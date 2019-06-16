@@ -128,9 +128,7 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 				return;
 			}
 
-			for (int i = 0; i < memoryBlocks.length; i++) {
-				IMemoryBlock memory = memoryBlocks[i];
-
+			for (IMemoryBlock memory : memoryBlocks) {
 				if (!fTabFolderForMemoryBlock.containsKey(memory)) {
 					createFolderForMemoryBlock(memory);
 				}
@@ -143,27 +141,21 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	@Override
 	public void memoryBlocksRemoved(final IMemoryBlock[] memoryBlocks) {
 		Display.getDefault().asyncExec(() -> {
-			for (int j = 0; j < memoryBlocks.length; j++) {
-				IMemoryBlock mbRemoved = memoryBlocks[j];
+			for (IMemoryBlock mbRemoved : memoryBlocks) {
 				if (fTabFolderForMemoryBlock == null) {
 					return;
 				}
-
 				// get all renderings from this memory block and remove them
 				// from the view
 				IMemoryRendering[] renderings = fRenderingMgr.getRenderingsFromMemoryBlock(mbRemoved);
-
-				for (int k = 0; k < renderings.length; k++) {
-					removeMemoryRendering(renderings[k]);
+				for (IMemoryRendering rendering : renderings) {
+					removeMemoryRendering(rendering);
 				}
-
 				// remove a the tab folder if the memory block is removed
 				CTabFolder tabFolder = fTabFolderForMemoryBlock.get(mbRemoved);
-
 				if (tabFolder == null) {
 					continue;
 				}
-
 				fTabFolderForMemoryBlock.remove(mbRemoved);
 				fMemoryBlockFromTabFolder.remove(tabFolder);
 				IMemoryBlockRetrieval retrieve = MemoryViewUtil.getMemoryBlockRetrieval(mbRemoved);
@@ -172,18 +164,14 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 						fTabFolderForDebugView.remove(MemoryViewUtil.getHashCode(retrieve));
 					}
 				}
-
 				if (!tabFolder.isDisposed()) {
 					// dispose all view tabs belonging to the tab folder
 					CTabItem[] items = tabFolder.getItems();
-
-					for (int i = 0; i < items.length; i++) {
-						disposeTab(items[i]);
+					for (CTabItem item : items) {
+						disposeTab(item);
 					}
-
 					// dispose the tab folder
 					tabFolder.dispose();
-
 					// if this is the top control
 					if (tabFolder == fStackLayout.topControl) {
 
@@ -222,7 +210,6 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 					// if not the top control
 					// no need to do anything
 				}
-
 				fAddedMemoryBlocks.remove(mbRemoved);
 				updateToolBarActionsEnablement();
 			}
@@ -502,20 +489,17 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 
 			CTabItem[] tabs = tabFolder.getItems();
 			boolean foundTab = false;
-			for (int i1 = 0; i1 < tabs.length; i1++) {
-				IMemoryViewTab viewTab1 = (IMemoryViewTab) tabs[i1].getData();
-
-				if (tabs[i1].isDisposed()) {
+			for (CTabItem tab : tabs) {
+				IMemoryViewTab viewTab1 = (IMemoryViewTab) tab.getData();
+				if (tab.isDisposed()) {
 					continue;
 				}
-
 				if (viewTab1.getRendering().getMemoryBlock() == memory) {
 					if (viewTab1.getRendering() == rendering) {
 						foundTab = true;
-						disposeTab(tabs[i1]);
+						disposeTab(tab);
 						break;
 					}
-
 				}
 			}
 
@@ -528,12 +512,12 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 					CTabFolder otherTabFolder = enumeration.nextElement();
 					tabs = otherTabFolder.getItems();
 					IMemoryViewTab viewTab2 = null;
-					for (int i2 = 0; i2 < tabs.length; i2++) {
-						viewTab2 = (IMemoryViewTab) tabs[i2].getData();
+					for (CTabItem tab : tabs) {
+						viewTab2 = (IMemoryViewTab) tab.getData();
 						if (viewTab2.getRendering().getMemoryBlock() == memory) {
 							if (viewTab2.getRendering() == rendering) {
 								foundTab = true;
-								disposeTab(tabs[i2]);
+								disposeTab(tab);
 								break;
 							}
 						}
@@ -563,8 +547,8 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 	}
 
 	private void restoreViewTabs(IMemoryRendering[] renderings) {
-		for (int i = 0; i < renderings.length; i++) {
-			memoryBlockRenderingAdded(renderings[i]);
+		for (IMemoryRendering rendering : renderings) {
+			memoryBlockRenderingAdded(rendering);
 		}
 	}
 
@@ -1050,10 +1034,9 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 				originalProvider = service.getSynchronizationProvider();
 			}
 
-			for (int i = 0; i < renderings.length; i++) {
-				if (renderings[i] instanceof IResettableMemoryRendering) {
+			for (IMemoryRendering rendering : renderings) {
+				if (rendering instanceof IResettableMemoryRendering) {
 					try {
-
 						// This is done to allow user to select multiple memory
 						// monitors and
 						// reset their renderings.
@@ -1075,10 +1058,10 @@ public class RenderingViewPane extends AbstractMemoryViewPane implements IMemory
 						// though the rendering
 						// is currently hidden.
 						if (service != null) {
-							service.setSynchronizationProvider(renderings[i]);
+							service.setSynchronizationProvider(rendering);
 						}
-						((IResettableMemoryRendering) renderings[i]).resetRendering();
-					} catch (DebugException e) {
+						((IResettableMemoryRendering) rendering).resetRendering();
+					}catch (DebugException e) {
 						// do not pop up error message
 						// error message is annoying where there are multiple
 						// rendering

@@ -143,12 +143,12 @@ public class LaunchAction extends Action {
 	 */
 	private void removeFromLaunchHistories(ILaunchConfiguration config, ILaunchGroup[] groups) {
 		LaunchHistory history = null;
-		for(int i = 0; i < groups.length; i++) {
-			history = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchHistory(groups[i].getIdentifier());
-			if(history != null) {
+		for (ILaunchGroup group : groups) {
+			history = DebugUIPlugin.getDefault().getLaunchConfigurationManager().getLaunchHistory(group.getIdentifier());
+			if (history != null) {
 				history.removeFromHistory(fConfiguration);
 			} else {
-				DebugUIPlugin.logErrorMessage(MessageFormat.format("Unable to remove configuration [{0}] from launch history. The launch history for mode [{1}] does not exist.", new Object[] { config.getName(), groups[i].getMode() })); //$NON-NLS-1$
+				DebugUIPlugin.logErrorMessage(MessageFormat.format("Unable to remove configuration [{0}] from launch history. The launch history for mode [{1}] does not exist.", new Object[]{config.getName(), group.getMode()})); //$NON-NLS-1$
 			}
 		}
 	}

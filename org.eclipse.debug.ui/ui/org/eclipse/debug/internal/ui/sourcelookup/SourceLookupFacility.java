@@ -205,8 +205,7 @@ public class SourceLookupFacility implements IPageListener, IPartListener2, IPro
 	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		IStackFrame frame = null;
-		for (int i = 0; i < events.length; i++) {
-			final DebugEvent event = events[i];
+		for (DebugEvent event : events) {
 			switch (event.getKind()) {
 				case DebugEvent.TERMINATE:
 				case DebugEvent.RESUME:

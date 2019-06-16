@@ -52,8 +52,7 @@ public abstract class ToggleFilterAction extends Action {
 				ViewerFilter filter = getViewerFilter();
 				ViewerFilter[] filters = getViewer().getFilters();
 				boolean alreadyAdded = false;
-				for (int i = 0; i < filters.length; i++) {
-					ViewerFilter addedFilter = filters[i];
+				for (ViewerFilter addedFilter : filters) {
 					if (addedFilter.equals(filter)) {
 						alreadyAdded = true;
 						break;

@@ -80,8 +80,7 @@ public class ArchiveFilter extends ViewerFilter {
 		boolean added = false;
 		try {
 			IResource[] resources = container.members();
-			for (int i = 0; i < resources.length; i++) {
-				IResource resource = resources[i];
+			for (IResource resource : resources) {
 				if (resource instanceof IFile) {
 					IFile file = (IFile)resource;
 					String ext = file.getFileExtension();

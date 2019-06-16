@@ -198,8 +198,8 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Object[] items = fContentProvider.getElements(fViewer.getInput());
-				for (int i = 0; i < items.length; i++) {
-					fViewer.setSubtreeChecked(items[i], true);
+				for (Object item : items) {
+					fViewer.setSubtreeChecked(item, true);
 				}
 				setPageComplete(isComplete());
 			}
@@ -209,8 +209,8 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				Object[] items = fContentProvider.getElements(fViewer.getInput());
-				for (int i = 0; i < items.length; i++) {
-					fViewer.setSubtreeChecked(items[i], false);
+				for (Object item : items) {
+					fViewer.setSubtreeChecked(item, false);
 				}
 				setPageComplete(isComplete());
 			}
@@ -244,8 +244,8 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 		boolean state = fViewer.getChecked(element);
 		if(element instanceof ILaunchConfigurationType) {
 			Object[] items = ((ConfigContentProvider)fViewer.getContentProvider()).getChildren(element);
-			for(int i = 0; i < items.length; i++) {
-				fViewer.setChecked(items[i], state);
+			for (Object item : items) {
+				fViewer.setChecked(item, state);
 			}
 			fViewer.setGrayed(element, false);
 		}
@@ -255,8 +255,8 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 			Object[] items = ccp.getChildren(parent);
 			boolean checked = true;
 			boolean onechecked = false;
-			for(int i = 0; i < items.length; i++) {
-				state = fViewer.getChecked(items[i]);
+			for (Object item : items) {
+				state = fViewer.getChecked(item);
 				checked &= state;
 				if(state) {
 					onechecked = true;
@@ -308,8 +308,8 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 	protected boolean isComplete() {
 		Object[] elements = fViewer.getCheckedElements();
 		boolean oneconfig = false;
-		for(int i = 0; i < elements.length; i++) {
-			if(elements[i] instanceof ILaunchConfiguration) {
+		for (Object element : elements) {
+			if (element instanceof ILaunchConfiguration) {
 				oneconfig = true;
 				break;
 			}
@@ -364,13 +364,13 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 					File newfile = null;
 					boolean owall = false, nowall = false;
 					MessageDialog dialog = null;
-					for(int i = 0; i < configs.length; i++) {
+					for (Object config : configs) {
 						if (progressMonitor.isCanceled()) {
 							return Status.CANCEL_STATUS;
 						}
-						if(configs[i] instanceof ILaunchConfiguration) {
+						if (config instanceof ILaunchConfiguration) {
 							try {
-								LaunchConfiguration launchConfig = (LaunchConfiguration) configs[i];
+								LaunchConfiguration launchConfig = (LaunchConfiguration) config;
 								file = launchConfig.getFileStore();
 								if (file == null) {
 									if (errors == null) {
@@ -384,11 +384,11 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 											continue;
 										}
 										dialog = new MessageDialog(DebugUIPlugin.getShell(), WizardMessages.ExportLaunchConfigurationsWizardPage_11, null, MessageFormat.format(WizardMessages.ExportLaunchConfigurationsWizardPage_12, new Object[] { file.getName() }), MessageDialog.QUESTION, new String[] {
-												WizardMessages.ExportLaunchConfigurationsWizardPage_13,
-												WizardMessages.ExportLaunchConfigurationsWizardPage_14,
-												WizardMessages.ExportLaunchConfigurationsWizardPage_15,
-												WizardMessages.ExportLaunchConfigurationsWizardPage_16,
-												WizardMessages.ExportLaunchConfigurationsWizardPage_17 }, 0);
+											WizardMessages.ExportLaunchConfigurationsWizardPage_13,
+											WizardMessages.ExportLaunchConfigurationsWizardPage_14,
+											WizardMessages.ExportLaunchConfigurationsWizardPage_15,
+											WizardMessages.ExportLaunchConfigurationsWizardPage_16,
+											WizardMessages.ExportLaunchConfigurationsWizardPage_17 }, 0);
 										if(!owall) {
 											int ret = dialog.open();
 											switch(ret) {
@@ -421,15 +421,13 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 										copyFile(file, newfile);
 									}
 								}
-							}
-							catch (IOException e ) {
+							} catch (IOException e) {
 								if (errors == null) {
 									errors = new ArrayList<>(configs.length);
 								}
 								errors.add(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(),
 										e.getMessage(), e));
-							}
-							catch (CoreException e) {
+							} catch (CoreException e) {
 								if (errors == null) {
 									errors = new ArrayList<>(configs.length);
 								}

@@ -261,9 +261,9 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 
 	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
-		for (int i = 0; i < events.length; i++) {
-			Object source = events[i].getSource();
-			if (events[i].getKind() == DebugEvent.TERMINATE && source instanceof IMemoryBlockRetrieval) {
+		for (DebugEvent event : events) {
+			Object source = event.getSource();
+			if (event.getKind() == DebugEvent.TERMINATE && source instanceof IMemoryBlockRetrieval) {
 				if (isDisposed()) {
 					return;
 				}
@@ -333,8 +333,8 @@ public abstract class AbstractMemoryViewPane implements IMemoryBlockListener, IS
 			// if tab folder is not empty, dipose view tabs
 			CTabItem[] tabs = tabFolder.getItems();
 
-			for (int i = 0; i < tabs.length; i++) {
-				disposeTab(tabs[i]);
+			for (CTabItem tab : tabs) {
+				disposeTab(tab);
 			}
 
 			tabFolder.dispose();

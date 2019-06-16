@@ -33,8 +33,8 @@ public class RemoveAllTerminatedAction extends AbstractRemoveAllActionDelegate i
 	protected boolean isEnabled() {
 		ILaunch[] launches = DebugPlugin.getDefault().getLaunchManager().getLaunches();
 		if (launches != null) {
-			for (int i= 0; i < launches.length; i++) {
-				if (launches[i].isTerminated()) {
+			for (ILaunch launch : launches) {
+				if (launch.isTerminated()) {
 					return true;
 				}
 			}
@@ -44,8 +44,7 @@ public class RemoveAllTerminatedAction extends AbstractRemoveAllActionDelegate i
 
 	public static void removeTerminatedLaunches(ILaunch[] elements) {
 		List<ILaunch> removed = new ArrayList<>();
-		for (int i = 0; i < elements.length; i++) {
-			ILaunch launch = elements[i];
+		for (ILaunch launch : elements) {
 			if (launch.isTerminated()) {
 				removed.add(launch);
 			}

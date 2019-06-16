@@ -75,8 +75,8 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 
 	@Override
 	public void launchesTerminated(ILaunch[] launches) {
-		for (int i = 0; i < launches.length; i++) {
-			if (launches[i] == fLaunch) {
+		for (ILaunch launch : launches) {
+			if (launch == fLaunch) {
 				fireDelta(IModelDelta.STATE | IModelDelta.CONTENT | IModelDelta.UNINSTALL);
 				break;
 			}
@@ -85,8 +85,8 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 
 	@Override
 	public void launchesRemoved(ILaunch[] launches) {
-		for (int i = 0; i < launches.length; i++) {
-			if (launches[i] == fLaunch) {
+		for (ILaunch launch : launches) {
+			if (launch == fLaunch) {
 				fireDelta(IModelDelta.UNINSTALL);
 				break;
 			}
@@ -99,8 +99,8 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 
 	@Override
 	public void launchesChanged(ILaunch[] launches) {
-		for (int i = 0; i < launches.length; i++) {
-			if (launches[i] == fLaunch) {
+		for (ILaunch launch : launches) {
+			if (launch == fLaunch) {
 				fireDelta(IModelDelta.STATE | IModelDelta.CONTENT);
 				installModelProxies();
 				break;
@@ -121,8 +121,7 @@ public class LaunchProxy extends AbstractModelProxy implements ILaunchesListener
 		synchronized(this) {
 			Object[] children = fLaunch.getChildren();
 			ModelDelta launchDelta = root.addNode(fLaunch, indexOf(fLaunch, allLaunches), IModelDelta.EXPAND, children.length);
-			for (int j = 0; j < children.length; j++) {
-				Object child = children[j];
+			for (Object child : children) {
 				if (fPrevChildren.add(child)) {
 					changes = true;
 					launchDelta.addNode(child, indexOf(child, children), IModelDelta.INSTALL, -1);

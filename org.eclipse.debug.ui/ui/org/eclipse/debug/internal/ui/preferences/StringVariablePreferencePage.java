@@ -388,8 +388,8 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 			}
 		}
 		VariableWrapper[] variables= variablesToRemove.toArray(new VariableWrapper[0]);
-		for (int i = 0; i < variables.length; i++) {
-			variables[i].setRemoved(true);
+		for (VariableWrapper variable : variables) {
+			variable.setRemoved(true);
 		}
 		variableTable.refresh();
 	}
@@ -474,8 +474,8 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 
 	private void restoreDefaultColumnWidths(){
 		TableLayout layout = new TableLayout();
-		for (int i = 0; i < variableTableColumnLayouts.length; i++) {
-			layout.addColumnData(variableTableColumnLayouts[i]);
+		for (ColumnLayoutData variableTableColumnLayout : variableTableColumnLayouts) {
+			layout.addColumnData(variableTableColumnLayout);
 		}
 		variableTable.getTable().setLayout(layout);
 	}
@@ -560,8 +560,8 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 			fWorkingSet.clear();
 			IStringVariableManager manager = getVariableManager();
 			IValueVariable[] variables = manager.getValueVariables();
-			for (int i = 0; i < variables.length; i++) {
-				fWorkingSet.add(new VariableWrapper(variables[i]));
+			for (IValueVariable variable : variables) {
+				fWorkingSet.add(new VariableWrapper(variable));
 			}
 		}
 

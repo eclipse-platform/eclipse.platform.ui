@@ -726,10 +726,9 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		// content.
 		if (!getTableRendering(fInput).isDisplayingError())
 		{
-			for (int i=0; i<lines.length; i++)
-			{
-				contentCache.put(lines[i].getAddress(), lines[i]);
-				lines[i].isMonitored = true;
+			for (TableRenderingLine line : lines) {
+				contentCache.put(line.getAddress(), line);
+				line.isMonitored = true;
 			}
 		}
 
@@ -933,9 +932,8 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		TableRenderingLine[] convertedLines = convertBytesToLines(bytes, bytesPerLine, new BigInteger(fContentCacheStartAddress, 16));
 
 		contentCache.clear();
-		for (int i=0; i<convertedLines.length; i++)
-		{
-			contentCache.put(convertedLines[i].getAddress(), convertedLines[i]);
+		for (TableRenderingLine convertedLine : convertedLines) {
+			contentCache.put(convertedLine.getAddress(), convertedLine);
 		}
 	}
 

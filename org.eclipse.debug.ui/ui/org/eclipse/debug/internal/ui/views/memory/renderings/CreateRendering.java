@@ -257,12 +257,10 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 		// make a copy of the container, may be diposed when a rendering is added
 		IMemoryRenderingContainer container = fContainer;
 		// add memory renderings to Memory Rendering Manager
-		for (int i=0; i<renderings.length; i++)
-		{
-			if (renderings[i] instanceof IMemoryRenderingType)
-			{
+		for (Object r : renderings) {
+			if (r instanceof IMemoryRenderingType) {
 				try {
-					IMemoryRendering rendering = ((IMemoryRenderingType)renderings[i]).createRendering();
+					IMemoryRendering rendering = ((IMemoryRenderingType) r).createRendering();
 					if (rendering != null)
 					{
 						rendering.init(container, getMemoryBlock());

@@ -115,8 +115,8 @@ public class LaunchConfigurationPresentationManager {
 			String typeId = null;
 			Map<Set<String>, LaunchConfigurationTabGroupExtension> map = null;
 			List<Set<String>> modes = null;
-			for (int i = 0; i < groups.length; i++) {
-				group = new LaunchConfigurationTabGroupExtension(groups[i]);
+			for (IConfigurationElement g : groups) {
+				group = new LaunchConfigurationTabGroupExtension(g);
 				typeId = group.getTypeIdentifier();
 				map = fTabGroupExtensions.get(typeId);
 				if (map == null) {
@@ -164,8 +164,8 @@ public class LaunchConfigurationPresentationManager {
 		IConfigurationElement[] elements = epoint.getConfigurationElements();
 		LaunchConfigurationTabExtension tab = null;
 		Hashtable<String, LaunchConfigurationTabExtension> element = null;
-		for(int i = 0; i < elements.length; i++) {
-			tab = new LaunchConfigurationTabExtension(elements[i]);
+		for (IConfigurationElement e : elements) {
+			tab = new LaunchConfigurationTabExtension(e);
 			element = fContributedTabs.get(tab.getTabGroupId());
 			if(element == null) {
 				element = new Hashtable<>();
@@ -254,29 +254,28 @@ public class LaunchConfigurationPresentationManager {
 			return tabs;
 		}
 		HashSet<LaunchConfigurationTabExtension> set = new HashSet<>();
-		for(int i = 0; i < tabs.length; i ++) {
-		//filter capabilities
-			if(!WorkbenchActivityHelper.filterItem(new LaunchTabContribution(tabs[i]))) {
-			//filter to preferred delegate (if there is one)
+		for (LaunchConfigurationTabExtension tab : tabs) {
+			//filter capabilities
+			if (!WorkbenchActivityHelper.filterItem(new LaunchTabContribution(tab))) {
+				//filter to preferred delegate (if there is one)
 				Set<String> modes = config.getModes();
 				modes.add(mode);
 				ILaunchDelegate delegate = config.getPreferredDelegate(modes);
 				if(delegate == null) {
 					delegate = config.getType().getPreferredDelegate(modes);
 				}
-				Set<String> delegateSet = tabs[i].getDelegateSet();
-				if(delegate != null) {
-					if(delegateSet.isEmpty() || delegateSet.contains(delegate.getId())) {
-						set.add(tabs[i]);
+				Set<String> delegateSet = tab.getDelegateSet();
+				if (delegate != null) {
+					if (delegateSet.isEmpty() || delegateSet.contains(delegate.getId())) {
+						set.add(tab);
 					}
-				}
-				else {
+				} else {
 					//otherwise filter based on the collection of delegates for the modes
 					ILaunchDelegate[] delegates = config.getType().getDelegates(modes);
-					for(int j = 0; j < delegates.length; j++) {
-						if(delegateSet.isEmpty() || delegateSet.contains(delegates[j].getId())) {
+					for (ILaunchDelegate d : delegates) {
+						if (delegateSet.isEmpty() || delegateSet.contains(d.getId())) {
 							//associated with all modes and tab groups or only specific ones if indicated
-							set.add(tabs[i]);
+							set.add(tab);
 						}
 					}
 				}

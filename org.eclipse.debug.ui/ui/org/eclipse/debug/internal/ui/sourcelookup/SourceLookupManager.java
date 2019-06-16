@@ -39,8 +39,7 @@ public class SourceLookupManager implements IWindowListener {
 	private SourceLookupManager() {
 		IWorkbench workbench = PlatformUI.getWorkbench();
 		IWorkbenchWindow[] workbenchWindows = workbench.getWorkbenchWindows();
-		for (int i = 0; i < workbenchWindows.length; i++) {
-			IWorkbenchWindow window = workbenchWindows[i];
+		for (IWorkbenchWindow window : workbenchWindows) {
 			windowOpened(window);
 		}
 		workbench.addWindowListener(this);

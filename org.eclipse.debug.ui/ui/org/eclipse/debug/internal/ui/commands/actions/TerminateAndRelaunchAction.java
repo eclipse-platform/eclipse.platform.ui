@@ -45,8 +45,8 @@ public class TerminateAndRelaunchAction extends DebugCommandAction {
 			DebugUIPlugin.getStandardDisplay().asyncExec(() -> {
 				// Must be run in the UI thread since the launch can require
 				// prompting to proceed
-				for (int i = 0; i < targets.length; i++) {
-					ILaunch launch = DebugUIPlugin.getLaunch(targets[i]);
+				for (Object target : targets) {
+					ILaunch launch = DebugUIPlugin.getLaunch(target);
 					if (launch != null) {
 						RelaunchActionDelegate.relaunch(launch.getLaunchConfiguration(), launch.getLaunchMode());
 					}
@@ -84,8 +84,8 @@ public class TerminateAndRelaunchAction extends DebugCommandAction {
 		ISelection context = event.getContext();
 		if (context instanceof IStructuredSelection) {
 			Object[] elements = ((IStructuredSelection)context).toArray();
-			for (int i = 0; i < elements.length; i++) {
-				if (!canRelaunch(elements[i])) {
+			for (Object element : elements) {
+				if (!canRelaunch(element)) {
 					setEnabled(false);
 					return;
 				}

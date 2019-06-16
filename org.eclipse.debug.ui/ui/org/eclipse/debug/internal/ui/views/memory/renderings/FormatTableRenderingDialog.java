@@ -353,9 +353,8 @@ public class FormatTableRenderingDialog extends TrayDialog
 			}
 
 			addressCol.pack();
-			for (int i=0; i<columns.length; i++)
-			{
-				columns[i].pack();
+			for (TableColumn column : columns) {
+				column.pack();
 			}
 
 

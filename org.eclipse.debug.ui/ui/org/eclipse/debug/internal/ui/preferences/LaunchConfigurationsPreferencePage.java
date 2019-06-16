@@ -281,13 +281,12 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 			ILaunchConfiguration[] configurations = lmanager.getMigrationCandidates();
 			//separate the private from the public
 			List<ILaunchConfiguration> pub = new ArrayList<>();
-			for(int i = 0; i < configurations.length; i++) {
-				if(DebugUITools.isPrivate(configurations[i])) {
+			for (ILaunchConfiguration configuration : configurations) {
+				if (DebugUITools.isPrivate(configuration)) {
 					//auto-migrate private ones
-					configurations[i].migrate();
-				}
-				else {
-					pub.add(configurations[i]);
+					configuration.migrate();
+				} else {
+					pub.add(configuration);
 				}
 			}
 			if(pub.isEmpty()) {
@@ -301,9 +300,9 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 				fMonitor = new ProgressMonitorPart(fMigrateNow.getParent(), new GridLayout());
 				Object[] objs = listd.getResult();
 				fMonitor.beginTask(DebugPreferencesMessages.LaunchingPreferencePage_31, objs.length);
-				for(int i = 0; i < objs.length; i++) {
-					if(objs[i] instanceof ILaunchConfiguration) {
-						((ILaunchConfiguration)objs[i]).migrate();
+				for (Object obj : objs) {
+					if (obj instanceof ILaunchConfiguration) {
+						((ILaunchConfiguration) obj).migrate();
 					}
 					fMonitor.worked(1);
 				}
@@ -335,11 +334,11 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		String[] types = getPreferenceStore().getString(IInternalDebugUIConstants.PREF_FILTER_TYPE_LIST).split("\\,"); //$NON-NLS-1$
 		TableItem[] items = fTable.getItems();
 		ILaunchConfigurationType type;
-		for(int i = 0; i < types.length; i++) {
-			for(int j = 0; j < items.length; j++) {
-				type = (ILaunchConfigurationType)items[j].getData();
-				if(type.getIdentifier().equals(types[i])) {
-					items[j].setChecked(true);
+		for (String t : types) {
+			for (TableItem item : items) {
+				type = (ILaunchConfigurationType) item.getData();
+				if (type.getIdentifier().equals(t)) {
+					item.setChecked(true);
 				}
 			}
 		}
@@ -370,9 +369,9 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 		String types = IInternalDebugCoreConstants.EMPTY_STRING;
 		TableItem[] items = fTable.getItems();
 		ILaunchConfigurationType type;
-		for(int i = 0; i < items.length; i++) {
-			if(items[i].getChecked()) {
-				type = (ILaunchConfigurationType)items[i].getData();
+		for (TableItem item : items) {
+			if (item.getChecked()) {
+				type = (ILaunchConfigurationType) item.getData();
 				types += type.getIdentifier()+","; //$NON-NLS-1$
 			}
 		}

@@ -53,8 +53,7 @@ public abstract class ElementContentProvider implements IElementContentProvider 
 		Job job = new ElementContentProviderJob("Debug children update") { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				for (int i = 0; i < updates.length; i++) {
-					IChildrenUpdate update = updates[i];
+				for (IChildrenUpdate update : updates) {
 					if (!update.isCanceled()) {
 						retrieveChildren(update);
 					}
@@ -72,8 +71,7 @@ public abstract class ElementContentProvider implements IElementContentProvider 
 		Job job = new ElementContentProviderJob("Debug child count update") { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				for (int i = 0; i < updates.length; i++) {
-					IChildrenCountUpdate update = updates[i];
+				for (IChildrenCountUpdate update : updates) {
 					if (!update.isCanceled()) {
 						retrieveChildCount(update);
 					}
@@ -207,8 +205,7 @@ public abstract class ElementContentProvider implements IElementContentProvider 
 		Job job = new ElementContentProviderJob("Debug has children update") { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				for (int i = 0; i < updates.length; i++) {
-					IHasChildrenUpdate update = updates[i];
+				for (IHasChildrenUpdate update : updates) {
 					if (!update.isCanceled()) {
 						updateHasChildren(update);
 					}

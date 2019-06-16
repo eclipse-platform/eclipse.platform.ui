@@ -92,8 +92,8 @@ public class FolderSourceContainerDialog extends ElementTreeSelectionDialog {
 		ISelectionStatusValidator validator= new ISelectionStatusValidator() {
 			@Override
 			public IStatus validate(Object[] selection) {
-				for (int i= 0; i < selection.length; i++) {
-					if (!(selection[i] instanceof IFolder)) {
+				for (Object f : selection) {
+					if (!(f instanceof IFolder)) {
 						return new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), -1, SourceLookupUIMessages.sourceSearch_folderSelectionError, null); //
 					}
 				}

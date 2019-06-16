@@ -110,8 +110,8 @@ public class DebugElementLabelProvider extends ElementLabelProvider {
 				IDebugModelPresentation presentation = debugContext.getModelPresentation();
 				if (presentation instanceof IDebugModelPresentationExtension) {
 					IDebugModelPresentationExtension extension = (IDebugModelPresentationExtension) presentation;
-					for (int i = 0; i < updates.length; i++) {
-						if (extension.requiresUIThread(updates[i].getElement())) {
+					for (ILabelUpdate u : updates) {
+						if (extension.requiresUIThread(u.getElement())) {
 							return true;
 						}
 					}

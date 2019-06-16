@@ -170,8 +170,7 @@ public class DebugContextManager implements IDebugContextManager {
 	public void addDebugContextListener(IDebugContextListener listener) {
 		fGlobalListeners.add(listener);
 		DebugWindowContextService[] services = getServices();
-		for (int i = 0; i < services.length; i++) {
-			DebugWindowContextService service = services[i];
+		for (DebugWindowContextService service : services) {
 			service.addDebugContextListener(listener);
 		}
 	}
@@ -180,8 +179,7 @@ public class DebugContextManager implements IDebugContextManager {
 	public void removeDebugContextListener(IDebugContextListener listener) {
 		fGlobalListeners.remove(listener);
 		DebugWindowContextService[] services = getServices();
-		for (int i = 0; i < services.length; i++) {
-			DebugWindowContextService service = services[i];
+		for (DebugWindowContextService service : services) {
 			service.removeDebugContextListener(listener);
 		}
 	}

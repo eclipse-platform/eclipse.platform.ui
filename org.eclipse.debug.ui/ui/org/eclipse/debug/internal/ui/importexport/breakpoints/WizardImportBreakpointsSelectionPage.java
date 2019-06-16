@@ -98,8 +98,8 @@ public class WizardImportBreakpointsSelectionPage extends WizardPage {
 			operation.run(monitor);
 			BreakpointContainer breakpointManager = new BreakpointContainer(null, null);
 			IBreakpoint[] importedBreakpoints = operation.getImportedBreakpoints();
-			for (int i = 0; i < importedBreakpoints.length; i++) {
-				breakpointManager.addBreakpoint(importedBreakpoints[i], new ModelDelta(null, IModelDelta.ADDED));
+			for (IBreakpoint importedBreakpoint : importedBreakpoints) {
+				breakpointManager.addBreakpoint(importedBreakpoint, new ModelDelta(null, IModelDelta.ADDED));
 			}
 			currentTView.getViewer().setInput(breakpointManager);
 			currentTView.getViewer().refresh();

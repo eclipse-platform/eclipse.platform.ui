@@ -61,9 +61,9 @@ public class ResetMemoryBlockAction implements IViewActionDelegate {
 				MemoryView memView = (MemoryView) fView;
 				IMemoryRenderingContainer[] containers = memView.getMemoryRenderingContainers();
 
-				for (int i = 0; i < containers.length; i++) {
-					if (containers[i] instanceof RenderingViewPane) {
-						((RenderingViewPane) containers[i]).resetRenderings(mb, resetVisible);
+				for (IMemoryRenderingContainer container : containers) {
+					if (container instanceof RenderingViewPane) {
+						((RenderingViewPane) container).resetRenderings(mb, resetVisible);
 					}
 				}
 			}
@@ -77,12 +77,12 @@ public class ResetMemoryBlockAction implements IViewActionDelegate {
 			IStructuredSelection strucSel = (IStructuredSelection) selection;
 			Object[] objs = strucSel.toArray();
 			fSelectedMB.clear();
-			for (int i = 0; i < objs.length; i++) {
-				if (objs[i] instanceof IMemoryBlock) {
-					fSelectedMB.add(objs[i]);
+			for (Object obj : objs) {
+				if (obj instanceof IMemoryBlock) {
+					fSelectedMB.add(obj);
 				}
-				if (objs[i] instanceof IMemoryRendering) {
-					fSelectedMB.add(((IMemoryRendering) objs[i]).getMemoryBlock());
+				if (obj instanceof IMemoryRendering) {
+					fSelectedMB.add(((IMemoryRendering) obj).getMemoryBlock());
 				}
 			}
 		}

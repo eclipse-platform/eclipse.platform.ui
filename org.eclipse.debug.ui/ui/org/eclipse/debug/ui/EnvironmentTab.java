@@ -608,8 +608,8 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	protected boolean addVariable(EnvironmentVariable variable) {
 		String name = variable.getName();
 		TableItem[] items = environmentTable.getTable().getItems();
-		for (int i = 0; i < items.length; i++) {
-			EnvironmentVariable existingVariable = (EnvironmentVariable) items[i].getData();
+		for (TableItem item : items) {
+			EnvironmentVariable existingVariable = (EnvironmentVariable) item.getData();
 			if (existingVariable.getName().equals(name)) {
 
 				boolean overWrite = MessageDialog.openQuestion(getShell(),
@@ -685,8 +685,8 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 
 		// get Environment Variables from the table
 		TableItem[] items = environmentTable.getTable().getItems();
-		for (int i = 0; i < items.length; i++) {
-			EnvironmentVariable var = (EnvironmentVariable) items[i].getData();
+		for (TableItem item : items) {
+			EnvironmentVariable var = (EnvironmentVariable) item.getData();
 			envVariables.remove(var.getName());
 		}
 
@@ -696,8 +696,8 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		int button = dialog.open();
 		if (button == Window.OK) {
 			Object[] selected = dialog.getResult();
-			for (int i = 0; i < selected.length; i++) {
-				environmentTable.add(selected[i]);
+			for (Object o : selected) {
+				environmentTable.add(o);
 			}
 		}
 
@@ -883,8 +883,8 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		// configuration's attributes.
 		TableItem[] items = environmentTable.getTable().getItems();
 		Map<String, String> map = new HashMap<>(items.length);
-		for (int i = 0; i < items.length; i++) {
-			EnvironmentVariable var = (EnvironmentVariable) items[i].getData();
+		for (TableItem item : items) {
+			EnvironmentVariable var = (EnvironmentVariable) item.getData();
 			map.put(var.getName(), var.getValue());
 		}
 		if (map.isEmpty()) {

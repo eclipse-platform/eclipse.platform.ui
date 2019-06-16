@@ -160,8 +160,8 @@ public class BreakpointOrganizerExtension implements IBreakpointOrganizer, IBrea
 		if (organizer instanceof IBreakpointOrganizerDelegateExtension) {
 			((IBreakpointOrganizerDelegateExtension)organizer).addBreakpoints(breakpoints, category);
 		} else {
-			for (int i = 0; i < breakpoints.length; i++) {
-				addBreakpoint(breakpoints[i], category);
+			for (IBreakpoint breakpoint : breakpoints) {
+				addBreakpoint(breakpoint, category);
 			}
 		}
 	}
@@ -172,8 +172,8 @@ public class BreakpointOrganizerExtension implements IBreakpointOrganizer, IBrea
 		if (organizer instanceof IBreakpointOrganizerDelegateExtension) {
 			((IBreakpointOrganizerDelegateExtension)organizer).removeBreakpoints(breakpoints, category);
 		} else {
-			for (int i = 0; i < breakpoints.length; i++) {
-				removeBreakpoint(breakpoints[i], category);
+			for (IBreakpoint breakpoint : breakpoints) {
+				removeBreakpoint(breakpoint, category);
 			}
 		}
 

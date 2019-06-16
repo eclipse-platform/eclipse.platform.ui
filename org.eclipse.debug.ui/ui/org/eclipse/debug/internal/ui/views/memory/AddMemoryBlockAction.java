@@ -184,8 +184,8 @@ public class AddMemoryBlockAction extends Action implements IDebugContextListene
 	 * @return if we should exit
 	 */
 	private boolean addMemoryBlocks(boolean exit, Object elem, IMemoryBlockRetrieval standardMemRetrieval, MonitorMemoryBlockDialog dialog, final String[] expressionsArray) {
-		for (int i = 0; i < expressionsArray.length; i++) {
-			String expression = expressionsArray[i].trim();
+		for (String e : expressionsArray) {
+			String expression = e.trim();
 			try {
 				if (standardMemRetrieval instanceof IMemoryBlockRetrievalExtension) {
 					// if the debug session supports
@@ -276,8 +276,8 @@ public class AddMemoryBlockAction extends Action implements IDebugContextListene
 
 	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
-		for (int i = 0; i < events.length; i++) {
-			handleDebugEvent(events[i]);
+		for (DebugEvent event : events) {
+			handleDebugEvent(event);
 		}
 	}
 
@@ -344,18 +344,18 @@ public class AddMemoryBlockAction extends Action implements IDebugContextListene
 			DebugUIPlugin.log(e1);
 		}
 
-		for (int i = 0; i < renderingTypes.length; i++) {
+		for (IMemoryRenderingType renderingType : renderingTypes) {
 			try {
 				boolean create = true;
 				if (primaryType != null) {
-					if (primaryType.getId().equals(renderingTypes[i].getId())) {
+					if (primaryType.getId().equals(renderingType.getId())) {
 						create = false;
 					}
 				}
 				if (create) {
-					createRenderingInContainer(memoryBlock, renderingTypes[i], IDebugUIConstants.ID_RENDERING_VIEW_PANE_2);
+					createRenderingInContainer(memoryBlock, renderingType, IDebugUIConstants.ID_RENDERING_VIEW_PANE_2);
 				}
-			} catch (CoreException e) {
+			}catch (CoreException e) {
 				DebugUIPlugin.log(e);
 			}
 		}

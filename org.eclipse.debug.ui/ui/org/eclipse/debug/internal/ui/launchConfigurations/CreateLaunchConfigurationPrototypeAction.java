@@ -80,8 +80,8 @@ public class CreateLaunchConfigurationPrototypeAction extends AbstractLaunchConf
 				ILaunchConfigurationDialog dialog = LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog();
 				tabGroup.createTabs(dialog, dialog.getMode());
 				ILaunchConfigurationTab[] tabs = tabGroup.getTabs();
-				for (int i = 0; i < tabs.length; i++) {
-					tabs[i].setLaunchConfigurationDialog(dialog);
+				for (ILaunchConfigurationTab tab : tabs) {
+					tab.setLaunchConfigurationDialog(dialog);
 				}
 				tabGroup.setDefaults(wc);
 				tabGroup.dispose();

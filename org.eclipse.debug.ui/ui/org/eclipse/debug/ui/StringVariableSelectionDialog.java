@@ -183,13 +183,13 @@ public class StringVariableSelectionDialog extends ElementListSelectionDialog {
 		ArrayList<Object> filtered = new ArrayList<>();
 		filtered.addAll(Arrays.asList(elements));
 		if(!fFilters.isEmpty() && !fShowAllSelected) {
-			for (int i = 0; i < elements.length; i++) {
-				if(elements[i] instanceof IDynamicVariable) {
+			for (Object element : elements) {
+				if (element instanceof IDynamicVariable) {
 					boolean bFiltered = false;
 					for (int j = 0; (j < fFilters.size()) && !bFiltered; j++) {
 						VariableFilter filter = fFilters.get(j);
-						if(filter.isFiltered((IDynamicVariable)elements[i])) {
-							filtered.remove(elements[i]);
+						if (filter.isFiltered((IDynamicVariable) element)) {
+							filtered.remove(element);
 							bFiltered = true;
 						}
 					}

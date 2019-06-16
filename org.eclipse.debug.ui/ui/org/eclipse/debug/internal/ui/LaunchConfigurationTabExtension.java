@@ -110,8 +110,8 @@ public final class LaunchConfigurationTabExtension {
 			fDelegates = new HashSet<>();
 			IConfigurationElement[] children = fElement.getChildren(IConfigurationElementConstants.ASSOCIATED_DELEGATE);
 			String id = null;
-			for(int i = 0; i < children.length; i++) {
-				id = children[i].getAttribute(IConfigurationElementConstants.DELEGATE);
+			for (IConfigurationElement child : children) {
+				id = child.getAttribute(IConfigurationElementConstants.DELEGATE);
 				if(id != null) {
 					fDelegates.add(id);
 				}

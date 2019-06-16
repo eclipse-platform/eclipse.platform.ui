@@ -139,11 +139,11 @@ public class CopyTableRenderingToClipboardAction extends Action
 		StringBuilder temp;
 
 		//get the column contents from all the rows
-		for (int i=0; i < itemList.length; i++) {
-			for (int j=0; j < numColumns; j++) {
+		for (TableItem item : itemList) {
+			for (int j = 0; j < numColumns; j++) {
 				tableContents.append(COLUMN_SEPERATOR);
 
-				temp = new StringBuilder(labelProvider.getColumnText(itemList[i].getData(), j));
+				temp = new StringBuilder(labelProvider.getColumnText(item.getData(), j));
 
 				if (j>0)
 				{

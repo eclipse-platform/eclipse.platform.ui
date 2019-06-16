@@ -35,8 +35,7 @@ public abstract class ElementMementoProvider implements IElementMementoProvider 
 		Job job = new Job("compare element") { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				for (int i = 0; i < requests.length; i++) {
-					IElementCompareRequest request = requests[i];
+				for (IElementCompareRequest request : requests) {
 					try {
 						request.setEqual(isEqual(request.getElement(), request.getMemento(), request.getPresentationContext()));
 					} catch (CoreException e) {
@@ -67,8 +66,7 @@ public abstract class ElementMementoProvider implements IElementMementoProvider 
 		Job job = new Job("encode element") { //$NON-NLS-1$
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				for (int i = 0; i < requests.length; i++) {
-					IElementMementoRequest request = requests[i];
+				for (IElementMementoRequest request : requests) {
 					try {
 						if (!encodeElement(request.getElement(), request.getMemento(), request.getPresentationContext())) {
 							request.cancel();

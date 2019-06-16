@@ -63,11 +63,9 @@ public class SourceLookupUIUtils {
 		//read in SourceContainer presentation extensions
 		IConfigurationElement[] sourceContainerPresentationExtensions =extensionPoint.getConfigurationElements();
 		fSourceContainerPresentationHashtable = new Hashtable<>();
-		for (int i = 0; i < sourceContainerPresentationExtensions.length; i++) {
-			fSourceContainerPresentationHashtable.put(
-					sourceContainerPresentationExtensions[i].getAttribute(CONTAINER_ID_ATTRIBUTE),
-					sourceContainerPresentationExtensions[i]);
-			registerContainerImages(sourceContainerPresentationExtensions[i]);
+		for (IConfigurationElement extension : sourceContainerPresentationExtensions) {
+			fSourceContainerPresentationHashtable.put(extension.getAttribute(CONTAINER_ID_ATTRIBUTE), extension);
+			registerContainerImages(extension);
 		}
 	}
 

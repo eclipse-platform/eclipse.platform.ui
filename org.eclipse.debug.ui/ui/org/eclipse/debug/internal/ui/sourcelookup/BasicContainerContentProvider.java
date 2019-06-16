@@ -44,9 +44,9 @@ public class BasicContainerContentProvider implements ITreeContentProvider {
 			}
 
 			ArrayList<IProject> accessibleProjects = new ArrayList<>();
-			for (int i = 0; i < allProjects.length; i++) {
-				if (allProjects[i].isOpen()) {
-					accessibleProjects.add(allProjects[i]);
+			for (IProject p : allProjects) {
+				if (p.isOpen()) {
+					accessibleProjects.add(p);
 				}
 			}
 			return accessibleProjects.toArray();

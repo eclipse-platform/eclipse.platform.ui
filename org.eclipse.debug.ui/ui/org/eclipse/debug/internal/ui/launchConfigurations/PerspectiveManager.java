@@ -311,8 +311,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 		Runnable r = () -> {
 			IContextActivation[] activations = fLaunchToContextActivations.remove(launch);
 			if (activations != null) {
-				for (int i = 0; i < activations.length; i++) {
-					IContextActivation activation = activations[i];
+				for (IContextActivation activation : activations) {
 					activation.getContextService().deactivateContext(activation);
 				}
 			}
@@ -539,8 +538,7 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	 */
 	private Shell getModalDialogOpen(Shell shell) {
 		Shell[] shells = shell.getShells();
-		for (int i = 0; i < shells.length; i++) {
-			Shell dialog = shells[i];
+		for (Shell dialog : shells) {
 			if ((dialog.getStyle() & (SWT.APPLICATION_MODAL | SWT.PRIMARY_MODAL | SWT.SYSTEM_MODAL)) > 0) {
 				return dialog;
 			}
@@ -563,8 +561,8 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 			return window;
 		}
 		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
-		for (int i = 0; i < windows.length; i++) {
-			window = windows[i];
+		for (IWorkbenchWindow w : windows) {
+			window = w;
 			if (isWindowShowingPerspective(window, perspectiveId)) {
 				return window;
 			}
@@ -1034,8 +1032,8 @@ public class PerspectiveManager implements ILaunchListener, ISuspendTriggerListe
 	private Set<String> parseModes(String modes) {
 		HashSet<String> modeset = new HashSet<>();
 		String[] ms = modes.split(","); //$NON-NLS-1$
-		for(int i = 0; i < ms.length; i++) {
-			modeset.add(ms[i].trim());
+		for (String m : ms) {
+			modeset.add(m.trim());
 		}
 		return modeset;
 	}

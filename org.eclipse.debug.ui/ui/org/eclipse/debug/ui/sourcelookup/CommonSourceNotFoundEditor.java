@@ -269,8 +269,7 @@ public class CommonSourceNotFoundEditor extends EditorPart implements IReusableE
 				Object artifact = getArtifact();
 				if (artifact instanceof IDebugElement) {
 					IDebugElement element = (IDebugElement)artifact;
-					for (int i = 0; i < launches.length; i++) {
-						ILaunch launch = launches[i];
+					for (ILaunch launch : launches) {
 						if (launch.equals(element.getLaunch())) {
 							closeEditor();
 							return;

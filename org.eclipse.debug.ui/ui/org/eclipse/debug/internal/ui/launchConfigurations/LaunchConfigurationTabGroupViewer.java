@@ -906,21 +906,21 @@ public class LaunchConfigurationTabGroupViewer {
 		CTabItem tab = null;
 		String name = IInternalDebugCoreConstants.EMPTY_STRING;
 		Control control = null;
-		for (int i = 0; i < tabs.length; i++) {
+		for (ILaunchConfigurationTab t : tabs) {
 			tab = new CTabItem(fTabFolder, SWT.BORDER);
-			name = tabs[i].getName();
+			name = t.getName();
 			if (name == null) {
 				name = LaunchConfigurationsMessages.LaunchConfigurationDialog_unspecified_28;
 			}
 			tab.setText(name);
-			tab.setImage(tabs[i].getImage());
+			tab.setImage(t.getImage());
 			ScrolledComposite sc = new ScrolledComposite(tab.getParent(), SWT.V_SCROLL | SWT.H_SCROLL);
 			sc.setFont(tab.getParent().getFont());
 			sc.setExpandHorizontal(true);
 			sc.setExpandVertical(true);
 			sc.setShowFocusedControl(true);
-			tabs[i].createControl(sc);
-			control = tabs[i].getControl();
+			t.createControl(sc);
+			control = t.getControl();
 			if (control != null) {
 				sc.setContent(control);
 				sc.setMinSize(control.computeSize(SWT.DEFAULT, SWT.DEFAULT));
@@ -932,9 +932,9 @@ public class LaunchConfigurationTabGroupViewer {
 			setActiveTab(tabs[0]);
 		}
 		// select same tab as before, if possible
-		for (int i = 0; i < tabs.length; i++) {
-			if (tabs[i].getClass().equals(tabKind)) {
-				setActiveTab(tabs[i]);
+		for (ILaunchConfigurationTab t : tabs) {
+			if (t.getClass().equals(tabKind)) {
+				setActiveTab(t);
 				break;
 			}
 		}
@@ -983,8 +983,8 @@ public class LaunchConfigurationTabGroupViewer {
 			}
 			tabGroup.createTabs(getLaunchConfigurationDialog(), getLaunchConfigurationDialog().getMode());
 			ILaunchConfigurationTab[] tabs = tabGroup.getTabs();
-			for (int i = 0; i < tabs.length; i++) {
-				tabs[i].setLaunchConfigurationDialog(getLaunchConfigurationDialog());
+			for (ILaunchConfigurationTab tab : tabs) {
+				tab.setLaunchConfigurationDialog(getLaunchConfigurationDialog());
 			}
 		};
 
@@ -1174,8 +1174,8 @@ public class LaunchConfigurationTabGroupViewer {
 		if (tabs == null) {
 			return false;
 		}
-		for (int i = 0; i < tabs.length; i++) {
-			if (!tabs[i].canSave()) {
+		for (ILaunchConfigurationTab tab : tabs) {
+			if (!tab.canSave()) {
 				return false;
 			}
 		}
@@ -1202,8 +1202,8 @@ public class LaunchConfigurationTabGroupViewer {
 		if (tabs == null) {
 			return false;
 		}
-		for (int i = 0; i < tabs.length; i++) {
-			if (!tabs[i].isValid(getWorkingCopy())) {
+		for (ILaunchConfigurationTab tab : tabs) {
+			if (!tab.isValid(getWorkingCopy())) {
 				return false;
 			}
 		}
@@ -1306,8 +1306,7 @@ public class LaunchConfigurationTabGroupViewer {
 		}
 
 		ILaunchConfigurationTab[] allTabs = getTabs();
-		for (int i = 0; i < allTabs.length; i++) {
-			ILaunchConfigurationTab tab = allTabs[i];
+		for (ILaunchConfigurationTab tab : allTabs) {
 			if (tab == activeTab) {
 				continue;
 			}

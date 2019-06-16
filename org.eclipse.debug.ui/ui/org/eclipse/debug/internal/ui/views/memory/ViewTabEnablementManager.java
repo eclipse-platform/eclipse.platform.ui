@@ -62,10 +62,9 @@ public class ViewTabEnablementManager implements SelectionListener {
 		CTabItem[] allTabs = folder.getItems();
 
 		// check all tabs to make sure they are enabled/disabled properly
-		for (int i = 0; i < allTabs.length; i++) {
+		for (CTabItem tab : allTabs) {
 			IMemoryViewTab viewTab;
-			Object obj = allTabs[i].getData();
-
+			Object obj = tab.getData();
 			if (obj instanceof IMemoryViewTab) {
 				viewTab = (IMemoryViewTab) obj;
 

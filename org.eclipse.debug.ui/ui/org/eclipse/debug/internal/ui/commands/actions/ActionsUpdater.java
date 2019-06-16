@@ -45,8 +45,8 @@ public class ActionsUpdater {
 		if (!fDone) {
 			if (!fEnabled || fNumOfVotes == fNumVoters) {
 				fDone = true;
-				for (int i = 0; i < fActions.length; i++) {
-					fActions[i].setEnabled(fEnabled);
+				for (IEnabledTarget fAction : fActions) {
+					fAction.setEnabled(fEnabled);
 				}
 			}
 		}

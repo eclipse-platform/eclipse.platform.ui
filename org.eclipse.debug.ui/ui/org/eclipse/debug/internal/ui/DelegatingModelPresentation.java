@@ -93,11 +93,9 @@ public class DelegatingModelPresentation implements IDebugModelPresentation, IDe
 		IExtensionPoint point= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.ID_DEBUG_MODEL_PRESENTATION);
 		if (point != null) {
 			IExtension[] extensions= point.getExtensions();
-			for (int i= 0; i < extensions.length; i++) {
-				IExtension extension= extensions[i];
+			for (IExtension extension : extensions) {
 				IConfigurationElement[] configElements= extension.getConfigurationElements();
-				for (int j= 0; j < configElements.length; j++) {
-					IConfigurationElement elt= configElements[j];
+				for (IConfigurationElement elt : configElements) {
 					String id= elt.getAttribute("id"); //$NON-NLS-1$
 					if (id != null) {
 						IDebugModelPresentation lp= new LazyModelPresentation(this, elt);

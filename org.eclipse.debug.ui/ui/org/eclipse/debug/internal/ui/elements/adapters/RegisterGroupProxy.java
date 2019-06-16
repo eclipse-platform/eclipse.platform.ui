@@ -236,8 +236,8 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 	@Override
 	public int hashCode() {
 		int code = getClass().hashCode();
-		for (int i = 0; i < fGroups.length; i++) {
-			code+=fGroups[i].hashCode();
+		for (IRegisterGroup fGroup : fGroups) {
+			code += fGroup.hashCode();
 		}
 		return code;
 	}
@@ -336,9 +336,9 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 	 * @param updates updates to cancel
 	 */
 	private void cancelUpdates(IViewerUpdate[] updates) {
-		for (int i = 0; i < updates.length; i++) {
-			updates[i].setStatus(Status.CANCEL_STATUS);
-			updates[i].done();
+		for (IViewerUpdate update : updates) {
+			update.setStatus(Status.CANCEL_STATUS);
+			update.done();
 		}
 	}
 
@@ -347,8 +347,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		IElementMementoProvider provider = ViewerAdapterService.getMementoProvider(fFrame);
 		if (provider != null) {
 			List<IElementCompareRequest> others = new ArrayList<>(requests.length);
-			for (int i = 0; i < requests.length; i++) {
-				IElementCompareRequest request = requests[i];
+			for (IElementCompareRequest request : requests) {
 				if (request.getElement().equals(this)) {
 					Integer integer = request.getMemento().getInteger(HASH_CODE);
 					if (integer != null) {
@@ -374,8 +373,7 @@ public class RegisterGroupProxy implements IModelProxyFactory, IColumnPresentati
 		IElementMementoProvider provider = ViewerAdapterService.getMementoProvider(fFrame);
 		if (provider != null) {
 			List<IElementMementoRequest> others = new ArrayList<>(requests.length);
-			for (int i = 0; i < requests.length; i++) {
-				IElementMementoRequest request = requests[i];
+			for (IElementMementoRequest request : requests) {
 				if (request.getElement().equals(this)) {
 					request.getMemento().putInteger(HASH_CODE, this.hashCode());
 					request.done();

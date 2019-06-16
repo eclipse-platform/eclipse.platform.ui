@@ -29,11 +29,11 @@ abstract public class AbstractVirtualContentTableModel extends AsynchronousTable
 		ModelNode[] nodes = getNodes(getRootNode().getElement());
 		ArrayList<Object> result = new ArrayList<>();
 		if (nodes != null) {
-			for (int i = 0; i < nodes.length; i++) {
-				ModelNode[] children = nodes[i].getChildrenNodes();
+			for (ModelNode node : nodes) {
+				ModelNode[] children = node.getChildrenNodes();
 				if (children != null) {
-					for (int j = 0; j < children.length; j++) {
-						result.add(children[j].getElement());
+					for (ModelNode child : children) {
+						result.add(child.getElement());
 					}
 				}
 			}

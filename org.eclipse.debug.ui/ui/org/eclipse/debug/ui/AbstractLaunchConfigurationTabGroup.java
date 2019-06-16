@@ -62,8 +62,8 @@ public abstract class AbstractLaunchConfigurationTabGroup implements ILaunchConf
 	public void dispose() {
 		ILaunchConfigurationTab[] tabs = getTabs();
 		if (tabs != null) {
-			for (int i = 0; i < tabs.length; i++) {
-				tabs[i].dispose();
+			for (ILaunchConfigurationTab tab : tabs) {
+				tab.dispose();
 			}
 		}
 	}
@@ -76,8 +76,8 @@ public abstract class AbstractLaunchConfigurationTabGroup implements ILaunchConf
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		ILaunchConfigurationTab[] tabs = getTabs();
-		for (int i = 0; i < tabs.length; i++) {
-			tabs[i].setDefaults(configuration);
+		for (ILaunchConfigurationTab tab : tabs) {
+			tab.setDefaults(configuration);
 		}
 	}
 
@@ -89,8 +89,8 @@ public abstract class AbstractLaunchConfigurationTabGroup implements ILaunchConf
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		ILaunchConfigurationTab[] tabs = getTabs();
-		for (int i = 0; i < tabs.length; i++) {
-			tabs[i].initializeFrom(configuration);
+		for (ILaunchConfigurationTab tab : tabs) {
+			tab.initializeFrom(configuration);
 		}
 	}
 
@@ -102,8 +102,8 @@ public abstract class AbstractLaunchConfigurationTabGroup implements ILaunchConf
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		ILaunchConfigurationTab[] tabs = getTabs();
-		for (int i = 0; i < tabs.length; i++) {
-			tabs[i].performApply(configuration);
+		for (ILaunchConfigurationTab tab : tabs) {
+			tab.performApply(configuration);
 		}
 	}
 
@@ -120,8 +120,8 @@ public abstract class AbstractLaunchConfigurationTabGroup implements ILaunchConf
 	@Override
 	public void launched(ILaunch launch) {
 		ILaunchConfigurationTab[] tabs = getTabs();
-		for (int i = 0; i < tabs.length; i++) {
-			tabs[i].launched(launch);
+		for (ILaunchConfigurationTab tab : tabs) {
+			tab.launched(launch);
 		}
 	}
 

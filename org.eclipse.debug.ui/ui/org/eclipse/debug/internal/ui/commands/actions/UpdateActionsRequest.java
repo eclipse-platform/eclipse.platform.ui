@@ -41,8 +41,8 @@ public class UpdateActionsRequest extends DebugCommandRequest implements IEnable
 	@Override
 	public synchronized void done() {
 		if (!isCanceled()) {
-			for (int i = 0; i < fActions.length; i++) {
-				fActions[i].setEnabled(fEnabled);
+			for (IEnabledTarget action : fActions) {
+				action.setEnabled(fEnabled);
 			}
 		}
 	}

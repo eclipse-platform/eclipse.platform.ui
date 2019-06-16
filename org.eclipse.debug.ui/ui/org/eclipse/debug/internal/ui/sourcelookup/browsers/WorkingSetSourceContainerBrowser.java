@@ -40,8 +40,8 @@ public class WorkingSetSourceContainerBrowser extends AbstractSourceContainerBro
 		if (dialog.open() == Window.OK) {
 			IWorkingSet[] selections = dialog.getSelection();
 			if (selections != null) {
-				for (int i = 0; i < selections.length; i++) {
-					containers.add(new WorkingSetSourceContainer(selections[i]));
+				for (IWorkingSet selection : selections) {
+					containers.add(new WorkingSetSourceContainer(selection));
 				}
 			}
 		}

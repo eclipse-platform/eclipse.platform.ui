@@ -445,8 +445,8 @@ public class DetailPaneManager {
 			IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_DETAIL_FACTORIES);
 			IConfigurationElement[] infos = extensionPoint.getConfigurationElements();
 			DetailPaneFactoryExtension delegate = null;
-			for(int i = 0; i < infos.length; i++) {
-				delegate = new DetailPaneFactoryExtension(infos[i]);
+			for (IConfigurationElement info : infos) {
+				delegate = new DetailPaneFactoryExtension(info);
 				fKnownFactories.add(delegate);
 			}
 		}

@@ -117,8 +117,7 @@ public class EnableWatchExpressionAction implements IViewActionDelegate, IAction
 
 	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
-		for (int i = 0; i < events.length; i++) {
-			DebugEvent event = events[i];
+		for (DebugEvent event : events) {
 			if (event.getSource() instanceof IWatchExpression) {
 				if (event.getKind() == DebugEvent.CHANGE) {
 					selectionChanged(fAction, fSelection);

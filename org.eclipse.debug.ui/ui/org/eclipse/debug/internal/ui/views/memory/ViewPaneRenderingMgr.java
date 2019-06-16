@@ -78,9 +78,8 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener {
 
 		IMemoryRendering[] toRemove = getRenderings(mem, renderingId);
 
-		for (int i = 0; i < toRemove.length; i++) {
-			fRenderings.remove(toRemove[i]);
-
+		for (IMemoryRendering rendering : toRemove) {
+			fRenderings.remove(rendering);
 			// remove listener after the last memory block has been removed
 			if (fRenderings.isEmpty()) {
 				DebugPlugin.getDefault().removeDebugEventListener(this);
@@ -179,8 +178,8 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener {
 	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 
-		for (int i = 0; i < events.length; i++) {
-			handleDebugEvent(events[i]);
+		for (DebugEvent event : events) {
+			handleDebugEvent(event);
 		}
 
 	}
@@ -198,9 +197,9 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener {
 				// returns empty array if dt == null
 				IMemoryRendering[] deletedrendering = getRenderingsFromDebugTarget(dt);
 
-				for (int i = 0; i < deletedrendering.length; i++) {
-					removeMemoryBlockRendering(deletedrendering[i].getMemoryBlock(), deletedrendering[i].getRenderingId());
-					fViewPane.removeMemoryRendering(deletedrendering[i]);
+				for (IMemoryRendering rendering : deletedrendering) {
+					removeMemoryBlockRendering(rendering.getMemoryBlock(), rendering.getRenderingId());
+					fViewPane.removeMemoryRendering(rendering);
 				}
 			}
 		}
@@ -302,8 +301,7 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener {
 		Document document = LaunchManager.getDocument();
 		Element rootElement = document.createElement(RENDERINGS_TAG);
 		document.appendChild(rootElement);
-		for (int i = 0; i < renderings.length; i++) {
-			IMemoryRendering rendering = renderings[i];
+		for (IMemoryRendering rendering : renderings) {
 			Element element = document.createElement(MEMORY_RENDERING_TAG);
 			element.setAttribute(MEMORY_BLOCK, Integer.toString(rendering.getMemoryBlock().hashCode()));
 			element.setAttribute(RENDERING_ID, rendering.getRenderingId());
@@ -347,18 +345,18 @@ public class ViewPaneRenderingMgr implements IDebugEventSetListener {
 
 				IMemoryBlock[] memoryBlocks = DebugPlugin.getDefault().getMemoryBlockManager().getMemoryBlocks();
 				IMemoryBlock memoryBlock = null;
-				for (int j = 0; j < memoryBlocks.length; j++) {
-					if (Integer.toString(memoryBlocks[j].hashCode()).equals(memoryBlockHashCode)) {
-						memoryBlock = memoryBlocks[j];
+				for (IMemoryBlock m : memoryBlocks) {
+					if (Integer.toString(m.hashCode()).equals(memoryBlockHashCode)) {
+						memoryBlock = m;
 					}
 				}
 
 				if (memoryBlock != null) {
 					IMemoryRenderingType[] types = DebugUITools.getMemoryRenderingManager().getRenderingTypes(memoryBlock);
 					IMemoryRenderingType type = null;
-					for (int k = 0; k < types.length; k++) {
-						if (types[k].getId().equals(renderingId)) {
-							type = types[k];
+					for (IMemoryRenderingType t : types) {
+						if (t.getId().equals(renderingId)) {
+							type = t;
 						}
 					}
 

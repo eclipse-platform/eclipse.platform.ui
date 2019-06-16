@@ -262,9 +262,9 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 			// also try to find other views and register
 			if (DebugUIPlugin.getActiveWorkbenchWindow() != null && DebugUIPlugin.getActiveWorkbenchWindow().getActivePage() != null) {
 				IViewReference references[] = DebugUIPlugin.getActiveWorkbenchWindow().getActivePage().getViewReferences();
-				for (int i = 0; i < references.length; i++) {
-					if (references[i].getSecondaryId() != null) {
-						MemoryViewIdRegistry.registerView(references[i].getSecondaryId());
+				for (IViewReference reference : references) {
+					if (reference.getSecondaryId() != null) {
+						MemoryViewIdRegistry.registerView(reference.getSecondaryId());
 					}
 				}
 			}
@@ -422,8 +422,8 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 
 		ToolBarManager viewerToolBarMgr = new ToolBarManager(SWT.FLAT);
 		IAction[] actions = fMemBlkViewer.getActions();
-		for (int i = 0; i < actions.length; i++) {
-			viewerToolBarMgr.add(actions[i]);
+		for (IAction action : actions) {
+			viewerToolBarMgr.add(action);
 		}
 		ToolBar viewerToolbar = viewerToolBarMgr.createControl(viewerViewForm);
 		viewerViewForm.setTopRight(viewerToolbar);
@@ -547,15 +547,15 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 	private void setVisible(boolean visible) {
 		IMemoryViewPane[] viewPanes = getViewPanes();
 
-		for (int i = 0; i < viewPanes.length; i++) {
+		for (IMemoryViewPane viewPane : viewPanes) {
 			// if currently visible, take view pane's visibility into account
 			// else force view pane to be visible if it is listed in
 			// "visible view panes" array list.
 			if (fVisible) {
-				viewPanes[i].setVisible(visible && viewPanes[i].isVisible());
+				viewPane.setVisible(visible && viewPane.isVisible());
 			} else {
-				if (isViewPaneVisible(viewPanes[i].getId())) {
-					viewPanes[i].setVisible(visible);
+				if (isViewPaneVisible(viewPane.getId())) {
+					viewPane.setVisible(visible);
 				}
 			}
 		}
@@ -596,8 +596,8 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 	 */
 	private void restoreView() {
 		IMemoryViewPane[] viewPanes = getViewPanes();
-		for (int i = 0; i < viewPanes.length; i++) {
-			viewPanes[i].restoreViewPane();
+		for (IMemoryViewPane viewPane : viewPanes) {
+			viewPane.restoreViewPane();
 		}
 	}
 
@@ -613,9 +613,9 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 		if (viewPaneControl != null) {
 			Control children[] = fSashForm.getChildren();
 
-			for (int i = 0; i < children.length; i++) {
-				if (children[i] == viewPaneControl) {
-					children[i].setVisible(show);
+			for (Control child : children) {
+				if (child == viewPaneControl) {
+					child.setVisible(show);
 					IMemoryViewPane viewPane = fViewPanes.get(paneId);
 					if (viewPane != null) {
 						viewPane.setVisible(show);
@@ -673,8 +673,8 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 				fVisibleViewPanes.add(paneId);
 			}
 		} else {
-			for (int i = 0; i < defaultVisiblePaneIds.length; i++) {
-				fVisibleViewPanes.add(defaultVisiblePaneIds[i]);
+			for (String defaultVisiblePaneId : defaultVisiblePaneIds) {
+				fVisibleViewPanes.add(defaultVisiblePaneId);
 			}
 		}
 
@@ -699,9 +699,9 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 	private void loadOrientation() {
 		fViewOrientation = Platform.getPreferencesService().getInt(DebugUIPlugin.getUniqueIdentifier(), getOrientationPrefId(), HORIZONTAL_VIEW_ORIENTATION, null);
 
-		for (int i = 0; i < fOrientationActions.length; i++) {
-			if (fOrientationActions[i].getOrientation() == fViewOrientation) {
-				fOrientationActions[i].run();
+		for (ViewPaneOrientationAction fOrientationAction : fOrientationActions) {
+			if (fOrientationAction.getOrientation() == fViewOrientation) {
+				fOrientationAction.run();
 			}
 		}
 		updateOrientationActions();
@@ -720,13 +720,12 @@ public class MemoryView extends ViewPart implements IMemoryRenderingSite2 {
 	}
 
 	private void updateOrientationActions() {
-		for (int i = 0; i < fOrientationActions.length; i++) {
-			if (fOrientationActions[i].getOrientation() == fViewOrientation) {
-				fOrientationActions[i].setChecked(true);
+		for (ViewPaneOrientationAction fOrientationAction : fOrientationActions) {
+			if (fOrientationAction.getOrientation() == fViewOrientation) {
+				fOrientationAction.setChecked(true);
 			} else {
-				fOrientationActions[i].setChecked(false);
+				fOrientationAction.setChecked(false);
 			}
-
 		}
 	}
 

@@ -75,10 +75,9 @@ public class LaunchSuspendTrigger implements ISuspendTrigger, IDebugEventSetList
 	public void handleDebugEvents(DebugEvent[] events) {
 		// open the debugger if this is a suspend event and the debug view is not yet open
 		// and the preferences are set to switch
-		for (int i = 0; i < events.length; i++) {
-			DebugEvent event = events[i];
+		for (DebugEvent event : events) {
 			if (event.getKind() == DebugEvent.SUSPEND && !event.isEvaluation() && event.getDetail() != DebugEvent.STEP_END) {
-//				 Don't switch perspective for evaluations or stepping
+				//				 Don't switch perspective for evaluations or stepping
 				Object source = event.getSource();
 				if (source instanceof IAdaptable) {
 					IAdaptable adaptable = (IAdaptable) source;

@@ -88,9 +88,9 @@ public class NewMemoryViewAction implements IViewActionDelegate {
 			MemoryView newMView = (MemoryView) newView;
 			IMemoryViewPane[] viewPanes = fView.getViewPanes();
 			int orientation = fView.getViewPanesOrientation();
-			for (int i = 0; i < viewPanes.length; i++) {
+			for (IMemoryViewPane viewPane : viewPanes) {
 				// copy view pane visibility
-				newMView.showViewPane(fView.isViewPaneVisible(viewPanes[i].getId()), viewPanes[i].getId());
+				newMView.showViewPane(fView.isViewPaneVisible(viewPane.getId()), viewPane.getId());
 			}
 
 			// do not want to copy renderings as it could be very expensive

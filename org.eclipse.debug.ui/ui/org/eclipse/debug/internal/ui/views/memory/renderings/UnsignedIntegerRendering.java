@@ -130,10 +130,8 @@ public class UnsignedIntegerRendering extends AbstractIntegerRendering {
 
 		String paddedStr = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_PADDED_STR);
 		boolean invalid = false;
-		for (int i=0; i<data.length; i++)
-		{
-			if (!data[i].isReadable())
-			{
+		for (MemoryByte memByte : data) {
+			if (!memByte.isReadable()) {
 				invalid = true;
 				break;
 			}

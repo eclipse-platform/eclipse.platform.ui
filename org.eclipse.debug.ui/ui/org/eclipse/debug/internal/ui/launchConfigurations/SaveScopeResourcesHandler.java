@@ -201,15 +201,15 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 	protected IResource[] getScopedDirtyResources(IProject[] projects) {
 		HashSet<IResource> dirtyres = new HashSet<>();
 		IWorkbenchWindow[] windows = PlatformUI.getWorkbench().getWorkbenchWindows();
-		for(int l = 0; l < windows.length; l++) {
-			IWorkbenchPage[] pages = windows[l].getPages();
-			for(int i = 0; i < pages.length; i++) {
-				IEditorPart[] eparts = pages[i].getDirtyEditors();
-				for(int j = 0; j < eparts.length; j++) {
-					IResource resource = eparts[j].getEditorInput().getAdapter(IResource.class);
-					if(resource != null) {
-						for(int k = 0; k < projects.length; k++) {
-							if(projects[k].equals(resource.getProject())) {
+		for (IWorkbenchWindow window : windows) {
+			IWorkbenchPage[] pages = window.getPages();
+			for (IWorkbenchPage page : pages) {
+				IEditorPart[] eparts = page.getDirtyEditors();
+				for (IEditorPart epart : eparts) {
+					IResource resource = epart.getEditorInput().getAdapter(IResource.class);
+					if (resource != null) {
+						for (IProject project : projects) {
+							if (project.equals(resource.getProject())) {
 								dirtyres.add(resource);
 							}
 						}

@@ -118,8 +118,8 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 				public void menuShown(MenuEvent e) {
 					Menu m = (Menu)e.widget;
 					MenuItem[] items = m.getItems();
-					for (int i=0; i < items.length; i++) {
-						items[i].dispose();
+					for (MenuItem item : items) {
+						item.dispose();
 					}
 					fillMenu(m);
 				}
@@ -133,9 +133,8 @@ public class AddMemoryRenderingActionDelegate extends Action implements IViewAct
 			{
 				IMemoryRenderingType[] types = fActionDelegate.getMemoryRenderingTypes(fPart, fCurrentSelection);
 
-				for (int i=0; i<types.length; i++)
-				{
-					AddMemoryRenderingAction action = new AddMemoryRenderingAction(types[i]);
+				for (IMemoryRenderingType type : types) {
+					AddMemoryRenderingAction action = new AddMemoryRenderingAction(type);
 					ActionContributionItem item = new ActionContributionItem(action);
 					item.fill(parent, -1);
 				}

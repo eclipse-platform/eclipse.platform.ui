@@ -51,8 +51,8 @@ public class DeletedProjectFilter extends ViewerFilter {
 				if(resources == null) {
 					return true;
 				}
-				for(int i = 0; i < resources.length; i++) {
-					IProject project= resources[i].getProject();
+				for (IResource resource : resources) {
+					IProject project = resource.getProject();
 					if(project != null && project.exists()) {
 						return true;
 					}

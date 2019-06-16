@@ -115,8 +115,7 @@ public class OpenLaunchDialogAction extends Action implements IActionDelegate2, 
 	 */
 	private boolean existsConfigTypesForMode() {
 		ILaunchConfigurationType[] configTypes = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationTypes();
-		for (int i = 0; i < configTypes.length; i++) {
-			ILaunchConfigurationType configType = configTypes[i];
+		for (ILaunchConfigurationType configType : configTypes) {
 			if (configType.supportsMode(getMode())) {
 				return true;
 			}

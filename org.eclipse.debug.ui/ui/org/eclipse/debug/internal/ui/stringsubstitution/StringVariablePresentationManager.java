@@ -99,8 +99,7 @@ public class StringVariablePresentationManager {
 		fConfigurations = new HashMap<>();
 		IExtensionPoint point= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), EXTENSION_POINT_STRING_VARIABLE_PRESENTATIONS);
 		IConfigurationElement elements[]= point.getConfigurationElements();
-		for (int i = 0; i < elements.length; i++) {
-			IConfigurationElement element = elements[i];
+		for (IConfigurationElement element : elements) {
 			String name= element.getAttribute(ATTR_NAME);
 			if (name == null) {
 				DebugUIPlugin.logErrorMessage(MessageFormat.format("String variable presentation extension missing required 'variableName' attribute: {0}", new Object[] { element.getDeclaringExtension().getLabel() })); //$NON-NLS-1$

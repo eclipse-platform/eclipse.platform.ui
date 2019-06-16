@@ -87,8 +87,8 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 		// clean up old columns
 		TableColumn[] oldColumns = getTable().getColumns();
 
-		for (int i = 0; i < oldColumns.length; i++) {
-			oldColumns[i].dispose();
+		for (TableColumn oldColumn : oldColumns) {
+			oldColumn.dispose();
 		}
 	}
 
@@ -97,8 +97,8 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 		CellEditor[] oldCellEditors = getCellEditors();
 
 		if (oldCellEditors != null) {
-			for (int i = 0; i < oldCellEditors.length; i++) {
-				oldCellEditors[i].dispose();
+			for (CellEditor oldCellEditor : oldCellEditors) {
+				oldCellEditor.dispose();
 			}
 		}
 	}
@@ -424,9 +424,9 @@ abstract public class AsyncVirtualContentTableViewer extends AsynchronousTableVi
 			// check each of the items and find the minimum
 			TableItem[] items = table.getItems();
 			int minHeight = table.getItemHeight();
-			for (int i = 0; i < items.length; i++) {
-				if (items[i].getData() != null) {
-					minHeight = Math.min(items[i].getBounds(0).height, minHeight);
+			for (TableItem item : items) {
+				if (item.getData() != null) {
+					minHeight = Math.min(item.getBounds(0).height, minHeight);
 				}
 			}
 

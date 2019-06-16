@@ -28,8 +28,7 @@ public class MemoryViewTreeModelContentProvider extends TreeModelContentProvider
 	protected void updateNodes(IModelDelta[] nodes, int mask) {
 
 		if (getViewer() instanceof TreeModelViewer) {
-			for (int i = 0; i < nodes.length; i++) {
-				IModelDelta node = nodes[i];
+			for (IModelDelta node : nodes) {
 				int flags = node.getFlags();
 
 				if ((mask & ITreeModelContentProvider.CONTROL_MODEL_DELTA_FLAGS) != 0 && (flags & IModelDelta.ADDED) != 0 && (flags & IModelDelta.SELECT) != 0 && node.getElement() instanceof IMemoryBlock) {

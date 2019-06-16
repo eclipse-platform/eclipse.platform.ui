@@ -83,8 +83,8 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 		treeViewer.setUseHashlookup(true);
 		treeViewer.setInput(ResourcesPlugin.getWorkspace().getRoot());
 		if(fFilters != null) {
-			for (int i = 0; i < fFilters.length; i++) {
-				treeViewer.addFilter(fFilters[i]);
+			for (ViewerFilter filter : fFilters) {
+				treeViewer.addFilter(filter);
 			}
 		}
 		treeViewer.getControl().addHelpListener(new HelpListener() {

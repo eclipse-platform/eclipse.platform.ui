@@ -80,8 +80,8 @@ public class GoToAddressDialog extends TrayDialog implements ModifyListener {
 
 		// add history
 		String[] historyExpression = history.toArray(new String[history.size()]);
-		for (int i = 0; i < historyExpression.length; i++) {
-			expressionInput.add(historyExpression[i]);
+		for (String h : historyExpression) {
+			expressionInput.add(h);
 		}
 
 		expressionInput.addModifyListener(this);

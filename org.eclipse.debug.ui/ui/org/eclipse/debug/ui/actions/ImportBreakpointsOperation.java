@@ -183,11 +183,11 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 			localmonitor.setWorkRemaining(nodes.length);
 			Map<String, Object> attributes = null;
 			IBreakpointImportParticipant[] participants = null;
-			for(int i = 0; i < nodes.length; i++) {
+			for (IMemento node : nodes) {
 				if(localmonitor.isCanceled()) {
 					return;
 				}
-				attributes = collectBreakpointProperties(nodes[i]);
+				attributes = collectBreakpointProperties(node);
 				if(attributes == null) {
 					continue;
 				}
@@ -197,7 +197,6 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 				} else {
 					resource = workspace;
 				}
-
 				// filter resource breakpoints that do not exist in this workspace
 				if(resource != null) {
 					try {
@@ -245,14 +244,13 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	 */
 	protected IMarker findExistingMarker(Map<String, Object> attributes, IBreakpointImportParticipant[] participants) {
 		IBreakpoint[] bps = fManager.getBreakpoints();
-		for(int i = 0; i < bps.length; i++) {
-			for(int j = 0; j < participants.length; j++) {
+		for (IBreakpoint bp : bps) {
+			for (IBreakpointImportParticipant participant : participants) {
 				try {
-					if(participants[j].matches(attributes, bps[i])) {
-						return bps[i].getMarker();
+					if (participant.matches(attributes, bp)) {
+						return bp.getMarker();
 					}
-				}
-				catch(CoreException ce) {}
+				}catch(CoreException ce) {}
 			}
 		}
 		return null;
@@ -285,8 +283,8 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 
 		//copy all the marker attributes to the map
 		IMemento[] children = child.getChildren(IImportExportConstants.IE_NODE_ATTRIB);
-		for(int i = 0; i < children.length; i++) {
-			readAttribute(children[i], map);
+		for (IMemento c : children) {
+			readAttribute(c, map);
 		}
 
 		//collect attributes from the 'resource' node
@@ -349,8 +347,8 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 				updateWorkingSets(names, breakpoint);
 			}
 			if(participants != null) {
-				for(int i = 0; i < participants.length; i++) {
-					participants[i].verify(breakpoint);
+				for (IBreakpointImportParticipant participant : participants) {
+					participant.verify(breakpoint);
 				}
 			}
 		}
@@ -376,14 +374,14 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 		IWorkingSetManager mgr = PlatformUI.getWorkbench().getWorkingSetManager();
 		ArrayList<IWorkingSet> sets = new ArrayList<>();
 		collectContainingWorkingsets(breakpoint, sets);
-		for (int i = 0; i < wsnames.length; i++) {
-			if("".equals(wsnames[i])) { //$NON-NLS-1$
+		for (String wsname : wsnames) {
+			if ("".equals(wsname)) { //$NON-NLS-1$
 				continue;
 			}
-			IWorkingSet set = mgr.getWorkingSet(wsnames[i]);
-			if(set == null) {
+			IWorkingSet set = mgr.getWorkingSet(wsname);
+			if (set == null) {
 				//create working set
-				set = mgr.createWorkingSet(wsnames[i], new IAdaptable[] {});
+				set = mgr.createWorkingSet(wsname, new IAdaptable[] {});
 				set.setId(IDebugUIConstants.BREAKPOINT_WORKINGSET_ID);
 				mgr.addWorkingSet(set);
 			}
@@ -416,10 +414,9 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	private void collectContainingWorkingsets(IBreakpoint breakpoint, List<IWorkingSet> collector) {
 		IWorkingSetManager mgr = PlatformUI.getWorkbench().getWorkingSetManager();
 		IWorkingSet[] sets = mgr.getWorkingSets();
-		for (int i = 0; i < sets.length; i++) {
-			if(IDebugUIConstants.BREAKPOINT_WORKINGSET_ID.equals(sets[i].getId()) &&
-					containsBreakpoint(sets[i], breakpoint)) {
-				collector.add(sets[i]);
+		for (IWorkingSet set : sets) {
+			if (IDebugUIConstants.BREAKPOINT_WORKINGSET_ID.equals(set.getId()) && containsBreakpoint(set, breakpoint)) {
+				collector.add(set);
 			}
 		}
 	}
@@ -432,8 +429,8 @@ public class ImportBreakpointsOperation implements IRunnableWithProgress {
 	 */
 	private boolean containsBreakpoint(IWorkingSet set, IBreakpoint breakpoint) {
 		IAdaptable[] elements = set.getElements();
-		for (int i = 0; i < elements.length; i++) {
-			if (elements[i].equals(breakpoint)) {
+		for (IAdaptable element : elements) {
+			if (element.equals(breakpoint)) {
 				return true;
 			}
 		}

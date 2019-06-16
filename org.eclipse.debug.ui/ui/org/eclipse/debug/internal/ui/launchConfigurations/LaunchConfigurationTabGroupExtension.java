@@ -105,8 +105,8 @@ public class LaunchConfigurationTabGroupExtension {
 				IConfigurationElement element = null;
 				String perspective = null, mode = null;
 				Set<String> mset = null;
-				for (int i = 0; i < modes.length; i++) {
-					element = modes[i];
+				for (IConfigurationElement m : modes) {
+					element = m;
 					mode = element.getAttribute(IConfigurationElementConstants.MODE);
 					mset = new HashSet<>();
 					mset.add(mode);
@@ -192,8 +192,8 @@ public class LaunchConfigurationTabGroupExtension {
 			IConfigurationElement child = null;
 			String mode = null;
 			HashSet<String> set = null;
-			for (int i = 0; i < children.length; i++) {
-				child = children[i];
+			for (IConfigurationElement c : children) {
+				child = c;
 				mode = child.getAttribute(IConfigurationElementConstants.MODE);
 				if(mode != null) {
 					set = new HashSet<>();

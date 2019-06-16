@@ -53,8 +53,8 @@ public class ClosedProjectFilter extends ViewerFilter {
 				if(resources == null) {
 					return true;
 				}
-				for(int i = 0; i < resources.length; i++) {
-					IProject project= resources[i].getProject();
+				for (IResource resource : resources) {
+					IProject project = resource.getProject();
 					//we don't want overlap with the deleted projects filter, so we need to allow projects that don't exist through
 					if(project != null && (project.isOpen() || !project.exists())) {
 						return true;

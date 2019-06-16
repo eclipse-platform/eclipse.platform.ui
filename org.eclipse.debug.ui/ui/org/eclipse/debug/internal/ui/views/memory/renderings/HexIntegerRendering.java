@@ -46,14 +46,10 @@ public class HexIntegerRendering extends AbstractIntegerRendering {
 			data = swapped;
 		}
 
-		for (int i=0; i<data.length; i++)
-		{
-			if (data[i].isReadable())
-			{
-				strBuffer.append(new String(RenderingsUtil.convertByteToCharArray(data[i].getValue())));
-			}
-			else
-			{
+		for (MemoryByte memByte : data) {
+			if (memByte.isReadable()) {
+				strBuffer.append(new String(RenderingsUtil.convertByteToCharArray(memByte.getValue())));
+			} else {
 				// pad with padded string
 				strBuffer.append(paddedStr);
 			}

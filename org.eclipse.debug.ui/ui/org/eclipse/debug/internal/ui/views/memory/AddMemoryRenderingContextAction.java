@@ -56,9 +56,9 @@ public class AddMemoryRenderingContextAction implements IViewActionDelegate {
 		String actionId = action.getId();
 		IMemoryRenderingContainer selectedPane = null;
 
-		for (int i = 0; i < viewPanes.length; i++) {
-			if (actionId.contains(viewPanes[i].getId())) {
-				selectedPane = viewPanes[i];
+		for (IMemoryRenderingContainer viewPane : viewPanes) {
+			if (actionId.contains(viewPane.getId())) {
+				selectedPane = viewPane;
 				break;
 			}
 		}

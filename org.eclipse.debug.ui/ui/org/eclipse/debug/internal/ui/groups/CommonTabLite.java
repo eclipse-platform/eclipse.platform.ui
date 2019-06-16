@@ -211,11 +211,11 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 	private String getDefaultSharedConfigLocation(ILaunchConfiguration config) {
 		String path = IInternalDebugCoreConstants.EMPTY_STRING;
 		try {
-			IResource[] res = config.getMappedResources();
-			if(res != null) {
+			IResource[] resources = config.getMappedResources();
+			if(resources != null) {
 				IProject  proj;
-				for (int i = 0; i < res.length; i++) {
-					proj = res[i].getProject();
+				for (IResource res : resources) {
+					proj = res.getProject();
 					if(proj != null && proj.isAccessible()) {
 						return proj.getFullPath().toOSString();
 					}
@@ -385,8 +385,8 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 				// see if there are any changes
 				if (num == checked.length) {
 					boolean different = false;
-					for (int i = 0; i < checked.length; i++) {
-						if (!groups.contains(checked[i])) {
+					for (Object c : checked) {
+						if (!groups.contains(c)) {
 							different = true;
 							break;
 						}
@@ -399,8 +399,8 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 			config.setAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, (String)null);
 			config.setAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, (String)null);
 			List<String> groups = null;
-			for (int i = 0; i < checked.length; i++) {
-				LaunchGroupExtension group = (LaunchGroupExtension)checked[i];
+			for (Object c : checked) {
+				LaunchGroupExtension group = (LaunchGroupExtension) c;
 				if (groups == null) {
 					groups = new ArrayList<>();
 				}
@@ -499,8 +499,7 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 			ILaunchGroup[] groups = DebugUITools.getLaunchGroups();
 			List<ILaunchGroup> possibleGroups = new ArrayList<>();
 			ILaunchConfiguration configuration = (ILaunchConfiguration)inputElement;
-			for (int i = 0; i < groups.length; i++) {
-				ILaunchGroup extension = groups[i];
+			for (ILaunchGroup extension : groups) {
 				LaunchHistory history = getLaunchConfigurationManager().getLaunchHistory(extension.getIdentifier());
 				if (history != null && history.accepts(configuration)) {
 					possibleGroups.add(extension);

@@ -99,8 +99,7 @@ public class MemoryRenderingManager extends AbstractMemoryRenderingBindingsProvi
 		while (iterator.hasNext()) {
 			RenderingBindings binding = iterator.next();
 			IMemoryRenderingType[] renderingTypes = binding.getDefaultRenderingTypes(block);
-			for (int i = 0; i < renderingTypes.length; i++) {
-				IMemoryRenderingType type = renderingTypes[i];
+			for (IMemoryRenderingType type : renderingTypes) {
 				if (!allTypes.contains(type)) {
 					allTypes.add(type);
 				}
@@ -125,8 +124,7 @@ public class MemoryRenderingManager extends AbstractMemoryRenderingBindingsProvi
 		List<IMemoryRenderingType> allTypes = new ArrayList<>();
 		for (RenderingBindings binding : fBindings) {
 			IMemoryRenderingType[] renderingTypes = binding.getRenderingTypes(block);
-			for (int i = 0; i < renderingTypes.length; i++) {
-				IMemoryRenderingType type = renderingTypes[i];
+			for (IMemoryRenderingType type : renderingTypes) {
 				if (!allTypes.contains(type)) {
 					allTypes.add(type);
 				}
@@ -141,8 +139,7 @@ public class MemoryRenderingManager extends AbstractMemoryRenderingBindingsProvi
 	private void initializeRenderings() {
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_MEMORY_RENDERINGS);
 		IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
-		for (int i = 0; i < configurationElements.length; i++) {
-			IConfigurationElement element = configurationElements[i];
+		for (IConfigurationElement element : configurationElements) {
 			String name = element.getName();
 			if (name.equals(ELEMENT_MEMORY_RENDERING_TYPE)) {
 				MemoryRenderingType type = new MemoryRenderingType(element);

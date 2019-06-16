@@ -86,8 +86,7 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 		fMode = mode;
 		ILaunchGroup[] groups = DebugUITools.getLaunchGroups();
 		fGroupsByCategory = new HashMap<>(3);
-		for (int i = 0; i < groups.length; i++) {
-			ILaunchGroup group = groups[i];
+		for (ILaunchGroup group : groups) {
 			if (group.getMode().equals(mode)) {
 				if (group.getCategory() == null) {
 					fGroup = group;
@@ -132,8 +131,8 @@ public abstract class ContextualLaunchAction implements IObjectActionDelegate, I
 				if (fFillMenu) {
 					Menu m = (Menu)e.widget;
 					MenuItem[] items = m.getItems();
-					for (int i=0; i < items.length; i++) {
-						items[i].dispose();
+					for (MenuItem item : items) {
+						item.dispose();
 					}
 					fillMenu(m);
 					fFillMenu = false;

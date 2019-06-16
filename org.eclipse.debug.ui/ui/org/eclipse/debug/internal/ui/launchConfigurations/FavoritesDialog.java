@@ -154,8 +154,8 @@ public class FavoritesDialog extends TrayDialog {
 		sfd.open();
 		Object[] selection = sfd.getResult();
 		if (selection != null) {
-			for (int i = 0; i < selection.length; i++) {
-				getFavorites().add((ILaunchConfiguration) selection[i]);
+			for (Object s : selection) {
+				getFavorites().add((ILaunchConfiguration) s);
 			}
 			updateStatus();
 		}
@@ -202,8 +202,7 @@ public class FavoritesDialog extends TrayDialog {
 		List<?> selList = sel.toList();
 		Object[] movedFavs= new Object[getFavorites().size()];
 		int i;
-		for (Iterator<?> favs = selList.iterator(); favs.hasNext();) {
-			Object config = favs.next();
+		for (Object config : selList) {
 			i= getFavorites().indexOf(config);
 			movedFavs[i + direction]= config;
 		}
@@ -380,10 +379,8 @@ public class FavoritesDialog extends TrayDialog {
 
 				int taskSize = Math.abs(initial.length-current.size());//get task size
 				monitor.beginTask(LaunchConfigurationsMessages.FavoritesDialog_8, taskSize);//and set it
-
 				// removed favorites
-				for (int i = 0; i < initial.length; i++) {
-					ILaunchConfiguration configuration = initial[i];
+				for (ILaunchConfiguration configuration : initial) {
 					if (!current.contains(configuration)) {
 						// remove fav attributes
 						try {

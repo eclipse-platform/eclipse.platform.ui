@@ -82,8 +82,7 @@ public abstract class SourceContainerAction extends SelectionListenerAction {
 		List<ISourceContainer> targets = new ArrayList<>();
 		List<Object> selection = getViewer().getStructuredSelection().toList();
 		ISourceContainer[] entries = getViewer().getEntries();
-		for (int i = 0; i < entries.length; i++) {
-			ISourceContainer target = entries[i];
+		for (ISourceContainer target : entries) {
 			if (selection.contains(target)) {
 				targets.add(target);
 			}

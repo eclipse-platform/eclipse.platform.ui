@@ -48,11 +48,11 @@ public class ProjectSourceContainerBrowser extends AbstractSourceContainerBrowse
 		if(dialog.open() == Window.OK){
 			Object[] elements= ((ListSelectionDialog)dialog).getResult();
 			ArrayList<ISourceContainer> res = new ArrayList<>();
-			for (int i= 0; i < elements.length; i++) {
-				if(!(elements[i] instanceof IProject)) {
+			for (Object element : elements) {
+				if (!(element instanceof IProject)) {
 					continue;
 				}
-				res.add(new ProjectSourceContainer((IProject)elements[i], ((ProjectSourceContainerDialog)dialog).isAddRequiredProjects()));
+				res.add(new ProjectSourceContainer((IProject) element, ((ProjectSourceContainerDialog)dialog).isAddRequiredProjects()));
 			}
 			return res.toArray(new ISourceContainer[res.size()]);
 		}

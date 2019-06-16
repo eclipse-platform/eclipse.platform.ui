@@ -275,8 +275,8 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 			public void menuShown(MenuEvent e) {
 				Menu m = (Menu)e.widget;
 				MenuItem[] items = m.getItems();
-				for (int i=0; i < items.length; i++) {
-					items[i].dispose();
+				for (MenuItem item : items) {
+					item.dispose();
 				}
 				fillMenu();
 			}
@@ -335,8 +335,7 @@ public class LaunchShortcutsAction extends Action implements IMenuCreator, IWork
 	 */
 	private boolean existsConfigTypesForMode() {
 		ILaunchConfigurationType[] configTypes = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationTypes();
-		for (int i = 0; i < configTypes.length; i++) {
-			ILaunchConfigurationType configType = configTypes[i];
+		for (ILaunchConfigurationType configType : configTypes) {
 			if (configType.supportsMode(getMode())) {
 				return true;
 			}

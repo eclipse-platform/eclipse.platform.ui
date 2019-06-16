@@ -111,8 +111,8 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 			}
 			public void setEnabled(IBreakpoint[] breakpoints) throws CoreException {
 				boolean enable= isEnableAction();
-				for (int i = 0; i < breakpoints.length; i++) {
-					breakpoints[i].setEnabled(enable);
+				for (IBreakpoint breakpoint : breakpoints) {
+					breakpoint.setEnabled(enable);
 				}
 			}
 		};
@@ -165,9 +165,9 @@ public class EnableBreakpointsAction implements IViewActionDelegate, IPartListen
 			}
 			else if (selected instanceof IBreakpointContainer) {
 				IBreakpoint[] breakpoints = ((IBreakpointContainer) selected).getBreakpoints();
-				for (int i = 0; i < breakpoints.length; i++) {
+				for (IBreakpoint breakpoint : breakpoints) {
 					try {
-						if (breakpoints[i].isEnabled()) {
+						if (breakpoint.isEnabled()) {
 							allDisabled= false;
 						} else {
 							allEnabled= false;

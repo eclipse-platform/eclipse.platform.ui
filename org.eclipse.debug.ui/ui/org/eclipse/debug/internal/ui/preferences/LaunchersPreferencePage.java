@@ -296,20 +296,20 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 			Set<DuplicateDelegate> tmp = null;
 			ILaunchDelegate prefdelegate = null;
 			DuplicateDelegate dd = null;
-			for(int i = 0; i < types.length; i++) {
-				modes = types[i].getSupportedModeCombinations();
+			for (ILaunchConfigurationType type : types) {
+				modes = type.getSupportedModeCombinations();
 				for (Iterator<Set<String>> iter = modes.iterator(); iter.hasNext();) {
 					modeset = iter.next();
-					delegates = types[i].getDelegates(modeset);
-					if(delegates.length > 1) {
-						tmp = fDuplicates.get(types[i]);
+					delegates = type.getDelegates(modeset);
+					if (delegates.length > 1) {
+						tmp = fDuplicates.get(type);
 						if(tmp == null) {
 							tmp = new HashSet<>();
 						}
-						dd = new DuplicateDelegate(types[i], delegates, modeset);
+						dd = new DuplicateDelegate(type, delegates, modeset);
 						tmp.add(dd);
-						fDuplicates.put(types[i], tmp);
-						prefdelegate = types[i].getPreferredDelegate(modeset);
+						fDuplicates.put(type, tmp);
+						prefdelegate = type.getPreferredDelegate(modeset);
 						if(prefdelegate != null) {
 							fDupeSelections.put(dd, prefdelegate);
 						}

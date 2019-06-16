@@ -435,10 +435,9 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	protected void saveAllCheckedActionStates() {
 		IToolBarManager tbm= getViewSite().getActionBars().getToolBarManager();
 		IContributionItem[] items= tbm.getItems();
-		for (int i = 0; i < items.length; i++) {
-			IContributionItem iContributionItem = items[i];
-			if (iContributionItem instanceof ActionContributionItem) {
-				ActionContributionItem item= (ActionContributionItem)iContributionItem;
+		for (IContributionItem contitem : items) {
+			if (contitem instanceof ActionContributionItem) {
+				ActionContributionItem item= (ActionContributionItem)contitem;
 				IAction action= item.getAction();
 				if (action.getStyle() == IAction.AS_CHECK_BOX && action.isEnabled()) {
 					saveCheckedActionState(action);
@@ -627,9 +626,9 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 			}
 			IContributionItem[] items = tbm.getItems();
 			if (items != null) {
-				for (int i = 0; i < items.length; i++) {
-					if (items[i] instanceof ActionContributionItem) {
-						IAction action = ((ActionContributionItem) items[i]).getAction();
+				for (IContributionItem item : items) {
+					if (item instanceof ActionContributionItem) {
+						IAction action = ((ActionContributionItem) item).getAction();
 						if (!SkipAllBreakpointsAction.ACTION_ID.equals(action.getId())) {
 							if (action.getStyle() == IAction.AS_CHECK_BOX) {
 								initActionState(action);

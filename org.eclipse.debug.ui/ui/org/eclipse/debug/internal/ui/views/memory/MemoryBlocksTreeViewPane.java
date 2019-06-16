@@ -110,9 +110,9 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 			if (selected != null && selected instanceof IStructuredSelection) {
 				Object[] selectedMemBlks = ((IStructuredSelection) selected).toArray();
 				ArrayList<Object> memoryBlocks = new ArrayList<>();
-				for (int i = 0; i < selectedMemBlks.length; i++) {
-					if (selectedMemBlks[i] instanceof IMemoryBlock) {
-						memoryBlocks.add(selectedMemBlks[i]);
+				for (Object selectedMemBlk : selectedMemBlks) {
+					if (selectedMemBlk instanceof IMemoryBlock) {
+						memoryBlocks.add(selectedMemBlk);
 					}
 				}
 
@@ -224,8 +224,8 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 
 		@Override
 		public void handleDebugEvents(DebugEvent[] events) {
-			for (int i = 0; i < events.length; i++) {
-				doHandleDebugEvent(events[i]);
+			for (DebugEvent event : events) {
+				doHandleDebugEvent(event);
 			}
 		}
 	}

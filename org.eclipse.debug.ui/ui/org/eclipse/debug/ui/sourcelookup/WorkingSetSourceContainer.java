@@ -86,18 +86,17 @@ public class WorkingSetSourceContainer extends CompositeSourceContainer{
 		}
 
 		ArrayList<ISourceContainer> locationList = new ArrayList<>();
-		for (int i = 0; i < elements.length; i++) {
-			IResource resource = elements[i].getAdapter(IResource.class);
-
+		for (IAdaptable element : elements) {
+			IResource resource = element.getAdapter(IResource.class);
 			if (resource != null) {
 				switch (resource.getType()) {
-				case IResource.FOLDER:
-					locationList.add(new FolderSourceContainer((IFolder)resource, true));
-					break;
-				case IResource.PROJECT:
-					locationList.add(new ProjectSourceContainer((IProject)resource, true));
-					break;
-					//if the element corresponds to an IFile, do nothing
+					case IResource.FOLDER:
+						locationList.add(new FolderSourceContainer((IFolder)resource, true));
+						break;
+					case IResource.PROJECT:
+						locationList.add(new ProjectSourceContainer((IProject)resource, true));
+						break;
+						//if the element corresponds to an IFile, do nothing
 					default:
 						break;
 				}

@@ -127,8 +127,8 @@ public abstract class ElementLabelProvider implements IElementLabelProvider {
 			if (fQueue == null) {
 				return false;
 			} else {
-				for (int i = 0; i < updates.length; i++) {
-					fQueue.addLast(updates[i]);
+				for (ILabelUpdate update : updates) {
+					fQueue.addLast(update);
 				}
 				return true;
 			}

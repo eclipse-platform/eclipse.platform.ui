@@ -78,8 +78,8 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 			if (element instanceof IBreakpointContainer) {
 				// Breakpoint containers are visible if any of their children are visible.
 				IBreakpoint[] breakpoints = ((IBreakpointContainer) element).getBreakpoints();
-				for (int i = 0; i < breakpoints.length; i++) {
-					if (select(viewer, element, breakpoints[i])) {
+				for (IBreakpoint breakpoint : breakpoints) {
+					if (select(viewer, element, breakpoint)) {
 						return true;
 					}
 				}

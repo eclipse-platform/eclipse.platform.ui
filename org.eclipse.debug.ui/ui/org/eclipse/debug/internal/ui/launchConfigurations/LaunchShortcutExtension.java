@@ -198,9 +198,8 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 			}
 			IConfigurationElement[] labels = context.getChildren(IConfigurationElementConstants.CONTEXT_LABEL);
 			fContextLabels = new ArrayList<>(labels.length);
-			for (int i = 0; i < labels.length; i++) {
-				fContextLabels.add(new Pair(labels[i].getAttribute(IConfigurationElementConstants.MODE),
-						labels[i].getAttribute(IConfigurationElementConstants.LABEL)));
+			for (IConfigurationElement label : labels) {
+				fContextLabels.add(new Pair(label.getAttribute(IConfigurationElementConstants.MODE), label.getAttribute(IConfigurationElementConstants.LABEL)));
 			}
 		}
 		// pick out the first occurance of the "name" bound to "mode"
@@ -223,8 +222,8 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 			fAssociatedTypes = new HashSet<>();
 			IConfigurationElement[] children = fConfig.getChildren(IConfigurationElementConstants.CONFIGURATION_TYPES);
 			String id = null;
-			for (int i = 0; i < children.length; i++) {
-				id = children[i].getAttribute(IConfigurationElementConstants.ID);
+			for (IConfigurationElement child : children) {
+				id = child.getAttribute(IConfigurationElementConstants.ID);
 				if(id != null) {
 					fAssociatedTypes.add(id);
 				}
@@ -256,9 +255,9 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 			}
 			//load descriptions for child description elements
 			IConfigurationElement[] children = fConfig.getChildren(IConfigurationElementConstants.DESCRIPTION);
-			for(int i = 0; i < children.length; i++) {
-				String lmode = children[i].getAttribute(IConfigurationElementConstants.MODE);
-				descr = children[i].getAttribute(IConfigurationElementConstants.DESCRIPTION);
+			for (IConfigurationElement child : children) {
+				String lmode = child.getAttribute(IConfigurationElementConstants.MODE);
+				descr = child.getAttribute(IConfigurationElementConstants.DESCRIPTION);
 				fDescriptions.put(lmode, descr);
 			}
 		}
@@ -387,8 +386,8 @@ public class LaunchShortcutExtension implements ILaunchShortcut2, IPluginContrib
 		if (fPerspectives == null) {
 			IConfigurationElement[] perspectives = getConfigurationElement().getChildren(IConfigurationElementConstants.PERSPECTIVE);
 			fPerspectives = new ArrayList<>(perspectives.length);
-			for (int i = 0; i < perspectives.length; i++) {
-				fPerspectives.add(perspectives[i].getAttribute(IConfigurationElementConstants.ID));
+			for (IConfigurationElement perspective : perspectives) {
+				fPerspectives.add(perspective.getAttribute(IConfigurationElementConstants.ID));
 			}
 		}
 		return fPerspectives;

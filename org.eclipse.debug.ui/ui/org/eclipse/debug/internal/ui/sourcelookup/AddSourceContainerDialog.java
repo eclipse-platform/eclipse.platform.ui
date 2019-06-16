@@ -160,8 +160,7 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 	 */
 	private ISourceContainerType[] filterTypes(ISourceContainerType[] types){
 		ArrayList<ISourceContainerType> validTypes = new ArrayList<>();
-		for (int i=0; i< types.length; i++) {
-			ISourceContainerType type = types[i];
+		for (ISourceContainerType type : types) {
 			if (fDirector.supportsSourceContainerType(type)) {
 				ISourceContainerBrowser sourceContainerBrowser = DebugUITools.getSourceContainerBrowser(type.getId());
 				if(sourceContainerBrowser != null && sourceContainerBrowser.canAddSourceContainers(fDirector)) {

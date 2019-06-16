@@ -1159,8 +1159,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			ILaunchConfigurationDialog dialog = LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog();
 			tabGroup.createTabs(dialog, dialog.getMode());
 			ILaunchConfigurationTab[] tabs = tabGroup.getTabs();
-			for (int i = 0; i < tabs.length; i++) {
-				tabs[i].setLaunchConfigurationDialog(dialog);
+			for (ILaunchConfigurationTab tab : tabs) {
+				tab.setLaunchConfigurationDialog(dialog);
 			}
 			tabGroup.setDefaults(wc);
 			tabGroup.dispose();
@@ -1259,12 +1259,11 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			String type = IInternalDebugCoreConstants.EMPTY_STRING;
 			//if the item is not in the list and is expanded add it, otherwise if it
 			//is not expanded do a remove...either way for the else we query the list
-			for(int i = 0; i < items.length; i++) {
-				type = ((ILaunchConfigurationType)items[i].getData()).getIdentifier();
-				if(!list.contains(type) & items[i].getExpanded()) {
+			for (TreeItem item : items) {
+				type = ((ILaunchConfigurationType) item.getData()).getIdentifier();
+				if (!list.contains(type) & item.getExpanded()) {
 					list.add(type);
-				}
-				else if(!items[i].getExpanded()) {
+				} else if (!item.getExpanded()) {
 					list.remove(type);
 				}
 			}
@@ -1302,10 +1301,10 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 						catch (CoreException e) {DebugUIPlugin.log(e);}
 					}
 				}
-				for(int i = 0; i < nodes.length; i++) {
-					for(int k = 0; k < items.length; k++) {
-						ILaunchConfigurationType type = (ILaunchConfigurationType)items[k].getData();
-						if(type.getIdentifier().equals(nodes[i])) {
+				for (String node : nodes) {
+					for (TreeItem item : items) {
+						ILaunchConfigurationType type = (ILaunchConfigurationType) item.getData();
+						if (type.getIdentifier().equals(node)) {
 							toexpand.add(type);
 						}
 					}

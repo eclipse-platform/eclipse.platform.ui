@@ -367,8 +367,8 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		// clean up
 		combo.removeAll();
 
-		for (int i = 0; i < labels.length; i++) {
-			combo.add(labels[i]);
+		for (String label : labels) {
+			combo.add(label);
 		}
 
 		combo.select(selectionIdx);

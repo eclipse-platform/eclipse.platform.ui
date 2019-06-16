@@ -109,8 +109,8 @@ public abstract class BasicDebugViewContentProvider implements IStructuredConten
 
 	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
-		for (int i=0; i < events.length; i++) {
-			handleDebugEvent(events[i]);
+		for (DebugEvent event : events) {
+			handleDebugEvent(event);
 		}
 	}
 

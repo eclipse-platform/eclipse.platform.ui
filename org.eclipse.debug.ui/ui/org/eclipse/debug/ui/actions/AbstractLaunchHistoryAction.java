@@ -181,8 +181,8 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	 */
 	private boolean existsConfigTypesForMode() {
 		ILaunchConfigurationType[] configTypes = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationTypes();
-		for (int i = 0; i < configTypes.length; i++) {
-			if (configTypes[i].supportsMode(getMode())) {
+		for (ILaunchConfigurationType configType : configTypes) {
+			if (configType.supportsMode(getMode())) {
 				return true;
 			}
 		}
@@ -314,8 +314,8 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 				if (fRecreateMenu) {
 					Menu m = (Menu)e.widget;
 					MenuItem[] items = m.getItems();
-					for (int i=0; i < items.length; i++) {
-						items[i].dispose();
+					for (MenuItem item : items) {
+						item.dispose();
 					}
 					fillMenu(m);
 					fRecreateMenu= false;
@@ -347,8 +347,7 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 
 		// Add favorites
 		int accelerator = 1;
-		for (int i = 0; i < favoriteList.length; i++) {
-			ILaunchConfiguration launch= favoriteList[i];
+		for (ILaunchConfiguration launch : favoriteList) {
 			LaunchAction action= new LaunchAction(launch, getMode());
 			addToMenu(menu, action, accelerator);
 			accelerator++;
@@ -360,8 +359,7 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 		}
 
 		// Add history launches next
-		for (int i = 0; i < historyList.length; i++) {
-			ILaunchConfiguration launch= historyList[i];
+		for (ILaunchConfiguration launch : historyList) {
 			LaunchAction action= new LaunchAction(launch, getMode());
 			addToMenu(menu, action, accelerator);
 			accelerator++;

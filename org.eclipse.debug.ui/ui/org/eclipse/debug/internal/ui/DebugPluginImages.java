@@ -271,8 +271,7 @@ public class DebugPluginImages {
 		//try to get the images from the config types themselves, cache those that could not be found
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_LAUNCH_CONFIGURATION_TYPE_IMAGES);
 		IConfigurationElement[] configElements= extensionPoint.getConfigurationElements();
-		for (int i = 0; i < configElements.length; i++) {
-			IConfigurationElement configElement = configElements[i];
+		for (IConfigurationElement configElement : configElements) {
 			ImageDescriptor descriptor = DebugUIPlugin.getImageDescriptor(configElement, ATTR_LAUNCH_CONFIG_TYPE_ICON);
 			if (descriptor == null) {
 				descriptor = ImageDescriptor.getMissingImageDescriptor();

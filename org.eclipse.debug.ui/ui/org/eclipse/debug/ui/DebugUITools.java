@@ -16,7 +16,6 @@ package org.eclipse.debug.ui;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -220,11 +219,9 @@ public class DebugUITools {
 		IExtensionPoint point= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.ID_DEBUG_MODEL_PRESENTATION);
 		if (point != null) {
 			IExtension[] extensions= point.getExtensions();
-			for (int i= 0; i < extensions.length; i++) {
-				IExtension extension= extensions[i];
+			for (IExtension extension : extensions) {
 				IConfigurationElement[] configElements= extension.getConfigurationElements();
-				for (int j= 0; j < configElements.length; j++) {
-					IConfigurationElement elt= configElements[j];
+				for (IConfigurationElement elt : configElements) {
 					String id= elt.getAttribute("id"); //$NON-NLS-1$
 					if (id != null && id.equals(identifier)) {
 						return new LazyModelPresentation(elt);
@@ -323,8 +320,8 @@ public class DebugUITools {
 
 		if (allowUndo) {
 
-			for (int i= 0; i < markers.length; i++) {
-				markers[i].setAttribute(DebugPlugin.ATTR_BREAKPOINT_IS_DELETED, true);
+			for (IMarker marker : markers) {
+				marker.setAttribute(DebugPlugin.ATTR_BREAKPOINT_IS_DELETED, true);
 			}
 
 			IAdaptable context= null;
@@ -537,8 +534,7 @@ public class DebugUITools {
 	@Deprecated
 	public static int openLaunchConfigurationDialog(Shell shell, IStructuredSelection selection, String mode) {
 		ILaunchGroup[] groups = getLaunchGroups();
-		for (int i = 0; i < groups.length; i++) {
-			ILaunchGroup group = groups[i];
+		for (ILaunchGroup group : groups) {
 			if (group.getMode().equals(mode) && group.getCategory() == null) {
 				return openLaunchConfigurationDialogOnGroup(shell, selection, group.getIdentifier());
 			}
@@ -859,8 +855,7 @@ public class DebugUITools {
 				try {
 					IResource[] configResource = iLaunch.getLaunchConfiguration().getMappedResources();
 					if (configResource != null && configResource.length == 1) {
-						for (Iterator<Object> iter = fgLaunchToggleTerminateMap.keySet().iterator(); iter.hasNext();) {
-							Object key = iter.next();
+						for (Object key : fgLaunchToggleTerminateMap.keySet()) {
 							if (key instanceof IEditorPart) {
 								IEditorInput input = ((IEditorPart) key).getEditorInput();
 								if (input.getAdapter(IResource.class).equals(configResource[0])) {
@@ -879,8 +874,7 @@ public class DebugUITools {
 							}
 						}
 					} else {
-						for (Iterator<Object> iter = fgLaunchToggleTerminateMap.keySet().iterator(); iter.hasNext();) {
-							Object key = iter.next();
+						for (Object key : fgLaunchToggleTerminateMap.keySet()) {
 							if (key instanceof IStructuredSelection) {
 								Object toggleValue = getToggleTerminateValue(key);
 								if (toggleValue instanceof TerminateToggleValue) {

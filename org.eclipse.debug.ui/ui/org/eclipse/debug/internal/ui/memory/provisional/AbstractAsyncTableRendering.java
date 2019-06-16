@@ -1481,9 +1481,9 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 			// check each of the items and find the minimum
 			TableItem[] items = table.getItems();
 			int minHeight = table.getItemHeight();
-			for (int i = 0; i < items.length; i++) {
-				if (items[i].getData() != null) {
-					minHeight = Math.min(items[i].getBounds(0).height, minHeight);
+			for (TableItem item : items) {
+				if (item.getData() != null) {
+					minHeight = Math.min(item.getBounds(0).height, minHeight);
 				}
 			}
 
@@ -2754,8 +2754,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 	 */
 	private TableItem getItem(Point point) {
 		TableItem[] items = fTableViewer.getTable().getItems();
-		for (int i = 0; i < items.length; i++) {
-			TableItem item = items[i];
+		for (TableItem item : items) {
 			if (item.getData() != null) {
 				Point start = new Point(item.getBounds(0).x, item.getBounds(0).y);
 				start = fTableViewer.getTable().toDisplay(start);

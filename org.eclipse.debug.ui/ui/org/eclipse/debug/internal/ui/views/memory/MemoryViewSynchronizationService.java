@@ -81,8 +81,8 @@ public class MemoryViewSynchronizationService implements IMemoryRenderingSynchro
 			if (fFilters == null) {
 				return true;
 			}
-			for (int i = 0; i < fFilters.length; i++) {
-				if (fFilters[i].equals(property)) {
+			for (String filter : fFilters) {
+				if (filter.equals(property)) {
 					return true;
 				}
 			}
@@ -134,9 +134,7 @@ public class MemoryViewSynchronizationService implements IMemoryRenderingSynchro
 			return;
 		}
 
-		for (int i = 0; i < memoryBlocks.length; i++) {
-			IMemoryBlock memory = memoryBlocks[i];
-
+		for (IMemoryBlock memory : memoryBlocks) {
 			if (fLastChangedRendering != null && fLastChangedRendering.getMemoryBlock() == memory) {
 				fLastChangedRendering = null;
 			}
@@ -343,9 +341,8 @@ public class MemoryViewSynchronizationService implements IMemoryRenderingSynchro
 					// synchronization service is being enabled
 					// this is to get around problem when the last changed
 					// rendering is not currently the sync info provider
-
-					for (int i = 0; i < ids.length; i++) {
-						PropertyChangeEvent evt = new PropertyChangeEvent(fLastChangedRendering, ids[i], null, info.getProperty(ids[i]));
+					for (String id : ids) {
+						PropertyChangeEvent evt = new PropertyChangeEvent(fLastChangedRendering, id, null, info.getProperty(id));
 						firePropertyChanged(evt);
 					}
 				}

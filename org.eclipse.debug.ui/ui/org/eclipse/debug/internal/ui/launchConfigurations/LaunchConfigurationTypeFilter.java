@@ -45,8 +45,8 @@ public class LaunchConfigurationTypeFilter extends ViewerFilter {
 		if(element instanceof ILaunchConfigurationType) {
 			IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
 			String[] types = store.getString(IInternalDebugUIConstants.PREF_FILTER_TYPE_LIST).split("\\,"); //$NON-NLS-1$
-			for(int i = 0; i < types.length; i++) {
-				if(types[i].equals(((ILaunchConfigurationType)element).getIdentifier())) {
+			for (String type : types) {
+				if (type.equals(((ILaunchConfigurationType)element).getIdentifier())) {
 					return false;
 				}
 			}

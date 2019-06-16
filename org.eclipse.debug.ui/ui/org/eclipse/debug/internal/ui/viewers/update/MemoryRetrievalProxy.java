@@ -77,20 +77,18 @@ public class MemoryRetrievalProxy extends AbstractModelProxy implements IMemoryB
 				ModelDelta delta = new ModelDelta(fRetrieval, IModelDelta.NO_CHANGE);
 
 				// find a memory block to select
-
-				for (int i = 0; i < memory.length; i++) {
-					IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(memory[i]);
-
+				for (IMemoryBlock block : memory) {
+					IMemoryBlockRetrieval retrieval = MemoryViewUtil.getMemoryBlockRetrieval(block);
 					if (retrieval != null) {
 						if (retrieval == fRetrieval) {
 							// do not change selection if the memory block
 							// removed is not
 							// currently selected
 							// #getCurrentSelection must be run on the UI thread
-							if (isMemoryBlockSelected(getCurrentSelection(), memory[i])) {
+							if (isMemoryBlockSelected(getCurrentSelection(), block)) {
 								addSelectDeltaNode(delta);
 							}
-							delta.addNode(memory[i], IModelDelta.REMOVED);
+							delta.addNode(block, IModelDelta.REMOVED);
 						}
 					}
 				}

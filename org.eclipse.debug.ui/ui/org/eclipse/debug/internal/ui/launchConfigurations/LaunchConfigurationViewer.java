@@ -173,12 +173,12 @@ public class LaunchConfigurationViewer extends TreeViewer {
 		Object[] types = cp.getElements(null);
 		LaunchGroupFilter filter = new LaunchGroupFilter(((LaunchConfigurationsDialog)LaunchConfigurationsDialog.getCurrentlyVisibleLaunchConfigurationDialog()).getLaunchGroup());
 		ILaunchConfiguration[] configs = null;
-		for(int i = 0; i < types.length; i++) {
-			if(filter.select(this, types[i], null)) {
+		for (Object type : types) {
+			if (filter.select(this, type, null)) {
 				fTotalCount++;
-				configs = (ILaunchConfiguration[]) cp.getChildren(types[i]);
-				for(int j = 0; j < configs.length; j++) {
-					if(LaunchConfigurationManager.isVisible(configs[j])) {
+				configs = (ILaunchConfiguration[]) cp.getChildren(type);
+				for (ILaunchConfiguration config : configs) {
+					if (LaunchConfigurationManager.isVisible(config)) {
 						fTotalCount++;
 					}
 				}
@@ -199,9 +199,7 @@ public class LaunchConfigurationViewer extends TreeViewer {
 		TreeItem[] items = getTree().getItems();
 		count += items.length;
 		boolean expanded = false;
-		TreeItem item = null;
-		for(int i = 0; i < items.length; i++) {
-			item = items[i];
+		for (TreeItem item : items) {
 			expanded = item.getExpanded();
 			setExpandedState(item.getData(), true);
 			count += item.getItems().length;

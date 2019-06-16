@@ -254,10 +254,10 @@ public class VirtualFindAction extends Action implements IUpdate {
 	private void collectAllChildren(VirtualItem element, List<VirtualItem> collect) {
 		VirtualItem[] children = element.getItems();
 		if (children != null) {
-			for (int i = 0; i < children.length; i++) {
-				if (!children[i].needsLabelUpdate()) {
-					collect.add(children[i]);
-					collectAllChildren(children[i], collect);
+			for (VirtualItem child : children) {
+				if (!child.needsLabelUpdate()) {
+					collect.add(child);
+					collectAllChildren(child, collect);
 				}
 			}
 		}

@@ -279,10 +279,10 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		ILaunch[] launches = DebugPlugin.getDefault().getLaunchManager().getLaunches();
 		boolean launched = false;
 		ILaunchConfiguration tmp = null;
-		for(int i = 0; i < launches.length; i++) {
-			tmp = launches[i].getLaunchConfiguration();
-			if(tmp != null) {
-				if(!launches[i].isTerminated() && tmp.equals(config)) {
+		for (ILaunch launch : launches) {
+			tmp = launch.getLaunchConfiguration();
+			if (tmp != null) {
+				if (!launch.isTerminated() && tmp.equals(config)) {
 					launched = true;
 					break;
 				}
@@ -533,9 +533,9 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		if (list == null || configs == null) {
 			return;
 		}
-		for (int i = 0; i < configs.length; i++) {
-			if (!list.contains(configs[i])) {
-				list.add(configs[i]);
+		for (ILaunchConfiguration config : configs) {
+			if (!list.contains(config)) {
+				list.add(config);
 			}
 		}
 	}
@@ -549,9 +549,9 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 			workbench.addWindowListener(this);
 			// initialize for already open windows
 			IWorkbenchWindow[] workbenchWindows = workbench.getWorkbenchWindows();
-			for (int i = 0; i < workbenchWindows.length; i++) {
-				if (workbenchWindows[i].getSelectionService() != null) {
-					windowOpened(workbenchWindows[i]);
+			for (IWorkbenchWindow workbenchWindow : workbenchWindows) {
+				if (workbenchWindow.getSelectionService() != null) {
+					windowOpened(workbenchWindow);
 				}
 			}
 		}
@@ -697,8 +697,8 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 		//we want to ensure that even if a launch is removed from the debug view
 		//when it is not terminated we update the label just in case.
 		//bug 195232
-		for(int i = 0; i < launches.length; i++) {
-			if(!launches[i].isTerminated()) {
+		for (ILaunch launch : launches) {
+			if (!launch.isTerminated()) {
 				fUpdateLabel = true;
 				return;
 			}

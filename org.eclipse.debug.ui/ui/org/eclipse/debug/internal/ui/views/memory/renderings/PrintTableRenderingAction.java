@@ -80,22 +80,20 @@ public class PrintTableRenderingAction extends Action
 		lineNum = printColumnLabels(printGC, lineNum);
 
 		//for all items in the table
-		for (int i=0; i < itemList.length; i++) {
+		for (TableItem item : itemList) {
 			StringBuilder tableContents = new StringBuilder();
 			//print all columns for this row
-			for (int j=0; j < numColumns; j++) {
-				String columnText = labelProvider.getColumnText(itemList[i].getData(), j);
-
+			for (int j = 0; j < numColumns; j++) {
+				String columnText = labelProvider.getColumnText(item.getData(), j);
 				while (columnText.length() < fRendering.getBytesPerColumn() * charsPerByte)
 				{
-					 columnText += " "; //$NON-NLS-1$
+					columnText += " "; //$NON-NLS-1$
 				}
 				tableContents.append(COLUMN_SEPERATOR);
 				tableContents.append(columnText);
 			}
 			printGC.drawString(tableContents.toString(), 10, 10+(lineNum*printGC.getFontMetrics().getHeight()));
 			lineNum++;
-
 			// if we've run over the end of a page, start a new one
 			if (20+lineNum*printGC.getFontMetrics().getHeight() > printer.getClientArea().height) {
 				lineNum=1;

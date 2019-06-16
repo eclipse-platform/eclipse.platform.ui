@@ -401,8 +401,8 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 						if (selection.length == 0) {
 							return new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, IInternalDebugCoreConstants.EMPTY_STRING, null);
 						}
-						for (int i = 0; i < selection.length; i++) {
-							if (!(selection[i] instanceof IFile)) {
+						for (Object f : selection) {
+							if (!(f instanceof IFile)) {
 								return new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, IInternalDebugCoreConstants.EMPTY_STRING, null);
 							}
 						}
@@ -621,11 +621,11 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	private String getDefaultSharedConfigLocation(ILaunchConfiguration config) {
 		String path = IInternalDebugCoreConstants.EMPTY_STRING;
 		try {
-			IResource[] res = config.getMappedResources();
-			if(res != null) {
+			IResource[] mappedResources = config.getMappedResources();
+			if(mappedResources != null) {
 				IProject  proj;
-				for (int i = 0; i < res.length; i++) {
-					proj = res[i].getProject();
+				for (IResource resource : mappedResources) {
+					proj = resource.getProject();
 					if(proj != null && proj.isAccessible()) {
 						return proj.getFullPath().toOSString();
 					}
@@ -906,8 +906,8 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 				// see if there are any changes
 				if (num == checked.length) {
 					boolean different = false;
-					for (int i = 0; i < checked.length; i++) {
-						if (!groups.contains(checked[i])) {
+					for (Object checked1 : checked) {
+						if (!groups.contains(checked1)) {
 							different = true;
 							break;
 						}
@@ -920,8 +920,8 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			config.setAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, (String)null);
 			config.setAttribute(IDebugUIConstants.ATTR_RUN_FAVORITE, (String)null);
 			List<String> groups = null;
-			for (int i = 0; i < checked.length; i++) {
-				LaunchGroupExtension group = (LaunchGroupExtension)checked[i];
+			for (Object c : checked) {
+				LaunchGroupExtension group = (LaunchGroupExtension) c;
 				if (groups == null) {
 					groups = new ArrayList<>();
 				}
@@ -1125,8 +1125,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			ILaunchGroup[] groups = DebugUITools.getLaunchGroups();
 			List<ILaunchGroup> possibleGroups = new ArrayList<>();
 			ILaunchConfiguration configuration = (ILaunchConfiguration)inputElement;
-			for (int i = 0; i < groups.length; i++) {
-				ILaunchGroup extension = groups[i];
+			for (ILaunchGroup extension : groups) {
 				LaunchHistory history = getLaunchConfigurationManager().getLaunchHistory(extension.getIdentifier());
 				if (history != null && history.accepts(configuration)) {
 					possibleGroups.add(extension);

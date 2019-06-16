@@ -144,10 +144,8 @@ public class SignedIntegerRendering extends AbstractIntegerRendering {
 
 		boolean invalid = false;
 		String paddedStr = DebugUIPlugin.getDefault().getPreferenceStore().getString(IDebugUIConstants.PREF_PADDED_STR);
-		for (int i=0; i<data.length; i++)
-		{
-			if (!data[i].isReadable())
-			{
+		for (MemoryByte memByte : data) {
+			if (!memByte.isReadable()) {
 				invalid = true;
 				break;
 			}

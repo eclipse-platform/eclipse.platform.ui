@@ -80,8 +80,8 @@ public class LaunchManagerProxy extends AbstractModelProxy implements ILaunchesL
 	 */
 	protected void fireDelta(ILaunch[] launches, int launchFlags) {
 		ModelDelta delta = new ModelDelta(fLaunchManager, IModelDelta.NO_CHANGE);
-		for (int i = 0; i < launches.length; i++) {
-			delta.addNode(launches[i], launchFlags);
+		for (ILaunch launch : launches) {
+			delta.addNode(launch, launchFlags);
 		}
 		fireModelChanged(delta);
 	}

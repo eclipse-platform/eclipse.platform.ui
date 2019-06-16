@@ -69,9 +69,9 @@ public class SelectBreakpointWorkingsetDialog extends AbstractDebugCheckboxSelec
 	private IWorkingSet[] getBreakpointWorkingSets() {
 		IWorkingSet[] ws = PlatformUI.getWorkbench().getWorkingSetManager().getAllWorkingSets();
 		ArrayList<IWorkingSet> list = new ArrayList<>();
-		for(int i = 0; i < ws.length; i++) {
-			if(IDebugUIConstants.BREAKPOINT_WORKINGSET_ID.equals(ws[i].getId())) {
-				list.add(ws[i]);
+		for (IWorkingSet w : ws) {
+			if (IDebugUIConstants.BREAKPOINT_WORKINGSET_ID.equals(w.getId())) {
+				list.add(w);
 			}
 		}
 		return list.toArray(new IWorkingSet[list.size()]);

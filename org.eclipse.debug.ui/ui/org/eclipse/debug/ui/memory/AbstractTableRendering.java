@@ -1450,17 +1450,15 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 			// clean up old columns
 			TableColumn[] oldColumns = fTableViewer.getTable().getColumns();
 
-			for (int i=0; i<oldColumns.length; i++)
-			{
-				oldColumns[i].dispose();
+			for (TableColumn oldColumn : oldColumns) {
+				oldColumn.dispose();
 			}
 
 			// clean up old cell editors
 			CellEditor[] oldCellEditors = fTableViewer.getCellEditors();
 
-			for (int i=0; i<oldCellEditors.length; i++)
-			{
-				oldCellEditors[i].dispose();
+			for (CellEditor oldCellEditor : oldCellEditors) {
+				oldCellEditor.dispose();
 			}
 		}
 
@@ -2377,9 +2375,8 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 			fTableCursor = null;
 
 			// clean up cell editors
-			for (int i=0; i<fEditors.length; i++)
-			{
-				fEditors[i].dispose();
+			for (CellEditor editor : fEditors) {
+				editor.dispose();
 			}
 
 			// remove font change listener when the view tab is disposed
@@ -2751,9 +2748,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		int colNum = -1;
 		int numCol = fTableViewer.getColumnProperties().length;
 
-		for (int j=0; j<tableItems.length; j++)
-		{
-			TableItem item = tableItems[j];
+		for (TableItem item : tableItems) {
 			for (int i=0; i<numCol; i++)
 			{
 				Rectangle bound = item.getBounds(i);
@@ -3350,9 +3345,8 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 			// check each of the items and find the minimum
 			TableItem[] items = table.getItems();
 			int minHeight = table.getItemHeight();
-			for (int i=0; i<items.length; i++)
-			{
-				minHeight = Math.min(items[i].getBounds(0).height, minHeight);
+			for (TableItem item : items) {
+				minHeight = Math.min(item.getBounds(0).height, minHeight);
 			}
 
 			return minHeight;
@@ -3676,14 +3670,12 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 	private TableItem getItem(Point point)
 	{
 		TableItem[] items = fTableViewer.getTable().getItems();
-		for (int i=0; i<items.length; i++)
-		{
-			Point start = new Point(items[i].getBounds(0).x, items[i].getBounds(0).y);
+		for (TableItem item : items) {
+			Point start = new Point(item.getBounds(0).x, item.getBounds(0).y);
 			start = fTableViewer.getTable().toDisplay(start);
-			Point end = new Point(start.x + items[i].getBounds(0).width, start.y + items[i].getBounds(0).height);
-
+			Point end = new Point(start.x + item.getBounds(0).width, start.y + item.getBounds(0).height);
 			if (start.y < point.y && point.y < end.y) {
-				return items[i];
+				return item;
 			}
 		}
 		return null;

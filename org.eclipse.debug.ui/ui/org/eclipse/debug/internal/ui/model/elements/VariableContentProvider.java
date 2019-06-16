@@ -236,17 +236,17 @@ public class VariableContentProvider extends ElementContentProvider {
 			DebugPlugin.getDefault().addDebugEventListener(new IDebugEventSetListener(){
 				@Override
 				public void handleDebugEvents(DebugEvent[] events) {
-					for (int i = 0; i < events.length; i++) {
-						if (events[i].getKind() == DebugEvent.TERMINATE){
+					for (DebugEvent event : events) {
+						if (event.getKind() == DebugEvent.TERMINATE) {
 							fgLogicalCache.clear();
 							break;
-						} else if (events[i].getKind() == DebugEvent.RESUME && events[i].getDetail() != DebugEvent.EVALUATION_IMPLICIT){
+						} else if (event.getKind() == DebugEvent.RESUME && event.getDetail() != DebugEvent.EVALUATION_IMPLICIT) {
 							fgLogicalCache.clear();
 							break;
-						} else if (events[i].getKind() == DebugEvent.SUSPEND && events[i].getDetail() != DebugEvent.EVALUATION_IMPLICIT){
-								fgLogicalCache.clear();
-								break;
-						} else if (events[i].getKind() == DebugEvent.CHANGE && events[i].getDetail() == DebugEvent.CONTENT){
+						} else if (event.getKind() == DebugEvent.SUSPEND && event.getDetail() != DebugEvent.EVALUATION_IMPLICIT) {
+							fgLogicalCache.clear();
+							break;
+						} else if (event.getKind() == DebugEvent.CHANGE && event.getDetail() == DebugEvent.CONTENT) {
 							fgLogicalCache.clear();
 							break;
 						}

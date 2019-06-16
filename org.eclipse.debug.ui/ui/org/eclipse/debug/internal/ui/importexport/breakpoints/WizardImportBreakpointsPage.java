@@ -224,24 +224,24 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 
 						private void removeUncheckedBreakpoints(IBreakpoint[] importedBreakpoints) {
 							IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
-							for(int i = 0; i < importedBreakpoints.length; i++) {
+							for (IBreakpoint importedBreakpoint : importedBreakpoints) {
 								boolean selected = false;
-								for(int j = 0; j < selectedMarkers.size(); j++) {
+								for (int j = 0; j < selectedMarkers.size(); j++) {
 									try {
-								Map<String, Object> importedMarkerAttributes = importedBreakpoints[i].getMarker().getAttributes();
-								Map<String, Object> selectedMarkerAttributes = selectedMarkers.get(j).getAttributes();
+										Map<String, Object> importedMarkerAttributes = importedBreakpoint.getMarker().getAttributes();
+										Map<String, Object> selectedMarkerAttributes = selectedMarkers.get(j).getAttributes();
 										if(importedMarkerAttributes.equals(selectedMarkerAttributes)) {
 											selected = true;
 											break;
 										}
-									} catch (CoreException e) {
+									}catch (CoreException e) {
 										DebugPlugin.log(e);
 									}
 								}
-								if(!selected) {
+								if (!selected) {
 									try {
-										manager.removeBreakpoint(importedBreakpoints[i], true);
-									} catch (CoreException e) {
+										manager.removeBreakpoint(importedBreakpoint, true);
+									}catch (CoreException e) {
 										DebugPlugin.log(e);
 									}
 								}

@@ -93,11 +93,9 @@ public class TableRenderingLine extends PlatformObject {
 			// pad unavailable bytes with padded string from memory block
 			String paddedString = null;
 			int bufferCounter = 0;
-			for (int i=0; i<fBytes.length; i++)
-			{
+			for (MemoryByte mb : fBytes) {
 				// if byte is invalid
-				if (!fBytes[i].isReadable())
-				{
+				if (!mb.isReadable()) {
 					if (paddedString == null)
 					{
 						paddedString = fPaddedString;
@@ -177,10 +175,9 @@ public class TableRenderingLine extends PlatformObject {
 		// if the string representation is the same, no need to compare
 		if (oldData.getRawMemoryString().equals(getRawMemoryString()))
 		{
-			for (int i=0; i<fBytes.length; i++)
-			{
+			for (MemoryByte mb : fBytes) {
 				// set history as known if we have old data for this line
-				fBytes[i].setHistoryKnown(true);
+				mb.setHistoryKnown(true);
 			}
 			return;
 		}
@@ -283,11 +280,10 @@ public class TableRenderingLine extends PlatformObject {
 
 	public void unmarkDeltas()
 	{
-		for (int i=0; i<fBytes.length; i++)
-		{
+		for (MemoryByte mb : fBytes) {
 			// unset the change bit
-			if (fBytes[i].isChanged()) {
-				fBytes[i].setChanged(false);
+			if (mb.isChanged()) {
+				mb.setChanged(false);
 			}
 		}
 	}

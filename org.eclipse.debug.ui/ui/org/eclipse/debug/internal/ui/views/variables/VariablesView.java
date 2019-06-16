@@ -500,8 +500,8 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		createOrientationActions(variablesViewer);
 		IPreferenceStore prefStore = DebugUIPlugin.getDefault().getPreferenceStore();
 		String orientation = prefStore.getString(getDetailPanePreferenceKey());
-		for (int i = 0; i < fToggleDetailPaneActions.length; i++) {
-			fToggleDetailPaneActions[i].setChecked(fToggleDetailPaneActions[i].getOrientation().equals(orientation));
+		for (ToggleDetailPaneAction action : fToggleDetailPaneActions) {
+			action.setChecked(action.getOrientation().equals(orientation));
 		}
 
 		fDetailPane = new DetailPaneProxy(this);
@@ -1440,9 +1440,9 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 
 	protected ToggleDetailPaneAction getToggleDetailPaneAction(String orientation)
 	{
-		for (int i=0; i<fToggleDetailPaneActions.length; i++) {
-			if (fToggleDetailPaneActions[i].getOrientation().equals(orientation)) {
-				return fToggleDetailPaneActions[i];
+		for (ToggleDetailPaneAction action : fToggleDetailPaneActions) {
+			if (action.getOrientation().equals(orientation)) {
+				return action;
 			}
 		}
 
