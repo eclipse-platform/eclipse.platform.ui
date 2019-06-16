@@ -47,11 +47,6 @@ public class JobQueueTest extends TestCase {
 		this.queue = new JobQueue(false);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-	}
-
 	public void testEqualValues() {
 		//if several equal values are entered, they should come out in FIFO order
 		final int NUM_ENTRIES = 10;

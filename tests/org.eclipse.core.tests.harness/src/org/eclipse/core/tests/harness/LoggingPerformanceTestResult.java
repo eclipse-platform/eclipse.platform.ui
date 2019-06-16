@@ -153,27 +153,4 @@ public class LoggingPerformanceTestResult extends PerformanceTestResult {
 		}
 		out.println("</ul>");
 	}
-
-	/**
-	 * Start the timer with the given name.  If the timer has already
-	 * been created, send it a startTiming message.  If not, create it
-	 * and send the new timer the startTiming message.
-	 */
-
-	@Override
-	public synchronized void startTimer(String timerName) {
-		super.startTimer(timerName);
-		//log("Starting timer: " + timerName);
-	}
-
-	/**
-	 * Look up the timer with the given name and send it a stopTiming
-	 * message.  If the timer does not exist, report an error.
-	 */
-
-	@Override
-	public synchronized void stopTimer(String timerName) {
-		super.stopTimer(timerName);
-		//log("Stopping timer: " + timerName);
-	}
 }
