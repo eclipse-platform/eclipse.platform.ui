@@ -848,8 +848,8 @@ public final class IDE {
 		}
 
 		IContentType contentType = null;
-		try {
-			try (InputStream is = fileStore.openInputStream(EFS.NONE, null)) {
+		try (InputStream is = fileStore.openInputStream(EFS.NONE, null)) {
+			{
 				contentType = Platform.getContentTypeManager().findContentTypeFor(is, name);
 			}
 		} catch (CoreException ex) {

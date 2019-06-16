@@ -103,15 +103,10 @@ public class ZipFileExporter implements IFileExporter {
 			entry.setTime(localTimeStamp);
 
 		outputStream.putNextEntry(entry);
-		InputStream contentStream = contents.getContents(false);
-		try {
+		try (InputStream contentStream = contents.getContents(false)) {
 			int n;
 			while ((n = contentStream.read(readBuffer)) > 0) {
 				outputStream.write(readBuffer, 0, n);
-			}
-		} finally {
-			if (contentStream != null) {
-				contentStream.close();
 			}
 		}
 		outputStream.closeEntry();
