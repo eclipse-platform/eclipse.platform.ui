@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation bug 154329
  *                                               - fixes in bug 170381, 198665, 200731
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548314
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -21,6 +22,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeEvent;
@@ -463,13 +465,14 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 		return super.getLabelProvider();
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected List getSelectionFromWidget() {
 		if (virtualManager != null) {
 			return getVirtualSelection();
 		}
 		Widget[] items = doGetSelection();
-		ArrayList list = new ArrayList(items.length);
+		List<Object> list = new ArrayList<>(items.length);
 		for (Widget item : items) {
 			Object e = item.getData();
 			if (e != null) {
@@ -486,9 +489,9 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * @return List of Object
 	 */
 
-	private List getVirtualSelection() {
+	private List<Object> getVirtualSelection() {
 
-		List result = new ArrayList();
+		List<Object> result = new ArrayList<>();
 		int[] selectionIndices = doGetSelectionIndices();
 		if (getContentProvider() instanceof ILazyContentProvider) {
 			ILazyContentProvider lazy = (ILazyContentProvider) getContentProvider();
@@ -828,7 +831,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	}
 
 	@Override
-	protected void setSelectionToWidget(List list, boolean reveal) {
+	protected void setSelectionToWidget(@SuppressWarnings("rawtypes") List list, boolean reveal) {
 		if (list == null) {
 			doDeselectAll();
 			return;
@@ -862,7 +865,7 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 			if( ! list.isEmpty() ) {
 				int[] indices = new int[list.size()];
 
-				Iterator it = list.iterator();
+				Iterator<?> it = list.iterator();
 				Item[] items = doGetItems();
 				Object modelElement;
 
@@ -895,13 +898,13 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * @param reveal
 	 *            Whether or not reveal the first item.
 	 */
-	private void virtualSetSelectionToWidget(List list, boolean reveal) {
+	private void virtualSetSelectionToWidget(@SuppressWarnings("rawtypes") List list, boolean reveal) {
 		int size = list.size();
 		int[] indices = new int[list.size()];
 
 		Item firstItem = null;
 		int count = 0;
-		HashSet virtualElements = new HashSet();
+		HashSet<Object> virtualElements = new HashSet<>();
 		for (int i = 0; i < size; ++i) {
 			Object o = list.get(i);
 			Widget w = findItem(o);

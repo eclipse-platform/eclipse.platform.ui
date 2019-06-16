@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 460380
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548314
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
@@ -222,7 +223,7 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
 	 * @see #setCheckedElements
 	 */
 	public Object[] getCheckedElements() {
-		ArrayList v = new ArrayList();
+		List<Object> v = new ArrayList<>();
 		Control tree = getControl();
 		internalCollectChecked(v, tree);
 		return v.toArray();
@@ -257,7 +258,7 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
 	 * @see #setGrayedElements
 	 */
 	public Object[] getGrayedElements() {
-		List result = new ArrayList();
+		List<Object> result = new ArrayList<>();
 		internalCollectGrayed(result, getControl());
 		return result.toArray();
 	}
@@ -306,7 +307,7 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
 	 * @param result a writable list of elements (element type: <code>Object</code>)
 	 * @param widget the widget
 	 */
-	private void internalCollectChecked(List result, Widget widget) {
+	private void internalCollectChecked(List<Object> result, Widget widget) {
 		Item[] items = getChildren(widget);
 		for (Item item : items) {
 			if (item instanceof TreeItem && ((TreeItem) item).getChecked()) {
@@ -326,7 +327,7 @@ public class CheckboxTreeViewer extends TreeViewer implements ICheckable {
 	 * @param result a writable list of elements (element type: <code>Object</code>)
 	 * @param widget the widget
 	 */
-	private void internalCollectGrayed(List result, Widget widget) {
+	private void internalCollectGrayed(List<Object> result, Widget widget) {
 		Item[] items = getChildren(widget);
 		for (Item item : items) {
 			if (item instanceof TreeItem && ((TreeItem) item).getGrayed()) {

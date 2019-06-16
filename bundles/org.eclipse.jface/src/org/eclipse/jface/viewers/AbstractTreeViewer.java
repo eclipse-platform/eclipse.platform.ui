@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,6 +17,7 @@
  *     Bruce Sutton, bug 221768
  *     Matthew Hall, bug 221988
  *     Julien Desgats, bug 203950
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548314
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -307,7 +308,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	private Object[] filter(Object parentElementOrTreePath, Object[] elements) {
 		ViewerFilter[] filters = getFilters();
 		if (filters != null) {
-			ArrayList filtered = new ArrayList(elements.length);
+			List<Object> filtered = new ArrayList<>(elements.length);
 			for (Object element : elements) {
 				boolean add = true;
 				for (ViewerFilter filter : filters) {
@@ -1473,10 +1474,11 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	protected abstract Item[] getSelection(Control control);
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected List getSelectionFromWidget() {
 		Widget[] items = getSelection(getControl());
-		ArrayList list = new ArrayList(items.length);
+		List<Object> list = new ArrayList<>(items.length);
 		for (Widget item : items) {
 			Object e = item.getData();
 			if (e != null) {
@@ -2531,7 +2533,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * a list of tree paths.
 	 */
 	@Override
-	protected void setSelectionToWidget(List v, boolean reveal) {
+	protected void setSelectionToWidget(@SuppressWarnings("rawtypes") List v, boolean reveal) {
 		if (v == null) {
 			setSelection(new ArrayList<>(0));
 			return;
@@ -2917,12 +2919,12 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @since 2.0
 	 */
 	public Object[] getVisibleExpandedElements() {
-		ArrayList v = new ArrayList();
+		ArrayList<Object> v = new ArrayList<>();
 		internalCollectVisibleExpanded(v, getControl());
 		return v.toArray();
 	}
 
-	private void internalCollectVisibleExpanded(ArrayList result, Widget widget) {
+	private void internalCollectVisibleExpanded(ArrayList<Object> result, Widget widget) {
 		Item[] items = getChildren(widget);
 		for (Item item : items) {
 			if (getExpanded(item)) {
@@ -2945,7 +2947,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * @since 3.2
 	 */
 	protected TreePath getTreePathFromItem(Item item) {
-		LinkedList segments = new LinkedList();
+		LinkedList<Object> segments = new LinkedList<>();
 		while (item != null) {
 			Object segment = item.getData();
 			Assert.isNotNull(segment);
@@ -3011,8 +3013,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	protected void setSelectionToWidget(ISelection selection, boolean reveal) {
 		if (selection instanceof ITreeSelection) {
 			ITreeSelection treeSelection = (ITreeSelection) selection;
-			setSelectionToWidget(Arrays.asList(treeSelection.getPaths()),
-					reveal);
+			setSelectionToWidget(Arrays.asList(treeSelection.getPaths()), reveal);
 		} else {
 			super.setSelectionToWidget(selection, reveal);
 		}

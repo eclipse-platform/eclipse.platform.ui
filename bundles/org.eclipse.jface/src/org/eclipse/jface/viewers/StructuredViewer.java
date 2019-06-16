@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 402439, 475689
  *     Thorsten Maack <tm@tmaack.de> - Bug 482163
  *     Jan-Ove Weichel <janove.weichel@vogella.com> - Bug 481490
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548314
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
@@ -671,7 +672,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 */
 	protected Object[] filter(Object[] elements) {
 		if (filters != null) {
-			ArrayList filtered = new ArrayList(elements.length);
+			List<Object> filtered = new ArrayList<>(elements.length);
 			Object root = getRoot();
 			for (Object element : elements) {
 				boolean add = true;
@@ -977,7 +978,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		if (control == null || control.isDisposed()) {
 			return StructuredSelection.EMPTY;
 		}
-		List list = getSelectionFromWidget();
+		List<?> list = getSelectionFromWidget();
 		return new StructuredSelection(list, comparer);
 	}
 
@@ -1008,6 +1009,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 *
 	 * @return the list of selected elements
 	 */
+	@SuppressWarnings("rawtypes")
 	protected abstract List getSelectionFromWidget();
 
 	/**
@@ -1534,7 +1536,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		if (filters != null) {
 			// Note: can't use List.remove(Object). Use identity comparison
 			// instead.
-			for (Iterator i = filters.iterator(); i.hasNext();) {
+			for (Iterator<ViewerFilter> i = filters.iterator(); i.hasNext();) {
 				Object o = i.next();
 				if (o == filter) {
 					i.remove();
@@ -1681,7 +1683,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 *            <code>true</code> if the selection is to be made visible,
 	 *            and <code>false</code> otherwise
 	 */
-	protected abstract void setSelectionToWidget(List l, boolean reveal);
+	protected abstract void setSelectionToWidget(@SuppressWarnings("rawtypes") List l, boolean reveal);
 
 	/**
 	 * Converts the selection to a <code>List</code> and calls
@@ -1702,7 +1704,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		if (selection instanceof IStructuredSelection) {
 			setSelectionToWidget(((IStructuredSelection) selection).toList(), reveal);
 		} else {
-			setSelectionToWidget((List) null, reveal);
+			setSelectionToWidget((List<?>) null, reveal);
 		}
 	}
 

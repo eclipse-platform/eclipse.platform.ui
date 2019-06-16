@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548314
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -32,14 +33,14 @@ import org.eclipse.swt.widgets.Widget;
  * state of its children. Containers are checked and non-gray if all contained
  * leafs are checked. The container is grayed if some but not all leafs are
  * checked.
- * 
+ *
  * @since 3.1
  */
 public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
 
 	/**
 	 * Constructor for ContainerCheckedTreeViewer.
-	 * 
+	 *
 	 * @see CheckboxTreeViewer#CheckboxTreeViewer(Composite)
 	 */
 	public ContainerCheckedTreeViewer(Composite parent) {
@@ -49,7 +50,7 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
 
 	/**
 	 * Constructor for ContainerCheckedTreeViewer.
-	 * 
+	 *
 	 * @see CheckboxTreeViewer#CheckboxTreeViewer(Composite,int)
 	 */
 	public ContainerCheckedTreeViewer(Composite parent, int style) {
@@ -59,7 +60,7 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
 
 	/**
 	 * Constructor for ContainerCheckedTreeViewer.
-	 * 
+	 *
 	 * @see CheckboxTreeViewer#CheckboxTreeViewer(Tree)
 	 */
 	public ContainerCheckedTreeViewer(Tree tree) {
@@ -87,7 +88,7 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
 
 	/**
 	 * Update element after a checkstate change.
-	 * 
+	 *
 	 * @param element
 	 */
 	protected void doCheckStateChanged(Object element) {
@@ -241,7 +242,7 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
 	public Object[] getCheckedElements() {
 		Object[] checked = super.getCheckedElements();
 		// add all items that are children of a checked node but not created yet
-		ArrayList result = new ArrayList();
+		ArrayList<Object> result = new ArrayList<>();
 		for (Object curr : checked) {
 			result.add(curr);
 			Widget item = findItem(curr);
@@ -259,11 +260,11 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
 
 	/**
 	 * Recursively add the filtered children of element to the result.
-	 * 
+	 *
 	 * @param element
 	 * @param result
 	 */
-	private void collectChildren(Object element, ArrayList result) {
+	private void collectChildren(Object element, ArrayList<Object> result) {
 		Object[] filteredChildren = getFilteredChildren(element);
 		for (Object curr : filteredChildren) {
 			result.add(curr);

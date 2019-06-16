@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2015 IBM Corporation and others.
+ * Copyright (c) 2001, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548314
  *******************************************************************************/
 package org.eclipse.ui.internal.views.properties.tabbed.view;
 
@@ -34,7 +35,7 @@ import org.eclipse.ui.IWorkbenchPart;
 public class TabbedPropertyViewer extends StructuredViewer {
 
 	protected TabbedPropertyList list;
-	protected List elements;
+	protected List<Object> elements;
 	protected IWorkbenchPart part;
 
 	/**
@@ -46,7 +47,7 @@ public class TabbedPropertyViewer extends StructuredViewer {
 	public TabbedPropertyViewer(TabbedPropertyList list) {
 		this.list = list;
 		hookControl(list);
-		elements = new ArrayList();
+		elements = new ArrayList<>();
 	}
 
 	/**
@@ -91,13 +92,14 @@ public class TabbedPropertyViewer extends StructuredViewer {
 		/* not implemented */
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	protected List getSelectionFromWidget() {
 		int index = list.getSelectionIndex();
 		if (index == TabbedPropertyList.NONE) {
-			return Collections.EMPTY_LIST;
+			return Collections.emptyList();
 		}
-		List result = new ArrayList(1);
+		List<Object> result = new ArrayList<>(1);
 		result.add(getElementAt(index));
 		return result;
 	}
@@ -117,7 +119,7 @@ public class TabbedPropertyViewer extends StructuredViewer {
 	 * element will represent the selection.
 	 */
 	@Override
-	protected void setSelectionToWidget(List l, boolean reveal) {
+	protected void setSelectionToWidget(@SuppressWarnings("rawtypes") List l, boolean reveal) {
 		if (l == null || l.isEmpty()) { // clear selection
 			list.deselectAll();
 		} else {
@@ -178,6 +180,7 @@ public class TabbedPropertyViewer extends StructuredViewer {
 	 * @return the elements in this list viewer.
 	 * @since 3.5
 	 */
+	@SuppressWarnings("rawtypes")
 	public List getElements() {
 		return elements;
 	}

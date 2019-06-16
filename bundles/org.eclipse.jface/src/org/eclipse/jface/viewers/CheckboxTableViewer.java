@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548314
  *******************************************************************************/
 package org.eclipse.jface.viewers;
 
@@ -240,7 +241,7 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
 	 */
 	public Object[] getCheckedElements() {
 		TableItem[] children = getTable().getItems();
-		ArrayList v = new ArrayList(children.length);
+		List<Object> v = new ArrayList<>(children.length);
 		for (TableItem item : children) {
 			Object data = item.getData();
 			if (data != null) {
@@ -280,7 +281,7 @@ public class CheckboxTableViewer extends TableViewer implements ICheckable {
 	 */
 	public Object[] getGrayedElements() {
 		TableItem[] children = getTable().getItems();
-		List v = new ArrayList(children.length);
+		List<Object> v = new ArrayList<>(children.length);
 		for (TableItem item : children) {
 			Object data = item.getData();
 			if (data != null) {
