@@ -47,8 +47,7 @@ public class SampleSessionTest extends TestCase {
 	}
 
 	public static Test suite() {
-		TestSuite sameSession = new SessionTestSuite(CoreTest.PI_HARNESS, SampleSessionTest.class);
-		return sameSession;
+		return new SessionTestSuite(CoreTest.PI_HARNESS, SampleSessionTest.class);
 	}
 
 }

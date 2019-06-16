@@ -207,8 +207,7 @@ abstract public class Requestor<L extends AnnotatedElement> implements IRequesto
 		result = prime * result + Objects.hashCode(injector);
 		result = prime * result + Boolean.hashCode(isOptional);
 		result = prime * result + Objects.hashCode(primarySupplier);
-		result = prime * result + objectHashcode;
-		return result;
+		return prime * result + objectHashcode;
 	}
 
 	@Override

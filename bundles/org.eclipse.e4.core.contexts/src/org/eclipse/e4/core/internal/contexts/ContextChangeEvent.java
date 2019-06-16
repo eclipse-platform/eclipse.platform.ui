@@ -149,8 +149,7 @@ public final class ContextChangeEvent {
 		// if ((eventType == DISPOSE) || (eventType == UNINJECTED))
 		// result = prime * result + ((context == null) ? 0 : context.hashCode());
 		result = prime * result + eventType;
-		result = prime * result + Objects.hashCode(key);
-		return result;
+		return prime * result + Objects.hashCode(key);
 	}
 
 	@Override

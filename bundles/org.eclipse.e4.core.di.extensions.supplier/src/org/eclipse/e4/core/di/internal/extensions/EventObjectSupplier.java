@@ -109,8 +109,7 @@ public class EventObjectSupplier extends ExtendedObjectSupplier implements Event
 			final int prime = 31;
 			int result = 1;
 			result = prime * result + Objects.hashCode(requestor);
-			result = prime * result + Objects.hashCode(topic);
-			return result;
+			return prime * result + Objects.hashCode(topic);
 		}
 
 		public IRequestor getRequestor() {

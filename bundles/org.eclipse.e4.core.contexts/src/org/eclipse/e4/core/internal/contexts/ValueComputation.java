@@ -84,8 +84,7 @@ public class ValueComputation extends Computation {
 		int result = 1;
 		result = prime * result + Objects.hashCode(function);
 		result = prime * result + Objects.hashCode(name);
-		result = prime * result + Objects.hashCode(originatingContext);
-		return result;
+		return prime * result + Objects.hashCode(originatingContext);
 	}
 
 	@Override

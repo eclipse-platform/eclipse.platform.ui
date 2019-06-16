@@ -108,8 +108,7 @@ public class ContextObjectSupplier extends PrimaryObjectSupplier {
 			final int prime = 31;
 			int hashRresult = 1;
 			hashRresult = prime * hashRresult + Objects.hashCode(context);
-			hashRresult = prime * hashRresult + Objects.hashCode(requestor);
-			return hashRresult;
+			return prime * hashRresult + Objects.hashCode(requestor);
 		}
 
 		@Override

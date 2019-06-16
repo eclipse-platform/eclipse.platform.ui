@@ -28,8 +28,7 @@ import junit.framework.TestFailure;
 public class LoggingPerformanceTestResult extends PerformanceTestResult {
 	private static PrintWriter createWriter(File logFile) {
 		try {
-			PrintWriter writer = new PrintWriter(new FileOutputStream(logFile), true);
-			return writer;
+			return new PrintWriter(new FileOutputStream(logFile), true);
 		} catch (IOException e) {
 			System.out.println("Unable to open log output file: " + logFile);
 			return new PrintWriter(System.out, true);

@@ -43,8 +43,7 @@ public class TrackableComputationExt extends Computation {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + Objects.hashCode(originatingContext);
-		result = prime * result + Objects.hashCode(runnable);
-		return result;
+		return prime * result + Objects.hashCode(runnable);
 	}
 
 	@Override

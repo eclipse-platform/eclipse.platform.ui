@@ -602,8 +602,7 @@ public class PreferencesServiceTest extends RuntimeTest {
 				// ignore
 			}
 		}
-		InputStream input = new ByteArrayInputStream(output.toByteArray());
-		return input;
+		return new ByteArrayInputStream(output.toByteArray());
 	}
 
 	/*

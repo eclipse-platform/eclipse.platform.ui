@@ -48,8 +48,7 @@ public class BundleTestingHelper {
 		if (entry == null) {
 			Assert.fail(tag + " entry " + location + " could not be found in " + context.getBundle().getSymbolicName());
 		}
-		Bundle installed = context.installBundle(FileLocator.toFileURL(entry).toExternalForm());
-		return installed;
+		return context.installBundle(FileLocator.toFileURL(entry).toExternalForm());
 	}
 
 	/**
@@ -92,8 +91,7 @@ public class BundleTestingHelper {
 
 	public static boolean  resolveBundles(BundleContext context, Bundle[] bundles) {
 		FrameworkWiring wiring = context.getBundle(Constants.SYSTEM_BUNDLE_LOCATION).adapt(FrameworkWiring.class);
-		boolean result = wiring.resolveBundles(asList(bundles));
-		return result;
+		return wiring.resolveBundles(asList(bundles));
 	}
 
 	public static void runWithBundles(String tag, Runnable runnable, BundleContext context, String[] locations, TestRegistryChangeListener listener) {

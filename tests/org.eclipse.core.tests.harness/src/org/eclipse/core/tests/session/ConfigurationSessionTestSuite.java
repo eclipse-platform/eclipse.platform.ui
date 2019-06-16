@@ -279,8 +279,7 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 			// only works if configuration is file: based
 			throw new IllegalStateException();
 		}
-		File configurationDir = new File(configurationURL.getFile());
-		return configurationDir;
+		return new File(configurationURL.getFile());
 	}
 
 }
