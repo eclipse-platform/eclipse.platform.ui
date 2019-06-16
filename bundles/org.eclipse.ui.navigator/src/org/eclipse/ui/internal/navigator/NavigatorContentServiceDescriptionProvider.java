@@ -69,8 +69,7 @@ public final class NavigatorContentServiceDescriptionProvider implements
 						.getDescription(target);
 			}
 		}
-		message = (message != null) ? message : getDefaultStatusBarMessage(1);
-		return message;
+		return (message != null) ? message : getDefaultStatusBarMessage(1);
 
 	}
 

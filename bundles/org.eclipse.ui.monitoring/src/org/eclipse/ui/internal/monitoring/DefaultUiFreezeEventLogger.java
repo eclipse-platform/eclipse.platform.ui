@@ -151,11 +151,9 @@ public class DefaultUiFreezeEventLogger implements IUiFreezeEventLogger {
 				Messages.DefaultUiFreezeEventLogger_thread_details,
 				thread.getThreadId(), thread.getThreadState());
 
-		StringBuilder threadText = new StringBuilder(NLS.bind(
+		return new StringBuilder(NLS.bind(
 				Messages.DefaultUiFreezeEventLogger_thread_header_2,
 				thread.getThreadName(), threadDetails));
-
-		return threadText;
 	}
 
 	private static String getClassAndHashCode(LockInfo info) {

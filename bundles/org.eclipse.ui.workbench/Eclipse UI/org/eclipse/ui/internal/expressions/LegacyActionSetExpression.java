@@ -72,8 +72,7 @@ public final class LegacyActionSetExpression extends WorkbenchWindowExpression {
 
 	protected int computeHhashCode() {
 		int hashCode = HASH_INITIAL * HASH_FACTOR + hashCode(getWindow());
-		hashCode = hashCode * HASH_FACTOR + hashCode(actionSetId);
-		return hashCode;
+		return hashCode * HASH_FACTOR + hashCode(actionSetId);
 	}
 
 	@Override

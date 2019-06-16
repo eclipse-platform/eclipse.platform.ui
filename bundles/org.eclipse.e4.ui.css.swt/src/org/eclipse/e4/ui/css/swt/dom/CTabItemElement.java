@@ -42,8 +42,7 @@ public class CTabItemElement extends ItemElement {
 		CTabItem item = getItem();
 		CTabFolder parent = item.getParent();
 		if (parent != null) {
-			Element element = getElement(parent);
-			return element;
+			return getElement(parent);
 		}
 		return null;
 	}

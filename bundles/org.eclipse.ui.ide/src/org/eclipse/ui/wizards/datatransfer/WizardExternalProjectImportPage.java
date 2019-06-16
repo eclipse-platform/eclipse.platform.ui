@@ -339,8 +339,7 @@ public class WizardExternalProjectImportPage extends WizardPage {
 	}
 
 	private IWorkspace getWorkspace() {
-		IWorkspace workspace = IDEWorkbenchPlugin.getPluginWorkspace();
-		return workspace;
+		return IDEWorkbenchPlugin.getPluginWorkspace();
 	}
 
 	/**

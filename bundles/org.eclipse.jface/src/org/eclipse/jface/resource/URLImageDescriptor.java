@@ -203,8 +203,7 @@ class URLImageDescriptor extends ImageDescriptor {
 				if (url.getQuery() != null) {
 					file += '?' + url.getQuery();
 				}
-				URL xUrl = new URL(url.getProtocol(), url.getHost(), url.getPort(), file);
-				return xUrl;
+				return new URL(url.getProtocol(), url.getHost(), url.getPort(), file);
 			} catch (MalformedURLException e) {
 				Policy.getLog().log(new Status(IStatus.ERROR, Policy.JFACE, e.getLocalizedMessage(), e));
 			}

@@ -127,8 +127,7 @@ public class DefaultSectionsParser implements IReadmeFileParser {
 			lastme.setNumberOfLines(lineno - lastlineno - 1);
 		}
 		MarkElement[] results = new MarkElement[topLevel.size()];
-		results = topLevel.toArray(results);
-		return results;
+		return topLevel.toArray(results);
 	}
 
 	/**

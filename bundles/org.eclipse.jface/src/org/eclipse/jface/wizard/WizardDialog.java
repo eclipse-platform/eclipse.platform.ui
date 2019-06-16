@@ -804,7 +804,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 	 * @return MessageDalog
 	 */
 	private MessageDialog createWizardClosingDialog() {
-		MessageDialog result = new MessageDialog(getShell(),
+		return new MessageDialog(getShell(),
 				JFaceResources.getString("WizardClosingDialog.title"), //$NON-NLS-1$
 				null,
 				JFaceResources.getString("WizardClosingDialog.message"), //$NON-NLS-1$
@@ -815,7 +815,6 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 				return super.getShellStyle() | SWT.SHEET;
 			}
 		};
-		return result;
 	}
 
 	/**

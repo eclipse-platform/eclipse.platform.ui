@@ -36,8 +36,7 @@ public class CSSSWTCursorHelper {
 			return null;
 		}
 
-		Cursor cursor = new Cursor(display, i);
-		return cursor;
+		return new Cursor(display, i);
 	}
 
 	public static String getCSSCursor(Cursor cursor) {

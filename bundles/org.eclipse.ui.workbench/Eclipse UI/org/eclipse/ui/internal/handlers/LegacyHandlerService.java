@@ -326,15 +326,13 @@ public class LegacyHandlerService implements IHandlerService {
 	@Override
 	public ExecutionEvent createExecutionEvent(Command command, Event event) {
 		EvaluationContext legacy = new EvaluationContext(evalContext, evalContext.getDefaultVariable());
-		ExecutionEvent e = new ExecutionEvent(command, Collections.EMPTY_MAP, event, legacy);
-		return e;
+		return new ExecutionEvent(command, Collections.EMPTY_MAP, event, legacy);
 	}
 
 	@Override
 	public ExecutionEvent createExecutionEvent(ParameterizedCommand command, Event event) {
 		EvaluationContext legacy = new EvaluationContext(evalContext, evalContext.getDefaultVariable());
-		ExecutionEvent e = new ExecutionEvent(command.getCommand(), command.getParameterMap(), event, legacy);
-		return e;
+		return new ExecutionEvent(command.getCommand(), command.getParameterMap(), event, legacy);
 	}
 
 	@Override

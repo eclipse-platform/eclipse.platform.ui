@@ -191,8 +191,7 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 			return null;
 		}
 
-		WorkbenchPreferenceNode node = new WorkbenchPreferenceNode(id, element);
-		return node;
+		return new WorkbenchPreferenceNode(id, element);
 	}
 
 	/**

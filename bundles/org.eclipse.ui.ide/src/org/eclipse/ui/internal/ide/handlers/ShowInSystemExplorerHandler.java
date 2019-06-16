@@ -133,9 +133,7 @@ public class ShowInSystemExplorerHandler extends AbstractHandler {
 			return null;
 		}
 		IPath path = new Path(parameter);
-		IResource item = ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
-
-		return item;
+		return ResourcesPlugin.getWorkspace().getRoot().getFileForLocation(path);
 	}
 
 	private IResource getSelectionResource(ExecutionEvent event) {
@@ -146,8 +144,7 @@ public class ShowInSystemExplorerHandler extends AbstractHandler {
 
 		Object selectedObject = selection
 				.getFirstElement();
-		IResource item = Adapters.adapt(selectedObject, IResource.class);
-		return item;
+		return Adapters.adapt(selectedObject, IResource.class);
 	}
 
 	private IResource getEditorInputResource(ExecutionEvent event) {

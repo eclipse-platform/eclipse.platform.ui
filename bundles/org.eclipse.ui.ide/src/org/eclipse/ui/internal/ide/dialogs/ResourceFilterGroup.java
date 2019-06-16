@@ -1420,8 +1420,7 @@ class FilterTypeUtil {
 	static Object getValue(UIResourceFilterDescription filter, String property) {
 		if (property.equals(ID)) {
 			String id = filter.getFileInfoMatcherDescription().getId();
-			int index = getDescriptorIndex(id);
-			return index;
+			return getDescriptorIndex(id);
 		}
 		if (property.equals(MODE)) {
 			if ((filter.getType() & IResourceFilterDescription.INCLUDE_ONLY) != 0)
@@ -1833,8 +1832,7 @@ class FilterCopy extends UIResourceFilterDescription {
 			arg = descriptions;
 		}
 
-		FileInfoMatcherDescription desc = new FileInfoMatcherDescription(getId(), arg);
-		return desc;
+		return new FileInfoMatcherDescription(getId(), arg);
 	}
 }
 

@@ -125,8 +125,7 @@ public class FormTextModel {
 			taggedText = taggedText.replaceAll("&lt;", "&#060;"); //$NON-NLS-1$//$NON-NLS-2$
 			taggedText = taggedText.replaceAll("&gt;", "&#062;"); //$NON-NLS-1$//$NON-NLS-2$
 			taggedText = taggedText.replaceAll("&amp;", "&#038;"); //$NON-NLS-1$//$NON-NLS-2$
-			taggedText = taggedText.replaceAll("&([^#])", "&#038;$1"); //$NON-NLS-1$//$NON-NLS-2$
-			return taggedText;
+			return taggedText.replaceAll("&([^#])", "&#038;$1"); //$NON-NLS-1$//$NON-NLS-2$
 		} catch (Exception e) {
 			return pTaggedText;
 		}

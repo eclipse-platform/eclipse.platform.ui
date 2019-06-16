@@ -41,8 +41,7 @@ public class ToolItemElement extends ItemElement {
 		ToolItem item = getToolItem();
 		ToolBar parent = item.getParent();
 		if (parent != null) {
-			Element element = getElement(parent);
-			return element;
+			return getElement(parent);
 		}
 		return null;
 	}

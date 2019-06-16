@@ -679,10 +679,10 @@ public abstract class AbstractWorkingSetManager extends EventManager
 	}
 
 	private static List<WorkingSetDescriptor> getUniqueDescriptors(String symbolicName) {
-		final List<WorkingSetDescriptor> descriptors = WorkbenchPlugin.getDefault().getWorkingSetRegistry()
-				.getUpdaterDescriptorsForNamespace(symbolicName);
+		
 		// Note: WorkingSetRegistry never contains descriptors with same id
-		return descriptors;
+		return WorkbenchPlugin.getDefault().getWorkingSetRegistry()
+				.getUpdaterDescriptorsForNamespace(symbolicName);
 	}
 
 	private List<IWorkingSet> getWorkingSetsForId(String id) {

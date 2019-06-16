@@ -144,8 +144,7 @@ final class HandlerActivation implements IHandlerActivation {
 		// Check depth
 		final int thisDepth = this.getDepth();
 		final int thatDepth = activation.getDepth();
-		difference = thisDepth - thatDepth;
-		return difference;
+		return thisDepth - thatDepth;
 	}
 
 	@Override

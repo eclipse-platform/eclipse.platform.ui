@@ -512,8 +512,7 @@ public class IDEApplication implements IApplication, IExecutableExtension {
 
 		final Version ide_version = toMajorMinorVersion(WORKSPACE_CHECK_REFERENCE_BUNDLE_VERSION);
 		Version workspace_version = toMajorMinorVersion(version);
-		int versionCompareResult = workspace_version.compareTo(ide_version);
-		return versionCompareResult;
+		return workspace_version.compareTo(ide_version);
 	}
 
 	/**

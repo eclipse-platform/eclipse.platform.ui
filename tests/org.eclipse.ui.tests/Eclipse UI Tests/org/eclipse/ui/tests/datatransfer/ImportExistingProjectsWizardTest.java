@@ -1245,8 +1245,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 	private ProjectRecord[] getProjectsFromArchive(WizardProjectsImportPage newWizard, URL projectsArchive) {
 		newWizard.getProjectFromDirectoryRadio().setSelection(false);
 		newWizard.updateProjectsList(projectsArchive.getPath());
-		ProjectRecord[] projectRecords = newWizard.getProjectRecords();
-		return projectRecords;
+		return newWizard.getProjectRecords();
 	}
 
 	private List<String> getValidProjects(ProjectRecord[] projectRecords) {
@@ -1289,8 +1288,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 
 		dialog.getShell().setSize(Math.max(100, dialog.getShell().getSize().x),
 				100);
-		WizardProjectsImportPage wpip = (WizardProjectsImportPage) wizard
+		return (WizardProjectsImportPage) wizard
 				.getPage("wizardExternalProjectsPage");
-		return wpip;
 	}
 }

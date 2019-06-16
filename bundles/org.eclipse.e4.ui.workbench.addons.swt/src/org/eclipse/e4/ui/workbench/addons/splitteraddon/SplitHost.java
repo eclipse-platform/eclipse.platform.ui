@@ -46,8 +46,7 @@ public class SplitHost {
 	MCompositePart myPart;
 
 	List<MPart> getSubParts() {
-		List<MPart> childParts = ms.findElements(myPart, null, MPart.class);
-		return childParts;
+		return ms.findElements(myPart, null, MPart.class);
 	}
 
 	MPart findInnerActive(MCompositePart outer) {

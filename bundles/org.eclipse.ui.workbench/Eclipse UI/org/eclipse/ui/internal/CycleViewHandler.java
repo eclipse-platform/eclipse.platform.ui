@@ -121,8 +121,7 @@ public class CycleViewHandler extends FilteredTableBaseHandler {
 	private ParameterizedCommand getParametrizedCommand(String workbenchCommand) {
 		final ICommandService commandService = window.getWorkbench().getService(ICommandService.class);
 		final Command command = commandService.getCommand(workbenchCommand);
-		ParameterizedCommand parameterizedCommand = new ParameterizedCommand(command, null);
-		return parameterizedCommand;
+		return new ParameterizedCommand(command, null);
 	}
 
 	@Override

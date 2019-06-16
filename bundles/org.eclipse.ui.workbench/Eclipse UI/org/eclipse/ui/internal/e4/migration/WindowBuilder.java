@@ -276,8 +276,7 @@ public class WindowBuilder {
 		if (side == null) {
 			side = SideValue.BOTTOM;
 		}
-		MTrimBar bar = modelService.getTrim(window, side);
-		return bar;
+		return modelService.getTrim(window, side);
 	}
 
 	private void addEditors() {

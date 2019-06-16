@@ -219,9 +219,8 @@ public class MenuAdditionCacheEntry {
 					public Object compute(IEclipseContext context, String contextKey) {
 						ServiceLocator sl = new ServiceLocator();
 						sl.setContext(context);
-						DynamicMenuContributionItem item = new DynamicMenuContributionItem(MenuHelper.getId(child), sl,
+						return new DynamicMenuContributionItem(MenuHelper.getId(child), sl,
 								child);
-						return item;
 					}
 				};
 
@@ -418,9 +417,8 @@ public class MenuAdditionCacheEntry {
 					public Object compute(IEclipseContext context, String contextKey) {
 						ServiceLocator sl = new ServiceLocator();
 						sl.setContext(context);
-						DynamicToolBarContributionItem dynamicItem = new DynamicToolBarContributionItem(
+						return new DynamicToolBarContributionItem(
 								MenuHelper.getId(child), sl, child);
-						return dynamicItem;
 					}
 				};
 

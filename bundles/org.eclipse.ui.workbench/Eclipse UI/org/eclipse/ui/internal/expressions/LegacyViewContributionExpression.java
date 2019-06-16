@@ -72,8 +72,7 @@ public final class LegacyViewContributionExpression extends WorkbenchWindowExpre
 	@Override
 	protected int computeHashCode() {
 		int hashCode = HASH_INITIAL * HASH_FACTOR + hashCode(getWindow());
-		hashCode = hashCode * HASH_FACTOR + hashCode(activePartId);
-		return hashCode;
+		return hashCode * HASH_FACTOR + hashCode(activePartId);
 	}
 
 	@Override

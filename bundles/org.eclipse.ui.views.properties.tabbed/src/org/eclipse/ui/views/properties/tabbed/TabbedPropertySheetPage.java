@@ -1004,9 +1004,8 @@ public class TabbedPropertySheetPage
 	public ITabDescriptor[] getActiveTabs() {
 		List elements = tabbedPropertyViewer.getElements();
 		if (elements != null && elements.size() > 0) {
-			ITabDescriptor[] tabDescriptors = (ITabDescriptor[]) elements
+			return (ITabDescriptor[]) elements
 					.toArray(new ITabDescriptor[0]);
-			return tabDescriptors;
 		}
 		return new ITabDescriptor[] {};
 	}

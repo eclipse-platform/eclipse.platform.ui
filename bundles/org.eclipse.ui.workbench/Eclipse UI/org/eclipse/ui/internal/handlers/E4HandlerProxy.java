@@ -92,8 +92,7 @@ public class E4HandlerProxy implements IHandler2, IHandlerListener, IElementUpda
 				appContext);
 		if (handler != null) {
 			if (handler.isHandled()) {
-				final Object returnValue = handler.execute(event);
-				return returnValue;
+				return handler.execute(event);
 			}
 			throw new NotHandledException("Handler " + handler //$NON-NLS-1$
 					+ " is not handled for for command " + command); //$NON-NLS-1$

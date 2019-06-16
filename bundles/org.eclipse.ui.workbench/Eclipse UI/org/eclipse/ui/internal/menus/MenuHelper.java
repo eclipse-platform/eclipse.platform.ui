@@ -675,7 +675,7 @@ public class MenuHelper {
 			return null;
 		}
 
-		IContextFunction generator = new ContextFunction() {
+		return new ContextFunction() {
 			private ActionDescriptor getDescriptor(IEclipseContext context) {
 				switch (type) {
 				case ActionDescriptor.T_WORKBENCH:
@@ -720,7 +720,6 @@ public class MenuHelper {
 				return obj;
 			}
 		};
-		return generator;
 	}
 
 	public static MMenu createMenu(MenuManager manager) {

@@ -73,8 +73,7 @@ public class FormImages {
 			int hash = 0;
 			for (RGB fRGB : fRGBs)
 				hash = hash * 7 + fRGB.hashCode();
-			hash = hash * 7 + fLength;
-			return hash;
+			return hash * 7 + fLength;
 		}
 	}
 
@@ -104,8 +103,7 @@ public class FormImages {
 		public int hashCode() {
 			int hash = super.hashCode();
 			hash = hash * 7 + Integer.valueOf(fTheight).hashCode();
-			hash = hash * 7 + Integer.valueOf(fMarginHeight).hashCode();
-			return hash;
+			return hash * 7 + Integer.valueOf(fMarginHeight).hashCode();
 		}
 
 		@Override
@@ -273,8 +271,7 @@ public class FormImages {
 		public int hashCode() {
 			int hash = super.hashCode();
 			hash = hash * 7 + Integer.hashCode(fTheight);
-			hash = hash * 7 + Integer.hashCode(fMarginHeight);
-			return hash;
+			return hash * 7 + Integer.hashCode(fMarginHeight);
 		}
 
 		@Override

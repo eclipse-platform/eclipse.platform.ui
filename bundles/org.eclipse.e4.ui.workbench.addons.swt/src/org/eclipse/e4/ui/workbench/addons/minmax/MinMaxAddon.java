@@ -1042,9 +1042,7 @@ public class MinMaxAddon {
 		if (persp != null) {
 			cacheId = persp.getElementId();
 		}
-		String cacheInfo = minMaxAddon.getPersistedState().get(cacheId);
-
-		return cacheInfo;
+		return minMaxAddon.getPersistedState().get(cacheId);
 	}
 
 	private int getCachedIndex(MUIElement element) {
@@ -1092,8 +1090,6 @@ public class MinMaxAddon {
 			int stackCenterX = stackBounds.x + (stackBounds.width / 2);
 			side = stackCenterX < winCenterX ? SideValue.LEFT : SideValue.RIGHT;
 		}
-		MTrimBar bar = modelService.getTrim(window, side);
-
-		return bar;
+		return modelService.getTrim(window, side);
 	}
 }

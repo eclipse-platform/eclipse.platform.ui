@@ -39,8 +39,7 @@ public class ConfigurationElementAdapter extends ModelHandlerBase implements IAd
 	@Override
 	public Object[] getChildren(Object element, String id) {
 		IConfigurationElement ice = (IConfigurationElement) element;
-		IConfigurationElement[] kids = ice.getChildren(id);
-		return kids;
+		return ice.getChildren(id);
 	}
 
 	@Override

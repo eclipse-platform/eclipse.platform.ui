@@ -62,8 +62,7 @@ public class PreferenceElement extends QuickAccessElement {
 	public ImageDescriptor getImageDescriptor() {
 		Image image = preferenceNode.getLabelImage();
 		if (image != null) {
-			ImageDescriptor descriptor = ImageDescriptor.createFromImage(image);
-			return descriptor;
+			return ImageDescriptor.createFromImage(image);
 		}
 		return null;
 	}

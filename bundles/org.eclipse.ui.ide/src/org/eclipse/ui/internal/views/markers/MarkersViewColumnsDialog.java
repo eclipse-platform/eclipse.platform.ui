@@ -66,8 +66,7 @@ public class MarkersViewColumnsDialog extends ViewerColumnsDialog<FieldEntry> {
 
 	@Override
 	protected Control createDialogArea(Composite parent) {
-		Control control = super.createDialogArea(parent);
-		return control;
+		return super.createDialogArea(parent);
 	}
 
 	@Override

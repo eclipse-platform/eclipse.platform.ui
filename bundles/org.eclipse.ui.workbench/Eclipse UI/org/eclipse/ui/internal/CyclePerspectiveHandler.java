@@ -49,16 +49,14 @@ public class CyclePerspectiveHandler extends FilteredTableBaseHandler {
 	protected ParameterizedCommand getBackwardCommand() {
 		final ICommandService commandService = window.getWorkbench().getService(ICommandService.class);
 		final Command command = commandService.getCommand(IWorkbenchCommandConstants.WINDOW_PREVIOUS_PERSPECTIVE);
-		ParameterizedCommand commandBack = new ParameterizedCommand(command, null);
-		return commandBack;
+		return new ParameterizedCommand(command, null);
 	}
 
 	@Override
 	protected ParameterizedCommand getForwardCommand() {
 		final ICommandService commandService = window.getWorkbench().getService(ICommandService.class);
 		final Command command = commandService.getCommand(IWorkbenchCommandConstants.WINDOW_NEXT_PERSPECTIVE);
-		ParameterizedCommand commandF = new ParameterizedCommand(command, null);
-		return commandF;
+		return new ParameterizedCommand(command, null);
 	}
 
 	@Override

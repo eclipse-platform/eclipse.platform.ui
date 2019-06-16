@@ -143,7 +143,6 @@ public abstract class AbstractPartRenderer {
 		}
 
 		int val = -1;
-		val = Integer.parseInt(overrideStr);
-		return val;
+		return Integer.parseInt(overrideStr);
 	}
 }

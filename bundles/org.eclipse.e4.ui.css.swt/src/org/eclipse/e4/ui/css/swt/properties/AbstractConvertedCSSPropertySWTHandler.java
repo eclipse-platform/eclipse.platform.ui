@@ -40,8 +40,7 @@ public abstract class AbstractConvertedCSSPropertySWTHandler extends
 		Object toType = getToType(value);
 		if (toType != null) {
 			try {
-				String newValue = engine.convert(value, toType, null);
-				return newValue;
+				return engine.convert(value, toType, null);
 			} catch (Exception e) {
 
 			}

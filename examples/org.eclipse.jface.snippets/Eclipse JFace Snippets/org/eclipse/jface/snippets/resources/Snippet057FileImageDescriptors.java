@@ -70,8 +70,7 @@ public class Snippet057FileImageDescriptors {
 				if (registry == null) {
 					registry = new ImageRegistry(shell.getDisplay());
 				}
-				ImageDescriptor desc = registry.getDescriptor(path);
-				return desc;
+				return registry.getDescriptor(path);
 			}
 
 			@Override

@@ -426,8 +426,7 @@ public class ModelServiceImpl implements EModelService {
 			int searchFlags, Selector matcher) {
 		LinkedHashSet<T> elements = new LinkedHashSet<>();
 		findElementsRecursive(searchRoot, clazz, matcher, elements, searchFlags);
-		ArrayList<T> elementsList = new ArrayList<>(elements);
-		return elementsList;
+		return new ArrayList<>(elements);
 	}
 
 	private <T> Iterable<T> findPerspectiveElements(MUIElement searchRoot, String id,
@@ -994,8 +993,7 @@ public class ModelServiceImpl implements EModelService {
 	public MPerspective getActivePerspective(MWindow window) {
 		List<MPerspectiveStack> pStacks = findElements(window, null, MPerspectiveStack.class);
 		if (pStacks.size() == 1) {
-			MPerspective perspective = pStacks.get(0).getSelectedElement();
-			return perspective;
+			return pStacks.get(0).getSelectedElement();
 		}
 
 		return null;

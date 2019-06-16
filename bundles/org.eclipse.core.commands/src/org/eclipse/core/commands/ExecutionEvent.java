@@ -177,8 +177,7 @@ public final class ExecutionEvent {
 				throw new ExecutionException("Command does not have a value converter"); //$NON-NLS-1$
 			}
 			final String stringValue = getParameter(parameterId);
-			final Object objectValue = valueConverter.convertToObject(stringValue);
-			return objectValue;
+			return valueConverter.convertToObject(stringValue);
 		} catch (final NotDefinedException e) {
 			throw new ExecutionException("Command is not defined", e); //$NON-NLS-1$
 		} catch (final ParameterValueConversionException e) {

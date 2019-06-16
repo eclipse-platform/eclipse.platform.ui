@@ -865,8 +865,7 @@ public final class URI
 		uri = encode(uri, PATH_CHAR_HI, PATH_CHAR_LO, false);
 		if (file.isAbsolute())
 		{
-			URI result = createURI((uri.charAt(0) == SEGMENT_SEPARATOR ? "file:" : "file:/") + uri);
-			return result;
+			return createURI((uri.charAt(0) == SEGMENT_SEPARATOR ? "file:" : "file:/") + uri);
 		}
 		else
 		{
@@ -1004,8 +1003,7 @@ public final class URI
 		{
 			pathName = encode(pathName, PATH_CHAR_HI, PATH_CHAR_LO, false);
 		}
-		URI result = createURI((pathName.charAt(0) == SEGMENT_SEPARATOR ? unrootedBase : rootedBase) + pathName);
-		return result;
+		return createURI((pathName.charAt(0) == SEGMENT_SEPARATOR ? unrootedBase : rootedBase) + pathName);
 	}
 
 	// Private constructor for use of static factory methods.

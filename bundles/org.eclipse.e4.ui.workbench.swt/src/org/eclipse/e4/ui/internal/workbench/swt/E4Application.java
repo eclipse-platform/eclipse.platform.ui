@@ -383,9 +383,7 @@ public class E4Application implements IApplication {
 		eclipseContext.set(IModelResourceHandler.class, handler);
 
 		Resource resource = handler.loadMostRecentModel();
-		theApp = (MApplication) resource.getContents().get(0);
-
-		return theApp;
+		return (MApplication) resource.getContents().get(0);
 	}
 
 	/**

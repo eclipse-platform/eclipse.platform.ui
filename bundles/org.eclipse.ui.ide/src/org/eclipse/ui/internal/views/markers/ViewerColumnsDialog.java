@@ -748,8 +748,7 @@ abstract class ViewerColumnsDialog<T> extends ViewerSettingsAndStatusDialog {
 			final int prime = 31;
 			int result = 1;
 			result = prime * result + Objects.hashCode(key);
-			result = prime * result + keyIndex;
-			return result;
+			return prime * result + keyIndex;
 		}
 
 		@Override

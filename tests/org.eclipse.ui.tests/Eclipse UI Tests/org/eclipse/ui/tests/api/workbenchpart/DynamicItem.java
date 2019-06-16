@@ -70,8 +70,7 @@ public class DynamicItem extends CompoundContributionItem {
 
 	@Override
 	protected IContributionItem[] getContributionItems() {
-		IContributionItem[] items = { new ActionContributionItem(action1),
+		return new IContributionItem[] { new ActionContributionItem(action1),
 				new ActionContributionItem(action2) };
-		return items;
 	}
 }

@@ -536,8 +536,7 @@ public class ModeledPageLayout implements IPageLayout {
 		if (found.size() > 0)
 			return (MUIElement) found.get(0);
 
-		MUIElement foundElement = modelService.find(id, toSearch);
-		return foundElement;
+		return modelService.find(id, toSearch);
 	}
 
 	private MPart findPart(MUIElement toSearch, String id) {

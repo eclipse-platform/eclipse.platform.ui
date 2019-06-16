@@ -47,8 +47,7 @@ public class Bug125792Test extends UITestCase {
 	private ICommandService getCommandService() {
 		Object serviceObject = getWorkbench().getAdapter(ICommandService.class);
 		if (serviceObject != null) {
-			ICommandService service = (ICommandService) serviceObject;
-			return service;
+			return (ICommandService) serviceObject;
 		}
 		return null;
 	}

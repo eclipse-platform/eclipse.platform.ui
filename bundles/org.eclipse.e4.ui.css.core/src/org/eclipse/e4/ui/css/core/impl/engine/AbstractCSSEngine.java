@@ -288,8 +288,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	public CSSStyleDeclaration parseStyleDeclaration(InputSource source) throws IOException {
 		checkInputSource(source);
 		CSSParser parser = makeCSSParser();
-		CSSStyleDeclaration styleDeclaration = parser.parseStyleDeclaration(source);
-		return styleDeclaration;
+		return parser.parseStyleDeclaration(source);
 	}
 
 	/*--------------- Parse CSS Selector -----------------*/
@@ -318,8 +317,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	public SelectorList parseSelectors(InputSource source) throws IOException {
 		checkInputSource(source);
 		CSSParser parser = makeCSSParser();
-		SelectorList list = parser.parseSelectors(source);
-		return list;
+		return parser.parseSelectors(source);
 	}
 
 	/*--------------- Parse CSS Property Value-----------------*/

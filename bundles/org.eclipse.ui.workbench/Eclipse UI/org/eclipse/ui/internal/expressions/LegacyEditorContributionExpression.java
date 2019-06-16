@@ -72,8 +72,7 @@ public final class LegacyEditorContributionExpression extends WorkbenchWindowExp
 	@Override
 	protected int computeHashCode() {
 		int hashCode = HASH_INITIAL * HASH_FACTOR + hashCode(getWindow());
-		hashCode = hashCode * HASH_FACTOR + hashCode(activeEditorId);
-		return hashCode;
+		return hashCode * HASH_FACTOR + hashCode(activeEditorId);
 	}
 
 	@Override

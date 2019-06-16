@@ -847,8 +847,7 @@ public class TestHarnessImpl extends ApplicationElementImpl implements
 	 */
 	public NotificationChain basicSetParent(
 			MElementContainer<MUIElement> newParent, NotificationChain msgs) {
-		msgs = eBasicSetContainer((InternalEObject)newParent, MTestPackage.TEST_HARNESS__PARENT, msgs);
-		return msgs;
+		return eBasicSetContainer((InternalEObject)newParent, MTestPackage.TEST_HARNESS__PARENT, msgs);
 	}
 
 	/**

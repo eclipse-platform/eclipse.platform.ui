@@ -157,8 +157,7 @@ public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 
 	private IExtensionPoint getExtensionPoint() {
 		IExtensionRegistry reg = Platform.getExtensionRegistry();
-		IExtensionPoint ep = reg.getExtensionPoint(EXT_ID_SERVICES);
-		return ep;
+		return reg.getExtensionPoint(EXT_ID_SERVICES);
 	}
 
 	public AbstractSourceProvider[] getSourceProviders() {

@@ -122,8 +122,7 @@ final class ChangeQueue {
 	 * @return the first change
 	 */
 	public synchronized Change dequeue() {
-		Change result = queue.removeFirst();
-		return result;
+		return queue.removeFirst();
 	}
 
 	/**

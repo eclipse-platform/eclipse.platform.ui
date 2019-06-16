@@ -118,14 +118,12 @@ public class DragTestSuite extends AutoTestSuite {
 	}
 
 	private TestDropLocation[] getCommonDropTargets(IWorkbenchWindowProvider dragSource) {
-		TestDropLocation[] targets = {
+		return new TestDropLocation[] {
 			// Test dragging to the edges of the workbench window
 			new WindowDropTarget(dragSource, SWT.TOP),
 			new WindowDropTarget(dragSource, SWT.BOTTOM),
 			new WindowDropTarget(dragSource, SWT.LEFT),
 			new WindowDropTarget(dragSource, SWT.RIGHT) };
-
-		return targets;
 	}
 
 	/**
@@ -140,7 +138,7 @@ public class DragTestSuite extends AutoTestSuite {
 		String resNav = IPageLayout.ID_RES_NAV;
 		String probView = IPageLayout.ID_PROBLEM_VIEW;
 
-		TestDropLocation[] targets = new TestDropLocation[] {
+		return new TestDropLocation[] {
 			// Editor area
 			new EditorAreaDropTarget(dragSource, SWT.LEFT),
 			new EditorAreaDropTarget(dragSource, SWT.RIGHT),
@@ -171,8 +169,6 @@ public class DragTestSuite extends AutoTestSuite {
 			new ViewTabDropTarget(dragSource, probView),
 			new ViewTitleDropTarget(dragSource, probView),
 			};
-
-		return targets;
 	}
 
 	/**
@@ -183,15 +179,13 @@ public class DragTestSuite extends AutoTestSuite {
 	 * @since 3.1
 	 */
 	private TestDropLocation[] getDetachedWindowDropTargets(IWorkbenchWindowProvider dragSource) {
-		TestDropLocation[] targets = new TestDropLocation[] {
+		return new TestDropLocation[] {
 			// Editor area
 			new ViewDropTarget(dragSource, DragDropPerspectiveFactory.dropViewId1, SWT.CENTER),
 			new ViewDropTarget(dragSource, DragDropPerspectiveFactory.dropViewId3, SWT.CENTER),
 			new ViewTabDropTarget(dragSource, DragDropPerspectiveFactory.dropViewId1),
 			new DetachedDropTarget()
 		};
-
-		return targets;
 	}
 
 	private TestDropLocation[] getEditorDropTargets(IWorkbenchWindowProvider originatingWindow) {

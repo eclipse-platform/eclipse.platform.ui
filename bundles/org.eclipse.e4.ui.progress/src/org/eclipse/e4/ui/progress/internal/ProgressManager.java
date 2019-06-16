@@ -787,8 +787,7 @@ public class ProgressManager extends ProgressProvider {
 	 */
 	ImageData[] getImageData(URL fileSystemPath, ImageLoader loader) {
 		try (InputStream stream = fileSystemPath.openStream()) {
-			ImageData[] result = loader.load(stream);
-			return result;
+			return loader.load(stream);
 		} catch (FileNotFoundException exception) {
 			ProgressManagerUtil.logException(exception);
 			return null;

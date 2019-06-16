@@ -237,8 +237,7 @@ public class ResourceHandler implements IModelResourceHandler {
 	}
 
 	private File getWorkbenchSaveLocation() {
-		File workbenchData = new File(getBaseLocation(), "workbench.xmi"); //$NON-NLS-1$
-		return workbenchData;
+		return new File(getBaseLocation(), "workbench.xmi"); //$NON-NLS-1$
 	}
 
 	private File getBaseLocation() {
@@ -250,8 +249,7 @@ public class ResourceHandler implements IModelResourceHandler {
 		}
 		baseLocation = new File(baseLocation, ".metadata"); //$NON-NLS-1$
 		baseLocation = new File(baseLocation, ".plugins"); //$NON-NLS-1$
-		baseLocation = new File(baseLocation, "org.eclipse.e4.workbench"); //$NON-NLS-1$
-		return baseLocation;
+		return new File(baseLocation, "org.eclipse.e4.workbench"); //$NON-NLS-1$
 	}
 
 	// Ensures that even models with error are loaded!

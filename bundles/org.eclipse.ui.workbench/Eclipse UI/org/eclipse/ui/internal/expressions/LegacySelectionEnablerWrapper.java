@@ -74,8 +74,7 @@ public final class LegacySelectionEnablerWrapper extends WorkbenchWindowExpressi
 	@Override
 	protected int computeHashCode() {
 		int hashCode = HASH_INITIAL * HASH_FACTOR + hashCode(getWindow());
-		hashCode = hashCode * HASH_FACTOR + hashCode(enabler);
-		return hashCode;
+		return hashCode * HASH_FACTOR + hashCode(enabler);
 	}
 
 	@Override

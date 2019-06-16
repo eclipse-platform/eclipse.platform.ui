@@ -333,8 +333,7 @@ public class TimeoutDumpTimer extends TimerTask {
 		if (!outputDirectory.exists()) {
 			outputDirectory.mkdirs();
 		}
-		String filename = outputDirectory.getAbsolutePath() + "/dump_screen" + num + ".png";
-		return filename;
+		return outputDirectory.getAbsolutePath() + "/dump_screen" + num + ".png";
 	}
 
 	private static void logInfo(String message) {

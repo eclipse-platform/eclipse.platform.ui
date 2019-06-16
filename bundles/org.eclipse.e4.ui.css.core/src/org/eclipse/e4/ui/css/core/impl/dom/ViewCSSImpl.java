@@ -72,8 +72,7 @@ public class ViewCSSImpl implements ViewCSS, ExtendedDocumentCSS.StyleSheetChang
 	 */
 	@Override
 	public CSSStyleDeclaration getComputedStyle(Element elt, String pseudoElt) {
-		CSSStyleDeclaration styleDeclaration = getComputedStyle(getCombinedRules(), elt, pseudoElt);
-		return styleDeclaration;
+		return getComputedStyle(getCombinedRules(), elt, pseudoElt);
 	}
 
 	/**

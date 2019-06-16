@@ -163,9 +163,7 @@ public final class OpenResourceHandler extends Action implements IHandler,
 			return null;
 		}
 
-		final Object[] result = dialog.getResult();
-
-		return result;
+		return dialog.getResult();
 	}
 
 	@Override

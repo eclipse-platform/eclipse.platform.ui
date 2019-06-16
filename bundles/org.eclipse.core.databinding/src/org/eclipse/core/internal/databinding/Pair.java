@@ -47,8 +47,7 @@ public class Pair {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + Objects.hashCode(a);
-		result = prime * result + Objects.hashCode(b);
-		return result;
+		return prime * result + Objects.hashCode(b);
 	}
 
 	@Override

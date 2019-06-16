@@ -154,8 +154,7 @@ public class AbstractMultiEditorTest extends UITestCase {
 			inputs[f] = new FileEditorInput(f1);
 		}
 
-		MultiEditorInput input = new MultiEditorInput(ids, inputs);
-		return input;
+		return new MultiEditorInput(ids, inputs);
 	}
 
 	/**

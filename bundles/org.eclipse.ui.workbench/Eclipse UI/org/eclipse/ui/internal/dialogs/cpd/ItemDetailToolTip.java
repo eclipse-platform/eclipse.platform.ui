@@ -400,8 +400,6 @@ class ItemDetailToolTip extends NameAndDescriptionToolTip {
 			}
 		}
 
-		Binding[] bindings = foundBindings.toArray(new Binding[foundBindings.size()]);
-
-		return bindings;
+		return foundBindings.toArray(new Binding[foundBindings.size()]);
 	}
 }

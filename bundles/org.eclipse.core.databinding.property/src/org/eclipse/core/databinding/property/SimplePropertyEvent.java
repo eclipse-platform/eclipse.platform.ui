@@ -102,7 +102,6 @@ public final class SimplePropertyEvent<S, D extends IDiff> extends EventObject {
 		int hash = 17;
 		hash = hash * 37 + getSource().hashCode();
 		hash = hash * 37 + property.hashCode();
-		hash = hash * 37 + Objects.hashCode(diff);
-		return hash;
+		return hash * 37 + Objects.hashCode(diff);
 	}
 }

@@ -69,12 +69,12 @@ final class ContributionRoot implements IContributionRoot {
 	 */
 	String createIdentifierId(IContributionItem item) {
 		String namespace = factory.getNamespace();
-		String identifierID = namespace != null ? namespace + '/' + item.getId() : null; // create the activity
+		
 																							// identifier ID. If
 																							// this factory doesn't have
 																							// a namespace
 																							// it will be null.
-		return identifierID;
+		return namespace != null ? namespace + '/' + item.getId() : null;
 	}
 
 	public List<IContributionItem> getItems() {

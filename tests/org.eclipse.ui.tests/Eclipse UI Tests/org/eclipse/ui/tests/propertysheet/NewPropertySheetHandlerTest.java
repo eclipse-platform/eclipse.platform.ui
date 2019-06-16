@@ -64,9 +64,8 @@ public class NewPropertySheetHandlerTest extends AbstractPropertySheetTest {
 		IEvaluationContext evalContext = handlerService.getCurrentState();
 		Command command = commandService
 				.getCommand(TestNewPropertySheetHandler.ID);
-		ExecutionEvent executionEvent = new ExecutionEvent(command,
+		return new ExecutionEvent(command,
 				new HashMap<>(), null, evalContext);
-		return executionEvent;
 	}
 
 	/**

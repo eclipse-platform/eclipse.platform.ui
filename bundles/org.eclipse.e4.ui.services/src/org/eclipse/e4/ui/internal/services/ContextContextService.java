@@ -164,8 +164,7 @@ public class ContextContextService implements EContextService {
 
 	@Override
 	public Context getContext(String id) {
-		Context ctx = contextManager.getContext(id);
-		return ctx;
+		return contextManager.getContext(id);
 	}
 
 }

@@ -76,9 +76,8 @@ public abstract class AbstractPropertySheetTest extends UITestCase {
 			if (contributionItem.getId() != null
 					&& contributionItem.getId().startsWith(
 							PIN_PROPERTY_SHEET_ACTION_ID_PREFIX)) {
-				IAction action = ((ActionContributionItem) contributionItem)
+				return ((ActionContributionItem) contributionItem)
 						.getAction();
-				return action;
 			}
 		}
 		return null;

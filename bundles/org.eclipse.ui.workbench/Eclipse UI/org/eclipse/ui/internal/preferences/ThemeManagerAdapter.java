@@ -43,9 +43,7 @@ public class ThemeManagerAdapter extends PropertyMapAdapter {
 
 	@Override
 	public Set keySet() {
-		Set result = ThemeAdapter.getKeySet(manager.getCurrentTheme());
-
-		return result;
+		return ThemeAdapter.getKeySet(manager.getCurrentTheme());
 	}
 
 	@Override

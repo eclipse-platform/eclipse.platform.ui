@@ -74,8 +74,7 @@ public class TestFactoryImpl extends EFactoryImpl implements MTestFactory {
 	 */
 	@Override
 	public MTestHarness createTestHarness() {
-		TestHarnessImpl testHarness = new TestHarnessImpl();
-		return testHarness;
+		return new TestHarnessImpl();
 	}
 
 	/**

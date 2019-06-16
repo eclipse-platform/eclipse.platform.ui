@@ -103,8 +103,7 @@ public class StackDropAgent extends DropAgent {
 		Rectangle ctfBounds = theCTF.getBounds();
 		ctfBounds.height = theCTF.getTabHeight();
 
-		Rectangle displayBounds = Display.getCurrent().map(theCTF.getParent(), null, ctfBounds);
-		return displayBounds;
+		return Display.getCurrent().map(theCTF.getParent(), null, ctfBounds);
 	}
 
 	/**

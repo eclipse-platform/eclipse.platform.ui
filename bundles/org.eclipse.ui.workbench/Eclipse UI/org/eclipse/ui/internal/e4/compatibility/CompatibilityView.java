@@ -202,7 +202,7 @@ public class CompatibilityView extends CompatibilityPart {
 					}
 				}
 				actionBars.updateActionBars();
-				final Runnable dispose = () -> actionBuilder.dispose();
+				Runnable dispose = () -> actionBuilder.dispose();
 				return dispose;
 			}
 		};

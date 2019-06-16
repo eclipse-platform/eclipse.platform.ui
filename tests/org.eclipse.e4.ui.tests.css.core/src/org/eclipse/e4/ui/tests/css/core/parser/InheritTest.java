@@ -92,8 +92,7 @@ public class InheritTest {
 		DocumentCSSImpl docCss = new DocumentCSSImpl();
 		docCss.addStyleSheet(styleSheet);
 
-		// mock engine
-		CSSEngineImpl engine = new CSSEngineImpl(docCss) {
+		return new CSSEngineImpl(docCss) {
 			{
 				registerCSSPropertyHandlerProvider(new TestHandlerProvider());
 			}
@@ -111,8 +110,6 @@ public class InheritTest {
 				return super.getElement(element);
 			}
 		};
-
-		return engine;
 	}
 
 	/**

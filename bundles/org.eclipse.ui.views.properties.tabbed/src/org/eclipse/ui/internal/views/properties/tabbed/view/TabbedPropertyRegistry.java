@@ -283,9 +283,8 @@ public class TabbedPropertyRegistry {
 					selection);
 		}
 
-		ITabDescriptor[] result = filterTabDescriptors(allDescriptors, part,
+		return filterTabDescriptors(allDescriptors, part,
 				selection);
-		return result;
 	}
 
 	/**

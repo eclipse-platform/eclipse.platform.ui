@@ -48,8 +48,7 @@ public class SWTElementHelpers {
 		Constructor<?> constructor = classElement
 				.getConstructor(ELEMENT_CONSTRUCTOR_PARAM);
 		Object[] o = { widget, engine };
-		Element newElement = (Element) constructor.newInstance(o);
-		return newElement;
+		return (Element) constructor.newInstance(o);
 	}
 
 	/**

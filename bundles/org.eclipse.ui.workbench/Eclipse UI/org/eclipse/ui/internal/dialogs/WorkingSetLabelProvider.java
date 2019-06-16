@@ -50,8 +50,7 @@ public class WorkingSetLabelProvider extends LabelProvider {
 			return null;
 		}
 
-		Image icon = (Image) images.get(imageDescriptor);
-		return icon;
+		return (Image) images.get(imageDescriptor);
 	}
 
 	@Override

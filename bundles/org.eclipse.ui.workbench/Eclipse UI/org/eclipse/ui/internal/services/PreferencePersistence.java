@@ -207,9 +207,7 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 		}
 
 		final Command command = commandService.getCommand(commandId);
-		final ParameterizedCommand parameterizedCommand = readParameters(memento, warningsToLog, command);
-
-		return parameterizedCommand;
+		return readParameters(memento, warningsToLog, command);
 	}
 
 	/**

@@ -153,8 +153,7 @@ public class ZoomTestCase extends UITestCase {
 	// show the given view as a regular view
 	protected IViewPart showRegularView(String id, int mode) {
 		try {
-			IViewPart view = page.showView(id, null, mode);
-			return view;
+			return page.showView(id, null, mode);
 		} catch (PartInitException e) {
 		}
 		return null;

@@ -99,16 +99,14 @@ public class CyclePageHandler extends FilteredTableBaseHandler {
 	protected ParameterizedCommand getBackwardCommand() {
 		final ICommandService commandService = window.getWorkbench().getService(ICommandService.class);
 		final Command command = commandService.getCommand(IWorkbenchCommandConstants.NAVIGATE_PREVIOUS_PAGE);
-		ParameterizedCommand commandF = new ParameterizedCommand(command, null);
-		return commandF;
+		return new ParameterizedCommand(command, null);
 	}
 
 	@Override
 	protected ParameterizedCommand getForwardCommand() {
 		final ICommandService commandService = window.getWorkbench().getService(ICommandService.class);
 		final Command command = commandService.getCommand(IWorkbenchCommandConstants.NAVIGATE_NEXT_PAGE);
-		ParameterizedCommand commandF = new ParameterizedCommand(command, null);
-		return commandF;
+		return new ParameterizedCommand(command, null);
 	}
 
 	@Override

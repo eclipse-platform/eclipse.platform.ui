@@ -186,8 +186,7 @@ public class ExtensionFactory implements IExecutableExtensionFactory, IExecutabl
 			return configure(new ContentTypesPreferencePage());
 		}
 		if (SHOW_IN_CONTRIBUTION.equals(id)) {
-			ShowInMenu showInMenu = new ShowInMenu();
-			return showInMenu;
+			return new ShowInMenu();
 		}
 
 		throw new CoreException(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0,

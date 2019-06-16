@@ -132,8 +132,7 @@ public class ActionSetRegistry implements IExtensionChangeHandler {
 		}
 		actionSets.add(actionSetId);
 
-		ActionSetPartAssociation association = new ActionSetPartAssociation(partId, actionSetId);
-		return association;
+		return new ActionSetPartAssociation(partId, actionSetId);
 	}
 
 	/**

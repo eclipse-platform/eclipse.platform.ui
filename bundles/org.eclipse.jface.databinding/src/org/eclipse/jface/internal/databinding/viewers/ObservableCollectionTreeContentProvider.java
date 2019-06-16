@@ -269,8 +269,7 @@ public abstract class ObservableCollectionTreeContentProvider<E> implements ITre
 	}
 
 	protected TreeNode getExistingNode(E element) {
-		TreeNode node = elementNodes.get(element);
-		return node;
+		return elementNodes.get(element);
 	}
 
 	protected boolean isViewerDisposed() {

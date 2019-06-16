@@ -122,9 +122,8 @@ public class ModelAssemblerFragmentOrderingTests {
 		fragment.getElements().addAll(contributedElements);
 		fragment.setPositionInList(positionInList);
 		fragmentsContainer.getFragments().add(fragment);
-		ModelFragmentWrapper wrapper = new ModelFragmentWrapper(fragmentsContainer, fragment, contributorName,
+		return new ModelFragmentWrapper(fragmentsContainer, fragment, contributorName,
 				contributorURI, checkExists);
-		return wrapper;
 	}
 
 	/**

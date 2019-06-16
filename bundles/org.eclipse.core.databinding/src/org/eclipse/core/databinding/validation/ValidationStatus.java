@@ -122,8 +122,7 @@ public class ValidationStatus extends Status {
 
 		result = prime * result + Objects.hashCode(message);
 		result = prime * result + severity;
-		result = prime * result + Objects.hashCode(throwable);
-		return result;
+		return prime * result + Objects.hashCode(throwable);
 	}
 
 	/**

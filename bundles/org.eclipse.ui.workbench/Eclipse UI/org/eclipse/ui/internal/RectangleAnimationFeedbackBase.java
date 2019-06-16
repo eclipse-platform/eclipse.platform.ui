@@ -84,12 +84,10 @@ public abstract class RectangleAnimationFeedbackBase extends AnimationFeedbackBa
 	public static Rectangle interpolate(Rectangle start, Rectangle end, double amount) {
 		double initialWeight = 1.0 - amount;
 
-		Rectangle result = new Rectangle((int) (start.x * initialWeight + end.x * amount),
+		return new Rectangle((int) (start.x * initialWeight + end.x * amount),
 				(int) (start.y * initialWeight + end.y * amount),
 				(int) (start.width * initialWeight + end.width * amount),
 				(int) (start.height * initialWeight + end.height * amount));
-
-		return result;
 	}
 
 	public List getStartRects() {

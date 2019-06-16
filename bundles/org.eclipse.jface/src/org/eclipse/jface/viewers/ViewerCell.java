@@ -383,8 +383,7 @@ public class ViewerCell {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + columnIndex;
-		result = prime * result + Objects.hashCode(row);
-		return result;
+		return prime * result + Objects.hashCode(row);
 	}
 
 	@Override

@@ -201,8 +201,7 @@ public class ContentProposalAdapterTest {
 	}
 
 	private IContentProposalProvider createContentProposalProvider() {
-		SimpleContentProposalProvider proposalProvider = new SimpleContentProposalProvider(getProposals());
-		return proposalProvider;
+		return new SimpleContentProposalProvider(getProposals());
 	}
 
 	private String[] getProposals() {

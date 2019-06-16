@@ -277,8 +277,7 @@ public class AggregateWorkingSet extends AbstractWorkingSet implements IAggregat
 
 	@Override
 	public int hashCode() {
-		int hashCode = getName().hashCode() & java.util.Arrays.hashCode(getComponentsInternal());
-		return hashCode;
+		return getName().hashCode() & java.util.Arrays.hashCode(getComponentsInternal());
 	}
 
 	@Override

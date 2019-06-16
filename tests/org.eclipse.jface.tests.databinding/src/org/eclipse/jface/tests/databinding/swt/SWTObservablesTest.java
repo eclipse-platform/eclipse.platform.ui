@@ -317,9 +317,8 @@ public class SWTObservablesTest extends AbstractSWTTestCase {
 	 */
 	private IPropertyObservable<?> getPropertyObservable(ISWTObservable observable) {
 		IDecoratingObservable decoratingObservable = (IDecoratingObservable) observable;
-		IPropertyObservable<?> propertyObservable = (IPropertyObservable<?>) decoratingObservable
+		return (IPropertyObservable<?>) decoratingObservable
 				.getDecorated();
-		return propertyObservable;
 	}
 
 	@Test

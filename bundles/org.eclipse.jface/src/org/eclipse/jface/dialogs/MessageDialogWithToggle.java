@@ -735,8 +735,7 @@ public class MessageDialogWithToggle extends MessageDialog {
 
 
 		if (buttonLabelToIdMap != null && buttonLabelToIdMap.containsKey(buttonLabel)) {
-			int id = buttonLabelToIdMap.get(buttonLabel).intValue();
-			return id;
+			return buttonLabelToIdMap.get(buttonLabel).intValue();
 		}
 
 		// The following hard-coded mapping of labels to ID is unfortunately

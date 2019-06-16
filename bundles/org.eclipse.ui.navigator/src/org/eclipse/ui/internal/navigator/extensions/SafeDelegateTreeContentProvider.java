@@ -95,14 +95,12 @@ public class SafeDelegateTreeContentProvider implements
 			TreePath tp = (TreePath) aParentElement;
 			return getChildren(tp);
 		}
-		Object[] children = contentProvider.getChildren(aParentElement);
-		return children;
+		return contentProvider.getChildren(aParentElement);
 	}
 
 	@Override
 	public Object[] getElements(Object anInputElement) {
-		Object[] elements = contentProvider.getElements(anInputElement);
-		return elements;
+		return contentProvider.getElements(anInputElement);
 	}
 
 	@Override
@@ -238,8 +236,7 @@ public class SafeDelegateTreeContentProvider implements
 	public Object[] getChildren(TreePath parentPath) {
 		if (contentProvider instanceof ITreePathContentProvider) {
 			ITreePathContentProvider tpcp = (ITreePathContentProvider) contentProvider;
-			Object[] children = tpcp.getChildren(parentPath);
-			return children;
+			return tpcp.getChildren(parentPath);
 		}
 		return getChildren(parentPath.getLastSegment());
 	}

@@ -123,12 +123,8 @@ public abstract class DialogCellEditor extends CellEditor {
 					force);
 			Point buttonSize = button.computeSize(SWT.DEFAULT, SWT.DEFAULT,
 					force);
-			// Just return the button width to ensure the button is not clipped
-			// if the label is long.
-			// The label will just use whatever extra width there is
-			Point result = new Point(buttonSize.x, Math.max(contentsSize.y,
+			return new Point(buttonSize.x, Math.max(contentsSize.y,
 					buttonSize.y));
-			return result;
 		}
 	}
 

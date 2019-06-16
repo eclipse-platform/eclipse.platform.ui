@@ -163,8 +163,7 @@ public final class BindingService implements IBindingService {
 
 	@Override
 	public TriggerSequence getBestActiveBindingFor(ParameterizedCommand command) {
-		TriggerSequence seq = bindingService.getBestSequenceFor(command);
-		return seq;
+		return bindingService.getBestSequenceFor(command);
 	}
 
 	@Override

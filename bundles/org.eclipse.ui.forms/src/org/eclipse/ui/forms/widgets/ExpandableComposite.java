@@ -524,8 +524,7 @@ public class ExpandableComposite extends Canvas {
 				resultHeight = hHint;
 			}
 
-			Point result = new Point(resultWidth, resultHeight);
-			return result;
+			return new Point(resultWidth, resultHeight);
 		}
 
 		@Override

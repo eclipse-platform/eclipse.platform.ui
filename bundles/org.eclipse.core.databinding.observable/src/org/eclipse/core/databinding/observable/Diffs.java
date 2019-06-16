@@ -230,8 +230,7 @@ public class Diffs {
 	public static <E> ListDiff<E> computeListDiff(List<? extends E> oldList, List<? extends E> newList) {
 		List<ListDiffEntry<E>> diffEntries = new ArrayList<>();
 		createListDiffs(new ArrayList<E>(oldList), newList, diffEntries);
-		ListDiff<E> listDiff = createListDiff(diffEntries);
-		return listDiff;
+		return createListDiff(diffEntries);
 	}
 
 	/**

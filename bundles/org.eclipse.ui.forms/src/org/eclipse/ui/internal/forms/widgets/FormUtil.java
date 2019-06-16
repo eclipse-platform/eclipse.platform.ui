@@ -169,8 +169,7 @@ public class FormUtil {
 		}
 		String lastWord = text.substring(last);
 		Point extent = gc.textExtent(lastWord);
-		width = Math.max(width, extent.x);
-		return width;
+		return Math.max(width, extent.x);
 	}
 
 	public static Point computeWrapSize(GC gc, String text, int wHint) {

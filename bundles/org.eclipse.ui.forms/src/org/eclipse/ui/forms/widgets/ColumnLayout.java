@@ -108,8 +108,7 @@ public final class ColumnLayout extends Layout implements ILayoutExtension {
 		ncolumns = Math.min(ncolumns, parent.getChildren().length);
 		ncolumns = Math.min(ncolumns, maxNumColumns);
 		ncolumns = Math.max(ncolumns, minNumColumns);
-		ncolumns = Math.max(ncolumns, 1);
-		return ncolumns;
+		return Math.max(ncolumns, 1);
 	}
 
 	private int computeOptimalNumColumnsForWidth(Composite parent, int width) {

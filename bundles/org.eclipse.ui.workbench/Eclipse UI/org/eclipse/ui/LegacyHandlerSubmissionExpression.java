@@ -99,8 +99,7 @@ public final class LegacyHandlerSubmissionExpression extends Expression {
 	protected int computeHashCode() {
 		int hashCode = HASH_INITIAL * HASH_FACTOR + hashCode(activePartId);
 		hashCode = hashCode * HASH_FACTOR + hashCode(activeShell);
-		hashCode = hashCode * HASH_FACTOR + hashCode(activeSite);
-		return hashCode;
+		return hashCode * HASH_FACTOR + hashCode(activeSite);
 	}
 
 	@Override

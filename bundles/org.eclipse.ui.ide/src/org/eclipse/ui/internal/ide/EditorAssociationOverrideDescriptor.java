@@ -59,8 +59,7 @@ public final class EditorAssociationOverrideDescriptor {
 	public static EditorAssociationOverrideDescriptor[] getContributedEditorAssociationOverrides() {
 		IExtensionRegistry registry= Platform.getExtensionRegistry();
 		IConfigurationElement[] elements= registry.getConfigurationElementsFor(EDITOR_ASSOCIATION_OVERRIDE_EXTENSION_POINT);
-		EditorAssociationOverrideDescriptor[] editorAssociationOverrideDescs= createDescriptors(elements);
-		return editorAssociationOverrideDescs;
+		return createDescriptors(elements);
 	}
 
 	/**

@@ -96,8 +96,7 @@ public final class Priority implements Comparable {
 	@Deprecated
 	public int compareTo(Object object) {
 		Priority castedObject = (Priority) object;
-		int compareTo = Util.compare(value, castedObject.value);
-		return compareTo;
+		return Util.compare(value, castedObject.value);
 	}
 
 	/**

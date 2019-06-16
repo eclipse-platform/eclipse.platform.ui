@@ -229,8 +229,7 @@ public class TrimmedPartLayout extends Layout {
 		if (side == SWT.TOP) {
 			if (top != null) {
 				Rectangle b = top.getBounds();
-				b = top.getDisplay().map(top.getParent(), null, b);
-				return b;
+				return top.getDisplay().map(top.getParent(), null, b);
 			}
 
 			// Fake one
@@ -240,8 +239,7 @@ public class TrimmedPartLayout extends Layout {
 		if (side == SWT.BOTTOM) {
 			if (bottom != null) {
 				Rectangle b = bottom.getBounds();
-				b = bottom.getDisplay().map(bottom.getParent(), null, b);
-				return b;
+				return bottom.getDisplay().map(bottom.getParent(), null, b);
 			}
 
 			// Fake one
@@ -252,8 +250,7 @@ public class TrimmedPartLayout extends Layout {
 		if (side == SWT.LEFT) {
 			if (left != null && left.getChildren().length > 0) {
 				Rectangle b = left.getBounds();
-				b = left.getDisplay().map(left.getParent(), null, b);
-				return b;
+				return left.getDisplay().map(left.getParent(), null, b);
 			}
 
 			// Fake one
@@ -263,8 +260,7 @@ public class TrimmedPartLayout extends Layout {
 		if (side == SWT.RIGHT) {
 			if (right != null && right.getChildren().length > 0) {
 				Rectangle b = right.getBounds();
-				b = right.getDisplay().map(right.getParent(), null, b);
-				return b;
+				return right.getDisplay().map(right.getParent(), null, b);
 			}
 
 			// Fake one

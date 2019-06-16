@@ -1187,8 +1187,7 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 		@Override
 		protected Object restoreItemFromMemento(IMemento element) {
 			ResourceFactory resourceFactory = new ResourceFactory();
-			IResource resource = (IResource) resourceFactory.createElement(element);
-			return resource;
+			return (IResource) resourceFactory.createElement(element);
 		}
 
 		@Override

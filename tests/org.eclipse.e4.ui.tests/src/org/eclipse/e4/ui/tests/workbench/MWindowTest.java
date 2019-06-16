@@ -417,8 +417,7 @@ public class MWindowTest {
 	private MPart getContributedPart(MWindow window) {
 		MPartSashContainer psc = (MPartSashContainer) window.getChildren().get(0);
 		MPartStack stack = (MPartStack) psc.getChildren().get(0);
-		MPart part = (MPart) stack.getChildren().get(0);
-		return part;
+		return (MPart) stack.getChildren().get(0);
 	}
 
 	private MWindow createWindowWithOneView() {

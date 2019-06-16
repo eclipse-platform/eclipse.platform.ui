@@ -299,10 +299,9 @@ public class Mocks {
 		}
 		MockInvocationHandler mockInvocationHandler = new MockInvocationHandler(
 				ordered, equalityComparator);
-		Object newProxyInstance = Proxy.newProxyInstance(Mocks.class
+		return Proxy.newProxyInstance(Mocks.class
 				.getClassLoader(), new Class[] { interfaceType, Mock.class },
 				mockInvocationHandler);
-		return newProxyInstance;
 	}
 
 	public static void startChecking(Object mock) {

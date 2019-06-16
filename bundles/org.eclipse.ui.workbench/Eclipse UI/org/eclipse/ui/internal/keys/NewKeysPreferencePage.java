@@ -287,8 +287,7 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 		private int sortUser(final Object a, final Object b) {
 			int typeA = ((BindingElement) a).getUserDelta().intValue();
 			int typeB = ((BindingElement) b).getUserDelta().intValue();
-			int result = typeA - typeB;
-			return result;
+			return typeA - typeB;
 		}
 
 	}

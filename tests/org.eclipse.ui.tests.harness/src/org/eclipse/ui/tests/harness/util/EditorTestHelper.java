@@ -180,8 +180,7 @@ public class EditorTestHelper {
 				return allJobsQuiet();
 			}
 		};
-		boolean quiet= helper.waitForCondition(getActiveDisplay(), maxTime > 0 ? maxTime : Long.MAX_VALUE, intervalTime);
-		return quiet;
+		return helper.waitForCondition(getActiveDisplay(), maxTime > 0 ? maxTime : Long.MAX_VALUE, intervalTime);
 	}
 
 	public static void sleep(int intervalTime) {

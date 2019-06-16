@@ -78,8 +78,7 @@ public class XpathtestFactoryImpl extends EFactoryImpl implements XpathtestFacto
 	 */
 	@Override
 	public Root createRoot() {
-		RootImpl root = new RootImpl();
-		return root;
+		return new RootImpl();
 	}
 
 	/**
@@ -89,8 +88,7 @@ public class XpathtestFactoryImpl extends EFactoryImpl implements XpathtestFacto
 	 */
 	@Override
 	public Node createNode() {
-		NodeImpl node = new NodeImpl();
-		return node;
+		return new NodeImpl();
 	}
 
 	/**
@@ -100,8 +98,7 @@ public class XpathtestFactoryImpl extends EFactoryImpl implements XpathtestFacto
 	 */
 	@Override
 	public ExtendedNode createExtendedNode() {
-		ExtendedNodeImpl extendedNode = new ExtendedNodeImpl();
-		return extendedNode;
+		return new ExtendedNodeImpl();
 	}
 
 	/**
@@ -111,8 +108,7 @@ public class XpathtestFactoryImpl extends EFactoryImpl implements XpathtestFacto
 	 */
 	@Override
 	public Menu createMenu() {
-		MenuImpl menu = new MenuImpl();
-		return menu;
+		return new MenuImpl();
 	}
 
 	/**
@@ -122,8 +118,7 @@ public class XpathtestFactoryImpl extends EFactoryImpl implements XpathtestFacto
 	 */
 	@Override
 	public MenuItem createMenuItem() {
-		MenuItemImpl menuItem = new MenuItemImpl();
-		return menuItem;
+		return new MenuItemImpl();
 	}
 
 	/**
@@ -133,8 +128,7 @@ public class XpathtestFactoryImpl extends EFactoryImpl implements XpathtestFacto
 	 */
 	@Override
 	public MenuElement createMenuElement() {
-		MenuElementImpl menuElement = new MenuElementImpl();
-		return menuElement;
+		return new MenuElementImpl();
 	}
 
 	/**

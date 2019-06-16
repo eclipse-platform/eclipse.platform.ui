@@ -211,8 +211,7 @@ public class NodeImpl extends EObjectImpl implements Node {
 	 * @generated
 	 */
 	public NotificationChain basicSetParent(Node newParent, NotificationChain msgs) {
-		msgs = eBasicSetContainer((InternalEObject)newParent, XpathtestPackage.NODE__PARENT, msgs);
-		return msgs;
+		return eBasicSetContainer((InternalEObject)newParent, XpathtestPackage.NODE__PARENT, msgs);
 	}
 
 	/**

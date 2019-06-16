@@ -97,8 +97,7 @@ public class FormDialog extends TrayDialog {
 		//gd.heightHint = 1;
 		Label sep = new Label(parent, SWT.HORIZONTAL|SWT.SEPARATOR);
 		sep.setLayoutData(gd);
-		Control bar = super.createButtonBar(parent);
-		return bar;
+		return super.createButtonBar(parent);
 	}
 
 	/**

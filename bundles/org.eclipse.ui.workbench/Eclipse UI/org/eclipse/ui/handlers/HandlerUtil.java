@@ -555,8 +555,7 @@ public class HandlerUtil {
 	 * @since 3.4
 	 */
 	public static Object getShowInInput(ExecutionEvent event) {
-		Object var = getVariable(event, ISources.SHOW_IN_INPUT);
-		return var;
+		return getVariable(event, ISources.SHOW_IN_INPUT);
 	}
 
 	/**
@@ -568,8 +567,7 @@ public class HandlerUtil {
 	 * @since 3.4
 	 */
 	public static Object getShowInInputChecked(ExecutionEvent event) throws ExecutionException {
-		Object var = getVariableChecked(event, ISources.SHOW_IN_INPUT);
-		return var;
+		return getVariableChecked(event, ISources.SHOW_IN_INPUT);
 	}
 
 	/**

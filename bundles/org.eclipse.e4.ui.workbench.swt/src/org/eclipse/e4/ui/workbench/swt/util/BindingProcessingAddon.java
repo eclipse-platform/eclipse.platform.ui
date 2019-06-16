@@ -198,8 +198,7 @@ public class BindingProcessingAddon {
 
 		if (binding.getTransientData().get(EBindingService.MODEL_TO_BINDING_KEY) != null) {
 			try {
-				keyBinding = (Binding) binding.getTransientData().get(EBindingService.MODEL_TO_BINDING_KEY);
-				return keyBinding;
+				return (Binding) binding.getTransientData().get(EBindingService.MODEL_TO_BINDING_KEY);
 			} catch (ClassCastException cce) {
 				System.err.println(
 						"Invalid type stored in transient data with the key "

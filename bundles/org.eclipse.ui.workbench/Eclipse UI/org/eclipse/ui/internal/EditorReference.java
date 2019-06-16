@@ -134,8 +134,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 			if (savedState != null) {
 				StringReader sr = new StringReader(savedState);
 				try {
-					XMLMemento memento = XMLMemento.createReadRoot(sr);
-					return memento;
+					return XMLMemento.createReadRoot(sr);
 				} catch (WorkbenchException e) {
 					WorkbenchPlugin.log(e);
 					return null;

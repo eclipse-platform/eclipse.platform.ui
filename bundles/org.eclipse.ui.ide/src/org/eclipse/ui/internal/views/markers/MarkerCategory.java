@@ -170,8 +170,7 @@ class MarkerCategory extends MarkerSupportItem {
 		int result = 1;
 		result = prime * result
 				+ Objects.hashCode(markers);
-		result = prime * result + Objects.hashCode(name);
-		return result;
+		return prime * result + Objects.hashCode(name);
 	}
 
 	@Override

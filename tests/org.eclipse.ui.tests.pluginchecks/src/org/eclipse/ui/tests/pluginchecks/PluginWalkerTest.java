@@ -190,8 +190,7 @@ public class PluginWalkerTest {
 	private static DocumentBuilder createDocumentBuilder() throws ParserConfigurationException {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
 		factory.setNamespaceAware(true);
-		DocumentBuilder builder = factory.newDocumentBuilder();
-		return builder;
+		return factory.newDocumentBuilder();
 	}
 
 	private Collection<BundleWiring> findWirings(final String bundleSymbolicName, BundleContext bundleContext) {

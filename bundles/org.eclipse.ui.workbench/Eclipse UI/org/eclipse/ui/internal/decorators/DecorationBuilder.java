@@ -141,10 +141,8 @@ public class DecorationBuilder implements IDecoration {
 		if (clearReplacementImage) {
 			descriptors[IDecoration.REPLACE] = null;
 		}
-		DecorationResult newResult = new DecorationResult(new ArrayList<>(prefixes), new ArrayList<>(suffixes), descriptors,
+		return new DecorationResult(new ArrayList<>(prefixes), new ArrayList<>(suffixes), descriptors,
 				foregroundColor, backgroundColor, font);
-
-		return newResult;
 	}
 
 	/**

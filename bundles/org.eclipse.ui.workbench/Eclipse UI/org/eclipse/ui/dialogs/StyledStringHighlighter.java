@@ -53,8 +53,7 @@ public class StyledStringHighlighter implements IStyledStringHighlighter {
 				break;
 			}
 		}
-		filterPattern = filterPattern.substring(0, filterPattern.length() - numEndTerminators);
-		return filterPattern;
+		return filterPattern.substring(0, filterPattern.length() - numEndTerminators);
 	}
 
 	private String replaceConsecutiveAsterisks(String filterPattern) {

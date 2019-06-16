@@ -198,8 +198,7 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 		hHint += paddingTop + paddingBottom;
 		if (0 <= part && part < parent.getItemCount()) {
 			gc.setAdvanced(true);
-			Point result = super.computeSize(part, state, gc, wHint, hHint);
-			return result;
+			return super.computeSize(part, state, gc, wHint, hHint);
 		}
 		return super.computeSize(part, state, gc, wHint, hHint);
 	}

@@ -130,8 +130,7 @@ public class FileEditorMapping extends Object implements IFileEditorMapping, Clo
 		result = prime * result + Objects.hashCode(deletedEditors);
 		result = prime * result + Objects.hashCode(editors);
 		result = prime * result + Objects.hashCode(extension);
-		result = prime * result + Objects.hashCode(name);
-		return result;
+		return prime * result + Objects.hashCode(name);
 	}
 
 	@Override

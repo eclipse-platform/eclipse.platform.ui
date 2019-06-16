@@ -501,9 +501,7 @@ public final class CellData {
 		}
 
 		if (resultWidth == SWT.DEFAULT || resultHeight == SWT.DEFAULT) {
-			Point result = computeRawSize(control, resultWidth, resultHeight);
-
-			return result;
+			return computeRawSize(control, resultWidth, resultHeight);
 		}
 
 		return new Point(resultWidth, resultHeight);

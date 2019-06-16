@@ -221,8 +221,7 @@ import org.eclipse.swt.widgets.Scrollable;
 		Rectangle currClientArea = scrollable.getClientArea();
 		Rectangle fullRect = this.getFullBackgroundRect(scrollable, currClientArea, true);
 		if (fullRect != null) {
-			boolean ret = fullRect.contains(controlPos.x, controlPos.y);
-			return ret;
+			return fullRect.contains(controlPos.x, controlPos.y);
 		}
 		return false;
 	}

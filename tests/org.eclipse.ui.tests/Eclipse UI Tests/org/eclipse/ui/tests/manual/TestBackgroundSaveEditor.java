@@ -104,7 +104,7 @@ public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSo
 				setDirty(false);
 				return null;
 			}
-			IJobRunnable result = monitor1 -> {
+			return monitor1 -> {
 				monitor1.beginTask("Saving in the background", data.backgroundSaveTime);
 				for (int i = 0; i < data.backgroundSaveTime; i++) {
 					if (monitor1.isCanceled()) {
@@ -127,7 +127,6 @@ public class TestBackgroundSaveEditor extends EditorPart implements ISaveablesSo
 				monitor1.done();
 				return Status.OK_STATUS;
 			};
-			return result;
 		}
 
 		@Override

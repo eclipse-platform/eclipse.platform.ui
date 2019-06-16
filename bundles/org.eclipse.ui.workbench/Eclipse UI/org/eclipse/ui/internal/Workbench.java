@@ -3094,8 +3094,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	 * @return the id of the preference page, or <code>null</code> if none
 	 */
 	public String getMainPreferencePageId() {
-		String id = getAdvisor().getMainPreferencePageId();
-		return id;
+		return getAdvisor().getMainPreferencePageId();
 	}
 
 	@Override

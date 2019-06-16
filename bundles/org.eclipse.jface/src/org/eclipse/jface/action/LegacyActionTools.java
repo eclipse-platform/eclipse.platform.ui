@@ -311,8 +311,7 @@ public final class LegacyActionTools {
 		if (result != null) {
 			return result;
 		}
-		result = new String(new char[] { (char) i });
-		return result;
+		return new String(new char[] { (char) i });
 	}
 
 	/**

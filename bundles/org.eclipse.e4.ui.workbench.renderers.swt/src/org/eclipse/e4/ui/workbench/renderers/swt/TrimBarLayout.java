@@ -171,8 +171,7 @@ public class TrimBarLayout extends Layout {
 		int totalWrapSpacing = (lines.size() - 1) * wrapSpacing;
 		totalMinor += horizontal ? (marginTop + marginBottom) + totalWrapSpacing
 				: (marginLeft + marginRight) + totalWrapSpacing;
-		Point calcSize = horizontal ? new Point(wHint, totalMinor) : new Point(totalMinor, hHint);
-		return calcSize;
+		return horizontal ? new Point(wHint, totalMinor) : new Point(totalMinor, hHint);
 	}
 
 	private Point computeSize(Control ctrl) {

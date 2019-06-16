@@ -1996,9 +1996,8 @@ public class ContentProposalAdapter {
 		}
 		String contents = getControlContentAdapter().getControlContents(
 				getControl());
-		IContentProposal[] proposals = proposalProvider.getProposals(contents,
+		return proposalProvider.getProposals(contents,
 				position);
-		return proposals;
 	}
 
 	/**

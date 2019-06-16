@@ -107,9 +107,8 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 			}
 		}
 
-		Transfer[] transfers = supportedTypes
+		return supportedTypes
 				.toArray(new Transfer[supportedTypes.size()]);
-		return transfers;
 	}
 
 	@Override

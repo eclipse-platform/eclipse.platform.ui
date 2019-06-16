@@ -55,7 +55,6 @@ public class ColumnLayoutUtils {
 				colHeight += verticalMargin;
 			colHeight += childHeight;
 		}
-		maxHeight = Math.max(colHeight, maxHeight);
-		return maxHeight;
+		return Math.max(colHeight, maxHeight);
 	}
 }

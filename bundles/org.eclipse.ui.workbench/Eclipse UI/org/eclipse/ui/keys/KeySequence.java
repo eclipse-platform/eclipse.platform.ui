@@ -235,8 +235,7 @@ public final class KeySequence implements Comparable {
 	@Override
 	public int compareTo(Object object) {
 		KeySequence castedObject = (KeySequence) object;
-		int compareTo = Util.compare(keyStrokes, castedObject.keyStrokes);
-		return compareTo;
+		return Util.compare(keyStrokes, castedObject.keyStrokes);
 	}
 
 	/**

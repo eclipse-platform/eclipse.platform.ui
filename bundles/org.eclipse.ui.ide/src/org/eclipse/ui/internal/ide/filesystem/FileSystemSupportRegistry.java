@@ -181,10 +181,8 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 		}
 		String name = element.getAttribute(LABEL);
 		String fileSystem = element.getAttribute(SCHEME);
-		FileSystemConfiguration config = new FileSystemConfiguration(name,
+		return new FileSystemConfiguration(name,
 				contributors[0], fileSystem);
-
-		return config;
 
 	}
 

@@ -101,9 +101,7 @@ public abstract class SubContributionManager implements IContributionManager {
 	@Override
 	public IContributionItem find(String id) {
 		IContributionItem item = parentMgr.find(id);
-		// Return the item passed to us, not the wrapper.
-		item = unwrap(item);
-		return item;
+		return unwrap(item);
 	}
 
 	@Override

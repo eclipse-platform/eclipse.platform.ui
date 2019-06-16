@@ -633,8 +633,7 @@ public class PerspectiveBuilder {
 			return null;
 		}
 		IExtension[] extensions = point.getExtensions();
-		extensions = RegistryReader.orderExtensions(extensions);
-		return extensions;
+		return RegistryReader.orderExtensions(extensions);
 	}
 
 	private static ArrayList<String> getExtensionShowInPartFromRegistry(IExtension extension, String targetId) {

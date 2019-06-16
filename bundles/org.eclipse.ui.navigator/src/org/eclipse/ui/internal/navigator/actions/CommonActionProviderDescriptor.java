@@ -332,8 +332,7 @@ public class CommonActionProviderDescriptor implements
 		final int PRIME = 31;
 		int result = 1;
 		result = PRIME * result + Objects.hashCode(definedId);
-		result = PRIME * result + Objects.hashCode(visibilityId);
-		return result;
+		return PRIME * result + Objects.hashCode(visibilityId);
 	}
 
 	@Override

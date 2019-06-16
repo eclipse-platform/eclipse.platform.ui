@@ -199,8 +199,7 @@ public class GlobalizationPreferencePage extends PreferencePage implements IWork
 		labelControl.setLayoutData(gd);
 		labelControl.setText(label);
 
-		Combo comboBox = new Combo(parent, SWT.READ_ONLY);
-		return comboBox;
+		return new Combo(parent, SWT.READ_ONLY);
 	}
 
 	private static void createSpace(Composite parent) {

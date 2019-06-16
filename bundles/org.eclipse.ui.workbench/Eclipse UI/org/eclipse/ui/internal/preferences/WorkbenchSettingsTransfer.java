@@ -58,9 +58,7 @@ public abstract class WorkbenchSettingsTransfer extends SettingsTransfer {
 
 		// Strip it down to the extension
 		dataLocation = dataLocation.removeFirstSegments(segmentsToRemove);
-		// Now add in the
-		dataLocation = newWorkspaceRoot.append(dataLocation);
-		return dataLocation;
+		return newWorkspaceRoot.append(dataLocation);
 	}
 
 }

@@ -67,8 +67,7 @@ public class LegacyEditorActionBarExpression extends Expression {
 
 	@Override
 	protected final int computeHashCode() {
-		int hashCode = HASH_INITIAL * HASH_FACTOR + hashCode(activeEditorId);
-		return hashCode;
+		return HASH_INITIAL * HASH_FACTOR + hashCode(activeEditorId);
 	}
 
 	@Override

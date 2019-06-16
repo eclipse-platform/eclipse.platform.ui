@@ -238,9 +238,7 @@ public class NewFolderDialog extends SelectionStatusDialog {
 	private IFolder createFolderHandle(String folderName) {
 		IWorkspaceRoot workspaceRoot = container.getWorkspace().getRoot();
 		IPath folderPath = container.getFullPath().append(folderName);
-		IFolder folderHandle = workspaceRoot.getFolder(folderPath);
-
-		return folderHandle;
+		return workspaceRoot.getFolder(folderPath);
 	}
 
 	/**

@@ -50,8 +50,7 @@ public class IViewActionDelegateTest extends IActionDelegateTest {
 	 */
 	@Override
 	protected Object createActionWidget() throws Throwable {
-		MockViewPart view = (MockViewPart) fPage.showView(TEST_VIEW_ID);
-		return view;
+		return (MockViewPart) fPage.showView(TEST_VIEW_ID);
 	}
 
 	/**

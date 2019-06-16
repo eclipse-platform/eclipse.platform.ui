@@ -137,8 +137,7 @@ public class ControlElement extends WidgetElement {
 		Control control = getControl();
 		Composite parent = control.getParent();
 		if (parent != null) {
-			Element element = getElement(parent);
-			return element;
+			return getElement(parent);
 		}
 		return null;
 	}

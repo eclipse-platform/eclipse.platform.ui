@@ -71,8 +71,7 @@ public class CustomBeanUpdateValueStrategy<S, D> extends UpdateValueStrategy<S, 
 	}
 
 	private String upperCaseFirstLetter(String name) {
-		String result = name.substring(0, 1).toUpperCase() + name.substring(1);
-		return result;
+		return name.substring(0, 1).toUpperCase() + name.substring(1);
 	}
 
 	@Override

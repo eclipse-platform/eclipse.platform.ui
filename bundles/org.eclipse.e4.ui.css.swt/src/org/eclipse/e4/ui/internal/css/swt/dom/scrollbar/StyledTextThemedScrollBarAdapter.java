@@ -238,9 +238,8 @@ public class StyledTextThemedScrollBarAdapter extends AbstractThemedScrollBarAda
 			if (considerMargins) {
 				h -= (styledText.getTopMargin() + styledText.getBottomMargin());
 			}
-			Rectangle rect = new Rectangle(w - lineWidth, considerMargins ? styledText.getTopMargin() : 0, lineWidth,
+			return new Rectangle(w - lineWidth, considerMargins ? styledText.getTopMargin() : 0, lineWidth,
 					h);
-			return rect;
 		}
 
 		@Override
@@ -344,9 +343,8 @@ public class StyledTextThemedScrollBarAdapter extends AbstractThemedScrollBarAda
 			if (considerMargins) {
 				w -= (styledText.getLeftMargin() + styledText.getRightMargin());
 			}
-			Rectangle rect = new Rectangle(considerMargins ? styledText.getLeftMargin() : 0, h - lineWidth, w,
+			return new Rectangle(considerMargins ? styledText.getLeftMargin() : 0, h - lineWidth, w,
 					lineWidth);
-			return rect;
 		}
 
 		@Override

@@ -79,8 +79,7 @@ public class ColorFieldEditor extends FieldEditor {
 		gc.setFont(f);
 		int height = gc.getFontMetrics().getHeight();
 		gc.dispose();
-		Point p = new Point(height * 3 - 6, height);
-		return p;
+		return new Point(height * 3 - 6, height);
 	}
 
 

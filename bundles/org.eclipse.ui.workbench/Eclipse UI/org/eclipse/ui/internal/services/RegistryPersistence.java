@@ -309,9 +309,7 @@ public abstract class RegistryPersistence implements IDisposable, IWorkbenchRegi
 		}
 
 		final Command command = commandService.getCommand(commandId);
-		final ParameterizedCommand parameterizedCommand = readParameters(configurationElement, warningsToLog, command);
-
-		return parameterizedCommand;
+		return readParameters(configurationElement, warningsToLog, command);
 	}
 
 	/**

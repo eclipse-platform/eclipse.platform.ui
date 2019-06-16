@@ -456,8 +456,7 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 	private String safeDecorateText(Object element, String start, FullDecoratorDefinition decorator) {
 		fullTextRunnable.setValues(start, element, decorator);
 		SafeRunner.run(fullTextRunnable);
-		String newResult = fullTextRunnable.getResult();
-		return newResult;
+		return fullTextRunnable.getResult();
 	}
 
 	/**
@@ -517,8 +516,7 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 	private Image safeDecorateImage(Object element, Image start, FullDecoratorDefinition decorator) {
 		fullImageRunnable.setValues(start, element, decorator);
 		SafeRunner.run(fullImageRunnable);
-		Image newResult = fullImageRunnable.getResult();
-		return newResult;
+		return fullImageRunnable.getResult();
 	}
 
 	/**

@@ -51,8 +51,7 @@ public class TabbedPropertySheetWidgetFactory
 	 * @return the tab folder
 	 */
 	public CTabFolder createTabFolder(Composite parent, int style) {
-		CTabFolder tabFolder = new CTabFolder(parent, style);
-		return tabFolder;
+		return new CTabFolder(parent, style);
 	}
 
 	/**
@@ -65,8 +64,7 @@ public class TabbedPropertySheetWidgetFactory
 	 * @return the tab item.
 	 */
 	public CTabItem createTabItem(CTabFolder tabFolder, int style) {
-		CTabItem tabItem = new CTabItem(tabFolder, style);
-		return tabItem;
+		return new CTabItem(tabFolder, style);
 	}
 
 	/**
@@ -79,8 +77,7 @@ public class TabbedPropertySheetWidgetFactory
 	 * @return the list.
 	 */
 	public List createList(Composite parent, int style) {
-		List list = new org.eclipse.swt.widgets.List(parent, style);
-		return list;
+		return new org.eclipse.swt.widgets.List(parent, style);
 	}
 
 	@Override
@@ -92,8 +89,7 @@ public class TabbedPropertySheetWidgetFactory
 
 	@Override
 	public Composite createComposite(Composite parent) {
-		Composite c = createComposite(parent, SWT.NONE);
-		return c;
+		return createComposite(parent, SWT.NONE);
 	}
 
 	/**
@@ -122,9 +118,8 @@ public class TabbedPropertySheetWidgetFactory
 	 * @return the composite.
 	 */
 	public ScrolledComposite createScrolledComposite(Composite parent, int style) {
-		ScrolledComposite scrolledComposite = new ScrolledComposite(parent,
+		return new ScrolledComposite(parent,
 			style);
-		return scrolledComposite;
 	}
 
 	/**

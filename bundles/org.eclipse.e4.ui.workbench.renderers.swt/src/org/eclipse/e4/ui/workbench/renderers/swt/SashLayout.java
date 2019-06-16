@@ -309,8 +309,7 @@ public class SashLayout extends Layout {
 		}
 
 		try {
-			int value = Integer.parseInt(info);
-			return value;
+			return Integer.parseInt(info);
 		} catch (NumberFormatException e) {
 			return 0;
 		}

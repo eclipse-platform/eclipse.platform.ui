@@ -1248,8 +1248,7 @@ public class IWorkbenchPageTest extends UITestCase {
 		IWorkbench workbench = getWorkbench();
 		IHandlerService handlerService = workbench.getService(IHandlerService.class);
 		IEvaluationContext contextSnapshot = handlerService.createContextSnapshot(true);
-		ExecutionEvent event = new ExecutionEvent(command, parameters, null, contextSnapshot);
-		return event;
+		return new ExecutionEvent(command, parameters, null, contextSnapshot);
 	}
 
 	private Command createCommand(String id) {

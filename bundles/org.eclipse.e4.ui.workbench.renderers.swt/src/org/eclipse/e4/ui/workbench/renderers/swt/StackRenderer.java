@@ -683,8 +683,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 
 	private boolean getMRUValueFromPreferences() {
 		boolean initialMRUValue = preferences.getBoolean(MRU_KEY_DEFAULT, MRU_DEFAULT);
-		boolean actualValue = preferences.getBoolean(MRU_KEY, initialMRUValue);
-		return actualValue;
+		return preferences.getBoolean(MRU_KEY, initialMRUValue);
 	}
 
 	private void updateMRUValue(CTabFolder tabFolder) {

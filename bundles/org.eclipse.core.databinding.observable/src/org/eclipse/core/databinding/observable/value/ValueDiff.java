@@ -59,8 +59,7 @@ public abstract class ValueDiff<T> implements IDiff {
 		final int prime = 31;
 		int result = 1;
 		result = prime * result + Objects.hashCode(getNewValue());
-		result = prime * result + Objects.hashCode(getOldValue());
-		return result;
+		return prime * result + Objects.hashCode(getOldValue());
 	}
 
 	@Override

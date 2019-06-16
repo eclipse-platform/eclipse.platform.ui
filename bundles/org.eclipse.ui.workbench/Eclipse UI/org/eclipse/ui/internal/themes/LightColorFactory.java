@@ -115,8 +115,7 @@ public class LightColorFactory implements IColorFactory, IExecutableExtension {
 		if (Display.getCurrent().getDepth() < 15)
 			return getActiveFocusEndColor();
 
-		RGB startColor = ColorUtil.blend(white, getActiveFocusEndColor(), 75);
-		return startColor;
+		return ColorUtil.blend(white, getActiveFocusEndColor(), 75);
 	}
 
 	/*

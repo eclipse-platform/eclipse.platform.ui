@@ -125,9 +125,7 @@ public class TrimDropAgent extends DropAgent {
 		Point center = new Point(bounds.x + (bounds.width / 2), bounds.y + (bounds.height / 2));
 		boolean horizontal = trimBar.getSide() == SideValue.TOP
 				|| trimBar.getSide() == SideValue.BOTTOM;
-		boolean after = horizontal ? info.cursorPos.x > center.x : info.cursorPos.y > center.y;
-
-		return after;
+		return horizontal ? info.cursorPos.x > center.x : info.cursorPos.y > center.y;
 	}
 
 	@Override

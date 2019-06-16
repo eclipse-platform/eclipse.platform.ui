@@ -377,12 +377,8 @@ public class MultiEditorTest extends UITestCase {
 	 * @return the IContributionItem for the test editor cool bar.
 	 */
 	private IContributionItem findMyCoolBar(WorkbenchPage page) {
-		// listItems(page);
-		IContributionItem contribution = ((IActionBars2) page.getActionBars())
+		return ((IActionBars2) page.getActionBars())
 				.getCoolBarManager().find(TESTEDITOR_COOLBAR);
-		// assertNotNull(contribution);
-
-		return contribution;
 	}
 
 	/**
@@ -543,8 +539,7 @@ public class MultiEditorTest extends UITestCase {
 			inputs[f] = new FileEditorInput(f1);
 		}
 
-		MultiEditorInput input = new MultiEditorInput(ids, inputs);
-		return input;
+		return new MultiEditorInput(ids, inputs);
 	}
 
 	private IFile createFile(IProject testProject, String simpleFile) throws CoreException, IOException {

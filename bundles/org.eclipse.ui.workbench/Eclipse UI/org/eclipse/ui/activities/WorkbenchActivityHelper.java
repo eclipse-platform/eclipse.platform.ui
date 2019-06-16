@@ -52,9 +52,8 @@ public final class WorkbenchActivityHelper {
 	 */
 	public static IIdentifier getIdentifier(IPluginContribution contribution) {
 		IWorkbenchActivitySupport workbenchActivitySupport = PlatformUI.getWorkbench().getActivitySupport();
-		IIdentifier identifier = workbenchActivitySupport.getActivityManager()
+		return workbenchActivitySupport.getActivityManager()
 				.getIdentifier(createUnifiedId(contribution));
-		return identifier;
 	}
 
 	/**

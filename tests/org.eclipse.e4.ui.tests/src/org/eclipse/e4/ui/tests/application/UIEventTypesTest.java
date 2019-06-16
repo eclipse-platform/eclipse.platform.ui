@@ -21,7 +21,6 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.events.IEventBroker;
-import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.MApplicationFactory;
 import org.eclipse.e4.ui.workbench.UIEvents;
@@ -40,8 +39,7 @@ public class UIEventTypesTest extends HeadlessApplicationElementTest {
 
 	@Override
 	protected MApplicationElement createApplicationElement(IEclipseContext appContext) throws Exception {
-		MApplication application = MApplicationFactory.INSTANCE.createApplication();
-		return application;
+		return MApplicationFactory.INSTANCE.createApplication();
 	}
 
 	@Before

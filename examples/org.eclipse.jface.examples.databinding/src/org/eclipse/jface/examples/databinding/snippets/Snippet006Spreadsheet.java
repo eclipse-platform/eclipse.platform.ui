@@ -302,9 +302,8 @@ public class Snippet006Spreadsheet {
 	}
 
 	private static String cellReference(int rowIndex, int columnIndex) {
-		String cellReference = "" + ((char) ('A' + columnIndex))
+		return "" + ((char) ('A' + columnIndex))
 				+ (rowIndex + 1);
-		return cellReference;
 	}
 
 }

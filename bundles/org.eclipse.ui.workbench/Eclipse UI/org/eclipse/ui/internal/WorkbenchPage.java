@@ -2432,8 +2432,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 		if (perspectiveRegistry == null) {
 			return null;
 		}
-		IPerspectiveDescriptor desc = perspectiveRegistry.findPerspectiveWithId(id);
-		return desc;
+		return perspectiveRegistry.findPerspectiveWithId(id);
 	}
 
 	@Override

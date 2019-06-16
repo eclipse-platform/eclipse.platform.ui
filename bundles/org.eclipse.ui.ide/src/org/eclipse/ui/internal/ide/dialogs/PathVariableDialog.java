@@ -680,8 +680,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 	 */
 	public String getVariableValue() {
 		if (currentResource != null) {
-			String internalFormat = getPathVariableManager().convertFromUserEditableFormat(variableValue, operationMode == EDIT_LINK_LOCATION);
-			return internalFormat;
+			return getPathVariableManager().convertFromUserEditableFormat(variableValue, operationMode == EDIT_LINK_LOCATION);
 		}
 		return variableValue;
 	}

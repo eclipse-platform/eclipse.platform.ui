@@ -516,8 +516,7 @@ public class PartServiceImpl implements EPartService {
 					null, EModelService.PRESENTATION);
 			return allPerspectiveElements.contains(element);
 		}
-		boolean inCurrentPerspective = persp == persp.getParent().getSelectedElement();
-		return inCurrentPerspective;
+		return persp == persp.getParent().getSelectedElement();
 	}
 
 	private boolean isInContainer(MUIElement element) {

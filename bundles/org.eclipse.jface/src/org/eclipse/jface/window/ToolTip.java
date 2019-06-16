@@ -259,8 +259,7 @@ public abstract class ToolTip {
 				return false;
 			}
 
-			boolean rv = !tmp.equals(currentArea);
-			return rv;
+			return !tmp.equals(currentArea);
 		}
 
 		return true;
@@ -284,8 +283,7 @@ public abstract class ToolTip {
 				return false;
 			}
 
-			boolean rv = !tmp.equals(currentArea);
-			return rv;
+			return !tmp.equals(currentArea);
 		}
 
 		return true;
