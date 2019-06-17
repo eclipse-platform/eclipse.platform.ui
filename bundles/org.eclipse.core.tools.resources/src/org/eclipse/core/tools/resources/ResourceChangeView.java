@@ -242,7 +242,7 @@ public class ResourceChangeView extends SpyView implements IResourceChangeListen
 		 * within a resource change event.
 		 */
 		private String getFlagsAsString(int flags) {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			if ((IResourceDelta.ADDED & flags) != 0) {
 				buffer.append("-"); //$NON-NLS-1$
 				buffer.append("ADDED"); //$NON-NLS-1$
@@ -340,7 +340,7 @@ public class ResourceChangeView extends SpyView implements IResourceChangeListen
 
 		@Override
 		public String getText(Object obj) {
-			StringBuffer buffer = new StringBuffer(obj.toString());
+			StringBuilder buffer = new StringBuilder(obj.toString());
 			if (obj instanceof ResourceEventNode) {
 				buffer.append("Workspace Root - "); //$NON-NLS-1$
 				buffer.append(getEventTypeAsString(((ResourceEventNode) obj).getEventType()));

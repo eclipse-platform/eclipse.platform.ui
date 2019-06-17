@@ -96,7 +96,7 @@ public class CountResourcesAction implements IWorkbenchWindowActionDelegate {
 	 */
 
 	private void showResourcesCount(List<IResource> resources, int count) {
-		StringBuffer message = new StringBuffer();
+		StringBuilder message = new StringBuilder();
 		message.append("Number of resources visited: "); //$NON-NLS-1$
 		message.append(count);
 		message.append("\nStarting point(s): \n"); //$NON-NLS-1$

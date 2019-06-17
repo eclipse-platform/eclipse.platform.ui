@@ -145,7 +145,7 @@ public class DeltaView extends SpyView implements IResourceChangeListener {
 
 				// updates viewer document, appending new delta information     
 				IDocument doc = viewer.getDocument();
-				StringBuffer contents = new StringBuffer(doc.get());
+				StringBuilder contents = new StringBuilder(doc.get());
 				contents.append('\n');
 
 				// asks for a string representation for the delta

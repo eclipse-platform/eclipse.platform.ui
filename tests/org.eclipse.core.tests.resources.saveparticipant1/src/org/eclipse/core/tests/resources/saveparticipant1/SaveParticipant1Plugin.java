@@ -64,7 +64,7 @@ public class SaveParticipant1Plugin extends Plugin implements ISaveParticipant {
 	}
 
 	private String getMessage(int expectedPreviousSaveNumber, int previousSaveNumber) {
-		StringBuffer message = new StringBuffer();
+		StringBuilder message = new StringBuilder();
 		message.append("Expected previous saved id was: ");
 		message.append(expectedPreviousSaveNumber);
 		message.append("\nPrevious saved id is: ");

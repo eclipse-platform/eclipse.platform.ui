@@ -472,7 +472,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 	}
 
 	String prettyPrint(int i) {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (;;) {
 			if (i < 1000) {
 				String val = Integer.toString(i);

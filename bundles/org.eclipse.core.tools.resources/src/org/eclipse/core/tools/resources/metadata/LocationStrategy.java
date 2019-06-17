@@ -27,7 +27,7 @@ class LocationStrategy implements IStringDumpingStrategy {
 	 */
 	@Override
 	public String dumpStringContents(DataInputStream dataInput) throws IOException {
-		StringBuffer contents = new StringBuffer(100);
+		StringBuilder contents = new StringBuilder(100);
 		String location = dataInput.readUTF();
 		contents.append("Location: '"); //$NON-NLS-1$
 		contents.append(location);
