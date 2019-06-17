@@ -730,7 +730,7 @@ public class UrlUtil {
 
 	// Create a relative path based on the current URL
 	public static String getRelativePath(HttpServletRequest req, String filePath) {
-		StringBuffer result = new StringBuffer(""); //$NON-NLS-1$
+		StringBuilder result = new StringBuilder(""); //$NON-NLS-1$
 		String reqPath = req.getPathInfo();
 		if (reqPath != null) {
 			for (int i; 0 <= (i = reqPath.indexOf('/', 1));) {

@@ -43,7 +43,7 @@ public class StringUtil {
 		if (input == null) {
 			return null;
 		}
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		boolean atStart = true;
 		boolean whitespaceToInsert = false;
 		for (int i = 0; i < input.length(); i++) {
