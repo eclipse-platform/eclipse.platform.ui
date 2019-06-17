@@ -422,10 +422,8 @@ public class IntroURL implements IIntroURL {
             Browser browser = impl.getBrowser();
             return browser.setUrl(url);
         }
-        {
-            // SWT presentation.
-            return openBrowser(url, pluginId);
-        }
+        // SWT presentation.
+		return openBrowser(url, pluginId);
     }
 
 

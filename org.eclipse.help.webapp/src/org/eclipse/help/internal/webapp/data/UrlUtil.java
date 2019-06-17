@@ -705,20 +705,18 @@ public class UrlUtil {
 		if (BaseHelpSystem.getMode() != BaseHelpSystem.MODE_INFOCENTER) {
 			return ProductPreferences.isRTL();
 		}
-		{
-			if (infocenterDirection == INFOCENTER_DIRECTION_RTL) {
-				return true;
-			} else if (infocenterDirection == INFOCENTER_DIRECTION_LTR) {
-				return false;
-			}
-			String locale = getLocale(request, response);
-			if (locale.startsWith("ar") || locale.startsWith("fa") //$NON-NLS-1$ //$NON-NLS-2$
-					|| locale.startsWith("he") || locale.startsWith("iw") //$NON-NLS-1$ //$NON-NLS-2$
-					| locale.startsWith("ur")) { //$NON-NLS-1$
-				return true;
-			}
+		if (infocenterDirection == INFOCENTER_DIRECTION_RTL) {
+			return true;
+		} else if (infocenterDirection == INFOCENTER_DIRECTION_LTR) {
 			return false;
 		}
+		String locale = getLocale(request, response);
+		if (locale.startsWith("ar") || locale.startsWith("fa") //$NON-NLS-1$ //$NON-NLS-2$
+				|| locale.startsWith("he") || locale.startsWith("iw") //$NON-NLS-1$ //$NON-NLS-2$
+				| locale.startsWith("ur")) { //$NON-NLS-1$
+			return true;
+		}
+		return false;
 	}
 
 	// Return true if the URI is of the form /<context>/nav/*

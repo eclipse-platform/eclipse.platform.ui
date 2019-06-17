@@ -208,12 +208,10 @@ public class ResourceManager extends SWTResourceManager {
 			}
 		}
 		// dispose plugin images
-		{
-			for (Image image : m_URLImageMap.values()) {
-				image.dispose();
-			}
-			m_URLImageMap.clear();
+		for (Image image : m_URLImageMap.values()) {
+			image.dispose();
 		}
+		m_URLImageMap.clear();
 	}
 
 	////////////////////////////////////////////////////////////////////////////
@@ -359,11 +357,9 @@ public class ResourceManager extends SWTResourceManager {
 	 */
 	private static URL getPluginImageURL(String symbolicName, String path) {
 		// try runtime plugins
-		{
-			Bundle bundle = Platform.getBundle(symbolicName);
-			if (bundle != null) {
-				return bundle.getEntry(path);
-			}
+		Bundle bundle = Platform.getBundle(symbolicName);
+		if (bundle != null) {
+			return bundle.getEntry(path);
 		}
 		// try design time provider
 		if (m_designTimePluginResourceProvider != null) {
@@ -405,18 +401,16 @@ public class ResourceManager extends SWTResourceManager {
 			// Ignore any exceptions
 		}
 		// else work with 'plugin' as with usual Eclipse plugin
-		{
-			Class<?> PluginClass = Class.forName("org.eclipse.core.runtime.Plugin"); //$NON-NLS-1$
-			if (PluginClass.isAssignableFrom(plugin.getClass())) {
-				//
-				Class<?> PathClass = Class.forName("org.eclipse.core.runtime.Path"); //$NON-NLS-1$
-				Constructor<?> pathConstructor = PathClass.getConstructor(String.class);
-				Object path = pathConstructor.newInstance(name);
-				//
-				Class<?> IPathClass = Class.forName("org.eclipse.core.runtime.IPath"); //$NON-NLS-1$
-				Method findMethod = PluginClass.getMethod("find", IPathClass); //$NON-NLS-1$
-				return (URL) findMethod.invoke(plugin, path);
-			}
+		Class<?> PluginClass = Class.forName("org.eclipse.core.runtime.Plugin"); //$NON-NLS-1$
+		if (PluginClass.isAssignableFrom(plugin.getClass())) {
+			//
+			Class<?> PathClass = Class.forName("org.eclipse.core.runtime.Path"); //$NON-NLS-1$
+			Constructor<?> pathConstructor = PathClass.getConstructor(String.class);
+			Object path = pathConstructor.newInstance(name);
+			//
+			Class<?> IPathClass = Class.forName("org.eclipse.core.runtime.IPath"); //$NON-NLS-1$
+			Method findMethod = PluginClass.getMethod("find", IPathClass); //$NON-NLS-1$
+			return (URL) findMethod.invoke(plugin, path);
 		}
 		return null;
 	}

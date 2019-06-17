@@ -119,8 +119,7 @@ public class CookieUtil {
 				    if (isObsoleteCookie(name) || cookiesToKeep.contains(name)) {
 				    	cookiesToDelete.add(name);
 				    }
-					cookiesToKeep.add(name); {
-				}
+					cookiesToKeep.add(name);
 			}
 
 			for (String name : cookiesToDelete) {

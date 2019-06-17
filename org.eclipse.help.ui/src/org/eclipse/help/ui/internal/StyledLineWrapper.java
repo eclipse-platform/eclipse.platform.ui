@@ -181,14 +181,13 @@ public class StyledLineWrapper implements StyledTextContent {
 				// if we reached the end, stop
 				if (start >= textChars.length)
 					break;
-				{ // see if the next character is an LF
-					ch = textChars[start];
-					if (ch == SWT.LF) {
-						start++;
-						i++;
-						if (start >= textChars.length)
-							break;
-					}
+				// see if the next character is an LF
+				ch = textChars[start];
+				if (ch == SWT.LF) {
+					start++;
+					i++;
+					if (start >= textChars.length)
+						break;
 				}
 			} else if (ch == SWT.LF) {
 				lines.add(new String(textChars, start, i - start));
