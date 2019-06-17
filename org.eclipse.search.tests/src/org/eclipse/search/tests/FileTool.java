@@ -67,7 +67,7 @@ public class FileTool {
 
 				try (
 						InputStream src = zipFile.getInputStream(entry);
-						OutputStream dst = new FileOutputStream(file);
+						OutputStream dst = new FileOutputStream(file)
 					) {
 					transferData(src, dst);
 				}
@@ -108,7 +108,7 @@ public class FileTool {
 		destination.getParentFile().mkdirs();
 		try (
 				InputStream  is = new FileInputStream(source);
-				OutputStream os = new FileOutputStream(destination);
+				OutputStream os = new FileOutputStream(destination)
 			) {
 
 			transferData(is, os);
@@ -195,7 +195,7 @@ public class FileTool {
 	}
 
 	public static void write(String fileName, StringBuffer content) throws IOException {
-		try (Writer writer= new FileWriter(fileName);) {
+		try (Writer writer= new FileWriter(fileName)) {
 			writer.write(content.toString());
 		}
 	}
