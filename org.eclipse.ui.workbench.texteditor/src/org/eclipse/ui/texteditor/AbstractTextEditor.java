@@ -6310,14 +6310,12 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		StyledText widget= fSourceViewer.getTextWidget();
 		widget.setRedraw(false);
-		{
-			adjustHighlightRange(revealStart, revealLength);
-			fSourceViewer.revealRange(revealStart, revealLength);
+		adjustHighlightRange(revealStart, revealLength);
+		fSourceViewer.revealRange(revealStart, revealLength);
 
-			fSourceViewer.setSelectedRange(selectionStart, selectionLength);
+		fSourceViewer.setSelectedRange(selectionStart, selectionLength);
 
-			markInNavigationHistory();
-		}
+		markInNavigationHistory();
 		widget.setRedraw(true);
 	}
 

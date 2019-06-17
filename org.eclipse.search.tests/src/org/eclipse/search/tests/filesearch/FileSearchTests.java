@@ -311,13 +311,11 @@ public class FileSearchTests {
 			engine.search(scope, collector, searchPattern, null);
 			assertEquals("Number of whole-word results", 10, collector.getNumberOfResults());
 		}
-		{
-			// regexp, whole word = false: match all lines
-			Pattern searchPattern= PatternConstructor.createPattern("h[eio]ll", true, true, false, false);
-			collector.reset();
-			engine.search(scope, collector, searchPattern, null);
-			assertEquals("Number of partial-word results", 22, collector.getNumberOfResults());
-		}
+		// regexp, whole word = false: match all lines
+		Pattern searchPattern= PatternConstructor.createPattern("h[eio]ll", true, true, false, false);
+		collector.reset();
+		engine.search(scope, collector, searchPattern, null);
+		assertEquals("Number of partial-word results", 22, collector.getNumberOfResults());
 	}
 
 	@Test
@@ -437,13 +435,11 @@ public class FileSearchTests {
 			engine.search(scope, collector, searchPattern, null);
 			assertEquals(1, collector.getNumberOfResults());
 		}
-		{
-			// visit non-derived in folder3
-			TextSearchScope scope= TextSearchScope.newSearchScope(new IResource[] { folder3 }, fileNamePattern, false);
-			collector.reset();
-			engine.search(scope, collector, searchPattern, null);
-			assertEquals(0, collector.getNumberOfResults());
-		}
+		// visit non-derived in folder3
+		TextSearchScope scope= TextSearchScope.newSearchScope(new IResource[] { folder3 }, fileNamePattern, false);
+		collector.reset();
+		engine.search(scope, collector, searchPattern, null);
+		assertEquals(0, collector.getNumberOfResults());
 	}
 
 	@Test

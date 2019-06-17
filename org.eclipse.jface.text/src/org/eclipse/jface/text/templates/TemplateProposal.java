@@ -159,24 +159,22 @@ public class TemplateProposal implements ICompletionProposal, ICompletionProposa
 			fContext.setReadOnly(false);
 			int start;
 			TemplateBuffer templateBuffer;
-			{
-				int oldReplaceOffset= getReplaceOffset();
-				try {
-					// this may already modify the document (e.g. add imports)
-					templateBuffer= fContext.evaluate(fTemplate);
-				} catch (TemplateException e1) {
-					fSelectedRegion= fRegion;
-					return;
-				}
-
-				start= getReplaceOffset();
-				int shift= start - oldReplaceOffset;
-				int end= Math.max(getReplaceEndOffset(), offset + shift);
-
-				// insert template string
-				String templateString= templateBuffer.getString();
-				document.replace(start, end - start, templateString);
+			int oldReplaceOffset= getReplaceOffset();
+			try {
+				// this may already modify the document (e.g. add imports)
+				templateBuffer= fContext.evaluate(fTemplate);
+			} catch (TemplateException e1) {
+				fSelectedRegion= fRegion;
+				return;
 			}
+
+			start= getReplaceOffset();
+			int shift= start - oldReplaceOffset;
+			int end= Math.max(getReplaceEndOffset(), offset + shift);
+
+			// insert template string
+			String templateString= templateBuffer.getString();
+			document.replace(start, end - start, templateString);
 
 			// translate positions
 			LinkedModeModel model= new LinkedModeModel();

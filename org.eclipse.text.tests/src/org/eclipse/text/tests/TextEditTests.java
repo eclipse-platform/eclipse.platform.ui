@@ -1093,23 +1093,21 @@ public class TextEditTests {
 		IDocument document= new Document("foo(1, 2), 3");
 
 		MultiTextEdit root= new MultiTextEdit();
-		{
-			CopySourceEdit innerRoot= new CopySourceEdit(0, 9);
+		CopySourceEdit innerRoot= new CopySourceEdit(0, 9);
 
-			TextEdit e1= new ReplaceEdit(0, 9, "");
-			e1.addChild(innerRoot);
-			CopyTargetEdit t1= new CopyTargetEdit(11, innerRoot);
+		TextEdit e1= new ReplaceEdit(0, 9, "");
+		e1.addChild(innerRoot);
+		CopyTargetEdit t1= new CopyTargetEdit(11, innerRoot);
 
-			TextEdit e2= new ReplaceEdit(11, 1, "");
-			CopySourceEdit s2= new CopySourceEdit(11, 1);
-			e2.addChild(s2);
-			CopyTargetEdit t2= new CopyTargetEdit(0, s2);
+		TextEdit e2= new ReplaceEdit(11, 1, "");
+		CopySourceEdit s2= new CopySourceEdit(11, 1);
+		e2.addChild(s2);
+		CopyTargetEdit t2= new CopyTargetEdit(0, s2);
 
-			root.addChild(e1);
-			root.addChild(t2);
-			root.addChild(e2);
-			root.addChild(t1);
-		}
+		root.addChild(e1);
+		root.addChild(t2);
+		root.addChild(e2);
+		root.addChild(t1);
 
 		root.apply(document);
 
@@ -1122,22 +1120,20 @@ public class TextEditTests {
 		IDocument document= new Document("foo(1, 2), 3");
 
 		MultiTextEdit root= new MultiTextEdit();
-		{
-			TextEdit e1= new ReplaceEdit(4, 1, "");
-			CopySourceEdit s1= new CopySourceEdit(4, 1);
-			e1.addChild(s1);
-			CopyTargetEdit t1= new CopyTargetEdit(7, s1);
+		TextEdit e1= new ReplaceEdit(4, 1, "");
+		CopySourceEdit s1= new CopySourceEdit(4, 1);
+		e1.addChild(s1);
+		CopyTargetEdit t1= new CopyTargetEdit(7, s1);
 
-			TextEdit e2= new ReplaceEdit(7, 1, "");
-			CopySourceEdit s2= new CopySourceEdit(7, 1);
-			e2.addChild(s2);
-			CopyTargetEdit t2= new CopyTargetEdit(4, s2);
+		TextEdit e2= new ReplaceEdit(7, 1, "");
+		CopySourceEdit s2= new CopySourceEdit(7, 1);
+		e2.addChild(s2);
+		CopyTargetEdit t2= new CopyTargetEdit(4, s2);
 
-			root.addChild(e1);
-			root.addChild(t2);
-			root.addChild(e2);
-			root.addChild(t1);
-		}
+		root.addChild(e1);
+		root.addChild(t2);
+		root.addChild(e2);
+		root.addChild(t1);
 
 		root.apply(document);
 
@@ -1167,21 +1163,19 @@ public class TextEditTests {
 			innerRoot.addChild(t1);
 		}
 		MultiTextEdit root= new MultiTextEdit();
-		{
-			TextEdit e1= new ReplaceEdit(0, 9, "");
-			e1.addChild(innerRoot);
-			CopyTargetEdit t1= new CopyTargetEdit(11, innerRoot);
+		TextEdit e1= new ReplaceEdit(0, 9, "");
+		e1.addChild(innerRoot);
+		CopyTargetEdit t1= new CopyTargetEdit(11, innerRoot);
 
-			TextEdit e2= new ReplaceEdit(11, 1, "");
-			CopySourceEdit s2= new CopySourceEdit(11, 1);
-			e2.addChild(s2);
-			CopyTargetEdit t2= new CopyTargetEdit(0, s2);
+		TextEdit e2= new ReplaceEdit(11, 1, "");
+		CopySourceEdit s2= new CopySourceEdit(11, 1);
+		e2.addChild(s2);
+		CopyTargetEdit t2= new CopyTargetEdit(0, s2);
 
-			root.addChild(e1);
-			root.addChild(t2);
-			root.addChild(e2);
-			root.addChild(t1);
-		}
+		root.addChild(e1);
+		root.addChild(t2);
+		root.addChild(e2);
+		root.addChild(t1);
 
 		root.apply(document);
 

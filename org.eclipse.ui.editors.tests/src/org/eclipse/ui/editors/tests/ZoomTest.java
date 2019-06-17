@@ -96,22 +96,18 @@ public class ZoomTest {
 	@Test
 	public void testZoomCommand() throws Exception {
 		int times = 6;
-		{
-			Command zoomInCommand = PlatformUI.getWorkbench().getService(ICommandService.class)
-					.getCommand("org.eclipse.ui.edit.text.zoomIn");
-			for (int i = 0; i < times; i++) {
-				zoomInCommand.executeWithChecks(new ExecutionEvent(zoomInCommand, Collections.EMPTY_MAP, null, null));
-			}
-			Assert.assertEquals(this.initialFontSize + 12, text.getFont().getFontData()[0].getHeight());
+		Command zoomInCommand = PlatformUI.getWorkbench().getService(ICommandService.class)
+				.getCommand("org.eclipse.ui.edit.text.zoomIn");
+		for (int i = 0; i < times; i++) {
+			zoomInCommand.executeWithChecks(new ExecutionEvent(zoomInCommand, Collections.EMPTY_MAP, null, null));
 		}
-		{
-			Command zoomOutCommand = PlatformUI.getWorkbench().getService(ICommandService.class)
-					.getCommand("org.eclipse.ui.edit.text.zoomOut");
-			for (int i = 0; i < times; i++) {
-				zoomOutCommand.executeWithChecks(new ExecutionEvent(zoomOutCommand, Collections.EMPTY_MAP, null, null));
-			}
-			Assert.assertEquals(this.initialFontSize, text.getFont().getFontData()[0].getHeight());
+		Assert.assertEquals(this.initialFontSize + 12, text.getFont().getFontData()[0].getHeight());
+		Command zoomOutCommand = PlatformUI.getWorkbench().getService(ICommandService.class)
+				.getCommand("org.eclipse.ui.edit.text.zoomOut");
+		for (int i = 0; i < times; i++) {
+			zoomOutCommand.executeWithChecks(new ExecutionEvent(zoomOutCommand, Collections.EMPTY_MAP, null, null));
 		}
+		Assert.assertEquals(this.initialFontSize, text.getFont().getFontData()[0].getHeight());
 	}
 
 }

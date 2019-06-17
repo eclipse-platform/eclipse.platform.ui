@@ -482,21 +482,19 @@ class ContextInformationPopup implements IContentAssistListener {
 					break;
 				}
 			}
-			{
-				fContentAssistant.removeContentAssistListener(this, ContentAssistant.CONTEXT_INFO_POPUP);
+			fContentAssistant.removeContentAssistListener(this, ContentAssistant.CONTEXT_INFO_POPUP);
 
-				if (fContentAssistSubjectControlAdapter.getControl() != null)
-					fContentAssistSubjectControlAdapter.removeSelectionListener(fTextWidgetSelectionListener);
-				fTextWidgetSelectionListener= null;
+			if (fContentAssistSubjectControlAdapter.getControl() != null)
+				fContentAssistSubjectControlAdapter.removeSelectionListener(fTextWidgetSelectionListener);
+			fTextWidgetSelectionListener= null;
 
-				fContextInfoPopup.setVisible(false);
-				fContextInfoPopup.dispose();
-				fContextInfoPopup= null;
+			fContextInfoPopup.setVisible(false);
+			fContextInfoPopup.dispose();
+			fContextInfoPopup= null;
 
-				if (fTextPresentation != null) {
-					fTextPresentation.clear();
-					fTextPresentation= null;
-				}
+			if (fTextPresentation != null) {
+				fTextPresentation.clear();
+				fTextPresentation= null;
 			}
 		}
 
