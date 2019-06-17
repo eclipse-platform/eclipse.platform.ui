@@ -129,7 +129,7 @@ public class SearchResultPageTest {
 		int itemCount= result.getMatchCount(element);
 		assertTrue(itemCount > 0);
 		if (itemCount > 1)
-			assertTrue(item.getText().indexOf(String.valueOf(itemCount)) >= 0);
+			assertTrue(item.getText().contains(String.valueOf(itemCount)));
 	}
 
 	@Test
