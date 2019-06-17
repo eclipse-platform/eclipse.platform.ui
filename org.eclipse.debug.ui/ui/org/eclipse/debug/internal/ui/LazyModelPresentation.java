@@ -206,7 +206,7 @@ public class LazyModelPresentation implements IDebugModelPresentation, IDebugEdi
 					buf.append(getDefaultText(element));
 					return buf.toString();
 				} else if (element instanceof IVariable) {
-					return new StringBuffer(((IVariable)element).getValue().getReferenceTypeName()).append(' ').append(getDefaultText(element)).toString();
+					return new StringBuilder(((IVariable)element).getValue().getReferenceTypeName()).append(' ').append(getDefaultText(element)).toString();
 				}
 			} catch (DebugException de) {
 				DebugUIPlugin.log(de);
