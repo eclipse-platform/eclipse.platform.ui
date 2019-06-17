@@ -403,7 +403,7 @@ public class DocumentUndoManagerTest extends TestCase {
 	}
 
 	private static String createRandomString(int length) {
-		final StringBuffer buffer= new StringBuffer();
+		final StringBuilder buffer= new StringBuilder();
 
 		for (int i= 0; i < length; i++)
 			buffer.append(getRandomCharacter());
