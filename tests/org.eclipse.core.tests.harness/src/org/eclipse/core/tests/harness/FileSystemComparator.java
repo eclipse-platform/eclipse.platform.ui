@@ -109,8 +109,7 @@ public class FileSystemComparator {
 	public Object loadSnapshot(File rootLocation) throws IOException {
 		File summaryFile = new File(rootLocation, SNAPSHOT_FILE_NAME);
 		Map<String, FileSummary> snapshot = new HashMap<>();
-		BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(summaryFile)));
-		try {
+		try (BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(summaryFile)))) {
 			String line;
 			while ((line = in.readLine()) != null) {
 				String path = line;
@@ -118,8 +117,6 @@ public class FileSystemComparator {
 				long size = Long.parseLong(in.readLine());
 				snapshot.put(path, new FileSummary(path, timestamp, size));
 			}
-		} finally {
-			in.close();
 		}
 		return snapshot;
 	}

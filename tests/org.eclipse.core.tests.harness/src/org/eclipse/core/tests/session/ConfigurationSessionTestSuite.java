@@ -122,14 +122,8 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 		}
 		// save the properties
 		File configINI = configurationPath.append("config.ini").toFile();
-		OutputStream out = null;
-		try {
-			out = new BufferedOutputStream(new FileOutputStream(configINI));
+		try (OutputStream out = new BufferedOutputStream(new FileOutputStream(configINI))) {
 			contents.store(out, null);
-		} finally {
-			if (out != null) {
-				out.close();
-			}
 		}
 	}
 
