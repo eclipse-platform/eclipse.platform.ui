@@ -11,6 +11,7 @@
  * Contributors:
  *     Keith Seitz (keiths@redhat.com) - initial implementation
  *     IBM Corporation - integration and code cleanup
+ *     Red Hat - Bug 548344
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
@@ -52,6 +53,7 @@ public class EnvironmentVariable
 		return value;
 	}
 
+
 	/**
 	 * Sets this variable's value
 	 * @param value
@@ -59,6 +61,15 @@ public class EnvironmentVariable
 	public void setValue(String value)
 	{
 		this.value = value;
+	}
+
+	/**
+	 * Sets this variable's name
+	 *
+	 * @param name
+	 */
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	@Override
