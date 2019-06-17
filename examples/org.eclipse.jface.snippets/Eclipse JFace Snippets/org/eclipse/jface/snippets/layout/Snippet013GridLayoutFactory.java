@@ -35,29 +35,28 @@ public class Snippet013GridLayoutFactory {
 
 	public static Shell createShell1() {
 		Shell shell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM);
-		{ // Populate the shell
-			Label text = new Label(shell, SWT.WRAP);
-			text
-					.setText("This is a layout test. This text should wrap in the test. You could call it a text test.");
-			GridDataFactory.generate(text, 2, 1);
 
-			List theList = new List(shell, SWT.H_SCROLL | SWT.V_SCROLL
-					| SWT.BORDER);
+		// Populate the shell
+		Label text = new Label(shell, SWT.WRAP);
+		text
+				.setText("This is a layout test. This text should wrap in the test. You could call it a text test.");
+		GridDataFactory.generate(text, 2, 1);
 
-			theList.add("Hello");
-			theList.add("World");
-			GridDataFactory.defaultsFor(theList).hint(300, 300)
-					.applyTo(theList);
+		List theList = new List(shell, SWT.H_SCROLL | SWT.V_SCROLL
+				| SWT.BORDER);
 
-			Composite buttonBar = new Composite(shell, SWT.NONE);
-			{ // Populate buttonBar
-				Button add = new Button(buttonBar, SWT.PUSH);
-				add.setText("Add");
-				Button remove = new Button(buttonBar, SWT.PUSH);
-				remove.setText("Remove");
-			}
-			GridLayoutFactory.fillDefaults().generateLayout(buttonBar);
-		}
+		theList.add("Hello");
+		theList.add("World");
+		GridDataFactory.defaultsFor(theList).hint(300, 300)
+				.applyTo(theList);
+
+		Composite buttonBar = new Composite(shell, SWT.NONE);
+		// Populate buttonBar
+		Button add = new Button(buttonBar, SWT.PUSH);
+		add.setText("Add");
+		Button remove = new Button(buttonBar, SWT.PUSH);
+		remove.setText("Remove");
+		GridLayoutFactory.fillDefaults().generateLayout(buttonBar);
 		GridLayoutFactory.fillDefaults().numColumns(2).margins(
 				LayoutConstants.getMargins()).generateLayout(shell);
 
@@ -66,57 +65,52 @@ public class Snippet013GridLayoutFactory {
 
 	public static Shell createShell3() {
 		Shell shell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM);
-		{ // Populate the shell
 
-			Text text = new Text(shell, SWT.WRAP | SWT.BORDER);
-			text
-					.setText("This shell has asymmetric margins. The left, right, top, and bottom margins should be 0, 10, 40, and 80 pixels respectively");
+		// Populate the shell
+		Text text = new Text(shell, SWT.WRAP | SWT.BORDER);
+		text
+				.setText("This shell has asymmetric margins. The left, right, top, and bottom margins should be 0, 10, 40, and 80 pixels respectively");
 
-			Rectangle margins = Geometry.createDiffRectangle(0, 10, 40, 80);
+		Rectangle margins = Geometry.createDiffRectangle(0, 10, 40, 80);
 
-			GridLayoutFactory.fillDefaults().extendedMargins(margins)
-					.generateLayout(shell);
-
-		}
+		GridLayoutFactory.fillDefaults().extendedMargins(margins)
+				.generateLayout(shell);
 
 		return shell;
 	}
 
 	public static Shell createShell2() {
 		Shell shell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM);
-		{ // Populate the shell
 
-			Label text = new Label(shell, SWT.NONE);
-			text.setText("Name:");
-			new Text(shell, SWT.BORDER);
+		// Populate the shell
+		Label text = new Label(shell, SWT.NONE);
+		text.setText("Name:");
+		new Text(shell, SWT.BORDER);
 
-			Label quest = new Label(shell, SWT.NONE);
-			quest.setText("Quest:");
-			CCombo combo = new CCombo(shell, SWT.BORDER);
-			combo.add("I seek the holy grail");
-			combo.add("What? I don't know that");
-			combo.add("All your base are belong to us");
+		Label quest = new Label(shell, SWT.NONE);
+		quest.setText("Quest:");
+		CCombo combo = new CCombo(shell, SWT.BORDER);
+		combo.add("I seek the holy grail");
+		combo.add("What? I don't know that");
+		combo.add("All your base are belong to us");
 
-			Label colour = new Label(shell, SWT.NONE);
-			colour.setText("Color:");
-			new Text(shell, SWT.BORDER);
+		Label colour = new Label(shell, SWT.NONE);
+		colour.setText("Color:");
+		new Text(shell, SWT.BORDER);
 
-			Composite buttonBar = new Composite(shell, SWT.NONE);
-			{ // Populate buttonBar
-				Button add = new Button(buttonBar, SWT.PUSH);
-				add.setText("Okay");
-				Button remove = new Button(buttonBar, SWT.PUSH);
-				remove.setText("Cancel");
+		Composite buttonBar = new Composite(shell, SWT.NONE);
+		Button add = new Button(buttonBar, SWT.PUSH);
+		add.setText("Okay");
+		Button remove = new Button(buttonBar, SWT.PUSH);
+		remove.setText("Cancel");
 
-				GridLayoutFactory.fillDefaults().numColumns(2).generateLayout(
-						buttonBar);
-			}
-			GridDataFactory.fillDefaults().span(2, 1).align(SWT.RIGHT,
-					SWT.BOTTOM).applyTo(buttonBar);
+		GridLayoutFactory.fillDefaults().numColumns(2).generateLayout(
+				buttonBar);
+		GridDataFactory.fillDefaults().span(2, 1).align(SWT.RIGHT,
+				SWT.BOTTOM).applyTo(buttonBar);
 
-			GridLayoutFactory.fillDefaults().numColumns(2).margins(
-					LayoutConstants.getMargins()).generateLayout(shell);
-		}
+		GridLayoutFactory.fillDefaults().numColumns(2).margins(
+				LayoutConstants.getMargins()).generateLayout(shell);
 
 		return shell;
 	}

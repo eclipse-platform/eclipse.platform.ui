@@ -85,63 +85,61 @@ public class LabelProviderTest {
 
 		// Create shell
 		shell = new Shell(Display.getCurrent());
-		{ // Initialize shell
-			setOfRenamables = new WritableSet<>();
 
-			list = new ListViewer(shell);
-			ObservableSetContentProvider<RenamableItem> contentProvider = new ObservableSetContentProvider<>();
-			list.setContentProvider(contentProvider);
-			list.setLabelProvider(new ListeningLabelProvider<RenamableItem>(contentProvider.getKnownElements()) {
-				RenamableItem.Listener listener = item -> fireChangeEvent(Collections.singleton(item));
+		// Initialize shell
+		setOfRenamables = new WritableSet<>();
 
-				@Override
-				public void updateLabel(ViewerLabel label, Object element) {
-					if (element instanceof RenamableItem) {
-						RenamableItem item = (RenamableItem) element;
+		list = new ListViewer(shell);
+		ObservableSetContentProvider<RenamableItem> contentProvider = new ObservableSetContentProvider<>();
+		list.setContentProvider(contentProvider);
+		list.setLabelProvider(new ListeningLabelProvider<RenamableItem>(contentProvider.getKnownElements()) {
+			RenamableItem.Listener listener = item -> fireChangeEvent(Collections.singleton(item));
 
-						label.setText(item.getName());
-					}
+			@Override
+			public void updateLabel(ViewerLabel label, Object element) {
+				if (element instanceof RenamableItem) {
+					RenamableItem item = (RenamableItem) element;
+
+					label.setText(item.getName());
 				}
-
-				@Override
-				protected void addListenerTo(RenamableItem next) {
-					next.addListener(listener);
-				}
-
-				@Override
-				protected void removeListenerFrom(RenamableItem next) {
-					next.removeListener(listener);
-				}
-			});
-			list.setInput(setOfRenamables);
-
-			selectedRenamable = ViewerProperties.singleSelection(RenamableItem.class).observe(list);
-
-			Composite buttonBar = new Composite(shell, SWT.NONE);
-			{ // Initialize buttonBar
-				addButton = new Button(buttonBar, SWT.PUSH);
-				addButton.setText("Add"); //$NON-NLS-1$
-				addButton.addSelectionListener(buttonSelectionListener);
-				removeButton = new Button(buttonBar, SWT.PUSH);
-				removeButton.addSelectionListener(buttonSelectionListener);
-				removeButton.setText("Remove"); //$NON-NLS-1$
-				renameButton = new Button(buttonBar, SWT.PUSH);
-				renameButton.addSelectionListener(buttonSelectionListener);
-				renameButton.setText("Rename"); //$NON-NLS-1$
-
-				selectedRenamable
-						.addValueChangeListener(event -> {
-							boolean shouldEnable = selectedRenamable.getValue() != null;
-							removeButton.setEnabled(shouldEnable);
-							renameButton.setEnabled(shouldEnable);
-						});
-				removeButton.setEnabled(false);
-				renameButton.setEnabled(false);
-
-				GridLayoutFactory.fillDefaults().generateLayout(buttonBar);
 			}
 
-		}
+			@Override
+			protected void addListenerTo(RenamableItem next) {
+				next.addListener(listener);
+			}
+
+			@Override
+			protected void removeListenerFrom(RenamableItem next) {
+				next.removeListener(listener);
+			}
+		});
+		list.setInput(setOfRenamables);
+
+		selectedRenamable = ViewerProperties.singleSelection(RenamableItem.class).observe(list);
+
+		Composite buttonBar = new Composite(shell, SWT.NONE);
+		// Initialize buttonBar
+		addButton = new Button(buttonBar, SWT.PUSH);
+		addButton.setText("Add"); //$NON-NLS-1$
+		addButton.addSelectionListener(buttonSelectionListener);
+		removeButton = new Button(buttonBar, SWT.PUSH);
+		removeButton.addSelectionListener(buttonSelectionListener);
+		removeButton.setText("Remove"); //$NON-NLS-1$
+		renameButton = new Button(buttonBar, SWT.PUSH);
+		renameButton.addSelectionListener(buttonSelectionListener);
+		renameButton.setText("Rename"); //$NON-NLS-1$
+
+		selectedRenamable
+				.addValueChangeListener(event -> {
+					boolean shouldEnable = selectedRenamable.getValue() != null;
+					removeButton.setEnabled(shouldEnable);
+					renameButton.setEnabled(shouldEnable);
+				});
+		removeButton.setEnabled(false);
+		renameButton.setEnabled(false);
+
+		GridLayoutFactory.fillDefaults().generateLayout(buttonBar);
 		GridLayoutFactory.fillDefaults().numColumns(2).margins(
 				LayoutConstants.getMargins()).generateLayout(shell);
 	}

@@ -377,79 +377,75 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 	protected void fillCoolBar(ICoolBarManager coolBar) {
 
 		IActionBarConfigurer2 actionBarConfigurer = (IActionBarConfigurer2) getActionBarConfigurer();
+
+		// File Group
 		coolBar.add(new GroupMarker(IIDEActionConstants.GROUP_FILE));
-		{ // File Group
-			IToolBarManager fileToolBar = actionBarConfigurer.createToolBarManager();
-			fileToolBar.add(new Separator(IWorkbenchActionConstants.NEW_GROUP));
-			fileToolBar.add(newWizardDropDownAction);
-			fileToolBar.add(new GroupMarker(IWorkbenchActionConstants.NEW_EXT));
-			fileToolBar.add(new GroupMarker(
-					IWorkbenchActionConstants.SAVE_GROUP));
-			fileToolBar.add(saveAction);
-			fileToolBar.add(saveAllAction);
-			fileToolBar
-					.add(new GroupMarker(IWorkbenchActionConstants.SAVE_EXT));
-			fileToolBar.add(getPrintItem());
-			fileToolBar
-					.add(new GroupMarker(IWorkbenchActionConstants.PRINT_EXT));
+		IToolBarManager fileToolBar = actionBarConfigurer.createToolBarManager();
+		fileToolBar.add(new Separator(IWorkbenchActionConstants.NEW_GROUP));
+		fileToolBar.add(newWizardDropDownAction);
+		fileToolBar.add(new GroupMarker(IWorkbenchActionConstants.NEW_EXT));
+		fileToolBar.add(new GroupMarker(
+				IWorkbenchActionConstants.SAVE_GROUP));
+		fileToolBar.add(saveAction);
+		fileToolBar.add(saveAllAction);
+		fileToolBar
+				.add(new GroupMarker(IWorkbenchActionConstants.SAVE_EXT));
+		fileToolBar.add(getPrintItem());
+		fileToolBar
+				.add(new GroupMarker(IWorkbenchActionConstants.PRINT_EXT));
 
-			fileToolBar
-					.add(new Separator(IWorkbenchActionConstants.BUILD_GROUP));
-			fileToolBar
-					.add(new GroupMarker(IWorkbenchActionConstants.BUILD_EXT));
-			fileToolBar.add(new Separator(
-					IWorkbenchActionConstants.MB_ADDITIONS));
+		fileToolBar
+				.add(new Separator(IWorkbenchActionConstants.BUILD_GROUP));
+		fileToolBar
+				.add(new GroupMarker(IWorkbenchActionConstants.BUILD_EXT));
+		fileToolBar.add(new Separator(
+				IWorkbenchActionConstants.MB_ADDITIONS));
 
-			// Add to the cool bar manager
-			coolBar.add(actionBarConfigurer.createToolBarContributionItem(fileToolBar,
-					IWorkbenchActionConstants.TOOLBAR_FILE));
-		}
+		// Add to the cool bar manager
+		coolBar.add(actionBarConfigurer.createToolBarContributionItem(fileToolBar,
+				IWorkbenchActionConstants.TOOLBAR_FILE));
 
+		// Edit group
 		coolBar.add(new GroupMarker(IIDEActionConstants.GROUP_EDIT));
-		{ // Edit group
-			IToolBarManager editToolBar = actionBarConfigurer.createToolBarManager();
-			editToolBar.add(new Separator(IWorkbenchActionConstants.EDIT_GROUP));
-			editToolBar.add(undoAction);
-			editToolBar.add(redoAction);
+		IToolBarManager editToolBar = actionBarConfigurer.createToolBarManager();
+		editToolBar.add(new Separator(IWorkbenchActionConstants.EDIT_GROUP));
+		editToolBar.add(undoAction);
+		editToolBar.add(redoAction);
 
-			// Add to the cool bar manager
-			coolBar.add(actionBarConfigurer.createToolBarContributionItem(editToolBar,
-					IWorkbenchActionConstants.TOOLBAR_EDIT));
-		}
+		// Add to the cool bar manager
+		coolBar.add(actionBarConfigurer.createToolBarContributionItem(editToolBar,
+				IWorkbenchActionConstants.TOOLBAR_EDIT));
 
 		coolBar.add(new GroupMarker(IWorkbenchActionConstants.MB_ADDITIONS));
 
+		// Navigate group
 		coolBar.add(new GroupMarker(IIDEActionConstants.GROUP_NAV));
-		{ // Navigate group
-			IToolBarManager navToolBar = actionBarConfigurer.createToolBarManager();
-			navToolBar.add(new Separator(
-					IWorkbenchActionConstants.HISTORY_GROUP));
-			navToolBar
-					.add(new GroupMarker(IWorkbenchActionConstants.GROUP_APP));
-			navToolBar.add(backwardHistoryAction);
-			navToolBar.add(forwardHistoryAction);
-			navToolBar.add(new Separator(IWorkbenchActionConstants.PIN_GROUP));
-			navToolBar.add(getPinEditorItem());
+		IToolBarManager navToolBar = actionBarConfigurer.createToolBarManager();
+		navToolBar.add(new Separator(
+				IWorkbenchActionConstants.HISTORY_GROUP));
+		navToolBar
+				.add(new GroupMarker(IWorkbenchActionConstants.GROUP_APP));
+		navToolBar.add(backwardHistoryAction);
+		navToolBar.add(forwardHistoryAction);
+		navToolBar.add(new Separator(IWorkbenchActionConstants.PIN_GROUP));
+		navToolBar.add(getPinEditorItem());
 
-			// Add to the cool bar manager
-			coolBar.add(actionBarConfigurer.createToolBarContributionItem(navToolBar,
-					IWorkbenchActionConstants.TOOLBAR_NAVIGATE));
-		}
+		// Add to the cool bar manager
+		coolBar.add(actionBarConfigurer.createToolBarContributionItem(navToolBar,
+				IWorkbenchActionConstants.TOOLBAR_NAVIGATE));
 
 		coolBar.add(new GroupMarker(IWorkbenchActionConstants.GROUP_EDITOR));
 
 		coolBar.add(new GroupMarker(IWorkbenchActionConstants.GROUP_HELP));
 
-		{ // Help group
-			IToolBarManager helpToolBar = actionBarConfigurer.createToolBarManager();
-			helpToolBar.add(new Separator(IWorkbenchActionConstants.GROUP_HELP));
-//            helpToolBar.add(searchComboItem);
-			// Add the group for applications to contribute
-			helpToolBar.add(new GroupMarker(IWorkbenchActionConstants.GROUP_APP));
-			// Add to the cool bar manager
-			coolBar.add(actionBarConfigurer.createToolBarContributionItem(helpToolBar,
-					IWorkbenchActionConstants.TOOLBAR_HELP));
-		}
+		// Help group
+		IToolBarManager helpToolBar = actionBarConfigurer.createToolBarManager();
+		helpToolBar.add(new Separator(IWorkbenchActionConstants.GROUP_HELP));
+		// Add the group for applications to contribute
+		helpToolBar.add(new GroupMarker(IWorkbenchActionConstants.GROUP_APP));
+		// Add to the cool bar manager
+		coolBar.add(actionBarConfigurer.createToolBarContributionItem(helpToolBar,
+				IWorkbenchActionConstants.TOOLBAR_HELP));
 
 	}
 
@@ -473,18 +469,16 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 	private MenuManager createFileMenu() {
 		MenuManager menu = new MenuManager(IDEWorkbenchMessages.Workbench_file, IWorkbenchActionConstants.M_FILE);
 		menu.add(new GroupMarker(IWorkbenchActionConstants.FILE_START));
-		{
-			// create the New submenu, using the same id for it as the New action
-			String newText = IDEWorkbenchMessages.Workbench_new;
-			String newId = ActionFactory.NEW.getId();
-			MenuManager newMenu = new MenuManager(newText, newId);
-			newMenu.setActionDefinitionId("org.eclipse.ui.file.newQuickMenu"); //$NON-NLS-1$
-			newMenu.add(new Separator(newId));
-			this.newWizardMenu = new NewWizardMenu(getWindow());
-			newMenu.add(this.newWizardMenu);
-			newMenu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-			menu.add(newMenu);
-		}
+		// create the New submenu, using the same id for it as the New action
+		String newText = IDEWorkbenchMessages.Workbench_new;
+		String newId = ActionFactory.NEW.getId();
+		MenuManager newMenu = new MenuManager(newText, newId);
+		newMenu.setActionDefinitionId("org.eclipse.ui.file.newQuickMenu"); //$NON-NLS-1$
+		newMenu.add(new Separator(newId));
+		this.newWizardMenu = new NewWizardMenu(getWindow());
+		newMenu.add(this.newWizardMenu);
+		newMenu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
+		menu.add(newMenu);
 
 		menu.add(new GroupMarker(IWorkbenchActionConstants.NEW_EXT));
 
@@ -596,15 +590,13 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 			menu.add(new Separator(IWorkbenchActionConstants.OPEN_EXT + i));
 		}
 		menu.add(new Separator(IWorkbenchActionConstants.SHOW_EXT));
-		{
-			MenuManager showInSubMenu = new MenuManager(
-					IDEWorkbenchMessages.Workbench_showIn, "showIn"); //$NON-NLS-1$
-			showInSubMenu.setActionDefinitionId(showInQuickMenu
-					.getActionDefinitionId());
-			showInSubMenu.add(ContributionItemFactory.VIEWS_SHOW_IN
-					.create(getWindow()));
-			menu.add(showInSubMenu);
-		}
+		MenuManager showInSubMenu = new MenuManager(
+				IDEWorkbenchMessages.Workbench_showIn, "showIn"); //$NON-NLS-1$
+		showInSubMenu.setActionDefinitionId(showInQuickMenu
+				.getActionDefinitionId());
+		showInSubMenu.add(ContributionItemFactory.VIEWS_SHOW_IN
+				.create(getWindow()));
+		menu.add(showInSubMenu);
 		for (int i = 2; i < 5; ++i) {
 			menu.add(new Separator(IWorkbenchActionConstants.SHOW_EXT + i));
 		}

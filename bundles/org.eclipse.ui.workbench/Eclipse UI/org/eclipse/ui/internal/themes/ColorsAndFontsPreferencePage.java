@@ -180,36 +180,32 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 					}
 				}
 			}
-			{
-				ColorDefinition[] colorDefinitions = themeRegistry.getColorsFor(currentTheme.getId());
-				for (ColorDefinition colorDefinition : colorDefinitions) {
-					if (!colorDefinition.isEditable()) {
+			ColorDefinition[] colorDefinitions = themeRegistry.getColorsFor(currentTheme.getId());
+			for (ColorDefinition colorDefinition : colorDefinitions) {
+				if (!colorDefinition.isEditable()) {
+					continue;
+				}
+				String catId = colorDefinition.getCategoryId();
+				if ((catId == null && categoryId == null)
+						|| (catId != null && categoryId != null && categoryId.equals(catId))) {
+					if (colorDefinition.getDefaultsTo() != null && parentIsInSameCategory(colorDefinition)) {
 						continue;
 					}
-					String catId = colorDefinition.getCategoryId();
-					if ((catId == null && categoryId == null)
-							|| (catId != null && categoryId != null && categoryId.equals(catId))) {
-						if (colorDefinition.getDefaultsTo() != null && parentIsInSameCategory(colorDefinition)) {
-							continue;
-						}
-						list.add(colorDefinition);
-					}
+					list.add(colorDefinition);
 				}
 			}
-			{
-				FontDefinition[] fontDefinitions = themeRegistry.getFontsFor(currentTheme.getId());
-				for (FontDefinition fontDefinition : fontDefinitions) {
-					if (!fontDefinition.isEditable()) {
+			FontDefinition[] fontDefinitions = themeRegistry.getFontsFor(currentTheme.getId());
+			for (FontDefinition fontDefinition : fontDefinitions) {
+				if (!fontDefinition.isEditable()) {
+					continue;
+				}
+				String catId = fontDefinition.getCategoryId();
+				if ((catId == null && categoryId == null)
+						|| (catId != null && categoryId != null && categoryId.equals(catId))) {
+					if (fontDefinition.getDefaultsTo() != null && parentIsInSameCategory(fontDefinition)) {
 						continue;
 					}
-					String catId = fontDefinition.getCategoryId();
-					if ((catId == null && categoryId == null)
-							|| (catId != null && categoryId != null && categoryId.equals(catId))) {
-						if (fontDefinition.getDefaultsTo() != null && parentIsInSameCategory(fontDefinition)) {
-							continue;
-						}
-						list.add(fontDefinition);
-					}
+					list.add(fontDefinition);
 				}
 			}
 			return list.toArray(new Object[list.size()]);

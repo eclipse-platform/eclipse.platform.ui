@@ -334,27 +334,21 @@ public class WorkbenchThemeManager extends EventManager implements IThemeManager
 			}
 
 			// update the jface registries
-			{
-				ColorRegistry jfaceColors = JFaceResources.getColorRegistry();
-				ColorRegistry themeColors = currentTheme.getColorRegistry();
-				for (Object themeColorKey : themeColors.getKeySet()) {
-					String key = (String) themeColorKey;
-					jfaceColors.put(key, themeColors.getRGB(key));
-				}
+			ColorRegistry jfaceColors = JFaceResources.getColorRegistry();
+			ColorRegistry themeColors = currentTheme.getColorRegistry();
+			for (Object themeColorKey : themeColors.getKeySet()) {
+				String key = (String) themeColorKey;
+				jfaceColors.put(key, themeColors.getRGB(key));
 			}
-			{
-				FontRegistry jfaceFonts = JFaceResources.getFontRegistry();
-				FontRegistry themeFonts = currentTheme.getFontRegistry();
-				for (Object themeFontKey : themeFonts.getKeySet()) {
-					String key = (String) themeFontKey;
-					jfaceFonts.put(key, themeFonts.getFontData(key));
-				}
+			FontRegistry jfaceFonts = JFaceResources.getFontRegistry();
+			FontRegistry themeFonts = currentTheme.getFontRegistry();
+			for (Object themeFontKey : themeFonts.getKeySet()) {
+				String key = (String) themeFontKey;
+				jfaceFonts.put(key, themeFonts.getFontData(key));
 			}
-			{
-				if (oldTheme != null && eventBroker != null) {
-					eventBroker.send(UIEvents.UILifeCycle.THEME_CHANGED, null);
-					eventBroker.send(UIEvents.UILifeCycle.THEME_DEFINITION_CHANGED, context.get(MApplication.class));
-				}
+			if (oldTheme != null && eventBroker != null) {
+				eventBroker.send(UIEvents.UILifeCycle.THEME_CHANGED, null);
+				eventBroker.send(UIEvents.UILifeCycle.THEME_DEFINITION_CHANGED, context.get(MApplication.class));
 			}
 		}
 	}

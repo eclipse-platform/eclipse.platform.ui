@@ -122,23 +122,21 @@ public class CTabItemTest extends CSSSWTTestCase {
 		folder.getItems();
 		assertEquals(0, folder.getSelectionIndex());
 		CTabItem item = folder.getItem(0);
-		{
-			FontData fontData = item.getFont().getFontData()[0];
-			assertEquals("Verdana", fontData.getName());
-			assertEquals(16, fontData.getHeight());
-			assertEquals(SWT.NORMAL, fontData.getStyle());
+		FontData fontData = item.getFont().getFontData()[0];
+		assertEquals("Verdana", fontData.getName());
+		assertEquals(16, fontData.getHeight());
+		assertEquals(SWT.NORMAL, fontData.getStyle());
 
-			// verify retrieval
-			assertEquals("Verdana", engine.retrieveCSSProperty(item, "font-family", null));
-			assertEquals("16", engine.retrieveCSSProperty(item, "font-size", null));
+		// verify retrieval
+		assertEquals("Verdana", engine.retrieveCSSProperty(item, "font-family", null));
+		assertEquals("16", engine.retrieveCSSProperty(item, "font-size", null));
 
-			// make sure child controls are styled
-			Control button = item.getControl();
-			fontData = button.getFont().getFontData()[0];
-			assertEquals("Verdana", fontData.getName());
-			assertEquals(12, fontData.getHeight());
-			assertEquals(SWT.NORMAL, fontData.getStyle());
-		}
+		// make sure child controls are styled
+		Control button = item.getControl();
+		fontData = button.getFont().getFontData()[0];
+		assertEquals("Verdana", fontData.getName());
+		assertEquals(12, fontData.getHeight());
+		assertEquals(SWT.NORMAL, fontData.getStyle());
 	}
 
 	@Test
@@ -149,20 +147,18 @@ public class CTabItemTest extends CSSSWTTestCase {
 
 		assertEquals(0, folder.getSelectionIndex());
 		CTabItem item = folder.getItem(0);
-		{
-			FontData fontData = item.getFont().getFontData()[0];
-			assertEquals(SWT.BOLD, fontData.getStyle());
+		FontData fontData = item.getFont().getFontData()[0];
+		assertEquals(SWT.BOLD, fontData.getStyle());
 
-			// verify retrieval
-			assertEquals("bold",
-					engine.retrieveCSSProperty(item,
-							"font-weight", null));
+		// verify retrieval
+		assertEquals("bold",
+				engine.retrieveCSSProperty(item,
+						"font-weight", null));
 
-			// make sure child controls are styled
-			Control button = item.getControl();
-			fontData = button.getFont().getFontData()[0];
-			assertEquals(SWT.BOLD, fontData.getStyle());
-		}
+		// make sure child controls are styled
+		Control button = item.getControl();
+		fontData = button.getFont().getFontData()[0];
+		assertEquals(SWT.BOLD, fontData.getStyle());
 	}
 
 	@Test
@@ -173,18 +169,16 @@ public class CTabItemTest extends CSSSWTTestCase {
 
 		assertEquals(0, folder.getSelectionIndex());
 		CTabItem item = folder.getItem(0);
-		{
-			FontData fontData = item.getFont().getFontData()[0];
-			assertEquals(SWT.ITALIC, fontData.getStyle());
+		FontData fontData = item.getFont().getFontData()[0];
+		assertEquals(SWT.ITALIC, fontData.getStyle());
 
-			// verify retrieval
-			assertEquals("italic", engine.retrieveCSSProperty(item, "font-style", null));
+		// verify retrieval
+		assertEquals("italic", engine.retrieveCSSProperty(item, "font-style", null));
 
-			// make sure child controls are styled
-			Control button = item.getControl();
-			fontData = button.getFont().getFontData()[0];
-			assertEquals(SWT.BOLD, fontData.getStyle());
-		}
+		// make sure child controls are styled
+		Control button = item.getControl();
+		fontData = button.getFont().getFontData()[0];
+		assertEquals(SWT.BOLD, fontData.getStyle());
 	}
 
 	private void testSelectedFontBold(CTabFolder folder, int selectionIndex) {

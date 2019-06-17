@@ -58,53 +58,51 @@ public class LayoutConstraintsView extends ViewPart implements ISizeProvider {
 		control = parent;
 
 		Composite buttonBar = new Composite(parent, SWT.NONE);
-		{
-			GridDataFactory buttonData = GridDataFactory.fillDefaults().grab(true, false);
+		GridDataFactory buttonData = GridDataFactory.fillDefaults().grab(true, false);
 
-			Button applyButton = new Button(buttonBar, SWT.PUSH);
-			applyButton.setText("Apply");
-			applyButton.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					applyPressed();
+		Button applyButton = new Button(buttonBar, SWT.PUSH);
+		applyButton.setText("Apply");
+		applyButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				applyPressed();
+			}
+		});
+		buttonData.applyTo(applyButton);
+
+		Button clearButton = new Button(buttonBar, SWT.PUSH);
+		clearButton.setText("Reset");
+		clearButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				minWidthText.setText("");
+				maxWidthText.setText("");
+				quantizedWidthText.setText("");
+				minHeightText.setText("");
+				maxHeightText.setText("");
+				quantizedHeightText.setText("");
+				fixedAreaText.setText("");
+				applyPressed();
+			}
+		});
+		buttonData.applyTo(clearButton);
+
+		Button newViewButton = new Button(buttonBar, SWT.PUSH);
+		newViewButton.setText("New View");
+		newViewButton.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				try {
+					getSite().getPage().showView("org.eclipse.ui.tests.layout.constraints.LayoutConstraintsView",
+							"" + System.currentTimeMillis(), IWorkbenchPage.VIEW_ACTIVATE);
+				} catch (PartInitException e1) {
+					MessageDialog.openError(getSite().getShell(), "Error opening view", "Unable to open view.");
 				}
-			});
-			buttonData.applyTo(applyButton);
+			}
+		});
+		buttonData.applyTo(newViewButton);
 
-			Button clearButton = new Button(buttonBar, SWT.PUSH);
-			clearButton.setText("Reset");
-			clearButton.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					minWidthText.setText("");
-					maxWidthText.setText("");
-					quantizedWidthText.setText("");
-					minHeightText.setText("");
-					maxHeightText.setText("");
-					quantizedHeightText.setText("");
-					fixedAreaText.setText("");
-					applyPressed();
-				}
-			});
-			buttonData.applyTo(clearButton);
-
-			Button newViewButton = new Button(buttonBar, SWT.PUSH);
-			newViewButton.setText("New View");
-			newViewButton.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					try {
-						getSite().getPage().showView("org.eclipse.ui.tests.layout.constraints.LayoutConstraintsView",
-								"" + System.currentTimeMillis(), IWorkbenchPage.VIEW_ACTIVATE);
-					} catch (PartInitException e1) {
-						MessageDialog.openError(getSite().getShell(), "Error opening view", "Unable to open view.");
-					}
-				}
-			});
-			buttonData.applyTo(newViewButton);
-
-			GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(3).applyTo(buttonBar);
-		}
+		GridLayoutFactory.fillDefaults().equalWidth(true).numColumns(3).applyTo(buttonBar);
 		GridDataFactory.fillDefaults().grab(true, false).span(2, 1).applyTo(buttonBar);
 
 		new Label(parent, SWT.NONE).setText("Min Width");

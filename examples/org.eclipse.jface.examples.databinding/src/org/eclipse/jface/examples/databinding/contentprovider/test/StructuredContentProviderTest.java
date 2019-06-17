@@ -116,67 +116,65 @@ public class StructuredContentProviderTest {
 		createDataModel();
 
 		shell = new Shell(Display.getCurrent(), SWT.SHELL_TRIM);
-		{ // Initialize shell
-			final Label someDoubles = new Label(shell, SWT.NONE);
-			someDoubles.setText("A list of random Doubles"); //$NON-NLS-1$
-			someDoubles.setLayoutData(new GridData(
-					GridData.HORIZONTAL_ALIGN_FILL
-							| GridData.VERTICAL_ALIGN_FILL));
 
-			Control addRemoveComposite = createInputControl(shell, inputSet);
+		// Initialize shell
+		final Label someDoubles = new Label(shell, SWT.NONE);
+		someDoubles.setText("A list of random Doubles"); //$NON-NLS-1$
+		someDoubles.setLayoutData(new GridData(
+				GridData.HORIZONTAL_ALIGN_FILL
+						| GridData.VERTICAL_ALIGN_FILL));
 
-			GridData addRemoveData = new GridData(GridData.FILL_BOTH);
-			addRemoveData.minimumHeight = 1;
-			addRemoveData.minimumWidth = 1;
+		Control addRemoveComposite = createInputControl(shell, inputSet);
 
-			addRemoveComposite.setLayoutData(addRemoveData);
+		GridData addRemoveData = new GridData(GridData.FILL_BOTH);
+		addRemoveData.minimumHeight = 1;
+		addRemoveData.minimumWidth = 1;
 
-			Group operation = new Group(shell, SWT.NONE);
-			{ // Initialize operation group
-				operation.setText("Select transformation"); //$NON-NLS-1$
+		addRemoveComposite.setLayoutData(addRemoveData);
 
-				createRadioButton(operation, currentFunction, "f(x) = x", //$NON-NLS-1$
-						SomeMathFunction.OP_IDENTITY);
-				createRadioButton(operation, currentFunction, "f(x) = 2 * x", //$NON-NLS-1$
-						SomeMathFunction.OP_MULTIPLY);
-				createRadioButton(operation, currentFunction,
-						"f(x) = floor(x)", //$NON-NLS-1$
-						SomeMathFunction.OP_ROUND);
+		Group operation = new Group(shell, SWT.NONE);
+		// Initialize operation group
+		operation.setText("Select transformation"); //$NON-NLS-1$
 
-				GridLayout layout = new GridLayout();
-				layout.numColumns = 1;
-				operation.setLayout(layout);
+		createRadioButton(operation, currentFunction, "f(x) = x", //$NON-NLS-1$
+				SomeMathFunction.OP_IDENTITY);
+		createRadioButton(operation, currentFunction, "f(x) = 2 * x", //$NON-NLS-1$
+				SomeMathFunction.OP_MULTIPLY);
+		createRadioButton(operation, currentFunction, "f(x) = floor(x)", //$NON-NLS-1$
+				SomeMathFunction.OP_ROUND);
+
+		GridLayout layout = new GridLayout();
+		layout.numColumns = 1;
+		operation.setLayout(layout);
+		operation.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL
+				| GridData.VERTICAL_ALIGN_FILL));
+
+		Control outputControl = createOutputComposite(shell);
+		GridData outputData = new GridData(GridData.FILL_BOTH);
+		outputData.minimumHeight = 1;
+		outputData.minimumWidth = 1;
+		outputData.widthHint = 300;
+		outputData.heightHint = 150;
+
+		outputControl.setLayoutData(outputData);
+
+		final Label sumLabel = new Label(shell, SWT.NONE);
+		new ControlUpdater(sumLabel) {
+			@Override
+			protected void updateControl() {
+				double sum = sumOfOutputSet.getValue();
+				int size = outputSet.size();
+
+				sumLabel.setText("The sum of the above " + size //$NON-NLS-1$
+						+ " doubles is " + sum); //$NON-NLS-1$
 			}
-			operation.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL
-					| GridData.VERTICAL_ALIGN_FILL));
+		};
+		sumLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL
+				| GridData.VERTICAL_ALIGN_FILL));
 
-			Control outputControl = createOutputComposite(shell);
-			GridData outputData = new GridData(GridData.FILL_BOTH);
-			outputData.minimumHeight = 1;
-			outputData.minimumWidth = 1;
-			outputData.widthHint = 300;
-			outputData.heightHint = 150;
-
-			outputControl.setLayoutData(outputData);
-
-			final Label sumLabel = new Label(shell, SWT.NONE);
-			new ControlUpdater(sumLabel) {
-				@Override
-				protected void updateControl() {
-					double sum = sumOfOutputSet.getValue();
-					int size = outputSet.size();
-
-					sumLabel.setText("The sum of the above " + size //$NON-NLS-1$
-							+ " doubles is " + sum); //$NON-NLS-1$
-				}
-			};
-			sumLabel.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL
-					| GridData.VERTICAL_ALIGN_FILL));
-
-			GridLayout layout = new GridLayout();
-			layout.numColumns = 1;
-			shell.setLayout(layout);
-		}
+		GridLayout shellLayout = new GridLayout();
+		layout.numColumns = 1;
+		shell.setLayout(shellLayout);
 
 	}
 
@@ -285,89 +283,83 @@ public class StructuredContentProviderTest {
 	private Control createInputControl(Composite parent,
 			final WritableSet<Double> inputSet) {
 		Composite addRemoveComposite = new Composite(parent, SWT.NONE);
-		{ // Initialize addRemoveComposite
-			ListViewer listOfInts = new ListViewer(addRemoveComposite,
-					SWT.BORDER);
+		ListViewer listOfInts = new ListViewer(addRemoveComposite,
+				SWT.BORDER);
 
-			listOfInts.setContentProvider(new ObservableSetContentProvider<>());
-			listOfInts.setLabelProvider(new ViewerLabelProvider());
-			listOfInts.setInput(inputSet);
+		listOfInts.setContentProvider(new ObservableSetContentProvider<>());
+		listOfInts.setLabelProvider(new ViewerLabelProvider());
+		listOfInts.setInput(inputSet);
 
-			final IObservableValue<Double> selectedInt = ViewerProperties.singleSelection(Double.class)
-					.observe(listOfInts);
+		final IObservableValue<Double> selectedInt = ViewerProperties.singleSelection(Double.class)
+				.observe(listOfInts);
 
-			GridData listData = new GridData(GridData.FILL_BOTH);
-			listData.minimumHeight = 1;
-			listData.minimumWidth = 1;
-			listData.widthHint = 150;
-			listData.heightHint = 150;
-			listOfInts.getControl().setLayoutData(listData);
+		GridData listData = new GridData(GridData.FILL_BOTH);
+		listData.minimumHeight = 1;
+		listData.minimumWidth = 1;
+		listData.widthHint = 150;
+		listData.heightHint = 150;
+		listOfInts.getControl().setLayoutData(listData);
 
-			Composite buttonBar = new Composite(addRemoveComposite, SWT.NONE);
-			{ // Initialize button bar
+		Composite buttonBar = new Composite(addRemoveComposite, SWT.NONE);
+		Button add = new Button(buttonBar, SWT.PUSH);
+		add.setText("Add"); //$NON-NLS-1$
+		add.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				inputSet.add(random.nextDouble() * 100.0);
+				super.widgetSelected(e);
+			}
+		});
+		add.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL
+				| GridData.VERTICAL_ALIGN_FILL));
 
-				Button add = new Button(buttonBar, SWT.PUSH);
-				add.setText("Add"); //$NON-NLS-1$
-				add.addSelectionListener(new SelectionAdapter() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						inputSet.add(random.nextDouble() * 100.0);
-						super.widgetSelected(e);
-					}
-				});
-				add.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL
+		final Button remove = new Button(buttonBar, SWT.PUSH);
+		remove.setText("Remove"); //$NON-NLS-1$
+		// Enable the Remove button if and only if there is currently an
+		// element selected.
+		new ControlUpdater(remove) {
+			@Override
+			protected void updateControl() {
+				// This block demonstrates auto-listening.
+				// When updateControl is running, the framework
+				// remembers each
+				// updatable that gets touched. Since we're calling
+				// selectedInt.getValue()
+				// here, this updator will be flagged as dependant on
+				// selectedInt. This
+				// means that whenever selectedInt changes, this block
+				// of code will re-run
+				// itself.
+
+				// The result is that the remove button will recompute
+				// its enablement
+				// whenever the selection in the listbox changes, and it
+				// was not necessary
+				// to attach any listeners.
+				remove.setEnabled(selectedInt.getValue() != null);
+			}
+		};
+
+		remove.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				inputSet.remove(selectedInt.getValue());
+				super.widgetSelected(e);
+			}
+		});
+		remove.setLayoutData(new GridData(
+				GridData.HORIZONTAL_ALIGN_FILL
 						| GridData.VERTICAL_ALIGN_FILL));
 
-				final Button remove = new Button(buttonBar, SWT.PUSH);
-				remove.setText("Remove"); //$NON-NLS-1$
-				// Enable the Remove button if and only if there is currently an
-				// element selected.
-				new ControlUpdater(remove) {
-					@Override
-					protected void updateControl() {
-						// This block demonstrates auto-listening.
-						// When updateControl is running, the framework
-						// remembers each
-						// updatable that gets touched. Since we're calling
-						// selectedInt.getValue()
-						// here, this updator will be flagged as dependant on
-						// selectedInt. This
-						// means that whenever selectedInt changes, this block
-						// of code will re-run
-						// itself.
+		GridLayout buttonLayout = new GridLayout();
+		buttonLayout.numColumns = 1;
+		buttonBar.setLayout(buttonLayout); // End button bar
+		buttonBar.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL
+				| GridData.VERTICAL_ALIGN_BEGINNING));
 
-						// The result is that the remove button will recompute
-						// its enablement
-						// whenever the selection in the listbox changes, and it
-						// was not necessary
-						// to attach any listeners.
-						remove.setEnabled(selectedInt.getValue() != null);
-					}
-				};
-
-				remove.addSelectionListener(new SelectionAdapter() {
-					@Override
-					public void widgetSelected(SelectionEvent e) {
-						inputSet.remove(selectedInt.getValue());
-						super.widgetSelected(e);
-					}
-				});
-				remove.setLayoutData(new GridData(
-						GridData.HORIZONTAL_ALIGN_FILL
-								| GridData.VERTICAL_ALIGN_FILL));
-
-				GridLayout buttonLayout = new GridLayout();
-				buttonLayout.numColumns = 1;
-				buttonBar.setLayout(buttonLayout);
-
-			} // End button bar
-			buttonBar.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_FILL
-					| GridData.VERTICAL_ALIGN_BEGINNING));
-
-			GridLayout addRemoveLayout = new GridLayout();
-			addRemoveLayout.numColumns = 2;
-			addRemoveComposite.setLayout(addRemoveLayout);
-		}
+		GridLayout addRemoveLayout = new GridLayout();
+		addRemoveLayout.numColumns = 2;
+		addRemoveComposite.setLayout(addRemoveLayout);
 		return addRemoveComposite;
 	}
 

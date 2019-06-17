@@ -121,35 +121,33 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 				}
 			};
 		}
-		{
-			final Button button = new Button(parent, SWT.CHECK);
-			button.setText("dirty");
-			button.addSelectionListener(new SelectionAdapter() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					MySaveable saveable = (MySaveable) selection.getValue();
-					saveable.setDirty(button.getSelection());
+		final Button button = new Button(parent, SWT.CHECK);
+		button.setText("dirty");
+		button.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent e) {
+				MySaveable saveable = (MySaveable) selection.getValue();
+				saveable.setDirty(button.getSelection());
+			}
+		});
+		new ControlUpdater(button) {
+			@Override
+			protected void updateControl() {
+				MySaveable saveable = (MySaveable) selection.getValue();
+				if (saveable == null) {
+					button.setEnabled(false);
+					button.setSelection(false);
+				} else {
+					button.setEnabled(true);
+					// we know that isDirty is implemented using a
+					// WritableValue,
+					// and thus a dependency on that writable value will
+					// result from
+					// calling isDirty().
+					button.setSelection(saveable.isDirty());
 				}
-			});
-			new ControlUpdater(button) {
-				@Override
-				protected void updateControl() {
-					MySaveable saveable = (MySaveable) selection.getValue();
-					if (saveable == null) {
-						button.setEnabled(false);
-						button.setSelection(false);
-					} else {
-						button.setEnabled(true);
-						// we know that isDirty is implemented using a
-						// WritableValue,
-						// and thus a dependency on that writable value will
-						// result from
-						// calling isDirty().
-						button.setSelection(saveable.isDirty());
-					}
-				}
-			};
-		}
+			}
+		};
 		getSite().setSelectionProvider(viewer);
 		dirty.addValueChangeListener(event -> firePropertyChange(ISaveablePart.PROP_DIRTY));
 		GridLayoutFactory.fillDefaults().numColumns(4).equalWidth(false)

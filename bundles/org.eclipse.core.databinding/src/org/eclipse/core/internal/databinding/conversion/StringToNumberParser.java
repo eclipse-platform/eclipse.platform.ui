@@ -267,10 +267,8 @@ public class StringToNumberParser {
 			}
 		}
 
-		/* if (bigDecimal != null) */{
-			return max.compareTo(bigDecimal) >= 0
-					&& min.compareTo(bigDecimal) <= 0;
-		}
+		/* if (bigDecimal != null) */return max.compareTo(bigDecimal) >= 0
+				&& min.compareTo(bigDecimal) <= 0;
 
 		// throw new IllegalArgumentException(
 		//				"Number of type [" + number.getClass().getName() + "] is not supported."); //$NON-NLS-1$ //$NON-NLS-2$

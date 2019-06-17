@@ -2117,20 +2117,18 @@ public class ModelAssemblerFragmentOrderingTests {
 					Arrays.asList(menuitem000), "index:0", contributorName, contributorURI, false);
 			fragmentList.add(fragmentWrapper);
 		}
-		{
-			Resource fragmentResource = factory.createResource(URI.createURI("fragmentvirtualuri5"));
-			resourceSet.getResources().add(fragmentResource);
-			final String contributorName = "menuitem001";
-			final String contributorURI = fragmentResource.getURI().toString();
+		Resource fragmentResource = factory.createResource(URI.createURI("fragmentvirtualuri5"));
+		resourceSet.getResources().add(fragmentResource);
+		final String contributorName = "menuitem001";
+		final String contributorURI = fragmentResource.getURI().toString();
 
-			// the contributed elements
-			MModelFragments fragmentsContainer = MFragmentFactory.INSTANCE.createModelFragments();
-			fragmentResource.getContents().add((EObject) fragmentsContainer);
+		// the contributed elements
+		MModelFragments fragmentsContainer = MFragmentFactory.INSTANCE.createModelFragments();
+		fragmentResource.getContents().add((EObject) fragmentsContainer);
 
-			ModelFragmentWrapper fragmentWrapper = createFragmentWrapper(fragmentsContainer, "children", "menu00",
-					Arrays.asList(menuitem001), "index:10", contributorName, contributorURI, false);
-			fragmentList.add(fragmentWrapper);
-		}
+		ModelFragmentWrapper fragmentWrapper = createFragmentWrapper(fragmentsContainer, "children", "menu00",
+				Arrays.asList(menuitem001), "index:10", contributorName, contributorURI, false);
+		fragmentList.add(fragmentWrapper);
 
 		assembler.processFragmentWrappers(fragmentList);
 
@@ -2211,26 +2209,24 @@ public class ModelAssemblerFragmentOrderingTests {
 
 			fragmentsContainer.getImports().add(menu00);
 		}
-		{
-			Resource fragmentResource = factory.createResource(URI.createURI("fragmentvirtualuri2"));
-			resourceSet.getResources().add(fragmentResource);
-			final String contributorName = "fragment2";
-			final String contributorURI = fragmentResource.getURI().toString();
+		Resource fragmentResource = factory.createResource(URI.createURI("fragmentvirtualuri2"));
+		resourceSet.getResources().add(fragmentResource);
+		final String contributorName = "fragment2";
+		final String contributorURI = fragmentResource.getURI().toString();
 
-			// the contributed elements
-			MModelFragments fragmentsContainer = MFragmentFactory.INSTANCE.createModelFragments();
-			fragmentResource.getContents().add((EObject) fragmentsContainer);
+		// the contributed elements
+		MModelFragments fragmentsContainer = MFragmentFactory.INSTANCE.createModelFragments();
+		fragmentResource.getContents().add((EObject) fragmentsContainer);
 
-			ModelFragmentWrapper fragmentWrapperMenu00 = createFragmentWrapper(fragmentsContainer, "children", "menu0",
-					Arrays.asList(menu00), "index:1", contributorName, contributorURI, false);
-			fragmentList.add(fragmentWrapperMenu00);
-			ModelFragmentWrapper fragmentWrapperMenu02 = createFragmentWrapper(fragmentsContainer, "children", "menu0",
-					Arrays.asList(menu02), "index:20", contributorName, contributorURI, false);
-			fragmentList.add(fragmentWrapperMenu02);
-			ModelFragmentWrapper fragmentWrapperMenuItem001 = createFragmentWrapper(fragmentsContainer, "children",
-					"menu00", Arrays.asList(menuitem001), "index:3", contributorName, contributorURI, false);
-			fragmentList.add(fragmentWrapperMenuItem001);
-		}
+		ModelFragmentWrapper fragmentWrapperMenu00 = createFragmentWrapper(fragmentsContainer, "children", "menu0",
+				Arrays.asList(menu00), "index:1", contributorName, contributorURI, false);
+		fragmentList.add(fragmentWrapperMenu00);
+		ModelFragmentWrapper fragmentWrapperMenu02 = createFragmentWrapper(fragmentsContainer, "children", "menu0",
+				Arrays.asList(menu02), "index:20", contributorName, contributorURI, false);
+		fragmentList.add(fragmentWrapperMenu02);
+		ModelFragmentWrapper fragmentWrapperMenuItem001 = createFragmentWrapper(fragmentsContainer, "children",
+				"menu00", Arrays.asList(menuitem001), "index:3", contributorName, contributorURI, false);
+		fragmentList.add(fragmentWrapperMenuItem001);
 
 		assembler.processFragmentWrappers(fragmentList);
 
@@ -2301,20 +2297,18 @@ public class ModelAssemblerFragmentOrderingTests {
 					Arrays.asList(menu1), "index:10", contributorName, contributorURI, false);
 			fragmentList.add(fragmentWrapper);
 		}
-		{
-			Resource fragmentResource = factory.createResource(URI.createURI("fragmentvirtualuri2"));
-			resourceSet.getResources().add(fragmentResource);
-			final String contributorName = "menu2";
-			final String contributorURI = fragmentResource.getURI().toString();
+		Resource fragmentResource = factory.createResource(URI.createURI("fragmentvirtualuri2"));
+		resourceSet.getResources().add(fragmentResource);
+		final String contributorName = "menu2";
+		final String contributorURI = fragmentResource.getURI().toString();
 
-			// the contributed elements
-			MModelFragments fragmentsContainer = MFragmentFactory.INSTANCE.createModelFragments();
-			fragmentResource.getContents().add((EObject) fragmentsContainer);
+		// the contributed elements
+		MModelFragments fragmentsContainer = MFragmentFactory.INSTANCE.createModelFragments();
+		fragmentResource.getContents().add((EObject) fragmentsContainer);
 
-			ModelFragmentWrapper fragmentWrapper = createFragmentWrapper(fragmentsContainer, "children", "menu1",
-					Arrays.asList(menu2), "index:20", contributorName, contributorURI, false);
-			fragmentList.add(fragmentWrapper);
-		}
+		ModelFragmentWrapper fragmentWrapper = createFragmentWrapper(fragmentsContainer, "children", "menu1",
+				Arrays.asList(menu2), "index:20", contributorName, contributorURI, false);
+		fragmentList.add(fragmentWrapper);
 
 		assembler.processFragmentWrappers(fragmentList);
 
@@ -2381,20 +2375,18 @@ public class ModelAssemblerFragmentOrderingTests {
 					Arrays.asList(menu3), "index:0", contributorName, contributorURI, false);
 			fragmentList.add(fragmentWrapper);
 		}
-		{
-			Resource fragmentResource = factory.createResource(URI.createURI("fragmentvirtualuri2"));
-			resourceSet.getResources().add(fragmentResource);
-			final String contributorName = "menu2";
-			final String contributorURI = fragmentResource.getURI().toString();
+		Resource fragmentResource = factory.createResource(URI.createURI("fragmentvirtualuri2"));
+		resourceSet.getResources().add(fragmentResource);
+		final String contributorName = "menu2";
+		final String contributorURI = fragmentResource.getURI().toString();
 
-			// the contributed elements
-			MModelFragments fragmentsContainer = MFragmentFactory.INSTANCE.createModelFragments();
-			fragmentResource.getContents().add((EObject) fragmentsContainer);
+		// the contributed elements
+		MModelFragments fragmentsContainer = MFragmentFactory.INSTANCE.createModelFragments();
+		fragmentResource.getContents().add((EObject) fragmentsContainer);
 
-			ModelFragmentWrapper fragmentWrapper = createFragmentWrapper(fragmentsContainer, "children", "menu1",
-					Arrays.asList(menu2), "index:20", contributorName, contributorURI, false);
-			fragmentList.add(fragmentWrapper);
-		}
+		ModelFragmentWrapper fragmentWrapper = createFragmentWrapper(fragmentsContainer, "children", "menu1",
+				Arrays.asList(menu2), "index:20", contributorName, contributorURI, false);
+		fragmentList.add(fragmentWrapper);
 
 		assembler.processFragmentWrappers(fragmentList);
 
@@ -2458,12 +2450,10 @@ public class ModelAssemblerFragmentOrderingTests {
 		Set<ModelFragmentWrapper> fragmentList2 = new TreeSet<>(new ModelFragmentComparator(application));
 		fragmentList2.addAll(fragmentList);
 
-		{
-			Iterator<ModelFragmentWrapper> iterator = fragmentList2.iterator();
-			assertEquals(fragmentWrapper3, iterator.next());
-			assertEquals(fragmentWrapper2, iterator.next());
-			assertEquals(fragmentWrapper1, iterator.next());
-		}
+		Iterator<ModelFragmentWrapper> iterator = fragmentList2.iterator();
+		assertEquals(fragmentWrapper3, iterator.next());
+		assertEquals(fragmentWrapper2, iterator.next());
+		assertEquals(fragmentWrapper1, iterator.next());
 
 	}
 }

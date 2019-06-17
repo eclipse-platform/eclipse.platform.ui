@@ -53,15 +53,13 @@ public class JFaceThemeTest extends ThemeTest {
 						.getFontData(key));
 			}
 		}
-		{
-			ColorRegistry jfaceColors = JFaceResources.getColorRegistry();
-			ColorRegistry themeColors = theme.getColorRegistry();
-			assertTrue(jfaceColors.getKeySet().containsAll(
-					themeColors.getKeySet()));
-			for (Object element : themeColors.getKeySet()) {
-				String key = (String) element;
-				assertEquals(themeColors.getRGB(key), jfaceColors.getRGB(key));
-			}
+		ColorRegistry jfaceColors = JFaceResources.getColorRegistry();
+		ColorRegistry themeColors = theme.getColorRegistry();
+		assertTrue(jfaceColors.getKeySet().containsAll(
+				themeColors.getKeySet()));
+		for (Object element : themeColors.getKeySet()) {
+			String key = (String) element;
+			assertEquals(themeColors.getRGB(key), jfaceColors.getRGB(key));
 		}
 		JFaceResources.getFontRegistry().removeListener(listener);
 		JFaceResources.getColorRegistry().removeListener(listener);
