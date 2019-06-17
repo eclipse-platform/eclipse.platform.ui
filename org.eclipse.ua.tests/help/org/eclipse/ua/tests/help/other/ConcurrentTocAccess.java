@@ -93,7 +93,7 @@ public class ConcurrentTocAccess {
 
 	private class BadHrefException extends RuntimeException {
 		private static final long serialVersionUID = 410319402417607912L;
-	};
+	}
 	private class BadLabelException extends RuntimeException {
 		private static final long serialVersionUID = -4581518572807575035L;
 	}

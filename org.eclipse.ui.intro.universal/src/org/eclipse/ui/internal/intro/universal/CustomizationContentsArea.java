@@ -235,7 +235,7 @@ public class CustomizationContentsArea {
 			} else {
 				event.doit = false;
 			}
-		};
+		}
 
 		@Override
 		public void dragSetData(DragSourceEvent event) {

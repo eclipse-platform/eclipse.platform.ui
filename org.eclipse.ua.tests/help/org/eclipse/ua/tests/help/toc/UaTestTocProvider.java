@@ -68,7 +68,7 @@ public class UaTestTocProvider extends AbstractTocProvider {
 			return false;
 		}
 
-	};
+	}
 
 	public UaTestTocProvider() {
 		toc = new UserToc("Generated Toc", null, true);

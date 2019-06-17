@@ -87,7 +87,7 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 	private CompositeCheatSheetSaveHelper saveHelper;
 
 	private ICompositeCheatSheetTask selectedTask;
-	private boolean initialized = false;;
+	private boolean initialized = false;
 
 	public CompositeCheatSheetPage(CompositeCheatSheetModel model, ICheatSheetStateManager stateManager) {
 		this.model = model;
