@@ -1876,7 +1876,7 @@ public class LinkedResourceTest extends ResourceTest {
 
 			// there should be an entry in .project for the linked file
 			String string = readStringInFileSystem(existingProject.getFile(".project"));
-			assertTrue("3.0", string.indexOf(linkedFile.getProjectRelativePath().toString()) != -1);
+			assertTrue("3.0", string.contains(linkedFile.getProjectRelativePath().toString()));
 
 			// move the folder
 			try {
