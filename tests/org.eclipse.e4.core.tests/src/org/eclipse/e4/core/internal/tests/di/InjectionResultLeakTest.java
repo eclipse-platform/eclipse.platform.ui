@@ -51,22 +51,20 @@ public class InjectionResultLeakTest {
 		IEclipseContext context = EclipseContextFactory.create();
 		WeakReference<?> ref;
 
-		{ // scope the "part" object to help GC
-			Object part = new Object();
-			ref = new WeakReference<>(part);
-			assertEquals(part, ref.get());
+		Object part = new Object();
+		ref = new WeakReference<>(part);
+		assertEquals(part, ref.get());
 
-			context.set("testGC", part);
+		context.set("testGC", part);
 
-			PartConsumer consumer = ContextInjectionFactory.make(
-					PartConsumer.class, context);
-			assertEquals(part, consumer.part);
+		PartConsumer consumer = ContextInjectionFactory.make(
+				PartConsumer.class, context);
+		assertEquals(part, consumer.part);
 
-			part = null; // another "let's help GC" statement
-			context.remove("testGC");
+		part = null; // another "let's help GC" statement
+		context.remove("testGC");
 
-			assertNull(consumer.part);
-		}
+		assertNull(consumer.part);
 
 		// gc a few times
 		System.runFinalization();

@@ -259,14 +259,12 @@ public class InjectionEventTest {
 
 	private void wrapSetup() throws InvocationTargetException, InstantiationException {
 		IEclipseContext context = EclipseContextFactory.create();
-		{
-			InjectTarget target = ContextInjectionFactory.make(InjectTarget.class, context);
-			// send event
-			helper.sendEvent("e4/test/event1", "event1data");
-			assertEquals(1, target.counter1);
-			assertEquals("event1data", target.string1);
-			target.valid = false;
-		}
+		InjectTarget target = ContextInjectionFactory.make(InjectTarget.class, context);
+		// send event
+		helper.sendEvent("e4/test/event1", "event1data");
+		assertEquals(1, target.counter1);
+		assertEquals("event1data", target.string1);
+		target.valid = false;
 
 	}
 

@@ -74,12 +74,10 @@ public class CoreTestsActivator implements BundleActivator {
 			bundleContext.registerService(IContextFunction.SERVICE_NAME, new ContextFunctionLow(), properties);
 		}
 
-		{
-			Dictionary<String, Object> properties = new Hashtable<>();
-			properties.put(IContextFunction.SERVICE_CONTEXT_KEY,"test.contextfunction.ranking");
-			properties.put(Constants.SERVICE_RANKING, 100);
-			bundleContext.registerService(IContextFunction.SERVICE_NAME, new ContextFunctionHigh(), properties);
-		}
+		Dictionary<String, Object> properties = new Hashtable<>();
+		properties.put(IContextFunction.SERVICE_CONTEXT_KEY,"test.contextfunction.ranking");
+		properties.put(Constants.SERVICE_RANKING, 100);
+		bundleContext.registerService(IContextFunction.SERVICE_NAME, new ContextFunctionHigh(), properties);
 
 	}
 
