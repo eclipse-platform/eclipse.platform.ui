@@ -44,7 +44,7 @@ public class WithExpression extends CompositeExpression {
 
 	public WithExpression(Element element) throws CoreException {
 		fVariable= element.getAttribute(ATT_VARIABLE);
-		Expressions.checkAttribute(ATT_VARIABLE, !fVariable.isEmpty() ? fVariable : null);
+		Expressions.checkAttribute(ATT_VARIABLE, fVariable.isEmpty() ? null : fVariable);
 	}
 
 	public WithExpression(String variable) {

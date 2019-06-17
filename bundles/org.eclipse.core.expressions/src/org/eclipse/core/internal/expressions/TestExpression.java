@@ -70,7 +70,7 @@ public class TestExpression extends Expression {
 		fProperty= property.substring(pos + 1);
 		fArgs= Expressions.getArguments(element, ATT_ARGS);
 		String value = element.getAttribute(ATT_VALUE);
-		fExpectedValue= Expressions.convertArgument(!value.isEmpty() ? value : null);
+		fExpectedValue = Expressions.convertArgument(value.isEmpty() ? null : value);
 		fForcePluginActivation= Expressions.getOptionalBooleanAttribute(element, ATT_FORCE_PLUGIN_ACTIVATION);
 	}
 

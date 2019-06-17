@@ -45,9 +45,9 @@ public class SystemTestExpression extends Expression {
 
 	public SystemTestExpression(Element element) throws CoreException {
 		fProperty= element.getAttribute(ATT_PROPERTY);
-		Expressions.checkAttribute(ATT_PROPERTY, !fProperty.isEmpty() ? fProperty : null);
+		Expressions.checkAttribute(ATT_PROPERTY, fProperty.isEmpty() ? null : fProperty);
 		fExpectedValue= element.getAttribute(ATT_VALUE);
-		Expressions.checkAttribute(ATT_VALUE, !fExpectedValue.isEmpty() ? fExpectedValue : null);
+		Expressions.checkAttribute(ATT_VALUE, fExpectedValue.isEmpty() ? null : fExpectedValue);
 	}
 
 	public SystemTestExpression(String property, String expectedValue) {

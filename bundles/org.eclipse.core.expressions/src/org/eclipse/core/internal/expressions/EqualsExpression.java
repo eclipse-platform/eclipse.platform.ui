@@ -45,7 +45,7 @@ public class EqualsExpression extends Expression {
 
 	public EqualsExpression(Element element) throws CoreException {
 		String value= element.getAttribute(ATT_VALUE);
-		Expressions.checkAttribute(ATT_VALUE, !value.isEmpty() ? value : null);
+		Expressions.checkAttribute(ATT_VALUE, value.isEmpty() ? null : value);
 		fExpectedValue= Expressions.convertArgument(value);
 	}
 

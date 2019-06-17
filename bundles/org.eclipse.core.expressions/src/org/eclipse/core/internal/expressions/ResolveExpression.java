@@ -48,7 +48,7 @@ public class ResolveExpression extends CompositeExpression {
 
 	public ResolveExpression(Element element) throws CoreException {
 		fVariable= element.getAttribute(ATT_VARIABLE);
-		Expressions.checkAttribute(ATT_VARIABLE, !fVariable.isEmpty() ? fVariable : null);
+		Expressions.checkAttribute(ATT_VARIABLE, fVariable.isEmpty() ? null : fVariable);
 		fArgs= Expressions.getArguments(element, ATT_ARGS);
 	}
 
