@@ -84,7 +84,7 @@ public class ViewPerformanceSuite extends TestSuite {
 			for (String categoryPath1 : categoryPath) {
 				// Only test basic views
 				if (categoryPath1.equals(BASIC_PATH)) {
-					if (descriptor.getId().indexOf(VIEWS_PATTERN) >= 0 || descriptor.getId().equals(PROJECT_EXPLORER)) {
+					if (descriptor.getId().contains(VIEWS_PATTERN) || descriptor.getId().equals(PROJECT_EXPLORER)) {
 						result.add(descriptor.getId());
 					}
 				}

@@ -119,7 +119,7 @@ public class LabelProviderTest2 {
 		selectedRenamable = ViewerProperties.singleSelection(RenamableItem.class).observe(list);
 
 		Composite buttonBar = new Composite(shell, SWT.NONE);
-		// Initialize buttonBar]
+		// Initialize buttonBar
 		addButton = new Button(buttonBar, SWT.PUSH);
 		addButton.setText("Add"); //$NON-NLS-1$
 		addButton.addSelectionListener(buttonSelectionListener);

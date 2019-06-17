@@ -3259,7 +3259,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 			// if the plugin is not in the set of disabled plugins,
 			// then
 			// execute the code to start it
-			if (disabledPlugins.indexOf(extension.getContributor().getName()) == -1) {
+			if (!disabledPlugins.contains(extension.getContributor().getName())) {
 				SafeRunner.run(new EarlyStartupRunnable(extension));
 			}
 		}

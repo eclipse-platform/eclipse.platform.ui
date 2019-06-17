@@ -241,7 +241,7 @@ public class DragTest extends UITestCaseWithResult {
 		// see bug 180242. This code should disappear before release...
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 		boolean curMinMaxState = apiStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
-		if (getName().indexOf("drag maximized") >= 0) {
+		if (getName().contains("drag maximized")) {
 			apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
 		}
 

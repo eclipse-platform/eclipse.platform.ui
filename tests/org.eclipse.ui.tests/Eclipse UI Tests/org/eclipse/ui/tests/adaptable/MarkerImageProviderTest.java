@@ -45,7 +45,7 @@ public class MarkerImageProviderTest extends UITestCase {
 		IWorkbenchAdapter adapter = marker.getAdapter(IWorkbenchAdapter.class);
 		ImageDescriptor imageDesc = adapter.getImageDescriptor(marker);
 		assertNotNull(imageDesc);
-		assertTrue(imageDesc.toString().indexOf("anything") != -1); //$NON-NLS-1$
+		assertTrue(imageDesc.toString().contains("anything")); //$NON-NLS-1$
 	}
 
 	/**
@@ -63,7 +63,7 @@ public class MarkerImageProviderTest extends UITestCase {
 		IWorkbenchAdapter adapter = marker.getAdapter(IWorkbenchAdapter.class);
 		ImageDescriptor imageDesc = adapter.getImageDescriptor(marker);
 		assertNotNull(imageDesc);
-		assertTrue(imageDesc.toString().indexOf("anything") != -1); //$NON-NLS-1$
+		assertTrue(imageDesc.toString().contains("anything")); //$NON-NLS-1$
 	}
 
 }

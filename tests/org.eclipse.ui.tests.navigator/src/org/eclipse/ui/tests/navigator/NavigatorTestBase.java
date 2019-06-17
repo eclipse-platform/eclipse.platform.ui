@@ -317,14 +317,14 @@ public class NavigatorTestBase {
 				if (DEBUG) {
 					System.out.println("menu text: " + childMm.getMenuText());
 				}
-				if (childMm.getMenuText().indexOf(item) >= 0)
+				if (childMm.getMenuText().contains(item))
 					return childMm;
 			} else if (item1 instanceof ActionContributionItem) {
 				ActionContributionItem aci = (ActionContributionItem) item1;
 				if (DEBUG) {
 					System.out.println("action text: " + aci.getAction().getText());
 				}
-				if (aci.getAction().getText().indexOf(item) >= 0)
+				if (aci.getAction().getText().contains(item))
 					return aci;
 			}
 		}

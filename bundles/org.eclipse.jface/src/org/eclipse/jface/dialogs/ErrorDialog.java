@@ -496,7 +496,7 @@ public class ErrorDialog extends IconAndMessageDialog {
 			IStatus eStatus = ce.getStatus();
 			// Only print the exception message if it is not contained in the
 			// parent message
-			if (message == null || message.indexOf(eStatus.getMessage()) == -1) {
+			if (message == null || !message.contains(eStatus.getMessage())) {
 				populateList(listToPopulate, eStatus, nesting, true);
 			}
 		}
@@ -559,7 +559,7 @@ public class ErrorDialog extends IconAndMessageDialog {
 			IStatus eStatus = ce.getStatus();
 			// Gets exception message if it is not contained in the
 			// parent message
-			if (message == null || message.indexOf(eStatus.getMessage()) == -1) {
+			if (message == null || !message.contains(eStatus.getMessage())) {
 				result |= listContentExists(eStatus, true);
 			}
 		}
