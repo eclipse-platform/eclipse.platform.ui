@@ -52,7 +52,7 @@ public class RegistryCSSPropertyHandlerProvider extends AbstractCSSPropertyHandl
 	private IExtensionRegistry registry;
 	private boolean hasDeprecatedProperties = false; // mild optimization for getCSSProperties()
 
-	private Map<String, Map<String, ICSSPropertyHandler>> propertyHandlerMap = new HashMap<>();;
+	private Map<String, Map<String, ICSSPropertyHandler>> propertyHandlerMap = new HashMap<>();
 
 	public RegistryCSSPropertyHandlerProvider(IExtensionRegistry registry) {
 		this.registry = registry;

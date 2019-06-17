@@ -75,7 +75,7 @@ public class Snippet047WizardWithLongRunningOperation {
 			return true;
 		}
 
-	};
+	}
 
 	private static class MyWizardPage extends WizardPage {
 

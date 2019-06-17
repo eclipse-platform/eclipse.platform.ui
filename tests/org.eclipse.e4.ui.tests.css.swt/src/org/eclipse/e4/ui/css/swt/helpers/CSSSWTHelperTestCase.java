@@ -57,7 +57,7 @@ public abstract class CSSSWTHelperTestCase {
 				@Override
 				public IColorAndFontProvider getColorAndFontProvider() {
 					return provider;
-				};
+				}
 			}.start(null);
 		} catch (Exception e) {
 			fail();

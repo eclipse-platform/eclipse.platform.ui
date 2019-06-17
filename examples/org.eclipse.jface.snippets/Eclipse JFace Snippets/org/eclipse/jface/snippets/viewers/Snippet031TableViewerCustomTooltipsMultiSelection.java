@@ -268,7 +268,7 @@ public class Snippet031TableViewerCustomTooltipsMultiSelection {
 				shell.dispose ();
 				break;
 			}
-		}};
+		}}
 
 
 

@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Button;
  */
 public class ButtonElement extends ControlElement {
 
-	private boolean isSelected = false;;
+	private boolean isSelected = false;
 
 	private SelectionListener selectionListener = new SelectionAdapter() {
 		@Override

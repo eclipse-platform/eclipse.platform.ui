@@ -57,7 +57,7 @@ public class Snippet017TableViewerHideShowColumns {
 				column.getDisplay().syncExec(() -> column.setWidth(index));
 			}
 		}
-	};
+	}
 
 	private class ExpandThread extends Thread {
 		private int width = 0;

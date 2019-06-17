@@ -99,7 +99,7 @@ public abstract class ElementAdapter implements Element, CSSStylableElement {
 	public String getAttributeNS(String namespace, String attr)
 			throws DOMException {
 		return getAttribute(attr);
-	};
+	}
 
 	@Override
 	public Attr getAttributeNode(String arg0) {

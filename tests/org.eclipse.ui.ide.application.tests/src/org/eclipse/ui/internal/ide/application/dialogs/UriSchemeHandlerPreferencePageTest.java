@@ -311,7 +311,7 @@ public class UriSchemeHandlerPreferencePageTest {
 			@Override
 			public Shell getShell() {
 				return new Shell();
-			};
+			}
 		};
 
 		page.extensionReader = createExtensionReaderStub();

@@ -733,7 +733,7 @@ public class LogView extends ViewPart implements ILogListener {
 
 			BufferedReader in = null;
 			try (BufferedWriter out = new BufferedWriter(
-					new OutputStreamWriter(new FileOutputStream(outputFile), StandardCharsets.UTF_8));) {
+					new OutputStreamWriter(new FileOutputStream(outputFile), StandardCharsets.UTF_8))) {
 				// $NON-NLS-1$
 				if (exportWholeLog) {
 					in = new BufferedReader(

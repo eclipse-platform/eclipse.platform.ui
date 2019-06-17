@@ -485,7 +485,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		StringBuilder buffer = new StringBuilder();
 		char[] part = new char[2048];
 		int read = 0;
-		try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, encoding));) {
+		try (BufferedReader reader = new BufferedReader(new InputStreamReader(is, encoding))) {
 
 			while ((read = reader.read(part)) != -1) {
 				buffer.append(part, 0, read);

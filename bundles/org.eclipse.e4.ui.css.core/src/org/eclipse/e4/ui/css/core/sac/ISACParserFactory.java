@@ -44,5 +44,5 @@ public interface ISACParserFactory {
 	 */
 	public abstract Parser makeParser(String name)
 			throws ClassNotFoundException, IllegalAccessException,
-			InstantiationException, NullPointerException, ClassCastException;;
+			InstantiationException, NullPointerException, ClassCastException;
 }

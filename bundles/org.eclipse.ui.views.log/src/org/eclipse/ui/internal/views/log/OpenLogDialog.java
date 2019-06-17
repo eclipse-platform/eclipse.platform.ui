@@ -171,7 +171,7 @@ public final class OpenLogDialog extends TrayDialog {
 	// reading large files
 	void readLargeFile(PrintWriter writer) throws FileNotFoundException, IOException {
 		boolean hasStarted = false;
-		try (RandomAccessFile random = new RandomAccessFile(logFile, "r");) { //$NON-NLS-1$
+		try (RandomAccessFile random = new RandomAccessFile(logFile, "r")) { //$NON-NLS-1$
 
 			random.seek(logFile.length() - LogReader.MAX_FILE_LENGTH);
 			for (;;) {

@@ -171,7 +171,7 @@ public class ReadmeFilePropertyPage2 extends PropertyPage {
 		if (resource.getType() == IResource.FILE) {
 			int length = 0;
 			IFile file = (IFile) resource;
-			try (InputStream contentStream = file.getContents(); Reader in = new InputStreamReader(contentStream);) {
+			try (InputStream contentStream = file.getContents(); Reader in = new InputStreamReader(contentStream)) {
 
 				int chunkSize = contentStream.available();
 				StringBuilder buffer = new StringBuilder(chunkSize);

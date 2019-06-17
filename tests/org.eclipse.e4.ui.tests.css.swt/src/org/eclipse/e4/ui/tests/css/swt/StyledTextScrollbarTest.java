@@ -36,7 +36,7 @@ public class StyledTextScrollbarTest extends CSSSWTTestCase {
 	@Before
 	public void setUpShell() {
 		shell = new Shell(display, SWT.SHELL_TRIM);
-	};
+	}
 
 	@After
 	public void tearDownShell() {

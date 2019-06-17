@@ -183,5 +183,5 @@ public class InheritTest {
 		public Collection<String> getCSSProperties(Object element) {
 			return Collections.singleton("property");
 		}
-	};
+	}
 }
