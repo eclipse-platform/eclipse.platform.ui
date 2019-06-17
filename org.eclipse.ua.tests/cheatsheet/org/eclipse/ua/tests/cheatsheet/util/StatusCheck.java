@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.MultiStatus;
 public class StatusCheck {
 
 	public static void assertStatusContains(IStatus status, String text) {
-		if (status.getMessage().indexOf(text) == -1) {
+		if (!status.getMessage().contains(text)) {
 			Assert.fail("Expected status message to contain '" + text + "' actual message is '"
 					+ status.getMessage() + "'");
 		}
@@ -36,11 +36,11 @@ public class StatusCheck {
 		Assert.assertTrue(status instanceof MultiStatus);
 		IStatus[] children = status.getChildren();
 		for (IStatus element : children) {
-			if (element.getMessage().indexOf(text) >= 0) {
+			if (element.getMessage().contains(text)) {
 				return;
 			}
 		}
-		if (status.getMessage().indexOf(text) == -1) {
+		if (!status.getMessage().contains(text)) {
 			Assert.fail("Expected status message to contain '" + text + "' status.toString = '"
 					+ status.toString() + "'");
 		}

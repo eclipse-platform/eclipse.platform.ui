@@ -48,7 +48,7 @@ public class ProducerSerializerTest {
 		IToc[] tocs = HelpSystem.getTocs();
 		for (IToc toc : tocs) {
 			// only look for content in data/help/producer
-			if (toc.getHref().indexOf("data/help/producer/") != -1) {
+			if (toc.getHref().contains("data/help/producer/")) {
 				ITopic[] topics = toc.getTopics();
 				// only goes one level deep - don't need subtopics here
 				for (ITopic topic : topics) {

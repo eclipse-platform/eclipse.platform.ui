@@ -443,7 +443,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
     public AbstractIntroElement findTarget(AbstractIntroContainer container,
             String path, String extensionId) {
         // resolve path segments if they are incomplete.
-        if (path.indexOf("@")!= -1) { //$NON-NLS-1$
+        if (path.contains("@")) { //$NON-NLS-1$
         	// new in 3.2: dynamic resolution of incomplete target paths
         	IntroModelRoot root = getModelRoot();
         	if (root!=null) {

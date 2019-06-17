@@ -614,7 +614,7 @@ public class IntroURL implements IIntroURL {
         StringBuilder url = new StringBuilder();
         url.append("http://org.eclipse.ui.intro/"); //$NON-NLS-1$
         url.append(command.getReplaceValue().trim());
-        if (command.getReplaceValue().indexOf("?") == -1) //$NON-NLS-1$
+        if (!command.getReplaceValue().contains("?")) //$NON-NLS-1$
             // command does not have parameters.
             url.append("?"); //$NON-NLS-1$
         else

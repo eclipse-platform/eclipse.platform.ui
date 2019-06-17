@@ -54,7 +54,7 @@ public SearchResult[] getSearchResults() {
 }
 
 private void searchTopic(ITopic topic) {
-	if (topic.getLabel().toLowerCase().indexOf(searchTerm.toLowerCase()) != -1
+	if (topic.getLabel().toLowerCase().contains(searchTerm.toLowerCase())
 		&& topic.getHref() != null) {
 		SearchResult result = new SearchResult();
 		result.title = topic.getLabel();

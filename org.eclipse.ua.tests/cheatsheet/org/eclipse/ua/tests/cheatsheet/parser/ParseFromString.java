@@ -95,6 +95,6 @@ public class ParseFromString {
 		ICheatSheet cheatSheet = parser.parse(input, CheatSheetParser.SIMPLE_ONLY);
 		assertNull(cheatSheet);
 		assertEquals(Status.ERROR, parser.getStatus().getSeverity());
-		assertTrue(parser.getStatus().getMessage().indexOf("must contain at least one <item>") >= 0);
+		assertTrue(parser.getStatus().getMessage().contains("must contain at least one <item>"));
 	}
 }
