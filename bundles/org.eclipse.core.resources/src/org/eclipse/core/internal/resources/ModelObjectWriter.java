@@ -269,10 +269,8 @@ public class ModelObjectWriter implements IModelObjectConstants {
 			for (String key : sorted) {
 				Object value = table.get(key);
 				writer.startTag(DICTIONARY, null);
-				{
-					writer.printSimpleTag(KEY, key);
-					writer.printSimpleTag(VALUE, value);
-				}
+				writer.printSimpleTag(KEY, key);
+				writer.printSimpleTag(VALUE, value);
 				writer.endTag(DICTIONARY);
 			}
 		}
