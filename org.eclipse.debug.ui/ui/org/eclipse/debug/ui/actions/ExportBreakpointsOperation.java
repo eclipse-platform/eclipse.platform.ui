@@ -89,7 +89,7 @@ public class ExportBreakpointsOperation implements IRunnableWithProgress {
 	public void run(IProgressMonitor monitor) throws InvocationTargetException {
 		SubMonitor localmonitor = SubMonitor.convert(monitor, ImportExportMessages.ExportOperation_0, fBreakpoints.length);
 		XMLMemento memento = XMLMemento.createWriteRoot(IImportExportConstants.IE_NODE_BREAKPOINTS);
-		try (Writer writer = fWriter;) {
+		try (Writer writer = fWriter) {
 			for (int i = 0; i < fBreakpoints.length; i++) {
 				if (localmonitor.isCanceled()) {
 					return;

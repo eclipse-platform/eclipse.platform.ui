@@ -544,7 +544,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
 		String string = store.getString(PREF_STATE_MEMENTO);
 		if(string.length() > 0) {
-			try (ByteArrayInputStream bin = new ByteArrayInputStream(string.getBytes()); InputStreamReader reader = new InputStreamReader(bin);) {
+			try (ByteArrayInputStream bin = new ByteArrayInputStream(string.getBytes()); InputStreamReader reader = new InputStreamReader(bin)) {
 				XMLMemento stateMemento = XMLMemento.createReadRoot(reader);
 				setMemento(stateMemento);
 			} catch (WorkbenchException e) {
@@ -588,7 +588,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	public void partDeactivated(IWorkbenchPart part) {
 		String id = part.getSite().getId();
 		if (id.equals(getSite().getId())) {
-			try (ByteArrayOutputStream bout = new ByteArrayOutputStream(); OutputStreamWriter writer = new OutputStreamWriter(bout);) {
+			try (ByteArrayOutputStream bout = new ByteArrayOutputStream(); OutputStreamWriter writer = new OutputStreamWriter(bout)) {
 				XMLMemento memento = XMLMemento.createWriteRoot("VariablesViewMemento"); //$NON-NLS-1$
 				saveViewerState(memento);
 				memento.save(writer);

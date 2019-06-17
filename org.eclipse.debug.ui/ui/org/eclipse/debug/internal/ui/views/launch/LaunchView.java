@@ -945,7 +945,7 @@ public class LaunchView extends AbstractDebugView
 	public void partDeactivated(IWorkbenchPart part) {
 		String id = part.getSite().getId();
 		if (id.equals(getSite().getId())) {
-			try (ByteArrayOutputStream bout = new ByteArrayOutputStream(); OutputStreamWriter writer = new OutputStreamWriter(bout);) {
+			try (ByteArrayOutputStream bout = new ByteArrayOutputStream(); OutputStreamWriter writer = new OutputStreamWriter(bout)) {
 				XMLMemento memento = XMLMemento.createWriteRoot("DebugViewMemento"); //$NON-NLS-1$
 				saveViewerState(memento);
 				memento.save(writer);
