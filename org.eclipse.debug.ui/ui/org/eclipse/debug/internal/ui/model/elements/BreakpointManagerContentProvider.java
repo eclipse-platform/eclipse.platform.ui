@@ -431,9 +431,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
 
 			IBreakpoint[] breakpoints = thread.getBreakpoints();
 			Set<IBreakpoint> bpsSet = new HashSet<>(breakpoints.length * 4 / 3);
-			for (int i = 0; i< breakpoints.length; i++) {
-				bpsSet.add(breakpoints[i]);
-			}
+			Collections.addAll(bpsSet, breakpoints);
 
 			ModelDelta delta = new ModelDelta(fInput, IModelDelta.NO_CHANGE);
 			synchronized (this) {
@@ -881,9 +879,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
 					debugTargets.add(((IDebugElement)next).getDebugTarget());
 				} else if (next instanceof ILaunch) {
 					IDebugTarget[] targets = ((ILaunch)next).getDebugTargets();
-					for (int j = 0; j < targets.length; j++) {
-						debugTargets.add(targets[j]);
-					}
+					Collections.addAll(debugTargets, targets);
 				} else if (next instanceof IProcess) {
 					IDebugTarget target = ((IProcess)next).getAdapter(IDebugTarget.class);
 					if (target != null) {

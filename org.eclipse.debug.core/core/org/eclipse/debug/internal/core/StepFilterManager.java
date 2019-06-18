@@ -15,6 +15,7 @@
 package org.eclipse.debug.internal.core;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -106,9 +107,7 @@ public class StepFilterManager implements ILaunchListener {
 		initialize();
 		List<IStepFilter> select = new ArrayList<>();
 		for (StepFilter extension : stepFilters) {
-			for (IStepFilter stepFilter : extension.getStepFilters(modelIdentifier)) {
-				select.add(stepFilter);
-			}
+			Collections.addAll(select, extension.getStepFilters(modelIdentifier));
 		}
 		return select.toArray(new IStepFilter[select.size()]);
 	}

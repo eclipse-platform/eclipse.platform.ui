@@ -14,6 +14,7 @@
 package org.eclipse.debug.internal.ui.actions;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -118,9 +119,7 @@ public class ConfigureColumnsAction extends Action implements IUpdate {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IDebugHelpContextIds.CONFIGURE_COLUMNS_DIALOG);
 		String[] visibleColumns = fViewer.getVisibleColumns();
 		List<String> initialSelection = new ArrayList<>(visibleColumns.length);
-		for (int i = 0; i < visibleColumns.length; i++) {
-			initialSelection.add(visibleColumns[i]);
-		}
+		Collections.addAll(initialSelection, visibleColumns);
 		dialog.setTitle(ActionMessages.ConfigureColumnsAction_2);
 		dialog.setInitialElementSelections(initialSelection);
 		if (dialog.open() == Window.OK) {

@@ -15,6 +15,7 @@
 package org.eclipse.debug.core.model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -337,9 +338,7 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 			List<IProject> orderedProjects = new ArrayList<>(projects.length);
 			//Projects may not be in the build order but should be built if selected
 			List<IProject> unorderedProjects = new ArrayList<>(projects.length);
-			for(int i = 0; i < projects.length; ++i) {
-				unorderedProjects.add(projects[i]);
-			}
+			Collections.addAll(unorderedProjects, projects);
 
 			for (int i = 0; i < orderedNames.length; i++) {
 				String projectName = orderedNames[i];

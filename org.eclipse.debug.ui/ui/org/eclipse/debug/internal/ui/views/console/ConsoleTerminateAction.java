@@ -14,6 +14,7 @@
 package org.eclipse.debug.internal.ui.views.console;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugPlugin;
@@ -90,9 +91,7 @@ public class ConsoleTerminateAction extends Action implements IUpdate {
 				IProcess process2 = processes[j];
 				if (process2.equals(process)) {
 					IDebugTarget[] debugTargets = launch.getDebugTargets();
-					for (int k = 0; k < debugTargets.length; k++) {
-						targets.add(debugTargets[k]);
-					}
+					Collections.addAll(targets, debugTargets);
 					return targets; // all possible targets have been terminated for the launch.
 				}
 			}

@@ -14,6 +14,7 @@
 package org.eclipse.debug.internal.ui.sourcelookup;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -96,9 +97,7 @@ public abstract class SourceContainerAction extends SelectionListenerAction {
 	protected List<ISourceContainer> getEntriesAsList() {
 		ISourceContainer[] entries = getViewer().getEntries();
 		List<ISourceContainer> list = new ArrayList<>(entries.length);
-		for (int i = 0; i < entries.length; i++) {
-			list.add(entries[i]);
-		}
+		Collections.addAll(list, entries);
 		return list;
 	}
 

@@ -15,6 +15,7 @@ package org.eclipse.debug.core.sourcelookup.containers;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -110,9 +111,7 @@ public class DirectorySourceContainer extends CompositeSourceContainer {
 					continue;
 				}
 				if (isFindDuplicates()) {
-					for(int j=0; j < objects.length; j++) {
-						sources.add(objects[j]);
-					}
+					Collections.addAll(sources, objects);
 				} else {
 					sources.add(objects[0]);
 					break;

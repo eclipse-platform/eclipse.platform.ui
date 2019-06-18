@@ -14,6 +14,7 @@
 package org.eclipse.debug.internal.core;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,9 +96,7 @@ public class LogicalStructureManager {
 		// asks the logical structure providers
 		for (LogicalStructureProvider provider : fTypeProviders) {
 			ILogicalStructureType[] types = provider.getLogicalStructures(value);
-			for (int i = 0; i < types.length; i++) {
-				select.add(types[i]);
-			}
+			Collections.addAll(select, types);
 		}
 		return select.toArray(new ILogicalStructureType[select.size()]);
 	}

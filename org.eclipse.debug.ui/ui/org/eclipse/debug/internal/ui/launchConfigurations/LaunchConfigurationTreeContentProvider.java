@@ -17,6 +17,7 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -93,9 +94,7 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 					}
 				}
 				ILaunchConfiguration[] prototypes = getLaunchManager().getLaunchConfigurations(type, ILaunchConfiguration.PROTOTYPE);
-				for (ILaunchConfiguration prototype : prototypes) {
-					configs.add(prototype);
-				}
+				Collections.addAll(configs, prototypes);
 				return configs.toArray(new ILaunchConfiguration[0]);
 			} else {
 				return getLaunchManager().getLaunchConfigurationTypes();

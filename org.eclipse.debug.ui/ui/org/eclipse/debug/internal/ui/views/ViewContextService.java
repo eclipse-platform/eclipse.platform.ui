@@ -1003,9 +1003,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 			DebugContextViewBindings bindings= fContextIdsToBindings.get(contextsIds.get(i));
 			if (bindings != null) {
 				String[] bindingViewIds = bindings.getAllViewBindingsIds();
-				for (int j = 0; j < bindingViewIds.length; j++) {
-					viewIds.add(bindingViewIds[j]);
-				}
+				Collections.addAll(viewIds, bindingViewIds);
 			}
 		}
 		return viewIds;

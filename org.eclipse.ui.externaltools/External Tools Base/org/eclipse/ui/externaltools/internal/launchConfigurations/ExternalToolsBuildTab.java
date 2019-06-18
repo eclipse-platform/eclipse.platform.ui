@@ -16,6 +16,7 @@ package org.eclipse.ui.externaltools.internal.launchConfigurations;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -240,9 +241,7 @@ public class ExternalToolsBuildTab extends AbstractLaunchConfigurationTab {
 				fSpecificProjectsButton.setSelection(true);
 				IProject[] projects = getBuildProjects(configuration, IExternalToolConstants.ATTR_BUILD_SCOPE);
 				fProjects = new ArrayList<>(projects.length);
-				for (int i = 0; i < projects.length; i++) {
-					fProjects.add(projects[i]);
-				}
+				Collections.addAll(fProjects, projects);
 			}
 		}
 	}

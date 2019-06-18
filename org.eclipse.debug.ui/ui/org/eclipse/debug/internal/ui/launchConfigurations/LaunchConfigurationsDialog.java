@@ -18,6 +18,7 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -1254,9 +1255,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			}
 			ArrayList<String> list = new ArrayList<>();
 			String[] persisted = value.split(DELIMITER);
-			for(int i = 0; i < persisted.length; i++) {
-				list.add(persisted[i]);
-			}
+			Collections.addAll(list, persisted);
 			String type = IInternalDebugCoreConstants.EMPTY_STRING;
 			//if the item is not in the list and is expanded add it, otherwise if it
 			//is not expanded do a remove...either way for the else we query the list

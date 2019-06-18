@@ -778,9 +778,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 				}
 				//copy into collection for hashcode matching
 				HashSet<String> typeset = new HashSet<>(ctypes.length);
-				for(int i = 0; i < ctypes.length; i++) {
-					typeset.add(ctypes[i]);
-				}
+				Collections.addAll(typeset, ctypes);
 				ILaunchConfiguration[] configurations = filterConfigs(getLaunchManager().getLaunchConfigurations());
 				ILaunchConfiguration configuration = null;
 				IResource[] resrcs = null;

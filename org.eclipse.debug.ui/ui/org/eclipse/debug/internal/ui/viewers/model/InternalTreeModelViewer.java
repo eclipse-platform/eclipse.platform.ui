@@ -16,6 +16,7 @@
 package org.eclipse.debug.internal.ui.viewers.model;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -1593,9 +1594,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		Tree tree = (Tree) getControl();
 		TreeItem[] selection = tree.getSelection();
 		Set<TreeItem> set = new HashSet<>();
-		for (int i = 0; i < selection.length; i++) {
-			set.add(selection[i]);
-		}
+		Collections.addAll(set, selection);
 
 		TreeItem[] items = null;
 		Widget w = internalGetWidgetToSelect(path);

@@ -1242,9 +1242,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			IDebugTarget[] targets = null;
 			for (ILaunch launch : fLaunches) {
 				targets = launch.getDebugTargets();
-				for (int i = 0; i < targets.length; i++) {
-					allTargets.add(targets[i]);
-				}
+				Collections.addAll(allTargets, targets);
 			}
 			return allTargets.toArray(new IDebugTarget[allTargets.size()]);
 		}
@@ -1840,9 +1838,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 			IProcess[] processes = null;
 			for (ILaunch launch : fLaunches) {
 				processes = launch.getProcesses();
-				for (int i= 0; i < processes.length; i++) {
-					allProcesses.add(processes[i]);
-				}
+				Collections.addAll(allProcesses, processes);
 			}
 			return allProcesses.toArray(new IProcess[allProcesses.size()]);
 		}

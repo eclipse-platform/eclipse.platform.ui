@@ -16,6 +16,7 @@ package org.eclipse.debug.internal.ui.actions.breakpoints;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
@@ -118,9 +119,7 @@ public class RemoveBreakpointAction extends AbstractSelectionActionDelegate {
 						}
 						if(deleteAll) {
 							IBreakpoint[] breakpoints = bpc.getBreakpoints();
-							for (int i = 0; i < breakpoints.length; i++) {
-								breakpointsToDelete.add(breakpoints[i]);
-							}
+							Collections.addAll(breakpointsToDelete, breakpoints);
 						}
 					}
 				}

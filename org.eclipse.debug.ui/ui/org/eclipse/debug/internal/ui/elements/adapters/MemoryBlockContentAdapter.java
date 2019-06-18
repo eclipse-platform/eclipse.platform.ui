@@ -18,6 +18,7 @@ package org.eclipse.debug.internal.ui.elements.adapters;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Vector;
 
 import org.eclipse.core.runtime.CoreException;
@@ -359,9 +360,7 @@ public class MemoryBlockContentAdapter extends AsynchronousContentAdapter {
 		if (memoryBuffer.length < reqNumBytes) {
 			ArrayList<MemoryByte> newBuffer = new ArrayList<>();
 
-			for (int i = 0; i < memoryBuffer.length; i++) {
-				newBuffer.add(memoryBuffer[i]);
-			}
+			Collections.addAll(newBuffer, memoryBuffer);
 
 			for (int i = memoryBuffer.length; i < reqNumBytes; i++) {
 				MemoryByte mb = new MemoryByte();

@@ -18,6 +18,7 @@ package org.eclipse.debug.internal.ui.actions.breakpoints;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -197,9 +198,7 @@ public class ShowSupportedBreakpointsAction extends ToggleFilterAction implement
 				debugTargets.add(((IDebugElement)next).getDebugTarget());
 			} else if (next instanceof ILaunch) {
 				IDebugTarget[] targets= ((ILaunch)next).getDebugTargets();
-				for (int j = 0; j < targets.length; j++) {
-					debugTargets.add(targets[j]);
-				}
+				Collections.addAll(debugTargets, targets);
 			} else if (next instanceof IProcess) {
 				IDebugTarget target= ((IProcess)next).getAdapter(IDebugTarget.class);
 				if (target != null) {

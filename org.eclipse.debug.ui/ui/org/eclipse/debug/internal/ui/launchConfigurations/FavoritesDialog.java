@@ -14,6 +14,7 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -326,9 +327,7 @@ public class FavoritesDialog extends TrayDialog {
 	 * Copies the array into the list
 	 */
 	protected void addAll(ILaunchConfiguration[] array, List<ILaunchConfiguration> list) {
-		for (int i = 0; i < array.length; i++) {
-			list.add(array[i]);
-		}
+		Collections.addAll(list, array);
 	}
 
 	/**

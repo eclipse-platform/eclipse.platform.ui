@@ -14,6 +14,7 @@
 package org.eclipse.debug.internal.ui.viewers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -60,9 +61,7 @@ class ChildrenRequestMonitor extends AsynchronousRequestMonitor implements IChil
 	@Override
 	public void addChildren(Object[] children) {
 		synchronized (fChildren) {
-			for (int i = 0; i < children.length; i++) {
-				fChildren.add(children[i]);
-			}
+			Collections.addAll(fChildren, children);
 		}
 
 		scheduleViewerUpdate(0);

@@ -14,6 +14,7 @@
 package org.eclipse.debug.internal.ui.views.breakpoints;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -399,9 +400,7 @@ public class BreakpointSetOrganizer extends AbstractBreakpointOrganizerDelegate 
 			IWorkingSet set = ((WorkingSetCategory) category).getWorkingSet();
 			IAdaptable[] elements = set.getElements();
 			List<IAdaptable> list = new ArrayList<>(elements.length);
-			for (int i = 0; i < elements.length; i++) {
-				list.add(elements[i]);
-			}
+			Collections.addAll(list, elements);
 			for (int i = 0; i < breakpoints.length; i++) {
 				IBreakpoint breakpoint = breakpoints[i];
 				fCache.removeMappedEntry(breakpoint.getMarker(), set.getName());

@@ -17,6 +17,7 @@ package org.eclipse.debug.internal.ui.viewers.model;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -1448,9 +1449,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
 		VirtualTree tree = getTree();
 		VirtualItem[] selection = tree.getSelection();
 		Set<VirtualItem> set = new HashSet<>();
-		for (int i = 0; i < selection.length; i++) {
-			set.add(selection[i]);
-		}
+		Collections.addAll(set, selection);
 
 		VirtualItem[] items = null;
 		VirtualItem parent = findItem(path);

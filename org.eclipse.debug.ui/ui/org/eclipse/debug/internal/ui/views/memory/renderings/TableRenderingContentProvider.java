@@ -16,6 +16,7 @@ package org.eclipse.debug.internal.ui.views.memory.renderings;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
@@ -448,10 +449,7 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 		{
 			ArrayList<MemoryByte> newBuffer = new ArrayList<>();
 
-			for (int i=0; i<memoryBuffer.length; i++)
-			{
-				newBuffer.add(memoryBuffer[i]);
-			}
+			Collections.addAll(newBuffer, memoryBuffer);
 
 			for (int i=memoryBuffer.length; i<reqNumBytes; i++)
 			{

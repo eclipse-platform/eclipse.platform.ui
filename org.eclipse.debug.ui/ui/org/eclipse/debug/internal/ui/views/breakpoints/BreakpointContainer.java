@@ -16,6 +16,7 @@ package org.eclipse.debug.internal.ui.views.breakpoints;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -598,9 +599,7 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
 				BreakpointContainer container = containers[i];
 				BreakpointContainer[] subcontainers = container.getContainers(breakpoint);
 				if (subcontainers != null) {
-					for (int j = 0; j < subcontainers.length; j++) {
-						list.add(subcontainers[j]);
-					}
+					Collections.addAll(list, subcontainers);
 				}
 			}
 			return list.toArray(new BreakpointContainer[list.size()]);

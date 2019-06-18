@@ -14,6 +14,7 @@
 package org.eclipse.debug.internal.ui.contextlaunching;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -498,9 +499,7 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 					voteDefault++;
 				} else {
 					if(cfgs.length > 0) {
-						for(int j = 0; j < cfgs.length; j++) {
-							configs.add(cfgs[j]);
-						}
+						Collections.addAll(configs, cfgs);
 					}
 				}
 			}

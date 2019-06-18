@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.debug.core.commands;
 
+import java.util.Collections;
 import java.util.LinkedHashSet;
 
 import org.eclipse.core.runtime.CoreException;
@@ -393,9 +394,7 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 			return objects;
 		} else {
 			LinkedHashSet<Object> set = new LinkedHashSet<>(objects.length);
-			for (int i = 0; i < objects.length; i++) {
-				set.add(objects[i]);
-			}
+			Collections.addAll(set, objects);
 			return set.toArray();
 		}
 	}

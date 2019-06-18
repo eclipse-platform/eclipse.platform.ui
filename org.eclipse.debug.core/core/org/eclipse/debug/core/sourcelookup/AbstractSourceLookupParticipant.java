@@ -14,6 +14,7 @@
 package org.eclipse.debug.core.sourcelookup;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -66,9 +67,7 @@ public abstract class AbstractSourceLookupParticipant implements ISourceLookupPa
 							//it will only not be null when we care about duplicates
 							//saves the computation in isFindDuplicates()
 							if (results != null) {
-								for (int j = 0; j < objects.length; j++) {
-									results.add(objects[j]);
-								}
+								Collections.addAll(results, objects);
 							} else {
 								if (objects.length == 1) {
 									return objects;

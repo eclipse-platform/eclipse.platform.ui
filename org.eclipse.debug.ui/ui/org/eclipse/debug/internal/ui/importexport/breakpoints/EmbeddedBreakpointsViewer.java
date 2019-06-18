@@ -15,6 +15,7 @@
 package org.eclipse.debug.internal.ui.importexport.breakpoints;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Vector;
@@ -173,9 +174,7 @@ public class EmbeddedBreakpointsViewer {
 	private void getBreakpointsFromContainers(IBreakpointContainer container, ArrayList<IBreakpoint> list) {
 		IBreakpoint[] bps = container.getBreakpoints();
 		list.ensureCapacity(list.size() + bps.length);
-		for (int j = 0; j < bps.length; j++) {
-			list.add(bps[j]);
-		}
+		Collections.addAll(list, bps);
 	}
 
 	/**

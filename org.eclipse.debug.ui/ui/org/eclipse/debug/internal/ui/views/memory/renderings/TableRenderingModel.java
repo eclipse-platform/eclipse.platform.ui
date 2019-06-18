@@ -16,6 +16,7 @@ package org.eclipse.debug.internal.ui.views.memory.renderings;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
@@ -323,9 +324,7 @@ public class TableRenderingModel extends AbstractVirtualContentTableModel implem
 		ArrayList<MemoryByte> toReturn = new ArrayList<>();
 		for (int i = 0; i < segments.length; i++) {
 			MemoryByte[] temp = segments[i].getBytes();
-			for (int j = 0; j < temp.length; j++) {
-				toReturn.add(temp[j]);
-			}
+			Collections.addAll(toReturn, temp);
 		}
 		return toReturn.toArray(new MemoryByte[0]);
 	}
@@ -405,9 +404,7 @@ public class TableRenderingModel extends AbstractVirtualContentTableModel implem
 		if (computeChanges()) {
 			Object[] newContent = compare(kids.toArray());
 			ArrayList<Object> newList = new ArrayList<>();
-			for (int i = 0; i < newContent.length; i++) {
-				newList.add(newContent[i]);
-			}
+			Collections.addAll(newList, newContent);
 			super.setChildren(parentNode, newList);
 		} else {
 			super.setChildren(parentNode, kids);

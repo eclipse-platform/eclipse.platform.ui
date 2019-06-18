@@ -26,6 +26,7 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -1621,9 +1622,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		assertTrue("Should be a prototype", prototype.isPrototype()); //$NON-NLS-1$
 		ILaunchConfiguration[] prototypes = wc.getType().getPrototypes();
 		List<ILaunchConfiguration> list = new ArrayList<>();
-		for (int i = 0; i < prototypes.length; i++) {
-			list.add(prototypes[i]);
-		}
+		Collections.addAll(list, prototypes);
 		assertFalse("Expecting at least prototype", list.isEmpty()); //$NON-NLS-1$
 		assertTrue("Missing created prototype", list.contains(prototype)); //$NON-NLS-1$
 	}

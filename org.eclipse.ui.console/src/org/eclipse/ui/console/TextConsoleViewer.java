@@ -15,6 +15,7 @@
 package org.eclipse.ui.console;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -378,9 +379,7 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 
 			StyleRange[] partitionerStyles = ((IConsoleDocumentPartitioner) document.getDocumentPartitioner()).getStyleRanges(event.lineOffset, event.lineText.length());
 			if (partitionerStyles != null) {
-				for (int i = 0; i < partitionerStyles.length; i++) {
-					ranges.add(partitionerStyles[i]);
-				}
+				Collections.addAll(ranges, partitionerStyles);
 			} else {
 				ranges.add(new StyleRange(offset, length, null, null));
 			}

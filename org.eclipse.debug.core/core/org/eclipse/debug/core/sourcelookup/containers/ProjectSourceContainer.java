@@ -15,6 +15,7 @@
 package org.eclipse.debug.core.sourcelookup.containers;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -91,9 +92,7 @@ public class ProjectSourceContainer extends ContainerSourceContainer {
 				IProject[] projects = getAllReferencedProjects(project);
 				ISourceContainer[] folders = super.createSourceContainers();
 				List<ISourceContainer> all = new ArrayList<>(folders.length + projects.length);
-				for (int i = 0; i < folders.length; i++) {
-					all.add(folders[i]);
-				}
+				Collections.addAll(all, folders);
 				for (int i = 0; i < projects.length; i++) {
 					if (project.exists() && project.isOpen()) {
 						ProjectSourceContainer container = new ProjectSourceContainer(projects[i], false);

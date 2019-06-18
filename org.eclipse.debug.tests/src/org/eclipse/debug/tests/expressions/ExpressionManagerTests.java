@@ -14,6 +14,7 @@
 package org.eclipse.debug.tests.expressions;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.debug.core.DebugPlugin;
@@ -71,25 +72,19 @@ public class ExpressionManagerTests extends AbstractDebugTest {
 
 		@Override
 		public void expressionsAdded(IExpression[] expressions) {
-			for (int i = 0; i < expressions.length; i++) {
-				added.add(expressions[i]);
-			}
+			Collections.addAll(added, expressions);
 			addedCallbacks++;
 		}
 
 		@Override
 		public void expressionsRemoved(IExpression[] expressions) {
-			for (int i = 0; i < expressions.length; i++) {
-				removed.add(expressions[i]);
-			}
+			Collections.addAll(removed, expressions);
 			removedCallbacks++;
 		}
 
 		@Override
 		public void expressionsChanged(IExpression[] expressions) {
-			for (int i = 0; i < expressions.length; i++) {
-				changed.add(expressions[i]);
-			}
+			Collections.addAll(changed, expressions);
 			changedCallbacks++;
 		}
 
@@ -105,18 +100,14 @@ public class ExpressionManagerTests extends AbstractDebugTest {
 
 		@Override
 		public void expressionsMoved(IExpression[] expressions, int index) {
-			for (int i = 0; i < expressions.length; i++) {
-				moved.add(expressions[i]);
-			}
+			Collections.addAll(moved, expressions);
 			movedCallbacks++;
 			insertIndex = index;
 		}
 
 		@Override
 		public void expressionsInserted(IExpression[] expressions, int index) {
-			for (int i = 0; i < expressions.length; i++) {
-				inserted.add(expressions[i]);
-			}
+			Collections.addAll(inserted, expressions);
 			insertedCallbacks++;
 			insertIndex = index;
 		}
