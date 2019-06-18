@@ -532,8 +532,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 			}
 		}
 
-		for (int i= 0; i < toBeDeleted.size(); i++)
-			fMarkerUpdaterSpecifications.remove(toBeDeleted.get(i));
+		fMarkerUpdaterSpecifications.removeAll(toBeDeleted);
 	}
 
 	/**

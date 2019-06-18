@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -459,8 +460,7 @@ public class TextUtilities {
 						IDocumentPartitionerExtension2 extension2= (IDocumentPartitionerExtension2) p;
 						String[] c= extension2.getManagingPositionCategories();
 						if (c != null) {
-							for (String element : c)
-								categories.add(element);
+							Collections.addAll(categories, c);
 						}
 					}
 				}

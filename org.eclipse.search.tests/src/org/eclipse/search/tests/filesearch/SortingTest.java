@@ -17,6 +17,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -55,9 +56,7 @@ public class SortingTest {
 		Object[] elements= result.getElements();
 		for (Object element : elements) {
 			Match[] matches = result.getMatches(element);
-			for (Match matche : matches) {
-				allMatches.add(matche);
-			}
+			Collections.addAll(allMatches, matches);
 		}
 		// now remove them and readd them in reverse order
 		result.removeAll();

@@ -16,6 +16,7 @@ package org.eclipse.ui.texteditor;
 
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.regex.PatternSyntaxException;
@@ -357,8 +358,7 @@ public class FindNextAction extends ResourceAction implements IUpdate {
 		String[] findHistory= s.getArray("findhistory"); //$NON-NLS-1$
 		if (findHistory != null) {
 			fFindHistory.clear();
-			for (int i= 0; i < findHistory.length; i++)
-				fFindHistory.add(findHistory[i]);
+			Collections.addAll(fFindHistory, findHistory);
 		}
 	}
 

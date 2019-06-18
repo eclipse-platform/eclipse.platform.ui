@@ -15,6 +15,7 @@
 package org.eclipse.search.ui.text;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -1352,18 +1353,14 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 	private void collectAllMatches(HashSet<Match> set, Object[] elements) {
 		for (Object element : elements) {
 			Match[] matches = getDisplayedMatches(element);
-			for (Match match : matches) {
-				set.add(match);
-			}
+			Collections.addAll(set, matches);
 		}
 	}
 
 	private void collectAllMatchesBelow(AbstractTextSearchResult result, Set<Match> set, ITreeContentProvider cp, Object[] elements) {
 		for (Object element : elements) {
 			Match[] matches = getDisplayedMatches(element);
-			for (Match match : matches) {
-				set.add(match);
-			}
+			Collections.addAll(set, matches);
 			Object[] children = cp.getChildren(element);
 			collectAllMatchesBelow(result, set, cp, children);
 		}

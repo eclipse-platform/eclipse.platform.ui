@@ -15,6 +15,7 @@ package org.eclipse.ui.internal.editors.text;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -416,9 +417,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 
 			@Override
 			public void filterElements(Object[] elements) throws InterruptedException {
-				for (Object element : elements) {
-					returnValue.add(element);
-				}
+				Collections.addAll(returnValue, elements);
 			}
 		};
 
@@ -697,9 +696,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 
 		Object[] listItems= listContentProvider.getElements(treeElement);
 		List<Object> listItemsChecked= new ArrayList<>();
-		for (int i= 0; i < listItems.length; ++i) {
-			listItemsChecked.add(listItems[i]);
-		}
+		Collections.addAll(listItemsChecked, listItems);
 
 		checkedStateStore.put(treeElement, listItemsChecked);
 	}

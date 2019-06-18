@@ -15,6 +15,7 @@
 package org.eclipse.ui.texteditor;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -1828,16 +1829,14 @@ class FindReplaceDialog extends Dialog {
 		if (findHistory != null) {
 			List<String> history= getFindHistory();
 			history.clear();
-			for (int i= 0; i < findHistory.length; i++)
-				history.add(findHistory[i]);
+			Collections.addAll(history, findHistory);
 		}
 
 		String[] replaceHistory= s.getArray("replacehistory"); //$NON-NLS-1$
 		if (replaceHistory != null) {
 			List<String> history= getReplaceHistory();
 			history.clear();
-			for (int i= 0; i < replaceHistory.length; i++)
-				history.add(replaceHistory[i]);
+			Collections.addAll(history, replaceHistory);
 		}
 	}
 
