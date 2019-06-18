@@ -642,25 +642,19 @@ public class MarkerTest extends ResourceTest {
 
 		// add more markers and do a search on all marker types
 		Vector<IMarker> allMarkers = new Vector<>(markers.length * 3);
-		for (IMarker marker : markers) {
-			allMarkers.add(marker);
-		}
+		Collections.addAll(allMarkers, markers);
 		try {
 			markers = createMarkers(resources, IMarker.BOOKMARK);
 		} catch (CoreException e) {
 			fail("3.0", e);
 		}
-		for (IMarker marker : markers) {
-			allMarkers.add(marker);
-		}
+		Collections.addAll(allMarkers, markers);
 		try {
 			markers = createMarkers(resources, IMarker.TASK);
 		} catch (CoreException e) {
 			fail("3.1", e);
 		}
-		for (IMarker marker : markers) {
-			allMarkers.add(marker);
-		}
+		Collections.addAll(allMarkers, markers);
 		try {
 			IMarker[] found = getWorkspace().getRoot().findMarkers(null, false, IResource.DEPTH_INFINITE);
 			assertEquals("3.2", allMarkers.toArray(new IMarker[allMarkers.size()]), found);
