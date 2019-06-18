@@ -23,7 +23,7 @@
   </parent>
   <groupId>org.eclipse.ui</groupId>
   <artifactId>org.eclipse.tips.feature</artifactId>
-  <version>0.2.500-SNAPSHOT</version>
+  <version>0.2.600-SNAPSHOT</version>
   <packaging>eclipse-feature</packaging>
     <build>
      <plugins>
