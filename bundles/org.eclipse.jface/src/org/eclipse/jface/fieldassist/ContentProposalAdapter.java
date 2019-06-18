@@ -713,8 +713,6 @@ public class ContentProposalAdapter {
 				item.setText(getString(current));
 				item.setImage(getImage(current));
 				item.setData(current);
-			} else {
-				// this should not happen, but does on win32
 			}
 		}
 
