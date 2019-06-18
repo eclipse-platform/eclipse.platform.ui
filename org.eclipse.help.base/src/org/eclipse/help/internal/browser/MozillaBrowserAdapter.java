@@ -188,25 +188,17 @@ public class MozillaBrowserAdapter implements IBrowser {
 		 * @return @throws
 		 *         InterruptedException
 		 */
-		private boolean errorsInOutput(StreamConsumer outputs,
-				StreamConsumer errors) {
+		private boolean errorsInOutput(StreamConsumer outputs, StreamConsumer errors) {
 			try {
 				outputs.join(1000);
-				if (outputs.getLastLine() != null
-						&& (outputs.getLastLine().indexOf(
-								"No running window found") //$NON-NLS-1$
-						>= 0 || outputs.getLastLine().indexOf(
-								"not running on display") //$NON-NLS-1$
-						>= 0)) {
+				if (outputs.getLastLine() != null && (outputs.getLastLine().indexOf("No running window found") >= 0 //$NON-NLS-1$
+						|| outputs.getLastLine().indexOf("not running on display") >= 0)) {//$NON-NLS-1$
 					return true;
 				}
 				errors.join(1000);
-				if (errors.getLastLine() != null
-						&& (errors.getLastLine().indexOf(
-								"No running window found") //$NON-NLS-1$
-						>= 0 || errors.getLastLine().indexOf(
-								"not running on display") //$NON-NLS-1$
-						>= 0)) {
+				if (errors.getLastLine() != null && (errors.getLastLine().indexOf("No running window found") >= 0 //$NON-NLS-1$
+						|| errors.getLastLine().indexOf("not running on display") >= 0)) {//$NON-NLS-1$
+
 					return true;
 				}
 			} catch (InterruptedException ie) {
@@ -221,8 +213,7 @@ public class MozillaBrowserAdapter implements IBrowser {
 			waitForBrowser();
 			if (exitRequested)
 				return;
-			if (openBrowser(executable + " -remote openURL(" + url + ")") //$NON-NLS-1$ //$NON-NLS-2$
-			== 0) {
+			if (openBrowser(executable + " -remote openURL(" + url + ")") == 0) {//$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			}
 			if (exitRequested)
