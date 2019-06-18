@@ -1060,10 +1060,10 @@ public class SearchIndex implements IHelpSearchIndex {
 				|| fileName.endsWith(".xml") //$NON-NLS-1$
 				|| fileName.endsWith(".txt")) { //$NON-NLS-1$
 			// indexable
-		} else if (fileName.indexOf(".htm#") >= 0 //$NON-NLS-1$
-				|| fileName.indexOf(".html#") >= 0 //$NON-NLS-1$
-				|| fileName.indexOf(".xhtml#") >= 0 //$NON-NLS-1$
-				|| fileName.indexOf(".xml#") >= 0) { //$NON-NLS-1$
+		} else if (fileName.contains(".htm#") //$NON-NLS-1$
+				|| fileName.contains(".html#") //$NON-NLS-1$
+				|| fileName.contains(".xhtml#") //$NON-NLS-1$
+				|| fileName.contains(".xml#")) { //$NON-NLS-1$
 			url = url.substring(0, url.lastIndexOf('#'));
 			// its a fragment, index whole document
 		} else {

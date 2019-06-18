@@ -59,7 +59,7 @@ public final class JSonHelper {
 		if (str == null) {
 			return ""; //$NON-NLS-1$
 		}
-		if (str.indexOf(DOUBLEQUOTE) < 0) {
+		if (!str.contains(DOUBLEQUOTE)) {
 			return DOUBLEQUOTE + str + DOUBLEQUOTE;
 		}
 		return DOUBLEQUOTE + str.replaceAll(DOUBLEQUOTE, "\\\\" + DOUBLEQUOTE) + DOUBLEQUOTE; //$NON-NLS-1$

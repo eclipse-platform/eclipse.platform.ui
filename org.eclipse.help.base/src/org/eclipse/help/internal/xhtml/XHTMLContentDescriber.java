@@ -37,7 +37,7 @@ public class XHTMLContentDescriber implements IContentDescriber {
 			char[] chars = new char[BUFFER_SIZE];
 			reader.read(chars);
 			String str = new String(chars);
-			return (str.indexOf(XHTML_DTD_PREFIX) != -1) ? VALID : INVALID;
+			return (str.contains(XHTML_DTD_PREFIX)) ? VALID : INVALID;
 		}
 		catch (Exception e) {
 			return INDETERMINATE;

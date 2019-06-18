@@ -205,7 +205,7 @@ public class UrlUtil {
 		}
 
 		if (new WebappPreferences().isRestrictTopicParameter()) {
-		    if (path.indexOf(":/") >= 0) {  //$NON-NLS-1$
+		    if (path.contains(":/")) {  //$NON-NLS-1$
 			    return false;
 		    }
 		}
@@ -266,7 +266,7 @@ public class UrlUtil {
 		    return false;
         agent=agent.toLowerCase(Locale.ENGLISH);
 		// sample substring Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)
-		return agent.indexOf("bot") >= 0 || agent.indexOf("crawl") >= 0//$NON-NLS-1$ //$NON-NLS-2$
+		return agent.contains("bot") || agent.contains("crawl")//$NON-NLS-1$ //$NON-NLS-2$
                 || request.getParameter("bot") != null;//$NON-NLS-1$
     }
 
@@ -280,10 +280,10 @@ public class UrlUtil {
 		    return false;
 		agent=agent.toLowerCase(Locale.ENGLISH);
 		// sample substring Gecko/20020508
-		if (agent.indexOf("like gecko") >= 0) { //$NON-NLS-1$
+		if (agent.contains("like gecko")) { //$NON-NLS-1$
 			return false;
 		}
-		return agent.indexOf("gecko") >= 0; //$NON-NLS-1$
+		return agent.contains("gecko"); //$NON-NLS-1$
 	}
 
 	public static boolean isIE(HttpServletRequest request) {
@@ -303,7 +303,7 @@ public class UrlUtil {
 		}
 		//
 
-		return (agent.indexOf("msie") >= 0); //$NON-NLS-1$
+		return (agent.contains("msie")); //$NON-NLS-1$
 	}
 
 	public static String getIEVersion(HttpServletRequest request) {
@@ -341,7 +341,7 @@ public class UrlUtil {
 		if (agent==null)
 		    return false;
 		agent=agent.toLowerCase(Locale.ENGLISH);
-		return agent.indexOf("konqueror") >= 0; //$NON-NLS-1$
+		return agent.contains("konqueror"); //$NON-NLS-1$
 	}
 
 	/**
@@ -359,7 +359,7 @@ public class UrlUtil {
 		if (agent==null)
 		    return false;
 		agent=agent.toLowerCase(Locale.ENGLISH);
-		return agent.indexOf("mozilla/5") >= 0; //$NON-NLS-1$
+		return agent.contains("mozilla/5"); //$NON-NLS-1$
 	}
 
 	public static String getMozillaVersion(HttpServletRequest request) {
@@ -371,7 +371,7 @@ public class UrlUtil {
 		if (agent==null)
 		    return "0"; //$NON-NLS-1$
 		agent=agent.toLowerCase(Locale.ENGLISH);
-		if (agent.indexOf("mozilla/5") < 0) //$NON-NLS-1$
+		if (!agent.contains("mozilla/5")) //$NON-NLS-1$
 			return "0"; //$NON-NLS-1$
 		int start = agent.indexOf("rv:") + "rv:".length(); //$NON-NLS-1$ //$NON-NLS-2$
 		if (start < "rv:".length() || start >= agent.length()) //$NON-NLS-1$
@@ -391,7 +391,7 @@ public class UrlUtil {
 		if (agent==null)
 		    return false;
 		agent=agent.toLowerCase(Locale.ENGLISH);
-		return agent.indexOf("opera") >= 0; //$NON-NLS-1$
+		return agent.contains("opera"); //$NON-NLS-1$
 	}
 
 	public static String getOperaVersion(String agent) {
@@ -417,7 +417,7 @@ public class UrlUtil {
 		if (agent==null)
 		    return false;
 		agent=agent.toLowerCase(Locale.ENGLISH);
-		return agent.indexOf("safari/") >= 0; //$NON-NLS-1$
+		return agent.contains("safari/"); //$NON-NLS-1$
 	}
 
 	public static String getSafariVersion(HttpServletRequest request) {

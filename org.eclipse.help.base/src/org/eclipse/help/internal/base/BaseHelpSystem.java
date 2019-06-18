@@ -196,7 +196,7 @@ public final class BaseHelpSystem {
 
 	public static URL resolve(String href, boolean documentOnly) {
 		String url = null;
-		if (href == null || href.indexOf("://") != -1 //$NON-NLS-1$
+		if (href == null || href.contains("://") //$NON-NLS-1$
 				   || isFileProtocol(href))
 			url = href;
 		else {
@@ -216,7 +216,7 @@ public final class BaseHelpSystem {
 
 	public static URL resolve(String href, String servlet) {
 		String url = null;
-		if (href == null || href.indexOf("://") != -1 //$NON-NLS-1$
+		if (href == null || href.contains("://") //$NON-NLS-1$
 		   || isFileProtocol(href)) {
 			url = href;
 		}

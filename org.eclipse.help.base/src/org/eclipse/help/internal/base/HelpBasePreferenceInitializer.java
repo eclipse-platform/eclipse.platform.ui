@@ -31,11 +31,11 @@ public class HelpBasePreferenceInitializer extends
 
 		String os = System.getProperty("os.name").toLowerCase(Locale.ENGLISH); //$NON-NLS-1$
 
-		if (os.indexOf("windows") != -1) { //$NON-NLS-1$
+		if (os.contains("windows")) { //$NON-NLS-1$
 			prefs
 					.put("custom_browser_path", //$NON-NLS-1$
 							"\"C:\\Program Files\\Internet Explorer\\IEXPLORE.EXE\" %1"); //$NON-NLS-1$
-		} else if (os.indexOf("linux") != -1) { //$NON-NLS-1$
+		} else if (os.contains("linux")) { //$NON-NLS-1$
 			prefs.put("custom_browser_path", //$NON-NLS-1$
 					"konqueror %1"); //$NON-NLS-1$
 		} else {

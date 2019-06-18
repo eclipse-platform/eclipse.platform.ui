@@ -1354,7 +1354,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 	}
 
 	public boolean isHelpResource(String url) {
-		if (url == null || url.indexOf("://") == -1) //$NON-NLS-1$
+		if (url == null || !url.contains("://")) //$NON-NLS-1$
 			return true;
 		return false;
 	}

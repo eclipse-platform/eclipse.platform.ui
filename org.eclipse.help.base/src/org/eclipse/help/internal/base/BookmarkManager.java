@@ -120,7 +120,7 @@ public class BookmarkManager extends Observable {
 			// separate the url and title by vertical bar
 
 			// check for duplicates
-			if (bookmarks.indexOf("," + encode(bookmarkURL) + "|") != -1) //$NON-NLS-1$ //$NON-NLS-2$
+			if (bookmarks.contains("," + encode(bookmarkURL) + "|")) //$NON-NLS-1$ //$NON-NLS-2$
 				return;
 			bookmarks = bookmarks
 					+ "," + encode(bookmarkURL) + "|" + encode(title); //$NON-NLS-1$ //$NON-NLS-2$

@@ -74,13 +74,13 @@ public class MozillaFactory implements IBrowserFactory, IExecutableExtension {
 		try {
 			outputs.join(1000);
 			if (outputs.getLastLine() != null
-					&& outputs.getLastLine().indexOf("no " + executable + " in") >= 0) {//$NON-NLS-1$ //$NON-NLS-2$
+					&& outputs.getLastLine().contains("no " + executable + " in")) {//$NON-NLS-1$ //$NON-NLS-2$
 
 				return true;
 			}
 			errors.join(1000);
 			if (errors.getLastLine() != null
-					&& errors.getLastLine().indexOf("no " + executable + " in") >= 0) { //$NON-NLS-1$ //$NON-NLS-2$
+					&& errors.getLastLine().contains("no " + executable + " in")) { //$NON-NLS-1$ //$NON-NLS-2$
 				return true;
 			}
 		} catch (InterruptedException ie) {

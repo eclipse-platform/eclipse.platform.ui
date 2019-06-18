@@ -89,7 +89,7 @@ public class EclipseConnector {
 		    //System.out.println("Transfer " + url); //$NON-NLS-1$
 			// Redirect if the request includes PLUGINS_ROOT and is not a content request
 			int index = url.lastIndexOf(HelpURLConnection.PLUGINS_ROOT);
-			if (index!= -1 && url.indexOf("content/" + HelpURLConnection.PLUGINS_ROOT) == -1) {  //$NON-NLS-1$
+			if (index!= -1 && !url.contains("content/" + HelpURLConnection.PLUGINS_ROOT)) {  //$NON-NLS-1$
 				StringBuilder redirectURL = new StringBuilder();
 
 				redirectURL.append(req.getContextPath());
