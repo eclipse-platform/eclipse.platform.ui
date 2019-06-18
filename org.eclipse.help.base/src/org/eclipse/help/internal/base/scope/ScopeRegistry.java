@@ -15,6 +15,7 @@
 package org.eclipse.help.internal.base.scope;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
@@ -94,8 +95,7 @@ public class ScopeRegistry {
 			else if (obj instanceof IHelpScopeProducer)
 			{
 				IScopeHandle dynamicScopes[] = ((IHelpScopeProducer)obj).getScopeHandles();
-				for (int d=0;d<dynamicScopes.length;d++)
-					scopes.add(dynamicScopes[d]);
+				Collections.addAll(scopes, dynamicScopes);
 			}
 		}
 		initialized = true;

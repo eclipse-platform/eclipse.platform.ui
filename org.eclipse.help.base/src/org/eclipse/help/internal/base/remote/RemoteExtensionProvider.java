@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.help.AbstractContentExtensionProvider;
@@ -63,9 +64,7 @@ public class RemoteExtensionProvider extends AbstractContentExtensionProvider {
 						}
 						UAElement element = reader.read(in);
 						IContentExtension[] children = element.getChildren(IContentExtension.class);
-						for (int contrib = 0; contrib < children.length; contrib++) {
-							contributions.add(children[contrib]);
-						}
+						Collections.addAll(contributions, children);
 					} catch (IOException e) {
 						String msg = "I/O error while trying to contact the remote help server"; //$NON-NLS-1$
 						HelpBasePlugin.logError(msg, e);

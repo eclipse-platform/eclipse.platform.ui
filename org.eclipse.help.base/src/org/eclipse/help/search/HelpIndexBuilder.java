@@ -22,6 +22,7 @@ import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
@@ -448,9 +449,7 @@ public class HelpIndexBuilder {
 		if (legalLanguages==null) {
 			legalLanguages = new HashSet<>();
 			String [] choices = Locale.getISOLanguages();
-			for (int i=0; i<choices.length; i++) {
-				legalLanguages.add(choices[i]);
-			}
+			Collections.addAll(legalLanguages, choices);
 		}
 		return legalLanguages.contains(language);
 	}
@@ -459,9 +458,7 @@ public class HelpIndexBuilder {
 		if (legalCountries==null) {
 			legalCountries = new HashSet<>();
 			String [] choices = Locale.getISOCountries();
-			for (int i=0; i<choices.length; i++) {
-				legalCountries.add(choices[i]);
-			}
+			Collections.addAll(legalCountries, choices);
 		}
 		return legalCountries.contains(country);
 	}

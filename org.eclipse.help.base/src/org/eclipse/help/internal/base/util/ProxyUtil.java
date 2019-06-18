@@ -25,6 +25,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.internal.net.ProxyManager;
@@ -98,11 +99,9 @@ public class ProxyUtil {
 		if (service instanceof ProxyManager)
 			natives = ((ProxyManager)service).getNativeNonProxiedHosts();
 
-		for (int m=0;m<manuals.length;m++)
-			hosts.add(manuals[m]);
+		Collections.addAll(hosts, manuals);
 		if (natives!=null)
-			for (int n=0;n<natives.length;n++)
-				hosts.add(natives[n]);
+			Collections.addAll(hosts, natives);
 		return hosts;
 	}
 

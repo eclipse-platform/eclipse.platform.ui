@@ -61,11 +61,7 @@ public class ButtonData extends RequestData {
 		}
 
 		List<AbstractButton> buttonList = new ArrayList<>();
-		for (AbstractButton button : allButtons) {
-			//if (button.isVisible() && button.getLocation() == location) {
-				buttonList.add(button);
-			//}
-		}
+		buttonList.addAll(allButtons);
 		AbstractButton[] buttons = buttonList.toArray(new AbstractButton[buttonList.size()]);
 		return buttons;
 	}

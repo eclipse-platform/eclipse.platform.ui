@@ -15,6 +15,7 @@ package org.eclipse.help.internal.standalone;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -101,9 +102,7 @@ public class Options {
 	public static void init(String appId, String[] args) {
 		// convert array of arguments to a list
 		List<String> list = new ArrayList<>();
-		for (int i = 0; i < args.length; i++) {
-			list.add(args[i]);
-		}
+		Collections.addAll(list, args);
 
 		init(appId, list);
 	}

@@ -15,6 +15,7 @@
 package org.eclipse.help.internal.search;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -277,8 +278,7 @@ public class SearchResults implements ISearchHitCollector {
 		scopes = new ArrayList<>(wSets.length);
 		for (int w = 0; w < wSets.length; w++) {
 			AdaptableHelpResource[] elements = wSets[w].getElements();
-			for (int i = 0; i < elements.length; i++)
-				scopes.add(elements[i]);
+			Collections.addAll(scopes, elements);
 		}
 		return scopes;
 	}
@@ -290,8 +290,7 @@ public class SearchResults implements ISearchHitCollector {
 		ArrayList<CriterionResource> criteriaScopes = new ArrayList<>(wSets.length);
 		for (int w = 0; w < wSets.length; w++) {
 			CriterionResource[] elements = wSets[w].getCriteria();
-			for (int i = 0; i < elements.length; i++)
-				criteriaScopes.add(elements[i]);
+			Collections.addAll(criteriaScopes, elements);
 		}
 		return criteriaScopes;
 	}

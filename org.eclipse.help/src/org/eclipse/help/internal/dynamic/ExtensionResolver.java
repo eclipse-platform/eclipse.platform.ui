@@ -16,6 +16,7 @@ package org.eclipse.help.internal.dynamic;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import javax.xml.parsers.ParserConfigurationException;
@@ -67,9 +68,7 @@ public class ExtensionResolver {
 			String content = extensions[i].getContent();
 			try {
 				Node[] nodes = getContent(content);
-				for (int j=0;j<nodes.length;++j) {
-					list.add(nodes[j]);
-				}
+				Collections.addAll(list, nodes);
 			}
 			catch (Throwable t) {
 				// ignore invalid extensions

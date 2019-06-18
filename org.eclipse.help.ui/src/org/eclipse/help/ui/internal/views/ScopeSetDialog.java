@@ -14,6 +14,7 @@
 package org.eclipse.help.ui.internal.views;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -227,9 +228,7 @@ public class ScopeSetDialog extends TrayDialog  {
 
 	private ArrayList<ScopeSet> extractSets(ScopeSet[] array) {
 		ArrayList<ScopeSet> list = new ArrayList<>();
-		for (int i=0; i<array.length; i++) {
-			list.add(array[i]);
-		}
+		Collections.addAll(list, array);
 		return list;
 	}
 

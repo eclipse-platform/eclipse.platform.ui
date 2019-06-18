@@ -15,7 +15,7 @@ package org.eclipse.help.ui.internal.views;
 
 import java.net.URL;
 import java.util.ArrayList;
-
+import java.util.Collections;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IHelpResource;
@@ -234,8 +234,7 @@ public class EngineResultSection {
 	 * @see org.eclipse.help.internal.search.federated.ISearchEngineResultCollector#add(org.eclipse.help.internal.search.federated.ISearchEngineResult[])
 	 */
 	public synchronized void add(ISearchEngineResult[] matches) {
-		for (int i = 0; i < matches.length; i++)
-			hits.add(matches[i]);
+		Collections.addAll(hits, matches);
 		asyncUpdateResults(false, false);
 	}
 

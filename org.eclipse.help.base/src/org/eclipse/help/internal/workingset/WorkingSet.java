@@ -14,6 +14,7 @@
 package org.eclipse.help.internal.workingset;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -59,17 +60,13 @@ public class WorkingSet {
 			elements = new AdaptableHelpResource[0];
 
 		this.elements = new ArrayList<>(elements.length);
-		for (int i = 0; i < elements.length; i++) {
-			this.elements.add(elements[i]);
-		}
+		Collections.addAll(this.elements, elements);
 
 		if (criteria == null)
 			criteria = new CriterionResource[0];
 
 		this.criteria = new ArrayList<>(criteria.length);
-		for (int j = 0; j < criteria.length; j++) {
-			this.criteria.add(criteria[j]);
-		}
+		Collections.addAll(this.criteria, criteria);
 	}
 
 	public void removeElement(AdaptableHelpResource element) {
@@ -97,16 +94,13 @@ public class WorkingSet {
 
 	public void setElements(AdaptableHelpResource[] elements) {
 		this.elements = new ArrayList<>(elements.length);
-		for (int i = 0; i < elements.length; i++)
-			this.elements.add(elements[i]);
+		Collections.addAll(this.elements, elements);
 	}
 
 
 	public void setCriteria(CriterionResource[] criteria) {
 		this.criteria = new ArrayList<>(criteria.length);
-		for(int i = 0; i < criteria.length; i++) {
-			this.criteria.add(criteria[i]);
-		}
+		Collections.addAll(this.criteria, criteria);
 	}
 
 	public CriterionResource[] getCriteria(){

@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -57,9 +58,7 @@ public class CssUtil {
 	public static void addCssFiles(final String preference, List<String> list) {
 		String topicCssPath = Platform.getPreferencesService().getString(HelpBasePlugin.PLUGIN_ID, preference, "", null);  //$NON-NLS-1$
 		String[] cssFiles = CssUtil.getCssFilenames(topicCssPath);
-		for (String cssFile : cssFiles) {
-			list.add(cssFile);
-		}
+		Collections.addAll(list, cssFiles);
 	}
 
 	public static String createCssIncludes(List<String> cssFiles, String backPath) {
