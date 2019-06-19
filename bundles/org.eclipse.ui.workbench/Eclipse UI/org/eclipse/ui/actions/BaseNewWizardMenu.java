@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Andreas Buchen <andreas.buchen@sap.com> - Bug 206584
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548428
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
@@ -58,7 +59,7 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
 	 * add the ability to update the submenus of a window
 	 */
 
-	private final Map actions = new HashMap(21);
+	private final Map<String, IAction> actions = new HashMap<>(21);
 
 	private final IExtensionChangeHandler configListener = new IExtensionChangeHandler() {
 
@@ -115,11 +116,11 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
 	}
 
 	/**
-	 * Adds the items to show to the given list.
+	 * Adds the contribution items to show to the given list.
 	 *
-	 * @param list the list to add items to
+	 * @param list the list to add contribution items to
 	 */
-	protected void addItems(List list) {
+	protected void addItems(List<IContributionItem> list) {
 		if (addShortcuts(list)) {
 			list.add(new Separator());
 		}
@@ -129,11 +130,11 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
 	/**
 	 * Adds the new wizard shortcuts for the current perspective to the given list.
 	 *
-	 * @param list the list to add items to
+	 * @param list the list to add contribution items to
 	 * @return <code>true</code> if any items were added, <code>false</code> if none
 	 *         were added
 	 */
-	protected boolean addShortcuts(List list) {
+	protected boolean addShortcuts(List<IContributionItem> list) {
 		boolean added = false;
 		IWorkbenchPage page = workbenchWindow.getActivePage();
 		if (page != null) {
@@ -168,7 +169,7 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
 	private IAction getAction(String id) {
 		// Keep a cache, rather than creating a new action each time,
 		// so that image caching in ActionContributionItem works.
-		IAction action = (IAction) actions.get(id);
+		IAction action = actions.get(id);
 		if (action == null) {
 			IWizardDescriptor wizardDesc = WorkbenchPlugin.getDefault().getNewWizardRegistry().findWizard(id);
 			if (wizardDesc != null) {
@@ -186,7 +187,7 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
 
 	@Override
 	protected IContributionItem[] getContributionItems() {
-		ArrayList list = new ArrayList();
+		List<IContributionItem> list = new ArrayList<>();
 		if (workbenchWindow != null && workbenchWindow.getActivePage() != null
 				&& workbenchWindow.getActivePage().getPerspective() != null) {
 			addItems(list);
@@ -198,7 +199,7 @@ public class BaseNewWizardMenu extends CompoundContributionItem {
 			dummyAction.setEnabled(false);
 			list.add(new ActionContributionItem(dummyAction));
 		}
-		return (IContributionItem[]) list.toArray(new IContributionItem[list.size()]);
+		return list.toArray(new IContributionItem[list.size()]);
 	}
 
 	/**

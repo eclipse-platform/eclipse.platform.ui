@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548428
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
@@ -164,12 +165,12 @@ public class NewWizardMenu extends BaseNewWizardMenu {
 	}
 
 	@Override
-	protected void addItems(List list) {
-		ArrayList shortCuts= new ArrayList();
+	protected void addItems(List<IContributionItem> list) {
+		List<IContributionItem> shortCuts = new ArrayList<>();
 		addShortcuts(shortCuts);
 
-		for (Iterator iterator= shortCuts.iterator(); iterator.hasNext();) {
-			Object curr= iterator.next();
+		for (Iterator<IContributionItem> iterator = shortCuts.iterator(); iterator.hasNext();) {
+			IContributionItem curr = iterator.next();
 			if (curr instanceof ActionContributionItem && isNewProjectWizardAction(((ActionContributionItem) curr).getAction())) {
 				iterator.remove();
 				list.add(curr);
