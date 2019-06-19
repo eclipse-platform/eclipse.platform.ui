@@ -17,12 +17,14 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import org.eclipse.core.databinding.observable.sideeffect.ISideEffect;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.junit.Before;
@@ -397,6 +399,27 @@ public class SideEffectTest extends AbstractDefaultRealmTestCase {
 		disposeTest.dispose();
 		runAsync();
 		assertFalse(hasRun.get());
+	}
+
+	@Test
+	public void testObservableInMap() {
+		HashMap<String, IObservableValue<String>> hashMap = new HashMap<>();
+		IObservableValue<String> observableValue = new WritableValue<>();
+		observableValue.setValue("Simon");
+		hashMap.put("Simon", observableValue);
+
+		ISideEffect.create(() -> {
+			IObservableValue<String> observable = hashMap.get("Simon");
+			observable.getValue();
+			sideEffectInvocations++;
+		});
+
+		assertEquals(1, sideEffectInvocations);
+
+		observableValue.setValue("Stefan");
+		runAsync();
+
+		assertEquals(2, sideEffectInvocations);
 	}
 
 	// Doesn't currently work, but this would be a desirable property for
