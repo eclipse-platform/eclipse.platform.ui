@@ -204,8 +204,8 @@ public class ServiceSupplier extends ExtendedObjectSupplier implements EventHand
 	}
 
 	private synchronized void trackService(BundleContext context, Class<?> serviceClass, IRequestor requestor) {
-		Map<Class<?>, ServiceHandler> map = this.handlerList.computeIfAbsent(context, (k) -> new ConcurrentHashMap<>());
-		ServiceHandler handler = map.computeIfAbsent(serviceClass, (cl) -> {
+		Map<Class<?>, ServiceHandler> map = this.handlerList.computeIfAbsent(context, k -> new ConcurrentHashMap<>());
+		ServiceHandler handler = map.computeIfAbsent(serviceClass, cl -> {
 			ServiceHandler h = new ServiceHandler(this,context, serviceClass);
 			context.addServiceListener(h);
 			return h;

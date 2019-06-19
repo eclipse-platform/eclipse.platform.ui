@@ -77,7 +77,7 @@ public class ServiceSupplierTestCase {
 
 	@After
 	public void cleanup() {
-		this.registrations.forEach( r -> r.unregister());
+		this.registrations.forEach( ServiceRegistration::unregister);
 	}
 
 	@Test

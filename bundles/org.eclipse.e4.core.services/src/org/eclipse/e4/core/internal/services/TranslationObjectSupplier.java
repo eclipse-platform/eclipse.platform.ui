@@ -131,9 +131,7 @@ public class TranslationObjectSupplier extends ExtendedObjectSupplier implements
 	 *            The {@link IRequestor} that requested the instance.
 	 */
 	private void addListener(Class<?> descriptorsClass, IRequestor requestor) {
-		Set<IRequestor> registered = this.listeners.computeIfAbsent(descriptorsClass, (dc) -> {
-			return ConcurrentHashMap.newKeySet();
-		});
+		Set<IRequestor> registered = this.listeners.computeIfAbsent(descriptorsClass, dc -> ConcurrentHashMap.newKeySet());
 		registered.add(requestor);
 	}
 
