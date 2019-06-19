@@ -358,7 +358,7 @@ public class E4Application implements IApplication {
 
 		// Save and restore
 		Boolean saveAndRestore = getArgValue(IWorkbench.PERSIST_STATE, appContext, false)
-				.map(value -> Boolean.parseBoolean(value)).orElse(Boolean.TRUE);
+				.map(Boolean::parseBoolean).orElse(Boolean.TRUE);
 
 		eclipseContext.set(IWorkbench.PERSIST_STATE, saveAndRestore);
 
@@ -371,7 +371,7 @@ public class E4Application implements IApplication {
 
 		// Persisted state
 		Boolean clearPersistedState = getArgValue(IWorkbench.CLEAR_PERSISTED_STATE, appContext, true)
-				.map(value -> Boolean.parseBoolean(value)).orElse(Boolean.FALSE);
+				.map(Boolean::parseBoolean).orElse(Boolean.FALSE);
 		eclipseContext.set(IWorkbench.CLEAR_PERSISTED_STATE, clearPersistedState);
 
 		String resourceHandler = getArgValue(IWorkbench.MODEL_RESOURCE_HANDLER, appContext, false)
@@ -448,7 +448,7 @@ public class E4Application implements IApplication {
 
 		final String brandingProperty = appContext.getBrandingProperty(argName);
 
-		return Optional.ofNullable(brandingProperty).map(brandingPropertyValue -> Optional.of(brandingPropertyValue))
+		return Optional.ofNullable(brandingProperty).map(Optional::of)
 				.orElse(Optional.ofNullable(System.getProperty(argName)));
 	}
 

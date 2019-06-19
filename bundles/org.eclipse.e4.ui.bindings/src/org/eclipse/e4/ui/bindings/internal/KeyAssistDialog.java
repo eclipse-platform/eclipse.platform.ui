@@ -354,7 +354,7 @@ public class KeyAssistDialog extends PopupDialog {
 		/*
 		 * If you double-click on the table, it should execute the selected command.
 		 */
-		completionsTable.addListener(SWT.DefaultSelection, event -> executeKeyBinding(event));
+		completionsTable.addListener(SWT.DefaultSelection, this::executeKeyBinding);
 	}
 
 	/**

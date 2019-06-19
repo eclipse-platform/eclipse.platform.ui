@@ -86,7 +86,7 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
 	 */
 	@Override
 	protected void hookControl(Control control) {
-		control.addDisposeListener(event -> handleDispose(event));
+		control.addDisposeListener(this::handleDispose);
 	}
 
 	@Override

@@ -127,7 +127,7 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 	public void testGetFirstPart_GetContext() {
 		// need to wrap this since the renderer will try build the UI for the
 		// part if it hasn't been built
-		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> UIStartupTest.super.testGetFirstPart_GetContext());
+		Realm.runWithDefault(DisplayRealm.getRealm(display), super::testGetFirstPart_GetContext);
 	}
 
 	@Test
@@ -135,7 +135,7 @@ public abstract class UIStartupTest extends HeadlessApplicationTest {
 	public void testGetSecondPart_GetContext() {
 		// need to wrap this since the renderer will try build the UI for the
 		// part if it hasn't been built
-		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> UIStartupTest.super.testGetSecondPart_GetContext());
+		Realm.runWithDefault(DisplayRealm.getRealm(display), super::testGetSecondPart_GetContext);
 	}
 
 	private static MWindowElement getNonContainer(MWindowElement activeChild) {

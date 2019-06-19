@@ -429,7 +429,7 @@ public class TrimStack {
 		// if one of the kids changes state, re-scrape the CTF
 		MUIElement parentElement = changedElement.getParent();
 		if (parentElement == minimizedElement) {
-			trimStackTB.getDisplay().asyncExec(() -> updateTrimStackItems());
+			trimStackTB.getDisplay().asyncExec(this::updateTrimStackItems);
 		}
 	};
 
@@ -447,7 +447,7 @@ public class TrimStack {
 
 		// if a child has been added or removed, re-scape the CTF
 		if (changedObj == minimizedElement) {
-			trimStackTB.getDisplay().asyncExec(() -> updateTrimStackItems());
+			trimStackTB.getDisplay().asyncExec(this::updateTrimStackItems);
 		}
 	};
 
@@ -463,7 +463,7 @@ public class TrimStack {
 		}
 
 		if (minimizedElement.getWidget() != null) {
-			trimStackTB.getDisplay().asyncExec(() -> updateTrimStackItems());
+			trimStackTB.getDisplay().asyncExec(this::updateTrimStackItems);
 		}
 	};
 

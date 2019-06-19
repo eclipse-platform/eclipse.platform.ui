@@ -64,7 +64,7 @@ public class E4ResourceTest {
 	private void assertThatMapsAreEquals(Map<String, EObject> idToObject, Map<EObject, String> objectToId) {
 		assertEquals(idToObject.size(), objectToId.size());
 		Map<String, EObject> checkMap = objectToId.entrySet().stream()
-				.collect(Collectors.toMap(e -> e.getValue(), e -> e.getKey()));
+				.collect(Collectors.toMap(Entry::getValue, Entry::getKey));
 
 		for (Entry<String, EObject> e : idToObject.entrySet()) {
 			EObject eObject = checkMap.get(e.getKey());

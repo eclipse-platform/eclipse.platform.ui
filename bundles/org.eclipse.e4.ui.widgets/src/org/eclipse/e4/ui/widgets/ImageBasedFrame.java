@@ -60,7 +60,7 @@ public class ImageBasedFrame extends Canvas {
 		this.vertical = vertical;
 		this.draggable = draggable;
 
-		addPaintListener(e -> drawFrame(e));
+		addPaintListener(this::drawFrame);
 
 		addListener(SWT.MouseExit, event -> {
 			ImageBasedFrame frame = (ImageBasedFrame) event.widget;

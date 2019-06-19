@@ -501,7 +501,7 @@ public class WBWRenderer extends SWTPartRenderer {
 		// no direct model parent, must be a detached window
 		if (window.getParent() == null) {
 			context.set(IWindowCloseHandler.class,
-					window1 -> closeDetachedWindow(window1));
+					this::closeDetachedWindow);
 		} else {
 			context.set(IWindowCloseHandler.class,
 					window1 -> {
