@@ -36,6 +36,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.widgets.Shell;
 
@@ -70,41 +71,46 @@ public class ToolBarContributionRecord {
 		recentlyUpdated.add(this);
 		boolean changed = false;
 		for (MToolBarElement item : generatedElements) {
-			boolean currentVisibility = computeVisibility(recentlyUpdated,
-					item, exprContext);
+			boolean currentVisibility = computeVisibility(recentlyUpdated, item, exprContext);
 			if (item.isVisible() != currentVisibility) {
 				item.setVisible(currentVisibility);
 				changed = true;
 			}
 		}
 		for (MToolBarElement item : sharedElements) {
-			boolean currentVisibility = computeVisibility(recentlyUpdated,
-					item, exprContext);
+			boolean currentVisibility = computeVisibility(recentlyUpdated, item, exprContext);
 			if (item.isVisible() != currentVisibility) {
 				item.setVisible(currentVisibility);
 				changed = true;
 			}
 		}
 
-		if (changed) {
-			ToolBarManager managerForModel = getManagerForModel();
-			managerForModel.markDirty();
-			if (isVisible) {
-				// Make sure the MToolBar model is visible because
-				// TrimBarLayout.hideManagedTB hides and IPresentationEngine moves
-				// it to the Limbo-Shell
-				Stream.of(managerForModel.getItems()).filter(i -> i.isVisible()).findFirst().ifPresent((i) -> {
-					MWindow window = getWindow();
-					if (window != null) {
-						Object widget = window.getWidget();
-						if (widget instanceof Shell) {
-							((Shell) widget).requestLayout();
-						}
-					}
-				});
+		// if nothing has changed, we have nothing to update
+		if (!changed) {
+			return;
+		}
+		ToolBarManager managerForModel = getManagerForModel();
+		managerForModel.markDirty();
+
+		// if not visible no need to request the layout of the toolbar
+		if (!isVisible) {
+			return;
+		}
+		// Make sure the MToolBar model is visible because
+		// TrimBarLayout.hideManagedTB hides and IPresentationEngine moves
+		// it to the Limbo-Shell
+		boolean anyMatch = Stream.of(managerForModel.getItems()).anyMatch(IContributionItem::isVisible);
+		if (anyMatch) {
+			MWindow window = getWindow();
+			if (window != null) {
+				Object widget = window.getWidget();
+				if (widget instanceof Shell) {
+					((Shell) widget).requestLayout();
+				}
 			}
 		}
 	}
+
 
 	private MWindow getWindow() {
 		EObject n = (EObject) toolbarModel;
