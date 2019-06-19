@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2018 Daniel Rolka and others.
+ * Copyright (c) 2014, 2019 Daniel Rolka and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -46,7 +46,7 @@ public class StylingPreferencesHandlerTest extends TestCase {
 		IEclipsePreferences pref2 = mock(IEclipsePreferences.class);
 
 		StylingPreferencesHandlerTestable handler = spy(new StylingPreferencesHandlerTestable(mock(Display.class)));
-		doReturn(new HashSet<>(Arrays.asList(pref1, pref2))).when(handler).getPreferences();
+		doReturn(new HashSet<>(Arrays.asList(pref1, pref2))).when(handler).getThemeRelatedPreferences();
 		doReturn(Arrays.asList("pref1.prop1", "pref1.prop2")).when(handler).getOverriddenPropertyNames(pref1);
 		doReturn(Arrays.asList("pref2.prop1")).when(handler).getOverriddenPropertyNames(pref2);
 
@@ -71,7 +71,7 @@ public class StylingPreferencesHandlerTest extends TestCase {
 		IEclipsePreferences pref2 = mock(IEclipsePreferences.class);
 
 		StylingPreferencesHandlerTestable handler = spy(new StylingPreferencesHandlerTestable(mock(Display.class)));
-		doReturn(new HashSet<>(Arrays.asList(pref1, pref2))).when(handler).getPreferences();
+		doReturn(new HashSet<>(Arrays.asList(pref1, pref2))).when(handler).getThemeRelatedPreferences();
 		doReturn(Arrays.asList("pref1.prop1", "pref1.prop2")).when(handler).getOverriddenPropertyNames(pref1);
 		doReturn(Arrays.asList("pref2.prop1", "pref2.prop2")).when(handler).getOverriddenPropertyNames(pref2);
 
@@ -93,10 +93,10 @@ public class StylingPreferencesHandlerTest extends TestCase {
 	public void testGetPreferences() {
 		Set<IEclipsePreferences> result = new StylingPreferencesHandler(mock(Display.class)) {
 			@Override
-			public Set<IEclipsePreferences> getPreferences() {
-				return super.getPreferences();
+			public Set<IEclipsePreferences> getThemeRelatedPreferences() {
+				return super.getThemeRelatedPreferences();
 			}
-		}.getPreferences();
+		}.getThemeRelatedPreferences();
 
 		assertFalse(result.isEmpty());
 	}
@@ -138,7 +138,7 @@ public class StylingPreferencesHandlerTest extends TestCase {
 		}
 
 		@Override
-		public Set<IEclipsePreferences> getPreferences() {
+		public Set<IEclipsePreferences> getThemeRelatedPreferences() {
 			return Collections.emptySet();
 		}
 
