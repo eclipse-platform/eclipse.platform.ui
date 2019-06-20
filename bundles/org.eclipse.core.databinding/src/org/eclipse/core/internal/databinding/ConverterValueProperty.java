@@ -65,7 +65,7 @@ public class ConverterValueProperty<S, T> extends SimpleValueProperty<S, T> {
 	@Override
 	protected void doSetValue(S source, T value) {
 		// setting a value is not supported
-		throw new UnsupportedOperationException(toString()
+		throw new UnsupportedOperationException(this
 				+ ": Setter not supported on a converted value!"); //$NON-NLS-1$
 	}
 

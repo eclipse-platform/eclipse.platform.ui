@@ -81,7 +81,7 @@ public class Screenshots {
 			for (Shell shell : shells) {
 				out.print(display.getActiveShell() == shell ? "  active, " : "  inactive, ");
 				out.print((shell.isVisible() ? "visible: " : "invisible: ") + shell);
-				out.println(" @ " + shell.getBounds().toString());
+				out.println(" @ " + shell.getBounds());
 			}
 		}
 

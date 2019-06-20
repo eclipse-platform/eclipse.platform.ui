@@ -40,12 +40,12 @@ public final class DataBindingContextBindingsProperty extends ListProperty<DataB
 
 	@Override
 	protected void doSetList(DataBindingContext source, List<Binding> list) {
-		throw new UnsupportedOperationException(toString() + " is unmodifiable"); //$NON-NLS-1$
+		throw new UnsupportedOperationException(this + " is unmodifiable"); //$NON-NLS-1$
 	}
 
 	@Override
 	protected void doUpdateList(DataBindingContext source, ListDiff<Binding> diff) {
-		throw new UnsupportedOperationException(toString() + " is unmodifiable"); //$NON-NLS-1$
+		throw new UnsupportedOperationException(this + " is unmodifiable"); //$NON-NLS-1$
 	}
 
 	@Override

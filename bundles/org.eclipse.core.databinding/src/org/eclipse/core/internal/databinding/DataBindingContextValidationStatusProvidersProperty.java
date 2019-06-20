@@ -41,12 +41,12 @@ public final class DataBindingContextValidationStatusProvidersProperty
 
 	@Override
 	protected void doSetList(DataBindingContext source, List<ValidationStatusProvider> list) {
-		throw new UnsupportedOperationException(toString() + " is unmodifiable"); //$NON-NLS-1$
+		throw new UnsupportedOperationException(this + " is unmodifiable"); //$NON-NLS-1$
 	}
 
 	@Override
 	protected void doUpdateList(DataBindingContext source, ListDiff<ValidationStatusProvider> diff) {
-		throw new UnsupportedOperationException(toString() + " is unmodifiable"); //$NON-NLS-1$
+		throw new UnsupportedOperationException(this + " is unmodifiable"); //$NON-NLS-1$
 	}
 
 	@Override

@@ -40,12 +40,12 @@ public class ValidationStatusProviderModelsProperty extends ListProperty<Validat
 
 	@Override
 	protected void doSetList(ValidationStatusProvider source, List<IObservable> list) {
-		throw new UnsupportedOperationException(toString() + " is unmodifiable"); //$NON-NLS-1$
+		throw new UnsupportedOperationException(this + " is unmodifiable"); //$NON-NLS-1$
 	}
 
 	@Override
 	protected void doUpdateList(ValidationStatusProvider source, ListDiff<IObservable> diff) {
-		throw new UnsupportedOperationException(toString() + " is unmodifiable"); //$NON-NLS-1$
+		throw new UnsupportedOperationException(this + " is unmodifiable"); //$NON-NLS-1$
 	}
 
 	@Override
