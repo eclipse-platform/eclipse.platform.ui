@@ -138,7 +138,7 @@ public class ChildrenUpdate extends ViewerUpdateMonitor implements IChildrenUpda
 					end = Math.max(end, otherEnd);
 					fLength = end - fIndex;
 					if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-						DebugUIPlugin.trace("coalesced: " + this.toString()); //$NON-NLS-1$
+						DebugUIPlugin.trace("coalesced: " + this); //$NON-NLS-1$
 					}
 					return true;
 				}

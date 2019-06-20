@@ -285,9 +285,9 @@ public abstract class AbstractMemoryRendering extends PlatformObject implements 
 	 */
 	protected String decorateLabel(String label) {
 		if (fLabelDecorator != null) {
-			return fLabelDecorator.decorateText(label.toString(), this);
+			return fLabelDecorator.decorateText(label, this);
 		}
-		return label.toString();
+		return label;
 	}
 
 	/**

@@ -457,10 +457,10 @@ public class TestModelUpdatesListener implements IViewerUpdateListener, ILabelUp
 		}
 
 		if (fFailOnRedundantUpdates && !fRedundantUpdates.isEmpty()) {
-			Assert.fail("Redundant Updates: " + fRedundantUpdates.toString()); //$NON-NLS-1$
+			Assert.fail("Redundant Updates: " + fRedundantUpdates); //$NON-NLS-1$
 		}
 		if (fFailOnRedundantLabelUpdates && !fRedundantLabelUpdates.isEmpty()) {
-			Assert.fail("Redundant Label Updates: " + fRedundantLabelUpdates.toString()); //$NON-NLS-1$
+			Assert.fail("Redundant Label Updates: " + fRedundantLabelUpdates); //$NON-NLS-1$
 		}
 		if (fFailOnMultipleLabelUpdateSequences && fLabelUpdatesComplete > (fLabelUpdatesCompleteAtReset + 1)) {
 			Assert.fail("Multiple label update sequences detected"); //$NON-NLS-1$

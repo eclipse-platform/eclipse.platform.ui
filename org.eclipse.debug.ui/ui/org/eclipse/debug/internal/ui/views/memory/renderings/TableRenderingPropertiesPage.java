@@ -69,14 +69,14 @@ public class TableRenderingPropertiesPage extends PropertyPage implements
 					addProperty(composite, DebugUIMessages.TableRenderingPropertiesPage_2, content.toString());
 				}
 
-				String length = String.valueOf(rendering.getAddressableUnitPerColumn()) + " " + DebugUIMessages.TableRenderingPropertiesPage_3; //$NON-NLS-1$
+				String length = rendering.getAddressableUnitPerColumn() + " " + DebugUIMessages.TableRenderingPropertiesPage_3; //$NON-NLS-1$
 				addProperty(composite, DebugUIMessages.TableRenderingPropertiesPage_4, length);
 
 				String selectedContent = rendering.getSelectedAsString();
 				addProperty(composite, DebugUIMessages.TableRenderingPropertiesPage_5, selectedContent);
 
 				int addressableSize = rendering.getAddressableSize() * 8;
-				addProperty(composite, DebugUIMessages.TableRenderingPropertiesPage_6, String.valueOf(addressableSize) + " " + DebugUIMessages.TableRenderingPropertiesPage_8); //$NON-NLS-1$
+				addProperty(composite, DebugUIMessages.TableRenderingPropertiesPage_6, addressableSize + " " + DebugUIMessages.TableRenderingPropertiesPage_8); //$NON-NLS-1$
 
 				boolean endianessKnown = bytes[0].isEndianessKnown();
 				int endianess = RenderingsUtil.ENDIANESS_UNKNOWN;

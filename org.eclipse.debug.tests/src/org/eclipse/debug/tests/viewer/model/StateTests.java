@@ -103,7 +103,7 @@ abstract public class StateTests extends AbstractViewerModelTest implements ITes
 		fViewer.saveElementState(path0, savedDelta, IModelDelta.EXPAND | IModelDelta.SELECT);
 
 		if (!deltaMatches(updateDelta, savedDelta) ) {
-			fail("Expected:\n" + updateDelta.toString() + "\nGot:\n" + savedDelta); //$NON-NLS-1$ //$NON-NLS-2$
+			fail("Expected:\n" + updateDelta + "\nGot:\n" + savedDelta); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -708,7 +708,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 		fViewer.saveElementState(TreePath.EMPTY, restoredState, IModelDelta.EXPAND | IModelDelta.SELECT);
 
 		if (!deltaMatches(originalState, restoredState)) {
-			fail("Expected:\n" + originalState.toString() + "\nGot:\n" + restoredState); //$NON-NLS-1$ //$NON-NLS-2$
+			fail("Expected:\n" + originalState + "\nGot:\n" + restoredState); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -758,7 +758,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 		fViewer.saveElementState(TreePath.EMPTY, restoredState, IModelDelta.EXPAND | IModelDelta.SELECT);
 
 		if (!deltaMatches(originalState, restoredState)) {
-			fail("Expected:\n" + originalState.toString() + "\nGot:\n" + restoredState); //$NON-NLS-1$ //$NON-NLS-2$
+			fail("Expected:\n" + originalState + "\nGot:\n" + restoredState); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -800,7 +800,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 		fViewer.saveElementState(TreePath.EMPTY, restoredState, IModelDelta.EXPAND | IModelDelta.SELECT);
 
 		if (!deltaMatches(originalState, restoredState)) {
-			fail("Expected:\n" + originalState.toString() + "\nGot:\n" + restoredState); //$NON-NLS-1$ //$NON-NLS-2$
+			fail("Expected:\n" + originalState + "\nGot:\n" + restoredState); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 
@@ -845,7 +845,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 		fViewer.saveElementState(TreePath.EMPTY, restoredState, IModelDelta.EXPAND | IModelDelta.SELECT);
 
 		if (!deltaMatches(originalState, restoredState)) {
-			fail("Expected:\n" + originalState.toString() + "\nGot:\n" + restoredState); //$NON-NLS-1$ //$NON-NLS-2$
+			fail("Expected:\n" + originalState + "\nGot:\n" + restoredState); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 

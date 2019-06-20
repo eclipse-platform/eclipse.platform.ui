@@ -524,7 +524,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 	private void doModelChanged(IModelDelta delta, IModelProxy proxy) {
 		if (!proxy.isDisposed()) {
 			if (DebugUIPlugin.DEBUG_DELTAS && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
-				DebugUIPlugin.trace("RECEIVED DELTA: " + delta.toString()); //$NON-NLS-1$
+				DebugUIPlugin.trace("RECEIVED DELTA: " + delta); //$NON-NLS-1$
 			}
 
 			updateModel(delta, getModelDeltaMask());

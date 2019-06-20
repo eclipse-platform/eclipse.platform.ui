@@ -370,7 +370,7 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 			fmodes = LaunchConfigurationPresentationManager.getDefault().getLaunchModeNames(smodes);
 			if(!fmodes.isEmpty()) {
 				//add the mode set and create a combo
-				String modeString= fmodes.size() == 1 ? fmodes.get(0).toString() : fmodes.toString();
+				String modeString= fmodes.size() == 1 ? fmodes.get(0) : fmodes.toString();
 				SWTFactory.createLabel(parent, modeString + ":", 1); //$NON-NLS-1$
 				combo = SWTFactory.createCombo(parent, SWT.READ_ONLY, 1, fgPerspectiveLabels);
 				if(combo == null) {

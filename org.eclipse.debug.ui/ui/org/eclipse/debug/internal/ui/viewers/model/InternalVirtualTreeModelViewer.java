@@ -1296,7 +1296,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
 				String[] columns = entry.getValue();
 				visible.putInteger(SIZE, columns.length);
 				for (int i = 0; i < columns.length; i++) {
-					visible.putString(COLUMN+Integer.toString(i), columns[i]);
+					visible.putString(COLUMN+i, columns[i]);
 				}
 			}
 		}
@@ -1333,7 +1333,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
 				int length = integer.intValue();
 				String[] columns = new String[length];
 				for (int j = 0; j < length; j++) {
-					columns[j] = child.getString(COLUMN+Integer.toString(j));
+					columns[j] = child.getString(COLUMN+j);
 				}
 				fVisibleColumns.put(id, columns);
 			}

@@ -77,7 +77,7 @@ public class BreakpointOrderingTests extends AbstractDebugTest {
 				ResourcesPlugin.getWorkspace().run( wr, null );
 			}
 			catch ( CoreException e ) {
-				fail("Unexpected exception: " + e.toString()); //$NON-NLS-1$
+				fail("Unexpected exception: " + e); //$NON-NLS-1$
 			}
 
 		}

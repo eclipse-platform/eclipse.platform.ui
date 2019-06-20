@@ -64,7 +64,7 @@ public abstract class AbstractViewerModelTest extends AbstractDebugTest {
 		try {
 			super.runTest();
 		} catch (Throwable t) {
-			throw new ExecutionException("Test failed: " + t.getMessage() + "\n fListener = " + fListener.toString(), t); //$NON-NLS-1$ //$NON-NLS-2$
+			throw new ExecutionException("Test failed: " + t.getMessage() + "\n fListener = " + fListener, t); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 

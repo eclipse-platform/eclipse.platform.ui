@@ -380,7 +380,7 @@ public class PDAVirtualMachine {
 			pdaVM = new PDAVirtualMachine(programFile, debug, commandPort, eventPort);
 			pdaVM.startDebugger();
 		} catch (IOException e) {
-			System.err.println("Error: " + e.toString()); //$NON-NLS-1$
+			System.err.println("Error: " + e); //$NON-NLS-1$
 			return;
 		}
 		pdaVM.run();
@@ -1087,7 +1087,7 @@ public class PDAVirtualMachine {
 		String var = args.getNextStringArg();
 		Object val = args.getNextIntOrStringArg();
 		while (args.hasNextArg()) {
-			val = val.toString() + " " + args.getNextStringArg(); //$NON-NLS-1$
+			val = val + " " + args.getNextStringArg(); //$NON-NLS-1$
 		}
 
 		if (sfnumber >= thread.fFrames.size()) {
@@ -1123,7 +1123,7 @@ public class PDAVirtualMachine {
 			sendCommandResponse("error: invalid thread\n"); //$NON-NLS-1$
 			return;
 		}
-		sendCommandResponse( Integer.toString(thread.fFrames.size() + 1) + "\n" ); //$NON-NLS-1$
+		sendCommandResponse( (thread.fFrames.size() + 1) + "\n" ); //$NON-NLS-1$
 	}
 
 
@@ -1262,7 +1262,7 @@ public class PDAVirtualMachine {
 		if (val == null) {
 			sendCommandResponse("error: variable undefined\n"); //$NON-NLS-1$
 		} else {
-			sendCommandResponse(val.toString() + "\n"); //$NON-NLS-1$
+			sendCommandResponse(val + "\n"); //$NON-NLS-1$
 		}
 	}
 
@@ -1482,7 +1482,7 @@ public class PDAVirtualMachine {
 				Object val = arg;
 				if (args.hasNextArg()) {
 					while (args.hasNextArg()) {
-						val = val.toString() + " " + args.getNextStringArg(); //$NON-NLS-1$
+						val = val + " " + args.getNextStringArg(); //$NON-NLS-1$
 					}
 				} else {
 					try {

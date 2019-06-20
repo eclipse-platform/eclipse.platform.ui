@@ -110,7 +110,7 @@ public class AvailableLogicalStructuresAction extends Action implements IMenuCre
 				}
 				label.append(action.getText());
 				if (enabledType == type) {
-					action.setText(label.toString() + " " + VariablesViewMessages.AvailableLogicalStructuresAction_2); //$NON-NLS-1$
+					action.setText(label + " " + VariablesViewMessages.AvailableLogicalStructuresAction_2); //$NON-NLS-1$
 				} else {
 					action.setText(label.toString());
 				}

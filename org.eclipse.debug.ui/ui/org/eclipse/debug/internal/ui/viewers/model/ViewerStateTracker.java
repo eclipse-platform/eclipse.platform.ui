@@ -288,7 +288,7 @@ class ViewerStateTracker {
 													&& DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(
 															fContentProvider.getPresentationContext())) {
 												DebugUIPlugin.trace("STATE RESTORE BEGINS"); //$NON-NLS-1$
-												DebugUIPlugin.trace("\tRESTORE: " + stateDelta2.toString()); //$NON-NLS-1$
+												DebugUIPlugin.trace("\tRESTORE: " + stateDelta2); //$NON-NLS-1$
 												notifyStateUpdate(input, STATE_RESTORE_SEQUENCE_BEGINS, null);
 											}
 											stateDelta2.setElement(input);

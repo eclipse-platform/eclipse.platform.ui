@@ -894,7 +894,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 				String[] columns = entry.getValue();
 				visible.putInteger(SIZE, columns.length);
 				for (int i = 0; i < columns.length; i++) {
-					visible.putString(COLUMN+Integer.toString(i), columns[i]);
+					visible.putString(COLUMN+i, columns[i]);
 				}
 			}
 		}
@@ -905,7 +905,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 				int[] order = entry.getValue();
 				orderMemento.putInteger(SIZE, order.length);
 				for (int i = 0; i < order.length; i++) {
-					orderMemento.putInteger(COLUMN+Integer.toString(i), order[i]);
+					orderMemento.putInteger(COLUMN+i, order[i]);
 				}
 			}
 		}
@@ -951,7 +951,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 				int length = integer.intValue();
 				String[] columns = new String[length];
 				for (int j = 0; j < length; j++) {
-					columns[j] = child.getString(COLUMN+Integer.toString(j));
+					columns[j] = child.getString(COLUMN+j);
 				}
 				fVisibleColumns.put(id, columns);
 			}
@@ -965,7 +965,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 				int length = integer.intValue();
 				int[] order = new int[length];
 				for (int j = 0; j < length; j++) {
-					order[j] = child.getInteger(COLUMN+Integer.toString(j)).intValue();
+					order[j] = child.getInteger(COLUMN+j).intValue();
 				}
 				fColumnOrder.put(id, order);
 			}

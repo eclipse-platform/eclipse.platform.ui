@@ -189,7 +189,7 @@ public class ProcessPropertyPage extends PropertyPage {
 				return tmp;
 			}
 			tmp = proc.getLabel();
-			int idx = tmp.lastIndexOf("("); //$NON-NLS-1$
+			int idx = tmp.lastIndexOf('('); 
 			if(idx < 0) {
 				idx = tmp.length();
 			}
