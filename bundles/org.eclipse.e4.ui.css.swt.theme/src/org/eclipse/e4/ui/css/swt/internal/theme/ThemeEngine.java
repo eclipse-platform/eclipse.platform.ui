@@ -453,7 +453,7 @@ public class ThemeEngine implements IThemeEngine {
 				URL url;
 				InputStream stream = null;
 				try {
-					url = FileLocator.resolve(new URL(stylesheet.toString()));
+					url = FileLocator.resolve(new URL(stylesheet));
 					for (CSSEngine engine : cssEngines) {
 						try {
 							stream = url.openStream();

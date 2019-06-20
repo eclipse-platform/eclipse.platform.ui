@@ -980,7 +980,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 
 	@Override
 	public void registerIconForFamily(ImageDescriptor icon, Object family) {
-		String key = IMAGE_KEY + String.valueOf(imageKeyTable.size());
+		String key = IMAGE_KEY + imageKeyTable.size();
 		imageKeyTable.put(family, key);
 		ImageRegistry registry = JFaceResources.getImageRegistry();
 

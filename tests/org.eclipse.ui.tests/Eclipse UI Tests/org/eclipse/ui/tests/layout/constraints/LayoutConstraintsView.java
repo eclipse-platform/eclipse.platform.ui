@@ -153,7 +153,7 @@ public class LayoutConstraintsView extends ViewPart implements ISizeProvider {
 		StringBuilder result = new StringBuilder();
 		result.append("// Sample implementation: Make sure your ViewPart adapts to ISizeProvider.\n");
 		result.append("// Then implement the following two methods.\n\n");
-		sampleImplementation.setText(result.toString() + getSizeFlagsString() + computePreferredSizeString());
+		sampleImplementation.setText(result + getSizeFlagsString() + computePreferredSizeString());
 
 		// Trigger a workbench layout
 		updateLayout();

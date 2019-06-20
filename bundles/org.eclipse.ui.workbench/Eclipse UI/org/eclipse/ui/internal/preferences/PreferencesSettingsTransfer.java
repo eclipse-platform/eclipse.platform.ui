@@ -50,8 +50,8 @@ public class PreferencesSettingsTransfer extends WorkbenchSettingsTransfer {
 						"Content from directory '" + srcFolder.getAbsolutePath() + "' can not be listed."); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			for (String file : files) {
-				File srcFile = new File(srcFolder.getPath().toString(), file);
-				File destFile = new File(destFolder.getPath().toString(), file);
+				File srcFile = new File(srcFolder.getPath(), file);
+				File destFile = new File(destFolder.getPath(), file);
 
 				try {
 					copyFiles(srcFile, destFile);

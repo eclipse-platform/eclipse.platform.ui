@@ -64,7 +64,7 @@ public class DOMExceptionImpl extends DOMException {
 	}
 
 	private static String keyString(int key) {
-		return "s" + String.valueOf(key);
+		return "s" + key;
 	}
 
 }

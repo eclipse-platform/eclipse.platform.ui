@@ -43,13 +43,13 @@ public class FontFieldEditorTestPreferencePage extends
 
 		for (int i = 0; i < 3; i++) {
 			//Create one with a preview
-			addField(new FontFieldEditor("FontValue" + String.valueOf(i),
-					"Font Test" + String.valueOf(i), "Preview", feParent));
+			addField(new FontFieldEditor("FontValue" + i,
+					"Font Test" + i, "Preview", feParent));
 
 			//Create one without
 			addField(new FontFieldEditor(
-					"FontValueDefault" + String.valueOf(i), "Font Test Default"
-							+ String.valueOf(i), feParent));
+					"FontValueDefault" + i, "Font Test Default"
+							+ i, feParent));
 		}
 
 	}

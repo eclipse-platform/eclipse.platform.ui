@@ -56,7 +56,7 @@ public class CompressedJavaProject implements ICompressedNode, IAdaptable {
 		if (nonextSourceFolders.size() == 1) {
 			singleRoot = nonextSourceFolders.get(0);
 		}
-		return "Compressed Java resources: " + ((singleRoot != null) ? ": " + singleRoot.toString() : ""); //$NON-NLS-1$ //$NON-NLS-2$
+		return "Compressed Java resources: " + ((singleRoot != null) ? ": " + singleRoot : ""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	public IProject getProject() {

@@ -68,7 +68,7 @@ public class Snippet044TableViewerKeyboardEditing {
 
 		@Override
 		public String getText(Object element) {
-			return "Column " + table.getColumnOrder()[columnIndex] + " => " + element.toString();
+			return "Column " + table.getColumnOrder()[columnIndex] + " => " + element;
 		}
 	}
 
@@ -93,7 +93,7 @@ public class Snippet044TableViewerKeyboardEditing {
 
 		@Override
 		protected Object getValue(Object element) {
-			return "Column " + property + " => " + element.toString();
+			return "Column " + property + " => " + element;
 		}
 
 		@Override

@@ -259,7 +259,7 @@ public class ResourceHandler implements IModelResourceHandler {
 			resource = getResource(uri);
 		} catch (Exception e) {
 			// TODO We could use diagnostics for better analyzing the error
-			logger.error(e, "Unable to load resource " + uri.toString()); //$NON-NLS-1$
+			logger.error(e, "Unable to load resource " + uri); //$NON-NLS-1$
 			return null;
 		}
 

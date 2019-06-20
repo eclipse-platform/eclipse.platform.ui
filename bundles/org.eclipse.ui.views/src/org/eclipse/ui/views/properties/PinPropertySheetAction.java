@@ -36,7 +36,7 @@ public class PinPropertySheetAction extends Action {
 		super(PropertiesMessages.Pin_text, IAction.AS_CHECK_BOX);
 
 		setId(PinPropertySheetAction.class.getName()
-				+ "#" + Long.toString(System.currentTimeMillis())); //$NON-NLS-1$
+				+ "#" + System.currentTimeMillis()); //$NON-NLS-1$
 		setToolTipText(PropertiesMessages.Pin_toolTip);
 		setImageDescriptor(WorkbenchImages
 				.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_PIN_EDITOR));

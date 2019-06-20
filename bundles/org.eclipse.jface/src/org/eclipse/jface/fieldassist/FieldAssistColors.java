@@ -159,9 +159,9 @@ public class FieldAssistColors {
 		List<Color> toBeRemoved = new ArrayList<>(1);
 
 		if (DEBUG) {
-			System.out.println("Display map is " + displays.toString()); //$NON-NLS-1$
+			System.out.println("Display map is " + displays); //$NON-NLS-1$
 			System.out
-					.println("Color map is " + requiredFieldColorMap.toString()); //$NON-NLS-1$
+					.println("Color map is " + requiredFieldColorMap); //$NON-NLS-1$
 		}
 
 		// Look for any stored colors that were created on this display
@@ -197,14 +197,14 @@ public class FieldAssistColors {
 			displays.remove(color);
 			// Dispose it
 			if (DEBUG) {
-				System.out.println("Disposing color " + color.toString()); //$NON-NLS-1$
+				System.out.println("Disposing color " + color); //$NON-NLS-1$
 			}
 			color.dispose();
 		}
 		if (DEBUG) {
-			System.out.println("Display map is " + displays.toString()); //$NON-NLS-1$
+			System.out.println("Display map is " + displays); //$NON-NLS-1$
 			System.out
-					.println("Color map is " + requiredFieldColorMap.toString()); //$NON-NLS-1$
+					.println("Color map is " + requiredFieldColorMap); //$NON-NLS-1$
 		}
 	}
 

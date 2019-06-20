@@ -359,6 +359,6 @@ public class NavigatorContentExtension implements IMementoAware,
 
 	@Override
 	public String toString() {
-		return descriptor.toString() + " Instance"; //$NON-NLS-1$
+		return descriptor + " Instance"; //$NON-NLS-1$
 	}
 }

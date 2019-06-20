@@ -451,7 +451,7 @@ public class DynamicTest extends UITestCase {
 				+ "<categoryActivityBinding categoryId = \"dynamic.category\" activityId = \"dynamic.activity\" />"
 				+ "<activityPatternBinding activityId=\"dynamic.activity\"  pattern=\"dynamic.activity/.*\"/>"
 				+ "<defaultEnablement id=\"dynamic.activity\"/>" + "</extension></plugin>";
-		byte[] bytes = ACTIVITY.toString().getBytes(StandardCharsets.UTF_8);
+		byte[] bytes = ACTIVITY.getBytes(StandardCharsets.UTF_8);
 		InputStream is = new ByteArrayInputStream(bytes);
 		IContributor contrib = ContributorFactoryOSGi.createContributor(TestPlugin.getDefault().getBundle());
 		ExtensionRegistry registry = (ExtensionRegistry) RegistryFactory.getRegistry();

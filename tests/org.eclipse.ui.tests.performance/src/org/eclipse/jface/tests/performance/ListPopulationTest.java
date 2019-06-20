@@ -131,7 +131,7 @@ public class ListPopulationTest extends BasicPerformanceTest {
 	private String[] getItems(int count) {
 		String[] items = new String[count];
 		for (int j = 0; j < items.length; j++) {
-			items[j] = "Element " + String.valueOf(j);
+			items[j] = "Element " + j;
 
 		}
 		return items;

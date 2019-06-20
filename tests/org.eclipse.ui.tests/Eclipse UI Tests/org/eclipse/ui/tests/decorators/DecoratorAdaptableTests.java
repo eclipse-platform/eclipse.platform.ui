@@ -59,7 +59,7 @@ public class DecoratorAdaptableTests extends UITestCase {
 					allMatchesFound = false;
 				}
 			}
-			assertTrue("Adaptable test " + testSubName + " has failed for object " + object.toString(), allMatchesFound == shouldHaveMatches);
+			assertTrue("Adaptable test " + testSubName + " has failed for object " + object, allMatchesFound == shouldHaveMatches);
 		}
 	}
 

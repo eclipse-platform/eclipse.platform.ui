@@ -95,7 +95,7 @@ public class Snippet014TreeViewerNoMandatoryLabelProvider {
 		public String toString() {
 			String rv = "Item ";
 			if (parent != null) {
-				rv = parent.toString() + ".";
+				rv = parent + ".";
 			}
 
 			rv += counter;
@@ -115,7 +115,7 @@ public class Snippet014TreeViewerNoMandatoryLabelProvider {
 
 		@Override
 		public String getColumnText(Object element, int columnIndex) {
-			return "Column " + columnIndex + " => " + element.toString();
+			return "Column " + columnIndex + " => " + element;
 		}
 
 		@Override

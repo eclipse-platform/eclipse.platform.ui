@@ -223,7 +223,7 @@ public class NodeImpl extends EObjectImpl implements Node {
 	public void setParent(Node newParent) {
 		if (newParent != eInternalContainer() || (eContainerFeatureID() != XpathtestPackage.NODE__PARENT && newParent != null)) {
 			if (EcoreUtil.isAncestor(this, newParent))
-				throw new IllegalArgumentException("Recursive containment not allowed for " + toString());
+				throw new IllegalArgumentException("Recursive containment not allowed for " + this);
 			NotificationChain msgs = null;
 			if (eInternalContainer() != null)
 				msgs = eBasicRemoveFromContainer(msgs);

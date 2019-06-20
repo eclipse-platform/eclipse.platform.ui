@@ -255,7 +255,7 @@ public class CTabItemTest extends CSSSWTTestCase {
 
 	private void testShowClose(boolean showClose) {
 		CTabFolder folder = createTestTabFolder("CTabItem { show-close: "
-				+ Boolean.toString(showClose) + " }");
+				+ showClose + " }");
 		CTabItem[] items = folder.getItems();
 		for (CTabItem item : items) {
 			assertEquals(showClose, item.getShowClose());

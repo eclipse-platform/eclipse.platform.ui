@@ -572,7 +572,7 @@ public class UtilTest extends TestCase {
 		IIdentifier identifier = manager.getIdentifier(IDENTIFIER);
 		Set<String> boundActivities = identifier.getActivityIds();
 		assertTrue(boundActivities.size() == 1);
-		String id = boundActivities.iterator().next().toString();
+		String id = boundActivities.iterator().next();
 		assertTrue(id.equals(ACTIVITY_NON_REG_EXP));
 
 		// Check conversion from normal string to regular expression string

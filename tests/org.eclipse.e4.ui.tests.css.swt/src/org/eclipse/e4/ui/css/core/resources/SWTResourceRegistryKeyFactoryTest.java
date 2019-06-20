@@ -61,7 +61,7 @@ public class SWTResourceRegistryKeyFactoryTest extends CSSSWTHelperTestCase {
 		Object result = factory.createKey(fontProperties);
 
 		assertEquals(ResourceByDefinitionKey.class, result.getClass());
-		assertEquals(CSSResourcesHelpers.getCSSValueKey(fontProperties).toString(), result.toString());
+		assertEquals(CSSResourcesHelpers.getCSSValueKey(fontProperties), result.toString());
 	}
 
 	@Test
@@ -71,7 +71,7 @@ public class SWTResourceRegistryKeyFactoryTest extends CSSSWTHelperTestCase {
 		Object result = factory.createKey(colorValue);
 
 		assertEquals(ResourceByDefinitionKey.class, result.getClass());
-		assertEquals(CSSResourcesHelpers.getCSSValueKey(colorValue).toString(),
+		assertEquals(CSSResourcesHelpers.getCSSValueKey(colorValue),
 				result.toString());
 	}
 }

@@ -193,7 +193,7 @@ public class UITestHelper {
 		if (preferred.x > size.x) {
 			//close the dialog
 			button.getShell().dispose();
-			Assert.assertTrue(message.toString(), false);
+			Assert.assertTrue(message, false);
 		}
 	}
 
@@ -221,7 +221,7 @@ public class UITestHelper {
 		if (preferred.x > size.x) {
 			//close the dialog
 			label.getShell().dispose();
-			Assert.assertTrue(message.toString(), false);
+			Assert.assertTrue(message, false);
 		}
 	}
 

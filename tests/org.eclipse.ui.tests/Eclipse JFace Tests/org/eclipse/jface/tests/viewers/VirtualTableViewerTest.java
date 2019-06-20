@@ -109,7 +109,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 
 		for (int i = 0; i < items.length; i++) {
 			TableItem item = items[i];
-			assertTrue("Missing data in item " + String.valueOf(i) + " of " + items.length, item
+			assertTrue("Missing data in item " + i + " of " + items.length, item
 					.getData() instanceof TestElement);
 		}
 	}
@@ -308,8 +308,8 @@ public class VirtualTableViewerTest extends TableViewerTest {
 		StructuredSelection selection = new StructuredSelection(children);
 		fViewer.setSelection(selection);
 		IStructuredSelection result = fViewer.getStructuredSelection();
-		assertTrue("Size was " + String.valueOf(result.size()) + " expected "
-				+ String.valueOf(children.length),
+		assertTrue("Size was " + result.size() + " expected "
+				+ children.length,
 				(result.size() == children.length));
 		Set<TestElement> childrenSet = new HashSet<>(Arrays.asList(children));
 		Set<?> selectedSet = new HashSet<Object>(result.toList());

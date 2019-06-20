@@ -211,7 +211,7 @@ public class DialogCheck {
 		if (preferred.x > size.x) {
 			//close the dialog
 			button.getShell().dispose();
-			assertTrue(message.toString(), false);
+			assertTrue(message, false);
 		}
 	}
 
@@ -243,7 +243,7 @@ public class DialogCheck {
 		if (preferred.x > size.x) {
 			//close the dialog
 			label.getShell().dispose();
-			assertTrue(message.toString(), false);
+			assertTrue(message, false);
 		}
 	}
 

@@ -36,7 +36,7 @@ public class DeviceResourceException extends RuntimeException {
 	 * @param cause cause of the exception (or null if none)
 	 */
 	public DeviceResourceException(DeviceResourceDescriptor missingResource, Throwable cause) {
-		super("Unable to create resource " + missingResource.toString()); //$NON-NLS-1$
+		super("Unable to create resource " + missingResource); //$NON-NLS-1$
 		// don't pass the cause to super, to allow compilation against JCL Foundation (bug 80059)
 		this.cause = cause;
 	}

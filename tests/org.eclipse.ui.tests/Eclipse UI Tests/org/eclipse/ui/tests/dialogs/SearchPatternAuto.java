@@ -51,7 +51,7 @@ public class SearchPatternAuto extends TestCase {
 	 */
 	private static void generateRescourcesTestCases(char startChar, char endChar, int lenght, String resource){
 		for (char ch = startChar; ch <= endChar; ch++) {
-			String res = resource + String.valueOf(ch);
+			String res = resource + ch;
 			if (lenght == res.length()) {
 				resources.add(res);
 			} else if ((res.trim().length() % 2) == 0) {

@@ -1115,7 +1115,7 @@ public class CopyFilesAndFoldersOperation {
 					}
 				};
 
-				final String initial = getAutoNewNameFor(originalName, workspace).lastSegment().toString();
+				final String initial = getAutoNewNameFor(originalName, workspace).lastSegment();
 				InputDialog dialog = new InputDialog(
 						messageShell,
 						IDEWorkbenchMessages.CopyFilesAndFoldersOperation_inputDialogTitle,

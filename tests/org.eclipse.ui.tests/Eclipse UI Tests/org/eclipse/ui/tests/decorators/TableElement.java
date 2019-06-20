@@ -24,7 +24,7 @@ public class TableElement extends TestElement{
 	public TableElement(int newIndex) {
 		super();
 		index = newIndex;
-		name = "Table Item " + String.valueOf(index);
+		name = "Table Item " + index;
 
 	}
 }

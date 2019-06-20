@@ -85,7 +85,7 @@ public abstract class PluginAction extends Action
 			setId(id);
 		} else {
 			// Create unique action id.
-			setId("PluginAction." + Integer.toString(actionCount)); //$NON-NLS-1$
+			setId("PluginAction." + actionCount); //$NON-NLS-1$
 			++actionCount;
 		}
 

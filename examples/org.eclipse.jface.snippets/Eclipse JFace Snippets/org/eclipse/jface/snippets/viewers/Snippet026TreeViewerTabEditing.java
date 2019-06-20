@@ -107,7 +107,7 @@ public class Snippet026TreeViewerTabEditing {
 
 			@Override
 			public String getText(Object element) {
-				return prefix + element.toString();
+				return prefix + element;
 			}
 
 		};
@@ -221,7 +221,7 @@ public class Snippet026TreeViewerTabEditing {
 		public String toString() {
 			String rv = "Item ";
 			if (parent != null) {
-				rv = parent.toString() + ".";
+				rv = parent + ".";
 			}
 			rv += counter;
 

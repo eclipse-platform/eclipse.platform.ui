@@ -105,7 +105,7 @@ public class Snippet053StartEditorWithContextMenu extends SelectionAdapter {
 		public String toString() {
 			String rv = "Item ";
 			if (parent != null) {
-				rv = parent.toString() + ".";
+				rv = parent + ".";
 			}
 			rv += counter;
 

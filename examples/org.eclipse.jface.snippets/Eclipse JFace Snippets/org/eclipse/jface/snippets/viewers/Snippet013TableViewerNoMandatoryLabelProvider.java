@@ -63,7 +63,7 @@ public class Snippet013TableViewerNoMandatoryLabelProvider {
 
 		@Override
 		public String getColumnText(Object element, int columnIndex) {
-			return "Column " + columnIndex + " => " + element.toString();
+			return "Column " + columnIndex + " => " + element;
 		}
 
 		@Override

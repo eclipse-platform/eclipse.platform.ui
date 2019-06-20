@@ -51,7 +51,7 @@ public class Bug203657TreeViewerTest extends ViewerTestCase {
 		public String toString() {
 			String rv = "Item ";
 			if (parent != null) {
-				rv = parent.toString() + ".";
+				rv = parent + ".";
 			}
 
 			rv += counter;

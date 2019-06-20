@@ -228,7 +228,7 @@ public class ProjectNaturesPage extends PropertyPage {
 					return getMissingNatureLabel(natureId);
 				}
 			} else {
-				return "Not a valid nature input " + element.toString(); //$NON-NLS-1$
+				return "Not a valid nature input " + element; //$NON-NLS-1$
 			}
 			return getNatureDescriptorLabel(nature);
 		}

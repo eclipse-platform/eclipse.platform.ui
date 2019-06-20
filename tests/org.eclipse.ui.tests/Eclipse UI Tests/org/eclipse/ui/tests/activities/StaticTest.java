@@ -64,12 +64,12 @@ public class StaticTest extends UITestCase {
 		categoryIds = new ArrayList<>();
 		for (index = 1; index <= 6; index++)
 		 {
-			categoryIds.add("org.eclipse.category" + Integer.toString(index)); //$NON-NLS-1$
+			categoryIds.add("org.eclipse.category" + index); //$NON-NLS-1$
 		}
 		activityIds = new ArrayList<>();
 		for (index = 1; index <= 18; index++)
 		 {
-			activityIds.add("org.eclipse.activity" + Integer.toString(index)); //$NON-NLS-1$
+			activityIds.add("org.eclipse.activity" + index); //$NON-NLS-1$
 		}
 		patternActivityIds = new ArrayList<>();
 		for (index = 0; index < 3; index++) {
@@ -91,7 +91,7 @@ public class StaticTest extends UITestCase {
 		// Check enabled activity Ids
 		for (int index = 1; index <= 4; index++) {
 			assertTrue(activityManager.getEnabledActivityIds().contains(
-					"org.eclipse.activity" + Integer.toString(index)));
+					"org.eclipse.activity" + index));
 		}
 		// Check identifier
 		IIdentifier activityIdentifier = activityManager
@@ -114,7 +114,7 @@ public class StaticTest extends UITestCase {
 		for (int index = 2; index <= 7; index++) {
 			assertTrue(activityRequirementBindings
 					.contains(new ActivityRequirementBinding(
-							"org.eclipse.activity" + Integer.toString(index),
+							"org.eclipse.activity" + index,
 							"org.eclipse.activity1")));
 		}
 		// Check activity pattern bindings
@@ -156,7 +156,7 @@ public class StaticTest extends UITestCase {
 		for (int index = 1; index <= 4; index++) {
 			assertTrue(categoryActivityBindings
 					.contains(new CategoryActivityBinding(
-							"org.eclipse.activity" + Integer.toString(index),
+							"org.eclipse.activity" + index,
 							first_category.getId())));
 		}
 		try {

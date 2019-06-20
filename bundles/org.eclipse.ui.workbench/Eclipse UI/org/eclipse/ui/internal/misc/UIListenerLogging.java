@@ -216,7 +216,7 @@ public class UIListenerLogging {
 		if (isEnabled(PAGE_PROPERTY_EVENTS)) {
 			System.out.println(PAGE_PROPERTY_EVENTS + " page " //$NON-NLS-1$
 					+ Util.safeString(page.getLabel()) + ", " + changeId + " = " + Util.safeString(newValue.toString()) //$NON-NLS-1$ //$NON-NLS-2$
-					+ "( old value = " + newValue.toString() + " )"); //$NON-NLS-1$ //$NON-NLS-2$
+					+ "( old value = " + newValue + " )"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 	}
 

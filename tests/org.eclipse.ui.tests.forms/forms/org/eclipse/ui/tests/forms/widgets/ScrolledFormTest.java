@@ -141,7 +141,7 @@ public class ScrolledFormTest {
 		boolean heightOkay = (Math.abs(expectedHeight - result.y) <= 1);
 		boolean widthOkay = (expectedWidth == result.x);
 		if (!(heightOkay && widthOkay)) {
-			assertEquals("Child control had unexpected size for test case " + testData.toString(),
+			assertEquals("Child control had unexpected size for test case " + testData,
 					new Point(expectedWidth, expectedHeight), result);
 		}
 	}

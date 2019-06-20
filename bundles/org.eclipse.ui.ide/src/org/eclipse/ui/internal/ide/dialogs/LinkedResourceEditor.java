@@ -655,7 +655,7 @@ public class LinkedResourceEditor {
 
 				Text text = new Text(parent, SWT.BORDER | SWT.MULTI
 						| SWT.V_SCROLL | SWT.H_SCROLL);
-				text.setText(resultMessage.toString());
+				text.setText(resultMessage);
 				GridData data = new GridData(640, 300);
 				text.setLayoutData(data);
 				return parent;

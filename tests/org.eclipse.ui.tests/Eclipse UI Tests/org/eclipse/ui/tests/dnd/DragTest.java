@@ -139,7 +139,7 @@ public class DragTest extends UITestCaseWithResult {
 	static WorkbenchPage page;
 
 	public DragTest(TestDragSource dragSource, TestDropLocation dropTarget, AbstractTestLogger log, String suffix) {
-		super("drag " + dragSource.toString() + " to " + dropTarget.toString() + suffix, log);
+		super("drag " + dragSource + " to " + dropTarget + suffix, log);
 		this.dragSource = dragSource;
 		this.dropTarget = dropTarget;
 	}

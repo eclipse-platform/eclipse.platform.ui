@@ -33,7 +33,7 @@ public class TreeElement extends TestElement {
 			level = 0;
 		} else {
 			level = parent.level + 1;
-			name = "Level" + String.valueOf(level) + " - " + String.valueOf(index);
+			name = "Level" + level + " - " + index;
 			parent.children.add(this);
 		}
 	}

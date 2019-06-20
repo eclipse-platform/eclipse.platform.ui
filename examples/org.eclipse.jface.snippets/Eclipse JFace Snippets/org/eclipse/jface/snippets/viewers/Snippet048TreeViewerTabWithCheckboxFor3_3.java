@@ -86,7 +86,7 @@ public class Snippet048TreeViewerTabWithCheckboxFor3_3 {
 
 			@Override
 			public String getText(Object element) {
-				return "Column 1 => " + element.toString();
+				return "Column 1 => " + element;
 			}
 
 		});
@@ -122,7 +122,7 @@ public class Snippet048TreeViewerTabWithCheckboxFor3_3 {
 
 			@Override
 			public String getText(Object element) {
-				return "Column 2 => " + element.toString();
+				return "Column 2 => " + element;
 			}
 
 		});
@@ -307,7 +307,7 @@ public class Snippet048TreeViewerTabWithCheckboxFor3_3 {
 		public String toString() {
 			String rv = "Item ";
 			if (parent != null) {
-				rv = parent.toString() + ".";
+				rv = parent + ".";
 			}
 			rv += counter;
 

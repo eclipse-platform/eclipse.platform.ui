@@ -131,7 +131,7 @@ public class Snippet055HideShowColumn {
 
 		@Override
 		public String getText(Object element) {
-			return prefix + " => " + element.toString();
+			return prefix + " => " + element;
 		}
 
 	}
@@ -229,7 +229,7 @@ public class Snippet055HideShowColumn {
 		public String toString() {
 			String rv = "Item ";
 			if (parent != null) {
-				rv = parent.toString() + ".";
+				rv = parent + ".";
 			}
 			rv += counter;
 

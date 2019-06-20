@@ -77,7 +77,7 @@ public class Snippet045TableViewerFillFromBackgroundThread {
 			if (m.counter == 0) {
 				return "Column " + columnIndex + " => " + "Initial input";
 			}
-			return "Column " + columnIndex + " => thread added " + element.toString();
+			return "Column " + columnIndex + " => thread added " + element;
 		}
 
 		@Override

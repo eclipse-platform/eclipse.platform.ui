@@ -390,7 +390,7 @@ public class ContentProposalAdapter {
 					// and filter the proposals.
 					if (Character.isDefined(key)) {
 						if (filterStyle == FILTER_CUMULATIVE) {
-							filterText = filterText + String.valueOf(key);
+							filterText = filterText + key;
 						} else if (filterStyle == FILTER_CHARACTER) {
 							filterText = String.valueOf(key);
 						}

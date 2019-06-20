@@ -1338,7 +1338,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 			WidgetElement.setEngine(display, cssEngine);
 			if (cssResourcesURI != null) {
 				cssEngine.getResourcesLocatorManager().registerResourceLocator(
-						new OSGiResourceLocator(cssResourcesURI.toString()));
+						new OSGiResourceLocator(cssResourcesURI));
 			}
 			// FIXME: is this needed?
 			display.setData("org.eclipse.e4.ui.css.context", appContext); //$NON-NLS-1$

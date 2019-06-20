@@ -115,7 +115,7 @@ public class Snippet051TableCenteredImage {
 
 			@Override
 			public String getText(Object element) {
-				return "Column 1 => " + element.toString() + ((((MyModel) element).counter % 2 != 0) ? " barcode" : "");
+				return "Column 1 => " + element + ((((MyModel) element).counter % 2 != 0) ? " barcode" : "");
 			}
 		});
 

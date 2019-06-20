@@ -81,7 +81,7 @@ public class DynamicTestsElement implements
 		nameBuffer.replace(underscore + 1, underscore + 2, path.substring(
 				underscore + 1, underscore + 2).toUpperCase());
 		nameBuffer.replace(underscore, underscore + 1, " ");//$NON-NLS-1$
-		name = nameBuffer.substring(slash + 1, dot).toString();
+		name = nameBuffer.substring(slash + 1, dot);
 		PropertyDescriptor propertyDescriptor = new PropertyDescriptor(ID_NAME,
 				ID_NAME);
 		propertyDescriptor.setCategory(DEFAULT_CATEGORY);

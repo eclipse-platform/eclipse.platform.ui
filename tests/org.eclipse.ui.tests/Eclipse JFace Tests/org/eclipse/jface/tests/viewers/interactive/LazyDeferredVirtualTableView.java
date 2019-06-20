@@ -51,7 +51,7 @@ public class LazyDeferredVirtualTableView extends VirtualTableView {
 					int rangeLength = rangeEnd - rangeStart;
 					for (int i = 0; i <= rangeLength; i++) {
 						int index = i + rangeStart;
-						viewer.replace("Element " + String.valueOf(index),
+						viewer.replace("Element " + index,
 								index);
 					}
 

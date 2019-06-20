@@ -54,7 +54,7 @@ public class SWTTreeTest extends BasicPerformanceTest {
 	private void createChildren() {
 		for (int i = 0; i < TreeAddTest.TEST_COUNT; i++) {
 			TreeItem item = new TreeItem(tree, SWT.NONE);
-			item.setText("Element " + String.valueOf(i));
+			item.setText("Element " + i);
 
 		}
 

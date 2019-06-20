@@ -82,7 +82,7 @@ public class Snippet036FocusBorderCellHighlighter {
 
 		@Override
 		protected Object getValue(Object element) {
-			return "Column " + property + " => " + element.toString();
+			return "Column " + property + " => " + element;
 		}
 
 		@Override
@@ -104,7 +104,7 @@ public class Snippet036FocusBorderCellHighlighter {
 
 		@Override
 		public String getText(Object element) {
-			return "Column " + table.getColumnOrder()[columnIndex] + " => " + element.toString();
+			return "Column " + table.getColumnOrder()[columnIndex] + " => " + element;
 		}
 	}
 

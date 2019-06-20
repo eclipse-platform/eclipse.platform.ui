@@ -452,7 +452,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 		// If someone works with disposed parts, we can't help, it is a bug
 		if (e4Context == null) {
 			WorkbenchPlugin.log(new IllegalStateException(
-					"IWorkbenchSite.getShell() was called after part disposal: " + toString())); //$NON-NLS-1$
+					"IWorkbenchSite.getShell() was called after part disposal: " + this)); //$NON-NLS-1$
 			return PlatformUI.getWorkbench().getDisplay().getActiveShell();
 		}
 

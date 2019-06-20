@@ -97,7 +97,7 @@ public class VirtualTableView extends ViewPart {
 			public Object[] getElements(Object inputElement) {
 				String[] elements = new String[itemCount];
 				for (int i = 0; i < itemCount; i++) {
-					elements[i] = "Element " + String.valueOf(i);
+					elements[i] = "Element " + i;
 				}
 				return elements;
 			}

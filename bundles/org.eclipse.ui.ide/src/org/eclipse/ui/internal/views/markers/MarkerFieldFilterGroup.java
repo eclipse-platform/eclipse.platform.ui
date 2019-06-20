@@ -220,7 +220,7 @@ class MarkerFieldFilterGroup {
 	public String getID() {
 		if (id == null) {
 			if (element == null) {
-				id = USER + String.valueOf(System.currentTimeMillis());
+				id = USER + System.currentTimeMillis();
 			} else {
 				id = element.getAttribute(MarkerSupportInternalUtilities.ATTRIBUTE_ID);
 			}

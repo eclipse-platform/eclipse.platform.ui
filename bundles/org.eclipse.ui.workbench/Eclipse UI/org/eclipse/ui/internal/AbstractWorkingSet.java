@@ -70,7 +70,7 @@ public abstract class AbstractWorkingSet implements IAdaptable, IWorkingSet, Clo
 		this.name = name;
 		this.label = label;
 		labelBoundToName = Objects.equals(name, label);
-		uniqueId = Long.toString(System.currentTimeMillis()) + "_" + counter++; //$NON-NLS-1$
+		uniqueId = System.currentTimeMillis() + "_" + counter++; //$NON-NLS-1$
 	}
 
 	/**

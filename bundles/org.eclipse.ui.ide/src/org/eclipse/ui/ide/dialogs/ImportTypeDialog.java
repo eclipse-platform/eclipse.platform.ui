@@ -238,7 +238,7 @@ public class ImportTypeDialog extends TrayDialog {
 		if (!found) {
 			if (buffer.length() > 0)
 				buffer.append(":"); //$NON-NLS-1$
-			buffer.append(Integer.toString(operationMask) + "," + value); //$NON-NLS-1$
+			buffer.append(operationMask + "," + value); //$NON-NLS-1$
 		}
 		String newValue = buffer.toString();
 		IDEWorkbenchPlugin.getDefault().getPreferenceStore().setValue(key, newValue);

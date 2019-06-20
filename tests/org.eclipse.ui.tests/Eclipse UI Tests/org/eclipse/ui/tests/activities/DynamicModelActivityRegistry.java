@@ -100,7 +100,7 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 					.add(new ActivityPatternBindingDefinition(
 							((ActivityDefinition) activityDefinitions.toArray()[index])
 									.getId(), "org.eclipse.pattern" //$NON-NLS-1$
-									+ Integer.toString(index + 1), sourceId));
+									+ (index + 1), sourceId));
 		}
 	}
 
@@ -113,20 +113,20 @@ public class DynamicModelActivityRegistry extends AbstractActivityRegistry {
 		for (int index = 1; index <= categoryDefinitions.size(); index++) {
 			categoryActivityBindingDefinitions
 					.add(new CategoryActivityBindingDefinition(
-							"org.eclipse.activity" + Integer.toString(counter), //$NON-NLS-1$
-							"org.eclipse.category" + Integer.toString(index), //$NON-NLS-1$
+							"org.eclipse.activity" + counter, //$NON-NLS-1$
+							"org.eclipse.category" + index, //$NON-NLS-1$
 							sourceId));
 			counter++;
 			categoryActivityBindingDefinitions
 					.add(new CategoryActivityBindingDefinition(
-							"org.eclipse.activity" + Integer.toString(counter), //$NON-NLS-1$
-							"org.eclipse.category" + Integer.toString(index), //$NON-NLS-1$
+							"org.eclipse.activity" + counter, //$NON-NLS-1$
+							"org.eclipse.category" + index, //$NON-NLS-1$
 							sourceId));
 			counter++;
 			categoryActivityBindingDefinitions
 					.add(new CategoryActivityBindingDefinition(
-							"org.eclipse.activity" + Integer.toString(counter), //$NON-NLS-1$
-							"org.eclipse.category" + Integer.toString(index), //$NON-NLS-1$
+							"org.eclipse.activity" + counter, //$NON-NLS-1$
+							"org.eclipse.category" + index, //$NON-NLS-1$
 							sourceId));
 			counter++;
 		}

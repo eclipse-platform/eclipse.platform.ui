@@ -102,7 +102,7 @@ public class BrowserExt implements IBrowserExt {
 				Trace
 						.trace(
 								Trace.SEVERE,
-								"Could not create delegate" + toString() + ": " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+								"Could not create delegate" + this + ": " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return delegate;
@@ -127,7 +127,7 @@ public class BrowserExt implements IBrowserExt {
 			Trace
 					.trace(
 							Trace.SEVERE,
-							"Error calling delegate " + toString() + ": " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+							"Error calling delegate " + this + ": " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
 		}
 	}
@@ -146,7 +146,7 @@ public class BrowserExt implements IBrowserExt {
 			Trace
 					.trace(
 							Trace.SEVERE,
-							"Error calling delegate " + toString() + ": " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
+							"Error calling delegate " + this + ": " + e.getMessage()); //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
 		}
 	}

@@ -33,7 +33,7 @@ public class TestTreeElement extends TestElement {
 	public TestTreeElement(int index, TestTreeElement treeParent) {
 		super();
 		this.parent = treeParent;
-		name = generateFirstEntry() + String.valueOf(index);
+		name = generateFirstEntry() + index;
 	}
 
 	/**

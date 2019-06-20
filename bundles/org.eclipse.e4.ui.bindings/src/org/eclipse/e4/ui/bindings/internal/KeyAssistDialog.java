@@ -373,7 +373,7 @@ public class KeyAssistDialog extends PopupDialog {
 			} catch (CommandException e) {
 				// WorkbenchPlugin.log(binding.getParameterizedCommand().toString(), e);
 				// TODO we probably need to log something here.
-				System.err.println(binding.getParameterizedCommand().toString() + " : " + e); //$NON-NLS-1$
+				System.err.println(binding.getParameterizedCommand() + " : " + e); //$NON-NLS-1$
 			}
 		}
 	}

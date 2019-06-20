@@ -1057,7 +1057,7 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 			}
 		}
 		assertTrue("Files expected but not in workspace for project \"" + project.getName() + "\": "
-				+ filesNotImported.toString(), filesNotImported.length() == 0);
+				+ filesNotImported, filesNotImported.length() == 0);
 	}
 
 	/**

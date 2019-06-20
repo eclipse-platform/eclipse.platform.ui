@@ -1501,7 +1501,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 			String str = provider.getText(element);
 			if (selectionDecorator != null && isSelected(element)) {
-				return selectionDecorator.decorateText(str.toString(), element);
+				return selectionDecorator.decorateText(str, element);
 			}
 
 			return str;

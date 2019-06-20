@@ -250,7 +250,7 @@ public class E4Workbench implements IWorkbench {
 		}
 		if (Policy.DEBUG_CONTEXTS) {
 			Activator.trace(Policy.DEBUG_CONTEXTS_FLAG, "initializeContext(" //$NON-NLS-1$
-					+ parentContext.toString() + ", " + contextModel + ")", null); //$NON-NLS-1$ //$NON-NLS-2$
+					+ parentContext + ", " + contextModel + ")", null); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		// fill in the interfaces, so MContributedPart.class.getName() will
 		// return the model element, for example.

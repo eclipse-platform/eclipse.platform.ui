@@ -37,7 +37,7 @@ public class TestElement {
 	 * @param index
 	 */
 	public TestElement(int index) {
-		name = TestTreeElement.generateFirstEntry() + String.valueOf(index);
+		name = TestTreeElement.generateFirstEntry() + index;
 	}
 
 	public String getText() {

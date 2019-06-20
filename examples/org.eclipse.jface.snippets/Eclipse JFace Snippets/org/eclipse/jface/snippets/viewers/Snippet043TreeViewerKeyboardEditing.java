@@ -194,7 +194,7 @@ public class Snippet043TreeViewerKeyboardEditing {
 		public String toString() {
 			String rv = "Item ";
 			if (parent != null) {
-				rv = parent.toString() + ".";
+				rv = parent + ".";
 			}
 			rv += counter;
 

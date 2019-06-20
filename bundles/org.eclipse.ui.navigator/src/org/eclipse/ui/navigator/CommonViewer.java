@@ -521,7 +521,7 @@ public class CommonViewer extends TreeViewer {
 
 	@Override
 	public String toString() {
-		return contentService.toString() + " Viewer"; //$NON-NLS-1$
+		return contentService + " Viewer"; //$NON-NLS-1$
 	}
 
 	@Override

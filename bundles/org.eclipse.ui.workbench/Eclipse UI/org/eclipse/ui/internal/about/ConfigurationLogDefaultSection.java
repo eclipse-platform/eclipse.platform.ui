@@ -162,7 +162,7 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
 		try {
 			service.exportPreferences(node, stm, null);
 		} catch (CoreException e) {
-			writer.println("Error reading preferences " + e.toString());//$NON-NLS-1$
+			writer.println("Error reading preferences " + e);//$NON-NLS-1$
 		}
 
 		// copy the prefs from the byte array to the writer
@@ -183,7 +183,7 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
 				writer.write(chars, 0, read);
 			}
 		} catch (IOException e) {
-			writer.println("Error reading preferences " + e.toString());//$NON-NLS-1$
+			writer.println("Error reading preferences " + e);//$NON-NLS-1$
 		}
 
 		// ByteArray streams don't need to be closed

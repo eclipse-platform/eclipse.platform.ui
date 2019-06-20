@@ -115,7 +115,7 @@ public class Measure extends CSSValueImpl {
 		case LexicalUnit.SAC_POINT:
 		case LexicalUnit.SAC_INCH:
 		case LexicalUnit.SAC_DEGREE:
-			return String.valueOf(value.getFloatValue()) + value.getDimensionUnitText();
+			return value.getFloatValue() + value.getDimensionUnitText();
 		case LexicalUnit.SAC_URI:
 			return "url(" + value.getStringValue() + ")";
 		case LexicalUnit.SAC_OPERATOR_COMMA:

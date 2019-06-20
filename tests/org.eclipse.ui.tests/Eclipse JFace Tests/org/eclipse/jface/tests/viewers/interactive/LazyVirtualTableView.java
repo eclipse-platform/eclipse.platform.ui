@@ -42,7 +42,7 @@ public class LazyVirtualTableView extends VirtualTableView {
 	private void initElements() {
 		elements = new ArrayList<>();
 		for (int i = 0; i < itemCount; i++) {
-			elements.add("Element " + String.valueOf(i));
+			elements.add("Element " + i);
 		}
 	}
 

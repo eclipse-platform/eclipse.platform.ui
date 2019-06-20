@@ -212,7 +212,7 @@ public class Snippet056BooleanCellEditor {
 
 		@Override
 		public String getText(Object element) {
-			return this.prefix + " => " + element.toString();
+			return this.prefix + " => " + element;
 		}
 	}
 
@@ -268,7 +268,7 @@ public class Snippet056BooleanCellEditor {
 		public String toString() {
 			String rv = "Item ";
 			if (parent != null) {
-				rv = parent.toString() + ".";
+				rv = parent + ".";
 			}
 
 			rv += counter;

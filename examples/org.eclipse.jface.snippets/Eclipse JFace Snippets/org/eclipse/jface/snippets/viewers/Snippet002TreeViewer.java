@@ -76,7 +76,7 @@ public class Snippet002TreeViewer {
 		public String toString() {
 			String rv = "Item ";
 			if( parent != null ) {
-				rv = parent.toString() + ".";
+				rv = parent + ".";
 			}
 
 			rv += counter;

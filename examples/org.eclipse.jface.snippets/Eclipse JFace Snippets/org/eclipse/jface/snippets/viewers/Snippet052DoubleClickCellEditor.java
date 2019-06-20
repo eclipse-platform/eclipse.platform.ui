@@ -156,7 +156,7 @@ public class Snippet052DoubleClickCellEditor {
 
 		@Override
 		protected Object getValue(Object element) {
-			return "Column " + property + " => " + element.toString();
+			return "Column " + property + " => " + element;
 		}
 
 		@Override

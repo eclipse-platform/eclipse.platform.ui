@@ -391,7 +391,7 @@ public final class ObjectContributionTest extends UITestCase {
 			}
 
 			if (existance && !commands.isEmpty()) {
-				fail(name + " Missing " + commands.toString()
+				fail(name + " Missing " + commands
 						+ " from context menu.");
 			}
 		} finally {

@@ -90,7 +90,7 @@ public class ViewWithSaveables extends ViewPart implements ISaveablesSource,
 			@Override
 			public String getText(Object element) {
 				MySaveable saveable = (MySaveable) element;
-				return (saveable.isDirty() ? "*" : "") + saveable.toString();
+				return (saveable.isDirty() ? "*" : "") + saveable;
 			}
 		});
 		viewer.setInput(saveables);

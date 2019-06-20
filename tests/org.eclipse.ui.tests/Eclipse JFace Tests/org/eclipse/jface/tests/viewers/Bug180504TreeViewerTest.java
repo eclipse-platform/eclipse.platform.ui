@@ -49,7 +49,7 @@ public class Bug180504TreeViewerTest extends ViewerTestCase {
 		public String toString() {
 			String rv = "Item ";
 			if (parent != null) {
-				rv = parent.toString() + ".";
+				rv = parent + ".";
 			}
 
 			rv += counter;

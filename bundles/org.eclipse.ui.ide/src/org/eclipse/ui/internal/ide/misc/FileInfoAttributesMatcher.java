@@ -134,8 +134,8 @@ public class FileInfoAttributesMatcher extends AbstractFileInfoMatcher {
 		return VERSION_IMPLEMENTATION + DELIMITER +
 				argument.key + DELIMITER +
 				argument.operator + DELIMITER +
-				Boolean.toString(argument.caseSensitive) + DELIMITER +
-				Boolean.toString(argument.regularExpression) + DELIMITER +
+				argument.caseSensitive + DELIMITER +
+				argument.regularExpression + DELIMITER +
 				argument.pattern;
 
 	}

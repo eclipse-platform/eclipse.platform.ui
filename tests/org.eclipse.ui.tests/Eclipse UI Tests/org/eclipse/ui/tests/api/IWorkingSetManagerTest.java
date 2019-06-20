@@ -243,7 +243,7 @@ public class IWorkingSetManagerTest extends UITestCase {
 			IWorkingSet[] workingSets = new IWorkingSet[10];
 			for (int i = 0 ; i < 10; i++) {
 				IWorkingSet workingSet = fWorkingSetManager.createWorkingSet(
-						"ws_" + Integer.toString(i + 1), new IAdaptable[] { fWorkspace.getRoot() });
+						"ws_" + (i + 1), new IAdaptable[] { fWorkspace.getRoot() });
 				fWorkingSetManager.addRecentWorkingSet(workingSet);
 				fWorkingSetManager.addWorkingSet(workingSet);
 				workingSets[9 - i] = workingSet;
@@ -261,7 +261,7 @@ public class IWorkingSetManagerTest extends UITestCase {
 
 			for (int i = 7 ; i < 9; i++) {
 				IWorkingSet workingSet = fWorkingSetManager.createWorkingSet(
-						"ws_addded_" + Integer.toString(i + 1), new IAdaptable[] { fWorkspace.getRoot() });
+						"ws_addded_" + (i + 1), new IAdaptable[] { fWorkspace.getRoot() });
 				fWorkingSetManager.addRecentWorkingSet(workingSet);
 				fWorkingSetManager.addWorkingSet(workingSet);
 				workingSets9[8 - i] = workingSet;

@@ -71,7 +71,7 @@ public class Snippet046UpdateViewerFromBackgroundThread {
 
 		@Override
 		public String getColumnText(Object element, int columnIndex) {
-			return "Column " + columnIndex + " => " + element.toString();
+			return "Column " + columnIndex + " => " + element;
 		}
 
 	}

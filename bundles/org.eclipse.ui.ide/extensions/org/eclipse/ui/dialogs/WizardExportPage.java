@@ -498,7 +498,7 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
 				IDEWorkbenchMessages.WizardExportPage_selectResourcesToExport);
 		if (containerPath != null) { // null means user cancelled
 			String relativePath = containerPath.makeRelative().toString();
-			if (!relativePath.toString().equals(resourceNameField.getText())) {
+			if (!relativePath.equals(resourceNameField.getText())) {
 				resetSelectedResources();
 				resourceNameField.setText(relativePath);
 			}

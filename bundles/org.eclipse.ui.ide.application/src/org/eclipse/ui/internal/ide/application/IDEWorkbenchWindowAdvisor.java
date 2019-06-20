@@ -455,7 +455,7 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	}
 
 	private String computeTitlePath(FileStoreEditorInput editorInput) {
-		return editorInput.getURI().getPath().toString();
+		return editorInput.getURI().getPath();
 	}
 
 	private String computeTitlePath(IFileEditorInput editorInput) {

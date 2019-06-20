@@ -233,7 +233,7 @@ public class MenuContributionHarness extends ViewPart {
 			public void run() {
 				IStructuredSelection selection = viewer.getStructuredSelection();
 				Object obj = selection.getFirstElement();
-				showMessage("Double-click detected on " + obj.toString());
+				showMessage("Double-click detected on " + obj);
 			}
 		};
 	}
