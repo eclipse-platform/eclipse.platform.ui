@@ -153,7 +153,7 @@ public class LocalFile extends FileStore {
 		//file system is not case sensitive (Radar bug 3190672)
 		LocalFile otherFile = (LocalFile) obj;
 		if (LocalFileSystem.MACOSX)
-			return filePath.toLowerCase().equals(otherFile.filePath.toLowerCase());
+			return filePath.equalsIgnoreCase(otherFile.filePath);
 		return file.equals(otherFile.file);
 	}
 

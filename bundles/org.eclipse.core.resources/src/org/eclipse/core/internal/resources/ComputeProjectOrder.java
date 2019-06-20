@@ -140,7 +140,7 @@ public class ComputeProjectOrder {
 
 			@Override
 			public String toString() {
-				return from.toString() + " -> " + to.toString(); //$NON-NLS-1$
+				return from + " -> " + to; //$NON-NLS-1$
 			}
 
 		}

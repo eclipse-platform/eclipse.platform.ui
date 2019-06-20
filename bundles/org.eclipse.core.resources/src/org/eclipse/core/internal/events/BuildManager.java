@@ -1092,7 +1092,8 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 		long start = System.currentTimeMillis();
 		currentDelta = deltaTreeCache.computeIfAbsent(null, oldTree, newTree, () -> {
 			if (Policy.DEBUG_BUILD_NEEDED) {
-				String message = "Checking if need to build. Starting delta computation between: " + oldTree.toString() + " and " + newTree.toString(); //$NON-NLS-1$ //$NON-NLS-2$
+				String message = "Checking if need to build. Starting delta computation between: " + oldTree + " and " //$NON-NLS-1$ //$NON-NLS-2$
+						+ newTree;
 				Policy.debug(message);
 			}
 			DeltaDataTree computed = newTree.getDataTree().forwardDeltaWith(oldTree.getDataTree(), ResourceComparator.getBuildComparator());

@@ -995,7 +995,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	 */
 	private String findVariant(String target, String[] list) {
 		for (String element : list) {
-			if (target.toUpperCase().equals(element.toUpperCase()))
+			if (target.equalsIgnoreCase(element))
 				return element;
 		}
 		return null;

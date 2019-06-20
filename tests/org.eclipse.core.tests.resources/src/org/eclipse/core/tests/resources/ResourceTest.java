@@ -763,7 +763,7 @@ public abstract class ResourceTest extends CoreTest {
 	 */
 	protected String getClassName() {
 		String fullClassName = getClass().getName();
-		return fullClassName.substring(fullClassName.lastIndexOf(".") + 1);
+		return fullClassName.substring(fullClassName.lastIndexOf('.') + 1);
 	}
 
 	/**

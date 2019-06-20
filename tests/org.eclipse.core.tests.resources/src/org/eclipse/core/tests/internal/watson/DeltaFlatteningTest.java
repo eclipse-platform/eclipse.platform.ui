@@ -50,7 +50,7 @@ public class DeltaFlatteningTest extends ElementTreeSerializationTest {
 		fSubtreePath = path;
 		fDepth = depth;
 		ElementTree newTree = (ElementTree) doPipeTest();
-		TestUtil.assertEqualTrees(this.getClass().toString() + "test0", fTree, newTree, fSubtreePath, fDepth);
+		TestUtil.assertEqualTrees(this.getClass() + "test0", fTree, newTree, fSubtreePath, fDepth);
 	}
 
 	/**

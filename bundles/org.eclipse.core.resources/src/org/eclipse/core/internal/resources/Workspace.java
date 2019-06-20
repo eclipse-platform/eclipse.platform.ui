@@ -2478,7 +2478,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * structure suitable for debug purposes.
 	 */
 	public String toDebugString() {
-		final StringBuilder buffer = new StringBuilder("\nDump of " + toString() + ":\n"); //$NON-NLS-1$ //$NON-NLS-2$
+		final StringBuilder buffer = new StringBuilder("\nDump of " + this + ":\n"); //$NON-NLS-1$ //$NON-NLS-2$
 		buffer.append("  parent: " + tree.getParent()); //$NON-NLS-1$
 		IElementContentVisitor visitor = (aTree, requestor, elementContents) -> {
 			buffer.append("\n  " + requestor.requestPath() + ": " + elementContents); //$NON-NLS-1$ //$NON-NLS-2$

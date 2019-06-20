@@ -81,7 +81,7 @@ public class Bug_226264 extends ResourceTest {
 			fail("1.0", e);
 		}
 
-		assertTrue("2.0: " + job.getResult().toString(), job.getResult().isOK());
+		assertTrue("2.0: " + job.getResult(), job.getResult().isOK());
 
 		assertDoesNotExistInWorkspace("3.0", project1);
 		assertDoesNotExistInWorkspace("4.0", project2);

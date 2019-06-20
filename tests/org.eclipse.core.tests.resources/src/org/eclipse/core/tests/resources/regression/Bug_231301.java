@@ -81,7 +81,7 @@ public class Bug_231301 extends ResourceTest {
 			fail("1.0", e);
 		}
 
-		assertTrue("2.0: " + job.getResult().toString(), job.getResult().isOK());
+		assertTrue("2.0: " + job.getResult(), job.getResult().isOK());
 		assertTrue("3.0", !project1.isOpen());
 		assertTrue("4.0", !project2.isOpen());
 	}

@@ -53,7 +53,7 @@ public class TreeFlatteningTest extends ElementTreeSerializationTest {
 
 		ElementTree newTree = (ElementTree) doPipeTest();
 
-		TestUtil.assertEqualTrees(this.getClass().toString() + "test0", fTree, newTree, fSubtreePath, fDepth);
+		TestUtil.assertEqualTrees(this.getClass() + "test0", fTree, newTree, fSubtreePath, fDepth);
 	}
 
 	/**
@@ -80,7 +80,7 @@ public class TreeFlatteningTest extends ElementTreeSerializationTest {
 		fTree = TestUtil.createTestElementTree();
 		ElementTree newTree = (ElementTree) doFileTest();
 
-		TestUtil.assertEqualTrees(this.getClass().toString() + "test0", fTree, newTree);
+		TestUtil.assertEqualTrees(this.getClass() + "test0", fTree, newTree);
 	}
 
 	/**
@@ -102,7 +102,7 @@ public class TreeFlatteningTest extends ElementTreeSerializationTest {
 
 		ElementTree newTree = (ElementTree) doPipeTest();
 
-		TestUtil.assertEqualTrees(this.getClass().toString() + "test0", fTree, newTree);
+		TestUtil.assertEqualTrees(this.getClass() + "test0", fTree, newTree);
 	}
 
 	public void testWriteRoot() {
@@ -112,6 +112,6 @@ public class TreeFlatteningTest extends ElementTreeSerializationTest {
 
 		ElementTree newTree = (ElementTree) doPipeTest();
 
-		TestUtil.assertEqualTrees(this.getClass().toString() + "test0", fTree, newTree, fSubtreePath);
+		TestUtil.assertEqualTrees(this.getClass() + "test0", fTree, newTree, fSubtreePath);
 	}
 }

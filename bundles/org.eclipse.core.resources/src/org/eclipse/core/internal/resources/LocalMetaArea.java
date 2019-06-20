@@ -465,7 +465,7 @@ public class LocalMetaArea implements ICoreConstants {
 			if (projectLocation == null)
 				dataOut.writeUTF(""); //$NON-NLS-1$
 			else
-				dataOut.writeUTF(URI_PREFIX + projectLocation.toString());
+				dataOut.writeUTF(URI_PREFIX + projectLocation);
 			dataOut.writeInt(prjRefs.length);
 			for (IProject prjRef : prjRefs)
 				dataOut.writeUTF(prjRef.getName());

@@ -62,7 +62,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		}
 	}
 
-	protected static final String ROOT_SEQUENCE_NUMBER_KEY = Path.ROOT.toString() + LocalMetaArea.F_TREE;
+	protected static final String ROOT_SEQUENCE_NUMBER_KEY = Path.ROOT + LocalMetaArea.F_TREE;
 	protected static final String CLEAR_DELTA_PREFIX = "clearDelta_"; //$NON-NLS-1$
 	protected static final String DELTA_EXPIRATION_PREFIX = "deltaExpiration_"; //$NON-NLS-1$
 	protected static final int DONE_SAVING = 3;
