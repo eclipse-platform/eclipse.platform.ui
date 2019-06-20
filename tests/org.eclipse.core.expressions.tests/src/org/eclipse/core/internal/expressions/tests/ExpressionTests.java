@@ -681,7 +681,7 @@ public class ExpressionTests {
 			EvaluationResult result= exp.evaluate(context);
 			fail("Count should've failed for non-Collection variable.  Result = " +
 
-			result.toString());
+			result);
 		} catch (CoreException e) {
 			assertEquals(ExpressionStatus.VARIABLE_IS_NOT_A_COLLECTION, e.getStatus().getCode());
 		}
@@ -937,7 +937,7 @@ public class ExpressionTests {
 			EvaluationResult result= exp.evaluate(context);
 			fail("Count should've failed for non-Collection variable.  Result = " +
 
-			result.toString());
+			result);
 		} catch (CoreException e) {
 			assertEquals(ExpressionStatus.VARIABLE_IS_NOT_A_COLLECTION, e.getStatus().getCode());
 		}

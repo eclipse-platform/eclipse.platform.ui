@@ -404,7 +404,7 @@ public class EclipseContext implements IEclipseContext {
 		boolean containsKey = localValues.containsKey(name);
 		if (containsKey) {
 			if (!checkModifiable(name)) {
-				String tmp = "Variable " + name + " is not modifiable in the context " + toString(); //$NON-NLS-1$ //$NON-NLS-2$
+				String tmp = "Variable " + name + " is not modifiable in the context " + this; //$NON-NLS-1$ //$NON-NLS-2$
 				throw new IllegalArgumentException(tmp);
 			}
 			Object oldValue = localValues.put(name, value);

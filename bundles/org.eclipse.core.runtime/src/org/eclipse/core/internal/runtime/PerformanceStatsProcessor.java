@@ -146,7 +146,7 @@ public class PerformanceStatsProcessor extends Job {
 		setSystem(true);
 		setPriority(DECORATE);
 		BundleContext context = PlatformActivator.getContext();
-		String filter = '(' + FrameworkLog.SERVICE_PERFORMANCE + '=' + Boolean.TRUE.toString() + ')';
+		String filter = '(' + FrameworkLog.SERVICE_PERFORMANCE + '=' + Boolean.TRUE + ')';
 		Collection<ServiceReference<FrameworkLog>> references;
 		FrameworkLog perfLog = null;
 		try {

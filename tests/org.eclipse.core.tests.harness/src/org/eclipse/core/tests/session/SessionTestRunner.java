@@ -327,7 +327,7 @@ public class SessionTestRunner {
 				// explicitly end test since process crashed before test could finish
 				result.endTest(test);
 			} else {
-				result.addError(test, new Exception("Test did not run: " + test.toString()));
+				result.addError(test, new Exception("Test did not run: " + test));
 			}
 		} else if (crashTest) {
 			result.addError(test, new Exception("Should have caused crash"));

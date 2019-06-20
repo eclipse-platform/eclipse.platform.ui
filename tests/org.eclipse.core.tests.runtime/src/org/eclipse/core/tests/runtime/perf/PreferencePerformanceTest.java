@@ -42,7 +42,7 @@ public class PreferencePerformanceTest extends RuntimeTest {
 		ArrayList<String> keyList = new ArrayList<>();
 		ArrayList<String> valueList = new ArrayList<>();
 		for (int i = 0; i < size; i++) {
-			keyList.add(prefix + '.' + Integer.toString(i) + getUniqueString());
+			keyList.add(prefix + '.' + i + getUniqueString());
 			valueList.add(Integer.toString(i));
 		}
 		String[][] result = new String[2][];
@@ -80,7 +80,7 @@ public class PreferencePerformanceTest extends RuntimeTest {
 		ArrayList<String> keyList = new ArrayList<>();
 		ArrayList<String> valueList = new ArrayList<>();
 		for (int i = 0; i < size; i++) {
-			keyList.add(Integer.toString(i) + getUniqueString());
+			keyList.add(i + getUniqueString());
 			valueList.add(Integer.toString(i));
 		}
 		String[][] result = new String[2][];
@@ -278,7 +278,7 @@ public class PreferencePerformanceTest extends RuntimeTest {
 		final ArrayList<String> keyList = new ArrayList<>();
 		final ArrayList<String> valueList = new ArrayList<>();
 		for (int i = 0; i < KEYS_PER_NODE; i++) {
-			keyList.add(getUniqueString() + Integer.toString(i));
+			keyList.add(getUniqueString() + i);
 			valueList.add(Integer.toString(i));
 		}
 		final String[] keys = keyList.toArray(new String[keyList.size()]);
@@ -323,7 +323,7 @@ public class PreferencePerformanceTest extends RuntimeTest {
 		final ArrayList<String> keyList = new ArrayList<>();
 		final ArrayList<String> valueList = new ArrayList<>();
 		for (int i = 0; i < KEYS_PER_NODE; i++) {
-			keyList.add(getUniqueString() + Integer.toString(i));
+			keyList.add(getUniqueString() + i);
 			valueList.add(Integer.toString(i));
 		}
 		final String[] keys = keyList.toArray(new String[keyList.size()]);

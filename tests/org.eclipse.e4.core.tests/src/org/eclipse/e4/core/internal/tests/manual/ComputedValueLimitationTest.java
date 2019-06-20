@@ -68,7 +68,7 @@ public class ComputedValueLimitationTest {
 		@Override
 		public Object compute(IEclipseContext context, String contextKey) {
 			int useArg = ExtenralFactor.useChild();
-			return context.get("arg" + Integer.toString(useArg));
+			return context.get("arg" + useArg);
 		}
 	}
 
@@ -85,7 +85,7 @@ public class ComputedValueLimitationTest {
 
 		IEclipseContext context = EclipseContextFactory.create();
 		for (int i = 0; i < 10; i++) {
-			context.set("arg" + Integer.toString(i), Integer.toString(i));
+			context.set("arg" + i, Integer.toString(i));
 		}
 		context.set("computed", new CalcColor());
 

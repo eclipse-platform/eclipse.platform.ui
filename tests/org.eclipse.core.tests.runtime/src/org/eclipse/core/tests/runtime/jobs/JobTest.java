@@ -574,11 +574,11 @@ public class JobTest extends AbstractJobTest {
 			//schedule the job and wait on the barrier until it is running
 			job.schedule();
 			barrier.waitForStatus(TestBarrier.STATUS_WAIT_FOR_RUN);
-			assertEquals(Integer.toString(i) + ".1.0", 0, canceling[0]);
+			assertEquals(i + ".1.0", 0, canceling[0]);
 			jobmonitor[0].setCanceled(true);
-			assertEquals(Integer.toString(i) + ".1.1", 1, canceling[0]);
+			assertEquals(i + ".1.1", 1, canceling[0]);
 			jobmonitor[0].setCanceled(true);
-			assertEquals(Integer.toString(i) + ".1.2", 1, canceling[0]);
+			assertEquals(i + ".1.2", 1, canceling[0]);
 			//let the job finish
 			barrier.setStatus(TestBarrier.STATUS_RUNNING);
 			waitForState(job, Job.NONE);

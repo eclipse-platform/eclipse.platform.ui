@@ -236,7 +236,7 @@ public class InjectorImpl implements IInjector {
 				null, true, /* initial */ true, /* track */ false);
 		if (result == IInjector.NOT_A_VALUE) {
 			if (object != null && qualifier != null) {
-				throw new InjectionException("Unable to find matching method to invoke. Searching for the annotation \"" + qualifier.toString() + "\" on an instance of \"" + object.getClass().getSimpleName() + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				throw new InjectionException("Unable to find matching method to invoke. Searching for the annotation \"" + qualifier + "\" on an instance of \"" + object.getClass().getSimpleName() + "\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			throw new InjectionException("Unable to find matching method to invoke. One of the arguments was null."); //$NON-NLS-1$
 		}

@@ -70,7 +70,7 @@ public class DumpException extends Exception {
 	 */
 	@Override
 	public String getMessage() {
-		return super.getMessage() + ((cause != null) ? (" caused by " + cause.toString()) : ""); //$NON-NLS-1$ //$NON-NLS-2$
+		return super.getMessage() + ((cause != null) ? (" caused by " + cause) : ""); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
