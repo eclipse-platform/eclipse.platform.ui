@@ -20,4 +20,7 @@
   <artifactId>org.eclipse.debug.examples.memory</artifactId>
   <version>1.102.200-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
+  <properties>
+    <skipAPIAnalysis>true</skipAPIAnalysis>
+  </properties>
 </project>
