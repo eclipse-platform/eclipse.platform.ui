@@ -116,9 +116,7 @@ public final class BrowseRefactoringHistoryContentProvider extends RefactoringHi
 			fProjectRefactoringHistories= new HashMap<>();
 			Map<String, Collection<RefactoringDescriptorProxy>> projectRefactoringHistories= new HashMap<>();
 			if (fRefactoringHistory != null && !fRefactoringHistory.isEmpty()) {
-				final RefactoringDescriptorProxy[] proxies= fRefactoringHistory.getDescriptors();
-				for (int index= 0; index < proxies.length; index++) {
-					final RefactoringDescriptorProxy proxy= proxies[index];
+				for (RefactoringDescriptorProxy proxy : fRefactoringHistory.getDescriptors()) {
 					String current= proxy.getProject();
 					if (current == null || current.length() == 0)
 						current= WORKSPACE_PROJECT;

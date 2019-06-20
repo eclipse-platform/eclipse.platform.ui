@@ -76,8 +76,8 @@ public final class RefactoringHistoryEditHelper {
 	 */
 	private static IProject[] getAffectedProjects(final RefactoringDescriptorProxy[] descriptors) {
 		final Set<String> set= new HashSet<>();
-		for (int index= 0; index < descriptors.length; index++) {
-			final String project= descriptors[index].getProject();
+		for (RefactoringDescriptorProxy descriptor : descriptors) {
+			final String project= descriptor.getProject();
 			if (project == null || "".equals(project)) //$NON-NLS-1$
 				return null;
 			set.add(project);

@@ -48,9 +48,7 @@ public class CompositeChangeNode extends AbstractChangeNode {
 	}
 
 	private void getFlattendedChildren(List<PreviewNode> result, CompositeChangeNode parent, CompositeChange focus) {
-		Change[] changes= focus.getChildren();
-		for (int i= 0; i < changes.length; i++) {
-			Change change= changes[i];
+		for (Change change : focus.getChildren()) {
 			if (fFilter == null || fFilter.select(change)) {
 				if (change instanceof CompositeChange && ((CompositeChange) change).isSynthetic()) {
 					getFlattendedChildren(result, parent, (CompositeChange) change);

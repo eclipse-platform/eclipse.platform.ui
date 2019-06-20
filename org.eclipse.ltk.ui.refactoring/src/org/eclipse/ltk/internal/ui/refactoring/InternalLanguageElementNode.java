@@ -14,7 +14,6 @@
  package org.eclipse.ltk.internal.ui.refactoring;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
@@ -66,8 +65,7 @@ public abstract class InternalLanguageElementNode extends TextEditChangeNode.Chi
 
 	@Override
 	void setEnabled(boolean enabled) {
-		for (Iterator<ChildNode> iter= fChildren.iterator(); iter.hasNext();) {
-			PreviewNode element= iter.next();
+		for (PreviewNode element : fChildren) {
 			element.setEnabled(enabled);
 		}
 	}
@@ -108,8 +106,7 @@ public abstract class InternalLanguageElementNode extends TextEditChangeNode.Chi
 	boolean hasDerived() {
 		if (fChildren == null)
 			return false;
-		for (Iterator<ChildNode> iter= fChildren.iterator(); iter.hasNext();) {
-			PreviewNode node= iter.next();
+		for (PreviewNode node : fChildren) {
 			if (node.hasDerived())
 				return true;
 		}
@@ -119,8 +116,7 @@ public abstract class InternalLanguageElementNode extends TextEditChangeNode.Chi
 	private GroupCategorySet getGroupCategorySet() {
 		if (fGroupCategories == null) {
 			fGroupCategories= GroupCategorySet.NONE;
-			for (Iterator<ChildNode> iter= fChildren.iterator(); iter.hasNext();) {
-				PreviewNode node= iter.next();
+			for (PreviewNode node : fChildren) {
 				GroupCategorySet other= null;
 				if (node instanceof TextEditGroupNode) {
 					other= ((TextEditGroupNode)node).getGroupCategorySet();
@@ -143,9 +139,7 @@ public abstract class InternalLanguageElementNode extends TextEditChangeNode.Chi
 
 	private List<TextEditBasedChangeGroup> collectTextEditBasedChangeGroups(List<GroupCategory> categories) {
 		List<TextEditBasedChangeGroup> result= new ArrayList<>(10);
-		PreviewNode[] children= getChildren();
-		for (int i= 0; i < children.length; i++) {
-			PreviewNode child= children[i];
+		for (PreviewNode child : getChildren()) {
 			if (child instanceof TextEditGroupNode) {
 				TextEditBasedChangeGroup changeGroup= ((TextEditGroupNode)child).getChangeGroup();
 				if (categories == null || changeGroup.getGroupCategorySet().containsOneCategory(categories))

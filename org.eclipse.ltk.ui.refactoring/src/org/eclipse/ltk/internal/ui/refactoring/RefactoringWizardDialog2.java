@@ -385,9 +385,9 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 	}
 
 	private void setDisplayCursor(Display d, Cursor c) {
-		Shell[] shells= d.getShells();
-		for (int i= 0; i < shells.length; i++)
-			shells[i].setCursor(c);
+		for (Shell shell : d.getShells()) {
+			shell.setCursor(c);
+		}
 	}
 
 	private void stopped(Map<String, Object> savedState) {

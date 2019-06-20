@@ -120,10 +120,10 @@ public abstract class AbstractChangeNode extends PreviewNode {
 
 	@Override
 	boolean hasOneGroupCategory(List<GroupCategory> categories) {
-		PreviewNode[] children= getChildren();
-		for (int i= 0; i < children.length; i++) {
-			if (children[i].hasOneGroupCategory(categories))
+		for (PreviewNode child : getChildren()) {
+			if (child.hasOneGroupCategory(categories)) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -132,10 +132,10 @@ public abstract class AbstractChangeNode extends PreviewNode {
 	boolean hasDerived() {
 		if (hasDerivedResourceChange(fChange))
 			return true;
-		PreviewNode[] children= getChildren();
-		for (int i= 0; i < children.length; i++) {
-			if (children[i].hasDerived())
+		for (PreviewNode child : getChildren()) {
+			if (child.hasDerived()) {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -143,8 +143,8 @@ public abstract class AbstractChangeNode extends PreviewNode {
 	int getDefaultChangeActive() {
 		int result= fChange.isEnabled() ? ACTIVE : INACTIVE;
 		if (fChildren != null) {
-			for (int i= 0; i < fChildren.length; i++) {
-				result= ACTIVATION_TABLE[fChildren[i].getActive()][result];
+			for (PreviewNode child : fChildren) {
+				result= ACTIVATION_TABLE[child.getActive()][result];
 				if (result == PARTLY_ACTIVE)
 					break;
 			}

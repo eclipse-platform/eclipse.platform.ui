@@ -170,9 +170,10 @@ public class TextEditChangeNode extends InternalTextEditChangeNode {
 	private TextEditBasedChangeGroup[] getSortedChangeGroups(TextEditBasedChange change) {
 		TextEditBasedChangeGroup[] groups= change.getChangeGroups();
 		List<TextEditBasedChangeGroup> result= new ArrayList<>(groups.length);
-		for (int i= 0; i < groups.length; i++) {
-			if (!groups[i].getTextEditGroup().isEmpty())
-				result.add(groups[i]);
+		for (TextEditBasedChangeGroup group : groups) {
+			if (!group.getTextEditGroup().isEmpty()) {
+				result.add(group);
+			}
 		}
 		Comparator<TextEditBasedChangeGroup> comparator= new OffsetComparator();
 		Collections.sort(result, comparator);

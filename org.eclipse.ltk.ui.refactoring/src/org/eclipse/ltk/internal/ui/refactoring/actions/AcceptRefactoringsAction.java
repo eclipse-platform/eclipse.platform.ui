@@ -120,9 +120,9 @@ public final class AcceptRefactoringsAction extends Action {
 	@Override
 	public boolean isEnabled() {
 		if (fProxies != null && fProxies.length > 0) {
-			for (int index= 0; index < fProxies.length; index++) {
-				if (fProxies[index] instanceof RefactoringDescriptorSynchronizationProxy) {
-					final RefactoringDescriptorSynchronizationProxy proxy= (RefactoringDescriptorSynchronizationProxy) fProxies[index];
+			for (RefactoringDescriptorProxy fproxy : fProxies) {
+				if (fproxy instanceof RefactoringDescriptorSynchronizationProxy) {
+					final RefactoringDescriptorSynchronizationProxy proxy= (RefactoringDescriptorSynchronizationProxy) fproxy;
 					if (proxy.getDirection() == IThreeWayDiff.INCOMING)
 						return true;
 				}
@@ -140,13 +140,13 @@ public final class AcceptRefactoringsAction extends Action {
 				final WizardDialog dialog= new WizardDialog(fShell, wizard);
 				IProject project= null;
 				Set<RefactoringDescriptorSynchronizationProxy> proxies= new HashSet<>();
-				for (int index= 0; index < fProxies.length; index++) {
-					if (fProxies[index] instanceof RefactoringDescriptorSynchronizationProxy) {
-						final RefactoringDescriptorSynchronizationProxy proxy= (RefactoringDescriptorSynchronizationProxy) fProxies[index];
+				for (RefactoringDescriptorProxy fproxy : fProxies) {
+					if (fproxy instanceof RefactoringDescriptorSynchronizationProxy) {
+						final RefactoringDescriptorSynchronizationProxy proxy= (RefactoringDescriptorSynchronizationProxy) fproxy;
 						if (proxy.getDirection() == IThreeWayDiff.INCOMING)
 							proxies.add(proxy);
 					}
-					String name= fProxies[index].getProject();
+					String name= fproxy.getProject();
 					if (name != null && !"".equals(name)) //$NON-NLS-1$
 						project= ResourcesPlugin.getWorkspace().getRoot().getProject(name);
 				}

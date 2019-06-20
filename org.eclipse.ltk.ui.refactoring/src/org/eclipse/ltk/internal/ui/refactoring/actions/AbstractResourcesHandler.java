@@ -64,8 +64,8 @@ public abstract class AbstractResourcesHandler extends AbstractHandler {
 					}
 
 					if (traversals != null) {
-						for (int i= 0; i < traversals.length; i++) {
-							IResource[] traversalResources= traversals[i].getResources();
+						for (ResourceTraversal traversal : traversals) {
+							IResource[] traversalResources= traversal.getResources();
 							if (traversalResources != null) {
 								resources.addAll(Arrays.asList(traversalResources)); // for
 							}// if

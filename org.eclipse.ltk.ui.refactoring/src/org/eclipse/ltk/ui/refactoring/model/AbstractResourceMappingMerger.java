@@ -145,10 +145,9 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 	 */
 	private static IProject[] getAffectedProjects(final RefactoringHistory history) {
 		final Set<IProject> set= new HashSet<>();
-		final RefactoringDescriptorProxy[] proxies= history.getDescriptors();
 		final IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
-		for (int index= 0; index < proxies.length; index++) {
-			final String name= proxies[index].getProject();
+		for (RefactoringDescriptorProxy proxy : history.getDescriptors()) {
+			final String name= proxy.getProject();
 			if (name != null && !"".equals(name)) //$NON-NLS-1$
 				set.add(root.getProject(name));
 			else
@@ -320,8 +319,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 		final Set<RefactoringDescriptor> result= new HashSet<>();
 		try {
 			monitor.beginTask(RefactoringUIMessages.RefactoringModelMerger_retrieving_refactorings, diffs.length * 2);
-			for (int index= 0; index < diffs.length; index++) {
-				final IDiff diff= diffs[index];
+			for (IDiff diff : diffs) {
 				if (diff instanceof IThreeWayDiff) {
 					final IThreeWayDiff threeWay= (IThreeWayDiff) diff;
 					final Set<RefactoringDescriptor> localDescriptors= new HashSet<>();
@@ -381,9 +379,9 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 				try {
 					stream= storage.getContents();
 					final RefactoringHistory history= RefactoringHistoryService.getInstance().readRefactoringHistory(stream, RefactoringDescriptor.MULTI_CHANGE);
-					final RefactoringDescriptorProxy[] proxies= history.getDescriptors();
-					for (int offset= 0; offset < proxies.length; offset++)
-						descriptors.add(proxies[offset].requestDescriptor(null));
+					for (RefactoringDescriptorProxy proxy : history.getDescriptors()) {
+						descriptors.add(proxy.requestDescriptor(null));
+					}
 				} catch (CoreException exception) {
 					RefactoringUIPlugin.log(exception);
 				} finally {

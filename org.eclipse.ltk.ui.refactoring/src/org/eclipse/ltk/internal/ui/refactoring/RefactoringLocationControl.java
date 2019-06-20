@@ -115,8 +115,9 @@ public class RefactoringLocationControl extends Composite {
 			String[] locations= settings.getArray(fKey);
 			if (locations == null || locations.length == 0)
 				return;
-			for (int index= 0; index < locations.length; index++)
-				fCombo.add(locations[index]);
+			for (String location : locations) {
+				fCombo.add(location);
+			}
 			fCombo.select(0);
 		}
 	}

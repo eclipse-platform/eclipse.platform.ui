@@ -41,8 +41,7 @@ public abstract class DescriptorManager {
 			init();
 
 		List<AbstractDescriptor> candidates= new ArrayList<>(1);
-		for (int i= 0; i < fExtensions.length; i++) {
-			AbstractDescriptor descriptor= fExtensions[i];
+		for (AbstractDescriptor descriptor : fExtensions) {
 			if (descriptor.matches(element, fVariableName)) {
 				candidates.add(descriptor);
 			}

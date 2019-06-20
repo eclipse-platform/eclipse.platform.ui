@@ -15,7 +15,6 @@ package org.eclipse.ltk.internal.ui.refactoring;
 
 import java.net.URL;
 import java.util.HashMap;
-import java.util.Iterator;
 
 import org.osgi.framework.Bundle;
 
@@ -135,8 +134,7 @@ public class RefactoringPluginImages {
 	/* package */ static ImageRegistry getImageRegistry() {
 		if (fgImageRegistry == null) {
 			fgImageRegistry= new ImageRegistry();
-			for (Iterator<String> iter= fgAvoidSWTErrorMap.keySet().iterator(); iter.hasNext();) {
-				String key= iter.next();
+			for (String key : fgAvoidSWTErrorMap.keySet()) {
 				fgImageRegistry.put(key, fgAvoidSWTErrorMap.get(key));
 			}
 			fgAvoidSWTErrorMap= null;

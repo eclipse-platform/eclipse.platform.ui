@@ -64,9 +64,9 @@ public final class RejectRefactoringsAction extends Action {
 	@Override
 	public boolean isEnabled() {
 		if (fProxies != null && fProxies.length > 0 && fContext instanceof IMergeContext) {
-			for (int index= 0; index < fProxies.length; index++) {
-				if (fProxies[index] instanceof RefactoringDescriptorSynchronizationProxy) {
-					final RefactoringDescriptorSynchronizationProxy proxy= (RefactoringDescriptorSynchronizationProxy) fProxies[index];
+			for (RefactoringDescriptorProxy fproxy : fProxies) {
+				if (fproxy instanceof RefactoringDescriptorSynchronizationProxy) {
+					final RefactoringDescriptorSynchronizationProxy proxy= (RefactoringDescriptorSynchronizationProxy) fproxy;
 					if (proxy.getDirection() == IThreeWayDiff.INCOMING)
 						return true;
 				}
@@ -86,8 +86,9 @@ public final class RejectRefactoringsAction extends Action {
 						try {
 							monitor.beginTask("", fProxies.length + 100); //$NON-NLS-1$
 							final RefactoringHistoryService service= RefactoringHistoryService.getInstance();
-							for (int index= 0; index < fProxies.length; index++)
-								service.addRefactoringDescriptor(fProxies[index], new SubProgressMonitor(monitor, 1));
+							for (RefactoringDescriptorProxy proxy : fProxies) {
+								service.addRefactoringDescriptor(proxy, new SubProgressMonitor(monitor, 1));
+							}
 						} finally {
 							monitor.done();
 						}

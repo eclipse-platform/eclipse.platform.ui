@@ -146,9 +146,8 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		 *            the changed element
 		 */
 		private void reconcileCheckState(final Object element) {
-			final Object[] children= getChildren(element);
-			for (int index= 0; index < children.length; index++) {
-				reconcileCheckState(children[index]);
+			for (Object child : getChildren(element)) {
+				reconcileCheckState(child);
 			}
 			int checkCount= 0;
 			final Collection<RefactoringDescriptorProxy> collection= getCoveredDescriptors(element);
@@ -234,9 +233,8 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		 */
 		private void setSubTreeGrayed(final Object element, final boolean grayed) {
 			setElementGrayed(element, grayed);
-			final Object[] children= getChildren(element);
-			for (int index= 0; index < children.length; index++) {
-				setSubTreeGrayed(children[index], grayed);
+			for (Object child : getChildren(element)) {
+				setSubTreeGrayed(child, grayed);
 			}
 		}
 	}
@@ -532,9 +530,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 				final RefactoringDescriptorProxy proxy= entry.getDescriptor();
 				set.add(proxy);
 			} else {
-				final Object[] children= provider.getChildren(element);
-				for (int index= 0; index < children.length; index++) {
-					final Object child= children[index];
+				for (Object child : provider.getChildren(element)) {
 					if (child instanceof RefactoringHistoryNode)
 						getCoveredDescriptors(child, set);
 				}
@@ -619,8 +615,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 		Assert.isNotNull(selection);
 		fSelectedDescriptors.clear();
 		final Object[] elements= selection.toArray();
-		for (int index= 0; index < elements.length; index++) {
-			final Object element= elements[index];
+		for (Object element : elements) {
 			if (element instanceof RefactoringHistoryEntry) {
 				final RefactoringHistoryEntry entry= (RefactoringHistoryEntry) element;
 				final RefactoringDescriptorProxy proxy= entry.getDescriptor();
@@ -717,9 +712,9 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			handleCheckStateChanged();
 			final Object[] roots= provider.getRootElements();
 			if (roots != null) {
-				for (int index= 0; index < roots.length; index++) {
-					if (!(roots[index] instanceof RefactoringHistoryEntry)) {
-						fHistoryViewer.setExpandedState(roots[index], true);
+				for (Object root : roots) {
+					if (!(root instanceof RefactoringHistoryEntry)) {
+						fHistoryViewer.setExpandedState(root, true);
 						return;
 					}
 				}

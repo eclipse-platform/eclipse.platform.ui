@@ -141,15 +141,14 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 		if (selection instanceof IStructuredSelection) {
 			final IStructuredSelection structured= (IStructuredSelection) selection;
 			if (!structured.isEmpty()) {
-				final Object[] elements= structured.toArray();
 				final ISynchronizationScope scope= context.getScope();
-				for (int index= 0; index < elements.length; index++) {
-					if (elements[index] instanceof RefactoringHistory) {
-						getRefactorings(scope, (RefactoringHistory) elements[index], set);
-					} else if (elements[index] instanceof RefactoringDescriptorProxy) {
-						getRefactoring(scope, (RefactoringDescriptorProxy) elements[index], set);
-					} else if (elements[index] instanceof RefactoringDescriptor) {
-						getRefactoring(scope, new RefactoringDescriptorProxyAdapter(((RefactoringDescriptor) elements[index])), set);
+				for (Object element : structured.toArray()) {
+					if (element instanceof RefactoringHistory) {
+						getRefactorings(scope, (RefactoringHistory) element, set);
+					} else if (element instanceof RefactoringDescriptorProxy) {
+						getRefactoring(scope, (RefactoringDescriptorProxy) element, set);
+					} else if (element instanceof RefactoringDescriptor) {
+						getRefactoring(scope, new RefactoringDescriptorProxyAdapter((RefactoringDescriptor) element), set);
 					}
 				}
 			}
@@ -216,15 +215,14 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 		if (selection instanceof IStructuredSelection) {
 			final IStructuredSelection structured= (IStructuredSelection) selection;
 			if (!structured.isEmpty()) {
-				final Object[] elements= structured.toArray();
 				final ISynchronizationScope scope= context.getScope();
-				for (int index= 0; index < elements.length; index++) {
-					if (elements[index] instanceof RefactoringHistory) {
-						return hasRefactorings(scope, (RefactoringHistory) elements[index]);
-					} else if (elements[index] instanceof RefactoringDescriptorProxy) {
-						return hasRefactoring(scope, (RefactoringDescriptorProxy) elements[index]);
-					} else if (elements[index] instanceof RefactoringDescriptor) {
-						return hasRefactoring(scope, new RefactoringDescriptorProxyAdapter((RefactoringDescriptor) elements[index]));
+				for (Object element : structured.toArray()) {
+					if (element instanceof RefactoringHistory) {
+						return hasRefactorings(scope, (RefactoringHistory) element);
+					} else if (element instanceof RefactoringDescriptorProxy) {
+						return hasRefactoring(scope, (RefactoringDescriptorProxy) element);
+					} else if (element instanceof RefactoringDescriptor) {
+						return hasRefactoring(scope, new RefactoringDescriptorProxyAdapter((RefactoringDescriptor) element));
 					}
 				}
 			}

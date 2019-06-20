@@ -177,8 +177,7 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 	}
 
 	private void grayChildren(Item[] items, boolean grayed) {
-		for (int i= 0; i < items.length; i++) {
-			Item element= items[i];
+		for (Item element : items) {
 			if (element instanceof TreeItem) {
 				TreeItem item= (TreeItem)element;
 				if (item.getGrayed() != grayed) {

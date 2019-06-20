@@ -236,8 +236,8 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 		private void updateListOfProjects() {
 			IResource[] initialResources = fRefactoringProcessor.getResourcesToDelete();
 			StringBuilder buf= new StringBuilder();
-			for (int i= 0; i < initialResources.length; i++) {
-				String location= getLocation(initialResources[i]);
+			for (IResource initialResource : initialResources) {
+				String location= getLocation(initialResource);
 				if (location != null) {
 					if (buf.length() > 0)
 						buf.append('\n');
@@ -269,8 +269,7 @@ public class DeleteResourcesWizard extends RefactoringWizard {
 		}
 
 		private boolean containsLinkedResource(IResource[] resources) {
-			for (int i = 0; i < resources.length; i++) {
-				IResource resource = resources[i];
+			for (IResource resource : resources) {
 				if (resource != null && resource.isLinked()) { // paranoia code, can not be null
 					return true;
 				}

@@ -295,8 +295,9 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 	private Object[] getRefactoringHistoryEntries(final RefactoringHistoryNode parent) {
 		final RefactoringDescriptorProxy[] proxies= getRefactoringDescriptorProxies();
 		final List<RefactoringHistoryEntry> list= new ArrayList<>(proxies.length);
-		for (int index= 0; index < proxies.length; index++)
-			list.add(new RefactoringHistoryEntry(parent, proxies[index]));
+		for (RefactoringDescriptorProxy proxy : proxies) {
+			list.add(new RefactoringHistoryEntry(parent, proxy));
+		}
 		return list.toArray();
 	}
 
@@ -499,8 +500,8 @@ public class RefactoringHistoryContentProvider implements ITreeContentProvider {
 				final long[][] structure= getRefactoringRootStructure(proxies[0].getTimeStamp());
 				int begin= 0;
 				long end= Long.MAX_VALUE;
-				for (int index= 0; index < proxies.length; index++) {
-					final long stamp= proxies[index].getTimeStamp();
+				for (RefactoringDescriptorProxy proxy : proxies) {
+					final long stamp= proxy.getTimeStamp();
 					for (int offset= begin; offset < structure.length; offset++) {
 						final long start= structure[offset][0];
 						if (stamp >= start && stamp <= end) {

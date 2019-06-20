@@ -251,8 +251,8 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			fMenu= new Menu(parent);
 			if (fFilterActions.length != 0) {
 				new ActionContributionItem(fShowAllAction).fill(fMenu, -1);
-				for (int i= 0; i < fFilterActions.length; i++) {
-					new ActionContributionItem(fFilterActions[i]).fill(fMenu, -1);
+				for (FilterAction fFilterAction : fFilterActions) {
+					new ActionContributionItem(fFilterAction).fill(fMenu, -1);
 				}
 				new MenuItem(fMenu, SWT.SEPARATOR);
 			}
@@ -663,13 +663,14 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	}
 
 	private boolean hasChanges(CompositeChange change) {
-		final Change[] children= change.getChildren();
-		for (int index= 0; index < children.length; index++) {
-			if (children[index] instanceof CompositeChange) {
-				if (hasChanges((CompositeChange) children[index]))
+		for (Change child : change.getChildren()) {
+			if (child instanceof CompositeChange) {
+				if (hasChanges((CompositeChange) child)) {
 					return true;
-			} else
+				}
+			} else {
 				return true;
+			}
 		}
 		return false;
 	}
@@ -684,14 +685,12 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 
 	private void collectGroupCategories(Set<GroupCategory> result, Change change) {
 		if (change instanceof TextEditBasedChange) {
-			TextEditBasedChangeGroup[] groups= ((TextEditBasedChange)change).getChangeGroups();
-			for (int i= 0; i < groups.length; i++) {
-				result.addAll(groups[i].getGroupCategorySet().asList());
+			for (TextEditBasedChangeGroup group : ((TextEditBasedChange)change).getChangeGroups()) {
+				result.addAll(group.getGroupCategorySet().asList());
 			}
 		} else if (change instanceof CompositeChange) {
-			Change[] children= ((CompositeChange)change).getChildren();
-			for (int i= 0; i < children.length; i++) {
-				collectGroupCategories(result, children[i]);
+			for (Change child : ((CompositeChange)change).getChildren()) {
+				collectGroupCategories(result, child);
 			}
 		}
 	}

@@ -455,9 +455,7 @@ public abstract class RefactoringWizard extends Wizard {
 		if (fDefaultPageTitle == null)
 			return;
 
-		IWizardPage[] pages= getPages();
-		for (int i= 0; i < pages.length; i++) {
-			IWizardPage page= pages[i];
+		for (IWizardPage page : getPages()) {
 			if (page.getTitle() == null)
 				page.setTitle(fDefaultPageTitle);
 		}
