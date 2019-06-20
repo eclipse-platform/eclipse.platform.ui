@@ -16,7 +16,6 @@
 package org.eclipse.ltk.core.refactoring;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
@@ -67,16 +66,18 @@ public abstract class TextEditBasedChange extends Change {
 		@Override
 		protected boolean considerEdit(TextEdit edit) {
 			if (fExcludes != null) {
-				for (int i= 0; i < fExcludes.length; i++) {
-					if (edit.equals(fExcludes[i]))
+				for (TextEdit fExclude : fExcludes) {
+					if (edit.equals(fExclude)) {
 						return false;
+					}
 				}
 				return true;
 			}
 			if (fIncludes != null) {
-				for (int i= 0; i < fIncludes.length; i++) {
-					if (edit.equals(fIncludes[i]))
+				for (TextEdit fInclude : fIncludes) {
+					if (edit.equals(fInclude)) {
 						return true;
+					}
 				}
 				return false;
 			}
@@ -84,16 +85,16 @@ public abstract class TextEditBasedChange extends Change {
 		}
 		private TextEdit[] flatten(TextEdit[] edits) {
 			List<TextEdit> result= new ArrayList<>(5);
-			for (int i= 0; i < edits.length; i++) {
-				flatten(result, edits[i]);
+			for (TextEdit edit : edits) {
+				flatten(result, edit);
 			}
 			return result.toArray(new TextEdit[result.size()]);
 		}
 		private void flatten(List<TextEdit> result, TextEdit edit) {
 			result.add(edit);
 			TextEdit[] children= edit.getChildren();
-			for (int i= 0; i < children.length; i++) {
-				flatten(result, children[i]);
+			for (TextEdit child : children) {
+				flatten(result, child);
 			}
 		}
 	}
@@ -188,8 +189,7 @@ public abstract class TextEditBasedChange extends Change {
 	public boolean hasOneGroupCategory(List<GroupCategory> groupCategories) {
 		if (fCombiedGroupCategories == null) {
 			fCombiedGroupCategories= GroupCategorySet.NONE;
-			for (Iterator<TextEditBasedChangeGroup> iter= fChangeGroups.iterator(); iter.hasNext();) {
-				TextEditBasedChangeGroup group= iter.next();
+			for (TextEditBasedChangeGroup group : fChangeGroups) {
 				fCombiedGroupCategories= GroupCategorySet.union(fCombiedGroupCategories, group.getGroupCategorySet());
 			}
 		}
@@ -230,7 +230,7 @@ public abstract class TextEditBasedChange extends Change {
 
 				int offset= document.getLineInformation(startLine).getOffset();
 				IRegion endLineRegion= document.getLineInformation(endLine);
-				int length = endLineRegion.getOffset() + endLineRegion.getLength() - offset;
+				int length= endLineRegion.getOffset() + endLineRegion.getLength() - offset;
 				return document.get(offset, length);
 
 			} else {
@@ -367,8 +367,8 @@ public abstract class TextEditBasedChange extends Change {
 		if (edits == null)
 			return null;
 		final List<TextEdit> result= new ArrayList<>(edits.length);
-		for (int i= 0; i < edits.length; i++) {
-			TextEdit edit= copier.getCopy(edits[i]);
+		for (TextEdit e : edits) {
+			TextEdit edit= copier.getCopy(e);
 			if (edit != null)
 				result.add(edit);
 		}
@@ -378,8 +378,7 @@ public abstract class TextEditBasedChange extends Change {
 	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
-		for (Iterator<TextEditBasedChangeGroup> iter= fChangeGroups.iterator(); iter.hasNext();) {
-			TextEditBasedChangeGroup element= iter.next();
+		for (TextEditBasedChangeGroup element : fChangeGroups) {
 			element.setEnabled(enabled);
 		}
 	}

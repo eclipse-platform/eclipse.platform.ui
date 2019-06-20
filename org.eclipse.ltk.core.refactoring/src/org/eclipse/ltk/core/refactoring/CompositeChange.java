@@ -121,8 +121,8 @@ public class CompositeChange extends Change {
 	 * @param changes the changes to add
 	 */
 	public void addAll(Change[] changes) {
-		for (int i= 0; i < changes.length; i++) {
-			add(changes[i]);
+		for (Change change : changes) {
+			add(change);
 		}
 	}
 
@@ -135,8 +135,7 @@ public class CompositeChange extends Change {
 	 */
 	public void merge(CompositeChange change) {
 		Change[] others= change.getChildren();
-		for (int i= 0; i < others.length; i++) {
-			Change other= others[i];
+		for (Change other : others) {
 			change.remove(other);
 			add(other);
 		}
@@ -214,8 +213,7 @@ public class CompositeChange extends Change {
 	@Override
 	public void initializeValidationData(IProgressMonitor pm) {
 		pm.beginTask("", fChanges.size()); //$NON-NLS-1$
-		for (Iterator<Change> iter= fChanges.iterator(); iter.hasNext();) {
-			Change change= iter.next();
+		for (Change change : fChanges) {
 			change.initializeValidationData(new SubProgressMonitor(pm, 1));
 			pm.worked(1);
 		}
@@ -471,8 +469,7 @@ public class CompositeChange extends Change {
 		if (fChanges.size() == 0)
 			return new Object[0];
 		List<Object> result= new ArrayList<>();
-		for (Iterator<Change> iter= fChanges.iterator(); iter.hasNext();) {
-			Change change= iter.next();
+		for (Change change : fChanges) {
 			Object[] affectedObjects= change.getAffectedObjects();
 			if (affectedObjects == null)
 				return null;

@@ -210,11 +210,9 @@ public class MultiStateUndoChange extends Change {
 			ContentStamp currentStamp= ContentStamps.get(fFile, document);
 			// perform the changes
 			LinkedList<UndoEdit> list= new LinkedList<>();
-			for (int index= 0; index < fUndos.length; index++) {
-				UndoEdit edit= fUndos[index];
+			for (UndoEdit edit : fUndos) {
 				UndoEdit redo= edit.apply(document, TextEdit.CREATE_UNDO);
 				list.addFirst(redo);
-
 			}
 
 			// try to restore the document content stamp

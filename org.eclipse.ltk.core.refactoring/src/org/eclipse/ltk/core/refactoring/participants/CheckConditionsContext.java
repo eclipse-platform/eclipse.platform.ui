@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -123,8 +122,7 @@ public class CheckConditionsContext {
 			}
 		});
 		pm.beginTask("", values.size()); //$NON-NLS-1$
-		for (Iterator<IConditionChecker> iter= values.iterator(); iter.hasNext();) {
-			IConditionChecker checker= iter.next();
+		for (IConditionChecker checker : values) {
 			result.merge(checker.check(new SubProgressMonitor(pm, 1)));
 			if (pm.isCanceled())
 				throw new OperationCanceledException();

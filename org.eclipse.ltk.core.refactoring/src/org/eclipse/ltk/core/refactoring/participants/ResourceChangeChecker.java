@@ -68,8 +68,8 @@ public class ResourceChangeChecker implements IConditionChecker {
 	 */
 	public static RefactoringStatus checkFilesToBeChanged(IFile[] files, IProgressMonitor monitor) throws CoreException {
 		ResourceChangeChecker checker= new ResourceChangeChecker();
-		for (int i= 0; i < files.length; i++) {
-			checker.getDeltaFactory().change(files[i]);
+		for (IFile file : files) {
+			checker.getDeltaFactory().change(file);
 		}
 		return checker.check(monitor);
 	}
@@ -138,8 +138,8 @@ public class ResourceChangeChecker implements IConditionChecker {
 		} else {
 			IStatus[] children= status.getChildren();
 			RefactoringStatus result= new RefactoringStatus();
-			for (int i= 0; i < children.length; i++) {
-				result.merge(createFrom(children[i]));
+			for (IStatus child : children) {
+				result.merge(createFrom(child));
 			}
 			return result;
 		}

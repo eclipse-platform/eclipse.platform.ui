@@ -329,8 +329,7 @@ public class ResourceModifications {
 		if (fDeltaDescriptions == null)
 			return false;
 		IPath fullPath= resource.getFullPath();
-		for (Iterator<DeltaDescription> iter= fDeltaDescriptions.iterator(); iter.hasNext();) {
-			DeltaDescription delta= iter.next();
+		for (DeltaDescription delta : fDeltaDescriptions) {
 			if (fullPath.equals(delta.getDestinationPath()))
 				return true;
 		}

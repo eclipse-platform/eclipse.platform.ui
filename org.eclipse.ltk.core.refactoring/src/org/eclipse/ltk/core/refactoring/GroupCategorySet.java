@@ -16,7 +16,6 @@ package org.eclipse.ltk.core.refactoring;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -110,9 +109,10 @@ public class GroupCategorySet {
 	public GroupCategorySet(GroupCategory[] categories) {
 		Assert.isNotNull(categories);
 		fContent= new ArrayList<>(categories.length);
-		for (int i= 0; i < categories.length; i++) {
-			if (!fContent.contains(categories[i]))
-				fContent.add(categories[i]);
+		for (GroupCategory categorie : categories) {
+			if (!fContent.contains(categorie)) {
+				fContent.add(categorie);
+			}
 		}
 	}
 
@@ -139,8 +139,7 @@ public class GroupCategorySet {
 	 *  contained in this set; otherwise <code>false</code>
 	 */
 	public boolean containsOneCategory(List<GroupCategory> categories) {
-		for (Iterator<GroupCategory> iter= categories.iterator(); iter.hasNext();) {
-			GroupCategory category= iter.next();
+		for (GroupCategory category : categories) {
 			if(contains(category))
 				return true;
 		}

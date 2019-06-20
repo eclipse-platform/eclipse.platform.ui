@@ -114,9 +114,10 @@ abstract class AbstractResourceUndoState extends ResourceUndoState {
 			resource.setResourceAttributes(resourceAttributes);
 		}
 		if (markerDescriptions != null) {
-			for (int i = 0; i < markerDescriptions.length; i++) {
-				if (markerDescriptions[i].resource.exists())
-					markerDescriptions[i].createMarker();
+			for (MarkerUndoState markerDescription : markerDescriptions) {
+				if (markerDescription.resource.exists()) {
+					markerDescription.createMarker();
+				}
 			}
 		}
 	}

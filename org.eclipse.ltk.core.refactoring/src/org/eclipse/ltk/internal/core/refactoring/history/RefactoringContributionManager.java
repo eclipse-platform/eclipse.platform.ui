@@ -162,8 +162,7 @@ public final class RefactoringContributionManager implements IRegistryChangeList
 			fContributionCache= new HashMap<>(32);
 			fIdCache= new HashMap<>(32);
 			final IConfigurationElement[] elements= Platform.getExtensionRegistry().getConfigurationElementsFor(RefactoringCore.ID_PLUGIN, REFACTORING_CONTRIBUTIONS_EXTENSION_POINT);
-			for (int index= 0; index < elements.length; index++) {
-				final IConfigurationElement element= elements[index];
+			for (IConfigurationElement element : elements) {
 				final String attributeId= element.getAttribute(ATTRIBUTE_ID);
 				final String point= RefactoringCore.ID_PLUGIN + "." + REFACTORING_CONTRIBUTIONS_EXTENSION_POINT; //$NON-NLS-1$
 				if (attributeId != null && !"".equals(attributeId)) { //$NON-NLS-1$

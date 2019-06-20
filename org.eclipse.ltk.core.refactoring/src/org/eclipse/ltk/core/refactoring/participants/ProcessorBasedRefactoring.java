@@ -236,8 +236,8 @@ public class ProcessorBasedRefactoring extends Refactoring {
 			fParticipants= EMPTY_PARTICIPANTS;
 		} else {
 			fParticipants= new ArrayList<>();
-			for (int i= 0; i < loadedParticipants.length; i++) {
-				fParticipants.add(loadedParticipants[i]);
+			for (RefactoringParticipant loadedParticipant : loadedParticipants) {
+				fParticipants.add(loadedParticipant);
 			}
 		}
 		if (result.hasFatalError()) {
@@ -442,8 +442,8 @@ public class ProcessorBasedRefactoring extends Refactoring {
 			}
 		} else if (change instanceof CompositeChange) {
 			Change[] children= ((CompositeChange) change).getChildren();
-			for (int i= 0; i < children.length; i++) {
-				addToTextChangeMap(children[i]);
+			for (Change child : children) {
+				addToTextChangeMap(child);
 			}
 		}
 	}

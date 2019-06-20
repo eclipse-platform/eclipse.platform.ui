@@ -198,9 +198,9 @@ public class FileUndoState extends AbstractResourceUndoState {
 	 * @return  best guess state
 	 */
 	private IFileState getMatchingFileState(IFileState[] states) {
-		for (int i= 0; i < states.length; i++) {
-			if (localTimeStamp == states[i].getModificationTime()) {
-				return states[i];
+		for (IFileState state : states) {
+			if (localTimeStamp == state.getModificationTime()) {
+				return state;
 			}
 		}
 		return states[0];

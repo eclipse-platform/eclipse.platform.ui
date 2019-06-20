@@ -124,8 +124,7 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 		try {
 			RefactoringStatus result= new RefactoringStatus();
 
-			for (int i= 0; i < fResources.length; i++) {
-				IResource resource= fResources[i];
+			for (IResource resource : fResources) {
 				if (!isSynchronizedExcludingLinkedResources(resource)) {
 					String pathLabel= BasicElementLabels.getPathLabel(resource.getFullPath(), false);
 					
@@ -162,13 +161,13 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 			
 			ResourceChangeChecker checker= context.getChecker(ResourceChangeChecker.class);
 			IResourceChangeDescriptionFactory deltaFactory= checker.getDeltaFactory();
-			for (int i= 0; i < fResources.length; i++) {
-				if (fResources[i].isPhantom()) {
-					result.addFatalError(Messages.format(RefactoringCoreMessages.DeleteResourcesProcessor_delete_error_phantom, BasicElementLabels.getPathLabel(fResources[i].getFullPath(), false)));
-				} else if (fDeleteContents && Resources.isReadOnly(fResources[i])) {
-					result.addFatalError(Messages.format(RefactoringCoreMessages.DeleteResourcesProcessor_delete_error_read_only, BasicElementLabels.getPathLabel(fResources[i].getFullPath(), false)));
+			for (IResource fResource : fResources) {
+				if (fResource.isPhantom()) {
+					result.addFatalError(Messages.format(RefactoringCoreMessages.DeleteResourcesProcessor_delete_error_phantom, BasicElementLabels.getPathLabel(fResource.getFullPath(), false)));
+				} else if (fDeleteContents && Resources.isReadOnly(fResource)) {
+					result.addFatalError(Messages.format(RefactoringCoreMessages.DeleteResourcesProcessor_delete_error_read_only, BasicElementLabels.getPathLabel(fResource.getFullPath(), false)));
 				} else {
-					deltaFactory.delete(fResources[i]);
+					deltaFactory.delete(fResource);
 				}
 			}
 			return result;
@@ -205,8 +204,7 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 	}
 
 	private void checkDirtyResources(final RefactoringStatus result) throws CoreException {
-		for (int i= 0; i < fResources.length; i++) {
-			IResource resource= fResources[i];
+		for (IResource resource : fResources) {
 			if (resource instanceof IProject && !((IProject) resource).isOpen())
 				continue;
 			resource.accept(new IResourceVisitor() {
@@ -242,9 +240,9 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 			RefactoringChangeDescriptor descriptor= new RefactoringChangeDescriptor(createDescriptor());
 			CompositeChange change= new CompositeChange(RefactoringCoreMessages.DeleteResourcesProcessor_change_name);
 			change.markAsSynthetic();
-			for (int i= 0; i < fResources.length; i++) {
+			for (IResource fResource : fResources) {
 				pm.worked(1);
-				DeleteResourceChange dc= new DeleteResourceChange(fResources[i].getFullPath(), true, fDeleteContents);
+				DeleteResourceChange dc= new DeleteResourceChange(fResource.getFullPath(), true, fDeleteContents);
 				dc.setDescriptor(descriptor);
 				change.add(dc);
 			}
@@ -290,8 +288,8 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 
 	@Override
 	public boolean isApplicable() throws CoreException {
-		for (int i= 0; i < fResources.length; i++) {
-			if (!canDelete(fResources[i])) {
+		for (IResource fResource : fResources) {
+			if (!canDelete(fResource)) {
 				return false;
 			}
 		}
@@ -311,8 +309,8 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 
 		final String[] affectedNatures= ResourceProcessors.computeAffectedNatures(fResources);
 		final DeleteArguments deleteArguments= new DeleteArguments(fDeleteContents);
-		for (int i= 0; i < fResources.length; i++) {
-			result.addAll(Arrays.asList(ParticipantManager.loadDeleteParticipants(status, this, fResources[i], deleteArguments, affectedNatures, sharedParticipants)));
+		for (IResource fResource : fResources) {
+			result.addAll(Arrays.asList(ParticipantManager.loadDeleteParticipants(status, this, fResource, deleteArguments, affectedNatures, sharedParticipants)));
 		}
 
 		return result.toArray(new RefactoringParticipant[result.size()]);
@@ -320,8 +318,8 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 
 	private static IResource[] removeDescendants(IResource[] resources) {
 		ArrayList<IResource> result= new ArrayList<>();
-		for (int i= 0; i < resources.length; i++) {
-			addToList(result, resources[i]);
+		for (IResource resource : resources) {
+			addToList(result, resource);
 		}
 		return result.toArray(new IResource[result.size()]);
 	}
@@ -342,7 +340,7 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 	}
 
 	public RefactoringStatus setResources(IResource[] resources, IProgressMonitor pm) throws OperationCanceledException, CoreException {
-		this.fResources = resources;
+		this.fResources= resources;
 		return checkInitialConditions(pm);
 	}
 

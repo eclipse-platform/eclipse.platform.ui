@@ -216,8 +216,8 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 		final IRefactoringHistoryService service= RefactoringHistoryService.getInstance();
 		try {
 			service.connect();
-			for (int index= 0; index < proxies.length; index++) {
-				final RefactoringDescriptor descriptor= proxies[index].requestDescriptor(new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+			for (RefactoringDescriptorProxy proxie : proxies) {
+				final RefactoringDescriptor descriptor= proxie.requestDescriptor(new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 				if (descriptor != null) {
 					RefactoringContext context= null;
 					RefactoringStatus status= new RefactoringStatus();

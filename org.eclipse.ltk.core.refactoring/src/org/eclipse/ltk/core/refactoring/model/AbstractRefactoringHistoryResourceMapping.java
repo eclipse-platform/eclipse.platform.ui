@@ -85,8 +85,8 @@ public abstract class AbstractRefactoringHistoryResourceMapping extends Resource
 		final Set<IProject> set= new HashSet<>();
 		final IWorkspaceRoot root= ResourcesPlugin.getWorkspace().getRoot();
 		final RefactoringDescriptorProxy[] proxies= fRefactoringHistory.getDescriptors();
-		for (int index= 0; index < proxies.length; index++) {
-			final String name= proxies[index].getProject();
+		for (RefactoringDescriptorProxy proxie : proxies) {
+			final String name= proxie.getProject();
 			if (name != null && !"".equals(name)) //$NON-NLS-1$
 				set.add(root.getProject(name));
 		}

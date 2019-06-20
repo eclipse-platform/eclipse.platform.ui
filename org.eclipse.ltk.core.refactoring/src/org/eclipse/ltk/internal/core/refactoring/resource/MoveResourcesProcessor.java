@@ -134,14 +134,13 @@ public class MoveResourcesProcessor extends MoveProcessor {
 			ResourceChangeChecker checker= context.getChecker(ResourceChangeChecker.class);
 			IResourceChangeDescriptionFactory deltaFactory= checker.getDeltaFactory();
 
-			for (int i= 0; i < fResourcesToMove.length; i++) {
-				IResource resource= fResourcesToMove[i];
+			for (IResource resource : fResourcesToMove) {
 				IResource newResource= fDestination.findMember(resource.getName());
 				if (newResource != null) {
 					status.addWarning(Messages.format(RefactoringCoreMessages.MoveResourcesProcessor_warning_destination_already_exists, BasicElementLabels.getPathLabel(newResource.getFullPath(), false)));
 					deltaFactory.delete(newResource);
 				}
-				ResourceModifications.buildMoveDelta(deltaFactory, fResourcesToMove[i], fMoveArguments);
+				ResourceModifications.buildMoveDelta(deltaFactory, resource, fMoveArguments);
 			}
 			return status;
 		} finally {
@@ -166,8 +165,8 @@ public class MoveResourcesProcessor extends MoveProcessor {
 		}
 
 		IPath destinationPath= destination.getFullPath();
-		for (int i= 0; i < fResourcesToMove.length; i++) {
-			IPath path= fResourcesToMove[i].getFullPath();
+		for (IResource r : fResourcesToMove) {
+			IPath path= r.getFullPath();
 			if (path.isPrefixOf(destinationPath) || path.equals(destinationPath)) {
 				return RefactoringStatus.createFatalErrorStatus(Messages.format(RefactoringCoreMessages.MoveResourceProcessor_destination_inside_moved, BasicElementLabels.getPathLabel(path, false)));
 			}
@@ -217,8 +216,8 @@ public class MoveResourcesProcessor extends MoveProcessor {
 			compositeChange.markAsSynthetic();
 
 			RefactoringChangeDescriptor descriptor= new RefactoringChangeDescriptor(createDescriptor());
-			for (int i= 0; i < fResourcesToMove.length; i++) {
-				MoveResourceChange moveChange= new MoveResourceChange(fResourcesToMove[i], fDestination);
+			for (IResource r : fResourcesToMove) {
+				MoveResourceChange moveChange= new MoveResourceChange(r, fDestination);
 				moveChange.setDescriptor(descriptor);
 				compositeChange.add(moveChange);
 			}
@@ -245,8 +244,8 @@ public class MoveResourcesProcessor extends MoveProcessor {
 
 	@Override
 	public boolean isApplicable() {
-		for (int i= 0; i < fResourcesToMove.length; i++) {
-			if (!canMove(fResourcesToMove[i])) {
+		for (IResource r : fResourcesToMove) {
+			if (!canMove(r)) {
 				return false;
 			}
 		}
@@ -262,8 +261,8 @@ public class MoveResourcesProcessor extends MoveProcessor {
 		String[] affectedNatures= ResourceProcessors.computeAffectedNatures(fResourcesToMove);
 
 		List<MoveParticipant> result= new ArrayList<>();
-		for (int i= 0; i < fResourcesToMove.length; i++) {
-			MoveParticipant[] participants= ParticipantManager.loadMoveParticipants(status, this, fResourcesToMove[i], fMoveArguments, null, affectedNatures, shared);
+		for (IResource r : fResourcesToMove) {
+			MoveParticipant[] participants= ParticipantManager.loadMoveParticipants(status, this, r, fMoveArguments, null, affectedNatures, shared);
 			result.addAll(Arrays.asList(participants));
 		}
 		return result.toArray(new RefactoringParticipant[result.size()]);

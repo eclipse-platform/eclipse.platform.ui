@@ -159,15 +159,16 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		Assert.isTrue(flags > RefactoringDescriptor.NONE);
 		try {
 			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, proxies.length);
-			for (int offset= 0; offset < proxies.length; offset++) {
-				final RefactoringDescriptor descriptor= proxies[offset].requestDescriptor(new SubProgressMonitor(monitor, 1));
+			for (RefactoringDescriptorProxy proxy : proxies) {
+				final RefactoringDescriptor descriptor= proxy.requestDescriptor(new SubProgressMonitor(monitor, 1));
 				if (descriptor != null) {
 					final int filter= descriptor.getFlags();
 					if ((filter | flags) == filter) {
-						if (resolve)
+						if (resolve) {
 							set.add(new RefactoringDescriptorProxyAdapter(descriptor));
-						else
-							set.add(proxies[offset]);
+						} else {
+							set.add(proxy);
+						}
 					}
 				}
 			}
@@ -410,8 +411,8 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		try {
 			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_deleting_refactorings, proxies.length + 300);
 			final Map<String, Collection<RefactoringDescriptorProxy>> projects= new HashMap<>();
-			for (int index= 0; index < proxies.length; index++) {
-				String project= proxies[index].getProject();
+			for (RefactoringDescriptorProxy proxy : proxies) {
+				String project= proxy.getProject();
 				if (project == null || "".equals(project)) //$NON-NLS-1$
 					project= RefactoringHistoryService.NAME_WORKSPACE_PROJECT;
 				Collection<RefactoringDescriptorProxy> collection= projects.get(project);
@@ -419,7 +420,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 					collection= new ArrayList<>();
 					projects.put(project, collection);
 				}
-				collection.add(proxies[index]);
+				collection.add(proxy);
 				monitor.worked(1);
 			}
 			final SubProgressMonitor subMonitor= new SubProgressMonitor(monitor, 300);
@@ -477,16 +478,18 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		try {
 			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_deleting_refactorings, proxies.length + 300);
 			final Set<RefactoringDescriptorProxy> set= new HashSet<>(proxies.length);
-			for (int index= 0; index < proxies.length; index++) {
-				if (query.proceed(proxies[index]).isOK())
-					set.add(proxies[index]);
+			for (RefactoringDescriptorProxy proxy : proxies) {
+				if (query.proceed(proxy).isOK()) {
+					set.add(proxy);
+				}
 				monitor.worked(1);
 			}
 			if (!set.isEmpty()) {
 				final RefactoringDescriptorProxy[] delete= set.toArray(new RefactoringDescriptorProxy[set.size()]);
 				deleteRefactoringDescriptors(delete, new SubProgressMonitor(monitor, 300));
-				for (int index= 0; index < delete.length; index++)
-					fireRefactoringHistoryEvent(delete[index], RefactoringHistoryEvent.DELETED);
+				for (RefactoringDescriptorProxy d : delete) {
+					fireRefactoringHistoryEvent(d, RefactoringHistoryEvent.DELETED);
+				}
 			}
 		} finally {
 			monitor.done();
@@ -674,20 +677,19 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 3 * projects.length);
 			final Set<RefactoringDescriptorProxy> set= new HashSet<>();
 			if (flags > RefactoringDescriptor.NONE) {
-				for (int index= 0; index < projects.length; index++) {
-					final IProject project= projects[index];
+				for (IProject project : projects) {
 					if (project.isAccessible()) {
 						final RefactoringDescriptorProxy[] proxies= getProjectHistory(project, start, end, flags, new SubProgressMonitor(monitor, 1)).getDescriptors();
 						filterRefactoringDescriptors(proxies, set, false, flags, new SubProgressMonitor(monitor, 2));
 					}
 				}
 			} else {
-				for (int index= 0; index < projects.length; index++) {
-					final IProject project= projects[index];
+				for (IProject project : projects) {
 					if (project.isAccessible()) {
 						final RefactoringDescriptorProxy[] proxies= getProjectHistory(project, start, end, RefactoringDescriptor.NONE, new SubProgressMonitor(monitor, 3)).getDescriptors();
-						for (int offset= 0; offset < proxies.length; offset++)
-							set.add(proxies[offset]);
+						for (RefactoringDescriptorProxy proxy : proxies) {
+							set.add(proxy);
+						}
 					}
 				}
 			}
@@ -745,10 +747,11 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 		if (descriptor != null) {
 			final RefactoringDescriptor[] descriptors= descriptor.getRefactorings();
 			if (flags > RefactoringDescriptor.NONE) {
-				for (int index= 0; index < descriptors.length; index++) {
-					final int current= descriptors[index].getFlags();
-					if ((current | flags) == current)
-						list.add(descriptors[index]);
+				for (RefactoringDescriptor d : descriptors) {
+					final int current= d.getFlags();
+					if ((current | flags) == current) {
+						list.add(d);
+					}
 				}
 			} else
 				list.addAll(Arrays.asList(descriptors));
@@ -821,8 +824,8 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			monitor.beginTask("", 100 * proxies.length); //$NON-NLS-1$
 			connect();
 			final List<RefactoringDescriptor> list= new ArrayList<>(proxies.length);
-			for (int index= 0; index < proxies.length; index++) {
-				final RefactoringDescriptor descriptor= proxies[index].requestDescriptor(new SubProgressMonitor(monitor, 100));
+			for (RefactoringDescriptorProxy proxy : proxies) {
+				final RefactoringDescriptor descriptor= proxy.requestDescriptor(new SubProgressMonitor(monitor, 100));
 				if (descriptor != null) {
 					final int current= descriptor.getFlags();
 					if ((current | flags) == current)

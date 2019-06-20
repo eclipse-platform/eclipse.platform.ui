@@ -187,8 +187,7 @@ public class RefactoringStatus {
 	 */
 	public RefactoringStatusEntry getEntryMatchingCode(String pluginId, int code) {
 		Assert.isTrue(pluginId != null);
-		for (Iterator<RefactoringStatusEntry> iter= fEntries.iterator(); iter.hasNext(); ) {
-			RefactoringStatusEntry entry= iter.next();
+		for (RefactoringStatusEntry entry : fEntries) {
 			if (pluginId.equals(entry.getPluginId()) && entry.getCode() == code)
 				return entry;
 		}
@@ -423,8 +422,8 @@ public class RefactoringStatus {
 		} else {
 			IStatus[] children= status.getChildren();
 			RefactoringStatus result= new RefactoringStatus();
-			for (int i= 0; i < children.length; i++) {
-				result.merge(RefactoringStatus.create(children[i]));
+			for (IStatus child : children) {
+				result.merge(RefactoringStatus.create(child));
 			}
 			return result;
 		}
