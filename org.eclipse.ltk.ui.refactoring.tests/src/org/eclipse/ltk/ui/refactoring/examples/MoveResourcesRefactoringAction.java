@@ -75,10 +75,11 @@ public class MoveResourcesRefactoringAction extends Action implements IActionDel
 		}
 	}
 
-	private static boolean isMoveAvailable(IResource[] resource) {
-		for (int i= 0; i < resource.length; i++) {
-			if (!resource[i].exists())
+	private static boolean isMoveAvailable(IResource[] resources) {
+		for (IResource resource : resources) {
+			if (!resource.exists()) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -93,11 +94,9 @@ public class MoveResourcesRefactoringAction extends Action implements IActionDel
 	}
 
 	private static IResource[] evaluateResources(IStructuredSelection sel) {
-		Object[] objects= sel.toArray();
 		ArrayList<IResource> res= new ArrayList<>();
 		IContainer parent= null;
-		for (int i= 0; i < objects.length; i++) {
-			Object curr= objects[i];
+		for (Object curr : sel.toArray()) {
 			if (curr instanceof IFile || curr instanceof IFolder) {
 				IResource resource= (IResource) curr;
 				if (parent == null) {

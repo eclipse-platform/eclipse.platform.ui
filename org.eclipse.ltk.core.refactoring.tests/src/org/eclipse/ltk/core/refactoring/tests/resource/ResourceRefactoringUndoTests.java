@@ -132,8 +132,8 @@ public class ResourceRefactoringUndoTests extends TestCase {
 		fProject.delete();
 		final IFileStore[] toDelete= storesToDelete.toArray(new IFileStore[storesToDelete.size()]);
 		storesToDelete.clear();
-		for (int i= 0; i < toDelete.length; i++) {
-			clear(toDelete[i]);
+		for (IFileStore d : toDelete) {
+			clear(d);
 		}
 	}
 
@@ -518,8 +518,8 @@ public class ResourceRefactoringUndoTests extends TestCase {
 			if (!contentMatch) {
 				return false;
 			}
-			for (int i= 0; i < markerSnapshots.length; i++) {
-				if (!markerSnapshots[i].existsOn(resource)) {
+			for (MarkerSnapshot markerSnapshot : markerSnapshots) {
+				if (!markerSnapshot.existsOn(resource)) {
 					return false;
 				}
 			}
@@ -556,9 +556,9 @@ public class ResourceRefactoringUndoTests extends TestCase {
 					return false;
 				}
 			}
-			for (int i= 0; i < memberSnapshots.length; i++) {
-				if (!fileNameExcludes.contains(memberSnapshots[i].name)) {
-					if (!memberSnapshots[i].isValid(folder)) {
+			for (ResourceSnapshot memberSnapshot : memberSnapshots) {
+				if (!fileNameExcludes.contains(memberSnapshot.name)) {
+					if (!memberSnapshot.isValid(folder)) {
 						return false;
 					}
 				}
@@ -580,9 +580,8 @@ public class ResourceRefactoringUndoTests extends TestCase {
 		boolean existsOn(IResource resource) throws CoreException {
 			// comparison is based on equality of attributes, since id will
 			// change on create/delete/recreate sequence
-			IMarker[] markers= resource.findMarkers(type, false, IResource.DEPTH_ZERO);
-			for (int i= 0; i < markers.length; i++) {
-				if (markers[i].getAttributes().equals(attributes)) {
+			for (IMarker marker : resource.findMarkers(type, false, IResource.DEPTH_ZERO)) {
+				if (marker.getAttributes().equals(attributes)) {
 					return true;
 				}
 			}
@@ -623,9 +622,9 @@ public class ResourceRefactoringUndoTests extends TestCase {
 				project.open(null);
 			}
 
-			for (int i= 0; i < memberSnapshots.length; i++) {
-				if (!fileNameExcludes.contains(memberSnapshots[i].name)) {
-					if (!memberSnapshots[i].isValid(resource)) {
+			for (ResourceSnapshot memberSnapshot : memberSnapshots) {
+				if (!fileNameExcludes.contains(memberSnapshot.name)) {
+					if (!memberSnapshot.isValid(resource)) {
 						return false;
 					}
 				}

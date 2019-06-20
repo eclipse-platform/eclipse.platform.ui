@@ -78,10 +78,11 @@ public class DeleteResourcesRefactoringAction extends Action implements IActionD
 		}
 	}
 
-	private static boolean isDeleteAvailable(IResource[] resource) {
-		for (int i= 0; i < resource.length; i++) {
-			if (!resource[i].exists())
+	private static boolean isDeleteAvailable(IResource[] resources) {
+		for (IResource resource : resources) {
+			if (!resource.exists()) {
 				return false;
+			}
 		}
 		return true;
 	}
@@ -97,9 +98,7 @@ public class DeleteResourcesRefactoringAction extends Action implements IActionD
 
 	private static IResource[] evaluateResources(IStructuredSelection sel) {
 		ArrayList<IResource> res= new ArrayList<>();
-		Object[] objects= sel.toArray();
-		for (int i= 0; i < objects.length; i++) {
-			Object curr= objects[i];
+		for (Object curr : sel.toArray()) {
 			if (curr instanceof IFile || curr instanceof IFolder) {
 				if (!addFileOrFolder(res, (IResource) curr)) {
 					return null;

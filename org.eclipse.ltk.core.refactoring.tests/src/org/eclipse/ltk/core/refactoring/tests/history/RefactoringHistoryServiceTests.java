@@ -244,8 +244,9 @@ public class RefactoringHistoryServiceTests extends TestCase {
 		RefactoringHistory workspaceHistory= service.getWorkspaceHistory(null);
 		final RefactoringDescriptorProxy[] descriptors= workspaceHistory.getDescriptors();
 		assertEquals("Refactoring history has wrong size:", COMMON_NUMBER, descriptors.length);
-		for (int index= 0; index < descriptors.length; index++)
-			assertTrue("Workspace refactoring should have no project attribute set:\n\n" + descriptors[index].toString(), descriptors[index].getProject() == null);
+		for (RefactoringDescriptorProxy descriptor : descriptors) {
+			assertTrue("Workspace refactoring should have no project attribute set:\n\n" + descriptor.toString(), descriptor.getProject() == null);
+		}
 	}
 
 	public void testDeleteProjectHistory1() throws Exception {
@@ -253,11 +254,11 @@ public class RefactoringHistoryServiceTests extends TestCase {
 		final IProject project= fProject.getProject();
 		final RefactoringHistoryService service= RefactoringHistoryService.getInstance();
 		RefactoringHistory workspaceHistory= service.getWorkspaceHistory(null);
-		RefactoringDescriptorProxy[] descriptors= workspaceHistory.getDescriptors();
 		Set<RefactoringDescriptorProxy> set= new HashSet<>();
-		for (int index= 0; index < descriptors.length; index++) {
-			if (descriptors[index].getProject() == null)
-				set.add(descriptors[index]);
+		for (RefactoringDescriptorProxy descriptor : workspaceHistory.getDescriptors()) {
+			if (descriptor.getProject() == null) {
+				set.add(descriptor);
+			}
 		}
 		service.deleteRefactoringDescriptors(set.toArray(new RefactoringDescriptorProxy[set.size()]), null);
 		workspaceHistory= service.getWorkspaceHistory(null);
