@@ -271,9 +271,10 @@ public class JobInfo extends JobTreeElement {
 		if (isCanceled()) {
 			return NLS.bind(ProgressMessages.JobInfo_Cancelled, (new Object[] { getJob().getName() }));
 		}
-		if (isBlocked()) {
+		IStatus blockedStatusLocal = getBlockedStatus();
+		if (blockedStatusLocal != null) {
 			return NLS.bind(ProgressMessages.JobInfo_Blocked, (new Object[] { getJob().getName(),
-			blockedStatus.getMessage() }));
+					blockedStatusLocal.getMessage() }));
 		}
 		if (getJob().getState() == Job.RUNNING) {
 			TaskInfo info = getTaskInfo();
