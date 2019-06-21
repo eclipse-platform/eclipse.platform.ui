@@ -24,7 +24,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 
 public class PropertyHelper {
-	private static final Map<String, Method> NOTNESTEDCACHE = new HashMap<String, Method>();
+	private static final Map<String, Method> NOTNESTEDCACHE = new HashMap<>();
 
 	public static Object getProperty(Object bean, String attr)
 			throws Exception {

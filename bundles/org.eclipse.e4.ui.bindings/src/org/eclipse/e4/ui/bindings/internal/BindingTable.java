@@ -124,12 +124,12 @@ public class BindingTable {
 	public static final BindingComparator BEST_SEQUENCE = new BindingComparator();
 
 	private Context tableId;
-	private ArrayList<Binding> bindings = new ArrayList<Binding>();
-	private Map<TriggerSequence, Binding> bindingsByTrigger = new HashMap<TriggerSequence, Binding>();
-	private Map<ParameterizedCommand, ArrayList<Binding>> bindingsByCommand = new HashMap<ParameterizedCommand, ArrayList<Binding>>();
-	private Map<TriggerSequence, ArrayList<Binding>> bindingsByPrefix = new HashMap<TriggerSequence, ArrayList<Binding>>();
-	private Map<TriggerSequence, ArrayList<Binding>> conflicts = new HashMap<TriggerSequence, ArrayList<Binding>>();
-	private Map<TriggerSequence, ArrayList<Binding>> orderedBindingsByTrigger = new HashMap<TriggerSequence, ArrayList<Binding>>();
+	private ArrayList<Binding> bindings = new ArrayList<>();
+	private Map<TriggerSequence, Binding> bindingsByTrigger = new HashMap<>();
+	private Map<ParameterizedCommand, ArrayList<Binding>> bindingsByCommand = new HashMap<>();
+	private Map<TriggerSequence, ArrayList<Binding>> bindingsByPrefix = new HashMap<>();
+	private Map<TriggerSequence, ArrayList<Binding>> conflicts = new HashMap<>();
+	private Map<TriggerSequence, ArrayList<Binding>> orderedBindingsByTrigger = new HashMap<>();
 
 	/**
 	 * @param context
@@ -147,7 +147,7 @@ public class BindingTable {
 	}
 
 	public Collection<Binding> getConflicts() {
-		Collection<Binding> conflictsList = new ArrayList<Binding>();
+		Collection<Binding> conflictsList = new ArrayList<>();
 		for (ArrayList<Binding> conflictsForTrigger : conflicts.values()) {
 			if (conflictsForTrigger != null) {
 				conflictsList.addAll(conflictsForTrigger);
@@ -171,7 +171,7 @@ public class BindingTable {
 		if (bindingList == null || bindingList.isEmpty()) {
 			if (possibleConflict != null) {
 				if (bindingList == null) {
-					bindingList = new ArrayList<Binding>();
+					bindingList = new ArrayList<>();
 					orderedBindingsByTrigger.put(binding.getTriggerSequence(), bindingList);
 				}
 				bindingList.add(binding);
@@ -198,7 +198,7 @@ public class BindingTable {
 
 		ArrayList<Binding> sequences = bindingsByCommand.get(binding.getParameterizedCommand());
 		if (sequences == null) {
-			sequences = new ArrayList<Binding>();
+			sequences = new ArrayList<>();
 			bindingsByCommand.put(binding.getParameterizedCommand(), sequences);
 		}
 		sequences.add(binding);
@@ -208,7 +208,7 @@ public class BindingTable {
 		for (int i = 1; i < prefs.length; i++) {
 			ArrayList<Binding> bindings = bindingsByPrefix.get(prefs[i]);
 			if (bindings == null) {
-				bindings = new ArrayList<Binding>();
+				bindings = new ArrayList<>();
 				bindingsByPrefix.put(prefs[i], bindings);
 			}
 			bindings.add(binding);
@@ -277,7 +277,7 @@ public class BindingTable {
 				if (rc == 0) {
 					ArrayList<Binding> conflictList = conflicts.get(sequence);
 					if (conflictList == null) {
-						conflictList = new ArrayList<Binding>();
+						conflictList = new ArrayList<>();
 						conflicts.put(sequence, conflictList);
 					} else {
 						conflictList.clear();

@@ -47,7 +47,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 public class GradientBackgroundListener implements Listener {
-	private static Map<Control, GradientBackgroundListener> handlers = new HashMap<Control, GradientBackgroundListener>();
+	private static Map<Control, GradientBackgroundListener> handlers = new HashMap<>();
 
 	private Gradient grad;
 	private final Control control;
@@ -121,7 +121,7 @@ public class GradientBackgroundListener implements Listener {
 		 * just a slice for the control's height that is then repeated.
 		 */
 		if (grad.isRadial()) {
-			List<java.awt.Color> colors = new ArrayList<java.awt.Color>();
+			List<java.awt.Color> colors = new ArrayList<>();
 			for (Object rgbObj : grad.getRGBs()) {
 				if (rgbObj instanceof RGBA) {
 					RGBA rgba = (RGBA) rgbObj;
@@ -151,7 +151,7 @@ public class GradientBackgroundListener implements Listener {
 			int y = verticalGradient ? size.y : 2;
 			gradientImage = new Image(control.getDisplay(), x, y);
 			GC gc = new GC(gradientImage);
-			List<Color> colors = new ArrayList<Color>();
+			List<Color> colors = new ArrayList<>();
 			for (Object rgbObj : grad.getRGBs()) {
 				if (rgbObj instanceof RGBA) {
 					RGBA rgba = (RGBA) rgbObj;

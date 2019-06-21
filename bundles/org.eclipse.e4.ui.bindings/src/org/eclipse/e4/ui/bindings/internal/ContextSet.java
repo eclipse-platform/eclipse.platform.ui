@@ -75,7 +75,7 @@ public class ContextSet {
 	private List<Context> contexts;
 
 	public ContextSet(Collection<Context> c) {
-		contexts = new ArrayList<Context>(c);
+		contexts = new ArrayList<>(c);
 		Collections.sort(contexts, CONTEXT_COMP);
 	}
 

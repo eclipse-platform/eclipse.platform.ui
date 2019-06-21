@@ -124,7 +124,7 @@ public class SWTResourcesRegistry extends AbstractResourcesRegistry {
 	}
 
 	public List<Object> removeResourcesByKeyTypeAndType(Class<?> keyType, Class<?>... types) {
-		List<Object> removedResources = new ArrayList<Object>();
+		List<Object> removedResources = new ArrayList<>();
 		for (Class<?> cls : types) {
 			Iterator<Entry<Object, Object>> iter = getCacheByType(cls).entrySet().iterator();
 			while (iter.hasNext()) {

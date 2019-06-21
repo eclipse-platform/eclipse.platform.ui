@@ -56,7 +56,7 @@ public class HandlerServiceImpl implements EHandlerService {
 	public static final String STATIC_CONTEXT = "HandlerServiceImpl.staticContext"; //$NON-NLS-1$
 	public static final String HANDLER_EXCEPTION = "HandlerServiceImpl.exception"; //$NON-NLS-1$
 
-	private static LinkedList<ExecutionContexts> contextStack = new LinkedList<ExecutionContexts>();
+	private static LinkedList<ExecutionContexts> contextStack = new LinkedList<>();
 
 	public static ContextFunction handlerGenerator = null;
 

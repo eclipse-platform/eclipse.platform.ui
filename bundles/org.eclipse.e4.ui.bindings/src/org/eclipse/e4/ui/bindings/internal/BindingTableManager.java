@@ -79,7 +79,7 @@ public class BindingTableManager {
 	// we're just going through each binding table, and returning a
 	// flat list of bindings here
 	public Collection<Binding> getActiveBindings() {
-		ArrayList<Binding> bindings = new ArrayList<Binding>();
+		ArrayList<Binding> bindings = new ArrayList<>();
 		for (Context ctx : definedTables.getContexts()) {
 			BindingTable table = getTable(ctx.getId());
 			if (table != null) {
@@ -95,7 +95,7 @@ public class BindingTableManager {
 
 	public Collection<Binding> getConflictsFor(ContextSet contextSet,
 			TriggerSequence triggerSequence) {
-		Collection<Binding> matches = new ArrayList<Binding>();
+		Collection<Binding> matches = new ArrayList<>();
 		for (Context ctx : contextSet.getContexts()) {
 			BindingTable table = getTable(ctx.getId());
 			if (table != null) {
@@ -109,7 +109,7 @@ public class BindingTableManager {
 	}
 
 	public Collection<Binding> getAllConflicts() {
-		Collection<Binding> conflictsList = new ArrayList<Binding>();
+		Collection<Binding> conflictsList = new ArrayList<>();
 		for (Context ctx : definedTables.getContexts()) {
 			BindingTable table = getTable(ctx.getId());
 			if (table != null) {
@@ -174,7 +174,7 @@ public class BindingTableManager {
 
 	public Collection<Binding> getSequencesFor(ContextSet contextSet,
 			ParameterizedCommand parameterizedCommand) {
-		ArrayList<Binding> bindings = new ArrayList<Binding>();
+		ArrayList<Binding> bindings = new ArrayList<>();
 		List<Context> contexts = contextSet.getContexts();
 		ListIterator<Context> it = contexts.listIterator(contexts.size());
 		while (it.hasPrevious()) {
@@ -192,7 +192,7 @@ public class BindingTableManager {
 	}
 
 	public Collection<Binding> getBindingsFor(ContextSet contextSet, ParameterizedCommand cmd) {
-		Collection<Binding> bindings = new ArrayList<Binding>();
+		Collection<Binding> bindings = new ArrayList<>();
 		for (Context ctx : contextSet.getContexts()) {
 			BindingTable table = getTable(ctx.getId());
 			if (table != null) {
@@ -221,7 +221,7 @@ public class BindingTableManager {
 	}
 
 	public Collection<Binding> getPartialMatches(ContextSet contextSet, TriggerSequence sequence) {
-		ArrayList<Binding> bindings = new ArrayList<Binding>();
+		ArrayList<Binding> bindings = new ArrayList<>();
 		List<Context> contexts = contextSet.getContexts();
 		ListIterator<Context> it = contexts.listIterator(contexts.size());
 		while (it.hasPrevious()) {

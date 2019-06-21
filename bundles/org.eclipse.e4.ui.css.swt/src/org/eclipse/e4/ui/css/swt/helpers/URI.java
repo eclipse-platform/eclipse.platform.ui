@@ -285,7 +285,7 @@ public final class URI
 	// Static initializer for archiveSchemes.
 	static
 	{
-		Set<String> set = new HashSet<String>();
+		Set<String> set = new HashSet<>();
 		String propertyValue = System.getProperty("org.eclipse.emf.common.util.URI.archiveSchemes");
 
 		if (propertyValue == null)
@@ -767,7 +767,7 @@ public final class URI
 
 		if (segmentsRemain(uri, i))
 		{
-			List<String> segmentList = new ArrayList<String>();
+			List<String> segmentList = new ArrayList<>();
 
 			while (segmentsRemain(uri, i))
 			{

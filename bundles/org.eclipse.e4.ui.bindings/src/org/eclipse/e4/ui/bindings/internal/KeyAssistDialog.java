@@ -69,7 +69,7 @@ public class KeyAssistDialog extends PopupDialog {
 	/**
 	 * The ordered list of command identifiers corresponding to the table.
 	 */
-	private List<Binding> bindings = new ArrayList<Binding>();
+	private List<Binding> bindings = new ArrayList<>();
 
 	/**
 	 * The table containing of the possible completions. This value is <code>null</code> until the

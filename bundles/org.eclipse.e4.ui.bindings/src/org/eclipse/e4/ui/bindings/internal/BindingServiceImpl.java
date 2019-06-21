@@ -173,7 +173,7 @@ public class BindingServiceImpl implements EBindingService {
 			contextSet = ContextSet.EMPTY;
 			return;
 		}
-		ArrayList<Context> contexts = new ArrayList<Context>();
+		ArrayList<Context> contexts = new ArrayList<>();
 		for (String id : set) {
 			contexts.add(contextManager.getContext(id));
 		}

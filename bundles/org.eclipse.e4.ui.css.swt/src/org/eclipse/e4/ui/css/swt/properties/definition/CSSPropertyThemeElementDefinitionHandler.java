@@ -42,7 +42,7 @@ public class CSSPropertyThemeElementDefinitionHandler implements ICSSPropertyHan
 
 	private static final String MESSAGE_QUERY_PARAM = "message";
 
-	private Map<Long, ResourceBundle> bundleToResourceBundles = new WeakHashMap<Long, ResourceBundle>();
+	private Map<Long, ResourceBundle> bundleToResourceBundles = new WeakHashMap<>();
 
 	@Override
 	public boolean applyCSSProperty(Object element, String property,

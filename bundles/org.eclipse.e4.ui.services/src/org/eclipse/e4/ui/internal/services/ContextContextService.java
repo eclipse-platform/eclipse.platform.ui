@@ -49,7 +49,7 @@ public class ContextContextService implements EContextService {
 		@SuppressWarnings("unchecked")
 		LinkedList<String> locals = (LinkedList<String>) eclipseContext.getLocal(LOCAL_CONTEXTS);
 		if (locals == null) {
-			locals = new LinkedList<String>();
+			locals = new LinkedList<>();
 			locals.add(id);
 			eclipseContext.set(LOCAL_CONTEXTS, locals);
 		} else {
@@ -94,7 +94,7 @@ public class ContextContextService implements EContextService {
 		@SuppressWarnings("unchecked")
 		LinkedList<String> locals = (LinkedList<String>) eclipseContext.getLocal(DEFERED_ACTIVATES);
 		if (locals == null) {
-			locals = new LinkedList<String>();
+			locals = new LinkedList<>();
 			eclipseContext.set(DEFERED_ACTIVATES, locals);
 		}
 		locals.add(id);
@@ -110,7 +110,7 @@ public class ContextContextService implements EContextService {
 		@SuppressWarnings("unchecked")
 		LinkedList<String> locals = (LinkedList<String>) eclipseContext.getLocal(LOCAL_CONTEXTS);
 		if (locals == null) {
-			locals = new LinkedList<String>();
+			locals = new LinkedList<>();
 		}
 		@SuppressWarnings("unchecked")
 		LinkedList<String> activates = (LinkedList<String>) eclipseContext.getLocal(DEFERED_ACTIVATES);

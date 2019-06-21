@@ -145,7 +145,7 @@ public class CTabFolderElement extends CompositeElement implements ChildVisibili
 		// CTabItem contents. We need to expose both the CTabItems but
 		// just the composite of the active CTabItem
 		CTabFolder folder = (CTabFolder) getWidget();
-		ArrayList<Widget> visible = new ArrayList<Widget>();
+		ArrayList<Widget> visible = new ArrayList<>();
 
 		if (folder.getTopRight() != null) {
 			visible.add(folder.getTopRight());

@@ -66,7 +66,7 @@ public class EclipsePreferencesHelper {
 		if (value == null) {
 			return Collections.emptyList();
 		}
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		for (String name : value.split(SEPARATOR)) {
 			if (name != null && !name.isEmpty()) {
 				result.add(name);
