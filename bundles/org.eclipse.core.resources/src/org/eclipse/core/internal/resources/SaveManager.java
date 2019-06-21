@@ -843,12 +843,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			if (!target.exists())
 				return;
 		}
-		try {
-			try (
-				SafeChunkyInputStream input = new SafeChunkyInputStream(target);
-			) {
-				masterTable.load(input);
-			}
+		try (SafeChunkyInputStream input = new SafeChunkyInputStream(target)) {
+			masterTable.load(input);
 		} catch (IOException e) {
 			String message = Messages.resources_exMasterTable;
 			throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);
@@ -1038,12 +1034,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 			savedStates = Collections.synchronizedMap(new HashMap<String, SavedState>(10));
 			return;
 		}
-		try {
-			try (
-				DataInputStream input = new DataInputStream(new SafeFileInputStream(treeLocation.toOSString(), tempLocation.toOSString(), TREE_BUFFER_SIZE));
-			) {
-				WorkspaceTreeReader.getReader(workspace, input.readInt()).readTree(input, monitor);
-			}
+		try (DataInputStream input = new DataInputStream(new SafeFileInputStream(treeLocation.toOSString(), tempLocation.toOSString(), TREE_BUFFER_SIZE))) {
+			WorkspaceTreeReader.getReader(workspace, input.readInt()).readTree(input, monitor);
 		} catch (IOException e) {
 			String msg = NLS.bind(Messages.resources_readMeta, treeLocation.toOSString());
 			throw new ResourceException(IResourceStatus.FAILED_READ_METADATA, treeLocation, msg, e);

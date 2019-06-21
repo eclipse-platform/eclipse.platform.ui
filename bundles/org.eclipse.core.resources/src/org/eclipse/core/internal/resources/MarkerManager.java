@@ -539,12 +539,10 @@ public class MarkerManager implements IManager {
 		java.io.File tempFile = new java.io.File(tempLocation.toOSString());
 		if (!sourceFile.exists() && !tempFile.exists())
 			return;
-		try {
-			try (DataInputStream input = new DataInputStream(
-					new SafeFileInputStream(sourceLocation.toOSString(), tempLocation.toOSString()));) {
-				MarkerReader reader = new MarkerReader(workspace);
-				reader.read(input, generateDeltas);
-			}
+		try (DataInputStream input = new DataInputStream(
+				new SafeFileInputStream(sourceLocation.toOSString(), tempLocation.toOSString()))) {
+			MarkerReader reader = new MarkerReader(workspace);
+			reader.read(input, generateDeltas);
 		} catch (Exception e) {
 			// don't let runtime exceptions such as ArrayIndexOutOfBounds prevent startup
 			String msg = NLS.bind(Messages.resources_readMeta, sourceLocation);

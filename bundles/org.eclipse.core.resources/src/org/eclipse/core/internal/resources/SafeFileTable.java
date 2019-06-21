@@ -65,12 +65,8 @@ public class SafeFileTable {
 		table = new Properties();
 		if (!target.exists())
 			return;
-		try {
-			try (
-				FileInputStream input = new FileInputStream(target);
-			) {
-				table.load(input);
-			}
+		try (FileInputStream input = new FileInputStream(target)) {
+			table.load(input);
 		} catch (IOException e) {
 			String message = Messages.resources_exSafeRead;
 			throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);
@@ -79,12 +75,8 @@ public class SafeFileTable {
 
 	public void save() throws CoreException {
 		java.io.File target = location.toFile();
-		try {
-			try (
-				FileOutputStream output = new FileOutputStream(target);
-			) {
-				table.store(output, "safe table"); //$NON-NLS-1$
-			}
+		try (FileOutputStream output = new FileOutputStream(target)) {
+			table.store(output, "safe table"); //$NON-NLS-1$
 		} catch (IOException e) {
 			String message = Messages.resources_exSafeSave;
 			throw new ResourceException(IResourceStatus.INTERNAL_ERROR, null, message, e);

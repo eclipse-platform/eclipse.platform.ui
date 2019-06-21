@@ -155,12 +155,10 @@ public class Synchronizer implements ISynchronizer {
 		IPath tempLocation = workspace.getMetaArea().getBackupLocationFor(sourceLocation);
 		if (!sourceLocation.toFile().exists() && !tempLocation.toFile().exists())
 			return;
-		try {
-			try (DataInputStream input = new DataInputStream(
-					new SafeFileInputStream(sourceLocation.toOSString(), tempLocation.toOSString()));) {
-				SyncInfoReader reader = new SyncInfoReader(workspace, this);
-				reader.readSyncInfo(input);
-			}
+		try (DataInputStream input = new DataInputStream(
+				new SafeFileInputStream(sourceLocation.toOSString(), tempLocation.toOSString()))) {
+			SyncInfoReader reader = new SyncInfoReader(workspace, this);
+			reader.readSyncInfo(input);
 		} catch (Exception e) {
 			// don't let runtime exceptions such as ArrayIndexOutOfBounds prevent startup
 			String msg = NLS.bind(Messages.resources_readMeta, sourceLocation);

@@ -882,10 +882,8 @@ public abstract class ResourceTest extends CoreTest {
 			return;
 		}
 		java.io.File osFile = location.toFile();
-		try {
-			try (FileOutputStream os = new FileOutputStream(osFile);) {
-				os.write(newContent.getBytes("UTF8"));
-			}
+		try (FileOutputStream os = new FileOutputStream(osFile)) {
+			os.write(newContent.getBytes("UTF8"));
 		} catch (IOException e) {
 			fail(m + "0.0", e);
 		}
