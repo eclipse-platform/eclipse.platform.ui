@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,13 +11,13 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 474274
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548516
  ******************************************************************************/
 
 package org.eclipse.e4.core.tests;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-
+import org.eclipse.e4.core.internal.tests.about.AboutTest;
+import org.eclipse.e4.core.internal.tests.about.InstalledFeaturesTest;
 import org.eclipse.e4.core.internal.tests.contexts.ActivationTest;
 import org.eclipse.e4.core.internal.tests.contexts.ContextDynamicTest;
 import org.eclipse.e4.core.internal.tests.contexts.DependenciesLeakTest;
@@ -61,6 +61,8 @@ import org.eclipse.e4.core.internal.tests.di.extensions.InjectionOSGiTest;
 import org.eclipse.e4.core.internal.tests.di.extensions.InjectionPreferencesTest;
 import org.eclipse.e4.core.internal.tests.di.extensions.ServiceSupplierTestCase;
 import org.eclipse.e4.core.internal.tests.nls.NLSTest;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
@@ -74,6 +76,10 @@ import junit.framework.Test;
 		InjectionOSGiTest.class,
 		InjectionOSGiHandlerTest.class,
 		ServiceSupplierTestCase.class,
+
+		// About
+		AboutTest.class,
+		InstalledFeaturesTest.class,
 
 		// DI
 		InjectionOrderTest.class,
