@@ -70,7 +70,7 @@ public class DumpTool implements IApplication {
 		DumperFactory factory = DumperFactory.getInstance();
 		String[] registeredFileNames = factory.getRegisteredFileNames();
 		this.fileFilter = new MetadataFileFilter(registeredFileNames);
-		this.directoryFilter = pathname -> pathname.isDirectory();
+		this.directoryFilter = File::isDirectory;
 		System.out.println("DumpTool started...");
 		System.out.println("Analyzing: "+fileName);
 

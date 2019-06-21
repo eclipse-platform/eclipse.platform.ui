@@ -59,7 +59,7 @@ public class MetadataTreeContentProvider extends AbstractTreeContentProvider {
 	public MetadataTreeContentProvider(String[] registeredFileNames) {
 		super(true);
 		this.fileFilter = new MetadataFileFilter(registeredFileNames);
-		this.directoryFilter = file -> file.isDirectory();
+		this.directoryFilter = File::isDirectory;
 		this.treeRebuilder = new MetadataTreeRebuilder();
 	}
 
