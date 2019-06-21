@@ -189,6 +189,16 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String EnvironmentTab_20;
 	public static String EnvironmentTab_AttributeLabel_AppendEnvironmentVariables;
 	public static String EnvironmentTab_AttributeLabel_EnvironmentVariables;
+	public static String EnvironmentTab_ContextMenu0;
+
+	public static String EnvironmentTab_ContextMenu1;
+
+	public static String EnvironmentTab_ContextMenu2;
+
+	public static String EnvironmentTab_ContextMenu3;
+
+	public static String EnvironmentTab_ContextMenu4;
+
 	public static String EnvironmentTab_Copy;
 	public static String EnvironmentTab_Paste;
 	public static String EnvironmentTab_Paste_Overwrite_Title;

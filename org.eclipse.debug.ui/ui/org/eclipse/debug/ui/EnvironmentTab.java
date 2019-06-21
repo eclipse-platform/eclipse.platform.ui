@@ -88,6 +88,10 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -317,6 +321,80 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 				handleTableSelectionChanged(event);
 			}
 		});
+
+		// Setup right-click context menu
+		Menu menuTable = new Menu(table);
+		table.setMenu(menuTable);
+
+		// Create add environment variable menu item
+		MenuItem miAdd = new MenuItem(menuTable, SWT.NONE);
+		miAdd.setText(LaunchConfigurationsMessages.EnvironmentTab_ContextMenu0);
+
+		miAdd.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				handleEnvAddButtonSelected();
+			}
+		});
+
+		// Create copy environment variable menu item
+		MenuItem miCopy = new MenuItem(menuTable, SWT.NONE);
+		miCopy.setText(LaunchConfigurationsMessages.EnvironmentTab_ContextMenu1);
+
+		miCopy.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				handleEnvCopyButtonSelected();
+			}
+		});
+
+		// Create paste environment variable menu item
+		MenuItem miPaste = new MenuItem(menuTable, SWT.NONE);
+		miPaste.setText(LaunchConfigurationsMessages.EnvironmentTab_ContextMenu2);
+
+		miPaste.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				handleEnvPasteButtonSelected();
+			}
+		});
+
+		// Create remove environment variable menu item
+		MenuItem miRemove = new MenuItem(menuTable, SWT.NONE);
+		miRemove.setText(LaunchConfigurationsMessages.EnvironmentTab_ContextMenu3);
+		miRemove.addSelectionListener(new SelectionAdapter() {
+			@Override
+			public void widgetSelected(SelectionEvent event) {
+				handleEnvRemoveButtonSelected();
+			}
+		});
+
+		environmentTable.addSelectionChangedListener(new ISelectionChangedListener() {
+			@Override
+			public void selectionChanged(SelectionChangedEvent event) {
+				IStructuredSelection selection = environmentTable.getStructuredSelection();
+				if (selection.size() == 1) {
+					miRemove.setText(LaunchConfigurationsMessages.EnvironmentTab_ContextMenu3);
+				} else if (selection.size() > 1) {
+					miRemove.setText(LaunchConfigurationsMessages.EnvironmentTab_ContextMenu4);
+				}
+			}
+		});
+
+		// Disable certain context menu item's if no table item is selected
+		table.addListener(SWT.MenuDetect, new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				if (table.getSelectionCount() <= 0) {
+					miRemove.setEnabled(false);
+					miCopy.setEnabled(false);
+				} else {
+					miRemove.setEnabled(true);
+					miCopy.setEnabled(true);
+				}
+			}
+		});
+
 
 		// Setup and create Columns
 		ColumnViewerEditorActivationStrategy actSupport = new ColumnViewerEditorActivationStrategy(environmentTable) {
