@@ -1139,7 +1139,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 		};
 		fTableCursor.addKeyListener(fCursorKeyAdapter);
 
-		fCursorTraverseListener = e -> handleCursorTraverseEvt(e);
+		fCursorTraverseListener = this::handleCursorTraverseEvt;
 
 		fTableCursor.addTraverseListener(fCursorTraverseListener);
 

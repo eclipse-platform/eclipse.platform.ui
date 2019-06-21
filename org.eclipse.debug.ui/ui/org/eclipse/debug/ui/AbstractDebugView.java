@@ -557,7 +557,7 @@ public abstract class AbstractDebugView extends PageBookView implements IDebugVi
 	protected void createContextMenu(Control menuControl) {
 		MenuManager menuMgr= new MenuManager("#PopUp"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(mgr -> fillContextMenu(mgr));
+		menuMgr.addMenuListener(this::fillContextMenu);
 		Menu menu= menuMgr.createContextMenu(menuControl);
 		menuControl.setMenu(menu);
 

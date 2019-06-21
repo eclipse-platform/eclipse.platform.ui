@@ -221,7 +221,7 @@ public class LaunchConfigurationWorkingCopy extends LaunchConfiguration implemen
 				}
 			}
 			if (useRunnable) {
-					IWorkspaceRunnable wr = pm -> doSave0(pm);
+					IWorkspaceRunnable wr = this::doSave0;
 				ResourcesPlugin.getWorkspace().run(wr, null, 0, lmonitor.newChild(1));
 			} else {
 				//file is persisted in the metadata not the workspace

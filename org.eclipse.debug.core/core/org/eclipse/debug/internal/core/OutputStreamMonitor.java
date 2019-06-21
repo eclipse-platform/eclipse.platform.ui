@@ -209,7 +209,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 	protected void startMonitoring() {
 		if (fThread == null) {
 			fDone.set(false);
-			fThread = new Thread((Runnable) () -> read(), DebugCoreMessages.OutputStreamMonitor_label);
+			fThread = new Thread((Runnable) this::read, DebugCoreMessages.OutputStreamMonitor_label);
 			fThread.setDaemon(true);
 			fThread.setPriority(Thread.MIN_PRIORITY);
 			fThread.start();

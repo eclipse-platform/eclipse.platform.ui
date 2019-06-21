@@ -71,7 +71,7 @@ public class WatchExpression implements IWatchExpression {
 			return;
 		}
 
-		IWatchExpressionListener listener = result -> setResult(result);
+		IWatchExpressionListener listener = this::setResult;
 		setPending(true);
 		IWatchExpressionDelegate delegate= DebugPlugin.getDefault().getExpressionManager().newWatchExpressionDelegate(context.getModelIdentifier());
 		if (delegate != null) {

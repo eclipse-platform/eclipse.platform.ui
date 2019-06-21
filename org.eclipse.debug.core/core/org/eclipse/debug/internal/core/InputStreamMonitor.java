@@ -97,7 +97,7 @@ public class InputStreamMonitor {
 	 */
 	public void startMonitoring() {
 		if (fThread == null) {
-			fThread = new Thread((Runnable) () -> write(), DebugCoreMessages.InputStreamMonitor_label);
+			fThread = new Thread((Runnable) this::write, DebugCoreMessages.InputStreamMonitor_label);
 			fThread.setDaemon(true);
 			fThread.start();
 		}

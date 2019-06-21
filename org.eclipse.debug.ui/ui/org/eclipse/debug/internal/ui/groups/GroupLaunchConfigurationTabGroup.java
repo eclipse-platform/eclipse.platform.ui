@@ -19,6 +19,7 @@ package org.eclipse.debug.internal.ui.groups;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -642,9 +643,7 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 		}
 		modes = new LinkedHashMap<>();
 		modes.put(GroupLaunchElement.MODE_INHERIT, new InheritModeGroup());
-		Set<ILaunchGroup> sortedGroups = new TreeSet<>((a, b) -> {
-			return a.getLabel().compareTo(b.getLabel());
-		});
+		Set<ILaunchGroup> sortedGroups = new TreeSet<>(Comparator.comparing(ILaunchGroup::getLabel));
 		LaunchConfigurationManager mgr = DebugUIPlugin.getDefault().getLaunchConfigurationManager();
 		sortedGroups.addAll(Arrays.asList(mgr.getLaunchGroups()));
 		for (ILaunchGroup launchGroup : sortedGroups) {

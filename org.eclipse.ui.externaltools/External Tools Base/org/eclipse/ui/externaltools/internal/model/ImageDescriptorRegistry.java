@@ -83,7 +83,7 @@ public class ImageDescriptorRegistry {
 	}
 
 	private void hookDisplay() {
-		fDisplay.asyncExec(() -> fDisplay.disposeExec(() -> dispose()));
+		fDisplay.asyncExec(() -> fDisplay.disposeExec(this::dispose));
 	}
 }
 

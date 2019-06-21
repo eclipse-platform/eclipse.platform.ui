@@ -699,7 +699,7 @@ public abstract class AbstractAsyncTableRendering extends AbstractBaseTableRende
 						// create context menu
 						// create pop up menu for the rendering
 						createActions();
-						IMenuListener menuListener = mgr -> fillContextMenu(mgr);
+						IMenuListener menuListener = AbstractAsyncTableRendering.this::fillContextMenu;
 						createPopupMenu(fTableViewer.getControl(), menuListener);
 						createPopupMenu(fTableViewer.getCursor(), menuListener);
 

@@ -101,7 +101,7 @@ public abstract class AbstractLaunchConfigurationAction extends SelectionListene
 				return;
 			}
 		}
-		Runnable r = () -> performAction();
+		Runnable r = this::performAction;
 		BusyIndicator.showWhile(getShell().getDisplay(), r);
 	}
 
