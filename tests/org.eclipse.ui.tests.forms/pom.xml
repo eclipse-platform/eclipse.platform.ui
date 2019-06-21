@@ -20,6 +20,6 @@
   </parent>
   <groupId>org.eclipse.ui</groupId>
   <artifactId>org.eclipse.ui.tests.forms</artifactId>
-  <version>3.7.400-SNAPSHOT</version>
+  <version>3.7.500-SNAPSHOT</version>
   <packaging>eclipse-test-plugin</packaging>
 </project>
