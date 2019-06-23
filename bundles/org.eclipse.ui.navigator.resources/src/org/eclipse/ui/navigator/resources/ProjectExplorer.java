@@ -37,6 +37,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.ISaveablesSource;
+import org.eclipse.ui.ISecondarySaveableSource;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchCommandConstants;
@@ -70,7 +71,7 @@ import org.eclipse.ui.navigator.INavigatorContentService;
  * @since 3.2
  *
  */
-public final class ProjectExplorer extends CommonNavigator {
+public final class ProjectExplorer extends CommonNavigator implements ISecondarySaveableSource {
 
 	/**
 	 * Provides a constant for the standard instance of the Common Navigator.
@@ -353,5 +354,10 @@ public final class ProjectExplorer extends CommonNavigator {
 	private IEditorPart getActiveEditor() {
 		IWorkbenchPage page = getSite().getPage();
 		return page != null ? page.getActiveEditor() : null;
+	}
+
+	@Override
+	public boolean isDirtyStateSupported() {
+		return hasSaveablesProvider();
 	}
 }
