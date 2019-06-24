@@ -56,6 +56,7 @@ public class CompletionTest extends AbstratGenericEditorTest {
 	@Test
 	public void testCompletion() throws Exception {
 		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
+		editor.selectAndReveal(3, 0);
 		openConentAssist();
 		this.completionShell= findNewShell(beforeShells);
 		final Table completionProposalList = findCompletionSelectionControl(completionShell);
@@ -65,11 +66,28 @@ public class CompletionTest extends AbstratGenericEditorTest {
 	}
 
 	@Test
+	public void testCompletionUsingViewerSelection() throws Exception {
+		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
+		editor.getDocumentProvider().getDocument(editor.getEditorInput()).set("abc");
+		editor.selectAndReveal(0, 3);
+		openConentAssist();
+		this.completionShell= findNewShell(beforeShells);
+		final Table completionProposalList = findCompletionSelectionControl(completionShell);
+		assertTrue(new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return Arrays.stream(completionProposalList.getItems()).map(TableItem::getText).anyMatch("ABC"::equals);
+			}
+		}.waitForCondition(completionProposalList.getDisplay(), 200));
+	}
+
+	@Test
 	public void testEnabledWhenCompletion() throws Exception {
 		// Confirm that when disabled, a completion shell is present
 		EnabledPropertyTester.setEnabled(false);
 		createAndOpenFile("enabledWhen.txt", "bar 'bar'");
 		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
+		editor.selectAndReveal(3, 0);
 		openConentAssist();
 		Shell[] afterShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells())
 				.filter(Shell::isVisible)
@@ -82,12 +100,12 @@ public class CompletionTest extends AbstratGenericEditorTest {
 		EnabledPropertyTester.setEnabled(true);
 		createAndOpenFile("enabledWhen.txt", "bar 'bar'");
 		final Set<Shell> beforeEnabledShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
+		editor.selectAndReveal(3, 0);
 		openConentAssist();
 		assertNotNull(findNewShell(beforeEnabledShells));
 	}
 
 	private void openConentAssist() {
-		editor.selectAndReveal(3, 0);
 		ContentAssistAction action = (ContentAssistAction) editor.getAction(ITextEditorActionConstants.CONTENT_ASSIST);
 		action.update();
 		action.run();
@@ -103,13 +121,12 @@ public class CompletionTest extends AbstratGenericEditorTest {
 	 */
 	private void checkCompletionContent(final Table completionProposalList) {
 		// should be instantaneous, but happens to go asynchronous on CI so let's allow a wait
-		new DisplayHelper() {
+		assertTrue(new DisplayHelper() {
 			@Override
 			protected boolean condition() {
 				return completionProposalList.getItemCount() == 2;
 			}
-		}.waitForCondition(completionProposalList.getDisplay(), 200);
-		assertEquals(2, completionProposalList.getItemCount());
+		}.waitForCondition(completionProposalList.getDisplay(), 200));
 		final TableItem computingItem = completionProposalList.getItem(0);
 		assertTrue("Missing computing info entry", computingItem.getText().contains("Computing")); //$NON-NLS-1$ //$NON-NLS-2$
 		TableItem completionProposalItem = completionProposalList.getItem(1);
@@ -142,6 +159,7 @@ public class CompletionTest extends AbstratGenericEditorTest {
 	@Test
 	public void testCompletionFreeze_bug521484() throws Exception {
 		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
+		editor.selectAndReveal(3, 0);
 		openConentAssist();
 		this.completionShell= findNewShell(beforeShells);
 		final Table completionProposalList = findCompletionSelectionControl(this.completionShell);

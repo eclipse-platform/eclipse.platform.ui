@@ -159,4 +159,29 @@ public class BlockTextSelection extends TextSelection implements IBlockTextSelec
 		}
 		return new IRegion[] {new Region(getOffset(), getLength())};
 	}
+
+	/**
+	 * @since 3.16
+	 */
+	@Override
+	public String toString() {
+		StringBuilder sb= new StringBuilder();
+		sb.append("BlockTextSelection [offset: ").append(getOffset()); //$NON-NLS-1$
+		sb.append(", startLine: ").append(fStartLine); //$NON-NLS-1$
+		if (fEndLine != fStartLine) {
+			sb.append(", endLine: ").append(fEndLine); //$NON-NLS-1$
+		}
+		sb.append(", startColumn: ").append(fStartColumn); //$NON-NLS-1$
+		if (fEndColumn != fStartColumn) {
+			sb.append(", endColumn").append(fEndColumn); //$NON-NLS-1$
+		}
+		if (getLength() != 0) {
+			sb.append(", text: ").append(getText()); //$NON-NLS-1$
+		}
+		if (getDocument() != null) {
+			sb.append(", document: ").append(getDocument()); //$NON-NLS-1$
+		}
+		sb.append("]"); //$NON-NLS-1$
+		return sb.toString();
+	}
 }

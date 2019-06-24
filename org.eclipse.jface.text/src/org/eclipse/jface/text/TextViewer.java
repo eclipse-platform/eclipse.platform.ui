@@ -113,7 +113,7 @@ import org.eclipse.jface.text.projection.ChildDocumentManager;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class TextViewer extends Viewer implements
-					ITextViewer, ITextViewerExtension, ITextViewerExtension2, ITextViewerExtension4, ITextViewerExtension6, ITextViewerExtension7, ITextViewerExtension8,
+		ITextViewer, ITextViewerExtension, ITextViewerExtension2, ITextViewerExtension4, ITextViewerExtension6, ITextViewerExtension7, ITextViewerExtension8, ITextViewerExtension9,
 					IEditingSupportRegistry, ITextOperationTarget, ITextOperationTargetExtension,
 					IWidgetTokenOwner, IWidgetTokenOwnerExtension, IPostSelectionProvider {
 
@@ -1752,6 +1752,12 @@ public class TextViewer extends Viewer implements
 				selectionChanged(event.x, event.y - event.x);
 			}
 		});
+		fTextWidget.addCaretListener(e -> {
+			// caret listener is invoked before widget actually performs the caret (and selection)
+			// change. So we can't update the selection synchronously on event, instead, we
+			// delay the selection update.
+			fTextWidget.getDisplay().asyncExec(() -> selectionChanged(e.caretOffset, 0));
+		});
 
 		fCursorListener= new CursorListener();
 		fCursorListener.install();
@@ -2234,6 +2240,21 @@ public class TextViewer extends Viewer implements
 
 	//---- Selection
 
+	/**
+	 * Caches the selection value. Is only modified from inside UI Thread. Can be accessed from any
+	 * thread.
+	 */
+	private volatile ITextSelection cachedSelection= TextSelection.emptySelection();
+
+	private void updateSelectionCache() {
+		cachedSelection= computeSelection();
+	}
+
+	@Override
+	public ITextSelection getLastKnownSelection() {
+		return cachedSelection;
+	}
+
 	@Override
 	public Point getSelectedRange() {
 
@@ -2272,6 +2293,7 @@ public class TextViewer extends Viewer implements
 				selectionChanged(selectionRange[0], selectionRange[1]);
 			}
 		}
+		updateSelectionCache();
 	}
 
 	/**
@@ -2410,6 +2432,12 @@ public class TextViewer extends Viewer implements
 
 	@Override
 	public ISelection getSelection() {
+		final ITextSelection res= computeSelection();
+		cachedSelection= res;
+		return res;
+	}
+
+	private ITextSelection computeSelection() {
 		if (fTextWidget != null && fTextWidget.getBlockSelection()) {
 			int[] ranges= fTextWidget.getSelectionRanges();
 			int startOffset= ranges[0];
@@ -2574,6 +2602,7 @@ public class TextViewer extends Viewer implements
 	 * @param length the length of the newly selected range in the visible document
 	 */
 	protected void selectionChanged(int offset, int length) {
+		updateSelectionCache();
 		queuePostSelectionChanged(true);
 		fireSelectionChanged(offset, length);
 	}

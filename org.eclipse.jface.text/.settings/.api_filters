@@ -1,5 +1,29 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.jface.text" version="2">
+    <resource path="src/META-INF/MANIFEST.MF">
+        <filter comment="Workaround https://bugs.eclipse.org/bugs/show_bug.cgi?id=548680#c11" id="926941240">
+            <message_arguments>
+                <message_argument value="3.16.0"/>
+                <message_argument value="3.15.200"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/META-INF/MANIFEST.MF">
+        <filter comment="Workaround https://bugs.eclipse.org/bugs/show_bug.cgi?id=548680#c11" id="923795461">
+            <message_arguments>
+                <message_argument value="3.16.0"/>
+                <message_argument value="3.15.200"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/jface/text/ITextViewer.java" type="org.eclipse.jface.text.ITextViewer">
+        <filter comment="Method introduction unlikely to collide with existing implementations." id="404000815">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.text.ITextViewer"/>
+                <message_argument value="getLastKnownSelection()"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/jface/text/TextViewer.java" type="org.eclipse.jface.text.TextViewer">
         <filter id="572522506">
             <message_arguments>

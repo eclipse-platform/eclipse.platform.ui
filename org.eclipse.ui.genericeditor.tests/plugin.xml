@@ -35,6 +35,10 @@
 	        </test>
 	      </enabledWhen>
 		</contentAssistProcessor>
+	<contentAssistProcessor
+		class="org.eclipse.ui.genericeditor.tests.contributions.ToUpperCaseContentAssistProcessor"
+		contentType="org.eclipse.ui.genericeditor.tests.content-type">
+	</contentAssistProcessor>
 	</extension>
 	<extension
 			point="org.eclipse.ui.genericeditor.hoverProviders">

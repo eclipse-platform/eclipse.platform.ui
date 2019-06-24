@@ -11,7 +11,7 @@
  * Contributors:
  * 	   Sergey Prigogin (Google) - initial API and implementation
  * 	   Mickael Istria (Red Hat Inc.) - [Bug 544708] Ctrl+Home
- * 	   Paul Pazderski - [Bug 545530] Test for TextViewer's default IDocumentAdapter implementation. 
+ * 	   Paul Pazderski - [Bug 545530] Test for TextViewer's default IDocumentAdapter implementation.
  *******************************************************************************/
 package org.eclipse.jface.text.tests;
 
@@ -27,6 +27,7 @@ import org.junit.Rule;
 import org.junit.Test;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.custom.StyledTextContent;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Control;
@@ -35,10 +36,16 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
+
 import org.eclipse.jface.util.Util;
 
+import org.eclipse.jface.text.BlockTextSelection;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocumentAdapter;
+import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextViewer;
 import org.eclipse.jface.text.source.SourceViewer;
@@ -72,6 +79,96 @@ public class TextViewerTest {
 			assertEquals(0, textViewer.getTextWidget().getCaretOffset());
 		} finally {
 			shell.dispose();
+		}
+	}
+
+	@Test
+	public void testCaretMoveChangesSelection() throws Exception {
+		Shell shell= new Shell();
+		try {
+			TextViewer textViewer= new TextViewer(shell, SWT.NONE);
+			Document document= new Document("abc");
+			textViewer.setDocument(document);
+			int len= document.getLength();
+			// Select the whole document with the caret at the beginning.
+			textViewer.setSelectedRange(0, len);
+			ITextSelection selection = (ITextSelection)textViewer.getSelectionProvider().getSelection();
+			assertEquals(0, selection.getOffset());
+			assertEquals(len, selection.getLength());
+			textViewer.getTextWidget().setCaretOffset(1);
+			selection = (ITextSelection)textViewer.getSelectionProvider().getSelection();
+			assertEquals(1, selection.getOffset());
+			assertEquals(0, selection.getLength());
+		} finally {
+			shell.dispose();
+		}
+	}
+
+	@Test
+	public void testGetCachedSelection() throws Exception {
+		Shell shell= new Shell();
+		try {
+			TextViewer textViewer= new TextViewer(shell, SWT.NONE);
+			Document document= new Document("abc");
+			textViewer.setDocument(document);
+			int len= document.getLength();
+			// Select the whole document with the caret at the beginning.
+			textViewer.setSelectedRange(0, len);
+			checkInAndOutUIThread(() -> {
+				ITextSelection selection = textViewer.getLastKnownSelection();
+				assertEquals(0, selection.getOffset());
+				assertEquals(len, selection.getLength());
+			});
+		} finally {
+			shell.dispose();
+		}
+	}
+
+	@Test
+	public void testBlockSelectionAccessors() throws Exception {
+		Shell shell= new Shell();
+		try {
+			ITextViewer textViewer= new TextViewer(shell, SWT.NONE);
+			Document document= new Document("0123\n4567\n89ab\ncdef");
+			textViewer.setDocument(document);
+			// Select the whole document with the caret at the beginning.
+			StyledText textWidget= textViewer.getTextWidget();
+			textWidget.setBlockSelection(true);
+			shell.setLayout(new FillLayout());
+			shell.open();
+			textViewer.getSelectionProvider().setSelection(new BlockTextSelection(textViewer.getDocument(), 1, 1, 2, 2, textWidget.getTabs()));
+			BlockTextSelection sel = (BlockTextSelection)textViewer.getSelectionProvider().getSelection();
+			assertEquals(1, sel.getStartLine());
+			assertEquals(2, sel.getEndLine());
+			assertEquals(1, sel.getStartColumn());
+			assertEquals(2, sel.getEndColumn());
+		} finally {
+			shell.dispose();
+		}
+	}
+
+
+	private void checkInAndOutUIThread(Runnable r) throws InterruptedException {
+		// first run in UI Thread, forward exceptions
+		r.run();
+		// then run in non-UI Thread
+		Job job = Job.create("Check in non-UI Thread", monitor -> {
+			try {
+				r.run();
+				return Status.OK_STATUS;
+			} catch (Throwable t) {
+				return new Status(IStatus.ERROR, "org.eclipse.jface.text.tests", t.getMessage(), t);
+			}
+		});
+		job.schedule();
+		job.join();
+		if (!job.getResult().isOK()) {
+			Throwable ex = job.getResult().getException();
+			if (ex != null) {
+				throw new AssertionError("Assertion fail in non-UI Thread", ex);
+			} else {
+				fail(job.getResult().toString());
+			}
 		}
 	}
 
