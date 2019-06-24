@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,8 @@
 package org.eclipse.ant.internal.core;
 
 import java.io.FileDescriptor;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.net.InetAddress;
 import java.net.SocketPermission;
 import java.security.Permission;
@@ -50,11 +52,6 @@ public class AntSecurityManager extends SecurityManager {
 		this(securityManager, restrictedThread, true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#checkExit(int)
-	 */
 	@Override
 	public void checkExit(int status) {
 		// no exit allowed from the restricted thread...System.exit is being called
@@ -68,11 +65,17 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#checkAccept(java.lang.String, int)
-	 */
+	@Override
+	public void checkPermission(Permission perm) {
+		if (!fAllowSettingSystemProperties && fgPropertyPermission.implies(perm) && fRestrictedThread == Thread.currentThread()) {
+			// attempting to write a system property
+			throw new AntSecurityException();
+		}
+		if (fSecurityManager != null) {
+			fSecurityManager.checkPermission(perm);
+		}
+	}
+
 	@Override
 	public void checkAccept(String host, int port) {
 		if (fSecurityManager != null) {
@@ -80,11 +83,6 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#checkAccess(java.lang.Thread)
-	 */
 	@Override
 	public void checkAccess(Thread t) {
 		if (fSecurityManager != null) {
@@ -92,11 +90,6 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#checkAccess(java.lang.ThreadGroup)
-	 */
 	@Override
 	public void checkAccess(ThreadGroup g) {
 		if (fSecurityManager != null) {
@@ -104,23 +97,6 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#checkAwtEventQueueAccess()
-	 */
-	@Override
-	public void checkAwtEventQueueAccess() {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkAwtEventQueueAccess();
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#checkConnect(java.lang.String, int, java.lang.Object)
-	 */
 	@Override
 	public void checkConnect(String host, int port, Object context) {
 		if (fSecurityManager != null) {
@@ -128,11 +104,6 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#checkConnect(java.lang.String, int)
-	 */
 	@Override
 	public void checkConnect(String host, int port) {
 		if (fSecurityManager != null) {
@@ -140,11 +111,6 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#checkCreateClassLoader()
-	 */
 	@Override
 	public void checkCreateClassLoader() {
 		if (fSecurityManager != null) {
@@ -152,11 +118,6 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#checkDelete(java.lang.String)
-	 */
 	@Override
 	public void checkDelete(String file) {
 		if (fSecurityManager != null) {
@@ -164,11 +125,6 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#checkExec(java.lang.String)
-	 */
 	@Override
 	public void checkExec(String cmd) {
 		if (fSecurityManager != null) {
@@ -176,11 +132,6 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#checkLink(java.lang.String)
-	 */
 	@Override
 	public void checkLink(String lib) {
 		if (fSecurityManager != null) {
@@ -188,11 +139,6 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#checkListen(int)
-	 */
 	@Override
 	public void checkListen(int port) {
 		if (fSecurityManager != null) {
@@ -200,21 +146,8 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#checkMemberAccess(java.lang.Class, int)
-	 */
-	@Override
-	public void checkMemberAccess(Class<?> clazz, int which) {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkMemberAccess(clazz, which);
-		}
-	}
-
 	/**
-	 * @see java.lang.SecurityManager#checkMulticast(java.net.InetAddress, byte)
-	 * @deprecated
+	 * @deprecated Use {@link #checkPermission(java.security.Permission)} instead
 	 */
 	@Deprecated
 	@Override
@@ -228,11 +161,6 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#checkMulticast(java.net.InetAddress)
-	 */
 	@Override
 	public void checkMulticast(InetAddress maddr) {
 		if (fSecurityManager != null) {
@@ -240,11 +168,6 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#checkPackageAccess(java.lang.String)
-	 */
 	@Override
 	public void checkPackageAccess(String pkg) {
 		if (fSecurityManager != null) {
@@ -252,11 +175,6 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#checkPackageDefinition(java.lang.String)
-	 */
 	@Override
 	public void checkPackageDefinition(String pkg) {
 		if (fSecurityManager != null) {
@@ -264,11 +182,6 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#checkPermission(java.security.Permission, java.lang.Object)
-	 */
 	@Override
 	public void checkPermission(Permission perm, Object context) {
 		if (fSecurityManager != null) {
@@ -276,27 +189,6 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#checkPermission(java.security.Permission)
-	 */
-	@Override
-	public void checkPermission(Permission perm) {
-		if (!fAllowSettingSystemProperties && fgPropertyPermission.implies(perm) && fRestrictedThread == Thread.currentThread()) {
-			// attempting to write a system property
-			throw new AntSecurityException();
-		}
-		if (fSecurityManager != null) {
-			fSecurityManager.checkPermission(perm);
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#checkPrintJobAccess()
-	 */
 	@Override
 	public void checkPrintJobAccess() {
 		if (fSecurityManager != null) {
@@ -304,11 +196,6 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#checkPropertiesAccess()
-	 */
 	@Override
 	public void checkPropertiesAccess() {
 		if (fSecurityManager != null) {
@@ -317,11 +204,6 @@ public class AntSecurityManager extends SecurityManager {
 		super.checkPropertiesAccess();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#checkPropertyAccess(java.lang.String)
-	 */
 	@Override
 	public void checkPropertyAccess(String key) {
 		if (fSecurityManager != null) {
@@ -329,11 +211,6 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#checkRead(java.io.FileDescriptor)
-	 */
 	@Override
 	public void checkRead(FileDescriptor fd) {
 		if (fSecurityManager != null) {
@@ -341,11 +218,6 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#checkRead(java.lang.String, java.lang.Object)
-	 */
 	@Override
 	public void checkRead(String file, Object context) {
 		if (fSecurityManager != null) {
@@ -353,11 +225,6 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#checkRead(java.lang.String)
-	 */
 	@Override
 	public void checkRead(String file) {
 		if (fSecurityManager != null) {
@@ -365,11 +232,6 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#checkSecurityAccess(java.lang.String)
-	 */
 	@Override
 	public void checkSecurityAccess(String target) {
 		if (fSecurityManager != null) {
@@ -377,11 +239,6 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#checkSetFactory()
-	 */
 	@Override
 	public void checkSetFactory() {
 		if (fSecurityManager != null) {
@@ -389,36 +246,6 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#checkSystemClipboardAccess()
-	 */
-	@Override
-	public void checkSystemClipboardAccess() {
-		if (fSecurityManager != null) {
-			fSecurityManager.checkSystemClipboardAccess();
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#checkTopLevelWindow(java.lang.Object)
-	 */
-	@Override
-	public boolean checkTopLevelWindow(Object window) {
-		if (fSecurityManager != null) {
-			return fSecurityManager.checkTopLevelWindow(window);
-		}
-		return super.checkTopLevelWindow(window);
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#checkWrite(java.io.FileDescriptor)
-	 */
 	@Override
 	public void checkWrite(FileDescriptor fd) {
 		if (fSecurityManager != null) {
@@ -426,11 +253,6 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#checkWrite(java.lang.String)
-	 */
 	@Override
 	public void checkWrite(String file) {
 		if (fSecurityManager != null) {
@@ -438,31 +260,6 @@ public class AntSecurityManager extends SecurityManager {
 		}
 	}
 
-	/**
-	 * @see java.lang.SecurityManager#getInCheck()
-	 * @deprecated
-	 */
-	@Deprecated
-	// @Override Super class method has been removed in JDK 10
-	public boolean getInCheck() {
-		try {
-			SecurityManager.class.getDeclaredMethod("getInCheck", (Class[]) null); //$NON-NLS-1$
-			if (fSecurityManager != null) {
-				return fSecurityManager.getInCheck();
-			}
-			return super.getInCheck();
-		}
-		catch (NoSuchMethodException | SecurityException e) {
-			Platform.getLog(AntCorePlugin.getPlugin().getBundle()).log(new Status(IStatus.WARNING, AntCorePlugin.PI_ANTCORE, InternalCoreAntMessages.AntSecurityManager_0));
-			return false;
-		}
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#getSecurityContext()
-	 */
 	@Override
 	public Object getSecurityContext() {
 		if (fSecurityManager != null) {
@@ -471,16 +268,156 @@ public class AntSecurityManager extends SecurityManager {
 		return super.getSecurityContext();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.SecurityManager#getThreadGroup()
-	 */
 	@Override
 	public ThreadGroup getThreadGroup() {
 		if (fSecurityManager != null) {
 			fSecurityManager.getThreadGroup();
 		}
 		return super.getThreadGroup();
+	}
+
+	// --------------------------------------------------------------------------------
+	// Below are SecurityManager methods deprecated in Java 9 and removed in Java 10.
+	// They are accessed through reflections to support Java 8 and 11 at the same time.
+	// XXX: This also means you must not add @Override annotations even if Eclipse try to add them.
+	// --------------------------------------------------------------------------------
+
+	/**
+	 * @deprecated super class method has been removed in JDK 10
+	 */
+	@Deprecated
+	public void checkAwtEventQueueAccess() {
+		if (fSecurityManager != null) {
+			try {
+				final Method m = fSecurityManager.getClass().getMethod("checkAwtEventQueueAccess"); //$NON-NLS-1$
+				m.invoke(fSecurityManager);
+			}
+			catch (NoSuchMethodException e) {
+				logDeprecatedAccess(e);
+			}
+			catch (InvocationTargetException e) {
+				if (e.getTargetException() instanceof RuntimeException) {
+					throw (RuntimeException) e.getTargetException();
+				}
+				logException(e);
+			}
+			catch (IllegalAccessException | IllegalArgumentException e) {
+				logException(e);
+			}
+		}
+	}
+
+	/**
+	 * @deprecated super class method has been removed in JDK 10
+	 */
+	@Deprecated
+	public void checkMemberAccess(Class<?> clazz, int which) {
+		if (fSecurityManager != null) {
+			try {
+				final Method m = fSecurityManager.getClass().getMethod("checkMemberAccess", Class.class, int.class); //$NON-NLS-1$
+				m.invoke(fSecurityManager, clazz, which);
+			}
+			catch (NoSuchMethodException e) {
+				logDeprecatedAccess(e);
+			}
+			catch (InvocationTargetException e) {
+				if (e.getTargetException() instanceof RuntimeException) {
+					throw (RuntimeException) e.getTargetException();
+				}
+				logException(e);
+			}
+			catch (IllegalAccessException | IllegalArgumentException e) {
+				logException(e);
+			}
+		}
+	}
+
+	/**
+	 * @deprecated super class method has been removed in JDK 10
+	 */
+	@Deprecated
+	public void checkSystemClipboardAccess() {
+		if (fSecurityManager != null) {
+			try {
+				final Method m = fSecurityManager.getClass().getMethod("checkSystemClipboardAccess"); //$NON-NLS-1$
+				m.invoke(fSecurityManager);
+			}
+			catch (NoSuchMethodException e) {
+				logDeprecatedAccess(e);
+			}
+			catch (InvocationTargetException e) {
+				if (e.getTargetException() instanceof RuntimeException) {
+					throw (RuntimeException) e.getTargetException();
+				}
+				logException(e);
+			}
+			catch (IllegalAccessException | IllegalArgumentException e) {
+				logException(e);
+			}
+		}
+	}
+
+	/**
+	 * @deprecated super class method has been removed in JDK 10
+	 */
+	@Deprecated
+	public boolean checkTopLevelWindow(Object window) {
+		try {
+			if (fSecurityManager != null) {
+				final Method m = fSecurityManager.getClass().getMethod("checkTopLevelWindow", Object.class); //$NON-NLS-1$
+				return (boolean) m.invoke(fSecurityManager, window);
+			}
+			final Method m = SecurityManager.class.getMethod("checkTopLevelWindow", Object.class); //$NON-NLS-1$
+			return (boolean) m.invoke(new SecurityManager(), window);
+		}
+		catch (NoSuchMethodException e) {
+			logDeprecatedAccess(e);
+		}
+		catch (InvocationTargetException e) {
+			if (e.getTargetException() instanceof RuntimeException) {
+				throw (RuntimeException) e.getTargetException();
+			}
+			logException(e);
+		}
+		catch (IllegalAccessException | IllegalArgumentException e) {
+			logException(e);
+		}
+		return false;
+	}
+
+	/**
+	 * @deprecated super class method has been removed in JDK 10
+	 */
+	@Deprecated
+	public boolean getInCheck() {
+		try {
+			if (fSecurityManager != null) {
+				final Method m = fSecurityManager.getClass().getMethod("getInCheck"); //$NON-NLS-1$
+				return (boolean) m.invoke(fSecurityManager);
+			}
+			final Method m = SecurityManager.class.getMethod("getInCheck"); //$NON-NLS-1$
+			return (boolean) m.invoke(new SecurityManager());
+		}
+		catch (NoSuchMethodException e) {
+			logDeprecatedAccess(e);
+		}
+		catch (InvocationTargetException e) {
+			if (e.getTargetException() instanceof RuntimeException) {
+				throw (RuntimeException) e.getTargetException();
+			}
+			logException(e);
+		}
+		catch (IllegalAccessException | IllegalArgumentException e) {
+			logException(e);
+		}
+		return false;
+	}
+
+	private static void logDeprecatedAccess(Throwable e) {
+		Platform.getLog(AntCorePlugin.getPlugin().getBundle()).log(new Status(IStatus.WARNING, AntCorePlugin.PI_ANTCORE, InternalCoreAntMessages.AntSecurityManager_0, e));
+	}
+
+	private static void logException(Throwable e) {
+		Platform.getLog(AntCorePlugin.getPlugin().getBundle()).log(new Status(IStatus.ERROR, AntCorePlugin.PI_ANTCORE, e.getLocalizedMessage(), e));
 	}
 }
