@@ -24,6 +24,10 @@
   <version>4.6.500-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 
+  <properties>
+    <skipAPIAnalysis>true</skipAPIAnalysis> <!-- https://bugs.eclipse.org/bugs/show_bug.cgi?id=548572 -->
+  </properties>
+
   <build>
     <plugins>
       <plugin>

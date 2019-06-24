@@ -15,4 +15,7 @@
 
 	<packaging>eclipse-test-plugin</packaging>
 
+	<properties>
+		<skipAPIAnalysis>true</skipAPIAnalysis> <!-- Not in baseline -->
+	</properties>
 </project>
