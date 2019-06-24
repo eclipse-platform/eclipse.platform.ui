@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     Red Hat - Bug 548344
+ *     IBM Corporation - Bug 548557 - Warnings in I20190621-1800 for debug.ui
 // *******************************************************************************/
 
 package org.eclipse.debug.internal.ui;
@@ -47,11 +48,13 @@ public class TextGetSetEditingSupport<T> extends EditingSupport {
 		return true;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected Object getValue(Object element) {
 		return getter.apply((T) element);
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void setValue(Object element, Object value) {
 		setter.accept((T) element, (String) value);
