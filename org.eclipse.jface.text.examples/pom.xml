@@ -20,4 +20,9 @@
   <artifactId>org.eclipse.jface.text.examples</artifactId>
   <version>1.0.100-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
+
+  <properties>
+    <skipAPIAnalysis>true</skipAPIAnalysis> <!-- bundle not in baseline -->
+  </properties>
+
 </project>
