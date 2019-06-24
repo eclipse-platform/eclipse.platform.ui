@@ -195,9 +195,7 @@ import org.eclipse.swt.widgets.Scrollable;
 		Class<? extends Control> c = control.getClass();
 		try {
 			c.getMethod(name, parameterTypes);
-		} catch (SecurityException e) {
-			return false;
-		} catch (NoSuchMethodException e) {
+		} catch (SecurityException | NoSuchMethodException e) {
 			return false;
 		}
 		return true;

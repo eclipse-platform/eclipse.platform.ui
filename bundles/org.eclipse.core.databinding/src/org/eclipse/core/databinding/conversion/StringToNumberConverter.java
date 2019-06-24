@@ -113,8 +113,7 @@ public class StringToNumberConverter<T extends Number> extends NumberFormatConve
 					(icuBigDecimal != null)+", icuBigDecimalScale="+(icuBigDecimalScale != null)+ //$NON-NLS-1$
 					", icuBigDecimalUnscaledValue="+(icuBigDecimalUnscaledValue != null)); //$NON-NLS-1$ */
 		}
-		catch(ClassNotFoundException e) {}
-		catch(NoSuchMethodException e) {}
+		catch(ClassNotFoundException | NoSuchMethodException e) {}
 	}
 	/**
 	 * @param numberFormat

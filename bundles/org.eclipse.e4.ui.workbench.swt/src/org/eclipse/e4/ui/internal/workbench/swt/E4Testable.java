@@ -85,9 +85,7 @@ public class E4Testable extends TestableObject {
 	private void waitForEarlyStartup() {
 		try {
 			Job.getJobManager().join("earlyStartup", null);
-		} catch (OperationCanceledException e) {
-			// ignore
-		} catch (InterruptedException e) {
+		} catch (OperationCanceledException | InterruptedException e) {
 			// ignore
 		}
 	}

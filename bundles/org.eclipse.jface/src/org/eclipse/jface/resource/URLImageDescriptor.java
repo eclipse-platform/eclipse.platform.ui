@@ -261,9 +261,7 @@ class URLImageDescriptor extends ImageDescriptor {
 				if (!InternalPolicy.DEBUG_LOAD_URL_IMAGE_DESCRIPTOR_DIRECTLY) {
 					try {
 						return new Image(device, new URLImageFileNameProvider(url));
-					} catch (SWTException exception) {
-						// If we fail fall back to the slower input stream method.
-					} catch (IllegalArgumentException exception) {
+					} catch (SWTException | IllegalArgumentException exception) {
 						// If we fail fall back to the slower input stream method.
 					}
 				}

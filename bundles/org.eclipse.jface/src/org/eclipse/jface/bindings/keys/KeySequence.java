@@ -176,11 +176,7 @@ public final class KeySequence extends TriggerSequence implements Comparable {
 
 			final KeyStroke[] keyStrokeArray = keyStrokes.toArray(new KeyStroke[keyStrokes.size()]);
 			return new KeySequence(keyStrokeArray);
-		} catch (final IllegalArgumentException e) {
-			throw new ParseException(
-					"Could not construct key sequence with these key strokes: " //$NON-NLS-1$
-							+ keyStrokes);
-		} catch (final NullPointerException e) {
+		} catch (final IllegalArgumentException | NullPointerException e) {
 			throw new ParseException(
 					"Could not construct key sequence with these key strokes: " //$NON-NLS-1$
 							+ keyStrokes);

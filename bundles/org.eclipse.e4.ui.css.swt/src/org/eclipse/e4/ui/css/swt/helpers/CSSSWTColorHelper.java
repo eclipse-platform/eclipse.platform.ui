@@ -116,10 +116,7 @@ public class CSSSWTColorHelper {
 					return display.getSystemColor(field.getInt(null)).getRGBA();
 				}
 			}
-		} catch (IllegalArgumentException e) {
-			// no op - shouldnt happen. We check for static before calling
-			// getInt(null)
-		} catch (IllegalAccessException e) {
+		} catch (IllegalArgumentException | IllegalAccessException e) {
 			// no op - shouldnt happen. We check for public before calling
 			// getInt(null)
 		}

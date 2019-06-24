@@ -39,8 +39,6 @@ public class OSGiResourceLocator implements IResourceLocator {
 		try {
 			URL resolvedURL = FileLocator.resolve(new URL(uri));
 			return resolvedURL.toString();
-		} catch (MalformedURLException e) {
-
 		} catch (IOException e) {
 
 		}

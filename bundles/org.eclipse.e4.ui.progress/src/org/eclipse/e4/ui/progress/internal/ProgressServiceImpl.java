@@ -209,13 +209,7 @@ public class ProgressServiceImpl implements IProgressService {
 			try {
 				manager.beginRule(rule, getEventLoopMonitor());
 				context.run(false, false, runnable);
-			} catch (InvocationTargetException e) {
-				status = new Status(IStatus.ERROR, IProgressConstants.PLUGIN_ID, e
-						.getMessage(), e);
-			} catch (InterruptedException e) {
-				status = new Status(IStatus.ERROR, IProgressConstants.PLUGIN_ID, e
-						.getMessage(), e);
-			} catch (OperationCanceledException e) {
+			} catch (InvocationTargetException | InterruptedException | OperationCanceledException e) {
 				status = new Status(IStatus.ERROR, IProgressConstants.PLUGIN_ID, e
 						.getMessage(), e);
 			} finally {

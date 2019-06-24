@@ -193,13 +193,7 @@ public abstract class ResourceManager {
 
 		try {
 			return (Image) create(descriptor);
-		} catch (DeviceResourceException e) {
-			Policy.getLog().log(
-					new Status(IStatus.WARNING, "org.eclipse.jface", 0, //$NON-NLS-1$
-							"The image could not be loaded: " + descriptor, //$NON-NLS-1$
-							e));
-			return getDefaultImage();
-		} catch (SWTException e) {
+		} catch (DeviceResourceException | SWTException e) {
 			Policy.getLog().log(
 					new Status(IStatus.WARNING, "org.eclipse.jface", 0, //$NON-NLS-1$
 							"The image could not be loaded: " + descriptor, //$NON-NLS-1$

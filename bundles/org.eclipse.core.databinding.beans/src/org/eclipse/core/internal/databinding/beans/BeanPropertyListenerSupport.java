@@ -109,11 +109,7 @@ public class BeanPropertyListenerSupport {
 			try {
 				method.invoke(bean, parameters);
 				return true;
-			} catch (IllegalArgumentException e) {
-				log(IStatus.WARNING, message + bean, e);
-			} catch (IllegalAccessException e) {
-				log(IStatus.WARNING, message + bean, e);
-			} catch (InvocationTargetException e) {
+			} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
 				log(IStatus.WARNING, message + bean, e);
 			}
 		}

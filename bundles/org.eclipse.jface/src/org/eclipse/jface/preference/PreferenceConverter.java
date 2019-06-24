@@ -156,9 +156,7 @@ public class PreferenceConverter {
 		for (int i = 0; i < numTokens; i++) {
 			try {
 				fontData[i] = new FontData(tokenizer.nextToken());
-			} catch (SWTException error) {
-				return defaultResult;
-			} catch (IllegalArgumentException error) {
+			} catch (SWTException | IllegalArgumentException error) {
 				return defaultResult;
 			}
 		}

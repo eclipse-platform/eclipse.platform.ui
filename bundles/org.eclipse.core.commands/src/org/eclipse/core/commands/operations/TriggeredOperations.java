@@ -173,10 +173,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 				IStatus status = triggeringOperation.execute(monitor, info);
 				history.closeOperation(status.isOK(), false, IOperationHistory.EXECUTE);
 				return status;
-			} catch (ExecutionException e) {
-				history.closeOperation(false, false, IOperationHistory.EXECUTE);
-				throw e;
-			} catch (RuntimeException e) {
+			} catch (ExecutionException | RuntimeException e) {
 				history.closeOperation(false, false, IOperationHistory.EXECUTE);
 				throw e;
 			}
@@ -199,11 +196,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 				}
 				history.closeOperation(status.isOK(), false, IOperationHistory.REDO);
 				return status;
-			} catch (ExecutionException e) {
-				children = childrenToRestore;
-				history.closeOperation(false, false, IOperationHistory.REDO);
-				throw e;
-			} catch (RuntimeException e) {
+			} catch (ExecutionException | RuntimeException e) {
 				children = childrenToRestore;
 				history.closeOperation(false, false, IOperationHistory.REDO);
 				throw e;
@@ -225,11 +218,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 				}
 				history.closeOperation(status.isOK(), false, IOperationHistory.UNDO);
 				return status;
-			} catch (ExecutionException e) {
-				children = childrenToRestore;
-				history.closeOperation(false, false, IOperationHistory.UNDO);
-				throw e;
-			} catch (RuntimeException e) {
+			} catch (ExecutionException | RuntimeException e) {
 				children = childrenToRestore;
 				history.closeOperation(false, false, IOperationHistory.UNDO);
 				throw e;

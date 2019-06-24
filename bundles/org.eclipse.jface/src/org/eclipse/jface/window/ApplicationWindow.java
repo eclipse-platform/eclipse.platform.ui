@@ -761,9 +761,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
 					try {
 						ModalContext.run(runnable, fork, mgr
 								.getProgressMonitor(), display);
-					} catch (InvocationTargetException ite) {
-						holder[0] = ite;
-					} catch (InterruptedException ie) {
+					} catch (InvocationTargetException | InterruptedException ie) {
 						holder[0] = ie;
 					}
 				});

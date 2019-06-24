@@ -127,9 +127,7 @@ public abstract class SafeRunnable implements ISafeRunnable {
 			public void run(ISafeRunnable code) {
 				try {
 					code.run();
-				} catch (Exception e) {
-					handleException(code, e);
-				} catch (LinkageError e) {
+				} catch (Exception | LinkageError e) {
 					handleException(code, e);
 				}
 			}

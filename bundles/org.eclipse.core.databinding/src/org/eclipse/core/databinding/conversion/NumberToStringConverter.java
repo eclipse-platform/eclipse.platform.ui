@@ -60,8 +60,7 @@ public class NumberToStringConverter extends Converter<Object, String> {
 			icuBigDecimalCtr = icuBigDecimal.getConstructor(BigInteger.class, int.class);
 //			System.out.println("DEBUG: Full ICU4J support state: icuBigDecimal="+(icuBigDecimal != null)+", icuBigDecimalCtr="+(icuBigDecimalCtr != null)); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		catch(ClassNotFoundException e) {}
-		catch(NoSuchMethodException e) {}
+		catch(ClassNotFoundException | NoSuchMethodException e) {}
 	}
 
 	/**
@@ -135,9 +134,7 @@ public class NumberToStringConverter extends Converter<Object, String> {
 				try {
 					fromObject = icuBigDecimalCtr.newInstance(o.unscaledValue(), Integer.valueOf(o.scale()));
 				}
-				catch(InstantiationException e) {}
-				catch(InvocationTargetException e) {}
-				catch(IllegalAccessException e) {}
+				catch(InstantiationException | InvocationTargetException | IllegalAccessException e) {}
 				// Otherwise, replacement plugin present and supports java.math.BigDecimal.
 			}
 			synchronized (numberFormat) {

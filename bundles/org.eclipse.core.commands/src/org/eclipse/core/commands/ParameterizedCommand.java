@@ -333,8 +333,7 @@ public final class ParameterizedCommand implements Comparable {
 			// convert the parameters to an Parameterization array and create
 			// the command
 			return new ParameterizedCommand(command, parms.toArray(new Parameterization[parms.size()]));
-		} catch (NotDefinedException e) {
-		} catch (ParameterValueConversionException e) {
+		} catch (NotDefinedException | ParameterValueConversionException e) {
 		}
 		return null;
 	}

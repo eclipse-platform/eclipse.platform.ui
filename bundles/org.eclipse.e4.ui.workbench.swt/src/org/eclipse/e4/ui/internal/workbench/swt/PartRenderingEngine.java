@@ -1165,9 +1165,7 @@ public class PartRenderingEngine implements IPresentationEngine {
 						}
 					} catch (ThreadDeath th) {
 						throw th;
-					} catch (Exception ex) {
-						handle(ex, advisor);
-					} catch (Error err) {
+					} catch (Exception | Error err) {
 						handle(err, advisor);
 					}
 				}

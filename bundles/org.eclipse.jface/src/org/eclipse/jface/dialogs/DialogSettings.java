@@ -272,11 +272,7 @@ public class DialogSettings implements IDialogSettings {
 				root = document.getFirstChild();
 			}
 			load(document, (Element) root);
-		} catch (ParserConfigurationException e) {
-			// ignore
-		} catch (IOException e) {
-			// ignore
-		} catch (SAXException e) {
+		} catch (ParserConfigurationException | IOException | SAXException e) {
 			// ignore
 		}
 	}
