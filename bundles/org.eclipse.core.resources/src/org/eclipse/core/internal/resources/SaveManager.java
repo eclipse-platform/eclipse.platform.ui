@@ -1541,7 +1541,8 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 					parent = parent.getParent();
 				}
 				if (parent == null) {
-					IStatus status = new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, "null parent found while collapsing trees", null); //$NON-NLS-1$
+					Exception e = new NullPointerException("null parent found while collapsing trees"); //$NON-NLS-1$
+					IStatus status = new Status(IStatus.WARNING, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, e.getMessage(), e);
 					Policy.log(status);
 					return null;
 				}

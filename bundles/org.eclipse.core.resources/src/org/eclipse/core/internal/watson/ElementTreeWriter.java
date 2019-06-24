@@ -125,6 +125,9 @@ public class ElementTreeWriter {
 				/* find the next tree in the list */
 				ElementTree parent = oldest.getParent();
 				while (table.get(parent) == null) {
+					if (parent == null) {
+						throw new IOException("null parent found while sorting trees"); //$NON-NLS-1$
+					}
 					parent = parent.getParent();
 				}
 				oldest = parent;
@@ -177,7 +180,7 @@ public class ElementTreeWriter {
 	 * @param depth The depth of the subtree to write.  A depth of zero writes a
 	 *  single node, and a depth of D_INFINITE writes the whole subtree.
 	 * @param output The stream to write the subtree to.
-	
+
 	 */
 	public void writeDeltaChain(ElementTree[] trees, IPath path, int depth, DataOutput output, IElementComparator comparator) throws IOException {
 		/* Write the format version number */
