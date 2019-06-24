@@ -501,10 +501,7 @@ public class FilteredTree extends Composite {
 			@Override
 			public void mouseDown(MouseEvent e) {
 				if (filterText.getText().equals(initialText)) {
-					// XXX: We cannot call clearText() due to
-					// https://bugs.eclipse.org/bugs/show_bug.cgi?id=260664
-					setFilterText(""); //$NON-NLS-1$
-					textChanged();
+					clearText();
 				}
 			}
 		});
