@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2017 IBM Corporation and others.
+ * Copyright (c) 2007, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -113,7 +113,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		controller.init(getWorkbench());
 
 		ContextModel cm = controller.getContextModel();
-		ContextElement dialog = (ContextElement) cm.getContextIdToElement()
+		ContextElement dialog = cm.getContextIdToElement()
 				.get(IContextService.CONTEXT_ID_DIALOG);
 		assertNull(cm.getSelectedElement());
 		assertNotNull(dialog);
@@ -127,7 +127,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 
 		assertEquals(1, events.size());
 
-		ContextElement window = (ContextElement) cm.getContextIdToElement()
+		ContextElement window = cm.getContextIdToElement()
 				.get(IContextService.CONTEXT_ID_WINDOW);
 		assertNotNull(window);
 
@@ -387,9 +387,9 @@ public class KeysPreferenceModelTest extends UITestCase {
 		controller.init(getWorkbench());
 
 		final ContextModel cm = controller.getContextModel();
-		final ContextElement dialog = (ContextElement) cm
+		final ContextElement dialog = cm
 				.getContextIdToElement().get(IContextService.CONTEXT_ID_DIALOG);
-		final ContextElement window = (ContextElement) cm
+		final ContextElement window = cm
 				.getContextIdToElement().get(IContextService.CONTEXT_ID_WINDOW);
 
 		final BindingModel bm = controller.getBindingModel();
@@ -431,7 +431,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		controller.init(getWorkbench());
 
 		final ContextModel cm = controller.getContextModel();
-		final ContextElement dialog = (ContextElement) cm
+		final ContextElement dialog = cm
 				.getContextIdToElement().get(IContextService.CONTEXT_ID_DIALOG);
 
 		final BindingModel bm = controller.getBindingModel();
@@ -513,7 +513,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		controller.init(getWorkbench());
 
 		final ContextModel cm = controller.getContextModel();
-		final ContextElement window = (ContextElement) cm
+		final ContextElement window = cm
 				.getContextIdToElement().get(IContextService.CONTEXT_ID_WINDOW);
 
 		final BindingModel bm = controller.getBindingModel();
@@ -838,7 +838,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		controller.init(getWorkbench());
 
 		final ContextModel cm = controller.getContextModel();
-		final ContextElement window = (ContextElement) cm
+		final ContextElement window = cm
 				.getContextIdToElement().get(IContextService.CONTEXT_ID_WINDOW);
 
 		final BindingModel bm = controller.getBindingModel();
@@ -868,7 +868,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		controller.init(getWorkbench());
 
 		final ContextModel cm = controller.getContextModel();
-		final ContextElement dialog = (ContextElement) cm
+		final ContextElement dialog = cm
 				.getContextIdToElement().get(IContextService.CONTEXT_ID_DIALOG);
 
 		final BindingModel bm = controller.getBindingModel();
