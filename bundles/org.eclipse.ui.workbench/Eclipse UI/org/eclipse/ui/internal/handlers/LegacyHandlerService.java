@@ -488,9 +488,7 @@ public class LegacyHandlerService implements IHandlerService {
 		if (vars != null) {
 			try {
 				return (Map<?, ?>) vars.get(ctx);
-			} catch (IllegalArgumentException e) {
-
-			} catch (IllegalAccessException e) {
+			} catch (IllegalArgumentException | IllegalAccessException e) {
 
 			}
 		}
@@ -504,9 +502,7 @@ public class LegacyHandlerService implements IHandlerService {
 			try {
 				contextFVariables = EvaluationContext.class.getField("fVariables"); //$NON-NLS-1$
 				contextFVariables.setAccessible(true);
-			} catch (SecurityException e) {
-
-			} catch (NoSuchFieldException e) {
+			} catch (SecurityException | NoSuchFieldException e) {
 
 			}
 		}

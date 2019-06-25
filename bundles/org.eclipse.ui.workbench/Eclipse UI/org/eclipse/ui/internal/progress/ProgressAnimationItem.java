@@ -164,13 +164,7 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 			try {
 				service.executeCommand(command, null);
 				removeTopElement(ji);
-			} catch (ExecutionException e) {
-				exception = e;
-			} catch (NotDefinedException e) {
-				exception = e;
-			} catch (NotEnabledException e) {
-				exception = e;
-			} catch (NotHandledException e) {
+			} catch (ExecutionException | NotDefinedException | NotEnabledException | NotHandledException e) {
 				exception = e;
 			}
 

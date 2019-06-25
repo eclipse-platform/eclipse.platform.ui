@@ -133,13 +133,7 @@ public class ShowViewMenu extends ContributionItem {
 			public void run() {
 				try {
 					handlerService.executeCommand(cmd, null);
-				} catch (final ExecutionException e) {
-					// Do nothing.
-				} catch (NotDefinedException e) {
-					// Do nothing.
-				} catch (NotEnabledException e) {
-					// Do nothing.
-				} catch (NotHandledException e) {
+				} catch (ExecutionException | NotDefinedException | NotEnabledException | NotHandledException e) {
 					// Do nothing.
 				}
 			}

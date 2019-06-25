@@ -107,10 +107,7 @@ public final class HandlerPersistence extends RegistryPersistence {
 			if (activation.getHandler() != null) {
 				try {
 					activation.getHandler().dispose();
-				} catch (Exception e) {
-					WorkbenchPlugin.log("Failed to dispose handler for " //$NON-NLS-1$
-							+ activation.getCommandId(), e);
-				} catch (LinkageError e) {
+				} catch (Exception | LinkageError e) {
 					WorkbenchPlugin.log("Failed to dispose handler for " //$NON-NLS-1$
 							+ activation.getCommandId(), e);
 				}

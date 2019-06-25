@@ -107,9 +107,7 @@ public class TarFile {
 				TarEntry oldEntry = curEntry;
 				try {
 					curEntry = entryEnumerationStream.getNextEntry();
-				} catch(TarException e) {
-					curEntry = null;
-				} catch(IOException e) {
+				} catch(TarException | IOException e) {
 					curEntry = null;
 				}
 				return oldEntry;

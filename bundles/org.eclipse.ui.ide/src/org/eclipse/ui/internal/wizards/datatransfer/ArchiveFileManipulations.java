@@ -46,9 +46,7 @@ public class ArchiveFileManipulations {
 		TarFile tarFile = null;
 		try {
 			tarFile = new TarFile(fileName);
-		} catch (TarException tarException) {
-			return false;
-		} catch (IOException ioException) {
+		} catch (TarException | IOException ioException) {
 			return false;
 		} finally {
 			if (tarFile != null) {

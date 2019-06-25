@@ -704,8 +704,7 @@ public class LogView extends ViewPart implements ILogListener {
 		ProgressMonitorDialog pmd = new ProgressMonitorDialog(getViewSite().getShell());
 		try {
 			pmd.run(true, true, op);
-		} catch (InvocationTargetException e) { // do nothing
-		} catch (InterruptedException e) { // do nothing
+		} catch (InvocationTargetException | InterruptedException e) { // do nothing
 		} finally {
 			fReadLogAction.setText(Messages.LogView_readLog_reload);
 			fReadLogAction.setToolTipText(Messages.LogView_readLog_reload);
@@ -820,8 +819,7 @@ public class LogView extends ViewPart implements ILogListener {
 		ProgressMonitorDialog pmd = new ProgressMonitorDialog(getViewSite().getShell());
 		try {
 			pmd.run(true, true, op);
-		} catch (InvocationTargetException e) { // do nothing
-		} catch (InterruptedException e) { // do nothing
+		} catch (InvocationTargetException | InterruptedException e) { // do nothing
 		} finally {
 			fReadLogAction.setText(Messages.LogView_readLog_restore);
 			fReadLogAction.setToolTipText(Messages.LogView_readLog_restore);

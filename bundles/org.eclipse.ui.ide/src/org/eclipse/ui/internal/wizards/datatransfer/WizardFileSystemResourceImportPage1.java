@@ -1166,10 +1166,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 
 		try {
 			dialog.run(true, true, runnable);
-		} catch (InvocationTargetException exception) {
-			//Couldn't start. Do nothing.
-			return;
-		} catch (InterruptedException exception) {
+		} catch (InvocationTargetException | InterruptedException exception) {
 			//Got interrupted. Do nothing.
 			return;
 		}

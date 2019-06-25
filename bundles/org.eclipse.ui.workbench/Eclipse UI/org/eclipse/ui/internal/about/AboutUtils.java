@@ -14,7 +14,6 @@
 package org.eclipse.ui.internal.about;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -146,9 +145,7 @@ public class AboutUtils {
 		try {
 			IWebBrowser browser = support.getExternalBrowser();
 			browser.openURL(new URL(urlEncodeForSpaces(href.toCharArray())));
-		} catch (MalformedURLException e) {
-			openWebBrowserError(shell, href, e);
-		} catch (PartInitException e) {
+		} catch (MalformedURLException | PartInitException e) {
 			openWebBrowserError(shell, href, e);
 		}
 	}
@@ -237,8 +234,6 @@ public class AboutUtils {
 			while ((count = in.read(buffer, 0, buffer.length)) > 0) {
 				out.write(buffer, 0, count);
 			}
-		} catch (FileNotFoundException e) {
-			return null;
 		} catch (IOException e) {
 			return null;
 		} finally {

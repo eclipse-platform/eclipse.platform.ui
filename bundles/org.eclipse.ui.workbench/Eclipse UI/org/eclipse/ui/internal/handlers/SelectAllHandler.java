@@ -130,14 +130,11 @@ public class SelectAllHandler extends WidgetMethodHandler {
 
 				}
 
-			} catch (IllegalAccessException e) {
-				// The method is protected, so do nothing.
-
 			} catch (InvocationTargetException e) {
 				throw new ExecutionException("An exception occurred while executing " //$NON-NLS-1$
 						+ getMethodToExecute(), e.getTargetException());
 
-			} catch (NoSuchMethodException e) {
+			} catch (IllegalAccessException | NoSuchMethodException e) {
 				// I can't get the text limit. Do nothing.
 
 			}

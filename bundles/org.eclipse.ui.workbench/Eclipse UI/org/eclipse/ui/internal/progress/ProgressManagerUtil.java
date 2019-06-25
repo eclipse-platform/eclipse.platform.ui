@@ -489,9 +489,7 @@ public class ProgressManagerUtil {
 			if (splashShell != null && splashShell.isVisible()) {
 				return splashShell;
 			}
-		} catch (IllegalAccessException e) {
-			// Use non-modal shell
-		} catch (InvocationTargetException e) {
+		} catch (IllegalAccessException | InvocationTargetException e) {
 			// Use non-modal shell
 		}
 

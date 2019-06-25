@@ -850,9 +850,7 @@ public final class IDE {
 		IContentType contentType = null;
 		try (InputStream is = fileStore.openInputStream(EFS.NONE, null)) {
 			contentType = Platform.getContentTypeManager().findContentTypeFor(is, name);
-		} catch (CoreException ex) {
-			// continue without content type
-		} catch (IOException ex) {
+		} catch (CoreException | IOException ex) {
 			// continue without content type
 		}
 
@@ -1418,9 +1416,7 @@ public final class IDE {
 		try {
 			is = fileStore.openInputStream(EFS.NONE, null);
 			contentTypes = Platform.getContentTypeManager().findContentTypesFor(is, name);
-		} catch (CoreException ex) {
-			// it's OK, ignore
-		} catch (IOException ex) {
+		} catch (CoreException | IOException ex) {
 			// it's OK, ignore
 		} finally {
 			if (is != null) {

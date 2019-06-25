@@ -282,9 +282,7 @@ public class SaveableHelper {
 			WorkbenchPlugin.log(title, new Status(IStatus.WARNING, PlatformUI.PLUGIN_ID, 0, title, targetExc));
 			StatusUtil.handleStatus(title, targetExc, StatusManager.SHOW, shellProvider.getShell());
 			// Fall through to return failure
-		} catch (InterruptedException e) {
-			// The user pressed cancel. Fall through to return failure
-		} catch (OperationCanceledException e) {
+		} catch (InterruptedException | OperationCanceledException e) {
 			// The user pressed cancel. Fall through to return failure
 		}
 		return success[0];

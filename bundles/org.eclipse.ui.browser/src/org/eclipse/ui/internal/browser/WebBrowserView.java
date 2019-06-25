@@ -94,9 +94,7 @@ public class WebBrowserView extends ViewPart implements
 			IWorkbenchBrowserSupport support = PlatformUI.getWorkbench()
 					.getBrowserSupport();
 			support.getExternalBrowser().openURL(theURL);
-		} catch (MalformedURLException e) {
-			// TODO handle this
-		} catch (PartInitException e) {
+		} catch (MalformedURLException | PartInitException e) {
 			// TODO handle this
 		}
 	}

@@ -184,9 +184,7 @@ public class EditorInputTransfer extends ByteArrayTransfer {
 				results[i] = readEditorInput(in);
 			}
 			return results;
-		} catch (IOException e) {
-			return null;
-		} catch (WorkbenchException e) {
+		} catch (IOException | WorkbenchException e) {
 			return null;
 		}
 

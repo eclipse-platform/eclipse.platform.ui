@@ -370,11 +370,7 @@ public final class SelectionEnabler {
 				}
 				// should not happen - but enable if it does
 				return true;
-			} catch (NoSuchMethodException e) {
-				// should not happen - fall through if it does
-			} catch (IllegalAccessException e) {
-				// should not happen - fall through if it does
-			} catch (InvocationTargetException e) {
+			} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
 				// should not happen - fall through if it does
 			}
 		}

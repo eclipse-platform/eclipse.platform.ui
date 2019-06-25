@@ -487,10 +487,7 @@ public class QuickFixPage extends WizardPage {
 						monitor1.worked(1);
 					}
 				});
-			} catch (InvocationTargetException e) {
-				StatusManager.getManager().handle(
-						MarkerSupportInternalUtilities.errorFor(e));
-			} catch (InterruptedException e) {
+			} catch (InvocationTargetException | InterruptedException e) {
 				StatusManager.getManager().handle(
 						MarkerSupportInternalUtilities.errorFor(e));
 			}

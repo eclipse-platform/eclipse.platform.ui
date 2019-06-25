@@ -568,9 +568,7 @@ public class LinkedResourceEditor {
 			try {
 				new ProgressMonitorDialog(fRemoveButton.getShell()).run(true,
 						true, op);
-			} catch (InvocationTargetException e) {
-				IDEWorkbenchPlugin.log(null, e);
-			} catch (InterruptedException e) {
+			} catch (InvocationTargetException | InterruptedException e) {
 				IDEWorkbenchPlugin.log(null, e);
 			}
 			fTree.refresh();

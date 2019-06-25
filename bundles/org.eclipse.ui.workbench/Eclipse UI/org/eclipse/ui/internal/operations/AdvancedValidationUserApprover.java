@@ -206,12 +206,10 @@ public class AdvancedValidationUserApprover implements IOperationApprover, IOper
 
 			progressDialog.run(false, true, runnable);
 			return runnable.getStatus();
-		} catch (OperationCanceledException e) {
-			return Status.CANCEL_STATUS;
 		} catch (InvocationTargetException e) {
 			reportException(e, uiInfo);
 			return IOperationHistory.OPERATION_INVALID_STATUS;
-		} catch (InterruptedException e) {
+		} catch (OperationCanceledException | InterruptedException e) {
 			// Operation was cancelled and acknowledged by runnable with this
 			// exception. Do nothing.
 			return Status.CANCEL_STATUS;

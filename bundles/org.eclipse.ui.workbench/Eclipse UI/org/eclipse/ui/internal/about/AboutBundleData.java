@@ -104,9 +104,7 @@ public class AboutBundleData extends AboutData {
 			isSigned = signedContent != null && signedContent.isSigned();
 			isSignedDetermined = true;
 			return isSigned;
-		} catch (IOException e) {
-			throw (IllegalStateException) new IllegalStateException().initCause(e);
-		} catch (GeneralSecurityException e) {
+		} catch (IOException | GeneralSecurityException e) {
 			throw (IllegalStateException) new IllegalStateException().initCause(e);
 		} finally {
 			bundleContext.ungetService(factoryRef);

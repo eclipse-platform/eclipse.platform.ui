@@ -121,9 +121,7 @@ public class JFaceProperty<S, T> extends SimpleValueProperty<S, T> {
 			addPropertyListenerMethod = clazz.getMethod("addPropertyChangeListener", IPropertyChangeListener.class); //$NON-NLS-1$
 			removePropertyListenerMethod = clazz.getMethod("removePropertyChangeListener", //$NON-NLS-1$
 					IPropertyChangeListener.class);
-		} catch (SecurityException e) {
-			throw new IllegalArgumentException();
-		} catch (NoSuchMethodException e) {
+		} catch (SecurityException | NoSuchMethodException e) {
 			throw new IllegalArgumentException();
 		}
 	}
@@ -138,9 +136,7 @@ public class JFaceProperty<S, T> extends SimpleValueProperty<S, T> {
 	protected T doGetValue(Object model) {
 		try {
 			return (T) getterMethod.invoke(model);
-		} catch (InvocationTargetException e) {
-			throw new IllegalStateException(e.getMessage());
-		} catch (IllegalAccessException e) {
+		} catch (InvocationTargetException | IllegalAccessException e) {
 			throw new IllegalStateException(e.getMessage());
 		}
 	}
@@ -149,9 +145,7 @@ public class JFaceProperty<S, T> extends SimpleValueProperty<S, T> {
 	protected void doSetValue(Object model, Object value) {
 		try {
 			setterMethod.invoke(model, value);
-		} catch (IllegalAccessException e) {
-			throw new IllegalStateException(e.getMessage());
-		} catch (InvocationTargetException e) {
+		} catch (IllegalAccessException | InvocationTargetException e) {
 			throw new IllegalStateException(e.getMessage());
 		}
 	}

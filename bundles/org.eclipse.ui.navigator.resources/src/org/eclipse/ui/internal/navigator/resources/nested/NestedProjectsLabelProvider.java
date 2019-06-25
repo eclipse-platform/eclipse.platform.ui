@@ -134,12 +134,9 @@ public class NestedProjectsLabelProvider extends ResourceExtensionLabelProvider 
 							problemsModelSnapshot.get(50, TimeUnit.MILLISECONDS)
 									.getMaxSeverityIncludingNestedProjects(resource));
 				}
-			} catch (InterruptedException | ExecutionException e) {
-				WorkbenchNavigatorPlugin.log(e.getMessage(),
-						new Status(IStatus.ERROR, WorkbenchNavigatorPlugin.PLUGIN_ID, e.getMessage(), e));
 			} catch (TimeoutException e) {
 				// ignore
-			} catch (RuntimeException e) {
+			} catch (InterruptedException | ExecutionException | RuntimeException e) {
 				WorkbenchNavigatorPlugin.log(e.getMessage(),
 						new Status(IStatus.ERROR, WorkbenchNavigatorPlugin.PLUGIN_ID, e.getMessage(), e));
 			}

@@ -186,9 +186,7 @@ public class BundleSigningInfo {
 							date.setText(dateText);
 						});
 
-					} catch (IOException e1) {
-						return new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, e1.getMessage(), e1);
-					} catch (GeneralSecurityException e2) {
+					} catch (IOException | GeneralSecurityException e2) {
 						return new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, e2.getMessage(), e2);
 					}
 					return Status.OK_STATUS;
@@ -200,8 +198,7 @@ public class BundleSigningInfo {
 		Job cleanup = Job.create(WorkbenchMessages.BundleSigningTray_Unget_Signing_Service, (IJobFunction) monitor -> {
 			try {
 				Job.getJobManager().join(signerJob, monitor);
-			} catch (OperationCanceledException e1) {
-			} catch (InterruptedException e2) {
+			} catch (OperationCanceledException | InterruptedException e2) {
 			}
 			bundleContext.ungetService(factoryRef);
 			return Status.OK_STATUS;

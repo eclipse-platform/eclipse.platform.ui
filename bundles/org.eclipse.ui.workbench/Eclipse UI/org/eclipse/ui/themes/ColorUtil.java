@@ -48,10 +48,7 @@ public final class ColorUtil {
 					return getSystemColor(field.getInt(null));
 				}
 			}
-		} catch (IllegalArgumentException e) {
-			// no op - shouldnt happen. We check for static before calling
-			// getInt(null)
-		} catch (IllegalAccessException e) {
+		} catch (IllegalArgumentException | IllegalAccessException e) {
 			// no op - shouldnt happen. We check for public before calling
 			// getInt(null)
 		}

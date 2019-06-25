@@ -767,13 +767,9 @@ public class ProgressInfoItem extends Composite {
 			IStatus status = Status.OK_STATUS;
 			try {
 				handlerService.executeCommand((ParameterizedCommand) data, null);
-			} catch (ExecutionException e) {
-				status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e.getMessage(), e);
-			} catch (NotDefinedException e) {
-				status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e.getMessage(), e);
 			} catch (NotEnabledException e) {
 				status = new Status(IStatus.WARNING, PlatformUI.PLUGIN_ID, e.getMessage(), e);
-			} catch (NotHandledException e) {
+			} catch (ExecutionException | NotDefinedException | NotHandledException e) {
 				status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e.getMessage(), e);
 			}
 

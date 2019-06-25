@@ -318,15 +318,7 @@ public final class LegacyResourceSupport {
 				Method m = c.getDeclaredMethod("getDefault");//$NON-NLS-1$
 				defaultContributorResourceAdapter = m.invoke(null);
 				return defaultContributorResourceAdapter;
-			} catch (SecurityException e) {
-				// shouldn't happen - but play it safe
-			} catch (NoSuchMethodException e) {
-				// shouldn't happen - but play it safe
-			} catch (IllegalArgumentException e) {
-				// shouldn't happen - but play it safe
-			} catch (IllegalAccessException e) {
-				// shouldn't happen - but play it safe
-			} catch (InvocationTargetException e) {
+			} catch (SecurityException | NoSuchMethodException | IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
 				// shouldn't happen - but play it safe
 			}
 
@@ -435,11 +427,7 @@ public final class LegacyResourceSupport {
 			if (m != null) {
 				try {
 					return m.invoke(resourceAdapter, adaptable);
-				} catch (IllegalArgumentException e) {
-					// shouldn't happen - but play it safe
-				} catch (IllegalAccessException e) {
-					// shouldn't happen - but play it safe
-				} catch (InvocationTargetException e) {
+				} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
 					// shouldn't happen - but play it safe
 				}
 			}
@@ -458,9 +446,7 @@ public final class LegacyResourceSupport {
 			try {
 				getAdaptedResourceMethod = c.getDeclaredMethod("getAdaptedResource", new Class[] { IAdaptable.class }); //$NON-NLS-1$
 				return getAdaptedResourceMethod;
-			} catch (SecurityException e) {
-				// shouldn't happen - but play it safe
-			} catch (NoSuchMethodException e) {
+			} catch (SecurityException | NoSuchMethodException e) {
 				// shouldn't happen - but play it safe
 			}
 
@@ -480,9 +466,7 @@ public final class LegacyResourceSupport {
 				getAdaptedResourceMappingMethod = c.getDeclaredMethod("getAdaptedResourceMapping", //$NON-NLS-1$
 						new Class<?>[] { IAdaptable.class });
 				return getAdaptedResourceMappingMethod;
-			} catch (SecurityException e) {
-				// do nothing - play it safe
-			} catch (NoSuchMethodException e) {
+			} catch (SecurityException | NoSuchMethodException e) {
 				// do nothing - play it safe
 			}
 
@@ -547,11 +531,7 @@ public final class LegacyResourceSupport {
 					if (result != null) {
 						return result;
 					}
-				} catch (IllegalArgumentException e) {
-					// shouldn't happen - but play it safe
-				} catch (IllegalAccessException e) {
-					// shouldn't happen - but play it safe
-				} catch (InvocationTargetException e) {
+				} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
 					// shouldn't happen - but play it safe
 				}
 

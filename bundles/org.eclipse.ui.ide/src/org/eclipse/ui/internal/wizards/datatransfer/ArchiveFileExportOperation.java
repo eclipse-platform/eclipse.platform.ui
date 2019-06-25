@@ -199,9 +199,7 @@ public class ArchiveFileExportOperation implements IRunnableWithProgress {
 
 			try {
 				exporter.write((IFile) exportResource, destinationName);
-			} catch (IOException e) {
-				addError(NLS.bind(DataTransferMessages.DataTransfer_errorExporting, exportResource.getFullPath().makeRelative(), e.getMessage()), e);
-			} catch (CoreException e) {
+			} catch (IOException | CoreException e) {
 				addError(NLS.bind(DataTransferMessages.DataTransfer_errorExporting, exportResource.getFullPath().makeRelative(), e.getMessage()), e);
 			}
 

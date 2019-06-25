@@ -349,10 +349,7 @@ public class ChooseWorkspaceData {
 				}
 				recentWorkspaces[i] = path;
 			}
-		} catch (IOException e) {
-			// cannot log because instance area has not been set
-			return false;
-		} catch (WorkbenchException e) {
+		} catch (IOException | WorkbenchException e) {
 			// cannot log because instance area has not been set
 			return false;
 		} finally {

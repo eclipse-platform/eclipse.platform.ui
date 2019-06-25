@@ -250,10 +250,7 @@ public class FileSystemExportOperation implements IRunnableWithProgress {
 
 		try {
 			exporter.write(file, fullPath);
-		} catch (IOException e) {
-			errorTable.add(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0,
-					NLS.bind(DataTransferMessages.DataTransfer_errorExporting, fullPath, e.getMessage()), e));
-		} catch (CoreException e) {
+		} catch (IOException | CoreException e) {
 			errorTable.add(new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, 0,
 					NLS.bind(DataTransferMessages.DataTransfer_errorExporting, fullPath, e.getMessage()), e));
 		}

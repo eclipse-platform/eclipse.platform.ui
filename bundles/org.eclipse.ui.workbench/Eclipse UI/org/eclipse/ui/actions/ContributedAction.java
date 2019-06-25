@@ -173,13 +173,7 @@ public final class ContributedAction extends CommandAction {
 			try {
 				getParameterizedCommand().getCommand().setHandler(partHandler);
 				getParameterizedCommand().executeWithChecks(event, appContext);
-			} catch (ExecutionException e) {
-				// TODO some logging, perhaps?
-			} catch (NotDefinedException e) {
-				// TODO some logging, perhaps?
-			} catch (NotEnabledException e) {
-				// TODO some logging, perhaps?
-			} catch (NotHandledException e) {
+			} catch (ExecutionException | NotDefinedException | NotEnabledException | NotHandledException e) {
 				// TODO some logging, perhaps?
 			} finally {
 				getParameterizedCommand().getCommand().setHandler(oldHandler);

@@ -923,9 +923,7 @@ public class WelcomeEditor extends EditorPart {
 	public void read(InputStream is) throws IOException {
 		try {
 			parser = new WelcomeParser();
-		} catch (ParserConfigurationException e) {
-			throw (IOException) (new IOException().initCause(e));
-		} catch (SAXException e) {
+		} catch (ParserConfigurationException | SAXException e) {
 			throw (IOException) (new IOException().initCause(e));
 		}
 		parser.parse(is);

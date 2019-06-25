@@ -19,7 +19,6 @@ package org.eclipse.ui.internal.wizards.datatransfer;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -309,8 +308,6 @@ public class WizardArchiveFileResourceImportPage1 extends
 
 		try {
 			return new ZipFile(fileName);
-		} catch (ZipException e) {
-			// ignore
 		} catch (IOException e) {
 			// ignore
 		}
@@ -338,9 +335,7 @@ public class WizardArchiveFileResourceImportPage1 extends
 
 		try {
 			return new TarFile(fileName);
-		} catch (TarException e) {
-			// ignore
-		} catch (IOException e) {
+		} catch (TarException | IOException e) {
 			// ignore
 		}
 

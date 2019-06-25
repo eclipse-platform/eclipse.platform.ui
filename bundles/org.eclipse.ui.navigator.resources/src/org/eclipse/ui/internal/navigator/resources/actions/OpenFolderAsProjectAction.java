@@ -86,13 +86,7 @@ public class OpenFolderAsProjectAction extends Action {
 			} else {
 				WorkbenchNavigatorPlugin.getDefault().getLog().log(status);
 			}
-		} catch (CoreException e) {
-			WorkbenchNavigatorPlugin
-					.getDefault()
-					.getLog()
-					.log(new Status(IStatus.ERROR, WorkbenchNavigatorPlugin.getDefault().getBundle().getSymbolicName(),
-							"Failed to import " + folder.getName(), e)); //$NON-NLS-1$
-		} catch (ExecutionException e) {
+		} catch (CoreException | ExecutionException e) {
 			WorkbenchNavigatorPlugin
 					.getDefault()
 					.getLog()

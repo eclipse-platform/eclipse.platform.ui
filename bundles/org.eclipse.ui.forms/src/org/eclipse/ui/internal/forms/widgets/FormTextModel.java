@@ -144,9 +144,7 @@ public class FormTextModel {
 			InputSource source = new InputSource(is);
 			Document doc = parser.parse(source);
 			processDocument(doc, expandURLs);
-		} catch (ParserConfigurationException e) {
-			SWT.error(SWT.ERROR_INVALID_ARGUMENT, e, " " + e.getMessage()); //$NON-NLS-1$
-		} catch (SAXException e) {
+		} catch (ParserConfigurationException | SAXException e) {
 			SWT.error(SWT.ERROR_INVALID_ARGUMENT, e, " " + e.getMessage()); //$NON-NLS-1$
 		} catch (IOException e) {
 			SWT.error(SWT.ERROR_IO, e);

@@ -202,8 +202,7 @@ public final class OpenLogDialog extends TrayDialog {
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(getParentShell());
 		try {
 			dialog.run(true, true, runnable);
-		} catch (InvocationTargetException e) { // do nothing
-		} catch (InterruptedException e) { // do nothing
+		} catch (InvocationTargetException | InterruptedException e) { // do nothing
 		}
 	}
 
@@ -219,8 +218,7 @@ public final class OpenLogDialog extends TrayDialog {
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(getParentShell());
 		try {
 			dialog.run(true, true, runnable);
-		} catch (InvocationTargetException e) { // do nothing
-		} catch (InterruptedException e) { // do nothing
+		} catch (InvocationTargetException | InterruptedException e) { // do nothing
 		}
 	}
 }

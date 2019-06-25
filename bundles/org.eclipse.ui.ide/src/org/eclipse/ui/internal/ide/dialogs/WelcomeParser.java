@@ -369,11 +369,7 @@ public class WelcomeParser extends DefaultHandler {
 	public void parse(InputStream is) {
 		try {
 			parser.parse(new InputSource(is), this);
-		} catch (SAXException e) {
-			IStatus status = new Status(IStatus.ERROR,
-					IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.WelcomeParser_parseException, e);
-			IDEWorkbenchPlugin.log(IDEWorkbenchMessages.WelcomeParser_parseError, status);
-		} catch (IOException e) {
+		} catch (SAXException | IOException e) {
 			IStatus status = new Status(IStatus.ERROR,
 					IDEWorkbenchPlugin.IDE_WORKBENCH, 1, IDEWorkbenchMessages.WelcomeParser_parseException, e);
 			IDEWorkbenchPlugin.log(IDEWorkbenchMessages.WelcomeParser_parseError, status);

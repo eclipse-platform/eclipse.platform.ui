@@ -242,13 +242,7 @@ public class WidgetMethodHandler extends AbstractHandler implements IExecutableE
 			} catch (final ClassNotFoundException e) {
 				// There is no Swing support, so do nothing.
 
-			} catch (final NoSuchMethodException e) {
-				// The API has changed, which seems amazingly unlikely.
-				throw new Error("Something is seriously wrong here"); //$NON-NLS-1$
-			} catch (IllegalAccessException e) {
-				// The API has changed, which seems amazingly unlikely.
-				throw new Error("Something is seriously wrong here"); //$NON-NLS-1$
-			} catch (InvocationTargetException e) {
+			} catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
 				// The API has changed, which seems amazingly unlikely.
 				throw new Error("Something is seriously wrong here"); //$NON-NLS-1$
 			}

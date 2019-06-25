@@ -327,10 +327,7 @@ public final class CommandLegacyActionWrapper extends AbstractAction {
 			baseCommand.execute(executionEvent);
 			firePropertyChange(IAction.RESULT, null, Boolean.TRUE);
 
-		} catch (final NotHandledException e) {
-			firePropertyChange(IAction.RESULT, null, Boolean.FALSE);
-
-		} catch (final ExecutionException e) {
+		} catch (final NotHandledException | ExecutionException e) {
 			firePropertyChange(IAction.RESULT, null, Boolean.FALSE);
 			// TODO Should this be logged?
 

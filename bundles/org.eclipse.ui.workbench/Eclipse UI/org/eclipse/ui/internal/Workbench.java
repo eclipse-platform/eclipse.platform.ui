@@ -2432,11 +2432,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 			try {
 				handlerService.executeCommand(commandId, event);
 				event.doit = false;
-			} catch (NotDefinedException e1) {
-				// regular condition; do nothing
-			} catch (NotEnabledException e2) {
-				// regular condition; do nothing
-			} catch (NotHandledException e3) {
+			} catch (NotDefinedException | NotEnabledException | NotHandledException e3) {
 				// regular condition; do nothing
 			} catch (ExecutionException ex) {
 				StatusUtil.handleStatus(ex, StatusManager.SHOW | StatusManager.LOG);

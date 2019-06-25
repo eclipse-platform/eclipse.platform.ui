@@ -91,9 +91,7 @@ public class WorkbenchTestable extends TestableObject {
 	private void waitForEarlyStartup() {
 		try {
 			Job.getJobManager().join(Workbench.EARLY_STARTUP_FAMILY, null);
-		} catch (OperationCanceledException e) {
-			// ignore
-		} catch (InterruptedException e) {
+		} catch (OperationCanceledException | InterruptedException e) {
 			// ignore
 		}
 	}

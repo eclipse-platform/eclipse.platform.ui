@@ -306,11 +306,7 @@ public abstract class OperationHistoryActionHandler extends Action
 			} else {
 				reportException(t);
 			}
-		} catch (InterruptedException e) {
-			// Operation was cancelled and acknowledged by runnable with this
-			// exception.
-			// Do nothing.
-		} catch (OperationCanceledException e) {
+		} catch (InterruptedException | OperationCanceledException e) {
 			// the operation was cancelled. Do nothing.
 		} finally {
 			progressDialog = null;

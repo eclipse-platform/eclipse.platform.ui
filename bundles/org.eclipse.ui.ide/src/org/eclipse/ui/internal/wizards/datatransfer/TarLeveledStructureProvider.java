@@ -120,10 +120,7 @@ public class TarLeveledStructureProvider implements
 	public InputStream getContents(Object element) {
 		try {
 			return tarFile.getInputStream((TarEntry) element);
-		} catch (TarException e) {
-			IDEWorkbenchPlugin.log(e.getLocalizedMessage(), e);
-			return null;
-		} catch (IOException e) {
+		} catch (TarException | IOException e) {
 			IDEWorkbenchPlugin.log(e.getLocalizedMessage(), e);
 			return null;
 		}

@@ -320,9 +320,7 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 				}
 			}
 			return returnValue;
-		} catch (final ParseException e) {
-			return new HashMap<>();
-		} catch (final org.eclipse.ui.keys.ParseException e) {
+		} catch (final ParseException | org.eclipse.ui.keys.ParseException e) {
 			return new HashMap<>();
 		}
 	}

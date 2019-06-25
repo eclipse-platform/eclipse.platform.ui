@@ -1080,11 +1080,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			try {
 				manager.beginRule(rule, getEventLoopMonitor());
 				context.run(false, false, runnable);
-			} catch (InvocationTargetException e) {
-				status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e.getMessage(), e);
-			} catch (InterruptedException e) {
-				status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e.getMessage(), e);
-			} catch (OperationCanceledException e) {
+			} catch (InvocationTargetException | InterruptedException | OperationCanceledException e) {
 				status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, e.getMessage(), e);
 			} finally {
 				manager.endRule(rule);

@@ -102,10 +102,7 @@ public class LTKLauncher {
 				handlerService.executeCommand(commandId, null);
 			}
 			return true;
-		} catch (ExecutionException e) {
-		} catch (NotDefinedException e) {
-		} catch (NotEnabledException e) {
-		} catch (NotHandledException e) {
+		} catch (ExecutionException | NotDefinedException | NotEnabledException | NotHandledException e) {
 		}
 		return false;
 	}

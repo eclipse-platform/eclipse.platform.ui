@@ -238,12 +238,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 					}
 
 				}
-			} catch (CoreException e) {
-				// project definition file could not be parsed
-				this.projectName = DataTransferMessages.WizardProjectsImportPage_invalidProjectName;
-				this.isInvalid = true;
-
-			} catch (IOException e) {
+			} catch (CoreException | IOException e) {
 				this.projectName = DataTransferMessages.WizardProjectsImportPage_invalidProjectName;
 				this.isInvalid = true;
 			}

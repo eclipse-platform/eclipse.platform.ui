@@ -103,15 +103,7 @@ public final class ComponentSupport {
 				if (!strName.isEmpty()) {
 					return true;
 				}
-			} catch (ClassNotFoundException exception) {
-				// Couldn't ask so return false
-				return false;
-			} catch (NoSuchMethodException exception) {
-				// Couldn't find the method so return false
-				return false;
-			} catch (IllegalAccessException exception) {
-				return false;
-			} catch (InvocationTargetException exception) {
+			} catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException | InvocationTargetException exception) {
 				return false;
 			}
 

@@ -144,13 +144,7 @@ public class StatusUtil {
 					if (o instanceof Throwable) {
 						cause = (Throwable) o;
 					}
-				} catch (NoSuchMethodException e) {
-					// ignore
-				} catch (IllegalArgumentException e) {
-					// ignore
-				} catch (IllegalAccessException e) {
-					// ignore
-				} catch (InvocationTargetException e) {
+				} catch (NoSuchMethodException | IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
 					// ignore
 				}
 			}
