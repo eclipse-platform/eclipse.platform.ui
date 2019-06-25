@@ -570,12 +570,10 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	}
 
 	/**
-	 * Attempts to add the given variable. Returns whether the variable was added or
-	 * not (as when the user answers not to overwrite an existing variable).
-	 *
-	 * @param variable       the variable to add
-	 * @param forceOverwrite whether the user should be given a confirmation prompt
-	 *                       when overwriting a variable
+	 * Attempts to add the given variable. Returns whether the variable
+	 * was added or not (as when the user answers not to overwrite an
+	 * existing variable).
+	 * @param variable the variable to add
 	 * @return whether the variable was added
 	 */
 	protected boolean addVariable(EnvironmentVariable variable) {
