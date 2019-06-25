@@ -1,2 +1,3 @@
 /.project
 org.eclipse.ui.tests/data/org.eclipse.datatransferArchives/**/.project
+/target/

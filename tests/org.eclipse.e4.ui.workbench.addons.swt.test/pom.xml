@@ -22,7 +22,8 @@
   <packaging>eclipse-test-plugin</packaging>
 
   <properties>
-	<unitTestSuite>org.eclipse.e4.ui.workbench.addons.swt.test.AllTests</unitTestSuite>
+    <unitTestSuite>org.eclipse.e4.ui.workbench.addons.swt.test.AllTests</unitTestSuite>
+    <skipAPIAnalysis>true</skipAPIAnalysis> <!-- Not in baseline -->
   </properties>
 
   <build>
