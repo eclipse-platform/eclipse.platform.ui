@@ -831,6 +831,14 @@
             contentTypeId="org.eclipse.ui.tests.contentType.bug502837"
             editorId="org.eclipse.ui.tests.api.MockEditorPart1">
       </editorContentTypeBinding>
+      <editor
+            default="false"
+            id="org.eclipse.ui.tests.editor.bug516470"
+            name="Bug 516470 Editor">
+         <contentTypeBinding
+               contentTypeId="org.eclipse.ui.tests.contentType.bug516470-witheditor">
+         </contentTypeBinding>
+      </editor>
    </extension>
    <extension
          point="org.eclipse.ui.actionSets">
@@ -1196,6 +1204,18 @@
            file-extensions="bug502837"
            name="ContentType for bug502837"
            id="org.eclipse.ui.tests.contentType.bug502837">
+     </content-type>
+     <content-type
+           file-extensions="bug516470-noeditor"
+           id="org.eclipse.ui.tests.contentType.bug516470-noeditor"
+           name="Bug 516470 No editor content type"
+           priority="normal">
+     </content-type>
+     <content-type
+           file-extensions="bug516470-witheditor"
+           id="org.eclipse.ui.tests.contentType.bug516470-witheditor"
+           name="Bug 516470 With editor content type"
+           priority="normal">
      </content-type>
    </extension>
    		

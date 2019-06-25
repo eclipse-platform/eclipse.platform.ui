@@ -809,39 +809,39 @@ public final class IDE {
 	}
 
 	/**
-	 * Returns an editor id appropriate for opening the given file store.
+	 * Returns an editor descriptor appropriate for opening the given file store.
 	 * <p>
-	 * The editor descriptor is determined using a multi-step process. This
-	 * method will attempt to resolve the editor based on content-type bindings
-	 * as well as traditional name/extension bindings.
+	 * The editor descriptor is determined using a multi-step process. This method
+	 * will attempt to resolve the editor based on content-type bindings as well as
+	 * traditional name/extension bindings.
 	 * </p>
 	 * <ol>
 	 * <li>The workbench editor registry is consulted to determine if an editor
-	 * extension has been registered for the file type. If so, an instance of
-	 * the editor extension is opened on the file. See
+	 * extension has been registered for the file type. If so, an instance of the
+	 * editor extension is opened on the file. See
 	 * <code>IEditorRegistry.getDefaultEditor(String)</code>.</li>
 	 * <li>The preferred {@link IUnknownEditorStrategy} is consulted.</li>
-	 * <li>The {@link SystemEditorOrTextEditorStrategy} is consulted, whose
-	 * behavior is
+	 * <li>The {@link SystemEditorOrTextEditorStrategy} is consulted, whose behavior
+	 * is
 	 * <ol>
-	 * <li>The operating system is consulted to determine if an in-place
-	 * component editor is available (e.g. OLE editor on Win32 platforms).</li>
-	 * <li>The operating system is consulted to determine if an external editor
-	 * is available.</li>
-	 * <li>The workbench editor registry is consulted to determine if the
-	 * default text editor is available.</li>
-	 * </ol></li>
+	 * <li>The operating system is consulted to determine if an in-place component
+	 * editor is available (e.g. OLE editor on Win32 platforms).</li>
+	 * <li>The operating system is consulted to determine if an external editor is
+	 * available.</li>
+	 * <li>The workbench editor registry is consulted to determine if the default
+	 * text editor is available.</li>
+	 * </ol>
+	 * </li>
 	 * </ol>
 	 *
-	 * @param fileStore
-	 *            the file store
-	 * @param allowInteractive
-	 *            Whether user interactions are allowed
-	 * @return the id of an editor, appropriate for opening the file
-	 * @throws PartInitException
-	 *             if no editor can be found
+	 * @param fileStore        the file store
+	 * @param allowInteractive Whether user interactions are allowed
+	 * @return editor descriptor of an editor, appropriate for opening the file
+	 * @throws PartInitException if no editor can be found
+	 * @since 3.16
 	 */
-	private static String getEditorId(IFileStore fileStore, boolean allowInteractive) throws PartInitException {
+	public static IEditorDescriptor getEditorDescriptorForFileStore(IFileStore fileStore, boolean allowInteractive)
+			throws PartInitException {
 		String name = fileStore.fetchInfo().getName();
 		if (name == null) {
 			throw new IllegalArgumentException();
@@ -859,7 +859,7 @@ public final class IDE {
 		IEditorDescriptor defaultEditor = editorReg.getDefaultEditor(name, contentType);
 		defaultEditor = overrideDefaultEditorAssociation(new FileStoreEditorInput(fileStore), contentType,
 				defaultEditor);
-		return getEditorDescriptor(name, editorReg, defaultEditor, allowInteractive).getId();
+		return getEditorDescriptor(name, editorReg, defaultEditor, allowInteractive);
 	}
 
 	/**
@@ -1368,7 +1368,7 @@ public final class IDE {
 		IEditorInput input = getEditorInput(fileStore);
 		String editorId;
 		try {
-			editorId = getEditorId(fileStore, true);
+			editorId = getEditorDescriptorForFileStore(fileStore, true).getId();
 		} catch (OperationCanceledException ex) {
 			return null;
 		}

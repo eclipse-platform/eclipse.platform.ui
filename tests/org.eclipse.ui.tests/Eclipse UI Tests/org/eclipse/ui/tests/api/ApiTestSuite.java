@@ -23,6 +23,7 @@ import org.eclipse.ui.tests.api.workbenchpart.RawIViewPartTest;
 import org.eclipse.ui.tests.api.workbenchpart.ViewPartTitleTest;
 import org.eclipse.ui.tests.ide.api.FileEditorInputTest;
 import org.eclipse.ui.tests.ide.api.IDETest;
+import org.eclipse.ui.tests.ide.api.IDETest2;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -68,6 +69,7 @@ import org.junit.runners.Suite;
 	 Bug75118Test.class,
 	 FileEditorInputTest.class,
 	 IDETest.class,
+	 IDETest2.class,
 	 IEditorMatchingStrategyTest.class,
 	 XMLMementoTest.class,
 	 //IWorkbenchPartTestableTests.class,
