@@ -77,15 +77,15 @@ public class PerspectiveStackRenderer extends LazyStackRenderer {
 	protected void showTab(MUIElement tabElement) {
 		MPerspective persp = (MPerspective) tabElement;
 
-		Control ctrl = (Control) tabElement.getWidget();
+		Control ctrl = (Control) persp.getWidget();
 		if (ctrl == null) {
-			ctrl = (Control) renderer.createGui(tabElement);
-		} else if (ctrl.getParent() != tabElement.getParent().getWidget()) {
-			Composite parent = (Composite) tabElement.getParent().getWidget();
+			ctrl = (Control) renderer.createGui(persp);
+		} else if (ctrl.getParent() != persp.getParent().getWidget()) {
+			Composite parent = (Composite) persp.getParent().getWidget();
 			ctrl.setParent(parent);
 		}
 
-		super.showTab(tabElement);
+		super.showTab(persp);
 
 		// relayout the perspective
 		Composite psComp = ctrl.getParent();
@@ -98,17 +98,12 @@ public class PerspectiveStackRenderer extends LazyStackRenderer {
 		ctrl.moveAbove(null);
 
 		// Force a context switch
-		if (tabElement instanceof MPerspective) {
-			MPerspective selected = (MPerspective) tabElement.getParent().getSelectedElement();
-			if (selected != null) {
-				IEclipseContext context = selected.getContext();
-				context.get(EPartService.class).switchPerspective(selected);
-			}
-		}
+		IEclipseContext context = persp.getContext();
+		context.get(EPartService.class).switchPerspective(persp);
 
 		// Move any other controls to 'limbo'
-		Control[] kids = ctrl.getParent().getChildren();
-		Shell limbo = (Shell) persp.getContext().get("limbo"); //$NON-NLS-1$
+		Control[] kids = psComp.getChildren();
+		Shell limbo = (Shell) context.get("limbo"); //$NON-NLS-1$
 		for (Control child : kids) {
 			if (child != ctrl) {
 				child.setParent(limbo);
