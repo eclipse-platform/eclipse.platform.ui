@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 481319, 481318
  *     Philipp Kunz <philipp.kunz@paratix.ch> - Bug 297922
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 520080
  *******************************************************************************/
 package org.eclipse.ui.plugin;
 
@@ -20,15 +21,12 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.core.runtime.Status;
@@ -38,9 +36,11 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.SWTError;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WWinPluginAction;
@@ -283,7 +283,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 * This method exists as a convenience for plugin implementors. The workbench
 	 * can also be accessed by invoking <code>PlatformUI.getWorkbench()</code>.
 	 * </p>
-	 * 
+	 *
 	 * @return IWorkbench the workbench for this plug-in
 	 */
 	public IWorkbench getWorkbench() {
@@ -370,7 +370,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 * <p>
 	 * Subclasses may override this method to fill the image registry.
 	 * </p>
-	 * 
+	 *
 	 * @param reg the registry to initialize
 	 *
 	 * @see #getImageRegistry
@@ -594,7 +594,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 * The <code>AbstractUIPlugin</code> implementation of this <code>Plugin</code>
 	 * method does nothing. Subclasses may extend this method, but must send super
 	 * first.
-	 * 
+	 *
 	 * @deprecated In Eclipse 3.0, <code>shutdown</code> has been replaced by
 	 *             {@link Plugin#stop(BundleContext context)}. Implementations of
 	 *             <code>shutdown</code> should be changed to extend
@@ -690,6 +690,18 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 * Creates and returns a new image descriptor for an image file located within
 	 * the specified plug-in.
 	 * <p>
+	 * Prefer to use
+	 * {@link ResourceLocator#imageDescriptorFromBundle(String, String)} to create a
+	 * new {@link ImageDescriptor} for a file inside a bundle or
+	 * </p>
+	 * <p>
+	 * <code>ImageDescriptor imageDescriptor = PlatformUI.isWorkbenchRunning() ? PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(imageSymbolicName) : null;</code>
+	 * </p>
+	 * <p>
+	 * to reuse already declared {@link ImageDescriptor} (refer to
+	 * {@link ISharedImages#getImageDescriptor(String)} for more details)
+	 * </p>
+	 * <p>
 	 * This is a convenience method that simply locates the image file in within the
 	 * plug-in. It will now query the ISharedImages registry first. The path is
 	 * relative to the root of the plug-in, and takes into account files coming from
@@ -706,51 +718,25 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 *                      root of the plug-in; the path must be legal
 	 * @return an image descriptor, or <code>null</code> if no image could be found
 	 * @since 3.0
+	 *
 	 */
 	public static ImageDescriptor imageDescriptorFromPlugin(String pluginId, String imageFilePath) {
 		if (pluginId == null || imageFilePath == null) {
 			throw new IllegalArgumentException();
 		}
-
 		IWorkbench workbench = PlatformUI.isWorkbenchRunning() ? PlatformUI.getWorkbench() : null;
 		ImageDescriptor imageDescriptor = workbench == null ? null
 				: workbench.getSharedImages().getImageDescriptor(imageFilePath);
-		if (imageDescriptor != null)
+		if (imageDescriptor != null) {
 			return imageDescriptor; // found in the shared images
-
+		}
 		// if the bundle is not ready then there is no image
 		Bundle bundle = Platform.getBundle(pluginId);
 		if (!BundleUtility.isReady(bundle)) {
+
 			return null;
 		}
-
-		// Don't resolve the URL here, but create a URL using the
-		// "platform:/plugin" protocol, which also supports fragments.
-		// Caveat: The resulting URL may contain $nl$ etc., which is not
-		// directly supported by PlatformURLConnection and needs to go through
-		// FileLocator#find(URL), see bug 250432.
-		IPath uriPath = new Path("/plugin").append(pluginId).append(imageFilePath); //$NON-NLS-1$
-		URL url;
-		try {
-			URI uri = new URI("platform", null, uriPath.toString(), null); //$NON-NLS-1$
-			url = uri.toURL();
-		} catch (MalformedURLException | URISyntaxException e) {
-			return null;
-		}
-
-		// look for the image
-		URL fullPathString = FileLocator.find(url);
-		if (fullPathString == null) {
-			// If not found, reinterpret imageFilePath as full URL.
-			// This is unspecified, but apparently widely-used, see bug 395126.
-			try {
-				url = new URL(imageFilePath);
-			} catch (MalformedURLException e) {
-				return null;
-			}
-		}
-		// create image descriptor with the platform:/ URL
-		return ImageDescriptor.createFromURL(url);
+		return ResourceLocator.imageDescriptorFromBundle(pluginId, imageFilePath).orElse(null);
 	}
 
 	/**
