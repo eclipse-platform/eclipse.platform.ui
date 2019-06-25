@@ -61,11 +61,7 @@ public class TestBug108162 extends TestCase {
 					dialog.run(true, false, new LockAcquiringOperation());
 					//should not succeed
 					assertTrue("Should not get here", false);
-				} catch (InvocationTargetException e) {
-					//this failure is expected because it tried to fork and block while owning a lock.
-				} catch (InterruptedException e) {
-					//ignore
-				} catch (IllegalStateException e) {
+				} catch (InvocationTargetException | InterruptedException | IllegalStateException e) {
 					//this failure is expected because it tried to fork and block while owning a lock.
 				}
 			}

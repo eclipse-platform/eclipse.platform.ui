@@ -428,10 +428,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 				verifyArchive(folderCount, allEntries);
 			}
 		}
-		catch (IOException e){
-			fail(e.getMessage());
-		}
-		catch (TarException e){
+		catch (IOException | TarException e){
 			fail(e.getMessage());
 		}
 	}

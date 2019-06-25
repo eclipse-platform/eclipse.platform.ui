@@ -85,8 +85,7 @@ public class StringToNumberConverterTest {
 			icuBigDecimal = Class.forName("com.ibm.icu.math.BigDecimal");
 			icuBigDecimalCtr = icuBigDecimal.getConstructor(BigInteger.class, int.class);
 		}
-		catch(ClassNotFoundException e) {}
-		catch(NoSuchMethodException e) {}
+		catch(ClassNotFoundException | NoSuchMethodException e) {}
 	}
 	/**
 	 * Takes a java.math.BigDecimal and returns an ICU formatted string for it.

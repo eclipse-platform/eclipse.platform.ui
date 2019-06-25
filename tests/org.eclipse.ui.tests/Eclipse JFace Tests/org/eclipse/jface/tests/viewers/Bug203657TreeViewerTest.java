@@ -169,13 +169,7 @@ public class Bug203657TreeViewerTest extends ViewerTestCase {
 			assertNull(cell.getElement());
 			assertNull(cell.getViewerRow());
 			assertEquals(0, cell.getColumnIndex());
-		} catch (SecurityException e) {
-			fail(e.getMessage());
-		} catch (NoSuchFieldException e) {
-			fail(e.getMessage());
-		} catch (IllegalArgumentException e) {
-			fail(e.getMessage());
-		} catch (IllegalAccessException e) {
+		} catch (SecurityException | NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
 			fail(e.getMessage());
 		}
 	}

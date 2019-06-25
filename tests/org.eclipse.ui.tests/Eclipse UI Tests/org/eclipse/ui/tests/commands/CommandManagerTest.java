@@ -111,9 +111,7 @@ public final class CommandManagerTest extends UITestCase {
 		final ExecutionEvent event = new ExecutionEvent();
 		try {
 			command.execute(event);
-		} catch (final ExecutionException e) {
-			exception = e;
-		} catch (final NotHandledException e) {
+		} catch (final ExecutionException | NotHandledException e) {
 			exception = e;
 		}
 

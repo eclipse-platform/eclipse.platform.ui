@@ -55,20 +55,13 @@ public class MarkersTestMarkersView extends MarkerSupportView {
 		try {
 			method = ExtendedMarkersView.class.getDeclaredMethod("getAllMarkers");
 			method.setAccessible(true);
-		} catch (SecurityException e) {
-			e.printStackTrace();
-			return new IMarker[0];
-		} catch (NoSuchMethodException e) {
+		} catch (SecurityException | NoSuchMethodException e) {
 			e.printStackTrace();
 			return new IMarker[0];
 		}
 		try {
 			return (IMarker[]) method.invoke(this);
-		} catch (IllegalArgumentException e) {
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
+		} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
 			e.printStackTrace();
 		}
 		return new IMarker[0];
@@ -95,9 +88,7 @@ public class MarkersTestMarkersView extends MarkerSupportView {
 			field = ExtendedMarkersView.class.getDeclaredField("updateJob");
 			field.setAccessible(true);
 			return (Job) field.get(this);
-		} catch (IllegalAccessException e) {
-			e.printStackTrace();
-		} catch (NoSuchFieldException e) {
+		} catch (IllegalAccessException | NoSuchFieldException e) {
 			e.printStackTrace();
 		}
 

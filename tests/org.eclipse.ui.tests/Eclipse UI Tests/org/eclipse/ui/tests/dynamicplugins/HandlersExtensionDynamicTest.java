@@ -94,9 +94,7 @@ public final class HandlersExtensionDynamicTest extends DynamicTestCase {
 		command = commandService.getCommand("monkey");
 		try {
 			command.execute(new ExecutionEvent());
-		} catch (final ExecutionException e) {
-			fail();
-		} catch (final NotHandledException e) {
+		} catch (final ExecutionException | NotHandledException e) {
 			fail();
 		}
 

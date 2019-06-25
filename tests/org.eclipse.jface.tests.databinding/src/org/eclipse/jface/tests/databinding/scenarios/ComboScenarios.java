@@ -134,12 +134,9 @@ public class ComboScenarios extends ScenariosTestCase {
 				for (Object l : list) {
 					result.add(getter.invoke(l));
 				}
-			} catch (IllegalArgumentException e) {
-			} catch (IllegalAccessException e) {
-			} catch (InvocationTargetException e) {
+			} catch (IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
 			}
-		} catch (SecurityException e) {
-		} catch (NoSuchMethodException e) {
+		} catch (SecurityException | NoSuchMethodException e) {
 		}
 		return result;
 	}

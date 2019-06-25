@@ -188,10 +188,7 @@ public class GradientTest extends CSSSWTTestCase {
 			Field field = folder.getClass().getDeclaredField("selectionGradientColors");
 			field.setAccessible(true);
 			return ((Color[]) field.get(folder))[i];
-		} catch (NoSuchFieldException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
+		} catch (NoSuchFieldException | IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
@@ -204,10 +201,7 @@ public class GradientTest extends CSSSWTTestCase {
 			Field field = folder.getClass().getDeclaredField("selectionGradientPercents");
 			field.setAccessible(true);
 			return (int[]) field.get(folder);
-		} catch (NoSuchFieldException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IllegalAccessException e) {
+		} catch (NoSuchFieldException | IllegalAccessException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}

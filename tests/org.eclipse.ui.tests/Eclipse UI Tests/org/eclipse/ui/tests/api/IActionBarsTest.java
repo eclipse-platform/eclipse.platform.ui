@@ -195,10 +195,7 @@ public class IActionBarsTest extends UITestCase {
 		assertNotNull(commandId);
 		try {
 			hs.executeCommand(commandId, null);
-		} catch (NotHandledException e) {
-			// this is not a failure, just a condition to be checked by
-			// the test
-		} catch (NotEnabledException e) {
+		} catch (NotHandledException | NotEnabledException e) {
 			// this is not a failure, just a condition to be checked by
 			// the test
 		} catch (Exception e) {

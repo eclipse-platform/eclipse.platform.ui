@@ -94,9 +94,7 @@ public class ProgressMonitorDialogPerformanceTest extends BasicPerformanceTest {
 
 		try {
 			dialog.run(false, true, runnable);
-		} catch (InvocationTargetException e) {
-			fail(e.getMessage(), e);
-		} catch (InterruptedException e) {
+		} catch (InvocationTargetException | InterruptedException e) {
 			fail(e.getMessage(), e);
 		}
 

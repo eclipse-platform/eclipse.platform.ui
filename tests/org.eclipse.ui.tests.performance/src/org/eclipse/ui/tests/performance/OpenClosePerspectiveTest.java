@@ -127,10 +127,7 @@ public class OpenClosePerspectiveTest extends BasicPerformanceTest {
 				.getService(IHandlerService.class);
 		try {
 			handlerService.executeCommand(pCommand, null);
-		} catch (ExecutionException e1) {
-		} catch (NotDefinedException e1) {
-		} catch (NotEnabledException e1) {
-		} catch (NotHandledException e1) {
+		} catch (ExecutionException | NotDefinedException | NotEnabledException | NotHandledException e1) {
 		}
 
 	}

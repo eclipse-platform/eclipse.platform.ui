@@ -78,12 +78,7 @@ public class ModelRobustnessTest {
 		try {
 			l.add(MBasicFactory.INSTANCE.createPart());
 			fail("The adding of this should have failed");
-		} catch (IllegalArgumentException e) {
-			// This exception is expected!
-		} catch (ArrayStoreException e) {
-			// EMF 2.9 now throws this instead of IllegalArgumentException. See
-			// bug 407539
-		} catch (ClassCastException e) {
+		} catch (IllegalArgumentException | ArrayStoreException | ClassCastException e) {
 			// EList.add says this is the expected exception, although testing
 			// indicates its one of the two previous exceptions that is really
 			// thrown.

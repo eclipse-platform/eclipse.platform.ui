@@ -74,8 +74,7 @@ public class ResourceMappingMarkersTest extends AbstractNavigatorTest {
 			Job.getJobManager().join(
 					problemView.MARKERSVIEW_UPDATE_JOB_FAMILY,
 					new NullProgressMonitor());
-		} catch (OperationCanceledException e) {
-		} catch (InterruptedException e) {
+		} catch (OperationCanceledException | InterruptedException e) {
 		}
 
 		IMarker[] markers=problemView.getCurrentMarkers();

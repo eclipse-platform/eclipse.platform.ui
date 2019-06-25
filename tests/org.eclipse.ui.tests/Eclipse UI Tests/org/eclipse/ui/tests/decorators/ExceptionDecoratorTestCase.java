@@ -76,8 +76,7 @@ public class ExceptionDecoratorTestCase extends DecoratorEnablementTestCase {
 		//errors to occur
 		try {
 			Job.getJobManager().join(DecoratorManager.FAMILY_DECORATE, null);
-		} catch (OperationCanceledException e) {
-		} catch (InterruptedException e) {
+		} catch (OperationCanceledException | InterruptedException e) {
 		}
 
 		//Be sure that the decorators were all disabled on errors.

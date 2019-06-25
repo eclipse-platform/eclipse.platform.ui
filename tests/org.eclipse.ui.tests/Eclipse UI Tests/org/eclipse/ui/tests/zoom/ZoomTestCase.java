@@ -116,7 +116,6 @@ public class ZoomTestCase extends UITestCase {
 
 //            DragOperations
 //        		.drag(editor3, new EditorAreaDropTarget(new ExistingWindowProvider(window), SWT.RIGHT), false);
-		} catch (PartInitException e) {
 		} catch (CoreException e) {
 		}
 
