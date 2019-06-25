@@ -6,6 +6,7 @@
     xmlns:git="http://www.eclipse.org/oomph/setup/git/1.0"
     xmlns:predicates="http://www.eclipse.org/oomph/predicates/1.0"
     xmlns:setup="http://www.eclipse.org/oomph/setup/1.0"
+    xmlns:setup.p2="http://www.eclipse.org/oomph/setup/p2/1.0"
     xmlns:setup.targlets="http://www.eclipse.org/oomph/setup/targlets/1.0"
     xmlns:setup.workingsets="http://www.eclipse.org/oomph/setup/workingsets/1.0"
     xmlns:workingsets="http://www.eclipse.org/oomph/workingsets/1.0"
@@ -114,6 +115,22 @@
             pattern=".*\.(examples|snippets|demo).*|Widget.*"/>
       </predicate>
     </workingSet>
+  </setupTask>
+  <setupTask
+      xsi:type="setup.p2:P2Task"
+      label="EMF Tools">
+    <requirement
+        name="org.eclipse.emf.ecore.editor.feature.group"/>
+    <requirement
+        name="org.eclipse.emf.codegen.ecore.ui.feature.group"/>
+    <repository
+        url="http://download.eclipse.org/modeling/emf/emf/builds/nightly/latest"/>
+  </setupTask>
+  <setupTask
+      xsi:type="setup.p2:P2Task"
+      label="E4 Tools">
+    <requirement
+        name="org.eclipse.e4.core.tools.feature.feature.group"/>
   </setupTask>
   <stream name="master"
       label="Master"/>
