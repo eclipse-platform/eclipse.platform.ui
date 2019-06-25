@@ -556,14 +556,7 @@ public class JobsView {
 									monitor);
 						}
 					});
-		} catch (InterruptedException e) {
-			// thrown if the user interrupts the join by canceling the progress
-			// monitor
-			// A UI component should swallow the exception and finish the action
-			// or operation. A lower level component should just propagate the
-			// exception
-			e.printStackTrace();
-		} catch (InvocationTargetException e) {
+		} catch (InterruptedException | InvocationTargetException e) {
 			// Thrown when the operation running within busyCursorWhile throws
 			// an
 			// exception. This should either be propagated or displayed to the
@@ -587,9 +580,7 @@ public class JobsView {
 								doRun(duration, monitor);
 						}
 					}, ResourcesPlugin.getWorkspace().getRoot());
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
+		} catch (InvocationTargetException | InterruptedException e) {
 			e.printStackTrace();
 		}
 	}

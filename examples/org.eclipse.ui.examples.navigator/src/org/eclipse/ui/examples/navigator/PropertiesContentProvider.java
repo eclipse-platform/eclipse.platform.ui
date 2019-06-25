@@ -101,8 +101,7 @@ public class PropertiesContentProvider implements ITreeContentProvider,
 
 					cachedModelMap.put(modelFile, propertiesTreeData);
 					return model;
-				} catch (IOException e) {
-				} catch (CoreException e) {
+				} catch (IOException | CoreException e) {
 				}
 			} else {
 				cachedModelMap.remove(modelFile);

@@ -38,9 +38,7 @@ public class Snippet058VistaProgressBars {
 		IRunnableWithProgress runnable = createRunnableFor(dialog);
 		try {
 			dialog.run(true, true, runnable);
-		} catch (InvocationTargetException e) {
-			e.printStackTrace();
-		} catch (InterruptedException e) {
+		} catch (InvocationTargetException | InterruptedException e) {
 			e.printStackTrace();
 		}
 

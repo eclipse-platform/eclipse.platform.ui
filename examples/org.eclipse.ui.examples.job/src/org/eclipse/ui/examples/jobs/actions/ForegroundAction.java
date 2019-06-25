@@ -29,9 +29,7 @@ public class ForegroundAction implements IWorkbenchWindowActionDelegate {
 			ResourcesPlugin.getWorkspace().run((IWorkspaceRunnable) monitor -> {
 				// no-op
 			}, null);
-		} catch (OperationCanceledException e) {
-			e.printStackTrace();
-		} catch (CoreException e) {
+		} catch (OperationCanceledException | CoreException e) {
 			e.printStackTrace();
 		}
 	}

@@ -199,19 +199,7 @@ public class Snippet048TreeViewerTabWithCheckboxFor3_3 {
 						Method m = ColumnViewerEditor.class.getDeclaredMethod("processTraverseEvent", new Class[] {int.class,ViewerRow.class,TraverseEvent.class});
 						m.setAccessible(true);
 						m.invoke(editor, Integer.valueOf(cell.getColumnIndex()), cell.getViewerRow(), e);
-					} catch (SecurityException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (NoSuchMethodException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (IllegalArgumentException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (IllegalAccessException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (InvocationTargetException e1) {
+					} catch (SecurityException | NoSuchMethodException | IllegalArgumentException | IllegalAccessException | InvocationTargetException e1) {
 						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}

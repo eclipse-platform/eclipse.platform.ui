@@ -120,13 +120,7 @@ public class DeletePropertyAction extends ActionDelegate {
 		};
 		try {
 			PlatformUI.getWorkbench().getProgressService().run(true, false, deletePropertyOperation);
-		} catch (InvocationTargetException e) {
-			// handle error gracefully
-			Activator.logError(0, "Could not delete property!", e); //$NON-NLS-1$
-			MessageDialog.openError(Display.getDefault().getActiveShell(),
-					"Error Deleting Property",  //$NON-NLS-1$
-					"Could not delete property!");   //$NON-NLS-1$
-		} catch (InterruptedException e) {
+		} catch (InvocationTargetException | InterruptedException e) {
 			// handle error gracefully
 			Activator.logError(0, "Could not delete property!", e); //$NON-NLS-1$
 			MessageDialog.openError(Display.getDefault().getActiveShell(),
