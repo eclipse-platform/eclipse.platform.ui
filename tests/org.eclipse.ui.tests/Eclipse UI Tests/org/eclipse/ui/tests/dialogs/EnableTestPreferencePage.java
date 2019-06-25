@@ -44,6 +44,8 @@ public class EnableTestPreferencePage extends FieldEditorPreferencePage
 
 	private StringFieldEditor se;
 
+	private StringFieldEditor mlse;
+
 	private Composite beParent;
 
 	private Composite ceParent;
@@ -55,6 +57,8 @@ public class EnableTestPreferencePage extends FieldEditorPreferencePage
 	private Composite rgParent;
 
 	private Composite seParent;
+
+	private Composite mlseParent;
 
 	private boolean enabledState = true;
 
@@ -75,7 +79,7 @@ public class EnableTestPreferencePage extends FieldEditorPreferencePage
 		pe.setEnabled(enabledState, peParent);
 		rg.setEnabled(enabledState, rgParent);
 		se.setEnabled(enabledState, seParent);
-
+		mlse.setEnabled(enabledState, mlseParent);
 	}
 
 	/**
@@ -112,6 +116,10 @@ public class EnableTestPreferencePage extends FieldEditorPreferencePage
 		se = new StringFieldEditor("String Value", "String Editor", seParent);
 		addField(se);
 
+		mlseParent = getFieldEditorParent();
+		mlse = new StringFieldEditor("Multiline String Value", "Multiline String Editor", StringFieldEditor.UNLIMITED,
+				3, StringFieldEditor.VALIDATE_ON_KEY_STROKE, mlseParent);
+		addField(mlse);
 	}
 
 	@Override

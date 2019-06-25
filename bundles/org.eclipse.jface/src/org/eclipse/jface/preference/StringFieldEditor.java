@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
@@ -35,8 +35,8 @@ import org.eclipse.swt.widgets.Text;
 public class StringFieldEditor extends FieldEditor {
 
 	/**
-	 * Validation strategy constant (value <code>0</code>) indicating that
-	 * the editor should perform validation after every key stroke.
+	 * Validation strategy constant (value <code>0</code>) indicating that the
+	 * editor should perform validation after every key stroke.
 	 *
 	 * @see #setValidateStrategy
 	 */
@@ -74,6 +74,11 @@ public class StringFieldEditor extends FieldEditor {
 	Text textField;
 
 	/**
+	 * Height of text field in characters; initially 1.
+	 */
+	private int heigthInChars = 1;
+
+	/**
 	 * Width of text field in characters; initially unlimited.
 	 */
 	private int widthInChars = UNLIMITED;
@@ -107,28 +112,50 @@ public class StringFieldEditor extends FieldEditor {
 	}
 
 	/**
-	 * Creates a string field editor.
-	 * Use the method <code>setTextLimit</code> to limit the text.
+	 * Creates a string field editor. Use the method <code>setTextLimit</code> to
+	 * limit the text.
 	 *
-	 * @param name the name of the preference this field editor works on
+	 * @param name          the name of the preference this field editor works on
+	 * @param labelText     the label text of the field editor
+	 * @param widthInChars  the width of the text input field in characters, or
+	 *                      <code>UNLIMITED</code> for no limit
+	 * @param heigthInChars the height of the text input field in characters.
+	 * @param strategy      either <code>VALIDATE_ON_KEY_STROKE</code> to perform on
+	 *                      the fly checking (the default), or
+	 *                      <code>VALIDATE_ON_FOCUS_LOST</code> to perform
+	 *                      validation only after the text has been typed in
+	 * @param parent        the parent of the field editor's control
+	 * @since 3.17
+	 */
+	public StringFieldEditor(String name, String labelText, int widthInChars, int heigthInChars, int strategy,
+			Composite parent) {
+		init(name, labelText);
+		this.widthInChars = widthInChars;
+		this.heigthInChars = heigthInChars;
+		setValidateStrategy(strategy);
+		isValid = false;
+		errorMessage = JFaceResources.getString("StringFieldEditor.errorMessage");//$NON-NLS-1$
+		createControl(parent);
+	}
+
+	/**
+	 * Creates a string field editor. Use the method <code>setTextLimit</code> to
+	 * limit the text.
+	 *
+	 * @param name      the name of the preference this field editor works on
 	 * @param labelText the label text of the field editor
-	 * @param width the width of the text input field in characters,
-	 *  or <code>UNLIMITED</code> for no limit
-	 * @param strategy either <code>VALIDATE_ON_KEY_STROKE</code> to perform
-	 *  on the fly checking (the default), or <code>VALIDATE_ON_FOCUS_LOST</code> to
-	 *  perform validation only after the text has been typed in
-	 * @param parent the parent of the field editor's control
+	 * @param width     the width of the text input field in characters, or
+	 *                  <code>UNLIMITED</code> for no limit
+	 * @param strategy  either <code>VALIDATE_ON_KEY_STROKE</code> to perform on the
+	 *                  fly checking (the default), or
+	 *                  <code>VALIDATE_ON_FOCUS_LOST</code> to perform validation
+	 *                  only after the text has been typed in
+	 * @param parent    the parent of the field editor's control
 	 * @since 2.0
 	 */
 	public StringFieldEditor(String name, String labelText, int width,
 			int strategy, Composite parent) {
-		init(name, labelText);
-		widthInChars = width;
-		setValidateStrategy(strategy);
-		isValid = false;
-		errorMessage = JFaceResources
-				.getString("StringFieldEditor.errorMessage");//$NON-NLS-1$
-		createControl(parent);
+		this(name, labelText, width, 1, strategy, parent);
 	}
 
 	/**
@@ -229,11 +256,19 @@ public class StringFieldEditor extends FieldEditor {
 		textField = getTextControl(parent);
 		GridData gd = new GridData();
 		gd.horizontalSpan = numColumns - 1;
-		if (widthInChars != UNLIMITED) {
+		if (widthInChars != UNLIMITED || heigthInChars > 1) {
 			GC gc = new GC(textField);
 			try {
-				Point extent = gc.textExtent("X");//$NON-NLS-1$
-				gd.widthHint = widthInChars * extent.x;
+				if (widthInChars!=UNLIMITED) {
+					Point extent = gc.textExtent("X");//$NON-NLS-1$
+					gd.widthHint = widthInChars * extent.x;
+				} else {
+					gd.horizontalAlignment = GridData.FILL;
+					gd.grabExcessHorizontalSpace = true;
+				}
+				if (heigthInChars>1) {
+					gd.heightHint = heigthInChars * gc.getFontMetrics().getHeight();
+				}
 			} finally {
 				gc.dispose();
 			}
@@ -317,7 +352,7 @@ public class StringFieldEditor extends FieldEditor {
 	 */
 	public Text getTextControl(Composite parent) {
 		if (textField == null) {
-			textField = new Text(parent, SWT.SINGLE | SWT.BORDER);
+			textField = createTextWidget(parent);
 			textField.setFont(parent.getFont());
 			switch (validateStrategy) {
 			case VALIDATE_ON_KEY_STROKE:
@@ -370,6 +405,20 @@ public class StringFieldEditor extends FieldEditor {
 			checkParent(textField, parent);
 		}
 		return textField;
+	}
+
+	/**
+	 * Create the text widget.
+	 *
+	 * @param parent
+	 * @return The widget
+	 * @since 3.17
+	 */
+	protected Text createTextWidget(Composite parent) {
+		if (heigthInChars > 1) {
+			return new Text(parent, SWT.BORDER | SWT.MULTI | SWT.V_SCROLL | SWT.WRAP);
+		}
+		return new Text(parent, SWT.SINGLE | SWT.BORDER);
 	}
 
 	/**
@@ -511,4 +560,5 @@ public class StringFieldEditor extends FieldEditor {
 		super.setEnabled(enabled, parent);
 		getTextControl(parent).setEnabled(enabled);
 	}
+
 }
