@@ -17,7 +17,6 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.progress.internal;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;

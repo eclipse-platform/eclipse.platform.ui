@@ -29,7 +29,6 @@ import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**

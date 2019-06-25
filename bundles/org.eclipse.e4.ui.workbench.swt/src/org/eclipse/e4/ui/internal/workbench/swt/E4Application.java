@@ -349,7 +349,6 @@ public class E4Application implements IApplication {
 	}
 
 	private MApplication loadApplicationModel(IApplicationContext appContext, IEclipseContext eclipseContext) {
-		MApplication theApp = null;
 
 		Location instanceLocation = WorkbenchSWTActivator.getDefault().getInstanceLocation();
 

@@ -18,7 +18,6 @@ import org.eclipse.e4.ui.css.swt.helpers.CSSSWTImageHelper;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.widgets.Item;
-import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 public class CTabItemElement extends ItemElement {
