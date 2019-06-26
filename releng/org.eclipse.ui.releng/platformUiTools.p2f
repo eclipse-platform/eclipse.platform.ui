@@ -1,7 +1,17 @@
 <?xml version='1.0' encoding='UTF-8'?>
 <?p2f version='1.0.0'?>
 <p2f  version='1.0.0'>
-  <ius size='41'>
+  <ius size='43'>
+    <iu id='org.eclipse.emf.ecore.editor.feature.group' name='org.eclipse.emf.ecore.editor.feature.group' version='0.0.0'>
+      <repositories size='1'>
+        <repository location='http://download.eclipse.org/modeling/emf/emf/builds/nightly/latest'/>
+      </repositories>
+    </iu>
+    <iu id='org.eclipse.emf.codegen.ecore.ui.feature.group' name='org.eclipse.emf.codegen.ecore.ui.feature.group' version='0.0.0'>
+      <repositories size='1'>
+        <repository location='http://download.eclipse.org/modeling/emf/emf/builds/nightly/latest'/>
+      </repositories>
+    </iu>
     <iu id='org.jsoup' name='org.jsoup' version='0.0.0'>
       <repositories size='1'>
         <repository location='http://download.eclipse.org/releases/latest/'/>
