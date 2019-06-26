@@ -12,6 +12,7 @@ Export-Package:
  org.eclipse.jface.text.tests.reconciler,
  org.eclipse.jface.text.tests.rules,
  org.eclipse.jface.text.tests.source,
+ org.eclipse.jface.text.tests.source.inlined,
  org.eclipse.jface.text.tests.templates.persistence,
  org.eclipse.jface.text.tests.util
 Require-Bundle: 

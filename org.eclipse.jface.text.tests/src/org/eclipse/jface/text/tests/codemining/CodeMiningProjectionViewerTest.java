@@ -43,7 +43,6 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.codemining.ICodeMining;
 import org.eclipse.jface.text.codemining.ICodeMiningProvider;
 import org.eclipse.jface.text.codemining.LineContentCodeMining;
-import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.AnnotationPainter;
 import org.eclipse.jface.text.source.IAnnotationAccess;
 import org.eclipse.jface.text.source.ISharedTextColors;
@@ -51,6 +50,7 @@ import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
 import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
+import org.eclipse.jface.text.tests.source.inlined.InlineAnnotationTest.AccessAllAnnoations;
 import org.eclipse.jface.text.tests.util.DisplayHelper;
 
 public class CodeMiningProjectionViewerTest {
@@ -86,22 +86,7 @@ public class CodeMiningProjectionViewerTest {
 		fParent.setSize(500, 200);
 		fParent.setLayout(new FillLayout());
 		fViewer= new ProjectionViewer(fParent, null, null, false, SWT.NONE);
-		IAnnotationAccess annotationAccess = new IAnnotationAccess() {
-			@Override
-			public Object getType(Annotation annotation) {
-				return annotation.getType();
-			}
-
-			@Override
-			public boolean isMultiLine(Annotation annotation) {
-				return true;
-			}
-
-			@Override
-			public boolean isTemporary(Annotation annotation) {
-				return true;
-			}
-		};
+		IAnnotationAccess annotationAccess = new AccessAllAnnoations();
 		// code minings
 		AnnotationPainter painter = new AnnotationPainter(fViewer, annotationAccess);
 		fViewer.addPainter(painter);
