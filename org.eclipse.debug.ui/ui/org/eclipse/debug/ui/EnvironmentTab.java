@@ -55,7 +55,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
-import org.eclipse.jface.viewers.ColumnViewerEditor;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationStrategy;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -406,10 +405,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 			}
 		};
 
-		int feature = ColumnViewerEditor.TABBING_HORIZONTAL | ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR
-				| ColumnViewerEditor.TABBING_VERTICAL | ColumnViewerEditor.KEYBOARD_ACTIVATION;
-
-		TableViewerEditor.create(environmentTable, actSupport, feature);
+		TableViewerEditor.create(environmentTable, actSupport, SWT.NONE);
 
 		// Setup environment variable name column
 		final TableViewerColumn tcv1 = new TableViewerColumn(environmentTable, SWT.NONE, 0);
