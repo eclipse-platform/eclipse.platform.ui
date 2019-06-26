@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2018 IBM Corporation and others.
+ * Copyright (c) 2003, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -165,24 +165,16 @@ public class FilterDialog extends TrayDialog {
 	}
 
 	private void createSessionSection(Composite parent) {
-		Composite container = new Composite(parent, SWT.NONE);
+		Group container = new Group(parent, SWT.NONE);
 		container.setLayout(new GridLayout());
 		container.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
-
-		Label label = new Label(container, SWT.NONE);
-		label.setText(Messages.LogView_FilterDialog_eventsLogged);
+		container.setText(Messages.LogView_FilterDialog_eventsLogged);
 
 		showAllButton = new Button(container, SWT.RADIO);
 		showAllButton.setText(Messages.LogView_FilterDialog_allSessions);
-		GridData gd = new GridData();
-		gd.horizontalIndent = 20;
-		showAllButton.setLayoutData(gd);
 
 		Button button = new Button(container, SWT.RADIO);
 		button.setText(Messages.LogView_FilterDialog_recentSession);
-		gd = new GridData();
-		gd.horizontalIndent = 20;
-		button.setLayoutData(gd);
 
 		if (memento.getString(LogView.P_SHOW_ALL_SESSIONS).equals("true")) { //$NON-NLS-1$
 			showAllButton.setSelection(true);
