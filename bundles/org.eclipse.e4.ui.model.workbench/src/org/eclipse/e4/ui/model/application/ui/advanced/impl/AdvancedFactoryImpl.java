@@ -97,8 +97,7 @@ public class AdvancedFactoryImpl extends EFactoryImpl implements MAdvancedFactor
 	 */
 	@Override
 	public MPlaceholder createPlaceholder() {
-		PlaceholderImpl placeholder = new PlaceholderImpl();
-		return placeholder;
+		return new PlaceholderImpl();
 	}
 
 	/**
@@ -109,8 +108,7 @@ public class AdvancedFactoryImpl extends EFactoryImpl implements MAdvancedFactor
 	 */
 	@Override
 	public MPerspective createPerspective() {
-		PerspectiveImpl perspective = new PerspectiveImpl();
-		return perspective;
+		return new PerspectiveImpl();
 	}
 
 	/**
@@ -121,8 +119,7 @@ public class AdvancedFactoryImpl extends EFactoryImpl implements MAdvancedFactor
 	 */
 	@Override
 	public MPerspectiveStack createPerspectiveStack() {
-		PerspectiveStackImpl perspectiveStack = new PerspectiveStackImpl();
-		return perspectiveStack;
+		return new PerspectiveStackImpl();
 	}
 
 	/**
@@ -133,8 +130,7 @@ public class AdvancedFactoryImpl extends EFactoryImpl implements MAdvancedFactor
 	 */
 	@Override
 	public MArea createArea() {
-		AreaImpl area = new AreaImpl();
-		return area;
+		return new AreaImpl();
 	}
 
 	/**

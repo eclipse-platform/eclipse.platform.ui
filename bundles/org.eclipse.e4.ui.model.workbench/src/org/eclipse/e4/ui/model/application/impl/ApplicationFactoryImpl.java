@@ -121,8 +121,7 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	 * @generated
 	 */
 	public Map.Entry<String, String> createStringToStringMap() {
-		StringToStringMapImpl stringToStringMap = new StringToStringMapImpl();
-		return stringToStringMap;
+		return new StringToStringMapImpl();
 	}
 
 	/**
@@ -133,8 +132,7 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	 */
 	@Override
 	public MApplication createApplication() {
-		ApplicationImpl application = new ApplicationImpl();
-		return application;
+		return new ApplicationImpl();
 	}
 
 	/**
@@ -145,8 +143,7 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	 */
 	@Override
 	public MAddon createAddon() {
-		AddonImpl addon = new AddonImpl();
-		return addon;
+		return new AddonImpl();
 	}
 
 	/**
@@ -155,8 +152,7 @@ public class ApplicationFactoryImpl extends EFactoryImpl implements MApplication
 	 * @generated
 	 */
 	public Map.Entry<String, Object> createStringToObjectMap() {
-		StringToObjectMapImpl stringToObjectMap = new StringToObjectMapImpl();
-		return stringToObjectMap;
+		return new StringToObjectMapImpl();
 	}
 
 	/**

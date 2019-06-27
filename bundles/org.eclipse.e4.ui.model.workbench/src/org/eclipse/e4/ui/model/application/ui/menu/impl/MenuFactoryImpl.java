@@ -159,8 +159,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 */
 	@Override
 	public MMenuSeparator createMenuSeparator() {
-		MenuSeparatorImpl menuSeparator = new MenuSeparatorImpl();
-		return menuSeparator;
+		return new MenuSeparatorImpl();
 	}
 
 	/**
@@ -171,8 +170,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 */
 	@Override
 	public MMenu createMenu() {
-		MenuImpl menu = new MenuImpl();
-		return menu;
+		return new MenuImpl();
 	}
 
 	/**
@@ -184,8 +182,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 */
 	@Override
 	public MMenuContribution createMenuContribution() {
-		MenuContributionImpl menuContribution = new MenuContributionImpl();
-		return menuContribution;
+		return new MenuContributionImpl();
 	}
 
 	/**
@@ -196,8 +193,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 */
 	@Override
 	public MPopupMenu createPopupMenu() {
-		PopupMenuImpl popupMenu = new PopupMenuImpl();
-		return popupMenu;
+		return new PopupMenuImpl();
 	}
 
 	/**
@@ -208,8 +204,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 */
 	@Override
 	public MDirectMenuItem createDirectMenuItem() {
-		DirectMenuItemImpl directMenuItem = new DirectMenuItemImpl();
-		return directMenuItem;
+		return new DirectMenuItemImpl();
 	}
 
 	/**
@@ -220,8 +215,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 */
 	@Override
 	public MHandledMenuItem createHandledMenuItem() {
-		HandledMenuItemImpl handledMenuItem = new HandledMenuItemImpl();
-		return handledMenuItem;
+		return new HandledMenuItemImpl();
 	}
 
 	/**
@@ -232,8 +226,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 */
 	@Override
 	public MToolBar createToolBar() {
-		ToolBarImpl toolBar = new ToolBarImpl();
-		return toolBar;
+		return new ToolBarImpl();
 	}
 
 	/**
@@ -244,8 +237,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 */
 	@Override
 	public MToolControl createToolControl() {
-		ToolControlImpl toolControl = new ToolControlImpl();
-		return toolControl;
+		return new ToolControlImpl();
 	}
 
 	/**
@@ -256,8 +248,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 */
 	@Override
 	public MHandledToolItem createHandledToolItem() {
-		HandledToolItemImpl handledToolItem = new HandledToolItemImpl();
-		return handledToolItem;
+		return new HandledToolItemImpl();
 	}
 
 	/**
@@ -268,8 +259,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 */
 	@Override
 	public MDirectToolItem createDirectToolItem() {
-		DirectToolItemImpl directToolItem = new DirectToolItemImpl();
-		return directToolItem;
+		return new DirectToolItemImpl();
 	}
 
 	/**
@@ -280,8 +270,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 */
 	@Override
 	public MToolBarSeparator createToolBarSeparator() {
-		ToolBarSeparatorImpl toolBarSeparator = new ToolBarSeparatorImpl();
-		return toolBarSeparator;
+		return new ToolBarSeparatorImpl();
 	}
 
 	/**
@@ -293,8 +282,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 */
 	@Override
 	public MToolBarContribution createToolBarContribution() {
-		ToolBarContributionImpl toolBarContribution = new ToolBarContributionImpl();
-		return toolBarContribution;
+		return new ToolBarContributionImpl();
 	}
 
 	/**
@@ -306,8 +294,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 */
 	@Override
 	public MTrimContribution createTrimContribution() {
-		TrimContributionImpl trimContribution = new TrimContributionImpl();
-		return trimContribution;
+		return new TrimContributionImpl();
 	}
 
 	/**
@@ -318,8 +305,7 @@ public class MenuFactoryImpl extends EFactoryImpl implements MMenuFactory {
 	 */
 	@Override
 	public MDynamicMenuContribution createDynamicMenuContribution() {
-		DynamicMenuContributionImpl dynamicMenuContribution = new DynamicMenuContributionImpl();
-		return dynamicMenuContribution;
+		return new DynamicMenuContributionImpl();
 	}
 
 	/**

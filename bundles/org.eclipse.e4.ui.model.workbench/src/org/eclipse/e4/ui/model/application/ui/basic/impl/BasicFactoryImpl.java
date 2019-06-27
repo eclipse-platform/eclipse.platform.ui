@@ -121,8 +121,7 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	 */
 	@Override
 	public MPart createPart() {
-		PartImpl part = new PartImpl();
-		return part;
+		return new PartImpl();
 	}
 
 	/**
@@ -133,8 +132,7 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	 */
 	@Override
 	public MCompositePart createCompositePart() {
-		CompositePartImpl compositePart = new CompositePartImpl();
-		return compositePart;
+		return new CompositePartImpl();
 	}
 
 	/**
@@ -148,8 +146,7 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	@Deprecated
 	@Override
 	public MInputPart createInputPart() {
-		InputPartImpl inputPart = new InputPartImpl();
-		return inputPart;
+		return new InputPartImpl();
 	}
 
 	/**
@@ -160,8 +157,7 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	 */
 	@Override
 	public MPartStack createPartStack() {
-		PartStackImpl partStack = new PartStackImpl();
-		return partStack;
+		return new PartStackImpl();
 	}
 
 	/**
@@ -172,8 +168,7 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	 */
 	@Override
 	public MPartSashContainer createPartSashContainer() {
-		PartSashContainerImpl partSashContainer = new PartSashContainerImpl();
-		return partSashContainer;
+		return new PartSashContainerImpl();
 	}
 
 	/**
@@ -184,8 +179,7 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	 */
 	@Override
 	public MWindow createWindow() {
-		WindowImpl window = new WindowImpl();
-		return window;
+		return new WindowImpl();
 	}
 
 	/**
@@ -196,8 +190,7 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	 */
 	@Override
 	public MTrimmedWindow createTrimmedWindow() {
-		TrimmedWindowImpl trimmedWindow = new TrimmedWindowImpl();
-		return trimmedWindow;
+		return new TrimmedWindowImpl();
 	}
 
 	/**
@@ -208,8 +201,7 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	 */
 	@Override
 	public MTrimBar createTrimBar() {
-		TrimBarImpl trimBar = new TrimBarImpl();
-		return trimBar;
+		return new TrimBarImpl();
 	}
 
 	/**

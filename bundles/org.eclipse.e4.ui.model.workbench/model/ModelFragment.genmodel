@@ -27,4 +27,5 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute ModelFragment.ecore#//StringModelFragment/positionInList"/>
     </genClasses>
   </genPackages>
+  <codeStyle>UnnecessaryAssignmentBeforeReturn</codeStyle>
 </genmodel:GenModel>

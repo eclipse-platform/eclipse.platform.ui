@@ -88,8 +88,7 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	 */
 	@Override
 	public MPartDescriptor createPartDescriptor() {
-		PartDescriptorImpl partDescriptor = new PartDescriptorImpl();
-		return partDescriptor;
+		return new PartDescriptorImpl();
 	}
 
 	/**

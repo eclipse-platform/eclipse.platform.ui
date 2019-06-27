@@ -136,8 +136,7 @@ public class CommandsFactoryImpl extends EFactoryImpl implements MCommandsFactor
 	 */
 	@Override
 	public MBindingContext createBindingContext() {
-		BindingContextImpl bindingContext = new BindingContextImpl();
-		return bindingContext;
+		return new BindingContextImpl();
 	}
 
 	/**
@@ -148,8 +147,7 @@ public class CommandsFactoryImpl extends EFactoryImpl implements MCommandsFactor
 	 */
 	@Override
 	public MBindingTable createBindingTable() {
-		BindingTableImpl bindingTable = new BindingTableImpl();
-		return bindingTable;
+		return new BindingTableImpl();
 	}
 
 	/**
@@ -160,8 +158,7 @@ public class CommandsFactoryImpl extends EFactoryImpl implements MCommandsFactor
 	 */
 	@Override
 	public MCommand createCommand() {
-		CommandImpl command = new CommandImpl();
-		return command;
+		return new CommandImpl();
 	}
 
 	/**
@@ -172,8 +169,7 @@ public class CommandsFactoryImpl extends EFactoryImpl implements MCommandsFactor
 	 */
 	@Override
 	public MCommandParameter createCommandParameter() {
-		CommandParameterImpl commandParameter = new CommandParameterImpl();
-		return commandParameter;
+		return new CommandParameterImpl();
 	}
 
 	/**
@@ -184,8 +180,7 @@ public class CommandsFactoryImpl extends EFactoryImpl implements MCommandsFactor
 	 */
 	@Override
 	public MHandler createHandler() {
-		HandlerImpl handler = new HandlerImpl();
-		return handler;
+		return new HandlerImpl();
 	}
 
 	/**
@@ -196,8 +191,7 @@ public class CommandsFactoryImpl extends EFactoryImpl implements MCommandsFactor
 	 */
 	@Override
 	public MKeyBinding createKeyBinding() {
-		KeyBindingImpl keyBinding = new KeyBindingImpl();
-		return keyBinding;
+		return new KeyBindingImpl();
 	}
 
 	/**
@@ -208,8 +202,7 @@ public class CommandsFactoryImpl extends EFactoryImpl implements MCommandsFactor
 	 */
 	@Override
 	public MParameter createParameter() {
-		ParameterImpl parameter = new ParameterImpl();
-		return parameter;
+		return new ParameterImpl();
 	}
 
 	/**
@@ -220,8 +213,7 @@ public class CommandsFactoryImpl extends EFactoryImpl implements MCommandsFactor
 	 */
 	@Override
 	public MCategory createCategory() {
-		CategoryImpl category = new CategoryImpl();
-		return category;
+		return new CategoryImpl();
 	}
 
 	/**
