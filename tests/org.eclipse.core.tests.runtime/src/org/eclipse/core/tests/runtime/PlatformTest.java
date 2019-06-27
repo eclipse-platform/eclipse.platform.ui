@@ -293,6 +293,16 @@ public class PlatformTest extends RuntimeTest {
 		assertNull("no match => null result", result);
 	}
 
+	public void testGetSystemBundle() {
+		Bundle expectedSystem = RuntimeTestsPlugin.getContext().getBundle(Constants.SYSTEM_BUNDLE_LOCATION);
+		Bundle actualSystem = Platform.getBundle(Constants.SYSTEM_BUNDLE_SYMBOLICNAME);
+		assertEquals("Wrong system bundle.", expectedSystem, actualSystem);
+
+		Bundle[] actualSystems = Platform.getBundles(Constants.SYSTEM_BUNDLE_SYMBOLICNAME, null);
+		assertEquals("Wrong number of system bundles.", 1, actualSystems.length);
+		assertEquals("Wrong system bundle.", expectedSystem, actualSystems[0]);
+	}
+
 	/**
 	 * Helper method to create empty bundles with just name and version given. The
 	 * bundles are packaged to jars and installed into the container. The jars are

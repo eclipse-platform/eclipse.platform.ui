@@ -226,6 +226,9 @@ public final class InternalPlatform {
 	}
 
 	public Bundle[] getBundles(String symbolicName, String versionRange) {
+		if (Constants.SYSTEM_BUNDLE_SYMBOLICNAME.equals(symbolicName)) {
+			symbolicName = context.getBundle(Constants.SYSTEM_BUNDLE_LOCATION).getSymbolicName();
+		}
 		Map<String, String> directives = Collections.singletonMap(Namespace.REQUIREMENT_FILTER_DIRECTIVE,
 				getRequirementFilter(symbolicName, versionRange));
 		Collection<BundleCapability> matchingBundleCapabilities = fwkWiring.findProviders(ModuleContainer
