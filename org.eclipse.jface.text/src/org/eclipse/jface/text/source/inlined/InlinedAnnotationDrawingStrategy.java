@@ -248,8 +248,8 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 			return;
 		}
 		if (gc != null) {
-			String hostCharacter= textWidget.getText(widgetOffset - 1, widgetOffset - 1);
-			int redrawnCharacterWidth= gc.stringExtent(hostCharacter).x;
+			char hostCharacter= textWidget.getText(widgetOffset - 1, widgetOffset - 1).charAt(0);
+			int redrawnCharacterWidth= hostCharacter != '\t' ? gc.getCharWidth(hostCharacter) : textWidget.getTabs() * gc.getCharWidth(' ');
 			Rectangle charBounds= textWidget.getTextBounds(widgetOffset - 1, widgetOffset - 1);
 			Rectangle annotationBounds= new Rectangle(charBounds.x + redrawnCharacterWidth, charBounds.y, annotation.getWidth(), charBounds.height);
 
@@ -299,7 +299,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 					gc.setForeground(textWidget.getSelectionForeground());
 					gc.setBackground(textWidget.getSelectionBackground());
 				}
-				gc.drawString(hostCharacter, charBounds.x, charBounds.y, true);
+				gc.drawString(Character.toString(hostCharacter), charBounds.x, charBounds.y, true);
 				// END TO REMOVE
 			} else if (style != null && style.metrics != null && style.metrics.width != 0) {
 				// line content annotation had an , reset it

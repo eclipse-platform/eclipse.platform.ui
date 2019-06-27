@@ -50,7 +50,7 @@ import org.eclipse.jface.text.source.projection.ProjectionAnnotation;
 import org.eclipse.jface.text.source.projection.ProjectionAnnotationModel;
 import org.eclipse.jface.text.source.projection.ProjectionSupport;
 import org.eclipse.jface.text.source.projection.ProjectionViewer;
-import org.eclipse.jface.text.tests.source.inlined.InlineAnnotationTest.AccessAllAnnoations;
+import org.eclipse.jface.text.tests.source.inlined.LineContentBoundsDrawingTest.AccessAllAnnoations;
 import org.eclipse.jface.text.tests.util.DisplayHelper;
 
 public class CodeMiningProjectionViewerTest {

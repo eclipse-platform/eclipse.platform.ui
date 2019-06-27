@@ -27,7 +27,8 @@ import org.eclipse.jface.text.tests.rules.FastPartitionerTest;
 import org.eclipse.jface.text.tests.rules.ScannerColumnTest;
 import org.eclipse.jface.text.tests.rules.WordRuleTest;
 import org.eclipse.jface.text.tests.source.LineNumberRulerColumnTest;
-import org.eclipse.jface.text.tests.source.inlined.InlineAnnotationTest;
+import org.eclipse.jface.text.tests.source.inlined.AnnotationOnTabTest;
+import org.eclipse.jface.text.tests.source.inlined.LineContentBoundsDrawingTest;
 import org.eclipse.jface.text.tests.templates.persistence.TemplatePersistenceDataTest;
 
 
@@ -58,7 +59,8 @@ import org.eclipse.jface.text.tests.templates.persistence.TemplatePersistenceDat
 		WordRuleTest.class,
 
 		TemplatePersistenceDataTest.class,
-		InlineAnnotationTest.class,
+		LineContentBoundsDrawingTest.class,
+		AnnotationOnTabTest.class,
 		CodeMiningTest.class,
 		CodeMiningProjectionViewerTest.class
 })

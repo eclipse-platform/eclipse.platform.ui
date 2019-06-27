@@ -43,8 +43,12 @@ import org.eclipse.jface.text.source.inlined.InlinedAnnotationSupport;
 import org.eclipse.jface.text.source.inlined.LineContentAnnotation;
 import org.eclipse.jface.text.tests.util.DisplayHelper;
 
+/**
+ * This test verify that the bounds of the text as returned by StyledText.getTextBounds()
+ * actually match what's printed on the widget.
+ */
 @RunWith(Parameterized.class)
-public class InlineAnnotationTest {
+public class LineContentBoundsDrawingTest {
 	@Parameters(name="{0}")
 	public static String[] contents() {
 		return new String[] {
@@ -56,7 +60,7 @@ public class InlineAnnotationTest {
 
 	private String text;
 
-	public InlineAnnotationTest(String text) {
+	public LineContentBoundsDrawingTest(String text) {
 		this.text = text;
 	}
 
@@ -77,10 +81,10 @@ public class InlineAnnotationTest {
 		}
 	}
 
-	private static final class TestAnnotationPainter extends AnnotationPainter {
+	public static final class TestAnnotationPainter extends AnnotationPainter {
 		private boolean painted;
 
-		private TestAnnotationPainter(ISourceViewer sourceViewer, IAnnotationAccess access) {
+		public TestAnnotationPainter(ISourceViewer sourceViewer, IAnnotationAccess access) {
 			super(sourceViewer, access);
 		}
 
