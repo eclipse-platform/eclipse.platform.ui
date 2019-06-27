@@ -820,7 +820,7 @@ public final class IDE {
 	 * extension has been registered for the file type. If so, an instance of the
 	 * editor extension is opened on the file. See
 	 * <code>IEditorRegistry.getDefaultEditor(String)</code>.</li>
-	 * <li>The preferred {@link IUnknownEditorStrategy} is consulted.</li>
+	 * <li>The preferred {@link IUnassociatedEditorStrategy} is consulted.</li>
 	 * <li>The {@link SystemEditorOrTextEditorStrategy} is consulted, whose behavior
 	 * is
 	 * <ol>
@@ -1114,7 +1114,7 @@ public final class IDE {
 	/**
 	 * Get the editor descriptor for a given name using the editorDescriptor
 	 * passed in as a default as a starting point. It may delegate computation
-	 * to the active {@link IUnknownEditorStrategy}.
+	 * to the active {@link IUnassociatedEditorStrategy}.
 	 *
 	 * @param name
 	 *            The name of the element to open.
@@ -1123,7 +1123,7 @@ public final class IDE {
 	 * @param defaultDescriptor
 	 *            IEditorDescriptor or <code>null</code>
 	 * @param allowInteractive
-	 *            Whether we ask selected {@link IUnknownEditorStrategy}, that
+	 *            Whether we ask selected {@link IUnassociatedEditorStrategy}, that
 	 *            can be interactive.
 	 * @return IEditorDescriptor
 	 * @throws PartInitException
