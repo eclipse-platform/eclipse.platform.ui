@@ -25,6 +25,7 @@
   <properties>
   	<testSuite>${project.artifactId}</testSuite>
   	<testClass>org.eclipse.core.internal.contenttype.tests.AllTests</testClass>
+  	<skipAPIAnalysis>true</skipAPIAnalysis> <!-- Not in baseline -->
   </properties>
   
   <build>
