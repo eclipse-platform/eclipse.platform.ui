@@ -54,7 +54,6 @@ import org.eclipse.ui.internal.genericeditor.folding.DefaultFoldingReconciler;
 import org.eclipse.ui.internal.genericeditor.hover.CompositeTextHover;
 import org.eclipse.ui.internal.genericeditor.markers.MarkerResoltionQuickAssistProcessor;
 import org.eclipse.ui.texteditor.ITextEditor;
-import org.eclipse.ui.texteditor.spelling.SpellingCorrectionProcessor;
 
 /**
  * The configuration of the {@link ExtensionBasedTextEditor}. It registers the proxy composite for hover, completion, syntax highlighting, and then those proxy take care of resolving to the right
@@ -193,8 +192,7 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 
 	@Override public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer) {
 		QuickAssistAssistant quickAssistAssistant = new QuickAssistAssistant();
-		CompositeQuickAssistProcessor processor = new CompositeQuickAssistProcessor(Arrays.asList(new MarkerResoltionQuickAssistProcessor(), new SpellingCorrectionProcessor()));
-		quickAssistAssistant.setQuickAssistProcessor(processor);
+		quickAssistAssistant.setQuickAssistProcessor(new MarkerResoltionQuickAssistProcessor());
 		quickAssistAssistant.setRestoreCompletionProposalSize(EditorsPlugin.getDefault().getDialogSettingsSection("quick_assist_proposal_size")); //$NON-NLS-1$
 		quickAssistAssistant.setInformationControlCreator(parent -> new DefaultInformationControl(parent, EditorsPlugin.getAdditionalInfoAffordanceString()));
 		return quickAssistAssistant;
