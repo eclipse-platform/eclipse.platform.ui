@@ -327,7 +327,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 
 		// Create add environment variable menu item
 		MenuItem miAdd = new MenuItem(menuTable, SWT.NONE);
-		miAdd.setText(LaunchConfigurationsMessages.EnvironmentTab_ContextMenu0);
+		miAdd.setText(LaunchConfigurationsMessages.EnvironmentTab_Add_4);
 
 		miAdd.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -338,7 +338,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 
 		// Create copy environment variable menu item
 		MenuItem miCopy = new MenuItem(menuTable, SWT.NONE);
-		miCopy.setText(LaunchConfigurationsMessages.EnvironmentTab_ContextMenu1);
+		miCopy.setText(LaunchConfigurationsMessages.EnvironmentTab_Copy);
 
 		miCopy.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -349,7 +349,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 
 		// Create paste environment variable menu item
 		MenuItem miPaste = new MenuItem(menuTable, SWT.NONE);
-		miPaste.setText(LaunchConfigurationsMessages.EnvironmentTab_ContextMenu2);
+		miPaste.setText(LaunchConfigurationsMessages.EnvironmentTab_Paste);
 
 		miPaste.addSelectionListener(new SelectionAdapter() {
 			@Override
@@ -360,7 +360,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 
 		// Create remove environment variable menu item
 		MenuItem miRemove = new MenuItem(menuTable, SWT.NONE);
-		miRemove.setText(LaunchConfigurationsMessages.EnvironmentTab_ContextMenu3);
+		miRemove.setText(LaunchConfigurationsMessages.EnvironmentTab_Remove_6);
 		miRemove.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
@@ -373,9 +373,9 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 			public void selectionChanged(SelectionChangedEvent event) {
 				IStructuredSelection selection = environmentTable.getStructuredSelection();
 				if (selection.size() == 1) {
-					miRemove.setText(LaunchConfigurationsMessages.EnvironmentTab_ContextMenu3);
+					miRemove.setText(LaunchConfigurationsMessages.EnvironmentTab_Remove_6);
 				} else if (selection.size() > 1) {
-					miRemove.setText(LaunchConfigurationsMessages.EnvironmentTab_ContextMenu4);
+					miRemove.setText(LaunchConfigurationsMessages.EnvironmentTab_Remove_All);
 				}
 			}
 		});
@@ -494,7 +494,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 				GridData.VERTICAL_ALIGN_BEGINNING | GridData.HORIZONTAL_ALIGN_END, 0, 0);
 
 		// Create buttons
-		envAddButton = createPushButton(buttonComposite, LaunchConfigurationsMessages.EnvironmentTab_New_4, null);
+		envAddButton = createPushButton(buttonComposite, LaunchConfigurationsMessages.EnvironmentTab_Add_4, null);
 		envAddButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
