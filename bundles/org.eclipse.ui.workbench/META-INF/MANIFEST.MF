@@ -61,6 +61,7 @@ Export-Package: org.eclipse.e4.ui.workbench.addons.perspectiveswitcher;x-interna
  org.eclipse.ui.internal.progress;x-friends:="org.eclipse.ui.ide,org.eclipse.ui.ide.application",
  org.eclipse.ui.internal.provisional.application;x-friends:="org.eclipse.ui.ide",
  org.eclipse.ui.internal.quickaccess;x-friends:="org.eclipse.ui",
+ org.eclipse.ui.internal.quickaccess.providers;x-friends:="org.eclipse.ui",
  org.eclipse.ui.internal.registry;x-friends:="org.eclipse.ui,org.eclipse.ui.ide",
  org.eclipse.ui.internal.services;x-friends:="org.eclipse.ui",
  org.eclipse.ui.internal.splash;x-internal:=true,
