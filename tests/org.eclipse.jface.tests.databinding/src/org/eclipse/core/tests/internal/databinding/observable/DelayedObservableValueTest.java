@@ -149,7 +149,7 @@ public class DelayedObservableValueTest extends AbstractDefaultRealmTestCase {
 			@Override
 			public void run() {
 				// Give plenty of time for display to run timer task
-				long timeout = time() + 5000;
+				long timeout = time() + 20_000;
 				do {
 					sleep(10);
 					processDisplayEvents();
