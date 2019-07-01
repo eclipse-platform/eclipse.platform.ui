@@ -36,7 +36,7 @@ public class TestModelContentProvider implements ITestModelListener,
 		if (fViewer instanceof ListViewer) {
 			if (change.getParent() != null
 					&& change.getParent().equals(fViewer.getInput())) {
-				((ListViewer) fViewer).add(change.getChildren());
+				((ListViewer) fViewer).add((Object[]) change.getChildren());
 			}
 		} else if (fViewer instanceof TableViewer) {
 			if (change.getParent() != null

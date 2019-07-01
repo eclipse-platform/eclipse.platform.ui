@@ -289,7 +289,7 @@ public class CommonViewer extends TreeViewer {
 	}
 
 	@Override
-	public void add(Object parentElement, Object[] childElements) {
+	public void add(Object parentElement, Object... childElements) {
 		NavigatorPipelineService pipeDream = (NavigatorPipelineService) contentService
 				.getPipelineService();
 
