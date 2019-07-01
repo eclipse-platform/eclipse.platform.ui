@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2018 IBM Corporation and others.
+ * Copyright (c) 2015, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548799
  *******************************************************************************/
 package org.eclipse.e4.demo.cssbridge.ui.actions;
 
@@ -17,7 +18,9 @@ import org.eclipse.e4.ui.css.swt.theme.ITheme;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.osgi.framework.FrameworkUtil;
 
 @SuppressWarnings("restriction")
 public class CssThemeSwitchAction extends Action {
@@ -32,8 +35,8 @@ public class CssThemeSwitchAction extends Action {
 		super(text);
 		setId(actionId);
 		setActionDefinitionId(actionId);
-		setImageDescriptor(org.eclipse.e4.demo.cssbridge.ui.Activator
-				.getImageDescriptor(iconPath));
+		String bundleSymbolicName = FrameworkUtil.getBundle(CssThemeSwitchAction.class).getSymbolicName();
+		setImageDescriptor(ResourceLocator.imageDescriptorFromBundle(bundleSymbolicName, iconPath).orElse(null));
 
 		this.window = window;
 		this.themeId = themeId;

@@ -2,12 +2,18 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Bundle-Name
 Bundle-SymbolicName: org.eclipse.e4.demo.cssbridge;singleton:=true
-Bundle-Version: 1.1.100.qualifier
-Bundle-Activator: org.eclipse.e4.demo.cssbridge.ui.Activator
+Bundle-Version: 1.1.200.qualifier
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.eclipse.e4.ui.css.swt.theme
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Export-Package: org.eclipse.e4.demo.cssbridge.core,
+ org.eclipse.e4.demo.cssbridge.internal.core;x-internal:=true,
+ org.eclipse.e4.demo.cssbridge.model,
+ org.eclipse.e4.demo.cssbridge.ui,
+ org.eclipse.e4.demo.cssbridge.ui.actions,
+ org.eclipse.e4.demo.cssbridge.ui.views,
+ org.eclipse.e4.demo.cssbridge.util
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/mailservice.xml
 Automatic-Module-Name: org.eclipse.e4.demo.cssbridge
