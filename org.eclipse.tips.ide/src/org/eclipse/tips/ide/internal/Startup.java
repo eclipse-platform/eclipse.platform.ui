@@ -50,7 +50,21 @@ public class Startup implements IStartup {
 	@Override
 	public void earlyStartup() {
 		if (!(TipsPreferences.getStartupBehavior() == TipManager.START_DISABLE)) {
-			start();
+			Job job = new Job(Messages.Startup_1) {
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					start();
+					return Status.OK_STATUS;
+				}
+
+				@Override
+				public boolean belongsTo(Object family) {
+					return Startup.class.equals(family);
+				}
+			};
+			job.setSystem(true);
+			job.setUser(false);
+			job.schedule();
 		}
 	}
 

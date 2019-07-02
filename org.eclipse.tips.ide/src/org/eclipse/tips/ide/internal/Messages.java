@@ -15,6 +15,7 @@ public class Messages extends NLS {
 	public static String IDETipManager_8;
 	public static String IDETipManager_9;
 	public static String Startup_0;
+	public static String Startup_1;
 	public static String Startup_18;
 	public static String Startup_19;
 	public static String Startup_20;
