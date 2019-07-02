@@ -23,6 +23,7 @@
             category="org.eclipse.ui.externaltools"
             modes="run"
             id="org.eclipse.ui.externaltools.ProgramLaunchConfigurationType"
+            allowCommandLine="true"
             allowOutputMerging="true">
       </launchConfigurationType>
       <launchConfigurationType
@@ -31,6 +32,7 @@
             category="org.eclipse.ui.externaltools.builder"
             modes="run"
             id="org.eclipse.ui.externaltools.ProgramBuilderLaunchConfigurationType"
+            allowCommandLine="true"
             allowOutputMerging="true">
       </launchConfigurationType>
    </extension>
@@ -39,10 +41,10 @@
          name="%Builder.externalTools"
          point="org.eclipse.core.resources.builders">
      <builder
-      	isConfigurable= "true">
+        isConfigurable= "true">
          <run
                class="org.eclipse.core.externaltools.internal.model.ExternalToolBuilder">
          </run>
       </builder>
-   </extension>   
+   </extension>
 </plugin>

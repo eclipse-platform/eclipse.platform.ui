@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -56,14 +56,12 @@ public interface ILaunchConfigurationDelegate {
 
 	/**
 	 * Gets the command line to launch the given configuration in the specified
-	 * mode, contributing debug targets and/or processes to the given launch
-	 * object. The launch object has already been registered with the launch
-	 * manager.
+	 * mode.
 	 *
-	 * @param configuration the configuration to launch
-	 * @param mode the mode in which to launch, one of the mode constants
-	 *            defined by <code>ILaunchManager</code> - <code>RUN_MODE</code>
-	 *            or <code>DEBUG_MODE</code>.
+	 * @param configuration the configuration to build command line for
+	 * @param mode the mode in which to build command line, one of the mode
+	 *            constants defined by <code>ILaunchManager</code> -
+	 *            <code>RUN_MODE</code> or <code>DEBUG_MODE</code>.
 	 * @param monitor progress monitor, or <code>null</code> progress monitor,
 	 *            or <code>null</code>. A cancelable progress monitor is
 	 *            provided by the Job framework. It should be noted that the
@@ -74,10 +72,9 @@ public interface ILaunchConfigurationDelegate {
 	 *            workspace batch jobs to be canceled, as the canceled flag is
 	 *            propagated up the top-level parent monitor. The provided
 	 *            monitor is not guaranteed to have been started.
-	 * @param launch the launch object to contribute processes and debug targets
-	 *            to
+	 * @param launch the launch to create command line for
 	 * @return the command line string
-	 * @exception CoreException if launching fails
+	 * @exception CoreException if building the command line failed
 	 * @since 3.13
 	 */
 	public default String showCommandLine(ILaunchConfiguration configuration, String mode, ILaunch launch, IProgressMonitor monitor) throws CoreException {
