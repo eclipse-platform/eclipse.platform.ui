@@ -70,6 +70,9 @@
     <module>org.eclipse.ui.genericeditor</module>
     <module>org.eclipse.ui.genericeditor.tests</module>
     <module>org.eclipse.ui.genericeditor.examples</module>
+    <!-- Quick Search -->
+    <module>org.eclipse.text.quicksearch</module>
+    <module>org.eclipse.text.quicksearch.tests</module>
   </modules>
 
 </project>
