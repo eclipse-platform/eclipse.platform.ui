@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -1520,12 +1520,14 @@ public class LaunchConfigurationTabGroupViewer {
 					saved[0] = fWorkingCopy.doSave(ILaunchConfiguration.UPDATE_PROTOTYPE_CHILDREN);
 				}
 			}
-			updateButtons();
-			fInitializingTabs = false;
 		}
 		catch (CoreException e) {exception = e;}
 		catch (InvocationTargetException e) {exception = e;}
 		catch (InterruptedException e) {exception = e;}
+		finally { fInitializingTabs = false; }
+
+		updateButtons();
+
 		if(exception != null) {
 			DebugUIPlugin.errorDialog(getShell(), LaunchConfigurationsMessages.LaunchConfigurationDialog_Launch_Configuration_Error_46, LaunchConfigurationsMessages.LaunchConfigurationDialog_Exception_occurred_while_saving_launch_configuration_47, exception); //
 			return null;
