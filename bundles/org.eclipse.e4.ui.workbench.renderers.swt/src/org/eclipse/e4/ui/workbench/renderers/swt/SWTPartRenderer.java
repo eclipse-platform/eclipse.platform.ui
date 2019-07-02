@@ -46,7 +46,6 @@ import org.eclipse.swt.widgets.Widget;
 
 public abstract class SWTPartRenderer extends AbstractPartRenderer {
 
-	private static final String ICON_URI_FOR_PART = "IconUriForPart"; //$NON-NLS-1$
 	private static final String ADORN_ICON_IMAGE_KEY = "previouslyAdorned"; //$NON-NLS-1$
 
 	private String pinURI = "platform:/plugin/org.eclipse.e4.ui.workbench.renderers.swt/icons/full/ovr16/pinned_ovr.png"; //$NON-NLS-1$
@@ -241,22 +240,17 @@ public abstract class SWTPartRenderer extends AbstractPartRenderer {
 	private String getIconURI(MUILabel element) {
 		if (element instanceof MPart) {
 			MPart part = (MPart) element;
-			String iconURI = (String) part.getTransientData().get(
-					ICON_URI_FOR_PART);
-			if (iconURI != null) {
-				return iconURI;
+			String iconURI = part.getIconURI();
+
+			if (iconURI == null) {
+				MPartDescriptor desc = modelService.getPartDescriptor(part.getElementId());
+				iconURI = desc != null ? desc.getIconURI() : null;
 			}
-
-			MPartDescriptor desc = modelService.getPartDescriptor(part
-					.getElementId());
-			iconURI = desc != null && desc.getIconURI() != null ? desc
-					.getIconURI() : element.getIconURI();
-			part.getTransientData().put(ICON_URI_FOR_PART, iconURI);
-
 			return iconURI;
 		}
 		return element.getIconURI();
 	}
+
 
 	/**
 	 * @param element

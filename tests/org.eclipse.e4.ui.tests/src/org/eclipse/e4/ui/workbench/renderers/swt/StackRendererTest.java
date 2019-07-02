@@ -16,6 +16,7 @@
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -28,6 +29,7 @@ import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.swt.CSSConstants;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
@@ -37,12 +39,17 @@ import org.eclipse.e4.ui.services.internal.events.EventBroker;
 import org.eclipse.e4.ui.tests.rules.WorkbenchContextRule;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
+import org.eclipse.swt.graphics.Image;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 
 public class StackRendererTest {
+
+	private static final String PART_DESC_ICON = "platform:/plugin/org.eclipse.e4.ui.tests/icons/pinned_ovr.png";
+	private static final String PART_ICON = "platform:/plugin/org.eclipse.e4.ui.tests/icons/filenav_nav.png";
 
 	@Rule
 	public WorkbenchContextRule contextRule = new WorkbenchContextRule();
@@ -56,7 +63,8 @@ public class StackRendererTest {
 	@Inject
 	private MApplication application;
 
-	private MPart part;
+	private MPart part1;
+	private MPart part2;
 	private CTabItemStylingMethodsListener executedMethodsListener;
 	private MPartStack partStack;
 
@@ -64,16 +72,24 @@ public class StackRendererTest {
 	public void setUp() throws Exception {
 		MWindow window = ems.createModelElement(MWindow.class);
 		partStack = ems.createModelElement(MPartStack.class);
-		part = ems.createModelElement(MPart.class);
-		part.setLabel("some title");
 
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
 
-		window.getChildren().add(partStack);
-		partStack.getChildren().add(part);
+		MPartDescriptor partDescriptor = ems.createModelElement(MPartDescriptor.class);
+		partDescriptor.setElementId("myelementid");
+		partDescriptor.setLabel("some title");
+		partDescriptor.setIconURI(PART_DESC_ICON);
+		application.getDescriptors().add(partDescriptor);
 
-		executedMethodsListener = new CTabItemStylingMethodsListener(part);
+		part1 = ems.createPart(partDescriptor);
+		part2 = ems.createPart(partDescriptor);
+
+		window.getChildren().add(partStack);
+		partStack.getChildren().add(part1);
+		partStack.getChildren().add(part2);
+
+		executedMethodsListener = new CTabItemStylingMethodsListener(part1);
 
 		context.set(IStylingEngine.class, (IStylingEngine) Proxy.newProxyInstance(getClass().getClassLoader(),
 				new Class<?>[] { IStylingEngine.class }, executedMethodsListener));
@@ -86,7 +102,7 @@ public class StackRendererTest {
 			throws Exception {
 		// given
 		HashMap<String, Object> params = new HashMap<>();
-		params.put(UIEvents.EventTags.ELEMENT, part);
+		params.put(UIEvents.EventTags.ELEMENT, part1);
 		params.put(UIEvents.EventTags.NEW_VALUE, CSSConstants.CSS_BUSY_CLASS);
 		params.put(UIEvents.EventTags.OLD_VALUE, null);
 
@@ -106,7 +122,7 @@ public class StackRendererTest {
 	public void testTabStateHandlerWhenSelectionChangedEvent() throws Exception {
 		// given
 		MPlaceholder placeHolder = ems.createModelElement(MPlaceholder.class);
-		placeHolder.setRef(part);
+		placeHolder.setRef(part1);
 
 		HashMap<String, Object> params = new HashMap<>();
 		params.put(UIEvents.EventTags.ELEMENT, partStack);
@@ -123,6 +139,33 @@ public class StackRendererTest {
 		assertEquals(1,
 				executedMethodsListener
 						.getMethodExecutionCount("setClassnameAndId(.+)"));
+	}
+
+	@Test
+	public void testBug475357_IconChanges() throws Exception {
+		part1.setIconURI(PART_DESC_ICON);
+		CTabItem item = ((CTabFolder) partStack.getWidget()).getItem(0);
+		Image image = item.getImage();
+
+		part1.setIconURI(PART_ICON);
+		assertNotEquals(item.getImage(), image);
+	}
+
+	@Test
+	public void testBug475357_PartIconOverridesDescriptor() throws Exception {
+
+		// check that Renderer uses Part's icon over PartDescriptor's icon
+		CTabItem item = ((CTabFolder) partStack.getWidget()).getItem(1);
+		Image descImage = item.getImage();
+
+		part2.setIconURI(PART_ICON);
+		Image partIcon = item.getImage();
+		assertNotEquals(partIcon, descImage);
+
+		part2.setIconURI(null);
+		Image ovrwriteIcon = item.getImage();
+		assertNotEquals(ovrwriteIcon, partIcon);
+		assertEquals(ovrwriteIcon, descImage);
 	}
 
 	// helper functions

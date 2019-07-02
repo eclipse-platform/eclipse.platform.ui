@@ -251,9 +251,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 		List<CTabItem> itemsToSet = getItemsToSet(part);
 		for (CTabItem item : itemsToSet) {
 			if (key.equals(IPresentationEngine.OVERRIDE_ICON_IMAGE_KEY)) {
-				this.imageChanged = true;
-				item.setImage(getImage(part));
-				this.imageChanged = false;
+				changePartTabImage(part, item);
 			} else if (key.equals(IPresentationEngine.OVERRIDE_TITLE_TOOL_TIP_KEY)) {
 				String newTip = getToolTip(part);
 				item.setToolTipText(getToolTip(newTip));
@@ -581,7 +579,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 			cti.setText(getLabel(part, part.getLocalizedLabel()));
 			break;
 		case UIEvents.UILabel.ICONURI:
-			cti.setImage(getImage(part));
+			changePartTabImage(part, cti);
 			break;
 		case UIEvents.UILabel.TOOLTIP:
 		case UIEvents.UILabel.LOCALIZED_TOOLTIP:
@@ -595,6 +593,12 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 		default:
 			break;
 		}
+	}
+
+	private void changePartTabImage(MPart part, CTabItem item) {
+		this.imageChanged = true;
+		item.setImage(getImage(part));
+		this.imageChanged = false;
 	}
 
 	@PreDestroy
