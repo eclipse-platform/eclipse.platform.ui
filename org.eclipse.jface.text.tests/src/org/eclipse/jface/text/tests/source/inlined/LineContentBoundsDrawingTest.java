@@ -155,7 +155,7 @@ public class LineContentBoundsDrawingTest {
 		RGB backgroundRgb = widget.getBackground().getRGB();
 		ImageData imageData = image.getImageData();
 		for (int x = imageData.width - 50 /* magic number to avoid rulers and other */; x >= 0; x--) {
-			for (int y = 3 /* magic number as well to avoid title bar */; y < imageData.height; y++) {
+			for (int y = 3 /* magic number as well to avoid title bar */; y < imageData.height - 3; y++) {
 				if (!imageData.palette.getRGB(imageData.getPixel(x, y)).equals(backgroundRgb)) {
 					image.dispose();
 					return x;
