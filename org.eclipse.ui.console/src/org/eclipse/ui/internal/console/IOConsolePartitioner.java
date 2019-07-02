@@ -418,18 +418,52 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 				lastPartitionWithValidOffset--;
 				inputPartition = getPartitionByIndex(inputPartitionIndex);
 			}
-			if (inputPartition == null || inputPartition.isReadOnly()) {
-				if (inputPartition != null && offset < inputPartition.getOffset() + inputPartition.getLength()) {
-					// input is inside an existing read-only partition
-					splitPartition(offset);
+
+			// process event text in parts split on line delimiters
+			int textOffset = 0;
+			while (textOffset < eventTextLength) {
+				final int[] result = TextUtilities.indexOf(lld, event.getText(), textOffset);
+				final boolean foundNewline = result[1] >= 0;
+				final int newTextOffset = foundNewline ? result[0] + lld[result[1]].length() : eventTextLength;
+				final int inputLength = newTextOffset - textOffset;
+
+				if (inputPartition == null || inputPartition.isReadOnly()) {
+					final int inputOffset = offset + textOffset;
+					if (inputPartition != null
+							&& inputOffset < inputPartition.getOffset() + inputPartition.getLength()) {
+						// input is inside an existing read-only partition
+						splitPartition(inputOffset);
+					}
+					inputPartition = new IOConsolePartition(inputOffset, inputStream);
+					inputPartitionIndex++;
+					partitions.add(inputPartitionIndex, inputPartition);
+					inputPartitions.add(inputPartition);
+					lastPartitionWithValidOffset++; // new input partitions get build with correct offsets
 				}
-				inputPartition = new IOConsolePartition(offset, inputStream);
-				inputPartitionIndex++;
-				partitions.add(inputPartitionIndex, inputPartition);
-				inputPartitions.add(inputPartition);
-				lastPartitionWithValidOffset++; // new input partitions get build with correct offsets
+
+				inputPartition.setLength(inputPartition.getLength() + inputLength);
+
+				if (foundNewline) {
+					inputPartitions.sort(CMP_REGION_BY_OFFSET);
+					final StringBuilder inputLine = new StringBuilder();
+					for (IOConsolePartition p : inputPartitions) {
+						try {
+							final String fragment = document.get(p.getOffset(), p.getLength());
+							inputLine.append(fragment);
+						} catch (BadLocationException e) {
+							log(e);
+						}
+						p.setReadOnly();
+					}
+					inputPartitions.clear();
+					if (ASSERT) {
+						Assert.isTrue(inputLine.length() > 0);
+					}
+					inputStream.appendData(inputLine.toString());
+				}
+				Assert.isTrue(newTextOffset > textOffset); // can prevent infinity loop
+				textOffset = newTextOffset;
 			}
-			inputPartition.setLength(inputPartition.getLength() + eventTextLength);
 		}
 
 		// repair partition offsets
@@ -457,27 +491,6 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 				partition.setOffset(newOffset);
 				newOffset += partition.getLength();
 			}
-		}
-
-		// send pending input if event contains line delimiter
-		final int[] result = TextUtilities.indexOf(lld, event.getText(), 0);
-		if (result[1] >= 0) {
-			inputPartitions.sort(CMP_REGION_BY_OFFSET);
-			final StringBuilder inputLine = new StringBuilder();
-			for (IOConsolePartition p : inputPartitions) {
-				try {
-					final String fragment = document.get(p.getOffset(), p.getLength());
-					inputLine.append(fragment);
-				} catch (BadLocationException e) {
-					log(e);
-				}
-				p.setReadOnly();
-			}
-			inputPartitions.clear();
-			if (ASSERT) {
-				Assert.isTrue(inputLine.length() > 0);
-			}
-			inputStream.appendData(inputLine.toString());
 		}
 
 		if (ASSERT) {
