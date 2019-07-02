@@ -68,7 +68,6 @@ public class LaunchConfigurationsMessages extends NLS {
 	public static String CompileErrorPromptStatusHandler_0;
 	public static String CompileErrorPromptStatusHandler_1;
 	public static String CompileErrorPromptStatusHandler_2;
-	public static String EnvironmentTab_2;
 
 	public static String EnvironmentTab_22;
 
