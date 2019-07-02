@@ -29,7 +29,7 @@ public class ContentTypeSpecializationComparator<T> implements Comparator<Generi
 		return depth(o2.targetContentType) - depth(o1.targetContentType);
 	}
 
-	private static int depth(IContentType targetContentType) {
+	public static int depth(IContentType targetContentType) {
 		int res = 0;
 		IContentType current = targetContentType;
 		while (current != null) {
