@@ -15,6 +15,7 @@
          Patrick Chuong (Texas Instruments) - Improve usability of the breakpoint view (Bug 238956)
          Patrick Chuong (Texas Instruments) - Move debug toolbar actions to main window (Bug 332784)
          Axel Richard (Obeo) - Bug 41353 - Launch configurations prototypes
+         Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 529651 - Launch group launches do not build before launch 
  -->
 
 <plugin>
@@ -1709,6 +1710,12 @@
             class="org.eclipse.debug.internal.ui.groups.GroupLaunchHandler"
             code="233"
             id="org.eclipse.debug.ui.groups.GroupLaunchHandler"
+            plugin="org.eclipse.debug.core">
+      </statusHandler>
+      <statusHandler
+            class="org.eclipse.debug.internal.ui.BuildBeforeLaunchStatusHandler"
+            code="206"
+            id="org.eclipse.debug.ui.statusHandlers.BuildBeforeLaunch"
             plugin="org.eclipse.debug.core">
       </statusHandler>
    </extension>

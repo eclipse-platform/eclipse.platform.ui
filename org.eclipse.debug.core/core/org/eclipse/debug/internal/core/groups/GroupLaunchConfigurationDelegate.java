@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2009, 2016 QNX Software Systems and others.
+ *  Copyright (c) 2009, 2019 QNX Software Systems and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *      QNX Software Systems - initial API and implementation
  *      Freescale Semiconductor
  *      SSI Schaefer
+ *      Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 529651
  *******************************************************************************/
 package org.eclipse.debug.internal.core.groups;
 
@@ -58,6 +59,8 @@ public class GroupLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 	public static final int CODE_GROUP_LAUNCH_START = 233;
 	public static final int CODE_GROUP_LAUNCH_DONE = 234;
 
+	private static final int CODE_BUILD_BEFORE_LAUNCH = 206;
+
 	private static final String NAME_PROP = "name"; //$NON-NLS-1$
 	private static final String ENABLED_PROP = "enabled"; //$NON-NLS-1$
 	private static final String ADOPT_PROP = "adoptIfRunning"; //$NON-NLS-1$
@@ -74,6 +77,8 @@ public class GroupLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 
 	private static final Status GROUP_LAUNCH_START = new Status(IStatus.INFO, DEBUG_CORE, CODE_GROUP_LAUNCH_START, IInternalDebugCoreConstants.EMPTY_STRING, null);
 	private static final Status GROUP_LAUNCH_DONE = new Status(IStatus.INFO, DEBUG_CORE, CODE_GROUP_LAUNCH_DONE, IInternalDebugCoreConstants.EMPTY_STRING, null);
+
+	private static final Status BUILD_BEFORE_LAUNCH = new Status(IStatus.INFO, DEBUG_CORE, CODE_BUILD_BEFORE_LAUNCH, IInternalDebugCoreConstants.EMPTY_STRING, null);
 
 	@Override
 	public ILaunch getLaunch(ILaunchConfiguration configuration, String mode) throws CoreException {
@@ -152,7 +157,17 @@ public class GroupLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 		ILaunch subLaunch = running.stream().findFirst().orElse(null);
 		boolean launched = false;
 		if (subLaunch == null) {
-			subLaunch = child.launch(localMode, monitor);
+			boolean build = true;// see DebugUIPreferenceInitializer
+			IStatusHandler buildHandler = DebugPlugin.getDefault().getStatusHandler(BUILD_BEFORE_LAUNCH);
+			try {
+				Object resolution = buildHandler.handleStatus(BUILD_BEFORE_LAUNCH, child);
+				if (resolution instanceof Boolean) {
+					build = ((Boolean) resolution).booleanValue();
+				}
+			} catch (Exception e) {
+				// ignore and use default
+			}
+			subLaunch = child.launch(localMode, monitor, build);
 			launched = true;
 		}
 
