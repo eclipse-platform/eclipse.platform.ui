@@ -249,7 +249,8 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 		}
 		if (gc != null) {
 			char hostCharacter= textWidget.getText(widgetOffset - 1, widgetOffset - 1).charAt(0);
-			int redrawnCharacterWidth= hostCharacter != '\t' ? gc.getCharWidth(hostCharacter) : textWidget.getTabs() * gc.getCharWidth(' ');
+			// use gc.stringExtent instead of gc.geCharWidth because of bug 548866
+			int redrawnCharacterWidth= hostCharacter != '\t' ? gc.stringExtent(Character.toString(hostCharacter)).x : textWidget.getTabs() * gc.stringExtent(" ").x; //$NON-NLS-1$
 			Rectangle charBounds= textWidget.getTextBounds(widgetOffset - 1, widgetOffset - 1);
 			Rectangle annotationBounds= new Rectangle(charBounds.x + redrawnCharacterWidth, charBounds.y, annotation.getWidth(), charBounds.height);
 
