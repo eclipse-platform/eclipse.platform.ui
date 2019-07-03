@@ -11,8 +11,10 @@
 package org.eclipse.jface.tests;
 
 import org.eclipse.jface.tests.action.AllActionTests;
+import org.eclipse.jface.tests.fieldassist.FieldAssistTestSuite;
 import org.eclipse.jface.tests.images.AllImagesTests;
 import org.eclipse.jface.tests.labelProviders.DecoratingLabelProviderTests;
+import org.eclipse.jface.tests.layout.AllLayoutTests;
 import org.eclipse.jface.tests.preferences.AllPrefsTests;
 import org.eclipse.jface.tests.resources.AllResourcesTests;
 import org.eclipse.jface.tests.viewers.AllViewersTests;
@@ -22,8 +24,9 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ AllActionTests.class, AllImagesTests.class, AllPrefsTests.class, AllResourcesTests.class,
-		AllViewersTests.class, AllWidgetTests.class, DecoratingLabelProviderTests.class })
+@SuiteClasses({ AllActionTests.class, AllImagesTests.class, AllLayoutTests.class, AllPrefsTests.class,
+		AllResourcesTests.class, AllViewersTests.class, AllWidgetTests.class, DecoratingLabelProviderTests.class,
+		FieldAssistTestSuite.class })
 public class AllTests {
 
 }

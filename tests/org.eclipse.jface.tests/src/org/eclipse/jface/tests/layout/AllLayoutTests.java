@@ -20,10 +20,10 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ GeometryTest.class, AbstractColumnLayoutTest.class, GridDataFactoryTest.class,
 		GridLayoutFactoryTest.class, TreeColumnLayoutTest.class })
-public class AllTests {
+public class AllLayoutTests {
 
 	public static void main(String[] args) {
-		JUnitCore.main(AllTests.class.getName());
+		JUnitCore.main(AllLayoutTests.class.getName());
 	}
 
 }

@@ -75,6 +75,8 @@ public class ContentProposalAdapterTest {
 	 *
 	 * Tests whether no proposal popup was opened if TAB was pressed within
 	 * activation delay.
+	 *
+	 * @throws Exception
 	 */
 	@Test
 	public void testBug520372AutoActivationDelayTab() throws Exception {
@@ -92,6 +94,8 @@ public class ContentProposalAdapterTest {
 	 *
 	 * Tests whether no proposal popup was opened if CR was pressed within
 	 * activation delay.
+	 *
+	 * @throws Exception
 	 */
 	@Test
 	public void testBug520372AutoActivationDelayCR() throws Exception {
@@ -109,6 +113,8 @@ public class ContentProposalAdapterTest {
 	 *
 	 * Tests whether no proposal popup was opened if ESC was pressed within
 	 * activation delay.
+	 *
+	 * @throws Exception
 	 */
 	@Test
 	public void testBug520372AutoActivationDelayESC() throws Exception {
@@ -171,8 +177,7 @@ public class ContentProposalAdapterTest {
 	 * Sends an SWT KeyDown event for the specified character to the field assist
 	 * control.
 	 *
-	 * @param character
-	 *            the character that has been pressed
+	 * @param character the character that has been pressed
 	 */
 	private void sendKeyDownToControl(char character) {
 		// fake a KeyDown event
@@ -193,18 +198,18 @@ public class ContentProposalAdapterTest {
 		}
 	}
 
-	private ContentProposalAdapter createContentProposalAdapter(Control control) {
+	private static ContentProposalAdapter createContentProposalAdapter(Control control) {
 		ContentProposalAdapter contentProposalAdapter = new ContentProposalAdapter(control, new TextContentAdapter(),
 				createContentProposalProvider(), null, null);
 		contentProposalAdapter.setAutoActivationDelay(2000);
 		return contentProposalAdapter;
 	}
 
-	private IContentProposalProvider createContentProposalProvider() {
+	private static IContentProposalProvider createContentProposalProvider() {
 		return new SimpleContentProposalProvider(getProposals());
 	}
 
-	private String[] getProposals() {
+	private static String[] getProposals() {
 		return new String[] { "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten" };
 	}
 

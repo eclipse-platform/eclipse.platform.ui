@@ -87,13 +87,17 @@ public abstract class AbstractFieldAssistTestCase {
 
 	/**
 	 * Creates the field assist window that is to be tested.
+	 *
+	 * @return The newly created window.
 	 */
 	protected abstract AbstractFieldAssistWindow createFieldAssistWindow();
 
 	/**
 	 * Returns the created field assist window. May be null if
-	 * {@link #createFieldAssistWindow()} has not been called yet or if the test
-	 * is being torn down.
+	 * {@link #createFieldAssistWindow()} has not been called yet or if the test is
+	 * being torn down.
+	 *
+	 * @return the field assist window
 	 */
 	protected AbstractFieldAssistWindow getFieldAssistWindow() {
 		return window;
@@ -138,9 +142,9 @@ public abstract class AbstractFieldAssistTestCase {
 	}
 
 	/**
-	 * Send focus somewhere besides the field assist shell.
-	 * This involves optionally creating another shell.  If we
-	 * create another shell, we need to adjust the originalShellCount
+	 * Send focus somewhere besides the field assist shell. This involves optionally
+	 * creating another shell. If we create another shell, we need to adjust the
+	 * originalShellCount
 	 */
 	protected void sendFocusElsewhere() {
 		anotherShell.setFocus();
@@ -156,11 +160,10 @@ public abstract class AbstractFieldAssistTestCase {
 	}
 
 	/**
-	 * Sends an SWT KeyDown event for the specified character to the field
-	 * assist control.
+	 * Sends an SWT KeyDown event for the specified character to the field assist
+	 * control.
 	 *
-	 * @param character
-	 *            the character that has been pressed
+	 * @param character the character that has been pressed
 	 */
 	protected void sendKeyDownToControl(char character) {
 		// fake a KeyDown event
@@ -174,9 +177,8 @@ public abstract class AbstractFieldAssistTestCase {
 
 	/**
 	 * Sends an SWT KeyDown event for the specified keystroke
-	 *
-	 * @param character
-	 *            the character that has been pressed
+	 * 
+	 * @param keystroke the character that has been pressed
 	 */
 	protected void sendKeyDownToControl(KeyStroke keystroke) {
 		// fake a KeyDown event
@@ -193,30 +195,27 @@ public abstract class AbstractFieldAssistTestCase {
 	 */
 	protected void assertOneShellUp() {
 		spinEventLoop();
-		assertEquals("There should only be one shell up, the dialog",
-				originalShellCount + 1, window.getDisplay().getShells().length);
+		assertEquals("There should only be one shell up, the dialog", originalShellCount + 1,
+				window.getDisplay().getShells().length);
 	}
 
 	/**
-	 * Checks that there are two shells up, the original field assist window and
-	 * the proposals popup.
+	 * Checks that there are two shells up, the original field assist window and the
+	 * proposals popup.
 	 */
 	protected void assertTwoShellsUp() {
 		spinEventLoop();
-		assertEquals(
-				"There should two shells up, the dialog and the proposals dialog",
-				originalShellCount + 2, window.getDisplay().getShells().length);
+		assertEquals("There should two shells up, the dialog and the proposals dialog", originalShellCount + 2,
+				window.getDisplay().getShells().length);
 	}
 
 	protected void setControlContent(String text) {
-		window.getControlContentAdapter().setControlContents(
-				window.getFieldAssistControl(), text, text.length());
+		window.getControlContentAdapter().setControlContents(window.getFieldAssistControl(), text, text.length());
 
 	}
 
 	protected String getControlContent() {
-		return window.getControlContentAdapter().getControlContents(
-				window.getFieldAssistControl());
+		return window.getControlContentAdapter().getControlContents(window.getFieldAssistControl());
 
 	}
 

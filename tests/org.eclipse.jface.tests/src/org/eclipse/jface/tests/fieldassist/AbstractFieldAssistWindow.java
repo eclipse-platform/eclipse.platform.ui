@@ -69,8 +69,7 @@ public abstract class AbstractFieldAssistWindow extends Window {
 	}
 
 	/**
-	 * @param parent
-	 *            the SWT composite
+	 * @param parent the SWT composite
 	 */
 	protected void createExtraControls(Composite parent) {
 		// default is to do nothing
@@ -85,14 +84,12 @@ public abstract class AbstractFieldAssistWindow extends Window {
 	 * Create and return the content proposal adapter that will be used by this
 	 * field assist window.
 	 *
-	 * @param control
-	 *            the SWT control to provide field assist for
+	 * @param control the SWT control to provide field assist for
+	 * @return The newly created ContentProposalAdapter.
 	 */
-	protected ContentProposalAdapter createContentProposalAdapter(
-			Control control) {
-		return new ContentProposalAdapter(control, getControlContentAdapter(),
-				getContentProposalProvider(), getKeyStroke(),
-				getAutoActivationCharacters());
+	protected ContentProposalAdapter createContentProposalAdapter(Control control) {
+		return new ContentProposalAdapter(control, getControlContentAdapter(), getContentProposalProvider(),
+				getKeyStroke(), getAutoActivationCharacters());
 	}
 
 	protected abstract IControlContentAdapter getControlContentAdapter();
@@ -116,8 +113,7 @@ public abstract class AbstractFieldAssistWindow extends Window {
 	}
 
 	protected String[] getProposals() {
-		return new String[] { "one", "two", "three", "four", "five", "six",
-				"seven", "eight", "nine", "ten" };
+		return new String[] { "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten" };
 	}
 
 	protected char[] getAutoActivationCharacters() {
@@ -129,8 +125,7 @@ public abstract class AbstractFieldAssistWindow extends Window {
 	}
 
 	protected IContentProposalProvider createContentProposalProvider() {
-		SimpleContentProposalProvider proposalProvider = new SimpleContentProposalProvider(
-				getProposals());
+		SimpleContentProposalProvider proposalProvider = new SimpleContentProposalProvider(getProposals());
 		proposalProvider.setFiltering(shouldFilterProposals());
 		return proposalProvider;
 	}
@@ -146,8 +141,7 @@ public abstract class AbstractFieldAssistWindow extends Window {
 		return adapter;
 	}
 
-	public void setContentProposalProvider(
-			IContentProposalProvider proposalProvider) {
+	public void setContentProposalProvider(IContentProposalProvider proposalProvider) {
 		this.proposalProvider = proposalProvider;
 	}
 

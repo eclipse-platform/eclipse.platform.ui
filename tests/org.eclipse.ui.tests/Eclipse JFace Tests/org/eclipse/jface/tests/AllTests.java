@@ -18,9 +18,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ org.eclipse.jface.tests.dialogs.AllTests.class, org.eclipse.jface.tests.layout.AllTests.class,
-		org.eclipse.jface.tests.wizards.WizardTestSuite.class,
-		org.eclipse.jface.tests.fieldassist.FieldAssistTestSuite.class, org.eclipse.jface.tests.window.AllTests.class })
+@Suite.SuiteClasses({ org.eclipse.jface.tests.dialogs.AllTests.class,
+		org.eclipse.jface.tests.wizards.WizardTestSuite.class, org.eclipse.jface.tests.window.AllTests.class })
 public class AllTests {
 
 	public static void main(String[] args) {
