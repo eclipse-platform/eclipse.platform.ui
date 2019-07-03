@@ -110,10 +110,10 @@ public class ResourceManagerTest extends TestCase {
 				new TestDescriptor(ImageDescriptor.createFromImage(testImage2)),
 				new TestDescriptor(ImageDescriptor.createFromImage(testImage)),
 				new TestDescriptor(ImageDescriptor.createFromImage(testImage)),
-				new TestDescriptor(ImageDescriptor.createFromImage(testImage, display)),
+				new TestDescriptor(ImageDescriptor.createFromImage(testImage)),
 
-				new TestDescriptor(ImageDescriptor.createFromImage(testImage, display)), // 10
-				new TestDescriptor(ImageDescriptor.createFromImage(testImage2, display)),
+				new TestDescriptor(ImageDescriptor.createFromImage(testImage)), // 10
+				new TestDescriptor(ImageDescriptor.createFromImage(testImage2)),
 				new TestDescriptor(ColorDescriptor.createFrom(new RGB(10, 200, 54))),
 				new TestDescriptor(ColorDescriptor.createFrom(new RGB(10, 200, 54))),
 				new TestDescriptor(ColorDescriptor.createFrom(new RGB(200, 220, 54))),
@@ -121,9 +121,9 @@ public class ResourceManagerTest extends TestCase {
 				new TestDescriptor(ColorDescriptor.createFrom(testColor)), // 15
 				new TestDescriptor(ColorDescriptor.createFrom(testColor)),
 				new TestDescriptor(ColorDescriptor.createFrom(testColor2)),
-				new TestDescriptor(ColorDescriptor.createFrom(testColor, display)),
-				new TestDescriptor(ColorDescriptor.createFrom(testColor, display)),
-				new TestDescriptor(ColorDescriptor.createFrom(testColor2, display)) };
+				new TestDescriptor(ColorDescriptor.createFrom(testColor)),
+				new TestDescriptor(ColorDescriptor.createFrom(testColor)),
+				new TestDescriptor(ColorDescriptor.createFrom(testColor2)) };
 
 		// Let the tests know how many duplicates are in the array
 		numDupes = 11;

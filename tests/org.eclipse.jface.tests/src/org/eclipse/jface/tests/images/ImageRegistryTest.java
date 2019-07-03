@@ -49,10 +49,10 @@ public class ImageRegistryTest extends TestCase {
 		// so the image registry is up to date
 		Dialog.getBlockedHandler();
 
-		String[] imageNames = new String[] { Dialog.DLG_IMG_ERROR,
-				Dialog.DLG_IMG_INFO, Dialog.DLG_IMG_QUESTION,
-				Dialog.DLG_IMG_WARNING, Dialog.DLG_IMG_MESSAGE_ERROR,
-				Dialog.DLG_IMG_MESSAGE_INFO, Dialog.DLG_IMG_MESSAGE_WARNING };
+		@SuppressWarnings("deprecation")
+		String[] imageNames = new String[] { Dialog.DLG_IMG_ERROR, Dialog.DLG_IMG_INFO, Dialog.DLG_IMG_QUESTION,
+				Dialog.DLG_IMG_WARNING, Dialog.DLG_IMG_MESSAGE_ERROR, Dialog.DLG_IMG_MESSAGE_INFO,
+				Dialog.DLG_IMG_MESSAGE_WARNING };
 
 		ImageRegistry reg = JFaceResources.getImageRegistry();
 
@@ -64,20 +64,19 @@ public class ImageRegistryTest extends TestCase {
 	}
 
 	/**
-	 * check that we get non-null versions of the <code>IconAndMessageDialog</code> images
-	 * so we know that the code using them can rely on them.
+	 * check that we get non-null versions of the <code>IconAndMessageDialog</code>
+	 * images so we know that the code using them can rely on them.
 	 *
 	 * Note that they can be <code>null</code> from SWT.
 	 *
 	 */
 	public void testGetIconMessageDialogImages() {
 
-		IconAndMessageDialog iconDialog = new MessageDialog(null,
-				"testGetDialogIcons", null, "Message", Window.CANCEL, 0, "cancel");
+		IconAndMessageDialog iconDialog = new MessageDialog(null, "testGetDialogIcons", null, "Message", Window.CANCEL,
+				0, "cancel");
 
-		Image[] images = new Image[] { iconDialog.getErrorImage(),
-				iconDialog.getInfoImage(), iconDialog.getQuestionImage(),
-				iconDialog.getWarningImage() };
+		Image[] images = new Image[] { iconDialog.getErrorImage(), iconDialog.getInfoImage(),
+				iconDialog.getQuestionImage(), iconDialog.getWarningImage() };
 
 		for (Image image : images) {
 			assertTrue("Returned null image", image != null);
