@@ -17,20 +17,18 @@ package org.eclipse.jface.tests.preferences;
 
 import java.lang.reflect.Field;
 
-import junit.framework.TestCase;
-
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.PreferenceStore;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
+
+import junit.framework.TestCase;
 
 public class BooleanFieldEditorTest extends TestCase {
 
@@ -64,12 +62,12 @@ public class BooleanFieldEditorTest extends TestCase {
 		bfEditorWithSameLabel.setPreferenceName("name");
 		bfEditorWithSameLabel.setPreferenceStore(myPreferenceStore);
 
-		myPreferenceStore.setDefault("name", true);	//Make sure this doesn't interfere
+		myPreferenceStore.setDefault("name", true); // Make sure this doesn't interfere
 		myPreferenceStore.setValue("name", false);
 		bfEditorWithSameLabel.load();
 		assertFalse(bfEditorWithSameLabel.getBooleanValue());
 
-		myPreferenceStore.setDefault("name", false); //Make sure this doesn't interfere
+		myPreferenceStore.setDefault("name", false); // Make sure this doesn't interfere
 		myPreferenceStore.setValue("name", true);
 		bfEditorWithSameLabel.load();
 		assertTrue(bfEditorWithSameLabel.getBooleanValue());
@@ -81,12 +79,12 @@ public class BooleanFieldEditorTest extends TestCase {
 		bfEditorWithSameLabel.setPreferenceStore(myPreferenceStore);
 
 		myPreferenceStore.setDefault("name", false);
-		myPreferenceStore.setValue("name", true);	//Make sure this doesn't interfere
+		myPreferenceStore.setValue("name", true); // Make sure this doesn't interfere
 		bfEditorWithSameLabel.loadDefault();
 		assertFalse(bfEditorWithSameLabel.getBooleanValue());
 
 		myPreferenceStore.setDefault("name", true);
-		myPreferenceStore.setValue("name", false);	//Make sure this doesn't interfere
+		myPreferenceStore.setValue("name", false); // Make sure this doesn't interfere
 		bfEditorWithSameLabel.loadDefault();
 		assertTrue(bfEditorWithSameLabel.getBooleanValue());
 	}
@@ -131,12 +129,7 @@ public class BooleanFieldEditorTest extends TestCase {
 	}
 
 	public void testValueChanged() {
-		bfEditorWithSameLabel.setPropertyChangeListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				otherThreadEventOccurred();
-			}
-		});
+		bfEditorWithSameLabel.setPropertyChangeListener(event -> otherThreadEventOccurred());
 
 		PreferenceStore myPreferenceStore = new PreferenceStore();
 		bfEditorWithSameLabel.setPreferenceName("name");
@@ -158,14 +151,15 @@ public class BooleanFieldEditorTest extends TestCase {
 		assertTrue(otherThreadEventOccurred);
 	}
 
-
 	public void testSetFocus() {
-		bfEditorWithSameLabel = new BooleanFieldEditor("name", "label", shell){
+		bfEditorWithSameLabel = new BooleanFieldEditor("name", "label", shell) {
 			@Override
 			protected Button getChangeControl(Composite parent) {
-				return new Button(parent,SWT.CHECK){
+				return new Button(parent, SWT.CHECK) {
 					@Override
-					protected void checkSubclass() {}
+					protected void checkSubclass() {
+					}
+
 					@Override
 					public boolean setFocus() {
 						otherThreadEventOccurred();
@@ -216,7 +210,8 @@ public class BooleanFieldEditorTest extends TestCase {
 			protected void createFieldEditors() {
 				Composite parent = getFieldEditorParent();
 				BooleanFieldEditor bfEditorWithSameLabel = new BooleanFieldEditor("name", "label", parent);
-				BooleanFieldEditor bfEditorWithSeparateLabel = new BooleanFieldEditor("name2", "label", BooleanFieldEditor.SEPARATE_LABEL, parent);
+				BooleanFieldEditor bfEditorWithSeparateLabel = new BooleanFieldEditor("name2", "label",
+						BooleanFieldEditor.SEPARATE_LABEL, parent);
 
 				editors[0] = bfEditorWithSameLabel;
 				editors[1] = bfEditorWithSeparateLabel;
@@ -234,8 +229,8 @@ public class BooleanFieldEditorTest extends TestCase {
 		Button buttonWithSameLabel = getButton(bfEditorWithSameLabel);
 		Button buttonWithSeparateLabel = getButton(bfEditorWithSeparateLabel);
 
-		int withLabelSpan = ((GridData)buttonWithSameLabel.getLayoutData()).horizontalSpan;
-		int separateLabelSpan = ((GridData)buttonWithSeparateLabel.getLayoutData()).horizontalSpan;
+		int withLabelSpan = ((GridData) buttonWithSameLabel.getLayoutData()).horizontalSpan;
+		int separateLabelSpan = ((GridData) buttonWithSeparateLabel.getLayoutData()).horizontalSpan;
 
 		assertEquals(withLabelSpan - 1, separateLabelSpan);
 	}
@@ -243,7 +238,7 @@ public class BooleanFieldEditorTest extends TestCase {
 	/**
 	 * Reads the button control from the BooleanFieldEditor
 	 */
-	private Button getButton(BooleanFieldEditor booleanFieldEditor) {
+	private static Button getButton(BooleanFieldEditor booleanFieldEditor) {
 		try {
 			Field f = BooleanFieldEditor.class.getDeclaredField("checkBox");
 			f.setAccessible(true);
@@ -264,12 +259,12 @@ public class BooleanFieldEditorTest extends TestCase {
 	}
 
 	/**
-	 * Invoke to wait for a single expected event from another thread.
-	 * Times out after one second.
+	 * Invoke to wait for a single expected event from another thread. Times out
+	 * after one second.
 	 */
 	private void waitForEventInOtherThread() {
 		synchronized (lock) {
-			if(!otherThreadEventOccurred) {
+			if (!otherThreadEventOccurred) {
 				try {
 					lock.wait(1000);
 				} catch (InterruptedException e) {
@@ -285,4 +280,3 @@ public class BooleanFieldEditorTest extends TestCase {
 	}
 
 }
-

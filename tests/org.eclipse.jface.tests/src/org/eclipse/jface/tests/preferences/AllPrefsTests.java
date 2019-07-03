@@ -19,9 +19,9 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ BooleanFieldEditorTest.class, StringFieldEditorTest.class, IntegerFieldEditorTest.class })
-public class AllTests {
+public class AllPrefsTests {
 
 	public static void main(String[] args) {
-		JUnitCore.main(AllTests.class.getName());
+		JUnitCore.main(AllPrefsTests.class.getName());
 	}
 }
