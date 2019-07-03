@@ -11,11 +11,12 @@
  * Contributors:
  *     SAP SE - initial version
  ******************************************************************************/
-package org.eclipse.jface.widgets;
+package org.eclipse.jface.tests.widgets;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 
+import org.eclipse.jface.widgets.AbstractItemFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;

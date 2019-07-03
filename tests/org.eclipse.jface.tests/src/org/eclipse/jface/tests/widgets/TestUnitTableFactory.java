@@ -11,12 +11,13 @@
 * Contributors:
 *     SAP SE - initial version
 ******************************************************************************/
-package org.eclipse.jface.widgets;
+package org.eclipse.jface.tests.widgets;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import org.eclipse.jface.widgets.TableFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.widgets.Event;

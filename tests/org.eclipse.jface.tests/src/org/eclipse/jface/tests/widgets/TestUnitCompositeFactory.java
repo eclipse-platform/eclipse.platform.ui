@@ -11,10 +11,11 @@
  * Contributors:
  *     Marcus Hoepfner - initial API and implementation
  *******************************************************************************/
-package org.eclipse.jface.widgets;
+package org.eclipse.jface.tests.widgets;
 
 import static org.junit.Assert.assertEquals;
 
+import org.eclipse.jface.widgets.CompositeFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;

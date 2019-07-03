@@ -11,7 +11,7 @@
  * Contributors:
  *     SAP SE - initial version
  ******************************************************************************/
-package org.eclipse.jface.widgets;
+package org.eclipse.jface.tests.widgets;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;

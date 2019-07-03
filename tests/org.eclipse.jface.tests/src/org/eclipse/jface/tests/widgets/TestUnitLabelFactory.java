@@ -11,10 +11,11 @@
  * Contributors:
  *     SAP SE - initial version
  ******************************************************************************/
-package org.eclipse.jface.widgets;
+package org.eclipse.jface.tests.widgets;
 
 import static org.junit.Assert.assertEquals;
 
+import org.eclipse.jface.widgets.LabelFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Label;
 import org.junit.Test;

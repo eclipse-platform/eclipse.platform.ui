@@ -12,7 +12,7 @@
  *     SAP SE - initial version
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 544471
  ******************************************************************************/
-package org.eclipse.jface.widgets;
+package org.eclipse.jface.tests.widgets;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -21,6 +21,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.widgets.AbstractControlFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
