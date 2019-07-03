@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2011, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,20 +10,19 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
-package org.eclipse.jface.tests;
+ ******************************************************************************/
+
+package org.eclipse.jface.tests.resources;
 
 import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ org.eclipse.jface.tests.dialogs.AllTests.class, org.eclipse.jface.tests.layout.AllTests.class,
-		org.eclipse.jface.tests.wizards.WizardTestSuite.class,
-		org.eclipse.jface.tests.fieldassist.FieldAssistTestSuite.class, org.eclipse.jface.tests.window.AllTests.class })
-public class AllTests {
+@Suite.SuiteClasses({ FontRegistryTest.class })
+public class AllResourcesTests {
 
 	public static void main(String[] args) {
-		JUnitCore.main(AllTests.class.getName());
+		JUnitCore.main(AllResourcesTests.class.getName());
 	}
 }
