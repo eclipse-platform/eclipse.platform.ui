@@ -19,13 +19,13 @@ import org.eclipse.jface.resource.DeviceResourceException;
 import org.eclipse.jface.resource.DeviceResourceManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.junit.Assert;
 
 import junit.framework.TestCase;
@@ -45,7 +45,7 @@ public class ResourceManagerTest extends TestCase {
 	private DeviceResourceManager globalResourceManager;
 
 	private static ImageDescriptor getImage(String path) {
-		return AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.ui.tests", path);
+		return ResourceLocator.imageDescriptorFromBundle("org.eclipse.jface.tests", path).orElse(null);
 	}
 
 	private static final class TestDescriptor extends DeviceResourceDescriptor {
@@ -62,6 +62,7 @@ public class ResourceManagerTest extends TestCase {
 			refCount++;
 			return result;
 		}
+
 		@Override
 		public void destroyResource(Object previouslyCreatedObject) {
 			refCount--;
@@ -71,7 +72,7 @@ public class ResourceManagerTest extends TestCase {
 		@Override
 		public boolean equals(Object arg0) {
 			if (arg0 instanceof TestDescriptor) {
-				TestDescriptor td = (TestDescriptor)arg0;
+				TestDescriptor td = (TestDescriptor) arg0;
 
 				return td.toWrap.equals(toWrap);
 			}
@@ -100,10 +101,8 @@ public class ResourceManagerTest extends TestCase {
 		// If you modify this array, be sure to adjust numDupes as well. Note that some
 		// tests index the array directly, so it is a good idea to always add to this
 		// array rather than remove from it.
-		descriptors = new DeviceResourceDescriptor[] {
-				new TestDescriptor(getImage("icons/anything.gif")),
-				new TestDescriptor(getImage("icons/anything.gif")),
-				new TestDescriptor(getImage("icons/binary_co.gif")),
+		descriptors = new DeviceResourceDescriptor[] { new TestDescriptor(getImage("icons/anything.gif")),
+				new TestDescriptor(getImage("icons/anything.gif")), new TestDescriptor(getImage("icons/binary_co.gif")),
 				new TestDescriptor(getImage("icons/binary_co.gif")),
 				new TestDescriptor(getImage("icons/mockeditorpart1.gif")),
 
@@ -113,7 +112,7 @@ public class ResourceManagerTest extends TestCase {
 				new TestDescriptor(ImageDescriptor.createFromImage(testImage)),
 				new TestDescriptor(ImageDescriptor.createFromImage(testImage, display)),
 
-				new TestDescriptor(ImageDescriptor.createFromImage(testImage, display)),  // 10
+				new TestDescriptor(ImageDescriptor.createFromImage(testImage, display)), // 10
 				new TestDescriptor(ImageDescriptor.createFromImage(testImage2, display)),
 				new TestDescriptor(ColorDescriptor.createFrom(new RGB(10, 200, 54))),
 				new TestDescriptor(ColorDescriptor.createFrom(new RGB(10, 200, 54))),
@@ -124,8 +123,7 @@ public class ResourceManagerTest extends TestCase {
 				new TestDescriptor(ColorDescriptor.createFrom(testColor2)),
 				new TestDescriptor(ColorDescriptor.createFrom(testColor, display)),
 				new TestDescriptor(ColorDescriptor.createFrom(testColor, display)),
-				new TestDescriptor(ColorDescriptor.createFrom(testColor2, display))
-				};
+				new TestDescriptor(ColorDescriptor.createFrom(testColor2, display)) };
 
 		// Let the tests know how many duplicates are in the array
 		numDupes = 11;
@@ -173,8 +171,8 @@ public class ResourceManagerTest extends TestCase {
 		// Allocating resources without the manager will not reuse duplicates, so we
 		// should get exactly one resource per descriptor.
 
-		Assert.assertEquals("Expecting one resource to be allocated per descriptor",
-				descriptors.length, TestDescriptor.refCount);
+		Assert.assertEquals("Expecting one resource to be allocated per descriptor", descriptors.length,
+				TestDescriptor.refCount);
 
 		// Deallocate resources directly using the descriptors
 		for (int i = 0; i < descriptors.length; i++) {
@@ -198,14 +196,14 @@ public class ResourceManagerTest extends TestCase {
 			resources[i] = resource;
 		}
 
-		Assert.assertEquals("Descriptors created from Images should not reallocate Images when the original can be reused",
+		Assert.assertEquals(
+				"Descriptors created from Images should not reallocate Images when the original can be reused",
 				testImage, resources[9]);
 
 		// Allocating resources without the manager will reuse duplicates, so the number
 		// of resources should equal the number of unique descriptors.
 
-		Assert.assertEquals("Duplicate descriptors should be reused",
-				descriptors.length - numDupes,
+		Assert.assertEquals("Duplicate descriptors should be reused", descriptors.length - numDupes,
 				TestDescriptor.refCount);
 
 		// Deallocate resources directly using the descriptors
@@ -229,9 +227,9 @@ public class ResourceManagerTest extends TestCase {
 	public void testLocalManagerAllocations() throws Exception {
 		// These arrays are indices into the descriptors array. For example, {0,1,7}
 		// is a quick shorthand to indicate we should allocate resources 0, 1, and 7.
-		int[] gResources = {0, 1, 5, 3, 7, 12, 13, 14};
-		int[] lm1Resources = {0, 2, 3, 4, 11, 12, 13, 15};
-		int[] lm2Resources = {0, 1, 6, 7, 8, 12, 14, 16};
+		int[] gResources = { 0, 1, 5, 3, 7, 12, 13, 14 };
+		int[] lm1Resources = { 0, 2, 3, 4, 11, 12, 13, 15 };
+		int[] lm2Resources = { 0, 1, 6, 7, 8, 12, 14, 16 };
 
 		LocalResourceManager lm1 = new LocalResourceManager(globalResourceManager);
 		LocalResourceManager lm2 = new LocalResourceManager(globalResourceManager);
@@ -255,14 +253,17 @@ public class ResourceManagerTest extends TestCase {
 		deallocateResources(lm2, lm2Resources);
 		Assert.assertEquals(lm1Count, TestDescriptor.refCount);
 
-		// Dispose lm2 (shouldn't do anything since we already deallocated all of its resources)
+		// Dispose lm2 (shouldn't do anything since we already deallocated all of its
+		// resources)
 		// Ensure that this doesn't change any refcounts
 		lm2.dispose();
 		Assert.assertEquals(lm1Count, TestDescriptor.refCount);
 
-		// Dispose lm1 without first deallocating its resources. This should correctly detect
+		// Dispose lm1 without first deallocating its resources. This should correctly
+		// detect
 		// what needs to be deallocated from lm1 without affecting any global resources.
-		// If everything works, we should be back to the resource count we had after allocating
+		// If everything works, we should be back to the resource count we had after
+		// allocating
 		// the global resources.
 		lm1.dispose();
 		Assert.assertEquals(initialCount, TestDescriptor.refCount);

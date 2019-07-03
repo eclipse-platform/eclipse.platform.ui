@@ -61,8 +61,8 @@ public class ContributionItemTest extends JFaceActionTest {
 	 */
 	public void testForceModeText() {
 		Action action = new DummyAction();
-		action.setImageDescriptor(
-				ResourceLocator.imageDescriptorFromBundle("org.eclipse.ui.tests", "icons/anything.gif").orElse(null));
+		action.setImageDescriptor(ResourceLocator
+				.imageDescriptorFromBundle("org.eclipse.jface.tests", "icons/anything.gif").orElse(null));
 		ActionContributionItem item = new ActionContributionItem(action);
 		item.fill(getShell());
 

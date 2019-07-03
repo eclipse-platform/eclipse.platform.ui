@@ -26,8 +26,8 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.tests.TestPlugin;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 import junit.framework.TestCase;
 
@@ -58,14 +58,13 @@ public class FileImageDescriptorTest extends TestCase {
 		Class<?> missing = null;
 		ArrayList<Image> images = new ArrayList<>();
 
-		Bundle bundle = TestPlugin.getDefault().getBundle();
+		Bundle bundle = FrameworkUtil.getBundle(FileImageDescriptorTest.class);
 		Enumeration<String> bundleEntries = bundle.getEntryPaths(IMAGES_DIRECTORY);
 
 		while (bundleEntries.hasMoreElements()) {
 			ImageDescriptor descriptor;
 			String localImagePath = bundleEntries.nextElement();
-			URL[] files = FileLocator.findEntries(bundle, new Path(
-					localImagePath));
+			URL[] files = FileLocator.findEntries(bundle, new Path(localImagePath));
 
 			for (URL file : files) {
 
@@ -75,8 +74,7 @@ public class FileImageDescriptorTest extends TestCase {
 				}
 
 				try {
-					descriptor = ImageDescriptor.createFromFile(missing,
-							FileLocator.toFileURL(file).getFile());
+					descriptor = ImageDescriptor.createFromFile(missing, FileLocator.toFileURL(file).getFile());
 				} catch (IOException e) {
 					fail(e.getLocalizedMessage());
 					continue;
@@ -101,8 +99,7 @@ public class FileImageDescriptorTest extends TestCase {
 	 */
 	public void testFileImageDescriptorLocal() {
 
-		ImageDescriptor descriptor = ImageDescriptor.createFromFile(
-				FileImageDescriptorTest.class, "anything.gif");
+		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class, "anything.gif");
 
 		Image image = descriptor.createImage();
 		assertTrue("Could not find image", image != null);
@@ -115,8 +112,7 @@ public class FileImageDescriptorTest extends TestCase {
 	 */
 	public void testFileImageDescriptorMissing() {
 
-		ImageDescriptor descriptor = ImageDescriptor.createFromFile(
-				FileImageDescriptorTest.class, "missing.gif");
+		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class, "missing.gif");
 
 		Image image = descriptor.createImage(false);
 		assertTrue("Found an image but should be null", image == null);
@@ -127,8 +123,7 @@ public class FileImageDescriptorTest extends TestCase {
 	 */
 	public void testFileImageDescriptorMissingWithDefault() {
 
-		ImageDescriptor descriptor = ImageDescriptor.createFromFile(
-				FileImageDescriptorTest.class, "missing.gif");
+		ImageDescriptor descriptor = ImageDescriptor.createFromFile(FileImageDescriptorTest.class, "missing.gif");
 
 		Image image = descriptor.createImage(true);
 		assertTrue("Did not find default image", image != null);

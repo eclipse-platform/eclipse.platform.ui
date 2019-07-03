@@ -21,9 +21,9 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ ImageRegistryTest.class, ResourceManagerTest.class, FileImageDescriptorTest.class,
 		DecorationOverlayIconTest.class })
-public class AllTests {
+public class AllImagesTests {
 
 	public static void main(String[] args) {
-		JUnitCore.main(AllTests.class.getName());
+		JUnitCore.main(AllImagesTests.class.getName());
 	}
 }
