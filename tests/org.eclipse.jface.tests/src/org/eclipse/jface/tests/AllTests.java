@@ -8,15 +8,16 @@
  * Contributors:
  *     SAP SE - initial version
  *******************************************************************************/
-package org.eclipse.jface.tests.suites;
+package org.eclipse.jface.tests;
 
+import org.eclipse.jface.tests.action.AllActionTests;
 import org.eclipse.jface.tests.widgets.AllWidgetTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ AllWidgetTests.class })
-public class AllUnitTests {
+@SuiteClasses({ AllActionTests.class, AllWidgetTests.class })
+public class AllTests {
 
 }

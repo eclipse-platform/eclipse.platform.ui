@@ -17,9 +17,9 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionManager;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Tests for the [I]ContributionItem API.
@@ -31,8 +31,7 @@ public class ContributionItemTest extends JFaceActionTest {
 	/**
 	 * Constructs a new test with the given name.
 	 *
-	 * @param name
-	 *            the name of the test
+	 * @param name the name of the test
 	 */
 	public ContributionItemTest(String name) {
 		super(name);
@@ -40,9 +39,9 @@ public class ContributionItemTest extends JFaceActionTest {
 
 	/**
 	 * Tests that a contribution item's parent link is set when added to a
-	 * contribution manager, and cleared when the item is removed.
-	 * This is a regression test for:
-	 * Bug 80569 [Contributions] Parent of contribution item not cleared when item removed from manager
+	 * contribution manager, and cleared when the item is removed. This is a
+	 * regression test for: Bug 80569 [Contributions] Parent of contribution item
+	 * not cleared when item removed from manager
 	 */
 	public void testParentLink() {
 		IContributionManager mgr = new DummyContributionManager();
@@ -55,16 +54,15 @@ public class ContributionItemTest extends JFaceActionTest {
 	}
 
 	/**
-	 * Tests that an action contribution item will display the text in a
-	 * created SWT button when the MODE_FORCE_TEXT mode is set.
-	 * This is a test for:
-	 * Bug 187956 [ActionSets] ActionContributionItem.MODE_FORCE_TEXT should apply to Buttons too
+	 * Tests that an action contribution item will display the text in a created SWT
+	 * button when the MODE_FORCE_TEXT mode is set. This is a test for: Bug 187956
+	 * [ActionSets] ActionContributionItem.MODE_FORCE_TEXT should apply to Buttons
+	 * too
 	 */
 	public void testForceModeText() {
 		Action action = new DummyAction();
 		action.setImageDescriptor(
-		AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.ui.tests",
-				"icons/anything.gif"));
+				ResourceLocator.imageDescriptorFromBundle("org.eclipse.ui.tests", "icons/anything.gif").orElse(null));
 		ActionContributionItem item = new ActionContributionItem(action);
 		item.fill(getShell());
 

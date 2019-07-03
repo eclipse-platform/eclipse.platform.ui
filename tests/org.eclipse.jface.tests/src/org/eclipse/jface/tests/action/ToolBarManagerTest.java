@@ -31,7 +31,7 @@ public class ToolBarManagerTest extends JFaceActionTest {
 		Composite parent = createComposite();
 		ToolBarManager manager = new ToolBarManager(DEFAULT_STYLE | SWT.HORIZONTAL);
 
-		manager.setStyle( DEFAULT_STYLE | SWT.VERTICAL);
+		manager.setStyle(DEFAULT_STYLE | SWT.VERTICAL);
 		ToolBar toolBar = manager.createControl(parent);
 		assertFalse(toolBar.isDisposed());
 		verifyOrientation(toolBar, SWT.VERTICAL);
@@ -73,12 +73,11 @@ public class ToolBarManagerTest extends JFaceActionTest {
 		assertTrue(toolBar.isDisposed());
 	}
 
-
 	private Composite createComposite() {
 		return new Composite(getShell(), SWT.DEFAULT);
 	}
 
-	private void verifyOrientation(ToolBar toolBar, int expected) {
+	private static void verifyOrientation(ToolBar toolBar, int expected) {
 		assertTrue((toolBar.getStyle() & expected) != 0);
 
 		int opposite = (expected & SWT.HORIZONTAL) != 0 ? SWT.VERTICAL : SWT.HORIZONTAL;

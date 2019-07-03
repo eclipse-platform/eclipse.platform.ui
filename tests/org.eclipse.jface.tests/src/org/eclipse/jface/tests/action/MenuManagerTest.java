@@ -20,8 +20,8 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
+import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Menu;
-import org.eclipse.swt.widgets.Shell;
 
 /**
  * Tests for the MenuManager API.
@@ -36,8 +36,7 @@ public class MenuManagerTest extends JFaceActionTest {
 	/**
 	 * Constructs a new test with the given name.
 	 *
-	 * @param name
-	 *            the name of the test
+	 * @param name the name of the test
 	 */
 	public MenuManagerTest(String name) {
 		super(name);
@@ -59,9 +58,9 @@ public class MenuManagerTest extends JFaceActionTest {
 	}
 
 	/**
-	 * Tests that adding a concrete visible item to a menu with no concrete
-	 * visible items makes the menu visible. Regression test for bug 54779 [RCP]
-	 * Problem updating menus, menu not appearing
+	 * Tests that adding a concrete visible item to a menu with no concrete visible
+	 * items makes the menu visible. Regression test for bug 54779 [RCP] Problem
+	 * updating menus, menu not appearing
 	 *
 	 * @see MenuManager#isVisible()
 	 * @see MenuManager#markDirty()
@@ -87,8 +86,8 @@ public class MenuManagerTest extends JFaceActionTest {
 	}
 
 	/**
-	 * This is a test case for bug 204788 to ensure that a disposed menu is
-	 * marked as being dirty.
+	 * This is a test case for bug 204788 to ensure that a disposed menu is marked
+	 * as being dirty.
 	 */
 	public void testDisposedMenuIsDirty() {
 		MenuManager menuBarMgr = createMenuBarManager();
@@ -104,8 +103,8 @@ public class MenuManagerTest extends JFaceActionTest {
 	}
 
 	/**
-	 * This is a test case for bug 255429 to ensure that a menu manager without any text
-	 * set does not throw an NPE.
+	 * This is a test case for bug 255429 to ensure that a menu manager without any
+	 * text set does not throw an NPE.
 	 */
 	public void testEmptyMenuManagerNPE() {
 		Menu menu = new Menu(getShell());
@@ -114,9 +113,10 @@ public class MenuManagerTest extends JFaceActionTest {
 	}
 
 	/**
-	 * Creates a menu manager with the given name, adding items based on the given template.
+	 * Creates a menu manager with the given name, adding items based on the given
+	 * template.
 	 *
-	 * @param name the name
+	 * @param name     the name
 	 * @param template the template
 	 *
 	 * @return a menu with no concrete visible items
@@ -135,27 +135,27 @@ public class MenuManagerTest extends JFaceActionTest {
 
 	private IContributionItem createItem(char template) {
 		switch (template) {
-			case 'g':
-				return new GroupMarker("testGroup" + groupMarkerCount++);
-			case 's':
-				return new Separator("testSeparator" + separatorCount++);
-			case 'a': {
-				IAction action = new DummyAction();
-				return new ActionContributionItem(action);
-			}
-			case 'n': {
-				IAction action = new DummyAction();
-				ActionContributionItem item = new ActionContributionItem(action);
-				item.setVisible(false);
-				return item;
-			}
-			default:
-				throw new IllegalArgumentException("Unknown template char: " + template);
+		case 'g':
+			return new GroupMarker("testGroup" + groupMarkerCount++);
+		case 's':
+			return new Separator("testSeparator" + separatorCount++);
+		case 'a': {
+			IAction action = new DummyAction();
+			return new ActionContributionItem(action);
+		}
+		case 'n': {
+			IAction action = new DummyAction();
+			ActionContributionItem item = new ActionContributionItem(action);
+			item.setVisible(false);
+			return item;
+		}
+		default:
+			throw new IllegalArgumentException("Unknown template char: " + template);
 		}
 	}
 
 	protected MenuManager createMenuBarManager() {
-		Shell shell = getShell();
+		Decorations shell = getShell();
 		MenuManager menuMgr = new MenuManager();
 		Menu menuBar = menuMgr.createMenuBar(shell);
 		shell.setMenuBar(menuBar);

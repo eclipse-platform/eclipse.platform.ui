@@ -20,10 +20,10 @@ import org.junit.runners.Suite;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ ContributionItemTest.class, ToolBarManagerTest.class, CoolBarManagerTest.class,
 		MenuManagerTest.class })
-public class AllTests {
+public class AllActionTests {
 
 	public static void main(String[] args) {
-		JUnitCore.main(AllTests.class.getName());
+		JUnitCore.main(AllActionTests.class.getName());
 	}
 
 }
