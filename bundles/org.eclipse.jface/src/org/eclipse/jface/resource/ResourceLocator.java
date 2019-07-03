@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * This class contains a collection of helper methods for finding JFace
@@ -78,6 +79,24 @@ public final class ResourceLocator {
 	}
 
 	/**
+	 * Returns an <code>{@link Optional}&lt;{@link URL}&gt;</code> containing the
+	 * URL for the given path in the given bundle. Returns {@link Optional#empty()}
+	 * if the URL could not be computed or created.
+	 *
+	 * @see FileLocator#find(URL)
+	 * @see ImageDescriptor#createFromURL(URL)
+	 *
+	 * @param classFromBundle A class defined by a bundle class loader.
+	 * @param filePath        the path of the resource file in the given bundle,
+	 *                        relative to the root of the bundle
+	 * @return an <code>{@link Optional}&lt;{@link URL}&gt;</code> or
+	 *         {@link Optional#empty()}.
+	 */
+	public static Optional<URL> locate(Class<?> classFromBundle, String filePath) {
+		return Optional.ofNullable(FileLocator.find(FrameworkUtil.getBundle(classFromBundle), new Path(filePath)));
+	}
+
+	/**
 	 * Returns a new <code>{@link Optional}&lt;{@link ImageDescriptor}&gt;</code>
 	 * for an image file located within the specified bundle or
 	 * {@link Optional#empty()}.
@@ -92,14 +111,43 @@ public final class ResourceLocator {
 	 *
 	 * @see ImageDescriptor#createFromURL(URL)
 	 *
-	 * @param bundleSymbolicName  the {@link Bundle} symbolic name
-	 * @param imageFilePath the path of the image file in the given bundle, relative
-	 *                      to the root of the bundle
+	 * @param bundleSymbolicName the {@link Bundle} symbolic name
+	 * @param imageFilePath      the path of the image file in the given bundle,
+	 *                           relative to the root of the bundle
 	 * @return <code>{@link Optional}&lt;{@link ImageDescriptor}&gt;</code> or
 	 *         {@link Optional#empty()}
 	 */
 	public static Optional<ImageDescriptor> imageDescriptorFromBundle(String bundleSymbolicName, String imageFilePath) {
 		Optional<URL> locate = locate(bundleSymbolicName, imageFilePath);
+		if (locate.isPresent()) {
+			return Optional.of(ImageDescriptor.createFromURL(locate.get()));
+		}
+		return Optional.empty();
+	}
+
+	/**
+	 * Returns a new <code>{@link Optional}&lt;{@link ImageDescriptor}&gt;</code>
+	 * for an image file located within the specified bundle or
+	 * {@link Optional#empty()}.
+	 * <p>
+	 * This is a convenience method that simply locates the image file in within the
+	 * bundle. The path is relative to the root of the bundle, and takes into
+	 * account files coming from bundle fragments. The path may include $arg$
+	 * elements. However, the path must not have a leading "." or path separator.
+	 * Clients should use a path like "icons/mysample.png" rather than
+	 * "./icons/mysample.png" or "/icons/mysample.png".
+	 * </p>
+	 *
+	 * @see ImageDescriptor#createFromURL(URL)
+	 *
+	 * @param classFromBundle A class defined by a bundle class loader.
+	 * @param imageFilePath   the path of the image file in the given bundle,
+	 *                        relative to the root of the bundle
+	 * @return <code>{@link Optional}&lt;{@link ImageDescriptor}&gt;</code> or
+	 *         {@link Optional#empty()}
+	 */
+	public static Optional<ImageDescriptor> imageDescriptorFromBundle(Class<?> classFromBundle, String imageFilePath) {
+		Optional<URL> locate = locate(classFromBundle, imageFilePath);
 		if (locate.isPresent()) {
 			return Optional.of(ImageDescriptor.createFromURL(locate.get()));
 		}
