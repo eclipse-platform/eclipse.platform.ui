@@ -19,10 +19,10 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.views.properties.tabbed.TabbedPropertyViewStatusCodes;
 import org.eclipse.ui.internal.views.properties.tabbed.l10n.TabbedPropertyMessages;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.properties.tabbed.AbstractTabDescriptor;
 import org.eclipse.ui.views.properties.tabbed.ISectionDescriptor;
 import org.osgi.framework.Bundle;
@@ -79,13 +79,10 @@ public class TabDescriptor extends AbstractTabDescriptor {
 			label = configurationElement.getAttribute(ATT_LABEL);
 			String imageString = configurationElement.getAttribute(ATT_IMAGE);
 			if (imageString != null) {
-				image = AbstractUIPlugin.imageDescriptorFromPlugin(
-						configurationElement.getDeclaringExtension()
-								.getContributor().getName(), imageString)
-						.createImage();
+				String name = configurationElement.getDeclaringExtension().getContributor().getName();
+				ResourceLocator.imageDescriptorFromBundle(name, imageString).ifPresent(d -> image = d.createImage());
 			}
-			String indentedString = configurationElement
-					.getAttribute(ATT_INDENTED);
+			String indentedString = configurationElement.getAttribute(ATT_INDENTED);
 			indented = indentedString != null && indentedString.equals("true"); //$NON-NLS-1$
 			category = configurationElement.getAttribute(ATT_CATEGORY);
 			afterTab = configurationElement.getAttribute(ATT_AFTER_TAB);
