@@ -114,13 +114,13 @@ public abstract class FileBufferFunctions {
 
 		@Override
 		protected void failed(Throwable e, Description description) {
-			IStatus status= new Status(IStatus.ERROR, BUNDLE_ID, "FAIL in " + description.toString(), e);
+			IStatus status= new Status(IStatus.ERROR, BUNDLE_ID, "FAIL in " + description, e);
 			log.log(status);
 		}
 
 		@Override
 		protected void succeeded(Description description) {
-			IStatus status= new Status(IStatus.INFO, BUNDLE_ID, "PASS in " + description.toString());
+			IStatus status= new Status(IStatus.INFO, BUNDLE_ID, "PASS in " + description);
 			log.log(status);
 		}
 	}
@@ -895,15 +895,15 @@ public abstract class FileBufferFunctions {
 				if (newLocation != null) {
 					if (listener.count != 1 || listener.buffer != fileBuffer || !newLocation.equals(listener.newLocation)) {
 						StringBuilder buf= new StringBuilder();
-						buf.append("Wrong listener notifcation in " + getClass().getName() + ":\n");
-						buf.append("listener.count: " + listener.count + " (expected: 1)\n");
+						buf.append("Wrong listener notifcation in ").append(getClass().getName()).append(":\n");
+						buf.append("listener.count: ").append(listener.count).append(" (expected: 1)\n");
 						if (newLocation.equals(listener.newLocation))
 							buf.append("newLocation identical: true\n");
 						else {
-							buf.append("listener.newLocation: " + listener.newLocation + "\n");
-							buf.append("newLocation: " + newLocation + "\n");
+							buf.append("listener.newLocation: ").append(listener.newLocation).append("\n");
+							buf.append("newLocation: ").append(newLocation).append("\n");
 						}
-						buf.append("buffers identical: " + Boolean.valueOf(listener.buffer == fileBuffer));
+						buf.append("buffers identical: ").append(listener.buffer == fileBuffer);
 						fail(buf.toString());
 					}
 				}
