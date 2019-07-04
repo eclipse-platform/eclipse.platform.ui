@@ -24,14 +24,13 @@ import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.internal.navigator.CommonNavigatorMessages;
 import org.eclipse.ui.internal.navigator.NavigatorFilterService;
-import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.navigator.ICommonFilterDescriptor;
 import org.eclipse.ui.navigator.IMementoAware;
@@ -146,10 +145,11 @@ public class FilterActionGroup extends ActionGroup implements IMementoAware {
 				.getBooleanConfigProperty(INavigatorViewerDescriptor.PROP_HIDE_AVAILABLE_CUSTOMIZATIONS_DIALOG);
 		if (!hideAvailableCustomizationsDialog) {
 			selectFiltersAction = new SelectFiltersAction(commonViewer, this);
-			ImageDescriptor selectFiltersIcon = NavigatorPlugin.getImageDescriptor("icons/full/elcl16/filter_ps.png"); //$NON-NLS-1$
-			selectFiltersAction.setImageDescriptor(selectFiltersIcon);
-			selectFiltersAction.setHoverImageDescriptor(selectFiltersIcon);
-
+			String imageFilePath = "icons/full/elcl16/filter_ps.png"; //$NON-NLS-1$
+			ResourceLocator.imageDescriptorFromBundle(getClass(), imageFilePath).ifPresent(d -> {
+				selectFiltersAction.setImageDescriptor(d);
+				selectFiltersAction.setHoverImageDescriptor(d);
+			});
 			filtersMenu = new MenuManager(CommonNavigatorMessages.FilterActionGroup_RecentFilters);
 			menuListener = manager -> {
 				filtersMenu.removeAll();

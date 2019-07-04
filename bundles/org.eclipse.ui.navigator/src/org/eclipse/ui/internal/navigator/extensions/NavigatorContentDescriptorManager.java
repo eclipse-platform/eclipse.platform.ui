@@ -29,8 +29,8 @@ import java.util.WeakHashMap;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.SafeRunner;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.navigator.NavigatorPlugin;
 import org.eclipse.ui.internal.navigator.NavigatorSafeRunnable;
@@ -38,7 +38,6 @@ import org.eclipse.ui.internal.navigator.Policy;
 import org.eclipse.ui.internal.navigator.VisibilityAssistant;
 import org.eclipse.ui.navigator.INavigatorContentDescriptor;
 import org.eclipse.ui.navigator.OverridePolicy;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * @since 3.2
@@ -282,17 +281,16 @@ public class NavigatorContentDescriptorManager {
 			if (iconPath != null) {
 				String prefix = contentDescriptor.getId() == null ? "" : contentDescriptor.getId(); //$NON-NLS-1$
 				String iconKey = prefix + "::" + iconPath; //$NON-NLS-1$
-				image = getImageRegistry().get(iconKey);
+				ImageRegistry registry = getImageRegistry();
+				image = registry.get(iconKey);
 				if (image == null || image.isDisposed()) {
-					ImageDescriptor imageDescriptor = AbstractUIPlugin
-							.imageDescriptorFromPlugin(contentDescriptor
-							.getContribution().getPluginId(), iconPath);
-					if (imageDescriptor != null) {
-						image = imageDescriptor.createImage();
-						if (image != null) {
-							getImageRegistry().put(iconKey, image);
+					String pluginId = contentDescriptor.getContribution().getPluginId();
+					ResourceLocator.imageDescriptorFromBundle(pluginId, iconPath).ifPresent(d -> {
+						Image created = d.createImage();
+						if (created != null) {
+							registry.put(iconKey, created);
 						}
-					}
+					});
 				}
 			}
 		}

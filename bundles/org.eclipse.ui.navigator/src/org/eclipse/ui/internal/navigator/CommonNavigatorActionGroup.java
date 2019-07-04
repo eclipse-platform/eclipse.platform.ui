@@ -18,7 +18,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.commands.ActionHandler;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IActionBars;
@@ -92,13 +92,6 @@ public class CommonNavigatorActionGroup extends ActionGroup implements IMementoA
 	}
 
 	/**
-	 * Returns the image descriptor with the given relative path.
-	 */
-	protected final ImageDescriptor getImageDescriptor(String relativePath) {
-		return NavigatorPlugin.getImageDescriptor("icons/full/" + relativePath); //$NON-NLS-1$
-	}
-
-	/**
 	 *
 	 */
 	private void makeActions() {
@@ -134,9 +127,11 @@ public class CommonNavigatorActionGroup extends ActionGroup implements IMementoA
 		if (!hideLinkWithEditorAction) {
 			toggleLinkingAction = new LinkEditorAction(commonNavigator,
 					commonViewer, linkHelperService);
-			ImageDescriptor syncIcon = getImageDescriptor("elcl16/synced.png"); //$NON-NLS-1$
-			toggleLinkingAction.setImageDescriptor(syncIcon);
-			toggleLinkingAction.setHoverImageDescriptor(syncIcon);
+			String imageFilePath = "icons/full/elcl16/synced.png"; //$NON-NLS-1$
+			ResourceLocator.imageDescriptorFromBundle(getClass(), imageFilePath).ifPresent(d -> {
+				toggleLinkingAction.setImageDescriptor(d);
+				toggleLinkingAction.setHoverImageDescriptor(d);
+			});
 			service.activateHandler(toggleLinkingAction.getActionDefinitionId(),
 					new ActionHandler(toggleLinkingAction));
 		}
@@ -145,9 +140,11 @@ public class CommonNavigatorActionGroup extends ActionGroup implements IMementoA
 				.getBooleanConfigProperty(INavigatorViewerDescriptor.PROP_HIDE_COLLAPSE_ALL_ACTION);
 		if (!hideCollapseAllAction) {
 			collapseAllAction = new CollapseAllAction(commonViewer);
-			ImageDescriptor collapseAllIcon = getImageDescriptor("elcl16/collapseall.png"); //$NON-NLS-1$
-			collapseAllAction.setImageDescriptor(collapseAllIcon);
-			collapseAllAction.setHoverImageDescriptor(collapseAllIcon);
+			String imageFilePath = "icons/full/elcl16/collapseall.png"; //$NON-NLS-1$
+			ResourceLocator.imageDescriptorFromBundle(getClass(), imageFilePath).ifPresent(d -> {
+				collapseAllAction.setImageDescriptor(d);
+				collapseAllAction.setHoverImageDescriptor(d);
+			});
 			collapseAllHandler = new CollapseAllHandler(commonViewer);
 			service.activateHandler(CollapseAllHandler.COMMAND_ID, collapseAllHandler);
 		}
