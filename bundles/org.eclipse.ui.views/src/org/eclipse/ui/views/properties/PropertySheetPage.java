@@ -27,6 +27,7 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.jface.util.ConfigureColumns;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ISelection;
@@ -59,9 +60,6 @@ import org.eclipse.ui.internal.views.properties.PropertiesMessages;
 import org.eclipse.ui.part.CellEditorActionHandler;
 import org.eclipse.ui.part.IContributedContentsView;
 import org.eclipse.ui.part.Page;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
 
 /**
  * The standard implementation of property sheet page which presents
@@ -460,9 +458,8 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
 	// Replacement for the bundle activator, see Bug 481956
 	private ImageDescriptor createImageDescriptor(String relativeIconPath) {
 		String ICONS_PATH = "$nl$/icons/full/";//$NON-NLS-1$
-		Bundle bundle = FrameworkUtil.getBundle(PropertySheetPage.class);
-		return AbstractUIPlugin
-				.imageDescriptorFromPlugin(bundle.getSymbolicName(), ICONS_PATH + relativeIconPath);
+		String imageFilePath = ICONS_PATH + relativeIconPath;
+		return ResourceLocator.imageDescriptorFromBundle(PropertySheetPage.class, imageFilePath).orElse(null);
 	}
 
 	@Override
