@@ -27,8 +27,8 @@ import org.eclipse.jface.viewers.TreeNodeContentProvider;
 import org.eclipse.jface.viewers.TreePathViewerSorter;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.jface.viewers.ViewerSorter;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
@@ -92,7 +92,7 @@ public class SimpleTreeViewerTest extends ViewerTestCase {
 		});
 	}
 
-	static class MyViewerSorter extends ViewerSorter {
+	static class MyViewerSorter extends ViewerComparator {
 		boolean inverted = false;
 
 		@Override
@@ -106,7 +106,7 @@ public class SimpleTreeViewerTest extends ViewerTestCase {
 
 	public void testBug184441() {
 		MyViewerSorter sorter = new MyViewerSorter();
-		treeViewer.setSorter(sorter);
+		treeViewer.setComparator(sorter);
 		ITreeContentProvider contentProvider = (ITreeContentProvider) treeViewer.getContentProvider();
 		Object firstRoot = contentProvider.getElements(treeViewer.getInput())[0];
 		Object childOfFirstRoot = contentProvider.getChildren(firstRoot)[0];

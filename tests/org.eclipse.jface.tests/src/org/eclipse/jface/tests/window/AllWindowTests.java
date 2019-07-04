@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2011, 2017 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,20 +10,19 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *******************************************************************************/
-package org.eclipse.jface.tests.dialogs;
+ ******************************************************************************/
+
+package org.eclipse.jface.tests.window;
 
 import org.junit.runner.JUnitCore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ DialogTest.class, StatusDialogTest.class, DialogSettingsTest.class, InputDialogTest.class,
-		TitleAreaDialogTest.class, SafeRunnableErrorTest.class, ProgressIndicatorStyleTest.class,
-		ProgressMonitorDialogTest.class })
-public class AllTests {
+@Suite.SuiteClasses({ ApplicationWindowTest.class })
+public class AllWindowTests {
 
 	public static void main(String[] args) {
-		JUnitCore.main(AllTests.class.getName());
+		JUnitCore.main(AllWindowTests.class.getName());
 	}
 }

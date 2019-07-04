@@ -28,7 +28,7 @@ public class ResetSorterAction extends TestBrowserAction {
 		Viewer viewer = getBrowser().getViewer();
 		if (viewer instanceof StructuredViewer) {
 			StructuredViewer v = (StructuredViewer) viewer;
-			v.setSorter(null);
+			v.setComparator(null);
 		}
 	}
 }

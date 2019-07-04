@@ -25,6 +25,8 @@ public abstract class TestBrowserAction extends Action {
 
 	/**
 	 * Returns the test browser.
+	 *
+	 * @return The browser
 	 */
 	public TestBrowser getBrowser() {
 		return browser;

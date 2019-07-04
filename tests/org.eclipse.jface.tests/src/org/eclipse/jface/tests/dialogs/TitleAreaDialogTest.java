@@ -13,19 +13,18 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.dialogs;
 
-import junit.framework.TestCase;
-
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+
+import junit.framework.TestCase;
 
 public class TitleAreaDialogTest extends TestCase {
 
-	static ImageDescriptor descriptor = AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.ui.tests", "icons/anything.gif");
+	static ImageDescriptor descriptor = ResourceLocator
+			.imageDescriptorFromBundle("org.eclipse.jface.tests", "icons/anything.gif").orElse(null);
 
 	private TitleAreaDialog dialog;
 
@@ -46,13 +45,7 @@ public class TitleAreaDialogTest extends TestCase {
 		dialog.setTitleImage(image);
 		dialog.create();
 		Shell shell = dialog.getShell();
-		shell.addDisposeListener(new DisposeListener() {
-
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				image.dispose();
-			}
-		});
+		shell.addDisposeListener(e -> image.dispose());
 		dialog.open();
 	}
 

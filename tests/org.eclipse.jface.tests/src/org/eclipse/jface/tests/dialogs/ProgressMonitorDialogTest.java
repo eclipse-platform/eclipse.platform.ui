@@ -29,7 +29,7 @@ public class ProgressMonitorDialogTest extends TestCase {
 		Display.getDefault();
 	}
 
-	private void testRun(boolean fork, boolean cancelable) throws Exception {
+	private static void testRun(boolean fork, boolean cancelable) throws Exception {
 		ProgressMonitorDialog pmd = new ProgressMonitorDialog(null);
 		pmd.open();
 		pmd.run(fork, cancelable, monitor -> {

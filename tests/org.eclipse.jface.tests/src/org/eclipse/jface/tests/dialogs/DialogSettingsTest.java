@@ -29,12 +29,9 @@ public class DialogSettingsTest extends TestCase {
 
 	private static final float DELTA = 0.0000001f;
 
-	private static final String[] TEST_STRINGS = { "value",
-			" value with spaces ", "value.with.many.dots",
-			"value_with_underscores", "value<with<lessthan",
-			"value>with>greaterthan", "value&with&ampersand",
-			"value\"with\"quote", "value#with#hash", "",
-			"\nvalue\nwith\nnewlines\n", "\tvalue\twith\ttab\t",
+	private static final String[] TEST_STRINGS = { "value", " value with spaces ", "value.with.many.dots",
+			"value_with_underscores", "value<with<lessthan", "value>with>greaterthan", "value&with&ampersand",
+			"value\"with\"quote", "value#with#hash", "", "\nvalue\nwith\nnewlines\n", "\tvalue\twith\ttab\t",
 			"\rvalue\rwith\rreturn\r", };
 
 	public void testDialogSettings() throws IOException {
@@ -42,14 +39,12 @@ public class DialogSettingsTest extends TestCase {
 			final String name = testString;
 			testPutAndGetWithTitle(new DialogSettingsChecker() {
 				@Override
-				public void prepareAndCheckBeforeSerialization(
-						IDialogSettings dialogSettingsToSerialize) {
+				public void prepareAndCheckBeforeSerialization(IDialogSettings dialogSettingsToSerialize) {
 					// nothing
 				}
 
 				@Override
-				public void checkAfterDeserialization(
-						IDialogSettings deserializedDialogSettings) {
+				public void checkAfterDeserialization(IDialogSettings deserializedDialogSettings) {
 					assertEquals(name, deserializedDialogSettings.getName());
 				}
 			}, name);
@@ -62,54 +57,40 @@ public class DialogSettingsTest extends TestCase {
 			testPutAndGet(new DialogSettingsChecker() {
 
 				@Override
-				public void prepareAndCheckBeforeSerialization(
-						IDialogSettings dialogSettingsToSerialize) {
-					assertEquals(0,
-							dialogSettingsToSerialize.getSections().length);
-					assertEquals(null, dialogSettingsToSerialize
-							.getSection(name));
+				public void prepareAndCheckBeforeSerialization(IDialogSettings dialogSettingsToSerialize) {
+					assertEquals(0, dialogSettingsToSerialize.getSections().length);
+					assertEquals(null, dialogSettingsToSerialize.getSection(name));
 					dialogSettingsToSerialize.addNewSection(name);
-					assertEquals(1,
-							dialogSettingsToSerialize.getSections().length);
+					assertEquals(1, dialogSettingsToSerialize.getSections().length);
 					assertNotNull(dialogSettingsToSerialize.getSection(name));
-					assertEquals(name, dialogSettingsToSerialize.getSection(
-							name).getName());
-					assertEquals(name,
-							dialogSettingsToSerialize.getSections()[0]
-									.getName());
+					assertEquals(name, dialogSettingsToSerialize.getSection(name).getName());
+					assertEquals(name, dialogSettingsToSerialize.getSections()[0].getName());
 				}
 
 				@Override
-				public void checkAfterDeserialization(
-						IDialogSettings deserializedDialogSettings) {
-					assertEquals(1,
-							deserializedDialogSettings.getSections().length);
+				public void checkAfterDeserialization(IDialogSettings deserializedDialogSettings) {
+					assertEquals(1, deserializedDialogSettings.getSections().length);
 					assertNotNull(deserializedDialogSettings.getSection(name));
-					assertEquals(name, deserializedDialogSettings.getSection(
-							name).getName());
-					assertEquals(name,
-							deserializedDialogSettings.getSections()[0]
-									.getName());
+					assertEquals(name, deserializedDialogSettings.getSection(name).getName());
+					assertEquals(name, deserializedDialogSettings.getSections()[0].getName());
 				}
 			});
 		}
 	}
 
 	/**
-	 * Helper method to fill a DialogSettings object to be checked later by
-	 * check.
+	 * Helper method to fill a DialogSettings object to be checked later by check.
 	 *
 	 * @param memento
 	 */
-	private void fill(IDialogSettings dialogSettings) {
+	private static void fill(IDialogSettings dialogSettings) {
 		dialogSettings.put("booleanKey", true);
 		dialogSettings.put("floatKey", 0.4f);
 		dialogSettings.put("doubleKey", 0.5);
 		dialogSettings.put("integerKey", 324765);
 		dialogSettings.put("longKey", 1324765L);
 		dialogSettings.put("stringKey", "a string");
-		dialogSettings.put("stringArrayKey", new String[] { "some text data1",
-				"some text data2" });
+		dialogSettings.put("stringArrayKey", new String[] { "some text data1", "some text data2" });
 		final IDialogSettings section = dialogSettings.addNewSection("child1");
 		section.addNewSection("child2");
 		section.addNewSection("child3");
@@ -117,6 +98,8 @@ public class DialogSettingsTest extends TestCase {
 
 	/**
 	 * Helper method to check if the values set by fill are still there.
+	 *
+	 * @param dialogSettings
 	 *
 	 */
 	protected void check(IDialogSettings dialogSettings) {
@@ -140,8 +123,7 @@ public class DialogSettingsTest extends TestCase {
 		testPutAndGet(new DialogSettingsChecker() {
 
 			@Override
-			public void prepareAndCheckBeforeSerialization(
-					IDialogSettings dialogSettingsToSerialize) {
+			public void prepareAndCheckBeforeSerialization(IDialogSettings dialogSettingsToSerialize) {
 				IDialogSettings section = new DialogSettings("some section");
 				fill(section);
 				check(section);
@@ -150,10 +132,8 @@ public class DialogSettingsTest extends TestCase {
 			}
 
 			@Override
-			public void checkAfterDeserialization(
-					IDialogSettings deserializedDialogSettings) {
-				final IDialogSettings section = deserializedDialogSettings
-						.getSection("some section");
+			public void checkAfterDeserialization(IDialogSettings deserializedDialogSettings) {
+				final IDialogSettings section = deserializedDialogSettings.getSection("some section");
 				assertNotNull(section);
 				assertEquals("some section", section.getName());
 				check(section);
@@ -208,7 +188,7 @@ public class DialogSettingsTest extends TestCase {
 		DialogSettings dialogSettings = new DialogSettings(null);
 
 		try {
-			dialogSettings.removeSection((IDialogSettings)null);
+			dialogSettings.removeSection((IDialogSettings) null);
 		} catch (NullPointerException expected) {
 		}
 	}
@@ -218,19 +198,15 @@ public class DialogSettingsTest extends TestCase {
 			final String key = testString;
 			testPutAndGet(new DialogSettingsChecker() {
 				@Override
-				public void prepareAndCheckBeforeSerialization(
-						IDialogSettings dialogSettingsToSerialize) {
+				public void prepareAndCheckBeforeSerialization(IDialogSettings dialogSettingsToSerialize) {
 					assertNull(dialogSettingsToSerialize.get(key));
 					dialogSettingsToSerialize.put(key, "some string");
-					assertEquals("some string", dialogSettingsToSerialize
-							.get(key));
+					assertEquals("some string", dialogSettingsToSerialize.get(key));
 				}
 
 				@Override
-				public void checkAfterDeserialization(
-						IDialogSettings deserializedDialogSettings) {
-					assertEquals("some string", deserializedDialogSettings
-							.get(key));
+				public void checkAfterDeserialization(IDialogSettings deserializedDialogSettings) {
+					assertEquals("some string", deserializedDialogSettings.get(key));
 				}
 			});
 		}
@@ -242,18 +218,14 @@ public class DialogSettingsTest extends TestCase {
 			testPutAndGet(new DialogSettingsChecker() {
 
 				@Override
-				public void prepareAndCheckBeforeSerialization(
-						IDialogSettings dialogSettingsToSerialize) {
+				public void prepareAndCheckBeforeSerialization(IDialogSettings dialogSettingsToSerialize) {
 					dialogSettingsToSerialize.put("someKey", value);
-					assertEquals(value, dialogSettingsToSerialize
-							.get("someKey"));
+					assertEquals(value, dialogSettingsToSerialize.get("someKey"));
 				}
 
 				@Override
-				public void checkAfterDeserialization(
-						IDialogSettings deserializedDialogSettings) {
-					assertEquals(value, deserializedDialogSettings
-							.get("someKey"));
+				public void checkAfterDeserialization(IDialogSettings deserializedDialogSettings) {
+					assertEquals(value, deserializedDialogSettings.get("someKey"));
 				}
 			});
 		}
@@ -268,17 +240,12 @@ public class DialogSettingsTest extends TestCase {
 				testPutAndGet(new DialogSettingsChecker() {
 
 					@Override
-					public void prepareAndCheckBeforeSerialization(
-							IDialogSettings dialogSettingsToSerialize) {
+					public void prepareAndCheckBeforeSerialization(IDialogSettings dialogSettingsToSerialize) {
 						dialogSettingsToSerialize.put("someKey", value);
-						assertEquals(2, dialogSettingsToSerialize
-								.getArray("someKey").length);
-						assertEquals(value1, dialogSettingsToSerialize
-								.getArray("someKey")[0]);
-						assertEquals(value2, dialogSettingsToSerialize
-								.getArray("someKey")[1]);
-						dialogSettingsToSerialize.put("anotherKey1",
-								new String[] {});
+						assertEquals(2, dialogSettingsToSerialize.getArray("someKey").length);
+						assertEquals(value1, dialogSettingsToSerialize.getArray("someKey")[0]);
+						assertEquals(value2, dialogSettingsToSerialize.getArray("someKey")[1]);
+						dialogSettingsToSerialize.put("anotherKey1", new String[] {});
 						// TODO see bug 98332, we should handle null cases too
 						// dialogSettingsToSerialize.put("anotherKey2",
 						// new String[] { null });
@@ -289,16 +256,11 @@ public class DialogSettingsTest extends TestCase {
 					}
 
 					@Override
-					public void checkAfterDeserialization(
-							IDialogSettings deserializedDialogSettings) {
-						assertEquals(2, deserializedDialogSettings
-								.getArray("someKey").length);
-						assertEquals(value1, deserializedDialogSettings
-								.getArray("someKey")[0]);
-						assertEquals(value2, deserializedDialogSettings
-								.getArray("someKey")[1]);
-						assertEquals(0, deserializedDialogSettings
-								.getArray("anotherKey1").length);
+					public void checkAfterDeserialization(IDialogSettings deserializedDialogSettings) {
+						assertEquals(2, deserializedDialogSettings.getArray("someKey").length);
+						assertEquals(value1, deserializedDialogSettings.getArray("someKey")[0]);
+						assertEquals(value2, deserializedDialogSettings.getArray("someKey")[1]);
+						assertEquals(0, deserializedDialogSettings.getArray("anotherKey1").length);
 						// TODO see bug 98332, we should handle null cases too
 						// assertEquals(1, deserializedDialogSettings
 						// .getArray("anotherKey2").length);
@@ -328,40 +290,32 @@ public class DialogSettingsTest extends TestCase {
 		testPutAndGet(new DialogSettingsChecker() {
 
 			@Override
-			public void prepareAndCheckBeforeSerialization(
-					IDialogSettings dialogSettingsToSerialize) {
+			public void prepareAndCheckBeforeSerialization(IDialogSettings dialogSettingsToSerialize) {
 				dialogSettingsToSerialize.put("true", true);
 				dialogSettingsToSerialize.put("false", false);
 				assertEquals(true, dialogSettingsToSerialize.getBoolean("true"));
-				assertEquals(false, dialogSettingsToSerialize
-						.getBoolean("false"));
+				assertEquals(false, dialogSettingsToSerialize.getBoolean("false"));
 			}
 
 			@Override
-			public void checkAfterDeserialization(
-					IDialogSettings deserializedDialogSettings) {
-				assertEquals(true, deserializedDialogSettings
-						.getBoolean("true"));
-				assertEquals(false, deserializedDialogSettings
-						.getBoolean("false"));
+			public void checkAfterDeserialization(IDialogSettings deserializedDialogSettings) {
+				assertEquals(true, deserializedDialogSettings.getBoolean("true"));
+				assertEquals(false, deserializedDialogSettings.getBoolean("false"));
 			}
 		});
 	}
 
 	public void testGetDouble() throws IOException {
-		final double[] values = new double[] { -3.1415, 1, 0, 4554.45235,
-				Double.MAX_VALUE, Double.MIN_VALUE, Double.NaN,
-				Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY };
+		final double[] values = new double[] { -3.1415, 1, 0, 4554.45235, Double.MAX_VALUE, Double.MIN_VALUE,
+				Double.NaN, Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY };
 
 		for (double testValue : values) {
 			final double value = testValue;
 			testPutAndGet(new DialogSettingsChecker() {
 				@Override
-				public void prepareAndCheckBeforeSerialization(
-						IDialogSettings dialogSettingsToSerialize) {
+				public void prepareAndCheckBeforeSerialization(IDialogSettings dialogSettingsToSerialize) {
 					dialogSettingsToSerialize.put("someKey", value);
-					final double d = dialogSettingsToSerialize
-							.getDouble("someKey");
+					final double d = dialogSettingsToSerialize.getDouble("someKey");
 					if (Double.isNaN(value)) {
 						assertTrue(Double.isNaN(d));
 					} else {
@@ -370,10 +324,8 @@ public class DialogSettingsTest extends TestCase {
 				}
 
 				@Override
-				public void checkAfterDeserialization(
-						IDialogSettings deserializedDialogSettings) {
-					final double d = deserializedDialogSettings
-							.getDouble("someKey");
+				public void checkAfterDeserialization(IDialogSettings deserializedDialogSettings) {
+					final double d = deserializedDialogSettings.getDouble("someKey");
 					if (Double.isNaN(value)) {
 						assertTrue(Double.isNaN(d));
 					} else {
@@ -385,19 +337,16 @@ public class DialogSettingsTest extends TestCase {
 	}
 
 	public void testGetFloat() throws IOException {
-		final float[] values = new float[] { -3.1415f, 1, 0, 4554.45235f,
-				Float.MAX_VALUE, Float.MIN_VALUE, Float.NaN,
+		final float[] values = new float[] { -3.1415f, 1, 0, 4554.45235f, Float.MAX_VALUE, Float.MIN_VALUE, Float.NaN,
 				Float.POSITIVE_INFINITY, Float.NEGATIVE_INFINITY };
 
 		for (float testValue : values) {
 			final float value = testValue;
 			testPutAndGet(new DialogSettingsChecker() {
 				@Override
-				public void prepareAndCheckBeforeSerialization(
-						IDialogSettings dialogSettingsToSerialize) {
+				public void prepareAndCheckBeforeSerialization(IDialogSettings dialogSettingsToSerialize) {
 					dialogSettingsToSerialize.put("someKey", value);
-					final float f = dialogSettingsToSerialize
-							.getFloat("someKey");
+					final float f = dialogSettingsToSerialize.getFloat("someKey");
 					if (Float.isNaN(value)) {
 						assertTrue(Float.isNaN(f));
 					} else {
@@ -406,10 +355,8 @@ public class DialogSettingsTest extends TestCase {
 				}
 
 				@Override
-				public void checkAfterDeserialization(
-						IDialogSettings deserializedDialogSettings) {
-					final float f = deserializedDialogSettings
-							.getFloat("someKey");
+				public void checkAfterDeserialization(IDialogSettings deserializedDialogSettings) {
+					final float f = deserializedDialogSettings.getFloat("someKey");
 					if (Float.isNaN(value)) {
 						assertTrue(Float.isNaN(f));
 					} else {
@@ -421,52 +368,42 @@ public class DialogSettingsTest extends TestCase {
 	}
 
 	public void testGetInt() throws IOException {
-		int[] values = new int[] { 36254, 0, 1, -36254, Integer.MAX_VALUE,
-				Integer.MIN_VALUE };
+		int[] values = new int[] { 36254, 0, 1, -36254, Integer.MAX_VALUE, Integer.MIN_VALUE };
 
 		for (int testValue : values) {
 			final int value = testValue;
 			testPutAndGet(new DialogSettingsChecker() {
 
 				@Override
-				public void prepareAndCheckBeforeSerialization(
-						IDialogSettings dialogSettingsToSerialize) {
+				public void prepareAndCheckBeforeSerialization(IDialogSettings dialogSettingsToSerialize) {
 					dialogSettingsToSerialize.put("someKey", value);
-					assertEquals(value, dialogSettingsToSerialize
-							.getInt("someKey"));
+					assertEquals(value, dialogSettingsToSerialize.getInt("someKey"));
 				}
 
 				@Override
-				public void checkAfterDeserialization(
-						IDialogSettings deserializedDialogSettings) {
-					assertEquals(value, deserializedDialogSettings
-							.getInt("someKey"));
+				public void checkAfterDeserialization(IDialogSettings deserializedDialogSettings) {
+					assertEquals(value, deserializedDialogSettings.getInt("someKey"));
 				}
 			});
 		}
 	}
 
 	public void testGetLong() throws IOException {
-		long[] values = new long[] { 36254L, 0L, 1L, -36254L, Long.MAX_VALUE,
-				Long.MIN_VALUE };
+		long[] values = new long[] { 36254L, 0L, 1L, -36254L, Long.MAX_VALUE, Long.MIN_VALUE };
 
 		for (long testValue : values) {
 			final long value = testValue;
 			testPutAndGet(new DialogSettingsChecker() {
 
 				@Override
-				public void prepareAndCheckBeforeSerialization(
-						IDialogSettings dialogSettingsToSerialize) {
+				public void prepareAndCheckBeforeSerialization(IDialogSettings dialogSettingsToSerialize) {
 					dialogSettingsToSerialize.put("someKey", value);
-					assertEquals(value, dialogSettingsToSerialize
-							.getLong("someKey"));
+					assertEquals(value, dialogSettingsToSerialize.getLong("someKey"));
 				}
 
 				@Override
-				public void checkAfterDeserialization(
-						IDialogSettings deserializedDialogSettings) {
-					assertEquals(value, deserializedDialogSettings
-							.getLong("someKey"));
+				public void checkAfterDeserialization(IDialogSettings deserializedDialogSettings) {
+					assertEquals(value, deserializedDialogSettings.getLong("someKey"));
 				}
 			});
 		}
@@ -479,27 +416,21 @@ public class DialogSettingsTest extends TestCase {
 	public void testGetSections() {
 	}
 
-	private static interface DialogSettingsChecker {
-		void prepareAndCheckBeforeSerialization(
-				IDialogSettings dialogSettingsToSerialize);
+	private interface DialogSettingsChecker {
+		void prepareAndCheckBeforeSerialization(IDialogSettings dialogSettingsToSerialize);
 
-		void checkAfterDeserialization(
-				IDialogSettings deserializedDialogSettings);
+		void checkAfterDeserialization(IDialogSettings deserializedDialogSettings);
 	}
 
-	private void testPutAndGet(DialogSettingsChecker dialogSettingsChecker)
-			throws IOException {
+	private static void testPutAndGet(DialogSettingsChecker dialogSettingsChecker) throws IOException {
 		testPutAndGetWithTitle(dialogSettingsChecker, "DialogSettingsTest");
 	}
 
-	private void testPutAndGetWithTitle(
-			DialogSettingsChecker dialogSettingsChecker, String sectionName)
+	private static void testPutAndGetWithTitle(DialogSettingsChecker dialogSettingsChecker, String sectionName)
 			throws IOException {
-		IDialogSettings dialogSettingsToSerialize = new DialogSettings(
-				sectionName);
+		IDialogSettings dialogSettingsToSerialize = new DialogSettings(sectionName);
 
-		dialogSettingsChecker
-				.prepareAndCheckBeforeSerialization(dialogSettingsToSerialize);
+		dialogSettingsChecker.prepareAndCheckBeforeSerialization(dialogSettingsToSerialize);
 
 		try (StringWriter writer = new StringWriter()) {
 			dialogSettingsToSerialize.save(writer);
@@ -512,6 +443,7 @@ public class DialogSettingsTest extends TestCase {
 
 	}
 
+	@SuppressWarnings("resource")
 	public void testSaveWithIOException() {
 		final DialogSettings settings = new DialogSettings("test");
 		try {
@@ -524,8 +456,7 @@ public class DialogSettingsTest extends TestCase {
 	private static class BrokenWriter extends Writer {
 
 		@Override
-		public void write(final char[] cbuf, final int off, final int len)
-				throws IOException {
+		public void write(final char[] cbuf, final int off, final int len) throws IOException {
 			throw new IOException("Bang!");
 		}
 

@@ -54,17 +54,6 @@
 					</dependency>
 	  			</dependencies>
 			</configuration>
-			<executions>
-				<execution>
-					<id>jface-tests</id>
-					<phase>integration-test</phase>
-					<goals><goal>test</goal></goals>
-					<configuration>
-						<testClass>org.eclipse.jface.tests.AllTests</testClass>
-						<useUIHarness>false</useUIHarness>
-					</configuration>
-				</execution>
-			</executions>
   		</plugin>
   	</plugins>
   </build>

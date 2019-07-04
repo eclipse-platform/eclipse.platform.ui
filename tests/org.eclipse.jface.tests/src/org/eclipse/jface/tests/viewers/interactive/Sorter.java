@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2014 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,19 +10,17 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Jeanderson Candido <http://jeandersonbc.github.io> - Bug 433608
  *******************************************************************************/
-package org.eclipse.jface.tests;
+package org.eclipse.jface.tests.viewers.interactive;
 
-import org.junit.runner.JUnitCore;
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
+import org.eclipse.jface.viewers.IBasicPropertyConstants;
+import org.eclipse.jface.viewers.ViewerComparator;
 
-@RunWith(Suite.class)
-@Suite.SuiteClasses({ org.eclipse.jface.tests.dialogs.AllTests.class,
-		org.eclipse.jface.tests.wizards.WizardTestSuite.class, org.eclipse.jface.tests.window.AllTests.class })
-public class AllTests {
+public class Sorter extends ViewerComparator {
 
-	public static void main(String[] args) {
-		JUnitCore.main(AllTests.class.getName());
+	@Override
+	public boolean isSorterProperty(Object element, String property) {
+		return IBasicPropertyConstants.P_TEXT.equals(property);
 	}
 }

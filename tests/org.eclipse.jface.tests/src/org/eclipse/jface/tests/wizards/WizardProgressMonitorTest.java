@@ -51,9 +51,11 @@ public class WizardProgressMonitorTest extends TestCase {
 	/**
 	 * This test ensures that the labels of a progress monitor are cleared
 	 * in-between calls to the wizard dialog's run(boolean, boolean,
-	 * IRunnableWithProgress) method. If they are not cleared in between runs,
-	 * they end up spilling over to the successive call and causes flickering of
-	 * text in the label.
+	 * IRunnableWithProgress) method. If they are not cleared in between runs, they
+	 * end up spilling over to the successive call and causes flickering of text in
+	 * the label.
+	 *
+	 * @throws Exception
 	 */
 	public void testProgressLabelsClearedBug271530() throws Exception {
 		// make up some random task names
@@ -85,12 +87,10 @@ public class WizardProgressMonitorTest extends TestCase {
 				"", dialog.getProgressMonitorLabelText()); //$NON-NLS-1$
 
 		String subTask = dialog.getProgressMonitorSubTaskText();
-		if(subTask !=null && !subTask.isEmpty())
-		 {
+		if (subTask != null && !subTask.isEmpty()) {
 			fail("The progress monitor's subtask should have been cleared"); //$NON-NLS-1$
 		}
 	}
-
 
 	protected IRunnableWithProgress getRunnable(final String taskName) {
 		return monitor -> {
@@ -123,8 +123,7 @@ public class WizardProgressMonitorTest extends TestCase {
 		}
 
 		@Override
-		protected ProgressMonitorPart createProgressMonitorPart(
-				Composite composite, GridLayout pmlayout) {
+		protected ProgressMonitorPart createProgressMonitorPart(Composite composite, GridLayout pmlayout) {
 			return new ProgressMonitorPartSubclass(composite, pmlayout, useStopButton);
 		}
 
@@ -163,8 +162,10 @@ public class WizardProgressMonitorTest extends TestCase {
 	/**
 	 * This test ensures that a wizard dialog subclass which overrides the
 	 * #getProgressMonitorPart method and returns a monitor without the stop button
-	 * will fail gracefully.  That is, the runnable will run as expected.
-	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=287887#c57
+	 * will fail gracefully. That is, the runnable will run as expected. See
+	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=287887#c57
+	 * 
+	 * @throws Exception
 	 */
 	public void testProgressMonitorWithoutStopButtonBug287887() throws Exception {
 		// make up some random task names

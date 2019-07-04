@@ -14,13 +14,21 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.viewers.interactive;
 
-import org.eclipse.jface.viewers.IBasicPropertyConstants;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.Viewer;
 
-public class Sorter extends ViewerSorter {
+public class SetSorterAction extends TestBrowserAction {
+
+	public SetSorterAction(String label, TestBrowser browser) {
+		super(label, browser);
+	}
 
 	@Override
-	public boolean isSorterProperty(Object element, String property) {
-		return IBasicPropertyConstants.P_TEXT.equals(property);
+	public void run() {
+		Viewer viewer = getBrowser().getViewer();
+		if (viewer instanceof StructuredViewer) {
+			StructuredViewer v = (StructuredViewer) viewer;
+			v.setComparator(new Sorter());
+		}
 	}
 }

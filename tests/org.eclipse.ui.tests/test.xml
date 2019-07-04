@@ -53,17 +53,7 @@
 
     </ant>
     
-    <property name="jface-sniff-folder"
-              value="${eclipse-home}/jface_sniff_folder"/>
-    <delete dir="${jface-sniff-folder}" quiet="true"/>
-    <ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
-      <property name="data-dir" value="${jface-sniff-folder}"/>
-      <property name="plugin-name" value="${plugin-name}"/>
-      <property name="classname"
-                value="org.eclipse.jface.tests.AllTests"/>
-    </ant>
-    
-  	<property name="parts-data-folder"
+    <property name="parts-data-folder"
   	 	      value="${eclipse-home}/parts_data_folder"/>
   	<delete dir="${parts-data-folder}" quiet="true"/>
     <!--ant target="core-test" antfile="${library-file}" dir="${eclipse-home}">
