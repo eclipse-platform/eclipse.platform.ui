@@ -14,8 +14,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.BundleContext;
 
@@ -54,37 +54,37 @@ public class Activator extends AbstractUIPlugin {
 
 	@Override
 	protected void initializeImageRegistry(ImageRegistry registry) {
-		registry.put(SharedImages.DESC_PREV_EVENT, createImageDescriptor(SharedImages.DESC_PREV_EVENT));
-		registry.put(SharedImages.DESC_NEXT_EVENT, createImageDescriptor(SharedImages.DESC_NEXT_EVENT));
+		registerImageDescriptor(registry, SharedImages.DESC_PREV_EVENT);
+		registerImageDescriptor(registry, SharedImages.DESC_NEXT_EVENT);
 
-		registry.put(SharedImages.DESC_ERROR_ST_OBJ, createImageDescriptor(SharedImages.DESC_ERROR_ST_OBJ));
-		registry.put(SharedImages.DESC_ERROR_STACK_OBJ, createImageDescriptor(SharedImages.DESC_ERROR_STACK_OBJ));
-		registry.put(SharedImages.DESC_INFO_ST_OBJ, createImageDescriptor(SharedImages.DESC_INFO_ST_OBJ));
-		registry.put(SharedImages.DESC_OK_ST_OBJ, createImageDescriptor(SharedImages.DESC_OK_ST_OBJ));
-		registry.put(SharedImages.DESC_WARNING_ST_OBJ, createImageDescriptor(SharedImages.DESC_WARNING_ST_OBJ));
-		registry.put(SharedImages.DESC_HIERARCHICAL_LAYOUT_OBJ, createImageDescriptor(SharedImages.DESC_HIERARCHICAL_LAYOUT_OBJ));
+		registerImageDescriptor(registry, SharedImages.DESC_ERROR_ST_OBJ);
+		registerImageDescriptor(registry, SharedImages.DESC_ERROR_STACK_OBJ);
+		registerImageDescriptor(registry, SharedImages.DESC_INFO_ST_OBJ);
+		registerImageDescriptor(registry, SharedImages.DESC_OK_ST_OBJ);
+		registerImageDescriptor(registry, SharedImages.DESC_WARNING_ST_OBJ);
+		registerImageDescriptor(registry, SharedImages.DESC_HIERARCHICAL_LAYOUT_OBJ);
 
-		registry.put(SharedImages.DESC_CLEAR, createImageDescriptor(SharedImages.DESC_CLEAR));
-		registry.put(SharedImages.DESC_CLEAR_DISABLED, createImageDescriptor(SharedImages.DESC_CLEAR_DISABLED));
-		registry.put(SharedImages.DESC_OPEN_CONSOLE, createImageDescriptor(SharedImages.DESC_OPEN_CONSOLE));
-		registry.put(SharedImages.DESC_REMOVE_LOG, createImageDescriptor(SharedImages.DESC_REMOVE_LOG));
-		registry.put(SharedImages.DESC_REMOVE_LOG_DISABLED, createImageDescriptor(SharedImages.DESC_REMOVE_LOG_DISABLED));
-		registry.put(SharedImages.DESC_EXPORT, createImageDescriptor(SharedImages.DESC_EXPORT));
-		registry.put(SharedImages.DESC_EXPORT_DISABLED, createImageDescriptor(SharedImages.DESC_EXPORT_DISABLED));
-		registry.put(SharedImages.DESC_FILTER, createImageDescriptor(SharedImages.DESC_FILTER));
-		registry.put(SharedImages.DESC_FILTER_DISABLED, createImageDescriptor(SharedImages.DESC_FILTER_DISABLED));
-		registry.put(SharedImages.DESC_IMPORT, createImageDescriptor(SharedImages.DESC_IMPORT));
-		registry.put(SharedImages.DESC_IMPORT_DISABLED, createImageDescriptor(SharedImages.DESC_IMPORT_DISABLED));
-		registry.put(SharedImages.DESC_OPEN_LOG, createImageDescriptor(SharedImages.DESC_OPEN_LOG));
-		registry.put(SharedImages.DESC_OPEN_LOG_DISABLED, createImageDescriptor(SharedImages.DESC_OPEN_LOG_DISABLED));
-		registry.put(SharedImages.DESC_PROPERTIES, createImageDescriptor(SharedImages.DESC_PROPERTIES));
-		registry.put(SharedImages.DESC_PROPERTIES_DISABLED, createImageDescriptor(SharedImages.DESC_PROPERTIES_DISABLED));
-		registry.put(SharedImages.DESC_READ_LOG, createImageDescriptor(SharedImages.DESC_READ_LOG));
-		registry.put(SharedImages.DESC_READ_LOG_DISABLED, createImageDescriptor(SharedImages.DESC_READ_LOG_DISABLED));
+		registerImageDescriptor(registry, SharedImages.DESC_CLEAR);
+		registerImageDescriptor(registry, SharedImages.DESC_CLEAR_DISABLED);
+		registerImageDescriptor(registry, SharedImages.DESC_OPEN_CONSOLE);
+		registerImageDescriptor(registry, SharedImages.DESC_REMOVE_LOG);
+		registerImageDescriptor(registry, SharedImages.DESC_REMOVE_LOG_DISABLED);
+		registerImageDescriptor(registry, SharedImages.DESC_EXPORT);
+		registerImageDescriptor(registry, SharedImages.DESC_EXPORT_DISABLED);
+		registerImageDescriptor(registry, SharedImages.DESC_FILTER);
+		registerImageDescriptor(registry, SharedImages.DESC_FILTER_DISABLED);
+		registerImageDescriptor(registry, SharedImages.DESC_IMPORT);
+		registerImageDescriptor(registry, SharedImages.DESC_IMPORT_DISABLED);
+		registerImageDescriptor(registry, SharedImages.DESC_OPEN_LOG);
+		registerImageDescriptor(registry, SharedImages.DESC_OPEN_LOG_DISABLED);
+		registerImageDescriptor(registry, SharedImages.DESC_PROPERTIES);
+		registerImageDescriptor(registry, SharedImages.DESC_PROPERTIES_DISABLED);
+		registerImageDescriptor(registry, SharedImages.DESC_READ_LOG);
+		registerImageDescriptor(registry, SharedImages.DESC_READ_LOG_DISABLED);
 	}
 
-	private ImageDescriptor createImageDescriptor(String id) {
-		return imageDescriptorFromPlugin(PLUGIN_ID, id);
+	private void registerImageDescriptor(ImageRegistry registry, String id) {
+		ResourceLocator.imageDescriptorFromBundle(getClass(), id).ifPresent(d -> registry.put(id, d));
 	}
 
 }
