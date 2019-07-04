@@ -355,7 +355,7 @@ public class FindReplaceDocumentAdapterTest {
 		String contents= "Unix\nWindows\r\nMac\rEnd";
 		fDocument.set(contents);
 
-		int n= contents.indexOf("\n");
+		int n= contents.indexOf('\n');
 		int rn= contents.indexOf("\r\n");
 		int r= contents.indexOf("\rEnd");
 
@@ -378,7 +378,7 @@ public class FindReplaceDocumentAdapterTest {
 		String contents= "Unix\n[\\R]\\R\r\n";
 		fDocument.set(contents);
 
-		int n= contents.indexOf("\n");
+		int n= contents.indexOf('\n');
 		int rn= contents.indexOf("\r\n");
 
 		IRegion region= adapter.find(0, "[a-zA-Z\\t{\\\\R}]*\\{?\\R", true, false, false, true);
@@ -401,7 +401,7 @@ public class FindReplaceDocumentAdapterTest {
 		String contents= "+[\\R]\\R\r\n";
 		fDocument.set(contents);
 
-		int n= contents.indexOf("[");
+		int n= contents.indexOf('[');
 		int rn= contents.indexOf("\r\n");
 
 		IRegion region= adapter.find(0, "[a-zA-Z\\t{\\\\R}]*\\{?\\R", true, false, false, true);

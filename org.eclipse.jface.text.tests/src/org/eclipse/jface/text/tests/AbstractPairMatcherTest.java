@@ -377,13 +377,13 @@ public abstract class AbstractPairMatcherTest {
 	 * @return the created test case
 	 */
 	public TestCase createTestCase(String str) {
-		int pos1= str.indexOf("%");
+		int pos1= str.indexOf('%');
 		assertFalse(pos1 == -1);
-		int pos2= str.lastIndexOf("%");
+		int pos2= str.lastIndexOf('%');
 		boolean selectionTest= pos1 != pos2;
 
-		int match1= str.indexOf("#");
-		int match2= str.lastIndexOf("#");
+		int match1= str.indexOf('#');
+		int match2= str.lastIndexOf('#');
 		boolean enclosingTest= match1 != match2;
 
 		// account for the length of marker characters
