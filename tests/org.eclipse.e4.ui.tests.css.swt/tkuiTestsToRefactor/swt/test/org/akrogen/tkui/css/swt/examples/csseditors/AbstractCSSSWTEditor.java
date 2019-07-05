@@ -490,9 +490,9 @@ public abstract class AbstractCSSSWTEditor extends AbstractCSSEditor {
 		if (start <= end) {
 			String lineText = textArea.getText(start, end);
 			lineText = lineText.trim();
-			int index = lineText.indexOf(":");
+			int index = lineText.indexOf(':');
 			if (index > 0) {
-				if (lineText.indexOf("{") != -1)
+				if (lineText.indexOf('{') != -1)
 					return;
 				String property = lineText.substring(0, index);
 				String value = lineText.substring(index + 1, lineText.length());
