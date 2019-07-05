@@ -727,7 +727,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 
             outputFile = configuration.getAttribute(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, (String)null);
             append = configuration.getAttribute(IDebugUIConstants.ATTR_APPEND_TO_FILE, false);
-			mergeOutput = configuration.getAttribute(IDebugUIConstants.ATTR_MERGE_OUTPUT, false);
+			mergeOutput = configuration.getAttribute(DebugPlugin.ATTR_MERGE_OUTPUT, false);
 			supportsMergeOutput = configuration.getType().supportsOutputMerging();
         } catch (CoreException e) {
         }
@@ -1057,9 +1057,9 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		}
 		if (fMergeOutput != null) {
 			if (fMergeOutput.getSelection()) {
-				configuration.setAttribute(IDebugUIConstants.ATTR_MERGE_OUTPUT, true);
+				configuration.setAttribute(DebugPlugin.ATTR_MERGE_OUTPUT, true);
 			} else {
-				configuration.setAttribute(IDebugUIConstants.ATTR_MERGE_OUTPUT, (String) null);
+				configuration.setAttribute(DebugPlugin.ATTR_MERGE_OUTPUT, (String) null);
 			}
 		}
 

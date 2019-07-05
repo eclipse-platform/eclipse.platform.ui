@@ -995,18 +995,6 @@ public interface IDebugUIConstants {
 	 */
 	String ATTR_APPEND_TO_FILE = PLUGIN_ID + ".ATTR_APPEND_TO_FILE"; //$NON-NLS-1$
 
-	/**
-	 * Launch configuration attribute - a boolean value indicating whether a
-	 * configuration should be launched with merged error and standard output.
-	 * Merging output can ensure the process output appears in console in same order
-	 * as the process produce it. On the other hand the error output can not be
-	 * colored different from standard output anymore. Default value is
-	 * <code>false</code>.
-	 *
-	 * @since 3.15
-	 */
-	String ATTR_MERGE_OUTPUT = PLUGIN_ID + ".ATTR_MERGE_OUTPUT"; //$NON-NLS-1$
-
 	// Extension points
 
 	/**

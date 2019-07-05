@@ -294,8 +294,22 @@ public class DebugPlugin extends Plugin {
 	public static final String ATTR_CONSOLE_ENCODING = "org.eclipse.debug.ui.ATTR_CONSOLE_ENCODING"; //$NON-NLS-1$
 
 	/**
-	 * Boolean preference key (value <code>org.eclipse.debug.core.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE</code>) that controls
-	 * whether to delete associated configurations when a project is deleted. Default value is <code>false</code>.
+	 * Launch configuration attribute - a boolean value indicating whether a
+	 * configuration should be launched with merged error and standard output.
+	 * Merging output can ensure the process output appears in console in same
+	 * order as the process produce it. On the other hand the error output can
+	 * not be colored different from standard output anymore. Default value is
+	 * <code>false</code>.
+	 *
+	 * @since 3.14
+	 */
+	public static final String ATTR_MERGE_OUTPUT = PI_DEBUG_CORE + ".ATTR_MERGE_OUTPUT"; //$NON-NLS-1$
+
+	/**
+	 * Boolean preference key (value
+	 * <code>org.eclipse.debug.core.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE</code>)
+	 * that controls whether to delete associated configurations when a project
+	 * is deleted. Default value is <code>false</code>.
 	 *
 	 * @since 3.7
 	 */

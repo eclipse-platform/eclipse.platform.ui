@@ -50,17 +50,6 @@ public class ProgramLaunchDelegate extends LaunchConfigurationDelegate {
 	private static final String ATTR_LAUNCH_IN_BACKGROUND = "org.eclipse.debug.ui.ATTR_LAUNCH_IN_BACKGROUND"; //$NON-NLS-1$
 
 	/**
-	 * Launch configuration attribute - a boolean value indicating whether a
-	 * configuration should be launched with merged error and standard output.
-	 * Default value is <code>false</code>.
-	 * <p>
-	 * This constant is defined in org.eclipse.debug.ui, but has to be copied
-	 * here to support headless launching.
-	 * </p>
-	 */
-	private static final String ATTR_MERGE_OUTPUT = "org.eclipse.debug.ui.ATTR_MERGE_OUTPUT"; //$NON-NLS-1$
-
-	/**
 	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate#launch(org.eclipse.debug.core.ILaunchConfiguration,
 	 *      java.lang.String, org.eclipse.debug.core.ILaunch,
 	 *      org.eclipse.core.runtime.IProgressMonitor)
@@ -110,7 +99,7 @@ public class ProgramLaunchDelegate extends LaunchConfigurationDelegate {
 			return;
 		}
 
-		boolean mergeOutput = configuration.getAttribute(ATTR_MERGE_OUTPUT, false);
+		boolean mergeOutput = configuration.getAttribute(DebugPlugin.ATTR_MERGE_OUTPUT, false);
 		Process p = DebugPlugin.exec(cmdLine, workingDir, envp, mergeOutput);
 		IProcess process = null;
 

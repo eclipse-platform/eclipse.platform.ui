@@ -173,7 +173,7 @@ Since 3.3, the &lt;code&gt;sourceLocatorId&lt;/code&gt; can also be specified vi
          <attribute name="allowOutputMerging" type="boolean">
             <annotation>
                <documentation>
-                  specifies whether this launch configuration type supports output merging. A launch configuration which singals support must check the launch configuration attribute "org.eclipse.debug.ui.ATTR_MERGE_OUTPUT" and if its value is true perform the launch in a way that stderr and stdout are merged and both can be read through stdout.
+                  specifies whether this launch configuration type supports output merging. A launch configuration which singals support must check the launch configuration attribute "org.eclipse.debug.core.ATTR_MERGE_OUTPUT" and if its value is true perform the launch in a way that stderr and stdout are merged and both can be read through stdout.
                   Defaults to &lt;code&gt;false&lt;/code&gt; if not specified. This attribute was added in 4.13 release.
                </documentation>
             </annotation>
