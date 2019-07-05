@@ -35,9 +35,9 @@ public final class HTMLUtil {
 	 *            false otherwise
 	 * @return
 	 */
-	public static StringBuffer createHTMLStartTag(String elementName,
+	public static StringBuilder createHTMLStartTag(String elementName,
 			Map elementAttributes, boolean insertLineBreak) {
-		StringBuffer element = new StringBuffer();
+		StringBuilder element = new StringBuilder();
 		if (elementName != null) {
 			// open the start tag
 			element.append(openHTMLStartTag(elementName));
@@ -60,7 +60,7 @@ public final class HTMLUtil {
 	 *            true to insert a new line after the start tag
 	 * @return
 	 */
-	public static StringBuffer createHTMLStartTag(String elementName,
+	public static StringBuilder createHTMLStartTag(String elementName,
 			boolean insertLineBreak) {
 		return createHTMLStartTag(elementName, null, insertLineBreak);
 	}
@@ -73,7 +73,7 @@ public final class HTMLUtil {
 	 *            the name of the element to create
 	 * @return
 	 */
-	public static StringBuffer createHTMLStartTag(String elementName) {
+	public static StringBuilder createHTMLStartTag(String elementName) {
 		return createHTMLStartTag(elementName, null, true);
 	}
 
@@ -86,9 +86,9 @@ public final class HTMLUtil {
 	 *            true to add a new line at the end
 	 * @return
 	 */
-	public static StringBuffer createHTMLEndTag(String elementName,
+	public static StringBuilder createHTMLEndTag(String elementName,
 			boolean addNewLine) {
-		StringBuffer closingElement = new StringBuffer();
+		StringBuilder closingElement = new StringBuilder();
 		if (elementName != null)
 			closingElement.append(IIntroHTMLConstants.LT).append(
 					IIntroHTMLConstants.FORWARD_SLASH).append(elementName)
