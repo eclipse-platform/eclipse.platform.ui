@@ -101,8 +101,8 @@ public class TipImage {
 		fURL = null;
 		if (base64Image.matches("^data:image\\/.*?;base64,.*$")) { //$NON-NLS-1$
 			fBase64Image = base64Image;
-			int from = base64Image.indexOf('/') + 1; //$NON-NLS-1$
-			int to = base64Image.indexOf(';'); //$NON-NLS-1$
+			int from = base64Image.indexOf('/') + 1;
+			int to = base64Image.indexOf(';');
 			setExtension(base64Image.substring(from, to).trim());
 			setExtension(base64Image.substring(from, to).trim());
 		} else {
