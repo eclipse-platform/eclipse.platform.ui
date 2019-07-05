@@ -585,7 +585,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 	 * Holds data until updateJob can be run and the document can be updated.
 	 */
 	private class PendingPartition {
-		StringBuffer text = new StringBuffer(8192);
+		StringBuilder text = new StringBuilder(8192);
 		IOConsoleOutputStream stream;
 
 		PendingPartition(IOConsoleOutputStream stream, String text) {
@@ -637,7 +637,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 	void processQueue() {
 		synchronized (overflowLock) {
 			ArrayList<PendingPartition> pendingCopy = new ArrayList<>();
-			StringBuffer buffer = null;
+			StringBuilder buffer = null;
 			boolean consoleClosed = false;
 			synchronized(pendingPartitions) {
 				pendingCopy.addAll(pendingPartitions);
@@ -652,7 +652,7 @@ public class IOConsolePartitioner implements IConsoleDocumentPartitioner, IDocum
 					size+= pp.text.length();
 				}
 			}
-			buffer = new StringBuffer(size);
+			buffer = new StringBuilder(size);
 			for (PendingPartition pp : pendingCopy) {
 				if (pp != consoleClosedPartition) {
 					buffer.append(pp.text);
