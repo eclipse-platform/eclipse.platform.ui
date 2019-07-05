@@ -98,7 +98,7 @@ public class HelpURLConnection extends URLConnection {
 		if (urlFile.startsWith("/")) //$NON-NLS-1$
 			urlFile = urlFile.substring(1);
 
-		int indx = urlFile.indexOf("?"); //$NON-NLS-1$
+		int indx = urlFile.indexOf('?');
 		if (indx != -1) {
 			query = urlFile.substring(indx + 1);
 			urlFile = urlFile.substring(0, indx);
@@ -179,7 +179,7 @@ public class HelpURLConnection extends URLConnection {
 		StringTokenizer stok = new StringTokenizer(query, "&"); //$NON-NLS-1$
 		while (stok.hasMoreTokens()) {
 			String aQuery = stok.nextToken();
-			int equalsPosition = aQuery.indexOf("="); //$NON-NLS-1$
+			int equalsPosition = aQuery.indexOf('=');
 			if (equalsPosition > -1) { // well formed name/value pair
 				String arg = aQuery.substring(0, equalsPosition);
 				String val = aQuery.substring(equalsPosition + 1);
@@ -294,11 +294,11 @@ public class HelpURLConnection extends URLConnection {
 	protected String getFile() {
 		if (file == null) {
 			// Strip the plugin id
-			int start = pluginAndFile.indexOf("/") + 1; //$NON-NLS-1$
+			int start = pluginAndFile.indexOf('/') + 1;
 			// Strip query string or anchor bookmark
-			int end = pluginAndFile.indexOf("?"); //$NON-NLS-1$
+			int end = pluginAndFile.indexOf('?');
 			if (end == -1)
-				end = pluginAndFile.indexOf("#"); //$NON-NLS-1$
+				end = pluginAndFile.indexOf('#');
 			if (end == -1)
 				end = pluginAndFile.length();
 			file = pluginAndFile.substring(start, end);

@@ -67,7 +67,7 @@ public class IntroText extends AbstractBaseIntroElement {
 	public boolean checkIfFormatted() {
 		if (text == null)
 			return false;
-		int i = text.indexOf("<"); //$NON-NLS-1$
+		int i = text.indexOf('<');
 		return i == -1 ? false : true;
 	}
 

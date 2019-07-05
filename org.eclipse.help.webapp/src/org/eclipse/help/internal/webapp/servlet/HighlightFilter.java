@@ -165,7 +165,7 @@ public class HighlightFilter implements IFilter {
 		Collection<String> resultPass1 = new ArrayList<>();
 		for (String word : col) {
 			int index;
-			while ((index = word.indexOf("*")) >= 0) { //$NON-NLS-1$
+			while ((index = word.indexOf('*')) >= 0) {
 				if (index > 0)
 					resultPass1.add(word.substring(0, index));
 				if (word.length() > index)
@@ -179,7 +179,7 @@ public class HighlightFilter implements IFilter {
 		Collection<String> resultPass2 = new ArrayList<>();
 		for (String word : resultPass1) {
 			int index;
-			while ((index = word.indexOf("?")) >= 0) { //$NON-NLS-1$
+			while ((index = word.indexOf('?')) >= 0) {
 				if (index > 0)
 					resultPass2.add(word.substring(0, index));
 				if (word.length() > index)
