@@ -45,7 +45,7 @@ public class BuildFilesResolver implements IDynamicVariableResolver
 		IResourceDelta buildDelta = ExternalToolBuilder.getBuildDelta();
 		if (buildDelta != null)
 		{
-			final StringBuffer fileList = new StringBuffer();
+			final StringBuilder fileList = new StringBuilder();
 			final Set<String> changedResources = new LinkedHashSet<>();
 
 			// Use the argument to determine which deltas to visit - if none,
