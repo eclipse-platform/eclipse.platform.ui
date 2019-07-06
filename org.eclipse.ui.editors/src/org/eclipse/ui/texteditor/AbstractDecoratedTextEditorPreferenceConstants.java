@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -89,6 +89,19 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 	 * </p>
 	 */
 	public final static String EDITOR_SPACES_FOR_TABS= "spacesForTabs"; //$NON-NLS-1$
+
+	/**
+	 * A named preference that specifies if the editor removes multiple spaces on delete/backspace
+	 * key as if they were tabs. Only relevant when {@link #EDITOR_SPACES_FOR_TABS} preference is
+	 * set to <code>true</code>.
+	 * <p>
+	 * Value is of type <code>Boolean</code>. If <code>true</code>, the editor removes multiple
+	 * spaces.
+	 * </p>
+	 * 
+	 * @since 3.13
+	 */
+	public final static String EDITOR_DELETE_SPACES_AS_TABS= "removeSpacesAsTabs"; //$NON-NLS-1$
 
 	/**
 	 * A named preference that holds the size of the editor's undo history.
@@ -706,6 +719,7 @@ public class AbstractDecoratedTextEditorPreferenceConstants {
 
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH, 4);
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS, false);
+		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_DELETE_SPACES_AS_TABS, false);
 
 		store.setDefault(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_UNDO_HISTORY_SIZE, 200);
 

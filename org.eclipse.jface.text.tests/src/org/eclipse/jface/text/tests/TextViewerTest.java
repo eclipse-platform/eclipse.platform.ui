@@ -292,7 +292,7 @@ public class TextViewerTest {
 		postKeyEvent(viewer.getTextWidget(), SWT.HOME, SWT.CTRL, SWT.KeyDown);
 	}
 
-	private static void postKeyEvent(Control widget, int keyCode, int stateMask, int type) {
+	static void postKeyEvent(Control widget, int keyCode, int stateMask, int type) {
 		Display display= widget.getDisplay();
 		widget.setFocus();
 		DisplayHelper.driveEventQueue(display);

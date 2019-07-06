@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
-
 /**
  * Auto edit strategy that converts tabs into spaces.
  * <p>
@@ -26,11 +25,22 @@ package org.eclipse.jface.text;
 public class TabsToSpacesConverter implements IAutoEditStrategy {
 
 	private int fTabRatio;
+
+	private boolean fDeleteSpacesAsTab;
+
 	private ILineTracker fLineTracker;
 
 
 	public void setNumberOfSpacesPerTab(int ratio) {
 		fTabRatio= ratio;
+	}
+
+	/**
+	 * @param enabled if true, spaces deletion will be modified to match tabs behavior
+	 * @since 3.16
+	 */
+	public void setDeleteSpacesAsTab(boolean enabled) {
+		fDeleteSpacesAsTab= enabled;
 	}
 
 	public void setLineTracker(ILineTracker lineTracker) {
@@ -55,8 +65,11 @@ public class TabsToSpacesConverter implements IAutoEditStrategy {
 		if (text == null)
 			return;
 
-		int index= text.indexOf('\t');
-		if (index > -1) {
+		if (text.isEmpty()) {
+
+			replaceDeleteSpaceByDeleteTab(document, command);
+
+		} else if (text.indexOf('\t') > -1) {
 
 			StringBuilder buffer= new StringBuilder();
 
@@ -93,7 +106,38 @@ public class TabsToSpacesConverter implements IAutoEditStrategy {
 				command.text= buffer.toString();
 
 			} catch (BadLocationException x) {
+				throw new IllegalArgumentException("should never happen", x); //$NON-NLS-1$
 			}
+		}
+	}
+
+	private void replaceDeleteSpaceByDeleteTab(IDocument document, DocumentCommand command) {
+		if (!fDeleteSpacesAsTab || fTabRatio == 0 || command.length != 1)
+			return;
+		ITextSelection selection= command.fSelection;
+		if (selection == null || selection.getLength() != 0)
+			return;
+		try {
+			if (document.getChar(command.offset) != ' ')
+				return;
+
+			IRegion line= document.getLineInformationOfOffset(command.offset);
+			int offsetInLine= command.offset - line.getOffset();
+			boolean isDeleteKey= selection.getOffset() == command.offset;
+			if (isDeleteKey) {
+				int spacesToRemove= fTabRatio - (offsetInLine % fTabRatio) - 1;
+				while (spacesToRemove-- > 0 && document.getChar(command.offset + command.length) == ' ') {
+					command.length++;
+				}
+			} else { //backspace
+				int spacesToRemove= offsetInLine % fTabRatio;
+				while (spacesToRemove-- > 0 && document.getChar(command.offset - 1) == ' ') {
+					command.offset--;
+					command.length++;
+				}
+			}
+		} catch (BadLocationException e) {
+			throw new IllegalArgumentException("should never happen", e); //$NON-NLS-1$
 		}
 	}
 }

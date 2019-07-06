@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -138,6 +138,7 @@ final class TextEditorMessages extends NLS {
 	public static String TextEditorDefaultsPreferencePage_carriageReturn;
 	public static String TextEditorDefaultsPreferencePage_transparencyLevel;
 	public static String TextEditorDefaultsPreferencePage_configureWhitespaceCharacterPainterProperties;
+	public static String TextEditorDefaultsPreferencePage_deleteSpacesAsTabs;
 	public static String TextEditorDefaultsPreferencePage_enclosed;
 	public static String TextEditorDefaultsPreferencePage_enrichHoverMode;
 	public static String TextEditorDefaultsPreferencePage_enrichHover_immediately;
