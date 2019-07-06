@@ -55,6 +55,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.viewers.ColumnLabelProvider;
+import org.eclipse.jface.viewers.ColumnViewerEditor;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationEvent;
 import org.eclipse.jface.viewers.ColumnViewerEditorActivationStrategy;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -405,7 +406,10 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 			}
 		};
 
-		TableViewerEditor.create(environmentTable, actSupport, SWT.NONE);
+		int feature = ColumnViewerEditor.TABBING_HORIZONTAL | ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR
+				| ColumnViewerEditor.TABBING_VERTICAL | ColumnViewerEditor.KEYBOARD_ACTIVATION;
+
+		TableViewerEditor.create(environmentTable, actSupport, feature);
 
 		// Setup environment variable name column
 		final TableViewerColumn tcv1 = new TableViewerColumn(environmentTable, SWT.NONE, 0);
@@ -420,12 +424,14 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		tc1.setText(envTableColumnHeaders[0]);
 		tcv1.setEditingSupport(new TextGetSetEditingSupport<>(tcv1.getViewer(), EnvironmentVariable::getName,
 				(EnvironmentVariable envVar, String value) -> {
-					if (value != null && !value.isEmpty()) {
-						if (!value.equals(envVar.getName())) {
-							// Trim environment variable names
-							EnvironmentVariable editedVar = new EnvironmentVariable(value.trim(), envVar.getValue());
-							if (addVariable(editedVar)) {
-								environmentTable.remove(envVar);
+					// Trim environment variable names
+					String newName = value.trim();
+					if (newName != null && !newName.isEmpty()) {
+						if (!newName.equals(envVar.getName())) {
+							if (canRenameVariable(newName)) {
+								envVar.setName(newName);
+								updateAppendReplace();
+								updateLaunchConfigurationDialog();
 							}
 						}
 					}
@@ -444,6 +450,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		tc2.setText(envTableColumnHeaders[1]);
 		tcv2.setEditingSupport(
 				new TextGetSetEditingSupport<>(tcv2.getViewer(), EnvironmentVariable::getValue, (envVar, value) -> {
+					// Don't trim environment variable values
 					envVar.setValue(value);
 					updateAppendReplace();
 					updateLaunchConfigurationDialog();
@@ -563,6 +570,34 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 			addVariable(new EnvironmentVariable(name.trim(), value));
 			updateAppendReplace();
 		}
+	}
+
+	/**
+	 * Returns whether the environment variable can be renamed to the given variable
+	 * name. If the name is already used for another variable, the user decides with
+	 * a dialog whether to overwrite the existing variable
+	 *
+	 * @param newVariableName the chosen name to give to the variable
+	 * @return whether the new name should be used or not
+	 */
+	private boolean canRenameVariable(String newVariableName) {
+		TableItem[] items = environmentTable.getTable().getItems();
+		for (int i = 0; i < items.length; i++) {
+			EnvironmentVariable existingVariable = (EnvironmentVariable) items[i].getData();
+			if (existingVariable.getName().equals(newVariableName)) {
+
+				boolean overWrite = MessageDialog.openQuestion(getShell(),
+						LaunchConfigurationsMessages.EnvironmentTab_12,
+						MessageFormat.format(LaunchConfigurationsMessages.EnvironmentTab_13,
+								new Object[] { newVariableName }));
+				if (!overWrite) {
+					return false;
+				}
+				environmentTable.remove(existingVariable);
+				return true;
+			}
+		}
+		return true;
 	}
 
 	/**
