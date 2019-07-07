@@ -49,6 +49,7 @@ import org.eclipse.e4.ui.tests.workbench.TopoSortTests;
 import org.eclipse.e4.ui.workbench.renderers.swt.StackRendererTest;
 import org.eclipse.e4.ui.workbench.renderers.swt.TabStateHandlerTest;
 import org.eclipse.e4.ui.workbench.renderers.swt.ThemeDefinitionChangedHandlerTest;
+import org.eclipse.e4.ui.workbench.renderers.swt.ToolBarManagerRendererTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -87,6 +88,7 @@ import org.junit.runners.Suite;
 		StackRendererTest.class,
 		TabStateHandlerTest.class,
 		ThemeDefinitionChangedHandlerTest.class,
+		ToolBarManagerRendererTest.class,
 		TopoSortTests.class,
 		ExtensionsSortTests.class,
 		HandlerActivationTest.class,
