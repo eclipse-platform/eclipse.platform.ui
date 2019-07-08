@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 BestSolution.at and others.
+ * Copyright (c) 2010, 2019 BestSolution.at and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -132,9 +132,8 @@ public class StringModelFragment extends AbstractComponentEditor<MStringModelFra
 
 		if (selectedContainer == null) {
 			return Messages.StringModelFragment_Label;
-		} else {
-			return Messages.StringModelFragment_LabelFor + selectedContainer.getName();
 		}
+		return Messages.StringModelFragment_LabelFor + selectedContainer.getName();
 	}
 
 	@Override
