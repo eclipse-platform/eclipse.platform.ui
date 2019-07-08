@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 TwelveTone LLC and others.
+ * Copyright (c) 2014, 2019 TwelveTone LLC and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -23,7 +23,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionEvent;
@@ -50,7 +50,7 @@ public class TableViewerUtil {
 		}
 	}
 
-	static abstract class InvertableSorter extends ViewerSorter {
+	static abstract class InvertableSorter extends ViewerComparator {
 		@Override
 		public abstract int compare(Viewer viewer, Object e1, Object e2);
 
@@ -132,14 +132,14 @@ public class TableViewerUtil {
 		public void chooseColumnForSorting() {
 			viewer.getTable().setSortColumn(column);
 			viewer.getTable().setSortDirection(currentSorter.getSortDirection());
-			viewer.setSorter(currentSorter);
+			viewer.setComparator(currentSorter);
 		}
 
 		@Override
 		public void widgetSelected(SelectionEvent e) {
 			InvertableSorter newSorter;
 			if (viewer.getTable().getSortColumn() == column) {
-				newSorter = ((InvertableSorter) viewer.getSorter()).getInverseSorter();
+				newSorter = ((InvertableSorter) viewer.getComparator()).getInverseSorter();
 			} else {
 				if (keepDirection) {
 					newSorter = currentSorter;
