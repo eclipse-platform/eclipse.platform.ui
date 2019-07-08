@@ -203,7 +203,6 @@ public class StringModelFragment extends AbstractComponentEditor<MStringModelFra
 	 * Element ID. It can be known thanks to the dialog or must be computed from the
 	 * ID value
 	 *
-	 * @return
 	 */
 	public static EClass findContainerType(MStringModelFragment modelFragment) {
 		// we get the StringModelFragment. If not initialized, no search...

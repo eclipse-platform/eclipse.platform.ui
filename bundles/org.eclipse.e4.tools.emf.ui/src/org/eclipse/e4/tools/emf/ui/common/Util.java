@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2017 BestSolution.at and others.
+ * Copyright (c) 2010, 2019 BestSolution.at and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -384,10 +384,10 @@ public class Util {
 	}
 
 	/**
-	 * This method checks if an EReference can be considered in a model fragment
-	 * ie : it must be containment EReference to a model object.
+	 * This method checks if an EReference can be considered in a model fragment ie
+	 * : it must be containment EReference to a model object.
 	 *
-	 * @param c
+	 * @param r
 	 * @return true if the reference is containment and type is not a
 	 *         StringStringToMap or other no editable type
 	 */

@@ -99,20 +99,16 @@ public class TableViewerUtil {
 		/**
 		 * The constructor of this listener.
 		 *
-		 * @param viewer
-		 *            the tableviewer this listener belongs to
-		 * @param column
-		 *            the column this listener is responsible for
-		 * @param sorter
-		 *            the sorter this listener uses
-		 * @param defaultDirection
-		 *            the default sorting direction of this Listener. Possible
-		 *            values are {@link SWT.UP} and {@link SWT.DOWN}
-		 * @param keepDirection
-		 *            if true, the listener will remember the last sorting
-		 *            direction of the associated column and restore it when the
-		 *            column is reselected. If false, the listener will use the
-		 *            default sorting direction
+		 * @param viewer           the tableviewer this listener belongs to
+		 * @param column           the column this listener is responsible for
+		 * @param sorter           the sorter this listener uses
+		 * @param defaultDirection the default sorting direction of this Listener.
+		 *                         Possible values are {@link SWT#UP} and
+		 *                         {@link SWT#DOWN}
+		 * @param keepDirection    if true, the listener will remember the last sorting
+		 *                         direction of the associated column and restore it
+		 *                         when the column is reselected. If false, the listener
+		 *                         will use the default sorting direction
 		 */
 		public TableSortSelectionListener(TableViewer viewer, TableColumn column, AbstractInvertableTableSorter sorter,
 				int defaultDirection, boolean keepDirection) {
