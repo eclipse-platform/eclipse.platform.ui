@@ -64,6 +64,7 @@ import org.eclipse.pde.core.plugin.IPluginBase;
 import org.eclipse.pde.core.plugin.IPluginModelBase;
 import org.eclipse.pde.internal.core.PDECore;
 import org.eclipse.pde.internal.core.TargetPlatformHelper;
+import org.eclipse.pde.internal.core.util.PatternConstructor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -118,7 +119,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 			@Override
 			public void findContribution(Filter filter, ContributionResultHandler handler) {
 
-				final Pattern patternName = Pattern.compile(filter.namePattern, Pattern.CASE_INSENSITIVE);
+				final Pattern patternName = PatternConstructor.createPattern(filter.namePattern, false);
 
 				reloadCache(false, filter.getProviderStatusCallback());
 
@@ -211,6 +212,7 @@ public abstract class TargetPlatformContributionCollector extends ClassContribut
 					}
 				}
 			}
+
 		});
 
 		addModelElementContributor(new IModelElementProvider() {

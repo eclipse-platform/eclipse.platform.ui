@@ -999,7 +999,9 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 			currentSearchThread.cancel();
 			if (bJoin) {
 				try {
-					currentSearchThread.join();
+					if (currentSearchThread != null) {
+						currentSearchThread.join();
+					}
 				} catch (final InterruptedException e) {
 				} finally {
 					currentSearchThread = null;
