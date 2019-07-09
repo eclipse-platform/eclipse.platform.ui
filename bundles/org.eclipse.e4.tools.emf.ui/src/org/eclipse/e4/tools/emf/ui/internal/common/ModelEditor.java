@@ -28,6 +28,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -627,6 +628,7 @@ public class ModelEditor implements IGotoObject {
 			final int noSelected = listOfSelections.size();
 
 			boolean addSeparator = false;
+			// single selection
 			if (!s.isEmpty() && noSelected == 1) {
 				List<Action> actions;
 				if (s.getFirstElement() instanceof VirtualEntry) {
@@ -694,23 +696,32 @@ public class ModelEditor implements IGotoObject {
 						manager.add(menu2);
 					}
 
-					if (o.eContainer() != null) {
-						addSeparator = true;
-						manager.add(new Action(messages.ModelEditor_Delete, ImageDescriptor
-								.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Obj16_cross))) {
-							@Override
-							public void run() {
-								final Command cmd = DeleteCommand.create(modelProvider.getEditingDomain(), o);
-								if (cmd.canExecute()) {
-									modelProvider.getEditingDomain().getCommandStack().execute(cmd);
-								}
-							}
-						});
-					}
 				}
 			}
-			// multi selection
+
+			// single & multi selection
 			if (noSelected > 0) {
+
+				// add delete entry if there are no virtual entries in selection all selected
+				// elements have a container
+				if (listOfSelections.stream().noneMatch(VirtualEntry.class::isInstance)
+						&& listOfSelections.stream().filter(EObject.class::isInstance).map(EObject.class::cast)
+						.map(EObject::eContainer).allMatch(Objects::nonNull)) {
+					addSeparator = true;
+					manager.add(new Action(messages.ModelEditor_Delete, ImageDescriptor
+							.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_Obj16_cross))) {
+						@Override
+						public void run() {
+							final CompoundCommand cmd = new CompoundCommand();
+							EditingDomain editingDomain = modelProvider.getEditingDomain();
+							listOfSelections.forEach(o -> cmd.append(DeleteCommand.create(editingDomain, o)));
+							if (cmd.canExecute() && !cmd.isEmpty()) {
+								editingDomain.getCommandStack().execute(cmd);
+							}
+						}
+					});
+				}
+
 				if (!isModelFragment() && modelExtractor != null) {
 					manager.add(new Action(messages.ModelEditor_ExtractFragment, ImageDescriptor
 							.createFromImage(resourcePool.getImageUnchecked(ResourceProvider.IMG_ModelFragments))) {
@@ -762,6 +773,7 @@ public class ModelEditor implements IGotoObject {
 						}
 					});
 				}
+
 
 			}
 
@@ -2070,7 +2082,7 @@ public class ModelEditor implements IGotoObject {
 			case TAB_FORM:
 				// make sure tree node has been instantiated
 				final ObservableListTreeContentProvider<?> provider = (ObservableListTreeContentProvider<?>) viewer
-						.getContentProvider();
+				.getContentProvider();
 				getFirstMatchingItem(object, provider, provider.getChildren(viewer.getInput()));
 
 				viewer.reveal(object);
