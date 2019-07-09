@@ -176,8 +176,11 @@ public class MinMaxAddon {
 		public void mouseDoubleClick(MouseEvent e) {
 			// only maximize if the primary mouse button was used
 			if (e.button == 1) {
+
+				MUIElement elementToChange = getElementToChange(e);
 				CTabFolder ctf = (CTabFolder) e.widget;
-				if (!ctf.getMaximizeVisible()) {
+
+				if (!getCTFFor(elementToChange).getMaximizeVisible()) {
 					return;
 				}
 
@@ -186,7 +189,6 @@ public class MinMaxAddon {
 					return;
 				}
 
-				MUIElement elementToChange = getElementToChange(e);
 				if (!elementToChange.getTags().contains(MAXIMIZED)) {
 					setState(elementToChange, MAXIMIZED);
 				} else {
