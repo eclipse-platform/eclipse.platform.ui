@@ -235,6 +235,7 @@ public class MenuManagerRendererFilter implements Listener {
 							evalContext, EclipseContextFactory.create()));
 				}
 				if (contrib.getObject() == null) {
+					contrib.setEnabled(false);
 					continue;
 				}
 				MDirectMenuItem item = (MDirectMenuItem) element;
