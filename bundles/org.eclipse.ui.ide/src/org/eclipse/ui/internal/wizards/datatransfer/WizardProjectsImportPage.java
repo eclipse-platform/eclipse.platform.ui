@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2017 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -1619,9 +1619,13 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			saveInHistory(settings, STORE_DIRECTORIES, directoryPathField.getText());
 			saveInHistory(settings, STORE_ARCHIVES, archivePathField.getText());
 
-			settings.put(STORE_NESTED_PROJECTS, nestedProjectsCheckbox.getSelection());
+			if (nestedProjectsCheckbox.isEnabled()) { // only store selection if it was users choice and not enforced
+				settings.put(STORE_NESTED_PROJECTS, nestedProjectsCheckbox.getSelection());
+			}
 
-			settings.put(STORE_COPY_PROJECT_ID, copyCheckbox.getSelection());
+			if (copyCheckbox.isEnabled()) { // only store selection if it was users choice and not enforced
+				settings.put(STORE_COPY_PROJECT_ID, copyCheckbox.getSelection());
+			}
 
 			settings.put(STORE_ARCHIVE_SELECTED, projectFromArchiveRadio
 					.getSelection());
