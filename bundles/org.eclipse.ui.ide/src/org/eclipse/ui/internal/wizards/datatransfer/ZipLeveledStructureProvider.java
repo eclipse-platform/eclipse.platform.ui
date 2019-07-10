@@ -225,13 +225,17 @@ public class ZipLeveledStructureProvider implements
 		}
 		children.put(root, new ArrayList<>());
 		Enumeration<? extends ZipEntry> entries = zipFile.entries();
+
+		if (!canonicalDestinationDirPath.endsWith(File.separator)) {
+			canonicalDestinationDirPath += File.separator;
+		}
+
 		while (entries.hasMoreElements()) {
 			try {
 				ZipEntry entry = entries.nextElement();
 				File destinationfile = new File(zipDestinationDir, entry.getName());
 				String canonicalDestinationFile = destinationfile.getCanonicalPath();
-
-				if (!canonicalDestinationFile.startsWith(canonicalDestinationDirPath + File.separator)) {
+				if (!canonicalDestinationFile.startsWith(canonicalDestinationDirPath)) {
 					invalidEntries.add(entry.getName());
 					throw new IOException("Entry is outside of the target dir: " + entry.getName()); //$NON-NLS-1$
 				}
