@@ -191,6 +191,7 @@ public class ShowViewDialog extends Dialog implements
 	 */
 	private void createFilteredTreeViewer(Composite parent) {
 		PatternFilter filter = new ViewPatternFilter(context);
+		filter.setIncludeLeadingWildcard(true);
 		int styleBits = SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER;
 		filteredTree = new FilteredTree(parent, styleBits, filter);
 		filteredTree.setBackground(parent.getDisplay().getSystemColor(
