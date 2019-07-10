@@ -16,8 +16,6 @@ package org.eclipse.jface.viewers;
 
 import java.util.Objects;
 
-import org.eclipse.jface.util.Util;
-
 /**
  * A simple data structure that is useful for implemented tree models. This can
  * be returned by
@@ -116,7 +114,7 @@ public class TreeNode {
 
 	@Override
 	public int hashCode() {
-		return Util.hashCode(value);
+		return Objects.hashCode(value);
 	}
 
 	/**
