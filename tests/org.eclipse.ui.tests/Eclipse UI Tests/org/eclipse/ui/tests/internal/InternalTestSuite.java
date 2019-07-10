@@ -59,6 +59,7 @@ import org.junit.runners.Suite;
 	WorkbenchSiteProgressServiceModelTagsTest.class,
 //	WorkbenchPageTest.class,
 	SaveablesListTest.class,
-	Bug540297WorkbenchPageFindViewTest.class
+	Bug540297WorkbenchPageFindViewTest.class,
+	Bug549139Test.class,
 })
 public class InternalTestSuite {}

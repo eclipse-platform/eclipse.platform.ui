@@ -22,21 +22,13 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.StructuredSelection;
-import org.eclipse.jface.window.IShellProvider;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
-import org.eclipse.ui.actions.DeleteResourceAction;
 import org.eclipse.ui.actions.TextActionHandler;
-import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.operations.AdvancedValidationUserApprover;
 import org.eclipse.ui.views.navigator.ResourceNavigator;
-
-import junit.framework.TestCase;
 
 /**
  * bug 99858 [IDE] Error upon deleting a project. Tests that our delete code no
@@ -44,7 +36,7 @@ import junit.framework.TestCase;
  *
  * @since 3.2
  */
-public class Bug99858Test extends TestCase {
+public class Bug99858Test extends ResourceActionTest {
 
 	private static final String NAVIGATOR_VIEW = "org.eclipse.ui.views.ResourceNavigator";
 
@@ -83,7 +75,7 @@ public class Bug99858Test extends TestCase {
 		view.setFocus();
 
 		// get a testing version of the delete action, and set it up.
-		MyDeleteResourceAction newDel = new MyDeleteResourceAction(
+		TestDeleteResourceAction newDel = new TestDeleteResourceAction(
 				view.getViewSite());
 		newDel.setEnabled(true);
 		TextActionHandler tmpHandler = new TextActionHandler(view.getViewSite()
@@ -92,7 +84,7 @@ public class Bug99858Test extends TestCase {
 
 		view.getViewSite().getActionBars().updateActionBars();
 
-		chewUpEvents();
+		processUIEvents();
 
 		StructuredSelection s = new StructuredSelection(testProject);
 
@@ -101,7 +93,7 @@ public class Bug99858Test extends TestCase {
 		assertFalse(testProject.isAccessible());
 		view.getViewSite().getSelectionProvider().setSelection(s);
 		newDel.selectionChanged(s);
-		chewUpEvents();
+		processUIEvents();
 
 		IAction del = view.getViewSite().getActionBars()
 				.getGlobalActionHandler(ActionFactory.DELETE.getId());
@@ -111,62 +103,15 @@ public class Bug99858Test extends TestCase {
 		// run the delete event.
 		del.runWithEvent(null);
 
-		chewUpEvents();
+		processUIEvents();
 
 		// the delete even ran
 		assertTrue(newDel.fRan);
 
-		// Join twice as there are two jobs now
-		boolean joined = false;
-		while (!joined) {
-			try {
-				Job.getJobManager().join(IDEWorkbenchMessages.DeleteResourceAction_jobName, null);
-				joined = true;
-			} catch (InterruptedException ex) {
-				// we might be blocking some other thread, spin the event loop
-				// to run syncExecs
-				chewUpEvents();
-				// and now keep trying to join
-			}
-		}
-
-		joined = false;
-		while (!joined) {
-			try {
-				Job.getJobManager().join(IDEWorkbenchMessages.DeleteResourceAction_jobName, null);
-				joined = true;
-			} catch (InterruptedException ex) {
-				// we might be blocking some other thread, spin the event loop
-				// to run syncExecs
-				chewUpEvents();
-				// and now keep trying to join
-			}
-		}
+		joinDeleteResourceActionJobs();
 
 		// if our project still exists, the delete failed.
 		assertFalse(testProject.exists());
-	}
-
-	/**
-	 * Subclass the delete action and go into testing mode, which limits user
-	 * dialogs.
-	 *
-	 * @since 3.2
-	 */
-	private class MyDeleteResourceAction extends DeleteResourceAction {
-
-		public boolean fRan = false;
-
-		public MyDeleteResourceAction(IShellProvider provider) {
-			super(provider);
-			fTestingMode = true;
-		}
-
-		@Override
-		public void run() {
-			super.run();
-			fRan = true;
-		}
 	}
 
 	/**
@@ -187,26 +132,5 @@ public class Bug99858Test extends TestCase {
 		ByteArrayInputStream inputStream = new ByteArrayInputStream(
 				contents.getBytes());
 		textFile.create(inputStream, true, null);
-	}
-
-	/**
-	 * After an internal action, see if there are any outstanding SWT events.
-	 */
-	private void chewUpEvents() {
-		Display display = Display.getCurrent();
-		while (display.readAndDispatch()) {
-		}
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		AdvancedValidationUserApprover.AUTOMATED_MODE = true;
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		AdvancedValidationUserApprover.AUTOMATED_MODE = false;
-		super.tearDown();
 	}
 }
