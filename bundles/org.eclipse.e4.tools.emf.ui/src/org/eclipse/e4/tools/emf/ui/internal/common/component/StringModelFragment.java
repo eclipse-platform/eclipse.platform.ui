@@ -130,10 +130,22 @@ public class StringModelFragment extends AbstractComponentEditor<MStringModelFra
 	@Override
 	public String getLabel(Object element) {
 
-		if (selectedContainer == null) {
-			return Messages.StringModelFragment_Label;
+		MStringModelFragment modelFragment;
+		if (element instanceof MStringModelFragment) {
+			modelFragment = (MStringModelFragment) element;
+		} else {
+			modelFragment = getStringModelFragment();
 		}
-		return Messages.StringModelFragment_LabelFor + selectedContainer.getName();
+
+		EClass container = findContainerType(modelFragment);
+		String result;
+		if (container == null) {
+			result = Messages.StringModelFragment_Label;
+		} else {
+			result = Messages.StringModelFragment_LabelFor + container.getName();
+		}
+
+		return result;
 	}
 
 	@Override
