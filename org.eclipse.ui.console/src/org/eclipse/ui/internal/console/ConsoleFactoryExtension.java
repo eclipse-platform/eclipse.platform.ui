@@ -13,23 +13,18 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.console;
 
-import java.net.URL;
-
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.ExpressionTagNames;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsoleFactory;
-import org.osgi.framework.Bundle;
 
 /**
  * @since 3.1
@@ -108,11 +103,8 @@ public class ConsoleFactoryExtension implements IPluginContribution {
 		if (fImageDescriptor == null) {
 			String path = fConfig.getAttribute("icon"); //$NON-NLS-1$
 			if (path != null) {
-				Bundle bundle = Platform.getBundle(getPluginId());
-				URL url = FileLocator.find(bundle, new Path(path), null);
-				if (url != null) {
-					fImageDescriptor =  ImageDescriptor.createFromURL(url);
-				}
+				fImageDescriptor = ResourceLocator.imageDescriptorFromBundle(fConfig.getNamespaceIdentifier(), path)
+						.orElse(null);
 			}
 		}
 		return fImageDescriptor;
