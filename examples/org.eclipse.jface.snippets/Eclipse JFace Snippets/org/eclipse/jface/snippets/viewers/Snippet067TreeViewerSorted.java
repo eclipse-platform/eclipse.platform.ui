@@ -145,6 +145,8 @@ public class Snippet067TreeViewerSorted {
 					v.setLabelProvider(new MyLabelProvider());
 				}
 				v.update(v, null);
+				shell.layout(true, true);
+
 			}
 		});
 
@@ -161,9 +163,9 @@ public class Snippet067TreeViewerSorted {
 		legendComposite.setLayout(new FillLayout());
 		legendV.setLabelProvider(new LegendLabelProvider());
 		legendV.setContentProvider(ArrayContentProvider.getInstance());
-		final String[] test_input = { "Population > 1,000,000", "Population > 500,000", "Population > 250,000",
+		final String[] legendCategories = { "Population > 1,000,000", "Population > 500,000", "Population > 250,000",
 				"Population > 50,000", "Population > 25,000", "Population > 5000", "Population <= 5000" };
-		legendV.setInput(test_input);
+		legendV.setInput(legendCategories);
 		legendV.update(legendV, null);
 
 		// Legend label
