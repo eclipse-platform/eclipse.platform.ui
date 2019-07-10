@@ -33,6 +33,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -143,6 +144,8 @@ public class SmartImportWizard extends Wizard implements IImportWizard {
 		}
 	}
 
+	private static final String SMART_IMPORT_SECTION_NAME = SmartImportWizard.class.getSimpleName();
+
 	private File initialSelection;
 	private Set<IWorkingSet> initialWorkingSets = new HashSet<>();
 	private SmartImportRootWizardPage projectRootPage;
@@ -161,7 +164,8 @@ public class SmartImportWizard extends Wizard implements IImportWizard {
 		setForcePreviousAndNextButtons(true);
 		IDialogSettings dialogSettings = getDialogSettings();
 		if (dialogSettings == null) {
-			dialogSettings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
+			dialogSettings = DialogSettings.getOrCreateSection(IDEWorkbenchPlugin.getDefault().getDialogSettings(),
+					SMART_IMPORT_SECTION_NAME);
 			setDialogSettings(dialogSettings);
 		}
 		setWindowTitle(DataTransferMessages.SmartImportWizardPage_importProjectsInFolderTitle);
