@@ -318,11 +318,16 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 
 	// dialog store id constants
 	private static final String STORE_DIRECTORIES = "WizardProjectsImportPage.STORE_DIRECTORIES";//$NON-NLS-1$
+
 	private static final String STORE_ARCHIVES = "WizardProjectsImportPage.STORE_ARCHIVES";//$NON-NLS-1$
 
 	private static final String STORE_NESTED_PROJECTS = "WizardProjectsImportPage.STORE_NESTED_PROJECTS"; //$NON-NLS-1$
 
 	private static final String STORE_COPY_PROJECT_ID = "WizardProjectsImportPage.STORE_COPY_PROJECT_ID"; //$NON-NLS-1$
+
+	private static final String STORE_CLOSE_CREATED_PROJECTS_ID = "WizardProjectsImportPage.STORE_CLOSE_CREATED_PROJECTS_ID"; //$NON-NLS-1$
+
+	private static final String STORE_HIDE_CONFLICTING_PROJECTS_ID = "WizardProjectsImportPage.STORE_HIDE_CONFLICTING_PROJECTS_ID"; //$NON-NLS-1$
 
 	private static final String STORE_ARCHIVE_SELECTED = "WizardProjectsImportPage.STORE_ARCHIVE_SELECTED"; //$NON-NLS-1$
 
@@ -338,7 +343,13 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 
 	private boolean copyFiles = false;
 
+	private Button closeProjectsCheckbox;
+
 	private boolean closeProjectsAfterImport = false;
+
+	private Button hideConflictingProjectsCheckbox;
+
+	private boolean hideConflictingProjects = false;
 
 	private ProjectRecord[] selectedProjects = new ProjectRecord[0];
 
@@ -374,9 +385,9 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 
 	private IStructuredSelection currentSelection;
 
-	private Button hideConflictingProjects;
 
 	private ConflictingProjectFilter conflictingProjectsFilter = new ConflictingProjectFilter();
+
 
 	/**
 	 * Creates a new project creation wizard page.
@@ -490,28 +501,26 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			}
 		});
 
-		Button closeProjectsCheckbox = new Button(optionsGroup, SWT.CHECK);
+		closeProjectsCheckbox = new Button(optionsGroup, SWT.CHECK);
 		closeProjectsCheckbox.setText(DataTransferMessages.WizardProjectsImportPage_closeProjectsAfterImport);
 		closeProjectsCheckbox.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		closeProjectsCheckbox.setSelection(closeProjectsAfterImport);
 		closeProjectsCheckbox.addSelectionListener(
 				SelectionListener.widgetSelectedAdapter(e -> closeProjectsAfterImport = closeProjectsCheckbox.getSelection()));
 
-		hideConflictingProjects = new Button(optionsGroup, SWT.CHECK);
-		hideConflictingProjects
+		hideConflictingProjectsCheckbox = new Button(optionsGroup, SWT.CHECK);
+		hideConflictingProjectsCheckbox
 				.setText(DataTransferMessages.WizardProjectsImportPage_hideExistingProjects);
-		hideConflictingProjects.setLayoutData(new GridData(
+		hideConflictingProjectsCheckbox.setLayoutData(new GridData(
 				GridData.FILL_HORIZONTAL));
-		hideConflictingProjects.addSelectionListener(new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				projectsList.removeFilter(conflictingProjectsFilter);
-				if (hideConflictingProjects.getSelection()) {
-					projectsList.addFilter(conflictingProjectsFilter);
-				}
+		hideConflictingProjectsCheckbox.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			hideConflictingProjects = hideConflictingProjectsCheckbox.getSelection();
+			projectsList.removeFilter(conflictingProjectsFilter);
+			if (hideConflictingProjectsCheckbox.getSelection()) {
+				projectsList.addFilter(conflictingProjectsFilter);
 			}
-		});
-		Dialog.applyDialogFont(hideConflictingProjects);
+		}));
+		Dialog.applyDialogFont(hideConflictingProjectsCheckbox);
 	}
 
 	/**
@@ -785,12 +794,20 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			browseDirectoriesButton.setEnabled(false);
 			archivePathField.setEnabled(true);
 			browseArchivesButton.setEnabled(true);
+
+			// if there are available selections in the combo-box, select latest entry
+			if (archivePathField.getItemCount() > 0 && archivePathField.getText().isEmpty()) {
+				archivePathField.setText(archivePathField.getItem(0));
+			}
+
 			updateProjectsList(archivePathField.getText());
 			archivePathField.setFocus();
 			nestedProjectsCheckbox.setSelection(true);
 			nestedProjectsCheckbox.setEnabled(false);
 			copyCheckbox.setSelection(true);
 			copyCheckbox.setEnabled(false);
+			closeProjectsCheckbox.setSelection(closeProjectsAfterImport);
+			hideConflictingProjectsCheckbox.setSelection(hideConflictingProjects);
 		}
 	}
 
@@ -800,12 +817,19 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			browseDirectoriesButton.setEnabled(true);
 			archivePathField.setEnabled(false);
 			browseArchivesButton.setEnabled(false);
+
+			if (directoryPathField.getItemCount() > 0 && directoryPathField.getText().isEmpty()) {
+				directoryPathField.setText(directoryPathField.getItem(0));
+			}
+
 			updateProjectsList(directoryPathField.getText());
 			directoryPathField.setFocus();
 			nestedProjectsCheckbox.setEnabled(true);
 			nestedProjectsCheckbox.setSelection(nestedProjects);
 			copyCheckbox.setEnabled(true);
 			copyCheckbox.setSelection(copyFiles);
+			closeProjectsCheckbox.setSelection(closeProjectsAfterImport);
+			hideConflictingProjectsCheckbox.setSelection(hideConflictingProjects);
 		}
 	}
 
@@ -860,7 +884,6 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 								DataTransferMessages.WizardProjectsImportPage_SearchingMessage,
 								100);
 				selectedProjects = new ProjectRecord[0];
-				Collection files = new ArrayList();
 				monitor.worked(10);
 				if (!dirSelected
 						&& ArchiveFileManipulations.isTarFile(path)) {
@@ -873,18 +896,19 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 							sourceTarFile);
 					Object child1 = structureProvider.getRoot();
 
+					Collection<ProjectRecord> files = new ArrayList<>();
 					if (!collectProjectFilesFromProvider(files, child1, 0,
 							monitor)) {
 						return;
 					}
-					Iterator filesIterator1 = files.iterator();
+					Iterator<ProjectRecord> filesIterator1 = files.iterator();
 					selectedProjects = new ProjectRecord[files.size()];
 					int index1 = 0;
 					monitor.worked(50);
 					monitor
 							.subTask(DataTransferMessages.WizardProjectsImportPage_ProcessingMessage);
 					while (filesIterator1.hasNext()) {
-						selectedProjects[index1++] = (ProjectRecord) filesIterator1
+						selectedProjects[index1++] = filesIterator1
 								.next();
 					}
 				} else if (!dirSelected
@@ -897,36 +921,39 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 							sourceFile);
 					Object child2 = structureProvider.getRoot();
 
+					Collection<ProjectRecord> files = new ArrayList<>();
 					if (!collectProjectFilesFromProvider(files, child2, 0,
 							monitor)) {
 						return;
 					}
-					Iterator filesIterator2 = files.iterator();
+
+					Iterator<ProjectRecord> filesIterator2 = files.iterator();
 					selectedProjects = new ProjectRecord[files.size()];
 					int index2 = 0;
 					monitor.worked(50);
 					monitor
 							.subTask(DataTransferMessages.WizardProjectsImportPage_ProcessingMessage);
 					while (filesIterator2.hasNext()) {
-						selectedProjects[index2++] = (ProjectRecord) filesIterator2
+						selectedProjects[index2++] = filesIterator2
 								.next();
 					}
 				}
 
 				else if (dirSelected && directory.isDirectory()) {
 
+					Collection<File> files = new ArrayList<>();
 					if (!collectProjectFilesFromDirectory(files, directory,
 							null, nestedProjects, monitor)) {
 						return;
 					}
-					Iterator filesIterator3 = files.iterator();
+					Iterator<File> filesIterator3 = files.iterator();
 					selectedProjects = new ProjectRecord[files.size()];
 					int index3 = 0;
 					monitor.worked(50);
 					monitor
 							.subTask(DataTransferMessages.WizardProjectsImportPage_ProcessingMessage);
 					while (filesIterator3.hasNext()) {
-						File file = (File) filesIterator3.next();
+						File file = filesIterator3.next();
 						selectedProjects[index3] = new ProjectRecord(file);
 						index3++;
 					}
@@ -1111,11 +1138,11 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 		monitor.subTask(NLS.bind(
 				DataTransferMessages.WizardProjectsImportPage_CheckingMessage,
 				structureProvider.getLabel(entry)));
-		List children = structureProvider.getChildren(entry);
+		List<?> children = structureProvider.getChildren(entry);
 		if (children == null) {
-			children = new ArrayList(1);
+			children = new ArrayList<>(1);
 		}
-		Iterator childrenEnum = children.iterator();
+		Iterator<?> childrenEnum = children.iterator();
 		while (childrenEnum.hasNext()) {
 			Object child = childrenEnum.next();
 			if (structureProvider.isFolder(child)) {
@@ -1309,7 +1336,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 		}
 		if (record.projectArchiveFile != null) {
 			// import from archive
-			List fileSystemObjects = structureProvider
+			List<?> fileSystemObjects = structureProvider
 					.getChildren(record.parent);
 			structureProvider.setStrip(record.level);
 			ImportOperation operation = new ImportOperation(project
@@ -1516,6 +1543,17 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			// checkbox
 			copyFiles = settings.getBoolean(STORE_COPY_PROJECT_ID);
 			copyCheckbox.setSelection(copyFiles);
+
+			// checkbox
+			closeProjectsAfterImport = settings.getBoolean(STORE_CLOSE_CREATED_PROJECTS_ID);
+			closeProjectsCheckbox.setSelection(closeProjectsAfterImport);
+
+			// checkbox
+			hideConflictingProjects = settings.getBoolean(STORE_HIDE_CONFLICTING_PROJECTS_ID);
+			hideConflictingProjectsCheckbox.setSelection(hideConflictingProjects);
+			// trigger a selection event for the button to make sure the filter is set
+			// properly at page creation
+			hideConflictingProjectsCheckbox.notifyListeners(SWT.Selection, new Event());
 		}
 
 		// Second, check to see if we don't have an initial path,
@@ -1587,6 +1625,10 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 
 			settings.put(STORE_ARCHIVE_SELECTED, projectFromArchiveRadio
 					.getSelection());
+
+			settings.put(STORE_CLOSE_CREATED_PROJECTS_ID, closeProjectsCheckbox.getSelection());
+
+			settings.put(STORE_HIDE_CONFLICTING_PROJECTS_ID, hideConflictingProjectsCheckbox.getSelection());
 		}
 	}
 
