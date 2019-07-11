@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.jface" version="2">
+    <resource path="src/org/eclipse/jface/viewers/ColumnViewerEditor.java" type="org.eclipse.jface.viewers.ColumnViewerEditor">
+        <filter comment="Highly unlikely that TABBING_CYCLE_IN_VIEWER is already implemented by clients." id="336658481">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.ColumnViewerEditor"/>
+                <message_argument value="TABBING_CYCLE_IN_VIEWER"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

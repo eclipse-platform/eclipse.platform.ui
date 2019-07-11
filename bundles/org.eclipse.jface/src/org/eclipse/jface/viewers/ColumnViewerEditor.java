@@ -13,6 +13,7 @@
  *     Tom Schindl <tom.schindl@bestsolution.at> - refactoring (bug 153993)
  *     											   fix in bug: 151295,178946,166500,195908,201906,207676,180504,216706,218336
  *     Tony Juckel -  Bug 130854 - JFace TableViewer ignoring ICellEditor validator state
+ *     Andrew Obuchowicz <aobuchow@redhat.com> - Bug 549194: Add TABBING_CYCLE_IN_VIEWER
  *******************************************************************************/
 
 package org.eclipse.jface.viewers;
@@ -102,22 +103,31 @@ public abstract class ColumnViewerEditor {
 	 */
 	public static final int KEEP_EDITOR_ON_DOUBLE_CLICK = 1 << 6;
 
+	/**
+	 * Should if the end of the viewer is reached, start from the first element in
+	 * the viewer (conversely, hitting shift-tab in the first element of the viewer
+	 * results in jumping to the last element of the viewer)
+	 *
+	 * @since 3.17
+	 */
+	public static final int TABBING_CYCLE_IN_VIEWER = 1 << 7;
+
+
 	private int feature;
 
 	/**
-	 * @param viewer
-	 *            the viewer this editor is attached to
-	 * @param editorActivationStrategy
-	 *            the strategy used to decide about editor activation
-	 * @param feature
-	 *            bit mask controlling the editor
-	 *            <ul>
-	 *            <li>{@link ColumnViewerEditor#DEFAULT}</li>
-	 *            <li>{@link ColumnViewerEditor#TABBING_CYCLE_IN_ROW}</li>
-	 *            <li>{@link ColumnViewerEditor#TABBING_HORIZONTAL}</li>
-	 *            <li>{@link ColumnViewerEditor#TABBING_MOVE_TO_ROW_NEIGHBOR}</li>
-	 *            <li>{@link ColumnViewerEditor#TABBING_VERTICAL}</li>
-	 *            </ul>
+	 * @param viewer                   the viewer this editor is attached to
+	 * @param editorActivationStrategy the strategy used to decide about editor
+	 *                                 activation
+	 * @param feature                  bit mask controlling the editor
+	 *                                 <ul>
+	 *                                 <li>{@link ColumnViewerEditor#DEFAULT}</li>
+	 *                                 <li>{@link ColumnViewerEditor#TABBING_CYCLE_IN_ROW}</li>
+	 *                                 <li>{@link ColumnViewerEditor#TABBING_HORIZONTAL}</li>
+	 *                                 <li>{@link ColumnViewerEditor#TABBING_MOVE_TO_ROW_NEIGHBOR}</li>
+	 *                                 <li>{@link ColumnViewerEditor#TABBING_VERTICAL}</li>
+	 *                                 <li>{@link ColumnViewerEditor#TABBING_CYCLE_IN_VIEWER}</li>
+	 *                                 </ul>
 	 */
 	protected ColumnViewerEditor(final ColumnViewer viewer,
 			ColumnViewerEditorActivationStrategy editorActivationStrategy,
@@ -614,10 +624,18 @@ public abstract class ColumnViewerEditor {
 							viewer);
 				}
 			}
+			if ((feature & TABBING_CYCLE_IN_VIEWER) == TABBING_CYCLE_IN_VIEWER) {
+				ViewerRow rowAbove = row.getNeighbor(ViewerRow.ABOVE, false);
+				if (rowAbove == null) {
+					return getLastCell(row);
+				}
+
+			}
 		}
 
 		return rv;
 	}
+
 
 	private ViewerCell searchNextCell(ViewerRow row, ViewerCell currentCell,
 			ViewerCell originalCell, ColumnViewer viewer) {
@@ -651,20 +669,72 @@ public abstract class ColumnViewerEditor {
 					rv = searchNextCell(rowBelow, null, originalCell, viewer);
 				}
 			}
+			if ((feature & TABBING_CYCLE_IN_VIEWER) == TABBING_CYCLE_IN_VIEWER) {
+				ViewerRow rowBelow = row.getNeighbor(ViewerRow.BELOW, false);
+				if (rowBelow == null) {
+					return getFirstCell(row);
+				}
+
+
+			}
 		}
 
 		return rv;
 	}
 
 	/**
+	 * Searches for the top-left-most cell and returns it
+	 *
+	 * @param row Row to search from
+	 * @return Top-left-most cell in the viewer
+	 *
+	 *
+	 */
+	private ViewerCell getFirstCell(ViewerRow row) {
+		ViewerRow rowAbove = row.getNeighbor(ViewerRow.ABOVE, false);
+		ViewerRow topMostRow = rowAbove;
+		if (rowAbove == null) {
+			// Already on the top most-row, return left-most cell
+			return row.getCell(row.getCreationIndex(0));
+		}
+		while (rowAbove != null) {
+			topMostRow = rowAbove;
+			rowAbove = rowAbove.getNeighbor(ViewerRow.ABOVE, false);
+		}
+
+		return topMostRow.getCell(row.getCreationIndex(0));
+	}
+
+	/**
+	 * Searches for the bottom-right-most cell and returns it
+	 *
+	 * @param row Row to search from
+	 * @return bottom-right-most cell in the viewer
+	 *
+	 *
+	 */
+	private ViewerCell getLastCell(ViewerRow row) {
+		ViewerRow rowBelow = row.getNeighbor(ViewerRow.BELOW, false);
+		ViewerRow bottomMostRow = rowBelow;
+		if (rowBelow == null) {
+			// Already on the bottom most-row, return right-most cell
+			return row.getCell(row.getCreationIndex(row.getColumnCount() - 1));
+		}
+		while (rowBelow != null) {
+			bottomMostRow = rowBelow;
+			rowBelow = rowBelow.getNeighbor(ViewerRow.BELOW, false);
+		}
+
+		return bottomMostRow.getCell(row.getCreationIndex(bottomMostRow.getColumnCount() - 1));
+	}
+
+
+	/**
 	 * Position the editor inside the control
 	 *
-	 * @param w
-	 *            the editor control
-	 * @param item
-	 *            the item (row) in which the editor is drawn in
-	 * @param fColumnNumber
-	 *            the column number in which the editor is shown
+	 * @param w             the editor control
+	 * @param item          the item (row) in which the editor is drawn in
+	 * @param fColumnNumber the column number in which the editor is shown
 	 */
 	protected abstract void setEditor(Control w, Item item, int fColumnNumber);
 
