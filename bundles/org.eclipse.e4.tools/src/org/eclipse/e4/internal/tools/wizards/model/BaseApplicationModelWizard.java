@@ -364,6 +364,8 @@ public abstract class BaseApplicationModelWizard extends Wizard implements INewW
 				.createElement(extPointFragmentRegister);
 		element.setName(FRAGMENT);
 		element.setAttribute("uri", file.getName()); //$NON-NLS-1$
+		// Bug 538922 set default value of apply to always
+		element.setAttribute("apply", "always"); //$NON-NLS-1$ //$NON-NLS-2$
 		extPointFragmentRegister.setId(project.getName() + "." + FRAGMENT); //$NON-NLS-1$
 		extPointFragmentRegister.setPoint(WORKBENCH_MODEL_EP_ID);
 		extPointFragmentRegister.add(element);
