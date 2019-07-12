@@ -19,7 +19,6 @@ import org.junit.Test;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Shell;
 
@@ -84,10 +83,10 @@ public class AnnotationOnTabTest {
 			}
 		}.waitForCondition(textWidget.getDisplay(), 2000));
 		DisplayHelper.sleep(textWidget.getDisplay(), 1000);
-		int referenceIndex = textWidget.getText().indexOf("reference");
-		Rectangle referenceBounds = textWidget.getTextBounds(referenceIndex, referenceIndex);
-		Rectangle annotatedCharactedBounds = textWidget.getTextBounds(annotationIndex, annotationIndex);
 		// XXX disabled due bug 549110
-		// Assert.assertTrue("Annotation didn't shift target character to the right, it most likely replaced the tab instead of expanding it", referenceBounds.x < annotatedCharactedBounds.x);
+//		int referenceIndex = textWidget.getText().indexOf("reference");
+//		Rectangle referenceBounds = textWidget.getTextBounds(referenceIndex, referenceIndex);
+//		Rectangle annotatedCharactedBounds = textWidget.getTextBounds(annotationIndex, annotationIndex);
+//		Assert.assertTrue("Annotation didn't shift target character to the right, it most likely replaced the tab instead of expanding it", referenceBounds.x < annotatedCharactedBounds.x);
 	}
 }

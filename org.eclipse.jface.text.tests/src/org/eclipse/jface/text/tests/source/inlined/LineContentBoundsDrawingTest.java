@@ -26,7 +26,6 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Shell;
 
@@ -141,11 +140,11 @@ public class LineContentBoundsDrawingTest {
 			}
 		}.waitForCondition(textWidget.getDisplay(), 2000));
 		DisplayHelper.sleep(textWidget.getDisplay(), 1000);
-		Rectangle textBounds= textWidget.getTextBounds(0, textWidget.getText().length() - 1);
-		int supposedMostRightPaintedPixel = textBounds.x + textBounds.width - 1;
-		int mostRightPaintedPixel= getMostRightPaintedPixel(textWidget);
 		// XXX disabled due bug 549110
-		// Assert.assertEquals(supposedMostRightPaintedPixel, mostRightPaintedPixel, 1.5); // use double comparison with delta to tolerate variation from a system to the other
+//		Rectangle textBounds= textWidget.getTextBounds(0, textWidget.getText().length() - 1);
+//		int supposedMostRightPaintedPixel = textBounds.x + textBounds.width - 1;
+//		int mostRightPaintedPixel= getMostRightPaintedPixel(textWidget);
+//		Assert.assertEquals(supposedMostRightPaintedPixel, mostRightPaintedPixel, 1.5); // use double comparison with delta to tolerate variation from a system to the other
 	}
 
 	public int getMostRightPaintedPixel(StyledText widget) {
