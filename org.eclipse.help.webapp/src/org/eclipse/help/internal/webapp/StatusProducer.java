@@ -308,7 +308,6 @@ public class StatusProducer implements IHelpContentProducer {
 			pageBuffer.append(tab(3)+ "</p>\n"); //$NON-NLS-1$
 		}	else {
 			pageBuffer.append(tab(3)+"<br/><p>\n"); //$NON-NLS-1$
-			//pageBuffer.append("<img src=\"PLUGINS_ROOT/org.eclipse.help/command_link.png\"/>");  //$NON-NLS-1$
 			pageBuffer.append("<a class=\"command-link\""  //$NON-NLS-1$
 				+ " href='javascript:executeCommand(\"org.eclipse.help.ui.ignoreMissingPlaceholders\")'>" //$NON-NLS-1$
 				+  WebappResources.getString("ignoreMissingBooks", locale)+"</a>"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -379,7 +378,7 @@ public class StatusProducer implements IHelpContentProducer {
 	 */
 	private String getActiveLink(Locale locale)
 	{
-		return "<img src=\"PLUGINS_ROOT/org.eclipse.help/command_link.png\"/>"  //$NON-NLS-1$
+		return "<img src=\"PLUGINS_ROOT/org.eclipse.help/command_link.svg\"/>"  //$NON-NLS-1$
 			+ "<a class=\"command-link\""  //$NON-NLS-1$
 			+ " href='javascript:executeCommand(\"org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.help.ui.contentPreferencePage)\")'>" //$NON-NLS-1$
 			+ WebappResources.getString("remotePreferencesMenuSelect", locale)+"</a>"; //$NON-NLS-1$ //$NON-NLS-2$
