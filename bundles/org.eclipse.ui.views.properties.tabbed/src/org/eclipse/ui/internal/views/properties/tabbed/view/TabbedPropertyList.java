@@ -69,7 +69,7 @@ public class TabbedPropertyList
 
 	private boolean focus = false;
 
-	private ListElement[] elements;
+	private ListElement[] elements = ELEMENTS_EMPTY;
 
 	/**
 	 * This map specifies the number of dynamic images for a tab. It has a
@@ -710,10 +710,8 @@ public class TabbedPropertyList
 	 * Removes all elements from this list.
 	 */
 	public void removeAll() {
-		if (elements != null) {
-			for (ListElement element : elements) {
-				element.dispose();
-			}
+		for (ListElement element : elements) {
+			element.dispose();
 		}
 		elements = ELEMENTS_EMPTY;
 		selectedElementIndex = NONE;
