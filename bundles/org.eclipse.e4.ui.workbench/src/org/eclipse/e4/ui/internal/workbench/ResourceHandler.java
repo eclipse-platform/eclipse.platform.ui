@@ -25,6 +25,7 @@ import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.PostConstruct;
 import javax.inject.Inject;
@@ -210,8 +211,11 @@ public class ResourceHandler implements IModelResourceHandler {
 
 	@Override
 	public void save() throws IOException {
-		if (saveAndRestore)
-			resource.save(null);
+		if (saveAndRestore) {
+			Map<String, Object> options = new HashMap<>();
+			options.put(E4XMIResource.OPTION_FILTER_PERSIST_STATE, Boolean.TRUE);
+			resource.save(options);
+		}
 	}
 
 	/**

@@ -37,6 +37,8 @@ import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 
 public class E4XMIResource extends XMIResourceImpl {
 
+	public static final String OPTION_FILTER_PERSIST_STATE = "E4_FILTER_PERSISTED_STATE"; //$NON-NLS-1$
+
 	private Map<EObject, String> objectMap = new WeakHashMap<>();
 	private Set<String> knownIds = new HashSet<>();
 
@@ -166,11 +168,12 @@ public class E4XMIResource extends XMIResourceImpl {
 
 	/*
 	 * Create custom XML save to allow filtering of volatile UI elements.
-	 *
-	 * @generated NOT
 	 */
 	@Override
-	protected XMLSave createXMLSave() {
-		return new E4XMISave(createXMLHelper());
+	protected XMLSave createXMLSave(Map<?, ?> options) {
+		if (options != null && Boolean.TRUE.equals(options.get(OPTION_FILTER_PERSIST_STATE))) {
+			return new E4XMISave(createXMLHelper());
+		}
+		return super.createXMLSave(options);
 	}
 }

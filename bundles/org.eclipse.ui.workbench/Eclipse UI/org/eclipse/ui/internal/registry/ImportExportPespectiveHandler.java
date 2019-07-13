@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -32,6 +33,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
+import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResourceFactory;
 import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -235,7 +237,9 @@ public class ImportExportPespectiveHandler {
 		resource.getContents().add((EObject) persp);
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		try {
-			resource.save(output, null);
+			Map<String, Object> options = new HashMap<>();
+			options.put(E4XMIResource.OPTION_FILTER_PERSIST_STATE, Boolean.TRUE);
+			resource.save(output, options);
 		} finally {
 			try {
 				output.close();

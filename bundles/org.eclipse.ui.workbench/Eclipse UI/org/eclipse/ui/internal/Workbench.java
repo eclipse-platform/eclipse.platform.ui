@@ -85,6 +85,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
+import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.IUpdateService;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.internal.workbench.swt.IEventLoopAdvisor;
@@ -1269,7 +1270,9 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 				cleanUpCopy(appCopy, e4Context);
 				try {
 					if (!detectWorkbenchCorruption((MApplication) res.getContents().get(0))) {
-						res.save(null);
+						Map<String, Object> options = new HashMap<>();
+						options.put(E4XMIResource.OPTION_FILTER_PERSIST_STATE, Boolean.TRUE);
+						res.save(options);
 					}
 				} catch (IOException e) {
 					// Just auto-save, we don't really care
