@@ -25,19 +25,21 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer;
 import org.eclipse.e4.ui.workbench.swt.internal.copy.SearchPattern;
+import org.eclipse.jface.text.contentassist.BoldStylerProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
+import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.dialogs.StyledStringHighlighter;
 import org.eclipse.ui.themes.ITheme;
 
 /**
@@ -137,15 +139,20 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 					String text = getWorkbenchPartReferenceText(ref);
 					cell.setText(text);
 					cell.setImage(ref.getTitleImage());
-					// get the model to define the style
-					MPart model = ref.getModel();
-					// build the style range
-					StyleRange style = new StyleRange();
-					style.start = 0;
-					style.length = cell.getText().length();
-					// if hidden use the bold font, if active italic
-					style.font = getFont(isHiddenEditor(model), isActiveEditor(model));
-					cell.setStyleRanges(new StyleRange[] { style });
+
+					SearchPattern matcher = WorkbookEditorsHandler.this.getMatcher();
+					if (matcher == null) {
+						cell.setStyleRanges(null);
+					} else {
+						String pattern = matcher.getPattern();
+						StyledStringHighlighter ssh = new StyledStringHighlighter();
+						StyledString ss = ssh.highlight(text, pattern,
+								new BoldStylerProvider(WorkbookEditorsHandler.this.getFont(false, true))
+										.getBoldStyler());
+						cell.setStyleRanges(ss.getStyleRanges());
+					}
+
+					cell.getControl().redraw();
 				}
 			}
 
