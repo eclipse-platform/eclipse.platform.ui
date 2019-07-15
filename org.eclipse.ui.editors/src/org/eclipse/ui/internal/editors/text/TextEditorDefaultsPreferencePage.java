@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer (Wind River Systems) - https://bugs.eclipse.org/bugs/show_bug.cgi?id=22712
+ *     Andrew Obuchowicz <aobuchow@redhat.com> - Bug 548168 Add color preview to table
  *******************************************************************************/
 package org.eclipse.ui.internal.editors.text;
 
@@ -18,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -25,6 +27,9 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.GC;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -35,9 +40,10 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Link;
-import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Spinner;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.core.runtime.Assert;
@@ -48,12 +54,19 @@ import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.layout.PixelConverter;
+import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.preference.ColorSelector;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.StringConverter;
+import org.eclipse.jface.viewers.ArrayContentProvider;
+import org.eclipse.jface.viewers.ColumnWeightData;
+import org.eclipse.jface.viewers.LabelProvider;
+import org.eclipse.jface.viewers.SelectionChangedEvent;
+import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TableViewer;
 
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -642,21 +655,34 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		}
 	}
 
-	private final String[][] fAppearanceColorListModel= new String[][] {
-		{TextEditorMessages.TextEditorPreferencePage_lineNumberForegroundColor, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, null},
-		{TextEditorMessages.TextEditorPreferencePage_currentLineHighlighColor, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, null},
-		{TextEditorMessages.TextEditorPreferencePage_printMarginColor, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, null},
-		{TextEditorMessages.TextEditorPreferencePage_findScopeColor, AbstractTextEditor.PREFERENCE_COLOR_FIND_SCOPE, null},
-		{TextEditorMessages.TextEditorPreferencePage_selectionForegroundColor, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR},
-		{TextEditorMessages.TextEditorPreferencePage_selectionBackgroundColor, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR},
-		{TextEditorMessages.TextEditorPreferencePage_backgroundColor, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT},
-		{TextEditorMessages.TextEditorPreferencePage_foregroundColor, AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND, AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT},
-		{TextEditorMessages.HyperlinkColor_label, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_COLOR, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_COLOR_SYSTEM_DEFAULT},
-	};
+	private class ColorEntry {
+		public final String colorKey;
+		public final String label;
+		public RGB previousColor;
+		public final String isSystemDefaultKey;
+		public ColorEntry(String colorKey, String label, String isSystemDefaultKey) {
+			this.colorKey= colorKey;
+			this.label= label;
+			this.previousColor= PreferenceConverter.getColor(fOverlayStore, colorKey);
+			this.isSystemDefaultKey= isSystemDefaultKey;
+		}
+		public boolean isSystemDefault() {
+			return this.isSystemDefaultKey != null && fOverlayStore.getBoolean(isSystemDefaultKey);
+		}
+
+		public RGB getRGB() {
+			return PreferenceConverter.getColor(fOverlayStore, this.colorKey);
+		}
+
+		public void setColor(RGB rgb) {
+			this.previousColor= PreferenceConverter.getColor(fOverlayStore, this.colorKey);
+			PreferenceConverter.setValue(fOverlayStore, this.colorKey, rgb);
+		}
+	}
 
 	private OverlayPreferenceStore fOverlayStore;
-
-	private List fAppearanceColorList;
+	private TableViewer fAppearanceColorTableViewer;
+	private List<Image> colorPreviewImages;
 	private ColorSelector fAppearanceColorEditor;
 	private Button fAppearanceColorDefault;
 
@@ -757,14 +783,11 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	}
 
 	private void handleAppearanceColorListSelection() {
-		int i= fAppearanceColorList.getSelectionIndex();
-		if (i == -1)
-			return;
-
-		String key= fAppearanceColorListModel[i][1];
-		RGB rgb= PreferenceConverter.getColor(fOverlayStore, key);
+		ColorEntry selectedColor= getSelectedAppearanceColorOption();
+		RGB rgb= selectedColor.getRGB();
 		fAppearanceColorEditor.setColorValue(rgb);
-		updateAppearanceColorWidgets(fAppearanceColorListModel[i][2]);
+
+		updateAppearanceColorWidgets(selectedColor.isSystemDefaultKey);
 	}
 
 	private void updateAppearanceColorWidgets(String systemDefaultKey) {
@@ -914,10 +937,12 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		gd.horizontalSpan= 2;
 		editorComposite.setLayoutData(gd);
 
-		fAppearanceColorList= new List(editorComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
-		gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_BOTH);
-		gd.heightHint= fAppearanceColorList.getItemHeight() * 8;
-		fAppearanceColorList.setLayoutData(gd);
+		// Set up Appearance Color Options Table
+		Composite tableComposite= new Composite(editorComposite, SWT.NONE);
+		GridData tableGD= new GridData(GridData.FILL_VERTICAL);
+		tableComposite.setLayoutData(tableGD);
+		fAppearanceColorTableViewer= new TableViewer(tableComposite, SWT.SINGLE | SWT.V_SCROLL | SWT.BORDER);
+		initializeAppearColorTable(tableComposite);
 
 		Composite stylesComposite= new Composite(editorComposite, SWT.NONE);
 		layout= new GridLayout();
@@ -942,19 +967,35 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		SelectionListener colorDefaultSelectionListener= new SelectionListener() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				boolean systemDefault= fAppearanceColorDefault.getSelection();
-				fAppearanceColorEditor.getButton().setEnabled(!systemDefault);
-
-				int i= fAppearanceColorList.getSelectionIndex();
-				if (i == -1)
-					return;
-
-				String key= fAppearanceColorListModel[i][2];
-				if (key != null)
-					fOverlayStore.setValue(key, systemDefault);
+				boolean useSystemDefaultColor= fAppearanceColorDefault.getSelection();
+				fAppearanceColorEditor.getButton().setEnabled(!useSystemDefaultColor);
+				ColorEntry selectedColor= getSelectedAppearanceColorOption();
+				if (selectedColor.isSystemDefaultKey != null) {
+					if (!useSystemDefaultColor) {
+						// Update the color picker/editor's displayed color
+						fAppearanceColorEditor.setColorValue(selectedColor.previousColor);
+						// Disable the default color preference
+						fOverlayStore.setValue(selectedColor.isSystemDefaultKey, false);
+						// Set the color preference to the last user-set color
+						selectedColor.setColor(selectedColor.previousColor);
+					} else {
+						// System Default Color set to Black as system default colors can't yet reliably be retrieved
+						RGB defaultColor= new RGB(0, 0, 0);
+						selectedColor.previousColor= PreferenceConverter.getColor(fOverlayStore, selectedColor.colorKey);
+						// Update the color picker/editor's displayed color
+						fAppearanceColorEditor.setColorValue(defaultColor);
+						selectedColor.setColor(defaultColor);
+						// Use/enable the default color preference
+						fOverlayStore.setValue(selectedColor.isSystemDefaultKey, true);
+					}
+					// Make the newly set color (system default or last used color) display in the table
+					fAppearanceColorTableViewer.update(selectedColor, null);
+				}
 			}
 			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {}
+			public void widgetDefaultSelected(SelectionEvent e) {
+				// do nothing
+			}
 		};
 
 		fAppearanceColorDefault= new Button(stylesComposite, SWT.CHECK);
@@ -966,16 +1007,6 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		fAppearanceColorDefault.setVisible(false);
 		fAppearanceColorDefault.addSelectionListener(colorDefaultSelectionListener);
 
-		fAppearanceColorList.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// do nothing
-			}
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				handleAppearanceColorListSelection();
-			}
-		});
 		foregroundColorButton.addSelectionListener(new SelectionListener() {
 			@Override
 			public void widgetDefaultSelected(SelectionEvent e) {
@@ -983,12 +1014,10 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			}
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				int i= fAppearanceColorList.getSelectionIndex();
-				if (i == -1)
-					return;
-
-				String key= fAppearanceColorListModel[i][1];
-				PreferenceConverter.setValue(fOverlayStore, key, fAppearanceColorEditor.getColorValue());
+				ColorEntry selectedColor= getSelectedAppearanceColorOption();
+				selectedColor.setColor(fAppearanceColorEditor.getColorValue());
+				// Make the newly selected color display in the table
+				fAppearanceColorTableViewer.update(selectedColor, null);
 			}
 		});
 
@@ -1007,10 +1036,49 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		link.setLayoutData(gridData);
 
 		addFiller(appearanceComposite, 2);
-
 		appearanceComposite.layout();
-
 		return appearanceComposite;
+	}
+
+	private void initializeAppearColorTable(Composite tableComposite) {
+		fAppearanceColorTableViewer.addSelectionChangedListener((SelectionChangedEvent event) -> handleAppearanceColorListSelection());
+		colorPreviewImages= new ArrayList<>();
+		fAppearanceColorTableViewer.setLabelProvider(new LabelProvider() {
+			@Override
+			public Image getImage(Object element) {
+				ColorEntry colorEntry= ((ColorEntry) element);
+				if (colorEntry.isSystemDefault())
+					return null;
+				int dimensions= 10;
+				RGB rgb= colorEntry.getRGB();
+				Color color= new Color(tableComposite.getParent().getDisplay(), rgb.red, rgb.green, rgb.blue);
+				Image image= new Image(tableComposite.getParent().getDisplay(), dimensions, dimensions);
+				GC gc= new GC(image);
+				// Draw color preview 
+				gc.setBackground(color);
+				gc.fillRectangle(0, 0, dimensions, dimensions);
+				// Draw outline around color preview
+				gc.setBackground(new Color(tableComposite.getParent().getDisplay(), 0, 0, 0));
+				gc.setLineWidth(2);
+				gc.drawRectangle(0, 0, dimensions, dimensions);
+				gc.dispose();
+				colorPreviewImages.add(image);
+				return image;
+			}
+			@Override
+			public String getText(Object element) {
+				return ((ColorEntry) element).label;
+			}
+		});
+		TableColumn tc= new TableColumn(fAppearanceColorTableViewer.getTable(), SWT.NONE, 0);
+		TableColumnLayout tableColumnLayout= new TableColumnLayout(true);
+		PixelConverter pixelConverter= new PixelConverter(tableComposite.getParent().getFont());
+		tableColumnLayout.setColumnData(tc, new ColumnWeightData(1, pixelConverter.convertWidthInCharsToPixels(30)));
+		tableComposite.setLayout(tableColumnLayout);
+		GridData gd= new GridData(GridData.VERTICAL_ALIGN_BEGINNING | GridData.FILL_BOTH);
+		Table fAppearanceColorTable= fAppearanceColorTableViewer.getTable();
+		gd.heightHint= fAppearanceColorTable.getItemHeight() * 8;
+		fAppearanceColorTable.setLayoutData(gd);
 	}
 
 	private boolean isWordWrapPreferenceAllowed() {
@@ -1019,7 +1087,6 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 	@Override
 	protected Control createContents(Composite parent) {
-
 		initializeDefaultColors();
 
 		fOverlayStore.load();
@@ -1033,18 +1100,27 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	}
 
 	private void initialize() {
-
+		// Initialize AppearanceColorOptions model with the appropriate preference keys
+		ColorEntry[] fApperanceColorOptionsModel= new ColorEntry[] {
+				new ColorEntry(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, TextEditorMessages.TextEditorPreferencePage_lineNumberForegroundColor, null),
+				new ColorEntry(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, TextEditorMessages.TextEditorPreferencePage_currentLineHighlighColor, null),
+				new ColorEntry(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, TextEditorMessages.TextEditorPreferencePage_printMarginColor, null),
+				new ColorEntry(AbstractTextEditor.PREFERENCE_COLOR_FIND_SCOPE, TextEditorMessages.TextEditorPreferencePage_findScopeColor, null),
+				new ColorEntry(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR, TextEditorMessages.TextEditorPreferencePage_selectionForegroundColor,
+						AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR),
+				new ColorEntry(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR, TextEditorMessages.TextEditorPreferencePage_selectionBackgroundColor,
+						AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR),
+				new ColorEntry(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, TextEditorMessages.TextEditorPreferencePage_backgroundColor,
+						AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT),
+				new ColorEntry(AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND, TextEditorMessages.TextEditorPreferencePage_foregroundColor,
+						AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT),
+				new ColorEntry(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_COLOR, TextEditorMessages.HyperlinkColor_label,
+						AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_COLOR_SYSTEM_DEFAULT)
+		};
+		fAppearanceColorTableViewer.setContentProvider(ArrayContentProvider.getInstance());
+		fAppearanceColorTableViewer.setInput(fApperanceColorOptionsModel);
 		initializeFields();
-
-		for (String[] fAppearanceColor : fAppearanceColorListModel) {
-			fAppearanceColorList.add(fAppearanceColor[0]);
-		}
-		fAppearanceColorList.getDisplay().asyncExec(() -> {
-			if (fAppearanceColorList != null && !fAppearanceColorList.isDisposed()) {
-				fAppearanceColorList.select(0);
-				handleAppearanceColorListSelection();
-			}
-		});
+		fAppearanceColorTableViewer.setSelection(new StructuredSelection(fAppearanceColorTableViewer.getElementAt(0)), true);
 	}
 
 	private void initializeFields() {
@@ -1090,18 +1166,16 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	@Override
 	public boolean performOk() {
 		fOverlayStore.propagate();
+		fAppearanceColorTableViewer.refresh();
 		return true;
 	}
 
 	@Override
 	protected void performDefaults() {
-
 		fOverlayStore.loadDefaults();
-
 		initializeFields();
-
 		handleAppearanceColorListSelection();
-
+		fAppearanceColorTableViewer.refresh();
 		super.performDefaults();
 	}
 
@@ -1112,6 +1186,11 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			fOverlayStore.stop();
 			fOverlayStore= null;
 		}
+
+		for (Image image : colorPreviewImages) {
+			image.dispose();
+		}
+		colorPreviewImages= null;
 
 		super.dispose();
 	}
@@ -1180,7 +1259,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			}
 		});
 
-		gd= new GridData(GridData.FILL, GridData.CENTER, false, false);
+		gd= new GridData(SWT.FILL, GridData.CENTER, false, false);
 		Link link= new Link(composite, SWT.NONE);
 		link.setText(linkText);
 		link.setLayoutData(gd);
@@ -1329,6 +1408,16 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		};
 		master.addSelectionListener(listener);
 		fMasterSlaveListeners.add(listener);
+	}
+
+	/**
+	 * Returns the currently selected item in the Appearance Color Options Table.
+	 * 
+	 * @return {@link ColorEntry} the ColorEntry representing the currently selected item in the
+	 *         table
+	 */
+	private ColorEntry getSelectedAppearanceColorOption() {
+		return (ColorEntry) fAppearanceColorTableViewer.getStructuredSelection().getFirstElement();
 	}
 
 	private static void indent(Control control) {
