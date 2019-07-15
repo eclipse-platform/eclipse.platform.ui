@@ -15,7 +15,9 @@ package org.eclipse.ui.tests.performance;
 
 import java.util.Enumeration;
 
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 
 import junit.framework.Test;
 import junit.framework.TestCase;
@@ -52,7 +54,8 @@ public class FilteredTestSuite extends TestSuite {
 	private String filterTestName;
 
 	public FilteredTestSuite() {
-		BundleContext context = UIPerformancePlugin.getDefault().getContext();
+		Bundle bundle = FrameworkUtil.getBundle(getClass());
+		BundleContext context = bundle != null ? bundle.getBundleContext() : null;
 		if (context == null) { // most likely run in a wrong launch mode
 			System.err.println("UIPerformanceTestSuite was unable to retirieve bundle context; test filtering is disabled");
 			return;

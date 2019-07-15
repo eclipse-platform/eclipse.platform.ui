@@ -29,7 +29,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Baseclass for simple performance tests.
@@ -63,7 +65,8 @@ public abstract class BasicPerformanceTest extends UITestCase {
 
 	public BasicPerformanceTest(String testName) {
 		this(testName, NONE);
-		BundleContext context = UIPerformancePlugin.getDefault().getContext();
+		Bundle bundle = FrameworkUtil.getBundle(getClass());
+		BundleContext context = bundle != null ? bundle.getBundleContext() : null;
 		if (context == null) { // most likely run in a wrong launch mode
 			System.err.println("Unable to retrieve bundle context from BasicPerformanceTest; interactive mode is disabled");
 			return;
@@ -339,7 +342,7 @@ public abstract class BasicPerformanceTest extends UITestCase {
 				runnable.run();
 			} catch (Exception e) {
 				throw new CoreException(new Status(IStatus.ERROR,
-						UIPerformancePlugin.getDefault().getBundle()
+						FrameworkUtil.getBundle(BasicPerformanceTest.class)
 								.getSymbolicName(), IStatus.OK,
 						"An exception occurred", e));
 			}

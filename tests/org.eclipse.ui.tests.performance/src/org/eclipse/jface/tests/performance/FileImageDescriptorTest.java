@@ -26,8 +26,8 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.tests.performance.BasicPerformanceTest;
 import org.eclipse.ui.tests.performance.TestRunnable;
-import org.eclipse.ui.tests.performance.UIPerformancePlugin;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * ComboViewerRefreshTest is a test of refreshes of difference size in the combo
@@ -60,7 +60,7 @@ public class FileImageDescriptorTest extends BasicPerformanceTest {
 				Class<?> missing = null;
 				ArrayList<Image> images = new ArrayList<>();
 
-				Bundle bundle = UIPerformancePlugin.getDefault().getBundle();
+				Bundle bundle = FrameworkUtil.getBundle(getClass());
 				Enumeration<String> bundleEntries = bundle
 						.getEntryPaths(IMAGES_DIRECTORY);
 
