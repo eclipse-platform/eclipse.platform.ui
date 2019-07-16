@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,11 +10,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548799
  *******************************************************************************/
 package org.eclipse.ui.tests.views.properties.tabbed.dynamic.tab.descriptors;
 
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.tests.views.properties.tabbed.Activator;
 import org.eclipse.ui.tests.views.properties.tabbed.dynamic.section.descriptors.DynamicTestsBlackSectionDescriptor;
 import org.eclipse.ui.tests.views.properties.tabbed.dynamic.views.DynamicTestsTypeMapper;
 import org.eclipse.ui.views.properties.tabbed.AbstractTabDescriptor;
@@ -52,8 +53,8 @@ public class DynamicTestsBlackTabDescriptor extends AbstractTabDescriptor {
 	@Override
 	public Image getImage() {
 		if (image == null) {
-			image = Activator
-					.getImageDescriptor("icons/black_triangle.gif").createImage(); //$NON-NLS-1$
+			String path = "icons/black_triangle.gif"; //$NON-NLS-1$
+			ResourceLocator.imageDescriptorFromBundle(getClass(), path).ifPresent(d -> image = d.createImage());
 		}
 		return image;
 	}

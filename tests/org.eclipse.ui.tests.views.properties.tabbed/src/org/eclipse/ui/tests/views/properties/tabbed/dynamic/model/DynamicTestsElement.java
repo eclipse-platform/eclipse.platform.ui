@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548799
  *******************************************************************************/
 package org.eclipse.ui.tests.views.properties.tabbed.dynamic.model;
 
@@ -17,8 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.tests.views.properties.tabbed.Activator;
 import org.eclipse.ui.tests.views.properties.tabbed.dynamic.views.DynamicTestsView;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertySource;
@@ -54,7 +55,7 @@ public class DynamicTestsElement implements
 
 	private String path;
 
-	private List propertyDescriptors = new ArrayList();
+	private List<PropertyDescriptor> propertyDescriptors = new ArrayList<>();
 
 	private DynamicTestsShape shape;
 
@@ -74,7 +75,7 @@ public class DynamicTestsElement implements
 				dot));
 		this.dynamicTestsColor = DynamicTestsColor.getColor(path.substring(
 				slash + 1, underscore));
-		this.image = Activator.getImageDescriptor(path).createImage();
+		ResourceLocator.imageDescriptorFromBundle(getClass(), path).ifPresent(d -> this.image = d.createImage());
 		StringBuilder nameBuffer = new StringBuilder(path);
 		nameBuffer.replace(slash + 1, slash + 2, path.substring(slash + 1,
 				slash + 2).toUpperCase());
@@ -123,8 +124,7 @@ public class DynamicTestsElement implements
 
 	@Override
 	public IPropertyDescriptor[] getPropertyDescriptors() {
-		return (IPropertyDescriptor[]) propertyDescriptors
-				.toArray(new IPropertyDescriptor[0]);
+		return propertyDescriptors.toArray(new IPropertyDescriptor[0]);
 	}
 
 	@Override

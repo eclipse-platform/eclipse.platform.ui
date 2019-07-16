@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007 IBM Corporation and others.
+ * Copyright (c) 2007, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548799
  *******************************************************************************/
 package org.eclipse.ui.tests.views.properties.tabbed.dynamic.views;
 
@@ -17,6 +18,7 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -26,7 +28,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
-import org.eclipse.ui.tests.views.properties.tabbed.Activator;
 import org.eclipse.ui.tests.views.properties.tabbed.dynamic.model.DynamicTestsElement;
 import org.eclipse.ui.views.properties.IPropertySheetPage;
 import org.eclipse.ui.views.properties.tabbed.ITabbedPropertySheetPageContributor;
@@ -143,13 +144,9 @@ public class DynamicTestsView extends ViewPart implements
 		final String staticText = "Use static contributions from plugin.xml"; //$NON-NLS-1$
 		final String dynamicSectionsText = "Use dynamic section contributions from code"; //$NON-NLS-1$
 		final String dynamicTabsText = "Use dynamic tab (and section) contributions from code"; //$NON-NLS-1$
-		ImageDescriptor imageDescriptor = Activator
-				.getImageDescriptor("icons/sample.gif");//$NON-NLS-1$
-		if (imageDescriptor == null) {
-			imageDescriptor = PlatformUI.getWorkbench().getSharedImages()
-					.getImageDescriptor(ISharedImages.IMG_OBJS_ERROR_TSK);
-		}
-
+		String path = "icons/sample.gif"; //$NON-NLS-1$
+		ImageDescriptor imageDescriptor = ResourceLocator.imageDescriptorFromBundle(getClass(), path).orElse(
+				PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(ISharedImages.IMG_OBJS_ERROR_TSK));
 		staticAction = new Action(staticText, IAction.AS_CHECK_BOX) {
 			@Override
 			public void run() {
