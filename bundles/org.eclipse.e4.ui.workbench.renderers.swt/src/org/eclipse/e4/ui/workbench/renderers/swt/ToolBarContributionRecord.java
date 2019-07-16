@@ -291,7 +291,9 @@ public class ToolBarContributionRecord {
 	}
 
 	public void dispose() {
-		toolbarModel.getChildren().removeAll(generatedElements);
+		for (MToolBarElement copy : generatedElements) {
+			toolbarModel.getChildren().remove(copy);
+		}
 		for (MToolBarElement shared : sharedElements) {
 			ArrayList<ToolBarContributionRecord> array = renderer
 					.getList(shared);

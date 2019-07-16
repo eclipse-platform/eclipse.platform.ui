@@ -315,7 +315,9 @@ public class ContributionRecord {
 	}
 
 	public void dispose() {
-		menuModel.getChildren().removeAll(generatedElements);
+		for (MMenuElement copy : generatedElements) {
+			menuModel.getChildren().remove(copy);
+		}
 		for (MMenuElement shared : sharedElements) {
 			renderer.removeRecord(shared, this);
 			ArrayList<ContributionRecord> array = renderer.getList(shared);

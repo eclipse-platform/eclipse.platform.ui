@@ -162,7 +162,9 @@ public class MinMaxAddonUtil {
 			if (partStacks.contains(element)) {
 				continue;
 			}
-			elementsToRestore.removeAll(partStacks);
+			for (MPartStack partStack : partStacks) {
+				elementsToRestore.remove(partStack);
+			}
 		}
 	}
 

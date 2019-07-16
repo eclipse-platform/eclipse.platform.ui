@@ -121,7 +121,9 @@ public class ContextContextService implements EContextService {
 		LinkedList<?> deactivates = (LinkedList<?>) eclipseContext.getLocal(DEFERED_DEACTIVATES);
 		if (deactivates != null) {
 			eclipseContext.remove(DEFERED_DEACTIVATES);
-			locals.removeAll(deactivates);
+			for (Object id : deactivates) {
+				locals.remove(id);
+			}
 		}
 		eclipseContext.set(LOCAL_CONTEXTS, locals.clone());
 	}

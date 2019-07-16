@@ -2034,7 +2034,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 		// Remove the actual shared Parts for any placeholder that was removed
 		List<MUIElement> seList = model.getSharedElements();
-		seList.removeAll(sharedPartsToRemove);
+		for (MPart partToRemove : sharedPartsToRemove) {
+			seList.remove(partToRemove);
+		}
 	}
 
 	private boolean isLastEditorStack(MUIElement element) {
