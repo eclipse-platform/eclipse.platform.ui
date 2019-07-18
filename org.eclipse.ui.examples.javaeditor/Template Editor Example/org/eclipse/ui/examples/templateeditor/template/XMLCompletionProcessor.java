@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,13 +10,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548799
  *******************************************************************************/
 package org.eclipse.ui.examples.templateeditor.template;
 
 import org.eclipse.swt.graphics.Image;
 
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.ResourceLocator;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
@@ -114,8 +115,7 @@ public class XMLCompletionProcessor extends TemplateCompletionProcessor {
 		ImageRegistry registry= TemplateEditorUI.getDefault().getImageRegistry();
 		Image image= registry.get(DEFAULT_IMAGE);
 		if (image == null) {
-			ImageDescriptor desc= TemplateEditorUI.imageDescriptorFromPlugin("org.eclipse.ui.examples.javaeditor", DEFAULT_IMAGE); //$NON-NLS-1$
-			registry.put(DEFAULT_IMAGE, desc);
+			ResourceLocator.imageDescriptorFromBundle(getClass(), DEFAULT_IMAGE).ifPresent(d -> registry.put(DEFAULT_IMAGE, d));
 			image= registry.get(DEFAULT_IMAGE);
 		}
 		return image;

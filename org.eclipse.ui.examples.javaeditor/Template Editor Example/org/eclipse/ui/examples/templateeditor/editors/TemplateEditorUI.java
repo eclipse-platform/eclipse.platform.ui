@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548799
  *******************************************************************************/
 package org.eclipse.ui.examples.templateeditor.editors;
 
@@ -25,13 +26,13 @@ import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.resource.ResourceLocator;
 
 import org.eclipse.jface.text.templates.ContextTypeRegistry;
 import org.eclipse.jface.text.templates.persistence.TemplateStore;
 
 import org.eclipse.ui.examples.javaeditor.JavaEditorExamplePlugin;
 import org.eclipse.ui.examples.templateeditor.template.XMLContextType;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import org.eclipse.ui.editors.text.templates.ContributionContextTypeRegistry;
 import org.eclipse.ui.editors.text.templates.ContributionTemplateStore;
@@ -102,7 +103,7 @@ public class TemplateEditorUI  {
 	}
 
 	public static ImageDescriptor imageDescriptorFromPlugin(String string, String default_image) {
-		return AbstractUIPlugin.imageDescriptorFromPlugin(string, default_image);
+		return ResourceLocator.imageDescriptorFromBundle(string, default_image).orElse(null);
 	}
 
 	public IPreferenceStore getPreferenceStore() {
