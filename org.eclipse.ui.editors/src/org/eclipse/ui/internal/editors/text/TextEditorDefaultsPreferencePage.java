@@ -666,6 +666,11 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 			this.previousColor= PreferenceConverter.getColor(fOverlayStore, colorKey);
 			this.isSystemDefaultKey= isSystemDefaultKey;
 		}
+
+		public boolean allowSystemDefault() {
+			return this.isSystemDefaultKey != null;
+		}
+
 		public boolean isSystemDefault() {
 			return this.isSystemDefaultKey != null && fOverlayStore.getBoolean(isSystemDefaultKey);
 		}
@@ -677,6 +682,12 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		public void setColor(RGB rgb) {
 			this.previousColor= PreferenceConverter.getColor(fOverlayStore, this.colorKey);
 			PreferenceConverter.setValue(fOverlayStore, this.colorKey, rgb);
+		}
+
+		public void setSystemDefault(boolean value) {
+			if (this.isSystemDefaultKey != null) {
+				fOverlayStore.setValue(this.isSystemDefaultKey, value);
+			}
 		}
 	}
 
@@ -784,23 +795,10 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 	private void handleAppearanceColorListSelection() {
 		ColorEntry selectedColor= getSelectedAppearanceColorOption();
-		RGB rgb= selectedColor.getRGB();
+		fAppearanceColorDefault.setVisible(selectedColor.isSystemDefaultKey != null);
+		fAppearanceColorDefault.setSelection(selectedColor.isSystemDefault());
+		RGB rgb= selectedColor.isSystemDefault() ? new RGB(0, 0, 0) : PreferenceConverter.getColor(fOverlayStore, selectedColor.colorKey);
 		fAppearanceColorEditor.setColorValue(rgb);
-
-		updateAppearanceColorWidgets(selectedColor.isSystemDefaultKey);
-	}
-
-	private void updateAppearanceColorWidgets(String systemDefaultKey) {
-		if (systemDefaultKey == null) {
-			fAppearanceColorDefault.setSelection(false);
-			fAppearanceColorDefault.setVisible(false);
-			fAppearanceColorEditor.getButton().setEnabled(true);
-		} else {
-			boolean systemDefault= fOverlayStore.getBoolean(systemDefaultKey);
-			fAppearanceColorDefault.setSelection(systemDefault);
-			fAppearanceColorDefault.setVisible(true);
-			fAppearanceColorEditor.getButton().setEnabled(!systemDefault);
-		}
 	}
 
 	private Control createAppearancePage(Composite parent) {
@@ -964,37 +962,15 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		gd.horizontalAlignment= GridData.BEGINNING;
 		foregroundColorButton.setLayoutData(gd);
 
-		SelectionListener colorDefaultSelectionListener= new SelectionListener() {
+		SelectionListener colorDefaultSelectionListener= new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				boolean useSystemDefaultColor= fAppearanceColorDefault.getSelection();
-				fAppearanceColorEditor.getButton().setEnabled(!useSystemDefaultColor);
-				ColorEntry selectedColor= getSelectedAppearanceColorOption();
-				if (selectedColor.isSystemDefaultKey != null) {
-					if (!useSystemDefaultColor) {
-						// Update the color picker/editor's displayed color
-						fAppearanceColorEditor.setColorValue(selectedColor.previousColor);
-						// Disable the default color preference
-						fOverlayStore.setValue(selectedColor.isSystemDefaultKey, false);
-						// Set the color preference to the last user-set color
-						selectedColor.setColor(selectedColor.previousColor);
-					} else {
-						// System Default Color set to Black as system default colors can't yet reliably be retrieved
-						RGB defaultColor= new RGB(0, 0, 0);
-						selectedColor.previousColor= PreferenceConverter.getColor(fOverlayStore, selectedColor.colorKey);
-						// Update the color picker/editor's displayed color
-						fAppearanceColorEditor.setColorValue(defaultColor);
-						selectedColor.setColor(defaultColor);
-						// Use/enable the default color preference
-						fOverlayStore.setValue(selectedColor.isSystemDefaultKey, true);
-					}
-					// Make the newly set color (system default or last used color) display in the table
-					fAppearanceColorTableViewer.update(selectedColor, null);
+				ColorEntry colorEntry = getSelectedAppearanceColorOption();
+				if (colorEntry.allowSystemDefault()) {
+					colorEntry.setSystemDefault(fAppearanceColorDefault.getSelection());
+					handleAppearanceColorListSelection(); // refresh color preview and checkbox state
+					fAppearanceColorTableViewer.update(colorEntry, null);
 				}
-			}
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// do nothing
 			}
 		};
 
@@ -1007,17 +983,15 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		fAppearanceColorDefault.setVisible(false);
 		fAppearanceColorDefault.addSelectionListener(colorDefaultSelectionListener);
 
-		foregroundColorButton.addSelectionListener(new SelectionListener() {
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
-				// do nothing
-			}
+		foregroundColorButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				ColorEntry selectedColor= getSelectedAppearanceColorOption();
 				selectedColor.setColor(fAppearanceColorEditor.getColorValue());
+				selectedColor.setSystemDefault(false);
 				// Make the newly selected color display in the table
 				fAppearanceColorTableViewer.update(selectedColor, null);
+				fAppearanceColorDefault.setSelection(selectedColor.isSystemDefault());
 			}
 		});
 
