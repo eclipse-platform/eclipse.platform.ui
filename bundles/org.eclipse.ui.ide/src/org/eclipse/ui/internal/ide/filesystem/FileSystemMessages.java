@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 549409
  *******************************************************************************/
 
 package org.eclipse.ui.internal.ide.filesystem;
@@ -40,4 +41,9 @@ public class FileSystemMessages extends NLS{
 	 * The label for file system selection.
 	 */
 	public static String FileSystemSelection_title;
+
+	/**
+	 * The message for file system extension creation error.
+	 */
+	public static String FileSystemSupportRegistry_e_creating_extension;
 }

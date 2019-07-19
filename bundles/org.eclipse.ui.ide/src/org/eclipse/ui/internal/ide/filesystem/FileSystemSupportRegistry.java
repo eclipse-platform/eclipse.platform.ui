@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christian Dietrich (itemis AG) - fix for bug #549409
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 549409
  ******************************************************************************/
 
 package org.eclipse.ui.internal.ide.filesystem;
@@ -18,7 +20,7 @@ import java.io.File;
 import java.net.URI;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
+import java.util.stream.Stream;
 
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.runtime.CoreException;
@@ -68,7 +70,7 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 		return singleton;
 	}
 
-	private Collection registeredContributions = new HashSet(0);
+	private Collection<FileSystemConfiguration> registeredContributions = new HashSet<>(0);
 
 	FileSystemConfiguration defaultConfiguration = new FileSystemConfiguration(
 			FileSystemMessages.DefaultFileSystem_name, new FileSystemContributor() {
@@ -96,8 +98,6 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 				}
 			}, null);
 
-	private FileSystemConfiguration[] allConfigurations;
-
 	/**
 	 * Create a new instance of the receiver.
 	 */
@@ -119,7 +119,6 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 	@Override
 	public void addExtension(IExtensionTracker tracker, IExtension extension) {
 		processExtension(tracker, extension);
-		allConfigurations = null;//Clear the cache
 	}
 
 	@Override
@@ -127,8 +126,6 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 		for (Object object : objects) {
 			registeredContributions.remove(object);
 		}
-		allConfigurations = null;//Clear the cache
-
 	}
 
 	/**
@@ -140,8 +137,10 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 	private void processExtension(IExtensionTracker tracker, IExtension extension) {
 		for (IConfigurationElement configElement : extension.getConfigurationElements()) {
 			FileSystemConfiguration contribution = newConfiguration(configElement);
-			registeredContributions.add(contribution);
-			tracker.registerObject(extension, contribution, IExtensionTracker.REF_STRONG);
+			if (contribution != null) {
+				registeredContributions.add(contribution);
+				tracker.registerObject(extension, contribution, IExtensionTracker.REF_STRONG);
+			}
 		}
 	}
 
@@ -167,12 +166,13 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 
 				} catch (CoreException exception) {
 					exceptions[0] = exception;
+					IDEWorkbenchPlugin.getDefault().getLog().log(exception.getStatus());
 				}
 			}
 
 			@Override
 			public void handleException(Throwable e) {
-				// Do nothing as Core will handle the logging
+				IDEWorkbenchPlugin.log(FileSystemMessages.FileSystemSupportRegistry_e_creating_extension, e);
 			}
 		});
 
@@ -192,19 +192,8 @@ public class FileSystemSupportRegistry implements IExtensionChangeHandler {
 	 * @return FileSystemConfiguration[]
 	 */
 	public FileSystemConfiguration[] getConfigurations() {
-		if (allConfigurations == null) {
-			allConfigurations = new FileSystemConfiguration[registeredContributions
-					.size() + 1];
-			allConfigurations[0] = defaultConfiguration;
-
-			Iterator iterator = registeredContributions.iterator();
-			int index = 0;
-			while (iterator.hasNext()) {
-				allConfigurations[++index] = (FileSystemConfiguration) iterator
-						.next();
-			}
-		}
-		return allConfigurations;
+		return Stream.concat(Stream.of(defaultConfiguration), registeredContributions.stream())
+				.toArray(FileSystemConfiguration[]::new);
 	}
 
 	/**
