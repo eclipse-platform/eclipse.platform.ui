@@ -237,7 +237,6 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	public EnvironmentTab() {
 		super();
 		setHelpContextId(IDebugHelpContextIds.LAUNCH_CONFIGURATION_DIALOG_ENVIRONMENT_TAB);
-
 		try {
 			this.copyKeyStroke = KeyStroke.getInstance("M1+C"); //$NON-NLS-1$
 		} catch (ParseException e) {
@@ -329,7 +328,6 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		// Create add environment variable menu item
 		MenuItem miAdd = new MenuItem(menuTable, SWT.NONE);
 		miAdd.setText(LaunchConfigurationsMessages.EnvironmentTab_Add_4);
-
 		miAdd.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent event) {
@@ -395,7 +393,6 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 
-
 		// Setup and create Columns
 		ColumnViewerEditorActivationStrategy actSupport = new ColumnViewerEditorActivationStrategy(environmentTable) {
 			@Override
@@ -404,10 +401,12 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 						|| event.eventType == ColumnViewerEditorActivationEvent.MOUSE_DOUBLE_CLICK_SELECTION
 						|| event.eventType == ColumnViewerEditorActivationEvent.PROGRAMMATIC;
 			}
+
 		};
 
-		int feature = ColumnViewerEditor.TABBING_HORIZONTAL | ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR
-				| ColumnViewerEditor.TABBING_VERTICAL | ColumnViewerEditor.KEYBOARD_ACTIVATION;
+		int feature = ColumnViewerEditor.TABBING_MOVE_TO_ROW_NEIGHBOR | ColumnViewerEditor.TABBING_HORIZONTAL
+				| ColumnViewerEditor.KEYBOARD_ACTIVATION
+				| ColumnViewerEditor.TABBING_CYCLE_IN_VIEWER;
 
 		TableViewerEditor.create(environmentTable, actSupport, feature);
 
@@ -464,7 +463,6 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		tableComposite.setLayout(tableColumnLayout);
 
 		environmentTable.getTable().addKeyListener(new KeyAdapter() {
-
 			@Override
 			public void keyReleased(KeyEvent e) {
 				KeyStroke current = computeKeyStroke(e);
@@ -619,7 +617,6 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 						MessageFormat.format(LaunchConfigurationsMessages.EnvironmentTab_13, new Object[] { name })); //
 				if (!overWrite) {
 					return false;
-
 				}
 				environmentTable.remove(existingVariable);
 				break;
