@@ -16,6 +16,7 @@
 package org.eclipse.ui.internal.handlers;
 
 import org.eclipse.core.commands.IHandler;
+import org.eclipse.core.commands.IHandler2;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -83,7 +84,12 @@ final class HandlerActivation implements IHandlerActivation {
 
 	@Override
 	public boolean evaluate(IEvaluationContext context) {
-		if (activeWhen == null) {
+		if (handler instanceof IHandler2) {
+			((IHandler2) handler).setEnabled(context);
+		}
+		if (!handler.isEnabled()) {
+			active = false;
+		} else if (activeWhen == null) {
 			active = true;
 		} else {
 			try {
