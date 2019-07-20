@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 489250
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548799
  *******************************************************************************/
 
 package org.eclipse.ui.internal.ide;
@@ -32,6 +33,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.widgets.Display;
@@ -316,7 +318,7 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 	 * @return ImageDescriptor
 	 */
 	public static ImageDescriptor getIDEImageDescriptor(String relativePath){
-		return imageDescriptorFromPlugin(IDE_WORKBENCH, ICONS_PATH + relativePath);
+		return ResourceLocator.imageDescriptorFromBundle(IDE_WORKBENCH, ICONS_PATH + relativePath).orElse(null);
 	}
 	/**
 	 * Return the resourceManager used by this plug-in.

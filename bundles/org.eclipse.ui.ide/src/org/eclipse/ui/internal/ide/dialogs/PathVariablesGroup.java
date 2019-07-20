@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
  *     Helena Halperin (IBM) - bug #299212
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430694
  *     Robert Roth <robert.roth.off@gmail.com> - Bug 57371
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548799
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
@@ -37,7 +38,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.layout.TableColumnLayout;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.ColumnWeightData;
@@ -74,7 +75,6 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import com.ibm.icu.text.Collator;
 
@@ -151,7 +151,7 @@ public class PathVariablesGroup {
 	private final Image BUILTIN_IMG = PlatformUI.getWorkbench()
 			.getSharedImages().getImage(ISharedImages.IMG_OBJ_FOLDER);
 	// unknown (non-existent) image. created locally, dispose locally
-	private Image imageUnkown;
+	private Image imageUnknown;
 
 	// current project for which the variables are being edited.
 	// If null, the workspace variables are being edited instead.
@@ -232,12 +232,10 @@ public class PathVariablesGroup {
 	public Control createContents(Composite parent) {
 		Font font = parent.getFont();
 
-		if (imageUnkown == null) {
-			ImageDescriptor descriptor = AbstractUIPlugin
-					.imageDescriptorFromPlugin(
+		if (imageUnknown == null) {
+			ResourceLocator.imageDescriptorFromBundle(
 							IDEWorkbenchPlugin.IDE_WORKBENCH,
-							"$nl$/icons/full/obj16/warning.png"); //$NON-NLS-1$
-			imageUnkown = descriptor.createImage();
+					"$nl$/icons/full/obj16/warning.png").ifPresent(d -> imageUnknown = d.createImage()); //$NON-NLS-1$
 		}
 		initializeDialogUnits(parent);
 		shell = parent.getShell();
@@ -375,7 +373,7 @@ public class PathVariablesGroup {
 			IPath resolvedValue = URIUtil.toPath(resolvedURI);
 			IFileInfo file = IDEResourceInfoUtils.getFileInfo(resolvedValue);
 			if (!isBuiltInVariable(varName))
-				cell.setImage(file.exists() ? (file.isDirectory() ? FOLDER_IMG : FILE_IMG) : imageUnkown);
+				cell.setImage(file.exists() ? (file.isDirectory() ? FOLDER_IMG : FILE_IMG) : imageUnknown);
 			else
 				cell.setImage(BUILTIN_IMG);
 		}
@@ -419,9 +417,9 @@ public class PathVariablesGroup {
 	 * Disposes the group's resources.
 	 */
 	public void dispose() {
-		if (imageUnkown != null) {
-			imageUnkown.dispose();
-			imageUnkown = null;
+		if (imageUnknown != null) {
+			imageUnknown.dispose();
+			imageUnknown = null;
 		}
 	}
 

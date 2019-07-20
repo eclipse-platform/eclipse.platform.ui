@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,26 +11,29 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430694
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548799
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
+
+import java.util.Optional;
 
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * A VirtualResourceDecorator replaces an element's image, if it is a virtual
  * resource.
  */
 public class VirtualResourceDecorator implements ILightweightLabelDecorator {
-	private static final ImageDescriptor VIRTUAL_FOLDER;
+	private static final Optional<ImageDescriptor> VIRTUAL_FOLDER;
 
 	static {
-		VIRTUAL_FOLDER = AbstractUIPlugin.imageDescriptorFromPlugin(
+		VIRTUAL_FOLDER = ResourceLocator.imageDescriptorFromBundle(
 				IDEWorkbenchPlugin.IDE_WORKBENCH,
 				"$nl$/icons/full/ovr16/virt_ovr.png"); //$NON-NLS-1$
 	}
@@ -85,7 +88,7 @@ public class VirtualResourceDecorator implements ILightweightLabelDecorator {
 	@Override
 	public void decorate(Object element, IDecoration decoration) {
 		if (element instanceof IFolder && ((IResource) element).isVirtual()) {
-			decoration.addOverlay(VIRTUAL_FOLDER, IDecoration.BOTTOM_RIGHT);
+			VIRTUAL_FOLDER.ifPresent(o -> decoration.addOverlay(o, IDecoration.BOTTOM_RIGHT));
 		}
 	}
 }

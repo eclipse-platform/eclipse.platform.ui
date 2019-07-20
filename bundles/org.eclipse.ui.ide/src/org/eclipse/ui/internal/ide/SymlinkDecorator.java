@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2012, 2015 Robin Rosenberg <robin.rosenberg@dewire.com>
+ * Copyright (C) 2012, 2019 Robin Rosenberg <robin.rosenberg@dewire.com> and others.
  *
  *
  * This program and the accompanying materials
@@ -8,20 +8,23 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- *
- * Lars Vogel <Lars.Vogel@gmail.com> - Bug 430694
+ *     Robin Rosenberg <robin.rosenberg@dewire.com> - initial API and implementation
+ *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430694
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548799
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
+
+import java.util.Optional;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.resources.mapping.ResourceMapping;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Decorate symbolic links
@@ -29,10 +32,10 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  */
 public class SymlinkDecorator implements ILightweightLabelDecorator {
 
-	private static ImageDescriptor SYMLINK;
+	private static Optional<ImageDescriptor> SYMLINK;
 
 	static {
-		SYMLINK = AbstractUIPlugin.imageDescriptorFromPlugin(
+		SYMLINK = ResourceLocator.imageDescriptorFromBundle(
 				IDEWorkbenchPlugin.IDE_WORKBENCH,
 				"$nl$/icons/full/ovr16/symlink_ovr.png"); //$NON-NLS-1$
 
@@ -59,14 +62,15 @@ public class SymlinkDecorator implements ILightweightLabelDecorator {
 
 	@Override
 	public void decorate(Object element, IDecoration decoration) {
-		if (element instanceof ResourceMapping)
+		if (element instanceof ResourceMapping) {
 			element = ((ResourceMapping) element).getModelObject();
-
+		}
 		IResource resource = Adapters.adapt(element, IResource.class);
 		if (resource != null) {
 			ResourceAttributes resourceAttributes = resource.getResourceAttributes();
-			if (resourceAttributes != null && resourceAttributes.isSymbolicLink())
-				decoration.addOverlay(SYMLINK);
+			if (resourceAttributes != null && resourceAttributes.isSymbolicLink()) {
+				SYMLINK.ifPresent(decoration::addOverlay);
+			}
 		}
 	}
 }

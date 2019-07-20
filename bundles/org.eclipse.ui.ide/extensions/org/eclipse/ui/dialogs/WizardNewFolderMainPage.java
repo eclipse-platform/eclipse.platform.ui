@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     Leon J. Breedt - Added multiple folder creation support (in WizardNewFolderMainPage)
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 430694, 472784
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 371776
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548799
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -49,6 +50,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.CompositeImageDescriptor;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardPage;
@@ -77,7 +79,6 @@ import org.eclipse.ui.internal.ide.dialogs.CreateLinkedResourceGroup;
 import org.eclipse.ui.internal.ide.dialogs.ResourceFilterEditDialog;
 import org.eclipse.ui.internal.ide.misc.OverlayIcon;
 import org.eclipse.ui.internal.ide.misc.ResourceAndContainerGroup;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Standard main page for a wizard that creates a folder resource.
@@ -502,15 +503,17 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 					.getImageDescriptor(ISharedImages.IMG_OBJ_FOLDER);
 
 			ImageDescriptor[][] linkedResourceOverlayMap = new ImageDescriptor[4][1];
-			linkedResourceOverlayMap[1] = new ImageDescriptor[] { AbstractUIPlugin.imageDescriptorFromPlugin(
-					IDEWorkbenchPlugin.IDE_WORKBENCH, "$nl$/icons/full/ovr16/link_ovr.png") }; //$NON-NLS-1$
+			linkedResourceOverlayMap[1] = new ImageDescriptor[] { ResourceLocator
+					.imageDescriptorFromBundle(IDEWorkbenchPlugin.IDE_WORKBENCH, "$nl$/icons/full/ovr16/link_ovr.png") //$NON-NLS-1$
+					.orElse(null) };
 
 			CompositeImageDescriptor linkedFolderDescriptor = new OverlayIcon(folderDescriptor,
 					linkedResourceOverlayMap, new Point(16, 16));
 
 			ImageDescriptor[][] virtualFolderOverlayMap = new ImageDescriptor[4][1];
-			virtualFolderOverlayMap[1] = new ImageDescriptor[] { AbstractUIPlugin.imageDescriptorFromPlugin(
-					IDEWorkbenchPlugin.IDE_WORKBENCH, "$nl$/icons/full/ovr16/virt_ovr.png") }; //$NON-NLS-1$
+			virtualFolderOverlayMap[1] = new ImageDescriptor[] { ResourceLocator
+					.imageDescriptorFromBundle(IDEWorkbenchPlugin.IDE_WORKBENCH, "$nl$/icons/full/ovr16/virt_ovr.png") //$NON-NLS-1$
+					.orElse(null) };
 
 			CompositeImageDescriptor virtualFolderDescriptor = new OverlayIcon(folderDescriptor,
 					virtualFolderOverlayMap, new Point(16, 16));
@@ -633,7 +636,7 @@ public class WizardNewFolderMainPage extends WizardPage implements Listener {
 	 * Initializes this page's controls.
 	 */
 	protected void initializePage() {
-		Iterator it = currentSelection.iterator();
+		Iterator<?> it = currentSelection.iterator();
 		if (it.hasNext()) {
 			Object next = it.next();
 			IResource selectedResource = Adapters.adapt(next, IResource.class);

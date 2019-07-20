@@ -14,6 +14,7 @@
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430694
  *     Mickael Istria (Red Hat Inc.) - Bug 486901
  *                                   - [Cleanup] Avoid useless string instances
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548799
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
@@ -58,8 +59,8 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.fieldassist.TextContentAdapter;
 import org.eclipse.jface.layout.TreeColumnLayout;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.jface.text.FindReplaceDocumentAdapterContentProposalProvider;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.CheckboxCellEditor;
@@ -124,7 +125,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.misc.FileInfoAttributesMatcher;
 import org.eclipse.ui.internal.ide.misc.StringFileInfoMatcher;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * A widget group that displays resource filters. Includes buttons to edit,
@@ -161,41 +161,20 @@ public class ResourceFilterGroup {
 	 *
 	 */
 	public ResourceFilterGroup() {
-		ImageDescriptor fileIconDescriptor = AbstractUIPlugin
-		.imageDescriptorFromPlugin(IDEWorkbenchPlugin.IDE_WORKBENCH,
-				"$nl$/icons/full/obj16/fileType_filter.png"); //$NON-NLS-1$
-		if (fileIconDescriptor != null)
-			fileIcon = fileIconDescriptor.createImage();
-
-		ImageDescriptor folderIconDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
-				IDEWorkbenchPlugin.IDE_WORKBENCH,
-				"$nl$/icons/full/obj16/folderType_filter.png"); //$NON-NLS-1$
-		if (folderIconDescriptor != null)
-			folderIcon = folderIconDescriptor.createImage();
-
-		ImageDescriptor fileFolderIconDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
-				IDEWorkbenchPlugin.IDE_WORKBENCH,
-				"$nl$/icons/full/obj16/fileFolderType_filter.png"); //$NON-NLS-1$
-		if (fileFolderIconDescriptor != null)
-			fileFolderIcon = fileFolderIconDescriptor.createImage();
-
-		ImageDescriptor descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
-				IDEWorkbenchPlugin.IDE_WORKBENCH,
-				"$nl$/icons/full/obj16/includeMode_filter.png"); //$NON-NLS-1$
-		if (descriptor != null)
-			includeIcon = descriptor.createImage();
-
-		descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
-				IDEWorkbenchPlugin.IDE_WORKBENCH,
-				"$nl$/icons/full/obj16/excludeMode_filter.png"); //$NON-NLS-1$
-		if (descriptor != null)
-			excludeIcon = descriptor.createImage();
-
-		ImageDescriptor inheritableIconDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(
-				IDEWorkbenchPlugin.IDE_WORKBENCH,
-				"$nl$/icons/full/obj16/inheritable_filter.png"); //$NON-NLS-1$
-		if (inheritableIconDescriptor != null)
-			inheritableIcon = inheritableIconDescriptor.createImage();
+		ResourceLocator.imageDescriptorFromBundle(IDEWorkbenchPlugin.IDE_WORKBENCH,
+				"$nl$/icons/full/obj16/fileType_filter.png").ifPresent(d -> fileIcon = d.createImage()); //$NON-NLS-1$
+		ResourceLocator.imageDescriptorFromBundle(IDEWorkbenchPlugin.IDE_WORKBENCH,
+				"$nl$/icons/full/obj16/folderType_filter.png").ifPresent(d -> folderIcon = d.createImage()); //$NON-NLS-1$
+		ResourceLocator
+				.imageDescriptorFromBundle(IDEWorkbenchPlugin.IDE_WORKBENCH,
+						"$nl$/icons/full/obj16/fileFolderType_filter.png") //$NON-NLS-1$
+				.ifPresent(d -> fileFolderIcon = d.createImage());
+		ResourceLocator.imageDescriptorFromBundle(IDEWorkbenchPlugin.IDE_WORKBENCH,
+				"$nl$/icons/full/obj16/includeMode_filter.png").ifPresent(d -> includeIcon = d.createImage()); //$NON-NLS-1$
+		ResourceLocator.imageDescriptorFromBundle(IDEWorkbenchPlugin.IDE_WORKBENCH,
+				"$nl$/icons/full/obj16/excludeMode_filter.png").ifPresent(d -> excludeIcon = d.createImage()); //$NON-NLS-1$
+		ResourceLocator.imageDescriptorFromBundle(IDEWorkbenchPlugin.IDE_WORKBENCH,
+				"$nl$/icons/full/obj16/inheritable_filter.png").ifPresent(d -> inheritableIcon = d.createImage()); //$NON-NLS-1$
 	}
 
 	Image getImage(String string, int i) {

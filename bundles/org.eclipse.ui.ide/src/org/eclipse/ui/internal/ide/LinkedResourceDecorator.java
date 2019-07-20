@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,19 +11,21 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 430694
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548799
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
 import java.net.URI;
+import java.util.Optional;
 
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.jface.viewers.IDecoration;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ILightweightLabelDecorator;
 import org.eclipse.ui.internal.ide.dialogs.IDEResourceInfoUtils;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * A LinkedResourceDecorator decorates an element's image with a linked
@@ -32,15 +34,15 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * @since 2.1
  */
 public class LinkedResourceDecorator implements ILightweightLabelDecorator {
-	private static final ImageDescriptor LINK;
+	private static final Optional<ImageDescriptor> LINK;
 
-	private static final ImageDescriptor LINK_WARNING;
+	private static final Optional<ImageDescriptor> LINK_WARNING;
 
 	static {
-		LINK = AbstractUIPlugin.imageDescriptorFromPlugin(
+		LINK = ResourceLocator.imageDescriptorFromBundle(
 				IDEWorkbenchPlugin.IDE_WORKBENCH,
 				"$nl$/icons/full/ovr16/link_ovr.png"); //$NON-NLS-1$
-		LINK_WARNING = AbstractUIPlugin.imageDescriptorFromPlugin(
+		LINK_WARNING = ResourceLocator.imageDescriptorFromBundle(
 				IDEWorkbenchPlugin.IDE_WORKBENCH,
 				"$nl$/icons/full/ovr16/linkwarn_ovr.png"); //$NON-NLS-1$
 	}
@@ -103,9 +105,9 @@ public class LinkedResourceDecorator implements ILightweightLabelDecorator {
 				fileInfo = IDEResourceInfoUtils.getFileInfo(location);
 			}
 			if (fileInfo != null && fileInfo.exists()) {
-				decoration.addOverlay(LINK);
+				LINK.ifPresent(decoration::addOverlay);
 			} else {
-				decoration.addOverlay(LINK_WARNING);
+				LINK_WARNING.ifPresent(decoration::addOverlay);
 			}
 		}
 

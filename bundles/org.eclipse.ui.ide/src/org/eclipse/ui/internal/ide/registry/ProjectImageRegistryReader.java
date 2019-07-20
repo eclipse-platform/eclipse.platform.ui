@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2014 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,14 +10,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548799
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.registry;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * A strategy to project nature image extensions from the registry.
@@ -60,13 +60,8 @@ public class ProjectImageRegistryReader extends IDERegistryReader {
 			return true;
 		}
 		String extendingPluginId = element.getContributor().getName();
-		ImageDescriptor image = AbstractUIPlugin.imageDescriptorFromPlugin(
-				extendingPluginId, icon);
-
-		if (image != null) {
-			registry.setNatureImage(natureId, image);
-		}
-
+		ResourceLocator.imageDescriptorFromBundle(extendingPluginId, icon)
+				.ifPresent(d -> registry.setNatureImage(natureId, d));
 		return true;
 	}
 
