@@ -43,6 +43,12 @@ public interface IWorkbenchConstants {
 	// ID of the MPerspectiveStack in the IDE e4 model
 	String PERSPECTIVE_STACK_ID = "org.eclipse.ui.ide.perspectivestack"; //$NON-NLS-1$
 
+	// ID of the main MTrimBar in the IDE e4 model
+	String MAIN_TOOLBAR_ID = "org.eclipse.ui.main.toolbar"; //$NON-NLS-1$
+
+	// ID of the main MMenu in the IDE e4 model
+	String MAIN_MENU_ID = "org.eclipse.ui.main.menu"; //$NON-NLS-1$
+
 	// mappings for type/extension to an editor - backward compatibility only.
 	String EDITOR_FILE_NAME = "editors.xml"; //$NON-NLS-1$
 

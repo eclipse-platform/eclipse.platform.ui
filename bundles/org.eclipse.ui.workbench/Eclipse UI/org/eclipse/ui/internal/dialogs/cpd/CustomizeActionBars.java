@@ -39,7 +39,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars2;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.internal.CoolBarToTrimManager;
-import org.eclipse.ui.internal.menus.ActionSet;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.provisional.application.IActionBarConfigurer2;
 import org.eclipse.ui.services.IServiceLocator;
 
@@ -71,7 +71,7 @@ public class CustomizeActionBars implements IActionBarConfigurer2, IActionBars2 
 	public CustomizeActionBars(IWorkbenchWindowConfigurer configurer, IEclipseContext context) {
 		this.configurer = configurer;
 		statusLineManager = new StatusLineManager();
-		menuManager = new MenuManager("MenuBar", ActionSet.MAIN_MENU); //$NON-NLS-1$
+		menuManager = new MenuManager("MenuBar", IWorkbenchConstants.MAIN_MENU_ID); //$NON-NLS-1$
 
 		IRendererFactory rendererFactory = context.get(IRendererFactory.class);
 		EModelService modelService = context.get(EModelService.class);
@@ -90,7 +90,7 @@ public class CustomizeActionBars implements IActionBarConfigurer2, IActionBars2 
 
 		// See WorkbenchWindow.setup()
 		mainMenu = modelService.createModelElement(MMenu.class);
-		mainMenu.setElementId(ActionSet.MAIN_MENU);
+		mainMenu.setElementId(IWorkbenchConstants.MAIN_MENU_ID);
 
 		menuRenderer = (MenuManagerRenderer) rendererFactory.getRenderer(mainMenu, null);
 		menuRenderer.linkModelToManager(mainMenu, menuManager);

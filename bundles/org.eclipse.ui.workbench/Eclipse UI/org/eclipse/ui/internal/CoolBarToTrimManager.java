@@ -57,7 +57,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IWorkbenchActionConstants;
-import org.eclipse.ui.internal.menus.ActionSet;
 import org.eclipse.ui.internal.menus.MenuHelper;
 import org.eclipse.ui.menus.CommandContributionItem;
 
@@ -89,7 +88,6 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 	}
 
 	private static final String TOOLBAR_SEPARATOR = "toolbarSeparator"; //$NON-NLS-1$
-	private static final String MAIN_TOOLBAR_ID = ActionSet.MAIN_TOOLBAR;
 	public static final String OBJECT = "coolbar.object"; //$NON-NLS-1$
 	private static final String PREV_CHILD_VISIBLE = "prevChildVisible"; //$NON-NLS-1$
 	private MTrimBar topTrim;
@@ -117,10 +115,10 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 		toolbarExtensions = new ArrayList<>();
 
 		modelService = window.getContext().get(EModelService.class);
-		topTrim = (MTrimBar) modelService.find(MAIN_TOOLBAR_ID, window);
+		topTrim = (MTrimBar) modelService.find(IWorkbenchConstants.MAIN_TOOLBAR_ID, window);
 		if (topTrim == null) {
 			topTrim = modelService.getTrim(window, SideValue.TOP);
-			topTrim.setElementId(MAIN_TOOLBAR_ID);
+			topTrim.setElementId(IWorkbenchConstants.MAIN_TOOLBAR_ID);
 		}
 		topTrim.setToBeRendered(false);
 		MToolBar mToolBar = modelService.createModelElement(MToolBar.class);

@@ -52,6 +52,7 @@ import org.eclipse.ui.activities.IIdentifier;
 import org.eclipse.ui.activities.IIdentifierListener;
 import org.eclipse.ui.activities.IdentifierEvent;
 import org.eclipse.ui.commands.ICommandImageService;
+import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.ServiceLocator;
@@ -59,8 +60,6 @@ import org.eclipse.ui.menus.CommandContributionItem;
 
 public class MenuAdditionCacheEntry {
 	private static final String AFTER_ADDITIONS = "after=additions"; //$NON-NLS-1$
-
-	static final String MAIN_TOOLBAR = ActionSet.MAIN_TOOLBAR;
 
 	static final String TRIM_COMMAND1 = "org.eclipse.ui.trim.command1"; //$NON-NLS-1$
 
@@ -81,7 +80,8 @@ public class MenuAdditionCacheEntry {
 	 */
 	static boolean isInWorkbenchTrim(MenuLocationURI location) {
 		final String path = location.getPath();
-		return MAIN_TOOLBAR.equals(path) || TRIM_COMMAND1.equals(path) || TRIM_COMMAND2.equals(path)
+		return IWorkbenchConstants.MAIN_TOOLBAR_ID.equals(path) || TRIM_COMMAND1.equals(path)
+				|| TRIM_COMMAND2.equals(path)
 				|| TRIM_VERTICAL1.equals(path) || TRIM_VERTICAL2.equals(path) || TRIM_STATUS.equals(path);
 	}
 
@@ -345,7 +345,7 @@ public class MenuAdditionCacheEntry {
 	private void processTrimLocation(MTrimContribution contribution) {
 		String query = location.getQuery();
 		if (TRIM_COMMAND2.equals(location.getPath())) {
-			contribution.setParentId(MAIN_TOOLBAR);
+			contribution.setParentId(IWorkbenchConstants.MAIN_TOOLBAR_ID);
 			if (isUndefined(query)) {
 				query = "endof"; //$NON-NLS-1$
 			}
