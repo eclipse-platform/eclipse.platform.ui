@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2012, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,18 +12,19 @@
  *     IBM Corporation - initial API and implementation
  *     Brock Janiczak (brockj_eclipse@ihug.com.au) - handler registration
  *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 473063
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548799
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveFactory;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.internal.WorkbenchImages;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * PerspectiveDescriptor.
@@ -101,21 +102,21 @@ public class PerspectiveDescriptor implements IPerspectiveDescriptor, IPluginCon
 
 	@Override
 	public ImageDescriptor getImageDescriptor() {
-		if (image != null)
+		if (image != null) {
 			return image;
-
+		}
 		// Try and get an image from the IConfigElement
 		if (configElement != null) {
 			String icon = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
 			if (icon != null) {
-				image = AbstractUIPlugin.imageDescriptorFromPlugin(configElement.getNamespaceIdentifier(), icon);
+				image = ResourceLocator.imageDescriptorFromBundle(configElement.getNamespaceIdentifier(), icon)
+						.orElse(null);
 			}
 		}
-
 		// Get a default image
-		if (image == null)
+		if (image == null) {
 			image = WorkbenchImages.getImageDescriptor(ISharedImages.IMG_ETOOL_DEF_PERSPECTIVE);
-
+		}
 		return image;
 	}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2018 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,11 +11,10 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 422040
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548799
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.PaintListener;
@@ -24,12 +23,10 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 public class DragHandle extends Composite implements PaintListener {
 
 	Image handleImage;
-	ImageDescriptor descriptor;
 	private boolean isHorizontal;
 
 	private static int margin = 2;
@@ -38,8 +35,6 @@ public class DragHandle extends Composite implements PaintListener {
 		super(parent, SWT.NONE);
 
 		addPaintListener(this);
-
-		descriptor = AbstractUIPlugin.imageDescriptorFromPlugin(WorkbenchPlugin.PI_WORKBENCH, "icons/misc/handle.png"); //$NON-NLS-1$
 
 		handleImage = new Image(parent.getDisplay(), 4, 4);
 		GC context = new GC(handleImage);
@@ -125,8 +120,7 @@ public class DragHandle extends Composite implements PaintListener {
 		if (isDisposed()) {
 			return;
 		}
-		super.dispose();
 		handleImage.dispose();
-		JFaceResources.getResources().destroyImage(descriptor);
+		super.dispose();
 	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 43573 [Contributions] Support icon in <menu>
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548799
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -26,11 +27,11 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.RegistryReader;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * This class contains shared functionality for reading action contributions
@@ -244,7 +245,7 @@ public abstract class PluginActionBuilder extends RegistryReader {
 			ImageDescriptor image = null;
 			if (icon != null) {
 				String extendingPluginId = menuElement.getDeclaringExtension().getContributor().getName();
-				image = AbstractUIPlugin.imageDescriptorFromPlugin(extendingPluginId, icon);
+				image = ResourceLocator.imageDescriptorFromBundle(extendingPluginId, icon).orElse(null);
 			}
 			if (label == null) {
 				WorkbenchPlugin.log("Plugin \'" //$NON-NLS-1$

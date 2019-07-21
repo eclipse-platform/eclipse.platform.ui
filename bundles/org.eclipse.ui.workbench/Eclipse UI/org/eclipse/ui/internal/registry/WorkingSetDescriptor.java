@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548799
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
@@ -22,12 +23,12 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IWorkingSetElementAdapter;
 import org.eclipse.ui.IWorkingSetUpdater;
 import org.eclipse.ui.dialogs.IWorkingSetPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * A working set descriptor stores the plugin registry data for a working set
@@ -88,8 +89,8 @@ public class WorkingSetDescriptor implements IPluginContribution {
 
 		IConfigurationElement[] containsChildren = configElement.getChildren(TAG_APPLICABLE_TYPE);
 		if (containsChildren.length > 0) {
-			List byClassList = new ArrayList(containsChildren.length);
-			List byAdapterList = new ArrayList(containsChildren.length);
+			List<String> byClassList = new ArrayList<>(containsChildren.length);
+			List<String> byAdapterList = new ArrayList<>(containsChildren.length);
 			for (IConfigurationElement child : containsChildren) {
 				String className = child.getAttribute(IWorkbenchRegistryConstants.ATT_CLASS);
 				if (className != null)
@@ -98,12 +99,12 @@ public class WorkingSetDescriptor implements IPluginContribution {
 					byAdapterList.add(className);
 			}
 			if (!byClassList.isEmpty()) {
-				classTypes = (String[]) byClassList.toArray(new String[byClassList.size()]);
+				classTypes = byClassList.toArray(new String[byClassList.size()]);
 				Arrays.sort(classTypes);
 			}
 
 			if (!byAdapterList.isEmpty()) {
-				adapterTypes = (String[]) byAdapterList.toArray(new String[byAdapterList.size()]);
+				adapterTypes = byAdapterList.toArray(new String[byAdapterList.size()]);
 				Arrays.sort(adapterTypes);
 			}
 		}
@@ -170,10 +171,9 @@ public class WorkingSetDescriptor implements IPluginContribution {
 		if (icon == null) {
 			return null;
 		}
-
 		IExtension extension = configElement.getDeclaringExtension();
 		String extendingPluginId = extension.getContributor().getName();
-		return AbstractUIPlugin.imageDescriptorFromPlugin(extendingPluginId, icon);
+		return ResourceLocator.imageDescriptorFromBundle(extendingPluginId, icon).orElse(null);
 	}
 
 	/**

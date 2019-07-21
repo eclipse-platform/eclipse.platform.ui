@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548799
  *******************************************************************************/
 package org.eclipse.ui.internal.preferences;
 
@@ -22,12 +23,12 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.preferences.IPreferenceFilter;
 import org.eclipse.core.runtime.preferences.PreferenceFilterEntry;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.PreferenceTransferRegistryReader;
 import org.eclipse.ui.internal.registry.RegistryReader;
 import org.eclipse.ui.model.WorkbenchAdapter;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Instances represent registered preference transfers.
@@ -172,7 +173,7 @@ public class PreferenceTransferElement extends WorkbenchAdapter implements IPlug
 			if (iconName == null) {
 				return null;
 			}
-			imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(getPluginId(), iconName);
+			imageDescriptor = ResourceLocator.imageDescriptorFromBundle(getPluginId(), iconName).orElse(null);
 		}
 		return imageDescriptor;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,10 +10,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548799
  *******************************************************************************/
 package org.eclipse.ui.part;
 
 import java.util.Objects;
+import java.util.Optional;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -22,6 +24,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -34,7 +37,6 @@ import org.eclipse.ui.internal.intro.IntroMessages;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.intro.IIntroSite;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Abstract base implementation of an intro part.
@@ -64,7 +66,7 @@ public abstract class IntroPart extends EventManager implements IIntroPart, IExe
 
 	private IConfigurationElement configElement;
 
-	private ImageDescriptor imageDescriptor;
+	private Optional<ImageDescriptor> imageDescriptor;
 
 	private IIntroSite partSite;
 
@@ -94,11 +96,8 @@ public abstract class IntroPart extends EventManager implements IIntroPart, IExe
 	 */
 	@Override
 	public void dispose() {
-		if (titleImage != null) {
-			JFaceResources.getResources().destroyImage(imageDescriptor);
-			titleImage = null;
-		}
-
+		imageDescriptor.ifPresent(JFaceResources.getResources()::destroyImage);
+		titleImage = null;
 		// Clear out the property change listeners as we
 		// should not be notifying anyone after the part
 		// has been disposed.
@@ -244,26 +243,16 @@ public abstract class IntroPart extends EventManager implements IIntroPart, IExe
 	 */
 	@Override
 	public void setInitializationData(IConfigurationElement cfig, String propertyName, Object data) {
-
 		// Save config element.
 		configElement = cfig;
-
 		titleLabel = cfig.getAttribute(IWorkbenchRegistryConstants.ATT_LABEL);
-
 		// Icon.
 		String strIcon = cfig.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
 		if (strIcon == null) {
 			return;
 		}
-
-		imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(configElement.getContributor().getName(), strIcon);
-
-		if (imageDescriptor == null) {
-			return;
-		}
-
-		Image image = JFaceResources.getResources().createImageWithDefault(imageDescriptor);
-		titleImage = image;
+		imageDescriptor = ResourceLocator.imageDescriptorFromBundle(configElement.getContributor().getName(), strIcon);
+		imageDescriptor.ifPresent(d -> titleImage = JFaceResources.getResources().createImageWithDefault(d));
 	}
 
 	/**

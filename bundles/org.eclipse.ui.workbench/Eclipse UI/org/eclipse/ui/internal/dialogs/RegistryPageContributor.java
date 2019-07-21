@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
  *     Oakland Software (Francis Upton) <francisu@ieee.org> - bug 223808
  *     James Blackburn (Broadcom Corp.) - Bug 294628 multiple selection
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548799
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
@@ -21,7 +22,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Map.Entry;
 import org.eclipse.core.expressions.EvaluationContext;
@@ -37,6 +37,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.IActionFilter;
 import org.eclipse.ui.IPluginContribution;
@@ -50,7 +51,6 @@ import org.eclipse.ui.internal.registry.CategorizedPageRegistryReader;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.PropertyPagesRegistryReader;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * This property page contributor is created from page entry in the registry.
@@ -67,7 +67,7 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 	 * The list of subpages (immediate children) of this node (element type:
 	 * <code>RegistryPageContributor</code>).
 	 */
-	private Collection subPages = new ArrayList();
+	private Collection<RegistryPageContributor> subPages = new ArrayList<>();
 
 	private boolean adaptable = false;
 
@@ -177,9 +177,10 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 	 */
 	public ImageDescriptor getPageIcon() {
 		String iconName = pageElement.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
-		if (iconName == null)
+		if (iconName == null) {
 			return null;
-		return AbstractUIPlugin.imageDescriptorFromPlugin(pageElement.getNamespaceIdentifier(), iconName);
+		}
+		return ResourceLocator.imageDescriptorFromBundle(pageElement.getNamespaceIdentifier(), iconName).orElse(null);
 	}
 
 	/**
@@ -394,13 +395,7 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 	 * @return RegistryPageContributor
 	 */
 	public Object getChild(String id) {
-		Iterator iterator = subPages.iterator();
-		while (iterator.hasNext()) {
-			RegistryPageContributor next = (RegistryPageContributor) iterator.next();
-			if (next.getPageId().equals(id))
-				return next;
-		}
-		return null;
+		return subPages.stream().filter(c -> c.getPageId().equals(id)).findFirst().orElse(null);
 	}
 
 	/**

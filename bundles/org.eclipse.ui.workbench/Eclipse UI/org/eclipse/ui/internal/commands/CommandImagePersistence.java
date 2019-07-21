@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548799
  *******************************************************************************/
 
 package org.eclipse.ui.internal.commands;
@@ -25,12 +26,12 @@ import org.eclipse.core.runtime.IRegistryChangeEvent;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.services.RegistryPersistence;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 
 /**
@@ -106,22 +107,18 @@ public final class CommandImagePersistence extends RegistryPersistence {
 			if (icon == null) {
 				continue;
 			}
-
 			final String disabledIcon = readOptional(configurationElement, ATT_DISABLEDICON);
 			final String hoverIcon = readOptional(configurationElement, ATT_HOVERICON);
-
 			String namespaceId = configurationElement.getNamespaceIdentifier();
-			ImageDescriptor iconDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(namespaceId, icon);
-			commandImageManager.bind(commandId, CommandImageManager.TYPE_DEFAULT, style, iconDescriptor);
+			ResourceLocator.imageDescriptorFromBundle(namespaceId, icon)
+					.ifPresent(d -> commandImageManager.bind(commandId, CommandImageManager.TYPE_DEFAULT, style, d));
 			if (disabledIcon != null) {
-				ImageDescriptor disabledIconDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(namespaceId,
-						disabledIcon);
-				commandImageManager.bind(commandId, CommandImageManager.TYPE_DISABLED, style, disabledIconDescriptor);
+				ResourceLocator.imageDescriptorFromBundle(namespaceId, disabledIcon).ifPresent(
+						d -> commandImageManager.bind(commandId, CommandImageManager.TYPE_DISABLED, style, d));
 			}
 			if (hoverIcon != null) {
-				ImageDescriptor hoverIconDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(namespaceId,
-						hoverIcon);
-				commandImageManager.bind(commandId, CommandImageManager.TYPE_HOVER, style, hoverIconDescriptor);
+				ResourceLocator.imageDescriptorFromBundle(namespaceId, hoverIcon)
+						.ifPresent(d -> commandImageManager.bind(commandId, CommandImageManager.TYPE_HOVER, style, d));
 			}
 		}
 

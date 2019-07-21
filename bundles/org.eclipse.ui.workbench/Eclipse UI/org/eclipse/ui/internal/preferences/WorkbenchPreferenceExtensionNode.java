@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,7 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Jan-Hendrik Diederich, Bredex GmbH - bug 201052
  *     Oakland Software (Francis Upton) <francisu@ieee.org> - bug 219273
- *
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548799
  *******************************************************************************/
 
 package org.eclipse.ui.internal.preferences;
@@ -23,11 +23,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.KeywordRegistry;
 import org.eclipse.ui.model.IComparableContribution;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * The WorkbenchPreferenceExtensionNode is the abstract class for all property
@@ -161,11 +161,10 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
 		if (imageDescriptor != null) {
 			return imageDescriptor;
 		}
-
 		String imageName = getConfigurationElement().getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
 		if (imageName != null) {
 			String contributingPluginId = pluginId;
-			imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(contributingPluginId, imageName);
+			imageDescriptor = ResourceLocator.imageDescriptorFromBundle(contributingPluginId, imageName).orElse(null);
 		}
 		return imageDescriptor;
 	}

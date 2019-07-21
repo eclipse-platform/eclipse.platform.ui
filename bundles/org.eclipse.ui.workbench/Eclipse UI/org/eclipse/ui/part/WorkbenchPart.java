@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548799
  *******************************************************************************/
 package org.eclipse.ui.part;
 
@@ -19,6 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -28,6 +30,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.ui.workbench.renderers.swt.ContributedPartRenderer;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.window.Window;
@@ -44,7 +47,6 @@ import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.Util;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Abstract base implementation of all workbench parts.
@@ -62,7 +64,7 @@ public abstract class WorkbenchPart extends EventManager
 		implements IWorkbenchPart3, IExecutableExtension, IWorkbenchPartOrientation {
 	private String title = ""; //$NON-NLS-1$
 
-	private ImageDescriptor imageDescriptor;
+	private Optional<ImageDescriptor> imageDescriptor;
 
 	private Image titleImage;
 
@@ -100,9 +102,8 @@ public abstract class WorkbenchPart extends EventManager
 	 */
 	@Override
 	public void dispose() {
-		if (imageDescriptor != null) {
-			JFaceResources.getResources().destroyImage(imageDescriptor);
-		}
+		imageDescriptor.ifPresent(JFaceResources.getResources()::destroyImage);
+		titleImage = null;
 
 		// Clear out the property change listeners as we
 		// should not be notifying anyone after the part
@@ -215,27 +216,18 @@ public abstract class WorkbenchPart extends EventManager
 	 */
 	@Override
 	public void setInitializationData(IConfigurationElement cfig, String propertyName, Object data) {
-
 		// Save config element.
 		configElement = cfig;
-
 		// Part name and title.
 		partName = Util.safeString(cfig.getAttribute("name"));//$NON-NLS-1$ ;
 		title = partName;
-
 		// Icon.
 		String strIcon = cfig.getAttribute("icon");//$NON-NLS-1$
 		if (strIcon == null) {
 			return;
 		}
-
-		imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(configElement.getContributor().getName(), strIcon);
-
-		if (imageDescriptor == null) {
-			return;
-		}
-
-		titleImage = JFaceResources.getResources().createImageWithDefault(imageDescriptor);
+		imageDescriptor = ResourceLocator.imageDescriptorFromBundle(configElement.getContributor().getName(), strIcon);
+		imageDescriptor.ifPresent(d -> titleImage = JFaceResources.getResources().createImageWithDefault(d));
 	}
 
 	/**
@@ -299,10 +291,8 @@ public abstract class WorkbenchPart extends EventManager
 		}
 		this.titleImage = titleImage;
 		firePropertyChange(IWorkbenchPart.PROP_TITLE);
-		if (imageDescriptor != null) {
-			JFaceResources.getResources().destroyImage(imageDescriptor);
-			imageDescriptor = null;
-		}
+		imageDescriptor.ifPresent(JFaceResources.getResources()::destroyImage);
+		imageDescriptor = Optional.empty();
 	}
 
 	/**

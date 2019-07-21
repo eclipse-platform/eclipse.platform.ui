@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Fair Isaac Corporation <Hemant.Singh@Gmail.com> - Bug 326695
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548799
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs;
 
@@ -19,6 +20,7 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.IPluginContribution;
@@ -34,7 +36,6 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.IWorkbenchAdapter2;
 import org.eclipse.ui.model.IWorkbenchAdapter3;
 import org.eclipse.ui.model.WorkbenchAdapter;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.wizards.IWizardCategory;
 import org.eclipse.ui.wizards.IWizardDescriptor;
 
@@ -116,7 +117,7 @@ public class WorkbenchWizardElement extends WorkbenchAdapter
 	 * Create an the instance of the object described by the configuration element.
 	 * That is, create the instance of the class the isv supplied in the extension
 	 * point.
-	 * 
+	 *
 	 * @return the new object
 	 * @throws CoreException
 	 */
@@ -168,8 +169,8 @@ public class WorkbenchWizardElement extends WorkbenchAdapter
 			if (iconName == null) {
 				return null;
 			}
-			imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(configurationElement.getNamespaceIdentifier(),
-					iconName);
+			imageDescriptor = ResourceLocator
+					.imageDescriptorFromBundle(configurationElement.getNamespaceIdentifier(), iconName).orElse(null);
 		}
 		return imageDescriptor;
 	}
@@ -236,8 +237,8 @@ public class WorkbenchWizardElement extends WorkbenchAdapter
 			if (descImage == null) {
 				return null;
 			}
-			descriptionImage = AbstractUIPlugin.imageDescriptorFromPlugin(configurationElement.getNamespaceIdentifier(),
-					descImage);
+			descriptionImage = ResourceLocator
+					.imageDescriptorFromBundle(configurationElement.getNamespaceIdentifier(), descImage).orElse(null);
 		}
 		return descriptionImage;
 	}

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2018 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548799
  *******************************************************************************/
 package org.eclipse.ui.activities;
 
@@ -18,6 +19,7 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Hashtable;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -29,6 +31,7 @@ import org.eclipse.jface.resource.DeviceResourceException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -62,7 +65,6 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.activities.InternalActivityHelper;
 import org.eclipse.ui.internal.activities.ws.ActivityEnabler;
 import org.eclipse.ui.internal.activities.ws.ActivityMessages;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Activities preference page that primarily shows categories and can optionally
@@ -120,7 +122,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage
 
 		private LocalResourceManager manager = new LocalResourceManager(JFaceResources.getResources());
 
-		private ImageDescriptor lockDescriptor;
+		private Optional<ImageDescriptor> lockDescriptor;
 
 		private boolean decorate;
 
@@ -129,7 +131,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage
 		 */
 		public CategoryLabelProvider(boolean decorate) {
 			this.decorate = decorate;
-			lockDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(PlatformUI.PLUGIN_ID,
+			lockDescriptor = ResourceLocator.imageDescriptorFromBundle(PlatformUI.PLUGIN_ID,
 					"icons/full/ovr16/lock_ovr.png"); //$NON-NLS-1$
 		}
 
@@ -141,13 +143,14 @@ public final class ActivityCategoryPreferencePage extends PreferencePage
 				try {
 					if (decorate) {
 						if (isLocked(category)) {
-							ImageData originalImageData = descriptor.getImageData();
-							OverlayIcon overlay = new OverlayIcon(descriptor, lockDescriptor,
-									new Point(originalImageData.width, originalImageData.height));
-							return manager.createImage(overlay);
+							if (lockDescriptor.isPresent()) {
+								ImageData originalImageData = descriptor.getImageData(100);
+								OverlayIcon overlay = new OverlayIcon(descriptor, lockDescriptor.get(),
+										new Point(originalImageData.width, originalImageData.height));
+								return manager.createImage(overlay);
+							}
 						}
 					}
-
 					return manager.createImage(descriptor);
 				} catch (DeviceResourceException e) {
 					WorkbenchPlugin.log(e);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548799
  *******************************************************************************/
 package org.eclipse.ui.internal.decorators;
 
@@ -17,10 +18,10 @@ import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.ui.internal.dialogs.DialogUtil;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Represent the description of an action within an action set. It does not
@@ -55,7 +56,8 @@ public class LightweightActionDescriptor implements IAdaptable, IWorkbenchAdapte
 		String iconName = actionElement.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
 		if (iconName != null) {
 			IExtension extension = actionElement.getDeclaringExtension();
-			this.image = AbstractUIPlugin.imageDescriptorFromPlugin(extension.getContributor().getName(), iconName);
+			ResourceLocator.imageDescriptorFromBundle(extension.getContributor().getName(), iconName)
+					.ifPresent(d -> this.image = d);
 		}
 	}
 

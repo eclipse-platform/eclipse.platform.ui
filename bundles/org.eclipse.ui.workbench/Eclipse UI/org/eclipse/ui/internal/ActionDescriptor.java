@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548799
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -17,6 +18,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.IViewPart;
@@ -24,7 +26,6 @@ import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * When 'action' tag is found in the registry, an object of this class is
@@ -214,14 +215,15 @@ public class ActionDescriptor implements IPluginContribution {
 		String extendingPluginId = actionElement.getDeclaringExtension().getContributor().getName();
 
 		if (icon != null) {
-			action.setImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(extendingPluginId, icon));
+			ResourceLocator.imageDescriptorFromBundle(extendingPluginId, icon).ifPresent(action::setImageDescriptor);
 		}
 		if (hoverIcon != null) {
-			action.setHoverImageDescriptor(AbstractUIPlugin.imageDescriptorFromPlugin(extendingPluginId, hoverIcon));
+			ResourceLocator.imageDescriptorFromBundle(extendingPluginId, hoverIcon)
+					.ifPresent(action::setHoverImageDescriptor);
 		}
 		if (disabledIcon != null) {
-			action.setDisabledImageDescriptor(
-					AbstractUIPlugin.imageDescriptorFromPlugin(extendingPluginId, disabledIcon));
+			ResourceLocator.imageDescriptorFromBundle(extendingPluginId, disabledIcon)
+					.ifPresent(action::setDisabledImageDescriptor);
 		}
 
 		if (accelerator != null) {

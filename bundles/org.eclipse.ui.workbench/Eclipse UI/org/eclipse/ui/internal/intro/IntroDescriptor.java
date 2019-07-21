@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548799
  *******************************************************************************/
 package org.eclipse.ui.internal.intro;
 
@@ -18,11 +19,11 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.ui.IPluginContribution;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.intro.IntroContentDetector;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * Describes an introduction extension.
@@ -75,8 +76,8 @@ public class IntroDescriptor implements IIntroDescriptor, IPluginContribution {
 		if (iconName == null) {
 			return null;
 		}
-
-		imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin(element.getContributor().getName(), iconName);
+		imageDescriptor = ResourceLocator.imageDescriptorFromBundle(element.getContributor().getName(), iconName)
+				.orElse(null);
 		return imageDescriptor;
 	}
 

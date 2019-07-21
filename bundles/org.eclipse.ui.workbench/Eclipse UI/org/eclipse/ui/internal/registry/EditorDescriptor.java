@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn - Bug 256316 getImageDescriptor() is not thread safe
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 548799
  *******************************************************************************/
 package org.eclipse.ui.internal.registry;
 
@@ -20,6 +21,7 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.program.Program;
 import org.eclipse.ui.IEditorActionBarContributor;
@@ -36,7 +38,6 @@ import org.eclipse.ui.internal.misc.ProgramImageDescriptor;
 import org.eclipse.ui.internal.tweaklets.InterceptContributions;
 import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.Util;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * @see IEditorDescriptor
@@ -45,7 +46,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable, 
 
 	/**
 	 * Generated serial version UID for this class.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private static final long serialVersionUID = 3905241225668998961L;
@@ -98,7 +99,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable, 
 	/**
 	 * Create a new instance of an editor descriptor. Limited to internal framework
 	 * calls.
-	 * 
+	 *
 	 * @param element
 	 * @param id2
 	 */
@@ -154,7 +155,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable, 
 
 	/**
 	 * Return the program called programName. Return null if it is not found.
-	 * 
+	 *
 	 * @return org.eclipse.swt.program.Program
 	 */
 	private static Program findProgram(String programName) {
@@ -272,22 +273,23 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable, 
 	@Override
 	public ImageDescriptor getImageDescriptor() {
 		ImageDescriptor tempDescriptor = null;
-
 		synchronized (imageDescLock) {
-			if (!testImage)
+			if (!testImage) {
 				return imageDesc;
-
+			}
 			if (imageDesc == null) {
 				String imageFileName = getImageFilename();
 				String command = getFileName();
-				if (imageFileName != null && configurationElement != null)
-					tempDescriptor = AbstractUIPlugin
-							.imageDescriptorFromPlugin(configurationElement.getNamespaceIdentifier(), imageFileName);
-				else if (command != null)
+				if (imageFileName != null && configurationElement != null) {
+					tempDescriptor = ResourceLocator
+							.imageDescriptorFromBundle(configurationElement.getNamespaceIdentifier(), imageFileName)
+							.orElse(null);
+				} else if (command != null) {
 					tempDescriptor = WorkbenchImages.getImageDescriptorFromProgram(command, 0);
-			} else
+				}
+			} else {
 				tempDescriptor = imageDesc;
-
+			}
 			if (tempDescriptor == null) { // still null? return default image
 				imageDesc = WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FILE);
 				testImage = false;
@@ -303,17 +305,19 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable, 
 		// on Linux due to SWT's implementation of Image. See bugs 265028 and 256316 for
 		// details.
 		Image img = tempDescriptor.createImage(false);
-		if (img == null) // @issue what should be the default image?
+		if (img == null) { // @issue what should be the default image?
 			tempDescriptor = WorkbenchImages.getImageDescriptor(ISharedImages.IMG_OBJ_FILE);
-		else
+		} else {
 			img.dispose();
+		}
 		// <----- End of must-not-lock part
 
 		// reenter synchronized block
 		synchronized (imageDescLock) {
 			// if another thread has set the image description, use it
-			if (!testImage)
+			if (!testImage) {
 				return imageDesc;
+			}
 			// otherwise set the image description we calculated above
 			imageDesc = tempDescriptor;
 			testImage = false;
@@ -385,7 +389,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable, 
 
 	/**
 	 * Get the program for the receiver if there is one.
-	 * 
+	 *
 	 * @return Program
 	 */
 	public Program getProgram() {
@@ -573,7 +577,7 @@ public final class EditorDescriptor implements IEditorDescriptor, Serializable, 
 
 	/**
 	 * Set the receivers program.
-	 * 
+	 *
 	 * @param newProgram
 	 */
 	/* package */void setProgram(Program newProgram) {
