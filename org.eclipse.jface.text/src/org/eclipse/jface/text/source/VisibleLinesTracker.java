@@ -13,8 +13,7 @@
  */
 package org.eclipse.jface.text.source;
 
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.function.Consumer;
 
 import org.eclipse.swt.custom.StyledText;
@@ -48,10 +47,9 @@ class VisibleLinesTracker implements PaintListener {
 	private int oldBottomPixel;
 
 	/**
-	 *
 	 * List of handler to call when a visible line height change.
 	 */
-	private final Collection<Consumer<StyledText>> handlers;
+	private final LinkedHashSet<Consumer<StyledText>> handlers= new LinkedHashSet<>();
 
 	/**
 	 * Constructor to track line height change of visible lines of the {@link StyledText} of the
@@ -61,7 +59,6 @@ class VisibleLinesTracker implements PaintListener {
 	 */
 	private VisibleLinesTracker(ITextViewer viewer) {
 		this.viewer= viewer;
-		this.handlers= new ArrayList<>();
 	}
 
 	@Override

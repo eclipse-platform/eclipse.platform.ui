@@ -644,15 +644,11 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		fCanvas.addMouseMoveListener(fMouseHandler);
 		fCanvas.addMouseWheelListener(fMouseHandler);
 
-		if (fCachedTextViewer != null) {
-			VisibleLinesTracker.track(fCachedTextViewer, lineHeightChangeHandler);
-			fCachedTextViewer.addTextListener(fInternalListener);
+		fCachedTextViewer.addTextListener(fInternalListener);
 
-
-			if (fFont == null) {
-				if (fCachedTextWidget != null && !fCachedTextWidget.isDisposed())
-					fFont= fCachedTextWidget.getFont();
-			}
+		if (fFont == null) {
+			if (!fCachedTextWidget.isDisposed())
+				fFont= fCachedTextWidget.getFont();
 		}
 
 		if (fFont != null)
