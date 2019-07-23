@@ -13,6 +13,12 @@
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
+import org.eclipse.core.commands.common.EventManager;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
@@ -27,14 +33,6 @@ import org.eclipse.swt.widgets.ColorDialog;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-
-import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
-
-import org.eclipse.core.commands.common.EventManager;
-
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
  * The <code>ColorSelector</code> is a wrapper for a button that displays a
@@ -71,7 +69,7 @@ public class ColorSelector extends EventManager {
 		fExtent = computeImageSize(parent);
 		fImage = new Image(parent.getDisplay(), fExtent.x, fExtent.y);
 		GC gc = new GC(fImage);
-		gc.setBackground(fButton.getBackground());
+		gc.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BORDER));
 		gc.fillRectangle(0, 0, fExtent.x, fExtent.y);
 		gc.dispose();
 		fButton.setImage(fImage);
@@ -183,14 +181,12 @@ public class ColorSelector extends EventManager {
 	protected void updateColorImage() {
 		Display display = fButton.getDisplay();
 		GC gc = new GC(fImage);
-		gc.setForeground(display.getSystemColor(SWT.COLOR_BLACK));
-		gc.drawRectangle(0, 2, fExtent.x - 1, fExtent.y - 4);
 		if (fColor != null) {
 			fColor.dispose();
 		}
 		fColor = new Color(display, fColorValue);
 		gc.setBackground(fColor);
-		gc.fillRectangle(1, 3, fExtent.x - 2, fExtent.y - 5);
+		gc.fillRectangle(1, 0, fExtent.x - 2, fExtent.y - 1);
 		gc.dispose();
 		fButton.setImage(fImage);
 	}
