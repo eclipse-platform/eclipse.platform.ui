@@ -658,11 +658,15 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	private class ColorEntry {
 		public final String colorKey;
 		public final String label;
+
+		public final RGB systemColorRGB;
 		public final String isSystemDefaultKey;
-		public ColorEntry(String colorKey, String label, String isSystemDefaultKey) {
+
+		public ColorEntry(String colorKey, String label, String isSystemDefaultKey, Color systemColor) {
 			this.colorKey= colorKey;
 			this.label= label;
 			this.isSystemDefaultKey= isSystemDefaultKey;
+			this.systemColorRGB= (systemColor != null) ? systemColor.getRGB() : null;
 		}
 
 		public boolean allowSystemDefault() {
@@ -676,6 +680,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		public RGB getRGB() {
 			return PreferenceConverter.getColor(fOverlayStore, this.colorKey);
 		}
+
 
 		public void setColor(RGB rgb) {
 			PreferenceConverter.setValue(fOverlayStore, this.colorKey, rgb);
@@ -794,7 +799,13 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		ColorEntry selectedColor= getSelectedAppearanceColorOption();
 		fAppearanceColorDefault.setVisible(selectedColor.isSystemDefaultKey != null);
 		fAppearanceColorDefault.setSelection(selectedColor.isSystemDefault());
-		RGB rgb= selectedColor.isSystemDefault() ? new RGB(0, 0, 0) : PreferenceConverter.getColor(fOverlayStore, selectedColor.colorKey);
+		RGB rgb;
+		if (selectedColor.isSystemDefault()) {
+			rgb= (selectedColor.systemColorRGB != null) ? selectedColor.systemColorRGB : new RGB(0, 0, 0);
+		} else {
+			rgb= PreferenceConverter.getColor(fOverlayStore, selectedColor.colorKey);
+		}
+
 		fAppearanceColorEditor.setColorValue(rgb);
 	}
 
@@ -1014,15 +1025,17 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	private void initializeAppearColorTable(Composite tableComposite) {
 		fAppearanceColorTableViewer.addSelectionChangedListener((SelectionChangedEvent event) -> handleAppearanceColorListSelection());
 		colorPreviewImages= new ArrayList<>();
+
 		fAppearanceColorTableViewer.setLabelProvider(new LabelProvider() {
 			@Override
 			public Image getImage(Object element) {
 				ColorEntry colorEntry= ((ColorEntry) element);
-				if (colorEntry.isSystemDefault())
+				if (colorEntry.isSystemDefault() && colorEntry.systemColorRGB == null) {
 					return null;
-				int dimensions= 10;
-				RGB rgb= colorEntry.getRGB();
+				}
+				RGB rgb= colorEntry.isSystemDefault() ? colorEntry.systemColorRGB : colorEntry.getRGB();
 				Color color= new Color(tableComposite.getParent().getDisplay(), rgb.red, rgb.green, rgb.blue);
+				int dimensions= 10;
 				Image image= new Image(tableComposite.getParent().getDisplay(), dimensions, dimensions);
 				GC gc= new GC(image);
 				// Draw color preview 
@@ -1033,6 +1046,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 				gc.setLineWidth(2);
 				gc.drawRectangle(0, 0, dimensions, dimensions);
 				gc.dispose();
+				color.dispose();
 				colorPreviewImages.add(image);
 				return image;
 			}
@@ -1071,22 +1085,32 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	}
 
 	private void initialize() {
+		Display display= getControl().getDisplay();
 		// Initialize AppearanceColorOptions model with the appropriate preference keys
 		ColorEntry[] fApperanceColorOptionsModel= new ColorEntry[] {
-				new ColorEntry(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, TextEditorMessages.TextEditorPreferencePage_lineNumberForegroundColor, null),
-				new ColorEntry(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, TextEditorMessages.TextEditorPreferencePage_currentLineHighlighColor, null),
-				new ColorEntry(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, TextEditorMessages.TextEditorPreferencePage_printMarginColor, null),
-				new ColorEntry(AbstractTextEditor.PREFERENCE_COLOR_FIND_SCOPE, TextEditorMessages.TextEditorPreferencePage_findScopeColor, null),
+				// Line Number Foreground Color
+				new ColorEntry(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR, TextEditorMessages.TextEditorPreferencePage_lineNumberForegroundColor, null, null),
+				// Current Line Highlight Color
+				new ColorEntry(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_CURRENT_LINE_COLOR, TextEditorMessages.TextEditorPreferencePage_currentLineHighlighColor, null, null),
+				// Print Margin Color
+				new ColorEntry(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_COLOR, TextEditorMessages.TextEditorPreferencePage_printMarginColor, null, null),
+				// Find Scope Color
+				new ColorEntry(AbstractTextEditor.PREFERENCE_COLOR_FIND_SCOPE, TextEditorMessages.TextEditorPreferencePage_findScopeColor, null, null),
+				// Selection Foreground Color
 				new ColorEntry(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR, TextEditorMessages.TextEditorPreferencePage_selectionForegroundColor,
-						AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR),
+						AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR, display.getSystemColor(SWT.COLOR_LIST_SELECTION_TEXT)),
+				// Selection Background Color
 				new ColorEntry(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR, TextEditorMessages.TextEditorPreferencePage_selectionBackgroundColor,
-						AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR),
+						AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_DEFAULT_COLOR, display.getSystemColor(SWT.COLOR_LIST_SELECTION)),
+				// Text Editor Background Color
 				new ColorEntry(AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND, TextEditorMessages.TextEditorPreferencePage_backgroundColor,
-						AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT),
+						AbstractTextEditor.PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT, display.getSystemColor(SWT.COLOR_LIST_BACKGROUND)),
+				// Text Editor Foreground Color
 				new ColorEntry(AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND, TextEditorMessages.TextEditorPreferencePage_foregroundColor,
-						AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT),
+						AbstractTextEditor.PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT, display.getSystemColor(SWT.COLOR_LIST_FOREGROUND)),
+				// Hyperlink Color
 				new ColorEntry(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_COLOR, TextEditorMessages.HyperlinkColor_label,
-						AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_COLOR_SYSTEM_DEFAULT)
+						AbstractDecoratedTextEditorPreferenceConstants.EDITOR_HYPERLINK_COLOR_SYSTEM_DEFAULT, display.getSystemColor(SWT.COLOR_LINK_FOREGROUND))
 		};
 		fAppearanceColorTableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		fAppearanceColorTableViewer.setInput(fApperanceColorOptionsModel);
