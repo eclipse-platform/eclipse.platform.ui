@@ -658,12 +658,10 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 	private class ColorEntry {
 		public final String colorKey;
 		public final String label;
-		public RGB previousColor;
 		public final String isSystemDefaultKey;
 		public ColorEntry(String colorKey, String label, String isSystemDefaultKey) {
 			this.colorKey= colorKey;
 			this.label= label;
-			this.previousColor= PreferenceConverter.getColor(fOverlayStore, colorKey);
 			this.isSystemDefaultKey= isSystemDefaultKey;
 		}
 
@@ -680,7 +678,6 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		}
 
 		public void setColor(RGB rgb) {
-			this.previousColor= PreferenceConverter.getColor(fOverlayStore, this.colorKey);
 			PreferenceConverter.setValue(fOverlayStore, this.colorKey, rgb);
 		}
 
@@ -965,7 +962,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		SelectionListener colorDefaultSelectionListener= new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				ColorEntry colorEntry = getSelectedAppearanceColorOption();
+				ColorEntry colorEntry= getSelectedAppearanceColorOption();
 				if (colorEntry.allowSystemDefault()) {
 					colorEntry.setSystemDefault(fAppearanceColorDefault.getSelection());
 					handleAppearanceColorListSelection(); // refresh color preview and checkbox state
