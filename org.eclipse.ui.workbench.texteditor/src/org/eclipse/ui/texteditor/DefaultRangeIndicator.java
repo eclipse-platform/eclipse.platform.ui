@@ -141,11 +141,11 @@ public class DefaultRangeIndicator extends Annotation implements IAnnotationPres
 
 		ImageData imageData= new ImageData(width, height, 1, createPalette(display, rangeIndicatorColor));
 
-		for (int y= 0; y < height; y++)
-			for (int x= 0; x < width; x++)
-				imageData.setPixel(x, y, (x + y) % 2);
+		for (int y= 0, offset= 1; y < height; y++, offset= (offset + 1) % 2)
+			for (int x= offset; x < width; x += 2)
+				imageData.setPixel(x, y, 1);
 
-		imageData.transparentPixel= imageData.palette.getPixel(imageData.getRGBs()[1]);
+		imageData.transparentPixel= 1;
 
 
 		return new Image(display, imageData);
