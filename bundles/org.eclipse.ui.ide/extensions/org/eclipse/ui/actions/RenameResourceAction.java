@@ -430,7 +430,12 @@ public class RenameResourceAction extends WorkspaceAction {
 		textEditor.setBounds(2, inset, Math.min(textSize.x, parentSize.x - 4),
 				parentSize.y - 2 * inset);
 		textEditorParent.redraw();
-		textEditor.selectAll();
+		int startOfFileExtension = resource.getName().lastIndexOf('.'); // $NON-NLS-1$
+		if (startOfFileExtension == -1) {
+			textEditor.selectAll();
+		} else {
+			textEditor.setSelection(0, startOfFileExtension);
+		}
 		textEditor.setFocus();
 	}
 
@@ -440,21 +445,19 @@ public class RenameResourceAction extends WorkspaceAction {
 		if (currentResource == null || !currentResource.exists()) {
 			return;
 		}
-		if (LTKLauncher.openRenameWizard(getStructuredSelection())) {
-			return;
-		}
-		if (this.navigatorTree == null) {
-			// Do a quick read only and null check
-			if (!checkReadOnlyAndNull(currentResource)) {
-				return;
+		if (LTKLauncher.isCompositeRename(getStructuredSelection()) || this.navigatorTree == null) {
+			if (!LTKLauncher.openRenameWizard(getStructuredSelection())) {
+				// LTK Launcher couldn't rename the resource
+				if (!checkReadOnlyAndNull(currentResource)) {
+					return;
+				}
+				String newName = queryNewResourceName(currentResource);
+				if (newName == null || newName.isEmpty()) {
+					return;
+				}
+				newPath = currentResource.getFullPath().removeLastSegments(1).append(newName);
+				super.run();
 			}
-			String newName = queryNewResourceName(currentResource);
-			if (newName == null || newName.isEmpty()) {
-				return;
-			}
-			newPath = currentResource.getFullPath().removeLastSegments(1)
-					.append(newName);
-			super.run();
 		} else {
 			runWithInlineEditor();
 		}
@@ -530,9 +533,11 @@ public class RenameResourceAction extends WorkspaceAction {
 					if (!status.isOK()) {
 						displayError(status.getMessage());
 					} else {
-						IPath newPath = inlinedResource.getFullPath()
-								.removeLastSegments(1).append(newName);
-						runWithNewPath(newPath, inlinedResource);
+						if (!LTKLauncher.renameResource(newName, getStructuredSelection())) {
+							// LTK Launcher couldn't rename the resource
+							IPath newPath = inlinedResource.getFullPath().removeLastSegments(1).append(newName);
+							runWithNewPath(newPath, inlinedResource);
+						}
 					}
 				}
 				inlinedResource = null;
@@ -649,6 +654,7 @@ public class RenameResourceAction extends WorkspaceAction {
 										WorkspaceUndoUtil
 												.getUIInfoAdapter(getShell()));
 					} catch (ExecutionException e) {
+						IDEWorkbenchPlugin.log(e.toString());
 						if (e.getCause() instanceof CoreException) {
 							errorStatus[0] = ((CoreException) e.getCause())
 									.getStatus();

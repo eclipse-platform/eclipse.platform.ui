@@ -15,6 +15,11 @@
 
 package org.eclipse.ui.internal.ide.actions;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.NotEnabledException;
@@ -37,7 +42,8 @@ public class LTKLauncher {
 	private static final String LTK_DELETE_ID = "org.eclipse.ltk.ui.refactoring.commands.deleteResources"; //$NON-NLS-1$
 	private static final String LTK_MOVE_ID = "org.eclipse.ltk.ui.refactoring.commands.moveResources"; //$NON-NLS-1$
 	private static final String LTK_RENAME_ID = "org.eclipse.ltk.ui.refactoring.commands.renameResource"; //$NON-NLS-1$
-
+	private static final String LTK_RENAME_COMMAND_NEWNAME_KEY = "org.eclipse.ltk.ui.refactoring.commands.renameResource.newName.parameter.key"; //$NON-NLS-1$
+	private static final String LTK_CHECK_COMPOSITE_RENAME_PARAMETER_KEY = "org.eclipse.ltk.ui.refactoring.commands.checkCompositeRename.parameter.key"; //$NON-NLS-1$
 	/**
 	 * Open the LTK delete resources wizard if available.
 	 *
@@ -48,7 +54,7 @@ public class LTKLauncher {
 	 */
 	public static boolean openDeleteWizard(
 			IStructuredSelection structuredSelection) {
-		return runCommand(LTK_DELETE_ID, structuredSelection);
+		return runCommand(LTK_DELETE_ID, structuredSelection, Collections.emptyMap());
 	}
 
 	/**
@@ -61,24 +67,55 @@ public class LTKLauncher {
 	 */
 	public static boolean openMoveWizard(
 			IStructuredSelection structuredSelection) {
-		return runCommand(LTK_MOVE_ID, structuredSelection);
+		return runCommand(LTK_MOVE_ID, structuredSelection, Collections.emptyMap());
 	}
 
 	/**
-	 * Open the LTK rename resource wizard if available.
+	 * Performs a silent resource rename using the given new name.
 	 *
-	 * @param structuredSelection
-	 *            The action current selection.
+	 * @param newName             The new name to give the resource
+	 *
+	 * @param structuredSelection The action current selection.
+	 *
+	 * @return <code>true</code> if we can perform the rename
+	 */
+	public static boolean renameResource(String newName,
+			IStructuredSelection structuredSelection) {
+		Map<String, Object> commandParameters = new HashMap<>();
+		commandParameters.put(LTK_RENAME_COMMAND_NEWNAME_KEY, newName);
+		return runCommand(LTK_RENAME_ID, structuredSelection, commandParameters);
+	}
+
+	/**
+	 * Open the LTK rename resource wizard if available. The resource's new name
+	 * will be inputed in the wizard dialog.
+	 *
+	 *
+	 * @param structuredSelection The action current selection.
 	 *
 	 * @return <code>true</code> if we can launch the wizard
 	 */
-	public static boolean openRenameWizard(
-			IStructuredSelection structuredSelection) {
-		return runCommand(LTK_RENAME_ID, structuredSelection);
+	public static boolean openRenameWizard(IStructuredSelection structuredSelection) {
+		return runCommand(LTK_RENAME_ID, structuredSelection, Collections.emptyMap());
 	}
 
-	private static boolean runCommand(String commandId,
-			IStructuredSelection selection) {
+	/**
+	 * Returns true if a rename would result in multiple files being affected
+	 * (composite change), false if only the file being renamed is affected.
+	 *
+	 * @param structuredSelection The action current selection.
+	 * @return <code>true</code> if a rename is composite change, <code>false</code>
+	 *         otherwise
+	 */
+	public static boolean isCompositeRename(IStructuredSelection structuredSelection) {
+		Map<String, Object> commandParameters = new HashMap<>();
+		commandParameters.put(LTK_CHECK_COMPOSITE_RENAME_PARAMETER_KEY, true);
+		return runCommand(LTK_RENAME_ID, structuredSelection, commandParameters);
+	}
+
+	private static boolean runCommand(String commandId, IStructuredSelection selection,
+			Map<String, Object> commandParameters) {
+
 		ICommandService commandService = PlatformUI
 				.getWorkbench().getService(ICommandService.class);
 		Command cmd = commandService.getCommand(commandId);
@@ -93,13 +130,20 @@ public class LTKLauncher {
 			c = new EvaluationContext(handlerService
 					.createContextSnapshot(false), selection.toList());
 			c.addVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME, selection);
+			for (Entry<String, Object> entry : commandParameters.entrySet()) {
+				c.addVariable(entry.getKey(), entry.getValue());
+			}
 		}
 		try {
+			Object commandResult;
 			if (c != null) {
-				handlerService.executeCommandInContext(
+				commandResult = handlerService.executeCommandInContext(
 						new ParameterizedCommand(cmd, null), null, c);
 			} else {
-				handlerService.executeCommand(commandId, null);
+				commandResult = handlerService.executeCommand(commandId, null);
+			}
+			if (commandResult instanceof Boolean) {
+				return (Boolean) commandResult;
 			}
 			return true;
 		} catch (ExecutionException | NotDefinedException | NotEnabledException | NotHandledException e) {
