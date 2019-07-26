@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -617,7 +617,8 @@ public abstract class RefactoringWizard extends Wizard {
 	 */
 	public final Change internalCreateChange(InternalAPI api, CreateChangeOperation operation, boolean updateStatus) {
 		Assert.isNotNull(api);
-		return createChange(operation, updateStatus, getContainer());
+		IRunnableContext context= getContainer() != null ? getContainer() : fRunnableContext;
+		return createChange(operation, updateStatus, context);
 	}
 
 	/**
@@ -660,7 +661,7 @@ public abstract class RefactoringWizard extends Wizard {
 	private Change createChange(CreateChangeOperation operation, boolean updateStatus, IRunnableContext context){
 		InvocationTargetException exception= null;
 		try {
-			context.run(true, fIsChangeCreationCancelable, new WorkbenchRunnableAdapter(
+			context.run((context != PlatformUI.getWorkbench().getActiveWorkbenchWindow()), fIsChangeCreationCancelable, new WorkbenchRunnableAdapter(
 				operation, ResourcesPlugin.getWorkspace().getRoot()));
 		} catch (InterruptedException e) {
 			setConditionCheckingStatus(null);
