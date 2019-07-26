@@ -126,6 +126,11 @@
             description="%renameResource.description"
             id="org.eclipse.ltk.ui.refactoring.commands.renameResource"
             name="%renameResource.name">
+			<commandParameter
+                  id="org.eclipse.ltk.ui.refactoring.commands.renameResource.newName.parameter.key"
+                  name="%renameResource.commandParameter.newName"
+                  optional="true">
+            </commandParameter>
       </command>
    </extension>
 </plugin>

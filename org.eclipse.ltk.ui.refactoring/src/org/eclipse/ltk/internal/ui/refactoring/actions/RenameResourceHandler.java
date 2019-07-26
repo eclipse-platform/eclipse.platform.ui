@@ -13,6 +13,8 @@
  ******************************************************************************/
 package org.eclipse.ltk.internal.ui.refactoring.actions;
 
+import org.eclipse.osgi.util.NLS;
+
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.commands.ExecutionEvent;
@@ -26,18 +28,33 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
+import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 import org.eclipse.ltk.ui.refactoring.RefactoringWizardOpenOperation;
 import org.eclipse.ltk.ui.refactoring.resource.RenameResourceWizard;
 
 public class RenameResourceHandler extends AbstractResourcesHandler {
+	private static final String LTK_RENAME_COMMAND_NEWNAME_PARAMETER_KEY= "org.eclipse.ltk.ui.refactoring.commands.renameResource.newName.parameter.key"; //$NON-NLS-1$
+
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 		Shell activeShell= HandlerUtil.getActiveShell(event);
+		Object newNameValue= HandlerUtil.getVariable(event, LTK_RENAME_COMMAND_NEWNAME_PARAMETER_KEY);
+		String newName= null;
+		if (newNameValue instanceof String) {
+			newName= (String) newNameValue;
+		} else if (newNameValue != null) {
+			RefactoringUIPlugin.logErrorMessage(NLS.bind(RefactoringUIMessages.RenameResourceHandler_ERROR_EXPECTED_STRING, newNameValue.getClass().getName()));
+		}
 		ISelection sel= HandlerUtil.getCurrentSelection(event);
 		if (sel instanceof IStructuredSelection) {
 			IResource resource= getCurrentResource((IStructuredSelection) sel);
 			if (resource != null) {
-				RenameResourceWizard refactoringWizard= new RenameResourceWizard(resource);
+				RenameResourceWizard refactoringWizard;
+				if (newName != null) {
+					refactoringWizard= new RenameResourceWizard(resource, newName);
+				} else {
+					refactoringWizard= new RenameResourceWizard(resource);
+				}
 				RefactoringWizardOpenOperation op= new RefactoringWizardOpenOperation(refactoringWizard);
 				try {
 					op.run(activeShell, RefactoringUIMessages.RenameResourceHandler_title);
