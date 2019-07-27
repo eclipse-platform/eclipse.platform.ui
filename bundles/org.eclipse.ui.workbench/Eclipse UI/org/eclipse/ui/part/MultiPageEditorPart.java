@@ -18,7 +18,6 @@ package org.eclipse.ui.part;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -770,8 +769,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	@Override
 	public boolean isDirty() {
 		// use nestedEditors to avoid SWT requests; see bug 12996
-		for (Iterator<IEditorPart> i = nestedEditors.iterator(); i.hasNext();) {
-			IEditorPart editor = i.next();
+		for (IEditorPart editor : nestedEditors) {
 			if (editor.isDirty()) {
 				return true;
 			}

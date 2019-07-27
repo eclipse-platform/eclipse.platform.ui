@@ -53,9 +53,9 @@ public class PerspectiveProvider extends QuickAccessProvider {
 			IPerspectiveDescriptor[] perspectives = PlatformUI.getWorkbench().getPerspectiveRegistry()
 					.getPerspectives();
 			cachedElements = new QuickAccessElement[perspectives.length];
-			for (int i = 0; i < perspectives.length; i++) {
-				if (!WorkbenchActivityHelper.filterItem(perspectives[i])) {
-					PerspectiveElement perspectiveElement = new PerspectiveElement(perspectives[i]);
+			for (IPerspectiveDescriptor perspective : perspectives) {
+				if (!WorkbenchActivityHelper.filterItem(perspective)) {
+					PerspectiveElement perspectiveElement = new PerspectiveElement(perspective);
 					idToElement.put(perspectiveElement.getId(), perspectiveElement);
 				}
 			}

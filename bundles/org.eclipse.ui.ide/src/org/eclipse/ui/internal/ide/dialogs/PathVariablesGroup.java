@@ -20,7 +20,6 @@ package org.eclipse.ui.internal.ide.dialogs;
 
 import java.net.URI;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.SortedMap;
@@ -653,9 +652,7 @@ public class PathVariablesGroup {
 	public boolean performOk() {
 		try {
 			// first process removed variables
-			for (Iterator<String> removed = removedVariableNames.iterator(); removed
-					.hasNext();) {
-				String removedVariableName = removed.next();
+			for (String removedVariableName : removedVariableNames) {
 				// only removes variables that have not been added again
 				if (!tempPathVariables.containsKey(removedVariableName)) {
 					pathVariableManager.setURIValue(removedVariableName, null);

@@ -396,12 +396,11 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 	private int getNumRows(IContributionItem[] items) {
 		int numRows = 1;
 		boolean separatorFound = false;
-		for (int i = 0; i < items.length; i++) {
-			if (items[i].isSeparator()) {
+		for (IContributionItem item : items) {
+			if (item.isSeparator()) {
 				separatorFound = true;
 			}
-			if ((separatorFound) && (isChildVisible(items[i])) && (!items[i].isGroupMarker())
-					&& (!items[i].isSeparator())) {
+			if ((separatorFound) && (isChildVisible(item)) && (!item.isGroupMarker()) && (!item.isSeparator())) {
 				numRows++;
 				separatorFound = false;
 			}
@@ -919,9 +918,9 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 			CoolItem[] items = coolBar.getItems();
 			if (items != null) {
 				ArrayList<Control> children = new ArrayList<>(items.length);
-				for (int i = 0; i < items.length; i++) {
-					if ((items[i].getControl() != null) && (!items[i].getControl().isDisposed())) {
-						children.add(items[i].getControl());
+				for (CoolItem item : items) {
+					if ((item.getControl() != null) && (!item.getControl().isDisposed())) {
+						children.add(item.getControl());
 					}
 				}
 				// Convert array

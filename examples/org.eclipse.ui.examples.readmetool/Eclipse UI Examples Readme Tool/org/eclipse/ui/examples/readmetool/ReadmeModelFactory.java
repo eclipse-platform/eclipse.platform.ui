@@ -147,12 +147,12 @@ public class ReadmeModelFactory {
 				if (i == extensions.length - 1) {
 					IConfigurationElement[] configElements = currentExtension
 							.getConfigurationElements();
-					for (int j = 0; j < configElements.length; j++) {
+					for (IConfigurationElement configElement : configElements) {
 						IConfigurationElement config = configElements[i];
 						if (config.getName()
-								.equals(IReadmeConstants.TAG_PARSER)) {
+							.equals(IReadmeConstants.TAG_PARSER)) {
 							// process the first 'parser' element and stop
-                            processParserElement(config);
+							processParserElement(config);
 							break;
 						}
 					}

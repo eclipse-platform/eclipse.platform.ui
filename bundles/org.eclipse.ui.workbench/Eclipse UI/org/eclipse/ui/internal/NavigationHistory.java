@@ -527,8 +527,7 @@ public class NavigationHistory implements INavigationHistory {
 			}
 		}
 		IMemento editorsMem = memento.createChild(IWorkbenchConstants.TAG_EDITORS);
-		for (Iterator<NavigationHistoryEditorInfo> iter = editors.iterator(); iter.hasNext();) {
-			NavigationHistoryEditorInfo info = iter.next();
+		for (NavigationHistoryEditorInfo info : editors) {
 			info.saveState(editorsMem.createChild(IWorkbenchConstants.TAG_EDITOR));
 		}
 
@@ -645,8 +644,7 @@ public class NavigationHistory implements INavigationHistory {
 		if (dup == null) {
 			return;
 		}
-		for (Iterator<NavigationHistoryEntry> iter = history.iterator(); iter.hasNext();) {
-			NavigationHistoryEntry entry = iter.next();
+		for (NavigationHistoryEntry entry : history) {
 			if (entry.editorInfo == dup) {
 				entry.editorInfo = info;
 				info.refCount++;

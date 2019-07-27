@@ -15,7 +15,6 @@
 package org.eclipse.ui.internal;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Objects;
 import java.util.Set;
 import org.eclipse.core.runtime.Adapters;
@@ -198,9 +197,7 @@ public class WorkingSet extends AbstractWorkingSet {
 			memento.putString(IWorkbenchConstants.TAG_LABEL, getLabel());
 			memento.putString(IWorkbenchConstants.TAG_ID, getUniqueId());
 			memento.putString(IWorkbenchConstants.TAG_EDIT_PAGE_ID, editPageId);
-			Iterator iterator = elements.iterator();
-			while (iterator.hasNext()) {
-				IAdaptable adaptable = (IAdaptable) iterator.next();
+			for (IAdaptable adaptable : elements) {
 				final IPersistableElement persistable = Adapters.adapt(adaptable, IPersistableElement.class);
 				if (persistable != null) {
 					final IMemento itemMemento = memento.createChild(IWorkbenchConstants.TAG_ITEM);

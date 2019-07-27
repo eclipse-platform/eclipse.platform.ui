@@ -1031,13 +1031,12 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		if (cascadingTheme != null)
 			cascadingTheme.dispose();
 
-		for (Iterator<IThemePreview> i = previewSet.iterator(); i.hasNext();) {
-			IThemePreview preview = i.next();
+		for (IThemePreview preview : previewSet) {
 			try {
 				preview.dispose();
 			} catch (RuntimeException e) {
 				WorkbenchPlugin.log(RESOURCE_BUNDLE.getString("errorDisposePreviewLog"), //$NON-NLS-1$
-						StatusUtil.newStatus(IStatus.ERROR, e.getMessage(), e));
+					StatusUtil.newStatus(IStatus.ERROR, e.getMessage(), e));
 			}
 		}
 		previewSet.clear();

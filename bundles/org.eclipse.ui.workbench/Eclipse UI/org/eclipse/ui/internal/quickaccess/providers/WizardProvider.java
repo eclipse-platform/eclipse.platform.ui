@@ -53,9 +53,9 @@ public class WizardProvider extends QuickAccessProvider {
 			List<IWizardDescriptor> result = new ArrayList<>();
 			collectWizards(rootCategory, result);
 			IWizardDescriptor[] wizards = result.toArray(new IWizardDescriptor[result.size()]);
-			for (int i = 0; i < wizards.length; i++) {
-				if (!WorkbenchActivityHelper.filterItem(wizards[i])) {
-					WizardElement wizardElement = new WizardElement(wizards[i]);
+			for (IWizardDescriptor wizard : wizards) {
+				if (!WorkbenchActivityHelper.filterItem(wizard)) {
+					WizardElement wizardElement = new WizardElement(wizard);
 					idToElement.put(wizardElement.getId(), wizardElement);
 				}
 			}

@@ -1556,8 +1556,7 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 			contextIdsByUniqueName = new HashMap<>();
 			contextUniqueNamesById = new HashMap<>();
 
-			for (Iterator<Map.Entry<String, Set<Context>>> iterator = contextsByName.entrySet().iterator(); iterator.hasNext();) {
-				Map.Entry<String, Set<Context>> entry = iterator.next();
+			for (Map.Entry<String, Set<Context>> entry : contextsByName.entrySet()) {
 				String name = entry.getKey();
 				Set<Context> contexts = entry.getValue();
 				Iterator<Context> iterator2 = contexts.iterator();
@@ -1570,7 +1569,7 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 					while (iterator2.hasNext()) {
 						Context context = iterator2.next();
 						String uniqueName = MessageFormat.format(Util.translateString(RESOURCE_BUNDLE, "uniqueName"), //$NON-NLS-1$
-								name, context.getId());
+							name, context.getId());
 						contextIdsByUniqueName.put(uniqueName, context.getId());
 						contextUniqueNamesById.put(context.getId(), uniqueName);
 					}
@@ -1580,9 +1579,7 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 			categoryIdsByUniqueName = new HashMap<>();
 			categoryUniqueNamesById = new HashMap<>();
 
-			for (Iterator<Map.Entry<String, Set<Category>>> iterator = categoriesByName.entrySet().iterator(); iterator
-					.hasNext();) {
-				Map.Entry<String, Set<Category>> entry = iterator.next();
+			for (Map.Entry<String, Set<Category>> entry : categoriesByName.entrySet()) {
 				String name = entry.getKey();
 				Set<Category> categories = entry.getValue();
 				Iterator<Category> iterator2 = categories.iterator();
@@ -1595,7 +1592,7 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 					while (iterator2.hasNext()) {
 						Category category = iterator2.next();
 						String uniqueName = MessageFormat.format(Util.translateString(RESOURCE_BUNDLE, "uniqueName"), //$NON-NLS-1$
-								new Object[] { name, category.getId() });
+							new Object[] { name, category.getId() });
 						categoryIdsByUniqueName.put(uniqueName, category.getId());
 						categoryUniqueNamesById.put(category.getId(), uniqueName);
 					}
@@ -1605,8 +1602,7 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 			schemeIdsByUniqueName = new HashMap<>();
 			schemeUniqueNamesById = new HashMap<>();
 
-			for (Iterator<Map.Entry<String, Set<Scheme>>> iterator = schemesByName.entrySet().iterator(); iterator.hasNext();) {
-				Map.Entry<String, Set<Scheme>> entry = iterator.next();
+			for (Map.Entry<String, Set<Scheme>> entry : schemesByName.entrySet()) {
 				String name = entry.getKey();
 				Set<Scheme> keyConfigurations = entry.getValue();
 				Iterator<Scheme> iterator2 = keyConfigurations.iterator();
@@ -1619,7 +1615,7 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 					while (iterator2.hasNext()) {
 						Scheme scheme = iterator2.next();
 						String uniqueName = MessageFormat.format(Util.translateString(RESOURCE_BUNDLE, "uniqueName"), //$NON-NLS-1$
-								new Object[] { name, scheme.getId() });
+							new Object[] { name, scheme.getId() });
 						schemeIdsByUniqueName.put(uniqueName, scheme.getId());
 						schemeUniqueNamesById.put(scheme.getId(), uniqueName);
 					}

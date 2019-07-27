@@ -19,7 +19,6 @@ package org.eclipse.ui.internal.quickaccess.providers;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -100,9 +99,8 @@ public class CommandProvider extends QuickAccessProvider {
 			ParameterizedCommand pcmd = new ParameterizedCommand(command, null);
 			if (command != null && ehandlerService.canExecute(pcmd)) {
 				try {
-					Collection<?> combinations = ParameterizedCommand.generateCombinations(command);
-					for (Iterator<?> it = combinations.iterator(); it.hasNext();) {
-						ParameterizedCommand pc = (ParameterizedCommand) it.next();
+					Collection<ParameterizedCommand> combinations = ParameterizedCommand.generateCombinations(command);
+					for (ParameterizedCommand pc : combinations) {
 						String id = pc.serialize();
 						synchronized (idToCommand) {
 							idToCommand.put(id, new CommandElement(pc, id, this));

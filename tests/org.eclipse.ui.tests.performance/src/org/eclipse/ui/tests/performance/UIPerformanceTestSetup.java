@@ -78,8 +78,7 @@ public class UIPerformanceTestSetup extends TestSetup {
 				 * TODO: remove when https://bugs.eclipse.org/bugs/show_bug.cgi?id=71362 is fixed
 				 */
 		StackTraceElement[] elements=  new Throwable().getStackTrace();
-		for (int i= 0; i < elements.length; i++) {
-			StackTraceElement element= elements[i];
+		for (StackTraceElement element : elements) {
 			if (element.getClassName().equals("org.eclipse.test.EclipseTestRunner")) {
 				PlatformUI.getWorkbench().close();
 				break;

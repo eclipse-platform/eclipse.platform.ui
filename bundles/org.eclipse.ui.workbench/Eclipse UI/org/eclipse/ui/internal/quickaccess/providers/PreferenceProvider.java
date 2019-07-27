@@ -65,13 +65,12 @@ public class PreferenceProvider extends QuickAccessProvider {
 	}
 
 	private void collectElements(String prefix, IPreferenceNode[] subNodes, List<PreferenceElement> result) {
-		for (int i = 0; i < subNodes.length; i++) {
-			if (!WorkbenchActivityHelper.filterItem(subNodes[i])) {
-				PreferenceElement preferenceElement = new PreferenceElement(subNodes[i], prefix);
+		for (IPreferenceNode subNode : subNodes) {
+			if (!WorkbenchActivityHelper.filterItem(subNode)) {
+				PreferenceElement preferenceElement = new PreferenceElement(subNode, prefix);
 				result.add(preferenceElement);
-				String nestedPrefix = prefix.length() == 0 ? subNodes[i].getLabelText()
-						: (prefix + "/" + subNodes[i].getLabelText()); //$NON-NLS-1$
-				collectElements(nestedPrefix, subNodes[i].getSubNodes(), result);
+				String nestedPrefix = prefix.length() == 0 ? subNode.getLabelText() : (prefix + "/" + subNode.getLabelText()); //$NON-NLS-1$
+				collectElements(nestedPrefix, subNode.getSubNodes(), result);
 			}
 		}
 	}

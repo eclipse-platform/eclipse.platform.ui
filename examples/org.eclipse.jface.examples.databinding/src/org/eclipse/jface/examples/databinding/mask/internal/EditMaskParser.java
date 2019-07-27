@@ -45,8 +45,8 @@ public class EditMaskParser {
 	 * @param input the user input which may or may not be in valid format
 	 */
 	public void setInput(String input) {
-		for (int i = 0; i < expectedTokens.length; i++) {
-			expectedTokens[i].clear();
+		for (EditMaskLexerAndToken expectedToken : expectedTokens) {
+			expectedToken.clear();
 		}
 		int tokenPosition = 0;
 		int inputPosition = 0;
@@ -72,8 +72,8 @@ public class EditMaskParser {
 	 */
 	public String getFormattedResult() {
 		StringBuilder result = new StringBuilder();
-		for (int i = 0; i < expectedTokens.length; i++) {
-			String outputChar = expectedTokens[i].getInput();
+		for (EditMaskLexerAndToken expectedToken : expectedTokens) {
+			String outputChar = expectedToken.getInput();
 			if (outputChar == null) {
 				outputChar = "" + placeholder;
 			}
@@ -87,11 +87,11 @@ public class EditMaskParser {
 	 */
 	public String getRawResult() {
 		StringBuilder result = new StringBuilder();
-		for (int i = 0; i < expectedTokens.length; i++) {
-			if (expectedTokens[i].isReadOnly()) {
+		for (EditMaskLexerAndToken expectedToken : expectedTokens) {
+			if (expectedToken.isReadOnly()) {
 				continue;
 			}
-			String outputChar = expectedTokens[i].getInput();
+			String outputChar = expectedToken.getInput();
 			if (outputChar == null) {
 				outputChar = "";
 			}
@@ -104,8 +104,8 @@ public class EditMaskParser {
 	 * @return true if the current input is a valid input
 	 */
 	public boolean isComplete() {
-		for (int i = 0; i < expectedTokens.length; i++) {
-			if (!expectedTokens[i].isComplete()) {
+		for (EditMaskLexerAndToken expectedToken : expectedTokens) {
+			if (!expectedToken.isComplete()) {
 				return false;
 			}
 		}

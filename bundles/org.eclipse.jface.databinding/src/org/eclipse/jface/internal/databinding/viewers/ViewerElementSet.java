@@ -157,8 +157,8 @@ public class ViewerElementSet<E> implements Set<E> {
 		outer: for (Iterator<?> iterator = iterator(); iterator.hasNext();) {
 			@SuppressWarnings("unchecked")
 			E element = (E) iterator.next();
-			for (int i = 0; i < retainAll.length; i++) {
-				if (comparer.equals(element, retainAll[i])) {
+			for (E retain : retainAll) {
+				if (comparer.equals(element, retain)) {
 					continue outer;
 				}
 			}

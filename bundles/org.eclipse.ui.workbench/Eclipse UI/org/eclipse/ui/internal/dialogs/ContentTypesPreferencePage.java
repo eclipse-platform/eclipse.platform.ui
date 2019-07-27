@@ -21,7 +21,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -508,8 +507,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements IWorkb
 			}
 			boolean enabled = true;
 			List<Spec> elements = selection.toList();
-			for (Iterator<Spec> i = elements.iterator(); i.hasNext();) {
-				Spec spec = i.next();
+			for (Spec spec : elements) {
 				if (spec.isPredefined) {
 					enabled = false;
 				}

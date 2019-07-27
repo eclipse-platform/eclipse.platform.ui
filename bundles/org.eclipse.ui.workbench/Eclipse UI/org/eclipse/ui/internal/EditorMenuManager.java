@@ -15,7 +15,6 @@ package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
@@ -204,8 +203,7 @@ public class EditorMenuManager extends SubMenuManager {
 		if (wrappers == null) {
 			return;
 		}
-		for (Iterator<EditorMenuManager> iter = wrappers.iterator(); iter.hasNext();) {
-			EditorMenuManager element = iter.next();
+		for (EditorMenuManager element : wrappers) {
 			element.getAllContributedActions(set);
 		}
 	}

@@ -174,8 +174,9 @@ public abstract class UITestCase extends TestCase {
 
 		if (status.isMultiStatus()) {
 			IStatus[] children = status.getChildren();
-			for (int i = 0; i < children.length; i++)
-				write(children[i], indent + 1);
+			for (IStatus child : children) {
+				write(child, indent + 1);
+			}
 		}
 	}
 

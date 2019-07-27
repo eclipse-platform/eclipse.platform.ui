@@ -14,7 +14,6 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
@@ -124,8 +123,7 @@ public class CloseAllSavedAction extends PageEventAction implements IPropertyLis
 	@Override
 	public void dispose() {
 		super.dispose();
-		for (Iterator<IWorkbenchPart> it = partsWithListeners.iterator(); it.hasNext();) {
-			IWorkbenchPart part = it.next();
+		for (IWorkbenchPart part : partsWithListeners) {
 			part.removePropertyListener(this);
 		}
 		partsWithListeners.clear();
