@@ -102,7 +102,7 @@ public class Observables {
 	 */
 	public static <T> IObservableValue<T> observeDelayedValue(int delay,
 			IObservableValue<T> observable) {
-		return new DelayedObservableValue<T>(delay, observable);
+		return new DelayedObservableValue<>(delay, observable);
 	}
 
 	/**
@@ -120,7 +120,7 @@ public class Observables {
 	public static <T> IObservableValue<T> unmodifiableObservableValue(
 			IObservableValue<T> value) {
 		Assert.isNotNull(value, "Argument 'value' cannot be null"); //$NON-NLS-1$
-		return new UnmodifiableObservableValue<T>(value);
+		return new UnmodifiableObservableValue<>(value);
 	}
 
 	/**
@@ -140,7 +140,7 @@ public class Observables {
 	 */
 	public static <T> IObservableValue<T> constantObservableValue(Realm realm,
 			T value, Object valueType) {
-		return new ConstantObservableValue<T>(realm, value, valueType);
+		return new ConstantObservableValue<>(realm, value, valueType);
 	}
 
 	/**
@@ -210,7 +210,7 @@ public class Observables {
 			throw new IllegalArgumentException("List parameter cannot be null."); //$NON-NLS-1$
 		}
 
-		return new UnmodifiableObservableList<E>(list);
+		return new UnmodifiableObservableList<>(list);
 	}
 
 	/**
@@ -230,7 +230,7 @@ public class Observables {
 			throw new IllegalArgumentException("Set parameter cannot be null"); //$NON-NLS-1$
 		}
 
-		return new UnmodifiableObservableSet<E>(set);
+		return new UnmodifiableObservableSet<>(set);
 	}
 
 	/**
@@ -254,7 +254,7 @@ public class Observables {
 			throw new IllegalArgumentException("Map parameter cannot be null"); //$NON-NLS-1$
 		}
 
-		return new UnmodifiableObservableMap<K, V>(map);
+		return new UnmodifiableObservableMap<>(map);
 	}
 
 	/**
@@ -320,7 +320,7 @@ public class Observables {
 	 */
 	public static <E> IObservableList<E> emptyObservableList(Realm realm,
 			Object elementType) {
-		return new EmptyObservableList<E>(realm, elementType);
+		return new EmptyObservableList<>(realm, elementType);
 	}
 
 	/**
@@ -386,7 +386,7 @@ public class Observables {
 	 */
 	public static <E> IObservableSet<E> emptyObservableSet(Realm realm,
 			Object elementType) {
-		return new EmptyObservableSet<E>(realm, elementType);
+		return new EmptyObservableSet<>(realm, elementType);
 	}
 
 	/**
@@ -488,7 +488,7 @@ public class Observables {
 	 */
 	public static <T> IObservableValue<T> proxyObservableValue(
 			IObservableValue<T> target) {
-		return new DecoratingObservableValue<T>(target, false);
+		return new DecoratingObservableValue<>(target, false);
 	}
 
 	/**
@@ -505,7 +505,7 @@ public class Observables {
 	 */
 	public static <E> IObservableSet<E> proxyObservableSet(
 			IObservableSet<E> target) {
-		return new DecoratingObservableSet<E>(target, false);
+		return new DecoratingObservableSet<>(target, false);
 	}
 
 	/**
@@ -523,7 +523,7 @@ public class Observables {
 	 */
 	public static <E> IObservableList<E> proxyObservableList(
 			IObservableList<E> target) {
-		return new DecoratingObservableList<E>(target, false);
+		return new DecoratingObservableList<>(target, false);
 	}
 
 	/**
@@ -543,7 +543,7 @@ public class Observables {
 	 */
 	public static <K, V> IObservableMap<K, V> proxyObservableMap(
 			IObservableMap<K, V> target) {
-		return new DecoratingObservableMap<K, V>(target, false);
+		return new DecoratingObservableMap<>(target, false);
 	}
 
 	/**
@@ -702,7 +702,7 @@ public class Observables {
 			IObservableMap<K, V> map, K key, Object valueType) {
 		if (valueType == null)
 			valueType = map.getValueType();
-		return new MapEntryObservableValue<K, V>(map, key, valueType);
+		return new MapEntryObservableValue<>(map, key, valueType);
 	}
 
 	/**

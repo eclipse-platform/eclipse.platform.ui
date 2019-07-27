@@ -51,8 +51,8 @@ public abstract class ComputedObservableMap<K, V> extends AbstractObservableMap<
 	private Object valueType;
 
 	private ISetChangeListener<K> setChangeListener = event -> {
-		Set<K> addedKeys = new HashSet<K>(event.diff.getAdditions());
-		Set<K> removedKeys = new HashSet<K>(event.diff.getRemovals());
+		Set<K> addedKeys = new HashSet<>(event.diff.getAdditions());
+		Set<K> removedKeys = new HashSet<>(event.diff.getRemovals());
 		Map<K, V> oldValues = new HashMap<>();
 		Map<K, V> newValues = new HashMap<>();
 		for (K removedKey : removedKeys) {

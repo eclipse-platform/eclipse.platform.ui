@@ -66,7 +66,7 @@ public class EvaluationCacheTest extends NavigatorTestBase {
 	}
 
 	private void doNotSameInstEqual(boolean toComputeOverrides) {
-		java.util.List<String> key = new ArrayList<String>(2);
+		java.util.List<String> key = new ArrayList<>(2);
 		key.add("Hi");
 		key.add("There");
 		NavigatorContentDescriptor[] value = new NavigatorContentDescriptor[0];

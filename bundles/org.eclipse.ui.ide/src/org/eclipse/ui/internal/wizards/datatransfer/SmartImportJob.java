@@ -555,7 +555,7 @@ public class SmartImportJob extends Job {
 
 			project.open(refreshMode, subMonitor.split(1));
 			if (!this.report.containsKey(project)) {
-				this.report.put(project, new ArrayList<ProjectConfigurator>());
+				this.report.put(project, new ArrayList<>());
 			}
 			if (this.listener != null) {
 				this.listener.projectCreated(project);
@@ -681,7 +681,7 @@ public class SmartImportJob extends Job {
 					for (File supportedDirectory : supportedDirectories) {
 						if (supportedDirectory.isDirectory()) {
 							if (!res.containsKey(supportedDirectory)) {
-								res.put(supportedDirectory, new ArrayList<ProjectConfigurator>());
+								res.put(supportedDirectory, new ArrayList<>());
 							}
 							res.get(supportedDirectory).add(configurator);
 						} else {

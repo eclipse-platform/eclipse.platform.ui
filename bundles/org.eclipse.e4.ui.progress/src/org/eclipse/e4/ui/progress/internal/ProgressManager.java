@@ -85,7 +85,7 @@ public class ProgressManager extends ProgressProvider {
 			.synchronizedMap(new HashMap<Job, JobMonitor>());
 
 	final private Map<Object, Collection<IJobBusyListener>> familyListeners = Collections
-			.synchronizedMap(new HashMap<Object, Collection<IJobBusyListener>>());
+			.synchronizedMap(new HashMap<>());
 
 	//	list of IJobProgressManagerListener
 	private ListenerList<IJobProgressManagerListener> listeners = new ListenerList<>();

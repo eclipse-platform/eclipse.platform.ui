@@ -40,7 +40,7 @@ class ProgressAnimationProcessor implements IAnimationProcessor {
 		manager = animationManager;
 	}
 
-	List<AnimationItem> items = Collections.synchronizedList(new ArrayList<AnimationItem>());
+	List<AnimationItem> items = Collections.synchronizedList(new ArrayList<>());
 
 	public void startAnimationLoop(IProgressMonitor monitor) {
 

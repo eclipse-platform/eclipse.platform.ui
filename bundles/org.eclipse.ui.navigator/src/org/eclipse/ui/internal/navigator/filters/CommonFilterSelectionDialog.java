@@ -227,7 +227,7 @@ public class CommonFilterSelectionDialog extends TrayDialog {
 	protected void okPressed() {
 
 		if (contentExtensionsTab != null) {
-			List<String> checkedExtensions = new ArrayList<String>();
+			List<String> checkedExtensions = new ArrayList<>();
 			TableItem[] tableItems = contentExtensionsTab.getTable().getItems();
 			INavigatorContentDescriptor descriptor;
 			for (TableItem tableItem : tableItems) {

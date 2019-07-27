@@ -180,7 +180,7 @@ public final class URI
 
 		public synchronized void put(String key, URI value)
 		{
-			super.put(key, new WeakReference<URI>(value));
+			super.put(key, new WeakReference<>(value));
 			if (++count > limit)
 			{
 				cleanGCedValues();

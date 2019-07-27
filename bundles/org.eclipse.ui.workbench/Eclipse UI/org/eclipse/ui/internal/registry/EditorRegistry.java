@@ -496,7 +496,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	public IEditorDescriptor[] getSortedEditorsFromPlugins() {
 		// see #comparer
 		Collection<IEditorDescriptor> descs = WorkbenchActivityHelper.restrictCollection(sortedEditorsFromPlugins,
-				new ArrayList<IEditorDescriptor>());
+				new ArrayList<>());
 		return descs.toArray(new IEditorDescriptor[descs.size()]);
 	}
 

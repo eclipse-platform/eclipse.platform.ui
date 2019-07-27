@@ -65,7 +65,7 @@ public class LinkHelperManager {
 			Object anObject,
 			INavigatorContentService aContentService) {
 
-		List<LinkHelperDescriptor> helpersList = new ArrayList<LinkHelperDescriptor>();
+		List<LinkHelperDescriptor> helpersList = new ArrayList<>();
 		LinkHelperDescriptor descriptor = null;
 		for (Iterator<LinkHelperDescriptor> itr = getDescriptors().iterator(); itr.hasNext();) {
 			descriptor = itr.next();
@@ -98,7 +98,7 @@ public class LinkHelperManager {
 	public LinkHelperDescriptor[] getLinkHelpersFor(IEditorInput anInput,
 			INavigatorContentService aContentService) {
 
-		List<LinkHelperDescriptor> helpersList = new ArrayList<LinkHelperDescriptor>();
+		List<LinkHelperDescriptor> helpersList = new ArrayList<>();
 		LinkHelperDescriptor descriptor = null;
 		for (Iterator<LinkHelperDescriptor> itr = getDescriptors().iterator(); itr.hasNext();) {
 			descriptor = itr.next();
@@ -117,7 +117,7 @@ public class LinkHelperManager {
 
 	protected List<LinkHelperDescriptor> getDescriptors() {
 		if (descriptors == null) {
-			descriptors = new ArrayList<LinkHelperDescriptor>();
+			descriptors = new ArrayList<>();
 		}
 		return descriptors;
 	}

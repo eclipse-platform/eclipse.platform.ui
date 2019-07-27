@@ -45,7 +45,7 @@ public class EvaluationValueReference<T> extends SoftReference<T> {
 	 */
 	public EvaluationValueReference(T referrent, EvaluationReference<?> key) {
 		super(referrent);
-		this.refToKey = new WeakReference<EvaluationReference<?>>(key);
+		this.refToKey = new WeakReference<>(key);
 	}
 
 	/**
@@ -59,7 +59,7 @@ public class EvaluationValueReference<T> extends SoftReference<T> {
 	public EvaluationValueReference(T referrent, EvaluationReference<?> key,
 			ReferenceQueue<? super T> queue) {
 		super(referrent, queue);
-		this.refToKey = new WeakReference<EvaluationReference<?>>(key);
+		this.refToKey = new WeakReference<>(key);
 	}
 
 	/**

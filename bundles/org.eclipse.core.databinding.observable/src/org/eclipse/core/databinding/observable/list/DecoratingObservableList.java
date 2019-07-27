@@ -68,7 +68,7 @@ public class DecoratingObservableList<E> extends
 	protected void fireListChange(ListDiff<E> diff) {
 		// fire general change event first
 		super.fireChange();
-		fireEvent(new ListChangeEvent<E>(this, diff));
+		fireEvent(new ListChangeEvent<>(this, diff));
 	}
 
 	@Override

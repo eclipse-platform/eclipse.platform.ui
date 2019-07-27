@@ -253,7 +253,7 @@ public class SimplePropertyObservableSet<S, E> extends AbstractObservableSet<E>
 		if (set.containsAll(c))
 			return false;
 
-		Set<E> additions = new HashSet<E>(c);
+		Set<E> additions = new HashSet<>(c);
 		additions.removeAll(set);
 
 		if (additions.isEmpty())
@@ -276,7 +276,7 @@ public class SimplePropertyObservableSet<S, E> extends AbstractObservableSet<E>
 		if (set.isEmpty())
 			return false;
 
-		Set<Object> removals = new HashSet<Object>(c);
+		Set<Object> removals = new HashSet<>(c);
 		removals.retainAll(set);
 		@SuppressWarnings("unchecked")
 		// because we have removed everything that is not an E

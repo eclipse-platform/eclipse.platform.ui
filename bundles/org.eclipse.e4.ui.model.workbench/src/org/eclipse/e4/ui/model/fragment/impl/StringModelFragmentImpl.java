@@ -306,7 +306,7 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 
 	@Override
 	public List<MApplicationElement> merge(MApplication application) {
-		List<MApplicationElement> ret = new ArrayList<MApplicationElement>();
+		List<MApplicationElement> ret = new ArrayList<>();
 
 		String idsOrXPath = getParentElementId();
 		if (idsOrXPath.startsWith("xpath:")) {
@@ -328,7 +328,7 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 				if (feature != null) {
 					List<MApplicationElement> elements;
 					if (parentIds.length > 1) {
-						elements = new ArrayList<MApplicationElement>();
+						elements = new ArrayList<>();
 						for (MApplicationElement element : getElements()) {
 							elements.add((MApplicationElement) EcoreUtil.copy((EObject) element));
 						}
@@ -347,7 +347,7 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 		XPathContext xpathContext = f.newContext((EObject) application);
 		Iterator<Object> i = xpathContext.iterate(xPath);
 
-		List<MApplicationElement> targetElements = new ArrayList<MApplicationElement>();
+		List<MApplicationElement> targetElements = new ArrayList<>();
 		try {
 			while (i.hasNext()) {
 				Object obj = i.next();
@@ -364,7 +364,7 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 			EStructuralFeature feature = ((EObject) targetElement).eClass().getEStructuralFeature(getFeaturename());
 			if (feature != null) {
 				List<MApplicationElement> elements;
-				elements = new ArrayList<MApplicationElement>();
+				elements = new ArrayList<>();
 				for (MApplicationElement element : getElements()) {
 					elements.add((MApplicationElement) EcoreUtil.copy((EObject) element));
 				}

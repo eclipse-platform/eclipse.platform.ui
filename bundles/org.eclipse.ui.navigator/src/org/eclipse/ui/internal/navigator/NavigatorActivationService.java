@@ -64,7 +64,7 @@ public final class NavigatorActivationService implements
 	 * as a Map to avoid the synchronization during the frequent checking of
 	 * extension status.
 	 */
-	private final Map<String, Boolean> activatedExtensionsMap = new HashMap<String, Boolean>();
+	private final Map<String, Boolean> activatedExtensionsMap = new HashMap<>();
 
 	/*
 	 * IExtensionActivationListeners
@@ -315,7 +315,7 @@ public final class NavigatorActivationService implements
 	public INavigatorContentDescriptor[] activateExtensions(
 			String[] extensionIds, boolean toDeactivateAllOthers) {
 
-		Set<NavigatorContentDescriptor> activatedDescriptors = new HashSet<NavigatorContentDescriptor>();
+		Set<NavigatorContentDescriptor> activatedDescriptors = new HashSet<>();
 		setActive(extensionIds, true);
 		for (String extensionId : extensionIds) {
 			activatedDescriptors.add(CONTENT_DESCRIPTOR_REGISTRY
@@ -325,7 +325,7 @@ public final class NavigatorActivationService implements
 		if (toDeactivateAllOthers) {
 			NavigatorContentDescriptor[] descriptors = CONTENT_DESCRIPTOR_REGISTRY
 					.getAllContentDescriptors();
-			List<NavigatorContentDescriptor> descriptorList = new ArrayList<NavigatorContentDescriptor>(Arrays.asList(descriptors));
+			List<NavigatorContentDescriptor> descriptorList = new ArrayList<>(Arrays.asList(descriptors));
 
 			for (NavigatorContentDescriptor descriptor : descriptors) {
 				for (String extensionId : extensionIds) {
@@ -356,13 +356,13 @@ public final class NavigatorActivationService implements
 	public INavigatorContentDescriptor[] deactivateExtensions(
 			String[] extensionIds, boolean toEnableAllOthers) {
 
-		Set<NavigatorContentDescriptor> activatedDescriptors = new HashSet<NavigatorContentDescriptor>();
+		Set<NavigatorContentDescriptor> activatedDescriptors = new HashSet<>();
 		setActive(extensionIds, false);
 
 		if (toEnableAllOthers) {
 			NavigatorContentDescriptor[] descriptors = CONTENT_DESCRIPTOR_REGISTRY
 					.getAllContentDescriptors();
-			List<NavigatorContentDescriptor> descriptorList = new ArrayList<NavigatorContentDescriptor>(Arrays.asList(descriptors));
+			List<NavigatorContentDescriptor> descriptorList = new ArrayList<>(Arrays.asList(descriptors));
 
 			for (NavigatorContentDescriptor descriptor : descriptors) {
 				for (String extensionId : extensionIds) {

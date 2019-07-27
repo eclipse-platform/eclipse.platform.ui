@@ -37,7 +37,7 @@ public class IdentityWrapper<T> {
 	 * @return an IdentityWrapper wrapping the specified object
 	 */
 	public static <T> IdentityWrapper<T> wrap(T o) {
-		return o == null ? new IdentityWrapper<T>(null) : new IdentityWrapper<T>(o);
+		return o == null ? new IdentityWrapper<>(null) : new IdentityWrapper<>(o);
 	}
 
 	final T o;

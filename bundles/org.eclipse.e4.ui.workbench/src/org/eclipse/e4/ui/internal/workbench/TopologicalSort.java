@@ -198,8 +198,8 @@ public abstract class TopologicalSort<T, ID> {
 		requires.clear();
 		depends.clear();
 		for (ID id : mappedObjects.keySet()) {
-			requires.put(id, new LinkedHashSet<ID>());
-			depends.put(id, new LinkedHashSet<ID>());
+			requires.put(id, new LinkedHashSet<>());
+			depends.put(id, new LinkedHashSet<>());
 		}
 
 		// now populate the dependency graph

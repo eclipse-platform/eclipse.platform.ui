@@ -40,7 +40,7 @@ public class NavigatorContentServiceTransfer {
 		return instance;
 	}
 
-	private final Set<WeakReference<INavigatorContentService>> registeredContentServices = new HashSet<WeakReference<INavigatorContentService>>();
+	private final Set<WeakReference<INavigatorContentService>> registeredContentServices = new HashSet<>();
 
 	/**
 	 *
@@ -48,7 +48,7 @@ public class NavigatorContentServiceTransfer {
 	 */
 	public synchronized void registerContentService(INavigatorContentService aContentService) {
 		if(findService(aContentService.getViewerId()) == null) {
-			registeredContentServices.add(new WeakReference<INavigatorContentService>(aContentService));
+			registeredContentServices.add(new WeakReference<>(aContentService));
 		}
 	}
 

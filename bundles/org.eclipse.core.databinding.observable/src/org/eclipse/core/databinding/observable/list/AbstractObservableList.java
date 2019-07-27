@@ -128,7 +128,7 @@ public abstract class AbstractObservableList<E> extends AbstractList<E>
 	protected void fireListChange(ListDiff<E> diff) {
 		// fire general change event first
 		fireChange();
-		changeSupport.fireEvent(new ListChangeEvent<E>(this, diff));
+		changeSupport.fireEvent(new ListChangeEvent<>(this, diff));
 	}
 
 	@Override

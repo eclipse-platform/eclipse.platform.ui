@@ -66,7 +66,7 @@ public class PropertySheetEntry extends EventManager implements IPropertySheetEn
 	/**
 	 * The property sources for the values we are displaying/editing.
 	 */
-	private Map<Object, IPropertySource> sources = new HashMap<Object, IPropertySource>(0);
+	private Map<Object, IPropertySource> sources = new HashMap<>(0);
 
 	/**
 	 * The value of this entry is defined as the the first object in its value

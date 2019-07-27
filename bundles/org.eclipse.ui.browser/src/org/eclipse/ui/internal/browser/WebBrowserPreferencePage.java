@@ -385,7 +385,7 @@ public class WebBrowserPreferencePage extends PreferencePage implements
 
 			IRunnableWithProgress r = monitor -> {
 				monitor.beginTask(Messages.searchingTaskName, IProgressMonitor.UNKNOWN);
-				search(rootDir, existingPaths, foundBrowsers, new HashSet<String>(), monitor);
+				search(rootDir, existingPaths, foundBrowsers, new HashSet<>(), monitor);
 				monitor.done();
 			};
 

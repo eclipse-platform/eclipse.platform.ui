@@ -61,7 +61,7 @@ public class ListPropertyDetailValuesList<S, T, E> extends ListProperty<S, E> {
 	@Override
 	protected List<E> doGetList(S source) {
 		List<T> masterList = masterProperty.getList(source);
-		List<E> detailList = new ArrayList<E>(masterList.size());
+		List<E> detailList = new ArrayList<>(masterList.size());
 		for (T t : masterList)
 			detailList.add(detailProperty.getValue(t));
 		return detailList;

@@ -47,7 +47,7 @@ public class CommonWizardDescriptorManager {
 	 */
 	public static final String WIZARD_TYPE_NEW = "new"; //$NON-NLS-1$
 
-	private Map<String, Set> commonWizardDescriptors = new HashMap<String, Set>();
+	private Map<String, Set> commonWizardDescriptors = new HashMap<>();
 
 	/**
 	 * @return the singleton instance of the registry
@@ -79,7 +79,7 @@ public class CommonWizardDescriptorManager {
 			Set<CommonWizardDescriptor> descriptors = commonWizardDescriptors.get(aDesc
 					.getType());
 			if (descriptors == null) {
-				commonWizardDescriptors.put(aDesc.getType(), descriptors = new HashSet<CommonWizardDescriptor>());
+				commonWizardDescriptors.put(aDesc.getType(), descriptors = new HashSet<>());
 			}
 			if (!descriptors.contains(aDesc)) {
 				descriptors.add(aDesc);
@@ -108,7 +108,7 @@ public class CommonWizardDescriptorManager {
 			return NO_DESCRIPTOR_IDS;
 		}
 		/* Find other Common Wizard providers which enable for this object */
-		List<String> descriptorIds = new ArrayList<String>();
+		List<String> descriptorIds = new ArrayList<>();
 		for (Iterator commonWizardDescriptorsItr = commonDescriptors.iterator(); commonWizardDescriptorsItr
 				.hasNext();) {
 			CommonWizardDescriptor descriptor = (CommonWizardDescriptor) commonWizardDescriptorsItr
@@ -145,7 +145,7 @@ public class CommonWizardDescriptorManager {
 			return NO_DESCRIPTORS;
 		}
 		/* Find other Common Wizard providers which enable for this object */
-		List<CommonWizardDescriptor> descriptors = new ArrayList<CommonWizardDescriptor>();
+		List<CommonWizardDescriptor> descriptors = new ArrayList<>();
 		for (Iterator commonWizardDescriptorsItr = commonDescriptors.iterator(); commonWizardDescriptorsItr
 				.hasNext();) {
 			CommonWizardDescriptor descriptor = (CommonWizardDescriptor) commonWizardDescriptorsItr

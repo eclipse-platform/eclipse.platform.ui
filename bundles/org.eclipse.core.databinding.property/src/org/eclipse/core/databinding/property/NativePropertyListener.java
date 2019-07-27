@@ -69,7 +69,7 @@ public abstract class NativePropertyListener<S, D extends IDiff> implements INat
 	 *            a diff describing the change in state
 	 */
 	protected void fireChange(S source, D diff) {
-		listener.handleEvent(new SimplePropertyEvent<S, D>(
+		listener.handleEvent(new SimplePropertyEvent<>(
 				SimplePropertyEvent.CHANGE, source, property, diff));
 	}
 
@@ -81,7 +81,7 @@ public abstract class NativePropertyListener<S, D extends IDiff> implements INat
 	 *            the source object whose property became stale
 	 */
 	protected void fireStale(S source) {
-		listener.handleEvent(new SimplePropertyEvent<S, D>(
+		listener.handleEvent(new SimplePropertyEvent<>(
 				SimplePropertyEvent.STALE, source, property, null));
 	}
 }

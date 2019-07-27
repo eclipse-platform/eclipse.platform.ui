@@ -42,7 +42,7 @@ public class RegistryCSSElementProvider implements IElementProvider {
 			DEPRECATED_ELEMENT_PROVIDER_EXTPOINT };
 
 	private Map<Class<?>, IElementProvider> providerCache = Collections
-			.synchronizedMap(new WeakHashMap<Class<?>, IElementProvider>());
+			.synchronizedMap(new WeakHashMap<>());
 
 	public RegistryCSSElementProvider(IExtensionRegistry registry) {
 		// FIXME: add a registry listener to refresh caches; but would need to

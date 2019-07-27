@@ -127,7 +127,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	/**
 	 * a map of undo limits per context
 	 */
-	private Map<IUndoContext, Integer> limits = Collections.synchronizedMap(new HashMap<IUndoContext, Integer>());
+	private Map<IUndoContext, Integer> limits = Collections.synchronizedMap(new HashMap<>());
 
 	/**
 	 * the list of {@link IOperationHistoryListener}s
@@ -137,12 +137,12 @@ public final class DefaultOperationHistory implements IOperationHistory {
 	/**
 	 * the list of operations available for redo, LIFO
 	 */
-	private List<IUndoableOperation> redoList = Collections.synchronizedList(new ArrayList<IUndoableOperation>());
+	private List<IUndoableOperation> redoList = Collections.synchronizedList(new ArrayList<>());
 
 	/**
 	 * the list of operations available for undo, LIFO
 	 */
-	private List<IUndoableOperation> undoList = Collections.synchronizedList(new ArrayList<IUndoableOperation>());
+	private List<IUndoableOperation> undoList = Collections.synchronizedList(new ArrayList<>());
 
 	/**
 	 * a lock that is used to synchronize access between the undo and redo

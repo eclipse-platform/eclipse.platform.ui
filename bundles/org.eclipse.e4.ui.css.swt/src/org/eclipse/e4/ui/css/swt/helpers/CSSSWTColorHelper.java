@@ -133,7 +133,7 @@ public class CSSSWTColorHelper {
 		if (cachedFields == null) {
 			Class<?> clazz = SWT.class;
 			Field[] allFields = clazz.getDeclaredFields();
-			ArrayList<Field> applicableFields = new ArrayList<Field>(
+			ArrayList<Field> applicableFields = new ArrayList<>(
 					allFields.length);
 
 			for (Field field : allFields) {

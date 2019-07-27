@@ -165,8 +165,8 @@ public class CompositeMap<K, I, V> extends ObservableMap<K, V> {
 		final Set<K> removes = new HashSet<>();
 		final Map<K, V> oldValues = new HashMap<>();
 		final Map<K, V> newValues = new HashMap<>();
-		Set<I> addedKeys = new HashSet<I>(diff.getAddedKeys());
-		Set<I> removedKeys = new HashSet<I>(diff.getRemovedKeys());
+		Set<I> addedKeys = new HashSet<>(diff.getAddedKeys());
+		Set<I> removedKeys = new HashSet<>(diff.getRemovedKeys());
 
 		for (I addedKey : addedKeys) {
 			Set<K> elements1 = firstMap.getKeys(addedKey);

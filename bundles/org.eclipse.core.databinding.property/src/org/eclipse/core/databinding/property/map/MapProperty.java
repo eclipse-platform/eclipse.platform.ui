@@ -160,6 +160,6 @@ public abstract class MapProperty<S, K, V> implements IMapProperty<S, K, V> {
 
 	@Override
 	public final <T> IMapProperty<S, K, T> values(IValueProperty<? super V, T> detailValues) {
-		return new MapPropertyDetailValuesMap<S, K, V, T>(this, detailValues);
+		return new MapPropertyDetailValuesMap<>(this, detailValues);
 	}
 }

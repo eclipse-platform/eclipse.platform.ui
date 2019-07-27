@@ -80,7 +80,7 @@ public class ObservableCollectionTreeContentProviderTest extends AbstractDefault
 
 		IObservableSet<String> knownElements = contentProvider.getKnownElements();
 		assertFalse(knownElements.contains(input));
-		assertEquals(new HashSet<Object>(Arrays.asList(rootElements)), knownElements);
+		assertEquals(new HashSet<>(Arrays.asList(rootElements)), knownElements);
 	}
 
 	@Test

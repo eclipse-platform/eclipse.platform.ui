@@ -249,7 +249,7 @@ public abstract class AbstractWorkingSetManager extends EventManager
 
 	@Override
 	public IWorkingSet[] getWorkingSets() {
-		SortedSet<IWorkingSet> visibleSubset = new TreeSet<IWorkingSet>(WorkingSetComparator.getInstance());
+		SortedSet<IWorkingSet> visibleSubset = new TreeSet<>(WorkingSetComparator.getInstance());
 		for (IWorkingSet workingSet : workingSets) {
 			if (workingSet.isVisible()) {
 				visibleSubset.add(workingSet);

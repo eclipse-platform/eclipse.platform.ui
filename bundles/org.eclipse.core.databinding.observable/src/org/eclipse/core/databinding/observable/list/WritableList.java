@@ -196,7 +196,7 @@ public class WritableList<E> extends ObservableList<E> {
 	@Override
 	public boolean addAll(Collection<? extends E> c) {
 		checkRealm();
-		List<ListDiffEntry<E>> entries = new ArrayList<ListDiffEntry<E>>(
+		List<ListDiffEntry<E>> entries = new ArrayList<>(
 				c.size());
 		int addIndex = wrappedList.size();
 		for (E element : c) {
@@ -210,7 +210,7 @@ public class WritableList<E> extends ObservableList<E> {
 	@Override
 	public boolean addAll(int index, Collection<? extends E> c) {
 		checkRealm();
-		List<ListDiffEntry<E>> entries = new ArrayList<ListDiffEntry<E>>(
+		List<ListDiffEntry<E>> entries = new ArrayList<>(
 				c.size());
 		int addIndex = index;
 		for (E element : c) {
@@ -282,7 +282,7 @@ public class WritableList<E> extends ObservableList<E> {
 		checkRealm();
 		// We remove the elements from back to front which is typically much
 		// faster on common list implementations like ArrayList.
-		List<ListDiffEntry<E>> entries = new ArrayList<ListDiffEntry<E>>(
+		List<ListDiffEntry<E>> entries = new ArrayList<>(
 				wrappedList.size());
 		for (ListIterator<E> it = wrappedList.listIterator(wrappedList.size()); it
 				.hasPrevious();) {
@@ -300,6 +300,6 @@ public class WritableList<E> extends ObservableList<E> {
 	 * @return new list with the default realm.
 	 */
 	public static <T> WritableList<T> withElementType(Object elementType) {
-		return new WritableList<T>(Realm.getDefault(), new ArrayList<T>(), elementType);
+		return new WritableList<T>(Realm.getDefault(), new ArrayList<>(), elementType);
 	}
 }

@@ -63,17 +63,17 @@ public class CommonActionDescriptorManager {
 	}
 
 	/* Provides a map of (ids, CommonActionProviderDescriptor)-pairs. */
-	private final Map<String, CommonActionProviderDescriptor> dependentDescriptors = new LinkedHashMap<String, CommonActionProviderDescriptor>();
+	private final Map<String, CommonActionProviderDescriptor> dependentDescriptors = new LinkedHashMap<>();
 
 	/* Provides a map of (ids, CommonActionProviderDescriptor)-pairs. */
-	private final Map<String, CommonActionProviderDescriptor> rootDescriptors = new LinkedHashMap<String, CommonActionProviderDescriptor>();
+	private final Map<String, CommonActionProviderDescriptor> rootDescriptors = new LinkedHashMap<>();
 
 	/* Provides a map of (ids, CommonActionProviderDescriptor)-pairs. */
-	private final Set<CommonActionProviderDescriptor> overridingDescriptors = new LinkedHashSet<CommonActionProviderDescriptor>();
+	private final Set<CommonActionProviderDescriptor> overridingDescriptors = new LinkedHashSet<>();
 
 
-	private final LinkedList<CommonActionProviderDescriptor> rootDescriptorsList = new LinkedList<CommonActionProviderDescriptor>();
-	private final LinkedList<CommonActionProviderDescriptor> dependentDescriptorsList = new LinkedList<CommonActionProviderDescriptor>();
+	private final LinkedList<CommonActionProviderDescriptor> rootDescriptorsList = new LinkedList<>();
+	private final LinkedList<CommonActionProviderDescriptor> dependentDescriptorsList = new LinkedList<>();
 
 
 	/**
@@ -162,7 +162,7 @@ public class CommonActionDescriptorManager {
 
 		}
 
-		Collection<CommonActionProviderDescriptor> unresolvedDependentDescriptors = new ArrayList<CommonActionProviderDescriptor>(
+		Collection<CommonActionProviderDescriptor> unresolvedDependentDescriptors = new ArrayList<>(
 				dependentDescriptors.values());
 
 		for (Iterator<CommonActionProviderDescriptor> iter = dependentDescriptors.values().iterator(); iter
@@ -229,7 +229,7 @@ public class CommonActionDescriptorManager {
 
 		Set blockedProviders = new HashSet();
 		CommonActionProviderDescriptor actionDescriptor = null;
-		Set<CommonActionProviderDescriptor> providers = new LinkedHashSet<CommonActionProviderDescriptor>();
+		Set<CommonActionProviderDescriptor> providers = new LinkedHashSet<>();
 		for (Iterator<CommonActionProviderDescriptor> providerItr = rootDescriptors.values().iterator(); providerItr
 				.hasNext();) {
 			actionDescriptor = providerItr

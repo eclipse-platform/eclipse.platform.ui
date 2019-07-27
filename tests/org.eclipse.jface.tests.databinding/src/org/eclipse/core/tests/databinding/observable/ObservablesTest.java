@@ -40,7 +40,7 @@ public class ObservablesTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testUnmodifiableObservableList() throws Exception {
 		IObservableList unmodifiable = Observables.unmodifiableObservableList(new ObservableListStub(
-				new ArrayList<Object>(0), String.class));
+				new ArrayList<>(0), String.class));
 		assertTrue(unmodifiable instanceof UnmodifiableObservableList);
 	}
 

@@ -82,7 +82,7 @@ public abstract class MapDiff<K, V> implements IDiff {
 	 * @since 1.3
 	 */
 	public Map<K, V> simulateOn(Map<K, V> map) {
-		return new DeltaMap<K, V>(map, this);
+		return new DeltaMap<>(map, this);
 	}
 
 	private static class DeltaMap<K, V> extends AbstractMap<K, V> {
@@ -113,7 +113,7 @@ public abstract class MapDiff<K, V> implements IDiff {
 		@Override
 		public Set<Entry<K, V>> entrySet() {
 			if (entrySet == null) {
-				entrySet = new DeltaMapEntrySet<K, V>(map, diff);
+				entrySet = new DeltaMapEntrySet<>(map, diff);
 			}
 			return entrySet;
 		}
@@ -194,13 +194,13 @@ public abstract class MapDiff<K, V> implements IDiff {
 							if (diff.getRemovedKeys().contains(candidateKey)) {
 								continue;
 							} else if (diff.getChangedKeys().contains(candidateKey)) {
-								candidateEntry = new DeltaMapEntry<K, V>(candidateKey, diff);
+								candidateEntry = new DeltaMapEntry<>(candidateKey, diff);
 							} else {
-								candidateEntry = new MapEntryWrapper<K, V>(candidateEntry);
+								candidateEntry = new MapEntryWrapper<>(candidateEntry);
 							}
 						} else if (addedKeys.hasNext()) {
 							candidateKey = addedKeys.next();
-							candidateEntry = new DeltaMapEntry<K, V>(candidateKey, diff);
+							candidateEntry = new DeltaMapEntry<>(candidateKey, diff);
 						} else {
 							return false;
 						}

@@ -31,16 +31,16 @@ import org.eclipse.ui.internal.navigator.Policy;
 
 class Binding {
 
-	private final Set<Pattern> rootPatterns = new HashSet<Pattern>();
+	private final Set<Pattern> rootPatterns = new HashSet<>();
 
-	private final Set<Pattern> includePatterns = new HashSet<Pattern>();
+	private final Set<Pattern> includePatterns = new HashSet<>();
 
-	private final Set<Pattern> excludePatterns = new HashSet<Pattern>();
+	private final Set<Pattern> excludePatterns = new HashSet<>();
 
 	private final String TAG_EXTENSION;
 
-	private final Map<String, Boolean> knownIds = new HashMap<String, Boolean>();
-	private final Map<String, Boolean> knownRootIds = new HashMap<String, Boolean>();
+	private final Map<String, Boolean> knownIds = new HashMap<>();
+	private final Map<String, Boolean> knownRootIds = new HashMap<>();
 
 	protected Binding(String tagExtension) {
 		TAG_EXTENSION = tagExtension;

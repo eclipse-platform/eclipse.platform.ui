@@ -156,6 +156,6 @@ public abstract class ListProperty<S, E> implements IListProperty<S, E> {
 
 	@Override
 	public final <T> IListProperty<S, T> values(IValueProperty<? super E, T> detailValue) {
-		return new ListPropertyDetailValuesList<S, E, T>(this, detailValue);
+		return new ListPropertyDetailValuesList<>(this, detailValue);
 	}
 }

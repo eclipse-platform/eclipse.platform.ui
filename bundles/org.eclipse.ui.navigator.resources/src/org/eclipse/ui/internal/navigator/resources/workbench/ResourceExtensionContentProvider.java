@@ -96,7 +96,7 @@ public class ResourceExtensionContentProvider extends WorkbenchContentProvider {
 		}
 
 
-		final Collection<Runnable> runnables = new ArrayList<Runnable>();
+		final Collection<Runnable> runnables = new ArrayList<>();
 		processDelta(delta, runnables);
 
 		if (runnables.isEmpty()) {

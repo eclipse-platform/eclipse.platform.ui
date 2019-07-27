@@ -76,7 +76,7 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 		super();
 		contentService = aContentService;
 		provider = aProvider;
-		assistantsToUse = new ArrayList<CommonDragAdapterAssistant>();
+		assistantsToUse = new ArrayList<>();
 	}
 
 	/**

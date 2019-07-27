@@ -303,7 +303,7 @@ public class SimplePropertyObservableMap<S, K, V> extends AbstractObservableMap<
 		if (map.isEmpty())
 			return;
 
-		MapDiff<K, V> diff = Diffs.createMapDiffRemoveAll(new HashMap<K, V>(map));
+		MapDiff<K, V> diff = Diffs.createMapDiffRemoveAll(new HashMap<>(map));
 		updateMap(map, diff);
 	}
 

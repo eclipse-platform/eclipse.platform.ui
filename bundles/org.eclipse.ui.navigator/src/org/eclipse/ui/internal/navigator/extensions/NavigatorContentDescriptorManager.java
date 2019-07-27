@@ -155,7 +155,7 @@ public class NavigatorContentDescriptorManager {
 			Map<VisibilityAssistant, EvaluationCache> cachedEvaluations,
 			VisibilityAssistant aVisibilityAssistant, boolean considerOverrides, boolean possibleChild) {
 		EvaluationCache cache = getEvaluationCache(cachedEvaluations, aVisibilityAssistant);
-		Set<NavigatorContentDescriptor> descriptors = new TreeSet<NavigatorContentDescriptor>(ExtensionSequenceNumberComparator.INSTANCE);
+		Set<NavigatorContentDescriptor> descriptors = new TreeSet<>(ExtensionSequenceNumberComparator.INSTANCE);
 
 		NavigatorContentDescriptor[] cachedDescriptors = null;
 		if ((cachedDescriptors = cache.getDescriptors(anElement, considerOverrides)) != null) {
@@ -217,7 +217,7 @@ public class NavigatorContentDescriptorManager {
 
 				boolean isOverridden;
 
-				Set<NavigatorContentDescriptor> overridingDescriptors = new TreeSet<NavigatorContentDescriptor>(ExtensionSequenceNumberComparator.INSTANCE);
+				Set<NavigatorContentDescriptor> overridingDescriptors = new TreeSet<>(ExtensionSequenceNumberComparator.INSTANCE);
 				isOverridden = addDescriptorsConsideringOverrides(anElement, descriptor.getOverriddingExtensions(),
 						aVisibilityAssistant, overridingDescriptors, possibleChild);
 
@@ -422,7 +422,7 @@ public class NavigatorContentDescriptorManager {
 	private void computeSequenceNumbers() {
 		NavigatorContentDescriptor[] descs = getAllContentDescriptors();
 
-		LinkedList<NavigatorContentDescriptor> list = new LinkedList<NavigatorContentDescriptor>();
+		LinkedList<NavigatorContentDescriptor> list = new LinkedList<>();
 		list.addAll(Arrays.asList(descs));
 
 		boolean changed = true;

@@ -35,7 +35,7 @@ public class JobInfo extends JobTreeElement {
 	private IStatus blockedStatus;
 
 	private volatile boolean canceled = false;
-	private List<SubTaskInfo> children = Collections.synchronizedList(new ArrayList<SubTaskInfo>());
+	private List<SubTaskInfo> children = Collections.synchronizedList(new ArrayList<>());
 
 	private Job job;
 

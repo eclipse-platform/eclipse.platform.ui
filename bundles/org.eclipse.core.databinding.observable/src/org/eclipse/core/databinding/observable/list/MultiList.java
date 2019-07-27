@@ -118,7 +118,7 @@ public class MultiList<E> extends AbstractObservableList<E> {
 	@Deprecated
 	public MultiList(Realm realm, IObservableList<E>[] lists, Object elementType) {
 		super(realm);
-		this.lists = new ArrayList<IObservableList<E>>(lists.length);
+		this.lists = new ArrayList<>(lists.length);
 		this.lists.addAll(Arrays.asList(lists));
 		this.elementType = elementType;
 
@@ -493,7 +493,7 @@ public class MultiList<E> extends AbstractObservableList<E> {
 		private int iterIndex = 0;
 
 		private MultiListItr() {
-			iters = new ArrayList<Iterator<E>>(lists.size());
+			iters = new ArrayList<>(lists.size());
 			for (IObservableList<E> list : lists) {
 				iters.add(list.iterator());
 			}
@@ -528,7 +528,7 @@ public class MultiList<E> extends AbstractObservableList<E> {
 		private int iterIndex;
 
 		private MultiListListItr(int initialIndex) {
-			iters = new ArrayList<ListIterator<E>>(lists.size());
+			iters = new ArrayList<>(lists.size());
 			int offset = 0;
 			for (int i = 0; i < lists.size(); i++) {
 				IObservableList<E> list = lists.get(i);

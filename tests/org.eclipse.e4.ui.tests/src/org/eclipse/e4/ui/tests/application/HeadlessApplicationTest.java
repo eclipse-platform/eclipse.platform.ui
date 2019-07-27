@@ -165,7 +165,7 @@ public abstract class HeadlessApplicationTest extends HeadlessApplicationElement
 	}
 
 	private void testModify(MContext mcontext) {
-		Set<String> variables = getVariables(mcontext, new HashSet<String>());
+		Set<String> variables = getVariables(mcontext, new HashSet<>());
 		IEclipseContext context = mcontext.getContext();
 
 		for (String variable : variables) {

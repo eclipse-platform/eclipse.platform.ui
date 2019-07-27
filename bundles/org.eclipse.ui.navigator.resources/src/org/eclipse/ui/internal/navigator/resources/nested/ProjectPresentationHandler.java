@@ -46,7 +46,7 @@ public class ProjectPresentationHandler extends AbstractHandler {
 			if (newNest != previousNest) {
 				ISelection initialSelection = navigator.getCommonViewer().getSelection();
 				INavigatorFilterService filterService = navigator.getNavigatorContentService().getFilterService();
-				Set<String> filters = new HashSet<String>();
+				Set<String> filters = new HashSet<>();
 				for (ICommonFilterDescriptor desc : filterService.getVisibleFilterDescriptors()) {
 					if (filterService.isActive(desc.getId())) {
 						filters.add(desc.getId());

@@ -252,7 +252,7 @@ public abstract class ListDiff<E> implements IDiff {
 			} else if (c.isEmpty()) {
 				return cat(a, b);
 			}
-			return new ConcatList<T>(a, b, c);
+			return new ConcatList<>(a, b, c);
 		}
 
 		public static <T> List<T> cat(List<T> a, List<T> b) {
@@ -264,7 +264,7 @@ public abstract class ListDiff<E> implements IDiff {
 			} else if (b.isEmpty()) {
 				return a;
 			}
-			return new ConcatList<T>(a, b, Collections.<T> emptyList());
+			return new ConcatList<>(a, b, Collections.<T> emptyList());
 		}
 
 		private ConcatList(List<E> firstSublist, List<E> middleSublist, List<E> lastSublist) {

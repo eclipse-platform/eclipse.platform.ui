@@ -158,6 +158,6 @@ public abstract class SetProperty<S, E> implements ISetProperty<S, E> {
 
 	@Override
 	public final <T> IMapProperty<S, E, T> values(IValueProperty<? super E, T> detailValues) {
-		return new SetPropertyDetailValuesMap<S, E, T>(this, detailValues);
+		return new SetPropertyDetailValuesMap<>(this, detailValues);
 	}
 }

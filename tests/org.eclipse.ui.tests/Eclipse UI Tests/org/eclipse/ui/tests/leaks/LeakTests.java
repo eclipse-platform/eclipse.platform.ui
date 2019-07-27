@@ -87,7 +87,7 @@ public class LeakTests extends UITestCase {
 	 * @return
 	 */
 	private Reference createReference(ReferenceQueue queue, Object object) {
-		return new PhantomReference<Object>(object, queue);
+		return new PhantomReference<>(object, queue);
 	}
 
 	@Override

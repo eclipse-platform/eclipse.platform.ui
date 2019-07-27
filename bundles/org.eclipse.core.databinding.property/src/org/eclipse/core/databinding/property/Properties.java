@@ -101,7 +101,7 @@ public class Properties {
 	 *         property value.
 	 */
 	public static <T> IValueProperty<T, T> selfValue(Object valueType) {
-		return new SelfValueProperty<T>(valueType);
+		return new SelfValueProperty<>(valueType);
 	}
 
 	/**
@@ -115,7 +115,7 @@ public class Properties {
 	 *         the property list.
 	 */
 	public static <E> IListProperty<List<E>, E> selfList(Object elementType) {
-		return new SelfListProperty<E>(elementType);
+		return new SelfListProperty<>(elementType);
 	}
 
 	/**
@@ -129,7 +129,7 @@ public class Properties {
 	 *         the property set.
 	 */
 	public static <E> ISetProperty<Set<E>, E> selfSet(Object elementType) {
-		return new SelfSetProperty<E>(elementType);
+		return new SelfSetProperty<>(elementType);
 	}
 
 	/**
@@ -145,7 +145,7 @@ public class Properties {
 	 *         the property map.
 	 */
 	public static <K, V> IMapProperty<Map<K, V>, K, V> selfMap(Object keyType, Object valueType) {
-		return new SelfMapProperty<K, V>(keyType, valueType);
+		return new SelfMapProperty<>(keyType, valueType);
 	}
 
 	/**

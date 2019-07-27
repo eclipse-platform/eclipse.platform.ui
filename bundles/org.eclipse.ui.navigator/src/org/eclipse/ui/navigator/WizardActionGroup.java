@@ -223,7 +223,7 @@ public final class WizardActionGroup extends ActionGroup {
 	 */
 	private synchronized Map/*<String, SortedSet<IAction>>*/<String, SortedSet>  findGroups() {
 		IAction action = null;
-		Map<String, SortedSet> groups = new TreeMap<String, SortedSet>();
+		Map<String, SortedSet> groups = new TreeMap<>();
 		SortedSet<IAction> sortedWizards = null;
 		String menuGroupId = null;
 		for (CommonWizardDescriptor descriptor : descriptors) {

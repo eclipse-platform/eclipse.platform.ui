@@ -144,7 +144,7 @@ public class Diffs {
 			return (ListDiff<E>) diff;
 		}
 
-		return new UnmodifiableListDiff<E>(diff);
+		return new UnmodifiableListDiff<>(diff);
 	}
 
 	/**
@@ -166,7 +166,7 @@ public class Diffs {
 			return (SetDiff<E>) diff;
 		}
 
-		return new UnmodifiableSetDiff<E>(diff);
+		return new UnmodifiableSetDiff<>(diff);
 	}
 
 	/**
@@ -188,7 +188,7 @@ public class Diffs {
 			return (MapDiff<K, V>) diff;
 		}
 
-		return new UnmodifiableMapDiff<K, V>(diff);
+		return new UnmodifiableMapDiff<>(diff);
 	}
 
 	/**
@@ -210,7 +210,7 @@ public class Diffs {
 			return (ValueDiff<V>) diff;
 		}
 
-		return new UnmodifiableValueDiff<V>(diff);
+		return new UnmodifiableValueDiff<>(diff);
 	}
 
 	/**
@@ -229,7 +229,7 @@ public class Diffs {
 	 */
 	public static <E> ListDiff<E> computeListDiff(List<? extends E> oldList, List<? extends E> newList) {
 		List<ListDiffEntry<E>> diffEntries = new ArrayList<>();
-		createListDiffs(new ArrayList<E>(oldList), newList, diffEntries);
+		createListDiffs(new ArrayList<>(oldList), newList, diffEntries);
 		return createListDiff(diffEntries);
 	}
 
@@ -382,9 +382,9 @@ public class Diffs {
 	 *         new set states.
 	 */
 	public static <E> SetDiff<E> computeSetDiff(Set<? extends E> oldSet, Set<? extends E> newSet) {
-		Set<E> additions = new HashSet<E>(newSet);
+		Set<E> additions = new HashSet<>(newSet);
 		additions.removeAll(oldSet);
-		Set<E> removals = new HashSet<E>(oldSet);
+		Set<E> removals = new HashSet<>(oldSet);
 		removals.removeAll(newSet);
 		return createSetDiff(additions, removals);
 	}
@@ -448,7 +448,7 @@ public class Diffs {
 			Map<? extends K, ? extends V> newMap) {
 		// starts out with all keys from the new map, we will remove keys from
 		// the old map as we go
-		final Set<K> addedKeys = new HashSet<K>(newMap.keySet());
+		final Set<K> addedKeys = new HashSet<>(newMap.keySet());
 		final Set<K> removedKeys = new HashSet<>();
 		final Set<K> changedKeys = new HashSet<>();
 		final Map<K, V> oldValues = new HashMap<>();

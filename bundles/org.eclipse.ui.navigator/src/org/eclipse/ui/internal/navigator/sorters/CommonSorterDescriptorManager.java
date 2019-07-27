@@ -41,7 +41,7 @@ public class CommonSorterDescriptorManager {
 
 	private static final CommonSorterDescriptor[] NO_SORTER_DESCRIPTORS = new CommonSorterDescriptor[0];
 
-	private final Map<INavigatorContentDescriptor, Set> sortersMap = new HashMap<INavigatorContentDescriptor, Set>();
+	private final Map<INavigatorContentDescriptor, Set> sortersMap = new HashMap<>();
 
 	/**
 	 *
@@ -88,7 +88,7 @@ public class CommonSorterDescriptorManager {
 			NavigatorContentService aContentService,
 			INavigatorContentDescriptor theSource, Object aParent) {
 
-		List<CommonSorterDescriptor> applicableSorters = new ArrayList<CommonSorterDescriptor>();
+		List<CommonSorterDescriptor> applicableSorters = new ArrayList<>();
 
 		CommonSorterDescriptor descriptor;
 		Set<CommonSorterDescriptor> sorters = getCommonSorters(theSource);
@@ -183,7 +183,7 @@ public class CommonSorterDescriptorManager {
 		synchronized (sortersMap) {
 			descriptors = sortersMap.get(contentDescriptor);
 			if (descriptors == null) {
-				sortersMap.put(contentDescriptor, descriptors = new HashSet<CommonSorterDescriptor>());
+				sortersMap.put(contentDescriptor, descriptors = new HashSet<>());
 			}
 		}
 		return descriptors;

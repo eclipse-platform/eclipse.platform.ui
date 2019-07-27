@@ -86,7 +86,7 @@ public class ModelUtils {
 		EObject eContainer = (EObject) container;
 
 		if( feature.isMany() ) {
-			List<MApplicationElement> copy = new ArrayList<MApplicationElement>(elements);
+			List<MApplicationElement> copy = new ArrayList<>(elements);
 
 			@SuppressWarnings("unchecked")
 			List<MApplicationElement> list= (List<MApplicationElement>)eContainer.eGet(feature);

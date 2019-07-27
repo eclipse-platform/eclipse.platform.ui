@@ -212,7 +212,7 @@ public class ShellTest extends CSSSWTTestCase {
 				display);
 
 		Shell parent = new Shell(display, SWT.NONE);
-		parent.setData(new HashSet<Object>());
+		parent.setData(new HashSet<>());
 		parent.open();
 		engine.applyStyles(parent, true);
 

@@ -42,7 +42,7 @@ public class CommonDropDescriptorManager {
 	 * A map of (INavigatorContentDescriptor,
 	 * CommonDropAdapterDescriptor)-pairs.
 	 */
-	private final Map<INavigatorContentDescriptor, List> dropDescriptors = new TreeMap<INavigatorContentDescriptor, List>(ExtensionSequenceNumberComparator.INSTANCE);
+	private final Map<INavigatorContentDescriptor, List> dropDescriptors = new TreeMap<>(ExtensionSequenceNumberComparator.INSTANCE);
 
 	/**
 	 *
@@ -69,7 +69,7 @@ public class CommonDropDescriptorManager {
 	 */
 	public CommonDropAdapterDescriptor[] findCommonDropAdapterAssistants(Object aDropTarget, INavigatorContentService aContentService) {
 
-		Set<CommonDropAdapterDescriptor> foundDescriptors = new LinkedHashSet<CommonDropAdapterDescriptor>();
+		Set<CommonDropAdapterDescriptor> foundDescriptors = new LinkedHashSet<>();
 		for (INavigatorContentDescriptor contentDescriptor : dropDescriptors.keySet()) {
 			if (aContentService.isVisible(contentDescriptor.getId())
 					&& aContentService.isActive(contentDescriptor.getId())) {
@@ -100,7 +100,7 @@ public class CommonDropDescriptorManager {
 			descriptors = dropDescriptors.get(aContentDescriptor);
 			if (descriptors == null) {
 				dropDescriptors.put(aContentDescriptor,
-						(descriptors = new ArrayList<CommonDropAdapterDescriptor>()));
+						(descriptors = new ArrayList<>()));
 			}
 
 		}

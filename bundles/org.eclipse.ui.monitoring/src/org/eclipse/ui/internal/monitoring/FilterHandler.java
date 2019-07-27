@@ -124,8 +124,8 @@ public class FilterHandler {
 	public FilterHandler(String commaSeparatedMethods) {
 		String[] filters = commaSeparatedMethods.split(","); //$NON-NLS-1$
 
-		List<StackFrame> stackFrames = new ArrayList<StackFrame>(filters.length);
-		List<Pattern> stackPatterns = new ArrayList<Pattern>(filters.length);
+		List<StackFrame> stackFrames = new ArrayList<>(filters.length);
+		List<Pattern> stackPatterns = new ArrayList<>(filters.length);
 		for (String filter : filters) {
 			if (containsWildcards(filter)) {
 				Pattern pattern = createPattern(filter);

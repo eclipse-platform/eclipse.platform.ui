@@ -34,7 +34,7 @@ public class CommonFilterDescriptorManager {
 	private static final CommonFilterDescriptor[] NO_FILTER_DESCRIPTORS = new CommonFilterDescriptor[0];
 
 	// K(ID) V(CommonFilterDescriptor)
-	private final Map<String, CommonFilterDescriptor> filters = new HashMap<String, CommonFilterDescriptor>();
+	private final Map<String, CommonFilterDescriptor> filters = new HashMap<>();
 
 	/**
 	 *
@@ -75,7 +75,7 @@ public class CommonFilterDescriptorManager {
 	 */
 	public CommonFilterDescriptor[] findVisibleFilters(INavigatorContentService contentService, boolean forUI) {
 
-		List<CommonFilterDescriptor> visibleFilters = new ArrayList<CommonFilterDescriptor>();
+		List<CommonFilterDescriptor> visibleFilters = new ArrayList<>();
 		for (CommonFilterDescriptor descriptor : filters.values()) {
 			if (forUI && !descriptor.isVisibleInUi())
 				continue;
