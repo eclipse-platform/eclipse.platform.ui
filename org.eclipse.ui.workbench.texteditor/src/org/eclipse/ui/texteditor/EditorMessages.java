@@ -94,6 +94,8 @@ final class EditorMessages extends NLS {
 	public static String Editor_statusline_mode_overwrite_label;
 	public static String Editor_statusline_mode_smartinsert_label;
 	public static String Editor_statusline_position_pattern;
+	public static String Editor_statusline_position_pattern_offset;
+	public static String Editor_statusline_position_pattern_selection;
 	public static String Editor_statusline_error_label;
 	public static String WorkbenchChainedTextFontFieldEditor_defaultWorkbenchTextFont;
 	public static String FindReplace_title;

@@ -743,6 +743,9 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER));
 
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_CARET_OFFSET));
+		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_SELECTION_SIZE));
+
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.BOOLEAN, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_FOREGROUND_DEFAULT_COLOR));
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SELECTION_BACKGROUND_COLOR));
@@ -884,6 +887,14 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		label= TextEditorMessages.TextEditorPreferencePage_showLineNumbers;
 		Preference showLineNumbers= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_LINE_NUMBER_RULER, label, null);
 		addCheckBox(appearanceComposite, showLineNumbers, new BooleanDomain(), 0);
+
+		label= TextEditorMessages.TextEditorPreferencePage_showCaretOffsetInStatus;
+		Preference showCaretOffset= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_CARET_OFFSET, label, null);
+		addCheckBox(appearanceComposite, showCaretOffset, new BooleanDomain(), 0);
+
+		label= TextEditorMessages.TextEditorPreferencePage_showSelectionInStatus;
+		Preference showSelectionNumbers= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SHOW_SELECTION_SIZE, label, null);
+		addCheckBox(appearanceComposite, showSelectionNumbers, new BooleanDomain(), 0);
 
 		label= TextEditorMessages.TextEditorDefaultsPreferencePage_range_indicator;
 		Preference showMagnet= new Preference(AbstractDecoratedTextEditorPreferenceConstants.SHOW_RANGE_INDICATOR, label, null);

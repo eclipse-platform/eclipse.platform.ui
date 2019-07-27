@@ -40,6 +40,8 @@ final class TextEditorMessages extends NLS {
 	public static String TextEditorPreferencePage_printMarginColumn;
 	public static String TextEditorPreferencePage_printMarginAllowOverride;
 	public static String TextEditorPreferencePage_showLineNumbers;
+	public static String TextEditorPreferencePage_showCaretOffsetInStatus;
+	public static String TextEditorPreferencePage_showSelectionInStatus;
 	public static String TextEditorPreferencePage_highlightCurrentLine;
 	public static String TextEditorPreferencePage_showPrintMargin;
 	public static String TextEditorPreferencePage_color;
