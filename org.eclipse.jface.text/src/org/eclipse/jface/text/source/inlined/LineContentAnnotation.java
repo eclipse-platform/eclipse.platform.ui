@@ -115,6 +115,9 @@ public class LineContentAnnotation extends AbstractInlinedAnnotation {
 	 */
 	StyleRange updateStyle(StyleRange style) {
 		Position widgetPosition= computeWidgetPosition();
+		if (widgetPosition == null) {
+			return null;
+		}
 		boolean usePreviousChar= drawRightToPreviousChar(widgetPosition.getOffset());
 		if (width == 0 || getRedrawnCharacterWidth() == 0) {
 			return null;

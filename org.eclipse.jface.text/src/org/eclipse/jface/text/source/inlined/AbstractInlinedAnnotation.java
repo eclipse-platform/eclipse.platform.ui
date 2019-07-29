@@ -88,7 +88,11 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 	final Position computeWidgetPosition() {
 		if (fViewer instanceof ITextViewerExtension5) {
 			IRegion region= ((ITextViewerExtension5) fViewer).modelRange2WidgetRange(new Region(position.getOffset(), position.getLength()));
-			return new Position(region.getOffset(), region.getLength());
+			if (region != null) {
+				return new Position(region.getOffset(), region.getLength());
+			} else {
+				return null;
+			}
 		}
 		return position;
 	}
