@@ -13,20 +13,20 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.preferences;
 
-import junit.framework.TestCase;
-
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferenceDialog;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.jface.tests.preferences.SamplePreferencePage;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dialogs.FilteredPreferenceDialog;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
+
+import junit.framework.TestCase;
 
 /**
  * Added as a result of the bug 226547:
@@ -36,8 +36,8 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  */
 public class PreferencesDialogTest extends TestCase {
 
-	static ImageDescriptor descriptor = AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.ui.tests",
-					"icons/anything.gif");
+	static ImageDescriptor descriptor = ResourceLocator
+			.imageDescriptorFromBundle("org.eclipse.ui.tests", "icons/anything.gif").orElse(null);
 
 	public Shell shell;
 

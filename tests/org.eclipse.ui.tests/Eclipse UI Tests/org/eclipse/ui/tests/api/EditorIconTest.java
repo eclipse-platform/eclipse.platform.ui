@@ -18,15 +18,15 @@ import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.jface.resource.ImageDescriptor;
+import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.tests.harness.util.ImageTests;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
- * Tests to ensure that various icon scenarios work.  These are tested on
- * editors but should be applicable for any client of
- * AbstractUIPlugin.imageDescriptorFromPlugin()
+ * Tests to ensure that various icon scenarios work. These are tested on editors
+ * but should be applicable for any client of
+ * {@link ResourceLocator#imageDescriptorFromBundle(String, String)}
  *
  * @since 3.0
  */
@@ -46,8 +46,8 @@ public class EditorIconTest extends UITestCase {
 		try {
 			i1 = fWorkbench.getEditorRegistry().getDefaultEditor(
 					"foo.icontest1").getImageDescriptor().createImage();
-			i2 = AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.ui",
-					"icons/full/obj16/font.png").createImage();
+			i2 = ResourceLocator.imageDescriptorFromBundle("org.eclipse.ui", "icons/full/obj16/font.png")
+					.orElseThrow(() -> new AssertionError()).createImage();
 			ImageTests.assertEquals(i1, i2);
 		}
 		finally {
@@ -66,9 +66,9 @@ public class EditorIconTest extends UITestCase {
 		try {
 			i1 = fWorkbench.getEditorRegistry().getDefaultEditor(
 					"foo.icontest2").getImageDescriptor().createImage();
-			i2 = AbstractUIPlugin.imageDescriptorFromPlugin(
+			i2 = ResourceLocator.imageDescriptorFromBundle(
 					"org.eclipse.jdt.ui", "icons/full/obj16/class_obj.png") // layer breaker!
-					.createImage();
+					.orElseThrow(() -> new AssertionError()).createImage();
 			ImageTests.assertEquals(i1, i2);
 		}
 		finally {
@@ -88,8 +88,8 @@ public class EditorIconTest extends UITestCase {
 		try {
 			i1 = fWorkbench.getEditorRegistry().getDefaultEditor(
 					"foo.icontest3").getImageDescriptor().createImage();
-			i2 = AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.ui",
-					"icons/full/obj16/file_obj.png").createImage();
+			i2 = ResourceLocator.imageDescriptorFromBundle("org.eclipse.ui", "icons/full/obj16/file_obj.png")
+					.orElseThrow(() -> new AssertionError()).createImage();
 			ImageTests.assertEquals(i1, i2);
 		}
 		finally {
@@ -106,8 +106,9 @@ public class EditorIconTest extends UITestCase {
 	 * Tests undocumented support for platform:/plugin/... URLs.
 	 */
 	public void testBug395126() {
-		ImageDescriptor imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.jface",
-				"platform:/plugin/org.eclipse.jface/$nl$/icons/full/message_error.png");
+		ImageDescriptor imageDescriptor = ResourceLocator.imageDescriptorFromBundle("org.eclipse.jface",
+				"platform:/plugin/org.eclipse.jface/$nl$/icons/full/message_error.png")
+				.orElseThrow(() -> new AssertionError());
 		Image image = null;
 		try {
 			image = imageDescriptor.createImage(false);
@@ -123,8 +124,8 @@ public class EditorIconTest extends UITestCase {
 	 * Tests undocumented support for platform:/plugin/... URLs.
 	 */
 	public void testBug395126_missing() {
-		ImageDescriptor imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.jface",
-				"platform:/plugin/org.eclipse.jface/$nl$/icons/does-not-exist.gif");
+		ImageDescriptor imageDescriptor = ResourceLocator.imageDescriptorFromBundle("org.eclipse.jface",
+				"platform:/plugin/org.eclipse.jface/$nl$/icons/does-not-exist.gif").orElse(null);
 		Image image = null;
 		try {
 			image = imageDescriptor.createImage(false);
@@ -141,8 +142,8 @@ public class EditorIconTest extends UITestCase {
 	 */
 	public void testBug474072() throws Exception {
 		URL url = FileLocator.find(new URL("platform:/plugin/org.eclipse.jface/$nl$/icons/full/message_error.png"));
-		ImageDescriptor imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.jface",
-				url.toString());
+		ImageDescriptor imageDescriptor = ResourceLocator.imageDescriptorFromBundle("org.eclipse.jface", url.toString())
+				.orElseThrow(() -> new AssertionError());
 		Image image = null;
 		try {
 			image = imageDescriptor.createImage(false);
@@ -161,7 +162,8 @@ public class EditorIconTest extends UITestCase {
 		String url = FileLocator.find(new URL("platform:/plugin/org.eclipse.jface/$nl$/icons/full/message_error.png"))
 				.toString();
 		url += "does-not-exist";
-		ImageDescriptor imageDescriptor = AbstractUIPlugin.imageDescriptorFromPlugin("org.eclipse.jface", url);
+		ImageDescriptor imageDescriptor = ResourceLocator.imageDescriptorFromBundle("org.eclipse.jface", url)
+				.orElse(null);
 		Image image = null;
 		try {
 			image = imageDescriptor.createImage(false);
