@@ -294,7 +294,7 @@ public class BeanProperties {
 	 * @return a list property for the given property name of the given bean
 	 *         class.
 	 */
-	public static <S> IBeanListProperty<S, Object> list(Class<S> beanClass, String propertyName) {
+	public static <S, E> IBeanListProperty<S, E> list(Class<S> beanClass, String propertyName) {
 		return list(beanClass, propertyName, null);
 	}
 
