@@ -64,7 +64,7 @@ public abstract class WorkbenchPart extends EventManager
 		implements IWorkbenchPart3, IExecutableExtension, IWorkbenchPartOrientation {
 	private String title = ""; //$NON-NLS-1$
 
-	private Optional<ImageDescriptor> imageDescriptor;
+	private Optional<ImageDescriptor> imageDescriptor = Optional.empty();
 
 	private Image titleImage;
 
