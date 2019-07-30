@@ -179,7 +179,7 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 				// failed to create the error part, log it
 				logger.error(ex);
 			} catch (PartInitException ex) {
-				WorkbenchPlugin.log("Unable to initialize error part", ex.getStatus()); //$NON-NLS-1$
+				WorkbenchPlugin.log("Unable to initialize error part", ex); //$NON-NLS-1$
 			}
 		}
 
@@ -301,6 +301,7 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 	}
 
 	boolean handlePartInitException(PartInitException e) {
+		WorkbenchPlugin.log("Unable to create part", e); //$NON-NLS-1$
 		WorkbenchPartReference reference = getReference();
 		IWorkbenchPartSite site = reference.getSite();
 		reference.invalidate();
@@ -315,13 +316,12 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 		internalDisposeSite(site);
 
 		alreadyDisposed = false;
-		WorkbenchPlugin.log("Unable to create part", e.getStatus()); //$NON-NLS-1$
 
 		wrapped = reference.createErrorPart(e.getStatus());
 		try {
 			reference.initialize(wrapped);
 		} catch (PartInitException ex) {
-			WorkbenchPlugin.log("Unable to initialize error part", ex.getStatus()); //$NON-NLS-1$
+			WorkbenchPlugin.log("Unable to initialize error part", ex); //$NON-NLS-1$
 			return false;
 		}
 		return true;
@@ -342,9 +342,8 @@ public abstract class CompatibilityPart implements ISelectionChangedListener {
 			if (!handlePartInitException(e)) {
 				return;
 			}
-		} catch (Exception e) {
-			WorkbenchPlugin.log("Unable to initialize part", e); //$NON-NLS-1$
-			if (!handlePartInitException(new PartInitException(e.getMessage()))) {
+		} catch (RuntimeException e) {
+			if (!handlePartInitException(new PartInitException(e.getMessage(), e))) {
 				return;
 			}
 		}
