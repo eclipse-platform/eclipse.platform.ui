@@ -47,6 +47,7 @@ import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILazyContentProvider;
@@ -972,7 +973,8 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 							int start = document.getLineOffset(Math.max(line-(numLines-1)/2, 0));
 							int end = document.getLength();
 							try {
-								end = document.getLineOffset(start+numLines);
+								IRegion lineInfo = document.getLineInformation(line + numLines/2);
+								end = lineInfo.getOffset() + lineInfo.getLength();
 							} catch (BadLocationException e) {
 								//Presumably line number is past the end of document.
 								//ignore.
