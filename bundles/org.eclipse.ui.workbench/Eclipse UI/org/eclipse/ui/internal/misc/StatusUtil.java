@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.misc;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -116,45 +114,7 @@ public class StatusUtil {
 	}
 
 	public static IStatus newStatus(String pluginId, String message, Throwable exception) {
-		return new Status(IStatus.ERROR, pluginId, IStatus.OK, message, getCause(exception));
-	}
-
-	public static Throwable getCause(Throwable exception) {
-		// Figure out which exception should actually be logged -- if the given
-		// exception is
-		// a wrapper, unwrap it
-		Throwable cause = null;
-		if (exception != null) {
-			if (exception instanceof CoreException) {
-				// Workaround: CoreException contains a cause, but does not actually implement
-				// getCause().
-				// If we get a CoreException, we need to manually unpack the cause. Otherwise,
-				// use
-				// the general-purpose mechanism. Remove this branch if CoreException ever
-				// implements
-				// a correct getCause() method.
-				CoreException ce = (CoreException) exception;
-				cause = ce.getStatus().getException();
-			} else {
-				// use reflect instead of a direct call to getCause(), to allow compilation
-				// against JCL Foundation (bug 80053)
-				try {
-					Method causeMethod = exception.getClass().getMethod("getCause"); //$NON-NLS-1$
-					Object o = causeMethod.invoke(exception);
-					if (o instanceof Throwable) {
-						cause = (Throwable) o;
-					}
-				} catch (NoSuchMethodException | IllegalArgumentException | IllegalAccessException | InvocationTargetException e) {
-					// ignore
-				}
-			}
-
-			if (cause == null) {
-				cause = exception;
-			}
-		}
-
-		return cause;
+		return new Status(IStatus.ERROR, pluginId, IStatus.OK, message, exception);
 	}
 
 	/**
@@ -173,7 +133,7 @@ public class StatusUtil {
 			}
 		}
 
-		return new Status(severity, WorkbenchPlugin.PI_WORKBENCH, severity, statusMessage, getCause(exception));
+		return new Status(severity, WorkbenchPlugin.PI_WORKBENCH, severity, statusMessage, exception);
 	}
 
 	/**

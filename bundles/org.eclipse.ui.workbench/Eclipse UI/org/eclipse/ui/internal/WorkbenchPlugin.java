@@ -686,7 +686,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 			errorCode = ce.getStatus().getCode();
 		}
 
-		return new Status(IStatus.ERROR, pluginId, errorCode, message, StatusUtil.getCause(t));
+		return new Status(IStatus.ERROR, pluginId, errorCode, message, t);
 	}
 
 	/**
