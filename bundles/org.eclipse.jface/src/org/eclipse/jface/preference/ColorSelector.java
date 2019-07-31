@@ -186,7 +186,7 @@ public class ColorSelector extends EventManager {
 		}
 		fColor = new Color(display, fColorValue);
 		gc.setBackground(fColor);
-		gc.fillRectangle(1, 0, fExtent.x - 2, fExtent.y - 1);
+		gc.fillRectangle(1, 1, fExtent.x - 2, fExtent.y - 2);
 		gc.dispose();
 		fButton.setImage(fImage);
 	}
