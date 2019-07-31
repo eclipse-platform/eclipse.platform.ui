@@ -479,7 +479,9 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	 */
 	@Override
 	public void dispose() {
-		deactivateSite(true, false);
+		if (getSite() != null) {
+			deactivateSite(true, false);
+		}
 
 		pageChangeListeners.clear();
 		for (int i = 0; i < nestedEditors.size(); ++i) {

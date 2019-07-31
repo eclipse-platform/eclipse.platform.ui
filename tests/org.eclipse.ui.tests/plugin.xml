@@ -628,6 +628,12 @@
             id="org.eclipse.ui.tests.multipageeditor.TestMultiPageEditor">
       </editor>
       <editor
+            name="Test Multi-Page Editor (throwing PartInitException)"
+            icon="icons/mockeditorpart2.gif"
+            class="org.eclipse.ui.tests.multipageeditor.TestMultiPageEditorThrowingPartInitException"
+            id="org.eclipse.ui.tests.multipageeditor.TestMultiPageEditorThrowingPartInitException">
+      </editor>
+      <editor
             class="org.eclipse.ui.tests.api.workbenchpart.TitleTestEditor"
             icon="icons/anything.gif"
             default="true"
