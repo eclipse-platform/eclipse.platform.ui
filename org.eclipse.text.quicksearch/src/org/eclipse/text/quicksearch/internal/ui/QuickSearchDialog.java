@@ -122,6 +122,7 @@ import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
+import org.eclipse.ui.internal.quickaccess.QuickAccessMessages;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -133,8 +134,8 @@ import org.eclipse.ui.progress.UIJob;
 @SuppressWarnings({ "rawtypes", "restriction", "unchecked" })
 public class QuickSearchDialog extends SelectionStatusDialog {
 
-	private static final int GO_BUTTON_ID = IDialogConstants.CLIENT_ID  + 1;
-	private static final int REFRESH_BUTTON_ID = IDialogConstants.CLIENT_ID + 2;
+	private static final int OPEN_BUTTON_ID = IDialogConstants.OK_ID;
+	private static final int REFRESH_BUTTON_ID = IDialogConstants.RETRY_ID;
 
 	public static final Styler HIGHLIGHT_STYLE = org.eclipse.search.internal.ui.text.DecoratingFileSearchLabelProvider.HIGHLIGHT_STYLE;
 
@@ -607,7 +608,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		Composite labels = new Composite(parent, SWT.NONE);
 
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 2;
+		layout.numColumns = 3;
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		labels.setLayout(layout);
@@ -630,6 +631,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 
 		progressLabel = new Label(labels, SWT.RIGHT);
 		progressLabel.setLayoutData(gd);
+		createButton(labels, REFRESH_BUTTON_ID, Messages.QuickSearchDialog_Refresh, false);
 
 		labels.setLayoutData(gd);
 		return listLabel;
@@ -760,10 +762,11 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		Composite searchInComposite = createNestedComposite(inputRow, 2, false);
 		GridDataFactory.fillDefaults().span(4,1).grab(true, false).applyTo(searchInComposite);
 		Label searchInLabel = new Label(searchInComposite, SWT.NONE);
-		searchInLabel.setText(" In: ");
+		searchInLabel.setText(Messages.QuickSearchDialog_In);
+		GridDataFactory.swtDefaults().indent(5, 0).applyTo(searchInLabel);
 		searchIn = new Text(searchInComposite, SWT.SINGLE | SWT.BORDER | SWT.ICON_CANCEL);
-		searchIn.setToolTipText("Search in (comma-separated list of '.gitignore' style inclusion patterns)");
-		GridDataFactory.fillDefaults().grab(true, false).applyTo(searchIn);
+		searchIn.setToolTipText(Messages.QuickSearchDialog_InTooltip);
+		GridDataFactory.fillDefaults().grab(true, false).indent(5, 0).applyTo(searchIn);
 
 		final Label listLabel = createLabels(content);
 
@@ -791,14 +794,14 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 
 		TableViewerColumn col = new TableViewerColumn(list, SWT.RIGHT);
 		col.setLabelProvider(LINE_NUMBER_LABEL_PROVIDER);
-		col.getColumn().setText("Line");
+		col.getColumn().setText(Messages.QuickSearchDialog_line);
 		col.getColumn().setWidth(40);
 		col = new TableViewerColumn(list, SWT.LEFT);
-		col.getColumn().setText("Text");
+		col.getColumn().setText(Messages.QuickSearchDialog_text);
 		col.setLabelProvider(LINE_TEXT_LABEL_PROVIDER);
 		col.getColumn().setWidth(400);
 		col = new TableViewerColumn(list, SWT.LEFT);
-		col.getColumn().setText("Path");
+		col.getColumn().setText(Messages.QuickSearchDialog_path);
 		col.setLabelProvider(LINE_FILE_LABEL_PROVIDER);
 		col.getColumn().setWidth(150);
 
@@ -1116,12 +1119,12 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 			int itemCount = contentProvider.getNumberOfElements();
 			list.setItemCount(itemCount);
 			list.refresh(true, false);
-			Button goButton = getButton(GO_BUTTON_ID);
-			if (goButton!=null && !goButton.isDisposed()) {
+			Button openButton = getButton(OPEN_BUTTON_ID);
+			if (openButton!=null && !openButton.isDisposed()) {
 				//Even if no element is selected. The dialog should be have as if the first
 				//element in the list is selected. So the button is enabled if any
 				//element is available in the list.
-				goButton.setEnabled(itemCount>0);
+				openButton.setEnabled(itemCount>0);
 			}
 
 		}
@@ -1160,39 +1163,36 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	 * Handles double-click of items, but *also* by pressing the 'enter' key.
 	 */
 	protected void handleDoubleClick() {
-		goButtonPressed();
+		okPressed();
 	}
 
 	protected void refreshButtonPressed() {
 		applyFilter(true);
 	}
 
-	/**
-	 * Handles directly clicking the 'go' button.
-	 */
-	protected void goButtonPressed() {
+
+	@Override
+	protected void okPressed() {
 		computeResult();
 		openSelection();
 		if (!toggleKeepOpenAction.isChecked()) {
+			setReturnCode(OK);
 			close();
 		}
 	}
 
 	@Override
+	protected void buttonPressed(int buttonId) {
+		if (buttonId == REFRESH_BUTTON_ID) {
+			refreshButtonPressed();
+		} else {
+			super.buttonPressed(buttonId);
+		}
+	}
+
+	@Override
 	protected void createButtonsForButtonBar(Composite parent) {
-		SelectionListener listener = new SelectionAdapter() {
-			@Override
-			public void widgetSelected(SelectionEvent e) {
-				int buttonId = (int) ((Button)e.widget).getData();
-				if (buttonId==GO_BUTTON_ID) {
-					goButtonPressed();
-				} else if (buttonId==REFRESH_BUTTON_ID) {
-					refreshButtonPressed();
-				}
-			}
-		};
-		createButton(parent, GO_BUTTON_ID, "Go!", false).addSelectionListener(listener);
-		createButton(parent, REFRESH_BUTTON_ID, "Refresh", false).addSelectionListener(listener);
+		createButton(parent, OPEN_BUTTON_ID, Messages.QuickSearchDialog_Open, true);
 		refreshWidgets();
 	}
 

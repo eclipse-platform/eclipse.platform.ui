@@ -25,6 +25,14 @@ public class Messages extends NLS {
 	public static String QuickSearchPreferencesPage_6;
 	public static String QuickSearchPreferencesPage_7;
 	public static String QuickSearchPreferencesPage_8;
+	public static String QuickSearchDialog_Open;
+	public static String QuickSearchDialog_Refresh;
+	public static String QuickSearchDialog_In;
+	public static String QuickSearchDialog_InTooltip;
+	public static String QuickSearchDialog_line;
+	public static String QuickSearchDialog_text;
+	public static String QuickSearchDialog_path;
+
 	static {
 		// initialize resource bundle
 		NLS.initializeMessages(BUNDLE_NAME, Messages.class);
