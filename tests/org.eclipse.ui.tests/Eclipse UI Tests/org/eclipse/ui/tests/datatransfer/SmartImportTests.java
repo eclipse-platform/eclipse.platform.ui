@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Consumer;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -124,11 +125,20 @@ public class SmartImportTests extends UITestCase {
 	}
 
 	private void proceedSmartImportWizard(SmartImportWizard wizard) throws InterruptedException {
+		Consumer<SmartImportRootWizardPage> doNothing = page -> {};
+		proceedSmartImportWizard(wizard, doNothing);
+	}
+
+	private void proceedSmartImportWizard(SmartImportWizard wizard, Consumer<SmartImportRootWizardPage> setSettings)
+			throws InterruptedException {
 		WizardDialog dialog = new WizardDialog(getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
 		try {
 			dialog.setBlockOnOpen(false);
 			dialog.open();
 			processEvents();
+			SmartImportRootWizardPage page = (SmartImportRootWizardPage) wizard
+					.getPage(SmartImportRootWizardPage.class.getName());
+			setSettings.accept(page);
 			final Button okButton = getFinishButton(dialog.buttonBar);
 			assertNotNull(okButton);
 			processEventsUntil(() -> okButton.isEnabled(), -1);
@@ -264,6 +274,57 @@ public class SmartImportTests extends UITestCase {
 		assertEquals(modules.size(), ImportMeProjectConfigurator.configuredProjects.size());
 		assertTrue("All modules should be configured",
 				ImportMeProjectConfigurator.configuredProjects.containsAll(modules));
+	}
+
+	@Test
+	public void testConfigurationCloseImportedProjects() throws Exception {
+		String location = ImportTestUtils.copyDataLocation("ImportExistingProjectsWizardTestRebuildProject");
+		File file = new File(location);
+		SmartImportWizard wizard = new SmartImportWizard();
+		wizard.setInitialImportSource(file);
+		proceedSmartImportWizard(wizard, page -> page.setCloseProjectsAfterImport(true));
+
+		// Check expected projects are there
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+
+		try {
+			assertEquals(2, projects.length);
+
+			IProject rootProject = ResourcesPlugin.getWorkspace().getRoot()
+					.getProject("ImportExistingProjectsWizardTestRebuildProject");
+			assertTrue("Missing test project", rootProject.exists());
+			assertFalse("Test project should be closed after import", rootProject.isOpen());
+		} finally {
+			ImportTestUtils.deleteWorkspaceProjects(projects);
+		}
+	}
+
+	@Test
+	public void testConfigurationFullBuildAfterImportedProjects() throws Exception {
+		String location = ImportTestUtils.copyDataLocation("ImportExistingProjectsWizardTestRebuildProject");
+		File file = new File(location);
+		SmartImportWizard wizard = new SmartImportWizard();
+		wizard.setInitialImportSource(file);
+
+		ImportTestUtils.TestBuilder.resetCallCount();
+		proceedSmartImportWizard(wizard, page -> {
+			page.setCloseProjectsAfterImport(false);
+		});
+		ImportTestUtils.waitForBuild();
+
+		// Check expected projects are there
+		IProject[] projects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
+		try {
+			assertEquals(2, projects.length);
+
+			IProject rootProject = ResourcesPlugin.getWorkspace().getRoot()
+					.getProject("ImportExistingProjectsWizardTestRebuildProject");
+
+			assertTrue("Missing test project", rootProject.exists());
+			ImportTestUtils.TestBuilder.assertFullBuildWasDone();
+		} finally {
+			ImportTestUtils.deleteWorkspaceProjects(projects);
+		}
 	}
 
 	@Test

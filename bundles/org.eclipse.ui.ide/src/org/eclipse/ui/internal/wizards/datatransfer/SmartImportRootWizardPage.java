@@ -1000,5 +1000,14 @@ public class SmartImportRootWizardPage extends WizardPage {
 		return this.wizardProgressMonitor.get();
 	}
 
+	/**
+	 * Public for tests.
+	 *
+	 * @param closeProjectsAfterImport whether projects should be closed after being
+	 *                                 imported
+	 */
+	public void setCloseProjectsAfterImport(boolean closeProjectsAfterImport) {
+		this.closeProjectsAfterImport = closeProjectsAfterImport;
+	}
 }
 

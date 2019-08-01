@@ -1376,6 +1376,13 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 				return new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, 2,
 						e.getCause().getLocalizedMessage(), e);
 			}
+			if (closeProjectsAfterImport) {
+				try {
+					project.close(subMonitor.split(1));
+				} catch (CoreException e) {
+					return e.getStatus();
+				}
+			}
 			return operation.getStatus();
 		}
 
@@ -1695,5 +1702,4 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 	protected boolean allowNewContainerName() {
 		return true;
 	}
-
 }
