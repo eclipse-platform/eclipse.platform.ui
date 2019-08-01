@@ -231,6 +231,15 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
 	}
 
 	@Override
+	public boolean setSubtreeChecked(Object element, boolean state) {
+		if (super.setSubtreeChecked(element, state)) {
+			doCheckStateChanged(element);
+			return true;
+		}
+		return false;
+	}
+
+	@Override
 	protected void setExpanded(Item item, boolean expand) {
 		super.setExpanded(item, expand);
 		if (expand && item instanceof TreeItem) {

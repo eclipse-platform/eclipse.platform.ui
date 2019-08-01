@@ -25,7 +25,7 @@ import junit.framework.TestSuite;
 		DeprecatedUIWizardsAuto.class, UIPreferencesAuto.class, UIComparePreferencesAuto.class,
 		DeprecatedUIPreferencesAuto.class, UIMessageDialogsAuto.class, UINewWorkingSetWizardAuto.class,
 		UIEditWorkingSetWizardAuto.class, SearchPatternAuto.class, UIFilteredResourcesSelectionDialogAuto.class,
-		TreeManagerTest.class })
+		TreeManagerTest.class, ContainerCheckedTreeViewerTest.class })
 public class UIAutomatedSuite extends TestSuite {
 
 }

@@ -362,12 +362,8 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 				WorkbenchMessages.CheckedTreeSelectionDialog_select_all, false);
 		SelectionListener listener = widgetSelectedAdapter(e -> {
 			Object[] viewerElements = fContentProvider.getElements(fInput);
-			if (fContainerMode) {
-				fViewer.setCheckedElements(viewerElements);
-			} else {
-				for (Object viewerElement : viewerElements) {
-					fViewer.setSubtreeChecked(viewerElement, true);
-				}
+			for (Object viewerElement : viewerElements) {
+				fViewer.setSubtreeChecked(viewerElement, true);
 			}
 			updateOKStatus();
 		});
