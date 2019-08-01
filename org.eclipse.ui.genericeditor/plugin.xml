@@ -224,4 +224,10 @@
             id="org.eclipse.ui.genericeditor.compareViewer">
       </viewer>
    </extension>
+  <extension
+         point="org.eclipse.ui.ide.editorAssociationOverride">
+      <editorAssociationOverride
+            class="org.eclipse.ui.internal.genericeditor.GenericEditorAssociationOverride"
+            id="org.eclipse.ui.internal.genericeditor.GenericEditorAssociationOverride"/>
+   </extension>
 </plugin>
