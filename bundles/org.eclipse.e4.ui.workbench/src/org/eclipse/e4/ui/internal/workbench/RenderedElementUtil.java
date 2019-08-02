@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2016 IBM Corporation and others.
+ * Copyright (c) 2014, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -95,6 +95,16 @@ public class RenderedElementUtil {
 	 */
 	public static Object getContributionManager(MUIElement element) {
 		return element.getTransientData().get(CONTRIBUTION_MANAGER_KEY);
+	}
+
+	/**
+	 * Test whether the UI element is an 'rendered' element.
+	 *
+	 * @param element the UI element
+	 * @return <code>true</code> if the element is a 'rendered' element
+	 */
+	public static boolean isRenderedElement(MUIElement element) {
+		return element != null && element.getTags().contains(RENDERED_TAG);
 	}
 
 	/**

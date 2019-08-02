@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Christian Pontesegger and others.
+ * Copyright (c) 2018, 2019 Christian Pontesegger and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,7 @@
 package org.eclipse.e4.ui.internal.workbench;
 
 import org.eclipse.e4.ui.model.application.MApplicationElement;
+import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.InternalEObject;
@@ -40,6 +41,12 @@ public class E4XMISave extends XMISaveImpl {
 			MApplicationElement appElement = (MApplicationElement) o;
 			String persists = appElement.getPersistedState().get(IWorkbench.PERSIST_STATE);
 			if (persists != null && !Boolean.parseBoolean(persists)) {
+				return;
+			}
+		}
+		if (o instanceof MUIElement) {
+			MUIElement uiElement = (MUIElement) o;
+			if (OpaqueElementUtil.isOpaqueElement(uiElement) || RenderedElementUtil.isRenderedElement(uiElement)) {
 				return;
 			}
 		}

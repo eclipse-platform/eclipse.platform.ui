@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 IBM Corporation and others.
+ * Copyright (c) 2014, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -106,7 +106,17 @@ public class OpaqueElementUtil {
 	}
 
 	/**
-	 * Tests whether a menu element is an opaque menue
+	 * Tests whether a element is an opaque element
+	 *
+	 * @param uiElement
+	 * @return <code>true</code> if the element is an 'opaque' element
+	 */
+	public static boolean isOpaqueElement(MUIElement uiElement) {
+		return uiElement != null && uiElement.getTags().contains(OPAQUE_TAG);
+	}
+
+	/**
+	 * Tests whether a menu element is an opaque menu
 	 *
 	 * @param item
 	 * @return <code>true</code> if the element is an 'opaque' menu
