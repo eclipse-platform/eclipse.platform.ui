@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+4 * Copyright (c) 2006, 2015 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,10 @@
 package org.eclipse.ui.internal.quickaccess;
 
 import java.util.Arrays;
+import java.util.Comparator;
+import java.util.SortedSet;
+import java.util.TreeSet;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.quickaccess.QuickAccessElement;
 
@@ -24,7 +28,10 @@ import org.eclipse.ui.quickaccess.QuickAccessElement;
  */
 public abstract class QuickAccessProvider {
 
-	private QuickAccessElement[] sortedElements;
+	/*
+	 * Cached elements that are always returned
+	 */
+	private QuickAccessElement[] cacheSortedElements;
 
 	/**
 	 * Returns the unique ID of this provider.
@@ -48,18 +55,42 @@ public abstract class QuickAccessProvider {
 	public abstract ImageDescriptor getImageDescriptor();
 
 	/**
-	 * Returns the elements provided by this provider.
+	 * Returns the elements provided by this provider in all circumstances. Elements
+	 * get filter downstream in the process, so this list can be greedy. The result
+	 * may be cached and reused so this method may be invoked only once for a
+	 * QuickAccess session.
 	 *
 	 * @return this provider's elements
 	 */
 	public abstract QuickAccessElement[] getElements();
 
-	public QuickAccessElement[] getElementsSorted() {
-		if (sortedElements == null) {
-			sortedElements = getElements();
-			Arrays.sort(sortedElements, (e1, e2) -> e1.getSortLabel().compareTo(e2.getSortLabel()));
+	/**
+	 * Returns the elements provided by this provider in all circumstances. Elements
+	 * get filter downstream in the process, so this list can be greedy. The result
+	 * isn't cached and reused, so this method will be invoked whenever user change
+	 * input.
+	 *
+	 * @param filter  user input
+	 * @param monitor
+	 * @return this provider's elements
+	 */
+	public QuickAccessElement[] getElements(String filter, IProgressMonitor monitor) {
+		return null;
+	}
+
+	public QuickAccessElement[] getElementsSorted(String filter, IProgressMonitor monitor) {
+		if (cacheSortedElements == null) {
+			cacheSortedElements = getElements();
+			Arrays.sort(cacheSortedElements, Comparator.comparing(QuickAccessElement::getSortLabel));
 		}
-		return sortedElements;
+		QuickAccessElement[] filterSpecificElements = getElements(filter, monitor);
+		if (filterSpecificElements == null || filterSpecificElements.length == 0) {
+			return cacheSortedElements;
+		}
+		SortedSet<QuickAccessElement> res = new TreeSet<>(Comparator.comparing(QuickAccessElement::getSortLabel));
+		res.addAll(Arrays.asList(cacheSortedElements));
+		res.addAll(Arrays.asList(filterSpecificElements));
+		return res.toArray(new QuickAccessElement[res.size()]);
 	}
 
 	/**
@@ -73,8 +104,8 @@ public abstract class QuickAccessProvider {
 		if (id == null) {
 			return null;
 		}
-		if (sortedElements != null) {
-			for (QuickAccessElement element : sortedElements) {
+		if (cacheSortedElements != null) {
+			for (QuickAccessElement element : cacheSortedElements) {
 				if (id.equals(element.getId())) {
 					return element;
 				}
@@ -92,7 +123,7 @@ public abstract class QuickAccessProvider {
 	 * method will retrigger computation of elements.
 	 */
 	public final void reset() {
-		sortedElements = null;
+		cacheSortedElements = null;
 		doReset();
 	}
 

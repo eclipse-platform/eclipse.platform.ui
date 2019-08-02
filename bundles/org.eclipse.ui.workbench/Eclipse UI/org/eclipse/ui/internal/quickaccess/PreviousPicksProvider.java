@@ -17,6 +17,7 @@ package org.eclipse.ui.internal.quickaccess;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
@@ -43,7 +44,7 @@ class PreviousPicksProvider extends QuickAccessProvider {
 	}
 
 	@Override
-	public QuickAccessElement[] getElementsSorted() {
+	public QuickAccessElement[] getElementsSorted(String filter, IProgressMonitor monitor) {
 		return getElements();
 	}
 

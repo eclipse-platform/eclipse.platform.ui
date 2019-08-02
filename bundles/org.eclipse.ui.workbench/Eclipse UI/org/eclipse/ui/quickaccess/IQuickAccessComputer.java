@@ -17,12 +17,23 @@ package org.eclipse.ui.quickaccess;
  * Implementations of this interface are used to compute some extra content for
  * the Quick Access features, using extension point
  * <code>org.eclipse.ui.quickaccess</code>.
+ * <p>
+ * Use extension class {@link IQuickAccessComputerExtension} to run a new query
+ * and return new results whenever filter text change.
+ * </p>
  *
  * @since 3.115
  */
 public interface IQuickAccessComputer {
 
 	/**
+	 * Returns the elements to add to the Quick Access proposals, for any request or
+	 * filter.
+	 * <p>
+	 * The returned elements are then filtered according to user input so only
+	 * relevant ones are shown in the list of proposals.
+	 * </p>
+	 *
 	 * @return the elements to add to the Quick Access proposals
 	 */
 	QuickAccessElement[] computeElements();

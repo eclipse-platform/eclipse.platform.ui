@@ -31,6 +31,8 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.core.runtime.Adapters;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -94,6 +96,7 @@ public abstract class QuickAccessContents {
 	private static final int MIN_SEARCH_LENGTH = 3;
 
 	protected Text filterText;
+	private IProgressMonitor monitor;
 
 	private QuickAccessProvider[] providers;
 	private Map<String, QuickAccessProvider> providerMap = new HashMap<>();
@@ -138,6 +141,10 @@ public abstract class QuickAccessContents {
 	 *
 	 */
 	public void refresh(String filter) {
+		if (monitor != null) {
+			monitor.setCanceled(true);
+			monitor = null;
+		}
 		if (table != null) {
 			boolean filterTextEmpty = filter.length() == 0;
 
@@ -151,7 +158,8 @@ public abstract class QuickAccessContents {
 			// perfect match, to be selected in the table if not null
 			QuickAccessElement perfectMatch = getPerfectMatch(filter);
 
-			List<QuickAccessEntry>[] entries = computeMatchingEntries(filter, perfectMatch, extraEntries);
+			monitor = new NullProgressMonitor();
+			List<QuickAccessEntry>[] entries = computeMatchingEntries(filter, perfectMatch, extraEntries, monitor);
 			int selectionIndex = refreshTable(perfectMatch, entries, extraEntries);
 
 			if (table.getItemCount() > 0) {
@@ -424,11 +432,12 @@ public abstract class QuickAccessContents {
 	 * @param extraEntries extra entries that will be added to the tabular
 	 *                     visualization after computing matching entries, i.e.
 	 *                     Search in Help
+	 * @param aMonitor
 	 * @return the array of lists (one per provider) contains the quick access
 	 *         entries that should be added to the table, possibly empty
 	 */
 	private List<QuickAccessEntry>[] computeMatchingEntries(String filter, QuickAccessElement perfectMatch,
-			List<QuickAccessEntry> extraEntries) {
+			List<QuickAccessEntry> extraEntries, IProgressMonitor aMonitor) {
 		// collect matches in an array of lists
 		@SuppressWarnings("unchecked")
 		List<QuickAccessEntry>[] entries = new List[providers.length];
@@ -458,6 +467,9 @@ public abstract class QuickAccessContents {
 				filter = category + " " + categoryMatcher.group(2); //$NON-NLS-1$
 			}
 			for (int i = 0; i < providers.length && (showAllMatches || countTotal < maxCount); i++) {
+				if (aMonitor.isCanceled()) {
+					break;
+				}
 				if (entries[i] == null) {
 					entries[i] = new ArrayList<>();
 					indexPerProvider[i] = 0;
@@ -471,7 +483,7 @@ public abstract class QuickAccessContents {
 					continue;
 				}
 				if (filter.length() > 0 || provider.isAlwaysPresent() || showAllMatches) {
-					QuickAccessElement[] sortedElements = provider.getElementsSorted();
+					QuickAccessElement[] sortedElements = provider.getElementsSorted(filter, aMonitor);
 					if (!(provider instanceof PreviousPicksProvider)) {
 						for (QuickAccessElement element : sortedElements) {
 							elementsToProviders.put(element, provider);
