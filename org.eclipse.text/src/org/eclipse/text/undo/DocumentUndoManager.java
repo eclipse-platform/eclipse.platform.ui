@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Paul Pazderski  - Bug 549755: use {@link DocumentRewriteSession} if operation has lot of changes
  *******************************************************************************/
 package org.eclipse.text.undo;
 
@@ -36,6 +37,8 @@ import org.eclipse.core.runtime.Status;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.DocumentEvent;
+import org.eclipse.jface.text.DocumentRewriteSession;
+import org.eclipse.jface.text.DocumentRewriteSessionType;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentExtension4;
 import org.eclipse.jface.text.IDocumentListener;
@@ -458,9 +461,20 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 				c= fChanges.get(0);
 				fDocumentUndoManager.fireDocumentUndo(c.fStart, c.fPreservedText, c.fText, uiInfo, DocumentUndoEvent.ABOUT_TO_UNDO, size > 1);
 
+				DocumentRewriteSession rewriteSession= null;
+				if (size > 25 && fDocumentUndoManager.fDocument instanceof IDocumentExtension4
+						&& ((IDocumentExtension4) fDocumentUndoManager.fDocument).getActiveRewriteSession() == null) {
+					DocumentRewriteSessionType sessionType= size > 1000 ? DocumentRewriteSessionType.UNRESTRICTED : DocumentRewriteSessionType.UNRESTRICTED_SMALL;
+					rewriteSession= ((IDocumentExtension4) fDocumentUndoManager.fDocument).startRewriteSession(sessionType);
+				}
+
 				for (int i= size - 1; i >= 0; --i) {
 					c= fChanges.get(i);
 					c.undoTextChange();
+				}
+
+				if (rewriteSession != null) {
+					((IDocumentExtension4) fDocumentUndoManager.fDocument).stopRewriteSession(rewriteSession);
 				}
 				fDocumentUndoManager.resetProcessChangeState();
 				fDocumentUndoManager.fireDocumentUndo(c.fStart, c.fPreservedText, c.fText, uiInfo,
@@ -479,9 +493,20 @@ public class DocumentUndoManager implements IDocumentUndoManager {
 				c= fChanges.get(size - 1);
 				fDocumentUndoManager.fireDocumentUndo(c.fStart, c.fText, c.fPreservedText, uiInfo, DocumentUndoEvent.ABOUT_TO_REDO, size > 1);
 
-				for (int i= 0; i <= size - 1; ++i) {
+				DocumentRewriteSession rewriteSession= null;
+				if (size > 25 && fDocumentUndoManager.fDocument instanceof IDocumentExtension4
+						&& ((IDocumentExtension4) fDocumentUndoManager.fDocument).getActiveRewriteSession() == null) {
+					DocumentRewriteSessionType sessionType= size > 1000 ? DocumentRewriteSessionType.UNRESTRICTED : DocumentRewriteSessionType.UNRESTRICTED_SMALL;
+					rewriteSession= ((IDocumentExtension4) fDocumentUndoManager.fDocument).startRewriteSession(sessionType);
+				}
+
+				for (int i= 0; i < size; ++i) {
 					c= fChanges.get(i);
 					c.redoTextChange();
+				}
+
+				if (rewriteSession != null) {
+					((IDocumentExtension4) fDocumentUndoManager.fDocument).stopRewriteSession(rewriteSession);
 				}
 				fDocumentUndoManager.resetProcessChangeState();
 				fDocumentUndoManager.fireDocumentUndo(c.fStart, c.fText, c.fPreservedText, uiInfo, DocumentUndoEvent.REDONE, size > 1);
