@@ -4619,5 +4619,13 @@
           <instanceof value="org.eclipse.core.resources.IProject"/>
     </enablement>
  </extension>
+ <extension
+       point="org.eclipse.ui.quickAccess">
+    <computer
+          class="org.eclipse.ui.tests.quickaccess.TestQuickAccessComputer"
+          name="Test Quick Access Computer"
+          requiresUIAccess="false">
+    </computer>
+ </extension>
 
 </plugin>

@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
@@ -149,7 +150,7 @@ public class QuickAccessExtensionManager {
 				if (computer instanceof IQuickAccessComputerExtension) {
 					return ((IQuickAccessComputerExtension) computer).computeElements(filter, monitor);
 				}
-				return null;
+				return new QuickAccessElement[0];
 			}
 			return activateElement;
 		}
@@ -159,6 +160,12 @@ public class QuickAccessExtensionManager {
 			if (canDelegate()) {
 				computer.resetState();
 			}
+		}
+
+		@Override
+		public QuickAccessElement getElementForId(String id) {
+			getElementsSorted(null, new NullProgressMonitor()); // initialize content
+			return super.getElementForId(id);
 		}
 
 	}

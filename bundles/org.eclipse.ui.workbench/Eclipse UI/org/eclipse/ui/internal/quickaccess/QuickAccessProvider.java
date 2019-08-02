@@ -83,6 +83,9 @@ public abstract class QuickAccessProvider {
 			cacheSortedElements = getElements();
 			Arrays.sort(cacheSortedElements, Comparator.comparing(QuickAccessElement::getSortLabel));
 		}
+		if (filter == null) {
+			return cacheSortedElements;
+		}
 		QuickAccessElement[] filterSpecificElements = getElements(filter, monitor);
 		if (filterSpecificElements == null || filterSpecificElements.length == 0) {
 			return cacheSortedElements;

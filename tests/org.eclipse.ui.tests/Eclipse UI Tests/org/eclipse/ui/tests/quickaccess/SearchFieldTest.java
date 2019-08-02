@@ -14,7 +14,6 @@
 
 package org.eclipse.ui.tests.quickaccess;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,6 +28,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.quickaccess.SearchField;
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 
 /**
@@ -61,7 +61,7 @@ public class SearchFieldTest extends UITestCase {
 		assertNotNull("Search Field must exist", searchField);
 	}
 
-	public void testPreviousChoicesAvailable() throws InvocationTargetException, InterruptedException {
+	public void testPreviousChoicesAvailable() {
 		// add one selection to history
 		createSearchField();
 		Shell shell = searchField.getQuickAccessShell();
@@ -83,6 +83,36 @@ public class SearchFieldTest extends UITestCase {
 		searchField.activate(searchField.getQuickAccessSearchText());
 		processEventsUntil(() -> searchField.getQuickAccessTable().getItemCount() > 1, 500);
 		assertTrue(getAllEntries(searchField.getQuickAccessTable()).get(0).contains(quickAccessElementText));
+	}
+
+	public void testPreviousChoicesAvailableForExtension() {
+		// add one selection to history
+		createSearchField();
+		Text text = searchField.getQuickAccessSearchText();
+		text.setText(TestQuickAccessComputer.TEST_QUICK_ACCESS_PROPOSAL_LABEL);
+		assertTrue(new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return TestQuickAccessComputer
+						.isContributedItem(getAllEntries(searchField.getQuickAccessTable()).get(0));
+			}
+		}.waitForCondition(text.getDisplay(), 200));
+		searchField.getQuickAccessTable().select(0);
+		Event enterPressed = new Event();
+		enterPressed.widget = text;
+		enterPressed.keyCode = SWT.CR;
+		text.notifyListeners(SWT.KeyDown, enterPressed);
+		workbenchWindow.close(true);
+		processEventsUntil(() -> searchField.getQuickAccessSearchText().isDisposed(), 500);
+		// then try in a new SearchField
+		createSearchField();
+		searchField.activate(searchField.getQuickAccessSearchText());
+		assertTrue("Contributed item not found in previous choices", new DisplayHelper() { //$NON-NLS-1$
+			@Override
+			protected boolean condition() {
+				return getAllEntries(searchField.getQuickAccessTable()).stream().anyMatch(TestQuickAccessComputer::isContributedItem);
+			}
+		}.waitForCondition(searchField.getQuickAccessTable().getDisplay(), 500));
 	}
 
 	private List<String> getAllEntries(Table table) {

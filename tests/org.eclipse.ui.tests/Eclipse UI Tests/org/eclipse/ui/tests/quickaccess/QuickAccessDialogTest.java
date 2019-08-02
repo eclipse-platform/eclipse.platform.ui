@@ -15,6 +15,8 @@
 
 package org.eclipse.ui.tests.quickaccess;
 
+import java.util.Arrays;
+
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
@@ -48,13 +50,10 @@ public class QuickAccessDialogTest extends UITestCase {
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
 		openTestWindow();
-		WorkbenchWindow workbenchWindow = (WorkbenchWindow) getWorkbench()
-				.getActiveWorkbenchWindow();
+		WorkbenchWindow workbenchWindow = (WorkbenchWindow) getWorkbench().getActiveWorkbenchWindow();
 		MWindow window = workbenchWindow.getModel();
-		EModelService modelService = window.getContext().get(
-				EModelService.class);
-		MToolControl control = (MToolControl) modelService.find(
-				"SearchField", window); //$NON-NLS-1$
+		EModelService modelService = window.getContext().get(EModelService.class);
+		MToolControl control = (MToolControl) modelService.find("SearchField", window); //$NON-NLS-1$
 		searchField = (SearchField) control.getObject();
 		assertNotNull("Search Field must exist", searchField);
 	}
@@ -120,7 +119,18 @@ public class QuickAccessDialogTest extends UITestCase {
 		int newCount = table.getItemCount();
 		assertTrue("Not enough quick access items for simple filter", newCount > 3);
 		assertTrue("Too many quick access items for size of table", newCount < MAXIMUM_NUMBER_OF_ELEMENTS);
+	}
 
+	public void testContributedElement() {
+		final Table table = searchField.getQuickAccessTable();
+		Text text = searchField.getQuickAccessSearchText();
+		assertTrue("Quick access filter should be empty", text.getText().isEmpty());
+		assertTrue("Quick access table should be empty", table.getItemCount() == 0);
+
+		text.setText(TestQuickAccessComputer.TEST_QUICK_ACCESS_PROPOSAL_LABEL);
+		processEventsUntil(() -> table.getItemCount() > 0, 200);
+		assertTrue("Missing contributed element", Arrays.stream(table.getItems())
+				.anyMatch(item -> item.getText(1).equals(TestQuickAccessComputer.TEST_QUICK_ACCESS_PROPOSAL_LABEL)));
 	}
 
 	/**
@@ -129,12 +139,10 @@ public class QuickAccessDialogTest extends UITestCase {
 	 */
 	public void testShowAll() throws Exception {
 		// Open the shell
-		IHandlerService handlerService = getWorkbench().getActiveWorkbenchWindow()
-				.getService(IHandlerService.class);
+		IHandlerService handlerService = getWorkbench().getActiveWorkbenchWindow().getService(IHandlerService.class);
 		Shell shell = searchField.getQuickAccessShell();
 		assertFalse("Quick access dialog should not be visible yet", shell.isVisible());
-		handlerService
-		.executeCommand("org.eclipse.ui.window.quickAccess", null); //$NON-NLS-1$
+		handlerService.executeCommand("org.eclipse.ui.window.quickAccess", null); //$NON-NLS-1$
 		assertTrue("Quick access dialog should be visible now", shell.isVisible());
 		final Table table = searchField.getQuickAccessTable();
 		Text text = searchField.getQuickAccessSearchText();
@@ -150,32 +158,28 @@ public class QuickAccessDialogTest extends UITestCase {
 		final String oldFirstItemText = table.getItem(0).getText(1);
 
 		// Run the handler to turn on show all
-		handlerService
-		.executeCommand("org.eclipse.ui.window.quickAccess", null); //$NON-NLS-1$
+		handlerService.executeCommand("org.eclipse.ui.window.quickAccess", null); //$NON-NLS-1$
 		processEventsUntil(() -> table.getItemCount() != oldCount, 200);
 		final int newCount = table.getItemCount();
 		assertTrue("Turning on show all should display more items", newCount > oldCount);
 		assertEquals("Turning on show all should not change the top item", oldFirstItemText, table.getItem(0).getText(1));
 
 		// Run the handler to turn off show all
-		handlerService
-		.executeCommand("org.eclipse.ui.window.quickAccess", null); //$NON-NLS-1$
+		handlerService.executeCommand("org.eclipse.ui.window.quickAccess", null); //$NON-NLS-1$
 		processEventsUntil(() -> table.getItemCount() != newCount, 200);
 		// Note: The table count may one off from the old count because of shell resizing (scroll bars being added then removed)
 		assertTrue("Turning off show all should limit items shown", table.getItemCount() < newCount);
 		assertEquals("Turning off show all should not change the top item", oldFirstItemText, table.getItem(0).getText(1));
 
 		// Run the handler to turn on show all
-		handlerService
-		.executeCommand("org.eclipse.ui.window.quickAccess", null); //$NON-NLS-1$
+		handlerService.executeCommand("org.eclipse.ui.window.quickAccess", null); //$NON-NLS-1$
 		processEventsUntil(() -> table.getItemCount() != oldCount, 200);
 		assertEquals("Turning on show all twice shouldn't change the items", newCount, table.getItemCount());
 		assertEquals("Turning on show all twice shouldn't change the top item", oldFirstItemText, table.getItem(0).getText(1));
 
 		// Close and reopen the shell
 		shell.setVisible(false);
-		handlerService
-		.executeCommand("org.eclipse.ui.window.quickAccess", null); //$NON-NLS-1$
+		handlerService.executeCommand("org.eclipse.ui.window.quickAccess", null); //$NON-NLS-1$
 		text.setText("T");
 		processEventsUntil(() -> table.getItemCount() > 1, 200);
 		// Note: The table count may one off from the old count because of shell resizing (scroll bars being added then removed)
