@@ -16,7 +16,6 @@
 package org.eclipse.ui.internal.handlers;
 
 import org.eclipse.core.commands.IHandler;
-import org.eclipse.core.commands.IHandler2;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -98,24 +97,8 @@ final class HandlerActivation implements IHandlerActivation {
 				 * can just treat it as false.
 				 */
 				if (Policy.DEBUG_CMDS) {
-					Activator.trace(Policy.DEBUG_CMDS_FLAG,
-							"Failed to evaluate activeWhen for HandlerActivation " + this + " in context " + context, //$NON-NLS-1$ //$NON-NLS-2$
-							e);
+					Activator.trace(Policy.DEBUG_CMDS_FLAG, "Failed to calculate active", e); //$NON-NLS-1$
 				}
-			}
-		}
-		if (active) {
-			try {
-				if (handler instanceof IHandler2) {
-					((IHandler2) handler).setEnabled(context);
-				}
-				if (!handler.isEnabled()) {
-					active = false;
-				}
-			} catch (RuntimeException e) {
-				active = false;
-				Activator.trace(Policy.DEBUG_CMDS_FLAG, "Failed to evaluate handler active state for HandlerActivation " //$NON-NLS-1$
-						+ this + " in context " + context, e); //$NON-NLS-1$
 			}
 		}
 		return active;

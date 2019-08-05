@@ -28,8 +28,6 @@ import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
-import org.eclipse.core.expressions.EvaluationContext;
-import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.e4.core.commands.internal.HandlerServiceImpl;
 import org.eclipse.ui.IPageLayout;
@@ -87,22 +85,6 @@ public class HandlerActivationTest extends UITestCase {
 			IWorkbenchPart part = (IWorkbenchPart) HandlerUtil.getVariable(
 					evaluationContext, ISources.ACTIVE_PART_NAME);
 			setBaseEnabled(part instanceof ContentOutline);
-		}
-	}
-
-	static class HandlerThrowingExceptionInSetEnabled extends AbstractHandler {
-
-		public boolean setEnabledWasCalled;
-
-		@Override
-		public Object execute(ExecutionEvent event) {
-			return null;
-		}
-
-		@Override
-		public void setEnabled(Object evaluationContext) {
-			setEnabledWasCalled = true;
-			throw new RuntimeException("simulated exception");
 		}
 	}
 
@@ -470,29 +452,4 @@ public class HandlerActivationTest extends UITestCase {
 		assertTrue(cmd.isEnabled());
 		handlerService.executeCommandInContext(pcmd, null, outlineContext);
 	}
-
-	public void testEvaluateNeedsToCheckActiveWhenBeforeHandlerEnablement() {
-		HandlerThrowingExceptionInSetEnabled handler = new HandlerThrowingExceptionInSetEnabled();
-		Expression activeWhen = Expression.FALSE; // always false
-		IHandlerActivation handlerActivation = handlerService.activateHandler(CMD_ID, handler, activeWhen);
-		testHandlerActivations.put(handler, handlerActivation);
-
-		handlerActivation.evaluate(new EvaluationContext(null, new Object()));
-
-		assertFalse(handler.setEnabledWasCalled);
-	}
-
-	public void testEvaluateShouldSwallowExceptionFromHandlerEnablementCheck() {
-		HandlerThrowingExceptionInSetEnabled handler = new HandlerThrowingExceptionInSetEnabled();
-		Expression activeWhen = Expression.TRUE; // always true
-		IHandlerActivation handlerActivation = handlerService.activateHandler(CMD_ID, handler, activeWhen);
-		testHandlerActivations.put(handler, handlerActivation);
-
-		handlerActivation.evaluate(new EvaluationContext(null, new Object()));
-
-		assertTrue(handler.setEnabledWasCalled);
-
-		// no exception should be thrown from evaluate()
-	}
-
 }
