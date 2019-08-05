@@ -84,12 +84,7 @@ final class HandlerActivation implements IHandlerActivation {
 
 	@Override
 	public boolean evaluate(IEvaluationContext context) {
-		if (handler instanceof IHandler2) {
-			((IHandler2) handler).setEnabled(context);
-		}
-		if (!handler.isEnabled()) {
-			active = false;
-		} else if (activeWhen == null) {
+		if (activeWhen == null) {
 			active = true;
 		} else {
 			try {
@@ -103,8 +98,24 @@ final class HandlerActivation implements IHandlerActivation {
 				 * can just treat it as false.
 				 */
 				if (Policy.DEBUG_CMDS) {
-					Activator.trace(Policy.DEBUG_CMDS_FLAG, "Failed to calculate active", e); //$NON-NLS-1$
+					Activator.trace(Policy.DEBUG_CMDS_FLAG,
+							"Failed to evaluate activeWhen for HandlerActivation " + this + " in context " + context, //$NON-NLS-1$ //$NON-NLS-2$
+							e);
 				}
+			}
+		}
+		if (active) {
+			try {
+				if (handler instanceof IHandler2) {
+					((IHandler2) handler).setEnabled(context);
+				}
+				if (!handler.isEnabled()) {
+					active = false;
+				}
+			} catch (RuntimeException e) {
+				active = false;
+				Activator.trace(Policy.DEBUG_CMDS_FLAG, "Failed to evaluate handler active state for HandlerActivation " //$NON-NLS-1$
+						+ this + " in context " + context, e); //$NON-NLS-1$
 			}
 		}
 		return active;
