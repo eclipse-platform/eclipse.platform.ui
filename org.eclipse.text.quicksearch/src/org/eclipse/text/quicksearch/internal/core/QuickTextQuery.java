@@ -1,7 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2013 Pivotal Software, Inc.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v2.0
+ * Copyright (c) 2013, 2010 Pivotal Software, Inc. and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
@@ -25,7 +26,6 @@ import org.eclipse.jface.text.IRegion;
  *
  * @author Kris De Volder
  */
-@SuppressWarnings("restriction")
 public class QuickTextQuery {
 
 	//TODO: delete and use jface Region class instead.

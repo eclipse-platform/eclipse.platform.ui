@@ -1,7 +1,8 @@
 /*******************************************************************************
- * Copyright (c) 2019 Pivotal, Inc.
- * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v2.0
+ * Copyright (c) 2019 Pivotal, Inc. and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
@@ -16,7 +17,6 @@ import org.apache.tools.ant.types.selectors.TokenizedPath;
 import org.apache.tools.ant.types.selectors.TokenizedPattern;
 import org.eclipse.core.resources.IResource;
 
-@SuppressWarnings("restriction")
 public class ResourceMatchers {
 
 	public static ResourceMatcher ANY = new ResourceMatcher() {
