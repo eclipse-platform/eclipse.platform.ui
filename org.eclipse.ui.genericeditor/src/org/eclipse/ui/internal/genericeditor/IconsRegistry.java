@@ -22,8 +22,6 @@ import java.util.Objects;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IRegistryChangeEvent;
-import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -31,36 +29,28 @@ import org.eclipse.core.runtime.content.IContentType;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ResourceLocator;
 
-public class ContentTypeImagesRegistry {
+public class IconsRegistry {
 
 	private static final String EXTENSION_POINT_ID = GenericEditorPlugin.BUNDLE_ID + ".icons"; //$NON-NLS-1$
 	private Map<IContentType, ImageDescriptor> extensions = new LinkedHashMap<>();
 	private boolean outOfSync = true;
 
-	public ContentTypeImagesRegistry() {
-		Platform.getExtensionRegistry().addRegistryChangeListener(new IRegistryChangeListener() {
-			@Override
-			public void registryChanged(IRegistryChangeEvent event) {
-				outOfSync = true;
-			}
-		}, EXTENSION_POINT_ID);
+	public IconsRegistry() {
+		Platform.getExtensionRegistry().addRegistryChangeListener(event -> outOfSync = true, EXTENSION_POINT_ID);
 	}
 
 	public ImageDescriptor getImageDescriptor(IContentType[] contentTypes) {
 		if (this.outOfSync) {
 			sync();
 		}
-		return Arrays.stream(contentTypes)
-				.sorted(Collections.reverseOrder(Comparator.comparingInt(ContentTypeSpecializationComparator::depth)))
-				.map(extensions::get).filter(Objects::nonNull).findFirst().orElse(null);
+		return Arrays.stream(contentTypes).sorted(Collections.reverseOrder(Comparator.comparingInt(ContentTypeSpecializationComparator::depth))).map(extensions::get).filter(Objects::nonNull).findFirst().orElse(null);
 	}
 
 	private void sync() {
-		Set<IContentType> toRemoveContentTypes = new HashSet<IContentType>(this.extensions.keySet());
-		for (IConfigurationElement extension : Platform.getExtensionRegistry()
-				.getConfigurationElementsFor(EXTENSION_POINT_ID)) {
+		Set<IContentType> toRemoveContentTypes = new HashSet<>(this.extensions.keySet());
+		for (IConfigurationElement extension : Platform.getExtensionRegistry().getConfigurationElementsFor(EXTENSION_POINT_ID)) {
 			try {
-				final String contentTypeId = extension.getAttribute("contentTypeId"); //$NON-NLS-1$
+				final String contentTypeId = extension.getAttribute(GenericContentTypeRelatedExtension.CONTENT_TYPE_ATTRIBUTE);
 				if (contentTypeId == null || contentTypeId.isEmpty()) {
 					continue;
 				}
@@ -75,15 +65,10 @@ public class ContentTypeImagesRegistry {
 					if (icon == null || icon.isEmpty()) {
 						continue;
 					}
-					ImageDescriptor imageDescriptor = ResourceLocator
-							.imageDescriptorFromBundle(extension.getNamespaceIdentifier(), icon).orElse(null);
-					if (imageDescriptor != null) {
-						this.extensions.put(contentType, imageDescriptor);
-					}
+					ResourceLocator.imageDescriptorFromBundle(extension.getNamespaceIdentifier(), icon).ifPresent(imageDescriptor -> this.extensions.put(contentType, imageDescriptor));
 				}
 			} catch (Exception ex) {
-				GenericEditorPlugin.getDefault().getLog()
-						.log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, ex.getMessage(), ex));
+				GenericEditorPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, GenericEditorPlugin.BUNDLE_ID, ex.getMessage(), ex));
 			}
 		}
 

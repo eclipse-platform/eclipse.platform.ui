@@ -36,7 +36,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public class GenericContentTypeRelatedExtension<T> {
 	private static final String ID_ATTRIBUTE = "id"; //$NON-NLS-1$
 	private static final String CLASS_ATTRIBUTE = "class"; //$NON-NLS-1$
-	private static final String CONTENT_TYPE_ATTRIBUTE = "contentType"; //$NON-NLS-1$
+	static final String CONTENT_TYPE_ATTRIBUTE = "contentType"; //$NON-NLS-1$
 	private static final String ENABLED_WHEN_ATTRIBUTE = "enabledWhen"; //$NON-NLS-1$
 
 	public final IConfigurationElement extension;
