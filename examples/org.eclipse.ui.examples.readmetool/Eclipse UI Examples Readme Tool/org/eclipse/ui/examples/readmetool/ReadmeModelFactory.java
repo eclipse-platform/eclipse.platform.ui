@@ -14,15 +14,13 @@
  *******************************************************************************/
 package org.eclipse.ui.examples.readmetool;
 
+import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
-
-import org.eclipse.core.resources.IFile;
-
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
@@ -147,12 +145,12 @@ public class ReadmeModelFactory {
 				if (i == extensions.length - 1) {
 					IConfigurationElement[] configElements = currentExtension
 							.getConfigurationElements();
-					for (IConfigurationElement configElement : configElements) {
+					for (int j = 0; j < configElements.length; j++) {
 						IConfigurationElement config = configElements[i];
 						if (config.getName()
-							.equals(IReadmeConstants.TAG_PARSER)) {
+								.equals(IReadmeConstants.TAG_PARSER)) {
 							// process the first 'parser' element and stop
-							processParserElement(config);
+                            processParserElement(config);
 							break;
 						}
 					}
