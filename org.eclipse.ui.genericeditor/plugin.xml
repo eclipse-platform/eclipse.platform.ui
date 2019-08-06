@@ -227,7 +227,7 @@
   <extension
          point="org.eclipse.ui.ide.editorAssociationOverride">
       <editorAssociationOverride
-            class="org.eclipse.ui.internal.genericeditor.GenericEditorAssociationOverride"
+            class="org.eclipse.ui.internal.genericeditor.GenericEditorWithIconAssociationOverride"
             id="org.eclipse.ui.internal.genericeditor.GenericEditorAssociationOverride"/>
    </extension>
 </plugin>

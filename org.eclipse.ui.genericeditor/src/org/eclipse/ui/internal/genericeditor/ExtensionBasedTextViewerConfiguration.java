@@ -233,7 +233,7 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 
 	@Override protected Map<String, IAdaptable> getHyperlinkDetectorTargets(ISourceViewer sourceViewer) {
 		Map<String, IAdaptable> targets = super.getHyperlinkDetectorTargets(sourceViewer);
-		targets.put("org.eclipse.ui.genericeditor.GenericEditor", editor); //$NON-NLS-1$
+		targets.put(ExtensionBasedTextEditor.GENERIC_EDITOR_ID, editor);
 		return targets;
 	}
 }

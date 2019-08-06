@@ -44,6 +44,7 @@ import org.eclipse.ui.texteditor.SourceViewerDecorationSupport;
 public class ExtensionBasedTextEditor extends TextEditor {
 
 	private static final String CONTEXT_ID = "org.eclipse.ui.genericeditor.genericEditorContext"; //$NON-NLS-1$
+	public static final String GENERIC_EDITOR_ID = "org.eclipse.ui.genericeditor.GenericEditor"; //$NON-NLS-1$
 
 	private static final String MATCHING_BRACKETS = GenericEditorPreferenceConstants.EDITOR_MATCHING_BRACKETS;
 	private static final String MATCHING_BRACKETS_COLOR = GenericEditorPreferenceConstants.EDITOR_MATCHING_BRACKETS_COLOR;

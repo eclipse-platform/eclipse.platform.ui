@@ -21,28 +21,36 @@ import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.ide.IEditorAssociationOverride;
 
-public class GenericEditorAssociationOverride implements IEditorAssociationOverride {
+/**
+ * Overrides all the default generic editor icon with the content-type specific
+ * icons contributed using the extension point
+ * "org.eclipse.ui.genericeditor.icons".Content provides uses the overridden
+ * icons to show in Project Explorer
+ */
+public class GenericEditorWithIconAssociationOverride implements IEditorAssociationOverride {
 
 	private Map<String, IEditorDescriptor> descriptorMap = new HashMap<String, IEditorDescriptor>();
 
 	@Override
 	public IEditorDescriptor[] overrideEditors(IEditorInput editorInput, IContentType contentType,
 			IEditorDescriptor[] editorDescriptors) {
-		return overrideEditors(editorInput.getName(), contentType, editorDescriptors);
+		return editorInput != null ? overrideEditors(editorInput.getName(), contentType, editorDescriptors)
+				: editorDescriptors;
 	}
 
 	@Override
 	public IEditorDescriptor[] overrideEditors(String fileName, IContentType contentType,
 			IEditorDescriptor[] editorDescriptors) {
-		return Arrays.stream(editorDescriptors).map(descripter -> {
-			return getEditorDescriptorForFile(descripter, fileName);
+		return Arrays.stream(editorDescriptors).map(descriptor -> {
+			return getEditorDescriptorForFile(descriptor, fileName);
 		}).toArray(size -> new IEditorDescriptor[size]);
 	}
 
 	@Override
 	public IEditorDescriptor overrideDefaultEditor(IEditorInput editorInput, IContentType contentType,
 			IEditorDescriptor editorDescriptor) {
-		return overrideDefaultEditor(editorInput.getName(), contentType, editorDescriptor);
+		return editorInput != null ? overrideDefaultEditor(editorInput.getName(), contentType, editorDescriptor)
+				: editorDescriptor;
 	}
 
 	@Override
@@ -51,14 +59,14 @@ public class GenericEditorAssociationOverride implements IEditorAssociationOverr
 		return getEditorDescriptorForFile(editorDescriptor, fileName);
 	}
 
-	private IEditorDescriptor getEditorDescriptorForFile(IEditorDescriptor defaultDescripter, String fileName) {
-		if (defaultDescripter != null
-				&& "org.eclipse.ui.genericeditor.GenericEditor".equals(defaultDescripter.getId())) { //$NON-NLS-1$
+	private IEditorDescriptor getEditorDescriptorForFile(IEditorDescriptor defaultDescriptor, String fileName) {
+		if (defaultDescriptor != null && ExtensionBasedTextEditor.GENERIC_EDITOR_ID.equals(defaultDescriptor.getId())
+				&& fileName != null && !fileName.isEmpty()) {
 			if (!descriptorMap.containsKey(fileName)) {
-				descriptorMap.put(fileName, new GenericEditorDescriptor(fileName, defaultDescripter));
+				descriptorMap.put(fileName, new GenericEditorWithContentTypeIcon(fileName, defaultDescriptor));
 			}
 			return descriptorMap.get(fileName);
 		}
-		return defaultDescripter;
+		return defaultDescriptor;
 	}
 }

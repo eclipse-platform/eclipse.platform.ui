@@ -20,11 +20,16 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorMatchingStrategy;
 
-public class GenericEditorDescriptor implements IEditorDescriptor {
+/**
+ * Overrides the default generic editor icon with the content-type specific
+ * icons contributed using the extension point
+ * "org.eclipse.ui.genericeditor.icons".
+ */
+public class GenericEditorWithContentTypeIcon implements IEditorDescriptor {
 	private IEditorDescriptor editorDescriptor;
 	private String fileName;
 
-	public GenericEditorDescriptor(String fileName, IEditorDescriptor editorDescriptor) {
+	public GenericEditorWithContentTypeIcon(String fileName, IEditorDescriptor editorDescriptor) {
 		Assert.isNotNull(editorDescriptor);
 		this.fileName = fileName;
 		this.editorDescriptor = editorDescriptor;
