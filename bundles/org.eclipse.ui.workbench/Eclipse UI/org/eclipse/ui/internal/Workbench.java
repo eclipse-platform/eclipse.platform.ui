@@ -1990,8 +1990,8 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 			}
 		}
 		if (!found) {
-			MPartDescriptor descriptor = org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicFactoryImpl.eINSTANCE
-					.createPartDescriptor();
+			EModelService modelService = e4Context.get(EModelService.class);
+			MPartDescriptor descriptor = modelService.createModelElement(MPartDescriptor.class);
 			descriptor.getTags().add("Editor"); //$NON-NLS-1$
 			descriptor.setCloseable(true);
 			descriptor.setAllowMultiple(true);
