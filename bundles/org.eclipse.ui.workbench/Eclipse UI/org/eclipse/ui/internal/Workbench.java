@@ -1948,6 +1948,9 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 		for (MPartDescriptor desc : currentDescriptors) {
 			// do we have a matching descriptor?
 			if (desc.getElementId().equals(CompatibilityEditor.MODEL_ELEMENT_ID)) {
+				// In older versions of the workbench, REMOVE_ON_HIDE_TAG was not set on the
+				// descriptor. For migration, ensure that it is set on any model, Bug 527689.
+				desc.getTags().add(EPartService.REMOVE_ON_HIDE_TAG);
 				found = true;
 				break;
 			}
@@ -1956,6 +1959,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 			EModelService modelService = e4Context.get(EModelService.class);
 			MPartDescriptor descriptor = modelService.createModelElement(MPartDescriptor.class);
 			descriptor.getTags().add("Editor"); //$NON-NLS-1$
+			descriptor.getTags().add(EPartService.REMOVE_ON_HIDE_TAG);
 			descriptor.setCloseable(true);
 			descriptor.setAllowMultiple(true);
 			descriptor.setElementId(CompatibilityEditor.MODEL_ELEMENT_ID);

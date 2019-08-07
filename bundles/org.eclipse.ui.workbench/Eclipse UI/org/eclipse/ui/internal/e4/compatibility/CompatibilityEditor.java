@@ -19,7 +19,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
-import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
@@ -55,10 +54,6 @@ public class CompatibilityEditor extends CompatibilityPart {
 	CompatibilityEditor(MPart part, EditorReference ref) {
 		super(part);
 		reference = ref;
-
-		if (!part.getTags().contains(EPartService.REMOVE_ON_HIDE_TAG)) {
-			part.getTags().add(EPartService.REMOVE_ON_HIDE_TAG);
-		}
 	}
 
 	@Override

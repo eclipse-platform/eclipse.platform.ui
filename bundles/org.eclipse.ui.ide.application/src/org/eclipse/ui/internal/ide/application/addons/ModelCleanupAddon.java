@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 vogella GmbH and others.
+ * Copyright (c) 2014, 2019 vogella GmbH and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     Simon Scholz <scholzsimon@vogella.com> - Bug 445663
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 445663
+ *     Rolf Theunissen <rolf.theunissen@gmail.com> - Bug 527689
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.application.addons;
 
@@ -29,8 +30,11 @@ import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.internal.workbench.URIHelper;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.UIEvents.UILifeCycle;
+import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor;
 import org.eclipse.ui.internal.registry.ViewRegistry;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -69,6 +73,10 @@ public class ModelCleanupAddon {
 
 	@Inject
 	@Optional
+	private EModelService modelService;
+
+	@Inject
+	@Optional
 	private Logger logger;
 
 	/**
@@ -90,6 +98,22 @@ public class ModelCleanupAddon {
 						+ "' id and the '" + partDescriptor.getLocalizedLabel() //$NON-NLS-1$
 						+ "' description. Points to the invalid '" + partDescriptor.getContributionURI() + "' class."); //$NON-NLS-1$ //$NON-NLS-2$
 				iterator.remove();
+			}
+		}
+
+		cleanHiddenCompatibilityEditors();
+	}
+
+	/**
+	 * Compatibility editors were not always removed when hidden, see Bug 527689.
+	 * Clean up any Compatibility editor that is not to be rendered.
+	 */
+	private void cleanHiddenCompatibilityEditors() {
+		List<MPart> compatEditors = modelService.findElements(application, CompatibilityEditor.MODEL_ELEMENT_ID,
+				MPart.class);
+		for (MPart editor : compatEditors) {
+			if (!editor.isToBeRendered()) {
+				editor.getParent().getChildren().remove(editor);
 			}
 		}
 	}
@@ -183,7 +207,7 @@ public class ModelCleanupAddon {
 		};
 		Collection<BundleCapability> identities = bundleContext.getBundle(Constants.SYSTEM_BUNDLE_LOCATION)
 				.adapt(FrameworkWiring.class).findProviders(req);
-		Collection<BundleWiring> result = new ArrayList<BundleWiring>(1); // normally
+		Collection<BundleWiring> result = new ArrayList<>(1); // normally
 																			// only
 																			// one
 		for (BundleCapability identity : identities) {
