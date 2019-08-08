@@ -148,6 +148,11 @@
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+I"/>
       <key
+            commandId="org.eclipse.ui.file.properties"
+            platform="carbon"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+I"/>
+      <key
             commandId="org.eclipse.ui.file.refresh"
             sequence="F5"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
@@ -161,6 +166,17 @@
             contextId="org.eclipse.ui.contexts.dialogAndWindow"
             sequence="M1+Y"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+      		platform="carbon"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            sequence="M1+Y"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            commandId="org.eclipse.ui.edit.redo"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            sequence="M1+M2+Z"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" 
+            platform="carbon"/>
       <key
       		platform="gtk"
             contextId="org.eclipse.ui.contexts.dialogAndWindow"
@@ -213,8 +229,38 @@
             sequence="M3+ARROW_LEFT"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
+            platform="carbon"
+            sequence="M3+ARROW_LEFT"
+            commandId=""
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            platform="carbon"
+            commandId="org.eclipse.ui.navigate.backwardHistory"
+            sequence="COMMAND+["
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            platform="carbon"
+            commandId="org.eclipse.ui.navigate.backwardHistory"
+            sequence="COMMAND+ALT+ARROW_LEFT"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
             commandId="org.eclipse.ui.navigate.forwardHistory"
             sequence="M3+ARROW_RIGHT"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            platform="carbon"
+            sequence="M3+ARROW_RIGHT"
+            commandId=""
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            platform="carbon"
+            commandId="org.eclipse.ui.navigate.forwardHistory"
+            sequence="COMMAND+]"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            platform="carbon"
+            commandId="org.eclipse.ui.navigate.forwardHistory"
+            sequence="COMMAND+ALT+ARROW_RIGHT"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
             commandId="org.eclipse.ui.window.openEditorDropDown"
@@ -225,8 +271,23 @@
             sequence="M1+M2+E"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
+            commandId="org.eclipse.ui.window.showContextMenu"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            platform="carbon"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="SHIFT+F10"/>
+      <key
             commandId="org.eclipse.ui.window.showSystemMenu"
             sequence="M3+-"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            platform="carbon"
+            sequence="M3+-"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            commandId="org.eclipse.ui.window.showSystemMenu"
+            platform="carbon"
+            sequence="M1+M2+F10"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
             commandId="org.eclipse.ui.window.showViewMenu"
@@ -236,6 +297,16 @@
       <key
             commandId="org.eclipse.ui.window.activateEditor"
             sequence="F12"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <!-- F12 is the Dashboard on carbon -->
+      <key
+            platform="carbon"
+            sequence="F12"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            commandId="org.eclipse.ui.window.activateEditor"
+            platform="carbon"
+            sequence="M1+F12"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
             commandId="org.eclipse.ui.window.maximizePart"
@@ -276,7 +347,30 @@
             sequence="M1+M2+F8"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
+            platform="carbon"
+            sequence="M1+F4"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            platform="carbon"
+            sequence="M1+M2+F4"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            platform="carbon"
+            sequence="M1+,"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            commandId="org.eclipse.ui.navigate.previous"
+            platform="carbon"
+            sequence="M1+M2+."
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
             commandId="org.eclipse.ui.edit.cut"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            sequence="M2+DEL"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            platform="carbon"
+            commandId=""
             contextId="org.eclipse.ui.contexts.dialogAndWindow"
             sequence="M2+DEL"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
@@ -286,10 +380,23 @@
             sequence="M1+INSERT"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
       <key
+            platform="carbon"
+            commandId=""
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            sequence="M1+INSERT"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
             commandId="org.eclipse.ui.edit.paste"
             contextId="org.eclipse.ui.contexts.dialogAndWindow"
             sequence="M2+INSERT"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+      <key
+            platform="carbon"
+            commandId=""
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            sequence="M2+INSERT"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration" />
+
 	  <key
 	        commandId="org.eclipse.ui.edit.text.contentAssist.proposals"
 	        contextId="org.eclipse.ui.contexts.dialogAndWindow"
@@ -577,6 +684,24 @@
          </parameter>
       </key>
       <key
+            platform="carbon"
+            commandId=""
+            contextId="org.eclipse.ui.contexts.window"
+            sequence="M1+_"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>
+      <key
+            platform="carbon"
+            commandId="org.eclipse.ui.window.splitEditor"
+            contextId="org.eclipse.ui.contexts.window"
+            sequence="COMMAND+SHIFT+-"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+         <parameter
+               id="Splitter.isHorizontal"
+               value="true">
+         </parameter>
+      </key>
+      <key
             commandId="org.eclipse.ui.window.splitEditor"
             contextId="org.eclipse.ui.contexts.window"
             sequence="M1+{"
@@ -597,6 +722,24 @@
                value="false">
          </parameter>
       </key>
+      <key
+            platform="carbon"
+            commandId=""
+            contextId="org.eclipse.ui.contexts.window"
+            sequence="M1+{"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+      </key>
+      <key
+            platform="carbon"
+            commandId="org.eclipse.ui.window.splitEditor"
+            contextId="org.eclipse.ui.contexts.window"
+            sequence="COMMAND+SHIFT+["
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration">
+         <parameter
+               id="Splitter.isHorizontal"
+               value="false">
+         </parameter>
+      </key>
      <key
             commandId="org.eclipse.ui.navigate.nextTab"
             contextId="org.eclipse.ui.contexts.dialogAndWindow"
@@ -605,9 +748,22 @@
       </key>
       <key
             contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            platform="carbon"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+PAGE_DOWN">
+      </key>
+      <key
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
             platform="cocoa"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+PAGE_DOWN">
+      </key>
+      <key
+            commandId="org.eclipse.ui.navigate.nextTab"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            platform="carbon"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M4+PAGE_DOWN">
       </key>
       <key
             commandId="org.eclipse.ui.navigate.nextTab"
@@ -624,9 +780,22 @@
       </key>
       <key
             contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            platform="carbon"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+PAGE_UP">
+      </key>
+      <key
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
             platform="cocoa"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+PAGE_UP">
+      </key>
+      <key
+            commandId="org.eclipse.ui.navigate.previousTab"
+            contextId="org.eclipse.ui.contexts.dialogAndWindow"
+            platform="carbon"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M4+PAGE_UP">
       </key>
       <key
             commandId="org.eclipse.ui.navigate.previousTab"
