@@ -12,7 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 481319, 481318
  *     Philipp Kunz <philipp.kunz@paratix.ch> - Bug 297922
- *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 520080
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 520080, 549861
  *******************************************************************************/
 package org.eclipse.ui.plugin;
 
@@ -720,7 +720,11 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 * @return an image descriptor, or <code>null</code> if no image could be found
 	 * @since 3.0
 	 *
+	 * @deprecated use
+	 *             {@link ResourceLocator#imageDescriptorFromBundle(String, String)}
+	 *             directly
 	 */
+	@Deprecated
 	public static ImageDescriptor imageDescriptorFromPlugin(String pluginId, String imageFilePath) {
 		if (pluginId == null || imageFilePath == null) {
 			throw new IllegalArgumentException();
