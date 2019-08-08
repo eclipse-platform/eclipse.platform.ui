@@ -22,8 +22,6 @@ import java.util.List;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.mapping.IResourceChangeDescriptionFactory;
-import org.eclipse.core.resources.mapping.ResourceChangeValidator;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -50,7 +48,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.undo.DeleteResourcesOperation;
 import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
@@ -458,10 +455,6 @@ public class DeleteResourceAction extends SelectionListenerAction {
 			}
 		}
 
-		if (!validateDelete(resources)) {
-			return;
-		}
-
 		// WARNING: do not query the selected resources more than once
 		// since the selection may change during the run,
 		// e.g. due to window activation when the prompt dialog is dismissed.
@@ -493,24 +486,6 @@ public class DeleteResourceAction extends SelectionListenerAction {
 
 		deletionCheckJob.schedule();
 
-	}
-
-	/**
-	 * Validates the operation against the model providers.
-	 *
-	 * @return whether the operation should proceed
-	 */
-	private boolean validateDelete(List<? extends IResource> resources) {
-		IResourceChangeDescriptionFactory factory = ResourceChangeValidator.getValidator().createDeltaFactory();
-		for (IResource resource : resources) {
-			if (resource instanceof IProject) {
-				IProject project = (IProject) resource;
-				factory.delete(project);
-			}
-		}
-		String message = IDEWorkbenchMessages.DeleteResourceAction_warning;
-		return IDE.promptToConfirm(shellProvider.getShell(), IDEWorkbenchMessages.DeleteResourceAction_confirm, message,
-				factory.getDelta(), getModelProviderIds(), false /* no need to syncExec */);
 	}
 
 	/**
