@@ -50,7 +50,7 @@
    <element name="icon">
       <annotation>
          <appinfo>
-            <meta.element labelAttribute="contentTypeId"/>
+            <meta.element labelAttribute="contentType"/>
          </appinfo>
          <documentation>
             The icon to associate with a particular content type.
@@ -106,7 +106,7 @@
  &lt;extension
  point=&quot;org.eclipse.ui.genericeditor.icons&quot;&gt;
   &lt;icon
-  contentTypeId=&quot;org.eclipse.core.runtime.text&quot;
+  contentType=&quot;org.eclipse.core.runtime.text&quot;
   icon=&quot;platform:/plugin/org.eclipse.ui.test/icons/text_content.png&quot; /&gt;
  &lt;/extension&gt;
 &lt;/pre&gt;
