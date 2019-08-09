@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -164,6 +164,8 @@ public class PopupMenuExtender implements IMenuListener2, IRegistryChangeListene
 		}
 		if (menuModel == null) {
 			menuModel = MenuFactoryImpl.eINSTANCE.createPopupMenu();
+			menuModel.getPersistedState().put(org.eclipse.e4.ui.workbench.IWorkbench.PERSIST_STATE,
+					Boolean.FALSE.toString());
 			menuModel.setElementId(id);
 			menuModel.getTags().add(ContributionsAnalyzer.MC_POPUP);
 			modelPart.getMenus().add(menuModel);

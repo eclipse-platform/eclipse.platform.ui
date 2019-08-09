@@ -822,6 +822,8 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			if (model.getMainMenu() == null) {
 				mainMenu = modelService.createModelElement(MMenu.class);
 				mainMenu.setElementId(IWorkbenchConstants.MAIN_MENU_ID);
+				mainMenu.getPersistedState().put(org.eclipse.e4.ui.workbench.IWorkbench.PERSIST_STATE,
+						Boolean.FALSE.toString());
 
 				renderer = (MenuManagerRenderer) rendererFactory.getRenderer(mainMenu, null);
 				renderer.linkModelToManager(mainMenu, menuManager);

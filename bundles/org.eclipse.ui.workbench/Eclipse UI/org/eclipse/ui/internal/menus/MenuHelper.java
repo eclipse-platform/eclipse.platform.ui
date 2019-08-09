@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2018 IBM Corporation and others.
+ * Copyright (c) 2010, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -53,6 +53,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
+import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.commands.ICommandImageService;
@@ -337,6 +338,7 @@ public class MenuHelper {
 
 	public static MMenu createMenuAddition(IConfigurationElement menuAddition) {
 		MMenu element = MenuFactoryImpl.eINSTANCE.createMenu();
+		element.getPersistedState().put(IWorkbench.PERSIST_STATE, Boolean.FALSE.toString());
 		String id = MenuHelper.getId(menuAddition);
 		element.setElementId(id);
 		String text = MenuHelper.getLabel(menuAddition);

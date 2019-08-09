@@ -59,6 +59,7 @@ import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
+import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 
@@ -450,6 +451,7 @@ public final class ContributionsAnalyzer {
 				continue;
 			}
 			MTrimElement copy = (MTrimElement) EcoreUtil.copy((EObject) item);
+			copy.getPersistedState().put(IWorkbench.PERSIST_STATE, Boolean.FALSE.toString());
 			if (DEBUG) {
 				trace("addTrimContribution " + copy, trimBar.getWidget(), trimBar); //$NON-NLS-1$
 			}

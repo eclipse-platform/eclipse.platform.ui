@@ -100,9 +100,6 @@ import org.eclipse.e4.ui.model.application.commands.impl.CommandsFactoryImpl;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
-import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
-import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
@@ -1299,22 +1296,6 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 		// the trim elements that need to be removed are stored in the trimBar.
 		setSearchContribution(appCopy, false);
 		EModelService modelService = context.get(EModelService.class);
-		List<MWindow> windows = modelService.findElements(appCopy, null, MWindow.class);
-		for (MWindow window : windows) {
-			if (window instanceof MTrimmedWindow) {
-				MTrimmedWindow trimmedWindow = (MTrimmedWindow) window;
-				// clean up the main menu to avoid duplicate menu items
-				window.setMainMenu(null);
-				// clean up trim bars created through contributions
-				// to avoid duplicate toolbars
-				for (MTrimBar trimBar : trimmedWindow.getTrimBars()) {
-					cleanUpTrimBar(trimBar);
-				}
-			}
-		}
-		appCopy.getMenuContributions().clear();
-		appCopy.getToolBarContributions().clear();
-		appCopy.getTrimContributions().clear();
 
 		List<MPart> parts = modelService.findElements(appCopy, null, MPart.class);
 		for (MPart part : parts) {
@@ -1326,13 +1307,6 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 				tb.getChildren().clear();
 			}
 		}
-	}
-
-	private static void cleanUpTrimBar(MTrimBar element) {
-		for (MTrimElement child : element.getPendingCleanup()) {
-			element.getChildren().remove(child);
-		}
-		element.getPendingCleanup().clear();
 	}
 
 	@Override

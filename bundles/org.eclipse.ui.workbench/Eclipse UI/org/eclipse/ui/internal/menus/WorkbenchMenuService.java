@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2016 IBM Corporation and others.
+ * Copyright (c) 2010, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -136,6 +136,8 @@ public class WorkbenchMenuService implements IMenuService, IMenuServiceWorkaroun
 			return;
 		}
 		MMenuContribution menuContribution = MenuFactoryImpl.eINSTANCE.createMenuContribution();
+		menuContribution.getPersistedState().put(org.eclipse.e4.ui.workbench.IWorkbench.PERSIST_STATE,
+				Boolean.FALSE.toString());
 		menuContribution.setElementId(factory.getNamespace() + ":" + factory.hashCode()); //$NON-NLS-1$
 
 		if ("org.eclipse.ui.popup.any".equals(location.getPath())) { //$NON-NLS-1$
@@ -165,6 +167,8 @@ public class WorkbenchMenuService implements IMenuService, IMenuServiceWorkaroun
 	private void processToolbarChildren(AbstractContributionFactory factory, MenuLocationURI location, String parentId,
 			String position) {
 		MToolBarContribution toolBarContribution = MenuFactoryImpl.eINSTANCE.createToolBarContribution();
+		toolBarContribution.getPersistedState().put(org.eclipse.e4.ui.workbench.IWorkbench.PERSIST_STATE,
+				Boolean.FALSE.toString());
 		toolBarContribution.setElementId(factory.getNamespace() + ":" + factory.hashCode()); //$NON-NLS-1$
 		toolBarContribution.setParentId(parentId);
 		toolBarContribution.setPositionInParent(position);
