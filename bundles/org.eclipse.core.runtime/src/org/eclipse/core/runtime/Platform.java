@@ -750,7 +750,7 @@ public final class Platform {
 	 * @return the path of the log file on disk.
 	 */
 	public static IPath getLogFileLocation() {
-		return InternalPlatform.getDefault().getMetaArea().getLogLocation();
+		return MetaDataKeeper.getMetaArea().getLogLocation();
 	}
 
 	/**

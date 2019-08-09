@@ -369,15 +369,6 @@ public final class InternalPlatform {
 		return result;
 	}
 
-	/**
-	 * Returns the object which defines the location and organization
-	 * of the platform's meta area.
-	 */
-	public DataArea getMetaArea() {
-		// TODO: deprecate?
-		return MetaDataKeeper.getMetaArea();
-	}
-
 	public String getNL() {
 		return getBundleContext().getProperty(PROP_NL);
 	}
@@ -543,7 +534,7 @@ public final class InternalPlatform {
 
 	public IPath getStateLocation(Bundle bundle, boolean create) throws IllegalStateException {
 		assertInitialized();
-		IPath result = getMetaArea().getStateLocation(bundle);
+		IPath result = MetaDataKeeper.getMetaArea().getStateLocation(bundle);
 		if (create)
 			result.toFile().mkdirs();
 		return result;
@@ -716,7 +707,7 @@ public final class InternalPlatform {
 		processCommandLine(getEnvironmentInfoService().getNonFrameworkArgs());
 		initializeDebugFlags();
 		initialized = true;
-		getMetaArea();
+		MetaDataKeeper.getMetaArea();
 		initializeAuthorizationHandler();
 		startServices();
 
