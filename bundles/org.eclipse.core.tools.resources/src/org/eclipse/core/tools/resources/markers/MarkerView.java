@@ -414,7 +414,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
-		IWorkbenchWindow window = CoreResourcesToolsPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 
 		ISelectionService sel_service = window.getSelectionService();
 		sel_service.addSelectionListener(this);
@@ -463,7 +463,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 	@Override
 	public void dispose() {
 		super.dispose();
-		IWorkbenchWindow window = CoreResourcesToolsPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		ISelectionService sel_service = window.getSelectionService();
 		sel_service.removeSelectionListener(this);
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
