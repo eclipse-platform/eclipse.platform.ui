@@ -102,8 +102,6 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicFactoryImpl;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
-import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.workbench.IModelResourceHandler;
@@ -1264,7 +1262,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
 				final Resource res = handler.createResourceWithApp(appCopy);
-				cleanUpCopy(appCopy, e4Context);
+				cleanUpCopy(appCopy);
 				try {
 					if (!detectWorkbenchCorruption((MApplication) res.getContents().get(0))) {
 						Map<String, Object> options = new HashMap<>();
@@ -1291,22 +1289,10 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 		cleanAndSaveJob.schedule();
 	}
 
-	private static void cleanUpCopy(MApplication appCopy, IEclipseContext context) {
+	private static void cleanUpCopy(MApplication appCopy) {
 		// clean up all trim bars that come from trim bar contributions
 		// the trim elements that need to be removed are stored in the trimBar.
 		setSearchContribution(appCopy, false);
-		EModelService modelService = context.get(EModelService.class);
-
-		List<MPart> parts = modelService.findElements(appCopy, null, MPart.class);
-		for (MPart part : parts) {
-			for (MMenu menu : part.getMenus()) {
-				menu.getChildren().clear();
-			}
-			MToolBar tb = part.getToolbar();
-			if (tb != null) {
-				tb.getChildren().clear();
-			}
-		}
 	}
 
 	@Override
