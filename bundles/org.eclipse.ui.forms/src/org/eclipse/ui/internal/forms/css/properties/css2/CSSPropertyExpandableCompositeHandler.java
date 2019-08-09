@@ -22,19 +22,30 @@ import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertyExpandableCompositeHandler extends AbstractCSSPropertySWTHandler {
 
-	private static final String TITLE_BAR_FOREGROUND = "swt-titlebar-color"; //$NON-NLS-1$
+	public static final String TITLE_BAR_FOREGROUND = "swt-titlebar-color"; //$NON-NLS-1$
 
 	@Override
 	protected void applyCSSProperty(Control control, String property, CSSValue value, String pseudo, CSSEngine engine)
 			throws Exception {
-		if (!(control instanceof ExpandableComposite)) {
+		if (!(control instanceof ExpandableComposite) || property == null
+				|| value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE) {
 			return;
 		}
-		if (TITLE_BAR_FOREGROUND.equalsIgnoreCase(property)) {
-			if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-				Color newColor = (Color) engine.convert(value, Color.class, control.getDisplay());
-				((ExpandableComposite) control).setTitleBarForeground(newColor);
-			}
+
+		Color newColor = (Color) engine.convert(value, Color.class, control.getDisplay());
+		ExpandableComposite expandableComposite = (ExpandableComposite) control;
+		switch (property.toLowerCase()) {
+		case TITLE_BAR_FOREGROUND:
+			expandableComposite.setTitleBarForeground(newColor);
+			break;
+		case CSSPropertyFormHandler.TB_TOGGLE:
+			expandableComposite.setToggleColor(newColor);
+			break;
+		case CSSPropertyFormHandler.TB_TOGGLE_HOVER:
+			expandableComposite.setActiveToggleColor(newColor);
+			break;
+		default:
+			break;
 		}
 	}
 

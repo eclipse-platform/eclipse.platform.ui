@@ -31,34 +31,37 @@ public class CSSPropertyTitleFormsHandler extends AbstractCSSPropertySWTHandler 
 	protected void applyCSSProperty(Control control, String property, CSSValue value, String pseudo, CSSEngine engine)
 			throws Exception {
 
-		if (BACKGROUND_COLOR_GRADIENT_TITLEBAR_PROPERTY.equalsIgnoreCase(property)) {
-			if (control instanceof Section) {
-				if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-					Color newColor = (Color) engine.convert(value, Color.class, control.getDisplay());
-					((Section) control).setTitleBarGradientBackground(newColor);
-				} else if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
-
-				}
-			}
-		} else if (BACKGROUND_COLOR_TITLEBAR_PROPERTY.equalsIgnoreCase(property)) {
-			if (control instanceof Section) {
-				if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-					Color newColor = (Color) engine.convert(value, Color.class, control.getDisplay());
-					((Section) control).setTitleBarBackground(newColor);
-				} else if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
-
-				}
-			}
-		} else if (BORDER_COLOR_TITLEBAR_PROPERTY.equalsIgnoreCase(property)) {
-			if (control instanceof Section) {
-				if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-					Color newColor = (Color) engine.convert(value, Color.class, control.getDisplay());
-					((Section) control).setTitleBarBorderColor(newColor);
-				} else if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
-
-				}
-			}
+		if (!(control instanceof Section) || property == null
+				|| value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE) {
+			return;
 		}
+
+		Color newColor = (Color) engine.convert(value, Color.class, control.getDisplay());
+		Section section = (Section) control;
+
+		switch (property.toLowerCase()) {
+		case BACKGROUND_COLOR_GRADIENT_TITLEBAR_PROPERTY:
+			section.setTitleBarGradientBackground(newColor);
+			break;
+		case BACKGROUND_COLOR_TITLEBAR_PROPERTY:
+			section.setTitleBarBackground(newColor);
+			break;
+		case BORDER_COLOR_TITLEBAR_PROPERTY:
+			section.setTitleBarBorderColor(newColor);
+			break;
+		case CSSPropertyExpandableCompositeHandler.TITLE_BAR_FOREGROUND:
+			section.setTitleBarForeground(newColor);
+			break;
+		case CSSPropertyFormHandler.TB_TOGGLE:
+			section.setToggleColor(newColor);
+			break;
+		case CSSPropertyFormHandler.TB_TOGGLE_HOVER:
+			section.setActiveToggleColor(newColor);
+			break;
+		default:
+			break;
+		}
+
 	}
 
 	@Override

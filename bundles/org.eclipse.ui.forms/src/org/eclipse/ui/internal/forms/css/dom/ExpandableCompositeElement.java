@@ -26,6 +26,8 @@ public class ExpandableCompositeElement extends CompositeElement {
 	@Override
 	public void reset() {
 		getExpandableComposite().setTitleBarForeground(null);
+		getExpandableComposite().setToggleColor(null);
+		getExpandableComposite().setActiveToggleColor(null);
 		super.reset();
 	}
 

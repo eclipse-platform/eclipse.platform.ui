@@ -16,6 +16,15 @@
          <property-name
                name="border-color-titlebar">
          </property-name>
+         <property-name
+               name="swt-titlebar-color">
+         </property-name>
+         <property-name
+               name="tb-toggle-color"> <!-- IFormColors.TB_TOGGLE -->
+         </property-name>
+         <property-name
+               name="tb-toggle-hover-color"> <!-- IFormColors.TB_TOGGLE_HOVER -->
+         </property-name>
       </handler>
       <handler
             adapter="org.eclipse.ui.internal.forms.css.dom.FormElement"
@@ -50,6 +59,12 @@
          <property-name
                name="swt-titlebar-color">
          </property-name>
+         <property-name
+               name="tb-toggle-color"> <!-- IFormColors.TB_TOGGLE -->
+         </property-name>
+         <property-name
+               name="tb-toggle-hover-color"> <!-- IFormColors.TB_TOGGLE_HOVER -->
+         </property-name>
       </handler>
    </extension>
    <extension
@@ -57,18 +72,11 @@
       <provider
             class="org.eclipse.ui.internal.forms.css.dom.FormsElementProvider">
          <widget
+               class="org.eclipse.ui.forms.widgets.ExpandableComposite"></widget>
+         <widget
                class="org.eclipse.ui.forms.widgets.Section"></widget>
          <widget
                class="org.eclipse.ui.forms.widgets.Form"></widget>
-      </provider>
-   </extension>
-   <extension
-         point="org.eclipse.e4.ui.css.core.elementProvider">
-      <provider
-            class="org.eclipse.ui.internal.forms.css.dom.ExpandableCompositeElementProvider">
-         <widget
-               class="org.eclipse.ui.forms.widgets.ExpandableComposite">
-         </widget>
       </provider>
    </extension>
 </plugin>
