@@ -707,7 +707,6 @@ public final class InternalPlatform {
 		processCommandLine(getEnvironmentInfoService().getNonFrameworkArgs());
 		initializeDebugFlags();
 		initialized = true;
-		MetaDataKeeper.getMetaArea();
 		initializeAuthorizationHandler();
 		startServices();
 
