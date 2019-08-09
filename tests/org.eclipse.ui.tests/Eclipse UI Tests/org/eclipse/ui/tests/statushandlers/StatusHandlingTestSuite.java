@@ -27,10 +27,8 @@ import org.junit.runners.Suite;
 	StatusDialogManagerTest.class,
 	LabelProviderWrapperTest.class,
 	SupportTrayTest.class,
-	WorkbenchStatusDialogManagerImplTest.class
-		// TODO test fails in Gerrit, but passes locally
-		// I think it needs a "org.eclipse.sdk.ide" product to pass
-		// WizardsStatusHandlingTestCase.class,
+	WorkbenchStatusDialogManagerImplTest.class,
+	WizardsStatusHandlingTestCase.class,
 })
 public class StatusHandlingTestSuite {
 	//

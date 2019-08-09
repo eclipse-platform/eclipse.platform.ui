@@ -70,6 +70,12 @@ public class WizardsStatusHandlingTestCase extends TestCase {
 		super(name);
 	}
 
+	@Override
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		TestStatusHandler.uninstall();
+	}
+
 	private Shell getShell() {
 		return DialogCheck.getShell();
 	}
@@ -96,7 +102,7 @@ public class WizardsStatusHandlingTestCase extends TestCase {
 		return dialog;
 	}
 
-	public void testWizardWithNoDefaultContructor() {
+	public void testWizardWithNoDefaultContructor() throws Exception {
 		UITestCase.processEvents();
 
 		final CustomWizardDialog dialog = exportWizard();
@@ -122,6 +128,8 @@ public class WizardsStatusHandlingTestCase extends TestCase {
 		}
 
 		// pressing "Next"
+		TestStatusHandler.install();
+
 		dialog.nextPressed2();
 
 		UITestCase.processEvents();

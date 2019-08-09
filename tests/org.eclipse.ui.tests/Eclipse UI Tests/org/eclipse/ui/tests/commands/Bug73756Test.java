@@ -56,13 +56,21 @@ public final class Bug73756Test extends UITestCase {
 		super(name);
 	}
 
+	@Override
+	protected void doTearDown() throws Exception {
+		super.doTearDown();
+		TestStatusHandler.uninstall();
+	}
+
 	/**
 	 * Tests that calling <code>isActive()</code> on an undefined command
 	 * causes a log message to be written. This simple calls
 	 * <code>isActive()</code> for a bogus command identifier. A log listener
 	 * flips a boolean flag if a log message is written.
 	 */
-	public final void testUndefinedCommandIsActiveLogged() {
+	public final void testUndefinedCommandIsActiveLogged() throws Exception {
+		TestStatusHandler.install();
+
 		// Check if a bogus command is active.
 		ExternalActionManager.getInstance().getCallback().isActive(CMD_ID);
 

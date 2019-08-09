@@ -24,6 +24,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
 	CommandExecutionTest.class,
 	Bug70503Test.class,
+	Bug73756Test.class,
 	Bug74982Test.class,
 	Bug74990Test.class,
 	Bug87856Test.class,
@@ -38,7 +39,6 @@ import org.junit.runners.Suite;
 
 // The following tests broke during e4 transition and still need adjustments:
 //	Bug66182Test.class,
-//	Bug73756Test.class,
 //	HelpContextIdTest.class,
 //	StateTest.class,
 //	CommandEnablementTest.class,
