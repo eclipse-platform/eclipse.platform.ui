@@ -26,6 +26,7 @@ import org.eclipse.ui.IViewActionDelegate;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 
 /**
  * Action for opening a new memory view.
@@ -45,7 +46,7 @@ public class NewMemoryViewAction implements IViewActionDelegate {
 
 		String secondaryId = MemoryViewIdRegistry.getUniqueSecondaryId(IDebugUIConstants.ID_MEMORY_VIEW);
 		try {
-			IWorkbenchPage page = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getActivePage();
+			IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 			IViewPart newView = page.showView(IDebugUIConstants.ID_MEMORY_VIEW, secondaryId, IWorkbenchPage.VIEW_ACTIVATE);
 
 			// set initial selection for new view

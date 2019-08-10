@@ -25,7 +25,6 @@ import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.core.model.IMemoryBlockRetrievalExtension;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.views.memory.MemoryViewUtil;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
@@ -65,7 +64,7 @@ public class GoToAddressAction extends Action
 	{
 		try
 		{
-			Shell shell= DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
+			Shell shell= PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 
 			// create dialog to ask for expression/address to block
 			GoToAddressDialog dialog = new GoToAddressDialog(shell);

@@ -391,7 +391,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 				selection = selectionProvider.getSelection();
 			} else {
 				// otherwise, take selection from selection service
-				selection = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection(IDebugUIConstants.ID_MEMORY_VIEW);
+				selection = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getSelectionService().getSelection(IDebugUIConstants.ID_MEMORY_VIEW);
 			}
 
 			IMemoryBlock element = getMemoryBlock(selection);

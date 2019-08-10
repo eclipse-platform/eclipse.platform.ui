@@ -58,6 +58,7 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
 public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
@@ -576,7 +577,7 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 	public void showTableCursor(final boolean show)
 	{
 
-		Display display = DebugUIPlugin.getDefault().getWorkbench().getDisplay();
+		Display display = PlatformUI.getWorkbench().getDisplay();
 		if (Thread.currentThread() == display.getThread())
 		{
 			if (!fTableCursor.isDisposed())

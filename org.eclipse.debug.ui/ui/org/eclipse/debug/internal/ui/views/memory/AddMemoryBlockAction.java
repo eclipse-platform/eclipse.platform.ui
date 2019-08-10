@@ -131,7 +131,7 @@ public class AddMemoryBlockAction extends Action implements IDebugContextListene
 				return;
 			}
 
-			Shell shell = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
+			Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 			// create dialog to ask for expression/address to block
 			MonitorMemoryBlockDialog dialog = new MonitorMemoryBlockDialog(shell, retrieval, prefillExp, prefillLength);
 			dialog.open();

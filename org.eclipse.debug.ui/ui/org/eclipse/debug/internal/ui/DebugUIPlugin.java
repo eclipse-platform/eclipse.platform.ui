@@ -1067,7 +1067,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		}
 
 		if (wait) {
-			IWorkbench workbench = DebugUIPlugin.getDefault().getWorkbench();
+			IWorkbench workbench = PlatformUI.getWorkbench();
 			IProgressService progressService = workbench.getProgressService();
 			final IRunnableWithProgress runnable = monitor -> {
 				/*
@@ -1254,7 +1254,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 			}
 		};
 
-		IWorkbench workbench = DebugUIPlugin.getDefault().getWorkbench();
+		IWorkbench workbench = PlatformUI.getWorkbench();
 		IProgressService progressService = workbench.getProgressService();
 
 		job.setPriority(Job.INTERACTIVE);

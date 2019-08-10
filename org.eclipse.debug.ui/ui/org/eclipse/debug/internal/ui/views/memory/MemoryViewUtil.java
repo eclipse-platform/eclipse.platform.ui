@@ -28,12 +28,12 @@ import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IMemoryBlockExtension;
 import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
-import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 
 /**
@@ -124,7 +124,7 @@ public class MemoryViewUtil {
 				if (e != null)
 					detail = e.getMessage();
 
-				Shell shell = DebugUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow().getShell();
+				Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 
 				MessageDialog.openError(shell, title, message + "\n" + detail); //$NON-NLS-1$
 				return Status.OK_STATUS;

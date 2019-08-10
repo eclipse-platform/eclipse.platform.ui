@@ -3432,7 +3432,7 @@ public abstract class AbstractTableRendering extends AbstractBaseTableRendering 
 						}
 
 						// update UI asynchronously
-						Display display = DebugUIPlugin.getDefault().getWorkbench().getDisplay();
+						Display display = PlatformUI.getWorkbench().getDisplay();
 						display.asyncExec(() -> {
 							updateLabels();
 

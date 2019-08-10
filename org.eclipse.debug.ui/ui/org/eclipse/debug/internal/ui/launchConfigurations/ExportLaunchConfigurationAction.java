@@ -22,6 +22,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.wizard.WizardDialog;
+import org.eclipse.ui.PlatformUI;
 
 public class ExportLaunchConfigurationAction extends AbstractLaunchConfigurationAction {
 	/**
@@ -45,7 +46,7 @@ public class ExportLaunchConfigurationAction extends AbstractLaunchConfiguration
 		} else {
 			wizard = new ExportLaunchConfigurationsWizard(selection);
 		}
-		wizard.init(DebugUIPlugin.getDefault().getWorkbench(), null);
+		wizard.init(PlatformUI.getWorkbench(), null);
 		WizardDialog dialog = new WizardDialog(DebugUIPlugin.getShell(), wizard);
 		dialog.open();
 	}
