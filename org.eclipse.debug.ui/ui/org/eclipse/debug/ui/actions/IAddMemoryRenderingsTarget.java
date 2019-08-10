@@ -43,7 +43,7 @@ import org.eclipse.ui.IWorkbenchPart;
  * <p>
  * Clients may implement this interface.
  * </p>
- * 
+ *
  * @since 3.2
  * @see AddMemoryRenderingActionDelegate
  */

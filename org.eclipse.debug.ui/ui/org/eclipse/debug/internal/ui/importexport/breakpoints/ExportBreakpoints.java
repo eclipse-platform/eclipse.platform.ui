@@ -32,7 +32,7 @@ import org.eclipse.ui.PlatformUI;
  * <p>
  * The action simply calls the wizard to export breakpoints.
  * </p>
- * 
+ *
  * @see WizardExportBreakpoints
  * @see WizardExportBreakpointsPage
  *

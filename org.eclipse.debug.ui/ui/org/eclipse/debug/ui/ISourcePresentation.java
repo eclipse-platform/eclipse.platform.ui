@@ -43,7 +43,7 @@ import org.eclipse.ui.IEditorInput;
  * {@link org.eclipse.debug.ui.IDebugModelPresentation} or as an optional
  * extension to an {@link org.eclipse.debug.core.model.ISourceLocator}.
  * </p>
- * 
+ *
  * @since 2.0
  */
 public interface ISourcePresentation {

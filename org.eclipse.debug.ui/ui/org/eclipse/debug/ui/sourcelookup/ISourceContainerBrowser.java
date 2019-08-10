@@ -27,7 +27,7 @@ import org.eclipse.swt.widgets.Shell;
  * contributes a source container browser via the <code>browserClass</code>
  * attribute.
  * </p>
- * 
+ *
  * <pre>
  * &lt;extension point=&quot;org.eclipse.debug.ui.sourceContainerPresentations&quot;&gt;
  *    &lt;sourceContainerPresentation
@@ -38,7 +38,7 @@ import org.eclipse.swt.widgets.Shell;
  *    &lt;/sourceContainerPresentation&gt;
  * &lt;/extension&gt;
  * </pre>
- * 
+ *
  * @since 3.0
  */
 public interface ISourceContainerBrowser {

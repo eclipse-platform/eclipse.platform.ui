@@ -30,7 +30,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
  * <p>
  * Following is example plug-in XML for contributing a breakpoint organizer.
  * </p>
- * 
+ *
  * <pre>
  * &lt;extension point="org.eclipse.debug.ui.breakpointOrganizers"&gt;
  * 	&lt;breakpointOrganizer
@@ -40,7 +40,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
  *      icon="icons/full/obj16/example_org.png"/&gt;
  * &lt;/extension&gt;
  * </pre>
- * 
+ *
  * The attributes are specified as follows:
  * <ul>
  * <li><code>class</code> Fully qualified name of a Java class that implements
@@ -55,7 +55,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
  * Clients contributing a breakpoint organizer are intended to implement this
  * interface.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public interface IBreakpointOrganizerDelegate {

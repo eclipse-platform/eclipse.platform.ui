@@ -47,7 +47,7 @@ import org.eclipse.ui.services.IServiceLocator;
  * Following is example plug-in XML used to contribute this action to an
  * editor's vertical ruler context menu.
  * </p>
- * 
+ *
  * <pre>
  * &lt;extension point="org.eclipse.ui.menus"&gt;
  *   &lt;menuContribution

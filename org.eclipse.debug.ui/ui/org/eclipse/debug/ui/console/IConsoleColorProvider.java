@@ -29,7 +29,7 @@ import org.eclipse.swt.graphics.Color;
  * A console color provider extension is defined in <code>plugin.xml</code>.
  * Following is an example definition of a console color provider extension.
  * </p>
- * 
+ *
  * <pre>
  * &lt;extension point="org.eclipse.debug.ui.consoleColorProviders"&gt;
  *   &lt;consoleColorProvider
@@ -39,7 +39,7 @@ import org.eclipse.swt.graphics.Color;
  *   &lt;/consoleColorProvider&gt;
  * &lt;/extension&gt;
  * </pre>
- * 
+ *
  * The attributes are specified as follows:
  * <ul>
  * <li><code>id</code> specifies a unique identifier for this color
@@ -53,7 +53,7 @@ import org.eclipse.swt.graphics.Color;
  * <p>
  * Clients may implement this interface.
  * </p>
- * 
+ *
  * @since 2.1
  */
 

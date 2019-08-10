@@ -735,7 +735,7 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 
 	/*
 	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	@Override

@@ -23,7 +23,7 @@ import org.eclipse.swt.widgets.Shell;
  * <p>
  * Following is example plug-in XML for contributing a variable value editor.
  * </p>
- * 
+ *
  * <pre>
  * &lt;extension point="org.eclipse.debug.ui.variableValueEditors"&gt;
  *    &lt;variableEditor
@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Shell;
  *       class="com.examples.variables.MyVariableValueEditor"/&gt;
  * &lt;/extension&gt;
  * </pre>
- * 
+ *
  * The attributes are specified as follows:
  * <ul>
  * <li><code>modelId</code> the debug model identifier for which the given
@@ -42,7 +42,7 @@ import org.eclipse.swt.widgets.Shell;
  * <p>
  * Clients may implement this interface.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public interface IVariableValueEditor {

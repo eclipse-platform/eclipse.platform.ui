@@ -24,7 +24,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  * <code>org.eclipse.debug.ui.detailPaneFactories</code> extension point.
  * Following is an example of a detail pane factory extension:
  * </p>
- * 
+ *
  * <pre>
  * &lt;extension point="org.eclipse.debug.ui.detailPaneFactories"&gt;
  *     &lt;detailFactories
@@ -33,10 +33,10 @@ import org.eclipse.jface.viewers.IStructuredSelection;
  *     &lt;/detailFactories&gt;
  * &lt;/extension&gt;
  * </pre>
- * 
+ *
  * Clients contributing a detail pane factory are intended to implement this
  * interface.
- * 
+ *
  * @see IDetailPane
  * @since 3.3
  *

@@ -54,7 +54,7 @@ import org.eclipse.ui.texteditor.ITextEditorExtension;
  * extension point, by referencing the ruler's context menu identifier in the
  * <code>targetID</code> attribute.
  * </p>
- * 
+ *
  * <pre>
  * &lt;extension point="org.eclipse.ui.popupMenus"&gt;
  *   &lt;viewerContribution
@@ -72,7 +72,7 @@ import org.eclipse.ui.texteditor.ITextEditorExtension;
  * Clients may refer to this class as an action delegate in plug-in XML. This
  * class is not intended to be subclassed.
  * </p>
- * 
+ *
  * @see IToggleBreakpointsTargetManager
  * @see IToggleBreakpointsTargetFactory
  * @noextend This class is not intended to be subclassed by clients.
