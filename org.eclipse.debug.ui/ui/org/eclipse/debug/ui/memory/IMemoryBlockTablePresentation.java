@@ -16,6 +16,7 @@
 package org.eclipse.debug.ui.memory;
 
 import java.math.BigInteger;
+
 import org.eclipse.debug.core.model.IMemoryBlock;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 
