@@ -19,7 +19,13 @@ import org.eclipse.ui.handlers.CollapseAllHandler;
 
 /**
  * Collapse all project nodes.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noreference This class is not intended to be referenced by clients.
  *
+ *              Planned to be deleted, please see Bug
+ *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=549953
  * @deprecated as of 3.5, use the Common Navigator Framework classes instead
  */
 @Deprecated

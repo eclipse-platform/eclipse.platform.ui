@@ -25,6 +25,10 @@ import org.eclipse.ui.PlatformUI;
  *
  * @noextend This interface is not intended to be extended by clients.
  * @noimplement This interface is not intended to be implemented by clients.
+ * @noreference This class is not intended to be referenced by clients.
+ *
+ *              Planned to be deleted, please see Bug
+ *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=549953
  *
  */
 /* package */interface INavigatorHelpContextIds {

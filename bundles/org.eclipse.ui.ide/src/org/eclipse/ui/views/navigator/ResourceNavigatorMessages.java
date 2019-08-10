@@ -20,6 +20,14 @@ package org.eclipse.ui.views.navigator;
  * @deprecated These messages are not API and should not be referenced outside
  *             of this plug-in.
  * @noextend This class is not intended to be subclassed by clients.
+ * 
+ * @noextend This class is not intended to be subclassed by clients.
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noreference This class is not intended to be referenced by clients.
+ *
+ *              Planned to be deleted, please see Bug
+ *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=549953
+ *
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
 @Deprecated

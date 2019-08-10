@@ -1,0 +1,563 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.ui.ide" version="2">
+    <resource path="src/org/eclipse/ui/views/navigator/CollapseAllAction.java" type="org.eclipse.ui.views.navigator.CollapseAllAction">
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="@noextend"/>
+                <message_argument value="org.eclipse.ui.views.navigator.CollapseAllAction"/>
+            </message_arguments>
+        </filter>
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.CollapseAllAction"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.CollapseAllAction"/>
+                <message_argument value="run()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/views/navigator/FilterSelectionAction.java" type="org.eclipse.ui.views.navigator.FilterSelectionAction">
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="@noextend"/>
+                <message_argument value="org.eclipse.ui.views.navigator.FilterSelectionAction"/>
+            </message_arguments>
+        </filter>
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.FilterSelectionAction"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.FilterSelectionAction"/>
+                <message_argument value="run()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/views/navigator/GotoActionGroup.java" type="org.eclipse.ui.views.navigator.GotoActionGroup">
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="@noextend"/>
+                <message_argument value="org.eclipse.ui.views.navigator.GotoActionGroup"/>
+            </message_arguments>
+        </filter>
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.GotoActionGroup"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.GotoActionGroup"/>
+                <message_argument value="fillActionBars(IActionBars)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.GotoActionGroup"/>
+                <message_argument value="fillContextMenu(IMenuManager)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.GotoActionGroup"/>
+                <message_argument value="updateActionBars()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/views/navigator/GotoResourceAction.java" type="org.eclipse.ui.views.navigator.GotoResourceAction">
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="@noextend"/>
+                <message_argument value="org.eclipse.ui.views.navigator.GotoResourceAction"/>
+            </message_arguments>
+        </filter>
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.GotoResourceAction"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.GotoResourceAction"/>
+                <message_argument value="run()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/views/navigator/ResourceNavigator.java" type="org.eclipse.ui.views.navigator.ResourceNavigator">
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="@noextend"/>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigator"/>
+            </message_arguments>
+        </filter>
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigator"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigator"/>
+                <message_argument value="createPartControl(Composite)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigator"/>
+                <message_argument value="dispose()"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigator"/>
+                <message_argument value="getAdapter(Class&lt;T&gt;)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigator"/>
+                <message_argument value="getComparator()"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigator"/>
+                <message_argument value="getFrameList()"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigator"/>
+                <message_argument value="getPatternFilter()"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigator"/>
+                <message_argument value="getPlugin()"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigator"/>
+                <message_argument value="getShell()"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigator"/>
+                <message_argument value="getSorter()"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigator"/>
+                <message_argument value="getTreeViewer()"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigator"/>
+                <message_argument value="getViewer()"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigator"/>
+                <message_argument value="getWorkingSet()"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigator"/>
+                <message_argument value="init(IViewSite, IMemento)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigator"/>
+                <message_argument value="isLinkingEnabled()"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigator"/>
+                <message_argument value="saveState(IMemento)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigator"/>
+                <message_argument value="selectReveal(ISelection)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigator"/>
+                <message_argument value="setComparator(ResourceComparator)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigator"/>
+                <message_argument value="setFiltersPreference(String[])"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigator"/>
+                <message_argument value="setFocus()"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigator"/>
+                <message_argument value="setLabelDecorator(ILabelDecorator)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigator"/>
+                <message_argument value="setLinkingEnabled(boolean)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigator"/>
+                <message_argument value="setSorter(ResourceSorter)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigator"/>
+                <message_argument value="setWorkingSet(IWorkingSet)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigator"/>
+                <message_argument value="updateTitle()"/>
+            </message_arguments>
+        </filter>
+        <filter id="576725006">
+            <message_arguments>
+                <message_argument value="IResourceNavigator"/>
+                <message_argument value="ResourceNavigator"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/views/navigator/ResourceNavigatorAction.java" type="org.eclipse.ui.views.navigator.ResourceNavigatorAction">
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="@noextend"/>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigatorAction"/>
+            </message_arguments>
+        </filter>
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigatorAction"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigatorAction"/>
+                <message_argument value="getNavigator()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/views/navigator/ResourceNavigatorActionGroup.java" type="org.eclipse.ui.views.navigator.ResourceNavigatorActionGroup">
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="@noextend"/>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigatorActionGroup"/>
+            </message_arguments>
+        </filter>
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigatorActionGroup"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigatorActionGroup"/>
+                <message_argument value="getNavigator()"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigatorActionGroup"/>
+                <message_argument value="handleKeyPressed(KeyEvent)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigatorActionGroup"/>
+                <message_argument value="runDefaultAction(IStructuredSelection)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/views/navigator/ResourceNavigatorMessages.java" type="org.eclipse.ui.views.navigator.ResourceNavigatorMessages">
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigatorMessages"/>
+                <message_argument value="format(String, Object[])"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigatorMessages"/>
+                <message_argument value="getString(String)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/views/navigator/ResourceNavigatorMoveAction.java" type="org.eclipse.ui.views.navigator.ResourceNavigatorMoveAction">
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="@noextend"/>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigatorMoveAction"/>
+            </message_arguments>
+        </filter>
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigatorMoveAction"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigatorMoveAction"/>
+                <message_argument value="run()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/views/navigator/ResourceNavigatorRenameAction.java" type="org.eclipse.ui.views.navigator.ResourceNavigatorRenameAction">
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="@noextend"/>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigatorRenameAction"/>
+            </message_arguments>
+        </filter>
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigatorRenameAction"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceNavigatorRenameAction"/>
+                <message_argument value="handleKeyReleased(KeyEvent)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/views/navigator/ResourcePatternFilter.java" type="org.eclipse.ui.views.navigator.ResourcePatternFilter">
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="@noextend"/>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourcePatternFilter"/>
+            </message_arguments>
+        </filter>
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourcePatternFilter"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourcePatternFilter"/>
+                <message_argument value="getPatterns()"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourcePatternFilter"/>
+                <message_argument value="select(Viewer, Object, Object)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourcePatternFilter"/>
+                <message_argument value="setPatterns(String[])"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/views/navigator/ResourceSelectionUtil.java" type="org.eclipse.ui.views.navigator.ResourceSelectionUtil">
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceSelectionUtil"/>
+                <message_argument value="allResources(IStructuredSelection, int)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceSelectionUtil"/>
+                <message_argument value="allResourcesAreOfType(IStructuredSelection, int)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceSelectionUtil"/>
+                <message_argument value="resourceIsType(IResource, int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/views/navigator/ResourceSorter.java" type="org.eclipse.ui.views.navigator.ResourceSorter">
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="@noinstantiate"/>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceSorter"/>
+            </message_arguments>
+        </filter>
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceSorter"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceSorter"/>
+                <message_argument value="compare(Viewer, Object, Object)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceSorter"/>
+                <message_argument value="getCriteria()"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ResourceSorter"/>
+                <message_argument value="setCriteria(int)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/views/navigator/ShowInNavigatorAction.java" type="org.eclipse.ui.views.navigator.ShowInNavigatorAction">
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="@noextend"/>
+                <message_argument value="org.eclipse.ui.views.navigator.ShowInNavigatorAction"/>
+            </message_arguments>
+        </filter>
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ShowInNavigatorAction"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ShowInNavigatorAction"/>
+                <message_argument value="run()"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ShowInNavigatorAction"/>
+                <message_argument value="selectionChanged(IStructuredSelection)"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/views/navigator/SortAndFilterActionGroup.java" type="org.eclipse.ui.views.navigator.SortAndFilterActionGroup">
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="@noextend"/>
+                <message_argument value="org.eclipse.ui.views.navigator.SortAndFilterActionGroup"/>
+            </message_arguments>
+        </filter>
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.SortAndFilterActionGroup"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.SortAndFilterActionGroup"/>
+                <message_argument value="fillActionBars(IActionBars)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.SortAndFilterActionGroup"/>
+                <message_argument value="updateActionBars()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/views/navigator/SortViewAction.java" type="org.eclipse.ui.views.navigator.SortViewAction">
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="@noextend"/>
+                <message_argument value="org.eclipse.ui.views.navigator.SortViewAction"/>
+            </message_arguments>
+        </filter>
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.SortViewAction"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.SortViewAction"/>
+                <message_argument value="run()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/views/navigator/ToggleLinkingAction.java" type="org.eclipse.ui.views.navigator.ToggleLinkingAction">
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="@noextend"/>
+                <message_argument value="org.eclipse.ui.views.navigator.ToggleLinkingAction"/>
+            </message_arguments>
+        </filter>
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ToggleLinkingAction"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.ToggleLinkingAction"/>
+                <message_argument value="run()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/ui/views/navigator/WorkspaceActionGroup.java" type="org.eclipse.ui.views.navigator.WorkspaceActionGroup">
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="@noextend"/>
+                <message_argument value="org.eclipse.ui.views.navigator.WorkspaceActionGroup"/>
+            </message_arguments>
+        </filter>
+        <filter id="336744520">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.WorkspaceActionGroup"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.WorkspaceActionGroup"/>
+                <message_argument value="fillActionBars(IActionBars)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.WorkspaceActionGroup"/>
+                <message_argument value="fillContextMenu(IMenuManager)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.WorkspaceActionGroup"/>
+                <message_argument value="handleKeyPressed(KeyEvent)"/>
+            </message_arguments>
+        </filter>
+        <filter id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.views.navigator.WorkspaceActionGroup"/>
+                <message_argument value="updateActionBars()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
