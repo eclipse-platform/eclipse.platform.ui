@@ -37,6 +37,7 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.monitoring.IUiFreezeEventLogger;
 import org.eclipse.ui.monitoring.PreferenceConstants;
 import org.eclipse.ui.monitoring.StackSample;
@@ -687,7 +688,7 @@ public class EventLoopMonitorThread extends Thread {
 	}
 
 	private static Display getDisplay() throws IllegalStateException {
-		IWorkbench workbench = MonitoringPlugin.getDefault().getWorkbench();
+		IWorkbench workbench = PlatformUI.getWorkbench();
 		if (workbench == null) {
 			throw new IllegalStateException(Messages.EventLoopMonitorThread_workbench_was_null);
 		}

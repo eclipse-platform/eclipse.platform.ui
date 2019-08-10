@@ -19,6 +19,7 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.monitoring.EventLoopMonitorThread;
 import org.eclipse.ui.internal.monitoring.MonitoringPlugin;
 import org.eclipse.ui.internal.monitoring.MonitoringStartup;
@@ -64,7 +65,7 @@ public class MonitoringPreferenceListener implements IPropertyChangeListener {
 
 			monitorThreadRestartInProgress = true;
 
-			final Display display = MonitoringPlugin.getDefault().getWorkbench().getDisplay();
+			final Display display = PlatformUI.getWorkbench().getDisplay();
 			// Schedule the event to restart the thread after all preferences have had enough time
 			// to propagate.
 			display.asyncExec(this::refreshMonitoringThread);
