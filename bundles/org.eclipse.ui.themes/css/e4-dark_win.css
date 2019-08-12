@@ -203,14 +203,26 @@ StatusLine, ImageBasedFrame{
 
 /* ####################### CSS for .MParts ####################### */
 
+.MPart Form Section,
+.MPart Form Label,
+.MPart Form FormText,
+.MPart Form Button[style~='SWT.CHECK'],
+.MPart Form Button[style~='SWT.RADIO'],
+.MPartStack.active .MPart Form Section,
+.MPartStack.active .MPart Form Label,
+.MPartStack.active .MPart Form FormText,
+.MPartStack.active .MPart Form Button[style~='SWT.CHECK'],
+.MPartStack.active .MPart Form Button[style~='SWT.RADIO']
+{
+	background-color: inherit;
+	color: #f4f7f7;
+}
+
 /* Make the content of the Form brighter because the color of
    the font of some widgets is hard-coded to be black on Window */
 
 .MPart Form,
 .MPart Form Sash,
-.MPart Form Label,
-.MPart Form Section,
-.MPart Form FormText,
 .MPart Form Link,
 .MPart Form Button,
 .MPart Form Group,
@@ -225,9 +237,6 @@ StatusLine, ImageBasedFrame{
 .MPart LayoutComposite > * > LayoutComposite > Section > LayoutComposite > *, /*LayoutComposite > MasterDetailBlock$... > LayoutComposite > Section > LayoutComposite > ExtensionsSection$...*/
 .MPartStack.active .MPart Form,
 .MPartStack.active .MPart Form Sash,
-.MPartStack.active .MPart Form Label,
-.MPartStack.active .MPart Form Section,
-.MPartStack.active .MPart Form FormText,
 .MPartStack.active .MPart Form Link,
 .MPartStack.active .MPart Form Button,
 .MPartStack.active .MPart Form Group,
