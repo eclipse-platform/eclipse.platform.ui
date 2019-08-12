@@ -393,6 +393,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		contentProvider = new ContentProvider();
 		selectionMode = NONE;
 		MAX_LINE_LEN = QuickSearchActivator.getDefault().getPreferences().getMaxLineLen();
+		progressJob.setSystem(true);
 	}
 
 	/*
