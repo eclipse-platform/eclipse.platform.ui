@@ -259,7 +259,10 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 				IPath path = item.getFile().getFullPath();
 				String name = path.lastSegment();
 				String dir = path.removeLastSegments(1).toString();
-				cell.setText(name + " - "+dir);
+				if (dir.startsWith("/")) {
+					dir = dir.substring(1);
+				}
+				cell.setText(name + " - " + dir);
 				StyleRange[] styleRanges = new StyleRange[] {
 						new StyleRange(name.length(), dir.length()+3, GREY, null)
 				};
