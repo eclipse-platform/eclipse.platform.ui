@@ -43,7 +43,6 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 
 	private static HelpUIPlugin plugin;
 
-	// private static BundleContext bundleContext;
 	/**
 	 * Logs an Error message with an exception. Note that the message should already be localized to
 	 * proper locale. ie: Resources.getString() should already have been called
@@ -86,7 +85,6 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 		FilterResolver.setExtension(new FilterResolverExtension());
 		HelpEvaluationContext.setContext(HelpUIEvaluationContext.getContext());
 
-		// bundleContext = context;
 		// Setup debugging options
 		DEBUG = isDebugging();
 		if (DEBUG) {
