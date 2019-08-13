@@ -133,7 +133,7 @@ public class FilteredTree extends Composite {
 	protected Composite treeComposite;
 
 	/**
-	 * Tells whether this filtetered tree is used to make quick selections. In this
+	 * Tells whether this filtered tree is used to make quick selections. In this
 	 * mode the first match in the tree is automatically selected while filtering
 	 * and the 'Enter' key is not used to move the focus to the tree.
 	 *
