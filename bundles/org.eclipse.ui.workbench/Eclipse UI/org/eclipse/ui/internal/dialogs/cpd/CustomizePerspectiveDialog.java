@@ -848,6 +848,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		actionSetToolbarViewer = new TreeViewer(toolbarGroup);
 		actionSetToolbarViewer.setAutoExpandLevel(AbstractTreeViewer.ALL_LEVELS);
 		actionSetToolbarViewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		actionSetToolbarViewer.setUseHashlookup(true);
 		actionSetToolbarViewer.setContentProvider(TreeManager.getTreeContentProvider());
 		actionSetToolbarViewer.setLabelProvider(new GrayOutUnavailableLabelProvider(null));
 		actionSetToolbarViewer.addFilter(setFilter);
