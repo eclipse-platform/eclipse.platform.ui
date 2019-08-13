@@ -886,7 +886,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		});
 
 		createDetailsArea(sashForm);
-		sashForm.setWeights(new int[] {5,1});
+		sashForm.setWeights(new int[] {5,2});
 
 		applyDialogFont(content);
 
