@@ -50,7 +50,6 @@ import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.ISharedImages;
-import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
@@ -606,17 +605,6 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 */
 	public IViewRegistry getViewRegistry() {
 		return e4Context.get(IViewRegistry.class);
-	}
-
-	/**
-	 * Answer the workbench.
-	 *
-	 * @deprecated Use <code>PlatformUI.getWorkbench()</code> instead.
-	 */
-	@Deprecated
-	@Override
-	public IWorkbench getWorkbench() {
-		return PlatformUI.getWorkbench();
 	}
 
 	/**
@@ -1320,7 +1308,8 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 					preferenceManager = new WorkbenchPreferenceManager(PREFERENCE_PAGE_CATEGORY_SEPARATOR);
 
 					// Get the pages from the registry
-					PreferencePageRegistryReader registryReader = new PreferencePageRegistryReader(getWorkbench());
+					PreferencePageRegistryReader registryReader = new PreferencePageRegistryReader(
+							PlatformUI.getWorkbench());
 					registryReader.loadFromRegistry(Platform.getExtensionRegistry());
 					preferenceManager.addPages(registryReader.getTopLevelNodes());
 
