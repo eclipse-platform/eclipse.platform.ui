@@ -183,7 +183,7 @@ public class HelpIndexBuilder {
 			// We will ignore docBundleIds which is null anyway,
 			// and use id and fid to create plugin info
 			// for the destination
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			appendBundleInformation(buffer, id.id, id.version.toString());
 			if (fid != null)
 				appendBundleInformation(buffer, fid.id, fid.version.toString());

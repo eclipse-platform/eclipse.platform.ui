@@ -150,7 +150,7 @@ public class AboutServlet extends HttpServlet {
 	}
 
 	private void getPreferences(HttpServletResponse resp) throws IOException {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append(XHTML_1);
 		String title = WebappResources.getString("preferences", locale); //$NON-NLS-1$
 		buf.append(UrlUtil.htmlEncode(title));

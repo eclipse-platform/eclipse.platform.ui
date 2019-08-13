@@ -133,8 +133,8 @@ public final class HTMLUtil {
 	 *            the value of the attribute
 	 * @return
 	 */
-	public static StringBuffer createAttribute(String attrName, String attrValue) {
-		StringBuffer attribute = new StringBuffer();
+	public static StringBuilder createAttribute(String attrName, String attrValue) {
+		StringBuilder attribute = new StringBuilder();
 		if (attrName != null && attrValue != null) {
 			attribute.append(attrName).append(IIntroHTMLConstants.EQUALS)
 					.append(IIntroHTMLConstants.QUOTE).append(attrValue)
@@ -143,17 +143,17 @@ public final class HTMLUtil {
 		return attribute;
 	}
 
-	public static StringBuffer openHTMLStartTag(String elementName) {
-		return new StringBuffer().append(IIntroHTMLConstants.LT).append(
+	public static StringBuilder openHTMLStartTag(String elementName) {
+		return new StringBuilder().append(IIntroHTMLConstants.LT).append(
 				elementName);
 	}
 
-	public static StringBuffer closeHTMLTag() {
+	public static StringBuilder closeHTMLTag() {
 		return closeHTMLTag(true);
 	}
 
-	public static StringBuffer closeHTMLTag(boolean newLine) {
-		StringBuffer closing = new StringBuffer()
+	public static StringBuilder closeHTMLTag(boolean newLine) {
+		StringBuilder closing = new StringBuilder()
 				.append(IIntroHTMLConstants.GT);
 		if (newLine)
 			closing.append(IIntroHTMLConstants.NEW_LINE);

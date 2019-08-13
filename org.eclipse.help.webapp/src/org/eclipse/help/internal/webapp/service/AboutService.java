@@ -125,7 +125,7 @@ public class AboutService extends AboutServlet {
 
 	private String processRequest(HttpServletRequest req, HttpServletResponse resp)
 			throws ServletException, IOException {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n"); //$NON-NLS-1$
 
 		String showParam = req.getParameter("show"); //$NON-NLS-1$
@@ -140,7 +140,7 @@ public class AboutService extends AboutServlet {
 		return buf.toString();
 	}
 
-	private void getAgent(StringBuffer buf, HttpServletRequest req, HttpServletResponse resp)
+	private void getAgent(StringBuilder buf, HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 		service = Utils.AGENT;
 
@@ -153,7 +153,7 @@ public class AboutService extends AboutServlet {
 		buf.append("</userAgent>"); //$NON-NLS-1$
 	}
 
-	private void getPreferences(StringBuffer buf, HttpServletResponse resp)
+	private void getPreferences(StringBuilder buf, HttpServletResponse resp)
 			throws IOException {
 		service = Utils.PREFERENCE;
 
@@ -166,7 +166,7 @@ public class AboutService extends AboutServlet {
 		buf.append("\n</preferences>"); //$NON-NLS-1$
 	}
 
-	private void getAboutPlugins(StringBuffer buf, HttpServletRequest req, HttpServletResponse resp)
+	private void getAboutPlugins(StringBuilder buf, HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 		service = Utils.ABOUT_PLUGIN;
 

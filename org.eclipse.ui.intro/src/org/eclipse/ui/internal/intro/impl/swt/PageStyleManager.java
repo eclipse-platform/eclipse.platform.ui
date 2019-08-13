@@ -201,7 +201,7 @@ public class PageStyleManager extends SharedStyleManager {
 
 	private int getIntProperty(AbstractBaseIntroElement element,
 			String qualifier, int defaultValue) {
-		StringBuffer buff = ModelLoaderUtil.createPathToElementKey(element, true);
+		StringBuilder buff = ModelLoaderUtil.createPathToElementKey(element, true);
 		if (buff == null)
 			return defaultValue;
 		String key = buff.append(qualifier).toString();
@@ -210,7 +210,7 @@ public class PageStyleManager extends SharedStyleManager {
 
 	private boolean getBooleanProperty(AbstractBaseIntroElement element,
 			String qualifier, boolean defaultValue) {
-		StringBuffer buff = ModelLoaderUtil.createPathToElementKey(element, true);
+		StringBuilder buff = ModelLoaderUtil.createPathToElementKey(element, true);
 		if (buff == null)
 			return defaultValue;
 		String key = buff.append(qualifier).toString();
@@ -255,7 +255,7 @@ public class PageStyleManager extends SharedStyleManager {
 	 * @return
 	 */
 	public String getDescription(IntroGroup group) {
-		StringBuffer buff = ModelLoaderUtil.createPathToElementKey(group, true);
+		StringBuilder buff = ModelLoaderUtil.createPathToElementKey(group, true);
 		if (buff == null)
 			return null;
 		String key = buff.append(".description-id").toString(); //$NON-NLS-1$
@@ -395,7 +395,7 @@ public class PageStyleManager extends SharedStyleManager {
 
 
 	public Color getColor(FormToolkit toolkit, AbstractBaseIntroElement element) {
-		StringBuffer buff = ModelLoaderUtil.createPathToElementKey(element, true);
+		StringBuilder buff = ModelLoaderUtil.createPathToElementKey(element, true);
 		if (buff == null)
 			return null;
 		String key = buff.append(".font.fg").toString(); //$NON-NLS-1$
@@ -403,7 +403,7 @@ public class PageStyleManager extends SharedStyleManager {
 	}
 
 	public Color getBackgrond(FormToolkit toolkit, AbstractBaseIntroElement element) {
-		StringBuffer buff = ModelLoaderUtil.createPathToElementKey(element, true);
+		StringBuilder buff = ModelLoaderUtil.createPathToElementKey(element, true);
 		if (buff == null)
 			return null;
 		String key = buff.append(".bg").toString(); //$NON-NLS-1$
@@ -413,7 +413,7 @@ public class PageStyleManager extends SharedStyleManager {
 	public boolean isBold(IntroText text) {
 		String value = null;
 		/*
-		StringBuffer buff = ModelLoaderUtil.createPathToElementKey(text, true);
+		StringBuilder buff = ModelLoaderUtil.createPathToElementKey(text, true);
 		if (buff != null) {
 			String key = buff.append(".font.bold").toString(); //$NON-NLS-1$
 			value = getProperty(key);
@@ -436,7 +436,7 @@ public class PageStyleManager extends SharedStyleManager {
 	}
 
 	private String getPropertyValue(AbstractIntroIdElement element, String suffix) {
-		StringBuffer buff = ModelLoaderUtil.createPathToElementKey(element, true);
+		StringBuilder buff = ModelLoaderUtil.createPathToElementKey(element, true);
 		if (buff != null) {
 			String key = buff.append(suffix).toString();
 			String value = getProperty(key);
@@ -492,13 +492,13 @@ public class PageStyleManager extends SharedStyleManager {
 
 	private String createImageKey(AbstractIntroPage page, IntroLink link,
 			String qualifier) {
-		StringBuffer buff = null;
+		StringBuilder buff = null;
 		if (link != null) {
 			buff = ModelLoaderUtil.createPathToElementKey(link, true);
 			if (buff == null)
 				return ""; //$NON-NLS-1$
 		} else {
-			buff = new StringBuffer();
+			buff = new StringBuilder();
 			buff.append(page.getId());
 		}
 		buff.append("."); //$NON-NLS-1$
@@ -521,7 +521,7 @@ public class PageStyleManager extends SharedStyleManager {
 
 	public Image getImage(IntroImage introImage) {
 		String imageLocation = introImage.getSrcAsIs();
-		StringBuffer buff = ModelLoaderUtil.createPathToElementKey(introImage, true);
+		StringBuilder buff = ModelLoaderUtil.createPathToElementKey(introImage, true);
 		String key;
 		if (buff == null) {
 			key = "//" + imageLocation; //$NON-NLS-1$

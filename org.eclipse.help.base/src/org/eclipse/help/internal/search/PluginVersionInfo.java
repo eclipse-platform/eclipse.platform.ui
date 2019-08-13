@@ -79,7 +79,7 @@ public class PluginVersionInfo extends HelpProperties {
 			if (pluginBundle == null) {
 				continue;
 			}
-			StringBuffer pluginVersionAndFragments = new StringBuffer();
+			StringBuilder pluginVersionAndFragments = new StringBuilder();
 			appendBundleInformation(pluginVersionAndFragments, bundleId,
 					pluginBundle.getHeaders().get(
 							Constants.BUNDLE_VERSION));
@@ -99,7 +99,7 @@ public class PluginVersionInfo extends HelpProperties {
 		}
 	}
 
-	protected void appendBundleInformation(StringBuffer buffer, String id,
+	protected void appendBundleInformation(StringBuilder buffer, String id,
 			String version) {
 		if (buffer.length()>0)
 			buffer.append(SEPARATOR);

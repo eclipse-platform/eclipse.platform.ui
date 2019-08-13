@@ -82,7 +82,7 @@ public class StatusProducer implements IHelpContentProducer {
 			!href.equalsIgnoreCase(MissingContentManager.REMOTE_STATUS_HELP_VIEW_HREF))
 			return null;
 
-		StringBuffer pageBuffer = new StringBuffer();
+		StringBuilder pageBuffer = new StringBuilder();
 
 
 		// Get all remote sites, and subset of non-working sites
@@ -220,7 +220,7 @@ public class StatusProducer implements IHelpContentProducer {
 		return getBytes(pageBuffer);
 	}
 
-	public void addCloseLink(Locale locale, StringBuffer pageBuffer) {
+	public void addCloseLink(Locale locale, StringBuilder pageBuffer) {
 		WebappPreferences prefs = new WebappPreferences();
 		String homepage = "/help/topic"+prefs.getHelpHome(); //$NON-NLS-1$
 		pageBuffer.append(tab(3)+"<div style=\"position:absolute;right:4px;top:4px;\">\n"); //$NON-NLS-1$
@@ -230,7 +230,7 @@ public class StatusProducer implements IHelpContentProducer {
 	}
 
 	private InputStream getNetworkOKPage(Locale locale) {
-		StringBuffer pageBuffer = new StringBuffer();
+		StringBuilder pageBuffer = new StringBuilder();
 		// Write HTML header and body beginning.
 		String title = WebappResources.getString("networkHelpAvailable", locale); //$NON-NLS-1$
 		pageBuffer.append(getHtmlHead(locale, title));
@@ -245,7 +245,7 @@ public class StatusProducer implements IHelpContentProducer {
 	}
 
 	private InputStream getMissingTopicPage(String topicPath, Locale locale) {
-		StringBuffer pageBuffer = new StringBuffer();
+		StringBuilder pageBuffer = new StringBuilder();
 		// Write HTML header and body beginning.
 		String title = WebappResources.getString("someBooksUninstalled", locale); //$NON-NLS-1$
 		pageBuffer.append(getHtmlHead(locale, title));
@@ -274,7 +274,7 @@ public class StatusProducer implements IHelpContentProducer {
 		if (unresolved.length == 0) {
 			return getNoBooksMissingPage(locale, isHelpView);
 		}
-		StringBuffer pageBuffer = new StringBuffer();
+		StringBuilder pageBuffer = new StringBuilder();
 		// Write HTML header and body beginning.
 		String title = WebappResources.getString("someBooksUninstalled", locale); //$NON-NLS-1$
 		pageBuffer.append(getHtmlHead(locale, title));
@@ -320,7 +320,7 @@ public class StatusProducer implements IHelpContentProducer {
 
 
 	private InputStream getNoBooksMissingPage(Locale locale, boolean isHelpView) {
-		StringBuffer pageBuffer = new StringBuffer();
+		StringBuilder pageBuffer = new StringBuilder();
 		// Write HTML header and body beginning.
 		String title = WebappResources.getString("allBooksInstalledTitle", locale); //$NON-NLS-1$
 		pageBuffer.append(getHtmlHead(locale, title));
@@ -409,7 +409,7 @@ public class StatusProducer implements IHelpContentProducer {
 		return tabs;
 	}
 
-	private static InputStream getBytes(StringBuffer pageBuffer) {
+	private static InputStream getBytes(StringBuilder pageBuffer) {
 		return new ByteArrayInputStream(pageBuffer.toString().getBytes(StandardCharsets.UTF_8));
 	}
 

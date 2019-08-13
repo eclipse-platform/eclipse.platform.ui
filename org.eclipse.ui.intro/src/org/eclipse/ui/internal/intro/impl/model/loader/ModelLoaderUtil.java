@@ -165,11 +165,11 @@ public class ModelLoaderUtil {
 	 * @param element
 	 * @return
 	 */
-	public static StringBuffer createPathToElementKey(
+	public static StringBuilder createPathToElementKey(
 			AbstractIntroIdElement element, boolean full) {
 		if (element.getId() == null)
 			return null;
-		StringBuffer buffer = new StringBuffer(element.getId());
+		StringBuilder buffer = new StringBuilder(element.getId());
 		AbstractBaseIntroElement parent = (AbstractBaseIntroElement) element
 			.getParent();
 		while (parent != null

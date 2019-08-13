@@ -32,15 +32,15 @@ import org.osgi.service.prefs.BackingStoreException;
  */
 
 public class PreferenceWriter {
-	private StringBuffer buf;
+	private StringBuilder buf;
 	private Locale locale;
 	private boolean isXML;
 
-	public PreferenceWriter(StringBuffer buf, Locale locale) {
+	public PreferenceWriter(StringBuilder buf, Locale locale) {
 		this(buf, locale, false);
 	}
 
-	public PreferenceWriter(StringBuffer buf, Locale locale, boolean isXML) {
+	public PreferenceWriter(StringBuilder buf, Locale locale, boolean isXML) {
 		this.buf = buf;
 		this.locale = locale;
 		this.isXML = isXML;
