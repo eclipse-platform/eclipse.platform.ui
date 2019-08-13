@@ -395,7 +395,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget, 
 	 */
 	protected void initLabelProvider(TreeViewer viewer) {
 		viewer.setLabelProvider(new DecoratingLabelProvider(new WorkbenchLabelProvider(),
-				getPlugin().getWorkbench().getDecoratorManager().getLabelDecorator()));
+				PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
 	}
 
 	/**
