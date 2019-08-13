@@ -417,8 +417,10 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * @param trigger build trigger
 	 * @param buildReferences transitively build referenced build configurations
 	 */
-	private void buildInternal(IBuildConfiguration[] requestedConfigs, int trigger, boolean buildReferences, IProgressMonitor monitor) throws CoreException {
-		monitor = Policy.monitorFor(monitor);
+	private void buildInternal(IBuildConfiguration[] requestedConfigs, int trigger, boolean buildReferences,
+			IProgressMonitor monitor) throws CoreException {
+
+
 		// Bug 343256 use a relaxed scheduling rule if the config we're building uses a relaxed rule.
 		// Otherwise fall-back to WR.
 		// PRE + POST_BUILD, and the build itself are allowed to modify resources, so require the current thread's scheduling rule
@@ -428,105 +430,105 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		final ISchedulingRule notificationRule = getRuleFactory().buildRule();
 		ISchedulingRule currentRule = null;
 		boolean buildParallel = noEnclosingRule && getDescription().getMaxConcurrentBuilds() > 1 && getDescription().getBuildOrder() == null;
+		SubMonitor subMonitor = SubMonitor.convert(monitor, 100);
 		try {
-			monitor.beginTask("", Policy.opWork); //$NON-NLS-1$
 			try {
-				try {
 
-					// Must run the PRE_BUILD with the WRule held before acquiring WS lock
-					// Can remove this if we run notifications without the WS lock held: bug 249951
-					prepareOperation(notificationRule, monitor);
-					currentRule = notificationRule;
-					beginOperation(true);
-					aboutToBuild(this, trigger);
-				} finally {
-					if (relaxed) {
-						endOperation(currentRule, false);
-						prepareOperation(null, monitor);
-						currentRule = null;
-						beginOperation(false);
-					}
-				}
-
-				IStatus result;
-				try {
-					// Calculate the build-order having called the pre-build notification (which may change build order)
-					// If configs == EMPTY_BUILD_CONFIG_ARRAY => This is a full workspace build.
-					IBuildConfiguration[] allConfigs = requestedConfigs;
-					Digraph<IBuildConfiguration> buildGraph = null;
-					if (allConfigs == EMPTY_BUILD_CONFIG_ARRAY) {
-						if (trigger != IncrementalProjectBuilder.CLEAN_BUILD) {
-							if (getDescription().getBuildOrder() != null) {
-								allConfigs = getBuildOrder();
-							} else {
-								buildGraph = getBuildGraph();
-							}
-						} else {
-							// clean all accessible configurations
-							List<IBuildConfiguration> configArr = new ArrayList<>();
-							IProject[] prjs = getRoot().getProjects();
-							for (IProject prj : prjs)
-								if (prj.isAccessible())
-									configArr.addAll(Arrays.asList(prj.getBuildConfigs()));
-							allConfigs = configArr.toArray(new IBuildConfiguration[configArr.size()]);
-						}
-					} else {
-						// Order the passed in build configurations + resolve references if requested
-						Set<IBuildConfiguration> refsList = new HashSet<>();
-						for (IBuildConfiguration config : allConfigs) {
-							// Check project + build configuration are accessible.
-							if (!config.getProject().isAccessible() || !config.getProject().hasBuildConfig(config.getName()))
-								continue;
-							refsList.add(config);
-							// Find transitive closure of referenced project buildConfigs
-							if (buildReferences)
-								recursivelyAddBuildConfigs(refsList, config);
-						}
-
-						// Order the referenced project buildConfigs
-						buildGraph = computeProjectBuildConfigOrderGraph(refsList);
-					}
-					if (buildGraph != null) {
-						buildGraph.freeze();
-						allConfigs = ComputeProjectOrder.computeVertexOrder(buildGraph, IBuildConfiguration.class).vertexes;
-					}
-
-					buildParallel &= (buildGraph != null && buildGraph.vertexList.size() > 1);
-					if (buildParallel) {
-						relaxed = noEnclosingRule && allRelaxed(allConfigs, trigger);
-						buildParallel &= relaxed;
-					}
-					if (buildParallel) {
-						endOperation(currentRule, false); // operation needs to be ended to allow concurrent edits
-						currentRule = null;
-						result = getBuildManager().buildParallel(buildGraph, requestedConfigs, trigger, getBuildJobGroup(), Policy.subMonitorFor(monitor, Policy.opWork));
-					} else {
-						result = getBuildManager().build(allConfigs, requestedConfigs, trigger, Policy.subMonitorFor(monitor, Policy.opWork));
-					}
-				} finally {
-					// Run the POST_BUILD with the WRule held
-					if (relaxed) {
-						if (!buildParallel) {
-							endOperation(currentRule, false);
-						}
-						prepareOperation(notificationRule, monitor);
-						currentRule = notificationRule;
-						beginOperation(false);
-					}
-					//must fire POST_BUILD if PRE_BUILD has occurred
-					broadcastBuildEvent(this, IResourceChangeEvent.POST_BUILD, trigger);
-				}
-				if (!result.isOK())
-					throw new ResourceException(result);
+				// Must run the PRE_BUILD with the WRule held before acquiring WS lock
+				// Can remove this if we run notifications without the WS lock held: bug 249951
+				prepareOperation(notificationRule, subMonitor.newChild(1));
+				currentRule = notificationRule;
+				beginOperation(true);
+				aboutToBuild(this, trigger);
 			} finally {
-				//building may close the tree, but we are still inside an operation so open it
-				if (tree.isImmutable())
-					newWorkingTree();
-				// Rule will be the build-rule from the POST_BUILD refresh
-				endOperation(currentRule, false);
+				if (relaxed) {
+					endOperation(currentRule, false);
+					prepareOperation(null, subMonitor.newChild(1));
+					currentRule = null;
+					beginOperation(false);
+				}
 			}
+
+			IStatus result;
+			try {
+				// Calculate the build-order having called the pre-build notification (which may
+				// change build order)
+				// If configs == EMPTY_BUILD_CONFIG_ARRAY => This is a full workspace build.
+				IBuildConfiguration[] allConfigs = requestedConfigs;
+				Digraph<IBuildConfiguration> buildGraph = null;
+				if (allConfigs == EMPTY_BUILD_CONFIG_ARRAY) {
+					if (trigger != IncrementalProjectBuilder.CLEAN_BUILD) {
+						if (getDescription().getBuildOrder() != null) {
+							allConfigs = getBuildOrder();
+						} else {
+							buildGraph = getBuildGraph();
+						}
+					} else {
+						// clean all accessible configurations
+						List<IBuildConfiguration> configArr = new ArrayList<>();
+						IProject[] prjs = getRoot().getProjects();
+						for (IProject prj : prjs)
+							if (prj.isAccessible())
+								configArr.addAll(Arrays.asList(prj.getBuildConfigs()));
+						allConfigs = configArr.toArray(new IBuildConfiguration[configArr.size()]);
+					}
+				} else {
+					// Order the passed in build configurations + resolve references if requested
+					Set<IBuildConfiguration> refsList = new HashSet<>();
+					for (IBuildConfiguration config : allConfigs) {
+						// Check project + build configuration are accessible.
+						if (!config.getProject().isAccessible()
+								|| !config.getProject().hasBuildConfig(config.getName()))
+							continue;
+						refsList.add(config);
+						// Find transitive closure of referenced project buildConfigs
+						if (buildReferences)
+							recursivelyAddBuildConfigs(refsList, config);
+					}
+
+					// Order the referenced project buildConfigs
+					buildGraph = computeProjectBuildConfigOrderGraph(refsList);
+				}
+				if (buildGraph != null) {
+					buildGraph.freeze();
+					allConfigs = ComputeProjectOrder.computeVertexOrder(buildGraph, IBuildConfiguration.class).vertexes;
+				}
+
+				buildParallel &= (buildGraph != null && buildGraph.vertexList.size() > 1);
+				if (buildParallel) {
+					relaxed = noEnclosingRule && allRelaxed(allConfigs, trigger);
+					buildParallel &= relaxed;
+				}
+				if (buildParallel) {
+					endOperation(currentRule, false); // operation needs to be ended to allow concurrent edits
+					currentRule = null;
+					result = getBuildManager().buildParallel(buildGraph, requestedConfigs, trigger, getBuildJobGroup(),
+							subMonitor.newChild(97));
+				} else {
+					result = getBuildManager().build(allConfigs, requestedConfigs, trigger,
+							subMonitor.newChild(97));
+				}
+			} finally {
+				// Run the POST_BUILD with the WRule held
+				if (relaxed) {
+					if (!buildParallel) {
+						endOperation(currentRule, false);
+					}
+					prepareOperation(notificationRule, subMonitor.newChild(1));
+					currentRule = notificationRule;
+					beginOperation(false);
+				}
+				// must fire POST_BUILD if PRE_BUILD has occurred
+				broadcastBuildEvent(this, IResourceChangeEvent.POST_BUILD, trigger);
+			}
+			if (!result.isOK())
+				throw new ResourceException(result);
 		} finally {
-			monitor.done();
+			// building may close the tree, but we are still inside an operation so open it
+			if (tree.isImmutable())
+				newWorkingTree();
+			// Rule will be the build-rule from the POST_BUILD refresh
+			endOperation(currentRule, false);
 		}
 	}
 
@@ -988,71 +990,63 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	}
 
 	@Override
-	public IStatus copy(IResource[] resources, IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
-		monitor = Policy.monitorFor(monitor);
-		try {
-			Assert.isLegal(resources != null);
-			int opWork = Math.max(resources.length, 1);
-			int totalWork = Policy.totalWork * opWork / Policy.opWork;
-			String message = Messages.resources_copying_0;
-			monitor.beginTask(message, totalWork);
-			if (resources.length == 0)
-				return Status.OK_STATUS;
-			// to avoid concurrent changes to this array
-			resources = resources.clone();
-			IPath parentPath = null;
-			message = Messages.resources_copyProblem;
-			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
-			try {
-				prepareOperation(getRoot(), monitor);
-				beginOperation(true);
-				for (int i = 0; i < resources.length; i++) {
-					Policy.checkCanceled(monitor);
-					IResource resource = resources[i];
-					if (resource == null || isDuplicate(resources, i)) {
-						monitor.worked(1);
-						continue;
-					}
-					// test siblings
-					if (parentPath == null)
-						parentPath = resource.getFullPath().removeLastSegments(1);
-					if (parentPath.equals(resource.getFullPath().removeLastSegments(1))) {
-						// test copy requirements
-						try {
-							IPath destinationPath = destination.append(resource.getName());
-							IStatus requirements = ((Resource) resource).checkCopyRequirements(destinationPath, resource.getType(), updateFlags);
-							if (requirements.isOK()) {
-								try {
-									resource.copy(destinationPath, updateFlags, Policy.subMonitorFor(monitor, 1));
-								} catch (CoreException e) {
-									status.merge(e.getStatus());
-								}
-							} else {
-								monitor.worked(1);
-								status.merge(requirements);
-							}
-						} catch (CoreException e) {
-							monitor.worked(1);
-							status.merge(e.getStatus());
-						}
-					} else {
-						monitor.worked(1);
-						message = NLS.bind(Messages.resources_notChild, resources[i].getFullPath(), parentPath);
-						status.merge(new ResourceStatus(IResourceStatus.OPERATION_FAILED, resources[i].getFullPath(), message));
-					}
-				}
-			} catch (OperationCanceledException e) {
-				getWorkManager().operationCanceled();
-				throw e;
-			} finally {
-				endOperation(getRoot(), true);
-			}
-			if (status.matches(IStatus.ERROR))
-				throw new ResourceException(status);
-			return status.isOK() ? Status.OK_STATUS : (IStatus) status;
-		} finally {
-			monitor.done();
+	public IStatus copy(IResource[] resources, IPath destination, int updateFlags, IProgressMonitor monitor)
+			throws CoreException {
+		Assert.isLegal(resources != null);
+
+		if (resources.length == 0) {
+			return Status.OK_STATUS;
 		}
+		// to avoid concurrent changes to this array
+		resources = resources.clone();
+		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.resources_copying_0, resources.length);
+		IPath parentPath = null;
+		String message = Messages.resources_copyProblem;
+		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
+		try {
+			prepareOperation(getRoot(), subMonitor);
+			beginOperation(true);
+			for (int i = 0; i < resources.length; i++) {
+				IResource resource = resources[i];
+				if (resource == null || isDuplicate(resources, i)) {
+					subMonitor.split(1);
+					continue;
+				}
+				// test siblings
+				if (parentPath == null)
+					parentPath = resource.getFullPath().removeLastSegments(1);
+				if (parentPath.equals(resource.getFullPath().removeLastSegments(1))) {
+					// test copy requirements
+					try {
+						IPath destinationPath = destination.append(resource.getName());
+						IStatus requirements = ((Resource) resource).checkCopyRequirements(destinationPath, resource.getType(), updateFlags);
+						if (requirements.isOK()) {
+							try {
+								resource.copy(destinationPath, updateFlags, Policy.subMonitorFor(monitor, 1));
+							} catch (CoreException e) {
+								status.merge(e.getStatus());
+							}
+						} else {
+							status.merge(requirements);
+						}
+					} catch (CoreException e) {
+						status.merge(e.getStatus());
+					}
+				} else {
+					message = NLS.bind(Messages.resources_notChild, resources[i].getFullPath(), parentPath);
+					status.merge(new ResourceStatus(IResourceStatus.OPERATION_FAILED, resources[i].getFullPath(), message));
+				}
+				subMonitor.worked(1);
+			}
+		} catch (OperationCanceledException e) {
+			getWorkManager().operationCanceled();
+			throw e;
+		} finally {
+			endOperation(getRoot(), true);
+		}
+		if (status.matches(IStatus.ERROR))
+			throw new ResourceException(status);
+		return status.isOK() ? Status.OK_STATUS : (IStatus) status;
 	}
 
 	protected void copyTree(IResource source, IPath destination, int depth, int updateFlags, boolean keepSyncInfo) throws CoreException {
@@ -1377,50 +1371,46 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 	@Override
 	public IStatus delete(IResource[] resources, int updateFlags, IProgressMonitor monitor) throws CoreException {
-		monitor = Policy.monitorFor(monitor);
+
+		String message = Messages.resources_deleteProblem;
+		MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message,
+				null);
+		if (resources.length == 0) {
+			return result;
+		}
+		resources = resources.clone(); // to avoid concurrent changes to this array
+		SubMonitor subMonitor = SubMonitor.convert(monitor, message, resources.length);
 		try {
-			int opWork = Math.max(resources.length, 1);
-			int totalWork = Policy.totalWork * opWork / Policy.opWork;
-			String message = Messages.resources_deleting_0;
-			monitor.beginTask(message, totalWork);
-			message = Messages.resources_deleteProblem;
-			MultiStatus result = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
-			if (resources.length == 0)
-				return result;
-			resources = resources.clone(); // to avoid concurrent changes to this array
-			try {
-				prepareOperation(getRoot(), monitor);
-				beginOperation(true);
-				for (IResource r : resources) {
-					Policy.checkCanceled(monitor);
-					Resource resource = (Resource) r;
-					if (resource == null) {
-						monitor.worked(1);
-						continue;
-					}
-					try {
-						resource.delete(updateFlags, Policy.subMonitorFor(monitor, 1));
-					} catch (CoreException e) {
-						// Don't really care about the exception unless the resource is still around.
-						ResourceInfo info = resource.getResourceInfo(false, false);
-						if (resource.exists(resource.getFlags(info), false)) {
-							message = NLS.bind(Messages.resources_couldnotDelete, resource.getFullPath());
-							result.merge(new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, resource.getFullPath(), message));
-							result.merge(e.getStatus());
-						}
+			prepareOperation(getRoot(), subMonitor);
+			beginOperation(true);
+			for (IResource r : resources) {
+				Resource resource = (Resource) r;
+				if (resource == null) {
+					subMonitor.split(1);
+					continue;
+				}
+				try {
+					resource.delete(updateFlags, subMonitor.newChild(1));
+				} catch (CoreException e) {
+					// Don't really care about the exception unless the resource is still around.
+					ResourceInfo info = resource.getResourceInfo(false, false);
+					if (resource.exists(resource.getFlags(info), false)) {
+						message = NLS.bind(Messages.resources_couldnotDelete, resource.getFullPath());
+						result.merge(new ResourceStatus(IResourceStatus.FAILED_DELETE_LOCAL, resource.getFullPath(),
+								message));
+						result.merge(e.getStatus());
 					}
 				}
-				if (result.matches(IStatus.ERROR))
-					throw new ResourceException(result);
-				return result;
-			} catch (OperationCanceledException e) {
-				getWorkManager().operationCanceled();
-				throw e;
-			} finally {
-				endOperation(getRoot(), true);
+				subMonitor.worked(1);
 			}
+			if (result.matches(IStatus.ERROR))
+				throw new ResourceException(result);
+			return result;
+		} catch (OperationCanceledException e) {
+			getWorkManager().operationCanceled();
+			throw e;
 		} finally {
-			monitor.done();
+			endOperation(getRoot(), true);
 		}
 	}
 
@@ -2000,68 +1990,66 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 	@Override
 	public IStatus move(IResource[] resources, IPath destination, int updateFlags, IProgressMonitor monitor) throws CoreException {
-		monitor = Policy.monitorFor(monitor);
-		try {
-			Assert.isLegal(resources != null);
-			int opWork = Math.max(resources.length, 1);
-			int totalWork = Policy.totalWork * opWork / Policy.opWork;
-			String message = Messages.resources_moving_0;
-			monitor.beginTask(message, totalWork);
-			if (resources.length == 0)
-				return Status.OK_STATUS;
-			resources = resources.clone(); // to avoid concurrent changes to this array
-			IPath parentPath = null;
-			message = Messages.resources_moveProblem;
-			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
-			try {
-				prepareOperation(getRoot(), monitor);
-				beginOperation(true);
-				for (int i = 0; i < resources.length; i++) {
-					Policy.checkCanceled(monitor);
-					Resource resource = (Resource) resources[i];
-					if (resource == null || isDuplicate(resources, i)) {
-						monitor.worked(1);
-						continue;
-					}
-					// test siblings
-					if (parentPath == null)
-						parentPath = resource.getFullPath().removeLastSegments(1);
-					if (parentPath.equals(resource.getFullPath().removeLastSegments(1))) {
-						// test move requirements
-						try {
-							IStatus requirements = resource.checkMoveRequirements(destination.append(resource.getName()), resource.getType(), updateFlags);
-							if (requirements.isOK()) {
-								try {
-									resource.move(destination.append(resource.getName()), updateFlags, Policy.subMonitorFor(monitor, 1));
-								} catch (CoreException e) {
-									status.merge(e.getStatus());
-								}
-							} else {
-								monitor.worked(1);
-								status.merge(requirements);
-							}
-						} catch (CoreException e) {
-							monitor.worked(1);
-							status.merge(e.getStatus());
-						}
-					} else {
-						monitor.worked(1);
-						message = NLS.bind(Messages.resources_notChild, resource.getFullPath(), parentPath);
-						status.merge(new ResourceStatus(IResourceStatus.OPERATION_FAILED, resource.getFullPath(), message));
-					}
-				}
-			} catch (OperationCanceledException e) {
-				getWorkManager().operationCanceled();
-				throw e;
-			} finally {
-				endOperation(getRoot(), true);
-			}
-			if (status.matches(IStatus.ERROR))
-				throw new ResourceException(status);
-			return status.isOK() ? (IStatus) Status.OK_STATUS : (IStatus) status;
-		} finally {
-			monitor.done();
+		Assert.isLegal(resources != null);
+
+		if (resources.length == 0) {
+			return Status.OK_STATUS;
 		}
+		resources = resources.clone(); // to avoid concurrent changes to this array
+
+		String message = Messages.resources_moving_0;
+		SubMonitor subMonitor = SubMonitor.convert(monitor, message, resources.length);
+		IPath parentPath = null;
+		message = Messages.resources_moveProblem;
+		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message,
+				null);
+		try {
+			prepareOperation(getRoot(), subMonitor);
+			beginOperation(true);
+			for (int i = 0; i < resources.length; i++) {
+				Resource resource = (Resource) resources[i];
+				if (resource == null || isDuplicate(resources, i)) {
+					subMonitor.split(1);
+					continue;
+				}
+				// test siblings
+				if (parentPath == null)
+					parentPath = resource.getFullPath().removeLastSegments(1);
+				if (parentPath.equals(resource.getFullPath().removeLastSegments(1))) {
+					// test move requirements
+					try {
+						IStatus requirements = resource.checkMoveRequirements(destination.append(resource.getName()),
+								resource.getType(), updateFlags);
+						if (requirements.isOK()) {
+							try {
+								resource.move(destination.append(resource.getName()), updateFlags,
+										subMonitor.newChild(1));
+							} catch (CoreException e) {
+								status.merge(e.getStatus());
+							}
+						} else {
+							subMonitor.worked(1);
+							status.merge(requirements);
+						}
+					} catch (CoreException e) {
+						subMonitor.worked(1);
+						status.merge(e.getStatus());
+					}
+				} else {
+					subMonitor.worked(1);
+					message = NLS.bind(Messages.resources_notChild, resource.getFullPath(), parentPath);
+					status.merge(new ResourceStatus(IResourceStatus.OPERATION_FAILED, resource.getFullPath(), message));
+				}
+			}
+		} catch (OperationCanceledException e) {
+			getWorkManager().operationCanceled();
+			throw e;
+		} finally {
+			endOperation(getRoot(), true);
+		}
+		if (status.matches(IStatus.ERROR))
+			throw new ResourceException(status);
+		return status.isOK() ? (IStatus) Status.OK_STATUS : (IStatus) status;
 	}
 
 	/**
@@ -2207,10 +2195,9 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// create root location
 		localMetaArea.locationFor(getRoot()).toFile().mkdirs();
 
-		IProgressMonitor nullMonitor = Policy.monitorFor(null);
-		startup(nullMonitor);
 		//restart the notification manager so it is initialized with the right tree
-		notificationManager.startup(null);
+		SubMonitor subMonitor = SubMonitor.convert(null);
+		startup(subMonitor);
 		openFlag = true;
 		if (crashed || refreshRequested()) {
 			try {
@@ -2281,34 +2268,29 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 
 	@Override
 	public void run(ICoreRunnable action, ISchedulingRule rule, int options, IProgressMonitor monitor) throws CoreException {
-		monitor = Policy.monitorFor(monitor);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, Policy.totalWork); // $NON-NLS-1$
+		int depth = -1;
+		boolean avoidNotification = (options & IWorkspace.AVOID_UPDATE) != 0;
 		try {
-			monitor.beginTask("", Policy.totalWork); //$NON-NLS-1$
-			int depth = -1;
-			boolean avoidNotification = (options & IWorkspace.AVOID_UPDATE) != 0;
-			try {
-				prepareOperation(rule, monitor);
-				beginOperation(true);
-				if (avoidNotification)
-					avoidNotification = notificationManager.beginAvoidNotify();
-				depth = getWorkManager().beginUnprotected();
-				action.run(Policy.subMonitorFor(monitor, Policy.opWork));
-			} catch (OperationCanceledException e) {
+			prepareOperation(rule, subMonitor);
+			beginOperation(true);
+			if (avoidNotification)
+				avoidNotification = notificationManager.beginAvoidNotify();
+			depth = getWorkManager().beginUnprotected();
+			action.run(subMonitor.newChild(Policy.opWork));
+		} catch (OperationCanceledException e) {
+			getWorkManager().operationCanceled();
+			throw e;
+		} catch (CoreException e) {
+			if (e.getStatus().getSeverity() == IStatus.CANCEL)
 				getWorkManager().operationCanceled();
-				throw e;
-			} catch (CoreException e) {
-				if (e.getStatus().getSeverity() == IStatus.CANCEL)
-					getWorkManager().operationCanceled();
-				throw e;
-			} finally {
-				if (avoidNotification)
-					notificationManager.endAvoidNotify();
-				if (depth >= 0)
-					getWorkManager().endUnprotected(depth);
-				endOperation(rule, false);
-			}
+			throw e;
 		} finally {
-			monitor.done();
+			if (avoidNotification)
+				notificationManager.endAvoidNotify();
+			if (depth >= 0)
+				getWorkManager().endUnprotected(depth);
+			endOperation(rule, false);
 		}
 	}
 
@@ -2383,43 +2365,42 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 	 * Shuts down the workspace managers.
 	 */
 	protected void shutdown(IProgressMonitor monitor) throws CoreException {
-		monitor = Policy.monitorFor(monitor);
-		try {
-			IManager[] managers = {buildManager, propertyManager, pathVariableManager, charsetManager, fileSystemManager, markerManager, _workManager, aliasManager, refreshManager, contentDescriptionManager, natureManager, filterManager};
-			monitor.beginTask("", managers.length); //$NON-NLS-1$
-			String message = Messages.resources_shutdownProblems;
-			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, null);
-			// best effort to shutdown every object and free resources
-			for (IManager manager : managers) {
-				if (manager == null)
-					monitor.worked(1);
-				else {
-					try {
-						manager.shutdown(Policy.subMonitorFor(monitor, 1));
-					} catch (Exception e) {
-						message = Messages.resources_shutdownProblems;
-						status.add(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message, e));
-					}
+		IManager[] managers = { buildManager, propertyManager, pathVariableManager, charsetManager, fileSystemManager,
+				markerManager, _workManager, aliasManager, refreshManager, contentDescriptionManager, natureManager,
+				filterManager };
+		SubMonitor subMonitor = SubMonitor.convert(monitor, managers.length); // $NON-NLS-1$
+		String message = Messages.resources_shutdownProblems;
+		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message,
+				null);
+		// best effort to shutdown every object and free resources
+		for (IManager manager : managers) {
+			if (manager == null)
+				subMonitor.worked(1);
+			else {
+				try {
+					manager.shutdown(subMonitor.newChild(1));
+				} catch (Exception e) {
+					message = Messages.resources_shutdownProblems;
+					status.add(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR,
+							message, e));
 				}
 			}
-			buildManager = null;
-			notificationManager = null;
-			propertyManager = null;
-			pathVariableManager = null;
-			fileSystemManager = null;
-			markerManager = null;
-			synchronizer = null;
-			saveManager = null;
-			_workManager = null;
-			aliasManager = null;
-			refreshManager = null;
-			charsetManager = null;
-			contentDescriptionManager = null;
-			if (!status.isOK())
-				throw new CoreException(status);
-		} finally {
-			monitor.done();
 		}
+		buildManager = null;
+		notificationManager = null;
+		propertyManager = null;
+		pathVariableManager = null;
+		fileSystemManager = null;
+		markerManager = null;
+		synchronizer = null;
+		saveManager = null;
+		_workManager = null;
+		aliasManager = null;
+		refreshManager = null;
+		charsetManager = null;
+		contentDescriptionManager = null;
+		if (!status.isOK())
+			throw new CoreException(status);
 	}
 
 	@Override
