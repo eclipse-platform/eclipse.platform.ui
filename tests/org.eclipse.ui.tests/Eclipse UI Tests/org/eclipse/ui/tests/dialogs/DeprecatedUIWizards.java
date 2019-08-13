@@ -56,7 +56,7 @@ public class DeprecatedUIWizards extends TestCase {
 	}
 
 	private IWorkbench getWorkbench() {
-		return WorkbenchPlugin.getDefault().getWorkbench();
+		return PlatformUI.getWorkbench();
 	}
 
 	private WizardDialog exportWizard(IWizardPage page) {

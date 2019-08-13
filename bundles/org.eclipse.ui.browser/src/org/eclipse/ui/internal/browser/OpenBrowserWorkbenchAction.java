@@ -13,9 +13,11 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.browser;
 
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.ui.*;
+import org.eclipse.jface.viewers.ISelection;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.IWorkbenchWindowActionDelegate;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 /**
@@ -61,7 +63,7 @@ public class OpenBrowserWorkbenchAction implements IWorkbenchWindowActionDelegat
 	@Override
 	public void run(IAction action) {
 		try {
-			IWorkbenchBrowserSupport browserSupport = WebBrowserUIPlugin.getInstance().getWorkbench().getBrowserSupport();
+			IWorkbenchBrowserSupport browserSupport = PlatformUI.getWorkbench().getBrowserSupport();
 			IWebBrowser browser = browserSupport.createBrowser(IWorkbenchBrowserSupport.LOCATION_BAR | IWorkbenchBrowserSupport.NAVIGATION_BAR, null, null, null);
 			browser.openURL(null);
 		} catch (Exception e) {

@@ -17,6 +17,7 @@ import java.net.URL;
 
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.internal.browser.WebBrowserPreference;
@@ -27,9 +28,9 @@ public class InternalBrowserViewTestCase {
 
 	@Test
 	public void testBrowser() throws Exception {
-		shell = WebBrowserTestsPlugin.getInstance().getWorkbench().getActiveWorkbenchWindow().getShell();
+		shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		WebBrowserPreference.setBrowserChoice(WebBrowserPreference.INTERNAL);
-		IWorkbenchBrowserSupport wbs = WebBrowserTestsPlugin.getInstance().getWorkbench().getBrowserSupport();
+		IWorkbenchBrowserSupport wbs = PlatformUI.getWorkbench().getBrowserSupport();
 		IWebBrowser wb = wbs.createBrowser(IWorkbenchBrowserSupport.AS_VIEW, "test3", "MyBrowser", "A tooltip");
 
 		wb.openURL(new URL("http://www.ibm.com"));

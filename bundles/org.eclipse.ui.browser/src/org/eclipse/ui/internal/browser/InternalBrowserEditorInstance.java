@@ -19,6 +19,7 @@ import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 /**
  * An instance of a running Web browser.
  */
@@ -35,7 +36,7 @@ public class InternalBrowserEditorInstance extends InternalBrowserInstance {
 		input.setToolTipText(this.tooltip);
 		WebBrowserEditor editor = (WebBrowserEditor)part;
 
-		IWorkbenchWindow workbenchWindow = WebBrowserUIPlugin.getInstance().getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		IWorkbenchPage page = null;
 		if (workbenchWindow != null)
 			page = workbenchWindow.getActivePage();

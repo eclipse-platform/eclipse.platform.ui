@@ -324,7 +324,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget, 
 
 		getSite().setSelectionProvider(viewer);
 		getSite().getPage().addPartListener(partListener);
-		IWorkingSetManager workingSetManager = getPlugin().getWorkbench().getWorkingSetManager();
+		IWorkingSetManager workingSetManager =  PlatformUI.getWorkbench().getWorkingSetManager();
 		workingSetManager.addPropertyChangeListener(propertyChangeListener);
 
 		if (memento != null) {
@@ -502,7 +502,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget, 
 	public void dispose() {
 		getSite().getPage().removePartListener(partListener);
 
-		IWorkingSetManager workingSetManager = getPlugin().getWorkbench().getWorkingSetManager();
+		IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
 		workingSetManager.removePropertyChangeListener(propertyChangeListener);
 
 		if (collapseAllHandler != null) {
@@ -922,7 +922,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget, 
 		IWorkingSet workingSet = null;
 
 		if (workingSetName != null && workingSetName.isEmpty() == false) {
-			IWorkingSetManager workingSetManager = getPlugin().getWorkbench().getWorkingSetManager();
+			IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
 			workingSet = workingSetManager.getWorkingSet(workingSetName);
 		} else if (PlatformUI.getPreferenceStore()
 				.getBoolean(IWorkbenchPreferenceConstants.USE_WINDOW_WORKING_SET_BY_DEFAULT)) {

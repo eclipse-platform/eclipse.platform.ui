@@ -153,7 +153,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 		final ITreeContentProvider treeContentProvider = new WorkbenchContentProvider();
 		tree.setContentProvider(treeContentProvider);
 		tree.setLabelProvider(new DecoratingLabelProvider(new WorkbenchLabelProvider(),
-				IDEWorkbenchPlugin.getDefault().getWorkbench().getDecoratorManager().getLabelDecorator()));
+				PlatformUI.getWorkbench().getDecoratorManager().getLabelDecorator()));
 		tree.setInput(IDEWorkbenchPlugin.getPluginWorkspace().getRoot());
 		tree.setComparator(new ResourceComparator(ResourceComparator.NAME));
 
@@ -337,7 +337,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 			Object[] items = null;
 			if (workingSet == null) {
 
-				IWorkbenchPage page = IDEWorkbenchPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow()
+				IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 						.getActivePage();
 				if (page == null) {
 					return;

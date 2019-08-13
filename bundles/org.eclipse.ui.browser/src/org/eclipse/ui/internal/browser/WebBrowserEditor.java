@@ -230,7 +230,7 @@ public class WebBrowserEditor extends EditorPart implements IBrowserViewerContai
 	 * Open the input in the internal Web browser.
 	 */
 	public static void open(WebBrowserEditorInput input) {
-		IWorkbenchWindow workbenchWindow = WebBrowserUIPlugin.getInstance().getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		IWorkbenchPage page = workbenchWindow.getActivePage();
 
 		try {

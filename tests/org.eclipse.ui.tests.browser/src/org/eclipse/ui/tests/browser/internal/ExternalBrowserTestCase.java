@@ -15,6 +15,7 @@ package org.eclipse.ui.tests.browser.internal;
 
 import java.net.URL;
 
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.browser.IWebBrowser;
 import org.eclipse.ui.browser.IWorkbenchBrowserSupport;
 import org.eclipse.ui.internal.browser.WebBrowserPreference;
@@ -24,7 +25,7 @@ public class ExternalBrowserTestCase {
 	@Test
 	public void testBrowser() throws Exception {
 		WebBrowserPreference.setBrowserChoice(WebBrowserPreference.EXTERNAL);
-		IWorkbenchBrowserSupport wbs = WebBrowserTestsPlugin.getInstance().getWorkbench().getBrowserSupport();
+		IWorkbenchBrowserSupport wbs = PlatformUI.getWorkbench().getBrowserSupport();
 		IWebBrowser wb = wbs.createBrowser("test2");
 
 		wb.openURL(new URL("http://www.ibm.com"));

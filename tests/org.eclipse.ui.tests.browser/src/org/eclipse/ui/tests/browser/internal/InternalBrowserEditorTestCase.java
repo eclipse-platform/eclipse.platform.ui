@@ -34,9 +34,9 @@ public class InternalBrowserEditorTestCase {
 
 	@Test
 	public void testBrowser() throws Exception {
-		shell = WebBrowserTestsPlugin.getInstance().getWorkbench().getActiveWorkbenchWindow().getShell();
+		shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		WebBrowserPreference.setBrowserChoice(WebBrowserPreference.INTERNAL);
-		IWorkbenchBrowserSupport wbs = WebBrowserTestsPlugin.getInstance().getWorkbench().getBrowserSupport();
+		IWorkbenchBrowserSupport wbs = PlatformUI.getWorkbench().getBrowserSupport();
 		IWebBrowser wb = wbs.createBrowser(IWorkbenchBrowserSupport.AS_EDITOR, "test", "MyBrowser", "A tooltip");
 
 		wb.openURL(new URL("http://www.ibm.com"));
@@ -51,9 +51,9 @@ public class InternalBrowserEditorTestCase {
 
 	@Test
 	public void testBrowserID() throws Exception {
-		shell = WebBrowserTestsPlugin.getInstance().getWorkbench().getActiveWorkbenchWindow().getShell();
+		shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		WebBrowserPreference.setBrowserChoice(WebBrowserPreference.INTERNAL);
-		IWorkbenchBrowserSupport wbs = WebBrowserTestsPlugin.getInstance().getWorkbench().getBrowserSupport();
+		IWorkbenchBrowserSupport wbs = PlatformUI.getWorkbench().getBrowserSupport();
 		IWebBrowser wb = wbs.createBrowser(IWorkbenchBrowserSupport.AS_EDITOR, "test", "MyBrowser", "A tooltip");
 
 		wb.openURL(new URL("http://www.ibm.com"));

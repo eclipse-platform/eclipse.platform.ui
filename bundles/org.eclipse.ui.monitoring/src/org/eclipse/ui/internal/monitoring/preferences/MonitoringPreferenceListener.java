@@ -86,7 +86,7 @@ public class MonitoringPreferenceListener implements IPropertyChangeListener {
 			// If thread is null, the newly-defined preferences are invalid.
 			if (thread == null) {
 				MessageDialog.openError(
-						plugin.getWorkbench().getActiveWorkbenchWindow().getShell(),
+						PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
 						Messages.MonitoringPreferenceListener_preference_error_header,
 						Messages.MonitoringPreferenceListener_preference_error);
 				return;

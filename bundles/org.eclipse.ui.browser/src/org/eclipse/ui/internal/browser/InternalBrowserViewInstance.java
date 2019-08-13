@@ -18,6 +18,7 @@ import java.net.URL;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 /**
  * An instance of a running Web browser.
  */
@@ -28,7 +29,7 @@ public class InternalBrowserViewInstance extends InternalBrowserInstance {
 
 	@Override
 	public void openURL(URL url) throws PartInitException {
-		IWorkbenchWindow workbenchWindow = WebBrowserUIPlugin.getInstance().getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchWindow workbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		final IWorkbenchPage page = workbenchWindow.getActivePage();
 		WebBrowserView view = (WebBrowserView)part;
 		if (view == null) {
