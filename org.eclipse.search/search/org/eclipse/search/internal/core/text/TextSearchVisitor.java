@@ -449,7 +449,7 @@ public class TextSearchVisitor {
 	 */
 	private Map<IFile, IDocument> evalNonFileBufferDocuments() {
 		Map<IFile, IDocument> result= new HashMap<>();
-		IWorkbench workbench= SearchPlugin.getDefault().getWorkbench();
+		IWorkbench workbench = PlatformUI.getWorkbench();
 		IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
 		for (IWorkbenchWindow window : windows) {
 			IWorkbenchPage[] pages= window.getPages();

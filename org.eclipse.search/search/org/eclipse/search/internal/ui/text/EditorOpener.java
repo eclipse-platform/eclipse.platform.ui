@@ -28,13 +28,13 @@ import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IReusableEditor;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.FileEditorInput;
 
 import org.eclipse.ui.texteditor.ITextEditor;
 
 import org.eclipse.search.internal.ui.SearchMessages;
-import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.search.ui.NewSearchUI;
 
 public class EditorOpener {
@@ -80,7 +80,8 @@ public class EditorOpener {
 	private String getEditorID(IFile file) throws PartInitException {
 		IEditorDescriptor desc = IDE.getEditorDescriptor(file, true, true);
 		if (desc == null)
-			return SearchPlugin.getDefault().getWorkbench().getEditorRegistry().findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID).getId();
+			return PlatformUI.getWorkbench().getEditorRegistry().findEditor(IEditorRegistry.SYSTEM_EXTERNAL_EDITOR_ID)
+					.getId();
 		return desc.getId();
 	}
 

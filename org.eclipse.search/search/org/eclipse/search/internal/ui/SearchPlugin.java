@@ -42,6 +42,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 import org.eclipse.search.internal.core.text.TextSearchEngineRegistry;
@@ -113,7 +114,7 @@ public class SearchPlugin extends AbstractUIPlugin {
 	 * @return returns <code>null</code> if the active window is not a workbench window
 	 */
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
-		IWorkbenchWindow window= fgSearchPlugin.getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (window == null) {
 			final WindowRef windowRef= new WindowRef();
 			Display.getDefault().syncExec(() -> setActiveWorkbenchWindow(windowRef));

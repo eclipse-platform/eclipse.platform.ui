@@ -32,6 +32,8 @@ import org.eclipse.jface.text.Position;
 import org.eclipse.jface.text.source.Annotation;
 import org.eclipse.jface.text.source.IAnnotationModel;
 
+import org.eclipse.ui.PlatformUI;
+
 import org.eclipse.ui.texteditor.AnnotationTypeLookup;
 import org.eclipse.ui.texteditor.ITextEditor;
 
@@ -116,7 +118,7 @@ public class AnnotationManagerTest {
 		NewSearchUI.runQueryInForeground(null, fQuery1);
 		FileSearchResult result= (FileSearchResult) fQuery1.getSearchResult();
 		IFile file= (IFile) result.getElements()[0];
-		SearchTestPlugin.openTextEditor(SearchTestPlugin.getDefault().getWorkbench().getWorkbenchWindows()[0].getPages()[0], file);
+		SearchTestPlugin.openTextEditor(PlatformUI.getWorkbench().getWorkbenchWindows()[0].getPages()[0], file);
 		result.addMatch(new FileMatch(file));
 	}
 
