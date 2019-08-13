@@ -8,7 +8,8 @@ Bundle-Vendor: %provider-name
 Require-Bundle: org.eclipse.core.runtime;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.core.filesystem;bundle-version="[1.1.0,2.0.0)";resolution:=optional,
  org.eclipse.ui;bundle-version="[3.3.0,4.0.0)",
- org.eclipse.ui.ide;bundle-version="[3.3.0,4.0.0)";resolution:=optional
+ org.eclipse.ui.ide;bundle-version="[3.3.0,4.0.0)";resolution:=optional,
+ org.eclipse.e4.ui.dialogs;bundle-version="1.1.600"
 Import-Package: com.ibm.icu.text
 Eclipse-LazyStart: true
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
