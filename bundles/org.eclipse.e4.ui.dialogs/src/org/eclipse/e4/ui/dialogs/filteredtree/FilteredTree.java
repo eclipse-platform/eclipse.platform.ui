@@ -260,6 +260,7 @@ public class FilteredTree extends Composite {
 	 */
 	protected Control createTreeControl(Composite parent, int style) {
 		treeViewer = doCreateTreeViewer(parent, style);
+		treeViewer.setUseHashlookup(true);
 		GridData data = new GridData(SWT.FILL, SWT.FILL, true, true);
 		treeViewer.getControl().setLayoutData(data);
 		treeViewer.getControl().addDisposeListener(e -> refreshJob.cancel());
