@@ -30,7 +30,6 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.SerializationException;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
@@ -73,7 +72,7 @@ public class TestCommandExecution {
 	}
 
 	private ICommandService getService() {
-		IWorkbench wb =UserAssistanceTestPlugin.getDefault().getWorkbench(); //.getCommandSupport();
+		IWorkbench wb = PlatformUI.getWorkbench();
 		Object serviceObject = wb.getAdapter(ICommandService.class);
 		if (serviceObject != null) {
 			ICommandService service = (ICommandService)serviceObject;

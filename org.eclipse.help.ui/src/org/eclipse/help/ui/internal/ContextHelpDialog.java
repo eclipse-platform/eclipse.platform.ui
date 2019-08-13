@@ -332,7 +332,7 @@ public class ContextHelpDialog {
 		}
 
 		// create dynamic help link if current context allows dynamic help
-		IWorkbenchWindow wbWindow = HelpUIPlugin.getDefault().getWorkbench().getActiveWorkbenchWindow();
+		IWorkbenchWindow wbWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		if (DefaultHelpUI.isActiveShell(parentShell, wbWindow) || HelpTray.isAppropriateFor(parentShell)) {
 			// Create separator.
 			label = new Label(composite, SWT.SEPARATOR | SWT.HORIZONTAL);

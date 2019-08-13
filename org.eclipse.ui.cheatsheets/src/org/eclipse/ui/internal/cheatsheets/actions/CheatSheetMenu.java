@@ -27,6 +27,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.cheatsheets.OpenCheatSheetAction;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetHistory;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
@@ -181,7 +182,7 @@ public class CheatSheetMenu extends ContributionItem {
 	 * @return IWorkbenchPage
 	 */
 	private IWorkbenchPage getActiveWorkbenchPage() {
-		IWorkbench workbench = CheatSheetPlugin.getPlugin().getWorkbench();
+		IWorkbench workbench = PlatformUI.getWorkbench();
 		IWorkbenchWindow window = workbench.getActiveWorkbenchWindow();
 
 		//get the active cheatsheet view, if opened

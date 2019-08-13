@@ -94,7 +94,7 @@ public class IntroPlugin extends AbstractUIPlugin {
 			launchBar.close();
 			launchBar = null;
 		}
-		IntroLaunchBar.destroyAll(getWorkbench());
+		IntroLaunchBar.destroyAll(PlatformUI.getWorkbench());
 	}
 
 	public void setLaunchBar(IntroLaunchBar launchBar) {
