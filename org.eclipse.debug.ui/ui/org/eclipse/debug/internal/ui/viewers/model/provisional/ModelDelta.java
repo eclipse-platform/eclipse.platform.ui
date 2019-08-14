@@ -292,14 +292,14 @@ public class ModelDelta implements IModelDelta {
 
 	@Override
 	public String toString() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append("Model Delta Start\n"); //$NON-NLS-1$
 		appendDetail("  ", buf, this); //$NON-NLS-1$
 		buf.append("Model Delta End\n"); //$NON-NLS-1$
 		return buf.toString();
 	}
 
-	private void appendDetail(String indent, StringBuffer buf, IModelDelta delta) {
+	private void appendDetail(String indent, StringBuilder buf, IModelDelta delta) {
 		buf.append(indent);
 		buf.append("Element: "); //$NON-NLS-1$
 		buf.append(delta.getElement());

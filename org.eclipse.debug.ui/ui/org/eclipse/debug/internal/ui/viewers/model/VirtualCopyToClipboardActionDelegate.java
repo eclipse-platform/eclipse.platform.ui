@@ -140,7 +140,7 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 	 * @param buffer String buffer for copy text.
 	 * @param indent Current indentation in tree text.
 	 */
-	protected void append(VirtualItem item, StringBuffer buffer, int indent) {
+	protected void append(VirtualItem item, StringBuilder buffer, int indent) {
 		for (int i= 0; i < indent; i++) {
 			buffer.append(TAB);
 		}
@@ -302,12 +302,12 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 	}
 
 	private void copySelectionToClipboard(VirtualTreeModelViewer virtualViewer, Set<VirtualItem> itemsToCopy, int selectionRootDepth) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		writeItemToBuffer (virtualViewer.getTree(), itemsToCopy, buffer, -selectionRootDepth);
 		writeBufferToClipboard(buffer);
 	}
 
-	protected void writeItemToBuffer(VirtualItem item, Set<VirtualItem> itemsToCopy, StringBuffer buffer, int indent) {
+	protected void writeItemToBuffer(VirtualItem item, Set<VirtualItem> itemsToCopy, StringBuilder buffer, int indent) {
 		if (itemsToCopy.contains(item)) {
 			append(item, buffer, indent);
 		}
@@ -319,7 +319,7 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 		}
 	}
 
-	protected void writeBufferToClipboard(StringBuffer buffer) {
+	protected void writeBufferToClipboard(StringBuilder buffer) {
 		if (buffer.length() == 0) {
 			return;
 		}

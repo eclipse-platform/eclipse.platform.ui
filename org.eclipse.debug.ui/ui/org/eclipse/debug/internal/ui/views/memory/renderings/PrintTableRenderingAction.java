@@ -148,7 +148,7 @@ public class PrintTableRenderingAction extends Action
 		//get the column headers
 		for (int k=0; k < numColumns; k++) {
 
-			StringBuffer columnLabel = new StringBuffer(columns[k].getText());
+			StringBuilder columnLabel = new StringBuilder(columns[k].getText());
 			int numBytes = 0;
 
 			if (k > 0)

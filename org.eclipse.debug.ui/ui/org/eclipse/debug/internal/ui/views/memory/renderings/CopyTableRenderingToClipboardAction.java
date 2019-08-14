@@ -86,7 +86,7 @@ public class CopyTableRenderingToClipboardAction extends Action
 		//get the column headers and line them up properly
 		for (int k=0; k < numColumns; k++) {
 
-			StringBuffer columnLabel = new StringBuffer(columns[k].getText());
+			StringBuilder columnLabel = new StringBuilder(columns[k].getText());
 			int numBytes = 0;
 			int numChars = 0;
 
@@ -136,14 +136,14 @@ public class CopyTableRenderingToClipboardAction extends Action
 		}
 
 		tableContents.append(System.getProperty("line.separator")); //$NON-NLS-1$
-		StringBuffer temp;
+		StringBuilder temp;
 
 		//get the column contents from all the rows
 		for (int i=0; i < itemList.length; i++) {
 			for (int j=0; j < numColumns; j++) {
 				tableContents.append(COLUMN_SEPERATOR);
 
-				temp = new StringBuffer(labelProvider.getColumnText(itemList[i].getData(), j));
+				temp = new StringBuilder(labelProvider.getColumnText(itemList[i].getData(), j));
 
 				if (j>0)
 				{

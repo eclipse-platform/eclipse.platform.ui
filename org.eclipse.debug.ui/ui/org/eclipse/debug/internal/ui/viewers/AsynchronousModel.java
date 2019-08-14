@@ -615,7 +615,7 @@ public abstract class AsynchronousModel {
 
 	@Override
 	public String toString() {
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		if (fRoot != null) {
 			buf.append("ROOT: "); //$NON-NLS-1$
 			append(buf, fRoot, 0);
@@ -625,7 +625,7 @@ public abstract class AsynchronousModel {
 		return buf.toString();
 	}
 
-	private void append(StringBuffer buf, ModelNode node, int level) {
+	private void append(StringBuilder buf, ModelNode node, int level) {
 		for (int i = 0; i < level; i++) {
 			buf.append('\t');
 		}

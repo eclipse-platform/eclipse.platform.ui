@@ -84,7 +84,7 @@ public class TableRenderingLine extends PlatformObject {
 	{
 		if (fStrRep == null)
 		{
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			fStrRep = RenderingsUtil.convertByteArrayToHexString(getByteArray());
 			fStrRep = fStrRep.toUpperCase();
 

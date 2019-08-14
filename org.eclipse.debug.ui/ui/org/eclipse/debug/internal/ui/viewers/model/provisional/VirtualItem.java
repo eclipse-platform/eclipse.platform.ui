@@ -530,12 +530,12 @@ public class VirtualItem {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		toStringItem(buffer, IInternalDebugCoreConstants.EMPTY_STRING);
 		return buffer.toString();
 	}
 
-	void toStringItem(StringBuffer buffer, String indent) {
+	void toStringItem(StringBuilder buffer, String indent) {
 		buffer.append(indent);
 		buffer.append(toStringElement());
 		buffer.append("\n"); //$NON-NLS-1$
