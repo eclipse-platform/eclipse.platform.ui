@@ -608,7 +608,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		Composite labels = new Composite(parent, SWT.NONE);
 
 		GridLayout layout = new GridLayout();
-		layout.numColumns = 3;
+		layout.numColumns = 2;
 		layout.marginWidth = 0;
 		layout.marginHeight = 0;
 		labels.setLayout(layout);
@@ -630,6 +630,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		listLabel.setLayoutData(gd);
 
 		progressLabel = new Label(labels, SWT.RIGHT);
+		gd = new GridData(GridData.FILL_HORIZONTAL);
 		progressLabel.setLayoutData(gd);
 		createButton(labels, REFRESH_BUTTON_ID, Messages.QuickSearchDialog_Refresh, false);
 
