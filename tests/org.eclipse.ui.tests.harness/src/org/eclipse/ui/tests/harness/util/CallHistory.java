@@ -111,6 +111,20 @@ public class CallHistory {
 	}
 
 	/**
+	 * Returns whether a list of methods have been called in order.
+	 *
+	 * @param testNames an array of the method names in the order they are expected
+	 * @return same list if the methods were called in order, or actual one
+	 *         otherwise
+	 */
+	public String[] verifyAndReturnOrder(String[] testNames) throws IllegalArgumentException {
+		if (verifyOrder(testNames)) {
+			return testNames;
+		}
+		return methodList.toArray(new String[0]);
+	}
+
+	/**
 	 * Returns whether a method has been called.
 	 *
 	 * @param methodName a method name

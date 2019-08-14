@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import java.util.Arrays;
+
 import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.tests.harness.util.ActionUtil;
@@ -29,17 +31,28 @@ public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
 		super(testName);
 	}
 
-	public void testInit() throws Throwable {
+	@Override
+	public void testRun() throws Throwable {
 		// Run the action.
-		testRun();
+		super.testRun();
 
 		// Verify lifecycle.
 		// The init, selectionChanged, and run methods should
 		// be called, in that order.
 		MockActionDelegate delegate = getDelegate();
 		assertNotNull(delegate);
-		assertTrue(delegate.callHistory.verifyOrder(new String[] { "init",
-				"selectionChanged", "run" }));
+		String[] testNames = new String[] { "init", "selectionChanged", "run" };
+		assertEquals(Arrays.toString(testNames), Arrays.toString(delegate.callHistory.verifyAndReturnOrder(testNames)));
+	}
+
+	/**
+	 * Returns the last mock action delegate which was created.
+	 */
+	@Override
+	protected MockActionDelegate getDelegate() throws Throwable {
+		MockActionDelegate delegate = MockWorkbenchWindowActionDelegate.lastDelegate;
+		assertNotNull(delegate);
+		return delegate;
 	}
 
 	// Bug 48799.  Commented out testDispose to avoid a test failure.  This should be a temporary solution.

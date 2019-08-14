@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import java.util.Arrays;
+
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.UITestCase;
@@ -49,8 +51,9 @@ public abstract class IActionDelegateTest extends UITestCase {
 		runAction(obj);
 		MockActionDelegate delegate = getDelegate();
 		assertNotNull(delegate);
-		assertTrue(delegate.callHistory.verifyOrder(new String[] {
-				"selectionChanged", "run" }));
+		String[] testNames = new String[] { "selectionChanged", "run" };
+		assertEquals(Arrays.toString(testNames),
+				Arrays.toString(delegate.callHistory.verifyAndReturnOrder(testNames)));
 	}
 
 	public void testSelectionChanged() throws Throwable {

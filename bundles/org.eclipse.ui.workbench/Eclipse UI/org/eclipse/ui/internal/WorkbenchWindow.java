@@ -187,6 +187,7 @@ import org.eclipse.ui.internal.menus.SlaveMenuService;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.progress.ProgressRegion;
 import org.eclipse.ui.internal.provisional.application.IActionBarConfigurer2;
+import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.UIExtensionTracker;
@@ -872,6 +873,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			partService.setPage(page);
 			page.setPerspective(perspective);
 			firePageActivated();
+
+			// Populate all legacy actionsets into the model, see Bug 549898
+			ActionSetRegistry registry = application.getContext().get(ActionSetRegistry.class);
+			getActionPresentation().setActionSets(registry.getActionSets());
 
 			if (newWindow) {
 				page.fireInitialPartVisibilityEvents();

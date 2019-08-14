@@ -1533,20 +1533,8 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		engine.createGui(customizeActionBars.mainMenu, customizeActionBars.windowModel.getWidget(),
 				customizeActionBars.windowModel.getContext());
 
-		MTrimBar topTrim = customizeActionBars.coolBarManager.getTopTrim();
-		topTrim.setToBeRendered(true);
-
-		// Get the menu from the action bars
-		engine.createGui(topTrim, customizeActionBars.windowModel.getWidget(),
-				customizeActionBars.windowModel.getContext());
-
-		// Ensure the menu is completely built by updating the menu manager.
-		// (This method call requires a menu already be created)
-		customizeActionBars.menuManager.updateAll(true);
-		customizeActionBars.coolBarManager.update(true);
-
 		shortcuts = new Category(""); //$NON-NLS-1$
-		toolBarItems = createTrimBarEntries(topTrim);
+		toolBarItems = createTrimBarEntries(window.getTopTrim());
 		menuItems = createMenuStructure(customizeActionBars.mainMenu);
 	}
 
@@ -1961,7 +1949,6 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 			MToolBar toolBar = (MToolBar) trimElement;
 			ToolBarManager manager = toolbarMngrRenderer.getManager(toolBar);
 			if (manager != null) {
-				toolbarMngrRenderer.reconcileManagerToModel(manager, toolBar);
 				IContributionItem contributionItem = (IContributionItem) toolBar.getTransientData()
 						.get(CoolBarToTrimManager.OBJECT);
 				String text = getToolbarLabel(toolBar);
