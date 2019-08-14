@@ -16,15 +16,14 @@ import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.text.quicksearch.internal.ui.messages"; //$NON-NLS-1$
-	public static String QuickSearchPreferencesPage_0;
-	public static String QuickSearchPreferencesPage_1;
-	public static String QuickSearchPreferencesPage_2;
-	public static String QuickSearchPreferencesPage_3;
-	public static String QuickSearchPreferencesPage_4;
-	public static String QuickSearchPreferencesPage_5;
-	public static String QuickSearchPreferencesPage_6;
-	public static String QuickSearchPreferencesPage_7;
-	public static String QuickSearchPreferencesPage_8;
+	public static String QuickSearchPreferencesPage_Tooltip_Extensions;
+	public static String QuickSearchPreferencesPage_Tooltip_Prefixes;
+	public static String QuickSearchPreferencesPage_Tooltip_Names;
+	public static String QuickSearchPreferencesPage_MaxLineLength;
+	public static String QuickSearchPreferencesPage_Tooltip_MaxLineLength;
+	public static String QuickSearchPreferencesPage_Ignored_Extensions;
+	public static String QuickSearchPreferencesPage_Ignored_Prefixes;
+	public static String QuickSearchPreferencesPage_Ignored_Names;
 	public static String QuickSearchDialog_Open;
 	public static String QuickSearchDialog_Refresh;
 	public static String QuickSearchDialog_In;
