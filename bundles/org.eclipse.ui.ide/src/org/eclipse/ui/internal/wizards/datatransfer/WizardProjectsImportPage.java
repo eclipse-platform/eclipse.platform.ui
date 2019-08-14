@@ -550,6 +550,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 				| GridData.GRAB_VERTICAL | GridData.FILL_BOTH));
 
 		projectsList = new CheckboxTreeViewer(listComposite, SWT.BORDER);
+		projectsList.setUseHashlookup(true);
 		GridData gridData = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gridData.widthHint = new PixelConverter(projectsList.getControl()).convertWidthInCharsToPixels(25);
 		gridData.heightHint = new PixelConverter(projectsList.getControl()).convertHeightInCharsToPixels(10);

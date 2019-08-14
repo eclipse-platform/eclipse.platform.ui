@@ -1751,7 +1751,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 
 	/**
 	 * Configures whether this structured viewer uses an internal hash table to
-	 * speeds up the mapping between elements and SWT items. This must be called
+	 * speed up the mapping between elements and SWT items. This must be called
 	 * before the viewer is given an input (via <code>setInput</code>).
 	 *
 	 * @param enable

@@ -554,7 +554,9 @@ public class SmartImportRootWizardPage extends WizardPage {
 		FilteredTree filterTree = new FilteredTree(res, SWT.BORDER | SWT.CHECK, patternFilter, true) {
 			@Override
 			public CheckboxTreeViewer doCreateTreeViewer(Composite treeParent, int style) {
-				return new CheckboxTreeViewer(treeParent, style);
+				CheckboxTreeViewer checkboxTreeViewer = new CheckboxTreeViewer(treeParent, style);
+				checkboxTreeViewer.setUseHashlookup(true);
+				return checkboxTreeViewer;
 			}
 		};
 		tree = (CheckboxTreeViewer) filterTree.getViewer();
