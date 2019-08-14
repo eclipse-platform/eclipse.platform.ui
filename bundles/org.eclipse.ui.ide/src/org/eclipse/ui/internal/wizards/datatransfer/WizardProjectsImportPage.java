@@ -388,6 +388,11 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 
 	private ConflictingProjectFilter conflictingProjectsFilter = new ConflictingProjectFilter();
 
+	/**
+	 * Prevent handling focus lost events during other events which trigger
+	 * directory searches. See bug 549966.
+	 */
+	private boolean isUpdatingProjectsList;
 
 	/**
 	 * Creates a new project creation wizard page.
@@ -479,9 +484,9 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			public void widgetSelected(SelectionEvent e) {
 				nestedProjects = nestedProjectsCheckbox.getSelection();
 				if (projectFromDirectoryRadio.getSelection()) {
-					updateProjectsList(directoryPathField.getText().trim(), true);
+					updateProjectsListAndPreventFocusLostHandling(directoryPathField.getText().trim(), true);
 				} else {
-					updateProjectsList(archivePathField.getText().trim(), true);
+					updateProjectsListAndPreventFocusLostHandling(archivePathField.getText().trim(), true);
 				}
 			}
 		});
@@ -650,9 +655,9 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				if (projectFromDirectoryRadio.getSelection()) {
-					updateProjectsList(directoryPathField.getText().trim(), true);
+					updateProjectsListAndPreventFocusLostHandling(directoryPathField.getText().trim(), true);
 				} else {
-					updateProjectsList(archivePathField.getText().trim(), true);
+					updateProjectsListAndPreventFocusLostHandling(archivePathField.getText().trim(), true);
 				}
 			}
 		});
@@ -740,7 +745,9 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 		directoryPathField.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(org.eclipse.swt.events.FocusEvent e) {
-				updateProjectsList(directoryPathField.getText().trim());
+				if (!isUpdatingProjectsList) {
+					updateProjectsList(directoryPathField.getText().trim());
+				}
 			}
 
 		});
@@ -762,7 +769,9 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 		archivePathField.addFocusListener(new FocusAdapter() {
 			@Override
 			public void focusLost(org.eclipse.swt.events.FocusEvent e) {
-				updateProjectsList(archivePathField.getText().trim());
+				if (!isUpdatingProjectsList) {
+					updateProjectsList(archivePathField.getText().trim());
+				}
 			}
 		});
 
@@ -851,7 +860,22 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 	 * @param path
 	 */
 	public void updateProjectsList(final String path) {
-		updateProjectsList(path, false);
+		updateProjectsListAndPreventFocusLostHandling(path, false);
+	}
+
+	/**
+	 * Calling {@link #updateProjectsList(String, boolean)} will cause a focus lost
+	 * event, if the directory or archive field is active. Handling that focus lost
+	 * event causes nested execution of the update method, leading to broken
+	 * behavior. See bug 549966.
+	 */
+	private void updateProjectsListAndPreventFocusLostHandling(final String path, boolean forceUpdate) {
+		isUpdatingProjectsList = true;
+		try {
+			updateProjectsList(path, forceUpdate);
+		} finally {
+			isUpdatingProjectsList = false;
+		}
 	}
 
 	private void updateProjectsList(final String path, boolean forceUpdate) {
@@ -874,8 +898,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 
 		// We can't access the radio button from the inner class so get the
 		// status beforehand
-		final boolean dirSelected = this.projectFromDirectoryRadio
-				.getSelection();
+		final boolean dirSelected = this.projectFromDirectoryRadio.getSelection();
 		try {
 			getContainer().run(true, true, monitor -> {
 
