@@ -119,7 +119,7 @@ public final class RefactoringHistoryImplementation extends RefactoringHistory {
 
 	@Override
 	public String toString() {
-		final StringBuffer buffer= new StringBuffer(256);
+		final StringBuilder buffer= new StringBuilder(256);
 		buffer.append(getClass().getName());
 		buffer.append("[descriptors="); //$NON-NLS-1$
 		buffer.append(getDescriptors().toString());

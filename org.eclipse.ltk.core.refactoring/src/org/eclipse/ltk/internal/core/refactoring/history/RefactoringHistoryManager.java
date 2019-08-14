@@ -157,7 +157,7 @@ public final class RefactoringHistoryManager {
 	public static String escapeString(final String string) {
 		if (string.indexOf(DELIMITER_COMPONENT) < 0) {
 			final int length= string.length();
-			final StringBuffer buffer= new StringBuffer(length + 16);
+			final StringBuilder buffer= new StringBuilder(length + 16);
 			for (int index= 0; index < length; index++) {
 				final char character= string.charAt(index);
 				if (DELIMITER_COMPONENT == character)
@@ -445,7 +445,7 @@ public final class RefactoringHistoryManager {
 	 */
 	public static IPath stampToPath(final long stamp) {
 		fgCalendar.setTimeInMillis(stamp);
-		final StringBuffer buffer= new StringBuffer(256);
+		final StringBuilder buffer= new StringBuilder(256);
 		buffer.append(fgCalendar.get(Calendar.YEAR));
 		buffer.append(IPath.SEPARATOR);
 		buffer.append(fgCalendar.get(Calendar.MONTH) + 1);
@@ -500,7 +500,7 @@ public final class RefactoringHistoryManager {
 	public static String unescapeString(final String string) {
 		if (string.indexOf(DELIMITER_COMPONENT) < 0) {
 			final int length= string.length();
-			final StringBuffer buffer= new StringBuffer(length);
+			final StringBuilder buffer= new StringBuilder(length);
 			for (int index= 0; index < length; index++) {
 				final char character= string.charAt(index);
 				if (DELIMITER_COMPONENT == character) {
@@ -566,7 +566,7 @@ public final class RefactoringHistoryManager {
 	 *             if an input/output error occurs
 	 */
 	public static void writeRefactoringDescriptorProxies(final OutputStream stream, final RefactoringDescriptorProxy[] proxies) throws IOException {
-		final StringBuffer buffer= new StringBuffer(proxies.length * 64);
+		final StringBuilder buffer= new StringBuilder(proxies.length * 64);
 		sortRefactoringDescriptorsAscending(proxies);
 		for (int index= 0; index < proxies.length; index++) {
 			buffer.append(proxies[index].getTimeStamp());
@@ -659,7 +659,7 @@ public final class RefactoringHistoryManager {
 			print(sb.toString());
 	}
 
-		private static void appendEscapedChar(StringBuffer buffer, char c) {
+		private static void appendEscapedChar(StringBuilder buffer, char c) {
 			String replacement= getReplacement(c);
 			if (replacement != null) {
 				buffer.append('&');
@@ -671,7 +671,7 @@ public final class RefactoringHistoryManager {
 		}
 
 		private static String getEscaped(String s) {
-			StringBuffer result= new StringBuffer(s.length() + 10);
+			StringBuilder result= new StringBuilder(s.length() + 10);
 			for (int i= 0; i < s.length(); ++i) {
 				appendEscapedChar(result, s.charAt(i));
 			}
