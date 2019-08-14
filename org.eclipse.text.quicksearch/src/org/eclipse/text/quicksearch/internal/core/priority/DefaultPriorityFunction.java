@@ -43,10 +43,9 @@ public class DefaultPriorityFunction extends PriorityFunction {
 	 * be ignored.
 	 */
 	public String[] ignoredExtensions = {
-		".class", ".gif", ".exe", ".png", ".jpg", ".zip", ".jar", ".svg", ".psd", "~",
-		".CLASS", ".GIF", ".EXE", ".PNG", ".JPG", ".ZIP", ".JAR", ".SVG", ".PSD",
-		".pdf", ".p12", ".odt", ".odp", ".doc", ".pptx", ".ppt", ".bin", ".docx", ".xls", ".xlsx",
-		".PDF", ".P12", ".ODT", ".ODP", ".DOC", ".PPTX", ".PPT", ".BIN", ".DOCX", ".XLS", ".XLSX"
+			"~", ".bin", ".bmp", ".class", ".com", ".doc", ".docx", ".exe", ".gif",
+			".jar", ".jpg", ".jpeg", ".odp", ".odt", ".p12", ".pdf", ".png",
+			".ppt", ".pptx", ".psd", ".svg", ".xls", ".xlsx", ".zip"
 	};
 
 	/**
@@ -62,7 +61,7 @@ public class DefaultPriorityFunction extends PriorityFunction {
 	 * Strings to be ignored.
 	 */
 	public String[] ignoredNames = {
-		"bin", "target", "build"
+		"bin", "build", "target"
 	};
 
 	public Set<IResource> ignoredResources = null;
@@ -78,7 +77,7 @@ public class DefaultPriorityFunction extends PriorityFunction {
 			}
 			String name = r.getName();
 			for (String ext : ignoredExtensions) {
-				if (name.endsWith(ext)) {
+				if (name.regionMatches(true, name.length() - ext.length(), ext, 0, ext.length())) {
 					return PRIORITY_IGNORE;
 				}
 			}
@@ -98,7 +97,7 @@ public class DefaultPriorityFunction extends PriorityFunction {
 	}
 
 	/**
-	 * Initialise some configurable settings from an instance of QuickSearchPreferences
+	 * Initialize some configurable settings from an instance of QuickSearchPreferences
 	 */
 	public void configure(QuickSearchPreferences preferences) {
 		String[] pref = preferences.getIgnoredExtensions();
