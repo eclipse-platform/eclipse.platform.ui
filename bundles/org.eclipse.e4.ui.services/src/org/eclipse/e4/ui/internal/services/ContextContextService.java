@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -25,8 +25,7 @@ import org.eclipse.e4.ui.services.IServiceConstants;
 
 public class ContextContextService implements EContextService {
 	static final String LOCAL_CONTEXTS = "localContexts";
-	static final String DEFERED_ACTIVATES = "localContexts.activates";
-	static final String DEFERED_DEACTIVATES = "localContexts.deactivates";
+	static final String DEFERRED_UPDATES = "localContexts.updates";
 
 	private IEclipseContext eclipseContext;
 	private ContextManager contextManager;
@@ -92,12 +91,12 @@ public class ContextContextService implements EContextService {
 
 	private void deferActivateContext(String id) {
 		@SuppressWarnings("unchecked")
-		LinkedList<String> locals = (LinkedList<String>) eclipseContext.getLocal(DEFERED_ACTIVATES);
+		LinkedList<String> locals = (LinkedList<String>) eclipseContext.getLocal(DEFERRED_UPDATES);
 		if (locals == null) {
 			locals = new LinkedList<>();
-			eclipseContext.set(DEFERED_ACTIVATES, locals);
+			eclipseContext.set(DEFERRED_UPDATES, locals);
 		}
-		locals.add(id);
+		locals.add("+" + id);
 	}
 
 	private void setEventCaching(boolean cache) {
@@ -113,17 +112,16 @@ public class ContextContextService implements EContextService {
 			locals = new LinkedList<>();
 		}
 		@SuppressWarnings("unchecked")
-		LinkedList<String> activates = (LinkedList<String>) eclipseContext.getLocal(DEFERED_ACTIVATES);
-		if (activates != null) {
-			eclipseContext.remove(DEFERED_ACTIVATES);
-			locals.addAll(activates);
-		}
-		LinkedList<?> deactivates = (LinkedList<?>) eclipseContext.getLocal(DEFERED_DEACTIVATES);
-		if (deactivates != null) {
-			eclipseContext.remove(DEFERED_DEACTIVATES);
-			for (Object id : deactivates) {
-				locals.remove(id);
+		LinkedList<String> updates = (LinkedList<String>) eclipseContext.getLocal(DEFERRED_UPDATES);
+		if (updates != null) {
+			for (String update : updates) {
+				if (update.startsWith("+")) {
+					locals.add(update.substring(1));
+				} else if (update.startsWith("-")) {
+					locals.remove(update.substring(1));
+				}
 			}
+			eclipseContext.remove(DEFERRED_UPDATES);
 		}
 		eclipseContext.set(LOCAL_CONTEXTS, locals.clone());
 	}
@@ -146,12 +144,12 @@ public class ContextContextService implements EContextService {
 
 	private void deferDeactivateContext(String id) {
 		@SuppressWarnings("unchecked")
-		LinkedList<String> locals = (LinkedList<String>) eclipseContext.getLocal(DEFERED_DEACTIVATES);
+		LinkedList<String> locals = (LinkedList<String>) eclipseContext.getLocal(DEFERRED_UPDATES);
 		if (locals == null) {
 			locals = new LinkedList<>();
-			eclipseContext.set(DEFERED_DEACTIVATES, locals);
+			eclipseContext.set(DEFERRED_UPDATES, locals);
 		}
-		locals.add(id);
+		locals.add("-" + id);
 	}
 
 	@Override
