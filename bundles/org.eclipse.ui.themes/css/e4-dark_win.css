@@ -206,11 +206,17 @@ StatusLine, ImageBasedFrame{
 .MPart Form Section,
 .MPart Form Label,
 .MPart Form FormText,
+.MPartStack .MPart Form MasterDetailsBlock-MDSashForm,
+.MPartStack .MPart Form SashForm,
+.MPartStack .MPart Form Sash,
 .MPart Form Button[style~='SWT.CHECK'],
 .MPart Form Button[style~='SWT.RADIO'],
 .MPartStack.active .MPart Form Section,
 .MPartStack.active .MPart Form Label,
 .MPartStack.active .MPart Form FormText,
+.MPartStack.active .MPart Form MasterDetailsBlock-MDSashForm,
+.MPartStack.active .MPart Form SashForm,
+.MPartStack.active .MPart Form Sash,
 .MPartStack.active .MPart Form Button[style~='SWT.CHECK'],
 .MPartStack.active .MPart Form Button[style~='SWT.RADIO']
 {
@@ -222,11 +228,9 @@ StatusLine, ImageBasedFrame{
    the font of some widgets is hard-coded to be black on Window */
 
 .MPart Form,
-.MPart Form Sash,
 .MPart Form Link,
 .MPart Form Button,
 .MPart Form Group,
-.MPart Form SashForm,
 .MPart Form LayoutComposite,
 .MPart Form ScrolledPageBook,
 .MPart Form DependenciesComposite,
@@ -236,11 +240,9 @@ StatusLine, ImageBasedFrame{
 .MPart Form DependenciesComposite > SashForm > Section > *, /* Section > DependenciesComposite$... */
 .MPart LayoutComposite > * > LayoutComposite > Section > LayoutComposite > *, /*LayoutComposite > MasterDetailBlock$... > LayoutComposite > Section > LayoutComposite > ExtensionsSection$...*/
 .MPartStack.active .MPart Form,
-.MPartStack.active .MPart Form Sash,
 .MPartStack.active .MPart Form Link,
 .MPartStack.active .MPart Form Button,
 .MPartStack.active .MPart Form Group,
-.MPartStack.active .MPart Form SashForm,
 .MPartStack.active .MPart Form LayoutComposite,
 .MPartStack.active .MPart Form ScrolledPageBook,
 .MPartStack.active .MPart Form DependenciesComposite,
