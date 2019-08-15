@@ -17,11 +17,11 @@
    <extension
          point="org.eclipse.ui.commands">
       <category
-            name="Quick Search Category"
+            name="Quick Search"
             id="org.eclipse.text.quicksearch.commands.category">
       </category>
       <command
-            name="Quick Search Command"
+            name="Quick Search"
             categoryId="org.eclipse.text.quicksearch.commands.category"
             id="org.eclipse.text.quicksearch.commands.quicksearchCommand">
       </command>
@@ -36,7 +36,7 @@
          point="org.eclipse.ui.actionSets">
          
       <actionSet
-            label="Quick Search ActionSet"
+            label="Quick Search"
             visible="true"
             id="org.eclipse.text.quicksearch.actionSet">
             
@@ -65,9 +65,9 @@
                id="org.eclipse.text.quicksearch.commands.quicksearchAction"
                class="org.eclipse.text.quicksearch.internal.ui.QuickSearchAction"
                definitionId="org.eclipse.text.quicksearch.commands.quicksearchCommand"
-               label="Quick Search"
+               label="Quick Search..."
                menubarPath="org.eclipse.search.menu/extraSearchGroup"
-               tooltip="Search for Text pattern in the workspace">
+               tooltip="Search for a text pattern in the workspace">
          </action>
       </actionSet>
    </extension>

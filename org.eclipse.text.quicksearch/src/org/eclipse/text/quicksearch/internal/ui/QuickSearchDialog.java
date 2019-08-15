@@ -391,7 +391,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		this.window = window;
 		setShellStyle(SWT.CLOSE | SWT.MODELESS | SWT.BORDER | SWT.TITLE | SWT.RESIZE);
 		setBlockOnOpen(false);
-		this.setTitle("Quick Text Search");
+		this.setTitle("Quick Search");
 		this.context = new QuickSearchContext(window);
 		this.multi = false;
 		contentProvider = new ContentProvider();
