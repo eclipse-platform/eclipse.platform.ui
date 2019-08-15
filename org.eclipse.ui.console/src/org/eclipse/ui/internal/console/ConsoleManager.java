@@ -338,16 +338,20 @@ public class ConsoleManager implements IConsoleManager {
 	}
 
 	/**
-	 * Returns whether the given console view should be brought to the top.
-	 * The view should not be brought to the top if the view is pinned on
-	 * a console other than the given console.
+	 * Returns whether the given console view should be brought to the top. The view
+	 * should not be brought to the top if the view is pinned on a console other
+	 * than the given console.
+	 *
+	 * @param console     the console to be shown in the view
+	 * @param consoleView the view which should be brought to the top
+	 * @return whether the given console view should be brought to the top
 	 */
 	private boolean shouldBringToTop(IConsole console, IViewPart consoleView) {
-		boolean bringToTop= true;
+		boolean bringToTop = true;
 		if (consoleView instanceof IConsoleView) {
-			IConsoleView cView= (IConsoleView)consoleView;
+			IConsoleView cView = (IConsoleView) consoleView;
 			if (cView.isPinned()) {
-				IConsole pinnedConsole= cView.getConsole();
+				IConsole pinnedConsole = cView.getConsole();
 				bringToTop = console.equals(pinnedConsole);
 			}
 		}

@@ -56,6 +56,8 @@ public class ConsolePlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the singleton instance of the console plug-in.
+	 *
+	 * @return the singleton instance of this console plug-in
 	 */
 	public static ConsolePlugin getDefault() {
 		return fgPlugin;
@@ -68,6 +70,8 @@ public class ConsolePlugin extends AbstractUIPlugin {
 
 	/**
 	 * Convenience method which returns the unique identifier of this plug-in.
+	 *
+	 * @return this plug-in's unique identifier
 	 */
 	public static String getUniqueIdentifier() {
 		return PI_UI_CONSOLE;
@@ -120,6 +124,8 @@ public class ConsolePlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the workbench display.
+	 *
+	 * @return the workbench display
 	 */
 	public static Display getStandardDisplay() {
 		return PlatformUI.getWorkbench().getDisplay();
@@ -127,6 +133,11 @@ public class ConsolePlugin extends AbstractUIPlugin {
 
 	/**
 	 * Utility method with conventions
+	 *
+	 * @param shell   the parent shell for the dialog
+	 * @param title   dialog title
+	 * @param message dialog message
+	 * @param t       error to show in dialog
 	 */
 	public static void errorDialog(Shell shell, String title, String message, Throwable t) {
 		IStatus status;
@@ -146,11 +157,12 @@ public class ConsolePlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Returns the <code>Image</code> identified by the given key,
-	 * or <code>null</code> if it does not exist.
+	 * Returns the <code>Image</code> identified by the given key, or
+	 * <code>null</code> if it does not exist.
 	 *
-	 * @return the <code>Image</code> identified by the given key,
-	 * or <code>null</code> if it does not exist
+	 * @param key the image's key
+	 * @return the <code>Image</code> identified by the given key, or
+	 *         <code>null</code> if it does not exist
 	 * @since 3.1
 	 */
 	public static Image getImage(String key) {
@@ -158,11 +170,12 @@ public class ConsolePlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Returns the <code>ImageDescriptor</code> identified by the given key,
-	 * or <code>null</code> if it does not exist.
+	 * Returns the <code>ImageDescriptor</code> identified by the given key, or
+	 * <code>null</code> if it does not exist.
 	 *
-	 * @return the <code>ImageDescriptor</code> identified by the given key,
-	 * or <code>null</code> if it does not exist
+	 * @param key the image's key
+	 * @return the <code>ImageDescriptor</code> identified by the given key, or
+	 *         <code>null</code> if it does not exist
 	 * @since 3.1
 	 */
 	public static ImageDescriptor getImageDescriptor(String key) {

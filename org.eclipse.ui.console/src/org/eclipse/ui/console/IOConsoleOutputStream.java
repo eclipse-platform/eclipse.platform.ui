@@ -79,6 +79,7 @@ public class IOConsoleOutputStream extends OutputStream {
 	 * Constructs a new output stream on the given console.
 	 *
 	 * @param console I/O console
+	 * @param charset the encoding used to write to console
 	 */
 	IOConsoleOutputStream(IOConsole console, Charset charset) {
 		this.decoder = new StreamDecoder(charset);

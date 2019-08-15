@@ -64,7 +64,10 @@ public class TextViewerGotoLineAction extends TextViewerAction {
 	protected ITextViewer fTextViewer;
 
 	/**
-	 * Constructs a goto line action for the viewer using the provided resource bundle
+	 * Constructs a goto line action for the viewer using the provided resource
+	 * bundle.
+	 * 
+	 * @param viewer the viewer to jump in
 	 */
 	public TextViewerGotoLineAction(ITextViewer viewer) {
 		super(viewer, -1);
@@ -83,6 +86,8 @@ public class TextViewerGotoLineAction extends TextViewerAction {
 
 	/**
 	 * Jumps to the line.
+	 *
+	 * @param line the target line. First line is line <code>0</code>.
 	 */
 	protected void gotoLine(int line) {
 

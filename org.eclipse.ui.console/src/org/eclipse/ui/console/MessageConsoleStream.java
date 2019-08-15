@@ -43,7 +43,8 @@ public class MessageConsoleStream extends IOConsoleOutputStream {
 	private MessageConsole fMessageConsole;
 
 	/**
-	 * Constructs a new stream connected to the given console.
+	 * Constructs a new stream connected to the given console with workbench default
+	 * encoding.
 	 *
 	 * @param console the console to write messages to
 	 */
@@ -55,6 +56,7 @@ public class MessageConsoleStream extends IOConsoleOutputStream {
 	 * Constructs a new stream connected to the given console.
 	 *
 	 * @param console the console to write messages to
+	 * @param charset encoding used to write to console
 	 * @since 3.7
 	 */
 	public MessageConsoleStream(MessageConsole console, Charset charset) {

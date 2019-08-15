@@ -28,7 +28,9 @@ public class FollowHyperlinkAction extends Action {
 	private TextConsoleViewer viewer;
 
 	/**
-	 * Constructs a follow link action
+	 * Constructs a follow link action.
+	 * 
+	 * @param consoleViewer the viewer containing the link
 	 */
 	public FollowHyperlinkAction(TextConsoleViewer consoleViewer) {
 		super(ConsoleMessages.FollowHyperlinkAction_0);

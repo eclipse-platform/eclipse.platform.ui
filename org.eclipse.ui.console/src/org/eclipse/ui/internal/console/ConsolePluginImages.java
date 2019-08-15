@@ -98,6 +98,8 @@ public class ConsolePluginImages {
 
 	/**
 	 * Returns the ImageRegistry.
+	 *
+	 * @return the ImageRegistry
 	 */
 	public static ImageRegistry getImageRegistry() {
 		if (imageRegistry == null) {
@@ -107,11 +109,12 @@ public class ConsolePluginImages {
 	}
 
 	/**
-	 *	Initialize the image registry by declaring all of the required
-	 *	graphics. This involves creating JFace image descriptors describing
-	 *	how to create/find the image should it be needed.
-	 *	The image is not actually allocated until requested.
+	 * Initialize the image registry by declaring all of the required graphics. This
+	 * involves creating JFace image descriptors describing how to create/find the
+	 * image should it be needed. The image is not actually allocated until
+	 * requested.
 	 *
+	 * <pre>
 	 * 	Prefix conventions
 	 *		Wizard Banners			WIZBAN_
 	 *		Preference Banners		PREF_BAN_
@@ -132,25 +135,36 @@ public class ConsolePluginImages {
 	 *		This may mean the same package directory as the package holding this class.
 	 *		The images are declared using this.getClass() to ensure they are looked up via
 	 *		this plugin class.
-	 *	@see org.eclipse.jface.resource.ImageRegistry
+	 * </pre>
+	 *
+	 * @return the initialized ImageRegistry
+	 * @see org.eclipse.jface.resource.ImageRegistry
 	 */
 	public static ImageRegistry initializeImageRegistry() {
-		imageRegistry= new ImageRegistry(ConsolePlugin.getStandardDisplay());
+		imageRegistry = new ImageRegistry(ConsolePlugin.getStandardDisplay());
 		declareImages();
 		return imageRegistry;
 	}
 
 	/**
-	 * Returns the <code>Image<code> identified by the given key,
-	 * or <code>null</code> if it does not exist.
+	 * Returns the <code>Image</code> identified by the given key, or
+	 * <code>null</code> if it does not exist.
+	 *
+	 * @param key the image's key
+	 * @return the <code>Image</code> identified by the given key, or
+	 *         <code>null</code> if it does not exist
 	 */
 	public static Image getImage(String key) {
 		return getImageRegistry().get(key);
 	}
 
 	/**
-	 * Returns the <code>ImageDescriptor<code> identified by the given key,
-	 * or <code>null</code> if it does not exist.
+	 * Returns the <code>ImageDescriptor</code> identified by the given key, or
+	 * <code>null</code> if it does not exist.
+	 * 
+	 * @param key the image's key
+	 * @return the <code>ImageDescriptor</code> identified by the given key, or
+	 *         <code>null</code> if it does not exist
 	 */
 	public static ImageDescriptor getImageDescriptor(String key) {
 		return getImageRegistry().getDescriptor(key);
