@@ -621,7 +621,8 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 	 * @since 3.0
 	 */
 	protected TreeViewer createTreeViewer(Composite parent) {
-		final TreeViewer viewer = new TreeViewer(parent, SWT.NONE);
+		TreeViewer viewer = new TreeViewer(parent, SWT.NONE);
+		viewer.setUseHashlookup(true);
 		addListeners(viewer);
 		viewer.setLabelProvider(new PreferenceLabelProvider());
 		viewer.setContentProvider(new PreferenceContentProvider());

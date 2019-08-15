@@ -122,7 +122,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 		 * @param filter    the PatternFilter to use for the TreeViewer
 		 */
 		PreferenceFilteredTree(Composite parent, int treeStyle, PatternFilter filter) {
-			super(parent, treeStyle, filter, true);
+			super(parent, treeStyle, filter, true, true);
 		}
 
 		/**
