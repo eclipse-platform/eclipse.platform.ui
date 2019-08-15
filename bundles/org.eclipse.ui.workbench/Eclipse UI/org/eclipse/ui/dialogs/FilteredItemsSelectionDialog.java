@@ -162,7 +162,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 	private Text pattern;
 
-	private TableViewer list;
+	private TableViewer tableViewer;
 
 	private DetailsContentViewer details;
 
@@ -470,7 +470,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		listLabel.addTraverseListener(e -> {
 			if (e.detail == SWT.TRAVERSE_MNEMONIC && e.doit) {
 				e.detail = SWT.TRAVERSE_NONE;
-				list.getTable().setFocus();
+				tableViewer.getTable().setFocus();
 			}
 		});
 
@@ -548,7 +548,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 * @since 3.5
 	 */
 	protected void fillContextMenu(IMenuManager menuManager) {
-		List<?> selectedElements = list.getStructuredSelection().toList();
+		List<?> selectedElements = tableViewer.getStructuredSelection().toList();
 
 		Object item = null;
 
@@ -576,7 +576,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		contextMenuManager.setRemoveAllWhenShown(true);
 		contextMenuManager.addMenuListener(manager -> fillContextMenu(manager));
 
-		final Table table = list.getTable();
+		final Table table = tableViewer.getTable();
 		Menu menu = contextMenuManager.createContextMenu(table);
 		table.setMenu(menu);
 	}
@@ -617,8 +617,8 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 		final Label listLabel = createLabels(content);
 
-		list = new TableViewer(content, (multi ? SWT.MULTI : SWT.SINGLE) | SWT.BORDER | SWT.V_SCROLL | SWT.VIRTUAL);
-		list.getTable().getAccessible().addAccessibleListener(new AccessibleAdapter() {
+		tableViewer = new TableViewer(content, (multi ? SWT.MULTI : SWT.SINGLE) | SWT.BORDER | SWT.V_SCROLL | SWT.VIRTUAL);
+		tableViewer.getTable().getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			@Override
 			public void getName(AccessibleEvent e) {
 				if (e.childID == ACC.CHILDID_SELF) {
@@ -626,14 +626,14 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 				}
 			}
 		});
-		list.setContentProvider(contentProvider);
-		list.setLabelProvider(getItemsListLabelProvider());
-		list.setInput(new Object[0]);
-		list.setItemCount(contentProvider.getNumberOfElements());
+		tableViewer.setContentProvider(contentProvider);
+		tableViewer.setLabelProvider(getItemsListLabelProvider());
+		tableViewer.setInput(new Object[0]);
+		tableViewer.setItemCount(contentProvider.getNumberOfElements());
 		gd = new GridData(GridData.FILL_BOTH);
-		applyDialogFont(list.getTable());
-		gd.heightHint = list.getTable().getItemHeight() * 15;
-		list.getTable().setLayoutData(gd);
+		applyDialogFont(tableViewer.getTable());
+		gd.heightHint = tableViewer.getTable().getItemHeight() * 15;
+		tableViewer.getTable().setLayoutData(gd);
 
 		createPopupMenu();
 
@@ -643,27 +643,27 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 			@Override
 			public void keyPressed(KeyEvent e) {
 				if (e.keyCode == SWT.ARROW_DOWN) {
-					if (list.getTable().getItemCount() > 0) {
-						list.getTable().setFocus();
+					if (tableViewer.getTable().getItemCount() > 0) {
+						tableViewer.getTable().setFocus();
 					}
 				}
 			}
 		});
 
-		list.addSelectionChangedListener(event -> {
+		tableViewer.addSelectionChangedListener(event -> {
 			StructuredSelection selection = (StructuredSelection) event.getSelection();
 			handleSelected(selection);
 		});
 
-		list.addDoubleClickListener(event -> handleDoubleClick());
+		tableViewer.addDoubleClickListener(event -> handleDoubleClick());
 
-		list.getTable().addKeyListener(new KeyAdapter() {
+		tableViewer.getTable().addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
 
 				if (e.keyCode == SWT.DEL) {
 
-					List<?> selectedElements = ((StructuredSelection) list.getSelection()).toList();
+					List<?> selectedElements = ((StructuredSelection) tableViewer.getSelection()).toList();
 
 					Object item = null;
 					boolean isSelectedHistory = true;
@@ -681,25 +681,25 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 				}
 
 				if (e.keyCode == SWT.ARROW_UP && (e.stateMask & SWT.SHIFT) != 0 && (e.stateMask & SWT.CTRL) != 0) {
-					IStructuredSelection selection = list.getStructuredSelection();
+					IStructuredSelection selection = tableViewer.getStructuredSelection();
 
 					if (selection.size() == 1) {
 						Object element = selection.getFirstElement();
-						if (element.equals(list.getElementAt(0))) {
+						if (element.equals(tableViewer.getElementAt(0))) {
 							pattern.setFocus();
 						}
-						if (list.getElementAt(list.getTable().getSelectionIndex() - 1) instanceof ItemsListSeparator)
-							list.getTable().setSelection(list.getTable().getSelectionIndex() - 1);
-						list.getTable().notifyListeners(SWT.Selection, new Event());
+						if (tableViewer.getElementAt(tableViewer.getTable().getSelectionIndex() - 1) instanceof ItemsListSeparator)
+							tableViewer.getTable().setSelection(tableViewer.getTable().getSelectionIndex() - 1);
+						tableViewer.getTable().notifyListeners(SWT.Selection, new Event());
 
 					}
 				}
 
 				if (e.keyCode == SWT.ARROW_DOWN && (e.stateMask & SWT.SHIFT) != 0 && (e.stateMask & SWT.CTRL) != 0) {
 
-					if (list.getElementAt(list.getTable().getSelectionIndex() + 1) instanceof ItemsListSeparator)
-						list.getTable().setSelection(list.getTable().getSelectionIndex() + 1);
-					list.getTable().notifyListeners(SWT.Selection, new Event());
+					if (tableViewer.getElementAt(tableViewer.getTable().getSelectionIndex() + 1) instanceof ItemsListSeparator)
+						tableViewer.getTable().setSelection(tableViewer.getTable().getSelectionIndex() + 1);
+					tableViewer.getTable().notifyListeners(SWT.Selection, new Event());
 				}
 
 			}
@@ -788,7 +788,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 			status = new Status(IStatus.ERROR, PlatformUI.PLUGIN_ID, IStatus.ERROR, EMPTY_STRING, null);
 
 			if (lastSelection != null && getListSelectionLabelDecorator() != null) {
-				list.update(lastSelection, null);
+				tableViewer.update(lastSelection, null);
 			}
 
 			currentSelection = null;
@@ -820,11 +820,11 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 			}
 
 			if (lastSelection != null && getListSelectionLabelDecorator() != null) {
-				list.update(lastSelection, null);
+				tableViewer.update(lastSelection, null);
 			}
 
 			if (getListSelectionLabelDecorator() != null) {
-				list.update(currentSelection, null);
+				tableViewer.update(currentSelection, null);
 			}
 		}
 
@@ -855,25 +855,25 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 * Refreshes the dialog - has to be called in UI thread.
 	 */
 	public void refresh() {
-		if (list != null && !list.getTable().isDisposed()) {
+		if (tableViewer != null && !tableViewer.getTable().isDisposed()) {
 
-			List<?> lastRefreshSelection = ((StructuredSelection) list.getSelection()).toList();
-			list.getTable().deselectAll();
+			List<?> lastRefreshSelection = ((StructuredSelection) tableViewer.getSelection()).toList();
+			tableViewer.getTable().deselectAll();
 
-			list.setItemCount(contentProvider.getNumberOfElements());
-			list.refresh();
+			tableViewer.setItemCount(contentProvider.getNumberOfElements());
+			tableViewer.refresh();
 
-			if (list.getTable().getItemCount() > 0) {
+			if (tableViewer.getTable().getItemCount() > 0) {
 				// preserve previous selection
 				if (refreshWithLastSelection && lastRefreshSelection != null && lastRefreshSelection.size() > 0) {
-					list.setSelection(new StructuredSelection(lastRefreshSelection));
+					tableViewer.setSelection(new StructuredSelection(lastRefreshSelection));
 				} else {
 					refreshWithLastSelection = true;
-					list.getTable().setSelection(0);
-					list.getTable().notifyListeners(SWT.Selection, new Event());
+					tableViewer.getTable().setSelection(0);
+					tableViewer.getTable().notifyListeners(SWT.Selection, new Event());
 				}
 			} else {
-				list.setSelection(StructuredSelection.EMPTY);
+				tableViewer.setSelection(StructuredSelection.EMPTY);
 			}
 
 		}
@@ -905,7 +905,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 *                        is available
 	 */
 	public void reloadCache(boolean checkDuplicates, IProgressMonitor monitor) {
-		if (list != null && !list.getTable().isDisposed() && contentProvider != null) {
+		if (tableViewer != null && !tableViewer.getTable().isDisposed() && contentProvider != null) {
 			contentProvider.reloadCache(checkDuplicates, monitor);
 		}
 	}
@@ -929,7 +929,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	@Override
 	protected void computeResult() {
 
-		List<?> selectedElements = list.getStructuredSelection().toList();
+		List<?> selectedElements = tableViewer.getStructuredSelection().toList();
 
 		List<Object> objectsToReturn = new ArrayList<>();
 
@@ -1011,7 +1011,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 */
 	protected StructuredSelection getSelectedItems() {
 
-		StructuredSelection selection = (StructuredSelection) list.getStructuredSelection();
+		StructuredSelection selection = (StructuredSelection) tableViewer.getStructuredSelection();
 
 		List<?> selectedItems = selection.toList();
 		Object itemToRemove = null;
@@ -1392,7 +1392,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 		@Override
 		public void run() {
-			List<?> selectedElements = ((StructuredSelection) list.getSelection()).toList();
+			List<?> selectedElements = ((StructuredSelection) tableViewer.getSelection()).toList();
 			removeSelectedItems(selectedElements);
 		}
 	}
@@ -1541,16 +1541,16 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		}
 
 		private String getSeparatorLabel(String separatorLabel) {
-			Rectangle rect = list.getTable().getBounds();
+			Rectangle rect = tableViewer.getTable().getBounds();
 
-			int borderWidth = list.getTable().computeTrim(0, 0, 0, 0).width;
+			int borderWidth = tableViewer.getTable().computeTrim(0, 0, 0, 0).width;
 
 			int imageWidth = WorkbenchImages.getImage(IWorkbenchGraphicConstants.IMG_OBJ_SEPARATOR).getBounds().width;
 
 			int width = rect.width - borderWidth - imageWidth;
 
-			GC gc = new GC(list.getTable());
-			gc.setFont(list.getTable().getFont());
+			GC gc = new GC(tableViewer.getTable());
+			gc.setFont(tableViewer.getTable().getFont());
 
 			int fSeparatorWidth = gc.getAdvanceWidth('-');
 			int fMessageLength = gc.textExtent(separatorLabel).x;
@@ -2584,7 +2584,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		@Override
 		public void updateElement(int index) {
 
-			FilteredItemsSelectionDialog.this.list
+			FilteredItemsSelectionDialog.this.tableViewer
 					.replace((lastFilteredItems.size() > index) ? lastFilteredItems.get(index) : null, index);
 
 		}
@@ -2612,7 +2612,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 			// the TableViewer's root (the input) is treated as parent
 
-			lastFilteredItems = Arrays.asList(getFilteredItems(list.getInput(), subMonitor.split(100)));
+			lastFilteredItems = Arrays.asList(getFilteredItems(tableViewer.getInput(), subMonitor.split(100)));
 
 			if (reset || subMonitor.isCanceled()) {
 				return;
@@ -2680,7 +2680,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 			// filter the elements using provided ViewerFilters
 			if (filters != null && filteredElements != null) {
 				for (Object f : filters) {
-					filteredElements = ((ViewerFilter) f).filter(list, parent, filteredElements);
+					filteredElements = ((ViewerFilter) f).filter(tableViewer, parent, filteredElements);
 					monitor.worked(ticks);
 				}
 			}
