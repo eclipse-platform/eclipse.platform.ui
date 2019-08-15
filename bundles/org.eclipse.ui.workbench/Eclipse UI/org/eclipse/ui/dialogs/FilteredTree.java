@@ -148,6 +148,117 @@ public class FilteredTree extends Composite {
 	private static final long SOFT_MAX_EXPAND_TIME = 200;
 
 	/**
+	 * Create a new instance of the receiver. Subclasses that wish to override the
+	 * default creation behavior may use this constructor, but must ensure that the
+	 * <code>init(composite, int, PatternFilter)</code> method is called in the
+	 * overriding constructor. *
+	 * <p>
+	 *
+	 * <b>WARNING:</b> Passing false as parameter for useFastHashLookup results in a
+	 * slow performing tree and should not be used if the underlying data model uses
+	 * a stable and correct hashCode and equals implementation.
+	 *
+	 * </p>
+	 *
+	 * @param parent            the parent <code>Composite</code>
+	 * @param useNewLook        ignored, keep for API compliance
+	 * @param useFastHashLookup true, if tree should use fast hashlookup, false, if
+	 *                          the tree should be slow but working for data with
+	 *                          mutable or broken hashcode implementation
+	 * @since 3.116
+	 */
+	public FilteredTree(Composite parent, boolean useNewLook, boolean useFastHashLookup) {
+		super(parent, SWT.NONE);
+		this.parent = parent;
+		treeViewer.setUseHashlookup(useFastHashLookup);
+	}
+
+	/**
+	 * Create a new instance of the receiver.
+	 *
+	 * <p>
+	 *
+	 * <b>WARNING:</b> Passing false as parameter for useFastHashLookup results in a
+	 * slow performing tree and should not be used if the underlying data model uses
+	 * a stable and correct hashCode and equals implementation.
+	 *
+	 * </p>
+	 *
+	 * @param parent            the parent <code>Composite</code>
+	 * @param treeStyle         the style bits for the <code>Tree</code>
+	 * @param filter            the filter to be used
+	 * @param useNewLook        ignored, keep for API compliance
+	 * @param useFastHashLookup true, if tree should use fast hash lookup, false, if
+	 *                          the tree should be slow but working for data with
+	 *                          mutable or broken hashcode implementation
+	 * @since 3.116
+	 */
+	public FilteredTree(Composite parent, int treeStyle, PatternFilter filter, boolean useNewLook,
+			boolean useFastHashLookup) {
+		super(parent, SWT.NONE);
+		this.parent = parent;
+		init(treeStyle, filter);
+		treeViewer.setUseHashlookup(useFastHashLookup);
+	}
+
+	/**
+	 * Create a new instance of the receiver. Subclasses that wish to override the
+	 * default creation behavior may use this constructor, but must ensure that the
+	 * <code>init(composite, int, PatternFilter)</code> method is called in the
+	 * overriding constructor.
+	 *
+	 * <p>
+	 * <b>WARNING:</b> Using this constructor results in a slow performing tree and
+	 * should not be used if the underlying data model uses a stable and correct
+	 * hashCode and equals implementation. Prefer the usage of
+	 * {@link #FilteredTree(Composite, boolean, boolean)} if possible.
+	 * </p>
+	 *
+	 *
+	 * @param parent the parent <code>Composite</code>
+	 * @see #init(int, PatternFilter)
+	 *
+	 * @since 3.3
+	 * @deprecated As of 3.116, replaced by
+	 *             {@link #FilteredTree(Composite, boolean, boolean)}
+	 */
+	@Deprecated
+	protected FilteredTree(Composite parent) {
+		super(parent, SWT.NONE);
+		this.parent = parent;
+	}
+
+	/**
+	 * Create a new instance of the receiver. Subclasses that wish to override the
+	 * default creation behavior may use this constructor, but must ensure that the
+	 * <code>init(composite, int, PatternFilter)</code> method is called in the
+	 * overriding constructor. *
+	 * <p>
+	 *
+	 * <p>
+	 * <b>WARNING:</b> Using this constructor results in a slow performing tree and
+	 * should not be used if the underlying data model uses a stable and correct
+	 * hashCode and equals implementation. Prefer the usage of
+	 * {@link #FilteredTree(Composite, int, PatternFilter, boolean, boolean)} if
+	 * possible.
+	 * </p>
+	 *
+	 * @param parent     the parent <code>Composite</code>
+	 * @param useNewLook ignored, look introduced in 3.5 is always used
+	 * @see #init(int, PatternFilter)
+	 *
+	 * @since 3.5
+	 *
+	 * @deprecated As of 3.116, replaced by
+	 *             {@link #FilteredTree(Composite, int, PatternFilter, boolean, boolean)}
+	 */
+	@Deprecated
+	protected FilteredTree(Composite parent, boolean useNewLook) {
+		super(parent, SWT.NONE);
+		this.parent = parent;
+	}
+
+	/**
 	 * Create a new instance of the receiver.
 	 * <p>
 	 * <b>WARNING:</b> Using this constructor results in a slow performing tree and
@@ -172,7 +283,6 @@ public class FilteredTree extends Composite {
 		this.parent = parent;
 		init(treeStyle, filter);
 	}
-
 	/**
 	 * Create a new instance of the receiver.
 	 *
@@ -200,72 +310,6 @@ public class FilteredTree extends Composite {
 		init(treeStyle, filter);
 	}
 
-
-	/**
-	 * Create a new instance of the receiver.
-	 *
-	 * <p>
-	 *
-	 * <b>WARNING:</b> Passing false as parameter for useFastHashLookup in a slow
-	 * performing tree and should not be used if the underlying data model uses a
-	 * stable and correct hashCode and equals implementation. Prefer the usage of
-	 * {@link #FilteredTree(Composite, int, PatternFilter, boolean, true)} if
-	 * possible
-	 *
-	 * </p>
-	 *
-	 * @param parent            the parent <code>Composite</code>
-	 * @param treeStyle         the style bits for the <code>Tree</code>
-	 * @param filter            the filter to be used
-	 * @param useNewLook        ignored, keep for API compliance
-	 * @param useFastHashLookup true, if tree should use fast hashlookup, false, if
-	 *                          the tree should be slow but working for data with
-	 *                          mutable or broken hashcode implementation
-	 * @since 3.116
-	 */
-	public FilteredTree(Composite parent, int treeStyle, PatternFilter filter, boolean useNewLook,
-			boolean useFastHashLookup) {
-		super(parent, SWT.NONE);
-		this.parent = parent;
-		init(treeStyle, filter);
-		treeViewer.setUseHashlookup(useFastHashLookup);
-	}
-
-	/**
-	 * Create a new instance of the receiver. Subclasses that wish to override the
-	 * default creation behavior may use this constructor, but must ensure that the
-	 * <code>init(composite, int, PatternFilter)</code> method is called in the
-	 * overriding constructor.
-	 *
-	 * @param parent the parent <code>Composite</code>
-	 * @see #init(int, PatternFilter)
-	 *
-	 * @since 3.3
-	 * @deprecated As of 3.5, replaced by {@link #FilteredTree(Composite, boolean)}
-	 *             where using the look is encouraged
-	 */
-	@Deprecated
-	protected FilteredTree(Composite parent) {
-		super(parent, SWT.NONE);
-		this.parent = parent;
-	}
-
-	/**
-	 * Create a new instance of the receiver. Subclasses that wish to override the
-	 * default creation behavior may use this constructor, but must ensure that the
-	 * <code>init(composite, int, PatternFilter)</code> method is called in the
-	 * overriding constructor.
-	 *
-	 * @param parent     the parent <code>Composite</code>
-	 * @param useNewLook ignored, look introduced in 3.5 is always used
-	 * @see #init(int, PatternFilter)
-	 *
-	 * @since 3.5
-	 */
-	protected FilteredTree(Composite parent, boolean useNewLook) {
-		super(parent, SWT.NONE);
-		this.parent = parent;
-	}
 
 	/**
 	 * Create the filtered tree.
