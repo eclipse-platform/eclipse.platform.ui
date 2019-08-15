@@ -999,20 +999,13 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	}
 
 	/**
-	 * Computes how much lines of text can be displayed in the details section based on
-	 * its current height and font metrics.
+	 * Computes how many lines of text can be displayed in the details section.
 	 */
 	private int computeLines() {
 		if (details!=null && !details.isDisposed()) {
-			GC gc = new GC(details);
-			try {
-				FontMetrics fm = gc.getFontMetrics();
-				int itemH = fm.getHeight();
-				int areaH = details.getClientArea().height;
-				return (areaH+itemH-1) / itemH;
-			} finally {
-				gc.dispose();
-			}
+			int lineHeight = details.getLineHeight();
+			int areaHeight = details.getClientArea().height;
+			return (areaHeight + lineHeight - 1) / lineHeight;
 		}
 		return 0;
 	}
