@@ -22,7 +22,7 @@ package org.eclipse.ltk.internal.ui.refactoring.util;
 public final class Strings {
 
 	public static String removeNewLine(String message) {
-		final StringBuffer result= new StringBuffer();
+		final StringBuilder result= new StringBuilder();
 		int current= 0;
 		int index= message.indexOf('\n', 0);
 		while (index != -1) {

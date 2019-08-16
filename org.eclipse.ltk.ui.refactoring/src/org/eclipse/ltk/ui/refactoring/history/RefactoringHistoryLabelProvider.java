@@ -198,7 +198,7 @@ public class RefactoringHistoryLabelProvider extends LabelProvider {
 			return RefactoringUIMessages.RefactoringHistoryControlConfiguration_collection_label;
 		} else if (element instanceof RefactoringHistoryNode) {
 			final RefactoringHistoryNode node= (RefactoringHistoryNode) element;
-			final StringBuffer buffer= new StringBuffer(32);
+			final StringBuilder buffer= new StringBuilder(32);
 			final int kind= node.getKind();
 			switch (kind) {
 				case RefactoringHistoryNode.COLLECTION:
