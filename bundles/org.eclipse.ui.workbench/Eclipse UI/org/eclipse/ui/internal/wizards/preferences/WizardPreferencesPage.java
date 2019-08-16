@@ -313,7 +313,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements Listen
 
 	private FilteredTree createFilteredTree(Group group) {
 		int style = SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER;
-		return new FilteredTree(group, style, new PatternFilter(), true) {
+		return new FilteredTree(group, style, new PatternFilter(), true, true) {
 			@Override
 			protected TreeViewer doCreateTreeViewer(Composite parent, int style) {
 				return new CheckboxTreeViewer(parent, style);
