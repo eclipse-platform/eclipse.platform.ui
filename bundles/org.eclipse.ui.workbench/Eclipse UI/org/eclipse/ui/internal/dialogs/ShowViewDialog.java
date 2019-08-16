@@ -211,7 +211,7 @@ public class ShowViewDialog extends Dialog implements ISelectionChangedListener,
 	private void createFilteredTreeViewer(Composite parent) {
 		PatternFilter filter = new ViewPatternFilter();
 		int styleBits = SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER;
-		filteredTree = new FilteredTree(parent, styleBits, filter, true);
+		filteredTree = new FilteredTree(parent, styleBits, filter, true, true);
 		filteredTree.setQuickSelectionMode(true);
 		filteredTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 
