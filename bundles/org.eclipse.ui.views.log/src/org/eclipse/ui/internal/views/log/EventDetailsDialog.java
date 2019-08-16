@@ -219,6 +219,7 @@ public class EventDetailsDialog extends TrayDialog {
 
 		applyDialogFont(buttonBar);
 		getButton(IDialogConstants.OK_ID).setFocus();
+		getButton(IDialogConstants.OK_ID).setText(IDialogConstants.CLOSE_LABEL);
 	}
 
 	@Override
