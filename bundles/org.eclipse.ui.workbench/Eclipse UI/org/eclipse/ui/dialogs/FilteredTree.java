@@ -164,13 +164,16 @@ public class FilteredTree extends Composite {
 	 * @param useNewLook        ignored, keep for API compliance
 	 * @param useFastHashLookup true, if tree should use fast hashlookup, false, if
 	 *                          the tree should be slow but working for data with
-	 *                          mutable or broken hashcode implementation
+	 *                          mutable or broken hashcode implementation. Only used
+	 *                          if treeViewer is already initialized
 	 * @since 3.116
 	 */
 	public FilteredTree(Composite parent, boolean useNewLook, boolean useFastHashLookup) {
 		super(parent, SWT.NONE);
 		this.parent = parent;
-		treeViewer.setUseHashlookup(useFastHashLookup);
+		if (treeViewer != null) {
+			treeViewer.setUseHashlookup(useFastHashLookup);
+		}
 	}
 
 	/**
@@ -190,7 +193,8 @@ public class FilteredTree extends Composite {
 	 * @param useNewLook        ignored, keep for API compliance
 	 * @param useFastHashLookup true, if tree should use fast hash lookup, false, if
 	 *                          the tree should be slow but working for data with
-	 *                          mutable or broken hashcode implementation
+	 *                          mutable or broken hashcode implementation. Only used
+	 *                          if treeViewer is already initialized
 	 * @since 3.116
 	 */
 	public FilteredTree(Composite parent, int treeStyle, PatternFilter filter, boolean useNewLook,
@@ -198,7 +202,9 @@ public class FilteredTree extends Composite {
 		super(parent, SWT.NONE);
 		this.parent = parent;
 		init(treeStyle, filter);
-		treeViewer.setUseHashlookup(useFastHashLookup);
+		if (treeViewer != null) {
+			treeViewer.setUseHashlookup(useFastHashLookup);
+		}
 	}
 
 	/**
