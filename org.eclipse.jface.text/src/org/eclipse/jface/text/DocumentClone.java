@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,8 +10,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Paul Pazderski - Bug 545252: cloned document was only partial read-only
  *******************************************************************************/
 package org.eclipse.jface.text;
+
+import java.util.Arrays;
 
 import org.eclipse.core.runtime.Assert;
 
@@ -54,12 +57,13 @@ class DocumentClone extends AbstractDocument {
 
 		@Override
 		public void replace(int offset, int length, String text) {
+			// not allowed
 		}
 
 		@Override
 		public void set(String text) {
+			// not allowed
 		}
-
 	}
 
 	/**
@@ -72,20 +76,30 @@ class DocumentClone extends AbstractDocument {
 		super();
 		setTextStore(new StringTextStore(content));
 
-		boolean hasDefaultDelims= lineDelimiters == null;
-		if (!hasDefaultDelims && DefaultLineTracker.DELIMITERS.length == lineDelimiters.length) {
-			hasDefaultDelims= true;
-			for (int i= 0; i < lineDelimiters.length; i++) {
-				if (DefaultLineTracker.DELIMITERS[i] != lineDelimiters[i]) {
-					hasDefaultDelims= false;
-					break;
-				}
-			}
-		}
-
+		boolean hasDefaultDelims= Arrays.equals(lineDelimiters, DefaultLineTracker.DELIMITERS);
 		ILineTracker tracker= hasDefaultDelims ? new DefaultLineTracker() : new ConfigurableLineTracker(lineDelimiters);
 		setLineTracker(tracker);
 		getTracker().set(content);
 		completeInitialization();
+	}
+
+	@Override
+	public void replace(int pos, int length, String text) throws BadLocationException {
+		// not allowed
+	}
+
+	@Override
+	public void replace(int pos, int length, String text, long modificationStamp) throws BadLocationException {
+		// not allowed
+	}
+
+	@Override
+	public void set(String text) {
+		// not allowed
+	}
+
+	@Override
+	public void set(String text, long modificationStamp) {
+		//not allowed
 	}
 }

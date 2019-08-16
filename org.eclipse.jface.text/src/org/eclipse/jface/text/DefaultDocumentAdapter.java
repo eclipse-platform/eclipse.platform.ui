@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Paul Pazderski - Bug 545252 - improve stop/resumeForwarding with copy-on-write approach
  *******************************************************************************/
 package org.eclipse.jface.text;
 
@@ -36,12 +37,17 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 
 	/** The adapted document. */
 	private IDocument fDocument;
-	/** The document clone for the non-forwarding case. */
-	private IDocument fDocumentClone;
-	/** The original content */
-	private String fOriginalContent;
-	/** The original line delimiters */
-	private String[] fOriginalLineDelimiters;
+	/**
+	 * The document to be used to read stuff. Most of the time this is equal to {@link #fDocument}.
+	 * Only if non-forwarding is enabled and {@link #fDocument} was changed while non-forwarding
+	 * {@link #fActiveDocument} points to a read-only copy of {@link #fDocument} with the content it
+	 * had when change forwarding was disabled. I.e. this reference must always expected to be
+	 * read-only.
+	 *
+	 * @see IDocumentAdapterExtension
+	 * @see #fIsForwarding
+	 */
+	private IDocument fActiveDocument;
 	/** The registered text change listeners */
 	private List<TextChangeListener> fTextChangeListeners= new ArrayList<>(1);
 	/**
@@ -92,18 +98,8 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 			fDocument.removePrenotifiedDocumentListener(this);
 
 		fDocument= document;
+		fActiveDocument= fDocument;
 		fLineDelimiter= null;
-
-		if (!fIsForwarding) {
-			fDocumentClone= null;
-			if (fDocument != null) {
-				fOriginalContent= fDocument.get();
-				fOriginalLineDelimiters= fDocument.getLegalLineDelimiters();
-			} else {
-				fOriginalContent= null;
-				fOriginalLineDelimiters= null;
-			}
-		}
 
 		if (fDocument != null)
 			fDocument.addPrenotifiedDocumentListener(this);
@@ -151,16 +147,7 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 	}
 
 	private IDocument getDocumentForRead() {
-		if (!fIsForwarding) {
-			if (fDocumentClone == null) {
-				String content= fOriginalContent == null ? "" : fOriginalContent; //$NON-NLS-1$
-				String[] delims= fOriginalLineDelimiters == null ? DefaultLineTracker.DELIMITERS : fOriginalLineDelimiters;
-				fDocumentClone= new DocumentClone(content, delims);
-			}
-			return fDocumentClone;
-		}
-
-		return fDocument;
+		return fActiveDocument;
 	}
 
 	@Override
@@ -274,6 +261,9 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 
 	@Override
 	public void documentAboutToBeChanged(DocumentEvent event) {
+		if (!fIsForwarding && fDocument == fActiveDocument) {
+			fActiveDocument= new DocumentClone(fActiveDocument.get(), fActiveDocument.getLegalLineDelimiters());
+		}
 
 		fRememberedLengthOfDocument= fDocument.getLength();
 		try {
@@ -377,17 +367,12 @@ class DefaultDocumentAdapter implements IDocumentAdapter, IDocumentListener, IDo
 	@Override
 	public void resumeForwardingDocumentChanges() {
 		fIsForwarding= true;
-		fDocumentClone= null;
-		fOriginalContent= null;
-		fOriginalLineDelimiters= null;
+		fActiveDocument= fDocument;
 		fireTextSet();
 	}
 
 	@Override
 	public void stopForwardingDocumentChanges() {
-		fDocumentClone= null;
-		fOriginalContent= fDocument.get();
-		fOriginalLineDelimiters= fDocument.getLegalLineDelimiters();
 		fIsForwarding= false;
 	}
 }
