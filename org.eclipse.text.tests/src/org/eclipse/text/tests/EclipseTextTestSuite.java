@@ -29,6 +29,8 @@ import org.eclipse.text.tests.templates.TemplatesTestSuite;
  */
 @RunWith(Suite.class)
 @SuiteClasses({
+		MultiStringMatcherTest.class,
+		ConfigurableLineTrackerTest.class,
 		LineTrackerTest4.class,
 		DocumentExtensionTest.class,
 		LineTrackerTest3.class,

@@ -1,0 +1,430 @@
+/*******************************************************************************
+ * Copyright (c) 2019 Paul Pazderski, Thomas Wolf, and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     Paul Pazderski; Thomas Wolf - initial API and implementation
+ *******************************************************************************/
+package org.eclipse.jface.text;
+
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+/**
+ * Fast matcher to find the occurrences of any of a fixed set of constant strings. Supports finding
+ * all (possibly overlapping) matches, or only the leftmost longest match.
+ *
+ * @since 3.9
+ */
+public class MultiStringMatcher {
+
+	// An implementation of the Aho-Corasick algorithm (without the DFA construction from section 6 of the
+	// paper; just the failure and output links).
+	//
+	// See Aho, Alfred A.; Corasick, Margaret J.: "Efficient String Matching: An Aid to Bibliographic Search",
+	// CACM 18(6), 1975.
+	//
+	// The algorithm has been modified to support both reporting all matches or only leftmost longest matches.
+
+	/**
+	 * Describes a match result of {@link MultiStringMatcher#indexOf(CharSequence, int)}, giving
+	 * access to the matched string and the offset in the text it was matched at.
+	 */
+	public static interface Match {
+
+		/**
+		 * Obtains the matched string.
+		 *
+		 * @return the text matched
+		 */
+		String getText();
+
+		/**
+		 * Obtains the offset the {@link #getText() text} was matched at.
+		 *
+		 * @return the offset
+		 */
+		int getOffset();
+
+	}
+
+	/** A Builder for creating a {@link MultiStringMatcher}. */
+	public static interface Builder {
+
+		/**
+		 * Adds search strings to be looked for. {@code null} and empty strings in the arguments are
+		 * ignored.
+		 *
+		 * @param searchStrings to add to be looked for by the matcher.
+		 * @return this
+		 * @throws IllegalStateException if the {@link MultiStringMatcher} was already built.
+		 */
+		Builder add(String... searchStrings);
+
+		/**
+		 * Returns the {@link MultiStringMatcher} built by this builder.
+		 * <p>
+		 * Note that a {@link Builder} instance can build only <em>one</em>
+		 * {@link MultiStringMatcher} instance. This is by design; otherwise the builder would have
+		 * to store all the searchStrings somewhere, which may be rather memory intensive if a lot
+		 * of search strings are added.
+		 * </p>
+		 *
+		 * @return the {@link MultiStringMatcher}
+		 * @throws IllegalStateException if the {@link MultiStringMatcher} was already built.
+		 */
+		MultiStringMatcher build();
+	}
+
+	private static class BuilderImpl implements Builder {
+
+		private MultiStringMatcher m;
+
+		BuilderImpl() {
+			m= new MultiStringMatcher();
+		}
+
+		private void check() {
+			if (m == null) {
+				throw new IllegalStateException("Builder.build() was already called"); //$NON-NLS-1$
+			}
+		}
+
+		@Override
+		public Builder add(String... searchStrings) {
+			check();
+			m.add(searchStrings);
+			return this;
+		}
+
+		@Override
+		public MultiStringMatcher build() {
+			check();
+			MultiStringMatcher result= m;
+			m= null;
+			if (!result.root.hasChildren()) {
+				// no search strings were added; return a specialized "matches nothing" matcher
+				return new MultiStringMatcher() {
+					@Override
+					public List<Match> find(CharSequence text, int offset) {
+						return new LinkedList<>();
+					}
+
+					@Override
+					public Match indexOf(CharSequence text, int offset) {
+						return null;
+					}
+				};
+			}
+			result.buildLinks();
+			return result;
+		}
+	}
+
+	/**
+	 * Creates an initially empty {@link Builder}.
+	 *
+	 * @return the {@link Builder}
+	 */
+	public static Builder builder() {
+		return new BuilderImpl();
+	}
+
+	private static class MatchResult implements Match {
+
+		private final String match;
+
+		private final int offset;
+
+		public MatchResult(String match, int offset) {
+			this.match= match;
+			this.offset= offset;
+		}
+
+		@Override
+		public String getText() {
+			return match;
+		}
+
+		@Override
+		public int getOffset() {
+			return offset;
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hashCode(match) * 31 + Integer.hashCode(offset);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null || getClass() != obj.getClass()) {
+				return false;
+			}
+			MatchResult other= (MatchResult) obj;
+			return offset == other.offset && Objects.equals(match, other.match);
+		}
+
+		@Override
+		public String toString() {
+			return '[' + match + ", " + offset + ']'; //$NON-NLS-1$
+		}
+	}
+
+	/** A node in the trie built from the search strings. */
+	private static class Node {
+		HashMap<Character, Node> children;
+
+		String match;
+
+		Node fail;
+
+		Node output;
+
+		Node next(Character c) {
+			return children == null ? null : children.get(c);
+		}
+
+		Node add(char c) {
+			if (children == null) {
+				children= new HashMap<>();
+			}
+			return children.computeIfAbsent(Character.valueOf(c), key -> new Node());
+		}
+
+		boolean hasChildren() {
+			return children != null;
+		}
+
+		@Override
+		public String toString() {
+			return "Match: " + (match == null ? "null" : '>' + match + '<') //$NON-NLS-1$ //$NON-NLS-2$
+					+ " Children: " + (children == null ? "<none>" : children.keySet().stream().map(c -> c.toString()).collect(Collectors.joining(", "))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		}
+	}
+
+	/** Root node of the trie. */
+	private final Node root= new Node() {
+		@Override
+		Node next(Character c) {
+			// Implements the sentinel loop on the root node for all non-matching characters.
+			Node child= super.next(c);
+			return child == null ? this : child;
+		}
+	};
+
+	private MultiStringMatcher() {
+		// Always use a Builder or the static helper methods to create a MultiStringMatcher
+	}
+
+	private void add(String... searchStrings) {
+		if (searchStrings != null) {
+			for (String searchString : searchStrings) {
+				if (searchString == null || searchString.isEmpty()) {
+					continue;
+				}
+				Node node= root;
+				for (char c : searchString.toCharArray()) {
+					node= node.add(c);
+				}
+				node.match= searchString;
+			}
+		}
+	}
+
+	private void buildLinks() {
+		// Build the fail and output links. See the paper referenced at the top; this
+		// is a one-to-one implementation of the original algorithm. Variable names
+		// s, r, and state are kept as in the paper.
+		List<Node> queue= new LinkedList<>();
+		for (Node s : root.children.values()) {
+			if (s.children != null) {
+				// No need to queue nodes without children since we don't do anything
+				// with them anyway.
+				queue.add(s);
+			}
+			s.fail= root;
+		}
+		while (!queue.isEmpty()) {
+			Node r= queue.remove(0);
+			for (Map.Entry<Character, Node> entry : r.children.entrySet()) {
+				Character c= entry.getKey();
+				Node s= entry.getValue();
+				if (s.children != null) {
+					queue.add(s);
+				}
+				Node state= r.fail;
+				Node f;
+				while ((f= state.next(c)) == null) {
+					state= state.fail;
+				}
+				s.fail= f;
+				if (f.match != null) {
+					s.output= f;
+				} else if (f.output != null) {
+					s.output= f.output;
+				}
+			}
+		}
+	}
+
+	/**
+	 * Find the next occurrence of any of the search strings of the {@link MultiStringMatcher} in
+	 * the given {@code text} starting at the given {@code offset}.
+	 * <p>
+	 * Performs a simultaneous search for all the strings, returning the leftmost match. If multiple
+	 * search strings match at the same index, the longest match is returned.
+	 * </p>
+	 *
+	 * @param text to search (not {@code null})
+	 * @param offset to start searching at
+	 * @return the leftmost longest match found, or {@code null} if no match was found.
+	 */
+	public Match indexOf(CharSequence text, int offset) {
+		// Main search loop of the Aho-Corasick algorithm, modified to stop after
+		// the leftmost longest match.
+		// How it works: primary goal -> lowest offset, secondary goal -> longest match.
+		// We differ between primary and sub matches. When the first match a character we walk down
+		// a path on the trie to find a match. Any match we found on this way is a primary match and
+		// any new primary match is better than the one before. Also a primary match always got a better
+		// offset than any sub or failover match.
+		// A sub match is a sub pattern of our main trie path. There offset is always after any of the
+		// primaries. Sub matches are not found in offset order so we must check if a new sub match is
+		// better than our best so far.
+		// If we fell off the trie path but found a primary match we are done. No other match can get a lower
+		// offset. Sometimes we can continue on another trie path through the fail link. If we found no
+		// failover path we can return our sub match or must restart at root. If we changed to a
+		// failover path we must check on the first direct match if a sub match from the previous path
+		// is better. If yes it will be returned if not we continue like we did on the first path.
+		int textEnd= text.length();
+		Match primaryMatch= null;
+		Match subMatch= null;
+		boolean failover= false;
+		Node node= root;
+		for (int i= offset; i < textEnd; i++) {
+			Character c= Character.valueOf(text.charAt(i));
+			Node next= node.next(c);
+			if (next == null) {
+				// Fell off the trie.
+				if (primaryMatch != null) {
+					// Return primary match because any other match must have a higher offset.
+					return primaryMatch;
+				}
+				// Search for other trie to change to.
+				do {
+					node= node.fail;
+				} while ((next= node.next(c)) == null);
+				failover= (node != root);
+				if (!failover && subMatch != null) {
+					// We fell of the trie and could not switch to another. Return best sub match if possible.
+					return subMatch;
+				}
+			}
+			node= next;
+			if (node.match != null) {
+				int newOffset= i - node.match.length() + 1;
+				// On a failover trie the sub match can be better.
+				// And if it is return it because nothing better will follow.
+				if (failover && subMatch != null && subMatch.getOffset() < newOffset) {
+					return subMatch;
+				}
+				// Any new primary match is better because all have the same offset but any new must be longer.
+				primaryMatch= new MatchResult(node.match, newOffset);
+				if (!node.hasChildren()) {
+					// We will fall off the trie on next character so we can return right here
+					return primaryMatch;
+				}
+			}
+			// Check for sub matches but only if there is no primary match because only another primary match can be better.
+			if (primaryMatch == null) {
+				Node out= node.output;
+				if (out != null) {
+					int newOffset= i - out.match.length() + 1;
+					if (subMatch == null
+							|| newOffset < subMatch.getOffset()
+							|| (newOffset == subMatch.getOffset() && out.match.length() > subMatch.getText().length())) {
+						subMatch= new MatchResult(out.match, newOffset);
+					}
+				}
+			}
+		}
+		return primaryMatch != null ? primaryMatch : subMatch;
+	}
+
+	/**
+	 * Finds all occurrences of any of the search strings of the {@link MultiStringMatcher} in the
+	 * given {@code text} starting at the given {@code offset}, including overlapping occurrences.
+	 *
+	 * @param text to search (not {@code null})
+	 * @param offset to start searching at
+	 * @return a possibly empty list of matches
+	 */
+	public List<Match> find(CharSequence text, int offset) {
+		// Main search loop of the standard Aho-Corasick algorithm.
+		int textEnd= text.length();
+		List<Match> matches= new LinkedList<>();
+		Node node= root;
+		for (int i= offset; i < textEnd; i++) {
+			Character c= Character.valueOf(text.charAt(i));
+			Node next;
+			while ((next= node.next(c)) == null) {
+				node= node.fail;
+			}
+			node= next;
+			if (node.match != null) {
+				matches.add(new MatchResult(node.match, i - node.match.length() + 1));
+			}
+			Node out= node.output;
+			while (out != null) {
+				matches.add(new MatchResult(out.match, i - out.match.length() + 1));
+				out= out.output;
+			}
+		}
+		return matches;
+	}
+
+	/**
+	 * Finds the leftmost longest occurrence of any of the given {@code searchStrings} in the
+	 * {@code text} starting at the given {@code offset}.
+	 * <p>
+	 * To match the same set of search strings repeatedly against texts it is more efficient to
+	 * build and re-use a {@link MultiStringMatcher}.
+	 * </p>
+	 *
+	 * @param text to search (not {@code null})
+	 * @param offset to start searching at
+	 * @param searchStrings to look for; non-{@code null} and non-empty strings are ignored
+	 * @return a {@link Match} describing the match found, or {@code null} if no match was found or
+	 *         there are no non-{@code null} non-empty {@code searchStrings}
+	 */
+	public static Match indexOf(CharSequence text, int offset, String... searchStrings) {
+		return create(searchStrings).indexOf(text, offset);
+	}
+
+	/**
+	 * Creates a {@link MultiStringMatcher} for the given {@code searchStrings}.
+	 * <p>
+	 * If there are no non-{@code null} non-empty {@code searchStrings}, the returned
+	 * {@link MultiStringMatcher} will never match anything.
+	 * </p>
+	 *
+	 * @param searchStrings to look for; non-{@code null} and non-empty strings are ignored
+	 * @return the {@link MultiStringMatcher}
+	 */
+	public static MultiStringMatcher create(String... searchStrings) {
+		return builder().add(searchStrings).build();
+	}
+}

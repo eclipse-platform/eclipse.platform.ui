@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,10 +10,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Thomas Wolf - Bug 545252: improved search performance for multiple delimiters
  *******************************************************************************/
 package org.eclipse.jface.text;
 
 import org.eclipse.core.runtime.Assert;
+
+import org.eclipse.jface.text.MultiStringMatcher.Match;
 
 
 /**
@@ -31,12 +34,12 @@ import org.eclipse.core.runtime.Assert;
  */
 public class ConfigurableLineTracker extends AbstractLineTracker {
 
-
 	/** The strings which are considered being the line delimiter */
-	private String[] fDelimiters;
+	private final String[] fDelimiters;
 	/** A predefined delimiter information which is always reused as return value */
-	private DelimiterInfo fDelimiterInfo= new DelimiterInfo();
-
+	private final DelimiterInfo fDelimiterInfo= new DelimiterInfo();
+	/** Util to search the configured line delimiters in text. <code>null</code> if only one delimiter is used. */
+	private final MultiStringMatcher fMatcher;
 
 	/**
 	 * Creates a standard line tracker for the given line delimiters.
@@ -47,6 +50,7 @@ public class ConfigurableLineTracker extends AbstractLineTracker {
 	public ConfigurableLineTracker(String[] legalLineDelimiters) {
 		Assert.isTrue(legalLineDelimiters != null && legalLineDelimiters.length > 0);
 		fDelimiters= TextUtilities.copy(legalLineDelimiters);
+		fMatcher= legalLineDelimiters.length > 1 ? MultiStringMatcher.create(legalLineDelimiters) : null;
 	}
 
 	@Override
@@ -56,12 +60,13 @@ public class ConfigurableLineTracker extends AbstractLineTracker {
 
 	@Override
 	protected DelimiterInfo nextDelimiterInfo(String text, int offset) {
-		if (fDelimiters.length > 1) {
-			int[] info= TextUtilities.indexOf(fDelimiters, text, offset);
-			if (info[0] == -1)
+		if (fMatcher != null) {
+			Match m = fMatcher.indexOf(text, offset);
+			if (m == null) {
 				return null;
-			fDelimiterInfo.delimiterIndex= info[0];
-			fDelimiterInfo.delimiter= fDelimiters[info[1]];
+			}
+			fDelimiterInfo.delimiterIndex= m.getOffset();
+			fDelimiterInfo.delimiter= m.getText();
 		} else {
 			int index= text.indexOf(fDelimiters[0], offset);
 			if (index == -1)
