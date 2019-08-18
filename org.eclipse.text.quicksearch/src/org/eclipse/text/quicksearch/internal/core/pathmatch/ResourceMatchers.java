@@ -22,7 +22,7 @@ public class ResourceMatchers {
 	public static ResourceMatcher ANY = new ResourceMatcher() {
 		@Override
 		public String toString() {
-			return "ResourceMatcher(ANY)";
+			return "ResourceMatcher(ANY)"; //$NON-NLS-1$
 		}
 		@Override
 		public boolean matches(IResource resource) {
@@ -35,7 +35,7 @@ public class ResourceMatchers {
 		if (text.isEmpty()) {
 			return ANY;
 		}
-		String[] paths = text.split(",");
+		String[] paths = text.split(","); //$NON-NLS-1$
 		if (paths.length==1) {
 			return path(paths[0]);
 		} else {
@@ -52,14 +52,14 @@ public class ResourceMatchers {
 
 			@Override
 			public String toString() {
-				StringBuilder buf = new StringBuilder("ResourceMatcher(");
+				StringBuilder buf = new StringBuilder("ResourceMatcher(");  //$NON-NLS-1$
 				for (int i = 0; i < matchers.length; i++) {
 					if (i>0) {
-						buf.append(", ");
+						buf.append(", ");  //$NON-NLS-1$
 					}
 					buf.append(matchers[i]);
 				}
-				buf.append(")");
+				buf.append(")");  //$NON-NLS-1$
 				return buf.toString();
 			}
 
@@ -76,8 +76,8 @@ public class ResourceMatchers {
 	}
 
 	private static ResourceMatcher path(String _pat) {
-		if (!_pat.startsWith("/") && !_pat.startsWith("**/")) {
-			_pat = "**/"+_pat;
+		if (!_pat.startsWith("/") && !_pat.startsWith("**/")) { //$NON-NLS-1$ //$NON-NLS-2$
+			_pat = "**/"+_pat; //$NON-NLS-1$
 		}
 		final String pat = _pat;
 		TokenizedPattern matcher = new TokenizedPattern(pat);

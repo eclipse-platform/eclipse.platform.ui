@@ -28,10 +28,10 @@ import org.eclipse.text.quicksearch.internal.util.LineReader;
 public class QuickSearchPreferences {
 
 	//Keys used to fetch 'raw' preferences values from the preferences store.
-	public static final String IGNORED_EXTENSIONS = "ignored.extensions";
-	public static final String IGNORED_NAMES = "ignored.names";
-	public static final String IGNORED_PREFIXES = "ignored.prefixes";
-	public static final String MAX_LINE_LEN = "LineReader.MAX_LINE_LEN";
+	public static final String IGNORED_EXTENSIONS = "ignored.extensions"; //$NON-NLS-1$
+	public static final String IGNORED_NAMES = "ignored.names"; //$NON-NLS-1$
+	public static final String IGNORED_PREFIXES = "ignored.prefixes"; //$NON-NLS-1$
+	public static final String MAX_LINE_LEN = "LineReader.MAX_LINE_LEN"; //$NON-NLS-1$
 	private static boolean initializedDefaults;
 
 	private IPreferenceStore store;
@@ -73,11 +73,11 @@ public class QuickSearchPreferences {
 	 * dropped.
 	 */
 	private String[] parseStringList(String raw) {
-		String[] elements = raw.split("[,\n]");
+		String[] elements = raw.split("[,\n]");  //$NON-NLS-1$
 		List<String> list = new ArrayList<String>(elements.length);
 		for (String e : elements) {
 			e = e.trim();
-			if (!"".equals(e)) {
+			if (!e.isEmpty()) {
 				list.add(e);
 			}
 		}
@@ -101,7 +101,7 @@ public class QuickSearchPreferences {
 		StringBuilder encoded = new StringBuilder();
 		for (int i = 0; i < strings.length; i++) {
 			if (i>0) {
-				encoded.append(", ");
+				encoded.append(", ");  //$NON-NLS-1$
 			}
 			encoded.append(strings[i]);
 		}

@@ -31,6 +31,15 @@ public class Messages extends NLS {
 	public static String QuickSearchDialog_line;
 	public static String QuickSearchDialog_text;
 	public static String QuickSearchDialog_path;
+	public static String QuickSearchDialog_RefreshJob;
+	public static String QuickSearchDialog_searching;
+	public static String QuickSearchDialog_keepOpen_toggle;
+	public static String QuickSearchDialog_caseSensitive_toggle;
+	public static String QuickSearchDialog_title;
+	public static String QuickSearchDialog_caseSensitive_label;
+	public static String QuickSearchDialog_caseInsensitive_label;
+	public static String QuickSearchDialog_patternHint;
+	public static String QuickTextSearch_updateMatchesJob;
 
 	static {
 		// initialize resource bundle

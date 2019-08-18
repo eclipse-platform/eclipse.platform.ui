@@ -43,9 +43,11 @@ public class DefaultPriorityFunction extends PriorityFunction {
 	 * be ignored.
 	 */
 	public String[] ignoredExtensions = {
-			"~", ".bin", ".bmp", ".class", ".com", ".doc", ".docx", ".exe", ".gif",
-			".jar", ".jpg", ".jpeg", ".odp", ".odt", ".p12", ".pdf", ".png",
-			".ppt", ".pptx", ".psd", ".svg", ".xls", ".xlsx", ".zip"
+			"~", ".bin", ".bmp", ".class", ".com", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			".doc", ".docx", ".exe", ".gif", ".jar", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			".jpg", ".jpeg", ".odp", ".odt", ".p12", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			".pdf", ".png", ".ppt", ".pptx", ".psd", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+			".svg", ".xls", ".xlsx", ".zip" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 	};
 
 	/**
@@ -53,7 +55,7 @@ public class DefaultPriorityFunction extends PriorityFunction {
 	 * starts with any of these Strings to be ignored.
 	 */
 	public String[] ignoredPrefixes = {
-		"."
+		"."  //$NON-NLS-1$
 	};
 
 	/**
@@ -61,7 +63,7 @@ public class DefaultPriorityFunction extends PriorityFunction {
 	 * Strings to be ignored.
 	 */
 	public String[] ignoredNames = {
-		"bin", "build", "target"
+		"bin", "build", "target" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	};
 
 	public Set<IResource> ignoredResources = null;

@@ -14,14 +14,13 @@
 <?eclipse version="3.4"?>
 <plugin>
 
-   <extension
-         point="org.eclipse.ui.commands">
+   <extension point="org.eclipse.ui.commands">
       <category
-            name="Quick Search"
+            name="%quickSearch.label"
             id="org.eclipse.text.quicksearch.commands.category">
       </category>
       <command
-            name="Quick Search"
+            name="%quickSearch.label"
             categoryId="org.eclipse.text.quicksearch.commands.category"
             id="org.eclipse.text.quicksearch.commands.quicksearchCommand">
       </command>
@@ -32,11 +31,10 @@
         So we have to use the old mechanism using actionSets 
         See here https://stackoverflow.com/questions/7113380/how-to-extend-the-source-menu-in-eclipse-or-what-is-its-locationuri
     -->
-   <extension
-         point="org.eclipse.ui.actionSets">
+   <extension point="org.eclipse.ui.actionSets">
          
       <actionSet
-            label="Quick Search"
+            label="%quickSearch.label"
             visible="true"
             id="org.eclipse.text.quicksearch.actionSet">
             
@@ -65,36 +63,34 @@
                id="org.eclipse.text.quicksearch.commands.quicksearchAction"
                class="org.eclipse.text.quicksearch.internal.ui.QuickSearchAction"
                definitionId="org.eclipse.text.quicksearch.commands.quicksearchCommand"
-               label="Quick Search..."
+               label="%quickSearch.ellipsis"
                menubarPath="org.eclipse.search.menu/extraSearchGroup"
-               tooltip="Search for a text pattern in the workspace">
+               tooltip="%quickSearch.tooltip">
          </action>
       </actionSet>
    </extension>
    
-<!-- This doesn't work unfortunately... 
-  <extension point="org.eclipse.ui.menus">
+   <!-- This doesn't work unfortunately... 
+   <extension point="org.eclipse.ui.menus">
      <menuContribution locationURI="menu:navigate?after=additions">
         <command commandId="org.eclipse.text.quicksearch.commands.quicksearchCommand"
-                 label="Quick Search"
+                 label="%quickSearch.label"
                  mnemonic="Q">
         </command>
      </menuContribution>
    </extension> -->
-   
+
    <!-- Allthough we have an action defined, it seems the action isn't always working. So for good measure
        also define a handler -->
-   <extension
-         point="org.eclipse.ui.handlers">
+   <extension point="org.eclipse.ui.handlers">
       <handler
             commandId="org.eclipse.text.quicksearch.commands.quicksearchCommand"
             class="org.eclipse.text.quicksearch.internal.ui.QuickSearchHandler">
       </handler>
    </extension>
-   
-<!-- Define keybinding -->   
-   <extension
-         point="org.eclipse.ui.bindings">
+
+   <!-- Define keybinding -->   
+   <extension point="org.eclipse.ui.bindings">
       <key
             commandId="org.eclipse.text.quicksearch.commands.quicksearchCommand"
             contextId="org.eclipse.ui.contexts.window"
@@ -103,12 +99,11 @@
       </key>
    </extension>
 
-<extension
-      point = "org.eclipse.ui.preferencePages">
+   <extension point = "org.eclipse.ui.preferencePages">
        <page id="org.eclipse.text.quicksearch.PreferencesPage"
 	        class="org.eclipse.text.quicksearch.internal.ui.QuickSearchPreferencesPage"
-            name="Quick Search">
+          name="%quickSearch.label">
        </page>
-</extension>
+   </extension>
 
 </plugin>

@@ -39,7 +39,7 @@ public class LineItem {
 
 	@Override
 	public String toString() {
-		return lineNumber + ": " + line + "  (" +f.getProjectRelativePath() + ")";
+		return lineNumber + ": " + line + "  (" +f.getProjectRelativePath() + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
 	public String getText() {

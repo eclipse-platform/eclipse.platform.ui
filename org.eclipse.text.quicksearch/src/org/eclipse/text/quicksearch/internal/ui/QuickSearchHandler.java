@@ -54,14 +54,14 @@ public class QuickSearchHandler extends AbstractHandler {
 	 * Based on the current active selection initialize the priority function and/or
 	 * the initial contents of the search box.
 	 */
-	 static private void initializeFromSelection(IWorkbenchWindow workbench, QuickSearchDialog dialog) {
+	 private static void initializeFromSelection(IWorkbenchWindow workbench, QuickSearchDialog dialog) {
 		if (workbench!=null) {
 			ISelectionService selectionService = workbench.getSelectionService();
 			ISelection selection = selectionService.getSelection();
-			if (selection!=null && selection instanceof ITextSelection) {
+			if (selection instanceof ITextSelection) {
 				//Use text selection to set initial search pattern.
 				String text = ((ITextSelection) selection).getText();
-				if (text!=null && !"".equals(text)) {
+				if (text!=null && !text.isEmpty()) {
 					dialog.setInitialPattern(text, QuickSearchDialog.FULL_SELECTION);
 				}
 			}

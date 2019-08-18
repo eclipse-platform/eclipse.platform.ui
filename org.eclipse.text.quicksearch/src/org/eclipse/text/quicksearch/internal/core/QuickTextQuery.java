@@ -52,7 +52,7 @@ public class QuickTextQuery {
 	 * A query that matches anything.
 	 */
 	public QuickTextQuery() {
-		this("", true);
+		this("", true); //$NON-NLS-1$
 	}
 
 	public QuickTextQuery(String substring, boolean caseSensitive) {
@@ -75,11 +75,11 @@ public class QuickTextQuery {
 			switch (c) {
 			case '?':
 				appendSegment(segment, regexp);
-				regexp.append(".");
+				regexp.append('.');
 				break;
 			case '*':
 				appendSegment(segment, regexp);
-				regexp.append(".*");
+				regexp.append(".*"); //$NON-NLS-1$
 				break;
 			case '\\':
 				if (pos<len) {
@@ -146,8 +146,8 @@ public class QuickTextQuery {
 	 * whether one pattern is sub-pattern of the other.
 	 */
 	private String normalize(String pat, boolean caseSensitive) {
-		if (pat.endsWith("\\")) {
-			pat = pat + "\\";
+		if (pat.endsWith("\\")) { //$NON-NLS-1$
+			pat = pat + "\\"; //$NON-NLS-1$
 		}
 		if (!caseSensitive) {
 			pat = pat.toLowerCase();
@@ -182,12 +182,12 @@ public class QuickTextQuery {
 	 * of the search.
 	 */
 	public boolean isTrivial() {
-		return "".equals(this.orgPattern);
+		return "".equals(this.orgPattern); //$NON-NLS-1$
 	}
 
 	@Override
 	public String toString() {
-		return "QTQuery("+orgPattern+", "+(caseSensitive?"caseSens":"caseInSens")+")";
+		return "QTQuery("+orgPattern+", "+(caseSensitive?"caseSens":"caseInSens")+")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	}
 
 	public List<TextRange> findAll(String text) {

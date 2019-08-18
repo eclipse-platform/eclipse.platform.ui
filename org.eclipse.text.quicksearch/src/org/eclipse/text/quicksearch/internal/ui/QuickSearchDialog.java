@@ -26,6 +26,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
@@ -63,6 +64,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
+import org.eclipse.osgi.util.NLS;
 import org.eclipse.search.internal.ui.text.EditorOpener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.ACC;
@@ -139,7 +141,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 
 	public static final Styler HIGHLIGHT_STYLE = org.eclipse.search.internal.ui.text.DecoratingFileSearchLabelProvider.HIGHLIGHT_STYLE;
 
-	private UIJob refreshJob = new UIJob("Refresh") {
+	private UIJob refreshJob = new UIJob(Messages.QuickSearchDialog_RefreshJob) {
 		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 			refreshWidgets();
@@ -169,7 +171,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	 * Job that shows a simple busy indicator while a search is active.
 	 * The job must be scheduled when a search starts/resumes.
 	 */
-	private UIJob progressJob =  new UIJob("Refresh") {
+	private UIJob progressJob =  new UIJob(Messages.QuickSearchDialog_RefreshJob) {
 		int animate = 0; // number of dots to display.
 
 		protected String dots(int animate) {
@@ -186,7 +188,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 				if (path.length()<=30) {
 					return path;
 				}
-				return "..."+path.substring(path.length()-30);
+				return "..."+path.substring(path.length()-30); //$NON-NLS-1$
 			}
 			return dots(animate);
 		}
@@ -195,9 +197,9 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		public IStatus runInUIThread(IProgressMonitor mon) {
 			if (!mon.isCanceled() && progressLabel!=null && !progressLabel.isDisposed()) {
 				if (searcher==null || searcher.isDone()) {
-					progressLabel.setText("");
+					progressLabel.setText(""); //$NON-NLS-1$
 				} else {
-					progressLabel.setText("Searching"+currentFileInfo(searcher.getCurrentFile(), animate));
+					progressLabel.setText(NLS.bind(Messages.QuickSearchDialog_searching, currentFileInfo(searcher.getCurrentFile(), animate)));
 					animate = (animate+1)%4;
 					this.schedule(333);
 				}
@@ -211,9 +213,9 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		public void update(ViewerCell cell) {
 			LineItem item = (LineItem) cell.getElement();
 			if (item!=null) {
-				cell.setText(""+item.getLineNumber());
+				cell.setText(Integer.toString(item.getLineNumber()));
 			} else {
-				cell.setText("?");
+				cell.setText("?"); //$NON-NLS-1$
 			}
 			cell.setImage(getBlankImage());
 		};
@@ -231,7 +233,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 				cell.setText(text.getString());
 				cell.setStyleRanges(text.getStyleRanges());
 			} else {
-				cell.setText("");
+				cell.setText(""); //$NON-NLS-1$
 				cell.setStyleRanges(null);
 			}
 			cell.setImage(getBlankImage());
@@ -260,16 +262,16 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 				IPath path = item.getFile().getFullPath();
 				String name = path.lastSegment();
 				String dir = path.removeLastSegments(1).toString();
-				if (dir.startsWith("/")) {
+				if (dir.startsWith("/")) { //$NON-NLS-1$
 					dir = dir.substring(1);
 				}
-				cell.setText(name + " - " + dir);
+				cell.setText(name + " - " + dir); //$NON-NLS-1$
 				StyleRange[] styleRanges = new StyleRange[] {
 						new StyleRange(name.length(), dir.length()+3, GREY, null)
 				};
 				cell.setStyleRanges(styleRanges);
 			} else {
-				cell.setText("");
+				cell.setText(""); //$NON-NLS-1$
 				cell.setStyleRanges(null);
 			}
 			cell.setImage(getBlankImage());
@@ -293,21 +295,21 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 //		};
 	};
 
-	private static final String DIALOG_SETTINGS = QuickSearchDialog.class.getName()+".DIALOG_SETTINGS";
+	private static final String DIALOG_SETTINGS = QuickSearchDialog.class.getName()+".DIALOG_SETTINGS"; //$NON-NLS-1$
 
 	private static final String DIALOG_BOUNDS_SETTINGS = "DialogBoundsSettings"; //$NON-NLS-1$
 
 	private static final String DIALOG_HEIGHT = "DIALOG_HEIGHT"; //$NON-NLS-1$
 	private static final String DIALOG_WIDTH = "DIALOG_WIDTH"; //$NON-NLS-1$
-	private static final String DIALOG_COLUMNS = "COLUMN_WIDTHS";
-	private static final String DIALOG_SASH_WEIGHTS = "SASH_WEIGHTS";
+	private static final String DIALOG_COLUMNS = "COLUMN_WIDTHS"; //$NON-NLS-1$
+	private static final String DIALOG_SASH_WEIGHTS = "SASH_WEIGHTS"; //$NON-NLS-1$
 
-	private static final String DIALOG_LAST_QUERY = "LAST_QUERY";
-	private static final String DIALOG_PATH_FILTER = "PATH_FILTER";
-	private static final String CASE_SENSITIVE = "CASE_SENSITIVE";
+	private static final String DIALOG_LAST_QUERY = "LAST_QUERY"; //$NON-NLS-1$
+	private static final String DIALOG_PATH_FILTER = "PATH_FILTER"; //$NON-NLS-1$
+	private static final String CASE_SENSITIVE = "CASE_SENSITIVE"; //$NON-NLS-1$
 	private static final boolean CASE_SENSITIVE_DEFAULT = true;
 
-	private static final String KEEP_OPEN = "KEEP_OPEN";
+	private static final String KEEP_OPEN = "KEEP_OPEN"; //$NON-NLS-1$
 	private static final boolean KEEP_OPEN_DEFAULT = false;
 
 	/**
@@ -391,7 +393,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		this.window = window;
 		setShellStyle(SWT.CLOSE | SWT.MODELESS | SWT.BORDER | SWT.TITLE | SWT.RESIZE);
 		setBlockOnOpen(false);
-		this.setTitle("Quick Search");
+		this.setTitle(Messages.QuickSearchDialog_title);
 		this.context = new QuickSearchContext(window);
 		this.multi = false;
 		contentProvider = new ContentProvider();
@@ -418,7 +420,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 			if (initialPatternText==null) {
 				String lastSearch = settings.get(DIALOG_LAST_QUERY);
 				if (lastSearch==null) {
-					lastSearch = "";
+					lastSearch = ""; //$NON-NLS-1$
 				}
 				pattern.setText(lastSearch);
 				pattern.setSelection(0, lastSearch.length());
@@ -461,7 +463,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	private class ToggleKeepOpenAction extends Action {
 		public ToggleKeepOpenAction(IDialogSettings settings) {
 			super(
-					"Keep Open",
+					Messages.QuickSearchDialog_keepOpen_toggle,
 					IAction.AS_CHECK_BOX
 			);
 			if (settings.get(KEEP_OPEN)==null) {
@@ -482,7 +484,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 
 		public ToggleCaseSensitiveAction(IDialogSettings settings) {
 			super(
-					"Case Sensitive",
+					Messages.QuickSearchDialog_caseSensitive_toggle,
 					IAction.AS_CHECK_BOX
 			);
 			if (settings.get(CASE_SENSITIVE)==null) {
@@ -547,7 +549,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		if (table.getColumnCount()>0) {
 			String[] columnWidths = new String[table.getColumnCount()];
 			for (int i = 0; i < columnWidths.length; i++) {
-				columnWidths[i] = ""+table.getColumn(i).getWidth();
+				columnWidths[i] = Integer.toString(table.getColumn(i).getWidth());
 			}
 			settings.put(DIALOG_COLUMNS, columnWidths);
 		}
@@ -555,7 +557,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 			int[] w = sashForm.getWeights();
 			String[] ws = new String[w.length];
 			for (int i = 0; i < ws.length; i++) {
-				ws[i] = ""+w[i];
+				ws[i] = Integer.toString(w[i]);
 			}
 			settings.put(DIALOG_SASH_WEIGHTS, ws);
 		}
@@ -597,8 +599,9 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	}
 
 	private void refreshHeaderLabel() {
-		String msg = toggleCaseSensitiveAction.isChecked() ? "Case SENSITIVE" : "Case INSENSITIVE";
-		msg += " Pattern (? = any character, * = any string)";
+		String msg = toggleCaseSensitiveAction.isChecked() ? Messages.QuickSearchDialog_caseSensitive_label : Messages.QuickSearchDialog_caseInsensitive_label;
+		msg += ' ';
+		msg += Messages.QuickSearchDialog_patternHint;
 		headerLabel.setText(msg);
 	}
 
@@ -960,7 +963,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 			}
 			IStructuredSelection sel = (IStructuredSelection) list.getSelection();
 			if (sel==null || sel.isEmpty()) {
-				details.setText("");
+				details.setText(""); //$NON-NLS-1$
 			} else {
 				//Not empty selection
 				int numLines = computeLines();
@@ -991,7 +994,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 				}
 			}
 			//empty selection or some error:
-			details.setText("");
+			details.setText(""); //$NON-NLS-1$
 		}
 	}
 
@@ -1267,7 +1270,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	 * @return status of the dialog to be set
 	 */
 	protected IStatus validateItem(Object item) {
-		return new Status(IStatus.OK, QuickSearchActivator.PLUGIN_ID, "fine");
+		return Status.OK_STATUS;
 	}
 
 	/**
@@ -1350,8 +1353,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	 * @return name of the given item
 	 */
 	public String getElementName(Object item) {
-		return ""+item;
-//		return (String)item; // Assuming the items are strings for now
+		return Objects.toString(item);
 	}
 
 	/**

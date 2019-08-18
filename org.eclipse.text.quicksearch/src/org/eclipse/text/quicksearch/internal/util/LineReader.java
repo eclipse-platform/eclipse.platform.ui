@@ -95,7 +95,7 @@ public class LineReader {
 			line.append((char)c);
 			c = read();
 			if (offset>maxOffset) {
-				throw new IOException("Very long lines of text. Minified file?");
+				throw new IOException("Very long lines of text. Minified file?"); //$NON-NLS-1$
 			}
 		}
 		//Last char read was some kind of line terminator. But only read first char of it.

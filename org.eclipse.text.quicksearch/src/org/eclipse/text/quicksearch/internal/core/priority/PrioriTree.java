@@ -171,7 +171,7 @@ public class PrioriTree extends DefaultPriorityFunction {
 			//ancestor node found
 			result = node.childPriority;
 		}
-		debug("Priority for "+r.getFullPath() + " = " + result);
+		debug("Priority for "+r.getFullPath() + " = " + result); //$NON-NLS-1$ //$NON-NLS-2$
 		return result;
 	}
 
@@ -208,12 +208,12 @@ public class PrioriTree extends DefaultPriorityFunction {
 	 * For debugging purposes. Dumps tree data onto System.out
 	 */
 	public void dump() {
-		dump("/", 0);
+		dump("/", 0); //$NON-NLS-1$
 	}
 
 	private void dump(String name, int indent) {
 		indent(indent);
-		System.out.println(name + " : " +priority);
+		System.out.println(name + " : " +priority); //$NON-NLS-1$
 		if (children!=null) {
 			for (Entry<String, PrioriTree> c : children.entrySet()) {
 				c.getValue().dump(c.getKey(), indent+1);
@@ -223,7 +223,7 @@ public class PrioriTree extends DefaultPriorityFunction {
 
 	private void indent(int i) {
 		for (int j = 0; j < i; j++) {
-			System.out.print("  ");
+			System.out.print("  "); //$NON-NLS-1$
 		}
 	}
 

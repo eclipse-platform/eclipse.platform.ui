@@ -26,6 +26,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.text.quicksearch.internal.core.priority.DefaultPriorityFunction;
 import org.eclipse.text.quicksearch.internal.core.priority.PriorityFunction;
+import org.eclipse.text.quicksearch.internal.ui.Messages;
 import org.eclipse.text.quicksearch.internal.ui.QuickSearchActivator;
 
 /**
@@ -53,7 +54,7 @@ public abstract class ResourceWalker extends Job {
 	}
 
 	public ResourceWalker() {
-		super("QuickSearch");
+		super(Messages.QuickSearchDialog_title);
 		init();
 	}
 
@@ -185,7 +186,7 @@ public abstract class ResourceWalker extends Job {
 	 * in 'mid-run'.
 	 */
 	public void setPriorityFun(PriorityFunction f) {
-		Assert.isNotNull(f, "PriorityFunction should never be null");
+		Assert.isNotNull(f, "PriorityFunction should never be null"); //$NON-NLS-1$
 		this.prioritFun = f;
 	}
 

@@ -27,6 +27,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.text.quicksearch.internal.core.pathmatch.ResourceMatcher;
 import org.eclipse.text.quicksearch.internal.core.pathmatch.ResourceMatchers;
 import org.eclipse.text.quicksearch.internal.core.priority.PriorityFunction;
+import org.eclipse.text.quicksearch.internal.ui.Messages;
 import org.eclipse.text.quicksearch.internal.util.LightSchedulingRule;
 import org.eclipse.text.quicksearch.internal.util.LineReader;
 
@@ -43,7 +44,7 @@ public class QuickTextSearcher {
 	/**
 	 * Scheduling rule used by Jobs that work on the matches collection.
 	 */
-	private ISchedulingRule matchesRule = new LightSchedulingRule("QuickSearchMatchesRule");
+	private ISchedulingRule matchesRule = new LightSchedulingRule("QuickSearchMatchesRule"); //$NON-NLS-1$
 
 	private SearchInFilesWalker walker = null;
 	private IncrementalUpdateJob incrementalUpdate;
@@ -189,7 +190,7 @@ public class QuickTextSearcher {
 	 */
 	private class IncrementalUpdateJob extends Job {
 		public IncrementalUpdateJob() {
-			super("Update matches");
+			super(Messages.QuickTextSearch_updateMatchesJob);
 			this.setRule(matchesRule);
 			//This job isn't started automatically. It should be schedule every time
 			// there's a 'newQuery' set by the user/client.
