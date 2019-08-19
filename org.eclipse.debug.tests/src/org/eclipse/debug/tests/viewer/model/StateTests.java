@@ -17,6 +17,7 @@ package org.eclipse.debug.tests.viewer.model;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
@@ -160,6 +161,68 @@ abstract public class StateTests extends AbstractViewerModelTest implements ITes
 				});
 		}
 		model.setRoot(new TestElement(model, "root", elements)); //$NON-NLS-1$
+
+		return model;
+	}
+
+	/**
+	 * Creates a model in the pattern of:
+	 *
+	 * <pre>
+	 * root
+	 *   1
+	 *     1.1
+	 *     1.2
+	 *     ...
+	 *     1.childrenCount
+	 *   2
+	 *     2.1
+	 *     2.2
+	 *     ...
+	 *     2.childrenCount
+	 *   3
+	 *     3.1
+	 *     3.2
+	 *     ...
+	 *     3.childrenCount
+	 *   ...
+	 *   (size)
+	 *     (size).1
+	 *     (size).2
+	 *     ...
+	 *     (size).childrenCount
+	 * </pre>
+	 *
+	 * @param size The number of elements in the tree
+	 * @param childrenCount Number of children of each element
+	 * @param shouldReturnChildren The supplier dictates whether children should
+	 *            be reported when fetched
+	 * @return The model
+	 */
+	static TestModel alternatingSubtreesModelWithChildren(int size, int childrenCount, Supplier<Boolean> shouldReturnChildren) {
+		TestModel model = new TestModel();
+		TestElement[] elements = new TestElement[size];
+		for (int i = 0; i < size; i++) {
+			String text = Integer.toString(i + 1);
+
+			TestElement[] children = new TestElement[childrenCount];
+			for (int x = 0; x < childrenCount; x++) {
+				children[x] = new TestElement(model, text + "." + (x + 1), new TestElement[0]);
+			}
+
+			elements[i] = new TestElement(model, text, children) {
+				@Override
+				public TestElement[] getChildren() {
+					if (shouldReturnChildren.get()) {
+						return super.getChildren();
+					}
+
+					return new TestElement[0];
+				}
+			};
+		}
+
+		model.setRoot(new TestElement(model, "root", elements));
 
 		return model;
 	}
@@ -347,6 +410,130 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 		assertTrue( fListener.checkCoalesced(TreePath.EMPTY, 0, 5) );
 	}
 
+	public void testKeepCollapsedAfterRemovingAndReaddingChildrenInExpandedTree() throws Exception {
+		boolean showChildren[] = new boolean[] { true };
+		int size = 3;
+		Supplier<Boolean> shouldShowChildren = () -> showChildren[0];
+
+		TestModel model = alternatingSubtreesModelWithChildren(size, 10, shouldShowChildren);
+
+		// Create the listener, only check the first level
+		fListener.reset(TreePath.EMPTY, model.getRootElement(), 1, true, false);
+
+		// Set the input into the view and update the view.
+		fViewer.setInput(model.getRootElement());
+		waitWhile(t -> !fListener.isFinished(), createListenerErrorMessage());
+		model.validateData(fViewer, TreePath.EMPTY, true);
+
+		/*
+		 * 1. Trigger model update with expansion of all elements
+		 */
+		{
+			fListener.reset();
+			fListener.setFailOnRedundantUpdates(false);
+
+			TestElement rootElement = model.getRootElement();
+			TestElement[] children = rootElement.getChildren();
+			ModelDelta rootDelta = new ModelDelta(rootElement, IModelDelta.NO_CHANGE);
+			ModelDelta expandDelta = model.getBaseDelta(rootDelta);
+			for (int i = 0; i < children.length; i++) {
+				TestElement element = children[i];
+				ModelDelta delta = expandDelta;
+				int index = i;
+				while (element.getChildren().length != 0) {
+					TreePath elementPath = model.findElement(element.getLabel());
+					fListener.addUpdates(elementPath, element, 1, CHILD_COUNT_UPDATES | CHILDREN_UPDATES);
+					delta = delta.addNode(element, index, IModelDelta.EXPAND | IModelDelta.CONTENT, element.getChildren().length);
+					element = element.getChildren()[0];
+					index = 0;
+				}
+			}
+
+			model.postDelta(rootDelta);
+
+			TestUtil.waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE), null, 300000, t -> "Listener not finished: " + fListener);
+		}
+
+		/*
+		 * 2. Trigger model change with no children
+		 */
+		{
+			fListener.reset();
+			fListener.setFailOnRedundantUpdates(false);
+
+			showChildren[0] = false;
+
+			TestElement rootElement = model.getRootElement();
+			ModelDelta rootDelta = new ModelDelta(rootElement, IModelDelta.CONTENT);
+			model.getBaseDelta(rootDelta);
+
+			TreePath elementPath = TreePath.EMPTY;
+			fListener.addUpdates(elementPath, rootElement, 2, CHILD_COUNT_UPDATES | CHILDREN_UPDATES);
+
+			model.postDelta(rootDelta);
+
+			TestUtil.waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE), null, 60000, t -> "Listener not finished: " + fListener);
+		}
+
+		/*
+		 * 3. Trigger model change with expansion for first element and its
+		 * first child selected
+		 */
+		{
+			fListener.reset();
+			fListener.setFailOnRedundantUpdates(false);
+
+			showChildren[0] = true;
+
+			TestElement rootElement = model.getRootElement();
+			TestElement[] children = rootElement.getChildren();
+			ModelDelta rootDelta = new ModelDelta(rootElement, IModelDelta.NO_CHANGE);
+			ModelDelta delta = model.getBaseDelta(rootDelta);
+
+			// Expand the element and select first child
+			TestElement element = children[0];
+			delta = delta.addNode(element, 0, IModelDelta.EXPAND, element.getChildren().length);
+
+			TreePath elementPath = model.findElement(element.getLabel());
+			fListener.addUpdates(elementPath, element, 2, CHILDREN_UPDATES);
+
+			element = element.getChildren()[0];
+			delta = delta.addNode(element, 0, IModelDelta.SELECT, -1);
+
+			model.postDelta(rootDelta);
+
+			TestUtil.waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE), null, 60000, t -> "Listener not finished: " + fListener);
+		}
+
+		/*
+		 * 4. Trigger model change to update all elements and their plus state
+		 */
+		{
+			fListener.reset();
+			fListener.setFailOnRedundantUpdates(false);
+
+			showChildren[0] = true;
+
+			TestElement rootElement = model.getRootElement();
+			ModelDelta rootDelta = new ModelDelta(rootElement, IModelDelta.CONTENT);
+			model.getBaseDelta(rootDelta);
+
+			TestElement element = rootElement.getChildren()[0];
+			TreePath elementPath = model.findElement(element.getLabel());
+			fListener.addUpdates(elementPath, element, 1, CHILDREN_UPDATES);
+
+			model.postDelta(rootDelta);
+
+			TestUtil.waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE | MODEL_CHANGED_COMPLETE), null, 6000000, t -> "Listener not finished: " + fListener);
+		}
+
+		/*
+		 * Only first element should be expanded, all other should be collapsed
+		 */
+		for (int i = 1; i <= size; i++) {
+			assertTrue(getInternalViewer().getExpandedState(model.findElement(Integer.toString(i))) == (i == 1));
+		}
+	}
 
 	public void testPreserveExpandedOnSubTreeContent() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
