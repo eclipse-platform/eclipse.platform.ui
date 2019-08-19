@@ -136,7 +136,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		// TODO E4 - missing e4 replacement
 		// PlatformUI.getWorkbench().getHelpSystem().setHelp(noEntryLabel,
 		//		IWorkbenchHelpContextIds.RESPONSIVE_UI);
-
+		setUseHashlookup(true);
 	}
 
 	@Override
