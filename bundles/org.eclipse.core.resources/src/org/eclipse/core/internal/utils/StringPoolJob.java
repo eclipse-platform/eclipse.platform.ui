@@ -24,8 +24,8 @@ import org.osgi.framework.Bundle;
  * with the platform.
  */
 public class StringPoolJob extends Job {
-	private static final long INITIAL_DELAY = 10000;//ten seconds
-	private static final long RESCHEDULE_DELAY = 300000;//five minutes
+	private static final long INITIAL_DELAY = 300000; // five minutes
+	private static final long RESCHEDULE_DELAY = 900000; // fifteen minutes
 	private long lastDuration;
 	/**
 	 * Stores all registered string pool participants, along with the scheduling
