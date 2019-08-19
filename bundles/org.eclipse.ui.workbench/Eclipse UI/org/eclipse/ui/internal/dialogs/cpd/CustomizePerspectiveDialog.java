@@ -146,6 +146,10 @@ import org.eclipse.ui.wizards.IWizardDescriptor;
  */
 public class CustomizePerspectiveDialog extends TrayDialog {
 
+	/**
+	 * Flag showing that we have initialized all legacy action sets for given window
+	 */
+	private static final String ALL_SETS_INITIALIZED = "ALL_SETS_INITIALIZED"; //$NON-NLS-1$
 	private static final String TOOLBAR_ICON = "$nl$/icons/full/obj16/toolbar.png"; //$NON-NLS-1$
 	private static final String SUBMENU_ICON = "$nl$/icons/full/obj16/submenu.png"; //$NON-NLS-1$
 	private static final String MENU_ICON = "$nl$/icons/full/obj16/menu.png"; //$NON-NLS-1$
@@ -1330,10 +1334,22 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	}
 
 	private void initializeActionSetInput() {
-		// Just get the action sets at this point. Do not load the action set
-		// until it is actually selected in the dialog.
+		// Just get the action sets at this point.
 		ActionSetRegistry reg = WorkbenchPlugin.getDefault().getActionSetRegistry();
 		IActionSetDescriptor[] sets = reg.getActionSets();
+
+		// Populate all legacy actionsets into the model, see bug 549898
+		// Note: all (also invisible) actions sets will be loaded here and
+		// respective actions will be created. This is not good ("invisible"
+		// actions will live from this moment on till shutdown) and we need
+		// a better solution.
+		Object initDone = context.get(ALL_SETS_INITIALIZED);
+		if (initDone == null) {
+			context.set(ALL_SETS_INITIALIZED, Boolean.TRUE);
+			window.getActionPresentation().setActionSets(sets);
+			window.updateActionSets();
+		}
+
 		IActionSetDescriptor[] actionSetDescriptors = ((WorkbenchPage) window.getActivePage()).getActionSets();
 		List<IActionSetDescriptor> initiallyAvailableActionSets = Arrays.asList(actionSetDescriptors);
 

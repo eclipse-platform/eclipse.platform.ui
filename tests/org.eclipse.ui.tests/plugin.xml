@@ -4129,6 +4129,19 @@
                style="push">
          </action>
       </actionSet>
+      <actionSet
+            id="org.eclipse.ui.tests.notInitializedActionSet"
+            label="actionSet for testing lazy loading of invisible action sets"
+            visible="false">
+         <action
+               class="org.eclipse.ui.tests.api.NotInitializedWorkbenchWindowActionDelegate"
+               id="org.eclipse.ui.tests.do_not_init"
+               label="Simply do not init me"
+               menubarPath="window/additions"
+               toolbarPath="window/additions"
+               style="push">
+         </action>
+      </actionSet>
    </extension>
    <extension
          point="org.eclipse.ui.commandImages">

@@ -45,6 +45,15 @@ public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
 		assertEquals(Arrays.toString(testNames), Arrays.toString(delegate.callHistory.verifyAndReturnOrder(testNames)));
 	}
 
+	public void testLazyInit() {
+		// Action set shouldn't be shown / initialized on startup
+		int count = NotInitializedWorkbenchWindowActionDelegate.INIT_COUNT.intValue();
+		assertEquals("Expected to see zero inits of invisible delegates", 0, count);
+		// So far we don't have tests for that, so let assume this is also true
+		count = NotInitializedWorkbenchWindowActionDelegate.INSTANCE_COUNT.intValue();
+		assertEquals("Expected to see zero instances of invisible delegates", 0, count);
+	}
+
 	/**
 	 * Returns the last mock action delegate which was created.
 	 */
