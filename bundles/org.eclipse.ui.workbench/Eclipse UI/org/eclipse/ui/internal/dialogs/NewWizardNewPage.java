@@ -295,7 +295,7 @@ class NewWizardNewPage implements ISelectionChangedListener {
 
 		filteredTreeFilter = new WizardPatternFilter();
 		FilteredTree filterTree = new FilteredTree(composite, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER,
-				filteredTreeFilter, true);
+				filteredTreeFilter, true, true);
 		filterTree.setQuickSelectionMode(true);
 
 		final TreeViewer treeViewer = filterTree.getViewer();
@@ -326,7 +326,6 @@ class NewWizardNewPage implements ISelectionChangedListener {
 		}
 
 		AdaptableList input = new AdaptableList(inputArray);
-
 		treeViewer.setInput(input);
 
 		filterTree.setBackground(parent.getDisplay().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
