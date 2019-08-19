@@ -239,7 +239,6 @@ public class FilteredTree extends Composite {
 	 * default creation behavior may use this constructor, but must ensure that the
 	 * <code>init(composite, int, PatternFilter)</code> method is called in the
 	 * overriding constructor. *
-	 * <p>
 	 *
 	 * <p>
 	 * <b>WARNING:</b> Using this constructor results in a slow performing tree and
@@ -270,7 +269,7 @@ public class FilteredTree extends Composite {
 	 * <b>WARNING:</b> Using this constructor results in a slow performing tree and
 	 * should not be used if the underlying data model uses a stable and correct
 	 * hashCode and equals implementation. Prefer the usage of
-	 * {@link #FilteredTree(Composite, int, PatternFilter, boolean, true)} if
+	 * {@link #FilteredTree(Composite, int, PatternFilter, boolean, boolean)} if
 	 * possible.
 	 * </p>
 	 *
@@ -296,7 +295,7 @@ public class FilteredTree extends Composite {
 	 * <b>WARNING:</b> Using this constructor results in a slow performing tree and
 	 * should not be used if the underlying data model uses a stable and correct
 	 * hashCode and equals implementation. Prefer the usage of
-	 * {@link #FilteredTree(Composite, int, PatternFilter, boolean, true)} if
+	 * {@link #FilteredTree(Composite, int, PatternFilter, boolean, boolean)} if
 	 * possible
 	 * </p>
 	 *
