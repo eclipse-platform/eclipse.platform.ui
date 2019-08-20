@@ -1623,8 +1623,16 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 					"Need an underlying widget to be able to set the input." + //$NON-NLS-1$
 							"(Has the widget been disposed?)"); //$NON-NLS-1$
 		}
-		unmapAllElements();
-		super.setInput(input);
+		try {
+			//		fInChange= true;
+
+			unmapAllElements();
+
+			super.setInput(input);
+
+		} finally {
+			//		fInChange= false;
+		}
 	}
 
 	@Override
