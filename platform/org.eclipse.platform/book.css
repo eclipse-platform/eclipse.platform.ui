@@ -117,7 +117,7 @@ th	     { font-weight: bold }
 		background: #3d3d3d;
 	} 
 	body, h1, h2, h3, h4, h5, h6, caption, p, 
-	table, td,  th, ul, ol, dl, li, dd, dt{
+	table, td,  th, ul, ol, dl, li, dd, dt, pre {
 		color: #f0f0f0;
 	}
 	
