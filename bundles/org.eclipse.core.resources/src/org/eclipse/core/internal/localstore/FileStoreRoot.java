@@ -19,6 +19,7 @@ import java.io.File;
 import java.net.URI;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.internal.resources.ICoreConstants;
 import org.eclipse.core.internal.utils.FileUtil;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -73,6 +74,13 @@ public class FileStoreRoot {
 		IResource resource = workspaceRoot.findMember(workspacePath);
 		if (resource != null)
 			return resource.getPathVariableManager();
+		// Bug 547691 - deal with requests for the path of a deleted project
+		if (workspacePath.segmentCount() == 0) {
+			return workspaceRoot.getPathVariableManager();
+		}
+		if (workspacePath.segmentCount() == ICoreConstants.PROJECT_SEGMENT_LENGTH) {
+			return workspaceRoot.getProject(workspacePath.lastSegment()).getPathVariableManager();
+		}
 		return workspaceRoot.getFile(workspacePath).getPathVariableManager();
 	}
 

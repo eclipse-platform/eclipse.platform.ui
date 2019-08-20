@@ -463,6 +463,25 @@ public class FileSystemResourceManagerTest extends LocalStoreTest implements ICo
 		assertEquals("2.3", lastModified, ((Resource) project).getResourceInfo(false, false).getLocalSyncInfo());
 	}
 
+	/**
+	 * Test for bug 547691, exception when passing deleted project path to
+	 * {@link FileSystemResourceManager#locationURIFor(IResource)}.
+	 */
+	public void testBug547691() throws Exception {
+		String projectName = getUniqueString();
+		IWorkspace workspace = getWorkspace();
+		IProject project = workspace.getRoot().getProject(projectName);
+		IProjectDescription projectDescription = workspace.newProjectDescription(projectName);
+		project.create(projectDescription, null);
+		project.open(null);
+		FileSystemResourceManager manager = ((Workspace) getWorkspace()).getFileSystemManager();
+		URI location = manager.locationURIFor(project);
+		assertNotNull("Expected location for accessible project to not be null", location);
+		project.delete(true, null);
+		URI locationAfterDelete = manager.locationURIFor(project);
+		assertEquals("Expected location of project to not change after delete", location, locationAfterDelete);
+	}
+
 	protected void write(final IFile file, final InputStream contents, final boolean force, IProgressMonitor monitor)
 			throws CoreException {
 		try {
