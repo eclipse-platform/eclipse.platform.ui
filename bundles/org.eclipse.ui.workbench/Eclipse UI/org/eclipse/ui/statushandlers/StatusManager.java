@@ -120,6 +120,8 @@ public class StatusManager {
 
 	private ListenerList<INotificationListener> listeners = new ListenerList<>();
 
+	private StatusManagerLogListener statusManagerLogListener;
+
 	/**
 	 * Returns StatusManager singleton instance.
 	 *
@@ -138,7 +140,8 @@ public class StatusManager {
 	}
 
 	private StatusManager() {
-		Platform.addLogListener(new StatusManagerLogListener());
+		statusManagerLogListener = new StatusManagerLogListener();
+		Platform.addLogListener(statusManagerLogListener);
 	}
 
 	private AbstractStatusHandler getStatusHandler() {
@@ -269,13 +272,13 @@ public class StatusManager {
 	/**
 	 * Handles given CoreException. This method has been introduced to prevent
 	 * anti-pattern:
-	 * 
+	 *
 	 * <pre>
 	 * <code>
 	 * StatusManager.getManager().handle(coreException.getStatus());
 	 * </code>
 	 * </pre>
-	 * 
+	 *
 	 * that does not print the stack trace to the log.
 	 *
 	 * @param coreException a CoreException to be handled.
@@ -415,5 +418,15 @@ public class StatusManager {
 		 */
 		int HANDLED = 0x01;
 
+	}
+
+	/**
+	 * Unregisters the StatusManager from the workbench. Called by the framework
+	 * during shutdown, should not be called by client code.
+	 *
+	 * @since 3.116
+	 */
+	public void unregister() {
+		Platform.removeLogListener(statusManagerLogListener);
 	}
 }

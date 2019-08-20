@@ -2961,11 +2961,11 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	 */
 	private void shutdown() {
 		// shutdown application-specific portions first
+		StatusManager statusManager = StatusManager.getManager();
 		try {
 			advisor.postShutdown();
 		} catch (Exception ex) {
-			StatusManager.getManager()
-					.handle(StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, "Exceptions during shutdown", ex)); //$NON-NLS-1$
+			statusManager.handle(StatusUtil.newStatus(WorkbenchPlugin.PI_WORKBENCH, "Exceptions during shutdown", ex)); //$NON-NLS-1$
 		}
 
 		// notify regular workbench clients of shutdown, and clear the list when done
@@ -3009,6 +3009,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 		if (tracker != null) {
 			tracker.close();
 		}
+		statusManager.unregister();
 	}
 
 	/**
