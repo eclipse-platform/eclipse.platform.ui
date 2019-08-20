@@ -827,6 +827,10 @@ public interface IProject extends IContainer, IAdaptable {
 	 * by the given progress monitor.
 	 * </p>
 	 *
+	 * @param updateFlags if {@link IResource#BACKGROUND_REFRESH} is passed,
+	 *    and the project is not new in the workspace (i.e. is not being opened for the first time)
+	 *    a background refresh is scheduled with the workspace refresh manager.
+	 *    See description above for cases in which the project is new in the workspace.
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting is not desired
 	 * @exception CoreException if this method fails. Reasons include:

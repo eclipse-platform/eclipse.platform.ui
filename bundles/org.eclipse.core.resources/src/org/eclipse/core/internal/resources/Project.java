@@ -1080,6 +1080,12 @@ public class Project extends Container implements IProject {
 							refreshLocal(IResource.DEPTH_INFINITE, Policy.subMonitorFor(monitor, Policy.opWork * 60 / 100));
 						}
 					}
+				} else {
+					// Bug 544975 - When opening a closed project, refresh it in the background
+					if ((updateFlags & IResource.BACKGROUND_REFRESH) != 0) {
+						workspace.refreshManager.refresh(this);
+						monitor.worked(Policy.opWork * 60 / 100);
+					}
 				}
 				//creation of this project may affect overlapping resources
 				workspace.getAliasManager().updateAliases(this, getStore(), IResource.DEPTH_INFINITE, monitor);

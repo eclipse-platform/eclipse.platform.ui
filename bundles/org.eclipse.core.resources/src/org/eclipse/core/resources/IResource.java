@@ -223,9 +223,8 @@ public interface IResource extends IAdaptable, ISchedulingRule {
 	int AVOID_NATURE_CONFIG = 0x40;
 
 	/**
-	 * Update flag constant (bit mask value 128) indicating that opening a
-	 * project for the first time or creating a linked folder should refresh in the
-	 * background.
+	 * Update flag constant (bit mask value 128) indicating that opening a project
+	 * or creating a linked folder should refresh in the background.
 	 *
 	 * @see IProject#open(int, IProgressMonitor)
 	 * @see IFolder#createLink(URI, int, IProgressMonitor)
