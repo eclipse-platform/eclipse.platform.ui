@@ -18,6 +18,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 /**
@@ -116,8 +117,8 @@ public class MultiStringMatcher {
 				// no search strings were added; return a specialized "matches nothing" matcher
 				return new MultiStringMatcher() {
 					@Override
-					public List<Match> find(CharSequence text, int offset) {
-						return new LinkedList<>();
+					public void find(CharSequence text, int offset, Consumer<Match> matches) {
+						return;
 					}
 
 					@Override
@@ -289,6 +290,52 @@ public class MultiStringMatcher {
 	}
 
 	/**
+	 * Finds all occurrences of any of the search strings of the {@link MultiStringMatcher} in the
+	 * given {@code text} starting at the given {@code offset}, including overlapping occurrences.
+	 *
+	 * @param text to search (not {@code null})
+	 * @param offset to start searching at
+	 * @param matches {@link Consumer} all matches are fed to
+	 *
+	 * @since 3.10
+	 */
+	public void find(CharSequence text, int offset, Consumer<Match> matches) {
+		// Main search loop of the standard Aho-Corasick algorithm.
+		int textEnd= text.length();
+		Node node= root;
+		for (int i= offset; i < textEnd; i++) {
+			Character c= Character.valueOf(text.charAt(i));
+			Node next;
+			while ((next= node.next(c)) == null) {
+				node= node.fail;
+			}
+			node= next;
+			if (node.match != null) {
+				matches.accept(new MatchResult(node.match, i - node.depth + 1));
+			}
+			Node out= node.output;
+			while (out != null) {
+				matches.accept(new MatchResult(out.match, i - out.depth + 1));
+				out= out.output;
+			}
+		}
+	}
+
+	/**
+	 * Finds all occurrences of any of the search strings of the {@link MultiStringMatcher} in the
+	 * given {@code text} starting at the given {@code offset}, including overlapping occurrences.
+	 *
+	 * @param text to search (not {@code null})
+	 * @param offset to start searching at
+	 * @return a possibly empty list of matches
+	 */
+	public List<Match> find(CharSequence text, int offset) {
+		List<Match> matches= new LinkedList<>();
+		find(text, offset, matches::add);
+		return matches;
+	}
+
+	/**
 	 * Find the next occurrence of any of the search strings of the {@link MultiStringMatcher} in
 	 * the given {@code text} starting at the given {@code offset}.
 	 * <p>
@@ -381,38 +428,6 @@ public class MultiStringMatcher {
 			}
 		}
 		return primaryMatch != null ? primaryMatch : subMatch;
-	}
-
-	/**
-	 * Finds all occurrences of any of the search strings of the {@link MultiStringMatcher} in the
-	 * given {@code text} starting at the given {@code offset}, including overlapping occurrences.
-	 *
-	 * @param text to search (not {@code null})
-	 * @param offset to start searching at
-	 * @return a possibly empty list of matches
-	 */
-	public List<Match> find(CharSequence text, int offset) {
-		// Main search loop of the standard Aho-Corasick algorithm.
-		int textEnd= text.length();
-		List<Match> matches= new LinkedList<>();
-		Node node= root;
-		for (int i= offset; i < textEnd; i++) {
-			Character c= Character.valueOf(text.charAt(i));
-			Node next;
-			while ((next= node.next(c)) == null) {
-				node= node.fail;
-			}
-			node= next;
-			if (node.match != null) {
-				matches.add(new MatchResult(node.match, i - node.match.length() + 1));
-			}
-			Node out= node.output;
-			while (out != null) {
-				matches.add(new MatchResult(out.match, i - out.match.length() + 1));
-				out= out.output;
-			}
-		}
-		return matches;
 	}
 
 	/**
