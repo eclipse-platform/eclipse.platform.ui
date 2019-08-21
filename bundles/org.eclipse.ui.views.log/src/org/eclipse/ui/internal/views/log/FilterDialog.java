@@ -161,7 +161,6 @@ public class FilterDialog extends TrayDialog {
 		});
 		maxLogTailSizeText.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		maxLogTailSizeText.setText(memento.getString(LogView.P_LOG_MAX_TAIL_SIZE));
-		maxLogTailSizeText.setEnabled(limit.getSelection());
 	}
 
 	private void createSessionSection(Composite parent) {
