@@ -163,7 +163,7 @@ public class QuickTextSearcher {
 		@Override
 		public void resume() {
 			//Only resume if we don't already exceed the maxResult limit.
-			if (matches.size()<maxResults) {
+			if (isActive()) {
 				super.resume();
 			}
 		}
@@ -252,7 +252,7 @@ public class QuickTextSearcher {
 	private void add(LineItem line) {
 		if (matches.add(line)) {
 			requestor.add(line);
-			if (matches.size() >= maxResults) {
+			if (!isActive()) {
 				walker.suspend();
 			}
 		}
@@ -292,6 +292,14 @@ public class QuickTextSearcher {
 		}
 		incrementalUpdate = new IncrementalUpdateJob();
 		incrementalUpdate.schedule();
+	}
+
+	public boolean isActive() {
+		// Information for the job showing 'Searching ...' if we are still searching.
+		// The walker can be suspended for different reasons, not all of them count as
+		// inactive. The main situation where the walker is suspended and interpreted as
+		// inactive is when the max number of results are reached.
+		return !isDone() && matches.size() < maxResults;
 	}
 
 	public boolean isDone() {

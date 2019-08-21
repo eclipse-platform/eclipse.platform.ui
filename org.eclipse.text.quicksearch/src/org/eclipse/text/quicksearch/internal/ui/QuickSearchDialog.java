@@ -196,7 +196,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		@Override
 		public IStatus runInUIThread(IProgressMonitor mon) {
 			if (!mon.isCanceled() && progressLabel!=null && !progressLabel.isDisposed()) {
-				if (searcher==null || searcher.isDone()) {
+				if (searcher==null || !searcher.isActive()) {
 					progressLabel.setText(""); //$NON-NLS-1$
 				} else {
 					progressLabel.setText(NLS.bind(Messages.QuickSearchDialog_searching, currentFileInfo(searcher.getCurrentFile(), animate)));
