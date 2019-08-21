@@ -90,12 +90,21 @@ public abstract class ResourceWalker extends Job {
 	}
 
 	/**
+	 * Request that the walker stops walking at the next reasonable opportunity and drop
+	 * all pending workitems. The walker cannot be resumed and must be reinitialized.
+	 */
+	public void stop() {
+		this.queue = null;
+		this.suspend = false;
+	}
+
+	/**
 	 * Request the walker to be restarted... i.e. begin walking the resource tree from
 	 * the initial state.
 	 */
 
 	/**
-	 * Request that the walker be resumed. This clears the 'supsend' state if it is set
+	 * Request that the walker be resumed. This clears the 'suspend' state if it is set
 	 * and ensures that the Job is scheduled.
 	 */
 	public void resume() {

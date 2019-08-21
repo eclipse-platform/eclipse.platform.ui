@@ -243,6 +243,8 @@ public class QuickTextSearcher {
 				if (!query.isTrivial()) {
 					walker.init(); //Reinitialize the walker work queue to its starting state
 					walker.resume(); //Allow walker to resume when we release the scheduling rule.
+				} else {
+					walker.stop();
 				}
 			}
 		}
