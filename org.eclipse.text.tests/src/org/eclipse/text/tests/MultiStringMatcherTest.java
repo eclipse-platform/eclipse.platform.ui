@@ -30,11 +30,17 @@ public class MultiStringMatcherTest {
 	public ExpectedException thrown = ExpectedException.none();
 
 	private static Match run(String text, String... needles) {
-		return MultiStringMatcher.indexOf(text, 0, needles);
+		return run(text, 0, needles);
 	}
 
 	private static Match run(String text, int offset, String... needles) {
-		return MultiStringMatcher.indexOf(text, offset, needles);
+		return run(new TestCharSequence(text), offset, needles);
+	}
+
+	private static Match run(TestCharSequence text, int offset, String... needles) {
+		Match result = MultiStringMatcher.indexOf(text, offset, needles);
+		assertEquals("Algorithm backtracked", 0, text.getBackTrack());
+		return result;
 	}
 
 	private static void test(Match m, String expected, int index) {
@@ -448,5 +454,69 @@ public class MultiStringMatcherTest {
 		b.build();
 		thrown.expect(IllegalStateException.class);
 		b.build();
+	}
+
+	@Test
+	public void scan001() throws Exception {
+		TestCharSequence text = new TestCharSequence("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
+		Match m = run(text, 0, "x", "xx", "xxx", "xxxx");
+		test(m, "xxxx", 0);
+		assertEquals("Scanned too far", 3, text.getLastIndex());
+	}
+
+	@Test
+	public void scan002() throws Exception {
+		TestCharSequence text = new TestCharSequence("ddcababababababcabxdd");
+		Match m = run(text, 0, "ca", "cabx", "ababc");
+		test(m, "ca", 2);
+		assertEquals("Scanned too far", 5, text.getLastIndex());
+	}
+
+	@Test
+	public void scan003() throws Exception {
+		TestCharSequence text = new TestCharSequence("ddcabarbarazz");
+		Match m = run(text, 0, "a", "cabby", "barbara");
+		test(m, "a", 3);
+		assertEquals("Scanned too far", 5, text.getLastIndex());
+	}
+
+	private static class TestCharSequence implements CharSequence {
+
+		private final String value;
+
+		private int lastIndex = -1;
+
+		private int backtrack = 0;
+
+		public TestCharSequence(String value) {
+			this.value = value;
+		}
+
+		@Override
+		public int length() {
+			return value.length();
+		}
+
+		@Override
+		public char charAt(int index) {
+			if (index < lastIndex) {
+				backtrack = Math.min(backtrack, index - lastIndex);
+			}
+			lastIndex = index;
+			return value.charAt(index);
+		}
+
+		@Override
+		public CharSequence subSequence(int start, int end) {
+			throw new UnsupportedOperationException();
+		}
+
+		public int getLastIndex() {
+			return lastIndex;
+		}
+
+		public int getBackTrack() {
+			return backtrack;
+		}
 	}
 }

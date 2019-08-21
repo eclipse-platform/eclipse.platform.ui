@@ -194,6 +194,12 @@ public class MultiStringMatcher {
 
 		Node output;
 
+		final int depth;
+
+		Node(int depth) {
+			this.depth= depth;
+		}
+
 		Node next(Character c) {
 			return children == null ? null : children.get(c);
 		}
@@ -202,7 +208,7 @@ public class MultiStringMatcher {
 			if (children == null) {
 				children= new HashMap<>();
 			}
-			return children.computeIfAbsent(Character.valueOf(c), key -> new Node());
+			return children.computeIfAbsent(Character.valueOf(c), key -> new Node(depth + 1));
 		}
 
 		boolean hasChildren() {
@@ -211,13 +217,14 @@ public class MultiStringMatcher {
 
 		@Override
 		public String toString() {
-			return "Match: " + (match == null ? "null" : '>' + match + '<') //$NON-NLS-1$ //$NON-NLS-2$
-					+ " Children: " + (children == null ? "<none>" : children.keySet().stream().map(c -> c.toString()).collect(Collectors.joining(", "))); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+			return "[depth=" + depth + ", match=" + match //$NON-NLS-1$ //$NON-NLS-2$
+					+ ", children=" + (children == null ? "<none>" : children.keySet().stream().map(c -> c.toString()).collect(Collectors.joining(", "))) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+					+ ']';
 		}
 	}
 
 	/** Root node of the trie. */
-	private final Node root= new Node() {
+	private final Node root= new Node(0) {
 		@Override
 		Node next(Character c) {
 			// Implements the sentinel loop on the root node for all non-matching characters.
@@ -251,7 +258,7 @@ public class MultiStringMatcher {
 		// s, r, and state are kept as in the paper.
 		List<Node> queue= new LinkedList<>();
 		for (Node s : root.children.values()) {
-			if (s.children != null) {
+			if (s.hasChildren()) {
 				// No need to queue nodes without children since we don't do anything
 				// with them anyway.
 				queue.add(s);
@@ -263,7 +270,7 @@ public class MultiStringMatcher {
 			for (Map.Entry<Character, Node> entry : r.children.entrySet()) {
 				Character c= entry.getKey();
 				Node s= entry.getValue();
-				if (s.children != null) {
+				if (s.hasChildren()) {
 					queue.add(s);
 				}
 				Node state= r.fail;
@@ -321,41 +328,41 @@ public class MultiStringMatcher {
 		int textEnd= text.length();
 		Match primaryMatch= null;
 		Match subMatch= null;
-		boolean failover= false;
 		Node node= root;
 		for (int i= offset; i < textEnd; i++) {
 			Character c= Character.valueOf(text.charAt(i));
 			Node next= node.next(c);
 			if (next == null) {
-				// Fell off the trie.
+				// Can't continue on this path.
 				if (primaryMatch != null) {
 					// Return primary match because any other match must have a higher offset.
 					return primaryMatch;
 				}
-				// Search for other trie to change to.
+				// Search for another path to continue matching.
 				do {
 					node= node.fail;
 				} while ((next= node.next(c)) == null);
-				failover= (node != root);
-				if (!failover && subMatch != null) {
-					// We fell of the trie and could not switch to another. Return best sub-match
-					// if possible.
-					return subMatch;
+				if (subMatch != null) {
+					if (next == root) {
+						// We fell off the trie and could not switch to another. Return the best
+						// sub-match.
+						return subMatch;
+					} else if (subMatch.getOffset() < i - node.depth) {
+						// The new path starts at i - node.depth == i - next.depth + 1, so if a
+						// sub-match is earlier, we may return it. Any primary match on this path
+						// or on any other path we might switch to later on will have a higher
+						// offset, and so will any sub-matches we might discover on these paths.
+						return subMatch;
+					}
 				}
 			}
 			node= next;
 			if (node.match != null) {
-				int newOffset= i - node.match.length() + 1;
-				// On a failover trie the sub match can be better.
-				// And if it is return it because nothing better will follow.
-				if (failover && subMatch != null && subMatch.getOffset() < newOffset) {
-					return subMatch;
-				}
 				// Any new primary match is better because all have the same offset but any new one
-				// must be longer.
-				primaryMatch= new MatchResult(node.match, newOffset);
+				// must be longer. An existing sub-match from a previous path is checked above.
+				primaryMatch= new MatchResult(node.match, i - node.depth + 1);
 				if (!node.hasChildren()) {
-					// We will fall off the trie on the next character, so we can return right here
+					// We will fall off the trie on the next character, so we can return right here.
 					return primaryMatch;
 				}
 			}
@@ -364,10 +371,10 @@ public class MultiStringMatcher {
 			if (primaryMatch == null) {
 				Node out= node.output;
 				if (out != null) {
-					int newOffset= i - out.match.length() + 1;
+					int newOffset= i - out.depth + 1;
 					if (subMatch == null
 							|| newOffset < subMatch.getOffset()
-							|| (newOffset == subMatch.getOffset() && out.match.length() > subMatch.getText().length())) {
+							|| (newOffset == subMatch.getOffset() && out.depth > subMatch.getText().length())) {
 						subMatch= new MatchResult(out.match, newOffset);
 					}
 				}
