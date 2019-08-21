@@ -32,7 +32,6 @@ import org.eclipse.jface.text.IInformationControlExtension5;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -89,7 +88,6 @@ public class CompositeInformationControl extends AbstractInformationControl impl
 		this.controls = new LinkedHashMap<>(); // TODO maybe use canReuse or canReplace
 		GridLayout layout = new GridLayout(1, false);
 		parent.setLayout(layout);
-		boolean firstControl = true;
 		for (Entry<ITextHover, IInformationControlCreator> hoverControlCreator : this.creators.entrySet()) {
 			IInformationControl informationControl = hoverControlCreator.getValue().createInformationControl(parent.getShell());
 			if (informationControl instanceof AbstractInformationControl) {
@@ -100,13 +98,8 @@ public class CompositeInformationControl extends AbstractInformationControl impl
 				}
 				for (Control control : children) {
 					control.setParent(parent);
-					control.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-				}
-				if (!firstControl) {
-					((GridData)children.get(0).getLayoutData()).verticalIndent = 15;
 				}
 				controls.put(hoverControlCreator.getKey(), informationControl);
-				firstControl = false;
 			} else {
 				GenericEditorPlugin.getDefault().getLog().log(new Status(IStatus.WARNING, GenericEditorPlugin.BUNDLE_ID,
 						"Only text hovers producing an AbstractInformationControl can be aggregated; got a " + informationControl.getClass().getSimpleName())); //$NON-NLS-1$
