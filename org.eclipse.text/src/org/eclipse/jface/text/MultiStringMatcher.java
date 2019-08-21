@@ -31,10 +31,10 @@ public class MultiStringMatcher {
 	// An implementation of the Aho-Corasick algorithm (without the DFA construction from section 6 of the
 	// paper; just the failure and output links).
 	//
-	// See Aho, Alfred A.; Corasick, Margaret J.: "Efficient String Matching: An Aid to Bibliographic Search",
+	// See Aho, Alfred V.; Corasick, Margaret J.: "Efficient String Matching: An Aid to Bibliographic Search",
 	// CACM 18(6), 1975.
 	//
-	// The algorithm has been modified to support both reporting all matches or only leftmost longest matches.
+	// The algorithm has been modified to support reporting either all matches or only leftmost longest matches.
 
 	/**
 	 * Describes a match result of {@link MultiStringMatcher#indexOf(CharSequence, int)}, giving
@@ -296,19 +296,28 @@ public class MultiStringMatcher {
 	public Match indexOf(CharSequence text, int offset) {
 		// Main search loop of the Aho-Corasick algorithm, modified to stop after
 		// the leftmost longest match.
-		// How it works: primary goal -> lowest offset, secondary goal -> longest match.
-		// We differ between primary and sub matches. When the first match a character we walk down
-		// a path on the trie to find a match. Any match we found on this way is a primary match and
-		// any new primary match is better than the one before. Also a primary match always got a better
-		// offset than any sub or failover match.
-		// A sub match is a sub pattern of our main trie path. There offset is always after any of the
-		// primaries. Sub matches are not found in offset order so we must check if a new sub match is
-		// better than our best so far.
-		// If we fell off the trie path but found a primary match we are done. No other match can get a lower
-		// offset. Sometimes we can continue on another trie path through the fail link. If we found no
-		// failover path we can return our sub match or must restart at root. If we changed to a
-		// failover path we must check on the first direct match if a sub match from the previous path
-		// is better. If yes it will be returned if not we continue like we did on the first path.
+		//
+		// To find a match, we pursue a primary goal (lowest offset) and a secondary goal
+		// (longest match). We differentiate between primary and sub-matches. Matching starts
+		// by walking down one path of the trie. Any match we find on this path is a primary
+		// match and any new primary match is better than the one before.  A sub-match is a
+		// matching prefix of a suffix of the text currently scanned along the path. These
+		// sub-matches occur on paths off the one we're currently following, and they are
+		// linked in the trie via the output links. Their offset is always greater than that
+		// of a primary match, and sub-matches further into the 'output' chain are shorter.
+		// Therefore we are interested only in the first such sub-match. While walking down
+		// a path, sub-matches off this path are not found in offset order, so we have to
+		// check whether a new sub-match is better (lower offset, or longer) than a previously
+		// found sub-match.
+		//
+		// When we can't continue matching on the current path, the algorithm uses the fail
+		// links to try to find an alternate path to match (which would match a suffix of
+		// what was traversed so far). Therefore, if we already had a primary match, it is
+		// returned, since any other match must have a higher offset. If there is no alternate
+		// path, we fall off the trie (the algorithm bring us back to root, and would start
+		// again from the top). If we have any match, we may stop and return it. If we _do_
+		// change to an alternate path but there's a sub-match with a lower offset, we also
+		// may return that. Otherwise we continue normally on the new path.
 		int textEnd= text.length();
 		Match primaryMatch= null;
 		Match subMatch= null;
@@ -329,7 +338,8 @@ public class MultiStringMatcher {
 				} while ((next= node.next(c)) == null);
 				failover= (node != root);
 				if (!failover && subMatch != null) {
-					// We fell of the trie and could not switch to another. Return best sub match if possible.
+					// We fell of the trie and could not switch to another. Return best sub-match
+					// if possible.
 					return subMatch;
 				}
 			}
@@ -341,14 +351,16 @@ public class MultiStringMatcher {
 				if (failover && subMatch != null && subMatch.getOffset() < newOffset) {
 					return subMatch;
 				}
-				// Any new primary match is better because all have the same offset but any new must be longer.
+				// Any new primary match is better because all have the same offset but any new one
+				// must be longer.
 				primaryMatch= new MatchResult(node.match, newOffset);
 				if (!node.hasChildren()) {
-					// We will fall off the trie on next character so we can return right here
+					// We will fall off the trie on the next character, so we can return right here
 					return primaryMatch;
 				}
 			}
-			// Check for sub matches but only if there is no primary match because only another primary match can be better.
+			// Check for sub matches but only if there is no primary match because only another
+			// primary match can be better.
 			if (primaryMatch == null) {
 				Node out= node.output;
 				if (out != null) {
