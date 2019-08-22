@@ -47,9 +47,19 @@ public interface ISelectionService {
 	 * they will be removed when the IServiceLocator used to acquire this service is
 	 * disposed.
 	 * </p>
+	 * <p>
+	 * <b>Note:</b> only update the UI when the UI is visible. See the
+	 * {@link SelectionListenerFactory} for listeners that will only be called when
+	 * the UI is visible to the user.
+	 * </p>
+	 *
 	 *
 	 * @param listener a selection listener
 	 * @see #removeSelectionListener(ISelectionListener)
+	 * @see SelectionListenerFactory#getVisiblePartSelectionListener(IWorkbenchPart,
+	 *      ISelectionListener)
+	 * @see SelectionListenerFactory#getVisiblePartSelectionListener2(IWorkbenchPart,
+	 *      ISelectionListener)
 	 */
 	void addSelectionListener(ISelectionListener listener);
 
@@ -64,19 +74,28 @@ public interface ISelectionService {
 	 * <code>INullSelectionListener</code>.
 	 * </p>
 	 * <p>
-	 * Note: This will not correctly track editor parts as each editor does not have
-	 * a unique partId.
+	 * <b>Note:</b> this will not correctly track editor parts as each editor does
+	 * not have a unique partId.
 	 * </p>
 	 * <p>
 	 * <b>Note:</b> listeners should be removed when no longer necessary. If not,
 	 * they will be removed when the IServiceLocator used to acquire this service is
 	 * disposed.
 	 * </p>
+	 * <p>
+	 * <b>Note:</b> only update the UI when the UI is visible. See the
+	 * {@link SelectionListenerFactory} for listeners that will only be called when
+	 * the UI is visible to the user.
+	 * </p>
 	 *
 	 * @param partId   the id of the part to track
 	 * @param listener a selection listener
 	 * @since 2.0
 	 * @see #removeSelectionListener(String, ISelectionListener)
+	 * @see SelectionListenerFactory#getVisiblePartSelectionListener(IWorkbenchPart,
+	 *      ISelectionListener)
+	 * @see SelectionListenerFactory#getVisiblePartSelectionListener2(IWorkbenchPart,
+	 *      ISelectionListener)
 	 */
 	void addSelectionListener(String partId, ISelectionListener listener);
 
@@ -92,9 +111,19 @@ public interface ISelectionService {
 	 * they will be removed when the IServiceLocator used to acquire this service is
 	 * disposed.
 	 * </p>
+	 * <p>
+	 * <b>Note:</b> only update the UI when the UI is visible. See the
+	 * {@link SelectionListenerFactory} for listeners that will only be called when
+	 * the UI is visible to the user.
+	 * </p>
+	 *
 	 *
 	 * @param listener a selection listener
 	 * @see #removePostSelectionListener(ISelectionListener)
+	 * @see SelectionListenerFactory#getVisiblePartSelectionListener(IWorkbenchPart,
+	 *      ISelectionListener)
+	 * @see SelectionListenerFactory#getVisiblePartSelectionListener2(IWorkbenchPart,
+	 *      ISelectionListener)
 	 */
 	void addPostSelectionListener(ISelectionListener listener);
 
@@ -109,19 +138,27 @@ public interface ISelectionService {
 	 * <code>INullSelectionListener</code>.
 	 * </p>
 	 * <p>
-	 * Note: This will not correctly track editor parts as each editor does not have
-	 * a unique partId.
+	 * <b>Note:</b> this will not correctly track editor parts as each editor does
+	 * not have a unique partId.
 	 * </p>
 	 * <p>
 	 * <b>Note:</b> listeners should be removed when no longer necessary. If not,
 	 * they will be removed when the IServiceLocator used to acquire this service is
 	 * disposed.
 	 * </p>
+	 * <b>Note:</b> only update the UI when the UI is visible. See the
+	 * {@link SelectionListenerFactory} for listeners that will only be called when
+	 * the UI is visible to the user.
+	 * </p>
 	 *
 	 * @param partId   the id of the part to track
 	 * @param listener a selection listener
 	 * @since 2.0
 	 * @see #removePostSelectionListener(String, ISelectionListener)
+	 * @see SelectionListenerFactory#getVisiblePartSelectionListener(IWorkbenchPart,
+	 *      ISelectionListener)
+	 * @see SelectionListenerFactory#getVisiblePartSelectionListener2(IWorkbenchPart,
+	 *      ISelectionListener)
 	 */
 	void addPostSelectionListener(String partId, ISelectionListener listener);
 

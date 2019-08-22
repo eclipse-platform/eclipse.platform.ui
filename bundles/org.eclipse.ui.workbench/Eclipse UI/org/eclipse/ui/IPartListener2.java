@@ -41,7 +41,8 @@ public interface IPartListener2 {
 	 * @param partRef the part that was activated
 	 * @see IWorkbenchPage#activate
 	 */
-	void partActivated(IWorkbenchPartReference partRef);
+	default void partActivated(IWorkbenchPartReference partRef) {
+	}
 
 	/**
 	 * Notifies this listener that the given part has been brought to the top.
@@ -56,7 +57,8 @@ public interface IPartListener2 {
 	 * @param partRef the part that was surfaced
 	 * @see IWorkbenchPage#bringToTop
 	 */
-	void partBroughtToTop(IWorkbenchPartReference partRef);
+	default void partBroughtToTop(IWorkbenchPartReference partRef) {
+	}
 
 	/**
 	 * Notifies this listener that the given part has been closed.
@@ -69,7 +71,8 @@ public interface IPartListener2 {
 	 * @param partRef the part that was closed
 	 * @see IWorkbenchPage#hideView
 	 */
-	void partClosed(IWorkbenchPartReference partRef);
+	default void partClosed(IWorkbenchPartReference partRef) {
+	}
 
 	/**
 	 * Notifies this listener that the given part has been deactivated.
@@ -77,7 +80,8 @@ public interface IPartListener2 {
 	 * @param partRef the part that was deactivated
 	 * @see IWorkbenchPage#activate
 	 */
-	void partDeactivated(IWorkbenchPartReference partRef);
+	default void partDeactivated(IWorkbenchPartReference partRef) {
+	}
 
 	/**
 	 * Notifies this listener that the given part has been opened.
@@ -90,7 +94,8 @@ public interface IPartListener2 {
 	 * @param partRef the part that was opened
 	 * @see IWorkbenchPage#showView
 	 */
-	void partOpened(IWorkbenchPartReference partRef);
+	default void partOpened(IWorkbenchPartReference partRef) {
+	}
 
 	/**
 	 * Notifies this listener that the given part is hidden or obscured by another
@@ -98,19 +103,22 @@ public interface IPartListener2 {
 	 *
 	 * @param partRef the part that is hidden or obscured by another part
 	 */
-	void partHidden(IWorkbenchPartReference partRef);
+	default void partHidden(IWorkbenchPartReference partRef) {
+	}
 
 	/**
 	 * Notifies this listener that the given part is visible.
 	 *
 	 * @param partRef the part that is visible
 	 */
-	void partVisible(IWorkbenchPartReference partRef);
+	default void partVisible(IWorkbenchPartReference partRef) {
+	}
 
 	/**
 	 * Notifies this listener that the given part's input was changed.
 	 *
 	 * @param partRef the part whose input was changed
 	 */
-	void partInputChanged(IWorkbenchPartReference partRef);
+	default void partInputChanged(IWorkbenchPartReference partRef) {
+	}
 }
