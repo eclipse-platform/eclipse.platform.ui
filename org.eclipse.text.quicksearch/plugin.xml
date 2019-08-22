@@ -100,9 +100,11 @@
    </extension>
 
    <extension point = "org.eclipse.ui.preferencePages">
-       <page id="org.eclipse.text.quicksearch.PreferencesPage"
-	        class="org.eclipse.text.quicksearch.internal.ui.QuickSearchPreferencesPage"
-          name="%quickSearch.label">
+       <page
+             category="org.eclipse.ui.preferencePages.Workbench"
+             class="org.eclipse.text.quicksearch.internal.ui.QuickSearchPreferencesPage"
+             id="org.eclipse.text.quicksearch.PreferencesPage"
+             name="%quickSearch.label">
        </page>
    </extension>
 
