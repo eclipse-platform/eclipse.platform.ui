@@ -196,8 +196,9 @@ public class KeyBindingImpl extends ApplicationElementImpl implements MKeyBindin
 		switch (featureID) {
 		case CommandsPackageImpl.KEY_BINDING__PARAMETERS:
 			return ((InternalEList<?>) getParameters()).basicRemove(otherEnd, msgs);
+		default:
+			return super.eInverseRemove(otherEnd, featureID, msgs);
 		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -216,8 +217,9 @@ public class KeyBindingImpl extends ApplicationElementImpl implements MKeyBindin
 			return basicGetCommand();
 		case CommandsPackageImpl.KEY_BINDING__PARAMETERS:
 			return getParameters();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -239,8 +241,10 @@ public class KeyBindingImpl extends ApplicationElementImpl implements MKeyBindin
 			getParameters().clear();
 			getParameters().addAll((Collection<? extends MParameter>) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -260,8 +264,10 @@ public class KeyBindingImpl extends ApplicationElementImpl implements MKeyBindin
 		case CommandsPackageImpl.KEY_BINDING__PARAMETERS:
 			getParameters().clear();
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -278,8 +284,9 @@ public class KeyBindingImpl extends ApplicationElementImpl implements MKeyBindin
 			return command != null;
 		case CommandsPackageImpl.KEY_BINDING__PARAMETERS:
 			return parameters != null && !parameters.isEmpty();
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**

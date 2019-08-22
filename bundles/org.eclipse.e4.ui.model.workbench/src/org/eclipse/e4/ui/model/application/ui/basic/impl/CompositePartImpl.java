@@ -206,8 +206,9 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 		switch (featureID) {
 		case BasicPackageImpl.COMPOSITE_PART__CHILDREN:
 			return ((InternalEList<InternalEObject>) (InternalEList<?>) getChildren()).basicAdd(otherEnd, msgs);
+		default:
+			return super.eInverseAdd(otherEnd, featureID, msgs);
 		}
-		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -220,8 +221,9 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 		switch (featureID) {
 		case BasicPackageImpl.COMPOSITE_PART__CHILDREN:
 			return ((InternalEList<?>) getChildren()).basicRemove(otherEnd, msgs);
+		default:
+			return super.eInverseRemove(otherEnd, featureID, msgs);
 		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -240,8 +242,9 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 			return basicGetSelectedElement();
 		case BasicPackageImpl.COMPOSITE_PART__HORIZONTAL:
 			return isHorizontal();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -263,8 +266,10 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 		case BasicPackageImpl.COMPOSITE_PART__HORIZONTAL:
 			setHorizontal((Boolean) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -284,8 +289,10 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 		case BasicPackageImpl.COMPOSITE_PART__HORIZONTAL:
 			setHorizontal(HORIZONTAL_EDEFAULT);
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -302,8 +309,9 @@ public class CompositePartImpl extends PartImpl implements MCompositePart {
 			return selectedElement != null;
 		case BasicPackageImpl.COMPOSITE_PART__HORIZONTAL:
 			return horizontal != HORIZONTAL_EDEFAULT;
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**

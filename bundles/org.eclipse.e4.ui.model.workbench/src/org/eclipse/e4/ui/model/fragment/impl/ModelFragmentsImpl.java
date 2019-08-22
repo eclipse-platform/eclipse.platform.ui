@@ -122,8 +122,9 @@ public class ModelFragmentsImpl extends org.eclipse.emf.ecore.impl.MinimalEObjec
 			return ((InternalEList<?>) getImports()).basicRemove(otherEnd, msgs);
 		case FragmentPackageImpl.MODEL_FRAGMENTS__FRAGMENTS:
 			return ((InternalEList<?>) getFragments()).basicRemove(otherEnd, msgs);
+		default:
+			return super.eInverseRemove(otherEnd, featureID, msgs);
 		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -138,8 +139,9 @@ public class ModelFragmentsImpl extends org.eclipse.emf.ecore.impl.MinimalEObjec
 			return getImports();
 		case FragmentPackageImpl.MODEL_FRAGMENTS__FRAGMENTS:
 			return getFragments();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -159,8 +161,10 @@ public class ModelFragmentsImpl extends org.eclipse.emf.ecore.impl.MinimalEObjec
 			getFragments().clear();
 			getFragments().addAll((Collection<? extends MModelFragment>) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -177,8 +181,10 @@ public class ModelFragmentsImpl extends org.eclipse.emf.ecore.impl.MinimalEObjec
 		case FragmentPackageImpl.MODEL_FRAGMENTS__FRAGMENTS:
 			getFragments().clear();
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -193,8 +199,9 @@ public class ModelFragmentsImpl extends org.eclipse.emf.ecore.impl.MinimalEObjec
 			return imports != null && !imports.isEmpty();
 		case FragmentPackageImpl.MODEL_FRAGMENTS__FRAGMENTS:
 			return fragments != null && !fragments.isEmpty();
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 } //ModelFragmentsImpl

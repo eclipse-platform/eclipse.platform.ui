@@ -225,15 +225,4 @@ public class CommandsFactoryImpl extends EFactoryImpl implements MCommandsFactor
 		return (CommandsPackageImpl) getEPackage();
 	}
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @deprecated
-	 * @generated
-	 */
-	@Deprecated
-	public static CommandsPackageImpl getPackage() {
-		return CommandsPackageImpl.eINSTANCE;
-	}
-
 } //CommandsFactoryImpl

@@ -220,8 +220,9 @@ public class CategoryImpl extends ApplicationElementImpl implements MCategory {
 			return getLocalizedName();
 		case CommandsPackageImpl.CATEGORY__LOCALIZED_DESCRIPTION:
 			return getLocalizedDescription();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -238,8 +239,10 @@ public class CategoryImpl extends ApplicationElementImpl implements MCategory {
 		case CommandsPackageImpl.CATEGORY__DESCRIPTION:
 			setDescription((String) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -256,8 +259,10 @@ public class CategoryImpl extends ApplicationElementImpl implements MCategory {
 		case CommandsPackageImpl.CATEGORY__DESCRIPTION:
 			setDescription(DESCRIPTION_EDEFAULT);
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -278,8 +283,9 @@ public class CategoryImpl extends ApplicationElementImpl implements MCategory {
 		case CommandsPackageImpl.CATEGORY__LOCALIZED_DESCRIPTION:
 			return LOCALIZED_DESCRIPTION_EDEFAULT == null ? getLocalizedDescription() != null
 					: !LOCALIZED_DESCRIPTION_EDEFAULT.equals(getLocalizedDescription());
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**
@@ -311,8 +317,9 @@ public class CategoryImpl extends ApplicationElementImpl implements MCategory {
 		case CommandsPackageImpl.CATEGORY___UPDATE_LOCALIZATION:
 			updateLocalization();
 			return null;
+		default:
+			return super.eInvoke(operationID, arguments);
 		}
-		return super.eInvoke(operationID, arguments);
 	}
 
 	/**

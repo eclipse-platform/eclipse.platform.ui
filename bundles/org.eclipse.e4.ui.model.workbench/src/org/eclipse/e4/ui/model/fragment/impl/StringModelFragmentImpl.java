@@ -217,8 +217,9 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 			return getParentElementId();
 		case FragmentPackageImpl.STRING_MODEL_FRAGMENT__POSITION_IN_LIST:
 			return getPositionInList();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -238,8 +239,10 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 		case FragmentPackageImpl.STRING_MODEL_FRAGMENT__POSITION_IN_LIST:
 			setPositionInList((String) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -259,8 +262,10 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 		case FragmentPackageImpl.STRING_MODEL_FRAGMENT__POSITION_IN_LIST:
 			setPositionInList(POSITION_IN_LIST_EDEFAULT);
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -279,8 +284,9 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 		case FragmentPackageImpl.STRING_MODEL_FRAGMENT__POSITION_IN_LIST:
 			return POSITION_IN_LIST_EDEFAULT == null ? positionInList != null
 					: !POSITION_IN_LIST_EDEFAULT.equals(positionInList);
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**

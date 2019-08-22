@@ -110,8 +110,9 @@ public class InputPartImpl extends PartImpl implements MInputPart {
 		switch (featureID) {
 		case BasicPackageImpl.INPUT_PART__INPUT_URI:
 			return getInputURI();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -125,8 +126,10 @@ public class InputPartImpl extends PartImpl implements MInputPart {
 		case BasicPackageImpl.INPUT_PART__INPUT_URI:
 			setInputURI((String) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -140,8 +143,10 @@ public class InputPartImpl extends PartImpl implements MInputPart {
 		case BasicPackageImpl.INPUT_PART__INPUT_URI:
 			setInputURI(INPUT_URI_EDEFAULT);
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -154,8 +159,9 @@ public class InputPartImpl extends PartImpl implements MInputPart {
 		switch (featureID) {
 		case BasicPackageImpl.INPUT_PART__INPUT_URI:
 			return INPUT_URI_EDEFAULT == null ? inputURI != null : !INPUT_URI_EDEFAULT.equals(inputURI);
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**

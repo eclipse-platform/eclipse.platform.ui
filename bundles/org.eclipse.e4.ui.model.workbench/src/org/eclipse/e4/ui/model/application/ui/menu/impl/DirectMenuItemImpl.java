@@ -159,8 +159,9 @@ public class DirectMenuItemImpl extends MenuItemImpl implements MDirectMenuItem 
 			return getContributionURI();
 		case MenuPackageImpl.DIRECT_MENU_ITEM__OBJECT:
 			return getObject();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -177,8 +178,10 @@ public class DirectMenuItemImpl extends MenuItemImpl implements MDirectMenuItem 
 		case MenuPackageImpl.DIRECT_MENU_ITEM__OBJECT:
 			setObject(newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -195,8 +198,10 @@ public class DirectMenuItemImpl extends MenuItemImpl implements MDirectMenuItem 
 		case MenuPackageImpl.DIRECT_MENU_ITEM__OBJECT:
 			setObject(OBJECT_EDEFAULT);
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -212,8 +217,9 @@ public class DirectMenuItemImpl extends MenuItemImpl implements MDirectMenuItem 
 					: !CONTRIBUTION_URI_EDEFAULT.equals(contributionURI);
 		case MenuPackageImpl.DIRECT_MENU_ITEM__OBJECT:
 			return OBJECT_EDEFAULT == null ? object != null : !OBJECT_EDEFAULT.equals(object);
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**

@@ -157,8 +157,9 @@ public abstract class ContributionImpl extends ApplicationElementImpl implements
 			return getContributionURI();
 		case ApplicationPackageImpl.CONTRIBUTION__OBJECT:
 			return getObject();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -175,8 +176,10 @@ public abstract class ContributionImpl extends ApplicationElementImpl implements
 		case ApplicationPackageImpl.CONTRIBUTION__OBJECT:
 			setObject(newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -193,8 +196,10 @@ public abstract class ContributionImpl extends ApplicationElementImpl implements
 		case ApplicationPackageImpl.CONTRIBUTION__OBJECT:
 			setObject(OBJECT_EDEFAULT);
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -210,8 +215,9 @@ public abstract class ContributionImpl extends ApplicationElementImpl implements
 					: !CONTRIBUTION_URI_EDEFAULT.equals(contributionURI);
 		case ApplicationPackageImpl.CONTRIBUTION__OBJECT:
 			return OBJECT_EDEFAULT == null ? object != null : !OBJECT_EDEFAULT.equals(object);
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**

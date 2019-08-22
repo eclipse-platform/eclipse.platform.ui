@@ -166,8 +166,9 @@ public class PlaceholderImpl extends UIElementImpl implements MPlaceholder {
 			return basicGetRef();
 		case AdvancedPackageImpl.PLACEHOLDER__CLOSEABLE:
 			return isCloseable();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -184,8 +185,10 @@ public class PlaceholderImpl extends UIElementImpl implements MPlaceholder {
 		case AdvancedPackageImpl.PLACEHOLDER__CLOSEABLE:
 			setCloseable((Boolean) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -202,8 +205,10 @@ public class PlaceholderImpl extends UIElementImpl implements MPlaceholder {
 		case AdvancedPackageImpl.PLACEHOLDER__CLOSEABLE:
 			setCloseable(CLOSEABLE_EDEFAULT);
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -218,8 +223,9 @@ public class PlaceholderImpl extends UIElementImpl implements MPlaceholder {
 			return ref != null;
 		case AdvancedPackageImpl.PLACEHOLDER__CLOSEABLE:
 			return closeable != CLOSEABLE_EDEFAULT;
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**

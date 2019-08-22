@@ -92,8 +92,9 @@ public class TrimBarImpl extends GenericTrimContainerImpl<MTrimElement> implemen
 		switch (featureID) {
 		case BasicPackageImpl.TRIM_BAR__PENDING_CLEANUP:
 			return getPendingCleanup();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -109,8 +110,10 @@ public class TrimBarImpl extends GenericTrimContainerImpl<MTrimElement> implemen
 			getPendingCleanup().clear();
 			getPendingCleanup().addAll((Collection<? extends MTrimElement>) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -124,8 +127,10 @@ public class TrimBarImpl extends GenericTrimContainerImpl<MTrimElement> implemen
 		case BasicPackageImpl.TRIM_BAR__PENDING_CLEANUP:
 			getPendingCleanup().clear();
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -138,8 +143,9 @@ public class TrimBarImpl extends GenericTrimContainerImpl<MTrimElement> implemen
 		switch (featureID) {
 		case BasicPackageImpl.TRIM_BAR__PENDING_CLEANUP:
 			return pendingCleanup != null && !pendingCleanup.isEmpty();
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 } //TrimBarImpl

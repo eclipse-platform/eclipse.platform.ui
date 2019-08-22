@@ -282,8 +282,9 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 			return getLocalizedLabel();
 		case AdvancedPackageImpl.AREA__LOCALIZED_TOOLTIP:
 			return getLocalizedTooltip();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -303,8 +304,10 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 		case AdvancedPackageImpl.AREA__TOOLTIP:
 			setTooltip((String) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -324,8 +327,10 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 		case AdvancedPackageImpl.AREA__TOOLTIP:
 			setTooltip(TOOLTIP_EDEFAULT);
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -348,8 +353,9 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 		case AdvancedPackageImpl.AREA__LOCALIZED_TOOLTIP:
 			return LOCALIZED_TOOLTIP_EDEFAULT == null ? getLocalizedTooltip() != null
 					: !LOCALIZED_TOOLTIP_EDEFAULT.equals(getLocalizedTooltip());
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**
@@ -447,8 +453,9 @@ public class AreaImpl extends PartSashContainerImpl implements MArea {
 		case AdvancedPackageImpl.AREA___UPDATE_LOCALIZATION:
 			updateLocalization();
 			return null;
+		default:
+			return super.eInvoke(operationID, arguments);
 		}
-		return super.eInvoke(operationID, arguments);
 	}
 
 	/**

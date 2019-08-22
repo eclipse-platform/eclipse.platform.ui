@@ -142,15 +142,4 @@ public class AdvancedFactoryImpl extends EFactoryImpl implements MAdvancedFactor
 		return (AdvancedPackageImpl) getEPackage();
 	}
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @deprecated
-	 * @generated
-	 */
-	@Deprecated
-	public static AdvancedPackageImpl getPackage() {
-		return AdvancedPackageImpl.eINSTANCE;
-	}
-
 } //AdvancedFactoryImpl

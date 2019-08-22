@@ -589,8 +589,9 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 			if (eInternalContainer() != null)
 				msgs = eBasicRemoveFromContainer(msgs);
 			return basicSetParent((MElementContainer<MUIElement>) otherEnd, msgs);
+		default:
+			return super.eInverseAdd(otherEnd, featureID, msgs);
 		}
-		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -605,8 +606,9 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 			return basicSetParent(null, msgs);
 		case UiPackageImpl.UI_ELEMENT__VISIBLE_WHEN:
 			return basicSetVisibleWhen(null, msgs);
+		default:
+			return super.eInverseRemove(otherEnd, featureID, msgs);
 		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -620,8 +622,9 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 		case UiPackageImpl.UI_ELEMENT__PARENT:
 			return eInternalContainer().eInverseRemove(this, UiPackageImpl.ELEMENT_CONTAINER__CHILDREN,
 					MElementContainer.class, msgs);
+		default:
+			return super.eBasicRemoveFromContainerFeature(msgs);
 		}
-		return super.eBasicRemoveFromContainerFeature(msgs);
 	}
 
 	/**
@@ -656,8 +659,9 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 			return getAccessibilityPhrase();
 		case UiPackageImpl.UI_ELEMENT__LOCALIZED_ACCESSIBILITY_PHRASE:
 			return getLocalizedAccessibilityPhrase();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -699,8 +703,10 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 		case UiPackageImpl.UI_ELEMENT__ACCESSIBILITY_PHRASE:
 			setAccessibilityPhrase((String) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -741,8 +747,10 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 		case UiPackageImpl.UI_ELEMENT__ACCESSIBILITY_PHRASE:
 			setAccessibilityPhrase(ACCESSIBILITY_PHRASE_EDEFAULT);
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -778,8 +786,9 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 		case UiPackageImpl.UI_ELEMENT__LOCALIZED_ACCESSIBILITY_PHRASE:
 			return LOCALIZED_ACCESSIBILITY_PHRASE_EDEFAULT == null ? getLocalizedAccessibilityPhrase() != null
 					: !LOCALIZED_ACCESSIBILITY_PHRASE_EDEFAULT.equals(getLocalizedAccessibilityPhrase());
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**
@@ -811,8 +820,9 @@ public abstract class UIElementImpl extends ApplicationElementImpl implements MU
 		case UiPackageImpl.UI_ELEMENT___UPDATE_LOCALIZATION:
 			updateLocalization();
 			return null;
+		default:
+			return super.eInvoke(operationID, arguments);
 		}
-		return super.eInvoke(operationID, arguments);
 	}
 
 	/**

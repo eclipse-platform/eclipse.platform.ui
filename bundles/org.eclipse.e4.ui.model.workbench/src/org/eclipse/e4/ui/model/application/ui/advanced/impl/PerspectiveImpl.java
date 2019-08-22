@@ -540,8 +540,9 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 			return ((InternalEList<?>) getWindows()).basicRemove(otherEnd, msgs);
 		case AdvancedPackageImpl.PERSPECTIVE__TRIM_BARS:
 			return ((InternalEList<?>) getTrimBars()).basicRemove(otherEnd, msgs);
+		default:
+			return super.eInverseRemove(otherEnd, featureID, msgs);
 		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -579,8 +580,9 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 			return getWindows();
 		case AdvancedPackageImpl.PERSPECTIVE__TRIM_BARS:
 			return getTrimBars();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -628,8 +630,10 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 			getTrimBars().clear();
 			getTrimBars().addAll((Collection<? extends MTrimBar>) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -670,8 +674,10 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 		case AdvancedPackageImpl.PERSPECTIVE__TRIM_BARS:
 			getTrimBars().clear();
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -708,8 +714,9 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 			return windows != null && !windows.isEmpty();
 		case AdvancedPackageImpl.PERSPECTIVE__TRIM_BARS:
 			return trimBars != null && !trimBars.isEmpty();
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**
@@ -881,8 +888,9 @@ public class PerspectiveImpl extends ElementContainerImpl<MPartSashContainerElem
 		case AdvancedPackageImpl.PERSPECTIVE___UPDATE_LOCALIZATION:
 			updateLocalization();
 			return null;
+		default:
+			return super.eInvoke(operationID, arguments);
 		}
-		return super.eInvoke(operationID, arguments);
 	}
 
 	/**

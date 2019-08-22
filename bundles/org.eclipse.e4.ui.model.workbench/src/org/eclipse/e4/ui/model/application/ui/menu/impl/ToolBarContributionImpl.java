@@ -193,8 +193,9 @@ public class ToolBarContributionImpl extends ElementContainerImpl<MToolBarElemen
 			return getParentId();
 		case MenuPackageImpl.TOOL_BAR_CONTRIBUTION__POSITION_IN_PARENT:
 			return getPositionInParent();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -211,8 +212,10 @@ public class ToolBarContributionImpl extends ElementContainerImpl<MToolBarElemen
 		case MenuPackageImpl.TOOL_BAR_CONTRIBUTION__POSITION_IN_PARENT:
 			setPositionInParent((String) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -229,8 +232,10 @@ public class ToolBarContributionImpl extends ElementContainerImpl<MToolBarElemen
 		case MenuPackageImpl.TOOL_BAR_CONTRIBUTION__POSITION_IN_PARENT:
 			setPositionInParent(POSITION_IN_PARENT_EDEFAULT);
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -246,8 +251,9 @@ public class ToolBarContributionImpl extends ElementContainerImpl<MToolBarElemen
 		case MenuPackageImpl.TOOL_BAR_CONTRIBUTION__POSITION_IN_PARENT:
 			return POSITION_IN_PARENT_EDEFAULT == null ? positionInParent != null
 					: !POSITION_IN_PARENT_EDEFAULT.equals(positionInParent);
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**

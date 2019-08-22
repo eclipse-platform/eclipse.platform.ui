@@ -341,8 +341,9 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 			return getLocalizedTooltip();
 		case MenuPackageImpl.MENU_ELEMENT__MNEMONICS:
 			return getMnemonics();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -365,8 +366,10 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 		case MenuPackageImpl.MENU_ELEMENT__MNEMONICS:
 			setMnemonics((String) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -389,8 +392,10 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 		case MenuPackageImpl.MENU_ELEMENT__MNEMONICS:
 			setMnemonics(MNEMONICS_EDEFAULT);
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -415,8 +420,9 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 					: !LOCALIZED_TOOLTIP_EDEFAULT.equals(getLocalizedTooltip());
 		case MenuPackageImpl.MENU_ELEMENT__MNEMONICS:
 			return MNEMONICS_EDEFAULT == null ? mnemonics != null : !MNEMONICS_EDEFAULT.equals(mnemonics);
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**
@@ -516,8 +522,9 @@ public abstract class MenuElementImpl extends UIElementImpl implements MMenuElem
 		case MenuPackageImpl.MENU_ELEMENT___UPDATE_LOCALIZATION:
 			updateLocalization();
 			return null;
+		default:
+			return super.eInvoke(operationID, arguments);
 		}
-		return super.eInvoke(operationID, arguments);
 	}
 
 	/**

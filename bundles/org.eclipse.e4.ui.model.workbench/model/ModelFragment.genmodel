@@ -28,4 +28,6 @@
     </genClasses>
   </genPackages>
   <codeStyle>UnnecessaryAssignmentBeforeReturn</codeStyle>
+  <codeStyle>SwitchMissingDefaultCase</codeStyle>
+  <codeStyle>UnnecessaryDeprecatedMethod</codeStyle>
 </genmodel:GenModel>

@@ -151,8 +151,9 @@ public class StringToStringMapImpl extends org.eclipse.emf.ecore.impl.MinimalEOb
 			return getTypedKey();
 		case ApplicationPackageImpl.STRING_TO_STRING_MAP__VALUE:
 			return getTypedValue();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -169,8 +170,10 @@ public class StringToStringMapImpl extends org.eclipse.emf.ecore.impl.MinimalEOb
 		case ApplicationPackageImpl.STRING_TO_STRING_MAP__VALUE:
 			setTypedValue((String) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -187,8 +190,10 @@ public class StringToStringMapImpl extends org.eclipse.emf.ecore.impl.MinimalEOb
 		case ApplicationPackageImpl.STRING_TO_STRING_MAP__VALUE:
 			setTypedValue(VALUE_EDEFAULT);
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -203,8 +208,9 @@ public class StringToStringMapImpl extends org.eclipse.emf.ecore.impl.MinimalEOb
 			return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
 		case ApplicationPackageImpl.STRING_TO_STRING_MAP__VALUE:
 			return VALUE_EDEFAULT == null ? value != null : !VALUE_EDEFAULT.equals(value);
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**

@@ -188,8 +188,9 @@ public enum SideValue implements InternalSideValue {
 			return LEFT;
 		case RIGHT_VALUE:
 			return RIGHT;
+		default:
+			return null;
 		}
-		return null;
 	}
 
 	/**

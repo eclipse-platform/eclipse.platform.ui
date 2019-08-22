@@ -184,8 +184,9 @@ public class BindingContextImpl extends ApplicationElementImpl implements MBindi
 		switch (featureID) {
 		case CommandsPackageImpl.BINDING_CONTEXT__CHILDREN:
 			return ((InternalEList<?>) getChildren()).basicRemove(otherEnd, msgs);
+		default:
+			return super.eInverseRemove(otherEnd, featureID, msgs);
 		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -202,8 +203,9 @@ public class BindingContextImpl extends ApplicationElementImpl implements MBindi
 			return getDescription();
 		case CommandsPackageImpl.BINDING_CONTEXT__CHILDREN:
 			return getChildren();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -225,8 +227,10 @@ public class BindingContextImpl extends ApplicationElementImpl implements MBindi
 			getChildren().clear();
 			getChildren().addAll((Collection<? extends MBindingContext>) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -246,8 +250,10 @@ public class BindingContextImpl extends ApplicationElementImpl implements MBindi
 		case CommandsPackageImpl.BINDING_CONTEXT__CHILDREN:
 			getChildren().clear();
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -264,8 +270,9 @@ public class BindingContextImpl extends ApplicationElementImpl implements MBindi
 			return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
 		case CommandsPackageImpl.BINDING_CONTEXT__CHILDREN:
 			return children != null && !children.isEmpty();
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**

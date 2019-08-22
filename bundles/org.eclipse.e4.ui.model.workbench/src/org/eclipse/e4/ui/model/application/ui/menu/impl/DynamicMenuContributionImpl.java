@@ -159,8 +159,9 @@ public class DynamicMenuContributionImpl extends MenuItemImpl implements MDynami
 			return getContributionURI();
 		case MenuPackageImpl.DYNAMIC_MENU_CONTRIBUTION__OBJECT:
 			return getObject();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -177,8 +178,10 @@ public class DynamicMenuContributionImpl extends MenuItemImpl implements MDynami
 		case MenuPackageImpl.DYNAMIC_MENU_CONTRIBUTION__OBJECT:
 			setObject(newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -195,8 +198,10 @@ public class DynamicMenuContributionImpl extends MenuItemImpl implements MDynami
 		case MenuPackageImpl.DYNAMIC_MENU_CONTRIBUTION__OBJECT:
 			setObject(OBJECT_EDEFAULT);
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -212,8 +217,9 @@ public class DynamicMenuContributionImpl extends MenuItemImpl implements MDynami
 					: !CONTRIBUTION_URI_EDEFAULT.equals(contributionURI);
 		case MenuPackageImpl.DYNAMIC_MENU_CONTRIBUTION__OBJECT:
 			return OBJECT_EDEFAULT == null ? object != null : !OBJECT_EDEFAULT.equals(object);
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**

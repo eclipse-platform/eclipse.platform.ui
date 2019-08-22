@@ -246,8 +246,9 @@ public abstract class ApplicationElementImpl extends org.eclipse.emf.ecore.impl.
 		case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA:
 			return ((InternalEList<?>) ((EMap.InternalMapView<String, Object>) getTransientData()).eMap())
 					.basicRemove(otherEnd, msgs);
+		default:
+			return super.eInverseRemove(otherEnd, featureID, msgs);
 		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -274,8 +275,9 @@ public abstract class ApplicationElementImpl extends org.eclipse.emf.ecore.impl.
 				return ((EMap.InternalMapView<String, Object>) getTransientData()).eMap();
 			else
 				return getTransientData();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -305,8 +307,10 @@ public abstract class ApplicationElementImpl extends org.eclipse.emf.ecore.impl.
 			((EStructuralFeature.Setting) ((EMap.InternalMapView<String, Object>) getTransientData()).eMap())
 					.set(newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -332,8 +336,10 @@ public abstract class ApplicationElementImpl extends org.eclipse.emf.ecore.impl.
 		case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA:
 			getTransientData().clear();
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -355,8 +361,9 @@ public abstract class ApplicationElementImpl extends org.eclipse.emf.ecore.impl.
 					: !CONTRIBUTOR_URI_EDEFAULT.equals(contributorURI);
 		case ApplicationPackageImpl.APPLICATION_ELEMENT__TRANSIENT_DATA:
 			return transientData != null && !transientData.isEmpty();
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**

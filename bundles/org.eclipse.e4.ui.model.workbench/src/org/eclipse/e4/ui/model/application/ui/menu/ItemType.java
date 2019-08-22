@@ -164,8 +164,9 @@ public enum ItemType implements InternalItemType {
 			return CHECK;
 		case RADIO_VALUE:
 			return RADIO;
+		default:
+			return null;
 		}
-		return null;
 	}
 
 	/**

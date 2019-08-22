@@ -164,8 +164,9 @@ public class PerspectiveStackImpl extends UIElementImpl implements MPerspectiveS
 		switch (featureID) {
 		case AdvancedPackageImpl.PERSPECTIVE_STACK__CHILDREN:
 			return ((InternalEList<InternalEObject>) (InternalEList<?>) getChildren()).basicAdd(otherEnd, msgs);
+		default:
+			return super.eInverseAdd(otherEnd, featureID, msgs);
 		}
-		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -178,8 +179,9 @@ public class PerspectiveStackImpl extends UIElementImpl implements MPerspectiveS
 		switch (featureID) {
 		case AdvancedPackageImpl.PERSPECTIVE_STACK__CHILDREN:
 			return ((InternalEList<?>) getChildren()).basicRemove(otherEnd, msgs);
+		default:
+			return super.eInverseRemove(otherEnd, featureID, msgs);
 		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -196,8 +198,9 @@ public class PerspectiveStackImpl extends UIElementImpl implements MPerspectiveS
 			if (resolve)
 				return getSelectedElement();
 			return basicGetSelectedElement();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -216,8 +219,10 @@ public class PerspectiveStackImpl extends UIElementImpl implements MPerspectiveS
 		case AdvancedPackageImpl.PERSPECTIVE_STACK__SELECTED_ELEMENT:
 			setSelectedElement((MPerspective) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -234,8 +239,10 @@ public class PerspectiveStackImpl extends UIElementImpl implements MPerspectiveS
 		case AdvancedPackageImpl.PERSPECTIVE_STACK__SELECTED_ELEMENT:
 			setSelectedElement((MPerspective) null);
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -250,8 +257,9 @@ public class PerspectiveStackImpl extends UIElementImpl implements MPerspectiveS
 			return children != null && !children.isEmpty();
 		case AdvancedPackageImpl.PERSPECTIVE_STACK__SELECTED_ELEMENT:
 			return selectedElement != null;
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**

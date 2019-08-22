@@ -201,8 +201,9 @@ public class CommandParameterImpl extends ApplicationElementImpl implements MCom
 			return getTypeId();
 		case CommandsPackageImpl.COMMAND_PARAMETER__OPTIONAL:
 			return isOptional();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -222,8 +223,10 @@ public class CommandParameterImpl extends ApplicationElementImpl implements MCom
 		case CommandsPackageImpl.COMMAND_PARAMETER__OPTIONAL:
 			setOptional((Boolean) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -243,8 +246,10 @@ public class CommandParameterImpl extends ApplicationElementImpl implements MCom
 		case CommandsPackageImpl.COMMAND_PARAMETER__OPTIONAL:
 			setOptional(OPTIONAL_EDEFAULT);
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -261,8 +266,9 @@ public class CommandParameterImpl extends ApplicationElementImpl implements MCom
 			return TYPE_ID_EDEFAULT == null ? typeId != null : !TYPE_ID_EDEFAULT.equals(typeId);
 		case CommandsPackageImpl.COMMAND_PARAMETER__OPTIONAL:
 			return optional != OPTIONAL_EDEFAULT;
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**

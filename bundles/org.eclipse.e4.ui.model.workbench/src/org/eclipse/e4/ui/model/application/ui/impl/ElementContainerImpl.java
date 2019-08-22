@@ -199,8 +199,9 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 		switch (featureID) {
 		case UiPackageImpl.ELEMENT_CONTAINER__CHILDREN:
 			return ((InternalEList<InternalEObject>) (InternalEList<?>) getChildren()).basicAdd(otherEnd, msgs);
+		default:
+			return super.eInverseAdd(otherEnd, featureID, msgs);
 		}
-		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -213,8 +214,9 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 		switch (featureID) {
 		case UiPackageImpl.ELEMENT_CONTAINER__CHILDREN:
 			return ((InternalEList<?>) getChildren()).basicRemove(otherEnd, msgs);
+		default:
+			return super.eInverseRemove(otherEnd, featureID, msgs);
 		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -231,8 +233,9 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 			if (resolve)
 				return getSelectedElement();
 			return basicGetSelectedElement();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -251,8 +254,10 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 		case UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT:
 			setSelectedElement((T) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -269,8 +274,10 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 		case UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT:
 			setSelectedElement((T) null);
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -285,8 +292,9 @@ public abstract class ElementContainerImpl<T extends MUIElement> extends UIEleme
 			return children != null && !children.isEmpty();
 		case UiPackageImpl.ELEMENT_CONTAINER__SELECTED_ELEMENT:
 			return selectedElement != null;
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 } //ElementContainerImpl

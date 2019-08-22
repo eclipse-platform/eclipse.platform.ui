@@ -200,8 +200,9 @@ public class HandledToolItemImpl extends ToolItemImpl implements MHandledToolIte
 		switch (featureID) {
 		case MenuPackageImpl.HANDLED_TOOL_ITEM__PARAMETERS:
 			return ((InternalEList<?>) getParameters()).basicRemove(otherEnd, msgs);
+		default:
+			return super.eInverseRemove(otherEnd, featureID, msgs);
 		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -220,8 +221,9 @@ public class HandledToolItemImpl extends ToolItemImpl implements MHandledToolIte
 			return getWbCommand();
 		case MenuPackageImpl.HANDLED_TOOL_ITEM__PARAMETERS:
 			return getParameters();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -243,8 +245,10 @@ public class HandledToolItemImpl extends ToolItemImpl implements MHandledToolIte
 			getParameters().clear();
 			getParameters().addAll((Collection<? extends MParameter>) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -264,8 +268,10 @@ public class HandledToolItemImpl extends ToolItemImpl implements MHandledToolIte
 		case MenuPackageImpl.HANDLED_TOOL_ITEM__PARAMETERS:
 			getParameters().clear();
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -282,8 +288,9 @@ public class HandledToolItemImpl extends ToolItemImpl implements MHandledToolIte
 			return WB_COMMAND_EDEFAULT == null ? wbCommand != null : !WB_COMMAND_EDEFAULT.equals(wbCommand);
 		case MenuPackageImpl.HANDLED_TOOL_ITEM__PARAMETERS:
 			return parameters != null && !parameters.isEmpty();
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**

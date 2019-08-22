@@ -420,8 +420,9 @@ public abstract class ItemImpl extends UIElementImpl implements MItem {
 			return isSelected();
 		case MenuPackageImpl.ITEM__TYPE:
 			return getType();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -450,8 +451,10 @@ public abstract class ItemImpl extends UIElementImpl implements MItem {
 		case MenuPackageImpl.ITEM__TYPE:
 			setType((ItemType) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -480,8 +483,10 @@ public abstract class ItemImpl extends UIElementImpl implements MItem {
 		case MenuPackageImpl.ITEM__TYPE:
 			setType(TYPE_EDEFAULT);
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -510,8 +515,9 @@ public abstract class ItemImpl extends UIElementImpl implements MItem {
 			return selected != SELECTED_EDEFAULT;
 		case MenuPackageImpl.ITEM__TYPE:
 			return type != TYPE_EDEFAULT;
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**
@@ -609,8 +615,9 @@ public abstract class ItemImpl extends UIElementImpl implements MItem {
 		case MenuPackageImpl.ITEM___UPDATE_LOCALIZATION:
 			updateLocalization();
 			return null;
+		default:
+			return super.eInvoke(operationID, arguments);
 		}
-		return super.eInvoke(operationID, arguments);
 	}
 
 	/**

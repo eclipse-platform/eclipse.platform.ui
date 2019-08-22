@@ -302,8 +302,9 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 		switch (featureID) {
 		case CommandsPackageImpl.COMMAND__PARAMETERS:
 			return ((InternalEList<?>) getParameters()).basicRemove(otherEnd, msgs);
+		default:
+			return super.eInverseRemove(otherEnd, featureID, msgs);
 		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -328,8 +329,9 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 			return getLocalizedCommandName();
 		case CommandsPackageImpl.COMMAND__LOCALIZED_DESCRIPTION:
 			return getLocalizedDescription();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -354,8 +356,10 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 		case CommandsPackageImpl.COMMAND__CATEGORY:
 			setCategory((MCategory) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -378,8 +382,10 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 		case CommandsPackageImpl.COMMAND__CATEGORY:
 			setCategory((MCategory) null);
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -404,8 +410,9 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 		case CommandsPackageImpl.COMMAND__LOCALIZED_DESCRIPTION:
 			return LOCALIZED_DESCRIPTION_EDEFAULT == null ? getLocalizedDescription() != null
 					: !LOCALIZED_DESCRIPTION_EDEFAULT.equals(getLocalizedDescription());
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**
@@ -437,8 +444,9 @@ public class CommandImpl extends ApplicationElementImpl implements MCommand {
 		case CommandsPackageImpl.COMMAND___UPDATE_LOCALIZATION:
 			updateLocalization();
 			return null;
+		default:
+			return super.eInvoke(operationID, arguments);
 		}
-		return super.eInvoke(operationID, arguments);
 	}
 
 	/**

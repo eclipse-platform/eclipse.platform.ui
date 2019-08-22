@@ -115,15 +115,4 @@ public class FragmentFactoryImpl extends EFactoryImpl implements MFragmentFactor
 		return (FragmentPackageImpl) getEPackage();
 	}
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @deprecated
-	 * @generated
-	 */
-	@Deprecated
-	public static FragmentPackageImpl getPackage() {
-		return FragmentPackageImpl.eINSTANCE;
-	}
-
 } //FragmentFactoryImpl

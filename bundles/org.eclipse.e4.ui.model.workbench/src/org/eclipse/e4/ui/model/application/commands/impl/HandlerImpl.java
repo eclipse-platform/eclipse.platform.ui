@@ -120,8 +120,9 @@ public class HandlerImpl extends ContributionImpl implements MHandler {
 			if (resolve)
 				return getCommand();
 			return basicGetCommand();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -135,8 +136,10 @@ public class HandlerImpl extends ContributionImpl implements MHandler {
 		case CommandsPackageImpl.HANDLER__COMMAND:
 			setCommand((MCommand) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -150,8 +153,10 @@ public class HandlerImpl extends ContributionImpl implements MHandler {
 		case CommandsPackageImpl.HANDLER__COMMAND:
 			setCommand((MCommand) null);
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -164,8 +169,9 @@ public class HandlerImpl extends ContributionImpl implements MHandler {
 		switch (featureID) {
 		case CommandsPackageImpl.HANDLER__COMMAND:
 			return command != null;
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 } //HandlerImpl

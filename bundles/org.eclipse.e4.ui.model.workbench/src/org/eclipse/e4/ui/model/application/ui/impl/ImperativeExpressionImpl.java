@@ -205,8 +205,9 @@ public class ImperativeExpressionImpl extends ExpressionImpl implements MImperat
 			return getObject();
 		case UiPackageImpl.IMPERATIVE_EXPRESSION__TRACKING:
 			return isTracking();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -226,8 +227,10 @@ public class ImperativeExpressionImpl extends ExpressionImpl implements MImperat
 		case UiPackageImpl.IMPERATIVE_EXPRESSION__TRACKING:
 			setTracking((Boolean) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -247,8 +250,10 @@ public class ImperativeExpressionImpl extends ExpressionImpl implements MImperat
 		case UiPackageImpl.IMPERATIVE_EXPRESSION__TRACKING:
 			setTracking(TRACKING_EDEFAULT);
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -266,8 +271,9 @@ public class ImperativeExpressionImpl extends ExpressionImpl implements MImperat
 			return OBJECT_EDEFAULT == null ? object != null : !OBJECT_EDEFAULT.equals(object);
 		case UiPackageImpl.IMPERATIVE_EXPRESSION__TRACKING:
 			return tracking != TRACKING_EDEFAULT;
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**

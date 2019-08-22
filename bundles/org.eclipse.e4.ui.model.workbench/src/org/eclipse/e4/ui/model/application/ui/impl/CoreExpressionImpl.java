@@ -153,8 +153,9 @@ public class CoreExpressionImpl extends ExpressionImpl implements MCoreExpressio
 			return getCoreExpressionId();
 		case UiPackageImpl.CORE_EXPRESSION__CORE_EXPRESSION:
 			return getCoreExpression();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -171,8 +172,10 @@ public class CoreExpressionImpl extends ExpressionImpl implements MCoreExpressio
 		case UiPackageImpl.CORE_EXPRESSION__CORE_EXPRESSION:
 			setCoreExpression(newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -189,8 +192,10 @@ public class CoreExpressionImpl extends ExpressionImpl implements MCoreExpressio
 		case UiPackageImpl.CORE_EXPRESSION__CORE_EXPRESSION:
 			setCoreExpression(CORE_EXPRESSION_EDEFAULT);
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -207,8 +212,9 @@ public class CoreExpressionImpl extends ExpressionImpl implements MCoreExpressio
 		case UiPackageImpl.CORE_EXPRESSION__CORE_EXPRESSION:
 			return CORE_EXPRESSION_EDEFAULT == null ? coreExpression != null
 					: !CORE_EXPRESSION_EDEFAULT.equals(coreExpression);
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**

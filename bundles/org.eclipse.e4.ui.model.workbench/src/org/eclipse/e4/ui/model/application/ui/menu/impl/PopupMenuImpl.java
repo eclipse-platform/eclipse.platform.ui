@@ -172,8 +172,9 @@ public class PopupMenuImpl extends MenuImpl implements MPopupMenu {
 		case MenuPackageImpl.POPUP_MENU__PROPERTIES:
 			return ((InternalEList<?>) ((EMap.InternalMapView<String, String>) getProperties()).eMap())
 					.basicRemove(otherEnd, msgs);
+		default:
+			return super.eInverseRemove(otherEnd, featureID, msgs);
 		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -193,8 +194,9 @@ public class PopupMenuImpl extends MenuImpl implements MPopupMenu {
 				return ((EMap.InternalMapView<String, String>) getProperties()).eMap();
 			else
 				return getProperties();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -217,8 +219,10 @@ public class PopupMenuImpl extends MenuImpl implements MPopupMenu {
 			((EStructuralFeature.Setting) ((EMap.InternalMapView<String, String>) getProperties()).eMap())
 					.set(newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -238,8 +242,10 @@ public class PopupMenuImpl extends MenuImpl implements MPopupMenu {
 		case MenuPackageImpl.POPUP_MENU__PROPERTIES:
 			getProperties().clear();
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -256,8 +262,9 @@ public class PopupMenuImpl extends MenuImpl implements MPopupMenu {
 			return variables != null && !variables.isEmpty();
 		case MenuPackageImpl.POPUP_MENU__PROPERTIES:
 			return properties != null && !properties.isEmpty();
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**

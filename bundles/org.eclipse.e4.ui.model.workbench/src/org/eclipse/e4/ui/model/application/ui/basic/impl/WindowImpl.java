@@ -799,8 +799,9 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 			return ((InternalEList<?>) getWindows()).basicRemove(otherEnd, msgs);
 		case BasicPackageImpl.WINDOW__SHARED_ELEMENTS:
 			return ((InternalEList<?>) getSharedElements()).basicRemove(otherEnd, msgs);
+		default:
+			return super.eInverseRemove(otherEnd, featureID, msgs);
 		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -850,8 +851,9 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 			return getWindows();
 		case BasicPackageImpl.WINDOW__SHARED_ELEMENTS:
 			return getSharedElements();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -918,8 +920,10 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 			getSharedElements().clear();
 			getSharedElements().addAll((Collection<? extends MUIElement>) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -978,8 +982,10 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 		case BasicPackageImpl.WINDOW__SHARED_ELEMENTS:
 			getSharedElements().clear();
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -1028,8 +1034,9 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 			return windows != null && !windows.isEmpty();
 		case BasicPackageImpl.WINDOW__SHARED_ELEMENTS:
 			return sharedElements != null && !sharedElements.isEmpty();
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**
@@ -1223,8 +1230,9 @@ public class WindowImpl extends ElementContainerImpl<MWindowElement> implements 
 		case BasicPackageImpl.WINDOW___UPDATE_LOCALIZATION:
 			updateLocalization();
 			return null;
+		default:
+			return super.eInvoke(operationID, arguments);
 		}
-		return super.eInvoke(operationID, arguments);
 	}
 
 	/**

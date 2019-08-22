@@ -168,15 +168,4 @@ public class UiFactoryImpl extends EFactoryImpl implements MUiFactory {
 		return (UiPackageImpl) getEPackage();
 	}
 
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @deprecated
-	 * @generated
-	 */
-	@Deprecated
-	public static UiPackageImpl getPackage() {
-		return UiPackageImpl.eINSTANCE;
-	}
-
 } //UiFactoryImpl

@@ -193,8 +193,9 @@ public class MenuContributionImpl extends ElementContainerImpl<MMenuElement> imp
 			return getPositionInParent();
 		case MenuPackageImpl.MENU_CONTRIBUTION__PARENT_ID:
 			return getParentId();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -211,8 +212,10 @@ public class MenuContributionImpl extends ElementContainerImpl<MMenuElement> imp
 		case MenuPackageImpl.MENU_CONTRIBUTION__PARENT_ID:
 			setParentId((String) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -229,8 +232,10 @@ public class MenuContributionImpl extends ElementContainerImpl<MMenuElement> imp
 		case MenuPackageImpl.MENU_CONTRIBUTION__PARENT_ID:
 			setParentId(PARENT_ID_EDEFAULT);
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -246,8 +251,9 @@ public class MenuContributionImpl extends ElementContainerImpl<MMenuElement> imp
 					: !POSITION_IN_PARENT_EDEFAULT.equals(positionInParent);
 		case MenuPackageImpl.MENU_CONTRIBUTION__PARENT_ID:
 			return PARENT_ID_EDEFAULT == null ? parentId != null : !PARENT_ID_EDEFAULT.equals(parentId);
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**

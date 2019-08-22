@@ -108,8 +108,9 @@ public abstract class ModelFragmentImpl extends org.eclipse.emf.ecore.impl.Minim
 		switch (featureID) {
 		case FragmentPackageImpl.MODEL_FRAGMENT__ELEMENTS:
 			return ((InternalEList<?>) getElements()).basicRemove(otherEnd, msgs);
+		default:
+			return super.eInverseRemove(otherEnd, featureID, msgs);
 		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -122,8 +123,9 @@ public abstract class ModelFragmentImpl extends org.eclipse.emf.ecore.impl.Minim
 		switch (featureID) {
 		case FragmentPackageImpl.MODEL_FRAGMENT__ELEMENTS:
 			return getElements();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -139,8 +141,10 @@ public abstract class ModelFragmentImpl extends org.eclipse.emf.ecore.impl.Minim
 			getElements().clear();
 			getElements().addAll((Collection<? extends MApplicationElement>) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -154,8 +158,10 @@ public abstract class ModelFragmentImpl extends org.eclipse.emf.ecore.impl.Minim
 		case FragmentPackageImpl.MODEL_FRAGMENT__ELEMENTS:
 			getElements().clear();
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -168,8 +174,9 @@ public abstract class ModelFragmentImpl extends org.eclipse.emf.ecore.impl.Minim
 		switch (featureID) {
 		case FragmentPackageImpl.MODEL_FRAGMENT__ELEMENTS:
 			return elements != null && !elements.isEmpty();
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**
@@ -182,8 +189,9 @@ public abstract class ModelFragmentImpl extends org.eclipse.emf.ecore.impl.Minim
 		switch (operationID) {
 		case FragmentPackageImpl.MODEL_FRAGMENT___MERGE__MAPPLICATION:
 			return merge((MApplication) arguments.get(0));
+		default:
+			return super.eInvoke(operationID, arguments);
 		}
-		return super.eInvoke(operationID, arguments);
 	}
 
 } //ModelFragmentImpl

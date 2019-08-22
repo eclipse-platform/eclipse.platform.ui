@@ -109,8 +109,9 @@ public abstract class GenericTrimContainerImpl<T extends MUIElement> extends Ele
 		switch (featureID) {
 		case UiPackageImpl.GENERIC_TRIM_CONTAINER__SIDE:
 			return getSide();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -124,8 +125,10 @@ public abstract class GenericTrimContainerImpl<T extends MUIElement> extends Ele
 		case UiPackageImpl.GENERIC_TRIM_CONTAINER__SIDE:
 			setSide((SideValue) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -139,8 +142,10 @@ public abstract class GenericTrimContainerImpl<T extends MUIElement> extends Ele
 		case UiPackageImpl.GENERIC_TRIM_CONTAINER__SIDE:
 			setSide(SIDE_EDEFAULT);
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -153,8 +158,9 @@ public abstract class GenericTrimContainerImpl<T extends MUIElement> extends Ele
 		switch (featureID) {
 		case UiPackageImpl.GENERIC_TRIM_CONTAINER__SIDE:
 			return side != SIDE_EDEFAULT;
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**

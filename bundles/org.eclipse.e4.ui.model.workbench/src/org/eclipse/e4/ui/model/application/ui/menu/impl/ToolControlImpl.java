@@ -160,8 +160,9 @@ public class ToolControlImpl extends ToolBarElementImpl implements MToolControl 
 			return getContributionURI();
 		case MenuPackageImpl.TOOL_CONTROL__OBJECT:
 			return getObject();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -178,8 +179,10 @@ public class ToolControlImpl extends ToolBarElementImpl implements MToolControl 
 		case MenuPackageImpl.TOOL_CONTROL__OBJECT:
 			setObject(newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -196,8 +199,10 @@ public class ToolControlImpl extends ToolBarElementImpl implements MToolControl 
 		case MenuPackageImpl.TOOL_CONTROL__OBJECT:
 			setObject(OBJECT_EDEFAULT);
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -213,8 +218,9 @@ public class ToolControlImpl extends ToolBarElementImpl implements MToolControl 
 					: !CONTRIBUTION_URI_EDEFAULT.equals(contributionURI);
 		case MenuPackageImpl.TOOL_CONTROL__OBJECT:
 			return OBJECT_EDEFAULT == null ? object != null : !OBJECT_EDEFAULT.equals(object);
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**

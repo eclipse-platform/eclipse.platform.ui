@@ -817,8 +817,9 @@ public class PartImpl extends UIElementImpl implements MPart {
 			return basicSetToolbar(null, msgs);
 		case BasicPackageImpl.PART__TRIM_BARS:
 			return ((InternalEList<?>) getTrimBars()).basicRemove(otherEnd, msgs);
+		default:
+			return super.eInverseRemove(otherEnd, featureID, msgs);
 		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -870,8 +871,9 @@ public class PartImpl extends UIElementImpl implements MPart {
 			return getLocalizedDescription();
 		case BasicPackageImpl.PART__TRIM_BARS:
 			return getTrimBars();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -937,8 +939,10 @@ public class PartImpl extends UIElementImpl implements MPart {
 			getTrimBars().clear();
 			getTrimBars().addAll((Collection<? extends MTrimBar>) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -997,8 +1001,10 @@ public class PartImpl extends UIElementImpl implements MPart {
 		case BasicPackageImpl.PART__TRIM_BARS:
 			getTrimBars().clear();
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -1051,8 +1057,9 @@ public class PartImpl extends UIElementImpl implements MPart {
 					: !LOCALIZED_DESCRIPTION_EDEFAULT.equals(getLocalizedDescription());
 		case BasicPackageImpl.PART__TRIM_BARS:
 			return trimBars != null && !trimBars.isEmpty();
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**
@@ -1326,8 +1333,9 @@ public class PartImpl extends UIElementImpl implements MPart {
 		case BasicPackageImpl.PART___UPDATE_LOCALIZATION:
 			updateLocalization();
 			return null;
+		default:
+			return super.eInvoke(operationID, arguments);
 		}
-		return super.eInvoke(operationID, arguments);
 	}
 
 	/**

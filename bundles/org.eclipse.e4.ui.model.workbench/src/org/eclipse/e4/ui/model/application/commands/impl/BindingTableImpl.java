@@ -150,8 +150,9 @@ public class BindingTableImpl extends ApplicationElementImpl implements MBinding
 		switch (featureID) {
 		case CommandsPackageImpl.BINDING_TABLE__BINDINGS:
 			return ((InternalEList<?>) getBindings()).basicRemove(otherEnd, msgs);
+		default:
+			return super.eInverseRemove(otherEnd, featureID, msgs);
 		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -168,8 +169,9 @@ public class BindingTableImpl extends ApplicationElementImpl implements MBinding
 			if (resolve)
 				return getBindingContext();
 			return basicGetBindingContext();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -188,8 +190,10 @@ public class BindingTableImpl extends ApplicationElementImpl implements MBinding
 		case CommandsPackageImpl.BINDING_TABLE__BINDING_CONTEXT:
 			setBindingContext((MBindingContext) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -206,8 +210,10 @@ public class BindingTableImpl extends ApplicationElementImpl implements MBinding
 		case CommandsPackageImpl.BINDING_TABLE__BINDING_CONTEXT:
 			setBindingContext((MBindingContext) null);
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -222,8 +228,9 @@ public class BindingTableImpl extends ApplicationElementImpl implements MBinding
 			return bindings != null && !bindings.isEmpty();
 		case CommandsPackageImpl.BINDING_TABLE__BINDING_CONTEXT:
 			return bindingContext != null;
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 } //BindingTableImpl

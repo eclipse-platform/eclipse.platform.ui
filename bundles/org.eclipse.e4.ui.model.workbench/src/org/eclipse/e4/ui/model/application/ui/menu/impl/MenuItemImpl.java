@@ -136,8 +136,9 @@ public abstract class MenuItemImpl extends ItemImpl implements MMenuItem {
 		switch (featureID) {
 		case MenuPackageImpl.MENU_ITEM__MNEMONICS:
 			return getMnemonics();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -151,8 +152,10 @@ public abstract class MenuItemImpl extends ItemImpl implements MMenuItem {
 		case MenuPackageImpl.MENU_ITEM__MNEMONICS:
 			setMnemonics((String) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -166,8 +169,10 @@ public abstract class MenuItemImpl extends ItemImpl implements MMenuItem {
 		case MenuPackageImpl.MENU_ITEM__MNEMONICS:
 			setMnemonics(MNEMONICS_EDEFAULT);
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -180,8 +185,9 @@ public abstract class MenuItemImpl extends ItemImpl implements MMenuItem {
 		switch (featureID) {
 		case MenuPackageImpl.MENU_ITEM__MNEMONICS:
 			return MNEMONICS_EDEFAULT == null ? mnemonics != null : !MNEMONICS_EDEFAULT.equals(mnemonics);
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**
@@ -285,8 +291,9 @@ public abstract class MenuItemImpl extends ItemImpl implements MMenuItem {
 			return null;
 		case MenuPackageImpl.MENU_ITEM___GET_LOCALIZED_MNEMONICS:
 			return getLocalizedMnemonics();
+		default:
+			return super.eInvoke(operationID, arguments);
 		}
-		return super.eInvoke(operationID, arguments);
 	}
 
 	/**

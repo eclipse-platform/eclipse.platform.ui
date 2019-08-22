@@ -826,8 +826,9 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 					.basicRemove(otherEnd, msgs);
 		case BasicPackageImpl.PART_DESCRIPTOR__TRIM_BARS:
 			return ((InternalEList<?>) getTrimBars()).basicRemove(otherEnd, msgs);
+		default:
+			return super.eInverseRemove(otherEnd, featureID, msgs);
 		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -879,8 +880,9 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 				return getProperties();
 		case BasicPackageImpl.PART_DESCRIPTOR__TRIM_BARS:
 			return getTrimBars();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -946,8 +948,10 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 			getTrimBars().clear();
 			getTrimBars().addAll((Collection<? extends MTrimBar>) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -1006,8 +1010,10 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 		case BasicPackageImpl.PART_DESCRIPTOR__TRIM_BARS:
 			getTrimBars().clear();
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -1060,8 +1066,9 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 			return properties != null && !properties.isEmpty();
 		case BasicPackageImpl.PART_DESCRIPTOR__TRIM_BARS:
 			return trimBars != null && !trimBars.isEmpty();
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**
@@ -1207,8 +1214,9 @@ public class PartDescriptorImpl extends ApplicationElementImpl implements MPartD
 		case BasicPackageImpl.PART_DESCRIPTOR___UPDATE_LOCALIZATION:
 			updateLocalization();
 			return null;
+		default:
+			return super.eInvoke(operationID, arguments);
 		}
-		return super.eInvoke(operationID, arguments);
 	}
 
 	/**

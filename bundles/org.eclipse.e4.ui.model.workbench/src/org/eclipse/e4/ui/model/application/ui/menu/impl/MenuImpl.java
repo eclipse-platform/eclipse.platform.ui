@@ -203,8 +203,9 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 		switch (featureID) {
 		case MenuPackageImpl.MENU__CHILDREN:
 			return ((InternalEList<InternalEObject>) (InternalEList<?>) getChildren()).basicAdd(otherEnd, msgs);
+		default:
+			return super.eInverseAdd(otherEnd, featureID, msgs);
 		}
-		return super.eInverseAdd(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -217,8 +218,9 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 		switch (featureID) {
 		case MenuPackageImpl.MENU__CHILDREN:
 			return ((InternalEList<?>) getChildren()).basicRemove(otherEnd, msgs);
+		default:
+			return super.eInverseRemove(otherEnd, featureID, msgs);
 		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -237,8 +239,9 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 			return basicGetSelectedElement();
 		case MenuPackageImpl.MENU__ENABLED:
 			return isEnabled();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -260,8 +263,10 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 		case MenuPackageImpl.MENU__ENABLED:
 			setEnabled((Boolean) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -281,8 +286,10 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 		case MenuPackageImpl.MENU__ENABLED:
 			setEnabled(ENABLED_EDEFAULT);
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -299,8 +306,9 @@ public class MenuImpl extends MenuElementImpl implements MMenu {
 			return selectedElement != null;
 		case MenuPackageImpl.MENU__ENABLED:
 			return enabled != ENABLED_EDEFAULT;
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**

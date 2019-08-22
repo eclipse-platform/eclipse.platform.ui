@@ -107,8 +107,9 @@ public abstract class GenericTileImpl<T extends MUIElement> extends ElementConta
 		switch (featureID) {
 		case UiPackageImpl.GENERIC_TILE__HORIZONTAL:
 			return isHorizontal();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -122,8 +123,10 @@ public abstract class GenericTileImpl<T extends MUIElement> extends ElementConta
 		case UiPackageImpl.GENERIC_TILE__HORIZONTAL:
 			setHorizontal((Boolean) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -137,8 +140,10 @@ public abstract class GenericTileImpl<T extends MUIElement> extends ElementConta
 		case UiPackageImpl.GENERIC_TILE__HORIZONTAL:
 			setHorizontal(HORIZONTAL_EDEFAULT);
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -151,8 +156,9 @@ public abstract class GenericTileImpl<T extends MUIElement> extends ElementConta
 		switch (featureID) {
 		case UiPackageImpl.GENERIC_TILE__HORIZONTAL:
 			return horizontal != HORIZONTAL_EDEFAULT;
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**

@@ -577,7 +577,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public MCommand getCommand(final String elementId) {
 		if (elementIdToCommandMap == null) {
-			Map<String, MCommand> result = new HashMap<>();
+			Map<String, MCommand> result = new HashMap<String, MCommand>();
 			for (MCommand command : getCommands()) {
 				MCommand otherCommand = result.put(command.getElementId(), command);
 				if (otherCommand != null) {
@@ -623,8 +623,9 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 			return ((InternalEList<?>) getAddons()).basicRemove(otherEnd, msgs);
 		case ApplicationPackageImpl.APPLICATION__CATEGORIES:
 			return ((InternalEList<?>) getCategories()).basicRemove(otherEnd, msgs);
+		default:
+			return super.eInverseRemove(otherEnd, featureID, msgs);
 		}
-		return super.eInverseRemove(otherEnd, featureID, msgs);
 	}
 
 	/**
@@ -670,8 +671,9 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 			return getCategories();
 		case ApplicationPackageImpl.APPLICATION__DIALOGS:
 			return getDialogs();
+		default:
+			return super.eGet(featureID, resolve, coreType);
 		}
-		return super.eGet(featureID, resolve, coreType);
 	}
 
 	/**
@@ -746,8 +748,10 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 			getDialogs().clear();
 			getDialogs().addAll((Collection<? extends MDialog>) newValue);
 			return;
+		default:
+			super.eSet(featureID, newValue);
+			return;
 		}
-		super.eSet(featureID, newValue);
 	}
 
 	/**
@@ -806,8 +810,10 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 		case ApplicationPackageImpl.APPLICATION__DIALOGS:
 			getDialogs().clear();
 			return;
+		default:
+			super.eUnset(featureID);
+			return;
 		}
-		super.eUnset(featureID);
 	}
 
 	/**
@@ -850,8 +856,9 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 			return categories != null && !categories.isEmpty();
 		case ApplicationPackageImpl.APPLICATION__DIALOGS:
 			return dialogs != null && !dialogs.isEmpty();
+		default:
+			return super.eIsSet(featureID);
 		}
-		return super.eIsSet(featureID);
 	}
 
 	/**
@@ -1040,8 +1047,9 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 		switch (operationID) {
 		case ApplicationPackageImpl.APPLICATION___GET_COMMAND__STRING:
 			return getCommand((String) arguments.get(0));
+		default:
+			return super.eInvoke(operationID, arguments);
 		}
-		return super.eInvoke(operationID, arguments);
 	}
 
 	/**
