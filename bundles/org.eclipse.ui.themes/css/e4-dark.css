@@ -112,6 +112,10 @@ CTabFolder Tree, CTabFolder Canvas {
     color: #CCC;
 }
 
+CTabFolder Scale {
+    background-color: inherit;
+}
+
 .MPartStack.active CTabFolder Canvas {
     background-color: #262626;
     color: #CCC;
