@@ -30,6 +30,7 @@ import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.environment.EnvironmentInfo;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * The central class of the Eclipse Platform Runtime. This class cannot
@@ -1022,6 +1023,35 @@ public final class Platform {
 	public static ILog getLog(Bundle bundle) {
 		return InternalPlatform.getDefault().getLog(bundle);
 	}
+
+	/**
+	 * Returns the log for the bundle of the given class. If no such log exists, one
+	 * is created.
+	 *
+	 * @param clazz the class in a bundle whose log is returned
+	 * @return the log for the bundle to which the bundle belongs
+	 *
+	 * @since 3.16
+	 */
+	public static ILog getLog(Class<?> clazz) {
+		Bundle bundle = FrameworkUtil.getBundle(clazz);
+		return InternalPlatform.getDefault().getLog(bundle);
+	}
+
+	/**
+	 * Logs the given status for the bundle of the given class. If no such log
+	 * exists, one is created.
+	 *
+	 * @param clazz  the class in a bundle whose log is returned
+	 * @param status the status to log
+	 *
+	 * @since 3.16
+	 */
+
+	public static void log(Class<?> clazz, IStatus status) {
+		getLog(clazz).log(status);
+	}
+
 
 	/**
 	 * Returns the given bundle's resource bundle for the current locale.
