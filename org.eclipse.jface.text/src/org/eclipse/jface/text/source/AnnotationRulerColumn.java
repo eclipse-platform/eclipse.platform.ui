@@ -81,30 +81,38 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	private static class ReusableRegion extends Position implements IRegion {}
 
 	/**
-	 * Pair of an annotation and their associated position. Used inside the paint method
-	 * for sorting annotations based on the offset of their position.
+	 * Holder for an annotation, their associated position and paint layer. Used inside the paint
+	 * method for sorting annotations based on the offset of their position and layer.
+	 *
 	 * @since 3.0
 	 */
 	private static class Tuple {
 		Annotation annotation;
 		Position position;
+		int layer;
 
-		Tuple(Annotation annotation, Position position) {
+		Tuple(Annotation annotation, Position position, int layer) {
 			this.annotation= annotation;
 			this.position= position;
+			this.layer= layer;
 		}
 	}
 
 	/**
-	 * Comparator for <code>Tuple</code>s.
+	 * Comparator for <code>Tuple</code>s to order them by layer and offset.
+	 *
 	 * @since 3.0
 	 */
 	private static class TupleComparator implements Comparator<Tuple> {
 		@Override
 		public int compare(Tuple o1, Tuple o2) {
+			int cmp= Integer.compare(o1.layer, o2.layer);
+			if (cmp != 0) {
+				return cmp;
+			}
 			Position p1= o1.position;
 			Position p2= o2.position;
-			return p1.getOffset() - p2.getOffset();
+			return Integer.compare(p1.getOffset(), p2.getOffset());
 		}
 	}
 
@@ -725,7 +733,6 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		Rectangle r= new Rectangle(0, 0, 0, 0);
 		ReusableRegion range= new ReusableRegion();
 		boolean isWrapActive= fCachedTextWidget.getWordWrap();
-		int minLayer= Integer.MAX_VALUE, maxLayer= Integer.MIN_VALUE;
 		fCachedAnnotations.clear();
 		Iterator<Annotation> iter;
 		if (fModel instanceof IAnnotationModelExtension2)
@@ -752,65 +759,54 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 			if (fAnnotationAccessExtension != null)
 				lay= fAnnotationAccessExtension.getLayer(annotation);
 
-			minLayer= Math.min(minLayer, lay);
-			maxLayer= Math.max(maxLayer, lay);
-			fCachedAnnotations.add(new Tuple(annotation, position));
+			fCachedAnnotations.add(new Tuple(annotation, position, lay));
 		}
 		Collections.sort(fCachedAnnotations, fTupleComparator);
 
-		for (int layer= minLayer; layer <= maxLayer; layer++) {
-			for (int i= 0, n= fCachedAnnotations.size(); i < n; i++) {
-				Tuple tuple= fCachedAnnotations.get(i);
-				Annotation annotation= tuple.annotation;
-				Position position= tuple.position;
+		for (Tuple tuple : fCachedAnnotations) {
+			Annotation annotation= tuple.annotation;
+			Position position= tuple.position;
 
-				int lay= IAnnotationAccessExtension.DEFAULT_LAYER;
-				if (fAnnotationAccessExtension != null)
-					lay= fAnnotationAccessExtension.getLayer(annotation);
-				if (lay != layer)	// wrong layer: skip annotation
-					continue;
+			range.setOffset(position.getOffset());
+			range.setLength(position.getLength());
+			IRegion widgetRegion= extension.modelRange2WidgetRange(range);
+			if (widgetRegion == null)
+				continue;
 
-				range.setOffset(position.getOffset());
-				range.setLength(position.getLength());
-				IRegion widgetRegion= extension.modelRange2WidgetRange(range);
-				if (widgetRegion == null)
-					continue;
+			int offset= widgetRegion.getOffset();
+			int startLine= extension.widgetLineOfWidgetOffset(offset);
+			if (startLine == -1)
+				continue;
 
-				int offset= widgetRegion.getOffset();
-				int startLine= extension.widgetLineOfWidgetOffset(offset);
-				if (startLine == -1)
-					continue;
+			int length= Math.max(widgetRegion.getLength() - 1, 0);
+			int endLine= extension.widgetLineOfWidgetOffset(offset + length);
+			if (endLine == -1)
+				continue;
 
-				int length= Math.max(widgetRegion.getLength() -1, 0);
-				int endLine= extension.widgetLineOfWidgetOffset(offset + length);
-				if (endLine == -1)
-					continue;
+			r.x= 0;
 
-				r.x= 0;
+			r.width= dimension.x;
+			int lines= endLine - startLine;
 
-				r.width= dimension.x;
-				int lines= endLine - startLine;
-
-				if(startLine != endLine || !isWrapActive || length <= 0){
-					// line height for different lines includes wrapped line info already,
-					// end we show annotations without offset info at very first line anyway
-					r.height= JFaceTextUtil.computeLineHeight(fCachedTextWidget, startLine, endLine + 1, lines + 1);
-					r.y= JFaceTextUtil.computeLineHeight(fCachedTextWidget, 0, startLine, startLine)  - fScrollPos;
-				} else {
-					// annotate only the part of the line related to the given offset
-					Rectangle textBounds= fCachedTextWidget.getTextBounds(offset, offset + length);
-					r.height= textBounds.height;
-					r.y = textBounds.y;
-				}
-				// adjust the annotation position at the bottom of the line if line height has custom vertical line indent
-				int verticalIndent= fCachedTextViewer.getTextWidget().getLineVerticalIndent(startLine);
-				if (verticalIndent > 0) {
-					r.y+= verticalIndent;
-					r.height-= verticalIndent;
-				}
-				if (r.y < dimension.y && fAnnotationAccessExtension != null)  // annotation within visible area
-					fAnnotationAccessExtension.paint(annotation, gc, fCanvas, r);
+			if (startLine != endLine || !isWrapActive || length <= 0) {
+				// line height for different lines includes wrapped line info already,
+				// end we show annotations without offset info at very first line anyway
+				r.height= JFaceTextUtil.computeLineHeight(fCachedTextWidget, startLine, endLine + 1, lines + 1);
+				r.y= JFaceTextUtil.computeLineHeight(fCachedTextWidget, 0, startLine, startLine) - fScrollPos;
+			} else {
+				// annotate only the part of the line related to the given offset
+				Rectangle textBounds= fCachedTextWidget.getTextBounds(offset, offset + length);
+				r.height= textBounds.height;
+				r.y= textBounds.y;
 			}
+			// adjust the annotation position at the bottom of the line if line height has custom vertical line indent
+			int verticalIndent= fCachedTextViewer.getTextWidget().getLineVerticalIndent(startLine);
+			if (verticalIndent > 0) {
+				r.y+= verticalIndent;
+				r.height-= verticalIndent;
+			}
+			if (r.y < dimension.y && fAnnotationAccessExtension != null) // annotation within visible area
+				fAnnotationAccessExtension.paint(annotation, gc, fCanvas, r);
 		}
 
 		fCachedAnnotations.clear();
