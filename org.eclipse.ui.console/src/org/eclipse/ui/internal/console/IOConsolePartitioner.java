@@ -36,8 +36,9 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitionerExtension;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
+import org.eclipse.jface.text.MultiStringMatcher;
+import org.eclipse.jface.text.MultiStringMatcher.Match;
 import org.eclipse.jface.text.Region;
-import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.jface.text.TypedRegion;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.widgets.Display;
@@ -104,8 +105,11 @@ public class IOConsolePartitioner
 	 * offset used by updateJob
 	 */
 	private int firstOffset;
-	/** An array of legal line delimiters. */
-	private String[] lld;
+	/**
+	 * A matcher to search for legal line delimiters in new input. Never
+	 * <code>null</code> but match nothing if no document connected.
+	 */
+	private MultiStringMatcher legalLineDelimiterMatcher;
 	private int highWaterMark = -1;
 	private int lowWaterMark = -1;
 	private boolean connected = false;
@@ -142,7 +146,7 @@ public class IOConsolePartitioner
 	public void connect(IDocument doc) {
 		document = doc;
 		document.setDocumentPartitioner(this);
-		lld = document.getLegalLineDelimiters();
+		legalLineDelimiterMatcher = MultiStringMatcher.create(document.getLegalLineDelimiters());
 		partitions = new ArrayList<>();
 		pendingPartitions = new ArrayList<>();
 		inputPartitions = new ArrayList<>();
@@ -443,9 +447,9 @@ public class IOConsolePartitioner
 			// process event text in parts split on line delimiters
 			int textOffset = 0;
 			while (textOffset < eventTextLength) {
-				final int[] result = TextUtilities.indexOf(lld, event.getText(), textOffset);
-				final boolean foundNewline = result[1] >= 0;
-				final int newTextOffset = foundNewline ? result[0] + lld[result[1]].length() : eventTextLength;
+				final Match nextNewline = legalLineDelimiterMatcher.indexOf(event.getText(), textOffset);
+				final int newTextOffset = nextNewline != null ? nextNewline.getOffset() + nextNewline.getText().length()
+						: eventTextLength;
 				final int inputLength = newTextOffset - textOffset;
 
 				if (inputPartition == null || inputPartition.isReadOnly()) {
@@ -464,7 +468,7 @@ public class IOConsolePartitioner
 
 				inputPartition.setLength(inputPartition.getLength() + inputLength);
 
-				if (foundNewline) {
+				if (nextNewline != null) {
 					inputPartitions.sort(CMP_REGION_BY_OFFSET);
 					final StringBuilder inputLine = new StringBuilder();
 					for (IOConsolePartition p : inputPartitions) {

@@ -25,8 +25,9 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentAdapter;
 import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.IRegion;
+import org.eclipse.jface.text.MultiStringMatcher;
+import org.eclipse.jface.text.MultiStringMatcher.Match;
 import org.eclipse.jface.text.Region;
-import org.eclipse.jface.text.TextUtilities;
 import org.eclipse.swt.custom.TextChangeListener;
 import org.eclipse.swt.custom.TextChangedEvent;
 import org.eclipse.swt.custom.TextChangingEvent;
@@ -80,12 +81,13 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
 	/** Adapted document. */
 	private IDocument document;
 	/**
-	 * The strings the connected document interprets as line delimiters.
+	 * The matcher to find the legal line delimiters of the connected document in
+	 * some text. <code>null</code> if no document connected.
 	 * <p>
-	 * This is usually <code>{ "\r", "\n", "\r\n" }</code>.
+	 * This usually matches <code>{ "\r", "\n", "\r\n" }</code>.
 	 * </p>
 	 */
-	private String[] docLegalLineDelimiters;
+	private MultiStringMatcher docLegalLineDelimiterMatcher;
 
 	/**
 	 * Number of widget lines in document. If fixed width is disabled it is always
@@ -149,12 +151,12 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
 		}
 
 		document = doc;
-		docLegalLineDelimiters = null;
+		docLegalLineDelimiterMatcher = null;
 		updateWidgetOffsets(0);
 
 		if (doc != null) {
 			doc.addDocumentListener(this);
-			docLegalLineDelimiters = doc.getLegalLineDelimiters();
+			docLegalLineDelimiterMatcher = MultiStringMatcher.create(doc.getLegalLineDelimiters());
 		}
 	}
 
@@ -441,8 +443,8 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
 			int lastDocLineLengthDiff = -eventLength;
 
 			int newTextOffset = 0;
-			int[] result = TextUtilities.indexOf(docLegalLineDelimiters, newText, newTextOffset);
-			if (result[1] < 0) {
+			Match newLineMatch = docLegalLineDelimiterMatcher.indexOf(newText, newTextOffset);
+			if (newLineMatch == null) {
 				// single line insert
 				lastInsertLength = eventOffset - firstWidgetLineOffset + newTextLength;
 				lastDocLineLengthDiff += newTextLength;
@@ -456,19 +458,19 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
 				// 3. Last line: everything (including) last line delimiter to end of inserted
 				// text
 
-				final int firstInsertLength = result[0];
+				final int firstInsertLength = newLineMatch.getOffset();
 				// newLineCount here is numbers of lines required if text is wrapped -1 because
 				// we start inserting in an existing line and +1 for the first line delimiter we
 				// had found
 				newLineCount = linesIfWrapped(eventOffset - firstWidgetLineOffset + firstInsertLength);
 
 				while (true) {
-					newTextOffset = result[0] + docLegalLineDelimiters[result[1]].length();
-					result = TextUtilities.indexOf(docLegalLineDelimiters, newText, newTextOffset);
-					if (result[1] < 0) {
+					newTextOffset = newLineMatch.getOffset() + newLineMatch.getText().length();
+					newLineMatch = docLegalLineDelimiterMatcher.indexOf(newText, newTextOffset);
+					if (newLineMatch == null) {
 						break;
 					}
-					final int insertedLineLength = result[0] - newTextOffset;
+					final int insertedLineLength = newLineMatch.getOffset() - newTextOffset;
 					// new text's middle lines are unaffected from existing content and simply count
 					// as number of lines they need with wrapping
 					newLineCount += linesIfWrapped(insertedLineLength);
