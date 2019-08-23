@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Comment here on purpose. Same with project-tag over multiple lines -->
+<project name="Specific">
+
+	<include file="buildFileHierarchicalLv1.xml" />
+	<include file="../../performance/build.xml" />
+	<include file="../../performance/build.xml" />
+	<include file="../../performance/build.xml" />
+	<include file="../../performance/build.xml" />
+	<include file="../../performance/build.xml" />
+
+	<target name="deploy" depends="commonLv1.deploy,
+    	commonLv1.commonLv2.deploySuper,
+    	commonLv1.commonLv2.commonLv3.deployLv3" />
+
+</project>

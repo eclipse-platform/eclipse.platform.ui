@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="commonSuper">
+	<include file="buildFileHierarchicalLv3.xml" as="commonLv3Prefix"/>
+	<target name="deploySuper">
+		<echo>test-lv3</echo>
+	</target>
+</project>

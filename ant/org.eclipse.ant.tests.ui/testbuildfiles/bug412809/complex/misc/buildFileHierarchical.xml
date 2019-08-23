@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="Specific">
+
+	<include file="buildFileHierarchicalLv1.xml" />
+	<target name="deploy" depends="commonLv1.deploy,
+    	commonLv1.commonLv2.deploySuper,
+    	commonLv1.commonLv2.commonLv3Prefix.deployLv3" />
+</project>

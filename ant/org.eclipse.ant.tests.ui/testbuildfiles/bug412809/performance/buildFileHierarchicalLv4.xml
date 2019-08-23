@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="commonLv4">
+	<include file="../../performance/build.xml" />
+	<include file="../../performance/build.xml" />
+	<include file="../../performance/build.xml" />
+	<include file="../../performance/build.xml" />
+	<include file="../../performance/build.xml" />
+
+	<target name="deployLv4" >
+		<echo>test-lv4</echo>
+	</target>
+</project>

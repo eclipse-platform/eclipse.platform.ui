@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2009 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     John-Mason P. Shackelford (john-mason.shackelford@pearson.com) - bug 49380, 49445, bug 53547
+ *     Alexander Blaas (arctis Softwaretechnologie GmbH) - bug 412809
  *******************************************************************************/
 package org.eclipse.ant.internal.ui;
 
@@ -24,7 +25,7 @@ public interface IAntUIConstants {
 	/**
 	 * Plugin identifier for Ant ui(value <code>org.eclipse.ant.ui</code>).
 	 */
-	public static final String PLUGIN_ID = "org.eclipse.ant.ui"; //$NON-NLS-1$;
+	public static final String PLUGIN_ID = "org.eclipse.ant.ui"; //$NON-NLS-1$ ;
 
 	// ------- Views -------
 
@@ -42,7 +43,7 @@ public interface IAntUIConstants {
 	public static final String IMG_PROPERTY = PLUGIN_ID + ".IMG_PROPERTY"; //$NON-NLS-1$
 
 	public static final String IMG_TAB_ANT_TARGETS = PLUGIN_ID + ".IMG_TAB_ANT_TARGETS"; //$NON-NLS-1$
-	public static final String IMG_TAB_CLASSPATH = PLUGIN_ID + ".IMG_TAB_CLASSPATH"; //$NON-NLS-1$;
+	public static final String IMG_TAB_CLASSPATH = PLUGIN_ID + ".IMG_TAB_CLASSPATH"; //$NON-NLS-1$ ;
 
 	// Label images
 	public static final String IMG_ANT = PLUGIN_ID + ".ant"; //$NON-NLS-1$
@@ -53,6 +54,8 @@ public interface IAntUIConstants {
 	public static final String IMG_ANT_TARGET_ERROR = PLUGIN_ID + ".antTargetError"; //$NON-NLS-1$
 	public static final String IMG_ANT_MACRODEF = PLUGIN_ID + ".antMacrodef"; //$NON-NLS-1$
 	public static final String IMG_ANT_IMPORT = PLUGIN_ID + ".antImport"; //$NON-NLS-1$
+	// TODO: add a include label image and change the identifier
+	public static final String IMG_ANT_INCLUDE = PLUGIN_ID + ".antImport"; //$NON-NLS-1$
 	public static final String IMG_ANT_TASKDEF = PLUGIN_ID + ".antTaskdef"; //$NON-NLS-1$
 	public static final String IMG_ANT_ECLIPSE_RUNTIME_OBJECT = PLUGIN_ID + ".antEclipse"; //$NON-NLS-1$
 
@@ -104,7 +107,7 @@ public interface IAntUIConstants {
 
 	/**
 	 * Size of left-hand column for right-justified task name. Used for Ant Build logging.
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.launching.runtime.logger.AntProcessBuildLogger
 	 * @see org.eclipse.ant.internal.launching.launchConfigurations.RemoteAntBuildListener
 	 */
@@ -118,5 +121,5 @@ public interface IAntUIConstants {
 	/**
 	 * Boolean attribute indicating if an input handler should be supplied for the build Default value is <code>true</code>.
 	 */
-	public static final String SET_INPUTHANDLER = PLUGIN_ID + "SET_INPUTHANDLER"; //$NON-NLS-1$	
+	public static final String SET_INPUTHANDLER = PLUGIN_ID + "SET_INPUTHANDLER"; //$NON-NLS-1$
 }

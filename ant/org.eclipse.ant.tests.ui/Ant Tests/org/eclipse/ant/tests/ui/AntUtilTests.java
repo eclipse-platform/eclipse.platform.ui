@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -7,24 +7,30 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Blaas (arctis Softwaretechnologie GmbH) - bug 412809
  *******************************************************************************/
 package org.eclipse.ant.tests.ui;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.ant.internal.ui.AntUtil;
+import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.model.AntTargetNode;
+import org.eclipse.ant.internal.ui.model.IAntElement;
+import org.eclipse.ant.internal.ui.model.IAntModel;
 import org.eclipse.ant.launching.IAntLaunchConstants;
 import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
 import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
+import org.junit.Assert;
 
 public class AntUtilTests extends AbstractAntUITest {
 
@@ -93,6 +99,145 @@ public class AntUtilTests extends AbstractAntUITest {
 		assertTrue(targets != null);
 		assertTrue("Incorrect number of targets retrieved; should be 3 was: " + targets.length, targets.length == 3); //$NON-NLS-1$
 		assertContains("import-default", targets); //$NON-NLS-1$
+	}
+
+	// for bugfix of bug 412809: Testing a simple "include-hierarchy" (only two levels setting the "as" property)
+	public void testGetIncludeTargetsSimpleHierarchyAlias() {
+		// The file itself contains one target. The included file contains the other one.
+		String buildFileName = "bug412809/simple/buildFileAlias"; //$NON-NLS-1$
+		AntTargetNode[] targets = getAntTargetNodesOfBuildFile(buildFileName);
+		String[] expectedTargets = { "deploy", "commonPrefixed.deploy" }; //$NON-NLS-1$ //$NON-NLS-2$
+		assertTargets(targets, expectedTargets);
+	}
+
+	// for bugfix of bug 412809: Testing a simple "include-hierarchy" (only two levels without the "as" property)
+	public void testGetIncludeTargetsSimpleHierarchyNoAliases() {
+		// The file itself contains one target. The included file contains the other one.
+		String buildFileName = "bug412809/simple/buildFileNoAlias"; //$NON-NLS-1$
+		AntTargetNode[] targets = getAntTargetNodesOfBuildFile(buildFileName);
+		String[] expectedTargets = { "deploy", "common.deploy" }; //$NON-NLS-1$ //$NON-NLS-2$
+		assertTargets(targets, expectedTargets);
+	}
+
+	// for bugfix of bug 412809: Testing a complex "include-hierarchy" (three levels, only non-aliases used)
+	public void testGetIncludeTargetsComplexHierarchyNoAlias() {
+		// The file itself contains one target. The included file contains the other one.
+		String buildFileName = "bug412809/complex/noAlias/buildFileHierarchical"; //$NON-NLS-1$
+		AntTargetNode[] targets = getAntTargetNodesOfBuildFile(buildFileName);
+		String[] expectedTargets = { "deploy", "commonLv1.deploy", "commonLv1.commonLv2.deploySuper", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				"commonLv1.commonLv2.commonLv3.deployLv3", "commonLv1.commonLv2.commonLv3.commonLv4.deployLv4" }; //$NON-NLS-1$ //$NON-NLS-2$
+		assertTargets(targets, expectedTargets);
+	}
+
+	// for bugfix of bug 412809: Testing a complex "include-hierarchy" (three levels, only aliases used)
+	public void testGetIncludeTargetsComplexHierarchyAlias() {
+		// The file itself contains one target. The included file contains the other one.
+		String buildFileName = "bug412809/complex/alias/buildFileHierarchical"; //$NON-NLS-1$
+		AntTargetNode[] targets = getAntTargetNodesOfBuildFile(buildFileName);
+		String[] expectedTargets = { "deploy", "commonLv1Prefix.deploy", "commonLv1Prefix.commonLv2Prefix.deploySuper", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				"commonLv1Prefix.commonLv2Prefix.commonLv3Prefix.deployLv3", //$NON-NLS-1$
+				"commonLv1Prefix.commonLv2Prefix.commonLv3Prefix.commonLv4Prefix.deployLv4" }; //$NON-NLS-1$
+		assertTargets(targets, expectedTargets);
+	}
+
+	// for bugfix of bug 412809: Testing a complex "include-hierarchy" (three levels, aliases and non-aliases used)
+	public void testGetIncludeTargetsComplexHierarchyMisc() {
+		// The file itself contains one target. The included file contains the other one.
+		String buildFileName = "bug412809/complex/misc/buildFileHierarchical"; //$NON-NLS-1$
+		AntTargetNode[] targets = getAntTargetNodesOfBuildFile(buildFileName);
+		String[] expectedTargets = { "deploy", "commonLv1.deploy", "commonLv1.commonLv2.deploySuper", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				"commonLv1.commonLv2.commonLv3Prefix.deployLv3", "commonLv1.commonLv2.commonLv3Prefix.commonLv4Prefix.deployLv4" }; //$NON-NLS-1$ //$NON-NLS-2$
+		assertTargets(targets, expectedTargets);
+	}
+
+	// for bugfix of bug 412809: Assure explicitly that the provided patch works on external as well as non-external build-files
+	public void testGetIncludeTargetsExternalFiles() {
+		// First assure that external and non-external files are included
+		String buildFileName = "bug412809/complex/misc/buildFileHierarchical"; //$NON-NLS-1$
+		File buildFile = getBuildFile(buildFileName + ".xml"); //$NON-NLS-1$
+		// tasks and position info but no lexical info
+		IAntModel model = AntUtil.getAntModel(buildFile.getAbsolutePath(), false, true, true);
+		AntProjectNode project = model.getProjectNode();
+
+		// 9 childnodes are contained
+		long childNodesExpected = 9;
+		boolean atLeastOneExternal = false;
+		List<IAntElement> childNodes = project.getChildNodes();
+
+		Assert.assertNotNull(childNodes);
+
+		int actualSize = childNodes.size();
+		Assert.assertEquals("Expecting " + childNodesExpected + " childnodes, but have: " + actualSize, childNodesExpected, actualSize); //$NON-NLS-1$ //$NON-NLS-2$
+
+		for (IAntElement element : childNodes) {
+			// "External" seems to be true if the element was defined within an "importNode" => check the import nodes
+			IAntElement importNode = element.getImportNode();
+
+			if (importNode != null) {
+				Assert.assertTrue(element.isExternal());
+				atLeastOneExternal = true;
+			} else {
+				Assert.assertFalse(element.isExternal());
+			}
+		}
+		// At least on external include-file was found
+		Assert.assertTrue(atLeastOneExternal);
+		// Then just execute the rest of the previous test
+		AntTargetNode[] targets = getAntTargetNodesOfBuildFile(buildFileName);
+		String[] expectedTargets = { "deploy", "commonLv1.deploy", "commonLv1.commonLv2.deploySuper", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				"commonLv1.commonLv2.commonLv3Prefix.deployLv3", "commonLv1.commonLv2.commonLv3Prefix.commonLv4Prefix.deployLv4" }; //$NON-NLS-1$ //$NON-NLS-2$
+		assertTargets(targets, expectedTargets);
+	}
+
+	// for bugfix of bug 412809: Testing the performance by including the huge build file from "/testbuildfiles/performance/build.xml"
+	public void testGetIncludeTargetsPerformance() {
+		/*
+		 * More or less the same files (noAlias-files because the parsing to search the project-name only occurs at includes where the alias-property
+		 * is not set), but every include-file now includes the "big build.xml"
+		 */
+		String buildFileName = "bug412809/performance/buildFileHierarchical"; //$NON-NLS-1$
+		long startTime = System.currentTimeMillis();
+		File buildFile = getBuildFile(buildFileName + ".xml"); //$NON-NLS-1$
+		IAntModel model = AntUtil.getAntModel(buildFile.getAbsolutePath(), false, true, true);
+		AntProjectNode project = model.getProjectNode();
+		long endTime = System.currentTimeMillis();
+
+		Assert.assertNotNull(project);
+		// Parsing the file-hierarchy should not take longer than 7.5s
+		long duration = endTime - startTime;
+		// Change this value if it does not fit the performance needs
+		long maxDuration = 7500;
+
+		Assert.assertTrue("Expecting a duration < " + maxDuration + ", but we have " + duration + "ms", duration < maxDuration); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		// Test the rest
+		AntTargetNode[] targets = getAntTargetNodesOfBuildFile(buildFileName);
+
+		String[] expectedTargets = { "deploy", "commonLv1.deploy", "commonLv1.commonLv2.deploySuper", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				"commonLv1.commonLv2.commonLv3.deployLv3", "commonLv1.commonLv2.commonLv3.commonLv4.deployLv4" }; //$NON-NLS-1$ //$NON-NLS-2$
+		// Expected targets
+		Assert.assertEquals(3380, targets.length);
+		// Just test if the mentioned targets are contained
+		for (String expectedTarget : expectedTargets) {
+			assertContains(expectedTarget, targets);
+		}
+	}
+
+	private AntTargetNode[] getAntTargetNodesOfBuildFile(String buildFileName) {
+		File buildFile = getBuildFile(buildFileName + ".xml"); //$NON-NLS-1$
+		AntTargetNode[] targets = AntUtil.getTargets(buildFile.getAbsolutePath());
+		assertTrue(targets != null);
+		return targets;
+	}
+
+	private void assertTargets(AntTargetNode[] targets, String[] expectedTargetNames) {
+		// Before the bugfix, the dependend target (defined in the included file) was not found and the dependencies-check failed
+		int expectedSize = expectedTargetNames.length;
+		assertTrue("Incorrect number of targets retrieved; should be " + expectedSize + " was: " //$NON-NLS-1$ //$NON-NLS-2$
+				+ targets.length, targets.length == expectedSize);
+
+		for (String expectedTarget : expectedTargetNames) {
+			assertContains(expectedTarget, targets);
+		}
 	}
 
 	protected ILaunchConfiguration getLaunchConfiguration(String buildFileName, String arguments, Map<String, String> properties, String propertyFiles) throws CoreException {

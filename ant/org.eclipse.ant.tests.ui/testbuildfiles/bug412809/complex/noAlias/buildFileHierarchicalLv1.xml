@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="commonLv1">
+	<include file="buildFileHierarchicalLv2.xml"/>
+	<target name="deploy">
+		<echo>test</echo>
+	</target>
+</project>

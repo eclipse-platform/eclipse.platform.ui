@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -7,10 +7,11 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Nico Seessle - bug 51332
+ *     Alexander Blaas (arctis Softwaretechnologie GmbH) - bug 412809
  *******************************************************************************/
 
 package org.eclipse.ant.internal.ui.model;
@@ -219,7 +220,7 @@ public class AntModel implements IAntModel {
 
 	/**
 	 * Searches the collection of registered {@link org.apache.tools.ant.ProjectHelper}s to see if we have one registered already.
-	 * 
+	 *
 	 * @return the {@link ProjectHelper} from our implementation of <code>null</code> if we have not registered one yet
 	 * @since 3.7
 	 * @see ProjectHelperRepository
@@ -237,7 +238,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#dispose()
 	 */
 	@Override
@@ -291,7 +292,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#reconcile()
 	 */
 	@Override
@@ -381,6 +382,8 @@ public class AntModel implements IAntModel {
 					System.setSecurityManager(new AntSecurityManager(origSM, Thread.currentThread(), false));
 					resolveBuildfile();
 					endReporting();
+					// clear the additional property-holder(s) to avoid potential memory leaks
+					ProjectHelper.clearAdditionalPropertyHolders();
 				}
 				catch (AntSecurityException e) {
 					// do nothing
@@ -678,7 +681,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#handleBuildException(org.apache.tools.ant.BuildException,
 	 * org.eclipse.ant.internal.ui.model.AntElementNode, int)
 	 */
@@ -746,7 +749,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#getEditedFile()
 	 */
 	@Override
@@ -770,7 +773,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#getLocationProvider()
 	 */
 	@Override
@@ -780,7 +783,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#addTarget(org.apache.tools.ant.Target, int, int)
 	 */
 	@Override
@@ -806,7 +809,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#addProject(org.apache.tools.ant.Project, int, int)
 	 */
 	@Override
@@ -818,7 +821,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#addDTD(java.lang.String, int, int)
 	 */
 	@Override
@@ -844,7 +847,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#addTask(org.apache.tools.ant.Task, org.apache.tools.ant.Task, org.xml.sax.Attributes, int,
 	 * int)
 	 */
@@ -892,7 +895,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#addEntity(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -915,6 +918,8 @@ public class AntModel implements IAntModel {
 			newNode = new AntPropertyNode(newTask, attributes);
 		} else if (taskName.equalsIgnoreCase("import")) { //$NON-NLS-1$
 			newNode = new AntImportNode(newTask, attributes);
+		} else if (taskName.equalsIgnoreCase("include")) { //$NON-NLS-1$
+			newNode = new AntIncludeNode(newTask, attributes);
 		} else if (taskName.equalsIgnoreCase("macrodef") //$NON-NLS-1$
 				|| taskName.equalsIgnoreCase("presetdef") //$NON-NLS-1$
 				|| taskName.equalsIgnoreCase("typedef") //$NON-NLS-1$
@@ -1119,7 +1124,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#getOffset(int, int)
 	 */
 	@Override
@@ -1152,7 +1157,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#setCurrentElementLength(int, int)
 	 */
 	@Override
@@ -1177,7 +1182,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#getFile()
 	 */
 	@Override
@@ -1241,7 +1246,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#warning(java.lang.Exception)
 	 */
 	@Override
@@ -1251,7 +1256,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#error(java.lang.Exception)
 	 */
 	@Override
@@ -1261,7 +1266,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#errorFromElementText(java.lang.Exception, int, int)
 	 */
 	@Override
@@ -1282,7 +1287,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#errorFromElement(java.lang.Exception, org.eclipse.ant.internal.ui.model.AntElementNode, int,
 	 * int)
 	 */
@@ -1429,7 +1434,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#fatalError(java.lang.Exception)
 	 */
 	@Override
@@ -1446,7 +1451,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#getEntityName(java.lang.String)
 	 */
 	@Override
@@ -1511,7 +1516,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#getProjectNode(boolean)
 	 */
 	@Override
@@ -1526,7 +1531,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#getProjectNode()
 	 */
 	@Override
@@ -1574,7 +1579,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#addComment(int, int, int)
 	 */
 	@Override
@@ -1596,7 +1601,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#needsTaskResolution()
 	 */
 	@Override
@@ -1606,7 +1611,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#needsLexicalResolution()
 	 */
 	@Override
@@ -1616,7 +1621,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#setClassLoader(java.net.URLClassLoader)
 	 */
 	@Override
@@ -1627,7 +1632,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#needsPositionResolution()
 	 */
 	@Override
@@ -1651,7 +1656,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#getText(int, int)
 	 */
 	@Override
@@ -1795,7 +1800,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#setProperties(java.util.Map)
 	 */
 	@Override
@@ -1805,7 +1810,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#setPropertyFiles(java.util.List)
 	 */
 	@Override
@@ -1924,7 +1929,7 @@ public class AntModel implements IAntModel {
 
 	/**
 	 * Sets whether the AntModel should reconcile if it become dirty. If set to reconcile, a reconcile is triggered if the model is dirty.
-	 * 
+	 *
 	 * @param shouldReconcile
 	 */
 	public void setShouldReconcile(boolean shouldReconcile) {
@@ -1936,7 +1941,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#addPrefixMapping(java.lang.String, java.lang.String)
 	 */
 	@Override
@@ -1970,7 +1975,7 @@ public class AntModel implements IAntModel {
 
 	/**
 	 * Compute the encoding for the backing build file
-	 * 
+	 *
 	 * @since 3.7
 	 */
 	void computeEncoding() {
@@ -2005,7 +2010,7 @@ public class AntModel implements IAntModel {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.model.IAntModel#getEncoding()
 	 */
 	@Override
