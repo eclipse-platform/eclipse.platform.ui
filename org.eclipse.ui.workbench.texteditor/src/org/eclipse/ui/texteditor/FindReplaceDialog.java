@@ -1048,10 +1048,10 @@ class FindReplaceDialog extends Dialog {
 	 */
 	private String getFirstLine(String selection) {
 		if (!selection.isEmpty()) {
-			int[] info= TextUtilities.indexOf(TextUtilities.DELIMITERS, selection, 0);
-			if (info[0] > 0)
-				return selection.substring(0, info[0]);
-			else if (info[0] == -1)
+			int delimiterOffset = TextUtilities.nextDelimiter(selection, 0).getKey().intValue();
+			if (delimiterOffset > 0)
+				return selection.substring(0, delimiterOffset);
+			else if (delimiterOffset == -1)
 				return selection;
 		}
 		return ""; //$NON-NLS-1$

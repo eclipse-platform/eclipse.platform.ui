@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
+import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -40,6 +41,7 @@ public class TextUtilities {
 	/**
 	 * Default line delimiters used by the text functions of this class.
 	 */
+	// Note: nextDelimiter implementation is sensitive to element order
 	public final static String[] DELIMITERS= new String[] { "\n", "\r", "\r\n" }; //$NON-NLS-3$ //$NON-NLS-2$ //$NON-NLS-1$
 
 	/**
@@ -61,12 +63,8 @@ public class TextUtilities {
 	 * @return the line delimiter
 	 */
 	public static String determineLineDelimiter(String text, String hint) {
-		try {
-			int[] info= indexOf(DELIMITERS, text, 0);
-			return DELIMITERS[info[1]];
-		} catch (ArrayIndexOutOfBoundsException x) {
-		}
-		return hint;
+		String delimiter = nextDelimiter(text, 0).getValue();
+		return delimiter != null ? delimiter : hint;
 	}
 
 	/**
@@ -88,6 +86,8 @@ public class TextUtilities {
 	 *             <li>new indexOf will <b>not</b> match empty string (old matched empty if nothing
 	 *             else matched)</li>
 	 *             </ul>
+	 *             For the common case of searching the next default {@link #DELIMITERS delimiter}
+	 *             use the optimized {@link #nextDelimiter(CharSequence, int)} method instead.
 	 */
 	@Deprecated
 	public static int[] indexOf(String[] searchStrings, String text, int offset) {
@@ -576,5 +576,44 @@ public class TextUtilities {
 			return copy;
 		}
 		return null;
+	}
+
+	/**
+	 * Search for the first standard line delimiter in text starting at given offset. Standard line
+	 * delimiters are those defined in {@link #DELIMITERS}. This is a faster variant of the equal
+	 *
+	 * <pre>
+	 * MultiStringMatcher.indexOf(TextUtilities.DELIMITERS, text, offset)
+	 * </pre>
+	 *
+	 * @param text the text to be searched. Not <code>null</code>.
+	 * @param offset the offset in text at which to start the search
+	 * @return a <code>Map.Entry&lt;Integer, String&gt;</code> where key is index of found delimiter
+	 *         or <code>-1<code> if non found and value is the delimiter found or <code>null</code>
+	 *         if non found. The return value itself is never <code>null</code>.
+	 * @since 3.10
+	 */
+	public static Map.Entry<Integer, String> nextDelimiter(CharSequence text, int offset) {
+		int delimiterIndex= -1;
+		String delimiter= null;
+		char ch;
+		final int length= text.length();
+		for (int i= offset; i < length; i++) {
+			ch= text.charAt(i);
+			if (ch == '\r') {
+				delimiterIndex= i;
+				if (i + 1 < length && text.charAt(i + 1) == '\n') {
+					delimiter= DELIMITERS[2];
+					break;
+				}
+				delimiter= DELIMITERS[1];
+				break;
+			} else if (ch == '\n') {
+				delimiterIndex= i;
+				delimiter= DELIMITERS[0];
+				break;
+			}
+		}
+		return new AbstractMap.SimpleImmutableEntry<>(Integer.valueOf(delimiterIndex), delimiter);
 	}
 }

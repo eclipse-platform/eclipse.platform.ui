@@ -20,6 +20,7 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
@@ -323,5 +324,49 @@ public class TextUtilitiesTest {
 		} catch (NullPointerException ex) {
 			// expected
 		}
+	}
+
+	@Test
+	public void testNextDelimiter() {
+		Map.Entry<Integer, String> result;
+		result = TextUtilities.nextDelimiter("abc\ndef", 0);
+		assertEquals(3, result.getKey().intValue());
+		assertEquals("\n", result.getValue());
+
+		result = TextUtilities.nextDelimiter("abc\ndef", 5);
+		assertEquals(-1, result.getKey().intValue());
+		assertEquals(null, result.getValue());
+
+		result = TextUtilities.nextDelimiter("abc\rdef\n123", 0);
+		assertEquals(3, result.getKey().intValue());
+		assertEquals("\r", result.getValue());
+
+		result = TextUtilities.nextDelimiter("abc+\r\ndef\n123", 0);
+		assertEquals(4, result.getKey().intValue());
+		assertEquals("\r\n", result.getValue());
+
+		result = TextUtilities.nextDelimiter("abc~>\r\r\ndef\n123", 0);
+		assertEquals(5, result.getKey().intValue());
+		assertEquals("\r", result.getValue());
+
+		result = TextUtilities.nextDelimiter("\nabc~>\r\r\ndef\n123", 0);
+		assertEquals(0, result.getKey().intValue());
+		assertEquals("\n", result.getValue());
+
+		result = TextUtilities.nextDelimiter("abc~>123\r\n", 0);
+		assertEquals(8, result.getKey().intValue());
+		assertEquals("\r\n", result.getValue());
+
+		result = TextUtilities.nextDelimiter("abc~>\r\r\ndef\n123", 9);
+		assertEquals(11, result.getKey().intValue());
+		assertEquals("\n", result.getValue());
+
+		result = TextUtilities.nextDelimiter("", 0);
+		assertEquals(-1, result.getKey().intValue());
+		assertEquals(null, result.getValue());
+
+		result = TextUtilities.nextDelimiter("abc123", 0);
+		assertEquals(-1, result.getKey().intValue());
+		assertEquals(null, result.getValue());
 	}
 }
