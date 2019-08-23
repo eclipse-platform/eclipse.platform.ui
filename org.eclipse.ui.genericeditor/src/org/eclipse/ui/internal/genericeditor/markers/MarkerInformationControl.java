@@ -130,7 +130,8 @@ public class MarkerInformationControl extends AbstractInformationControl impleme
 				}
 				resolutionImage.setImage(resolutionPic);
 				Link resolutionLink = new Link(resolutionComposite, SWT.NONE);
-				resolutionLink.setText("<A>" + resolution.getLabel() + "</a>"); //$NON-NLS-1$ //$NON-NLS-2$
+				String resolutionText = resolution.getLabel().replace("&", "&&"); // Disable mnemonics //$NON-NLS-1$ //$NON-NLS-2$
+				resolutionLink.setText("<A>" + resolutionText + "</a>"); //$NON-NLS-1$ //$NON-NLS-2$
 				resolutionLink.addSelectionListener(new SelectionAdapter() {
 					@Override
 					public void widgetSelected(SelectionEvent e) {
