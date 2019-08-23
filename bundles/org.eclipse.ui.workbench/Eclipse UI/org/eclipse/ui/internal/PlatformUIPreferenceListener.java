@@ -28,7 +28,6 @@ import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
-import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
@@ -76,33 +75,6 @@ public class PlatformUIPreferenceListener implements IEclipsePreferences.IPrefer
 
 			workbench.getPerspectiveRegistry().setDefaultPerspective(
 					PrefUtil.getAPIPreferenceStore().getString(IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID));
-			return;
-		}
-
-		if (IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR.equals(propertyName)) {
-			// IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
-			IWorkbench workbench = PlatformUI.getWorkbench();
-			for (IWorkbenchWindow window : workbench.getWorkbenchWindows()) {
-				if (window instanceof WorkbenchWindow) {
-					// ((WorkbenchWindow) window)
-					// .setPerspectiveBarLocation(apiStore
-					// .getString(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR));
-				}
-			}
-			return;
-		}
-
-		// TODO the banner apperance should have its own preference
-		if (IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS.equals(propertyName)) {
-			// boolean newValue = PrefUtil.getAPIPreferenceStore().getBoolean(
-			// IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS);
-
-			IWorkbench workbench = PlatformUI.getWorkbench();
-			for (IWorkbenchWindow window : workbench.getWorkbenchWindows()) {
-				if (window instanceof WorkbenchWindow) {
-					// ((WorkbenchWindow) window).setBannerCurve(newValue);
-				}
-			}
 			return;
 		}
 
@@ -159,7 +131,6 @@ public class PlatformUIPreferenceListener implements IEclipsePreferences.IPrefer
 
 		// Set Open mode
 		if (IPreferenceConstants.OPEN_ON_SINGLE_CLICK.equals(propertyName)
-				|| IPreferenceConstants.SELECT_ON_HOVER.equals(propertyName)
 				|| IPreferenceConstants.OPEN_AFTER_DELAY.equals(propertyName)
 				|| IPreferenceConstants.SELECT_ON_HOVER.equals(propertyName)) {
 			initializeSingleClickOption();
