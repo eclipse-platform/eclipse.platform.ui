@@ -1039,21 +1039,6 @@ public final class Platform {
 	}
 
 	/**
-	 * Logs the given status for the bundle of the given class. If no such log
-	 * exists, one is created.
-	 *
-	 * @param clazz  the class in a bundle whose log is returned
-	 * @param status the status to log
-	 *
-	 * @since 3.16
-	 */
-
-	public static void log(Class<?> clazz, IStatus status) {
-		getLog(clazz).log(status);
-	}
-
-
-	/**
 	 * Returns the given bundle's resource bundle for the current locale.
 	 * <p>
 	 * This resource bundle is typically stored as the plugin.properties file in the
