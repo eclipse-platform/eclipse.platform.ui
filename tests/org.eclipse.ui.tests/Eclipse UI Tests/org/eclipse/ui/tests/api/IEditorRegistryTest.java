@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.internal.content.ContentTypeManager;
@@ -57,6 +58,20 @@ import junit.framework.TestCase;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class IEditorRegistryTest extends TestCase {
 	private IEditorRegistry fReg;
+
+	/**
+	 * Number of received log messages with severity error while running a single
+	 * test method.
+	 */
+	private final AtomicInteger loggedErrors = new AtomicInteger();
+
+	/** Listener to count error messages while testing. */
+	private final ILogListener errorLogListener = (IStatus status, String plugin) -> {
+		if (status.matches(IStatus.ERROR)) {
+			System.out.println(status);
+			loggedErrors.incrementAndGet();
+		}
+	};
 
 	private IProject proj;
 
@@ -527,20 +542,9 @@ public class IEditorRegistryTest extends TestCase {
 		FileEditorMapping[] maps = new FileEditorMapping[src.length + 1];
 		System.arraycopy(src, 0, maps, 0, src.length);
 		maps[maps.length - 1] = newMapping;
-
-		final Throwable[] thrownException = new Throwable[1];
-		ILogListener listener = new ILogListener() {
-			@Override
-			public void logging(IStatus status, String plugin) {
-				Throwable throwable = status.getException();
-				if (throwable == null) {
-					thrownException[0] = new CoreException(status);
-				} else {
-					thrownException[0] = throwable;
-				}
-			}
-		};
-		Platform.addLogListener(listener);
+		// add error listener
+		loggedErrors.set(0);
+		Platform.addLogListener(errorLogListener);
 
 		try {
 			// invoke the same code that FileEditorsPreferencePage does
@@ -553,11 +557,8 @@ public class IEditorRegistryTest extends TestCase {
 			((EditorRegistry) fReg).saveAssociations();
 			PrefUtil.savePrefs();
 
-			Platform.removeLogListener(listener);
-
-			if (thrownException[0] != null) {
-				throw thrownException[0];
-			}
+			Platform.removeLogListener(errorLogListener);
+			assertEquals("Test triggered errors during preference save.", 0, loggedErrors.get());
 		}
 	}
 
