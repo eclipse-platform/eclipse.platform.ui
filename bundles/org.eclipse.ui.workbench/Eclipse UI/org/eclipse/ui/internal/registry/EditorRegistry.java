@@ -738,8 +738,6 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	 */
 	public void readResources(Map<String, IEditorDescriptor> editorTable, Reader reader) throws WorkbenchException {
 		XMLMemento memento = XMLMemento.createReadRoot(reader);
-		String versionString = memento.getString(IWorkbenchConstants.TAG_VERSION);
-		boolean versionIs31 = "3.1".equals(versionString); //$NON-NLS-1$
 
 		for (IMemento childMemento : memento.getChildren(IWorkbenchConstants.TAG_INFO)) {
 			List<IEditorDescriptor> editors = getEditorDescriptors(
@@ -774,18 +772,8 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 						childMemento.getChildren(IWorkbenchConstants.TAG_DELETED_EDITOR), editorTable);
 
 				List<IEditorDescriptor> defaultEditors = null;
-				if (versionIs31) { // parse the new format
-					defaultEditors = getEditorDescriptors(
-							childMemento.getChildren(IWorkbenchConstants.TAG_DEFAULT_EDITOR), editorTable);
-				} else { // guess at pre 3.1 format defaults
-					defaultEditors = new ArrayList<>(
-							(editors.isEmpty() ? 0 : 1) + mapping.getDeclaredDefaultEditors().length);
-					if (!editors.isEmpty()) {
-						IEditorDescriptor editor = editors.get(0);
-						defaultEditors.add(editor);
-					}
-					defaultEditors.addAll(Arrays.asList(mapping.getDeclaredDefaultEditors()));
-				}
+				defaultEditors = getEditorDescriptors(childMemento.getChildren(IWorkbenchConstants.TAG_DEFAULT_EDITOR),
+						editorTable);
 
 				// Add any new editors that have already been read from the registry
 				// which were not deleted.
