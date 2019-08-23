@@ -15,6 +15,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.monitoring;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IStartup;
@@ -35,7 +36,7 @@ public class MonitoringStartup implements IStartup {
 		}
 
 		IPreferenceStore preferences = MonitoringPlugin.getDefault().getPreferenceStore();
-		if (preferences.getBoolean(PreferenceConstants.MONITORING_ENABLED)) {
+		if (preferences.getBoolean(PreferenceConstants.MONITORING_ENABLED) && !Platform.inDevelopmentMode()) {
 			monitoringThread = createAndStartMonitorThread();
 		}
 
