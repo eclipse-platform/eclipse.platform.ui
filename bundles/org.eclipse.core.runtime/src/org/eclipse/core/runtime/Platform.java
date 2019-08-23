@@ -1026,15 +1026,14 @@ public final class Platform {
 	/**
 	 * Returns the given bundle's resource bundle for the current locale.
 	 * <p>
-	 * This resource bundle is typically stored as the plugin.properties file
-	 * in the plug-in itself, and contains any translatable strings used in the
-	 * plug-in manifest file (plugin.xml).
+	 * This resource bundle is typically stored as the plugin.properties file in the
+	 * plug-in itself, and contains any translatable strings used in the plug-in
+	 * manifest file (plugin.xml).
 	 * </p>
 	 * <p>
-	 * 	This mechanism is intended only for
-	 * externalizing strings found in the plug-in manifest file. Using this
-	 * method for externalizing strings in your code may result in degraded
-	 * memory performance.
+	 * This mechanism is intended only for externalizing strings found in the
+	 * plug-in manifest file. Using this method for externalizing strings in your
+	 * code may result in degraded memory performance.
 	 * </p>
 	 *
 	 * @param bundle the bundle whose resource bundle is being queried
