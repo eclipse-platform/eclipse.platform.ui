@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Julian Chen - fix for bug #92572, jclRM
  *     Benjamin Cabe <benjamin.cabe@anyware-tech.com> - fix for bug 265532
+ *     Christoph Läubrich - remove InternalPlatform.getDefault().log (bug 55083)
  *******************************************************************************/
 package org.eclipse.core.internal.runtime;
 
@@ -576,16 +577,6 @@ public final class InternalPlatform {
 	 */
 	public String[] knownWSValues() {
 		return WS_LIST;
-	}
-
-	/**
-	 * Notifies all listeners of the platform log.  This includes the console log, if
-	 * used, and the platform log file.  All Plugin log messages get funnelled
-	 * through here as well.
-	 */
-	public void log(final IStatus status) {
-		// TODO: deprecate?
-		RuntimeLog.log(status);
 	}
 
 	private void processCommandLine(String[] args) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2005, 2015 IBM Corporation and others.
+ *  Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -10,13 +10,13 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christoph Läubrich - remove reference to InternalPlatform.getDefault().log
  *******************************************************************************/
 package org.eclipse.core.internal.preferences.legacy;
 
 import java.lang.reflect.Field;
 import org.eclipse.core.internal.preferences.exchange.ILegacyPreferences;
-import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.Messages;
+import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.framework.Bundle;
@@ -91,7 +91,7 @@ public class InitLegacyPreferences implements ILegacyPreferences {
 
 	private static void log(Exception ex, String name) {
 		IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR, NLS.bind(Messages.plugin_unableToGetActivator, name), ex);
-		InternalPlatform.getDefault().log(status);
+		RuntimeLog.log(status);
 	}
 
 }

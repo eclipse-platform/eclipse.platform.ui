@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2014 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM - Initial API and implementation
+ *     Christoph Läubrich - remove reference to InternalPlatform.getDefault().log
  *******************************************************************************/
 package org.eclipse.core.internal.runtime;
 
@@ -161,7 +162,7 @@ public class PerformanceStatsProcessor extends Job {
 			}
 		} catch (Exception e) {
 			IStatus error = new Status(IStatus.ERROR, Platform.PI_RUNTIME, 1, "Error loading performance log", e); //$NON-NLS-1$
-			InternalPlatform.getDefault().log(error);
+			RuntimeLog.log(error);
 		}
 		//use the platform log if we couldn't create the performance log
 		if (perfLog == null)

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,14 +11,14 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 476403, 478769, 490586
+ *     Christoph Läubrich - remove reference to InternalPlatform.getDefault().log
  *******************************************************************************/
 package org.eclipse.core.runtime;
 
 import java.io.*;
 import java.net.URL;
 import java.util.Map;
-import org.eclipse.core.internal.runtime.InternalPlatform;
-import org.eclipse.core.internal.runtime.Messages;
+import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.debug.DebugOptions;
@@ -358,7 +358,7 @@ public abstract class Plugin implements BundleActivator {
 			} catch (org.osgi.service.prefs.BackingStoreException e) {
 				IStatus status = new Status(IStatus.ERROR, Platform.PI_RUNTIME, IStatus.ERROR,
 						Messages.preferences_saveProblems, e);
-				InternalPlatform.getDefault().log(status);
+				RuntimeLog.log(status);
 			}
 		};
 		innerCall.run();
