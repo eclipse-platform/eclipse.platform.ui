@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christoph Läubrich - add methods for logging without a IStatus object
  *******************************************************************************/
 package org.eclipse.core.runtime;
 
@@ -62,4 +63,73 @@ public interface ILog {
 	 * @see Platform#removeLogListener(ILogListener)
 	 */
 	public void removeLogListener(ILogListener listener);
+
+	/**
+	 * Logs a status with {@link IStatus#INFO} using this logger
+	 * {@link Bundle#getSymbolicName()} as pluginId
+	 *
+	 * @param message the message to log
+	 * @since 3.17
+	 */
+	default void info(String message) {
+		log(new Status(IStatus.INFO, getBundle().getSymbolicName(), message));
+	}
+
+	/**
+	 * Logs a status with {@link IStatus#INFO} using this logger
+	 * {@link Bundle#getSymbolicName()} as pluginId
+	 *
+	 * @param message   the message to log
+	 * @param throwable an optional throwable to associate with this status
+	 * @since 3.17
+	 */
+	default void info(String message, Throwable throwable) {
+		log(new Status(IStatus.INFO, getBundle().getSymbolicName(), message, throwable));
+	}
+
+	/**
+	 * Logs a status with {@link IStatus#WARNING} using this logger
+	 * {@link Bundle#getSymbolicName()} as pluginId
+	 *
+	 * @param message the message to log
+	 * @since 3.17
+	 */
+	default void warn(String message) {
+		log(new Status(IStatus.WARNING, getBundle().getSymbolicName(), message));
+	}
+
+	/**
+	 * Logs a status with {@link IStatus#WARNING} using this logger
+	 * {@link Bundle#getSymbolicName()} as pluginId
+	 *
+	 * @param message   the message to log
+	 * @param throwable an optional throwable to associate with this status
+	 * @since 3.17
+	 */
+	default void warn(String message, Throwable throwable) {
+		log(new Status(IStatus.WARNING, getBundle().getSymbolicName(), message, throwable));
+	}
+
+	/**
+	 * Logs a status with {@link IStatus#ERROR} using this logger
+	 * {@link Bundle#getSymbolicName()} as pluginId
+	 *
+	 * @param message the message to log
+	 * @since 3.17
+	 */
+	default void error(String message) {
+		log(new Status(IStatus.ERROR, getBundle().getSymbolicName(), message));
+	}
+
+	/**
+	 * Logs a status with {@link IStatus#ERROR} using this logger
+	 * {@link Bundle#getSymbolicName()} as pluginId
+	 *
+	 * @param message   the message to log
+	 * @param throwable an optional throwable to associate with this status
+	 * @since 3.17
+	 */
+	default void error(String message, Throwable throwable) {
+		log(new Status(IStatus.ERROR, getBundle().getSymbolicName(), message, throwable));
+	}
 }
