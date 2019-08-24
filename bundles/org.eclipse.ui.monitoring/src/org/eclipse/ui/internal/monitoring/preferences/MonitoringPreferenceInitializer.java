@@ -11,6 +11,7 @@
  * Contributors:
  *     Marcus Eng (Google) - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Christoph Läubrich - change to new preference store API
  *******************************************************************************/
 package org.eclipse.ui.internal.monitoring.preferences;
 
@@ -25,7 +26,7 @@ import org.eclipse.ui.monitoring.PreferenceConstants;
 public class MonitoringPreferenceInitializer extends AbstractPreferenceInitializer {
 	@Override
 	public void initializeDefaultPreferences() {
-		IPreferenceStore store = MonitoringPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore store = MonitoringPlugin.getPreferenceStore();
 
 		store.setDefault(PreferenceConstants.MONITORING_ENABLED, false);
 		store.setDefault(PreferenceConstants.LONG_EVENT_WARNING_THRESHOLD_MILLIS, 500); // 0.5 sec

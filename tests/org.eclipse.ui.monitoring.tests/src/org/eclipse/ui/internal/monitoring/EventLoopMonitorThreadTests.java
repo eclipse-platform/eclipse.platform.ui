@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014, 2015 Google Inc and others.
+ * Copyright (C) 2014, 2019 Google Inc and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *	   Marcus Eng (Google)
  *	   Sergey Prigogin (Google)
  *	   Simon Scholz <simon.scholz@vogella.com> - Bug 443391
+ *     Christoph Läubrich - change to new preference store API
  *******************************************************************************/
 package org.eclipse.ui.internal.monitoring;
 
@@ -22,7 +23,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.List;
 
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.internal.monitoring.EventLoopMonitorThread.Parameters;
@@ -95,7 +95,7 @@ public class EventLoopMonitorThreadTests {
 
 	@Before
 	public void setUp() {
-		getPreferences().setValue(PreferenceConstants.MONITORING_ENABLED, false);
+		MonitoringPlugin.getPreferenceStore().setValue(PreferenceConstants.MONITORING_ENABLED, false);
 		logger = new MockUiFreezeEventLogger();
 		loggedEvents = logger.getLoggedEvents();
 		sleepLock = new Object();
@@ -110,11 +110,7 @@ public class EventLoopMonitorThreadTests {
 			monitoringThread = null;
 		}
 		loggedEvents.clear();
-		getPreferences().setToDefault(PreferenceConstants.MONITORING_ENABLED);
-	}
-
-	private static IPreferenceStore getPreferences() {
-		return MonitoringPlugin.getDefault().getPreferenceStore();
+		MonitoringPlugin.getPreferenceStore().setToDefault(PreferenceConstants.MONITORING_ENABLED);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014 Google Inc and others.
+ * Copyright (C) 2014, 2019 Google Inc and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *	   Marcus Eng (Google)
  *	   Sergey Prigogin (Google)
  *	   Simon Scholz <simon.scholz@vogella.com> - Bug 443391
+ *     Christoph Läubrich - change to new preference store API
  *******************************************************************************/
 package org.eclipse.ui.internal.monitoring;
 
@@ -112,12 +113,12 @@ public class EventLoopMonitorThreadManualTests {
 
 	@Before
 	public void setUp() {
-		getPreferences().setValue(PreferenceConstants.MONITORING_ENABLED, false);
+		MonitoringPlugin.getPreferenceStore().setValue(PreferenceConstants.MONITORING_ENABLED, false);
 	}
 
 	@After
 	public void tearDown() {
-		getPreferences().setToDefault(PreferenceConstants.MONITORING_ENABLED);
+		MonitoringPlugin.getPreferenceStore().setToDefault(PreferenceConstants.MONITORING_ENABLED);
 	}
 
 	protected static long pn63(long pnSequence) {
@@ -410,7 +411,7 @@ public class EventLoopMonitorThreadManualTests {
 	}
 
 	protected static EventLoopMonitorThread.Parameters createDefaultParameters() {
-		IPreferenceStore preferences = MonitoringPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore preferences = MonitoringPlugin.getPreferenceStore();
 		EventLoopMonitorThread.Parameters params = new EventLoopMonitorThread.Parameters();
 
 		params.longEventWarningThreshold =
@@ -643,7 +644,4 @@ public class EventLoopMonitorThreadManualTests {
 		return mergedItems.toString();
 	}
 
-	private static IPreferenceStore getPreferences() {
-		return MonitoringPlugin.getDefault().getPreferenceStore();
-	}
 }

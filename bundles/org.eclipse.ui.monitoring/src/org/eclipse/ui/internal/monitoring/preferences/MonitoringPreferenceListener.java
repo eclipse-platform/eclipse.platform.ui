@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014, 2015 Google Inc and others.
+ * Copyright (C) 2014, 2019 Google Inc and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     Marcus Eng (Google) - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Christoph Läubrich - change to new preference store API
  *******************************************************************************/
 package org.eclipse.ui.internal.monitoring.preferences;
 
@@ -79,8 +80,7 @@ public class MonitoringPreferenceListener implements IPropertyChangeListener {
 		}
 		monitorThreadRestartInProgress = false;
 
-		MonitoringPlugin plugin = MonitoringPlugin.getDefault();
-		IPreferenceStore preferences = plugin.getPreferenceStore();
+		IPreferenceStore preferences = MonitoringPlugin.getPreferenceStore();
 		if (preferences.getBoolean(PreferenceConstants.MONITORING_ENABLED)) {
 			EventLoopMonitorThread thread = MonitoringStartup.createAndStartMonitorThread();
 			// If thread is null, the newly-defined preferences are invalid.

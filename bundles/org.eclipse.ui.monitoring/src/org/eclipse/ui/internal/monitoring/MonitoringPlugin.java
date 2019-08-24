@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014 Google Inc and others.
+ * Copyright (C) 2014 , 2019 Google Inc and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,46 +12,43 @@
  *     Steve Foreman (Google) - initial API and implementation
  *     Marcus Eng (Google)
  *     Sergey Prigogin (Google)
+ *     Christoph Läubrich - remove dependency to UI Activator
  *******************************************************************************/
 package org.eclipse.ui.internal.monitoring;
 
+import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.monitoring.PreferenceConstants;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
-import org.osgi.framework.BundleContext;
 
 /**
  * The activator class that controls the plug-in life cycle.
  */
-public class MonitoringPlugin extends AbstractUIPlugin {
-	private static MonitoringPlugin plugin;
+public class MonitoringPlugin {
 
-	@Override
-	public void start(BundleContext context) throws Exception {
-		super.start(context);
-		plugin = this;
-	}
-
-	@Override
-	public void stop(BundleContext context) throws Exception {
-		plugin = null;
-		super.stop(context);
-	}
-
-	public static MonitoringPlugin getDefault() {
-		return plugin;
-	}
+	private static ILog logger = Platform.getLog(MonitoringPlugin.class);
+	private static IPreferenceStore store;
 
 	public static void logError(String message, Throwable e) {
-		log(new Status(IStatus.ERROR, PreferenceConstants.PLUGIN_ID, message, e));
+		logger.log(new Status(IStatus.ERROR, PreferenceConstants.PLUGIN_ID, message, e));
 	}
 
 	public static void logWarning(String message) {
-		log(new Status(IStatus.WARNING, PreferenceConstants.PLUGIN_ID, message));
+		logger.log(new Status(IStatus.WARNING, PreferenceConstants.PLUGIN_ID, message));
 	}
 
-	private static void log(IStatus status) {
-		plugin.getLog().log(status);
+	public static void log(IStatus status) {
+		logger.log(status);
 	}
+
+	public static IPreferenceStore getPreferenceStore() {
+		if (store == null) {
+			store = PlatformUI.createPreferenceStore(MonitoringPlugin.class);
+		}
+		return store;
+	}
+
 }

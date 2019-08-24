@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,9 +10,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christoph Läubrich - add method to get preference store for a class
  *******************************************************************************/
 package org.eclipse.ui;
 
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.application.WorkbenchAdvisor;
@@ -20,7 +22,9 @@ import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.PrefUtil;
+import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eclipse.ui.testing.TestableObject;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * The central class for access to the Eclipse Platform User Interface. This
@@ -195,5 +199,17 @@ public final class PlatformUI {
 	 */
 	public static IPreferenceStore getPreferenceStore() {
 		return PrefUtil.getAPIPreferenceStore();
+	}
+
+	/**
+	 * Creates a {@link IPreferenceStore} store for the bundle that loaded that
+	 * class
+	 *
+	 * @param clazz the class to use for determining the responsible bundle
+	 * @return the instance scoped preference store for the given class
+	 * @since 3.117
+	 */
+	public static IPreferenceStore createPreferenceStore(Class<?> clazz) {
+		return new ScopedPreferenceStore(InstanceScope.INSTANCE, FrameworkUtil.getBundle(clazz).getSymbolicName());
 	}
 }

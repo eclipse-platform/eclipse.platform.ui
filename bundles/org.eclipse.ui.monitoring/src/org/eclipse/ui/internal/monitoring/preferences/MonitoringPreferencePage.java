@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014, 2015 Google Inc and others.
+ * Copyright (C) 2014, 2019 Google Inc and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     Marcus Eng (Google) - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Christoph Läubrich - change to new preference store API
  *******************************************************************************/
 package org.eclipse.ui.internal.monitoring.preferences;
 
@@ -24,7 +25,6 @@ import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.FieldEditorPreferencePage;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.IntegerFieldEditor;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
@@ -42,8 +42,6 @@ import org.eclipse.ui.monitoring.PreferenceConstants;
 public class MonitoringPreferencePage extends FieldEditorPreferencePage
 		implements IWorkbenchPreferencePage {
 	private static final int HOUR_IN_MS = 3600000;
-	private static final IPreferenceStore preferences =
-			MonitoringPlugin.getDefault().getPreferenceStore();
 	private BooleanFieldEditor monitoringEnabled;
 	private IntegerEditor longEventWarningThreshold;
 	private IntegerEditor longEventErrorThreshold;
@@ -101,7 +99,7 @@ public class MonitoringPreferencePage extends FieldEditorPreferencePage
 
 	public MonitoringPreferencePage() {
 		super(GRID);
-		editors = new HashMap<FieldEditor, Composite>();
+		editors = new HashMap<>();
 	}
 
 	@Override
@@ -191,7 +189,7 @@ public class MonitoringPreferencePage extends FieldEditorPreferencePage
 
 	@Override
 	public void init(IWorkbench workbench) {
-		setPreferenceStore(preferences);
+		setPreferenceStore(MonitoringPlugin.getPreferenceStore());
 	}
 
 	@Override
@@ -241,7 +239,7 @@ public class MonitoringPreferencePage extends FieldEditorPreferencePage
 		editor.fillIntoGrid(parent, 2);
 		editors.put(editor, parent);
 		if (!editor.getPreferenceName().equals(PreferenceConstants.MONITORING_ENABLED)) {
-			boolean enabled = preferences.getBoolean(PreferenceConstants.MONITORING_ENABLED);
+			boolean enabled = MonitoringPlugin.getPreferenceStore().getBoolean(PreferenceConstants.MONITORING_ENABLED);
 			editor.setEnabled(enabled, parent);
 		}
 		return editor;

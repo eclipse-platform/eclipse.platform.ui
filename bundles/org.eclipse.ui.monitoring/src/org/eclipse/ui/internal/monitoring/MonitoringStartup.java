@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014, 2015 Google Inc and others.
+ * Copyright (C) 2014, 2019 Google Inc and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     Steve Foreman (Google) - initial API and implementation
  *     Marcus Eng (Google)
  *     Sergey Prigogin (Google)
+ *     Christoph Läubrich - change to new preference store API
  *******************************************************************************/
 package org.eclipse.ui.internal.monitoring;
 
@@ -35,7 +36,7 @@ public class MonitoringStartup implements IStartup {
 			return;
 		}
 
-		IPreferenceStore preferences = MonitoringPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore preferences = MonitoringPlugin.getPreferenceStore();
 		if (preferences.getBoolean(PreferenceConstants.MONITORING_ENABLED) && !Platform.inDevelopmentMode()) {
 			monitoringThread = createAndStartMonitorThread();
 		}
@@ -70,7 +71,7 @@ public class MonitoringStartup implements IStartup {
 	}
 
 	private static EventLoopMonitorThread.Parameters loadPreferences() {
-		IPreferenceStore preferences = MonitoringPlugin.getDefault().getPreferenceStore();
+		IPreferenceStore preferences = MonitoringPlugin.getPreferenceStore();
 		EventLoopMonitorThread.Parameters args = new EventLoopMonitorThread.Parameters();
 
 		args.longEventWarningThreshold =

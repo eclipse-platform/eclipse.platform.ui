@@ -1,6 +1,5 @@
 Manifest-Version: 1.0
 Bundle-ActivationPolicy: lazy
-Bundle-Activator: org.eclipse.ui.internal.monitoring.MonitoringPlugin
 Bundle-ClassPath: .
 Bundle-Localization: plugin
 Bundle-ManifestVersion: 2

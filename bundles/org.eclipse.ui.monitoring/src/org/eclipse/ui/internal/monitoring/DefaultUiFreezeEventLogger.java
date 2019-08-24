@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (C) 2014, 2015 Google Inc and others.
+ * Copyright (C) 2014, 2019 Google Inc and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     Marcus Eng (Google) - initial API and implementation
  *     Sergey Prigogin (Google)
+ *     Christoph Läubrich - adjust log call
  *******************************************************************************/
 package org.eclipse.ui.internal.monitoring;
 
@@ -115,7 +116,7 @@ public class DefaultUiFreezeEventLogger implements IUiFreezeEventLogger {
 			lastTimestamp = sample.getTimestamp();
 		}
 
-		MonitoringPlugin.getDefault().getLog().log(loggedEvent);
+		MonitoringPlugin.log(loggedEvent);
 	}
 
 	private static IStatus createThreadStatus(ThreadInfo thread) {
