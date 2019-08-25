@@ -202,7 +202,7 @@ public class Property {
 	 */
 	@Override
 	public String toString() {
-		StringBuffer buff = new StringBuffer("\""); //$NON-NLS-1$
+		StringBuilder buff = new StringBuilder("\""); //$NON-NLS-1$
 		buff.append(getName());
 		buff.append("\"= \""); //$NON-NLS-1$
 		buff.append(getValue(false));

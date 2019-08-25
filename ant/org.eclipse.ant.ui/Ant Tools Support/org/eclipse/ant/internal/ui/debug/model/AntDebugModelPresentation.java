@@ -101,7 +101,7 @@ public class AntDebugModelPresentation extends LabelProvider implements IDebugMo
 	private String getThreadText(AntThread thread) {
 		String name = thread.getName();
 		if (name != null) {
-			StringBuffer text = new StringBuffer(name);
+			StringBuilder text = new StringBuilder(name);
 			if (thread.isSuspended()) {
 				IBreakpoint[] breakpoints = thread.getBreakpoints();
 				if (breakpoints.length > 0) {
@@ -129,7 +129,7 @@ public class AntDebugModelPresentation extends LabelProvider implements IDebugMo
 	private String getStackFrameText(AntStackFrame frame) {
 		String name = frame.getName();
 		if (name != null) {
-			StringBuffer text = new StringBuffer(name);
+			StringBuilder text = new StringBuilder(name);
 			int lineNumber = frame.getLineNumber();
 			String lineNumberString = null;
 			if (lineNumber == 0) {

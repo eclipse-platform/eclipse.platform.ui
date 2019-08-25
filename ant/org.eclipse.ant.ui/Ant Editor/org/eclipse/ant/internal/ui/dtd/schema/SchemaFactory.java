@@ -246,7 +246,7 @@ public class SchemaFactory implements DeclHandler {
 		checkLen();
 		if (fBuf[fPos] == '(')
 			return scanExpr();
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		while (fBuf[fPos] != '|' && fBuf[fPos] != ',' && fBuf[fPos] != ')' && fBuf[fPos] != '*' && fBuf[fPos] != '+' && fBuf[fPos] != '?') {
 			sb.append(fBuf[fPos++]);
 			checkLen();

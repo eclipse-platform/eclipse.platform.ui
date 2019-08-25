@@ -311,7 +311,7 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 		if (fTarget == null || !fTarget.supportsBreakpoint(breakpoint)) {
 			return;
 		}
-		StringBuffer message = new StringBuffer();
+		StringBuilder message = new StringBuilder();
 		if (add) {
 			try {
 				if (!breakpoint.isEnabled()) {

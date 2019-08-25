@@ -100,7 +100,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		for (int i = 0; i < size; i++) {
 			column.append(' ');
 		}
-		StringBuffer labelBuff = new StringBuffer();
+		StringBuilder labelBuff = new StringBuilder();
 		labelBuff.append('[');
 		labelBuff.append(name);
 		labelBuff.append("] "); //$NON-NLS-1$
@@ -248,7 +248,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 		long minutes = seconds / 60;
 		seconds = seconds % 60;
 
-		StringBuffer result = new StringBuffer(RuntimeMessages.AntProcessBuildLogger_Total_time);
+		StringBuilder result = new StringBuilder(RuntimeMessages.AntProcessBuildLogger_Total_time);
 		if (minutes > 0) {
 			result.append(minutes);
 			if (minutes > 1) {
@@ -304,7 +304,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 			return;
 		}
 		Target target = event.getTarget();
-		StringBuffer msg = new StringBuffer(System.getProperty("line.separator")); //$NON-NLS-1$
+		StringBuilder msg = new StringBuilder(System.getProperty("line.separator")); //$NON-NLS-1$
 		String targetName = target.getName();
 		msg.append(targetName);
 		msg.append(':');

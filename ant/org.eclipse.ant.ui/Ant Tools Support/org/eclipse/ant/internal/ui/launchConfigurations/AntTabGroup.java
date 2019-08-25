@@ -96,7 +96,7 @@ public class AntTabGroup extends AbstractLaunchConfigurationTabGroup {
 			IFile file = (IFile) resource;
 			if (AntUtil.isKnownAntFile(file)) {
 				String projectName = file.getProject().getName();
-				StringBuffer buffer = new StringBuffer(projectName);
+				StringBuilder buffer = new StringBuilder(projectName);
 				buffer.append(' ');
 				buffer.append(file.getName());
 				String name = buffer.toString().trim();

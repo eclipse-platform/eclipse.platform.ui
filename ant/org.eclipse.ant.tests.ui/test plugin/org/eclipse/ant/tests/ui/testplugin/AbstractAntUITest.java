@@ -284,7 +284,7 @@ public abstract class AbstractAntUITest extends TestCase {
 	 * @return the contents of the given {@link BufferedReader} as a {@link String}
 	 */
 	protected String getReaderContentAsStringNew(BufferedReader bufferedReader) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		try {
 			char[] readBuffer = new char[2048];
 			int n = bufferedReader.read(readBuffer);
@@ -308,7 +308,7 @@ public abstract class AbstractAntUITest extends TestCase {
 	 * @return the contents of the given {@link BufferedReader} as a {@link String}
 	 */
 	protected String getReaderContentAsString(BufferedReader bufferedReader) {
-		StringBuffer result = new StringBuffer();
+		StringBuilder result = new StringBuilder();
 		try {
 			String line = bufferedReader.readLine();
 

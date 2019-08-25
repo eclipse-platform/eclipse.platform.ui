@@ -27,7 +27,7 @@ public class AntAntNode extends AntTaskNode {
 
 	public AntAntNode(Task task, Attributes attributes) {
 		super(task);
-		StringBuffer label = new StringBuffer("ant "); //$NON-NLS-1$
+		StringBuilder label = new StringBuilder("ant "); //$NON-NLS-1$
 		fFile = attributes.getValue(IAntCoreConstants.DIR);
 		if (fFile != null) {
 			if (!FileUtils.isAbsolutePath(fFile)) {

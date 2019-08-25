@@ -193,7 +193,7 @@ public class AntBuilderTargetsTab extends AbstractLaunchConfigurationTab {
 			targetsSelected = configTargets;
 		}
 		String[] targets = AntUtil.parseRunTargets(targetsSelected);
-		StringBuffer result = new StringBuffer(targets[0]);
+		StringBuilder result = new StringBuilder(targets[0]);
 		for (int i = 1; i < targets.length; i++) {
 			result.append(", "); //$NON-NLS-1$
 			result.append(targets[i]);
@@ -331,7 +331,7 @@ public class AntBuilderTargetsTab extends AbstractLaunchConfigurationTab {
 	 */
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		if (!fAfterCleanTargetText.getText().equals(NOT_ENABLED)) {
 			buffer.append(IExternalToolConstants.BUILD_TYPE_FULL).append(',');
 		}

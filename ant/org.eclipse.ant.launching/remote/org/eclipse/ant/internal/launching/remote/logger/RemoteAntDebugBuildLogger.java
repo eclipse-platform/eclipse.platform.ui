@@ -314,7 +314,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 
 		if (shouldSuspend) {
 			if (detail != null) {
-				StringBuffer message = new StringBuffer(DebugMessageIds.SUSPENDED);
+				StringBuilder message = new StringBuilder(DebugMessageIds.SUSPENDED);
 				message.append(detail);
 				sendRequestResponse(message.toString());
 			}

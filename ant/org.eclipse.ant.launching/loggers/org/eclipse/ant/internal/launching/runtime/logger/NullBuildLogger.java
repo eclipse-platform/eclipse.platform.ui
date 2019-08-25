@@ -179,7 +179,7 @@ public class NullBuildLogger extends AbstractEclipseBuildLogger implements Build
 			return null;
 		}
 		fHandledException = exception;
-		StringBuffer message = new StringBuffer();
+		StringBuilder message = new StringBuilder();
 		message.append(StringUtils.LINE_SEP);
 		message.append(RuntimeMessages.NullBuildLogger_1);
 		message.append(StringUtils.LINE_SEP);

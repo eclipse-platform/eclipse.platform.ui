@@ -239,7 +239,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 		int lineLength = Integer.parseInt(msg.substring(index2 + 1, index3));
 		int index4 = index3 + 1 + lineLength;
 		String line = msg.substring(index3 + 1, index4);
-		StringBuffer labelBuff = new StringBuffer();
+		StringBuilder labelBuff = new StringBuilder();
 		labelBuff.append('[');
 		labelBuff.append(taskName);
 		labelBuff.append("] "); //$NON-NLS-1$

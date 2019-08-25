@@ -114,7 +114,7 @@ public class AntRunner implements IApplication {
 	 * Helper method to ensure an array is converted into an ArrayList.
 	 */
 	private String[] getArray(String args) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		boolean waitingForQuote = false;
 		ArrayList<String> result = new ArrayList<>();
 		for (StringTokenizer tokens = new StringTokenizer(args, ", \"", true); tokens.hasMoreTokens();) { //$NON-NLS-1$

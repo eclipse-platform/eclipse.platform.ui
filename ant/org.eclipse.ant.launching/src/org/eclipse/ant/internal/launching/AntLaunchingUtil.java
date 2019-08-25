@@ -81,7 +81,7 @@ public final class AntLaunchingUtil {
 		if (strings.length == 1)
 			return strings[0];
 
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		for (int i = 0; i < strings.length - 1; i++) {
 			buf.append(strings[i]);
 			buf.append(ATTRIBUTE_SEPARATOR);

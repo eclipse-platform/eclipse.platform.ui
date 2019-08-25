@@ -234,7 +234,7 @@ public class InternalAntRunner {
 		if ((messageOutputLevel != Project.MSG_DEBUG) && (messageOutputLevel != Project.MSG_VERBOSE)) {
 			return;
 		}
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < extraArguments.length; i++) {
 			sb.append(extraArguments[i]);
 			sb.append(' ');
@@ -326,7 +326,7 @@ public class InternalAntRunner {
 		while (spaces.length() < maxlen) {
 			spaces += spaces;
 		}
-		StringBuffer msg = new StringBuffer();
+		StringBuilder msg = new StringBuilder();
 		msg.append(heading + lSep + lSep);
 		for (int i = 0; i < names.size(); i++) {
 			msg.append(' ');
@@ -1160,7 +1160,7 @@ public class InternalAntRunner {
 	 */
 	private void printUsage() {
 		String lSep = System.getProperty("line.separator"); //$NON-NLS-1$
-		StringBuffer msg = new StringBuffer();
+		StringBuilder msg = new StringBuilder();
 		msg.append("ant ["); //$NON-NLS-1$
 		msg.append(RemoteAntMessages.getString("InternalAntRunner.options_13")); //$NON-NLS-1$
 		msg.append("] ["); //$NON-NLS-1$

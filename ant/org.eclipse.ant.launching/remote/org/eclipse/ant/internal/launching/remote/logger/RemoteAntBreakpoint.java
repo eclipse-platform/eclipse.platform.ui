@@ -37,7 +37,7 @@ public class RemoteAntBreakpoint {
 	}
 
 	public String toMarshallString() {
-		StringBuffer buffer = new StringBuffer(DebugMessageIds.BREAKPOINT);
+		StringBuilder buffer = new StringBuilder(DebugMessageIds.BREAKPOINT);
 		buffer.append(DebugMessageIds.MESSAGE_DELIMITER);
 		buffer.append(fFileName);
 		buffer.append(DebugMessageIds.MESSAGE_DELIMITER);

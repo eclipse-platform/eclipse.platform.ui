@@ -521,7 +521,7 @@ public class ExportUtil {
 	 * @return collection items separated with given separator
 	 */
 	public static String toString(Collection<String> c, String separator) {
-		StringBuffer b = new StringBuffer();
+		StringBuilder b = new StringBuilder();
 		for (Iterator<String> iter = c.iterator(); iter.hasNext();) {
 			b.append(iter.next());
 			b.append(separator);
@@ -622,7 +622,7 @@ public class ExportUtil {
 			// not possible to checkout files: not connected to version
 			// control plugin or hijacked files and made read-only, so
 			// collect error messages provided by validator and re-throw
-			StringBuffer message = new StringBuffer(status.getPlugin() + ": " //$NON-NLS-1$
+			StringBuilder message = new StringBuilder(status.getPlugin() + ": " //$NON-NLS-1$
 					+ status.getMessage() + NEWLINE);
 			if (status.isMultiStatus()) {
 				for (int i = 0; i < status.getChildren().length; i++) {

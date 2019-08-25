@@ -690,7 +690,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 	}
 
 	private String stripUnescapedQuotes(String javaLibPath) {
-		StringBuffer buf = new StringBuffer(javaLibPath.length());
+		StringBuilder buf = new StringBuilder(javaLibPath.length());
 		for (int i = 0; i < javaLibPath.length(); i++) {
 			char c = javaLibPath.charAt(i);
 			switch (c) {

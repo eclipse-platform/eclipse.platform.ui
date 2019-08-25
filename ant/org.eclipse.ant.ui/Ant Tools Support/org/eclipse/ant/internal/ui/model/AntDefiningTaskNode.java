@@ -156,7 +156,7 @@ public class AntDefiningTaskNode extends AntTaskNode {
 	 */
 	public static void setJavaClassPath(URL[] antClasspath) {
 
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 		File file = null;
 		for (int i = 0; i < antClasspath.length; i++) {
 			try {

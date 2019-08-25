@@ -53,7 +53,7 @@ public class AppletUtil {
 	 */
 	public static String buildHTMLFile(ILaunchConfiguration configuration) throws CoreException {
 		String name = getMainTypeName(configuration);
-		StringBuffer b = new StringBuffer();
+		StringBuilder b = new StringBuilder();
 		b.append("<!--" + BuildFileCreator.WARNING + " -->" + ExportUtil.NEWLINE); //$NON-NLS-1$ //$NON-NLS-2$
 		b.append("<html>" + ExportUtil.NEWLINE); //$NON-NLS-1$
 		b.append("    <body>" + ExportUtil.NEWLINE); //$NON-NLS-1$

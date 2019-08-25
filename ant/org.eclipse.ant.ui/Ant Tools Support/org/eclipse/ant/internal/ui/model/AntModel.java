@@ -1026,7 +1026,7 @@ public class AntModel implements IAntModel {
 	}
 
 	private String generateLabel(String taskName, Attributes attributes, String attributeName) {
-		StringBuffer label = new StringBuffer(taskName);
+		StringBuilder label = new StringBuilder(taskName);
 		String srcFile = attributes.getValue(attributeName);
 		if (srcFile != null) {
 			label.append(' ');
@@ -1046,7 +1046,7 @@ public class AntModel implements IAntModel {
 			if (column <= 0) {
 				column = getLastCharColumn(line);
 				String lineText = fDocument.get(fDocument.getLineOffset(line - 1), column);
-				StringBuffer searchString = new StringBuffer("</"); //$NON-NLS-1$
+				StringBuilder searchString = new StringBuilder("</"); //$NON-NLS-1$
 				searchString.append(element.getName());
 				searchString.append('>');
 				int index = lineText.indexOf(searchString.toString());
@@ -1302,7 +1302,7 @@ public class AntModel implements IAntModel {
 
 	private AntElementNode createProblemElement(SAXParseException exception) {
 		int lineNumber = exception.getLineNumber();
-		StringBuffer message = new StringBuffer(exception.getMessage());
+		StringBuilder message = new StringBuilder(exception.getMessage());
 		if (lineNumber != -1) {
 			message.append(AntModelMessages.AntModel_1 + lineNumber);
 		}

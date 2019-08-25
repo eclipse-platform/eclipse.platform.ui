@@ -501,7 +501,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 
 		fOrderButton.setEnabled(checked.length > 1);
 
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		Iterator<AntTargetNode> iter = fOrderedTargets.iterator();
 		while (iter.hasNext()) {
 			buffer.append(iter.next().getTargetName());
@@ -578,7 +578,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			if (exceptions[0] != null) {
 				IStatus exceptionStatus = exceptions[0].getStatus();
 				IStatus[] children = exceptionStatus.getChildren();
-				StringBuffer message = new StringBuffer(exceptions[0].getMessage());
+				StringBuilder message = new StringBuilder(exceptions[0].getMessage());
 				for (int i = 0; i < children.length; i++) {
 					message.append(' ');
 					IStatus childStatus = children[i];
@@ -760,7 +760,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			return;
 		}
 
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 		Iterator<AntTargetNode> iter = fOrderedTargets.iterator();
 		String targets = null;
 		while (iter.hasNext()) {

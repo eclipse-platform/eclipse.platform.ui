@@ -48,7 +48,7 @@ public class XmlDocumentFormatter {
 		protected String readTag() throws IOException {
 			int intChar;
 			char c;
-			StringBuffer node = new StringBuffer();
+			StringBuilder node = new StringBuilder();
 
 			while (!complete && (intChar = reader.read()) != -1) {
 				c = (char) intChar;
@@ -81,7 +81,7 @@ public class XmlDocumentFormatter {
 		protected String readTag() throws IOException {
 			int intChar;
 			char c;
-			StringBuffer node = new StringBuffer();
+			StringBuilder node = new StringBuilder();
 
 			while (!complete && (intChar = reader.read()) != -1) {
 				c = (char) intChar;
@@ -115,7 +115,7 @@ public class XmlDocumentFormatter {
 		protected String readTag() throws IOException {
 			int intChar;
 			char c;
-			StringBuffer node = new StringBuffer();
+			StringBuilder node = new StringBuilder();
 
 			while (!complete && (intChar = reader.read()) != -1) {
 				c = (char) intChar;
@@ -333,7 +333,7 @@ public class XmlDocumentFormatter {
 		@Override
 		protected String readTag() throws IOException {
 
-			StringBuffer node = new StringBuffer();
+			StringBuilder node = new StringBuilder();
 
 			boolean insideQuote = false;
 			int intChar;
@@ -472,7 +472,7 @@ public class XmlDocumentFormatter {
 	}
 
 	private String indent(String canonicalIndent) {
-		StringBuffer indent = new StringBuffer(30);
+		StringBuilder indent = new StringBuilder(30);
 		for (int i = 0; i < depth; i++) {
 			indent.append(canonicalIndent);
 		}

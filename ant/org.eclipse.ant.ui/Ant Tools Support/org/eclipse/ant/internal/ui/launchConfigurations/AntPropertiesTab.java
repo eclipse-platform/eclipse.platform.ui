@@ -203,7 +203,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 		items = fAntPropertiesBlock.getPropertyFiles();
 		String files = null;
 		if (items.length > 0) {
-			StringBuffer buff = new StringBuffer();
+			StringBuilder buff = new StringBuilder();
 			for (int i = 0; i < items.length; i++) {
 				String path = (String) items[i];
 				buff.append(path);

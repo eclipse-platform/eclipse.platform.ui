@@ -530,7 +530,7 @@ public class AntDebugState {
 				|| stringToEscape.indexOf("\\n") != -1)) { //$NON-NLS-1$
 			return stringToEscape;
 		}
-		StringBuffer escapedValue = new StringBuffer(stringToEscape);
+		StringBuilder escapedValue = new StringBuilder(stringToEscape);
 		for (int i = 0; i < escapedValue.length(); i++) {
 			switch (escapedValue.charAt(i)) {
 				case '\r':

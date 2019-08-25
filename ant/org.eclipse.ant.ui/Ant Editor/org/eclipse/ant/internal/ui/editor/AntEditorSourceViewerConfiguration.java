@@ -263,7 +263,7 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 		boolean useSpaces = fEditor.isTabsToSpacesConversionEnabled();
 
 		for (int i = 0; i <= tabWidth; i++) {
-			StringBuffer prefix = new StringBuffer();
+			StringBuilder prefix = new StringBuilder();
 			if (useSpaces) {
 				for (int j = 0; j + i < tabWidth; j++) {
 					prefix.append(' ');

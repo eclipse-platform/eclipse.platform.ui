@@ -747,7 +747,7 @@ public final class AntUtil {
 		if (extns.length == 0) {
 			return IAntCoreConstants.XML_EXTENSION;
 		}
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < extns.length; i++) {
 			if (i > 0)
 				sb.append('|');
@@ -765,7 +765,7 @@ public final class AntUtil {
 	 * @since 3.8
 	 */
 	public static boolean isKnownAntFileName(String name) {
-		StringBuffer buf = new StringBuffer(".*.("); //$NON-NLS-1$
+		StringBuilder buf = new StringBuilder(".*.("); //$NON-NLS-1$
 		buf.append(getKnownBuildFileExtensionsAsPattern());
 		buf.append(")"); //$NON-NLS-1$
 		try {

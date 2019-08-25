@@ -539,7 +539,7 @@ public class InternalAntRunner {
 		if ((messageOutputLevel != Project.MSG_DEBUG) && (messageOutputLevel != Project.MSG_VERBOSE)) {
 			return;
 		}
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < extraArguments.length; i++) {
 			sb.append(extraArguments[i]);
 			sb.append(' ');
@@ -1486,7 +1486,7 @@ public class InternalAntRunner {
 			System.arraycopy(customClasspath, 0, antClasspath, 0, customClasspath.length);
 			System.arraycopy(extraClasspath, 0, antClasspath, customClasspath.length, extraClasspath.length);
 		}
-		StringBuffer buff = new StringBuffer();
+		StringBuilder buff = new StringBuilder();
 		File file = null;
 		for (int i = 0; i < antClasspath.length; i++) {
 			try {

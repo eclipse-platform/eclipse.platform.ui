@@ -119,7 +119,7 @@ public class AntProperty extends AntDebugElement implements IVariable, Comparabl
 	 */
 	public String getText() {
 		if (fLabel == null) {
-			StringBuffer buffer = new StringBuffer(getName());
+			StringBuilder buffer = new StringBuilder(getName());
 			buffer.append("= "); //$NON-NLS-1$
 			buffer.append(fValue.getValueString());
 			fLabel = buffer.toString();

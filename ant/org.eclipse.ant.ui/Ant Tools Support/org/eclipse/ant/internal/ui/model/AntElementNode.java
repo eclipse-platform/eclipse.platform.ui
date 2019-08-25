@@ -373,7 +373,7 @@ public class AntElementNode implements IAdaptable, IAntElement {
 	@Override
 	public String getElementPath() {
 		if (fElementPath == null) {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			String buildFileName = getProjectNode().getBuildFileName();
 			if (buildFileName != null) {
 				buffer.append(buildFileName);

@@ -247,7 +247,7 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 	 * @return a unique name for the copy
 	 */
 	public static String getNewLaunchConfigurationName(IPath filePath, String projectName, String targetAttribute) {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		if (projectName != null) {
 			buffer.append(projectName);
 			buffer.append(' ');

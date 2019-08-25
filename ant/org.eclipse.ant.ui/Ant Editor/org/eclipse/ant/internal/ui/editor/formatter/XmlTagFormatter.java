@@ -117,7 +117,7 @@ public class XmlTagFormatter {
 
 		@Override
 		public String toString() {
-			StringBuffer sb = new StringBuffer(500);
+			StringBuilder sb = new StringBuilder(500);
 			sb.append('<');
 			sb.append(this.getElementName());
 			if (this.attributeCount() > 0 || this.isClosed())
@@ -179,7 +179,7 @@ public class XmlTagFormatter {
 		}
 
 		protected String wrapTag(Tag tag, FormattingPreferences prefs, String indent, String lineDelimiter) {
-			StringBuffer sb = new StringBuffer(1024);
+			StringBuilder sb = new StringBuilder(1024);
 			sb.append('<');
 			sb.append(tag.getElementName());
 			sb.append(' ');

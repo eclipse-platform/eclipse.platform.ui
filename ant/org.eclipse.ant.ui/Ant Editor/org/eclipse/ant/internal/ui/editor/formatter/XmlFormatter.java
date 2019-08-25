@@ -237,7 +237,7 @@ public class XmlFormatter {
 			return IAntCoreConstants.EMPTY_STRING;
 		}
 
-		StringBuffer buf = new StringBuffer();
+		StringBuilder buf = new StringBuilder();
 		buf.append(XmlDocumentFormatter.getLeadingWhitespace(node.getOffset(), document));
 		buf.append(XmlDocumentFormatter.createIndent());
 		return buf.toString();

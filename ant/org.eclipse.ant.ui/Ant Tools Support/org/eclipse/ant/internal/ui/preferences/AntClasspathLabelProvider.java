@@ -80,7 +80,7 @@ public class AntClasspathLabelProvider implements ILabelProvider {
 	public String getText(Object element) {
 		if (element instanceof IAntClasspathEntry) {
 			IAntClasspathEntry entry = (IAntClasspathEntry) element;
-			StringBuffer label = new StringBuffer(entry.getLabel());
+			StringBuilder label = new StringBuilder(entry.getLabel());
 			if (element instanceof GlobalClasspathEntries) {
 				if (((GlobalClasspathEntries) element).getType() == ClasspathModel.ANT_HOME) {
 					AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();

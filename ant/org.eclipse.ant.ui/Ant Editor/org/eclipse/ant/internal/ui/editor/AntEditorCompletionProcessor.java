@@ -1025,7 +1025,7 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 			if (prefix.length() == 0 || propertyName.toLowerCase().startsWith(prefix)) {
 				String additionalPropertyInfo = (String) properties.get(propertyName);
 
-				StringBuffer replacementString = new StringBuffer();
+				StringBuilder replacementString = new StringBuilder();
 				if (appendBraces) {
 					replacementString.append("${"); //$NON-NLS-1$
 				}
@@ -1203,7 +1203,7 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 		ICompletionProposal proposal = null;
 		if (openElementName != null) {
 			if (prefix.length() == 0 || openElementName.toLowerCase().startsWith(prefix)) {
-				StringBuffer replaceString = new StringBuffer();
+				StringBuilder replaceString = new StringBuilder();
 				if (!closingMode) {
 					if (previousChar != '/') {
 						if (previousChar != '<') {
@@ -1214,7 +1214,7 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 				}
 				replaceString.append(openElementName);
 				replaceString.append('>');
-				StringBuffer displayString = new StringBuffer("</"); //$NON-NLS-1$
+				StringBuilder displayString = new StringBuilder("</"); //$NON-NLS-1$
 				displayString.append(openElementName);
 				displayString.append('>');
 				proposal = new AntCompletionProposal(replaceString.toString(), cursorPosition - prefix.length(), prefix.length(), replaceString.length(), null, displayString.toString(), AntEditorMessages.getString("AntEditorCompletionProcessor.39"), AntCompletionProposal.TAG_CLOSING_PROPOSAL); //$NON-NLS-1$

@@ -1691,7 +1691,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			prefs.setValue(IAntCoreConstants.PREFERENCE_TASKS, IAntCoreConstants.EMPTY_STRING);
 			return;
 		}
-		StringBuffer tasks = new StringBuffer();
+		StringBuilder tasks = new StringBuilder();
 		for (int i = 0; i < customTasks.length; i++) {
 			tasks.append(customTasks[i].getTaskName());
 			tasks.append(',');
@@ -1714,7 +1714,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			prefs.setValue(IAntCoreConstants.PREFERENCE_TYPES, IAntCoreConstants.EMPTY_STRING);
 			return;
 		}
-		StringBuffer types = new StringBuffer();
+		StringBuilder types = new StringBuilder();
 		for (int i = 0; i < customTypes.length; i++) {
 			types.append(customTypes[i].getTypeName());
 			types.append(',');
@@ -1737,7 +1737,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			prefs.setValue(IAntCoreConstants.PREFERENCE_PROPERTIES, IAntCoreConstants.EMPTY_STRING);
 			return;
 		}
-		StringBuffer properties = new StringBuffer();
+		StringBuilder properties = new StringBuilder();
 		for (int i = 0; i < customProperties.length; i++) {
 			properties.append(customProperties[i].getName());
 			properties.append(',');
@@ -1768,7 +1768,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			}
 		}
 		if (changed) {
-			StringBuffer entries = new StringBuffer();
+			StringBuilder entries = new StringBuilder();
 			for (int i = 0; i < additionalEntries.length; i++) {
 				entries.append(additionalEntries[i].getLabel());
 				entries.append(',');
@@ -1806,7 +1806,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			prefs.setValue(IAntCoreConstants.PREFERENCE_ANT_HOME_ENTRIES, IAntCoreConstants.EMPTY_STRING);
 			return;
 		}
-		StringBuffer entries = new StringBuffer();
+		StringBuilder entries = new StringBuilder();
 		for (int i = 0; i < antHomeEntries.length; i++) {
 			entries.append(antHomeEntries[i].getLabel());
 			entries.append(',');
@@ -1816,7 +1816,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	}
 
 	protected void updatePropertyFiles(Preferences prefs) {
-		StringBuffer files = new StringBuffer();
+		StringBuilder files = new StringBuilder();
 		for (int i = 0; i < customPropertyFiles.length; i++) {
 			files.append(customPropertyFiles[i]);
 			files.append(',');

@@ -64,7 +64,7 @@ public class AntAutoEditStrategy extends DefaultIndentLineAutoEditStrategy {
 			if (!nextNodeIsEndTag(c.offset, d)) {
 				correct.append(XmlDocumentFormatter.createIndent());
 			}
-			StringBuffer buf = new StringBuffer(c.text);
+			StringBuilder buf = new StringBuilder(c.text);
 			buf.append(correct);
 			fAccumulatedChange += buf.length();
 

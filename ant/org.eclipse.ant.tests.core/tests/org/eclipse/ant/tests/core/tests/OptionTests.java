@@ -136,7 +136,7 @@ public class OptionTests extends AbstractAntTest {
 		IFile file = checkFileExists("TestLogFile.txt"); //$NON-NLS-1$
 
 		try (InputStream stream = file.getContents(); InputStreamReader in = new InputStreamReader(new BufferedInputStream(stream))) {
-			StringBuffer buffer = new StringBuffer();
+			StringBuilder buffer = new StringBuilder();
 			char[] readBuffer = new char[2048];
 			int n = in.read(readBuffer);
 			while (n > 0) {

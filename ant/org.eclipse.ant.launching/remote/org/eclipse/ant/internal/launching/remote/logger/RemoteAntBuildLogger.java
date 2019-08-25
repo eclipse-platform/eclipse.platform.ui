@@ -166,7 +166,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 			return;
 		}
 
-		StringBuffer message = new StringBuffer();
+		StringBuilder message = new StringBuilder();
 		message.append(StringUtils.LINE_SEP);
 		message.append(RemoteAntMessages.getString("RemoteAntBuildLogger.1")); //$NON-NLS-1$
 		message.append(StringUtils.LINE_SEP);
@@ -188,7 +188,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 		long minutes = seconds / 60;
 		seconds = seconds % 60;
 
-		StringBuffer result = new StringBuffer(RemoteAntMessages.getString("RemoteAntBuildLogger.Total_time")); //$NON-NLS-1$
+		StringBuilder result = new StringBuilder(RemoteAntMessages.getString("RemoteAntBuildLogger.Total_time")); //$NON-NLS-1$
 		if (minutes > 0) {
 			result.append(minutes);
 			if (minutes > 1) {
@@ -241,7 +241,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 		}
 
 		fSentProcessId = true;
-		StringBuffer message = new StringBuffer(MessageIds.PROCESS_ID);
+		StringBuilder message = new StringBuilder(MessageIds.PROCESS_ID);
 		message.append(fProcessId);
 		sendMessage(message.toString());
 		if (fEventQueue != null) {
@@ -382,7 +382,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 		Target target = event.getTarget();
 		Location location = AntDebugState.getLocation(target);
 
-		StringBuffer message = new StringBuffer();
+		StringBuilder message = new StringBuilder();
 		message.append(MessageIds.TARGET);
 		message.append(',');
 		message.append(target.getName());
