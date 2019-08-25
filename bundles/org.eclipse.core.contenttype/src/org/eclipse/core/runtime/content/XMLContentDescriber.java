@@ -59,7 +59,7 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 
 	@Override
 	public int describe(InputStream input, IContentDescription description) throws IOException {
-		return describe2(input, description, new HashMap<String, Object>());
+		return describe2(input, description, new HashMap<>());
 	}
 
 	int describe2(InputStream input, IContentDescription description, Map<String, Object> properties) throws IOException {
@@ -70,7 +70,7 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 
 	@Override
 	public int describe(Reader input, IContentDescription description) throws IOException {
-		return describe2(input, description, new HashMap<String, Object>());
+		return describe2(input, description, new HashMap<>());
 	}
 
 	int describe2(Reader input, IContentDescription description, Map<String, Object> properties) throws IOException {

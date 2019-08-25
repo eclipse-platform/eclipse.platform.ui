@@ -136,7 +136,7 @@ public class InjectorImpl implements IInjector {
 
 		// We call @PostConstruct after injection. This means that is is called
 		// as a part of both #make() and #inject().
-		processAnnotated(PostConstruct.class, object, object.getClass(), objectSupplier, tempSupplier, new ArrayList<Class<?>>(5));
+		processAnnotated(PostConstruct.class, object, object.getClass(), objectSupplier, tempSupplier, new ArrayList<>(5));
 
 		// remove references to the temporary suppliers
 		for (Requestor<?> requestor : requestors) {
@@ -197,7 +197,7 @@ public class InjectorImpl implements IInjector {
 		try {
 			if (!forgetInjectedObject(object, objectSupplier))
 				return; // not injected at this time
-			processAnnotated(PreDestroy.class, object, object.getClass(), objectSupplier, null, new ArrayList<Class<?>>(5));
+			processAnnotated(PreDestroy.class, object, object.getClass(), objectSupplier, null, new ArrayList<>(5));
 
 			ArrayList<Requestor<?>> requestors = new ArrayList<>();
 			processClassHierarchy(object, objectSupplier, null, true /* track */, false /* inverse order */, requestors);
@@ -456,7 +456,7 @@ public class InjectorImpl implements IInjector {
 			Object object = objects[i];
 			if (!forgetInjectedObject(object, objectSupplier))
 				continue; // not injected at this time
-			processAnnotated(PreDestroy.class, object, object.getClass(), objectSupplier, null, new ArrayList<Class<?>>(5));
+			processAnnotated(PreDestroy.class, object, object.getClass(), objectSupplier, null, new ArrayList<>(5));
 		}
 		forgetSupplier(objectSupplier);
 	}
@@ -652,7 +652,7 @@ public class InjectorImpl implements IInjector {
 	}
 
 	private void processClassHierarchy(Object userObject, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, boolean track, boolean normalOrder, List<Requestor<?>> requestors) {
-		processClass(userObject, objectSupplier, tempSupplier, (userObject == null) ? null : userObject.getClass(), new ArrayList<Class<?>>(5), track, normalOrder, requestors);
+		processClass(userObject, objectSupplier, tempSupplier, (userObject == null) ? null : userObject.getClass(), new ArrayList<>(5), track, normalOrder, requestors);
 	}
 
 	/**
@@ -696,7 +696,7 @@ public class InjectorImpl implements IInjector {
 
 	private void rememberInjectedStatic(Class<?> objectsClass) {
 		synchronized (injectedClasses) {
-			injectedClasses.add(new WeakReference<Class<?>>(objectsClass));
+			injectedClasses.add(new WeakReference<>(objectsClass));
 		}
 	}
 

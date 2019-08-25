@@ -89,9 +89,9 @@ public class EclipseContext implements IEclipseContext {
 	}
 
 	private WeakGroupedListenerList weakListeners = new WeakGroupedListenerList();
-	private Map<String, ValueComputation> localValueComputations = Collections.synchronizedMap(new HashMap<String, ValueComputation>());
+	private Map<String, ValueComputation> localValueComputations = Collections.synchronizedMap(new HashMap<>());
 
-	final protected Map<String, Object> localValues = Collections.synchronizedMap(new HashMap<String, Object>());
+	final protected Map<String, Object> localValues = Collections.synchronizedMap(new HashMap<>());
 
 	private Set<String> modifiable;
 
@@ -106,8 +106,8 @@ public class EclipseContext implements IEclipseContext {
 	// I don't think we need to sync referenceQueue access
 	private ReferenceQueue<Object> referenceQueue = new ReferenceQueue<>();
 
-	private Map<Reference<?>, TrackableComputationExt> activeComputations = Collections.synchronizedMap(new HashMap<Reference<?>, TrackableComputationExt>());
-	private Set<TrackableComputationExt> activeRATs = Collections.synchronizedSet(new HashSet<TrackableComputationExt>());
+	private Map<Reference<?>, TrackableComputationExt> activeComputations = Collections.synchronizedMap(new HashMap<>());
+	private Set<TrackableComputationExt> activeRATs = Collections.synchronizedSet(new HashSet<>());
 
 	private final static Object[] nullArgs = new Object[] {null};
 
@@ -122,7 +122,7 @@ public class EclipseContext implements IEclipseContext {
 	public EclipseContext(IEclipseContext parent) {
 		setParent(parent);
 		if (parent == null)
-			waiting = Collections.synchronizedList(new ArrayList<Computation>());
+			waiting = Collections.synchronizedList(new ArrayList<>());
 		if (debugAddOn != null)
 			debugAddOn.notify(this, IEclipseContextDebugger.EventType.CONSTRUCTED, null);
 	}
@@ -567,7 +567,7 @@ public class EclipseContext implements IEclipseContext {
 			return;
 		}
 		if (waiting == null) // could happen on re-parent
-			waiting = Collections.synchronizedList(new ArrayList<Computation>());
+			waiting = Collections.synchronizedList(new ArrayList<>());
 		waiting.add(cp);
 	}
 

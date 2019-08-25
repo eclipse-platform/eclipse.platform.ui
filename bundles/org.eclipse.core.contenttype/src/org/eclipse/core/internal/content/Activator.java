@@ -45,7 +45,7 @@ public class Activator implements BundleActivator, ServiceTrackerCustomizer<IExt
 	public void start(BundleContext context) throws Exception {
 		bundleContext = context;
 		singleton = this;
-		contentManagerService = bundleContext.registerService(IContentTypeManager.class, ContentTypeManager.getInstance(), new Hashtable<String, Object>());
+		contentManagerService = bundleContext.registerService(IContentTypeManager.class, ContentTypeManager.getInstance(), new Hashtable<>());
 		registryTracker = new ServiceTracker<>(context, IExtensionRegistry.class, this);
 		registryTracker.open();
 	}

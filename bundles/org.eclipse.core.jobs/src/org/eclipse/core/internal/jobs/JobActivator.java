@@ -67,7 +67,7 @@ public class JobActivator implements BundleActivator {
 	}
 
 	private void registerServices() {
-		jobManagerService = bundleContext.registerService(IJobManager.class.getName(), JobManager.getInstance(), new Hashtable<String, Object>());
+		jobManagerService = bundleContext.registerService(IJobManager.class.getName(), JobManager.getInstance(), new Hashtable<>());
 	}
 
 	private void unregisterServices() {

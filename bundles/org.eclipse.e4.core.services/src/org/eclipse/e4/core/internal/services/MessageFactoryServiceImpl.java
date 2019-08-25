@@ -50,10 +50,10 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 
 	// Cache so when multiple instance use the same message class
 	private Map<Object, Reference<Object>> SOFT_CACHE = Collections
-			.synchronizedMap(new HashMap<Object, Reference<Object>>());
+			.synchronizedMap(new HashMap<>());
 
 	private Map<Object, Reference<Object>> WEAK_CACHE = Collections
-			.synchronizedMap(new HashMap<Object, Reference<Object>>());
+			.synchronizedMap(new HashMap<>());
 
 	private int CLEANUPCOUNT = 0;
 
@@ -111,9 +111,9 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 
 		if (cache != null) {
 			if (type == ReferenceType.SOFT) {
-				cache.put(key, new SoftReference<Object>(instance));
+				cache.put(key, new SoftReference<>(instance));
 			} else if (type == ReferenceType.WEAK) {
-				cache.put(key, new WeakReference<Object>(instance));
+				cache.put(key, new WeakReference<>(instance));
 			}
 		}
 

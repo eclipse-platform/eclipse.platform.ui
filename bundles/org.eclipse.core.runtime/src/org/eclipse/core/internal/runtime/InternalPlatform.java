@@ -722,9 +722,9 @@ public final class InternalPlatform {
 	private void startServices() {
 		// The check for getProduct() is relatively expensive (about 3% of the headless startup),
 		// so we don't want to enforce it here.
-		customPreferencesService = context.registerService(IProductPreferencesService.class, new ProductPreferencesService(), new Hashtable<String,String>());
+		customPreferencesService = context.registerService(IProductPreferencesService.class, new ProductPreferencesService(), new Hashtable<>());
 
-		legacyPreferencesService = context.registerService(ILegacyPreferences.class, new InitLegacyPreferences(), new Hashtable<String, String>());
+		legacyPreferencesService = context.registerService(ILegacyPreferences.class, new InitLegacyPreferences(), new Hashtable<>());
 	}
 
 	private void stopServices() {

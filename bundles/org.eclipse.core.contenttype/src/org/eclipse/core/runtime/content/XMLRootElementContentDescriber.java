@@ -94,7 +94,7 @@ public final class XMLRootElementContentDescriber extends XMLContentDescriber im
 	 */
 	@Override
 	public int describe(InputStream contents, IContentDescription description) throws IOException {
-		return describe(contents, description, new HashMap<String, Object>());
+		return describe(contents, description, new HashMap<>());
 	}
 
 	/**
@@ -115,7 +115,7 @@ public final class XMLRootElementContentDescriber extends XMLContentDescriber im
 	 */
 	@Override
 	public int describe(Reader contents, IContentDescription description) throws IOException {
-		return describe(contents, description, new HashMap<String, Object>());
+		return describe(contents, description, new HashMap<>());
 	}
 
 	/**

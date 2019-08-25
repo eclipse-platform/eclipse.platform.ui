@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.jobs.ILock;
  * Multiple readers are allowed to perform simultaneously.
  */
 public class ReadWriteMonitor {
-	private final Set<Thread> blockedThreads = Collections.synchronizedSet(new HashSet<Thread>());
+	private final Set<Thread> blockedThreads = Collections.synchronizedSet(new HashSet<>());
 	private ILock lock;
 	/**
 	 * <0 : writing (cannot go beyond -1, i.e one concurrent writer)
