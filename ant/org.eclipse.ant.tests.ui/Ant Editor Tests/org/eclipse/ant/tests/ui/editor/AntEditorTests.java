@@ -102,18 +102,18 @@ public class AntEditorTests extends AbstractAntUITest {
 		IRegion region = hover.getHoverRegion(editor.getViewer(), offset);
 		String hoverText = hover.getHoverInfo(editor.getViewer(), region);
 		assertNotNull("Expecting a hovertext object", hoverText); //$NON-NLS-1$
-		assertTrue("Expected to see '<h5>Includes:</h5><li>include</li>'", hoverText.indexOf("<h5>Includes:</h5><li>include</li>") > -1); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Expected to see '<h5>Excludes:</h5><li>exclude</li>'", hoverText.indexOf("<h5>Excludes:</h5><li>exclude</li>") > -1); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("Expected to see '<h5>Includes:</h5><li>include</li>'", hoverText.contains("<h5>Includes:</h5><li>include</li>")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("Expected to see '<h5>Excludes:</h5><li>exclude</li>'", hoverText.contains("<h5>Excludes:</h5><li>exclude</li>")); //$NON-NLS-1$ //$NON-NLS-2$
 		String text = "<li>**" + File.separator + "SCCS" + File.separator + "**</li>"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		assertTrue("Expected to see '<li>**/SCCS/**</li>'", hoverText.indexOf(text) > -1); //$NON-NLS-1$
+		assertTrue("Expected to see '<li>**/SCCS/**</li>'", hoverText.contains(text)); //$NON-NLS-1$
 		text = "<li>**" + File.separator + ".DS_Store</li>"; //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Expected to see '<li>**/.DS_Store</li>'", hoverText.indexOf(text) > -1); //$NON-NLS-1$
+		assertTrue("Expected to see '<li>**/.DS_Store</li>'", hoverText.contains(text)); //$NON-NLS-1$
 		text = "<li>**" + File.separator + ".bzrignore</li>"; //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Expected to see '<li>**/.bzrignore</li>'", hoverText.indexOf(text) > -1); //$NON-NLS-1$
+		assertTrue("Expected to see '<li>**/.bzrignore</li>'", hoverText.contains(text)); //$NON-NLS-1$
 		text = "<li>**" + File.separator + ".gitattributes</li>"; //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Expected to see '<li>**/.gitattributes</li>'", hoverText.indexOf(text) > -1); //$NON-NLS-1$
+		assertTrue("Expected to see '<li>**/.gitattributes</li>'", hoverText.contains(text)); //$NON-NLS-1$
 		text = "<li>**" + File.separator + ".hgtags</li>"; //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Expected to see '<li>**/.hgtags</li>'", hoverText.indexOf(text) > -1); //$NON-NLS-1$
+		assertTrue("Expected to see '<li>**/.hgtags</li>'", hoverText.contains(text)); //$NON-NLS-1$
 	}
 
 	public void testTaskdefOpenDeclaration() throws PartInitException, BadLocationException {
@@ -273,7 +273,7 @@ public class AntEditorTests extends AbstractAntUITest {
 		assertNotNull("The selected region for the augmented element cannot be null", region); //$NON-NLS-1$
 		String text = hover.getHoverInfo(editor.getViewer(), region);
 		assertNotNull("The hover text for the path element must not be null", text); //$NON-NLS-1$
-		assertTrue("The hover text must contain the augmented element 'foo'", text.indexOf("foo") > -1); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("The hover text must contain the augmented element 'foo'", text.contains("foo")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

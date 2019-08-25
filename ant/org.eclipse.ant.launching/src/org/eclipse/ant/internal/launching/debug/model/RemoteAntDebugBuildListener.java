@@ -118,7 +118,7 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 			fTarget.suspended(DebugEvent.CLIENT_REQUEST);
 		} else if (message.endsWith(DebugMessageIds.STEP)) {
 			fTarget.suspended(DebugEvent.STEP_END);
-		} else if (message.indexOf(DebugMessageIds.BREAKPOINT) >= 0) {
+		} else if (message.contains(DebugMessageIds.BREAKPOINT)) {
 			fTarget.breakpointHit(message);
 		}
 	}

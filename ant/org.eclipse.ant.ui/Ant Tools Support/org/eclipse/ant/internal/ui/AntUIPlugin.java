@@ -221,7 +221,7 @@ public class AntUIPlugin extends AbstractUIPlugin {
 	 */
 	public static boolean isMacOS() {
 		String osname = System.getProperty("os.name").toLowerCase(Locale.US); //$NON-NLS-1$
-		return osname.indexOf("mac") != -1; //$NON-NLS-1$
+		return osname.contains("mac"); //$NON-NLS-1$
 	}
 
 	/**

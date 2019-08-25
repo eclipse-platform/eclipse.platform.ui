@@ -83,7 +83,7 @@ public class AntAugmentTaskNode extends AntTaskNode {
 			if (!prop) {
 				return identifier.equals(attrId);
 			}
-			return attrId != null && identifier.indexOf(attrId) > -1;
+			return attrId != null && identifier.contains(attrId);
 		}
 		return false;
 	}

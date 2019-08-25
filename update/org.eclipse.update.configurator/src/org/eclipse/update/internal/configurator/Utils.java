@@ -268,7 +268,7 @@ public class Utils {
 		StringTokenizer stok = new StringTokenizer(candidateValues, ","); //$NON-NLS-1$
 		while (stok.hasMoreTokens()) {
 			String token = stok.nextToken().toUpperCase();
-			if (siteValues.indexOf(token)!=-1) return true;
+			if (siteValues.contains(token)) return true;
 		}
 		return false;
 	}
@@ -375,7 +375,7 @@ public class Utils {
 	}
 
 	public static boolean isAutomaticallyStartedBundle(String bundleURL) {
-		if (bundleURL.indexOf("org.eclipse.osgi") != -1) //$NON-NLS-1$
+		if (bundleURL.contains("org.eclipse.osgi")) //$NON-NLS-1$
 			return true;
 		
 		String osgiBundles = ConfigurationActivator.getBundleContext().getProperty("osgi.bundles"); //$NON-NLS-1$
@@ -387,10 +387,10 @@ public class Utils {
 				token = token.substring(0,index);
 			if (token.startsWith("reference:file:")) { //$NON-NLS-1$
 				File f = new File(token.substring(15));
-				if (bundleURL.indexOf(f.getName()) != -1)
+				if (bundleURL.contains(f.getName()))
 					return true;
 			}
-			if (bundleURL.indexOf(token) != -1)
+			if (bundleURL.contains(token))
 				return true;
 		}
 		return false;

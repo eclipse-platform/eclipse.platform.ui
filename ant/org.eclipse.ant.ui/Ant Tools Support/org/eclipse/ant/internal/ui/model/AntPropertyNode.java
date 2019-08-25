@@ -178,7 +178,7 @@ public class AntPropertyNode extends AntTaskNode {
 		}
 
 		if (fValue != null) {
-			return fValue.indexOf(identifier) != -1;
+			return fValue.contains(identifier);
 		}
 		return false;
 	}

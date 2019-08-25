@@ -561,7 +561,7 @@ public class ExportUtil {
 				String warning = BuildFileCreator.WARNING.substring(0, i);
 				String line;
 				while ((line = in.readLine()) != null) {
-					if (line.indexOf(warning) != -1) {
+					if (line.contains(warning)) {
 						return false;
 					}
 				}

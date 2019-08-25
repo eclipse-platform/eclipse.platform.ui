@@ -302,9 +302,9 @@ public class OptionTests extends AbstractAntTest {
 	 */
 	public void testSpecifyBadTargetAsArg() throws CoreException {
 		run("TestForEcho.xml", new String[] { "echo2" }, false); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Should be an unknown target message", AntTestChecker.getDefault().getLoggedMessage(1).indexOf("Unknown target") >= 0); //$NON-NLS-1$//$NON-NLS-2$
-		assertTrue("Should be an unknown target message", AntTestChecker.getDefault().getLoggedMessage(1).indexOf("echo2") >= 0); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Should be a no known target message", AntTestChecker.getDefault().getLoggedMessage(0).indexOf("No known target specified.") >= 0); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("Should be an unknown target message", AntTestChecker.getDefault().getLoggedMessage(1).contains("Unknown target")); //$NON-NLS-1$//$NON-NLS-2$
+		assertTrue("Should be an unknown target message", AntTestChecker.getDefault().getLoggedMessage(1).contains("echo2")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("Should be a no known target message", AntTestChecker.getDefault().getLoggedMessage(0).contains("No known target specified.")); //$NON-NLS-1$ //$NON-NLS-2$
 		assertEquals("Should not have run any targets", 0, AntTestChecker.getDefault().getTargetsStartedCount()); //$NON-NLS-1$
 	}
 
@@ -314,8 +314,8 @@ public class OptionTests extends AbstractAntTest {
 	 */
 	public void testSpecifyBothBadAndGoodTargetsAsArg() throws CoreException {
 		run("TestForEcho.xml", new String[] { "echo2", "Test for Echo" }, false); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-		assertTrue("Should be an unknown target message", AntTestChecker.getDefault().getLoggedMessage(5).indexOf("Unknown target") >= 0); //$NON-NLS-1$ //$NON-NLS-2$
-		assertTrue("Should be an unknown target message", AntTestChecker.getDefault().getLoggedMessage(5).indexOf("echo2") >= 0); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("Should be an unknown target message", AntTestChecker.getDefault().getLoggedMessage(5).contains("Unknown target")); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("Should be an unknown target message", AntTestChecker.getDefault().getLoggedMessage(5).contains("echo2")); //$NON-NLS-1$ //$NON-NLS-2$
 		assertEquals("Should have run the Test for Echo target", 5, AntTestChecker.getDefault().getTargetsStartedCount()); //$NON-NLS-1$
 	}
 

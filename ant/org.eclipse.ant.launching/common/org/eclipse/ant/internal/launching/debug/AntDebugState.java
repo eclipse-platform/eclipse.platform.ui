@@ -526,8 +526,9 @@ public class AntDebugState {
 	}
 
 	private String escapeLineSeparator(String stringToEscape) {
-		if (!(stringToEscape.indexOf('\r') != -1 || stringToEscape.indexOf('\n') != -1 || stringToEscape.indexOf("\\r") != -1 //$NON-NLS-1$
-				|| stringToEscape.indexOf("\\n") != -1)) { //$NON-NLS-1$
+		if (!(stringToEscape.indexOf('\r') != -1 || stringToEscape.indexOf('\n') != -1 || stringToEscape.contains("\\r") //$NON-NLS-1$
+		
+				|| stringToEscape.contains("\\n"))) { //$NON-NLS-1$
 			return stringToEscape;
 		}
 		StringBuilder escapedValue = new StringBuilder(stringToEscape);

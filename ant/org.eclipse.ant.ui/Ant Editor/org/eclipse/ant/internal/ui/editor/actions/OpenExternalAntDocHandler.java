@@ -148,7 +148,7 @@ public class OpenExternalAntDocHandler extends AbstractHandler {
 				return null;
 			}
 			String className = definition.getClassName();
-			if (className.indexOf("taskdef") != -1) { //$NON-NLS-1$
+			if (className.contains("taskdef")) { //$NON-NLS-1$
 				return "Tasks"; //$NON-NLS-1$
 			}
 			return "Types"; //$NON-NLS-1$

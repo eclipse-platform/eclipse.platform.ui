@@ -165,10 +165,10 @@ public class AntTaskNode extends AntElementNode {
 			String key = iter.next();
 			String value = (String) attributeMap.get(key);
 			if (lookingForProperty && (key.equals("if") || key.equals("unless"))) { //$NON-NLS-1$ //$NON-NLS-2$
-				if (value.indexOf(identifier.substring(2, identifier.length() - 1)) != -1) {
+				if (value.contains(identifier.substring(2, identifier.length() - 1))) {
 					return true;
 				}
-			} else if (value.indexOf(identifier) != -1) {
+			} else if (value.contains(identifier)) {
 				return true;
 			}
 		}
@@ -197,7 +197,7 @@ public class AntTaskNode extends AntElementNode {
 			String key = iter.next();
 			String value = (String) attributeMap.get(key);
 			int identifierCorrection = 1;
-			if (value.indexOf(identifier) != -1) {
+			if (value.contains(identifier)) {
 				int keyOffset = textToSearch.indexOf(key);
 				while (keyOffset > 0 && !Character.isWhitespace(textToSearch.charAt(keyOffset - 1))) {
 					keyOffset = textToSearch.indexOf(key, keyOffset + 1);
