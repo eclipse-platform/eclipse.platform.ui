@@ -145,7 +145,7 @@ public abstract class AbstractModelProxy implements IModelProxy2 {
 			fInstallJob = new Job("Model Proxy installed notification job") {//$NON-NLS-1$
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
-					synchronized(this) {
+					synchronized(AbstractModelProxy.this) {
 						fInstallJob = null;
 					}
 					if (!monitor.isCanceled()) {
