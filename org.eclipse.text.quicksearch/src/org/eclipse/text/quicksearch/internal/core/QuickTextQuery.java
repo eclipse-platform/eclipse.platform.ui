@@ -195,7 +195,7 @@ public class QuickTextQuery {
 		if (isTrivial()) {
 			return Arrays.asList();
 		} else {
-			List<TextRange> ranges = new ArrayList<QuickTextQuery.TextRange>();
+			List<TextRange> ranges = new ArrayList<>();
 			Matcher matcher = pattern.matcher(text);
 			while (matcher.find()) {
 				int start = matcher.start();

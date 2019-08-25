@@ -175,14 +175,14 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 			// these are what are passed off to the annotation model to
 			// actually create and maintain the annotations
 			List<Annotation> modifications = new ArrayList<Annotation>();
-			List<FoldingAnnotation> deletions = new ArrayList<FoldingAnnotation>();
-			List<FoldingAnnotation> existing = new ArrayList<FoldingAnnotation>();
+			List<FoldingAnnotation> deletions = new ArrayList<>();
+			List<FoldingAnnotation> existing = new ArrayList<>();
 			Map<Annotation, Position> additions = new HashMap<Annotation, Position>();
 
 			// find and mark all folding annotations with length 0 for deletion
 			markInvalidAnnotationsForDeletion(dirtyRegion, deletions, existing);
 
-			List<LineIndent> previousRegions = new ArrayList<LineIndent>();
+			List<LineIndent> previousRegions = new ArrayList<>();
 
 			int tabSize = 1;
 			int minimumRangeSize = 1;

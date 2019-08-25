@@ -148,7 +148,7 @@ public class AbstractReconcilerTest {
 	@Before
 	public void setUp() {
 		fBarrier= new Barrier();
-		fCallLog= Collections.synchronizedList(new ArrayList<String>());
+		fCallLog= Collections.synchronizedList(new ArrayList<>());
 		fReconciler= new AbstractReconciler() {
 					@Override
 					protected void initialProcess() {

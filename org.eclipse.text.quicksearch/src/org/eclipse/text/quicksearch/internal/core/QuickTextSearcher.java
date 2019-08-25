@@ -39,7 +39,7 @@ public class QuickTextSearcher {
 	 * Keeps track of currently found matches. Items are added as they are found and may also
 	 * be removed when the query changed and they become invalid.
 	 */
-	private Set<LineItem> matches = new HashSet<LineItem>(2000);
+	private Set<LineItem> matches = new HashSet<>(2000);
 
 	/**
 	 * Scheduling rule used by Jobs that work on the matches collection.

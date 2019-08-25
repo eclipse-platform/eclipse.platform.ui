@@ -74,7 +74,7 @@ public class QuickSearchPreferences {
 	 */
 	private String[] parseStringList(String raw) {
 		String[] elements = raw.split("[,\n]");  //$NON-NLS-1$
-		List<String> list = new ArrayList<String>(elements.length);
+		List<String> list = new ArrayList<>(elements.length);
 		for (String e : elements) {
 			e = e.trim();
 			if (!e.isEmpty()) {

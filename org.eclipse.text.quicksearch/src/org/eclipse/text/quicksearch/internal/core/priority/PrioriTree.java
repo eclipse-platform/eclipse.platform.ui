@@ -145,7 +145,7 @@ public class PrioriTree extends DefaultPriorityFunction {
 	 */
 	private PrioriTree ensureChild(String segment) {
 		if (children==null) {
-			children = new HashMap<String, PrioriTree>();
+			children = new HashMap<>();
 		}
 		PrioriTree child = children.get(segment);
 		if (child==null) {

@@ -59,7 +59,7 @@ public abstract class ResourceWalker extends Job {
 	}
 
 	protected void init() {
-		queue = new PriorityQueue<ResourceWalker.QItem>();
+		queue = new PriorityQueue<>();
 		queue.add(new QItem(0, ResourcesPlugin.getWorkspace().getRoot()));
 	}
 
