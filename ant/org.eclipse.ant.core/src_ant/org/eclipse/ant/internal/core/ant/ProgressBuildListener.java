@@ -126,7 +126,7 @@ public class ProgressBuildListener implements BuildListener {
 	protected int computeWork(List<Target> targets) {
 		int result = 0;
 		for (int i = 0; i < targets.size(); i++) {
-			result = result + countTarget(targets.get(i), new ArrayList<String>());
+			result = result + countTarget(targets.get(i), new ArrayList<>());
 		}
 		return result;
 	}

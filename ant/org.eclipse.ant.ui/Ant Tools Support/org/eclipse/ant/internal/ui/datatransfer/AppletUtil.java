@@ -68,7 +68,7 @@ public class AppletUtil {
 		b.append("\" height=\""); //$NON-NLS-1$
 		b.append(Integer.toString(configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_HEIGHT, 200)));
 		b.append("\">" + ExportUtil.NEWLINE); //$NON-NLS-1$
-		Map<String, String> parameters = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS, new HashMap<String, String>());
+		Map<String, String> parameters = configuration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_APPLET_PARAMETERS, new HashMap<>());
 		if (parameters.size() != 0) {
 			Iterator<Entry<String, String>> iterator = parameters.entrySet().iterator();
 			while (iterator.hasNext()) {

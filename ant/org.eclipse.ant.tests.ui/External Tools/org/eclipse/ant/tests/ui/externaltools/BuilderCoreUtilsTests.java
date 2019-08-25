@@ -61,7 +61,7 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	 * @throws Exception
 	 */
 	public void testConfigFromBuildCommandArgs1() throws Exception {
-		ILaunchConfiguration config = BuilderCoreUtils.configFromBuildCommandArgs(getProject(), new HashMap<String, String>(), new String[] { BuilderCoreUtils.VERSION_1_0 });
+		ILaunchConfiguration config = BuilderCoreUtils.configFromBuildCommandArgs(getProject(), new HashMap<>(), new String[] { BuilderCoreUtils.VERSION_1_0 });
 		assertNull("There should be no configuration returned without the config handle and arguments", config); //$NON-NLS-1$
 	}
 

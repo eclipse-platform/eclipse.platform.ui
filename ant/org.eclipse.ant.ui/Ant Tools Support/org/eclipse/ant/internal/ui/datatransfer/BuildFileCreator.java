@@ -990,7 +990,7 @@ public class BuildFileCreator {
 		if (!conf.getAttribute(ILaunchManager.ATTR_APPEND_ENVIRONMENT_VARIABLES, true)) {
 			javaElement.setAttribute("newenvironment", "true"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		Map<String, String> props = conf.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, new TreeMap<String, String>());
+		Map<String, String> props = conf.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, new TreeMap<>());
 		addElements(props, doc, javaElement, "env", "key", IAntCoreConstants.VALUE); //$NON-NLS-1$ //$NON-NLS-2$
 		addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, IAntCoreConstants.EMPTY_STRING), doc, javaElement, "jvmarg", "line", variable2value, projectRoot); //$NON-NLS-1$ //$NON-NLS-2$
 		addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROGRAM_ARGUMENTS, IAntCoreConstants.EMPTY_STRING), doc, javaElement, "arg", "line", variable2value, projectRoot); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1131,7 +1131,7 @@ public class BuildFileCreator {
 				junitElement.appendChild(testElement);
 			}
 		}
-		Map<String, String> props = conf.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, new TreeMap<String, String>());
+		Map<String, String> props = conf.getAttribute(ILaunchManager.ATTR_ENVIRONMENT_VARIABLES, new TreeMap<>());
 		addElements(props, doc, junitElement, "env", "key", IAntCoreConstants.VALUE); //$NON-NLS-1$ //$NON-NLS-2$
 		addElement(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_ARGUMENTS, IAntCoreConstants.EMPTY_STRING), doc, junitElement, "jvmarg", "line", variable2value, projectRoot); //$NON-NLS-1$ //$NON-NLS-2$
 		element.appendChild(junitElement);

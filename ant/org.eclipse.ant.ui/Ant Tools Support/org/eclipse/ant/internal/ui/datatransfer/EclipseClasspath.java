@@ -319,8 +319,8 @@ public class EclipseClasspath {
 			classDirs.add(refName);
 			rawClassPathEntries.add(refName);
 			rawClassPathEntriesAbsolute.add(refName);
-			inclusionLists.add(new ArrayList<String>());
-			exclusionLists.add(new ArrayList<String>());
+			inclusionLists.add(new ArrayList<>());
+			exclusionLists.add(new ArrayList<>());
 		}
 	}
 
@@ -340,8 +340,8 @@ public class EclipseClasspath {
 			classDirs.add(classpathRef);
 			rawClassPathEntries.add(classpathRef);
 			rawClassPathEntriesAbsolute.add(classpathRef);
-			inclusionLists.add(new ArrayList<String>());
-			exclusionLists.add(new ArrayList<String>());
+			inclusionLists.add(new ArrayList<>());
+			exclusionLists.add(new ArrayList<>());
 		}
 	}
 
