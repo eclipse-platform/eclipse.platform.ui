@@ -123,7 +123,7 @@ public class LaunchConfigurationInfo {
 	 * Constructs a new empty info
 	 */
 	protected LaunchConfigurationInfo() {
-		setAttributeTable(new TreeMap<String, Object>());
+		setAttributeTable(new TreeMap<>());
 	}
 
 	/**
@@ -152,10 +152,10 @@ public class LaunchConfigurationInfo {
 	 */
 	protected void setAttributes(Map<String, ?> map) {
 		if (map == null) {
-			setAttributeTable(new TreeMap<String, Object>());
+			setAttributeTable(new TreeMap<>());
 			return;
 		}
-		setAttributeTable(new TreeMap<String, Object>(map));
+		setAttributeTable(new TreeMap<>(map));
 	}
 
 	/**

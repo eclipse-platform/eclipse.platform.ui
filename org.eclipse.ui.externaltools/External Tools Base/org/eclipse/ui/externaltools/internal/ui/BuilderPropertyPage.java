@@ -1060,7 +1060,7 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 		try {
 			ICommand newCommand = project.getDescription().newCommand();
 			String builderName= config.getAttribute(IExternalToolConstants.ATTR_DISABLED_BUILDER, (String)null);
-			Map<String, String> args = config.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, new HashMap<String, String>(0));
+			Map<String, String> args = config.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, new HashMap<>(0));
 
 			newCommand.setBuilderName(builderName);
 			newCommand.setArguments(args);

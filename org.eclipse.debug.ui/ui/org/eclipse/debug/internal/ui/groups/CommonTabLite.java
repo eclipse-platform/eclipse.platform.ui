@@ -304,7 +304,7 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 		fFavoritesTable.setInput(config);
 		fFavoritesTable.setCheckedElements(new Object[]{});
 		try {
-			List<String> groups = config.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, new ArrayList<String>());
+			List<String> groups = config.getAttribute(IDebugUIConstants.ATTR_FAVORITE_GROUPS, new ArrayList<>());
 			if (groups.isEmpty()) {
 				// check old attributes for backwards compatible
 				if (config.getAttribute(IDebugUIConstants.ATTR_DEBUG_FAVORITE, false)) {

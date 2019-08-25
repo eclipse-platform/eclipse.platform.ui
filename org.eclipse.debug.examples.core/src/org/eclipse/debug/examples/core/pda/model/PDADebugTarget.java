@@ -91,13 +91,13 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 	private boolean fTerminated = false;
 
 	// threads
-	private Map<Integer, PDAThread> fThreads = Collections.synchronizedMap(new LinkedHashMap<Integer, PDAThread>());
+	private Map<Integer, PDAThread> fThreads = Collections.synchronizedMap(new LinkedHashMap<>());
 
 	// event dispatch job
 	private EventDispatchJob fEventDispatch;
 
 	// event listeners
-	private List<IPDAEventListener> fEventListeners = Collections.synchronizedList(new ArrayList<IPDAEventListener>());
+	private List<IPDAEventListener> fEventListeners = Collections.synchronizedList(new ArrayList<>());
 
 	/**
 	 * Listens to events from the PDA VM and fires corresponding

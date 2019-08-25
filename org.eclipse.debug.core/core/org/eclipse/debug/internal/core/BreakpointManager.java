@@ -471,14 +471,14 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * workspace. Start listening to resource deltas.
 	 */
 	private void initializeBreakpoints() {
-		setBreakpoints(new Vector<IBreakpoint>(10));
+		setBreakpoints(new Vector<>(10));
 		try {
 			loadBreakpoints(getWorkspace().getRoot(), false);
 			getWorkspace().addResourceChangeListener(this, IResourceChangeEvent.POST_BUILD);
 			getWorkspace().addResourceChangeListener(fPostChangeListener, IResourceChangeEvent.POST_CHANGE);
 		} catch (CoreException ce) {
 			DebugPlugin.log(ce);
-			setBreakpoints(new Vector<IBreakpoint>(0));
+			setBreakpoints(new Vector<>(0));
 		}
 	}
 

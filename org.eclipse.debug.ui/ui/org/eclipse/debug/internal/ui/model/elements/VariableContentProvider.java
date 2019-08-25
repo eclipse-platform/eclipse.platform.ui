@@ -112,7 +112,7 @@ public class VariableContentProvider extends ElementContentProvider {
 	 * @return logical value for the raw value
 	 */
 	protected IValue getLogicalValue(IValue value, IPresentationContext context) throws CoreException {
-		return getLogicalValue(value, new ArrayList<String>(), context);
+		return getLogicalValue(value, new ArrayList<>(), context);
 	}
 
 	/**

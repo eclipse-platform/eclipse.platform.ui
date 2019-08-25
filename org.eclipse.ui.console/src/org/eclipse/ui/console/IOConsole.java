@@ -52,7 +52,7 @@ public class IOConsole extends TextConsole {
 	/**
 	 * A collection of open streams connected to this console.
 	 */
-	private List<Closeable> openStreams = Collections.synchronizedList(new ArrayList<Closeable>());
+	private List<Closeable> openStreams = Collections.synchronizedList(new ArrayList<>());
 
 	/**
 	 * The encoding used to for displaying console output.
