@@ -735,7 +735,7 @@ public class MarkerTest extends ResourceTest {
 			file = project.getFile("foo.txt");
 			file.create(getRandomContents(), true, null);
 			IMarker marker = file.createMarker(IMarker.PROBLEM);
-			marker.setAttributes(new HashMap<String, String>());
+			marker.setAttributes(new HashMap<>());
 			marker.setAttribute(IMarker.SEVERITY, testValue);
 			Object value = marker.getAttribute(IMarker.SEVERITY);
 			assertEquals("1.0." + file.getFullPath(), value, testValue);

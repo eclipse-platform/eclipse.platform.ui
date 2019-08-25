@@ -58,7 +58,7 @@ public class NotificationManager implements IManager, ILifecycleListener {
 	/**
 	 * The Threads that are currently avoiding notification.
 	 */
-	private final Set<Thread> avoidNotify = Collections.synchronizedSet(new HashSet<Thread>());
+	private final Set<Thread> avoidNotify = Collections.synchronizedSet(new HashSet<>());
 
 	/**
 	 * Indicates whether a notification is currently in progress. Used to avoid

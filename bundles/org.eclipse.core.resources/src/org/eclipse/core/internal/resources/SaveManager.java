@@ -140,7 +140,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		this.snapshotJob = new DelayedSnapshotJob(this);
 		snapshotRequested = false;
 		snapshotRequestor = null;
-		saveParticipants = Collections.synchronizedMap(new HashMap<String, ISaveParticipant>(10));
+		saveParticipants = Collections.synchronizedMap(new HashMap<>(10));
 	}
 
 	public ISavedState addParticipant(String pluginId, ISaveParticipant participant) throws CoreException {
@@ -1027,7 +1027,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 		IPath treeLocation = workspace.getMetaArea().getTreeLocationFor(workspace.getRoot(), false);
 		IPath tempLocation = workspace.getMetaArea().getBackupLocationFor(treeLocation);
 		if (!treeLocation.toFile().exists() && !tempLocation.toFile().exists()) {
-			savedStates = Collections.synchronizedMap(new HashMap<String, SavedState>(10));
+			savedStates = Collections.synchronizedMap(new HashMap<>(10));
 			return;
 		}
 		try (DataInputStream input = new DataInputStream(new SafeFileInputStream(treeLocation.toOSString(), tempLocation.toOSString(), TREE_BUFFER_SIZE))) {

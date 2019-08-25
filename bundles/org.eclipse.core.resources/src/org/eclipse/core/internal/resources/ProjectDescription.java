@@ -63,7 +63,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	// Cache of the build configurations
 	protected volatile IBuildConfiguration[] cachedBuildConfigs;
 	// Cached build configuration references. Not persisted.
-	protected Map<String, IBuildConfiguration[]> cachedConfigRefs = Collections.synchronizedMap(new HashMap<String, IBuildConfiguration[]>(1));
+	protected Map<String, IBuildConfiguration[]> cachedConfigRefs = Collections.synchronizedMap(new HashMap<>(1));
 	/**
 	 * Cached project level references. Synchronize on {@link #cachedRefsMutex} before reading or writing. Increment
 	 * {@link #cachedRefsDirtyCount} whenever this is dirtied.
@@ -118,7 +118,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 			clone.variableDescriptions = (HashMap<String, VariableDescription>) variableDescriptions.clone();
 		clone.buildSpec = getBuildSpec(true);
 		clone.dynamicConfigRefs = (HashMap<String, IBuildConfiguration[]>) dynamicConfigRefs.clone();
-		clone.cachedConfigRefs = Collections.synchronizedMap(new HashMap<String, IBuildConfiguration[]>(1));
+		clone.cachedConfigRefs = Collections.synchronizedMap(new HashMap<>(1));
 		clone.clearCachedDynamicReferences(null);
 		return clone;
 	}

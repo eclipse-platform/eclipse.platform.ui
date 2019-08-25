@@ -180,7 +180,7 @@ public class RefreshJob extends WorkspaceJob {
 						}
 						longestRefresh = 0;
 					}
-					addRequests(collectChildrenToDepth(toRefresh, new ArrayList<IResource>(), depth));
+					addRequests(collectChildrenToDepth(toRefresh, new ArrayList<>(), depth));
 				} catch (CoreException e) {
 					errors.merge(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, 1, errors.getMessage(), e));
 				}

@@ -29,7 +29,7 @@ public class WorkspaceRoot extends Container implements IWorkspaceRoot {
 	 * that have been requested from this root.  This maps project
 	 * name strings to project handles.
 	 */
-	private final Map<String, Project> projectTable = Collections.synchronizedMap(new HashMap<String, Project>(16));
+	private final Map<String, Project> projectTable = Collections.synchronizedMap(new HashMap<>(16));
 
 	/**
 	 * Cache of the canonicalized platform location.

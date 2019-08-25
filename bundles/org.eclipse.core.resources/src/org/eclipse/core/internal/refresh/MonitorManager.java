@@ -59,7 +59,7 @@ class MonitorManager implements ILifecycleListener, IPathVariableChangeListener,
 	public MonitorManager(IWorkspace workspace, RefreshManager refreshManager) {
 		this.workspace = workspace;
 		this.refreshManager = refreshManager;
-		registeredMonitors = Collections.synchronizedMap(new HashMap<IRefreshMonitor, List<IResource>>(10));
+		registeredMonitors = Collections.synchronizedMap(new HashMap<>(10));
 		pollMonitor = new PollingMonitor(refreshManager);
 	}
 

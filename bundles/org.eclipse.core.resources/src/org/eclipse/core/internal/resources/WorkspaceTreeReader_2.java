@@ -209,7 +209,7 @@ public class WorkspaceTreeReader_2 extends WorkspaceTreeReader_1 {
 		Map<String, List<BuilderPersistentInfo>> groupedInfos = new HashMap<>();
 		for (BuilderPersistentInfo info : infos) {
 			if (!groupedInfos.containsKey(info.getProjectName()))
-				groupedInfos.put(info.getProjectName(), new ArrayList<BuilderPersistentInfo>());
+				groupedInfos.put(info.getProjectName(), new ArrayList<>());
 			groupedInfos.get(info.getProjectName()).add(info);
 		}
 		for (Map.Entry<String, List<BuilderPersistentInfo>> entry : groupedInfos.entrySet()) {

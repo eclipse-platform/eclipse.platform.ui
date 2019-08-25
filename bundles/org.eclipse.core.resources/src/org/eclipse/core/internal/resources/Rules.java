@@ -34,7 +34,7 @@ class Rules implements IResourceRuleFactory, ILifecycleListener {
 	/**
 	 * Map of project names to the factory for that project.
 	 */
-	private final Map<String, IResourceRuleFactory> projectsToRules = Collections.synchronizedMap(new HashMap<String, IResourceRuleFactory>());
+	private final Map<String, IResourceRuleFactory> projectsToRules = Collections.synchronizedMap(new HashMap<>());
 	private final TeamHook teamHook;
 	private final IWorkspaceRoot root;
 
