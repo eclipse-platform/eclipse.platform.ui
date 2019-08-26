@@ -740,7 +740,11 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 						removeSaveOnCloseNotNeededParts(saveableParts);
 					}
 					if (saveableParts.isEmpty()) {
-						return super.saveParts(dirtyParts, confirm);
+						if (nonCompatibilityParts.isEmpty()) {
+							// nothing to save
+							return true;
+						}
+						return super.saveParts(nonCompatibilityParts, confirm);
 					} else if (!nonCompatibilityParts.isEmpty()) {
 						return saveMixedParts(nonCompatibilityParts, saveableParts, confirm, addNonPartSources);
 					}
