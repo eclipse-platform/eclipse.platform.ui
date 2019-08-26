@@ -52,12 +52,7 @@ public class ToggleBreakpointAction extends Action implements IUpdate {
 	private IWorkbenchPart fPart;
 	private IDocument fDocument;
 	private IVerticalRulerInfo fRulerInfo;
-	private IToggleBreakpointsTargetManagerListener fListener = new IToggleBreakpointsTargetManagerListener() {
-		@Override
-		public void preferredTargetsChanged() {
-			update();
-		}
-	};
+	private IToggleBreakpointsTargetManagerListener fListener = this::update;
 
 	/**
 	 * Constructs a new action to toggle a breakpoint in the given

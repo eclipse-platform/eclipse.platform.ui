@@ -30,7 +30,6 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.AbstractMemoryRenderingBindingsProvider;
-import org.eclipse.debug.ui.memory.IMemoryRenderingBindingsListener;
 import org.eclipse.debug.ui.memory.IMemoryRenderingBindingsProvider;
 import org.eclipse.debug.ui.memory.IMemoryRenderingManager;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
@@ -164,12 +163,7 @@ class RenderingBindings extends AbstractMemoryRenderingBindingsProvider implemen
 				}
 
 				if (fProvider != null) {
-					fProvider.addListener(new IMemoryRenderingBindingsListener() {
-						@Override
-						public void memoryRenderingBindingsChanged() {
-							fireBindingsChanged();
-						}
-					});
+					fProvider.addListener(this::fireBindingsChanged);
 				}
 			}
 		}

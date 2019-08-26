@@ -82,12 +82,7 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
 	 */
 	private IAction fAction;
 
-	private IEnabledTarget fEnabledTarget = new IEnabledTarget() {
-		@Override
-		public void setEnabled(boolean enabled) {
-			DebugCommandAction.this.setEnabled(enabled);
-		}
-	};
+	private IEnabledTarget fEnabledTarget = DebugCommandAction.this::setEnabled;
 
 	/**
 	 * Constructor

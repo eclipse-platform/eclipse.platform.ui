@@ -127,12 +127,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
 			}
 		};
 
-		private IDebugContextListener fDebugContextListener = new IDebugContextListener() {
-			@Override
-			public void debugContextChanged(DebugContextEvent event) {
-				InputData.this.debugContextChanged(event);
-			}
-		};
+		private IDebugContextListener fDebugContextListener = InputData.this::debugContextChanged;
 
 		/**
 		 * Constructor

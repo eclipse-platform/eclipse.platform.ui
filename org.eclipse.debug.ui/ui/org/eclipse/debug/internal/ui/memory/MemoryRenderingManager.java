@@ -29,7 +29,6 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.memory.AbstractMemoryRenderingBindingsProvider;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
-import org.eclipse.debug.ui.memory.IMemoryRenderingBindingsListener;
 import org.eclipse.debug.ui.memory.IMemoryRenderingManager;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 
@@ -158,12 +157,7 @@ public class MemoryRenderingManager extends AbstractMemoryRenderingBindingsProvi
 				try {
 					bindings.validate();
 					fBindings.add(bindings);
-					bindings.addListener(new IMemoryRenderingBindingsListener() {
-						@Override
-						public void memoryRenderingBindingsChanged() {
-							fireBindingsChanged();
-						}
-					});
+					bindings.addListener(this::fireBindingsChanged);
 				} catch (CoreException e) {
 					DebugUIPlugin.log(e);
 				}
