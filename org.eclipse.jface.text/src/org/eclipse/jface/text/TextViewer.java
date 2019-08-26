@@ -81,6 +81,7 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 
+import org.eclipse.jface.text.MultiStringMatcher.Match;
 import org.eclipse.jface.text.hyperlink.HyperlinkManager;
 import org.eclipse.jface.text.hyperlink.HyperlinkManager.DETECTION_STRATEGY;
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector;
@@ -3927,7 +3928,7 @@ public class TextViewer extends Viewer implements
 					TextTransfer plainTextTransfer= TextTransfer.getInstance();
 					String contents= (String) clipboard.getContents(plainTextTransfer, DND.CLIPBOARD);
 					String toInsert;
-					if (TextUtilities.indexOf(fDocument.getLegalLineDelimiters(), contents, 0)[0] != -1) {
+					if (MultiStringMatcher.indexOf(contents, 0, fDocument.getLegalLineDelimiters()) != null) {
 						// multi-line insertion
 						toInsert= contents;
 					} else {
@@ -4302,6 +4303,7 @@ public class TextViewer extends Viewer implements
 		try {
 
 			IRegion[] occurrences= new IRegion[endLine - startLine + 1];
+			MultiStringMatcher prefixMatcher= MultiStringMatcher.create(prefixes);
 
 			// find all the first occurrences of prefix in the given lines
 			for (int i= 0; i < occurrences.length; i++) {
@@ -4310,20 +4312,20 @@ public class TextViewer extends Viewer implements
 				String text= d.get(line.getOffset(), line.getLength());
 
 				int index= -1;
-				int[] found= TextUtilities.indexOf(prefixes, text, 0);
-				if (found[0] != -1) {
+				Match m= prefixMatcher.indexOf(text, 0);
+				if (m != null) {
 					if (ignoreWhitespace) {
-						String s= d.get(line.getOffset(), found[0]);
+						String s= d.get(line.getOffset(), m.getOffset());
 						s= s.trim();
 						if (s.isEmpty())
-							index= line.getOffset() + found[0];
-					} else if (found[0] == 0)
+							index= line.getOffset() + m.getOffset();
+					} else if (m.getOffset() == 0)
 						index= line.getOffset();
 				}
 
 				if (index > -1) {
 					// remember where prefix is in line, so that it can be removed
-					int length= prefixes[found[1]].length();
+					int length= m.getText().length();
 					if (length == 0 && !ignoreWhitespace && line.getLength() > 0) {
 						// found a non-empty line which cannot be shifted
 						return;

@@ -39,6 +39,8 @@ import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.ITextViewerExtension;
+import org.eclipse.jface.text.MultiStringMatcher;
+import org.eclipse.jface.text.MultiStringMatcher.Match;
 import org.eclipse.jface.text.Region;
 import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.TextUtilities;
@@ -244,6 +246,7 @@ public final class SelectionProcessor {
 				int visualEndColumn= computeVisualColumn(endLine, endColumn);
 				root= new MultiTextEdit();
 				String[] delimiters= fDocument.getLegalLineDelimiters();
+				MultiStringMatcher delimiterMatcher= MultiStringMatcher.create(delimiters);
 
 				int lastDelim= 0;
 				for (int line= startLine; line <= endLine; line++) {
@@ -251,13 +254,13 @@ public final class SelectionProcessor {
 					if (lastDelim == -1) {
 						string= ""; //$NON-NLS-1$
 					} else {
-						int[] index= TextUtilities.indexOf(delimiters, replacement, lastDelim);
-						if (index[0] == -1) {
+						Match m= delimiterMatcher.indexOf(replacement, lastDelim);
+						if (m == null) {
 							string= replacement.substring(lastDelim);
 							lastDelim= -1;
 						} else {
-							string= replacement.substring(lastDelim, index[0]);
-							lastDelim= index[0] + delimiters[index[1]].length();
+							string= replacement.substring(lastDelim, m.getOffset());
+							lastDelim= m.getOffset() + m.getText().length();
 						}
 					}
 					TextEdit replace= createReplaceEdit(line, visualStartColumn, visualEndColumn, string, delete);
@@ -266,13 +269,13 @@ public final class SelectionProcessor {
 				while (lastDelim != -1) {
 					// more stuff to insert
 					String string;
-					int[] index= TextUtilities.indexOf(delimiters, replacement, lastDelim);
-					if (index[0] == -1) {
+					Match m= delimiterMatcher.indexOf(replacement, lastDelim);
+					if (m == null) {
 						string= replacement.substring(lastDelim);
 						lastDelim= -1;
 					} else {
-						string= replacement.substring(lastDelim, index[0]);
-						lastDelim= index[0] + delimiters[index[1]].length();
+						string= replacement.substring(lastDelim, m.getOffset());
+						lastDelim= m.getOffset() + m.getText().length();
 					}
 					endLine++;
 					TextEdit edit;
@@ -379,13 +382,8 @@ public final class SelectionProcessor {
 		@Override
 		ISelection makeReplaceSelection(ISelection selection, String replacement) throws BadLocationException {
 			IBlockTextSelection bts= (IBlockTextSelection)selection;
-			String[] delimiters= fDocument.getLegalLineDelimiters();
-			int[] index= TextUtilities.indexOf(delimiters, replacement, 0);
-			int length;
-			if (index[0] == -1)
-				length= replacement.length();
-			else
-				length= index[0];
+			Match m= MultiStringMatcher.indexOf(replacement, 0, fDocument.getLegalLineDelimiters());
+			int length= m != null ? m.getOffset() : replacement.length();
 
 			int startLine= bts.getStartLine();
 			int column= bts.getStartColumn() + length;
