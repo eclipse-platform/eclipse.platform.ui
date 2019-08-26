@@ -902,7 +902,7 @@ public class DocumentLineDiffer implements ILineDiffer, IDocumentListener, IAnno
 	 */
 	private void reinitOnError(Exception e) {
 		if (DEBUG)
-			System.err.println("reinitializing quickdiff:\n" + e.getLocalizedMessage() + "\n" + e.getStackTrace());  //$NON-NLS-1$//$NON-NLS-2$
+			System.err.println("reinitializing quickdiff:\n" + e.getLocalizedMessage() + "\n" + Arrays.toString(e.getStackTrace()));  //$NON-NLS-1$//$NON-NLS-2$
 		initialize();
 	}
 
