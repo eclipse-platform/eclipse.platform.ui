@@ -95,6 +95,6 @@ public class ProposalPosition extends LinkedPosition {
 
 	@Override
 	public int hashCode() {
-		return super.hashCode() | (fProposals == null ? 0 : fProposals.hashCode());
+		return super.hashCode() | (fProposals == null ? 0 : Arrays.hashCode(fProposals));
 	}
 }
