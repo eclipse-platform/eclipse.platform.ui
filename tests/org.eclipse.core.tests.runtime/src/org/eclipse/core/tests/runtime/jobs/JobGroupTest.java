@@ -531,7 +531,7 @@ public class JobGroupTest extends AbstractJobTest {
 		for (; i < 11; i++) {
 			if (status[0] == TestBarrier.STATUS_DONE) {
 				// Verify that the join call is blocked for at least for the duration of given timeout.
-				assertTrue("1.0 duration: " + duration + " timeout: " + timeout, duration[0] >= timeout);
+				assertTrue("1.0 duration: " + Arrays.toString(duration) + " timeout: " + timeout, duration[0] >= timeout);
 				break;
 			}
 			sleep(100);

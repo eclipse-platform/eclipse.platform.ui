@@ -14,6 +14,7 @@
 package org.eclipse.core.tests.internal.runtime;
 
 import java.io.*;
+import java.util.Arrays;
 import org.eclipse.core.internal.runtime.RuntimeLog;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.runtime.RuntimeTest;
@@ -40,11 +41,11 @@ public class LogSerializationTest extends RuntimeTest {
 
 	protected void assertEquals(String msg, IStatus[] expected, IStatus[] actual) {
 		if (expected == null) {
-			assertNull(msg + " expected null but got: " + actual, actual);
+			assertNull(msg + " expected null but got: " + Arrays.toString(actual), actual);
 			return;
 		}
 		if (actual == null) {
-			assertNull(msg + " expected " + expected + " but got null", expected);
+			assertNull(msg + " expected " + Arrays.toString(expected) + " but got null", expected);
 			return;
 		}
 		assertEquals(msg + " different number of statuses", expected.length, actual.length);

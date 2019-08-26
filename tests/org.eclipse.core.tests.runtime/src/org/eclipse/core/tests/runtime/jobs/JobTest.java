@@ -19,6 +19,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.runtime.jobs;
 
+import java.util.Arrays;
 import org.eclipse.core.internal.jobs.JobManager;
 import org.eclipse.core.internal.jobs.Worker;
 import org.eclipse.core.runtime.*;
@@ -897,7 +898,7 @@ public class JobTest extends AbstractJobTest {
 		for (; i < 11; i++) {
 			if (status[0] == TestBarrier.STATUS_DONE) {
 				// Verify that the join call is blocked for at least for the duration of given timeout
-				assertTrue("2.0 duration: " + duration + " timeout: " + timeout, duration[0] >= timeout);
+				assertTrue("2.0 duration: " + Arrays.toString(duration) + " timeout: " + timeout, duration[0] >= timeout);
 				break;
 			}
 			sleep(100);
