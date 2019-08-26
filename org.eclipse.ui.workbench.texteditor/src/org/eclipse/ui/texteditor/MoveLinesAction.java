@@ -32,7 +32,6 @@ import org.eclipse.jface.text.TextSelection;
 import org.eclipse.jface.text.TextUtilities;
 
 import org.eclipse.ui.internal.texteditor.CompoundEditExitStrategy;
-import org.eclipse.ui.internal.texteditor.ICompoundEditListener;
 
 /**
  * Action for moving selected lines in an editor.
@@ -92,12 +91,7 @@ public class MoveLinesAction extends TextEditorAction {
 		fCopy= copy;
 		String[] commandIds= copy ? new String[] {ITextEditorActionDefinitionIds.COPY_LINES_UP, ITextEditorActionDefinitionIds.COPY_LINES_DOWN } : new String[] {ITextEditorActionDefinitionIds.MOVE_LINES_UP, ITextEditorActionDefinitionIds.MOVE_LINES_DOWN };
 		fStrategy= new CompoundEditExitStrategy(commandIds);
-		fStrategy.addCompoundListener(new ICompoundEditListener() {
-			@Override
-			public void endCompoundEdit() {
-				MoveLinesAction.this.endCompoundEdit();
-			}
-		});
+		fStrategy.addCompoundListener(MoveLinesAction.this::endCompoundEdit);
 		update();
 	}
 
