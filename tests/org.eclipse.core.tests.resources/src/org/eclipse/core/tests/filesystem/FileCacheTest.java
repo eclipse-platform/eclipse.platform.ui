@@ -14,6 +14,7 @@
 package org.eclipse.core.tests.filesystem;
 
 import java.io.*;
+import java.util.Arrays;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
@@ -63,7 +64,7 @@ public class FileCacheTest extends FileSystemTest {
 				return;
 			}
 		}
-		fail(message + " arrays should be different, but they are not: " + expected);
+		fail(message + " arrays should be different, but they are not: " + Arrays.toString(expected));
 	}
 
 	/**
