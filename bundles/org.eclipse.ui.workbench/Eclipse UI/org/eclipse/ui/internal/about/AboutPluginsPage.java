@@ -388,7 +388,12 @@ public class AboutPluginsPage extends ProductInfoPage {
 		final BundlePatternFilter searchFilter = new BundlePatternFilter();
 		filterText.addModifyListener(e -> {
 			searchFilter.setPattern(filterText.getText());
-			vendorInfo.refresh();
+			vendorInfo.getTable().setRedraw(false);
+			try {
+				vendorInfo.refresh();
+			} finally {
+				vendorInfo.getTable().setRedraw(true);
+			}
 		});
 		vendorInfo.addFilter(searchFilter);
 
