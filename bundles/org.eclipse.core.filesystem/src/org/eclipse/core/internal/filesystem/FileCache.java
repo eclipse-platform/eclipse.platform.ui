@@ -66,7 +66,7 @@ public class FileCache {
 	 * @throws CoreException If the file cache could not be created
 	 */
 	private FileCache() throws CoreException {
-		IPath location = Activator.getCacheLocation();
+		IPath location = FileSystemAccess.getCacheLocation();
 		File cacheParent = new File(location.toFile(), CACHE_DIR_NAME);
 		cleanOldCache(cacheParent);
 		cacheParent.mkdirs();

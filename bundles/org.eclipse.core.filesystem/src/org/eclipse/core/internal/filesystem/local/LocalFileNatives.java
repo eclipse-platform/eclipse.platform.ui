@@ -51,7 +51,7 @@ abstract class LocalFileNatives {
 
 	private static boolean isLibraryPresent() {
 		String libName = System.mapLibraryName(LIBRARY_NAME);
-		Enumeration<URL> entries = Activator.findEntries("/", libName, true); //$NON-NLS-1$
+		Enumeration<URL> entries = FileSystemAccess.findEntries("/", libName, true); //$NON-NLS-1$
 		return entries != null && entries.hasMoreElements();
 	}
 

@@ -28,9 +28,8 @@ import org.osgi.framework.*;
  * OSGi is running.
  * @since org.eclipse.core.filesystem 1.1
  */
-public class Activator implements BundleActivator {
-	private static Activator instance;
-	private BundleContext context;
+public class FileSystemAccess {
+	private static BundleContext context = FrameworkUtil.getBundle(FileSystemAccess.class).getBundleContext();
 
 	/**
 	 * Returns the local file system location that should be used for 
@@ -39,18 +38,15 @@ public class Activator implements BundleActivator {
 	public static IPath getCacheLocation() {
 		//try to put the cache in the instance location if possible (3.2 behaviour)
 		try {
-			if (instance != null) {
-				BundleContext ctx = instance.context;
-				if (ctx != null) {
-					Collection<ServiceReference<Location>> refs = ctx.getServiceReferences(Location.class, Location.INSTANCE_FILTER);
-					if (refs != null && refs.size() == 1) {
-						ServiceReference<Location> ref = refs.iterator().next();
-						Location location = ctx.getService(ref);
-						if (location != null) {
-							IPath instancePath = new Path(new File(location.getURL().getFile()).toString());
-							ctx.ungetService(ref);
-							return instancePath.append(".metadata/.plugins").append(Policy.PI_FILE_SYSTEM); //$NON-NLS-1$
-						}
+			if (context != null) {
+				Collection<ServiceReference<Location>> refs = context.getServiceReferences(Location.class, Location.INSTANCE_FILTER);
+				if (refs != null && refs.size() == 1) {
+					ServiceReference<Location> ref = refs.iterator().next();
+					Location location = context.getService(ref);
+					if (location != null) {
+						IPath instancePath = new Path(new File(location.getURL().getFile()).toString());
+						context.ungetService(ref);
+						return instancePath.append(".metadata/.plugins").append(Policy.PI_FILE_SYSTEM); //$NON-NLS-1$
 					}
 				}
 			}
@@ -63,24 +59,10 @@ public class Activator implements BundleActivator {
 		//		Platform.getStateLocation(Platform.getBundle(Policy.PI_FILE_SYSTEM));
 	}
 
-	public Activator() {
-		instance = this;
-	}
-
 	public static Enumeration<URL> findEntries(String path, String filePattern, boolean recurse) {
-		if (instance != null && instance.context != null)
-			return instance.context.getBundle().findEntries(path, filePattern, recurse);
+		if (context != null)
+			return context.getBundle().findEntries(path, filePattern, recurse);
 		return null;
-	}
-
-	@Override
-	public void start(BundleContext aContext) throws Exception {
-		this.context = aContext;
-	}
-
-	@Override
-	public void stop(BundleContext aContext) throws Exception {
-		//nothing to do
 	}
 
 }
