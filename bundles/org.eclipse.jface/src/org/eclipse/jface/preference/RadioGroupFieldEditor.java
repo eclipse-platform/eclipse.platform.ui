@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Björn Michael <b.michael@gmx.de> - bug 129722 [JFace]
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
@@ -207,6 +208,16 @@ public class RadioGroupFieldEditor extends FieldEditor {
 		}
 
 		getPreferenceStore().setValue(getPreferenceName(), value);
+	}
+
+	/**
+	 * Returns this field editor's current selected value.
+	 *
+	 * @return current selected value
+	 * @since 3.18
+	 */
+	public String getSelectionValue() {
+		return value;
 	}
 
 	@Override
