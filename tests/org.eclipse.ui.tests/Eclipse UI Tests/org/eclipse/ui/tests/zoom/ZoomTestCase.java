@@ -59,48 +59,25 @@ public class ZoomTestCase extends UITestCase {
 
 	private IFile file3;
 
-	// Remember the actual value of the 'useMinMax' state
-	// so that 'tearDown' can restore it
-	private boolean oldMinMaxState;
-
 	public ZoomTestCase(String name) {
 		super(name);
 	}
 
 	@Override
-	protected void doTearDown() throws Exception {
-		// Ensure that the model is sane
-		// page.testInvariants();
-
-		super.doTearDown();
-
-		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
-		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, oldMinMaxState);
-	}
-
-	@Override
 	protected void doSetUp() throws Exception {
-		// These tests are hard-wired to the pre-3.3 zoom behaviour
-		// Run them anyway to ensure that we preserve the 3.0 mechanism
-		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
-		oldMinMaxState = apiStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
-
 		super.doSetUp();
 
 		window = (WorkbenchWindow) openTestWindow(ZoomPerspectiveFactory.PERSP_ID);
 		page = (WorkbenchPage) window.getActivePage();
 
+		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 		// Disable animations since they occur concurrently and can interferre
 		// with locating drop targets
-		apiStore.setValue(
-				IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS,
-				false);
+		setPreference(apiStore, IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, false);
 
 		// These tests are hard-wired to the pre-3.3 zoom behaviour
 		// Run them anyway to ensure that we preserve the 3.0 mechanism
-		oldMinMaxState = apiStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
-
-		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
+		setPreference(apiStore, IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
 
 		try {
 			project = FileUtil.createProject("IEditorPartTest"); //$NON-NLS-1$

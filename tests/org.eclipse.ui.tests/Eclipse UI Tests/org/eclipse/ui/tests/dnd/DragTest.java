@@ -15,7 +15,6 @@ package org.eclipse.ui.tests.dnd;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -168,10 +167,7 @@ public class DragTest extends UITestCaseWithResult {
 
 			// Disable animations since they occur concurrently and can interferre
 			// with locating drop targets
-			IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
-			apiStore.setValue(
-					IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS,
-					false);
+			setPreference(PrefUtil.getAPIPreferenceStore(), IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, false);
 		}
 
 		page.resetPerspective();
@@ -239,10 +235,8 @@ public class DragTest extends UITestCaseWithResult {
 
 		// KLUDGE!! revert to the old min/max when dragging maximized views
 		// see bug 180242. This code should disappear before release...
-		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
-		boolean curMinMaxState = apiStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX);
 		if (getName().contains("drag maximized")) {
-			apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
+			setPreference(PrefUtil.getAPIPreferenceStore(), IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, false);
 		}
 
 		dragSource.setPage(page);
@@ -254,9 +248,6 @@ public class DragTest extends UITestCaseWithResult {
 
 		// Uncomment the following line to 'stall' the tests here...
 		//stallTest();
-
-		// KLUDGE!! Restore the min/max pref
-		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_NEW_MIN_MAX, curMinMaxState);
 
 		return DragOperations.getLayoutDescription(page);
 	}

@@ -20,7 +20,6 @@ import java.nio.file.Path;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.tests.TestPlugin;
@@ -32,8 +31,6 @@ public class DialogSettingsCustomizationTest extends UITestCase {
 	private static final String KEY_DEFAULT_DIALOG_SETTINGS_ROOTURL = "default_dialog_settings_rootUrl"; //$NON-NLS-1$
 	private static final String FN_DIALOG_SETTINGS = "dialog_settings.xml"; //$NON-NLS-1$
 
-	private String oldValue;
-	private IPreferenceStore store;
 	private Path dialogSettingsPath;
 	private Field settingsField;
 	private TestPlugin testPlugin;
@@ -47,10 +44,8 @@ public class DialogSettingsCustomizationTest extends UITestCase {
 	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
-		store = PlatformUI.getPreferenceStore();
 		testPlugin = TestPlugin.getDefault();
 		rootUrlValue = "platform:/plugin/" + testPlugin.getBundle().getSymbolicName() + "/data/dialog_settings_root";
-		oldValue = store.getString(KEY_DEFAULT_DIALOG_SETTINGS_ROOTURL);
 		dialogSettingsPath = testPlugin.getStateLocation().append(FN_DIALOG_SETTINGS).toFile().toPath();
 		dialogSettingsPathBackup = testPlugin.getStateLocation().append(FN_DIALOG_SETTINGS + ".back").toFile().toPath();
 		if (Files.exists(dialogSettingsPath)) {
@@ -69,20 +64,19 @@ public class DialogSettingsCustomizationTest extends UITestCase {
 			Files.move(dialogSettingsPathBackup, dialogSettingsPath);
 		}
 		settingsField.set(testPlugin, null);
-		store.setValue(KEY_DEFAULT_DIALOG_SETTINGS_ROOTURL, oldValue);
 		super.doTearDown();
 	}
 
 	public void testDialogSettingsContributedByBundle() throws Exception {
 		assertDefaultBundleValueIsSet();
-		store.setValue(KEY_DEFAULT_DIALOG_SETTINGS_ROOTURL, rootUrlValue);
+		setPreference(PlatformUI.getPreferenceStore(), KEY_DEFAULT_DIALOG_SETTINGS_ROOTURL, rootUrlValue);
 		assertCustomValueIsSet();
 	}
 
 	public void testDialogSettingsContributedByFileUrl() throws Exception {
 		String rootUrl = FileLocator.toFileURL(new URL(rootUrlValue)).toString();
 		assertDefaultBundleValueIsSet();
-		store.setValue(KEY_DEFAULT_DIALOG_SETTINGS_ROOTURL, rootUrl);
+		setPreference(PlatformUI.getPreferenceStore(), KEY_DEFAULT_DIALOG_SETTINGS_ROOTURL, rootUrl);
 		assertCustomValueIsSet();
 	}
 
