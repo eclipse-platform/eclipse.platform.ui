@@ -722,7 +722,9 @@ public class InjectorImpl implements IInjector {
 	/**
 	 * Make the processor visit all declared methods on the given class.
 	 */
-	private boolean processMethods(final Object userObject, PrimaryObjectSupplier objectSupplier, PrimaryObjectSupplier tempSupplier, Class<?> objectsClass, ArrayList<Class<?>> classHierarchy, boolean track, List<Requestor<?>> requestors) {
+	private boolean processMethods(final Object userObject, PrimaryObjectSupplier objectSupplier,
+			PrimaryObjectSupplier tempSupplier, Class<?> objectsClass, ArrayList<Class<?>> classHierarchy,
+			boolean track, List<Requestor<?>> requestors) {
 		boolean injectedStatic = false;
 		Method[] methods = getDeclaredMethods(objectsClass);
 		for (Method method : methods) {
@@ -732,8 +734,9 @@ public class InjectorImpl implements IInjector {
 			Class<?> originalClass = userObject.getClass();
 			if (isOverriddenCache.containsKey(originalClass)) {
 				methodMap = isOverriddenCache.get(originalClass);
-				if (methodMap.containsKey(method))
+				if (methodMap.containsKey(method)) {
 					isOverridden = methodMap.get(method);
+				}
 			}
 			if (isOverridden == null) {
 				isOverridden = isOverridden(method, classHierarchy);
@@ -744,15 +747,18 @@ public class InjectorImpl implements IInjector {
 				methodMap.put(method, isOverridden);
 			}
 
-			if (isOverridden)
+			if (isOverridden) {
 				continue; // process in the subclass
+			}
 			if (Modifier.isStatic(method.getModifiers())) {
-				if (hasInjectedStatic(objectsClass))
+				if (hasInjectedStatic(objectsClass)) {
 					continue;
+				}
 				injectedStatic = true;
 			}
-			if (!isAnnotationPresent(method, Inject.class))
+			if (!isAnnotationPresent(method, Inject.class)) {
 				continue;
+			}
 			requestors.add(new MethodRequestor(method, this, objectSupplier, tempSupplier, userObject, track));
 		}
 		return injectedStatic;
