@@ -211,6 +211,7 @@ public class ProgressInfoItem extends Composite {
 		jobImageLabel.setLayoutData(imageData);
 
 		progressLabel = new Label(this, SWT.NONE);
+		progressLabel.addListener(SWT.Resize, event -> setMainText());
 		setMainText();
 
 		actionBar = new ToolBar(this, SWT.FLAT);

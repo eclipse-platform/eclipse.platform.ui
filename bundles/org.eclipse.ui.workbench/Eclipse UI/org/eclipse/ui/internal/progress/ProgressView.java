@@ -105,7 +105,7 @@ public class ProgressView extends ViewPart {
 
 	@Override
 	public void createPartControl(Composite parent) {
-		viewer = new DetailedProgressViewer(parent, SWT.MULTI | SWT.H_SCROLL);
+		viewer = new DetailedProgressViewer(parent, SWT.MULTI);
 		viewer.setComparator(ProgressManagerUtil.getProgressViewerComparator());
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IWorkbenchHelpContextIds.RESPONSIVE_UI);

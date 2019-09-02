@@ -46,7 +46,7 @@ public class ProgressView {
 	public void createPartControl(Composite parent, ProgressManager progressManager,
 			IProgressService progressService, FinishedJobs finishedJobs,
 			ProgressViewUpdater viewUpdater) {
-		viewer = new DetailedProgressViewer(parent, SWT.MULTI | SWT.H_SCROLL,
+		viewer = new DetailedProgressViewer(parent, SWT.MULTI,
 				progressService, finishedJobs);
 		viewer.setComparator(ProgressManagerUtil.getProgressViewerComparator());
 
