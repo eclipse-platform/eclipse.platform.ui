@@ -113,54 +113,42 @@ public class ViewCSSImpl implements ViewCSS, ExtendedDocumentCSS.StyleSheetChang
 	public CSSStyleDeclaration getComputedStyle(List<CSSRule> ruleList, Element elt, String pseudoElt) {
 		List<StyleWrapper> styleDeclarations = null;
 		StyleWrapper firstStyleDeclaration = null;
-		int length = ruleList.size();
 		int position = 0;
-		for (int i = 0; i < length; i++) {
-			CSSRule rule = ruleList.get(i);
-			if (rule.getType() == CSSRule.STYLE_RULE) {
-				CSSStyleRule styleRule = (CSSStyleRule) rule;
-				if (rule instanceof ExtendedCSSRule) {
-					ExtendedCSSRule r = (ExtendedCSSRule) rule;
-					SelectorList selectorList = r.getSelectorList();
-					// Loop for SelectorList
-					int l = selectorList.getLength();
-					for (int j = 0; j < l; j++) {
-						Selector selector = selectorList.item(j);
-						if (selector instanceof ExtendedSelector) {
-							ExtendedSelector extendedSelector = (ExtendedSelector) selector;
-							if (extendedSelector.match(elt, pseudoElt)) {
-								CSSStyleDeclaration style = styleRule
-										.getStyle();
-								int specificity = extendedSelector
-										.getSpecificity();
-								StyleWrapper wrapper = new StyleWrapper(style,
-										specificity, position++);
-								if (firstStyleDeclaration == null) {
-									firstStyleDeclaration = wrapper;
-								} else {
-									// There is several Style Declarations which
-									// match the current element
-									if (styleDeclarations == null) {
-										styleDeclarations = new ArrayList<>();
-										styleDeclarations.add(firstStyleDeclaration);
-									}
-									styleDeclarations.add(wrapper);
-								}
-							}
+		for (CSSRule rule : ruleList) {
+			if (rule.getType() != CSSRule.STYLE_RULE || (!(rule instanceof ExtendedCSSRule)) ) {
+				continue; // we only handle the CSSRule.STYLE_RULE and ExtendedCSSRule case
+			}
+			CSSStyleRule styleRule = (CSSStyleRule) rule;
+			ExtendedCSSRule r = (ExtendedCSSRule) rule;
+			SelectorList selectorList = r.getSelectorList();
+			// Loop for SelectorList
+			int l = selectorList.getLength();
+			for (int j = 0; j < l; j++) {
+				Selector selector = selectorList.item(j);
+				if (selector instanceof ExtendedSelector) {
+					ExtendedSelector extendedSelector = (ExtendedSelector) selector;
+					if (extendedSelector.match(elt, pseudoElt)) {
+						CSSStyleDeclaration style = styleRule.getStyle();
+						int specificity = extendedSelector.getSpecificity();
+						StyleWrapper wrapper = new StyleWrapper(style, specificity, position++);
+						if (firstStyleDeclaration == null) {
+							firstStyleDeclaration = wrapper;
 						} else {
-							// TODO : selector is not batik ExtendedSelector,
-							// Manage this case...
+							// There is several Style Declarations which
+							// match the current element
+							if (styleDeclarations == null) {
+								styleDeclarations = new ArrayList<>();
+								styleDeclarations.add(firstStyleDeclaration);
+							}
+							styleDeclarations.add(wrapper);
 						}
 					}
-				} else {
-					// TODO : CSS rule is not ExtendedCSSRule,
-					// Manage this case...
 				}
 			}
 		}
 		if (styleDeclarations != null) {
-			// There is several Style Declarations wich match
-			// the element, merge the CSS Property value.
+			// There is several Style Declarations which match the element, merge the CSS
+			// Property value.
 			return new CSSComputedStyleImpl(styleDeclarations);
 		}
 		if (firstStyleDeclaration != null) {
