@@ -732,11 +732,9 @@ public class InjectorImpl implements IInjector {
 			Boolean isOverridden = null;
 			Map<Method, Boolean> methodMap = null;
 			Class<?> originalClass = userObject.getClass();
-			if (isOverriddenCache.containsKey(originalClass)) {
-				methodMap = isOverriddenCache.get(originalClass);
-				if (methodMap.containsKey(method)) {
-					isOverridden = methodMap.get(method);
-				}
+			methodMap = isOverriddenCache.get(originalClass);
+			if (methodMap != null) {
+				isOverridden = methodMap.get(method);
 			}
 			if (isOverridden == null) {
 				isOverridden = isOverridden(method, classHierarchy);
