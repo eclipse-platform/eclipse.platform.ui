@@ -30,6 +30,9 @@ import org.eclipse.swt.widgets.Control;
  * @param <C> control
  *
  * @noextend this class is not intended to be subclassed by clients.
+ *
+ * @since 3.18
+ *
  */
 public abstract class AbstractControlFactory<F extends AbstractControlFactory<?, ?>, C extends Control>
 		extends AbstractWidgetFactory<F, C, Composite> {

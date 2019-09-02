@@ -27,6 +27,9 @@ import org.eclipse.swt.widgets.Widget;
  * @param <P> parent
  *
  * @noextend this class is not intended to be subclassed by clients.
+ *
+ * @since 3.18
+ *
  */
 public abstract class AbstractItemFactory<F extends AbstractItemFactory<?, ?, ?>, I extends Item, P extends Widget>
 		extends AbstractWidgetFactory<F, I, P> {

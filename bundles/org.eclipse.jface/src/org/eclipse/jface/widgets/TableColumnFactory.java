@@ -21,14 +21,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 /**
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class has been added as part of a work in
- * progress. There is no guarantee that this API will work or that it will
- * remain the same. Feel free to use it and give feedback via <a href=
- * "https://bugs.eclipse.org/bugs/buglist.cgi?component=UI&product=Platform">Bugzilla</a>,
- * but be aware that it might change.
- * </p>
- *
  * This class provides a convenient shorthand for creating and initializing
  * {@link TableColumn}. This offers several benefits over creating TableColumn
  * normal way:
@@ -65,6 +57,8 @@ import org.eclipse.swt.widgets.TableColumn;
  * The above example creates three table columns using the same instance of
  * factory.
  * </p>
+ *
+ * @since 3.18
  *
  */
 public final class TableColumnFactory extends AbstractItemFactory<TableColumnFactory, TableColumn, Table> {

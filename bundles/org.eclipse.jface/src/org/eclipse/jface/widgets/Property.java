@@ -30,6 +30,9 @@ import org.eclipse.swt.widgets.Widget;
  *
  * @noimplement this interface is not intended to be implemented by clients.
  * @noextend this class is not intended to be subclassed by clients.
+ *
+ * @since 3.18
+ *
  */
 @FunctionalInterface
 public interface Property<T extends Widget> {

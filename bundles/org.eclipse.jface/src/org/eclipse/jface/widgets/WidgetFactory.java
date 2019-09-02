@@ -25,14 +25,6 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 
 /**
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class has been added as part of a work in
- * progress. There is no guarantee that this API will work or that it will
- * remain the same. Feel free to use it and give feedback via <a href=
- * "https://bugs.eclipse.org/bugs/buglist.cgi?component=UI&product=Platform">Bugzilla</a>,
- * but be aware that it might change.
- * </p>
- *
  * This class provides a convenient shorthand for creating and initializing
  * factories for SWT widgets. This offers several benefits over creating SWT
  * widgets with the low level SWT API
@@ -71,6 +63,9 @@ import org.eclipse.swt.widgets.TreeColumn;
  * ButtonFactory. Note the layout method. A Supplier is used to create unique
  * GridData for every single button.
  * </p>
+ *
+ * @since 3.18
+ *
  */
 public final class WidgetFactory {
 	private WidgetFactory() {

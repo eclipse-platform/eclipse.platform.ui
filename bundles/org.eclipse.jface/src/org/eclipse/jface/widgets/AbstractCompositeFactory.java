@@ -26,6 +26,8 @@ import org.eclipse.swt.widgets.Layout;
  *
  * @noextend this class is not intended to be subclassed by clients.
  *
+ * @since 3.18
+ *
  */
 public abstract class AbstractCompositeFactory<F extends AbstractCompositeFactory<?, ?>, C extends Composite>
 		extends AbstractControlFactory<F, C> {

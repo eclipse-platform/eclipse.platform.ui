@@ -23,14 +23,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class has been added as part of a work in
- * progress. There is no guarantee that this API will work or that it will
- * remain the same. Feel free to use it and give feedback via <a href=
- * "https://bugs.eclipse.org/bugs/buglist.cgi?component=UI&product=Platform">Bugzilla</a>,
- * but be aware that it might change.
- * </p>
- *
  * This class provides a convenient shorthand for creating and initializing
  * {@link Text}. This offers several benefits over creating Text normal way:
  *
@@ -66,6 +58,9 @@ import org.eclipse.swt.widgets.Text;
  * <p>
  * The above example creates three texts using the same instance of TextFactory.
  * </p>
+ *
+ * @since 3.18
+ *
  */
 public final class TextFactory extends AbstractControlFactory<TextFactory, Text> {
 

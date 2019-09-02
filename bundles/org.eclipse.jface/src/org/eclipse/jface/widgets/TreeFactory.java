@@ -23,14 +23,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Tree;
 
 /**
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class has been added as part of a work in
- * progress. There is no guarantee that this API will work or that it will
- * remain the same. Feel free to use it and give feedback via <a href=
- * "https://bugs.eclipse.org/bugs/buglist.cgi?component=UI&product=Platform">Bugzilla</a>,
- * but be aware that it might change.
- * </p>
- *
  * This class provides a convenient shorthand for creating and initializing
  * {@link Tree}. This offers several benefits over creating Tree normal way:
  *
@@ -57,16 +49,20 @@ import org.eclipse.swt.widgets.Tree;
  * 		.onExpand(e -&gt; treeExpanded(e)) //
  * 		.create(parent);
  * </pre>
+ *
  * <p>
  * The above example creates a tree, sets some properties, registers a
  * SelectionListener and a TreeListener for expansion and finally creates the
  * tree in "parent".
  * </p>
+ *
  * <p>
  * Note that this class does not extend {@link AbstractCompositeFactory} even
  * though Tree extends Composite. This is because Tree is not supposed to be
  * used like a Composite.
  * </p>
+ *
+ * @since 3.18
  */
 public final class TreeFactory extends AbstractControlFactory<TreeFactory, Tree> {
 

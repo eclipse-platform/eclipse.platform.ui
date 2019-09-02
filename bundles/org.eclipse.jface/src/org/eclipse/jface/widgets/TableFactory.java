@@ -21,14 +21,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Table;
 
 /**
- * <p>
- * <strong>EXPERIMENTAL</strong>. This class has been added as part of a work in
- * progress. There is no guarantee that this API will work or that it will
- * remain the same. Feel free to use it and give feedback via <a href=
- * "https://bugs.eclipse.org/bugs/buglist.cgi?component=UI&product=Platform">Bugzilla</a>,
- * but be aware that it might change.
- * </p>
- *
  * This class provides a convenient shorthand for creating and initializing
  * {@link Table}. This offers several benefits over creating Table normal way:
  *
@@ -50,15 +42,19 @@ import org.eclipse.swt.widgets.Table;
  * 		.onSelect(e -&gt; tableClicked(e)) //
  * 		.create(parent);
  * </pre>
+ *
  * <p>
  * The above example creates a table, sets some properties, registers a
  * SelectionListener and finally creates the table in "parent".
  * </p>
+ *
  * <p>
  * Note that this class does not extend {@link AbstractCompositeFactory} even
  * though Table extends Composite. This is because Table is not supposed to be
  * used like a Composite.
  * </p>
+ *
+ * @since 3.18
  */
 public final class TableFactory extends AbstractControlFactory<TableFactory, Table> {
 
