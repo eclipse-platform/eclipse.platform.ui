@@ -110,7 +110,7 @@ public class ViewCSSImpl implements ViewCSS, ExtendedDocumentCSS.StyleSheetChang
 		return cssRules;
 	}
 
-	public CSSStyleDeclaration getComputedStyle(List<CSSRule> ruleList, Element elt, String pseudoElt) {
+	private CSSStyleDeclaration getComputedStyle(List<CSSRule> ruleList, Element elt, String pseudoElt) {
 		List<StyleWrapper> styleDeclarations = null;
 		StyleWrapper firstStyleDeclaration = null;
 		int position = 0;
