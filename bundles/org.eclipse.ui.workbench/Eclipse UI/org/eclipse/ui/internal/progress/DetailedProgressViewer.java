@@ -474,7 +474,8 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	 */
 	private void updateSize() {
 		Point size = control.computeSize(SWT.DEFAULT, SWT.DEFAULT);
-		size.x += IDialogConstants.HORIZONTAL_SPACING;
+		// no horizontal size because we do not want to scroll horizontal
+		size.x = 0;
 		size.y += IDialogConstants.VERTICAL_SPACING;
 		scrolled.setMinSize(size);
 	}

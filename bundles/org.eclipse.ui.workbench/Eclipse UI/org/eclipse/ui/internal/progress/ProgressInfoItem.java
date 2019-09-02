@@ -678,8 +678,6 @@ public class ProgressInfoItem extends Composite {
 			linkData.top = new FormAttachment(progressBar, IDialogConstants.VERTICAL_SPACING);
 			linkData.left = new FormAttachment(progressBar, 0, SWT.LEFT);
 			linkData.right = new FormAttachment(progressBar, 0, SWT.RIGHT);
-			// Give an initial value so as to constrain the link shortening
-			linkData.width = 20;
 
 			taskEntries.get(0).setLayoutData(linkData);
 		}
@@ -703,15 +701,11 @@ public class ProgressInfoItem extends Composite {
 				linkData.top = new FormAttachment(top, IDialogConstants.VERTICAL_SPACING);
 				linkData.left = new FormAttachment(top, 0, SWT.LEFT);
 				linkData.right = new FormAttachment(top, 0, SWT.RIGHT);
-				// Give an initial value so as to constrain the link shortening
-				linkData.width = 20;
 			} else {
 				Link previous = taskEntries.get(index - 1);
 				linkData.top = new FormAttachment(previous, IDialogConstants.VERTICAL_SPACING);
 				linkData.left = new FormAttachment(previous, 0, SWT.LEFT);
 				linkData.right = new FormAttachment(previous, 0, SWT.RIGHT);
-				// Give an initial value so as to constrain the link shortening
-				linkData.width = 20;
 			}
 
 			link.setLayoutData(linkData);
