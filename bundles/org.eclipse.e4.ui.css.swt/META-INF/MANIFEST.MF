@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.eclipse.e4.ui.css.swt;singleton:=true
-Bundle-Version: 0.13.600.qualifier
+Bundle-Version: 0.13.700.qualifier
 Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -11,7 +11,6 @@ Export-Package: org.eclipse.e4.ui.css.swt;x-friends:="org.eclipse.ui.workbench",
  org.eclipse.e4.ui.css.swt.dom.html;x-internal:=true,
  org.eclipse.e4.ui.css.swt.dom.preference;x-internal:=true,
  org.eclipse.e4.ui.css.swt.engine;x-friends:="org.eclipse.e4.ui.css.swt.theme,org.eclipse.e4.ui.workbench.swt",
- org.eclipse.e4.ui.css.swt.engine.html;x-internal:=true,
  org.eclipse.e4.ui.css.swt.helpers;x-friends:="org.eclipse.ui.views.properties.tabbed",
  org.eclipse.e4.ui.css.swt.properties;x-friends:="org.eclipse.ui.workbench,org.eclipse.ui.views.properties.tabbed",
  org.eclipse.e4.ui.css.swt.properties.converters;x-internal:=true,
