@@ -7178,12 +7178,31 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		@Override
 		public void doSave(IProgressMonitor monitor) throws CoreException {
-			fTextEditor.doSave(monitor);
+			try {
+				fTextEditor.doSave(monitor);
+			} catch (NullPointerException e) {
+				// This should not happen. Code added to handle the below bug.
+				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=550336
+				Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
+				ILog log = Platform.getLog(bundle);
+				Status status = new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, null, e);
+				log.log(status);
+			}
 		}
 
 		@Override
 		public boolean isDirty() {
-			return fTextEditor.isDirty();
+			try {
+				return fTextEditor.isDirty();
+			} catch (NullPointerException e) {
+				// This should not happen. Code added to handle the below bug.
+				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=550336
+				Bundle bundle = Platform.getBundle(PlatformUI.PLUGIN_ID);
+				ILog log = Platform.getLog(bundle);
+				Status status = new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, null, e);
+				log.log(status);
+				return false;
+			}
 		}
 
 		/*
