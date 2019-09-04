@@ -335,7 +335,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 		}
 
 		void updateTextView() {
-			final StringBuffer buffer = new StringBuffer();
+			final StringBuilder buffer = new StringBuilder();
 			buffer.append("Total resource count: " + prettyPrint(resourceCount) + "\n");
 			buffer.append("\tTeam private: " + prettyPrint(teamPrivateCount) + "\n");
 			buffer.append("\tPhantom: " + prettyPrint(phantomCount) + "\n");
