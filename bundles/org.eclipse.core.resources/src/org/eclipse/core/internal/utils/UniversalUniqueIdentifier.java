@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,10 +14,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.utils;
 
-import java.io.*;
 import java.math.BigInteger;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.security.SecureRandom;
 import java.util.GregorianCalendar;
 import java.util.Random;
@@ -134,28 +131,7 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 	private static byte[] computeNodeAddress() {
 
 		byte[] address = new byte[NODE_ADDRESS_BYTE_SIZE];
-
-		// Seed the secure randomizer with some oft-varying inputs
-		int thread = Thread.currentThread().hashCode();
-		long time = System.currentTimeMillis();
-		int objectId = System.identityHashCode(""); //$NON-NLS-1$
-		ByteArrayOutputStream byteOut = new ByteArrayOutputStream();
-		DataOutputStream out = new DataOutputStream(byteOut);
-		byte[] ipAddress = getIPAddress();
-
-		try {
-			if (ipAddress != null)
-				out.write(ipAddress);
-			out.write(thread);
-			out.writeLong(time);
-			out.write(objectId);
-			out.close();
-		} catch (IOException exc) {
-			//ignore the failure, we're just trying to come up with a random seed
-		}
-		byte[] rand = byteOut.toByteArray();
-
-		SecureRandom randomizer = new SecureRandom(rand);
+		SecureRandom randomizer = new SecureRandom();
 		randomizer.nextBytes(address);
 
 		// set the MSB of the first octet to 1 to distinguish from IEEE node addresses
@@ -181,28 +157,6 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 				return false;
 		}
 		return true;
-	}
-
-	/**
-	 Answers the IP address of the local machine using the
-	 Java API class <code>InetAddress</code>.
-	
-	 @return byte[] the network address in network order
-	 @see    java.net.InetAddress#getLocalHost()
-	 @see    java.net.InetAddress#getAddress()
-	 */
-	protected static byte[] getIPAddress() {
-		try {
-			return InetAddress.getLocalHost().getAddress();
-		} catch (UnknownHostException e) {
-			//valid for this to be thrown be a machine with no IP connection
-			//It is VERY important NOT to throw this exception
-			return null;
-		} catch (ArrayIndexOutOfBoundsException e) {
-			// there appears to be a bug in the VM if there is an alias
-			// see bug 354820. As above it is important not to throw this
-			return null;
-		}
 	}
 
 	private static byte[] getNodeAddress() {
