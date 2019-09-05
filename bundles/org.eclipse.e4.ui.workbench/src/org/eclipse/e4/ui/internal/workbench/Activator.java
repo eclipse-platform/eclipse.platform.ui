@@ -81,13 +81,6 @@ public class Activator implements BundleActivator, DebugOptionsListener {
 	}
 
 	/**
-	 * @return the bundle object
-	 */
-	public Bundle getBundle() {
-		return context.getBundle();
-	}
-
-	/**
 	 * @param bundleName
 	 *            the bundle symbolic name
 	 * @return A bundle if found, or <code>null</code>
