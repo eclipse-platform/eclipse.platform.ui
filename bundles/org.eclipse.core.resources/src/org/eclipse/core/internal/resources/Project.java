@@ -253,65 +253,61 @@ public class Project extends Container implements IProject {
 
 	@Override
 	public void create(IProjectDescription description, int updateFlags, IProgressMonitor monitor) throws CoreException {
-		monitor = Policy.monitorFor(monitor);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, Messages.resources_create, 100);
+		checkValidPath(path, PROJECT, false);
+		final ISchedulingRule rule = workspace.getRuleFactory().createRule(this);
 		try {
-			monitor.beginTask(Messages.resources_create, Policy.totalWork);
-			checkValidPath(path, PROJECT, false);
-			final ISchedulingRule rule = workspace.getRuleFactory().createRule(this);
-			try {
-				workspace.prepareOperation(rule, monitor);
-				if (description == null) {
-					description = new ProjectDescription();
-					description.setName(getName());
-				}
-				assertCreateRequirements(description);
-				workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CREATE, this));
-				workspace.beginOperation(true);
-				workspace.createResource(this, updateFlags);
-				workspace.getMetaArea().create(this);
-				ProjectInfo info = (ProjectInfo) getResourceInfo(false, true);
-
-				// setup description to obtain project location
-				ProjectDescription desc = (ProjectDescription) ((ProjectDescription) description).clone();
-				desc.setLocationURI(FileUtil.canonicalURI(description.getLocationURI()));
-				desc.setName(getName());
-				internalSetDescription(desc, false);
-				// see if there potentially are already contents on disk
-				final boolean hasSavedDescription = getLocalManager().hasSavedDescription(this);
-				boolean hasContent = hasSavedDescription;
-				//if there is no project description, there might still be content on disk
-				if (!hasSavedDescription)
-					hasContent = getLocalManager().hasSavedContent(this);
-				try {
-					// look for a description on disk
-					if (hasSavedDescription) {
-						updateDescription();
-						//make sure the .location file is written
-						workspace.getMetaArea().writePrivateDescription(this);
-					} else {
-						//write out the project
-						writeDescription(IResource.FORCE);
-					}
-				} catch (CoreException e) {
-					workspace.deleteResource(this);
-					throw e;
-				}
-				// inaccessible projects have a null modification stamp.
-				// set this after setting the description as #setDescription
-				// updates the stamp
-				info.clearModificationStamp();
-				//if a project already had content on disk, mark the project as having unknown children
-				if (hasContent)
-					info.set(ICoreConstants.M_CHILDREN_UNKNOWN);
-				workspace.getSaveManager().requestSnapshot();
-			} catch (OperationCanceledException e) {
-				workspace.getWorkManager().operationCanceled();
-				throw e;
-			} finally {
-				workspace.endOperation(rule, true);
+			workspace.prepareOperation(rule, subMonitor);
+			if (description == null) {
+				description = new ProjectDescription();
+				description.setName(getName());
 			}
+			assertCreateRequirements(description);
+			workspace.broadcastEvent(LifecycleEvent.newEvent(LifecycleEvent.PRE_PROJECT_CREATE, this));
+			workspace.beginOperation(true);
+			workspace.createResource(this, updateFlags);
+			workspace.getMetaArea().create(this);
+			ProjectInfo info = (ProjectInfo) getResourceInfo(false, true);
+
+			// setup description to obtain project location
+			ProjectDescription desc = (ProjectDescription) ((ProjectDescription) description).clone();
+			desc.setLocationURI(FileUtil.canonicalURI(description.getLocationURI()));
+			desc.setName(getName());
+			internalSetDescription(desc, false);
+			// see if there potentially are already contents on disk
+			final boolean hasSavedDescription = getLocalManager().hasSavedDescription(this);
+			boolean hasContent = hasSavedDescription;
+			// if there is no project description, there might still be content on disk
+			if (!hasSavedDescription)
+				hasContent = getLocalManager().hasSavedContent(this);
+			try {
+				// look for a description on disk
+				if (hasSavedDescription) {
+					updateDescription();
+					// make sure the .location file is written
+					workspace.getMetaArea().writePrivateDescription(this);
+				} else {
+					// write out the project
+					writeDescription(IResource.FORCE);
+				}
+			} catch (CoreException e) {
+				workspace.deleteResource(this);
+				throw e;
+			}
+			// inaccessible projects have a null modification stamp.
+			// set this after setting the description as #setDescription
+			// updates the stamp
+			info.clearModificationStamp();
+			// if a project already had content on disk, mark the project as having unknown
+			// children
+			if (hasContent)
+				info.set(ICoreConstants.M_CHILDREN_UNKNOWN);
+			workspace.getSaveManager().requestSnapshot();
+		} catch (OperationCanceledException e) {
+			workspace.getWorkManager().operationCanceled();
+			throw e;
 		} finally {
-			monitor.done();
+			workspace.endOperation(rule, true);
 		}
 	}
 
@@ -537,51 +533,49 @@ public class Project extends Container implements IProject {
 	 * Implements all build methods on IProject.
 	 */
 	protected void internalBuild(final IBuildConfiguration config, final int trigger, final String builderName, final Map<String, String> args, IProgressMonitor monitor) throws CoreException {
-		workspace.run(new ICoreRunnable() {
+		ICoreRunnable buildRunnable = new ICoreRunnable() {
 			@Override
 			public void run(IProgressMonitor innerMonitor) throws CoreException {
-				innerMonitor = Policy.monitorFor(innerMonitor);
-				final ISchedulingRule projectBuildRule = workspace.getBuildManager().getRule(config, trigger, builderName, args);
+
+				final ISchedulingRule projectBuildRule = workspace.getBuildManager().getRule(config, trigger,
+						builderName, args);
 				final boolean relaxed = Job.getJobManager().currentRule() == null && workspace.isRelaxedRule(projectBuildRule);
 
 				// PRE + POST_BUILD, and the build itself are allowed to modify resources, so require the current thread's scheduling rule
 				// to either contain the WR or be null. Therefore, if not null, ensure it contains the WR rule...
 				final ISchedulingRule notificationsRule = relaxed ? null : workspace.getRoot();
+				SubMonitor subMonitor = SubMonitor.convert(innerMonitor, 100);
 				try {
-					innerMonitor.beginTask("", Policy.totalWork); //$NON-NLS-1$
+					workspace.prepareOperation(notificationsRule, innerMonitor);
+					if (!shouldBuild())
+						return;
+					workspace.beginOperation(true);
+					workspace.aboutToBuild(Project.this, trigger);
+				} finally {
+					workspace.endOperation(notificationsRule, false);
+				}
+				try {
+					IStatus result;
+					workspace.prepareOperation(projectBuildRule, innerMonitor);
+					// don't open the tree eagerly because it will be wasted if no build occurs
+					workspace.beginOperation(false);
+					result = workspace.getBuildManager().build(config, trigger, builderName, args,
+							subMonitor.split(100));
+					if (!result.isOK())
+						throw new ResourceException(result);
+				} finally {
+					workspace.endOperation(projectBuildRule, false);
 					try {
 						workspace.prepareOperation(notificationsRule, innerMonitor);
-						if (!shouldBuild())
-							return;
-						workspace.beginOperation(true);
-						workspace.aboutToBuild(Project.this, trigger);
+						// don't open the tree eagerly because it will be wasted if no change occurs
+						workspace.beginOperation(false);
+						workspace.broadcastBuildEvent(Project.this, IResourceChangeEvent.POST_BUILD, trigger);
+						// building may close the tree, so open it
+						if (workspace.getElementTree().isImmutable())
+							workspace.newWorkingTree();
 					} finally {
 						workspace.endOperation(notificationsRule, false);
 					}
-					try {
-						IStatus result;
-						workspace.prepareOperation(projectBuildRule, innerMonitor);
-						//don't open the tree eagerly because it will be wasted if no build occurs
-						workspace.beginOperation(false);
-						result = workspace.getBuildManager().build(config, trigger, builderName, args, Policy.subMonitorFor(innerMonitor, Policy.opWork));
-						if (!result.isOK())
-							throw new ResourceException(result);
-					} finally {
-						workspace.endOperation(projectBuildRule, false);
-						try {
-							workspace.prepareOperation(notificationsRule, innerMonitor);
-							//don't open the tree eagerly because it will be wasted if no change occurs
-							workspace.beginOperation(false);
-							workspace.broadcastBuildEvent(Project.this, IResourceChangeEvent.POST_BUILD, trigger);
-							//building may close the tree, so open it
-							if (workspace.getElementTree().isImmutable())
-								workspace.newWorkingTree();
-						} finally {
-							workspace.endOperation(notificationsRule, false);
-						}
-					}
-				} finally {
-					innerMonitor.done();
 				}
 			}
 
@@ -592,12 +586,15 @@ public class Project extends Container implements IProject {
 			private boolean shouldBuild() {
 				ResourceInfo info = getResourceInfo(false, false);
 				int flags = getFlags(info);
-				if (!exists(flags, true) || !isOpen(flags))
+				if (!exists(flags, true) || !isOpen(flags)) {
 					return false;
+				}
 				return true;
 			}
 
-		}, null, IWorkspace.AVOID_UPDATE, monitor);
+		};
+
+		workspace.run(buildRunnable, null, IWorkspace.AVOID_UPDATE, monitor);
 	}
 
 	/**
