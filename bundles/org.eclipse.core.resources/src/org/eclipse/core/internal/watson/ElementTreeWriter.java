@@ -93,7 +93,7 @@ public class ElementTreeWriter {
 		ElementTree[] sorted = new ElementTree[numTrees];
 		int[] order = new int[numTrees];
 
-		/* first build a table of ElementTree -> Vector of Integers(indices in trees array) */
+		/* first build a table of ElementTree -> HashMap of Integers(indices in trees array) */
 		HashMap<ElementTree, List<Integer>> table = new HashMap<>(numTrees * 2 + 1);
 		for (int i = 0; i < trees.length; i++) {
 			List<Integer> indices = table.get(trees[i]);
