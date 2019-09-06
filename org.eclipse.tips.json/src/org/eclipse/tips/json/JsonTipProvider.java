@@ -33,6 +33,7 @@ import org.eclipse.tips.core.internal.LogUtil;
 import org.eclipse.tips.json.internal.JsonConstants;
 import org.eclipse.tips.json.internal.JsonHTMLTip;
 import org.eclipse.tips.json.internal.JsonUrlTip;
+import org.eclipse.tips.json.internal.Messages;
 import org.eclipse.tips.json.internal.Util;
 
 import com.google.gson.JsonArray;
@@ -76,11 +77,11 @@ public abstract class JsonTipProvider extends TipProvider {
 	 */
 	@Override
 	public synchronized IStatus loadNewTips(IProgressMonitor monitor) {
-		SubMonitor subMonitor = SubMonitor.convert(monitor);
+		SubMonitor subMonitor = SubMonitor.convert(monitor, getDescription() + SPACE + Messages.JsonTipProvider_1, 3);
 		ArrayList<Tip> result = new ArrayList<>();
 		try {
-			subMonitor.beginTask(getDescription() + SPACE + Messages.JsonTipProvider_1, -1);
 			fJsonObject = loadJsonObject();
+			subMonitor.worked(1);
 			if (fJsonObject == null) {
 				return new Status(IStatus.INFO, "org.eclipse.tips.json",
 						MessageFormat.format("Could not parse json for {0}. Cache invalidated.", getID()), null);
@@ -90,8 +91,9 @@ public abstract class JsonTipProvider extends TipProvider {
 			fImage = Util.getValueOrDefault(provider, JsonConstants.P_IMAGE, null);
 			setExpression(Util.getValueOrDefault(provider, JsonConstants.P_EXPRESSION, null));
 			JsonArray tips = provider.getAsJsonArray(JsonConstants.P_TIPS);
-			subMonitor.beginTask(getDescription() + SPACE + Messages.JsonTipProvider_2, -1);
+			subMonitor.worked(1);
 			tips.forEach(parm -> result.add(createJsonTip(parm)));
+			subMonitor.worked(1);
 		} catch (Exception e) {
 			Status status = new Status(IStatus.ERROR, "org.eclipse.tips.json", e.getMessage(), e); //$NON-NLS-1$
 			getManager().log(status);
@@ -99,7 +101,6 @@ public abstract class JsonTipProvider extends TipProvider {
 		}
 		getManager().log(LogUtil.info(MessageFormat.format(Messages.JsonTipProvider_4, result.size() + ""))); //$NON-NLS-1$
 		setTips(result);
-		subMonitor.done();
 		return Status.OK_STATUS;
 	}
 

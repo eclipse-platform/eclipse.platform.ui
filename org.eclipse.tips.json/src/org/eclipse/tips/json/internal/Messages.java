@@ -1,11 +1,10 @@
-package org.eclipse.tips.json;
+package org.eclipse.tips.json.internal;
 
 import org.eclipse.osgi.util.NLS;
 
 public class Messages extends NLS {
 	private static final String BUNDLE_NAME = "org.eclipse.tips.json.messages"; //$NON-NLS-1$
 	public static String JsonTipProvider_1;
-	public static String JsonTipProvider_2;
 	public static String JsonTipProvider_4;
 	static {
 		// initialize resource bundle
