@@ -99,10 +99,9 @@ public class WorkbenchPreferenceInitializer extends AbstractPreferenceInitialize
 		// Temporary option to turn off the dialog font
 		node.putBoolean("DISABLE_DIALOG_FONT", false); //$NON-NLS-1$
 
-		// Heap status preferences
-		// FIXME this does not actually set the default since it is the wrong
-		// node. It works because the default-default is false.
-		node.putBoolean(IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR, false);
+		// Heap status preferences is stored in different node
+		IEclipsePreferences heapNode = context.getNode("org.eclipse.ui"); //$NON-NLS-1$
+		heapNode.putBoolean(IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR, true);
 		node.putInt(IHeapStatusConstants.PREF_UPDATE_INTERVAL, 500);
 		node.putBoolean(IHeapStatusConstants.PREF_SHOW_MAX, false);
 		node.putBoolean(IPreferenceConstants.OVERRIDE_PRESENTATION, false);
