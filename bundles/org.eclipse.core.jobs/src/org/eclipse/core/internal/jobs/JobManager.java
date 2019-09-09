@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,6 +19,7 @@
  *              Bug 105821, Support for Job#join with timeout and progress monitor
  *     Jan Koehnlein - Fix for bug 60964 (454698)
  *     Terry Parker - Bug 457504, Publish a job group's final status to IJobChangeListeners
+ *     Xored Software Inc - Fix for bug 550738
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
@@ -304,6 +305,8 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 		IProgressMonitor monitor = null;
 		boolean runCanceling = false;
 		synchronized (lock) {
+			// signal that the job should be canceled before it gets a chance to run
+			job.setAboutToRunCanceled(true);
 			switch (job.getState()) {
 				case Job.NONE :
 					return true;
@@ -316,8 +319,6 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 							job.setRunCanceled(true);
 						break;
 					}
-					//signal that the job should be canceled before it gets a chance to run
-					job.setAboutToRunCanceled(true);
 					return false;
 				default :
 					changeState(job, Job.NONE);
@@ -554,28 +555,44 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 	}
 
 	/**
-	 * Performs the scheduling of a job.  Does not perform any notifications.
+	 * Performs the scheduling of a job.
+	 *
+	 * @return true on success, false if cancelled, or scheduled by another thread
 	 */
-	private void doSchedule(InternalJob job, long delay) {
+	private boolean doSchedule(InternalJob job, long delay) {
+		boolean cancelling = false;
 		synchronized (lock) {
 			//job may have been canceled already
 			int state = job.internalGetState();
 			if (state != InternalJob.ABOUT_TO_SCHEDULE && state != Job.SLEEPING)
-				return;
-			//if it's a decoration job with no rule, don't run it right now if the system is busy
-			if (job.getPriority() == Job.DECORATE && job.getRule() == null) {
-				long minDelay = running.size() * 100;
-				delay = Math.max(delay, minDelay);
-			}
-			if (delay > 0) {
-				job.setStartTime(System.currentTimeMillis() + delay);
-				changeState(job, Job.SLEEPING);
+				return false;
+
+			if (job.isAboutToRunCanceled()) {
+				cancelling = true;
+				job.setResult(Status.CANCEL_STATUS);
+				job.setProgressMonitor(null);
+				job.setThread(null);
+				changeState(job, Job.NONE);
 			} else {
-				job.setStartTime(System.currentTimeMillis() + delayFor(job.getPriority()));
-				job.setWaitQueueStamp(waitQueueCounter.increment());
-				changeState(job, Job.WAITING);
+				// if it's a decoration job with no rule, don't run it right now if the system
+				// is busy
+				if (job.getPriority() == Job.DECORATE && job.getRule() == null) {
+					long minDelay = running.size() * 100;
+					delay = Math.max(delay, minDelay);
+				}
+				if (delay > 0) {
+					job.setStartTime(System.currentTimeMillis() + delay);
+					changeState(job, Job.SLEEPING);
+				} else {
+					job.setStartTime(System.currentTimeMillis() + delayFor(job.getPriority()));
+					job.setWaitQueueStamp(waitQueueCounter.increment());
+					changeState(job, Job.WAITING);
+				}
 			}
 		}
+		if (cancelling)
+			jobListeners.done((Job) job, Status.CANCEL_STATUS, false);
+		return !cancelling;
 	}
 
 	/**
@@ -1228,6 +1245,8 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 		Assert.isNotNull(job, "Job is null"); //$NON-NLS-1$
 		Assert.isLegal(delay >= 0, "Scheduling delay is negative"); //$NON-NLS-1$
 		synchronized (lock) {
+			if (!reschedule)
+				job.setAboutToRunCanceled(false);
 			//if the job is already running, set it to be rescheduled when done
 			if (job.getState() == Job.RUNNING) {
 				job.setStartTime(delay);
@@ -1610,7 +1629,6 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 							internal.jobStateLock.notifyAll();
 							break;
 						}
-						internal.setAboutToRunCanceled(false);
 						endJob = true;
 						//fall through and end the job below
 					}
@@ -1674,17 +1692,18 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 
 	protected void wakeUp(InternalJob job, long delay) {
 		Assert.isLegal(delay >= 0, "Scheduling delay is negative"); //$NON-NLS-1$
+		boolean scheduled;
 		synchronized (lock) {
 			//cannot wake up if it is not sleeping
 			if (job.getState() != Job.SLEEPING)
 				return;
-			doSchedule(job, delay);
+			scheduled = doSchedule(job, delay);
 		}
 		//call the pool outside sync block to avoid deadlock
 		pool.jobQueued();
 
 		//only notify of wake up if immediate
-		if (delay == 0)
+		if (scheduled && delay == 0)
 			jobListeners.awake((Job) job);
 	}
 
