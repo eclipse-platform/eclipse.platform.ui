@@ -65,10 +65,10 @@ Table {
 
 
 .MTrimmedWindow.topLevel {
-    margin-top: 3px;
-    margin-bottom: 3px;
-    margin-left: 3px;
-    margin-right: 3px;
+	margin-top: 0px;
+	margin-bottom: 0px;
+	margin-left: 1px;
+	margin-right: 1px;
 }
 
 .MPartStack, .MPart {
