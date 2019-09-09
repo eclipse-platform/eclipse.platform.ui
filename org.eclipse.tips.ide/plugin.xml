@@ -16,12 +16,6 @@
 
 <plugin>
    <extension
-         point="org.eclipse.ui.startup">
-      <startup
-            class="org.eclipse.tips.ide.internal.Startup">
-      </startup>
-   </extension>
-   <extension
          point="org.eclipse.ui.commands">
       <command
             defaultHandler="org.eclipse.tips.ide.internal.TipsHandler"

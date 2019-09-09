@@ -27,7 +27,7 @@ public class TipsHandler extends AbstractHandler {
 	public Object execute(ExecutionEvent event) throws ExecutionException {
 //		if (!IDETipManager.getInstance().isOpen()) {
 			IDETipManager.getInstance().open(false);
-			Startup.loadProviders();
+			TipsStartupService.loadProviders();
 //		}
 		return null;
 	}

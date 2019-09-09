@@ -24,20 +24,25 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.tips.core.TipProvider;
 import org.eclipse.tips.core.internal.TipManager;
-import org.eclipse.ui.IStartup;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.UIJob;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.event.Event;
+import org.osgi.service.event.EventConstants;
+import org.osgi.service.event.EventHandler;
 
 /**
  * Early startup to run the TipManager in the IDE.
  *
  */
+@Component(property = EventConstants.EVENT_TOPIC + '=' + UIEvents.UILifeCycle.APP_STARTUP_COMPLETE)
 @SuppressWarnings("restriction")
-public class Startup implements IStartup {
+public class TipsStartupService implements EventHandler {
 
 	private static final String DBLQUOTE = "\""; //$NON-NLS-1$
 	private static final String EQ = "="; //$NON-NLS-1$
@@ -48,7 +53,7 @@ public class Startup implements IStartup {
 	private static final String SPACE = " "; //$NON-NLS-1$
 
 	@Override
-	public void earlyStartup() {
+	public void handleEvent(Event event) {
 		if (!(TipsPreferences.getStartupBehavior() == TipManager.START_DISABLE)) {
 			Job job = new Job(Messages.Startup_1) {
 				@Override
@@ -59,7 +64,7 @@ public class Startup implements IStartup {
 
 				@Override
 				public boolean belongsTo(Object family) {
-					return Startup.class.equals(family);
+					return TipsStartupService.class.equals(family);
 				}
 			};
 			job.setSystem(true);
@@ -202,7 +207,7 @@ public class Startup implements IStartup {
 	}
 
 	private static void log(CoreException e) {
-		Bundle bundle = FrameworkUtil.getBundle(Startup.class);
+		Bundle bundle = FrameworkUtil.getBundle(TipsStartupService.class);
 		Status status = new Status(IStatus.ERROR, bundle.getSymbolicName(), e.getMessage(), e);
 		Platform.getLog(bundle).log(status);
 	}

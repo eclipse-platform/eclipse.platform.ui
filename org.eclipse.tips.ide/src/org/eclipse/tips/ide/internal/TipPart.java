@@ -14,7 +14,7 @@ public class TipPart {
 		Composite composite = new Composite(pParent, SWT.NONE);
 		composite.setLayout(new FillLayout());
 		IDETipManager manager = (IDETipManager) IDETipManager.getInstance();
-		Startup.loadProviders();
+		TipsStartupService.loadProviders();
 		new TipComposite(composite, SWT.NONE).setTipManager(manager);
 	}
 }
