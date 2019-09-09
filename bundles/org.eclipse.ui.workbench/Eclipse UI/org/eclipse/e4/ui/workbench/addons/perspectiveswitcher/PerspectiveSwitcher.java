@@ -167,41 +167,41 @@ public class PerspectiveSwitcher {
 	@Inject
 	@Optional
 	void handleToBeRenderedEvent(@UIEventTopic(UIEvents.UIElement.TOPIC_TOBERENDERED) Event event) {
-	
+
 		Object changedObj = event.getProperty(UIEvents.EventTags.ELEMENT);
 		if (!(changedObj instanceof MPerspective) || (ignoreEvent(changedObj))) {
 			return;
 		}
-	
+
 		MPerspective persp = (MPerspective) event.getProperty(UIEvents.EventTags.ELEMENT);
-	
+
 		if (!persp.getParent().isToBeRendered())
 			return;
-	
+
 		if (persp.isToBeRendered()) {
 			addPerspectiveItem(persp);
 		} else {
 			removePerspectiveItem(persp);
 		}
-	
+
 	}
 
 	@Inject
 	@Optional
 	void handleLabelEvent(@UIEventTopic(UIEvents.UILabel.TOPIC_ALL) Event event) {
-	
+
 		Object changedObj = event.getProperty(UIEvents.EventTags.ELEMENT);
 		if (!(changedObj instanceof MPerspective) || (ignoreEvent(changedObj))) {
 			return;
 		}
-	
+
 		MPerspective perspective = (MPerspective) changedObj;
-	
+
 		if (!perspective.isToBeRendered())
 		{
 			return;
 		}
-	
+
 		for (ToolItem ti : perspSwitcherToolbar.getItems()) {
 			if (ti.getData() == perspective) {
 				String attName = (String) event.getProperty(UIEvents.EventTags.ATTNAME);
@@ -209,7 +209,7 @@ public class PerspectiveSwitcher {
 				updateToolItem(ti, attName, newValue);
 			}
 		}
-	
+
 		// update the size
 		fixSize();
 	}
@@ -263,8 +263,8 @@ public class PerspectiveSwitcher {
 		comp = new Composite(parent, SWT.NONE);
 		RowLayout layout = new RowLayout(SWT.HORIZONTAL);
 		layout.marginLeft = layout.marginRight = 8;
-		layout.marginBottom = 4;
-		layout.marginTop = 6;
+		layout.marginBottom = 0;
+		layout.marginTop = 0;
 		comp.setLayout(layout);
 		perspSwitcherToolbar = new ToolBar(comp, SWT.FLAT | SWT.WRAP | SWT.RIGHT + orientation);
 		comp.addPaintListener(e -> paint(e));
