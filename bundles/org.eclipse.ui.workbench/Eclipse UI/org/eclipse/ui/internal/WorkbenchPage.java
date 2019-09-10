@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,6 +17,7 @@
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 411639, 372799, 466230
  *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 473063
  *     Stefan Prieschl <stefan.prieschl@gmail.com> - Bug 374132
+ *     Paul Pazderski <paul-eclipse@ppazderski.de> - Bug 549361
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -80,6 +81,7 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MStackElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
+import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
@@ -4867,6 +4869,9 @@ public class WorkbenchPage implements IWorkbenchPage {
 					return isVisible(perspective, parent);
 				}
 			} else if (parent == null) {
+				if (element instanceof MTrimmedWindow) {
+					return true;
+				}
 				MPlaceholder placeholder = element.getCurSharedRef();
 				return placeholder == null ? false : isVisible(perspective, placeholder);
 			} else {
