@@ -21,6 +21,7 @@
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 487297
  *     Daniel Kruegler <daniel.kruegler@gmail.com> - Bug 520926
  *     Christian Georgi (SAP SE) - Bug 540440
+ *     Paul Pazderski <paul-eclipse@ppazderski.de> - Bug 550950
  *******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -265,6 +266,7 @@ import org.eclipse.ui.wizards.IWizardRegistry;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.Constants;
+import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.framework.SynchronousBundleListener;
 import org.osgi.util.tracker.ServiceTracker;
@@ -587,6 +589,31 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 				// create the workbench instance
 				Workbench workbench = new Workbench(display, advisor, appModel, context);
 
+				Dictionary<String, Object> properties = new Hashtable<>();
+				properties.put(Constants.SERVICE_RANKING, Integer.valueOf(Integer.MAX_VALUE - 1));
+				ServiceRegistration<?> registration[] = new ServiceRegistration[1];
+				StartupMonitor startupMonitor = new StartupMonitor() {
+					@Override
+					public void applicationRunning() {
+						registration[0].unregister(); // unregister ourself
+						// fire part visibility events now that we're up
+						for (IWorkbenchWindow window : workbench.getWorkbenchWindows()) {
+							IWorkbenchPage page = window.getActivePage();
+							if (page != null) {
+								((WorkbenchPage) page).fireInitialPartVisibilityEvents();
+							}
+						}
+					}
+					@Override
+					public void update() {
+						// do nothing - we come into the picture far too late
+						// for this to be relevant
+					}
+				};
+				registration[0] = FrameworkUtil.getBundle(WorkbenchPlugin.class).getBundleContext()
+						.registerService(StartupMonitor.class.getName(), startupMonitor,
+						properties);
+
 				// listener for updating the splash screen
 				SynchronousBundleListener bundleListener = null;
 				createSplash = WorkbenchPlugin.isSplashHandleSpecified();
@@ -796,10 +823,10 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 						splashShell.setBackgroundImage(background);
 				}
 
-				Dictionary properties = new Hashtable();
+				Dictionary<String, Object> properties = new Hashtable<>();
 				properties.put(Constants.SERVICE_RANKING, Integer.valueOf(Integer.MAX_VALUE));
 				BundleContext context = WorkbenchPlugin.getDefault().getBundleContext();
-				final ServiceRegistration registration[] = new ServiceRegistration[1];
+				final ServiceRegistration<?> registration[] = new ServiceRegistration[1];
 				StartupMonitor startupMonitor = new StartupMonitor() {
 
 					@Override
@@ -810,14 +837,6 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 						if (splash != null)
 							splash.dispose();
 						WorkbenchPlugin.unsetSplashShell(display);
-
-						// fire part visibility events now that we're up
-						for (IWorkbenchWindow window : getWorkbenchWindows()) {
-							IWorkbenchPage page = window.getActivePage();
-							if (page != null) {
-								((WorkbenchPage) page).fireInitialPartVisibilityEvents();
-							}
-						}
 					}
 
 					@Override
