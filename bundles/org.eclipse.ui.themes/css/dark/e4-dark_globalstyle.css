@@ -140,8 +140,7 @@ TextSearchControl > Label {
 Text[style~='SWT.SEARCH'],
 Text[style~='SWT.SEARCH'] + Label /* SWT-BUG: adjacent sibling selector is ignored (CSS2.1) */ {
     /* search boxes */
-    background-color: #949DA5;
-    color: #ffffff;
+    background-color: #757575; /* background-color is hard-coded */
 }
 Text[style~='SWT.POP_UP'] {
     background-color: #34383B;

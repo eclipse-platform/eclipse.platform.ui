@@ -297,24 +297,3 @@ Form > LayoutComposite > LayoutComposite > Combo:selected,
     color: #FFF;
 }
 
-Text[style~='SWT.SEARCH'],
-/* the following are required due to Bug 419482: */
-Composite > Text[style~='SWT.SEARCH'],
-TabFolder > Composite > Text[style~='SWT.SEARCH'],
-TabFolder > Composite > * > Text[style~='SWT.SEARCH'],
-DocCommentOwnerComposite > Group > Text[style~='SWT.SEARCH'],
-TabFolder > Composite > ScrolledComposite > Text[style~='SWT.SEARCH'],
-Shell > Composite > Composite > Text[style~='SWT.SEARCH'],
-Composite > Composite > Composite > Group > Text[style~='SWT.SEARCH'],
-Shell > Composite > Composite > Composite > Text[style~='SWT.SEARCH'],
-ScrolledComposite > Composite > Composite > Composite > Text[style~='SWT.SEARCH'],
-Shell > Composite > Composite > Composite > Composite > Composite > Text[style~='SWT.SEARCH'],
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > Text[style~='SWT.SEARCH'],
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > * > Text[style~='SWT.SEARCH'],
-#org-eclipse-pde-runtime-LogView Text[style~='SWT.SEARCH'],
-Form > LayoutComposite > LayoutComposite > Text[style~='SWT.SEARCH'],
-.MPart LayoutComposite > * > LayoutComposite > Section > LayoutComposite > Text[style~='SWT.SEARCH'] {
-    /* search boxes */
-    background-color: #949da5; /* background-color is hard-coded */
-    color: #333;
-}
