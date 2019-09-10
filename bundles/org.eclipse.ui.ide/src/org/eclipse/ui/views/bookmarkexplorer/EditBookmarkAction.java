@@ -23,7 +23,14 @@ import org.eclipse.ui.internal.views.bookmarkexplorer.BookmarkMessages;
 
 /**
  * Opens a properties dialog allowing the user to edit the bookmark's description.
+ *
+ * Marked for deletion, see Bug 550439
+ *
+ * @noreference
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
+@Deprecated
 class EditBookmarkAction extends BookmarkAction {
 
 	protected EditBookmarkAction(BookmarkNavigator view) {

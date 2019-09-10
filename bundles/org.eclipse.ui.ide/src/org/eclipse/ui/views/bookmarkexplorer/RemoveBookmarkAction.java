@@ -26,7 +26,14 @@ import org.eclipse.ui.internal.views.bookmarkexplorer.BookmarkMessages;
 
 /**
  * Action to remove the selected bookmarks.
+ *
+ * Marked for deletion, see Bug 550439
+ * 
+ * @noreference
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
+@Deprecated
 class RemoveBookmarkAction extends BookmarkAction {
 
 	/**

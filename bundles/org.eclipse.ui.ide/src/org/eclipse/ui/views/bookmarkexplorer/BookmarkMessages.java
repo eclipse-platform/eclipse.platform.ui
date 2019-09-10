@@ -17,8 +17,15 @@ package org.eclipse.ui.views.bookmarkexplorer;
 
 /**
  * Utility class which helps managing messages
- * @deprecated These messages are not API and should not be referenced
- * outside of this plug-in.
+ *
+ * @deprecated These messages are not API and should not be referenced outside
+ *             of this plug-in.
+ *
+ * Marked for deletion, see Bug 550439
+ *
+ * @noreference
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
 @Deprecated
 class BookmarkMessages {

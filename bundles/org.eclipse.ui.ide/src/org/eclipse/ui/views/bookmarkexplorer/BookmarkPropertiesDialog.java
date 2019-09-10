@@ -27,7 +27,14 @@ import org.eclipse.ui.views.markers.internal.DialogMarkerProperties;
  * This class was made public in 3.3.
  *
  * @since 3.3
+ *
+ * Marked for deletion, see Bug 550439
+ *
+ * @noreference
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
+@Deprecated
 public class BookmarkPropertiesDialog extends DialogMarkerProperties {
 
 

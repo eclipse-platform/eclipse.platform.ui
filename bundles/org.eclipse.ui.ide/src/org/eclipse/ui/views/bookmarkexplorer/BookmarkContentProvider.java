@@ -30,6 +30,15 @@ import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.widgets.Control;
 
+/*
+*
+* Marked for deletion, see Bug 550439
+*
+* @noreference
+* @noinstantiate This class is not intended to be instantiated by clients.
+* @noextend This class is not intended to be subclassed by clients.
+*/
+@Deprecated
 /**
  * Provides content for the bookmark navigator
  */

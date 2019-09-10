@@ -31,7 +31,14 @@ import org.eclipse.ui.part.MarkerTransfer;
 
 /**
  * Pastes one or more bookmark(s) from the clipboard into the bookmark navigator.
+ *
+ * Marked for deletion, see Bug 550439
+ * 
+ * @noreference
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
+@Deprecated
 class PasteBookmarkAction extends BookmarkAction {
 
 	private BookmarkNavigator view;

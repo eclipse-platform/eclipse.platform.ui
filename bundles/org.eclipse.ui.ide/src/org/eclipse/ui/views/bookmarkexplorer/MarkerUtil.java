@@ -14,16 +14,24 @@
 
 package org.eclipse.ui.views.bookmarkexplorer;
 
-import com.ibm.icu.text.DateFormat;
 import java.util.Date;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
+import com.ibm.icu.text.DateFormat;
+
 /**
  * Utility class for accessing marker attributes.
+ *
+ * Marked for deletion, see Bug 550439
+ *
+ * @noreference
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
+@Deprecated
 class MarkerUtil {
 
 	/**

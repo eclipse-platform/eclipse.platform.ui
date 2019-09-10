@@ -28,7 +28,14 @@ import org.eclipse.ui.internal.views.bookmarkexplorer.BookmarkMessages;
 
 /**
  * Provides labels for the bookmark navigator table
+ *
+ * Marked for deletion, see Bug 550439
+ *
+ * @noreference
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
+@Deprecated
 class BookmarkLabelProvider extends LabelProvider implements
 		ITableLabelProvider {
 

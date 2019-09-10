@@ -82,13 +82,19 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.views.navigator.ShowInNavigatorAction;
 
 /**
- * Main class for the bookmark navigator for displaying bookmarks on
- * resources and opening an editor on the bookmarked resource when the user
- * commands.
+ * Main class for the bookmark navigator for displaying bookmarks on resources
+ * and opening an editor on the bookmarked resource when the user commands.
  * <p>
- * @deprecated This view is no longer in use as of Eclipse 3.4.
- * The view referenced by {@link IPageLayout#ID_BOOKMARKS} is an {@link ExtendedMarkersView}.
- * </p>
+ *
+ * @deprecated This view is no longer in use as of Eclipse 3.4. The view
+ *             referenced by {@link IPageLayout#ID_BOOKMARKS} is an
+ *             {@link ExtendedMarkersView}.
+ *             </p>
+ *
+ *
+ * Marked for deletion, see Bug 550439
+ *
+ * @noreference
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
  */

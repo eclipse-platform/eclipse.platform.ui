@@ -24,6 +24,15 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionProviderAction;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 
+/*
+*
+* Marked for deletion, see Bug 550439
+*
+* @noreference
+* @noinstantiate This class is not intended to be instantiated by clients.
+* @noextend This class is not intended to be subclassed by clients.
+*/
+@Deprecated
 /**
  * An abstract class for all bookmark view actions.
  */

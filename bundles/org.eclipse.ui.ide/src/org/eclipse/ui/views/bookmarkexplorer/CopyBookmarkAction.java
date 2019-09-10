@@ -31,7 +31,14 @@ import org.eclipse.ui.part.MarkerTransfer;
 
 /**
  * Copies one or more bookmark(s) to the clipboard.
+ *
+ * Marked for deletion, see Bug 550439
+ *
+ * @noreference
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
+@Deprecated
 class CopyBookmarkAction extends BookmarkAction {
 
 	/**

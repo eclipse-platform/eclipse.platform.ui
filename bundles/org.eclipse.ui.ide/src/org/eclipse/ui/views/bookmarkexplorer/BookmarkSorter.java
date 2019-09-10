@@ -20,6 +20,15 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 
+/*
+*
+* Marked for deletion, see Bug 550439
+*
+* @noreference
+* @noinstantiate This class is not intended to be instantiated by clients.
+* @noextend This class is not intended to be subclassed by clients.
+*/
+@Deprecated
 class BookmarkSorter extends ViewerComparator {
 
 	private int[] directions;

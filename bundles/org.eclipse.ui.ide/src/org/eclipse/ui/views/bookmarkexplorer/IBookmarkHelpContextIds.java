@@ -23,7 +23,13 @@ import org.eclipse.ui.PlatformUI;
  * or extended.
  * </p>
  *
+ * Marked for deletion, see Bug 550439
+ *
+ * @noreference
+ * @noinstantiate This class is not intended to be instantiated by clients.
+ * @noextend This class is not intended to be subclassed by clients.
  */
+@Deprecated
 interface IBookmarkHelpContextIds {
 	String PREFIX = PlatformUI.PLUGIN_ID + "."; //$NON-NLS-1$
 
