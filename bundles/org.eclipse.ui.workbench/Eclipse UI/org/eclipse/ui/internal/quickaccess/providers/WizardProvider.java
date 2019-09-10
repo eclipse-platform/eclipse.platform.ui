@@ -41,7 +41,7 @@ public class WizardProvider extends QuickAccessProvider {
 	private Map<String, WizardElement> idToElement = new HashMap<>();
 
 	@Override
-	public QuickAccessElement getElementForId(String id) {
+	public QuickAccessElement findElement(String id, String filter) {
 		getElements();
 		return idToElement.get(id);
 	}

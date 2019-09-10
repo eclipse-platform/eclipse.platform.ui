@@ -69,7 +69,7 @@ public class CommandProvider extends QuickAccessProvider {
 	}
 
 	@Override
-	public QuickAccessElement getElementForId(String id) {
+	public QuickAccessElement findElement(String id, String filterText) {
 		retrieveCommand(id);
 		return idToCommand.get(id);
 	}

@@ -15,7 +15,6 @@
 package org.eclipse.ui.internal.quickaccess.providers;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceManager;
@@ -38,18 +37,18 @@ import org.eclipse.ui.quickaccess.QuickAccessElement;
  */
 public class PropertiesProvider extends QuickAccessProvider {
 
-	private Map idToElement;
+	private Map<String, PropertiesElement> idToElement;
 
 	@Override
-	public QuickAccessElement getElementForId(String id) {
+	public QuickAccessElement findElement(String id, String filterText) {
 		getElements();
-		return (PropertiesElement) idToElement.get(id);
+		return idToElement.get(id);
 	}
 
 	@Override
 	public QuickAccessElement[] getElements() {
 		if (idToElement == null) {
-			idToElement = new HashMap();
+			idToElement = new HashMap<>();
 			IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 			if (activePage != null) {
 				PropertyPageManager pageManager = new PropertyPageManager();
@@ -57,16 +56,14 @@ public class PropertiesProvider extends QuickAccessProvider {
 				if (selection instanceof IStructuredSelection && !selection.isEmpty()) {
 					Object element = ((IStructuredSelection) selection).getFirstElement();
 					PropertyPageContributorManager.getManager().contribute(pageManager, element);
-					List list = pageManager.getElements(PreferenceManager.PRE_ORDER);
-					IPreferenceNode[] properties = (IPreferenceNode[]) list.toArray(new IPreferenceNode[list.size()]);
-					for (IPreferenceNode property : properties) {
+					for (IPreferenceNode property : pageManager.getElements(PreferenceManager.PRE_ORDER)) {
 						PropertiesElement propertiesElement = new PropertiesElement(element, property);
 						idToElement.put(propertiesElement.getId(), propertiesElement);
 					}
 				}
 			}
 		}
-		return (QuickAccessElement[]) idToElement.values().toArray(new QuickAccessElement[idToElement.values().size()]);
+		return idToElement.values().toArray(new QuickAccessElement[idToElement.values().size()]);
 	}
 
 	@Override

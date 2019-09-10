@@ -17,6 +17,7 @@
 package org.eclipse.ui.internal.quickaccess;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -85,7 +86,7 @@ public class QuickAccessDialog extends PopupDialog {
 	private Set<ModifyListener> toRemoveTextListeners;
 	private Text filterText;
 	private IWorkbenchWindow window;
-	private static final String TEXT_ARRAY = "textArray"; //$NON-NLS-1$
+	private static final String USER_INPUT_TEXTS = "textArray"; //$NON-NLS-1$
 	private static final String TEXT_ENTRIES = "textEntries"; //$NON-NLS-1$
 	private static final String ORDERED_PROVIDERS = "orderedProviders"; //$NON-NLS-1$
 	private static final String ORDERED_ELEMENTS = "orderedElements"; //$NON-NLS-1$
@@ -389,7 +390,7 @@ public class QuickAccessDialog extends PopupDialog {
 		dialogSettings.put(ORDERED_ELEMENTS, orderedElements);
 		dialogSettings.put(ORDERED_PROVIDERS, orderedProviders);
 		dialogSettings.put(TEXT_ENTRIES, textEntries);
-		dialogSettings.put(TEXT_ARRAY, textArray);
+		dialogSettings.put(USER_INPUT_TEXTS, textArray);
 	}
 
 	private void restorePreviousEntries() {
@@ -399,22 +400,31 @@ public class QuickAccessDialog extends PopupDialog {
 		}
 		String[] orderedElements = dialogSettings.getArray(ORDERED_ELEMENTS);
 		String[] orderedProviders = dialogSettings.getArray(ORDERED_PROVIDERS);
-		String[] textEntries = dialogSettings.getArray(TEXT_ENTRIES);
-		String[] textArray = dialogSettings.getArray(TEXT_ARRAY);
+		String[] rawTextEntriesCountByElement = dialogSettings.getArray(TEXT_ENTRIES);
+		String[] userInputTexts = dialogSettings.getArray(USER_INPUT_TEXTS);
 		elementMap = new HashMap<>();
 		textMap = new HashMap<>();
-		if (orderedElements != null && orderedProviders != null && textEntries != null && textArray != null) {
-			int arrayIndex = 0;
+		if (orderedElements != null && orderedProviders != null && rawTextEntriesCountByElement != null
+				&& userInputTexts != null) {
+			Integer[] textEntriesCountByElement = Arrays.stream(rawTextEntriesCountByElement).map(Integer::parseInt)
+					.toArray(Integer[]::new);
+			int inputTextIndex = 0;
 			for (int i = 0; i < orderedElements.length; i++) {
+				int numberOfMatchingTextsForCurrentElement = textEntriesCountByElement[i].intValue();
 				QuickAccessProvider quickAccessProvider = providerMap.get(orderedProviders[i]);
-				int numTexts = Integer.parseInt(textEntries[i]);
 				if (quickAccessProvider != null) {
-					QuickAccessElement quickAccessElement = quickAccessProvider.getElementForId(orderedElements[i]);
+					String firstText = null;
+					if (inputTextIndex < userInputTexts.length && numberOfMatchingTextsForCurrentElement >= 1) {
+						firstText = userInputTexts[inputTextIndex];
+					}
+					QuickAccessElement quickAccessElement = quickAccessProvider.findElement(orderedElements[i],
+							firstText);
 					if (quickAccessElement != null) {
 						contents.registerProviderFor(quickAccessElement, quickAccessProvider);
 						ArrayList<String> arrayList = new ArrayList<>();
-						for (int j = arrayIndex; j < arrayIndex + numTexts; j++) {
-							String text = textArray[j];
+						for (int j = inputTextIndex; j < inputTextIndex
+								+ numberOfMatchingTextsForCurrentElement; j++) {
+							String text = userInputTexts[j];
 							// text length can be zero for old workspaces,
 							// see bug 190006
 							if (!text.isEmpty()) {
@@ -426,7 +436,7 @@ public class QuickAccessDialog extends PopupDialog {
 						previousPicksProvider.elements.add(quickAccessElement);
 					}
 				}
-				arrayIndex += numTexts;
+				inputTextIndex += numberOfMatchingTextsForCurrentElement;
 			}
 		}
 	}

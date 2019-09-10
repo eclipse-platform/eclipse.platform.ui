@@ -163,9 +163,12 @@ public class QuickAccessExtensionManager {
 		}
 
 		@Override
-		public QuickAccessElement getElementForId(String id) {
-			getElementsSorted(null, new NullProgressMonitor()); // initialize content
-			return super.getElementForId(id);
+		public QuickAccessElement findElement(String id, String filterText) {
+			QuickAccessElement[] elementsSorted = getElementsSorted(filterText, new NullProgressMonitor());
+			return Arrays.stream(elementsSorted)
+					.filter(element -> element.getId().equals(id))
+					.findAny()
+					.orElse(null);
 		}
 
 	}

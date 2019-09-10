@@ -263,7 +263,7 @@ public abstract class QuickAccessContents {
 		}
 
 		@Override
-		public QuickAccessElement getElementForId(String id) {
+		public QuickAccessElement findElement(String id, String filterText) {
 			return null;
 		}
 
@@ -484,6 +484,9 @@ public abstract class QuickAccessContents {
 				}
 				if (filter.length() > 0 || provider.isAlwaysPresent() || showAllMatches) {
 					QuickAccessElement[] sortedElements = provider.getElementsSorted(filter, aMonitor);
+					if (sortedElements == null) {
+						sortedElements = new QuickAccessElement[0];
+					}
 					if (!(provider instanceof PreviousPicksProvider)) {
 						for (QuickAccessElement element : sortedElements) {
 							elementsToProviders.put(element, provider);
@@ -493,7 +496,7 @@ public abstract class QuickAccessContents {
 					// count previous picks and store ids
 					if (isPreviousPickProvider) {
 						prevPick = sortedElements.length;
-						Stream.of(sortedElements).forEach(e -> prevPickIds.add(e.getId()));
+						Stream.of(sortedElements).map(QuickAccessElement::getId).forEach(prevPickIds::add);
 					}
 
 					int j = indexPerProvider[i];
@@ -523,7 +526,7 @@ public abstract class QuickAccessContents {
 							}
 
 						}
-						if (entryEnabled(provider, entry)) {
+						if (entry != null) {
 							entries[i].add(entry);
 							count++;
 							countTotal++;
@@ -551,7 +554,7 @@ public abstract class QuickAccessContents {
 
 		if (!perfectMatchAdded) {
 			QuickAccessEntry entry = getMatcherFor(perfectMatch).match(filter, providers[0]);
-			if (entryEnabled(providers[0], entry)) {
+			if (entry != null) {
 				if (entries[0] == null) {
 					entries[0] = new ArrayList<>();
 					indexPerProvider[0] = 0;
@@ -588,28 +591,6 @@ public abstract class QuickAccessContents {
 			categoryPattern = Pattern.compile(regex, Pattern.CASE_INSENSITIVE);
 		}
 		return categoryPattern;
-	}
-
-	/**
-	 * @param provider
-	 * @param entry
-	 * @return <code>true</code> if the entry is enabled
-	 */
-	private boolean entryEnabled(QuickAccessProvider provider, QuickAccessEntry entry) {
-		if (entry == null) {
-			return false;
-		}
-
-		// For a previous pick provider, check that the original provider does
-		// also provide the element
-		if (provider instanceof PreviousPicksProvider) {
-			QuickAccessElement element = entry.element;
-			final QuickAccessProvider originalProvider = getProviderFor(element);
-			QuickAccessElement match = originalProvider.getElementForId(element.getId());
-			return match != null;
-		}
-
-		return true;
 	}
 
 	private void doDispose() {

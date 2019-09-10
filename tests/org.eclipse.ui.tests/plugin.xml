@@ -4631,6 +4631,11 @@
           name="Test Quick Access Computer"
           requiresUIAccess="false">
     </computer>
+    <computer
+          class="org.eclipse.ui.tests.quickaccess.TestIncrementalQuickAccessComputer"
+          name="Test Incremental Quick Access Computer"
+          requiresUIAccess="false">
+    </computer>
  </extension>
 
 </plugin>

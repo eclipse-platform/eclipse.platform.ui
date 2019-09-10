@@ -58,7 +58,7 @@ public class ViewProvider extends QuickAccessProvider {
 	}
 
 	@Override
-	public QuickAccessElement getElementForId(String id) {
+	public QuickAccessElement findElement(String id, String filter) {
 		getElements();
 		return idToElement.get(id);
 	}

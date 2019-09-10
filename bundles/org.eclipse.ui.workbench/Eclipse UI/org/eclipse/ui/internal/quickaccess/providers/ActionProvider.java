@@ -38,7 +38,7 @@ import org.eclipse.ui.quickaccess.QuickAccessElement;
  */
 public class ActionProvider extends QuickAccessProvider {
 
-	private Map idToElement;
+	private Map<String, ActionElement> idToElement;
 
 	@Override
 	public String getId() {
@@ -46,32 +46,31 @@ public class ActionProvider extends QuickAccessProvider {
 	}
 
 	@Override
-	public QuickAccessElement getElementForId(String id) {
+	public QuickAccessElement findElement(String id, String filterText) {
 		getElements();
-		return (ActionElement) idToElement.get(id);
+		return idToElement.get(id);
 	}
 
 	@Override
 	public QuickAccessElement[] getElements() {
 		if (idToElement == null) {
-			idToElement = new HashMap();
+			idToElement = new HashMap<>();
 			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 			if (window instanceof WorkbenchWindow) {
 				MenuManager menu = ((WorkbenchWindow) window).getMenuManager();
-				Set result = new HashSet();
+				Set<ActionContributionItem> result = new HashSet<>();
 				collectContributions(menu, result);
-				ActionContributionItem[] actions = (ActionContributionItem[]) result
-						.toArray(new ActionContributionItem[result.size()]);
+				ActionContributionItem[] actions = result.toArray(new ActionContributionItem[result.size()]);
 				for (ActionContributionItem action : actions) {
 					ActionElement actionElement = new ActionElement(action);
 					idToElement.put(actionElement.getId(), actionElement);
 				}
 			}
 		}
-		return (ActionElement[]) idToElement.values().toArray(new ActionElement[idToElement.values().size()]);
+		return idToElement.values().toArray(new ActionElement[idToElement.values().size()]);
 	}
 
-	private void collectContributions(MenuManager menu, Set result) {
+	private void collectContributions(MenuManager menu, Set<ActionContributionItem> result) {
 		for (IContributionItem item : menu.getItems()) {
 			if (item instanceof SubContributionItem) {
 				item = ((SubContributionItem) item).getInnerItem();
@@ -79,7 +78,7 @@ public class ActionProvider extends QuickAccessProvider {
 			if (item instanceof MenuManager) {
 				collectContributions((MenuManager) item, result);
 			} else if (item instanceof ActionContributionItem && item.isEnabled()) {
-				result.add(item);
+				result.add((ActionContributionItem) item);
 			}
 		}
 	}

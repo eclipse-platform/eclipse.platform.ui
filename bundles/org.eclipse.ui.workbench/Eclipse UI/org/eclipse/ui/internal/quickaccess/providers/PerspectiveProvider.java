@@ -42,7 +42,7 @@ public class PerspectiveProvider extends QuickAccessProvider {
 	}
 
 	@Override
-	public QuickAccessElement getElementForId(String id) {
+	public QuickAccessElement findElement(String id, String filterText) {
 		getElements();
 		return idToElement.get(id);
 	}

@@ -75,12 +75,15 @@ public abstract class QuickAccessProvider {
 	 * @return this provider's elements
 	 */
 	public QuickAccessElement[] getElements(String filter, IProgressMonitor monitor) {
-		return null;
+		return new QuickAccessElement[0];
 	}
 
 	public QuickAccessElement[] getElementsSorted(String filter, IProgressMonitor monitor) {
 		if (cacheSortedElements == null) {
 			cacheSortedElements = getElements();
+			if (cacheSortedElements == null) {
+				cacheSortedElements = new QuickAccessElement[0];
+			}
 			Arrays.sort(cacheSortedElements, Comparator.comparing(QuickAccessElement::getSortLabel));
 		}
 		if (filter == null) {
@@ -100,10 +103,12 @@ public abstract class QuickAccessProvider {
 	 * Returns the element for the given ID if available, or null if no matching
 	 * element is available.
 	 *
-	 * @param id the ID of an element
+	 * @param id         the ID of an element
+	 * @param filterText optional, user filter that was used to find this element
+	 *                   first. May be null.
 	 * @return the element with the given ID, or null if not found.
 	 */
-	public QuickAccessElement getElementForId(String id) {
+	public QuickAccessElement findElement(String id, String filterText) {
 		if (id == null) {
 			return null;
 		}
@@ -145,4 +150,5 @@ public abstract class QuickAccessProvider {
 	public boolean requiresUiAccess() {
 		return false;
 	}
+
 }
