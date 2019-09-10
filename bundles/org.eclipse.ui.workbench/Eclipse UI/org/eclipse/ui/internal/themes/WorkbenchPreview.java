@@ -111,17 +111,8 @@ public class WorkbenchPreview implements IThemePreview {
 		currentTheme.addPropertyChangeListener(fontAndColorListener);
 		setColorsAndFonts();
 		setTabPosition();
-		setTabStyle();
 	}
 
-	/**
-	 * Set the tab style from preferences.
-	 */
-	protected void setTabStyle() {
-		boolean traditionalTab = PlatformUI.getPreferenceStore()
-				.getBoolean(IWorkbenchPreferenceConstants.SHOW_TRADITIONAL_STYLE_TABS);
-		folder.setSimple(traditionalTab);
-	}
 
 	/**
 	 * Set the tab location from preferences.

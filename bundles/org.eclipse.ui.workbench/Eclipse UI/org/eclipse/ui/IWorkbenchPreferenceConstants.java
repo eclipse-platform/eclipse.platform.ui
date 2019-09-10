@@ -254,9 +254,11 @@ public interface IWorkbenchPreferenceConstants {
 	 * <p>
 	 * The default value for this preference is: <code>true</code>
 	 * </p>
-	 *
+	 * 
+	 * @deprecated not supported since the 4.x migration
 	 * @since 3.0
 	 */
+	@Deprecated
 	String SHOW_TRADITIONAL_STYLE_TABS = "SHOW_TRADITIONAL_STYLE_TABS"; //$NON-NLS-1$
 
 	/**
