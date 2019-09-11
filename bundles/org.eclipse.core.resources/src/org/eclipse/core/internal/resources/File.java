@@ -38,21 +38,20 @@ public class File extends Resource implements IFile {
 
 	@Override
 	public void appendContents(InputStream content, int updateFlags, IProgressMonitor monitor) throws CoreException {
-		monitor = Policy.monitorFor(monitor);
+		String message = NLS.bind(Messages.resources_settingContents, getFullPath());
+		SubMonitor subMonitor = SubMonitor.convert(monitor, message, 100);
 		try {
-			String message = NLS.bind(Messages.resources_settingContents, getFullPath());
-			monitor.beginTask(message, Policy.totalWork);
 			Assert.isNotNull(content, "Content cannot be null."); //$NON-NLS-1$
 			if (workspace.shouldValidate)
 				workspace.validateSave(this);
 			final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(this);
 			try {
-				workspace.prepareOperation(rule, monitor);
+				workspace.prepareOperation(rule, subMonitor.newChild(1));
 				ResourceInfo info = getResourceInfo(false, false);
 				checkAccessible(getFlags(info));
 				workspace.beginOperation(true);
 				IFileInfo fileInfo = getStore().fetchInfo();
-				internalSetContents(content, fileInfo, updateFlags, true, Policy.subMonitorFor(monitor, Policy.opWork));
+				internalSetContents(content, fileInfo, updateFlags, true, subMonitor.newChild(99));
 			} catch (OperationCanceledException e) {
 				workspace.getWorkManager().operationCanceled();
 				throw e;
@@ -60,7 +59,6 @@ public class File extends Resource implements IFile {
 				workspace.endOperation(rule, true);
 			}
 		} finally {
-			monitor.done();
 			FileUtil.safeClose(content);
 		}
 	}
@@ -98,15 +96,13 @@ public class File extends Resource implements IFile {
 
 	@Override
 	public void create(InputStream content, int updateFlags, IProgressMonitor monitor) throws CoreException {
-		final boolean monitorNull = monitor == null;
-		monitor = Policy.monitorFor(monitor);
+		String message = NLS.bind(Messages.resources_creating, getFullPath());
+		SubMonitor subMonitor = SubMonitor.convert(monitor, message, 100);
 		try {
-			String message = monitorNull ? "" : NLS.bind(Messages.resources_creating, getFullPath()); //$NON-NLS-1$
-			monitor.beginTask(message, Policy.totalWork);
 			checkValidPath(path, FILE, true);
 			final ISchedulingRule rule = workspace.getRuleFactory().createRule(this);
 			try {
-				workspace.prepareOperation(rule, monitor);
+				workspace.prepareOperation(rule, subMonitor.newChild(1));
 				checkDoesNotExist();
 				Container parent = (Container) getParent();
 				ResourceInfo info = parent.getResourceInfo(false, false);
@@ -144,13 +140,13 @@ public class File extends Resource implements IFile {
 						throw new ResourceException(IResourceStatus.FAILED_WRITE_LOCAL, getFullPath(), message, null);
 					}
 				}
-				monitor.worked(Policy.opWork * 40 / 100);
+				subMonitor.worked(40);
 
 				info = workspace.createResource(this, updateFlags);
 				boolean local = content != null;
 				if (local) {
 					try {
-						internalSetContents(content, localInfo, updateFlags, false, Policy.subMonitorFor(monitor, Policy.opWork * 60 / 100));
+						internalSetContents(content, localInfo, updateFlags, false, subMonitor.newChild(59));
 					} catch (CoreException e) {
 						// a problem happened creating the file on disk, so delete from the workspace and disk
 						workspace.deleteResource(this);
@@ -173,7 +169,6 @@ public class File extends Resource implements IFile {
 				workspace.endOperation(rule, true);
 			}
 		} finally {
-			monitor.done();
 			FileUtil.safeClose(content);
 		}
 	}
@@ -326,20 +321,19 @@ public class File extends Resource implements IFile {
 
 	@Override
 	public void setContents(InputStream content, int updateFlags, IProgressMonitor monitor) throws CoreException {
-		monitor = Policy.monitorFor(monitor);
+		String message = NLS.bind(Messages.resources_settingContents, getFullPath());
+		SubMonitor subMonitor = SubMonitor.convert(monitor, message, 100);
 		try {
-			String message = NLS.bind(Messages.resources_settingContents, getFullPath());
-			monitor.beginTask(message, Policy.totalWork);
 			if (workspace.shouldValidate)
 				workspace.validateSave(this);
 			final ISchedulingRule rule = workspace.getRuleFactory().modifyRule(this);
 			try {
-				workspace.prepareOperation(rule, monitor);
+				workspace.prepareOperation(rule, subMonitor.newChild(1));
 				ResourceInfo info = getResourceInfo(false, false);
 				checkAccessible(getFlags(info));
 				workspace.beginOperation(true);
 				IFileInfo fileInfo = getStore().fetchInfo();
-				internalSetContents(content, fileInfo, updateFlags, false, Policy.subMonitorFor(monitor, Policy.opWork));
+				internalSetContents(content, fileInfo, updateFlags, false, subMonitor.newChild(99));
 			} catch (OperationCanceledException e) {
 				workspace.getWorkManager().operationCanceled();
 				throw e;
@@ -347,7 +341,6 @@ public class File extends Resource implements IFile {
 				workspace.endOperation(rule, true);
 			}
 		} finally {
-			monitor.done();
 			FileUtil.safeClose(content);
 		}
 	}
@@ -402,30 +395,25 @@ public class File extends Resource implements IFile {
 
 	@Override
 	public void setCharset(String newCharset, IProgressMonitor monitor) throws CoreException {
-		monitor = Policy.monitorFor(monitor);
+		String message = NLS.bind(Messages.resources_settingCharset, getFullPath());
+		SubMonitor subMonitor = SubMonitor.convert(monitor, message, 100);
+		// need to get the project as a scheduling rule because we might be creating a new folder/file to
+		// hold the project settings
+		final ISchedulingRule rule = workspace.getRuleFactory().charsetRule(this);
 		try {
-			String message = NLS.bind(Messages.resources_settingCharset, getFullPath());
-			monitor.beginTask(message, Policy.totalWork);
-			// need to get the project as a scheduling rule because we might be creating a new folder/file to
-			// hold the project settings
-			final ISchedulingRule rule = workspace.getRuleFactory().charsetRule(this);
-			try {
-				workspace.prepareOperation(rule, monitor);
-				ResourceInfo info = getResourceInfo(false, false);
-				checkAccessible(getFlags(info));
-				workspace.beginOperation(true);
-				workspace.getCharsetManager().setCharsetFor(getFullPath(), newCharset);
-				info = getResourceInfo(false, true);
-				info.incrementCharsetGenerationCount();
-				monitor.worked(Policy.opWork);
-			} catch (OperationCanceledException e) {
-				workspace.getWorkManager().operationCanceled();
-				throw e;
-			} finally {
-				workspace.endOperation(rule, true);
-			}
+			workspace.prepareOperation(rule, subMonitor.newChild(1));
+			ResourceInfo info = getResourceInfo(false, false);
+			checkAccessible(getFlags(info));
+			workspace.beginOperation(true);
+			workspace.getCharsetManager().setCharsetFor(getFullPath(), newCharset);
+			info = getResourceInfo(false, true);
+			info.incrementCharsetGenerationCount();
+			subMonitor.worked(99);
+		} catch (OperationCanceledException e) {
+			workspace.getWorkManager().operationCanceled();
+			throw e;
 		} finally {
-			monitor.done();
+			workspace.endOperation(rule, true);
 		}
 	}
 
