@@ -81,10 +81,12 @@ public class TextUtilities {
 	 * @deprecated use {@link MultiStringMatcher#indexOf(CharSequence, int, String...)} instead.
 	 *             Notable differences:
 	 *             <ul>
-	 *             <li>new indexOf will tolerate <code>null</code> and empty search strings (old
-	 *             accepted empty but throw on <code>null</code>)</li>
-	 *             <li>new indexOf will <b>not</b> match empty string (old matched empty if nothing
-	 *             else matched)</li>
+	 *             <li>new matcher indexOf does not allow negative offsets (old matcher treated them
+	 *             as <code>0</code>)</li>
+	 *             <li>new matcher indexOf will tolerate <code>null</code> and empty search strings
+	 *             (old accepted empty but throw on <code>null</code>)</li>
+	 *             <li>new matcher indexOf will <b>not</b> match empty string (old matched empty if
+	 *             nothing else matched)</li>
 	 *             </ul>
 	 *             For the common case of searching the next default {@link #DELIMITERS delimiter}
 	 *             use the optimized {@link #nextDelimiter(CharSequence, int)} method instead.
@@ -97,6 +99,9 @@ public class TextUtilities {
 		Objects.requireNonNull(searchStrings);
 		for (String searchString : searchStrings) {
 			Objects.requireNonNull(searchString);
+		}
+		if (offset < 0) {
+			offset = 0; // for compatibility with old implementation
 		}
 		final MultiStringMatcher.Match match= MultiStringMatcher.indexOf(text, offset, searchStrings);
 		if (match != null) {

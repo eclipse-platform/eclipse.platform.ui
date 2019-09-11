@@ -281,6 +281,10 @@ public class TextUtilitiesTest {
 	@SuppressWarnings("deprecation")
 	public void testIndexOf() {
 		int[] result;
+		result = TextUtilities.indexOf(new String[0], "xxxxxxxxxx", 0);
+		assertEquals(-1, result[0]);
+		assertEquals(-1, result[1]);
+
 		result = TextUtilities.indexOf(new String[] { "a", "ab", "abc" }, "xxxxxxxxxx", 0);
 		assertEquals(-1, result[0]);
 		assertEquals(-1, result[1]);
@@ -311,6 +315,14 @@ public class TextUtilitiesTest {
 		assertEquals(0, result[0]);
 		assertEquals(0, result[1]);
 
+		result = TextUtilities.indexOf(new String[] { "abc" }, "foobarabcd", -5);
+		assertEquals(6, result[0]);
+		assertEquals(0, result[1]);
+
+		result = TextUtilities.indexOf(new String[] { "abc" }, "foobarabcd", 20);
+		assertEquals(-1, result[0]);
+		assertEquals(-1, result[1]);
+
 		try {
 			TextUtilities.indexOf(null, "foobarabcd", 0);
 			fail("Exception not thrown");
@@ -320,6 +332,13 @@ public class TextUtilitiesTest {
 
 		try {
 			TextUtilities.indexOf(new String[] { "abc", null }, "foobarabcd", 0);
+			fail("Exception not thrown");
+		} catch (NullPointerException ex) {
+			// expected
+		}
+
+		try {
+			TextUtilities.indexOf(new String[] { "abc" }, null, 0);
 			fail("Exception not thrown");
 		} catch (NullPointerException ex) {
 			// expected
