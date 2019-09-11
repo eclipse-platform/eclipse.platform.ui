@@ -589,7 +589,7 @@ public class TextUtilities {
 	 * @param text the text to be searched. Not <code>null</code>.
 	 * @param offset the offset in text at which to start the search
 	 * @return a <code>Map.Entry&lt;Integer, String&gt;</code> where key is index of found delimiter
-	 *         or <code>-1<code> if non found and value is the delimiter found or <code>null</code>
+	 *         or <code>-1</code> if non found and value is the delimiter found or <code>null</code>
 	 *         if non found. The return value itself is never <code>null</code>.
 	 * @since 3.10
 	 */
