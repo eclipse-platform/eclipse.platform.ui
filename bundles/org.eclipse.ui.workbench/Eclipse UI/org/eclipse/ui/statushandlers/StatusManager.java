@@ -424,7 +424,7 @@ public class StatusManager {
 	 * Unregisters the StatusManager from the workbench. Called by the framework
 	 * during shutdown, should not be called by client code.
 	 *
-	 * @since 3.116
+	 * @since 3.117
 	 */
 	public void unregister() {
 		Platform.removeLogListener(statusManagerLogListener);
