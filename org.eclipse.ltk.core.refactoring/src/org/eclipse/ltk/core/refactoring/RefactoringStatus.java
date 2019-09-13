@@ -227,7 +227,7 @@ public class RefactoringStatus {
 	 * @since 3.1
 	 */
 	public RefactoringStatusEntry getEntryWithHighestSeverity() {
-		if (fEntries == null || fEntries.size() == 0)
+		if (fEntries == null || fEntries.isEmpty())
 			return null;
 		RefactoringStatusEntry result= fEntries.get(0);
 		for (int i= 1; i < fEntries.size(); i++) {

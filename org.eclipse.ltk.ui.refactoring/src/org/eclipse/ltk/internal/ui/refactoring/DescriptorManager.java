@@ -47,7 +47,7 @@ public abstract class DescriptorManager {
 			}
 			descriptor.clear();
 		}
-		if (candidates.size() == 0)
+		if (candidates.isEmpty())
 			return null;
 		// No support for conflicts yet.
 		return candidates.get(0);

@@ -597,7 +597,7 @@ public abstract class TextChange extends TextEditBasedChange {
 			for (TextEditBasedChangeGroup change : changes) {
 				edits.addAll(Arrays.asList(change.getTextEditGroup().getTextEdits()));
 			}
-			if (edits.size() == 0)
+			if (edits.isEmpty())
 				return null;
 			return TextEdit.getCoverage(edits.toArray(new TextEdit[edits.size()]));
 		}
@@ -618,7 +618,7 @@ public abstract class TextChange extends TextEditBasedChange {
 						result.add(copy);
 				}
 			}
-			if (result.size() == 0)
+			if (result.isEmpty())
 				return null;
 			return TextEdit.getCoverage(result.toArray(new TextEdit[result.size()]));
 		}
