@@ -132,6 +132,12 @@ public class SearchField {
 			res.setImage(image);
 			res.addDisposeListener(e -> image.dispose());
 		}
+		res.addMenuDetectListener(e -> {
+			if (res.getMenu() == null) {
+				res.setMenu(parent.getMenu());
+				e.doit = true;
+			}
+		});
 		return res;
 	}
 
