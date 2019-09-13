@@ -24,5 +24,6 @@
   
   <properties>
     <code.ignoredWarnings>-warn:-deprecation,raw,unchecked</code.ignoredWarnings>
+    <skipAPIAnalysis>true</skipAPIAnalysis>
   </properties>	
 </project>
