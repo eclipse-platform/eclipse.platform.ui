@@ -35,7 +35,6 @@ import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridLayout;
@@ -83,7 +82,6 @@ public class SearchField {
 			// release mouse button = click = CTRL+3 -> activate QuickAccess
 			activate(previousFocusControl);
 		}));
-		quickAccessButton.addFocusListener(FocusListener.focusGainedAdapter(e -> activate(previousFocusControl)));
 	}
 
 	@Inject
@@ -144,32 +142,11 @@ public class SearchField {
 		updateQuickAccessTriggerSequence();
 
 		if (triggerSequence != null) {
-//			txtQuickAccess.setMessage(
-//					NLS.bind(QuickAccessMessages.QuickAccess_EnterSearch_Shortcut, triggerSequence.format()));
 			quickAccessButton.setToolTipText(
 					NLS.bind(QuickAccessMessages.QuickAccess_TooltipDescription, triggerSequence.format()));
 		} else {
-//			txtQuickAccess.setMessage(QuickAccessMessages.QuickAccess_EnterSearch);
 			quickAccessButton.setToolTipText(QuickAccessMessages.QuickAccess_TooltipDescription_Empty);
 		}
-
-//		GC gc = new GC(quickAccessButton);
-//
-//		// workaround for Bug 491317
-//		if (Util.isWin32() || Util.isGtk()) {
-//			FontMetrics fm = gc.getFontMetrics();
-//			int wHint = QuickAccessMessages.QuickAccess_EnterSearch.length() * fm.getAverageCharWidth();
-//			int hHint = fm.getHeight();
-//			gc.dispose();
-//			quickAccessButton.setSize(quickAccessButton.computeSize(wHint, hHint));
-//		} else {
-//			Point p = gc.textExtent(QuickAccessMessages.QuickAccess_EnterSearch);
-//			Rectangle r = quickAccessButton.computeTrim(0, 0, p.x, p.y);
-//			gc.dispose();
-//
-//			// computeTrim() may result in r.x < 0
-//			GridDataFactory.fillDefaults().hint(r.width - r.x, SWT.DEFAULT).applyTo(txtQuickAccess);
-//		}
 		quickAccessButton.requestLayout();
 
 	}
