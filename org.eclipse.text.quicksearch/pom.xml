@@ -22,8 +22,4 @@
 	<artifactId>org.eclipse.text.quicksearch</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>eclipse-plugin</packaging>
-
-	<properties>
-		<skipAPIAnalysis>true</skipAPIAnalysis> <!-- https://bugs.eclipse.org/bugs/show_bug.cgi?id=548518#c41 -->
-	</properties>
 </project>
