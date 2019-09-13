@@ -18,6 +18,7 @@ import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
+import org.eclipse.jface.text.quickassist.IQuickAssistProcessor;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -43,6 +44,7 @@ public class GenericEditorPlugin extends AbstractUIPlugin {
 
 	private TextHoverRegistry textHoversRegistry;
 	private ContentAssistProcessorRegistry contentAssistProcessorsRegistry;
+	private QuickAssistProcessorRegistry quickAssistProcessorRegistry;
 	private ReconcilerRegistry reconcilierRegistry;
 	private PresentationReconcilerRegistry presentationReconcilierRegistry;
 	private AutoEditStrategyRegistry autoEditStrategyRegistry;
@@ -104,6 +106,18 @@ public class GenericEditorPlugin extends AbstractUIPlugin {
 			this.contentAssistProcessorsRegistry = new ContentAssistProcessorRegistry();
 		}
 		return this.contentAssistProcessorsRegistry;
+	}
+
+	/**
+	 * @return the registry allowing to access contributed
+	 *         {@link IQuickAssistProcessor}s.
+	 * @since 1.2
+	 */
+	public synchronized QuickAssistProcessorRegistry getQuickAssistProcessorRegistry() {
+		if (this.quickAssistProcessorRegistry == null) {
+			this.quickAssistProcessorRegistry = new QuickAssistProcessorRegistry();
+		}
+		return this.quickAssistProcessorRegistry;
 	}
 
 	/**

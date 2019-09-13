@@ -29,6 +29,7 @@ import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -58,7 +59,7 @@ public class CompletionTest extends AbstratGenericEditorTest {
 		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
 		editor.selectAndReveal(3, 0);
 		openConentAssist();
-		this.completionShell= findNewShell(beforeShells);
+		this.completionShell= findNewShell(beforeShells, editor.getSite().getShell().getDisplay());
 		final Table completionProposalList = findCompletionSelectionControl(completionShell);
 		checkCompletionContent(completionProposalList);
 		// TODO find a way to actually trigger completion and verify result against Editor content
@@ -71,7 +72,7 @@ public class CompletionTest extends AbstratGenericEditorTest {
 		editor.getDocumentProvider().getDocument(editor.getEditorInput()).set("abc");
 		editor.selectAndReveal(0, 3);
 		openConentAssist();
-		this.completionShell= findNewShell(beforeShells);
+		this.completionShell= findNewShell(beforeShells, editor.getSite().getShell().getDisplay());
 		final Table completionProposalList = findCompletionSelectionControl(completionShell);
 		assertTrue(new DisplayHelper() {
 			@Override
@@ -102,7 +103,7 @@ public class CompletionTest extends AbstratGenericEditorTest {
 		final Set<Shell> beforeEnabledShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
 		editor.selectAndReveal(3, 0);
 		openConentAssist();
-		assertNotNull(findNewShell(beforeEnabledShells));
+		assertNotNull(findNewShell(beforeEnabledShells, editor.getSite().getShell().getDisplay()));
 	}
 
 	private void openConentAssist() {
@@ -147,8 +148,8 @@ public class CompletionTest extends AbstratGenericEditorTest {
 		assertEquals("Addition of completion proposal should keep selection", selectedProposal, completionProposalList.getSelection()[0].getData());
 	}
 
-	private Shell findNewShell(Set<Shell> beforeShells) {
-		Shell[] afterShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells())
+	public static Shell findNewShell(Set<Shell> beforeShells, Display display) {
+		Shell[] afterShells = Arrays.stream(display.getShells())
 				.filter(Shell::isVisible)
 				.filter(shell -> !beforeShells.contains(shell))
 				.toArray(Shell[]::new);
@@ -161,7 +162,7 @@ public class CompletionTest extends AbstratGenericEditorTest {
 		final Set<Shell> beforeShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
 		editor.selectAndReveal(3, 0);
 		openConentAssist();
-		this.completionShell= findNewShell(beforeShells);
+		this.completionShell= findNewShell(beforeShells, editor.getSite().getShell().getDisplay());
 		final Table completionProposalList = findCompletionSelectionControl(this.completionShell);
 		// should be instantaneous, but happens to go asynchronous on CI so let's allow a wait
 		new DisplayHelper() {
@@ -188,7 +189,7 @@ public class CompletionTest extends AbstratGenericEditorTest {
 		testCompletion();
 		emulatePressLeftArrowKey();
 		DisplayHelper.sleep(editor.getSite().getShell().getDisplay(), LongRunningBarContentAssistProcessor.DELAY + 500); // adding delay is a workaround for bug521484, use only 100ms without the bug
-		this.completionShell= findNewShell(beforeShells);
+		this.completionShell= findNewShell(beforeShells, editor.getSite().getShell().getDisplay());
 		final Table completionProposalList = findCompletionSelectionControl(this.completionShell);
 		assertEquals("Missing proposals from a Processor", 2, completionProposalList.getItemCount()); // replace with line below when #5214894 is done
 		// checkCompletionContent(completionProposalList); // use this instead of assert above when #521484 is done
@@ -205,7 +206,7 @@ public class CompletionTest extends AbstratGenericEditorTest {
 		styledText.notifyListeners(ST.VerifyKey, e);
 	}
 
-	private Table findCompletionSelectionControl(Widget control) {
+	public static Table findCompletionSelectionControl(Widget control) {
 		if (control instanceof Table) {
 			return (Table)control;
 		} else if (control instanceof Composite) {

@@ -279,4 +279,11 @@
              contentType="org.eclipse.ui.genericeditor.tests.sub-specialized-content-type"
              icon="platform:/plugin/org.eclipse.ui.ide/icons/full/etool16/newprj_wiz.png"/>
     </extension>
+    <extension
+          point="org.eclipse.ui.genericeditor.quickAssistProcessors">
+       <quickAssistProcessor
+             class="org.eclipse.ui.genericeditor.tests.contributions.QuickAssistProcessor"
+             contentType="org.eclipse.ui.genericeditor.tests.content-type">
+       </quickAssistProcessor>
+    </extension>
 </plugin>

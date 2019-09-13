@@ -17,6 +17,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.genericeditor;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
@@ -44,6 +45,7 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContentAssistant;
 import org.eclipse.jface.text.presentation.IPresentationReconciler;
 import org.eclipse.jface.text.quickassist.IQuickAssistAssistant;
+import org.eclipse.jface.text.quickassist.IQuickAssistProcessor;
 import org.eclipse.jface.text.quickassist.QuickAssistAssistant;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -192,7 +194,11 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 
 	@Override public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer) {
 		QuickAssistAssistant quickAssistAssistant = new QuickAssistAssistant();
-		quickAssistAssistant.setQuickAssistProcessor(new MarkerResoltionQuickAssistProcessor());
+		List<IQuickAssistProcessor> quickAssistProcessors = new ArrayList<IQuickAssistProcessor>();
+		quickAssistProcessors.add(new MarkerResoltionQuickAssistProcessor());
+		quickAssistProcessors.addAll(GenericEditorPlugin.getDefault().getQuickAssistProcessorRegistry().getQuickAssistProcessors(sourceViewer, editor, getContentTypes(sourceViewer)));
+		CompositeQuickAssistProcessor compQuickAssistProcessor = new CompositeQuickAssistProcessor(quickAssistProcessors);
+		quickAssistAssistant.setQuickAssistProcessor(compQuickAssistProcessor);
 		quickAssistAssistant.setRestoreCompletionProposalSize(EditorsPlugin.getDefault().getDialogSettingsSection("quick_assist_proposal_size")); //$NON-NLS-1$
 		quickAssistAssistant.setInformationControlCreator(parent -> new DefaultInformationControl(parent, EditorsPlugin.getAdditionalInfoAffordanceString()));
 		return quickAssistAssistant;
