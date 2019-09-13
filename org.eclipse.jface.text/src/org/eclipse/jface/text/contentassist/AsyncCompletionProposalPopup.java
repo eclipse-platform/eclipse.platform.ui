@@ -32,7 +32,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 
 import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
@@ -231,21 +230,27 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 					}
 					List<ICompletionProposal> newProposals= new ArrayList<>(computedProposals);
 					fComputedProposals= newProposals;
-					Display.getDefault().asyncExec(() -> {
-						if (autoInsert && !autoActivated && remaining.isEmpty() && newProposals.size() == 1 && canAutoInsert(newProposals.get(0))) {
-							if (Helper.okToUse(fProposalShell)) {
-								insertProposal(newProposals.get(0), (char) 0, 0, offset);
-								hide();
+					Control control= fContentAssistSubjectControlAdapter.getControl();
+					if (!control.isDisposed()) {
+						control.getDisplay().asyncExec(() -> {
+							// Don't run anything if offset has changed while runnable was scheduled (i.e. filtering might have occurred for fast CA)
+							if (offset == fInvocationOffset) {
+								if (autoInsert && !autoActivated && remaining.isEmpty() && newProposals.size() == 1 && canAutoInsert(newProposals.get(0))) {
+									if (Helper.okToUse(fProposalShell)) {
+										insertProposal(newProposals.get(0), (char) 0, 0, offset);
+										hide();
+									}
+									return;
+								}
+								if (remaining.isEmpty() && callback != null) {
+									callback.accept(newProposals);
+								} else {
+									setProposals(newProposals, false);
+									displayProposals();
+								}
 							}
-							return;
-						}
-						if (remaining.isEmpty() && callback != null) {
-							callback.accept(newProposals);
-						} else {
-							setProposals(newProposals, false);
-							displayProposals();
-						}
-					});
+						});
+					}
 				});
 			}
 			displayProposals();
