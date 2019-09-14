@@ -75,11 +75,7 @@ public class WorkspaceDescriptionReader implements IModelObjectConstants {
 			DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 			Document document = parser.parse(input);
 			return read(document.getFirstChild());
-		} catch (IOException e) {
-			// ignore
-		} catch (SAXException e) {
-			// ignore
-		} catch (ParserConfigurationException e) {
+		} catch (IOException | SAXException | ParserConfigurationException e) {
 			// ignore
 		}
 		return null;

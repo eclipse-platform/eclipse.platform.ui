@@ -147,13 +147,11 @@ public class File extends Resource implements IFile {
 				if (local) {
 					try {
 						internalSetContents(content, localInfo, updateFlags, false, subMonitor.newChild(59));
-					} catch (CoreException e) {
-						// a problem happened creating the file on disk, so delete from the workspace and disk
-						workspace.deleteResource(this);
-						store.delete(EFS.NONE, null);
-						throw e; // rethrow
-					} catch (OperationCanceledException e) {
-						// the operation of setting contents has been canceled, so delete the file from the workspace and disk
+					} catch (CoreException | OperationCanceledException e) {
+						// CoreException when a problem happened creating the file on disk
+						// OperationCanceledException when the operation of setting contents has been
+						// canceled
+						// In either case delete from the workspace and disk
 						workspace.deleteResource(this);
 						store.delete(EFS.NONE, null);
 						throw e;

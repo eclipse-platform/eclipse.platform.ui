@@ -444,9 +444,7 @@ public class UnifiedTree {
 					}
 					rootPathHistory.insertShorter(rootFile.getCanonicalPath() + '/');
 				}
-			} catch (CoreException e) {
-				/*ignore*/
-			} catch (IOException e) {
+			} catch (CoreException | IOException e) {
 				/*ignore*/
 			}
 		}
@@ -535,9 +533,7 @@ public class UnifiedTree {
 				//It probably spans up a new tree of potential prefixes.
 				rootPathHistory.insertShorter(childPath);
 			}
-		} catch (IOException e) {
-			//ignore
-		} catch (CoreException e) {
+		} catch (IOException | CoreException e) {
 			//ignore
 		}
 		return false;

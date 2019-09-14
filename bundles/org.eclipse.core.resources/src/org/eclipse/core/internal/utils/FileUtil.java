@@ -299,9 +299,7 @@ public class FileUtil {
 						return "\r\n"; //$NON-NLS-1$
 					return "\r"; //$NON-NLS-1$
 				}
-			} catch (CoreException e) {
-				// ignore
-			} catch (IOException e) {
+			} catch (CoreException | IOException e) {
 				// ignore
 			}
 		}
