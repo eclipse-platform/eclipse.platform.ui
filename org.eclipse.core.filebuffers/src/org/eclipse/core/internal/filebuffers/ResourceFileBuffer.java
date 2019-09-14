@@ -315,10 +315,7 @@ public abstract class ResourceFileBuffer extends AbstractFileBuffer {
 
 			try {
 				commitFileBufferContent(monitor, overwrite);
-			} catch (CoreException x) {
-				fManager.fireStateChangeFailed(this);
-				throw x;
-			} catch (RuntimeException x) {
+			} catch (CoreException | RuntimeException x) {
 				fManager.fireStateChangeFailed(this);
 				throw x;
 			}

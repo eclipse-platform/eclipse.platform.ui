@@ -353,9 +353,7 @@ public class FileStoreTextFileBuffer extends FileStoreFileBuffer implements ITex
 				if (fEncoding == null)
 					fEncoding= description.getCharset();
 			}
-		} catch (CoreException e) {
-			// do nothing
-		} catch (IOException e) {
+		} catch (CoreException | IOException e) {
 			// do nothing
 		}
 
