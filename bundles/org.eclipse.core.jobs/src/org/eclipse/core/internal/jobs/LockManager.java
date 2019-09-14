@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
+import java.util.ArrayDeque;
 import java.util.HashMap;
-import java.util.Stack;
 import org.eclipse.core.internal.runtime.RuntimeLog;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -79,7 +79,7 @@ public class LockManager {
 	 * (a stack is needed because when a thread tries to re-acquire suspended locks,
 	 * it can cause deadlock, and some locks it owns can be suspended again)
 	 */
-	private HashMap<Thread, Stack<LockState[]>> suspendedLocks = new HashMap<>();
+	private final HashMap<Thread, ArrayDeque<LockState[]>> suspendedLocks = new HashMap<>();
 
 	public void aboutToRelease() {
 		if (lockListener == null)
@@ -158,9 +158,9 @@ public class LockManager {
 			for (int i = 0; i < toSuspend.length; i++)
 				suspended[i] = LockState.suspend((OrderedLock) toSuspend[i]);
 			synchronized (suspendedLocks) {
-				Stack<LockState[]> prevLocks = suspendedLocks.get(found.getCandidate());
+				ArrayDeque<LockState[]> prevLocks = suspendedLocks.get(found.getCandidate());
 				if (prevLocks == null)
-					prevLocks = new Stack<>();
+					prevLocks = new ArrayDeque<>();
 				prevLocks.push(suspended);
 				suspendedLocks.put(found.getCandidate(), prevLocks);
 			}
@@ -310,11 +310,11 @@ public class LockManager {
 	void resumeSuspendedLocks(Thread owner) {
 		LockState[] toResume;
 		synchronized (suspendedLocks) {
-			Stack prevLocks = suspendedLocks.get(owner);
+			ArrayDeque prevLocks = suspendedLocks.get(owner);
 			if (prevLocks == null)
 				return;
 			toResume = (LockState[]) prevLocks.pop();
-			if (prevLocks.empty())
+			if (prevLocks.isEmpty())
 				suspendedLocks.remove(owner);
 		}
 		for (LockState element : toResume)
