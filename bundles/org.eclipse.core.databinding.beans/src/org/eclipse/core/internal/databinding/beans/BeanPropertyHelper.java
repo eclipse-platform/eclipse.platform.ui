@@ -57,9 +57,7 @@ public class BeanPropertyHelper {
 						"Missing public setter method for " //$NON-NLS-1$
 								+ propertyDescriptor.getName() + " property"); //$NON-NLS-1$
 			}
-			if (!writeMethod.isAccessible()) {
-				writeMethod.setAccessible(true);
-			}
+			setAccessible(writeMethod);
 			writeMethod.invoke(source, value);
 		} catch (InvocationTargetException e) {
 			/*
@@ -94,9 +92,7 @@ public class BeanPropertyHelper {
 				throw new IllegalArgumentException(propertyDescriptor.getName()
 						+ " property does not have a read method."); //$NON-NLS-1$
 			}
-			if (!readMethod.isAccessible()) {
-				readMethod.setAccessible(true);
-			}
+			setAccessible(readMethod);
 			return readMethod.invoke(source);
 		} catch (InvocationTargetException e) {
 			/*
@@ -112,6 +108,20 @@ public class BeanPropertyHelper {
 							IStatus.OK,
 							"Could not read value of " + source + "." + propertyDescriptor.getName(), e)); //$NON-NLS-1$ //$NON-NLS-2$
 			return null;
+		}
+	}
+
+	/**
+	 * Wrapper around deprecated {@link Method#isAccessible}. Using that method is
+	 * still the right thing to do, even in presence of the new methods
+	 * {@link Method#canAccess} and {@link Method#trySetAccessible}, since we only
+	 * do that to avoid redundant calls to {@link Method#setAccessible}, and the
+	 * permission check that entails.
+	 */
+	@SuppressWarnings("deprecation")
+	static void setAccessible(Method method) {
+		if (!method.isAccessible()) {
+			method.setAccessible(true);
 		}
 	}
 

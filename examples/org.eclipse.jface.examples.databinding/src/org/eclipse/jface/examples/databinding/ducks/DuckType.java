@@ -104,9 +104,7 @@ public class DuckType implements InvocationHandler {
 			return object;
 		}
 		Method realMethod = objectClass.getMethod(method.getName(), method.getParameterTypes());
-		if (!realMethod.isAccessible()) {
-			realMethod.setAccessible(true);
-		}
+		realMethod.setAccessible(true);
 		return realMethod.invoke(object, args);
 	}
 

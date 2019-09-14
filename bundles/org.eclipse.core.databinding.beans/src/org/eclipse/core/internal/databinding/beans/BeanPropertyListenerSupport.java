@@ -103,9 +103,7 @@ public class BeanPropertyListenerSupport {
 		}
 
 		if (method != null) {
-			if (!method.isAccessible()) {
-				method.setAccessible(true);
-			}
+			BeanPropertyHelper.setAccessible(method);
 			try {
 				method.invoke(bean, parameters);
 				return true;
