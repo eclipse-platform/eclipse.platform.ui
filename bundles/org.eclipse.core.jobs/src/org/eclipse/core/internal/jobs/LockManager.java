@@ -81,10 +81,6 @@ public class LockManager {
 	 */
 	private HashMap<Thread, Stack<LockState[]>> suspendedLocks = new HashMap<>();
 
-	public LockManager() {
-		super();
-	}
-
 	public void aboutToRelease() {
 		if (lockListener == null)
 			return;
