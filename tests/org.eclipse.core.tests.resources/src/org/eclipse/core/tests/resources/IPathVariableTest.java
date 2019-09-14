@@ -784,9 +784,7 @@ public class IPathVariableTest extends ResourceTest {
 				out.write(dorProjectContent);
 			}
 			existingProject.open(getMonitor());
-		} catch (CoreException e) {
-			fail("1.99", e);
-		} catch (IOException e) {
+		} catch (CoreException | IOException e) {
 			fail("1.99", e);
 		}
 

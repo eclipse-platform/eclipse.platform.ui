@@ -32,9 +32,7 @@ public class Test342968FileSystem extends FileSystem {
 	public IFileStore getStore(URI uri) {
 		try {
 			return new Test342968FileStore(EFS.getStore(new URI(EFS.getLocalFileSystem().getScheme(), uri.getHost(), uri.getPath(), uri.getFragment())));
-		} catch (CoreException e) {
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
+		} catch (CoreException | URISyntaxException e) {
 			e.printStackTrace();
 		}
 		return null;

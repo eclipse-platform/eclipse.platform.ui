@@ -180,9 +180,7 @@ public class WorkspaceConcurrencyTest extends ResourceTest {
 		IResourceChangeListener listener = event -> {
 			try {
 				touch.touch(null);
-			} catch (CoreException e1) {
-				failure[0] = e1;
-			} catch (RuntimeException e2) {
+			} catch (CoreException | RuntimeException e2) {
 				failure[0] = e2;
 			}
 		};

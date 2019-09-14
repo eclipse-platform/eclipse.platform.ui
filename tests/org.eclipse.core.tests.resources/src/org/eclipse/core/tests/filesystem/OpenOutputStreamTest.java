@@ -54,9 +54,7 @@ public class OpenOutputStreamTest extends FileSystemTest {
 			assertEquals("1.0", BYTE_ONE, in.read());
 			assertEquals("1.1", BYTE_TWO, in.read());
 			assertEquals("1.2", EOF, in.read());
-		} catch (CoreException e) {
-			fail("4.99", e);
-		} catch (IOException e) {
+		} catch (CoreException | IOException e) {
 			fail("4.99", e);
 		}
 

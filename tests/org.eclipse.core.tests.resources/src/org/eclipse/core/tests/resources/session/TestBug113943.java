@@ -52,9 +52,7 @@ public class TestBug113943 extends WorkspaceSerializationTest {
 			assertTrue("1.1", linkChild.exists());
 
 			getWorkspace().save(true, getMonitor());
-		} catch (CoreException e) {
-			fail("1.99", e);
-		} catch (IOException e) {
+		} catch (CoreException | IOException e) {
 			fail("1.99", e);
 		}
 	}

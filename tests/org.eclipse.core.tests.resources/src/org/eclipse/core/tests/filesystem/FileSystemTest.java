@@ -86,9 +86,7 @@ public abstract class FileSystemTest extends CoreTest {
 				assertTrue("1.5", info.exists());
 				assertTrue("1.6", !info.isDirectory());
 			}
-		} catch (CoreException e) {
-			fail("ensureExists", e);
-		} catch (IOException e) {
+		} catch (CoreException | IOException e) {
 			fail("ensureExists", e);
 		}
 

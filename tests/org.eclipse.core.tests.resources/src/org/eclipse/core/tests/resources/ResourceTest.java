@@ -805,9 +805,7 @@ public abstract class ResourceTest extends CoreTest {
 					}
 					return "\r"; //$NON-NLS-1$
 				}
-			} catch (CoreException e) {
-				// ignore
-			} catch (IOException e) {
+			} catch (CoreException | IOException e) {
 				// ignore
 			} finally {
 				try {
@@ -1014,9 +1012,7 @@ public abstract class ResourceTest extends CoreTest {
 	protected void waitForBuild() {
 		try {
 			Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
-		} catch (OperationCanceledException e) {
-			//ignore
-		} catch (InterruptedException e) {
+		} catch (OperationCanceledException | InterruptedException e) {
 			//ignore
 		}
 	}
@@ -1027,9 +1023,7 @@ public abstract class ResourceTest extends CoreTest {
 	protected void waitForRefresh() {
 		try {
 			Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH, null);
-		} catch (OperationCanceledException e) {
-			//ignore
-		} catch (InterruptedException e) {
+		} catch (OperationCanceledException | InterruptedException e) {
 			//ignore
 		}
 	}

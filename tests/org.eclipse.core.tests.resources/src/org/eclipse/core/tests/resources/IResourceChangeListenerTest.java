@@ -178,9 +178,7 @@ public class IResourceChangeListenerTest extends ResourceTest {
 				}
 				return true;
 			});
-		} catch (CoreException e) {
-			fail(message, e);
-		} catch (RuntimeException e) {
+		} catch (CoreException | RuntimeException e) {
 			fail(message, e);
 		}
 	}
@@ -304,9 +302,7 @@ public class IResourceChangeListenerTest extends ResourceTest {
 			//wait for autobuild so POST_BUILD will fire
 			try {
 				Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_BUILD, null);
-			} catch (OperationCanceledException e) {
-				//ignore
-			} catch (InterruptedException e) {
+			} catch (OperationCanceledException | InterruptedException e) {
 				//ignore
 			}
 		} catch (CoreException e) {

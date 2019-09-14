@@ -124,9 +124,7 @@ public class FileCacheTest extends FileSystemTest {
 			assertTrue("3.1", !cachedFile.isDirectory());
 			assertEquals("3.2", newContents, getBytes(cachedFile));
 
-		} catch (IOException e) {
-			fail("1.99", e);
-		} catch (CoreException e) {
+		} catch (IOException | CoreException e) {
 			fail("1.99", e);
 		}
 	}
