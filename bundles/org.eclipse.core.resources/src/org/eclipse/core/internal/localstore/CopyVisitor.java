@@ -20,7 +20,6 @@ import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.Messages;
-import org.eclipse.core.internal.utils.Policy;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.util.NLS;
@@ -32,7 +31,7 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 	protected IResource rootDestination;
 
 	/** reports progress */
-	protected IProgressMonitor monitor;
+	protected SubMonitor monitor;
 
 	/** update flags */
 	protected int updateFlags;
@@ -60,7 +59,7 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 		this.updateFlags = updateFlags;
 		this.isDeep = (updateFlags & IResource.SHALLOW) == 0;
 		this.force = (updateFlags & IResource.FORCE) != 0;
-		this.monitor = monitor;
+		this.monitor = SubMonitor.convert(monitor);
 		this.segmentsToDrop = rootSource.getFullPath().segmentCount();
 		this.status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IStatus.INFO, Messages.localstore_copyProblem, null);
 	}
@@ -99,8 +98,8 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 			IFileStore destinationStore = destination.getStore();
 			//ensure the parent of the root destination exists (bug 126104)
 			if (destination == rootDestination)
-				destinationStore.getParent().mkdir(EFS.NONE, Policy.subMonitorFor(monitor, 0));
-			sourceStore.copy(destinationStore, EFS.SHALLOW, Policy.subMonitorFor(monitor, 0));
+				destinationStore.getParent().mkdir(EFS.NONE, monitor.newChild(0));
+			sourceStore.copy(destinationStore, EFS.SHALLOW, monitor.newChild(0));
 			//create the destination in the workspace
 			ResourceInfo info = localManager.getWorkspace().createResource(destination, updateFlags);
 			localManager.updateLocalSync(info, destinationStore.fetchInfo().getLastModified());
@@ -136,7 +135,7 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 	 */
 	protected RefreshLocalVisitor getRefreshLocalVisitor() {
 		if (refreshLocalVisitor == null)
-			refreshLocalVisitor = new RefreshLocalVisitor(Policy.monitorFor(null));
+			refreshLocalVisitor = new RefreshLocalVisitor(SubMonitor.convert(null));
 		return refreshLocalVisitor;
 	}
 
@@ -174,7 +173,7 @@ public class CopyVisitor implements IUnifiedTreeVisitor {
 
 	@Override
 	public boolean visit(UnifiedTreeNode node) throws CoreException {
-		Policy.checkCanceled(monitor);
+		monitor.checkCanceled();
 		int work = 1;
 		try {
 			//location can be null if based on an undefined variable
