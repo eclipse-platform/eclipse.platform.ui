@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -56,10 +56,13 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.part.ViewPart;
+import org.osgi.framework.*;
+import org.osgi.service.log.*;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
+import org.osgi.util.tracker.ServiceTracker;
 
-public class LogView extends ViewPart implements ILogListener {
+public class LogView extends ViewPart implements LogListener {
 	public static final String P_LOG_WARNING = "warning"; //$NON-NLS-1$
 	public static final String P_LOG_ERROR = "error"; //$NON-NLS-1$
 	public static final String P_LOG_INFO = "info"; //$NON-NLS-1$
@@ -101,6 +104,8 @@ public class LogView extends ViewPart implements ILogListener {
 	public static final int GROUP_BY_NONE = 0;
 	public static final int GROUP_BY_SESSION = 1;
 	public static final int GROUP_BY_PLUGIN = 2;
+
+	private ServiceTracker<LogReaderService, LogReaderService> logReaderServiceTracker;
 
 	private List<AbstractEntry> elements;
 	private Map<Object, Group> groups;
@@ -179,6 +184,25 @@ public class LogView extends ViewPart implements ILogListener {
 
 	@Override
 	public void createPartControl(Composite parent) {
+		BundleContext context = FrameworkUtil.getBundle(getClass()).getBundleContext();
+		this.logReaderServiceTracker = new ServiceTracker<LogReaderService, LogReaderService>(context,
+				LogReaderService.class, null) {
+			@Override
+			public LogReaderService addingService(ServiceReference<LogReaderService> reference) {
+				LogReaderService service = context.getService(reference);
+				if (service != null) {
+					service.addLogListener(LogView.this);
+				}
+				return service;
+			}
+
+			@Override
+			public void removedService(ServiceReference<LogReaderService> reference, LogReaderService service) {
+				service.removeLogListener(LogView.this);
+			}
+		};
+		this.logReaderServiceTracker.open();
+
 		Composite composite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout();
 		layout.horizontalSpacing = 0;
@@ -198,7 +222,6 @@ public class LogView extends ViewPart implements ILogListener {
 
 		makeHoverShell();
 
-		Platform.addLogListener(this);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(fFilteredTree, IHelpContextIds.LOG_VIEW);
 		getSite().getWorkbenchWindow().addPerspectiveListener(new IPerspectiveListener2() {
 
@@ -416,7 +439,7 @@ public class LogView extends ViewPart implements ILogListener {
 		action.setDisabledImageDescriptor(SharedImages.getImageDescriptor(SharedImages.DESC_IMPORT_DISABLED));
 		return action;
 	}
-	
+
 	private Action createOpenLogAction() {
 		Action action = null;
 		try {
@@ -648,7 +671,8 @@ public class LogView extends ViewPart implements ILogListener {
 	@Override
 	public void dispose() {
 		writeSettings();
-		Platform.removeLogListener(this);
+		this.logReaderServiceTracker.close();
+
 		fClipboard.dispose();
 		if (fTextShell != null)
 			fTextShell.dispose();
@@ -726,7 +750,8 @@ public class LogView extends ViewPart implements ILogListener {
 			fDirectory = outputFile.getParent();
 			if (outputFile.exists()) {
 				String message = NLS.bind(Messages.LogView_confirmOverwrite_message, outputFile.toString());
-				if (!MessageDialog.openQuestion(getViewSite().getShell(), (exportWholeLog ? Messages.LogView_exportLog : Messages.LogView_exportLogEntry), message))
+				if (!MessageDialog.openQuestion(getViewSite().getShell(),
+						(exportWholeLog ? Messages.LogView_exportLog : Messages.LogView_exportLogEntry), message))
 					return;
 			}
 
@@ -1002,13 +1027,13 @@ public class LogView extends ViewPart implements ILogListener {
 	}
 
 	@Override
-	public void logging(IStatus status, String plugin) {
+	public void logged(org.osgi.service.log.LogEntry input) {
 		if (!isPlatformLogOpen())
 			return;
 
 		if (batchEntries) {
 			// create LogEntry immediately to don't loose IStatus creation date.
-			LogEntry entry = createLogEntry(status);
+			LogEntry entry = createLogEntry(input);
 			batchedEntries.add(entry);
 			return;
 		}
@@ -1018,7 +1043,7 @@ public class LogView extends ViewPart implements ILogListener {
 			asyncRefresh(true);
 			fFirstEvent = false;
 		} else {
-			LogEntry entry = createLogEntry(status);
+			LogEntry entry = createLogEntry(input);
 
 			if (!batchedEntries.isEmpty()) {
 				// batch new entry as well, to have only one asyncRefresh()
@@ -1064,6 +1089,29 @@ public class LogView extends ViewPart implements ILogListener {
 		}
 
 		return entry;
+	}
+
+	private LogEntry createLogEntry(org.osgi.service.log.LogEntry input) {
+		// create a status from OSGi LogEntry
+		LogLevel logLevel = input.getLogLevel();
+		int severity;
+		switch (logLevel) {
+		case ERROR:
+			severity = IStatus.ERROR;
+			break;
+		case WARN:
+			severity = IStatus.WARNING;
+			break;
+		case INFO:
+			severity = IStatus.INFO;
+			break;
+		case DEBUG:
+		default:
+			severity = IStatus.OK;
+		}
+		IStatus status = new Status(severity, input.getBundle().getSymbolicName(), input.getMessage(),
+				input.getException());
+		return createLogEntry(status);
 	}
 
 	private synchronized void pushEntry(LogEntry entry) {
