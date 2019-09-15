@@ -398,6 +398,14 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	private int fCachedNumberOfDigits= -1;
 	/** Flag indicating whether a relayout is required */
 	private boolean fRelayoutRequired= false;
+	/** Last top pixel. */
+	private int fLastTopPixel = -1;
+	/** Last top model line. */
+	private int fLastTopModelLine;
+	/** Last number of lines visible. */
+	private int fLastNumberOfLines;
+	/** Last bottom model line. */
+	private int fLastBottomModelLine;
 	/**
 	 * Redraw runnable lock
 	 * @since 3.0
@@ -689,84 +697,128 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 
 		Point size= fCanvas.getSize();
 
-		if (size.x <= 0 || size.y <= 0)
+		if (size.x <= 0 || size.y <= 0) {
 			return;
+		}
 
 		if (fBuffer != null) {
 			Rectangle r= fBuffer.getBounds();
-			if (IS_MAC_BUG_516293 || r.width != size.x || r.height != size.y) {
+			if (r.width != size.x || r.height != size.y) {
 				fBuffer.dispose();
 				fBuffer= null;
 			}
 		}
 
 		ILineRange visibleLines= JFaceTextUtil.getVisibleModelLines(fCachedTextViewer);
-		if (visibleLines == null)
+		if (visibleLines == null) {
 			return;
-
-		if (IS_MAC_BUG_516293) {
-			/* FIXME: Workaround (bug 516293):
-			 * Relies on SWT implementation detail that GC drawing on macOS only draws at 100% zoom level.
-			 * For higher zoom levels (200%), we manually scale the font and drawing coordinates,
-			 * and then use getImageData(100) to extract the high-resolution image data. */
-			fBuffer= new Image(fCanvas.getDisplay(), (ImageDataProvider) zoom -> {
-				fZoom = zoom;
-				internalSetZoom(zoom);
-				int width= size.x * zoom / 100;
-				int height= size.y * zoom / 100;
-				Image gcImage= new Image(fCanvas.getDisplay(), width, height);
-
-				GC gc= new GC(gcImage);
-				Font font= fCanvas.getFont();
-				if (zoom != 100) {
-					if (fLastFont != null && font == fLastFont.get()) {
-						font= fLastZoomedFont;
-					} else {
-						fLastFont= new WeakReference<>(font);
-						FontData fontData= font.getFontData()[0];
-						fontData.setHeight(fontData.getHeight() * zoom / 100);
-						font= new Font(font.getDevice(), fontData);
-						fLastZoomedFont= font;
-					}
-				}
-				gc.setFont(font);
-				if (fForeground != null)
-					gc.setForeground(fForeground);
-
-				try {
-					gc.setBackground(getBackground(fCanvas.getDisplay()));
-					gc.fillRectangle(0, 0, width, height);
-
-					doPaint(gc, visibleLines);
-				} finally {
-					gc.dispose();
-					fZoom= 100;
-				}
-
-				ImageData imageData= gcImage.getImageData(100);
-				gcImage.dispose();
-				return imageData;
-			});
-
-		} else {
-			if (fBuffer == null)
-				fBuffer= new Image(fCanvas.getDisplay(), size.x, size.y);
-
-			GC gc= new GC(fBuffer);
-			gc.setFont(fCanvas.getFont());
-			if (fForeground != null)
-				gc.setForeground(fForeground);
-
-			try {
-				gc.setBackground(getBackground(fCanvas.getDisplay()));
-				gc.fillRectangle(0, 0, size.x, size.y);
-
-				doPaint(gc, visibleLines);
-			} finally {
-				gc.dispose();
-			}
 		}
 
+		boolean bufferStillValid = fBuffer != null;
+		if (fBuffer == null) {
+			fBuffer= new Image(fCanvas.getDisplay(), size.x, size.y);
+		}
+		GC bufferGC= new GC(fBuffer);
+		if (fForeground != null) {
+			bufferGC.setForeground(fForeground);
+		}
+		bufferGC.setBackground(getBackground(fCanvas.getDisplay()));
+		try {
+			int topPixel= fCachedTextWidget.getTopPixel();
+			int bufferY= 0;
+			int bufferH= size.y;
+			int numberOfLines= visibleLines.getNumberOfLines();
+			int dy= topPixel - fLastTopPixel;
+			if (dy != 0 && bufferStillValid && fLastTopPixel >= 0 && numberOfLines > 1 && numberOfLines == fLastNumberOfLines) {
+				if (dy > 0 && dy < size.y) {
+					bufferGC.copyArea(0, dy, size.x, size.y - dy, 0, 0);
+					bufferY= size.y - dy;
+					bufferH= size.y - bufferY;
+				} else if (dy < 0 && -dy < size.y) {
+					bufferGC.copyArea(0, 0, size.x, size.y + dy, 0, -dy);
+					bufferY= 0;
+					bufferH= -dy;
+				} else {
+					dy= 0;
+				}
+			} else {
+				dy= 0;
+			}
+			// dy == 0 means now "draw everything", either because there was no overlap, or we indeed didn't move
+			// (refresh or other cases), or there was a resize, or it's the first time.
+			int topModelLine= visibleLines.getStartLine();
+			int bottomModelLine= topModelLine + numberOfLines - 1;
+			if (dy != 0) {
+				// Reduce the line range.
+				if (dy > 0) {
+					visibleLines= new LineRange(fLastBottomModelLine, bottomModelLine - fLastBottomModelLine + 1);
+				} else {
+					visibleLines= new LineRange(topModelLine, fLastTopModelLine - topModelLine + 1);
+				}
+			}
+			fLastTopPixel= topPixel;
+			fLastTopModelLine= topModelLine;
+			fLastNumberOfLines= numberOfLines;
+			fLastBottomModelLine= bottomModelLine;
+			if (IS_MAC_BUG_516293) {
+				/* FIXME: Workaround (bug 516293):
+				 * Relies on SWT implementation detail that GC drawing on macOS only draws at 100% zoom level.
+				 * For higher zoom levels (200%), we manually scale the font and drawing coordinates,
+				 * and then use getImageData(100) to extract the high-resolution image data. */
+				ILineRange lines= visibleLines;
+				Image zoomedBuffer= new Image(fCanvas.getDisplay(), (ImageDataProvider) zoom -> {
+					fZoom= zoom;
+					internalSetZoom(zoom);
+					int width= size.x * zoom / 100;
+					int height= size.y * zoom / 100;
+					Image gcImage= new Image(fCanvas.getDisplay(), width, height);
+
+					GC gc= new GC(gcImage);
+					Font font= fCanvas.getFont();
+					if (zoom != 100) {
+						if (fLastFont != null && font == fLastFont.get()) {
+							font= fLastZoomedFont;
+						} else {
+							fLastFont= new WeakReference<>(font);
+							FontData fontData= font.getFontData()[0];
+							fontData.setHeight(fontData.getHeight() * zoom / 100);
+							font= new Font(font.getDevice(), fontData);
+							fLastZoomedFont= font;
+						}
+					}
+					gc.setFont(font);
+					if (fForeground != null) {
+						gc.setForeground(fForeground);
+					}
+					try {
+						gc.setBackground(getBackground(fCanvas.getDisplay()));
+						gc.fillRectangle(0, 0, width, height);
+
+						doPaint(gc, lines);
+					} finally {
+						gc.dispose();
+						fZoom= 100;
+					}
+
+					ImageData imageData= gcImage.getImageData(100);
+					gcImage.dispose();
+					return imageData;
+				});
+				try {
+					bufferGC.drawImage(zoomedBuffer, 0, bufferY, size.x, bufferH, 0, bufferY, size.x, bufferH);
+				} finally {
+					zoomedBuffer.dispose();
+				}
+			} else {
+				// Draw directly into the buffer
+				bufferGC.setFont(fCanvas.getFont());
+				bufferGC.fillRectangle(0, bufferY, size.x, bufferH);
+
+				doPaint(bufferGC, visibleLines);
+			}
+		} finally {
+			bufferGC.dispose();
+		}
 		dest.drawImage(fBuffer, 0, 0);
 	}
 
@@ -834,8 +886,8 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	void doPaint(GC gc, ILineRange visibleLines) {
 		Display display= fCachedTextWidget.getDisplay();
 
-		// draw diff info
-		int y= -JFaceTextUtil.getHiddenTopLinePixels(fCachedTextWidget);
+		int firstWidgetLineToDraw= JFaceTextUtil.modelLineToWidgetLine(fCachedTextViewer, visibleLines.getStartLine());
+		int y= fCachedTextWidget.getLinePixel(firstWidgetLineToDraw);
 
 		// add empty lines if line is wrapped
 		boolean isWrapActive= fCachedTextWidget.getWordWrap();
