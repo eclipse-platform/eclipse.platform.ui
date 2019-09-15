@@ -16,6 +16,7 @@
 package org.eclipse.ltk.core.refactoring.participants;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -236,9 +237,7 @@ public class ProcessorBasedRefactoring extends Refactoring {
 			fParticipants= EMPTY_PARTICIPANTS;
 		} else {
 			fParticipants= new ArrayList<>();
-			for (RefactoringParticipant loadedParticipant : loadedParticipants) {
-				fParticipants.add(loadedParticipant);
-			}
+			fParticipants.addAll(Arrays.asList(loadedParticipants));
 		}
 		if (result.hasFatalError()) {
 			pm.done();

@@ -26,6 +26,7 @@ import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URI;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -143,10 +144,8 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 						stream= new BufferedInputStream(new FileInputStream(file));
 						final RefactoringDescriptorProxy[] existing= RefactoringCore.getHistoryService().readRefactoringHistory(stream, RefactoringDescriptor.NONE).getDescriptors();
 						final Set<RefactoringDescriptorProxy> set= new HashSet<>();
-						for (int index= 0; index < existing.length; index++)
-							set.add(existing[index]);
-						for (int index= 0; index < fRefactoringDescriptors.length; index++)
-							set.add(fRefactoringDescriptors[index]);
+						set.addAll(Arrays.asList(existing));
+						set.addAll(Arrays.asList(fRefactoringDescriptors));
 						writable= new RefactoringDescriptorProxy[set.size()];
 						set.toArray(writable);
 					} catch (FileNotFoundException exception) {

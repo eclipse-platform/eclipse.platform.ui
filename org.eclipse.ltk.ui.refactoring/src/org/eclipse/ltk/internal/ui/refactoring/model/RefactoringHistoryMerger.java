@@ -16,6 +16,7 @@ package org.eclipse.ltk.internal.ui.refactoring.model;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -100,10 +101,8 @@ public final class RefactoringHistoryMerger implements IStorageMerger {
 		final DefaultRefactoringDescriptor[] sourceDescriptors= RefactoringHistoryManager.readRefactoringDescriptors(source);
 		final DefaultRefactoringDescriptor[] targetDescriptors= RefactoringHistoryManager.readRefactoringDescriptors(target);
 		final Set<DefaultRefactoringDescriptor> set= new HashSet<>();
-		for (int index= 0; index < sourceDescriptors.length; index++)
-			set.add(sourceDescriptors[index]);
-		for (int index= 0; index < targetDescriptors.length; index++)
-			set.add(targetDescriptors[index]);
+		set.addAll(Arrays.asList(sourceDescriptors));
+		set.addAll(Arrays.asList(targetDescriptors));
 		final RefactoringDescriptor[] outputDescriptors= new RefactoringDescriptor[set.size()];
 		set.toArray(outputDescriptors);
 		RefactoringHistoryManager.sortRefactoringDescriptorsAscending(outputDescriptors);

@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.core.refactoring.resource;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -46,9 +47,7 @@ public class ResourceProcessors {
 		if (visitedProjects.contains(focus))
 			return;
 		String[] pns= focus.getDescription().getNatureIds();
-		for (String pn : pns) {
-			result.add(pn);
-		}
+		result.addAll(Arrays.asList(pns));
 		visitedProjects.add(focus);
 		IProject[] referencing= focus.getReferencingProjects();
 		for (IProject r : referencing) {

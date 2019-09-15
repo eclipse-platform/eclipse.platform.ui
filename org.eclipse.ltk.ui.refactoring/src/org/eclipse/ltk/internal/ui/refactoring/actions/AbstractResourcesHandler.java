@@ -14,6 +14,7 @@
 package org.eclipse.ltk.internal.ui.refactoring.actions;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
@@ -66,9 +67,7 @@ public abstract class AbstractResourcesHandler extends AbstractHandler {
 						for (int i= 0; i < traversals.length; i++) {
 							IResource[] traversalResources= traversals[i].getResources();
 							if (traversalResources != null) {
-								for (int j= 0; j < traversalResources.length; j++) {
-									resources.add(traversalResources[j]);
-								}// for
+								resources.addAll(Arrays.asList(traversalResources)); // for
 							}// if
 						}// for
 					}// if

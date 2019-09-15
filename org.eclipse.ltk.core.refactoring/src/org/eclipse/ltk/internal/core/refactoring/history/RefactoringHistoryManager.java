@@ -214,9 +214,7 @@ public final class RefactoringHistoryManager {
 			if (!info.isDirectory() && info.exists() && store.getName().equalsIgnoreCase(RefactoringHistoryService.NAME_INDEX_FILE)) {
 				try (InputStream stream= store.openInputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL))) {
 					final RefactoringDescriptorProxy[] proxies= readRefactoringDescriptorProxies(stream, project, start, end);
-					for (RefactoringDescriptorProxy proxy : proxies) {
-						collection.add(proxy);
-					}
+					collection.addAll(Arrays.asList(proxies));
 					monitor.worked(1);
 				} catch (IOException exception) {
 					throw createCoreException(exception);

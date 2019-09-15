@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -104,10 +105,8 @@ public final class RefactoringIndexMerger implements IStorageMerger {
 		final RefactoringDescriptorProxy[] sourceProxies= RefactoringHistoryManager.readRefactoringDescriptorProxies(source, null, 0, Long.MAX_VALUE);
 		final RefactoringDescriptorProxy[] targetProxies= RefactoringHistoryManager.readRefactoringDescriptorProxies(target, null, 0, Long.MAX_VALUE);
 		final Set<RefactoringDescriptorProxy> set= new HashSet<>();
-		for (int index= 0; index < sourceProxies.length; index++)
-			set.add(sourceProxies[index]);
-		for (int index= 0; index < targetProxies.length; index++)
-			set.add(targetProxies[index]);
+		set.addAll(Arrays.asList(sourceProxies));
+		set.addAll(Arrays.asList(targetProxies));
 		RefactoringHistoryManager.writeRefactoringDescriptorProxies(output, set.toArray(new RefactoringDescriptorProxy[set.size()]));
 	}
 }

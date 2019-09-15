@@ -15,6 +15,7 @@ package org.eclipse.ltk.ui.refactoring.model;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -296,8 +297,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 		final Set<IDiff> set= new HashSet<>();
 		for (int index= 0; index < mappings.length; index++) {
 			final IDiff[] diffs= context.getDiffTree().getDiffs(context.getScope().getTraversals(mappings[index]));
-			for (int offset= 0; offset < diffs.length; offset++)
-				set.add(diffs[offset]);
+			set.addAll(Arrays.asList(diffs));
 		}
 		return set.toArray(new IDiff[set.size()]);
 	}

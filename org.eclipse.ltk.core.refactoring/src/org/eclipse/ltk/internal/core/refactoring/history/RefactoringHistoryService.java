@@ -687,9 +687,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 				for (IProject project : projects) {
 					if (project.isAccessible()) {
 						final RefactoringDescriptorProxy[] proxies= getProjectHistory(project, start, end, RefactoringDescriptor.NONE, new SubProgressMonitor(monitor, 3)).getDescriptors();
-						for (RefactoringDescriptorProxy proxy : proxies) {
-							set.add(proxy);
-						}
+						set.addAll(Arrays.asList(proxies));
 					}
 				}
 			}
