@@ -938,7 +938,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 	}
 
 	private void createDetailsArea(Composite parent) {
-		details = new StyledText(parent, SWT.MULTI+SWT.READ_ONLY+SWT.BORDER+SWT.H_SCROLL);
+		details = new StyledText(parent, SWT.MULTI+SWT.READ_ONLY+SWT.BORDER+SWT.H_SCROLL+SWT.V_SCROLL);
 		details.setFont(JFaceResources.getFont(TEXT_FONT));
 
 		list.addSelectionChangedListener(new ISelectionChangedListener() {
@@ -966,6 +966,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 				details.setText(""); //$NON-NLS-1$
 			} else {
 				//Not empty selection
+				final int context = 100; // number of lines before and after match to include in preview
 				int numLines = computeLines();
 				if (numLines > 0) {
 					LineItem item = (LineItem) sel.getFirstElement();
@@ -973,10 +974,11 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 					if (document!=null) {
 						try {
 							int line = item.getLineNumber()-1; //in document lines are 0 based. In search 1 based.
-							int start = document.getLineOffset(Math.max(line-(numLines-1)/2, 0));
+							int previewTopLine = Math.max(line-(numLines-1)/2, 0); // when this is top line in preview the match will be centered
+							int start = document.getLineOffset(Math.max(previewTopLine - context, 0));
 							int end = document.getLength();
 							try {
-								IRegion lineInfo = document.getLineInformation(line + numLines/2);
+								IRegion lineInfo = document.getLineInformation(line + numLines/2 + context);
 								end = lineInfo.getOffset() + lineInfo.getLength();
 							} catch (BadLocationException e) {
 								//Presumably line number is past the end of document.
@@ -986,7 +988,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 							StyledString styledString = highlightMatches(document.get(start, end-start));
 							details.setText(styledString.getString());
 							details.setStyleRanges(styledString.getStyleRanges());
-
+							details.setTopIndex(previewTopLine);
 							return;
 						} catch (BadLocationException e) {
 						}
