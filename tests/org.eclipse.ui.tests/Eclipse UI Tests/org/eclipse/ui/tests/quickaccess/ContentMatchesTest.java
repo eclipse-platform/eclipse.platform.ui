@@ -14,8 +14,6 @@
 
 package org.eclipse.ui.tests.quickaccess;
 
-import static org.junit.Assert.assertThat;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -25,6 +23,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.quickaccess.QuickAccessContents;
 import org.eclipse.ui.internal.quickaccess.QuickAccessDialog;
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.hamcrest.Matchers;
 
@@ -63,28 +62,38 @@ public class ContentMatchesTest extends UITestCase {
 		Text text = quickAccessContents.getFilterText();
 		text.setText("whitespace");
 		final Table table = quickAccessContents.getTable();
-		processEventsUntil(() -> table.getItemCount() > 1, 200);
-		List<String> allEntries = getAllEntries(table);
-		assertTrue(Matchers.hasItems(Matchers.containsString("Text Editors")).matches(allEntries));
+		assertTrue(new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return Matchers.hasItems(Matchers.containsString("Text Editors")).matches(getAllEntries(table));
+			}
+		}.waitForCondition(table.getDisplay(), 1000));
 	}
 
 	public void testRequestWithWhitespace() throws Exception {
 		Text text = quickAccessContents.getFilterText();
 		text.setText("text white");
 		final Table table = quickAccessContents.getTable();
-		processEventsUntil(() -> table.getItemCount() > 1, 200);
-		List<String> allEntries = getAllEntries(table);
-		assertTrue(Matchers.hasItems(Matchers.containsString("Text Editors")).matches(allEntries));
+		assertTrue(new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return Matchers.hasItems(Matchers.containsString("Text Editors")).matches(getAllEntries(table));
+			}
+		}.waitForCondition(table.getDisplay(), 1000));
 	}
 
 	public void testFindCommandByDescription() throws Exception {
 		Text text = quickAccessContents.getFilterText();
 		text.setText("rename ltk");
 		final Table table = quickAccessContents.getTable();
-		processEventsUntil(() -> table.getItemCount() > 1, 200);
-		List<String> allEntries = getAllEntries(table);
-		assertThat(allEntries, Matchers
-				.hasItems(Matchers.containsString("Rename the selected resource and notify LTK participants.")));
+		assertTrue(new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return Matchers
+						.hasItems(Matchers.containsString("Rename the selected resource and notify LTK participants."))
+						.matches(getAllEntries(table));
+			}
+		}.waitForCondition(table.getDisplay(), 1000));
 	}
 
 	static List<String> getAllEntries(Table table) {

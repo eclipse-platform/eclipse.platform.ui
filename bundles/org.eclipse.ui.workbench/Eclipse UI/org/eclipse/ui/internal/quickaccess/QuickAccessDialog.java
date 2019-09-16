@@ -18,10 +18,15 @@ package org.eclipse.ui.internal.quickaccess;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.Assert;
@@ -94,7 +99,6 @@ public class QuickAccessDialog extends PopupDialog {
 	static final int MAXIMUM_NUMBER_OF_TEXT_ENTRIES_PER_ELEMENT = 3;
 	protected Map<QuickAccessElement, ArrayList<String>> textMap = new HashMap<>();
 	protected Map<String, QuickAccessElement> elementMap = new HashMap<>();
-	protected Map<String, QuickAccessProvider> providerMap;
 	private final Display display;
 	private String lastSelectionFilter = ""; //$NON-NLS-1$
 	private PreviousPicksProvider previousPicksProvider;
@@ -114,7 +118,8 @@ public class QuickAccessDialog extends PopupDialog {
 			final CommandProvider commandProvider = new CommandProvider();
 			commandProvider.setSnapshot(new ExpressionContext(model.getContext().getActiveLeaf()));
 			List<QuickAccessProvider> providers = new ArrayList<>();
-			previousPicksProvider = new PreviousPicksProvider();
+			previousPicksProvider = new PreviousPicksProvider(MAXIMUM_NUMBER_OF_ELEMENTS);
+			previousPicksProvider.setElementsInitializer(() -> restorePreviousEntries(providers));
 			providers.add(previousPicksProvider);
 			providers.add(new EditorProvider());
 			providers.add(new ViewProvider(model.getContext().get(MApplication.class), model));
@@ -133,10 +138,10 @@ public class QuickAccessDialog extends PopupDialog {
 					});
 				}
 			}));
-			providerMap = new HashMap<>();
-			for (QuickAccessProvider provider : providers) {
-				providerMap.put(provider.getId(), provider);
-			}
+			Collection<String> previousPickProviderIds = getPreviousPickProviderIds(getDialogSettings());
+			previousPicksProvider.setInvolvedProviders(
+					providers.stream().filter(provider -> previousPickProviderIds.contains(provider.getId()))
+							.collect(Collectors.toSet()));
 			QuickAccessDialog.this.contents = new QuickAccessContents(
 					providers.toArray(new QuickAccessProvider[providers.size()])) {
 				@Override
@@ -159,59 +164,27 @@ public class QuickAccessDialog extends PopupDialog {
 				 * @param element
 				 */
 				void addPreviousPick(String text, QuickAccessElement element) {
-// previousPicksList:
-// Remove element from previousPicksList so
-// there are no duplicates
-// If list is max size, remove last(oldest)
-// element
-// Remove entries for removed element from
-// elementMap and textMap
-// Add element to front of previousPicksList
-					previousPicksProvider.elements.remove(element);
-					if (previousPicksProvider.elements.size() == MAXIMUM_NUMBER_OF_ELEMENTS) {
-						QuickAccessElement removedElement = previousPicksProvider.elements.removeLast();
+					previousPicksProvider.addPreviousPick(element, removedElement -> {
 						ArrayList<String> removedList = textMap.remove(removedElement);
-						for (int i = 0; i < removedList.size(); i++) {
-							elementMap.remove(removedList.get(i));
-						}
-					}
-					previousPicksProvider.elements.addFirst(element);
-
-// textMap:
-// Get list of strings for element from textMap
-// Create new list for element if there isn't
-// one and put
-// element->textList in textMap
-// Remove rememberedText from list
-// If list is max size, remove first(oldest)
-// string
-// Remove text from elementMap
-// Add rememberedText to list of strings for
-// element in textMap
+						removedList.forEach(elementMap::remove);
+					});
 					ArrayList<String> textList = textMap.computeIfAbsent(element, key -> new ArrayList<>());
-
 					textList.remove(text);
 					if (textList.size() == MAXIMUM_NUMBER_OF_TEXT_ENTRIES_PER_ELEMENT) {
-						Object removedText = textList.remove(0);
+						String removedText = textList.remove(0);
 						elementMap.remove(removedText);
 					}
 
-					if (text.length() > 0) {
+					if (!text.isEmpty()) {
 						textList.add(text);
-
-// elementMap:
-// Put rememberedText->element in elementMap
-// If it replaced a different element update
-// textMap and
-// PreviousPicksList
-						Object replacedElement = elementMap.put(text, element);
+						QuickAccessElement replacedElement = elementMap.put(text, element);
 						if (replacedElement != null && !replacedElement.equals(element)) {
 							textList = textMap.get(replacedElement);
 							if (textList != null) {
 								textList.remove(text);
 								if (textList.isEmpty()) {
 									textMap.remove(replacedElement);
-									previousPicksProvider.elements.remove(replacedElement);
+									previousPicksProvider.removeElement(replacedElement);
 								}
 							}
 						}
@@ -239,7 +212,6 @@ public class QuickAccessDialog extends PopupDialog {
 					}
 				}
 			};
-			restorePreviousEntries();
 			QuickAccessDialog.this.invokingCommand = invokingCommand;
 			if (QuickAccessDialog.this.invokingCommand != null && !QuickAccessDialog.this.invokingCommand.isDefined()) {
 				QuickAccessDialog.this.invokingCommand = null;
@@ -252,7 +224,7 @@ public class QuickAccessDialog extends PopupDialog {
 // create early
 			create();
 		});
-		QuickAccessDialog.this.contents.refresh(""); //$NON-NLS-1$
+		QuickAccessDialog.this.contents.updateProposals(""); //$NON-NLS-1$
 	}
 
 	@Override
@@ -393,11 +365,12 @@ public class QuickAccessDialog extends PopupDialog {
 		dialogSettings.put(USER_INPUT_TEXTS, textArray);
 	}
 
-	private void restorePreviousEntries() {
+	private List<QuickAccessElement> restorePreviousEntries(Collection<QuickAccessProvider> providers) {
 		IDialogSettings dialogSettings = getDialogSettings();
 		if (dialogSettings == null) {
-			return;
+			return Collections.emptyList();
 		}
+		List<QuickAccessElement> res = new ArrayList<>();
 		String[] orderedElements = dialogSettings.getArray(ORDERED_ELEMENTS);
 		String[] orderedProviders = dialogSettings.getArray(ORDERED_PROVIDERS);
 		String[] rawTextEntriesCountByElement = dialogSettings.getArray(TEXT_ENTRIES);
@@ -406,6 +379,8 @@ public class QuickAccessDialog extends PopupDialog {
 		textMap = new HashMap<>();
 		if (orderedElements != null && orderedProviders != null && rawTextEntriesCountByElement != null
 				&& userInputTexts != null) {
+			Map<String, QuickAccessProvider> providerMap = providers.stream()
+					.collect(Collectors.toMap(QuickAccessProvider::getId, Function.identity()));
 			Integer[] textEntriesCountByElement = Arrays.stream(rawTextEntriesCountByElement).map(Integer::parseInt)
 					.toArray(Integer[]::new);
 			int inputTextIndex = 0;
@@ -421,24 +396,40 @@ public class QuickAccessDialog extends PopupDialog {
 							firstText);
 					if (quickAccessElement != null) {
 						contents.registerProviderFor(quickAccessElement, quickAccessProvider);
-						ArrayList<String> arrayList = new ArrayList<>();
+						ArrayList<String> matchingTextsForElement = new ArrayList<>();
 						for (int j = inputTextIndex; j < inputTextIndex
 								+ numberOfMatchingTextsForCurrentElement; j++) {
 							String text = userInputTexts[j];
 							// text length can be zero for old workspaces,
 							// see bug 190006
 							if (!text.isEmpty()) {
-								arrayList.add(text);
+								matchingTextsForElement.add(text);
 								elementMap.put(text, quickAccessElement);
 							}
 						}
-						textMap.put(quickAccessElement, arrayList);
-						previousPicksProvider.elements.add(quickAccessElement);
+						textMap.put(quickAccessElement, matchingTextsForElement);
+						res.add(quickAccessElement);
 					}
 				}
 				inputTextIndex += numberOfMatchingTextsForCurrentElement;
 			}
 		}
+		return res;
+	}
+
+	/**
+	 * @param dialogSettings
+	 * @return
+	 */
+	private Collection<String> getPreviousPickProviderIds(IDialogSettings dialogSettings) {
+		if (dialogSettings == null) {
+			return Collections.emptySet();
+		}
+		String[] orderedProviders = dialogSettings.getArray(ORDERED_PROVIDERS);
+		if (orderedProviders == null) {
+			return Collections.emptySet();
+		}
+		return new HashSet<>(Arrays.asList(orderedProviders));
 	}
 
 	public QuickAccessContents getQuickAccessContents() {

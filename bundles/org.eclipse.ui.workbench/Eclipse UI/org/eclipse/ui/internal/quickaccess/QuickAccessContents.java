@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -32,13 +33,16 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.IJobChangeEvent;
+import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.core.runtime.jobs.JobChangeAdapter;
 import org.eclipse.jface.bindings.TriggerSequence;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.TableColumnLayout;
 import org.eclipse.jface.resource.FontDescriptor;
-import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.util.Util;
@@ -71,10 +75,10 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
-import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.quickaccess.providers.HelpSearchProvider;
 import org.eclipse.ui.keys.IBindingService;
+import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.quickaccess.QuickAccessElement;
 import org.eclipse.ui.themes.ColorUtil;
 
@@ -92,11 +96,8 @@ public abstract class QuickAccessContents {
 	private static final String QUICK_ACCESS_COMMAND_ID = "org.eclipse.ui.window.quickAccess"; //$NON-NLS-1$
 	private static final int INITIAL_COUNT_PER_PROVIDER = 5;
 	private static final int MAX_COUNT_TOTAL = 20;
-	/** Minumum length to suggest the user to search typed text in the Help */
-	private static final int MIN_SEARCH_LENGTH = 3;
 
 	protected Text filterText;
-	private IProgressMonitor monitor;
 
 	private QuickAccessProvider[] providers;
 	private Map<String, QuickAccessProvider> providerMap = new HashMap<>();
@@ -119,6 +120,7 @@ public abstract class QuickAccessContents {
 	private boolean showAllMatches = false;
 	protected boolean resized = false;
 	private TriggerSequence keySequence;
+	private Job computeProposalsJob;
 
 	public QuickAccessContents(QuickAccessProvider[] providers) {
 		this.providers = providers;
@@ -140,137 +142,64 @@ public abstract class QuickAccessContents {
 	 * @param filter The filter text to apply to results
 	 *
 	 */
-	public void refresh(String filter) {
-		if (monitor != null) {
-			monitor.setCanceled(true);
-			monitor = null;
+	public void updateProposals(String filter) {
+		if (computeProposalsJob != null) {
+			computeProposalsJob.cancel();
+			computeProposalsJob = null;
 		}
-		if (table != null) {
-			boolean filterTextEmpty = filter.length() == 0;
+		if (table == null || table.isDisposed()) {
+			return;
+		}
+		// extra entry added when the user activates help search
+		// (extensible)
+		List<QuickAccessEntry> extraEntries = new ArrayList<>();
+		QuickAccessEntry helpSearchEntry = new HelpSearchProvider().makeHelpSearchEntry(filter);
+		if (helpSearchEntry != null) {
+			extraEntries.add(helpSearchEntry);
+		}
 
-			// extra entry added when the user activates help search
-			// (extensible)
-			List<QuickAccessEntry> extraEntries = new ArrayList<>();
-			if (filter.length() > MIN_SEARCH_LENGTH) {
-				extraEntries.add(makeHelpSearchEntry(filter));
+		// perfect match, to be selected in the table if not null
+		QuickAccessElement perfectMatch = getPerfectMatch(filter);
+
+		String computingMessage = NLS.bind(QuickAccessMessages.QuickaAcessContents_computeMatchingEntries, filter);
+		int maxNumberOfItemsInTable = computeNumberOfItems();
+		AtomicReference<List<QuickAccessEntry>[]> entries = new AtomicReference<>();
+		final Job currentComputeEntriesJob = Job.create(computingMessage, theMonitor -> {
+			entries.set(
+					computeMatchingEntries(filter, perfectMatch, extraEntries, maxNumberOfItemsInTable, theMonitor));
+			return theMonitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
+		});
+		currentComputeEntriesJob.setPriority(Job.INTERACTIVE);
+		// feedback is delayed in a job as we don't want to show it on every keystroke
+		// but only when user seems to be waiting
+		String feedbackJobName = QuickAccessMessages.QuickAccessContents_computeMatchingEntries_displayFeedback_jobName;
+		Job computingFeedbackJob = Job.createSystem(feedbackJobName, montior -> {
+			try {
+				Thread.sleep(200);
+				if (currentComputeEntriesJob.getResult() != null) { // completed
+					return;
+				}
+				table.getDisplay().asyncExec(() -> {
+					if (!montior.isCanceled()) {
+						showHintText(computingMessage, grayColor);
+					}
+				});
+			} catch (InterruptedException e) {
 			}
-
-			// perfect match, to be selected in the table if not null
-			QuickAccessElement perfectMatch = getPerfectMatch(filter);
-
-			monitor = new NullProgressMonitor();
-			List<QuickAccessEntry>[] entries = computeMatchingEntries(filter, perfectMatch, extraEntries, monitor);
-			int selectionIndex = refreshTable(perfectMatch, entries, extraEntries);
-
-			if (table.getItemCount() > 0) {
-				table.setSelection(selectionIndex);
-				hideHintText();
-			} else if (filterTextEmpty) {
-				showHintText(QuickAccessMessages.QuickAccess_StartTypingToFindMatches, grayColor);
-			} else {
-				showHintText(QuickAccessMessages.QuickAccessContents_NoMatchingResults, grayColor);
+		});
+		currentComputeEntriesJob.addJobChangeListener(new JobChangeAdapter() {
+			@Override
+			public void done(IJobChangeEvent event) {
+				computingFeedbackJob.cancel();
+				if (computeProposalsJob == currentComputeEntriesJob && event.getResult().isOK()
+						&& !table.isDisposed()) {
+					table.getDisplay().asyncExec(() -> refreshTable(perfectMatch, entries.get(), extraEntries, filter));
+				}
 			}
-
-			// update info as-you-type
-			updateInfoLabel();
-
-			updateFeedback(filterTextEmpty, showAllMatches);
-		}
-	}
-
-	QuickAccessEntry searchHelpEntry = null;
-	QuickAccessProvider searchHelpProvider = null;
-	QuickAccessHelpSearchElement searchHelpElement = null;
-
-	/**
-	 * Instantiate a new {@link QuickAccessEntry} to search the given text in the
-	 * eclipse help
-	 *
-	 * @param text String to search in the Eclipse Help
-	 *
-	 * @return the {@link QuickAccessEntry} to perform the action
-	 */
-	private QuickAccessEntry makeHelpSearchEntry(String text) {
-		if (searchHelpEntry == null) {
-			searchHelpProvider = new QuickAccessHelpSearchProvider();
-			searchHelpElement = new QuickAccessHelpSearchElement();
-			searchHelpEntry = new QuickAccessEntry(searchHelpElement, searchHelpProvider, new int[][] {},
-					new int[][] {}, QuickAccessEntry.MATCH_PERFECT);
-			searchHelpEntry.firstInCategory = true;
-		}
-		searchHelpElement.searchText = text;
-		return searchHelpEntry;
-	}
-
-	/**
-	 * "Search X in help" element shown at the end of the list.
-	 */
-	static class QuickAccessHelpSearchElement extends QuickAccessElement {
-
-		/** identifier */
-		private static final String SEARCH_IN_HELP_ID = "search.in.help"; //$NON-NLS-1$
-
-		String searchText;
-
-		public QuickAccessHelpSearchElement() {
-		}
-
-		@Override
-		public String getLabel() {
-			return NLS.bind(QuickAccessMessages.QuickAccessContents_SearchInHelpLabel, searchText);
-		}
-
-		@Override
-		public String getId() {
-			return SEARCH_IN_HELP_ID;
-		}
-
-		@Override
-		public void execute() {
-			PlatformUI.getWorkbench().getHelpSystem().search(searchText);
-		}
-
-		@Override
-		public ImageDescriptor getImageDescriptor() {
-			return WorkbenchImages.getImageDescriptor(IWorkbenchGraphicConstants.IMG_ETOOL_HELP_SEARCH);
-		}
-
-	}
-
-	/**
-	 * Provider for the "Search X in help" element. Only used to have a category
-	 * "Help".
-	 */
-	static class QuickAccessHelpSearchProvider extends QuickAccessProvider {
-		@Override
-		public String getName() {
-			return QuickAccessMessages.QuickAccessContents_HelpCategory;
-		}
-
-		@Override
-		public String getId() {
-			return "search.help"; //$NON-NLS-1$
-		}
-
-		@Override
-		public ImageDescriptor getImageDescriptor() {
-			return null;
-		}
-
-		@Override
-		public QuickAccessElement[] getElements() {
-			return null;
-		}
-
-		@Override
-		public QuickAccessElement findElement(String id, String filterText) {
-			return null;
-		}
-
-		@Override
-		protected void doReset() {
-			// empty
-		}
+		});
+		this.computeProposalsJob = currentComputeEntriesJob;
+		currentComputeEntriesJob.schedule();
+		computingFeedbackJob.schedule();
 	}
 
 	/**
@@ -304,7 +233,7 @@ public abstract class QuickAccessContents {
 		if (showAllMatches != showAll) {
 			showAllMatches = showAll;
 			updateInfoLabel();
-			refresh(filterText.getText().toLowerCase());
+			updateProposals(filterText.getText().toLowerCase());
 		}
 	}
 
@@ -352,8 +281,11 @@ public abstract class QuickAccessContents {
 		return showAllMatches;
 	}
 
-	private int refreshTable(QuickAccessElement perfectMatch, List<QuickAccessEntry>[] entries,
-			List<QuickAccessEntry> extraEntries) {
+	private void refreshTable(QuickAccessElement perfectMatch, List<QuickAccessEntry>[] entries,
+			List<QuickAccessEntry> extraEntries, String filter) {
+		if (table.isDisposed()) {
+			return;
+		}
 		// search help extra entry: not from search or previous picks.
 		int nExtraEntries = (extraEntries == null) ? 0 : extraEntries.size();
 		if (table.getItemCount() > (entries.length + nExtraEntries)
@@ -404,7 +336,17 @@ public abstract class QuickAccessContents {
 		if (selectionIndex == -1) {
 			selectionIndex = 0;
 		}
-		return selectionIndex;
+
+		if (table.getItemCount() > 0) {
+			table.setSelection(selectionIndex);
+			hideHintText();
+		} else if (filter.isEmpty()) {
+			showHintText(QuickAccessMessages.QuickAccess_StartTypingToFindMatches, grayColor);
+		} else {
+			showHintText(QuickAccessMessages.QuickAccessContents_NoMatchingResults, grayColor);
+		}
+		updateInfoLabel();
+		updateFeedback(filter.isEmpty(), showAllMatches);
 	}
 
 	int numberOfFilteredResults;
@@ -437,12 +379,15 @@ public abstract class QuickAccessContents {
 	 *         entries that should be added to the table, possibly empty
 	 */
 	private List<QuickAccessEntry>[] computeMatchingEntries(String filter, QuickAccessElement perfectMatch,
-			List<QuickAccessEntry> extraEntries, IProgressMonitor aMonitor) {
+			List<QuickAccessEntry> extraEntries, int maxNumberOfItemsInTable, IProgressMonitor aMonitor) {
+		if (aMonitor == null) {
+			aMonitor = new NullProgressMonitor();
+		}
 		// collect matches in an array of lists
 		@SuppressWarnings("unchecked")
 		List<QuickAccessEntry>[] entries = new List[providers.length];
 		// extra entries are limiting the number of items for search results
-		int maxCount = computeNumberOfItems() - extraEntries.size();
+		int maxCount = maxNumberOfItemsInTable - extraEntries.size();
 		int[] indexPerProvider = new int[providers.length];
 		int countPerProvider = Math.min(maxCount / 4, INITIAL_COUNT_PER_PROVIDER);
 		int prevPick = 0;
@@ -466,7 +411,9 @@ public abstract class QuickAccessContents {
 				category = categoryMatcher.group(1);
 				filter = category + " " + categoryMatcher.group(2); //$NON-NLS-1$
 			}
-			for (int i = 0; i < providers.length && (showAllMatches || countTotal < maxCount); i++) {
+			final String finalFilter = filter;
+			for (int i = 0; i < providers.length && (showAllMatches || countTotal < maxCount)
+					&& !aMonitor.isCanceled(); i++) {
 				if (aMonitor.isCanceled()) {
 					break;
 				}
@@ -482,8 +429,28 @@ public abstract class QuickAccessContents {
 				if (category != null && !category.equalsIgnoreCase(provider.getName()) && !isPreviousPickProvider) {
 					continue;
 				}
-				if (filter.length() > 0 || provider.isAlwaysPresent() || showAllMatches) {
-					QuickAccessElement[] sortedElements = provider.getElementsSorted(filter, aMonitor);
+				if (!filter.isEmpty() || isPreviousPickProvider || showAllMatches) {
+					AtomicReference<QuickAccessElement[]> sortedElementRef = new AtomicReference<>();
+					if (provider.requiresUiAccess()) {
+						UIJob job = new UIJob(
+								NLS.bind(QuickAccessMessages.QuickAccessContents_processingProviderInUI,
+										provider.getName())) {
+							@Override
+							public IStatus runInUIThread(IProgressMonitor monitor) {
+								sortedElementRef.set(provider.getElementsSorted(finalFilter, monitor));
+								return Status.OK_STATUS;
+							}
+						};
+						job.schedule();
+						try {
+							job.join(0, new NullProgressMonitor());
+						} catch (Exception e) {
+							WorkbenchPlugin.log(e);
+						}
+					} else {
+						sortedElementRef.set(provider.getElementsSorted(filter, aMonitor));
+					}
+					QuickAccessElement[] sortedElements = sortedElementRef.get();
 					if (sortedElements == null) {
 						sortedElements = new QuickAccessElement[0];
 					}
@@ -502,7 +469,8 @@ public abstract class QuickAccessContents {
 					int j = indexPerProvider[i];
 					// loops on all the elements of a provider
 					while (j < sortedElements.length
-							&& (showAllMatches || (count < countPerProvider && countTotal < maxCount))) {
+							&& (showAllMatches || (count < countPerProvider && countTotal < maxCount))
+							&& !aMonitor.isCanceled()) {
 						QuickAccessElement element = sortedElements[j];
 
 						// Skip element if already in contained amid previous picks
@@ -550,7 +518,7 @@ public abstract class QuickAccessContents {
 			// from now on, add one element per provider
 			countPerProvider = 1;
 
-		} while ((showAllMatches || countTotal < maxCount) && !done);
+		} while ((showAllMatches || countTotal < maxCount) && !done && !aMonitor.isCanceled());
 
 		if (!perfectMatchAdded) {
 			QuickAccessEntry entry = getMatcherFor(perfectMatch).match(filter, providers[0]);
@@ -565,6 +533,9 @@ public abstract class QuickAccessContents {
 
 		// number of items matching the filtered search
 		numberOfFilteredResults = countTotal - prevPick;
+		if (!aMonitor.isCanceled()) {
+			aMonitor.done();
+		}
 		return entries;
 	}
 
@@ -602,15 +573,6 @@ public abstract class QuickAccessContents {
 			resourceManager.dispose();
 			resourceManager = null;
 		}
-	}
-
-	protected IDialogSettings getDialogSettings() {
-		final IDialogSettings workbenchDialogSettings = WorkbenchPlugin.getDefault().getDialogSettings();
-		IDialogSettings result = workbenchDialogSettings.getSection(getId());
-		if (result == null) {
-			result = workbenchDialogSettings.addNewSection(getId());
-		}
-		return result;
 	}
 
 	protected String getId() {
@@ -691,7 +653,7 @@ public abstract class QuickAccessContents {
 		});
 		filterText.addModifyListener(e -> {
 			String text = ((Text) e.widget).getText().toLowerCase();
-			refresh(text);
+			updateProposals(text);
 		});
 	}
 
@@ -782,7 +744,7 @@ public abstract class QuickAccessContents {
 						e.display.timerExec(100, () -> {
 							if (table != null && !table.isDisposed() && filterText != null
 									&& !filterText.isDisposed()) {
-								refresh(filterText.getText().toLowerCase());
+								updateProposals(filterText.getText().toLowerCase());
 							}
 							resized = false;
 						});

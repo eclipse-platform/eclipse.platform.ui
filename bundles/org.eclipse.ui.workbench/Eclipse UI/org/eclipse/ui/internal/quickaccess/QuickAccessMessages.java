@@ -46,6 +46,9 @@ public class QuickAccessMessages extends NLS {
 	public static String QuickAccessContents_HelpCategory;
 	public static String QuickAccessContents_RestoringPreviousChoicesLabel;
 	public static String QuickAccessContents_activate;
+	public static String QuickAccessContents_computeMatchingEntries_displayFeedback_jobName;
+	public static String QuickaAcessContents_computeMatchingEntries;
+	public static String QuickAccessContents_processingProviderInUI;
 
 	static {
 		// initialize resource bundle

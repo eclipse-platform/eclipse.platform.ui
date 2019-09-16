@@ -90,4 +90,9 @@ public class PreferenceProvider extends QuickAccessProvider {
 		cachedElements = null;
 		idToElement.clear();
 	}
+
+	@Override
+	public boolean requiresUiAccess() {
+		return true; // workbenchActivitySupport.getActivityManager() seems to require UI Thread
+	}
 }

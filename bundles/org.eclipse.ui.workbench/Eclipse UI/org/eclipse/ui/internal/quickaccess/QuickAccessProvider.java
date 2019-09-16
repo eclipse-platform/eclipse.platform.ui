@@ -122,10 +122,6 @@ public abstract class QuickAccessProvider {
 		return null;
 	}
 
-	public boolean isAlwaysPresent() {
-		return false;
-	}
-
 	/**
 	 * Resets the cache, so next invocation of {@link #getElements()} and related
 	 * method will retrigger computation of elements.

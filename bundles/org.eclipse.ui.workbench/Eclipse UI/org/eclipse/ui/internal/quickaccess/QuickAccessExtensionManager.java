@@ -121,11 +121,6 @@ public class QuickAccessExtensionManager {
 		}
 
 		@Override
-		public boolean isAlwaysPresent() {
-			return false;
-		}
-
-		@Override
 		public QuickAccessElement[] getElementsSorted(String filter, IProgressMonitor monitor) {
 			if (canDelegate()) {
 				if (computer.needsRefresh()) {
