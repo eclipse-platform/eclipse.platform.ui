@@ -19,6 +19,6 @@
   </parent>
   <groupId>org.eclipse.e4</groupId>
   <artifactId>org.eclipse.e4.core.contexts</artifactId>
-  <version>1.8.200-SNAPSHOT</version>
+  <version>1.8.300-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>
