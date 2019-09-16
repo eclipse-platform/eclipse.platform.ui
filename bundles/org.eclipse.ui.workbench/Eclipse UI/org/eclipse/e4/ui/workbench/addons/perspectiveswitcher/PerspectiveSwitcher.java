@@ -61,6 +61,7 @@ import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.PaintEvent;
+import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
@@ -528,15 +529,9 @@ public class PerspectiveSwitcher {
 
 		psItem.setSelection(persp == persp.getParent().getSelectedElement());
 
-		psItem.addSelectionListener(new SelectionListener() {
+		psItem.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				MPerspective persp = (MPerspective) e.widget.getData();
-				persp.getParent().setSelectedElement(persp);
-			}
-
-			@Override
-			public void widgetDefaultSelected(SelectionEvent e) {
 				MPerspective persp = (MPerspective) e.widget.getData();
 				persp.getParent().setSelectedElement(persp);
 			}
