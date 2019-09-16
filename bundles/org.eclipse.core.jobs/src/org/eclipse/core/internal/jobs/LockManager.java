@@ -158,11 +158,7 @@ public class LockManager {
 			for (int i = 0; i < toSuspend.length; i++)
 				suspended[i] = LockState.suspend((OrderedLock) toSuspend[i]);
 			synchronized (suspendedLocks) {
-				ArrayDeque<LockState[]> prevLocks = suspendedLocks.get(found.getCandidate());
-				if (prevLocks == null)
-					prevLocks = new ArrayDeque<>();
-				prevLocks.push(suspended);
-				suspendedLocks.put(found.getCandidate(), prevLocks);
+				suspendedLocks.computeIfAbsent(found.getCandidate(), key -> new ArrayDeque<>()).push(suspended);
 			}
 		} catch (Exception e) {
 			handleInternalError(e);
