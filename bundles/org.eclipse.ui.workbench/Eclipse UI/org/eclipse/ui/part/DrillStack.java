@@ -13,7 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.part;
 
-import java.util.Stack;
+import java.util.ArrayDeque;
+import java.util.Deque;
 
 /*
  * A <code>DrillStack</code> manages a stack of DrillFrames.
@@ -21,7 +22,7 @@ import java.util.Stack;
  */
 
 /* package */class DrillStack {
-	Stack fStack = null;
+	Deque<DrillFrame> fStack = null;
 
 	/**
 	 * Allocates a new DrillStack.
@@ -47,7 +48,7 @@ import java.util.Stack;
 	 * @return true if backward navigation is possible
 	 */
 	public boolean canGoBack() {
-		return (fStack.size() > 0);
+		return !fStack.isEmpty();
 	}
 
 	/**
@@ -57,21 +58,21 @@ import java.util.Stack;
 	 * @return true if "go home" is possible
 	 */
 	public boolean canGoHome() {
-		return (fStack.size() > 0);
+		return !fStack.isEmpty();
 	}
 
 	/**
 	 * Navigate backwards one record.
 	 */
 	public DrillFrame goBack() {
-		return (DrillFrame) fStack.pop();
+		return fStack.pop();
 	}
 
 	/**
 	 * Navigate to the home record.
 	 */
 	public DrillFrame goHome() {
-		DrillFrame aFrame = (DrillFrame) fStack.elementAt(0);
+		DrillFrame aFrame = fStack.getFirst();
 		reset();
 		return aFrame;
 	}
@@ -80,7 +81,7 @@ import java.util.Stack;
 	 * Clears the navigation stack.
 	 */
 	public void reset() {
-		fStack = new Stack();
+		fStack = new ArrayDeque<>();
 	}
 
 	/**
@@ -98,6 +99,6 @@ import java.util.Stack;
 	 * @return the top element on the stack
 	 */
 	public DrillFrame top() {
-		return (DrillFrame) fStack.peek();
+		return fStack.peek();
 	}
 }
