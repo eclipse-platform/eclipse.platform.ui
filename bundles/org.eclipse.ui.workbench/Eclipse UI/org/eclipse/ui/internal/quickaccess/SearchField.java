@@ -32,12 +32,13 @@ import org.eclipse.e4.ui.bindings.internal.BindingTableManager;
 import org.eclipse.e4.ui.bindings.internal.ContextSet;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.TriggerSequence;
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -73,7 +74,8 @@ public class SearchField {
 		display = parent.getDisplay();
 		display.addFilter(SWT.FocusIn, previousFocusListener);
 		final Composite comp = new Composite(parent, SWT.NONE);
-		comp.setLayout(new GridLayout());
+		comp.setSize(SWT.DEFAULT, 32);
+		GridLayoutFactory.swtDefaults().margins(3, 3).applyTo(comp);
 		updateQuickAccessTriggerSequence();
 		quickAccessButton = createButton(comp);
 		updateQuickAccessText();
@@ -121,6 +123,7 @@ public class SearchField {
 
 	private Button createButton(Composite parent) {
 		Button res = new Button(parent, SWT.PUSH | SWT.FLAT);
+		GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).applyTo(res);
 		try {
 			res.setText(quickAccessCommand.getName());
 		} catch (NotDefinedException e) {
