@@ -94,8 +94,6 @@ public class RenameResourceAction extends WorkspaceAction {
 	 */
 	private IPath newPath;
 
-	private String newName;
-
 	private String[] modelProviderIds;
 
 	private static final String CHECK_RENAME_TITLE = IDEWorkbenchMessages.RenameResourceAction_checkTitle;
@@ -432,13 +430,7 @@ public class RenameResourceAction extends WorkspaceAction {
 		textEditor.setBounds(2, inset, Math.min(textSize.x, parentSize.x - 4),
 				parentSize.y - 2 * inset);
 		textEditorParent.redraw();
-		int startOfFileExtension = resource.getName().lastIndexOf('.'); // $NON-NLS-1$
-		if (startOfFileExtension == -1) {
-			textEditor.selectAll();
-		} else {
-			textEditor.setSelection(0, startOfFileExtension);
-		}
-
+		textEditor.selectAll();
 		textEditor.setFocus();
 	}
 
@@ -448,23 +440,23 @@ public class RenameResourceAction extends WorkspaceAction {
 		if (currentResource == null || !currentResource.exists()) {
 			return;
 		}
-
-		if (this.navigatorTree != null) {
-			runWithInlineEditor();
-		} else {
-			if (LTKLauncher.openRenameWizard(null, getStructuredSelection())) {
-				return;
-			}
+		if (LTKLauncher.openRenameWizard(getStructuredSelection())) {
+			return;
+		}
+		if (this.navigatorTree == null) {
 			// Do a quick read only and null check
 			if (!checkReadOnlyAndNull(currentResource)) {
 				return;
 			}
-			newName = queryNewResourceName(currentResource);
+			String newName = queryNewResourceName(currentResource);
 			if (newName == null || newName.isEmpty()) {
 				return;
 			}
-			newPath = currentResource.getFullPath().removeLastSegments(1).append(newName);
+			newPath = currentResource.getFullPath().removeLastSegments(1)
+					.append(newName);
 			super.run();
+		} else {
+			runWithInlineEditor();
 		}
 	}
 
@@ -493,6 +485,7 @@ public class RenameResourceAction extends WorkspaceAction {
 			return resources.get(0);
 		}
 		return null;
+
 	}
 
 	/**
@@ -521,10 +514,11 @@ public class RenameResourceAction extends WorkspaceAction {
 		// Cache the resource to avoid selection loss since a selection of
 		// another item can trigger this method
 		inlinedResource = resource;
-		newName = textEditor.getText();
+		final String newName = textEditor.getText();
 		// Run this in an async to make sure that the operation that triggered
-		// this action is completed. Otherwise problems occur when the icon of
-		// the item being renamed is clicked (i.e., which causes the rename
+		// this action is completed. Otherwise this leads to problems when the
+		// icon of the item being renamed is clicked (i.e., which causes the
+		// rename
 		// text widget to lose focus and trigger this method).
 		Runnable query = () -> {
 			try {
@@ -536,18 +530,17 @@ public class RenameResourceAction extends WorkspaceAction {
 					if (!status.isOK()) {
 						displayError(status.getMessage());
 					} else {
-						 if (!LTKLauncher.openRenameWizard(newName, getStructuredSelection())) {
-							// LTK Launcher couldnt rename the resource
-							IPath newPath = inlinedResource.getFullPath().removeLastSegments(1).append(newName);
-							runWithNewPath(newPath, inlinedResource);
-						 }
+						IPath newPath = inlinedResource.getFullPath()
+								.removeLastSegments(1).append(newName);
+						runWithNewPath(newPath, inlinedResource);
 					}
 				}
 				inlinedResource = null;
 				// Dispose the text widget regardless
 				disposeTextWidget();
 				// Ensure the Navigator tree has focus, which it may not if
-				// the text widget previously had focus.
+				// the
+				// text widget previously had focus.
 				if (navigatorTree != null && !navigatorTree.isDisposed()) {
 					navigatorTree.setFocus();
 				}
@@ -634,21 +627,28 @@ public class RenameResourceAction extends WorkspaceAction {
 				// check for overwrite
 				IWorkspaceRoot workspaceRoot = resources[0].getWorkspace()
 						.getRoot();
-
 				IResource newResource = workspaceRoot.findMember(newPath);
 				boolean go = true;
 				if (newResource != null) {
 					go = checkOverwrite(getShell(), newResource);
 				}
 				if (go) {
-					MoveResourcesOperation op = new MoveResourcesOperation(resources[0], newPath,
+					MoveResourcesOperation op = new MoveResourcesOperation(
+							resources[0],
+							newPath,
 							IDEWorkbenchMessages.RenameResourceAction_operationTitle);
 					op.setModelProviderIds(getModelProviderIds());
 					try {
-						PlatformUI.getWorkbench().getOperationSupport().getOperationHistory().execute(op, monitor,
-								WorkspaceUndoUtil.getUIInfoAdapter(getShell()));
+						PlatformUI
+								.getWorkbench()
+								.getOperationSupport()
+								.getOperationHistory()
+								.execute(
+										op,
+										monitor,
+										WorkspaceUndoUtil
+												.getUIInfoAdapter(getShell()));
 					} catch (ExecutionException e) {
-						IDEWorkbenchPlugin.log(e.getMessage(), e);
 						if (e.getCause() instanceof CoreException) {
 							errorStatus[0] = ((CoreException) e.getCause())
 									.getStatus();
