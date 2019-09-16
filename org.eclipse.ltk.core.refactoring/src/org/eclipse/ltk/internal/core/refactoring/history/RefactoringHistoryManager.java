@@ -862,11 +862,7 @@ public final class RefactoringHistoryManager {
 							} else
 								writeIndexEntry(index, proxies, EFS.APPEND, new SubProgressMonitor(monitor, 5, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL), RefactoringCoreMessages.RefactoringHistoryService_updating_history);
 						}
-					} catch (ParserConfigurationException exception) {
-						throw createCoreException(exception);
-					} catch (IOException exception) {
-						throw createCoreException(exception);
-					} catch (SAXException exception) {
+					} catch (ParserConfigurationException | IOException | SAXException exception) {
 						throw createCoreException(exception);
 					} finally {
 						if (input != null) {
@@ -1018,11 +1014,7 @@ public final class RefactoringHistoryManager {
 						try {
 							input= new BufferedInputStream(history.openInputStream(EFS.NONE, new SubProgressMonitor(monitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)));
 							document= getCachedDocument(path, input);
-						} catch (ParserConfigurationException exception) {
-							throw createCoreException(exception);
-						} catch (IOException exception) {
-							throw createCoreException(exception);
-						} catch (SAXException exception) {
+						} catch (ParserConfigurationException | IOException | SAXException exception) {
 							throw createCoreException(exception);
 						} finally {
 							if (input != null) {
@@ -1204,11 +1196,7 @@ public final class RefactoringHistoryManager {
 							}
 						}
 						writeHistoryEntry(history, document, new SubProgressMonitor(monitor, 40, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL), RefactoringCoreMessages.RefactoringHistoryService_updating_history);
-					} catch (ParserConfigurationException exception) {
-						throw createCoreException(exception);
-					} catch (IOException exception) {
-						throw createCoreException(exception);
-					} catch (SAXException exception) {
+					} catch (ParserConfigurationException | IOException | SAXException exception) {
 						throw createCoreException(exception);
 					} finally {
 						if (input != null) {

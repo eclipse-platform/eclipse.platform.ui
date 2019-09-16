@@ -139,9 +139,7 @@ public final class RefactoringSessionTransformer {
 		try {
 			if (fDocument == null)
 				fDocument= DocumentBuilderFactory.newInstance().newDocumentBuilder().newDocument();
-		} catch (ParserConfigurationException exception) {
-			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.REFACTORING_HISTORY_IO_ERROR, exception.getLocalizedMessage(), null));
-		} catch (FactoryConfigurationError exception) {
+		} catch (ParserConfigurationException | FactoryConfigurationError exception) {
 			throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.REFACTORING_HISTORY_IO_ERROR, exception.getLocalizedMessage(), null));
 		}
 		if (fRefactoring == null) {

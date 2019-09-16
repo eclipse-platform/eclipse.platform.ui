@@ -547,9 +547,7 @@ public abstract class RefactoringWizard extends Wizard {
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(
 				new WorkbenchRunnableAdapter(op, ResourcesPlugin.getWorkspace().getRoot()));
-		} catch (InterruptedException e) {
-			exception= e;
-		} catch (InvocationTargetException e) {
+		} catch (InterruptedException | InvocationTargetException e) {
 			exception= e;
 		}
 		RefactoringStatus status= null;

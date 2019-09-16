@@ -150,9 +150,7 @@ public abstract class UndoManagerAction implements IWorkbenchWindowActionDelegat
 				PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(),
 				RefactoringUIMessages.UndoManagerAction_internal_error_title,
 				RefactoringUIMessages.UndoManagerAction_internal_error_message);
-		} catch (InterruptedException e) {
-			// Operation isn't cancelable.
-		} catch (OperationCanceledException e) {
+		} catch (InterruptedException | OperationCanceledException e) {
 			// the waiting dialog got canceled.
 		}
 	}

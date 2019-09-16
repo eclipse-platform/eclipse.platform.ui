@@ -340,14 +340,7 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 							new SubProgressMonitor(monitor, 1)));
 						reverseIsInitialized= true;
 					}
-				} catch (CoreException e) {
-					Change ch= result.reverseChange;
-					result.reverseChange= null;
-					if (ch != null && reverseIsInitialized) {
-						ch.dispose();
-					}
-					throw e;
-				} catch (RuntimeException e) {
+				} catch (CoreException | RuntimeException e) {
 					Change ch= result.reverseChange;
 					result.reverseChange= null;
 					if (ch != null && reverseIsInitialized) {

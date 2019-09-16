@@ -324,12 +324,9 @@ public class ProcessorBasedRefactoring extends Refactoring {
 					addToTextChangeMap(change);
 				}
 
-			} catch (CoreException e) {
-				disableParticipant(participant, e);
-				throw e;
 			} catch (OperationCanceledException e) {
 				throw e;
-			} catch (RuntimeException e) {
+			} catch (CoreException | RuntimeException e) {
 				disableParticipant(participant, e);
 				throw e;
 			}

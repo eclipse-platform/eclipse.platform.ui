@@ -226,10 +226,7 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 			} else {
 				fViewer.setInput(null);
 			}
-		} catch (CoreException e) {
-			RefactoringUIPlugin.log(e);
-			fViewer.setInput(null);
-		} catch (AssertionFailedException e) {
+		} catch (CoreException | AssertionFailedException e) {
 			RefactoringUIPlugin.log(e);
 			fViewer.setInput(null);
 		}

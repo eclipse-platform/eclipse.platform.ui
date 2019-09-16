@@ -116,9 +116,7 @@ public final class RefactoringSessionReader extends DefaultHandler {
 			reader.setFeature("http://xml.org/sax/features/validation", false); //$NON-NLS-1$
 			reader.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false); //$NON-NLS-1$
 
-		} catch (SAXNotRecognizedException exception) {
-			// Do nothing
-		} catch (SAXNotSupportedException exception) {
+		} catch (SAXNotRecognizedException | SAXNotSupportedException exception) {
 			// Do nothing
 		}
 		return parser;
@@ -148,10 +146,6 @@ public final class RefactoringSessionReader extends DefaultHandler {
 					throw new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.UNSUPPORTED_REFACTORING_HISTORY_VERSION, RefactoringCoreMessages.RefactoringSessionReader_unsupported_version_information, null));
 				return new RefactoringSessionDescriptor(fRefactoringDescriptors.toArray(new RefactoringDescriptor[fRefactoringDescriptors.size()]), fVersion, fComment);
 			}
-		} catch (IOException exception) {
-			throwCoreException(exception, exception.getLocalizedMessage());
-		} catch (ParserConfigurationException exception) {
-			throwCoreException(exception, exception.getLocalizedMessage());
 		} catch (SAXParseException exception) {
 			String message= Messages.format(RefactoringCoreMessages.RefactoringSessionReader_invalid_contents_at,
 					new Object[] {
@@ -159,7 +153,7 @@ public final class RefactoringSessionReader extends DefaultHandler {
 							Integer.toString(exception.getColumnNumber())
 			});
 			throwCoreException(exception, message);
-		} catch (SAXException exception) {
+		} catch (IOException | ParserConfigurationException | SAXException exception) {
 			throwCoreException(exception, exception.getLocalizedMessage());
 		} finally {
 			fRefactoringDescriptors= null;

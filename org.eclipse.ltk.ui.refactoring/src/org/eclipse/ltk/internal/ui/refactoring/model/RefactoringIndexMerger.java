@@ -62,9 +62,7 @@ public final class RefactoringIndexMerger implements IStorageMerger {
 			targetStream= target.getContents();
 			sourceStream= target.getContents();
 			performMerge(output, encoding, targetStream, sourceStream);
-		} catch (IOException exception) {
-			return new Status(IStatus.ERROR, RefactoringUIPlugin.getPluginId(), 1, RefactoringUIMessages.RefactoringHistoryMerger_error_auto_merge, exception);
-		} catch (CoreException exception) {
+		} catch (IOException | CoreException exception) {
 			return new Status(IStatus.ERROR, RefactoringUIPlugin.getPluginId(), 1, RefactoringUIMessages.RefactoringHistoryMerger_error_auto_merge, exception);
 		} finally {
 			if (targetStream != null) {

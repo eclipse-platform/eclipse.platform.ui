@@ -320,11 +320,7 @@ public class CompositeChange extends Change {
 			} else {
 				return null;
 			}
-		} catch (CoreException e) {
-			handleUndos(change, undos);
-			internalHandleException(change, e);
-			throw e;
-		} catch (RuntimeException e) {
+		} catch (CoreException | RuntimeException e) {
 			handleUndos(change, undos);
 			internalHandleException(change, e);
 			throw e;

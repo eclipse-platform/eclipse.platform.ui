@@ -736,9 +736,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 
 			return getContent(document, new Region(range.offset, range.length), expand, surround);
 
-		} catch (MalformedTreeException exception) {
-			RefactoringCorePlugin.log(exception);
-		} catch (BadLocationException exception) {
+		} catch (MalformedTreeException | BadLocationException exception) {
 			RefactoringCorePlugin.log(exception);
 		}
 		return getPreviewDocument(monitor).get();

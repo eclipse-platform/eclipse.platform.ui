@@ -280,17 +280,7 @@ public class PerformChangeOperation implements IWorkspaceRunnable {
 							fUndoManager.flush();
 						}
 					}
-				} catch (CoreException e) {
-					if (fUndoManager != null)
-						fUndoManager.flush();
-					if (fUndoChange != null && undoInitialized) {
-						Change ch= fUndoChange;
-						fUndoChange= null;
-						ch.dispose();
-					}
-					fUndoChange= null;
-					throw e;
-				} catch (RuntimeException e) {
+				} catch (CoreException | RuntimeException e) {
 					if (fUndoManager != null)
 						fUndoManager.flush();
 					if (fUndoChange != null && undoInitialized) {

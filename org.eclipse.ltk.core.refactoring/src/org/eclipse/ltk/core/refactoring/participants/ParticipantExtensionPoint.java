@@ -120,10 +120,7 @@ public class ParticipantExtensionPoint {
 					} else {
 						status.merge(filterStatus);
 					}
-				} catch (CoreException e) {
-					logMalfunctioningParticipant(status, descriptor, e);
-					iter.remove();
-				} catch (RuntimeException e) {
+				} catch (CoreException | RuntimeException e) {
 					logMalfunctioningParticipant(status, descriptor, e);
 					iter.remove();
 				}
