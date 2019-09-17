@@ -341,6 +341,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 		return false;
 	}
 
+	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private boolean loadState() {
 		try {
 			Properties props = stateManager.getProperties();
@@ -370,8 +371,8 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 			Hashtable<String, String> skippedSubItems = (Hashtable<String, String>) props
 					.get(IParserTags.SUBITEMSKIPPED);
 
-			ArrayList completedSubItemsItemList = new ArrayList();
-			ArrayList skippedSubItemsItemList = new ArrayList();
+			ArrayList completedSubItemsItemList = new ArrayList<>();
+			ArrayList skippedSubItemsItemList = new ArrayList<>();
 
 			Enumeration e = completedSubItems.keys();
 			while (e.hasMoreElements())

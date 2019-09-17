@@ -181,7 +181,7 @@ public class CheatSheetRegistryReader extends RegistryReader implements IRegistr
 	private final String csItemExtension = "cheatSheetItemExtension"; //$NON-NLS-1$
 	protected Map<String, TaskExplorerNode> taskExplorers = new HashMap<>();
 	protected Map<String, TaskEditorNode> taskEditors = new HashMap<>();
-	private Map nestedCategoryIds = new HashMap();
+	private Map<String, Object> nestedCategoryIds = new HashMap<>();
 
 	/**
 	 *	Create an instance of this class.

@@ -70,7 +70,7 @@ public class CheatSheetSaveHelper {
 	 * the registry, otherwise it is the url of the cheatsheet content file.
 	 */
 	public Properties createProperties(int currentItemNum, ArrayList<ViewItem> items,
-			boolean buttonIsDown, ArrayList expandRestoreStates, String csID, String contentPath) {
+			boolean buttonIsDown, ArrayList<String> expandRestoreStates, String csID, String contentPath) {
 		Properties props = new Properties();
 		Hashtable<String, String> subcompletedTable = new Hashtable<>(10);
 		Hashtable<String, String> subskippedTable = new Hashtable<>(10);
@@ -88,7 +88,7 @@ public class CheatSheetSaveHelper {
 		ArrayList<String> expandedList = new ArrayList<>();
 
 		if (expandRestoreStates == null)
-			expandRestoreStates = new ArrayList();
+			expandRestoreStates = new ArrayList<>();
 
 		// Assemble lists of expanded items and completed items.
 		for (int i = 0; i < items.size(); i++) {
@@ -213,6 +213,7 @@ public class CheatSheetSaveHelper {
 		return CheatSheetPlugin.getPlugin().saveMemento(writeMemento, csID + DOT_XML);
 	}
 
+	@SuppressWarnings("unchecked")
 	public IStatus saveToMemento(Properties properties, CheatSheetManager csm, IMemento writeMemento) {
 
 		String csID = (String) properties.get(IParserTags.ID);
@@ -281,6 +282,7 @@ public class CheatSheetSaveHelper {
 	}
 
 	private void addListOfStringsToMemento(IMemento memento, Properties properties, String key) {
+		@SuppressWarnings("unchecked")
 		List<String> list = (List<String>) properties.get(key);
 		if (list == null) {
 			return;
