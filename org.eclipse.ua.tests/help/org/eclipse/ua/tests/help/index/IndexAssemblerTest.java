@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 IBM Corporation and others.
+ * Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -38,6 +38,7 @@ import org.eclipse.help.internal.index.IndexFileParser;
 import org.eclipse.help.internal.index.IndexSee;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.junit.Test;
+import org.xml.sax.SAXParseException;
 
 public class IndexAssemblerTest {
 	@Test
@@ -100,6 +101,16 @@ public class IndexAssemblerTest {
 		assertEquals("topic0", topics[0].getLabel());
 		assertEquals("topic1", topics[1].getLabel());
 		assertEquals("topic2", topics[2].getLabel());
+	}
+
+	@Test(expected = SAXParseException.class)
+	public void testInvalid() throws Exception {
+		IndexFileParser parser = new IndexFileParser();
+		IndexContribution contrib = parser.parse(
+				new IndexFile(UserAssistanceTestPlugin.getPluginId(), "data/help/index/assembler/invalid.xml", "en"));
+		IndexAssembler assembler = new IndexAssembler();
+		List<IndexContribution> contributions = new ArrayList<>(Arrays.asList(contrib));
+		assembler.assemble(contributions, Platform.getNL());
 	}
 
 	// Replaces white space between ">" and "<" by a single newline
