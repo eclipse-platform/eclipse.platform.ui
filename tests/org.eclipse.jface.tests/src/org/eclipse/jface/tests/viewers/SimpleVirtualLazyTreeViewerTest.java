@@ -217,21 +217,15 @@ public class SimpleVirtualLazyTreeViewerTest extends ViewerTestCase {
 
 	private void processEventsUntilElementUpdated() {
 		updateElementCallCount = 0;
-		new DisplayHelper() {
-			@Override
-			protected boolean condition() {
-				// Keep processing events until the element updated event is queued and run
-				processEvents();
-				if (eventLoopAdjustmentBug531048) {
-					return updateElementCallCount <= 2;
+		// Keep processing events until the element updated event is queued and run
+		DisplayHelper.waitAndAssertCondition(fShell.getDisplay(), () -> {
+			if (eventLoopAdjustmentBug531048) {
+				if (updateElementCallCount > 2) {
+					assertEquals(2, updateElementCallCount);
+				} else if (updateElementCallCount == 0) {
+					assertEquals(1, updateElementCallCount);
 				}
-				return updateElementCallCount == 1;
 			}
-		}.waitForCondition(fViewer.getControl().getDisplay(), 3000);
-		if (eventLoopAdjustmentBug531048) {
-			assertTrue(updateElementCallCount <= 2);
-		} else {
-			assertEquals(1, updateElementCallCount);
-		}
+		});
 	}
 }

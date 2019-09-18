@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.harness.util;
 
+import static org.junit.Assert.assertTrue;
+
+import java.util.function.BooleanSupplier;
+
 import org.eclipse.swt.widgets.Display;
 
 /**
@@ -238,4 +242,49 @@ public abstract class DisplayHelper {
 		return condition;
 	}
 
+	/**
+	 * Returns a new {@link DisplayHelper}, which uses the argument condition.
+	 */
+	public static DisplayHelper create(BooleanSupplier condition) {
+		return new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				return condition.getAsBoolean();
+			}
+		};
+	}
+
+	/**
+	 * Waits for the condition until a timeout, returns false if the timeout
+	 * happened.
+	 */
+	public static boolean waitAndAssertCondition(Display display, long timeoutMs, BooleanSupplier condition) {
+		return create(condition).waitForCondition(display, timeoutMs, 10);
+	}
+
+	/**
+	 * Loops while {@code assertion} throws {@link AssertionError}. After a timeout
+	 * period {@code assertion} is run one last time, and the error is allowed to
+	 * propagate up the stack.
+	 * <p>
+	 * In this way the test condition doesn't have to be repeated, and the error
+	 * condition is still visible in the test result.
+	 */
+	public static void waitAndAssertCondition(Display display, Runnable assertion) {
+		BooleanSupplier condition = () -> {
+			try {
+				assertion.run();
+				return true;
+			} catch (AssertionError e) {
+				return false;
+			}
+		};
+
+		boolean completed = create(condition).waitForCondition(display, 10_000, 10);
+
+		if (!completed) {
+			assertion.run();
+			assertTrue("Timed out waiting for condition ", completed);
+		}
+	}
 }

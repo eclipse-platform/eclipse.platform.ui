@@ -87,7 +87,9 @@ public class ListViewerRefreshTest extends TestCase {
 		run("Refreshed viewer without a selection.", () -> viewer.refresh());
 
 		// BUG: The top index should not be the first item.
-		assertTrue(viewer.getList().getTopIndex() != 0);
+
+		DisplayHelper.waitAndAssertCondition(shell.getDisplay(),
+				() -> assertNotEquals(viewer.getList().getTopIndex(), 0));
 	}
 
 	/**
@@ -112,14 +114,8 @@ public class ListViewerRefreshTest extends TestCase {
 
 		viewer.getList().showSelection();
 
-		new DisplayHelper() {
-			@Override
-			protected boolean condition() {
-				return viewer.getList().getTopIndex() != 0;
-			}
-		}.waitForCondition(viewer.getControl().getDisplay(), 3000);
-
-		assertNotEquals(0, viewer.getList().getTopIndex());
+		DisplayHelper.waitAndAssertCondition(shell.getDisplay(),
+				() -> assertNotEquals(viewer.getList().getTopIndex(), 0));
 	}
 
 	/**
