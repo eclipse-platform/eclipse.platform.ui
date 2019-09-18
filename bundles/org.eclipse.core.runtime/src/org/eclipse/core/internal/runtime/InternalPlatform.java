@@ -629,6 +629,16 @@ public final class InternalPlatform {
 		initialized = true;
 		initializeAuthorizationHandler();
 		startServices();
+
+		// See if need to activate rest of the runtime plugins. Plugins are "gently" activated by touching
+		// a class from the corresponding plugin(s).
+		boolean shouldActivate = !"false".equalsIgnoreCase(context.getProperty(PROP_ACTIVATE_PLUGINS)); //$NON-NLS-1$
+		if (shouldActivate) {
+			// activate Preferences plugin by creating a class from it:
+			new org.eclipse.core.runtime.preferences.DefaultScope();
+			// activate Jobs plugin by creating a class from it:
+			org.eclipse.core.runtime.jobs.Job.getJobManager();
+		}
 	}
 
 	/**
