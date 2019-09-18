@@ -1752,12 +1752,6 @@ public class TextViewer extends Viewer implements
 				selectionChanged(event.x, event.y - event.x);
 			}
 		});
-		fTextWidget.addCaretListener(e -> {
-			// caret listener is invoked before widget actually performs the caret (and selection)
-			// change. So we can't update the selection synchronously on event, instead, we
-			// delay the selection update.
-			fTextWidget.getDisplay().asyncExec(() -> selectionChanged(e.caretOffset, 0));
-		});
 
 		fCursorListener= new CursorListener();
 		fCursorListener.install();
@@ -2293,7 +2287,6 @@ public class TextViewer extends Viewer implements
 				selectionChanged(selectionRange[0], selectionRange[1]);
 			}
 		}
-		updateSelectionCache();
 	}
 
 	/**
