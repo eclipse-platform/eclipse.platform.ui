@@ -88,18 +88,6 @@ public abstract class DisplayHelper {
 		return condition;
 	}
 
-	public static boolean waitForCondition(Display display, long timeout, BooleanSupplier condition) {
-		if (condition == null) {
-			throw new IllegalArgumentException("condition mustn't be null");
-		}
-		return new DisplayHelper() {
-			@Override
-			protected boolean condition() {
-				return condition.getAsBoolean();
-			}
-		}.waitForCondition(display, timeout);
-	}
-
 	/**
 	 * Call {@link Display#sleep()} and run the event loop until the given
 	 * timeout has elapsed.
@@ -256,6 +244,8 @@ public abstract class DisplayHelper {
 
 	/**
 	 * Returns a new {@link DisplayHelper}, which uses the argument condition.
+	 *
+	 * @since 1.6
 	 */
 	public static DisplayHelper create(BooleanSupplier condition) {
 		return new DisplayHelper() {
@@ -269,13 +259,13 @@ public abstract class DisplayHelper {
 	/**
 	 * Waits for the condition until a timeout, returns false if the timeout
 	 * happened.
-	 * 
+	 *
 	 * @param display   the display
 	 * @param timeout   timeout in milliseconds
 	 * @param condition condition to check, must not be null
 	 * @since 1.6
 	 */
-	public static boolean waitAndAssertCondition(Display display, long timeoutMs, BooleanSupplier condition) {
+	public static boolean waitForCondition(Display display, long timeoutMs, BooleanSupplier condition) {
 		return create(condition).waitForCondition(display, timeoutMs, 10);
 	}
 
@@ -286,6 +276,8 @@ public abstract class DisplayHelper {
 	 * <p>
 	 * In this way the test condition doesn't have to be repeated, and the error
 	 * condition is still visible in the test result.
+	 *
+	 * @since 1.6
 	 */
 	public static void waitAndAssertCondition(Display display, Runnable assertion) {
 		BooleanSupplier condition = () -> {
