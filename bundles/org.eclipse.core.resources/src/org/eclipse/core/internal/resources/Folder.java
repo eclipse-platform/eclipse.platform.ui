@@ -81,40 +81,36 @@ public class Folder extends Container implements IFolder {
 			createLink(LinkDescription.VIRTUAL_LOCATION, updateFlags, monitor);
 			return;
 		}
-
 		final boolean force = (updateFlags & IResource.FORCE) != 0;
-		monitor = Policy.monitorFor(monitor);
+		String message = NLS.bind(Messages.resources_creating, getFullPath());
+		SubMonitor subMonitor = SubMonitor.convert(monitor, message, 100);
+		checkValidPath(path, FOLDER, true);
+		final ISchedulingRule rule = workspace.getRuleFactory().createRule(this);
 		try {
-			String message = NLS.bind(Messages.resources_creating, getFullPath());
-			monitor.beginTask(message, Policy.totalWork);
-			checkValidPath(path, FOLDER, true);
-			final ISchedulingRule rule = workspace.getRuleFactory().createRule(this);
-			try {
-				workspace.prepareOperation(rule, monitor);
-				IFileStore store = getStore();
-				IFileInfo localInfo = store.fetchInfo();
-				assertCreateRequirements(store, localInfo, updateFlags);
-				workspace.beginOperation(true);
-				if (force && !Workspace.caseSensitive && localInfo.exists()) {
-					String name = getLocalManager().getLocalName(store);
-					if (name == null || localInfo.getName().equals(name)) {
-						delete(true, null);
-					} else {
-						// The file system is not case sensitive and a case variant exists at this location
-						String msg = NLS.bind(Messages.resources_existsLocalDifferentCase, new Path(store.toString()).removeLastSegments(1).append(name).toOSString());
-						throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, getFullPath(), msg, null);
-					}
+			workspace.prepareOperation(rule, subMonitor.newChild(1));
+			IFileStore store = getStore();
+			IFileInfo localInfo = store.fetchInfo();
+			assertCreateRequirements(store, localInfo, updateFlags);
+			workspace.beginOperation(true);
+			if (force && !Workspace.caseSensitive && localInfo.exists()) {
+				String name = getLocalManager().getLocalName(store);
+				if (name == null || localInfo.getName().equals(name)) {
+					delete(true, null);
+				} else {
+					// The file system is not case sensitive and a case variant exists at this
+					// location
+					String msg = NLS.bind(Messages.resources_existsLocalDifferentCase,
+							new Path(store.toString()).removeLastSegments(1).append(name).toOSString());
+					throw new ResourceException(IResourceStatus.CASE_VARIANT_EXISTS, getFullPath(), msg, null);
 				}
-				internalCreate(updateFlags, local, Policy.subMonitorFor(monitor, Policy.opWork));
-				workspace.getAliasManager().updateAliases(this, getStore(), IResource.DEPTH_ZERO, monitor);
-			} catch (OperationCanceledException e) {
-				workspace.getWorkManager().operationCanceled();
-				throw e;
-			} finally {
-				workspace.endOperation(rule, true);
 			}
+			internalCreate(updateFlags, local, subMonitor.newChild(98));
+			workspace.getAliasManager().updateAliases(this, getStore(), IResource.DEPTH_ZERO, subMonitor.newChild(1));
+		} catch (OperationCanceledException e) {
+			workspace.getWorkManager().operationCanceled();
+			throw e;
 		} finally {
-			monitor.done();
+			workspace.endOperation(rule, true);
 		}
 	}
 
