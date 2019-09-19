@@ -33,6 +33,7 @@ public class Policy {
 			DEBUG_AUTO_REFRESH = DEBUG && options.getBooleanOption(ResourcesPlugin.PI_RESOURCES + "/refresh", false); //$NON-NLS-1$
 
 			DEBUG_BUILD_DELTA = DEBUG && options.getBooleanOption(ResourcesPlugin.PI_RESOURCES + "/build/delta", false); //$NON-NLS-1$
+			DEBUG_BUILD_CYCLE = DEBUG && options.getBooleanOption(ResourcesPlugin.PI_RESOURCES + "/build/cycle", false); //$NON-NLS-1$
 			DEBUG_BUILD_FAILURE = DEBUG && options.getBooleanOption(ResourcesPlugin.PI_RESOURCES + "/build/failure", false); //$NON-NLS-1$
 			DEBUG_BUILD_INTERRUPT = DEBUG && options.getBooleanOption(ResourcesPlugin.PI_RESOURCES + "/build/interrupt", false); //$NON-NLS-1$
 			DEBUG_BUILD_INVOKING = DEBUG && options.getBooleanOption(ResourcesPlugin.PI_RESOURCES + "/build/invoking", false); //$NON-NLS-1$
@@ -74,6 +75,7 @@ public class Policy {
 
 	//debug constants
 	public static boolean DEBUG_BUILD_DELTA = false;
+	public static boolean DEBUG_BUILD_CYCLE = false;
 	public static boolean DEBUG_BUILD_FAILURE = false;
 	public static boolean DEBUG_BUILD_INTERRUPT = false;
 	public static boolean DEBUG_BUILD_INVOKING = false;

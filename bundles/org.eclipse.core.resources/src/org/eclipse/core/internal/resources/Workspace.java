@@ -491,6 +491,12 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				}
 				if (buildGraph != null) {
 					buildGraph.freeze();
+					if (Policy.DEBUG_BUILD_CYCLE && buildGraph.containsCycles()) {
+						List<IBuildConfiguration[]> nonTrivialComponents = buildGraph.nonTrivialComponents();
+						for (IBuildConfiguration[] iBuildConfigurations : nonTrivialComponents) {
+							Policy.debug("Cycle: " + Arrays.toString(iBuildConfigurations)); //$NON-NLS-1$
+						}
+					}
 					allConfigs = ComputeProjectOrder.computeVertexOrder(buildGraph, IBuildConfiguration.class).vertexes;
 				}
 

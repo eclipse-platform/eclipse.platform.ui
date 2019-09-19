@@ -27,6 +27,9 @@ org.eclipse.core.resources/build/invoking=false
 # Reports the start and end of build delta calculations
 org.eclipse.core.resources/build/delta=false
 
+# Reports build cycles
+org.eclipse.core.resources/build/cycle=false
+
 # For incremental builds, displays which builder is being run
 # and because of changes in which project.
 org.eclipse.core.resources/build/needbuild=false
