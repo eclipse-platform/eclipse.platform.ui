@@ -269,6 +269,11 @@ public abstract class DisplayHelper {
 	/**
 	 * Waits for the condition until a timeout, returns false if the timeout
 	 * happened.
+	 * 
+	 * @param display   the display
+	 * @param timeout   timeout in milliseconds
+	 * @param condition condition to check, must not be null
+	 * @since 1.6
 	 */
 	public static boolean waitAndAssertCondition(Display display, long timeoutMs, BooleanSupplier condition) {
 		return create(condition).waitForCondition(display, timeoutMs, 10);
