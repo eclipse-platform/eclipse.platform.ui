@@ -972,8 +972,8 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 					if (document!=null) {
 						try {
 							int line = item.getLineNumber()-1; //in document lines are 0 based. In search 1 based.
-							int previewTopLine = Math.max(line-(numLines-1)/2, 0); // when this is top line in preview the match will be centered
-							int start = document.getLineOffset(Math.max(previewTopLine - context, 0));
+							int contextStartLine = Math.max(line-(numLines-1)/2 - context, 0);
+							int start = document.getLineOffset(contextStartLine);
 							int end = document.getLength();
 							try {
 								IRegion lineInfo = document.getLineInformation(line + numLines/2 + context);
@@ -986,7 +986,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 							StyledString styledString = highlightMatches(document.get(start, end-start));
 							details.setText(styledString.getString());
 							details.setStyleRanges(styledString.getStyleRanges());
-							details.setTopIndex(previewTopLine);
+							details.setTopIndex(Math.max(line - contextStartLine - numLines/2, 0));
 							return;
 						} catch (BadLocationException e) {
 						}
