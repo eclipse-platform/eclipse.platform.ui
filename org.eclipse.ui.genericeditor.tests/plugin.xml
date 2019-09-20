@@ -282,7 +282,7 @@
     <extension
           point="org.eclipse.ui.genericeditor.quickAssistProcessors">
        <quickAssistProcessor
-             class="org.eclipse.ui.genericeditor.tests.contributions.QuickAssistProcessor"
+             class="org.eclipse.ui.genericeditor.tests.contributions.MockQuickAssistProcessor"
              contentType="org.eclipse.ui.genericeditor.tests.content-type">
        </quickAssistProcessor>
     </extension>
