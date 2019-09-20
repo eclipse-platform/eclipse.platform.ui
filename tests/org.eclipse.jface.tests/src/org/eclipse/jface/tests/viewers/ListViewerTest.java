@@ -144,15 +144,20 @@ public class ListViewerTest extends StructuredViewerTest {
 			int topIndex = list.getTopIndex();
 			assertNotEquals("Top item should not be the first item.", 0, topIndex);
 			fViewer.refresh();
-			processEvents();
-			assertEquals("Top index was not preserved after refresh.", topIndex, list.getTopIndex());
+
+			DisplayHelper.waitAndAssertCondition(fShell.getDisplay(), () -> {
+				assertEquals("Top index was not preserved after refresh.", topIndex, list.getTopIndex());
+			});
 
 			// Assert that when the previous top index after refresh is invalid no
 			// exceptions are thrown.
 			model.deleteChildren();
 
 			fViewer.refresh();
-			assertEquals(0, list.getTopIndex());
+
+			DisplayHelper.waitAndAssertCondition(fShell.getDisplay(), () -> {
+				assertEquals(0, list.getTopIndex());
+			});
 		} finally {
 			Device.DEBUG = false;
 		}
@@ -164,13 +169,9 @@ public class ListViewerTest extends StructuredViewerTest {
 
 		fViewer.setSelection(new StructuredSelection(((ListViewer)fViewer).getElementAt(50)),true);
 		List list = ((ListViewer) fViewer).getList();
-		new DisplayHelper() {
-			@Override
-			protected boolean condition() {
-				return list.getTopIndex() != 0;
-			}
-		}.waitForCondition(fViewer.getControl().getDisplay(), 3000);
-		assertNotEquals(0, list.getTopIndex());
+		DisplayHelper.waitAndAssertCondition(fShell.getDisplay(), () -> {
+			assertNotEquals(0, list.getTopIndex());
+		});
 	}
 
 	public void testSelectionNoRevealBug177619() throws Exception {
