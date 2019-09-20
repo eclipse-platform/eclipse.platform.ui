@@ -32,18 +32,19 @@ import org.eclipse.e4.ui.bindings.internal.BindingTableManager;
 import org.eclipse.e4.ui.bindings.internal.ContextSet;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.TriggerSequence;
-import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandImageService;
@@ -55,7 +56,7 @@ public class SearchField {
 
 	private static final String QUICK_ACCESS_COMMAND_ID = "org.eclipse.ui.window.quickAccess"; //$NON-NLS-1$
 
-	private Button quickAccessButton;
+	private ToolItem quickAccessButton;
 	private Display display;
 	private ParameterizedCommand quickAccessCommand;
 	private TriggerSequence triggerSequence = null;
@@ -77,7 +78,7 @@ public class SearchField {
 		comp.setSize(SWT.DEFAULT, 32);
 		GridLayoutFactory.swtDefaults().margins(3, 3).applyTo(comp);
 		updateQuickAccessTriggerSequence();
-		quickAccessButton = createButton(comp);
+		quickAccessButton = createQuickAccessToolbar(comp);
 		updateQuickAccessText();
 
 		quickAccessButton.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
@@ -121,27 +122,35 @@ public class SearchField {
 		}
 	}
 
-	private Button createButton(Composite parent) {
-		Button res = new Button(parent, SWT.PUSH | SWT.FLAT);
-		GridDataFactory.swtDefaults().align(SWT.CENTER, SWT.CENTER).applyTo(res);
+	private ToolItem createQuickAccessToolbar(Composite parent) {
+		Composite comp = new Composite(parent, SWT.NONE);
+		RowLayout layout = new RowLayout(SWT.HORIZONTAL);
+		layout.marginLeft = layout.marginRight = 8;
+		layout.marginBottom = 0;
+		layout.marginTop = 0;
+		comp.setLayout(layout);
+		ToolBar toolbar = new ToolBar(comp, SWT.FLAT | SWT.WRAP | SWT.RIGHT);
+
+		ToolItem quickAccessToolItem = new ToolItem(toolbar, SWT.PUSH);
+
 		try {
-			res.setText(quickAccessCommand.getName());
+			quickAccessToolItem.setText(quickAccessCommand.getName());
 		} catch (NotDefinedException e) {
 			WorkbenchPlugin.log(e);
 		}
 		ImageDescriptor imageDescriptor = commandImageService.getImageDescriptor(quickAccessCommand.getId());
 		if (imageDescriptor != null) {
 			Image image = imageDescriptor.createImage();
-			res.setImage(image);
-			res.addDisposeListener(e -> image.dispose());
+			quickAccessToolItem.setImage(image);
+			quickAccessToolItem.addDisposeListener(e -> image.dispose());
 		}
-		res.addMenuDetectListener(e -> {
-			if (res.getMenu() == null) {
-				res.setMenu(parent.getMenu());
+		toolbar.addMenuDetectListener(e -> {
+			if (toolbar.getMenu() == null) {
+				toolbar.setMenu(parent.getMenu());
 				e.doit = true;
 			}
 		});
-		return res;
+		return quickAccessToolItem;
 	}
 
 	private void updateQuickAccessText() {
@@ -156,7 +165,7 @@ public class SearchField {
 		} else {
 			quickAccessButton.setToolTipText(QuickAccessMessages.QuickAccess_TooltipDescription_Empty);
 		}
-		quickAccessButton.requestLayout();
+		quickAccessButton.getParent().requestLayout();
 
 	}
 
