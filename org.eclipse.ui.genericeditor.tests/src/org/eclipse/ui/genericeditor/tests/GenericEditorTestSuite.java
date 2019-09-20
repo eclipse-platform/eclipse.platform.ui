@@ -29,7 +29,8 @@ import org.junit.runners.Suite.SuiteClasses;
 		AutoEditTest.class,
 		ReconcilerTest.class,
 		HighlightTest.class,
-		IconsTest.class
+		IconsTest.class,
+		TestQuickAssist.class
 })
 public class GenericEditorTestSuite {
 	// see @SuiteClasses
