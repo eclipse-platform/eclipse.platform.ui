@@ -149,7 +149,7 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 
 	@Override
 	protected void invokeOperation(IResource resource, IProgressMonitor monitor) throws CoreException {
-		((IProject) resource).open(monitor);
+		((IProject) resource).open(IResource.BACKGROUND_REFRESH, monitor);
 	}
 
 	/**
@@ -230,7 +230,7 @@ public class OpenResourceAction extends WorkspaceAction implements IResourceChan
 					return;
 				}
 				SubMonitor subMonitor = SubMonitor.convert(mon, openProjectReferences ? 2 : 1);
-				project.open(subMonitor.split(1));
+				project.open(IResource.BACKGROUND_REFRESH, subMonitor.split(1));
 				final IProject[] references = project.getReferencedProjects();
 				if (!hasPrompted) {
 					openProjectReferences = false;
