@@ -719,10 +719,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			fBuffer= new Image(fCanvas.getDisplay(), size.x, size.y);
 		}
 		GC bufferGC= new GC(fBuffer);
-		if (fForeground != null) {
-			bufferGC.setForeground(fForeground);
-		}
-		bufferGC.setBackground(getBackground(fCanvas.getDisplay()));
+		Image newBuffer= null;
 		try {
 			int topPixel= fCachedTextWidget.getTopPixel();
 			int bufferY= 0;
@@ -766,7 +763,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 				 * For higher zoom levels (200%), we manually scale the font and drawing coordinates,
 				 * and then use getImageData(100) to extract the high-resolution image data. */
 				ILineRange lines= visibleLines;
-				Image zoomedBuffer= new Image(fCanvas.getDisplay(), (ImageDataProvider) zoom -> {
+				newBuffer= new Image(fCanvas.getDisplay(), (ImageDataProvider) zoom -> {
 					fZoom= zoom;
 					internalSetZoom(zoom);
 					int width= size.x * zoom / 100;
@@ -786,14 +783,8 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 							fLastZoomedFont= font;
 						}
 					}
-					gc.setFont(font);
-					if (fForeground != null) {
-						gc.setForeground(fForeground);
-					}
 					try {
-						gc.setBackground(getBackground(fCanvas.getDisplay()));
-						gc.fillRectangle(0, 0, width, height);
-
+						initializeGC(gc, font, 0, 0, width, height);
 						doPaint(gc, lines);
 					} finally {
 						gc.dispose();
@@ -804,22 +795,40 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 					gcImage.dispose();
 					return imageData;
 				});
+				bufferGC.drawImage(newBuffer, 0, bufferY, size.x, bufferH, 0, bufferY, size.x, bufferH);
+			} else if (dy != 0) {
+				// Some rulers may paint outside the line region. Let them paint in a new image,
+				// the copy the wanted bits.
+				newBuffer= new Image(fCanvas.getDisplay(), size.x, size.y);
+				GC localGC= new GC(newBuffer);
 				try {
-					bufferGC.drawImage(zoomedBuffer, 0, bufferY, size.x, bufferH, 0, bufferY, size.x, bufferH);
+					initializeGC(localGC, fCanvas.getFont(), 0, bufferY, size.x, bufferH);
+					doPaint(localGC, visibleLines);
 				} finally {
-					zoomedBuffer.dispose();
+					localGC.dispose();
 				}
+				bufferGC.drawImage(newBuffer, 0, bufferY, size.x, bufferH, 0, bufferY, size.x, bufferH);
 			} else {
-				// Draw directly into the buffer
-				bufferGC.setFont(fCanvas.getFont());
-				bufferGC.fillRectangle(0, bufferY, size.x, bufferH);
-
+				// We redraw everything; paint directly into the buffer
+				initializeGC(bufferGC, fCanvas.getFont(), 0, 0, size.x, size.y);
 				doPaint(bufferGC, visibleLines);
 			}
 		} finally {
 			bufferGC.dispose();
+			if (newBuffer != null) {
+				newBuffer.dispose();
+			}
 		}
 		dest.drawImage(fBuffer, 0, 0);
+	}
+
+	private void initializeGC(GC gc, Font font, int x, int y, int width, int height) {
+		gc.setFont(font);
+		if (fForeground != null) {
+			gc.setForeground(fForeground);
+		}
+		gc.setBackground(getBackground(fCanvas.getDisplay()));
+		gc.fillRectangle(x, y, width, height);
 	}
 
 	/**
