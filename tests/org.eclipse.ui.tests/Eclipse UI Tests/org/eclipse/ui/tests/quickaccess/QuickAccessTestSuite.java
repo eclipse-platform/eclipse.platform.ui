@@ -13,9 +13,11 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.quickaccess;
 
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
+@Ignore("These test have been failing a lot, they are disabled until they are fixed to be more stable. See bug 551153")
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ CamelUtilTest.class, QuickAccessDialogTest.class, ShellClosingTest.class,
 		ContentMatchesTest.class })
