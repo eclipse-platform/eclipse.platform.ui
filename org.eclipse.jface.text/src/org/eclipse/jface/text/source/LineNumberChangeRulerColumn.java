@@ -170,10 +170,8 @@ public class LineNumberChangeRulerColumn extends LineNumberRulerColumn implement
 		Color foreground= gc.getForeground();
 		if (visibleLines != null) {
 			if (fRevisionPainter.hasInformation()) {
-				fRevisionPainter.setZoom(fZoom);
 				fRevisionPainter.paint(gc, visibleLines);
 			} else if (fDiffPainter.hasInformation()) { // don't paint quick diff colors if revisions are painted
-				fDiffPainter.setZoom(fZoom);
 				fDiffPainter.paint(gc, visibleLines);
 			}
 		}
