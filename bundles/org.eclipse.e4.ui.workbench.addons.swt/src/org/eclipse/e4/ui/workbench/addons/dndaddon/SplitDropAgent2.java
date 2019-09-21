@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christoph Läubrich - Bug 365525
  ******************************************************************************/
 package org.eclipse.e4.ui.workbench.addons.dndaddon;
 
@@ -164,6 +165,9 @@ public class SplitDropAgent2 extends DropAgent {
 
 	private MUIElement checkAreaEdge(MUIElement dragElement, DnDInfo info) {
 		MPerspective persp = dndManager.getModelService().getPerspectiveFor(dragElement);
+		if (persp == null) {
+			return null;
+		}
 		List<MArea> areaList = dndManager.getModelService().findElements(persp, null, MArea.class,
 				null, EModelService.IN_SHARED_AREA);
 		if (areaList.size() > 0) {

@@ -13,6 +13,7 @@
  *     Lars Vogel (Lars.Vogel@gmail.com) - Bug 331690
  *     Dirk Fauth (dirk.fauth@googlemail.com) - Bug 459285
  *     Eugen Neufeld (eneufeld@eclipsesource.com) - Bug 432466, Bug 455568
+ *     Christoph Läubrich - Bug 365525
  ******************************************************************************/
 
 package org.eclipse.e4.ui.workbench.addons.minmax;
@@ -73,9 +74,9 @@ public class MinMaxAddon {
 	private static final String GLOBAL_CACHE_ID = "Global"; //$NON-NLS-1$
 
 	// tags representing the min/max state (h
-	private static String MINIMIZED = IPresentationEngine.MINIMIZED;
-	private static String MAXIMIZED = IPresentationEngine.MAXIMIZED;
-	private static String MINIMIZED_BY_ZOOM = IPresentationEngine.MINIMIZED_BY_ZOOM;
+	private static final String MINIMIZED = IPresentationEngine.MINIMIZED;
+	private static final String MAXIMIZED = IPresentationEngine.MAXIMIZED;
+	private static final String MINIMIZED_BY_ZOOM = IPresentationEngine.MINIMIZED_BY_ZOOM;
 
 	@Inject
 	IEventBroker eventBroker;
@@ -196,6 +197,9 @@ public class MinMaxAddon {
 	};
 
 	private void setState(MUIElement element, String state) {
+		if (element == null) {
+			return;
+		}
 		if (MINIMIZED.equals(state)) {
 			element.getTags().remove(MAXIMIZED);
 			element.getTags().add(MINIMIZED);
@@ -718,7 +722,12 @@ public class MinMaxAddon {
 	 */
 	private List<MUIElement> getElementsToMinimize(MUIElement element) {
 		MWindow win = MinMaxAddonUtil.getWindowFor(element);
-		MPerspective persp = modelService.getActivePerspective(win);
+		MPerspective persp;
+		if (win == null) {
+			persp = null;
+		} else {
+			persp = modelService.getActivePerspective(win);
+		}
 
 		List<MUIElement> elementsToMinimize = new ArrayList<>();
 		int loc = modelService.getElementLocation(element);
@@ -842,6 +851,9 @@ public class MinMaxAddon {
 	 */
 	private void restoreMaximizedElement(final MUIElement element, MWindow win) {
 		MPerspective elePersp = modelService.getPerspectiveFor(element);
+		if (elePersp == null) {
+			return;
+		}
 		List<String> maxTag = new ArrayList<>();
 		maxTag.add(MAXIMIZED);
 		List<MUIElement> curMax = modelService.findElements(win, null, MUIElement.class, maxTag);
