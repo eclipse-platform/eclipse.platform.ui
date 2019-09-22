@@ -2201,9 +2201,10 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 		// create root location
 		localMetaArea.locationFor(getRoot()).toFile().mkdirs();
 
-		//restart the notification manager so it is initialized with the right tree
 		SubMonitor subMonitor = SubMonitor.convert(null);
 		startup(subMonitor);
+		// restart the notification manager so it is initialized with the right tree
+		notificationManager.startup(null);
 		openFlag = true;
 		if (crashed || refreshRequested()) {
 			try {
