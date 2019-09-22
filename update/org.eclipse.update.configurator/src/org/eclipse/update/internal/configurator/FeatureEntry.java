@@ -312,7 +312,7 @@ public class FeatureEntry
 			return null;
 		
 		String resolvedURL = Utils.getResourceString(getResourceBundle(), licenseURL);
-		if (resolvedURL.startsWith("http://")) //$NON-NLS-1$
+		if (resolvedURL.startsWith("http://") || resolvedURL.startsWith("https://")) //$NON-NLS-1$ //$NON-NLS-2$
 			return resolvedURL;
 		try {
 			return new URL(getSite().getResolvedURL(), getURL() + resolvedURL).toExternalForm();

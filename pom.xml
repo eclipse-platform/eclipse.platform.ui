@@ -52,6 +52,7 @@
 
   <modules>
     <module>update/org.eclipse.update.configurator</module>
+    <module>update/org.eclipse.update.configurator.tests</module>
     <module>ant/org.eclipse.ant.core</module>
     <module>ant/org.eclipse.ant.launching</module>
     <module>ant/org.eclipse.ant.ui</module>
