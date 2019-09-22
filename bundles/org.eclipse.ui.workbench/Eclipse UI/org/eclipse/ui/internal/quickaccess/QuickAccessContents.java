@@ -441,6 +441,7 @@ public abstract class QuickAccessContents {
 								return Status.OK_STATUS;
 							}
 						};
+						job.setPriority(Job.INTERACTIVE);
 						job.schedule();
 						try {
 							job.join(0, new NullProgressMonitor());

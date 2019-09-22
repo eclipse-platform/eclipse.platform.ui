@@ -34,6 +34,7 @@ import org.hamcrest.Matchers;
  */
 public class ContentMatchesTest extends UITestCase {
 
+	private static final int TIMEOUT = 3000;
 	private QuickAccessDialog dialog;
 	private QuickAccessContents quickAccessContents;
 
@@ -62,38 +63,27 @@ public class ContentMatchesTest extends UITestCase {
 		Text text = quickAccessContents.getFilterText();
 		text.setText("whitespace");
 		final Table table = quickAccessContents.getTable();
-		assertTrue(new DisplayHelper() {
-			@Override
-			protected boolean condition() {
-				return Matchers.hasItems(Matchers.containsString("Text Editors")).matches(getAllEntries(table));
-			}
-		}.waitForCondition(table.getDisplay(), 1000));
+		assertTrue(DisplayHelper.waitForCondition(table.getDisplay(), TIMEOUT, () ->
+			Matchers.hasItems(Matchers.containsString("Text Editors")).matches(getAllEntries(table))
+		));
 	}
 
 	public void testRequestWithWhitespace() throws Exception {
 		Text text = quickAccessContents.getFilterText();
 		text.setText("text white");
 		final Table table = quickAccessContents.getTable();
-		assertTrue(new DisplayHelper() {
-			@Override
-			protected boolean condition() {
-				return Matchers.hasItems(Matchers.containsString("Text Editors")).matches(getAllEntries(table));
-			}
-		}.waitForCondition(table.getDisplay(), 1000));
+		assertTrue(DisplayHelper.waitForCondition(table.getDisplay(), TIMEOUT, () ->
+			Matchers.hasItems(Matchers.containsString("Text Editors")).matches(getAllEntries(table))
+		));
 	}
 
 	public void testFindCommandByDescription() throws Exception {
 		Text text = quickAccessContents.getFilterText();
 		text.setText("rename ltk");
 		final Table table = quickAccessContents.getTable();
-		assertTrue(new DisplayHelper() {
-			@Override
-			protected boolean condition() {
-				return Matchers
-						.hasItems(Matchers.containsString("Rename the selected resource and notify LTK participants."))
-						.matches(getAllEntries(table));
-			}
-		}.waitForCondition(table.getDisplay(), 1000));
+		assertTrue(DisplayHelper.waitForCondition(table.getDisplay(), TIMEOUT, () -> //
+		Matchers.hasItems(Matchers.containsString("Rename the selected resource and notify LTK participants."))
+				.matches(getAllEntries(table))));
 	}
 
 	static List<String> getAllEntries(Table table) {

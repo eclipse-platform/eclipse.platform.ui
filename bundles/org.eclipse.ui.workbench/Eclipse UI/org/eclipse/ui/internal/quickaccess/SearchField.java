@@ -178,7 +178,9 @@ public class SearchField {
 
 	@PreDestroy
 	void dispose() {
-		display.removeFilter(SWT.FocusIn, previousFocusListener);
+		if (display != null && !display.isDisposed()) {
+			display.removeFilter(SWT.FocusIn, previousFocusListener);
+		}
 	}
 
 }
