@@ -71,12 +71,6 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_OUTER_KEYLINE_COLOR {
 	background-color: #E8E8E8;
 }
 
-#PerspectiveSwitcher {
-	background-color: #F0F0F0 #E8E8E8 100%;
-	eclipse-perspective-keyline-color: #E8E8E8 #E8E8E8;
-	handle-image: url(./macHandle.png);
-}
-
 #org-eclipse-ui-editorss {
 	swt-tab-height: 8px;
 	padding: 0px 5px 7px;

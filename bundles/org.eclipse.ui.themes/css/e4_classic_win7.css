@@ -56,10 +56,6 @@ CTabItem:selected {
 	color: '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_TEXT_COLOR';
 }
 
-#PerspectiveSwitcher  {
-	eclipse-perspective-keyline-color: #ECE9D8 #FFFFFF;
-}
-
 .MToolControl.TrimStack {
 	frame-image:  url(./winClassicTSFrame.png);
 	handle-image:  url(./winClassicHandle.png);

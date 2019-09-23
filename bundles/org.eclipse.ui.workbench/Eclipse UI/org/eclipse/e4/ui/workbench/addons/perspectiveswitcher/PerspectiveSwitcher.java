@@ -60,17 +60,12 @@ import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.PaintEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -127,10 +122,7 @@ public class PerspectiveSwitcher {
 	private ToolBar perspSwitcherToolbar;
 
 	private Composite comp;
-	private Image backgroundImage;
 	private Image perspectiveImage;
-
-	Color borderColor, curveColor;
 	Control toolParent;
 	IPropertyChangeListener propertyChangeListener;
 
@@ -269,7 +261,6 @@ public class PerspectiveSwitcher {
 		layout.marginTop = 0;
 		comp.setLayout(layout);
 		perspSwitcherToolbar = new ToolBar(comp, SWT.FLAT | SWT.WRAP | SWT.RIGHT + orientation);
-		comp.addPaintListener(e -> paint(e));
 		toolParent = ((Control) toolControl.getParent().getWidget());
 
 		comp.addDisposeListener(e -> dispose());
@@ -766,109 +757,9 @@ public class PerspectiveSwitcher {
 		return null;
 	}
 
-	void paint(PaintEvent e) {
-		GC gc = e.gc;
-		Point size = comp.getSize();
-		if (curveColor == null || curveColor.isDisposed()) {
-			curveColor = e.display.getSystemColor(SWT.COLOR_GRAY);
-		}
-		int h = size.y;
-		int[] simpleCurve = new int[] { 0, h - 1, 1, h - 1, 2, h - 2, 2, 1, 3, 0 };
-		// draw border
-		gc.setForeground(curveColor);
-		gc.setAdvanced(true);
-		if (gc.getAdvanced()) {
-			gc.setAntialias(SWT.ON);
-		}
-		gc.drawPolyline(simpleCurve);
-
-		Rectangle bounds = ((Control) e.widget).getBounds();
-		bounds.x = bounds.y = 0;
-		Region r = new Region();
-		r.add(bounds);
-		int[] simpleCurveClose = new int[simpleCurve.length + 4];
-		System.arraycopy(simpleCurve, 0, simpleCurveClose, 0, simpleCurve.length);
-		int index = simpleCurve.length;
-		simpleCurveClose[index++] = bounds.width;
-		simpleCurveClose[index++] = 0;
-		simpleCurveClose[index++] = bounds.width;
-		simpleCurveClose[index++] = bounds.height;
-		r.subtract(simpleCurveClose);
-		Region clipping = new Region();
-		gc.getClipping(clipping);
-		r.intersect(clipping);
-		gc.setClipping(r);
-		Image b = toolParent.getBackgroundImage();
-		if (b != null && !b.isDisposed())
-			gc.drawImage(b, 0, 0);
-
-		r.dispose();
-		clipping.dispose();
-	}
-
-	void resize() {
-		Point size = comp.getSize();
-		Image oldBackgroundImage = backgroundImage;
-		backgroundImage = new Image(comp.getDisplay(), size.x, size.y);
-		GC gc = new GC(backgroundImage);
-		comp.getParent().drawBackground(gc, 0, 0, size.x, size.y, 0, 0);
-		Color background = comp.getBackground();
-		Color border = comp.getDisplay().getSystemColor(SWT.COLOR_WIDGET_NORMAL_SHADOW);
-		RGB backgroundRGB = background.getRGB();
-		// TODO naive and hard coded, doesn't deal with high contrast, etc.
-		Color gradientTop = new Color(comp.getDisplay(), backgroundRGB.red + 12, backgroundRGB.green + 10,
-				backgroundRGB.blue + 10);
-		int h = size.y;
-		int curveStart = 0;
-		int curve_width = 5;
-
-		int[] curve = new int[] { 0, h, 1, h, 2, h - 1, 3, h - 2, 3, 2, 4, 1, 5, 0, };
-		int[] line1 = new int[curve.length + 4];
-		int index = 0;
-		int x = curveStart;
-		line1[index++] = x + 1;
-		line1[index++] = h;
-		for (int i = 0; i < curve.length / 2; i++) {
-			line1[index++] = x + curve[2 * i];
-			line1[index++] = curve[2 * i + 1];
-		}
-		line1[index++] = x + curve_width;
-		line1[index++] = 0;
-
-		int[] line2 = new int[line1.length];
-		index = 0;
-		for (int i = 0; i < line1.length / 2; i++) {
-			line2[index] = line1[index++] - 1;
-			line2[index] = line1[index++];
-		}
-
-		// custom gradient
-		gc.setForeground(gradientTop);
-		gc.setBackground(background);
-		gc.drawLine(4, 0, size.x, 0);
-		gc.drawLine(3, 1, size.x, 1);
-		gc.fillGradientRectangle(2, 2, size.x - 2, size.y - 3, true);
-		gc.setForeground(background);
-		gc.drawLine(2, size.y - 1, size.x, size.y - 1);
-		gradientTop.dispose();
-
-		gc.setForeground(border);
-		gc.drawPolyline(line2);
-		gc.dispose();
-		comp.setBackgroundImage(backgroundImage);
-		if (oldBackgroundImage != null)
-			oldBackgroundImage.dispose();
-
-	}
 
 	void dispose() {
 		cleanUp();
-
-		if (backgroundImage != null) {
-			comp.setBackgroundImage(null);
-			backgroundImage.dispose();
-			backgroundImage = null;
-		}
 	}
 
 	void disposeTBImages() {
@@ -880,11 +771,6 @@ public class PerspectiveSwitcher {
 				image.dispose();
 			}
 		}
-	}
-
-	public void setKeylineColor(Color borderColor, Color curveColor) {
-		this.borderColor = borderColor;
-		this.curveColor = curveColor;
 	}
 
 	private void updateToolItem(ToolItem ti, String attName, Object newValue) {

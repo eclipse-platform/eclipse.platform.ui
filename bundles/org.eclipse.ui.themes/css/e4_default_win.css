@@ -77,11 +77,6 @@ ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_BG_END {
 	handle-image-rotated:  url(./win7Handle-rotated.png);
 }
 
-#PerspectiveSwitcher  {
-	background-color: #F5F7FC #E1E6F6 100%;
-	eclipse-perspective-keyline-color: #E1E6F6 #AAB0BF;
-}
-
 #org-eclipse-ui-editorss {
 	swt-tab-height: 8px;
 	padding: 0px 5px 7px;

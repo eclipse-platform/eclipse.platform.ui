@@ -67,10 +67,6 @@ CTabItem.busy {
     color: #888888;
 }
 
-#PerspectiveSwitcher {
-    eclipse-perspective-keyline-color: #AAB0BF #AAB0BF;
-}
-
 .MToolControl.TrimStack {
     /*frame-image:  url(./gtkTSFrame.png);*/
     handle-image:  url(./dragHandle.png);
@@ -134,7 +130,7 @@ CTabFolder Scale {
 
 /* ###################### Top Toolbar ########################## */
 
-#org-eclipse-ui-main-toolbar, #PerspectiveSwitcher {
+#org-eclipse-ui-main-toolbar {
     eclipse-perspective-keyline-color: #585858;
     background-color: #515658 #515658 100%;
     handle-image: none;
