@@ -24,8 +24,7 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.tests.harness.TestBarrier;
-import org.eclipse.core.tests.harness.TestJob;
+import org.eclipse.core.tests.harness.*;
 
 /**
  * This class tests public API related to building and to build specifications.
@@ -195,7 +194,9 @@ public class BuilderTest extends AbstractBuilderTest {
 		}
 		//start with a clean build
 		try {
-			getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, getMonitor());
+			FussyProgressMonitor monitor = new FussyProgressMonitor();
+			getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("3.1", e);
 		}
@@ -203,7 +204,9 @@ public class BuilderTest extends AbstractBuilderTest {
 		assertTrue("3.2", verifier.wasCleanBuild());
 		// Now do an incremental build - since delta was null it should appear as a clean build
 		try {
-			getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
+			FussyProgressMonitor monitor = new FussyProgressMonitor();
+			getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("3.3", e);
 		}
@@ -211,21 +214,27 @@ public class BuilderTest extends AbstractBuilderTest {
 		// next time it will appear as an incremental build
 		try {
 			project.touch(getMonitor());
-			getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
+			FussyProgressMonitor monitor = new FussyProgressMonitor();
+			getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("3.5", e);
 		}
 		assertTrue("3.6", verifier.wasIncrementalBuild());
 		//do another clean
 		try {
-			getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, getMonitor());
+			FussyProgressMonitor monitor = new FussyProgressMonitor();
+			getWorkspace().build(IncrementalProjectBuilder.CLEAN_BUILD, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("3.7", e);
 		}
 		assertTrue("3.8", verifier.wasCleanBuild());
 		//doing a full build should still look like a full build
 		try {
-			getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
+			FussyProgressMonitor monitor = new FussyProgressMonitor();
+			getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("3.9", e);
 		}
@@ -1138,28 +1147,34 @@ public class BuilderTest extends AbstractBuilderTest {
 		//try to do an incremental build when there has never
 		//been a batch build
 		try {
-			getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
+			FussyProgressMonitor monitor = new FussyProgressMonitor();
+			getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
 			verifier = SortBuilder.getInstance();
 			verifier.addExpectedLifecycleEvent(TestBuilder.SET_INITIALIZATION_DATA);
 			verifier.addExpectedLifecycleEvent(TestBuilder.STARTUP_ON_INITIALIZE);
 			verifier.addExpectedLifecycleEvent(TestBuilder.DEFAULT_BUILD_ID);
 			verifier.assertLifecycleEvents("3.1");
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("3.2", e);
 		}
 		// Now do another incremental build. Since we just did one, nothing
 		// should happen in this one.
 		try {
-			getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, getMonitor());
+			FussyProgressMonitor monitor = new FussyProgressMonitor();
+			getWorkspace().build(IncrementalProjectBuilder.INCREMENTAL_BUILD, monitor);
 			verifier.assertLifecycleEvents("3.4");
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("3.5", e);
 		}
 		// Now do a batch build
 		try {
-			getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
+			FussyProgressMonitor monitor = new FussyProgressMonitor();
+			getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, monitor);
 			verifier.addExpectedLifecycleEvent(TestBuilder.DEFAULT_BUILD_ID);
 			verifier.assertLifecycleEvents("3.6");
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("3.8", e);
 		}
@@ -1172,7 +1187,9 @@ public class BuilderTest extends AbstractBuilderTest {
 		// Open the project, build it, and delete it
 		try {
 			project.open(getMonitor());
-			getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, getMonitor());
+			FussyProgressMonitor monitor = new FussyProgressMonitor();
+			getWorkspace().build(IncrementalProjectBuilder.FULL_BUILD, monitor);
+			monitor.assertUsedUp();
 			project.delete(false, getMonitor());
 			verifier.addExpectedLifecycleEvent(TestBuilder.SET_INITIALIZATION_DATA);
 			verifier.addExpectedLifecycleEvent(TestBuilder.STARTUP_ON_INITIALIZE);

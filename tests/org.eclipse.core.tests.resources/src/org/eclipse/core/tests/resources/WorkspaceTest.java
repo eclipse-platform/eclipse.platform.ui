@@ -24,6 +24,7 @@ import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.tests.harness.FussyProgressMonitor;
 
 /**
  * This class should be refactored into the black box tests for
@@ -140,41 +141,57 @@ public class WorkspaceTest extends ResourceTest {
 	public void testFileCreation() throws Throwable {
 		IPath path = new Path("/testProject/testFile");
 		IFile target = getWorkspace().getRoot().getFile(path);
-		target.create(null, true, getMonitor());
+		FussyProgressMonitor monitor = new FussyProgressMonitor();
+		target.create(null, true, monitor);
+		monitor.assertUsedUp();
 		assertTrue(target.exists());
 	}
 
 	public void testFileDeletion() throws Throwable {
 		IPath path = new Path("/testProject/testFileForDelete");
 		IFile target = getWorkspace().getRoot().getFile(path);
-		target.create(null, true, getMonitor());
+		FussyProgressMonitor monitor = new FussyProgressMonitor();
+		target.create(null, true, monitor);
+		monitor.assertUsedUp();
 		assertTrue(target.exists());
-		target.delete(true, getMonitor());
+		monitor.prepare();
+		target.delete(true, monitor);
+		monitor.assertUsedUp();
 		assertTrue(!target.exists());
 	}
 
 	public void testFileEmptyDeletion() throws Throwable {
 		IPath path = new Path("/testProject/testFileForDelete2");
 		IFile target = getWorkspace().getRoot().getFile(path);
-		target.create(getContents(""), true, getMonitor());
+		FussyProgressMonitor monitor = new FussyProgressMonitor();
+		target.create(getContents(""), true, monitor);
+		monitor.assertUsedUp();
 		assertTrue(target.exists());
-		target.delete(true, getMonitor());
+		monitor.prepare();
+		target.delete(true, monitor);
+		monitor.assertUsedUp();
 		assertTrue(!target.exists());
 	}
 
 	public void testFileInFolderCreation() throws Throwable {
 		IPath path = new Path("/testProject/testFolder/testFile2");
 		IFile target = getWorkspace().getRoot().getFile(path);
-		target.create(getRandomContents(), true, getMonitor());
+		FussyProgressMonitor monitor = new FussyProgressMonitor();
+		target.create(getRandomContents(), true, monitor);
+		monitor.assertUsedUp();
 		assertTrue(target.exists());
 	}
 
 	public void testFileMove() throws Throwable {
 		IPath path = new Path("/testProject/targetFile");
 		IFile target = getWorkspace().getRoot().getFile(path);
-		target.create(getRandomContents(), true, getMonitor());
+		FussyProgressMonitor monitor = new FussyProgressMonitor();
+		target.create(getRandomContents(), true, monitor);
+		monitor.assertUsedUp();
 		IFile destination = getWorkspace().getRoot().getFile(new Path("/testProject/movedFile"));
-		target.move(destination.getFullPath(), true, getMonitor());
+		monitor.prepare();
+		target.move(destination.getFullPath(), true, monitor);
+		monitor.assertUsedUp();
 		assertTrue(destination.exists());
 		assertTrue(!target.exists());
 	}
@@ -185,7 +202,9 @@ public class WorkspaceTest extends ResourceTest {
 		assertTrue(existing.exists());
 		IFile target = getWorkspace().getRoot().getFile(path);
 		try {
-			target.create(null, true, getMonitor());
+			FussyProgressMonitor monitor = new FussyProgressMonitor();
+			target.create(null, true, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			assertTrue(existing.exists());
 			return;
@@ -196,7 +215,9 @@ public class WorkspaceTest extends ResourceTest {
 	public void testFolderCreation() throws Throwable {
 		IPath path = new Path("/testProject/testFolder");
 		IFolder target = getWorkspace().getRoot().getFolder(path);
-		target.create(true, true, getMonitor());
+		FussyProgressMonitor monitor = new FussyProgressMonitor();
+		target.create(true, true, monitor);
+		monitor.assertUsedUp();
 		assertTrue(target.exists());
 	}
 
@@ -206,7 +227,9 @@ public class WorkspaceTest extends ResourceTest {
 		ensureExistsInWorkspace(before, true);
 		//
 		assertExistsInWorkspace(before);
-		project.getFolder("c").delete(true, getMonitor());
+		FussyProgressMonitor monitor = new FussyProgressMonitor();
+		project.getFolder("c").delete(true, monitor);
+		monitor.assertUsedUp();
 		assertDoesNotExistInWorkspace(before);
 	}
 
@@ -219,11 +242,15 @@ public class WorkspaceTest extends ResourceTest {
 		ensureExistsInWorkspace(before, true);
 		String content = getRandomString();
 		IFile file = project.getFile(new Path("b/b/z"));
-		file.setContents(getContents(content), true, false, getMonitor());
+		FussyProgressMonitor monitor = new FussyProgressMonitor();
+		file.setContents(getContents(content), true, false, monitor);
+		monitor.assertUsedUp();
 
 		// Be sure the resources exist and then move them.
 		assertExistsInWorkspace(before);
-		project.getFolder("b").move(project.getFullPath().append("a"), true, getMonitor());
+		monitor.prepare();
+		project.getFolder("b").move(project.getFullPath().append("a"), true, monitor);
+		monitor.assertUsedUp();
 
 		//
 		assertDoesNotExistInWorkspace(before);
@@ -238,7 +265,10 @@ public class WorkspaceTest extends ResourceTest {
 		assertTrue(existing.exists());
 		IFolder target = getWorkspace().getRoot().getFolder(path);
 		try {
-			target.create(true, true, getMonitor());
+			FussyProgressMonitor monitor = new FussyProgressMonitor();
+			monitor.prepare();
+			target.create(true, true, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			assertTrue(existing.exists());
 			return;
@@ -251,7 +281,9 @@ public class WorkspaceTest extends ResourceTest {
 		IFolder source = project.getFolder("testFolder");
 		IFolder dest = project.getFolder("movedFolder");
 		//
-		source.move(dest.getFullPath(), true, getMonitor());
+		FussyProgressMonitor monitor = new FussyProgressMonitor();
+		source.move(dest.getFullPath(), true, monitor);
+		monitor.assertUsedUp();
 		assertExistsInWorkspace(dest);
 		assertDoesNotExistInWorkspace(source);
 	}
@@ -270,18 +302,20 @@ public class WorkspaceTest extends ResourceTest {
 			for (IResource resource : resources) {
 				switch (resource.getType()) {
 					case IResource.FILE :
-						((IFile) resource).create(null, false, getMonitor());
+					((IFile) resource).create(null, false, monitor);
 						break;
 					case IResource.FOLDER :
-						((IFolder) resource).create(false, true, getMonitor());
+					((IFolder) resource).create(false, true, monitor);
 						break;
 					case IResource.PROJECT :
-						((IProject) resource).create(getMonitor());
+					((IProject) resource).create(monitor);
 						break;
 				}
 			}
 		};
-		getWorkspace().run(body, getMonitor());
+		FussyProgressMonitor monitor = new FussyProgressMonitor();
+		getWorkspace().run(body, monitor);
+		monitor.assertUsedUp();
 		assertExistsInWorkspace(project);
 		assertExistsInWorkspace(resources);
 	}
@@ -292,44 +326,65 @@ public class WorkspaceTest extends ResourceTest {
 		ensureExistsInWorkspace(before, true);
 		//
 		assertExistsInWorkspace(before);
-		getWorkspace().delete(before, true, getMonitor());
+		FussyProgressMonitor monitor = new FussyProgressMonitor();
+		getWorkspace().delete(before, true, monitor);
+		monitor.assertUsedUp();
 		assertDoesNotExistInWorkspace(before);
 	}
 
 	public void testProjectCloseOpen() throws Throwable {
 		IProject target = getTestProject();
-		target.close(getMonitor());
+		FussyProgressMonitor monitor = new FussyProgressMonitor();
+		target.close(monitor);
+		monitor.assertUsedUp();
 		assertTrue(target.exists());
 		assertTrue(!target.isOpen());
 		assertTrue(!target.getFolder("testFolder").exists());
-		target.open(getMonitor());
+		monitor.prepare();
+		target.open(monitor);
+		monitor.assertUsedUp();
 		assertTrue(target.isOpen());
 		assertTrue(target.getFolder("testFolder").exists());
 	}
 
 	public void testProjectCreateOpenCloseDelete() throws Throwable {
 		IProject target = getTestProject2();
-		target.create(null, getMonitor());
+		FussyProgressMonitor monitor = new FussyProgressMonitor();
+		target.create(null, monitor);
+		monitor.assertUsedUp();
+		monitor.assertUsedUp();
 		assertTrue(target.exists());
-		target.open(getMonitor());
+		monitor.prepare();
+		target.open(monitor);
+		monitor.assertUsedUp();
 		assertTrue(target.isOpen());
-		target.close(getMonitor());
+		monitor.prepare();
+		target.close(monitor);
+		monitor.assertUsedUp();
 		assertTrue(!target.isOpen());
-		target.delete(true, getMonitor());
+		monitor.prepare();
+		target.delete(true, monitor);
+		monitor.assertUsedUp();
 		assertTrue(!target.exists());
 	}
 
 	public void testProjectCreation() throws Throwable {
 		IProject target = getTestProject();
-		target.create(null, getMonitor());
+		FussyProgressMonitor monitor = new FussyProgressMonitor();
+		target.create(null, monitor);
+		monitor.assertUsedUp();
 		assertTrue(target.exists());
-		target.open(getMonitor());
+		monitor.prepare();
+		target.open(monitor);
+		monitor.assertUsedUp();
 		assertTrue(target.isOpen());
 	}
 
 	public void testProjectDeletion() throws Throwable {
 		IProject target = getTestProject();
-		target.delete(true, getMonitor());
+		FussyProgressMonitor monitor = new FussyProgressMonitor();
+		target.delete(true, monitor);
+		monitor.assertUsedUp();
 		assertTrue("Project Deletion failed", !target.exists());
 	}
 
@@ -339,7 +394,9 @@ public class WorkspaceTest extends ResourceTest {
 			return;
 		}
 		IProject project = getTestProject();
-		project.create(null, getMonitor());
+		FussyProgressMonitor monitor = new FussyProgressMonitor();
+		project.create(null, monitor);
+		monitor.assertUsedUp();
 		IPath workingLocation = project.getWorkingLocation("org.eclipse.core.tests.resources");
 		IPath linkTarget = getRandomLocation();
 		try {
@@ -349,7 +406,9 @@ public class WorkspaceTest extends ResourceTest {
 			assertTrue(file.exists());
 			// Create a symlink in the working location of the project pointing to linkTarget.
 			createSymLink(workingLocation.toFile(), "link", linkTarget.toOSString(), true);
-			project.delete(true, getMonitor());
+			monitor.prepare();
+			project.delete(true, monitor);
+			monitor.assertUsedUp();
 			assertTrue("Project deletion failed", !project.exists());
 			assertTrue("Working location was not deleted", !workingLocation.toFile().exists());
 			assertTrue("File inside a symlinked directory got deleted", file.exists());
@@ -360,15 +419,21 @@ public class WorkspaceTest extends ResourceTest {
 
 	public void testProjectReferences() throws Throwable {
 		IProject target = getTestProject2();
-		target.create(null, getMonitor());
+		FussyProgressMonitor monitor = new FussyProgressMonitor();
+		target.create(null, monitor);
+		monitor.assertUsedUp();
 		assertTrue(target.exists());
 		IProject project = getTestProject();
 		IProjectDescription description = project.getDescription();
 		description.setReferencedProjects(new IProject[] {target});
-		project.setDescription(description, getMonitor());
+		monitor.prepare();
+		project.setDescription(description, monitor);
+		monitor.assertUsedUp();
 		assertTrue(target.getReferencingProjects().length == 1);
 
-		target.delete(true, getMonitor());
+		monitor.prepare();
+		target.delete(true, monitor);
+		monitor.assertUsedUp();
 		assertTrue(!target.exists());
 	}
 
@@ -400,7 +465,9 @@ public class WorkspaceTest extends ResourceTest {
 		IPath path = new Path("/testProject/testFile");
 		IFile target = getWorkspace().getRoot().getFile(path);
 		String testString = getRandomString();
-		target.setContents(getContents(testString), true, false, getMonitor());
+		FussyProgressMonitor monitor = new FussyProgressMonitor();
+		target.setContents(getContents(testString), true, false, monitor);
+		monitor.assertUsedUp();
 		try (InputStream content = target.getContents(false)) {
 			assertTrue("get not equal set", compareContent(content, getContents(testString)));
 		}
@@ -433,9 +500,13 @@ public class WorkspaceTest extends ResourceTest {
 	public void testSimpleMove() throws Throwable {
 		IPath path = new Path("/testProject/simpleFile");
 		IFile target = getWorkspace().getRoot().getFile(path);
-		target.create(getRandomContents(), true, getMonitor());
+		FussyProgressMonitor monitor = new FussyProgressMonitor();
+		target.create(getRandomContents(), true, monitor);
+		monitor.assertUsedUp();
 		IFile destination = getWorkspace().getRoot().getFile(new Path("/testProject/newSimpleFile"));
-		target.move(destination.getFullPath(), true, getMonitor());
+		monitor.prepare();
+		target.move(destination.getFullPath(), true, monitor);
+		monitor.assertUsedUp();
 		assertTrue(destination.exists());
 		assertTrue(!target.exists());
 	}

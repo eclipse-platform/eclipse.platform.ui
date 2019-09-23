@@ -25,10 +25,12 @@ import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.tests.harness.FussyProgressMonitor;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
 public class IProjectTest extends ResourceTest {
+	private final FussyProgressMonitor monitor = new FussyProgressMonitor();
 
 	public static Test suite() {
 		return new TestSuite(IProjectTest.class);
@@ -50,12 +52,14 @@ public class IProjectTest extends ResourceTest {
 		if (project == null) {
 			return;
 		}
-		IWorkspaceRunnable body = monitor -> {
-			project.create(description, monitor);
-			project.open(monitor);
+		IWorkspaceRunnable body = mon -> {
+			project.create(description, mon);
+			project.open(mon);
 		};
 		try {
-			getWorkspace().run(body, null);
+			monitor.prepare();
+			getWorkspace().run(body, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("#ensureExistsInWorkspace(IProject, IProjectDescription): " + project.getFullPath(), e);
 		}
@@ -75,6 +79,7 @@ public class IProjectTest extends ResourceTest {
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
+		monitor.prepare();
 	}
 
 	/**
@@ -83,13 +88,18 @@ public class IProjectTest extends ResourceTest {
 	public void testCopy() {
 		IProject project = getWorkspace().getRoot().getProject("Source");
 		try {
-			project.create(getMonitor());
-			project.open(getMonitor());
+			project.create(monitor);
+			monitor.assertUsedUp();
+			monitor.prepare();
+			project.open(monitor);
+			monitor.assertUsedUp();
 			project.createMarker(IMarker.TASK);
 			IProject destination = getWorkspace().getRoot().getProject("Destination");
 
 			assertTrue("1.0", !destination.exists());
-			project.copy(destination.getFullPath(), IResource.NONE, getMonitor());
+			monitor.prepare();
+			project.copy(destination.getFullPath(), IResource.NONE, monitor);
+			monitor.assertUsedUp();
 			assertTrue("1.1", destination.exists());
 			assertEquals("1.2", 0, destination.findMarkers(IMarker.TASK, true, IResource.DEPTH_INFINITE).length);
 		} catch (CoreException e) {
@@ -118,7 +128,9 @@ public class IProjectTest extends ResourceTest {
 			// expected
 		}
 		try {
-			project.create(getMonitor());
+			monitor.prepare();
+			project.create(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.99", e);
 		}
@@ -136,7 +148,9 @@ public class IProjectTest extends ResourceTest {
 			// expected
 		}
 		try {
-			project.open(getMonitor());
+			monitor.prepare();
+			project.open(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("2.99", e);
 		}
@@ -151,7 +165,9 @@ public class IProjectTest extends ResourceTest {
 		try {
 			IProjectDescription desc = project.getDescription();
 			desc.setNatureIds(new String[] {NATURE_SIMPLE});
-			project.setDescription(desc, getMonitor());
+			monitor.prepare();
+			project.setDescription(desc, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("4.99", e);
 		}
@@ -172,7 +188,9 @@ public class IProjectTest extends ResourceTest {
 		IProject project2 = getWorkspace().getRoot().getProject("testGetNature.Destination");
 		IProjectNature nature2 = null;
 		try {
-			project.copy(project2.getFullPath(), IResource.NONE, getMonitor());
+			monitor.prepare();
+			project.copy(project2.getFullPath(), IResource.NONE, monitor);
+			monitor.assertUsedUp();
 			nature2 = project2.getNature(NATURE_SIMPLE);
 		} catch (CoreException e) {
 			fail("6.99", e);
@@ -204,7 +222,9 @@ public class IProjectTest extends ResourceTest {
 			// expected
 		}
 		try {
-			project.create(getMonitor());
+			monitor.prepare();
+			project.create(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.99", e);
 		}
@@ -222,7 +242,9 @@ public class IProjectTest extends ResourceTest {
 			// expected
 		}
 		try {
-			project.open(getMonitor());
+			monitor.prepare();
+			project.open(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("2.99", e);
 		}
@@ -237,7 +259,9 @@ public class IProjectTest extends ResourceTest {
 		try {
 			IProjectDescription desc = project.getDescription();
 			desc.setNatureIds(new String[] {NATURE_SIMPLE});
-			project.setDescription(desc, getMonitor());
+			monitor.prepare();
+			project.setDescription(desc, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("4.99", e);
 		}
@@ -280,8 +304,12 @@ public class IProjectTest extends ResourceTest {
 			IProject project = root.getProject(name);
 			assertTrue("1.0 " + name, !project.exists());
 			try {
-				project.create(getMonitor());
-				project.open(getMonitor());
+				monitor.prepare();
+				project.create(monitor);
+				monitor.assertUsedUp();
+				monitor.prepare();
+				project.open(monitor);
+				monitor.assertUsedUp();
 				fail("1.1 " + name);
 			} catch (CoreException e) {
 				// expected
@@ -302,8 +330,12 @@ public class IProjectTest extends ResourceTest {
 			IProject project = root.getProject(name);
 			assertTrue("2.0 " + name, !project.exists());
 			try {
-				project.create(getMonitor());
-				project.open(getMonitor());
+				monitor.prepare();
+				project.create(monitor);
+				monitor.assertUsedUp();
+				monitor.prepare();
+				project.open(monitor);
+				monitor.assertUsedUp();
 			} catch (CoreException e) {
 				fail("2.1 " + name, e);
 			}
@@ -333,7 +365,9 @@ public class IProjectTest extends ResourceTest {
 			// expected
 		}
 		try {
-			project.create(getMonitor());
+			monitor.prepare();
+			project.create(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.99", e);
 		}
@@ -351,7 +385,9 @@ public class IProjectTest extends ResourceTest {
 			// expected
 		}
 		try {
-			project.open(getMonitor());
+			monitor.prepare();
+			project.open(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("2.99", e);
 		}
@@ -366,7 +402,9 @@ public class IProjectTest extends ResourceTest {
 		try {
 			IProjectDescription desc = project.getDescription();
 			desc.setNatureIds(new String[] {NATURE_SIMPLE});
-			project.setDescription(desc, getMonitor());
+			monitor.prepare();
+			project.setDescription(desc, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("4.99", e);
 		}
@@ -400,8 +438,12 @@ public class IProjectTest extends ResourceTest {
 		description.setLocation(rawLocation);
 		//create the project
 		try {
-			project.create(description, getMonitor());
-			project.open(getMonitor());
+			monitor.prepare();
+			project.create(description, monitor);
+			monitor.assertUsedUp();
+			monitor.prepare();
+			project.open(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("9.99", e);
 		}
@@ -420,7 +462,8 @@ public class IProjectTest extends ResourceTest {
 		ensureExistsInWorkspace(folder, true);
 
 		try {
-			target.close(getMonitor());
+			target.close(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.0", e);
 		}
@@ -429,7 +472,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("1.3", !folder.exists());
 
 		try {
-			target.open(getMonitor());
+			monitor.prepare();
+			target.open(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("2.0", e);
 		}
@@ -463,7 +508,8 @@ public class IProjectTest extends ResourceTest {
 			fail("1.1", e);
 		}
 		try {
-			source.copy(destination.getFullPath(), false, getMonitor());
+			source.copy(destination.getFullPath(), false, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.2", e);
 		}
@@ -483,7 +529,9 @@ public class IProjectTest extends ResourceTest {
 		assertEquals("1.9", value, actual);
 		// cleanup
 		try {
-			getWorkspace().getRoot().delete(false, getMonitor());
+			monitor.prepare();
+			getWorkspace().getRoot().delete(false, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.10", e);
 		}
@@ -506,7 +554,9 @@ public class IProjectTest extends ResourceTest {
 			fail("2.1", e);
 		}
 		try {
-			((IProject) source).copy(description, false, getMonitor());
+			monitor.prepare();
+			((IProject) source).copy(description, false, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("2.2", e);
 		}
@@ -526,7 +576,9 @@ public class IProjectTest extends ResourceTest {
 		assertEquals("2.9", value, actual);
 		// cleanup
 		try {
-			getWorkspace().getRoot().delete(false, getMonitor());
+			monitor.prepare();
+			getWorkspace().getRoot().delete(false, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("2.10", e);
 		}
@@ -543,13 +595,17 @@ public class IProjectTest extends ResourceTest {
 		ensureExistsInWorkspace(resources, true);
 		assertDoesNotExistInWorkspace("3.0", destination);
 		try {
-			source.copy(destination.getFullPath(), true, getMonitor());
+			monitor.prepare();
+			source.copy(destination.getFullPath(), true, monitor);
+			monitor.assertUsedUp();
 			fail("3.1");
 		} catch (CoreException e) {
 			// expected
 		}
 		try {
-			getWorkspace().getRoot().delete(false, getMonitor());
+			monitor.prepare();
+			getWorkspace().getRoot().delete(false, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("3.99", e);
 		}
@@ -565,14 +621,18 @@ public class IProjectTest extends ResourceTest {
 		ensureExistsInWorkspace(resources, true);
 		assertDoesNotExistInWorkspace("4.0", destination);
 		try {
-			source.copy(destination.getFullPath(), true, getMonitor());
+			monitor.prepare();
+			source.copy(destination.getFullPath(), true, monitor);
+			monitor.assertUsedUp();
 			fail("4.1");
 		} catch (CoreException e) {
 			// expected
 		}
 		// cleanup
 		try {
-			getWorkspace().getRoot().delete(true, getMonitor());
+			monitor.prepare();
+			getWorkspace().getRoot().delete(true, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("4.99", e);
 		}
@@ -581,28 +641,35 @@ public class IProjectTest extends ResourceTest {
 	public void testProjectCreateOpenCloseDelete() {
 		IProject target = getWorkspace().getRoot().getProject("Project");
 		try {
-			target.create(getMonitor());
+			target.create(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.0", e);
 		}
 		assertTrue("1.1", target.exists());
 
 		try {
-			target.open(getMonitor());
+			monitor.prepare();
+			target.open(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("2.0", e);
 		}
 		assertTrue("2.1", target.isOpen());
 
 		try {
-			target.close(getMonitor());
+			monitor.prepare();
+			target.close(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("3.0", e);
 		}
 		assertTrue("3.1", !target.isOpen());
 
 		try {
-			target.delete(true, getMonitor());
+			monitor.prepare();
+			target.delete(true, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("4.0", e);
 		}
@@ -613,14 +680,17 @@ public class IProjectTest extends ResourceTest {
 		IProject target = getWorkspace().getRoot().getProject("Project");
 
 		try {
-			target.create(getMonitor());
+			target.create(monitor);
+			monitor.assertUsedUp();
 			assertTrue("1.0", target.exists());
 		} catch (CoreException e) {
 			fail("1.1", e);
 		}
 		assertFalse("1.2", target.isOpen());
 		try {
-			target.open(getMonitor());
+			monitor.prepare();
+			target.open(monitor);
+			monitor.assertUsedUp();
 			assertTrue("2.0", target.isOpen());
 		} catch (CoreException e) {
 			fail("2.1", e);
@@ -663,10 +733,14 @@ public class IProjectTest extends ResourceTest {
 			instanceNode.flush();
 			description = project.getDescription();
 			description.setComment("some comment");
-			project.setDescription(description, getMonitor());
+			monitor.prepare();
+			project.setDescription(description, monitor);
+			monitor.assertUsedUp();
 			// existing .project should use existing line separator
 			assertEquals("2.0", systemValue, getLineSeparatorFromFile(file));
-			project.delete(true, getMonitor());
+			monitor.prepare();
+			project.delete(true, monitor);
+			monitor.assertUsedUp();
 
 			ensureExistsInWorkspace(project, true);
 			// new .project should have instance-specific line separator
@@ -681,10 +755,14 @@ public class IProjectTest extends ResourceTest {
 			instanceNode.flush();
 			description = project.getDescription();
 			description.setComment("some comment");
-			project.setDescription(description, getMonitor());
+			monitor.prepare();
+			project.setDescription(description, monitor);
+			monitor.assertUsedUp();
 			// existing .project should use existing line separator
 			assertEquals("4.0", newInstanceValue, getLineSeparatorFromFile(file));
-			project.delete(true, getMonitor());
+			monitor.prepare();
+			project.delete(true, monitor);
+			monitor.assertUsedUp();
 
 			ensureExistsInWorkspace(project, true);
 			// new .project should have OS default line separator
@@ -695,12 +773,18 @@ public class IProjectTest extends ResourceTest {
 			projectNode.put(Platform.PREF_LINE_SEPARATOR, newProjectValue);
 			projectNode.flush();
 			// remove .project file but leave the project
-			file.delete(true, getMonitor());
+			monitor.prepare();
+			file.delete(true, monitor);
+			monitor.assertUsedUp();
 			assertFalse("6.0", file.exists());
 			// workspace save should recreate .project file with project-specific line delimiter
-			getWorkspace().save(true, getMonitor());
+			monitor.prepare();
+			getWorkspace().save(true, monitor);
+			monitor.assertUsedUp();
 			// refresh project to update the resource tree
-			project.refreshLocal(IResource.DEPTH_INFINITE, getMonitor());
+			monitor.prepare();
+			project.refreshLocal(IResource.DEPTH_INFINITE, monitor);
+			monitor.assertUsedUp();
 			assertTrue("7.0", file.exists());
 			// new .project should have project-specific line separator
 			assertEquals("8.0", newProjectValue, getLineSeparatorFromFile(file));
@@ -712,7 +796,7 @@ public class IProjectTest extends ResourceTest {
 				instanceNode.put(Platform.PREF_LINE_SEPARATOR, oldInstanceValue);
 			}
 			instanceNode.flush();
-			project.delete(true, getMonitor());
+			project.delete(true, null);
 		}
 	}
 
@@ -724,7 +808,8 @@ public class IProjectTest extends ResourceTest {
 		IProjectDescription description = getWorkspace().newProjectDescription(target.getName());
 		description.setLocation(Platform.getLocation().append(".metadata"));
 		try {
-			target.create(description, getMonitor());
+			target.create(description, monitor);
+			monitor.assertUsedUp();
 			fail("1.0");
 		} catch (CoreException e) {
 			//expected
@@ -734,7 +819,9 @@ public class IProjectTest extends ResourceTest {
 		target = getWorkspace().getRoot().getProject(".metadata");
 		description = getWorkspace().newProjectDescription(target.getName());
 		try {
-			target.create(description, getMonitor());
+			monitor.prepare();
+			target.create(description, monitor);
+			monitor.assertUsedUp();
 			fail("1.1");
 		} catch (CoreException e) {
 			//expected
@@ -742,7 +829,9 @@ public class IProjectTest extends ResourceTest {
 
 		//same with one argument constructor
 		try {
-			target.create(getMonitor());
+			monitor.prepare();
+			target.create(monitor);
+			monitor.assertUsedUp();
 			fail("1.2");
 		} catch (CoreException e) {
 			//expected
@@ -758,8 +847,11 @@ public class IProjectTest extends ResourceTest {
 			IProject project = getWorkspace().getRoot().getProject(projectName);
 
 			try {
-				project.create(getMonitor());
-				project.delete(false, true, getMonitor());
+				project.create(monitor);
+				monitor.assertUsedUp();
+				monitor.prepare();
+				project.delete(false, true, monitor);
+				monitor.assertUsedUp();
 			} catch (CoreException ex) {
 				fail("1.0");
 			}
@@ -768,7 +860,9 @@ public class IProjectTest extends ResourceTest {
 			project = getWorkspace().getRoot().getProject(projectName.toUpperCase());
 
 			try {
-				project.create(getMonitor());
+				monitor.prepare();
+				project.create(monitor);
+				monitor.assertUsedUp();
 				fail("2.0");
 			} catch (CoreException e) {
 				//expected
@@ -778,7 +872,9 @@ public class IProjectTest extends ResourceTest {
 			project = getWorkspace().getRoot().getProject(projectName);
 
 			try {
-				project.create(getMonitor());
+				monitor.prepare();
+				project.create(monitor);
+				monitor.assertUsedUp();
 			} catch (CoreException e) {
 				fail("3.0", e);
 			}
@@ -809,7 +905,8 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("1.1", file.exists());
 		assertTrue("1.2", otherFile.exists());
 		try {
-			project.close(getMonitor());
+			project.close(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.3", e);
 		}
@@ -821,7 +918,9 @@ public class IProjectTest extends ResourceTest {
 		try {
 			int updateFlags = IResource.FORCE;
 			updateFlags |= IResource.ALWAYS_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.9", e);
 		}
@@ -844,7 +943,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("2.1", file.exists());
 		assertTrue("2.2", otherFile.exists());
 		try {
-			project.close(getMonitor());
+			monitor.prepare();
+			project.close(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("2.3", e);
 		}
@@ -855,7 +956,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("2.8", !otherFile.exists());
 		try {
 			int updateFlags = IResource.ALWAYS_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("2.9", e);
 		}
@@ -878,7 +981,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("3.1", file.exists());
 		assertTrue("3.2", otherFile.exists());
 		try {
-			project.close(getMonitor());
+			monitor.prepare();
+			project.close(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("3.3", e);
 		}
@@ -890,7 +995,9 @@ public class IProjectTest extends ResourceTest {
 		try {
 			int updateFlags = IResource.FORCE;
 			updateFlags |= IResource.NEVER_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("3.9", e);
 		}
@@ -915,7 +1022,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("4.1", file.exists());
 		assertTrue("4.2", otherFile.exists());
 		try {
-			project.close(getMonitor());
+			monitor.prepare();
+			project.close(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("4.3", e);
 		}
@@ -926,7 +1035,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("4.8", !otherFile.exists());
 		try {
 			int updateFlags = IResource.NEVER_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("4.9", e);
 		}
@@ -951,7 +1062,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("5.1", file.exists());
 		assertTrue("5.2", otherFile.exists());
 		try {
-			project.close(getMonitor());
+			monitor.prepare();
+			project.close(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("5.3", e);
 		}
@@ -962,7 +1075,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("5.8", !otherFile.exists());
 		try {
 			int updateFlags = IResource.FORCE;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("5.9", e);
 		}
@@ -987,7 +1102,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("6.1", file.exists());
 		assertTrue("6.2", otherFile.exists());
 		try {
-			project.close(getMonitor());
+			monitor.prepare();
+			project.close(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("6.3", e);
 		}
@@ -998,7 +1115,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("6.8", !otherFile.exists());
 		try {
 			int updateFlags = IResource.NONE;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("6.9", e);
 		}
@@ -1036,7 +1155,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("1.1", file.exists());
 		assertTrue("1.2", !otherFile.exists());
 		try {
-			project.close(getMonitor());
+			monitor.prepare();
+			project.close(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.3", e);
 		}
@@ -1050,7 +1171,9 @@ public class IProjectTest extends ResourceTest {
 		try {
 			int updateFlags = IResource.FORCE;
 			updateFlags |= IResource.ALWAYS_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.11", e);
 		}
@@ -1073,7 +1196,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("2.1", file.exists());
 		assertTrue("2.2", !otherFile.exists());
 		try {
-			project.close(getMonitor());
+			monitor.prepare();
+			project.close(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("2.3", e);
 		}
@@ -1086,7 +1211,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("2.10", !otherFile.exists());
 		try {
 			int updateFlags = IResource.ALWAYS_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("2.11", e);
 		}
@@ -1109,7 +1236,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("3.1", file.exists());
 		assertTrue("3.2", !otherFile.exists());
 		try {
-			project.close(getMonitor());
+			monitor.prepare();
+			project.close(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("3.3", e);
 		}
@@ -1123,7 +1252,9 @@ public class IProjectTest extends ResourceTest {
 		try {
 			int updateFlags = IResource.FORCE;
 			updateFlags |= IResource.NEVER_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("3.11", e);
 		}
@@ -1148,7 +1279,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("4.1", file.exists());
 		assertTrue("4.2", !otherFile.exists());
 		try {
-			project.close(getMonitor());
+			monitor.prepare();
+			project.close(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("4.3", e);
 		}
@@ -1161,7 +1294,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("4.10", !otherFile.exists());
 		try {
 			int updateFlags = IResource.NEVER_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("4.11", e);
 		}
@@ -1186,7 +1321,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("5.1", file.exists());
 		assertTrue("5.2", !otherFile.exists());
 		try {
-			project.close(getMonitor());
+			monitor.prepare();
+			project.close(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("5.3", e);
 		}
@@ -1199,7 +1336,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("5.10", !otherFile.exists());
 		try {
 			int updateFlags = IResource.FORCE;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("5.11", e);
 		}
@@ -1224,7 +1363,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("6.1", file.exists());
 		assertTrue("6.2", !otherFile.exists());
 		try {
-			project.close(getMonitor());
+			monitor.prepare();
+			project.close(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("6.3", e);
 		}
@@ -1237,7 +1378,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("6.10", !otherFile.exists());
 		try {
 			int updateFlags = IResource.NONE;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("6.11", e);
 		}
@@ -1275,14 +1418,18 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("1.2", project.exists());
 		assertTrue("1.3", file.exists());
 		try {
-			project.close(getMonitor());
+			monitor.prepare();
+			project.close(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.4", e);
 		}
 		try {
 			int updateFlags = IResource.FORCE;
 			updateFlags |= IResource.ALWAYS_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.5", e);
 		}
@@ -1305,13 +1452,17 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("2.2", project.exists());
 		assertTrue("2.3", file.exists());
 		try {
-			project.close(getMonitor());
+			monitor.prepare();
+			project.close(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("2.4", e);
 		}
 		try {
 			int updateFlags = IResource.ALWAYS_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("2.5", e);
 		}
@@ -1334,14 +1485,18 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("3.2", project.exists());
 		assertTrue("3.3", file.exists());
 		try {
-			project.close(getMonitor());
+			monitor.prepare();
+			project.close(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("3.4", e);
 		}
 		try {
 			int updateFlags = IResource.FORCE;
 			updateFlags |= IResource.NEVER_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("3.5", e);
 		}
@@ -1364,13 +1519,17 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("4.2", project.exists());
 		assertTrue("4.3", file.exists());
 		try {
-			project.close(getMonitor());
+			monitor.prepare();
+			project.close(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("4.4", e);
 		}
 		try {
 			int updateFlags = IResource.NEVER_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("4.5", e);
 		}
@@ -1393,13 +1552,17 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("5.2", project.exists());
 		assertTrue("5.3", file.exists());
 		try {
-			project.close(getMonitor());
+			monitor.prepare();
+			project.close(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("5.4", e);
 		}
 		try {
 			int updateFlags = IResource.FORCE;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("5.5", e);
 		}
@@ -1422,13 +1585,17 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("6.2", project.exists());
 		assertTrue("6.3", file.exists());
 		try {
-			project.close(getMonitor());
+			monitor.prepare();
+			project.close(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("6.4", e);
 		}
 		try {
 			int updateFlags = IResource.NONE;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("6.5", e);
 		}
@@ -1468,14 +1635,18 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("1.1", file.exists());
 		assertTrue("1.2", !otherFile.exists());
 		try {
-			project.close(getMonitor());
+			monitor.prepare();
+			project.close(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.3", e);
 		}
 		try {
 			int updateFlags = IResource.FORCE;
 			updateFlags |= IResource.ALWAYS_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.4", e);
 		}
@@ -1503,13 +1674,17 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("2.1", file.exists());
 		assertTrue("2.2", !otherFile.exists());
 		try {
-			project.close(getMonitor());
+			monitor.prepare();
+			project.close(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("2.3", e);
 		}
 		try {
 			int updateFlags = IResource.ALWAYS_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("2.4", e);
 		}
@@ -1537,14 +1712,18 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("3.1", file.exists());
 		assertTrue("3.2", !otherFile.exists());
 		try {
-			project.close(getMonitor());
+			monitor.prepare();
+			project.close(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("3.3", e);
 		}
 		try {
 			int updateFlags = IResource.FORCE;
 			updateFlags |= IResource.NEVER_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("3.4", e);
 		}
@@ -1572,13 +1751,17 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("4.2", !otherFile.exists());
 
 		try {
-			project.close(getMonitor());
+			monitor.prepare();
+			project.close(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("4.3", e);
 		}
 		try {
 			int updateFlags = IResource.NEVER_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("4.4", e);
 		}
@@ -1604,13 +1787,17 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("5.1", file.exists());
 		assertTrue("5.2", !otherFile.exists());
 		try {
-			project.close(getMonitor());
+			monitor.prepare();
+			project.close(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("5.3", e);
 		}
 		try {
 			int updateFlags = IResource.FORCE;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("5.4", e);
 		}
@@ -1637,13 +1824,17 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("6.1", file.exists());
 		assertTrue("6.2", !otherFile.exists());
 		try {
-			project.close(getMonitor());
+			monitor.prepare();
+			project.close(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("6.3", e);
 		}
 		try {
 			int updateFlags = IResource.NONE;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("6.4", e);
 		}
@@ -1682,7 +1873,8 @@ public class IProjectTest extends ResourceTest {
 		try {
 			int updateFlags = IResource.FORCE;
 			updateFlags |= IResource.ALWAYS_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.2", e);
 		}
@@ -1702,7 +1894,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("2.1", file.exists());
 		try {
 			int updateFlags = IResource.ALWAYS_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("2.2", e);
 		}
@@ -1723,7 +1917,9 @@ public class IProjectTest extends ResourceTest {
 		try {
 			int updateFlags = IResource.FORCE;
 			updateFlags |= IResource.NEVER_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("3.2", e);
 		}
@@ -1743,7 +1939,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("4.1", file.exists());
 		try {
 			int updateFlags = IResource.NEVER_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("4.2", e);
 		}
@@ -1763,7 +1961,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("5.1", file.exists());
 		try {
 			int updateFlags = IResource.FORCE;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("5.2", e);
 		}
@@ -1783,7 +1983,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("6.1", file.exists());
 		try {
 			int updateFlags = IResource.NONE;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("6.2", e);
 		}
@@ -1817,7 +2019,9 @@ public class IProjectTest extends ResourceTest {
 		try {
 			int updateFlags = IResource.FORCE;
 			updateFlags |= IResource.ALWAYS_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.2", e);
 		}
@@ -1838,7 +2042,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("2.1", !file.exists());
 		try {
 			int updateFlags = IResource.ALWAYS_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("2.2", e);
 		}
@@ -1860,7 +2066,9 @@ public class IProjectTest extends ResourceTest {
 		try {
 			int updateFlags = IResource.FORCE;
 			updateFlags |= IResource.NEVER_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("3.2", e);
 		}
@@ -1883,7 +2091,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("4.1", !file.exists());
 		try {
 			int updateFlags = IResource.NEVER_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("4.2", e);
 		}
@@ -1906,7 +2116,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("5.1", !file.exists());
 		try {
 			int updateFlags = IResource.FORCE;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("5.2", e);
 		}
@@ -1927,7 +2139,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("6.1", !file.exists());
 		try {
 			int updateFlags = IResource.NONE;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 			fail("6.2");
 		} catch (CoreException e) {
 			// expected
@@ -1963,7 +2177,9 @@ public class IProjectTest extends ResourceTest {
 		try {
 			int updateFlags = IResource.FORCE;
 			updateFlags |= IResource.ALWAYS_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.4", e);
 		}
@@ -1986,7 +2202,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("2.3", file.exists());
 		try {
 			int updateFlags = IResource.ALWAYS_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("2.4", e);
 		}
@@ -2010,7 +2228,9 @@ public class IProjectTest extends ResourceTest {
 		try {
 			int updateFlags = IResource.FORCE;
 			updateFlags |= IResource.NEVER_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("3.4", e);
 		}
@@ -2032,7 +2252,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("4.3", file.exists());
 		try {
 			int updateFlags = IResource.NEVER_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("4.4", e);
 		}
@@ -2056,7 +2278,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("5.3", file.exists());
 		try {
 			int updateFlags = IResource.FORCE;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("5.4", e);
 		}
@@ -2079,7 +2303,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("6.3", file.exists());
 		try {
 			int updateFlags = IResource.NONE;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("6.4", e);
 		}
@@ -2120,7 +2346,9 @@ public class IProjectTest extends ResourceTest {
 		try {
 			int updateFlags = IResource.FORCE;
 			updateFlags |= IResource.ALWAYS_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.3", e);
 		}
@@ -2149,7 +2377,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("2.2", !otherFile.exists());
 		try {
 			int updateFlags = IResource.ALWAYS_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("2.3", e);
 		}
@@ -2179,7 +2409,9 @@ public class IProjectTest extends ResourceTest {
 		try {
 			int updateFlags = IResource.FORCE;
 			updateFlags |= IResource.NEVER_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("3.3", e);
 		}
@@ -2208,7 +2440,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("4.2", !otherFile.exists());
 		try {
 			int updateFlags = IResource.NEVER_DELETE_PROJECT_CONTENT;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("4.3", e);
 		}
@@ -2235,7 +2469,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("5.2", !otherFile.exists());
 		try {
 			int updateFlags = IResource.FORCE;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("5.3", e);
 		}
@@ -2263,7 +2499,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("6.2", !otherFile.exists());
 		try {
 			int updateFlags = IResource.NONE;
-			project.delete(updateFlags, getMonitor());
+			monitor.prepare();
+			project.delete(updateFlags, monitor);
+			monitor.assertUsedUp();
 			fail("6.3");
 		} catch (CoreException e) {
 			// expected
@@ -2364,7 +2602,8 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("1.2", getWorkspace().validateProjectLocation(project1, path).isOK());
 		// create the first project with its default default mapping
 		try {
-			project1.create(getMonitor());
+			project1.create(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.3", e);
 		}
@@ -2376,7 +2615,9 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("2.0", getWorkspace().validateProjectLocation(project2, path).isOK());
 		desc.setLocation(path);
 		try {
-			project2.create(desc, getMonitor());
+			monitor.prepare();
+			project2.create(desc, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("2.1", e);
 		}
@@ -2384,7 +2625,9 @@ public class IProjectTest extends ResourceTest {
 		// create a third project with the default default location
 		IProject project3 = getWorkspace().getRoot().getProject("Project3");
 		try {
-			project3.create(getMonitor());
+			monitor.prepare();
+			project3.create(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("3.0", e);
 		}
@@ -2406,9 +2649,15 @@ public class IProjectTest extends ResourceTest {
 		assertTrue("5.3", getWorkspace().validateProjectLocation(null, root.append("%20foo")).isOK());
 
 		try {
-			project1.delete(true, getMonitor());
-			project2.delete(true, getMonitor());
-			project3.delete(true, getMonitor());
+			monitor.prepare();
+			project1.delete(true, monitor);
+			monitor.assertUsedUp();
+			monitor.prepare();
+			project2.delete(true, monitor);
+			monitor.assertUsedUp();
+			monitor.prepare();
+			project3.delete(true, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("20.1", e);
 		}
@@ -2424,7 +2673,8 @@ public class IProjectTest extends ResourceTest {
 		IProjectDescription desc = getWorkspace().newProjectDescription(project1.getName());
 		desc.setLocation(location);
 		try {
-			project1.create(desc, getMonitor());
+			project1.create(desc, monitor);
+			monitor.assertUsedUp();
 			project1.open(null);
 
 			assertTrue("1.0", project1.exists());
@@ -2432,7 +2682,9 @@ public class IProjectTest extends ResourceTest {
 			assertEquals("1.2", location, project1.getLocation());
 			assertEquals("1.3", location, project1.getRawLocation());
 
-			project1.delete(IResource.FORCE, getMonitor());
+			monitor.prepare();
+			project1.delete(IResource.FORCE, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.99", e);
 		} finally {
@@ -2461,7 +2713,9 @@ public class IProjectTest extends ResourceTest {
 			pathsToDelete.add(newPath);
 			destination.setLocation(newPath);
 			try {
-				project.move(destination, false, getMonitor());
+				monitor.prepare();
+				project.move(destination, false, monitor);
+				monitor.assertUsedUp();
 			} catch (CoreException e) {
 				fail("1.1", e);
 			}
@@ -2521,7 +2775,9 @@ public class IProjectTest extends ResourceTest {
 			fail("1.2", e);
 		}
 		try {
-			source.move(destination.getFullPath(), false, getMonitor());
+			monitor.prepare();
+			source.move(destination.getFullPath(), false, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.3", e);
 		}
@@ -2548,7 +2804,9 @@ public class IProjectTest extends ResourceTest {
 		assertEquals("1.10", 1, markers.length);
 		// cleanup
 		try {
-			getWorkspace().getRoot().delete(false, getMonitor());
+			monitor.prepare();
+			getWorkspace().getRoot().delete(false, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.11", e);
 		}
@@ -2577,7 +2835,9 @@ public class IProjectTest extends ResourceTest {
 		IProjectDescription description = getWorkspace().newProjectDescription(destination.getName());
 		assertDoesNotExistInWorkspace("2.3", destination);
 		try {
-			((IProject) source).move(description, false, getMonitor());
+			monitor.prepare();
+			((IProject) source).move(description, false, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("2.4", e);
 		}
@@ -2604,7 +2864,9 @@ public class IProjectTest extends ResourceTest {
 		assertEquals("2.13", 1, markers.length);
 		// cleanup
 		try {
-			getWorkspace().getRoot().delete(false, getMonitor());
+			monitor.prepare();
+			getWorkspace().getRoot().delete(false, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("2.14", e);
 		}
@@ -2616,7 +2878,9 @@ public class IProjectTest extends ResourceTest {
 		destProject = getWorkspace().getRoot().getProject("DestProject");
 		destination = destProject.getFolder("MyFolder");
 		try {
-			source.move(destination.getFullPath(), true, getMonitor());
+			monitor.prepare();
+			source.move(destination.getFullPath(), true, monitor);
+			monitor.assertUsedUp();
 			fail("3.3");
 		} catch (CoreException e) {
 			// expected
@@ -2630,7 +2894,9 @@ public class IProjectTest extends ResourceTest {
 		resources = buildResources(project, children);
 		destination = getWorkspace().getRoot().getProject("MyDestProject");
 		try {
-			source.move(destination.getFullPath(), true, getMonitor());
+			monitor.prepare();
+			source.move(destination.getFullPath(), true, monitor);
+			monitor.assertUsedUp();
 			fail("4.3");
 		} catch (CoreException e) {
 			// expected
@@ -2642,8 +2908,11 @@ public class IProjectTest extends ResourceTest {
 		IProject project = getWorkspace().getRoot().getProject(getUniqueString());
 		IProjectDescription description;
 		try {
-			project.create(getMonitor());
-			project.open(getMonitor());
+			project.create(monitor);
+			monitor.assertUsedUp();
+			monitor.prepare();
+			project.open(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.0", e);
 		}
@@ -2654,7 +2923,9 @@ public class IProjectTest extends ResourceTest {
 		try {
 			description = project.getDescription();
 			description.setLocation(subFolder.getLocation());
-			project.move(description, true, getMonitor());
+			monitor.prepare();
+			project.move(description, true, monitor);
+			monitor.assertUsedUp();
 			fail("2.0");
 		} catch (CoreException e) {
 			//should be thrown
@@ -2664,7 +2935,9 @@ public class IProjectTest extends ResourceTest {
 
 		//cleanup
 		try {
-			getWorkspace().getRoot().delete(false, getMonitor());
+			monitor.prepare();
+			getWorkspace().getRoot().delete(false, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("4.0", e);
 		}
@@ -2676,8 +2949,12 @@ public class IProjectTest extends ResourceTest {
 		description = getWorkspace().newProjectDescription(project.getName());
 		description.setLocation(getRandomLocation());
 		try {
-			project.create(description, getMonitor());
-			project.open(getMonitor());
+			monitor.prepare();
+			project.create(description, monitor);
+			monitor.assertUsedUp();
+			monitor.prepare();
+			project.open(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("5.0", e);
 		}
@@ -2688,7 +2965,9 @@ public class IProjectTest extends ResourceTest {
 		try {
 			description = project.getDescription();
 			description.setLocation(subFolder.getLocation());
-			project.move(description, true, getMonitor());
+			monitor.prepare();
+			project.move(description, true, monitor);
+			monitor.assertUsedUp();
 			fail("6.0");
 		} catch (CoreException e) {
 			//should be thrown
@@ -2709,8 +2988,12 @@ public class IProjectTest extends ResourceTest {
 		IProjectDescription description = getWorkspace().newProjectDescription(project.getName());
 		description.setLocationURI(getTempStore().toURI());
 		try {
-			project.create(description, getMonitor());
-			project.open(getMonitor());
+			monitor.prepare();
+			project.create(description, monitor);
+			monitor.assertUsedUp();
+			monitor.prepare();
+			project.open(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.1", e);
 		}
@@ -2736,7 +3019,9 @@ public class IProjectTest extends ResourceTest {
 		description.setName(destination.getName());
 		assertDoesNotExistInWorkspace("2.3", destination);
 		try {
-			project.move(description, false, getMonitor());
+			monitor.prepare();
+			project.move(description, false, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("2.4", e);
 		}
@@ -2764,7 +3049,9 @@ public class IProjectTest extends ResourceTest {
 		assertEquals("2.13", 1, markers.length);
 		// cleanup
 		try {
-			getWorkspace().getRoot().delete(false, getMonitor());
+			monitor.prepare();
+			getWorkspace().getRoot().delete(false, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("2.14", e);
 		}
@@ -2794,7 +3081,9 @@ public class IProjectTest extends ResourceTest {
 		try {
 			IProjectDescription description = target.getDescription();
 			description.setLocationURI(projectStore.toURI());
-			target.move(description, IResource.REPLACE, getMonitor());
+			monitor.prepare();
+			target.move(description, IResource.REPLACE, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.99", e);
 		}
@@ -2808,7 +3097,9 @@ public class IProjectTest extends ResourceTest {
 		try {
 			IProjectDescription description = target.getDescription();
 			description.setLocationURI(null);
-			target.move(description, IResource.REPLACE, getMonitor());
+			monitor.prepare();
+			target.move(description, IResource.REPLACE, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("2.99", e);
 		}
@@ -2841,15 +3132,21 @@ public class IProjectTest extends ResourceTest {
 		getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.PRE_CLOSE);
 		IProject project = getWorkspace().getRoot().getProject("MyProject");
 		try {
-			project.create(getMonitor());
-			project.open(getMonitor());
+			monitor.prepare();
+			project.create(monitor);
+			monitor.assertUsedUp();
+			monitor.prepare();
+			project.open(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.4", e);
 		}
 		assertTrue("1.5", project.exists());
 		assertTrue("1.6", project.isOpen());
 		try {
-			project.close(getMonitor());
+			monitor.prepare();
+			project.close(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.7", e);
 		}
@@ -2870,14 +3167,20 @@ public class IProjectTest extends ResourceTest {
 		getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.PRE_DELETE);
 		IProject project = getWorkspace().getRoot().getProject("MyProject");
 		try {
-			project.create(getMonitor());
-			project.open(getMonitor());
+			monitor.prepare();
+			project.create(monitor);
+			monitor.assertUsedUp();
+			monitor.prepare();
+			project.open(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.3", e);
 		}
 		assertTrue("1.4", project.exists());
 		try {
-			project.delete(IResource.FORCE, getMonitor());
+			monitor.prepare();
+			project.delete(IResource.FORCE, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.5", e);
 		}
@@ -2897,14 +3200,20 @@ public class IProjectTest extends ResourceTest {
 		getWorkspace().addResourceChangeListener(listener, IResourceChangeEvent.PRE_DELETE);
 		IProject project = getWorkspace().getRoot().getProject("MyProject");
 		try {
-			project.create(getMonitor());
-			project.open(getMonitor());
+			monitor.prepare();
+			project.create(monitor);
+			monitor.assertUsedUp();
+			monitor.prepare();
+			project.open(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.3", e);
 		}
 		assertTrue("1.4", project.exists());
 		try {
-			project.move(new Path("MyNewProject"), IResource.FORCE, getMonitor());
+			monitor.prepare();
+			project.move(new Path("MyNewProject"), IResource.FORCE, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.5", e);
 		}
@@ -2918,7 +3227,9 @@ public class IProjectTest extends ResourceTest {
 		ensureDoesNotExistInWorkspace(hiddenProject);
 
 		try {
-			hiddenProject.create(null, IResource.HIDDEN, getMonitor());
+			monitor.prepare();
+			hiddenProject.create(null, IResource.HIDDEN, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("1.0", e);
 		}
@@ -2927,8 +3238,12 @@ public class IProjectTest extends ResourceTest {
 
 		// try to delete and recreate the project
 		try {
-			hiddenProject.delete(false, getMonitor());
-			hiddenProject.create(getMonitor());
+			monitor.prepare();
+			hiddenProject.delete(false, monitor);
+			monitor.assertUsedUp();
+			monitor.prepare();
+			hiddenProject.create(monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("3.0", e);
 		}
@@ -2944,24 +3259,33 @@ public class IProjectTest extends ResourceTest {
 		IFolder folder = project.getFolder(getUniqueString());
 		IFile file = folder.getFile(getUniqueString());
 		ensureExistsInWorkspace(new IResource[] {project, folder, file}, true);
-		project.open(getMonitor());
+		project.open(monitor);
+		monitor.assertUsedUp();
 
 		// modify the file to create an entry in the history
-		file.setContents(new ByteArrayInputStream(getRandomString().getBytes()), true, true, getMonitor());
+		monitor.prepare();
+		file.setContents(new ByteArrayInputStream(getRandomString().getBytes()), true, true, monitor);
+		monitor.assertUsedUp();
 
 		// delete the project and check that its metadata is also deleted
-		project.delete(true, getMonitor());
+		monitor.prepare();
+		project.delete(true, monitor);
+		monitor.assertUsedUp();
 		IPath p = ((Workspace) getWorkspace()).getMetaArea().locationFor(project);
 		assertFalse("1.0", p.toFile().exists());
 
 		IProject otherProject = getWorkspace().getRoot().getProject(getUniqueString());
 		ensureExistsInWorkspace(new IResource[] {otherProject}, true);
-		otherProject.open(getMonitor());
+		monitor.prepare();
+		otherProject.open(monitor);
+		monitor.assertUsedUp();
 
 		// try to rename a project using the name of the deleted project
 		IProjectDescription desc = getWorkspace().newProjectDescription(projectName);
 		try {
-			otherProject.move(desc, true, getMonitor());
+			monitor.prepare();
+			otherProject.move(desc, true, monitor);
+			monitor.assertUsedUp();
 		} catch (CoreException e) {
 			fail("2.0", e);
 		}
