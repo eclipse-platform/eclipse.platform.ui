@@ -2706,5 +2706,13 @@
          </view>
       </perspectiveExtension>
    </extension>
+   <extension
+         point="org.eclipse.ui.quickAccess">
+      <computer
+            class="org.eclipse.ui.internal.ide.dialogs.OpenResourceQuickAccessComputer"
+            name="%quickAccess.resources.name"
+            requiresUIAccess="false">
+      </computer>
+   </extension>
 
 </plugin>
