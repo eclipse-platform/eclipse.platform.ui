@@ -389,13 +389,12 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 		project = FileUtil.createProject("projectToSelect");
 		ISelection selection = new StructuredSelection(project);
 
-		// show the 'Navigator'
-		IViewPart navigator = activePage.showView(IPageLayout.ID_RES_NAV);
-		// have the 'Navigator' select it
-		navigator.getSite().getSelectionProvider().setSelection(selection);
+		// show the 'Bookmarks'
+		IViewPart bookmarks = activePage.showView(IPageLayout.ID_BOOKMARKS);
 
 		// verify that the 'Navigator' uses a regular property sheet page
-		assertTrue("The 'Properties' view should render the content of the 'Navigator' in a regular property sheet page",
+		assertTrue(
+				"The 'Properties' view should render the content of the 'Bookmarks' in a regular property sheet page",
 				propertySheet.getCurrentPage() instanceof PropertySheetPage);
 
 		// show the 'Project Explorer'
@@ -404,7 +403,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 		projectExplorer.getSite().getSelectionProvider().setSelection(selection);
 
 		assertFalse("The 'Navigator' should be hidden behind the 'Project Explorer'",
-				activePage.isPartVisible(navigator));
+				activePage.isPartVisible(bookmarks));
 		assertTrue("The 'Project Explorer' should be visible in front of the 'Navigator'",
 				activePage.isPartVisible(projectExplorer));
 
@@ -420,7 +419,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 		// 'Project Explorer', just because it is hidden should _not_ mean the
 		// _pinned_ 'Properties' view should stop rendering its content though,
 		// this is the bug being tested
-		activePage.activate(navigator);
+		activePage.activate(bookmarks);
 
 		// verify that the page is not a non-standard property sheet page
 		assertFalse("The 'Properties' view should still be on the content of the 'Project Explorer' rendering a tabbed property sheet",
@@ -562,18 +561,6 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 		// at this place we get an "already disposed" error because we are tying
 		// to reuse default page
 		propertySheet = (PropertySheet) activePage.showView(IPageLayout.ID_PROP_SHEET);
-	}
-
-	/**
-	 * Tests bug 425525 using a view that contributes to the 'Properties' view
-	 * without using a customized page. This test uses the 'Navigator' view to
-	 * achieve this.
-	 *
-	 * @see #testBug425525(String, boolean)
-	 */
-	@Test
-	public void testInitialSelectionWithNormalProperties() throws Exception {
-		testBug425525(IPageLayout.ID_RES_NAV, true);
 	}
 
 	/**

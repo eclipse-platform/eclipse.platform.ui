@@ -88,9 +88,6 @@ public class ResourcePerspective implements IPerspectiveFactory {
 		topLeft.addView(IPageLayout.ID_PROJECT_EXPLORER);
 		topLeft.addPlaceholder(IPageLayout.ID_BOOKMARKS);
 
-		// Add a placeholder for the old navigator to maintain compatibility
-		topLeft.addPlaceholder("org.eclipse.ui.views.ResourceNavigator"); //$NON-NLS-1$
-
 		// Bottom left.
 		IFolderLayout bottomLeft = layout.createFolder(
 				"bottomLeft", IPageLayout.BOTTOM, (float) 0.50,//$NON-NLS-1$
