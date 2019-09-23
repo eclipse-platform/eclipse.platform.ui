@@ -27,6 +27,8 @@ import org.eclipse.swt.widgets.Control;
  *
  * @param <F> factory
  * @param <C> control
+ *
+ * @noextend this class is not intended to be subclassed by clients.
  */
 public abstract class AbstractControlFactory<F extends AbstractControlFactory<?, ?>, C extends Control>
 		extends AbstractWidgetFactory<F, C, Composite> {
@@ -35,7 +37,7 @@ public abstract class AbstractControlFactory<F extends AbstractControlFactory<?,
 	 * @param factoryClass
 	 * @param controlCreator
 	 */
-	protected AbstractControlFactory(Class<F> factoryClass, WidgetSupplier<C, Composite> controlCreator) {
+	AbstractControlFactory(Class<F> factoryClass, WidgetSupplier<C, Composite> controlCreator) {
 		super(factoryClass, controlCreator);
 	}
 

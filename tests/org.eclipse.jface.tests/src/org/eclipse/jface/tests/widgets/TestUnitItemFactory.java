@@ -16,13 +16,17 @@ package org.eclipse.jface.tests.widgets;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 
-import org.eclipse.jface.widgets.AbstractItemFactory;
+import org.eclipse.jface.widgets.TableColumnFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.junit.Before;
 import org.junit.Test;
 
+/**
+ * This test uses a TableColumnFactory to test the methods of
+ * AbstractItemFactory.
+ */
 public class TestUnitItemFactory extends AbstractFactoryTest {
 
 	private Table table;
@@ -36,7 +40,7 @@ public class TestUnitItemFactory extends AbstractFactoryTest {
 
 	@Test
 	public void createsDifferentItemsWithSameFactory() {
-		TestFactory testFactory = TestFactory.newTest();
+		TableColumnFactory testFactory = TableColumnFactory.newTableColumn(SWT.NONE);
 
 		TableColumn column1 = testFactory.create(table);
 		TableColumn column2 = testFactory.create(table);
@@ -48,21 +52,9 @@ public class TestUnitItemFactory extends AbstractFactoryTest {
 
 	@Test
 	public void createsControlWithProperties() {
-		TableColumn column = TestFactory.newTest() //
-				.image(image).text("Column").create(table);
+		TableColumn column = TableColumnFactory.newTableColumn(SWT.NONE).image(image).text("Column").create(table);
 
 		assertEquals(image, column.getImage());
 		assertEquals("Column", column.getText());
-	}
-
-	static class TestFactory extends AbstractItemFactory<TestFactory, TableColumn, Table> {
-
-		protected TestFactory(int style) {
-			super(TestFactory.class, parent -> new TableColumn(parent, style));
-		}
-
-		public static TestFactory newTest() {
-			return new TestFactory(SWT.NONE);
-		}
 	}
 }

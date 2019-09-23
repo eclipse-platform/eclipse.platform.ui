@@ -60,7 +60,7 @@ import org.eclipse.swt.widgets.Label;
  * LabelFactory.
  * </p>
  */
-public class LabelFactory extends AbstractControlFactory<LabelFactory, Label> {
+public final class LabelFactory extends AbstractControlFactory<LabelFactory, Label> {
 
 	private LabelFactory(int style) {
 		super(LabelFactory.class, (Composite parent) -> new Label(parent, style));

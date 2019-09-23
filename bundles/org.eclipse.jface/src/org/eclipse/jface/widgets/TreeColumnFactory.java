@@ -67,7 +67,7 @@ import org.eclipse.swt.widgets.TreeColumn;
  * </p>
  *
  */
-public class TreeColumnFactory extends AbstractItemFactory<TreeColumnFactory, TreeColumn, Tree> {
+public final class TreeColumnFactory extends AbstractItemFactory<TreeColumnFactory, TreeColumn, Tree> {
 
 	private TreeColumnFactory(int style) {
 		super(TreeColumnFactory.class, tree -> new TreeColumn(tree, style));

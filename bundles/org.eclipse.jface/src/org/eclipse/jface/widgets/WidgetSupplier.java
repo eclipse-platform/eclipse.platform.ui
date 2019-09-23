@@ -28,6 +28,9 @@ import org.eclipse.swt.widgets.Widget;
  *
  * @param <W> the type of the widget to be created
  * @param <P> the type of the parent the widget should be created in
+ *
+ * @noimplement this interface is not intended to be implemented by clients.
+ * @noextend this class is not intended to be subclassed by clients.
  */
 @FunctionalInterface
 public interface WidgetSupplier<W extends Widget, P extends Widget> {

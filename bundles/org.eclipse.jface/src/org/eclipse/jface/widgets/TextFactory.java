@@ -67,7 +67,7 @@ import org.eclipse.swt.widgets.Text;
  * The above example creates three texts using the same instance of TextFactory.
  * </p>
  */
-public class TextFactory extends AbstractControlFactory<TextFactory, Text> {
+public final class TextFactory extends AbstractControlFactory<TextFactory, Text> {
 
 	private TextFactory(int style) {
 		super(TextFactory.class, (Composite parent) -> new Text(parent, style));

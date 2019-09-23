@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Composite;
  * </ul>
  *
  */
-public class CompositeFactory extends AbstractCompositeFactory<CompositeFactory, Composite> {
+public final class CompositeFactory extends AbstractCompositeFactory<CompositeFactory, Composite> {
 
 	private CompositeFactory(int style) {
 		super(CompositeFactory.class, (Composite parent) -> new Composite(parent, style));

@@ -67,7 +67,7 @@ import org.eclipse.swt.widgets.TableColumn;
  * </p>
  *
  */
-public class TableColumnFactory extends AbstractItemFactory<TableColumnFactory, TableColumn, Table> {
+public final class TableColumnFactory extends AbstractItemFactory<TableColumnFactory, TableColumn, Table> {
 
 	private TableColumnFactory(int style) {
 		super(TableColumnFactory.class, table -> new TableColumn(table, style));

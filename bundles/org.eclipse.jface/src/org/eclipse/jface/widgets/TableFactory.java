@@ -56,7 +56,7 @@ import org.eclipse.swt.widgets.Table;
  * </p>
  *
  */
-public class TableFactory extends AbstractCompositeFactory<TableFactory, Table> {
+public final class TableFactory extends AbstractCompositeFactory<TableFactory, Table> {
 
 	private TableFactory(int style) {
 		super(TableFactory.class, (parent) -> new Table(parent, style));

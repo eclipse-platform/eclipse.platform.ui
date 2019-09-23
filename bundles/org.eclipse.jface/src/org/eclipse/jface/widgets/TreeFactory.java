@@ -64,7 +64,7 @@ import org.eclipse.swt.widgets.Tree;
  * </p>
  *
  */
-public class TreeFactory extends AbstractCompositeFactory<TreeFactory, Tree> {
+public final class TreeFactory extends AbstractCompositeFactory<TreeFactory, Tree> {
 
 	private TreeFactory(int style) {
 		super(TreeFactory.class, (parent) -> new Tree(parent, style));

@@ -43,7 +43,7 @@ import org.eclipse.swt.widgets.Spinner;
  * </ul>
  *
  */
-public class SpinnerFactory extends AbstractCompositeFactory<SpinnerFactory, Spinner> {
+public final class SpinnerFactory extends AbstractCompositeFactory<SpinnerFactory, Spinner> {
 
 	private SpinnerFactory(int style) {
 		super(SpinnerFactory.class, (Composite parent) -> new Spinner(parent, style));
