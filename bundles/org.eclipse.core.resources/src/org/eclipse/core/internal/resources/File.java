@@ -59,6 +59,7 @@ public class File extends Resource implements IFile {
 				workspace.endOperation(rule, true);
 			}
 		} finally {
+			subMonitor.done();
 			FileUtil.safeClose(content);
 		}
 	}
@@ -167,6 +168,7 @@ public class File extends Resource implements IFile {
 				workspace.endOperation(rule, true);
 			}
 		} finally {
+			subMonitor.done();
 			FileUtil.safeClose(content);
 		}
 	}
@@ -339,6 +341,7 @@ public class File extends Resource implements IFile {
 				workspace.endOperation(rule, true);
 			}
 		} finally {
+			subMonitor.done();
 			FileUtil.safeClose(content);
 		}
 	}
@@ -411,6 +414,7 @@ public class File extends Resource implements IFile {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
+			subMonitor.done();
 			workspace.endOperation(rule, true);
 		}
 	}

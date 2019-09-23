@@ -110,6 +110,7 @@ public class Folder extends Container implements IFolder {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
+			subMonitor.done();
 			workspace.endOperation(rule, true);
 		}
 	}

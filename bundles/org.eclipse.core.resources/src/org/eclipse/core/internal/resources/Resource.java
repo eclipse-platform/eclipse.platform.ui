@@ -541,6 +541,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
+			progress.done();
 			workspace.endOperation(rule, true);
 		}
 	}
@@ -588,6 +589,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
+			progress.done();
 			workspace.endOperation(workspace.getRoot(), true);
 		}
 	}
@@ -677,6 +679,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
+			progress.done();
 			workspace.endOperation(rule, true);
 		}
 	}
@@ -779,6 +782,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
+			progress.done();
 			workspace.endOperation(rule, true);
 		}
 	}
@@ -1511,6 +1515,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
+			progress.done();
 			workspace.endOperation(rule, true);
 		}
 	}
@@ -1554,6 +1559,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
+			progress.done();
 			workspace.endOperation(rule, build);
 		}
 	}
@@ -1621,6 +1627,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
+			progress.done();
 			workspace.endOperation(rule, true);
 		}
 	}
@@ -1651,6 +1658,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			internalSetLocal(flag, depth);
 			progress.split(98);
 		} finally {
+			progress.done();
 			workspace.endOperation(null, true);
 		}
 	}
@@ -1752,6 +1760,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
+			progress.done();
 			workspace.endOperation(rule, true);
 		}
 	}
@@ -1763,21 +1772,23 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	private void unprotectedDelete(ResourceTree tree, int updateFlags, IProgressMonitor monitor) {
 		IMoveDeleteHook hook = workspace.getMoveDeleteHook();
 		SubMonitor progress = SubMonitor.convert(monitor, 2).checkCanceled();
-		switch (getType()) {
-			case IResource.FILE :
+		try {
+			switch (getType()) {
+			case IResource.FILE:
 				if (!hook.deleteFile(tree, (IFile) this, updateFlags, progress.split(1)))
 					tree.standardDeleteFile((IFile) this, updateFlags, progress.split(1));
 				break;
-			case IResource.FOLDER :
+			case IResource.FOLDER:
 				if (!hook.deleteFolder(tree, (IFolder) this, updateFlags, progress.split(1)))
 					tree.standardDeleteFolder((IFolder) this, updateFlags, progress.split(1));
 				break;
-			case IResource.PROJECT :
+			case IResource.PROJECT:
 				if (!hook.deleteProject(tree, (IProject) this, updateFlags, progress.split(1)))
 					tree.standardDeleteProject((IProject) this, updateFlags, progress.split(1));
 				break;
-			case IResource.ROOT :
-				// When the root is deleted, all its children including hidden projects have to be deleted.
+			case IResource.ROOT:
+				// When the root is deleted, all its children including hidden projects have to
+				// be deleted.
 				IProject[] projects = ((IWorkspaceRoot) this).getProjects(IContainer.INCLUDE_HIDDEN);
 				progress.setWorkRemaining(projects.length * 2);
 				for (IProject project : projects) {
@@ -1785,6 +1796,9 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 						tree.standardDeleteProject(project, updateFlags, progress.split(1));
 				}
 				break;
+			}
+		} finally {
+			progress.done();
 		}
 	}
 
@@ -1796,16 +1810,17 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 	private boolean unprotectedMove(ResourceTree tree, final IResource destination, int updateFlags, IProgressMonitor monitor) throws CoreException, ResourceException {
 		IMoveDeleteHook hook = workspace.getMoveDeleteHook();
 		SubMonitor progress = SubMonitor.convert(monitor, 2).checkCanceled();
-		switch (getType()) {
-			case IResource.FILE :
+		try {
+			switch (getType()) {
+			case IResource.FILE:
 				if (!hook.moveFile(tree, (IFile) this, (IFile) destination, updateFlags, progress.split(1)))
 					tree.standardMoveFile((IFile) this, (IFile) destination, updateFlags, progress.split(1));
 				break;
-			case IResource.FOLDER :
+			case IResource.FOLDER:
 				if (!hook.moveFolder(tree, (IFolder) this, (IFolder) destination, updateFlags, progress.split(1)))
 					tree.standardMoveFolder((IFolder) this, (IFolder) destination, updateFlags, progress.split(1));
 				break;
-			case IResource.PROJECT :
+			case IResource.PROJECT:
 				IProject project = (IProject) this;
 				// If there is no change in name, there is nothing to do so return.
 				if (getName().equals(destination.getName()))
@@ -1815,9 +1830,12 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				if (!hook.moveProject(tree, project, description, updateFlags, progress.split(1)))
 					tree.standardMoveProject(project, description, updateFlags, progress.split(1));
 				break;
-			case IResource.ROOT :
+			case IResource.ROOT:
 				String msg = Messages.resources_moveRoot;
 				throw new ResourceException(new ResourceStatus(IResourceStatus.INVALID_VALUE, getFullPath(), msg));
+			}
+		} finally {
+			progress.done();
 		}
 		return true;
 	}
@@ -2003,6 +2021,7 @@ public abstract class Resource extends PlatformObject implements IResource, ICor
 				refreshLocal(DEPTH_INFINITE, progress.split(98));
 			}
 		} finally {
+			progress.done();
 			workspace.endOperation(rule, true);
 		}
 	}

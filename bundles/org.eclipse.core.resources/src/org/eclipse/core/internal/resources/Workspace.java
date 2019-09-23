@@ -530,6 +530,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			if (!result.isOK())
 				throw new ResourceException(result);
 		} finally {
+			subMonitor.done();
 			// building may close the tree, but we are still inside an operation so open it
 			if (tree.isImmutable())
 				newWorkingTree();
@@ -1048,6 +1049,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			getWorkManager().operationCanceled();
 			throw e;
 		} finally {
+			subMonitor.done();
 			endOperation(getRoot(), true);
 		}
 		if (status.matches(IStatus.ERROR))
@@ -1416,6 +1418,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			getWorkManager().operationCanceled();
 			throw e;
 		} finally {
+			subMonitor.done();
 			endOperation(getRoot(), true);
 		}
 	}
@@ -2051,6 +2054,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			getWorkManager().operationCanceled();
 			throw e;
 		} finally {
+			subMonitor.done();
 			endOperation(getRoot(), true);
 		}
 		if (status.matches(IStatus.ERROR))
@@ -2293,6 +2297,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				getWorkManager().operationCanceled();
 			throw e;
 		} finally {
+			subMonitor.done();
 			if (avoidNotification)
 				notificationManager.endAvoidNotify();
 			if (depth >= 0)
@@ -2376,38 +2381,42 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 				markerManager, _workManager, aliasManager, refreshManager, contentDescriptionManager, natureManager,
 				filterManager };
 		SubMonitor subMonitor = SubMonitor.convert(monitor, managers.length); // $NON-NLS-1$
-		String message = Messages.resources_shutdownProblems;
-		MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message,
-				null);
-		// best effort to shutdown every object and free resources
-		for (IManager manager : managers) {
-			if (manager == null)
-				subMonitor.worked(1);
-			else {
-				try {
-					manager.shutdown(subMonitor.newChild(1));
-				} catch (Exception e) {
-					message = Messages.resources_shutdownProblems;
-					status.add(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR,
-							message, e));
+		try {
+			String message = Messages.resources_shutdownProblems;
+			MultiStatus status = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR, message,
+					null);
+			// best effort to shutdown every object and free resources
+			for (IManager manager : managers) {
+				if (manager == null)
+					subMonitor.worked(1);
+				else {
+					try {
+						manager.shutdown(subMonitor.newChild(1));
+					} catch (Exception e) {
+						message = Messages.resources_shutdownProblems;
+						status.add(new Status(IStatus.ERROR, ResourcesPlugin.PI_RESOURCES, IResourceStatus.INTERNAL_ERROR,
+								message, e));
+					}
 				}
 			}
+			buildManager = null;
+			notificationManager = null;
+			propertyManager = null;
+			pathVariableManager = null;
+			fileSystemManager = null;
+			markerManager = null;
+			synchronizer = null;
+			saveManager = null;
+			_workManager = null;
+			aliasManager = null;
+			refreshManager = null;
+			charsetManager = null;
+			contentDescriptionManager = null;
+			if (!status.isOK())
+				throw new CoreException(status);
+		} finally {
+			subMonitor.done();
 		}
-		buildManager = null;
-		notificationManager = null;
-		propertyManager = null;
-		pathVariableManager = null;
-		fileSystemManager = null;
-		markerManager = null;
-		synchronizer = null;
-		saveManager = null;
-		_workManager = null;
-		aliasManager = null;
-		refreshManager = null;
-		charsetManager = null;
-		contentDescriptionManager = null;
-		if (!status.isOK())
-			throw new CoreException(status);
 	}
 
 	@Override

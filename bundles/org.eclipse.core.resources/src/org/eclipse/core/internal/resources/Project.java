@@ -202,6 +202,7 @@ public class Project extends Container implements IProject {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
+			subMonitor.done();
 			workspace.endOperation(rule, true);
 		}
 	}
@@ -307,6 +308,7 @@ public class Project extends Container implements IProject {
 			workspace.getWorkManager().operationCanceled();
 			throw e;
 		} finally {
+			subMonitor.done();
 			workspace.endOperation(rule, true);
 		}
 	}
@@ -546,36 +548,40 @@ public class Project extends Container implements IProject {
 				final ISchedulingRule notificationsRule = relaxed ? null : workspace.getRoot();
 				SubMonitor subMonitor = SubMonitor.convert(innerMonitor, 100);
 				try {
-					workspace.prepareOperation(notificationsRule, innerMonitor);
-					if (!shouldBuild())
-						return;
-					workspace.beginOperation(true);
-					workspace.aboutToBuild(Project.this, trigger);
-				} finally {
-					workspace.endOperation(notificationsRule, false);
-				}
-				try {
-					IStatus result;
-					workspace.prepareOperation(projectBuildRule, innerMonitor);
-					// don't open the tree eagerly because it will be wasted if no build occurs
-					workspace.beginOperation(false);
-					result = workspace.getBuildManager().build(config, trigger, builderName, args,
-							subMonitor.split(100));
-					if (!result.isOK())
-						throw new ResourceException(result);
-				} finally {
-					workspace.endOperation(projectBuildRule, false);
 					try {
 						workspace.prepareOperation(notificationsRule, innerMonitor);
-						// don't open the tree eagerly because it will be wasted if no change occurs
-						workspace.beginOperation(false);
-						workspace.broadcastBuildEvent(Project.this, IResourceChangeEvent.POST_BUILD, trigger);
-						// building may close the tree, so open it
-						if (workspace.getElementTree().isImmutable())
-							workspace.newWorkingTree();
+						if (!shouldBuild())
+							return;
+						workspace.beginOperation(true);
+						workspace.aboutToBuild(Project.this, trigger);
 					} finally {
 						workspace.endOperation(notificationsRule, false);
 					}
+					try {
+						IStatus result;
+						workspace.prepareOperation(projectBuildRule, innerMonitor);
+						// don't open the tree eagerly because it will be wasted if no build occurs
+						workspace.beginOperation(false);
+						result = workspace.getBuildManager().build(config, trigger, builderName, args,
+								subMonitor.split(100));
+						if (!result.isOK())
+							throw new ResourceException(result);
+					} finally {
+						workspace.endOperation(projectBuildRule, false);
+						try {
+							workspace.prepareOperation(notificationsRule, innerMonitor);
+							// don't open the tree eagerly because it will be wasted if no change occurs
+							workspace.beginOperation(false);
+							workspace.broadcastBuildEvent(Project.this, IResourceChangeEvent.POST_BUILD, trigger);
+							// building may close the tree, so open it
+							if (workspace.getElementTree().isImmutable())
+								workspace.newWorkingTree();
+						} finally {
+							workspace.endOperation(notificationsRule, false);
+						}
+					}
+				} finally {
+					subMonitor.done();
 				}
 			}
 
