@@ -40,6 +40,7 @@ public class Messages extends NLS {
 	public static String QuickSearchDialog_caseInsensitive_label;
 	public static String QuickSearchDialog_patternHint;
 	public static String QuickTextSearch_updateMatchesJob;
+	public static String quickAccessMatch;
 
 	static {
 		// initialize resource bundle

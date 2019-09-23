@@ -107,5 +107,13 @@
              name="%quickSearch.label">
        </page>
    </extension>
+   <extension
+         point="org.eclipse.ui.quickAccess">
+      <computer
+            class="org.eclipse.text.quicksearch.internal.ui.QuickSearchQuickAccessComputer"
+            name="%quickAccess.category.label"
+            requiresUIAccess="false">
+      </computer>
+   </extension>
 
 </plugin>
