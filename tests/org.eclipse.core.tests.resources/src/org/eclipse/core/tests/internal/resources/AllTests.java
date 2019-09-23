@@ -34,6 +34,7 @@ public class AllTests extends TestCase {
 		suite.addTest(ProjectReferencesTest.suite());
 		suite.addTest(ProjectDynamicReferencesTest.suite());
 		suite.addTest(ProjectBuildConfigsTest.suite());
+		suite.addTest(Bug544975Test.suite());
 		return suite;
 	}
 
