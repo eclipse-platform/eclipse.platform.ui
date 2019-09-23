@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,13 +15,13 @@
 package org.eclipse.ui.handlers;
 
 import java.util.Map;
-
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.window.Window;
+import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchCommandConstants;
@@ -56,11 +56,20 @@ public final class ShowPerspectiveHandler extends AbstractHandler {
 		if (value == null) {
 			openOther(window);
 		} else {
-
-			if (newWindow == null || newWindow.equalsIgnoreCase("false")) { //$NON-NLS-1$
-				openPerspective((String) value, window);
-			} else {
-				openNewWindowPerspective((String) value, window);
+			ExecutionException[] exception = new ExecutionException[1];
+			BusyIndicator.showWhile(null, () -> {
+				try {
+					if (newWindow == null || newWindow.equalsIgnoreCase("false")) { //$NON-NLS-1$
+						openPerspective((String) value, window);
+					} else {
+						openNewWindowPerspective((String) value, window);
+					}
+				} catch (ExecutionException e) {
+					exception[0] = e;
+				}
+			});
+			if (exception[0] != null) {
+				throw exception[0];
 			}
 		}
 		return null;
@@ -106,10 +115,20 @@ public final class ShowPerspectiveHandler extends AbstractHandler {
 			String perspectiveId = descriptor.getId();
 			// only open it in a new window if the preference is set and the
 			// current workbench page doesn't have an active perspective
-			if (IPreferenceConstants.OPM_NEW_WINDOW == openPerspMode && persp != null) {
-				openNewWindowPerspective(perspectiveId, activeWorkbenchWindow);
-			} else {
-				openPerspective(perspectiveId, activeWorkbenchWindow);
+			ExecutionException[] exception = new ExecutionException[1];
+			BusyIndicator.showWhile(null, () -> {
+				try {
+					if (IPreferenceConstants.OPM_NEW_WINDOW == openPerspMode && persp != null) {
+						openNewWindowPerspective(perspectiveId, activeWorkbenchWindow);
+					} else {
+						openPerspective(perspectiveId, activeWorkbenchWindow);
+					}
+				} catch (ExecutionException e) {
+					exception[0] = e;
+				}
+			});
+			if (exception[0] != null) {
+				throw exception[0];
 			}
 		}
 	}

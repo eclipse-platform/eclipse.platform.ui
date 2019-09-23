@@ -3981,6 +3981,10 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	@Override
 	public void setPerspective(IPerspectiveDescriptor perspective) {
+		BusyIndicator.showWhile(null, () -> busySetPerspective(perspective));
+	}
+
+	private void busySetPerspective(IPerspectiveDescriptor perspective) {
 		if (perspective == null) {
 			return;
 		}
