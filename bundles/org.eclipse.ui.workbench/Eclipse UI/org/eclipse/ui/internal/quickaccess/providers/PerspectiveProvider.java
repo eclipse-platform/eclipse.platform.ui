@@ -79,4 +79,9 @@ public class PerspectiveProvider extends QuickAccessProvider {
 		cachedElements = null;
 		idToElement.clear();
 	}
+
+	@Override
+	public boolean requiresUiAccess() {
+		return true;
+	}
 }

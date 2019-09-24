@@ -186,4 +186,9 @@ public class CommandProvider extends QuickAccessProvider {
 		}
 		currentSnapshot = null;
 	}
+
+	@Override
+	public boolean requiresUiAccess() {
+		return true;
+	}
 }

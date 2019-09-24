@@ -43,12 +43,24 @@ public class ViewElement extends QuickAccessElement {
 	private MWindow window;
 	private MPartDescriptor viewDescriptor;
 	private ImageDescriptor imageDescriptor;
+	private String viewLabel;
 
 	public ViewElement(MWindow window, MPartDescriptor descriptor) {
 		this.window = window;
 		this.viewDescriptor = descriptor;
-
-		imageDescriptor = createImageDescriptor();
+		this.imageDescriptor = createImageDescriptor();
+		this.viewLabel = LocalizationHelper.getLocalized(viewDescriptor.getLabel(), viewDescriptor,
+				window.getContext());
+		String categoryLabel = LocalizationHelper.getLocalized(viewDescriptor.getCategory(), viewDescriptor,
+				window.getContext());
+		if (categoryLabel != null) {
+			viewLabel = NLS.bind(QuickAccessMessages.QuickAccess_ViewWithCategory, viewLabel, categoryLabel);
+		}
+		String description = LocalizationHelper.getLocalized(viewDescriptor.getTooltip(), viewDescriptor,
+				window.getContext());
+		if (description != null && !description.isEmpty()) {
+			viewLabel = viewLabel + separator + description;
+		}
 	}
 
 	private ImageDescriptor createImageDescriptor() {
@@ -107,18 +119,6 @@ public class ViewElement extends QuickAccessElement {
 
 	@Override
 	public String getLabel() {
-		String viewLabel = LocalizationHelper.getLocalized(viewDescriptor.getLabel(), viewDescriptor,
-				window.getContext());
-		String categoryLabel = LocalizationHelper.getLocalized(viewDescriptor.getCategory(), viewDescriptor,
-				window.getContext());
-		if (categoryLabel != null) {
-			viewLabel = NLS.bind(QuickAccessMessages.QuickAccess_ViewWithCategory, viewLabel, categoryLabel);
-		}
-		String description = LocalizationHelper.getLocalized(viewDescriptor.getTooltip(), viewDescriptor,
-				window.getContext());
-		if (description != null && !description.isEmpty()) {
-			return viewLabel + separator + description;
-		}
 		return viewLabel;
 	}
 
