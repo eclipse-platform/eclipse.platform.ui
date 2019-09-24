@@ -464,13 +464,6 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 			firePreExecute(event);
 		}
 		final IHandler handler = this.handler;
-		// workaround for the division of responsibilities to get
-		// bug 369159 working
-		if ((handler != null)
-				&& "org.eclipse.ui.internal.MakeHandlersGo".equals(handler.getClass() //$NON-NLS-1$
-								.getName())) {
-			return handler.execute(event);
-		}
 
 		if (!isDefined()) {
 			final NotDefinedException exception = new NotDefinedException(
