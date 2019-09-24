@@ -45,7 +45,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.content.IContentDescription;
@@ -827,10 +826,6 @@ public class ResourceInfoPage extends PropertyPage {
 		GridData tableData = new GridData();
 		tableData.heightHint = table.getHeaderHeight() + 3 * table.getItemHeight();
 		table.setLayoutData(tableData);
-		if (Platform.WS_GTK.equals(Platform.getWS()))
-			// Removes gray padding around buttons embedded in the table on
-			// GTK, see bug 312240
-			table.setBackgroundMode(SWT.INHERIT_FORCE);
 		createExecutableWarning(composite, font);
 	}
 
