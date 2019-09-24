@@ -13,9 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.commands;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.StringWriter;
 import java.util.Arrays;
 import java.util.Objects;
 
@@ -1019,39 +1016,34 @@ public final class Command extends NamedHandleObjectWithState implements Compara
 	@Override
 	public String toString() {
 		if (string == null) {
-			final StringWriter sw = new StringWriter();
-			final BufferedWriter buffer = new BufferedWriter(sw);
-			try {
-				buffer.write("Command("); //$NON-NLS-1$
-				buffer.write(id);
-				buffer.write(',');
-				buffer.write(name==null?"":name); //$NON-NLS-1$
-				buffer.write(',');
-				buffer.newLine();
-				buffer.write("\t\t"); //$NON-NLS-1$
-				buffer.write(description==null?"":description); //$NON-NLS-1$
-				buffer.write(',');
-				buffer.newLine();
-				buffer.write("\t\t"); //$NON-NLS-1$
-				buffer.write(category==null?"":category.toString()); //$NON-NLS-1$
-				buffer.write(',');
-				buffer.newLine();
-				buffer.write("\t\t"); //$NON-NLS-1$
-				buffer.write(handler==null?"":handler.toString()); //$NON-NLS-1$
-				buffer.write(',');
-				buffer.newLine();
-				buffer.write("\t\t"); //$NON-NLS-1$
-				buffer.write(parameters == null ? "" : Arrays.toString(parameters)); //$NON-NLS-1$
-				buffer.write(',');
-				buffer.write(returnType==null?"":returnType.toString()); //$NON-NLS-1$
-				buffer.write(',');
-				buffer.write(""+defined); //$NON-NLS-1$
-				buffer.write(')');
-				buffer.flush();
-			} catch (IOException e) {
-				// should never get this exception
-			}
-			string = sw.toString();
+			String lineSeparator = System.lineSeparator();
+			StringBuilder builder = new StringBuilder();
+			builder.append("Command("); //$NON-NLS-1$
+			builder.append(id);
+			builder.append(',');
+			builder.append(name == null ? "" : name); //$NON-NLS-1$
+			builder.append(',');
+			builder.append(lineSeparator);
+			builder.append("\t\t"); //$NON-NLS-1$
+			builder.append(description == null ? "" : description); //$NON-NLS-1$
+			builder.append(',');
+			builder.append(lineSeparator);
+			builder.append("\t\t"); //$NON-NLS-1$
+			builder.append(category == null ? "" : category.toString()); //$NON-NLS-1$
+			builder.append(',');
+			builder.append(lineSeparator);
+			builder.append("\t\t"); //$NON-NLS-1$
+			builder.append(handler == null ? "" : handler.toString()); //$NON-NLS-1$
+			builder.append(',');
+			builder.append(lineSeparator);
+			builder.append("\t\t"); //$NON-NLS-1$
+			builder.append(parameters == null ? "" : Arrays.toString(parameters)); //$NON-NLS-1$
+			builder.append(',');
+			builder.append(returnType == null ? "" : returnType.toString()); //$NON-NLS-1$
+			builder.append(',');
+			builder.append("" + defined); //$NON-NLS-1$
+			builder.append(')');
+			string = builder.toString();
 		}
 		return string;
 	}
