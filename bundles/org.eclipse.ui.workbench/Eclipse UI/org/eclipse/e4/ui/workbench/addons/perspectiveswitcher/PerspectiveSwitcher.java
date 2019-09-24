@@ -263,7 +263,8 @@ public class PerspectiveSwitcher {
 		}
 		comp = new Composite(parent, SWT.NONE);
 		RowLayout layout = new RowLayout(SWT.HORIZONTAL);
-		layout.marginLeft = layout.marginRight = 8;
+		layout.marginLeft = 0;
+		layout.marginRight = 4;
 		layout.marginBottom = 0;
 		layout.marginTop = 0;
 		comp.setLayout(layout);
