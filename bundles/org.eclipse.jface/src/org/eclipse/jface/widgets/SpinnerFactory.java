@@ -42,8 +42,13 @@ import org.eclipse.swt.widgets.Spinner;
  * chained</li>
  * </ul>
  *
+ * <p>
+ * Note that this class does not extend {@link AbstractCompositeFactory} even
+ * though Spinner extends Composite. This is because Spinner is not supposed to
+ * be used like a Composite.
+ * </p>
  */
-public final class SpinnerFactory extends AbstractCompositeFactory<SpinnerFactory, Spinner> {
+public final class SpinnerFactory extends AbstractControlFactory<SpinnerFactory, Spinner> {
 
 	private SpinnerFactory(int style) {
 		super(SpinnerFactory.class, (Composite parent) -> new Spinner(parent, style));

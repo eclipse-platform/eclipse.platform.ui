@@ -62,9 +62,13 @@ import org.eclipse.swt.widgets.Tree;
  * SelectionListener and a TreeListener for expansion and finally creates the
  * tree in "parent".
  * </p>
- *
+ * <p>
+ * Note that this class does not extend {@link AbstractCompositeFactory} even
+ * though Tree extends Composite. This is because Tree is not supposed to be
+ * used like a Composite.
+ * </p>
  */
-public final class TreeFactory extends AbstractCompositeFactory<TreeFactory, Tree> {
+public final class TreeFactory extends AbstractControlFactory<TreeFactory, Tree> {
 
 	private TreeFactory(int style) {
 		super(TreeFactory.class, (parent) -> new Tree(parent, style));

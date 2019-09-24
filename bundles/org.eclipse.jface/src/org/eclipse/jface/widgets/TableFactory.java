@@ -54,9 +54,13 @@ import org.eclipse.swt.widgets.Table;
  * The above example creates a table, sets some properties, registers a
  * SelectionListener and finally creates the table in "parent".
  * </p>
- *
+ * <p>
+ * Note that this class does not extend {@link AbstractCompositeFactory} even
+ * though Table extends Composite. This is because Table is not supposed to be
+ * used like a Composite.
+ * </p>
  */
-public final class TableFactory extends AbstractCompositeFactory<TableFactory, Table> {
+public final class TableFactory extends AbstractControlFactory<TableFactory, Table> {
 
 	private TableFactory(int style) {
 		super(TableFactory.class, (parent) -> new Table(parent, style));
