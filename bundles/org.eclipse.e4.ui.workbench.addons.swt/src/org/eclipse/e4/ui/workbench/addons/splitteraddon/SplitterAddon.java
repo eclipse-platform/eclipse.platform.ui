@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2015 IBM Corporation and others.
+ * Copyright (c) 2011, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -131,7 +131,7 @@ public class SplitterAddon {
 		compPart.setTooltip(originalPart.getTooltip());
 		compPart.setIconURI(originalPart.getIconURI());
 		compPart.setCloseable(true);
-		compPart.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.splitteraddon.SplitHost"); //$NON-NLS-1$
+		compPart.setContributionURI(SplitHost.SPLIT_HOST_CONTRIBUTOR_URI);
 
 		// Check if icon from MPart was overridden
 		Object overriddenImage = originalPart.getTransientData().get(IPresentationEngine.OVERRIDE_ICON_IMAGE_KEY);

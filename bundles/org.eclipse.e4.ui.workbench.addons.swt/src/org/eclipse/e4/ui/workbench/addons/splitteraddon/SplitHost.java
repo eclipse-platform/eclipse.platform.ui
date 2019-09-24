@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2014 IBM Corporation and others.
+ * Copyright (c) 2013, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -44,6 +44,11 @@ public class SplitHost {
 	EPartService ps;
 	@Inject
 	MCompositePart myPart;
+
+	/**
+	 * The Contributing URI value that is set for the MCompositePart associated with this SplitHost.
+	 */
+	public static String SPLIT_HOST_CONTRIBUTOR_URI = "bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.splitteraddon.SplitHost"; //$NON-NLS-1$
 
 	List<MPart> getSubParts() {
 		return ms.findElements(myPart, null, MPart.class);

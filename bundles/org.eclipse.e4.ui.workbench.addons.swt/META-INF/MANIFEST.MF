@@ -30,6 +30,6 @@ Import-Package: javax.annotation,
 Export-Package: org.eclipse.e4.ui.workbench.addons.cleanupaddon;x-internal:=true,
  org.eclipse.e4.ui.workbench.addons.dndaddon;x-internal:=true,
  org.eclipse.e4.ui.workbench.addons.minmax;x-internal:=true,
- org.eclipse.e4.ui.workbench.addons.splitteraddon;x-internal:=true,
+ org.eclipse.e4.ui.workbench.addons.splitteraddon;x-friends:="org.eclipse.ui.workbench",
  org.eclipse.e4.ui.workbench.addons.swt;x-internal:=true
 Automatic-Module-Name: org.eclipse.e4.ui.workbench.addons.swt

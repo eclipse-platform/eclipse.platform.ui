@@ -73,6 +73,7 @@ import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspectiveStack;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
+import org.eclipse.e4.ui.model.application.ui.basic.MCompositePart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
@@ -88,6 +89,7 @@ import org.eclipse.e4.ui.model.internal.PositionInfo;
 import org.eclipse.e4.ui.services.EContextService;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
+import org.eclipse.e4.ui.workbench.addons.splitteraddon.SplitHost;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.ISaveHandler;
@@ -592,6 +594,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 									true, WorkbenchWindow.this);
 							return saveResult != null;
 						}
+					} else {
+						if (isSaveOnCloseNotNeededSplitEditorPart(dirtyPart)) {
+							return true;
+						}
 					}
 					return super.save(dirtyPart, confirm);
 				}
@@ -721,6 +727,48 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 					}
 				}
 
+				private void removeSaveOnCloseNotNeededSplitEditorParts(List<MPart> parts) {
+					for (Iterator<MPart> it = parts.iterator(); it.hasNext();) {
+						MPart part = it.next();
+						if (isSaveOnCloseNotNeededSplitEditorPart(part)) {
+							it.remove();
+						}
+					}
+				}
+
+				private boolean isSaveOnCloseNotNeededSplitEditorPart(MPart part) {
+					boolean notNeeded = false;
+					if (part instanceof MCompositePart
+							&& SplitHost.SPLIT_HOST_CONTRIBUTOR_URI.equals(part.getContributionURI())) {
+						MCompositePart compPart = (MCompositePart) part;
+						List<MPart> elements = modelService.findElements(compPart, null, MPart.class);
+						if (elements != null && elements.size() > 1) {
+							elements.remove(0);
+							for (MPart mpart : elements) {
+								Object object = mpart.getObject();
+								if (object instanceof CompatibilityPart) {
+									IWorkbenchPart workbenchPart = ((CompatibilityPart) object).getPart();
+									if (!SaveableHelper.isSaveable(workbenchPart)) {
+										notNeeded = true;
+									} else {
+										ISaveablePart saveable = SaveableHelper.getSaveable(workbenchPart);
+										if (saveable == null || !saveable.isSaveOnCloseNeeded()) {
+											notNeeded = true;
+										} else {
+											notNeeded = false;
+											break;
+										}
+									}
+								} else {
+									notNeeded = false;
+									break;
+								}
+							}
+						}
+					}
+					return notNeeded;
+				}
+
 				@Override
 				public boolean saveParts(Collection<MPart> dirtyParts, boolean confirm, boolean closing, boolean addNonPartSources) {
 					ArrayList<IWorkbenchPart> saveableParts = new ArrayList<>();
@@ -738,6 +786,9 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 					}
 					if (!saveableParts.isEmpty() && closing) {
 						removeSaveOnCloseNotNeededParts(saveableParts);
+					}
+					if (!nonCompatibilityParts.isEmpty() && closing) {
+						removeSaveOnCloseNotNeededSplitEditorParts(nonCompatibilityParts);
 					}
 					if (saveableParts.isEmpty()) {
 						if (nonCompatibilityParts.isEmpty()) {
