@@ -18,6 +18,7 @@
 
 package org.eclipse.e4.ui.workbench.addons.perspectiveswitcher;
 
+import static org.eclipse.swt.events.MenuListener.menuHiddenAdapter;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.io.IOException;
@@ -56,13 +57,10 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
-import org.eclipse.swt.events.MenuEvent;
-import org.eclipse.swt.events.MenuListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -300,20 +298,10 @@ public class PerspectiveSwitcher {
 		boolean showOpenOnPerspectiveBar = PrefUtil.getAPIPreferenceStore()
 				.getBoolean(IWorkbenchPreferenceConstants.SHOW_OPEN_ON_PERSPECTIVE_BAR);
 		if (showOpenOnPerspectiveBar) {
-			final ToolItem openPerspectiveItem = new ToolItem(perspSwitcherToolbar, SWT.PUSH);
+			ToolItem openPerspectiveItem = new ToolItem(perspSwitcherToolbar, SWT.PUSH);
 			openPerspectiveItem.setImage(getOpenPerspectiveImage());
 			openPerspectiveItem.setToolTipText(WorkbenchMessages.OpenPerspectiveDialogAction_tooltip);
-			openPerspectiveItem.addSelectionListener(new SelectionListener() {
-				@Override
-				public void widgetSelected(SelectionEvent e) {
-					selectPerspective();
-				}
-
-				@Override
-				public void widgetDefaultSelected(SelectionEvent e) {
-					selectPerspective();
-				}
-			});
+			openPerspectiveItem.addSelectionListener(widgetSelectedAdapter(e -> selectPerspective()));
 			new ToolItem(perspSwitcherToolbar, SWT.SEPARATOR);
 		}
 
@@ -571,26 +559,13 @@ public class PerspectiveSwitcher {
 		}
 
 		new MenuItem(menu, SWT.SEPARATOR);
-		// addDockOnSubMenu(menu);
 		addShowTextItem(menu);
 
 		Rectangle bounds = item.getBounds();
 		Point point = perspSwitcherToolbar.toDisplay(bounds.x, bounds.y + bounds.height);
 		menu.setLocation(point.x, point.y);
 		menu.setVisible(true);
-		menu.addMenuListener(new MenuListener() {
-
-			@Override
-			public void menuHidden(MenuEvent e) {
-				perspSwitcherToolbar.getDisplay().asyncExec(() -> menu.dispose());
-			}
-
-			@Override
-			public void menuShown(MenuEvent e) {
-				// Nothing to do
-			}
-
-		});
+		menu.addMenuListener(menuHiddenAdapter(e -> perspSwitcherToolbar.getDisplay().asyncExec(menu::dispose)));
 	}
 
 	private void addCloseItem(final Menu menu) {
