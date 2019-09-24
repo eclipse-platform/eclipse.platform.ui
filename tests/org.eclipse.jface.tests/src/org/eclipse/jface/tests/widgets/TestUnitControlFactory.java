@@ -77,7 +77,7 @@ public class TestUnitControlFactory extends AbstractFactoryTest {
 	@Test
 	public void testUniqueLayoutData() {
 		GridDataFactory gridDataFactory = GridDataFactory.fillDefaults().grab(true, false);
-		LabelFactory factory = LabelFactory.newLabel(SWT.NONE).layoutData(gridDataFactory::create);
+		LabelFactory factory = LabelFactory.newLabel(SWT.NONE).supplyLayoutData(gridDataFactory::create);
 
 		Label label = factory.create(shell);
 		Label label2 = factory.create(shell);

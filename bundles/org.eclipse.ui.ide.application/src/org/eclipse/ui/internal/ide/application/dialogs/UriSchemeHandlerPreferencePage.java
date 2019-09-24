@@ -142,7 +142,7 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 		gd.horizontalSpan = 2;
 		gd.heightHint = pixelConverter.convertHeightInCharsToPixels(1) / 2;
 
-		WidgetFactory.label(SWT.LEFT).layoutData(() -> gd).create(composite);
+		WidgetFactory.label(SWT.LEFT).layoutData(gd).create(composite);
 	}
 
 	private void createTableViewerForSchemes(Composite parent) {
@@ -201,7 +201,7 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 		WidgetFactory.label(SWT.NONE).text(UrlHandlerPreferencePage_Handler_Label).create(handlerComposite);
 
 		handlerLocation = WidgetFactory.text(SWT.READ_ONLY | SWT.BORDER)
-				.layoutData(() -> new GridData(SWT.FILL, SWT.CENTER, true, false)).create(handlerComposite);
+				.layoutData(new GridData(SWT.FILL, SWT.CENTER, true, false)).create(handlerComposite);
 
 		handlerComposite.setVisible(false); // set visible on table selection
 	}

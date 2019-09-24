@@ -70,20 +70,20 @@ public abstract class AbstractControlFactory<F extends AbstractControlFactory<?,
 	 *
 	 * <pre>
 	 * GridDataFactory gridDataFactory = GridDataFactory.fillDefaults().grab(true, false);
-	 * ButtonFactory.newButton(SWT.PUSH).layoutData(gridDataFactory::create);
+	 * ButtonFactory.newButton(SWT.PUSH).supplyLayoutData(gridDataFactory::create);
 	 * </pre>
 	 *
 	 * or without GridDataFactory:
 	 *
 	 * <pre>
-	 * ButtonFactory.newButton(SWT.PUSH).layoutData(() -&gt; new GridData());
+	 * ButtonFactory.newButton(SWT.PUSH).supplyLayoutData(GridData::new);
 	 * </pre>
 	 *
 	 * @param layoutDataSupplier {@link Supplier} creating a new layout data
 	 *                           instance
 	 * @return this
 	 */
-	public F layoutData(Supplier<Object> layoutDataSupplier) {
+	public F supplyLayoutData(Supplier<?> layoutDataSupplier) {
 		addProperty(c -> c.setLayoutData(layoutDataSupplier.get()));
 		return cast(this);
 	}
