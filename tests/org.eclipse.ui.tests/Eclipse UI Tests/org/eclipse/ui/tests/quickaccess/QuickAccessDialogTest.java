@@ -18,6 +18,7 @@ package org.eclipse.ui.tests.quickaccess;
 import static org.junit.Assert.assertNotEquals;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
@@ -360,6 +361,9 @@ public class QuickAccessDialogTest extends UITestCase {
 	}
 
 	private List<String> getAllEntries(Table table) {
+		if (table == null || table.isDisposed()) {
+			return Collections.emptyList();
+		}
 		final int nbColumns = table.getColumnCount();
 		return Arrays.stream(table.getItems()).map(item -> {
 			StringBuilder res = new StringBuilder();
