@@ -18,6 +18,11 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.expressions.Expression;
+import org.eclipse.core.expressions.ExpressionInfo;
+import org.eclipse.core.expressions.IEvaluationContext;
+import org.eclipse.ui.ISources;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
@@ -68,11 +73,22 @@ public final class HelpContextIdTest extends UITestCase {
 				"The initial help context id should be that of the handler",
 				HANDLER_HELP_ID, helpContextId);
 
-		// Retract the handler help context id by creating a handler conflict.
+		// Retract the handler help context id by creating a more specific handler
 		handlerService.activateHandler(COMMAND_ID, new AbstractHandler() {
 			@Override
 			public final Object execute(final ExecutionEvent event) {
 				return null;
+			}
+		}, new Expression() {
+
+			@Override
+			public void collectExpressionInfo(ExpressionInfo info) {
+				info.addVariableNameAccess(ISources.ACTIVE_CURRENT_SELECTION_NAME);
+			}
+
+			@Override
+			public EvaluationResult evaluate(IEvaluationContext context) {
+				return EvaluationResult.TRUE;
 			}
 		});
 		helpContextId = commandService.getHelpContextId(COMMAND_ID);

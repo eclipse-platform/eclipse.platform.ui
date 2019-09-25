@@ -36,10 +36,10 @@ import org.junit.runners.Suite;
 	HandlerActivationTest.class,
 	CommandCallbackTest.class,
 	CommandActionTest.class,
+	HelpContextIdTest.class,
 
 // The following tests broke during e4 transition and still need adjustments:
 //	Bug66182Test.class,
-//	HelpContextIdTest.class,
 //	StateTest.class,
 //	CommandEnablementTest.class,
 //	ActionDelegateProxyTest.class,
