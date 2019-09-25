@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -389,6 +389,8 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	private int fLastNumberOfLines;
 	/** Last bottom model line. */
 	private int fLastBottomModelLine;
+	/** Last canvas height used. */
+	private int fLastHeight= -1;
 	/**
 	 * Redraw runnable lock
 	 * @since 3.0
@@ -696,25 +698,40 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			int bufferH= size.y;
 			int numberOfLines= visibleLines.getNumberOfLines();
 			int dy= topPixel - fLastTopPixel;
-			if (dy != 0 && bufferStillValid && fLastTopPixel >= 0 && numberOfLines > 1 && numberOfLines == fLastNumberOfLines) {
-				if (dy > 0 && dy < size.y) {
-					bufferGC.copyArea(0, dy, size.x, size.y - dy, 0, 0);
-					bufferY= size.y - dy;
-					bufferH= size.y - bufferY;
-				} else if (dy < 0 && -dy < size.y) {
-					bufferGC.copyArea(0, 0, size.x, size.y + dy, 0, -dy);
+			int topModelLine= visibleLines.getStartLine();
+			int bottomModelLine= topModelLine + numberOfLines - 1;
+			int bottomWidgetLine= JFaceTextUtil.modelLineToWidgetLine(fCachedTextViewer, bottomModelLine);
+			boolean atEnd= bottomWidgetLine + 1 >= fCachedTextWidget.getLineCount();
+			int height= size.y;
+			if (dy != 0 && !atEnd && bufferStillValid && fLastTopPixel >= 0 && numberOfLines > 1 && numberOfLines == fLastNumberOfLines) {
+				int bottomPixel= fCachedTextWidget.getLinePixel(bottomWidgetLine + 1);
+				if (dy > 0 && bottomPixel < size.y) {
+					// Can occur on GTK with static scrollbars; see bug 551320.
+					height= bottomPixel;
+				}
+				if (dy > 0 && dy < height) {
+					int goodPixels= height;
+					if (goodPixels > fLastHeight) {
+						// Dont copy empty pixels from last time.
+						goodPixels= fLastHeight;
+					}
+					bufferGC.copyArea(0, dy, size.x, goodPixels - dy, 0, 0);
+					bufferY= goodPixels - dy;
+					bufferH= height - bufferY;
+				} else if (dy < 0 && -dy < height) {
+					bufferGC.copyArea(0, 0, size.x, height + dy, 0, -dy);
 					bufferY= 0;
 					bufferH= -dy;
 				} else {
+					height= size.y;
 					dy= 0;
 				}
 			} else {
 				dy= 0;
 			}
 			// dy == 0 means now "draw everything", either because there was no overlap, or we indeed didn't move
-			// (refresh or other cases), or there was a resize, or it's the first time.
-			int topModelLine= visibleLines.getStartLine();
-			int bottomModelLine= topModelLine + numberOfLines - 1;
+			// (refresh or other cases), or there was a resize, or it's the first time, or we are showing the very
+			// last line.
 			if (dy != 0) {
 				// Reduce the line range.
 				if (dy > 0) {
@@ -727,21 +744,29 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 			fLastTopModelLine= topModelLine;
 			fLastNumberOfLines= numberOfLines;
 			fLastBottomModelLine= bottomModelLine;
+			fLastHeight= height;
 			if (dy != 0) {
 				// Some rulers may paint outside the line region. Let them paint in a new image,
 				// the copy the wanted bits.
 				newBuffer= new Image(fCanvas.getDisplay(), size.x, size.y);
 				GC localGC= new GC(newBuffer);
 				try {
-					initializeGC(localGC, fCanvas.getFont(), 0, bufferY, size.x, bufferH);
+					initializeGC(localGC, 0, bufferY, size.x, bufferH);
 					doPaint(localGC, visibleLines);
 				} finally {
 					localGC.dispose();
 				}
 				bufferGC.drawImage(newBuffer, 0, bufferY, size.x, bufferH, 0, bufferY, size.x, bufferH);
+				if (dy > 0 && bufferY + bufferH < size.y) {
+					// Scrolled down in the text, but didn't use the full height of the Canvas: clear
+					// the rest. Occurs on GTK with static scrollbars; the area cleared here is the
+					// bit next to the horizontal scrollbar. See bug 551320.
+					bufferGC.setBackground(getBackground(fCanvas.getDisplay()));
+					bufferGC.fillRectangle(0, bufferY + bufferH, size.x, size.y - bufferY - bufferH + 1);
+				}
 			} else {
 				// We redraw everything; paint directly into the buffer
-				initializeGC(bufferGC, fCanvas.getFont(), 0, 0, size.x, size.y);
+				initializeGC(bufferGC, 0, 0, size.x, size.y);
 				doPaint(bufferGC, visibleLines);
 			}
 		} finally {
@@ -753,8 +778,8 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 		dest.drawImage(fBuffer, 0, 0);
 	}
 
-	private void initializeGC(GC gc, Font font, int x, int y, int width, int height) {
-		gc.setFont(font);
+	private void initializeGC(GC gc, int x, int y, int width, int height) {
+		gc.setFont(fCanvas.getFont());
 		if (fForeground != null) {
 			gc.setForeground(fForeground);
 		}
