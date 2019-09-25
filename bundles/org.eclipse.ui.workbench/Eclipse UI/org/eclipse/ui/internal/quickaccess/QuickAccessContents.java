@@ -67,6 +67,7 @@ import org.eclipse.swt.graphics.TextStyle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Table;
@@ -150,6 +151,7 @@ public abstract class QuickAccessContents {
 		if (table == null || table.isDisposed()) {
 			return;
 		}
+		final Display display = table.getDisplay();
 		// extra entry added when the user activates help search
 		// (extensible)
 		List<QuickAccessEntry> extraEntries = new ArrayList<>();
@@ -179,8 +181,8 @@ public abstract class QuickAccessContents {
 				if (currentComputeEntriesJob.getResult() != null) { // completed
 					return;
 				}
-				table.getDisplay().asyncExec(() -> {
-					if (!montior.isCanceled()) {
+				display.asyncExec(() -> {
+					if (!montior.isCanceled() && table.isDisposed()) {
 						showHintText(computingMessage, grayColor);
 					}
 				});
@@ -193,7 +195,7 @@ public abstract class QuickAccessContents {
 				computingFeedbackJob.cancel();
 				if (computeProposalsJob == currentComputeEntriesJob && event.getResult().isOK()
 						&& !table.isDisposed()) {
-					table.getDisplay().asyncExec(() -> refreshTable(perfectMatch, entries.get(), extraEntries, filter));
+					display.asyncExec(() -> refreshTable(perfectMatch, entries.get(), extraEntries, filter));
 				}
 			}
 		});
@@ -678,7 +680,7 @@ public abstract class QuickAccessContents {
 
 	/** Show the hint text with the given color */
 	private void showHintText(String text, Color color) {
-		if (hintText == null) {
+		if (hintText == null || hintText.isDisposed()) {
 			// toolbar hidden
 			return;
 		}
