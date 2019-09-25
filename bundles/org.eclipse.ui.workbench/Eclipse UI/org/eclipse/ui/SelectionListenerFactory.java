@@ -14,21 +14,32 @@
 package org.eclipse.ui;
 
 import static org.eclipse.ui.SelectionListenerFactory.Predicates.alreadyDelivered;
-import static org.eclipse.ui.SelectionListenerFactory.Predicates.selectionAlreadyDelivered;
+import static org.eclipse.ui.SelectionListenerFactory.Predicates.alreadyDeliveredAnyPart;
 import static org.eclipse.ui.SelectionListenerFactory.Predicates.selfMute;
 import static org.eclipse.ui.SelectionListenerFactory.Predicates.targetPartVisible;
 
 import java.util.Objects;
 import java.util.function.Predicate;
 import org.eclipse.core.runtime.Adapters;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.internal.PartSelectionListener;
 
 /**
- * A factory that creates specialised selection services which delegate
- * selections to your selection service based on predicates.
+ * Selection listeners are notified of all selections in the workbench. This
+ * means that the listener is always required to filter unwanted selections. In
+ * addition, the listener has to make sure to not to waste cycles in the UI
+ * thread, for instance, not update the UI while it is invisible, but make sure
+ * to repaint if becoming visible.
+ * <p>
+ * This filtering generally requires <u>a lot</u> of boilerplate code while,
+ * ideally, you only want to receive selections that are of interest.
+ * <p>
+ * This factory takes care of many practical filtering scenarios by allowing the
+ * creation of an intermediate selection service that only calls you back with
+ * selections you can work with.
  * <p>
  * <b>Usage:</b> (assumes the part implements ISelectionListener)
  * <p>
@@ -47,7 +58,7 @@ import org.eclipse.ui.internal.PartSelectionListener;
  * </pre>
  *
  * <p>
- * <u> Chained predicates: </u>
+ * <u> Chaining predicates: </u>
  *
  * <pre>
  * import static org.eclipse.ui.SelectionListenerFactory.Predicates.adaptsTo;
@@ -56,7 +67,7 @@ import org.eclipse.ui.internal.PartSelectionListener;
  * import static org.eclipse.ui.SelectionListenerFactory.Predicates.selfMute;
  * import static org.eclipse.ui.SelectionListenerFactory.Predicates.targetPartVisible;
  *
- * Predicate<ISelectionModel> predicate = adaptsTo(PlatformObject.class))
+ * Predicate&lt;ISelectionModel&gt; predicate = adaptsTo(PlatformObject.class))
  *		.and(selectionSize(1))
  *		.and(selfMute)
  *		.and(selectionPartVisible)
@@ -70,7 +81,7 @@ import org.eclipse.ui.internal.PartSelectionListener;
  * predicate: </u>
  *
  * <pre>
- * Predicate<ISelectionModel> predicate = new Predicate<SelectionListenerFactory.ISelectionModel>() {
+ * Predicate&lt;ISelectionModel&gt; predicate = new Predicate&lt;&gt;() {
  *
  * 	public boolean test(ISelectionModel model) {
  * 		if (model.getCurrentSelectionPart() == SampleView4.this) {
@@ -162,7 +173,7 @@ public class SelectionListenerFactory {
 		 * @return the {@link Predicate} that filters based on the the selection.
 		 */
 		public static Predicate<ISelectionModel> selectionType(Class<? extends ISelection> selectionType) {
-			return model -> !(model.getCurrentSelection() != null
+			return model -> (model.getCurrentSelection() != null
 					&& selectionType.isAssignableFrom(model.getCurrentSelection().getClass()));
 		}
 
@@ -191,8 +202,8 @@ public class SelectionListenerFactory {
 		 * @see #minimalSelectionSize(int)
 		 */
 		public static Predicate<ISelectionModel> selectionSize(int size) {
-			return model -> (model.getCurrentSelection() instanceof IStructuredSelection
-					&& ((IStructuredSelection) model.getCurrentSelection()).size() == size);
+			return model -> model.getCurrentSelection() instanceof IStructuredSelection
+					&& ((IStructuredSelection) model.getCurrentSelection()).size() == size;
 		}
 
 		/**
@@ -211,8 +222,8 @@ public class SelectionListenerFactory {
 		 * @return the {@link Predicate} that filters based on the selection size.
 		 */
 		public static Predicate<ISelectionModel> minimalSelectionSize(int size) {
-			return model -> (model.getCurrentSelection() instanceof IStructuredSelection
-					&& ((IStructuredSelection) model.getCurrentSelection()).size() >= size);
+			return model -> model.getCurrentSelection() instanceof IStructuredSelection
+					&& ((IStructuredSelection) model.getCurrentSelection()).size() >= size;
 		}
 
 		/**
@@ -242,12 +253,13 @@ public class SelectionListenerFactory {
 		 */
 		public static Predicate<ISelectionModel> adaptsTo(Class<?> adapterType) {
 			return model -> {
-				if (model.getCurrentSelection() instanceof IStructuredSelection) {
-					IStructuredSelection sel = (IStructuredSelection) model.getCurrentSelection();
-					for (Object object : sel.toArray()) {
-						if (Adapters.adapt(object, adapterType) == null) {
-							return false;
-						}
+				if (!(model.getCurrentSelection() instanceof IStructuredSelection)) {
+					return false;
+				}
+				IStructuredSelection sel = (IStructuredSelection) model.getCurrentSelection();
+				for (Object object : sel.toArray()) {
+					if (Adapters.adapt(object, adapterType) == null) {
+						return false;
 					}
 				}
 				return true;
@@ -286,7 +298,7 @@ public class SelectionListenerFactory {
 		 * reactions on selections that the listener already has.
 		 * </p>
 		 */
-		public static Predicate<ISelectionModel> selectionAlreadyDelivered = model -> !Objects
+		public static Predicate<ISelectionModel> alreadyDeliveredAnyPart = model -> !Objects
 				.equals(model.getCurrentSelection(), model.getLastDeliveredSelection());
 
 		/**
@@ -309,6 +321,7 @@ public class SelectionListenerFactory {
 		 * </p>
 		 */
 		public static Predicate<ISelectionModel> targetPartVisible = model -> model.isTargetPartVisible();
+
 	}
 
 	/**
@@ -317,31 +330,37 @@ public class SelectionListenerFactory {
 	 * The listener will be automatically removed when the part is closed.
 	 * </p>
 	 *
-	 * @param part      the part which also implements the
-	 *                  {@link ISelectionListener} to be notified.
-	 * @param predicate the predicates must test true before the selection is
-	 *                  delivered.
-	 * @return the listener
+	 * @param part      the part which must implements the
+	 *                  {@link ISelectionListener} to be notified. May not be null.
+	 * @param predicate the predicate must test true before the selection is
+	 *                  delivered. May not be null.
+	 * @return the listener. Never null.
 	 */
 	public static ISelectionListener createListener(IWorkbenchPart part, Predicate<ISelectionModel> predicate) {
+		Assert.isNotNull(part);
+		Assert.isNotNull(predicate);
 		return new PartSelectionListener(part, (ISelectionListener) part, predicate);
 	}
 
 	/**
-	 * Create a listener for a part that also acts as the selection listener.
+	 * Create a listener for a part with a separate selection listener.
 	 * <p>
 	 * The listener will be automatically removed when the part is closed.
 	 * </p>
 	 *
-	 * @param part      the part.
-	 * @param listener  the selection listener to be notified. It can be the part
-	 *                  itself if it implements {@link ISelectionChangedListener}.
-	 * @param predicate the predicates must test true before the selection is
-	 *                  delivered.
+	 * @param part      the part. May not be null.
+	 * @param listener  the selection listener to be notified. May not be null. It
+	 *                  can be the part itself if it implements
+	 *                  {@link ISelectionChangedListener}.
+	 * @param predicate the predicate that must test true before the selection is
+	 *                  delivered. May not be null.
 	 * @return the listener
 	 */
 	public static ISelectionListener createListener(IWorkbenchPart part, ISelectionListener listener,
 			Predicate<ISelectionModel> predicate) {
+		Assert.isNotNull(part);
+		Assert.isNotNull(listener);
+		Assert.isNotNull(predicate);
 		return new PartSelectionListener(part, listener, predicate);
 	}
 
@@ -355,12 +374,18 @@ public class SelectionListenerFactory {
 	 * The listener will be automatically removed when the part is closed.
 	 * </p>
 	 *
-	 * @param part     the part.
-	 * @param listener the selection listener to be notified. It can be the part
-	 *                 itself if it implements {@link ISelectionChangedListener}.
-	 * @return the listener
+	 * @param part     the part. May not be null.
+	 * @param listener the selection listener to be notified. May not be null. It
+	 *                 can be the part itself if it implements
+	 *                 {@link ISelectionChangedListener}.
+	 * @return the listener. Never null.
+	 *
+	 * @see Predicates#alreadyDelivered
+	 * @see Predicates#targetPartVisible
 	 */
 	public static ISelectionListener createVisibleListener(IWorkbenchPart part, ISelectionListener listener) {
+		Assert.isNotNull(part);
+		Assert.isNotNull(listener);
 		return new PartSelectionListener(part, listener, alreadyDelivered.and(targetPartVisible));
 	}
 
@@ -374,22 +399,31 @@ public class SelectionListenerFactory {
 	 * The listener will be automatically removed when the part is closed.
 	 * </p>
 	 *
-	 * @param part      the part.
-	 * @param listener  the selection listener to be notified. It can be the part
-	 *                  itself if it implements {@link ISelectionChangedListener}.
-	 * @param predicate the predicates must test true before the selection is
-	 *                  delivered.
-	 * @return the listener
+	 * @param part                the part. May not be null.
+	 * @param listener            the selection listener to be notified. May not be
+	 *                            null. It can be the part itself if it implements
+	 *                            {@link ISelectionChangedListener}.
+	 * @param additionalPredicate the additional predicate which must test true
+	 *                            before the selection is delivered. May not be
+	 *                            null.
+	 * @return the listener, never null.
+	 *
+	 * @see Predicates#alreadyDelivered
+	 * @see Predicates#targetPartVisible
+	 *
 	 */
 	public static ISelectionListener createVisibleListener(IWorkbenchPart part, ISelectionListener listener,
-			Predicate<ISelectionModel> predicate) {
-		return ((PartSelectionListener) createVisibleListener(part, listener)).addPredicate(predicate);
+			Predicate<ISelectionModel> additionalPredicate) {
+		Assert.isNotNull(part);
+		Assert.isNotNull(listener);
+		Assert.isNotNull(additionalPredicate);
+		return decorate(createVisibleListener(part, listener), additionalPredicate);
 	}
 
 	/**
 	 * Provides a listener that only gets notified of selection events when:
 	 * <ul>
-	 * <li>the selection has changed;</li>
+	 * <li>the selection was not already delivered from any part;</li>
 	 * <li>the part is visible;</li>
 	 * <li>the selection does not originate from the part.</li>
 	 * </ul>
@@ -397,15 +431,21 @@ public class SelectionListenerFactory {
 	 * The listener will be automatically removed when the part is closed.
 	 * </p>
 	 *
-	 * @param part
+	 * @param part     the part. May not be null.
 	 * @param listener the selection listener to be notified. It can be the part
 	 *                 itself if it implements {@link ISelectionChangedListener}.
+	 *                 May not be null.
 	 *
-	 * @return the listener
+	 * @return the listener, never null.
+	 *
+	 * @see Predicates#alreadyDeliveredAnyPart
+	 * @see Predicates#targetPartVisible
+	 * @see Predicates#selfMute
 	 */
 	public static ISelectionListener createVisibleSelfMutedListener(IWorkbenchPart part, ISelectionListener listener) {
-		return new PartSelectionListener(part, listener,
-				selectionAlreadyDelivered.and(targetPartVisible).and(selfMute));
+		Assert.isNotNull(part);
+		Assert.isNotNull(listener);
+		return new PartSelectionListener(part, listener, alreadyDeliveredAnyPart.and(targetPartVisible).and(selfMute));
 	}
 
 	/**
@@ -419,31 +459,42 @@ public class SelectionListenerFactory {
 	 * The listener will be automatically removed if the part is closed.
 	 * </p>
 	 *
-	 * @param part
-	 * @param listener  the selection listener to be notified. It can be the part
-	 *                  itself if it implements {@link ISelectionChangedListener}.
-	 * @param predicate the predicates must test true before the selection is
-	 *                  delivered.
-	 * @return the listener
+	 * @param part                the part. May not be null.
+	 * @param listener            the selection listener to be notified. May not be
+	 *                            null. It can be the part itself if it implements
+	 *                            {@link ISelectionChangedListener}.
+	 * @param additionalPredicate the predicate to and-add on top of the chain that
+	 *                            this method already adds. May not be null
+	 * @return the listener, never null.
+	 * @see #createVisibleListener(IWorkbenchPart, ISelectionListener)
+	 *
+	 * @see Predicates#alreadyDeliveredAnyPart
+	 * @see Predicates#targetPartVisible
+	 * @see Predicates#selfMute
 	 */
 	public static ISelectionListener createVisibleSelfMutedListener(IWorkbenchPart part, ISelectionListener listener,
-			Predicate<ISelectionModel> predicate) {
-		return ((PartSelectionListener) createVisibleSelfMutedListener(part, listener)).addPredicate(predicate);
+			Predicate<ISelectionModel> additionalPredicate) {
+		Assert.isNotNull(part);
+		Assert.isNotNull(listener);
+		Assert.isNotNull(additionalPredicate);
+		return decorate(createVisibleSelfMutedListener(part, listener), additionalPredicate);
 	}
 
 	/**
 	 * Decorates the passed listener with the passed predicate. The listener must be
-	 * created by this factory otherwise a {@link ClassCastException} is thrown.
+	 * created by this factory otherwise nothing happens.
 	 *
-	 * @param listener  the listener that was created by this factory.
-	 * @param predicate the predicate to and-chain to the existing predicates of
-	 *                  this listener
-	 * @param replace   true of the passed predicate is the new predicate, false to
-	 *                  and-chain it to the existing predicate
-	 * @return the listener
+	 * @param listener            the listener that was created by this factory.
+	 * @param additionalPredicate a predicate to and-add on top of the chain that
+	 *                            the listener already has. May not be null.
+	 * @return the passed listener
 	 */
-	public static ISelectionListener decorate(ISelectionListener listener, Predicate<ISelectionModel> predicate,
-			boolean replace) {
-		return ((PartSelectionListener) listener).addPredicate(predicate);
+	public static ISelectionListener decorate(ISelectionListener listener,
+			Predicate<ISelectionModel> additionalPredicate) {
+		Assert.isNotNull(additionalPredicate);
+		if (listener instanceof PartSelectionListener) {
+			return ((PartSelectionListener) listener).addPredicate(additionalPredicate);
+		}
+		return listener;
 	}
 }

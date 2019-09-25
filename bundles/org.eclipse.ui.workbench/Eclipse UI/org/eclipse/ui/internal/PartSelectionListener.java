@@ -37,13 +37,12 @@ public class PartSelectionListener implements ISelectionListener, INullSelection
 
 	private final ISelectionListener fCallbackListener;
 	private final IWorkbenchPart fTargetPart;
-	private final Predicate<ISelectionModel> fPredicate = t -> true;
+	private Predicate<ISelectionModel> fPredicate;
 
 	private IWorkbenchPart fCurrentSelectionPart;
 	private IWorkbenchPart fLastDeliveredPart;
 	private ISelection fCurrentSelection;
 	private ISelection fLastDeliveredSelection;
-	private boolean fTargetPartVisible;
 
 	/**
 	 * Constructs the intermediate selection listener to filter selections before
@@ -60,17 +59,16 @@ public class PartSelectionListener implements ISelectionListener, INullSelection
 		Assert.isNotNull(predicate);
 		fTargetPart = part;
 		fCallbackListener = callbackListener;
-		addPredicate(predicate);
+		fPredicate = predicate;
 		addPartListener(part);
 	}
 
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		saveCurrentSelection(part, selection);
-		if (!fPredicate.test(getModel())) {
-			return;
+		if (fPredicate.test(getModel())) {
+			doCallback(part, selection);
 		}
-		doCallback(part, selection);
 	}
 
 	private void doCallback(IWorkbenchPart part, ISelection selection) {
@@ -116,7 +114,7 @@ public class PartSelectionListener implements ISelectionListener, INullSelection
 
 			@Override
 			public boolean isTargetPartVisible() {
-				return fTargetPartVisible;
+				return fTargetPart.getSite().getPage().isPartVisible(fTargetPart);
 			}
 
 			@Override
@@ -133,15 +131,7 @@ public class PartSelectionListener implements ISelectionListener, INullSelection
 			@Override
 			public void partVisible(IWorkbenchPartReference partRef) {
 				if (partRef.getPart(false) == fTargetPart) {
-					fTargetPartVisible = true;
 					selectionChanged(fCurrentSelectionPart, fCurrentSelection);
-				}
-			}
-
-			@Override
-			public void partHidden(IWorkbenchPartReference partRef) {
-				if (partRef.getPart(false) == fTargetPart) {
-					fTargetPartVisible = false;
 				}
 			}
 
@@ -165,15 +155,17 @@ public class PartSelectionListener implements ISelectionListener, INullSelection
 	}
 
 	/**
-	 * "Ands" the passed predicate to the existing predicate.
+	 * And-chains this predicate to the already existing predicate. Nothing happens
+	 * if the passed predicate is null.
 	 *
 	 * @param predicate the non-null predicate to and-chain to the existing
 	 *                  predicate
 	 * @return this
 	 */
 	public PartSelectionListener addPredicate(Predicate<ISelectionModel> predicate) {
-		Assert.isNotNull(predicate);
-		fPredicate.and(predicate);
+		if (predicate != null) {
+			fPredicate = fPredicate.and(predicate);
+		}
 		return this;
 	}
 }

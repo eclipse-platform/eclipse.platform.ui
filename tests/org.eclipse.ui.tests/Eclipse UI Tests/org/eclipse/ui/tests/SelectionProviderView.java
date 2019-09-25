@@ -103,4 +103,9 @@ public class SelectionProviderView extends ViewPart implements
 			((ISelectionChangedListener) listener).selectionChanged(event);
 		}
 	}
+
+	@Override
+	public void dispose() {
+		super.dispose(); // for debugging
+	}
 }

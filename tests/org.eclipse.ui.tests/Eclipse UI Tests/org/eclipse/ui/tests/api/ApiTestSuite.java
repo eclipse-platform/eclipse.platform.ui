@@ -55,6 +55,7 @@ import org.junit.runners.Suite;
 	 IEditorActionBarContributorTest.class,
 	 IPartServiceTest.class,
 	 ISelectionServiceTest.class,
+	 SelectionListenerFactoryTest.class,
 	 IWorkingSetTest.class,
 	 IWorkingSetManagerTest.class,
 	 IWorkingSetElementAdapterTests.class,
