@@ -131,8 +131,7 @@ public class ProjectContentsLocationArea {
 	 * @param reporter
 	 * @param composite
 	 */
-	public ProjectContentsLocationArea(IErrorMessageReporter reporter,
-			Composite composite) {
+	public ProjectContentsLocationArea(IErrorMessageReporter reporter, Composite composite) {
 		errorReporter = reporter;
 
 		// If it is a new project always start enabled
@@ -206,8 +205,7 @@ public class ProjectContentsLocationArea {
 	private void createUserEntryArea(Composite composite, boolean defaultEnabled) {
 		// location label
 		locationLabel = new Label(composite, SWT.NONE);
-		locationLabel
-				.setText(IDEWorkbenchMessages.ProjectLocationSelectionDialog_locationLabel);
+		locationLabel.setText(IDEWorkbenchMessages.ProjectLocationSelectionDialog_locationLabel);
 
 		// project location entry field
 		locationPathField = new Text(composite, SWT.BORDER);
@@ -229,8 +227,7 @@ public class ProjectContentsLocationArea {
 		createFileSystemSelection(composite);
 
 		if (defaultEnabled) {
-			locationPathField.setText(TextProcessor
-					.process(getDefaultPathDisplayString()));
+			locationPathField.setText(TextProcessor.process(getDefaultPathDisplayString()));
 		} else {
 			if (existingProject == null) {
 				locationPathField.setText(IDEResourceInfoUtils.EMPTY_STRING);
