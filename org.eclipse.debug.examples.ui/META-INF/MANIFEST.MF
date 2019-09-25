@@ -29,4 +29,5 @@ Export-Package: org.eclipse.debug.examples.ui.midi.adapters;x-internal:=true,
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Bundle-Vendor: %Bundle-Vendor
+Bundle-ClassPath: .
 Automatic-Module-Name: org.eclipse.debug.examples.ui
