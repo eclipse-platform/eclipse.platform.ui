@@ -174,34 +174,32 @@ public abstract class QuickAccessContents {
 		currentComputeEntriesJob.setPriority(Job.INTERACTIVE);
 		// feedback is delayed in a job as we don't want to show it on every keystroke
 		// but only when user seems to be waiting
-		String feedbackJobName = QuickAccessMessages.QuickAccessContents_computeMatchingEntries_displayFeedback_jobName;
-		Job computingFeedbackJob = Job.createSystem(feedbackJobName, montior -> {
-			try {
-				Thread.sleep(200);
-				if (currentComputeEntriesJob.getResult() != null) { // completed
-					return;
+		UIJob computingFeedbackJob = new UIJob(table.getDisplay(), QuickAccessMessages.QuickAccessContents_computeMatchingEntries_displayFeedback_jobName) {
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				if (currentComputeEntriesJob.getResult() == null && !monitor.isCanceled() && !table.isDisposed()) {
+					showHintText(computingMessage, grayColor);
+					return Status.OK_STATUS;
 				}
-				display.asyncExec(() -> {
-					if (!montior.isCanceled() && table.isDisposed()) {
-						showHintText(computingMessage, grayColor);
-					}
-				});
-			} catch (InterruptedException e) {
+				return Status.CANCEL_STATUS;
 			}
-		});
+		};
 		currentComputeEntriesJob.addJobChangeListener(new JobChangeAdapter() {
 			@Override
 			public void done(IJobChangeEvent event) {
 				computingFeedbackJob.cancel();
 				if (computeProposalsJob == currentComputeEntriesJob && event.getResult().isOK()
 						&& !table.isDisposed()) {
-					display.asyncExec(() -> refreshTable(perfectMatch, entries.get(), extraEntries, filter));
+					display.asyncExec(() -> {
+						computingFeedbackJob.cancel();
+						refreshTable(perfectMatch, entries.get(), extraEntries, filter);
+					});
 				}
 			}
 		});
 		this.computeProposalsJob = currentComputeEntriesJob;
 		currentComputeEntriesJob.schedule();
-		computingFeedbackJob.schedule();
+		computingFeedbackJob.schedule(200); // delay a bit so if proposals compute fast enough, we don't show feedback
 	}
 
 	/**
