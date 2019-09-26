@@ -412,17 +412,17 @@ public abstract class QuickAccessContents {
 				filter = category + " " + categoryMatcher.group(2); //$NON-NLS-1$
 			}
 			final String finalFilter = filter;
-			for (int i = 0; i < providers.length && (showAllMatches || countTotal < maxCount)
-					&& !aMonitor.isCanceled(); i++) {
+			for (int providerIndex = 0; providerIndex < providers.length && (showAllMatches || countTotal < maxCount)
+					&& !aMonitor.isCanceled(); providerIndex++) {
 				if (aMonitor.isCanceled()) {
 					break;
 				}
-				if (entries[i] == null) {
-					entries[i] = new ArrayList<>();
-					indexPerProvider[i] = 0;
+				if (entries[providerIndex] == null) {
+					entries[providerIndex] = new ArrayList<>();
+					indexPerProvider[providerIndex] = 0;
 				}
 				int count = 0;
-				QuickAccessProvider provider = providers[i];
+				QuickAccessProvider provider = providers[providerIndex];
 				// when category is specified, skip providers except the
 				// specified one and the previous pick provider
 				boolean isPreviousPickProvider = (provider instanceof PreviousPicksProvider);
@@ -455,6 +455,7 @@ public abstract class QuickAccessContents {
 					if (sortedElements == null) {
 						sortedElements = new QuickAccessElement[0];
 					}
+					sortedElements = Arrays.copyOf(sortedElements, sortedElements.length);
 					if (!(provider instanceof PreviousPicksProvider)) {
 						for (QuickAccessElement element : sortedElements) {
 							elementsToProviders.put(element, provider);
@@ -466,8 +467,11 @@ public abstract class QuickAccessContents {
 						prevPick = sortedElements.length;
 						Stream.of(sortedElements).map(QuickAccessElement::getId).forEach(prevPickIds::add);
 					}
+					if (!filter.isEmpty() && sortedElements.length > 0) {
+						sortedElements = putPrefixMatchFirst(sortedElements, filter);
+					}
 
-					int j = indexPerProvider[i];
+					int j = indexPerProvider[providerIndex];
 					// loops on all the elements of a provider
 					while (j < sortedElements.length
 							&& (showAllMatches || (count < countPerProvider && countTotal < maxCount))
@@ -482,7 +486,7 @@ public abstract class QuickAccessContents {
 
 						QuickAccessEntry entry = null;
 						if (filter.length() == 0) {
-							if (i == 0 || showAllMatches) {
+							if (providerIndex == 0 || showAllMatches) {
 								entry = new QuickAccessEntry(element, provider, new int[0][0], new int[0][0],
 										QuickAccessEntry.MATCH_PERFECT);
 							} else {
@@ -496,10 +500,10 @@ public abstract class QuickAccessContents {
 
 						}
 						if (entry != null) {
-							entries[i].add(entry);
+							entries[providerIndex].add(entry);
 							count++;
 							countTotal++;
-							if (i == 0 && entry.element == perfectMatch) {
+							if (providerIndex == 0 && entry.element == perfectMatch) {
 								perfectMatchAdded = true;
 								maxCount = MAX_COUNT_TOTAL;
 							}
@@ -508,7 +512,7 @@ public abstract class QuickAccessContents {
 						j++;
 					}
 
-					indexPerProvider[i] = j;
+					indexPerProvider[providerIndex] = j;
 
 					if (j < sortedElements.length) {
 						done = false;
@@ -538,6 +542,34 @@ public abstract class QuickAccessContents {
 			aMonitor.done();
 		}
 		return entries;
+	}
+
+	/*
+	 * Consider whether we could directly check the "matchQuality" here, but it
+	 * seems to be a more expensive operation
+	 */
+	private static QuickAccessElement[] putPrefixMatchFirst(QuickAccessElement[] elements, String prefix) {
+		QuickAccessElement[] res = new QuickAccessElement[elements.length];
+		List<Integer> matchingIndexes = new ArrayList<>();
+		for (int i = 0; i < elements.length; i++) {
+			if (elements[i].getLabel().toLowerCase().startsWith(prefix.toLowerCase())) {
+				matchingIndexes.add(Integer.valueOf(i));
+			}
+		}
+		int currentMatchIndex = 0;
+		int currentNonMatchIndex = matchingIndexes.size();
+		for (int i = 0; i < res.length; i++) {
+			boolean isMatch = !matchingIndexes.isEmpty() && matchingIndexes.iterator().next().intValue() == i;
+			if (isMatch) {
+				matchingIndexes.remove(0);
+				res[currentMatchIndex] = elements[i];
+				currentMatchIndex++;
+			} else {
+				res[currentNonMatchIndex] = elements[i];
+				currentNonMatchIndex++;
+			}
+		}
+		return res;
 	}
 
 	Pattern categoryPattern;
