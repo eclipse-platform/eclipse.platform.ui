@@ -21,24 +21,27 @@ import org.eclipse.swt.widgets.Control;
 import org.w3c.dom.css.CSSValue;
 
 public class CSSBackgroundModePropertyHandler extends
-		AbstractCSSPropertySWTHandler {
+AbstractCSSPropertySWTHandler {
 
 	@Override
 	protected void applyCSSProperty(Control control, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if (value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE) {
+		if (value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE || !(control instanceof Composite)) {
 			return;
 		}
-		if (control instanceof Composite) {
-			Composite composite = (Composite) control;
-			String stringValue = value.getCssText().toLowerCase();
-			if ("default".equalsIgnoreCase(stringValue)) {
-				composite.setBackgroundMode(SWT.INHERIT_DEFAULT);
-			} else if ("force".equalsIgnoreCase(stringValue)) {
-				composite.setBackgroundMode(SWT.INHERIT_FORCE);
-			} else if ("none".equalsIgnoreCase(stringValue)) {
-				composite.setBackgroundMode(SWT.INHERIT_NONE);
-			}
+		Composite composite = (Composite) control;
+		String stringValue = value.getCssText().toLowerCase();
+
+		switch (stringValue) {
+		case "default":
+			composite.setBackgroundMode(SWT.INHERIT_DEFAULT);
+			break;
+		case "force":
+			composite.setBackgroundMode(SWT.INHERIT_FORCE);
+			break;
+		case "none":
+			composite.setBackgroundMode(SWT.INHERIT_NONE);
+			break;
 		}
 	}
 

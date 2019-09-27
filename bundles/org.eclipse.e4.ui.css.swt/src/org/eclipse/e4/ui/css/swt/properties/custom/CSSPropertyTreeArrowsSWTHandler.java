@@ -31,18 +31,18 @@ public class CSSPropertyTreeArrowsSWTHandler implements ICSSPropertyHandler {
 	@Override
 	public boolean applyCSSProperty(Object element, String property, CSSValue value, String pseudo, CSSEngine engine)
 			throws Exception {
-		if (element instanceof TreeElement) {
-			TreeElement treeElement = (TreeElement) element;
-			Tree tree = treeElement.getTree();
-			if (SWT_TREE_ARROWS_COLOR.equals(property)) {
-				if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-					Color newColor = (Color) engine.convert(value, Color.class, tree.getDisplay());
-					treeElement.setTreeArrowsForegroundColor(newColor);
-				}
-			} else if (SWT_TREE_ARROWS_MODE.equals(property)) {
-				// Note: windows-only
-				treeElement.setTreeArrowsMode(value.getCssText());
-			}
+		if (!(element instanceof TreeElement)) {
+			return false;
+		}
+
+		TreeElement treeElement = (TreeElement) element;
+		Tree tree = treeElement.getTree();
+		if (SWT_TREE_ARROWS_COLOR.equals(property) && value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+			Color newColor = (Color) engine.convert(value, Color.class, tree.getDisplay());
+			treeElement.setTreeArrowsForegroundColor(newColor);
+		} else if (SWT_TREE_ARROWS_MODE.equals(property)) {
+			// Note: windows-only
+			treeElement.setTreeArrowsMode(value.getCssText());
 		}
 		return false;
 	}

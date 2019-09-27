@@ -37,35 +37,35 @@ public class CSSPropertySelectionBackgroundHandler implements ICSSPropertyHandle
 	@Override
 	public boolean applyCSSProperty(Object element, String property, CSSValue value, String pseudo, CSSEngine engine)
 			throws Exception {
-		if (element instanceof ISelectionBackgroundCustomizationElement && element instanceof ElementAdapter) {
-			ElementAdapter elementAdapter = (ElementAdapter) element;
-			Object nativeWidget = elementAdapter.getNativeWidget();
-			if (nativeWidget instanceof Widget) {
-				Widget widget = (Widget) nativeWidget;
 
-				ISelectionBackgroundCustomizationElement treeElement = (ISelectionBackgroundCustomizationElement) element;
-
-				if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-					if (SWT_SELECTION_FOREGROUND_COLOR.equals(property)) {
-						Color newColor = (Color) engine.convert(value, Color.class, widget.getDisplay());
-						treeElement.setSelectionForegroundColor(newColor);
-					} else if (SWT_SELECTION_BACKGROUND_COLOR.equals(property)) {
-						Color newColor = (Color) engine.convert(value, Color.class, widget.getDisplay());
-						treeElement.setSelectionBackgroundColor(newColor);
-					} else if (SWT_SELECTION_BORDER_COLOR.equals(property)) {
-						Color newColor = (Color) engine.convert(value, Color.class, widget.getDisplay());
-						treeElement.setSelectionBorderColor(newColor);
-					} else if (SWT_HOT_BACKGROUND_COLOR.equals(property)) {
-						Color newColor = (Color) engine.convert(value, Color.class, widget.getDisplay());
-						treeElement.setHotBackgroundColor(newColor);
-					} else if (SWT_HOT_BORDER_COLOR.equals(property)) {
-						Color newColor = (Color) engine.convert(value, Color.class, widget.getDisplay());
-						treeElement.setHotBorderColor(newColor);
-					}
-				}
-			}
-
+		if (!(element instanceof ISelectionBackgroundCustomizationElement && element instanceof ElementAdapter)
+				|| !(((ElementAdapter) element).getNativeWidget() instanceof Widget) || property == null
+				|| value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE) {
+			return false;
 		}
+
+		Widget widget = (Widget) ((ElementAdapter) element).getNativeWidget();
+		ISelectionBackgroundCustomizationElement treeElement = (ISelectionBackgroundCustomizationElement) element;
+		Color newColor = (Color) engine.convert(value, Color.class, widget.getDisplay());
+
+		switch (property) {
+		case SWT_SELECTION_FOREGROUND_COLOR:
+			treeElement.setSelectionForegroundColor(newColor);
+			break;
+		case SWT_SELECTION_BACKGROUND_COLOR:
+			treeElement.setSelectionBackgroundColor(newColor);
+			break;
+		case SWT_SELECTION_BORDER_COLOR:
+			treeElement.setSelectionBorderColor(newColor);
+			break;
+		case SWT_HOT_BACKGROUND_COLOR:
+			treeElement.setHotBackgroundColor(newColor);
+			break;
+		case SWT_HOT_BORDER_COLOR:
+			treeElement.setHotBorderColor(newColor);
+			break;
+		}
+
 		return false;
 	}
 

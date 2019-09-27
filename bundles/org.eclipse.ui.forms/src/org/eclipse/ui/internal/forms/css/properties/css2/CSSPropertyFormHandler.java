@@ -57,50 +57,47 @@ public class CSSPropertyFormHandler extends AbstractCSSPropertySWTHandler {
 	@Override
 	protected void applyCSSProperty(Control control, String property, CSSValue value, String pseudo, CSSEngine engine)
 			throws Exception {
-		if (control instanceof Form) {
-			Form form = (Form) control;
-			if (TEXT_BACKGROUND_COLOR.equals(property)) {
-				if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-					Color color = (Color) engine.convert(value, Color.class, form.getDisplay());
-					// When a single color is received, make it 100% with that
-					// single color.
-					form.setTextBackground(new Color[] { color }, new int[] { 100 }, true);
+		if (!(control instanceof Form)) {
+			return;
+		}
 
-				} else if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
-					Gradient grad = (Gradient) engine.convert(value, Gradient.class, form.getDisplay());
-					if (grad == null) {
-						return;
-					}
-					List<CSSPrimitiveValue> values = grad.getValues();
-					List<Color> colors = new ArrayList<>(values.size());
-					for (CSSPrimitiveValue cssValue : values) {
-						if (cssValue != null) {
-							if (cssValue.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-								Color color = (Color) engine.convert(cssValue, Color.class, form.getDisplay());
-								colors.add(color);
-							}
-						}
-					}
+		Form form = (Form) control;
+		if (TEXT_BACKGROUND_COLOR.equals(property)) {
+			if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+				Color color = (Color) engine.convert(value, Color.class, form.getDisplay());
+				// When a single color is received, make it 100% with that
+				// single color.
+				form.setTextBackground(new Color[] { color }, new int[] { 100 }, true);
 
-					if (colors.size() > 0) {
-						List<Integer> list = grad.getPercents();
-						int[] percents = new int[list.size()];
-						for (int i = 0; i < percents.length; i++) {
-							percents[i] = list.get(i).intValue();
-						}
-						form.setTextBackground(colors.toArray(new Color[0]), percents,
-								grad.getVerticalGradient());
+			} else if (value.getCssValueType() == CSSValue.CSS_VALUE_LIST) {
+				Gradient grad = (Gradient) engine.convert(value, Gradient.class, form.getDisplay());
+				if (grad == null) {
+					return;
+				}
+				List<CSSPrimitiveValue> values = grad.getValues();
+				List<Color> colors = new ArrayList<>(values.size());
+				for (CSSPrimitiveValue cssValue : values) {
+					if (cssValue != null && cssValue.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+						Color color = (Color) engine.convert(cssValue, Color.class, form.getDisplay());
+						colors.add(color);
 					}
 				}
 
-			} else {
-				String headProperty = propertyToHeadProperty.get(property);
-				if (headProperty != null) {
-					if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
-						Color color = (Color) engine.convert(value, Color.class, form.getDisplay());
-						form.setHeadColor(headProperty, color);
+				if (colors.size() > 0) {
+					List<Integer> list = grad.getPercents();
+					int[] percents = new int[list.size()];
+					for (int i = 0; i < percents.length; i++) {
+						percents[i] = list.get(i).intValue();
 					}
+					form.setTextBackground(colors.toArray(new Color[0]), percents, grad.getVerticalGradient());
 				}
+			}
+
+		} else {
+			String headProperty = propertyToHeadProperty.get(property);
+			if (headProperty != null && value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
+				Color color = (Color) engine.convert(value, Color.class, form.getDisplay());
+				form.setHeadColor(headProperty, color);
 			}
 		}
 	}

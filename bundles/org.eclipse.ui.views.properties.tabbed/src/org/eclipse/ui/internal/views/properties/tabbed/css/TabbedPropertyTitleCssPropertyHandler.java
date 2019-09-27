@@ -18,7 +18,6 @@ import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelper;
 import org.eclipse.e4.ui.css.swt.properties.AbstractCSSPropertySWTHandler;
-import org.eclipse.swt.graphics.RGBA;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.IFormColors;
 import org.eclipse.ui.internal.views.properties.tabbed.view.TabbedPropertyTitle;
@@ -44,18 +43,13 @@ public class TabbedPropertyTitleCssPropertyHandler extends AbstractCSSPropertySW
 	@Override
 	protected void applyCSSProperty(Control control, String property, CSSValue value, String pseudo, CSSEngine engine)
 			throws Exception {
-		if (!(control instanceof TabbedPropertyTitle)) {
+		if (!(control instanceof TabbedPropertyTitle) || value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE
+				|| property == null || !cssPropertyToSWTProperty.containsKey(property)) {
 			return;
 		}
-		TabbedPropertyTitle title = (TabbedPropertyTitle) control;
 
-		String swtProperty = cssPropertyToSWTProperty.get(property);
-		if (swtProperty != null) {
-			if ((value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE)) {
-				RGBA rgba = CSSSWTColorHelper.getRGBA(value);
-				title.setColor(swtProperty, rgba);
-			}
-		}
+		TabbedPropertyTitle title = (TabbedPropertyTitle) control;
+		title.setColor(cssPropertyToSWTProperty.get(property), CSSSWTColorHelper.getRGBA(value));
 	}
 
 	@Override

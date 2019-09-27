@@ -29,20 +29,20 @@ AbstractCSSPropertySWTHandler {
 	@Override
 	protected void applyCSSProperty(Control control, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if (! (control instanceof CTabFolder)) {
+		if (!(control instanceof CTabFolder) || value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE
+				|| ((CSSPrimitiveValue) value).getPrimitiveType() != CSSPrimitiveValue.CSS_IDENT) {
 			return;
 		}
 
-		if ((value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) &&
-				( ((CSSPrimitiveValue) value).getPrimitiveType() == CSSPrimitiveValue.CSS_IDENT) ) {
-			String postion = ((CSSPrimitiveValue) value).getStringValue();
-			if (postion.equalsIgnoreCase("bottom")) {
-				((CTabFolder) control).setTabPosition(SWT.BOTTOM);
-			}
-
-			if (postion.equalsIgnoreCase("top")) {
-				((CTabFolder) control).setTabPosition(SWT.TOP);
-			}
+		CTabFolder tabFolder = (CTabFolder) control;
+		String position = ((CSSPrimitiveValue) value).getStringValue();
+		switch (position.toLowerCase()) {
+		case "bottom":
+			tabFolder.setTabPosition(SWT.BOTTOM);
+			break;
+		case "top":
+			tabFolder.setTabPosition(SWT.TOP);
+			break;
 		}
 	}
 
