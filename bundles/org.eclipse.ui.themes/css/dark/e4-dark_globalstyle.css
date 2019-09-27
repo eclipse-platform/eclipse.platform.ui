@@ -422,16 +422,6 @@ Twistie {
     color: #E8E4DF;
 }
 
-#SearchField {
-    /* background-image: url('./searchbox.png'); */
-    /* SWT-BUG: textures are applied as a label over the native ones, */
-    /* in this way textures with alpha color are not usable; */
-    /* default margins and padding cannot be modified and textures are not */
-    /* scaled properly to fit the container size: this makes the result ugly, */
-    /* moreover a texture is drawn over the widget, so also the text is covered */
-    color: #f0f0f0;
-}
-
 /* Button {
       background-color: inherit;  /* ignored */
       /* background-image: url('./button_bg.png') */
