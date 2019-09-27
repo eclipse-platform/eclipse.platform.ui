@@ -186,7 +186,6 @@
 }
 .MPart FormHeading {
     background: #505f70;
-    background-image: #505f70;
 }
 .MPartStack.active .MPart FormHeading,
 .MPartStack.active .MPart FormHeading > TitleRegion,
@@ -199,7 +198,6 @@
 }
 .MPartStack.active .MPart FormHeading {
     background: #415062;
-    background-image: #415062;
 }
 .MPart FormHeading,
 .MPart FormHeading > TitleRegion {

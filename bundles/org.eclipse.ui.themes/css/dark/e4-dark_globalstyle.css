@@ -309,7 +309,6 @@ GradientCanvas > ImageHyperlink {
 GradientCanvas {
     /* SWT-BUG workaround: GradientCanvas background-color is ignored */
     background: #3f4447;
-    background-image: #3f4447;
 }
 CategoryItem > GradientCanvas,
 CategoryItem > GradientCanvas > Label {
@@ -351,7 +350,6 @@ Form,
 FormHeading {
     background: #505f70;
     background-color: #505F70;
-    background-image: #505f70;
     color: #9AC9D8;
 }
 
