@@ -370,11 +370,14 @@ Form {
 }
 
 Section {
-       background-color: #4F5355;
-       color: #AEBED0;
-       background-color-titlebar: #4F5355;
-       background-color-gradient-titlebar: #4F5355;
-       border-color-titlebar: #4F5355;
+    background-color: #4F5355;
+    color: #AEBED0;
+    background-color-titlebar: #4F5355;
+    background-color-gradient-titlebar: #4F5355;
+    border-color-titlebar: #4F5355;
+    swt-titlebar-color: #cccccc;
+	tb-toggle-hover-color: #F4F7F7;
+	tb-toggle-color: #F4F7F7;
 }
 
 Form > LayoutComposite > LayoutComposite > * {
@@ -490,6 +493,8 @@ Link {
 
 ExpandableComposite {
     swt-titlebar-color: #cccccc;
+	tb-toggle-hover-color: #F4F7F7;
+	tb-toggle-color: #F4F7F7;
 }
 
 TabbedPropertyTitle > CLabel{
