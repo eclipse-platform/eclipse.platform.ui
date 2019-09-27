@@ -105,7 +105,6 @@ Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][s
     color: #dddddd;
 }
 
-/* Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.MENU'][style~='SWT.DATE'][style~='SWT.RESIZE'][style~='SWT.TITLE'][style~='SWT.APPLICATION_MODAL'][style~='SWT.FULL_SELECTION'][style~='SWT.SMOOTH'] > Composite[style~='SWT.LEFT_TO_RIGHT'], */
 Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.MENU'][style~='SWT.DATE'][style~='SWT.RESIZE'][style~='SWT.TITLE'][style~='SWT.APPLICATION_MODAL'][style~='SWT.FULL_SELECTION'][style~='SWT.SMOOTH'] > Composite[style~='SWT.LEFT_TO_RIGHT'] > Text[style~='SWT.READ_ONLY'],
 Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.MENU'][style~='SWT.DATE'][style~='SWT.RESIZE'][style~='SWT.TITLE'][style~='SWT.APPLICATION_MODAL'][style~='SWT.FULL_SELECTION'][style~='SWT.SMOOTH'] > Composite[style~='SWT.LEFT_TO_RIGHT'] > ToolBar {
     /* Dialog windows title */
@@ -421,22 +420,6 @@ Tree {
 Twistie {
     color: #E8E4DF;
 }
-
-/* Button {
-      background-color: inherit;  /* ignored */
-      /* background-image: url('./button_bg.png') */
-/* } */
-
-/* Button[style~='SWT.CHECK'] { */
-    /* currently, Button object isn't consistent (eg. also a checkbox/radio is seen as Button) */
-    /* so, css rules applied to Button have to be overridden for non-Button matches */
-/* }
-   Button:disabled {
-      /* SWT-BUG: currently, a disabled button cannot be styled with any window manager (gtk, win32, cocoa) */
-/* }
-   Button:hover {
-      /* SWT-BUG: currently, an hovered button cannot be styled with any window manager (gtk, win32, cocoa) */
-/* } */
 
 .MPartSashContainer {
     background-color: #515658;
