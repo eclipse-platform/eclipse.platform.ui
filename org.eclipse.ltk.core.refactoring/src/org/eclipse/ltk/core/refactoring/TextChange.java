@@ -502,7 +502,7 @@ public abstract class TextChange extends TextEditBasedChange {
 			for (TextEdit edit : edits) {
 				// TODO: enable once following bug is fixed
 				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=130909
-				// Assert.isTrue(root == edits[e].getRoot(), "Wrong root edit"); //$NON-NLS-1$
+				Assert.isTrue(root == edit.getRoot(), "Wrong root edit"); //$NON-NLS-1$
 			}
 		}
 		PreviewAndRegion result= getPreviewDocument(changeGroups, pm);
