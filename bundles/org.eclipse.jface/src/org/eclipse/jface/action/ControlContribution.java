@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christoph Läubrich - Bug 551587
  *******************************************************************************/
 package org.eclipse.jface.action;
 
@@ -110,6 +111,7 @@ public abstract class ControlContribution extends ContributionItem {
 			ToolItem ti = new ToolItem(parent, SWT.SEPARATOR, index);
 			ti.setControl(control);
 			ti.setWidth(computeWidth(control));
+			ti.setData(this);
 		}
 	}
 }

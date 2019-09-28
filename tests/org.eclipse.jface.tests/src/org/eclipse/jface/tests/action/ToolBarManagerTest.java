@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013 IBM Corporation and others.
+ * Copyright (c) 2013, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,14 +10,19 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christoph Läubrich - add testcase for Bug #551587
  ******************************************************************************/
 
 package org.eclipse.jface.tests.action;
 
+import org.eclipse.jface.action.ControlContribution;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.ToolBar;
+import org.eclipse.swt.widgets.ToolItem;
 
 public class ToolBarManagerTest extends JFaceActionTest {
 
@@ -71,6 +76,24 @@ public class ToolBarManagerTest extends JFaceActionTest {
 
 		manager.dispose();
 		assertTrue(toolBar.isDisposed());
+	}
+
+	public void testControlContributionIsSet() {
+		ToolBarManager manager = new ToolBarManager();
+		manager.add(new ControlContribution("test") {
+
+			@Override
+			protected Control createControl(Composite parent) {
+
+				return new Label(parent, SWT.NONE);
+			}
+		});
+		ToolBar toolBar = manager.createControl(createComposite());
+		for (ToolItem item : toolBar.getItems()) {
+			if (!(item.getData() instanceof ControlContribution)) {
+				fail("ToolItem data is not set to ControlContribution");
+			}
+		}
 	}
 
 	private Composite createComposite() {
