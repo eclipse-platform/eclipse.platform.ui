@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2010 IBM Corporation and others.
+ * Copyright (c) 2007, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,7 +14,7 @@
 package org.eclipse.e4.internal.tools.jdt.templates;
 
 import org.eclipse.jdt.internal.corext.template.java.AbstractJavaContextType;
-import org.eclipse.jdt.internal.corext.template.java.JavaContext;
+import org.eclipse.jdt.internal.corext.template.java.IJavaContext;
 
 /**
  * The context type for templates inside e4 code.
@@ -44,7 +44,7 @@ public class E4ContextType extends AbstractJavaContextType {
 	public static final String ID_STATEMENTS = "e4-statements"; //$NON-NLS-1$
 
 	@Override
-	protected void initializeContext(JavaContext context) {
+	protected void initializeContext(IJavaContext context) {
 		if (!getId().equals(E4ContextType.ID_ALL)) { // a specific context must also allow the templates that work
 			// everywhere
 			context.addCompatibleContextType(E4ContextType.ID_ALL);
