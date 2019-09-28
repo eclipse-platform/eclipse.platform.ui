@@ -55,6 +55,7 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.Saveable;
+import org.eclipse.ui.actions.ActionGroup;
 import org.eclipse.ui.actions.CloseResourceAction;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.DefaultSaveable;
@@ -63,6 +64,7 @@ import org.eclipse.ui.internal.navigator.filters.UserFilter;
 import org.eclipse.ui.internal.navigator.framelist.Frame;
 import org.eclipse.ui.internal.navigator.framelist.FrameList;
 import org.eclipse.ui.internal.navigator.framelist.TreeFrame;
+import org.eclipse.ui.internal.navigator.resources.ProjectExplorerActionGroup;
 import org.eclipse.ui.internal.navigator.resources.ResourceToItemsMapper;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorPlugin;
@@ -79,6 +81,7 @@ import org.eclipse.ui.navigator.INavigatorContentService;
  * @since 3.2
  *
  */
+@SuppressWarnings("restriction")
 public final class ProjectExplorer extends CommonNavigator implements ISecondarySaveableSource {
 
 	/**
@@ -110,8 +113,8 @@ public final class ProjectExplorer extends CommonNavigator implements ISecondary
 	private int rootMode;
 
 	/**
-	 * Used only in the case of top level = PROJECTS and only when some
-	 * working sets are selected.
+	 * Used only in the case of top level = PROJECTS and only when some working sets
+	 * are selected.
 	 */
 	private String workingSetLabel;
 
@@ -163,6 +166,11 @@ public final class ProjectExplorer extends CommonNavigator implements ISecondary
 		}
 	}
 
+	@Override
+	protected ActionGroup createCommonActionGroup() {
+		return new ProjectExplorerActionGroup(this, getCommonViewer(), getLinkHelperService());
+	}
+
 	/**
 	 * The superclass does not deal with the content description, handle it here.
 	 *
@@ -200,8 +208,7 @@ public final class ProjectExplorer extends CommonNavigator implements ISecondary
 	/**
 	 * Returns the tool tip text for the given element.
 	 *
-	 * @param element
-	 *            the element
+	 * @param element the element
 	 * @return the tooltip
 	 * @noreference This method is not intended to be referenced by clients.
 	 */
@@ -229,16 +236,14 @@ public final class ProjectExplorer extends CommonNavigator implements ISecondary
 			if (workingSetLabel == null)
 				return result;
 			if (result.length() == 0)
-				return NLS.bind(WorkbenchNavigatorMessages.ProjectExplorer_toolTip,
-						new String[] { workingSetLabel });
-			return NLS.bind(WorkbenchNavigatorMessages.ProjectExplorer_toolTip2, new String[] {
-					result, workingSetLabel });
+				return NLS.bind(WorkbenchNavigatorMessages.ProjectExplorer_toolTip, new String[] { workingSetLabel });
+			return NLS.bind(WorkbenchNavigatorMessages.ProjectExplorer_toolTip2,
+					new String[] { result, workingSetLabel });
 		}
 
 		// Working set mode. During initialization element and viewer can
 		// be null.
-		if (element != null && !(element instanceof IWorkingSet)
-				&& getCommonViewer() != null) {
+		if (element != null && !(element instanceof IWorkingSet) && getCommonViewer() != null) {
 			FrameList frameList = getCommonViewer().getFrameList();
 			// Happens during initialization
 			if (frameList == null)
@@ -311,8 +316,7 @@ public final class ProjectExplorer extends CommonNavigator implements ISecondary
 		ICommandService commandService = getViewSite().getService(ICommandService.class);
 		Command openProjectCommand = commandService.getCommand(IWorkbenchCommandConstants.PROJECT_OPEN_PROJECT);
 		if (openProjectCommand != null && openProjectCommand.isHandled() && openProjectCommand.isEnabled()) {
-			IStructuredSelection selection = (IStructuredSelection) anEvent
-					.getSelection();
+			IStructuredSelection selection = (IStructuredSelection) anEvent.getSelection();
 			Object element = selection.getFirstElement();
 			if (element instanceof IProject && !((IProject) element).isOpen()) {
 				try {

@@ -46,8 +46,8 @@ import org.eclipse.ui.navigator.LinkHelperService;
  */
 public class CommonNavigatorActionGroup extends ActionGroup implements IMementoAware {
 
-	private static final String FRAME_ACTION_SEPARATOR_ID= "FRAME_ACTION_SEPARATOR_ID"; //$NON-NLS-1$
-	private static final String FRAME_ACTION_GROUP_ID= "FRAME_ACTION_GROUP_ID"; //$NON-NLS-1$
+	private static final String FRAME_ACTION_SEPARATOR_ID = "FRAME_ACTION_SEPARATOR_ID"; //$NON-NLS-1$
+	private static final String FRAME_ACTION_GROUP_ID = "FRAME_ACTION_GROUP_ID"; //$NON-NLS-1$
 
 	private BackAction backAction;
 
@@ -71,19 +71,15 @@ public class CommonNavigatorActionGroup extends ActionGroup implements IMementoA
 
 	private boolean frameActionsShown;
 
-
-
 	/**
 	 * Create a action group the common navigator actions.
 	 *
-	 * @param aNavigator
-	 *            The IViewPart for this action group
-	 * @param aViewer
-	 *            The Viewer for this action group
+	 * @param aNavigator        The IViewPart for this action group
+	 * @param aViewer           The Viewer for this action group
 	 * @param linkHelperService the link service helper
 	 */
-	public CommonNavigatorActionGroup(CommonNavigator aNavigator,
-			CommonViewer aViewer, LinkHelperService linkHelperService) {
+	public CommonNavigatorActionGroup(CommonNavigator aNavigator, CommonViewer aViewer,
+			LinkHelperService linkHelperService) {
 		super();
 		commonNavigator = aNavigator;
 		commonViewer = aViewer;
@@ -111,22 +107,19 @@ public class CommonNavigatorActionGroup extends ActionGroup implements IMementoA
 					upAction.update();
 				}
 				commonNavigator.updateTitle();
-				IActionBars actionBars= commonNavigator.getViewSite().getActionBars();
+				IActionBars actionBars = commonNavigator.getViewSite().getActionBars();
 				updateToolBar(actionBars.getToolBarManager());
 				actionBars.updateActionBars();
 			}
 		});
 
-		IHandlerService service = commonNavigator.getSite()
-				.getService(IHandlerService.class);
+		IHandlerService service = commonNavigator.getSite().getService(IHandlerService.class);
 
-		INavigatorViewerDescriptor viewerDescriptor = commonViewer
-				.getNavigatorContentService().getViewerDescriptor();
+		INavigatorViewerDescriptor viewerDescriptor = commonViewer.getNavigatorContentService().getViewerDescriptor();
 		boolean hideLinkWithEditorAction = viewerDescriptor
 				.getBooleanConfigProperty(INavigatorViewerDescriptor.PROP_HIDE_LINK_WITH_EDITOR_ACTION);
 		if (!hideLinkWithEditorAction) {
-			toggleLinkingAction = new LinkEditorAction(commonNavigator,
-					commonViewer, linkHelperService);
+			toggleLinkingAction = new LinkEditorAction(commonNavigator, commonViewer, linkHelperService);
 			String imageFilePath = "icons/full/elcl16/synced.png"; //$NON-NLS-1$
 			ResourceLocator.imageDescriptorFromBundle(getClass(), imageFilePath).ifPresent(d -> {
 				toggleLinkingAction.setImageDescriptor(d);
@@ -149,18 +142,27 @@ public class CommonNavigatorActionGroup extends ActionGroup implements IMementoA
 			service.activateHandler(CollapseAllHandler.COMMAND_ID, collapseAllHandler);
 		}
 
-		filterGroup = new FilterActionGroup(commonViewer);
+		filterGroup = createFilterActionGroup(commonViewer);
+	}
+
+	/**
+	 * Creates the filter action group. Subclasses may override to provide their own
+	 * implementation.
+	 * 
+	 * @param pCommonViewer
+	 *
+	 * @return the {@link FilterActionGroup}
+	 */
+	protected FilterActionGroup createFilterActionGroup(CommonViewer pCommonViewer) {
+		return new FilterActionGroup(pCommonViewer);
 	}
 
 	@Override
 	public void fillActionBars(IActionBars actionBars) {
 
-		actionBars.setGlobalActionHandler(ActionFactory.BACK.getId(),
-				backAction);
-		actionBars.setGlobalActionHandler(ActionFactory.FORWARD.getId(),
-				forwardAction);
-		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.UP,
-				upAction);
+		actionBars.setGlobalActionHandler(ActionFactory.BACK.getId(), backAction);
+		actionBars.setGlobalActionHandler(ActionFactory.FORWARD.getId(), forwardAction);
+		actionBars.setGlobalActionHandler(IWorkbenchActionConstants.UP, upAction);
 
 		filterGroup.fillActionBars(actionBars);
 		fillToolBar(actionBars.getToolBarManager());
@@ -174,7 +176,7 @@ public class CommonNavigatorActionGroup extends ActionGroup implements IMementoA
 			toolBar.add(forwardAction);
 			toolBar.add(upAction);
 			toolBar.add(new Separator(FRAME_ACTION_SEPARATOR_ID));
-			frameActionsShown= true;
+			frameActionsShown = true;
 		}
 		toolBar.add(new GroupMarker(FRAME_ACTION_GROUP_ID));
 		if (collapseAllAction != null) {
@@ -189,17 +191,15 @@ public class CommonNavigatorActionGroup extends ActionGroup implements IMementoA
 	protected void fillViewMenu(IMenuManager menu) {
 		menu.add(new Separator());
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS+"-end"));//$NON-NLS-1$
+		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS + "-end"));//$NON-NLS-1$
 		if (toggleLinkingAction != null) {
-			menu
-			.insertAfter(IWorkbenchActionConstants.MB_ADDITIONS
-					+ "-end", toggleLinkingAction); //$NON-NLS-1$
+			menu.insertAfter(IWorkbenchActionConstants.MB_ADDITIONS + "-end", toggleLinkingAction); //$NON-NLS-1$
 		}
 	}
 
 	private void updateToolBar(IToolBarManager toolBar) {
-		boolean hasBeenFrameActionsShown= frameActionsShown;
-		frameActionsShown= backAction.isEnabled() || upAction.isEnabled() || forwardAction.isEnabled();
+		boolean hasBeenFrameActionsShown = frameActionsShown;
+		frameActionsShown = backAction.isEnabled() || upAction.isEnabled() || forwardAction.isEnabled();
 		if (frameActionsShown != hasBeenFrameActionsShown) {
 			if (hasBeenFrameActionsShown) {
 				toolBar.remove(backAction.getId());
@@ -216,7 +216,6 @@ public class CommonNavigatorActionGroup extends ActionGroup implements IMementoA
 		}
 	}
 
-
 	@Override
 	public void dispose() {
 		super.dispose();
@@ -227,7 +226,7 @@ public class CommonNavigatorActionGroup extends ActionGroup implements IMementoA
 		if (toggleLinkingAction != null) {
 			toggleLinkingAction.dispose();
 		}
-		if (collapseAllHandler!=null) {
+		if (collapseAllHandler != null) {
 			collapseAllHandler.dispose();
 		}
 	}
