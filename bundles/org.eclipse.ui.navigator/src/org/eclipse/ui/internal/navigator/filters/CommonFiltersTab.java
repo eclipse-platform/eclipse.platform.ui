@@ -106,7 +106,7 @@ public class CommonFiltersTab extends CustomizationTab {
 	}
 
 	private void createPatternFilterText(Composite composite) {
-		filterText = new Text(composite, SWT.SINGLE | SWT.BORDER);
+		filterText = new Text(composite, SWT.SINGLE | SWT.BORDER | SWT.SEARCH | SWT.ICON_CANCEL);
 		GridData filterTextGridData = new GridData(GridData.FILL_HORIZONTAL);
 		filterText.setLayoutData(filterTextGridData);
 		filterText.setText(initialFilterTextValue);
