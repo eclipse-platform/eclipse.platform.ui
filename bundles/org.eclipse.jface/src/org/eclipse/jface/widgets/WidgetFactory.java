@@ -14,6 +14,7 @@
 package org.eclipse.jface.widgets;
 
 
+import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -163,5 +164,16 @@ public final class WidgetFactory {
 	 */
 	public static SashFactory sash(int style) {
 		return SashFactory.newSash(style);
+	}
+
+	/**
+	 * @param style SWT style applicable for SashForm. Refer to
+	 *              {@link SashForm#SashForm(Composite, int)} for supported styles.
+	 * @return SashFormFactory
+	 *
+	 * @since 3.21
+	 */
+	public static SashFormFactory sashForm(int style) {
+		return SashFormFactory.newSashForm(style);
 	}
 }

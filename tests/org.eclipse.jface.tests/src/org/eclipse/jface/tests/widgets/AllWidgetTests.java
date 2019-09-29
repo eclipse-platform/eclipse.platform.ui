@@ -19,6 +19,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestUnitCompositeFactory.class, //
 		TestUnitLabelFactory.class, //
 		TestUnitSashFactory.class, //
+		TestUnitSashFormFactory.class, //
 		TestUnitSpinnerFactory.class, //
 		TestUnitTextFactory.class, //
 		TestUnitTableFactory.class, //
