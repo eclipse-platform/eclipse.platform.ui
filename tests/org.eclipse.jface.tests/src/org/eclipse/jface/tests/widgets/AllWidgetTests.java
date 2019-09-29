@@ -20,6 +20,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestUnitLabelFactory.class, //
 		TestUnitSashFactory.class, //
 		TestUnitSashFormFactory.class, //
+		TestUnitShellFactory.class, //
 		TestUnitSpinnerFactory.class, //
 		TestUnitTextFactory.class, //
 		TestUnitTableFactory.class, //
