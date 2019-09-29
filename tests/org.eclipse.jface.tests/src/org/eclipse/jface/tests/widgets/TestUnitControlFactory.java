@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.widgets.LabelFactory;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.GridData;
@@ -58,19 +59,28 @@ public class TestUnitControlFactory extends AbstractFactoryTest {
 	}
 
 	@Test
+	public void setsTooltip() {
+		Label label = LabelFactory.newLabel(SWT.NONE).tooltip("toolTip").create(shell);
+		assertEquals("toolTip", label.getToolTipText());
+	}
+
+	@Test
+	public void setsEnabled() {
+		Label label = LabelFactory.newLabel(SWT.NONE).enabled(false).create(shell);
+		assertFalse(label.getEnabled());
+	}
+
+	@Test
+	public void setsLayoutData() {
+		Label label = LabelFactory.newLabel(SWT.NONE).layoutData(new GridData(GridData.FILL_BOTH)).create(shell);
+		assertTrue(label.getLayoutData() instanceof GridData);
+	}
+
+	@Test
 	public void createsControlWithProperties() {
 		Font font = new Font(null, new FontData());
 
-		Label label = LabelFactory.newLabel(SWT.NONE) //
-				.tooltip("toolTip") //
-				.enabled(false) //
-				.layoutData(new GridData(GridData.FILL_BOTH)) //
-				.font(font) //
-				.create(shell);
-
-		assertFalse(label.getEnabled());
-		assertEquals("toolTip", label.getToolTipText());
-		assertTrue(label.getLayoutData() instanceof GridData);
+		Label label = LabelFactory.newLabel(SWT.NONE).font(font).create(shell);
 		assertEquals(font, label.getFont());
 	}
 
@@ -83,5 +93,27 @@ public class TestUnitControlFactory extends AbstractFactoryTest {
 		Label label2 = factory.create(shell);
 
 		assertNotSame(label.getLayoutData(), label2.getLayoutData());
+	}
+
+	@Test
+	public void setsForeground() {
+		Color color = new Color(null, 255, 255, 255);
+		Label label = LabelFactory.newLabel(SWT.NONE).foreground(color).create(shell);
+
+		assertEquals(color, label.getForeground());
+	}
+
+	@Test
+	public void setsBackground() {
+		Color color = new Color(null, 0, 0, 0);
+		Label label = LabelFactory.newLabel(SWT.NONE).background(color).create(shell);
+
+		assertEquals(color, label.getBackground());
+	}
+
+	@Test
+	public void setsOrientation() {
+		Label label = LabelFactory.newLabel(SWT.NONE).orientation(SWT.LEFT_TO_RIGHT).create(shell);
+		assertEquals(SWT.LEFT_TO_RIGHT, label.getOrientation());
 	}
 }

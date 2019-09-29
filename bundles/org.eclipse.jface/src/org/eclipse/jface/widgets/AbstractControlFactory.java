@@ -16,6 +16,7 @@ package org.eclipse.jface.widgets;
 
 import java.util.function.Supplier;
 
+import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -113,6 +114,39 @@ public abstract class AbstractControlFactory<F extends AbstractControlFactory<?,
 	 */
 	public F font(Font font) {
 		addProperty(c -> c.setFont(font));
+		return cast(this);
+	}
+
+	/**
+	 * Sets the foreground color.
+	 *
+	 * @param color
+	 * @return this
+	 */
+	public F foreground(Color color) {
+		addProperty(c -> c.setForeground(color));
+		return cast(this);
+	}
+
+	/**
+	 * Sets the background color.
+	 *
+	 * @param color
+	 * @return this
+	 */
+	public F background(Color color) {
+		addProperty(c -> c.setBackground(color));
+		return cast(this);
+	}
+
+	/**
+	 * Sets the orientation
+	 *
+	 * @param orientation
+	 * @return this
+	 */
+	public F orientation(int orientation) {
+		addProperty(t -> t.setOrientation(orientation));
 		return cast(this);
 	}
 }
