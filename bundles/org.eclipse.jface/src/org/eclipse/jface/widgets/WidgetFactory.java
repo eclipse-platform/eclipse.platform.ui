@@ -17,6 +17,7 @@ package org.eclipse.jface.widgets;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Sash;
 import org.eclipse.swt.widgets.Spinner;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -151,5 +152,16 @@ public final class WidgetFactory {
 	 */
 	public static TreeColumnFactory treeColumn(int style) {
 		return TreeColumnFactory.newTreeColumn(style);
+	}
+
+	/**
+	 * @param style SWT style applicable for Sash. Refer to
+	 *              {@link Sash#Sash(Composite, int)} for supported styles.
+	 * @return SashFactory
+	 *
+	 * @since 3.21
+	 */
+	public static SashFactory sash(int style) {
+		return SashFactory.newSash(style);
 	}
 }
