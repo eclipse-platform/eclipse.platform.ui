@@ -305,7 +305,9 @@ public abstract class FieldEditorPreferencePage extends PreferencePage
 				FieldEditor pe = e.next();
 				pe.setPage(this);
 				pe.setPropertyChangeListener(this);
-				pe.setPreferenceStore(getPreferenceStore());
+				if (pe.getPreferenceStore() == null) {
+					pe.setPreferenceStore(getPreferenceStore());
+				}
 				pe.load();
 			}
 		}
