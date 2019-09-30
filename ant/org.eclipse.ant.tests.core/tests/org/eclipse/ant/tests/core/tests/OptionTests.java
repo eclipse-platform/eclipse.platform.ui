@@ -50,7 +50,7 @@ public class OptionTests extends AbstractAntTest {
 	 */
 	public void testMinusH() throws CoreException {
 		run("TestForEcho.xml", new String[] { "-h" }); //$NON-NLS-1$ //$NON-NLS-2$
-		assertEquals("incorrect message number logged", 34, AntTestChecker.getDefault().getMessagesLoggedCount()); //$NON-NLS-1$
+		assertEquals("incorrect message number logged", 36, AntTestChecker.getDefault().getMessagesLoggedCount()); //$NON-NLS-1$
 		assertTrue("Help is incorrect", getLastMessageLogged() != null && AntTestChecker.getDefault().getMessages().get(0).startsWith(START_OF_HELP)); //$NON-NLS-1$
 	}
 
