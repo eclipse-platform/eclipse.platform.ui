@@ -1,3 +1,0 @@
-requires.0.namespace = osgi.extender
-requires.0.name = osgi.component
-requires.0.range = [1.2.0, 2)
