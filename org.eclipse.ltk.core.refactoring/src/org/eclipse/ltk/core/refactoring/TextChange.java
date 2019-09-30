@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -500,8 +500,6 @@ public abstract class TextChange extends TextEditBasedChange {
 		for (TextEditBasedChangeGroup group : changeGroups) {
 			TextEdit[] edits= group.getTextEdits();
 			for (TextEdit edit : edits) {
-				// TODO: enable once following bug is fixed
-				// https://bugs.eclipse.org/bugs/show_bug.cgi?id=130909
 				Assert.isTrue(root == edit.getRoot(), "Wrong root edit"); //$NON-NLS-1$
 			}
 		}
