@@ -295,10 +295,12 @@ public class QuickAccessDialog extends PopupDialog {
 
 	@Override
 	public boolean close() {
-		filterText.removeKeyListener(getKeyAdapter());
-		if (toRemoveTextListeners != null) {
-			for (ModifyListener listener : toRemoveTextListeners) {
-				filterText.removeModifyListener(listener);
+		if (!filterText.isDisposed()) {
+			filterText.removeKeyListener(getKeyAdapter());
+			if (toRemoveTextListeners != null) {
+				for (ModifyListener listener : toRemoveTextListeners) {
+					filterText.removeModifyListener(listener);
+				}
 			}
 		}
 		storeDialog(getDialogSettings());
