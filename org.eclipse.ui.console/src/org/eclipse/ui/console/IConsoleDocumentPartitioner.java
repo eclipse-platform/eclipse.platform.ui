@@ -31,11 +31,11 @@ import org.eclipse.swt.custom.StyleRange;
  * In order to provided backward compatibility for clients of
  * <code>IConsoleDocumentPartitioner</code>, extension interfaces are used to
  * provide a means of evolution. The following extension interfaces exist:
+ * </p>
  * <ul>
  * <li>{@link org.eclipse.ui.console.IConsoleDocumentPartitionerExtension} since
  * version 3.9 adding more possibilities to query read-only regions.</li>
  * </ul>
- * </p>
  *
  * @see org.eclipse.ui.console.TextConsole
  * @see org.eclipse.ui.console.IConsoleDocumentPartitionerExtension
