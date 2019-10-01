@@ -61,6 +61,9 @@ public final class SelectionEnabler {
 		public boolean recursive;
 	}
 
+	/**
+	 * Enablement mode value for ANY_NUMBER
+	 */
 	public static final int ANY_NUMBER = -2;
 
 	/**
@@ -90,12 +93,24 @@ public final class SelectionEnabler {
 	 */
 	private static final String JFACE_TEXT_PLUG_IN = "org.eclipse.jface.text"; //$NON-NLS-1$
 
+	/**
+	 * Enablement mode value for MULTIPLE
+	 */
 	public static final int MULTIPLE = -5;
 
+	/**
+	 * Enablement mode value for NONE
+	 */
 	public static final int NONE = -4;
 
+	/**
+	 * Enablement mode value for NONE_OR_ONE
+	 */
 	public static final int NONE_OR_ONE = -3;
 
+	/**
+	 * Enablement mode value for ONE_OR_MORE
+	 */
 	public static final int ONE_OR_MORE = -1;
 
 	/**
@@ -110,6 +125,9 @@ public final class SelectionEnabler {
 	 */
 	private static boolean textSelectionPossible = true;
 
+	/**
+	 * Enablement mode value for UNKNOWN
+	 */
 	public static final int UNKNOWN = 0;
 
 	/**
@@ -167,8 +185,8 @@ public final class SelectionEnabler {
 	 * Verifies that the given name matches the given wildcard filter. Returns true
 	 * if it does.
 	 *
-	 * @param name
-	 * @param filter
+	 * @param name   the name to match
+	 * @param filter the filter to match to
 	 * @return <code>true</code> if there is a match
 	 */
 	public static boolean verifyNameMatch(String name, String filter) {
@@ -190,7 +208,7 @@ public final class SelectionEnabler {
 	/**
 	 * Create a new instance of the receiver.
 	 *
-	 * @param configElement
+	 * @param configElement the configuration element to parse
 	 */
 	public SelectionEnabler(IConfigurationElement configElement) {
 		super();
@@ -328,7 +346,7 @@ public final class SelectionEnabler {
 	/**
 	 * Check if the receiver is enabled for the given selection.
 	 *
-	 * @param selection
+	 * @param selection the selection
 	 * @return <code>true</code> if the given selection matches the conditions
 	 *         specified in <code>IConfirgurationElement</code>.
 	 */

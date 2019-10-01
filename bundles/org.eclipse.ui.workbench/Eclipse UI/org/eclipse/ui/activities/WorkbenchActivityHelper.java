@@ -59,14 +59,13 @@ public final class WorkbenchActivityHelper {
 	/**
 	 * Answers whether a given contribution is allowed to be used based on activity
 	 * enablement. If it is currently disabled, then a dialog is opened and the user
-	 * is prompted to activate the requried activities. If the user declines their
+	 * is prompted to activate the required activities. If the user declines their
 	 * activation then false is returned. In all other cases <code>true</code> is
 	 * returned.
 	 *
 	 * @param object the contribution to test.
 	 * @return whether the contribution is allowed to be used based on activity
 	 *         enablement.
-	 * @deprecated
 	 * @see #allowUseOf(ITriggerPoint, Object)
 	 */
 	@Deprecated
@@ -160,7 +159,7 @@ public final class WorkbenchActivityHelper {
 	 * <pre>
 	 * pluginId / extensionId
 	 * </pre>
-	 * 
+	 *
 	 * . If the IPluginContribution does not define a plugin id then the extension
 	 * id alone is returned.
 	 *

@@ -33,11 +33,12 @@ public class YesNoCancelListSelectionDialog extends ListSelectionDialog {
 	 *
 	 * Create a list selection dialog with a possible Yes/No or Cancel result.
 	 *
-	 * @param parentShell
-	 * @param input
-	 * @param contentProvider
-	 * @param labelProvider
-	 * @param message
+	 * @param parentShell     the parent shell
+	 * @param input           the root element to populate this dialog with
+	 * @param contentProvider the content provider for navigating the model
+	 * @param labelProvider   the label provider for displaying model elements
+	 * @param message         the message to be displayed at the top of this dialog,
+	 *                        or <code>null</code> to display a default message
 	 * @deprecated see class comment
 	 */
 	@Deprecated

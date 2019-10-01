@@ -24,7 +24,7 @@ import org.eclipse.swt.graphics.Image;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IWorkbenchPartReference {
@@ -38,37 +38,43 @@ public interface IWorkbenchPartReference {
 	IWorkbenchPart getPart(boolean restore);
 
 	/**
+	 * @return the title of the part
 	 * @see IWorkbenchPart#getTitle
 	 */
 	String getTitle();
 
 	/**
+	 * @return the title image of the part
 	 * @see IWorkbenchPart#getTitleImage
 	 */
 	Image getTitleImage();
 
 	/**
+	 * @return the title tooltip
 	 * @see IWorkbenchPart#getTitleToolTip
 	 */
 	String getTitleToolTip();
 
 	/**
+	 * @return the ID of the part
 	 * @see IWorkbenchPartSite#getId
 	 */
 	String getId();
 
 	/**
+	 * @param listener the property listener
 	 * @see IWorkbenchPart#addPropertyListener
 	 */
 	void addPropertyListener(IPropertyListener listener);
 
 	/**
+	 * @param listener the poperty listener to remove
 	 * @see IWorkbenchPart#removePropertyListener
 	 */
 	void removePropertyListener(IPropertyListener listener);
 
 	/**
-	 * Returns the workbench page that contains this part
+	 * @return the workbench page that contains this part
 	 */
 	IWorkbenchPage getPage();
 

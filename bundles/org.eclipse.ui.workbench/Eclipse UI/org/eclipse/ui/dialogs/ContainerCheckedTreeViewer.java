@@ -89,7 +89,7 @@ public class ContainerCheckedTreeViewer extends CheckboxTreeViewer {
 	/**
 	 * Update element after a checkstate change.
 	 *
-	 * @param element
+	 * @param element the element to update
 	 */
 	protected void doCheckStateChanged(Object element) {
 		Widget item = findItem(element);

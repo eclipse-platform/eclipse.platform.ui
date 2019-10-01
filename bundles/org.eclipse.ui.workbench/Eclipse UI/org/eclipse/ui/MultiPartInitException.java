@@ -32,8 +32,8 @@ public class MultiPartInitException extends WorkbenchException {
 	 * positions being <code>null</code>. The restriction may be lifted in the
 	 * future, and clients of this class must not make this assumption.
 	 *
-	 * @param references
-	 * @param exceptions
+	 * @param references the parts in error
+	 * @param exceptions the exceptions
 	 */
 	public MultiPartInitException(IWorkbenchPartReference[] references, PartInitException[] exceptions) {
 		super(exceptions[findFirstException(exceptions)].getStatus());

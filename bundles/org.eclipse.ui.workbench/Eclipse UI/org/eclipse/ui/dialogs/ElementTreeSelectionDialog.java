@@ -83,7 +83,7 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Constructs an instance of <code>ElementTreeSelectionDialog</code>.
-	 * 
+	 *
 	 * @param parent          The parent shell for the dialog
 	 * @param labelProvider   the label provider to render the entries
 	 * @param contentProvider the content provider to evaluate the tree structure
@@ -116,7 +116,7 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Sets the initial selection. Convenience method.
-	 * 
+	 *
 	 * @param selection the initial selection.
 	 */
 	public void setInitialSelection(Object selection) {
@@ -125,7 +125,7 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Sets the message to be displayed if the list is empty.
-	 * 
+	 *
 	 * @param message the message to be displayed.
 	 */
 	public void setEmptyListMessage(String message) {
@@ -134,8 +134,8 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Specifies if multiple selection is allowed.
-	 * 
-	 * @param allowMultiple
+	 *
+	 * @param allowMultiple true if allowed.
 	 */
 	public void setAllowMultiple(boolean allowMultiple) {
 		fAllowMultiple = allowMultiple;
@@ -143,8 +143,8 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Specifies if default selected events (double click) are created.
-	 * 
-	 * @param doubleClickSelects
+	 *
+	 * @param doubleClickSelects true or false.
 	 */
 	public void setDoubleClickSelects(boolean doubleClickSelects) {
 		fDoubleClickSelects = doubleClickSelects;
@@ -152,8 +152,8 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Sets the sorter used by the tree viewer.
-	 * 
-	 * @param sorter
+	 *
+	 * @param sorter the {@link ViewerSorter}
 	 * @deprecated as of 3.3, use
 	 *             {@link ElementTreeSelectionDialog#setComparator(ViewerComparator)}
 	 *             instead
@@ -165,8 +165,8 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Sets the comparator used by the tree viewer.
-	 * 
-	 * @param comparator
+	 *
+	 * @param comparator the {@link ViewerComparator}
 	 * @since 3.3
 	 */
 	public void setComparator(ViewerComparator comparator) {
@@ -175,7 +175,7 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Adds a filter to the tree viewer.
-	 * 
+	 *
 	 * @param filter a filter.
 	 */
 	public void addFilter(ViewerFilter filter) {
@@ -189,7 +189,7 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 	/**
 	 * Sets an optional validator to check if the selection is valid. The validator
 	 * is invoked whenever the selection changes.
-	 * 
+	 *
 	 * @param validator the validator to validate the selection.
 	 */
 	public void setValidator(ISelectionStatusValidator validator) {
@@ -198,7 +198,7 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Sets the tree input.
-	 * 
+	 *
 	 * @param input the tree input.
 	 */
 	public void setInput(Object input) {
@@ -207,7 +207,7 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Sets the size of the tree in unit of characters.
-	 * 
+	 *
 	 * @param width  the width of the tree.
 	 * @param height the height of the tree.
 	 */
@@ -385,8 +385,9 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Set the result using the super class implementation of buttonPressed.
-	 * 
-	 * @param id
+	 *
+	 * @param id the id of the button that was pressed (see IDialogConstants.*_ID
+	 *           constants)
 	 * @see org.eclipse.jface.dialogs.Dialog#buttonPressed(int)
 	 */
 	protected void access$superButtonPressed(int id) {
@@ -395,8 +396,9 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 
 	/**
 	 * Set the result using the super class implementation of setResult.
-	 * 
-	 * @param result
+	 *
+	 * @param result list of selected elements, or <code>null</code> if Cancel was
+	 *               pressed
 	 * @see SelectionStatusDialog#setResult(int, Object)
 	 */
 	protected void access$setResult(List result) {

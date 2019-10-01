@@ -71,8 +71,11 @@ public abstract class ActionFactory {
 
 	private static class WorkbenchCommandAction extends CommandAction implements IWorkbenchAction {
 		/**
-		 * @param commandIdIn
-		 * @param window
+		 * Creates the action backed by a command. For commands that don't take
+		 * parameters.
+		 * 
+		 * @param commandIdIn the command id. Must not be null.
+		 * @param window      the workbench window
 		 */
 		public WorkbenchCommandAction(String commandIdIn, IWorkbenchWindow window) {
 			super(window, commandIdIn);

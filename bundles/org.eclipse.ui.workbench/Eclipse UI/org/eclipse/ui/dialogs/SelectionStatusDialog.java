@@ -51,7 +51,7 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 	/**
 	 * Creates an instance of a <code>SelectionStatusDialog</code>.
 	 *
-	 * @param parent
+	 * @param parent the parent shell
 	 */
 	public SelectionStatusDialog(Shell parent) {
 		super(parent);
@@ -95,8 +95,8 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 	/**
 	 * Sets a result element at the given position.
 	 *
-	 * @param position
-	 * @param element
+	 * @param position the position
+	 * @param element  the element to set.
 	 */
 	protected void setResult(int position, Object element) {
 		Object[] result = getResult();
@@ -121,7 +121,7 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 	 * Update the dialog's status line to reflect the given status. It is safe to
 	 * call this method before the dialog has been opened.
 	 *
-	 * @param status
+	 * @param status the {@link IStatus} to use for updating the status line.
 	 */
 	protected void updateStatus(IStatus status) {
 		fLastStatus = status;
@@ -135,7 +135,7 @@ public abstract class SelectionStatusDialog extends SelectionDialog {
 	 * Update the status of the ok button to reflect the given status. Subclasses
 	 * may override this method to update additional buttons.
 	 *
-	 * @param status
+	 * @param status the {@link IStatus} to use.
 	 */
 	protected void updateButtonsEnableState(IStatus status) {
 		Button okButton = getOkButton();

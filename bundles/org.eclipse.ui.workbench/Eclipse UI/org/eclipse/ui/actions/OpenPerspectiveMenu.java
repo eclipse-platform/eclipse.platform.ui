@@ -47,7 +47,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @deprecated See IWorkbench.showPerspective methods.
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -65,6 +65,10 @@ public class OpenPerspectiveMenu extends PerspectiveMenu {
 
 	/**
 	 * Constructs a new menu.
+	 *
+	 * @param menuManager the menu manager
+	 * @param window      the window where a new page is created if an item within
+	 *                    the menu is selected
 	 */
 	public OpenPerspectiveMenu(IMenuManager menuManager, IWorkbenchWindow window) {
 		this(window);
@@ -168,7 +172,7 @@ public class OpenPerspectiveMenu extends PerspectiveMenu {
 	}
 
 	/**
-	 * Set whether replace menu item is enabled within its parent menu.
+	 * @param isEnabled true if replace menu item is enabled within its parent menu.
 	 */
 	public void setReplaceEnabled(boolean isEnabled) {
 		if (replaceEnabled != isEnabled) {

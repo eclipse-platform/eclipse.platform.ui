@@ -48,7 +48,7 @@ import org.eclipse.ui.internal.dialogs.NewWizard;
  * client must call #dispose() to give the action an opportunity to deregister
  * its listeners and to perform any other cleanup.
  * </p>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class NewWizardAction extends Action implements ActionFactory.IWorkbenchAction {
@@ -88,8 +88,8 @@ public class NewWizardAction extends Action implements ActionFactory.IWorkbenchA
 
 	/**
 	 * Create a new instance of this class.
-	 * 
-	 * @param window
+	 *
+	 * @param window the parent window
 	 */
 	public NewWizardAction(IWorkbenchWindow window) {
 		super(WorkbenchMessages.NewWizardAction_text);
@@ -120,7 +120,7 @@ public class NewWizardAction extends Action implements ActionFactory.IWorkbenchA
 	/**
 	 * Returns the id of the category of wizards to show or <code>null</code> to
 	 * show all categories.
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getCategoryId() {
@@ -130,8 +130,8 @@ public class NewWizardAction extends Action implements ActionFactory.IWorkbenchA
 	/**
 	 * Sets the id of the category of wizards to show or <code>null</code> to show
 	 * all categories.
-	 * 
-	 * @param id
+	 *
+	 * @param id the wizards's category id; may be </<code>null</code>
 	 */
 	public void setCategoryId(String id) {
 		categoryId = id;

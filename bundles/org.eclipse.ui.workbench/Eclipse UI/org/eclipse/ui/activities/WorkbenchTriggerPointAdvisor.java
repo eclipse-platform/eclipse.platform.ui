@@ -168,10 +168,10 @@ public class WorkbenchTriggerPointAdvisor implements ITriggerPointAdvisor, IExec
 	 * there is at least one disabled expression-based activity; and it returns
 	 * <code>true</code> if there are no disabled expression-based activities and
 	 * there is at least one applicable activity that is enabled.
-	 * 
+	 *
 	 * @param activityManager                            the activity manager
 	 * @param identifier                                 the identifier to update
-	 * @param disabledExpressionActivitiesTakePrecedence
+	 * @param disabledExpressionActivitiesTakePrecedence see method description
 	 *
 	 * @return <code>true</code> if this identifier should be enabled,
 	 *         <code>false</code> otherwise

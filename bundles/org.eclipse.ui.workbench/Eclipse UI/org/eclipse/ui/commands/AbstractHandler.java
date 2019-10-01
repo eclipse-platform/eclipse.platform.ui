@@ -130,6 +130,9 @@ public abstract class AbstractHandler extends org.eclipse.core.commands.Abstract
 		}
 	}
 
+	/**
+	 * @see org.eclipse.core.commands.AbstractHandler
+	 */
 	@SuppressWarnings("rawtypes")
 	@Deprecated
 	protected void fireHandlerChanged(final org.eclipse.ui.commands.HandlerEvent handlerEvent) {

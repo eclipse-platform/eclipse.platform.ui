@@ -15,7 +15,6 @@
 package org.eclipse.ui.handlers;
 
 import java.util.Hashtable;
-
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.jface.commands.PersistentState;
@@ -54,6 +53,9 @@ public final class RadioState extends PersistentState implements IExecutableExte
 	 */
 	public static final String PARAMETER_ID = "org.eclipse.ui.commands.radioStateParameter"; //$NON-NLS-1$
 
+	/**
+	 * This constructor creates a persisted instance.
+	 */
 	public RadioState() {
 		setShouldPersist(true);
 	}

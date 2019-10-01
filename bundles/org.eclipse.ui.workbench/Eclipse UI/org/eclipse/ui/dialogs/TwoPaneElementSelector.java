@@ -20,7 +20,9 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
-
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.jface.dialogs.IDialogConstants;
+import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
@@ -29,11 +31,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
-
-import org.eclipse.core.runtime.IStatus;
-
-import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.ILabelProvider;
 
 /**
  * A list selection dialog with two panes. Duplicated entries will be folded
@@ -48,7 +45,7 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
 
 	/**
 	 * The comparator used to sort the list in the lower pane.
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	private Comparator fLowerListComparator = null;
@@ -79,7 +76,7 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
 	 * Sets the upper list label. If the label is <code>null</code> (default), no
 	 * label is created.
 	 *
-	 * @param label
+	 * @param label the label to set or null for no label.
 	 */
 	public void setUpperListLabel(String label) {
 		fUpperListLabel = label;
@@ -245,8 +242,8 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
 
 	/**
 	 * Selects an element in the lower pane.
-	 * 
-	 * @param element
+	 *
+	 * @param element the element to select
 	 */
 	protected void setLowerSelectedElement(Object element) {
 		if (fQualifierElements == null) {
@@ -267,7 +264,7 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
 
 	/**
 	 * Returns the selected element from the lower pane.
-	 * 
+	 *
 	 * @return Object
 	 */
 	protected Object getLowerSelectedElement() {

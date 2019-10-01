@@ -146,7 +146,7 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 	/**
 	 * Sets the sorter used by the tree viewer.
 	 *
-	 * @param sorter
+	 * @param sorter the sorter
 	 * @deprecated since 3.3, use
 	 *             {@link CheckedTreeSelectionDialog#setComparator(ViewerComparator)}
 	 *             instead
@@ -170,7 +170,7 @@ public class CheckedTreeSelectionDialog extends SelectionStatusDialog {
 	/**
 	 * Sets the comparator used by the tree viewer.
 	 *
-	 * @param comparator
+	 * @param comparator the {@link ViewerComparator}
 	 * @since 3.3
 	 */
 	public void setComparator(ViewerComparator comparator) {

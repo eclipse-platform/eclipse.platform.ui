@@ -58,6 +58,7 @@ public interface IContainmentAdapter {
 	 *                           <code>CHECK_IF_ANCESTOR</code>,
 	 *                           <code>CHECK_IF_DESCENDENT</code> logically ORed
 	 *                           together.
+	 * @return true if contained, false otherwise.
 	 */
 	boolean contains(Object containmentContext, Object element, int flags);
 }

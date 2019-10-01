@@ -145,6 +145,8 @@ public class SubActionBars extends EventManager implements IActionBars {
 	 * of items. In this case we want to force the items to be visible/hidden only
 	 * when required, otherwise just change the enablement state.
 	 * </p>
+	 *
+	 * @param forceVisibility (is not used)
 	 */
 	public void activate(boolean forceVisibility) {
 		setActive(true);
@@ -235,6 +237,8 @@ public class SubActionBars extends EventManager implements IActionBars {
 	 * visible/hidden only when required, otherwise just change the enablement
 	 * state.
 	 * </p>
+	 *
+	 * @param forceHide (not used)
 	 */
 	public void deactivate(boolean forceHide) {
 		setActive(false);
@@ -311,8 +315,10 @@ public class SubActionBars extends EventManager implements IActionBars {
 	/**
 	 * Returns the complete list of active global action handlers. If there are no
 	 * global action handlers registered return null.
+	 *
+	 * @return a map with global action handlers
 	 */
-	public Map getGlobalActionHandlers() {
+	public Map<String, IAction> getGlobalActionHandlers() {
 		return actionHandlers;
 	}
 
@@ -407,7 +413,10 @@ public class SubActionBars extends EventManager implements IActionBars {
 	}
 
 	/**
-	 * Notification that the target part for the action bars has changed.
+	 * Notification that the target part for the action bars has changed. This
+	 * implementation does nothing.
+	 *
+	 * @param part the part to be notified.
 	 */
 	public void partChanged(IWorkbenchPart part) {
 	}

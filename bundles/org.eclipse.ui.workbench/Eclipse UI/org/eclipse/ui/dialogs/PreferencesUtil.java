@@ -38,7 +38,7 @@ public final class PreferencesUtil {
 
 	/**
 	 * Constant denoting no option.
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public static final int OPTION_NONE = 0;
@@ -49,7 +49,7 @@ public final class PreferencesUtil {
 	 * {@link #createPreferenceDialogOn(Shell, String, String[], Object, int)} or
 	 * {@link #createPropertyDialogOn(Shell, IAdaptable, String, String[], Object, int)}
 	 * .
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public static final int OPTION_FILTER_LOCKED = 1;
@@ -278,8 +278,8 @@ public final class PreferencesUtil {
 
 	/**
 	 * Return all of the properties page contributors for an element.
-	 * 
-	 * @param element
+	 *
+	 * @param element the element to process
 	 * @return {@link IPreferenceNode}[]
 	 * @since 3.4
 	 */

@@ -18,7 +18,6 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.Vector;
-
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -137,8 +136,8 @@ public class FilteredList extends Composite {
 		/**
 		 * Create a new instance of label.
 		 *
-		 * @param newString
-		 * @param image
+		 * @param newString the label
+		 * @param image     the image
 		 */
 		public Label(String newString, Image image) {
 			if (newString == null) {
@@ -152,8 +151,8 @@ public class FilteredList extends Composite {
 		/**
 		 * Return whether or not the receiver is the same as label.
 		 *
-		 * @param label
-		 * @return boolean
+		 * @param label the {@link Label} to compare
+		 * @return boolean true if the receiver is the same as the passed label
 		 */
 		public boolean equals(Label label) {
 			if (label == null) {
@@ -286,7 +285,7 @@ public class FilteredList extends Composite {
 	/**
 	 * Sets the filter matcher.
 	 *
-	 * @param filterMatcher
+	 * @param filterMatcher the {@link FilterMatcher} to set.
 	 */
 	public void setFilterMatcher(FilterMatcher filterMatcher) {
 		Assert.isNotNull(filterMatcher);
@@ -296,7 +295,7 @@ public class FilteredList extends Composite {
 	/**
 	 * Sets a custom comparator for sorting the list.
 	 *
-	 * @param comparator
+	 * @param comparator the {@link Comparator} to set.
 	 */
 	public void setComparator(Comparator comparator) {
 		Assert.isNotNull(comparator);
@@ -530,7 +529,7 @@ public class FilteredList extends Composite {
 		/**
 		 * Create a new instance of a job used to update the table.
 		 *
-		 * @param table
+		 * @param table the table to update.
 		 * @param count The number of items to update per running.
 		 */
 		public TableUpdateJob(Table table, int count) {

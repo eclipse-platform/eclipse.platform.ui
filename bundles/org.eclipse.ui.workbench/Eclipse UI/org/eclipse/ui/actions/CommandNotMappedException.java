@@ -27,15 +27,18 @@ public class CommandNotMappedException extends CommandException {
 	private static final long serialVersionUID = 1L;
 
 	/**
-	 * @param message
+	 * @param message the detail message; may be <code>null</code>.
 	 */
 	public CommandNotMappedException(String message) {
 		super(message);
 	}
 
 	/**
-	 * @param message
-	 * @param cause
+	 * Creates a new instance of this class with the specified detail message and
+	 * cause.
+	 *
+	 * @param message the detail message; may be <code>null</code>
+	 * @param cause   the cause; may be <code>null</code>.
 	 */
 	public CommandNotMappedException(String message, Throwable cause) {
 		super(message, cause);

@@ -165,7 +165,7 @@ public class SearchPattern {
 	/**
 	 * Matches text with pattern. matching is determine by matchKind.
 	 *
-	 * @param text
+	 * @param text the text to match
 	 * @return true if search pattern was matched with text false in other way
 	 */
 	public boolean matches(String text) {
@@ -515,7 +515,7 @@ public class SearchPattern {
 	 * Checks pattern's character is allowed for specified set. It could be override
 	 * if you want change logic of camelCaseMatch methods.
 	 *
-	 * @param patternChar
+	 * @param patternChar the char to check
 	 * @return true if patternChar is in set of allowed characters for pattern
 	 */
 	protected boolean isPatternCharAllowed(char patternChar) {

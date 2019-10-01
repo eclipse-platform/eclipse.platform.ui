@@ -40,8 +40,8 @@ public class WorkbenchEncoding {
 
 		/**
 		 * Create a new instance of the receiver.
-		 * 
-		 * @param definedEncodings
+		 *
+		 * @param definedEncodings the list of encodings
 		 */
 		public EncodingsRegistryReader(List<String> definedEncodings) {
 			super();

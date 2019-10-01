@@ -28,7 +28,7 @@ public abstract class NavigationLocation implements INavigationLocation {
 	/**
 	 * Constructs a NavigationLocation with its editor part.
 	 *
-	 * @param editorPart
+	 * @param editorPart the part
 	 */
 	protected NavigationLocation(IEditorPart editorPart) {
 		this.page = editorPart.getSite().getPage();

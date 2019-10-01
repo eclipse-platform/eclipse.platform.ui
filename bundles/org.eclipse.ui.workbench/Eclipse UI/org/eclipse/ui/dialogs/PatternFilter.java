@@ -153,7 +153,7 @@ public class PatternFilter extends ViewerFilter {
 	 * The pattern string for which this filter should select elements in the
 	 * viewer.
 	 *
-	 * @param patternString
+	 * @param patternString the pattern string.
 	 */
 	public void setPattern(String patternString) {
 		// these 2 strings allow the PatternFilter to be extended in
@@ -208,7 +208,7 @@ public class PatternFilter extends ViewerFilter {
 	 * may not be a valid selection since it is used merely to organize the
 	 * elements.
 	 *
-	 * @param element
+	 * @param element the element to check
 	 * @return true if this element is eligible for automatic selection
 	 */
 	public boolean isElementSelectable(Object element) {

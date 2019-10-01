@@ -101,11 +101,10 @@ public class ImportResourcesAction extends BaseSelectionListenerAction implement
 	}
 
 	/**
-	 * Sets the current selection. In for backwards compatability. Use
+	 * Sets the current selection. In for backwards compatibility. Use
 	 * selectionChanged() instead.
-	 * 
+	 *
 	 * @param selection the new selection
-	 * @deprecated
 	 */
 	@Deprecated
 	public void setSelection(IStructuredSelection selection) {

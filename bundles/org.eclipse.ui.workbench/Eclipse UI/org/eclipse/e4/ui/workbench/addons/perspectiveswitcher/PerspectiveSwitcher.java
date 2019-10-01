@@ -93,12 +93,19 @@ import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.service.event.Event;
 
+/**
+ * Class to handle perspective switching in the UI.
+ */
 public class PerspectiveSwitcher {
+
 	/**
-	 *
+	 * The ID of the perspective switcher
 	 */
 	public static final String PERSPECTIVE_SWITCHER_ID = "org.eclipse.e4.ui.PerspectiveSwitcher"; //$NON-NLS-1$
 
+	/**
+	 * The event {@link IEventBroker}.
+	 */
 	@Inject
 	protected IEventBroker eventBroker;
 
@@ -342,9 +349,21 @@ public class PerspectiveSwitcher {
 		return false;
 	}
 
+	/**
+	 *
+	 */
 	protected Point downPos = null;
+	/**
+	 *
+	 */
 	protected ToolItem dragItem = null;
+	/**
+	 *
+	 */
 	protected boolean dragging = false;
+	/**
+	 *
+	 */
 	protected Shell dragShell = null;
 
 	private void track(MouseEvent e) {
@@ -723,6 +742,10 @@ public class PerspectiveSwitcher {
 		fixSize();
 	}
 
+	/**
+	 * @param persp the perspective
+	 * @return the tool item
+	 */
 	protected ToolItem getItemFor(MPerspective persp) {
 		if (perspSwitcherToolbar == null)
 			return null;

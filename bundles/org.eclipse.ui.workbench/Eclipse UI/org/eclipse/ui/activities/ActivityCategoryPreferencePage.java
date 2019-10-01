@@ -127,7 +127,7 @@ public final class ActivityCategoryPreferencePage extends PreferencePage
 		private boolean decorate;
 
 		/**
-		 * @param decorate
+		 * @param decorate true if the label image may be decorated
 		 */
 		public CategoryLabelProvider(boolean decorate) {
 			this.decorate = decorate;
@@ -215,6 +215,9 @@ public final class ActivityCategoryPreferencePage extends PreferencePage
 		}
 	}
 
+	/**
+	 * The {@link IWorkbench}
+	 */
 	protected IWorkbench workbench;
 
 	private CheckboxTableViewer categoryViewer;
@@ -430,6 +433,9 @@ public final class ActivityCategoryPreferencePage extends PreferencePage
 				InternalActivityHelper.getEnabledCategories(workingCopy));
 	}
 
+	/**
+	 * @param category the {@link ICategory} to get the details from
+	 */
 	protected void setDetails(ICategory category) {
 		if (category == null) {
 			clearDetails();

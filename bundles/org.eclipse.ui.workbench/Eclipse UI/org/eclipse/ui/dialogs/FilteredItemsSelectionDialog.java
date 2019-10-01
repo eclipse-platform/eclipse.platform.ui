@@ -883,8 +883,6 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 	/**
 	 * Updates the progress label.
-	 *
-	 * @deprecated
 	 */
 	@Deprecated
 	public void updateProgressLabel() {
@@ -1098,7 +1096,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 * @param progressMonitor must be used to report search progress. The state of
 	 *                        this progress monitor reflects the state of the
 	 *                        filtering process.
-	 * @throws CoreException
+	 * @throws CoreException Something went wrong.
 	 */
 	protected abstract void fillContentProvider(AbstractContentProvider contentProvider, ItemsFilter itemsFilter,
 			IProgressMonitor progressMonitor) throws CoreException;
@@ -1893,7 +1891,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 * Filters items.
 		 *
 		 * @param monitor for monitoring progress
-		 * @throws CoreException
+		 * @throws CoreException Something went wrong.
 		 */
 		protected void filterContent(GranualProgressMonitor monitor) throws CoreException {
 
@@ -2100,6 +2098,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	 */
 	protected abstract class ItemsFilter {
 
+		/**
+		 * The {@link SearchPattern}.
+		 */
 		protected SearchPattern patternMatcher;
 
 		/**
@@ -2241,7 +2242,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		/**
 		 * Matches an item against filter conditions.
 		 *
-		 * @param item
+		 * @param item the item to match
 		 * @return <code>true</code> if item matches against filter conditions,
 		 *         <code>false</code> otherwise
 		 */
@@ -2251,7 +2252,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 * Checks consistency of an item. Item is inconsistent if was changed or
 		 * removed.
 		 *
-		 * @param item
+		 * @param item the item to check.
 		 * @return <code>true</code> if item is consistent, <code>false</code> if item
 		 *         is inconsistent
 		 */
@@ -2386,8 +2387,8 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		/**
 		 * Adds filtered item.
 		 *
-		 * @param item
-		 * @param itemsFilter
+		 * @param item        the item to add.
+		 * @param itemsFilter the filter to match
 		 */
 		@Override
 		public void add(Object item, ItemsFilter itemsFilter) {
@@ -2405,7 +2406,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		/**
 		 * Add all history items to <code>contentProvider</code>.
 		 *
-		 * @param itemsFilter
+		 * @param itemsFilter the filter to match
 		 */
 		public void addHistoryItems(ItemsFilter itemsFilter) {
 			if (this.selectionHistory != null) {
@@ -2475,7 +2476,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		}
 
 		/**
-		 * @param item
+		 * @param item the item to check
 		 * @return <code>true</code> if given item is part of the history
 		 */
 		public boolean isHistoryElement(Object item) {
@@ -2552,7 +2553,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		/**
 		 * Remember result of filtering.
 		 *
-		 * @param itemsFilter
+		 * @param itemsFilter the filter
 		 */
 		public void rememberResult(ItemsFilter itemsFilter) {
 			List<Object> itemsList = Collections.synchronizedList(Arrays.asList(getSortedItems()));

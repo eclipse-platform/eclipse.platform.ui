@@ -32,6 +32,11 @@ public abstract class AbstractEnabledHandler extends AbstractHandler {
 		return enabled;
 	}
 
+	/**
+	 * Sets the enabled state. Changing the state fires the HandlerEvent.
+	 *
+	 * @param isEnabled true to enable the handler, false to disable.
+	 */
 	protected void setEnabled(boolean isEnabled) {
 		if (enabled != isEnabled) {
 			enabled = isEnabled;

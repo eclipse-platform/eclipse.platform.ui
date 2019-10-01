@@ -54,6 +54,9 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 
 	private Label fMessage;
 
+	/**
+	 * Allows direct access to the filtered list.
+	 */
 	protected FilteredList fFilteredList;
 
 	private Text fFilterText;
@@ -74,7 +77,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 
 	/**
 	 * Constructs a list selection dialog.
-	 * 
+	 *
 	 * @param parent   The parent for the list.
 	 * @param renderer ILabelProvider for the list
 	 */
@@ -95,8 +98,8 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 
 	/**
 	 * Specifies if sorting, filtering and folding is case sensitive.
-	 * 
-	 * @param ignoreCase
+	 *
+	 * @param ignoreCase true if case insensitive, false otherwise.
 	 */
 	public void setIgnoreCase(boolean ignoreCase) {
 		fIgnoreCase = ignoreCase;
@@ -104,7 +107,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 
 	/**
 	 * Returns if sorting, filtering and folding is case sensitive.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean isCaseIgnored() {
@@ -114,7 +117,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	/**
 	 * Specifies whether everything or nothing should be filtered on empty filter
 	 * string.
-	 * 
+	 *
 	 * @param matchEmptyString boolean
 	 */
 	public void setMatchEmptyString(boolean matchEmptyString) {
@@ -123,8 +126,8 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 
 	/**
 	 * Specifies if multiple selection is allowed.
-	 * 
-	 * @param multipleSelection
+	 *
+	 * @param multipleSelection true if multiple selections are allowed.
 	 */
 	public void setMultipleSelection(boolean multipleSelection) {
 		fIsMultipleSelection = multipleSelection;
@@ -132,8 +135,8 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 
 	/**
 	 * Specifies whether duplicate entries are displayed or not.
-	 * 
-	 * @param allowDuplicates
+	 *
+	 * @param allowDuplicates true if duplicate entries must be displayed.
 	 */
 	public void setAllowDuplicates(boolean allowDuplicates) {
 		fAllowDuplicates = allowDuplicates;
@@ -141,7 +144,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 
 	/**
 	 * Sets the list size in unit of characters.
-	 * 
+	 *
 	 * @param width  the width of the list.
 	 * @param height the height of the list.
 	 */
@@ -152,7 +155,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 
 	/**
 	 * Sets the message to be displayed if the list is empty.
-	 * 
+	 *
 	 * @param message the message to be displayed.
 	 */
 	public void setEmptyListMessage(String message) {
@@ -161,7 +164,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 
 	/**
 	 * Sets the message to be displayed if the selection is empty.
-	 * 
+	 *
 	 * @param message the message to be displayed.
 	 */
 	public void setEmptySelectionMessage(String message) {
@@ -171,7 +174,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	/**
 	 * Sets an optional validator to check if the selection is valid. The validator
 	 * is invoked whenever the selection changes.
-	 * 
+	 *
 	 * @param validator the validator to validate the selection.
 	 */
 	public void setValidator(ISelectionStatusValidator validator) {
@@ -220,7 +223,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 
 	/**
 	 * Returns the current filter pattern.
-	 * 
+	 *
 	 * @return returns the current filter pattern or <code>null</code> if filter was
 	 *         not set.
 	 */
@@ -234,7 +237,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	/**
 	 * Returns the indices referring the current selection. To be called within
 	 * open().
-	 * 
+	 *
 	 * @return returns the indices of the current selection.
 	 */
 	protected int[] getSelectionIndices() {
@@ -245,7 +248,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	/**
 	 * Returns an index referring the first current selection. To be called within
 	 * open().
-	 * 
+	 *
 	 * @return returns the indices of the current selection.
 	 */
 	protected int getSelectionIndex() {
@@ -256,7 +259,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	/**
 	 * Sets the selection referenced by an array of elements. Empty or null array
 	 * removes selection. To be called within open().
-	 * 
+	 *
 	 * @param selection the indices of the selection.
 	 */
 	protected void setSelection(Object[] selection) {
@@ -267,7 +270,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	/**
 	 * Returns an array of the currently selected elements. To be called within or
 	 * after open().
-	 * 
+	 *
 	 * @return returns an array of the currently selected elements.
 	 */
 	protected Object[] getSelectedElements() {
@@ -277,7 +280,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 
 	/**
 	 * Returns all elements which are folded together to one entry in the list.
-	 * 
+	 *
 	 * @param index the index selecting the entry in the list.
 	 * @return returns an array of elements folded together.
 	 */
@@ -288,7 +291,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 
 	/**
 	 * Creates the message text widget and sets layout data.
-	 * 
+	 *
 	 * @param composite the parent composite of the message area.
 	 */
 	@Override
@@ -317,7 +320,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 
 	/**
 	 * Validates the current selection and updates the status line accordingly.
-	 * 
+	 *
 	 * @return boolean <code>true</code> if the current selection is valid.
 	 */
 	protected boolean validateCurrentSelection() {
@@ -354,7 +357,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 
 	/**
 	 * Creates a filtered list.
-	 * 
+	 *
 	 * @param parent the parent composite.
 	 * @return returns the filtered list widget.
 	 */
@@ -410,6 +413,13 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 		}
 	}
 
+	/**
+	 * Creates the filter text. Subclasses are allowed to override if they want the
+	 * text to be created differently and must not call super in this case.
+	 *
+	 * @param parent the parent to create the widget on
+	 * @return the created filter text widget.
+	 */
 	protected Text createFilterText(Composite parent) {
 		Text text = new Text(parent, SWT.BORDER);
 
@@ -498,7 +508,7 @@ public abstract class AbstractElementListSelectionDialog extends SelectionStatus
 	/**
 	 * Gets the optional validator used to check if the selection is valid. The
 	 * validator is invoked whenever the selection changes.
-	 * 
+	 *
 	 * @return the validator to validate the selection, or <code>null</code> if no
 	 *         validator has been set.
 	 *

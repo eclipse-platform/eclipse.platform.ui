@@ -51,8 +51,8 @@ public class ListDialog extends SelectionDialog {
 
 	/**
 	 * Create a new instance of the receiver with parent shell of parent.
-	 * 
-	 * @param parent
+	 *
+	 * @param parent the parent shell
 	 */
 	public ListDialog(Shell parent) {
 		super(parent);
@@ -130,7 +130,7 @@ public class ListDialog extends SelectionDialog {
 
 	/**
 	 * Return the style flags for the table viewer.
-	 * 
+	 *
 	 * @return int
 	 */
 	protected int getTableStyle() {

@@ -74,6 +74,7 @@ public final class ContributedAction extends CommandAction {
 	 * @param locator The appropriate service locator to use. If you use a part site
 	 *                as your locator, this action will be tied to your part.
 	 * @param element the contributed action element
+	 * @throws CommandNotMappedException if the element is not mapped to a command
 	 */
 	public ContributedAction(IServiceLocator locator, IConfigurationElement element) throws CommandNotMappedException {
 

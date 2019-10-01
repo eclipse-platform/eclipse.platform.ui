@@ -288,6 +288,7 @@ public class FilteredTree extends Composite {
 		this.parent = parent;
 		init(treeStyle, filter);
 	}
+
 	/**
 	 * Create a new instance of the receiver.
 	 *
@@ -315,7 +316,6 @@ public class FilteredTree extends Composite {
 		init(treeStyle, filter);
 	}
 
-
 	/**
 	 * Create the filtered tree.
 	 *
@@ -326,7 +326,8 @@ public class FilteredTree extends Composite {
 	 */
 	protected void init(int treeStyle, PatternFilter filter) {
 		patternFilter = filter;
-		showFilterControls = PlatformUI.getPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_FILTERED_TEXTS);
+		showFilterControls = PlatformUI.getPreferenceStore()
+				.getBoolean(IWorkbenchPreferenceConstants.SHOW_FILTERED_TEXTS);
 		createControl(parent, treeStyle);
 		createRefreshJob();
 		setInitialText(WorkbenchMessages.FilteredTree_FilterMessage);
@@ -337,8 +338,8 @@ public class FilteredTree extends Composite {
 	/**
 	 * Create the filtered tree's controls. Subclasses should override.
 	 *
-	 * @param parent
-	 * @param treeStyle
+	 * @param parent    the parent
+	 * @param treeStyle SWT style bits used to create the tree
 	 */
 	protected void createControl(Composite parent, int treeStyle) {
 		GridLayout layout = new GridLayout();
@@ -562,6 +563,12 @@ public class FilteredTree extends Composite {
 		};
 	}
 
+	/**
+	 * Updates the toolbar. The default implementation does nothing. Subclasses may
+	 * override.
+	 *
+	 * @param visible boolean
+	 */
 	protected void updateToolbar(boolean visible) {
 		// nothing to do
 	}
@@ -782,11 +789,11 @@ public class FilteredTree extends Composite {
 	/**
 	 * Set the text in the filter control.
 	 *
-	 * @param string
+	 * @param filterText the text to set.
 	 */
-	protected void setFilterText(String string) {
-		if (filterText != null) {
-			filterText.setText(string);
+	protected void setFilterText(String filterText) {
+		if (this.filterText != null) {
+			this.filterText.setText(filterText);
 			selectAll();
 		}
 	}
@@ -937,10 +944,6 @@ public class FilteredTree extends Composite {
 	 */
 	class NotifyingTreeViewer extends TreeViewer {
 
-		/**
-		 * @param parent
-		 * @param style
-		 */
 		public NotifyingTreeViewer(Composite parent, int style) {
 			super(parent, style);
 		}

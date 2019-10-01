@@ -465,6 +465,7 @@ public abstract class WorkbenchAdvisor {
 	 *
 	 * @param configurer an object for configuring the particular workbench window
 	 *                   just restored
+	 * @throws WorkbenchException exception to throw when something failed.
 	 *
 	 * @deprecated since 3.1, override
 	 *             {@link WorkbenchWindowAdvisor#postWindowRestore()} instead

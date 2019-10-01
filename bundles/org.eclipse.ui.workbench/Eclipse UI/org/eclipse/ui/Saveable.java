@@ -134,7 +134,7 @@ public abstract class Saveable extends InternalSaveable implements IAdaptable {
 	 * be the same because only one of them will be shown when prompting the user to
 	 * save.
 	 *
-	 * @param object
+	 * @param object the object to compare
 	 * @return true if this Saveable is equal to the given object
 	 */
 	@Override

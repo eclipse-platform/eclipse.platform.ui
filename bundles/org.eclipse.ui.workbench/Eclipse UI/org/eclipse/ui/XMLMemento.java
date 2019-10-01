@@ -92,19 +92,13 @@ public final class XMLMemento implements IMemento {
 			}
 
 			parser.setErrorHandler(new ErrorHandler() {
-				/**
-				 * @throws SAXException
-				 */
 				@Override
-				public void warning(SAXParseException exception) throws SAXException {
+				public void warning(SAXParseException exception) {
 					// ignore
 				}
 
-				/**
-				 * @throws SAXException
-				 */
 				@Override
-				public void error(SAXParseException exception) throws SAXException {
+				public void error(SAXParseException exception) {
 					// ignore
 				}
 
@@ -148,7 +142,8 @@ public final class XMLMemento implements IMemento {
 	 *
 	 * @param type the element node type to create on the document
 	 * @return the root memento for writing a document
-	 * @throws DOMException
+	 * @throws DOMException when the element could not be created for the passed
+	 *                      type
 	 */
 	public static XMLMemento createWriteRoot(String type) throws DOMException {
 		Document document;
@@ -225,7 +220,7 @@ public final class XMLMemento implements IMemento {
 	/**
 	 * Create a copy of the child node and append it to this node.
 	 *
-	 * @param child
+	 * @param child the child to copy
 	 * @return An IMenento for the new child node.
 	 * @throws DOMException if the child cannot be created
 	 */

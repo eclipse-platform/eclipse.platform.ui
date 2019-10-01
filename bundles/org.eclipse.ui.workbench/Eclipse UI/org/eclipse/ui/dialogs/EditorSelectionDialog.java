@@ -355,6 +355,9 @@ public class EditorSelectionDialog extends Dialog {
 		return fileName.substring(lastDot + 1, fileName.length());
 	}
 
+	/**
+	 * Fills the editor table.
+	 */
 	protected void fillEditorTable() {
 		IEditorDescriptor newSelection = selectedEditor;
 
@@ -505,6 +508,9 @@ public class EditorSelectionDialog extends Dialog {
 		return selectedEditor;
 	}
 
+	/**
+	 * Opens the prompt to select an external editor.
+	 */
 	protected void promptForExternalEditor() {
 		FileDialog dialog = new FileDialog(getShell(), SWT.OPEN | SWT.PRIMARY_MODAL | SWT.SHEET);
 		dialog.setFilterExtensions(Executable_Filters);

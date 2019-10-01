@@ -225,7 +225,7 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 	 * Note: This method does not refresh the viewer.
 	 * </p>
 	 *
-	 * @param memento
+	 * @param memento the memento with the filter actions content
 	 * @since 3.3
 	 */
 	public void restoreState(IMemento memento) {
