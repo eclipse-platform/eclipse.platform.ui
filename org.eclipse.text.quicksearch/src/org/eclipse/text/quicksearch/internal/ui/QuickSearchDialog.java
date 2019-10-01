@@ -195,7 +195,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 		public IStatus runInUIThread(IProgressMonitor mon) {
 			if (!mon.isCanceled() && progressLabel!=null && !progressLabel.isDisposed()) {
 				if (searcher==null || !searcher.isActive()) {
-					progressLabel.setText(""); //$NON-NLS-1$
+					progressLabel.setText(EMPTY_STRING);
 				} else {
 					progressLabel.setText(NLS.bind(Messages.QuickSearchDialog_searching, currentFileInfo(searcher.getCurrentFile(), animate)));
 					animate = (animate+1)%4;
@@ -231,7 +231,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 				cell.setText(text.getString());
 				cell.setStyleRanges(text.getStyleRanges());
 			} else {
-				cell.setText(""); //$NON-NLS-1$
+				cell.setText(EMPTY_STRING);
 				cell.setStyleRanges(null);
 			}
 			cell.setImage(getBlankImage());
@@ -269,7 +269,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 				};
 				cell.setStyleRanges(styleRanges);
 			} else {
-				cell.setText(""); //$NON-NLS-1$
+				cell.setText(EMPTY_STRING);
 				cell.setStyleRanges(null);
 			}
 			cell.setImage(getBlankImage());
@@ -418,10 +418,10 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 			if (initialPatternText==null) {
 				String lastSearch = settings.get(DIALOG_LAST_QUERY);
 				if (lastSearch==null) {
-					lastSearch = ""; //$NON-NLS-1$
+					lastSearch = EMPTY_STRING;
 				}
 				pattern.setText(lastSearch);
-				pattern.setSelection(0, lastSearch.length());
+				pattern.selectAll();
 			}
 			if (settings.get(DIALOG_PATH_FILTER)!=null) {
 				String filter = settings.get(DIALOG_PATH_FILTER);
@@ -903,7 +903,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 			pattern.setSelection(0, 0);
 			break;
 		case FULL_SELECTION:
-			pattern.setSelection(0, initialPatternText.length());
+			pattern.selectAll();
 			break;
 		}
 
@@ -961,7 +961,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 			}
 			IStructuredSelection sel = (IStructuredSelection) list.getSelection();
 			if (sel==null || sel.isEmpty()) {
-				details.setText(""); //$NON-NLS-1$
+				details.setText(EMPTY_STRING);
 			} else {
 				//Not empty selection
 				final int context = 100; // number of lines before and after match to include in preview
@@ -994,7 +994,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 				}
 			}
 			//empty selection or some error:
-			details.setText(""); //$NON-NLS-1$
+			details.setText(EMPTY_STRING);
 		}
 	}
 
