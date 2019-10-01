@@ -291,6 +291,7 @@ public class NavigatorContentDescriptorManager {
 							registry.put(iconKey, created);
 						}
 					});
+					image = registry.get(iconKey);
 				}
 			}
 		}

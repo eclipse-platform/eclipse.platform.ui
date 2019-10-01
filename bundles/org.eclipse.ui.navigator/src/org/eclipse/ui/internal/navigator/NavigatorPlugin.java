@@ -160,6 +160,7 @@ public class NavigatorPlugin extends AbstractUIPlugin {
 		if(image == null) {
 			ResourceLocator.imageDescriptorFromBundle(PLUGIN_ID, path)
 					.ifPresent(d -> registry.put(path, d.createImage()));
+			image = registry.get(path);
 		}
 		return image;
 	}
