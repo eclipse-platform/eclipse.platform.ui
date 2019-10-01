@@ -92,7 +92,7 @@ public interface ISelectionService {
 	 * @param listener a selection listener
 	 * @since 2.0
 	 * @see #removeSelectionListener(String, ISelectionListener)
-	 * @see SelectionListenerFactory#getVisiblePartSelectionListener(IWorkbenchPart,
+	 * @see SelectionListenerFactory#getCurrentSelection(IWorkbenchPart,
 	 *      ISelectionListener)
 	 * @see SelectionListenerFactory#getVisiblePartSelectionListener2(IWorkbenchPart,
 	 *      ISelectionListener)
@@ -146,6 +146,7 @@ public interface ISelectionService {
 	 * they will be removed when the IServiceLocator used to acquire this service is
 	 * disposed.
 	 * </p>
+	 * <p>
 	 * <b>Note:</b> only update the UI when the UI is visible. See the
 	 * {@link SelectionListenerFactory} for listeners that will only be called when
 	 * the UI is visible to the user.
