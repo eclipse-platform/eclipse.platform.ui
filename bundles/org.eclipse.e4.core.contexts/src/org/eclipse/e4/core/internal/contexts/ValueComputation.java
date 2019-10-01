@@ -29,7 +29,7 @@ public class ValueComputation extends Computation {
 	final private String name;
 
 	private Object cachedValue = NotAValue;
-	private boolean computing; // cycle detection
+	private volatile boolean computing; // cycle detection
 	private boolean valid = true;
 
 	public ValueComputation(String name, IEclipseContext originatingContext, IContextFunction computedValue) {
@@ -57,18 +57,29 @@ public class ValueComputation extends Computation {
 	public Object get() {
 		if (cachedValue != NotAValue)
 			return cachedValue;
-		if (this.computing)
-			throw new RuntimeException("Cycle while computing value " + this); //$NON-NLS-1$
+		if (computing) {
+			boolean hasCycle = originatingContext.hasComputation(this);
+			if (hasCycle) {
+				throw new RuntimeException("Cycle while computing value " + this); //$NON-NLS-1$
+			}
+		}
 
 		originatingContext.pushComputation(this);
 		computing = true;
 		try {
-			cachedValue = function.compute(originatingContext, name);
+			Object computed = function.compute(originatingContext, name);
+			cacheComputedValue(computed);
 		} finally {
 			computing = false;
 			originatingContext.popComputation(this);
 		}
 		return cachedValue;
+	}
+
+	private synchronized void cacheComputedValue(Object computed) {
+		if (cachedValue == NotAValue) {
+			cachedValue = computed;
+		}
 	}
 
 	@Override

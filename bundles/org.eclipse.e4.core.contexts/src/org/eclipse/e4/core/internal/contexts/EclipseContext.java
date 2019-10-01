@@ -767,6 +767,12 @@ public class EclipseContext implements IEclipseContext {
 		current.push(comp);
 	}
 
+	public boolean hasComputation(Computation comp) {
+		Stack<Computation> current = getCalculatedComputations();
+		boolean hasComputation = current.contains(comp);
+		return hasComputation;
+	}
+
 	public void popComputation(Computation comp) {
 		Stack<Computation> current = getCalculatedComputations();
 		Computation ended = current.pop();
