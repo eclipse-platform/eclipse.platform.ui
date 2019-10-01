@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2018 IBM Corporation and others.
+ * Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -25,16 +25,10 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.accessibility.AccessibleAdapter;
-import org.eclipse.swt.accessibility.AccessibleEvent;
-import org.eclipse.swt.events.FocusAdapter;
-import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
-import org.eclipse.swt.events.MouseAdapter;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.GridData;
@@ -55,8 +49,6 @@ import org.eclipse.ui.navigator.INavigatorFilterService;
 public class CommonFiltersTab extends CustomizationTab {
 
 	private static final String ALL = "*"; //$NON-NLS-1$
-
-	private String initialFilterTextValue = CommonNavigatorMessages.CommonFilterSelectionDialog_enter_name_of_filte_;
 
 	private Text filterText;
 
@@ -109,40 +101,8 @@ public class CommonFiltersTab extends CustomizationTab {
 		filterText = new Text(composite, SWT.SINGLE | SWT.BORDER | SWT.SEARCH | SWT.ICON_CANCEL);
 		GridData filterTextGridData = new GridData(GridData.FILL_HORIZONTAL);
 		filterText.setLayoutData(filterTextGridData);
-		filterText.setText(initialFilterTextValue);
+		filterText.setMessage(CommonNavigatorMessages.CommonFilterSelectionDialog_enter_name_of_filte_);
 		filterText.setFont(composite.getFont());
-
-		filterText.getAccessible().addAccessibleListener(
-				new AccessibleAdapter() {
-					@Override
-					public void getName(AccessibleEvent e) {
-						String filterTextString = filterText.getText();
-						if (filterTextString.length() == 0) {
-							e.result = initialFilterTextValue;
-						} else {
-							e.result = filterTextString;
-						}
-					}
-				});
-
-		filterText.addFocusListener(new FocusAdapter() {
-			@Override
-			public void focusGained(FocusEvent e) {
-				if (initialFilterTextValue.equals(filterText.getText().trim())) {
-					filterText.selectAll();
-				}
-			}
-		});
-
-		filterText.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseUp(MouseEvent e) {
-				super.mouseUp(e);
-				if (initialFilterTextValue.equals(filterText.getText().trim())) {
-					filterText.selectAll();
-				}
-			}
-		});
 
 		filterText.addKeyListener(new KeyAdapter() {
 			@Override
@@ -169,10 +129,7 @@ public class CommonFiltersTab extends CustomizationTab {
 						// if the initial filter text hasn't changed, do not try
 						// to match
 						boolean hasFocus = getTable().setFocus();
-						boolean textChanged = !initialFilterTextValue
-								.equals(filterText.getText().trim());
-						if (hasFocus && textChanged
-								&& filterText.getText().trim().length() > 0) {
+						if (hasFocus && filterText.getText().trim().length() > 0) {
 							TableItem item = getFirstHighlightedItem(getTable()
 									.getItems());
 							if (item != null) {
