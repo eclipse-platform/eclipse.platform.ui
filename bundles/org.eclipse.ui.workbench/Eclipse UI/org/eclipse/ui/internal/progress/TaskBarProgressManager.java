@@ -58,6 +58,11 @@ public class TaskBarProgressManager {
 
 	private Image overlayImage;
 
+	/**
+	 * Create a progress manager for the task item.
+	 *
+	 * @param taskItem task item to manage
+	 */
 	public TaskBarProgressManager(TaskItem taskItem) {
 		Assert.isNotNull(taskItem);
 		this.taskItem = taskItem;

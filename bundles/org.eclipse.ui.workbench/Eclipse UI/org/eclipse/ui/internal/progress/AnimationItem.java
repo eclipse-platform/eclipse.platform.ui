@@ -65,7 +65,7 @@ public abstract class AnimationItem {
 	/**
 	 * Create the canvas that will display the image.
 	 *
-	 * @param parent
+	 * @param parent the parent composite
 	 */
 	public void createControl(Composite parent) {
 
@@ -93,7 +93,7 @@ public abstract class AnimationItem {
 
 	/**
 	 * Create the animation item control.
-	 * 
+	 *
 	 * @param parent the parent Composite
 	 * @return Control
 	 */
@@ -142,7 +142,7 @@ public abstract class AnimationItem {
 
 	/**
 	 * Set the container that will be updated when this runs.
-	 * 
+	 *
 	 * @param container The animationContainer to set.
 	 */
 	void setAnimationContainer(IAnimationContainer container) {

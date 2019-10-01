@@ -92,7 +92,7 @@ public class AnimationManager {
 	/**
 	 * Add an item to the list
 	 *
-	 * @param item
+	 * @param item animation item to add
 	 */
 	void addItem(final AnimationItem item) {
 		animationProcessor.addItem(item);
@@ -101,7 +101,7 @@ public class AnimationManager {
 	/**
 	 * Remove an item from the list
 	 *
-	 * @param item
+	 * @param item animation item to remove
 	 */
 	void removeItem(final AnimationItem item) {
 		animationProcessor.removeItem(item);
@@ -110,7 +110,7 @@ public class AnimationManager {
 	/**
 	 * Return whether or not the current state is animated.
 	 *
-	 * @return boolean
+	 * @return whether or not the current state is animated
 	 */
 	boolean isAnimated() {
 		return animated;
@@ -119,7 +119,7 @@ public class AnimationManager {
 	/**
 	 * Set whether or not the receiver is animated.
 	 *
-	 * @param boolean
+	 * @param bool receivers new animated state
 	 */
 	void setAnimated(final boolean bool) {
 		animated = bool;

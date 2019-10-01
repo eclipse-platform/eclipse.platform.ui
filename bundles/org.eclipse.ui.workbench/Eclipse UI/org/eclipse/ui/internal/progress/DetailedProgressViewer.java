@@ -62,10 +62,10 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 
 	/**
 	 * Create a new instance of the receiver with a control that is a child of
-	 * parent with style style.
+	 * <i>parent</i> with <i>style</i> style.
 	 *
-	 * @param parent
-	 * @param style
+	 * @param parent the parent composite
+	 * @param style  the style for the progress viewer
 	 */
 	public DetailedProgressViewer(Composite parent, int style) {
 		scrolled = new ScrolledComposite(parent, SWT.V_SCROLL | style);
@@ -135,6 +135,13 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		setUseHashlookup(true);
 	}
 
+	/**
+	 * This method gets called when the observed object fires a property change
+	 * event.
+	 *
+	 * @param event the property change event object describing which property
+	 *              changed and how
+	 */
 	public void propertyChange(PropertyChangeEvent event) {
 		if (!IPreferenceConstants.MAX_PROGRESS_ENTRIES.equals(event.getProperty())) {
 			return;
@@ -206,8 +213,8 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	/**
 	 * Create a new item for info.
 	 *
-	 * @param info
-	 * @return ProgressInfoItem
+	 * @param info the job element the item should represent
+	 * @return ProgressInfoItem the created progress item representing the job info
 	 */
 	private ProgressInfoItem createNewItem(JobTreeElement info) {
 		final ProgressInfoItem item = new ProgressInfoItem(control, SWT.NONE, info);
@@ -254,9 +261,9 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	}
 
 	/**
-	 * Select the previous item in the receiver.
+	 * Select the previous item in the receiver. Selection will cycle.
 	 *
-	 * @param item
+	 * @param item the reference item. The item previous to this will be selected.
 	 */
 	protected void selectPrevious(ProgressInfoItem item) {
 		Control[] children = control.getChildren();
@@ -278,9 +285,9 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	}
 
 	/**
-	 * Select the next item in the receiver.
+	 * Select the next item in the receiver. Selection will cycle.
 	 *
-	 * @param item
+	 * @param item the reference item. The item next to this will be selected.
 	 */
 	protected void selectNext(ProgressInfoItem item) {
 		Control[] children = control.getChildren();
@@ -481,6 +488,11 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		scrolled.setMinSize(size);
 	}
 
+	/**
+	 * Get a copy of all progress items.
+	 *
+	 * @return all progress items
+	 */
 	public ProgressInfoItem[] getProgressInfoItems() {
 		Control[] children = control.getChildren();
 		ProgressInfoItem[] progressInfoItems = new ProgressInfoItem[children.length];

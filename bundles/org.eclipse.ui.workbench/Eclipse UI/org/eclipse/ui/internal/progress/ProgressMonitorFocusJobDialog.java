@@ -159,7 +159,7 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 	/**
 	 * Opens this dialog for the duration that the given job is running.
 	 *
-	 * @param jobToWatch
+	 * @param jobToWatch       job to watch
 	 * @param originatingShell The shell this request was created from. Do not block
 	 *                         on this shell.
 	 */

@@ -38,7 +38,6 @@ public abstract class UIJob extends Job {
 	 * this constructor will determine their display at runtime.
 	 *
 	 * @param name the job name
-	 *
 	 */
 	public UIJob(String name) {
 		super(name);
@@ -59,7 +58,7 @@ public abstract class UIJob extends Job {
 	/**
 	 * Convenience method to return a status for an exception.
 	 *
-	 * @param exception
+	 * @param exception the thrown exception
 	 * @return IStatus an error status built from the exception
 	 * @see Job
 	 */
@@ -68,9 +67,10 @@ public abstract class UIJob extends Job {
 	}
 
 	/**
+	 * Note: this message is marked final. Implementors should use runInUIThread()
+	 * instead.
+	 *
 	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-	 *      Note: this message is marked final. Implementors should use
-	 *      runInUIThread() instead.
 	 */
 	@Override
 	public final IStatus run(final IProgressMonitor monitor) {
@@ -112,8 +112,9 @@ public abstract class UIJob extends Job {
 	/**
 	 * Run the job in the UI Thread.
 	 *
-	 * @param monitor
-	 * @return IStatus
+	 * @param monitor the monitor to be used for reporting progress and responding
+	 *                to cancellation. The monitor is never <code>null</code>
+	 * @return resulting status of the run. The result must not be <code>null</code>
 	 */
 	public abstract IStatus runInUIThread(IProgressMonitor monitor);
 

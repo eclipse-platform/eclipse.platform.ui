@@ -80,6 +80,9 @@ public class WorkbenchSiteProgressService implements IWorkbenchSiteProgressServi
 	 */
 	private int busyCount = 0;
 
+	/**
+	 * Job to run UI updates.
+	 */
 	public class SiteUpdateJob extends WorkbenchJob {
 		private boolean busy;
 
@@ -178,7 +181,7 @@ public class WorkbenchSiteProgressService implements IWorkbenchSiteProgressServi
 	/**
 	 * Get the job change listener for this site.
 	 *
-	 * @param useHalfBusyCursor
+	 * @param useHalfBusyCursor <code>true</code> to use half busy cursor
 	 * @return IJobChangeListener
 	 */
 	public IJobChangeListener getJobChangeListener(final boolean useHalfBusyCursor) {
@@ -349,6 +352,11 @@ public class WorkbenchSiteProgressService implements IWorkbenchSiteProgressServi
 		return updateJob;
 	}
 
+	/**
+	 * Update UI to show busy state.
+	 *
+	 * @param busy <code>true</code> if we are busy
+	 */
 	protected void showBusy(boolean busy) {
 		MPart part = site.getModel();
 		if (busy) {

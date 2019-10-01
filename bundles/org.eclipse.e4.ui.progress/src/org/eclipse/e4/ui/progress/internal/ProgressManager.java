@@ -63,11 +63,10 @@ import org.eclipse.swt.widgets.Display;
  */
 public class ProgressManager extends ProgressProvider {
 	/**
-	 * A property to determine if the job was run in the dialog. Kept for
-	 * backwards compatability.
+	 * A property to determine if the job was run in the dialog. Kept for backwards
+	 * compatibility.
 	 *
-	 * @deprecated
-	 * @see IProgressConstants#PROPERTY_IN_DIALOG
+	 * @deprecated use IProgressConstants#PROPERTY_IN_DIALOG instead
 	 */
 	@Deprecated
 	public static final QualifiedName PROPERTY_IN_DIALOG = IProgressConstants.PROPERTY_IN_DIALOG;
@@ -493,10 +492,10 @@ public class ProgressManager extends ProgressProvider {
 	}
 
 	/**
-	 * The job in JobInfo is now sleeping. Refresh it if we are showing it,
-	 * remove it if not.
+	 * The job in JobInfo is now sleeping. Refresh it if we are showing it, remove
+	 * it if not.
 	 *
-	 * @param info
+	 * @param info the job going to sleep
 	 */
 	protected void sleepJobInfo(JobInfo info) {
 		if (isInfrastructureJob(info.getJob()))
@@ -574,7 +573,7 @@ public class ProgressManager extends ProgressProvider {
 	/**
 	 * Refresh the IJobProgressManagerListeners as a result of a change in info.
 	 *
-	 * @param info
+	 * @param info the updated job info
 	 */
 	public void refreshJobInfo(JobInfo info) {
 		GroupInfo group = info.getGroupInfo();
@@ -592,7 +591,7 @@ public class ProgressManager extends ProgressProvider {
 	/**
 	 * Refresh the IJobProgressManagerListeners as a result of a change in info.
 	 *
-	 * @param info
+	 * @param info the updated job group
 	 */
 	public void refreshGroup(GroupInfo info) {
 
@@ -649,7 +648,7 @@ public class ProgressManager extends ProgressProvider {
 	/**
 	 * Refresh the content providers as a result of an addition of info.
 	 *
-	 * @param info
+	 * @param info the added job info
 	 */
 	public void addJobInfo(JobInfo info) {
 		GroupInfo group = info.getGroupInfo();
@@ -710,7 +709,7 @@ public class ProgressManager extends ProgressProvider {
 	/**
 	 * Return the current job infos filtered on debug mode.
 	 *
-	 * @param debug
+	 * @param debug if the listener is in debug mode
 	 * @return JobInfo[]
 	 */
 	public JobInfo[] getJobInfos(boolean debug) {
@@ -730,7 +729,7 @@ public class ProgressManager extends ProgressProvider {
 	/**
 	 * Return the current root elements filtered on the debug mode.
 	 *
-	 * @param debug
+	 * @param debug if the listener is in debug mode
 	 * @return JobTreeElement[]
 	 */
 	public JobTreeElement[] getRootElements(boolean debug) {

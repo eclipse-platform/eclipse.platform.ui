@@ -55,18 +55,21 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 
 	private long watchTime = -1;
 
+	/** Flag to prevent nested closes. */
 	protected boolean alreadyClosed = false;
 
 	private IProgressMonitor wrapperedMonitor;
 
-	// Cache initial enablement in case the enablement state is set
-	// before the button is created
+	/**
+	 * Cache initial enablement in case the enablement state is set before the
+	 * button is created
+	 */
 	protected boolean enableDetailsButton = false;
 
 	/**
 	 * Create a new instance of the receiver.
 	 *
-	 * @param parent
+	 * @param parent dialogs parent shell
 	 */
 	public ProgressMonitorJobsDialog(Shell parent) {
 		super(parent);
@@ -81,8 +84,8 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 
 	/**
 	 * Create the extensions to the dialog area.
-	 * 
-	 * @param parent
+	 *
+	 * @param parent the parent composite
 	 */
 	protected void createExtendedDialogArea(Composite parent) {
 		viewerComposite = new Composite(parent, SWT.NONE);
@@ -99,7 +102,6 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 	/**
 	 * The details button has been selected. Open or close the progress viewer as
 	 * appropriate.
-	 *
 	 */
 	void handleDetailsButtonSelect() {
 		Shell shell = getShell();

@@ -36,8 +36,8 @@ public class JobsViewPreferenceDialog extends ViewSettingsDialog {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * 
-	 * @param parentShell
+	 *
+	 * @param parentShell the shell the dialog is associated with
 	 */
 	public JobsViewPreferenceDialog(Shell parentShell) {
 		super(parentShell);

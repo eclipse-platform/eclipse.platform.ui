@@ -65,7 +65,7 @@ public abstract class AnimationItem {
 	/**
 	 * Create the canvas that will display the image.
 	 *
-	 * @param parent
+	 * @param parent the parent composite
 	 */
 	public void createControl(Composite parent) {
 

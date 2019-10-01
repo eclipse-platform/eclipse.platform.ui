@@ -62,8 +62,8 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	 * Create a new instance of the receiver with a control that is a child of
 	 * parent with style style.
 	 *
-	 * @param parent
-	 * @param style
+	 * @param parent the parent composite
+	 * @param style  the style for the progress viewer
 	 */
 	public DetailedProgressViewer(Composite parent, int style,
 			IProgressService progressService, FinishedJobs finishedJobs) {
@@ -194,8 +194,8 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	/**
 	 * Create a new item for info.
 	 *
-	 * @param info
-	 * @return ProgressInfoItem
+	 * @param info the job element the item should represent
+	 * @return ProgressInfoItem the created progress item representing the job info
 	 */
 	private ProgressInfoItem createNewItem(JobTreeElement info) {
 		final ProgressInfoItem item = new ProgressInfoItem(control, SWT.NONE,
@@ -249,7 +249,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	/**
 	 * Select the previous item in the receiver.
 	 *
-	 * @param item
+	 * @param item the reference item. The item previous to this will be selected.
 	 */
 	protected void selectPrevious(ProgressInfoItem item) {
 		Control[] children = control.getChildren();
@@ -273,7 +273,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	/**
 	 * Select the next item in the receiver.
 	 *
-	 * @param item
+	 * @param item the reference item. The item next to this will be selected.
 	 */
 	protected void selectNext(ProgressInfoItem item) {
 		Control[] children = control.getChildren();
@@ -477,6 +477,11 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		}
 	}
 
+	/**
+	 * Get a copy of all progress items.
+	 *
+	 * @return all progress items
+	 */
 	public ProgressInfoItem[] getProgressInfoItems() {
 		Control[] children = control.getChildren();
 		ProgressInfoItem[] progressInfoItems = new ProgressInfoItem[children.length];

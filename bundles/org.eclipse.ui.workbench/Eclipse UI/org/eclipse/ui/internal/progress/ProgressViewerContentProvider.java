@@ -28,6 +28,7 @@ import org.eclipse.ui.progress.WorkbenchJob;
  * The ProgressViewerContentProvider is the content provider progress viewers.
  */
 public class ProgressViewerContentProvider extends ProgressContentProvider {
+	/** Viewer to show content. */
 	protected AbstractProgressViewer progressViewer;
 
 	private KeptJobsListener keptJobListener;
@@ -56,6 +57,9 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 		startListening();
 	}
 
+	/**
+	 * Stop listening on progress item changes.
+	 */
 	public void stopListening() {
 		ProgressViewUpdater.getSingleton().removeCollector(this);
 		if (keptJobListener != null) {
@@ -64,6 +68,9 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 		refreshNeeded = true;
 	}
 
+	/**
+	 * Start listening on progress item changes.
+	 */
 	public void startListening() {
 		ProgressViewUpdater.getSingleton().addCollector(this);
 		if (keptJobListener != null) {

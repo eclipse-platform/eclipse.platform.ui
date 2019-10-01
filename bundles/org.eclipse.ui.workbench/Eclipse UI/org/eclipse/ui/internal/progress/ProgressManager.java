@@ -86,8 +86,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 * A property to determine if the job was run in the dialog. Kept for backwards
 	 * compatibility.
 	 *
-	 * @deprecated
-	 * @see IProgressConstants#PROPERTY_IN_DIALOG
+	 * @deprecated use IProgressConstants#PROPERTY_IN_DIALOG instead
 	 */
 	@Deprecated
 	public static final QualifiedName PROPERTY_IN_DIALOG = IProgressConstants.PROPERTY_IN_DIALOG;
@@ -209,13 +208,19 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		/**
 		 * Creates a monitor on the supplied job.
 		 *
-		 * @param newJob
+		 * @param newJob  the job this monitor is created for
+		 * @param jobInfo the info object for the job
 		 */
 		JobMonitor(Job newJob, JobInfo jobInfo) {
 			job = newJob;
 			info = jobInfo;
 		}
 
+		/**
+		 * Get the monitored job's information.
+		 *
+		 * @return job info
+		 */
 		public JobInfo getJobInfo() {
 			return info;
 		}
@@ -223,7 +228,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		/**
 		 * Adds monitor as another monitor that
 		 *
-		 * @param monitor
+		 * @param monitor the listening monitor to add
 		 */
 		public void addProgressListener(IProgressMonitorWithBlocking monitor) {
 			Assert.isNotNull(monitor);
@@ -237,6 +242,11 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			}
 		}
 
+		/**
+		 * Removes progress listener.
+		 *
+		 * @param monitor the listening monitor to remove
+		 */
 		public void removeProgresListener(IProgressMonitorWithBlocking monitor) {
 			Set<IProgressMonitorWithBlocking> newSet = new LinkedHashSet<>(monitors);
 			newSet.remove(monitor);
@@ -342,6 +352,9 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		Job.getJobManager().addJobChangeListener(this.changeListener);
 	}
 
+	/**
+	 * Send pending notifications to listeners.
+	 */
 	/* Visible for testing */ public void notifyListeners() {
 		Set<GroupInfo> localPendingGroupUpdates, localPendingGroupRemoval;
 		Map<JobInfo, Set<IJobProgressManagerListener>> localPendingJobUpdates, localPendingJobAddition,
@@ -504,7 +517,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 * The job in JobInfo is now sleeping. Refreshes it if we are showing it,
 	 * removes it if not.
 	 *
-	 * @param info
+	 * @param info the job going to sleep
 	 */
 	protected void sleepJobInfo(JobInfo info) {
 		GroupInfo group = info.getGroupInfo();
@@ -577,8 +590,8 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 * Returns a monitor for the job. Checks if we cached a monitor for this job
 	 * previously for a long operation timeout check.
 	 *
-	 * @param job
-	 * @return IProgressMonitor
+	 * @param job the job to (progress) monitor
+	 * @return a monitor for the job. Might be an existing monitor for this job.
 	 */
 	public JobMonitor progressFor(Job job) {
 		return runnableMonitors.computeIfAbsent(job, j -> new JobMonitor(j, new JobInfo(j)));
@@ -605,7 +618,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	/**
 	 * Refreshes the IJobProgressManagerListeners as a result of a change in info.
 	 *
-	 * @param info
+	 * @param info the updated job info
 	 */
 	public void refreshJobInfo(JobInfo info) {
 		synchronized (pendingUpdatesMutex) {
@@ -617,7 +630,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	/**
 	 * Refreshes the IJobProgressManagerListeners as a result of a change in info.
 	 *
-	 * @param info
+	 * @param info the updated job group
 	 */
 	public void refreshGroup(GroupInfo info) {
 		synchronized (pendingUpdatesMutex) {
@@ -656,7 +669,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	/**
 	 * Refreshes the content providers as a result of an addition of info.
 	 *
-	 * @param info
+	 * @param info the added job info
 	 */
 	public void addJobInfo(JobInfo info) {
 		GroupInfo group = info.getGroupInfo();
@@ -706,7 +719,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	/**
 	 * Returns the current job infos filtered on debug mode.
 	 *
-	 * @param debug
+	 * @param debug if the listener is in debug mode
 	 * @return JobInfo[]
 	 */
 	public JobInfo[] getJobInfos(boolean debug) {
@@ -717,7 +730,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	/**
 	 * Returns the current root elements filtered on the debug mode.
 	 *
-	 * @param debug
+	 * @param debug if the listener is in debug mode
 	 * @return JobTreeElement[]
 	 */
 	public JobTreeElement[] getRootElements(boolean debug) {
@@ -1054,7 +1067,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	/**
 	 * Sets whether or not the ProgressViewUpdater should show system jobs.
 	 *
-	 * @param showSystem
+	 * @param showSystem <code>true</code> to show system jobs
 	 */
 	public void setShowSystemJobs(boolean showSystem) {
 		ProgressViewUpdater updater = ProgressViewUpdater.getSingleton();

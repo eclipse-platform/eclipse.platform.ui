@@ -163,12 +163,14 @@ public class ProgressInfoItem extends Composite {
 	}
 
 	/**
-	 * Create a new instance of the receiver with the specified parent, style
-	 * and info object/
+	 * Create a new instance of the receiver with the specified parent, style and
+	 * info object/
 	 *
-	 * @param parent
-	 * @param style
-	 * @param progressInfo
+	 * @param parent          the parent composite
+	 * @param style           the style to use for the info item's composite
+	 * @param progressInfo    the job element to represent
+	 * @param progressService service to do progress related work
+	 * @param finishedJobs    the singleton to store finished jobs which should kept
 	 */
 	public ProgressInfoItem(Composite parent, int style,
 			JobTreeElement progressInfo, IProgressService progressService,
@@ -382,9 +384,8 @@ public class ProgressInfoItem extends Composite {
 	/**
 	 * Get the name and status for a jobInfo
 	 *
-	 * @param jobInfo
-	 *
-	 * @return String
+	 * @param jobInfo job element to get display string for
+	 * @return display string for job
 	 */
 	public String getJobNameAndStatus(JobInfo jobInfo) {
 
@@ -788,8 +789,10 @@ public class ProgressInfoItem extends Composite {
 
 	}
 
+	/**
+	 * The action/trigger associated with this progress item should be executed.
+	 */
 	public void executeTrigger() {
-
 		Object data = link.getData(TRIGGER_KEY);
 		if (data instanceof IAction) {
 			IAction action = (IAction) data;
@@ -852,10 +855,10 @@ public class ProgressInfoItem extends Composite {
 	/**
 	 * Set the color base on the index
 	 *
-	 * @param i
+	 * @param row the item's index in presentation
 	 */
-	public void setColor(int i) {
-		currentIndex = i;
+	public void setColor(int row) {
+		currentIndex = row;
 
 		if (selected) {
 			setAllBackgrounds(getDisplay().getSystemColor(
@@ -865,7 +868,7 @@ public class ProgressInfoItem extends Composite {
 			return;
 		}
 
-		if (i % 2 == 0) {
+		if (row % 2 == 0) {
 			setAllBackgrounds(JFaceResources.getColorRegistry().get(
 					DARK_COLOR_KEY));
 		} else {
@@ -944,7 +947,7 @@ public class ProgressInfoItem extends Composite {
 	/**
 	 * Return whether or not the receiver is selected.
 	 *
-	 * @return boolean
+	 * @return receiver selected state
 	 */
 	boolean isSelected() {
 		return selected;

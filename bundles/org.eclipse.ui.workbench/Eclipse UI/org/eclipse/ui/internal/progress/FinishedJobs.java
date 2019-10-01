@@ -31,15 +31,15 @@ import org.eclipse.ui.progress.IProgressConstants;
  */
 public final class FinishedJobs extends EventManager {
 
-	/*
-	 * Interface for notify listeners.
+	/**
+	 * Interface to notify listeners.
 	 */
 	public interface KeptJobsListener {
 
 		/**
 		 * A job to be kept has finished
 		 *
-		 * @param jte
+		 * @param jte the element that finished
 		 */
 		void finished(JobTreeElement jte);
 
@@ -61,6 +61,11 @@ public final class FinishedJobs extends EventManager {
 
 	private static JobTreeElement[] emptyInfos;
 
+	/**
+	 * Returns the singleton instance of this class
+	 *
+	 * @return the singleton instance of this class
+	 */
 	public static synchronized FinishedJobs getInstance() {
 		if (theInstance == null) {
 			theInstance = new FinishedJobs();
@@ -144,6 +149,8 @@ public final class FinishedJobs extends EventManager {
 
 	/**
 	 * Register for notification.
+	 *
+	 * @param l listener to add. Not {@code null}.
 	 */
 	public void addListener(KeptJobsListener l) {
 		addListenerObject(l);
@@ -151,6 +158,8 @@ public final class FinishedJobs extends EventManager {
 
 	/**
 	 * Deregister for notification.
+	 *
+	 * @param l listener to remove. Not {@code null}.
 	 */
 	void removeListener(KeptJobsListener l) {
 		removeListenerObject(l);
@@ -276,6 +285,9 @@ public final class FinishedJobs extends EventManager {
 		}
 	}
 
+	/**
+	 * Remove all kept jobs with result status {@link IStatus#ERROR error}.
+	 */
 	public void removeErrorJobs() {
 		JobTreeElement[] infos = getKeptElements();
 		for (JobTreeElement info : infos) {
@@ -351,8 +363,9 @@ public final class FinishedJobs extends EventManager {
 	/**
 	 * Get the date that indicates the finish time.
 	 *
-	 * @param jte
-	 * @return Date
+	 * @param jte job element to get finish date for
+	 * @return finish date of the requested job element or <code>null</code> if
+	 *         unknown element
 	 */
 	public Date getFinishDate(JobTreeElement jte) {
 		Long o = finishedTime.get(jte);
@@ -365,8 +378,8 @@ public final class FinishedJobs extends EventManager {
 	/**
 	 * Return whether or not the kept infos have the element.
 	 *
-	 * @param element
-	 * @return boolean
+	 * @param element the job element to check
+	 * @return <code>true</code> if requested element is configured to be kept
 	 */
 	public boolean isKept(JobTreeElement element) {
 		return keptjobinfos.contains(element);
@@ -394,7 +407,7 @@ public final class FinishedJobs extends EventManager {
 
 	/**
 	 * Return the set of kept jobs.
-	 * 
+	 *
 	 * @return Set
 	 */
 	Set<JobTreeElement> getKeptAsSet() {

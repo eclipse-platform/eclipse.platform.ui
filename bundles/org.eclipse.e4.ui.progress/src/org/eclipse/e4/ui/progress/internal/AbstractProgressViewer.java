@@ -24,13 +24,15 @@ public abstract class AbstractProgressViewer extends StructuredViewer {
 
 	/**
 	 * Add the elements to the receiver.
-	 * @param elements
+	 *
+	 * @param elements job tree elements to add
 	 */
 	public abstract void add(Object[] elements);
 
 	/**
 	 * Remove the elements from the receiver.
-	 * @param elements
+	 *
+	 * @param elements job tree elements to remove
 	 */
 	public abstract void remove(Object[] elements);
 }

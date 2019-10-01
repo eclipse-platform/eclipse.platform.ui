@@ -270,7 +270,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	/**
 	 * Clears the cursor on the supplied control.
 	 *
-	 * @param control
+	 * @param control the control where custom cursor is removed
 	 */
 	private void clearCursor(Control control) {
 		if (control != null && !control.isDisposed()) {
@@ -306,7 +306,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 
 	/**
 	 * Returns the progress monitor being used for this dialog. This allows
-	 * recursive blockages to also respond to cancelation.
+	 * recursive blockages to also respond to cancellation.
 	 *
 	 * @return IProgressMonitor
 	 */
@@ -318,8 +318,9 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	 * Requests that the blocked jobs dialog be closed. The supplied monitor must be
 	 * the same one that was passed to the createBlockedDialog method.
 	 *
-	 * @param monitor
-	 * @return IProgressMonitor
+	 * @param monitor the monitor associated with this block dialog. Dialog will not
+	 *                close if it is another monitor.
+	 * @return <code>true</code> if successfully closed
 	 */
 	public boolean close(IProgressMonitor monitor) {
 		// ignore requests to close the dialog from all but the first monitor

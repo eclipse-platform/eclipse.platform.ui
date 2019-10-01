@@ -86,9 +86,9 @@ public class DeferredTreeContentManager {
 	 * Create a new instance of the receiver using the supplied content provider and
 	 * viewer. Run any jobs using the site.
 	 *
-	 * @param provider
-	 * @param viewer
-	 * @param site
+	 * @param provider content provider
+	 * @param viewer   content viewer
+	 * @param site     part site
 	 * @deprecated in 3.4. provider is not used by this class
 	 */
 	@Deprecated
@@ -114,8 +114,8 @@ public class DeferredTreeContentManager {
 	 * Create a new instance of the receiver using the supplied content provider and
 	 * viewer. Run any jobs using the site.
 	 *
-	 * @param viewer
-	 * @param site
+	 * @param viewer content viewer
+	 * @param site   part site
 	 *
 	 * @since 3.4
 	 */
@@ -189,7 +189,7 @@ public class DeferredTreeContentManager {
 	 * Return the IDeferredWorkbenchAdapter for element or the element if it is an
 	 * instance of IDeferredWorkbenchAdapter. If it does not exist return null.
 	 *
-	 * @param element
+	 * @param element element to adapt
 	 * @return IDeferredWorkbenchAdapter or <code>null</code>
 	 */
 	protected IDeferredWorkbenchAdapter getAdapter(Object element) {
@@ -297,9 +297,9 @@ public class DeferredTreeContentManager {
 	/**
 	 * Create a UIJob to add the children to the parent in the tree viewer.
 	 *
-	 * @param parent
-	 * @param children
-	 * @param monitor
+	 * @param parent   the parent object being filled in
+	 * @param children the elements being added
+	 * @param monitor  a progress monitor
 	 */
 	protected void addChildren(final Object parent, final Object[] children, IProgressMonitor monitor) {
 		WorkbenchJob updateJob = new WorkbenchJob(ProgressMessages.DeferredTreeContentManager_AddingChildren) {
@@ -322,7 +322,7 @@ public class DeferredTreeContentManager {
 	 * Return whether or not the element is or adapts to an
 	 * IDeferredWorkbenchAdapter.
 	 *
-	 * @param element
+	 * @param element the element to test
 	 * @return boolean <code>true</code> if the element is an
 	 *         IDeferredWorkbenchAdapter
 	 */
@@ -334,7 +334,7 @@ public class DeferredTreeContentManager {
 	 * Run a job to clear the placeholder. This is used when the update for the tree
 	 * is complete so that the user is aware that no more updates are pending.
 	 *
-	 * @param placeholder
+	 * @param placeholder placeholder to clear
 	 */
 	protected void runClearPlaceholderJob(final PendingUpdateAdapter placeholder) {
 		if (placeholder.isRemoved() || !PlatformUI.isWorkbenchRunning()) {
@@ -373,7 +373,7 @@ public class DeferredTreeContentManager {
 	 * Cancel all jobs that are fetching content for the given parent or any of its
 	 * children.
 	 *
-	 * @param parent
+	 * @param parent the root to cancel
 	 */
 	public void cancel(Object parent) {
 		if (parent == null) {

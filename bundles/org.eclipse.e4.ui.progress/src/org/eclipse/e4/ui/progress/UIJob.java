@@ -39,9 +39,7 @@ public abstract class UIJob extends Job {
 	 * used will be the one from the workbench if this is available. UIJobs with
 	 * this constructor will determine their display at runtime.
 	 *
-	 * @param name
-	 *            the job name
-	 *
+	 * @param name the job name
 	 */
 	public UIJob(String name) {
 		super(name);
@@ -64,7 +62,7 @@ public abstract class UIJob extends Job {
 	/**
 	 * Convenience method to return a status for an exception.
 	 *
-	 * @param exception
+	 * @param exception the thrown exception
 	 * @return IStatus an error status built from the exception
 	 * @see Job
 	 */
@@ -73,9 +71,10 @@ public abstract class UIJob extends Job {
 	}
 
 	/**
+	 * Note: this message is marked final. Implementors should use runInUIThread()
+	 * instead.
+	 *
 	 * @see org.eclipse.core.runtime.jobs.Job#run(org.eclipse.core.runtime.IProgressMonitor)
-	 *      Note: this message is marked final. Implementors should use
-	 *      runInUIThread() instead.
 	 */
 	@Override
 	public final IStatus run(final IProgressMonitor monitor) {
@@ -119,8 +118,9 @@ public abstract class UIJob extends Job {
 	/**
 	 * Run the job in the UI Thread.
 	 *
-	 * @param monitor
-	 * @return IStatus
+	 * @param monitor the monitor to be used for reporting progress and responding
+	 *                to cancellation. The monitor is never <code>null</code>
+	 * @return resulting status of the run. The result must not be <code>null</code>
 	 */
 	public abstract IStatus runInUIThread(IProgressMonitor monitor);
 
@@ -159,12 +159,25 @@ public abstract class UIJob extends Job {
 		return cachedDisplay;
 	}
 
+	/**
+	 * Convenience method to return a status for a throwable.
+	 *
+	 * @param t the thrown throwable
+	 * @return IStatus an error status built from the exception
+	 */
 	public static IStatus getStatus(Throwable t) {
 		String message = StatusUtil.getLocalizedMessage(t);
 
 		return newError(message, t);
 	}
 
+	/**
+	 * Convenience method to return a status for a throwable including a message.
+	 *
+	 * @param message error message
+	 * @param t       the thrown throwable
+	 * @return IStatus an error status built from the exception
+	 */
 	public static IStatus newError(String message, Throwable t) {
 		String pluginId = IProgressConstants.PLUGIN_ID;
 		int errorCode = IStatus.OK;
@@ -181,6 +194,11 @@ public abstract class UIJob extends Job {
 				StatusUtil.getCause(t));
 	}
 
+	/**
+	 * Returns UI synchronizer
+	 *
+	 * @return UI synchronizer
+	 */
 	protected UISynchronize getUiSynchronize() {
 		return Services.getInstance().getUISynchronize();
 	}

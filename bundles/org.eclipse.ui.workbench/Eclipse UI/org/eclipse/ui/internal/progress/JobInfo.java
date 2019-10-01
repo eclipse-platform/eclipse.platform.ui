@@ -46,7 +46,7 @@ public class JobInfo extends JobTreeElement {
 	/**
 	 * Creates a top level JobInfo.
 	 *
-	 * @param enclosingJob
+	 * @param enclosingJob the job to represent by this info
 	 */
 	protected JobInfo(Job enclosingJob) {
 		this.job = enclosingJob;
@@ -55,7 +55,7 @@ public class JobInfo extends JobTreeElement {
 	/**
 	 * Adds the subtask to the receiver.
 	 *
-	 * @param subTaskName
+	 * @param subTaskName name for the sub task
 	 */
 	void addSubTask(String subTaskName) {
 		children.add(new SubTaskInfo(this, subTaskName));

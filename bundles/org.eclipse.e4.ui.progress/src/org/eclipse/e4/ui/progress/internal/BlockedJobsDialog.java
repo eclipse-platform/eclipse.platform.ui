@@ -357,11 +357,12 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 	}
 
 	/**
-	 * Requests that the blocked jobs dialog be closed. The supplied monitor
-	 * must be the same one that was passed to the createBlockedDialog method.
+	 * Requests that the blocked jobs dialog be closed. The supplied monitor must be
+	 * the same one that was passed to the createBlockedDialog method.
 	 *
-	 * @param monitor
-	 * @return IProgressMonitor
+	 * @param monitor the monitor associated with this block dialog. Dialog will not
+	 *                close if it is another monitor.
+	 * @return <code>true</code> if successfully closed
 	 */
 	public boolean close(IProgressMonitor monitor) {
 		// ignore requests to close the dialog from all but the first monitor

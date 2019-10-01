@@ -23,19 +23,22 @@ interface IAnimationProcessor {
 
 	/**
 	 * Add an item to the list of the items we are updating.
-	 * @param item
+	 * 
+	 * @param item animation item to add
 	 */
 	void addItem(AnimationItem item);
 
 	/**
 	 * Remove an item from the list of the items we are updating.
-	 * @param item
+	 * 
+	 * @param item animation item to remove
 	 */
 	void removeItem(AnimationItem item);
 
 	/**
 	 * Return whether or not the receiver has any items.
-	 * @return
+	 * 
+	 * @return <code>true</code> if there are items
 	 */
 	boolean hasItems();
 
@@ -52,16 +55,17 @@ interface IAnimationProcessor {
 	void animationFinished();
 
 	/**
-	 * Get the preferred width of the types of items this
-	 * processor manages.
-	 * @return
+	 * Get the preferred width of the types of items this processor manages.
+	 * 
+	 * @return preferred width
 	 */
 	int getPreferredWidth();
 
 	/**
 	 * Return whether or not this is a job used by the processor.
-	 * @param job
-	 * @return
+	 * 
+	 * @param job the job to check
+	 * @return <code>true</code> if this job is used by the processor
 	 */
 	boolean isProcessorJob(Job job);
 

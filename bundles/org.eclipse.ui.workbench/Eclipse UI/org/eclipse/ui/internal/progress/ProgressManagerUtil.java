@@ -374,7 +374,7 @@ public class ProgressManagerUtil {
 	 * If there are any modal shells open reschedule openJob to wait until they are
 	 * closed. Return true if it rescheduled, false if there is nothing blocking it.
 	 *
-	 * @param openJob
+	 * @param openJob the job to reschedule (with delay) when modal dialog is open
 	 * @return boolean. true if the job was rescheduled due to modal dialogs.
 	 */
 	public static boolean rescheduleIfModalShellOpen(Job openJob) {
