@@ -56,9 +56,9 @@ public interface ISelectionService {
 	 *
 	 * @param listener a selection listener
 	 * @see #removeSelectionListener(ISelectionListener)
-	 * @see SelectionListenerFactory#getVisiblePartSelectionListener(IWorkbenchPart,
+	 * @see SelectionListenerFactory#createVisibleListener(IWorkbenchPart,
 	 *      ISelectionListener)
-	 * @see SelectionListenerFactory#getVisiblePartSelectionListener2(IWorkbenchPart,
+	 * @see SelectionListenerFactory#createVisibleSelfMutedListener(IWorkbenchPart,
 	 *      ISelectionListener)
 	 */
 	void addSelectionListener(ISelectionListener listener);
@@ -92,9 +92,9 @@ public interface ISelectionService {
 	 * @param listener a selection listener
 	 * @since 2.0
 	 * @see #removeSelectionListener(String, ISelectionListener)
-	 * @see SelectionListenerFactory#getCurrentSelection(IWorkbenchPart,
+	 * @see SelectionListenerFactory#createVisibleListener(IWorkbenchPart,
 	 *      ISelectionListener)
-	 * @see SelectionListenerFactory#getVisiblePartSelectionListener2(IWorkbenchPart,
+	 * @see SelectionListenerFactory#createVisibleSelfMutedListener(IWorkbenchPart,
 	 *      ISelectionListener)
 	 */
 	void addSelectionListener(String partId, ISelectionListener listener);
@@ -120,9 +120,9 @@ public interface ISelectionService {
 	 *
 	 * @param listener a selection listener
 	 * @see #removePostSelectionListener(ISelectionListener)
-	 * @see SelectionListenerFactory#getVisiblePartSelectionListener(IWorkbenchPart,
+	 * @see SelectionListenerFactory#createVisibleListener(IWorkbenchPart,
 	 *      ISelectionListener)
-	 * @see SelectionListenerFactory#getVisiblePartSelectionListener2(IWorkbenchPart,
+	 * @see SelectionListenerFactory#createVisibleSelfMutedListener(IWorkbenchPart,
 	 *      ISelectionListener)
 	 */
 	void addPostSelectionListener(ISelectionListener listener);
@@ -156,9 +156,9 @@ public interface ISelectionService {
 	 * @param listener a selection listener
 	 * @since 2.0
 	 * @see #removePostSelectionListener(String, ISelectionListener)
-	 * @see SelectionListenerFactory#getVisiblePartSelectionListener(IWorkbenchPart,
+	 * @see SelectionListenerFactory#createVisibleListener(IWorkbenchPart,
 	 *      ISelectionListener)
-	 * @see SelectionListenerFactory#getVisiblePartSelectionListener2(IWorkbenchPart,
+	 * @see SelectionListenerFactory#createVisibleSelfMutedListener(IWorkbenchPart,
 	 *      ISelectionListener)
 	 */
 	void addPostSelectionListener(String partId, ISelectionListener listener);

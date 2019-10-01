@@ -46,9 +46,9 @@ public interface ISelectionListener extends EventListener {
 	 * @param part      the workbench part containing the selection
 	 * @param selection the current selection. This may be <code>null</code> if
 	 *                  <code>INullSelectionListener</code> is implemented.
-	 * @see SelectionListenerFactory#getVisiblePartSelectionListener(IWorkbenchPart,
+	 * @see SelectionListenerFactory#createVisibleListener(IWorkbenchPart,
 	 *      ISelectionListener)
-	 * @see SelectionListenerFactory#getVisiblePartSelectionListener2(IWorkbenchPart,
+	 * @see SelectionListenerFactory#createVisibleSelfMutedListener(IWorkbenchPart,
 	 *      ISelectionListener)
 	 */
 	void selectionChanged(IWorkbenchPart part, ISelection selection);
