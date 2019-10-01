@@ -1199,7 +1199,7 @@ public interface IWorkbenchRegistryConstants {
 	/**
 	 * The name of the element describing splash handlers. Value
 	 * <code>splashHandler</code>.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	String TAG_SPLASH_HANDLER = "splashHandler"; //$NON-NLS-1$
@@ -1207,7 +1207,7 @@ public interface IWorkbenchRegistryConstants {
 	/**
 	 * The name of the element describing splash handler product bindings. Value
 	 * <code>splashHandlerProductBinding</code>.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	String TAG_SPLASH_HANDLER_PRODUCT_BINDING = "splashHandlerProductBinding"; //$NON-NLS-1$

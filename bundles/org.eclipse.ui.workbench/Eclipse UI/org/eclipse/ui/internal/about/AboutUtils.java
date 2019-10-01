@@ -109,7 +109,8 @@ public class AboutUtils {
 	 * to a resource within a bundle, then a temp copy of the file will be extracted
 	 * and opened.
 	 *
-	 * @see <code>Platform.asLocalUrl</code>
+	 * @see Platform#asLocalURL(URL)
+	 *
 	 * @param url The target url to be displayed, null will be safely ignored
 	 * @return true if the url was successfully displayed and false otherwise
 	 */

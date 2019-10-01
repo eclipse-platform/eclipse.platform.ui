@@ -276,8 +276,6 @@ public class StringMatcher {
 	 * Parses the given pattern into segments separated by wildcard &#39;*&#39;
 	 * characters.
 	 * 
-	 * @param p, a String object that is a simple regular expression with ?*? and/or
-	 *           &#39;&#63;&#39;
 	 */
 	private void parseWildCards() {
 		if (fPattern.startsWith("*")) { //$NON-NLS-1$

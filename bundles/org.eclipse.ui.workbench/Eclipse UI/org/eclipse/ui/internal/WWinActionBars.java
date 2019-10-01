@@ -20,6 +20,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.ui.IActionBars2;
+import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.services.IServiceLocator;
 
 public class WWinActionBars implements IActionBars2 {
@@ -103,9 +104,9 @@ public class WWinActionBars implements IActionBars2 {
 	 * Add a handler for a window action.
 	 *
 	 * The standard action ID's for the workbench are defined in
-	 * <code>IWorkbenchActions</code>.
+	 * <code>IWorkbenchActionConstants</code>.
 	 *
-	 * @see IWorkbenchActions
+	 * @see IWorkbenchActionConstants
 	 *
 	 * @param actionID an action ID declared in the registry
 	 * @param handler  an action which implements the action ID. <code>null</code>

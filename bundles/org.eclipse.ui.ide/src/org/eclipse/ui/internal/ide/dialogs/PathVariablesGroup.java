@@ -646,8 +646,9 @@ public class PathVariablesGroup {
 	/**
 	 * Commits the temporary state to the path variable manager in response to user
 	 * confirmation.
+	 *
 	 * @return boolean <code>true</code> if there were no problems.
-	 * @see IPathVariableManager#setValue(String, IResource, URI)
+	 * @see IPathVariableManager#setURIValue(String, URI)
 	 */
 	public boolean performOk() {
 		try {

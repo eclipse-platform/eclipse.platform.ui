@@ -29,7 +29,7 @@ import org.eclipse.ui.internal.registry.WorkingSetRegistry;
  * plugin specified working set page.
  *
  * @since 2.0
- * @see org.eclipse.ui.dialog.IWorkingSetPage
+ * @see org.eclipse.ui.dialogs.IWorkingSetPage
  */
 public class WorkingSetNewWizard extends Wizard implements IWorkingSetNewWizard {
 	private WorkingSetTypePage workingSetTypePage;

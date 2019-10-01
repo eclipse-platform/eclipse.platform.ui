@@ -35,7 +35,7 @@ public class AboutTextManager {
 
 	/**
 	 * Scan the contents of the about text
-	 * 
+	 *
 	 * @param s
 	 * @return
 	 */
@@ -237,7 +237,7 @@ public class AboutTextManager {
 
 	/**
 	 * Gets the about item.
-	 * 
+	 *
 	 * @return the about item
 	 */
 	public AboutItem getItem() {
@@ -246,7 +246,7 @@ public class AboutTextManager {
 
 	/**
 	 * Sets the about item.
-	 * 
+	 *
 	 * @param item about item
 	 */
 	public void setItem(AboutItem item) {

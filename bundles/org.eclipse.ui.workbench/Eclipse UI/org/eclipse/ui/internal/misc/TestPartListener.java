@@ -14,6 +14,7 @@
 package org.eclipse.ui.internal.misc;
 
 import org.eclipse.ui.IPartListener;
+import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
@@ -22,7 +23,7 @@ import org.eclipse.ui.IWorkbenchPart;
 public class TestPartListener implements IPartListener {
 	/**
 	 * TestPartListener constructor comment.
-	 * 
+	 *
 	 * @issue seems like garbage - no one using it
 	 */
 	public TestPartListener() {
@@ -33,7 +34,7 @@ public class TestPartListener implements IPartListener {
 	 * Notifies this listener that the given part has been activated.
 	 *
 	 * @param part the part that was activated
-	 * @see IPerspective#activate
+	 * @see IWorkbenchPage#activate
 	 */
 	@Override
 	public void partActivated(IWorkbenchPart part) {
@@ -51,7 +52,7 @@ public class TestPartListener implements IPartListener {
 	 * </p>
 	 *
 	 * @param part the part that was surfaced
-	 * @see IPerspective#bringToTop
+	 * @see IWorkbenchPage#bringToTop
 	 */
 	@Override
 	public void partBroughtToTop(IWorkbenchPart part) {
@@ -62,7 +63,7 @@ public class TestPartListener implements IPartListener {
 	 * Notifies this listener that the given part has been closed.
 	 *
 	 * @param part the part that was closed
-	 * @see IPerspective#close
+	 * @see IWorkbenchPage#close
 	 */
 	@Override
 	public void partClosed(IWorkbenchPart part) {
@@ -73,7 +74,7 @@ public class TestPartListener implements IPartListener {
 	 * Notifies this listener that the given part has been deactivated.
 	 *
 	 * @param part the part that was deactivated
-	 * @see IPerspective#activate
+	 * @see IWorkbenchPage#activate
 	 */
 	@Override
 	public void partDeactivated(IWorkbenchPart part) {

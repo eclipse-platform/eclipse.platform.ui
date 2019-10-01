@@ -16,7 +16,6 @@ package org.eclipse.ui.internal.misc;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IPath;
@@ -47,8 +46,9 @@ public class ExternalEditor {
 	/**
 	 * open the editor. If the descriptor has a program then use it - otherwise
 	 * build its info from the descriptor.
-	 * 
-	 * @exception Throws a CoreException if the external editor could not be opened.
+	 *
+	 * @exception CoreException Throws a CoreException if the external editor could
+	 *                          not be opened.
 	 */
 	public void open() throws CoreException {
 
@@ -70,8 +70,9 @@ public class ExternalEditor {
 
 	/**
 	 * open the editor.
-	 * 
-	 * @exception Throws a CoreException if the external editor could not be opened.
+	 *
+	 * @exception CoreException Throws a CoreException if the external editor could
+	 *                          not be opened.
 	 */
 	public void openWithUserDefinedProgram() throws CoreException {
 		// We need to determine if the command refers to a program in the plugin

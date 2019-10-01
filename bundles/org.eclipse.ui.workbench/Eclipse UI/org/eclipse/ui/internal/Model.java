@@ -90,7 +90,7 @@ public class Model {
 	 * Adds the given listener to the set of listeners that will be notified when
 	 * the state changes.
 	 *
-	 * @param toAdd
+	 * @param changeListener Listener to add.
 	 */
 	public void addChangeListener(IChangeListener changeListener) {
 		changeListener.update(false);
@@ -100,7 +100,7 @@ public class Model {
 	/**
 	 * Stops this model from sending change events from the given listener.
 	 *
-	 * @param toRemove
+	 * @param changeListener Listener to remove.
 	 */
 	public void removeChangeListener(IChangeListener changeListener) {
 		views.remove(changeListener);
