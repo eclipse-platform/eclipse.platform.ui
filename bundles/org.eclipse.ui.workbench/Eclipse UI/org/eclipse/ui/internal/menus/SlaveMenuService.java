@@ -119,7 +119,7 @@ public class SlaveMenuService implements IMenuService, IMenuServiceWorkaround {
 	}
 
 	/**
-	 * @return
+	 * @return IEvaluationContext
 	 * @see org.eclipse.ui.menus.IMenuService#getCurrentState()
 	 */
 	@Override
