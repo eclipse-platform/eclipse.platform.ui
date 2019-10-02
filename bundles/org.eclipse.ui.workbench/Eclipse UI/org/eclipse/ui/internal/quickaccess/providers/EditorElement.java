@@ -34,9 +34,11 @@ public class EditorElement extends QuickAccessElement {
 	private static final String separator = " - "; //$NON-NLS-1$
 
 	private IEditorReference editorReference;
+	private boolean dirty;
 
 	/* package */ EditorElement(IEditorReference editorReference) {
 		this.editorReference = editorReference;
+		this.dirty = editorReference.isDirty();
 	}
 
 	@Override
@@ -66,7 +68,6 @@ public class EditorElement extends QuickAccessElement {
 
 	@Override
 	public String getLabel() {
-		boolean dirty = editorReference.isDirty();
 		return (dirty ? DIRTY_MARK : "") + editorReference.getTitle() + separator + editorReference.getTitleToolTip(); //$NON-NLS-1$
 	}
 
@@ -91,4 +92,5 @@ public class EditorElement extends QuickAccessElement {
 		final EditorElement other = (EditorElement) obj;
 		return Objects.equals(editorReference, other.editorReference);
 	}
+
 }

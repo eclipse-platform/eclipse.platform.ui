@@ -270,6 +270,11 @@ public class QuickAccessDialogTest extends UITestCase {
 		assertTrue("Missing entry", DisplayHelper.waitForCondition(firstTable.getDisplay(), TIMEOUT, () ->
 			dialogContains(dialog, quickAccessElementText)
 		));
+		// it seems like the 1st proposal isn't really "Project Explorer" on "official"
+		// tests?
+		System.out.println("Quick Access entries after querying '" + quickAccessElementText + '\'');
+		System.out.println(getAllEntries(firstTable).stream().map(s -> "* " + s).collect(Collectors.joining("\n")));
+		String selectedProposal = firstTable.getItem(0).getText(1);
 		firstTable.select(0);
 		activateCurrentElement(dialog);
 		assertNotEquals(0, dialogSettings.getArray("orderedElements").length);
@@ -284,7 +289,7 @@ public class QuickAccessDialogTest extends UITestCase {
 		secondDialog.open();
 		assertTrue("Missing entry in previous pick",
 				DisplayHelper.waitForCondition(secondDialog.getShell().getDisplay(), TIMEOUT,
-						() -> dialogContains(secondDialog, quickAccessElementText)));
+						() -> dialogContains(secondDialog, selectedProposal)));
 	}
 
 	private void activateCurrentElement(QuickAccessDialog dialog) {
