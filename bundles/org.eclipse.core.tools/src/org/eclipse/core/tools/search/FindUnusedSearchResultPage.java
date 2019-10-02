@@ -111,7 +111,7 @@ public class FindUnusedSearchResultPage extends AbstractTextSearchViewPage imple
 		}
 	}
 
-	static final String[] SHOW_IN_TARGETS = new String[] { JavaUI.ID_PACKAGES, IPageLayout.ID_RES_NAV };
+	static final String[] SHOW_IN_TARGETS = new String[] { JavaUI.ID_PACKAGES, IPageLayout.ID_PROJECT_EXPLORER };
 
 	public static final IShowInTargetList SHOW_IN_TARGET_LIST = () -> SHOW_IN_TARGETS;
 
