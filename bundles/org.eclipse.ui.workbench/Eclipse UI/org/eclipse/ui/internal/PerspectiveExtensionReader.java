@@ -108,22 +108,33 @@ public class PerspectiveExtensionReader extends RegistryReader {
 			String type = child.getName();
 			if (includeTag(type)) {
 				boolean result = false;
-				if (type.equals(IWorkbenchRegistryConstants.TAG_ACTION_SET)) {
+				switch (type) {
+				case IWorkbenchRegistryConstants.TAG_ACTION_SET:
 					result = processActionSet(child);
-				} else if (type.equals(IWorkbenchRegistryConstants.TAG_VIEW)) {
+					break;
+				case IWorkbenchRegistryConstants.TAG_VIEW:
 					result = processView(child);
-				} else if (type.equals(IWorkbenchRegistryConstants.TAG_VIEW_SHORTCUT)) {
+					break;
+				case IWorkbenchRegistryConstants.TAG_VIEW_SHORTCUT:
 					result = processViewShortcut(child);
-				} else if (type.equals(IWorkbenchRegistryConstants.TAG_NEW_WIZARD_SHORTCUT)) {
+					break;
+				case IWorkbenchRegistryConstants.TAG_NEW_WIZARD_SHORTCUT:
 					result = processWizardShortcut(child);
-				} else if (type.equals(IWorkbenchRegistryConstants.TAG_PERSP_SHORTCUT)) {
+					break;
+				case IWorkbenchRegistryConstants.TAG_PERSP_SHORTCUT:
 					result = processPerspectiveShortcut(child);
-				} else if (type.equals(IWorkbenchRegistryConstants.TAG_SHOW_IN_PART)) {
+					break;
+				case IWorkbenchRegistryConstants.TAG_SHOW_IN_PART:
 					result = processShowInPart(child);
-				} else if (type.equals(IWorkbenchRegistryConstants.TAG_HIDDEN_MENU_ITEM)) {
+					break;
+				case IWorkbenchRegistryConstants.TAG_HIDDEN_MENU_ITEM:
 					result = processHiddenMenuItem(child);
-				} else if (type.equals(IWorkbenchRegistryConstants.TAG_HIDDEN_TOOLBAR_ITEM)) {
+					break;
+				case IWorkbenchRegistryConstants.TAG_HIDDEN_TOOLBAR_ITEM:
 					result = processHiddenToolBarItem(child);
+					break;
+				default:
+					break;
 				}
 				if (!result) {
 					WorkbenchPlugin.log("Unable to process element: " + //$NON-NLS-1$
