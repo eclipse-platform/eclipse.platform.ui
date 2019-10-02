@@ -6753,8 +6753,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			boolean showOffset = getPreferenceStore().getBoolean(PREFERENCE_SHOW_CARET_OFFSET);
 			Point selectedRange = fSourceViewer.getSelectedRange();
 			int selectionLength = selectedRange != null ? selectedRange.y : 0;
-			fOffsetLabel.fValue = selectionLength == 0 ? caret : selectionLength;
 			showSelection = showSelection && selectionLength > 0;
+			fOffsetLabel.fValue = showSelection ? selectionLength : caret;
 			if (!showSelection) {
 				if (!showOffset) {
 					// shows line : column
