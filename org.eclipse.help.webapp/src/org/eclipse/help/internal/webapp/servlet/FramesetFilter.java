@@ -77,6 +77,7 @@ public class FramesetFilter implements IFilter {
 			// Bug 317055 -  [webapp] URLEncode url requests from local users
 			url = URLEncoder.encode(url, "UTF-8"); //$NON-NLS-1$
 			if ( query != null ) {
+				query = URLEncoder.encode(query, "UTF-8"); //$NON-NLS-1$
 				url = url + UrlUtil.JavaScriptEncode("&")  + query;  //$NON-NLS-1$
 			}
 			script.append(url);
