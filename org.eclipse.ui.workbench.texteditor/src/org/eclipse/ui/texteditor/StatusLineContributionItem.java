@@ -58,7 +58,7 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 	 * Default number of characters that should fit into the item.
 	 * @since 3.0
 	 */
-	static final int DEFAULT_WIDTH_IN_CHARS= 14;
+	static final int DEFAULT_WIDTH_IN_CHARS = 19;
 	/**
 	 * Pre-computed label width hint.
 	 * @since 2.1
