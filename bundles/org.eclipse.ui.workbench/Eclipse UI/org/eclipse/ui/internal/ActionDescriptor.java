@@ -239,14 +239,21 @@ public class ActionDescriptor implements IPluginContribution {
 			String style) {
 		int actionStyle = IAction.AS_UNSPECIFIED;
 		if (style != null) {
-			if (style.equals(STYLE_RADIO)) {
+			switch (style) {
+			case STYLE_RADIO:
 				actionStyle = IAction.AS_RADIO_BUTTON;
-			} else if (style.equals(STYLE_TOGGLE)) {
+				break;
+			case STYLE_TOGGLE:
 				actionStyle = IAction.AS_CHECK_BOX;
-			} else if (style.equals(STYLE_PULLDOWN)) {
+				break;
+			case STYLE_PULLDOWN:
 				actionStyle = IAction.AS_DROP_DOWN_MENU;
-			} else if (style.equals(STYLE_PUSH)) {
+				break;
+			case STYLE_PUSH:
 				actionStyle = IAction.AS_PUSH_BUTTON;
+				break;
+			default:
+				break;
 			}
 		}
 
