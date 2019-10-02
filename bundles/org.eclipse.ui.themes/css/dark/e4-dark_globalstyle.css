@@ -90,31 +90,31 @@ ScrolledComposite > Composite > Composite > Composite > List,
 Shell > Composite > Composite > Composite > Composite > Composite > List,
 Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > List,
 Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > * > List {
-    background-color: #41464A;
-    color: #dddddd;
+    background-color:#515658;
+    color:#eeeeee;
 }
 
 Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.MENU'][style~='SWT.DATE'][style~='SWT.RESIZE'][style~='SWT.TITLE'][style~='SWT.APPLICATION_MODAL'][style~='SWT.FULL_SELECTION'][style~='SWT.SMOOTH'] > Composite[style~='SWT.LEFT_TO_RIGHT'] > Text[style~='SWT.READ_ONLY'],
 Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.MENU'][style~='SWT.DATE'][style~='SWT.RESIZE'][style~='SWT.TITLE'][style~='SWT.APPLICATION_MODAL'][style~='SWT.FULL_SELECTION'][style~='SWT.SMOOTH'] > Composite[style~='SWT.LEFT_TO_RIGHT'] > ToolBar {
     /* Dialog windows title */
     /*background-color: #4D5765;*/ /* There is no way to change the background-color of the title of a Dialog without introducing artifacts in some other Dialog windows */
-    color: #9ac9d8;
+    color:#eeeeee;
 }
 Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.MENU'][style~='SWT.DATE'][style~='SWT.RESIZE'][style~='SWT.TITLE'][style~='SWT.APPLICATION_MODAL'][style~='SWT.FULL_SELECTION'][style~='SWT.SMOOTH'] > Composite[style~='SWT.LEFT_TO_RIGHT'] > Label[style~='SWT.NO_FOCUS'] {
     /* Dialog windows title */
     /*background-color: #4D5765;*/
-    color: #EEEEEE;
+    color:#eeeeee;
 }
 
 Text {
-    background-color: #515658;
-    color: #cccccc;
+    background-color:#515658;
+    color:#eeeeee;
 }
 
 SashForm > StyledText {
 	/*	Fix StyledText inside a SashForm */
-    background-color: #202020;
-    color: #cccccc;
+    background-color:#515658;
+    color:#eeeeee;
 }
 
 
@@ -122,8 +122,8 @@ Text[style~='SWT.DROP_DOWN'],
 TextSearchControl /* SWT-BUG: background color is hard-coded */,
 TextSearchControl > Label {
     /* search boxes and input fields */
-    background-color: #41464A;
-    color: #dddddd;
+    background-color:#515658;
+    color:#eeeeee;
 }
 Text[style~='SWT.SEARCH'],
 Text[style~='SWT.SEARCH'] + Label /* SWT-BUG: adjacent sibling selector is ignored (CSS2.1) */ {
@@ -152,28 +152,28 @@ DatePicker > ImageHyperlink,
 ScheduleDatePicker,
 ScheduleDatePicker > Text,
 ScheduleDatePicker > ImageHyperlink {
-    background-color: #41464A;
-    color: #dddddd;
+    background-color:#515658;
+    color:#eeeeee;
 }
 
 Spinner,
 CCombo {
-    background-color: #383C3E;
-    color: #dddddd;
+    background-color:#515658;
+    color:#eeeeee;
 }
 
 Composite > StyledText,
 Shell [style~='SWT.DROP_DOWN'] > StyledText, /* for eg. folded code popup (but it's ignored) */
 /* the following are required due to Bug 419482 (see <1>): */
 ScrolledComposite > Composite > Composite > Composite > StyledText {
-    background-color: #252525;
-    color: #dddddd;
+    background-color:#515658;
+    color:#eeeeee;
 }
 
 ScrolledFormText,
 FormText {
-    background-color: #687174;
-    color: #eeeeee;
+    background-color:#515658;
+    color:#eeeeee;
 }
 
 Table,
