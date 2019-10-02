@@ -149,18 +149,27 @@ final class ExtensionActivityRegistry extends AbstractActivityRegistry {
 		for (IConfigurationElement configurationElement : configurationElements) {
 			String name = configurationElement.getName();
 
-			if (Persistence.TAG_ACTIVITY_REQUIREMENT_BINDING.equals(name)) {
+			switch (name) {
+			case Persistence.TAG_ACTIVITY_REQUIREMENT_BINDING:
 				readActivityRequirementBindingDefinition(configurationElement);
-			} else if (Persistence.TAG_ACTIVITY.equals(name)) {
+				break;
+			case Persistence.TAG_ACTIVITY:
 				readActivityDefinition(configurationElement);
-			} else if (Persistence.TAG_ACTIVITY_PATTERN_BINDING.equals(name)) {
+				break;
+			case Persistence.TAG_ACTIVITY_PATTERN_BINDING:
 				readActivityPatternBindingDefinition(configurationElement);
-			} else if (Persistence.TAG_CATEGORY_ACTIVITY_BINDING.equals(name)) {
+				break;
+			case Persistence.TAG_CATEGORY_ACTIVITY_BINDING:
 				readCategoryActivityBindingDefinition(configurationElement);
-			} else if (Persistence.TAG_CATEGORY.equals(name)) {
+				break;
+			case Persistence.TAG_CATEGORY:
 				readCategoryDefinition(configurationElement);
-			} else if (Persistence.TAG_DEFAULT_ENABLEMENT.equals(name)) {
+				break;
+			case Persistence.TAG_DEFAULT_ENABLEMENT:
 				readDefaultEnablement(configurationElement);
+				break;
+			default:
+				break;
 			}
 		}
 
