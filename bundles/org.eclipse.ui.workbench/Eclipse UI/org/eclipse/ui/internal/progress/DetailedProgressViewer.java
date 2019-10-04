@@ -132,7 +132,6 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		IPropertyChangeListener listener = x -> propertyChange(x);
 		prefs.addPropertyChangeListener(listener);
 		scrolled.addDisposeListener(x -> prefs.removePropertyChangeListener(listener));
-		setUseHashlookup(true);
 	}
 
 	/**
