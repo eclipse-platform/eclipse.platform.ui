@@ -77,6 +77,10 @@ public class SWTObservables {
 	 * pending will fire the value change immediately, short-circuiting the
 	 * delay.
 	 * <p>
+	 * Only updates resulting from the observed widget are delayed. Calls directly
+	 * to {@link IObservableValue#setValue} are not, and they cancel pending delayed
+	 * values.
+	 * <p>
 	 * Note that this observable will not forward {@link ValueChangingEvent}
 	 * events from a wrapped {@link IVetoableValue}.
 	 *
