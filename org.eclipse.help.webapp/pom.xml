@@ -25,7 +25,7 @@
       <plugin>
         <groupId>org.eclipse.jetty</groupId>
         <artifactId>jetty-jspc-maven-plugin</artifactId>
-        <version>9.4.20.v20190813</version>
+        <version>9.4.21.v20190926</version>
         <executions>
           <execution>
             <id>jspc</id>
