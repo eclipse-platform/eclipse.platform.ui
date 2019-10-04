@@ -21,6 +21,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.stream.Stream;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.e4.core.commands.ExpressionContext;
@@ -46,8 +49,8 @@ public class ToolBarContributionRecord {
 
 	MToolBar toolbarModel;
 	MToolBarContribution toolbarContribution;
-	ArrayList<MToolBarElement> generatedElements = new ArrayList<>();
-	HashSet<MToolBarElement> sharedElements = new HashSet<>();
+	List<MToolBarElement> generatedElements = new CopyOnWriteArrayList<>();
+	Set<MToolBarElement> sharedElements = new CopyOnWriteArraySet<>();
 	ToolBarManagerRenderer renderer;
 	boolean isVisible = true;
 	private IEclipseContext infoContext;
