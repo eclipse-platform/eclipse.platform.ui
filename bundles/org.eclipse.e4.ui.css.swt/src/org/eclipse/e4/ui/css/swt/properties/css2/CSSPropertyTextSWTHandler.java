@@ -63,7 +63,7 @@ public class CSSPropertyTextSWTHandler extends AbstractCSSPropertyTextHandler {
 		Widget widget = (Widget) element;
 		Color newColor = (Color) engine.convert(value, Color.class, widget.getDisplay());
 
-		if (newColor != null && newColor.isDisposed() || value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE) {
+		if (newColor == null || newColor.isDisposed() || value.getCssValueType() != CSSValue.CSS_PRIMITIVE_VALUE) {
 			return;
 		}
 
