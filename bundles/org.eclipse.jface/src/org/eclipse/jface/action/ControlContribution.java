@@ -33,6 +33,8 @@ import org.eclipse.swt.widgets.ToolItem;
  * </p>
  */
 public abstract class ControlContribution extends ContributionItem {
+	private ToolItem ti;
+
 	/**
 	 * Creates a control contribution item with the given id.
 	 *
@@ -108,7 +110,7 @@ public abstract class ControlContribution extends ContributionItem {
 					"createControl(Composite) of " + getClass() //$NON-NLS-1$
 							+ " returned null, cannot fill toolbar")); //$NON-NLS-1$
 		} else {
-			ToolItem ti = new ToolItem(parent, SWT.SEPARATOR, index);
+			ti = new ToolItem(parent, SWT.SEPARATOR, index);
 			ti.setControl(control);
 			ti.setWidth(computeWidth(control));
 			ti.setData(this);
@@ -126,5 +128,20 @@ public abstract class ControlContribution extends ContributionItem {
 				item.setVisible(visible);
 			}
 		}
+	}
+
+	@Override
+	public void update() {
+		if (ti != null && !ti.isDisposed()) {
+			Control control = ti.getControl();
+			if (control != null && !control.isDisposed()) {
+				ti.setWidth(computeWidth(control));
+			}
+		}
+	}
+
+	@Override
+	public void update(String id) {
+		update();
 	}
 }

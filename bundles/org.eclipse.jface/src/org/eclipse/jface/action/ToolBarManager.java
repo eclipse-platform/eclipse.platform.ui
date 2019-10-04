@@ -323,7 +323,6 @@ public class ToolBarManager extends ContributionManager implements IToolBarManag
 			int srcIx = 0;
 			int destIx = 0;
 			for (IContributionItem src : clean) {
-
 				// get corresponding item in SWT widget
 				if (srcIx < mi.length) {
 					dest = (IContributionItem) mi[srcIx].getData();
@@ -334,6 +333,9 @@ public class ToolBarManager extends ContributionManager implements IToolBarManag
 				if (dest != null && src.equals(dest)) {
 					srcIx++;
 					destIx++;
+					if (force) {
+						dest.update();
+					}
 					continue;
 				}
 
