@@ -591,9 +591,13 @@ public class ThemeEngine implements IThemeEngine {
 
 		// For Mac & GTK, if the system has Dark appearance set and Eclipse is using the
 		// default settings, then start Eclipse in Dark theme.
+
+		// Check that there is a dark theme present
+		boolean hasDarkTheme = getThemes().stream().anyMatch(t -> t.getId().startsWith(E4_DARK_THEME_ID));
+
 		String os = Platform.getOS();
 		String themeToRestore = (Platform.OS_LINUX.equals(os) || Platform.OS_MACOSX.equals(os))
-				&& Display.isSystemDarkTheme() ? E4_DARK_THEME_ID : alternateTheme;
+				&& Display.isSystemDarkTheme() && hasDarkTheme ? E4_DARK_THEME_ID : alternateTheme;
 		if (themeToRestore != null && flag) {
 			setTheme(themeToRestore, false);
 		}
