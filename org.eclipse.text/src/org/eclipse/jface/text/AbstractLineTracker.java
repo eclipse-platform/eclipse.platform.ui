@@ -46,8 +46,9 @@ public abstract class AbstractLineTracker implements ILineTracker, ILineTrackerE
 	 * Combines the information of the occurrence of a line delimiter. <code>delimiterIndex</code>
 	 * is the index where a line delimiter starts, whereas <code>delimiterLength</code>,
 	 * indicates the length of the delimiter.
+	 * @since 3.10
 	 */
-	protected static class DelimiterInfo {
+	public static class DelimiterInfo {
 		public int delimiterIndex;
 		public int delimiterLength;
 		public String delimiter;

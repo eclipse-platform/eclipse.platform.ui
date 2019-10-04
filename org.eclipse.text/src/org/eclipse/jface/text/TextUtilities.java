@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.jface.text;
 
-import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -27,6 +26,7 @@ import java.util.Set;
 
 import org.eclipse.core.runtime.Assert;
 
+import org.eclipse.jface.text.AbstractLineTracker.DelimiterInfo;
 
 /**
  * A collection of text functions.
@@ -63,7 +63,7 @@ public class TextUtilities {
 	 * @return the line delimiter
 	 */
 	public static String determineLineDelimiter(String text, String hint) {
-		String delimiter = nextDelimiter(text, 0).getValue();
+		String delimiter = nextDelimiter(text, 0).delimiter;
 		return delimiter != null ? delimiter : hint;
 	}
 
@@ -593,32 +593,36 @@ public class TextUtilities {
 	 *
 	 * @param text the text to be searched. Not <code>null</code>.
 	 * @param offset the offset in text at which to start the search
-	 * @return a <code>Map.Entry&lt;Integer, String&gt;</code> where key is index of found delimiter
-	 *         or <code>-1</code> if non found and value is the delimiter found or <code>null</code>
-	 *         if non found. The return value itself is never <code>null</code>.
+	 * @return a {@link DelimiterInfo}. If no delimiter was found
+	 *         {@link DelimiterInfo#delimiterIndex} is <code>-1</code> and
+	 *         {@link DelimiterInfo#delimiter} is <code>null</code>.
 	 * @since 3.10
 	 */
-	public static Map.Entry<Integer, String> nextDelimiter(CharSequence text, int offset) {
-		int delimiterIndex= -1;
-		String delimiter= null;
+	public static DelimiterInfo nextDelimiter(CharSequence text, int offset) {
+		final DelimiterInfo info= new DelimiterInfo();
 		char ch;
 		final int length= text.length();
 		for (int i= offset; i < length; i++) {
 			ch= text.charAt(i);
 			if (ch == '\r') {
-				delimiterIndex= i;
+				info.delimiterIndex= i;
 				if (i + 1 < length && text.charAt(i + 1) == '\n') {
-					delimiter= DELIMITERS[2];
+					info.delimiter= DELIMITERS[2];
 					break;
 				}
-				delimiter= DELIMITERS[1];
+				info.delimiter= DELIMITERS[1];
 				break;
 			} else if (ch == '\n') {
-				delimiterIndex= i;
-				delimiter= DELIMITERS[0];
+				info.delimiterIndex= i;
+				info.delimiter= DELIMITERS[0];
 				break;
 			}
 		}
-		return new AbstractMap.SimpleImmutableEntry<>(Integer.valueOf(delimiterIndex), delimiter);
+		if (info.delimiter == null) {
+			info.delimiterIndex= -1;
+		} else {
+			info.delimiterLength= info.delimiter.length();
+		}
+		return info;
 	}
 }

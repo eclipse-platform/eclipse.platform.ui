@@ -1048,7 +1048,7 @@ class FindReplaceDialog extends Dialog {
 	 */
 	private String getFirstLine(String selection) {
 		if (!selection.isEmpty()) {
-			int delimiterOffset = TextUtilities.nextDelimiter(selection, 0).getKey().intValue();
+			int delimiterOffset = TextUtilities.nextDelimiter(selection, 0).delimiterIndex;
 			if (delimiterOffset > 0)
 				return selection.substring(0, delimiterOffset);
 			else if (delimiterOffset == -1)

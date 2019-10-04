@@ -20,11 +20,11 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
 
+import org.eclipse.jface.text.AbstractLineTracker.DelimiterInfo;
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
@@ -347,45 +347,45 @@ public class TextUtilitiesTest {
 
 	@Test
 	public void testNextDelimiter() {
-		Map.Entry<Integer, String> result;
+		DelimiterInfo result;
 		result = TextUtilities.nextDelimiter("abc\ndef", 0);
-		assertEquals(3, result.getKey().intValue());
-		assertEquals("\n", result.getValue());
+		assertEquals(3, result.delimiterIndex);
+		assertEquals("\n", result.delimiter);
 
 		result = TextUtilities.nextDelimiter("abc\ndef", 5);
-		assertEquals(-1, result.getKey().intValue());
-		assertEquals(null, result.getValue());
+		assertEquals(-1, result.delimiterIndex);
+		assertEquals(null, result.delimiter);
 
 		result = TextUtilities.nextDelimiter("abc\rdef\n123", 0);
-		assertEquals(3, result.getKey().intValue());
-		assertEquals("\r", result.getValue());
+		assertEquals(3, result.delimiterIndex);
+		assertEquals("\r", result.delimiter);
 
 		result = TextUtilities.nextDelimiter("abc+\r\ndef\n123", 0);
-		assertEquals(4, result.getKey().intValue());
-		assertEquals("\r\n", result.getValue());
+		assertEquals(4, result.delimiterIndex);
+		assertEquals("\r\n", result.delimiter);
 
 		result = TextUtilities.nextDelimiter("abc~>\r\r\ndef\n123", 0);
-		assertEquals(5, result.getKey().intValue());
-		assertEquals("\r", result.getValue());
+		assertEquals(5, result.delimiterIndex);
+		assertEquals("\r", result.delimiter);
 
 		result = TextUtilities.nextDelimiter("\nabc~>\r\r\ndef\n123", 0);
-		assertEquals(0, result.getKey().intValue());
-		assertEquals("\n", result.getValue());
+		assertEquals(0, result.delimiterIndex);
+		assertEquals("\n", result.delimiter);
 
 		result = TextUtilities.nextDelimiter("abc~>123\r\n", 0);
-		assertEquals(8, result.getKey().intValue());
-		assertEquals("\r\n", result.getValue());
+		assertEquals(8, result.delimiterIndex);
+		assertEquals("\r\n", result.delimiter);
 
 		result = TextUtilities.nextDelimiter("abc~>\r\r\ndef\n123", 9);
-		assertEquals(11, result.getKey().intValue());
-		assertEquals("\n", result.getValue());
+		assertEquals(11, result.delimiterIndex);
+		assertEquals("\n", result.delimiter);
 
 		result = TextUtilities.nextDelimiter("", 0);
-		assertEquals(-1, result.getKey().intValue());
-		assertEquals(null, result.getValue());
+		assertEquals(-1, result.delimiterIndex);
+		assertEquals(null, result.delimiter);
 
 		result = TextUtilities.nextDelimiter("abc123", 0);
-		assertEquals(-1, result.getKey().intValue());
-		assertEquals(null, result.getValue());
+		assertEquals(-1, result.delimiterIndex);
+		assertEquals(null, result.delimiter);
 	}
 }
