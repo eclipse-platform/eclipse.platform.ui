@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,6 +18,8 @@
  *  Lars Vogel <Lars.Vogel@gmail.com> - Bug 440810
  *  Patrik Suzzi <psuzzi@gmail.com> - Bug 485133
  *  Lucas Bullen <lbullen@redhat.com> - Bug 525974, 531332
+ *  Emmanuel Chebbi <emmanuel.chebbi@outlook.fr> - Bug 214491
+ *     - [Dialogs] FilteredItemsSelectionDialog should respect setInitialSelections()
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
@@ -228,6 +230,11 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	private IHandlerActivation showViewHandler;
 
 	private IStyledStringHighlighter styledStringHighlighter;
+
+	/**
+	 * Used to set initial selection in {@link #refresh()}.
+	 */
+	private boolean isShownForTheFirstTime = true;
 
 	/**
 	 * Creates a new instance of the class.
@@ -857,13 +864,17 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 	public void refresh() {
 		if (tableViewer != null && !tableViewer.getTable().isDisposed()) {
 
-			List<?> lastRefreshSelection = ((StructuredSelection) tableViewer.getSelection()).toList();
+			List<Object> lastRefreshSelection = ((StructuredSelection) tableViewer.getSelection()).toList();
 			tableViewer.getTable().deselectAll();
 
 			tableViewer.setItemCount(contentProvider.getNumberOfElements());
 			tableViewer.refresh();
 
 			if (tableViewer.getTable().getItemCount() > 0) {
+				if (isShownForTheFirstTime) {
+					isShownForTheFirstTime = false;
+					lastRefreshSelection = prepareInitialSelection(lastRefreshSelection);
+				}
 				// preserve previous selection
 				if (refreshWithLastSelection && lastRefreshSelection != null && lastRefreshSelection.size() > 0) {
 					tableViewer.setSelection(new StructuredSelection(lastRefreshSelection));
@@ -879,6 +890,31 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		}
 
 		scheduleProgressMessageRefresh();
+	}
+
+	/**
+	 * Gets the elements that should be selected when the dialog opens.
+	 * <p>
+	 * Sets the <code>refreshWithLastSelection</code> to true if needed to make sure
+	 * that the initial selection is properly set.
+	 *
+	 * @param currentSelection the elements selected by default.
+	 *
+	 * @return the initial selection specified by the user or the currentSelection
+	 *         if no initial selection has been set.
+	 */
+	private List<Object> prepareInitialSelection(List<Object> currentSelection) {
+		boolean hasNoInitialSelection = getInitialElementSelections().isEmpty();
+		if (hasNoInitialSelection) {
+			return currentSelection;
+		}
+		refreshWithLastSelection = true;
+		if (!multi) {
+			// if multi selection is disabled then only the first item is selected
+			Object firstSelectedItem = getInitialElementSelections().get(0);
+			return Collections.singletonList(firstSelectedItem);
+		}
+		return getInitialElementSelections();
 	}
 
 	/**

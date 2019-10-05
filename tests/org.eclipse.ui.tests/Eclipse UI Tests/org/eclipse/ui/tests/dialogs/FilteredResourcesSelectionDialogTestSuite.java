@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017 Red Hat Inc. and others.
+ * Copyright (c) 2017-2019 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     Lucas Bullen (Red Hat Inc.) - initial API and implementation
+ *     Emmanuel Chebbi - test dialog's initial selection - Bug 214491
  *******************************************************************************/
 package org.eclipse.ui.tests.dialogs;
 
@@ -19,7 +20,7 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
- * The suite of tests for the filteredResourcesSelectionDialog.
+ * The suite of tests for the FilteredResourcesSelectionDialog.
  *
  * @since 3.14
  */
@@ -40,5 +41,6 @@ public class FilteredResourcesSelectionDialogTestSuite extends TestSuite {
 	 */
 	public FilteredResourcesSelectionDialogTestSuite() {
 		addTestSuite(ResourceItemLabelTest.class);
+		addTestSuite(ResourceInitialSelectionTest.class);
 	}
 }
