@@ -42,7 +42,6 @@ AbstractCSSPropertyBackgroundHandler {
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		Widget widget = SWTElementHelpers.getWidget(element);
 		if (widget != null) {
-			// super.applyCSSProperty(widget, property, value, pseudo, engine);
 			super.applyCSSProperty(element, property, value, pseudo, engine);
 			return true;
 		}
