@@ -240,6 +240,18 @@ public class CommandEnablementTest {
 
 	}
 
+	// Test is currently failing for numerous reason:
+	// - Items are not CommandContributionItem but HandledContributionItem
+	// - Handlers are not instances of HandlerProxy but
+	// WorkbenchHandlerServiceHandler
+	// - The actual changes only happen in the MenuManager, if a real Menu is
+	// attached
+	// Even when changing test to address this via
+	// a) changing assertions to deal with HandledContributionItem
+	// b) manually inserting a CommandContributionItem to the MenuManager
+	// the actual restoring of the default text does not seem to work anymore.
+	// Bug 275126 might again be seen.
+	// Related bugs possibly breaking this: 382839, 394336
 	@Test
 	public void testRestoreContributedUI() throws Exception {
 
@@ -440,6 +452,11 @@ public class CommandEnablementTest {
 		}
 	}
 
+	// Failure analysis:
+	// The isEnabled() assertions are correct, however, the
+	// enabledChanged listener is called more often than expected
+	// due to the way HandlerServiceHandler implements
+	// isEnabled() and setEnabled().
 	@Test
 	public void testEventsForEnabledHandlers() throws Exception {
 		// incremented for every change that should change enablement
@@ -549,6 +566,12 @@ public class CommandEnablementTest {
 		}
 	}
 
+	// Test failure analysis:
+	// - Selections passed to WorkbenchSourceProvider#selectionChanged()
+	//   never make it into the IEclipseContext.
+	// - When using ESelectionService to modify the selection, the
+	//   test passes.
+	// Intended behavior? Bug?
 	@Test
 	public void testEnablementWithHandlerProxy() throws Exception {
 		IConfigurationElement handlerProxyConfig = null;
@@ -608,6 +631,20 @@ public class CommandEnablementTest {
 		assertTrue(listener.lastChange);
 	}
 
+	// Test failure analysis:
+	// - Handlers are instances of WorkbenchHandlerServiceHandler
+	// - WorkbenchHandlerServiceHandler#setEnabled(Object) does not correctly
+	//   deal with IEvaluationContext instances being passed, i.e. none of the
+	//   variables in the snapshot created in the test are actually taken into
+	//   account.
+	// - Even when doing so by modifying
+	//   WorkbenchHandlerServiceHandler#setEnabled(Object), e.g. via
+	//   staticContext.set(IEvaluationContext.class, ...);
+	//   wont't help:
+	//   When WorkbenchHandlerServiceHandler#isEnabled() is called, the previous
+	//   call to #setEnabled(Object) is not relevant anymore, since the currently
+	//   active IEclipseContext is asked.
+	// Related bugs possibly breaking this: 382839, 394336
 	@Test
 	public void testEnablementForLocalContext() throws Exception {
 		UITestCase.openTestWindow("org.eclipse.ui.resourcePerspective");
