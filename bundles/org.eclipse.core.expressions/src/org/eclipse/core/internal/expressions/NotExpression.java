@@ -60,6 +60,10 @@ public class NotExpression extends Expression {
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName();
+		StringBuilder builder = new StringBuilder(getClass().getSimpleName());
+		builder.append(" [expression="); //$NON-NLS-1$
+		builder.append(fExpression);
+		builder.append("]"); //$NON-NLS-1$
+		return builder.toString();
 	}
 }
