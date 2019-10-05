@@ -19,6 +19,7 @@ import org.eclipse.debug.tests.breakpoint.BreakpointOrderingTests;
 import org.eclipse.debug.tests.console.ConsoleDocumentAdapterTests;
 import org.eclipse.debug.tests.console.ConsoleManagerTests;
 import org.eclipse.debug.tests.console.ConsoleTests;
+import org.eclipse.debug.tests.console.IOConsoleFixedWidthTests;
 import org.eclipse.debug.tests.console.IOConsoleTests;
 import org.eclipse.debug.tests.console.ProcessConsoleManagerTests;
 import org.eclipse.debug.tests.console.ProcessConsoleTests;
@@ -59,7 +60,7 @@ import junit.framework.TestSuite;
 public class AutomatedSuite extends TestSuite {
 
 	/**
-	 * Returns the suite.  This is required to use the JUnit Launcher.
+	 * Returns the suite. This is required to use the JUnit Launcher.
 	 *
 	 * @return the test suite
 	 */
@@ -117,6 +118,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(ConsoleManagerTests.class));
 		addTest(new TestSuite(ConsoleTests.class));
 		addTest(new TestSuite(IOConsoleTests.class));
+		addTest(new TestSuite(IOConsoleFixedWidthTests.class));
 		addTest(new TestSuite(ProcessConsoleManagerTests.class));
 		addTest(new TestSuite(ProcessConsoleTests.class));
 		addTest(new TestSuite(StreamsProxyTests.class));

@@ -135,6 +135,47 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
 	private int[] widgetLineOffsets = new int[1];
 
 	/**
+	 * The fact that wrapped lines are new lines without a newline delimiter leads
+	 * to some hard to handle edge cases since all involved interfaces (implicit)
+	 * assume a newline has its unique offset.
+	 * <p>
+	 * Consider a fixed with of 10 and a console filled with (automatically wrapped)
+	 * content of:
+	 * </p>
+	 *
+	 * <pre>
+	 * 0123456789
+	 * 0
+	 * </pre>
+	 *
+	 * <p>
+	 * If we remove the last character ('0') we must set replaceLineCount to 1 since
+	 * there is one line less due to the unwrapped line. The replaceLineCount is
+	 * necessary so that StyledTextRenderer updates the lines which possible follow
+	 * below and have changed due to moved content.
+	 * </p>
+	 * <p>
+	 * But StyledTextRenderer presumes that the line index where the event occurs is
+	 * the same before and after the text change. This is not the case for our auto
+	 * wrapped lines since getLineAtOffset(10) is 1 before text change and 0 after
+	 * </p>
+	 * <p>
+	 * To solve this unlucky situation we will lie to StyledText(Renderer) for the
+	 * short time between text changing event and actual text change. If we know the
+	 * same (start) offset will yield a different line index before and after change
+	 * we will return for this offset the line index it will have after the change
+	 * already before the change is applied. In this example if StyledText ask for
+	 * getLineAtOffset(10) we return 0 already before the text is actual changed.
+	 * </p>
+	 * <p>
+	 * This field store the offset for which we should preempt the new line index.
+	 * It must be an offset at fixed width border (or negative for none) because
+	 * only those have the potential for two different line indexes at same offset.
+	 * </p>
+	 */
+	private int preemptLineWrapChange = -1;
+
+	/**
 	 * New {@link ConsoleDocumentAdapter} with no {@link IDocument} connected yet.
 	 *
 	 * @param width fixed console width to enforce text wrap or &lt;= 0 to disable
@@ -264,6 +305,13 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
 				// is the index before the insertion index.
 				widgetLine = (-widgetLine) - 2;
 			}
+			if (offset == preemptLineWrapChange) {
+				// The requested offset is at fixed width border. In some text change situations
+				// we must return the line index it will have after the change even if the
+				// change is not applied yet. See #preemptLineWrapChange Javadoc for more
+				// details.
+				widgetLine--;
+			}
 			return widgetLine;
 		}
 	}
@@ -385,10 +433,10 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
 	 * @throws BadLocationException if document event is invalid
 	 */
 	private TextChangingEvent generateTextChangingEvent(DocumentEvent event) throws BadLocationException {
-		String newText = event.getText() == null ? "" : event.getText(); //$NON-NLS-1$
-		int newTextLength = newText.length();
-		int eventOffset = event.getOffset();
-		int eventLength = event.getLength();
+		final String newText = event.getText() == null ? "" : event.getText(); //$NON-NLS-1$
+		final int newTextLength = newText.length();
+		final int eventOffset = event.getOffset();
+		final int eventLength = event.getLength();
 		int replaceLineCount = 0;
 		int newLineCount = 0;
 
@@ -400,45 +448,14 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
 		// single character inserted at first offset can, from StyledText-Widgets
 		// perspective, change the content of every line.
 
-		if (newTextLength >= 0 || eventLength > 0) {
+		if (newTextLength > 0 || eventLength > 0) {
 			// In this method first and last refer to the first and last line affected by
 			// the current document event
-			final int firstDocLineIndex = document.getLineOfOffset(eventOffset);
-			final int firstDocLineOffset = document.getLineOffset(firstDocLineIndex);
-
-			if (eventOffset != firstDocLineOffset && (eventOffset - firstDocLineOffset) % fixedConsoleWidth == 0) {
-				// event start is at fixed width border
-				// XXX: the trick here is important to do the impossible
-				// The fact that wrapped lines are new lines without a newline delimiter leads
-				// to some (nearly) impossible edge cases since all involved interfaces
-				// (implicit) assume a newline has its unique offset.
-				//
-				// Consider a fixed with of 10 and a console filled with (automatically wrapped)
-				// content of:
-				// 0123456789
-				// 0
-				// If we remove the last character ('0') we must set replaceLineCount to 1 since
-				// there is one line less due to the unwrapped line. The replaceLineCount is
-				// necessary so that StyledTextRenderer updates the lines which possible follow
-				// below and have changed due to moved content.
-				// But StyledTextRenderer presumes that the line index where the event occurs is
-				// the same before and after the text change. This is not the case for our auto
-				// wrapped lines since getLineAtOffset(10) is 1 before text change and 0 after.
-				//
-				// To solve this unlucky situation we simply never send text change event
-				// occurring at the fixed width wrap border. If such an document change happens
-				// we expand the text change to include also the character before the wrap
-				// border.
-				eventOffset--;
-				eventLength++;
-				newText = document.get(eventOffset, 1) + newText;
-				newTextLength++;
-			}
-
 			final int eventEnd = eventOffset + eventLength;
 			final int firstWidgetLineIndex = getLineOfOffset(eventOffset);
 			final int firstWidgetLineOffset = getLineOffset(firstWidgetLineIndex);
 
+			final int firstInsertLength;
 			final int lastInsertLength;
 			int lastDocLineLengthDiff = -eventLength;
 
@@ -446,6 +463,7 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
 			Match newLineMatch = docLegalLineDelimiterMatcher.indexOf(newText, newTextOffset);
 			if (newLineMatch == null) {
 				// single line insert
+				firstInsertLength = newTextLength;
 				lastInsertLength = eventOffset - firstWidgetLineOffset + newTextLength;
 				lastDocLineLengthDiff += newTextLength;
 			} else {
@@ -458,7 +476,7 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
 				// 3. Last line: everything (including) last line delimiter to end of inserted
 				// text
 
-				final int firstInsertLength = newLineMatch.getOffset();
+				firstInsertLength = newLineMatch.getOffset();
 				// newLineCount here is numbers of lines required if text is wrapped -1 because
 				// we start inserting in an existing line and +1 for the first line delimiter we
 				// had found
@@ -512,6 +530,18 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
 				lastAffectedWidgetLineIndex--;
 			}
 			replaceLineCount = lastAffectedWidgetLineIndex - firstWidgetLineIndex;
+
+			if (firstInsertLength == 0 && eventLength > 0 && affectedContentAfterRange == 0) {
+				final int firstDocLineOffset = document.getLineInformationOfOffset(eventOffset).getOffset();
+				if (eventOffset != firstDocLineOffset && (eventOffset - firstDocLineOffset) % fixedConsoleWidth == 0) {
+					// Text change produce a tricky wrapped line change. Change start at fixed width
+					// border and is at start of wrapped line because there is wrapped content after
+					// event start. After change there is no more wrapped content after so the same
+					// event start offset is now one widget line above.
+					replaceLineCount++;
+					preemptLineWrapChange = eventOffset;
+				}
+			}
 		}
 
 		final TextChangingEvent changingEvent = new TextChangingEvent(this);
@@ -550,7 +580,7 @@ public class ConsoleDocumentAdapter implements IDocumentAdapter, IDocumentListen
 
 	@Override
 	public synchronized void documentChanged(DocumentEvent event) {
-
+		preemptLineWrapChange = -1;
 		updateWidgetOffsets(event.getOffset());
 
 		TextChangedEvent changeEvent = new TextChangedEvent(this);

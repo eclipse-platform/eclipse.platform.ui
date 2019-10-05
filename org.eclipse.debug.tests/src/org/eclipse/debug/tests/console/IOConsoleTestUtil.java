@@ -17,6 +17,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.tests.TestUtil;
 import org.eclipse.jface.text.BadLocationException;
@@ -24,9 +25,11 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITypedRegion;
+import org.eclipse.jface.text.Region;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ST;
 import org.eclipse.swt.custom.StyledText;
+import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.console.IConsoleDocumentPartitioner;
 import org.eclipse.ui.console.IOConsole;
@@ -55,6 +58,24 @@ public final class IOConsoleTestUtil {
 	 * initialized.
 	 */
 	private IOConsoleOutputStream defaultOut = null;
+	/**
+	 * This utility was initial written to be used with disabled fixed width
+	 * console. If fixed width is enabled some methods like 'set caret to line
+	 * end' may behave unexpected if a test case was written with non fixed
+	 * width console in mind.
+	 * <p>
+	 * If this field is set to <code>true</code> all methods which may behave
+	 * problematic in fixed width are executed in a way so that there result is
+	 * the same as if the console has no fixed width enabled. E.g. 'set caret to
+	 * line end' ignores virtual line wraps and jumps to the next real line
+	 * delimiter.
+	 * </p>
+	 * <p>
+	 * If this field is set to <code>true</code> any test written for non fixed
+	 * width mode should succeed regardless of the fixed width setting.
+	 * </p>
+	 */
+	private boolean ignoreFixedConsole = false;
 
 	/**
 	 * Create a new testing helper.
@@ -304,7 +325,34 @@ public final class IOConsoleTestUtil {
 	 */
 	public IOConsoleTestUtil backspace(int repeat) {
 		for (int i = 0; i < repeat; i++) {
-			textPanel.invokeAction(ST.DELETE_PREVIOUS);
+			if (ignoreFixedConsole) {
+				// Note: this backspace simulation can not handle multibyte line
+				// delimiter. It would only delete one byte with one backspace.
+				final Event e = new Event();
+				e.doit = true;
+				e.text = "";
+				final IRegion selection = getSelection();
+				if (selection.getLength() == 0) {
+					final int caretOffset = getCaretOffset();
+					e.start = caretOffset - 1;
+					e.end = caretOffset;
+					if (caretOffset <= 0) {
+						e.doit = false;
+					}
+				} else {
+					e.start = selection.getOffset();
+					e.end = selection.getOffset() + selection.getLength();
+				}
+				if (e.doit) {
+					textPanel.notifyListeners(SWT.Verify, e);
+				}
+				if (e.doit) {
+					textPanel.replaceTextRange(e.start, e.end - e.start, e.text);
+					setCaretOffset(e.start);
+				}
+			} else {
+				textPanel.invokeAction(ST.DELETE_PREVIOUS);
+			}
 		}
 		return this;
 	}
@@ -393,7 +441,17 @@ public final class IOConsoleTestUtil {
 	 * @return this {@link IOConsoleTestUtil} to chain methods
 	 */
 	public IOConsoleTestUtil moveCaretToLineStart() {
-		textPanel.invokeAction(ST.LINE_START);
+		if (ignoreFixedConsole) {
+			try {
+				final int currentOffset = getCaretOffset();
+				final int docLineStart = getDocument().getLineInformationOfOffset(currentOffset).getOffset();
+				setCaretOffset(docLineStart);
+			} catch (BadLocationException e) {
+				TestUtil.log(IStatus.ERROR, name, "Failed to set caret to line start in wrapped line mode.", e);
+			}
+		} else {
+			textPanel.invokeAction(ST.LINE_START);
+		}
 		return this;
 	}
 
@@ -403,8 +461,28 @@ public final class IOConsoleTestUtil {
 	 * @return this {@link IOConsoleTestUtil} to chain methods
 	 */
 	public IOConsoleTestUtil moveCaretToLineEnd() {
-		textPanel.invokeAction(ST.LINE_END);
+		if (ignoreFixedConsole) {
+			try {
+				final int currentOffset = getCaretOffset();
+				final IRegion docLine = getDocument().getLineInformationOfOffset(currentOffset);
+				setCaretOffset(docLine.getOffset() + docLine.getLength());
+			} catch (BadLocationException e) {
+				TestUtil.log(IStatus.ERROR, name, "Failed to set caret to line end in wrapped line mode.", e);
+			}
+		} else {
+			textPanel.invokeAction(ST.LINE_END);
+		}
 		return this;
+	}
+
+	/**
+	 * Get the selected text region in console.
+	 *
+	 * @return the selected region
+	 */
+	public IRegion getSelection() {
+		final Point selection = textPanel.getSelection();
+		return new Region(selection.x, selection.y - selection.x);
 	}
 
 	/**
@@ -650,6 +728,30 @@ public final class IOConsoleTestUtil {
 			defaultOut = console.newOutputStream();
 		}
 		return defaultOut;
+	}
+
+	/**
+	 * If <code>true</code> the util will work as if console is not in fixed
+	 * width mode. E.g. {@link #moveCaretToLineStart()} will move caret to
+	 * document line start not to widget line start.
+	 *
+	 * @see #ignoreFixedConsole
+	 */
+	public boolean isIgnoreFixedConsole() {
+		return ignoreFixedConsole;
+	}
+
+	/**
+	 * Enable compatibility mode. If set to <code>true</code> written for
+	 * console without fixed width should work with any fixed width. Commands
+	 * like {@link #moveCaretToLineStart()} are modified to not move to begin of
+	 * widget line (maybe wrapped line) but to start it would have without fixed
+	 * width.
+	 *
+	 * @see #ignoreFixedConsole
+	 */
+	public void setIgnoreFixedConsole(boolean ignoreWrappeding) {
+		this.ignoreFixedConsole = ignoreWrappeding;
 	}
 
 	/**

@@ -121,7 +121,7 @@ public class IOConsoleTests extends AbstractDebugTest {
 	 * @param title console title
 	 * @return util to help testing console functions
 	 */
-	private IOConsoleTestUtil getTestUtil(String title) {
+	protected IOConsoleTestUtil getTestUtil(String title) {
 		final IOConsole console = new IOConsole(title, "", null, StandardCharsets.UTF_8.name(), true);
 		consoleFinished.set(false);
 		console.addPropertyChangeListener((PropertyChangeEvent event) -> {
@@ -150,7 +150,7 @@ public class IOConsoleTests extends AbstractDebugTest {
 	 * @param c the test util containing the console to close
 	 * @param expected content this {@link IOConsole} input stream has received
 	 */
-	private void closeConsole(IOConsoleTestUtil c, String... expectedInputLines) throws IOException {
+	protected void closeConsole(IOConsoleTestUtil c, String... expectedInputLines) throws IOException {
 		if (consoleFinished.get()) {
 			// This should only happen if no output streams where used and the
 			// user input stream was explicit closed before

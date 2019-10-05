@@ -199,7 +199,7 @@ public class ConsoleDocumentAdapterTests extends AbstractDebugTest {
 
 		// add text starting at fixed width border
 		addText = "kl";
-		eventListener.addExpectation(new TextEventExpectation(TextChangeEventType.CHANGING, null, null, null, null, 0, 1));
+		eventListener.addExpectation(new TextEventExpectation(TextChangeEventType.CHANGING, docAdapter.getCharCount(), addText, 0, addText.length(), 0, 1));
 		eventListener.addExpectation(new TextEventExpectation(TextChangeEventType.CHANGED));
 		docAdapter.replaceTextRange(docAdapter.getCharCount(), 0, addText);
 		assertNumberOfLines(docAdapter, 5);
@@ -213,7 +213,7 @@ public class ConsoleDocumentAdapterTests extends AbstractDebugTest {
 		// insert text starting at fixed width border
 		addText = ">";
 		offset = docAdapter.getCharCount() - 2;
-		eventListener.addExpectation(new TextEventExpectation(TextChangeEventType.CHANGING, null, null, null, null, 1, 1));
+		eventListener.addExpectation(new TextEventExpectation(TextChangeEventType.CHANGING, offset, addText, 0, addText.length(), 0, 0));
 		eventListener.addExpectation(new TextEventExpectation(TextChangeEventType.CHANGED));
 		docAdapter.replaceTextRange(offset, 0, addText);
 		assertNumberOfLines(docAdapter, 5);
@@ -225,7 +225,7 @@ public class ConsoleDocumentAdapterTests extends AbstractDebugTest {
 		checkLineMapping(docAdapter, rand);
 
 		// delete character at fixed width border
-		eventListener.addExpectation(new TextEventExpectation(TextChangeEventType.CHANGING, null, null, null, null, 1, 1));
+		eventListener.addExpectation(new TextEventExpectation(TextChangeEventType.CHANGING, offset, "", 1, 0, 0, 0));
 		eventListener.addExpectation(new TextEventExpectation(TextChangeEventType.CHANGED));
 		docAdapter.replaceTextRange(offset, 1, "");
 		assertNumberOfLines(docAdapter, 5);
@@ -338,7 +338,7 @@ public class ConsoleDocumentAdapterTests extends AbstractDebugTest {
 		docAdapter.replaceTextRange(offset, 0, addText);
 		replaceText = "uvwxyz_-=|";
 		offset = docAdapter.getCharCount() - 3;
-		eventListener.addExpectation(new TextEventExpectation(TextChangeEventType.CHANGING, null, null, null, null, 1, 1));
+		eventListener.addExpectation(new TextEventExpectation(TextChangeEventType.CHANGING, offset, replaceText, 3, replaceText.length(), 0, 0));
 		eventListener.addExpectation(new TextEventExpectation(TextChangeEventType.CHANGED));
 		docAdapter.replaceTextRange(offset, 3, replaceText);
 		assertNumberOfLines(docAdapter, 7);
@@ -357,7 +357,7 @@ public class ConsoleDocumentAdapterTests extends AbstractDebugTest {
 
 		// remove last wrapped line
 		offset = docAdapter.getOffsetAtLine(docAdapter.getLineCount() - 1);
-		eventListener.addExpectation(new TextEventExpectation(TextChangeEventType.CHANGING, null, null, null, null, 1, 0));
+		eventListener.addExpectation(new TextEventExpectation(TextChangeEventType.CHANGING, offset, "", 10, 0, 1, 0));
 		eventListener.addExpectation(new TextEventExpectation(TextChangeEventType.CHANGED));
 		docAdapter.replaceTextRange(offset, 10, "");
 		assertNumberOfLines(docAdapter, 6);
@@ -376,7 +376,7 @@ public class ConsoleDocumentAdapterTests extends AbstractDebugTest {
 
 		// remove 5th line including it's real line delimiter
 		offset = docAdapter.getOffsetAtLine(5 - 1);
-		eventListener.addExpectation(new TextEventExpectation(TextChangeEventType.CHANGING, null, null, null, null, null, null));
+		eventListener.addExpectation(new TextEventExpectation(TextChangeEventType.CHANGING, offset, "", 11, 0, 1, 0));
 		eventListener.addExpectation(new TextEventExpectation(TextChangeEventType.CHANGED));
 		docAdapter.replaceTextRange(offset, 11, "");
 		assertNumberOfLines(docAdapter, 5);
@@ -637,7 +637,7 @@ public class ConsoleDocumentAdapterTests extends AbstractDebugTest {
 		// remove at fixed width border
 		offset = 10;
 		remove = 1;
-		eventListener.addExpectation(new TextEventExpectation(TextChangeEventType.CHANGING, null, null, null, null, 1, 0));
+		eventListener.addExpectation(new TextEventExpectation(TextChangeEventType.CHANGING, offset, "", remove, 0, 1, 0));
 		eventListener.addExpectation(new TextEventExpectation(TextChangeEventType.CHANGED));
 		docAdapter.replaceTextRange(offset, remove, "");
 		assertNumberOfLines(docAdapter, 1);
@@ -763,6 +763,7 @@ public class ConsoleDocumentAdapterTests extends AbstractDebugTest {
 		assertLine(docAdapter, 3, "#B");
 		checkLineMapping(docAdapter, rand);
 
+		// replace last (real) line with new content
 		addText = "*+";
 		offset = docAdapter.getCharCount() - 2;
 		length = 1;
@@ -774,6 +775,7 @@ public class ConsoleDocumentAdapterTests extends AbstractDebugTest {
 		assertLine(docAdapter, 3, "*+B");
 		checkLineMapping(docAdapter, rand);
 
+		// replace last character (at fixed width border) with new content
 		docAdapter.setText("");
 		docAdapter.replaceTextRange(docAdapter.getCharCount(), 0, "0123456789");
 		docAdapter.replaceTextRange(docAdapter.getCharCount(), 0, "ABCDEFGHIJ");
@@ -781,7 +783,7 @@ public class ConsoleDocumentAdapterTests extends AbstractDebugTest {
 		addText = "$b";
 		offset = docAdapter.getCharCount() - 1;
 		length = 1;
-		eventListener.addExpectation(new TextEventExpectation(TextChangeEventType.CHANGING, null, null, null, null, 1, 1));
+		eventListener.addExpectation(new TextEventExpectation(TextChangeEventType.CHANGING, offset, addText, length, addText.length(), 0, 0));
 		eventListener.addExpectation(new TextEventExpectation(TextChangeEventType.CHANGED));
 		docAdapter.replaceTextRange(offset, length, addText);
 		assertNumberOfLines(docAdapter, 3);
@@ -1164,6 +1166,7 @@ public class ConsoleDocumentAdapterTests extends AbstractDebugTest {
 		 * and {@link #docAdapter} is set do some additional validations.
 		 */
 		TextChangingEvent lastEvent;
+		int eventLineBeforeChange = -1;
 		int linesBeforeReplace = -1;
 		int lengthBeforeReplace = -1;
 
@@ -1180,31 +1183,30 @@ public class ConsoleDocumentAdapterTests extends AbstractDebugTest {
 		@Override
 		public void textChanging(TextChangingEvent event) {
 			final TextEventExpectation expectation = checkCommon(TextChangeEventType.CHANGING);
-			if (expectation == null) {
-				return;
-			}
-
-			if (expectation.start != null) {
-				assertEquals("event.start", (int) expectation.start, event.start);
-			}
-			if (expectation.newText != null) {
-				assertEquals("event.newText", expectation.newText, event.newText);
-			}
-			if (expectation.replaceCharCount != null) {
-				assertEquals("event.replaceCharCount", (int) expectation.replaceCharCount, event.replaceCharCount);
-			}
-			if (expectation.newCharCount != null) {
-				assertEquals("event.newCharCount", (int) expectation.newCharCount, event.newCharCount);
-			}
-			if (expectation.replaceLineCount != null) {
-				assertEquals("event.replaceLineCount", (int) expectation.replaceLineCount, event.replaceLineCount);
-			}
-			if (expectation.newLineCount != null) {
-				assertEquals("event.newLineCount", (int) expectation.newLineCount, event.newLineCount);
+			if (expectation != null) {
+				if (expectation.start != null) {
+					assertEquals("event.start", (int) expectation.start, event.start);
+				}
+				if (expectation.newText != null) {
+					assertEquals("event.newText", expectation.newText, event.newText);
+				}
+				if (expectation.replaceCharCount != null) {
+					assertEquals("event.replaceCharCount", (int) expectation.replaceCharCount, event.replaceCharCount);
+				}
+				if (expectation.newCharCount != null) {
+					assertEquals("event.newCharCount", (int) expectation.newCharCount, event.newCharCount);
+				}
+				if (expectation.replaceLineCount != null) {
+					assertEquals("event.replaceLineCount", (int) expectation.replaceLineCount, event.replaceLineCount);
+				}
+				if (expectation.newLineCount != null) {
+					assertEquals("event.newLineCount", (int) expectation.newLineCount, event.newLineCount);
+				}
 			}
 
 			if (!allowUnexpectedEvents && docAdapter != null) {
 				lastEvent = event;
+				eventLineBeforeChange = docAdapter.getLineAtOffset(event.start);
 				linesBeforeReplace = docAdapter.getLineCount();
 				lengthBeforeReplace = docAdapter.getCharCount();
 
@@ -1223,7 +1225,7 @@ public class ConsoleDocumentAdapterTests extends AbstractDebugTest {
 			if (docAdapter != null && lastEvent != null) {
 				final int lastEventOffset = lastEvent.start;
 				final int lastEventLineIndex = docAdapter.getLineAtOffset(lastEventOffset);
-				assertEquals("Line of offset " + lastEventOffset + " has changed after text change.", lastEventLineIndex, docAdapter.getLineAtOffset(lastEventOffset));
+				assertTrue("Line of event offset " + lastEventOffset + " has moved up.", eventLineBeforeChange <= lastEventLineIndex);
 
 				// check if predicted changes are correct
 				final int predictedDocLength = lengthBeforeReplace - lastEvent.replaceCharCount + lastEvent.newCharCount;
