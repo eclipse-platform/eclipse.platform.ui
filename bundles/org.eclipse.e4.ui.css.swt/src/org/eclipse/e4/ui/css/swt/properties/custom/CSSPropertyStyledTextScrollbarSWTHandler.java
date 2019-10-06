@@ -82,9 +82,11 @@ public class CSSPropertyStyledTextScrollbarSWTHandler implements ICSSPropertyHan
 		} else if (SWT_SCROLLBAR_THEMED.equals(property)) {
 			String cssText = value.getCssText();
 			styledTextElement.setScrollBarThemed(cssText);
+		} else {
+			return false;
 		}
 
-		return false;
+		return true;
 	}
 
 }

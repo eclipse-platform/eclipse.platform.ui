@@ -46,8 +46,10 @@ ICSSPropertyClassificationHandler {
 		case "visibility":
 			applyCSSPropertyVisibility(element, value, pseudo, engine);
 			break;
+		default:
+			return false;
 		}
-		return false;
+		return true;
 	}
 
 	@Override

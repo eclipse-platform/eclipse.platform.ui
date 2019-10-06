@@ -54,8 +54,10 @@ ICSSPropertyFontHandler {
 		case "font-weight":
 			applyCSSPropertyFontWeight(element, value, pseudo, engine);
 			break;
+		default:
+			return false;
 		}
-		return false;
+		return true;
 	}
 
 	@Override

@@ -64,9 +64,11 @@ public class CSSPropertySelectionBackgroundHandler implements ICSSPropertyHandle
 		case SWT_HOT_BORDER_COLOR:
 			treeElement.setHotBorderColor(newColor);
 			break;
+		default:
+			return false;
 		}
 
-		return false;
+		return true;
 	}
 
 }

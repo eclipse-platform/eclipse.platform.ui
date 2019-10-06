@@ -97,9 +97,11 @@ ICSSPropertyBorderHandler {
 		case "border-width":
 			applyCSSPropertyBorderWidth(element, value, pseudo, engine);
 			break;
+		default:
+			return false;
 		}
 
-		return false;
+		return true;
 	}
 
 	@Override

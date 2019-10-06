@@ -36,8 +36,10 @@ ICSSPropertyTextHandler {
 		case "text-transform":
 			applyCSSPropertyTextTransform(element, value, pseudo, engine);
 			break;
+		default:
+			return false;
 		}
-		return false;
+		return true;
 	}
 
 	@Override

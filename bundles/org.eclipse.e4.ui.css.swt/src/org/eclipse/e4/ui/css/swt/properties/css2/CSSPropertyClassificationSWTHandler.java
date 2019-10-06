@@ -34,8 +34,7 @@ AbstractCSSPropertyClassificationHandler {
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		Control control = SWTElementHelpers.getControl(element);
 		if (control != null) {
-			super.applyCSSProperty(control, property, value, pseudo, engine);
-			return true;
+			return super.applyCSSProperty(control, property, value, pseudo, engine);
 		}
 		return false;
 

@@ -33,6 +33,7 @@ public class CSSPropertyFontDefinitionHandler extends AbstractCSSPropertyFontHan
 
 			super.applyCSSProperty(properties, property, value, pseudo, engine);
 			setFontProperties(definition, properties);
+			return true;
 		}
 		return false;
 	}

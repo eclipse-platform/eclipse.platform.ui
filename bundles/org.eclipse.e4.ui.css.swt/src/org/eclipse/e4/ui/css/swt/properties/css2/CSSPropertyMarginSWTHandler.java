@@ -29,7 +29,7 @@ import org.w3c.dom.css.CSSValue;
 import org.w3c.dom.css.CSSValueList;
 
 public class CSSPropertyMarginSWTHandler extends
-		AbstractCSSPropertyMarginHandler {
+AbstractCSSPropertyMarginHandler {
 
 	public static final ICSSPropertyMarginHandler INSTANCE = new CSSPropertyMarginSWTHandler();
 
@@ -42,8 +42,7 @@ public class CSSPropertyMarginSWTHandler extends
 	public boolean applyCSSProperty(Object element, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 
-		super.applyCSSProperty(element, property, value, pseudo, engine);
-		return true;
+		return super.applyCSSProperty(element, property, value, pseudo, engine);
 	}
 
 	@Override

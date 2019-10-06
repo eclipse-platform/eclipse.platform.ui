@@ -42,6 +42,7 @@ public class CSSPropertyLinkSWTHandler implements ICSSPropertyHandler {
 		if (SWT_LINK_FOREGROUND_COLOR.equals(property)) {
 			Color newColor = (Color) engine.convert(value, Color.class, link.getDisplay());
 			link.setLinkForeground(newColor);
+			return true;
 		}
 		return false;
 	}

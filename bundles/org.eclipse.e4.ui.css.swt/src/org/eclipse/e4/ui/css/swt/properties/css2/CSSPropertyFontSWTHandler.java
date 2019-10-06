@@ -90,7 +90,7 @@ implements ICSSPropertyHandler2 {
 					.getCSS2FontProperties(widget, engine
 							.getCSSElementContext(widget));
 			if (fontProperties != null) {
-				super.applyCSSProperty(element, property, value, pseudo,
+				boolean applied = super.applyCSSProperty(element, property, value, pseudo,
 						engine);
 				if (widget instanceof CTabItem) {
 					Control parent = CTabETabHelper.getParent(widget);
@@ -108,14 +108,12 @@ implements ICSSPropertyHandler2 {
 					}
 					listener.setShouldStyle(true);
 				}
+				return applied;
 			}
-			return true;
 		} else {
 			if (element instanceof CSS2FontProperties) {
-				super
-				.applyCSSProperty(element, property, value, pseudo,
+				return super.applyCSSProperty(element, property, value, pseudo,
 						engine);
-				return true;
 			}
 		}
 		return false;

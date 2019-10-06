@@ -42,8 +42,7 @@ AbstractCSSPropertyPaddingHandler {
 			return false;
 		}
 
-		super.applyCSSProperty(element, property, value, pseudo, engine);
-		return true;
+		return super.applyCSSProperty(element, property, value, pseudo, engine);
 	}
 
 	@Override

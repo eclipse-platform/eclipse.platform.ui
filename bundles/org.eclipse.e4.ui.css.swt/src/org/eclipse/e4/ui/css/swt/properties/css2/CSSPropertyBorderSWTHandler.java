@@ -29,7 +29,7 @@ import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertyBorderSWTHandler extends
-		AbstractCSSPropertyBorderHandler implements ICSSPropertyHandler2 {
+AbstractCSSPropertyBorderHandler implements ICSSPropertyHandler2 {
 
 	public static final ICSSPropertyBorderHandler INSTANCE = new CSSPropertyBorderSWTHandler();
 
@@ -41,7 +41,7 @@ public class CSSPropertyBorderSWTHandler extends
 		if (control != null) {
 			Composite parent = control.getParent();
 			if (parent == null) {
-				return true;
+				return false;
 			}
 			CSSBorderProperties border = (CSSBorderProperties) control
 					.getData(CSSSWTConstants.CONTROL_CSS2BORDER_KEY);
@@ -63,10 +63,8 @@ public class CSSPropertyBorderSWTHandler extends
 			return true;
 		} else {
 			if (element instanceof CSSBorderProperties) {
-				super
-						.applyCSSProperty(element, property, value, pseudo,
-								engine);
-				return true;
+				return super.applyCSSProperty(element, property, value, pseudo,
+						engine);
 			}
 		}
 		return false;

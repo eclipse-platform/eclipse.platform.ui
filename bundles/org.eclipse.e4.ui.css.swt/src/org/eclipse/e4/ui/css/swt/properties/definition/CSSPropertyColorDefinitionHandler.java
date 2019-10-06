@@ -31,6 +31,7 @@ public class CSSPropertyColorDefinitionHandler implements ICSSPropertyHandler {
 			IColorDefinitionOverridable definition =
 					(IColorDefinitionOverridable) ((ColorDefinitionElement) element).getNativeWidget();
 			definition.setValue(CSSSWTColorHelper.getRGBA(value).rgb);
+			return true;
 		}
 		return false;
 	}

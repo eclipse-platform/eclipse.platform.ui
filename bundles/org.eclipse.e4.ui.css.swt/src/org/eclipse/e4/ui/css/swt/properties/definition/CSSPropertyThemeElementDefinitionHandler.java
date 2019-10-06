@@ -47,7 +47,7 @@ public class CSSPropertyThemeElementDefinitionHandler implements ICSSPropertyHan
 	@Override
 	public boolean applyCSSProperty(Object element, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if (!(element instanceof ThemeDefinitionElement<?>)) {
+		if (!(element instanceof ThemeDefinitionElement<?>) || property == null) {
 			return false;
 		}
 
@@ -55,12 +55,18 @@ public class CSSPropertyThemeElementDefinitionHandler implements ICSSPropertyHan
 				(IThemeElementDefinitionOverridable<?>) ((ThemeDefinitionElement<?>) element)
 				.getNativeWidget();
 
-		if (CATEGORY_PROP.equals(property)) {
+		switch (property) {
+		case CATEGORY_PROP:
 			definition.setCategoryId(normalizeId(value.getCssText().substring(1)));
-		} else if (LABEL_PROP.equals(property)) {
+			break;
+		case LABEL_PROP:
 			definition.setName(getLabel(value));
-		} else if (DESCRIPTION_PROP.equals(property)) {
+			break;
+		case DESCRIPTION_PROP:
 			definition.setDescription(getLabel(value));
+			break;
+		default:
+			return false;
 		}
 
 		return true;

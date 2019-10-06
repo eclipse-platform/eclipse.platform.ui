@@ -42,8 +42,10 @@ public abstract class AbstractCSSPropertyMarginHandler implements ICSSPropertyMa
 		case "margin-left":
 			applyCSSPropertyMarginLeft(element, value, pseudo, engine);
 			break;
+		default:
+			return false;
 		}
-		return false;
+		return true;
 	}
 
 	@Override

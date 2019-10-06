@@ -31,13 +31,20 @@ public class CSSPropertyThemesExtensionHandler implements ICSSPropertyHandler {
 	@Override
 	public boolean applyCSSProperty(Object element, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if (element instanceof ThemesExtensionElement) {
-			IThemesExtension themeExtension = (IThemesExtension) ((ThemesExtensionElement) element).getNativeWidget();
-			if (FONT_DEFINITION_PROP.equals(property)) {
-				addDefinitions(themeExtension, true, parseSymbolicNames(value.getCssText()));
-			} else if (COLOR_DEFINITION_PROP.equals(property)) {
-				addDefinitions(themeExtension, false, parseSymbolicNames(value.getCssText()));
-			}
+		if (!(element instanceof ThemesExtensionElement) || property == null) {
+			return false;
+		}
+
+		IThemesExtension themeExtension = (IThemesExtension) ((ThemesExtensionElement) element).getNativeWidget();
+		switch (property) {
+		case FONT_DEFINITION_PROP:
+			addDefinitions(themeExtension, true, parseSymbolicNames(value.getCssText()));
+			break;
+		case COLOR_DEFINITION_PROP:
+			addDefinitions(themeExtension, false, parseSymbolicNames(value.getCssText()));
+			break;
+		default:
+			return false;
 		}
 		return true;
 	}

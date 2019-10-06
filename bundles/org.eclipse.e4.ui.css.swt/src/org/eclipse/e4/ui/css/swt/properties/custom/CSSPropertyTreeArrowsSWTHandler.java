@@ -43,8 +43,11 @@ public class CSSPropertyTreeArrowsSWTHandler implements ICSSPropertyHandler {
 		} else if (SWT_TREE_ARROWS_MODE.equals(property)) {
 			// Note: windows-only
 			treeElement.setTreeArrowsMode(value.getCssText());
+		} else {
+			return false;
 		}
-		return false;
+
+		return true;
 	}
 
 	@Override

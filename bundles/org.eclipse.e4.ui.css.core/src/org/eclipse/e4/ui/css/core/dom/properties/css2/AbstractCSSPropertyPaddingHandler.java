@@ -42,8 +42,10 @@ public abstract class AbstractCSSPropertyPaddingHandler implements ICSSPropertyP
 		case "padding-left":
 			applyCSSPropertyPaddingLeft(element, value, pseudo, engine);
 			break;
+		default:
+			return false;
 		}
-		return false;
+		return true;
 	}
 
 	@Override
