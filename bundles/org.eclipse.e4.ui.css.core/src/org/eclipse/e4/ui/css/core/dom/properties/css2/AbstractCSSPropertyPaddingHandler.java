@@ -22,37 +22,50 @@ public abstract class AbstractCSSPropertyPaddingHandler implements ICSSPropertyP
 	@Override
 	public boolean applyCSSProperty(Object element, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if ("padding".equals(property))
+		if (property == null) {
+			return false;
+		}
+
+		switch (property) {
+		case "padding":
 			applyCSSPropertyPadding(element, value, pseudo, engine);
-		else if ("padding-top".equals(property))
+			break;
+		case "padding-top":
 			applyCSSPropertyPaddingTop(element, value, pseudo, engine);
-		else if ("padding-right".equals(property))
+			break;
+		case "padding-right":
 			applyCSSPropertyPaddingRight(element, value, pseudo, engine);
-		else if ("padding-bottom".equals(property))
+			break;
+		case "padding-bottom":
 			applyCSSPropertyPaddingBottom(element, value, pseudo, engine);
-		else if ("padding-left".equals(property))
+			break;
+		case "padding-left":
 			applyCSSPropertyPaddingLeft(element, value, pseudo, engine);
+			break;
+		}
 		return false;
 	}
 
 	@Override
 	public String retrieveCSSProperty(Object element, String property,
 			String pseudo, CSSEngine engine) throws Exception {
-		if ("padding".equals(property)) {
+		if (property == null) {
+			return null;
+		}
+
+		switch (property) {
+		case "padding":
 			return retrieveCSSPropertyPadding(element, pseudo, engine);
-		}
-		if ("padding-top".equals(property)) {
+		case "padding-top":
 			return retrieveCSSPropertyPaddingTop(element, pseudo, engine);
-		}
-		if ("padding-right".equals(property)) {
+		case "padding-right":
 			return retrieveCSSPropertyPaddingRight(element, pseudo, engine);
-		}
-		if ("padding-bottom".equals(property)) {
+		case "padding-bottom":
 			return retrieveCSSPropertyPaddingBottom(element, pseudo, engine);
-		}
-		if ("padding-left".equals(property)) {
+		case "padding-left":
 			return retrieveCSSPropertyPaddingLeft(element, pseudo, engine);
 		}
+
 		return null;
 	}
 }

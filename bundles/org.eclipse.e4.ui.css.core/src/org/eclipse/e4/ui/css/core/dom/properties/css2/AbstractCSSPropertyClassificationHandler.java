@@ -18,28 +18,34 @@ import org.eclipse.e4.ui.css.core.exceptions.UnsupportedPropertyException;
 import org.w3c.dom.css.CSSValue;
 
 public abstract class AbstractCSSPropertyClassificationHandler implements
-		ICSSPropertyClassificationHandler {
+ICSSPropertyClassificationHandler {
 
 	@Override
 	public boolean applyCSSProperty(Object element, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if ("clear".equals(property)) {
+		if (property == null) {
+			return false;
+		}
+
+		switch (property) {
+		case "clear":
 			applyCSSPropertyClear(element, value, pseudo, engine);
-		}
-		if ("cursor".equals(property)) {
+			break;
+		case "cursor":
 			applyCSSPropertyCursor(element, value, pseudo, engine);
-		}
-		if ("display".equals(property)) {
+			break;
+		case "display":
 			applyCSSPropertyDisplay(element, value, pseudo, engine);
-		}
-		if ("float".equals(property)) {
+			break;
+		case "float":
 			applyCSSPropertyFloat(element, value, pseudo, engine);
-		}
-		if ("position".equals(property)) {
+			break;
+		case "position":
 			applyCSSPropertyPosition(element, value, pseudo, engine);
-		}
-		if ("visibility".equals(property)) {
+			break;
+		case "visibility":
 			applyCSSPropertyVisibility(element, value, pseudo, engine);
+			break;
 		}
 		return false;
 	}
@@ -47,22 +53,22 @@ public abstract class AbstractCSSPropertyClassificationHandler implements
 	@Override
 	public String retrieveCSSProperty(Object element, String property,
 			String pseudo, CSSEngine engine) throws Exception {
-		if ("clear".equals(property)) {
+		if (property == null) {
+			return null;
+		}
+
+		switch (property) {
+		case "clear":
 			return retrieveCSSPropertyClear(element, pseudo, engine);
-		}
-		if ("cursor".equals(property)) {
+		case "cursor":
 			return retrieveCSSPropertyCursor(element, pseudo, engine);
-		}
-		if ("display".equals(property)) {
+		case "display":
 			return retrieveCSSPropertyDisplay(element, pseudo, engine);
-		}
-		if ("float".equals(property)) {
+		case "float":
 			return retrieveCSSPropertyFloat(element, pseudo, engine);
-		}
-		if ("position".equals(property)) {
+		case "position":
 			return retrieveCSSPropertyPosition(element, pseudo, engine);
-		}
-		if ("visibility".equals(property)) {
+		case "visibility":
 			return retrieveCSSPropertyVisibility(element, pseudo, engine);
 		}
 		return null;

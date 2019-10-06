@@ -22,35 +22,47 @@ public abstract class AbstractCSSPropertyMarginHandler implements ICSSPropertyMa
 	@Override
 	public boolean applyCSSProperty(Object element, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if ("margin".equals(property))
+		if (property == null) {
+			return false;
+		}
+
+		switch (property) {
+		case "margin":
 			applyCSSPropertyMargin(element, value, pseudo, engine);
-		else if ("margin-top".equals(property))
+			break;
+		case "margin-top":
 			applyCSSPropertyMarginTop(element, value, pseudo, engine);
-		else if ("margin-right".equals(property))
+			break;
+		case "margin-right":
 			applyCSSPropertyMarginRight(element, value, pseudo, engine);
-		else if ("margin-bottom".equals(property))
+			break;
+		case "margin-bottom":
 			applyCSSPropertyMarginBottom(element, value, pseudo, engine);
-		else if ("margin-left".equals(property))
+			break;
+		case "margin-left":
 			applyCSSPropertyMarginLeft(element, value, pseudo, engine);
+			break;
+		}
 		return false;
 	}
 
 	@Override
 	public String retrieveCSSProperty(Object element, String property,
 			String pseudo, CSSEngine engine) throws Exception {
-		if ("margin".equals(property)) {
+		if (property == null) {
+			return null;
+		}
+
+		switch (property) {
+		case "margin":
 			return retrieveCSSPropertyMargin(element, pseudo, engine);
-		}
-		if ("margin-top".equals(property)) {
+		case "margin-top":
 			return retrieveCSSPropertyMarginTop(element, pseudo, engine);
-		}
-		if ("margin-right".equals(property)) {
+		case "margin-right":
 			return retrieveCSSPropertyMarginRight(element, pseudo, engine);
-		}
-		if ("margin-bottom".equals(property)) {
+		case "margin-bottom":
 			return retrieveCSSPropertyMarginBottom(element, pseudo, engine);
-		}
-		if ("margin-left".equals(property)) {
+		case "margin-left":
 			return retrieveCSSPropertyMarginLeft(element, pseudo, engine);
 		}
 		return null;

@@ -25,114 +25,132 @@ import org.w3c.dom.css.CSSValue;
  * apply CSS Property border, border-color, border-style...
  */
 public abstract class AbstractCSSPropertyBorderHandler extends
-		AbstractCSSPropertyBorderCompositeHandler implements
-		ICSSPropertyBorderHandler {
+AbstractCSSPropertyBorderCompositeHandler implements
+ICSSPropertyBorderHandler {
 
 	@Override
 	public boolean applyCSSProperty(Object element, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		// Border
-		if ("border".equals(property))
+
+		if (property == null) {
+			return false;
+		}
+
+		switch (property) {
+		case "border":
 			applyCSSPropertyBorder(element, value, pseudo, engine);
-		// Border bottom
-		else if ("border-bottom".equals(property))
+			break;
+		case "border-bottom":
 			applyCSSPropertyBorderBottom(element, value, pseudo, engine);
-		else if ("border-bottom-color".equals(property))
+			break;
+		case "border-bottom-color":
 			applyCSSPropertyBorderBottomColor(element, value, pseudo, engine);
-		else if ("border-bottom-style".equals(property))
+			break;
+		case "border-bottom-style":
 			applyCSSPropertyBorderBottomStyle(element, value, pseudo, engine);
-		else if ("border-bottom-width".equals(property))
+			break;
+		case "border-bottom-width":
 			applyCSSPropertyBorderBottomWidth(element, value, pseudo, engine);
-		// Border color
-		else if ("border-color".equals(property))
+			break;
+		case "border-color":
 			applyCSSPropertyBorderColor(element, value, pseudo, engine);
-		// Border left
-		else if ("border-left".equals(property))
+			break;
+		case "border-left":
 			applyCSSPropertyBorderLeft(element, value, pseudo, engine);
-		else if ("border-left-color".equals(property))
+			break;
+		case "border-left-color":
 			applyCSSPropertyBorderLeftColor(element, value, pseudo, engine);
-		else if ("border-left-style".equals(property))
+			break;
+		case "border-left-style":
 			applyCSSPropertyBorderLeftStyle(element, value, pseudo, engine);
-		else if ("border-left-width".equals(property))
+			break;
+		case "border-left-width":
 			applyCSSPropertyBorderLeftWidth(element, value, pseudo, engine);
-		// Border right
-		else if ("border-right".equals(property))
+			break;
+		case "border-right":
 			applyCSSPropertyBorderRight(element, value, pseudo, engine);
-		else if ("border-right-color".equals(property))
+			break;
+		case "border-right-color":
 			applyCSSPropertyBorderRightColor(element, value, pseudo, engine);
-		else if ("border-right-style".equals(property))
+			break;
+		case "border-right-style":
 			applyCSSPropertyBorderRightStyle(element, value, pseudo, engine);
-		else if ("border-right-width".equals(property))
+			break;
+		case "border-right-width":
 			applyCSSPropertyBorderRightWidth(element, value, pseudo, engine);
-		// Border style
-		else if ("border-style".equals(property))
+			break;
+		case "border-style":
 			applyCSSPropertyBorderStyle(element, value, pseudo, engine);
-		// Border top
-		else if ("border-top".equals(property))
+			break;
+		case "border-top":
 			applyCSSPropertyBorderTop(element, value, pseudo, engine);
-		else if ("border-top-color".equals(property))
+			break;
+		case "border-top-color":
 			applyCSSPropertyBorderTopColor(element, value, pseudo, engine);
-		else if ("border-top-style".equals(property))
+			break;
+		case "border-top-style":
 			applyCSSPropertyBorderTopStyle(element, value, pseudo, engine);
-		else if ("border-top-width".equals(property))
+			break;
+		case "border-top-width":
 			applyCSSPropertyBorderTopWidth(element, value, pseudo, engine);
-		// Border width
-		else if ("border-width".equals(property))
+			break;
+		case "border-width":
 			applyCSSPropertyBorderWidth(element, value, pseudo, engine);
+			break;
+		}
+
 		return false;
 	}
 
 	@Override
 	public String retrieveCSSProperty(Object element, String property,
 			String pseudo, CSSEngine engine) throws Exception {
-		// Border
-		if ("border".equals(property))
+		if (property == null) {
+			return null;
+		}
+
+		switch (property) {
+		case "border":
 			return retrieveCSSPropertyBorder(element, pseudo, engine);
-		// Border bottom
-		if ("border-bottom".equals(property))
+		case "border-bottom":
 			return retrieveCSSPropertyBorderBottom(element, pseudo, engine);
-		if ("border-bottom-color".equals(property))
+		case "border-bottom-color":
 			return retrieveCSSPropertyBorderBottomColor(element, pseudo, engine);
-		if ("border-bottom-style".equals(property))
+		case "border-bottom-style":
 			return retrieveCSSPropertyBorderBottomStyle(element, pseudo, engine);
-		if ("border-bottom-width".equals(property))
+		case "border-bottom-width":
 			return retrieveCSSPropertyBorderBottomWidth(element, pseudo, engine);
-		// Border color
-		if ("border-color".equals(property))
+		case "border-color":
 			return retrieveCSSPropertyBorderColor(element, pseudo, engine);
-		// Border left
-		if ("border-left".equals(property))
+		case "border-left":
 			return retrieveCSSPropertyBorderLeft(element, pseudo, engine);
-		if ("border-left-color".equals(property))
+		case "border-left-color":
 			return retrieveCSSPropertyBorderLeftColor(element, pseudo, engine);
-		if ("border-left-style".equals(property))
+		case "border-left-style":
 			return retrieveCSSPropertyBorderLeftStyle(element, pseudo, engine);
-		if ("border-left-width".equals(property))
+		case "border-left-width":
 			return retrieveCSSPropertyBorderLeftWidth(element, pseudo, engine);
-		// Border right
-		if ("border-right".equals(property))
+		case "border-right":
 			return retrieveCSSPropertyBorderRight(element, pseudo, engine);
-		if ("border-right-color".equals(property))
+		case "border-right-color":
 			return retrieveCSSPropertyBorderRightColor(element, pseudo, engine);
-		if ("border-right-style".equals(property))
+		case "border-right-style":
 			return retrieveCSSPropertyBorderRightStyle(element, pseudo, engine);
-		if ("border-right-width".equals(property))
+		case "border-right-width":
 			return retrieveCSSPropertyBorderRightWidth(element, pseudo, engine);
-		// Border style
-		if ("border-style".equals(property))
+		case "border-style":
 			return retrieveCSSPropertyBorderStyle(element, pseudo, engine);
-		// Border top
-		if ("border-top".equals(property))
+		case "border-top":
 			return retrieveCSSPropertyBorderTop(element, pseudo, engine);
-		if ("border-top-color".equals(property))
+		case "border-top-color":
 			return retrieveCSSPropertyBorderTopColor(element, pseudo, engine);
-		if ("border-top-style".equals(property))
+		case "border-top-style":
 			return retrieveCSSPropertyBorderTopStyle(element, pseudo, engine);
-		if ("border-top-width".equals(property))
+		case "border-top-width":
 			return retrieveCSSPropertyBorderTopWidth(element, pseudo, engine);
-		// Border width
-		if ("border-width".equals(property))
+		case "border-width":
 			return retrieveCSSPropertyBorderWidth(element, pseudo, engine);
+		}
 		return null;
 	}
 

@@ -19,53 +19,66 @@ import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
 
 public abstract class AbstractCSSPropertyFontHandler extends
-		AbstractCSSPropertyFontCompositeHandler implements
-		ICSSPropertyFontHandler {
+AbstractCSSPropertyFontCompositeHandler implements
+ICSSPropertyFontHandler {
 
 	@Override
 	public boolean applyCSSProperty(Object element, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if ("font".equals(property))
+		if (property == null) {
+			return false;
+		}
+
+		switch (property) {
+		case "font":
 			applyCSSPropertyFont(element, value, pseudo, engine);
-		else if ("font-family".equals(property))
+			break;
+		case "font-family":
 			applyCSSPropertyFontFamily(element, value, pseudo, engine);
-		else if ("font-size".equals(property))
+			break;
+		case "font-size":
 			applyCSSPropertyFontSize(element, value, pseudo, engine);
-		else if ("font-adjust".equals(property))
+			break;
+		case "font-adjust":
 			applyCSSPropertyFontSizeAdjust(element, value, pseudo, engine);
-		else if ("font-stretch".equals(property))
+			break;
+		case "font-stretch":
 			applyCSSPropertyFontStretch(element, value, pseudo, engine);
-		else if ("font-style".equals(property))
+			break;
+		case "font-style":
 			applyCSSPropertyFontStyle(element, value, pseudo, engine);
-		else if ("font-variant".equals(property))
+			break;
+		case "font-variant":
 			applyCSSPropertyFontVariant(element, value, pseudo, engine);
-		else if ("font-weight".equals(property))
+			break;
+		case "font-weight":
 			applyCSSPropertyFontWeight(element, value, pseudo, engine);
+			break;
+		}
 		return false;
 	}
 
 	@Override
 	public String retrieveCSSProperty(Object element, String property,
 			String pseudo, CSSEngine engine) throws Exception {
-		if ("font-family".equals(property)) {
+		if (property == null) {
+			return null;
+		}
+
+		switch (property) {
+		case "font-family":
 			return retrieveCSSPropertyFontFamily(element, pseudo, engine);
-		}
-		if ("font-size".equals(property)) {
+		case "font-size":
 			return retrieveCSSPropertyFontSize(element, pseudo, engine);
-		}
-		if ("font-adjust".equals(property)) {
+		case "font-adjust":
 			return retrieveCSSPropertyFontAdjust(element, pseudo, engine);
-		}
-		if ("font-stretch".equals(property)) {
+		case "font-stretch":
 			return retrieveCSSPropertyFontStretch(element, pseudo, engine);
-		}
-		if ("font-style".equals(property)) {
+		case "font-style":
 			return retrieveCSSPropertyFontStyle(element, pseudo, engine);
-		}
-		if ("font-variant".equals(property)) {
+		case "font-variant":
 			return retrieveCSSPropertyFontVariant(element, pseudo, engine);
-		}
-		if ("font-weight".equals(property)) {
+		case "font-weight":
 			return retrieveCSSPropertyFontWeight(element, pseudo, engine);
 		}
 		return null;

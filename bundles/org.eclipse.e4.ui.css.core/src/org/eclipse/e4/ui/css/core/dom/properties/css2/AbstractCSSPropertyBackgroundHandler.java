@@ -22,29 +22,35 @@ import org.w3c.dom.css.CSSValue;
  * apply CSS Property background, background-color, background-image...
  */
 public abstract class AbstractCSSPropertyBackgroundHandler extends
-		AbstractCSSPropertyBackgroundCompositeHandler implements
-		ICSSPropertyBackgroundHandler {
+AbstractCSSPropertyBackgroundCompositeHandler implements
+ICSSPropertyBackgroundHandler {
 
 	@Override
 	public boolean applyCSSProperty(Object element, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
-		if ("background".equals(property)) {
+		if (property == null) {
+			return false;
+		}
+
+		switch (property) {
+		case "background":
 			applyCSSPropertyBackground(element, value, pseudo, engine);
-		}
-		if ("background-attachment".equals(property)) {
+			break;
+		case "background-attachment":
 			applyCSSPropertyBackgroundAttachment(element, value, pseudo, engine);
-		}
-		if ("background-color".equals(property)) {
+			break;
+		case "background-color":
 			applyCSSPropertyBackgroundColor(element, value, pseudo, engine);
-		}
-		if ("background-image".equals(property)) {
+			break;
+		case "background-image":
 			applyCSSPropertyBackgroundImage(element, value, pseudo, engine);
-		}
-		if ("background-position".equals(property)) {
+			break;
+		case "background-position":
 			applyCSSPropertyBackgroundPosition(element, value, pseudo, engine);
-		}
-		if ("background-repeat".equals(property)) {
+			break;
+		case "background-repeat":
 			applyCSSPropertyBackgroundRepeat(element, value, pseudo, engine);
+			break;
 		}
 		return false;
 	}
