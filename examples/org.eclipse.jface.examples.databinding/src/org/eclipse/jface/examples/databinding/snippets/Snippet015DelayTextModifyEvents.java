@@ -59,16 +59,6 @@ public class Snippet015DelayTextModifyEvents {
 		final ISWTObservableValue<String> delayed2 = WidgetProperties.text(SWT.Modify)
 				.observeDelayed(2000, text2);
 
-		// Trigger a manual value flush when enter is pressed
-		text2.addTraverseListener(e -> {
-			if (e.detail == SWT.TRAVERSE_RETURN) {
-				// When the setValue method is called on a delayed observable
-				// the change is immediately propagated to its listeners without
-				// any delay. All other pending changes are cancelled.
-				delayed2.setValue(text2.getText());
-			}
-		});
-
 		// (In a real application,you would want to dispose the resource manager
 		// when you are done with it)
 		ResourceManager resourceManager = new LocalResourceManager(
@@ -100,6 +90,26 @@ public class Snippet015DelayTextModifyEvents {
 		DataBindingContext dbc = new DataBindingContext();
 
 		dbc.bindValue(delayed1, delayed2);
+
+		// Sometimes it is useful to do a manual value flush when of the delayed
+		// observables. This can be done in the following two ways.
+
+		text2.addTraverseListener(e -> {
+			if (e.detail == SWT.TRAVERSE_RETURN) {
+				// The DataBindingContext update methods can also be used to update
+				// observables in bulk
+				dbc.updateTargets();
+			}
+		});
+
+		text1.addTraverseListener(e -> {
+			if (e.detail == SWT.TRAVERSE_RETURN) {
+				// When the setValue method is called on a delayed observable
+				// the change is immediately propagated to its listeners without
+				// any delay. All other pending changes are cancelled.
+				delayed1.setValue(text1.getText());
+			}
+		});
 	}
 
 	private static Label createLabel(Composite parent, int style, String text) {
