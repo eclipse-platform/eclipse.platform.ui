@@ -236,10 +236,13 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 					fModel.computeDetail(val, this);
 					synchronized (this) {
 						try {
-							// wait for a max of 30 seconds for result, then cancel
-							wait(30000);
+							// detail could already computed at this point (see bug 252433)
 							if (!fComputed) {
-								fMonitor.setCanceled(true);
+								// wait for a max of 30 seconds for result, then cancel
+								wait(30000);
+								if (!fComputed) {
+									fMonitor.setCanceled(true);
+								}
 							}
 						} catch (InterruptedException e) {
 							break;
