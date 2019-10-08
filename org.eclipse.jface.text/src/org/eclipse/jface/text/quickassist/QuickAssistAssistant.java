@@ -105,6 +105,7 @@ public class QuickAssistAssistant implements IQuickAssistAssistant, IQuickAssist
 		fQuickAssistAssistantImpl= new QuickAssistAssistantImpl();
 		fQuickAssistAssistantImpl.enableAutoActivation(false);
 		fQuickAssistAssistantImpl.enableAutoInsert(false);
+		fQuickAssistAssistantImpl.setRepeatedInvocationMode(true);
 	}
 
 	@Override
