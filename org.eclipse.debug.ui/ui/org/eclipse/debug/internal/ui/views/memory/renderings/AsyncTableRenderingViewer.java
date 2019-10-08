@@ -1029,9 +1029,13 @@ public class AsyncTableRenderingViewer extends AsyncVirtualContentTableViewer {
 
 	@Override
 	protected void updateComplete(IStatusMonitor monitor) {
+		if (fTableCursor.isDisposed()) {
+			return;
+		}
+
 		super.updateComplete(monitor);
 
-		if (!hasPendingUpdates() && !fTableCursor.isDisposed())
+		if (!hasPendingUpdates())
 		{
 			attemptSetKeySelection();
 			fTableCursor.redraw();
