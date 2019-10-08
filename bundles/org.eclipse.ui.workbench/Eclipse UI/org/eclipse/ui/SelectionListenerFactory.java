@@ -30,9 +30,9 @@ import org.eclipse.ui.internal.PartSelectionListener;
 /**
  * Selection listeners are notified of all selections in the workbench. This
  * means that the listener is always required to filter unwanted selections. In
- * addition, the listener has to make sure to not to waste cycles in the UI
- * thread, for instance, not update the UI while it is invisible, but make sure
- * to repaint if becoming visible.
+ * addition, the listener has to make sure not to waste cycles in the UI thread,
+ * for instance, not update the UI while it is invisible, but make sure to
+ * repaint if becoming visible.
  * <p>
  * This filtering generally requires <u>a lot</u> of boilerplate code while,
  * ideally, you only want to receive selections that are of interest.
