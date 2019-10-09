@@ -34,6 +34,7 @@ import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.source.SourceViewer;
 
 import org.eclipse.ui.genericeditor.tests.contributions.BarContentAssistProcessor;
+import org.eclipse.ui.tests.harness.util.UITestCase;
 
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.TextOperationAction;
@@ -54,16 +55,18 @@ public class ContextInfoTest extends AbstratGenericEditorTest {
 		TextOperationAction action = (TextOperationAction) editor.getAction(ITextEditorActionConstants.CONTENT_ASSIST_CONTEXT_INFORMATION);
 
 		editor.selectAndReveal(4, 0);
+		UITestCase.processEvents();
+		
 		action.update();
 		action.run();
-		waitAndDispatch(100);
 		this.completionShell= findNewShell(beforeShells);
 		assertEquals("idx= 0", getInfoText(this.completionShell));
 
 		editor.selectAndReveal(8, 0);
+		UITestCase.processEvents();
+		
 		action.update();
 		action.run();
-		waitAndDispatch(100);
 		this.completionShell= findNewShell(beforeShells);
 		assertEquals("idx= 1", getInfoText(this.completionShell));
 	}
@@ -77,15 +80,17 @@ public class ContextInfoTest extends AbstratGenericEditorTest {
 		TextOperationAction action = (TextOperationAction) editor.getAction(ITextEditorActionConstants.CONTENT_ASSIST_CONTEXT_INFORMATION);
 
 		editor.selectAndReveal(4, 0);
+		UITestCase.processEvents();
+		
 		action.update();
 		action.run();
-		waitAndDispatch(100);
 		this.completionShell= findNewShell(beforeShells);
 
 		editor.selectAndReveal(8, 0);
+		UITestCase.processEvents();
+		
 		action.update();
 		action.run();
-		waitAndDispatch(100);
 		this.completionShell= findNewShell(beforeShells);
 
 		editor.getAction(ITextEditorActionConstants.DELETE_LINE).run();
@@ -97,12 +102,22 @@ public class ContextInfoTest extends AbstratGenericEditorTest {
 
 
 	private Shell findNewShell(Set<Shell> beforeShells) {
+		waitAndDispatch(100);
+		Shell[] afterShells= findNewShells(beforeShells);
+		if(afterShells.length == 0) {
+			waitAndDispatch(1000);
+		}
+		afterShells= findNewShells(beforeShells);
+		assertEquals("No new shell found", 1, afterShells.length);
+		return afterShells[0];
+	}
+
+	private Shell[] findNewShells(Set<Shell> beforeShells) {
 		Shell[] afterShells = Arrays.stream(editor.getSite().getShell().getDisplay().getShells())
 				.filter(Shell::isVisible)
 				.filter(shell -> !beforeShells.contains(shell))
 				.toArray(Shell[]::new);
-		assertEquals("No new shell found", 1, afterShells.length);
-		return afterShells[0];
+		return afterShells;
 	}
 
 	private String getInfoText(final Shell shell) {
