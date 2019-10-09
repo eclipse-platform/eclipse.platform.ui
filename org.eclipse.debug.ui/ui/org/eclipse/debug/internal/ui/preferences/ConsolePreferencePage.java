@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -226,10 +226,7 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 	}
 
 	protected boolean canClearErrorMessage() {
-		if (fWidthEditor.isValid() && fBufferSizeEditor.isValid()) {
-			return true;
-		}
-		return false;
+		return fWidthEditor.isValid() && fBufferSizeEditor.isValid() && fTabSizeEditor.isValid();
 	}
 
 	/**
@@ -248,6 +245,9 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 				}
 				if (fBufferSizeEditor != null && event.getSource() != fBufferSizeEditor) {
 					fBufferSizeEditor.refreshValidState();
+				}
+				if (fTabSizeEditor != null && event.getSource() != fTabSizeEditor) {
+					fTabSizeEditor.refreshValidState();
 				}
 				checkState();
 			} else {
