@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.genericeditor;
 
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -130,7 +130,7 @@ public class ContentAssistProcessorRegistry {
 		}
 	}
 
-	private Map<IConfigurationElement, GenericContentTypeRelatedExtension<IContentAssistProcessor>> extensions = new HashMap<>();
+	private Map<IConfigurationElement, GenericContentTypeRelatedExtension<IContentAssistProcessor>> extensions = new LinkedHashMap<>();
 	private boolean outOfSync = true;
 
 	/**
