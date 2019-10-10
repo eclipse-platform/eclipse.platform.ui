@@ -19,7 +19,8 @@ import java.util.List;
 /**
  * A selection containing elements.
  */
-public interface IStructuredSelection extends ISelection {
+@SuppressWarnings("rawtypes")
+public interface IStructuredSelection extends ISelection, Iterable {
 	/**
 	 * Returns the first element in this selection, or <code>null</code>
 	 * if the selection is empty.
@@ -33,6 +34,7 @@ public interface IStructuredSelection extends ISelection {
 	 *
 	 * @return an iterator over the selected elements
 	 */
+	@Override
 	public Iterator iterator();
 
 	/**
