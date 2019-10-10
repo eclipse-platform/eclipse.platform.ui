@@ -2114,9 +2114,14 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (processors == null || processors.isEmpty()) {
 			return null;
 		}
-		// pick first one, arbitrary
-		IContentAssistProcessor p = processors.iterator().next();
-		return p != null ? p.getContextInformationValidator() : null;
+		IContextInformationValidator[] validators= processors.stream()
+				.map(IContentAssistProcessor::getContextInformationValidator)
+				.filter(Objects::nonNull)
+				.toArray(IContextInformationValidator[]::new);
+		if (validators.length == 0) {
+			return null;
+		}
+		return new CompositeContextInformationValidator(validators);
 	}
 
 	/**
@@ -2135,9 +2140,14 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 		if (processors == null || processors.isEmpty()) {
 			return null;
 		}
-		// pick first one, arbitrary
-		IContentAssistProcessor p = processors.iterator().next();
-		return p != null ? p.getContextInformationValidator() : null;
+		IContextInformationValidator[] validators= processors.stream()
+				.map(IContentAssistProcessor::getContextInformationValidator)
+				.filter(Objects::nonNull)
+				.toArray(IContextInformationValidator[]::new);
+		if (validators.length == 0) {
+			return null;
+		}
+		return new CompositeContextInformationValidator(validators);
 	}
 
 	/**
