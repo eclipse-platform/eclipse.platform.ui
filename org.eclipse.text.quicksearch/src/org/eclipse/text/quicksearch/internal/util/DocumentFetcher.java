@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008, 2013-2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.search.internal.ui.SearchPlugin;
 import org.eclipse.text.quicksearch.internal.ui.QuickSearchActivator;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -49,7 +48,6 @@ import org.eclipse.ui.texteditor.ITextEditor;
  *
  * @author Kris De Volder
  */
-@SuppressWarnings("restriction")
 public class DocumentFetcher {
 
 	private Map<IFile, IDocument> dirtyEditors;
@@ -135,7 +133,7 @@ public class DocumentFetcher {
 	 */
 	private Map<IFile, IDocument> evalNonFileBufferDocuments() {
 		Map<IFile, IDocument> result= new HashMap<IFile, IDocument>();
-		IWorkbench workbench= SearchPlugin.getDefault().getWorkbench();
+		IWorkbench workbench= PlatformUI.getWorkbench();
 		IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
 		for (int i= 0; i < windows.length; i++) {
 			IWorkbenchPage[] pages= windows[i].getPages();
