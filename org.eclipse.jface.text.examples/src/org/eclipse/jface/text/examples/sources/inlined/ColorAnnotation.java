@@ -1,5 +1,4 @@
-/**s
- *  Copyright (c) 2017 Angelo ZERR.
+/** Copyright (c) 2017, 2019 Angelo ZERR and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -119,7 +118,7 @@ public class ColorAnnotation extends LineContentAnnotation {
 	 */
 	private static int getSquareWidth(FontMetrics fontMetrics) {
 		// width = 2 spaces + size width of square
-		int width = 2 * fontMetrics.getAverageCharWidth() + getSquareSize(fontMetrics);
+		int width = (int) (2 * fontMetrics.getAverageCharacterWidth() + getSquareSize(fontMetrics));
 		return width;
 	}
 	
