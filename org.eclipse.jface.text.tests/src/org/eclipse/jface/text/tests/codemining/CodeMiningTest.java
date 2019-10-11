@@ -195,7 +195,7 @@ public class CodeMiningTest {
 	}
 
 	@Test
-	public void testCodeMiningMultiLine() throws BadLocationException {
+	public void testCodeMiningMultiLine() {
 		fViewer.getDocument().set("a\nbc");
 		fViewer.setCodeMiningProviders(new ICodeMiningProvider[] { new ICodeMiningProvider() {
 			@Override
