@@ -2234,6 +2234,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		return getPreferenceStore() != null && getPreferenceStore().getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_SPACES_FOR_TABS);
 	}
 
+	/**
+	 * @since 3.13
+	 */
 	@Override
 	protected boolean isSpacesAsTabsDeletionEnabled() {
 		return getPreferenceStore() != null && getPreferenceStore().getBoolean(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_DELETE_SPACES_AS_TABS);
