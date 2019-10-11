@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.core.filebuffers.tests;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 
@@ -107,7 +108,7 @@ public class ResourceHelper {
 	private static IFile createFile(IFile file, String contents) throws CoreException {
 		if (contents == null)
 			contents= "";
-		InputStream inputStream= new java.io.StringBufferInputStream(contents);
+		InputStream inputStream= new ByteArrayInputStream(contents.getBytes());
 		file.create(inputStream, true, NULL_MONITOR);
 		return file;
 	}
