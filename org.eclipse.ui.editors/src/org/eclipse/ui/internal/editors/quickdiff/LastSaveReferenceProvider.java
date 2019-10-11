@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -417,7 +417,7 @@ public class LastSaveReferenceProvider implements IQuickDiffReferenceProvider, I
 	 * 			- byte order mark is not valid for UTF-8
 	 */
 	private static boolean isUTF8BOM(String encoding, IStorage storage) throws CoreException {
-		if (storage instanceof IFile && StandardCharsets.UTF_8.name().equals(encoding)) { //$NON-NLS-1$
+		if (storage instanceof IFile && StandardCharsets.UTF_8.name().equals(encoding)) {
 			IFile file= (IFile) storage;
 			IContentDescription description= file.getContentDescription();
 			if (description != null) {
