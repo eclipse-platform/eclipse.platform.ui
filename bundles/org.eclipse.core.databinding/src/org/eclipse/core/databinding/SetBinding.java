@@ -25,6 +25,7 @@ import org.eclipse.core.databinding.observable.set.ISetChangeListener;
 import org.eclipse.core.databinding.observable.set.SetDiff;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.databinding.util.Policy;
 import org.eclipse.core.internal.databinding.BindingStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -194,6 +195,9 @@ public class SetBinding<M, T> extends Binding {
 					mergeStatus(multiStatus, setterStatus2);
 					// TODO: At this point, the two sets will be out of sync if an error occurred.
 				}
+			} catch (Exception ex) {
+				String message = ex.getMessage() != null ? ex.getMessage() : ""; //$NON-NLS-1$
+				multiStatus.add(new Status(IStatus.ERROR, Policy.JFACE_DATABINDING, IStatus.ERROR, message, ex));
 			} finally {
 				setValidationStatus(multiStatus);
 

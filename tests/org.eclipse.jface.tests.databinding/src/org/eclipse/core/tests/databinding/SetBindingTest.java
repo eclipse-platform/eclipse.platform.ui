@@ -17,13 +17,19 @@ package org.eclipse.core.tests.databinding;
 import static org.eclipse.core.databinding.UpdateSetStrategy.POLICY_NEVER;
 import static org.eclipse.core.databinding.UpdateSetStrategy.POLICY_UPDATE;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import java.util.concurrent.CountDownLatch;
+
+import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.SetBinding;
 import org.eclipse.core.databinding.UpdateSetStrategy;
+import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
 import org.eclipse.core.databinding.observable.set.WritableSet;
 import org.eclipse.core.databinding.util.Policy;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.junit.After;
 import org.junit.Assert;
@@ -95,6 +101,60 @@ public class SetBindingTest extends AbstractDefaultRealmTestCase {
 		target.add("first");
 		dbc.bindSet(target, model, new UpdateSetStrategy<>(POLICY_UPDATE), new UpdateSetStrategy<>(POLICY_NEVER));
 		assertEquals(model.size(), target.size());
+	}
+
+	@Test
+	public void testErrorDuringConversion() {
+		UpdateSetStrategy<String, String> modelToTarget = new UpdateSetStrategy<>();
+		modelToTarget.setConverter(IConverter.create(String.class, String.class, fromObject -> {
+			throw new IllegalArgumentException();
+		}));
+
+		Binding binding = dbc.bindSet(target, model, new UpdateSetStrategy<>(), modelToTarget);
+		CountDownLatch latch = new CountDownLatch(1);
+
+		Policy.setLog(status -> {
+			latch.countDown();
+			assertEquals(IStatus.ERROR, status.getSeverity());
+			assertTrue(status.getException() instanceof IllegalArgumentException);
+		});
+
+		model.add("first");
+
+		assertTrue("Target not changed on conversion error", target.isEmpty());
+		assertEquals(0, latch.getCount());
+		assertEquals(IStatus.ERROR, binding.getValidationStatus().getValue().getSeverity());
+
+		Policy.setLog(null);
+	}
+
+	/**
+	 * We test common functionality from UpdateStrategy here, because that base
+	 * class would need much more stubbing and mocking to test it.
+	 */
+	@Test
+	public void testErrorDuringRemoveIsLogged() {
+		IObservableSet<String> target = new WritableSet<String>() {
+			@Override
+			public boolean remove(Object elem) {
+				throw new IllegalArgumentException();
+			}
+		};
+
+		Binding binding = dbc.bindSet(target, model, new UpdateSetStrategy<>(), new UpdateSetStrategy<>());
+		CountDownLatch latch = new CountDownLatch(1);
+
+		Policy.setLog(status -> {
+			latch.countDown();
+			assertEquals(IStatus.ERROR, status.getSeverity());
+			assertTrue(status.getException() instanceof IllegalArgumentException);
+		});
+
+		model.add("first");
+		model.remove("first");
+
+		assertEquals(0, latch.getCount());
+		assertEquals(IStatus.ERROR, binding.getValidationStatus().getValue().getSeverity());
 	}
 
 }

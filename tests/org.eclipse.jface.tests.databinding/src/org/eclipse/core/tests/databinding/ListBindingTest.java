@@ -220,13 +220,13 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	 * class would need much more stubbing and mocking to test it.
 	 */
 	@Test
-	public void testErrorDuringConversionIsLogged() {
+	public void testErrorDuringConversion() {
 		UpdateListStrategy<String, String> modelToTarget = new UpdateListStrategy<>();
 		modelToTarget.setConverter(IConverter.create(String.class, String.class, fromObject -> {
 			throw new IllegalArgumentException();
 		}));
 
-		dbc.bindList(target, model, new UpdateListStrategy<>(), modelToTarget);
+		Binding binding = dbc.bindList(target, model, new UpdateListStrategy<>(), modelToTarget);
 		CountDownLatch latch = new CountDownLatch(1);
 
 		Policy.setLog(status -> {
@@ -237,7 +237,9 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 
 		model.add("first");
 
+		assertTrue("Target not changed on conversion error", target.isEmpty());
 		assertEquals(0, latch.getCount());
+		assertEquals(IStatus.ERROR, binding.getValidationStatus().getValue().getCode());
 
 		Policy.setLog(null);
 	}
@@ -247,14 +249,15 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	 * class would need much more stubbing and mocking to test it.
 	 */
 	@Test
-	public void testErrorDuringRemoveIsLogged() {
+	public void testErrorDuringRemove() {
 		IObservableList<String> target = new WritableList<String>() {
 			@Override
 			public String remove(int index) {
 				throw new IllegalArgumentException();
 			}
 		};
-		dbc.bindList(target, model, new UpdateListStrategy<>(), new UpdateListStrategy<>());
+
+		Binding binding = dbc.bindList(target, model, new UpdateListStrategy<>(), new UpdateListStrategy<>());
 		CountDownLatch latch = new CountDownLatch(1);
 
 		Policy.setLog(status -> {
@@ -266,7 +269,9 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 		model.add("first");
 		model.remove("first");
 
+		assertEquals("Target not changed on conversion error", Arrays.asList("first"), target);
 		assertEquals(0, latch.getCount());
+		assertEquals(IStatus.ERROR, binding.getValidationStatus().getValue().getSeverity());
 	}
 
 	/**
@@ -274,14 +279,14 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	 * class would need much more stubbing and mocking to test it.
 	 */
 	@Test
-	public void testErrorDuringMoveIsLogged() {
+	public void testErrorDuringMove() {
 		IObservableList<String> target = new WritableList<String>() {
 			@Override
 			public String move(int index, int index2) {
 				throw new IllegalArgumentException();
 			}
 		};
-		dbc.bindList(target, model, new UpdateListStrategy<>(), new UpdateListStrategy<>());
+		Binding binding = dbc.bindList(target, model, new UpdateListStrategy<>(), new UpdateListStrategy<>());
 		CountDownLatch latch = new CountDownLatch(1);
 
 		Policy.setLog(status -> {
@@ -294,7 +299,9 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 		model.add("second");
 		model.move(0, 1);
 
+		assertEquals("Target not changed on conversion error", Arrays.asList("first", "second"), target);
 		assertEquals(0, latch.getCount());
+		assertEquals(IStatus.ERROR, binding.getValidationStatus().getValue().getSeverity());
 	}
 
 	/**
@@ -302,14 +309,15 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	 * class would need much more stubbing and mocking to test it.
 	 */
 	@Test
-	public void testErrorDuringReplaceIsLogged() {
+	public void testErrorDuringReplace() {
 		IObservableList<String> target = new WritableList<String>() {
 			@Override
 			public String set(int index, String element) {
 				throw new IllegalArgumentException();
 			}
 		};
-		dbc.bindList(target, model, new UpdateListStrategy<>(), new UpdateListStrategy<>());
+
+		Binding binding = dbc.bindList(target, model, new UpdateListStrategy<>(), new UpdateListStrategy<>());
 		CountDownLatch latch = new CountDownLatch(1);
 
 		Policy.setLog(status -> {
@@ -321,7 +329,9 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 		model.add("first");
 		model.set(0, "second");
 
+		assertEquals("Element not changed on conversion error", "first", target.get(0));
 		assertEquals(0, latch.getCount());
+		assertEquals(IStatus.ERROR, binding.getValidationStatus().getValue().getSeverity());
 	}
 
 	/**

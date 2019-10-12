@@ -170,6 +170,9 @@ public class UpdateSetStrategy<S, D> extends UpdateStrategy<S, D> {
 	/**
 	 * Sets the converter to be invoked when converting added elements from the
 	 * source element type to the destination element type.
+	 * <p>
+	 * If the converter throws any exceptions they are reported as validation
+	 * errors, using the exception message.
 	 *
 	 * @param converter
 	 * @return the receiver, to enable method call chaining

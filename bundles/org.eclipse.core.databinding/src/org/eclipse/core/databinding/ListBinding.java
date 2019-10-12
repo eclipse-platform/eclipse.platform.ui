@@ -25,6 +25,7 @@ import org.eclipse.core.databinding.observable.list.ListDiff;
 import org.eclipse.core.databinding.observable.list.ListDiffVisitor;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.databinding.util.Policy;
 import org.eclipse.core.internal.databinding.BindingStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
@@ -222,6 +223,9 @@ public class ListBinding<M, T> extends Binding {
 				});
 				// TODO - at this point, the two lists will be out
 				// of sync if an error occurred...
+			} catch (Exception ex) {
+				String message = ex.getMessage() != null ? ex.getMessage() : ""; //$NON-NLS-1$
+				multiStatus.add(new Status(IStatus.ERROR, Policy.JFACE_DATABINDING, IStatus.ERROR, message, ex));
 			} finally {
 				setValidationStatus(multiStatus);
 
