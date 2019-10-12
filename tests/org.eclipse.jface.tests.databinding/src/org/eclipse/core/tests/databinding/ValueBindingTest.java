@@ -20,6 +20,7 @@ import static org.eclipse.core.databinding.UpdateValueStrategy.POLICY_NEVER;
 import static org.eclipse.core.databinding.UpdateValueStrategy.POLICY_UPDATE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 
 import org.eclipse.core.databinding.Binding;
 import org.eclipse.core.databinding.DataBindingContext;
@@ -38,6 +40,7 @@ import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.core.databinding.observable.value.WritableValue;
+import org.eclipse.core.databinding.util.Policy;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.internal.databinding.BindingStatus;
@@ -366,6 +369,31 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 	public void testTargetValueIsSyncedToModelIfModelWasNotSyncedToTarget() {
 		bindLoggingValue(new UpdateValueStrategy<>(true, POLICY_UPDATE), new UpdateValueStrategy<>(true, POLICY_NEVER));
 		assertEquals(model.getValue(), target.getValue());
+	}
+
+	@Test
+	public void testErrorDuringConversion() {
+		UpdateValueStrategy<String, String> modelToTarget = new UpdateValueStrategy<>();
+		modelToTarget.setConverter(IConverter.create(String.class, String.class, fromObject -> {
+			throw new IllegalArgumentException();
+		}));
+
+		Binding binding = dbc.bindValue(target, model, new UpdateValueStrategy<>(), modelToTarget);
+		CountDownLatch latch = new CountDownLatch(1);
+
+		Policy.setLog(status -> {
+			latch.countDown();
+			assertEquals(IStatus.ERROR, status.getSeverity());
+			assertTrue(status.getException() instanceof IllegalArgumentException);
+		});
+
+		model.setValue("first");
+
+		assertNull("Target not changed on conversion error", target.getValue());
+		assertEquals(0, latch.getCount());
+		assertEquals(IStatus.ERROR, binding.getValidationStatus().getValue().getCode());
+
+		Policy.setLog(null);
 	}
 
 	private void bindLoggingValue(UpdateValueStrategy<Object, String> targetToModel,

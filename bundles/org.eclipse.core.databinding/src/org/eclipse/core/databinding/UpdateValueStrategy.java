@@ -402,8 +402,11 @@ public class UpdateValueStrategy<S, D> extends UpdateStrategy<S, D> {
 	}
 
 	/**
-	 * Sets the converter to be invoked when converting from the source type to
-	 * the destination type.
+	 * Sets the converter to be invoked when converting from the source type to the
+	 * destination type.
+	 * <p>
+	 * If the converter throws any exceptions they are reported as validation
+	 * errors, using the exception message.
 	 *
 	 * @param converter
 	 * @return the receiver, to enable method call chaining
