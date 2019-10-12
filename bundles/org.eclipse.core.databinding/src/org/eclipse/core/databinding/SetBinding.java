@@ -153,16 +153,20 @@ public class SetBinding<M, T> extends Binding {
 	private <S, D1, D2 extends D1> void doUpdate(final IObservableSet<S> source, final IObservableSet<D1> destination,
 			final SetDiff<? extends S> diff, final UpdateSetStrategy<? super S, D2> updateSetStrategy,
 			final boolean explicit, final boolean clearDestination) {
+
 		final int policy = updateSetStrategy.getUpdatePolicy();
-		if (policy == UpdateSetStrategy.POLICY_NEVER)
+
+		if (policy == UpdateSetStrategy.POLICY_NEVER) {
 			return;
-		if (policy == UpdateSetStrategy.POLICY_ON_REQUEST && !explicit)
+		}
+
+		if (policy == UpdateSetStrategy.POLICY_ON_REQUEST && !explicit) {
 			return;
+		}
+
 		if (!destination.getRealm().isCurrent()) {
-			/*
-			 * If the destination is different from the source realm, we have to avoid lazy
-			 * diff calculation.
-			 */
+			// If the destination is different from the source realm, we have to avoid lazy
+			// diff calculation
 			diff.getAdditions();
 			diff.getRemovals();
 		}
@@ -181,20 +185,14 @@ public class SetBinding<M, T> extends Binding {
 
 				for (S element : diff.getRemovals()) {
 					IStatus setterStatus1 = updateSetStrategy.doRemove(destination, updateSetStrategy.convert(element));
-
 					mergeStatus(multiStatus, setterStatus1);
-					// TODO - at this point, the two sets
-					// will be out of sync if an error
-					// occurred...
+					// TODO: At this point, the two sets will be out of sync if an error occurred.
 				}
 
 				for (S element : diff.getAdditions()) {
 					IStatus setterStatus2 = updateSetStrategy.doAdd(destination, updateSetStrategy.convert(element));
-
 					mergeStatus(multiStatus, setterStatus2);
-					// TODO - at this point, the two sets
-					// will be out of sync if an error
-					// occurred...
+					// TODO: At this point, the two sets will be out of sync if an error occurred.
 				}
 			} finally {
 				setValidationStatus(multiStatus);

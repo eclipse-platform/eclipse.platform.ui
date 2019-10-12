@@ -154,82 +154,84 @@ public class ListBinding<M, T> extends Binding {
 			final IObservableList<D1> destination, final ListDiff<? extends S> diff,
 			final UpdateListStrategy<? super S, D2> updateListStrategy,
 			final boolean explicit, final boolean clearDestination) {
+
 		final int policy = updateListStrategy.getUpdatePolicy();
-		if (policy != UpdateListStrategy.POLICY_NEVER) {
-			if (policy != UpdateListStrategy.POLICY_ON_REQUEST || explicit) {
-				if (!destination.getRealm().isCurrent()) {
-					/*
-					 * If the destination is different from the source realm, we have to avoid lazy
-					 * diff calculation.
-					 */
-					diff.getDifferences();
+
+		if (policy == UpdateListStrategy.POLICY_NEVER) {
+			return;
+		}
+
+		if (policy == UpdateListStrategy.POLICY_ON_REQUEST && !explicit) {
+			return;
+		}
+
+		if (!destination.getRealm().isCurrent()) {
+			// If the destination is different from the source realm, we have to avoid lazy
+			// diff calculation
+			diff.getDifferences();
+		}
+
+		destination.getRealm().exec(() -> {
+			if (destination == target) {
+				updatingTarget = true;
+			} else {
+				updatingModel = true;
+			}
+			final MultiStatus multiStatus = BindingStatus.ok();
+
+			try {
+				if (clearDestination) {
+					destination.clear();
 				}
-				destination.getRealm().exec(() -> {
-					if (destination == target) {
-						updatingTarget = true;
-					} else {
-						updatingModel = true;
+				diff.accept(new ListDiffVisitor<S>() {
+					boolean useMoveAndReplace = updateListStrategy.useMoveAndReplace();
+
+					@Override
+					public void handleAdd(int index, S element) {
+						IStatus setterStatus = updateListStrategy.doAdd(destination,
+								updateListStrategy.convert(element), index);
+						mergeStatus(multiStatus, setterStatus);
 					}
-					final MultiStatus multiStatus = BindingStatus.ok();
 
-					try {
-						if (clearDestination) {
-							destination.clear();
-						}
-						diff.accept(new ListDiffVisitor<S>() {
-							boolean useMoveAndReplace = updateListStrategy.useMoveAndReplace();
+					@Override
+					public void handleRemove(int index, S element) {
+						IStatus setterStatus = updateListStrategy.doRemove(destination, index);
+						mergeStatus(multiStatus, setterStatus);
+					}
 
-							@Override
-							public void handleAdd(int index, S element) {
-								IStatus setterStatus = updateListStrategy.doAdd(destination,
-										updateListStrategy.convert(element), index);
-
-								mergeStatus(multiStatus, setterStatus);
-							}
-
-							@Override
-							public void handleRemove(int index, S element) {
-								IStatus setterStatus = updateListStrategy.doRemove(destination, index);
-								mergeStatus(multiStatus, setterStatus);
-							}
-
-							@Override
-							public void handleMove(int oldIndex, int newIndex, S element) {
-								if (useMoveAndReplace) {
-									IStatus setterStatus = updateListStrategy
-											.doMove(destination, oldIndex, newIndex);
-
-									mergeStatus(multiStatus, setterStatus);
-								} else {
-									super.handleMove(oldIndex, newIndex, element);
-								}
-							}
-
-							@Override
-							public void handleReplace(int index, S oldElement, S newElement) {
-								if (useMoveAndReplace) {
-									IStatus setterStatus = updateListStrategy.doReplace(
-										destination, index, updateListStrategy.convert(newElement));
-									mergeStatus(multiStatus, setterStatus);
-								} else {
-									super.handleReplace(index, oldElement, newElement);
-								}
-							}
-						});
-						// TODO - at this point, the two lists will be out
-						// of sync if an error occurred...
-					} finally {
-						setValidationStatus(multiStatus);
-
-						if (destination == target) {
-							updatingTarget = false;
+					@Override
+					public void handleMove(int oldIndex, int newIndex, S element) {
+						if (useMoveAndReplace) {
+							IStatus setterStatus = updateListStrategy.doMove(destination, oldIndex, newIndex);
+							mergeStatus(multiStatus, setterStatus);
 						} else {
-							updatingModel = false;
+							super.handleMove(oldIndex, newIndex, element);
+						}
+					}
+
+					@Override
+					public void handleReplace(int index, S oldElement, S newElement) {
+						if (useMoveAndReplace) {
+							IStatus setterStatus = updateListStrategy.doReplace(destination, index,
+									updateListStrategy.convert(newElement));
+							mergeStatus(multiStatus, setterStatus);
+						} else {
+							super.handleReplace(index, oldElement, newElement);
 						}
 					}
 				});
+				// TODO - at this point, the two lists will be out
+				// of sync if an error occurred...
+			} finally {
+				setValidationStatus(multiStatus);
+
+				if (destination == target) {
+					updatingTarget = false;
+				} else {
+					updatingModel = false;
+				}
 			}
-		}
+		});
 	}
 
 	private void setValidationStatus(final IStatus status) {

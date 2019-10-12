@@ -154,10 +154,14 @@ class ValueBinding<M, T> extends Binding {
 			final boolean explicit, final boolean validateOnly) {
 
 		final int policy = updateValueStrategy.getUpdatePolicy();
-		if (policy == UpdateValueStrategy.POLICY_NEVER)
+
+		if (policy == UpdateValueStrategy.POLICY_NEVER) {
 			return;
-		if (policy == UpdateValueStrategy.POLICY_ON_REQUEST && !explicit)
+		}
+
+		if (policy == UpdateValueStrategy.POLICY_ON_REQUEST && !explicit) {
 			return;
+		}
 
 		source.getRealm().exec(() -> {
 			boolean destinationRealmReached = false;
@@ -168,25 +172,30 @@ class ValueBinding<M, T> extends Binding {
 
 				// Validate after get
 				IStatus status = updateValueStrategy.validateAfterGet(value);
-				if (!mergeStatus(multiStatus, status))
+				if (!mergeStatus(multiStatus, status)) {
 					return;
+				}
 
 				// Convert value
 				final D2 convertedValue = updateValueStrategy.convert(value);
 
 				// Validate after convert
 				status = updateValueStrategy.validateAfterConvert(convertedValue);
-				if (!mergeStatus(multiStatus, status))
+				if (!mergeStatus(multiStatus, status)) {
 					return;
-				if (policy == UpdateValueStrategy.POLICY_CONVERT && !explicit)
+				}
+				if (policy == UpdateValueStrategy.POLICY_CONVERT && !explicit) {
 					return;
+				}
 
 				// Validate before set
 				status = updateValueStrategy.validateBeforeSet(convertedValue);
-				if (!mergeStatus(multiStatus, status))
+				if (!mergeStatus(multiStatus, status)) {
 					return;
-				if (validateOnly)
+				}
+				if (validateOnly) {
 					return;
+				}
 
 				// Set value
 				destinationRealmReached = true;
@@ -213,7 +222,6 @@ class ValueBinding<M, T> extends Binding {
 				// This check is necessary as in 3.2.2 Status
 				// doesn't accept a null message (bug 177264).
 				String message = (ex.getMessage() != null) ? ex.getMessage() : ""; //$NON-NLS-1$
-
 				mergeStatus(multiStatus,
 						new Status(IStatus.ERROR, Policy.JFACE_DATABINDING, IStatus.ERROR, message, ex));
 			} finally {
@@ -253,5 +261,4 @@ class ValueBinding<M, T> extends Binding {
 		model = null;
 		super.dispose();
 	}
-
 }
