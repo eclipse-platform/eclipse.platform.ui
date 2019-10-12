@@ -72,7 +72,7 @@ public class SetBindingTest extends AbstractDefaultRealmTestCase {
 	}
 
 	/**
-	 * test for bug 491678
+	 * Test for bug 491678.
 	 */
 	@Test
 	public void testAddListenerAndInitialSyncAreUninterruptable() {
@@ -88,7 +88,7 @@ public class SetBindingTest extends AbstractDefaultRealmTestCase {
 	}
 
 	/**
-	 * test for bug 491678
+	 * Test for bug 491678.
 	 */
 	@Test
 	public void testTargetValueIsSyncedToModelIfModelWasNotSyncedToTarget() {

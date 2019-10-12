@@ -360,7 +360,7 @@ public class ValueBindingTest extends AbstractDefaultRealmTestCase {
 	}
 
 	/**
-	 * test for bug 491678
+	 * Test for bug 491678.
 	 */
 	@Test
 	public void testTargetValueIsSyncedToModelIfModelWasNotSyncedToTarget() {

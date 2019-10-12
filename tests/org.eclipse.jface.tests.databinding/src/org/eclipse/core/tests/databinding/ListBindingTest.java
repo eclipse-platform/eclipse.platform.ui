@@ -21,6 +21,7 @@ import static org.eclipse.core.databinding.UpdateListStrategy.POLICY_UPDATE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,7 +42,6 @@ import org.eclipse.core.internal.databinding.BindingStatus;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -216,49 +216,34 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	}
 
 	/**
-	 * we test common functionality from UpdateStrategy here, because that base
+	 * We test common functionality from UpdateStrategy here, because that base
 	 * class would need much more stubbing and mocking to test it.
 	 */
 	@Test
 	public void testErrorDuringConversionIsLogged() {
 		UpdateListStrategy<String, String> modelToTarget = new UpdateListStrategy<>();
-		modelToTarget.setConverter(new IConverter<String, String>() {
-
-			@Override
-			public Object getFromType() {
-				return String.class;
-			}
-
-			@Override
-			public Object getToType() {
-				return String.class;
-			}
-
-			@Override
-			public String convert(String fromObject) {
-				throw new IllegalArgumentException();
-			}
-
-		});
+		modelToTarget.setConverter(IConverter.create(String.class, String.class, fromObject -> {
+			throw new IllegalArgumentException();
+		}));
 
 		dbc.bindList(target, model, new UpdateListStrategy<>(), modelToTarget);
 		CountDownLatch latch = new CountDownLatch(1);
 
 		Policy.setLog(status -> {
 			latch.countDown();
-			Assert.assertEquals(IStatus.ERROR, status.getSeverity());
-			Assert.assertTrue(status.getException() instanceof IllegalArgumentException);
+			assertEquals(IStatus.ERROR, status.getSeverity());
+			assertTrue(status.getException() instanceof IllegalArgumentException);
 		});
 
 		model.add("first");
 
-		Assert.assertEquals(0, latch.getCount());
+		assertEquals(0, latch.getCount());
 
 		Policy.setLog(null);
 	}
 
 	/**
-	 * we test common functionality from UpdateStrategy here, because that base
+	 * We test common functionality from UpdateStrategy here, because that base
 	 * class would need much more stubbing and mocking to test it.
 	 */
 	@Test
@@ -274,18 +259,18 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 
 		Policy.setLog(status -> {
 			latch.countDown();
-			Assert.assertEquals(IStatus.ERROR, status.getSeverity());
-			Assert.assertTrue(status.getException() instanceof IllegalArgumentException);
+			assertEquals(IStatus.ERROR, status.getSeverity());
+			assertTrue(status.getException() instanceof IllegalArgumentException);
 		});
 
 		model.add("first");
 		model.remove("first");
 
-		Assert.assertEquals(0, latch.getCount());
+		assertEquals(0, latch.getCount());
 	}
 
 	/**
-	 * we test common functionality from UpdateStrategy here, because that base
+	 * We test common functionality from UpdateStrategy here, because that base
 	 * class would need much more stubbing and mocking to test it.
 	 */
 	@Test
@@ -301,19 +286,19 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 
 		Policy.setLog(status -> {
 			latch.countDown();
-			Assert.assertEquals(IStatus.ERROR, status.getSeverity());
-			Assert.assertTrue(status.getException() instanceof IllegalArgumentException);
+			assertEquals(IStatus.ERROR, status.getSeverity());
+			assertTrue(status.getException() instanceof IllegalArgumentException);
 		});
 
 		model.add("first");
 		model.add("second");
 		model.move(0, 1);
 
-		Assert.assertEquals(0, latch.getCount());
+		assertEquals(0, latch.getCount());
 	}
 
 	/**
-	 * we test common functionality from UpdateStrategy here, because that base
+	 * We test common functionality from UpdateStrategy here, because that base
 	 * class would need much more stubbing and mocking to test it.
 	 */
 	@Test
@@ -329,24 +314,24 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 
 		Policy.setLog(status -> {
 			latch.countDown();
-			Assert.assertEquals(IStatus.ERROR, status.getSeverity());
-			Assert.assertTrue(status.getException() instanceof IllegalArgumentException);
+			assertEquals(IStatus.ERROR, status.getSeverity());
+			assertTrue(status.getException() instanceof IllegalArgumentException);
 		});
 
 		model.add("first");
 		model.set(0, "second");
 
-		Assert.assertEquals(0, latch.getCount());
+		assertEquals(0, latch.getCount());
 	}
 
 	/**
-	 * test for bug 491678
+	 * Test for bug 491678.
 	 */
 	@Test
 	public void testAddListenerAndInitialSyncAreUninterruptable() {
 		Policy.setLog(status -> {
 			if (!status.isOK()) {
-				Assert.fail("The databinding logger has the not-ok status " + status);
+				fail("The databinding logger has the not-ok status " + status);
 			}
 		});
 
@@ -356,7 +341,7 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	}
 
 	/**
-	 * test for bug 491678
+	 * Test for bug 491678.
 	 */
 	@Test
 	public void testTargetValueIsSyncedToModelIfModelWasNotSyncedToTarget() {
@@ -366,28 +351,13 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 	}
 
 	/**
-	 * test for bug 326507
+	 * Test for bug 326507.
 	 */
 	@Test
 	public void testConversion() {
 		UpdateListStrategy<String, String> modelToTarget = new UpdateListStrategy<>();
-		modelToTarget.setConverter(new IConverter<String, String>() {
-			@Override
-			public Object getFromType() {
-				return String.class;
-			}
-
-			@Override
-			public Object getToType() {
-				return String.class;
-			}
-			@Override
-			public String convert(String fromObject) {
-				return fromObject + "converted";
-			}
-
-		});
-
+		modelToTarget
+				.setConverter(IConverter.create(String.class, String.class, fromObject -> fromObject + "converted"));
 		dbc.bindList(target, model, new UpdateListStrategy<>(), modelToTarget);
 
 		model.add("1");
