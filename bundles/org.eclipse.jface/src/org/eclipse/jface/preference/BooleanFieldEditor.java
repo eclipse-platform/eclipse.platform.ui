@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Pierre-Yves B. <pyvesdev@gmail.com> - Bug 497619 - ComboFieldEditor doesnt fire PropertyChangeEvent for doLoadDefault and doLoad
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
@@ -158,6 +159,7 @@ public class BooleanFieldEditor extends FieldEditor {
 		if (checkBox != null) {
 			boolean value = getPreferenceStore().getDefaultBoolean(getPreferenceName());
 			checkBox.setSelection(value);
+			fireStateChanged(VALUE, wasSelected, value);
 			wasSelected = value;
 		}
 	}
@@ -238,9 +240,7 @@ public class BooleanFieldEditor extends FieldEditor {
 	 */
 	protected void valueChanged(boolean oldValue, boolean newValue) {
 		setPresentsDefaultValue(false);
-		if (oldValue != newValue) {
-			fireStateChanged(VALUE, oldValue, newValue);
-		}
+		fireStateChanged(VALUE, oldValue, newValue);
 	}
 
 	/*

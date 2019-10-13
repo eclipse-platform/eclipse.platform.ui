@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Remy Chi Jian Suen <remy.suen@gmail.com> - Bug 214392 missing implementation of ComboFieldEditor.setEnabled
+ *     Pierre-Yves B. <pyvesdev@gmail.com> - Bug 497619 - ComboFieldEditor doesnt fire PropertyChangeEvent for doLoadDefault and doLoad
  *******************************************************************************/
 package org.eclipse.jface.preference;
 
@@ -125,7 +126,9 @@ public class ComboFieldEditor extends FieldEditor {
 
 	@Override
 	protected void doLoadDefault() {
+		String oldValue = fValue;
 		updateComboForValue(getPreferenceStore().getDefaultString(getPreferenceName()));
+		valueChanged(oldValue, fValue);
 	}
 
 	@Override
@@ -158,7 +161,7 @@ public class ComboFieldEditor extends FieldEditor {
 				String name = fCombo.getText();
 				fValue = getValueForName(name);
 				setPresentsDefaultValue(false);
-				fireValueChanged(VALUE, oldValue, fValue);
+				valueChanged(oldValue, fValue);
 			}));
 		}
 		return fCombo;
@@ -190,6 +193,22 @@ public class ComboFieldEditor extends FieldEditor {
 		if (fEntryNamesAndValues.length > 0) {
 			fValue = fEntryNamesAndValues[0][1];
 			fCombo.setText(fEntryNamesAndValues[0][0]);
+		}
+	}
+
+	/**
+	 * Informs this field editor's listener, if it has one, about a change to the
+	 * value (<code>VALUE</code> property) provided that the old and new values are
+	 * different.
+	 *
+	 * @param oldValue the old value
+	 * @param newValue the new value
+	 * @since 3.18
+	 */
+	protected void valueChanged(String oldValue, String newValue) {
+		// Only fire event if old and new values are different.
+		if (oldValue != null && !oldValue.equals(newValue) || newValue != null) {
+			fireValueChanged(VALUE, oldValue, newValue);
 		}
 	}
 

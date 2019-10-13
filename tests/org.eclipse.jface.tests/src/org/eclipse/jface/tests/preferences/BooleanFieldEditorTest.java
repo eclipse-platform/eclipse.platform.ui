@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Matthew Bisson - <mrbisson@ca.ibm.com> Initial test implementation
+ *     Pierre-Yves B. <pyvesdev@gmail.com> - Bug 497619 - ComboFieldEditor doesnt fire PropertyChangeEvent for doLoadDefault and doLoad
  ******************************************************************************/
 
 package org.eclipse.jface.tests.preferences;
@@ -74,6 +75,8 @@ public class BooleanFieldEditorTest extends TestCase {
 	}
 
 	public void testLoadDefault() {
+		bfEditorWithSameLabel.setPropertyChangeListener(event -> otherThreadEventOccurred());
+
 		PreferenceStore myPreferenceStore = new PreferenceStore();
 		bfEditorWithSameLabel.setPreferenceName("name");
 		bfEditorWithSameLabel.setPreferenceStore(myPreferenceStore);
@@ -87,6 +90,9 @@ public class BooleanFieldEditorTest extends TestCase {
 		myPreferenceStore.setValue("name", false); // Make sure this doesn't interfere
 		bfEditorWithSameLabel.loadDefault();
 		assertTrue(bfEditorWithSameLabel.getBooleanValue());
+
+		waitForEventInOtherThread();
+		assertTrue(otherThreadEventOccurred);
 	}
 
 	public void testGetBooleanValue() {
