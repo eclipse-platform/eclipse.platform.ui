@@ -47,6 +47,7 @@ import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.IViewerValueProperty;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -442,6 +443,16 @@ public class CompositePartEditor extends AbstractComponentEditor<MCompositePart>
 				WidgetProperties.buttonSelection(), E4Properties.toBeRendered(getEditingDomain()));
 		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context,
 				WidgetProperties.buttonSelection(), E4Properties.visible(getEditingDomain()));
+
+		Composite propComposite = ControlFactory.createMapProperties(parent, Messages, this,
+				Messages.ModelTooling_Context_Properties, UiPackageImpl.Literals.CONTEXT__PROPERTIES,
+				VERTICAL_LIST_WIDGET_INDENT);
+		propComposite.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(3, 1).create());
+
+		Composite variablesComposite = ControlFactory.createStringListWidget(parent, Messages, this,
+				Messages.ModelTooling_Context_Variables, UiPackageImpl.Literals.CONTEXT__VARIABLES,
+				VERTICAL_LIST_WIDGET_INDENT);
+		variablesComposite.setLayoutData(GridDataFactory.fillDefaults().grab(true, true).span(3, 1).create());
 
 		item = new CTabItem(folder, SWT.NONE);
 		item.setText(Messages.ModelTooling_Common_TabSupplementary);
