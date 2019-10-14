@@ -31,7 +31,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class CTabFolderTest extends CSSSWTTestCase {
@@ -177,7 +176,6 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		assertEquals(SWT.ITALIC, fontData.getStyle());
 	}
 
-	@Ignore("this test was commented before bug 443094")
 	@Test
 	public void testBorderVisible() {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { border-visible: true}");

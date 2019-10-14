@@ -127,6 +127,14 @@
                name="unselected-tabs-color" deprecated="renamed as swt-unselected-tabs-color">
          </property-name>
       </handler>
+      <handler
+            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
+            composite="false"
+            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyBorderVisibleSWTHandler">
+         <property-name
+               name="border-visible">
+         </property-name>
+      </handler>
        <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
             composite="false"
