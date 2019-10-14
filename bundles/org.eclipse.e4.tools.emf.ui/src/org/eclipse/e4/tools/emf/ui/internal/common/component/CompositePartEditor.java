@@ -102,7 +102,7 @@ public class CompositePartEditor extends AbstractComponentEditor<MCompositePart>
 				createImageDescriptor(ResourceProvider.IMG_PartSashContainer)) {
 			@Override
 			public void run() {
-				handleAddChild(BasicPackageImpl.Literals.COMPOSITE_PART);
+				handleAddChild(BasicPackageImpl.Literals.PART_SASH_CONTAINER);
 			}
 		});
 		actions.add(new Action(Messages.CompositePartEditor_AddPartStack,
