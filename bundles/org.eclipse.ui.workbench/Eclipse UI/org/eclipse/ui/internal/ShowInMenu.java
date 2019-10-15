@@ -20,11 +20,13 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.e4.core.commands.ExpressionContext;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MCommand;
+import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
@@ -237,6 +239,14 @@ public class ShowInMenu extends ContributionItem implements IWorkbenchContributi
 					} catch (MalformedURLException e) {
 						ccip.icon = imgService.getImageDescriptor(commandId);
 					}
+					List<MParameter> menuParameters = ((MHandledMenuItem) menuElement).getParameters();
+					if (menuParameters != null && !menuParameters.isEmpty()) {
+						ccip.parameters = new HashMap<>(menuParameters.size());
+
+						for (MParameter menuParam : menuParameters) {
+							ccip.parameters.put(menuParam.getName(), menuParam.getValue());
+						}
+					}
 					innerMgr.add(new CommandContributionItem(ccip));
 				}
 			}
@@ -245,7 +255,7 @@ public class ShowInMenu extends ContributionItem implements IWorkbenchContributi
 
 	/**
 	 * Return the appropriate command contribution item for the parameter.
-	 * 
+	 *
 	 * @param viewDescriptor
 	 * @return the show in command contribution item
 	 */
