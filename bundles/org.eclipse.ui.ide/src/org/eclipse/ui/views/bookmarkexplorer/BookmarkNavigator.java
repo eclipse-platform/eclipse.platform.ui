@@ -476,7 +476,7 @@ public class BookmarkNavigator extends ViewPart {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IMemento selectionMem = memento.getChild(TAG_SELECTION);
 		if (selectionMem != null) {
-			ArrayList selectionList = new ArrayList();
+			ArrayList<IMarker> selectionList = new ArrayList<>();
 			for (IMemento markerMem : selectionMem.getChildren(TAG_MARKER)) {
 				try {
 					long id = Long.parseLong(markerMem.getString(TAG_ID));

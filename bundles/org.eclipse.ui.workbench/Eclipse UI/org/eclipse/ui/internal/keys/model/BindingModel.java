@@ -62,24 +62,24 @@ public class BindingModel extends CommonModel {
 		return deletes;
 	}
 
-	private Collection allParameterizedCommands;
+	private Collection<BindingElement> allParameterizedCommands;
 	private BindingManager bindingManager;
 
 	/**
 	 * Holds all the {@link BindingElement} objects.
 	 */
-	private HashSet bindingElements;
+	private HashSet<BindingElement> bindingElements;
 
 	/**
 	 * A map of {@link Binding} objects to {@link BindingElement} objects.
 	 */
-	private Map bindingToElement;
+	private Map<Binding, BindingElement> bindingToElement;
 
 	/**
 	 * A map of {@link ParameterizedCommand} objects to {@link BindingElement}
 	 * objects.
 	 */
-	private Map commandToElement;
+	private Map<ParameterizedCommand, BindingElement> commandToElement;
 
 	/**
 	 * @param kc
@@ -119,7 +119,7 @@ public class BindingModel extends CommonModel {
 	/**
 	 * @return Returns the bindings.
 	 */
-	public HashSet getBindings() {
+	public HashSet<BindingElement> getBindings() {
 		return bindingElements;
 	}
 
@@ -145,14 +145,14 @@ public class BindingModel extends CommonModel {
 	 * @param model
 	 */
 	public void init(IServiceLocator locator, BindingManager manager, ContextModel model) {
-		Set cmdsForBindings = new HashSet();
-		bindingToElement = new HashMap();
-		commandToElement = new HashMap();
+		Set<ParameterizedCommand> cmdsForBindings = new HashSet<>();
+		bindingToElement = new HashMap<>();
+		commandToElement = new HashMap<>();
 
-		bindingElements = new HashSet();
+		bindingElements = new HashSet<>();
 		bindingManager = manager;
 
-		Iterator i = manager.getActiveBindingsDisregardingContextFlat().iterator();
+		Iterator<?> i = manager.getActiveBindingsDisregardingContextFlat().iterator();
 		while (i.hasNext()) {
 			Binding b = (Binding) i.next();
 			BindingElement be = new BindingElement(controller);
@@ -164,9 +164,9 @@ public class BindingModel extends CommonModel {
 		}
 
 		ICommandService commandService = locator.getService(ICommandService.class);
-		final Collection commandIds = commandService.getDefinedCommandIds();
-		allParameterizedCommands = new HashSet();
-		final Iterator commandIdItr = commandIds.iterator();
+		final Collection<?> commandIds = commandService.getDefinedCommandIds();
+		allParameterizedCommands = new HashSet<>();
+		final Iterator<?> commandIdItr = commandIds.iterator();
 		while (commandIdItr.hasNext()) {
 			final String currentCommandId = (String) commandIdItr.next();
 			final Command currentCommand = commandService.getCommand(currentCommandId);
@@ -196,11 +196,11 @@ public class BindingModel extends CommonModel {
 	 * @param contextModel
 	 */
 	public void refresh(ContextModel contextModel) {
-		Set cmdsForBindings = new HashSet();
-		Collection activeManagerBindings = bindingManager.getActiveBindingsDisregardingContextFlat();
+		Set<Object> cmdsForBindings = new HashSet<>();
+		Collection<?> activeManagerBindings = bindingManager.getActiveBindingsDisregardingContextFlat();
 
 		// add any bindings that we don't already have.
-		Iterator i = activeManagerBindings.iterator();
+		Iterator<?> i = activeManagerBindings.iterator();
 		while (i.hasNext()) {
 			KeyBinding b = (KeyBinding) i.next();
 			ParameterizedCommand parameterizedCommand = b.getParameterizedCommand();
@@ -290,7 +290,7 @@ public class BindingModel extends CommonModel {
 			// Unbind any conflicts affected by the delete binding
 			ConflictModel conflictModel = controller.getConflictModel();
 			conflictModel.updateConflictsFor(bindingElement);
-			Collection conflictsList = conflictModel.getConflicts();
+			Collection<?> conflictsList = conflictModel.getConflicts();
 			if (conflictsList != null) {
 				Object[] conflicts = conflictsList.toArray();
 				for (Object conflict : conflicts) {
@@ -345,8 +345,8 @@ public class BindingModel extends CommonModel {
 
 		// Remove any USER bindings
 		Binding[] managerBindings = bindingManager.getBindings();
-		ArrayList systemBindings = new ArrayList();
-		ArrayList removalBindings = new ArrayList();
+		ArrayList<Binding> systemBindings = new ArrayList<>();
+		ArrayList<Binding> removalBindings = new ArrayList<>();
 		for (Binding managerBinding : managerBindings) {
 			if (managerBinding.getParameterizedCommand() == null) {
 				removalBindings.add(managerBinding);
@@ -360,12 +360,12 @@ public class BindingModel extends CommonModel {
 		}
 
 		// Clear the USER bindings for parameterized commands
-		Iterator i = systemBindings.iterator();
+		Iterator<Binding> i = systemBindings.iterator();
 		while (i.hasNext()) {
-			Binding sys = (Binding) i.next();
-			Iterator j = removalBindings.iterator();
+			Binding sys = i.next();
+			Iterator<Binding> j = removalBindings.iterator();
 			while (j.hasNext()) {
-				Binding del = (Binding) j.next();
+				Binding del = j.next();
 				if (deletes(del, sys) && del.getType() == Binding.USER) {
 					bindingManager.removeBinding(del);
 				}
@@ -404,10 +404,10 @@ public class BindingModel extends CommonModel {
 		}
 
 		boolean done = false;
-		Iterator i = bindingElements.iterator();
+		Iterator<BindingElement> i = bindingElements.iterator();
 		// Reselects the command
 		while (i.hasNext() && !done) {
-			BindingElement be = (BindingElement) i.next();
+			BindingElement be = i.next();
 			obj = be.getModelObject();
 			ParameterizedCommand pcmd = null;
 			if (obj instanceof ParameterizedCommand) {
@@ -425,8 +425,8 @@ public class BindingModel extends CommonModel {
 	/**
 	 * @param bindings The bindings to set.
 	 */
-	public void setBindings(HashSet bindings) {
-		HashSet old = this.bindingElements;
+	public void setBindings(HashSet<BindingElement> bindings) {
+		HashSet<BindingElement> old = this.bindingElements;
 		this.bindingElements = bindings;
 		controller.firePropertyChange(this, PROP_BINDINGS, old, bindings);
 	}
@@ -434,7 +434,7 @@ public class BindingModel extends CommonModel {
 	/**
 	 * @param bindingToElement The bindingToElement to set.
 	 */
-	public void setBindingToElement(Map bindingToElement) {
+	public void setBindingToElement(Map<Binding, BindingElement> bindingToElement) {
 		Map old = this.bindingToElement;
 		this.bindingToElement = bindingToElement;
 		controller.firePropertyChange(this, PROP_BINDING_ELEMENT_MAP, old, bindingToElement);
