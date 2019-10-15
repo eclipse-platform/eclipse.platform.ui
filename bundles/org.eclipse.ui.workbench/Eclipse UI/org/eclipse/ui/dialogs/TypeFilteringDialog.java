@@ -130,7 +130,7 @@ public class TypeFilteringDialog extends SelectionDialog {
 	 *
 	 * @param result
 	 */
-	private void addUserDefinedEntries(List result) {
+	private void addUserDefinedEntries(List<String> result) {
 		StringTokenizer tokenizer = new StringTokenizer(userDefinedText.getText(), TYPE_DELIMITER);
 		// Allow the *. and . prefix and strip out the extension
 		while (tokenizer.hasMoreTokens()) {
@@ -156,7 +156,7 @@ public class TypeFilteringDialog extends SelectionDialog {
 	private void checkInitialSelections() {
 		IFileEditorMapping editorMappings[] = ((EditorRegistry) PlatformUI.getWorkbench().getEditorRegistry())
 				.getUnifiedMappings();
-		ArrayList selectedMappings = new ArrayList();
+		ArrayList<String> selectedMappings = new ArrayList<>();
 		for (IFileEditorMapping mapping : editorMappings) {
 			// Check for both extension and label matches
 			if (this.initialSelections.contains(mapping.getExtension())) {
@@ -245,7 +245,7 @@ public class TypeFilteringDialog extends SelectionDialog {
 	private IFileEditorMapping[] getInput() {
 		// Filter the mappings to be just those with a wildcard extension
 		if (currentInput == null) {
-			List wildcardEditors = new ArrayList();
+			List<IFileEditorMapping> wildcardEditors = new ArrayList<>();
 			IFileEditorMapping[] allMappings = ((EditorRegistry) PlatformUI.getWorkbench().getEditorRegistry())
 					.getUnifiedMappings();
 			for (IFileEditorMapping allMapping : allMappings) {
@@ -275,7 +275,7 @@ public class TypeFilteringDialog extends SelectionDialog {
 	protected void okPressed() {
 		// Get the input children.
 		IFileEditorMapping[] children = getInput();
-		List list = new ArrayList();
+		List<String> list = new ArrayList<>();
 		// Build a list of selected children.
 		for (IFileEditorMapping element : children) {
 			if (listViewer.getChecked(element)) {

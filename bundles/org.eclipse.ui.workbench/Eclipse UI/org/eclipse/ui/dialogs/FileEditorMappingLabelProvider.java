@@ -14,9 +14,7 @@
 package org.eclipse.ui.dialogs;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.osgi.util.TextProcessor;
@@ -48,7 +46,7 @@ public class FileEditorMappingLabelProvider extends LabelProvider implements ITa
 	/**
 	 * Images that will require disposal.
 	 */
-	private List imagesToDispose = new ArrayList();
+	private List<Image> imagesToDispose = new ArrayList<>();
 
 	/**
 	 * Creates an instance of this class. The private visibility of this constructor
@@ -61,8 +59,8 @@ public class FileEditorMappingLabelProvider extends LabelProvider implements ITa
 	@Override
 	public void dispose() {
 		super.dispose();
-		for (Iterator e = imagesToDispose.iterator(); e.hasNext();) {
-			((Image) e.next()).dispose();
+		for (Image e : imagesToDispose) {
+			e.dispose();
 		}
 		imagesToDispose.clear();
 	}

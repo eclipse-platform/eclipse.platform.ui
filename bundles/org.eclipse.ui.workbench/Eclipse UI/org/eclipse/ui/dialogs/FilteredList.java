@@ -103,7 +103,7 @@ public class FilteredList extends Composite {
 
 	Label[] fLabels;
 
-	Vector fImages = new Vector();
+	Vector<Image> fImages = new Vector<>();
 
 	int[] fFoldedIndices;
 
@@ -256,7 +256,7 @@ public class FilteredList extends Composite {
 		int length = fElements.length;
 		// fill labels
 		fLabels = new Label[length];
-		Set imageSet = new HashSet();
+		Set<Image> imageSet = new HashSet<>();
 		for (int i = 0; i != length; i++) {
 			String text = fLabelProvider.getText(fElements[i]);
 			Image image = fLabelProvider.getImage(fElements[i]);

@@ -71,7 +71,7 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 
 	private IStatus fCurrStatus = new Status(IStatus.OK, PlatformUI.PLUGIN_ID, IStatus.OK, "", null); //$NON-NLS-1$
 
-	private List fFilters;
+	private List<ViewerFilter> fFilters;
 
 	private Object fInput;
 
@@ -110,7 +110,7 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 		fLabelProvider = labelProvider;
 		fContentProvider = contentProvider;
 
-		setResult(new ArrayList(0));
+		setResult(new ArrayList<>(0));
 		setStatusLineAboveButtons(true);
 	}
 
@@ -180,7 +180,7 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 	 */
 	public void addFilter(ViewerFilter filter) {
 		if (fFilters == null) {
-			fFilters = new ArrayList(4);
+			fFilters = new ArrayList<>(4);
 		}
 
 		fFilters.add(filter);
@@ -313,7 +313,7 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 		fViewer.setComparator(fComparator);
 		if (fFilters != null) {
 			for (int i = 0; i != fFilters.size(); i++) {
-				fViewer.addFilter((ViewerFilter) fFilters.get(i));
+				fViewer.addFilter(fFilters.get(i));
 			}
 		}
 
@@ -375,7 +375,7 @@ public class ElementTreeSelectionDialog extends SelectionStatusDialog {
 		if (elements.length > 0) {
 			if (fFilters != null) {
 				for (int i = 0; i < fFilters.size(); i++) {
-					ViewerFilter curr = (ViewerFilter) fFilters.get(i);
+					ViewerFilter curr = fFilters.get(i);
 					elements = curr.filter(fViewer, input, elements);
 				}
 			}
