@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import javax.xml.parsers.ParserConfigurationException;
 
@@ -87,9 +86,9 @@ public class WelcomeEditor extends EditorPart {
 
 	private WelcomeParser parser;
 
-	private ArrayList hyperlinkRanges = new ArrayList();
+	private ArrayList<StyleRange> hyperlinkRanges = new ArrayList<>();
 
-	private ArrayList texts = new ArrayList();
+	private ArrayList<StyledText> texts = new ArrayList<>();
 
 	private ScrolledComposite scrolledComposite;
 
@@ -136,15 +135,15 @@ public class WelcomeEditor extends EditorPart {
 	private StyledText nextText(StyledText text) {
 		int index = 0;
 		if (text == null) {
-			return (StyledText) texts.get(0);
+			return texts.get(0);
 		}
 		index = texts.indexOf(text);
 
 		//If we are not at the end....
 		if (index < texts.size() - 1) {
-			return (StyledText) texts.get(index + 1);
+			return texts.get(index + 1);
 		}
-		return (StyledText) texts.get(0);
+		return texts.get(0);
 	}
 
 	/**
@@ -153,15 +152,15 @@ public class WelcomeEditor extends EditorPart {
 	private StyledText previousText(StyledText text) {
 		int index = 0;
 		if (text == null) {
-			return (StyledText) texts.get(0);
+			return texts.get(0);
 		}
 		index = texts.indexOf(text);
 
 		//If we are at the beginning....
 		if (index == 0) {
-			return (StyledText) texts.get(texts.size() - 1);
+			return texts.get(texts.size() - 1);
 		}
-		return (StyledText) texts.get(index - 1);
+		return texts.get(index - 1);
 	}
 
 	/**
@@ -610,7 +609,7 @@ public class WelcomeEditor extends EditorPart {
 					} else {
 						extent = w - adjust;
 					}
-					StyledText text = (StyledText) texts.get(i);
+					StyledText text = texts.get(i);
 					Point p1 = text.computeSize(extent, SWT.DEFAULT, false);
 					((GridData) text.getLayoutData()).widthHint = p1.x;
 				}
@@ -692,9 +691,7 @@ public class WelcomeEditor extends EditorPart {
 					.equals(JFacePreferences.HYPERLINK_COLOR)) {
 				Color fg = JFaceColors.getHyperlinkText(editorComposite
 						.getDisplay());
-				Iterator links = hyperlinkRanges.iterator();
-				while (links.hasNext()) {
-					StyleRange range = (StyleRange) links.next();
+				for (StyleRange range : hyperlinkRanges) {
 					range.foreground = fg;
 				}
 			}
