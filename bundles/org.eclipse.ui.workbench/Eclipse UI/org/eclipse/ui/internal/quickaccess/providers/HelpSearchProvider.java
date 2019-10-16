@@ -15,7 +15,6 @@ package org.eclipse.ui.internal.quickaccess.providers;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.ui.internal.quickaccess.QuickAccessEntry;
 import org.eclipse.ui.internal.quickaccess.QuickAccessMessages;
 import org.eclipse.ui.internal.quickaccess.QuickAccessProvider;
 import org.eclipse.ui.quickaccess.QuickAccessElement;
@@ -27,6 +26,10 @@ import org.eclipse.ui.quickaccess.QuickAccessElement;
 public class HelpSearchProvider extends QuickAccessProvider {
 	/** Minumum length to suggest the user to search typed text in the Help */
 	public static final int MIN_SEARCH_LENGTH = 3;
+
+	public HelpSearchProvider() {
+		super();
+	}
 
 	@Override
 	public String getName() {
@@ -62,21 +65,5 @@ public class HelpSearchProvider extends QuickAccessProvider {
 	protected void doReset() {
 	}
 
-	/**
-	 * Instantiate a new {@link QuickAccessEntry} to search the given text in the
-	 * eclipse help
-	 *
-	 * @param text String to search in the Eclipse Help
-	 *
-	 * @return the {@link QuickAccessEntry} to perform the action
-	 */
-	public QuickAccessEntry makeHelpSearchEntry(String text) {
-		if (text.length() >= MIN_SEARCH_LENGTH) {
-			QuickAccessElement searchHelpElement = getElements(text, null)[0];
-			return new QuickAccessEntry(searchHelpElement, new HelpSearchProvider(), new int[][] {},
-					new int[][] {}, QuickAccessEntry.MATCH_PERFECT);
-		}
-		return null;
-	}
 
 }

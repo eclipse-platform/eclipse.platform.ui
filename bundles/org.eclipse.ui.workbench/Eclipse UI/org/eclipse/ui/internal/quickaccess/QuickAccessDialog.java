@@ -68,6 +68,7 @@ import org.eclipse.ui.internal.progress.ProgressManagerUtil;
 import org.eclipse.ui.internal.quickaccess.providers.ActionProvider;
 import org.eclipse.ui.internal.quickaccess.providers.CommandProvider;
 import org.eclipse.ui.internal.quickaccess.providers.EditorProvider;
+import org.eclipse.ui.internal.quickaccess.providers.HelpSearchProvider;
 import org.eclipse.ui.internal.quickaccess.providers.PerspectiveProvider;
 import org.eclipse.ui.internal.quickaccess.providers.PreferenceProvider;
 import org.eclipse.ui.internal.quickaccess.providers.PropertiesProvider;
@@ -138,6 +139,8 @@ public class QuickAccessDialog extends PopupDialog {
 					});
 				}
 			}));
+			providers.add(new HelpSearchProvider());
+
 			Collection<String> previousPickProviderIds = getPreviousPickProviderIds(getDialogSettings());
 			previousPicksProvider.setInvolvedProviders(
 					providers.stream().filter(provider -> previousPickProviderIds.contains(provider.getId()))

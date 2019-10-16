@@ -77,7 +77,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.quickaccess.providers.HelpSearchProvider;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.quickaccess.QuickAccessElement;
@@ -152,13 +151,6 @@ public abstract class QuickAccessContents {
 			return;
 		}
 		final Display display = table.getDisplay();
-		// extra entry added when the user activates help search
-		// (extensible)
-		List<QuickAccessEntry> extraEntries = new ArrayList<>();
-		QuickAccessEntry helpSearchEntry = new HelpSearchProvider().makeHelpSearchEntry(filter);
-		if (helpSearchEntry != null) {
-			extraEntries.add(helpSearchEntry);
-		}
 
 		// perfect match, to be selected in the table if not null
 		QuickAccessElement perfectMatch = getPerfectMatch(filter);
@@ -168,7 +160,7 @@ public abstract class QuickAccessContents {
 		AtomicReference<List<QuickAccessEntry>[]> entries = new AtomicReference<>();
 		final Job currentComputeEntriesJob = Job.create(computingMessage, theMonitor -> {
 			entries.set(
-					computeMatchingEntries(filter, perfectMatch, extraEntries, maxNumberOfItemsInTable, theMonitor));
+					computeMatchingEntries(filter, perfectMatch, maxNumberOfItemsInTable, theMonitor));
 			return theMonitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
 		});
 		currentComputeEntriesJob.setPriority(Job.INTERACTIVE);
@@ -192,7 +184,7 @@ public abstract class QuickAccessContents {
 						&& !table.isDisposed()) {
 					display.asyncExec(() -> {
 						computingFeedbackJob.cancel();
-						refreshTable(perfectMatch, entries.get(), extraEntries, filter);
+						refreshTable(perfectMatch, entries.get(), filter);
 					});
 				}
 			}
@@ -281,15 +273,11 @@ public abstract class QuickAccessContents {
 		return showAllMatches;
 	}
 
-	private void refreshTable(QuickAccessElement perfectMatch, List<QuickAccessEntry>[] entries,
-			List<QuickAccessEntry> extraEntries, String filter) {
+	private void refreshTable(QuickAccessElement perfectMatch, List<QuickAccessEntry>[] entries, String filter) {
 		if (table.isDisposed()) {
 			return;
 		}
-		// search help extra entry: not from search or previous picks.
-		int nExtraEntries = (extraEntries == null) ? 0 : extraEntries.size();
-		if (table.getItemCount() > (entries.length + nExtraEntries)
-				&& table.getItemCount() - (entries.length + nExtraEntries) > 20) {
+		if (table.getItemCount() > entries.length && table.getItemCount() - entries.length > 20) {
 			table.removeAll();
 		}
 		TableItem[] items = table.getItems();
@@ -324,11 +312,6 @@ public abstract class QuickAccessContents {
 					index++;
 				}
 			}
-		}
-		// add extra entry
-		for (QuickAccessEntry entry : extraEntries) {
-			TableItem item = new TableItem(table, SWT.NONE);
-			item.setData(entry);
 		}
 		if (index < items.length) {
 			table.remove(index, items.length - 1);
@@ -371,15 +354,13 @@ public abstract class QuickAccessContents {
 	 * @param filter       the string text filter to apply, possibly empty
 	 * @param perfectMatch a quick access element that should be given priority or
 	 *                     <code>null</code>
-	 * @param extraEntries extra entries that will be added to the tabular
-	 *                     visualization after computing matching entries, i.e.
-	 *                     Search in Help
+	 * 
 	 * @param aMonitor
 	 * @return the array of lists (one per provider) contains the quick access
 	 *         entries that should be added to the table, possibly empty
 	 */
 	private List<QuickAccessEntry>[] computeMatchingEntries(String filter, QuickAccessElement perfectMatch,
-			List<QuickAccessEntry> extraEntries, int maxNumberOfItemsInTable, IProgressMonitor aMonitor) {
+			int maxNumberOfItemsInTable, IProgressMonitor aMonitor) {
 		if (aMonitor == null) {
 			aMonitor = new NullProgressMonitor();
 		}
@@ -387,7 +368,7 @@ public abstract class QuickAccessContents {
 		@SuppressWarnings("unchecked")
 		List<QuickAccessEntry>[] entries = new List[providers.length];
 		// extra entries are limiting the number of items for search results
-		int maxCount = maxNumberOfItemsInTable - extraEntries.size();
+		int maxCount = maxNumberOfItemsInTable;
 		int[] indexPerProvider = new int[providers.length];
 		int countPerProvider = Math.min(maxCount / 4, INITIAL_COUNT_PER_PROVIDER);
 		int prevPick = 0;
