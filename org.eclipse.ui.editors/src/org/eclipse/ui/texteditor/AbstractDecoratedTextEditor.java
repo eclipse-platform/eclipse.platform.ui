@@ -121,6 +121,7 @@ import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IFileEditorInput;
+import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IURIEditorInput;
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.IWorkbenchCommandConstants;
@@ -151,6 +152,7 @@ import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.operations.NonLocalUndoUserApprover;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.IShowInSource;
+import org.eclipse.ui.part.IShowInTargetList;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.views.markers.MarkerViewUtil;
 
@@ -1428,6 +1430,9 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		if (MarkerAnnotationPreferences.class.equals(adapter))
 			return (T) EditorsPlugin.getDefault().getMarkerAnnotationPreferences();
 
+		if (IShowInTargetList.class.equals(adapter))
+			return (T) getShowInTargetList();
+
 		return super.getAdapter(adapter);
 
 	}
@@ -2086,6 +2091,29 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			keyBinding= ""; //$NON-NLS-1$
 
 		return NLSUtility.format(TextEditorMessages.AbstractDecoratedTextEditor_showIn_menu, keyBinding);
+	}
+
+	/**
+	 * Creates and returns the list of target part IDs for the Show In menu
+	 *
+	 * @return the 'Show In' target part IDs
+	 * @since 3.13
+	 */
+	protected String[] createShowInTargetList() {
+		return new String[] { IPageLayout.ID_MINIMAP_VIEW };
+	}
+
+	/**
+	 * Returns the Show In target list
+	 * 
+	 * @return the IShowInTargetList adapter, or <code>null</code> if no targets are listed
+	 */
+	private IShowInTargetList getShowInTargetList() {
+		final String[] targetList= createShowInTargetList();
+		if (targetList != null && targetList.length > 0) {
+			return () -> targetList;
+		}
+		return null;
 	}
 
 	/**
