@@ -53,6 +53,10 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.FocusAdapter;
+import org.eclipse.swt.events.FocusEvent;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -226,6 +230,33 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 
 		list = new WritableList<>();
 		viewer.setInput(list);
+		viewer.getControl().addFocusListener(new FocusAdapter() {
+			@Override
+			public void focusGained(FocusEvent e) {
+				if (viewer.getTable().getItemCount() > 0) {
+					viewer.getTable().select(0);
+				}
+			}
+		});
+
+		viewer.getTable().addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				super.keyPressed(e);
+				if (e.keyCode == SWT.ARROW_UP && viewer.getTable().getSelectionIndex() == 0) {
+					searchText.setFocus();
+				}
+			}
+		});
+
+		searchText.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.keyCode == SWT.ARROW_DOWN) {
+					viewer.getTable().setFocus();
+				}
+			}
+		});
 
 		searchText.addModifyListener(e -> updateSearch());
 
