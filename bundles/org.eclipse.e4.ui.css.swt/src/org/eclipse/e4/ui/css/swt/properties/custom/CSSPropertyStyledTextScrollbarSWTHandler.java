@@ -49,40 +49,49 @@ public class CSSPropertyStyledTextScrollbarSWTHandler implements ICSSPropertyHan
 		StyledTextElement styledTextElement = (StyledTextElement) element;
 		StyledText styledText = styledTextElement.getStyledText();
 
-		if (SWT_SCROLLBAR_BACKGROUND_COLOR.equals(property)) {
-			Color newColor = (Color) engine.convert(value, Color.class, styledText.getDisplay());
-			styledTextElement.setScrollBarBackgroundColor(newColor);
-		} else if (SWT_SCROLLBAR_FOREGROUND_COLOR.equals(property)) {
-			Color newColor = (Color) engine.convert(value, Color.class, styledText.getDisplay());
-			styledTextElement.setScrollBarForegroundColor(newColor);
-		} else if (SWT_SCROLLBAR_WIDTH.equals(property)) {
+		switch (property) {
+		case SWT_SCROLLBAR_BACKGROUND_COLOR:
+			Color bgColor = (Color) engine.convert(value, Color.class, styledText.getDisplay());
+			styledTextElement.setScrollBarBackgroundColor(bgColor);
+			break;
+		case SWT_SCROLLBAR_FOREGROUND_COLOR:
+			Color fgColor = (Color) engine.convert(value, Color.class, styledText.getDisplay());
+			styledTextElement.setScrollBarForegroundColor(fgColor);
+			break;
+		case SWT_SCROLLBAR_WIDTH:
 			if (value instanceof Measure) {
 				Measure measure = (Measure) value;
 				int width = (int) measure.getFloatValue(LexicalUnit.SAC_PIXEL);
 				styledTextElement.setScrollBarWidth(width);
 			}
-		} else if (SWT_SCROLLBAR_MOUSE_NEAR_SCROLL_WIDTH.equals(property)) {
+			break;
+		case SWT_SCROLLBAR_MOUSE_NEAR_SCROLL_WIDTH:
 			if (value instanceof Measure) {
 				Measure measure = (Measure) value;
 				int width = (int) measure.getFloatValue(LexicalUnit.SAC_PIXEL);
 				styledTextElement.setMouseNearScrollScrollBarWidth(width);
 			}
-		} else if (SWT_SCROLLBAR_BORDER_RADIUS.equals(property)) {
+			break;
+		case SWT_SCROLLBAR_BORDER_RADIUS:
 			if (value instanceof Measure) {
 				Measure measure = (Measure) value;
 				int radius = (int) measure.getFloatValue(LexicalUnit.SAC_PIXEL);
 				styledTextElement.setScrollBarBorderRadius(radius);
 			}
-		} else if (SWT_SCROLLBAR_VERTICAL_VISIBLE.equals(property)) {
-			Boolean visible = (Boolean) engine.convert(value, Boolean.class, styledText.getDisplay());
-			styledTextElement.setVerticalScrollBarVisible(visible);
-		} else if (SWT_SCROLLBAR_HORIZONTAL_VISIBLE.equals(property)) {
-			Boolean visible = (Boolean) engine.convert(value, Boolean.class, styledText.getDisplay());
-			styledTextElement.setHorizontalScrollBarVisible(visible);
-		} else if (SWT_SCROLLBAR_THEMED.equals(property)) {
+			break;
+		case SWT_SCROLLBAR_VERTICAL_VISIBLE:
+			Boolean verticalVisible = (Boolean) engine.convert(value, Boolean.class, styledText.getDisplay());
+			styledTextElement.setVerticalScrollBarVisible(verticalVisible);
+			break;
+		case SWT_SCROLLBAR_HORIZONTAL_VISIBLE:
+			Boolean horizontalVisible = (Boolean) engine.convert(value, Boolean.class, styledText.getDisplay());
+			styledTextElement.setHorizontalScrollBarVisible(horizontalVisible);
+			break;
+		case SWT_SCROLLBAR_THEMED:
 			String cssText = value.getCssText();
 			styledTextElement.setScrollBarThemed(cssText);
-		} else {
+			break;
+		default:
 			return false;
 		}
 
