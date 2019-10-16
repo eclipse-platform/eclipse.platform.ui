@@ -337,7 +337,8 @@ public class BindingTable {
 	}
 
 	public boolean isPartialMatch(TriggerSequence seq) {
-		return bindingsByPrefix.get(seq) != null;
+		ArrayList<Binding> values = bindingsByPrefix.get(seq);
+		return values != null && !values.isEmpty();
 	}
 
 	public Collection<Binding> getBindings() {
