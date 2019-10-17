@@ -141,7 +141,7 @@ public class BindingTableManager {
 					result = currentResult;
 				} else {
 					int rc = compareSchemes(result.getSchemeId(), currentResult.getSchemeId());
-					if (rc < 0) {
+					if (rc > 0) {
 						result = currentResult;
 					}
 				}
