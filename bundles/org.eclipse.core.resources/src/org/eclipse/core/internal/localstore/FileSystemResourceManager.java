@@ -1147,8 +1147,13 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 			if (BitMask.isSet(updateFlags, IResource.KEEP_HISTORY) && fileInfo.exists())
 				//never move to the history store, because then the file is missing if write fails
 				getHistoryStore().addState(target.getFullPath(), store, fileInfo, false);
-			if (!fileInfo.exists())
-				store.getParent().mkdir(EFS.NONE, null);
+			if (!fileInfo.exists()) {
+				IFileStore parent = store.getParent();
+				IFileInfo parentInfo = parent.fetchInfo();
+				if (!parentInfo.exists()) {
+					parent.mkdir(EFS.NONE, null);
+				}
+			}
 
 			// On Windows an attempt to open an output stream on a hidden file results in FileNotFoundException.
 			// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=194216
