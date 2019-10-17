@@ -58,7 +58,7 @@ import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.text.contentassist.BoldStylerProvider;
+import org.eclipse.jface.viewers.BoldStylerProvider;
 import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider;
 import org.eclipse.jface.viewers.IColorProvider;
