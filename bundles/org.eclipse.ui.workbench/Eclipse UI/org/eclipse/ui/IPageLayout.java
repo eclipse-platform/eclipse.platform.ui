@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -95,7 +95,7 @@ public interface IPageLayout {
 
 	/**
 	 * The view id for the Project Explorer.
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	String ID_PROJECT_EXPLORER = "org.eclipse.ui.navigator.ProjectExplorer"; //$NON-NLS-1$
@@ -117,14 +117,14 @@ public interface IPageLayout {
 
 	/**
 	 * The view id for the workbench's Problems View standard component.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	String ID_PROBLEM_VIEW = "org.eclipse.ui.views.ProblemView"; //$NON-NLS-1$
 
 	/**
 	 * The view id for the workbench's Progress View standard component.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	String ID_PROGRESS_VIEW = "org.eclipse.ui.views.ProgressView"; //$NON-NLS-1$
@@ -135,9 +135,16 @@ public interface IPageLayout {
 	String ID_TASK_LIST = "org.eclipse.ui.views.TaskList"; //$NON-NLS-1$
 
 	/**
+	 * The view id for the workbench's Minimap standard component.
+	 *
+	 * @since 3.117
+	 */
+	String ID_MINIMAP_VIEW = "org.eclipse.ui.views.minimap.MinimapView"; //$NON-NLS-1$
+
+	/**
 	 * Id of the navigate action set. (value
 	 * <code>"org.eclipse.ui.NavigateActionSet"</code>)
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	String ID_NAVIGATE_ACTION_SET = "org.eclipse.ui.NavigateActionSet"; //$NON-NLS-1$
@@ -166,21 +173,21 @@ public interface IPageLayout {
 
 	/**
 	 * Minimum acceptable ratio value when adding a view
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	float RATIO_MIN = 0.05f;
 
 	/**
 	 * Maximum acceptable ratio value when adding a view
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	float RATIO_MAX = 0.95f;
 
 	/**
 	 * The default fast view ratio width.
-	 * 
+	 *
 	 * @since 2.0
 	 * @deprecated discontinued support for fast views
 	 */
@@ -189,21 +196,21 @@ public interface IPageLayout {
 
 	/**
 	 * The default view ratio width for regular (non-fast) views.
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	float DEFAULT_VIEW_RATIO = 0.5f;
 
 	/**
 	 * A variable used to represent invalid ratios.
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	float INVALID_RATIO = -1f;
 
 	/**
 	 * A variable used to represent a ratio which has not been specified.
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	float NULL_RATIO = -2f;
