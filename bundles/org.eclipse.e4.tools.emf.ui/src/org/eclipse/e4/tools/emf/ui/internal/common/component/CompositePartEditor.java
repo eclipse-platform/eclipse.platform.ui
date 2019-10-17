@@ -19,6 +19,7 @@ import org.eclipse.e4.tools.emf.ui.internal.E4Properties;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.FeatureClassLabelProvider;
+import org.eclipse.e4.tools.emf.ui.internal.common.ModelEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.PartIconDialogEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.UIViewer;
@@ -355,6 +356,16 @@ public class CompositePartEditor extends AbstractComponentEditor<MCompositePart>
 					new ComponentLabelProvider(getEditor(), Messages, italicFontDescriptor)));
 
 			viewer.setInput(E4Properties.<MPartSashContainerElement>children().observeDetail(getMaster()));
+
+			viewer.addOpenListener(event -> {
+				if (event.getSelection() instanceof IStructuredSelection) {
+					IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+					if (selection.getFirstElement() instanceof EObject && getEditor() != null) {
+						EObject selected = (EObject) selection.getFirstElement();
+						getEditor().gotoEObject(ModelEditor.TAB_FORM, selected);
+					}
+				}
+			});
 
 			new Label(parent, SWT.NONE);
 

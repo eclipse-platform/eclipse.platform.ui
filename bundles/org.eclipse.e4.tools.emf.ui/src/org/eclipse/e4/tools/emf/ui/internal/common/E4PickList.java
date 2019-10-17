@@ -113,6 +113,17 @@ public class E4PickList extends AbstractPickList {
 		final ObservableListContentProvider<?> cp = new ObservableListContentProvider<>();
 		viewer.setContentProvider(cp);
 
+		viewer.addOpenListener(event -> {
+			if (event.getSelection() instanceof IStructuredSelection) {
+				IStructuredSelection selection = (IStructuredSelection) event.getSelection();
+				ModelEditor editor = componentEditor.getEditor();
+				if (selection.getFirstElement() instanceof EObject && editor != null) {
+					EObject selected = (EObject) selection.getFirstElement();
+					editor.gotoEObject(ModelEditor.TAB_FORM, selected);
+				}
+			}
+		});
+
 		// enable tabbing and keyboard activation
 		this.focusCellMgr = new TableViewerFocusCellManager(viewer, new FocusCellOwnerDrawHighlighter(viewer),
 				new CellNavigationStrategy());
