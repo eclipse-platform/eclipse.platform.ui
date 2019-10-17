@@ -20,6 +20,7 @@ import java.util.List;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.ResourceProvider;
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -82,29 +83,14 @@ public abstract class AbstractPickList extends Composite {
 
 		if (listFeatures != null && listFeatures.contains(PickListFeatures.NO_GROUP)) {
 			composite = new Composite(this, SWT.NONE);
+			composite.setLayout(GridLayoutFactory.fillDefaults().create());
 		} else {
 			composite = new Group(this, SWT.NONE);
+			composite.setLayout(GridLayoutFactory.swtDefaults().create());
 		}
 
-		GridLayout layout = new GridLayout(1, false);
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		layout.marginRight = 0;
-		layout.marginLeft = 0;
-		layout.horizontalSpacing = 0;
-		layout.verticalSpacing = 0;
-		composite.setLayout(layout);
-
 		Composite comp = new Composite(composite, SWT.NONE);
-
-		layout = new GridLayout(2, false);
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		layout.marginRight = 0;
-		layout.marginLeft = 0;
-		layout.horizontalSpacing = 0;
-		layout.verticalSpacing = 0;
-		comp.setLayout(layout);
+		comp.setLayout(GridLayoutFactory.fillDefaults().numColumns(2).create());
 		comp.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 
 		picker = new ComboViewer(comp, SWT.DROP_DOWN | SWT.BORDER | SWT.READ_ONLY);
@@ -115,15 +101,13 @@ public abstract class AbstractPickList extends Composite {
 		control.setLayoutData(gdpicker);
 
 		toolBar = new Composite(comp, SWT.NONE);
-		layout = new GridLayout(5, true);
+		GridLayout layout = GridLayoutFactory.swtDefaults().numColumns(5).spacing(2, 0).equalWidth(true).create();
 		if (listFeatures != null && listFeatures.contains(PickListFeatures.NO_PICKER)) {
 			layout.marginHeight = 0;
 			layout.marginWidth = 0;
 			layout.marginRight = 0;
 			layout.marginLeft = 0;
 		}
-		layout.horizontalSpacing = 2;
-		layout.verticalSpacing = 0;
 		toolBar.setLayout(layout);
 		toolBar.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		toolBar.setFont(composite.getFont());
