@@ -165,9 +165,11 @@ public class AboutFeaturesPage extends ProductInfoPage {
 		pluginsButton = createButton(parent, PLUGINS_ID, WorkbenchMessages.AboutFeaturesDialog_pluginsInfo);
 		createButton(parent, COLUMNS_ID, WorkbenchMessages.AboutFeaturesDialog_columns);
 		TableItem[] items = table.getSelection();
+		AboutBundleGroupData info = null;
 		if (items.length > 0) {
-			updateButtons((AboutBundleGroupData) items[0].getData());
+			info = (AboutBundleGroupData) items[0].getData();
 		}
+		updateButtons(info);
 	}
 
 	@Override
