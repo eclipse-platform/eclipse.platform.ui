@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -340,8 +340,10 @@ public class ProjectHelper extends ProjectHelper2 {
 		/*
 		 * Currently only this "property-holder" is used. Extend if necessary.
 		 */
-		parsedProjectNames.clear();
-		parsedProjectNames = null;
+		if (parsedProjectNames != null) {
+			parsedProjectNames.clear();
+			parsedProjectNames = null;
+		}
 	}
 
 	public static class ProjectHandler extends ProjectHelper2.ProjectHandler {
