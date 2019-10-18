@@ -2203,7 +2203,6 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 			WorkbenchPlugin.log("Defining a binding table: " + id); //$NON-NLS-1$
 		}
 		MBindingTable bt = CommandsFactoryImpl.eINSTANCE.createBindingTable();
-		bt.setElementId(id);
 		bt.setBindingContext(getBindingContext(id));
 		bindingTables.add(bt);
 	}
@@ -2215,7 +2214,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	 */
 	private boolean contains(List<MBindingTable> bindingTables, String id) {
 		for (MBindingTable bt : bindingTables) {
-			if (id.equals(bt.getElementId())) {
+			if (id.equals(bt.getBindingContext().getElementId())) {
 				return true;
 			}
 		}

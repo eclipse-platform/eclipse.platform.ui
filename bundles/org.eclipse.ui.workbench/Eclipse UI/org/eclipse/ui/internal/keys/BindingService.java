@@ -524,7 +524,7 @@ public final class BindingService implements IBindingService {
 	 */
 	private MBindingTable getMTable(String contextId) {
 		for (MBindingTable bt : application.getBindingTables()) {
-			if (contextId.equals(bt.getElementId())) {
+			if (bt.getBindingContext().getElementId().equals(contextId)) {
 				return bt;
 			}
 		}
