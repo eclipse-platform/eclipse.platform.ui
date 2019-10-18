@@ -58,6 +58,7 @@ import org.eclipse.jface.fieldassist.FieldDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.pde.internal.core.PDEExtensionRegistry;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 
 public class Util {
@@ -362,6 +363,40 @@ public class Util {
 		} catch (final Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * Scales an {@link Image} to the the given size preserving the original aspect
+	 * ratio. If a new Image is created, the given Image is disposed.
+	 *
+	 * @param img     Original Image
+	 * @param maxSize Maximum size of the resulting image (maximum width if the
+	 *                original image has landscape format and vice versa)
+	 * @return Scaled Image or the original image if it is already smaller than
+	 *         maxSize x maxSize
+	 */
+	public static Image scaleImage(Image img, int maxSize) {
+		Image result = img;
+
+		double scale1 = (double) maxSize / img.getImageData().height;
+		final double scale2 = (double) maxSize / img.getImageData().width;
+		if (scale2 < scale1) {
+			scale1 = scale2;
+		}
+		if (scale1 < 1) {
+			int width = (int) (img.getImageData().width * scale1);
+			if (width == 0) {
+				width = 1;
+			}
+			int height = (int) (img.getImageData().height * scale1);
+			if (height == 0) {
+				height = 1;
+			}
+			Image img2 = new Image(img.getDevice(), img.getImageData().scaledTo(width, height));
+			img.dispose();
+			result = img2;
+		}
+		return result;
 	}
 
 	/**

@@ -34,6 +34,7 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.ContributionData;
 import org.eclipse.e4.tools.emf.ui.common.IClassContributionProvider.Filter;
 import org.eclipse.e4.tools.emf.ui.common.ResourceSearchScope;
+import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.tools.emf.ui.internal.StringMatcher;
 import org.eclipse.e4.tools.emf.ui.internal.common.ClassContributionCollector;
@@ -170,41 +171,24 @@ public abstract class AbstractIconDialogWithScopeAndFilter extends FilteredContr
 					}
 				}
 
-				// scale image if larger then max height
-				// also remember max width for column resizing
-
-				double scale1 = (double) maxDisplayedImageSize / img.getImageData().height;
-				final double scale2 = (double) maxDisplayedImageSize / img.getImageData().width;
-				if (scale2 < scale1) {
-					scale1 = scale2;
-				}
-				if (scale1 < 1) {
-					int width = (int) (img.getImageData().width * scale1);
-					if (width == 0) {
-						width = 1;
-					}
-					int height = (int) (img.getImageData().height * scale1);
-					if (height == 0) {
-						height = 1;
-					}
-					final Image img2 = new Image(img.getDevice(), img.getImageData().scaledTo(width, height));
-					img.dispose();
-					img = img2;
-					icons.put(file, img);
+				Image scaled = Util.scaleImage(img, maxDisplayedImageSize);
+				if (!scaled.equals(img)) {
+					icons.put(file, scaled);
 				}
 				final int width = AbstractIconDialogWithScopeAndFilter.this.getViewer().getTable().getColumn(0)
 						.getWidth();
-				if (img.getImageData().width > width) {
+				if (scaled.getImageData().width > width) {
 					AbstractIconDialogWithScopeAndFilter.this.getViewer().getTable().getColumn(0)
-					.setWidth(img.getImageData().width);
+							.setWidth(scaled.getImageData().width);
 				}
-				final int height = img.getImageData().height;
+				final int height = scaled.getImageData().height;
 				if (height > maxImageHeight) {
 					maxImageHeight = height;
 				}
 
-				cell.setImage(img);
+				cell.setImage(scaled);
 			}
+
 		});
 		colIcon.getColumn().setWidth(30);
 

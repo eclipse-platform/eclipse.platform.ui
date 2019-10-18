@@ -19,9 +19,12 @@ package org.eclipse.e4.tools.emf.ui.common.component;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -74,6 +77,8 @@ public abstract class AbstractComponentEditor<M> {
 
 	private static final String CSS_CLASS_KEY = "org.eclipse.e4.ui.css.CssClassName"; //$NON-NLS-1$
 
+	private static final int MAX_IMG_SIZE = 16;
+
 	private final WritableValue<M> master = new WritableValue<>();
 
 	public static final int SEARCH_IMAGE = 0;
@@ -83,6 +88,8 @@ public abstract class AbstractComponentEditor<M> {
 	public static final int ARROW_DOWN = 4;
 
 	protected static final int VERTICAL_LIST_WIDGET_INDENT = 10;
+
+	private final List<Image> createdImages = new ArrayList<>();
 
 	@Inject
 	private EditingDomain editingDomain;
@@ -307,7 +314,10 @@ public abstract class AbstractComponentEditor<M> {
 		}
 
 		if (url != null) {
-			result = ImageDescriptor.createFromURL(url);
+			ImageDescriptor imageDesc = ImageDescriptor.createFromURL(url);
+			Image scaled = Util.scaleImage(imageDesc.createImage(), MAX_IMG_SIZE);
+			createdImages.add(scaled);
+			result = ImageDescriptor.createFromImage(scaled);
 		}
 
 		return result;
@@ -316,6 +326,7 @@ public abstract class AbstractComponentEditor<M> {
 	public Image getImage(Object element) {
 		return null;
 	}
+
 
 	public abstract String getLabel(Object element);
 
@@ -475,6 +486,11 @@ public abstract class AbstractComponentEditor<M> {
 			IValueProperty<M, String> attIdProp = EMFEditProperties.value(getEditingDomain(), attId);
 			generator.bind(getMaster(), addSourceProp, attIdProp, control);
 		}
+	}
+
+	@PreDestroy
+	public void dispose() {
+		createdImages.stream().filter(Objects::nonNull).filter(i -> !i.isDisposed()).forEach(Image::dispose);
 	}
 
 }
