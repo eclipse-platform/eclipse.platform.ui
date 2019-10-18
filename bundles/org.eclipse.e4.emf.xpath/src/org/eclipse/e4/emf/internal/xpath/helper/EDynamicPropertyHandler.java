@@ -13,6 +13,9 @@
  ******************************************************************************/
 package org.eclipse.e4.emf.internal.xpath.helper;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.jxpath.DynamicPropertyHandler;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.emf.ecore.EClass;
@@ -25,12 +28,14 @@ import org.eclipse.emf.ecore.EStructuralFeature;
  * @author Karsten Thoms <karsten.thoms@itemis.de>
  */
 public class EDynamicPropertyHandler implements DynamicPropertyHandler {
+	private Map<EClass, String[]> eClass2PropNames = new HashMap<>();
+
 	@Override
 	public String[] getPropertyNames(Object object) {
 		Assert.isLegal(object instanceof EObject);
 		EClass eClass = ((EObject) object).eClass();
-		String[] propNames = eClass.getEAllStructuralFeatures().stream().map(f -> f.getName()).toArray(String[]::new);
-		return propNames;
+		return eClass2PropNames.computeIfAbsent(eClass,
+				clz -> clz.getEAllStructuralFeatures().stream().map(f -> f.getName()).toArray(String[]::new));
 	}
 
 	@Override
