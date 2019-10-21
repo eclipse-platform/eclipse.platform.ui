@@ -21,7 +21,6 @@
           ecoreFeature="ecore:EReference UIElements.ecore#//Application/commands"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//Application/addons"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference UIElements.ecore#//Application/categories"/>
-      <genFeatures notify="false" createChild="false" propertySortChoices="true" ecoreFeature="ecore:EReference UIElements.ecore#//Application/dialogs"/>
       <genOperations ecoreOperation="UIElements.ecore#//Application/getCommand" body="if (elementIdToCommandMap == null) {&#xA;&#x9;Map&lt;String, MCommand> result = new &lt;%java.util.HashMap%>&lt;String, MCommand>();&#xA;&#x9;for (MCommand command : getCommands()) {&#xA;&#x9;&#x9;MCommand otherCommand = result.put(command.getElementId(), command);&#xA;&#x9;&#x9;if (otherCommand != null) {&#xA;&#x9;&#x9;&#x9;result.put(command.getElementId(), otherCommand);&#xA;&#x9;&#x9;}&#xA;&#x9;}&#xA;&#xA;&#x9;elementIdToCommandMap = result;&#xA;}&#xA;return elementIdToCommandMap.get(elementId);">
         <genParameters ecoreParameter="UIElements.ecore#//Application/getCommand/elementId"/>
       </genOperations>
@@ -296,8 +295,6 @@
               ecoreFeature="ecore:EReference UIElements.ecore#//ui/basic/TrimBar/pendingCleanup"/>
         </genClasses>
         <genClasses ecoreClass="UIElements.ecore#//ui/basic/StackElement"/>
-        <genClasses ecoreClass="UIElements.ecore#//ui/basic/Dialog"/>
-        <genClasses ecoreClass="UIElements.ecore#//ui/basic/WizardDialog"/>
       </nestedGenPackages>
       <nestedGenPackages prefix="Advanced" basePackage="org.eclipse.e4.ui.model.application.ui"
           disposableProviderFactory="true" ecorePackage="UIElements.ecore#//ui/advanced">

@@ -36,7 +36,6 @@ import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImp
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MSnippetContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
-import org.eclipse.e4.ui.model.application.ui.basic.MDialog;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.impl.ElementContainerImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
@@ -85,7 +84,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getCommands <em>Commands</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getAddons <em>Addons</em>}</li>
  *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getCategories <em>Categories</em>}</li>
- *   <li>{@link org.eclipse.e4.ui.model.application.impl.ApplicationImpl#getDialogs <em>Dialogs</em>}</li>
  * </ul>
  *
  * @since 1.0
@@ -252,20 +250,6 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	 * @ordered
 	 */
 	protected EList<MCategory> categories;
-
-	/**
-	 * The cached value of the '{@link #getDialogs() <em>Dialogs</em>}' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see #getDialogs()
-	 * @since 1.1
-	 * @deprecated
-	 * @noreference See {@link org.eclipse.e4.ui.model.application.MApplication#getDialogs() model documentation} for details.
-	 * @generated
-	 * @ordered
-	 */
-	@Deprecated
-	protected EList<MDialog> dialogs;
 
 	protected Map<String, MCommand> elementIdToCommandMap;
 
@@ -553,24 +537,6 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	/**
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
-	 * @since 1.1
-	 * @deprecated
-	 * @noreference See {@link org.eclipse.e4.ui.model.application.MApplication#getDialogs() model documentation} for details.
-	 * @generated
-	 */
-	@Deprecated
-	@Override
-	public List<MDialog> getDialogs() {
-		if (dialogs == null) {
-			dialogs = new EObjectResolvingEList<MDialog>(MDialog.class, this,
-					ApplicationPackageImpl.APPLICATION__DIALOGS);
-		}
-		return dialogs;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
 	 * @since 1.2
 	 * @generated
 	 */
@@ -669,8 +635,6 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 			return getAddons();
 		case ApplicationPackageImpl.APPLICATION__CATEGORIES:
 			return getCategories();
-		case ApplicationPackageImpl.APPLICATION__DIALOGS:
-			return getDialogs();
 		default:
 			return super.eGet(featureID, resolve, coreType);
 		}
@@ -744,10 +708,6 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 			getCategories().clear();
 			getCategories().addAll((Collection<? extends MCategory>) newValue);
 			return;
-		case ApplicationPackageImpl.APPLICATION__DIALOGS:
-			getDialogs().clear();
-			getDialogs().addAll((Collection<? extends MDialog>) newValue);
-			return;
 		default:
 			super.eSet(featureID, newValue);
 			return;
@@ -807,9 +767,6 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 		case ApplicationPackageImpl.APPLICATION__CATEGORIES:
 			getCategories().clear();
 			return;
-		case ApplicationPackageImpl.APPLICATION__DIALOGS:
-			getDialogs().clear();
-			return;
 		default:
 			super.eUnset(featureID);
 			return;
@@ -854,8 +811,6 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 			return addons != null && !addons.isEmpty();
 		case ApplicationPackageImpl.APPLICATION__CATEGORIES:
 			return categories != null && !categories.isEmpty();
-		case ApplicationPackageImpl.APPLICATION__DIALOGS:
-			return dialogs != null && !dialogs.isEmpty();
 		default:
 			return super.eIsSet(featureID);
 		}

@@ -554,19 +554,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	public static final int APPLICATION__CATEGORIES = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 14;
 
 	/**
-	 * The feature id for the '<em><b>Dialogs</b></em>' reference list.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.1
-	 * @deprecated
-	 * @noreference See {@link org.eclipse.e4.ui.model.application.MApplication#getDialogs() model documentation} for details.
-	 * @generated
-	 * @ordered
-	 */
-	@Deprecated
-	public static final int APPLICATION__DIALOGS = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 15;
-
-	/**
 	 * The number of structural features of the '<em>Application</em>' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -574,7 +561,7 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * @generated
 	 * @ordered
 	 */
-	public static final int APPLICATION_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 16;
+	public static final int APPLICATION_FEATURE_COUNT = UiPackageImpl.ELEMENT_CONTAINER_FEATURE_COUNT + 15;
 
 	/**
 	 * The operation id for the '<em>Update Localization</em>' operation.
@@ -1115,23 +1102,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	}
 
 	/**
-	 * Returns the meta object for the reference list '{@link org.eclipse.e4.ui.model.application.MApplication#getDialogs <em>Dialogs</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the reference list '<em>Dialogs</em>'.
-	 * @see org.eclipse.e4.ui.model.application.MApplication#getDialogs()
-	 * @see #getApplication()
-	 * @since 1.1
-	 * @deprecated
-	 * @noreference See {@link org.eclipse.e4.ui.model.application.MApplication#getDialogs() model documentation} for details.
-	 * @generated
-	 */
-	@Deprecated
-	public EReference getApplication_Dialogs() {
-		return (EReference) applicationEClass.getEStructuralFeatures().get(3);
-	}
-
-	/**
 	 * Returns the meta object for the '{@link org.eclipse.e4.ui.model.application.MApplication#getCommand(java.lang.String) <em>Get Command</em>}' operation.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -1373,7 +1343,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		createEReference(applicationEClass, APPLICATION__COMMANDS);
 		createEReference(applicationEClass, APPLICATION__ADDONS);
 		createEReference(applicationEClass, APPLICATION__CATEGORIES);
-		createEReference(applicationEClass, APPLICATION__DIALOGS);
 		createEOperation(applicationEClass, APPLICATION___GET_COMMAND__STRING);
 
 		applicationElementEClass = createEClass(APPLICATION_ELEMENT);
@@ -1486,9 +1455,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 				IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 		initEReference(getApplication_Categories(), theCommandsPackage.getCategory(), null, "categories", null, 0, -1, //$NON-NLS-1$
 				MApplication.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES,
-				!IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-		initEReference(getApplication_Dialogs(), theBasicPackage.getDialog(), null, "dialogs", null, 0, -1, //$NON-NLS-1$
-				MApplication.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_COMPOSITE, IS_RESOLVE_PROXIES,
 				!IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		EOperation op = initEOperation(getApplication__GetCommand__String(), theCommandsPackage.getCommand(),
@@ -1617,18 +1583,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EReference APPLICATION__CATEGORIES = eINSTANCE.getApplication_Categories();
-
-		/**
-		 * The meta object literal for the '<em><b>Dialogs</b></em>' reference list feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @since 1.1
-		 * @deprecated
-		 * @noreference See {@link org.eclipse.e4.ui.model.application.MApplication#getDialogs() model documentation} for details.
-		 * @generated
-		 */
-		@Deprecated
-		public static final EReference APPLICATION__DIALOGS = eINSTANCE.getApplication_Dialogs();
 
 		/**
 		 * The meta object literal for the '<em><b>Get Command</b></em>' operation.

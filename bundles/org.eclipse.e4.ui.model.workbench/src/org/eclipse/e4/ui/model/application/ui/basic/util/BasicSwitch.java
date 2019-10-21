@@ -29,7 +29,6 @@ import org.eclipse.e4.ui.model.application.ui.MSnippetContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.basic.MCompositePart;
-import org.eclipse.e4.ui.model.application.ui.basic.MDialog;
 import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
@@ -41,7 +40,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindowElement;
-import org.eclipse.e4.ui.model.application.ui.basic.MWizardDialog;
 import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
@@ -371,62 +369,6 @@ public class BasicSwitch<T1> extends Switch<T1> {
 				result = defaultCase(theEObject);
 			return result;
 		}
-		case BasicPackageImpl.DIALOG: {
-			MDialog dialog = (MDialog) theEObject;
-			T1 result = caseDialog(dialog);
-			if (result == null)
-				result = caseWindow(dialog);
-			if (result == null)
-				result = caseElementContainer(dialog);
-			if (result == null)
-				result = caseUILabel(dialog);
-			if (result == null)
-				result = caseContext(dialog);
-			if (result == null)
-				result = caseHandlerContainer(dialog);
-			if (result == null)
-				result = caseBindings(dialog);
-			if (result == null)
-				result = caseSnippetContainer(dialog);
-			if (result == null)
-				result = caseUIElement(dialog);
-			if (result == null)
-				result = caseApplicationElement(dialog);
-			if (result == null)
-				result = caseLocalizable(dialog);
-			if (result == null)
-				result = defaultCase(theEObject);
-			return result;
-		}
-		case BasicPackageImpl.WIZARD_DIALOG: {
-			MWizardDialog wizardDialog = (MWizardDialog) theEObject;
-			T1 result = caseWizardDialog(wizardDialog);
-			if (result == null)
-				result = caseDialog(wizardDialog);
-			if (result == null)
-				result = caseWindow(wizardDialog);
-			if (result == null)
-				result = caseElementContainer(wizardDialog);
-			if (result == null)
-				result = caseUILabel(wizardDialog);
-			if (result == null)
-				result = caseContext(wizardDialog);
-			if (result == null)
-				result = caseHandlerContainer(wizardDialog);
-			if (result == null)
-				result = caseBindings(wizardDialog);
-			if (result == null)
-				result = caseSnippetContainer(wizardDialog);
-			if (result == null)
-				result = caseUIElement(wizardDialog);
-			if (result == null)
-				result = caseApplicationElement(wizardDialog);
-			if (result == null)
-				result = caseLocalizable(wizardDialog);
-			if (result == null)
-				result = defaultCase(theEObject);
-			return result;
-		}
 		default:
 			return defaultCase(theEObject);
 		}
@@ -624,44 +566,6 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @generated
 	 */
 	public T1 caseStackElement(MStackElement object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Dialog</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Dialog</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @since 1.1
-	 * @deprecated
-	 * @noreference See {@link MDialog model documentation} for details.
-	 * @generated
-	 */
-	@Deprecated
-	public T1 caseDialog(MDialog object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Wizard Dialog</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Wizard Dialog</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @since 1.1
-	 * @deprecated
-	 * @noreference See {@link MWizardDialog model documentation} for details.
-	 * @generated
-	 */
-	@Deprecated
-	public T1 caseWizardDialog(MWizardDialog object) {
 		return null;
 	}
 

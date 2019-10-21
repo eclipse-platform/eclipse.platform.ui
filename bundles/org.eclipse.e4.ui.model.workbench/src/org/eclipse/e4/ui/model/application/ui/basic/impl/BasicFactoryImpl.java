@@ -13,12 +13,8 @@
  */
 package org.eclipse.e4.ui.model.application.ui.basic.impl;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.MCompositePart;
-import org.eclipse.e4.ui.model.application.ui.basic.MDialog;
 import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
@@ -26,14 +22,11 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
-import org.eclipse.e4.ui.model.application.ui.basic.MWizardDialog;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.impl.EFactoryImpl;
 import org.eclipse.emf.ecore.plugin.EcorePlugin;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.FrameworkUtil;
 
 /**
  * <!-- begin-user-doc -->
@@ -104,10 +97,6 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 			return (EObject) createTrimmedWindow();
 		case BasicPackageImpl.TRIM_BAR:
 			return (EObject) createTrimBar();
-		case BasicPackageImpl.DIALOG:
-			return (EObject) createDialog();
-		case BasicPackageImpl.WIZARD_DIALOG:
-			return (EObject) createWizardDialog();
 		default:
 			throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier"); //$NON-NLS-1$ //$NON-NLS-2$
 		}
@@ -202,44 +191,6 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	@Override
 	public MTrimBar createTrimBar() {
 		return new TrimBarImpl();
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.1
-	 * @deprecated
-	 * @noreference See {@link MDialog model documentation} for details.
-	 * @generated  NOT
-	 */
-	@Deprecated
-	@Override
-	public MDialog createDialog() {
-		DialogImpl dialog = new DialogImpl();
-		Bundle bundle = FrameworkUtil.getBundle(getClass());
-		Status s = new Status(IStatus.ERROR, bundle.getSymbolicName(), // $NON-NLS-1$
-				"Your application model still contains a deprecated Dialog instance. Please remove it to keep compatibility with future versions."); //$NON-NLS-1$
-		Platform.getLog(bundle).log(s);
-		return dialog;
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.1
-	 * @deprecated
-	 * @noreference See {@link MWizardDialog model documentation} for details.
-	 * @generated NOT
-	 */
-	@Deprecated
-	@Override
-	public MWizardDialog createWizardDialog() {
-		WizardDialogImpl wizardDialog = new WizardDialogImpl();
-		Bundle bundle = FrameworkUtil.getBundle(getClass());
-		Status s = new Status(IStatus.ERROR, bundle.getSymbolicName(), // $NON-NLS-1$
-				"Your application model still contains a deprecated WizardDialog instance. Please remove it to keep compatibility with future versions."); //$NON-NLS-1$
-		Platform.getLog(bundle).log(s);
-		return wizardDialog;
 	}
 
 	/**
