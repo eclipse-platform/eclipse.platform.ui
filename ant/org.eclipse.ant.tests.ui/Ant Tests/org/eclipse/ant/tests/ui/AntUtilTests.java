@@ -34,6 +34,9 @@ import org.junit.Assert;
 
 public class AntUtilTests extends AbstractAntUITest {
 
+	private static final long EXECUTION_THRESHOLD_INCLUDE_TASK = 7500;
+	private static final long WINDOWS_EXECUTION_THRESHOLD_INCLUDE_TASK = 15000;
+
 	public AntUtilTests(String name) {
 		super(name);
 	}
@@ -203,10 +206,16 @@ public class AntUtilTests extends AbstractAntUITest {
 		long endTime = System.currentTimeMillis();
 
 		Assert.assertNotNull(project);
-		// Parsing the file-hierarchy should not take longer than 7.5s
+		/*
+		 * Parsing the file-hierarchy should not take longer than:
+		 *
+		 * - 15s on windows (seems to be a general performance issue on windows)
+		 *
+		 * - 7.s elsewhere
+		 */
 		long duration = endTime - startTime;
 		// Change this value if it does not fit the performance needs
-		long maxDuration = 7500;
+		long maxDuration = this.getExecutionTresholdIncludeTask();
 
 		Assert.assertTrue("Expecting a duration < " + maxDuration + ", but we have " + duration + "ms", duration < maxDuration); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		// Test the rest
@@ -220,6 +229,17 @@ public class AntUtilTests extends AbstractAntUITest {
 		for (String expectedTarget : expectedTargets) {
 			assertContains(expectedTarget, targets);
 		}
+	}
+
+	private long getExecutionTresholdIncludeTask() {
+		if (this.runsOnWindows()) {
+			return WINDOWS_EXECUTION_THRESHOLD_INCLUDE_TASK;
+		}
+		return EXECUTION_THRESHOLD_INCLUDE_TASK;
+	}
+
+	private boolean runsOnWindows() {
+		return System.getProperty("os.name").toLowerCase().contains("win"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	private AntTargetNode[] getAntTargetNodesOfBuildFile(String buildFileName) {

@@ -314,7 +314,7 @@ public class ProjectHelper extends ProjectHelper2 {
 	 * @return The key as string
 	 */
 	private static String getBuildFileKey(IFile buildFile) {
-		return buildFile.getLocationURI().getPath();
+		return buildFile.getLocation().toFile().getAbsolutePath();
 	}
 
 	/**
@@ -392,7 +392,7 @@ public class ProjectHelper extends ProjectHelper2 {
 				String currentProjectName = context.getCurrentProjectName();
 				// just an additional check if the name is non-empty
 				if (this.isCurrentProjectNameValid(currentProjectName)) {
-					String buildFilePath = context.getBuildFile().getPath();
+					String buildFilePath = context.getBuildFile().getAbsolutePath();
 					storeParsedProjectName(buildFilePath, currentProjectName);
 				}
 			}
