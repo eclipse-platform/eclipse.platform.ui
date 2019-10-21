@@ -28,6 +28,9 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Ignore;
+import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.runner.RunWith;
 
 /**
  * Tests various sources keyed off the workbench window.
@@ -35,6 +38,8 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  * @since 3.3
  *
  */
+@RunWith(JUnit38ClassRunner.class)
+@Ignore("Disabled due 544032, see also 485167")
 public class WorkbenchWindowSubordinateSourcesTests extends UITestCase {
 
 	private WorkbenchWindow window;

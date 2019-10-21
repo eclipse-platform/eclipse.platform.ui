@@ -18,8 +18,13 @@ import static org.junit.Assert.assertFalse;
 
 import org.eclipse.jface.tests.fieldassist.AbstractFieldAssistWindow;
 import org.eclipse.swt.widgets.Combo;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.runner.RunWith;
 
+@RunWith(JUnit38ClassRunner.class)
+@Ignore("bug 275393")
 public class ComboContentAssistCommandAdapterTest extends
 		AbstractContentAssistCommandAdapterTest {
 

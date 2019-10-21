@@ -29,8 +29,13 @@ import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.runner.RunWith;
 
+@RunWith(JUnit38ClassRunner.class)
+@Ignore("bug 275393")
 public class TextContentAssistCommandAdapterTest extends
 		AbstractContentAssistCommandAdapterTest {
 

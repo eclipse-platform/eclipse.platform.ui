@@ -28,12 +28,17 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Ignore;
+import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.runner.RunWith;
 
 /**
  * Test for Bug 41931.
  *
  * @since 3.0
  */
+@RunWith(JUnit38ClassRunner.class)
+@Ignore
 public class Bug41931Test extends UITestCase {
 
 	/**

@@ -17,15 +17,10 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.InputStream;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.filesystem.EFS;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
-
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorRegistry;
 import org.eclipse.ui.IWorkbenchPage;
@@ -34,6 +29,12 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Ignore;
+import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.runner.RunWith;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 
 /**
@@ -47,6 +48,8 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  *
  * @since 3.4
  */
+@RunWith(JUnit38ClassRunner.class)
+@Ignore
 public class OpenSystemInPlaceEditorTest extends UITestCase {
 
 

@@ -31,6 +31,9 @@ import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.keys.ParseException;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Ignore;
+import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.runner.RunWith;
 
 /**
  * Tests that key bindings are treated correctly in a multi-page editor. This
@@ -39,6 +42,8 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  *
  * @since 3.0
  */
+@RunWith(JUnit38ClassRunner.class)
+@Ignore("Focus issues, see Commit c28efd634f53c9de7bb31b756ffc755b8faf0ffe")
 public class MultiPageKeyBindingTest extends UITestCase {
 
 	/**

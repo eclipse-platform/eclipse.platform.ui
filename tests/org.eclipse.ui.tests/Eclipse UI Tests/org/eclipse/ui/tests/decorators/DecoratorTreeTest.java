@@ -17,11 +17,16 @@ import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.junit.Ignore;
+import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.runner.RunWith;
 
 /**
  * The DecoratorTreeTest tests the font and color support on
  * tree viewers.
  */
+@RunWith(JUnit38ClassRunner.class)
+@Ignore("Disabled due to timing issues")
 public class DecoratorTreeTest extends DecoratorViewerTest {
 
 	/**

@@ -13,9 +13,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dnd;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.SWT;
@@ -24,10 +21,18 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.autotests.AutoTestSuite;
+import org.junit.Ignore;
+import org.junit.runner.RunWith;
+import org.junit.runners.AllTests;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * @since 3.0
  */
+@RunWith(AllTests.class)
+@Ignore("DND support not implemented yet in E4")
 public class DragTestSuite extends AutoTestSuite {
 
 	/**

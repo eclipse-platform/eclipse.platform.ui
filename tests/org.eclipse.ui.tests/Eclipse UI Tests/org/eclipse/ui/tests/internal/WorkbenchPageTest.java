@@ -23,7 +23,12 @@ import java.util.List;
 
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Ignore;
+import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.runner.RunWith;
 
+@RunWith(JUnit38ClassRunner.class)
+@Ignore
 public class WorkbenchPageTest extends UITestCase {
 
 	public WorkbenchPageTest(String testName) {

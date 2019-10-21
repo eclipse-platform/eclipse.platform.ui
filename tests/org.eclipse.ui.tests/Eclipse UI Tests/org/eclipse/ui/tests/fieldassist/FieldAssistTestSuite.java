@@ -23,11 +23,9 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
- FieldAssistAPITest.class
-//temporarily disabling tests, see bug 275393
-		// aComboContentAssistCommandAdapterTest.class,
-		// aTextContentAssistCommandAdapterTest.class
-
+	FieldAssistAPITest.class,
+	ComboContentAssistCommandAdapterTest.class,
+	TextContentAssistCommandAdapterTest.class,
 })
 public class FieldAssistTestSuite {
 }

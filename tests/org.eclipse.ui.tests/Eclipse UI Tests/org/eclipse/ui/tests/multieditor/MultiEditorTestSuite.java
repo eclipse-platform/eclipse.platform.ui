@@ -13,19 +13,15 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.multieditor;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.Ignore;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public class MultiEditorTestSuite extends TestSuite {
-
-	public static Test suite() {
-		return new MultiEditorTestSuite();
-	}
-	/**
-	 * Construct the test suite.
-	 */
-	public MultiEditorTestSuite() {
-		addTestSuite(AbstractMultiEditorTest.class);
-		addTestSuite(MultiEditorTest.class);
-	}
+@Ignore
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	AbstractMultiEditorTest.class,
+	MultiEditorTest.class,
+})
+public class MultiEditorTestSuite {
 }

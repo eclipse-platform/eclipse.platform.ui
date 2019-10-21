@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.internal;
 
+import org.eclipse.ui.tests.markers.Bug75909Test;
 import org.eclipse.ui.tests.markers.DeclarativeFilterActivityTest;
 import org.eclipse.ui.tests.markers.DeclarativeFilterDeclarationTest;
 import org.eclipse.ui.tests.markers.MarkerHelpRegistryReaderTest;
@@ -24,21 +25,22 @@ import org.eclipse.ui.tests.markers.MarkerSupportRegistryTests;
 import org.eclipse.ui.tests.markers.MarkerTesterTest;
 import org.eclipse.ui.tests.markers.MarkerViewTests;
 import org.eclipse.ui.tests.markers.MarkerViewUtilTest;
+import org.eclipse.ui.tests.markers.ResourceMappingMarkersTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
 	AnimationEngineTest.class,
-//	EditorActionBarsTest.class,
+	EditorActionBarsTest.class,
 	ActionSetExpressionTest.class,
 	PopupMenuExpressionTest.class,
-//	Bug41931Test.class,
-//	Bug75909Test.class,
+	Bug41931Test.class,
+	Bug75909Test.class,
 	Bug78470Test.class,
 	DeclarativeFilterActivityTest.class,
 	DeclarativeFilterDeclarationTest.class,
-//	ResourceMappingMarkersTest.class,
+	ResourceMappingMarkersTest.class,
 	MarkerSupportRegistryTests.class,
 	MarkerSortUtilTest.class,
 	MarkerViewTests.class,
@@ -47,17 +49,16 @@ import org.junit.runners.Suite;
 	MarkerHelpRegistryReaderTest.class,
 	MarkerQueryTest.class,
 	Bug99858Test.class,
-// Disabled due 544032, see also 485167
-//	WorkbenchWindowSubordinateSourcesTests.class,
+	WorkbenchWindowSubordinateSourcesTests.class,
 	ReopenMenuTest.class,
 	UtilTest.class,
 	MarkerTesterTest.class,
 	TextHandlerTest.class,
 	PerspectiveSwitcherTest.class,
-//	StickyViewManagerTest.class,
-//	FileEditorMappingTest.class,
+	StickyViewManagerTest.class,
+	FileEditorMappingTest.class,
 	WorkbenchSiteProgressServiceModelTagsTest.class,
-//	WorkbenchPageTest.class,
+	WorkbenchPageTest.class,
 	SaveablesListTest.class,
 	Bug540297WorkbenchPageFindViewTest.class,
 	Bug549139Test.class,

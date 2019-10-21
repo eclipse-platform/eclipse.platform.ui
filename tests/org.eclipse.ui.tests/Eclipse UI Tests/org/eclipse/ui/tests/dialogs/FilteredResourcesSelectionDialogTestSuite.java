@@ -15,33 +15,18 @@
 package org.eclipse.ui.tests.dialogs;
 
 import org.junit.runner.RunWith;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runners.Suite;
 
 /**
  * The suite of tests for the FilteredResourcesSelectionDialog.
  *
  * @since 3.14
  */
-@RunWith(org.junit.runners.AllTests.class)
-public class FilteredResourcesSelectionDialogTestSuite extends TestSuite {
-
-	/**
-	 * Returns the suite. This is required to use the JUnit Launcher.
-	 *
-	 * @return A new test suite; never <code>null</code>.;
-	 */
-	public static Test suite() {
-		return new FilteredResourcesSelectionDialogTestSuite();
-	}
-
-	/**
-	 * Construct the test suite.
-	 */
-	public FilteredResourcesSelectionDialogTestSuite() {
-		addTestSuite(ResourceItemLabelTest.class);
-		addTestSuite(ResourceInitialSelectionTest.class);
-		addTestSuite(ResourceSelectionFilteringDialogTest.class);
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	ResourceItemLabelTest.class,
+	ResourceInitialSelectionTest.class,
+	ResourceSelectionFilteringDialogTest.class,
+})
+public class FilteredResourcesSelectionDialogTestSuite {
 }

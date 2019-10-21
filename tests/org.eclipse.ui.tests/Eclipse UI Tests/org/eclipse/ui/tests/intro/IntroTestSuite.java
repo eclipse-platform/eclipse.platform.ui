@@ -13,24 +13,19 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.intro;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.Ignore;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * @since 3.0
  */
-public class IntroTestSuite extends TestSuite {
-
-	public static Test suite() {
-		return new IntroTestSuite();
-	}
-
-	/**
-	 *
-	 */
-	public IntroTestSuite() {
-		addTest(new TestSuite(IntroPartTest.class));
-		addTest(new TestSuite(NoIntroPartTest.class));
-		addTest(new TestSuite(IntroTest.class));
-	}
+@Ignore
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	IntroPartTest.class,
+	NoIntroPartTest.class,
+	IntroTest.class,
+})
+public class IntroTestSuite {
 }

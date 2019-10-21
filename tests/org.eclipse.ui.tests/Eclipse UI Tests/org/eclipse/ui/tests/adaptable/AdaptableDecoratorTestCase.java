@@ -16,8 +16,6 @@ package org.eclipse.ui.tests.adaptable;
 
 import java.io.ByteArrayInputStream;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
@@ -52,15 +50,6 @@ public class AdaptableDecoratorTestCase extends UITestCase implements
 	protected IFolder testFolder;
 
 	protected IFile testFile;
-
-	public static TestSuite suite() {
-		TestSuite ts = new TestSuite();
-		ts.addTest(new AdaptableDecoratorTestCase("testEnableDecorator"));
-		ts.addTest(new AdaptableDecoratorTestCase("testDisableDecorator"));
-		ts.addTest(new AdaptableDecoratorTestCase("testRefreshFullContributor"));
-		ts.addTest(new AdaptableDecoratorTestCase("testRefreshLightContributor"));
-		return ts;
-	}
 
 	/**
 	 * Constructor for DecoratorTestCase.

@@ -37,11 +37,16 @@ import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.tests.api.MockReusableEditorPart;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Ignore;
+import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.runner.RunWith;
 
 /**
  * @since 3.5
  *
  */
+@RunWith(JUnit38ClassRunner.class)
+@Ignore("See bug 436755 and commit 0d6ce84b3d3a588733bdae43224c612239a0a9a7")
 public class EditorSourceTest extends UITestCase {
 
 	private static class MyEval implements IPropertyChangeListener {

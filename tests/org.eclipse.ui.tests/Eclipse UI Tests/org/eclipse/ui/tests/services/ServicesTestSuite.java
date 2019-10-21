@@ -27,7 +27,7 @@ import org.junit.runners.Suite;
 	EvaluationServiceTest.class,
 	ContributedServiceTest.class,
 	WorkbenchSiteProgressServiceTest.class,
-// TODO EditorSourceTest.class
+	EditorSourceTest.class
 	})
 public final class ServicesTestSuite {
 }

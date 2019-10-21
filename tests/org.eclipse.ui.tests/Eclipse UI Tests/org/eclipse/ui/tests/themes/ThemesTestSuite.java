@@ -17,8 +17,6 @@ package org.eclipse.ui.tests.themes;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-import junit.framework.TestSuite;
-
 /**
  * @since 3.0
  */
@@ -30,6 +28,6 @@ import junit.framework.TestSuite;
 	 ThemeRegistryModifiedHandlerTest.class,
 	 StylingPreferencesHandlerTest.class
 })
-public class ThemesTestSuite extends TestSuite {
+public class ThemesTestSuite {
 
 }

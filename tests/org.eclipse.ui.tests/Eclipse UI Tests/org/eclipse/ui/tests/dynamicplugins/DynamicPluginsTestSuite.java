@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -20,6 +21,7 @@ import org.junit.runners.Suite;
  * Test suite for dynamic plug-in support.
  */
 @RunWith(Suite.class)
+@Ignore("Bug 405296")
 @Suite.SuiteClasses({
 	StatusHandlerTests.class,
 	AcceleratorConfigurationsExtensionDynamicTest.class,

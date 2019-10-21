@@ -29,6 +29,9 @@ import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.NotHandledException;
 import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Ignore;
+import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.runner.RunWith;
 
 /**
  * Tests that dialogs will inherit the handlers from the workbench window, if
@@ -37,6 +40,8 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  *
  * @since 3.0
  */
+@RunWith(JUnit38ClassRunner.class)
+@Ignore("broke during e4 transition and still need adjustments")
 public final class Bug66182Test extends UITestCase {
 
 	/**

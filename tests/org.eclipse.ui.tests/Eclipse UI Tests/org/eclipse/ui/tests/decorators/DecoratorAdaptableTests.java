@@ -26,13 +26,7 @@ import org.eclipse.ui.internal.decorators.LightweightDecoratorManager;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.tests.menus.ObjectContributionClasses;
 
-import junit.framework.TestSuite;
-
 public class DecoratorAdaptableTests extends UITestCase {
-
-	public static TestSuite suite() {
-		return new TestSuite(DecoratorAdaptableTests.class);
-	}
 
 	public DecoratorAdaptableTests(String testName) {
 		super(testName);

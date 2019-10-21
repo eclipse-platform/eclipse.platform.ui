@@ -29,6 +29,9 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.tests.internal.TestMemento;
 import org.eclipse.ui.views.markers.internal.MarkerType;
 import org.eclipse.ui.views.markers.internal.ProblemFilter;
+import org.junit.Ignore;
+import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.runner.RunWith;
 
 import junit.framework.TestCase;
 
@@ -44,6 +47,8 @@ import junit.framework.TestCase;
  * @since 3.1
  *
  */
+@RunWith(JUnit38ClassRunner.class)
+@Ignore
 public class Bug75909Test extends TestCase {
 
 	private static final int OLD_SETTINGS_SELECTED = 4;

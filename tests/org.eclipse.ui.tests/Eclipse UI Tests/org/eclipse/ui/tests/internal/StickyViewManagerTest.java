@@ -23,10 +23,15 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Ignore;
+import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.runner.RunWith;
 
 /**
  * @since 3.6
  */
+@RunWith(JUnit38ClassRunner.class)
+@Ignore
 public class StickyViewManagerTest extends UITestCase {
 
 	/**

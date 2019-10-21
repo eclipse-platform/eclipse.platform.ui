@@ -30,11 +30,16 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.tests.api.workbenchpart.MenuContributionHarness;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Ignore;
+import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.runner.RunWith;
 
 /**
  * @since 3.3
  *
  */
+@RunWith(JUnit38ClassRunner.class)
+@Ignore("broke during e4 transition and still need adjustments")
 public class ActionDelegateProxyTest extends UITestCase {
 	/**
 	 *

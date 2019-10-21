@@ -73,7 +73,7 @@ import org.junit.runners.Suite;
 	 IDETest2.class,
 	 IEditorMatchingStrategyTest.class,
 	 XMLMementoTest.class,
-	 //IWorkbenchPartTestableTests.class,
+	 IWorkbenchPartTestableTests.class,
 	 ArbitraryPropertyTest.class,
 	 LifecycleViewTest.class,
 	 DependencyInjectionViewTest.class,

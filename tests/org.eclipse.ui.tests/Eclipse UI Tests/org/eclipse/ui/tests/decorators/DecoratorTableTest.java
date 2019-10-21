@@ -18,10 +18,15 @@ import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.junit.Ignore;
+import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.runner.RunWith;
 
 /**
  * The DecoratorTableTest is the test for decorating tables.
  */
+@RunWith(JUnit38ClassRunner.class)
+@Ignore("Disabled due to timing issues")
 public class DecoratorTableTest extends DecoratorViewerTest {
 
 	/**

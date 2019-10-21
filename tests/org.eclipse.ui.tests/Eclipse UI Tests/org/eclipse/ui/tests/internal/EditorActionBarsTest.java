@@ -37,11 +37,16 @@ import org.eclipse.ui.tests.api.MockEditorPart;
 import org.eclipse.ui.tests.api.MockViewPart;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Ignore;
+import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.runner.RunWith;
 
 /**
  * This class contains tests for the editor action bars
  * implementation.
  */
+@RunWith(JUnit38ClassRunner.class)
+@Ignore
 public class EditorActionBarsTest extends UITestCase {
 
 	protected IWorkbenchWindow fWindow;

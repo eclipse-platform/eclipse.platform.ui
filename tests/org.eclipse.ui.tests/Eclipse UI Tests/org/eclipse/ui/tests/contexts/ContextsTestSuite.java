@@ -14,9 +14,7 @@
 package org.eclipse.ui.tests.contexts;
 
 import org.junit.runner.RunWith;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runners.Suite;
 
 /**
  * The suite of tests related to the "org.eclipse.ui.contexts" extension point,
@@ -26,24 +24,12 @@ import junit.framework.TestSuite;
  *
  * @since 3.0
  */
-@RunWith(org.junit.runners.AllTests.class)
-public final class ContextsTestSuite extends TestSuite {
-
-	/**
-	 * Returns the suite. This is required to use the JUnit Launcher.
-	 */
-	public static final Test suite() {
-		return new ContextsTestSuite();
-	}
-
-	/**
-	 * Constructs a new instance of <code>ContextsTestSuite</code> with all of
-	 * the relevent test cases.
-	 */
-	public ContextsTestSuite() {
-		addTestSuite(Bug74990Test.class);
-		addTestSuite(Bug84763Test.class);
-		addTestSuite(ExtensionTestCase.class);
-		addTestSuite(PartContextTest.class);
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	Bug74990Test.class,
+	Bug84763Test.class,
+	ExtensionTestCase.class,
+	PartContextTest.class,
+})
+public final class ContextsTestSuite {
 }

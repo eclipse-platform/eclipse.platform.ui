@@ -29,14 +29,18 @@ import org.eclipse.ui.tests.datatransfer.DataTransferTestSuite;
 import org.eclipse.ui.tests.decorators.DecoratorsTestSuite;
 import org.eclipse.ui.tests.dialogs.FilteredResourcesSelectionDialogTestSuite;
 import org.eclipse.ui.tests.dialogs.UIAutomatedSuite;
+import org.eclipse.ui.tests.dnd.DragTestSuite;
+import org.eclipse.ui.tests.dynamicplugins.DynamicPluginsTestSuite;
 import org.eclipse.ui.tests.encoding.EncodingTestSuite;
 import org.eclipse.ui.tests.fieldassist.FieldAssistTestSuite;
 import org.eclipse.ui.tests.filteredtree.FilteredTreeTests;
 import org.eclipse.ui.tests.filteredtree.PatternFilterTest;
 import org.eclipse.ui.tests.internal.InternalTestSuite;
+import org.eclipse.ui.tests.intro.IntroTestSuite;
 import org.eclipse.ui.tests.keys.KeysTestSuite;
 import org.eclipse.ui.tests.leaks.LeaksTestSuite;
 import org.eclipse.ui.tests.menus.MenusTestSuite;
+import org.eclipse.ui.tests.multieditor.MultiEditorTestSuite;
 import org.eclipse.ui.tests.multipageeditor.MultiPageEditorTestSuite;
 import org.eclipse.ui.tests.navigator.NavigatorTestSuite;
 import org.eclipse.ui.tests.operations.OperationsTestSuite;
@@ -47,7 +51,9 @@ import org.eclipse.ui.tests.quickaccess.QuickAccessTestSuite;
 import org.eclipse.ui.tests.releng.PluginActivationTests;
 import org.eclipse.ui.tests.services.ServicesTestSuite;
 import org.eclipse.ui.tests.statushandlers.StatusHandlingTestSuite;
+import org.eclipse.ui.tests.systeminplaceeditor.OpenSystemInPlaceEditorTest;
 import org.eclipse.ui.tests.themes.ThemesTestSuite;
+import org.eclipse.ui.tests.zoom.ZoomTestSuite;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -87,15 +93,13 @@ import org.junit.runners.Suite;
 	DirectoryProposalContentAssistTestSuite.class,
 	InternalTestSuite.class,
 	LeaksTestSuite.class,
-	StyledStringHighlighterTest.class
+	StyledStringHighlighterTest.class,
+	ZoomTestSuite.class,
+	DynamicPluginsTestSuite.class,
+	DragTestSuite.class,
+	IntroTestSuite.class,
+	MultiEditorTestSuite.class,
+	OpenSystemInPlaceEditorTest.class,
 })
 public class UiTestSuite {
-
-	// Not enabled tests:
-	// ZoomTestSuite.class,
-	// DynamicPluginsTestSuite.class, // FIXME See Bug 405296
-	// DragTestSuite.class,
-	// IntroTestSuite.class,
-	// MultiEditorTestSuite.class,
-	// OpenSystemInPlaceEditorTest..class,
 }

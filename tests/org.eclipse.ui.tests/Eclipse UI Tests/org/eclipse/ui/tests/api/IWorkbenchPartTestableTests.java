@@ -29,11 +29,16 @@ import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.testing.IWorkbenchPartTestable;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Ignore;
+import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.runner.RunWith;
 
 /**
  * @since 3.3
  *
  */
+@RunWith(JUnit38ClassRunner.class)
+@Ignore("No enabled tests")
 public class IWorkbenchPartTestableTests extends UITestCase {
 
 	/**

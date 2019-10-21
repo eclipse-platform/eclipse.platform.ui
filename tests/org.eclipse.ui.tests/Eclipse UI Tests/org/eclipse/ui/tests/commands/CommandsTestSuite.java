@@ -37,14 +37,12 @@ import org.junit.runners.Suite;
 	CommandCallbackTest.class,
 	CommandActionTest.class,
 	HelpContextIdTest.class,
-
-// The following tests broke during e4 transition and still need adjustments:
-//	Bug66182Test.class,
-//	StateTest.class,
-//	CommandEnablementTest.class,
-//	ActionDelegateProxyTest.class,
-//	ToggleStateTest.class,
-//	RadioStateTest.class,
+	Bug66182Test.class,
+	StateTest.class,
+	CommandEnablementTest.class,
+	ActionDelegateProxyTest.class,
+	ToggleStateTest.class,
+	RadioStateTest.class,
 })
 public final class CommandsTestSuite {
 }

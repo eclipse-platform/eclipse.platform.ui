@@ -21,7 +21,12 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.internal.registry.FileEditorMapping;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Ignore;
+import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.runner.RunWith;
 
+@RunWith(JUnit38ClassRunner.class)
+@Ignore
 public class FileEditorMappingTest extends UITestCase {
 
 	private EditorDescriptor textEditor;
