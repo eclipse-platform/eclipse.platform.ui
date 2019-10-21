@@ -34,6 +34,10 @@ import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Test cases covering the various interaction between bindings. Bindings that
@@ -42,6 +46,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  *
  * @since 3.1
  */
+@RunWith(JUnit4.class)
 public final class BindingPersistenceTest extends UITestCase {
 
 	private final String EMACS_SCHEME_ID = "org.eclipse.ui.emacsAcceleratorConfiguration";
@@ -50,12 +55,9 @@ public final class BindingPersistenceTest extends UITestCase {
 
 	/**
 	 * Constructor for <code>BindingPersistenceTest</code>.
-	 *
-	 * @param name
-	 *            The name of the test
 	 */
-	public BindingPersistenceTest(final String name) {
-		super(name);
+	public BindingPersistenceTest() {
+		super(BindingPersistenceTest.class.getSimpleName());
 	}
 
 	/**
@@ -79,6 +81,7 @@ public final class BindingPersistenceTest extends UITestCase {
 	 * @throws ParseException
 	 *             If "ALT+SHIFT+Q A" cannot be parsed by KeySequence.
 	 */
+	@Test
 	public final void testAutoLoad() throws ParseException {
 		bindingService.readRegistryAndPreferences(commandService);
 
@@ -142,6 +145,7 @@ public final class BindingPersistenceTest extends UITestCase {
 				(bindings.length == i));
 	}
 
+	@Test
 	public final void testSinglePlatform() throws Exception {
 		ParameterizedCommand about = new ParameterizedCommand(commandService
 				.getCommand("org.eclipse.ui.help.aboutAction"), null);
@@ -179,6 +183,8 @@ public final class BindingPersistenceTest extends UITestCase {
 		}
 	}
 
+	@Ignore
+	@Test
 	public final void TODOtestBindingTransform() throws Exception {
 		ParameterizedCommand addWS = new ParameterizedCommand(commandService
 				.getCommand("org.eclipse.ui.navigate.addToWorkingSet"), null);
@@ -228,6 +234,7 @@ public final class BindingPersistenceTest extends UITestCase {
 		assertEquals(1, activeBindingsFor.length);
 	}
 
+	@Test
 	public void testModifierWithPlatform() throws Exception {
 		ParameterizedCommand importCmd = new ParameterizedCommand(
 				commandService.getCommand("org.eclipse.ui.file.import"), null);
@@ -250,6 +257,7 @@ public final class BindingPersistenceTest extends UITestCase {
 		assertEquals(numOfMarkers, 1);
 	}
 
+	@Test
 	public void testModifierNotApplied() throws Exception {
 		ParameterizedCommand exportCmd = new ParameterizedCommand(
 				commandService.getCommand("org.eclipse.ui.file.export"), null);
@@ -268,6 +276,7 @@ public final class BindingPersistenceTest extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testDifferentPlatform() throws Exception {
 		ParameterizedCommand backCmd = new ParameterizedCommand(
 				commandService.getCommand("org.eclipse.ui.navigate.back"), null);
@@ -289,6 +298,7 @@ public final class BindingPersistenceTest extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testAboutBinding() throws Exception {
 		if (Util.isMac()) {
 			return;
@@ -361,6 +371,7 @@ public final class BindingPersistenceTest extends UITestCase {
 		assertEquals(aboutCmd, fourthMatch.getParameterizedCommand());
 	}
 
+	@Test
 	public void testAboutBindingIn3x() throws Exception {
 		if (Util.isMac()) {
 			// TODO investigate on Mac
@@ -403,6 +414,7 @@ public final class BindingPersistenceTest extends UITestCase {
 		assertEquals(aboutCmd, secondMatch.getParameterizedCommand());
 	}
 
+	@Test
 	public void testAboutBindingEmacs() throws Exception {
 		if (Util.isMac()) {
 			return;
@@ -487,6 +499,7 @@ public final class BindingPersistenceTest extends UITestCase {
 
 	// the 'paste' key binding overrides the 'redo' key binding on Windows
 	// platforms
+	@Test
 	public void testPasteAndRedoBindingEmacs() throws Exception {
 		if (Util.isMac()) {
 			// TODO investigate on Mac
@@ -537,6 +550,7 @@ public final class BindingPersistenceTest extends UITestCase {
 
 	// the 'paste' key binding overrides the 'redo' key binding and can be
 	// put back
+	@Test
 	public void testPasteBindingEmacs() throws Exception {
 
 		final Scheme emacsScheme = bindingService.getScheme(EMACS_SCHEME_ID);

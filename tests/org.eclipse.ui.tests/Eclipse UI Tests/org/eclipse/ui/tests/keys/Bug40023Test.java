@@ -31,12 +31,18 @@ import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests Bug 40023
  *
  * @since 3.0
  */
+@RunWith(JUnit4.class)
+@Ignore("Intermittent failure.  SWT Bug 44344.  XGrabPointer?")
 public class Bug40023Test extends UITestCase {
 
 	/**
@@ -61,12 +67,9 @@ public class Bug40023Test extends UITestCase {
 
 	/**
 	 * Constructor for Bug40023Test.
-	 *
-	 * @param name
-	 *            The name of the test
 	 */
-	public Bug40023Test(String name) {
-		super(name);
+	public Bug40023Test() {
+		super(Bug40023Test.class.getSimpleName());
 	}
 
 	/**
@@ -86,6 +89,7 @@ public class Bug40023Test extends UITestCase {
 	 * @throws ParseException
 	 *             If the key binding cannot be parsed.
 	 */
+	@Test
 	public void testCheckOnCheckbox() throws CoreException, CommandException,
 			FileNotFoundException, IOException, ParseException {
 		// Open a window to run the test.

@@ -14,13 +14,20 @@
 
 package org.eclipse.ui.tests.keys;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests Bug 42627
  *
  * @since 3.0
  */
+@RunWith(JUnit4.class)
+@Ignore("Logging piece of fix did not go in M4.") // See commit 74a677140dd3fc6a09fa1c769c0af2cac3c1c08b
 public class Bug42627Test extends UITestCase {
 
 	// TODO See if this is needed for anything.
@@ -45,12 +52,9 @@ public class Bug42627Test extends UITestCase {
 	//	private boolean logged;
 	/**
 	 * Constructor for Bug42627Test.
-	 *
-	 * @param name
-	 *           The name of the test
 	 */
 	public Bug42627Test(String name) {
-		super(name);
+		super(Bug42627Test.class.getSimpleName());
 	}
 
 	@Override
@@ -65,6 +69,7 @@ public class Bug42627Test extends UITestCase {
 	 * @throws CoreException
 	 *            If something fails when trying to open a new project.
 	 */
+	@Test
 	public void testLogUndefined() /*throws CoreException*/{
 		// TODO No log is being generated.  What was Chris' fix?
 		//		IWorkbenchWindow window = openTestWindow();

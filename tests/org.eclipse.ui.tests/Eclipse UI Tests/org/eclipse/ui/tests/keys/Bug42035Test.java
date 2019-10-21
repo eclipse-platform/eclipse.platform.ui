@@ -20,12 +20,16 @@ import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.ParseException;
 import org.eclipse.ui.keys.SWTKeySupport;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Test for Bug 42035.
  *
  * @since 3.0
  */
+@RunWith(JUnit4.class)
 public class Bug42035Test extends UITestCase {
 
 	/**
@@ -76,12 +80,9 @@ public class Bug42035Test extends UITestCase {
 
 	/**
 	 * Constructs a new instance of this test case.
-	 *
-	 * @param testName
-	 *            The name of the test
 	 */
-	public Bug42035Test(String testName) {
-		super(testName);
+	public Bug42035Test() {
+		super(Bug42035Test.class.getSimpleName());
 	}
 
 	/**
@@ -90,6 +91,7 @@ public class Bug42035Test extends UITestCase {
 	 * @throws ParseException
 	 *             If "CTRL+" cannot be processed.
 	 */
+	@Test
 	public void testCtrl() throws ParseException {
 		Event keyEvent = new Event();
 		keyEvent.keyCode = 0x40000;
@@ -111,6 +113,7 @@ public class Bug42035Test extends UITestCase {
 	 * @throws ParseException
 	 *             If "CTRL+ENTER" cannot be processed.
 	 */
+	@Test
 	public void testCtrlEnter() throws ParseException {
 		Event keyEvent = new Event();
 		keyEvent.keyCode = 0x0D;
@@ -126,6 +129,7 @@ public class Bug42035Test extends UITestCase {
 	 * @throws ParseException
 	 *             If "CTRL+M" cannot be processed.
 	 */
+	@Test
 	public void testCtrlM() throws ParseException {
 		Event keyEvent = new Event();
 		keyEvent.keyCode = 0x6D;
@@ -143,6 +147,7 @@ public class Bug42035Test extends UITestCase {
 	 *             If "CTRL+SHIFT+2", "CTRL+@" or "CTRL+SHIFT+@" cannot be
 	 *             processed.
 	 */
+	@Test
 	public void testCtrlShift2() throws ParseException {
 		Event keyEvent = new Event();
 		keyEvent.keyCode = '2';
@@ -160,6 +165,7 @@ public class Bug42035Test extends UITestCase {
 	 *             If "CTRL+SHIFT+7", "CTRL+/" or "CTRL+SHIFT+/" cannot be
 	 *             processed.
 	 */
+	@Test
 	public void testCtrlShift7_SwissGerman() throws ParseException {
 		Event keyEvent = new Event();
 		keyEvent.keyCode = '7';
@@ -177,6 +183,7 @@ public class Bug42035Test extends UITestCase {
 	 *             If "CTRL+SHIFT+7", "CTRL+&amp;" or "CTRL+SHIFT+&amp;" cannot be
 	 *             processed.
 	 */
+	@Test
 	public void testCtrlShift7_US() throws ParseException {
 		Event keyEvent = new Event();
 		keyEvent.keyCode = '7';

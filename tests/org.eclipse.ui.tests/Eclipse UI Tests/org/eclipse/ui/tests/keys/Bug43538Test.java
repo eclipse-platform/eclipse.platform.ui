@@ -23,28 +23,30 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.tests.harness.util.AutomationUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Test for Bug 43538.
  *
  * @since 3.0
  */
+@RunWith(JUnit4.class)
 public class Bug43538Test extends UITestCase {
 
 	/**
 	 * Constructs a new instance of this test case.
-	 *
-	 * @param testName
-	 *            The name of the test
 	 */
-	public Bug43538Test(String testName) {
-		super(testName);
+	public Bug43538Test() {
+		super(Bug43538Test.class.getSimpleName());
 	}
 
 	/**
 	 * Tests that if "Ctrl+Space" is pressed only one key down event with the
 	 * "CTRL" mask is received.
 	 */
+	@Test
 	public void testCtrlSpace() {
 		// Close Welcome: workaround for https://bugs.eclipse.org/429592 / https://bugs.eclipse.org/366608#c12
 		IIntroManager introManager= PlatformUI.getWorkbench().getIntroManager();

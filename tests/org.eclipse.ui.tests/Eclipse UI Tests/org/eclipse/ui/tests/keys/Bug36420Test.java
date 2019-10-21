@@ -32,22 +32,26 @@ import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.keys.KeySequence;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests Bug 36420
  *
  * @since 3.0
  */
+@RunWith(JUnit4.class)
+@Ignore("This no longer works due to focus issues related to key bindings")
+// See commit f4f9a6680173270f913891b1d2a8b5f05854b6f4
 public class Bug36420Test extends UITestCase {
 
 	/**
 	 * Constructor for Bug36420Test.
-	 *
-	 * @param name
-	 *            The name of the test
 	 */
-	public Bug36420Test(String name) {
-		super(name);
+	public Bug36420Test() {
+		super(Bug36420Test.class.getSimpleName());
 	}
 
 	/**
@@ -61,6 +65,7 @@ public class Bug36420Test extends UITestCase {
 	 * @throws IOException
 	 *             If something fails during output of the preferences file.
 	 */
+	@Test
 	public void testImportKeyPreferences() throws CoreException,
 			FileNotFoundException, IOException {
 		String commandId = "org.eclipse.ui.window.nextView"; //$NON-NLS-1$

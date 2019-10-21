@@ -40,12 +40,18 @@ import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.internal.keys.WorkbenchKeyboard;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Test for Bug 44460.
  *
  * @since 3.0
  */
+@RunWith(JUnit4.class)
+@Ignore("disabled since it refers to the Java builder and nature, which are not available in an RCP build")
 public class Bug44460Test extends UITestCase {
 
 	/**
@@ -55,7 +61,7 @@ public class Bug44460Test extends UITestCase {
 	 *            The name of the test
 	 */
 	public Bug44460Test(String testName) {
-		super(testName);
+		super(Bug44460Test.class.getSimpleName());
 	}
 
 	/**
@@ -67,6 +73,7 @@ public class Bug44460Test extends UITestCase {
 	 * @throws CoreException
 	 *             If the project cannot be created or opened.
 	 */
+	@Test
 	public void testCtrlShiftT() throws CommandException, CoreException {
 		// Open a new test window.
 		IWorkbenchWindow window = openTestWindow();

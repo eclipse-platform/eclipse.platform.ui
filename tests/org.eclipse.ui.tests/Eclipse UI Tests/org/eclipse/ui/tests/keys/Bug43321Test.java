@@ -36,22 +36,23 @@ import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests Bug 43321
  *
  * @since 3.0
  */
+@RunWith(JUnit4.class)
 public class Bug43321Test extends UITestCase {
 
 	/**
 	 * Constructor for Bug43321Test.
-	 *
-	 * @param name
-	 *            The name of the test
 	 */
-	public Bug43321Test(String name) {
-		super(name);
+	public Bug43321Test() {
+		super(Bug43321Test.class.getSimpleName());
 	}
 
 	/**
@@ -65,6 +66,7 @@ public class Bug43321Test extends UITestCase {
 	 * @throws ParseException
 	 *             If "CTRL+C" isn't a valid key stroke.
 	 */
+	@Test
 	public void testNoCheckOnNonCheckbox() throws CommandException,
 			CoreException, ParseException {
 		IWorkbenchWindow window = openTestWindow();

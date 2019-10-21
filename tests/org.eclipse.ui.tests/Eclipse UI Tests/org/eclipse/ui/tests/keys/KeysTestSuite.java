@@ -23,17 +23,14 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses({
 	BindingInteractionsTest.class,
 	BindingManagerTest.class,
-		DispatcherTest.class,
+	DispatcherTest.class,
 	BindingPersistenceTest.class,
-	// TODO This no longer works due to focus issues related to key bindings
-	//Bug36420Test.class,
+	Bug36420Test.class,
 	Bug36537Test.class,
-	//		TODO Intermittent failure.  SWT Bug 44344.  XGrabPointer?
-	//		Bug40023Test.class,
+	Bug40023Test.class,
 	Bug42024Test.class,
 	Bug42035Test.class,
-	//		TODO Logging piece of fix did not go in M4.
-	//		Bug42627Test.class,
+	Bug42627Test.class,
 	Bug43168Test.class,
 	Bug43321Test.class,
 	Bug43538Test.class,
@@ -41,15 +38,10 @@ import org.junit.runners.Suite;
 	Bug43610Test.class,
 	Bug43800Test.class,
 	KeysCsvTest.class,
-	//		TODO disabled since it refers to the Java builder and nature,
-	//      which are not available in an RCP build
-	//		Bug44460Test.class,
-	/* TODO disabled as it fails on the Mac.
-	 * Ctrl+S doesn't save the editor, and posting MOD1+S also doesn't seem to work.
-	 */
-	//Bug53489Test.class,
+	Bug44460Test.class,
+	Bug53489Test.class,
 	Bug189167Test.class,
-		KeysPreferenceModelTest.class
+	KeysPreferenceModelTest.class
  })
 public class KeysTestSuite {
 

@@ -27,28 +27,30 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests Bug 36537
  *
  * @since 3.0
  */
+@RunWith(JUnit4.class)
 public class Bug36537Test extends UITestCase {
 
 	/**
 	 * Constructor for Bug36537Test.
-	 *
-	 * @param name
-	 *            The name of the test
 	 */
-	public Bug36537Test(String name) {
-		super(name);
+	public Bug36537Test() {
+		super(Bug36537Test.class.getSimpleName());
 	}
 
 	/**
 	 * Tests that there are no redundant key bindings defined in the
 	 * application.
 	 */
+	@Test
 	public void testForRedundantKeySequenceBindings() {
 		final IWorkbenchWindow window = openTestWindow();
 		final IWorkbench workbench = window.getWorkbench();

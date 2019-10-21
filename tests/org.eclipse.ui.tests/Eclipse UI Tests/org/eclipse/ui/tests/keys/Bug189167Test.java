@@ -14,28 +14,32 @@
 
 package org.eclipse.ui.tests.keys;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import org.eclipse.jface.bindings.Binding;
+import org.junit.Test;
 
 /**
  * Tests Bug 189167
  *
  * @since 3.4
  */
-public class Bug189167Test extends TestCase {
+public class Bug189167Test {
 
 	private Binding createTestBinding() {
 		return new TestBinding("commandId", "schemeId", "contextId", "locale", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				"platform", 0, null); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testBindingsEqual() {
 		Binding one = createTestBinding();
 		Binding two = createTestBinding();
 		assertEquals(one, two);
 	}
 
+	@Test
 	public void testHashCodeEquals(){
 		Binding one = createTestBinding();
 		Binding two = createTestBinding();

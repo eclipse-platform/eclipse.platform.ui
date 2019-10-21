@@ -32,6 +32,10 @@ import org.eclipse.ui.commands.CommandException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.tests.harness.util.AutomationUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests that pressing delete in a styled text widget does not cause a double
@@ -39,6 +43,9 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  *
  * @since 3.0
  */
+@RunWith(JUnit4.class)
+@Ignore("disabled as it fails on the Mac.")
+// Ctrl+S doesn't save the editor, and posting MOD1+S also doesn't seem to work.
 public class Bug53489Test extends UITestCase {
 
 	/**
@@ -48,7 +55,7 @@ public class Bug53489Test extends UITestCase {
 	 *            The name of the test
 	 */
 	public Bug53489Test(String name) {
-		super(name);
+		super(Bug53489Test.class.getSimpleName());
 	}
 
 	/**
@@ -64,6 +71,7 @@ public class Bug53489Test extends UITestCase {
 	 * @throws IOException
 	 *             If the file cannot be read.
 	 */
+	@Test
 	public void testDoubleDelete() throws CommandException,
 			CoreException, IOException {
 		IWorkbenchWindow window = openTestWindow();

@@ -23,12 +23,16 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests Bug 42024
  *
  * @since 3.0
  */
+@RunWith(JUnit4.class)
 public class Bug42024Test extends UITestCase {
 
 	/** The shell on which the <code>KeySequenceText</code> is placed. */
@@ -39,12 +43,9 @@ public class Bug42024Test extends UITestCase {
 
 	/**
 	 * Constructor for Bug42024Test.
-	 *
-	 * @param name
-	 *            The name of the test
 	 */
-	public Bug42024Test(String name) {
-		super(name);
+	public Bug42024Test() {
+		super(Bug42024Test.class.getSimpleName());
 	}
 
 	/*
@@ -86,6 +87,7 @@ public class Bug42024Test extends UITestCase {
 	 * @throws ParseException
 	 *             If the test sequence cannot be parsed.
 	 */
+	@Test
 	public void testInfiniteStrokes() throws ParseException {
 		String keySequenceText = "A B C D E F"; //$NON-NLS-1$
 		KeySequence keySequence = KeySequence.getInstance(keySequenceText);
@@ -103,6 +105,7 @@ public class Bug42024Test extends UITestCase {
 	 * @throws ParseException
 	 *             If the test sequences cannot be parsed.
 	 */
+	@Test
 	public void testTruncation() throws ParseException {
 		final int length = 4;
 		text.setKeyStrokeLimit(length);
@@ -129,6 +132,7 @@ public class Bug42024Test extends UITestCase {
 	 * regardless of whether the stroke limit is some positive integer or
 	 * infinite.
 	 */
+	@Test
 	public void testZeroStroke() {
 		KeySequence zeroStrokeSequence = KeySequence.getInstance();
 

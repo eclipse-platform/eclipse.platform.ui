@@ -32,9 +32,9 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.BlockJUnit4ClassRunner;
+import org.junit.runners.JUnit4;
 
-@RunWith(BlockJUnit4ClassRunner.class)
+@RunWith(JUnit4.class)
 public class DispatcherTest extends UITestCase {
 
 	private KeyBindingDispatcher dispatcher;

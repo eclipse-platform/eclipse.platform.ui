@@ -37,11 +37,16 @@ import org.eclipse.ui.internal.keys.model.SchemeElement;
 import org.eclipse.ui.internal.keys.model.SchemeModel;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.4
  *
  */
+@RunWith(JUnit4.class)
 public class KeysPreferenceModelTest extends UITestCase {
 
 	private static final String ID_QUICK_SWITCH = "org.eclipse.ui.window.openEditorDropDown";
@@ -55,13 +60,11 @@ public class KeysPreferenceModelTest extends UITestCase {
 	private static final String ID_CMD_CONFLICT4 = "org.eclipse.ui.tests.keyModel.conflict4";
 	private static final String ID_CMD_EMACS1 = "org.eclipse.ui.tests.keyModel.emacs1";
 
-	/**
-	 * @param testName
-	 */
-	public KeysPreferenceModelTest(String testName) {
-		super(testName);
+	public KeysPreferenceModelTest() {
+		super(KeysPreferenceModelTest.class.getSimpleName());
 	}
 
+	@Test
 	public void testDefaults() throws Exception {
 		KeyController controller = new KeyController();
 		controller.init(getWorkbench());
@@ -108,6 +111,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		assertNull(bm.getSelectedElement());
 	}
 
+	@Test
 	public void testContexts() throws Exception {
 		final KeyController controller = new KeyController();
 		controller.init(getWorkbench());
@@ -147,6 +151,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		assertChanges(expected, events);
 	}
 
+	@Test
 	public void testBindings() throws Exception {
 		final KeyController controller = new KeyController();
 		controller.init(getWorkbench());
@@ -194,6 +199,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		assertChanges(expected, events);
 	}
 
+	@Test
 	public void testBasicConflicts() throws Exception {
 		final KeyController controller = new KeyController();
 		controller.init(getWorkbench());
@@ -252,6 +258,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		assertChanges(expected, events);
 	}
 
+	@Test
 	public void testConflictSelection() throws Exception {
 		final KeyController controller = new KeyController();
 		controller.init(getWorkbench());
@@ -285,6 +292,8 @@ public class KeysPreferenceModelTest extends UITestCase {
 		assertChanges(expected, events);
 	}
 
+	@Ignore
+	@Test
 	public void failsOnCocoatestCreateConflict() throws Exception {
 		final KeyController controller = new KeyController();
 		controller.init(getWorkbench());
@@ -320,6 +329,8 @@ public class KeysPreferenceModelTest extends UITestCase {
 		assertNull(cf.getConflicts());
 	}
 
+	@Ignore
+	@Test
 	public void failsOnMacCocoatestConflictRemove() throws Exception {
 		final KeyController controller = new KeyController();
 		controller.init(getWorkbench());
@@ -349,6 +360,8 @@ public class KeysPreferenceModelTest extends UITestCase {
 		assertNull(cf.getConflicts());
 	}
 
+	@Ignore
+	@Test
 	public void failsOnMacCocoatestConflictRestore() throws Exception {
 		final KeyController controller = new KeyController();
 		controller.init(getWorkbench());
@@ -382,6 +395,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		assertNull(cf.getConflicts());
 	}
 
+	@Test
 	public void testUpdateContext() throws Exception {
 		final KeyController controller = new KeyController();
 		controller.init(getWorkbench());
@@ -426,6 +440,8 @@ public class KeysPreferenceModelTest extends UITestCase {
 		assertChanges(expected, events);
 	}
 
+	@Ignore
+	@Test
 	public void failsOnWinAndLinuxWith16VMtestUpdateKeySequence() throws Exception {
 		final KeyController controller = new KeyController();
 		controller.init(getWorkbench());
@@ -508,6 +524,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		assertChanges(expected, events);
 	}
 
+	@Test
 	public void testCreateKeyBinding() throws Exception {
 		final KeyController controller = new KeyController();
 		controller.init(getWorkbench());
@@ -552,6 +569,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		assertChanges(expected, events);
 	}
 
+	@Test
 	public void testChangeSchemes() throws Exception {
 		final KeyController controller = new KeyController();
 		controller.init(getWorkbench());
@@ -599,6 +617,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		assertTrue(foundOriginal);
 	}
 
+	@Test
 	public void testChangeSchemesTwice() throws Exception {
 		final KeyController controller = new KeyController();
 		controller.init(getWorkbench());
@@ -668,6 +687,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		assertTrue(foundOriginal);
 	}
 
+	@Test
 	public void testSchemesWithNoDefaultBinding() throws Exception {
 		final KeyController controller = new KeyController();
 		controller.init(getWorkbench());
@@ -704,6 +724,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		assertTrue(emacsElement.getModelObject() instanceof ParameterizedCommand);
 	}
 
+	@Test
 	public void testCopyBinding() throws Exception {
 		final KeyController controller = new KeyController();
 		controller.init(getWorkbench());
@@ -737,6 +758,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		assertEquals(2, activates.size());
 	}
 
+	@Test
 	public void testCopyCommand() throws Exception {
 		final KeyController controller = new KeyController();
 		controller.init(getWorkbench());
@@ -770,6 +792,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		assertEquals(1, activates.size());
 	}
 
+	@Test
 	public void testRemoveActiveEditor() throws Exception {
 		final KeyController controller = new KeyController();
 		controller.init(getWorkbench());
@@ -787,6 +810,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		assertTrue(activateEditor.getModelObject() instanceof ParameterizedCommand);
 	}
 
+	@Test
 	public void testRestoreBinding() throws Exception {
 		final KeyController controller = new KeyController();
 		controller.init(getWorkbench());
@@ -833,6 +857,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		assertEquals(Integer.valueOf(Binding.SYSTEM), activateEditor.getUserDelta());
 	}
 
+	@Test
 	public void testRestoreCommand() throws Exception {
 		final KeyController controller = new KeyController();
 		controller.init(getWorkbench());
@@ -863,6 +888,7 @@ public class KeysPreferenceModelTest extends UITestCase {
 		assertTrue(conflict4.getModelObject() instanceof ParameterizedCommand);
 	}
 
+	@Test
 	public void testRestoreContext() throws Exception {
 		final KeyController controller = new KeyController();
 		controller.init(getWorkbench());

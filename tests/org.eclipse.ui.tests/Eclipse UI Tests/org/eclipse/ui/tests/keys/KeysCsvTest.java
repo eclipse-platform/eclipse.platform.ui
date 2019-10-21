@@ -14,16 +14,18 @@
 
 package org.eclipse.ui.tests.keys;
 
-import org.eclipse.ui.internal.util.Util;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import org.eclipse.ui.internal.util.Util;
+import org.junit.Test;
 
 /**
  * @since 3.3
  *
  */
-public class KeysCsvTest extends TestCase {
+public class KeysCsvTest {
 
+	@Test
 	public void testReplace() throws Exception {
 		final String src = "Test the \"replaceAll\"";
 		final String dest = "Test the \"\"replaceAll\"\"";
@@ -31,6 +33,7 @@ public class KeysCsvTest extends TestCase {
 		assertEquals(dest, val);
 	}
 
+	@Test
 	public void testReplaceFirst() throws Exception {
 		final String src = "\"Hello world!";
 		final String dest = "\"\"Hello world!";

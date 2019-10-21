@@ -22,30 +22,32 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests Bug 43597
  *
  * @since 3.0
  */
+@RunWith(JUnit4.class)
 public class Bug43597Test extends UITestCase {
 
 	private Font textFont;
 
 	/**
 	 * Constructor for Bug43597Test.
-	 *
-	 * @param name
-	 *            The name of the test
 	 */
-	public Bug43597Test(String name) {
-		super(name);
+	public Bug43597Test() {
+		super(Bug43597Test.class.getSimpleName());
 	}
 
 	/**
 	 * Tests that setting the text on a text widget to an empty string does not
 	 * reset the font. This was a problem only on carbon.
 	 */
+	@Test
 	public void testFontReset() {
 		String metaCharacter = "\u2325X"; //$NON-NLS-1$
 

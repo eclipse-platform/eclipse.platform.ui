@@ -27,6 +27,9 @@ import org.eclipse.jface.bindings.Scheme;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.util.Util;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Test cases covering the various interaction between bindings. Bindings that
@@ -35,6 +38,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  *
  * @since 3.1
  */
+@RunWith(JUnit4.class)
 public final class BindingInteractionsTest extends UITestCase {
 
 	/**
@@ -51,12 +55,9 @@ public final class BindingInteractionsTest extends UITestCase {
 
 	/**
 	 * Constructor for <code>BindingInteractionsTest</code>.
-	 *
-	 * @param name
-	 *            The name of the test
 	 */
-	public BindingInteractionsTest(final String name) {
-		super(name);
+	public BindingInteractionsTest() {
+		super(BindingInteractionsTest.class.getSimpleName());
 	}
 
 	/**
@@ -87,6 +88,7 @@ public final class BindingInteractionsTest extends UITestCase {
 	 * @throws NotDefinedException
 	 *             If the scheme we try to activate is not defined.
 	 */
+	@Test
 	public void testConflict() throws NotDefinedException {
 		final Context context = contextManager.getContext("na");
 		context.define("name", "description", null);
@@ -126,6 +128,7 @@ public final class BindingInteractionsTest extends UITestCase {
 	 * @throws NotDefinedException
 	 *             If the scheme we try to activate is not defined.
 	 */
+	@Test
 	public void testContextOverride() throws NotDefinedException {
 		final Context parentContext = contextManager.getContext("parent");
 		parentContext.define("parent", "parent context", null);
@@ -180,6 +183,7 @@ public final class BindingInteractionsTest extends UITestCase {
 	 * @throws NotDefinedException
 	 *             If the scheme we try to activate is not defined.
 	 */
+	@Test
 	public void testDeletedBinding() throws NotDefinedException {
 		final Context context = contextManager.getContext("na");
 		context.define("name", "description", null);
@@ -211,6 +215,7 @@ public final class BindingInteractionsTest extends UITestCase {
 	 * @throws NotDefinedException
 	 *             If the scheme we try to activate is not defined.
 	 */
+	@Test
 	public void testDeletedBindingAllowsParent() throws NotDefinedException {
 		final Context parentContext = contextManager.getContext("parent");
 		parentContext.define("name", "description", null);
@@ -252,6 +257,7 @@ public final class BindingInteractionsTest extends UITestCase {
 	 * @throws NotDefinedException
 	 *             If the scheme we try to activate is not defined.
 	 */
+	@Test
 	public void testDeletedBindingPlatform() throws NotDefinedException {
 		final String na = "na";
 
@@ -291,6 +297,7 @@ public final class BindingInteractionsTest extends UITestCase {
 	 * @throws NotDefinedException
 	 *             If the scheme we try to activate is not defined.
 	 */
+	@Test
 	public void testDeletedBindingUnnecessarily() throws NotDefinedException {
 		final Context context = contextManager.getContext("na");
 		context.define("name", "description", null);
@@ -329,6 +336,7 @@ public final class BindingInteractionsTest extends UITestCase {
 	 * @throws NotDefinedException
 	 *             If the scheme we try to activate is not defined.
 	 */
+	@Test
 	public void testDeletedBindingWithAddition() throws NotDefinedException {
 		final Context context = contextManager.getContext("na");
 		context.define("name", "description", null);
@@ -361,6 +369,7 @@ public final class BindingInteractionsTest extends UITestCase {
 	 * @throws NotDefinedException
 	 *             If the scheme we try to activate is not defined.
 	 */
+	@Test
 	public void testDeletedBindingWithUserOverride() throws NotDefinedException {
 		final Context context = contextManager.getContext("na");
 		context.define("name", "description", null);
@@ -397,6 +406,7 @@ public final class BindingInteractionsTest extends UITestCase {
 	 *
 	 * @since 3.2
 	 */
+	@Test
 	public void testDoubleDeletedBinding() {
 		final String parent = "parent";
 		final String child = "child";
@@ -442,6 +452,7 @@ public final class BindingInteractionsTest extends UITestCase {
 	 * @throws NotDefinedException
 	 *             If the scheme we try to activate is not defined.
 	 */
+	@Test
 	public void testDoubleParent() throws NotDefinedException {
 		final String parent = "parent";
 		final String child = "child";
@@ -489,6 +500,7 @@ public final class BindingInteractionsTest extends UITestCase {
 	 * @throws NotDefinedException
 	 *             If the scheme we try to activate is not defined.
 	 */
+	@Test
 	public void testLocaleOverride() throws NotDefinedException {
 		final Context context = contextManager.getContext("na");
 		context.define("name", "description", null);
@@ -525,6 +537,7 @@ public final class BindingInteractionsTest extends UITestCase {
 	 * @throws NotDefinedException
 	 *             If the scheme we try to activate is not defined.
 	 */
+	@Test
 	public void testPlatformOverride() throws NotDefinedException {
 		final Context context = contextManager.getContext("na");
 		context.define("name", "description", null);
@@ -568,6 +581,7 @@ public final class BindingInteractionsTest extends UITestCase {
 	 * @throws NotDefinedException
 	 *             If the scheme we try to activate is not defined.
 	 */
+	@Test
 	public void testSchemeOverride() throws NotDefinedException {
 		final Context context = contextManager.getContext("na");
 		context.define("name", "description", null);
@@ -603,6 +617,7 @@ public final class BindingInteractionsTest extends UITestCase {
 	 * @throws NotDefinedException
 	 *             If the scheme we try to activate is not defined.
 	 */
+	@Test
 	public void testSchemeOverrideDifferentContexts()
 			throws NotDefinedException {
 		final String parent = "parent";
@@ -652,6 +667,7 @@ public final class BindingInteractionsTest extends UITestCase {
 	 * @throws NotDefinedException
 	 *             If the scheme we try to activate is not defined.
 	 */
+	@Test
 	public void testSchemeOverrideDifferentTypes() throws NotDefinedException {
 		final Context context = contextManager.getContext("na");
 		context.define("name", "description", null);
@@ -687,6 +703,7 @@ public final class BindingInteractionsTest extends UITestCase {
 	 * @throws NotDefinedException
 	 *             If the scheme we try to activate is not defined.
 	 */
+	@Test
 	public void testSiblingContextConflict() throws NotDefinedException {
 		final Context context1 = contextManager.getContext("sibling1");
 		context1.define("sibling1", "first sibling context", null);
@@ -748,6 +765,7 @@ public final class BindingInteractionsTest extends UITestCase {
 	 * @throws NotDefinedException
 	 *             If the scheme we try to activate is not defined.
 	 */
+	@Test
 	public void testUserOverride() throws NotDefinedException {
 		final Context context = contextManager.getContext("na");
 		context.define("name", "description", null);
