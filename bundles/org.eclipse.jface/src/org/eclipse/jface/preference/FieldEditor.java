@@ -492,7 +492,7 @@ public abstract class FieldEditor {
 	 * the preference store.
 	 */
 	public void load() {
-		if (preferenceStore != null) {
+		if (getPreferenceStore() != null) {
 			isDefaultPresented = false;
 			doLoad();
 			refreshValidState();
@@ -504,7 +504,7 @@ public abstract class FieldEditor {
 	 * from the preference store.
 	 */
 	public void loadDefault() {
-		if (preferenceStore != null) {
+		if (getPreferenceStore() != null) {
 			isDefaultPresented = true;
 			doLoadDefault();
 			refreshValidState();
@@ -571,7 +571,7 @@ public abstract class FieldEditor {
 	 * <p>
 	 * For example:
 	 * </p>
-	 * 
+	 *
 	 * <pre>
 	 * 	...
 	 *  editor.setPreferenceName("font");
@@ -669,12 +669,13 @@ public abstract class FieldEditor {
 	 * Stores this field editor's value back into the preference store.
 	 */
 	public void store() {
-		if (preferenceStore == null) {
+		IPreferenceStore store = getPreferenceStore();
+		if (store == null) {
 			return;
 		}
 
 		if (isDefaultPresented) {
-			preferenceStore.setToDefault(preferenceName);
+			store.setToDefault(preferenceName);
 		} else {
 			doStore();
 		}
