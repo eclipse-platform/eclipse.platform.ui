@@ -118,10 +118,7 @@ SashForm > StyledText {
 }
 
 
-Text[style~='SWT.DROP_DOWN'],
-TextSearchControl /* SWT-BUG: background color is hard-coded */,
-TextSearchControl > Label {
-    /* search boxes and input fields */
+Text[style~='SWT.DROP_DOWN']{
     background-color:#515658;
     color:#eeeeee;
 }
@@ -241,11 +238,6 @@ Shell[style~='SWT.DROP_DOWN'][style~='SWT.SHADOW_IN'][style~='SWT.SHADOW_ETCHED_
 /* Error information popup */
     background-color: #2F2F2F;
     color: #CCC;
-}
-
-TextSearchControl {
-    background-color: #41464A;
-    color: #dddddd;
 }
 
 ViewerPane,
