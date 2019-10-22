@@ -14,8 +14,8 @@
       <javaCompletionProposalComputer
             activate="true"
             categoryId="org.eclipse.e4.tools.jdt.templates.e4ProposalCategory"
-            class="org.eclipse.e4.internal.tools.jdt.templates.E4TemplateCompletionProposalComputer">
-      </javaCompletionProposalComputer>
+            class="org.eclipse.e4.internal.tools.jdt.templates.E4TemplateCompletionProposalComputer"
+            requiresUIThread="false"/>
     </extension>
    <extension
          point="org.eclipse.ui.editors.templates">
