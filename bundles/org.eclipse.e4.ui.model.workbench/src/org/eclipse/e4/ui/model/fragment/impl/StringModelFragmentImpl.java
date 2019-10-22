@@ -16,6 +16,7 @@
 package org.eclipse.e4.ui.model.fragment.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -280,10 +281,10 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 			return FEATURENAME_EDEFAULT == null ? featurename != null : !FEATURENAME_EDEFAULT.equals(featurename);
 		case FragmentPackageImpl.STRING_MODEL_FRAGMENT__PARENT_ELEMENT_ID:
 			return PARENT_ELEMENT_ID_EDEFAULT == null ? parentElementId != null
-					: !PARENT_ELEMENT_ID_EDEFAULT.equals(parentElementId);
+			: !PARENT_ELEMENT_ID_EDEFAULT.equals(parentElementId);
 		case FragmentPackageImpl.STRING_MODEL_FRAGMENT__POSITION_IN_LIST:
 			return POSITION_IN_LIST_EDEFAULT == null ? positionInList != null
-					: !POSITION_IN_LIST_EDEFAULT.equals(positionInList);
+			: !POSITION_IN_LIST_EDEFAULT.equals(positionInList);
 		default:
 			return super.eIsSet(featureID);
 		}
@@ -348,23 +349,27 @@ public class StringModelFragmentImpl extends ModelFragmentImpl implements MStrin
 	}
 
 	private void mergeXPath(MApplication application, List<MApplicationElement> ret, String xPath) {
+		List<MApplicationElement> targetElements;
+		if ("/".equals(xPath)) {
+			targetElements = Collections.singletonList(application);
+		} else {
+			XPathContextFactory<EObject> f = EcoreXPathContextFactory.newInstance();
+			XPathContext xpathContext = f.newContext((EObject) application);
+			Iterator<Object> i = xpathContext.iterate(xPath);
 
-		XPathContextFactory<EObject> f = EcoreXPathContextFactory.newInstance();
-		XPathContext xpathContext = f.newContext((EObject) application);
-		Iterator<Object> i = xpathContext.iterate(xPath);
-
-		List<MApplicationElement> targetElements = new ArrayList<>();
-		try {
-			while (i.hasNext()) {
-				Object obj = i.next();
-				if (obj instanceof MApplicationElement) {
-					MApplicationElement o = (MApplicationElement) obj;
-					targetElements.add(o);
+			targetElements = new ArrayList<>();
+			try {
+				while (i.hasNext()) {
+					Object obj = i.next();
+					if (obj instanceof MApplicationElement) {
+						MApplicationElement o = (MApplicationElement) obj;
+						targetElements.add(o);
+					}
 				}
+			} catch (Exception ex) {
+				// custom xpath functions will throw exceptions
+				ex.printStackTrace();
 			}
-		} catch (Exception ex) {
-			// custom xpath functions will throw exceptions
-			ex.printStackTrace();
 		}
 		for (MApplicationElement targetElement : targetElements) {
 			EStructuralFeature feature = ((EObject) targetElement).eClass().getEStructuralFeature(getFeaturename());
