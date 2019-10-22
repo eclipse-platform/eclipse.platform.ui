@@ -79,16 +79,20 @@ public final class TextFactory extends AbstractControlFactory<TextFactory, Text>
 	 *
 	 * @param style
 	 * @return a new TextFactory instance
+	 *
+	 * @see Text#Text(Composite, int)
 	 */
 	public static TextFactory newText(int style) {
 		return new TextFactory(style);
 	}
 
 	/**
-	 * Sets the text.
+	 * Sets the contents of the receiver to the given string.
 	 *
 	 * @param text
 	 * @return this
+	 *
+	 * @see Text#setText(String)
 	 */
 	public TextFactory text(String text) {
 		addProperty(t -> t.setText(text));
@@ -96,10 +100,13 @@ public final class TextFactory extends AbstractControlFactory<TextFactory, Text>
 	}
 
 	/**
-	 * Sets the hint message.
+	 * Sets the widget message. The message text is displayed as a hint for the
+	 * user, indicating the purpose of the field.
 	 *
 	 * @param message
 	 * @return this
+	 *
+	 * @see Text#setMessage(String)
 	 */
 	public TextFactory message(String message) {
 		addProperty(t -> t.setMessage(message));
@@ -107,10 +114,17 @@ public final class TextFactory extends AbstractControlFactory<TextFactory, Text>
 	}
 
 	/**
-	 * Sets the text limit.
+	 * Sets the maximum number of characters that the receiver is capable of holding
+	 * to be the argument.
+	 * <p>
+	 * Instead of trying to set the text limit to zero, consider creating a
+	 * read-only text widget.
+	 * </p>
 	 *
 	 * @param limit
 	 * @return this
+	 *
+	 * @see Text#setTextLimit(int)
 	 */
 	public TextFactory limitTo(int limit) {
 		addProperty(t -> t.setTextLimit(limit));
@@ -119,11 +133,14 @@ public final class TextFactory extends AbstractControlFactory<TextFactory, Text>
 
 	/**
 	 * Creates a {@link SelectionListener} and registers it for the widgetSelected
-	 * event. If event is raised it calls the given consumer. The
-	 * {@link SelectionEvent} is passed to the consumer.
+	 * event. If the control is selected by the user the given consumer is invoked.
+	 * The {@link SelectionEvent} is passed to the consumer.
 	 *
 	 * @param consumer
 	 * @return this
+	 *
+	 * @see Text#addSelectionListener(SelectionListener)
+	 * @see SelectionListener#widgetSelectedAdapter(Consumer)
 	 */
 	public TextFactory onSelect(Consumer<SelectionEvent> consumer) {
 		addProperty(t -> t.addSelectionListener(SelectionListener.widgetSelectedAdapter(consumer)));
@@ -131,11 +148,17 @@ public final class TextFactory extends AbstractControlFactory<TextFactory, Text>
 	}
 
 	/**
-	 * Adds a ModifyListener. Can be called several times to add more than one
-	 * ModifyListener.
+	 * Adds the listener to the collection of listeners who will be notified when
+	 * the receiver's text is modified, by calling the modifyText method.
+	 * <p>
+	 * Can be called several times to add more than one ModifyListener.
+	 * </p>
 	 *
 	 * @param listener
 	 * @return this
+	 *
+	 * @see Text#addModifyListener(ModifyListener)
+	 * @see ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
 	 */
 	public TextFactory onModify(ModifyListener listener) {
 		addProperty(t -> t.addModifyListener(listener));
@@ -143,11 +166,17 @@ public final class TextFactory extends AbstractControlFactory<TextFactory, Text>
 	}
 
 	/**
-	 * Adds a VerifyListener. Can be called several times to add more than one
-	 * VerifyListener.
+	 * Adds the listener to the collection of listeners who will be notified when
+	 * the receiver's text is verified, by calling the verifyText method.
+	 * <p>
+	 * Can be called several times to add more than one VerifyListener.
+	 * </p>
 	 *
 	 * @param listener
 	 * @return this
+	 *
+	 * @see Text#addVerifyListener(VerifyListener)
+	 * @see VerifyListener#verifyText(org.eclipse.swt.events.VerifyEvent)
 	 */
 	public TextFactory onVerify(VerifyListener listener) {
 		addProperty(l -> l.addVerifyListener(listener));
