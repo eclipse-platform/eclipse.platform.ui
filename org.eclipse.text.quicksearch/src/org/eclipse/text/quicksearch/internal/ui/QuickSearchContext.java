@@ -29,6 +29,7 @@ import org.eclipse.text.quicksearch.internal.core.priority.PriorityFunction;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.ISelectionService;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
@@ -95,6 +96,9 @@ public class QuickSearchContext {
 	}
 
 	private Collection<IFile> getOpenFiles() {
+		if (window == null) {
+			return Collections.emptyList();
+		}
 		try {
 			IWorkbenchPage page = window.getActivePage();
 			if (page!=null) {
@@ -105,7 +109,7 @@ public class QuickSearchContext {
 						try {
 							IEditorInput input = editor.getEditorInput();
 							if (input!=null) {
-								IFile file = (IFile) input.getAdapter(IFile.class);
+								IFile file = input.getAdapter(IFile.class);
 								if (file != null) {
 								    files.add(file);
 								}
@@ -133,13 +137,16 @@ public class QuickSearchContext {
 	 * @return IFile or null if there is no current editor or the editor isn't associated to a file.
 	 */
 	private IFile getActiveFile() {
+		if (window == null) {
+			return null;
+		}
 		IWorkbenchPage page = window.getActivePage();
 		if (page!=null) {
 			IEditorPart editor = page.getActiveEditor();
 			if (editor!=null) {
 				IEditorInput input = editor.getEditorInput();
 				if (input!=null) {
-					return (IFile) input.getAdapter(IFile.class);
+					return input.getAdapter(IFile.class);
 				}
 			}
 		}
@@ -151,18 +158,22 @@ public class QuickSearchContext {
 	 * a Structured selection (e.g. in navigator or project/package explorer)
 	 */
 	private Collection<IResource> getSelectedResources() {
-		ISelection _s = window.getSelectionService().getSelection();
-		if (_s!=null && _s instanceof IStructuredSelection) {
-			IStructuredSelection s = (IStructuredSelection) _s;
-			if (s!=null && !s.isEmpty()) {
-				Object[] elements = s.toArray();
-				List<IResource> resources = new ArrayList<IResource>(elements.length);
+		if (window == null) {
+			return Collections.emptyList();
+		}
+		ISelectionService selectionService = window.getSelectionService();
+		ISelection selection = selectionService.getSelection();
+		if (selection instanceof IStructuredSelection) {
+			IStructuredSelection structuredSelection = (IStructuredSelection) selection;
+			if (!structuredSelection.isEmpty()) {
+				Object[] elements = structuredSelection.toArray();
+				List<IResource> resources = new ArrayList<>(elements.length);
 				for (Object e : elements) {
 					if (e instanceof IResource) {
 						resources.add((IResource) e);
 					} else if (e instanceof IAdaptable) {
 						IAdaptable ae = (IAdaptable) e;
-						IResource r = (IResource) ae.getAdapter(IResource.class);
+						IResource r = ae.getAdapter(IResource.class);
 						if (r!=null) {
 							resources.add(r);
 						}

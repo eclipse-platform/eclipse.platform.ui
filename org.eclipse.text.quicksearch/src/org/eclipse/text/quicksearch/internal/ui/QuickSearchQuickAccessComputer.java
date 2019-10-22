@@ -21,6 +21,7 @@ import org.eclipse.text.quicksearch.internal.core.LineItem;
 import org.eclipse.text.quicksearch.internal.core.QuickTextQuery;
 import org.eclipse.text.quicksearch.internal.core.QuickTextSearchRequestor;
 import org.eclipse.text.quicksearch.internal.core.QuickTextSearcher;
+import org.eclipse.text.quicksearch.internal.core.priority.PriorityFunction;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
@@ -33,15 +34,15 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public class QuickSearchQuickAccessComputer extends QuickTextSearchRequestor implements IQuickAccessComputer, IQuickAccessComputerExtension {
 
 	private static final int MAX_ENTRIES = 20;
-	private QuickSearchContext context;
+	private PriorityFunction priorities;
 
 	public QuickSearchQuickAccessComputer() {
-		context = new QuickSearchContext(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
+		priorities = new QuickSearchContext(PlatformUI.getWorkbench().getActiveWorkbenchWindow()).createPriorityFun();
 	}
 
 	@Override public QuickAccessElement[] computeElements(String query, IProgressMonitor monitor) {
 		List<LineItem> matches = Collections.synchronizedList(new ArrayList<>());
-		QuickTextSearcher searcher = new QuickTextSearcher(new QuickTextQuery("", false), context.createPriorityFun(), 100, new QuickTextSearchRequestor() { //$NON-NLS-1$
+		QuickTextSearcher searcher = new QuickTextSearcher(new QuickTextQuery("", false), priorities, 100, new QuickTextSearchRequestor() { //$NON-NLS-1$
 				@Override public void add(LineItem match) {
 					matches.add(match);
 				}
