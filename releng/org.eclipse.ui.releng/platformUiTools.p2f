@@ -127,6 +127,11 @@
         <repository location='http://download.eclipse.org/egit/updates-nightly'/>
       </repositories>
     </iu>
+    <iu id='org.eclipse.jgit.lfs.feature.group' name='Eclipse Git LFS support' >
+      <repositories size='1'>
+        <repository location='http://download.eclipse.org/egit/updates-nightly'/>
+      </repositories>
+    </iu>
     <iu id='org.eclipse.swtbot.forms.feature.group' name='SWTBot for Eclipse Forms Testing (incubation)' version='0.0.0'>
         <repositories size='1'>
             <repository location='http://download.eclipse.org/releases/latest/'/>
