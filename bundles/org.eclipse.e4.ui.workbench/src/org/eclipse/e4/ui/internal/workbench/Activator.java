@@ -35,21 +35,6 @@ import static org.eclipse.e4.ui.internal.workbench.Policy.TRACE_FLAG;
 
 import java.util.Hashtable;
 import java.util.List;
-import org.apache.commons.jxpath.JXPathIntrospector;
-import org.eclipse.e4.emf.internal.xpath.helper.EDynamicPropertyHandler;
-import org.eclipse.e4.ui.model.application.commands.impl.CommandsPackageImpl;
-import org.eclipse.e4.ui.model.application.descriptor.basic.impl.BasicPackageImpl;
-import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.advanced.impl.AdvancedPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
-import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
-import org.eclipse.e4.ui.model.fragment.impl.FragmentPackageImpl;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EClassifier;
-import org.eclipse.emf.ecore.EFactory;
-import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EPackage;
-import org.eclipse.emf.ecore.EcorePackage;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.service.debug.DebugOptionsListener;
@@ -123,8 +108,6 @@ public class Activator implements BundleActivator, DebugOptionsListener {
 		resolvedBundles = new BundleTracker<>(context, Bundle.RESOLVED
 				| Bundle.STARTING | Bundle.ACTIVE | Bundle.STOPPING, bundleFinder);
 		resolvedBundles.open();
-
-		registerJXPathPropertyHandlers();
 	}
 
 	@Override
@@ -222,28 +205,4 @@ public class Activator implements BundleActivator, DebugOptionsListener {
 		}
 	}
 
-	private static void registerJXPathPropertyHandlers() {
-		EPackage[] packages = new EPackage[] { EcorePackage.eINSTANCE, ApplicationPackageImpl.eINSTANCE,
-				CommandsPackageImpl.eINSTANCE, BasicPackageImpl.eINSTANCE, UiPackageImpl.eINSTANCE,
-				AdvancedPackageImpl.eINSTANCE,
-				org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl.eINSTANCE, MenuPackageImpl.eINSTANCE,
-				FragmentPackageImpl.eINSTANCE };
-
-		// register dynamic property handler for all application model classes
-		// to avoid costly bean introspection
-		for (EPackage ePackage : packages) {
-			for (EClassifier eClassifier : ePackage.getEClassifiers()) {
-				if (!(eClassifier instanceof EClass)) {
-					continue;
-				}
-				EClass eClass = (EClass) eClassifier;
-				if (eClass.isAbstract()) {
-					continue;
-				}
-				EFactory eFactory = EPackage.Registry.INSTANCE.getEFactory(ePackage.getNsURI());
-				Class<? extends EObject> implClass = eFactory.create(eClass).getClass();
-				JXPathIntrospector.registerDynamicClass(implClass, EDynamicPropertyHandler.class);
-			}
-		}
-	}
 }
