@@ -933,6 +933,10 @@ public class ActionContributionItem extends ContributionItem {
 					}
 				}
 
+				if (tooltipTextChanged) {
+					mi.setToolTipText(action.getToolTipText());
+				}
+
 				if (imageChanged) {
 					updateImages(false);
 				}
