@@ -15,7 +15,6 @@ package org.eclipse.help.internal.search;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.eclipse.core.runtime.*;
 
@@ -38,8 +37,7 @@ public class ProgressDistributor implements IProgressMonitor {
 		this.totalWork = totalWork;
 		this.worked = 0;
 		this.done = false;
-		for (Iterator<IProgressMonitor> it = monitors.iterator(); it.hasNext();) {
-			IProgressMonitor m = it.next();
+		for (IProgressMonitor m : monitors) {
 			m.beginTask(name, totalWork);
 		}
 	}
@@ -47,8 +45,7 @@ public class ProgressDistributor implements IProgressMonitor {
 	@Override
 	public synchronized void done() {
 		done = true;
-		for (Iterator<IProgressMonitor> it = monitors.iterator(); it.hasNext();) {
-			IProgressMonitor m = it.next();
+		for (IProgressMonitor m : monitors) {
 			m.done();
 		}
 	}
@@ -56,16 +53,14 @@ public class ProgressDistributor implements IProgressMonitor {
 	@Override
 	public void internalWorked(double work) {
 		worked += work;
-		for (Iterator<IProgressMonitor> it = monitors.iterator(); it.hasNext();) {
-			IProgressMonitor m = it.next();
+		for (IProgressMonitor m : monitors) {
 			m.internalWorked(work);
 		}
 	}
 
 	@Override
 	public synchronized boolean isCanceled() {
-		for (Iterator<IProgressMonitor> it = monitors.iterator(); it.hasNext();) {
-			IProgressMonitor m = it.next();
+		for (IProgressMonitor m : monitors) {
 			if (m.isCanceled()) {
 				return true;
 			}
@@ -80,8 +75,7 @@ public class ProgressDistributor implements IProgressMonitor {
 	@Override
 	public synchronized void setTaskName(String name) {
 		taskName = name;
-		for (Iterator<IProgressMonitor> it = monitors.iterator(); it.hasNext();) {
-			IProgressMonitor m = it.next();
+		for (IProgressMonitor m : monitors) {
 			m.setTaskName(name);
 		}
 	}
@@ -89,8 +83,7 @@ public class ProgressDistributor implements IProgressMonitor {
 	@Override
 	public synchronized void subTask(String name) {
 		subTaskName = name;
-		for (Iterator<IProgressMonitor> it = monitors.iterator(); it.hasNext();) {
-			IProgressMonitor m = it.next();
+		for (IProgressMonitor m : monitors) {
 			m.subTask(name);
 		}
 	}

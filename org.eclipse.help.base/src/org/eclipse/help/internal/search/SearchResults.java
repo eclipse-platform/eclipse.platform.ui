@@ -152,8 +152,7 @@ public class SearchResults implements ISearchHitCollector {
 	 */
 	private AdaptableHelpResource getScopeForTopic(String href) {
 		boolean enabled = HelpPlugin.getCriteriaManager().isCriteriaEnabled();
-		for (int i = 0; i < scopes.size(); i++) {
-			AdaptableHelpResource scope = scopes.get(i);
+		for (AdaptableHelpResource scope : scopes) {
 			ITopic inScopeTopic = scope.getTopic(href);
 			if (inScopeTopic != null){
 				if (filter == null || filter.inScope(inScopeTopic)) {
@@ -204,10 +203,10 @@ public class SearchResults implements ISearchHitCollector {
 		} else {
 			AdaptableHelpResource[] childrenScopes = scope.getChildren();
 			if (childrenScopes != null) {
-				for (int i = 0; i < childrenScopes.length; i++) {
+				for (AdaptableHelpResource childrenScope : childrenScopes) {
 					// To find the target toc recursively because scope.getHref
 					// may be null.
-					toc = getTocForScope(childrenScopes[i], locale);
+					toc = getTocForScope(childrenScope, locale);
 					if (toc != null)
 						return toc;
 				}
@@ -222,8 +221,7 @@ public class SearchResults implements ISearchHitCollector {
 	private IToc getTocForTopic(String href, String locale) {
 		IToc[] tocs = HelpPlugin.getTocManager().getTocs(locale);
 		boolean foundInToc = false;
-		for (int i = 0; i < tocs.length; i++) {
-			IToc nextToc = tocs[i];
+		for (IToc nextToc : tocs) {
 			ITopic topic = nextToc.getTopic(href);
 			if (topic != null) {
 				foundInToc = true;
@@ -288,8 +286,8 @@ public class SearchResults implements ISearchHitCollector {
 			return null;
 
 		ArrayList<CriterionResource> criteriaScopes = new ArrayList<>(wSets.length);
-		for (int w = 0; w < wSets.length; w++) {
-			CriterionResource[] elements = wSets[w].getCriteria();
+		for (WorkingSet wSet : wSets) {
+			CriterionResource[] elements = wSet.getCriteria();
 			Collections.addAll(criteriaScopes, elements);
 		}
 		return criteriaScopes;

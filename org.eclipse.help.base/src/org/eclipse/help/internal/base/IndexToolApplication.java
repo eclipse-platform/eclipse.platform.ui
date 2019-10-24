@@ -100,8 +100,8 @@ public class IndexToolApplication implements IApplication {
 			if(files == null) {
 				throw new IOException("Content from directory '" + file.getAbsolutePath() + "' can not be listed."); //$NON-NLS-1$ //$NON-NLS-2$
 			}
-			for (int i = 0; i < files.length; i++) {
-				delete(files[i]);
+			for (File fileToDelete : files) {
+				delete(fileToDelete);
 			}
 		}
 		if (!file.delete()) {
@@ -127,14 +127,14 @@ public class IndexToolApplication implements IApplication {
 		String[] files = dir.list();
 		if (files == null || files.length == 0)
 			return;
-		for (int i = 0; i < files.length; i++) {
+		for (String file : files) {
 			String path;
 			if (base == null) {
-				path = files[i];
+				path = file;
 			} else {
-				path = base + "/" + files[i]; //$NON-NLS-1$
+				path = base + "/" + file; //$NON-NLS-1$
 			}
-			File f = new File(dir, files[i]);
+			File f = new File(dir, file);
 			if (f.isDirectory())
 				zipDirectory(f, zout, path);
 			else {

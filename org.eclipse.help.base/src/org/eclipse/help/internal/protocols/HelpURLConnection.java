@@ -60,8 +60,8 @@ public class HelpURLConnection extends URLConnection {
 	protected static boolean cachingEnabled = true;
 	static {
 		String[] args = Platform.getCommandLineArgs();
-		for (int i = 0; i < args.length; i++) {
-			if ("-dev".equals(args[i])) { //$NON-NLS-1$
+		for (String arg : args) {
+			if ("-dev".equals(arg)) { //$NON-NLS-1$
 				cachingEnabled = false;
 				break;
 			}

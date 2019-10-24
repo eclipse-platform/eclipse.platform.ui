@@ -16,7 +16,6 @@ package org.eclipse.help.internal.base.scope;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Stack;
 
@@ -61,8 +60,7 @@ public class ScopeRegistry {
 
 
 		// Lookup in scope registry
-		for (Iterator<IScopeHandle> iter = scopes.iterator(); iter.hasNext();) {
-			IScopeHandle handle = iter.next();
+		for (IScopeHandle handle : scopes) {
 			if (id.equals(handle.getId())) {
 				return handle.getScope();
 			}
@@ -78,17 +76,17 @@ public class ScopeRegistry {
 		IExtensionRegistry registry = Platform.getExtensionRegistry();
 		IConfigurationElement[] elements = registry
 				.getConfigurationElementsFor(SCOPE_XP_NAME);
-		for (int i = 0; i < elements.length; i++) {
+		for (IConfigurationElement element : elements) {
 
 			Object obj = null;
 			try {
-				obj = elements[i].createExecutableExtension("class"); //$NON-NLS-1$
+				obj = element.createExecutableExtension("class"); //$NON-NLS-1$
 			} catch (CoreException e) {
 				HelpBasePlugin.logError("Create extension failed:[" //$NON-NLS-1$
 						+ SCOPE_XP_NAME + "].", e); //$NON-NLS-1$
 			}
 			if (obj instanceof AbstractHelpScope) {
-				String id = elements[i].getAttribute("id"); //$NON-NLS-1$
+				String id = element.getAttribute("id"); //$NON-NLS-1$
 				IScopeHandle filter = new ScopeHandle(id, (AbstractHelpScope) obj);
 				scopes.add(filter);
 			}
@@ -117,9 +115,8 @@ public class ScopeRegistry {
 	{
 		ArrayList<AbstractHelpScope> scopes = new ArrayList<>();
 
-		for (int p=0;p<phrases.length;p++)
-		{
-			AbstractHelpScope scope = parseScopePhrase(phrases[p]);
+		for (String phrase : phrases) {
+			AbstractHelpScope scope = parseScopePhrase(phrase);
 			if (scope!=null)
 				scopes.add(scope);
 		}

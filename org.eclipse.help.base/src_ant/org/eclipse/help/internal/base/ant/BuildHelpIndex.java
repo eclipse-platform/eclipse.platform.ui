@@ -75,8 +75,7 @@ public class BuildHelpIndex extends Task {
 		System.err.println(e.getMessage());
 		if (status.isMultiStatus()) {
 			IStatus [] children = status.getChildren();
-			for (int i=0; i<children.length; i++) {
-				IStatus child = children[i];
+			for (IStatus child : children) {
 				System.err.println("    " + child.getMessage()); //$NON-NLS-1$
 			}
 		}

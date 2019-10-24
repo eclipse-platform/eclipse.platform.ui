@@ -99,21 +99,21 @@ public class AnalyzerDescriptor {
 		// find extension point
 		IConfigurationElement configElements[] = Platform.getExtensionRegistry().getConfigurationElementsFor(
 				HelpBasePlugin.PLUGIN_ID, "luceneAnalyzer"); //$NON-NLS-1$
-		for (int i = 0; i < configElements.length; i++) {
-			if (!configElements[i].getName().equals("analyzer")) //$NON-NLS-1$
+		for (IConfigurationElement configElement : configElements) {
+			if (!configElement.getName().equals("analyzer")) //$NON-NLS-1$
 				continue;
-			String analyzerLocale = configElements[i].getAttribute("locale"); //$NON-NLS-1$
+			String analyzerLocale = configElement.getAttribute("locale"); //$NON-NLS-1$
 			if (analyzerLocale == null || !analyzerLocale.equals(locale))
 				continue;
 			try {
-				Object analyzer = configElements[i].createExecutableExtension("class"); //$NON-NLS-1$
+				Object analyzer = configElement.createExecutableExtension("class"); //$NON-NLS-1$
 				if (analyzer instanceof AnalyzerFactory)
 					this.luceneAnalyzer = ((AnalyzerFactory) analyzer).create();
 				else if (analyzer instanceof Analyzer)
 					this.luceneAnalyzer = (Analyzer) analyzer;
 				else
 					continue;
-				String pluginId = configElements[i].getContributor().getName();
+				String pluginId = configElement.getContributor().getName();
 				String pluginVersion = Platform.getBundle(pluginId).getHeaders()
 						.get(Constants.BUNDLE_VERSION);
 				this.id = pluginId + "#" + pluginVersion + "?locale=" + locale; //$NON-NLS-1$ //$NON-NLS-2$
@@ -130,7 +130,7 @@ public class AnalyzerDescriptor {
 				}
 			} catch (CoreException ce) {
 				HelpBasePlugin.logError("Exception occurred creating text analyzer " //$NON-NLS-1$
-						+ configElements[i].getAttribute("class") //$NON-NLS-1$
+						+ configElement.getAttribute("class") //$NON-NLS-1$
 						+ " for " + locale + " locale.", ce); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}

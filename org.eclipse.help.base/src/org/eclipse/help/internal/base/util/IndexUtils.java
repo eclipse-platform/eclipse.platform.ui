@@ -43,9 +43,9 @@ public class IndexUtils {
 		}
 		String[] path = getPath(see);
 		IUAElement[] children = index.getChildren();
-		for (int i = 0; i < children.length; i++) {
-			if (children[i] instanceof IIndexEntry) {
-				IIndexEntry indexEntry = (IIndexEntry)children[i];
+		for (IUAElement element : children) {
+			if (element instanceof IIndexEntry) {
+				IIndexEntry indexEntry = (IIndexEntry) element;
 				String entryKeyword = indexEntry.getKeyword();
 				if (path[depth].equals(entryKeyword)) {
 					if (path.length == depth + 1) {

@@ -15,7 +15,6 @@ package org.eclipse.help.internal.workingset;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.help.internal.criteria.CriterionResource;
@@ -117,9 +116,8 @@ public class WorkingSet {
 
 		Element contents = doc.createElement("contents"); //$NON-NLS-1$
 		ws.appendChild(contents);
-		for (Iterator<AdaptableHelpResource> it = elements.iterator(); it.hasNext();) {
+		for (AdaptableHelpResource helpResource : elements) {
 			Element child = doc.createElement("item"); //$NON-NLS-1$
-			AdaptableHelpResource helpResource = it.next();
 			helpResource.saveState(child);
 			contents.appendChild(child);
 		}
@@ -128,16 +126,14 @@ public class WorkingSet {
 			Element criteriaElement = doc.createElement("criteria"); //$NON-NLS-1$
 			ws.appendChild(criteriaElement);
 
-			for(Iterator<CriterionResource> iterator = criteria.iterator(); iterator.hasNext();){
+			for (CriterionResource criterion : criteria) {
 				Element criterionItem = doc.createElement("criterion"); //$NON-NLS-1$
 				criteriaElement.appendChild(criterionItem);
-				CriterionResource criterion = iterator.next();
 				String criterionName = criterion.getCriterionName();
 				criterionItem.setAttribute("name", criterionName);//$NON-NLS-1$
 				List<String> criterionValues = criterion.getCriterionValues();
 				if(!criterionValues.isEmpty()){
-					for(Iterator<String> iter = criterionValues.iterator(); iter.hasNext();){
-						String value = iter.next();
+					for (String value : criterionValues) {
 						if(value != null){
 							Element item = doc.createElement("item"); //$NON-NLS-1$
 							criterionItem.appendChild(item);

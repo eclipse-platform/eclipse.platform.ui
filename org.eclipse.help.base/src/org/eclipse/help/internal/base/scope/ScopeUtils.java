@@ -81,8 +81,8 @@ public class ScopeUtils {
 	 */
 	public static boolean hasInScopeDescendent(ITopic topic, AbstractHelpScope scope) {
 		ITopic[] subtopics = topic.getSubtopics();
-		for (int i = 0; i < subtopics.length; i++) {
-			if (showInTree(subtopics[i], scope)) {
+		for (ITopic subtopic : subtopics) {
+			if (showInTree(subtopic, scope)) {
 				return true;
 			}
 		}
@@ -95,8 +95,8 @@ public class ScopeUtils {
 	 */
 	public static boolean hasInScopeDescendent(IToc toc, AbstractHelpScope scope) {
 		ITopic[] topics = toc.getTopics();
-		for (int i = 0; i < topics.length; i++) {
-			if (showInTree(topics[i], scope)) {
+		for (ITopic topic : topics) {
+			if (showInTree(topic, scope)) {
 				return true;
 			}
 		}
@@ -110,21 +110,21 @@ public class ScopeUtils {
 	public static boolean hasInScopeDescendent(IIndexEntry entry,
 			AbstractHelpScope scope) {
 		ITopic[] topics = entry.getTopics();
-		for (int t = 0; t < topics.length; t++) {
-			if (showInTree(topics[t], scope)) {
+		for (ITopic topic : topics) {
+			if (showInTree(topic, scope)) {
 				return true;
 			}
 		}
 		IIndexEntry[] entries = entry.getSubentries();
-		for (int e = 0; e < entries.length; e++) {
-			if (showInTree(entries[e], scope)) {
+		for (IIndexEntry innerEntry : entries) {
+			if (showInTree(innerEntry, scope)) {
 				return true;
 			}
 		}
 		if (entry instanceof IIndexEntry2) {
 			IIndexSee[] sees = ((IIndexEntry2)entry).getSees();
-			for (int s = 0; s < sees.length; s++) {
-				if (showInTree(sees[s], scope)) {
+			for (IIndexSee see : sees) {
+				if (showInTree(see, scope)) {
 					return true;
 				}
 			}

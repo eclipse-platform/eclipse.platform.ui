@@ -186,9 +186,9 @@ public class Eclipse extends Thread {
 		if(plugins == null) {
 			throw new IOException("Content from plugins directory '" + pluginsDir.getAbsolutePath() + "' can not be listed."); //$NON-NLS-1$ //$NON-NLS-2$
 		}
-		for (int i = 0; i < plugins.length; i++) {
-			String file = plugins[i].getName();
-			if (file.startsWith("org.eclipse.equinox.launcher_") && file.endsWith(".jar") && !plugins[i].isDirectory()) //$NON-NLS-1$ //$NON-NLS-2$
+		for (File plugin : plugins) {
+			String file = plugin.getName();
+			if (file.startsWith("org.eclipse.equinox.launcher_") && file.endsWith(".jar") && !plugin.isDirectory()) //$NON-NLS-1$ //$NON-NLS-2$
 				return "plugins/" + file; //$NON-NLS-1$
 		}
 		throw new Exception("Plugins directory " + pluginsDir.getAbsolutePath() //$NON-NLS-1$
@@ -209,8 +209,8 @@ public class Eclipse extends Thread {
 	}
 	private void printCommand() {
 		System.out.println("Launch command is:"); //$NON-NLS-1$
-		for (int i = 0; i < cmdarray.length; i++) {
-			System.out.println("  " + cmdarray[i]); //$NON-NLS-1$
+		for (String cmd : cmdarray) {
+			System.out.println("  " + cmd); //$NON-NLS-1$
 		}
 
 	}

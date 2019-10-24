@@ -229,9 +229,9 @@ public class EclipseController implements EclipseLifeCycleListener {
 		urlStr.append(CONTROL_SERVLET_PATH);
 		urlStr.append("?command="); //$NON-NLS-1$
 		urlStr.append(command);
-		for (int i = 0; i < parameters.length; i++) {
+		for (String parameter : parameters) {
 			urlStr.append("&"); //$NON-NLS-1$
-			urlStr.append(parameters[i]);
+			urlStr.append(parameter);
 		}
 		if (Options.isDebug()) {
 			System.out.println("Control servlet URL=" + urlStr.toString()); //$NON-NLS-1$

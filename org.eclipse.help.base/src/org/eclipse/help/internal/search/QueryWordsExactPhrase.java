@@ -14,7 +14,6 @@
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.lucene.index.Term;
@@ -47,8 +46,7 @@ public class QueryWordsExactPhrase extends QueryWordsToken {
 	public Query createLuceneQuery(String field, float boost) {
 		PhraseQuery.Builder qBuilder = new PhraseQuery.Builder();
 		BoostQuery boostQuery = null;
-		for (Iterator<String> it = getWords().iterator(); it.hasNext();) {
-			String word = it.next();
+		for (String word : getWords()) {
 			Term t = new Term("exact_" + field, word); //$NON-NLS-1$
 			qBuilder.add(t);
 			boostQuery = new BoostQuery(qBuilder.build(), boost);

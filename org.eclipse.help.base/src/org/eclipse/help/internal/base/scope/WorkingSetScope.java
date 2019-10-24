@@ -194,8 +194,7 @@ public class WorkingSetScope extends AbstractHelpScope {
 			anchorlessHref = href;
 		}
 
-		for (int i = 0; i < elements.length; i++) {
-			AdaptableHelpResource adaptable = elements[i];
+		for (AdaptableHelpResource adaptable : elements) {
 			if (adaptable.getTopic(anchorlessHref) != null) {
 				return true;
 			}

@@ -46,8 +46,8 @@ public final class DefaultAnalyzer extends Analyzer {
 		// Check if the locale is supported by BreakIterator
 		// check here to do it only once.
 		Locale[] availableLocales = BreakIterator.getAvailableLocales();
-		for (int i = 0; i < availableLocales.length; i++) {
-			if (userLocale.equals(availableLocales[i])) {
+		for (Locale availableLocale : availableLocales) {
+			if (userLocale.equals(availableLocale)) {
 				locale = userLocale;
 				break;
 			}
@@ -55,8 +55,8 @@ public final class DefaultAnalyzer extends Analyzer {
 		if (locale == null && userLocale.getDisplayVariant().length() > 0) {
 			// Check if the locale without variant is supported by BreakIterator
 			Locale countryLocale = new Locale(userLocale.getLanguage(), userLocale.getCountry());
-			for (int i = 0; i < availableLocales.length; i++) {
-				if (countryLocale.equals(availableLocales[i])) {
+			for (Locale availableLocale : availableLocales) {
+				if (countryLocale.equals(availableLocale)) {
 					locale = countryLocale;
 					break;
 				}
@@ -65,8 +65,8 @@ public final class DefaultAnalyzer extends Analyzer {
 		if (locale == null && userLocale.getCountry().length() > 0) {
 			// Check if at least the language is supported by BreakIterator
 			Locale language = new Locale(userLocale.getLanguage(), ""); //$NON-NLS-1$
-			for (int i = 0; i < availableLocales.length; i++) {
-				if (language.equals(availableLocales[i])) {
+			for (Locale availableLocale : availableLocales) {
+				if (language.equals(availableLocale)) {
 					locale = language;
 					break;
 				}

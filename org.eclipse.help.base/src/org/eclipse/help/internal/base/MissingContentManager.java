@@ -17,7 +17,6 @@ package org.eclipse.help.internal.base;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -98,8 +97,7 @@ public class MissingContentManager {
 		// Read the placeholders from the extension registry
 		IConfigurationElement[] elements = registry
 				.getConfigurationElementsFor(EXTENSION_POINT_ID_TOC);
-		for (int i = 0; i < elements.length; ++i) {
-			IConfigurationElement elem = elements[i];
+		for (IConfigurationElement elem : elements) {
 			String pluginId = elem.getContributor().getName();
 			if (elem.getName().equals(ELEMENT_NAME_PLACEHOLDER)) {
 				try {
@@ -132,8 +130,7 @@ public class MissingContentManager {
 	 * @return a place holder page if defined, otherwise an error page
 	 */
 	public String getPageNotFoundPage(String path, boolean showPlaceholderPage) {
-		for (Iterator<Placeholder> iter = placeholders.iterator(); iter.hasNext(); ) {
-			Placeholder placeholder = iter.next();
+		for (Placeholder placeholder : placeholders) {
 			if (path.startsWith(placeholder.path) && Platform.getBundle(placeholder.bundle) == null) {
 				if ( showPlaceholderPage) {
 					return placeholder.placeholderPage;
@@ -187,8 +184,7 @@ public class MissingContentManager {
 	public Placeholder[] getUnresolvedPlaceholders() {
 		List<Placeholder> unresolved;
 		unresolved = new ArrayList<>();
-		for (Iterator<Placeholder> iter = placeholders.iterator(); iter.hasNext(); ) {
-			Placeholder ph = iter.next();
+		for (Placeholder ph : placeholders) {
 			String bundle = ph.bundle;
 			if (bundle != null && !bundlesToIgnore.contains(bundle) ) {
 				if (Platform.getBundle(bundle) == null ) {
@@ -203,8 +199,8 @@ public class MissingContentManager {
 	public void ignoreAllMissingPlaceholders() {
 		Placeholder[] unresolved = getUnresolvedPlaceholders();
 		String ignoredBundles = Platform.getPreferencesService().getString(HelpBasePlugin.PLUGIN_ID, IGNORE_MISSING_PLACEHOLDER_PREFERENCE, "", null); //$NON-NLS-1$
-		for ( int i = 0; i < unresolved.length; i++) {
-			String bundle = unresolved[i].bundle;
+		for (Placeholder element : unresolved) {
+			String bundle = element.bundle;
 			bundlesToIgnore.add(bundle);
 			if (ignoredBundles.length() > 0) {
 				ignoredBundles = ignoredBundles + ',';

@@ -253,9 +253,9 @@ public final class BaseHelpSystem {
 				getBase("/help/nftopic"),  //$NON-NLS-1$
 				getBase("/help/ntopic"),  //$NON-NLS-1$
 				getBase("/help/rtopic") }; //$NON-NLS-1$
-		for (int i = 0; i < baseVariants.length; i++) {
-			if (href.startsWith(baseVariants[i])) {
-				return href.substring(baseVariants[i].length());
+		for (String baseVariant : baseVariants) {
+			if (href.startsWith(baseVariant)) {
+				return href.substring(baseVariant.length());
 			}
 		}
 		return href;

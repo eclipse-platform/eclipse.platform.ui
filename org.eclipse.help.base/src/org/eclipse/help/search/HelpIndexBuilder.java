@@ -141,8 +141,7 @@ public class HelpIndexBuilder {
 		}
 
 		public File findFile(String file) {
-			for (int i=0; i<dirs.size(); i++) {
-				File dir = dirs.get(i);
+			for (File dir : dirs) {
 				File absoluteFile = new File(dir, file);
 				if (absoluteFile.exists())
 					return absoluteFile;
@@ -313,9 +312,7 @@ public class HelpIndexBuilder {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, HelpBaseResources.HelpIndexBuilder_buildingIndex, localeDirs.size());
 		MultiStatus multiStatus = null;
 
-		for (int i=0; i<localeDirs.size(); i++) {
-			// process locale dir
-			LocaleDir localeDir = localeDirs.get(i);
+		for (LocaleDir localeDir : localeDirs) {
 			MultiStatus localeStatus = processLocaleDir(pid, fid, localeDir, subMonitor.split(1));
 			if (localeStatus != null) {
 				if (multiStatus == null)
@@ -374,15 +371,13 @@ public class HelpIndexBuilder {
 			return;
 		File [] languages = listFiles(nl);
 		HashSet<String> locales = new HashSet<>();
-		for (int i=0; i<languages.length; i++) {
-			File language = languages[i];
+		for (File language : languages) {
 			if (!language.isDirectory())
 				continue;
 			if (!isValidLanguage(language.getName()))
 				continue;
 			File [] countries = listFiles(language);
-			for (int j=0; j<countries.length; j++) {
-				File country = countries[j];
+			for (File country : countries) {
 				String locale;
 				boolean hasCountry = false;
 				if (country.isDirectory() && isValidCountry(country.getName()))
@@ -413,13 +408,12 @@ public class HelpIndexBuilder {
 		if (systemRoot.exists() && systemRoot.isDirectory()) {
 			// check
 			File [] files = listFiles(systemRoot);
-			for (int i=0; i<files.length; i++) {
-				File sdir = files[i];
+			for (File sdir : files) {
 				if (!sdir.isDirectory())
 					continue;
 				String sname = sdir.getName();
-				for (int j=0; j<values.length; j++) {
-					if (values[j].equals(sname)) {
+				for (String value : values) {
+					if (value.equals(sname)) {
 						// valid
 						String relativePath="/"+systemRoot.getName()+"/"+sname; //$NON-NLS-1$ //$NON-NLS-2$
 						LocaleDir dir = new LocaleDir(sname, relativePath);
@@ -437,8 +431,7 @@ public class HelpIndexBuilder {
 	 * Reject bogus directories.
 	 */
 	private boolean isValidLocale(String locale) {
-		for (int i=0; i<legalLocales.length; i++) {
-			Locale legalLocale = legalLocales[i];
+		for (Locale legalLocale : legalLocales) {
 			if (legalLocale.toString().equals(locale))
 				return true;
 		}
@@ -496,8 +489,7 @@ public class HelpIndexBuilder {
 	private Collection<String> collectDocs(LocaleDir localeDir)
 			throws CoreException {
 		HashSet<String> docs = new HashSet<>();
-		for (int i = 0; i < tocFiles.size(); i++) {
-			TocFile tocFile = tocFiles.get(i);
+		for (TocFile tocFile : tocFiles) {
 			collectDocs(docs, getTocFile(localeDir, tocFile.href));
 			if (tocFile.extraDir!=null) {
 				//TODO also include all the indexable documents
@@ -579,8 +571,7 @@ public class HelpIndexBuilder {
 		checkCancelled(monitor);
 		MultiStatus multiStatus = null;
 
-		for (Iterator<String> it = addedDocs.iterator(); it.hasNext();) {
-			String href = it.next();
+		for (String href : addedDocs) {
 			URL url = localeDir.findURL(href);
 			if (url != null) {
 				IStatus status = index
@@ -646,8 +637,7 @@ public class HelpIndexBuilder {
 	private void prepareDirectory(File indexDirectory) throws CoreException {
 		if (indexDirectory.exists()) {
 			File[] files = listFiles(indexDirectory);
-			for (int i = 0; i < files.length; i++) {
-				File file = files[i];
+			for (File file : files) {
 				boolean result = file.delete();
 				if (!result)
 					throwCoreException(

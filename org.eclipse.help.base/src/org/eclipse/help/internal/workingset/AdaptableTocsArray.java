@@ -61,8 +61,8 @@ public class AdaptableTocsArray implements IAdaptable {
 		if (map == null) {
 			getChildren(); // make sure children are initialized
 			map = new HashMap<>(children.length);
-			for (int i = 0; i < children.length; i++)
-				map.put(children[i].getHref(), children[i]);
+			for (AdaptableToc child : children)
+				map.put(child.getHref(), child);
 		}
 		return map.get(href);
 	}

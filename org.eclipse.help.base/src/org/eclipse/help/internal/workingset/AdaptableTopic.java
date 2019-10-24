@@ -78,8 +78,8 @@ public class AdaptableTopic extends AdaptableHelpResource {
 			topicMap.put(getHref(), element);
 			FastStack<ITopic> stack = new FastStack<>();
 			ITopic[] topics = getSubtopics();
-			for (int i = 0; i < topics.length; i++)
-				stack.push(topics[i]);
+			for (ITopic topic : topics)
+				stack.push(topic);
 			while (!stack.isEmpty()) {
 				ITopic topic = stack.pop();
 				if (topic != null) {
@@ -88,8 +88,8 @@ public class AdaptableTopic extends AdaptableHelpResource {
 						topicMap.put(topicHref, topic);
 					}
 					ITopic[] subtopics = topic.getSubtopics();
-					for (int i = 0; i < subtopics.length; i++)
-						stack.push(subtopics[i]);
+					for (ITopic subtopic : subtopics)
+						stack.push(subtopic);
 				}
 			}
 		}

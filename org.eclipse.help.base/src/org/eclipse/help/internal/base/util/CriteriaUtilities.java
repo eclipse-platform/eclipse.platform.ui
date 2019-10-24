@@ -40,8 +40,7 @@ public class CriteriaUtilities {
 	}
 
 	public static void addCriteriaToMap(Map<String, Set<String>> map, ICriteria[] criteria) {
-		for (int i = 0; i < criteria.length; ++i) {
-			ICriteria criterion = criteria[i];
+		for (ICriteria criterion : criteria) {
 			String name = criterion.getName();
 			List<String> values = CriteriaUtilities.getCriteriaValues(criterion.getValue());
 			if (name != null && name.length() > 0 && values.size() > 0) {
@@ -57,8 +56,7 @@ public class CriteriaUtilities {
 	}
 
 	public static void addCriteriaToMap(Map<String, Set<String>> map, CriterionResource[] criteria) {
-		for(int i = 0; i < criteria.length; ++ i){
-			CriterionResource criterion = criteria[i];
+		for (CriterionResource criterion : criteria) {
 			String criterionName = criterion.getCriterionName();
 			List<String> criterionValues = criterion.getCriterionValues();
 

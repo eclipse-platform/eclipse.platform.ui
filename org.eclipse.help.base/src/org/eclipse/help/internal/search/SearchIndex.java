@@ -496,9 +496,9 @@ public class SearchIndex implements IHelpSearchIndex {
 		Map<String, String[]> mergedDocs = new HashMap<>();
 		// Create directories to merge and calculate all documents added
 		// and which are duplicates (to delete later)
-		for (int p = 0; p < pluginIndexes.length; p++) {
-			List<String> indexIds = pluginIndexes[p].getIDs();
-			List<String> indexPaths = pluginIndexes[p].getPaths();
+		for (PluginIndex pluginIndex : pluginIndexes) {
+			List<String> indexIds = pluginIndex.getIDs();
+			List<String> indexPaths = pluginIndex.getPaths();
 			if (monitor.isCanceled()) {
 				throw new OperationCanceledException();
 			}
@@ -551,8 +551,8 @@ public class SearchIndex implements IHelpSearchIndex {
 			}
 		}
 		// perform actual merging
-		for (Iterator<String> it = mergedDocs.keySet().iterator(); it.hasNext();) {
-			indexedDocs.put(it.next(), "0"); //$NON-NLS-1$
+		for (String doc : mergedDocs.keySet()) {
+			indexedDocs.put(doc, "0"); //$NON-NLS-1$
 		}
 		Directory[] luceneDirs = dirList.toArray(new Directory[dirList.size()]);
 		try {
@@ -571,8 +571,8 @@ public class SearchIndex implements IHelpSearchIndex {
 			PostingsEnum hrefDocs = null;
 			PostingsEnum indexDocs = null;
 			Term hrefTerm = new Term(FIELD_NAME, name);
-			for (int i = 0; i < index_paths.length; i++) {
-				Term indexTerm = new Term(FIELD_INDEX_ID, index_paths[i]);
+			for (String index_path : index_paths) {
+				Term indexTerm = new Term(FIELD_INDEX_ID, index_path);
 				List<LeafReaderContext> leaves = ar.leaves();
 				for (LeafReaderContext c : leaves) {
 					indexDocs = c.reader().postings(indexTerm);
@@ -690,9 +690,9 @@ public class SearchIndex implements IHelpSearchIndex {
 			IExtensionRegistry registry = Platform.getExtensionRegistry();
 			IExtensionPoint extensionPoint = registry.getExtensionPoint(TocFileProvider.EXTENSION_POINT_ID_TOC);
 			IExtension[] extensions = extensionPoint.getExtensions();
-			for (int i=0;i<extensions.length;++i) {
+			for (IExtension extension : extensions) {
 				try {
-					totalIds.add(extensions[i].getContributor().getName());
+					totalIds.add(extension.getContributor().getName());
 				}
 				catch (InvalidRegistryObjectException e) {
 					// ignore this extension and move on

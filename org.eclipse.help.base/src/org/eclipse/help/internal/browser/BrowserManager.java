@@ -15,7 +15,6 @@ package org.eclipse.help.internal.browser;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -390,8 +389,7 @@ public class BrowserManager {
 			// nothing to do, do not initialize
 			return;
 		}
-		for (Iterator<IBrowser> it = browsers.iterator(); it.hasNext();) {
-			IBrowser browser = it.next();
+		for (IBrowser browser : browsers) {
 			browser.close();
 		}
 	}

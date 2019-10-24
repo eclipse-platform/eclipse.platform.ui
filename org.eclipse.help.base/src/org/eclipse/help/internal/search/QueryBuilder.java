@@ -182,22 +182,14 @@ public class QueryBuilder {
 							}
 						} else {
 							QueryWordsPhrase phrase = QueryWordsToken.phrase();
-							for (Iterator<String> it = wordList.iterator(); it
-									.hasNext();) {
-								String word = it.next();
+							for (String word : wordList) {
 								phrase.addWord(word);
-								// add each analyzed word to the list of words
-								// to highlight
-								// this is only required to highlight stemmed
-								// words.
-								// Adding words should not be done when
-								// DefaultAnalyzer is used,
-								// because it does not perform stemming and
-								// common words removal
-								// which would result in common characters
-								// highlighted all over (bug 30263)
-								if (!analyzerDesc.getId().startsWith(
-										HelpBasePlugin.PLUGIN_ID + "#")) { //$NON-NLS-1$
+								// add each analyzed word to the list of words to highlight
+								// this is only required to highlight stemmed words.
+								// Adding words should not be done when DefaultAnalyzer is used,
+								// because it does not perform stemming and common words removal
+								// which would result in common characters highlighted all over (bug 30263)
+								if (!analyzerDesc.getId().startsWith(HelpBasePlugin.PLUGIN_ID + "#")) { //$NON-NLS-1$
 									if (!isTokenAfterNot && !highlightWords.contains(word)) {
 										highlightWords.add(word);
 									}
@@ -224,8 +216,7 @@ public class QueryBuilder {
 					}
 				}
 				QueryWordsExactPhrase phrase = QueryWordsToken.exactPhrase();
-				for (Iterator<String> it = wordList.iterator(); it.hasNext();) {
-					String word = it.next();
+				for (String word : wordList) {
 					phrase.addWord(word);
 					// add analyzed word to the list of words to highlight
 					if (!highlightWords.contains(word))
@@ -287,8 +278,7 @@ public class QueryBuilder {
 			float[] boosts) {
 		List<Query> oredQueries = new ArrayList<>();
 		ArrayList<QueryWordsToken> requiredQueryTokens = new ArrayList<>();
-		for (int i = 0; i < tokens.size(); i++) {
-			QueryWordsToken token = tokens.get(i);
+		for (QueryWordsToken token : tokens) {
 			if (token.type != QueryWordsToken.OR) {
 				requiredQueryTokens.add(token);
 			} else {
@@ -324,8 +314,7 @@ public class QueryBuilder {
 		boolean requiredTermExist = false;
 		// Parse tokens left to right
 		QueryWordsToken operator = null;
-		for (int i = 0; i < requiredTokens.size(); i++) {
-			QueryWordsToken token = requiredTokens.get(i);
+		for (QueryWordsToken token : requiredTokens) {
 			if (token.type == QueryWordsToken.AND
 					|| token.type == QueryWordsToken.NOT) {
 				operator = token;
@@ -425,8 +414,8 @@ public class QueryBuilder {
 		if (query == null)
 			return query;
 		// check if all tokens are words
-		for (int i = 0; i < analyzedTokens.size(); i++)
-			if (analyzedTokens.get(i).type != QueryWordsToken.WORD)
+		for (QueryWordsToken analyzedToken : analyzedTokens)
+			if (analyzedToken.type != QueryWordsToken.WORD)
 				return query;
 		// Create phrase query for all tokens and OR with original query
 		Builder booleanQueryBuilder = new BooleanQuery.Builder();
@@ -434,9 +423,8 @@ public class QueryBuilder {
 		PhraseQuery.Builder[] phraseQueriesBuilders = new PhraseQuery.Builder[fields.length];
 		for (int f = 0; f < fields.length; f++) {
 			phraseQueriesBuilders[f] = new PhraseQuery.Builder();
-			for (int i = 0; i < analyzedTokens.size(); i++) {
-				Term t = new Term(fields[f], analyzedTokens
-						.get(i).value);
+			for (QueryWordsToken analyzedToken : analyzedTokens) {
+				Term t = new Term(fields[f], analyzedToken.value);
 				phraseQueriesBuilders[f].add(t);
 			}
 			Query boostQuery = new BoostQuery(phraseQueriesBuilders[f].build(), 10 * boosts[f]);
@@ -451,9 +439,9 @@ public class QueryBuilder {
 	 */
 	public String gethighlightTerms() {
 		StringBuilder buf = new StringBuilder();
-		for (Iterator<String> it = highlightWords.iterator(); it.hasNext();) {
+		for (String word : highlightWords) {
 			buf.append('"');
-			buf.append(it.next());
+			buf.append(word);
 			buf.append("\" "); //$NON-NLS-1$
 		}
 		return buf.toString();

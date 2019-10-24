@@ -37,8 +37,8 @@ public class UnionScope extends AbstractHelpScope {
 
 	@Override
 	public boolean inScope(IToc toc) {
-		for (int scope = 0; scope < scopes.length; scope ++) {
-			if (scopes[scope].inScope(toc)) {
+		for (AbstractHelpScope scope : scopes) {
+			if (scope.inScope(toc)) {
 				return true;
 			}
 		}
@@ -47,8 +47,8 @@ public class UnionScope extends AbstractHelpScope {
 
 	@Override
 	public boolean inScope(ITopic topic) {
-		for (int scope = 0; scope < scopes.length; scope ++) {
-			if (scopes[scope].inScope(topic)) {
+		for (AbstractHelpScope scope : scopes) {
+			if (scope.inScope(topic)) {
 				return true;
 			}
 		}
@@ -57,8 +57,8 @@ public class UnionScope extends AbstractHelpScope {
 
 	@Override
 	public boolean inScope(IIndexEntry entry) {
-		for (int scope = 0; scope < scopes.length; scope ++) {
-			if (scopes[scope].inScope(entry)) {
+		for (AbstractHelpScope scope : scopes) {
+			if (scope.inScope(entry)) {
 				return true;
 			}
 		}
@@ -67,8 +67,8 @@ public class UnionScope extends AbstractHelpScope {
 
 	@Override
 	public boolean inScope(IIndexSee see) {
-		for (int scope = 0; scope < scopes.length; scope ++) {
-			if (scopes[scope].inScope(see)) {
+		for (AbstractHelpScope scope : scopes) {
+			if (scope.inScope(see)) {
 				return true;
 			}
 		}
@@ -82,8 +82,8 @@ public class UnionScope extends AbstractHelpScope {
 
 	@Override
 	public boolean isHierarchicalScope() {
-		for (int scope = 0; scope < scopes.length; scope ++) {
-			if (!scopes[scope].isHierarchicalScope()) {
+		for (AbstractHelpScope scope : scopes) {
+			if (!scope.isHierarchicalScope()) {
 				return false;
 			}
 		}
