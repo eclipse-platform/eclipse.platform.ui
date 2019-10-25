@@ -26,6 +26,7 @@
 @import url("platform:/plugin/org.eclipse.ui.themes/css/dark/e4-dark_globalstyle.css"); /* Remove this to have ONLY the main IDE shell dark */
 @import url("platform:/plugin/org.eclipse.ui.themes/css/dark/e4-dark_partstyle.css");
 @import url("platform:/plugin/org.eclipse.ui.themes/css/dark/e4-dark_tabstyle.css");
+@import url("platform:/plugin/org.eclipse.ui.themes/css/dark/e4-dark-drag-styling.css");
 
 Tree {
 	/**
@@ -118,22 +119,6 @@ CTabItem.busy {
     /*frame-image-rotated:  url(./gtkTSFrame-rotated.png);*/
     handle-image-rotated:  url(./dragHandle-rotated.png);
     frame-cuts: 5px 1px 5px 16px;
-}
-
-.MToolBar.Draggable {
-    handle-image:  url(./dragHandle.png);
-}
-
-.MToolControl.Draggable {
-    handle-image:  url(./dragHandle.png);
-}
-
-.DragFeedback {
-    background-color: COLOR-WIDGET-NORMAL-SHADOW;
-}
-
-.ModifiedDragFeedback {
-    background-color: #4176AF;
 }
 
 CTabFolder.MArea .MPartStack,CTabFolder.MArea .MPartStack.active {
