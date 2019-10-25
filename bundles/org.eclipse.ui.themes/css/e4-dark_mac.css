@@ -124,17 +124,6 @@ CTabFolder.MArea .MPartStack,CTabFolder.MArea .MPartStack.active {
     color: #F5F5F5;
 }
 
-
-/* ###################### Top Toolbar ########################## */
-
-#org-eclipse-ui-main-toolbar {
-    eclipse-perspective-keyline-color: #585858;
-    background-color: #515658 #515658 100%;
-    handle-image: none;
-    color: #EBE8E4;
-}
-
-
 /* #################### Bottom Status Bar ######################## */
 
 #org-eclipse-ui-StatusLine,
