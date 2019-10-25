@@ -13,7 +13,11 @@
  *     Andrea Guarinoni - initial API and implementation
  *******************************************************************************/
 
-/* New ColorDefinitions for the E4 dark theme */
+/* ColorDefinitions for the dark theme for the Eclipse IDE
+*
+* ThemeExtensions and ColorDefinition are  mapped to the Colors and Fonts preference
+* dialog in the IDE
+*/
 
 ThemesExtension { color-definition:
 	'#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_START',
