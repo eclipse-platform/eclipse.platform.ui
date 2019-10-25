@@ -187,7 +187,7 @@ public final class ExternalToolsPlugin extends AbstractUIPlugin implements
 	 * Returns the active workbench window or <code>null</code> if none
 	 */
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
-		return getDefault().getWorkbench().getActiveWorkbenchWindow();
+		return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	}
 
 	/**

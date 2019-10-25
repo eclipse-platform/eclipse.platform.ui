@@ -347,7 +347,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	 * @return the currently active workbench window or <code>null</code>
 	 */
 	public static IWorkbenchWindow getActiveWorkbenchWindow() {
-		return getDefault().getWorkbench().getActiveWorkbenchWindow();
+		return PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	}
 
 	/**
