@@ -101,19 +101,14 @@ CTabFolder Tree, CTabFolder Canvas {
 
 /* #################### Bottom Status Bar ######################## */
 
+StatusLine,
+ImageBasedFrame,
 #org-eclipse-ui-StatusLine,
+#org-eclipse-ui-StatusLine CLabel,
 #org-eclipse-ui-ProgressBar,
 #org-eclipse-ui-ProgressBar Canvas {
-    color: #CCCCCC;
+     color:#eeeeee;
 }
-#org-eclipse-ui-StatusLine CLabel {
-    color: #BDBAB7;
-}
-
-StatusLine, ImageBasedFrame{
-    color: red;
-}
-
 
 
 /* ###################### Global Styles ########################## */

@@ -93,17 +93,13 @@ CTabFolder.MArea .MPartStack,CTabFolder.MArea .MPartStack.active {
 
 /* #################### Bottom Status Bar ######################## */
 
+StatusLine,
+ImageBasedFrame,
 #org-eclipse-ui-StatusLine,
+#org-eclipse-ui-StatusLine CLabel,
 #org-eclipse-ui-ProgressBar,
 #org-eclipse-ui-ProgressBar Canvas {
-    color: #CCCCCC;
-}
-#org-eclipse-ui-StatusLine CLabel {
-    color: #BDBAB7;
-}
-
-StatusLine, ImageBasedFrame{
-    color: #BDBAB7;
+     color:#eeeeee;
 }
 
 /* ###################### Global Styles ########################## */
