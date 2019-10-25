@@ -986,8 +986,12 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 								.setPattern(searchContainer.getFullPath().append(containerPattern).toString());
 					}
 
-					if (!containerPattern.startsWith("" + IPath.SEPARATOR)) //$NON-NLS-1$
-						containerPattern = IPath.SEPARATOR + containerPattern;
+					if (!containerPattern.startsWith(Character.toString('*'))) {
+						if (!containerPattern.startsWith(Character.toString(IPath.SEPARATOR))) {
+							containerPattern = IPath.SEPARATOR + containerPattern;
+						}
+						containerPattern = '*' + containerPattern;
+					}
 					this.containerPattern = new SearchPattern(SearchPattern.RULE_EXACT_MATCH
 							| SearchPattern.RULE_PREFIX_MATCH | SearchPattern.RULE_PATTERN_MATCH);
 					this.containerPattern.setPattern(containerPattern);
@@ -1074,11 +1078,12 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 					// match path relative to current selection:
 					if (relativeContainerPattern != null)
 						return relativeContainerPattern.matches(containerPath);
+				// match direct parency
+
 					return false;
 				}
 				return true;
 			}
-
 			return false;
 		}
 

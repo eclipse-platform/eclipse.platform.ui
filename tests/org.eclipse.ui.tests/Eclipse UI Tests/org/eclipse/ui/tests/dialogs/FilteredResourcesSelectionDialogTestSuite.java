@@ -42,5 +42,6 @@ public class FilteredResourcesSelectionDialogTestSuite extends TestSuite {
 	public FilteredResourcesSelectionDialogTestSuite() {
 		addTestSuite(ResourceItemLabelTest.class);
 		addTestSuite(ResourceInitialSelectionTest.class);
+		addTestSuite(ResourceSelectionFilteringDialogTest.class);
 	}
 }
