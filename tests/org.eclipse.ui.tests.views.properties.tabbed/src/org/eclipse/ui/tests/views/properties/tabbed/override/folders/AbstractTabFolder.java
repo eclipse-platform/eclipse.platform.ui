@@ -36,7 +36,7 @@ import org.eclipse.ui.tests.views.properties.tabbed.override.items.IOverrideTest
  */
 public abstract class AbstractTabFolder implements IOverrideTestsTabFolder {
 
-	private ListenerList itemSelectionListeners = new ListenerList();
+	private ListenerList<IOverrideTestsTabItemSelectionListener> itemSelectionListeners = new ListenerList<>();
 
 	private CTabFolder tabFolder;
 

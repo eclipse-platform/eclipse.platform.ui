@@ -15,9 +15,9 @@ package org.eclipse.ui.tests.views.properties.tabbed.views;
 
 import java.util.Iterator;
 
-import org.eclipse.jface.viewers.TreeNode;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.TreeNode;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.tests.views.properties.tabbed.model.Element;
 
@@ -95,7 +95,7 @@ public class LabelProvider
 		if (structuredSelection.size() == 1) {
 			return false;
 		}
-		Iterator i = structuredSelection.iterator();
+		Iterator<?> i = structuredSelection.iterator();
 		Element element = (Element) ((TreeNode) i.next()).getValue();
 		for (; i.hasNext();) {
 			Element next = (Element) ((TreeNode) i.next()).getValue();

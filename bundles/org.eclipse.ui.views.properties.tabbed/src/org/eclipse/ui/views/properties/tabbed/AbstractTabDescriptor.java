@@ -34,14 +34,14 @@ import org.osgi.framework.FrameworkUtil;
 public abstract class AbstractTabDescriptor implements ITabDescriptor,
 		Cloneable {
 
-	private List sectionDescriptors;
+	private List<ISectionDescriptor> sectionDescriptors;
 
 	/**
 	 * Constructor for AbstractTabDescriptor.
 	 */
 	public AbstractTabDescriptor() {
 		super();
-		sectionDescriptors = new ArrayList(5);
+		sectionDescriptors = new ArrayList<>(5);
 	}
 
 	/*
@@ -66,15 +66,15 @@ public abstract class AbstractTabDescriptor implements ITabDescriptor,
 	 */
 	@Override
 	public TabContents createTab() {
-		List sections = new ArrayList(getSectionDescriptors().size());
-		for (Iterator iter = getSectionDescriptors().iterator(); iter.hasNext();) {
-			ISectionDescriptor descriptor = (ISectionDescriptor) iter.next();
+		List<ISection> sections = new ArrayList<>(getSectionDescriptors().size());
+		for (@SuppressWarnings("unchecked")
+		Iterator<ISectionDescriptor> iter = getSectionDescriptors().iterator(); iter.hasNext();) {
+			ISectionDescriptor descriptor = iter.next();
 			ISection section = descriptor.getSectionClass();
 			sections.add(section);
 		}
 		TabContents tab = new TabContents();
-		tab.setSections((ISection[]) sections.toArray(new ISection[sections
-				.size()]));
+		tab.setSections(sections.toArray(new ISection[sections.size()]));
 		return tab;
 	}
 

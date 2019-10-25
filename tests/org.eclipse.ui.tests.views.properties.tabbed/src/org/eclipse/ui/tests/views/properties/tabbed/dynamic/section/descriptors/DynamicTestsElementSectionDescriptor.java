@@ -47,7 +47,7 @@ public class DynamicTestsElementSectionDescriptor extends
 
 	@Override
 	public List getInputTypes() {
-		List list = new ArrayList();
+		List<String> list = new ArrayList<>();
 		list.add(DynamicTestsElement.class.getName());
 		return list;
 	}

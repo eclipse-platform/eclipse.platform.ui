@@ -64,7 +64,7 @@ public class SectionDescriptor extends AbstractSectionDescriptor {
 
 	private String afterSection;
 
-	private ArrayList inputTypes;
+	private List<String> inputTypes;
 
 	private IFilter filter;
 
@@ -209,7 +209,7 @@ public class SectionDescriptor extends AbstractSectionDescriptor {
 	@Override
 	public List getInputTypes() {
 		if (inputTypes == null) {
-			inputTypes = new ArrayList();
+			inputTypes = new ArrayList<>();
 			IConfigurationElement[] elements = getConfigurationElement()
 					.getChildren(ELEMENT_INPUT);
 			for (IConfigurationElement element : elements) {

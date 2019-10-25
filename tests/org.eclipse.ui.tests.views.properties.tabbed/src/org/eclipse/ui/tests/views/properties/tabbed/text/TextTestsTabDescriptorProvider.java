@@ -36,7 +36,7 @@ public class TextTestsTabDescriptorProvider implements ITabDescriptorProvider {
 		if (selection instanceof ITextSelection) {
 			ITextSelection textSelection = (ITextSelection) selection;
 			if (textSelection.getLength() != 0) {
-				List result = new ArrayList();
+				List<ITabDescriptor> result = new ArrayList<>();
 				StringTokenizer tokenizer = new StringTokenizer(textSelection
 						.getText());
 				while (tokenizer.hasMoreTokens()) {
@@ -44,8 +44,7 @@ public class TextTestsTabDescriptorProvider implements ITabDescriptorProvider {
 							.add(new TextTestsTabDescriptor(tokenizer
 									.nextToken()));
 				}
-				return (ITabDescriptor[]) result
-						.toArray(new ITabDescriptor[result.size()]);
+				return result.toArray(new ITabDescriptor[result.size()]);
 			}
 		}
 		return new ITabDescriptor[0];

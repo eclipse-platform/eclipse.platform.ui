@@ -97,15 +97,15 @@ public class TabbedPropertySheetPage
 
 	private TabContents currentTab;
 
-	private Map descriptorToTab;
+	private Map<ITabDescriptor, TabContents> descriptorToTab;
 
-	private Map tabToComposite;
+	private Map<TabContents, Composite> tabToComposite;
 
-	private List selectionQueue;
+	private List<String> selectionQueue;
 
 	private boolean selectionQueueLocked;
 
-	private List tabSelectionListeners;
+	private List<ITabSelectionListener> tabSelectionListeners;
 
 	private IWorkbenchWindow cachedWorkbenchWindow;
 
@@ -203,13 +203,13 @@ public class TabbedPropertySheetPage
 				// create tab if necessary
 				// can not cache based on the id - tabs may have the same id,
 				// but different section depending on the selection
-				tab = (TabContents) descriptorToTab.get(descriptor);
+				tab = descriptorToTab.get(descriptor);
 
 				if (tab != currentTab) {
 					hideTab(currentTab);
 				}
 
-				Composite tabComposite = (Composite) tabToComposite.get(tab);
+				Composite tabComposite = tabToComposite.get(tab);
 				if (tabComposite == null) {
 					tabComposite = createTabComposite();
 					tab.createControls(tabComposite,
@@ -244,7 +244,7 @@ public class TabbedPropertySheetPage
 		 */
 		private void showTab(TabContents target) {
 			if (target != null) {
-				Composite tabComposite = (Composite) tabToComposite.get(target);
+				Composite tabComposite = tabToComposite.get(target);
 				if (tabComposite != null) {
 					/**
 					 * the following method call order is important - do not
@@ -262,7 +262,7 @@ public class TabbedPropertySheetPage
 		 */
 		private void hideTab(TabContents target) {
 			if (target != null) {
-				Composite tabComposite = (Composite) tabToComposite.get(target);
+				Composite tabComposite = tabToComposite.get(target);
 				if (tabComposite != null) {
 					target.aboutToBeHidden();
 					tabComposite.setVisible(false);
@@ -298,9 +298,9 @@ public class TabbedPropertySheetPage
 			boolean showTitleBar) {
 		hasTitleBar = showTitleBar;
 		contributor = tabbedPropertySheetPageContributor;
-		tabToComposite = new HashMap();
-		selectionQueue = new ArrayList(10);
-		tabSelectionListeners = new ArrayList();
+		tabToComposite = new HashMap<>();
+		selectionQueue = new ArrayList<>(10);
+		tabSelectionListeners = new ArrayList<>();
 		initContributor(contributor.getContributorId());
 	}
 
@@ -407,7 +407,7 @@ public class TabbedPropertySheetPage
 	 *            the contributor id.
 	 */
 	private void initContributor(String contributorId) {
-		descriptorToTab = new HashMap();
+		descriptorToTab = new HashMap<>();
 		if (contributor.getContributorId().equals(contributorId)) {
 			/**
 			 * default contributor from the workbench part.
@@ -466,7 +466,7 @@ public class TabbedPropertySheetPage
 		}
 
 		disposeTabs(descriptorToTab.values());
-		descriptorToTab = new HashMap();
+		descriptorToTab = new HashMap<>();
 
 		/**
 		 * Remove the label provider change listener.
@@ -594,8 +594,7 @@ public class TabbedPropertySheetPage
 	public void resizeScrolledComposite() {
 		Point currentTabSize = new Point(0, 0);
 		if (currentTab != null) {
-			Composite sizeReference = (Composite) tabToComposite
-				.get(currentTab);
+			Composite sizeReference = tabToComposite.get(currentTab);
 			if (sizeReference != null) {
 				currentTabSize = sizeReference.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 			}
@@ -634,9 +633,9 @@ public class TabbedPropertySheetPage
 	 * @since 3.6
 	 */
 	protected void disposeTabs(Collection tabs) {
-		for (Iterator iter = tabs.iterator(); iter.hasNext();) {
-			TabContents tab = (TabContents) iter.next();
-			Composite composite = (Composite) tabToComposite.remove(tab);
+		for (Iterator<TabContents> iter = tabs.iterator(); iter.hasNext();) {
+			TabContents tab = iter.next();
+			Composite composite = tabToComposite.remove(tab);
 			tab.dispose();
 			if (composite != null) {
 				composite.dispose();
@@ -650,8 +649,8 @@ public class TabbedPropertySheetPage
 	private int getLastTabSelection(IWorkbenchPart part, ISelection input) {
 		ITabDescriptor[] descriptors = registry.getTabDescriptors(part, input);
 		if (descriptors.length != 0) {
-			for (Iterator iter = selectionQueue.iterator(); iter.hasNext();) {
-				String text = (String) iter.next();
+			for (Iterator<String> iter = selectionQueue.iterator(); iter.hasNext();) {
+				String text = iter.next();
 				for (int i = 0; i < descriptors.length; i++) {
 					if (text.equals(descriptors[i].getLabel())) {
 						return i;
@@ -670,11 +669,10 @@ public class TabbedPropertySheetPage
 	 * @since 3.4
 	 */
 	protected void updateTabs(ITabDescriptor[] descriptors) {
-		Map newTabs = new HashMap(descriptors.length * 2);
+		Map<ITabDescriptor, TabContents> newTabs = new HashMap<>(descriptors.length * 2);
 		boolean disposingCurrentTab = (currentTab != null);
 		for (ITabDescriptor descriptor : descriptors) {
-			TabContents tab = (TabContents) descriptorToTab
-					.remove(descriptor);
+			TabContents tab = descriptorToTab.remove(descriptor);
 
 			if (tab != null && tab.controlsHaveBeenCreated()) {
 				if (tab == currentTab) {
@@ -799,8 +797,8 @@ public class TabbedPropertySheetPage
 			 */
 			return;
 		}
-		for (Iterator i = tabSelectionListeners.iterator(); i.hasNext();) {
-			ITabSelectionListener listener = (ITabSelectionListener) i.next();
+		for (Iterator<ITabSelectionListener> i = tabSelectionListeners.iterator(); i.hasNext();) {
+			ITabSelectionListener listener = i.next();
 			listener.tabSelected(tabDescriptor);
 		}
 	}
@@ -939,7 +937,7 @@ public class TabbedPropertySheetPage
 		 * new id. If all contributor id do not match, then fall back to default
 		 * contributor from the workbench part.
 		 */
-		Iterator i = structuredSelection.iterator();
+		Iterator<?> i = structuredSelection.iterator();
 		i.next();
 		while (i.hasNext()) {
 			newContributor = getTabbedPropertySheetPageContributor(i.next());
@@ -1002,10 +1000,10 @@ public class TabbedPropertySheetPage
 	 * @since 3.5
 	 */
 	public ITabDescriptor[] getActiveTabs() {
-		List elements = tabbedPropertyViewer.getElements();
+		@SuppressWarnings("unchecked")
+		List<ITabDescriptor> elements = tabbedPropertyViewer.getElements();
 		if (elements != null && elements.size() > 0) {
-			return (ITabDescriptor[]) elements
-					.toArray(new ITabDescriptor[0]);
+			return elements.toArray(new ITabDescriptor[elements.size()]);
 		}
 		return new ITabDescriptor[] {};
 	}
@@ -1018,10 +1016,11 @@ public class TabbedPropertySheetPage
 	 * @since 3.5
 	 */
 	public void setSelectedTab(String id) {
-		List elements = tabbedPropertyViewer.getElements();
+		@SuppressWarnings("unchecked")
+		List<ITabDescriptor> elements = tabbedPropertyViewer.getElements();
 		if (elements != null && elements.size() > 0) {
-			for (Iterator i = elements.iterator(); i.hasNext();) {
-				ITabDescriptor tabDescriptor = (ITabDescriptor) i.next();
+			for (Iterator<ITabDescriptor> i = elements.iterator(); i.hasNext();) {
+				ITabDescriptor tabDescriptor = i.next();
 				if (tabDescriptor.getId() != null &&
 						tabDescriptor.getId().equals(id)) {
 					tabbedPropertyViewer.setSelection(new StructuredSelection(
@@ -1074,7 +1073,7 @@ public class TabbedPropertySheetPage
 	protected TabContents getTabContents(ITabDescriptor tabDescriptor) {
 		TabContents tabContents = null;
 		if (this.descriptorToTab.containsKey(tabDescriptor)) {
-			tabContents = (TabContents) this.descriptorToTab.get(tabDescriptor);
+			tabContents = this.descriptorToTab.get(tabDescriptor);
 		}
 		return tabContents;
 	}

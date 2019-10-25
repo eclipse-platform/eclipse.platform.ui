@@ -80,7 +80,7 @@ public class TabbedPropertyList
 	 * tab by using the showDynamicImage() and hideDynamicImage() methods on the
 	 * tab's ListElement object.
 	 */
-	private Map tabToDynamicImageCountMap;
+	private Map<ITabItem, Integer> tabToDynamicImageCountMap;
 
 	private int selectedElementIndex = NONE;
 
@@ -730,7 +730,7 @@ public class TabbedPropertyList
 	 *
 	 * @param tabToDynamicImageCountMap
 	 */
-	public void setDynamicImageCount(Map tabToDynamicImageCountMap) {
+	public void setDynamicImageCount(Map<ITabItem, Integer> tabToDynamicImageCountMap) {
 		this.tabToDynamicImageCountMap = tabToDynamicImageCountMap;
 	}
 
@@ -752,8 +752,7 @@ public class TabbedPropertyList
 				int dynamicImageCount = 0;
 				if (tabToDynamicImageCountMap != null
 						&& tabToDynamicImageCountMap.containsKey(children[i])) {
-					dynamicImageCount = ((Integer) tabToDynamicImageCountMap
-							.get(children[i])).intValue();
+					dynamicImageCount = tabToDynamicImageCountMap.get(children[i]).intValue();
 				}
 				elements[i] = new ListElement(this, (ITabItem) children[i],
 						dynamicImageCount, i);
@@ -788,8 +787,7 @@ public class TabbedPropertyList
 		if (tabToDynamicImageCountMap != null) {
 			int dynamicImageCount = 0;
 			if (tabToDynamicImageCountMap.containsKey(tabItem)) {
-				dynamicImageCount = ((Integer) tabToDynamicImageCountMap
-						.get(tabItem)).intValue();
+				dynamicImageCount = tabToDynamicImageCountMap.get(tabItem).intValue();
 			}
 			if (dynamicImageCount > 0) {
 				/*

@@ -146,15 +146,14 @@ public class TabbedPropertySheetPageDynamicTest extends TestCase {
 	 * When the three blue nodes are selected, two tabs display.
 	 */
 	public void select_all_blue() {
-		List blueList = new ArrayList();
+		List<DynamicTestsTreeNode> blueList = new ArrayList<>();
 		for (DynamicTestsTreeNode treeNode : treeNodes) {
 			if (DynamicTestsColor.BLUE
 					.equals(treeNode.getDynamicTestsElement().getPropertyValue(DynamicTestsElement.ID_COLOR))) {
 				blueList.add(treeNode);
 			}
 		}
-		DynamicTestsTreeNode[] selectNodes = (DynamicTestsTreeNode[]) blueList
-				.toArray(new DynamicTestsTreeNode[blueList.size()]);
+		DynamicTestsTreeNode[] selectNodes = blueList.toArray(new DynamicTestsTreeNode[blueList.size()]);
 		assertEquals(blueList.size(), 3);
 
 		setSelection(selectNodes);
@@ -205,15 +204,14 @@ public class TabbedPropertySheetPageDynamicTest extends TestCase {
 	 * When the three triangle nodes are selected, two tabs display.
 	 */
 	public void select_all_triangle() {
-		List triangleList = new ArrayList();
+		List<DynamicTestsTreeNode> triangleList = new ArrayList<>();
 		for (DynamicTestsTreeNode treeNode : treeNodes) {
 			if (DynamicTestsShape.TRIANGLE
 					.equals(treeNode.getDynamicTestsElement().getPropertyValue(DynamicTestsElement.ID_SHAPE))) {
 				triangleList.add(treeNode);
 			}
 		}
-		DynamicTestsTreeNode[] selectNodes = (DynamicTestsTreeNode[]) triangleList
-				.toArray(new DynamicTestsTreeNode[triangleList.size()]);
+		DynamicTestsTreeNode[] selectNodes = triangleList.toArray(new DynamicTestsTreeNode[triangleList.size()]);
 		assertEquals(triangleList.size(), 4);
 
 		setSelection(selectNodes);

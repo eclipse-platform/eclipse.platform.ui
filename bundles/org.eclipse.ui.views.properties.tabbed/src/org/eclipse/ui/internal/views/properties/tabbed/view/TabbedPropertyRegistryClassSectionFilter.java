@@ -78,7 +78,7 @@ public class TabbedPropertyRegistryClassSectionFilter {
 			IFilter filter = descriptor.getFilter();
 
 			if (filter != null) {
-				for (Iterator i = ((IStructuredSelection) selection).iterator(); i
+				for (Iterator<?> i = ((IStructuredSelection) selection).iterator(); i
 						.hasNext();) {
 					Object object = i.next();
 
@@ -96,14 +96,14 @@ public class TabbedPropertyRegistryClassSectionFilter {
 				return true;
 			}
 
-			Set effectiveTypes = new HashSet();
+			Set<Class<?>> effectiveTypes = new HashSet<>();
 
-			for (Iterator i = ((IStructuredSelection) selection).iterator(); i
+			for (Iterator<?> i = ((IStructuredSelection) selection).iterator(); i
 					.hasNext();) {
 
 				Object object = i.next();
 
-				Class remapType = object.getClass();
+				Class<?> remapType = object.getClass();
 				if (typeMapper != null) {
 					remapType = typeMapper.mapType(object);
 				}
@@ -127,9 +127,9 @@ public class TabbedPropertyRegistryClassSectionFilter {
 	}
 
 	private boolean appliesToEffectiveType(ISectionDescriptor descriptor,
-			Class inputClass) {
+			Class<?> inputClass) {
 
-		ArrayList classTypes = getClassTypes(inputClass);
+		ArrayList<String> classTypes = getClassTypes(inputClass);
 
 		List sectionInputTypes = descriptor.getInputTypes();
 		for (Iterator j = sectionInputTypes.iterator(); j.hasNext();) {
@@ -147,21 +147,21 @@ public class TabbedPropertyRegistryClassSectionFilter {
 	 * Returns the classes and interfaces the given target class
 	 * extends/implements.
 	 */
-	protected ArrayList getClassTypes(Class target) {
-		ArrayList result = new ArrayList();
+	protected ArrayList<String> getClassTypes(Class<?> target) {
+		ArrayList<String> result = new ArrayList<>();
 		// add classes
-		List classes = computeClassOrder(target);
-		for (Iterator i = classes.iterator(); i.hasNext();) {
-			result.add(((Class) i.next()).getName());
+		List<Class<?>> classes = computeClassOrder(target);
+		for (Iterator<Class<?>> i = classes.iterator(); i.hasNext();) {
+			result.add(i.next().getName());
 		}
 		// add interfaces
 		result.addAll(computeInterfaceOrder(classes));
 		return result;
 	}
 
-	private List computeClassOrder(Class target) {
-		List result = new ArrayList(4);
-		Class clazz = target;
+	private List<Class<?>> computeClassOrder(Class<?> target) {
+		List<Class<?>> result = new ArrayList<>(4);
+		Class<?> clazz = target;
 		while (clazz != null) {
 			result.add(clazz);
 			clazz = clazz.getSuperclass();
@@ -169,29 +169,28 @@ public class TabbedPropertyRegistryClassSectionFilter {
 		return result;
 	}
 
-	private List computeInterfaceOrder(List classes) {
-		List result = new ArrayList(4);
-		Map seen = new HashMap(4);
-		for (Iterator iter = classes.iterator(); iter.hasNext();) {
-			Class[] interfaces = ((Class) iter.next()).getInterfaces();
+	private List<String> computeInterfaceOrder(List<Class<?>> classes) {
+		List<String> result = new ArrayList<>(4);
+		Map<Class<?>, Class<?>> seen = new HashMap<>(4);
+		for (Iterator<Class<?>> iter = classes.iterator(); iter.hasNext();) {
+			Class<?>[] interfaces = iter.next().getInterfaces();
 			internalComputeInterfaceOrder(interfaces, result, seen);
 		}
 		return result;
 	}
 
-	private void internalComputeInterfaceOrder(Class[] interfaces, List result,
-			Map seen) {
-		List newInterfaces = new ArrayList(seen.size());
-		for (Class interfac : interfaces) {
+	private void internalComputeInterfaceOrder(Class<?>[] interfaces, List<String> result,
+			Map<Class<?>, Class<?>> seen) {
+		List<Class<?>> newInterfaces = new ArrayList<>(seen.size());
+		for (Class<?> interfac : interfaces) {
 			if (seen.get(interfac) == null) {
 				result.add(interfac.getName());
 				seen.put(interfac, interfac);
 				newInterfaces.add(interfac);
 			}
 		}
-		for (Iterator iter = newInterfaces.iterator(); iter.hasNext();) {
-			internalComputeInterfaceOrder(
-					((Class) iter.next()).getInterfaces(), result, seen);
+		for (Iterator<Class<?>> iter = newInterfaces.iterator(); iter.hasNext();) {
+			internalComputeInterfaceOrder(iter.next().getInterfaces(), result, seen);
 		}
 	}
 }

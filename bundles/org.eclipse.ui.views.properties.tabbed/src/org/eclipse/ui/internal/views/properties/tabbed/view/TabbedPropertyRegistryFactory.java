@@ -30,7 +30,7 @@ public class TabbedPropertyRegistryFactory {
 
 	static class CacheData {
 		TabbedPropertyRegistry registry;
-		List references;
+		List<ITabbedPropertySheetPageContributor> references;
 	}
 
 	/**
@@ -52,10 +52,10 @@ public class TabbedPropertyRegistryFactory {
 	 */
 	private TabbedPropertyRegistryFactory() {
 		super();
-		idToCacheData = new HashMap();
+		idToCacheData = new HashMap<>();
 	}
 
-	protected Map idToCacheData; // cache
+	protected Map<String, CacheData> idToCacheData; // cache
 
 	/**
 	 * Creates a registry for the given contributor.
@@ -71,11 +71,11 @@ public class TabbedPropertyRegistryFactory {
 		 * interface
 		 */
 		String key = target.getContributorId();
-		CacheData data = (CacheData) idToCacheData.get(key);
+		CacheData data = idToCacheData.get(key);
 		if (data == null) {
 			data = new CacheData();
 			data.registry = new TabbedPropertyRegistry(key);
-			data.references = new ArrayList(5);
+			data.references = new ArrayList<>(5);
 			idToCacheData.put(key, data);
 		}
 		data.references.add(target);
@@ -97,7 +97,7 @@ public class TabbedPropertyRegistryFactory {
 		 * interface
 		 */
 		String key = target.getContributorId();
-		CacheData data = (CacheData) idToCacheData.get(key);
+		CacheData data = idToCacheData.get(key);
 		if (data != null) {
 			data.references.remove(target);
 			if (data.references.isEmpty()) {

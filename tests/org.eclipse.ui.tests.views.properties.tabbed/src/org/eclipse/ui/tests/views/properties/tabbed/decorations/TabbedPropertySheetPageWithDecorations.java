@@ -130,13 +130,13 @@ public class TabbedPropertySheetPageWithDecorations extends
 			// Set the number of decoration-images in the TabbedPropertyList
 			TabbedPropertyList tabbedPropertyList = ((TabbedPropertyComposite) this
 					.getControl()).getList();
-			Map tabToImageDecorationsMap = getImageDecorationsForTabs(descriptors);
+			Map<ITabItem, Integer> tabToImageDecorationsMap = getImageDecorationsForTabs(descriptors);
 			tabbedPropertyList.setDynamicImageCount(tabToImageDecorationsMap);
 		}
 	}
 
-	private Map getImageDecorationsForTabs(ITabItem[] tabItems) {
-		Map tabToImageDecorationsMap = new HashMap();
+	private Map<ITabItem, Integer> getImageDecorationsForTabs(ITabItem[] tabItems) {
+		Map<ITabItem, Integer> tabToImageDecorationsMap = new HashMap<>();
 		for (ITabItem tabItem : tabItems) {
 			if (tabItem.getText().equals("Name")) {
 				tabToImageDecorationsMap.put(tabItem, Integer.valueOf(5));
