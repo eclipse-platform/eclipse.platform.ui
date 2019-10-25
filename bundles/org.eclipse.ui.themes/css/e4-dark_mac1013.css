@@ -99,11 +99,6 @@ CTabFolder Tree, CTabFolder Canvas {
     color: #CCC;
 }
 
-.MPartStack.active Table {
-    background-color: #2F2F2F;
-    color: #CCC;
-}
-
 .View {
     background-color: #313538;
     color: #F5F5F5;
@@ -121,7 +116,7 @@ CTabFolder Tree, CTabFolder Canvas {
 }
 
 StatusLine, ImageBasedFrame{
-    color: #BDBAB7;
+    color: red;
 }
 
 
