@@ -190,9 +190,16 @@ public class FileTool {
 		return s;
 	}
 
+	@Deprecated
 	public static void write(String fileName, StringBuffer content) throws IOException {
 		try (Writer writer= new FileWriter(fileName)) {
 			writer.write(content.toString());
+		}
+	}
+
+	public static void write(String fileName, String content) throws IOException {
+		try (Writer writer= new FileWriter(fileName)) {
+			writer.write(content);
 		}
 	}
 

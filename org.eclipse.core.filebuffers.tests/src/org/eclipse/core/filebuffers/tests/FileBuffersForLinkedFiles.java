@@ -94,7 +94,7 @@ public class FileBuffersForLinkedFiles extends FileBufferFunctions {
 
 	@Override
 	protected boolean modifyUnderlyingFile() throws Exception {
-		FileTool.write(fExternalFile.getAbsolutePath(), new StringBuffer("Changed content of linked file"));
+		FileTool.write(fExternalFile.getAbsolutePath(), "Changed content of linked file");
 		fExternalFile.setLastModified(1000);
 		IFile iFile= FileBuffers.getWorkspaceFileAtLocation(getPath());
 		iFile.refreshLocal(IResource.DEPTH_INFINITE, null);
