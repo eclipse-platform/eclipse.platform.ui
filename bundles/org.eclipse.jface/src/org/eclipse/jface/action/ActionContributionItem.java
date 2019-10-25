@@ -727,7 +727,7 @@ public class ActionContributionItem extends ContributionItem {
 			return;
 		}
 
-		// determine what to do
+		// Determine what to do.
 		boolean textChanged = propertyName == null || propertyName.equals(IAction.TEXT);
 		boolean imageChanged = propertyName == null || propertyName.equals(IAction.IMAGE);
 		boolean tooltipTextChanged = propertyName == null || propertyName.equals(IAction.TOOL_TIP_TEXT);
@@ -738,236 +738,240 @@ public class ActionContributionItem extends ContributionItem {
 				&& (propertyName == null || propertyName.equals(IAction.CHECKED));
 
 		if (widget instanceof ToolItem) {
-			ToolItem ti = (ToolItem) widget;
-			String text = action.getText();
-			// the set text is shown only if there is no image or if forced
-			// by MODE_FORCE_TEXT
-			boolean showText = text != null && ((getMode() & MODE_FORCE_TEXT) != 0 || !hasImages(action));
+			updateToolItem((ToolItem) widget, textChanged, imageChanged, tooltipTextChanged, enableStateChanged,
+					checkChanged);
+		} else if (widget instanceof MenuItem) {
+			updateMenuItem((MenuItem) widget, textChanged, imageChanged, tooltipTextChanged, enableStateChanged,
+					checkChanged);
+		} else if (widget instanceof Button) {
+			updateButton((Button) widget, textChanged, imageChanged, tooltipTextChanged, enableStateChanged,
+					checkChanged);
+		}
+	}
 
-			// only do the trimming if the text will be used
-			if (showText && text != null) {
-				text = Action.removeAcceleratorText(text);
-				text = Action.removeMnemonics(text);
-			}
+	private void updateToolItem(ToolItem ti, boolean textChanged, boolean imageChanged, boolean tooltipTextChanged,
+			boolean enableStateChanged, boolean checkChanged) {
+		String text = action.getText();
+		// The set text is shown only if there is no image or if forced by
+		// MODE_FORCE_TEXT.
+		boolean showText = text != null && ((getMode() & MODE_FORCE_TEXT) != 0 || !hasImages(action));
 
-			if (textChanged) {
-				String textToSet = showText ? text : ""; //$NON-NLS-1$
-				boolean rightStyle = (ti.getParent().getStyle() & SWT.RIGHT) != 0;
-				if (rightStyle || !ti.getText().equals(textToSet)) {
-					// In addition to being required to update the text if
-					// it
-					// gets nulled out in the action, this is also a
-					// workaround
-					// for bug 50151: Using SWT.RIGHT on a ToolBar leaves
-					// blank space
-					ti.setText(textToSet);
-				}
-			}
-
-			if (imageChanged) {
-				// only substitute a missing image if it has no text
-				updateImages(!showText);
-			}
-
-			if (tooltipTextChanged || textChanged) {
-				String toolTip = action.getToolTipText();
-				if ((toolTip == null) || (toolTip.length() == 0)) {
-					toolTip = text;
-				}
-
-				ExternalActionManager.ICallback callback = ExternalActionManager.getInstance().getCallback();
-				String commandId = action.getActionDefinitionId();
-				if ((callback != null) && (commandId != null) && (toolTip != null)) {
-					String acceleratorText = callback.getAcceleratorText(commandId);
-					if (acceleratorText != null && acceleratorText.length() != 0) {
-						toolTip = JFaceResources.format("Toolbar_Tooltip_Accelerator", //$NON-NLS-1$
-								toolTip, acceleratorText);
-					}
-				}
-
-				// if the text is showing, then only set the tooltip if
-				// different
-				if (!showText || toolTip != null && !toolTip.equals(text)) {
-					ti.setToolTipText(toolTip);
-				} else {
-					ti.setToolTipText(null);
-				}
-			}
-
-			if (enableStateChanged) {
-				boolean shouldBeEnabled = action.isEnabled() && isEnabledAllowed();
-
-				if (ti.getEnabled() != shouldBeEnabled) {
-					ti.setEnabled(shouldBeEnabled);
-				}
-			}
-
-			if (checkChanged) {
-				boolean bv = action.isChecked();
-
-				if (ti.getSelection() != bv) {
-					ti.setSelection(bv);
-				}
-			}
-			return;
+		// Only do the trimming if the text will be used
+		if (showText && text != null) {
+			text = Action.removeAcceleratorText(text);
+			text = Action.removeMnemonics(text);
 		}
 
-		if (widget instanceof MenuItem) {
-			MenuItem mi = (MenuItem) widget;
+		if (textChanged) {
+			String textToSet = showText ? text : ""; //$NON-NLS-1$
+			boolean rightStyle = (ti.getParent().getStyle() & SWT.RIGHT) != 0;
+			if (rightStyle || !ti.getText().equals(textToSet)) {
+				// In addition to being required to update the text if it gets nulled out in the
+				// action, this is also a workaround for bug 50151: Using SWT.RIGHT on a ToolBar
+				// leaves blank space.
+				ti.setText(textToSet);
+			}
+		}
 
-			if (textChanged) {
-				int accelerator = 0;
-				String acceleratorText = null;
-				IAction updatedAction = getAction();
-				String text = null;
-				accelerator = updatedAction.getAccelerator();
-				ExternalActionManager.ICallback callback = ExternalActionManager.getInstance().getCallback();
+		if (imageChanged) {
+			// Only substitute a missing image if it has no text.
+			updateImages(!showText);
+		}
 
-				// Block accelerators that are already in use.
-				if ((accelerator != 0) && (callback != null) && (callback.isAcceleratorInUse(accelerator))) {
-					accelerator = 0;
+		if (tooltipTextChanged || textChanged) {
+			String toolTip = action.getToolTipText();
+			if ((toolTip == null) || (toolTip.length() == 0)) {
+				toolTip = text;
+			}
+
+			ExternalActionManager.ICallback callback = ExternalActionManager.getInstance().getCallback();
+			String commandId = action.getActionDefinitionId();
+			if ((callback != null) && (commandId != null) && (toolTip != null)) {
+				String acceleratorText = callback.getAcceleratorText(commandId);
+				if (acceleratorText != null && acceleratorText.length() != 0) {
+					toolTip = JFaceResources.format("Toolbar_Tooltip_Accelerator", //$NON-NLS-1$
+							toolTip, acceleratorText);
 				}
+			}
 
-				/*
-				 * Process accelerators on GTK in a special way to avoid Bug 42009. We will
-				 * override the native input method by allowing these reserved accelerators to
-				 * be placed on the menu. We will only do this for "Ctrl+Shift+[0-9A-FU]".
-				 */
-				final String commandId = updatedAction.getActionDefinitionId();
-				if ((Util.isGtk()) && (callback instanceof IBindingManagerCallback) && (commandId != null)) {
-					final IBindingManagerCallback bindingManagerCallback = (IBindingManagerCallback) callback;
-					final IKeyLookup lookup = KeyLookupFactory.getDefault();
-					final TriggerSequence[] triggerSequences = bindingManagerCallback.getActiveBindingsFor(commandId);
-					for (final TriggerSequence triggerSequence : triggerSequences) {
-						final Trigger[] triggers = triggerSequence.getTriggers();
-						if (triggers.length == 1) {
-							final Trigger trigger = triggers[0];
-							if (trigger instanceof KeyStroke) {
-								final KeyStroke currentKeyStroke = (KeyStroke) trigger;
-								final int currentNaturalKey = currentKeyStroke.getNaturalKey();
-								if ((currentKeyStroke.getModifierKeys() == (lookup.getCtrl() | lookup.getShift()))
-										&& ((currentNaturalKey >= '0' && currentNaturalKey <= '9')
-												|| (currentNaturalKey >= 'A' && currentNaturalKey <= 'F')
-												|| (currentNaturalKey == 'U'))) {
-									accelerator = currentKeyStroke.getModifierKeys() | currentNaturalKey;
-									acceleratorText = triggerSequence.format();
-									break;
-								}
-							}
+			// If the text is showing, then only set the tooltip if different.
+			if (!showText || toolTip != null && !toolTip.equals(text)) {
+				ti.setToolTipText(toolTip);
+			} else {
+				ti.setToolTipText(null);
+			}
+		}
+
+		if (enableStateChanged) {
+			boolean shouldBeEnabled = action.isEnabled() && isEnabledAllowed();
+
+			if (ti.getEnabled() != shouldBeEnabled) {
+				ti.setEnabled(shouldBeEnabled);
+			}
+		}
+
+		if (checkChanged) {
+			boolean bv = action.isChecked();
+
+			if (ti.getSelection() != bv) {
+				ti.setSelection(bv);
+			}
+		}
+	}
+
+	private void updateMenuItemText(MenuItem mi) {
+		int accelerator = 0;
+		String acceleratorText = null;
+		IAction updatedAction = getAction();
+		String text = null;
+		accelerator = updatedAction.getAccelerator();
+		ExternalActionManager.ICallback callback = ExternalActionManager.getInstance().getCallback();
+
+		// Block accelerators that are already in use.
+		if ((accelerator != 0) && (callback != null) && (callback.isAcceleratorInUse(accelerator))) {
+			accelerator = 0;
+		}
+
+		/*
+		 * Process accelerators on GTK in a special way to avoid Bug 42009. We will
+		 * override the native input method by allowing these reserved accelerators to
+		 * be placed on the menu. We will only do this for "Ctrl+Shift+[0-9A-FU]".
+		 */
+		final String commandId = updatedAction.getActionDefinitionId();
+		if ((Util.isGtk()) && (callback instanceof IBindingManagerCallback) && (commandId != null)) {
+			final IBindingManagerCallback bindingManagerCallback = (IBindingManagerCallback) callback;
+			final IKeyLookup lookup = KeyLookupFactory.getDefault();
+			final TriggerSequence[] triggerSequences = bindingManagerCallback.getActiveBindingsFor(commandId);
+			for (final TriggerSequence triggerSequence : triggerSequences) {
+				final Trigger[] triggers = triggerSequence.getTriggers();
+				if (triggers.length == 1) {
+					final Trigger trigger = triggers[0];
+					if (trigger instanceof KeyStroke) {
+						final KeyStroke currentKeyStroke = (KeyStroke) trigger;
+						final int currentNaturalKey = currentKeyStroke.getNaturalKey();
+						if ((currentKeyStroke.getModifierKeys() == (lookup.getCtrl() | lookup.getShift()))
+								&& ((currentNaturalKey >= '0' && currentNaturalKey <= '9')
+										|| (currentNaturalKey >= 'A' && currentNaturalKey <= 'F')
+										|| (currentNaturalKey == 'U'))) {
+							accelerator = currentKeyStroke.getModifierKeys() | currentNaturalKey;
+							acceleratorText = triggerSequence.format();
+							break;
 						}
 					}
 				}
-
-				if (accelerator == 0) {
-					if ((callback != null) && (commandId != null)) {
-						acceleratorText = callback.getAcceleratorText(commandId);
-					}
-				}
-
-				IContributionManagerOverrides overrides = null;
-
-				if (getParent() != null) {
-					overrides = getParent().getOverrides();
-				}
-
-				if (overrides != null) {
-					text = getParent().getOverrides().getText(this);
-				}
-
-				mi.setAccelerator(accelerator);
-
-				if (text == null) {
-					text = updatedAction.getText();
-				}
-
-				if (text != null && acceleratorText == null) {
-					// use extracted accelerator text in case accelerator
-					// cannot be fully represented in one int (e.g.
-					// multi-stroke keys)
-					acceleratorText = LegacyActionTools.extractAcceleratorText(text);
-					if (acceleratorText == null && accelerator != 0) {
-						acceleratorText = Action.convertAccelerator(accelerator);
-					}
-				}
-
-				if (text == null) {
-					text = ""; //$NON-NLS-1$
-				} else {
-					text = Action.removeAcceleratorText(text);
-				}
-
-				if (acceleratorText == null) {
-					mi.setText(text);
-				} else {
-					mi.setText(text + '\t' + acceleratorText);
-				}
 			}
-
-			if (tooltipTextChanged) {
-				mi.setToolTipText(action.getToolTipText());
-			}
-
-			if (imageChanged) {
-				updateImages(false);
-			}
-
-			if (enableStateChanged) {
-				boolean shouldBeEnabled = action.isEnabled() && isEnabledAllowed();
-
-				if (mi.getEnabled() != shouldBeEnabled) {
-					mi.setEnabled(shouldBeEnabled);
-				}
-			}
-
-			if (checkChanged) {
-				boolean bv = action.isChecked();
-
-				if (mi.getSelection() != bv) {
-					mi.setSelection(bv);
-				}
-			}
-
-			return;
 		}
 
-		if (widget instanceof Button) {
-			Button button = (Button) widget;
-
-			if (imageChanged) {
-				updateImages(false);
+		if (accelerator == 0) {
+			if ((callback != null) && (commandId != null)) {
+				acceleratorText = callback.getAcceleratorText(commandId);
 			}
+		}
 
-			if (textChanged) {
-				String text = action.getText();
-				boolean showText = text != null && ((getMode() & MODE_FORCE_TEXT) != 0 || !hasImages(action));
-				// only do the trimming if the text will be used
-				if (showText) {
-					text = Action.removeAcceleratorText(text);
-				}
-				String textToSet = showText ? text : ""; //$NON-NLS-1$
-				button.setText(textToSet);
+		IContributionManagerOverrides overrides = null;
+
+		if (getParent() != null) {
+			overrides = getParent().getOverrides();
+		}
+
+		if (overrides != null) {
+			text = getParent().getOverrides().getText(this);
+		}
+
+		mi.setAccelerator(accelerator);
+
+		if (text == null) {
+			text = updatedAction.getText();
+		}
+
+		if (text != null && acceleratorText == null) {
+			// Use extracted accelerator text in case accelerator cannot be fully
+			// represented in one int (e.g. multi-stroke keys).
+			acceleratorText = LegacyActionTools.extractAcceleratorText(text);
+			if (acceleratorText == null && accelerator != 0) {
+				acceleratorText = Action.convertAccelerator(accelerator);
 			}
+		}
 
-			if (tooltipTextChanged) {
-				button.setToolTipText(action.getToolTipText());
+		if (text == null) {
+			text = ""; //$NON-NLS-1$
+		} else {
+			text = Action.removeAcceleratorText(text);
+		}
+
+		if (acceleratorText == null) {
+			mi.setText(text);
+		} else {
+			mi.setText(text + '\t' + acceleratorText);
+		}
+	}
+
+	private void updateMenuItem(MenuItem mi, boolean textChanged, boolean imageChanged, boolean tooltipTextChanged,
+			boolean enableStateChanged, boolean checkChanged) {
+		if (textChanged) {
+			updateMenuItemText(mi);
+		}
+
+		if (tooltipTextChanged) {
+			mi.setToolTipText(action.getToolTipText());
+		}
+
+		if (imageChanged) {
+			updateImages(false);
+		}
+
+		if (enableStateChanged) {
+			boolean shouldBeEnabled = action.isEnabled() && isEnabledAllowed();
+
+			if (mi.getEnabled() != shouldBeEnabled) {
+				mi.setEnabled(shouldBeEnabled);
 			}
+		}
 
-			if (enableStateChanged) {
-				boolean shouldBeEnabled = action.isEnabled() && isEnabledAllowed();
+		if (checkChanged) {
+			boolean bv = action.isChecked();
 
-				if (button.getEnabled() != shouldBeEnabled) {
-					button.setEnabled(shouldBeEnabled);
-				}
+			if (mi.getSelection() != bv) {
+				mi.setSelection(bv);
 			}
+		}
+	}
 
-			if (checkChanged) {
-				boolean bv = action.isChecked();
+	private void updateButton(Button button, boolean textChanged, boolean imageChanged, boolean tooltipTextChanged,
+			boolean enableStateChanged, boolean checkChanged) {
+		if (imageChanged) {
+			updateImages(false);
+		}
 
-				if (button.getSelection() != bv) {
-					button.setSelection(bv);
-				}
+		if (textChanged) {
+			String text = action.getText();
+			boolean showText = text != null && ((getMode() & MODE_FORCE_TEXT) != 0 || !hasImages(action));
+			// Only do the trimming if the text will be used.
+			if (showText) {
+				text = Action.removeAcceleratorText(text);
 			}
-			return;
+			String textToSet = showText ? text : ""; //$NON-NLS-1$
+			button.setText(textToSet);
+		}
+
+		if (tooltipTextChanged) {
+			button.setToolTipText(action.getToolTipText());
+		}
+
+		if (enableStateChanged) {
+			boolean shouldBeEnabled = action.isEnabled() && isEnabledAllowed();
+
+			if (button.getEnabled() != shouldBeEnabled) {
+				button.setEnabled(shouldBeEnabled);
+			}
+		}
+
+		if (checkChanged) {
+			boolean bv = action.isChecked();
+
+			if (button.getSelection() != bv) {
+				button.setSelection(bv);
+			}
 		}
 	}
 
