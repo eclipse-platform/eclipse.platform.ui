@@ -1380,7 +1380,6 @@ public class ApplicationPackageImpl extends EPackageImpl {
 	 * <!-- end-user-doc -->
 	 * @generated
 	 */
-	@SuppressWarnings("deprecation")
 	public void initializePackageContents() {
 		if (isInitialized)
 			return;

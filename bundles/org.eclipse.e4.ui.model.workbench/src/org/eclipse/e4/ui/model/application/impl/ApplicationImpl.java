@@ -89,7 +89,6 @@ import org.eclipse.emf.ecore.util.InternalEList;
  * @since 1.0
  * @generated
  */
-@SuppressWarnings("deprecation")
 public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MApplication {
 	/**
 	 * The default value of the '{@link #getContext() <em>Context</em>}' attribute.

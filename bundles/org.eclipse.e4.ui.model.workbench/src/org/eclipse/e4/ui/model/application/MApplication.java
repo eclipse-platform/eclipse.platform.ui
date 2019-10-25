@@ -66,7 +66,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.MTrimContributions;
  * @model
  * @generated
  */
-@SuppressWarnings("deprecation")
 public interface MApplication extends MElementContainer<MWindow>, MContext, MHandlerContainer, MBindingTableContainer,
 		MPartDescriptorContainer, MBindings, MMenuContributions, MToolBarContributions, MTrimContributions,
 		MSnippetContainer {
