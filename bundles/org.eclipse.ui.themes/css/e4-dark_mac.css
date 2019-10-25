@@ -91,11 +91,6 @@ CTabFolder.MArea .MPartStack,CTabFolder.MArea .MPartStack.active {
     color: #CCC;
 }
 
-.View {
-    background-color: #313538;
-    color: #F5F5F5;
-}
-
 /* #################### Bottom Status Bar ######################## */
 
 #org-eclipse-ui-StatusLine,

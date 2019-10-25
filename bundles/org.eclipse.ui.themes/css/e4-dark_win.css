@@ -140,11 +140,10 @@ CTabFolder Scale {
     color: #CCC;
 }
 
-.View {
-    background-color: #313538;
-    color: #F5F5F5;
+.MPartStack.active Table {
+    background-color: #2F2F2F;
+    color: #CCC;
 }
-
 
 /* ##################### Bottom Status Bar ####################### */
 

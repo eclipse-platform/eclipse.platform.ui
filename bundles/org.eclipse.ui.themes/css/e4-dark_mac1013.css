@@ -99,11 +99,6 @@ CTabFolder Tree, CTabFolder Canvas {
     color: #CCC;
 }
 
-.View {
-    background-color: #313538;
-    color: #F5F5F5;
-}
-
 /* #################### Bottom Status Bar ######################## */
 
 #org-eclipse-ui-StatusLine,
