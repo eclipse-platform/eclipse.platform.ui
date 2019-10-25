@@ -194,40 +194,40 @@ public class ActionContributionItem extends ContributionItem {
 	 */
 	@Override
 	public void fill(Composite parent) {
-		if (widget == null && parent != null) {
-			int flags = SWT.PUSH;
-			if (action != null) {
-				if (action.getStyle() == IAction.AS_CHECK_BOX) {
-					flags = SWT.TOGGLE;
-				}
-				if (action.getStyle() == IAction.AS_RADIO_BUTTON) {
-					flags = SWT.RADIO;
-				}
+		if (widget != null || parent == null) {
+			return;
+		}
+
+		int flags = SWT.PUSH;
+		if (action != null) {
+			if (action.getStyle() == IAction.AS_CHECK_BOX) {
+				flags = SWT.TOGGLE;
 			}
-
-			Button b = new Button(parent, flags);
-			b.setData(this);
-			b.addListener(SWT.Dispose, getButtonListener());
-			// Don't hook a dispose listener on the parent
-			b.addListener(SWT.Selection, getButtonListener());
-			if (action.getHelpListener() != null) {
-				b.addHelpListener(action.getHelpListener());
+			if (action.getStyle() == IAction.AS_RADIO_BUTTON) {
+				flags = SWT.RADIO;
 			}
-			widget = b;
+		}
 
-			update(null);
+		Button b = new Button(parent, flags);
+		b.setData(this);
+		b.addListener(SWT.Dispose, getButtonListener());
+		// Don't hook a dispose listener on the parent
+		b.addListener(SWT.Selection, getButtonListener());
+		if (action.getHelpListener() != null) {
+			b.addHelpListener(action.getHelpListener());
+		}
+		widget = b;
 
-			// Attach some extra listeners.
-			action.addPropertyChangeListener(propertyListener);
-			if (action != null) {
-				String commandId = action.getActionDefinitionId();
-				ExternalActionManager.ICallback callback = ExternalActionManager
-						.getInstance().getCallback();
+		update(null);
 
-				if ((callback != null) && (commandId != null)) {
-					callback.addPropertyChangeListener(commandId,
-							actionTextListener);
-				}
+		// Attach some extra listeners.
+		action.addPropertyChangeListener(propertyListener);
+		if (action != null) {
+			String commandId = action.getActionDefinitionId();
+			ExternalActionManager.ICallback callback = ExternalActionManager.getInstance().getCallback();
+
+			if ((callback != null) && (commandId != null)) {
+				callback.addPropertyChangeListener(commandId, actionTextListener);
 			}
 		}
 	}
@@ -242,62 +242,62 @@ public class ActionContributionItem extends ContributionItem {
 	 */
 	@Override
 	public void fill(Menu parent, int index) {
-		if (widget == null && parent != null) {
-			int flags = SWT.PUSH;
-			if (action != null) {
-				int style = action.getStyle();
-				switch (style) {
-				case IAction.AS_CHECK_BOX:
-					flags = SWT.CHECK;
-					break;
-				case IAction.AS_RADIO_BUTTON:
-					flags = SWT.RADIO;
-					break;
-				case IAction.AS_DROP_DOWN_MENU:
-					flags = SWT.CASCADE;
-					break;
-				default:
-					break;
-				}
+		if (widget != null || parent == null) {
+			return;
+		}
+
+		int flags = SWT.PUSH;
+		if (action != null) {
+			int style = action.getStyle();
+			switch (style) {
+			case IAction.AS_CHECK_BOX:
+				flags = SWT.CHECK;
+				break;
+			case IAction.AS_RADIO_BUTTON:
+				flags = SWT.RADIO;
+				break;
+			case IAction.AS_DROP_DOWN_MENU:
+				flags = SWT.CASCADE;
+				break;
+			default:
+				break;
 			}
+		}
 
-			MenuItem mi = null;
-			if (index >= 0) {
-				mi = new MenuItem(parent, flags, index);
-			} else {
-				mi = new MenuItem(parent, flags);
-			}
-			widget = mi;
+		MenuItem mi = null;
+		if (index >= 0) {
+			mi = new MenuItem(parent, flags, index);
+		} else {
+			mi = new MenuItem(parent, flags);
+		}
+		widget = mi;
 
-			mi.setData(this);
-			mi.addListener(SWT.Dispose, getMenuItemListener());
-			mi.addListener(SWT.Selection, getMenuItemListener());
-			if (action.getHelpListener() != null) {
-				mi.addHelpListener(action.getHelpListener());
-			}
+		mi.setData(this);
+		mi.addListener(SWT.Dispose, getMenuItemListener());
+		mi.addListener(SWT.Selection, getMenuItemListener());
+		if (action.getHelpListener() != null) {
+			mi.addHelpListener(action.getHelpListener());
+		}
 
-			if (flags == SWT.CASCADE) {
-				// just create a proxy for now, if the user shows it then
-				// fill it in
-				Menu subMenu = new Menu(parent);
-				subMenu.addListener(SWT.Show, getMenuCreatorListener());
-				subMenu.addListener(SWT.Hide, getMenuCreatorListener());
-				mi.setMenu(subMenu);
-			}
+		if (flags == SWT.CASCADE) {
+			// just create a proxy for now, if the user shows it then
+			// fill it in
+			Menu subMenu = new Menu(parent);
+			subMenu.addListener(SWT.Show, getMenuCreatorListener());
+			subMenu.addListener(SWT.Hide, getMenuCreatorListener());
+			mi.setMenu(subMenu);
+		}
 
-			update(null);
+		update(null);
 
-			// Attach some extra listeners.
-			action.addPropertyChangeListener(propertyListener);
-			if (action != null) {
-				String commandId = action.getActionDefinitionId();
-				ExternalActionManager.ICallback callback = ExternalActionManager
-						.getInstance().getCallback();
+		// Attach some extra listeners.
+		action.addPropertyChangeListener(propertyListener);
+		if (action != null) {
+			String commandId = action.getActionDefinitionId();
+			ExternalActionManager.ICallback callback = ExternalActionManager.getInstance().getCallback();
 
-				if ((callback != null) && (commandId != null)) {
-					callback.addPropertyChangeListener(commandId,
-							actionTextListener);
-				}
+			if ((callback != null) && (commandId != null)) {
+				callback.addPropertyChangeListener(commandId, actionTextListener);
 			}
 		}
 	}
@@ -312,53 +312,54 @@ public class ActionContributionItem extends ContributionItem {
 	 */
 	@Override
 	public void fill(ToolBar parent, int index) {
-		if (widget == null && parent != null) {
-			int flags = SWT.PUSH;
-			if (action != null) {
-				int style = action.getStyle();
-				switch (style) {
-				case IAction.AS_CHECK_BOX:
-					flags = SWT.CHECK;
-					break;
-				case IAction.AS_RADIO_BUTTON:
-					flags = SWT.RADIO;
-					break;
-				case IAction.AS_DROP_DOWN_MENU:
-					flags = SWT.DROP_DOWN;
-					break;
-				default:
-					break;
-				}
+		if (widget != null || parent == null) {
+			return;
+		}
+
+		int flags = SWT.PUSH;
+		if (action != null) {
+			int style = action.getStyle();
+			switch (style) {
+			case IAction.AS_CHECK_BOX:
+				flags = SWT.CHECK;
+				break;
+			case IAction.AS_RADIO_BUTTON:
+				flags = SWT.RADIO;
+				break;
+			case IAction.AS_DROP_DOWN_MENU:
+				flags = SWT.DROP_DOWN;
+				break;
+			default:
+				break;
 			}
+		}
 
-			ToolItem ti = null;
-			if (index >= 0) {
-				ti = new ToolItem(parent, flags, index);
-			} else {
-				ti = new ToolItem(parent, flags);
-			}
-			ti.setData(this);
-			ti.addListener(SWT.Selection, getToolItemListener());
-			ti.addListener(SWT.Dispose, getToolItemListener());
+		ToolItem ti = null;
+		if (index >= 0) {
+			ti = new ToolItem(parent, flags, index);
+		} else {
+			ti = new ToolItem(parent, flags);
+		}
+		ti.setData(this);
+		ti.addListener(SWT.Selection, getToolItemListener());
+		ti.addListener(SWT.Dispose, getToolItemListener());
 
-			widget = ti;
+		widget = ti;
 
-			update(null);
+		update(null);
 
-			// Attach some extra listeners.
-			action.addPropertyChangeListener(propertyListener);
-			if (action != null) {
-				String commandId = action.getActionDefinitionId();
-				ExternalActionManager.ICallback callback = ExternalActionManager
-						.getInstance().getCallback();
+		// Attach some extra listeners.
+		action.addPropertyChangeListener(propertyListener);
+		if (action != null) {
+			String commandId = action.getActionDefinitionId();
+			ExternalActionManager.ICallback callback = ExternalActionManager.getInstance().getCallback();
 
-				if ((callback != null) && (commandId != null)) {
-					callback.addPropertyChangeListener(commandId,
-							actionTextListener);
-				}
+			if ((callback != null) && (commandId != null)) {
+				callback.addPropertyChangeListener(commandId, actionTextListener);
 			}
 		}
 	}
+
 
 	/**
 	 * Returns the action associated with this contribution item.
@@ -463,34 +464,32 @@ public class ActionContributionItem extends ContributionItem {
 	 */
 	private void handleWidgetDispose(Event e) {
 		// Check if our widget is the one being disposed.
-		if (e.widget == widget) {
-			// Dispose of the menu creator.
-			if (action.getStyle() == IAction.AS_DROP_DOWN_MENU
-					&& menuCreatorCalled) {
-				IMenuCreator mc = action.getMenuCreator();
-				if (mc != null) {
-					mc.dispose();
-				}
-			}
-
-			// Unhook all of the listeners.
-			action.removePropertyChangeListener(propertyListener);
-			if (action != null) {
-				String commandId = action.getActionDefinitionId();
-				ExternalActionManager.ICallback callback = ExternalActionManager
-						.getInstance().getCallback();
-
-				if ((callback != null) && (commandId != null)) {
-					callback.removePropertyChangeListener(commandId,
-							actionTextListener);
-				}
-			}
-
-			// Clear the widget field.
-			widget = null;
-
-			disposeOldImages();
+		if (e.widget != widget) {
+			return; // Not for us.
 		}
+		// Dispose of the menu creator.
+		if (action.getStyle() == IAction.AS_DROP_DOWN_MENU && menuCreatorCalled) {
+			IMenuCreator mc = action.getMenuCreator();
+			if (mc != null) {
+				mc.dispose();
+			}
+		}
+
+		// Unhook all of the listeners.
+		action.removePropertyChangeListener(propertyListener);
+		if (action != null) {
+			String commandId = action.getActionDefinitionId();
+			ExternalActionManager.ICallback callback = ExternalActionManager.getInstance().getCallback();
+
+			if ((callback != null) && (commandId != null)) {
+				callback.removePropertyChangeListener(commandId, actionTextListener);
+			}
+		}
+
+		// Clear the widget field.
+		widget = null;
+
+		disposeOldImages();
 	}
 
 	/**
@@ -499,110 +498,105 @@ public class ActionContributionItem extends ContributionItem {
 	private void handleWidgetSelection(Event e, boolean selection) {
 
 		Widget item = e.widget;
-		if (item != null) {
-			int style = item.getStyle();
+		if (item == null || item != widget) {
+			return; // Not for us
+		}
+		int style = item.getStyle();
 
-			if ((style & (SWT.TOGGLE | SWT.CHECK)) != 0) {
-				if (action.getStyle() == IAction.AS_CHECK_BOX) {
-					action.setChecked(selection);
-				}
-			} else if ((style & SWT.RADIO) != 0) {
-				if (action.getStyle() == IAction.AS_RADIO_BUTTON) {
-					action.setChecked(selection);
-				}
-			} else if ((style & SWT.DROP_DOWN) != 0) {
-				if (e.detail == 4) { // on drop-down button
-					if (action.getStyle() == IAction.AS_DROP_DOWN_MENU) {
-						IMenuCreator mc = action.getMenuCreator();
-						menuCreatorCalled = true;
-						ToolItem ti = (ToolItem) item;
-						// we create the menu as a sub-menu of "dummy" so that
-						// we can use
-						// it in a cascading menu too.
-						// If created on a SWT control we would get an SWT
-						// error...
-						// Menu dummy= new Menu(ti.getParent());
-						// Menu m= mc.getMenu(dummy);
-						// dummy.dispose();
-						if (mc != null) {
-							Menu m = mc.getMenu(ti.getParent());
-							if (m != null) {
-								// position the menu below the drop down item
-								Point point = ti.getParent().toDisplay(
-										new Point(e.x, e.y));
-								m.setLocation(point.x, point.y); // waiting
-																	// for SWT
-								// 0.42
-								m.setVisible(true);
-								return; // we don't fire the action
-							}
+		if ((style & (SWT.TOGGLE | SWT.CHECK)) != 0) {
+			if (action.getStyle() == IAction.AS_CHECK_BOX) {
+				action.setChecked(selection);
+			}
+		} else if ((style & SWT.RADIO) != 0) {
+			if (action.getStyle() == IAction.AS_RADIO_BUTTON) {
+				action.setChecked(selection);
+			}
+		} else if ((style & SWT.DROP_DOWN) != 0) {
+			if (e.detail == SWT.ARROW) { // on drop-down button
+				if (action.getStyle() == IAction.AS_DROP_DOWN_MENU) {
+					IMenuCreator mc = action.getMenuCreator();
+					menuCreatorCalled = true;
+					ToolItem ti = (ToolItem) item;
+					// we create the menu as a sub-menu of "dummy" so that
+					// we can use
+					// it in a cascading menu too.
+					// If created on a SWT control we would get an SWT
+					// error...
+					// Menu dummy= new Menu(ti.getParent());
+					// Menu m= mc.getMenu(dummy);
+					// dummy.dispose();
+					if (mc != null) {
+						Menu m = mc.getMenu(ti.getParent());
+						if (m != null) {
+							// position the menu below the drop down item
+							Point point = ti.getParent().toDisplay(new Point(e.x, e.y));
+							m.setLocation(point.x, point.y); // waiting
+																// for SWT
+							// 0.42
+							m.setVisible(true);
+							return; // we don't fire the action
 						}
 					}
 				}
 			}
+		}
 
-			ExternalActionManager.IExecuteCallback callback = null;
-			String actionDefinitionId = action.getActionDefinitionId();
-			if (actionDefinitionId != null) {
-				Object obj = ExternalActionManager.getInstance()
-						.getCallback();
-				if (obj instanceof ExternalActionManager.IExecuteCallback) {
-					callback = (ExternalActionManager.IExecuteCallback) obj;
+		ExternalActionManager.IExecuteCallback callback = null;
+		String actionDefinitionId = action.getActionDefinitionId();
+		if (actionDefinitionId != null) {
+			Object obj = ExternalActionManager.getInstance().getCallback();
+			if (obj instanceof ExternalActionManager.IExecuteCallback) {
+				callback = (ExternalActionManager.IExecuteCallback) obj;
+			}
+		}
+
+		// Ensure action is enabled first.
+		// See 1GAN3M6: ITPUI:WINNT - Any IAction in the workbench can be
+		// executed while disabled.
+		if (action.isEnabled()) {
+			boolean trace = Policy.TRACE_ACTIONS;
+
+			long ms = 0L;
+			if (trace) {
+				ms = System.currentTimeMillis();
+				System.out.println("Running action: " + action.getText()); //$NON-NLS-1$
+			}
+
+			IPropertyChangeListener resultListener = null;
+			if (callback != null) {
+				resultListener = event -> {
+					// Check on result
+					if (event.getProperty().equals(IAction.RESULT)) {
+						if (event.getNewValue() instanceof Boolean) {
+							result = (Boolean) event.getNewValue();
+						}
+					}
+				};
+				action.addPropertyChangeListener(resultListener);
+				callback.preExecute(action, e);
+			}
+
+			action.runWithEvent(e);
+
+			if (callback != null) {
+				if (result == null || result.equals(Boolean.TRUE)) {
+					callback.postExecuteSuccess(action, Boolean.TRUE);
+				} else {
+					callback.postExecuteFailure(action,
+							new ExecutionException(action.getText() + " returned failure.")); //$NON-NLS-1$
 				}
 			}
 
-			// Ensure action is enabled first.
-			// See 1GAN3M6: ITPUI:WINNT - Any IAction in the workbench can be
-			// executed while disabled.
-			if (action.isEnabled()) {
-				boolean trace = Policy.TRACE_ACTIONS;
-
-				long ms = 0L;
-				if (trace) {
-					ms = System.currentTimeMillis();
-					System.out.println("Running action: " + action.getText()); //$NON-NLS-1$
-				}
-
-				IPropertyChangeListener resultListener = null;
-				if (callback != null) {
-					resultListener = event -> {
-						// Check on result
-						if (event.getProperty().equals(IAction.RESULT)) {
-							if (event.getNewValue() instanceof Boolean) {
-								result = (Boolean) event.getNewValue();
-							}
-						}
-					};
-					action.addPropertyChangeListener(resultListener);
-					callback.preExecute(action, e);
-				}
-
-				action.runWithEvent(e);
-
-				if (callback != null) {
-					if (result == null || result.equals(Boolean.TRUE)) {
-						callback.postExecuteSuccess(action, Boolean.TRUE);
-					} else {
-						callback.postExecuteFailure(action,
-								new ExecutionException(action.getText()
-										+ " returned failure.")); //$NON-NLS-1$
-					}
-				}
-
-				if (resultListener!=null) {
-					result = null;
-					action.removePropertyChangeListener(resultListener);
-				}
-				if (trace) {
-					System.out.println((System.currentTimeMillis() - ms)
-							+ " ms to run action: " + action.getText()); //$NON-NLS-1$
-				}
-			} else {
-				if (callback != null) {
-					callback.notEnabled(action, new NotEnabledException(action
-							.getText()
-							+ " is not enabled.")); //$NON-NLS-1$
-				}
+			if (resultListener != null) {
+				result = null;
+				action.removePropertyChangeListener(resultListener);
+			}
+			if (trace) {
+				System.out.println((System.currentTimeMillis() - ms) + " ms to run action: " + action.getText()); //$NON-NLS-1$
+			}
+		} else {
+			if (callback != null) {
+				callback.notEnabled(action, new NotEnabledException(action.getText() + " is not enabled.")); //$NON-NLS-1$
 			}
 		}
 	}
@@ -729,278 +723,251 @@ public class ActionContributionItem extends ContributionItem {
 	 */
 	@Override
 	public void update(String propertyName) {
-		if (widget != null) {
-			// determine what to do
-			boolean textChanged = propertyName == null
-					|| propertyName.equals(IAction.TEXT);
-			boolean imageChanged = propertyName == null
-					|| propertyName.equals(IAction.IMAGE);
-			boolean tooltipTextChanged = propertyName == null
-					|| propertyName.equals(IAction.TOOL_TIP_TEXT);
-			boolean enableStateChanged = propertyName == null
-					|| propertyName.equals(IAction.ENABLED)
-					|| propertyName
-							.equals(IContributionManagerOverrides.P_ENABLED);
-			boolean checkChanged = (action.getStyle() == IAction.AS_CHECK_BOX || action
-					.getStyle() == IAction.AS_RADIO_BUTTON)
-					&& (propertyName == null || propertyName
-							.equals(IAction.CHECKED));
+		if (widget == null) {
+			return;
+		}
 
-			if (widget instanceof ToolItem) {
-				ToolItem ti = (ToolItem) widget;
-				String text = action.getText();
-				// the set text is shown only if there is no image or if forced
-				// by MODE_FORCE_TEXT
-				boolean showText = text != null
-						&& ((getMode() & MODE_FORCE_TEXT) != 0 || !hasImages(action));
+		// determine what to do
+		boolean textChanged = propertyName == null || propertyName.equals(IAction.TEXT);
+		boolean imageChanged = propertyName == null || propertyName.equals(IAction.IMAGE);
+		boolean tooltipTextChanged = propertyName == null || propertyName.equals(IAction.TOOL_TIP_TEXT);
+		boolean enableStateChanged = propertyName == null || propertyName.equals(IAction.ENABLED)
+				|| propertyName.equals(IContributionManagerOverrides.P_ENABLED);
+		boolean checkChanged = (action.getStyle() == IAction.AS_CHECK_BOX
+				|| action.getStyle() == IAction.AS_RADIO_BUTTON)
+				&& (propertyName == null || propertyName.equals(IAction.CHECKED));
 
-				// only do the trimming if the text will be used
-				if (showText && text != null) {
-					text = Action.removeAcceleratorText(text);
-					text = Action.removeMnemonics(text);
-				}
+		if (widget instanceof ToolItem) {
+			ToolItem ti = (ToolItem) widget;
+			String text = action.getText();
+			// the set text is shown only if there is no image or if forced
+			// by MODE_FORCE_TEXT
+			boolean showText = text != null && ((getMode() & MODE_FORCE_TEXT) != 0 || !hasImages(action));
 
-				if (textChanged) {
-					String textToSet = showText ? text : ""; //$NON-NLS-1$
-					boolean rightStyle = (ti.getParent().getStyle() & SWT.RIGHT) != 0;
-					if (rightStyle || !ti.getText().equals(textToSet)) {
-						// In addition to being required to update the text if
-						// it
-						// gets nulled out in the action, this is also a
-						// workaround
-						// for bug 50151: Using SWT.RIGHT on a ToolBar leaves
-						// blank space
-						ti.setText(textToSet);
-					}
-				}
-
-				if (imageChanged) {
-					// only substitute a missing image if it has no text
-					updateImages(!showText);
-				}
-
-				if (tooltipTextChanged || textChanged) {
-					String toolTip = action.getToolTipText();
-					if ((toolTip == null) || (toolTip.length() == 0)) {
-						toolTip = text;
-					}
-
-					ExternalActionManager.ICallback callback = ExternalActionManager
-							.getInstance().getCallback();
-					String commandId = action.getActionDefinitionId();
-					if ((callback != null) && (commandId != null)
-							&& (toolTip != null)) {
-						String acceleratorText = callback
-								.getAcceleratorText(commandId);
-						if (acceleratorText != null
-								&& acceleratorText.length() != 0) {
-							toolTip = JFaceResources.format(
-									"Toolbar_Tooltip_Accelerator", //$NON-NLS-1$
-									toolTip, acceleratorText);
-						}
-					}
-
-					// if the text is showing, then only set the tooltip if
-					// different
-					if (!showText || toolTip != null && !toolTip.equals(text)) {
-						ti.setToolTipText(toolTip);
-					} else {
-						ti.setToolTipText(null);
-					}
-				}
-
-				if (enableStateChanged) {
-					boolean shouldBeEnabled = action.isEnabled()
-							&& isEnabledAllowed();
-
-					if (ti.getEnabled() != shouldBeEnabled) {
-						ti.setEnabled(shouldBeEnabled);
-					}
-				}
-
-				if (checkChanged) {
-					boolean bv = action.isChecked();
-
-					if (ti.getSelection() != bv) {
-						ti.setSelection(bv);
-					}
-				}
-				return;
+			// only do the trimming if the text will be used
+			if (showText && text != null) {
+				text = Action.removeAcceleratorText(text);
+				text = Action.removeMnemonics(text);
 			}
 
-			if (widget instanceof MenuItem) {
-				MenuItem mi = (MenuItem) widget;
+			if (textChanged) {
+				String textToSet = showText ? text : ""; //$NON-NLS-1$
+				boolean rightStyle = (ti.getParent().getStyle() & SWT.RIGHT) != 0;
+				if (rightStyle || !ti.getText().equals(textToSet)) {
+					// In addition to being required to update the text if
+					// it
+					// gets nulled out in the action, this is also a
+					// workaround
+					// for bug 50151: Using SWT.RIGHT on a ToolBar leaves
+					// blank space
+					ti.setText(textToSet);
+				}
+			}
 
-				if (textChanged) {
-					int accelerator = 0;
-					String acceleratorText = null;
-					IAction updatedAction = getAction();
-					String text = null;
-					accelerator = updatedAction.getAccelerator();
-					ExternalActionManager.ICallback callback = ExternalActionManager
-							.getInstance().getCallback();
+			if (imageChanged) {
+				// only substitute a missing image if it has no text
+				updateImages(!showText);
+			}
 
-					// Block accelerators that are already in use.
-					if ((accelerator != 0) && (callback != null)
-							&& (callback.isAcceleratorInUse(accelerator))) {
-						accelerator = 0;
+			if (tooltipTextChanged || textChanged) {
+				String toolTip = action.getToolTipText();
+				if ((toolTip == null) || (toolTip.length() == 0)) {
+					toolTip = text;
+				}
+
+				ExternalActionManager.ICallback callback = ExternalActionManager.getInstance().getCallback();
+				String commandId = action.getActionDefinitionId();
+				if ((callback != null) && (commandId != null) && (toolTip != null)) {
+					String acceleratorText = callback.getAcceleratorText(commandId);
+					if (acceleratorText != null && acceleratorText.length() != 0) {
+						toolTip = JFaceResources.format("Toolbar_Tooltip_Accelerator", //$NON-NLS-1$
+								toolTip, acceleratorText);
 					}
+				}
 
-					/*
-					 * Process accelerators on GTK in a special way to avoid Bug
-					 * 42009. We will override the native input method by
-					 * allowing these reserved accelerators to be placed on the
-					 * menu. We will only do this for "Ctrl+Shift+[0-9A-FU]".
-					 */
-					final String commandId = updatedAction
-							.getActionDefinitionId();
-					if ((Util.isGtk()) && (callback instanceof IBindingManagerCallback)
-							&& (commandId != null)) {
-						final IBindingManagerCallback bindingManagerCallback = (IBindingManagerCallback) callback;
-						final IKeyLookup lookup = KeyLookupFactory.getDefault();
-						final TriggerSequence[] triggerSequences = bindingManagerCallback
-								.getActiveBindingsFor(commandId);
-						for (final TriggerSequence triggerSequence : triggerSequences) {
-							final Trigger[] triggers = triggerSequence
-									.getTriggers();
-							if (triggers.length == 1) {
-								final Trigger trigger = triggers[0];
-								if (trigger instanceof KeyStroke) {
-									final KeyStroke currentKeyStroke = (KeyStroke) trigger;
-									final int currentNaturalKey = currentKeyStroke
-											.getNaturalKey();
-									if ((currentKeyStroke.getModifierKeys() == (lookup
-											.getCtrl() | lookup.getShift()))
-											&& ((currentNaturalKey >= '0' && currentNaturalKey <= '9')
-													|| (currentNaturalKey >= 'A' && currentNaturalKey <= 'F') || (currentNaturalKey == 'U'))) {
-										accelerator = currentKeyStroke
-												.getModifierKeys()
-												| currentNaturalKey;
-										acceleratorText = triggerSequence
-												.format();
-										break;
-									}
+				// if the text is showing, then only set the tooltip if
+				// different
+				if (!showText || toolTip != null && !toolTip.equals(text)) {
+					ti.setToolTipText(toolTip);
+				} else {
+					ti.setToolTipText(null);
+				}
+			}
+
+			if (enableStateChanged) {
+				boolean shouldBeEnabled = action.isEnabled() && isEnabledAllowed();
+
+				if (ti.getEnabled() != shouldBeEnabled) {
+					ti.setEnabled(shouldBeEnabled);
+				}
+			}
+
+			if (checkChanged) {
+				boolean bv = action.isChecked();
+
+				if (ti.getSelection() != bv) {
+					ti.setSelection(bv);
+				}
+			}
+			return;
+		}
+
+		if (widget instanceof MenuItem) {
+			MenuItem mi = (MenuItem) widget;
+
+			if (textChanged) {
+				int accelerator = 0;
+				String acceleratorText = null;
+				IAction updatedAction = getAction();
+				String text = null;
+				accelerator = updatedAction.getAccelerator();
+				ExternalActionManager.ICallback callback = ExternalActionManager.getInstance().getCallback();
+
+				// Block accelerators that are already in use.
+				if ((accelerator != 0) && (callback != null) && (callback.isAcceleratorInUse(accelerator))) {
+					accelerator = 0;
+				}
+
+				/*
+				 * Process accelerators on GTK in a special way to avoid Bug 42009. We will
+				 * override the native input method by allowing these reserved accelerators to
+				 * be placed on the menu. We will only do this for "Ctrl+Shift+[0-9A-FU]".
+				 */
+				final String commandId = updatedAction.getActionDefinitionId();
+				if ((Util.isGtk()) && (callback instanceof IBindingManagerCallback) && (commandId != null)) {
+					final IBindingManagerCallback bindingManagerCallback = (IBindingManagerCallback) callback;
+					final IKeyLookup lookup = KeyLookupFactory.getDefault();
+					final TriggerSequence[] triggerSequences = bindingManagerCallback.getActiveBindingsFor(commandId);
+					for (final TriggerSequence triggerSequence : triggerSequences) {
+						final Trigger[] triggers = triggerSequence.getTriggers();
+						if (triggers.length == 1) {
+							final Trigger trigger = triggers[0];
+							if (trigger instanceof KeyStroke) {
+								final KeyStroke currentKeyStroke = (KeyStroke) trigger;
+								final int currentNaturalKey = currentKeyStroke.getNaturalKey();
+								if ((currentKeyStroke.getModifierKeys() == (lookup.getCtrl() | lookup.getShift()))
+										&& ((currentNaturalKey >= '0' && currentNaturalKey <= '9')
+												|| (currentNaturalKey >= 'A' && currentNaturalKey <= 'F')
+												|| (currentNaturalKey == 'U'))) {
+									accelerator = currentKeyStroke.getModifierKeys() | currentNaturalKey;
+									acceleratorText = triggerSequence.format();
+									break;
 								}
 							}
 						}
 					}
+				}
 
-					if (accelerator == 0) {
-						if ((callback != null) && (commandId != null)) {
-							acceleratorText = callback
-									.getAcceleratorText(commandId);
-						}
-					}
-
-					IContributionManagerOverrides overrides = null;
-
-					if (getParent() != null) {
-						overrides = getParent().getOverrides();
-					}
-
-					if (overrides != null) {
-						text = getParent().getOverrides().getText(this);
-					}
-
-					mi.setAccelerator(accelerator);
-
-					if (text == null) {
-						text = updatedAction.getText();
-					}
-
-					if (text != null && acceleratorText == null) {
-						// use extracted accelerator text in case accelerator
-						// cannot be fully represented in one int (e.g.
-						// multi-stroke keys)
-						acceleratorText = LegacyActionTools
-								.extractAcceleratorText(text);
-						if (acceleratorText == null && accelerator != 0) {
-							acceleratorText = Action
-									.convertAccelerator(accelerator);
-						}
-					}
-
-					if (text == null) {
-						text = ""; //$NON-NLS-1$
-					} else {
-						text = Action.removeAcceleratorText(text);
-					}
-
-					if (acceleratorText == null) {
-						mi.setText(text);
-					} else {
-						mi.setText(text + '\t' + acceleratorText);
+				if (accelerator == 0) {
+					if ((callback != null) && (commandId != null)) {
+						acceleratorText = callback.getAcceleratorText(commandId);
 					}
 				}
 
-				if (tooltipTextChanged) {
-					mi.setToolTipText(action.getToolTipText());
+				IContributionManagerOverrides overrides = null;
+
+				if (getParent() != null) {
+					overrides = getParent().getOverrides();
 				}
 
-				if (imageChanged) {
-					updateImages(false);
+				if (overrides != null) {
+					text = getParent().getOverrides().getText(this);
 				}
 
-				if (enableStateChanged) {
-					boolean shouldBeEnabled = action.isEnabled()
-							&& isEnabledAllowed();
+				mi.setAccelerator(accelerator);
 
-					if (mi.getEnabled() != shouldBeEnabled) {
-						mi.setEnabled(shouldBeEnabled);
+				if (text == null) {
+					text = updatedAction.getText();
+				}
+
+				if (text != null && acceleratorText == null) {
+					// use extracted accelerator text in case accelerator
+					// cannot be fully represented in one int (e.g.
+					// multi-stroke keys)
+					acceleratorText = LegacyActionTools.extractAcceleratorText(text);
+					if (acceleratorText == null && accelerator != 0) {
+						acceleratorText = Action.convertAccelerator(accelerator);
 					}
 				}
 
-				if (checkChanged) {
-					boolean bv = action.isChecked();
-
-					if (mi.getSelection() != bv) {
-						mi.setSelection(bv);
-					}
+				if (text == null) {
+					text = ""; //$NON-NLS-1$
+				} else {
+					text = Action.removeAcceleratorText(text);
 				}
 
-				return;
+				if (acceleratorText == null) {
+					mi.setText(text);
+				} else {
+					mi.setText(text + '\t' + acceleratorText);
+				}
 			}
 
-			if (widget instanceof Button) {
-				Button button = (Button) widget;
-
-				if (imageChanged) {
-					updateImages(false);
-				}
-
-				if (textChanged) {
-					String text = action.getText();
-					boolean showText = text != null && ((getMode() & MODE_FORCE_TEXT) != 0 || !hasImages(action));
-					// only do the trimming if the text will be used
-					if (showText) {
-						text = Action.removeAcceleratorText(text);
-					}
-					String textToSet = showText ? text : ""; //$NON-NLS-1$
-					button.setText(textToSet);
-				}
-
-				if (tooltipTextChanged) {
-					button.setToolTipText(action.getToolTipText());
-				}
-
-				if (enableStateChanged) {
-					boolean shouldBeEnabled = action.isEnabled()
-							&& isEnabledAllowed();
-
-					if (button.getEnabled() != shouldBeEnabled) {
-						button.setEnabled(shouldBeEnabled);
-					}
-				}
-
-				if (checkChanged) {
-					boolean bv = action.isChecked();
-
-					if (button.getSelection() != bv) {
-						button.setSelection(bv);
-					}
-				}
-				return;
+			if (tooltipTextChanged) {
+				mi.setToolTipText(action.getToolTipText());
 			}
+
+			if (imageChanged) {
+				updateImages(false);
+			}
+
+			if (enableStateChanged) {
+				boolean shouldBeEnabled = action.isEnabled() && isEnabledAllowed();
+
+				if (mi.getEnabled() != shouldBeEnabled) {
+					mi.setEnabled(shouldBeEnabled);
+				}
+			}
+
+			if (checkChanged) {
+				boolean bv = action.isChecked();
+
+				if (mi.getSelection() != bv) {
+					mi.setSelection(bv);
+				}
+			}
+
+			return;
+		}
+
+		if (widget instanceof Button) {
+			Button button = (Button) widget;
+
+			if (imageChanged) {
+				updateImages(false);
+			}
+
+			if (textChanged) {
+				String text = action.getText();
+				boolean showText = text != null && ((getMode() & MODE_FORCE_TEXT) != 0 || !hasImages(action));
+				// only do the trimming if the text will be used
+				if (showText) {
+					text = Action.removeAcceleratorText(text);
+				}
+				String textToSet = showText ? text : ""; //$NON-NLS-1$
+				button.setText(textToSet);
+			}
+
+			if (tooltipTextChanged) {
+				button.setToolTipText(action.getToolTipText());
+			}
+
+			if (enableStateChanged) {
+				boolean shouldBeEnabled = action.isEnabled() && isEnabledAllowed();
+
+				if (button.getEnabled() != shouldBeEnabled) {
+					button.setEnabled(shouldBeEnabled);
+				}
+			}
+
+			if (checkChanged) {
+				boolean bv = action.isChecked();
+
+				if (button.getSelection() != bv) {
+					button.setSelection(bv);
+				}
+			}
+			return;
 		}
 	}
 
