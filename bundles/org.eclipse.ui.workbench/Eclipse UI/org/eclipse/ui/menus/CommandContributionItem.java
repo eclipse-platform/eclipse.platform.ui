@@ -521,6 +521,8 @@ public class CommandContributionItem extends ContributionItem {
 			}
 		}
 
+		item.setToolTipText(tooltip);
+
 		if (item.getSelection() != checkedState) {
 			item.setSelection(checkedState);
 		}
