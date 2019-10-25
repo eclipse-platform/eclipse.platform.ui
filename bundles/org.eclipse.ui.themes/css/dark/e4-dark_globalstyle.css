@@ -125,8 +125,10 @@ Text[style~='SWT.DROP_DOWN']{
 Text[style~='SWT.SEARCH'],
 Text[style~='SWT.SEARCH'] + Label /* SWT-BUG: adjacent sibling selector is ignored (CSS2.1) */ {
     /* search boxes */
-    background-color: #757575; /* background-color is hard-coded */
+    background-color: #333;
+    color: #F4F7F7;
 }
+
 Text[style~='SWT.POP_UP'] {
     background-color: #34383B;
     color: #dddddd;

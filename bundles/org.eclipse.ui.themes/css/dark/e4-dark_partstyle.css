@@ -233,13 +233,6 @@
 
 /* ------------------------------------------------------------- */
 
-#org-eclipse-pde-runtime-LogView Text {
-    background-color: #333;
-    color: #F4F7F7;
-}
-
-/* ------------------------------------------------------------- */
-
 #org-eclipse-pde-ui-TargetPlatformState PageBook > Composite > * {
     background-color: #2F2F2F;
     color: #CCC;
