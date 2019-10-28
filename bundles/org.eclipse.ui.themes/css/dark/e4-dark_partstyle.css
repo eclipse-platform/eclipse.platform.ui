@@ -148,10 +148,8 @@
 
 .MPart DatePicker,
 .MPart DatePicker > Text,
-.MPart DatePicker > ImageHyperlink,
 .MPart ScheduleDatePicker,
 .MPart ScheduleDatePicker > Text,
-.MPart ScheduleDatePicker > ImageHyperlink,
 .MPart CCombo,
 .MPart Spinner,
 .MPart Composite > StyledText,
@@ -162,10 +160,8 @@
 }
 .MPartStack.active .MPart DatePicker,
 .MPartStack.active .MPart DatePicker > Text,
-.MPartStack.active .MPart DatePicker > ImageHyperlink,
 .MPartStack.active .MPart ScheduleDatePicker,
 .MPartStack.active .MPart ScheduleDatePicker > Text,
-.MPartStack.active .MPart ScheduleDatePicker > ImageHyperlink,
 .MPartStack.active .MPart CCombo,
 .MPartStack.active .MPart Spinner,
 .MPartStack.active .MPart Composite > StyledText,

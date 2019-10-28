@@ -145,10 +145,8 @@ Text[style~='SWT.READ_ONLY'] {
 
 DatePicker,
 DatePicker > Text,
-DatePicker > ImageHyperlink,
 ScheduleDatePicker,
-ScheduleDatePicker > Text,
-ScheduleDatePicker > ImageHyperlink {
+ScheduleDatePicker > Text {
     background-color:#515658;
     color:#eeeeee;
 }
@@ -239,6 +237,12 @@ Shell[style~='SWT.DROP_DOWN'][style~='SWT.SHADOW_IN'][style~='SWT.SHADOW_ETCHED_
     background-color: #2F2F2F;
     color: #CCC;
 }
+
+Hyperlink,
+ImageHyperlink {
+    color: #6fc5ee;
+}
+
 
 ViewerPane,
 DrillDownComposite {
