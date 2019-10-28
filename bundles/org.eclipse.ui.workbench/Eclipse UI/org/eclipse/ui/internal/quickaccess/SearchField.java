@@ -19,6 +19,9 @@
  ******************************************************************************/
 package org.eclipse.ui.internal.quickaccess;
 
+import static org.eclipse.swt.events.MenuListener.menuHiddenAdapter;
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
+
 import java.util.Arrays;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -33,23 +36,31 @@ import org.eclipse.e4.ui.bindings.internal.ContextSet;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.Point;
+import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandImageService;
 import org.eclipse.ui.contexts.IContextService;
-import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.internal.IPreferenceConstants;
+import org.eclipse.ui.internal.WorkbenchMessages;
+import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.keys.IBindingService;
 
 public class SearchField {
@@ -133,24 +144,63 @@ public class SearchField {
 
 		ToolItem quickAccessToolItem = new ToolItem(toolbar, SWT.PUSH);
 
-		try {
-			quickAccessToolItem.setText(quickAccessCommand.getName());
-		} catch (NotDefinedException e) {
-			WorkbenchPlugin.log(e);
+		if (PrefUtil.getAPIPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_TEXT_ON_QUICK_ACCESS)) {
+				changeShowText(true, quickAccessToolItem);
 		}
+
 		ImageDescriptor imageDescriptor = commandImageService.getImageDescriptor(quickAccessCommand.getId());
 		if (imageDescriptor != null) {
 			Image image = imageDescriptor.createImage();
 			quickAccessToolItem.setImage(image);
 			quickAccessToolItem.addDisposeListener(e -> image.dispose());
 		}
-		toolbar.addMenuDetectListener(e -> {
-			if (toolbar.getMenu() == null) {
-				toolbar.setMenu(parent.getMenu());
-				e.doit = true;
-			}
+		toolbar.addMenuDetectListener(event -> {
+			openMenuFor(toolbar, quickAccessToolItem);
 		});
 		return quickAccessToolItem;
+	}
+
+	private void openMenuFor(ToolBar toolBar, ToolItem quickAccessToolItem) {
+		Menu menu = new Menu(toolBar);
+
+		new MenuItem(menu, SWT.SEPARATOR);
+		addShowTextItem(menu, quickAccessToolItem);
+
+		Rectangle bounds = toolBar.getBounds();
+		Point point = toolBar.toDisplay(bounds.x, bounds.y + bounds.height);
+		menu.setLocation(point.x, point.y);
+		menu.setVisible(true);
+		menu.addMenuListener(menuHiddenAdapter(e -> toolBar.getDisplay().asyncExec(menu::dispose)));
+	}
+
+	private void addShowTextItem(Menu menu, ToolItem quickAccessToolItem) {
+		MenuItem showtextMenuItem = new MenuItem(menu, SWT.CHECK);
+		showtextMenuItem.setText(WorkbenchMessages.PerspectiveBar_showText);
+		IPreferenceStore apiPreferenceStore = PrefUtil.getAPIPreferenceStore();
+		showtextMenuItem.addSelectionListener(widgetSelectedAdapter(e -> {
+			boolean preference = showtextMenuItem.getSelection();
+			if (preference != apiPreferenceStore
+					.getDefaultBoolean(IWorkbenchPreferenceConstants.SHOW_TEXT_ON_QUICK_ACCESS)) {
+				PrefUtil.getInternalPreferenceStore().setValue(IPreferenceConstants.OVERRIDE_PRESENTATION, true);
+			}
+			apiPreferenceStore.setValue(IWorkbenchPreferenceConstants.SHOW_TEXT_ON_QUICK_ACCESS, preference);
+			changeShowText(preference, quickAccessToolItem);
+		}));
+		showtextMenuItem
+				.setSelection(apiPreferenceStore.getBoolean(IWorkbenchPreferenceConstants.SHOW_TEXT_ON_QUICK_ACCESS));
+	}
+
+	private void changeShowText(boolean showText, ToolItem quickAccessToolItem) {
+		if (showText) {
+			try {
+				quickAccessToolItem.setText(quickAccessCommand.getName());
+			} catch (NotDefinedException e) {
+				e.printStackTrace();
+			}
+		} else {
+			quickAccessToolItem.setText(""); //$NON-NLS-1$
+		}
+		quickAccessButton.getParent().requestLayout();
 	}
 
 	private void updateQuickAccessText() {

@@ -277,6 +277,22 @@ public interface IWorkbenchPreferenceConstants {
 	String SHOW_TEXT_ON_PERSPECTIVE_BAR = "SHOW_TEXT_ON_PERSPECTIVE_BAR"; //$NON-NLS-1$
 
 	/**
+	 * A named preference for whether the workbench should show text on the find
+	 * actions bar.
+	 *
+	 * Boolean-valued: <code>true</code>, if the application should show text on the
+	 * find action bar, <code>false</code> otherwise.
+	 * <p>
+	 * The default value for this preference is: <code>false</code> (do not show
+	 * text on the find actions bar)
+	 * </p>
+	 *
+	 * @since 3.117
+	 */
+
+	String SHOW_TEXT_ON_QUICK_ACCESS = "SHOW_TEXT_ON_QUICK_ACCESS"; //$NON-NLS-1$
+
+	/**
 	 * A named preference for whether the workbench should show the "open
 	 * perspective" button on the perspective bar.
 	 *

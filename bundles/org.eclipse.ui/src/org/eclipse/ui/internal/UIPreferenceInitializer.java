@@ -78,6 +78,8 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 				IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR,
 				false);
 		node.putBoolean(
+				IWorkbenchPreferenceConstants.SHOW_TEXT_ON_QUICK_ACCESS, false);
+		node.putBoolean(
 				IWorkbenchPreferenceConstants.SHOW_OTHER_IN_PERSPECTIVE_MENU,
 				true);
 		node.putBoolean(
