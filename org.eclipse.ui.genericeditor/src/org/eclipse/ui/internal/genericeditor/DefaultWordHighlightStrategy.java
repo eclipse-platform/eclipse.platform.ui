@@ -105,18 +105,22 @@ public class DefaultWordHighlightStrategy implements IReconcilingStrategy, IReco
 		}
 
 		IAnnotationModel annotationModel = sourceViewer.getAnnotationModel();
-		synchronized (getLockObject(annotationModel)) {
-			if (annotationModel instanceof IAnnotationModelExtension) {
-				((IAnnotationModelExtension) annotationModel).replaceAnnotations(fOccurrenceAnnotations, annotationMap);
-			} else {
-				removeOccurrenceAnnotations();
-				Iterator<Entry<Annotation, Position>> iter = annotationMap.entrySet().iterator();
-				while (iter.hasNext()) {
-					Entry<Annotation, Position> mapEntry = iter.next();
-					annotationModel.addAnnotation(mapEntry.getKey(), mapEntry.getValue());
+		if (annotationModel != null) {
+			synchronized (getLockObject(annotationModel)) {
+				if (annotationModel instanceof IAnnotationModelExtension) {
+					((IAnnotationModelExtension) annotationModel).replaceAnnotations(fOccurrenceAnnotations, annotationMap);
+				} else {
+					removeOccurrenceAnnotations();
+					Iterator<Entry<Annotation, Position>> iter = annotationMap.entrySet().iterator();
+					while (iter.hasNext()) {
+						Entry<Annotation, Position> mapEntry = iter.next();
+						annotationModel.addAnnotation(mapEntry.getKey(), mapEntry.getValue());
+					}
 				}
+				fOccurrenceAnnotations = annotationMap.keySet().toArray(new Annotation[annotationMap.keySet().size()]);
 			}
-			fOccurrenceAnnotations = annotationMap.keySet().toArray(new Annotation[annotationMap.keySet().size()]);
+		} else {
+			fOccurrenceAnnotations = null;
 		}
 	}
 
