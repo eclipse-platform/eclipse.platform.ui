@@ -15,7 +15,6 @@
 package org.eclipse.ui.tests.menus;
 
 import java.lang.reflect.Field;
-import java.util.List;
 
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
@@ -23,7 +22,10 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.renderers.swt.HandledContributionItem;
+import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRenderer;
+import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.GroupMarker;
@@ -132,46 +134,6 @@ public class MenuPopulationTest extends MenuTestCase {
 		}
 	}
 
-	public void testMenuServicePopupReuse_Bug549818() throws Exception {
-
-		PopupMenuExtender popupMenuExtender1 = null;
-		PopupMenuExtender popupMenuExtender2 = null;
-		try {
-
-			window.getActivePage().showView(IPageLayout.ID_PROBLEM_VIEW);
-
-			processEventsUntil(new Condition() {
-				@Override
-				public boolean compute() {
-					return window.getActivePage().getActivePart() != null;
-				}
-			}, 10000);
-
-			IWorkbenchPart problemsView = window.getActivePage().getActivePart();
-			assertNotNull(problemsView);
-
-			List<MMenu> menus = problemsView.getSite().getService(MPart.class).getMenus();
-			int before = menus.size();
-
-			String testId = "org.eclipse.ui.tests.menus.bug549818";
-			MenuManager manager1 = new MenuManager();
-			MenuManager manager2 = new MenuManager();
-
-			popupMenuExtender1 = new PopupMenuExtender(testId, manager1, null, problemsView, null, false);
-			popupMenuExtender2 = new PopupMenuExtender(testId, manager2, null, problemsView, null, false);
-
-			assertEquals(before + 1, menus.size());
-
-		} finally {
-			if (popupMenuExtender1 != null) {
-				popupMenuExtender1.dispose();
-			}
-			if (popupMenuExtender2 != null) {
-				popupMenuExtender2.dispose();
-			}
-		}
-	}
-
 	// @Ignore("See Bugs 411765 and 452203")
 	public void XXXtestMenuServiceContribution() {
 		IMenuService ms = PlatformUI.getWorkbench().getService(IMenuService.class);
@@ -235,6 +197,61 @@ public class MenuPopulationTest extends MenuTestCase {
 		assertEquals(found, added);
 	}
 
+
+	public void test_1_1_RelationshipInMenuManagerRenderer_Bug552361() throws Exception {
+
+		PopupMenuExtender popupMenuExtender1 = null;
+		PopupMenuExtender popupMenuExtender2 = null;
+		try {
+
+			window.getActivePage().showView(IPageLayout.ID_PROBLEM_VIEW);
+
+			processEventsUntil(new Condition() {
+				@Override
+				public boolean compute() {
+					return window.getActivePage().getActivePart() != null;
+				}
+			}, 10000);
+
+			IWorkbenchPart problemsView = window.getActivePage().getActivePart();
+			assertNotNull(problemsView);
+
+			String testId = "org.eclipse.ui.tests.menus.bug552361";
+
+			MPart modelPart = problemsView.getSite().getService(MPart.class);
+			IRendererFactory factory = modelPart.getContext().get(IRendererFactory.class);
+			MenuManagerRenderer renderer = (MenuManagerRenderer) factory
+					.getRenderer(MenuFactoryImpl.eINSTANCE.createPopupMenu(), null);
+
+			MenuManager manager1 = new MenuManager();
+			MenuManager manager2 = new MenuManager();
+
+			MMenu menuModel1 = renderer.getMenuModel(manager1);
+			MMenu menuModel2 = renderer.getMenuModel(manager2);
+
+			assertNull(menuModel1);
+			assertNull(menuModel2);
+
+			popupMenuExtender1 = new PopupMenuExtender(testId, manager1, null, problemsView, null, false);
+			popupMenuExtender2 = new PopupMenuExtender(testId, manager2, null, problemsView, null, false);
+
+			menuModel1 = renderer.getMenuModel(manager1);
+			menuModel2 = renderer.getMenuModel(manager2);
+
+			assertNotNull(menuModel1);
+			assertNotNull(menuModel2);
+			assertSame(manager1, renderer.getManager(menuModel1));
+			assertSame(manager2, renderer.getManager(menuModel2));
+
+		} finally {
+			if (popupMenuExtender1 != null) {
+				popupMenuExtender1.dispose();
+			}
+			if (popupMenuExtender2 != null) {
+				popupMenuExtender2.dispose();
+			}
+		}
+	}
 
 	public void testViewPopulation() throws Exception {
 		MenuManager manager = new MenuManager(null, TEST_CONTRIBUTIONS_CACHE_ID);

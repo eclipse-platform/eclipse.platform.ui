@@ -22,7 +22,6 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionDelta;
@@ -77,12 +76,6 @@ public class PopupMenuExtender implements IMenuListener2, IRegistryChangeListene
 	 * included for the sake of object contributions.
 	 */
 	private static final int INCLUDE_EDITOR_INPUT = 1 << 1;
-
-	/**
-	 * A key (for IEclipseContext) to retrieve optional popup extender model id that
-	 * should be used to distinguish different menu contributions using same menu id
-	 */
-	public static final String POPUP_EXTENDER_MODEL_ID = "popupExtenderModelId"; //$NON-NLS-1$
 
 	private final MenuManager menu;
 
@@ -162,17 +155,9 @@ public class PopupMenuExtender implements IMenuListener2, IRegistryChangeListene
 		if (id == null) {
 			id = getClass().getName() + '.' + System.identityHashCode(this);
 		}
-		Object popupModelId = context == null ? null : context.get(POPUP_EXTENDER_MODEL_ID);
 		menuModel = null;
 		for (MMenu item : modelPart.getMenus()) {
-			if (id.equals(item.getElementId()) && item instanceof MPopupMenu
-					&& item.getTags().contains(ContributionsAnalyzer.MC_POPUP)) {
-				// If a dedicated model id provided, check that - this is needed to
-				// distinguish menus with same id's added for different child editors
-				// inside one multi-page editor. See bug 550986.
-				if (popupModelId != null && !item.getTags().contains(popupModelId)) {
-					continue;
-				}
+			if (id.equals(item.getElementId()) && item instanceof MPopupMenu && item.getTags().contains("popup")) { //$NON-NLS-1$
 				menuModel = (MPopupMenu) item;
 				break;
 			}
@@ -183,9 +168,6 @@ public class PopupMenuExtender implements IMenuListener2, IRegistryChangeListene
 					Boolean.FALSE.toString());
 			menuModel.setElementId(id);
 			menuModel.getTags().add(ContributionsAnalyzer.MC_POPUP);
-			if (popupModelId != null) {
-				menuModel.getTags().add(Objects.toString(popupModelId));
-			}
 			modelPart.getMenus().add(menuModel);
 		}
 		IRendererFactory factory = modelPart.getContext().get(IRendererFactory.class);

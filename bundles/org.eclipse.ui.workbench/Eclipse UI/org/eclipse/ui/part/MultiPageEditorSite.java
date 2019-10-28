@@ -133,7 +133,6 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 		IServiceLocatorCreator slc = site.getService(IServiceLocatorCreator.class);
 		String name = "MultiPageEditorSite (" + editor.getClass().getName() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
 		context = site.getModel().getContext().createChild(name);
-		context.set(PopupMenuExtender.POPUP_EXTENDER_MODEL_ID, name + hashCode());
 		serviceLocator = (ServiceLocator) slc.createServiceLocator(getNestedEditorSite(), null,
 				() -> getMultiPageEditor().close(), context);
 
