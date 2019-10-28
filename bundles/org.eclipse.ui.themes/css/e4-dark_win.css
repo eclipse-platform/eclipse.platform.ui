@@ -136,14 +136,6 @@ CTabItem.busy {
     background-color: #4176AF;
 }
 
-.MTrimmedWindow {
-    background-color: #515658;
-}
-
-.MTrimBar {
-    background-color: #515658;
-}
-
 CTabFolder.MArea .MPartStack,CTabFolder.MArea .MPartStack.active {
     swt-shadow-visible: false;
 }
