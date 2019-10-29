@@ -124,6 +124,7 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VApplicatio
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VApplicationWindowEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VBindingTableEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VCommandEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VControlsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VHandlerEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VItemParametersEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VMenuContributionsEditor;
@@ -251,6 +252,7 @@ public class ModelEditor implements IGotoObject {
 
 	public static final String VIRTUAL_PART_MENU = "org.eclipse.e4.tools.emf.ui.VIRTUAL_PART_MENU"; //$NON-NLS-1$
 	public static final String VIRTUAL_HANDLER = "org.eclipse.e4.tools.emf.ui.VIRTUAL_HANDLER"; //$NON-NLS-1$
+	public static final String VIRTUAL_CONTROLS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_CONTROLS"; //$NON-NLS-1$
 	public static final String VIRTUAL_BINDING_TABLE = "org.eclipse.e4.tools.emf.ui.VIRTUAL_BINDING_TABLE"; //$NON-NLS-1$
 	public static final String VIRTUAL_COMMAND = "org.eclipse.e4.tools.emf.ui.VIRTUAL_COMMAND"; //$NON-NLS-1$
 	public static final String VIRTUAL_APPLICATION_WINDOWS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_APPLICATION_WINDOWS"; //$NON-NLS-1$
@@ -279,6 +281,7 @@ public class ModelEditor implements IGotoObject {
 	public static final int TAB_FORM = 0;
 	public static final int TAB_XMI = 1;
 	public static final int TAB_LIST = 2;
+
 
 	/**
 	 * A map with key = eClass name or virtual key, value is an
@@ -1140,6 +1143,7 @@ public class ModelEditor implements IGotoObject {
 	private void registerVirtualEditors() {
 		registerEditor(VIRTUAL_PART_MENU, VPartMenuEditor.class);
 		registerEditor(VIRTUAL_HANDLER, VHandlerEditor.class);
+		registerEditor(VIRTUAL_CONTROLS, VControlsEditor.class);
 		registerEditor(VIRTUAL_BINDING_TABLE, VBindingTableEditor.class);
 		registerEditor(VIRTUAL_COMMAND, VCommandEditor.class);
 		registerEditor(VIRTUAL_APPLICATION_WINDOWS, VApplicationWindowEditor.class);

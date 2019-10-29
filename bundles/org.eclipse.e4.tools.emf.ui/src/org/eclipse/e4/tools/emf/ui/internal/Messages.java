@@ -277,6 +277,7 @@ public class Messages {
 	public String PartEditor_ContainerData;
 	public String PartEditor_ToolBar;
 	public String PartEditor_BindingContexts;
+	public String PartEditor_Controls;
 
 	public String PartSashContainerEditor_Label;
 	public String PartSashContainerEditor_Description;
@@ -508,6 +509,9 @@ public class Messages {
 	public String VHandlerEditor_TreeLabelDescription;
 	public String VHandlerEditor_Handlers;
 	public String VHandlerEditor_AddHandler;
+
+	public String VControlsEditor_TreeLabel;
+	public String VControlsEditor_TreeLabelDescription;
 
 	public String VMenuContributionsEditor_TreeLabel;
 	public String VMenuContributionsEditor_TreeLabelDescription;
@@ -799,11 +803,6 @@ public class Messages {
 	public String CompositePartEditor_Horizontal;
 	public String CompositePartEditor_Vertical;
 	public String CompositePartEditor_SelectedElement;
-	public String CompositePartEditor_ContainerData;
 	public String CompositePartEditor_Controls;
-	public String CompositePartEditor_LabelLabel;
-	public String CompositePartEditor_Tooltip;
-	public String CompositePartEditor_IconURI;
-	public String CompositePartEditor_IconURI_Tooltip;
 
 }
