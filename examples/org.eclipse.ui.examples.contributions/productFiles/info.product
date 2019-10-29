@@ -21,7 +21,6 @@
    <windowImages i16="icons/sample2.gif"/>
 
    <launcher>
-      <solaris/>
       <win useIco="false">
          <bmp/>
       </win>
