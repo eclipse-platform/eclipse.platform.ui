@@ -458,11 +458,6 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 	 */
 	private void loadTimeOutScript() {
 		fBrowser.setText(getLoadingScript(500));
-		while (!isDisposed()) {
-			if (!getDisplay().readAndDispatch()) {
-				break;
-			}
-		}
 	}
 
 	/**
@@ -471,11 +466,6 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 	 */
 	private void loadWaitingScript() {
 		fBrowser.setText(getWaitingScript(1500));
-		while (!isDisposed()) {
-			if (!getDisplay().readAndDispatch()) {
-				break;
-			}
-		}
 	}
 
 	/**
