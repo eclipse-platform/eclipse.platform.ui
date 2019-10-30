@@ -57,11 +57,11 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 
 	private Object currentTreeSelection;
 
-	private List expandedTreeNodes = new ArrayList();
+	private List<Object> expandedTreeNodes = new ArrayList<>();
 
-	private Map checkedStateStore = new HashMap(9);
+	private Map<Object, List> checkedStateStore = new HashMap(9);
 
-	private List whiteCheckedTreeItems = new ArrayList();
+	private List<Object> whiteCheckedTreeItems = new ArrayList<>();
 
 	private ITreeContentProvider treeContentProvider;
 
@@ -175,7 +175,7 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 
 		// if this tree element is already gray then its ancestors all are as well
 		if (!checkedStateStore.containsKey(treeElement)) {
-			checkedStateStore.put(treeElement, new ArrayList());
+			checkedStateStore.put(treeElement, new ArrayList<>());
 		}
 
 		Object parent = treeContentProvider.getParent(treeElement);
@@ -210,7 +210,7 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 	 *	@param treeElement java.lang.Object
 	 */
 	protected boolean areAllElementsChecked(Object treeElement) {
-		List checkedElements = (List) checkedStateStore.get(treeElement);
+		List<?> checkedElements = checkedStateStore.get(treeElement);
 		if (checkedElements == null) {
 			return false;
 		}
@@ -332,7 +332,7 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 	protected boolean determineShouldBeAtLeastGrayChecked(Object treeElement) {
 		// if any list items associated with treeElement are checked then it
 		// retains its gray-checked status regardless of its children
-		List checked = (List) checkedStateStore.get(treeElement);
+		List<?> checked = checkedStateStore.get(treeElement);
 		if (checked != null && (!checked.isEmpty())) {
 			return true;
 		}
@@ -393,8 +393,8 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 	 *
 	 *	@return java.util.Vector
 	 */
-	public Iterator getAllCheckedListItems() {
-		List result = new ArrayList();
+	public Iterator<?> getAllCheckedListItems() {
+		List result = new ArrayList<>();
 		Iterator listCollectionsEnum = checkedStateStore.values().iterator();
 
 		while (listCollectionsEnum.hasNext()) {
@@ -506,7 +506,7 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 	 */
 	protected void listItemChecked(Object listElement, boolean state,
 			boolean updatingFromSelection) {
-		List checkedListItems = (List) checkedStateStore
+		List checkedListItems = checkedStateStore
 				.get(currentTreeSelection);
 
 		if (state) {
@@ -514,7 +514,7 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 				// since the associated tree item has gone from 0 -> 1 checked
 				// list items, tree checking may need to be updated
 				grayCheckHierarchy(currentTreeSelection);
-				checkedListItems = (List) checkedStateStore
+				checkedListItems = checkedStateStore
 						.get(currentTreeSelection);
 			}
 			checkedListItems.add(listElement);
@@ -557,7 +557,7 @@ public class CheckboxTreeAndListGroup extends EventManager implements
 	 */
 	protected void populateListViewer(final Object treeElement) {
 		listViewer.setInput(treeElement);
-		List listItemsToCheck = (List) checkedStateStore.get(treeElement);
+		List listItemsToCheck = checkedStateStore.get(treeElement);
 
 		if (listItemsToCheck != null) {
 			Iterator listItemsEnum = listItemsToCheck.iterator();

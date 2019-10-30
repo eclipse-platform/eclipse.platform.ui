@@ -160,7 +160,7 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 	@Override
 	protected void computeResult() {
 
-		ArrayList list = new ArrayList();
+		ArrayList<String> list = new ArrayList<>();
 		list.add(this.projectNameField.getText());
 		list.add(locationArea.getProjectLocation());
 		setResult(list);

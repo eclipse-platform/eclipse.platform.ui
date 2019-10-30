@@ -102,9 +102,9 @@ public class EditorRegistryReader extends RegistryReader {
 
 		EditorDescriptor editor = new EditorDescriptor(id, element);
 
-		List extensionsVector = new ArrayList();
-		List filenamesVector = new ArrayList();
-		List contentTypeVector = new ArrayList();
+		List<String> extensionsVector = new ArrayList<>();
+		List<String> filenamesVector = new ArrayList<>();
+		List<String> contentTypeVector = new ArrayList<>();
 		boolean defaultEditor = false;
 
 		// Get editor name (required field).

@@ -38,7 +38,7 @@ public class NavigatorSorterService implements INavigatorSorterService, Visibili
 	private final NavigatorContentService contentService;
 
 	/* A map of (CommonSorterDescriptor, ViewerSorter)-pairs */
-	private final Map sorters = new HashMap();
+	private final Map<CommonSorterDescriptor, ViewerSorter> sorters = new HashMap<CommonSorterDescriptor, ViewerSorter>();
 
 	private INavigatorContentDescriptor[] sortOnlyDescriptors;
 
@@ -55,7 +55,7 @@ public class NavigatorSorterService implements INavigatorSorterService, Visibili
 	}
 
 	private synchronized void computeSortOnlyDescriptors() {
-		List sortOnlyList = new ArrayList();
+		List<INavigatorContentDescriptor> sortOnlyList = new ArrayList<INavigatorContentDescriptor>();
 		for (INavigatorContentDescriptor descriptor : NavigatorContentDescriptorManager.getInstance()
 				.getSortOnlyContentDescriptors()) {
 			if (contentService.isActive(descriptor.getId())) {
@@ -63,7 +63,7 @@ public class NavigatorSorterService implements INavigatorSorterService, Visibili
 			}
 		}
 
-		sortOnlyDescriptors = (INavigatorContentDescriptor[]) sortOnlyList.toArray(new INavigatorContentDescriptor[]{});
+		sortOnlyDescriptors = sortOnlyList.toArray(new INavigatorContentDescriptor[] {});
 	}
 
 	@Override
@@ -80,7 +80,7 @@ public class NavigatorSorterService implements INavigatorSorterService, Visibili
 	private ViewerSorter getSorter(CommonSorterDescriptor descriptor) {
 		ViewerSorter sorter = null;
 		synchronized (sorters) {
-			sorter = (ViewerSorter) sorters.get(descriptor);
+			sorter = sorters.get(descriptor);
 			if (sorter == null) {
 				sorters.put(descriptor, sorter = descriptor.createSorter());
 			}
@@ -123,7 +123,7 @@ public class NavigatorSorterService implements INavigatorSorterService, Visibili
 	public Map findAvailableSorters(INavigatorContentDescriptor theSource) {
 
 		CommonSorterDescriptor[] descriptors = CommonSorterDescriptorManager.getInstance().findApplicableSorters(theSource);
-		Map sorters = new HashMap();
+		Map<String, ViewerSorter> sorters = new HashMap<String, ViewerSorter>();
 
 		int count = 0;
 		for (CommonSorterDescriptor descriptor : descriptors) {

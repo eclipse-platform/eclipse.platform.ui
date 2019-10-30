@@ -120,7 +120,7 @@ public class ProjectReferencePage extends PropertyPage {
 
 				// Collect all the projects in the workspace except the given project
 				IProject[] projects = ((IWorkspace) o).getRoot().getProjects();
-				ArrayList referenced = new ArrayList(projects.length);
+				ArrayList<IProject> referenced = new ArrayList<>(projects.length);
 				boolean found = false;
 				for (IProject currentProject : projects) {
 					if (!found && currentProject.equals(project)) {

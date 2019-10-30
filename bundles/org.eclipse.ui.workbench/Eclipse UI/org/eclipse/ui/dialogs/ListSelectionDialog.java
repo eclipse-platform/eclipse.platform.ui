@@ -47,7 +47,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * <p>
  * Example:
  * </p>
- * 
+ *
  * <pre>
  * ListSelectionDialog dlg = new ListSelectionDialog(getShell(), input, new BaseWorkbenchContentProvider(),
  * 		new WorkbenchLabelProvider(), "Select the resources to save:");
@@ -55,7 +55,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * dlg.setTitle("Save Resources");
  * dlg.open();
  * </pre>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ListSelectionDialog extends SelectionDialog {
@@ -101,7 +101,7 @@ public class ListSelectionDialog extends SelectionDialog {
 
 	/**
 	 * Add the selection and deselection buttons to the dialog.
-	 * 
+	 *
 	 * @param composite org.eclipse.swt.widgets.Composite
 	 */
 	private void addSelectionButtons(Composite composite) {
@@ -130,7 +130,7 @@ public class ListSelectionDialog extends SelectionDialog {
 	 * viewer.
 	 */
 	private void checkInitialSelections() {
-		Iterator itemsToCheck = getInitialElementSelections().iterator();
+		Iterator<?> itemsToCheck = getInitialElementSelections().iterator();
 
 		while (itemsToCheck.hasNext()) {
 			listViewer.setChecked(itemsToCheck.next(), true);
@@ -204,7 +204,7 @@ public class ListSelectionDialog extends SelectionDialog {
 
 		// Build a list of selected children.
 		if (children != null) {
-			ArrayList list = new ArrayList();
+			ArrayList<Object> list = new ArrayList<>();
 			for (Object element : children) {
 				if (listViewer.getChecked(element)) {
 					list.add(element);

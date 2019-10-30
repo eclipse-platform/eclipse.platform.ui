@@ -23,7 +23,7 @@ public abstract class PropertyMapAdapter implements IDynamicPropertyMap {
 
 	private PropertyListenerList listeners;
 	private int ignoreCount = 0;
-	private ArrayList queuedEvents = new ArrayList();
+	private ArrayList<String> queuedEvents = new ArrayList<>();
 
 	@Override
 	public final void addListener(IPropertyMapListener listener) {
@@ -101,7 +101,7 @@ public abstract class PropertyMapAdapter implements IDynamicPropertyMap {
 		ignoreCount--;
 		if (ignoreCount == 0 && !queuedEvents.isEmpty()) {
 			if (listeners != null) {
-				listeners.firePropertyChange((String[]) queuedEvents.toArray(new String[queuedEvents.size()]));
+				listeners.firePropertyChange(queuedEvents.toArray(new String[queuedEvents.size()]));
 			}
 			queuedEvents.clear();
 		}
