@@ -28,6 +28,7 @@
 
 /* ############################## Global Styles ############################## */
 
+Shell,
 Composite, ScrolledComposite, ExpandableComposite, Canvas, TabFolder, CLabel, Label,
 CoolBar, Sash, Group, Hyperlink, RefactoringLocationControl, ChangeParametersControl, Link, FilteredTree,
 ProxyEntriesComposite, NonProxyHostsComposite, DelayedFilterCheckboxTree,
@@ -54,8 +55,6 @@ Composite > Composite > Composite > Group > *, /* Group > CreateRefactoringScrip
 Shell > Composite > Composite > Composite > *, /* Composite > FilteredPreferenceDialog$... */
 ScrolledComposite > Composite > Composite > Composite > *, /* Composite > NewKeysPreferencePage$... */
 Shell > Composite > Composite > Composite > Composite > Composite > *, /* Composite > ShowRefactoringHistoryWizardPage$... */
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > *, /* Composite > RefactoringWizardDialog$... */
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > * > *, /* Composite > RefactoringWizardDialog$... */ 
 Group > StyledText {
     background-color:#515658;
     color:#eeeeee;
@@ -84,18 +83,6 @@ Shell > Composite > Composite > Composite > Composite > Composite > List,
 Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > List,
 Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > * > List {
     background-color:#515658;
-    color:#eeeeee;
-}
-
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.MENU'][style~='SWT.DATE'][style~='SWT.RESIZE'][style~='SWT.TITLE'][style~='SWT.APPLICATION_MODAL'][style~='SWT.FULL_SELECTION'][style~='SWT.SMOOTH'] > Composite[style~='SWT.LEFT_TO_RIGHT'] > Text[style~='SWT.READ_ONLY'],
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.MENU'][style~='SWT.DATE'][style~='SWT.RESIZE'][style~='SWT.TITLE'][style~='SWT.APPLICATION_MODAL'][style~='SWT.FULL_SELECTION'][style~='SWT.SMOOTH'] > Composite[style~='SWT.LEFT_TO_RIGHT'] > ToolBar {
-    /* Dialog windows title */
-    /*background-color: #4D5765;*/ /* There is no way to change the background-color of the title of a Dialog without introducing artifacts in some other Dialog windows */
-    color:#eeeeee;
-}
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.MENU'][style~='SWT.DATE'][style~='SWT.RESIZE'][style~='SWT.TITLE'][style~='SWT.APPLICATION_MODAL'][style~='SWT.FULL_SELECTION'][style~='SWT.SMOOTH'] > Composite[style~='SWT.LEFT_TO_RIGHT'] > Label[style~='SWT.NO_FOCUS'] {
-    /* Dialog windows title */
-    /*background-color: #4D5765;*/
     color:#eeeeee;
 }
 
