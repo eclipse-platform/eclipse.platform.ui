@@ -93,8 +93,8 @@ public class AuthorizationHandler {
 			keyringFile = file.getAbsolutePath();
 		}
 		try {
-			Constructor<?> constructor = authClass.getConstructor(new Class[] {String.class, String.class});
-			keyring = constructor.newInstance(new Object[] {keyringFile, password});
+			Constructor<?> constructor = authClass.getConstructor(String.class, String.class);
+			keyring = constructor.newInstance(keyringFile, password);
 		} catch (Exception e) {
 			log(e);
 		}
@@ -102,8 +102,8 @@ public class AuthorizationHandler {
 			//try deleting the file and loading again - format may have changed
 			new java.io.File(keyringFile).delete();
 			try {
-				Constructor<?> constructor = authClass.getConstructor(new Class[] {String.class, String.class});
-				keyring = constructor.newInstance(new Object[] {keyringFile, password});
+				Constructor<?> constructor = authClass.getConstructor(String.class, String.class);
+				keyring = constructor.newInstance(keyringFile, password);
 			} catch (Exception e) {
 				//don't bother logging a second failure and let it flows to the callers
 			}
@@ -132,7 +132,7 @@ public class AuthorizationHandler {
 	 */
 	private static void saveKeyring() throws CoreException {
 		try {
-			Method method = authClass.getMethod("save", new Class[0]); //$NON-NLS-1$
+			Method method = authClass.getMethod("save"); //$NON-NLS-1$
 			method.invoke(keyring);
 		} catch (Exception e) {
 			log(e);
@@ -171,8 +171,8 @@ public class AuthorizationHandler {
 		if (!loadKeyring())
 			return;
 		try {
-			Method method = authClass.getMethod("addAuthorizationInfo", new Class[] {URL.class, String.class, String.class, Map.class}); //$NON-NLS-1$
-			method.invoke(keyring, new Object[] {serverUrl, realm, authScheme, new HashMap<>(info)});
+			Method method = authClass.getMethod("addAuthorizationInfo", URL.class, String.class, String.class, Map.class); //$NON-NLS-1$
+			method.invoke(keyring, serverUrl, realm, authScheme, new HashMap<>(info));
 		} catch (Exception e) {
 			log(e);
 		}
@@ -201,8 +201,8 @@ public class AuthorizationHandler {
 		if (!loadKeyring())
 			return;
 		try {
-			Method method = authClass.getMethod("addProtectionSpace", new Class[] {URL.class, String.class}); //$NON-NLS-1$
-			method.invoke(keyring, new Object[] {resourceUrl, realm});
+			Method method = authClass.getMethod("addProtectionSpace", URL.class, String.class); //$NON-NLS-1$
+			method.invoke(keyring, resourceUrl, realm);
 		} catch (Exception e) {
 			log(e);
 		}
@@ -234,8 +234,8 @@ public class AuthorizationHandler {
 		if (!loadKeyring())
 			return;
 		try {
-			Method method = authClass.getMethod("flushAuthorizationInfo", new Class[] {URL.class, String.class, String.class}); //$NON-NLS-1$
-			method.invoke(keyring, new Object[] {serverUrl, realm, authScheme});
+			Method method = authClass.getMethod("flushAuthorizationInfo", URL.class, String.class, String.class); //$NON-NLS-1$
+			method.invoke(keyring, serverUrl, realm, authScheme);
 		} catch (Exception e) {
 			log(e);
 		}
@@ -265,9 +265,9 @@ public class AuthorizationHandler {
 			if (!loadKeyring())
 				return null;
 			try {
-				Method method = authClass.getMethod("getAuthorizationInfo", new Class[] {URL.class, String.class, String.class}); //$NON-NLS-1$
+				Method method = authClass.getMethod("getAuthorizationInfo", URL.class, String.class, String.class); //$NON-NLS-1$
 				@SuppressWarnings("unchecked")
-				Map<String,String> info = (Map<String,String>) method.invoke(keyring, new Object[] {serverUrl, realm, authScheme});
+				Map<String,String> info = (Map<String,String>) method.invoke(keyring, serverUrl, realm, authScheme);
 				return info == null ? null : new HashMap<>(info);
 			} catch (Exception e) {
 				log(e);
@@ -293,8 +293,8 @@ public class AuthorizationHandler {
 			if (!loadKeyring())
 				return null;
 			try {
-				Method method = authClass.getMethod("getProtectionSpace", new Class[] {URL.class}); //$NON-NLS-1$
-				return (String)method.invoke(keyring, new Object[] {resourceUrl});
+				Method method = authClass.getMethod("getProtectionSpace", URL.class); //$NON-NLS-1$
+				return (String)method.invoke(keyring, resourceUrl);
 			} catch (Exception e) {
 				log(e);
 			}
