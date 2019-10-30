@@ -67,7 +67,7 @@ public class DispatcherTest extends UITestCase {
 		IEditorPart part = IDE.openEditor(getWorkbench().getActiveWorkbenchWindow().getActivePage(), file);
 		try {
 			int shellCount = Display.getCurrent().getShells().length;
-			dispatcher.press(Arrays.asList(new KeyStroke[] { KeyStroke.getInstance(SWT.CTRL, 'O') }), null);
+			dispatcher.press(Arrays.asList(KeyStroke.getInstance(SWT.CTRL, 'O')), null);
 			Assert.assertFalse("No handler should have been invoked", CheckInvokedHandler.invoked);
 			Assert.assertEquals("No Shell should have been added", shellCount, Display.getCurrent().getShells().length);
 		} finally {
@@ -86,7 +86,7 @@ public class DispatcherTest extends UITestCase {
 		IEditorPart part = IDE.openEditor(getWorkbench().getActiveWorkbenchWindow().getActivePage(), file);
 		try {
 			int shellCount = Display.getCurrent().getShells().length;
-			dispatcher.press(Arrays.asList(new KeyStroke[] { KeyStroke.getInstance(SWT.CTRL, 'O') }), null);
+			dispatcher.press(Arrays.asList(KeyStroke.getInstance(SWT.CTRL, 'O')), null);
 			Assert.assertTrue("Handler should have been invoked", CheckInvokedHandler.invoked);
 			Assert.assertEquals("No Shell should have been added", shellCount, Display.getCurrent().getShells().length);
 		} finally {

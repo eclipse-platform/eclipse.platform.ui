@@ -98,7 +98,7 @@ public class JobInfoTest {
 				int xyResult = x.compareTo(y);
 				int yxResult = y.compareTo(x);
 				// sgn(compare(x, y)) == -sgn(compare(y, x)) for all x and y.
-				assertEquals(String.format("sgn(compare(%1$s, %2$s)) != -sgn(compare(%2$s, %1$s))", new Object[] { x, y}),
+				assertEquals(String.format("sgn(compare(%1$s, %2$s)) != -sgn(compare(%2$s, %1$s))", x, y),
 						Math.round(Math.signum(xyResult)) , Math.round(-Math.signum(yxResult)));
 
 				for(int zi = 0; zi<this.jobinfos.size(); zi++) {
@@ -108,13 +108,17 @@ public class JobInfoTest {
 					// ((compare(x, y)>0) && (compare(y, z)>0)) implies compare(x, z)>0.
 					if(xyResult > 0) {
 						if(yzResult > 0) {
-							assertTrue(String.format("((compare(%1$s, %2$s)>0) && (compare(%2$s, %3$s)>0)) but not compare(%1$s, %3$s)>0", new Object[] {x, y, z}),
+							assertTrue(String.format(
+									"((compare(%1$s, %2$s)>0) && (compare(%2$s, %3$s)>0)) but not compare(%1$s, %3$s)>0",
+									x, y, z),
 									xzResult > 0);
 						}
 					}
 					else if(xyResult == 0) {
 						// compare(x, y)==0 implies that sgn(compare(x, z))==sgn(compare(y, z)) for all z.
-						assertEquals(String.format("compare(%1$s, %2$s)==0 but not that sgn(compare(%1$s, %3$s))==sgn(compare(%2$s, %3$s))", new Object[]{ x, y, z}),
+						assertEquals(String.format(
+								"compare(%1$s, %2$s)==0 but not that sgn(compare(%1$s, %3$s))==sgn(compare(%2$s, %3$s))",
+								x, y, z),
 								Math.round(Math.signum(xzResult)) , Math.round(Math.signum(yzResult)));
 					}
 				}
@@ -122,7 +126,7 @@ public class JobInfoTest {
 				boolean consistentWithEquals = true;
 				// Optionally (compare(x, y)==0) == (x.equals(y))
 				if(consistentWithEquals && xyResult == 0) {
-					assertTrue(String.format("compare(%1$s, %2$s)==0) == (%1$s.equals(%2$s)", new Object[] {x, y}),
+					assertTrue(String.format("compare(%1$s, %2$s)==0) == (%1$s.equals(%2$s)", x, y),
 							x.equals(y));
 				}
 			}
