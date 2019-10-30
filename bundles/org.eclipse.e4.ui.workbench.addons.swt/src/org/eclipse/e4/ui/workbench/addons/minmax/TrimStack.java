@@ -72,6 +72,7 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
+import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
 
@@ -253,6 +254,25 @@ public class TrimStack {
 			if (toolItem != null) {
 				toolItem.setToolTipText(getLabelText((MUILabel) toolItem.getData()));
 			}
+		}
+	}
+
+	@Inject
+	@Optional
+	private void subscribeTopicIconUriChanged(@UIEventTopic(UIEvents.UILabel.TOPIC_ICONURI) Event event) {
+		// Prevent exceptions on shutdown
+		if (trimStackTB == null || trimStackTB.isDisposed() || minimizedElement.getWidget() == null) {
+			return;
+		}
+
+		Object changedElement = event.getProperty(UIEvents.EventTags.ELEMENT);
+		if (!(changedElement instanceof MUIElement)) {
+			return;
+		}
+
+		ToolItem toolItem = getChangedToolItem((MUIElement) changedElement);
+		if (toolItem != null) {
+			toolItem.setImage(getImage((MUILabel) toolItem.getData()));
 		}
 	}
 
