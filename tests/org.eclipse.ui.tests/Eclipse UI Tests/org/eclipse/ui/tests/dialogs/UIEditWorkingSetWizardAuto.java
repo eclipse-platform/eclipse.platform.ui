@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -80,7 +80,7 @@ public class UIEditWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 		Text text = (Text) widgets.get(0);
 		assertEquals(WORKING_SET_NAME_1, text.getText());
 		assertTrue(page.canFlipToNextPage() == false);
-		assertTrue(fWizard.canFinish() == false);
+		assertTrue(fWizard.canFinish());
 		assertNull(page.getErrorMessage());
 		widgets = getWidgets((Composite) page.getControl(), Tree.class);
 		Tree tree = (Tree) widgets.get(0);

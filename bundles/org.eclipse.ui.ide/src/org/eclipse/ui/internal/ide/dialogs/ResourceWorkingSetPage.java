@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -83,7 +83,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 
 	private IWorkingSet workingSet;
 
-	private boolean firstCheck = false; // set to true if selection is set in setSelection
+	private boolean firstCheck = true;
 
 	/**
 	 * Creates a new instance of the receiver.
@@ -222,7 +222,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 		if (workingSet != null) {
 			text.setText(workingSet.getName());
 		}
-		setPageComplete(false);
+		validateInput();
 
 		Dialog.applyDialogFont(composite);
 	}
@@ -394,9 +394,10 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 		}
 		this.workingSet = workingSet;
 		if (getShell() != null && text != null) {
-			firstCheck = true;
-			initializeCheckedState();
+			firstCheck = false;
 			text.setText(workingSet.getName());
+			initializeCheckedState();
+			validateInput();
 		}
 	}
 
@@ -482,13 +483,17 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 
 		if (newText.equals(newText.trim()) == false) {
 			errorMessage = IDEWorkbenchMessages.ResourceWorkingSetPage_warning_nameWhitespace;
-		} else if (firstCheck) {
-			firstCheck = false;
-			return;
 		}
 		if (newText.isEmpty()) {
-			errorMessage = IDEWorkbenchMessages.ResourceWorkingSetPage_warning_nameMustNotBeEmpty;
+			if (firstCheck) {
+				setPageComplete(false);
+				firstCheck = false;
+				return;
+			} else {
+				errorMessage = IDEWorkbenchMessages.ResourceWorkingSetPage_warning_nameMustNotBeEmpty;
+			}
 		}
+		firstCheck = false;
 		if (errorMessage == null && (workingSet == null || newText.equals(workingSet.getName()) == false)) {
 			for (IWorkingSet workingSet : PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets()) {
 				if (newText.equals(workingSet.getName())) {
