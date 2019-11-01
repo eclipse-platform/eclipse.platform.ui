@@ -233,13 +233,13 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 
 	@Override
 	public void createContents(Composite parent) {
-		Composite composite = new Composite(parent, SWT.NONE);
-		composite.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		parent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
-		composite.setLayout(layout);
+		parent.setLayout(layout);
 
-		Tree tree = new Tree(composite, SWT.CHECK | SWT.H_SCROLL | SWT.V_SCROLL
+		Tree tree = new Tree(parent,
+				SWT.CHECK | SWT.H_SCROLL | SWT.V_SCROLL
 				| SWT.MULTI | SWT.FULL_SELECTION | SWT.BORDER);
 		tree.setLinesVisible(true);
 		tree.setHeaderVisible(false);
@@ -319,9 +319,10 @@ public class TypesConfigurationArea extends GroupFilterConfigurationArea {
 			}
 		});
 
-		Composite buttonComposite = new Composite(composite, SWT.NONE);
+		Composite buttonComposite = new Composite(parent, SWT.NONE);
 		GridLayout buttonLayout = new GridLayout();
 		buttonLayout.marginWidth = 0;
+		buttonLayout.marginHeight = 0;
 		buttonComposite.setLayout(buttonLayout);
 		GridData buttonsData = new GridData();
 		buttonsData.verticalAlignment = GridData.BEGINNING;

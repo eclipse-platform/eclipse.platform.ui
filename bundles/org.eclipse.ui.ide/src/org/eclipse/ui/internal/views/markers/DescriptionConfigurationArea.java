@@ -84,7 +84,9 @@ public class DescriptionConfigurationArea extends FilterConfigurationArea {
 	private void createDescriptionGroup(Composite parent) {
 
 		Composite descriptionComposite = new Composite(parent, SWT.NONE);
-		descriptionComposite.setLayout(new GridLayout(3, false));
+		GridLayout layout = new GridLayout(3, false);
+		layout.marginWidth = 0;
+		descriptionComposite.setLayout(layout);
 		descriptionComposite.setLayoutData(new GridData(
 				GridData.FILL_HORIZONTAL));
 

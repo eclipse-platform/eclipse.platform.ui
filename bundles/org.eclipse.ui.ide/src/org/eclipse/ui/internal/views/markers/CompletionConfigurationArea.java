@@ -52,10 +52,7 @@ public class CompletionConfigurationArea extends FilterConfigurationArea {
 	@Override
 	public void createContents(Composite parent) {
 
-		GridLayout layout = new GridLayout(2, false);
-		layout.marginHeight = 0;
-		layout.marginWidth = 0;
-		parent.setLayout(layout);
+		parent.setLayout(new GridLayout(2, false));
 
 		completeButton = new Button(parent, SWT.CHECK);
 		completeButton.setText(MarkerMessages.filtersDialog_statusComplete);

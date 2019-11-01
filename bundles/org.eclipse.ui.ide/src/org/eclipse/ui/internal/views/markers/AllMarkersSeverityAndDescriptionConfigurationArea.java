@@ -43,7 +43,9 @@ public class AllMarkersSeverityAndDescriptionConfigurationArea extends
 		super.createContents(parent);
 
 		Composite severityComposite = new Composite(parent, SWT.NONE);
-		severityComposite.setLayout(new GridLayout(1, false));
+		GridLayout layout = new GridLayout(1, false);
+		layout.marginWidth = 0;
+		severityComposite.setLayout(layout);
 		severityComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
 				| GridData.GRAB_HORIZONTAL));
 

@@ -450,6 +450,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 		Composite buttons = new Composite(composite, SWT.NONE);
 		GridLayout buttonLayout = new GridLayout();
 		buttonLayout.marginWidth = 0;
+		buttonLayout.marginHeight = 0;
 		buttons.setLayout(buttonLayout);
 		GridData buttonsData = new GridData();
 		buttonsData.verticalAlignment = GridData.BEGINNING;

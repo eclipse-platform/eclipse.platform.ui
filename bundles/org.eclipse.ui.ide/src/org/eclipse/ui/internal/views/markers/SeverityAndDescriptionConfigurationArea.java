@@ -68,6 +68,7 @@ public class SeverityAndDescriptionConfigurationArea extends
 		Composite severityComposite = new Composite(parent, SWT.NONE);
 		GridLayout layout = new GridLayout(4, false);
 		layout.horizontalSpacing = IDialogConstants.BUTTON_MARGIN;
+		layout.marginWidth = 0;
 		severityComposite.setLayout(layout);
 		severityComposite.setLayoutData(new GridData(GridData.FILL_HORIZONTAL
 				| GridData.GRAB_HORIZONTAL));
