@@ -557,6 +557,7 @@ public class Messages {
 	public String VWindowControlEditor_AddPartSashContainer;
 	public String VWindowControlEditor_AddPartStack;
 	public String VWindowControlEditor_AddPart;
+	public String VWindowControlEditor_AddCompositePart;
 	public String VWindowControlEditor_AddArea;
 
 	public String VWindowEditor_TreeLabel;
