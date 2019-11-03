@@ -1970,7 +1970,7 @@ public class ModelEditor implements IGotoObject {
 		 * @param destFeature the target feature in the model where data must be dropped
 		 * @param parent      the destination parent
 		 * @param index       the index in the parent list
-		 * @see bug #429684
+		 * @see bug 429684
 		 * @return the compound command
 		 */
 		private Command createRemoveAddCommand(Object data, EStructuralFeature destFeature, EObject parent, int index) {
@@ -2119,7 +2119,8 @@ public class ModelEditor implements IGotoObject {
 
 	// This will ensure the provider has created the tree node (so we can reveal
 	// it).
-	private Object getFirstMatchingItem(EObject target, ObservableListTreeContentProvider<?> provider, Object[] items) {
+	private static Object getFirstMatchingItem(EObject target, ObservableListTreeContentProvider<?> provider,
+			Object[] items) {
 		for (int i = 0; i < items.length; i++) {
 			if (items[i] == target) {
 				return items[i];
