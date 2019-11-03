@@ -1312,12 +1312,12 @@ public class ModelEditor implements IGotoObject {
 	}
 
 	@Inject
-	public void setNotVisibleColor(@Preference(ModelEditorPreferences.NOT_VISIBLE_COLOR) String color) {
+	public void setNotVisibleColor(@Preference(ModelEditorPreferences.NOT_VISIBLE_COLOR) String prefColorText) {
 		final RGB current = JFaceResources.getColorRegistry().getRGB(ComponentLabelProvider.NOT_VISIBLE_KEY);
+		RGB prefColor = StringConverter.asRGB(prefColorText, new RGB(200, 200, 200));
 
-		if (current == null || !current.equals(color)) {
-			JFaceResources.getColorRegistry().put(ComponentLabelProvider.NOT_VISIBLE_KEY,
-					StringConverter.asRGB(color, new RGB(200, 200, 200)));
+		if (current == null || !current.equals(prefColor)) {
+			JFaceResources.getColorRegistry().put(ComponentLabelProvider.NOT_VISIBLE_KEY, prefColor);
 		}
 
 		if (viewer != null) {
@@ -1327,12 +1327,12 @@ public class ModelEditor implements IGotoObject {
 	}
 
 	@Inject
-	public void setNotRenderedColor(@Preference(ModelEditorPreferences.NOT_RENDERED_COLOR) String color) {
+	public void setNotRenderedColor(@Preference(ModelEditorPreferences.NOT_RENDERED_COLOR) String prefColorText) {
+		RGB prefColor = StringConverter.asRGB(prefColorText, new RGB(200, 200, 200));
 		final RGB current = JFaceResources.getColorRegistry().getRGB(ComponentLabelProvider.NOT_RENDERED_KEY);
 
-		if (current == null || !current.equals(color)) {
-			JFaceResources.getColorRegistry().put(ComponentLabelProvider.NOT_RENDERED_KEY,
-					StringConverter.asRGB(color, new RGB(200, 200, 200)));
+		if (current == null || !current.equals(prefColor)) {
+			JFaceResources.getColorRegistry().put(ComponentLabelProvider.NOT_RENDERED_KEY, prefColor);
 		}
 
 		if (viewer != null) {
@@ -1343,13 +1343,13 @@ public class ModelEditor implements IGotoObject {
 
 	@Inject
 	public void setNotVisibleRenderedColor(
-			@Preference(ModelEditorPreferences.NOT_VISIBLE_AND_RENDERED_COLOR) String color) {
+			@Preference(ModelEditorPreferences.NOT_VISIBLE_AND_RENDERED_COLOR) String prefColorText) {
+		RGB prefColor = StringConverter.asRGB(prefColorText, new RGB(200, 200, 200));
 		final RGB current = JFaceResources.getColorRegistry()
 				.getRGB(ComponentLabelProvider.NOT_VISIBLE_AND_RENDERED_KEY);
 
-		if (current == null || !current.equals(color)) {
-			JFaceResources.getColorRegistry().put(ComponentLabelProvider.NOT_VISIBLE_AND_RENDERED_KEY,
-					StringConverter.asRGB(color, new RGB(200, 200, 200)));
+		if (current == null || !current.equals(prefColor)) {
+			JFaceResources.getColorRegistry().put(ComponentLabelProvider.NOT_VISIBLE_AND_RENDERED_KEY, prefColor);
 		}
 
 		if (viewer != null) {
