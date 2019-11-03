@@ -56,6 +56,7 @@ import org.eclipse.e4.core.di.annotations.Execute;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
+import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.core.services.nls.Translation;
 import org.eclipse.e4.core.services.translation.TranslationService;
 import org.eclipse.e4.tools.emf.ui.common.AbstractElementEditorContribution;
@@ -349,6 +350,9 @@ public class ModelEditor implements IGotoObject {
 	@Inject
 	@Optional
 	MPart currentPart;
+
+	@Inject
+	private Logger logger;
 
 	private final ObservablesManager obsManager;
 
@@ -813,9 +817,8 @@ public class ModelEditor implements IGotoObject {
 								}
 
 								support.openEditor(viewer.getControl().getShell(), s.getFirstElement(), ctx);
-							} catch (final CoreException e) {
-								// TODO Auto-generated catch block
-								e.printStackTrace();
+							} catch (CoreException e) {
+								logger.warn(e);
 							}
 						}
 					});
@@ -986,8 +989,7 @@ public class ModelEditor implements IGotoObject {
 			try {
 				contributionCreator.add((IContributionClassCreator) el.createExecutableExtension("class")); //$NON-NLS-1$
 			} catch (final CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.warn(e);
 			}
 		}
 	}
@@ -1013,8 +1015,7 @@ public class ModelEditor implements IGotoObject {
 			try {
 				editorFeatures.add((IEditorFeature) el.createExecutableExtension("class")); //$NON-NLS-1$
 			} catch (final CoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				logger.warn(e);
 			}
 		}
 	}
