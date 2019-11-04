@@ -88,7 +88,7 @@ public class HelpApplication implements IApplication, IExecutableExtension {
 		stopHelp();
 
 		// wait until start has finished
-		synchronized(this) {};
+		synchronized(this) {}
 	}
 
 	/**
