@@ -6,9 +6,9 @@ Bundle-Version: 3.9.500.qualifier
 Bundle-Activator: org.eclipse.search.tests.SearchTestPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.eclipse.search.core.tests,
- org.eclipse.search.tests,
- org.eclipse.search.tests.filesearch
+Export-Package: org.eclipse.search.core.tests;x-internal:=true,
+ org.eclipse.search.tests;x-internal:=true,
+ org.eclipse.search.tests.filesearch;x-internal:=true
 Require-Bundle: 
  org.eclipse.ui;bundle-version="[3.5.0,4.0.0)",
  org.eclipse.ui.ide;bundle-version="[3.5.0,4.0.0)",
