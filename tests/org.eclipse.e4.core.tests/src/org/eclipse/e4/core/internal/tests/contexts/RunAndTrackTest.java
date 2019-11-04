@@ -359,7 +359,7 @@ public class RunAndTrackTest {
 	@Test
 	public void testRemoveHiddenVariable() {
 		doHiddenValueChangeTest((IEclipseContext root, String var) -> {
-			root.remove(var);;
+			root.remove(var);
 		}, "child", 0);
 	}
 
