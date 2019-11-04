@@ -17,13 +17,9 @@ package org.eclipse.search.tests;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.Reader;
-import java.io.Writer;
 import java.net.URL;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
@@ -170,34 +166,6 @@ public class FileTool {
 		IPath stateLocation= plugin.getStateLocation();
 		stateLocation= stateLocation.append(path);
 		return stateLocation.toFile();
-	}
-
-	public static StringBuffer read(String fileName) throws IOException {
-		return read(new FileReader(fileName));
-	}
-
-	public static StringBuffer read(Reader reader) throws IOException {
-		StringBuffer s= new StringBuffer();
-		try {
-			char[] charBuffer= new char[8196];
-			int chars= reader.read(charBuffer);
-			while (chars != -1) {
-				s.append(charBuffer, 0, chars);
-				chars= reader.read(charBuffer);
-			}
-		} finally {
-			try {
-				reader.close();
-			} catch (IOException e) {
-			}
-		}
-		return s;
-	}
-
-	public static void write(String fileName, StringBuffer content) throws IOException {
-		try (Writer writer= new FileWriter(fileName)) {
-			writer.write(content.toString());
-		}
 	}
 
 	public static void delete(File file) {
