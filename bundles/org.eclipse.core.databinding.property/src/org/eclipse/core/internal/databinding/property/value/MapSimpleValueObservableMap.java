@@ -100,7 +100,7 @@ public class MapSimpleValueObservableMap<S, K, I extends S, V> extends AbstractO
 				oldValues.put(key, oldValue);
 			}
 
-			Set<K> changedKeys = new IdentitySet<K>(diff.getChangedKeys());
+			Set<K> changedKeys = new IdentitySet<>(diff.getChangedKeys());
 			for (Iterator<K> it = changedKeys.iterator(); it.hasNext();) {
 				K key = it.next();
 

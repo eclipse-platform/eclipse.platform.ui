@@ -79,7 +79,7 @@ public class UnionSetProperty<S, E> extends SetProperty<S, E> {
 
 	@Override
 	public IObservableSet<E> observe(Realm realm, S source) {
-		Set<IObservableSet<? extends E>> sets = new HashSet<IObservableSet<? extends E>>(properties.length);
+		Set<IObservableSet<? extends E>> sets = new HashSet<>(properties.length);
 		for (ISetProperty<S, E> property : properties) {
 			sets.add(property.observe(realm, source));
 		}

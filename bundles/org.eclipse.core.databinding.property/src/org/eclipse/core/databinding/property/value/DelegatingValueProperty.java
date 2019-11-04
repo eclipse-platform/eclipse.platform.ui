@@ -104,17 +104,17 @@ public abstract class DelegatingValueProperty<S, T> extends ValueProperty<S, T> 
 
 	@Override
 	public <U extends S> IObservableList<T> observeDetail(IObservableList<U> master) {
-		return new ListDelegatingValueObservableList<S, U, T>(master, this);
+		return new ListDelegatingValueObservableList<>(master, this);
 	}
 
 	@Override
 	public <U extends S> IObservableMap<U, T> observeDetail(IObservableSet<U> master) {
-		return new SetDelegatingValueObservableMap<S, U, T>(master, this);
+		return new SetDelegatingValueObservableMap<>(master, this);
 	}
 
 	@Override
 	public <K, V extends S> IObservableMap<K, T> observeDetail(IObservableMap<K, V> master) {
-		return new MapDelegatingValueObservableMap<S, K, V, T>(master, this);
+		return new MapDelegatingValueObservableMap<>(master, this);
 	}
 
 	private class NullValueProperty extends SimpleValueProperty<S, T> {

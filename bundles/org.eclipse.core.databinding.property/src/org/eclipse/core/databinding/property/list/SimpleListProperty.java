@@ -53,7 +53,7 @@ import org.eclipse.core.internal.databinding.property.list.SimplePropertyObserva
 public abstract class SimpleListProperty<S, E> extends ListProperty<S, E> {
 	@Override
 	public IObservableList<E> observe(Realm realm, S source) {
-		return new SimplePropertyObservableList<S, E>(realm, source, this);
+		return new SimplePropertyObservableList<>(realm, source, this);
 	}
 
 	// Accessors

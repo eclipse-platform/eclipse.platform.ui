@@ -56,7 +56,7 @@ import org.eclipse.core.internal.databinding.property.map.SimplePropertyObservab
 public abstract class SimpleMapProperty<S, K, V> extends MapProperty<S, K, V> {
 	@Override
 	public IObservableMap<K, V> observe(Realm realm, S source) {
-		return new SimplePropertyObservableMap<S, K, V>(realm, source, this);
+		return new SimplePropertyObservableMap<>(realm, source, this);
 	}
 
 	// Accessors

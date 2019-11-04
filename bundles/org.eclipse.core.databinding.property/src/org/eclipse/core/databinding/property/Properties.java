@@ -164,6 +164,6 @@ public class Properties {
 	 *         {@link IObservableValue}.
 	 */
 	public static <T> IValueProperty<IObservableValue<T>, T> observableValue(Object valueType) {
-		return new ObservableValueProperty<T>(valueType);
+		return new ObservableValueProperty<>(valueType);
 	}
 }

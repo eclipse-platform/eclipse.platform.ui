@@ -92,7 +92,7 @@ public class WritableList<E> extends ObservableList<E> {
 	 * @since 1.2
 	 */
 	public WritableList(Collection<E> collection, Object elementType) {
-		this(Realm.getDefault(), new ArrayList<E>(collection), elementType);
+		this(Realm.getDefault(), new ArrayList<>(collection), elementType);
 	}
 
 	/**
@@ -129,7 +129,7 @@ public class WritableList<E> extends ObservableList<E> {
 	 */
 	public WritableList(Realm realm, Collection<E> collection,
 			Object elementType) {
-		super(realm, new ArrayList<E>(collection), elementType);
+		super(realm, new ArrayList<>(collection), elementType);
 	}
 
 	@Override
@@ -300,6 +300,6 @@ public class WritableList<E> extends ObservableList<E> {
 	 * @return new list with the default realm.
 	 */
 	public static <T> WritableList<T> withElementType(Object elementType) {
-		return new WritableList<T>(Realm.getDefault(), new ArrayList<>(), elementType);
+		return new WritableList<>(Realm.getDefault(), new ArrayList<>(), elementType);
 	}
 }

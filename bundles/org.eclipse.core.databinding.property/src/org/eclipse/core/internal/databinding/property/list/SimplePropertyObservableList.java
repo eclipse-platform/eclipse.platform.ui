@@ -482,7 +482,7 @@ public class SimplePropertyObservableList<S, E> extends AbstractObservableList<E
 		if (index < 0 || index > list.size())
 			throw new IndexOutOfBoundsException();
 
-		List<ListDiffEntry<E>> entries = new ArrayList<ListDiffEntry<E>>(c.size());
+		List<ListDiffEntry<E>> entries = new ArrayList<>(c.size());
 		int offsetIndex = 0;
 		for (E element : c) {
 			entries.add(Diffs.createListDiffEntry(index + offsetIndex, true, element));

@@ -97,7 +97,7 @@ public class ValidatedObservableMap<K, V> extends ObservableMap<K, V> {
 	 * @param validationStatus
 	 */
 	public ValidatedObservableMap(final IObservableMap<K, V> target, final IObservableValue<IStatus> validationStatus) {
-		super(target.getRealm(), new HashMap<K, V>(target));
+		super(target.getRealm(), new HashMap<>(target));
 		Assert.isNotNull(validationStatus,
 				"Validation status observable cannot be null"); //$NON-NLS-1$
 		Assert.isTrue(target.getRealm().equals(validationStatus.getRealm()),

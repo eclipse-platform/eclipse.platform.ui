@@ -133,7 +133,7 @@ public class ListSimpleValueObservableList<S, M extends S, T> extends AbstractOb
 	protected void firstListenerAdded() {
 		ObservableTracker.setIgnore(true);
 		try {
-			knownMasterElements = new IdentityObservableSet<M>(getRealm(), null);
+			knownMasterElements = new IdentityObservableSet<>(getRealm(), null);
 		} finally {
 			ObservableTracker.setIgnore(false);
 		}

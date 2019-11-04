@@ -66,7 +66,7 @@ public final class UnionSet<E> extends ObservableSet<E> {
 	 * @param childSets
 	 */
 	public UnionSet(IObservableSet<? extends E>[] childSets) {
-		this(new HashSet<IObservableSet<? extends E>>(Arrays.asList(childSets)));
+		this(new HashSet<>(Arrays.asList(childSets)));
 	}
 
 	/**
@@ -83,7 +83,7 @@ public final class UnionSet<E> extends ObservableSet<E> {
 	 * @since 1.2
 	 */
 	public UnionSet(IObservableSet<? extends E>[] childSets, Object elementType) {
-		this(new HashSet<IObservableSet<? extends E>>(Arrays.asList(childSets)), elementType);
+		this(new HashSet<>(Arrays.asList(childSets)), elementType);
 	}
 
 	/**

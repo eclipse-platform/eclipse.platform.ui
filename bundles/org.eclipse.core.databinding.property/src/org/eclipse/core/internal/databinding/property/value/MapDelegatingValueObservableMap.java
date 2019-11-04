@@ -175,7 +175,7 @@ public class MapDelegatingValueObservableMap<S, K, I extends S, V> extends Abstr
 				oldValues.put(key, oldValue);
 			}
 
-			Set<K> changedKeys = new HashSet<K>(diff.getChangedKeys());
+			Set<K> changedKeys = new HashSet<>(diff.getChangedKeys());
 			for (Iterator<K> it = changedKeys.iterator(); it.hasNext();) {
 				K key = it.next();
 
