@@ -41,20 +41,7 @@ CompareStructureViewerSwitchingPane, CompareContentViewerSwitchingPane,
 QualifiedNameComponent, RefactoringStatusViewer, ImageHyperlink,
 MessageLine,
 Button /* SWT-BUG: checkbox inner label font color is not accessible */,
-/*Shell [style~='SWT.DROP_DOWN'] > GradientCanvas,*/ /* ignored */
-/* SWT-BUG dirty workaround [Eclipse Bug 419482]: a generic rule (eg: Composite > *) needed to catch an
-   element without a CSS id, a CSS class and a seekable Widget name, cannot be overridden
-   by a subsequent more specific rule used to correct the style for seekable elements (<1>): */
-TabFolder > Composite > *, /* Composite > CommitSearchPage$... */
-CTabFolder > Composite > *, /* Composite > CommitSearchPage$... */
-TabFolder > Composite > * > * /* [style~='SWT.NO_BACKGROUND'] <- generate E4 non-sense bugs in apparently not related other rules */, /* Composite > ContentMergeViewer$... > TextMergeViewer$... */
-DocCommentOwnerComposite > Group > *, /* Group > DocCommentOwnerComposite$... */
-TabFolder > Composite > ScrolledComposite > *, /* ScrolledComposite > ControlListViewer$... */
-Shell > Composite > Composite > *, /* Composite > StatusDialog$MessageLine (SWT-BUG: ignored) */
-Composite > Composite > Composite > Group > *, /* Group > CreateRefactoringScriptWizardPage$... */
-Shell > Composite > Composite > Composite > *, /* Composite > FilteredPreferenceDialog$... */
-ScrolledComposite > Composite > Composite > Composite > *, /* Composite > NewKeysPreferencePage$... */
-Shell > Composite > Composite > Composite > Composite > Composite > *, /* Composite > ShowRefactoringHistoryWizardPage$... */
+Composite > *, 
 Group > StyledText {
     background-color:#515658;
     color:#eeeeee;
@@ -67,21 +54,8 @@ ToolBar {
 	background-color:inherit;
 }
 
-Combo, List,
-/* It might be useless but currently it's needed due to a strange priority
-   policy used by the E4 platform to apply CSS rules to SWT widgets (see <1>): */
-Composite > List,
-TabFolder > Composite > List,
-TabFolder > Composite > * > List,
-DocCommentOwnerComposite > Group > List,
-TabFolder > Composite > ScrolledComposite > List,
-Shell > Composite > Composite > List,
-Composite > Composite > Composite > Group > List,
-Shell > Composite > Composite > Composite > List,
-ScrolledComposite > Composite > Composite > Composite > List,
-Shell > Composite > Composite > Composite > Composite > Composite > List,
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > List,
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > * > List {
+Combo, 
+List {
     background-color:#515658;
     color:#eeeeee;
 }
@@ -153,39 +127,13 @@ FormText {
     color:#eeeeee;
 }
 
-Table,
-/* the following are required due to Bug 419482 (see <1>): */
-Composite > Table,
-TabFolder > Composite > Table,
-TabFolder > Composite > * > Table,
-DocCommentOwnerComposite > Group > Table,
-TabFolder > Composite > ScrolledComposite > Table,
-Shell > Composite > Composite > Table,
-Composite > Composite > Composite > Group > Table,
-Shell > Composite > Composite > Composite > Table,
-ScrolledComposite > Composite > Composite > Composite > Table,
-Shell > Composite > Composite > Composite > Composite > Composite > Table,
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > Table,
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > * > Table {
+Table {
     background-color:#515658;
     color:#eeeeee;
 }
 
 Tree,
-RegistryFilteredTree,
-/* the following are required due to Bug 419482 (see <1>): */
-Composite > Tree,
-TabFolder > Composite > Tree,
-TabFolder > Composite > * > Tree,
-DocCommentOwnerComposite > Group > Tree,
-TabFolder > Composite > ScrolledComposite > Tree,
-Shell > Composite > Composite > Tree,
-Composite > Composite > Composite > Group > Tree,
-Shell > Composite > Composite > Composite > Tree,
-ScrolledComposite > Composite > Composite > Composite > Tree,
-Shell > Composite > Composite > Composite > Composite > Composite > Tree,
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > Tree,
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > * > Tree {
+RegistryFilteredTree {
     background-color:#515658;
     color:#eeeeee;
 }
