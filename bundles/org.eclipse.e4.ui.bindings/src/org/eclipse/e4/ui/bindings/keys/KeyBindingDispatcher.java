@@ -149,7 +149,7 @@ public class KeyBindingDispatcher {
 	 *         empty.
 	 */
 	public static List<KeyStroke> generatePossibleKeyStrokes(Event event) {
-		final List<KeyStroke> keyStrokes = new ArrayList<KeyStroke>(3);
+		final List<KeyStroke> keyStrokes = new ArrayList<>(3);
 
 		/*
 		 * If this is not a keyboard event, then there are no key strokes. This can happen if we are

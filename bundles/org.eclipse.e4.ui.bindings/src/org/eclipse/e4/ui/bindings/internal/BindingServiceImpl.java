@@ -138,7 +138,7 @@ public class BindingServiceImpl implements EBindingService {
 	@Override
 	public Collection<TriggerSequence> getSequencesFor(ParameterizedCommand command) {
 		Collection<Binding> bindings = manager.getSequencesFor(contextSet, command);
-		ArrayList<TriggerSequence> sequences = new ArrayList<TriggerSequence>(bindings.size());
+		ArrayList<TriggerSequence> sequences = new ArrayList<>(bindings.size());
 		for (Binding binding : bindings) {
 			sequences.add(binding.getTriggerSequence());
 		}

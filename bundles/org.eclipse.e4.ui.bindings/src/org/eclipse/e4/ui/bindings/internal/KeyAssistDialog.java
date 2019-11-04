@@ -387,7 +387,7 @@ public class KeyAssistDialog extends PopupDialog {
 		Collection<Binding> matchesForCommand;
 		Collection<Binding> activeBindings = bindingService.getActiveBindings();
 		Collection<Binding> conflictBindings = bindingService.getAllConflicts();
-		Collection<Binding> sortedMatches = new TreeSet<Binding>((binding1, binding2) -> {
+		Collection<Binding> sortedMatches = new TreeSet<>((binding1, binding2) -> {
 			ParameterizedCommand cmdA = binding1.getParameterizedCommand();
 			ParameterizedCommand cmdB = binding2.getParameterizedCommand();
 			int result = 0;
@@ -477,7 +477,7 @@ public class KeyAssistDialog extends PopupDialog {
 	 * @since 3.3
 	 */
 	public int open(Collection<Binding> bindings) {
-		matches = new TreeSet<Binding>((a, b) -> {
+		matches = new TreeSet<>((a, b) -> {
 			Binding bindingA = a;
 			Binding bindingB = b;
 			ParameterizedCommand commandA = bindingA.getParameterizedCommand();
