@@ -99,7 +99,7 @@ public class NewWizardShortcutAction extends Action implements IPluginContributi
 			IWorkbenchPart part = window.getPartService().getActivePart();
 			if (part instanceof IEditorPart) {
 				IEditorInput input = ((IEditorPart) part).getEditorInput();
-				Class fileClass = LegacyResourceSupport.getFileClass();
+				Class<?> fileClass = LegacyResourceSupport.getFileClass();
 				if (input != null && fileClass != null) {
 					Object file = Adapters.adapt(input, fileClass);
 					if (file != null) {

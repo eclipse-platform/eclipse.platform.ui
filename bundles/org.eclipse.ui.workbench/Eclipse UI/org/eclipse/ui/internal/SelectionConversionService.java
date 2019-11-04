@@ -49,7 +49,7 @@ public class SelectionConversionService implements ISelectionConversionService {
 	@Override
 	public IStructuredSelection convertToResources(IStructuredSelection originalSelection) {
 		// @issue resource-specific code should be pushed into IDE
-		Class resourceClass = LegacyResourceSupport.getResourceClass();
+		Class<?> resourceClass = LegacyResourceSupport.getResourceClass();
 		if (resourceClass == null) {
 			return originalSelection;
 		}

@@ -63,7 +63,7 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 
 	private Object[] elements;
 
-	private Class affectedObjectsClass;
+	private Class<?> affectedObjectsClass;
 
 	private ArrayList elementsAndAdapters;
 
@@ -96,7 +96,7 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 	 *                                 necessary for the comparison.
 	 */
 	public NonLocalUndoUserApprover(IUndoContext context, IEditorPart part, Object[] affectedObjects,
-			Class preferredComparisonClass) {
+			Class<?> preferredComparisonClass) {
 		super();
 		this.context = context;
 		this.part = part;

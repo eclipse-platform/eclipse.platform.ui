@@ -187,7 +187,7 @@ public abstract class WizardHandler extends AbstractHandler implements IElementU
 		/**
 		 * Returns the id of the category of wizards to show or <code>null</code> to
 		 * show all categories.
-		 * 
+		 *
 		 * @return String
 		 */
 		public String getCategoryId() {
@@ -197,7 +197,7 @@ public abstract class WizardHandler extends AbstractHandler implements IElementU
 		/**
 		 * Sets the id of the category of wizards to show or <code>null</code> to show
 		 * all categories.
-		 * 
+		 *
 		 * @param id
 		 */
 		public void setCategoryId(String id) {
@@ -213,7 +213,7 @@ public abstract class WizardHandler extends AbstractHandler implements IElementU
 			} else {
 				// @issue the following is resource-specific legacy code
 				// Build the selection from the IFile of the editor
-				Class resourceClass = LegacyResourceSupport.getResourceClass();
+				Class<?> resourceClass = LegacyResourceSupport.getResourceClass();
 				if (resourceClass != null) {
 					IWorkbenchWindow activeWorkbenchWindow = HandlerUtil.getActiveWorkbenchWindow(event);
 					IWorkbenchPart part = activeWorkbenchWindow.getPartService().getActivePart();
@@ -264,7 +264,7 @@ public abstract class WizardHandler extends AbstractHandler implements IElementU
 
 	/**
 	 * This is the execution of the handler to open a wizard dialog.
-	 * 
+	 *
 	 * @param event
 	 */
 	protected abstract void executeHandler(ExecutionEvent event);
@@ -312,7 +312,7 @@ public abstract class WizardHandler extends AbstractHandler implements IElementU
 	/**
 	 * Returns a structured selection based on the event to initialize the wizard
 	 * with.
-	 * 
+	 *
 	 * @param event the event object containing information about the current state
 	 *              of the application
 	 * @return the current structured selection of the application
