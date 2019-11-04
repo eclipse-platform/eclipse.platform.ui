@@ -654,7 +654,11 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 
 	@Override
 	public void update() {
-		updateMenuItem();
+//		This used to disable the menu item if this menu manager was part of a
+//		parent menu and the sub menu is empty. This is not necessary anymore,
+//		because in that case the menu is completely invisible.
+//		See bugs #34969, #47098, #552413, #552659.
+//		See isVisible().
 	}
 
 	/**
@@ -846,7 +850,6 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 				}
 			}
 		}
-		updateMenuItem();
 	}
 
 	@Override
@@ -916,41 +919,6 @@ public class MenuManager extends ContributionManager implements IMenuManager {
 	@Override
 	public void updateAll(boolean force) {
 		update(force, true);
-	}
-
-	/**
-	 * Updates the menu item for this sub menu. The menu item is disabled if this
-	 * sub menu is empty. Does nothing if this menu is not a submenu.
-	 */
-	private void updateMenuItem() {
-		/*
-		 * Commented out until proper solution to enablement of menu item for a sub-menu
-		 * is found. See bug 30833 for more details.
-		 *
-		 * if (menuItem != null && !menuItem.isDisposed() && menuExist()) {
-		 * IContributionItem items[] = getItems(); boolean enabled = false; for (int i =
-		 * 0; i < items.length; i++) { IContributionItem item = items[i]; enabled =
-		 * item.isEnabled(); if(enabled) break; } // Workaround for 1GDDCN2: SWT:Linux -
-		 * MenuItem.setEnabled() always causes a redraw if (menuItem.getEnabled() !=
-		 * enabled) menuItem.setEnabled(enabled); }
-		 */
-		// Partial fix for bug #34969 - diable the menu item if no
-		// items in sub-menu (for context menus).
-		if (menuItem != null && !menuItem.isDisposed() && menuExist()) {
-			boolean enabled = removeAllWhenShown || menu.getItemCount() > 0;
-			// Workaround for 1GDDCN2: SWT:Linux - MenuItem.setEnabled() always causes a
-			// redraw
-			if (menuItem.getEnabled() != enabled) {
-				// We only do this for context menus (for bug #34969)
-				Menu topMenu = menu;
-				while (topMenu.getParentMenu() != null) {
-					topMenu = topMenu.getParentMenu();
-				}
-				if ((topMenu.getStyle() & SWT.BAR) == 0) {
-					menuItem.setEnabled(enabled);
-				}
-			}
-		}
 	}
 
 	private boolean isChildVisible(IContributionItem item) {
