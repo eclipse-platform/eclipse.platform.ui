@@ -95,7 +95,7 @@ public class FilterListEditor extends ListEditor {
 			return new String[0];
 		}
 		String[] items = stringList.split(","); //$NON-NLS-1$
-		Arrays.sort(items);;
+		Arrays.sort(items);
 		return items;
 	}
 

@@ -73,7 +73,7 @@ public class BindingCreateTest {
 		schemeOnly = new HashMap<>();
 		schemeOnly.put(EBindingService.SCHEME_ID_ATTR_TAG, DEFAULT_SCHEME_ID);
 
-		schemeAndTypeAttrs = new HashMap<>();;
+		schemeAndTypeAttrs = new HashMap<>();
 		schemeAndTypeAttrs.put(EBindingService.SCHEME_ID_ATTR_TAG, DEFAULT_SCHEME_ID);
 		schemeAndTypeAttrs.put(EBindingService.TYPE_ATTR_TAG, "user");
 	}
