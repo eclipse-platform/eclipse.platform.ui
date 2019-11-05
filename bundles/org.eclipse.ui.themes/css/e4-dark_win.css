@@ -216,7 +216,6 @@ ImageBasedFrame,
 #org-eclipse-help-ui-HelpView Form Label,
 #org-eclipse-help-ui-HelpView Form Section,
 #org-eclipse-help-ui-HelpView Form FormText,
-#org-eclipse-help-ui-HelpView Form Hyperlink,
 #org-eclipse-help-ui-HelpView Form Button,
 #org-eclipse-help-ui-HelpView Form Group,
 #org-eclipse-help-ui-HelpView Form LayoutComposite,
@@ -230,7 +229,6 @@ ImageBasedFrame,
 .MPartStack.active #org-eclipse-help-ui-HelpView Form Label,
 .MPartStack.active #org-eclipse-help-ui-HelpView Form Section,
 .MPartStack.active #org-eclipse-help-ui-HelpView Form FormText,
-.MPartStack.active #org-eclipse-help-ui-HelpView Form Hyperlink,
 .MPartStack.active #org-eclipse-help-ui-HelpView Form Button,
 .MPartStack.active #org-eclipse-help-ui-HelpView Form Group,
 .MPartStack.active #org-eclipse-help-ui-HelpView Form LayoutComposite,
@@ -246,16 +244,6 @@ ImageBasedFrame,
     background-color: #313538;
     color: #DDDDDD;
 }
-.MPart Form DatePicker > ImageHyperlink,
-.MPart Form ScheduleDatePicker > ImageHyperlink {
-    background-color: #3f4447;
-    color: #BBBBBB;
-}
-.MPartStack.active .MPart Form DatePicker > ImageHyperlink,
-.MPartStack.active .MPart Form ScheduleDatePicker > ImageHyperlink {
-    background-color: #313538;
-    color: #AAAAAA;
-}
 .MPart PageBook > Form > LayoutComposite {
     background-color: #2F2F2F;
     color: #CCC;
@@ -264,13 +252,11 @@ ImageBasedFrame,
     background-color: #262626;
     color: #BBBBBB;
 }
-.MPart Form FormHeading LayoutComposite,
-.MPart Form FormHeading ImageHyperlink {
+.MPart Form FormHeading LayoutComposite {
     background-color: #505f70;
     color: #9ac9d8;
 }
-.MPartStack.active .MPart Form FormHeading LayoutComposite,
-.MPartStack.active .MPart Form FormHeading ImageHyperlink {
+.MPartStack.active .MPart Form FormHeading LayoutComposite {
     background-color: #415062;
     color: #9ac9d8;
 }

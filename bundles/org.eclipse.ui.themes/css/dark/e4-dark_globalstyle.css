@@ -21,7 +21,6 @@
  * 1.) Bug 419482 - Cascading policy in CSS
  * 2.) Bug 419377 - Setting a property to 'inherit' is not supported
  * 3.) Bug 430051 - Regression for CTabRendering when drawing bottom tabs
- * 4.) Bug 401015 - Add support for styling hyperlinks in Links
  * 5.) Bug 430278 - Add support for styling Scrollbars
  *******************************************************************************/
 
@@ -30,7 +29,7 @@
 
 Shell,
 Composite, ScrolledComposite, ExpandableComposite, Canvas, TabFolder, CLabel, Label,
-CoolBar, Sash, Group, Hyperlink, RefactoringLocationControl, ChangeParametersControl, Link, FilteredTree,
+CoolBar, Sash, Group, RefactoringLocationControl, ChangeParametersControl, Link, FilteredTree,
 ProxyEntriesComposite, NonProxyHostsComposite, DelayedFilterCheckboxTree,
 Splitter, ScrolledPageContent, ViewForm, LaunchConfigurationFilteredTree,
 ContainerSelectionGroup, BrowseCatalogItem, EncodingSettings,
@@ -38,7 +37,7 @@ ProgressMonitorPart, DocCommentOwnerComposite, NewServerComposite,
 NewManualServerComposite, ServerTypeComposite, FigureCanvas,
 DependenciesComposite, ListEditorComposite, WrappedPageBook,
 CompareStructureViewerSwitchingPane, CompareContentViewerSwitchingPane,
-QualifiedNameComponent, RefactoringStatusViewer, ImageHyperlink,
+QualifiedNameComponent, RefactoringStatusViewer,
 MessageLine,
 Button /* SWT-BUG: checkbox inner label font color is not accessible */,
 Composite > *, 
@@ -170,6 +169,7 @@ Shell[style~='SWT.DROP_DOWN'][style~='SWT.SHADOW_IN'][style~='SWT.SHADOW_ETCHED_
 
 Hyperlink,
 ImageHyperlink {
+	background-color: inherit;
     color: #6fc5ee;
 }
 
@@ -215,8 +215,7 @@ CategoryItem {
     color: #dddddd;
 }
 GradientCanvas,
-GradientCanvas > Label,
-GradientCanvas > ImageHyperlink {
+GradientCanvas > Label {
     background-color: #3f4447;
     color: #9ac9d8;
 }
