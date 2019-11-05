@@ -40,7 +40,8 @@ CompareStructureViewerSwitchingPane, CompareContentViewerSwitchingPane,
 QualifiedNameComponent, RefactoringStatusViewer,
 MessageLine,
 Button /* SWT-BUG: checkbox inner label font color is not accessible */,
-Composite > *, 
+Composite > *,
+Composite > * > *, /* See Bug 552691 Composite > RefactoringWizardDialog$... */
 Group > StyledText {
     background-color:#515658;
     color:#eeeeee;
