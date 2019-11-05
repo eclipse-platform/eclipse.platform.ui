@@ -102,7 +102,7 @@ public class QuickSearchContext {
 		try {
 			IWorkbenchPage page = window.getActivePage();
 			if (page!=null) {
-				Collection<IFile> files = new ArrayList<IFile>();
+				Collection<IFile> files = new ArrayList<>();
 				IEditorReference[] editors = page.getEditorReferences();
 				if (editors!=null) {
 					for (IEditorReference editor : editors) {

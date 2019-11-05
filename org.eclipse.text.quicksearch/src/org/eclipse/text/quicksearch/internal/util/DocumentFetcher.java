@@ -132,7 +132,7 @@ public class DocumentFetcher {
 	 * @return returns a map from IFile to IDocument for all open, dirty editors.
 	 */
 	private Map<IFile, IDocument> evalNonFileBufferDocuments() {
-		Map<IFile, IDocument> result= new HashMap<IFile, IDocument>();
+		Map<IFile, IDocument> result= new HashMap<>();
 		IWorkbench workbench= PlatformUI.getWorkbench();
 		IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
 		for (int i= 0; i < windows.length; i++) {

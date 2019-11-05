@@ -148,7 +148,7 @@ public class DefaultPriorityFunction extends PriorityFunction {
 
 	private void ignore(IContainer folder) {
 		if (ignoredResources==null) {
-			ignoredResources = new HashSet<IResource>();
+			ignoredResources = new HashSet<>();
 		}
 		ignoredResources.add(folder);
 	}
