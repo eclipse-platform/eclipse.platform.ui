@@ -113,6 +113,7 @@ public class TipSourceProvider extends AbstractSourceProvider {
 			}
 
 		});
+		job.setSystem(true);
 		job.schedule(5000); // allow the workbench to settle in.
 	}
 }
