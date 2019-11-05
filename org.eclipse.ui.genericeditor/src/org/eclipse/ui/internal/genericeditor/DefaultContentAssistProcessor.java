@@ -59,7 +59,7 @@ public class DefaultContentAssistProcessor implements IContentAssistProcessor {
 		int wordStartIndex = findStartingPoint(text, offset);
 		String prefix = text.substring(wordStartIndex, offset);
 
-		List<ICompletionProposal> proposals = new ArrayList<ICompletionProposal>();
+		List<ICompletionProposal> proposals = new ArrayList<>();
 		for (String token : tokenSet) {
 			if ((token==null)||(token.length()<2)) {
 				continue;

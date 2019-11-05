@@ -194,7 +194,7 @@ public final class ExtensionBasedTextViewerConfiguration extends TextSourceViewe
 
 	@Override public IQuickAssistAssistant getQuickAssistAssistant(ISourceViewer sourceViewer) {
 		QuickAssistAssistant quickAssistAssistant = new QuickAssistAssistant();
-		List<IQuickAssistProcessor> quickAssistProcessors = new ArrayList<IQuickAssistProcessor>();
+		List<IQuickAssistProcessor> quickAssistProcessors = new ArrayList<>();
 		quickAssistProcessors.add(new MarkerResoltionQuickAssistProcessor());
 		quickAssistProcessors.addAll(GenericEditorPlugin.getDefault().getQuickAssistProcessorRegistry().getQuickAssistProcessors(sourceViewer, editor, getContentTypes(sourceViewer)));
 		CompositeQuickAssistProcessor compQuickAssistProcessor = new CompositeQuickAssistProcessor(quickAssistProcessors);
