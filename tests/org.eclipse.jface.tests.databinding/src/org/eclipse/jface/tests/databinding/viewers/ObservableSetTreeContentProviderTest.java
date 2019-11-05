@@ -68,7 +68,7 @@ public class ObservableSetTreeContentProviderTest extends AbstractDefaultRealmTe
 	}
 
 	private void initContentProvider(IObservableFactory<Object, IObservableSet<Object>> listFactory) {
-		contentProvider = new ObservableSetTreeContentProvider<Object>(listFactory, null);
+		contentProvider = new ObservableSetTreeContentProvider<>(listFactory, null);
 		viewer.setContentProvider(contentProvider);
 		viewer.setInput(input);
 	}

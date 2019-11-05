@@ -226,7 +226,7 @@ public class SideEffectTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testNestedDependencyChangeAndRunIfDirtyCompletes() throws Exception {
 		AtomicBoolean hasRun = new AtomicBoolean();
-		WritableValue<Object> invalidator = new WritableValue<Object>(new Object(), null);
+		WritableValue<Object> invalidator = new WritableValue<>(new Object(), null);
 		ISideEffect innerSideEffect = ISideEffect.create(() -> {
 			invalidator.getValue();
 		});

@@ -346,7 +346,7 @@ public class ListBindingTest extends AbstractDefaultRealmTestCase {
 		});
 
 		model.add("first");
-		new ListBinding<String, String>(target, model, new UpdateListStrategy<>(), new UpdateListStrategy<>());
+		new ListBinding<>(target, model, new UpdateListStrategy<>(), new UpdateListStrategy<>());
 		model.remove(0);
 	}
 
