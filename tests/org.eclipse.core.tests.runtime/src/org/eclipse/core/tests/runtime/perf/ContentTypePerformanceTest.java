@@ -182,7 +182,7 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 			assertTrue(pluginLocation.append("META-INF").toFile().mkdirs());
 			URL installURL = null;
 			try {
-				installURL = pluginLocation.toFile().toURL();
+				installURL = pluginLocation.toFile().toURI().toURL();
 			} catch (MalformedURLException e) {
 				fail(tag + ".0.5", e);
 			}
@@ -303,7 +303,7 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 		Bundle installed = null;
 		try {
 			installed = RuntimeTestsPlugin.getContext()
-					.installBundle(getExtraPluginLocation().toFile().toURL().toExternalForm());
+					.installBundle(getExtraPluginLocation().toFile().toURI().toURL().toExternalForm());
 		} catch (BundleException e) {
 			fail("1.0", e);
 		} catch (MalformedURLException e) {

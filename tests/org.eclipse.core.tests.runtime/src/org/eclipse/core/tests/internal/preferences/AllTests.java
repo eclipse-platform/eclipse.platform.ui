@@ -32,6 +32,7 @@ public class AllTests extends TestCase {
 		super(name);
 	}
 
+	@SuppressWarnings("deprecation") // the deprecated tests are testing deprecated functionality with intention
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
 		suite.addTestSuite(EclipsePreferencesTest.class);

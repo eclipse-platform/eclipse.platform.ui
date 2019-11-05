@@ -85,7 +85,7 @@ public class PlatformURLLocalTest extends RuntimeTest {
 		assertFalse("3.0", platformURL.equals(resolvedURL));
 		URL expected = null;
 		try {
-			expected = new URL(RuntimeTestsPlugin.getPlugin().getStateLocation().toFile().toURL(), "x");
+			expected = new URL(RuntimeTestsPlugin.getPlugin().getStateLocation().toFile().toURI().toURL(), "x");
 		} catch (MalformedURLException e) {
 			fail("4.0", e);
 		}
