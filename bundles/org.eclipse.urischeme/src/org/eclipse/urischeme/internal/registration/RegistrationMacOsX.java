@@ -88,7 +88,7 @@ public class RegistrationMacOsX implements IOperatingSystemRegistration {
 
 		String lines = "(?:.*\\n)*"; //$NON-NLS-1$
 		Pattern pattern = Pattern.compile(
-				"^" + lines + "\\spath:\\s*(.*)\\n" + lines + "\\s*bindings:.*" + scheme + ":", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				"^" + lines + "\\spath:\\s*(.*)\\n" + lines + "\\s*bindings:.*" + Pattern.quote(scheme) + ":", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 				Pattern.MULTILINE);
 
 		for (String entry : splitList) {

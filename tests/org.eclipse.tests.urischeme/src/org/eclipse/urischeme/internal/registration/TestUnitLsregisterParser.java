@@ -43,7 +43,7 @@ public class TestUnitLsregisterParser {
 
 	private String convert(InputStream inputStream) {
 		try (Scanner scanner = new Scanner(inputStream, StandardCharsets.UTF_8.name())) {
-			return scanner.useDelimiter("\\A").next();
+			return scanner.useDelimiter("\\A").next().replaceAll("\r\n", "\n");
 		}
 	}
 }

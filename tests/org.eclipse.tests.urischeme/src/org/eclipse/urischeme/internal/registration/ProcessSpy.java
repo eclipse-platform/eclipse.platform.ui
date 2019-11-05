@@ -22,7 +22,7 @@ public class ProcessSpy implements IProcessExecutor {
 	@Override
 	public String execute(String process, String... args) throws IOException {
 		records.add(new Record(process, args));
-		return result;
+		return result == null ? null : result.replaceAll("\r\n", "\n");
 	}
 
 	class Record {
