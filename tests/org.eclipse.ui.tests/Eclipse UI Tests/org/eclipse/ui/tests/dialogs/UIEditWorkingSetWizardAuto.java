@@ -60,12 +60,12 @@ public class UIEditWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 		/*
 		 * Verify that correct working set edit page is displayed
 		 */
-		assertTrue(page.getClass() == fDefaultEditPage.getClass());
+		assertSame(page.getClass(), fDefaultEditPage.getClass());
 		/*
 		 * Test initial page state
 		 */
-		assertTrue(page.canFlipToNextPage() == false);
-		assertTrue(fWizard.canFinish() == false);
+		assertFalse(page.canFlipToNextPage());
+		assertFalse(fWizard.canFinish());
 		assertNull(page.getErrorMessage());
 		/*
 		 * Test page state with preset page input
@@ -79,7 +79,7 @@ public class UIEditWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 		List<Widget> widgets = getWidgets((Composite) page.getControl(), Text.class);
 		Text text = (Text) widgets.get(0);
 		assertEquals(WORKING_SET_NAME_1, text.getText());
-		assertTrue(page.canFlipToNextPage() == false);
+		assertFalse(page.canFlipToNextPage());
 		assertTrue(fWizard.canFinish());
 		assertNull(page.getErrorMessage());
 		widgets = getWidgets((Composite) page.getControl(), Tree.class);
@@ -94,8 +94,8 @@ public class UIEditWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 		 * Test page state with partial page input
 		 */
 		setTextWidgetText("", page);
-		assertTrue(page.canFlipToNextPage() == false);
-		assertTrue(fWizard.canFinish() == false);
+		assertFalse(page.canFlipToNextPage());
+		assertFalse(fWizard.canFinish());
 		assertNotNull(page.getErrorMessage());
 
 		/*
@@ -103,7 +103,7 @@ public class UIEditWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 		 */
 		setTextWidgetText(WORKING_SET_NAME_2, page);
 		checkTreeItems();
-		assertTrue(page.canFlipToNextPage() == false);
+		assertFalse(page.canFlipToNextPage());
 		assertTrue(fWizard.canFinish());
 		assertNull(page.getErrorMessage());
 

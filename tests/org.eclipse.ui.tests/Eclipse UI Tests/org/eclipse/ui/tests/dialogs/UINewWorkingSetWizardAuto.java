@@ -71,15 +71,15 @@ public class UINewWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 			 * Test initial page state
 			 */
 			assertEquals(descriptors.length, table.getItemCount());
-			assertTrue(typePage.canFlipToNextPage() == false);
-			assertTrue(fWizard.canFinish() == false);
+			assertFalse(typePage.canFlipToNextPage());
+			assertFalse(fWizard.canFinish());
 			/*
 			 * Test page state with page complete input
 			 */
 			table.setSelection(descriptors.length - 1);
 			table.notifyListeners(SWT.Selection, new Event());
 			assertTrue(typePage.canFlipToNextPage());
-			assertTrue(fWizard.canFinish() == false);
+			assertFalse(fWizard.canFinish());
 
 			/*
 			 * Check page texts
