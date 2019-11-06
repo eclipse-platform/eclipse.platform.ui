@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -83,7 +83,7 @@ public class AdvancedValidationUserApprover implements IOperationApprover, IOper
 
 		IAdaptable uiInfo;
 
-		StatusReportingRunnable(IUndoableOperation operation, IOperationHistory history, IAdaptable uiInfo, int doing) {
+		StatusReportingRunnable(IUndoableOperation operation, IAdaptable uiInfo, int doing) {
 			super();
 			this.operation = operation;
 			this.doing = doing;
@@ -174,7 +174,7 @@ public class AdvancedValidationUserApprover implements IOperationApprover, IOper
 		final IStatus[] status = new IStatus[1];
 		PlatformUI.getWorkbench().getDisplay().syncExec(() -> {
 			// Compute the undoable or redoable status
-			status[0] = computeOperationStatus(operation, history, uiInfo, doing);
+			status[0] = computeOperationStatus(operation, uiInfo, doing);
 
 			// Report non-OK statuses to the user. In some cases, the user
 			// may choose to proceed, and the returned status will be
@@ -196,10 +196,10 @@ public class AdvancedValidationUserApprover implements IOperationApprover, IOper
 		return status[0];
 	}
 
-	private IStatus computeOperationStatus(IUndoableOperation operation, IOperationHistory history, IAdaptable uiInfo,
+	private IStatus computeOperationStatus(IUndoableOperation operation, IAdaptable uiInfo,
 			int doing) {
 		try {
-			StatusReportingRunnable runnable = new StatusReportingRunnable(operation, history, uiInfo, doing);
+			StatusReportingRunnable runnable = new StatusReportingRunnable(operation, uiInfo, doing);
 			TimeTriggeredProgressMonitorDialog progressDialog = new TimeTriggeredProgressMonitorDialog(getShell(uiInfo),
 					PlatformUI.getWorkbench().getProgressService().getLongOperationTime());
 
