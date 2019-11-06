@@ -29,7 +29,6 @@ import org.w3c.dom.css.CSSValue;
 
 public class CSSPropertyTabRendererSWTHandler extends AbstractCSSPropertySWTHandler {
 
-	private boolean backwardsCompatURIsLogged = false;
 
 	@Override
 	protected void applyCSSProperty(Control control, String property,
@@ -40,15 +39,6 @@ public class CSSPropertyTabRendererSWTHandler extends AbstractCSSPropertySWTHand
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 			if (((CSSPrimitiveValue) value).getPrimitiveType() == CSSPrimitiveValue.CSS_URI) {
 				String rendURL = ((CSSPrimitiveValue) value).getStringValue();
-				// translate old-style platform:/plugin/ class specifiers into new-style bundleclass:// URIs
-				if (rendURL.startsWith("platform:/plugin/")) { //$NON-NLS-1$
-					if(!backwardsCompatURIsLogged) {
-						CSSActivator.getDefault().log(LogService.LOG_ERROR,
-								"platform-style URIs deprecated for referencing types: use bundleclass://<bundlename>/<typename>"); //$NON-NLS-1$
-						backwardsCompatURIsLogged = true;
-					}
-					rendURL = rendURL.replace("platform:/plugin/", "bundleclass://"); //$NON-NLS-1$ //$NON-NLS-2$
-				}
 				URI uri = URI.createURI(rendURL);
 				Bundle bundle = Platform.getBundle(uri.authority());
 				if (bundle == null) {

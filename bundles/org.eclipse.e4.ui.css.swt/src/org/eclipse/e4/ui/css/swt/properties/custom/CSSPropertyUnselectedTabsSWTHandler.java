@@ -31,8 +31,6 @@ import org.w3c.dom.css.CSSValue;
 public class CSSPropertyUnselectedTabsSWTHandler extends AbstractCSSPropertySWTHandler {
 	private static final String UNSELECTED_TABS_COLOR_PROP = "swt-unselected-tabs-color";
 
-	private static final String DEPRECATED_UNSELECTED_TABS_COLOR_PROP = "unselected-tabs-color";
-
 	private static final String RESIZE_LISTENER = "CSSPropertyUnselectedTabsSWTHandler.resizeListener";
 
 	@Override
@@ -84,8 +82,7 @@ public class CSSPropertyUnselectedTabsSWTHandler extends AbstractCSSPropertySWTH
 	}
 
 	private boolean isUnselectedTabsColorProp(String property) {
-		return UNSELECTED_TABS_COLOR_PROP.equals(property)
-				|| DEPRECATED_UNSELECTED_TABS_COLOR_PROP.equals(property);
+		return UNSELECTED_TABS_COLOR_PROP.equals(property);
 	}
 
 	// TODO: It needs to be refactored when the Bug 33276 gets fixed

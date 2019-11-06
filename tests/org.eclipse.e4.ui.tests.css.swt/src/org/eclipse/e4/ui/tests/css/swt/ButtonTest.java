@@ -120,37 +120,37 @@ public class ButtonTest extends CSSSWTTestCase {
 
 	@Test
 	public void testAlignment() {
-		Button buttonToTest = createTestButton("Button { alignment: right; }");
+		Button buttonToTest = createTestButton("Button { swt-alignment: right; }");
 		assertEquals(SWT.RIGHT, buttonToTest.getAlignment());
 
-		buttonToTest = createTestButton("Button { alignment: left; }");
+		buttonToTest = createTestButton("Button { swt-alignment: left; }");
 		assertEquals(SWT.LEFT, buttonToTest.getAlignment());
 
-		buttonToTest = createTestButton("Button { alignment: center; }");
+		buttonToTest = createTestButton("Button { swt-alignment: center; }");
 		assertEquals(SWT.CENTER, buttonToTest.getAlignment());
 	}
 
 	@Test
 	public void testAlignment2() {
-		Button buttonToTest = createTestButton("Button { alignment: trail; }");
+		Button buttonToTest = createTestButton("Button { swt-alignment: trail; }");
 		assertEquals(SWT.TRAIL, buttonToTest.getAlignment());
 
-		buttonToTest = createTestButton("Button { alignment: lead; }");
+		buttonToTest = createTestButton("Button { swt-alignment: lead; }");
 		assertEquals(SWT.LEAD, buttonToTest.getAlignment());
 	}
 
 	@Test
 	public void testArrowAlignment() {
-		Button buttonToTest = createTestArrowButton("Button { alignment: up; }");
+		Button buttonToTest = createTestArrowButton("Button { swt-alignment: up; }");
 		assertEquals(SWT.UP, buttonToTest.getAlignment());
 
-		buttonToTest = createTestArrowButton("Button { alignment: down; }");
+		buttonToTest = createTestArrowButton("Button { swt-alignment: down; }");
 		assertEquals(SWT.DOWN, buttonToTest.getAlignment());
 
-		buttonToTest = createTestArrowButton("Button { alignment: left; }");
+		buttonToTest = createTestArrowButton("Button { swt-alignment: left; }");
 		assertEquals(SWT.LEFT, buttonToTest.getAlignment());
 
-		buttonToTest = createTestArrowButton("Button { alignment: right; }");
+		buttonToTest = createTestArrowButton("Button { swt-alignment: right; }");
 		assertEquals(SWT.RIGHT, buttonToTest.getAlignment());
 	}
 

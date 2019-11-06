@@ -293,7 +293,7 @@ public class CTabItemTest extends CSSSWTTestCase {
 	public void testShowClose2() {
 		CTabFolder folder = createTestTabFolder();
 		CTabFolder folder2 = createFolder(folder.getShell());
-		engine = createEngine("CTabItem { show-close: true }", folder
+		engine = createEngine("CTabItem { swt-show-close: true }", folder
 				.getDisplay());
 		engine.applyStyles(folder.getShell(), true);
 

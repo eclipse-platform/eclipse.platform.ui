@@ -79,9 +79,6 @@
          <property-name
                name="swt-corner-radius">
          </property-name>
-         <property-name
-               name="corner-radius" deprecated="renamed as swt-corner-radius">
-         </property-name>
       </handler>
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
@@ -89,9 +86,6 @@
             handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyTabRendererSWTHandler">
          <property-name
                name="swt-tab-renderer">
-         </property-name>
-         <property-name
-               name="tab-renderer" deprecated="renamed as swt-tab-renderer">
          </property-name>
       </handler>
       <handler
@@ -123,9 +117,6 @@
          <property-name
                name="swt-unselected-tabs-color">
          </property-name>
-         <property-name
-               name="unselected-tabs-color" deprecated="renamed as swt-unselected-tabs-color">
-         </property-name>
       </handler>
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
@@ -150,9 +141,6 @@
          <property-name
                name="swt-outer-keyline-color">
          </property-name>
-         <property-name
-               name="outer-keyline-color" deprecated="renamed as swt-outer-keyline-color">
-         </property-name>
       </handler>
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
@@ -160,9 +148,6 @@
             handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyInnerKeylineSWTHandler">
          <property-name
                name="swt-inner-keyline-color">
-         </property-name>
-         <property-name
-               name="inner-keyline-color" deprecated="renamed as swt-swt-inner-keyline-color">
          </property-name>
       </handler>
       <handler
@@ -204,9 +189,6 @@
          <!-- we support some additional SWT alignment values -->
          <property-name
                name="swt-alignment">
-         </property-name>
-         <property-name
-               name="alignment" deprecated="renamed as swt-alignment">
          </property-name>
       </handler>
       <handler
@@ -292,7 +274,7 @@
          <property-name
                name="swt-show-close">
          </property-name>
-         <property-name
+             <property-name
                name="show-close" deprecated="renamed as swt-show-close">
          </property-name>
       </handler>
@@ -303,9 +285,6 @@
          <property-name
                name="swt-simple">
          </property-name>
-         <property-name
-               name="simple" deprecated="renamed as swt-simple">
-         </property-name>
       </handler>
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
@@ -313,9 +292,6 @@
             handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMaximizeVisibleSWTHandler">
          <property-name
                name="swt-maximize-visible">
-         </property-name>
-         <property-name
-               name="maximize-visible" deprecated="renamed as swt-maximize-visible">
          </property-name>
       </handler>
       <handler
@@ -325,9 +301,6 @@
          <property-name
                name="swt-minimize-visible">
          </property-name>
-         <property-name
-               name="minimize-visible" deprecated="renamed as swt-minimize-visible">
-         </property-name>
       </handler>
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
@@ -335,9 +308,6 @@
             handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMruVisibleSWTHandler">
          <property-name
                name="swt-mru-visible">
-         </property-name>
-         <property-name
-               name="mru-visible" deprecated="renamed as swt-mru-visible">
          </property-name>
       </handler>
       <handler
@@ -347,9 +317,6 @@
          <property-name
                name="swt-maximized">
          </property-name>
-         <property-name
-               name="maximized" deprecated="renamed as swt-maximized">
-         </property-name>
       </handler>
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
@@ -357,9 +324,6 @@
             handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMinimizedSWTHandler">
          <property-name
                name="swt-minimized">
-         </property-name>
-         <property-name
-               name="minimized" deprecated="renamed as swt-minimized">
          </property-name>
       </handler>
       <handler
@@ -369,9 +333,6 @@
          <property-name
                name="swt-tab-height">
          </property-name>
-         <property-name
-               name="tab-height" deprecated="renamed as swt-tab-height">
-         </property-name>
       </handler>
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
@@ -379,9 +340,6 @@
             handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySingleSWTHandler">
          <property-name
                name="swt-single">
-         </property-name>
-         <property-name
-               name="single" deprecated="renamed as swt-single">
          </property-name>
       </handler>
       <handler
@@ -391,9 +349,6 @@
          <property-name
                name="swt-unselected-close-visible">
          </property-name>
-         <property-name
-               name="unselected-close-visible" deprecated="renamed as swt-unselected-close-visible">
-         </property-name>
       </handler>
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
@@ -401,9 +356,6 @@
             handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyUnselectedImageVisibleSWTHandler">
          <property-name
                name="swt-unselected-image-visible">
-         </property-name>
-         <property-name
-               name="unselected-image-visible" deprecated="renamed as swt-unselected-image-visible">
          </property-name>
       </handler>
       <handler
@@ -413,9 +365,6 @@
          <property-name
                name="swt-selected-tabs-background">
          </property-name>
-         <property-name
-               name="selected-tabs-background" deprecated="renamed as swt-selected-tabs-background">
-         </property-name>
       </handler>
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
@@ -423,9 +372,6 @@
             handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyShadowVisibleSWTHandler">
          <property-name
                name="swt-shadow-visible">
-         </property-name>
-         <property-name
-               name="shadow-visible" deprecated="renamed as swt-shadow-visible">
          </property-name>
       </handler>
       <handler
@@ -435,9 +381,6 @@
          <property-name
                name="swt-selected-tab-fill">
          </property-name>
-         <property-name
-               name="selected-tab-fill" deprecated="renamed as selected-tab-fill">
-         </property-name>
       </handler>
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
@@ -445,9 +388,6 @@
             handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertye4TabOutline">
          <property-name
                name="swt-tab-outline">
-         </property-name>
-         <property-name
-               name="tab-outline" deprecated="renamed as swt-tab-outline">
          </property-name>
       </handler>
       <handler
@@ -457,9 +397,6 @@
          <property-name
                name="swt-unselected-hot-tab-color-background">
          </property-name>
-         <property-name
-               name="unselected-hot-tab-color-background" deprecated="renamed as swt-unselected-hot-tab-color-background">
-         </property-name>
       </handler>
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
@@ -467,9 +404,6 @@
             handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyShadowColorHandler">
          <property-name
                name="swt-shadow-color">
-         </property-name>
-         <property-name
-               name="shadow-color" deprecated="renamed as swt-shadow-color">
          </property-name>
       </handler>
       <handler
