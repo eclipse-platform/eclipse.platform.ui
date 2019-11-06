@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -34,7 +34,7 @@ public interface IPropertyMap {
 	 *                                       compute the set of valid keys
 	 * @since 3.1
 	 */
-	Set keySet();
+	Set<String> keySet();
 
 	/**
 	 * Returns the value of the given property. Returns null if the given property

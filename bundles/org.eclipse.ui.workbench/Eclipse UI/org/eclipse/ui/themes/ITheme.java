@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,7 +14,6 @@
 package org.eclipse.ui.themes;
 
 import java.util.Set;
-
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
@@ -117,7 +116,7 @@ public interface ITheme {
 	 *
 	 * @return the Set of keys
 	 */
-	Set keySet();
+	Set<String> keySet();
 
 	/**
 	 * Removes a property listener from the theme.

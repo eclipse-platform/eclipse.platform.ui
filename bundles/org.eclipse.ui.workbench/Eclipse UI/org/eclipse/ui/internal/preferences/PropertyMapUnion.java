@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.preferences;
 
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -23,7 +22,7 @@ import java.util.Set;
  */
 public class PropertyMapUnion implements IPropertyMap {
 
-	private Map values;
+	private Map<String, PropertyInfo> values;
 
 	private static final class PropertyInfo {
 		Object value;
@@ -36,13 +35,13 @@ public class PropertyMapUnion implements IPropertyMap {
 	}
 
 	@Override
-	public Set keySet() {
+	public Set<String> keySet() {
 		return values.keySet();
 	}
 
 	@Override
 	public Object getValue(String propertyId, Class propertyType) {
-		PropertyInfo info = (PropertyInfo) values.get(propertyId);
+		PropertyInfo info = values.get(propertyId);
 
 		if (info == null) {
 			return null;
@@ -59,7 +58,7 @@ public class PropertyMapUnion implements IPropertyMap {
 
 	@Override
 	public boolean isCommonProperty(String propertyId) {
-		PropertyInfo info = (PropertyInfo) values.get(propertyId);
+		PropertyInfo info = values.get(propertyId);
 
 		if (info == null) {
 			return false;
@@ -81,13 +80,11 @@ public class PropertyMapUnion implements IPropertyMap {
 	}
 
 	public void addMap(IPropertyMap toAdd) {
-		Set keySet = toAdd.keySet();
+		Set<String> keySet = toAdd.keySet();
 
 		// Update any existing attributes
-		for (Iterator iter = keySet().iterator(); iter.hasNext();) {
-			String key = (String) iter.next();
-
-			PropertyInfo localInfo = (PropertyInfo) values.get(key);
+		for (String key : keySet()) {
+			PropertyInfo localInfo = values.get(key);
 			// Shouldn't be null, but just in case...
 			if (localInfo != null) {
 				// If the attribute exists in the new map
@@ -112,10 +109,8 @@ public class PropertyMapUnion implements IPropertyMap {
 		}
 
 		// Add any new attributes that exist in the target
-		for (Iterator iter = keySet.iterator(); iter.hasNext();) {
-			String element = (String) iter.next();
-
-			PropertyInfo localInfo = (PropertyInfo) values.get(element);
+		for (String element : keySet) {
+			PropertyInfo localInfo = values.get(element);
 			if (localInfo == null) {
 				Object value = toAdd.getValue(element, Object.class);
 

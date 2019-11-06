@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Bredex GmbH and others.
+ * Copyright (c) 2008, 2019 Bredex GmbH and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,7 +17,6 @@ package org.eclipse.ui.internal.preferences;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceNode;
 import org.eclipse.ui.IPluginContribution;
@@ -46,14 +45,14 @@ public class WorkbenchPreferenceExpressionNode extends PreferenceNode implements
 	public IPreferenceNode[] getSubNodes() {
 		IPreferenceNode[] prefNodes = super.getSubNodes();
 		int size = prefNodes.length;
-		List list = new ArrayList(size);
+		List<IPreferenceNode> list = new ArrayList<>(size);
 		for (int i = 0; i < size; i++) {
 			IPreferenceNode prefNode = getNodeExpression(prefNodes[i]);
 			if (prefNode != null) {
 				list.add(prefNode);
 			}
 		}
-		return (IPreferenceNode[]) list.toArray(new IPreferenceNode[list.size()]);
+		return list.toArray(new IPreferenceNode[list.size()]);
 	}
 
 	/**

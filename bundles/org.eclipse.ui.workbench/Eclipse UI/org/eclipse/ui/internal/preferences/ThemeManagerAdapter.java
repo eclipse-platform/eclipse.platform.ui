@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,7 +14,6 @@
 package org.eclipse.ui.internal.preferences;
 
 import java.util.Set;
-
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.ui.themes.IThemeManager;
 
@@ -42,7 +41,7 @@ public class ThemeManagerAdapter extends PropertyMapAdapter {
 	}
 
 	@Override
-	public Set keySet() {
+	public Set<String> keySet() {
 		return ThemeAdapter.getKeySet(manager.getCurrentTheme());
 	}
 

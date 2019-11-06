@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -45,7 +45,7 @@ public class ThemeAdapter extends PropertyMapAdapter {
 	}
 
 	@Override
-	public Set keySet() {
+	public Set<String> keySet() {
 		return getKeySet(targetTheme);
 	}
 
@@ -54,8 +54,8 @@ public class ThemeAdapter extends PropertyMapAdapter {
 		return getValue(targetTheme, propertyId, propertyType);
 	}
 
-	public static Set getKeySet(ITheme targetTheme) {
-		Set result = new HashSet();
+	public static Set<String> getKeySet(ITheme targetTheme) {
+		Set<String> result = new HashSet<>();
 
 		result.addAll(targetTheme.keySet());
 		result.addAll(targetTheme.getColorRegistry().getKeySet());
@@ -64,7 +64,7 @@ public class ThemeAdapter extends PropertyMapAdapter {
 		return result;
 	}
 
-	public static Object getValue(ITheme targetTheme, String propertyId, Class propertyType) {
+	public static Object getValue(ITheme targetTheme, String propertyId, Class<?> propertyType) {
 
 		if (propertyType.isAssignableFrom(String.class)) {
 			return targetTheme.getString(propertyId);

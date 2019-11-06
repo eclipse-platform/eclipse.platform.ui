@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.preferences;
 
-import java.util.Iterator;
 import java.util.Set;
 
 /**
@@ -24,16 +23,14 @@ public class PropertyUtil {
 	}
 
 	public static boolean isEqual(IPropertyMap map1, IPropertyMap map2) {
-		Set map1Keys = map1.keySet();
-		Set map2Keys = map2.keySet();
+		Set<String> map1Keys = map1.keySet();
+		Set<String> map2Keys = map2.keySet();
 
 		if (!map1Keys.equals(map2Keys)) {
 			return false;
 		}
 
-		for (Iterator iter = map1Keys.iterator(); iter.hasNext();) {
-			String next = (String) iter.next();
-
+		for (String next : map1Keys) {
 			if (!map1.getValue(next, Object.class).equals(map2.getValue(next, Object.class))) {
 				return false;
 			}
@@ -50,11 +47,9 @@ public class PropertyUtil {
 	 * @since 3.1
 	 */
 	public static void copy(IPropertyMap destination, IPropertyMap source) {
-		Set keys = source.keySet();
+		Set<String> keys = source.keySet();
 
-		for (Iterator iter = keys.iterator(); iter.hasNext();) {
-			String key = (String) iter.next();
-
+		for (String key : keys) {
 			destination.setValue(key, source.getValue(key, Object.class));
 		}
 	}

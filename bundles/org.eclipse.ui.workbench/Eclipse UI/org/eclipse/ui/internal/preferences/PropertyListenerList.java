@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -18,7 +18,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -26,8 +25,8 @@ import java.util.Map;
  * @since 3.1
  */
 public final class PropertyListenerList {
-	private Map listeners;
-	private List globalListeners;
+	private Map<String, List<IPropertyMapListener>> listeners;
+	private List<IPropertyMapListener> globalListeners;
 	private static String[] singlePropertyDelta;
 	private static Object mutex = new Object();
 
@@ -64,9 +63,7 @@ public final class PropertyListenerList {
 
 	public void firePropertyChange(String[] propertyIds) {
 		if (globalListeners != null) {
-			for (Iterator iter = globalListeners.iterator(); iter.hasNext();) {
-				IPropertyMapListener next = (IPropertyMapListener) iter.next();
-
+			for (IPropertyMapListener next : globalListeners) {
 				next.propertyChanged(propertyIds);
 			}
 		}
@@ -76,18 +73,18 @@ public final class PropertyListenerList {
 			// To avoid temporary memory allocation, we try to simply move the
 			// result pointer around if possible. We only allocate a HashSet
 			// to compute which listeners we care about
-			Collection result = Collections.EMPTY_SET;
-			HashSet union = null;
+			Collection<IPropertyMapListener> result = Collections.emptySet();
+			HashSet<IPropertyMapListener> union = null;
 
 			for (String property : propertyIds) {
-				List existingListeners = (List) listeners.get(property);
+				List<IPropertyMapListener> existingListeners = listeners.get(property);
 
 				if (existingListeners != null) {
-					if (result == Collections.EMPTY_SET) {
+					if (result.isEmpty()) {
 						result = existingListeners;
 					} else {
 						if (union == null) {
-							union = new HashSet();
+							union = new HashSet<>();
 							union.addAll(result);
 							result = union;
 						}
@@ -97,9 +94,7 @@ public final class PropertyListenerList {
 				}
 			}
 
-			for (Iterator iter = result.iterator(); iter.hasNext();) {
-				IPropertyMapListener next = (IPropertyMapListener) iter.next();
-
+			for (IPropertyMapListener next : result) {
 				next.propertyChanged(propertyIds);
 			}
 		}
@@ -107,7 +102,7 @@ public final class PropertyListenerList {
 
 	public void add(IPropertyMapListener newListener) {
 		if (globalListeners == null) {
-			globalListeners = new ArrayList();
+			globalListeners = new ArrayList<>();
 		}
 
 		globalListeners.add(newListener);
@@ -123,13 +118,13 @@ public final class PropertyListenerList {
 	 */
 	private void addInternal(String propertyId, IPropertyMapListener newListener) {
 		if (listeners == null) {
-			listeners = new HashMap();
+			listeners = new HashMap<>();
 		}
 
-		List listenerList = (List) listeners.get(propertyId);
+		List<IPropertyMapListener> listenerList = listeners.get(propertyId);
 
 		if (listenerList == null) {
-			listenerList = new ArrayList(1);
+			listenerList = new ArrayList<>(1);
 			listeners.put(propertyId, listenerList);
 		}
 
@@ -149,7 +144,7 @@ public final class PropertyListenerList {
 		if (listeners == null) {
 			return;
 		}
-		List listenerList = (List) listeners.get(propertyId);
+		List<IPropertyMapListener> listenerList = listeners.get(propertyId);
 
 		if (listenerList != null) {
 			listenerList.remove(toRemove);
@@ -178,9 +173,7 @@ public final class PropertyListenerList {
 		}
 
 		if (listeners != null) {
-			for (Iterator iter = listeners.keySet().iterator(); iter.hasNext();) {
-				String key = (String) iter.next();
-
+			for (String key : listeners.keySet()) {
 				remove(key, toRemove);
 			}
 		}
