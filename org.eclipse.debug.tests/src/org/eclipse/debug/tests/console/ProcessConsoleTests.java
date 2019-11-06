@@ -82,9 +82,10 @@ public class ProcessConsoleTests extends AbstractDebugTest {
 
 	@Override
 	protected void tearDown() throws Exception {
-		assertEquals("Test triggered errors.", 0, loggedErrors.get());
 		Platform.removeLogListener(errorLogListener);
 		super.tearDown();
+
+		assertEquals("Test triggered errors.", 0, loggedErrors.get());
 	}
 
 	/**
