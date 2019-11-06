@@ -1,5 +1,5 @@
 /*******************************************************************************
-* Copyright (c) 2018 SAP SE and others.
+* Copyright (c) 2018, 2019 SAP SE and others.
 * All rights reserved. This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License v1.0
 * which accompanies this distribution, and is available at
@@ -81,7 +81,6 @@ import org.eclipse.urischeme.IUriSchemeExtensionReader;
  * General section
  *
  */
-@SuppressWarnings("restriction")
 public class UriSchemeHandlerPreferencePage extends PreferencePage implements IWorkbenchPreferencePage {
 
 	Text handlerLocation;
@@ -224,11 +223,6 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 		return returnList;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.jface.preference.PreferencePage#performOk()
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean performOk() {
@@ -258,26 +252,12 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 	}
 
 	private class TableSchemeSelectionListener implements ICheckStateListener, ISelectionChangedListener {
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see
-		 * org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.
-		 * eclipse.jface.viewers.SelectionChangedEvent)
-		 */
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			handleSelection();
 
 		}
 
-		/*
-		 * (non-Javadoc)
-		 *
-		 * @see
-		 * org.eclipse.jface.viewers.ICheckStateListener#checkStateChanged(org.eclipse.
-		 * jface.viewers.CheckStateChangedEvent)
-		 */
 		@Override
 		public void checkStateChanged(CheckStateChangedEvent event) {
 			handleCheckbox(event);
