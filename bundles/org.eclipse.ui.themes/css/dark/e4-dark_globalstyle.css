@@ -40,8 +40,18 @@ CompareStructureViewerSwitchingPane, CompareContentViewerSwitchingPane,
 QualifiedNameComponent, RefactoringStatusViewer,
 MessageLine,
 Button /* SWT-BUG: checkbox inner label font color is not accessible */,
-Composite > *, 
 Group > StyledText {
+    background-color:#515658;
+    color:#eeeeee;
+}
+
+/* Style all widget which are direct children of a Composite which is a direct child of a Shell
+This is typically the case for dialogs and we want to style all widgets there
+This catches for example the Rename dialog MessageBox widget in
+ RefactoringWizardDialog$... */
+Shell > Composite > *,
+Shell > Composite > * > *
+{
     background-color:#515658;
     color:#eeeeee;
 }
