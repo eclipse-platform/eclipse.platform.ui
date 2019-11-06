@@ -127,13 +127,13 @@ FormText {
 }
 
 Table {
-    background-color:#515658;
+    background-color:inherit;
     color:#eeeeee;
 }
 
 Tree,
 RegistryFilteredTree {
-    background-color:#515658;
+    background-color:inherit;
     color:#eeeeee;
 }
 

@@ -81,7 +81,7 @@ CTabFolder.MArea .MPartStack,CTabFolder.MArea .MPartStack.active {
     swt-shadow-visible: false;
 }
 
-CTabFolder Tree, CTabFolder Canvas {
+CTabFolder Canvas {
     background-color: #2F2F2F;
     color: #CCC;
 }

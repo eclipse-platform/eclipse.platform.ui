@@ -126,7 +126,7 @@ CTabFolder.MArea .MPartStack,CTabFolder.MArea .MPartStack.active {
 }
 
 
-CTabFolder Tree, CTabFolder Canvas {
+CTabFolder Canvas {
     background-color: #2F2F2F;
     color: #CCC;
 }
