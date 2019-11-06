@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 Manumitting Technologies Inc and others.
+ * Copyright (c) 2014, 2019 Manumitting Technologies Inc and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -32,14 +32,9 @@ import org.w3c.dom.Element;
  * A simple {@link IElementProvider} that is configured by an extension point.
  */
 public class RegistryCSSElementProvider implements IElementProvider {
-	/* the original extension point was misspelled */
-	private static final String DEPRECATED_ELEMENT_PROVIDER_EXTPOINT = "org.eclipse.e4.u.css.core.elementProvider";
 	private static final String ELEMENT_PROVIDER_EXTPOINT = "org.eclipse.e4.ui.css.core.elementProvider";
 
 	final private IExtensionRegistry registry;
-
-	private String[] extpts = { ELEMENT_PROVIDER_EXTPOINT,
-			DEPRECATED_ELEMENT_PROVIDER_EXTPOINT };
 
 	private Map<Class<?>, IElementProvider> providerCache = Collections
 			.synchronizedMap(new WeakHashMap<>());
@@ -61,27 +56,16 @@ public class RegistryCSSElementProvider implements IElementProvider {
 		}
 		for (Class<?> type : computeElementTypeLookup(o.getClass())) {
 			String typeName = type.getName();
-			for (String extpt : extpts) {
-				for (IConfigurationElement ce : registry.getConfigurationElementsFor(extpt)) {
-					if ("provider".equals(ce.getName())) {
-						for (IConfigurationElement ce2 : ce.getChildren()) {
-							if (typeName.equals(ce2.getAttribute("class"))) {
-								try {
-									if (extpt
-											.equals(DEPRECATED_ELEMENT_PROVIDER_EXTPOINT)) {
-										System.err
-										.println("Extension point "
-												+ DEPRECATED_ELEMENT_PROVIDER_EXTPOINT
-												+ " is deprecated; use "
-												+ ELEMENT_PROVIDER_EXTPOINT);
-									}
-									provider = (IElementProvider) ce
-											.createExecutableExtension("class");
-									providerCache.put(o.getClass(), provider);
-									return provider.getElement(o, engine);
-								} catch (CoreException e1) {
-									e1.printStackTrace();
-								}
+			for (IConfigurationElement ce : registry.getConfigurationElementsFor(ELEMENT_PROVIDER_EXTPOINT)) {
+				if ("provider".equals(ce.getName())) {
+					for (IConfigurationElement ce2 : ce.getChildren()) {
+						if (typeName.equals(ce2.getAttribute("class"))) {
+							try {
+								provider = (IElementProvider) ce.createExecutableExtension("class");
+								providerCache.put(o.getClass(), provider);
+								return provider.getElement(o, engine);
+							} catch (CoreException e1) {
+								e1.printStackTrace();
 							}
 						}
 					}
