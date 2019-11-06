@@ -9,7 +9,7 @@
             label="%theme.classic">
       </theme>
     <theme
-        basestylesheeturi="css/e4-dark.css"
+        basestylesheeturi="css/e4-dark_linux.css"
         id="org.eclipse.e4.ui.css.theme.e4_dark"
         label="%theme.dark"
         os="linux">
