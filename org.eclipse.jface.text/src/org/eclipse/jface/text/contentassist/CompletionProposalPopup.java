@@ -141,6 +141,9 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		@Override
 		public Object execute(ExecutionEvent event) throws ExecutionException {
+			if (fProposalTable.isDisposed()) {
+				return null;
+			}
 			int itemCount= fProposalTable.getItemCount();
 			int selectionIndex= fProposalTable.getSelectionIndex();
 			switch (fOperationCode) {
