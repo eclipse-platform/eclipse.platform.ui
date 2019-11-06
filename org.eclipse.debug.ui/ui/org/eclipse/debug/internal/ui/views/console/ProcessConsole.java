@@ -122,7 +122,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 	private boolean fAllocateConsole = true;
 	private String fStdInFile = null;
 
-	private boolean fStreamsClosed = false;
+	private volatile boolean fStreamsClosed = false;
 
 	/**
 	 * Create process console with default encoding.
@@ -443,7 +443,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 			} catch (IOException e) {
 			}
 		}
-		fStreamsClosed  = true;
+		fStreamsClosed = true;
 	}
 
 	/**
@@ -456,6 +456,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 		}
 		fFileOutputStream = null;
 		fInput = null;
+		fUserInput = null;
 	}
 
 	/**
@@ -765,7 +766,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 
 		@Override
 		protected IStatus run(IProgressMonitor monitor) {
-			if (fInput == null) {
+			if (fInput == null || fStreamsClosed) {
 				return monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
 			}
 			Charset encoding = getCharset();
@@ -776,7 +777,7 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 				char[] cbuf = new char[1024];
 				int charRead = 0;
 				while (charRead >= 0 && !monitor.isCanceled()) {
-					if (fInput == null) {
+					if (fInput == null || fStreamsClosed) {
 						break;
 					}
 					if (fInput != readingStream) {
