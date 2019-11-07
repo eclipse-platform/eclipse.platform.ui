@@ -44,7 +44,10 @@ import org.eclipse.jface.util.Util;
 
 import org.eclipse.jface.text.BlockTextSelection;
 import org.eclipse.jface.text.Document;
+import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentAdapter;
+import org.eclipse.jface.text.IDocumentExtension3;
+import org.eclipse.jface.text.ITextOperationTarget;
 import org.eclipse.jface.text.ITextSelection;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.TextViewer;
@@ -317,5 +320,51 @@ public class TextViewerTest {
 		}
 		b.append("end");
 		return b.toString();
+	}
+
+	@Test
+	public void testShiftLeft() {
+		Shell shell= new Shell();
+		try {
+			TextViewer textViewer= new TextViewer(shell, SWT.NONE);
+			{
+				// Normal case, both lines match prefix
+				Document document= new Document("//line1\n//line2");
+				textViewer.setDocumentPartitioning(IDocumentExtension3.DEFAULT_PARTITIONING);
+				textViewer.setDocument(document);
+				textViewer.setDefaultPrefixes(new String[] { "//" }, IDocument.DEFAULT_CONTENT_TYPE);
+
+				textViewer.doOperation(ITextOperationTarget.SELECT_ALL);
+				textViewer.doOperation(ITextOperationTarget.STRIP_PREFIX);
+
+				assertEquals("line1\nline2", textViewer.getDocument().get());
+			}
+			{
+				// Don't shift anything, as 2nd line does not match any prefix
+				Document document= new Document("//line1\nline2");
+				textViewer.setDocumentPartitioning(IDocumentExtension3.DEFAULT_PARTITIONING);
+				textViewer.setDocument(document);
+				textViewer.setDefaultPrefixes(new String[] { "//" }, IDocument.DEFAULT_CONTENT_TYPE);
+
+				textViewer.doOperation(ITextOperationTarget.SELECT_ALL);
+				textViewer.doOperation(ITextOperationTarget.STRIP_PREFIX);
+
+				assertEquals("//line1\nline2", textViewer.getDocument().get());
+			}
+			{
+				// Shift line1, since line2 matches the allowed empty prefix
+				Document document= new Document("//line1\nline2");
+				textViewer.setDocumentPartitioning(IDocumentExtension3.DEFAULT_PARTITIONING);
+				textViewer.setDocument(document);
+				textViewer.setDefaultPrefixes(new String[] { "//", "" }, IDocument.DEFAULT_CONTENT_TYPE);
+
+				textViewer.doOperation(ITextOperationTarget.SELECT_ALL);
+				textViewer.doOperation(ITextOperationTarget.STRIP_PREFIX);
+
+				assertEquals("line1\nline2", textViewer.getDocument().get());
+			}
+		} finally {
+			shell.dispose();
+		}
 	}
 }

@@ -4326,6 +4326,8 @@ public class TextViewer extends Viewer implements
 		try {
 
 			IRegion[] occurrences= new IRegion[endLine - startLine + 1];
+
+			boolean allowEmptyPrefix= Arrays.stream(prefixes).anyMatch(String::isEmpty);
 			MultiStringMatcher prefixMatcher= MultiStringMatcher.create(prefixes);
 
 			// find all the first occurrences of prefix in the given lines
@@ -4335,20 +4337,28 @@ public class TextViewer extends Viewer implements
 				String text= d.get(line.getOffset(), line.getLength());
 
 				int index= -1;
+				int matchOffset= -1;
+				String matchText= ""; //$NON-NLS-1$
 				Match m= prefixMatcher.indexOf(text, 0);
 				if (m != null) {
+					matchOffset= m.getOffset();
+					matchText= m.getText();
+				} else if (allowEmptyPrefix) {
+					matchOffset= 0;
+				}
+				if (matchOffset > -1) {
 					if (ignoreWhitespace) {
-						String s= d.get(line.getOffset(), m.getOffset());
+						String s= d.get(line.getOffset(), matchOffset);
 						s= s.trim();
 						if (s.isEmpty())
-							index= line.getOffset() + m.getOffset();
-					} else if (m.getOffset() == 0)
+							index= line.getOffset() + matchOffset;
+					} else if (matchOffset == 0)
 						index= line.getOffset();
 				}
 
 				if (index > -1) {
 					// remember where prefix is in line, so that it can be removed
-					int length= m.getText().length();
+					int length= matchText.length();
 					if (length == 0 && !ignoreWhitespace && line.getLength() > 0) {
 						// found a non-empty line which cannot be shifted
 						return;
