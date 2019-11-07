@@ -19,6 +19,7 @@ import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.e4.core.commands.ECommandService;
@@ -31,6 +32,7 @@ import org.eclipse.ui.internal.progress.JobInfo;
 import org.eclipse.ui.internal.progress.ProgressInfoItem;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.progress.IProgressConstants2;
+import org.eclipse.ui.tests.TestPlugin;
 
 /**
  * @since 3.6
@@ -135,45 +137,43 @@ public class ProgressContantsTest extends ProgressTestCase {
 		return null;
 	}
 
-	// Commented out due to https://bugs.eclipse.org/bugs/show_bug.cgi?id=288358
+	public void testKeepProperty() throws Exception {
+		openProgressView();
 
-//	public void testKeepProperty() throws Exception {
-//
-//		openProgressView();
-//
-//		DummyJob okJob = new DummyJob("OK Job", Status.OK_STATUS);
-//		okJob.setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.TRUE);
-//		okJob.schedule();
-//
-//		DummyJob warningJob = new DummyJob("Warning Job", new Status(IStatus.WARNING, TestPlugin.PLUGIN_ID, "Warning message"));
-//		warningJob.setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.TRUE);
-//		warningJob.schedule();
-//
-//		processEvents();
-//
-//		okJob.join();
-//		warningJob.join();
-//
-//		processEvents();
-//
-//		boolean okJobFound = false;
-//		boolean warningJobFound = false;
-//
-//		ProgressInfoItem[] progressInfoItems = progressView.getViewer().getProgressInfoItems();
-//		for (int i = 0; i < progressInfoItems.length; i++) {
-//			JobInfo[] jobInfos = progressInfoItems[i].getJobInfos();
-//			for (int j = 0; j < jobInfos.length; j++) {
-//				Job job = jobInfos[j].getJob();
-//				if (job.equals(okJob)) {
-//					okJobFound = true;
-//				}
-//				if (job.equals(warningJob)) {
-//					warningJobFound = true;
-//				}
-//			}
-//		}
-//
-//		assertTrue(okJobFound);
-//		assertTrue(warningJobFound);
-//	}
+		DummyJob okJob = new DummyJob("OK Job", Status.OK_STATUS);
+		okJob.setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.TRUE);
+		okJob.schedule();
+
+		DummyJob warningJob = new DummyJob("Warning Job",
+				new Status(IStatus.WARNING, TestPlugin.PLUGIN_ID, "Warning message"));
+		warningJob.setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.TRUE);
+		warningJob.schedule();
+
+		processEvents();
+
+		okJob.join();
+		warningJob.join();
+
+		processEvents();
+
+		boolean okJobFound = false;
+		boolean warningJobFound = false;
+
+		ProgressInfoItem[] progressInfoItems = progressView.getViewer().getProgressInfoItems();
+		for (ProgressInfoItem progressInfoItem : progressInfoItems) {
+			JobInfo[] jobInfos = progressInfoItem.getJobInfos();
+			for (JobInfo jobInfo : jobInfos) {
+				Job job = jobInfo.getJob();
+				if (job.equals(okJob)) {
+					okJobFound = true;
+				}
+				if (job.equals(warningJob)) {
+					warningJobFound = true;
+				}
+			}
+		}
+
+		assertTrue(okJobFound);
+		assertTrue(warningJobFound);
+	}
 }
