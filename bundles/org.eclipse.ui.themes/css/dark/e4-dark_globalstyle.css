@@ -64,11 +64,7 @@ ToolBar {
 }
 
 Combo, 
-List {
-    background-color:#515658;
-    color:#eeeeee;
-}
-
+List,
 Text {
     background-color:#515658;
     color:#eeeeee;
@@ -80,11 +76,6 @@ SashForm > StyledText {
     color:#eeeeee;
 }
 
-
-Text[style~='SWT.DROP_DOWN']{
-    background-color:#515658;
-    color:#eeeeee;
-}
 Text[style~='SWT.SEARCH'],
 Text[style~='SWT.SEARCH'] + Label /* SWT-BUG: adjacent sibling selector is ignored (CSS2.1) */ {
     /* search boxes */
@@ -92,21 +83,10 @@ Text[style~='SWT.SEARCH'] + Label /* SWT-BUG: adjacent sibling selector is ignor
     color: #F4F7F7;
 }
 
-Text[style~='SWT.POP_UP'] {
-    background-color: #34383B;
-    color: #dddddd;
-}
 Text[style~='SWT.READ_ONLY'] {
     background-color: #515658;
     color: #bbbbbb;
 }
-/* Text[style~='SWT.POP_UP'][style~='SWT.ERROR_MENU_NOT_POP_UP'][style~='SWT.ICON_WARNING'] {
-      /* Dirty way to catch error popup labels
-        (currently it's impossible since there's no difference
-        at all from some other Text elements) */
-/*    background-color: #742025;
-      color: #FF9997;
-} */
 
 DatePicker,
 DatePicker > Text,
