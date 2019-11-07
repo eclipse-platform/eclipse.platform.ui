@@ -154,7 +154,7 @@ public class ProgressContantsTest extends ProgressTestCase {
 		okJob.join();
 		warningJob.join();
 
-		processEvents();
+		waitForJobs(100, 1000);
 
 		boolean okJobFound = false;
 		boolean warningJobFound = false;
