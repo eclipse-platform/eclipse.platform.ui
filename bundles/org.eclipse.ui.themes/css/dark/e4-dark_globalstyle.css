@@ -57,8 +57,16 @@ Shell > Composite > * > *
 }
 
 /* ############################## Toolbar ############################## */
-/* Toolbar should inherit the colors of its container to avoid drawing artifacts*/
+/* Ensure that the labels in the tabfolder gets updated
+   See Bug 552780
+*/
+TabFolder > Composite > *, /* Composite > CommitSearchPage$... */
+CTabFolder > Composite > *, /* Composite > CommitSearchPage$... */
+TabFolder > Composite > * > * /* [style~='SWT.NO_BACKGROUND'] <- generate E4 non-sense bugs in apparently not related other rules */, /* Composite > ContentMergeViewer$... > TextMergeViewer$... */ {
+	color:#eeeeee;
+}
 
+/* Toolbar should inherit the colors of its container to avoid drawing artifacts*/
 ToolBar {
 	background-color:inherit;
 }
