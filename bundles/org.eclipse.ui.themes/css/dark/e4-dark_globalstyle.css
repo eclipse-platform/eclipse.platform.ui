@@ -62,7 +62,7 @@ Shell > Composite > * > *
 */
 TabFolder > Composite > *, /* Composite > CommitSearchPage$... */
 CTabFolder > Composite > *, /* Composite > CommitSearchPage$... */
-TabFolder > Composite > * > * /* [style~='SWT.NO_BACKGROUND'] <- generate E4 non-sense bugs in apparently not related other rules */, /* Composite > ContentMergeViewer$... > TextMergeViewer$... */ {
+TabFolder > Composite > * > * { /* [style~='SWT.NO_BACKGROUND'] <- generate E4 non-sense bugs in apparently not related other rules */ /* Composite > ContentMergeViewer$... > TextMergeViewer$... */ 
 	color:#eeeeee;
 }
 
