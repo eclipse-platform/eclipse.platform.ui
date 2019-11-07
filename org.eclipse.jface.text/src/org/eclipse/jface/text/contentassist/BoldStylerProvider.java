@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2016 IBM Corporation and others.
+ * Copyright (c) 2015, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -26,7 +26,7 @@ import org.eclipse.jface.viewers.StyledString.Styler;
  *
  * @since 3.11
  *
- * @deprecated use org.eclipse.jface.viewer.BoldStylerProvider directly
+ * @deprecated use {@link org.eclipse.jface.viewers.BoldStylerProvider} directly
  */
 @Deprecated
 public final class BoldStylerProvider {
