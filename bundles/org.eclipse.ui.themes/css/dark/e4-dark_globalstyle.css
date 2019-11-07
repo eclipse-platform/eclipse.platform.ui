@@ -65,7 +65,9 @@ ToolBar {
 
 Combo, 
 List,
-Text {
+Text,
+Spinner,
+CCombo  {
     background-color:#515658;
     color:#eeeeee;
 }
@@ -96,11 +98,6 @@ ScheduleDatePicker > Text {
     color:#eeeeee;
 }
 
-Spinner,
-CCombo {
-    background-color:#515658;
-    color:#eeeeee;
-}
 
 Composite > StyledText,
 Shell [style~='SWT.DROP_DOWN'] > StyledText, /* for eg. folded code popup (but it's ignored) */
@@ -116,11 +113,7 @@ FormText {
     color:#eeeeee;
 }
 
-Table {
-    background-color:inherit;
-    color:#eeeeee;
-}
-
+Table,
 Tree,
 RegistryFilteredTree {
     background-color:inherit;
