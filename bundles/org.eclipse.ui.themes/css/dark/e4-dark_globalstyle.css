@@ -40,6 +40,8 @@ CompareStructureViewerSwitchingPane, CompareContentViewerSwitchingPane,
 QualifiedNameComponent, RefactoringStatusViewer,
 MessageLine,
 Button /* SWT-BUG: checkbox inner label font color is not accessible */,
+Composite > *,
+Composite > * > *,
 Group > StyledText {
     background-color:#515658;
     color:#eeeeee;
@@ -49,6 +51,8 @@ Group > StyledText {
 /* Ensure that the labels in the tabfolder gets updated
    See Bug 552780
 */
+TabFolder > *,
+CTabFolder > *,
 TabFolder > Composite > *, /* Composite > CommitSearchPage$... */
 CTabFolder > Composite > *, /* Composite > CommitSearchPage$... */
 TabFolder > Composite > * > * { /* [style~='SWT.NO_BACKGROUND'] <- generate E4 non-sense bugs in apparently not related other rules Composite > ContentMergeViewer$... > TextMergeViewer$... */ 

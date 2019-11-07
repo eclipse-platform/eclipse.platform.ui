@@ -26,6 +26,8 @@
 }
 
 .MPart Composite,
+.MPart Composite > *,
+.MPart Composite > * > *,
 .MPart LayoutComposite,
 .MPart Label,
 .MPart ScrolledForm,
