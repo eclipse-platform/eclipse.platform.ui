@@ -306,11 +306,6 @@ LayoutComposite > Table {
     color: #FFF;
 }
 
-HeapStatus {
-	background-color: #41464a;
- 	color: black;
-}
-
 Table,
 Tree {
 	swt-header-color: #CCC;
