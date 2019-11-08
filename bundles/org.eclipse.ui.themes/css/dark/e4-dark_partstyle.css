@@ -229,9 +229,7 @@
     background-color: #262626;
     font-weight: bold;
 }
-#org-eclipse-e4-ui-compatibility-editor .MPart {
-    color: #EEEEEE;
-}
+
 #org-eclipse-e4-ui-compatibility-editor PaletteControl ScrolledComposite > Composite > * {
     background-color: #2F2F2F;
     color: #BBBBBB;
