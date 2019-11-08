@@ -202,15 +202,13 @@
 
 #org-eclipse-ui-console-ConsoleView .MPart > Composite,
 #org-eclipse-ui-console-ConsoleView .MPart StyledText,
-#org-eclipse-ui-console-ConsoleView .MPart PageBook Label,
-#org-eclipse-dltk-debug-ui-ScriptDisplayView SashForm > * {
+#org-eclipse-ui-console-ConsoleView .MPart PageBook Label {
     background-color: #2F2F2F;
     color: #CCCCCC;
 }
 .MPartStack.active #org-eclipse-ui-console-ConsoleView .MPart > Composite,
 .MPartStack.active #org-eclipse-ui-console-ConsoleView .MPart StyledText,
-.MPartStack.active #org-eclipse-ui-console-ConsoleView .MPart PageBook Label,
-.MPartStack.active #org-eclipse-dltk-debug-ui-ScriptDisplayView SashForm > * {
+.MPartStack.active #org-eclipse-ui-console-ConsoleView .MPart PageBook Label {
     background-color: #262626;
     color: #CCCCCC;
 }
