@@ -215,13 +215,6 @@
 
 /* ------------------------------------------------------------- */
 
-#org-eclipse-pde-ui-TargetPlatformState PageBook > Composite > * {
-    background-color: #2F2F2F;
-    color: #CCC;
-}
-
-/* ------------------------------------------------------------- */
-
 #org-eclipse-e4-ui-compatibility-editor Canvas {
     background-color: #262626;
 }
