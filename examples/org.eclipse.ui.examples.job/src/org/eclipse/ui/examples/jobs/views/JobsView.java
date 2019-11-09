@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2018 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,8 @@
 package org.eclipse.ui.examples.jobs.views;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -88,7 +90,7 @@ public class JobsView extends ViewPart {
 		boolean unknown = unknownField.getSelection();
 		boolean user = userField.getSelection();
 		boolean reschedule = rescheduleField.getSelection();
-		final long rescheduleWait = Long.parseLong(rescheduleDelay.getText());
+		final long rescheduleWait = parseDuration(rescheduleDelay.getText(), 1000);
 		boolean keep = keepField.getSelection();
 		boolean keepOne = keepOneField.getSelection();
 		boolean gotoAction = gotoActionField.getSelection();
@@ -108,7 +110,7 @@ public class JobsView extends ViewPart {
 			group.beginTask("Group", total); //$NON-NLS-1$
 		}
 
-		long delay = Integer.parseInt(delayField.getText());
+		long delay = parseDuration(delayField.getText(), 0);
 		for (int i = 0; i < jobCount; i++) {
 			Job result;
 			if (ui)
@@ -299,7 +301,7 @@ public class JobsView extends ViewPart {
 		// duration
 		Label label = new Label(body, SWT.NONE);
 		label.setText("Duration:"); //$NON-NLS-1$
-		durationField = new Combo(body, SWT.DROP_DOWN | SWT.READ_ONLY);
+		durationField = new Combo(body, SWT.DROP_DOWN);
 		GridData data = new GridData(GridData.FILL_HORIZONTAL);
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		durationField.setLayoutData(data);
@@ -457,21 +459,59 @@ public class JobsView extends ViewPart {
 	}
 
 	protected long getDuration() {
-		switch (durationField.getSelectionIndex()) {
-		case 0:
-			return 0;
-		case 1:
-			return 1;
-		case 2:
-			return 1000;
-		case 3:
-			return 10000;
-		case 4:
-			return 60000;
-		case 5:
-		default:
-			return 600000;
+		return parseDuration(durationField.getText(), 3000);
+	}
+
+	/**
+	 * Parse a time duration string with optional time unit to milliseconds. Only
+	 * supports integer values without sign. No negative value possible.
+	 * <p>
+	 * Supported units are (case insensitive) milliseconds, seconds, minutes, hours,
+	 * days. Duration value and unit are optional separated by whitespace. The unit
+	 * part can be shortened to a prefix of the full unit name. If the prefix is not
+	 * unique one unit will be preferred.
+	 * </p>
+	 *
+	 * @param durationStr duration string to parse
+	 * @return parsed duration in milliseconds or <code>-1</code> if string was
+	 *         invalid
+	 */
+	protected long parseDuration(String durationStr) {
+		if (durationStr == null || durationStr.isEmpty()) {
+			return -1;
 		}
+		String[] unitPrefix = new String[] { "seconds", "minutes", "hours", "days", "milliseconds" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		long[] prefixMultiplicator = new long[] { 1000, 60_000, 3_600_000, 1_314_000_000, 1 };
+		assert unitPrefix.length == prefixMultiplicator.length;
+
+		Pattern p = Pattern.compile("(\\d+)\\s*([a-z]*)", Pattern.CASE_INSENSITIVE); //$NON-NLS-1$
+		Matcher m = p.matcher(durationStr.trim());
+		if (m.matches()) {
+			long value = Long.parseLong(m.group(1));
+			String unit = m.group(2);
+			if (unit.isEmpty()) {
+				return value;
+			}
+			for (int i = 0; i < unitPrefix.length; i++) {
+				if (unitPrefix[i].startsWith(unit)) {
+					return value * prefixMultiplicator[i];
+				}
+			}
+		}
+		return -1;
+	}
+
+	/**
+	 * Parse duration or return default if string is invalid.
+	 *
+	 * @param durationStr     duration string to parse
+	 * @param defaultDuration default duration to return if string is invalid
+	 * @return the parsed or the default duration
+	 * @see #parseDuration(String)
+	 */
+	protected long parseDuration(String durationStr, long defaultDuration) {
+		long duration = parseDuration(durationStr);
+		return duration >= 0 ? duration : defaultDuration;
 	}
 
 	protected void jobWithRuntimeException() {
@@ -553,7 +593,6 @@ public class JobsView extends ViewPart {
 	 * Run a workspace runnable in the application window.
 	 *
 	 */
-
 	public void runnableInWindow() {
 
 		final long time = getDuration();
