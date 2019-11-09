@@ -67,8 +67,6 @@ public class ProgressReportingTest extends BasicPerformanceTest {
 	private volatile boolean isDone;
 	private Display display;
 
-	private boolean oldRunInBackgroundSetting;
-
 	/**
 	 * Create a new instance of the receiver.
 	 *
@@ -80,24 +78,15 @@ public class ProgressReportingTest extends BasicPerformanceTest {
 
 	@Override
 	protected void doSetUp() throws Exception {
-		oldRunInBackgroundSetting = WorkbenchPlugin.getDefault().getPreferenceStore()
-				.getBoolean(IPreferenceConstants.RUN_IN_BACKGROUND);
 		this.display = Display.getCurrent();
 		super.doSetUp();
-	}
-
-	@Override
-	protected void doTearDown() throws Exception {
-		boolean newRunInBackgroundSetting = oldRunInBackgroundSetting;
-		setRunInBackground(newRunInBackgroundSetting);
-		super.doTearDown();
 	}
 
 	/**
 	 * @param newRunInBackgroundSetting
 	 */
 	private void setRunInBackground(boolean newRunInBackgroundSetting) {
-		WorkbenchPlugin.getDefault().getPreferenceStore().setValue(IPreferenceConstants.RUN_IN_BACKGROUND,
+		setPreference(WorkbenchPlugin.getDefault().getPreferenceStore(), IPreferenceConstants.RUN_IN_BACKGROUND,
 				newRunInBackgroundSetting);
 	}
 

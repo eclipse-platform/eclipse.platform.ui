@@ -34,35 +34,15 @@ import org.junit.runner.RunWith;
 @Ignore
 public class StickyViewManagerTest extends UITestCase {
 
-	/**
-	 * The original behaviour of sticky views.
-	 */
-	private boolean originalPreference;
-
 	public StickyViewManagerTest(String testName) {
 		super(testName);
 	}
 
 	@Override
 	protected void doSetUp() throws Exception {
-		// preserve the original behaviour
-		originalPreference = PlatformUI.getPreferenceStore().getBoolean(
-				IWorkbenchPreferenceConstants.ENABLE_32_STICKY_CLOSE_BEHAVIOR);
-		// this test tests the new behaviour
-		PlatformUI.getPreferenceStore().setValue(
-				IWorkbenchPreferenceConstants.ENABLE_32_STICKY_CLOSE_BEHAVIOR,
+		setPreference(PlatformUI.getPreferenceStore(), IWorkbenchPreferenceConstants.ENABLE_32_STICKY_CLOSE_BEHAVIOR,
 				false);
 		super.doSetUp();
-	}
-
-	@Override
-	protected void doTearDown() throws Exception {
-		super.doTearDown();
-		// revert to the original behaviour to ensure future tests are not
-		// indirectly tampered by our settings
-		PlatformUI.getPreferenceStore().setValue(
-				IWorkbenchPreferenceConstants.ENABLE_32_STICKY_CLOSE_BEHAVIOR,
-				originalPreference);
 	}
 
 	/**
