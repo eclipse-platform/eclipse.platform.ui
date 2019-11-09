@@ -388,9 +388,9 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 				Widget item = doFindItem(treeElement);
 				if (item == null) {
 					// Is the parent showing?
-					Object parent = treeElement.getParent();
-					if (parent != null)
-						item = doFindItem(parent);
+					JobTreeElement parent = treeElement.getParent();
+					if (parent != null && parent != element)
+						remove(parent);
 				}
 				if (item != null) {
 					unmapElement(element);

@@ -17,11 +17,13 @@ import java.time.Duration;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.Map;
 import org.eclipse.jface.util.Throttler;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.internal.progress.FinishedJobs.KeptJobsListener;
 import org.eclipse.ui.internal.util.PrefUtil;
 
 /**
@@ -31,7 +33,12 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 
 	private static ProgressViewUpdater singleton;
 
-	private Set<IProgressUpdateCollector> collectors;
+	/**
+	 * Registered collectors to be feed with throttled updates. The value remembers
+	 * if the collector wants to collect updates for finished jobs
+	 * (<code>true</code>) or not.
+	 */
+	private Map<IProgressUpdateCollector, Boolean> collectors;
 
 	UpdatesInfo currentInfo = new UpdatesInfo();
 
@@ -39,6 +46,8 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 
 	Throttler throttledUpdate = new Throttler(PlatformUI.getWorkbench().getDisplay(), Duration.ofMillis(100),
 			this::update);
+
+	final KeptJobsListener finishedJobsListener = new FinishedJobsListener();
 
 	/**
 	 * The UpdatesInfo is a private class for keeping track of the updates required.
@@ -50,6 +59,10 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 		Collection<JobTreeElement> deletions = new LinkedHashSet<>();
 
 		Collection<JobTreeElement> refreshes = new LinkedHashSet<>();
+
+		Collection<JobTreeElement> keptFinished = new LinkedHashSet<>();
+
+		Collection<JobTreeElement> keptRemoved = new LinkedHashSet<>();
 
 		volatile boolean updateAll;
 
@@ -85,12 +98,32 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 		}
 
 		/**
+		 * Add an update for a job which has finished and should be kept
+		 *
+		 * @param finished
+		 */
+		synchronized void keptFinished(JobTreeElement finished) {
+			keptFinished.add(finished);
+		}
+
+		/**
+		 * Add an update for a job which was kept and is removed now
+		 *
+		 * @param removed
+		 */
+		synchronized void keptRemoved(JobTreeElement removed) {
+			keptRemoved.add(removed);
+		}
+
+		/**
 		 * Reset the caches after completion of an update.
 		 */
 		synchronized void reset() {
 			additions.clear();
 			deletions.clear();
 			refreshes.clear();
+			keptFinished.clear();
+			keptRemoved.clear();
 			updateAll = false;
 		}
 
@@ -136,9 +169,30 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 			JobTreeElement[] updateItems = refreshes.toArray(new JobTreeElement[0]);
 			JobTreeElement[] additionItems = additions.toArray(new JobTreeElement[0]);
 			JobTreeElement[] deletionItems = deletions.toArray(new JobTreeElement[0]);
-			return new JobTreeElement[][] { updateItems, additionItems, deletionItems };
+			JobTreeElement[] keptFinishedItems = keptFinished.toArray(new JobTreeElement[0]);
+			JobTreeElement[] keptRemovedItems = keptRemoved.toArray(new JobTreeElement[0]);
+			return new JobTreeElement[][] { updateItems, additionItems, deletionItems, keptFinishedItems,
+					keptRemovedItems };
 		}
 
+	}
+
+	class FinishedJobsListener implements KeptJobsListener {
+		@Override
+		public void finished(JobTreeElement jte) {
+			currentInfo.keptFinished(jte);
+			throttledUpdate.throttledExec();
+		}
+
+		@Override
+		public void removed(JobTreeElement jte) {
+			if (jte == null) {
+				currentInfo.updateAll = true;
+			} else {
+				currentInfo.keptRemoved(jte);
+			}
+			throttledUpdate.throttledExec();
+		}
 	}
 
 	/**
@@ -174,18 +228,33 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 	 * Create a new instance of the receiver.
 	 */
 	private ProgressViewUpdater() {
-		collectors = new LinkedHashSet<>();
+		collectors = new LinkedHashMap<>();
 		ProgressManager.getInstance().addListener(this);
 		debug = PrefUtil.getAPIPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_SYSTEM_JOBS);
+	}
+
+	/**
+	 * Add the new collector to the list of collectors. Collector will not receive
+	 * updates from {@link FinishedJobs}.
+	 *
+	 * @param newCollector
+	 */
+	void addCollector(IProgressUpdateCollector newCollector) {
+		addCollector(newCollector, false);
 	}
 
 	/**
 	 * Add the new collector to the list of collectors.
 	 *
 	 * @param newCollector
+	 * @param includeFinished if <code>true</code> the collector will receive
+	 *                        updates from {@link FinishedJobs}.
 	 */
-	void addCollector(IProgressUpdateCollector newCollector) {
-		collectors.add(newCollector);
+	void addCollector(IProgressUpdateCollector newCollector, boolean includeFinished) {
+		collectors.put(newCollector, includeFinished);
+		if (includeFinished) {
+			FinishedJobs.getInstance().addListener(finishedJobsListener);
+		}
 	}
 
 	/**
@@ -195,6 +264,10 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 	 */
 	void removeCollector(IProgressUpdateCollector provider) {
 		collectors.remove(provider);
+		// Remove listener if there is no more collector interested in finished jobs
+		if (!collectors.containsValue(Boolean.TRUE)) {
+			FinishedJobs.getInstance().removeListener(finishedJobsListener);
+		}
 		// Remove ourselves if there is nothing to update
 		if (collectors.isEmpty()) {
 			clearSingleton();
@@ -210,7 +283,7 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 
 		if (currentInfo.updateAll) {
 			currentInfo.reset();
-			for (IProgressUpdateCollector collector : collectors) {
+			for (IProgressUpdateCollector collector : collectors.keySet()) {
 				collector.refresh();
 			}
 
@@ -220,10 +293,12 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 			JobTreeElement[] updateItems = elements[0];
 			JobTreeElement[] additionItems = elements[1];
 			JobTreeElement[] deletionItems = elements[2];
+			JobTreeElement[] keptFinsihedItems = elements[3];
+			JobTreeElement[] keptRemovedItems = elements[4];
 
 			currentInfo.reset();
 
-			for (IProgressUpdateCollector collector : collectors) {
+			for (IProgressUpdateCollector collector : collectors.keySet()) {
 				if (updateItems.length > 0) {
 					collector.refresh(updateItems);
 				}
@@ -232,6 +307,12 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 				}
 				if (deletionItems.length > 0) {
 					collector.remove(deletionItems);
+				}
+				if (keptFinsihedItems.length > 0) {
+					collector.refresh(keptFinsihedItems);
+				}
+				if (keptRemovedItems.length > 0) {
+					collector.remove(keptRemovedItems);
 				}
 			}
 		}

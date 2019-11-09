@@ -87,16 +87,13 @@ public class ProgressContantsTest extends ProgressTestCase {
 		CommandHandler handler = new CommandHandler();
 		IHandlerActivation record = service.activateHandler(commandId, handler);
 
-		waitForJobs(100, 1000);
 		okJob.join();
 		processEvents();
 
-		ProgressInfoItem item = findProgressInfoItem(okJob);
-		if (item == null) {
+		ProgressInfoItem item;
+		int n = 5;
+		while ((item = findProgressInfoItem(okJob)) == null && n-- > 0) {
 			waitForJobs(100, 1000);
-			okJob.join();
-			processEvents();
-			item = findProgressInfoItem(okJob);
 		}
 		assertNotNull(item);
 		item.executeTrigger();
@@ -123,11 +120,8 @@ public class ProgressContantsTest extends ProgressTestCase {
 		okJob.setProperty(IProgressConstants.KEEP_PROPERTY, Boolean.TRUE);
 		okJob.schedule();
 
-		ProgressInfoItem item = null;
-		while ((item = findProgressInfoItem(okJob)) == null) {
-			// wait for the job to show up in the progress view
-			processEvents();
-		}
+		processEventsUntil(() -> findProgressInfoItem(okJob) != null, 3000);
+		ProgressInfoItem item = findProgressInfoItem(okJob);
 
 		assertNotNull(item);
 		assertFalse(item.isTriggerEnabled());
@@ -173,7 +167,7 @@ public class ProgressContantsTest extends ProgressTestCase {
 		okJob.join();
 		warningJob.join();
 
-		waitForJobs(100, 1000);
+		processEventsUntil(() -> findProgressInfoItem(okJob) != null && findProgressInfoItem(warningJob) != null, 3000);
 
 		boolean okJobFound = false;
 		boolean warningJobFound = false;
@@ -196,9 +190,6 @@ public class ProgressContantsTest extends ProgressTestCase {
 		assertTrue(warningJobFound);
 	}
 
-	// Test is incomplete at the moment. It should test KEEPONE_PROPERTY but
-	// progress view has (at least one) unresolved bug with this property. For now
-	// it only tests a java.util.ConcurrentModificationException with this property.
 	public void testKeepOneProperty() throws Exception {
 		openProgressView();
 
@@ -212,8 +203,24 @@ public class ProgressContantsTest extends ProgressTestCase {
 			job.schedule();
 		}
 		joinJobs(jobs, 10, TimeUnit.SECONDS);
-		waitForJobs(200, 1000);
+		{
+			// It is rather hard to find the perfect time to check the test result. The UI
+			// updates are throttled so the kept job is not immediate available after the
+			// job ends. A fixed wait time might be to short or unnecessary slow down the
+			// test. Waiting for the end condition with timeout may produce false positive
+			// results. It could be that we test in a moment there's only one kept element
+			// and the test succeeds but UI has more pending updates and might add more kept
+			// jobs which should be a test failure.
+			// Solution is to add an unique job after the 'keep one' jobs are finished and
+			// wait for it's appearance. The UI updates are ordered enough to be sure that
+			// kept job processing is finished when this error job appears.
+			DummyJob errorJob = new DummyJob("Last Job", new Status(IStatus.ERROR, TestPlugin.PLUGIN_ID, "error"));
+			errorJob.schedule();
+			processEventsUntil(() -> findProgressInfoItem(errorJob) != null, 3000);
+		}
 
+		assertEquals("Only one finished job should be kept in view", 1,
+				countBelongingProgressItems(DummyFamilyJob.class));
 		for (Job job : jobs) {
 			assertTrue(job.getResult().isOK());
 		}
@@ -234,11 +241,34 @@ public class ProgressContantsTest extends ProgressTestCase {
 			job.shouldFinish = true;
 		}
 		joinJobs(jobs, 10, TimeUnit.SECONDS);
-		waitForJobs(200, 1000);
+		{
+			DummyJob errorJob = new DummyJob("Last Job", new Status(IStatus.ERROR, TestPlugin.PLUGIN_ID, "error"));
+			errorJob.schedule();
+			processEventsUntil(() -> findProgressInfoItem(errorJob) != null, 3000);
+		}
 
+		assertEquals("Only one finished job should be kept in view", 1,
+				countBelongingProgressItems(DummyFamilyJob.class));
 		for (Job job : jobs) {
 			assertTrue(job.getResult().isOK());
 		}
 	}
 
+	/**
+	 * Count the number of items in progress view whose represented job
+	 * {@link Job#belongsTo(Object) belongs} to the given family.
+	 */
+	private int countBelongingProgressItems(Object family) {
+		int count = 0;
+		ProgressInfoItem[] progressInfoItems = progressView.getViewer().getProgressInfoItems();
+		for (ProgressInfoItem progressInfoItem : progressInfoItems) {
+			JobInfo[] jobInfos = progressInfoItem.getJobInfos();
+			for (JobInfo jobInfo : jobInfos) {
+				if (jobInfo.getJob().belongsTo(family)) {
+					count++;
+				}
+			}
+		}
+		return count;
+	}
 }
