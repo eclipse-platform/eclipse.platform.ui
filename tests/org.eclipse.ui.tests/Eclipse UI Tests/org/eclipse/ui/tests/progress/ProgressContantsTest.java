@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2017 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,10 @@
  ******************************************************************************/
 
 package org.eclipse.ui.tests.progress;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.core.commands.Category;
 import org.eclipse.core.commands.Command;
@@ -41,10 +45,25 @@ import org.eclipse.ui.tests.TestPlugin;
 public class ProgressContantsTest extends ProgressTestCase {
 
 	/**
-	 *
-	 * @param testName
-	 *
+	 * Like {@link DummyJob} but implements {@link Job#belongsTo(Object)} so that
+	 * each instance belongs to each other.
 	 */
+	private static class DummyFamilyJob extends DummyJob {
+
+		public DummyFamilyJob(String name, IStatus status) {
+			super(name, status);
+		}
+
+		@Override
+		public boolean belongsTo(Object family) {
+			if (family == null) {
+				return false;
+			}
+			Class<?> clazz = family instanceof Class ? (Class<?>) family : family.getClass();
+			return DummyFamilyJob.class.equals(clazz);
+		}
+	}
+
 	public ProgressContantsTest(String testName) {
 		super(testName);
 	}
@@ -176,4 +195,50 @@ public class ProgressContantsTest extends ProgressTestCase {
 		assertTrue(okJobFound);
 		assertTrue(warningJobFound);
 	}
+
+	// Test is incomplete at the moment. It should test KEEPONE_PROPERTY but
+	// progress view has (at least one) unresolved bug with this property. For now
+	// it only tests a java.util.ConcurrentModificationException with this property.
+	public void testKeepOneProperty() throws Exception {
+		openProgressView();
+
+		List<DummyJob> jobs = new ArrayList<>();
+		for (int i = 0; i < 3; i++) {
+			DummyFamilyJob job = new DummyFamilyJob("OK Job " + i, Status.OK_STATUS);
+			job.setProperty(IProgressConstants.KEEPONE_PROPERTY, Boolean.TRUE);
+			jobs.add(job);
+		}
+		for (Job job : jobs) {
+			job.schedule();
+		}
+		joinJobs(jobs, 10, TimeUnit.SECONDS);
+		waitForJobs(200, 1000);
+
+		for (Job job : jobs) {
+			assertTrue(job.getResult().isOK());
+		}
+
+		// This variant is optimized to test a ConcurrentModificationException or NPE.
+		// It tries to stop multiple jobs with KEEPONE_PROPERTY at the same time.
+		jobs.clear();
+		for (int i = 0; i < 20; i++) {
+			DummyFamilyJob job = new DummyFamilyJob("OK Job " + i, Status.OK_STATUS);
+			job.setProperty(IProgressConstants.KEEPONE_PROPERTY, Boolean.TRUE);
+			job.shouldFinish = false;
+			jobs.add(job);
+			job.schedule();
+		}
+		// ensure all jobs are started before ending all at the same time
+		processEventsUntil(null, 500);
+		for (DummyJob job : jobs) {
+			job.shouldFinish = true;
+		}
+		joinJobs(jobs, 10, TimeUnit.SECONDS);
+		waitForJobs(200, 1000);
+
+		for (Job job : jobs) {
+			assertTrue(job.getResult().isOK());
+		}
+	}
+
 }

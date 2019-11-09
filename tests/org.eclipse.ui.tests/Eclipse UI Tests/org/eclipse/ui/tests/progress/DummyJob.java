@@ -21,7 +21,7 @@ import org.eclipse.core.runtime.jobs.Job;
 
 /**
  *
- * A job that completes very quicky and returns the specified status
+ * A job that completes very quickly and returns the specified status
  *
  * @since 3.6
  * @author Prakash G.R. (grprakash@in.ibm.com)

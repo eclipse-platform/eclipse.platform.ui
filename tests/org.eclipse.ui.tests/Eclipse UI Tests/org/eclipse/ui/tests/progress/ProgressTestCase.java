@@ -14,6 +14,11 @@
 
 package org.eclipse.ui.tests.progress;
 
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
@@ -64,5 +69,30 @@ public abstract class ProgressTestCase extends UITestCase {
 	public void hideProgressView() {
 		window.getActivePage().hideView(progressView);
 		processEvents();
+	}
+
+	/**
+	 * Wait until all given jobs are finished or timeout is reached.
+	 *
+	 * @param jobs        list of jobs to join
+	 * @param timeout     timeout duration
+	 * @param timeoutUnit timeout duration unit
+	 * @throws OperationCanceledException if one of the jobs progress monitor was
+	 *                                    canceled while joining
+	 * @throws InterruptedException       if thread was interrupted while joining
+	 * @throws TimeoutException           if not all jobs finished in time
+	 */
+	public static void joinJobs(Iterable<? extends Job> jobs, int timeout, TimeUnit timeoutUnit)
+			throws OperationCanceledException, InterruptedException, TimeoutException {
+		long timeoutMs = timeoutUnit.toMillis(timeout);
+		long start = System.currentTimeMillis();
+		for (Job job : jobs) {
+			while (!job.join(100, null)) {
+				if (System.currentTimeMillis() - start > timeoutMs) {
+					throw new TimeoutException();
+				}
+				processEvents();
+			}
+		}
 	}
 }

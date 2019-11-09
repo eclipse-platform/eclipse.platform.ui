@@ -15,7 +15,6 @@ package org.eclipse.e4.ui.progress.internal;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -139,18 +138,15 @@ public class ProgressViewerContentProvider extends ProgressContentProvider {
 		if (!showFinished)
 			return elements;
 
-		Set<JobTreeElement> kept = finishedJobs.getKeptAsSet();
+		JobTreeElement[] kept = finishedJobs.getKeptElements();
 
-		if (kept.isEmpty())
+		if (kept.length == 0)
 			return elements;
 
 		Set<Object> all = new HashSet<>();
 
 		all.addAll(Arrays.asList(elements));
-
-		Iterator<JobTreeElement> keptIterator = kept.iterator();
-		while (keptIterator.hasNext()) {
-			JobTreeElement next = keptIterator.next();
+		for (JobTreeElement next : kept) {
 			if (next.getParent() != null && all.contains(next.getParent()))
 				continue;
 			all.add(next);
