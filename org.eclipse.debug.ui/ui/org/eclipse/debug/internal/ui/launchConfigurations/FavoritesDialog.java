@@ -183,7 +183,7 @@ public class FavoritesDialog extends TrayDialog {
 
 	@Override
 	protected Point getInitialSize() {
-		return new Point(350, 400);
+		return new Point(450, 500);
 	}
 
 	/**
