@@ -43,10 +43,13 @@ public abstract class AbstractItemFactory<F extends AbstractItemFactory<?, ?, ?>
 	}
 
 	/**
-	 * Sets the image.
+	 * Sets the receiver's image to the argument, which may be null indicating that
+	 * no image should be displayed.
 	 *
-	 * @param image
+	 * @param image the image to display on the receiver
 	 * @return this
+	 *
+	 * @see Item#setImage(Image)
 	 */
 	public F image(Image image) {
 		addProperty(i -> i.setImage(image));
@@ -54,10 +57,16 @@ public abstract class AbstractItemFactory<F extends AbstractItemFactory<?, ?, ?>
 	}
 
 	/**
-	 * Sets the text.
+	 * Sets the receiver's text.
+	 * <p>
+	 * Note: If control characters like '\n', '\t' etc. are used in the string, then
+	 * the behavior is platform dependent.
+	 * </p>
 	 *
-	 * @param text
+	 * @param text the text
 	 * @return this
+	 *
+	 * @see Item#setText(String)
 	 */
 	public F text(String text) {
 		addProperty(i -> i.setText(text));

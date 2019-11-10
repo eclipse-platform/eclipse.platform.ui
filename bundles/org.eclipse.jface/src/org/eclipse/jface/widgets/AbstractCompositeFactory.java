@@ -41,10 +41,13 @@ public abstract class AbstractCompositeFactory<F extends AbstractCompositeFactor
 	}
 
 	/**
-	 * Sets the layout.
+	 * Sets the layout which is associated with the receiver to be the argument
+	 * which may be null.
 	 *
-	 * @param layout
+	 * @param layout the receiver's layout or null
 	 * @return this
+	 *
+	 * @see Composite#setLayout(Layout)
 	 */
 	public F layout(Layout layout) {
 		addProperty(control -> control.setLayout(layout));
