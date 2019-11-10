@@ -82,10 +82,14 @@ public final class TreeFactory extends AbstractControlFactory<TreeFactory, Tree>
 	}
 
 	/**
-	 * Sets the lines visibility.
+	 * Marks the receiver's lines as visible if the argument is true, and marks it
+	 * invisible otherwise. Note that some platforms draw grid lines while others
+	 * may draw alternating row colors.
 	 *
-	 * @param visible
+	 * @param visible the visibility state
 	 * @return this
+	 *
+	 * @see Tree#setLinesVisible(boolean)
 	 */
 	public TreeFactory linesVisible(boolean visible) {
 		this.addProperty(w -> w.setLinesVisible(visible));
@@ -93,10 +97,13 @@ public final class TreeFactory extends AbstractControlFactory<TreeFactory, Tree>
 	}
 
 	/**
-	 * Sets the header visibility.
+	 * Marks the receiver's header as visible if the argument is true, and marks it
+	 * invisible otherwise.
 	 *
-	 * @param visible
+	 * @param visible the visibility state
 	 * @return this
+	 *
+	 * @see Tree#setHeaderVisible(boolean)
 	 */
 	public TreeFactory headerVisible(boolean visible) {
 		this.addProperty(w -> w.setHeaderVisible(visible));
@@ -104,10 +111,12 @@ public final class TreeFactory extends AbstractControlFactory<TreeFactory, Tree>
 	}
 
 	/**
-	 * Sets the item count of the table.
+	 * Sets the number of root-level items contained in the receiver.
 	 *
-	 * @param count
+	 * @param count the number of items
 	 * @return this
+	 *
+	 * @see Tree#setItemCount(int)
 	 */
 	public TreeFactory itemCount(int count) {
 		this.addProperty(w -> w.setItemCount(count));
@@ -116,11 +125,14 @@ public final class TreeFactory extends AbstractControlFactory<TreeFactory, Tree>
 
 	/**
 	 * Creates a {@link SelectionListener} and registers it for the widgetSelected
-	 * event. If event is raised it calls the given consumer. The
-	 * {@link SelectionEvent} is passed to the consumer.
+	 * event. If the receiver is selected by the user the given consumer is invoked.
+	 * The {@link SelectionEvent} is passed to the consumer.
 	 *
-	 * @param consumer
+	 * @param consumer the consumer whose accept method is called
 	 * @return this
+	 *
+	 * @see Tree#addSelectionListener(SelectionListener)
+	 * @see SelectionListener#widgetSelectedAdapter(Consumer)
 	 */
 	public TreeFactory onSelect(Consumer<SelectionEvent> consumer) {
 		addProperty(c -> c.addSelectionListener(SelectionListener.widgetSelectedAdapter(consumer)));
@@ -129,11 +141,14 @@ public final class TreeFactory extends AbstractControlFactory<TreeFactory, Tree>
 
 	/**
 	 * Creates a {@link TreeListener} and registers it for the collapsed event. If
-	 * event is raised it calls the given consumer. The {@link TreeEvent} is passed
-	 * to the consumer.
+	 * the receiver is collapsed by the user the given consumer is invoked. The
+	 * {@link TreeEvent} is passed to the consumer.
 	 *
-	 * @param consumer
+	 * @param consumer the consumer whose accept method is called
 	 * @return this
+	 *
+	 * @see Tree#addTreeListener(TreeListener)
+	 * @see SelectionListener#widgetSelectedAdapter(Consumer)
 	 */
 	public TreeFactory onCollapse(Consumer<TreeEvent> consumer) {
 		addProperty(c -> c.addTreeListener(TreeListener.treeCollapsedAdapter(consumer)));
@@ -142,15 +157,17 @@ public final class TreeFactory extends AbstractControlFactory<TreeFactory, Tree>
 
 	/**
 	 * Creates a {@link TreeListener} and registers it for the expanded event. If
-	 * event is raised it calls the given consumer. The {@link TreeEvent} is passed
-	 * to the consumer.
+	 * the receiver is expanded by the user the given consumer is invoked. The
+	 * {@link TreeEvent} is passed to the consumer.
 	 *
-	 * @param consumer
+	 * @param consumer the consumer whose accept method is called
 	 * @return this
+	 *
+	 * @see Tree#addTreeListener(TreeListener)
+	 * @see SelectionListener#widgetSelectedAdapter(Consumer)
 	 */
 	public TreeFactory onExpand(Consumer<TreeEvent> consumer) {
 		addProperty(c -> c.addTreeListener(TreeListener.treeExpandedAdapter(consumer)));
 		return this;
 	}
-
 }

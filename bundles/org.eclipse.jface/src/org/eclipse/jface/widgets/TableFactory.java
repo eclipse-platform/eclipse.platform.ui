@@ -75,11 +75,14 @@ public final class TableFactory extends AbstractControlFactory<TableFactory, Tab
 
 	/**
 	 * Creates a {@link SelectionListener} and registers it for the widgetSelected
-	 * event. If event is raised it calls the given consumer. The
-	 * {@link SelectionEvent} is passed to the consumer.
+	 * event. If the receiver is selected by the user the given consumer is invoked.
+	 * The {@link SelectionEvent} is passed to the consumer.
 	 *
-	 * @param consumer
+	 * @param consumer the consumer whose accept method is called
 	 * @return this
+	 *
+	 * @see Table#addSelectionListener(SelectionListener)
+	 * @see SelectionListener#widgetSelectedAdapter(Consumer)
 	 */
 	public TableFactory onSelect(Consumer<SelectionEvent> consumer) {
 		addProperty(c -> c.addSelectionListener(SelectionListener.widgetSelectedAdapter(consumer)));
@@ -87,10 +90,13 @@ public final class TableFactory extends AbstractControlFactory<TableFactory, Tab
 	}
 
 	/**
-	 * Sets the header visibility.
+	 * Marks the receiver's header as visible if the argument is true, and marks it
+	 * invisible otherwise.
 	 *
-	 * @param visible
+	 * @param visible the visibility state
 	 * @return this
+	 *
+	 * @see Table#setHeaderVisible(boolean)
 	 */
 	public TableFactory headerVisible(boolean visible) {
 		addProperty((t) -> t.setHeaderVisible(visible));
@@ -98,10 +104,14 @@ public final class TableFactory extends AbstractControlFactory<TableFactory, Tab
 	}
 
 	/**
-	 * Sets the lines visibility.
+	 * Marks the receiver's lines as visible if the argument is true, and marks it
+	 * invisible otherwise. Note that some platforms draw grid lines while others
+	 * may draw alternating row colors.
 	 *
-	 * @param visible
+	 * @param visible the visibility state
 	 * @return this
+	 *
+	 * @see Table#setLinesVisible(boolean)
 	 */
 	public TableFactory linesVisible(boolean visible) {
 		addProperty((t) -> t.setLinesVisible(visible));
@@ -109,14 +119,15 @@ public final class TableFactory extends AbstractControlFactory<TableFactory, Tab
 	}
 
 	/**
-	 * Sets the item count of the table.
+	 * Sets the number of items contained in the receiver.
 	 *
-	 * @param count
+	 * @param count the number of items
 	 * @return this
+	 *
+	 * @see Table#setItemCount(int)
 	 */
 	public TableFactory itemCount(int count) {
 		addProperty((t) -> t.setItemCount(count));
 		return this;
 	}
-
 }

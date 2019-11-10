@@ -84,7 +84,7 @@ public final class TextFactory extends AbstractControlFactory<TextFactory, Text>
 	/**
 	 * Sets the contents of the receiver to the given string.
 	 *
-	 * @param text
+	 * @param text the text
 	 * @return this
 	 *
 	 * @see Text#setText(String)
@@ -98,7 +98,7 @@ public final class TextFactory extends AbstractControlFactory<TextFactory, Text>
 	 * Sets the widget message. The message text is displayed as a hint for the
 	 * user, indicating the purpose of the field.
 	 *
-	 * @param message
+	 * @param message the message
 	 * @return this
 	 *
 	 * @see Text#setMessage(String)
@@ -116,7 +116,7 @@ public final class TextFactory extends AbstractControlFactory<TextFactory, Text>
 	 * read-only text widget.
 	 * </p>
 	 *
-	 * @param limit
+	 * @param limit the text limit
 	 * @return this
 	 *
 	 * @see Text#setTextLimit(int)
@@ -128,10 +128,10 @@ public final class TextFactory extends AbstractControlFactory<TextFactory, Text>
 
 	/**
 	 * Creates a {@link SelectionListener} and registers it for the widgetSelected
-	 * event. If the control is selected by the user the given consumer is invoked.
+	 * event. If the receiver is selected by the user the given consumer is invoked.
 	 * The {@link SelectionEvent} is passed to the consumer.
 	 *
-	 * @param consumer
+	 * @param consumer the consumer whose accept method is called
 	 * @return this
 	 *
 	 * @see Text#addSelectionListener(SelectionListener)
@@ -149,7 +149,7 @@ public final class TextFactory extends AbstractControlFactory<TextFactory, Text>
 	 * Can be called several times to add more than one ModifyListener.
 	 * </p>
 	 *
-	 * @param listener
+	 * @param listener the listener which should be notified
 	 * @return this
 	 *
 	 * @see Text#addModifyListener(ModifyListener)
@@ -167,7 +167,7 @@ public final class TextFactory extends AbstractControlFactory<TextFactory, Text>
 	 * Can be called several times to add more than one VerifyListener.
 	 * </p>
 	 *
-	 * @param listener
+	 * @param listener the listener which should be notified
 	 * @return this
 	 *
 	 * @see Text#addVerifyListener(VerifyListener)

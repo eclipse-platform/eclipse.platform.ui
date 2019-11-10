@@ -81,11 +81,14 @@ public final class TableColumnFactory extends AbstractItemFactory<TableColumnFac
 
 	/**
 	 * Creates a {@link SelectionListener} and registers it for the widgetSelected
-	 * event. If event is raised it calls the given consumer. The
-	 * {@link SelectionEvent} is passed to the consumer.
+	 * event. If the receiver is selected by the user the given consumer is invoked.
+	 * The {@link SelectionEvent} is passed to the consumer.
 	 *
-	 * @param consumer
+	 * @param consumer the consumer whose accept method is called
 	 * @return this
+	 *
+	 * @see TableColumn#addSelectionListener(SelectionListener)
+	 * @see SelectionListener#widgetSelectedAdapter(Consumer)
 	 */
 	public TableColumnFactory onSelect(Consumer<SelectionEvent> consumer) {
 		addProperty(c -> c.addSelectionListener(SelectionListener.widgetSelectedAdapter(consumer)));
@@ -93,10 +96,16 @@ public final class TableColumnFactory extends AbstractItemFactory<TableColumnFac
 	}
 
 	/**
-	 * Sets the alignment.
+	 * Controls how text and images will be displayed in the receiver. The argument
+	 * should be one of LEFT, RIGHT or CENTER.
 	 *
-	 * @param alignment
+	 * Note that due to a restriction on some platforms, the first column is always
+	 * left aligned.
+	 *
+	 * @param alignment the alignment
 	 * @return this
+	 *
+	 * @see TableColumn#setAlignment(int)
 	 */
 	public TableColumnFactory align(int alignment) {
 		addProperty(c -> c.setAlignment(alignment));
@@ -104,10 +113,20 @@ public final class TableColumnFactory extends AbstractItemFactory<TableColumnFac
 	}
 
 	/**
-	 * Sets the tooltip.
+	 * Sets the receiver's tool tip text to the argument, which may be null
+	 * indicating that the default tool tip for the control will be shown. For a
+	 * control that has a default tool tip, such as the Tree control on Windows,
+	 * setting the tool tip text to an empty string replaces the default, causing no
+	 * tool tip text to be shown.
 	 *
-	 * @param tooltip
+	 * The mnemonic indicator (character '&') is not displayed in a tool tip. To
+	 * display a single '&' in the tool tip, the character '&' can be escaped by
+	 * doubling it in the string.
+	 *
+	 * @param tooltip the tool tip text
 	 * @return this
+	 *
+	 * @see TableColumn#setToolTipText(String)
 	 */
 	public TableColumnFactory tooltip(String tooltip) {
 		addProperty(c -> c.setToolTipText(tooltip));
@@ -115,14 +134,15 @@ public final class TableColumnFactory extends AbstractItemFactory<TableColumnFac
 	}
 
 	/**
-	 * Sets the width.
+	 * Sets the width of the receiver.
 	 *
-	 * @param width
+	 * @param width the width
 	 * @return this
+	 *
+	 * @see TableColumn#setWidth(int)
 	 */
 	public TableColumnFactory width(int width) {
 		addProperty(c -> c.setWidth(width));
 		return this;
 	}
-
 }

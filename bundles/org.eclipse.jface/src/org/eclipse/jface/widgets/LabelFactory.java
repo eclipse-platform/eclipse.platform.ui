@@ -73,10 +73,24 @@ public final class LabelFactory extends AbstractControlFactory<LabelFactory, Lab
 	}
 
 	/**
-	 * Sets the text.
+	 * Sets the receiver's text.
+	 * <p>
+	 * This method sets the widget label. The label may include the mnemonic
+	 * character and line delimiters.
+	 * </p>
+	 * <p>
+	 * Mnemonics are indicated by an '&amp;' that causes the next character to be
+	 * the mnemonic. When the user presses a key sequence that matches the mnemonic,
+	 * focus is assigned to the control that follows the label. On most platforms,
+	 * the mnemonic appears underlined but may be emphasised in a platform specific
+	 * manner. The mnemonic indicator character '&amp;' can be escaped by doubling
+	 * it in the string, causing a single '&amp;' to be displayed.
+	 * </p>
 	 *
-	 * @param text
+	 * @param text the text
 	 * @return this
+	 *
+	 * @see Label#setText(String)
 	 */
 	public LabelFactory text(String text) {
 		addProperty(l -> l.setText(text));
@@ -84,10 +98,13 @@ public final class LabelFactory extends AbstractControlFactory<LabelFactory, Lab
 	}
 
 	/**
-	 * Sets the image.
+	 * Sets the receiver's image to the argument, which may be null indicating that
+	 * no image should be displayed.
 	 *
-	 * @param image
+	 * @param image the image to display on the receiver (may be null)
 	 * @return this
+	 *
+	 * @see Label#setImage(Image)
 	 */
 	public LabelFactory image(Image image) {
 		addProperty(l -> l.setImage(image));
@@ -95,10 +112,15 @@ public final class LabelFactory extends AbstractControlFactory<LabelFactory, Lab
 	}
 
 	/**
-	 * Sets the alignment.
+	 * Controls how text and images will be displayed in the receiver. The argument
+	 * should be one of <code>LEFT</code>, <code>RIGHT</code> or
+	 * <code>CENTER</code>. If the receiver is a <code>SEPARATOR</code> label, the
+	 * argument is ignored and the alignment is not changed.
 	 *
-	 * @param alignment
+	 * @param alignment the alignment
 	 * @return this
+	 *
+	 * @see Label#setAlignment(int)
 	 */
 	public LabelFactory align(int alignment) {
 		addProperty(l -> l.setAlignment(alignment));

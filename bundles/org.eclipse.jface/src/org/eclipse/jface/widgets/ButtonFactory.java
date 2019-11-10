@@ -83,10 +83,24 @@ public final class ButtonFactory extends AbstractControlFactory<ButtonFactory, B
 	}
 
 	/**
-	 * Sets the Button text.
+	 * Sets the receiver's text.
+	 * <p>
+	 * This method sets the button label. The label may include the mnemonic
+	 * character but must not contain line delimiters.
+	 * </p>
+	 * <p>
+	 * Mnemonics are indicated by an '&amp;' that causes the next character to be
+	 * the mnemonic. When the user presses a key sequence that matches the mnemonic,
+	 * a selection event occurs. On most platforms, the mnemonic appears underlined
+	 * but may be emphasized in a platform specific manner. The mnemonic indicator
+	 * character '&amp;' can be escaped by doubling it in the string, causing a
+	 * single '&amp;' to be displayed.
+	 * </p>
 	 *
-	 * @param text
+	 * @param text the text
 	 * @return this
+	 *
+	 * @see Button#setText(String)
 	 */
 	public ButtonFactory text(String text) {
 		addProperty(b -> b.setText(text));
@@ -94,10 +108,13 @@ public final class ButtonFactory extends AbstractControlFactory<ButtonFactory, B
 	}
 
 	/**
-	 * Sets the Button image.
+	 * Sets the receiver's image to the argument, which may be <code>null</code>
+	 * indicating that no image should be displayed.
 	 *
-	 * @param image
+	 * @param image the image to display on the receiver (may be <code>null</code>)
 	 * @return this
+	 *
+	 * @see Button#setImage(Image)
 	 */
 	public ButtonFactory image(Image image) {
 		addProperty(b -> b.setImage(image));
@@ -106,11 +123,14 @@ public final class ButtonFactory extends AbstractControlFactory<ButtonFactory, B
 
 	/**
 	 * Creates a {@link SelectionListener} and registers it for the widgetSelected
-	 * event. If event is raised it calls the given consumer. The
-	 * {@link SelectionEvent} is passed to the consumer.
+	 * event. If the receiver is selected by the user the given consumer is invoked.
+	 * The {@link SelectionEvent} is passed to the consumer.
 	 *
-	 * @param consumer
+	 * @param consumer the consumer whose accept method is called
 	 * @return this
+	 *
+	 * @see Button#addSelectionListener(SelectionListener)
+	 * @see SelectionListener#widgetSelectedAdapter(Consumer)
 	 */
 	public ButtonFactory onSelect(Consumer<SelectionEvent> consumer) {
 		addProperty(c -> c.addSelectionListener(SelectionListener.widgetSelectedAdapter(consumer)));
@@ -118,10 +138,14 @@ public final class ButtonFactory extends AbstractControlFactory<ButtonFactory, B
 	}
 
 	/**
-	 * Sets the data for the button.
+	 * Sets the application defined widget data associated with the receiver to be
+	 * the argument. The <em>widget data</em> is a single, unnamed field that is
+	 * stored with every widget.
 	 *
-	 * @param data
+	 * @param data the widget data
 	 * @return this
+	 *
+	 * @see Button#setData(Object)
 	 */
 	public ButtonFactory data(Object data) {
 		addProperty(b -> b.setData(data));
