@@ -954,7 +954,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		codeMiningsDomain.addValue(new EnumValue(AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_LEVEL__ERROR_WARNING,
 				TextEditorMessages.TextEditorDefaultsPreferencePage_codeMinings_ErrorWarnings));
 		codeMiningsDomain.addValue(new EnumValue(AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_LEVEL__ERROR_WARNING_INFO,
-				TextEditorMessages.TextEditorDefaultsPreferencePage_codeMinings_ErrowWarningsInfo));
+				TextEditorMessages.TextEditorDefaultsPreferencePage_codeMinings_ErrorWarningsInfo));
 		final Control[] showCodeMiningsControls= addCombo(appearanceComposite, showCodeMinings, codeMiningsDomain, 0);
 
 		label= TextEditorMessages.TextEditorDefaultsPreferencePage_codeMinings_max;

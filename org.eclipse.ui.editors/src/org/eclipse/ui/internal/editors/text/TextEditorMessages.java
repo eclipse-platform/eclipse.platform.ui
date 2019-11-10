@@ -140,7 +140,7 @@ final class TextEditorMessages extends NLS {
 	public static String TextEditorDefaultsPreferencePage_codeMinings_description;
 	public static String TextEditorDefaultsPreferencePage_codeMinings_error;
 	public static String TextEditorDefaultsPreferencePage_codeMinings_ErrorWarnings;
-	public static String TextEditorDefaultsPreferencePage_codeMinings_ErrowWarningsInfo;
+	public static String TextEditorDefaultsPreferencePage_codeMinings_ErrorWarningsInfo;
 	public static String TextEditorDefaultsPreferencePage_codeMinings_max;
 	public static String TextEditorDefaultsPreferencePage_codeMinings_max_description;
 	public static String TextEditorDefaultsPreferencePage_codeMinings_none;
