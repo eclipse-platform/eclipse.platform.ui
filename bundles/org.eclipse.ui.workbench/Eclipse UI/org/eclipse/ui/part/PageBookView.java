@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2015 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,6 +20,7 @@ import java.util.Map;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.SafeRunner;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.SafeRunnable;
@@ -702,6 +703,17 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 				showPageRec(defaultPageRec);
 			}
 		}
+
+		// If *we* are activating then activate the context
+		if (part == this) {
+			PageSite pageSite = getPageSite(getCurrentPage());
+			if (pageSite != null) {
+				IEclipseContext pageContext = pageSite.getSiteContext();
+				if (pageContext != null) {
+					pageContext.activate();
+				}
+			}
+		}
 	}
 
 	/**
@@ -1031,7 +1043,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 
 	/**
 	 * Make sure that the part is not considered if it is hidden.
-	 *
+	 * 
 	 * @param part
 	 * @since 3.5
 	 */
