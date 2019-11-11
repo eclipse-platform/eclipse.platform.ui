@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -107,6 +107,8 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 		@Override
 		public void setText(String text) {
 			if (fLabel != null) {
+				// Updating corresponding viewer state to reflect the updated text value.
+				getViewer().getControl().setData(CompareUI.COMPARE_VIEWER_TITLE, fLabel);
 				super.setText(fLabel);
 			} else {
 				super.setText(text);
