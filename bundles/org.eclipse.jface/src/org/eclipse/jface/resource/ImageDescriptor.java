@@ -61,8 +61,7 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor {
 	/**
 	 * A small red square used to warn that an image cannot be created.
 	 */
-	protected static final ImageData DEFAULT_IMAGE_DATA = new ImageData(6, 6,
-			1, new PaletteData(new RGB[] { new RGB(255, 0, 0) }));
+	protected static final ImageData DEFAULT_IMAGE_DATA = new ImageData(6, 6, 1, new PaletteData(new RGB(255, 0, 0)));
 
 	/**
 	 * Constructs an image descriptor.
