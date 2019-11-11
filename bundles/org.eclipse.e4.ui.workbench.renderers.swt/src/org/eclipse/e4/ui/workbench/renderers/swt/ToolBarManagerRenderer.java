@@ -118,12 +118,6 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 
 	private ToolItemUpdater enablementUpdater = new ToolItemUpdater();
 
-	// See Bug 536308
-	// remove disableThrottling system property in 4.11 if no problems are
-	// identified in 4.10
-	private static boolean disableThrottling = System.getProperty("bug_536308.disable.throttling") != null; //$NON-NLS-1$
-
-
 	@Inject
 	private Logger logger;
 
@@ -378,14 +372,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 				for (String var : updateVariables) {
 					context.get(var);
 				}
-				// See Bug 536308
-				// remove disableThrottling system property in 4.11 if no problems are
-				// identified in 4.10
-				if (disableThrottling) {
-					getUpdater().updateContributionItems(ALL_SELECTOR);
-				} else {
-					throttler.throttledExec();
-				}
+				throttler.throttledExec();
 				return true;
 			}
 		};
