@@ -155,11 +155,8 @@ ScrolledComposite > Composite > Composite > Composite > Button,
 Shell > Composite > Composite > Composite > Composite > Composite > Button,
 Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > Button,
 Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > * > Button,
-Form > LayoutComposite > LayoutComposite > Button,
 .MPart Button,
-.MPartStack.active .MPart Button,
-.MPart LayoutComposite > * > LayoutComposite > Section > LayoutComposite > Button,
-.MPartStack.active .MPart LayoutComposite > * > LayoutComposite > Section > LayoutComposite > Button {
+.MPartStack.active .MPart Button {
     background-color: unset;
     color: unset;
 }

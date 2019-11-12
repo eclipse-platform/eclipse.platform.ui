@@ -248,35 +248,6 @@ Section {
 	tb-toggle-color: #F4F7F7;
 }
 
-Form > LayoutComposite > LayoutComposite > * {
-    background-color: #515658;
-    color: #EEEEEE;
-}
-
-LayoutComposite, LayoutComposite > FormText,
-LayoutComposite > Label,
-LayoutComposite > Button {
-    background-color: #4F5355;
-    color: #F4F7F7;
-}
-
-LayoutComposite ScrolledPageBook,
-LayoutComposite Sash {
-    background-color: #4F5355;
-    color: #F4F7F7;
-}
-
-LayoutComposite > Text,
-LayoutComposite > Combo {
-    background-color: #414445;
-    color: #F4F7F7;
-}
-
-LayoutComposite > Table {
-    background-color: #333;
-    color: #FFF;
-}
-
 Table,
 Tree {
 	swt-header-color: #CCC;

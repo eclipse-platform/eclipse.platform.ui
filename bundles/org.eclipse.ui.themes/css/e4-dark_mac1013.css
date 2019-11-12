@@ -146,11 +146,8 @@ ScrolledComposite > Composite > Composite > Composite > Button,
 Shell > Composite > Composite > Composite > Composite > Composite > Button,
 Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > Button,
 Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > * > Button,
-Form > LayoutComposite > LayoutComposite > Button,
 .MPart Button,
-.MPartStack.active .MPart Button,
-.MPart LayoutComposite > * > LayoutComposite > Section > LayoutComposite > Button,
-.MPartStack.active .MPart LayoutComposite > * > LayoutComposite > Section > LayoutComposite > Button {
+.MPartStack.active .MPart Button {
     /* background-color is not applied to the whole button,
        but text color is changed, so it appear light on light */
     background-color: #2F2F2F;
@@ -170,11 +167,8 @@ ScrolledComposite > Composite > Composite > Composite > Button[style~='SWT.CHECK
 Shell > Composite > Composite > Composite > Composite > Composite > Button[style~='SWT.CHECK'],
 Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > Button[style~='SWT.CHECK'],
 Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > * > Button[style~='SWT.CHECK'],
-Form > LayoutComposite > LayoutComposite > Button[style~='SWT.CHECK'],
 .MPart Button[style~='SWT.CHECK'],
-.MPartStack.active .MPart Button[style~='SWT.CHECK'],
-.MPart LayoutComposite > * > LayoutComposite > Section > LayoutComposite > Button[style~='SWT.CHECK'],
-.MPartStack.active .MPart LayoutComposite > * > LayoutComposite > Section > LayoutComposite > Button[style~='SWT.CHECK'] {
+.MPartStack.active .MPart Button[style~='SWT.CHECK'] {
     /* currently, Button object isn't consistent (eg. also a checkbox is seen as Button) */
     /* so, css rules applied to Button have to be overridden for non-Button matches */
     background-color: #515658;
@@ -194,11 +188,8 @@ ScrolledComposite > Composite > Composite > Composite > Button[style~='SWT.RADIO
 Shell > Composite > Composite > Composite > Composite > Composite > Button[style~='SWT.RADIO'],
 Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > Button[style~='SWT.RADIO'],
 Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > * > Button[style~='SWT.RADIO'],
-Form > LayoutComposite > LayoutComposite > Button[style~='SWT.RADIO'],
 .MPart Button[style~='SWT.RADIO'],
-.MPartStack.active .MPart Button[style~='SWT.RADIO'],
-.MPart LayoutComposite > * > LayoutComposite > Section > LayoutComposite > Button[style~='SWT.RADIO'],
-.MPartStack.active .MPart LayoutComposite > * > LayoutComposite > Section > LayoutComposite > Button[style~='SWT.RADIO'] {
+.MPartStack.active .MPart Button[style~='SWT.RADIO'] {
     /* currently, Button object isn't consistent (eg. also a checkbox is seen as Button) */
     /* so, css rules applied to Button have to be overridden for non-Button matches */
     background-color: #515658;
@@ -218,9 +209,7 @@ Shell > Composite > Composite > Composite > Combo,
 ScrolledComposite > Composite > Composite > Composite > Combo,
 Shell > Composite > Composite > Composite > Composite > Composite > Combo,
 Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > Combo,
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > * > Combo,
-Form > LayoutComposite > LayoutComposite > Combo,
-.MPart LayoutComposite > * > LayoutComposite > Section > LayoutComposite > Combo {
+Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > * > Combo {
     background-color: #949DA5; 
     color: #222;  /* background of drop-drown list is hard-coded to white */
 }
@@ -237,9 +226,7 @@ Shell > Composite > Composite > Composite > Combo:selected,
 ScrolledComposite > Composite > Composite > Composite > Combo:selected,
 Shell > Composite > Composite > Composite > Composite > Composite > Combo:selected,
 Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > Combo:selected,
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > * > Combo:selected,
-Form > LayoutComposite > LayoutComposite > Combo:selected,
-.MPart LayoutComposite > * > LayoutComposite > Section > LayoutComposite > Combo:selected {
+Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > * > Combo:selected {
     background-color: #41464A;
     color: #FFF;
 }

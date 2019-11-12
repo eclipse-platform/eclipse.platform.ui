@@ -188,26 +188,20 @@ ImageBasedFrame,
 .MPart Form Link,
 .MPart Form Button,
 .MPart Form Group,
-.MPart Form LayoutComposite,
 .MPart Form ScrolledPageBook,
 .MPart Form DependenciesComposite,
 .MPart Form ListEditorComposite,
 .MPart Form Text[style~='SWT.READ_ONLY'],
-.MPart Form > LayoutComposite > LayoutComposite > ToolBar,
 .MPart Form DependenciesComposite > SashForm > Section > *, /* Section > DependenciesComposite$... */
-.MPart LayoutComposite > * > LayoutComposite > Section > LayoutComposite > *, /*LayoutComposite > MasterDetailBlock$... > LayoutComposite > Section > LayoutComposite > ExtensionsSection$...*/
 .MPartStack.active .MPart Form,
 .MPartStack.active .MPart Form Link,
 .MPartStack.active .MPart Form Button,
 .MPartStack.active .MPart Form Group,
-.MPartStack.active .MPart Form LayoutComposite,
 .MPartStack.active .MPart Form ScrolledPageBook,
 .MPartStack.active .MPart Form DependenciesComposite,
 .MPartStack.active .MPart Form ListEditorComposite,
 .MPartStack.active .MPart Form Text[style~='SWT.READ_ONLY'],
-.MPartStack.active .MPart Form > LayoutComposite > LayoutComposite > ToolBar,
-.MPartStack.active .MPart Form DependenciesComposite > SashForm > Section > *, /* Section > DependenciesComposite$... */
-.MPartStack.active .MPart LayoutComposite > * > LayoutComposite > Section > LayoutComposite > * /*LayoutComposite > MasterDetailBlock$... > LayoutComposite > Section > LayoutComposite > ExtensionsSection$...*/ {
+.MPartStack.active .MPart Form DependenciesComposite > SashForm > Section > * { /* Section > DependenciesComposite$... */ 
     background-color: #4f5355;
     color: #f4f7f7;
 }
@@ -218,7 +212,6 @@ ImageBasedFrame,
 #org-eclipse-help-ui-HelpView Form FormText,
 #org-eclipse-help-ui-HelpView Form Button,
 #org-eclipse-help-ui-HelpView Form Group,
-#org-eclipse-help-ui-HelpView Form LayoutComposite,
 #org-eclipse-help-ui-HelpView Form ScrolledPageBook,
 #org-eclipse-help-ui-HelpView Form Text[style~='SWT.READ_ONLY'] {
     background-color: #2F2F2F;
@@ -231,34 +224,15 @@ ImageBasedFrame,
 .MPartStack.active #org-eclipse-help-ui-HelpView Form FormText,
 .MPartStack.active #org-eclipse-help-ui-HelpView Form Button,
 .MPartStack.active #org-eclipse-help-ui-HelpView Form Group,
-.MPartStack.active #org-eclipse-help-ui-HelpView Form LayoutComposite,
 .MPartStack.active #org-eclipse-help-ui-HelpView Form ScrolledPageBook,
 .MPartStack.active #org-eclipse-help-ui-HelpView Form Text[style~='SWT.READ_ONLY'] {
     background-color: #262626;
     color: #BBBBBB;
 }
 .MPart Form Section Tree,
-.MPart LayoutComposite > * > LayoutComposite > Section > LayoutComposite > Tree,
-.MPartStack.active .MPart Form Section Tree,
-.MPartStack.active .MPart LayoutComposite > * > LayoutComposite > Section > LayoutComposite > Tree {
+.MPartStack.active .MPart Form Section Tree {
     background-color: #313538;
     color: #DDDDDD;
-}
-.MPart PageBook > Form > LayoutComposite {
-    background-color: #2F2F2F;
-    color: #CCC;
-}
-.MPartStack.active .MPart PageBook > Form > LayoutComposite {
-    background-color: #262626;
-    color: #BBBBBB;
-}
-.MPart Form FormHeading LayoutComposite {
-    background-color: #505f70;
-    color: #9ac9d8;
-}
-.MPartStack.active .MPart Form FormHeading LayoutComposite {
-    background-color: #415062;
-    color: #9ac9d8;
 }
 
 /* On the windows dark theme, the default is having the scrollbar themed
