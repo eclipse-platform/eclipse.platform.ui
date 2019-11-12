@@ -238,6 +238,7 @@ ImageBasedFrame,
 /* On the windows dark theme, the default is having the scrollbar themed
  * Note that the user may also set -Dswt.enable.themedScrollBar=false to force
  * it to false regardless of the CSS value.
+ * swt-scrollbar-themed must be present for -Dswt.enable.themedScrollBar to be supported
  */
 StyledText {
 	swt-scrollbar-themed: true;
