@@ -231,9 +231,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			if (delta == null) {
 				return false;
 			}
-			IMarkerDelta[] markerDeltas= delta.getMarkerDeltas();
-			for (int i= 0; i < markerDeltas.length; i++) {
-				IMarkerDelta markerDelta= markerDeltas[i];
+			for (IMarkerDelta markerDelta : delta.getMarkerDeltas()) {
 				if (markerDelta.isSubtypeOf(IBreakpoint.BREAKPOINT_MARKER)) {
 					switch (markerDelta.getKind()) {
 						case IResourceDelta.ADDED :
@@ -275,10 +273,8 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 */
 	private void loadBreakpoints(IResource resource, boolean notify) throws CoreException {
 		initBreakpointExtensions();
-		IMarker[] markers= getPersistedMarkers(resource);
 		List<IBreakpoint> added = new ArrayList<>();
-		for (int i = 0; i < markers.length; i++) {
-			IMarker marker= markers[i];
+		for (IMarker marker : getPersistedMarkers(resource)) {
 			try {
 				IBreakpoint breakpoint = createBreakpoint(marker);
 				synchronized (fPostChangMarkersChanged) {
@@ -315,11 +311,9 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 * @throws CoreException if a problem is encountered
 	 */
 	protected IMarker[] getPersistedMarkers(IResource resource) throws CoreException {
-		IMarker[] markers= resource.findMarkers(IBreakpoint.BREAKPOINT_MARKER, true, IResource.DEPTH_INFINITE);
 		final List<IMarker> delete = new ArrayList<>();
 		List<IMarker> persisted = new ArrayList<>();
-		for (int i = 0; i < markers.length; i++) {
-			IMarker marker= markers[i];
+		for (IMarker marker : resource.findMarkers(IBreakpoint.BREAKPOINT_MARKER, true, IResource.DEPTH_INFINITE)) {
 			// ensure the marker has a valid model identifier attribute
 			// and delete the breakpoint if not
 			String modelId = marker.getAttribute(IBreakpoint.ID, null);
@@ -340,8 +334,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			IWorkspaceRunnable wr = new IWorkspaceRunnable() {
 				@Override
 				public void run(IProgressMonitor pm) throws CoreException {
-					for (int i = 0; i < delMarkers.length; i++) {
-						IMarker marker = delMarkers[i];
+					for (IMarker marker : delMarkers) {
 						marker.delete();
 					}
 				}
@@ -381,16 +374,15 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	 */
 	private void initBreakpointExtensions() {
 		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_BREAKPOINTS);
-		IConfigurationElement[] elements = ep.getConfigurationElements();
-		for (int i= 0; i < elements.length; i++) {
-			String markerType = elements[i].getAttribute(IConfigurationElementConstants.MARKER_TYPE);
-			String className = elements[i].getAttribute(IConfigurationElementConstants.CLASS);
+		for (IConfigurationElement element : ep.getConfigurationElements()) {
+			String markerType = element.getAttribute(IConfigurationElementConstants.MARKER_TYPE);
+			String className = element.getAttribute(IConfigurationElementConstants.CLASS);
 			if (markerType == null) {
-				DebugPlugin.log(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Breakpoint extension " + elements[i].getDeclaringExtension().getUniqueIdentifier() + " missing required attribute: markerType", null)); //$NON-NLS-1$ //$NON-NLS-2$
+				DebugPlugin.log(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Breakpoint extension " + element.getDeclaringExtension().getUniqueIdentifier() + " missing required attribute: markerType", null)); //$NON-NLS-1$ //$NON-NLS-2$
 			} else if (className == null){
-				DebugPlugin.log(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Breakpoint extension " + elements[i].getDeclaringExtension().getUniqueIdentifier() + " missing required attribute: class", null)); //$NON-NLS-1$ //$NON-NLS-2$
+				DebugPlugin.log(new Status(IStatus.ERROR, DebugPlugin.getUniqueIdentifier(), DebugPlugin.INTERNAL_ERROR, "Breakpoint extension " + element.getDeclaringExtension().getUniqueIdentifier() + " missing required attribute: class", null)); //$NON-NLS-1$ //$NON-NLS-2$
 			} else {
-				fBreakpointExtensions.put(markerType, elements[i]);
+				fBreakpointExtensions.put(markerType, element);
 			}
 		}
 	}
@@ -506,8 +498,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	public void removeBreakpoints(IBreakpoint[] breakpoints, final boolean delete) throws CoreException {
 		final List<IBreakpoint> remove = new ArrayList<>(breakpoints.length);
 		List<IBreakpoint> bps = getBreakpoints0();
-		for (int i = 0; i < breakpoints.length; i++) {
-			IBreakpoint breakpoint = breakpoints[i];
+		for (IBreakpoint breakpoint : breakpoints) {
 			if (bps.contains(breakpoint)) {
 				remove.add(breakpoint);
 			}
@@ -610,8 +601,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 	private void addBreakpoints(IBreakpoint[] breakpoints, boolean notify) throws CoreException {
 		List<IBreakpoint> added = new ArrayList<>(breakpoints.length);
 		final List<IBreakpoint> update = new ArrayList<>();
-		for (int i = 0; i < breakpoints.length; i++) {
-			IBreakpoint breakpoint = breakpoints[i];
+		for (IBreakpoint breakpoint : breakpoints) {
 			if (!getBreakpoints0().contains(breakpoint)) {
 				verifyBreakpoint(breakpoint);
 				if (breakpoint.isRegistered()) {
@@ -760,9 +750,8 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				IWorkspaceRunnable wRunnable= new IWorkspaceRunnable() {
 					@Override
 					public void run(IProgressMonitor monitor) throws CoreException {
-						IMarker[] markers = fMoved.toArray(new IMarker[fMoved.size()]);
-						for (int i = 0; i < markers.length; i++) {
-							markers[i].delete();
+						for (IMarker marker : fMoved) {
+							marker.delete();
 						}
 					}
 				};
@@ -813,9 +802,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 				handleProjectResourceOpenStateChange(delta.getResource());
 				return false;
 			}
-			IMarkerDelta[] markerDeltas= delta.getMarkerDeltas();
-			for (int i= 0; i < markerDeltas.length; i++) {
-				IMarkerDelta markerDelta= markerDeltas[i];
+			for (IMarkerDelta markerDelta : delta.getMarkerDeltas()) {
 				if (markerDelta.isSubtypeOf(IBreakpoint.BREAKPOINT_MARKER)) {
 					switch (markerDelta.getKind()) {
 						case IResourceDelta.ADDED :
@@ -883,11 +870,9 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		 * @return matching breakpoint if exists else return <code>null</code>
 		 */
 		private IBreakpoint findMatchingBreakpoint(IMarker marker) {
-			Vector<IBreakpoint> breakpoints = getBreakpoints0();
 			try {
 				Integer line = (Integer) marker.getAttribute(IMarker.LINE_NUMBER);
-				for (int i = 0; i < breakpoints.size(); i++) {
-					IBreakpoint breakpoint = breakpoints.get(i);
+				for (IBreakpoint breakpoint : getBreakpoints0()) {
 					IMarker bpMarker = breakpoint.getMarker();
 					if (bpMarker != null && marker.getResource().equals(bpMarker.getResource()) && bpMarker.getAttribute(IMarker.LINE_NUMBER, -1) == (line == null ? -1 : line.intValue())) {
 						return breakpoint;
@@ -1303,18 +1288,17 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 			fImportParticipants = new HashMap<>();
 			fDefaultParticipant = new DefaultImportParticipant();
 			IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_BREAKPOINT_IMPORT_PARTICIPANTS);
-			IConfigurationElement[] elements = ep.getConfigurationElements();
 			String type = null;
 			ArrayList<BreakpointImportParticipantDelegate> list = null;
-			for(int i = 0; i < elements.length; i++) {
-				type = elements[i].getAttribute(IConfigurationElementConstants.TYPE);
+			for (IConfigurationElement element : ep.getConfigurationElements()) {
+				type = element.getAttribute(IConfigurationElementConstants.TYPE);
 				if(type != null) {
 					list = fImportParticipants.get(type);
 					if(list == null) {
 						list = new ArrayList<>();
 						fImportParticipants.put(type, list);
 					}
-					list.add(new BreakpointImportParticipantDelegate(elements[i]));
+					list.add(new BreakpointImportParticipantDelegate(element));
 				}
 			}
 		}
@@ -1415,9 +1399,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
-				IBreakpoint[] breakpoints = getBreakpoints();
-				for (int i = 0; i < breakpoints.length; i++) {
-					IBreakpoint breakpoint = breakpoints[i];
+				for (IBreakpoint breakpoint : getBreakpoints()) {
 					// Touch the marker (but don't actually change anything) so
 					// that the icon in
 					// the editor ruler will be updated (editors listen to

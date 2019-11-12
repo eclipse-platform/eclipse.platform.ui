@@ -269,8 +269,8 @@ public abstract class AsynchronousModel {
 		if (nodes == null) {
 			fElementToNodes.put(element, new ModelNode[] { node});
 		} else {
-			for (int i = 0; i < nodes.length; i++) {
-				if (nodes[i] == node) {
+			for (ModelNode mnode : nodes) {
+				if (mnode == node) {
 					return;
 				}
 			}
@@ -388,16 +388,16 @@ public abstract class AsynchronousModel {
 		ViewerFilter[] filters = getViewer().getFilters();
 		if (filters != null) {
 			ArrayList<Object> filtered = new ArrayList<>(elements.length);
-			for (int i = 0; i < elements.length; i++) {
+			for (Object element : elements) {
 				boolean add = true;
-				for (int j = 0; j < filters.length; j++) {
-					add = filters[j].select(getViewer(), parent, elements[i]);
+				for (ViewerFilter filter : filters) {
+					add = filter.select(getViewer(), parent, element);
 					if (!add) {
 						break;
 					}
 				}
 				if (add) {
-					filtered.add(elements[i]);
+					filtered.add(element);
 				}
 			}
 			return filtered.toArray();
@@ -585,8 +585,7 @@ public abstract class AsynchronousModel {
 						mapElement(child, newChildren[i]);
 					}
 				}
-				for (int i = 0; i < prevKids.length; i++) {
-					ModelNode kid = prevKids[i];
+				for (ModelNode kid : prevKids) {
 					if (kid != null) {
 						kid.dispose();
 						unmapNode(kid);
@@ -604,8 +603,8 @@ public abstract class AsynchronousModel {
 		final ModelNode[] finalUnmap = unmap;
 		preservingSelection(() -> {
 			if (finalUnmap != null) {
-				for (int i = 0; i < finalUnmap.length; i++) {
-					viewer.unmapNode(finalUnmap[i]);
+				for (ModelNode element : finalUnmap) {
+					viewer.unmapNode(element);
 				}
 			}
 			viewer.nodeChildrenChanged(parentNode);
@@ -633,8 +632,8 @@ public abstract class AsynchronousModel {
 		buf.append('\n');
 		ModelNode[] childrenNodes = node.getChildrenNodes();
 		if (childrenNodes != null) {
-			for (int i = 0; i < childrenNodes.length; i++) {
-				append(buf, childrenNodes[i], level + 1);
+			for (ModelNode childNode : childrenNodes) {
+				append(buf, childNode, level + 1);
 			}
 		}
 	}

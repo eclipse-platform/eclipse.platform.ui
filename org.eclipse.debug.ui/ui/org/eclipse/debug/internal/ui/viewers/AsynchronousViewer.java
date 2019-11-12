@@ -190,8 +190,8 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	public void update(Object element) {
 		ModelNode[] nodes = getModel().getNodes(element);
 		if (nodes != null) {
-			for (int i = 0; i < nodes.length; i++) {
-				updateLabel(nodes[i]);
+			for (ModelNode node : nodes) {
+				updateLabel(node);
 			}
 		}
 	}
@@ -421,8 +421,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		if (model != null) {
 			ModelNode[] nodes = model.getNodes(element);
 			if (nodes != null) {
-				for (int i = 0; i < nodes.length; i++) {
-					ModelNode node = nodes[i];
+				for (ModelNode node : nodes) {
 					// get the widget for the node
 					Widget item = findItem(node);
 					if (item != null) {
@@ -969,8 +968,8 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		unmapElement(node);
 		ModelNode[] childrenNodes = node.getChildrenNodes();
 		if (childrenNodes != null) {
-			for (int i = 0; i < childrenNodes.length; i++) {
-				unmapNode(childrenNodes[i]);
+			for (ModelNode childNode : childrenNodes) {
+				unmapNode(childNode);
 			}
 		}
 	}
@@ -983,8 +982,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 	protected ModelNode findNode(Widget widget) {
 		ModelNode[] nodes = getModel().getNodes(widget.getData());
 		if (nodes != null) {
-			for (int i = 0; i < nodes.length; i++) {
-				ModelNode node = nodes[i];
+			for (ModelNode node : nodes) {
 				Widget item = findItem(node);
 				if (widget == item) {
 					return node;
@@ -1031,8 +1029,7 @@ public abstract class AsynchronousViewer extends StructuredViewer implements Lis
 		if (parentItem != null) {
 			ModelNode[] nodes = getModel().getNodes(parentItem.getData());
 			if (nodes != null) {
-				for (int i = 0; i < nodes.length; i++) {
-					ModelNode parentNode = nodes[i];
+				for (ModelNode parentNode : nodes) {
 					Widget parentWidget = findItem(parentNode);
 					if (parentWidget == parentItem) {
 						ModelNode[] childrenNodes = parentNode.getChildrenNodes();

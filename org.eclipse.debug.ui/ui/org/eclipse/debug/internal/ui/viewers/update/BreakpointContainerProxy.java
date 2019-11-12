@@ -45,10 +45,9 @@ public class BreakpointContainerProxy extends AbstractModelProxy implements	IChe
 	@Override
 	public boolean setChecked(IPresentationContext context, Object viewerInput, TreePath path, boolean checked) {
 		boolean atLeastOne = false;
-		IBreakpoint[] breakpoints = fContainer.getBreakpoints();
-		for (int i = 0; i < breakpoints.length; ++i) {
+		for (IBreakpoint breakpoint : fContainer.getBreakpoints()) {
 			try {
-				breakpoints[i].setEnabled(checked);
+				breakpoint.setEnabled(checked);
 				atLeastOne = true;
 			} catch (CoreException e) {}
 		}

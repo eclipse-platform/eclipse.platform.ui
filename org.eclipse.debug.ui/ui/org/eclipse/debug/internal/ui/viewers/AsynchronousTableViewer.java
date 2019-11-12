@@ -156,8 +156,8 @@ public class AsynchronousTableViewer extends AsynchronousViewer implements Liste
 	protected List getSelectionFromWidget() {
 		TableItem[] selection = fTable.getSelection();
 		List<Object> datas = new ArrayList<>(selection.length);
-		for (int i = 0; i < selection.length; i++) {
-			datas.add(selection[i].getData());
+		for (TableItem element : selection) {
+			datas.add(element.getData());
 		}
 		return datas;
 	}

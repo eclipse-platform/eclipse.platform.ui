@@ -131,13 +131,12 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
 		if (fNesting != null && fNesting.length > 0) {
 			IAdaptable[] emptyCategories = fNesting[0].getCategories();
 			if (emptyCategories != null) {
-				for (int i = 0; i < emptyCategories.length; i++) {
-					IAdaptable empty = emptyCategories[i];
-					BreakpointContainer container = findExistingContainer(fChildContainers, empty);
+				for (IAdaptable category : emptyCategories) {
+					BreakpointContainer container = findExistingContainer(fChildContainers, category);
 					if (container == null) {
 						IBreakpointOrganizer[] siblings = new IBreakpointOrganizer[fNesting.length - 1];
 						System.arraycopy(fNesting, 1, siblings, 0, siblings.length);
-						container = new BreakpointContainer(this, empty, fNesting[0], fComparator, siblings);
+						container = new BreakpointContainer(this, category, fNesting[0], fComparator, siblings);
 						insertChildContainer(container);
 						container.fDefaultContainer = true;
 
@@ -276,11 +275,8 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
 			IBreakpointOrganizer organizer = fNesting[0];
 
 			// get the breakpoint categories from the organizer
-			IAdaptable[] categories = getCategories(breakpoint, organizer);
-
-			for (int i = 0; i < categories.length; ++i) {
+			for (IAdaptable category : getCategories(breakpoint, organizer)) {
 				ModelDelta childDelta = null;
-				IAdaptable category = categories[i];
 				BreakpointContainer container = findExistingContainer(fChildContainers, category);
 
 				// create a new container if it doesn't exist
@@ -595,8 +591,7 @@ public class BreakpointContainer extends ElementContentProvider implements IAdap
 				return new BreakpointContainer[]{this};
 			}
 			ArrayList<BreakpointContainer> list = new ArrayList<>();
-			for (int i = 0; i < containers.length; i++) {
-				BreakpointContainer container = containers[i];
+			for (BreakpointContainer container : containers) {
 				BreakpointContainer[] subcontainers = container.getContainers(breakpoint);
 				if (subcontainers != null) {
 					Collections.addAll(list, subcontainers);

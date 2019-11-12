@@ -52,9 +52,8 @@ public class BreakpointContainerLabelProvider extends DebugElementLabelProvider 
 		Object lastSegment = path.getLastSegment();
 		if (lastSegment instanceof IBreakpointContainer) {
 			IBreakpointContainer container = (IBreakpointContainer) lastSegment;
-			IBreakpoint[] breakpoints = container.getBreakpoints();
-			for (int i = 0; i < breakpoints.length; ++i) {
-				if (breakpoints[i].isEnabled()) {
+			for (IBreakpoint breakpoint : container.getBreakpoints()) {
+				if (breakpoint.isEnabled()) {
 					return true;
 				}
 			}
@@ -70,15 +69,14 @@ public class BreakpointContainerLabelProvider extends DebugElementLabelProvider 
 		Object lastSegment = path.getLastSegment();
 		if (lastSegment instanceof IBreakpointContainer) {
 			IBreakpointContainer container = (IBreakpointContainer) lastSegment;
-			IBreakpoint[] breakpoints = container.getBreakpoints();
-
+			
 			// Return true, gray if some breakpoints are enabled and some are disabled.
 			// return false if all breakpoints are either disabled or all are enabled.
 			boolean hasEnabled = false;
 			boolean hasDisabled = false;
 
-			for (int i = 0; i < breakpoints.length; ++i) {
-				if (breakpoints[i].isEnabled()) {
+			for (IBreakpoint breakpoint : container.getBreakpoints()) {
+				if (breakpoint.isEnabled()) {
 					hasEnabled = true;
 				} else {
 					hasDisabled = true;

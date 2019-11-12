@@ -94,8 +94,8 @@ public class AsyncTableRenderingCellModifier implements ICellModifier {
 				return fCustomModifier.canModify(mElement, null);
 			}
 
-			for (int i = 0; i < bytes.length; i++) {
-				if (!bytes[i].isWritable()) {
+			for (MemoryByte b : bytes) {
+				if (!b.isWritable()) {
 					canModify = false;
 				}
 			}

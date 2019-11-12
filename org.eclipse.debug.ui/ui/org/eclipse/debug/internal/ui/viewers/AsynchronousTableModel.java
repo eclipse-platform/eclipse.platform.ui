@@ -60,13 +60,13 @@ public class AsynchronousTableModel extends AsynchronousModel {
 				kids = new ArrayList<>(elements.length);
 			} else {
 				kids = new ArrayList<>(elements.length + childrenNodes.length);
-				for (int i = 0; i < childrenNodes.length; i++) {
-					kids.add(childrenNodes[i].getElement());
+				for (ModelNode childNode : childrenNodes) {
+					kids.add(childNode.getElement());
 				}
 			}
-			for (int i = 0; i < elements.length; i++) {
-				if (!kids.contains(elements[i])) {
-					kids.add(elements[i]);
+			for (Object element : elements) {
+				if (!kids.contains(element)) {
+					kids.add(element);
 					changed = true;
 				}
 			}
@@ -103,13 +103,13 @@ public class AsynchronousTableModel extends AsynchronousModel {
 				kids = new ArrayList<>(elements.length);
 			} else {
 				kids = new ArrayList<>(elements.length + childrenNodes.length);
-				for (int i = 0; i < childrenNodes.length; i++) {
-					kids.add(childrenNodes[i].getElement());
+				for (ModelNode childNode : childrenNodes) {
+					kids.add(childNode.getElement());
 				}
 			}
-			for (int i = 0; i < elements.length; i++) {
-				if (!kids.contains(elements[i])) {
-					kids.add(index, elements[i]);
+			for (Object element : elements) {
+				if (!kids.contains(element)) {
+					kids.add(index, element);
 					index++;
 					changed = true;
 				}
@@ -143,11 +143,11 @@ public class AsynchronousTableModel extends AsynchronousModel {
 			ModelNode[] childrenNodes = getRootNode().getChildrenNodes();
 			if (childrenNodes != null) {
 				kids = new ArrayList<>(childrenNodes.length);
-				for (int i = 0; i < childrenNodes.length; i++) {
-					kids.add(childrenNodes[i].getElement());
+				for (ModelNode childrenNode : childrenNodes) {
+					kids.add(childrenNode.getElement());
 				}
-				for (int i = 0; i < elements.length; i++) {
-					if (kids.remove(elements[i])) {
+				for (Object element : elements) {
+					if (kids.remove(element)) {
 						changed = true;
 					}
 				}
@@ -182,9 +182,7 @@ public class AsynchronousTableModel extends AsynchronousModel {
 		}
 		List<ModelNode> list = new ArrayList<>();
 		synchronized (this) {
-			ModelNode[] nodes = getNodes(element);
-			for (int i = 0; i < nodes.length; i++) {
-				ModelNode node = nodes[i];
+			for (ModelNode node : getNodes(element)) {
 				node.remap(replacement);
 				list.add(node);
 			}
