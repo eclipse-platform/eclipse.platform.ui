@@ -19,9 +19,9 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.swt.graphics.ImageData;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.dialogs.SearchPattern;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -38,42 +38,27 @@ public class OpenResourceQuickAccessComputer implements IQuickAccessComputer, IQ
 
 	@Override
 	public QuickAccessElement[] computeElements(String query, IProgressMonitor monitor) {
+		SearchPattern searchPattern = new SearchPattern();
+		searchPattern.setPattern(query);
+
 		List<QuickAccessElement> res = new ArrayList<>();
 		long startTime = System.currentTimeMillis();
 		WorkbenchLabelProvider labelProvider = new WorkbenchLabelProvider();
 		try {
-			ResourcesPlugin.getWorkspace().getRoot().accept(resource -> {
-				if (resource.getType() == IResource.FILE) {
-					res.add(new QuickAccessElement() {
-						@Override
-						public String getLabel() {
-							return labelProvider.getText(resource);
-						}
+			ResourcesPlugin.getWorkspace().getRoot().accept(resourceProxy -> {
+				if (resourceProxy.isDerived() || !resourceProxy.isAccessible()) {
+					return false;
+				}
 
-						@Override
-						public ImageDescriptor getImageDescriptor() {
-							ImageData imageData = labelProvider.getImage(resource).getImageData();
-							return ImageDescriptor.createFromImageDataProvider(zoom -> imageData);
-						}
-
-						@Override
-						public String getId() {
-							return resource.getFullPath().toString();
-						}
-
-						@Override
-						public void execute() {
-							try {
-								IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(),
-										(IFile) resource);
-							} catch (PartInitException e) {
-								IDEWorkbenchPlugin.log(e.getMessage(), e);
-							}
-						}
-					});
+				if (resourceProxy.getType() == IResource.FILE) {
+					String name = resourceProxy.getName();
+					if (searchPattern.matches(name)) {
+						IFile file = (IFile) resourceProxy.requestResource();
+						res.add(new ResourceElement(labelProvider, file));
+					}
 				}
 				return !monitor.isCanceled() && System.currentTimeMillis() - startTime < TIMEOUT_MS;
-			});
+			}, IResource.NONE);
 		} catch (CoreException e) {
 			IDEWorkbenchPlugin.log(e.getMessage(), e);
 		}
@@ -96,4 +81,37 @@ public class OpenResourceQuickAccessComputer implements IQuickAccessComputer, IQ
 		return false;
 	}
 
+	private static class ResourceElement extends QuickAccessElement {
+		private final WorkbenchLabelProvider fLabelProvider;
+		private final IFile fFile;
+
+		private ResourceElement(WorkbenchLabelProvider labelProvider, IFile resource) {
+			fLabelProvider = labelProvider;
+			fFile = resource;
+		}
+
+		@Override
+		public String getLabel() {
+			return fLabelProvider.getText(fFile);
+		}
+
+		@Override
+		public ImageDescriptor getImageDescriptor() {
+			return ImageDescriptor.createFromImageDataProvider(zoom -> fLabelProvider.getImage(fFile).getImageData());
+		}
+
+		@Override
+		public String getId() {
+			return fFile.getFullPath().toString();
+		}
+
+		@Override
+		public void execute() {
+			try {
+				IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), fFile);
+			} catch (PartInitException e) {
+				IDEWorkbenchPlugin.log(e.getMessage(), e);
+			}
+		}
+	}
 }
