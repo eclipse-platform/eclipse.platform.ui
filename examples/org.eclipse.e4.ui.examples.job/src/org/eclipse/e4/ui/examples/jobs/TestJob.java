@@ -127,10 +127,10 @@ public class TestJob extends Job {
 				monitor.worked(1);
 			}
 		} finally {
-			if (reschedule)
-				schedule(rescheduleWait);
 			monitor.done();
 		}
+		if (reschedule)
+			schedule(rescheduleWait);
 		return Status.OK_STATUS;
 	}
 
