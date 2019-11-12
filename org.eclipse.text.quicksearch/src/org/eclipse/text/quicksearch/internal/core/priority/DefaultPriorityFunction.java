@@ -12,14 +12,10 @@
  *******************************************************************************/
 package org.eclipse.text.quicksearch.internal.core.priority;
 
-import java.net.URI;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.eclipse.core.resources.IContainer;
-import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.resources.IWorkspaceRoot;
+import org.eclipse.core.runtime.IPath;
 import org.eclipse.text.quicksearch.internal.core.preferences.QuickSearchPreferences;
 
 /**
@@ -66,15 +62,13 @@ public class DefaultPriorityFunction extends PriorityFunction {
 		"bin", "build", "target" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	};
 
-	public Set<IResource> ignoredResources = null;
-
 	@Override
 	public double priority(IResource r) {
 		if (r!=null && r.isAccessible()) {
 			if (ignoreDerived && r.isDerived()) {
 				return PRIORITY_IGNORE;
 			}
-			if (ignoredResources!=null && ignoredResources.contains(r)) {
+			if (isIgnoredLinkedContainer(r)) {
 				return PRIORITY_IGNORE;
 			}
 			String name = r.getName();
@@ -99,6 +93,26 @@ public class DefaultPriorityFunction extends PriorityFunction {
 	}
 
 	/**
+	 * We want to avoid searching the same files / folders twice in cases where users have 'overlapping projects'.
+	 * I.e a project contains folders that are actually correspond to other projects also imported in the workspace.
+	 * <p>
+	 * See https://issuetracker.springsource.com/browse/STS-3783
+	 */
+	private boolean isIgnoredLinkedContainer(IResource resource) {
+		if (!(resource instanceof IContainer) || !resource.isLinked(IResource.NONE)) {
+			return false;
+		}
+
+		IPath location = resource.getLocation();
+		if (location == null) {
+			return true;
+		}
+		IWorkspaceRoot root = resource.getWorkspace().getRoot();
+		IContainer linkTarget = root.getContainerForLocation(location);
+		return linkTarget != null;
+	}
+
+	/**
 	 * Initialize some configurable settings from an instance of QuickSearchPreferences
 	 */
 	public void configure(QuickSearchPreferences preferences) {
@@ -114,42 +128,6 @@ public class DefaultPriorityFunction extends PriorityFunction {
 		if (pref!=null) {
 			this.ignoredPrefixes = pref;
 		}
-		computeIgnoredFolders();
 	}
 
-	/**
-	 * We want to avoid searchin the same files / folders twice in cases where users have 'overlapping projects'.
-	 * I.e a project contains folders that are actually correspond to other projects also imported in the workspace.
-	 * <p>
-	 * See https://issuetracker.springsource.com/browse/STS-3783
-	 * <p>
-	 * This method computes a set of folders to ignore.
-	 */
-	private void computeIgnoredFolders() {
-		//TODO: Hopefully this won't take too long to compute. Otherwise we may need to look at ways of caching it.
-		// it probably doesn't change that often.
-		IProject[] allprojects = ResourcesPlugin.getWorkspace().getRoot().getProjects();
-		for (IProject p : allprojects) {
-			if (p.isAccessible()) {
-				URI location = p.getLocationURI();
-				if (location!=null) {
-					IContainer[] containers = ResourcesPlugin.getWorkspace().getRoot().findContainersForLocationURI(location);
-					if (containers!=null) {
-						for (IContainer folder : containers) {
-							if (!folder.equals(p)) {
-								ignore(folder);
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	private void ignore(IContainer folder) {
-		if (ignoredResources==null) {
-			ignoredResources = new HashSet<>();
-		}
-		ignoredResources.add(folder);
-	}
 }
