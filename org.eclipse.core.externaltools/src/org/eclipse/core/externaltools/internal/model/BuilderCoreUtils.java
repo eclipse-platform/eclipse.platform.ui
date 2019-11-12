@@ -127,10 +127,9 @@ public class BuilderCoreUtils {
 		newCommand.setBuilding(IncrementalProjectBuilder.AUTO_BUILD, false);
 		newCommand.setBuilding(IncrementalProjectBuilder.CLEAN_BUILD, false);
 		String buildKinds = config.getAttribute(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, (String) null);
-		int[] triggers = buildTypesToArray(buildKinds);
 		boolean isfull = false, isinc = false;
-		for (int i = 0; i < triggers.length; i++) {
-			switch (triggers[i]) {
+		for (int trigger : buildTypesToArray(buildKinds)) {
+			switch (trigger) {
 				case IncrementalProjectBuilder.FULL_BUILD:
 					newCommand.setBuilding(IncrementalProjectBuilder.FULL_BUILD, true);
 					isfull = true;

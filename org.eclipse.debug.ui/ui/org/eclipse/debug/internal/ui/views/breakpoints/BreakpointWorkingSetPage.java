@@ -168,11 +168,10 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 	@Override
 	public void finish() {
 		String workingSetName = fWorkingSetName.getText();
-		Object[] adaptable = fTViewer.getCheckedElements().toArray();
 		ArrayList<IBreakpoint> elements = new ArrayList<>();
 		//weed out non-breakpoint elements since 3.2
-		for(int i = 0; i < adaptable.length; i++) {
-			IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(adaptable[i], IBreakpoint.class);
+		for (Object adaptableElement : fTViewer.getCheckedElements()) {
+			IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(adaptableElement, IBreakpoint.class);
 			if(breakpoint != null) {
 				elements.add(breakpoint);
 			}//end if
@@ -206,9 +205,8 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 		}
 		fFirstCheck= false;
 		if (errorMessage == null && (fWorkingSet == null || newText.equals(fWorkingSet.getName()) == false)) {
-			IWorkingSet[] workingSets= PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets();
-			for (int i= 0; i < workingSets.length; i++) {
-				if (newText.equals(workingSets[i].getName())) {
+			for (IWorkingSet workingSet : PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets()) {
+				if (newText.equals(workingSet.getName())) {
 					errorMessage= DebugUIViewsMessages.BreakpointWorkingSetPage_6;
 				}
 			}

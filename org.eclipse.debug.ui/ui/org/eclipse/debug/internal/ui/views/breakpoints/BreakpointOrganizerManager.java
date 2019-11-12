@@ -92,9 +92,7 @@ public class BreakpointOrganizerManager {
 	 */
 	private void loadOrganizers() {
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_BREAKPOINT_ORGANIZERS);
-		IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
-		for (int i = 0; i < configurationElements.length; i++) {
-			IConfigurationElement element= configurationElements[i];
+		for (IConfigurationElement element : extensionPoint.getConfigurationElements()) {
 			IBreakpointOrganizer organizer = new BreakpointOrganizerExtension(element);
 			if (validateOrganizer(organizer)) {
 				fOrganizers.put(organizer.getIdentifier(), organizer);
@@ -149,9 +147,7 @@ public class BreakpointOrganizerManager {
 	 * Shuts down the organizer manager, disposing organizers.
 	 */
 	public void shutdown() {
-		IBreakpointOrganizer[] organizers = getOrganizers();
-		for (int i = 0; i < organizers.length; i++) {
-			IBreakpointOrganizer organizer = organizers[i];
+		for (IBreakpointOrganizer organizer : getOrganizers()) {
 			organizer.dispose();
 		}
 	}

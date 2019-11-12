@@ -351,19 +351,18 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 			} else {
 				String value = node.getString(KEY_VALUE);
 				if (value != null) {
-					String[] ids = value.split(","); //$NON-NLS-1$
 					BreakpointOrganizerManager manager = BreakpointOrganizerManager.getDefault();
-					List<IBreakpointOrganizer> organziers = new ArrayList<>();
-					for (int i = 0; i < ids.length; i++) {
-						IBreakpointOrganizer organizer = manager.getOrganizer(ids[i]);
+					List<IBreakpointOrganizer> organizers = new ArrayList<>();
+					for (String id : value.split(",")) { //$NON-NLS-1$
+						IBreakpointOrganizer organizer = manager.getOrganizer(id);
 						if (organizer != null) {
-							organziers.add(organizer);
+							organizers.add(organizer);
 						}
 					}
-					fOrganizers = organziers.toArray(new IBreakpointOrganizer[organziers.size()]);
+					fOrganizers = organizers.toArray(new IBreakpointOrganizer[organizers.size()]);
 
-					for (int i = 0; i < fOrganizers.length; i++) {
-						fOrganizers[i].addPropertyChangeListener(this);
+					for (IBreakpointOrganizer organizer : fOrganizers) {
+						organizer.addPropertyChangeListener(this);
 					}
 				}
 			}
@@ -567,9 +566,8 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 	public boolean performPaste(Object target, ISelection selection) {
 		if (target instanceof IBreakpointContainer && selection instanceof IStructuredSelection) {
 			IBreakpointContainer container = (IBreakpointContainer) target;
-			Object[] objects = ((IStructuredSelection)selection).toArray();
-			for (int i = 0; i < objects.length; i++) {
-				IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(objects[i], IBreakpoint.class);
+			for (Object object : (IStructuredSelection) selection) {
+				IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(object, IBreakpoint.class);
 				if (breakpoint != null) {
 					container.getOrganizer().addBreakpoint(breakpoint, container.getCategory());
 				}
@@ -680,8 +678,8 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 		if (items.length == 0) {
 			return false;
 		}
-		for (int i = 0; i < items.length; i++) {
-			if (getRemovableContainer(items[i]) == null) {
+		for (TreePath item : items) {
+			if (getRemovableContainer(item) == null) {
 				return false;
 			}
 		}
@@ -698,10 +696,10 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 			return;
 		}
 		Map<IBreakpointContainer, List<IBreakpoint>> containersToBreakpoints = new HashMap<>();
-		for (int i = 0; i < paths.length; i++) {
-			IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(paths[i].getLastSegment(), IBreakpoint.class);
+		for (TreePath path : paths) {
+			IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(path.getLastSegment(), IBreakpoint.class);
 			if (breakpoint != null) {
-				IBreakpointContainer container = getRemovableContainer(paths[i]);
+				IBreakpointContainer container = getRemovableContainer(path);
 				if(container != null) {
 					List<IBreakpoint> list = containersToBreakpoints.get(container);
 					if (list == null) {
@@ -721,8 +719,8 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 				IBreakpointOrganizerDelegateExtension extension = (IBreakpointOrganizerDelegateExtension) organizer;
 				extension.removeBreakpoints(breakpoints, container.getCategory());
 			} else {
-				for (int i = 0; i < breakpoints.length; i++) {
-					organizer.removeBreakpoint(breakpoints[i], container.getCategory());
+				for (IBreakpoint breakpoint : breakpoints) {
+					organizer.removeBreakpoint(breakpoint, container.getCategory());
 				}
 			}
 		}
@@ -758,8 +756,8 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 				breakpoints.toArray(new IBreakpoint[breakpoints.size()]),
 				container.getCategory());
 		} else {
-			for (int i = 0; i < breakpoints.size(); i++) {
-				organizer.addBreakpoint(breakpoints.get(i), container.getCategory());
+			for (IBreakpoint breakpoint : breakpoints) {
+				organizer.addBreakpoint(breakpoint, container.getCategory());
 			}
 		}
 		// TODO expandToLevel(target.getData(), ALL_LEVELS);

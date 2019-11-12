@@ -51,10 +51,9 @@ public class ConsoleLineNotifier implements IPatternMatchListener, IPropertyChan
 		if (console instanceof ProcessConsole) {
 			fConsole = (ProcessConsole)console;
 
-			IConsoleLineTracker[] lineTrackers = DebugUIPlugin.getDefault().getProcessConsoleManager().getLineTrackers(fConsole.getProcess());
-			for (int i = 0; i < lineTrackers.length; i++) {
-				lineTrackers[i].init(fConsole);
-				addConsoleListener(lineTrackers[i]);
+			for (IConsoleLineTracker lineTracker : DebugUIPlugin.getDefault().getProcessConsoleManager().getLineTrackers(fConsole.getProcess())) {
+				lineTracker.init(fConsole);
+				addConsoleListener(lineTracker);
 			}
 
 			fConsole.addPropertyChangeListener(this);

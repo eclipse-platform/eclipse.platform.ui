@@ -15,7 +15,6 @@ package org.eclipse.debug.internal.ui.viewers;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.debug.internal.ui.viewers.provisional.IChildrenRequestMonitor;
@@ -79,8 +78,7 @@ class ChildrenRequestMonitor extends AsynchronousRequestMonitor implements IChil
 				getModel().setChildren(getNode(), fChildren);
 				fFirstUpdate = false;
 			} else {
-				for (Iterator<Object> iter = fChildren.iterator(); iter.hasNext();) {
-					Object child = iter.next();
+				for (Object child : fChildren) {
 					getModel().add(getNode(), child);
 				}
 			}

@@ -168,8 +168,8 @@ public class BreakpointManagerProxy extends AbstractModelProxy {
 						fPendingDeltas.clear();
 						fFireModelChangedJob = null;
 					}
-					for (int i = 0; i < deltas.length; i++) {
-						fireModelChanged( ((DeltaInfo)deltas[i]).fDelta );
+					for (Object pendingDelta : deltas) {
+						fireModelChanged( ((DeltaInfo)pendingDelta).fDelta );
 					}
 					return Status.OK_STATUS;
 				}

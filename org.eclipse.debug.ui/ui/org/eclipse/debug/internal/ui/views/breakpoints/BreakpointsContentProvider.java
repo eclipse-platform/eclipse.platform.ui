@@ -90,8 +90,8 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
 	public void setOrganizers(IBreakpointOrganizer[] organizers) {
 		// remove previous listeners
 		if (fOrganizers != null) {
-			for (int i = 0; i < fOrganizers.length; i++) {
-				fOrganizers[i].removePropertyChangeListener(this);
+			for (IBreakpointOrganizer organizer : fOrganizers) {
+				organizer.removePropertyChangeListener(this);
 			}
 		}
 		fOrganizers = organizers;
@@ -100,8 +100,8 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
 		}
 		// add listeners
 		if (fOrganizers != null) {
-			for (int i = 0; i < fOrganizers.length; i++) {
-				fOrganizers[i].addPropertyChangeListener(this);
+			for (IBreakpointOrganizer organizer : fOrganizers) {
+				organizer.addPropertyChangeListener(this);
 			}
 		}
 		if (!fDisposed) {
@@ -114,10 +114,10 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
 			reorganize();
 			if (isShowingGroups() && breakpoints != null) {
 				// restore expansion
-				for (int i = 0; i < fElements.length; i++) {
-					BreakpointContainer container = (BreakpointContainer) fElements[i];
-					for (int j = 0; j < breakpoints.length; j++) {
-						if (container.contains(breakpoints[j])) {
+				for (Object element : fElements) {
+					BreakpointContainer container = (BreakpointContainer) element;
+					for (IBreakpoint breakpoint : breakpoints) {
+						if (container.contains(breakpoint)) {
 							fViewer.expandToLevel(container, AbstractTreeViewer.ALL_LEVELS);
 							fViewer.updateCheckedState(container);
 							break;
@@ -140,8 +140,8 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
 	public BreakpointContainer[] getRoots(IBreakpoint breakpoint) {
 		if (isShowingGroups()) {
 			List<BreakpointContainer> list = new ArrayList<>();
-			for (int i = 0; i < fElements.length; i++) {
-				BreakpointContainer container = (BreakpointContainer) fElements[i];
+			for (Object element : fElements) {
+				BreakpointContainer container = (BreakpointContainer) element;
 				if (container.contains(breakpoint)) {
 					list.add(container);
 				}
@@ -172,14 +172,12 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
 		} else {
 			IBreakpointOrganizer organizer = fOrganizers[0];
 			Map<IAdaptable, BreakpointContainer> categoriesToContainers = new HashMap<>();
-			for (int i = 0; i < breakpoints.length; i++) {
-				IBreakpoint breakpoint = breakpoints[i];
+			for (IBreakpoint breakpoint : breakpoints) {
 				IAdaptable[] categories = organizer.getCategories(breakpoint);
 				if (categories == null || categories.length == 0) {
 					categories = OtherBreakpointCategory.getCategories(organizer);
 				}
-				for (int j = 0; j < categories.length; j++) {
-					IAdaptable category = categories[j];
+				for (IAdaptable category : categories) {
 					BreakpointContainer container = categoriesToContainers.get(category);
 					if (container == null) {
 						IBreakpointOrganizer[] nesting = null;
@@ -196,12 +194,11 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
 			// add empty categories
 			IAdaptable[] emptyCategories = organizer.getCategories();
 			if (emptyCategories != null) {
-				for (int i = 0; i < emptyCategories.length; i++) {
-					IAdaptable category = emptyCategories[i];
-					BreakpointContainer container = categoriesToContainers.get(category);
+				for (IAdaptable emptyCategory : emptyCategories) {
+					BreakpointContainer container = categoriesToContainers.get(emptyCategory);
 					if (container == null) {
-						container = new BreakpointContainer(category, organizer, null);
-						categoriesToContainers.put(category, container);
+						container = new BreakpointContainer(emptyCategory, organizer, null);
+						categoriesToContainers.put(emptyCategory, container);
 					}
 				}
 			}
@@ -234,10 +231,9 @@ public class BreakpointsContentProvider implements ITreeContentProvider, IProper
 			}
 			BreakpointContainer[] containers = new BreakpointContainer[categories.length];
 			int index = 0;
-			for (int i = 0; i < fElements.length; i++) {
-				BreakpointContainer container = (BreakpointContainer)fElements[i];
-				for (int j = 0; j < categories.length; j++) {
-					IAdaptable category = categories[j];
+			for (Object element : fElements) {
+				BreakpointContainer container = (BreakpointContainer)element;
+				for (IAdaptable category : categories) {
 					if (container.getCategory().equals(category)) {
 						containers[index] = container;
 						index++;

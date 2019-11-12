@@ -231,13 +231,13 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
 
 		private void registerOrganizersListener(IBreakpointOrganizer[] oldOrganizers, IBreakpointOrganizer[] newOrganizers) {
 			if (oldOrganizers != null) {
-				for (int i = 0; i < oldOrganizers.length; i++) {
-					oldOrganizers[i].removePropertyChangeListener(fOrganizersListener);
+				for (IBreakpointOrganizer oldOrganizer : oldOrganizers) {
+					oldOrganizer.removePropertyChangeListener(fOrganizersListener);
 				}
 			}
 			if (newOrganizers != null) {
-				for (int i = 0; i < newOrganizers.length; i++) {
-					newOrganizers[i].addPropertyChangeListener(fOrganizersListener);
+				for (IBreakpointOrganizer newOrganizer : newOrganizers) {
+					newOrganizer.addPropertyChangeListener(fOrganizersListener);
 				}
 			}
 		}
@@ -434,9 +434,8 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
 					if (DebugUIPlugin.DEBUG_BREAKPOINT_DELTAS) {
 						DebugUIPlugin.trace("POST BREAKPOINT DELTA (trackSelection)\n"); //$NON-NLS-1$
 					}
-					BreakpointManagerProxy[] proxies = getProxies();
-					for (int i = 0; i < proxies.length; i++) {
-						proxies[i].postModelChanged(delta, true);
+					for (BreakpointManagerProxy proxy : getProxies()) {
+						proxy.postModelChanged(delta, true);
 					}
 				}
 			}
@@ -460,9 +459,8 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
 				if (children[i] instanceof BreakpointContainer) {
 					BreakpointContainer childContainer = (BreakpointContainer)children[i];
 					boolean containsBP = false;
-					IBreakpoint[] containerBPs = childContainer.getBreakpoints();
-					for (int j = 0; j < containerBPs.length; j++) {
-						if (breakpoints.contains(containerBPs[j])) {
+					for (IBreakpoint containerBP : childContainer.getBreakpoints()) {
+						if (breakpoints.contains(containerBP)) {
 							containsBP = true;
 							break;
 						}
@@ -492,14 +490,14 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
 			if (filteredBreakpoints.length > 0) {
 				synchronized (this) {
 					ModelDelta delta = new ModelDelta(fInput, 0, IModelDelta.NO_CHANGE, -1);
-					for (int i = 0; i < filteredBreakpoints.length; ++i) {
+					for (IBreakpoint filteredBreakpoint : filteredBreakpoints) {
 						// Avoid adding breakpoints which were already removed.  If breakpoints
 						// are added and removed very fast, the Breakpoint manager can issue
 						// breakpoint added events after breakpoint removed events!  This means
 						// that such breakpoints would never be removed from the view.
 						// (Bug 289526)
-						if (DebugPlugin.getDefault().getBreakpointManager().getBreakpoint(filteredBreakpoints[i].getMarker()) != null) {
-							fContainer.addBreakpoint(filteredBreakpoints[i], delta);
+						if (DebugPlugin.getDefault().getBreakpointManager().getBreakpoint(filteredBreakpoint.getMarker()) != null) {
+							fContainer.addBreakpoint(filteredBreakpoint, delta);
 						}
 					}
 					delta.setChildCount(fContainer.getChildren().length);
@@ -526,8 +524,8 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
 			synchronized (this) {
 				boolean removed = false;
 				ModelDelta delta = new ModelDelta(fInput, IModelDelta.NO_CHANGE);
-				for (int i = 0; i < breakpoints.length; ++i) {
-					removed = fContainer.removeBreakpoint(breakpoints[i], delta) || removed;
+				for (IBreakpoint breakpoint : breakpoints) {
+					removed = fContainer.removeBreakpoint(breakpoint, delta) || removed;
 				}
 
 				if (removed) {
@@ -552,8 +550,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
 				List<IBreakpoint> removed = new ArrayList<>();
 				List<IBreakpoint> added = new ArrayList<>();
 				List<IBreakpoint> filteredAsList = Arrays.asList(filteredBreakpoints);
-				for (int i = 0; i < breakpoints.length; i++) {
-					IBreakpoint bp = breakpoints[i];
+				for (IBreakpoint bp : breakpoints) {
 					boolean oldContainedBp = fContainer.contains(bp);
 					boolean newContained = filteredAsList.contains(bp);
 					if (oldContainedBp && !newContained) {
@@ -568,9 +565,8 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
 				if (!removed.isEmpty()) {
 					breakpointsRemoved(removed.toArray(new IBreakpoint[removed.size()]));
 				}
-				for (int i = 0; i < filteredBreakpoints.length; ++i)
-				 {
-					appendModelDelta(fContainer, delta, IModelDelta.STATE | IModelDelta.CONTENT, filteredBreakpoints[i]); // content flag triggers detail refresh
+				for (IBreakpoint filteredBreakpoint : filteredBreakpoints) {
+					appendModelDelta(fContainer, delta, IModelDelta.STATE | IModelDelta.CONTENT, filteredBreakpoint); // content flag triggers detail refresh
 				}
 
 				if (DebugUIPlugin.DEBUG_BREAKPOINT_DELTAS) {
@@ -615,22 +611,20 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
 			IBreakpoint newBreakpoint = null;
 
 			Object[] children = container.getChildren();
-			Object[] refChildren = refContainer.getChildren();
-
-
-			for (int i = 0; i < refChildren.length; ++i) {
-				Object element = getElement(children, refChildren[i]);
+			
+			for (Object refChildElement : refContainer.getChildren()) {
+				Object element = getElement(children, refChildElement);
 
 				// if a child of refContainer doesn't exist in container, than insert it to container
 				//      - if the reference child is a container, than copy the reference child container to container
 				//      - otherwise (Breakpoint), add the breakpoint to container
 				if (element == null) {
-					if (refChildren[i] instanceof BreakpointContainer) {
-						BreakpointContainer.addChildContainer(container, (BreakpointContainer) refChildren[i], containerDelta);
-					} else if(refChildren[i] instanceof IBreakpoint) {
-						BreakpointContainer.addBreakpoint(container, (IBreakpoint) refChildren[i], containerDelta);
+					if (refChildElement instanceof BreakpointContainer) {
+						BreakpointContainer.addChildContainer(container, (BreakpointContainer) refChildElement, containerDelta);
+					} else if(refChildElement instanceof IBreakpoint) {
+						BreakpointContainer.addBreakpoint(container, (IBreakpoint) refChildElement, containerDelta);
 						if (newBreakpoint == null) {
-							newBreakpoint = (IBreakpoint) refChildren[i];
+							newBreakpoint = (IBreakpoint) refChildElement;
 						}
 					}
 
@@ -638,8 +632,8 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
 				// of container to the one in the refContainer's child.
 				} else if (element instanceof BreakpointContainer) {
 					ModelDelta childDelta = containerDelta.addNode(element, container.getChildIndex(element), IModelDelta.INSTALL, -1);
-					BreakpointContainer.copyOrganizers((BreakpointContainer) element, (BreakpointContainer) refChildren[i]);
-					newBreakpoint = insertAddedElements((BreakpointContainer) element, (BreakpointContainer) refChildren[i], childDelta);
+					BreakpointContainer.copyOrganizers((BreakpointContainer) element, (BreakpointContainer) refChildElement);
+					newBreakpoint = insertAddedElements((BreakpointContainer) element, (BreakpointContainer) refChildElement, childDelta);
 					childDelta.setChildCount(((BreakpointContainer) element).getChildren().length);
 				}
 			}
@@ -657,38 +651,36 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
 		 * @param containerDelta the delta of the existing container.
 		 */
 		private void deleteRemovedElements(BreakpointContainer container, BreakpointContainer refContainer, ModelDelta containerDelta) {
-			Object[] children = container.getChildren();
 			Object[] refChildren = refContainer.getChildren();
 
 			// if a child of container doesn't exist in refContainer, than remove it from container
-			for (int i = 0; i < children.length; ++i) {
-				Object element = getElement(refChildren, children[i]);
+			for (Object childElement : container.getChildren()) {
+				Object element = getElement(refChildren, childElement);
 
 				if (element == null) {
-					if (children[i] instanceof BreakpointContainer) {
-						BreakpointContainer.removeAll((BreakpointContainer) children[i], containerDelta);
+					if (childElement instanceof BreakpointContainer) {
+						BreakpointContainer.removeAll((BreakpointContainer) childElement, containerDelta);
 					} else {
-						BreakpointContainer.removeBreakpoint(container, (IBreakpoint) children[i], containerDelta);
+						BreakpointContainer.removeBreakpoint(container, (IBreakpoint) childElement, containerDelta);
 					}
 				} else if (element instanceof BreakpointContainer){
 
-					ModelDelta childDelta = containerDelta.addNode(children[i], IModelDelta.STATE);
-					deleteRemovedElements((BreakpointContainer) children[i], (BreakpointContainer) element, childDelta);
+					ModelDelta childDelta = containerDelta.addNode(childElement, IModelDelta.STATE);
+					deleteRemovedElements((BreakpointContainer) childElement, (BreakpointContainer) element, childDelta);
 				}
 			}
 		}
 
 		private void deleteAllElements(BreakpointContainer container, ModelDelta containerDelta) {
-			Object[] children = container.getChildren();
 			// Object[] refChildren = refContainer.getChildren();
 
 			// if a child of container doesn't exist in refContainer, than
 			// remove it from container
-			for (int i = 0; i < children.length; ++i) {
-				if (children[i] instanceof BreakpointContainer) {
-						BreakpointContainer.removeAll((BreakpointContainer) children[i], containerDelta);
+			for (Object childElement :  container.getChildren()) {
+				if (childElement instanceof BreakpointContainer) {
+						BreakpointContainer.removeAll((BreakpointContainer) childElement, containerDelta);
 					} else {
-						BreakpointContainer.removeBreakpoint(container, (IBreakpoint) children[i], containerDelta);
+						BreakpointContainer.removeBreakpoint(container, (IBreakpoint) childElement, containerDelta);
 					}
 			}
 		}
@@ -703,14 +695,14 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
 		 * @see #deleteRemovedElements
 		 */
 		private Object getElement(Object[] collection, Object element) {
-			for (int i = 0; i < collection.length; ++i) {
-				if (collection[i] instanceof BreakpointContainer && element instanceof BreakpointContainer) {
-					if (collection[i].equals(element)) {
-						return collection[i];
+			for (Object element2 : collection) {
+				if (element2 instanceof BreakpointContainer && element instanceof BreakpointContainer) {
+					if (element2.equals(element)) {
+						return element2;
 					}
 				} else {
-					if (collection[i].equals(element)) {
-						return collection[i];
+					if (element2.equals(element)) {
+						return element2;
 					}
 				}
 			}
@@ -734,8 +726,8 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
 			BreakpointContainer container = new BreakpointContainer(organizers, fComparator);
 			container.initDefaultContainers(rootDelta);
 
-			for (int i = 0; i < breakpoints.length; ++i) {
-				container.addBreakpoint(breakpoints[i], rootDelta);
+			for (IBreakpoint breakpoint : breakpoints) {
+				container.addBreakpoint(breakpoint, rootDelta);
 			}
 
 			return container;
@@ -819,9 +811,9 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
 			List<IDebugTarget> targets = getDebugTargets(selectionFilter);
 			ArrayList<IBreakpoint> retVal = new ArrayList<>();
 			if (targets != null) {
-				for (int i = 0; i < breakpoints.length; ++i) {
-					if (supportsBreakpoint(targets, breakpoints[i])) {
-						retVal.add(breakpoints[i]);
+				for (IBreakpoint breakpoint : breakpoints) {
+					if (supportsBreakpoint(targets, breakpoint)) {
+						retVal.add(breakpoint);
 					}
 				}
 			}
@@ -926,8 +918,8 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
 		}
 
 		// Dispose the removed input data
-		for (int i = 0; i < removed.size(); i++) {
-			removed.get(i).dispose();
+		for (InputData inputData : removed) {
+			inputData.dispose();
 		}
 	}
 
@@ -1048,9 +1040,8 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				InputData[] datas = fInputToData.values().toArray(new InputData[0]);
-				for (int i = 0; i < datas.length; i++) {
-					datas[i].breakpointsAdded(breakpoints);
+				for (InputData data : fInputToData.values()) {
+					data.breakpointsAdded(breakpoints);
 				}
 				return Status.OK_STATUS;
 			}
@@ -1067,9 +1058,8 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				InputData[] datas = fInputToData.values().toArray(new InputData[0]);
-				for (int i = 0; i < datas.length; i++) {
-					datas[i].breakpointsRemoved(breakpoints);
+				for (InputData data : fInputToData.values()) {
+					data.breakpointsRemoved(breakpoints);
 				}
 				return Status.OK_STATUS;
 			}
@@ -1086,9 +1076,8 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
 
 			@Override
 			protected IStatus run(IProgressMonitor monitor) {
-				InputData[] datas = fInputToData.values().toArray(new InputData[0]);
-				for (int i = 0; i < datas.length; i++) {
-					datas[i].breakpointsChanged(breakpoints);
+				for (InputData data : fInputToData.values()) {
+					data.breakpointsChanged(breakpoints);
 				}
 				return Status.OK_STATUS;
 			}
@@ -1107,9 +1096,9 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
 
 		if (parent.contains(breakpoint)) {
 			if ((containers.length != 0)) {
-				for (int i = 0; i < containers.length; ++i) {
-					ModelDelta nodeDelta = parentDelta.addNode(containers[i], IModelDelta.STATE);
-					appendModelDelta(containers[i], nodeDelta, flags, breakpoint);
+				for (BreakpointContainer container : containers) {
+					ModelDelta nodeDelta = parentDelta.addNode(container, IModelDelta.STATE);
+					appendModelDelta(container, nodeDelta, flags, breakpoint);
 				}
 			} else {
 				parentDelta.addNode(breakpoint, flags);
@@ -1130,14 +1119,13 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
 			return;
 		}
 
-		IModelDelta[] childDeltas = parentDelta.getChildDeltas();
-		for (int i = 0; i < childDeltas.length; ++i) {
-			if (element.equals(childDeltas[i].getElement())) {
-				((ModelDelta) childDeltas[i]).setFlags(childDeltas[i].getFlags() | flags);
+		for (IModelDelta childDelta : parentDelta.getChildDeltas()) {
+			if (element.equals(childDelta.getElement())) {
+				((ModelDelta) childDelta).setFlags(childDelta.getFlags() | flags);
 				return;
 			}
 
-			appendModelDeltaToElement(childDeltas[i], element, flags);
+			appendModelDeltaToElement(childDelta, element, flags);
 		}
 	}
 }
