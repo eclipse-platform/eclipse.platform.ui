@@ -40,7 +40,7 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 	 */
 	private Map<IProgressUpdateCollector, Boolean> collectors;
 
-	UpdatesInfo currentInfo = new UpdatesInfo();
+	final UpdatesInfo currentInfo = new UpdatesInfo();
 
 	boolean debug;
 
@@ -288,15 +288,17 @@ class ProgressViewUpdater implements IJobProgressManagerListener {
 			}
 
 		} else {
-			JobTreeElement[][] elements = currentInfo.processForUpdate();
+			JobTreeElement[][] elements;
+			synchronized (currentInfo) {
+				elements = currentInfo.processForUpdate();
+				currentInfo.reset();
+			}
 
 			JobTreeElement[] updateItems = elements[0];
 			JobTreeElement[] additionItems = elements[1];
 			JobTreeElement[] deletionItems = elements[2];
 			JobTreeElement[] keptFinsihedItems = elements[3];
 			JobTreeElement[] keptRemovedItems = elements[4];
-
-			currentInfo.reset();
 
 			for (IProgressUpdateCollector collector : collectors.keySet()) {
 				if (updateItems.length > 0) {
