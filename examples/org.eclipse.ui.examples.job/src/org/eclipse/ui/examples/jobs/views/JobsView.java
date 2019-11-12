@@ -179,8 +179,7 @@ public class JobsView extends ViewPart {
 		// create jobs
 		Button create = new Button(group, SWT.PUSH);
 		create.setText("Create jobs"); //$NON-NLS-1$
-		create
-				.setToolTipText("Creates and schedules jobs according to above parameters"); //$NON-NLS-1$
+		create.setToolTipText("Creates and schedules jobs according to above parameters"); //$NON-NLS-1$
 		create.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		create.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> createJobs()));
 
@@ -220,8 +219,7 @@ public class JobsView extends ViewPart {
 		// join the running test jobs
 		Button window = new Button(group, SWT.PUSH);
 		window.setText("Runnable in Window"); //$NON-NLS-1$
-		window
-				.setToolTipText("Using a runnable context in the workbench window"); //$NON-NLS-1$
+		window.setToolTipText("Using a runnable context in the workbench window"); //$NON-NLS-1$
 		window.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		window.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> runnableInWindow()));
 
@@ -242,7 +240,8 @@ public class JobsView extends ViewPart {
 		// show in dialog
 		Button showInDialog = new Button(group, SWT.PUSH);
 		showInDialog.setText("showInDialog"); //$NON-NLS-1$
-		showInDialog.setToolTipText("Uses IProgressService.showInDialog"); //$NON-NLS-1$
+		showInDialog.setToolTipText(
+				"Uses IProgressService.showInDialog. Does nothing if IPreferenceConstants.RUN_IN_BACKGROUND is enabled"); //$NON-NLS-1$
 		showInDialog.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		showInDialog.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> showInDialog()));
 
@@ -330,6 +329,7 @@ public class JobsView extends ViewPart {
 		data.widthHint = IDialogConstants.ENTRY_FIELD_WIDTH;
 		quantityField.setLayoutData(data);
 		quantityField.setText("1"); //$NON-NLS-1$
+		quantityField.setToolTipText("Number of jobs to create at once"); //$NON-NLS-1$
 
 		// reschedule delay
 		label = new Label(body, SWT.NONE);
@@ -360,6 +360,7 @@ public class JobsView extends ViewPart {
 		// system
 		systemField = new Button(group, SWT.CHECK);
 		systemField.setText("System job"); //$NON-NLS-1$
+		systemField.setToolTipText("Set system flag when creating jobs"); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		systemField.setLayoutData(data);
 
@@ -378,18 +379,21 @@ public class JobsView extends ViewPart {
 		// reschedule
 		rescheduleField = new Button(group, SWT.CHECK);
 		rescheduleField.setText("Reschedule"); //$NON-NLS-1$
+		rescheduleField.setToolTipText("Reschedule job on finish until job is canceled"); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		rescheduleField.setLayoutData(data);
 
 		// keep
 		keepField = new Button(group, SWT.CHECK);
 		keepField.setText("Keep"); //$NON-NLS-1$
+		keepField.setToolTipText("Set the IProgressConstants.KEEP_PROPERTY to true"); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		keepField.setLayoutData(data);
 
 		// keep one
 		keepOneField = new Button(group, SWT.CHECK);
 		keepOneField.setText("KeepOne"); //$NON-NLS-1$
+		keepOneField.setToolTipText("Set the IProgressConstants.KEEPONE_PROPERTY to true"); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		keepOneField.setLayoutData(data);
 
@@ -402,31 +406,32 @@ public class JobsView extends ViewPart {
 		// whether the job is a user job
 		userField = new Button(group, SWT.CHECK);
 		userField.setText("User job"); //$NON-NLS-1$
+		userField.setToolTipText("Set user flag when creating jobs"); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		userField.setLayoutData(data);
 
 		// whether the job has a goto action
 		gotoActionField = new Button(group, SWT.CHECK);
 		gotoActionField.setText("Goto action"); //$NON-NLS-1$
+		gotoActionField.setToolTipText("Create job with a clickable link to invoke a test action"); //$NON-NLS-1$
 		data = new GridData(GridData.FILL_HORIZONTAL);
 		gotoActionField.setLayoutData(data);
 
 		// whether the job should use a scheduling rule
 		schedulingRuleField = new Button(group, SWT.CHECK);
 		schedulingRuleField.setText("Schedule sequentially"); //$NON-NLS-1$
-		schedulingRuleField
-				.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
+		schedulingRuleField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		// failure
 		failureField = new Button(group, SWT.CHECK);
 		failureField.setText("Fail"); //$NON-NLS-1$
+		failureField.setToolTipText("Immediately end new job with error status"); //$NON-NLS-1$
 		failureField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 
 		// failure
 		noPromptField = new Button(group, SWT.CHECK);
 		noPromptField.setText("No Prompt"); //$NON-NLS-1$
-		noPromptField
-				.setToolTipText("Set the IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY to true"); //$NON-NLS-1$
+		noPromptField.setToolTipText("Set the IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY to true"); //$NON-NLS-1$
 		noPromptField.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 	}
 
