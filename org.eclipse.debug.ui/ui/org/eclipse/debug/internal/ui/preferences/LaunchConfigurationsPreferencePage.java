@@ -321,9 +321,7 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 	 * @since 3.2
 	 */
 	private void initFieldEditors() {
-		FieldEditor editor;
-		for(int i = 0; i < fFieldEditors.size(); i++) {
-			editor = fFieldEditors.get(i);
+		for (FieldEditor editor : fFieldEditors) {
 			editor.setPreferenceStore(getPreferenceStore());
 			editor.load();
 		}
@@ -331,10 +329,9 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 				Platform.getPreferencesService().getBoolean(DebugPlugin.getUniqueIdentifier(),
 				DebugPlugin.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE, true, null));
 		//restore the tables' checked state
-		String[] types = getPreferenceStore().getString(IInternalDebugUIConstants.PREF_FILTER_TYPE_LIST).split("\\,"); //$NON-NLS-1$
 		TableItem[] items = fTable.getItems();
 		ILaunchConfigurationType type;
-		for (String t : types) {
+		for (String t : getPreferenceStore().getString(IInternalDebugUIConstants.PREF_FILTER_TYPE_LIST).split("\\,")) { //$NON-NLS-1$
 			for (TableItem item : items) {
 				type = (ILaunchConfigurationType) item.getData();
 				if (type.getIdentifier().equals(t)) {
@@ -347,29 +344,25 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 	@Override
 	protected void performDefaults() {
 		fDeleteConfigs.setSelection(Preferences.getDefaultBoolean(DebugPlugin.getUniqueIdentifier(), DebugPlugin.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE, true));
-		FieldEditor editor = null;
-		for(int i = 0; i < fFieldEditors.size(); i++) {
-			editor = fFieldEditors.get(i);
+		for (FieldEditor editor : fFieldEditors) {
 			editor.loadDefault();
 			if(editor instanceof BooleanFieldEditor2) {
 				fTable.setEnabled(((BooleanFieldEditor2)editor).getBooleanValue());
 			}
 		}
-
 	}
 
 	@Override
 	public boolean performOk() {
 		//save field editors
-		for(int i = 0; i < fFieldEditors.size(); i++) {
-			fFieldEditors.get(i).store();
+		for (FieldEditor editor : fFieldEditors) {
+			editor.store();
 		}
 		Preferences.setBoolean(DebugPlugin.getUniqueIdentifier(), DebugPlugin.PREF_DELETE_CONFIGS_ON_PROJECT_DELETE, fDeleteConfigs.getSelection(), null);
 		//save table
 		String types = IInternalDebugCoreConstants.EMPTY_STRING;
-		TableItem[] items = fTable.getItems();
 		ILaunchConfigurationType type;
-		for (TableItem item : items) {
+		for (TableItem item : fTable.getItems()) {
 			if (item.getChecked()) {
 				type = (ILaunchConfigurationType) item.getData();
 				types += type.getIdentifier()+","; //$NON-NLS-1$

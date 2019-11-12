@@ -485,8 +485,8 @@ public class LaunchingResourceManager implements IPropertyChangeListener, IWindo
 			Object o = selection.getFirstElement();
 			LaunchShortcutExtension ext = null;
 			ILaunchConfiguration[] cfgs = null;
-			for(int i = 0; i < shortcuts.size(); i++) {
-				ext = shortcuts.get(i);
+			for (LaunchShortcutExtension shortcut : shortcuts) {
+				ext = shortcut;
 				if(o instanceof IEditorPart) {
 					cfgs = ext.getLaunchConfigurations((IEditorPart)o);
 				}

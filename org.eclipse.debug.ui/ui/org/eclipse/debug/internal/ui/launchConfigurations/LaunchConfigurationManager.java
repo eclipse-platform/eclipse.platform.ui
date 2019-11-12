@@ -197,9 +197,8 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		launchManager.addLaunchListener(this);
 		DebugUIPlugin.getDefault().addSaveParticipant(this);
 		//update histories for launches already registered
-		ILaunch[] launches = launchManager.getLaunches();
-		for (int i = 0; i < launches.length; i++) {
-			launchAdded(launches[i]);
+		for (ILaunch launch : launchManager.getLaunches()) {
+			launchAdded(launch);
 		}
 	}
 
@@ -243,14 +242,10 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			return configurations;
 		}
 		List<ILaunchConfiguration> filteredConfigs = new ArrayList<>();
-		ILaunchConfigurationType type = null;
-		LaunchConfigurationTypeContribution contribution = null;
-		ILaunchConfiguration configuration = null;
-		for (int i = 0; i < configurations.length; i++) {
-			configuration = configurations[i];
+		for (ILaunchConfiguration configuration : configurations) {
 			try {
-				type = configuration.getType();
-				contribution = new LaunchConfigurationTypeContribution(type);
+				ILaunchConfigurationType type = configuration.getType();
+				LaunchConfigurationTypeContribution contribution = new LaunchConfigurationTypeContribution(type);
 				if (DebugUIPlugin.doLaunchConfigurationFiltering(configuration) & !WorkbenchActivityHelper.filterItem(contribution)) {
 					filteredConfigs.add(configuration);
 				}
@@ -275,10 +270,10 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			return delegates;
 		}
 		HashSet<ILaunchDelegate> set = new HashSet<>();
-		for(int i = 0; i < delegates.length; i++) {
+		for (ILaunchDelegate delegate : delegates) {
 			//filter by capabilities
-			if(!WorkbenchActivityHelper.filterItem(new LaunchDelegateContribution(delegates[i]))) {
-				set.add(delegates[i]);
+			if(!WorkbenchActivityHelper.filterItem(new LaunchDelegateContribution(delegate))) {
+				set.add(delegate);
 			}
 		}
 		return set.toArray(new ILaunchDelegate[set.size()]);
@@ -327,9 +322,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	protected void removeTerminatedLaunches(ILaunch newLaunch) {
 		if (DebugUIPlugin.getDefault().getPreferenceStore().getBoolean(IDebugUIConstants.PREF_AUTO_REMOVE_OLD_LAUNCHES)) {
 			ILaunchManager lManager= DebugPlugin.getDefault().getLaunchManager();
-			Object[] launches= lManager.getLaunches();
-			for (int i= 0; i < launches.length; i++) {
-				ILaunch launch= (ILaunch)launches[i];
+			for (ILaunch launch : lManager.getLaunches()) {
 				if (launch != newLaunch && launch.isTerminated()) {
 					lManager.removeLaunch(launch);
 				}
@@ -434,8 +427,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 	 * @throws CoreException is an exception occurs
 	 */
 	protected void createEntry(Document doc, Element historyRootElement, ILaunchConfiguration[] configurations) throws CoreException {
-		for (int i = 0; i < configurations.length; i++) {
-			ILaunchConfiguration configuration = configurations[i];
+		for (ILaunchConfiguration configuration : configurations) {
 			if (configuration.exists()) {
 				Element launch = doc.createElement(IConfigurationElementConstants.LAUNCH);
 				launch.setAttribute(IConfigurationElementConstants.MEMENTO, configuration.getMemento());
@@ -561,18 +553,16 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			if (node.getNodeType() == Node.ELEMENT_NODE) {
 				Element element = (Element)node;
 				if (element.getNodeName().equals(IConfigurationElementConstants.MRU_HISTORY)) {
-					ILaunchConfiguration[] configs = getLaunchConfigurations(element);
-					for (int j = 0; j < configs.length; j++) {
-						history.addHistory(configs[j], false);
+					for (ILaunchConfiguration config : getLaunchConfigurations(element)) {
+						history.addHistory(config, false);
 					}
 				} else if (element.getNodeName().equals(IConfigurationElementConstants.FAVORITES)) {
 					ILaunchConfiguration[] favs = getLaunchConfigurations(element);
 					history.setFavorites(favs);
 					// add any favorites that have been added to the workspace before this plug-in
 					// was loaded - @see bug 231600
-					ILaunchConfiguration[] configurations = getLaunchManager().getLaunchConfigurations();
-					for (int j = 0; j < configurations.length; j++) {
-						history.checkFavorites(configurations[j]);
+					for (ILaunchConfiguration configuration : getLaunchManager().getLaunchConfigurations()) {
+						history.checkFavorites(configuration);
 					}
 				}
 			}
@@ -627,9 +617,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			//touch the type to see if its type exists
 			launchConfig.getType();
 			if (launchConfig.exists()) {
-				LaunchHistory history = null;
-				for (int i = 0; i < histories.length; i++) {
-					history = histories[i];
+				for (LaunchHistory history : histories) {
 					if (history.accepts(launchConfig) && history.getLaunchGroup().getMode().equals(mode)) {
 						history.addHistory(launchConfig, prepend);
 					}
@@ -651,8 +639,8 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 
 			// Load the configuration elements into a Map
 			fLaunchShortcuts = new ArrayList<>(infos.length);
-			for (int i = 0; i < infos.length; i++) {
-				fLaunchShortcuts.add(new LaunchShortcutExtension(infos[i]));
+			for (IConfigurationElement info : infos) {
+				fLaunchShortcuts.add(new LaunchShortcutExtension(info));
 			}
 			Collections.sort(fLaunchShortcuts, new ShortcutComparator());
 		}
@@ -670,8 +658,8 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			// Load the configuration elements into a Map
 			fLaunchGroups = new HashMap<>(infos.length);
 			LaunchGroupExtension ext = null;
-			for (int i = 0; i < infos.length; i++) {
-				ext = new LaunchGroupExtension(infos[i]);
+			for (IConfigurationElement info : infos) {
+				ext = new LaunchGroupExtension(info);
 				fLaunchGroups.put(ext.getIdentifier(), ext);
 			}
 		}
@@ -779,16 +767,12 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 				//copy into collection for hashcode matching
 				HashSet<String> typeset = new HashSet<>(ctypes.length);
 				Collections.addAll(typeset, ctypes);
-				ILaunchConfiguration[] configurations = filterConfigs(getLaunchManager().getLaunchConfigurations());
-				ILaunchConfiguration configuration = null;
-				IResource[] resrcs = null;
-				for(int i = 0; i < configurations.length; i++) {
-					configuration = configurations[i];
+				for (ILaunchConfiguration configuration : filterConfigs(getLaunchManager().getLaunchConfigurations())) {
 					if(typeset.contains(configuration.getType().getIdentifier()) && acceptConfiguration(configuration)) {
-						resrcs = configuration.getMappedResources();
+						IResource[] resrcs = configuration.getMappedResources();
 						if (resrcs != null) {
-							for (int j = 0; j < resrcs.length; j++) {
-								if (resource.equals(resrcs[j]) || resource.getFullPath().isPrefixOf(resrcs[j].getFullPath())) {
+							for (IResource res : resrcs) {
+								if (resource.equals(res) || resource.getFullPath().isPrefixOf(res.getFullPath())) {
 									list.add(configuration);
 									break;
 								}
@@ -908,13 +892,13 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			LaunchHistory history = getLaunchHistory(group.getIdentifier());
 			if(history != null) {
 				ILaunchConfiguration[] configs = history.getCompleteLaunchHistory();
-				for(int i = 0; i < configs.length; i++) {
-					if(configurations.contains(configs[i])) {
+				for (ILaunchConfiguration config : configs) {
+					if(configurations.contains(config)) {
 						if(resource instanceof IContainer) {
-							return configs[i];
+							return config;
 						}
 						else {
-							candidates.add(configs[i]);
+							candidates.add(config);
 						}
 					}
 				}
@@ -925,8 +909,8 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 						try {
 							res = config.getMappedResources();
 							if(res != null) {
-								for(int i = 0; i < res.length; i++) {
-									if(res[i].equals(resource)) {
+								for (IResource re : res) {
+									if(re.equals(resource)) {
 										return config;
 									}
 								}
@@ -935,9 +919,9 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 						catch(CoreException ce) {}
 					}
 				}
-				for(int i = 0; i < configs.length; i++) {
-					if(candidates.contains(configs[i])) {
-						return configs[i];
+				for (ILaunchConfiguration config : configs) {
+					if(candidates.contains(config)) {
+						return config;
 					}
 				}
 			}
@@ -1059,8 +1043,8 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			ILaunchGroup[] groups = getLaunchGroups();
 			fLaunchHistories = new HashMap<>(groups.length);
 			ILaunchGroup extension = null;
-			for (int i = 0; i < groups.length; i++) {
-				extension = groups[i];
+			for (ILaunchGroup group : groups) {
+				extension = group;
 				if (extension.isPublic()) {
 					fLaunchHistories.put(extension.getIdentifier(), new LaunchHistory(extension));
 				}
@@ -1097,10 +1081,9 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 			return null;
 		}
 		String category = type.getCategory();
-		ILaunchGroup[] groups = getLaunchGroups();
 		ILaunchGroup extension = null;
-		for (int i = 0; i < groups.length; i++) {
-			extension = groups[i];
+		for (ILaunchGroup group : getLaunchGroups()) {
+			extension = group;
 			if (category == null) {
 				if (extension.getCategory() == null && extension.getMode().equals(mode)) {
 					return extension;
@@ -1147,10 +1130,7 @@ public class LaunchConfigurationManager implements ILaunchListener, ISavePartici
 		String id = type.getIdentifier();
 		String name = id + ".SHARED_INFO"; //$NON-NLS-1$
 		ILaunchConfiguration shared = null;
-		ILaunchConfiguration[] configurations = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations(type);
-		ILaunchConfiguration configuration = null;
-		for (int i = 0; i < configurations.length; i++) {
-			configuration = configurations[i];
+		for (ILaunchConfiguration configuration : DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations(type)) {
 			if (configuration.getName().equals(name)) {
 				shared = configuration;
 				break;

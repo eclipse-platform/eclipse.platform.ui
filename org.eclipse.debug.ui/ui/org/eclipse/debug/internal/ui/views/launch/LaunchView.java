@@ -24,7 +24,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
@@ -385,10 +384,9 @@ public class LaunchView extends AbstractDebugView
 			synchronized (this) {
 				if (fContext instanceof ITreeSelection) {
 					ITreeSelection ss = (ITreeSelection) fContext;
-					TreePath[] ssPaths = ss.getPaths();
-					for (int i = 0; i < ssPaths.length; i++) {
-						if (ssPaths[i].startsWith(element, null)) {
-							if (ssPaths[i].getSegmentCount() == element.getSegmentCount()) {
+					for (TreePath path : ss.getPaths()) {
+						if (path.startsWith(element, null)) {
+							if (path.getSegmentCount() == element.getSegmentCount()) {
 								event = new DebugContextEvent(this, fContext, type);
 							} else {
 								// if parent of the currently selected element
@@ -486,8 +484,8 @@ public class LaunchView extends AbstractDebugView
 			super(LaunchView.this);
 			fProviders = providers;
 			fActiveProvider = providers[0];
-			for (int i = 0; i < fProviders.length; i++) {
-				fProviders[i].addDebugContextListener(this);
+			for (IDebugContextProvider provider : fProviders) {
+				provider.addDebugContextListener(this);
 			}
 		}
 
@@ -519,8 +517,8 @@ public class LaunchView extends AbstractDebugView
 		}
 
 		void dispose() {
-			for (int i = 0; i < fProviders.length; i++) {
-				fProviders[i].removeDebugContextListener(this);
+			for (IDebugContextProvider provider : fProviders) {
+				provider.removeDebugContextListener(this);
 			}
 			fProviders = null;
 			fActiveProvider = null;
@@ -637,8 +635,8 @@ public class LaunchView extends AbstractDebugView
 		IPreferenceStore prefStore = DebugUIPlugin.getDefault().getPreferenceStore();
 		String mode = prefStore.getString(IDebugPreferenceConstants.DEBUG_VIEW_MODE);
 		setViewMode(mode, parent);
-		for (int i = 0; i < fDebugViewModeActions.length; i++) {
-			fDebugViewModeActions[i].setChecked(fDebugViewModeActions[i].getMode().equals(mode));
+		for (DebugViewModeAction action : fDebugViewModeActions) {
+			action.setChecked(action.getMode().equals(mode));
 		}
 
 		createDebugToolBarInViewActions(parent);
@@ -958,8 +956,8 @@ public class LaunchView extends AbstractDebugView
 		}
 
 		StringBuilder buffer= new StringBuilder();
-		for (Iterator<String> itr = fDebugToolbarPerspectives.iterator(); itr.hasNext();) {
-			buffer.append(itr.next()).append(',');
+		for (String perspectiveId : fDebugToolbarPerspectives) {
+			buffer.append(perspectiveId).append(',');
 		}
 		getPreferenceStore().setValue(IDebugPreferenceConstants.DEBUG_VIEW_TOOLBAR_HIDDEN_PERSPECTIVES, buffer.toString());
 

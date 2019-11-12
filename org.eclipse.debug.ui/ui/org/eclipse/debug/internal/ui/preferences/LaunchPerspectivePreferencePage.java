@@ -544,21 +544,14 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		fSwitchSuspend.loadDefault();
 
 		PerspectiveManager pm = DebugUIPlugin.getDefault().getPerspectiveManager();
-		TreeItem[] items = fTree.getItems();
-		ILaunchConfigurationType type = null;
-		Set<Set<String>> modes = null;
-		Object[] delegates = null;
-		for(int i = 0; i < items.length; i++) {
-			type = (ILaunchConfigurationType) items[i].getData();
-			modes = type.getSupportedModeCombinations();
-			delegates = fTreeViewer.getFilteredChildren(type);
-			for (Set<String> modeset : modes) {
+		for (TreeItem item : fTree.getItems()) {
+			ILaunchConfigurationType type = (ILaunchConfigurationType) item.getData();
+			for (Set<String> modeset : type.getSupportedModeCombinations()) {
 				fgChangeSet.add(new PerspectiveChange(type, null, modeset, pm.getDefaultLaunchPerspective(type, null, modeset)));
 			}
-			for(int j = 0; j < delegates.length; j++) {
-				ILaunchDelegate delegate = (ILaunchDelegate) delegates[j];
-				modes = new HashSet<>(delegate.getModes());
-				for (Set<String> modeset : modes) {
+			for (Object child : fTreeViewer.getFilteredChildren(type)) {
+				ILaunchDelegate delegate = (ILaunchDelegate) child;
+				for (Set<String> modeset : new HashSet<>(delegate.getModes())) {
 					fgChangeSet.add(new PerspectiveChange(type, delegate, modeset, pm.getDefaultLaunchPerspective(type, delegate, modeset)));
 				}
 			}
@@ -580,13 +573,12 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		ArrayList<String> labels = new ArrayList<>();
 		labels.add(DebugPreferencesMessages.PerspectivePreferencePage_4);
 		IPerspectiveRegistry registry = PlatformUI.getWorkbench().getPerspectiveRegistry();
-		IPerspectiveDescriptor[] descriptors = registry.getPerspectives();
 		String label = null;
-		for(int i = 0; i < descriptors.length; i++) {
-			if(!WorkbenchActivityHelper.filterItem(descriptors[i])) {
-				label = descriptors[i].getLabel();
+		for (IPerspectiveDescriptor descriptor : registry.getPerspectives()) {
+			if(!WorkbenchActivityHelper.filterItem(descriptor)) {
+				label = descriptor.getLabel();
 				labels.add(label);
-				fgPerspectiveIdMap.put(label, descriptors[i].getId());
+				fgPerspectiveIdMap.put(label, descriptor.getId());
 			}
 		}
 		fgPerspectiveLabels = labels.toArray(new String[labels.size()]);

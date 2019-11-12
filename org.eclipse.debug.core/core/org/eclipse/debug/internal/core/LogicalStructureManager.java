@@ -188,10 +188,9 @@ public class LogicalStructureManager {
 		}
 		// If an index is stored for this combo, retrieve the id at the index
 		String id= fStructureTypeIds.get(index.intValue());
-		for (int i = 0; i < structureTypes.length; i++) {
-			// Return the type with the retrieved id
-			ILogicalStructureType type = structureTypes[i];
+		for (ILogicalStructureType type : structureTypes) {
 			if (type.getId().equals(id)) {
+			// Return the type with the retrieved id
 				return type;
 			}
 		}
@@ -228,8 +227,7 @@ public class LogicalStructureManager {
 	 */
 	protected String getComboString(ILogicalStructureType[] types) {
 		StringBuilder comboKey= new StringBuilder();
-		for (int i = 0; i < types.length; i++) {
-			ILogicalStructureType type = types[i];
+		for (ILogicalStructureType type : types) {
 			int typeIndex = fStructureTypeIds.indexOf(type.getId());
 			if (typeIndex == -1) {
 				typeIndex= fStructureTypeIds.size();
@@ -246,8 +244,7 @@ public class LogicalStructureManager {
 			IExtensionPoint point = Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LOGICAL_STRUCTURE_TYPES);
 			IConfigurationElement[] extensions = point.getConfigurationElements();
 			fTypes = new ArrayList<>(extensions.length);
-			for (int i = 0; i < extensions.length; i++) {
-				IConfigurationElement extension = extensions[i];
+			for (IConfigurationElement extension : extensions) {
 				LogicalStructureType type;
 				try {
 					type = new LogicalStructureType(extension);
@@ -260,9 +257,9 @@ public class LogicalStructureManager {
 			point= Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), DebugPlugin.EXTENSION_POINT_LOGICAL_STRUCTURE_PROVIDERS);
 			extensions= point.getConfigurationElements();
 			fTypeProviders = new ArrayList<>(extensions.length);
-			for (int i= 0; i < extensions.length; i++) {
+			for (IConfigurationElement extension : extensions) {
 				try {
-					fTypeProviders.add(new LogicalStructureProvider(extensions[i]));
+					fTypeProviders.add(new LogicalStructureProvider(extension));
 				} catch (CoreException e) {
 					DebugPlugin.log(e);
 				}

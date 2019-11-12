@@ -163,10 +163,10 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 
 			monitor.subTask(DebugCoreMessages.LaunchConfigurationDelegate_6);
 			List<IAdaptable> errors = new ArrayList<>();
-			for (int i = 0; i < projects.length; i++) {
-				monitor.subTask(MessageFormat.format(DebugCoreMessages.LaunchConfigurationDelegate_7, new Object[] { projects[i].getName() }));
-				if (existsProblems(projects[i])) {
-					errors.add(projects[i]);
+			for (IProject project : projects) {
+				monitor.subTask(MessageFormat.format(DebugCoreMessages.LaunchConfigurationDelegate_7, new Object[] { project.getName() }));
+				if (existsProblems(project)) {
+					errors.add(project);
 				}
 			}
 			if (!errors.isEmpty()) {
@@ -203,8 +203,8 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 			if (breakpoints == null) {
 				return true;
 			}
-			for (int i = 0; i < breakpoints.length; i++) {
-				if (breakpoints[i].isEnabled()) {
+			for (IBreakpoint breakpoint : breakpoints) {
+				if (breakpoint.isEnabled()) {
 					IStatusHandler prompter = DebugPlugin.getDefault().getStatusHandler(promptStatus);
 					if (prompter != null) {
 						boolean launchInDebugModeInstead = ((Boolean)prompter.handleStatus(switchToDebugPromptStatus, configuration)).booleanValue();
@@ -283,9 +283,9 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 */
 	protected IProject[] computeReferencedBuildOrder(IProject[] baseProjects) throws CoreException {
 		HashSet<IProject> unorderedProjects = new HashSet<>();
-		for(int i = 0; i< baseProjects.length; i++) {
-			unorderedProjects.add(baseProjects[i]);
-			addReferencedProjects(baseProjects[i], unorderedProjects);
+		for (IProject baseProject : baseProjects) {
+			unorderedProjects.add(baseProject);
+			addReferencedProjects(baseProject, unorderedProjects);
 		}
 		IProject[] projectSet = unorderedProjects.toArray(new IProject[unorderedProjects.size()]);
 		return computeBuildOrder(projectSet);
@@ -303,9 +303,7 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	 */
 	protected void addReferencedProjects(IProject project, Set<IProject> references) throws CoreException {
 		if (project.isOpen()) {
-			IProject[] projects = project.getReferencedProjects();
-			for (int i = 0; i < projects.length; i++) {
-				IProject refProject= projects[i];
+			for (IProject refProject : project.getReferencedProjects()) {
 				if (refProject.exists() && !references.contains(refProject)) {
 					references.add(refProject);
 					addReferencedProjects(refProject, references);
@@ -330,8 +328,7 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 			List<IProject> unorderedProjects = new ArrayList<>(projects.length);
 			Collections.addAll(unorderedProjects, projects);
 
-			for (int i = 0; i < orderedNames.length; i++) {
-				String projectName = orderedNames[i];
+			for (String projectName : orderedNames) {
 				for (Iterator<IProject> iterator = unorderedProjects.iterator(); iterator.hasNext();) {
 					IProject project = iterator.next();
 					if (project.getName().equals(projectName)) {
@@ -364,8 +361,8 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 	protected boolean existsProblems(IProject proj) throws CoreException {
 		IMarker[] markers = proj.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE);
 		if (markers.length > 0) {
-			for (int i = 0; i < markers.length; i++) {
-				if (isLaunchProblem(markers[i])) {
+			for (IMarker marker : markers) {
+				if (isLaunchProblem(marker)) {
 					return true;
 				}
 			}
@@ -405,11 +402,11 @@ public abstract class LaunchConfigurationDelegate implements ILaunchConfiguratio
 			public void run(IProgressMonitor pm) throws CoreException {
 				SubMonitor localmonitor = SubMonitor.convert(pm, DebugCoreMessages.LaunchConfigurationDelegate_scoped_incremental_build, projects.length);
 				try {
-					for (int i = 0; i < projects.length; i++ ) {
+					for (IProject project : projects) {
 						if (localmonitor.isCanceled()) {
 							throw new OperationCanceledException();
 						}
-						projects[i].build(IncrementalProjectBuilder.INCREMENTAL_BUILD, localmonitor.newChild(1));
+						project.build(IncrementalProjectBuilder.INCREMENTAL_BUILD, localmonitor.newChild(1));
 					}
 				} finally {
 					localmonitor.done();

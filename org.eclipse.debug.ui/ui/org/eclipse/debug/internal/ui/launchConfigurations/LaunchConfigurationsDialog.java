@@ -20,7 +20,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -1269,8 +1268,8 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 			}
 			value = IInternalDebugCoreConstants.EMPTY_STRING;
 			//build the preference string
-			for (Iterator<String> iter = list.iterator(); iter.hasNext();) {
-				value += iter.next() + DELIMITER;
+			for (String segment : list) {
+				value += segment + DELIMITER;
 			}
 			settings.put(DIALOG_EXPANDED_NODES, value);
 		}

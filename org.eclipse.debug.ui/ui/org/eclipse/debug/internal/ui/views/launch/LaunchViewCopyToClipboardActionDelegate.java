@@ -87,10 +87,10 @@ public class LaunchViewCopyToClipboardActionDelegate extends VirtualCopyToClipbo
 		if (items == null) {
 			return;
 		}
-		for (int i = 0; i < items.length; i++) {
-			set.add(items[i]);
-			if (items[i].getExpanded()) {
-				collectChildItems(set, items[i].getItems());
+		for (TreeItem item : items) {
+			set.add(item);
+			if (item.getExpanded()) {
+				collectChildItems(set, item.getItems());
 			}
 		}
 	}
