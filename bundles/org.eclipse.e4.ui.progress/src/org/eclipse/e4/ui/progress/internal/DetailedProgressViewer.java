@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,12 +10,15 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Paul Pazderski - Bug 552652: reorder ProgressInfoItems if possible instead of recreate
  *******************************************************************************/
 package org.eclipse.e4.ui.progress.internal;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.e4.ui.progress.IProgressService;
@@ -57,6 +60,13 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	private IProgressService progressService;
 
 	private FinishedJobs finishedJobs;
+
+	/**
+	 * Map to find existing controls for job items. Only elements with a control are
+	 * listed here. Job elements not visible due to {@link #maxDisplayed} are not in
+	 * this map.
+	 */
+	private final Map<JobTreeElement, ProgressInfoItem> jobItemControls = new HashMap<>();
 
 	/**
 	 * Create a new instance of the receiver with a control that is a child of
@@ -144,37 +154,19 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		ViewerComparator sorter = getComparator();
 
 		// Use a Set in case we are getting something added that exists
-		Set<Object> newItems = new HashSet<>(elements.length);
-
-		Control[] existingChildren = control.getChildren();
-		for (Control element : existingChildren) {
-			if (element.getData() != null)
-				newItems.add(element.getData());
-		}
-
+		Set<Object> newItems = new HashSet<>(jobItemControls.keySet());
 		for (Object element : elements) {
-			if (element != null)
+			if (element != null) {
 				newItems.add(element);
+			}
 		}
 
-		JobTreeElement[] infos = new JobTreeElement[newItems.size()];
-		newItems.toArray(infos);
-
+		JobTreeElement[] infos = newItems.toArray(new JobTreeElement[0]);
 		if (sorter != null) {
 			sorter.sort(this, infos);
 		}
 
-		// Update with the new elements to prevent flash
-		for (Control element : existingChildren) {
-			((ProgressInfoItem) element).dispose();
-		}
-
-		int totalSize = Math.min(newItems.size(), MAX_DISPLAYED);
-
-		for (int i = 0; i < totalSize; i++) {
-			ProgressInfoItem item = createNewItem(infos[i]);
-			item.setColor(i);
-		}
+		reorderControls(infos);
 
 		control.layout(true);
 		updateForShowingProgress();
@@ -184,10 +176,9 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	 * Update for the progress being displayed.
 	 */
 	private void updateForShowingProgress() {
-		if (control.getChildren().length > 0) {
-			scrolled.setContent(control);
-		} else {
-			scrolled.setContent(noEntryArea);
+		Control newContent = control.getChildren().length > 0 ? control : noEntryArea;
+		if (scrolled.getContent() != newContent) {
+			scrolled.setContent(newContent);
 		}
 	}
 
@@ -228,16 +219,12 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 
 			@Override
 			public void select() {
-
-				Control[] children = control.getChildren();
-				for (Control element : children) {
-					ProgressInfoItem child = (ProgressInfoItem) element;
+				for (ProgressInfoItem child : jobItemControls.values()) {
 					if (!item.equals(child)) {
 						child.selectWidgets(false);
 					}
 				}
 				item.selectWidgets(true);
-
 			}
 		});
 
@@ -302,6 +289,9 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 
 	@Override
 	protected Widget doFindItem(Object element) {
+		if (element instanceof JobTreeElement) {
+			return jobItemControls.get(element);
+		}
 		Control[] existingChildren = control.getChildren();
 		for (Control controlElement : existingChildren) {
 			if (controlElement.isDisposed()
@@ -388,6 +378,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 						item = doFindItem(parent);
 				}
 				if (item != null) {
+					jobItemControls.remove(element);
 					unmapElement(element);
 					item.dispose();
 				}
@@ -438,25 +429,96 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 	 * Refresh everything as the root is being refreshed.
 	 */
 	private void refreshAll() {
-
 		Object[] infos = getSortedChildren(getRoot());
-		Control[] existingChildren = control.getChildren();
-
-		for (Control element : existingChildren) {
-			element.dispose();
-
-		}
-
-		int maxLength = Math.min(infos.length,MAX_DISPLAYED);
-		// Create new ones if required
-		for (int i = 0; i < maxLength; i++) {
-			ProgressInfoItem item = createNewItem((JobTreeElement) infos[i]);
-			item.setColor(i);
-		}
+		reorderControls(infos);
 
 		control.layout(true);
 		updateForShowingProgress();
 
+	}
+
+	/**
+	 * Calling this method ensures that the list of job elements will be displayed
+	 * in given order in progress viewer.
+	 * <p>
+	 * Any progress item currently visible but not in the list of job elements will
+	 * be removed from viewer. The element list will be limited by
+	 * {@link #MAX_DISPLAYED}.
+	 * </p>
+	 * <p>
+	 * This method will try to reuse/reorder existing elements instead of disposing
+	 * and recreating them.
+	 * </p>
+	 * <p>
+	 * This method also updates the alternating background color for all elements
+	 * which will be visible after reorder.
+	 * </p>
+	 *
+	 * @param toShowJobElements list of job elements to show in progress viewer.
+	 *                          Array must not be <code>null</code> and elements
+	 *                          must be instances of {@link JobTreeElement}.
+	 */
+	private void reorderControls(Object[] toShowJobElements) {
+		int limit = Math.min(toShowJobElements.length, MAX_DISPLAYED);
+		if (limit == 0) {
+			// shortcut to remove all
+			for (Control existing : jobItemControls.values()) {
+				existing.dispose();
+			}
+			jobItemControls.clear();
+			return;
+		}
+
+		Control[] existingControls = control.getChildren();
+		Control lastControl = null;
+		int exIndex = 0;
+		for (int i = 0; i < limit; i++) {
+			JobTreeElement jobElement = (JobTreeElement) toShowJobElements[i];
+			ProgressInfoItem item = jobItemControls.get(jobElement);
+			if (item == null) {
+				item = createNewItem(jobElement);
+				jobItemControls.put(jobElement, item);
+
+				// if all existing elements are already reordered the new element is created in
+				// the correct position and does not have to be moved
+				if (exIndex < existingControls.length) {
+					if (lastControl == null) {
+						item.moveAbove(null);
+					} else {
+						item.moveBelow(lastControl);
+					}
+				}
+			} else {
+				for (; exIndex < existingControls.length; exIndex++) {
+					if (existingControls[exIndex] != null && !existingControls[exIndex].isDisposed()) {
+						break;
+					}
+				}
+				if (exIndex < existingControls.length && existingControls[exIndex] != item) {
+					if (lastControl == null) {
+						item.moveAbove(null);
+					} else {
+						item.moveBelow(lastControl);
+					}
+					for (int j = exIndex + 1; j < existingControls.length; j++) {
+						if (existingControls[j] == item) {
+							existingControls[j] = null;
+							break;
+						}
+					}
+				} else {
+					exIndex++;
+				}
+			}
+			item.setColor(i);
+			lastControl = item;
+		}
+		for (int i = exIndex; i < existingControls.length; i++) {
+			if (existingControls[i] != null) {
+				jobItemControls.remove(existingControls[i].getData());
+				existingControls[i].dispose();
+			}
+		}
 	}
 
 	/**
@@ -486,6 +548,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 		Control[] children = control.getChildren();
 		ProgressInfoItem[] progressInfoItems = new ProgressInfoItem[children.length];
 		System.arraycopy(children, 0, progressInfoItems, 0, children.length);
+		assert children.length == jobItemControls.size();
 		return progressInfoItems;
 	}
 
