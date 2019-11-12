@@ -121,11 +121,6 @@ RegistryFilteredTree {
     color:#eeeeee;
 }
 
-Shell > Composite > Table[style~='SWT.DROP_DOWN'] {
-    background-color: #35393C;
-    color: #dddddd;
-}
-
 Hyperlink,
 ImageHyperlink {
 	background-color: inherit;
