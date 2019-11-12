@@ -345,8 +345,7 @@ public class ExtendedMarkersView extends ViewPart {
 		viewer.getTree().setLayout(layout);
 		tree.setLinesVisible(true);
 		tree.setHeaderVisible(true);
-		tree.layout(true);
-
+		tree.requestLayout();
 	}
 
 	/**
