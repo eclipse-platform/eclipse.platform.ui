@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -280,8 +280,8 @@ public abstract class Dialog extends Window {
 	public static int convertHorizontalDLUsToPixels(FontMetrics fontMetrics,
 			int dlus) {
 		// round to the nearest pixel
-		return (fontMetrics.getAverageCharWidth() * dlus + HORIZONTAL_DIALOG_UNIT_PER_CHAR / 2)
-				/ HORIZONTAL_DIALOG_UNIT_PER_CHAR;
+		return (int) ((fontMetrics.getAverageCharacterWidth() * dlus + HORIZONTAL_DIALOG_UNIT_PER_CHAR / 2)
+				/ HORIZONTAL_DIALOG_UNIT_PER_CHAR);
 	}
 
 	/**
@@ -333,7 +333,7 @@ public abstract class Dialog extends Window {
 	 */
 	public static int convertWidthInCharsToPixels(FontMetrics fontMetrics,
 			int chars) {
-		return fontMetrics.getAverageCharWidth() * chars;
+		return (int) (fontMetrics.getAverageCharacterWidth() * chars);
 	}
 
 	/**

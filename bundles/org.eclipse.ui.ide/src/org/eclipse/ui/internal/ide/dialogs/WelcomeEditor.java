@@ -629,7 +629,7 @@ public class WelcomeEditor extends EditorPart {
 					VERT_SCROLL_INCREMENT);
 		} else {
 			GC gc = new GC(sampleStyledText);
-			int width = gc.getFontMetrics().getAverageCharWidth();
+			int width = (int) gc.getFontMetrics().getAverageCharacterWidth();
 			gc.dispose();
 			this.scrolledComposite.getHorizontalBar().setIncrement(width);
 			this.scrolledComposite.getVerticalBar().setIncrement(

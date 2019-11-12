@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,7 +16,6 @@ package org.eclipse.ui.actions;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
@@ -262,7 +261,7 @@ public abstract class QuickMenuCreator {
 		GC gc = null;
 		try {
 			gc = new GC(control);
-			return gc.getFontMetrics().getAverageCharWidth();
+			return (int) gc.getFontMetrics().getAverageCharacterWidth();
 		} finally {
 			if (gc != null) {
 				gc.dispose();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -208,8 +208,7 @@ public class ComboBoxCellEditor extends AbstractComboBoxCellEditor {
 		} else {
 			// make the comboBox 10 characters wide
 			GC gc = new GC(comboBox);
-			layoutData.minimumWidth = (gc.getFontMetrics()
-					.getAverageCharWidth() * 10) + 10;
+			layoutData.minimumWidth = (int) ((gc.getFontMetrics().getAverageCharacterWidth() * 10) + 10);
 			gc.dispose();
 		}
 		return layoutData;

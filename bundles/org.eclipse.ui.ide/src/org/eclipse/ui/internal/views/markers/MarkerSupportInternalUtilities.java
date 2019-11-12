@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -243,7 +243,7 @@ public class MarkerSupportInternalUtilities {
 	 */
 	public static final int getFontWidth(Control control) {
 		GC gc = new GC(control.getDisplay());
-		int width = gc.getFontMetrics().getAverageCharWidth();
+		int width = (int) gc.getFontMetrics().getAverageCharacterWidth();
 		gc.dispose();
 		return width;
 	}

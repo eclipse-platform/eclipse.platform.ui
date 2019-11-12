@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -55,7 +55,7 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
 	/**
 	 * Create a new instance of the receiver with the supplied parent and style
 	 * bits.
-	 * 
+	 *
 	 * @param parent      The composite the Canvas is created in
 	 * @param style       style bits for the canvas
 	 * @param itemsToShow the number of items this will show
@@ -186,7 +186,7 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
 
 	/**
 	 * Get the size hints for the receiver. These are used for layout data.
-	 * 
+	 *
 	 * @return Point - the preferred x and y coordinates
 	 */
 	public Point getSizeHints() {
@@ -195,7 +195,7 @@ public class ProgressCanvasViewer extends AbstractProgressViewer {
 
 		GC gc = new GC(canvas);
 		FontMetrics fm = gc.getFontMetrics();
-		int charWidth = fm.getAverageCharWidth();
+		int charWidth = (int) fm.getAverageCharacterWidth();
 		int charHeight = fm.getHeight();
 		int maxWidth = display.getBounds().width / 2;
 		int maxHeight = display.getBounds().height / 6;

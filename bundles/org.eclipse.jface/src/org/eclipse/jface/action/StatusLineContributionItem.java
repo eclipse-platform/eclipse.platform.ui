@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,7 @@
 package org.eclipse.jface.action;
 
 import org.eclipse.core.runtime.Assert;
-
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.FontMetrics;
@@ -23,8 +23,6 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
-
-import org.eclipse.jface.util.Util;
 
 /**
  * A contribution item to be used with status line managers.
@@ -112,7 +110,7 @@ public class StatusLineContributionItem extends ContributionItem {
 			GC gc = new GC(statusLine);
 			gc.setFont(statusLine.getFont());
 			FontMetrics fm = gc.getFontMetrics();
-			widthHint = fm.getAverageCharWidth() * charWidth;
+			widthHint = (int) (fm.getAverageCharacterWidth() * charWidth);
 			heightHint = fm.getHeight();
 			gc.dispose();
 		}

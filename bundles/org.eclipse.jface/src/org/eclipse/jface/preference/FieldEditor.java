@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -202,7 +202,7 @@ public abstract class FieldEditor {
 	protected int convertHorizontalDLUsToPixels(Control control, int dlus) {
 		GC gc = new GC(control);
 		gc.setFont(control.getFont());
-		int averageWidth = gc.getFontMetrics().getAverageCharWidth();
+		int averageWidth = (int) gc.getFontMetrics().getAverageCharacterWidth();
 		gc.dispose();
 
 		double horizontalDialogUnitSize = averageWidth * 0.25;
