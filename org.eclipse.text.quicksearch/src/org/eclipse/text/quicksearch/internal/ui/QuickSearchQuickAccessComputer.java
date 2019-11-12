@@ -34,6 +34,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 public class QuickSearchQuickAccessComputer extends QuickTextSearchRequestor implements IQuickAccessComputer, IQuickAccessComputerExtension {
 
 	private static final int MAX_ENTRIES = 20;
+	private static final long TIMEOUT = 200;
 	private PriorityFunction priorities;
 
 	public QuickSearchQuickAccessComputer() {
@@ -58,7 +59,7 @@ public class QuickSearchQuickAccessComputer extends QuickTextSearchRequestor imp
 		searcher.setMaxResults(MAX_ENTRIES);
 		searcher.setQuery(new QuickTextQuery(query, false), true);
 		long start = System.currentTimeMillis();
-		while (matches.size() < 20 && !searcher.isDone() && System.currentTimeMillis() - start < 3000) {
+		while (matches.size() < 20 && !searcher.isDone() && System.currentTimeMillis() - start < TIMEOUT) {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
