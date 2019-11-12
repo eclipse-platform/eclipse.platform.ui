@@ -239,8 +239,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		protected void disposeCellEditors() {
 			CellEditor[] cellEditors = getCellEditors();
 			if (cellEditors != null) {
-				for (int i = 0; i < cellEditors.length; i++) {
-					CellEditor editor = cellEditors[i];
+				for (CellEditor editor : cellEditors) {
 					if (editor != null) {
 						editor.dispose();
 					}
@@ -568,8 +567,8 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	 * @param columnIds the identifiers of the columns to reset
 	 */
 	public void resetColumnSizes(String[] columnIds) {
-		for (int i = 0; i < columnIds.length; i++) {
-			fColumnSizes.remove(columnIds[i]);
+		for (String columnId : columnIds) {
+			fColumnSizes.remove(columnId);
 		}
 	}
 
@@ -617,9 +616,9 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		} else {
 			Widget[] items = findItems(element);
 			if (items.length != 0) {
-				for (int i = 0; i < items.length; i++) {
-					if (items[i] instanceof TreeItem) {
-						contentProvider.preserveState(getTreePathFromItem((TreeItem)items[i]));
+				for (Widget item : items) {
+					if (item instanceof TreeItem) {
+						contentProvider.preserveState(getTreePathFromItem((TreeItem)item));
 					} else {
 						contentProvider.preserveState(TreePath.EMPTY);
 					}
@@ -679,11 +678,11 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		final TreeColumn[] columns = tree.getColumns();
 		String[] visibleColumnIds = getVisibleColumns();
 		// remove all listeners before disposing - see bug 223233
-		for (int i = 0; i < columns.length; i++) {
-			columns[i].removeControlListener(fListener);
+		for (TreeColumn column : columns) {
+			column.removeControlListener(fListener);
 		}
-		for (int i = 0; i < columns.length; i++) {
-			columns[i].dispose();
+		for (TreeColumn column : columns) {
+			column.dispose();
 		}
 		PresentationContext presentationContext = (PresentationContext) getPresentationContext();
 		if (presentation != null) {
@@ -744,23 +743,21 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	}
 
 	private void initColumns(int widthHint, int treeWidgetWidth, String[] visibleColumnIds) {
-		TreeColumn[] columns = getTree().getColumns();
-		for (int i = 0; i < columns.length; i++) {
-			TreeColumn treeColumn = columns[i];
-			Object colData = treeColumn.getData();
+		for (TreeColumn column : getTree().getColumns()) {
+			Object colData = column.getData();
 			String columnId = colData instanceof String ? (String) colData : null;
 			Integer width = fColumnSizes.get(colData);
 			if (width == null) {
 				int ans = getInitialColumnWidth(columnId, treeWidgetWidth, visibleColumnIds);
 				if (ans == -1) {
-					treeColumn.setWidth(widthHint);
+					column.setWidth(widthHint);
 				} else {
-					treeColumn.setWidth(ans);
+					column.setWidth(ans);
 				}
 			} else {
-				treeColumn.setWidth(width.intValue());
+				column.setWidth(width.intValue());
 			}
-			treeColumn.addControlListener(fListener);
+			column.addControlListener(fListener);
 		}
 	}
 
@@ -790,15 +787,15 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 					return presentation.getInitialColumns();
 				} else {
 					String[] available = presentation.getAvailableColumns();
-					for (int i = 0; i < columns.length; i++) {
+					for (String column : columns) {
 						boolean columnAvailable = false;
-						for (int j = 0; j < available.length; j++) {
-							if (columns[i].equals(available[j])) {
+						for (String element : available) {
+							if (column.equals(element)) {
 								columnAvailable = true;
 							}
 						}
 
-						if (!columnAvailable || presentation.getHeader(columns[i]) == null) {
+						if (!columnAvailable || presentation.getHeader(column) == null) {
 							// We found a column ID which is not in current list of available column IDs.
 							// Or the presentation cannot return a header title for the given column.
 							// Clear out saved column data for given column presentation.
@@ -839,11 +836,9 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	 */
 	protected void persistColumnSizes() {
 		Tree tree = getTree();
-		TreeColumn[] columns = tree.getColumns();
-		for (int i = 0; i < columns.length; i++) {
-			TreeColumn treeColumn = columns[i];
-			Object id = treeColumn.getData();
-			fColumnSizes.put(id, Integer.valueOf(treeColumn.getWidth()));
+		for (TreeColumn column :  tree.getColumns()) {
+			Object id = column.getData();
+			fColumnSizes.put(id, Integer.valueOf(column.getWidth()));
 		}
 	}
 
@@ -924,27 +919,21 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	 * @param memento the {@link IMemento} to read from
 	 */
 	public void initState(IMemento memento) {
-		IMemento[] mementos = memento.getChildren(COLUMN_SIZES);
-		for (int i = 0; i < mementos.length; i++) {
-			IMemento child = mementos[i];
+		for (IMemento child : memento.getChildren(COLUMN_SIZES)) {
 			String id = child.getID();
 			Integer size = child.getInteger(SIZE);
 			if (size != null) {
 				fColumnSizes.put(id, size);
 			}
 		}
-		mementos = memento.getChildren(SHOW_COLUMNS);
-		for (int i = 0; i < mementos.length; i++) {
-			IMemento child = mementos[i];
+		for (IMemento child : memento.getChildren(SHOW_COLUMNS)) {
 			String id = child.getID();
 			Boolean bool = Boolean.valueOf(child.getString(SHOW_COLUMNS));
 			if (!bool.booleanValue()) {
 				fShowColumns.put(id, bool);
 			}
 		}
-		mementos = memento.getChildren(VISIBLE_COLUMNS);
-		for (int i = 0; i < mementos.length; i++) {
-			IMemento child = mementos[i];
+		for (IMemento child : memento.getChildren(VISIBLE_COLUMNS)) {
 			String id = child.getID();
 			Integer integer = child.getInteger(SIZE);
 			if (integer != null) {
@@ -956,9 +945,7 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 				fVisibleColumns.put(id, columns);
 			}
 		}
-		mementos = memento.getChildren(COLUMN_ORDER);
-		for (int i = 0; i < mementos.length; i++) {
-			IMemento child = mementos[i];
+		for (IMemento child : memento.getChildren(COLUMN_ORDER)) {
 			String id = child.getID();
 			Integer integer = child.getInteger(SIZE);
 			if (integer != null) {
@@ -1133,9 +1120,9 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 		if (items.length == 1) {
 			return items[0];
 		}
-		for (int i = 0; i < items.length; i++) {
-			if (getTreePathFromItem((Item)items[i]).equals(path)) {
-				return items[i];
+		for (Widget item : items) {
+			if (getTreePathFromItem((Item)item).equals(path)) {
+				return item;
 			}
 		}
 		return null;
@@ -1354,9 +1341,8 @@ public class InternalTreeModelViewer extends TreeViewer implements IInternalTree
 	public boolean getElementChildrenRealized(TreePath parentPath) {
 		Widget parentItem = findItem(parentPath);
 		if (parentItem != null) {
-			Item[] children = getChildren(parentItem);
-			for (int i = 0; i < children.length; i++) {
-				if (children[i].getData() == null) {
+			for (Item element : getChildren(parentItem)) {
+				if (element.getData() == null) {
 					return false;
 				}
 			}

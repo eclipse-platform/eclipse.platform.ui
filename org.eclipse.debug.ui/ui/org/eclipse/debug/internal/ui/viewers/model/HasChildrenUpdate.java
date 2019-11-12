@@ -115,8 +115,8 @@ class HasChildrenUpdate extends ViewerUpdateMonitor implements IHasChildrenUpdat
 		if (getElementPath().equals(path)) {
 			return true;
 		} else if (fBatchedRequests != null) {
-			for (int i = 0; i < fBatchedRequests.size(); i++) {
-				if (fBatchedRequests.get(i).getElementPath().equals(path)) {
+			for (ViewerUpdateMonitor request : fBatchedRequests) {
+				if (request.getElementPath().equals(path)) {
 					return true;
 				}
 			}

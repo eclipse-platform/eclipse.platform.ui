@@ -250,17 +250,14 @@ public class InternalVirtualTreeModelViewer extends Viewer
 			itemsToDisassociate = findItems(element);
 		}
 
-		VirtualItem[] parentItems = findItems(parentElementOrTreePath);
-		for (int i = 0; i < parentItems.length; i++) {
-			VirtualItem parentItem = parentItems[i];
+		for (VirtualItem parentItem : findItems(parentElementOrTreePath)) {
 			if (index < parentItem.getItemCount()) {
 				VirtualItem item = parentItem.getItem(new Index(index));
 				selection = adjustSelectionForReplace(selectedItems, selection, item, element, parentItem.getData());
 				// disassociate any different item that represents the
 				// same element under the same parent (the tree)
-				for (int j = 0; j < itemsToDisassociate.length; j++) {
-					VirtualItem itemToDisassociate = itemsToDisassociate[j];
-					if (itemToDisassociate != item && itemsToDisassociate[j].getParent() == parentItem) {
+				for (VirtualItem itemToDisassociate : itemsToDisassociate) {
+					if (itemToDisassociate != item && itemToDisassociate.getParent() == parentItem) {
 						disassociate(itemToDisassociate);
 						itemToDisassociate.getParent().clear(itemToDisassociate.getIndex());
 					}
@@ -268,9 +265,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
 				//Object oldData = item.getData();
 				associate(element, item);
 				doUpdate(item);
-				VirtualItem[] children = item.getItems();
-				for (int j = 0; j < children.length; j++) {
-					children[j].setNeedsDataUpdate();
+				for (VirtualItem childitem : item.getItems()) {
+					childitem.setNeedsDataUpdate();
 				}
 			}
 		}
@@ -312,9 +308,7 @@ public class InternalVirtualTreeModelViewer extends Viewer
 		final List<TreePath> oldSelection = new LinkedList<>(Arrays.asList(((TreeSelection) getSelection()).getPaths()));
 		preservingSelection(() -> {
 			TreePath removedPath = null;
-			VirtualItem[] parentItems = findItems(parentOrTreePath);
-			for (int i = 0; i < parentItems.length; i++) {
-				VirtualItem parentItem = parentItems[i];
+			for (VirtualItem parentItem : findItems(parentOrTreePath)) {
 				if (parentItem.isDisposed()) {
 					continue;
 				}
@@ -361,12 +355,9 @@ public class InternalVirtualTreeModelViewer extends Viewer
 			return;
 		}
 
-		VirtualItem[] items = findItems(elementOrPath);
-		if (items.length > 0) {
-			for (int j = 0; j < items.length; j++) {
-				disassociate(items[j]);
-				items[j].getParent().remove(items[j].getIndex());
-			}
+		for (VirtualItem item : findItems(elementOrPath)) {
+			disassociate(item);
+			item.getParent().remove(item.getIndex());
 		}
 	}
 
@@ -377,8 +368,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
 			// Don't do anything - we are not seeing an instance of bug 185673
 			return selection;
 		}
-		for (int i = 0; i < selectedItems.length; i++) {
-			if (item == selectedItems[i]) {
+		for (VirtualItem selectedItem : selectedItems) {
+			if (item == selectedItem) {
 				// The current item was selected, but its data is null.
 				// The data will be replaced by the given element, so to keep
 				// it selected, we have to add it to the selection.
@@ -501,9 +492,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
 
 	@Override
 	public void refresh(Object element) {
-		VirtualItem[] items = findItems(element);
-		for (int i = 0; i < items.length; i++) {
-			refresh(items[i]);
+		for (VirtualItem item : findItems(element)) {
+			refresh(item);
 			validate();
 		}
 	}
@@ -517,9 +507,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
 				virtualLazyUpdateHasChildren(item);
 			}
 
-			VirtualItem[] items = item.getItems();
-			for (int i = 0; i < items.length; i++) {
-				items[i].setNeedsDataUpdate();
+			for (VirtualItem childItem : item.getItems()) {
+				childItem.setNeedsDataUpdate();
 			}
 		}
 		refreshStruct(item);
@@ -627,16 +616,14 @@ public class InternalVirtualTreeModelViewer extends Viewer
 	@Override
 	public void setChildCount(final Object elementOrTreePath, final int count) {
 		preservingSelection(() -> {
-			VirtualItem[] items = findItems(elementOrTreePath);
-			for (int i = 0; i < items.length; i++) {
-				VirtualItem[] children = items[i].getItems();
-				for (int j = 0; j < children.length; j++) {
-					if (children[j].getData() != null && children[j].getIndex().intValue() >= count) {
-						disassociate(children[j]);
+			for (VirtualItem item : findItems(elementOrTreePath)) {
+				for (VirtualItem element : item.getItems()) {
+					if (element.getData() != null && element.getIndex().intValue() >= count) {
+						disassociate(element);
 					}
 				}
 
-				items[i].setItemCount(count);
+				item.setItemCount(count);
 			}
 		});
 		validate();
@@ -645,15 +632,11 @@ public class InternalVirtualTreeModelViewer extends Viewer
 	@Override
 	public void setHasChildren(final Object elementOrTreePath, final boolean hasChildren) {
 		preservingSelection(() -> {
-			VirtualItem[] items = findItems(elementOrTreePath);
-			for (int i = 0; i < items.length; i++) {
-				VirtualItem item = items[i];
-
+			for (VirtualItem item : findItems(elementOrTreePath)) {
 				if (!hasChildren) {
-					VirtualItem[] children = item.getItems();
-					for (int j = 0; j < children.length; j++) {
-						if (children[j].getData() != null) {
-							disassociate(children[j]);
+					for (VirtualItem element : item.getItems()) {
+						if (element.getData() != null) {
+							disassociate(element);
 						}
 					}
 				}
@@ -826,10 +809,9 @@ public class InternalVirtualTreeModelViewer extends Viewer
 		item.setData(null);
 
 		// Disassociate the children
-		VirtualItem[] items = item.getItems();
-		for (int i = 0; i < items.length; i++) {
-			if (items[i].getData() != null) {
-				disassociate(items[i]);
+		for (VirtualItem childItem : item.getItems()) {
+			if (childItem.getData() != null) {
+				disassociate(childItem);
 			}
 		}
 	}
@@ -864,10 +846,10 @@ public class InternalVirtualTreeModelViewer extends Viewer
 		if (selection instanceof ITreeSelection) {
 			TreePath[] paths = ((ITreeSelection) selection).getPaths();
 			List<VirtualItem> newSelection = new ArrayList<>(paths.length);
-			for (int i = 0; i < paths.length; ++i) {
+			for (TreePath path : paths) {
 				// Use internalExpand since item may not yet be created. See
 				// 1G6B1AR.
-				VirtualItem item = findItem(paths[i]);
+				VirtualItem item = findItem(path);
 				if (item != null) {
 					newSelection.add(item);
 				}
@@ -895,9 +877,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
 
 	@Override
 	public void update(Object element) {
-		VirtualItem[] items = findItems(element);
-		for (int i = 0; i < items.length; i++) {
-			doUpdate(items[i]);
+		for (VirtualItem item : findItems(element)) {
+			doUpdate(item);
 		}
 	}
 
@@ -914,13 +895,13 @@ public class InternalVirtualTreeModelViewer extends Viewer
 		VirtualItem[] items = fTree.getSelection();
 		ArrayList<TreePath> list = new ArrayList<>(items.length);
 		Map<VirtualItem, TreePath> map = new LinkedHashMap<>(items.length * 4 / 3);
-		for (int i = 0; i < items.length; i++) {
+		for (VirtualItem item : items) {
 			TreePath path = null;
-			if (items[i].getData() != null) {
-				path = getTreePathFromItem(items[i]);
+			if (item.getData() != null) {
+				path = getTreePathFromItem(item);
 				list.add(path);
 			}
-			map.put(items[i], path);
+			map.put(item, path);
 		}
 		return new TreeSelection(list.toArray(new TreePath[list.size()]));
 	}
@@ -963,9 +944,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
 
 	@Override
 	public void setExpandedState(Object elementOrTreePath, boolean expanded) {
-		VirtualItem[] items = findItems(elementOrTreePath);
-		for (int i = 0; i < items.length; i++) {
-			items[i].setExpanded(expanded);
+		for (VirtualItem item : findItems(elementOrTreePath)) {
+			item.setExpanded(expanded);
 		}
 		validate();
 	}
@@ -994,11 +974,10 @@ public class InternalVirtualTreeModelViewer extends Viewer
 			}
 
 			if (level == ALL_LEVELS || level > 1) {
-				VirtualItem[] children = item.getItems();
 				int newLevel = (level == ALL_LEVELS ? ALL_LEVELS
 						: level - 1);
-				for (int i = 0; i < children.length; i++) {
-					expandToLevel(children[i], newLevel);
+				for (VirtualItem element : item.getItems()) {
+					expandToLevel(element, newLevel);
 				}
 			}
 		}
@@ -1315,18 +1294,14 @@ public class InternalVirtualTreeModelViewer extends Viewer
 	 * @param memento Memento to read state from.
 	 */
 	public void initState(IMemento memento) {
-		IMemento[] mementos = memento.getChildren(SHOW_COLUMNS);
-		for (int i = 0; i < mementos.length; i++) {
-			IMemento child = mementos[i];
+		for (IMemento child : memento.getChildren(SHOW_COLUMNS)) {
 			String id = child.getID();
 			Boolean bool = Boolean.valueOf(child.getString(SHOW_COLUMNS));
 			if (!bool.booleanValue()) {
 				fShowColumns.put(id, bool);
 			}
 		}
-		mementos = memento.getChildren(VISIBLE_COLUMNS);
-		for (int i = 0; i < mementos.length; i++) {
-			IMemento child = mementos[i];
+		for (IMemento child : memento.getChildren(VISIBLE_COLUMNS)) {
 			String id = child.getID();
 			Integer integer = child.getInteger(SIZE);
 			if (integer != null) {
@@ -1451,7 +1426,6 @@ public class InternalVirtualTreeModelViewer extends Viewer
 		Set<VirtualItem> set = new HashSet<>();
 		Collections.addAll(set, selection);
 
-		VirtualItem[] items = null;
 		VirtualItem parent = findItem(path);
 
 		if (parent != null) {
@@ -1468,9 +1442,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
 				delta.setFlags(delta.getFlags() | IModelDelta.SELECT);
 			}
 
-			items = parent.getItems();
-			for (int i = 0; i < items.length; i++) {
-				doSaveElementState(path, delta, items[i], set, flagsToSave);
+			for (VirtualItem item : parent.getItems()) {
+				doSaveElementState(path, delta, item, set, flagsToSave);
 			}
 			return true;
 		} else {
@@ -1499,9 +1472,8 @@ public class InternalVirtualTreeModelViewer extends Viewer
 				int numChildren = ((TreeModelContentProvider)getContentProvider()).viewToModelCount(elementPath, item.getItemCount());
 				ModelDelta childDelta = delta.addNode(element, modelIndex, flags, numChildren);
 				if (expanded) {
-					VirtualItem[] items = item.getItems();
-					for (int i = 0; i < items.length; i++) {
-						doSaveElementState(elementPath, childDelta, items[i], set, flagsToSave);
+					for (VirtualItem childItem : item.getItems()) {
+						doSaveElementState(elementPath, childDelta, childItem, set, flagsToSave);
 					}
 				}
 			}

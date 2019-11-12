@@ -61,9 +61,8 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
 			@Override
 			public void menuShown(MenuEvent e) {
 				Menu m = (Menu)e.widget;
-				MenuItem[] items = m.getItems();
-				for (int i=0; i < items.length; i++) {
-					items[i].dispose();
+				for (MenuItem item : m.getItems()) {
+					item.dispose();
 				}
 				fillMenu(m);
 			}
@@ -121,9 +120,7 @@ public class GroupBreakpointsByAction extends AbstractBreakpointsViewAction impl
 
 	public List<IAction> getActions(int accel) {
 		List<IAction> actions = new ArrayList<>();
-		IBreakpointOrganizer[] organizers = BreakpointOrganizerManager.getDefault().getOrganizers();
-		for (int i = 0; i < organizers.length; i++) {
-			IBreakpointOrganizer organizer = organizers[i];
+		for (IBreakpointOrganizer organizer : BreakpointOrganizerManager.getDefault().getOrganizers()) {
 			IAction action = new GroupBreakpointsAction(organizer, fView);
 			addAccel(accel, action, organizer.getLabel());
 			accel++;

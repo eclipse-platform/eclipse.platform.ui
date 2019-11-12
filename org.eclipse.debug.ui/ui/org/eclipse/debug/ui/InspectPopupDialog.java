@@ -110,9 +110,7 @@ public class InspectPopupDialog extends DebugPopup {
 		if (view != null) {
 			// copy over properties
 			IPresentationContext copy = ((TreeModelViewer)view.getViewer()).getPresentationContext();
-			String[] properties = copy.getProperties();
-			for (int i = 0; i < properties.length; i++) {
-				String key = properties[i];
+			for (String key : copy.getProperties()) {
 				fContext.setProperty(key, copy.getProperty(key));
 			}
 		}
@@ -140,9 +138,8 @@ public class InspectPopupDialog extends DebugPopup {
 		if (view != null) {
 			StructuredViewer structuredViewer = (StructuredViewer) view.getViewer();
 			if (structuredViewer != null) {
-				ViewerFilter[] filters = structuredViewer.getFilters();
-				for (int i = 0; i < filters.length; i++) {
-					fViewer.addFilter(filters[i]);
+				for (ViewerFilter filter : structuredViewer.getFilters()) {
+					fViewer.addFilter(filter);
 				}
 			}
 		}

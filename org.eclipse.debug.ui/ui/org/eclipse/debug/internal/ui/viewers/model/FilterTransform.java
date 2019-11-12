@@ -215,10 +215,10 @@ public class FilterTransform {
 				return childIndex;
 			}
 			int offset = 0;
-			for (int i = 0; i < filteredIndexes.length; i++) {
-				if (childIndex == filteredIndexes[i] ) {
+			for (int filteredIndex : filteredIndexes) {
+				if (childIndex == filteredIndex ) {
 					return -1;
-				} else if (childIndex > filteredIndexes[i]) {
+				} else if (childIndex > filteredIndex) {
 					offset++;
 				} else {
 					break;

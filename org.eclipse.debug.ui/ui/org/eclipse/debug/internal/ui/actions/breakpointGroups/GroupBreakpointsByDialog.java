@@ -148,13 +148,13 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 	 */
 	private void initializeContent() {
 		IBreakpointOrganizer[] organizers= BreakpointOrganizerManager.getDefault().getOrganizers();
-		for (int i = 0; i < organizers.length; i++) {
-			fAvailableOrganizersProvider.addAvailable(organizers[i]);
+		for (IBreakpointOrganizer organizer : organizers) {
+			fAvailableOrganizersProvider.addAvailable(organizer);
 		}
 		organizers = fView.getBreakpointOrganizers();
 		if (organizers != null) {
-			for (int i = 0; i < organizers.length; i++) {
-				fSelectedOrganizersProvider.addSelected(organizers[i]);
+			for (IBreakpointOrganizer organizer : organizers) {
+				fSelectedOrganizersProvider.addSelected(organizer);
 			}
 		}
 	}

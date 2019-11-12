@@ -267,8 +267,7 @@ public final class ExternalToolMigration {
 				arguments = buffer.toString();
 
 				buffer.setLength(0);
-				for (int i = 0; i < targets.size(); i++) {
-					String target = targets.get(i);
+				for (String target : targets) {
 					if (target != null && target.length() > 0) {
 						buffer.append(target);
 						buffer.append(","); //$NON-NLS-1$

@@ -65,8 +65,7 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 	public void expressionsMoved(IExpression[] expressions, int index){
 		int count = getElementsCount();
 		ModelDelta delta = new ModelDelta(getExpressionManager(), -1, IModelDelta.NO_CHANGE, count);
-		for (int i = 0; i < expressions.length; i++) {
-			IExpression expression = expressions[i];
+		for (IExpression expression : expressions) {
 			delta.addNode(expression, IModelDelta.REMOVED);
 		}
 		for (int i = 0; i < expressions.length; i++) {
@@ -111,8 +110,7 @@ public class ExpressionManagerModelProxy extends AbstractModelProxy implements I
 
 	private void updateExpressions(IExpression[] expressions, int flags) {
 		ModelDelta delta = new ModelDelta(getExpressionManager(), IModelDelta.NO_CHANGE);
-		for (int i = 0; i < expressions.length; i++) {
-			IExpression expression = expressions[i];
+		for (IExpression expression : expressions) {
 			delta.addNode(expression, flags);
 		}
 		fireModelChanged(delta);

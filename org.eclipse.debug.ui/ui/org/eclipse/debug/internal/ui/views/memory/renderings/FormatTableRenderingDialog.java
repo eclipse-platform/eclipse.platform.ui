@@ -108,9 +108,8 @@ public class FormatTableRenderingDialog extends TrayDialog
 			Label rowLabel = new Label(composite, SWT.NONE);
 			rowLabel.setText(DebugUIMessages.FormatTableRenderingAction_2);
 			fRowControl = new Combo(composite, SWT.READ_ONLY);
-			for (int i=0; i<fRowSizes.length; i++)
-			{
-				fRowControl.add(String.valueOf(fRowSizes[i]));
+			for (int size : fRowSizes) {
+				fRowControl.add(String.valueOf(size));
 			}
 
 			fRowControl.addSelectionListener(new SelectionListener() {
@@ -140,9 +139,8 @@ public class FormatTableRenderingDialog extends TrayDialog
 			Label columnLabel = new Label(composite, SWT.NONE);
 			columnLabel.setText(DebugUIMessages.FormatTableRenderingAction_4);
 			fColumnControl = new Combo(composite, SWT.READ_ONLY);
-			for (int i=0; i<fColumnSizes.length; i++)
-			{
-				fColumnControl.add(String.valueOf(fColumnSizes[i]));
+			for (int size : fColumnSizes) {
+				fColumnControl.add(String.valueOf(size));
 			}
 
 			fColumnControl.addSelectionListener(new SelectionListener() {

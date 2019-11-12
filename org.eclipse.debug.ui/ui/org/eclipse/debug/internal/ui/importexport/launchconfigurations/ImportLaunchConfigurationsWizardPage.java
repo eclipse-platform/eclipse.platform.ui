@@ -16,7 +16,6 @@ package org.eclipse.debug.internal.ui.importexport.launchconfigurations;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.runtime.CoreException;
@@ -169,13 +168,12 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 		settings.put(OVERWRITE, fOverwrite.getSelection());
 		settings.put(OLD_PATH, fFromDirectory.getText().trim());
 		boolean overwrite = fOverwrite.getSelection();
-		List<?> items = getSelectedResources();
 		File config, newconfig = null;
 		boolean owall = false, nowall = false;
 		MessageDialog dialog = null;
 		final List<File> filesToImport = new ArrayList<>();
-		for (Iterator<?> iter = items.iterator(); iter.hasNext();) {
-			config = (File) ((DebugFileSystemElement) iter.next()).getFileSystemObject();
+		for (Object resource :  getSelectedResources()) {
+			config = (File) ((DebugFileSystemElement) resource).getFileSystemObject();
 			newconfig = new File(new Path(LaunchManager.LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH.toOSString()).append(config.getName()).toOSString());
 			if(newconfig.exists() & !overwrite) {
 				if(nowall) {

@@ -346,9 +346,8 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 		}
 
 		if (fCreateBuildScheduleComponent) {
-			int buildTypes[]= BuilderUtils.buildTypesToArray(buildKindString);
-			for (int i = 0; i < buildTypes.length; i++) {
-				switch (buildTypes[i]) {
+			for (int buildType : BuilderUtils.buildTypesToArray(buildKindString)) {
+				switch (buildType) {
 					case IncrementalProjectBuilder.FULL_BUILD:
 						afterClean.setSelection(true);
 						break;
