@@ -90,10 +90,6 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 	boolean shadowEnabled = true;
 	Color shadowColor;
 	Color outerKeyline, innerKeyline;
-	Color[] activeToolbar;
-	int[] activePercents;
-	Color[] inactiveToolbar;
-	int[] inactivePercents;
 	boolean active;
 
 	Color[] selectedTabFillColors;
@@ -967,16 +963,6 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 	public void setInnerKeyline(Color color) {
 		this.innerKeyline = color;
 		parent.redraw();
-	}
-
-	public void setActiveToolbarGradient(Color[] color, int[] percents) {
-		activeToolbar = color;
-		activePercents = percents;
-	}
-
-	public void setInactiveToolbarGradient(Color[] color, int[] percents) {
-		inactiveToolbar = color;
-		inactivePercents = percents;
 	}
 
 	public void setActive(boolean active) {
