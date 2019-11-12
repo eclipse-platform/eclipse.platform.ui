@@ -281,11 +281,6 @@ PageSiteComposite > PropertyTable:disabled {
     color: #EEEEEE;
 }
 
-FlyoutControlComposite, FlyoutControlComposite CLabel {
-    background-color: #3f4447;
-    color: #EEEEEE;
-}
-
 /* See Bug 430848: We need to override the theme of the Eclipse splash screen, because
  * otherwise the splash screen would be partly switched to the dark theme during startup,
  * which does not look very nice.

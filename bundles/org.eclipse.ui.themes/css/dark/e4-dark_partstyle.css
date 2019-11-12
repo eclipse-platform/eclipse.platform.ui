@@ -218,10 +218,6 @@
     font-weight: bold;
 }
 
-#org-eclipse-e4-ui-compatibility-editor FlyoutControlComposite > Composite {
-    background-color: #3f4447;
-    color: #DDDDDD;
-}
 #org-eclipse-e4-ui-compatibility-editor LayoutCanvas {
     background-color: #252525;
     color: #CCCCCC;
