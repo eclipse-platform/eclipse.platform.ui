@@ -57,9 +57,7 @@ public class DefaultWatchExpressionModelProxy extends DefaultExpressionModelProx
 			@Override
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				if (!isDisposed()) {
-					IWorkbenchWindow[] workbenchWindows = PlatformUI.getWorkbench().getWorkbenchWindows();
-					for (int i = 0; i < workbenchWindows.length; i++) {
-						IWorkbenchWindow window = workbenchWindows[i];
+					for (IWorkbenchWindow window : PlatformUI.getWorkbench().getWorkbenchWindows()) {
 						// Virtual viewer may have a null control.
 						Control control = viewer.getControl();
 						if (control != null && control.getShell().equals(window.getShell())) {

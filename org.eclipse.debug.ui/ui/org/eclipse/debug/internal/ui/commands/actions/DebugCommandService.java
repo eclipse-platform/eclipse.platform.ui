@@ -198,8 +198,8 @@ public class DebugCommandService implements IDebugContextListener {
 			}
 		}
 		// ABORT - no command processors
-		for (int i = 0; i < actions.length; i++) {
-			actions[i].setEnabled(false);
+		for (IEnabledTarget action : actions) {
+			action.setEnabled(false);
 		}
 	}
 
@@ -252,8 +252,7 @@ public class DebugCommandService implements IDebugContextListener {
 	 */
 	private Map<IDebugCommandHandler, List<Object>> collate(Object[] elements, Class<?> handlerType) {
 		Map<IDebugCommandHandler, List<Object>> map = new HashMap<>();
-		for (int i = 0; i < elements.length; i++) {
-			Object element = elements[i];
+		for (Object element : elements) {
 			IDebugCommandHandler handler = getHandler(element, handlerType);
 			if (handler == null) {
 				return null;

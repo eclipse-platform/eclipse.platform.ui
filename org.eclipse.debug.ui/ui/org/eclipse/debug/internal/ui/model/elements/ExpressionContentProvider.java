@@ -60,21 +60,21 @@ public class ExpressionContentProvider extends VariableContentProvider {
 
 		@Override
 		public void update(ILabelUpdate[] updates) {
-			for (int i = 0; i < updates.length; i++) {
-				String[] columnIds = updates[i].getColumnIds();
+			for (ILabelUpdate update : updates) {
+				String[] columnIds = update.getColumnIds();
 				if (columnIds == null) {
-					updateLabel(updates[i], 0);
+					updateLabel(update, 0);
 				} else {
 					for (int j = 0; j < columnIds.length; j++) {
 						if (IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(columnIds[j])) {
-							updateLabel(updates[i], j);
+							updateLabel(update, j);
 						} else {
-							updates[i].setLabel(IInternalDebugCoreConstants.EMPTY_STRING, j);
+							update.setLabel(IInternalDebugCoreConstants.EMPTY_STRING, j);
 						}
 					}
 				}
 
-				updates[i].done();
+				update.done();
 			}
 		}
 
@@ -148,21 +148,21 @@ public class ExpressionContentProvider extends VariableContentProvider {
 	 * @since 3.4
 	 */
 	private void findDelegates(Map<IElementContentProvider, List<IViewerUpdate>> delegateMap, List<IViewerUpdate> notDelegated, IViewerUpdate[] updates) {
-		for (int i = 0; i < updates.length; i++) {
-			if (updates[i] instanceof ViewerUpdateMonitor && !((ViewerUpdateMonitor)updates[i]).isDelegated() && updates[i].getElement() instanceof IExpression){
-				IElementContentProvider delegate = ViewerAdapterService.getContentProvider(((IExpression)updates[i].getElement()).getValue());
+		for (IViewerUpdate update : updates) {
+			if (update instanceof ViewerUpdateMonitor && !((ViewerUpdateMonitor)update).isDelegated() && update.getElement() instanceof IExpression){
+				IElementContentProvider delegate = ViewerAdapterService.getContentProvider(((IExpression)update.getElement()).getValue());
 				if (delegate != null){
 					List<IViewerUpdate> updateList = delegateMap.get(delegate);
 					if (updateList == null){
 						updateList = new ArrayList<>();
 						delegateMap.put(delegate, updateList);
 					}
-					((ViewerUpdateMonitor)updates[i]).setDelegated(true);
-					updateList.add(updates[i]);
+					((ViewerUpdateMonitor)update).setDelegated(true);
+					updateList.add(update);
 					continue;
 				}
 			}
-			notDelegated.add(updates[i]);
+			notDelegated.add(update);
 		}
 	}
 
@@ -174,8 +174,8 @@ public class ExpressionContentProvider extends VariableContentProvider {
 			if (expression.hasErrors()) {
 				String[] messages = expression.getErrorMessages();
 				LinkedHashSet<ErrorMessageElement> set = new LinkedHashSet<>(messages.length);
-				for (int i = 0; i < messages.length; i++) {
-					set.add(new ErrorMessageElement(messages[i]));
+				for (String message : messages) {
+					set.add(new ErrorMessageElement(message));
 				}
 				return set.toArray();
 			}

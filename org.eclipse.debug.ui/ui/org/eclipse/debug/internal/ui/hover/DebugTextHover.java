@@ -85,9 +85,7 @@ public class DebugTextHover implements ITextHover, ITextHoverExtension, ITextHov
 	 */
 	private static String replaceHTMLChars(String variableText) {
 		StringBuilder buffer= new StringBuilder(variableText.length());
-		char[] characters = variableText.toCharArray();
-		for (int i = 0; i < characters.length; i++) {
-			char character= characters[i];
+		for (char character : variableText.toCharArray()) {
 			switch (character) {
 				case '<':
 					buffer.append("&lt;"); //$NON-NLS-1$

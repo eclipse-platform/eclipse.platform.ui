@@ -94,8 +94,7 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
 		fTimer.cancel();
 		fTimerTasks.clear();
 		DebugPlugin.getDefault().removeDebugEventListener(this);
-		for (int i = 0; i < fHandlers.length; i++) {
-			DebugEventHandler handler = fHandlers[i];
+		for (DebugEventHandler handler : fHandlers) {
 			handler.dispose();
 		}
 	}
@@ -112,11 +111,9 @@ public abstract class EventHandlerModelProxy extends AbstractModelProxy implemen
 		if (isDisposed()) {
 			return;
 		}
-		for (int i = 0; i < events.length; i++) {
-			DebugEvent event = events[i];
+		for (DebugEvent event : events) {
 			if (containsEvent(event)) {
-				for (int j = 0; j < fHandlers.length; j++) {
-					DebugEventHandler handler = fHandlers[j];
+				for (DebugEventHandler handler : fHandlers) {
 					if (isDisposed()) {
 						return;
 					}

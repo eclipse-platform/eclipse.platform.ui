@@ -55,21 +55,21 @@ public class ExpressionManagerContentProvider extends ElementContentProvider {
 
 		@Override
 		public void update(ILabelUpdate[] updates) {
-			for (int i = 0; i < updates.length; i++) {
-				String[] columnIds = updates[i].getColumnIds();
+			for (ILabelUpdate update : updates) {
+				String[] columnIds = update.getColumnIds();
 				if (columnIds == null) {
-					updateLabel(updates[i], 0);
+					updateLabel(update, 0);
 				} else {
 					for (int j = 0; j < columnIds.length; j++) {
 						if (IDebugUIConstants.COLUMN_ID_VARIABLE_NAME.equals(columnIds[j])) {
-							updateLabel(updates[i], j);
+							updateLabel(update, j);
 						} else {
-							updates[i].setLabel(IInternalDebugCoreConstants.EMPTY_STRING, j);
+							update.setLabel(IInternalDebugCoreConstants.EMPTY_STRING, j);
 						}
 					}
 				}
 
-				updates[i].done();
+				update.done();
 			}
 		}
 

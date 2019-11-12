@@ -139,9 +139,7 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 	 */
 	private void loadDebugModelContextBindings() {
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), ID_DEBUG_MODEL_CONTEXT_BINDINGS);
-		IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
-		for (int i = 0; i < configurationElements.length; i++) {
-			IConfigurationElement element = configurationElements[i];
+		for (IConfigurationElement element : extensionPoint.getConfigurationElements()) {
 			String modelIdentifier = element.getAttribute(ATTR_DEBUG_MODEL_ID);
 			String contextId = element.getAttribute(ATTR_CONTEXT_ID);
 			synchronized (this) {
@@ -215,16 +213,15 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 				alreadyEnabled = new HashSet<>();
 				fLaunchToModelIds.put(launch, alreadyEnabled);
 			}
-			for (int i = 0; i < modelIds.length; i++) {
-				String id = modelIds[i];
+			for (String id : modelIds) {
 				if (!alreadyEnabled.contains(id)) {
 					alreadyEnabled.add(id);
 					toEnable.add(id);
 				}
 			}
 		}
-		for (int i = 0; i < toEnable.size(); i++) {
-			activateModel(toEnable.get(i), launch);
+		for (String element : toEnable) {
+			activateModel(element, launch);
 		}
 
 		enableActivitiesFor(modelIds);
@@ -338,8 +335,7 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 	@Override
 	public void launchesTerminated(ILaunch[] launches) {
 		// disable activated contexts
-		for (int i = 0; i < launches.length; i++) {
-			ILaunch launch = launches[i];
+		for (ILaunch launch : launches) {
 			List<IContextActivation> activations;
 			synchronized(this) {
 				activations = fLanuchToContextActivations.remove(launch);
@@ -385,8 +381,7 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 		List<String> workbenchContexts = new ArrayList<>();
 		String[] modelIds = getDebugModelIds(target);
 		if (modelIds != null) {
-			for (int i = 0; i < modelIds.length; i++) {
-				String modelId = modelIds[i];
+			for (String modelId : modelIds) {
 				synchronized (this) {
 					List<String> contextIds = fModelToContextIds.get(modelId);
 					if (contextIds != null) {
@@ -410,8 +405,7 @@ public class DebugModelContextBindingManager implements IDebugContextListener, I
 	 */
 	private void enableActivitiesFor(String[] modelIds) {
 		Set<String> activities = null;
-		for (int i = 0; i < modelIds.length; i++) {
-			String id = modelIds[i];
+		for (String id : modelIds) {
 			if (!fModelsEnabledForActivities.contains(id)) {
 				Set<String> ids = fModelToActivities.get(id);
 				if (ids == null) {

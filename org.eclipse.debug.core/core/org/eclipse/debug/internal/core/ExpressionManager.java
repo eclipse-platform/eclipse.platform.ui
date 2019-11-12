@@ -107,9 +107,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 	 */
 	private void loadWatchExpressionDelegates() {
 		IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(DebugPlugin.getUniqueIdentifier(), "watchExpressionDelegates"); //$NON-NLS-1$
-		IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
-		for (int i = 0; i < configurationElements.length; i++) {
-			IConfigurationElement element = configurationElements[i];
+		for (IConfigurationElement element : extensionPoint.getConfigurationElements()) {
 			if (element.getName().equals("watchExpressionDelegate")) { //$NON-NLS-1$
 				String debugModel = element.getAttribute("debugModel"); //$NON-NLS-1$
 				if (debugModel == null || debugModel.length() == 0) {
@@ -236,8 +234,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 		Document document= LaunchManager.getDocument();
 		Element rootElement= document.createElement(WATCH_EXPRESSIONS_TAG);
 		document.appendChild(rootElement);
-		for (int i = 0; i < expressions.length; i++) {
-			IExpression expression= expressions[i];
+		for (IExpression expression : expressions) {
 			if (expression instanceof IWatchExpression) {
 				Element element= document.createElement(EXPRESSION_TAG);
 				element.setAttribute(TEXT_TAG, expression.getExpressionText());
@@ -275,8 +272,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 			if (fExpressions == null) {
 				fExpressions = new Vector<>(expressions.length);
 			}
-			for (int i = 0; i < expressions.length; i++) {
-				IExpression expression = expressions[i];
+			for (IExpression expression : expressions) {
 				if (fExpressions.indexOf(expression) == -1) {
 					added.add(expression);
 					fExpressions.add(expression);
@@ -336,8 +332,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 					insertionIndex++;
 				}
 				inserted = new ArrayList<>(expressions.length);
-				for (int i = 0; i < expressions.length; i++) {
-					IExpression expression = expressions[i];
+				for (IExpression expression : expressions) {
 					if (fExpressions.indexOf(expression) == -1) {
 						//Insert in the same order as the array is passed
 						fExpressions.add(insertionIndex+inserted.size(), expression);
@@ -387,10 +382,10 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 				insertionIndex++;
 			}
 
-			for (int i = 0; i < expressions.length; i++) {
-				int removeIndex = fExpressions.indexOf(expressions[i]);
+			for (IExpression expression : expressions) {
+				int removeIndex = fExpressions.indexOf(expression);
 				if (removeIndex >= 0){
-					movedExpressions.add(expressions[i]);
+					movedExpressions.add(expression);
 					if (removeIndex < insertionIndex){
 						insertionIndex--;
 					}
@@ -421,8 +416,7 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 			if (fExpressions == null) {
 				return;
 			}
-			for (int i = 0; i < expressions.length; i++) {
-				IExpression expression = expressions[i];
+			for (IExpression expression : expressions) {
 				if (fExpressions.remove(expression)) {
 					removed.add(expression);
 				}
@@ -566,8 +560,8 @@ public class ExpressionManager extends PlatformObject implements IExpressionMana
 				fType = update;
 				for (IExpressionListener iExpressionListener : fListeners) {
 					fListener = iExpressionListener;
-					for (int j = 0; j < expressions.length; j++) {
-						fExpression = expressions[j];
+					for (IExpression expression : expressions) {
+						fExpression = expression;
 						SafeRunner.run(this);
 					}
 				}

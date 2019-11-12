@@ -67,9 +67,8 @@ public class DebugModelPropertyTester extends PropertyTester {
 						getAdapter(receiver, IDebugModelProvider.class);
 			}
 			if (modelProvider != null) {
-				String[] ids = modelProvider.getModelIdentifiers();
-				for (int i = 0; i < ids.length; i++) {
-					if (ids[i].equals(expectedValue)) {
+				for (String id : modelProvider.getModelIdentifiers()) {
+					if (id.equals(expectedValue)) {
 						return true;
 					}
 				}

@@ -82,14 +82,10 @@ public class ConsoleTerminateAction extends Action implements IUpdate {
 	 */
 	private List<ITerminate> collectTargets(IProcess process) {
 		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
-		ILaunch[] launches = launchManager.getLaunches();
 		List<ITerminate> targets = new ArrayList<>();
-		for (int i = 0; i < launches.length; i++) {
-			ILaunch launch = launches[i];
-			IProcess[] processes = launch.getProcesses();
-			for (int j = 0; j < processes.length; j++) {
-				IProcess process2 = processes[j];
-				if (process2.equals(process)) {
+		for (ILaunch launch : launchManager.getLaunches()) {
+			for (IProcess proc : launch.getProcesses()) {
+				if (proc.equals(process)) {
 					IDebugTarget[] debugTargets = launch.getDebugTargets();
 					Collections.addAll(targets, debugTargets);
 					return targets; // all possible targets have been terminated for the launch.

@@ -122,9 +122,8 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 
 		//check sub-folders
 		if ((isFindDuplicates() && fSubfolders) || (sources.isEmpty() && fSubfolders)) {
-			ISourceContainer[] containers = getSourceContainers();
-			for (int i=0; i < containers.length; i++) {
-				Object[] objects = containers[i].findSourceElements(name);
+			for (ISourceContainer container : getSourceContainers()) {
+				Object[] objects = container.findSourceElements(name);
 				if (objects == null || objects.length == 0) {
 					continue;
 				}
@@ -172,15 +171,13 @@ public abstract class ContainerSourceContainer extends CompositeSourceContainer 
 		if(fSubfolders) {
 			IResource[] resources = getContainer().members();
 			List<ISourceContainer> list = new ArrayList<>(resources.length);
-			for (int i = 0; i < resources.length; i++) {
-				IResource resource = resources[i];
+			for (IResource resource : resources) {
 				if (resource.getType() == IResource.FOLDER) {
 					list.add(new FolderSourceContainer((IFolder)resource, fSubfolders));
 				}
 			}
 			ISourceContainer[] containers = list.toArray(new ISourceContainer[list.size()]);
-			for (int i = 0; i < containers.length; i++) {
-				ISourceContainer container = containers[i];
+			for (ISourceContainer container : containers) {
 				container.init(getDirector());
 			}
 			return containers;

@@ -579,9 +579,8 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 	 * @return whether the new name should be used or not
 	 */
 	private boolean canRenameVariable(String newVariableName) {
-		TableItem[] items = environmentTable.getTable().getItems();
-		for (int i = 0; i < items.length; i++) {
-			EnvironmentVariable existingVariable = (EnvironmentVariable) items[i].getData();
+		for (TableItem item : environmentTable.getTable().getItems()) {
+			EnvironmentVariable existingVariable = (EnvironmentVariable) item.getData();
 			if (existingVariable.getName().equals(newVariableName)) {
 
 				boolean overWrite = MessageDialog.openQuestion(getShell(),

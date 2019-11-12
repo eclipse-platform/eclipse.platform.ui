@@ -85,26 +85,26 @@ public class ExpressionDropAdapter extends ViewerDropAdapter {
 		fDropType = DROP_TYPE_DEFAULT;
 		event.detail = DND.DROP_NONE;
 
-		for (int i = 0; i < event.dataTypes.length; i++) {
-			if (LocalSelectionTransfer.getTransfer().isSupportedType(event.dataTypes[i])) {
+		for (TransferData dataType : event.dataTypes) {
+			if (LocalSelectionTransfer.getTransfer().isSupportedType(dataType)) {
 				if (isExpressionDrop()){
-					event.currentDataType = event.dataTypes[i];
+					event.currentDataType = dataType;
 					event.detail = DND.DROP_MOVE;
 					fDropType = DROP_TYPE_EXPRESSION;
 					break;
 				} else if (isVariableDrop()){
-					event.currentDataType = event.dataTypes[i];
+					event.currentDataType = dataType;
 					event.detail = DND.DROP_COPY;
 					fDropType = DROP_TYPE_VARIABLE;
 					break;
 				} else if (isWatchAdaptableElementDrop()){
-					event.currentDataType = event.dataTypes[i];
+					event.currentDataType = dataType;
 					event.detail = DND.DROP_COPY;
 					fDropType = DROP_TYPE_WATCH_ADAPTABLE_ELEMENT;
 					break;
 				}
-			} else if (TextTransfer.getInstance().isSupportedType(event.dataTypes[i])) {
-				event.currentDataType = event.dataTypes[i];
+			} else if (TextTransfer.getInstance().isSupportedType(dataType)) {
+				event.currentDataType = dataType;
 				event.detail = DND.DROP_COPY;
 				fDropType = DROP_TYPE_DEFAULT;
 				break;

@@ -18,7 +18,6 @@ package org.eclipse.debug.internal.ui.contexts;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -251,10 +250,9 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 				}
 			}
 
-			outer: for (Iterator<String> itr = fListenersByPartId.keySet().iterator(); itr.hasNext();) {
-				String listenerPartId = itr.next();
-				for (int i = 0; i < fProviders.size(); i++) {
-					String providerPartId = getCombinedPartId(fProviders.get(i).getPart());
+			outer: for (String listenerPartId : fListenersByPartId.keySet()) {
+				for (IDebugContextProvider provider : fProviders) {
+					String providerPartId = getCombinedPartId(provider.getPart());
 					if ((listenerPartId == null && providerPartId == null) ||
 						(listenerPartId != null && listenerPartId.equals(providerPartId)))
 					{
@@ -285,10 +283,9 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 				retVal = new ListenerList<>();
 			}
 
-			outer: for (Iterator<String> itr = fPostListenersByPartId.keySet().iterator(); itr.hasNext();) {
-				String listenerPartId = itr.next();
-				for (int i = 0; i < fProviders.size(); i++) {
-					String providerPartId = getCombinedPartId(fProviders.get(i).getPart());
+			outer: for (String listenerPartId : fPostListenersByPartId.keySet()) {
+				for (IDebugContextProvider provider : fProviders) {
+					String providerPartId = getCombinedPartId(provider.getPart());
 					if ((listenerPartId == null && providerPartId == null) || (listenerPartId != null && listenerPartId.equals(providerPartId))) {
 						continue outer;
 					}

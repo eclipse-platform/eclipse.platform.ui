@@ -1601,8 +1601,7 @@ public class DebugPlugin extends Plugin {
 
 			boolean containsSpace = false;
 			char[] characters = arguments[i].toCharArray();
-			for (int j = 0; j < characters.length; j++) {
-				char ch = characters[j];
+			for (char ch : characters) {
 				if (ch == ' ' || ch == '\t') {
 					containsSpace = true;
 					buf.append('"');
