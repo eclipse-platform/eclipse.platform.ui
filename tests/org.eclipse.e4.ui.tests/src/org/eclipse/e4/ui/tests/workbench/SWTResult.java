@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,11 +22,11 @@ import java.util.Arrays;
  * UI model.
  */
 public class SWTResult {
-	public Class clazz;
+	public Class<?> clazz;
 	public String text;
-	public ArrayList kids = new ArrayList();
+	public ArrayList<SWTResult> kids = new ArrayList<>();
 
-	public SWTResult(Class theClass, String theText, SWTResult[] children) {
+	public SWTResult(Class<?> theClass, String theText, SWTResult[] children) {
 		clazz = theClass;
 		text = theText;
 		if (children != null) {
