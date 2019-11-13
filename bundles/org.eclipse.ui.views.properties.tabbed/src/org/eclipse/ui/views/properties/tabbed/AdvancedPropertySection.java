@@ -36,10 +36,6 @@ public class AdvancedPropertySection
 	 */
 	protected PropertySheetPage page;
 
-	/**
-	 * @see org.eclipse.ui.views.properties.tabbed.ISection#createControls(org.eclipse.swt.widgets.Composite,
-	 *      org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage)
-	 */
 	@Override
 	public void createControls(Composite parent,
 			final TabbedPropertySheetPage atabbedPropertySheetPage) {
@@ -65,19 +61,12 @@ public class AdvancedPropertySection
 		});
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.tabbed.ISection#setInput(org.eclipse.ui.IWorkbenchPart,
-	 *      org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void setInput(IWorkbenchPart part, ISelection selection) {
 		super.setInput(part, selection);
 		page.selectionChanged(part, selection);
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.tabbed.ISection#dispose()
-	 */
 	@Override
 	public void dispose() {
 		super.dispose();
@@ -89,17 +78,11 @@ public class AdvancedPropertySection
 
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.tabbed.ISection#refresh()
-	 */
 	@Override
 	public void refresh() {
 		page.refresh();
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.tabbed.ISection#shouldUseExtraSpace()
-	 */
 	@Override
 	public boolean shouldUseExtraSpace() {
 		return true;

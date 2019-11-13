@@ -485,9 +485,6 @@ public class TabbedPropertySheetPage
 		}
 	}
 
-	/**
-	 * @see org.eclipse.ui.part.IPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 
@@ -516,17 +513,11 @@ public class TabbedPropertySheetPage
 		currentSelection = null;
 	}
 
-	/**
-	 * @see org.eclipse.ui.part.IPage#getControl()
-	 */
 	@Override
 	public Control getControl() {
 		return tabbedPropertyComposite;
 	}
 
-	/**
-	 * @see org.eclipse.ui.part.IPage#setActionBars(org.eclipse.ui.IActionBars)
-	 */
 	@Override
 	public void setActionBars(IActionBars actionBars) {
 		// Override the undo and redo global action handlers
@@ -554,18 +545,11 @@ public class TabbedPropertySheetPage
 		}
 	}
 
-	/**
-	 * @see org.eclipse.ui.part.IPage#setFocus()
-	 */
 	@Override
 	public void setFocus() {
 		getControl().setFocus();
 	}
 
-	/**
-	 * @see org.eclipse.ui.ISelectionListener#selectionChanged(org.eclipse.ui.IWorkbenchPart,
-	 *      org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void selectionChanged(IWorkbenchPart part, ISelection selection) {
 		setInput(part, selection);
@@ -867,9 +851,6 @@ public class TabbedPropertySheetPage
 		}
 	}
 
-	/**
-	 * @see org.eclipse.jface.viewers.ILabelProviderListener#labelProviderChanged(org.eclipse.jface.viewers.LabelProviderChangedEvent)
-	 */
 	@Override
 	public void labelProviderChanged(LabelProviderChangedEvent event) {
 		refreshTitleBar();

@@ -73,69 +73,43 @@ public abstract class AbstractPropertySection
 		return part;
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.tabbed.ISection#createControls(org.eclipse.swt.widgets.Composite,
-	 *      org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage)
-	 */
 	@Override
 	public void createControls(Composite parent,
 			TabbedPropertySheetPage aTabbedPropertySheetPage) {
 		this.tabbedPropertySheetPage = aTabbedPropertySheetPage;
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.tabbed.ISection#setInput(org.eclipse.ui.IWorkbenchPart,
-	 *      org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public void setInput(IWorkbenchPart part, ISelection selection) {
 		this.selection = selection;
 		this.part = part;
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.tabbed.ISection#aboutToBeShown()
-	 */
 	@Override
 	public void aboutToBeShown() {
 		/* empty default implementation */
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.tabbed.ISection#aboutToBeHidden()
-	 */
 	@Override
 	public void aboutToBeHidden() {
 		/* empty default implementation */
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.tabbed.ISection#dispose()
-	 */
 	@Override
 	public void dispose() {
 		/* empty default implementation */
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.tabbed.ISection#getMinimumHeight()
-	 */
 	@Override
 	public int getMinimumHeight() {
 		return SWT.DEFAULT;
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.tabbed.ISection#shouldUseExtraSpace()
-	 */
 	@Override
 	public boolean shouldUseExtraSpace() {
 		return false;
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.tabbed.ISection#refresh()
-	 */
 	@Override
 	public void refresh() {
 		/* empty default implementation */

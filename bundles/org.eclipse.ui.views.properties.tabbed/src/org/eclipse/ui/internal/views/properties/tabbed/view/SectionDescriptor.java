@@ -126,17 +126,11 @@ public class SectionDescriptor extends AbstractSectionDescriptor {
 		Platform.getLog(bundle).log(status);
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.tabbed.ISectionDescriptor#getId()
-	 */
 	@Override
 	public String getId() {
 		return id;
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.tabbed.ISectionDescriptor#getFilter()
-	 */
 	@Override
 	public IFilter getFilter() {
 		if (filter == null) {
@@ -164,17 +158,11 @@ public class SectionDescriptor extends AbstractSectionDescriptor {
 		return enablesFor;
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.tabbed.ISectionDescriptor#getTargetTab()
-	 */
 	@Override
 	public String getTargetTab() {
 		return targetTab;
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.tabbed.ISectionDescriptor#getAfterSection()
-	 */
 	@Override
 	public String getAfterSection() {
 		if (afterSection == null) {

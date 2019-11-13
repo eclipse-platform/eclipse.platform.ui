@@ -52,34 +52,21 @@ public abstract class AbstractSectionDescriptor implements ISectionDescriptor {
 		classFilter = new TabbedPropertyRegistryClassSectionFilter(typeMapper);
 	}
 
-	/*
-	 * @see org.eclipse.ui.views.properties.tabbed.ISectionDescriptor#appliesTo(org.eclipse.ui.IWorkbenchPart,
-	 *      org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public boolean appliesTo(IWorkbenchPart part, ISelection selection) {
 		return classFilter.appliesToSelection(this, selection);
 	}
 
-	/*
-	 * @see org.eclipse.ui.views.properties.tabbed.ISectionDescriptor#getAfterSection()
-	 */
 	@Override
 	public String getAfterSection() {
 		return TOP;
 	}
 
-	/*
-	 * @see org.eclipse.ui.views.properties.tabbed.ISectionDescriptor#getEnablesFor()
-	 */
 	@Override
 	public int getEnablesFor() {
 		return ENABLES_FOR_ANY;
 	}
 
-	/*
-	 * @see org.eclipse.ui.views.properties.tabbed.ISectionDescriptor#getFilter()
-	 */
 	@Override
 	public IFilter getFilter() {
 		return null;

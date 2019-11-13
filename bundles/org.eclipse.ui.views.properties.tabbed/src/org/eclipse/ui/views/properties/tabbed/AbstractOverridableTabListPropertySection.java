@@ -24,19 +24,11 @@ public class AbstractOverridableTabListPropertySection
 	extends AbstractPropertySection
 	implements IOverridableTabList {
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.views.properties.tabbed.IOverridableTabList#getTabs()
-	 */
 	@Override
 	public ITabItem[] getTabs() {
 		return new ITabItem[] {};
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see org.eclipse.ui.views.properties.tabbed.IOverridableTabList#selectTab(int)
-	 */
 	@Override
 	public void selectTab(int tab) {
 		/* no default implementation */
