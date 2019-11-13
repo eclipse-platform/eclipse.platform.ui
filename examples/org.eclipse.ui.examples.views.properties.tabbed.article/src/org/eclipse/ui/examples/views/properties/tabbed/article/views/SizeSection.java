@@ -53,6 +53,7 @@ public class SizeSection
 			widthText.getText());
 	};
 
+	@Override
 	public void setInput(IWorkbenchPart part, ISelection selection) {
 		super.setInput(part, selection);
 		Assert.isTrue(selection instanceof IStructuredSelection);
@@ -61,10 +62,7 @@ public class SizeSection
 		this.buttonElement = (ButtonElement) input;
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.tabbed.ITabbedPropertySection#createControls(org.eclipse.swt.widgets.Composite,
-	 *      org.eclipse.ui.views.properties.tabbed.TabbedPropertySheetPage)
-	 */
+	@Override
 	public void createControls(Composite parent,
 			TabbedPropertySheetPage tabbedPropertySheetPage) {
 		super.createControls(parent, tabbedPropertySheetPage);
@@ -111,9 +109,7 @@ public class SizeSection
 		widthText.addModifyListener(listener);
 	}
 
-	/*
-	 * @see org.eclipse.ui.views.properties.tabbed.view.ITabbedPropertySection#refresh()
-	 */
+	@Override
 	public void refresh() {
 		heightText.removeModifyListener(listener);
 		widthText.removeModifyListener(listener);

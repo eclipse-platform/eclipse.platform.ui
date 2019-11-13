@@ -47,6 +47,7 @@ public class LabelSection
 		properties.setPropertyValue(ButtonElementProperties.PROPERTY_TEXT, labelText.getText());
 	};
 
+	@Override
 	public void setInput(IWorkbenchPart part, ISelection selection) {
 		super.setInput(part, selection);
 		Assert.isTrue(selection instanceof IStructuredSelection);
@@ -55,6 +56,7 @@ public class LabelSection
 		this.buttonElement = (ButtonElement) input;
 	}
 
+	@Override
 	public void createControls(Composite parent,
 			TabbedPropertySheetPage aTabbedPropertySheetPage) {
 		super.createControls(parent, aTabbedPropertySheetPage);
@@ -80,6 +82,7 @@ public class LabelSection
 		labelLabel.setLayoutData(data);
 	}
 
+	@Override
 	public void refresh() {
 		labelText.removeModifyListener(listener);
 		ButtonElementProperties properties = (ButtonElementProperties) Adapters.adapt(buttonElement, IPropertySource.class);

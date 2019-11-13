@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 20119 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -38,6 +38,7 @@ public class CheckBoxPropertyDescriptor
 		super(id, displayName);
 	}
 
+	@Override
 	public CellEditor createPropertyEditor(Composite parent) {
 		CellEditor editor = new CheckboxCellEditor(parent);
 		if (getValidator() != null)

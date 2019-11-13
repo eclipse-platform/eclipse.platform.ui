@@ -49,34 +49,26 @@ public class ButtonElement
 		this.ctl = initBtn;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IAdaptable
-	 */
-	public Object getAdapter(Class adapter) {
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == IWorkbenchAdapter.class)
-			return this;
+			return adapter.cast(this);
 		if (adapter == IPropertySource.class)
-			return new ButtonElementProperties(this);
+			return adapter.cast(new ButtonElementProperties(this));
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IWorkbenchAdapter
-	 */
+	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IWorkbenchAdapter
-	 */
+	@Override
 	public String getLabel(Object o) {
 		return headingName;
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on IWorkbenchAdapter
-	 */
+	@Override
 	public Object getParent(Object o) {
 		return null;
 	}
@@ -90,9 +82,7 @@ public class ButtonElement
 		return ctl;
 	}
 
-	/**
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(Object)
-	 */
+	@Override
 	public Object[] getChildren(Object o) {
 		return null;
 	}

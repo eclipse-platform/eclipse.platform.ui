@@ -79,14 +79,17 @@ public class SizePropertySource
 		ctl.setSize(point);
 	}
 
+	@Override
 	public Object getEditableValue() {
 		return this;
 	}
 
+	@Override
 	public IPropertyDescriptor[] getPropertyDescriptors() {
 		return descriptors;
 	}
 
+	@Override
 	public Object getPropertyValue(Object propName) {
 		if (ID_WIDTH.equals(propName)) {
 			return new String(Integer.valueOf(point.x).toString());
@@ -106,19 +109,19 @@ public class SizePropertySource
 		return new Point(point.x, point.y);
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.IPropertySource#isPropertySet(Object)
-	 */
+	@Override
 	public boolean isPropertySet(Object propName) {
 		if (ID_WIDTH.equals(propName) || ID_HEIGHT.equals(propName))
 			return true;
 		return false;
 	}
 
+	@Override
 	public void resetPropertyValue(Object propName) {
 		//
 	}
 
+	@Override
 	public void setPropertyValue(Object propName, Object value) {
 		int newInt;
 		try {

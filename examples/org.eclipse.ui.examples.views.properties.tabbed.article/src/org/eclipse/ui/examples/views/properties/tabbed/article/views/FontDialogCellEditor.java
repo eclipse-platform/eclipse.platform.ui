@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -40,9 +40,7 @@ public class FontDialogCellEditor
 		super(parent);
 	}
 
-	/**
-	 * @see org.eclipse.jface.viewers.DialogCellEditor#openDialogBox(Control)
-	 */
+	@Override
 	protected Object openDialogBox(Control cellEditorWindow) {
 		FontDialog ftDialog = new FontDialog(PlatformUI.getWorkbench()
 			.getActiveWorkbenchWindow().getShell());

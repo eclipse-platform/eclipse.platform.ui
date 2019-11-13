@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -53,6 +53,7 @@ public class SampleView
 	 * This is a callback that will allow us to create the viewer and initialize
 	 * it.
 	 */
+	@Override
 	public void createPartControl(Composite parent) {
 		// create all the GUI controls
 		// create two groups
@@ -67,7 +68,7 @@ public class SampleView
 		btn.setText("Hello");//$NON-NLS-1$
 
 		// fill in the element
-		ArrayList ctlList = new ArrayList();
+		ArrayList<ButtonElement> ctlList = new ArrayList<>();
 		ButtonElement btnEl = new ButtonElement(btn, "Button");//$NON-NLS-1$
 		ctlList.add(btnEl);
 
@@ -81,26 +82,27 @@ public class SampleView
 	/**
 	 * Passing the focus request to the viewer's control.
 	 */
+	@Override
 	public void setFocus() {
 		viewer.getControl().setFocus();
 	}
 
-	/**
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(Class)
-	 */
-	public Object getAdapter(Class adapter) {
+	@Override
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == IPropertySheetPage.class)
-			return new TabbedPropertySheetPage(this);
+			return adapter.cast(new TabbedPropertySheetPage(this));
 		return super.getAdapter(adapter);
 	}
 
 	/**
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
+	@Override
 	public void dispose() {
 		super.dispose();
 	}
 
+	@Override
 	public String getContributorId() {
 		return getSite().getId();
 	}

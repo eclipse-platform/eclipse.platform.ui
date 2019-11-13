@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -37,9 +37,7 @@ public class FontPropertyDescriptor
 		super(id, displayName);
 	}
 
-	/**
-	 * @see org.eclipse.ui.views.properties.IPropertyDescriptor#createPropertyEditor(Composite)
-	 */
+	@Override
 	public CellEditor createPropertyEditor(Composite parent) {
 		CellEditor editor = new FontDialogCellEditor(parent);
 		if (getValidator() != null)
