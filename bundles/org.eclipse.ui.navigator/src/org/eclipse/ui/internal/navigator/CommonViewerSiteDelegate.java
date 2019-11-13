@@ -69,7 +69,7 @@ public class CommonViewerSiteDelegate implements ICommonViewerSite {
 	}
 
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		return Platform.getAdapterManager().getAdapter(this, adapter);
 	}
 

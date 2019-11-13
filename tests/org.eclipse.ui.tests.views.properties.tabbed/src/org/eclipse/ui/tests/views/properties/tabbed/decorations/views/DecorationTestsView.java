@@ -23,12 +23,12 @@ public class DecorationTestsView extends TestsView {
 	public static final String DECORATION_TESTS_VIEW_ID = "org.eclipse.ui.tests.views.properties.tabbed.decorations.views.DecorationTestsView"; //$NON-NLS-1$
 
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == IPropertySheetPage.class) {
 			if (tabbedPropertySheetPage == null) {
 				tabbedPropertySheetPage = new TabbedPropertySheetPageWithDecorations(this);
 			}
-			return tabbedPropertySheetPage;
+			return adapter.cast(tabbedPropertySheetPage);
 		}
 		return super.getAdapter(adapter);
 	}

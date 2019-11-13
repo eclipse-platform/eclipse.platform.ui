@@ -67,7 +67,7 @@ public class OverrideTestsView extends ViewPart implements
 	}
 
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (IPropertySheetPage.class.equals(adapter)) {
 			if (TestsPerspective.TESTS_PERSPECTIVE_ID.equals(getSite()
 					.getWorkbenchWindow().getActivePage().getPerspective()
@@ -75,9 +75,9 @@ public class OverrideTestsView extends ViewPart implements
 				if (tabbedPropertySheetPage == null) {
 					tabbedPropertySheetPage = new TabbedPropertySheetPage(this);
 				}
-				return tabbedPropertySheetPage;
+				return adapter.cast(tabbedPropertySheetPage);
 			}
-			return new OverrideTestsTabFolderPropertySheetPage();
+			return adapter.cast(new OverrideTestsTabFolderPropertySheetPage());
 		}
 		return super.getAdapter(adapter);
 	}

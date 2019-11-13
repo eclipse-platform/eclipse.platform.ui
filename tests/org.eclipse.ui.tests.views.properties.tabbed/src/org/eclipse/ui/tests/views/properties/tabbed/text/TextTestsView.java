@@ -72,12 +72,12 @@ public class TextTestsView extends ViewPart implements
 	}
 
 	@Override
-	public Object getAdapter(Class adapter) {
+	public <T> T getAdapter(Class<T> adapter) {
 		if (adapter == IPropertySheetPage.class) {
 			if (tabbedPropertySheetPage == null) {
 				tabbedPropertySheetPage = new TabbedPropertySheetPage(this);
 			}
-			return tabbedPropertySheetPage;
+			return adapter.cast(tabbedPropertySheetPage);
 		}
 		return super.getAdapter(adapter);
 	}
