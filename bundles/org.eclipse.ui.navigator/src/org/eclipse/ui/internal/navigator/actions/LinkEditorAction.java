@@ -45,8 +45,7 @@ import org.eclipse.ui.progress.UIJob;
  *
  * @since 3.2
  */
-public class LinkEditorAction extends Action implements
-		ISelectionChangedListener, IPropertyListener {
+public class LinkEditorAction extends Action implements ISelectionChangedListener, IPropertyListener {
 
 	private IPartListener partListener;
 
@@ -59,8 +58,7 @@ public class LinkEditorAction extends Action implements
 	private boolean ignoreSelectionChanged;
 	private boolean ignoreEditorActivation;
 
-	private UIJob activateEditorJob = new UIJob(
-			CommonNavigatorMessages.Link_With_Editor_Job_) {
+	private UIJob activateEditorJob = new UIJob(CommonNavigatorMessages.Link_With_Editor_Job_) {
 		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 
@@ -69,15 +67,13 @@ public class LinkEditorAction extends Action implements
 				if (selection != null && !selection.isEmpty()) {
 
 					if (selection.size() == 1) {
-						final ILinkHelper[] helpers = linkService
-								.getLinkHelpersFor(selection.getFirstElement());
+						ILinkHelper[] helpers = linkService.getLinkHelpersFor(selection.getFirstElement());
 						if (helpers.length > 0) {
 							ignoreEditorActivation = true;
 							SafeRunner.run(new NavigatorSafeRunnable() {
 								@Override
 								public void run() throws Exception {
-									helpers[0].activateEditor(commonNavigator.getSite()
-											.getPage(), selection);
+									helpers[0].activateEditor(commonNavigator.getSite().getPage(), selection);
 								}
 							});
 							ignoreEditorActivation = false;
@@ -89,8 +85,7 @@ public class LinkEditorAction extends Action implements
 		}
 	};
 
-	private UIJob updateSelectionJob = new UIJob(
-			CommonNavigatorMessages.Link_With_Editor_Job_) {
+	private UIJob updateSelectionJob = new UIJob(CommonNavigatorMessages.Link_With_Editor_Job_) {
 		@Override
 		public IStatus runInUIThread(IProgressMonitor monitor) {
 
@@ -141,9 +136,6 @@ public class LinkEditorAction extends Action implements
 		init();
 	}
 
-	/**
-	 * @see org.eclipse.ui.IViewActionDelegate#init(org.eclipse.ui.IViewPart)
-	 */
 	protected void init() {
 		partListener = new IPartListener() {
 
