@@ -400,12 +400,7 @@ public class EventLoopMonitorThreadManualTests {
 	}
 
 	private void killMonitorThread(final Thread thread, Display display) throws Exception {
-		display.syncExec(new Runnable() {
-			@Override
-			public void run() {
-				shutdownThread(thread);
-			}
-		});
+		display.syncExec(() -> shutdownThread(thread));
 
 		thread.join();
 	}
@@ -516,19 +511,11 @@ public class EventLoopMonitorThreadManualTests {
 
 	protected void startMonitoring(final Display display, final Thread monitorThread,
 			CountDownLatch eventsRegistered) throws Exception {
-		display.syncExec(new Runnable() {
-			@Override
-			public void run() {
-				monitorThread.start();
+		display.syncExec(() -> {
+			monitorThread.start();
 
-				// If we're still running when display gets disposed, shutdown the thread.
-				display.disposeExec(new Runnable() {
-					@Override
-					public void run() {
-						shutdownThread(monitorThread);
-					}
-				});
-			}
+			// If we're still running when display gets disposed, shutdown the thread.
+			display.disposeExec(() -> shutdownThread(monitorThread));
 		});
 
 		for (boolean eventsReady = false; !eventsReady;) {
@@ -551,12 +538,7 @@ public class EventLoopMonitorThreadManualTests {
 			System.out.println("Starting calibration...");
 		}
 		final double[] tWork = {0};
-		display.syncExec(new Runnable() {
-			@Override
-			public void run() {
-				tWork[0] = measureAvgTimePerWorkItem();
-			}
-		});
+		display.syncExec(() -> tWork[0] = measureAvgTimePerWorkItem());
 		if (PRINT_TO_CONSOLE) {
 			System.out.println(String.format("Calibration finished. tWorkUnit = %fns", tWork[0]));
 		}

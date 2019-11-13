@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Lars Vogel and others.
+ * Copyright (c) 2016, 2019 Lars Vogel and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -216,14 +216,11 @@ public class SaveAllDirtyPartsAddon {
 		final Display display = getWorkbenchDisplay();
 		if (display != null && !display.isDisposed()) {
 			try {
-				display.asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						removeIdleListenerFromWorkbenchDisplay();
-						// save jov could have been rescheduled by idleListener
-						// before it has been removed
-						autoSaveJob.cancel();
-					}
+				display.asyncExec(() -> {
+					removeIdleListenerFromWorkbenchDisplay();
+					// save jov could have been rescheduled by idleListener
+					// before it has been removed
+					autoSaveJob.cancel();
 				});
 			} catch (SWTException ex) {
 				// ignore

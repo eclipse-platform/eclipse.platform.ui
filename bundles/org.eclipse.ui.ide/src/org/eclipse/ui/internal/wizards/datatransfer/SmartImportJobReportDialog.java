@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 Red Hat Inc., and others
+ * Copyright (c) 2014, 2019 Red Hat Inc., and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -195,18 +195,15 @@ public class SmartImportJobReportDialog extends ProgressMonitorFocusJobDialog {
 				if (nestedProjectsTable.getControl().isDisposed()) {
 					return;
 				}
-				nestedProjectsTable.getControl().getDisplay().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						if (nestedProjectsTable.getControl().isDisposed()) {
-							return;
-						}
-						nestedProjectsTable.refresh();
-						nestedProjectsTable.getTable().update();
-						nestedProjectsTable.getTable().redraw();
-						nestedProjectsLabel.setText(NLS.bind(DataTransferMessages.SmartImportReport_importedProjects,
-								job.getConfiguredProjects().size()));
+				nestedProjectsTable.getControl().getDisplay().asyncExec(() -> {
+					if (nestedProjectsTable.getControl().isDisposed()) {
+						return;
 					}
+					nestedProjectsTable.refresh();
+					nestedProjectsTable.getTable().update();
+					nestedProjectsTable.getTable().redraw();
+					nestedProjectsLabel.setText(NLS.bind(DataTransferMessages.SmartImportReport_importedProjects,
+							job.getConfiguredProjects().size()));
 				});
 			}
 
@@ -215,16 +212,13 @@ public class SmartImportJobReportDialog extends ProgressMonitorFocusJobDialog {
 				if (nestedProjectsTable.getControl().isDisposed()) {
 					return;
 				}
-				nestedProjectsTable.getControl().getDisplay().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						if (nestedProjectsTable.getControl().isDisposed()) {
-							return;
-						}
-						nestedProjectsTable.refresh();
-						nestedProjectsTable.getTable().update();
-						nestedProjectsTable.getTable().redraw();
+				nestedProjectsTable.getControl().getDisplay().asyncExec(() -> {
+					if (nestedProjectsTable.getControl().isDisposed()) {
+						return;
 					}
+					nestedProjectsTable.refresh();
+					nestedProjectsTable.getTable().update();
+					nestedProjectsTable.getTable().redraw();
 				});
 			}
 
@@ -233,23 +227,20 @@ public class SmartImportJobReportDialog extends ProgressMonitorFocusJobDialog {
 				if (errorsTable.getControl().isDisposed()) {
 					return;
 				}
-				errorsTable.getControl().getDisplay().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						if (errorsTable.getControl().isDisposed()) {
-							return;
-						}
-						GridData gridData = (GridData) errorsTable.getControl().getLayoutData();
-						if (gridData.exclude) {
-							gridData.exclude = false;
-							((GridData) errorsLabel.getLayoutData()).exclude = false;
-						}
-						errorsTable.refresh();
-						errorsTable.getTable().update();
-						errorsLabel.setText(
-								NLS.bind(DataTransferMessages.SmartImportReport_importErrors, job.getErrors().size()));
-						res.layout(true);
+				errorsTable.getControl().getDisplay().asyncExec(() -> {
+					if (errorsTable.getControl().isDisposed()) {
+						return;
 					}
+					GridData gridData = (GridData) errorsTable.getControl().getLayoutData();
+					if (gridData.exclude) {
+						gridData.exclude = false;
+						((GridData) errorsLabel.getLayoutData()).exclude = false;
+					}
+					errorsTable.refresh();
+					errorsTable.getTable().update();
+					errorsLabel.setText(
+							NLS.bind(DataTransferMessages.SmartImportReport_importErrors, job.getErrors().size()));
+					res.layout(true);
 				});
 			}
 		};

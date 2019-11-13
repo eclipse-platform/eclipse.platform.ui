@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -872,19 +872,8 @@ public class CopyFilesAndFoldersOperation {
 	 */
 	private void reportFileInfoNotFound(final String fileName) {
 
-		messageShell.getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				ErrorDialog
-						.openError(
-								messageShell,
-								getProblemsTitle(),
-								NLS
-										.bind(
-												IDEWorkbenchMessages.CopyFilesAndFoldersOperation_infoNotFound,
-												fileName), null);
-			}
-		});
+		messageShell.getDisplay().syncExec(() -> ErrorDialog.openError(messageShell, getProblemsTitle(),
+				NLS.bind(IDEWorkbenchMessages.CopyFilesAndFoldersOperation_infoNotFound, fileName), null));
 	}
 
 	/**
@@ -945,13 +934,7 @@ public class CopyFilesAndFoldersOperation {
 	 *            The status to display
 	 */
 	private void displayError(final IStatus status) {
-		messageShell.getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				ErrorDialog.openError(messageShell, getProblemsTitle(), null,
-						status);
-			}
-		});
+		messageShell.getDisplay().syncExec(() -> ErrorDialog.openError(messageShell, getProblemsTitle(), null, status));
 	}
 
 	/**
@@ -1024,13 +1007,7 @@ public class CopyFilesAndFoldersOperation {
 	 *            the error message to show
 	 */
 	private void displayError(final String message) {
-		messageShell.getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				MessageDialog.openError(messageShell, getProblemsTitle(),
-						message);
-			}
-		});
+		messageShell.getDisplay().syncExec(() -> MessageDialog.openError(messageShell, getProblemsTitle(), message));
 	}
 
 	/**
@@ -1094,53 +1071,46 @@ public class CopyFilesAndFoldersOperation {
 		final IPath prefix = resource.getFullPath().removeLastSegments(1);
 		final String returnValue[] = { "" }; //$NON-NLS-1$
 
-		messageShell.getDisplay().syncExec(new Runnable() {
-			@Override
-			public void run() {
-				IInputValidator validator = new IInputValidator() {
-					@Override
-					public String isValid(String string) {
-						if (resource.getName().equals(string)) {
-							return IDEWorkbenchMessages.CopyFilesAndFoldersOperation_nameMustBeDifferent;
-						}
-						IStatus status = workspace.validateName(string,
-								resource.getType());
-						if (!status.isOK()) {
-							return status.getMessage();
-						}
-						if (workspace.getRoot().exists(prefix.append(string))) {
-							return IDEWorkbenchMessages.CopyFilesAndFoldersOperation_nameExists;
-						}
-						return null;
+		messageShell.getDisplay().syncExec(() -> {
+			IInputValidator validator = new IInputValidator() {
+				@Override
+				public String isValid(String string) {
+					if (resource.getName().equals(string)) {
+						return IDEWorkbenchMessages.CopyFilesAndFoldersOperation_nameMustBeDifferent;
 					}
-				};
-
-				final String initial = getAutoNewNameFor(originalName, workspace).lastSegment();
-				InputDialog dialog = new InputDialog(
-						messageShell,
-						IDEWorkbenchMessages.CopyFilesAndFoldersOperation_inputDialogTitle,
-						NLS
-								.bind(
-										IDEWorkbenchMessages.CopyFilesAndFoldersOperation_inputDialogMessage,
-										resource.getName()), initial, validator) {
-
-					@Override
-					protected Control createContents(Composite parent) {
-						Control contents= super.createContents(parent);
-						int lastIndexOfDot= initial.lastIndexOf('.');
-						if (resource instanceof IFile && lastIndexOfDot > 0) {
-							getText().setSelection(0, lastIndexOfDot);
-						}
-						return contents;
+					IStatus status = workspace.validateName(string, resource.getType());
+					if (!status.isOK()) {
+						return status.getMessage();
 					}
-				};
-				dialog.setBlockOnOpen(true);
-				dialog.open();
-				if (dialog.getReturnCode() == Window.CANCEL) {
-					returnValue[0] = null;
-				} else {
-					returnValue[0] = dialog.getValue();
+					if (workspace.getRoot().exists(prefix.append(string))) {
+						return IDEWorkbenchMessages.CopyFilesAndFoldersOperation_nameExists;
+					}
+					return null;
 				}
+			};
+
+			final String initial = getAutoNewNameFor(originalName, workspace).lastSegment();
+			InputDialog dialog = new InputDialog(messageShell,
+					IDEWorkbenchMessages.CopyFilesAndFoldersOperation_inputDialogTitle,
+					NLS.bind(IDEWorkbenchMessages.CopyFilesAndFoldersOperation_inputDialogMessage, resource.getName()),
+					initial, validator) {
+
+				@Override
+				protected Control createContents(Composite parent) {
+					Control contents = super.createContents(parent);
+					int lastIndexOfDot = initial.lastIndexOf('.');
+					if (resource instanceof IFile && lastIndexOfDot > 0) {
+						getText().setSelection(0, lastIndexOfDot);
+					}
+					return contents;
+				}
+			};
+			dialog.setBlockOnOpen(true);
+			dialog.open();
+			if (dialog.getReturnCode() == Window.CANCEL) {
+				returnValue[0] = null;
+			} else {
+				returnValue[0] = dialog.getValue();
 			}
 		});
 		if (returnValue[0] == null) {
@@ -1395,24 +1365,19 @@ public class CopyFilesAndFoldersOperation {
 						IDEWorkbenchMessages.CopyFilesAndFoldersOperation_overwriteAllButtonLabel,
 						IDEWorkbenchMessages.CopyFilesAndFoldersOperation_dontOverwriteButtonLabel,
 						IDialogConstants.CANCEL_LABEL };
-				messageShell.getDisplay().syncExec(new Runnable() {
-					@Override
-					public void run() {
-						MessageDialog dialog = new MessageDialog(
-								messageShell,
-								IDEWorkbenchMessages.CopyFilesAndFoldersOperation_question,
-								null, msg, MessageDialog.QUESTION, 0, options) {
-							@Override
-							protected int getShellStyle() {
-								return super.getShellStyle() | SWT.SHEET;
-							}
-						};
-						dialog.open();
-						int returnVal = dialog.getReturnCode();
-						String[] returnCodes = { YES, ALL, NO, CANCEL };
-						returnCode[0] = returnVal == -1 ? CANCEL
-								: returnCodes[returnVal];
-					}
+				messageShell.getDisplay().syncExec(() -> {
+					MessageDialog dialog = new MessageDialog(messageShell,
+							IDEWorkbenchMessages.CopyFilesAndFoldersOperation_question, null, msg,
+							MessageDialog.QUESTION, 0, options) {
+						@Override
+						protected int getShellStyle() {
+							return super.getShellStyle() | SWT.SHEET;
+						}
+					};
+					dialog.open();
+					int returnVal = dialog.getReturnCode();
+					String[] returnCodes = { YES, ALL, NO, CANCEL };
+					returnCode[0] = returnVal == -1 ? CANCEL : returnCodes[returnVal];
 				});
 				if (returnCode[0] == ALL) {
 					alwaysOverwrite = true;
