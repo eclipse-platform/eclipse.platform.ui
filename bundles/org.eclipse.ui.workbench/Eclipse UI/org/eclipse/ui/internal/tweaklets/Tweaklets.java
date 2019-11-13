@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -32,12 +32,12 @@ import org.eclipse.ui.statushandlers.StatusManager;
 public class Tweaklets {
 
 	public static class TweakKey {
-		Class tweakClass;
+		Class<?> tweakClass;
 
 		/**
 		 * @param tweakClass
 		 */
-		public TweakKey(Class tweakClass) {
+		public TweakKey(Class<?> tweakClass) {
 			this.tweakClass = tweakClass;
 		}
 
@@ -59,8 +59,8 @@ public class Tweaklets {
 		}
 	}
 
-	private static Map defaults = new HashMap();
-	private static Map tweaklets = new HashMap();
+	private static Map<TweakKey, Object> defaults = new HashMap<>();
+	private static Map<TweakKey, Object> tweaklets = new HashMap<>();
 
 	public static void setDefault(TweakKey definition, Object implementation) {
 		defaults.put(definition, implementation);
