@@ -127,10 +127,6 @@
     color: #EEEEEE;
     font-weight: normal;
 }
-#org-eclipse-e4-ui-compatibility-editor CTabItem:selected {
-    background-color: #262626;
-    font-weight: bold;
-}
 
 #org-eclipse-e4-ui-compatibility-editor LayoutCanvas {
     background-color: #252525;
