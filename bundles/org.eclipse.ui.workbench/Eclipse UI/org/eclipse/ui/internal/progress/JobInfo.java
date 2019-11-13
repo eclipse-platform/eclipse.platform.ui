@@ -146,8 +146,8 @@ public class JobInfo extends JobTreeElement {
 			return job.getName().compareTo(job2.getName());
 		}
 
-		// Order by priority.
-		if (thisPriority > otherPriority) {
+		// Order by priority (lower value is higher priority)
+		if (thisPriority < otherPriority) {
 			return -1;
 		}
 		return 1;

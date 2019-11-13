@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2017 IBM Corporation and others.
+ * Copyright (c) 2011, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -25,7 +25,6 @@ import java.util.List;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.internal.progress.JobInfo;
 import org.eclipse.ui.tests.harness.util.TestRunLogUtil;
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestWatcher;
@@ -34,11 +33,13 @@ public class JobInfoTestOrdering {
 	@Rule
 	public TestWatcher LOG_TESTRUN = TestRunLogUtil.LOG_TESTRUN;
 
-	private List<JobInfo> jobinfos = new ArrayList<>();
-
-	@Before
-	public void setUp() throws Exception {
-		jobinfos.clear();
+	/**
+	 * Test that checks when jobs sorted by their state, the running ones
+	 * are ordered to first place
+	 */
+	@Test
+	public void testJobStateOrdering() {
+		List<JobInfo> jobinfos = new ArrayList<>();
 		int counter = 0;
 		TestJob job;
 		JobInfo ji;
@@ -75,14 +76,6 @@ public class JobInfoTestOrdering {
 		ji = new ExtendedJobInfo(job);
 		jobinfos.add(ji);
 
-	}
-
-	/**
-	 * Test that checks when jobs sorted by their state, the running ones
-	 * are ordered to first place
-	 */
-	@Test
-	public void testJobStateOrdering() {
 		Collections.sort(jobinfos);
 		assertEquals(Job.RUNNING,  jobinfos.get(0).getJob().getState());
 		assertEquals(Job.WAITING,  jobinfos.get(1).getJob().getState());
@@ -90,4 +83,41 @@ public class JobInfoTestOrdering {
 		assertEquals(Job.NONE,     jobinfos.get(3).getJob().getState());
 	}
 
+	/**
+	 * Test that checks when jobs sorted by their priority, the jobs with highest
+	 * priority (lowest numerical value) are ordered to first place
+	 */
+	@Test
+	public void testJobPriorityOrdering() {
+		List<JobInfo> jobInfos = new ArrayList<>();
+		Job job;
+
+		job = new TestJob("TestJob");
+		job.setPriority(Job.DECORATE);
+		jobInfos.add(new ExtendedJobInfo(job));
+
+		job = new TestJob("TestJob");
+		job.setPriority(Job.BUILD);
+		jobInfos.add(new ExtendedJobInfo(job));
+
+		job = new TestJob("TestJob");
+		job.setPriority(Job.LONG);
+		jobInfos.add(new ExtendedJobInfo(job));
+
+		job = new TestJob("TestJob");
+		job.setPriority(Job.SHORT);
+		jobInfos.add(new ExtendedJobInfo(job));
+
+		job = new TestJob("TestJob");
+		job.setPriority(Job.INTERACTIVE);
+		jobInfos.add(new ExtendedJobInfo(job));
+
+		Collections.shuffle(jobInfos);
+		Collections.sort(jobInfos);
+		assertEquals(Job.INTERACTIVE, jobInfos.get(0).getJob().getPriority());
+		assertEquals(Job.SHORT,       jobInfos.get(1).getJob().getPriority());
+		assertEquals(Job.LONG,        jobInfos.get(2).getJob().getPriority());
+		assertEquals(Job.BUILD,       jobInfos.get(3).getJob().getPriority());
+		assertEquals(Job.DECORATE,    jobInfos.get(4).getJob().getPriority());
+	}
 }
