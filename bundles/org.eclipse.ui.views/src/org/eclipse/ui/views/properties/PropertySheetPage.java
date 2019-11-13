@@ -33,7 +33,6 @@ import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.window.SameShellProvider;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.DND;
@@ -149,12 +148,7 @@ public class PropertySheetPage extends Page implements IPropertySheetPage, IAdap
 		}
 		viewer.setRootEntry(rootEntry);
 		viewer.addActivationListener(getCellEditorActivationListener());
-		selectionChangeListener = new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				handleEntrySelection(event.getSelection());
-			}
-		};
+		selectionChangeListener = event -> handleEntrySelection(event.getSelection());
 		viewer.addSelectionChangedListener(selectionChangeListener);
 		initDragAndDrop();
 		makeActions();

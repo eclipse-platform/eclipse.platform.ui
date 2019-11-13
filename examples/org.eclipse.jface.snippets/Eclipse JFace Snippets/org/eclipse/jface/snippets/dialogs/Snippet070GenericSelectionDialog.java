@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 vogella GmbH and others.
+ * Copyright (c) 2015, 2019 vogella GmbH and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,13 +22,9 @@ import org.eclipse.jface.dialogs.AbstractSelectionDialog;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
@@ -172,21 +168,11 @@ public class Snippet070GenericSelectionDialog {
 			listViewer.setSelection(new StructuredSelection(getInitialSelection()), true);
 
 			// Add a selection change listener
-			listViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-				@Override
-				public void selectionChanged(SelectionChangedEvent event) {
-					// Update OK button enablement
-					getButton(IDialogConstants.OK_ID).setEnabled(!event.getSelection().isEmpty());
-				}
-			});
+			listViewer.addSelectionChangedListener(
+					event -> getButton(IDialogConstants.OK_ID).setEnabled(!event.getSelection().isEmpty()));
 
 			// Add double-click listener
-			listViewer.addDoubleClickListener(new IDoubleClickListener() {
-				@Override
-				public void doubleClick(DoubleClickEvent event) {
-					okPressed();
-				}
-			});
+			listViewer.addDoubleClickListener(event -> okPressed());
 			return composite;
 		}
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2008 IBM Corporation and others.
+ * Copyright (c) 2000, 20019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -28,7 +28,6 @@ import org.eclipse.jface.viewers.IPostSelectionProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IPartService;
@@ -148,12 +147,7 @@ public class MultiVariablePageTest extends UITestCase {
 		IPostSelectionProvider postProvider = (IPostSelectionProvider) sp;
 
 		fPostCalled = 0;
-		ISelectionChangedListener listener = new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				++fPostCalled;
-			}
-		};
+		ISelectionChangedListener listener = event -> ++fPostCalled;
 
 		try {
 			postProvider.addPostSelectionChangedListener(listener);

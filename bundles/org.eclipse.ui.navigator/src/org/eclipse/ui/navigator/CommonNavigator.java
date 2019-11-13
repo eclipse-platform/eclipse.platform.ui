@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2017, 2019 IBM Corporation and others.
+ * Copyright (c) 2003, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,12 +22,9 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
@@ -248,12 +245,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 				.getSaveablesService().init(this, getCommonViewer(),
 						saveablesLifecycleListener);
 
-		commonViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				firePropertyChange(PROP_DIRTY);
-			}});
+		commonViewer.addSelectionChangedListener(event -> firePropertyChange(PROP_DIRTY));
 
 		String helpContext = commonViewer.getNavigatorContentService().getViewerDescriptor().getHelpContext();
 		if (helpContext == null)
@@ -472,12 +464,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 * Returns the <code>IShowInSource</code> for this view.
 	 */
 	private IShowInSource getShowInSource() {
-		return new IShowInSource() {
-			@Override
-			public ShowInContext getShowInContext() {
-				return new ShowInContext(getCommonViewer().getInput(), getCommonViewer().getSelection());
-			}
-		};
+		return () -> new ShowInContext(getCommonViewer().getInput(), getCommonViewer().getSelection());
 	}
 
 	/**
@@ -532,17 +519,12 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	 */
 	protected void initListeners(TreeViewer viewer) {
 
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
+		viewer.addDoubleClickListener(event -> SafeRunner.run(new NavigatorSafeRunnable() {
 			@Override
-			public void doubleClick(final DoubleClickEvent event) {
-				SafeRunner.run(new NavigatorSafeRunnable() {
-					@Override
-					public void run() throws Exception {
-						handleDoubleClick(event);
-					}
-				});
+			public void run() throws Exception {
+				handleDoubleClick(event);
 			}
-		});
+		}));
 	}
 
 	/**
