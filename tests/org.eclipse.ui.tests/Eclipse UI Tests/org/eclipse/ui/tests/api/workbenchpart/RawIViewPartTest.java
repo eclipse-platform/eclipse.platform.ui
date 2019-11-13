@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2017 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -48,20 +48,17 @@ public class RawIViewPartTest extends UITestCase {
 
 	boolean contentChangeEvent = false;
 
-	private IPropertyListener propertyListener = new IPropertyListener() {
-		@Override
-		public void propertyChanged(Object source, int propId) {
-			switch (propId) {
-			case IWorkbenchPartConstants.PROP_TITLE:
-				titleChangeEvent = true;
-				break;
-			case IWorkbenchPartConstants.PROP_PART_NAME:
-				nameChangeEvent = true;
-				break;
-			case IWorkbenchPartConstants.PROP_CONTENT_DESCRIPTION:
-				contentChangeEvent = true;
-				break;
-			}
+	private IPropertyListener propertyListener = (source, propId) -> {
+		switch (propId) {
+		case IWorkbenchPartConstants.PROP_TITLE:
+			titleChangeEvent = true;
+			break;
+		case IWorkbenchPartConstants.PROP_PART_NAME:
+			nameChangeEvent = true;
+			break;
+		case IWorkbenchPartConstants.PROP_CONTENT_DESCRIPTION:
+			contentChangeEvent = true;
+			break;
 		}
 	};
 

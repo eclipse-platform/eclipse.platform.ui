@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,12 +14,9 @@
 package org.eclipse.ui.tests.api.workbenchpart;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.internal.layout.CellLayout;
 import org.eclipse.ui.internal.layout.Row;
 import org.eclipse.ui.part.ViewPart;
@@ -55,34 +52,19 @@ public class TitleTestView extends ViewPart {
 		title = new Text(composite, SWT.BORDER);
 		title.setText(getTitle());
 
-		title.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				setTitle(title.getText());
-			}
-		});
+		title.addModifyListener(e -> setTitle(title.getText()));
 
 		Label secondLabel = new Label(composite, SWT.NONE);
 		secondLabel.setText("Name");
 		name = new Text(composite, SWT.BORDER);
 		name.setText(getPartName());
-		name.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				setPartName(name.getText());
-			}
-		});
+		name.addModifyListener(e -> setPartName(name.getText()));
 
 		Label thirdLabel = new Label(composite, SWT.NONE);
 		thirdLabel.setText("Content");
 		contentDescription = new Text(composite, SWT.BORDER);
 		contentDescription.setText(getContentDescription());
-		contentDescription.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				setContentDescription(contentDescription.getText());
-			}
-		});
+		contentDescription.addModifyListener(e -> setContentDescription(contentDescription.getText()));
 
 		Label tlLabel = new Label(composite, SWT.NONE);
 		tlLabel.setText("getTitle() = ");
@@ -98,12 +80,7 @@ public class TitleTestView extends ViewPart {
 
 		updateLabels();
 
-		addPropertyListener(new IPropertyListener() {
-			@Override
-			public void propertyChanged(Object source, int propId) {
-				updateLabels();
-			}
-		});
+		addPropertyListener((source, propId) -> updateLabels());
 	}
 
 	private void updateLabels() {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -38,7 +38,6 @@ import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.FileTransfer;
@@ -106,15 +105,12 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 	private IWorkbenchPage lastActivePage;
 	private String lastEditorTitleTooltip = ""; //$NON-NLS-1$
 
-	private IPropertyListener editorPropertyListener = new IPropertyListener() {
-		@Override
-		public void propertyChanged(Object source, int propId) {
-			if (propId == IWorkbenchPartConstants.PROP_TITLE) {
-				if (lastActiveEditor != null) {
-					String newTitle= lastActiveEditor.getTitleToolTip();
-					if (!lastEditorTitleTooltip.equals(newTitle)) {
-						recomputeTitle();
-					}
+	private IPropertyListener editorPropertyListener = (source, propId) -> {
+		if (propId == IWorkbenchPartConstants.PROP_TITLE) {
+			if (lastActiveEditor != null) {
+				String newTitle = lastActiveEditor.getTitleToolTip();
+				if (!lastEditorTitleTooltip.equals(newTitle)) {
+					recomputeTitle();
 				}
 			}
 		}
@@ -357,20 +353,17 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 				});
 
 		// Listen for changes of the workspace name.
-		propertyChangeListener = new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				String property = event.getProperty();
-				if (IDEInternalPreferences.WORKSPACE_NAME.equals(property)
-						|| IDEInternalPreferences.SHOW_LOCATION.equals(property)
-						|| IDEInternalPreferences.SHOW_LOCATION_NAME.equals(property)
-						|| IDEInternalPreferences.SHOW_PERSPECTIVE_IN_TITLE.equals(property)
-						|| IDEInternalPreferences.SHOW_PRODUCT_IN_TITLE.equals(property)) {
-					// Make sure the title is actually updated by
-					// setting last active page.
-					lastActivePage = null;
-					updateTitle(false);
-				}
+		propertyChangeListener = event -> {
+			String property = event.getProperty();
+			if (IDEInternalPreferences.WORKSPACE_NAME.equals(property)
+					|| IDEInternalPreferences.SHOW_LOCATION.equals(property)
+					|| IDEInternalPreferences.SHOW_LOCATION_NAME.equals(property)
+					|| IDEInternalPreferences.SHOW_PERSPECTIVE_IN_TITLE.equals(property)
+					|| IDEInternalPreferences.SHOW_PRODUCT_IN_TITLE.equals(property)) {
+				// Make sure the title is actually updated by
+				// setting last active page.
+				lastActivePage = null;
+				updateTitle(false);
 			}
 		};
 		IDEWorkbenchPlugin.getDefault().getPreferenceStore()
