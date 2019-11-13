@@ -34,8 +34,8 @@ public final class QuickAccessMatcher {
 	}
 
 	private static final int[][] EMPTY_INDICES = new int[0][0];
-	private static final String WS_START = "^\\s+"; //$NON-NLS-1$
-	private static final String WS_END = "\\s+$"; //$NON-NLS-1$
+	private static final String WS_WILD_START = "^\\s*(\\*|\\?)*"; //$NON-NLS-1$
+	private static final String WS_WILD_END = "(\\*|\\?)*\\s*$"; //$NON-NLS-1$
 	private static final String ANY_WS = "\\s+"; //$NON-NLS-1$
 	private static final String EMPTY_STR = ""; //$NON-NLS-1$
 	private static final String PAR_START = "\\("; //$NON-NLS-1$
@@ -48,7 +48,7 @@ public final class QuickAccessMatcher {
 
 	/**
 	 * Get the existing {@link Pattern} for the given filter, or create a new one.
-	 * The generated pattern will replace whitespaces with * to match all.
+	 * The generated pattern will replace whitespace with * to match all.
 	 *
 	 * @param filter
 	 * @return
@@ -56,7 +56,7 @@ public final class QuickAccessMatcher {
 	private Pattern getWhitespacesPattern(String filter) {
 		if (wsPattern == null || !filter.equals(wsFilter)) {
 			wsFilter = filter;
-			String sFilter = filter.replaceFirst(WS_START, EMPTY_STR).replaceFirst(WS_END, EMPTY_STR)
+			String sFilter = filter.replaceFirst(WS_WILD_START, EMPTY_STR).replaceFirst(WS_WILD_END, EMPTY_STR)
 					.replaceAll(PAR_START, ONE_CHAR).replaceAll(PAR_END, ONE_CHAR);
 			sFilter = String.format(".*(%s).*", sFilter.replaceAll(ANY_WS, ").*(")); //$NON-NLS-1$//$NON-NLS-2$
 			wsPattern = safeCompile(sFilter);
@@ -76,21 +76,34 @@ public final class QuickAccessMatcher {
 	 * @return
 	 */
 	private Pattern getWildcardsPattern(String filter) {
+		// squash consecutive **** into a single *
+		filter = filter.replaceAll("\\*+", "*"); //$NON-NLS-1$ //$NON-NLS-2$
 		if (wcPattern == null || !filter.equals(wcFilter)) {
 			wcFilter = filter;
-			String sFilter = filter.replaceFirst(WS_START, EMPTY_STR).replaceFirst(WS_END, EMPTY_STR)
+			String sFilter = filter.replaceFirst(WS_WILD_START, EMPTY_STR).replaceFirst(WS_WILD_END, EMPTY_STR)
 					.replaceAll(PAR_START, ONE_CHAR).replaceAll(PAR_END, ONE_CHAR);
 			// replace '*' and '?' with their matchers ").*(" and ").?("
 			StringBuilder sb = new StringBuilder();
 			for (int i = 0; i < sFilter.length(); i++) {
 				char c = sFilter.charAt(i);
-				if (c == '*' || c == '?') {
+				if (c == '*') {
 					sb.append(").").append(c).append("("); //$NON-NLS-1$ //$NON-NLS-2$
+				} else if (c == '?') {
+					int n = 1;
+					for (; (i + 1) < sFilter.length(); i++) {
+						if (sFilter.charAt(i + 1) != '?') {
+							break;
+						}
+						n++;
+					}
+					sb.append(").").append(n == 1 ? '?' : String.format("{0,%d}", n)).append("("); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				} else {
 					sb.append(c);
 				}
 			}
 			sFilter = String.format(".*(%s).*", sb.toString()); //$NON-NLS-1$
+			// remove empty capturing groups
+			sFilter = sFilter.replace("()", EMPTY_STR); //$NON-NLS-1$
 			//
 			wcPattern = safeCompile(sFilter);
 		}
@@ -114,8 +127,6 @@ public final class QuickAccessMatcher {
 			return Pattern.compile("\\a"); //$NON-NLS-1$
 		}
 	}
-
-	int i = 0;
 
 	/**
 	 * If this element is a match (partial, complete, camel case, etc) to the given
