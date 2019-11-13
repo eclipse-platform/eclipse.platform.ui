@@ -29,6 +29,7 @@ import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -144,6 +145,8 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	 * An ordered list of ICSSPropertyHandlerProvider
 	 */
 	protected List<ICSSPropertyHandlerProvider> propertyHandlerProviders = new ArrayList<>();
+	// for performance hold a map of handlers to singleton list
+	private Map<ICSSPropertyHandler2, List<ICSSPropertyHandler2>> propertyHandler2InstanceMap = new HashMap<>();
 
 	private Map<String, String> currentCSSPropertiesApplied;
 
@@ -541,7 +544,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 		if (avoidanceCacheInstalled) {
 			currentCSSPropertiesApplied = new HashMap<>();
 		}
-		List<ICSSPropertyHandler2> handlers2 = null;
+		List<ICSSPropertyHandler2> handlers2 = Collections.emptyList();
 		for (int i = 0; i < style.getLength(); i++) {
 			String property = style.item(i);
 			CSSValue value = style.getPropertyCSSValue(property);
@@ -550,17 +553,23 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 				ICSSPropertyHandler2 propertyHandler2 = null;
 				if (handler instanceof ICSSPropertyHandler2) {
 					propertyHandler2 = (ICSSPropertyHandler2) handler;
-				} else {
-					if (handler instanceof ICSSPropertyHandler2Delegate) {
-						propertyHandler2 = ((ICSSPropertyHandler2Delegate) handler).getCSSPropertyHandler2();
-					}
+				} else if (handler instanceof ICSSPropertyHandler2Delegate) {
+					propertyHandler2 = ((ICSSPropertyHandler2Delegate) handler).getCSSPropertyHandler2();
 				}
 				if (propertyHandler2 != null) {
-					if (handlers2 == null) {
-						handlers2 = new ArrayList<>();
-					}
-					if (!handlers2.contains(propertyHandler2)) {
+					switch (handlers2.size()) {
+					case 0:
+						handlers2 = propertyHandler2InstanceMap.computeIfAbsent(propertyHandler2,
+								h -> Collections.singletonList(h));
+						break;
+					case 1:
+						handlers2 = new ArrayList<>(handlers2);
 						handlers2.add(propertyHandler2);
+						break;
+					default:
+						if (!handlers2.contains(propertyHandler2)) {
+							handlers2.add(propertyHandler2);
+						}
 					}
 				}
 			} catch (Exception e) {
@@ -569,13 +578,11 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 				}
 			}
 		}
-		if (handlers2 != null) {
-			for (ICSSPropertyHandler2 handler2 : handlers2) {
-				try {
-					handler2.onAllCSSPropertiesApplyed(element, this, pseudo);
-				} catch (Exception e) {
-					handleExceptions(e);
-				}
+		for (ICSSPropertyHandler2 handler2 : handlers2) {
+			try {
+				handler2.onAllCSSPropertiesApplyed(element, this, pseudo);
+			} catch (Exception e) {
+				handleExceptions(e);
 			}
 		}
 		if (avoidanceCacheInstalled) {

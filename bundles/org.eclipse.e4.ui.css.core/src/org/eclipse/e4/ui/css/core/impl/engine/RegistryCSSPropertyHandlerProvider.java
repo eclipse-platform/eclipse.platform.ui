@@ -17,6 +17,7 @@ package org.eclipse.e4.ui.css.core.impl.engine;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -53,6 +54,8 @@ public class RegistryCSSPropertyHandlerProvider extends AbstractCSSPropertyHandl
 	private boolean hasDeprecatedProperties = false; // mild optimization for getCSSProperties()
 
 	private Map<String, Map<String, ICSSPropertyHandler>> propertyHandlerMap = new HashMap<>();
+	// for performance hold a map of handlers to singleton list
+	private Map<ICSSPropertyHandler, List<ICSSPropertyHandler>> propertyHandlerInstanceMap = new HashMap<>();
 
 	public RegistryCSSPropertyHandlerProvider(IExtensionRegistry registry) {
 		this.registry = registry;
@@ -181,13 +184,22 @@ public class RegistryCSSPropertyHandlerProvider extends AbstractCSSPropertyHandl
 
 	@Override
 	public Collection<ICSSPropertyHandler> getCSSPropertyHandlers(Object element, String property) throws Exception {
-		List<ICSSPropertyHandler> handlers = new ArrayList<>();
+		List<ICSSPropertyHandler> handlers = Collections.emptyList();
 		Class<?> clazz = element.getClass();
 		while (clazz != Object.class) {
 			if (propertyHandlerMap.containsKey(clazz.getName())) {
 				ICSSPropertyHandler handler = propertyHandlerMap.get(clazz.getName()).get(property);
 				if (handler != null) {
-					handlers.add(handler);
+					switch (handlers.size()) {
+					case 0:
+						handlers = propertyHandlerInstanceMap.computeIfAbsent(handler,
+								h -> Collections.singletonList(h));
+						break;
+					case 1:
+						handlers = new ArrayList<>(handlers);
+					default:
+						handlers.add(handler);
+					}
 				}
 			}
 			clazz = clazz.getSuperclass();
