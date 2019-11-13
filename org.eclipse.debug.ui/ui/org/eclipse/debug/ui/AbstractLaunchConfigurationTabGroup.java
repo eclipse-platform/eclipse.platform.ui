@@ -49,7 +49,7 @@ public abstract class AbstractLaunchConfigurationTabGroup implements ILaunchConf
 	 *
 	 * @param tabs the tabs in this group
 	 */
-	protected void setTabs(ILaunchConfigurationTab[] tabs) {
+	protected void setTabs(ILaunchConfigurationTab... tabs) {
 		fTabs = tabs;
 	}
 
