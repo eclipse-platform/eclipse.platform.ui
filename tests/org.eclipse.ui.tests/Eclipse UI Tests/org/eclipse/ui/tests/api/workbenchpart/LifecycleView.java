@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2008 IBM Corporation and others.
+ * Copyright (c) 2007, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,8 +17,6 @@ package org.eclipse.ui.tests.api.workbenchpart;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.ToolBarManager;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IViewSite;
@@ -52,13 +50,7 @@ public class LifecycleView extends ViewPart {
 		});
 		actionBars.updateActionBars();
 		((ToolBarManager) toolBarManager).getControl().addDisposeListener(
-				new DisposeListener() {
-
-					@Override
-					public void widgetDisposed(DisposeEvent e) {
-						callWidgetDispose = true;
-					}
-				});
+				e -> callWidgetDispose = true);
 	}
 
 	@Override

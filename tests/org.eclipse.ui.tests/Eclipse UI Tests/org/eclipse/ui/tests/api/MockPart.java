@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2017 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.IExecutableExtension;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ISelectionProvider;
-import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
@@ -58,12 +57,7 @@ public class MockPart extends EventManager implements IExecutableExtension {
 
 	private Image titleImage;
 
-	private DisposeListener disposeListener = new DisposeListener() {
-		@Override
-		public void widgetDisposed(DisposeEvent e) {
-			MockPart.this.widgetDisposed();
-		}
-	};
+	private DisposeListener disposeListener = e -> MockPart.this.widgetDisposed();
 
 	public CallHistory getCallHistory() {
 		return callTrace;

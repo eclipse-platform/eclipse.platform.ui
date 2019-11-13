@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 IBM Corporation and others.
+ * Copyright (c) 2009, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -23,15 +23,11 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.di.PersistState;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 
@@ -65,24 +61,16 @@ public class SampleView {
 			final IExtensionRegistry registry) {
 		context = outputContext;
 
-		parent.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				if (errorOnWidgetDisposal) {
-					throw new RuntimeException();
-				}
+		parent.addDisposeListener(e -> {
+			if (errorOnWidgetDisposal) {
+				throw new RuntimeException();
 			}
 		});
 
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.getTree().setData("class", "navigator"); //$NON-NLS-1$ //$NON-NLS-2$
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				outputContext.set(IServiceConstants.ACTIVE_SELECTION,
-						event.getSelection());
-			}
-		});
+		viewer.addSelectionChangedListener(
+				event -> outputContext.set(IServiceConstants.ACTIVE_SELECTION, event.getSelection()));
 		viewer.setContentProvider(new ITreeContentProvider() {
 
 			@Override

@@ -38,8 +38,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TreeEditor;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseAdapter;
@@ -384,13 +382,10 @@ class PropertySheetViewer extends Viewer {
 
 		// Always ensure that if the tree item goes away that it's
 		// removed from the cache
-		item.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				Object possibleEntry = e.widget.getData();
-				if (possibleEntry != null)
-					entryToItemMap.remove(possibleEntry);
-			}
+		item.addDisposeListener(e -> {
+			Object possibleEntry = e.widget.getData();
+			if (possibleEntry != null)
+				entryToItemMap.remove(possibleEntry);
 		});
 
 		// add our listener

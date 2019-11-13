@@ -18,15 +18,12 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ViewForm;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorSite;
-import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.MultiEditor;
@@ -55,19 +52,11 @@ public class TiledEditor extends MultiEditor {
 		callHistory.add("widgetsDisposed");
 	}
 
-	/*
-	 * @see IWorkbenchPart#createPartControl(Composite)
-	 */
 	@Override
 	public void createPartControl(Composite parent) {
 		callHistory.add("createPartControl");
 
-		parent.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				widgetsDisposed();
-			}
-		});
+		parent.addDisposeListener(e -> widgetsDisposed());
 
 		parent = new Composite(parent, SWT.BORDER);
 
@@ -89,15 +78,10 @@ public class TiledEditor extends MultiEditor {
 			updateInnerEditorTitle(e, innerEditorTitle[i]);
 
 			final int index = i;
-			e.addPropertyListener(new IPropertyListener() {
-				@Override
-				public void propertyChanged(Object source, int property) {
-					if (property == IEditorPart.PROP_DIRTY
-							|| property == IWorkbenchPart.PROP_TITLE) {
-						if (source instanceof IEditorPart) {
-							updateInnerEditorTitle((IEditorPart) source,
-									innerEditorTitle[index]);
-						}
+			e.addPropertyListener((source, property) -> {
+				if (property == IEditorPart.PROP_DIRTY || property == IWorkbenchPart.PROP_TITLE) {
+					if (source instanceof IEditorPart) {
+						updateInnerEditorTitle((IEditorPart) source, innerEditorTitle[index]);
 					}
 				}
 			});

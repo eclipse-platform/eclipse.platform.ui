@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2014 Angelo Zerr and others.
+ * Copyright (c) 2008, 2019 Angelo Zerr and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,7 +19,6 @@ import org.eclipse.e4.ui.css.core.impl.engine.RegistryCSSElementProvider;
 import org.eclipse.e4.ui.css.core.impl.engine.RegistryCSSPropertyHandlerProvider;
 import org.eclipse.e4.ui.internal.css.swt.CSSActivator;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -45,12 +44,7 @@ public class CSSSWTEngineImpl extends AbstractCSSSWTEngineImpl {
 	}
 
 	private void init() {
-		disposeListener = new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				handleWidgetDisposed(e.widget);
-			}
-		};
+		disposeListener = e -> handleWidgetDisposed(e.widget);
 	}
 
 	@Override

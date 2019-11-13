@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2018 IBM Corporation and others.
+ * Copyright (c) 2010, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,8 +20,6 @@ import org.eclipse.e4.ui.internal.css.swt.ICTabRendering;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolderRenderer;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -102,12 +100,7 @@ public class CSSPropertyUnselectedTabsSWTHandler extends AbstractCSSPropertySWTH
 
 		folder.addListener(SWT.Resize, resizeListener);
 		folder.setData(RESIZE_LISTENER, resizeListener);
-		folder.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				e.widget.removeListener(SWT.Resize, resizeListener);
-			}
-		});
+		folder.addDisposeListener(e -> e.widget.removeListener(SWT.Resize, resizeListener));
 	}
 
 	private void removeResizeEventListener(CTabFolder folder) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 Tom Schindl and others.
+ * Copyright (c) 2006, 2019 Tom Schindl and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -27,7 +27,6 @@ import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -114,18 +113,12 @@ public class Snippet054NativeControlsInViewers {
 			@Override
 			public void update(ViewerCell cell) {
 				final TableItem item = (TableItem) cell.getItem();
-				DisposeListener listener = new DisposeListener() {
-
-					@Override
-					public void widgetDisposed(DisposeEvent e) {
-						if (item.getData("EDITOR") != null) {
-							TableEditor editor = (TableEditor) item
-									.getData("EDITOR");
-							editor.getEditor().dispose();
-							editor.dispose();
-						}
+				DisposeListener listener = e -> {
+					if (item.getData("EDITOR") != null) {
+						TableEditor editor = (TableEditor) item.getData("EDITOR");
+						editor.getEditor().dispose();
+						editor.dispose();
 					}
-
 				};
 				if (item.getData("EDITOR") != null) {
 					TableEditor editor = (TableEditor) item.getData("EDITOR");

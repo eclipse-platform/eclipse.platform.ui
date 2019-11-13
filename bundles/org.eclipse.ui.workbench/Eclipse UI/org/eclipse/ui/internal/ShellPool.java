@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,6 @@ package org.eclipse.ui.internal;
 
 import java.util.Iterator;
 import java.util.LinkedList;
-import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
@@ -47,12 +46,8 @@ public class ShellPool {
 
 	private boolean isDisposed = false;
 
-	private DisposeListener disposeListener = new DisposeListener() {
-		@Override
-		public void widgetDisposed(DisposeEvent e) {
-			WorkbenchPlugin.log(new RuntimeException("Widget disposed too early!")); //$NON-NLS-1$
-		}
-	};
+	private DisposeListener disposeListener = e -> WorkbenchPlugin
+			.log(new RuntimeException("Widget disposed too early!")); //$NON-NLS-1$
 
 	private ShellListener closeListener = new ShellAdapter() {
 
