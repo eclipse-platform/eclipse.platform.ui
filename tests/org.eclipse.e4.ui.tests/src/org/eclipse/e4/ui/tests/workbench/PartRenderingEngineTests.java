@@ -69,9 +69,9 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
 import org.osgi.service.log.LogEntry;
+import org.osgi.service.log.LogLevel;
 import org.osgi.service.log.LogListener;
 import org.osgi.service.log.LogReaderService;
-import org.osgi.service.log.LogService;
 
 public class PartRenderingEngineTests {
 
@@ -91,7 +91,7 @@ public class PartRenderingEngineTests {
 		@Override
 		public void logged(LogEntry entry) {
 			if (!logged) {
-				logged = entry.getLevel() == LogService.LOG_ERROR;
+				logged = entry.getLogLevel() == LogLevel.ERROR;
 			}
 		}
 	};
