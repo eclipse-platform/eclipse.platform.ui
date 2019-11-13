@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2001, 2015 IBM Corporation and others.
+ * Copyright (c) 2001, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,7 +17,6 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
@@ -67,17 +66,13 @@ public class TabbedPropertyTitle
 		super(parent, SWT.NO_FOCUS);
 		this.factory = factory;
 
-		this.addPaintListener(new PaintListener() {
-
-			@Override
-			public void paintControl(PaintEvent e) {
-				if (image == null && (text == null || text.equals(BLANK))) {
-					label.setVisible(false);
-				} else {
-					label.setVisible(true);
-				}
-				drawTitleBackground(e);
+		this.addPaintListener(e -> {
+			if (image == null && (text == null || text.equals(BLANK))) {
+				label.setVisible(false);
+			} else {
+				label.setVisible(true);
 			}
+			drawTitleBackground(e);
 		});
 
 		factory.getColors().initializeSectionToolBarColors();
