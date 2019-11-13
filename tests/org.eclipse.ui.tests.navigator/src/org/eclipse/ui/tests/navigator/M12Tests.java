@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Fair Isaac Corporation.
+ * Copyright (c) 2009, 2019 Fair Isaac Corporation.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,7 +22,6 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
@@ -205,13 +204,9 @@ public class M12Tests extends NavigatorTestBase {
 
 		final IFile file2 = _p2.getFile("file2.txt");
 
-		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				file2.delete(true, new NullProgressMonitor());
-				file2.create(null, true, null);
-			}
+		IWorkspaceRunnable runnable = monitor -> {
+			file2.delete(true, new NullProgressMonitor());
+			file2.create(null, true, null);
 		};
 
 		M1ContentProvider.resetCounters();
