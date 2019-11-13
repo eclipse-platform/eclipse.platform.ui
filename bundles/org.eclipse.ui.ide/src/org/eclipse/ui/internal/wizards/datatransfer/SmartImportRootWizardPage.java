@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2018 Red Hat Inc., and others
+ * Copyright (c) 2014, 2019 Red Hat Inc., and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -45,12 +45,9 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.fieldassist.ControlDecoration;
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.CellLabelProvider;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ICheckStateProvider;
 import org.eclipse.jface.viewers.IColorProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -398,14 +395,10 @@ public class SmartImportRootWizardPage extends WizardPage {
 
 			private void expandSelectedArchive() {
 				try {
-					getContainer().run(true, true, new IRunnableWithProgress() {
-						@Override
-						public void run(IProgressMonitor monitor)
-								throws InvocationTargetException, InterruptedException {
-							getWizard().expandArchive(selection, monitor);
-							if (monitor.isCanceled()) {
-								throw new InterruptedException();
-							}
+					getContainer().run(true, true, monitor -> {
+						getWizard().expandArchive(selection, monitor);
+						if (monitor.isCanceled()) {
+							throw new InterruptedException();
 						}
 					});
 				} catch (Exception ex) {
@@ -603,21 +596,17 @@ public class SmartImportRootWizardPage extends WizardPage {
 				return SmartImportRootWizardPage.this.directoriesToImport.contains(element);
 			}
 		});
-		tree.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				if (isExistingProject((File) event.getElement())
-						|| isExistingProjectName((File) event.getElement())) {
-					tree.setChecked(event.getElement(), false);
-					return;
-				}
-				if (event.getChecked()) {
-					SmartImportRootWizardPage.this.directoriesToImport.add((File) event.getElement());
-				} else {
-					SmartImportRootWizardPage.this.directoriesToImport.remove(event.getElement());
-				}
-				proposalsSelectionChanged();
+		tree.addCheckStateListener(event -> {
+			if (isExistingProject((File) event.getElement()) || isExistingProjectName((File) event.getElement())) {
+				tree.setChecked(event.getElement(), false);
+				return;
 			}
+			if (event.getChecked()) {
+				SmartImportRootWizardPage.this.directoriesToImport.add((File) event.getElement());
+			} else {
+				SmartImportRootWizardPage.this.directoriesToImport.remove(event.getElement());
+			}
+			proposalsSelectionChanged();
 		});
 
 		tree.getTree().setHeaderVisible(true);

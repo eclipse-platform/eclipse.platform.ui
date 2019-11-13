@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2011 IBM Corporation and others.
+ * Copyright (c) 2007, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,7 +16,6 @@ package org.eclipse.jface.tests.performance;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
@@ -65,30 +64,27 @@ public class ProgressMonitorDialogPerformanceTest extends BasicPerformanceTest {
 
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(new Shell(display));
 
-		IRunnableWithProgress runnable = new IRunnableWithProgress() {
-				@Override
-				public void run(IProgressMonitor monitor) {
+		IRunnableWithProgress runnable = monitor -> {
 
-				char[] chars = new char[10000];
-				for (int i = 0; i < chars.length; i++) {
-					chars[i] = 'A';
-				}
-				final String taskName = new String(chars);
+			char[] chars = new char[10000];
+			for (int i = 0; i < chars.length; i++) {
+				chars[i] = 'A';
+			}
+			final String taskName = new String(chars);
 
-				// warm up
+			// warm up
+			monitor.setTaskName(taskName);
+			processEvents();
+
+			// test
+			for (int testCounter = 0; testCounter < 20; testCounter++) {
+				startMeasuring();
+				for (int counter = 0; counter < 30; counter++) {
 				monitor.setTaskName(taskName);
 				processEvents();
-
-				// test
-				for (int testCounter = 0; testCounter < 20; testCounter++) {
-					startMeasuring();
-					for (int counter = 0; counter < 30; counter++) {
-						monitor.setTaskName(taskName);
-						processEvents();
-					}
-					processEvents();
-					stopMeasuring();
-				}
+			}
+				processEvents();
+				stopMeasuring();
 			}
 		};
 

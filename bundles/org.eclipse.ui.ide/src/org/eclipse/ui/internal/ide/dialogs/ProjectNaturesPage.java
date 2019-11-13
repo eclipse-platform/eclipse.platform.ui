@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 Gunnar Wagenknecht and others.
+ * Copyright (c) 2007, 2019 Gunnar Wagenknecht and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -29,7 +29,6 @@ import org.eclipse.core.resources.IProjectNatureDescriptor;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ErrorDialog;
@@ -39,10 +38,8 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
@@ -196,12 +193,8 @@ public class ProjectNaturesPage extends PropertyPage {
 				ProjectNaturesPage.this.activeNaturesList.refresh();
 			}
 		});
-		this.activeNaturesList.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				removeButton.setEnabled(!ProjectNaturesPage.this.activeNaturesList.getSelection().isEmpty());
-			}
-		});
+		this.activeNaturesList.addSelectionChangedListener(
+				event -> removeButton.setEnabled(!ProjectNaturesPage.this.activeNaturesList.getSelection().isEmpty()));
 		this.activeNaturesList.setSelection(new StructuredSelection()); // Empty selection
 
 		return composite;
@@ -332,18 +325,15 @@ public class ProjectNaturesPage extends PropertyPage {
 		}
 
 		// set nature ids
-		IRunnableWithProgress runnable = new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor monitor)
-					throws InvocationTargetException {
+		IRunnableWithProgress runnable = monitor -> {
 
-				try {
-					IProjectDescription description = project.getDescription();
-					description.setNatureIds(ProjectNaturesPage.this.naturesIdsWorkingCopy.toArray(new String[ProjectNaturesPage.this.naturesIdsWorkingCopy.size()]));
-					project.setDescription(description, monitor);
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				}
+			try {
+				IProjectDescription description = project.getDescription();
+				description.setNatureIds(ProjectNaturesPage.this.naturesIdsWorkingCopy
+						.toArray(new String[ProjectNaturesPage.this.naturesIdsWorkingCopy.size()]));
+				project.setDescription(description, monitor);
+			} catch (CoreException e) {
+				throw new InvocationTargetException(e);
 			}
 		};
 		try {

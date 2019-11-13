@@ -609,13 +609,7 @@ public class CopyFilesAndFoldersOperation {
 			return copiedResources[0];
 		}
 
-		IRunnableWithProgress op = new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor monitor) {
-				copyResources(resources, destinationPath, copiedResources,
-						monitor);
-			}
-		};
+		IRunnableWithProgress op = monitor -> copyResources(resources, destinationPath, copiedResources, monitor);
 
 		try {
 			PlatformUI.getWorkbench().getProgressService().run(fork, true, op);
@@ -1357,10 +1351,8 @@ public class CopyFilesAndFoldersOperation {
 				}
 
 				final String returnCode[] = { CANCEL };
-				final String msg = NLS
-						.bind(
-								IDEWorkbenchMessages.CopyFilesAndFoldersOperation_overwriteQuestion,
-								pathString);
+				final String msg = NLS.bind(IDEWorkbenchMessages.CopyFilesAndFoldersOperation_overwriteQuestion,
+						pathString);
 				final String[] options = { IDEWorkbenchMessages.CopyFilesAndFoldersOperation_overwriteButtonLabel,
 						IDEWorkbenchMessages.CopyFilesAndFoldersOperation_overwriteAllButtonLabel,
 						IDEWorkbenchMessages.CopyFilesAndFoldersOperation_dontOverwriteButtonLabel,

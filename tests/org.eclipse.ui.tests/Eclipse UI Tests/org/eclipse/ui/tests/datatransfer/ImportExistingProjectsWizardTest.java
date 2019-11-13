@@ -36,13 +36,11 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.tests.harness.FileSystemHelper;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
@@ -144,15 +142,8 @@ public class ImportExistingProjectsWizardTest extends UITestCase {
 	private void waitForRefresh() {
 		try {
 			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(
-					new IRunnableWithProgress() {
-						@Override
-						public void run(IProgressMonitor monitor)
-								throws InterruptedException {
-							Job.getJobManager().join(
-									ResourcesPlugin.FAMILY_AUTO_REFRESH,
-									new NullProgressMonitor());
-						}
-					});
+					monitor -> Job.getJobManager().join(ResourcesPlugin.FAMILY_AUTO_REFRESH,
+							new NullProgressMonitor()));
 		} catch (InvocationTargetException | InterruptedException e) {
 			fail(e.getLocalizedMessage());
 		}

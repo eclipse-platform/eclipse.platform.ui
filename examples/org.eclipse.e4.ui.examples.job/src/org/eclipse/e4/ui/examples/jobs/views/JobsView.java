@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 Wojciech Sudol and others.
+ * Copyright (c) 2014, 2019 Wojciech Sudol and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -38,7 +38,6 @@ import org.eclipse.e4.ui.progress.IProgressService;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -81,15 +80,11 @@ public class JobsView {
 			final long duration = getDuration();
 			final boolean shouldLock = lockField.getSelection();
 			progressService.busyCursorWhile(
-					new IRunnableWithProgress() {
-						@Override
-						public void run(IProgressMonitor monitor) {
-							if (shouldLock)
-								doRunInWorkspace(duration, monitor);
-							else
-								doRun(duration, monitor);
-						}
-
+					monitor -> {
+						if (shouldLock)
+							doRunInWorkspace(duration, monitor);
+						else
+							doRun(duration, monitor);
 					});
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
@@ -495,12 +490,7 @@ public class JobsView {
 	protected void doRunInWorkspace(final long duration,
 			IProgressMonitor monitor) {
 		try {
-			ResourcesPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-					doRun(duration, monitor);
-				}
-			}, monitor);
+			ResourcesPlugin.getWorkspace().run((IWorkspaceRunnable) monitor1 -> doRun(duration, monitor1), monitor);
 		} catch (CoreException e) {
 			e.printStackTrace();
 		}
@@ -548,14 +538,8 @@ public class JobsView {
 			// thread, the workbench will create a default progress monitor
 			// that reports progress in a modal dialog with details area
 			progressService.busyCursorWhile(
-					new IRunnableWithProgress() {
-						@Override
-						public void run(IProgressMonitor monitor)
-								throws InterruptedException {
-							Job.getJobManager().join(TestJob.FAMILY_TEST_JOB,
-									monitor);
-						}
-					});
+					monitor -> Job.getJobManager().join(TestJob.FAMILY_TEST_JOB,
+							monitor));
 		} catch (InterruptedException | InvocationTargetException e) {
 			// Thrown when the operation running within busyCursorWhile throws
 			// an
@@ -570,16 +554,12 @@ public class JobsView {
 			final long duration = getDuration();
 			final boolean shouldLock = lockField.getSelection();
 			progressService.runInUI(progressService,
-					new IRunnableWithProgress() {
-						@Override
-						public void run(IProgressMonitor monitor)
-								throws InterruptedException {
-							if (shouldLock)
-								doRunInWorkspace(duration, monitor);
-							else
-								doRun(duration, monitor);
-						}
-					}, ResourcesPlugin.getWorkspace().getRoot());
+					monitor -> {
+if (shouldLock)
+					doRunInWorkspace(duration, monitor);
+else
+					doRun(duration, monitor);
+}, ResourcesPlugin.getWorkspace().getRoot());
 		} catch (InvocationTargetException | InterruptedException e) {
 			e.printStackTrace();
 		}
