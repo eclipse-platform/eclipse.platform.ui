@@ -1128,8 +1128,8 @@ class ViewerStateTracker {
 			} else {
 				TreePath[] currentPaths = currentSelection.getPaths();
 				boolean pathInSelection = false;
-				for (int i = 0; i < currentPaths.length; i++) {
-					if (currentPaths[i].equals(treePath)) {
+				for (TreePath currentPath : currentPaths) {
+					if (currentPath.equals(treePath)) {
 						pathInSelection = true;
 						break;
 					}
@@ -1152,9 +1152,7 @@ class ViewerStateTracker {
 			// A child delta has the reveal flag, do not set the
 			// top element yet.
 			boolean setTopItem = true;
-			IModelDelta[] childDeltas = delta.getChildDeltas();
-			for (int i = 0; i < childDeltas.length; i++) {
-				IModelDelta childDelta = childDeltas[i];
+			for (IModelDelta childDelta : delta.getChildDeltas()) {
 				int modelIndex = childDelta.getIndex();
 				if (modelIndex >= 0 && (childDelta.getFlags() & IModelDelta.REVEAL) != 0) {
 					setTopItem = false;
@@ -1177,9 +1175,7 @@ class ViewerStateTracker {
 		if (knowsChildCount) {
 			int childCount = viewer.getChildCount(treePath);
 			if (childCount >= 0) {
-				ModelDelta[] childDeltas = (ModelDelta[])delta.getChildDeltas();
-				for (int i = 0; i < childDeltas.length; i++) {
-					ModelDelta childDelta = childDeltas[i];
+				for (ModelDelta childDelta : (ModelDelta[])delta.getChildDeltas()) {
 					int modelIndex = childDelta.getIndex();
 					if (modelIndex >= 0 && (childDelta.getFlags() & IModelDelta.REVEAL) != 0) {
 						if (modelIndex < childCount) {

@@ -15,7 +15,6 @@
 package org.eclipse.debug.internal.ui.preferences;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
@@ -184,18 +183,17 @@ public class ViewManagementPreferencePage extends PreferencePage implements IWor
 
 	@Override
 	public boolean performOk() {
-		Object[] descriptors = fPerspectiveViewer.getCheckedElements();
 		Set<String> perspectives = new HashSet<>();
-		for (int i = 0; i < descriptors.length; i++) {
-			perspectives.add( ((IPerspectiveDescriptor)descriptors[i]).getId() );
+		for (Object descriptor : fPerspectiveViewer.getCheckedElements()) {
+			perspectives.add( ((IPerspectiveDescriptor)descriptor).getId() );
 		}
 		if (perspectives.equals(ViewContextService.getDefaultEnabledPerspectives())) {
 			getPreferenceStore().setValue(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES,
 										  IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES_DEFAULT);
 		} else {
 			StringBuilder buffer= new StringBuilder();
-			for (Iterator<String> itr = perspectives.iterator(); itr.hasNext();) {
-				buffer.append(itr.next()).append(',');
+			for (String id : perspectives) {
+				buffer.append(id).append(',');
 			}
 			getPreferenceStore().setValue(IDebugUIConstants.PREF_MANAGE_VIEW_PERSPECTIVES, buffer.toString());
 		}

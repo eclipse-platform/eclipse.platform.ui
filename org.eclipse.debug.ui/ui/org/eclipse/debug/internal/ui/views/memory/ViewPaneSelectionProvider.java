@@ -60,8 +60,8 @@ public class ViewPaneSelectionProvider implements ISelectionProvider {
 
 	public void fireChanged() {
 		SelectionChangedEvent evt = new SelectionChangedEvent(this, getSelection());
-		for (int i = 0; i < fListeners.size(); i++) {
-			fListeners.get(i).selectionChanged(evt);
+		for (ISelectionChangedListener listener : fListeners) {
+			listener.selectionChanged(evt);
 		}
 	}
 }

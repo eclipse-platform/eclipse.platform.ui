@@ -134,8 +134,7 @@ public class VirtualFindAction extends Action implements IUpdate {
 
 		public FindLabelProvider(VirtualTreeModelViewer viewer, List<VirtualItem> items) {
 			fVirtualViewer = viewer;
-			for (int i = 0; i < items.size(); i++) {
-				VirtualItem item = items.get(i);
+			for (VirtualItem item : items) {
 				fTextCache.put(item, fVirtualViewer.getText(item, 0));
 			}
 		}

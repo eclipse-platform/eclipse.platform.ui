@@ -459,14 +459,13 @@ public class ToggleBreakpointsTargetManager implements IToggleBreakpointsTargetM
 		fKnownFactories = new LinkedHashMap<>();
 		fKnownFactories.put(DEFAULT_TOGGLE_TARGET_ID, new ToggleBreakpointsTargetAdapterFactory());
 		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_TOGGLE_BREAKPOINTS_TARGET_FACTORIES);
-		IConfigurationElement[] elements = ep.getConfigurationElements();
-		for (int i= 0; i < elements.length; i++) {
-			String id = elements[i].getAttribute(IConfigurationElementConstants.ID);
+		for (IConfigurationElement element : ep.getConfigurationElements()) {
+			String id = element.getAttribute(IConfigurationElementConstants.ID);
 			if (id != null && id.length() != 0) {
 				if (fKnownFactories.containsKey(id)) {
 					DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "org.eclipse.debug.ui.toggleBreakpointsTargetFactory extension failed to load breakpoint toggle target because the specified id is already registered.  Specified ID is: " + id, null)); //$NON-NLS-1$
 				} else {
-					fKnownFactories.put(id, new ToggleTargetFactory(elements[i]));
+					fKnownFactories.put(id, new ToggleTargetFactory(element));
 				}
 			} else {
 				DebugUIPlugin.log(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.INTERNAL_ERROR, "org.eclipse.debug.ui.toggleBreakpointsTargetFactory extension failed to load breakpoint toggle target because the specified id is empty.", null)); //$NON-NLS-1$

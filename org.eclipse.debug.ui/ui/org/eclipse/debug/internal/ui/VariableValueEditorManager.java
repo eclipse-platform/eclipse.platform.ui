@@ -100,8 +100,7 @@ public class VariableValueEditorManager {
 	private void loadVariableEditors() {
 		IExtensionPoint ep = Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_VARIABLE_VALUE_EDITORS);
 		IConfigurationElement[] elements = ep.getConfigurationElements();
-		for (int i = 0; i < elements.length; i++) {
-			IConfigurationElement element = elements[i];
+		for (IConfigurationElement element : elements) {
 			String modelId = element.getAttribute("modelId"); //$NON-NLS-1$
 			if (modelId != null) {
 				fEditorMap.put(modelId, element);

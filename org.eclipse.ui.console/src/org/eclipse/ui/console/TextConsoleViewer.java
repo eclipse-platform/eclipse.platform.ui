@@ -199,9 +199,7 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 		try {
 			IDocument document = getDocument();
 			if (document != null) {
-				Position[] positions = document.getPositions(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY);
-				for (int i = 0; i < positions.length; i++) {
-					Position position = positions[i];
+				for (Position position : document.getPositions(ConsoleHyperlinkPosition.HYPER_LINK_CATEGORY)) {
 					if (position.offset == event.fOffset && position.length <= event.fLength) {
 						position.delete();
 					}

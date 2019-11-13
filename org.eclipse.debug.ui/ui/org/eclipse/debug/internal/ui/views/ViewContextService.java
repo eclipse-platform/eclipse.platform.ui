@@ -256,14 +256,13 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 		 */
 		private void doActivation(IWorkbenchPage page, IPerspectiveDescriptor perspective, Set<String> allViewIds, String[] contextIds) {
 			// note activation of all the relevant contexts
-			for (int i = 0; i < contextIds.length; i++) {
-				addActivated(contextIds[i]);
+			for (String contextId : contextIds) {
+				addActivated(contextId);
 			}
 			// set the active context to be this
 			setActive(perspective, getId());
 			// activate the view bindings and bring most relevant views to top
-			for (int i = 0; i < fAllViewBindingIds.length; i++) {
-				String viewId = fAllViewBindingIds[i];
+			for (String viewId : fAllViewBindingIds) {
 				ViewBinding binding = fAllViewIdToBindings.get(viewId);
 				binding.activated(page, perspective);
 				binding.checkZOrder(page, allViewIds);
@@ -288,8 +287,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 				for (DebugContextViewBindings bindings : contexts) {
 					fAllConetxtIds[pos] = bindings.getId();
 					pos++;
-					for (int i = 0; i < bindings.fViewBindingIds.length; i++) {
-						String viewId = bindings.fViewBindingIds[i];
+					for (String viewId : bindings.fViewBindingIds) {
 						if (bindings == this) {
 							orderedIds.add(viewId);
 						}
@@ -314,8 +312,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 			if (isActiveContext(getId())) {
 				setActive(page.getPerspective(), null);
 			}
-			for (int i = 0; i < fViewBindingIds.length; i++) {
-				String viewId = fViewBindingIds[i];
+			for (String viewId : fViewBindingIds) {
 				ViewBinding binding = fAllViewIdToBindings.get(viewId);
 				binding.deactivated(page, perspective);
 			}
@@ -355,8 +352,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 		 * @param alreadyDone views already done
 		 */
 		public void saveBindings(Document document, Element root, Set<String> alreadyDone) {
-			for (int i = 0; i < fViewBindingIds.length; i++) {
-				String viewId = fViewBindingIds[i];
+			for (String viewId : fViewBindingIds) {
 				if (!alreadyDone.contains(viewId)) {
 					alreadyDone.add(viewId);
 					ViewBinding binding = fAllViewIdToBindings.get(viewId);
@@ -581,9 +577,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 		}
 
 		private void appendPerspectives(Document document, Element parent, Set<String> perpectives, String xmlValue) {
-			String[] ids = perpectives.toArray(new String[perpectives.size()]);
-			for (int i = 0; i < ids.length; i++) {
-				String id = ids[i];
+			for (String id : perpectives.toArray(new String[perpectives.size()])) {
 				Element element = document.createElement(XML_ELEMENT_PERSPECTIVE);
 				element.setAttribute(XML_ATTR_ID, id);
 				element.setAttribute(XML_ATTR_USER_ACTION, xmlValue);
@@ -664,9 +658,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	private void loadContextToViewExtensions() {
 		fContextIdsToBindings = new HashMap<>();
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), ID_CONTEXT_VIEW_BINDINGS);
-		IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
-		for (int i = 0; i < configurationElements.length; i++) {
-			IConfigurationElement element = configurationElements[i];
+		for (IConfigurationElement element : extensionPoint.getConfigurationElements()) {
 			if ( ELEM_CONTEXT_VIEW_BINDING.equals(element.getName()) ) {
 				String viewId = element.getAttribute(ATTR_VIEW_ID);
 				String contextId = element.getAttribute(ATTR_CONTEXT_ID);
@@ -780,9 +772,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 	public static Set<String> getDefaultEnabledPerspectives() {
 		Set<String> perspectives = new HashSet<>(4);
 		IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), ID_CONTEXT_VIEW_BINDINGS);
-		IConfigurationElement[] configurationElements = extensionPoint.getConfigurationElements();
-		for (int i = 0; i < configurationElements.length; i++) {
-			IConfigurationElement element = configurationElements[i];
+		for (IConfigurationElement element : extensionPoint.getConfigurationElements()) {
 			if ( ELEM_PERSPECTIVE.equals(element.getName()) ) {
 				String perspectiveId = element.getAttribute(ATTR_PERSPECTIVE_ID);
 				if (perspectiveId != null) {
@@ -816,8 +806,8 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 									if (!workbenchContexts.isEmpty()) {
 										// Quickly check if any contexts need activating
 										boolean needToActivate = false;
-										for (int i = 0; i < workbenchContexts.size(); i++) {
-											if (!isActivated(workbenchContexts.get(i))) {
+										for (String workbenchContext : workbenchContexts) {
+											if (!isActivated(workbenchContext)) {
 												needToActivate = true;
 												break;
 											}
@@ -827,8 +817,7 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 											Set<String> allViewIds = getAllContextsViewIDs(workbenchContexts);
 
 											// if all contexts already activate and last context is already active context == done
-											for (int i = 0; i < workbenchContexts.size(); i++) {
-												String contextId = workbenchContexts.get(i);
+											for (String contextId : workbenchContexts) {
 												if (!isActivated(contextId)) {
 													activateChain(contextId, getActivePerspective(), allViewIds);
 												}
@@ -993,17 +982,16 @@ public class ViewContextService implements IDebugContextListener, IPerspectiveLi
 		}
 	}
 
-	private Set<String> getAllContextsViewIDs(List<String> contextsIds) {
+	private Set<String> getAllContextsViewIDs(List<String> contextIds) {
 		if (fWindow == null) {
 			return Collections.EMPTY_SET; // disposed
 		}
 
 		TreeSet<String> viewIds = new TreeSet<>();
-		for (int i = 0; i < contextsIds.size(); i++) {
-			DebugContextViewBindings bindings= fContextIdsToBindings.get(contextsIds.get(i));
+		for (String contextId : contextIds) {
+			DebugContextViewBindings bindings= fContextIdsToBindings.get(contextId);
 			if (bindings != null) {
-				String[] bindingViewIds = bindings.getAllViewBindingsIds();
-				Collections.addAll(viewIds, bindingViewIds);
+				Collections.addAll(viewIds, bindings.getAllViewBindingsIds());
 			}
 		}
 		return viewIds;

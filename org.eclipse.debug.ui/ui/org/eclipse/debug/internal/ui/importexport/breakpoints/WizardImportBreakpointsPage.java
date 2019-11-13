@@ -226,10 +226,10 @@ public class WizardImportBreakpointsPage extends WizardPage implements Listener 
 							IBreakpointManager manager = DebugPlugin.getDefault().getBreakpointManager();
 							for (IBreakpoint importedBreakpoint : importedBreakpoints) {
 								boolean selected = false;
-								for (int j = 0; j < selectedMarkers.size(); j++) {
+								for (IMarker selectedMarker : selectedMarkers) {
 									try {
 										Map<String, Object> importedMarkerAttributes = importedBreakpoint.getMarker().getAttributes();
-										Map<String, Object> selectedMarkerAttributes = selectedMarkers.get(j).getAttributes();
+										Map<String, Object> selectedMarkerAttributes = selectedMarker.getAttributes();
 										if(importedMarkerAttributes.equals(selectedMarkerAttributes)) {
 											selected = true;
 											break;

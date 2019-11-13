@@ -146,8 +146,8 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 		}
 		String[] labels = (String[]) item.getData(VirtualItem.LABEL_KEY);
 		if(labels != null && labels.length > 0) {
-			for (int i = 0; i < labels.length; i++) {
-				String text = trimLabel(labels[i]);
+			for (String label : labels) {
+				String text = trimLabel(label);
 				if (text != null && !text.equals(IInternalDebugCoreConstants.EMPTY_STRING)) {
 					buffer.append(text+TAB);
 				}
@@ -221,18 +221,18 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 		listener.fSelectionRootDepth = Integer.MAX_VALUE;
 		TreeItem[] selection = getSelectedItems(clientViewer);
 		Set<VirtualItem> vSelection = new HashSet<>(selection.length * 4 / 3);
-		for (int i = 0; i < selection.length; i++) {
-			TreePath parentPath = fClientViewer.getTreePathFromItem(selection[i].getParentItem());
+		for (TreeItem element : selection) {
+			TreePath parentPath = fClientViewer.getTreePathFromItem(element.getParentItem());
 			listener.fSelectionRootDepth = Math.min(parentPath.getSegmentCount() + 1, listener.fSelectionRootDepth);
 			VirtualItem parentVItem = virtualViewer.findItem(parentPath);
 			if (parentVItem != null) {
 				int index = -1;
-				TreeItem parentItem = selection[i].getParentItem();
+				TreeItem parentItem = element.getParentItem();
 				if (parentItem != null) {
-					index = parentItem.indexOf(selection[i]);
+					index = parentItem.indexOf(element);
 				} else {
-					Tree parentTree = selection[i].getParent();
-					index = parentTree.indexOf(selection[i]);
+					Tree parentTree = element.getParent();
+					index = parentTree.indexOf(element);
 				}
 				index = ((ITreeModelContentProvider)clientViewer.getContentProvider()).viewToModelIndex(parentPath, index);
 				vSelection.add( parentVItem.getItem(new Index(index)) );
@@ -313,8 +313,8 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 		}
 		VirtualItem[] children = item.getItems();
 		if (children != null) {
-			for (int i = 0; i < children.length; i++) {
-				writeItemToBuffer(children[i], itemsToCopy, buffer, indent + 1);
+			for (VirtualItem element : children) {
+				writeItemToBuffer(element, itemsToCopy, buffer, indent + 1);
 			}
 		}
 	}

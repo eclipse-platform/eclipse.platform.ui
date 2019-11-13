@@ -636,9 +636,9 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 	public boolean areTreeModelViewerFiltersApplicable(Object parentElement) {
 		ViewerFilter[] filters = fViewer.getFilters();
 		if (filters.length > 0) {
-			for (int j = 0; j < filters.length; j++) {
-				if (filters[j] instanceof TreeModelViewerFilter &&
-					((TreeModelViewerFilter)filters[j]).isApplicable(fViewer, parentElement))
+			for (ViewerFilter filter : filters) {
+				if (filter instanceof TreeModelViewerFilter &&
+					((TreeModelViewerFilter)filter).isApplicable(fViewer, parentElement))
 				{
 					return true;
 				}
@@ -753,8 +753,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 	 * @param updates the updates to notify
 	 */
 	void updatesComplete(final List<ViewerUpdateMonitor> updates) {
-		for (int i = 0; i < updates.size(); i++) {
-			ViewerUpdateMonitor update = updates.get(i);
+		for (ViewerUpdateMonitor update : updates) {
 			notifyUpdate(UPDATE_COMPLETE, update);
 			if (DebugUIPlugin.DEBUG_UPDATE_SEQUENCE && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
 				DebugUIPlugin.trace("\tEND - " + update); //$NON-NLS-1$
@@ -977,8 +976,8 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 		Assert.isTrue( getViewer().getDisplay().getThread() == Thread.currentThread() );
 		List<ViewerUpdateMonitor> requests = fWaitingRequests.get(path);
 		if (requests != null) {
-			for (int i = 0; i < requests.size(); i++) {
-				if (requests.get(i) instanceof ChildrenUpdate) {
+			for (ViewerUpdateMonitor request : requests) {
+				if (request instanceof ChildrenUpdate) {
 					return true;
 				}
 			}
@@ -986,8 +985,8 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 		requests = fRequestsInProgress.get(path);
 		if (requests != null) {
 			int numChildrenUpdateRequests = 0;
-			for (int i = 0; i < requests.size(); i++) {
-				if (requests.get(i) instanceof ChildrenUpdate) {
+			for (ViewerUpdateMonitor request : requests) {
+				if (request instanceof ChildrenUpdate) {
 					if (++numChildrenUpdateRequests > 1) {
 						return true;
 					}
@@ -1203,8 +1202,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 		TreePath parentPath = path.getParentPath();
 		List<ViewerUpdateMonitor> requests = fWaitingRequests.get(path);
 		if (requests != null) {
-			for (int i = 0; i < requests.size(); i++) {
-				ViewerUpdateMonitor update = requests.get(i);
+			for (ViewerUpdateMonitor update : requests) {
 				if (update instanceof ChildrenUpdate) {
 					return true;
 				}
@@ -1212,8 +1210,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 		}
 		requests = fWaitingRequests.get(parentPath);
 		if (requests != null) {
-			for (int i = 0; i < requests.size(); i++) {
-				ViewerUpdateMonitor update = requests.get(i);
+			for (ViewerUpdateMonitor update : requests) {
 				if (update.containsUpdate(path)) {
 					return true;
 				}
@@ -1221,8 +1218,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 		}
 		requests = fRequestsInProgress.get(path);
 		if (requests != null) {
-			for (int i = 0; i < requests.size(); i++) {
-				ViewerUpdateMonitor update = requests.get(i);
+			for (ViewerUpdateMonitor update : requests) {
 				if (update instanceof ChildrenUpdate) {
 					return true;
 				}
@@ -1230,8 +1226,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 		}
 		requests = fRequestsInProgress.get(parentPath);
 		if (requests != null) {
-			for (int i = 0; i < requests.size(); i++) {
-				ViewerUpdateMonitor update = requests.get(i);
+			for (ViewerUpdateMonitor update : requests) {
 				if (update.getElement().equals(path.getLastSegment())) {
 					return true;
 				}
@@ -1261,8 +1256,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 	 * @see IModelDelta for a list of masks
 	 */
 	protected void updateNodes(IModelDelta[] nodes, int mask) {
-		for (int i = 0; i < nodes.length; i++) {
-			IModelDelta node = nodes[i];
+		for (IModelDelta node : nodes) {
 			int flags = node.getFlags() & mask;
 			if (flags != 0) {
 				if ((flags & IModelDelta.ADDED) != 0) {
@@ -1809,8 +1803,7 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 		}
 		// necessary to check if viewer is disposed
 		try {
-			for (int i = 0; i < jobCompletedUpdates.size(); i++) {
-				ViewerUpdateMonitor completedUpdate = jobCompletedUpdates.get(i);
+			for (ViewerUpdateMonitor completedUpdate : jobCompletedUpdates) {
 				if (!completedUpdate.isCanceled() && !isDisposed()) {
 					IStatus status = completedUpdate.getStatus();
 					if (status == null || status.isOK()) {

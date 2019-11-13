@@ -98,9 +98,8 @@ public class TerminateAndRemoveAction extends DebugCommandAction {
 		boolean isAllTerminated = true;
 		ISelection context = event.getContext();
 		if (context instanceof IStructuredSelection) {
-			Object[] elements = ((IStructuredSelection)context).toArray();
-			for (int i = 0; i < elements.length; i++) {
-				if (!isTerminated(elements[i])) {
+			for (Object element : ((IStructuredSelection)context)) {
+				if (!isTerminated(element)) {
 					isAllTerminated = false;
 					break;
 				}
@@ -129,8 +128,8 @@ public class TerminateAndRemoveAction extends DebugCommandAction {
 	protected void postExecute(IRequest request, Object[] targets) {
 		IStatus status = request.getStatus();
 		if(status == null || status.isOK()) {
-			for (int i = 0; i < targets.length; i++) {
-				ILaunch launch = DebugUIPlugin.getLaunch(targets[i]);
+			for (Object target : targets) {
+				ILaunch launch = DebugUIPlugin.getLaunch(target);
 				if (launch != null) {
 					DebugPlugin.getDefault().getLaunchManager().removeLaunch(launch);
 				}

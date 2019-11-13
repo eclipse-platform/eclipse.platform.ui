@@ -41,8 +41,7 @@ public class VirtualTree extends VirtualItem {
 		@Override
 		public boolean isItemVisible(VirtualItem item) {
 			// visible items.  For now only mark the selected items as visible.
-			for (int i = 0; i < fSelection.length; i++) {
-				VirtualItem selectionItem = fSelection[i];
+			for (VirtualItem selectionItem : fSelection) {
 				while (selectionItem != null) {
 					if (item.equals(selectionItem)) {
 						return true;
