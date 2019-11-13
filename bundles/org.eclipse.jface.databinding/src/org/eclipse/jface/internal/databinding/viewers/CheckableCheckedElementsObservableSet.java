@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Matthew Hall and others.
+ * Copyright (c) 2008, 2019 Matthew Hall and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -24,7 +24,6 @@ import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.set.AbstractObservableSet;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ICheckable;
 import org.eclipse.jface.viewers.IElementComparer;
@@ -65,18 +64,15 @@ public class CheckableCheckedElementsObservableSet<E> extends AbstractObservable
 		this.elementType = elementType;
 		this.elementComparer = elementComparer;
 
-		listener = new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				@SuppressWarnings("unchecked")
-				E element = (E) event.getElement();
-				if (event.getChecked()) {
-					if (wrappedSet.add(element))
-						fireSetChange(Diffs.createSetDiff(Collections.singleton(element), Collections.emptySet()));
-				} else {
-					if (wrappedSet.remove(element))
-						fireSetChange(Diffs.createSetDiff(Collections.emptySet(), Collections.singleton(element)));
-				}
+		listener = event -> {
+			@SuppressWarnings("unchecked")
+			E element = (E) event.getElement();
+			if (event.getChecked()) {
+				if (wrappedSet.add(element))
+					fireSetChange(Diffs.createSetDiff(Collections.singleton(element), Collections.emptySet()));
+			} else {
+				if (wrappedSet.remove(element))
+					fireSetChange(Diffs.createSetDiff(Collections.emptySet(), Collections.singleton(element)));
 			}
 		};
 		checkable.addCheckStateListener(listener);
