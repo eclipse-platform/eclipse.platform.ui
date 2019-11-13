@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008 Angelo Zerr and others.
+ * Copyright (c) 2008, 2019 Angelo Zerr and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -31,8 +31,6 @@ import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -264,11 +262,9 @@ public abstract class AbstractCSSSWTEditor extends AbstractCSSEditor {
 		textArea = new StyledText(composite, SWT.MULTI | SWT.V_SCROLL
 				| SWT.BORDER);
 		textArea.setLayoutData(new GridData(GridData.FILL_BOTH));
-		textArea.addModifyListener(new ModifyListener() {
-			public void modifyText(ModifyEvent e) {
-				if (applyStyleWhenTextAreaChangeCheckbox.getSelection())
-					applyStyles();
-			}
+		textArea.addModifyListener(e -> {
+			if (applyStyleWhenTextAreaChangeCheckbox.getSelection())
+				applyStyles();
 		});
 
 		textArea.addKeyListener(new KeyAdapter() {

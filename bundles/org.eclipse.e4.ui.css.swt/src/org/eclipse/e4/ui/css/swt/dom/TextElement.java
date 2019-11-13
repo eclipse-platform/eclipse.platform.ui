@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2015 Angelo Zerr and others.
+ * Copyright (c) 2009, 2019 Angelo Zerr and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,6 @@ package org.eclipse.e4.ui.css.swt.dom;
 
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.widgets.Text;
 
@@ -26,12 +25,7 @@ import org.eclipse.swt.widgets.Text;
  */
 public class TextElement extends ControlElement {
 
-	ModifyListener modifyListener = new ModifyListener() {
-		@Override
-		public void modifyText(ModifyEvent e) {
-			doApplyStyles();
-		}
-	};
+	ModifyListener modifyListener = e -> doApplyStyles();
 
 	public TextElement(Text text, CSSEngine engine) {
 		super(text, engine);

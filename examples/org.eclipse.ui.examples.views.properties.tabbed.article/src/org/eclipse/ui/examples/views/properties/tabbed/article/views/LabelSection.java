@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006 IBM Corporation and others.
+ * Copyright (c) 2006, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,7 +19,6 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.FormAttachment;
 import org.eclipse.swt.layout.FormData;
@@ -43,12 +42,9 @@ public class LabelSection
 
 	private ButtonElement buttonElement;
 
-	private ModifyListener listener = new ModifyListener() {
-
-		public void modifyText(ModifyEvent arg0) {
-			ButtonElementProperties properties = (ButtonElementProperties) Adapters.adapt(buttonElement, IPropertySource.class);
-			properties.setPropertyValue(ButtonElementProperties.PROPERTY_TEXT, labelText.getText());
-		}
+	private ModifyListener listener = arg0 -> {
+		ButtonElementProperties properties = (ButtonElementProperties) Adapters.adapt(buttonElement, IPropertySource.class);
+		properties.setPropertyValue(ButtonElementProperties.PROPERTY_TEXT, labelText.getText());
 	};
 
 	public void setInput(IWorkbenchPart part, ISelection selection) {
