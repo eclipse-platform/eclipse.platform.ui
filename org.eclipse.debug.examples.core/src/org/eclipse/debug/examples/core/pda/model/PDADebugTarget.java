@@ -126,9 +126,8 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 								new Status (IStatus.ERROR, "org.eclipse.debug.examples.core", "Error parsing PDA event", e)); //$NON-NLS-1$ //$NON-NLS-2$
 							continue;
 						}
-						Object[] listeners = fEventListeners.toArray();
-						for (int i = 0; i < listeners.length; i++) {
-							((IPDAEventListener)listeners[i]).handleEvent(event);
+						for (Object listener : fEventListeners.toArray()) {
+							((IPDAEventListener)listener).handleEvent(event);
 						}
 					}
 				} catch (IOException e) {
@@ -392,9 +391,8 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 	 * manager.
 	 */
 	private void installDeferredBreakpoints() {
-		IBreakpoint[] breakpoints = getBreakpointManager().getBreakpoints(getModelIdentifier());
-		for (int i = 0; i < breakpoints.length; i++) {
-			breakpointAdded(breakpoints[i]);
+		for (IBreakpoint breakpoint : getBreakpointManager().getBreakpoints(getModelIdentifier())) {
+			breakpointAdded(breakpoint);
 		}
 	}
 
@@ -489,12 +487,11 @@ public class PDADebugTarget extends PDADebugElement implements IDebugTarget, IBr
 	 */
 	@Override
 	public void breakpointManagerEnablementChanged(boolean enabled) {
-		IBreakpoint[] breakpoints = getBreakpointManager().getBreakpoints(getModelIdentifier());
-		for (int i = 0; i < breakpoints.length; i++) {
+		for (IBreakpoint breakpoint : getBreakpointManager().getBreakpoints(getModelIdentifier())) {
 			if (enabled) {
-				breakpointAdded(breakpoints[i]);
+				breakpointAdded(breakpoint);
 			} else {
-				breakpointRemoved(breakpoints[i], null);
+				breakpointRemoved(breakpoint, null);
 			}
 		}
 	}

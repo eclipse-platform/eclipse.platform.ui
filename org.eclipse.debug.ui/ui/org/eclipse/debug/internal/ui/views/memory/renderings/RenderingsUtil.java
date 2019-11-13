@@ -509,9 +509,8 @@ public class RenderingsUtil {
 		StringBuilder strBuffer = new StringBuilder();
 		char charArray[];
 
-		for (int i=0; i<byteArray.length;i ++)
-		{
-			charArray = RenderingsUtil.convertByteToCharArray(byteArray[i]);
+		for (byte element : byteArray) {
+			charArray = RenderingsUtil.convertByteToCharArray(element);
 			strBuffer.append(charArray);
 		}
 

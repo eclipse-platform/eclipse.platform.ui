@@ -405,10 +405,9 @@ public class TableRenderingContentProvider extends BasicDebugViewContentProvider
 
 				// fill buffer with memory returned by debug adapter
 				int j = prefillNumBytes; 							// counter for memoryBuffer
-				for (int i=0; i<memory.length; i++)
-				{
+				for (byte element : memory) {
 					MemoryByte tmp = new MemoryByte();
-					tmp.setValue(memory[i]);
+					tmp.setValue(element);
 					tmp.setReadable(true);
 					tmp.setWritable(true);
 					tmp.setEndianessKnown(false);

@@ -190,39 +190,34 @@ public class PresentationContext implements IPresentationContext {
 	public void initProperties(IMemento memento) {
 		IMemento presentationMemento = null;
 
-		IMemento[] mementos = memento.getChildren(PRESENTATION_CONTEXT_PROPERTIES);
-		for (int i = 0; i < mementos.length; i++) {
-			if (getId().equals(mementos[i].getID())) {
-				presentationMemento = mementos[i];
+		for (IMemento childMemento : memento.getChildren(PRESENTATION_CONTEXT_PROPERTIES)) {
+			if (getId().equals(childMemento.getID())) {
+				presentationMemento = childMemento;
 				break;
 			}
 		}
 
 		if (presentationMemento != null) {
-			IMemento[] stringProperties = presentationMemento.getChildren(STRING);
-			for (int i = 0; i < stringProperties.length; i++) {
-				fProperties.put(stringProperties[i].getID(), stringProperties[i].getString(STRING));
+			for (IMemento stringProperty : presentationMemento.getChildren(STRING)) {
+				fProperties.put(stringProperty.getID(), stringProperty.getString(STRING));
 			}
 
-			IMemento[] integerMementos = presentationMemento.getChildren(INTEGER);
-			for (int i = 0; i < integerMementos.length; i++) {
-				fProperties.put(integerMementos[i].getID(), integerMementos[i].getInteger(INTEGER));
+			for (IMemento integerMemento : presentationMemento.getChildren(INTEGER)) {
+				fProperties.put(integerMemento.getID(), integerMemento.getInteger(INTEGER));
 			}
 
-			IMemento[] booleanMementos = presentationMemento.getChildren(BOOLEAN);
-			for (int i = 0; i < booleanMementos.length; i++) {
-				fProperties.put(booleanMementos[i].getID(), booleanMementos[i].getBoolean(BOOLEAN));
+			for (IMemento booleanMemento : presentationMemento.getChildren(BOOLEAN)) {
+				fProperties.put(booleanMemento.getID(), booleanMemento.getBoolean(BOOLEAN));
 			}
 
-			IMemento[] persistableMementos = presentationMemento.getChildren(PERSISTABLE);
-			for (int i = 0; i < persistableMementos.length; i++) {
-				String factoryID = persistableMementos[i].getString(PERSISTABLE);
+			for (IMemento persistableMemento : presentationMemento.getChildren(PERSISTABLE)) {
+				String factoryID = persistableMemento.getString(PERSISTABLE);
 				if (factoryID != null) {
 					IElementFactory factory = PlatformUI.getWorkbench().getElementFactory(factoryID);
 					if (factory != null) {
-						Object element = factory.createElement(persistableMementos[i]);
+						Object element = factory.createElement(persistableMemento);
 						if (element != null) {
-							fProperties.put(persistableMementos[i].getID(), element);
+							fProperties.put(persistableMemento.getID(), element);
 						}
 					}
 				}

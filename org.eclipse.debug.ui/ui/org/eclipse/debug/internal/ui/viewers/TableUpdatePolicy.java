@@ -57,8 +57,7 @@ public class TableUpdatePolicy extends org.eclipse.debug.internal.ui.viewers.Abs
 	}
 
 	protected void updateNodes(IModelDelta[] nodes) {
-		for (int i = 0; i < nodes.length; i++) {
-			IModelDelta node = nodes[i];
+		for (IModelDelta node : nodes) {
 			int flags = node.getFlags();
 
 			if ((flags & IModelDelta.STATE) != 0) {

@@ -135,8 +135,8 @@ public class RemoveBreakpointAction extends AbstractSelectionActionDelegate {
 							Shell shell= getView() != null ? getView().getSite().getShell() : null;
 							DebugUITools.deleteBreakpoints(breakpoints, shell, pmonitor);
 
-							for (int i = 0; i < sets.length; i++) {
-								PlatformUI.getWorkbench().getWorkingSetManager().removeWorkingSet(sets[i]);
+							for (IWorkingSet set : sets) {
+								PlatformUI.getWorkbench().getWorkingSetManager().removeWorkingSet(set);
 							}
 							return Status.OK_STATUS;
 						} catch (CoreException e) {

@@ -181,11 +181,9 @@ public class ProgramLaunchDelegate extends LaunchConfigurationDelegate {
 		StringBuilder buf = new StringBuilder();
 		for (String c : commandLine) {
 			buf.append(' ');
-			char[] characters = c.toCharArray();
 			StringBuilder command = new StringBuilder();
 			boolean containsSpace = false;
-			for (int j = 0; j < characters.length; j++) {
-				char character = characters[j];
+			for (char character : c.toCharArray()) {
 				if (character == '\"') {
 					command.append('\\');
 				} else if (character == ' ') {

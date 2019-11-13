@@ -139,10 +139,8 @@ public class ProcessConsoleManager implements ILaunchListener {
 	}
 
 	protected void removeLaunch(ILaunch launch) {
-		IProcess[] processes= launch.getProcesses();
-		for (int i= 0; i < processes.length; i++) {
-			IProcess iProcess = processes[i];
-			removeProcess(iProcess);
+		for (IProcess process : launch.getProcesses()) {
+			removeProcess(process);
 		}
 		if (fProcesses != null) {
 			fProcesses.remove(launch);
@@ -171,9 +169,7 @@ public class ProcessConsoleManager implements ILaunchListener {
 	 */
 	public IConsole getConsole(IProcess process) {
 		IConsoleManager manager = ConsolePlugin.getDefault().getConsoleManager();
-		IConsole[] consoles = manager.getConsoles();
-		for (int i = 0; i < consoles.length; i++) {
-			IConsole console = consoles[i];
+		for (IConsole console : manager.getConsoles()) {
 			if (console instanceof ProcessConsole) {
 				ProcessConsole pc = (ProcessConsole)console;
 				if (pc.getProcess().equals(process)) {
@@ -236,9 +232,8 @@ public class ProcessConsoleManager implements ILaunchListener {
 		launchManager.addLaunchListener(this);
 
 		//set up the docs for launches already registered
-		ILaunch[] launches= launchManager.getLaunches();
-		for (int i = 0; i < launches.length; i++) {
-			launchAdded(launches[i]);
+		for (ILaunch launch : launchManager.getLaunches()) {
+			launchAdded(launch);
 		}
 	}
 
@@ -250,9 +245,7 @@ public class ProcessConsoleManager implements ILaunchListener {
 	public void shutdown() {
 		Job.getJobManager().cancel(ProcessConsoleManager.class);
 		ILaunchManager launchManager= DebugPlugin.getDefault().getLaunchManager();
-		ILaunch[] launches = launchManager.getLaunches();
-		for (int i = 0; i < launches.length; i++) {
-			ILaunch launch = launches[i];
+		for (ILaunch launch : launchManager.getLaunches()) {
 			removeLaunch(launch);
 		}
 		launchManager.removeLaunchListener(this);
@@ -272,9 +265,7 @@ public class ProcessConsoleManager implements ILaunchListener {
 		if (fColorProviders == null) {
 			fColorProviders = new HashMap<>();
 			IExtensionPoint extensionPoint= Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_CONSOLE_COLOR_PROVIDERS);
-			IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
-			for (int i = 0; i < elements.length; i++) {
-				IConfigurationElement extension = elements[i];
+			for (IConfigurationElement extension : extensionPoint.getConfigurationElements()) {
 				fColorProviders.put(extension.getAttribute("processType"), extension); //$NON-NLS-1$
 			}
 		}
@@ -311,9 +302,7 @@ public class ProcessConsoleManager implements ILaunchListener {
 			synchronized (fLineTrackersLock) { // can't use fLineTrackers as lock as it is null here
 				fLineTrackers = new HashMap<>();
 				IExtensionPoint extensionPoint = Platform.getExtensionRegistry().getExtensionPoint(DebugUIPlugin.getUniqueIdentifier(), IDebugUIConstants.EXTENSION_POINT_CONSOLE_LINE_TRACKERS);
-				IConfigurationElement[] elements = extensionPoint.getConfigurationElements();
-				for (int i = 0; i < elements.length; i++) {
-					IConfigurationElement extension = elements[i];
+				for (IConfigurationElement extension : extensionPoint.getConfigurationElements()) {
 					String processType = extension.getAttribute("processType"); //$NON-NLS-1$
 					List<IConfigurationElement> list = fLineTrackers.get(processType);
 					if (list == null) {
@@ -359,8 +348,7 @@ public class ProcessConsoleManager implements ILaunchListener {
 		IProcess[] old = fProcesses.get(launch);
 		IProcess[] curr = launch.getProcesses();
 		if (old != null) {
-			for (int i = 0; i < old.length; i++) {
-				IProcess process = old[i];
+			for (IProcess process : old) {
 				if (!contains(curr, process)) {
 					if (removed == null) {
 						removed = new ArrayList<>();
@@ -382,8 +370,7 @@ public class ProcessConsoleManager implements ILaunchListener {
 	 * @return whether the given object is contained in the list
 	 */
 	private boolean contains(Object[] list, Object object) {
-		for (int i = 0; i < list.length; i++) {
-			Object object2 = list[i];
+		for (Object object2 : list) {
 			if (object2.equals(object)) {
 				return true;
 			}

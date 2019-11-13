@@ -47,8 +47,8 @@ public class RemoveFromWorkingSetAction extends BreakpointSelectionAction {
 	@Override
 	public void run() {
 		if (fBreakpoints != null) {
-			for (int i = 0; i < fBreakpoints.length; i++) {
-				fBreakpoints[i].container.getOrganizer().removeBreakpoint(fBreakpoints[i].breakpoint, fBreakpoints[i].container.getCategory());
+			for (BreakpointSetElement breakpoint : fBreakpoints) {
+				breakpoint.container.getOrganizer().removeBreakpoint(breakpoint.breakpoint, breakpoint.container.getCategory());
 			}
 		}
 	}
@@ -73,10 +73,7 @@ public class RemoveFromWorkingSetAction extends BreakpointSelectionAction {
 		if (selection instanceof ITreeSelection) {
 			ITreeSelection tSel = (ITreeSelection)selection;
 
-			TreePath[] paths = tSel.getPaths();
-			for (int i = 0; i < paths.length; i++) {
-				TreePath path = paths[i];
-
+			for (TreePath path : tSel.getPaths()) {
 				// We can remove Breakpoints from their working set if any of their parents is a non "Other" breakpoint working set
 				IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(path.getLastSegment(), IBreakpoint.class);
 				if (breakpoint != null) {

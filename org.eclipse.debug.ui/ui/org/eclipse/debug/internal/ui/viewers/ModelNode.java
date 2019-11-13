@@ -64,8 +64,8 @@ public class ModelNode {
 		fDisposed = true;
 		ModelNode[] childrenNodes = getChildrenNodes();
 		if (childrenNodes != null) {
-			for (int i = 0; i < childrenNodes.length; i++) {
-				childrenNodes[i].dispose();
+			for (ModelNode node : childrenNodes) {
+				node.dispose();
 			}
 		}
 	}

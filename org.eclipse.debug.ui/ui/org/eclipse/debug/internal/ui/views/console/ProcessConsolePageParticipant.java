@@ -204,8 +204,7 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
 
 	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
-		for (int i = 0; i < events.length; i++) {
-			DebugEvent event = events[i];
+		for (DebugEvent event : events) {
 			if (event.getSource().equals(getProcess())) {
 				Runnable r = () -> {
 					if (fTerminate != null) {

@@ -100,9 +100,9 @@ public class SourceContainerViewer extends TreeViewer {
 	 */
 	public void setEntries(ISourceContainer[] entries) {
 		fEntries.clear();
-		for (int i = 0; i < entries.length; i++) {
-			if(entries[i] != null) {
-				fEntries.add(entries[i]);
+		for (ISourceContainer entry : entries) {
+			if(entry != null) {
+				fEntries.add(entry);
 			}
 		}
 		if (getInput() == null) {
@@ -141,9 +141,9 @@ public class SourceContainerViewer extends TreeViewer {
 		if (!sel.isEmpty()) {
 			index = fEntries.indexOf(sel.getFirstElement());
 		}
-		for (int i = 0; i < entries.length; i++) {
-			if (!fEntries.contains(entries[i])) {
-				fEntries.add(index, entries[i]);
+		for (ISourceContainer entry : entries) {
+			if (!fEntries.contains(entry)) {
+				fEntries.add(index, entry);
 				index++;
 			}
 		}

@@ -59,8 +59,9 @@ public class MemoryViewUtil {
 	 */
 	static public boolean isValidSelection(ISelection selection) {
 
-		if (!(selection instanceof IStructuredSelection))
+		if (!(selection instanceof IStructuredSelection)) {
 			return false;
+		}
 
 		// only single selection is allowed for this action
 		if (selection.isEmpty() || ((IStructuredSelection) selection).size() > 1) {
@@ -78,8 +79,9 @@ public class MemoryViewUtil {
 	 */
 	public static boolean isValidContext(Object elem) {
 		// if not debug element
-		if (!(elem instanceof IAdaptable))
+		if (!(elem instanceof IAdaptable)) {
 			return false;
+		}
 
 		IMemoryBlockRetrieval memRetrieval = ((IAdaptable) elem).getAdapter(IMemoryBlockRetrieval.class);
 
@@ -97,8 +99,9 @@ public class MemoryViewUtil {
 		}
 
 		// not valid if the debug target is already terminated
-		if (debugTarget != null && (debugTarget.isTerminated() || debugTarget.isDisconnected()))
+		if (debugTarget != null && (debugTarget.isTerminated() || debugTarget.isDisconnected())) {
 			return false;
+		}
 
 		if (memRetrieval != null && memRetrieval.supportsStorageRetrieval()) {
 			return true;
@@ -121,8 +124,9 @@ public class MemoryViewUtil {
 			public IStatus runInUIThread(IProgressMonitor monitor) {
 				// open error for the exception
 				String detail = IInternalDebugCoreConstants.EMPTY_STRING;
-				if (e != null)
+				if (e != null) {
 					detail = e.getMessage();
+				}
 
 				Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 
@@ -151,25 +155,27 @@ public class MemoryViewUtil {
 	 * @return true if the edit event is valid for activating the cell editor
 	 */
 	public static boolean isValidEditEvent(int event) {
-		for (int i = 0; i < MemoryViewUtil.ignoreKeyEvents.length; i++) {
-			if (event == MemoryViewUtil.ignoreKeyEvents[i])
+		for (int ignoredKeyKevent : MemoryViewUtil.ignoreKeyEvents) {
+			if (event == ignoredKeyKevent) {
 				return false;
+			}
 		}
 		return true;
 	}
 
 	public static BigInteger alignToBoundary(BigInteger integer, int numberOfUnitsPerLine) {
 		BigInteger[] result = integer.divideAndRemainder(BigInteger.valueOf(numberOfUnitsPerLine));
-		integer = integer.subtract(result[1]);
-		return integer;
+		return integer.subtract(result[1]);
 	}
 
 	public static void addHistory(String expression) {
-		if (!MEMORY_BLOCKS_HISTORY.contains(expression))
+		if (!MEMORY_BLOCKS_HISTORY.contains(expression)) {
 			MEMORY_BLOCKS_HISTORY.add(0, expression);
+		}
 
-		if (MEMORY_BLOCKS_HISTORY.size() > 5)
+		if (MEMORY_BLOCKS_HISTORY.size() > 5) {
 			MEMORY_BLOCKS_HISTORY.remove(MEMORY_BLOCKS_HISTORY.size() - 1);
+		}
 	}
 
 	public static String[] getHistory() {
@@ -194,8 +200,9 @@ public class MemoryViewUtil {
 
 		// if memory block extension, retrieval must be queired throught its
 		// interface
-		if (object instanceof IMemoryBlockExtension)
+		if (object instanceof IMemoryBlockExtension) {
 			return ((IMemoryBlockExtension) object).getMemoryBlockRetrieval();
+		}
 
 		// check if the object can adapt to a memory block retrieval
 		if (object instanceof IAdaptable) {

@@ -158,10 +158,9 @@ public class ModelDelta implements IModelDelta {
 				return node;
 			}
 		} else if (nodeOrNodes instanceof ModelDelta[]) {
-			ModelDelta[] nodes = (ModelDelta[])nodeOrNodes;
-			for (int i = 0; i < nodes.length; i++) {
-				if (index == nodes[i].getIndex()) {
-					return nodes[i];
+			for (ModelDelta node : (ModelDelta[])nodeOrNodes) {
+				if (index == node.getIndex()) {
+					return node;
 				}
 			}
 		}
@@ -175,8 +174,8 @@ public class ModelDelta implements IModelDelta {
 		}
 		// Create a map with capacity for all child nodes.
 		fNodesMap = new HashMap<>(fNodesList.size() * 4 / 3);
-		for (int i = 0; i < fNodesList.size(); i++) {
-			mapNode( fNodesList.get(i) );
+		for (ModelDelta node : fNodesList) {
+			mapNode( node );
 		}
 	}
 
@@ -358,9 +357,8 @@ public class ModelDelta implements IModelDelta {
 		buf.append(" Child Count: "); //$NON-NLS-1$
 		buf.append(delta.getChildCount());
 		buf.append('\n');
-		IModelDelta[] nodes = delta.getChildDeltas();
-		for (int i = 0; i < nodes.length; i++) {
-			appendDetail(indent + "  ", buf, nodes[i]); //$NON-NLS-1$
+		for (IModelDelta node : delta.getChildDeltas()) {
+			appendDetail(indent + "  ", buf, node); //$NON-NLS-1$
 		}
 	}
 
@@ -376,9 +374,8 @@ public class ModelDelta implements IModelDelta {
 
 	protected void doAccept(IModelDeltaVisitor visitor, int depth) {
 		if (visitor.visit(this, depth)) {
-			IModelDelta[] childDeltas = getChildDeltas();
-			for (int i = 0; i < childDeltas.length; i++) {
-				((ModelDelta)childDeltas[i]).doAccept(visitor, depth+1);
+			for (IModelDelta node : getChildDeltas()) {
+				((ModelDelta)node).doAccept(visitor, depth+1);
 			}
 		}
 	}
