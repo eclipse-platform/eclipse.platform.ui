@@ -50,7 +50,7 @@ import org.osgi.framework.FrameworkUtil;
  * <li>an image registry</li>
  * <li>a resource bundle</li>
  * </ul>
- * 
+ *
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
  */

@@ -52,7 +52,7 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper implements 
 
 	/**
 	 * Constructs a new instance of the receiver and forwards to monitor.
-	 * 
+	 *
 	 * @param monitor
 	 */
 	public EventLoopProgressMonitor(IProgressMonitor monitor) {
@@ -190,7 +190,7 @@ public class EventLoopProgressMonitor extends ProgressMonitorWrapper implements 
 
 	/**
 	 * Return the name of the current task.
-	 * 
+	 *
 	 * @return Returns the taskName.
 	 */
 	protected String getTaskName() {

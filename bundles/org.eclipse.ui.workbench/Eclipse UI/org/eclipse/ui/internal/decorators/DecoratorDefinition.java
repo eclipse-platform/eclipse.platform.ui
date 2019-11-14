@@ -98,7 +98,7 @@ public abstract class DecoratorDefinition implements IPluginContribution {
 
 	/**
 	 * Gets the enabled.
-	 * 
+	 *
 	 * @return Returns a boolean
 	 */
 	public boolean isEnabled() {
@@ -108,7 +108,7 @@ public abstract class DecoratorDefinition implements IPluginContribution {
 	/**
 	 * Sets the enabled flag and adds or removes the decorator manager as a listener
 	 * as appropriate.
-	 * 
+	 *
 	 * @param newState The enabled to set
 	 */
 	public void setEnabled(boolean newState) {
@@ -132,7 +132,7 @@ public abstract class DecoratorDefinition implements IPluginContribution {
 
 	/**
 	 * Dispose the decorator instance and remove listeners as appropirate.
-	 * 
+	 *
 	 * @param disposedDecorator
 	 */
 	protected void disposeCachedDecorator(IBaseLabelProvider disposedDecorator) {
@@ -156,7 +156,7 @@ public abstract class DecoratorDefinition implements IPluginContribution {
 
 	/**
 	 * Gets the id.
-	 * 
+	 *
 	 * @return Returns a String
 	 */
 	public String getId() {
@@ -176,7 +176,7 @@ public abstract class DecoratorDefinition implements IPluginContribution {
 
 	/**
 	 * Returns the enablement.
-	 * 
+	 *
 	 * @return ActionExpression
 	 */
 	protected ActionExpression getEnablement() {
@@ -246,7 +246,7 @@ public abstract class DecoratorDefinition implements IPluginContribution {
 	 * Gets the label provider and creates it if it does not exist yet. Throws a
 	 * CoreException if there is a problem creating the labelProvider. This method
 	 * should not be called unless a check for enabled to be true is done first.
-	 * 
+	 *
 	 * @return Returns a ILabelDecorator
 	 */
 	protected abstract IBaseLabelProvider internalGetLabelProvider() throws CoreException;
@@ -271,7 +271,7 @@ public abstract class DecoratorDefinition implements IPluginContribution {
 
 	/**
 	 * Return whether or not this is a full or lightweight definition.
-	 * 
+	 *
 	 * @return <code>true</code> if this is not a lightweight decorator.
 	 */
 	public abstract boolean isFull();
@@ -288,7 +288,7 @@ public abstract class DecoratorDefinition implements IPluginContribution {
 
 	/**
 	 * Return whether the decorator is applicable to the given element
-	 * 
+	 *
 	 * @param element the element to be decorated
 	 * @return whether the decorator w=should be applied to the element
 	 */

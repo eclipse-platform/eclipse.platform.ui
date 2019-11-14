@@ -55,7 +55,7 @@ import org.eclipse.ui.part.IShowInSource;
  * variable sources become user extensible a new conflict resolution mechanism
  * will be implemented.
  * </p>
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.
  *
@@ -96,14 +96,14 @@ public interface ISources {
 	/**
 	 * The variable name for the active contexts. This is for use with the
 	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	String ACTIVE_CONTEXT_NAME = "activeContexts"; //$NON-NLS-1$
 
 	/**
 	 * The priority given when the source includes a particular action set.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	int ACTIVE_ACTION_SETS = 1 << 8;
@@ -111,7 +111,7 @@ public interface ISources {
 	/**
 	 * The variable name for the active action sets. This is for use with the
 	 * {@link ISourceProvider} and {@link IEvaluationContext}.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	String ACTIVE_ACTION_SETS_NAME = "activeActionSets"; //$NON-NLS-1$
@@ -130,7 +130,7 @@ public interface ISources {
 	/**
 	 * The priority given when the source includes the currently active workbench
 	 * window shell.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	int ACTIVE_WORKBENCH_WINDOW_SHELL = 1 << 12;
@@ -138,7 +138,7 @@ public interface ISources {
 	/**
 	 * The variable name for the active workbench window shell. This is for use with
 	 * the <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	String ACTIVE_WORKBENCH_WINDOW_SHELL_NAME = "activeWorkbenchWindowShell"; //$NON-NLS-1$
@@ -199,14 +199,14 @@ public interface ISources {
 	/**
 	 * The variable name for the active editor part. This is for use with the
 	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	String ACTIVE_EDITOR_NAME = "activeEditor"; //$NON-NLS-1$
 
 	/**
 	 * The editor input of the currently active editor.
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	String ACTIVE_EDITOR_INPUT_NAME = "activeEditorInput"; //$NON-NLS-1$
@@ -268,7 +268,7 @@ public interface ISources {
 	/**
 	 * The variable for the showIn selection. This is for use with the
 	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
-	 * 
+	 *
 	 * @since 3.4
 	 * @see IShowInSource
 	 */
@@ -277,7 +277,7 @@ public interface ISources {
 	/**
 	 * The variable for the showIn input. This is for use with the
 	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
-	 * 
+	 *
 	 * @since 3.4
 	 * @see IShowInSource
 	 */
@@ -291,14 +291,14 @@ public interface ISources {
 	/**
 	 * The variable name for the active selection. This is for use with the
 	 * <code>ISourceProvider</code> and <code>IEvaluationContext</code>.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	String ACTIVE_CURRENT_SELECTION_NAME = "selection"; //$NON-NLS-1$
 
 	/**
 	 * The priority given when the source includes the current menu.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	int ACTIVE_MENU = 1 << 31;
@@ -306,7 +306,7 @@ public interface ISources {
 	/**
 	 * The variable name for the active menu. This is for use with the
 	 * {@link ISourceProvider} and {@link IEvaluationContext}.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	String ACTIVE_MENU_NAME = "activeMenu"; //$NON-NLS-1$

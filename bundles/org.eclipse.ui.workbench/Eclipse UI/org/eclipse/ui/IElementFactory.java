@@ -41,7 +41,7 @@ public interface IElementFactory {
 	 * <p>
 	 * If the result is not null, it should be persistable; that is,
 	 * </p>
-	 * 
+	 *
 	 * <pre>
 	 * result.getAdapter(org.eclipse.ui.IPersistableElement.class)
 	 * </pre>

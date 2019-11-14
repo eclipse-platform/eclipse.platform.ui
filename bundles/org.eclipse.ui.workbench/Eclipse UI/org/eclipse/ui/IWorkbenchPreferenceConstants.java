@@ -254,7 +254,7 @@ public interface IWorkbenchPreferenceConstants {
 	 * <p>
 	 * The default value for this preference is: <code>true</code>
 	 * </p>
-	 * 
+	 *
 	 * @deprecated not supported since the 4.x migration
 	 * @since 3.0
 	 */

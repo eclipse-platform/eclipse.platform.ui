@@ -25,14 +25,14 @@ public interface IThemeDescriptor extends IThemeElementDefinition {
 
 	/**
 	 * Returns the color overrides for this theme.
-	 * 
+	 *
 	 * @return ColorDefinition []
 	 */
 	ColorDefinition[] getColors();
 
 	/**
 	 * Returns the font overrides for this theme.
-	 * 
+	 *
 	 * @return GradientDefinition []
 	 */
 	FontDefinition[] getFonts();

@@ -84,7 +84,7 @@ public interface IWorkingSetManager {
 	 * Change event id when a working set updater got installed. NewValue of the
 	 * PropertyChangeEvent will be the installed updater. OldValue will be
 	 * <code>null</code>
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	String CHANGE_WORKING_SET_UPDATER_INSTALLED = "workingSetUpdaterInstalled"; //$NON-NLS-1$
@@ -93,7 +93,7 @@ public interface IWorkingSetManager {
 	 * Change event id when a working set updater got uninstalled. NewValue will be
 	 * <code>null</code> OldValue of the PropertyChangeEvent will be the uninstalled
 	 * updater.
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	String CHANGE_WORKING_SET_UPDATER_UNINSTALLED = "workingSetUpdaterUninstalled"; //$NON-NLS-1$

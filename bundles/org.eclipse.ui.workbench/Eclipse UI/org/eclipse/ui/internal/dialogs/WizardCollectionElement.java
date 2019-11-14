@@ -55,7 +55,7 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
 
 	/**
 	 * Creates a new <code>WizardCollectionElement</code>. Parent can be null.
-	 * 
+	 *
 	 * @param id       the id
 	 * @param pluginId the plugin
 	 * @param name     the name

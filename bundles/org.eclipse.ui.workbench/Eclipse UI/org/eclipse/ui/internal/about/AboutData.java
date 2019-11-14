@@ -27,7 +27,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 /**
  * An abstract parent that describes data that can be displayed in a table in
  * one of the about dialogs.
- * 
+ *
  * @since 3.0
  */
 public abstract class AboutData {
@@ -73,7 +73,7 @@ public abstract class AboutData {
 
 	/**
 	 * Modify the argument array to reverse the sort order.
-	 * 
+	 *
 	 * @param infos
 	 */
 	private static void reverse(AboutData[] infos) {

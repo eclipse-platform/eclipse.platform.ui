@@ -70,13 +70,13 @@ public class FontDefinition extends ThemeElementDefinition implements IHierarcha
 	/**
 	 * Returns the defaultsTo. This is the id of the text font that this font
 	 * defualts to.
-	 * 
+	 *
 	 * @return String or
-	 * 
+	 *
 	 *         <pre>
 	 *         null
 	 *         </pre>
-	 * 
+	 *
 	 *         .
 	 */
 	@Override

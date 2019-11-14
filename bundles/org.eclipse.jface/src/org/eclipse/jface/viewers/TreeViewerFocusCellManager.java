@@ -55,7 +55,7 @@ public class TreeViewerFocusCellManager extends SWTFocusCellManager {
 		public boolean isCollapseEvent(ColumnViewer viewer,
 				ViewerCell cellToCollapse, Event event) {
 
-			return cellToCollapse != null 
+			return cellToCollapse != null
 					&& ((TreeItem) cellToCollapse.getItem()).getExpanded()
 					&& event.keyCode == SWT.ARROW_LEFT
 					&& isFirstColumnCell(cellToCollapse);

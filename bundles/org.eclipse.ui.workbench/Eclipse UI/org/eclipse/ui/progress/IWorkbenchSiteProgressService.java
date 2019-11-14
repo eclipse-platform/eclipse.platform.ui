@@ -49,7 +49,7 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
 
 	/**
 	 * The property that is sent with busy notifications.
-	 * 
+	 *
 	 * @deprecated this property is no longer in use in the Eclipse SDK
 	 */
 	@Deprecated
@@ -95,7 +95,7 @@ public interface IWorkbenchSiteProgressService extends IProgressService {
 
 	/**
 	 * Show busy state if any job of the specified family is running.
-	 * 
+	 *
 	 * @param family Object
 	 * @see Job#belongsTo(Object)
 	 */

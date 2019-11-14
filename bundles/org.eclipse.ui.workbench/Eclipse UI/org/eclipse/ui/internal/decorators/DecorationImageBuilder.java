@@ -133,7 +133,7 @@ class DecorationImageBuilder {
 
 	/**
 	 * Create a composite image by underlaying and overlaying the base image.
-	 * 
+	 *
 	 * @param device
 	 * @param base
 	 * @param overlay

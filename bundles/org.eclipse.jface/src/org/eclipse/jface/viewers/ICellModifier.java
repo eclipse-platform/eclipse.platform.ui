@@ -57,7 +57,7 @@ public interface ICellModifier {
 	 * Note that it is possible for an SWT Item to be passed instead of the model
 	 * element. To handle this case in a safe way, use:
 	 * </p>
-	 * 
+	 *
 	 * <pre>
 	 * if (element instanceof Item) {
 	 * 	element = ((Item) element).getData();

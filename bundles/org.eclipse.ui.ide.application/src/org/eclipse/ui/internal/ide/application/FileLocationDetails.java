@@ -38,7 +38,7 @@ import org.eclipse.core.runtime.Path;
  * <li>filepath+line+col</li>
  * </ul>
  * Certain OS/WS interpret colons differently (see bug 496845)
- * 
+ *
  * @see #resolve(String)
  */
 public class FileLocationDetails {

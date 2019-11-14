@@ -1130,7 +1130,7 @@ public interface IWorkbenchPage extends IPartService, ISelectionService {
 	 * The length of the input array and editor ID arrays must be the same. The
 	 * editors are opened using pairs of { input[i], editorIDs[i] }.
 	 * </p>
-	 * 
+	 *
 	 * @param inputs     the editor inputs
 	 * @param editorIDs  the IDs of the editor extensions to use, in the order of
 	 *                   inputs

@@ -39,7 +39,7 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
 
 	/**
 	 * Create a new instance of the receiver with name pageName.
-	 * 
+	 *
 	 * @param pageName
 	 */
 	protected WizardPreferencesImportPage1(String pageName) {
@@ -117,7 +117,7 @@ public class WizardPreferencesImportPage1 extends WizardPreferencesPage {
 
 	/**
 	 * Return whether or not the file is valid.
-	 * 
+	 *
 	 * @return <code>true</code> of the file is an existing file and not a directory
 	 */
 	private boolean validFromFile() {

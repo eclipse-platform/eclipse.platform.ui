@@ -23,7 +23,7 @@ package org.eclipse.jface.viewers;
  * create a slightly modified tree selection based on an existing tree
  * selection. The recommended coding pattern in this case is as follows:
  * </p>
- * 
+ *
  * <pre>
  * ITreeSelection selection = (ITreeSelection)treeViewer.getSelection();
  * TreePath[] paths = selection.getPaths();
@@ -34,7 +34,7 @@ package org.eclipse.jface.viewers;
  * TreePath[] modifiedPaths = ... // modify as required
  * TreeSelection modifiedSelection = new TreeSelection(modifiedPaths, comparer);
  * </pre>
- * 
+ *
  * See bugs 135818 and 133375 for details.
  *
  * @since 3.2

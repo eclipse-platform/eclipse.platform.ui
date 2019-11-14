@@ -27,7 +27,7 @@ import org.eclipse.ui.internal.AnimationFeedbackBase;
 /**
  * RectangleAnimationFeedbackBase is an abstract base class for all the
  * rectangle animations.
- * 
+ *
  * @since 3.3
  *
  */

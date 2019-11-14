@@ -69,7 +69,7 @@ final class ContributionRoot implements IContributionRoot {
 	 */
 	String createIdentifierId(IContributionItem item) {
 		String namespace = factory.getNamespace();
-		
+
 																							// identifier ID. If
 																							// this factory doesn't have
 																							// a namespace

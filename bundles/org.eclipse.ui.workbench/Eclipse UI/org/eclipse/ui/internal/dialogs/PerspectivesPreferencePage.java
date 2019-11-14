@@ -375,7 +375,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 
 	/**
 	 * Look up the index of the perpective with the given if.
-	 * 
+	 *
 	 * @param perspectiveId or <code>null</code>
 	 * @return int -1 if it cannot be found
 	 */

@@ -45,7 +45,7 @@ import org.eclipse.ui.part.PageBookView;
  * When a <b>content outline view</b> notices an editor being activated, it asks
  * the editor whether it has a <b>content outline page</b> to include in the
  * outline view. This is done using <code>getAdapter</code>:
- * 
+ *
  * <pre>
  * IEditorPart editor = ...;
  * IContentOutlinePage outlinePage = (IContentOutlinePage) editor.getAdapter(IContentOutlinePage.class);
@@ -72,7 +72,7 @@ import org.eclipse.ui.part.PageBookView;
  * Outline view is needed for a workbench window. This class was not intended to
  * be instantiated or subclassed by clients.
  * </p>
- * 
+ *
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
  */

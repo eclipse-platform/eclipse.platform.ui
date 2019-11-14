@@ -31,7 +31,7 @@ public class WizardTagFilter extends ViewerFilter {
 
 	/**
 	 * Create a new instance of this filter
-	 * 
+	 *
 	 * @param tags the wizard tags to allow
 	 */
 	public WizardTagFilter(String[] tags) {

@@ -35,12 +35,12 @@ import org.eclipse.swt.widgets.Composite;
  * <p>
  * Example:
  * </p>
- * 
+ *
  * <pre>
  * String[] values = { "Top left", "Top right", "Bottom left", "Bottom right" };
  * IPropertyDescriptor pd = new ComboBoxPropertyDescriptor("origin", "Origin", values);
  * </pre>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ComboBoxPropertyDescriptor extends PropertyDescriptor {

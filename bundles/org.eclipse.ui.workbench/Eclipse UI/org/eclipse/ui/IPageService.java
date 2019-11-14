@@ -19,7 +19,7 @@ package org.eclipse.ui;
  * <p>
  * This service can be acquired from your service locator:
  * </p>
- * 
+ *
  * <pre>
  * IPageService service = (IPageService) getSite().getService(IPageService.class);
  * </pre>

@@ -33,7 +33,7 @@ public abstract class WorkbenchSettingsTransfer extends SettingsTransfer {
 
 	/**
 	 * Return a status message for missing workspace settings.
-	 * 
+	 *
 	 * @return IStatus
 	 */
 	protected IStatus noWorkingSettingsStatus() {
@@ -43,7 +43,7 @@ public abstract class WorkbenchSettingsTransfer extends SettingsTransfer {
 
 	/**
 	 * Return the workbench settings location for the new root
-	 * 
+	 *
 	 * @param newWorkspaceRoot
 	 * @return IPath or <code>null</code> if it can't be determined.
 	 */

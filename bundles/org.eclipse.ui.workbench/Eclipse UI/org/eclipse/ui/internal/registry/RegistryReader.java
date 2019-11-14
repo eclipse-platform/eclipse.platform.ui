@@ -86,7 +86,7 @@ public abstract class RegistryReader {
 	/**
 	 * Apply a reproducable order to the list of extensions provided, such that the
 	 * order will not change as extensions are added or removed.
-	 * 
+	 *
 	 * @param extensions the extensions to order
 	 * @return ordered extensions
 	 */

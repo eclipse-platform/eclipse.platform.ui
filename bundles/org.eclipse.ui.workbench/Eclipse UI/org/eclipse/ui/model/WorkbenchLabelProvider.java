@@ -102,7 +102,7 @@ public class WorkbenchLabelProvider extends LabelProvider
 	 * additional information relating to the state of the provided object.
 	 *
 	 * Subclasses may implement this method to decorate an object's label.
-	 * 
+	 *
 	 * @param input   The base text to decorate.
 	 * @param element The element used to look up decorations.
 	 * @return the resulting text
@@ -122,7 +122,7 @@ public class WorkbenchLabelProvider extends LabelProvider
 
 	/**
 	 * Returns the implementation of IWorkbenchAdapter for the given object.
-	 * 
+	 *
 	 * @param o the object to look up.
 	 * @return IWorkbenchAdapter or<code>null</code> if the adapter is not defined
 	 *         or the object is not adaptable.
@@ -133,7 +133,7 @@ public class WorkbenchLabelProvider extends LabelProvider
 
 	/**
 	 * Returns the implementation of IWorkbenchAdapter2 for the given object.
-	 * 
+	 *
 	 * @param o the object to look up.
 	 * @return IWorkbenchAdapter2 or<code>null</code> if the adapter is not defined
 	 *         or the object is not adaptable.

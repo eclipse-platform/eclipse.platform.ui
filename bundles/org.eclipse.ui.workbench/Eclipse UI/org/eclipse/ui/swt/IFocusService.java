@@ -45,7 +45,7 @@ import org.eclipse.swt.widgets.Control;
  * <p>
  * This service can be acquired from your service locator:
  * </p>
- * 
+ *
  * <pre>
  * IFocusService service = (IFocusService) getSite().getService(IFocusService.class);
  * </pre>

@@ -53,7 +53,7 @@ public class ReopenEditorMenu extends ContributionItem {
 
 	/**
 	 * Create a new instance.
-	 * 
+	 *
 	 * @param window        the window on which the menu is to be created
 	 * @param id            menu's id
 	 * @param showSeparator whether or not to show a separator

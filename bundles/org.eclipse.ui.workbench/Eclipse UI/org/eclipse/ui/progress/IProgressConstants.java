@@ -97,7 +97,7 @@ public interface IProgressConstants {
 	 * <code>ImageDescriptor</code> has been registered for the Job family with the
 	 * <code>IProgressService</code>.
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.resource.ImageDescriptor
 	 * @see org.eclipse.ui.progress.IProgressService
 	 **/
@@ -116,7 +116,7 @@ public interface IProgressConstants {
 	 * <p>
 	 * This property is not intended to be set by clients.
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.jobs.Job#isUser()
 	 */
 	QualifiedName PROPERTY_IN_DIALOG = new QualifiedName(IProgressConstants.PROPERTY_PREFIX, "inDialog"); //$NON-NLS-1$
@@ -128,7 +128,7 @@ public interface IProgressConstants {
 	 * The property must be of type <code>Boolean</code> and the hint is used if its
 	 * value is <code>true</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	QualifiedName NO_IMMEDIATE_ERROR_PROMPT_PROPERTY = new QualifiedName(PROPERTY_PREFIX, "delayErrorPrompt"); //$NON-NLS-1$

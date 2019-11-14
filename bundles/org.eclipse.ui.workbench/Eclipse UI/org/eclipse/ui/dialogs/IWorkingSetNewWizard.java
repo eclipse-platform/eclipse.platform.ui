@@ -26,7 +26,7 @@ import org.eclipse.ui.IWorkingSet;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * 
+ *
  * @see org.eclipse.ui.IWorkingSetManager
  * @see org.eclipse.ui.dialogs.IWorkingSetPage
  *

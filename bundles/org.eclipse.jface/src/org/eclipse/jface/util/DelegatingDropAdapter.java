@@ -50,7 +50,7 @@ import org.eclipse.swt.dnd.TransferData;
  * and demonstrates how a listener can be disabled in the isEnabled method. The
  * other listener supports text transfer.
  * </p>
- * 
+ *
  * <pre>
  * <code>
  *		final TreeViewer viewer = new TreeViewer(shell, SWT.NONE);
@@ -103,7 +103,7 @@ import org.eclipse.swt.dnd.TransferData;
  *		viewer.addDropSupport(DND.DROP_COPY | DND.DROP_MOVE, dropAdapter.getTransfers(), dropAdapter);
  * </code>
  * </pre>
- * 
+ *
  * @since 3.0
  */
 public class DelegatingDropAdapter implements DropTargetListener {

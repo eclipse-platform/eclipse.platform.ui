@@ -114,7 +114,7 @@ public class ProductProperties extends BrandingProperties implements IProductCon
 	/**
 	 * This instance will return properties from the given product. The properties
 	 * are retrieved in a lazy fashion and cached for later retrieval.
-	 * 
+	 *
 	 * @param product must not be null
 	 */
 	public ProductProperties(IProduct product) {
@@ -130,7 +130,7 @@ public class ProductProperties extends BrandingProperties implements IProductCon
 	 * <p>
 	 * E.g., On motif, this can be used to set the name used for resource lookup.
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.swt.widgets.Display#setAppName
 	 */
 	public String getAppName() {
@@ -227,7 +227,7 @@ public class ProductProperties extends BrandingProperties implements IProductCon
 	 * The returned value will have {n} values substituted based on the current
 	 * product's mappings regardless of the given product argument.
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.swt.widgets.Display#setAppName
 	 */
 	public static String getAppName(IProduct product) {

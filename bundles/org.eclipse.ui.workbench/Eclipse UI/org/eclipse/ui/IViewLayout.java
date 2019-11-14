@@ -67,7 +67,7 @@ public interface IViewLayout {
 	/**
 	 * Returns whether the view shows its title. This is only applicable to
 	 * standalone views.
-	 * 
+	 *
 	 * @return true if the title is shown, false otherwise.
 	 *
 	 * @see IPageLayout#addStandaloneView

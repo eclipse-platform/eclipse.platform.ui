@@ -44,7 +44,7 @@ public abstract class ActionGroup {
 	/**
 	 * Returns the context used to determine which actions are added, and what their
 	 * enabled state should be.
-	 * 
+	 *
 	 * @return the context
 	 */
 	public ActionContext getContext() {

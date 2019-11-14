@@ -34,7 +34,7 @@ public class PatternUtil {
 	 *            .matches();
 	 * </pre>
 	 * will return <code>true</code>.
-	 * 
+	 *
 	 * @param pattern pattern to quote
 	 * @return the quoted pattern
 	 */

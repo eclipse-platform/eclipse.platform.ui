@@ -20,7 +20,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * Stores information about the product. This class replaces the old AboutInfo.
  * The product information is available as strings, but is needed as URLs, etc.
  * This class manages that translation.
- * 
+ *
  * @since 3.0
  */
 public class ProductInfo {

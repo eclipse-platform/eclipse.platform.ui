@@ -53,7 +53,7 @@ import org.eclipse.swt.dnd.TransferData;
  * strings, the other supports file transfer and demonstrates how a listener can
  * be disabled using the dragStart method.
  * </p>
- * 
+ *
  * <pre>
  * <code>
  *		final TreeViewer viewer = new TreeViewer(shell, SWT.NONE);
@@ -93,7 +93,7 @@ import org.eclipse.swt.dnd.TransferData;
  *		viewer.addDragSupport(DND.DROP_COPY | DND.DROP_MOVE, dragAdapter.getTransfers(), dragAdapter);
  * </code>
  * </pre>
- * 
+ *
  * @since 3.0
  */
 public class DelegatingDragAdapter implements DragSourceListener {

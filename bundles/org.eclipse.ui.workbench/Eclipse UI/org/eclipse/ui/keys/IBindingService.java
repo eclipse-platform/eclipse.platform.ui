@@ -34,7 +34,7 @@ import org.eclipse.ui.services.IDisposable;
  * <p>
  * This service can be acquired from your service locator:
  * </p>
- * 
+ *
  * <pre>
  * IBindingService service = (IBindingService) getSite().getService(IBindingService.class);
  * </pre>

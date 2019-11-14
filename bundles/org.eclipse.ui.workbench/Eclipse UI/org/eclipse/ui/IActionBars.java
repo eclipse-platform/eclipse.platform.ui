@@ -61,7 +61,7 @@ import org.eclipse.ui.services.IServiceLocator;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * 
+ *
  * @noimplement This interface is not intended to be implemented by clients.
  */
 public interface IActionBars {

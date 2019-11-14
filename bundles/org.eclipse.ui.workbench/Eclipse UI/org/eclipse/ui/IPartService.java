@@ -23,7 +23,7 @@ package org.eclipse.ui;
  * <pre>
  * IPartService service = (IPartService) getSite().getService(IPartService.class);
  * </pre>
- * 
+ *
  * This service is not available globally, only from the workbench window level
  * down.
  *

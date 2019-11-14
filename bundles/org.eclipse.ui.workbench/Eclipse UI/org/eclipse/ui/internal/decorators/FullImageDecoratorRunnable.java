@@ -30,7 +30,7 @@ class FullImageDecoratorRunnable extends FullDecoratorRunnable {
 
 	/**
 	 * Get the result of the decoration or <code>null</code> if there was a failure.
-	 * 
+	 *
 	 * @return Image
 	 */
 	Image getResult() {
@@ -40,7 +40,7 @@ class FullImageDecoratorRunnable extends FullDecoratorRunnable {
 	/**
 	 * Set the values of the initialString and the decorator and object that are
 	 * going to be used to determine the result.
-	 * 
+	 *
 	 * @param initialImage
 	 * @param object
 	 * @param definition
@@ -53,7 +53,7 @@ class FullImageDecoratorRunnable extends FullDecoratorRunnable {
 
 	/**
 	 * Clear decorator references.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	void clearReferences() {

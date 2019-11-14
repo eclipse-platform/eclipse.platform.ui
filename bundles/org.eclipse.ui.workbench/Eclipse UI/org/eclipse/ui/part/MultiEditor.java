@@ -47,7 +47,7 @@ public abstract class MultiEditor extends AbstractMultiEditor {
 
 	/**
 	 * Updates the gradient in the title bar.
-	 * 
+	 *
 	 * @param editor
 	 */
 	public void updateGradient(IEditorPart editor) {

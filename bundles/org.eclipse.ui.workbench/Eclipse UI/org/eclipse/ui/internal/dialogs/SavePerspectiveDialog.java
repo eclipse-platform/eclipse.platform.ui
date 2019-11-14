@@ -73,7 +73,7 @@ public class SavePerspectiveDialog extends org.eclipse.jface.dialogs.Dialog
 
 	/**
 	 * PerspectiveDialog constructor comment.
-	 * 
+	 *
 	 * @param parentShell the parent shell
 	 * @param perspReg    the perspective registry
 	 */

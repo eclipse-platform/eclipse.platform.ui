@@ -21,7 +21,7 @@ import java.util.EventListener;
  * <p>
  * Usage:
  * </p>
- * 
+ *
  * <pre>
  * IPropertyChangeListener listener =
  *   new IPropertyChangeListener() {

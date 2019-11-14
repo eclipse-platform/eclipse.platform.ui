@@ -47,7 +47,7 @@ import org.eclipse.swt.graphics.Image;
  * <p>
  * <b>Note:</b> be sure to call dispose()
  * </p>
- * 
+ *
  * @since 3.5
  *
  */
@@ -473,7 +473,7 @@ public class TreeManager {
 	/**
 	 * Provides a {@link CheckListener} which updates a viewer whenever the
 	 * {@link TreeManager} model changes.
-	 * 
+	 *
 	 * @param viewer The viewer whose check states will be appropriately updated on
 	 *               a change to the model.
 	 * @return The created {@link CheckListener}.
@@ -502,7 +502,7 @@ public class TreeManager {
 	 * automatically update the viewer on a {@link TreeItem} check state
 	 * change.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param viewer the viewer to configure with this TreeManager.
 	 */
 	public void attachAll(CheckboxTreeViewer viewer) {
@@ -529,7 +529,7 @@ public class TreeManager {
 	 * automatically update the viewer on a {@link TreeItem} check state
 	 * change.</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param viewer the viewer to configure with this TreeManager.
 	 */
 	public void attachAll(CheckboxTableViewer viewer) {
@@ -542,7 +542,7 @@ public class TreeManager {
 
 	/**
 	 * Dissociates a listener.
-	 * 
+	 *
 	 * @param listener The listener to remove.
 	 */
 	public void removeListener(CheckListener listener) {
@@ -551,7 +551,7 @@ public class TreeManager {
 
 	/**
 	 * Fires all listeners.
-	 * 
+	 *
 	 * @param item The {@link TreeItem} that changed.
 	 */
 	private void fireListeners(TreeItem item) {

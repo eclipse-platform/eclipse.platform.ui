@@ -156,7 +156,7 @@ public interface IWorkbenchActionConstants {
 
 	/**
 	 * Name of standard View menu (value <code>"view"</code>).
-	 * 
+	 *
 	 * @deprecated Since 3.0. This is no longer used.
 	 */
 	@Deprecated
@@ -164,7 +164,7 @@ public interface IWorkbenchActionConstants {
 
 	/**
 	 * Name of standard Workbench menu (value <code>"workbench"</code>).
-	 * 
+	 *
 	 * @deprecated Since 3.0. This is no longer used.
 	 */
 	@Deprecated
@@ -316,7 +316,7 @@ public interface IWorkbenchActionConstants {
 	/**
 	 * File menu: name of group for extra Print-like actions (value
 	 * <code>"print.ext"</code>).
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	String PRINT_EXT = "print.ext"; // Group. //$NON-NLS-1$

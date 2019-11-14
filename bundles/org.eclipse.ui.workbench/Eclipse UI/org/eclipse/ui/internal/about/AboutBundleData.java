@@ -28,7 +28,7 @@ import org.osgi.framework.ServiceReference;
 
 /**
  * A small class to manage the about dialog information for a single bundle.
- * 
+ *
  * @since 3.0
  */
 public class AboutBundleData extends AboutData {

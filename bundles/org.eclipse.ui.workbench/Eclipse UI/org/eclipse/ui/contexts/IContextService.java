@@ -28,7 +28,7 @@ import org.eclipse.ui.services.IServiceWithSources;
  * <p>
  * This service can be acquired from your service locator:
  * </p>
- * 
+ *
  * <pre>
  * IContextService service = (IContextService) getSite().getService(IContextService.class);
  * </pre>

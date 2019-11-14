@@ -70,7 +70,7 @@ public class PerspectiveAdapter implements IPerspectiveListener4 {
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	@Override

@@ -30,7 +30,7 @@ public class PendingUpdateAdapter implements IWorkbenchAdapter, IAdaptable {
 
 	/**
 	 * Return whether or not this has been removed from the tree.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	protected boolean isRemoved() {
@@ -39,7 +39,7 @@ public class PendingUpdateAdapter implements IWorkbenchAdapter, IAdaptable {
 
 	/**
 	 * Set whether or not this has been removed from the tree.
-	 * 
+	 *
 	 * @param removedValue boolean
 	 */
 	protected void setRemoved(boolean removedValue) {

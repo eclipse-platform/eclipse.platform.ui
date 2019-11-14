@@ -183,7 +183,7 @@ public abstract class PreferencePage extends DialogPage implements
 	 * button bar. For each button a subclass contributes, it must also increase the
 	 * parent's grid layout number of columns by one; that is,
 	 * </p>
-	 * 
+	 *
 	 * <pre>
 	 * ((GridLayout) parent.getLayout()).numColumns++);
 	 * </pre>

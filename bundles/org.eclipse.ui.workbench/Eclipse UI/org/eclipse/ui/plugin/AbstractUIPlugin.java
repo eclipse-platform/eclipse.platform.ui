@@ -283,7 +283,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 * This method exists as a convenience for plugin implementors. The workbench
 	 * can also be accessed by invoking <code>PlatformUI.getWorkbench()</code>.
 	 * </p>
-	 * 
+	 *
 	 * @deprecated Use {@link PlatformUI#getWorkbench()} directly
 	 *
 	 * @return IWorkbench the workbench for this plug-in

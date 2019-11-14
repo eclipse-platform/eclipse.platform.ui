@@ -26,11 +26,11 @@ import org.eclipse.swt.widgets.Composite;
  * <p>
  * Example:
  * </p>
- * 
+ *
  * <pre>
  * IPropertyDescriptor pd = new ColorPropertyDescriptor("fg", "Foreground Color");
  * </pre>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class ColorPropertyDescriptor extends PropertyDescriptor {

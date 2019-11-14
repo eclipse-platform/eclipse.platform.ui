@@ -73,7 +73,7 @@ public abstract class ActionFactory {
 		/**
 		 * Creates the action backed by a command. For commands that don't take
 		 * parameters.
-		 * 
+		 *
 		 * @param commandIdIn the command id. Must not be null.
 		 * @param window      the workbench window
 		 */

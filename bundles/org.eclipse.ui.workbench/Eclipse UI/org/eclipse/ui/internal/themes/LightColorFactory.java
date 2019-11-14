@@ -40,7 +40,7 @@ public class LightColorFactory implements IColorFactory, IExecutableExtension {
 
 	/**
 	 * Return the highlight start (top of tab) color as an RGB
-	 * 
+	 *
 	 * @return the highlight start RGB
 	 */
 
@@ -57,7 +57,7 @@ public class LightColorFactory implements IColorFactory, IExecutableExtension {
 	 * describes the id of color we are looking for, one of
 	 * "org.eclipse.ui.workbench.ACTIVE_TAB_BG_START"
 	 * "org.eclipse.ui.workbench.ACTIVE_TAB_BG_END"
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.IExecutableExtension#setInitializationData(org.eclipse.core.runtime.IConfigurationElement,
 	 *      java.lang.String, java.lang.Object)
 	 */

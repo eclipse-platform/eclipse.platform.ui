@@ -61,7 +61,7 @@ public interface IProgressService extends IRunnableContext {
 	/**
 	 * The time at which an operation becomes considered a long operation. Used to
 	 * determine when the busy cursor will be replaced with a progress monitor.
-	 * 
+	 *
 	 * @return int
 	 * @see IProgressService#busyCursorWhile(IRunnableWithProgress)
 	 */
@@ -70,7 +70,7 @@ public interface IProgressService extends IRunnableContext {
 	/**
 	 * Register the ImageDescriptor to be the icon used for all jobs that belong to
 	 * family within the workbench.
-	 * 
+	 *
 	 * @param icon   ImageDescriptor that will be used when the job is being
 	 *               displayed
 	 * @param family The family to associate with
@@ -97,7 +97,7 @@ public interface IProgressService extends IRunnableContext {
 	 * Modal dialogs should also be avoided in the runnable as there will already be
 	 * a modal progress dialog open when this operation runs.
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.Dialog
 	 * @see org.eclipse.swt.SWT#APPLICATION_MODAL
 	 *
@@ -117,7 +117,7 @@ public interface IProgressService extends IRunnableContext {
 	/**
 	 * Get the icon that has been registered for a Job by checking if the job
 	 * belongs to any of the registered families.
-	 * 
+	 *
 	 * @param job
 	 * @return Icon or <code>null</code> if there isn't one.
 	 * @see IProgressService#registerIconForFamily(ImageDescriptor,Object)

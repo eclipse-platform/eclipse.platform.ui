@@ -25,7 +25,7 @@ package org.eclipse.ui;
  * <p>
  * API under construction and subject to change at any time.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public interface IWorkingSetUpdater {

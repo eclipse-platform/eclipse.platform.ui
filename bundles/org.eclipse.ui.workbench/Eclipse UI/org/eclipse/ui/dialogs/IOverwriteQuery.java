@@ -56,7 +56,7 @@ public interface IOverwriteQuery {
 	 * must run the query in a sync exec in the UI thread, if it needs to query the
 	 * user.
 	 * </p>
-	 * 
+	 *
 	 * @param pathString the path representing the entity to be overwritten
 	 * @return one of the return code constants declared on this interface
 	 */

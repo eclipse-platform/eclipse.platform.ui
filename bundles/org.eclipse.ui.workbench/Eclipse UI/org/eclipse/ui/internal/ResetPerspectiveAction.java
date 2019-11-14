@@ -37,7 +37,7 @@ public class ResetPerspectiveAction extends PerspectiveAction {
 
 	/**
 	 * Create an instance of this class
-	 * 
+	 *
 	 * @param window the window
 	 */
 	public ResetPerspectiveAction(IWorkbenchWindow window) {

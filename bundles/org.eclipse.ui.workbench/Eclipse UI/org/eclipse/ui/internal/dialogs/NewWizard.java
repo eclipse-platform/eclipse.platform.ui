@@ -94,7 +94,7 @@ public class NewWizard extends Wizard {
 
 	/**
 	 * Lazily create the wizards pages
-	 * 
+	 *
 	 * @param aWorkbench       the workbench
 	 * @param currentSelection the current selection
 	 */
@@ -151,7 +151,7 @@ public class NewWizard extends Wizard {
 	/**
 	 * Sets the projects only flag. If <code>true</code> only projects will be shown
 	 * in this wizard.
-	 * 
+	 *
 	 * @param b if only projects should be shown
 	 */
 	public void setProjectsOnly(boolean b) {

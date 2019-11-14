@@ -24,7 +24,7 @@ import org.eclipse.ui.branding.IBundleGroupConstants;
 
 /**
  * A small class to manage the information related to IBundleGroup's.
- * 
+ *
  * @since 3.0
  */
 public class AboutBundleGroupData extends AboutData {

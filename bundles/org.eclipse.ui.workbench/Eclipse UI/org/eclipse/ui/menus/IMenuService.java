@@ -26,7 +26,7 @@ import org.eclipse.ui.services.IServiceWithSources;
  * <p>
  * This service can be acquired from your service locator:
  * </p>
- * 
+ *
  * <pre>
  * IMenuService service = (IMenuService) getSite().getService(IMenuService.class);
  * </pre>

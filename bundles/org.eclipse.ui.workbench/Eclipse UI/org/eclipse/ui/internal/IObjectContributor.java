@@ -27,7 +27,7 @@ package org.eclipse.ui.internal;
 public interface IObjectContributor {
 	/**
 	 * Returns true if this contributor should be considered for the given object.
-	 * 
+	 *
 	 * @param object the object to text
 	 * @return boolean
 	 */
@@ -35,7 +35,7 @@ public interface IObjectContributor {
 
 	/**
 	 * Return whether or not the receiver can adapt to IResource.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	boolean canAdapt();

@@ -20,7 +20,7 @@ import org.eclipse.ui.PartInitException;
  * <p>
  * Pages should implement this interface.
  * </p>
- * 
+ *
  * @see PageBookView
  * @see Page
  */

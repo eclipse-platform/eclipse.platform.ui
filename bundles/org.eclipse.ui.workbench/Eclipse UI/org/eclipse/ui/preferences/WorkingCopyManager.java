@@ -27,7 +27,7 @@ import org.osgi.service.prefs.BackingStoreException;
  * <p>
  * This class is not intended to be sub-classed by clients.
  * </p>
- * 
+ *
  * @since 3.2
  */
 public class WorkingCopyManager implements IWorkingCopyManager {

@@ -40,7 +40,7 @@ import org.eclipse.swt.widgets.Control;
  * will not cause an error. The same behavior does not exist for content from
  * the input stream, however - it must be well formed in that case.
  * </p>
- * 
+ *
  * @since 3.0
  * @see FormText
  */

@@ -22,7 +22,7 @@ package org.eclipse.ui.part;
  * Clients using PluginTransfer should create an instance to contain the drop
  * data.
  * </p>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class PluginTransferData {

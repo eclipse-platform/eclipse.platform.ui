@@ -25,7 +25,7 @@ public class PreferenceTransferManager {
 
 	/**
 	 * Return an array of <code>IPreferenceTransfer</code> objects
-	 * 
+	 *
 	 * @return an array of <code>IPreferenceTransfer</code> objects
 	 */
 	public static PreferenceTransferElement[] getPreferenceTransfers() {

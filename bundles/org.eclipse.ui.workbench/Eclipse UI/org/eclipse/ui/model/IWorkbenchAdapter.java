@@ -23,7 +23,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
  * There is an associate label provider and content provider for showing
  * elements with a registered workbench adapter in JFace structured viewers.
  * </p>
- * 
+ *
  * @see WorkbenchLabelProvider
  * @see BaseWorkbenchContentProvider
  */

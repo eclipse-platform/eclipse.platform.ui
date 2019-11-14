@@ -70,7 +70,7 @@ public interface IPresentationEngine {
 	/**
 	 * When applied as a tag to an MUIElement inhibits detaching the element (ie.
 	 * through DnD...
-	 * 
+	 *
 	 * @since 1.6
 	 */
 	String NO_DETACH = "NoDetach"; //$NON-NLS-1$

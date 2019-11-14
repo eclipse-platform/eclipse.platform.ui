@@ -141,7 +141,7 @@ public class PerspectiveBarContributionItem extends ContributionItem {
 
 	/**
 	 * Update this item with a new perspective descriptor
-	 * 
+	 *
 	 * @param newDesc
 	 */
 	public void update(IPerspectiveDescriptor newDesc) {
@@ -186,7 +186,7 @@ public class PerspectiveBarContributionItem extends ContributionItem {
 
 	/**
 	 * Set the current perspective
-	 * 
+	 *
 	 * @param newPerspective
 	 */
 	public void setPerspective(IPerspectiveDescriptor newPerspective) {

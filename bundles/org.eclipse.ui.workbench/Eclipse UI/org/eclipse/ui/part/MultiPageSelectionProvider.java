@@ -34,7 +34,7 @@ import org.eclipse.ui.IEditorPart;
  * implementation of <code>MultiPageEditor.init</code> creates an instance of
  * this class.
  * </p>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class MultiPageSelectionProvider implements IPostSelectionProvider {
@@ -118,7 +118,7 @@ public class MultiPageSelectionProvider implements IPostSelectionProvider {
 
 	/**
 	 * Returns the multi-page editor.
-	 * 
+	 *
 	 * @return the multi-page editor.
 	 */
 	public MultiPageEditorPart getMultiPageEditor() {

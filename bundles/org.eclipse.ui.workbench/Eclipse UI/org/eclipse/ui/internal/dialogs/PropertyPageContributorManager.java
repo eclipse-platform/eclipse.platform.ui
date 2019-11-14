@@ -145,7 +145,7 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 
 	/**
 	 * Build the list of nodes to be sorted.
-	 * 
+	 *
 	 * @param nodes
 	 * @return List of CategorizedPageNode
 	 */
@@ -177,7 +177,7 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 	/**
 	 * Ideally, shared instance should not be used and manager should be located in
 	 * the workbench class.
-	 * 
+	 *
 	 * @return PropertyPageContributorManager
 	 */
 	public static PropertyPageContributorManager getManager() {
@@ -205,7 +205,7 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 
 	/**
 	 * Return the contributors for element filters on the enablement.
-	 * 
+	 *
 	 * @param element
 	 * @return Collection of PropertyPageContribution
 	 */

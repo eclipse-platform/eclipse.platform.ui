@@ -29,7 +29,7 @@ public class PreferenceNodeFilter extends ViewerFilter {
 
 	/**
 	 * Create a new instance of the receiver on a list of filteredIds.
-	 * 
+	 *
 	 * @param filteredIds The collection of ids that will be shown.
 	 */
 	public PreferenceNodeFilter(String[] filteredIds) {
@@ -44,7 +44,7 @@ public class PreferenceNodeFilter extends ViewerFilter {
 
 	/**
 	 * Check to see if the node or any of its children have an id in the ids.
-	 * 
+	 *
 	 * @param node WorkbenchPreferenceNode
 	 * @return boolean <code>true</code> if node or oe of its children has an id in
 	 *         the ids.

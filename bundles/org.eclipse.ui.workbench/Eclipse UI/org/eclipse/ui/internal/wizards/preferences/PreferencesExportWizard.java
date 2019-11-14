@@ -33,7 +33,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
  * <p>
  * Example:
  * </p>
- * 
+ *
  * <pre>
  * IWizard wizard = new PreferencesExportWizard();
  * wizard.init(workbench, selection);

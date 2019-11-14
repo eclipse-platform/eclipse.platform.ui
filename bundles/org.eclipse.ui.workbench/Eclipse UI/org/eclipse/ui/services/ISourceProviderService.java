@@ -23,7 +23,7 @@ import org.eclipse.ui.ISourceProvider;
  * <p>
  * This service can be acquired from your service locator:
  * </p>
- * 
+ *
  * <pre>
  * ISourceProviderService service = (ISourceProviderService) getSite().getService(ISourceProviderService.class);
  * </pre>

@@ -23,7 +23,7 @@ import org.eclipse.swt.graphics.RGB;
  * There is an associate label provider and content provider for showing
  * elements with a registered workbench adapter in JFace structured viewers.
  * </p>
- * 
+ *
  * @see IWorkbenchAdapter
  * @see WorkbenchLabelProvider
  * @see BaseWorkbenchContentProvider

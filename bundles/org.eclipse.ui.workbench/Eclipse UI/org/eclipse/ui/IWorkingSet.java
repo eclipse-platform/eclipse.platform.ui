@@ -33,7 +33,7 @@ public interface IWorkingSet extends IPersistableElement, IAdaptable {
 	 * This method might throw an {@link IllegalStateException} if the working set
 	 * is invalid.
 	 * </p>
-	 * 
+	 *
 	 * @return the working set's elements
 	 */
 	IAdaptable[] getElements();

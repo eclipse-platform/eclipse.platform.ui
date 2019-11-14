@@ -22,7 +22,7 @@ import org.eclipse.swt.events.SelectionEvent;
  * <p>
  * Usage:
  * </p>
- * 
+ *
  * <pre>
  *	OpenStrategy handler = new OpenStrategy(control);
  *	handler.addOpenListener(new IOpenEventListener() {

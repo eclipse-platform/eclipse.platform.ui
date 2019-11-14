@@ -99,7 +99,7 @@ public interface IEditorPart extends IWorkbenchPart, ISaveablePart {
 	 * determine if it is understood. If not, the implementor must throw a
 	 * <code>PartInitException</code>
 	 * </p>
-	 * 
+	 *
 	 * @param site  the editor site
 	 * @param input the editor input
 	 * @exception PartInitException if this editor was not initialized successfully

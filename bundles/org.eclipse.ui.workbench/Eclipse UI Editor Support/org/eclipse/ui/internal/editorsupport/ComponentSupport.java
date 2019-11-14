@@ -66,7 +66,7 @@ public final class ComponentSupport {
 
 	/**
 	 * Get a new OLEEditor
-	 * 
+	 *
 	 * @return IEditorPart
 	 */
 	private static IEditorPart getOleEditor() {

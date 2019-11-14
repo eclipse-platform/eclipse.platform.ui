@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.IConfigurationElement;
  * <p>
  * This interface is not intended to be implemented by clients.
  * </p>
- * 
+ *
  * @see ActionSetRegistry
  */
 public interface IActionSetDescriptor {

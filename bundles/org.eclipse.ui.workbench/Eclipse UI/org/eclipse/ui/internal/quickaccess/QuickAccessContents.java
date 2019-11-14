@@ -354,7 +354,7 @@ public abstract class QuickAccessContents {
 	 * @param filter       the string text filter to apply, possibly empty
 	 * @param perfectMatch a quick access element that should be given priority or
 	 *                     <code>null</code>
-	 * 
+	 *
 	 * @param aMonitor
 	 * @return the array of lists (one per provider) contains the quick access
 	 *         entries that should be added to the table, possibly empty

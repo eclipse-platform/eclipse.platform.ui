@@ -30,7 +30,7 @@ import org.eclipse.ui.internal.util.PrefUtil;
  * This job creates an Animation Engine that uses an Animation Feedback to
  * render the animation. To begin the animation, instantiate this object then
  * call schedule().
- * 
+ *
  * @since 3.3
  *
  */

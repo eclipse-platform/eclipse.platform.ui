@@ -63,7 +63,7 @@ public class ActionContext {
 
 	/**
 	 * Returns the input element.
-	 * 
+	 *
 	 * @return the input element
 	 */
 	public Object getInput() {

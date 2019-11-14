@@ -23,7 +23,7 @@ import org.eclipse.ui.PlatformUI;
  * WorkbenchJob is a type of job that implements a done listener and does the
  * shutdown checks before scheduling. This is used if a job is not meant to run
  * when the Workbench is shutdown.
- * 
+ *
  * @since 3.0
  */
 public abstract class WorkbenchJob extends UIJob {
@@ -32,7 +32,7 @@ public abstract class WorkbenchJob extends UIJob {
 	 * Create a new instance of the receiver with the supplied display and name.
 	 * Normally this constructor would not be used as it is best to let the job find
 	 * the display from the workbench
-	 * 
+	 *
 	 * @param jobDisplay Display. The display to run the job with.
 	 * @param name       String
 	 */
@@ -43,7 +43,7 @@ public abstract class WorkbenchJob extends UIJob {
 
 	/**
 	 * Add a new instance of the receiver with the supplied name.
-	 * 
+	 *
 	 * @param name String
 	 */
 	public WorkbenchJob(String name) {
@@ -78,7 +78,7 @@ public abstract class WorkbenchJob extends UIJob {
 	 * Perform done with the supplied event. This will only occur if the returned
 	 * status was OK. This is called only if the job is finished with an IStatus.OK
 	 * result and the workbench is still running.
-	 * 
+	 *
 	 * @param event IJobChangeEvent
 	 */
 	public void performDone(IJobChangeEvent event) {

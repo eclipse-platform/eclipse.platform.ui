@@ -98,7 +98,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 	/**
 	 * Create the buttons at the top of the preference page.
-	 * 
+	 *
 	 * @param composite
 	 */
 	protected void createSettings(Composite composite) {
@@ -395,7 +395,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 	/**
 	 * Show or hide the heap status based on selection.
-	 * 
+	 *
 	 * @param selection
 	 */
 	private void updateHeapStatus(boolean selection) {

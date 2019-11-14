@@ -188,7 +188,7 @@ public interface IMemento {
 	 * Returns an array of all the attribute keys of the memento. This will not be
 	 * <code>null</code>. If there are no keys, an array of length zero will be
 	 * returned.
-	 * 
+	 *
 	 * @return an array with all the attribute keys of the memento
 	 * @since 3.4
 	 */

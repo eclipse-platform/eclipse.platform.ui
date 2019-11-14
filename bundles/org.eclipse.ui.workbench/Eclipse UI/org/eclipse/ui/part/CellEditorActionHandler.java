@@ -41,14 +41,14 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * <p>
  * Example usage:
  * </p>
- * 
+ *
  * <pre>
  * actionHandler = new CellEditorActionHandler(this.getViewSite().getActionBars());
  * actionHandler.addCellEditor(textCellEditor1);
  * actionHandler.addCellEditor(textCellEditor2);
  * actionHandler.setSelectAllAction(selectAllAction);
  * </pre>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class CellEditorActionHandler {

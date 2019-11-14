@@ -23,14 +23,14 @@ import org.eclipse.core.runtime.Status;
  * <p>
  * This exception class is not intended to be subclassed by clients.
  * </p>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class WorkbenchException extends CoreException {
 
 	/**
 	 * Generated serial version UID for this class.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private static final long serialVersionUID = 3258125864872129078L;

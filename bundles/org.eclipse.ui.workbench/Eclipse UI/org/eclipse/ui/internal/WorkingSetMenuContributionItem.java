@@ -100,7 +100,7 @@ public class WorkingSetMenuContributionItem extends ContributionItem {
 
 	/*
 	 * @see org.eclipse.jface.action.ContributionItem#dispose()
-	 * 
+	 *
 	 * @since 3.3
 	 */
 	@Override

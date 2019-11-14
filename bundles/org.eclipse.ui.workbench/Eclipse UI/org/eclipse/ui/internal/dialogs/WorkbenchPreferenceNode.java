@@ -34,7 +34,7 @@ public class WorkbenchPreferenceNode extends WorkbenchPreferenceExtensionNode {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * 
+	 *
 	 * @param nodeId
 	 * @param element
 	 */
@@ -69,7 +69,7 @@ public class WorkbenchPreferenceNode extends WorkbenchPreferenceExtensionNode {
 
 	/**
 	 * Return the category name for the node.
-	 * 
+	 *
 	 * @return java.lang.String
 	 */
 	public String getCategory() {

@@ -61,7 +61,7 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 /**
  * Implementation of
  * {@link org.eclipse.ui.activities.IWorkbenchActivitySupport}.
- * 
+ *
  * @since 3.0
  */
 public class WorkbenchActivitySupport implements IWorkbenchActivitySupport, IExtensionChangeHandler {

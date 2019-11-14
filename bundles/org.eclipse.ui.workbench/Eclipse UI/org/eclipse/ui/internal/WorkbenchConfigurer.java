@@ -45,7 +45,7 @@ public final class WorkbenchConfigurer implements IWorkbenchConfigurer {
 	/**
 	 * Table to hold arbitrary key-data settings (key type: <code>String</code>,
 	 * value type: <code>Object</code>).
-	 * 
+	 *
 	 * @see #setData
 	 */
 	private Map extraData = new HashMap();

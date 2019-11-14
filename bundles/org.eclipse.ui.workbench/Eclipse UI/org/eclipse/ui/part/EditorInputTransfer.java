@@ -62,7 +62,7 @@ import org.eclipse.ui.XMLMemento;
  * Below is an example of how to set the data for dragging a single editor input
  * using a <code>EditorInputTransfer</code>.
  * </p>
- * 
+ *
  * <pre>
  * public void dragSetData(DragSourceEvent event) {
  * 	if (EditorInputTransfer.getInstance().isSupportedType(event.dataType)) {
@@ -192,7 +192,7 @@ public class EditorInputTransfer extends ByteArrayTransfer {
 
 	/**
 	 * Method readEditorInput.
-	 * 
+	 *
 	 * @param in
 	 * @return EditorInputData
 	 */
@@ -225,7 +225,7 @@ public class EditorInputTransfer extends ByteArrayTransfer {
 
 	/**
 	 * Method writeEditorInput.
-	 * 
+	 *
 	 * @param dataOut
 	 * @param editorInputData
 	 */

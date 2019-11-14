@@ -21,7 +21,7 @@ package org.eclipse.ui;
  * (named <code>"org.eclipse.ui.newWizards"</code>). For example, the plug-in's
  * XML markup might contain:
  * </p>
- * 
+ *
  * <pre>
  * &lt;extension point="org.eclipse.ui.newWizards"&gt;
  *   &lt;wizard

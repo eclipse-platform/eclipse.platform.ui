@@ -211,7 +211,7 @@ public class FileSystemElement implements IAdaptable {
 
 	/**
 	 * Removes a sub-folder from this file system element.
-	 * 
+	 *
 	 * @param child The child to remove.
 	 */
 	public void removeFolder(FileSystemElement child) {
@@ -233,7 +233,7 @@ public class FileSystemElement implements IAdaptable {
 
 	/**
 	 * Sets the parent of this file system element.
-	 * 
+	 *
 	 * @param element The new parent.
 	 */
 	public void setParent(FileSystemElement element) {

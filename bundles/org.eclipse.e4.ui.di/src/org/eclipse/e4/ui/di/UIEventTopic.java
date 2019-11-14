@@ -32,7 +32,7 @@ import javax.inject.Qualifier;
  * <p>
  * Example usage:
  * </p>
- * 
+ *
  * <pre>
  *   public class Car {
  *     &#064;void handle(@Optional @UIEventTopic("org/eclipse/e4/some/event/topic") Payload payload);

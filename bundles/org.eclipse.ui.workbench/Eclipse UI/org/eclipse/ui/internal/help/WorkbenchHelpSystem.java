@@ -303,7 +303,7 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 	/**
 	 * A wrapper for action help context that passes the action text to be used as a
 	 * title.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private static class ContextWithTitle implements IContext2 {

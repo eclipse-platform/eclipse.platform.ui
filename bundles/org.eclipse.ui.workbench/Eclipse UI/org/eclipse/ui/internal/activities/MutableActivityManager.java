@@ -108,7 +108,7 @@ public final class MutableActivityManager extends AbstractActivityManager
 
 	/**
 	 * Create a new instance of this class using the platform extension registry.
-	 * 
+	 *
 	 * @param triggerPointAdvisor
 	 */
 	public MutableActivityManager(ITriggerPointAdvisor triggerPointAdvisor) {
@@ -117,7 +117,7 @@ public final class MutableActivityManager extends AbstractActivityManager
 
 	/**
 	 * Create a new instance of this class using the provided registry.
-	 * 
+	 *
 	 * @param triggerPointAdvisor
 	 *
 	 * @param activityRegistry    the activity registry

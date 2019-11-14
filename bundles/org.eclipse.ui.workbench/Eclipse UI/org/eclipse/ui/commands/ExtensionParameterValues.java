@@ -29,7 +29,7 @@ import org.eclipse.core.runtime.IExecutableExtension;
  * advantage of the <code>IExecutableExtension</code> mechanism. The parameter
  * values and names can be specified purely in XML. This can be done as follows:
  * </p>
- * 
+ *
  * <pre>
  * <code>
  *     &lt;command

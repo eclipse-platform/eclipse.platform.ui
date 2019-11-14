@@ -34,7 +34,7 @@ public class ViewSettingsDialog extends Dialog {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * 
+	 *
 	 * @param parentShell
 	 */
 	public ViewSettingsDialog(Shell parentShell) {

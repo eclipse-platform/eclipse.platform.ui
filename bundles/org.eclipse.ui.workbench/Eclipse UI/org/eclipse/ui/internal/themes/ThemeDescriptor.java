@@ -48,7 +48,7 @@ public class ThemeDescriptor implements IThemeDescriptor {
 
 	/**
 	 * Create a new ThemeDescriptor
-	 * 
+	 *
 	 * @param id
 	 */
 	public ThemeDescriptor(String id) {

@@ -60,7 +60,7 @@ public interface IWorkbenchPropertyPage extends IPreferencePage {
 	 * wrapped in an IAdaptable by the workbench before it is forwarded to this
 	 * method.
 	 * </p>
-	 * 
+	 *
 	 * @see PropertyDialogAction
 	 *
 	 * @param element the object that owns the properties shown in this page

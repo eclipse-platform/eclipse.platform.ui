@@ -148,7 +148,7 @@ public class CommonNavigatorActionGroup extends ActionGroup implements IMementoA
 	/**
 	 * Creates the filter action group. Subclasses may override to provide their own
 	 * implementation.
-	 * 
+	 *
 	 * @param pCommonViewer
 	 *
 	 * @return the {@link FilterActionGroup}

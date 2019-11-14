@@ -31,7 +31,7 @@ public interface IProductConstants {
 	 * To obtain a human-readable name for the product, use
 	 * <code>IProduct.getName()</code>.
 	 * </p>
-	 * 
+	 *
 	 * @see org.eclipse.swt.widgets.Display#setAppName
 	 */
 	String APP_NAME = "appName"; //$NON-NLS-1$
@@ -65,11 +65,11 @@ public interface IProductConstants {
 	 * The contents must be the same format as a {@link java.util.Properties} file
 	 * with the key/value pairs being:
 	 * </p>
-	 * 
+	 *
 	 * <pre>
 	 * qualifier/key=value
 	 * </pre>
-	 * 
+	 *
 	 * Where <code>qualifier</code> is typically the bundle id.
 	 */
 	String PREFERENCE_CUSTOMIZATION = "preferenceCustomization"; //$NON-NLS-1$
@@ -85,7 +85,7 @@ public interface IProductConstants {
 	 * If the <code>WINDOW_IMAGES</code> property is given, then it supercedes this
 	 * one.
 	 * </p>
-	 * 
+	 *
 	 * @deprecated use WINDOW_IMAGES instead (see recommendations there)
 	 */
 	@Deprecated
@@ -137,7 +137,7 @@ public interface IProductConstants {
 	 * The value is a comma-separated list of four integer values, specifying x, y,
 	 * width, and height of the rectangle in pixel coordinates.
 	 * </p>
-	 * 
+	 *
 	 * @since 3.2
 	 * @see org.eclipse.ui.IWorkbenchPreferenceConstants#SHOW_PROGRESS_ON_STARTUP
 	 */
@@ -151,7 +151,7 @@ public interface IProductConstants {
 	 * The value is a comma-separated list of four integer values, specifying x, y,
 	 * width, and height of the rectangle in pixel coordinates.
 	 * </p>
-	 * 
+	 *
 	 * @since 3.2
 	 * @see org.eclipse.ui.IWorkbenchPreferenceConstants#SHOW_PROGRESS_ON_STARTUP
 	 */
@@ -165,7 +165,7 @@ public interface IProductConstants {
 	 * red component of the color, the next two digits the green component, and the
 	 * last two digits the blue component.
 	 * </p>
-	 * 
+	 *
 	 * @since 3.2
 	 * @see org.eclipse.ui.IWorkbenchPreferenceConstants#SHOW_PROGRESS_ON_STARTUP
 	 */

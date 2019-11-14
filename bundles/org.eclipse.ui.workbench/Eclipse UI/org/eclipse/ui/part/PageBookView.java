@@ -1043,7 +1043,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 
 	/**
 	 * Make sure that the part is not considered if it is hidden.
-	 * 
+	 *
 	 * @param part
 	 * @since 3.5
 	 */

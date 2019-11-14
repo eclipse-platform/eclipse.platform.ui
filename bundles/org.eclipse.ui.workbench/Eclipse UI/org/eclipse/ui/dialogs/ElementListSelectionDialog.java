@@ -30,7 +30,7 @@ public class ElementListSelectionDialog extends AbstractElementListSelectionDial
 
 	/**
 	 * Creates a list selection dialog.
-	 * 
+	 *
 	 * @param parent   the parent widget.
 	 * @param renderer the label renderer.
 	 */
@@ -40,7 +40,7 @@ public class ElementListSelectionDialog extends AbstractElementListSelectionDial
 
 	/**
 	 * Sets the elements of the list.
-	 * 
+	 *
 	 * @param elements the elements of the list.
 	 */
 	public void setElements(Object[] elements) {

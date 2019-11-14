@@ -60,7 +60,7 @@ public class BundleGroupProperties extends BrandingProperties implements IBundle
 	/**
 	 * This instance will return properties from the given bundle group. The
 	 * properties are retrieved in a lazy fashion and cached for later retrieval.
-	 * 
+	 *
 	 * @param bundleGroup must not be null
 	 */
 	public BundleGroupProperties(IBundleGroup bundleGroup) {

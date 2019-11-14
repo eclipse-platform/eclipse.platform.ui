@@ -41,7 +41,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * <p>
  * This class may be instantiated; it is not intended to be subclassed.
  * </p>
- * 
+ *
  * @deprecated Workbench no longer exposes the concept of "pages" in the user ui
  *             model. See IWorkbench.showPerspective methods.
  * @noextend This class is not intended to be subclassed by clients.

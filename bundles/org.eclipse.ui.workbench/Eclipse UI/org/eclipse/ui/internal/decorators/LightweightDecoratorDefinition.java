@@ -227,7 +227,7 @@ class LightweightDecoratorDefinition extends DecoratorDefinition implements IObj
 
 	/**
 	 * Decorate the element using the decoration to store the result.
-	 * 
+	 *
 	 * @param element
 	 * @param decoration
 	 */

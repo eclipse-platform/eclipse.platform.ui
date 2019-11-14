@@ -140,7 +140,7 @@ public abstract class AbstractMultiEditor extends EditorPart {
 
 	/**
 	 * Returns the active inner editor.
-	 * 
+	 *
 	 * @return the active editor
 	 */
 	public final IEditorPart getActiveEditor() {
@@ -149,7 +149,7 @@ public abstract class AbstractMultiEditor extends EditorPart {
 
 	/**
 	 * Returns an array with all inner editors.
-	 * 
+	 *
 	 * @return the inner editors
 	 */
 	public final IEditorPart[] getInnerEditors() {
