@@ -16,6 +16,7 @@
 
 package org.eclipse.ui.tests.forms;
 
+import org.eclipse.ui.tests.forms.events.AllEventsTests;
 import org.eclipse.ui.tests.forms.layout.AllLayoutTests;
 import org.eclipse.ui.tests.forms.util.AllUtilityTests;
 import org.eclipse.ui.tests.forms.widgets.AllWidgetsTests;
@@ -27,9 +28,10 @@ import org.junit.runners.Suite;
  */
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
-	AllLayoutTests.class,
-	AllUtilityTests.class,
-	AllWidgetsTests.class
+		AllEventsTests.class, //
+		AllLayoutTests.class, //
+		AllUtilityTests.class, //
+		AllWidgetsTests.class //
 })
 public class AllFormsTests {
 
