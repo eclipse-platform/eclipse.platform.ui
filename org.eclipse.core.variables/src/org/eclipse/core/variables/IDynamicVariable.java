@@ -23,7 +23,7 @@ import org.eclipse.core.runtime.CoreException;
  * The following is a definition of a dynamic variable that resolves to the name
  * of the selected resource:
  * </p>
- * 
+ *
  * <pre>
  *  &lt;extension point="org.eclipse.core.variables.dynamicVariables"&gt;
  *    &lt;variable
@@ -38,7 +38,7 @@ import org.eclipse.core.runtime.CoreException;
  * Clients contributing a dynamic variable provide an implementation of
  * {@link org.eclipse.core.variables.IDynamicVariableResolver}.
  * </p>
- * 
+ *
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
  */

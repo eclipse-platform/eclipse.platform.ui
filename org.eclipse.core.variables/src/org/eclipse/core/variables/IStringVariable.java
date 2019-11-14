@@ -18,7 +18,7 @@ package org.eclipse.core.variables;
  * A variable that can be referenced in an expression, which resolves to a
  * string value. Variables are referenced in expressions via their name, in the
  * following format.
- * 
+ *
  * <pre>
  * ${varname} or ${varname:argument}
  * </pre>
@@ -39,7 +39,7 @@ package org.eclipse.core.variables;
  * time a string substitution is performed by a contributed resolver. Dynamic
  * variables may accept an argument.</li>
  * </ul>
- * 
+ *
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
  */
