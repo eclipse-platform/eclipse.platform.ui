@@ -81,7 +81,7 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 	private Font fStatusTextFont;
 	/**
 	 * The color of the optional status text label or <code>null</code> if none.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	private Color fStatusTextForegroundColor;
@@ -208,7 +208,7 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 		Assert.isLegal(bg != null);
 		Assert.isLegal(fg != null);
 		Assert.isLegal(factor >= 0f && factor <= 1f);
-		
+
 		float complement= 1f - factor;
 		return new RGB(
 				(int) (complement * bg.red + factor * fg.red),
@@ -216,7 +216,7 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 				(int) (complement * bg.blue + factor * fg.blue)
 		);
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.text.IInformationControlExtension2#setInput(java.lang.Object)
 	 */
@@ -256,7 +256,7 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 		if (fStatusTextForegroundColor != null && !fStatusTextForegroundColor.isDisposed())
 			fStatusTextForegroundColor.dispose();
 		fStatusTextForegroundColor= null;
-		
+
 		fTextFont= null;
 		fShell= null;
 		fText= null;

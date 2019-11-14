@@ -91,7 +91,7 @@ class SelectResourcesDialog extends Dialog {
 		fResourceGroup.refresh();
 		setSelection(fInput, fAcceptableLocationsFilter);
 	}
-	
+
 	public IResource[] getSelectedResources() {
 		List<Object> items= fResourceGroup.getAllCheckedListItems();
 		return items.toArray(new IResource[items.size()]);
@@ -221,7 +221,7 @@ class SelectResourcesDialog extends Dialog {
 		selectTypesButton.addSelectionListener(listener);
 		selectTypesButton.setFont(font);
 		setButtonLayoutData(selectTypesButton);
-		
+
 		return buttonComposite;
 	}
 

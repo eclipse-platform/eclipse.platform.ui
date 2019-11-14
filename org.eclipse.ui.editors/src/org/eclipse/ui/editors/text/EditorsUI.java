@@ -93,7 +93,7 @@ public final class EditorsUI {
 	 * To access the general preference from another plug-in use a
 	 * {@link org.eclipse.ui.texteditor.ChainedPreferenceStore}:
 	 * </p>
-	 * 
+	 *
 	 * <pre>
 	 * List stores= new ArrayList(3);
 	 * stores.add(YourPlugin.getDefault().getPreferenceStore());
@@ -118,7 +118,7 @@ public final class EditorsUI {
 	 * To access the general preference from another plug-in use a
 	 * {@link org.eclipse.ui.texteditor.ChainedPreferenceStore}:
 	 * </p>
-	 * 
+	 *
 	 * <pre>
 	 * List stores= new ArrayList(3);
 	 * stores.add(YourPlugin.getDefault().getPreferenceStore());
@@ -146,7 +146,7 @@ public final class EditorsUI {
 
 	/**
 	 * Returns the preferences of this plug-in.
-	 * 
+	 *
 	 * @return the plug-in preferences
 	 * @see org.eclipse.core.runtime.Plugin#getPluginPreferences()
 	 * @deprecated As of 3.5, replaced by {@link #getPreferenceStore()}

@@ -56,7 +56,7 @@ public class ExtensionBasedTextEditor extends TextEditor {
 	private ImageDescriptor contentTypeImageDescripter;
 
 	/**
-	 * 
+	 *
 	 */
 	public ExtensionBasedTextEditor() {
 		configuration = new ExtensionBasedTextViewerConfiguration(this, getPreferenceStore());
@@ -101,10 +101,10 @@ public class ExtensionBasedTextEditor extends TextEditor {
 
 	/**
 	 * Configure the {@link ICharacterPairMatcher} from the "org.eclipse.ui.genericeditor.characterPairMatchers" extension point.
-	 * 
+	 *
 	 * @param viewer
 	 *            the source viewer.
-	 * 
+	 *
 	 * @param support
 	 *            the source viewer decoration support.
 	 */

@@ -51,7 +51,7 @@ public class QuickAssistProcessorRegistry {
 
 	/**
 	 * Get the contributed {@link IQuickAssistProcessor}s
-	 * 
+	 *
 	 * @return the list of {@link IQuickAssistProcessor} contributed
 	 */
 

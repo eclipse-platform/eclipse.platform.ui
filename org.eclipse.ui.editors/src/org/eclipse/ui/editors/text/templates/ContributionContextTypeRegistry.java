@@ -62,7 +62,7 @@ public class ContributionContextTypeRegistry extends ContextTypeRegistry {
 	/**
 	 * Creates a new context type registry and registers all context types contributed for the given
 	 * registry ID.
-	 * 
+	 *
 	 * @param registryId the registry ID
 	 * @since 3.5
 	 */
@@ -81,7 +81,7 @@ public class ContributionContextTypeRegistry extends ContextTypeRegistry {
 
 	/**
 	 * Registers all context types contributed for the given registry ID.
-	 * 
+	 *
 	 * @param registryId the registry ID
 	 * @since 3.5
 	 */

@@ -255,7 +255,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 		gc.dispose();
 		return width;
 	}
-	
+
 	/**
 	 * Returns a boolean indicating whether the passed tree element should be at
 	 * LEAST gray-checked. Note that this method does not consider whether it
@@ -677,7 +677,7 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 			listViewer.setAllChecked(selection);
 		});
 	}
-	
+
 	public void refresh() {
 		//Potentially long operation - show a busy cursor
 		BusyIndicator.showWhile(treeViewer.getControl().getDisplay(), () -> {
@@ -851,13 +851,13 @@ class SelectResourcesBlock implements ICheckStateListener, ISelectionChangedList
 
 		// Update the store before the hierarchy to prevent updating parents
 		// before all of the children are done
-		
+
 		for (Entry<IContainer, List<Object>> entry : items.entrySet()) {
 			Object key = entry.getKey();
 			primeHierarchyForSelection(key, selectedNodes);
 			checkedStateStore.put(key, entry.getValue());
 		}
-			
+
 
 		// Update the checked tree items. Since each tree item has a selected
 		// item, all the tree items will be gray checked.

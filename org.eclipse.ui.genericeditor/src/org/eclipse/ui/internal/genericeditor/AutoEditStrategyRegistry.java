@@ -35,7 +35,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * A registry of auto edit strategies provided by extension
  * <code>org.eclipse.ui.genericeditor.autoEditStrategy</code>. Those extensions
  * are specific to a given {@link IContentType}.
- * 
+ *
  * @since 1.1
  */
 public class AutoEditStrategyRegistry {
@@ -60,7 +60,7 @@ public class AutoEditStrategyRegistry {
 	/**
 	 * Get the contributed {@link IAutoEditStrategy}s that are relevant to hook
 	 * on source viewer according to document content types.
-	 * 
+	 *
 	 * @param sourceViewer
 	 *            the source viewer we're hooking completion to.
 	 * @param editor the text editor

@@ -33,7 +33,7 @@ import org.osgi.framework.BundleContext;
 
 /**
  * Generic editor plugin activator and singletons.
- * 
+ *
  * @since 1.0
  */
 public class GenericEditorPlugin extends AbstractUIPlugin {

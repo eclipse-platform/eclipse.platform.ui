@@ -66,5 +66,5 @@ public class MarkerResoltionQuickAssistProcessor implements IQuickAssistProcesso
 		}
 		return resolutions.toArray(new ICompletionProposal[resolutions.size()]);
 	}
-	
+
 }

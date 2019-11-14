@@ -485,7 +485,7 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	 * </p>
 	 * (value
 	 * <code>"org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals"</code>).
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	String QUICK_ASSIST= "org.eclipse.jdt.ui.edit.text.java.correction.assist.proposals"; //$NON-NLS-1$

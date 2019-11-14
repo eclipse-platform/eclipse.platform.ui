@@ -214,7 +214,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 		messageLabel.setFont(font);
 		return messageComposite;
 	}
-	
+
 	/**
 	 * Creates page for hover preferences.
 	 *
@@ -350,7 +350,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 			}
 
 		});
-		
+
 		fQuickDiffProviderNote= createNoteComposite(parent.getFont(), editorComposite, TextEditorMessages.QuickDiffConfigurationBlock_referenceProviderNoteTitle,
 				TextEditorMessages.QuickDiffConfigurationBlock_referenceProviderNoteMessage);
 		gd= new GridData(SWT.BEGINNING, SWT.FILL, false, true);

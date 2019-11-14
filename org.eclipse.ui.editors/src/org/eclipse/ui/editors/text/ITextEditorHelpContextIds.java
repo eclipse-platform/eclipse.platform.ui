@@ -75,5 +75,5 @@ public interface ITextEditorHelpContextIds extends IAbstractTextEditorHelpContex
 	 * @since 3.6
 	 */
 	String ACCESSIBILITY_PREFERENCE_PAGE= PREFIX + "accessibility_preference_page_context"; //$NON-NLS-1$
-	
+
 }

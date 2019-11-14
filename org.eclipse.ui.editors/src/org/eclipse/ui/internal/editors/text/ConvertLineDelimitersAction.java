@@ -101,7 +101,7 @@ public class ConvertLineDelimitersAction extends FileBufferOperationAction {
 			@Override
 			protected Composite createSelectionButtonGroup(Composite parent) {
 				Composite buttonGroup= super.createSelectionButtonGroup(parent);
-				
+
 				final Button button = new Button(buttonGroup, SWT.CHECK);
 				((GridLayout) buttonGroup.getLayout()).numColumns++;
 				button.setText(TextEditorMessages.ConvertLineDelimitersAction_show_only_text_files);
@@ -114,7 +114,7 @@ public class ConvertLineDelimitersAction extends FileBufferOperationAction {
 						refresh();
 					}
 				});
-				
+
 				return buttonGroup;
 			}
 		};
@@ -126,7 +126,7 @@ public class ConvertLineDelimitersAction extends FileBufferOperationAction {
 		}
 		return null;
 	}
-	
+
 	private String getDialogTitle() {
 		return NLSUtility.format(TextEditorMessages.ConvertLineDelimitersAction_dialog_title, fLabel);
 	}

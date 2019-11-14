@@ -26,7 +26,7 @@ import org.eclipse.jface.text.source.Annotation;
  * A quick assist processor that delegates all content assist
  * operations to children provided in constructor and aggregates
  * the results.
- * 
+ *
  * @since 1.0
  */
 public class CompositeQuickAssistProcessor implements IQuickAssistProcessor {

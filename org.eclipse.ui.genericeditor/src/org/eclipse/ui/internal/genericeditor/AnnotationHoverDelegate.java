@@ -28,7 +28,7 @@ import org.eclipse.ui.texteditor.MarkerAnnotation;
  * constructor.
  */
 public class AnnotationHoverDelegate implements ITextHover {
-	
+
 	private DefaultTextHover delegate;
 	private ISourceViewer viewer;
 

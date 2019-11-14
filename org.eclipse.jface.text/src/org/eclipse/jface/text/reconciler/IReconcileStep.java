@@ -53,7 +53,7 @@ import org.eclipse.jface.text.IRegion;
  * <p>
  * This interface must be implemented by clients.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public interface IReconcileStep {

@@ -99,7 +99,7 @@ public class DefaultEncodingSupport implements IEncodingSupport {
 				}
 			}
 		};
-		
+
 		prefs.addPreferenceChangeListener(fPreferenceChangeListener);
 	}
 

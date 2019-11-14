@@ -60,7 +60,7 @@ import org.eclipse.ui.PlatformUI;
  * @since 3.1
  */
 public class FileBufferOperationHandler extends AbstractHandler {
-	
+
 	private IFileBufferOperation fFileBufferOperation;
 	private IWorkbenchWindow fWindow;
 	private IResource[] fResources;

@@ -32,7 +32,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
  * A registry of character pair matchers provided by extension
  * <code>org.eclipse.ui.genericeditor.characterPairMatchers</code>. Those
  * extensions are specific to a given {@link IContentType}.
- * 
+ *
  * @since 1.2
  */
 public class CharacterPairMatcherRegistry {
@@ -57,7 +57,7 @@ public class CharacterPairMatcherRegistry {
 	/**
 	 * Get the contributed {@link IPresentationReconciliers}s that are relevant to
 	 * hook on source viewer according to document content types.
-	 * 
+	 *
 	 * @param sourceViewer the source viewer we're hooking completion to.
 	 * @param editor       the text editor
 	 * @param contentTypes the content types of the document we're editing.

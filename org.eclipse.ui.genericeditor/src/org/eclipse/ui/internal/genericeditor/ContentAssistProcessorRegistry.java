@@ -42,7 +42,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 /**
  * A registry of content assist processors provided by extension <code>org.eclipse.ui.genericeditor.contentAssistProcessors</code>.
  * Those extensions are specific to a given {@link IContentType}.
- * 
+ *
  * @since 1.0
  */
 public class ContentAssistProcessorRegistry {
@@ -147,7 +147,7 @@ public class ContentAssistProcessorRegistry {
 
 	/**
 	 * Get the contributed {@link IContentAssistProcessor}s that are relevant to hook on source viewer according
-	 * to document content types. 
+	 * to document content types.
 	 * @param sourceViewer the source viewer we're hooking completion to.
 	 * @param editor the text editor
 	 * @param contentTypes the content types of the document we're editing.

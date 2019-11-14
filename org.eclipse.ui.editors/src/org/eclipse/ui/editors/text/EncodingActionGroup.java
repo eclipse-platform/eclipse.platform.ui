@@ -48,7 +48,7 @@ import org.eclipse.ui.texteditor.TextEditorAction;
 
 /**
  * Action group for encoding actions.
- * 
+ *
  * @since 2.0
  * @deprecated As of 3.1, encoding needs to be changed via properties dialog. This class is planned
  *             for removal after March 2021 (see bug#544309 for details).

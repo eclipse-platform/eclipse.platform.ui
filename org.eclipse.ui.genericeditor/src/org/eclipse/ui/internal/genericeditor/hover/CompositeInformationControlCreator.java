@@ -113,7 +113,7 @@ public class CompositeInformationControlCreator
 		} while (thisIterator.hasNext());
 		return true;
 	}
-	
+
 
 	@Override
 	public IInformationControl createInformationControl(Shell parent) {

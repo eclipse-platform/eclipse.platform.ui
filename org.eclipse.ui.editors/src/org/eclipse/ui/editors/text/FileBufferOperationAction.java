@@ -152,7 +152,7 @@ public class FileBufferOperationAction extends Action implements IWorkbenchWindo
 	/**
 	 * Collect the files to process. This method may show a dialog to ask the user.
 	 * Subclasses may extend or reimplement.
-	 * 
+	 *
 	 * @param resources selected resources
 	 * @return the files to process, can be <code>null</code>
 	 */

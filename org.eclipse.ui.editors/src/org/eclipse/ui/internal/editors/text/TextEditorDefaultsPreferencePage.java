@@ -578,7 +578,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 		/**
 		 * Sets or clears the error message. If not <code>null</code>, the OK button is disabled.
-		 * 
+		 *
 		 * @param errorMessage the error message, or <code>null</code> to clear
 		 * @since 3.0
 		 */
@@ -880,7 +880,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		final IntegerDomain printMarginDomain= new IntegerDomain(20, 200);
 		final Control[] printMarginControls= addTextField(appearanceComposite, printMarginColumn, printMarginDomain, 15, 20);
 		createDependency(showPrintMarginButton, showPrintMargin, printMarginControls);
-		
+
 		label= TextEditorMessages.TextEditorPreferencePage_printMarginAllowOverride;
 		Preference printMarginAllowOverride= new Preference(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_PRINT_MARGIN_ALLOW_OVERRIDE, label, null);
 		final Button showPrintMarginAllowOverride= addCheckBox(appearanceComposite, printMarginAllowOverride, new BooleanDomain(), 0);
@@ -962,7 +962,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		Preference maxCodeMinings= new Preference(AnnotationCodeMiningPreferenceConstants.SHOW_ANNOTATION_CODE_MINING_MAX, label, description);
 		IntegerDomain maxCodeMiningsDomain= new IntegerDomain(0, 99999);
 		Control[] maxCodeMiningsControls= addTextField(appearanceComposite, maxCodeMinings, maxCodeMiningsDomain, 15, 20);
-		
+
 		final SelectionListener codeMiningsListener= new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
@@ -1091,7 +1091,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 				int dimensions= 10;
 				Image image= new Image(tableComposite.getParent().getDisplay(), dimensions, dimensions);
 				GC gc= new GC(image);
-				// Draw color preview 
+				// Draw color preview
 				gc.setBackground(color);
 				gc.fillRectangle(0, 0, dimensions, dimensions);
 				// Draw outline around color preview
@@ -1460,7 +1460,7 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 
 	/**
 	 * Returns the currently selected item in the Appearance Color Options Table.
-	 * 
+	 *
 	 * @return {@link ColorEntry} the ColorEntry representing the currently selected item in the
 	 *         table
 	 */

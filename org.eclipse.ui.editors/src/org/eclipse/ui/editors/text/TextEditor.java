@@ -55,7 +55,7 @@ public class TextEditor extends AbstractDecoratedTextEditor {
 
 	/**
 	 * Creates a new text editor.
-	 * 
+	 *
 	 * @see #initializeEditor()
 	 * @see #initializeKeyBindingScopes()
 	 */

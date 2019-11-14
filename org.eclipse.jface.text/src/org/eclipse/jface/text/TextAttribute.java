@@ -36,7 +36,7 @@ public class TextAttribute {
 
 	/**
 	 * Text attribute for underline style. (value <code>1 &lt;&lt; 30</code>)
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	public static final int UNDERLINE= 1 << 30;

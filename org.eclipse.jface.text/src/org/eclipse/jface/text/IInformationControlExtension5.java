@@ -38,7 +38,7 @@ import org.eclipse.jface.resource.JFaceResources;
  * <pre>
  * return fShell.getDisplay().getActiveShell() == fShell
  * </pre>
- * 
+ *
  * Likewise, {@link IInformationControl#addFocusListener(org.eclipse.swt.events.FocusListener)}
  * should install listeners for {@link SWT#Activate} and {@link SWT#Deactivate} on the shell and
  * forward events to the focus listeners. Clients are encouraged to subclass

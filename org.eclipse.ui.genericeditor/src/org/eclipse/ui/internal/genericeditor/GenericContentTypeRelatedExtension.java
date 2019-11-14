@@ -29,7 +29,7 @@ import org.eclipse.ui.texteditor.ITextEditor;
 
 /**
  * This class wraps and proxies an instance of T provided through extensions and loads it lazily when it can contribute to the editor, then delegates all operations to actual instance.
- * 
+ *
  * @param <T>
  *            the actual type to proxy, typically the one defined on the extension point.
  */

@@ -59,7 +59,7 @@ import org.eclipse.ui.views.markers.MarkerViewUtil;
  * <p>
  * This class may be instantiated but is not intended for sub-classing.
  * </p>
- * 
+ *
  * @since 2.0, allowed to be subclassed since 3.5
  */
 public class SelectMarkerRulerAction extends ResourceAction implements IUpdate {

@@ -7,11 +7,11 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Angelo Zerr <angelo.zerr@gmail.com> - adapt code org.eclipse.wst.sse.ui.internal.projection.AbstractStructuredFoldingStrategy to support generic indent folding strategy.
- *                                           [generic editor] Default Code folding for generic editor should use IndentFoldingStrategy - Bug 520659 
+ *                                           [generic editor] Default Code folding for generic editor should use IndentFoldingStrategy - Bug 520659
  */
 package org.eclipse.ui.internal.genericeditor.folding;
 
@@ -68,7 +68,7 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 
 		/**
 		 * Creates a new FoldingAnnotation.
-		 * 
+		 *
 		 * @param isCollapsed true if this annotation should be collapsed, false
 		 *                    otherwise
 		 */
@@ -80,7 +80,7 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 		/**
 		 * Does not paint hidden annotations. Annotations are hidden when they only span
 		 * one line.
-		 * 
+		 *
 		 * @see ProjectionAnnotation#paint(org.eclipse.swt.graphics.GC,
 		 *      org.eclipse.swt.widgets.Canvas, org.eclipse.swt.graphics.Rectangle)
 		 */
@@ -118,7 +118,7 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 
 	/**
 	 * The folding strategy must be associated with a viewer for it to function
-	 * 
+	 *
 	 * @param viewer the viewer to associate this folding strategy with
 	 */
 	public void setViewer(ProjectionViewer viewer) {
@@ -291,7 +291,7 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 
 	/**
 	 * Returns the line state for line which starts with a given keyword.
-	 * 
+	 *
 	 * @param lineContent        line content.
 	 * @param lastLineForKeyword last line for the given keyword.
 	 * @return
@@ -314,7 +314,7 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 
 	/**
 	 * Compute indentation level of the given line by using the given tab size.
-	 * 
+	 *
 	 * @param line    the line text.
 	 * @param tabSize the tab size.
 	 * @return the indentation level of the given line by using the given tab size.
@@ -342,10 +342,10 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 	/**
 	 * Given a {@link DirtyRegion} returns an {@link Iterator} of the already
 	 * existing annotations in that region.
-	 * 
+	 *
 	 * @param dirtyRegion the {@link DirtyRegion} to check for existing annotations
 	 *                    in
-	 * 
+	 *
 	 * @return an {@link Iterator} over the annotations in the given
 	 *         {@link DirtyRegion}. The iterator could have no annotations in it. Or
 	 *         <code>null</code> if projection has been disabled.
@@ -362,7 +362,7 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 
 	/**
 	 * Update annotations.
-	 * 
+	 *
 	 * @param modifications the folding annotations to update.
 	 * @param deletions     the folding annotations to delete.
 	 * @param existing      the existing folding annotations.
@@ -387,7 +387,7 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 
 	/**
 	 * Update annotations.
-	 * 
+	 *
 	 * @param existingAnnotation the existing annotations that need to be updated
 	 *                           based on the given dirtied IndexRegion
 	 * @param newPos             the new position that caused the annotations need
@@ -424,7 +424,7 @@ public class IndentFoldingStrategy implements IReconcilingStrategy, IReconciling
 	 * These {@link FoldingAnnotation}s are then added to the {@link List} of
 	 * {@link FoldingAnnotation}s to be deleted
 	 * </p>
-	 * 
+	 *
 	 * @param dirtyRegion find the now invalid {@link FoldingAnnotation}s in this
 	 *                    {@link DirtyRegion}
 	 * @param deletions   the current list of {@link FoldingAnnotation}s marked for

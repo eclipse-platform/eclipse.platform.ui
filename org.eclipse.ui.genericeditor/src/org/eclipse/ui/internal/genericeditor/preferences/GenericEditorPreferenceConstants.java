@@ -38,7 +38,7 @@ public class GenericEditorPreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 1.2
 	 */
 	public final static String EDITOR_MATCHING_BRACKETS = "matchingBrackets"; //$NON-NLS-1$
@@ -52,7 +52,7 @@ public class GenericEditorPreferenceConstants {
 	 *
 	 * @see org.eclipse.jface.resource.StringConverter
 	 * @see org.eclipse.jface.preference.PreferenceConverter
-	 * 
+	 *
 	 * @since 1.2
 	 */
 	public final static String EDITOR_MATCHING_BRACKETS_COLOR = "matchingBracketsColor"; //$NON-NLS-1$
@@ -63,7 +63,7 @@ public class GenericEditorPreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 1.2
 	 */
 	public final static String EDITOR_HIGHLIGHT_BRACKET_AT_CARET_LOCATION = "highlightBracketAtCaretLocation"; //$NON-NLS-1$
@@ -74,7 +74,7 @@ public class GenericEditorPreferenceConstants {
 	 * <p>
 	 * Value is of type <code>Boolean</code>.
 	 * </p>
-	 * 
+	 *
 	 * @since 1.2
 	 */
 	public final static String EDITOR_ENCLOSING_BRACKETS = "enclosingBrackets"; //$NON-NLS-1$

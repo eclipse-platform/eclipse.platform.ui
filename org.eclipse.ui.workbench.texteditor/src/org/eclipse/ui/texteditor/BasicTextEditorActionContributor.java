@@ -54,7 +54,7 @@ import org.eclipse.ui.part.EditorActionBarContributor;
  * line</li>
  * <li><code>setActiveEditor</code> - extend to react to editor changes</li>
  * </ul>
- * 
+ *
  * @see org.eclipse.ui.texteditor.ITextEditorActionConstants
  */
 public class BasicTextEditorActionContributor extends EditorActionBarContributor {
