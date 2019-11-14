@@ -46,7 +46,7 @@ public class EditorTest extends AbstratGenericEditorTest{
 		Assert.assertTrue(editorTextWidget.getWordWrap());
 		Assert.assertTrue(this.editor.isWordWrapEnabled());
 	}
-	
+
 	@Test
 	public void testGenericEditorCanShowWhitespaceCharacters() throws Exception {
 		this.editor.setFocus();

@@ -55,7 +55,7 @@ public abstract class AbstractPairMatcherTest {
 
 	/**
 	 * Constructs a new character pair matcher.
-	 * 
+	 *
 	 * @param chars the characters to match
 	 * @return the character pair matcher
 	 */
@@ -65,7 +65,7 @@ public abstract class AbstractPairMatcherTest {
 
 	/**
 	 * Returns the partitioning treated by the matcher.
-	 * 
+	 *
 	 * @return the partition
 	 */
 	protected String getDocumentPartitioning() {
@@ -83,7 +83,7 @@ public abstract class AbstractPairMatcherTest {
 
 	/**
 	 * Very simple checks.
-	 * 
+	 *
 	 * @throws BadLocationException test failure
 	 */
 	@Test
@@ -116,7 +116,7 @@ public abstract class AbstractPairMatcherTest {
 
 	/**
 	 * Very simple checks.
-	 * 
+	 *
 	 * @throws BadLocationException test failure
 	 */
 	@Test
@@ -135,7 +135,7 @@ public abstract class AbstractPairMatcherTest {
 
 	/**
 	 * Close matches.
-	 * 
+	 *
 	 * @throws BadLocationException test failure
 	 */
 	@Test
@@ -163,7 +163,7 @@ public abstract class AbstractPairMatcherTest {
 
 	/**
 	 * Checks of simple situations where no matches should be found.
-	 * 
+	 *
 	 * @throws BadLocationException test failure
 	 */
 	@Test
@@ -177,7 +177,7 @@ public abstract class AbstractPairMatcherTest {
 
 	/**
 	 * Test that it doesn't match across different partitions.
-	 * 
+	 *
 	 * @throws BadLocationException test failure
 	 */
 	@Test
@@ -215,7 +215,7 @@ public abstract class AbstractPairMatcherTest {
 
 	/**
 	 * Test that it works properly next to partition boundaries.
-	 * 
+	 *
 	 * @throws BadLocationException test failure
 	 */
 	@Test
@@ -271,7 +271,7 @@ public abstract class AbstractPairMatcherTest {
 
 	/**
 	 * Test a few boundary conditions.
-	 * 
+	 *
 	 * * @throws BadLocationException test failure
 	 */
 	@Test
@@ -307,7 +307,7 @@ public abstract class AbstractPairMatcherTest {
 
 	/**
 	 * Checks that the test case reader reads the test case as specified.
-	 * 
+	 *
 	 * @param testString the string to test
 	 * @param expectedPos the expected position
 	 * @param expectedMatch the expected match
@@ -322,7 +322,7 @@ public abstract class AbstractPairMatcherTest {
 
 	/**
 	 * Checks that the given matcher matches the input as specified.
-	 * 
+	 *
 	 * @param matcher the matcher
 	 * @param testCase the test string
 	 */
@@ -372,7 +372,7 @@ public abstract class AbstractPairMatcherTest {
 	/**
 	 * Creates a text case from a string. In the given string a '%' represents the position of the
 	 * cursor and a '#' represents the position of the expected matching character.
-	 * 
+	 *
 	 * @param str the string for which to create the test case
 	 * @return the created test case
 	 */

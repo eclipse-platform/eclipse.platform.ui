@@ -28,7 +28,7 @@ import org.eclipse.ui.ide.IDE;
 public class MarkerResolutionGenerator implements IMarkerResolutionGenerator {
 
 	public static final String FIXME= MarkerResolutionGenerator.class.getName() + ".fixme";
-	
+
 	private static class MarkerResolution implements IMarkerResolution2 {
 		@Override
 		public String getDescription() {
@@ -51,7 +51,7 @@ public class MarkerResolutionGenerator implements IMarkerResolutionGenerator {
 				e.printStackTrace();
 			}
 		}
-		
+
 	}
 
 	@Override

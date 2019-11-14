@@ -26,7 +26,7 @@ import org.eclipse.jface.text.source.ICharacterPairMatcher;
  * @since 3.3
  */
 public class DefaultPairMatcherTest extends AbstractPairMatcherTest {
-	
+
 	public DefaultPairMatcherTest() {
 		super(false);
 	}
@@ -40,7 +40,7 @@ public class DefaultPairMatcherTest extends AbstractPairMatcherTest {
 
 	/**
 	 * Close matches.
-	 * 
+	 *
 	 * @throws BadLocationException test failure
 	 */
 	@Test
@@ -54,7 +54,7 @@ public class DefaultPairMatcherTest extends AbstractPairMatcherTest {
 
 	/**
 	 * Checks of simple situations where no matches should be found.
-	 * 
+	 *
 	 * @throws BadLocationException test failure
 	 */
 	@Test

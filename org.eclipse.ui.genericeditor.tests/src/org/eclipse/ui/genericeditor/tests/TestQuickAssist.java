@@ -71,7 +71,7 @@ public class TestQuickAssist extends AbstratGenericEditorTest {
 		assertEquals(1, completionProposalList.getItemCount());
 		final TableItem quickAssistItem = completionProposalList.getItem(0);
 		assertTrue("Missing quick assist proposal", quickAssistItem.getText().contains("QUICK ASSIST PROPOSAL")); //$NON-NLS-1$ //$NON-NLS-2$
-		
+
 	}
 
 

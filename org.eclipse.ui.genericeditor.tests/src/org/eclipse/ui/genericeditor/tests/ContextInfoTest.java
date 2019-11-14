@@ -56,7 +56,7 @@ public class ContextInfoTest extends AbstratGenericEditorTest {
 
 		editor.selectAndReveal(4, 0);
 		UITestCase.processEvents();
-		
+
 		action.update();
 		action.run();
 		this.completionShell= findNewShell(beforeShells);
@@ -64,7 +64,7 @@ public class ContextInfoTest extends AbstratGenericEditorTest {
 
 		editor.selectAndReveal(8, 0);
 		UITestCase.processEvents();
-		
+
 		action.update();
 		action.run();
 		this.completionShell= findNewShell(beforeShells);
@@ -81,14 +81,14 @@ public class ContextInfoTest extends AbstratGenericEditorTest {
 
 		editor.selectAndReveal(4, 0);
 		UITestCase.processEvents();
-		
+
 		action.update();
 		action.run();
 		this.completionShell= findNewShell(beforeShells);
 
 		editor.selectAndReveal(8, 0);
 		UITestCase.processEvents();
-		
+
 		action.update();
 		action.run();
 		this.completionShell= findNewShell(beforeShells);

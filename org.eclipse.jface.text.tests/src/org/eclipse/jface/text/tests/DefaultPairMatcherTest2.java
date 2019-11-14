@@ -20,7 +20,7 @@ import org.eclipse.jface.text.source.ICharacterPairMatcher;
 
 /**
  * Tests for the default pair matcher.
- * 
+ *
  * @since 3.8
  */
 public class DefaultPairMatcherTest2 extends AbstractPairMatcherTest {
@@ -38,7 +38,7 @@ public class DefaultPairMatcherTest2 extends AbstractPairMatcherTest {
 
 	/**
 	 * Very simple checks.
-	 * 
+	 *
 	 * @throws BadLocationException test failure
 	 */
 	@Test

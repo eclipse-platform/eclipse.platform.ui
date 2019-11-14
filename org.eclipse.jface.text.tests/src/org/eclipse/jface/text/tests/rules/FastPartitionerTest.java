@@ -79,7 +79,7 @@ public class FastPartitionerTest {
 		int[] offsets= new int[] { 13, 26, 26, 39 };
 		assertGetPartition_InterleavingPartitions(offsets);
 	}
-	
+
 	@Test
 	public void testGetPartitionEmptyStart() {
 		fDoc.set("/* comment */docu     ment");

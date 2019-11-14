@@ -41,15 +41,15 @@ import org.eclipse.ui.texteditor.AbstractTextEditor;
 /**
  * Closes intro, create {@link #project}, create {@link #file} and open {@link #editor}; and clean up.
  * Also contains additional utility methods
- * @since 1.0 
+ * @since 1.0
  */
 public class AbstratGenericEditorTest {
-	
+
 	protected IProject project;
 	protected IFile file;
 	protected ExtensionBasedTextEditor editor;
 	protected IWorkbenchWindow window;
-	
+
 	/**
 	 * Closes intro, create {@link #project}, create {@link #file} and open {@link #editor}
 	 * @throws Exception ex
@@ -70,7 +70,7 @@ public class AbstratGenericEditorTest {
 	protected void createAndOpenFile() throws Exception {
 		createAndOpenFile("foo.txt", "bar 'bar'");
 	}
-	
+
 	/**
 	 * Creates a new file in the project, opens it, and associate that file with the test state
 	 * @param name name of the file in the project
@@ -103,12 +103,12 @@ public class AbstratGenericEditorTest {
 			file = null;
 		}
 	}
-	
+
 	protected SourceViewer getSourceViewer() {
 		SourceViewer sourceViewer= (SourceViewer) new Accessor(editor, AbstractTextEditor.class).invoke("getSourceViewer", new Object[0]);
 		return sourceViewer;
 	}
-	
+
 	@After
 	public void tearDown() throws Exception {
 		cleanFileAndEditor();
@@ -124,7 +124,7 @@ public class AbstratGenericEditorTest {
 			UITestCase.processEvents();
 		}
 	}
-	
+
 	public static void waitAndDispatch(long milliseconds) {
 		long timeout = milliseconds; //ms
 		long start = System.currentTimeMillis();

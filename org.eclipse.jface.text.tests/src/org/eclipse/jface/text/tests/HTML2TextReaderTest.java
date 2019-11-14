@@ -92,26 +92,26 @@ public class HTML2TextReaderTest {
 		if (DEBUG)
 			System.out.println("<" + result + "/>");
 		assertEquals(expectedOutput, result);
-		
+
 		Iterator<StyleRange> styleRangeIterator= textPresentation.getAllStyleRangeIterator();
 		List<StyleRange> ranges= new ArrayList<>();
 		while (styleRangeIterator.hasNext()) {
 			ranges.add(styleRangeIterator.next());
 		}
-		
+
 		Collections.sort(ranges, (r1, r2) -> r1.start - r2.start);
-		
+
 		assertEquals(Arrays.asList(styleRanges), ranges);
-		
+
 		for (int i= 0; i < ranges.size() - 1; i++) {
 			StyleRange range1= ranges.get(i);
 			StyleRange range2= ranges.get(i + 1);
-			
+
 			if (range1.start + range1.length > range2.start) {
 				assertTrue("StyleRanges overlap", false);
 			}
 		}
-		
+
 	}
 
 	@Test
@@ -120,14 +120,14 @@ public class HTML2TextReaderTest {
 		String expected= "3<5";
 		verify(string, expected, 0);
 	}
-	
+
 	@Test
 	public void test1() throws IOException{
 		String string= "<dl><dt>@author</dt><dd>Foo Bar</dd></dl>";
 		String expected= LD+ "@author"+LD+"\tFoo Bar"+LD;
 		verify(string, expected, 1);
 	}
-	
+
 	@Test
 	public void test2() throws IOException{
 		String string= "<code>3>5<code>";
@@ -148,7 +148,7 @@ public class HTML2TextReaderTest {
 		String expected= "void p.Bb.fes()"+ LD + LD + LD+ "Parameters:"+ LD + "\ti fred or null"+LD;
 		verify(string, expected, 3);
 	}
-	
+
 	@Test
 	public void test5() throws IOException{
 		String string= "<code>1<2<3<4</code>";
@@ -163,7 +163,7 @@ public class HTML2TextReaderTest {
 		String expected= LD + "Something." + LD + "Something more.";
 		verify(string, expected, 0);
 	}
-	
+
 	@Test
 	public void testEntity1() throws IOException {
 		String string= "&amp;";
@@ -177,7 +177,7 @@ public class HTML2TextReaderTest {
 		String expected= "&unknown;";
 		verify(string, expected, 0);
 	}
-	
+
 	@Test
 	public void testBug367378() throws IOException {
 		verify("<head>", "", 0);
@@ -197,7 +197,7 @@ public class HTML2TextReaderTest {
 		String expected= "no comment";
 		verify(string, expected, 0);
 	}
-	
+
 	@Test
 	public void testStyles1() throws IOException {
 		String string= "<b>Hello World</b>";
@@ -267,7 +267,7 @@ public class HTML2TextReaderTest {
 		String expected= "This is yet another test";
 		verify(string, expected, 3);
 	}
-	
+
 	@Test
 	public void testStylesWithPre() throws IOException {
 		String string= "I am <b>bold</b>." + LD + "<p>" + LD + "<pre>One" + LD + LD + "<b>T</b>hree.</pre>" + LD + "<p>" + LD + "<b>Author:</b> me.";
@@ -279,7 +279,7 @@ public class HTML2TextReaderTest {
 		};
 		verify(string, expected, ranges);
 	}
-	
+
 	@Test
 	public void testCombineBoldItalicStriker() throws IOException {
 		String string= "<strong>strong</strong>,<em>italic</em>,<s>strike</s>," +

@@ -87,7 +87,7 @@ public class TextPresentationTest {
 
 	/**
 	 * Creates a new color.
-	 * 
+	 *
 	 * @param red the amount of red in the color
 	 * @param green the amount of green in the color
 	 * @param blue the amount of blue in the color
@@ -119,7 +119,7 @@ public class TextPresentationTest {
 	public void testUnclippedRegions() {
 		checkRegions(fAllRanges, fNonDefaultRanges);
 	}
-	
+
 	@Test
 	public void testClippedRegions1() {
 		fTextPresentation.setResultWindow(new Region(0, 140));

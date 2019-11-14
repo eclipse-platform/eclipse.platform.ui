@@ -108,7 +108,7 @@ public abstract class DisplayHelper {
 	/**
 	 * The condition which has to be met in order for {@link #waitForCondition(Display, long)} to
 	 * return before the timeout elapses.
-	 * 
+	 *
 	 * @return <code>true</code> if the condition is met, <code>false</code> if the event loop
 	 *         should be driven some more
 	 */

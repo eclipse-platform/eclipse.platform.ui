@@ -48,30 +48,30 @@ import org.eclipse.jface.text.tests.util.DisplayHelper;
 
 /**
  * Tests for Async completion proposal popup proposals filtering mechanics
- * 
+ *
  * @author Alex Boyko
  *
  */
 public class FilteringAsyncContentAssistTests {
-	
-	private Shell shell; 
+
+	private Shell shell;
 	private SourceViewer viewer;
 	private ContentAssistant ca;
-	
+
 	@Before
 	public void setup() {
 		tearDown();
-		
+
 		shell = new Shell();
 		shell.setSize(300, 300);
 		shell.open();
-		
+
 		viewer = new SourceViewer(shell, null, SWT.NONE);
 		Document document = new Document();
 		viewer.setDocument(document);
 		ca = new ContentAssistant(true);
 	}
-	
+
 	@After
 	public void tearDown() {
 		if (shell != null) {
@@ -86,7 +86,7 @@ public class FilteringAsyncContentAssistTests {
 	/**
 	 * Simple CA with 1 immediate CA processor. Empty text, invoke CA, verify 1
 	 * proposal, apply it, verify the resultant text
-	 * 
+	 *
 	 * @throws Exception exception
 	 */
 	@Test
@@ -107,7 +107,7 @@ public class FilteringAsyncContentAssistTests {
 		assertEquals(1, computedProposals.size());
 
 		ICompletionProposal proposal = computedProposals.get(0);
-		
+
 		IDocument document = viewer.getDocument();
 
 		proposal.apply(document);
@@ -118,7 +118,7 @@ public class FilteringAsyncContentAssistTests {
 	/**
 	 * Simple CA with filtering with 2 immediate CA processors. Empty text
 	 * initially. Invoke CA, verify 2 proposals, type 'x', verify only 1 proposal 1
-	 * 
+	 *
 	 * @throws Exception exception
 	 */
 	@Test
@@ -159,7 +159,7 @@ public class FilteringAsyncContentAssistTests {
 	/**
 	 * Simple CA with filtering with 1 immediate CA processors. Empty text
 	 * initially. Invoke CA, verify 1 proposal, type 'a', verify no proposals
-	 * 
+	 *
 	 * @throws Exception exception
 	 */
 	@Test
@@ -194,7 +194,7 @@ public class FilteringAsyncContentAssistTests {
 	 * CA with 1 immediate and 1 delayed CA processors. Empty text initially. Invoke
 	 * CA, verify 1 proposal shows right away, and then another added later after
 	 * delay
-	 * 
+	 *
 	 * @throws Exception exception
 	 */
 	@Test
@@ -231,7 +231,7 @@ public class FilteringAsyncContentAssistTests {
 				viewer.getSelectedRange().x);
 		assertEquals("yy", document.get());
 	}
-	
+
 	/**
 	 * CA with 1 CA processor for which the first request takes long time and consequent request are
 	 * instant. Invoke CA. and type 'a' such that completions are not ready yet, but while recompute
@@ -239,7 +239,7 @@ public class FilteringAsyncContentAssistTests {
 	 * UI runnable to show completions. Recompute is immediate. Hence proposals shown right away.
 	 * However the async UI runnable to show old proposals runs after and overwrites the correct
 	 * immediate proposals. Test that this behaviour is fixed
-	 * 
+	 *
 	 * @throws Exception exception
 	 */
 	@Test
@@ -252,22 +252,22 @@ public class FilteringAsyncContentAssistTests {
 		ca.install(viewer);
 
 		viewer.setSelectedRange(0, 0);
-						
+
 		ca.showPossibleCompletions();
-		
+
 		DisplayHelper.sleep(shell.getDisplay(), 200);
 		new InsertEdit(0, "a").apply(document);
 		viewer.setSelectedRange(1, 0);
-		
+
 		DisplayHelper.sleep(shell.getDisplay(), 3000);
-		
+
 		List<ICompletionProposal> filteredProposals= getFilteredProposals(ca,
 				p -> p instanceof IncompleteCompletionProposal);
 		assertTrue(filteredProposals != null);
 		assertEquals(1, filteredProposals.size());
-		
+
 		filteredProposals.get(0).apply(document);
-		
+
 		assertEquals("aabc", document.get());
 
 	}
@@ -276,9 +276,9 @@ public class FilteringAsyncContentAssistTests {
 	 * CA with filtering with 1 immediate and 1 delayed CA processors. Empty text
 	 * initially. Invoke CA, verify 1 proposal shows right away, type `a` before
 	 * delayed proposal calculated, verify immediate proposal filtered out
-	 * 
+	 *
 	 * Bug: filtering only applied after all CA processors have completed
-	 * 
+	 *
 	 * @throws Exception exception
 	 */
 	@Test @Ignore
@@ -394,9 +394,9 @@ public class FilteringAsyncContentAssistTests {
 			return super.computeCompletionProposals(viewer, offset);
 		}
 	}
-	
+
 	private class LongInitialContentAssistProcessor extends DelayedContentAssistProcessor {
-		
+
 		LongInitialContentAssistProcessor(String template, long delay, boolean incomplete) {
 			super(template, delay, incomplete);
 		}
@@ -446,7 +446,7 @@ public class FilteringAsyncContentAssistTests {
 		List<ICompletionProposal> filteredProposals = getFilteredProposals(ca);
 		return filteredProposals == null ? null : filteredProposals.stream().filter(p).collect(Collectors.toList());
 	}
-	
+
 	private static class IncompleteCompletionProposal implements ICompletionProposal {
 
 		/** The string to be displayed in the completion proposal popup. */
@@ -504,7 +504,7 @@ public class FilteringAsyncContentAssistTests {
 			return null;
 		}
 	}
-	
+
 	private static class CompletionProposal extends IncompleteCompletionProposal
 		implements ICompletionProposalExtension, ICompletionProposalExtension2 {
 
@@ -559,9 +559,9 @@ public class FilteringAsyncContentAssistTests {
 		public int getContextInformationPosition() {
 			return 0;
 		}
-		
+
 	}
-	
+
 	@SuppressWarnings("boxing")
 	private static boolean isSubstringFoundOrderedInString(String subString, String string) {
 		int lastIndex = 0;

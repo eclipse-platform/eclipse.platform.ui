@@ -210,7 +210,7 @@ public class InlinedAnnotationDemo {
 
 	/**
 	 * Add RGB parameter name annotation
-	 * 
+	 *
 	 * @param paramName
 	 * @param rgbContent
 	 * @param startIndex

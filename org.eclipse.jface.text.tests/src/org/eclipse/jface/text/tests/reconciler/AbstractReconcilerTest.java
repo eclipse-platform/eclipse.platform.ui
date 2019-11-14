@@ -179,7 +179,7 @@ public class AbstractReconcilerTest {
 				};
 		fReconciler.setIsIncrementalReconciler(false);
 		fReconciler.setDelay(50); // make tests run faster
-		
+
 		fProgressMonitor= new NullProgressMonitor();
 		fReconciler.setProgressMonitor(fProgressMonitor);
 
@@ -222,7 +222,7 @@ public class AbstractReconcilerTest {
 		assertFalse(isActive());
 		assertFalse(isDirty());
 	}
-	
+
 	@Test
 	public void testDirtyingWhenClean() throws BadLocationException, InterruptedException {
 		installDocument();

@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Shell;
 public class ColorAnnotation extends LineContentAnnotation {
 
 	private Color color;
-	
+
 	private Consumer<MouseEvent> action = e -> {
 		StyledText styledText = super.getTextWidget();
 		Shell shell = new Shell(styledText.getDisplay());
@@ -61,10 +61,10 @@ public class ColorAnnotation extends LineContentAnnotation {
 			}
 		}
 	};
-	
+
 	/**
 	 * Format the given rgb to hexa color.
-	 * 
+	 *
 	 * @param rgb
 	 * @return the hexa color from the given rgb.
 	 */
@@ -121,7 +121,7 @@ public class ColorAnnotation extends LineContentAnnotation {
 		int width = (int) (2 * fontMetrics.getAverageCharacterWidth() + getSquareSize(fontMetrics));
 		return width;
 	}
-	
+
 	@Override
 	public Consumer<MouseEvent> getAction(MouseEvent e) {
 		return action;

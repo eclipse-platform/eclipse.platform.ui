@@ -95,17 +95,17 @@ public class TextViewerUndoManagerTest extends AbstractUndoManagerTest {
 
 		undoManager.disconnect(newContext);
 	}
-	
+
 	@Test
 	public void testTransferNonUndoableNonTextOp() throws Exception {
 		internalTestTransferNonTextOp(false);
 	}
-	
+
 	@Test
 	public void testTransferUndoableNonTextOp() throws Exception {
 		internalTestTransferNonTextOp(true);
 	}
-	
+
 	@Test
 	public void testCanUndo() throws Exception {
 		IDocument doc= new Document();
