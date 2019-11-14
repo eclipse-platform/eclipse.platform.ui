@@ -549,7 +549,7 @@ public class ThemeEngine implements IThemeEngine {
 	@Override
 	public void applyStyles(Object widget, boolean applyStylesToChildNodes) {
 		for (CSSEngine engine : cssEngines) {
-			Object element = engine.getElement(widget);
+			Element element = engine.getElement(widget);
 			if (element != null) {
 				engine.applyStyles(element, applyStylesToChildNodes);
 			}
