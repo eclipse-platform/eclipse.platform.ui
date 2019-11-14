@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ import org.eclipse.ui.views.properties.IPropertySource;
 
 /**
  * This class represents a Button Element in the Sample View
- * 
+ *
  * TIP: By implementing the <code>IWorkbenchAdapter</code> interface, we can
  * easily add objects of this type to viewers and parts in the workbench. When a
  * viewer contains <code>IWorkbenchAdapter</code>, the generic
@@ -38,7 +38,7 @@ public class ButtonElement
 
 	/**
 	 * Creates a new ButtonElement.
-	 * 
+	 *
 	 * @param initBtn
 	 *            the control of this element
 	 * @param heading
@@ -75,7 +75,7 @@ public class ButtonElement
 
 	/**
 	 * Retrieve the control for this element.
-	 * 
+	 *
 	 * @return the control for this element.
 	 */
 	public Button getControl() {

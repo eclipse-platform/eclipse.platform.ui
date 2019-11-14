@@ -22,7 +22,7 @@ import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
 
 /**
  * Moved from org.eclipse.ui.examples.readmetool
- * 
+ *
  * @since 3.3
  */
 public class ExampleControlContribution extends

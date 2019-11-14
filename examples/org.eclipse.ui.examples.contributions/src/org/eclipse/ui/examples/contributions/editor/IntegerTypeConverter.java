@@ -19,7 +19,7 @@ import org.eclipse.core.commands.ParameterValueConversionException;
 
 /**
  * Convert between Integer and String for a command parameter type.
- * 
+ *
  * @since 3.4
  */
 public class IntegerTypeConverter extends AbstractParameterValueConverter {

@@ -18,7 +18,7 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * Externalized messages for the code in this plugin.
- * 
+ *
  * @since 3.3
  */
 public class ContributionMessages extends NLS {

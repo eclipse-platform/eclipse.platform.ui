@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -22,7 +22,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * a new Font dialog cell editor.
- * 
+ *
  * @author Anthony Hunter
  */
 public class FontDialogCellEditor
@@ -32,7 +32,7 @@ public class FontDialogCellEditor
 	 * Creates a new Font dialog cell editor parented under the given control.
 	 * The cell editor value is <code>null</code> initially, and has no
 	 * validator.
-	 * 
+	 *
 	 * @param parent
 	 *            the parent control
 	 */

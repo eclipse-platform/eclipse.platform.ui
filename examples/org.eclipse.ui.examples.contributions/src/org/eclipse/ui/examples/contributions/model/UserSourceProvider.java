@@ -22,7 +22,7 @@ import org.eclipse.ui.ISources;
 
 /**
  * An example of provide a Person as a variable to the evaluation service.
- * 
+ *
  * @since 3.4
  */
 public class UserSourceProvider extends AbstractSourceProvider {

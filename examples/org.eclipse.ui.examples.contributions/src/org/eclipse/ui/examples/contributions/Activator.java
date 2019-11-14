@@ -21,7 +21,7 @@ import org.osgi.framework.BundleContext;
 
 /**
  * The activator class controls the plug-in life cycle.
- * 
+ *
  * @since 3.3
  */
 public class Activator extends AbstractUIPlugin {
@@ -40,12 +40,12 @@ public class Activator extends AbstractUIPlugin {
 		super.start(context);
 		DEBUG_COMMANDS = getDebugOption("/trace/commands"); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Piggy back of off org.eclipse.ui/trace/commands
 	 */
 	public static boolean DEBUG_COMMANDS = false;
-	
+
 	private static boolean getDebugOption(String option) {
 		return "true".equalsIgnoreCase(Platform.getDebugOption(PlatformUI.PLUGIN_ID + option)); //$NON-NLS-1$
 	}

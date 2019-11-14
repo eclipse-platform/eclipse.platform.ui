@@ -32,7 +32,7 @@ import org.eclipse.ui.services.IEvaluationService;
 
 /**
  * Allow the admin rights to be updated.
- * 
+ *
  * @since 3.4
  */
 public class AdminHandler extends AbstractHandler implements IElementUpdater {

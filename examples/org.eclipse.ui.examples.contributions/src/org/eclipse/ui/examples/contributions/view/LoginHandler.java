@@ -27,7 +27,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 /**
  * Allow login as the selected user. If you are doing this for real, I would
  * suggest checking their credentials!
- * 
+ *
  * @since 3.4
  */
 public class LoginHandler extends AbstractHandler {

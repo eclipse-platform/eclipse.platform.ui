@@ -18,7 +18,7 @@ import org.eclipse.core.expressions.PropertyTester;
 
 /**
  * Test properties of a Person object provided as a variable.
- * 
+ *
  * @since 3.4
  */
 public class UserPropertyTester extends PropertyTester {

@@ -20,7 +20,7 @@ import org.eclipse.ui.IPersistableElement;
 
 /**
  * The editor input for looking up a person.
- * 
+ *
  * @since 3.3
  */
 public class PersonInput implements IEditorInput {
@@ -68,11 +68,11 @@ public class PersonInput implements IEditorInput {
 	public int hashCode() {
 		return index;
 	}
-	
+
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof PersonInput) {
-			return index == ((PersonInput)o).index; 
+			return index == ((PersonInput)o).index;
 		}
 		return false;
 	}

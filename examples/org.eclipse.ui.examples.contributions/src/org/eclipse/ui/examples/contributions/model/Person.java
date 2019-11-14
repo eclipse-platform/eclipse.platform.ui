@@ -16,7 +16,7 @@ package org.eclipse.ui.examples.contributions.model;
 
 /**
  * A simple model object that is mutable.
- * 
+ *
  * @since 3.3
  */
 public class Person {
@@ -52,11 +52,11 @@ public class Person {
 	public void setGivenname(String givenname) {
 		this.givenname = givenname;
 	}
-	
+
 	public boolean hasAdminRights() {
 		return admin;
 	}
-	
+
 	public void setAdminRights(boolean admin) {
 		this.admin = admin;
 	}

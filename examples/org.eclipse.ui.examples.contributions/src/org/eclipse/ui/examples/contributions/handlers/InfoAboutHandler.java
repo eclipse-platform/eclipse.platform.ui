@@ -29,7 +29,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
  * <p>
  * This is used for the menu contribution example.
  * </p>
- * 
+ *
  * @since 3.4
  *
  */
@@ -38,9 +38,9 @@ public class InfoAboutHandler extends AbstractHandler {
 	/**
 	 * A blank dialog. This is activated by the About InfoView menu
 	 * contribution. The handler is active when the InfoView part is active.
-	 * 
+	 *
 	 * @since 3.4
-	 * 
+	 *
 	 */
 	private final class InfoAboutDialog extends Dialog {
 		private InfoAboutDialog(Shell parentShell) {

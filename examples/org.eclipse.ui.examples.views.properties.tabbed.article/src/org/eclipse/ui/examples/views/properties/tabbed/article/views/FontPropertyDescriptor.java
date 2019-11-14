@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -19,7 +19,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 /**
  * A font property descriptor.
- * 
+ *
  * @author Anthony Hunter
  */
 public class FontPropertyDescriptor
@@ -27,7 +27,7 @@ public class FontPropertyDescriptor
 
 	/**
 	 * Creates an property descriptor with the given id and display name.
-	 * 
+	 *
 	 * @param id
 	 *            the id of the property
 	 * @param displayName

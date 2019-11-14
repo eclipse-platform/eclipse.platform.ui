@@ -21,7 +21,7 @@ import org.eclipse.ui.IWorkbench;
 
 /**
  * Use the service to create a person.
- * 
+ *
  * @since 3.4
  */
 public class PersonWizard extends Wizard implements INewWizard {

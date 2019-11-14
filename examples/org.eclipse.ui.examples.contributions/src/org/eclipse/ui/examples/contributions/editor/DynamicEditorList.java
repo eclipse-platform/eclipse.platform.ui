@@ -35,7 +35,7 @@ import org.eclipse.ui.menus.CommandContributionItemParameter;
 
 /**
  * Provide a dynamic list of open editors to activate.
- * 
+ *
  * @since 3.4
  */
 public class DynamicEditorList extends CompoundContributionItem {

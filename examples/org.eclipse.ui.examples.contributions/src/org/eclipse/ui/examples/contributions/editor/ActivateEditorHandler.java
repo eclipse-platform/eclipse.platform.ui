@@ -25,7 +25,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 /**
  * Activate an already open editor (although technically this would open a new
  * one as well)
- * 
+ *
  * @since 3.4
  */
 public class ActivateEditorHandler extends AbstractHandler {

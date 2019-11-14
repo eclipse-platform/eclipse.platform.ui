@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,7 +20,7 @@ import org.eclipse.ui.views.properties.PropertyDescriptor;
 
 /**
  * A checkbox property descriptor.
- * 
+ *
  * @author Anthony Hunter
  */
 public class CheckBoxPropertyDescriptor
@@ -28,7 +28,7 @@ public class CheckBoxPropertyDescriptor
 
 	/**
 	 * Constructs a new property descriptor with the given id and display name.
-	 * 
+	 *
 	 * @param id
 	 *            the id for the descriptor.
 	 * @param displayName

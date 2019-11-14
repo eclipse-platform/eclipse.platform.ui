@@ -30,7 +30,7 @@ import org.eclipse.ui.services.ISourceProviderService;
 
 /**
  * Example implementation of the person service.
- * 
+ *
  * @since 3.4
  */
 public class PersonService implements IPersonService, IDisposable {

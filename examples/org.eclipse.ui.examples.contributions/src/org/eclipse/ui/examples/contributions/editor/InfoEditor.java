@@ -39,7 +39,7 @@ import org.eclipse.ui.part.EditorPart;
 
 /**
  * Edit a person.
- * 
+ *
  * @since 3.3
  */
 public class InfoEditor extends EditorPart {

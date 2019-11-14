@@ -19,7 +19,7 @@ import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * Supply the person service to the IServiceLocator framework.
- * 
+ *
  * @since 3.4
  */
 public class PersonServiceFactory extends AbstractServiceFactory {

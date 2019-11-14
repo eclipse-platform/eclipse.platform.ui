@@ -21,7 +21,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * Request the view refresh from the model.
- * 
+ *
  * @since 3.3
  */
 public class RefreshInfoHandler extends AbstractHandler {

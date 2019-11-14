@@ -28,11 +28,11 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * open an element for editing.
- * 
+ *
  * @since 3.3
  */
 public class EditInfoHandler extends AbstractHandler {
-	
+
 	public static final String ID = "org.eclipse.ui.examples.contributions.view.edit"; //$NON-NLS-1$
 
 	private static final String EDITOR_ID = "org.eclipse.ui.examples.contributions.editor"; //$NON-NLS-1$

@@ -26,7 +26,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * Swap 2 elements around in the the view.
- * 
+ *
  * @since 3.3
  */
 public class SwapInfoHandler extends AbstractHandler {

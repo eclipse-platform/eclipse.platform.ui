@@ -29,7 +29,7 @@ import org.eclipse.ui.services.IServiceLocator;
 
 /**
  * Create a Person, fill in the correct fields.
- * 
+ *
  * @since 3.4
  */
 public class PersonWizardPage extends WizardPage implements Listener {

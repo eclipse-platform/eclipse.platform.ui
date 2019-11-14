@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -21,7 +21,7 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 /**
  * Property source for the size properties.
- * 
+ *
  * @author Anthony Hunter
  */
 public class SizePropertySource
@@ -52,7 +52,7 @@ public class SizePropertySource
 
 	/**
 	 * The constructor for SizePropertySource.
-	 * 
+	 *
 	 * @param m_element
 	 *            the button element.
 	 * @param point
@@ -65,7 +65,7 @@ public class SizePropertySource
 
 	/**
 	 * Fire a property change event.
-	 * 
+	 *
 	 * @param propName
 	 *            the name of the property change.
 	 */
@@ -102,7 +102,7 @@ public class SizePropertySource
 
 	/**
 	 * Retrieve the value of the size property.
-	 * 
+	 *
 	 * @return the value of the size property.
 	 */
 	public Point getValue() {

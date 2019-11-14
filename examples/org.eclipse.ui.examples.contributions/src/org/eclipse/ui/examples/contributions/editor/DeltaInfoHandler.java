@@ -25,7 +25,7 @@ import org.eclipse.ui.handlers.HandlerUtil;
 
 /**
  * Show if there is any delta from the model for the active editor.
- * 
+ *
  * @since 3.3
  */
 public class DeltaInfoHandler extends AbstractHandler {

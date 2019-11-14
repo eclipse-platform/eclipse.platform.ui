@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
 
 /**
  * The property source provider for a button element.
- * 
+ *
  * @author Anthony Hunter
  */
 public class ButtonElementProperties
@@ -93,7 +93,7 @@ public class ButtonElementProperties
 
 	/**
 	 * Creates a new ButtonElementProperties.
-	 * 
+	 *
 	 * @param element
 	 *            the element whose properties this instance represents
 	 */
@@ -171,7 +171,7 @@ public class ButtonElementProperties
 
 	/**
 	 * Returns the mocha element.
-	 * 
+	 *
 	 * @return MochaElement
 	 */
 	public ButtonElement getButtonElement() {

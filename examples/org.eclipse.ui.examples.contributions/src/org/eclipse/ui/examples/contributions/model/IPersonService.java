@@ -20,7 +20,7 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 
 /**
  * An example service to manage People.
- * 
+ *
  * @since 3.4
  */
 public interface IPersonService {
@@ -36,7 +36,7 @@ public interface IPersonService {
 
 	/**
 	 * The collection of people.
-	 * 
+	 *
 	 * @return an unmodifiable Collection. For looking, not touching. Will not
 	 *         be <code>null</code>.
 	 */
@@ -44,7 +44,7 @@ public interface IPersonService {
 
 	/**
 	 * Return the person identified by <code>id</code>.
-	 * 
+	 *
 	 * @param id
 	 *            a valid ID
 	 * @return a copy of the person, or <code>null</code> if not found.
@@ -54,7 +54,7 @@ public interface IPersonService {
 	/**
 	 * Update the person in this service. If this person does not exist in the
 	 * service it does nothing.
-	 * 
+	 *
 	 * @param person
 	 *            the person to update. Must not be <code>null</code>.
 	 */
@@ -64,7 +64,7 @@ public interface IPersonService {
 	 * Create a person object for this id. Does nothing if a person already
 	 * exists for this id. The returned person has default values for most
 	 * attributes, and the person's ID is set to <code>id</code>.
-	 * 
+	 *
 	 * @param id
 	 *            the id for the person.
 	 * @return a copy of the person, or <code>null</code> if a person already
@@ -77,7 +77,7 @@ public interface IPersonService {
 	 * <p>
 	 * Note: this services cleans up listeners when it is disposed.
 	 * </p>
-	 * 
+	 *
 	 * @param listener
 	 *            the property change listener. Has no effect if an identical
 	 *            listener is already registered. Must not be <code>null</code>
@@ -89,7 +89,7 @@ public interface IPersonService {
 
 	/**
 	 * Remove the change listener.
-	 * 
+	 *
 	 * @param listener
 	 *            the property change listener. Has no effect if it is not
 	 *            already registered. Must not be <code>null</code>.
@@ -99,7 +99,7 @@ public interface IPersonService {
 	/**
 	 * Log this person into the system. This is in effect until anoteher person
 	 * is logged in.
-	 * 
+	 *
 	 * @param person
 	 *            the person to log in. May be <code>null</code>.
 	 */
