@@ -5,7 +5,8 @@ import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
 @RunWith(Suite.class)
-@SuiteClasses({ HyperLinkListenerTest.class,//
+@SuiteClasses({ ExpansionListenerTest.class, //
+		HyperLinkListenerTest.class,//
 })
 public class AllEventsTests {
 
