@@ -17,6 +17,7 @@ package org.eclipse.debug.ui.actions;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
@@ -51,6 +52,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MenuAdapter;
 import org.eclipse.swt.events.MenuEvent;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -198,7 +200,10 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	 * </p>
 	 */
 	protected void updateTooltip() {
-		getAction().setToolTipText(getToolTip());
+		CompletableFuture.supplyAsync(this::getToolTip)
+		.thenAccept(tooltip ->
+			Display.getDefault().asyncExec(() -> getAction().setToolTipText(tooltip))
+		);
 	}
 
 	/**
@@ -421,7 +426,7 @@ public abstract class AbstractLaunchHistoryAction implements IActionDelegate2, I
 	/**
 	 * @since 3.12
 	 */
-	protected void runInternal(IAction action, boolean isShift) {
+	protected void runInternal(IAction action, @SuppressWarnings("unused") boolean isShift) {
 		run(action);
 	}
 
