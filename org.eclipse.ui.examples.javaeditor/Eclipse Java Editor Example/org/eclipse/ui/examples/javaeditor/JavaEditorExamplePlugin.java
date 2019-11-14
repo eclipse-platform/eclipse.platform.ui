@@ -26,7 +26,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
 
 /**
  * The example java editor plug-in class.
- * 
+ *
  * @since 3.0
  */
 public class JavaEditorExamplePlugin extends AbstractUIPlugin {
@@ -54,7 +54,7 @@ public class JavaEditorExamplePlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the default plug-in instance.
-	 * 
+	 *
 	 * @return the default plug-in instance
 	 */
 	public static JavaEditorExamplePlugin getDefault() {
@@ -63,7 +63,7 @@ public class JavaEditorExamplePlugin extends AbstractUIPlugin {
 
 	/**
 	 * Return a scanner for creating Java partitions.
-	 * 
+	 *
 	 * @return a scanner for creating Java partitions
 	 */
 	public JavaPartitionScanner getJavaPartitionScanner() {
@@ -74,7 +74,7 @@ public class JavaEditorExamplePlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the singleton Java code scanner.
-	 * 
+	 *
 	 * @return the singleton Java code scanner
 	 */
 	public RuleBasedScanner getJavaCodeScanner() {
@@ -85,7 +85,7 @@ public class JavaEditorExamplePlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the singleton Java color provider.
-	 * 
+	 *
 	 * @return the singleton Java color provider
 	 */
 	public JavaColorProvider getJavaColorProvider() {
@@ -96,7 +96,7 @@ public class JavaEditorExamplePlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the singleton Javadoc scanner.
-	 * 
+	 *
 	 * @return the singleton Javadoc scanner
 	 */
 	public RuleBasedScanner getJavaDocScanner() {

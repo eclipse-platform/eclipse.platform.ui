@@ -39,7 +39,7 @@ import org.eclipse.ui.texteditor.spelling.SpellingProblem;
 import org.eclipse.ui.texteditor.spelling.SpellingService;
 
 public class SpellCheckDocumentListener implements IDocumentListener {
-	
+
 	Job lastJob = null;
 	SpellingService service = EditorsUI.getSpellingService();
 
@@ -73,7 +73,7 @@ public class SpellCheckDocumentListener implements IDocumentListener {
 				Region region = new Region(commentStart, commentEnd - commentStart);
 				service.check(event.getDocument(), new Region[] { region }, new SpellingContext(), new ISpellingProblemCollector() {
 					private Map<SpellingAnnotation, Position> annotations = new HashMap<>();
-				
+
 					@Override
 					public void endCollecting() {
 						Set<SpellingAnnotation> previous = new HashSet<>();
@@ -86,17 +86,17 @@ public class SpellCheckDocumentListener implements IDocumentListener {
 							((IAnnotationModelExtension)model).replaceAnnotations(
 									previous.toArray(new SpellingAnnotation[previous.size()]),
 									annotations);
-							
+
 						} else {
 							previous.forEach(model::removeAnnotation);
 							annotations.forEach(model::addAnnotation);
 						}
 					}
-					
+
 					@Override
 					public void beginCollecting() {
 					}
-					
+
 					@Override
 					public void accept(SpellingProblem problem) {
 						this.annotations.put(new SpellingAnnotation(problem), new Position(problem.getOffset(), problem.getLength()));

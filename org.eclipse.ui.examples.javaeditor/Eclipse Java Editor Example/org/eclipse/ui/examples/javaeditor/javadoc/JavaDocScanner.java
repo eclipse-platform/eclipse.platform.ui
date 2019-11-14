@@ -60,7 +60,7 @@ public class JavaDocScanner extends RuleBasedScanner {
 	 */
 	 public JavaDocScanner(JavaColorProvider provider) {
 		super();
-		
+
 		setDefaultReturnToken(new Token(new TextAttribute(provider.getColor(JavaColorProvider.JAVADOC_DEFAULT))));
 
 		IToken keyword= new Token(new TextAttribute(provider.getColor(JavaColorProvider.JAVADOC_KEYWORD)));

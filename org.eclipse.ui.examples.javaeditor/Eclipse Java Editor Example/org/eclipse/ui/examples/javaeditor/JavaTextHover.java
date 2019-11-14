@@ -30,7 +30,7 @@ public class JavaTextHover implements ITextHover {
 
 	/**
 	 * {@inheritDoc}
-	 * 
+	 *
 	 * @deprecated As of 3.4, replaced by
 	 *             {@link ITextHoverExtension2#getHoverInfo2(ITextViewer, IRegion)}
 	 */
