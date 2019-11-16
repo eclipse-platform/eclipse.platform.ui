@@ -54,8 +54,8 @@ public class AntCoreUtil {
 		// what kind of list it will return. We need a list that
 		// implements the method List.remove(Object) and ArrayList does.
 		ArrayList<String> result = new ArrayList<>(args.length);
-		for (int i = 0; i < args.length; i++) {
-			result.add(args[i]);
+		for (String arg : args) {
+			result.add(arg);
 		}
 		return result;
 	}
@@ -145,8 +145,7 @@ public class AntCoreUtil {
 	 */
 	public static List<Properties> loadPropertyFiles(List<String> fileNames, String base, String buildFileLocation) throws IOException {
 		ArrayList<Properties> allProperties = new ArrayList<>(fileNames.size());
-		for (int i = 0; i < fileNames.size(); i++) {
-			String filename = fileNames.get(i);
+		for (String filename : fileNames) {
 			File file = getFileRelativeToBaseDir(filename, base, buildFileLocation);
 			Properties props = new Properties();
 			try (FileInputStream fis = new FileInputStream(file)) {

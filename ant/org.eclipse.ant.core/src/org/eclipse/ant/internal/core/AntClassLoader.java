@@ -108,8 +108,8 @@ public class AntClassLoader extends URLClassLoader {
 		try {
 			URL result = null;
 			if (fPluginLoaders != null) {
-				for (int i = 0; i < fPluginLoaders.length; i++) {
-					result = fPluginLoaders[i].getResource(name);
+				for (ClassLoader loader : fPluginLoaders) {
+					result = loader.getResource(name);
 					if (result != null) {
 						return result;
 					}
@@ -136,8 +136,8 @@ public class AntClassLoader extends URLClassLoader {
 			if (fAllowPluginLoading || !(name.startsWith(ANT_URL_PREFIX) || name.startsWith(ANT_URL_PREFIX, 1))) {
 				if (fPluginLoaders != null) {
 					Enumeration<URL> result = null;
-					for (int i = 0; i < fPluginLoaders.length; i++) {
-						result = fPluginLoaders[i].getResources(name);
+					for (ClassLoader loader : fPluginLoaders) {
+						result = loader.getResources(name);
 						while (result.hasMoreElements()) {
 							all.add(result.nextElement());
 						}

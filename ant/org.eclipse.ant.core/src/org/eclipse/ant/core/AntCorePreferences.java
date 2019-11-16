@@ -346,10 +346,10 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 */
 	private IAntClasspathEntry[] migrateURLEntries(String[] urlEntries) {
 		List<AntClasspathEntry> result = new ArrayList<>(urlEntries.length);
-		for (int i = 0; i < urlEntries.length; i++) {
+		for (String urlEntry : urlEntries) {
 			URL url;
 			try {
-				url = new URL(urlEntries[i]);
+				url = new URL(urlEntry);
 			}
 			catch (MalformedURLException e) {
 				continue;
@@ -404,8 +404,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	protected Task[] extractTasks(Preferences prefs, String[] tasks) {
 		List<Task> result = new ArrayList<>(tasks.length);
-		for (int i = 0; i < tasks.length; i++) {
-			String taskName = tasks[i];
+		for (String taskName : tasks) {
 			String[] values = getArrayFromString(prefs.getString(IAntCoreConstants.PREFIX_TASK + taskName));
 			if (values.length < 2) {
 				continue;
@@ -426,8 +425,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	protected Type[] extractTypes(Preferences prefs, String[] types) {
 		List<Type> result = new ArrayList<>(types.length);
-		for (int i = 0; i < types.length; i++) {
-			String typeName = types[i];
+		for (String typeName : types) {
 			String[] values = getArrayFromString(prefs.getString(IAntCoreConstants.PREFIX_TYPE + typeName));
 			if (values.length < 2) {
 				continue;
@@ -477,10 +475,8 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 */
 	@Deprecated
 	public URL[] getDefaultAntURLs() {
-		IAntClasspathEntry[] entries = getDefaultAntHomeEntries();
 		List<URL> result = new ArrayList<>(3);
-		for (int i = 0; i < entries.length; i++) {
-			IAntClasspathEntry entry = entries[i];
+		for (IAntClasspathEntry entry : getDefaultAntHomeEntries()) {
 			result.add(entry.getEntryURL());
 		}
 		URL toolsURL = getToolsJarURL();
@@ -506,8 +502,8 @@ public class AntCorePreferences implements IPropertyChangeListener {
 					ExportedPackage[] packages = packageAdmin.getExportedPackages("org.apache.tools.ant"); //$NON-NLS-1$
 					Bundle bundle = findHighestAntVersion(packages);
 					if (bundle == null) {
-						for (int i = 0; i < packages.length; i++) {
-							bundle = packages[i].getExportingBundle();
+						for (ExportedPackage pckg : packages) {
+							bundle = pckg.getExportingBundle();
 							if (bundle == null) {
 								continue;
 							}
@@ -559,8 +555,8 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	Bundle findHighestAntVersion(ExportedPackage[] packages) {
 		Bundle bundle = null;
 		HashSet<Bundle> bundles = new HashSet<>();
-		for (int i = 0; i < packages.length; i++) {
-			bundle = packages[i].getExportingBundle();
+		for (ExportedPackage pckg : packages) {
+			bundle = pckg.getExportingBundle();
 			if (bundle == null) {
 				continue;
 			}
@@ -620,8 +616,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 */
 	protected List<Task> computeDefaultTasks(List<IConfigurationElement> tasks) {
 		List<Task> result = new ArrayList<>(tasks.size());
-		for (Iterator<IConfigurationElement> iterator = tasks.iterator(); iterator.hasNext();) {
-			IConfigurationElement element = iterator.next();
+		for (IConfigurationElement element : tasks) {
 			if (!relevantRunningHeadless(element)) {
 				continue;
 			}
@@ -664,8 +659,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 */
 	protected List<Type> computeDefaultTypes(List<IConfigurationElement> types) {
 		List<Type> result = new ArrayList<>(types.size());
-		for (Iterator<IConfigurationElement> iterator = types.iterator(); iterator.hasNext();) {
-			IConfigurationElement element = iterator.next();
+		for (IConfigurationElement element : types) {
 			if (!relevantRunningHeadless(element)) {
 				continue;
 			}
@@ -770,8 +764,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * Computes the extra classpath entries defined plug-ins and fragments.
 	 */
 	protected void computeDefaultExtraClasspathEntries(List<IConfigurationElement> entries) {
-		for (Iterator<IConfigurationElement> iterator = entries.iterator(); iterator.hasNext();) {
-			IConfigurationElement element = iterator.next();
+		for (IConfigurationElement element : entries) {
 			if (!relevantRunningHeadless(element)) {
 				continue;
 			}
@@ -826,8 +819,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 */
 	private void computeDefaultProperties(List<IConfigurationElement> properties) {
 		defaultProperties = new ArrayList<>(properties.size());
-		for (Iterator<IConfigurationElement> iterator = properties.iterator(); iterator.hasNext();) {
-			IConfigurationElement element = iterator.next();
+		for (IConfigurationElement element : properties) {
 			if (!relevantRunningHeadless(element)) {
 				continue;
 			}
@@ -977,8 +969,8 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		}
 
 		List<IAntClasspathEntry> entries = new ArrayList<>(urls.length);
-		for (int i = 0; i < urls.length; i++) {
-			AntClasspathEntry entry = new AntClasspathEntry(urls[i]);
+		for (URL url : urls) {
+			AntClasspathEntry entry = new AntClasspathEntry(url);
 			entries.add(entry);
 		}
 		return entries;
@@ -1037,8 +1029,8 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			return;
 		}
 		URL url = null;
-		for (int i = 0; i < libraries.length; i++) {
-			url = source.getEntry(libraries[i].getValue());
+		for (ManifestElement library : libraries) {
+			url = source.getEntry(library.getValue());
 			if (url != null) {
 				destination.add(new AntClasspathEntry(FileLocator.toFileURL(url)));
 			}
@@ -1077,8 +1069,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	public URL[] getRemoteExtraClasspathURLs() {
 		List<URL> urls = new ArrayList<>(extraClasspathURLs.size());
 
-		for (int i = 0; i < extraClasspathURLs.size(); i++) {
-			IAntClasspathEntry entry = extraClasspathURLs.get(i);
+		for (AntClasspathEntry entry : extraClasspathURLs) {
 			if (!entry.isEclipseRuntimeRequired()) {
 				urls.add(entry.getEntryURL());
 			}
@@ -1100,8 +1091,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			addEntryURLs(result, additionalEntries);
 		}
 
-		for (int i = 0; i < extraClasspathURLs.size(); i++) {
-			IAntClasspathEntry entry = extraClasspathURLs.get(i);
+		for (AntClasspathEntry entry : extraClasspathURLs) {
 			URL url = entry.getEntryURL();
 			if (url != null) {
 				result.add(url);
@@ -1112,8 +1102,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	}
 
 	private void addEntryURLs(List<URL> result, IAntClasspathEntry[] entries) {
-		for (int i = 0; i < entries.length; i++) {
-			IAntClasspathEntry entry = entries[i];
+		for (IAntClasspathEntry entry : entries) {
 			URL url = entry.getEntryURL();
 			if (url != null) {
 				result.add(url);
@@ -1243,11 +1232,11 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * Copied from org.eclipse.pde.internal.build.Utils
 	 */
 	private void removeArcs(List<Relation> edges, List<BundleRevision> roots, Map<BundleRevision, Integer> counts) {
-		for (Iterator<BundleRevision> j = roots.iterator(); j.hasNext();) {
-			Object root = j.next();
-			for (int i = 0; i < edges.size(); i++) {
-				if (root.equals(edges.get(i).to)) {
-					BundleRevision input = edges.get(i).from;
+		for (BundleRevision bundleRevision : roots) {
+			Object root = bundleRevision;
+			for (Relation edge : edges) {
+				if (root.equals(edge.to)) {
+					BundleRevision input = edge.from;
 					Integer count = counts.get(input);
 					if (count != null) {
 						counts.put(input, Integer.valueOf(count.intValue() - 1));
@@ -1268,8 +1257,8 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			if (roots.isEmpty()) {
 				break;
 			}
-			for (Iterator<BundleRevision> i = roots.iterator(); i.hasNext();) {
-				counts.remove(i.next());
+			for (BundleRevision bundleRevision : roots) {
+				counts.remove(bundleRevision);
 			}
 			nodes.addAll(roots);
 			removeArcs(edges, roots, counts);
@@ -1282,10 +1271,10 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 */
 	private Map<BundleRevision, Integer> computeCounts(List<Relation> mappings) {
 		Map<BundleRevision, Integer> counts = new HashMap<>(5);
-		for (int i = 0; i < mappings.size(); i++) {
-			BundleRevision from = mappings.get(i).from;
+		for (Relation mapping : mappings) {
+			BundleRevision from = mapping.from;
 			Integer fromCount = counts.get(from);
-			BundleRevision to = mappings.get(i).to;
+			BundleRevision to = mapping.to;
 			if (to == null)
 				counts.put(from, Integer.valueOf(0));
 			else {
@@ -1303,8 +1292,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 */
 	private List<BundleRevision> findRootNodes(Map<BundleRevision, Integer> counts) {
 		List<BundleRevision> result = new ArrayList<>(5);
-		for (Iterator<BundleRevision> i = counts.keySet().iterator(); i.hasNext();) {
-			BundleRevision node = i.next();
+		for (BundleRevision node : counts.keySet()) {
 			int count = counts.get(node).intValue();
 			if (count == 0) {
 				result.add(node);
@@ -1437,8 +1425,8 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			return customPropertyFiles;
 		}
 		List<String> files = new ArrayList<>(customPropertyFiles.length);
-		for (int i = 0; i < customPropertyFiles.length; i++) {
-			String filename = customPropertyFiles[i];
+		for (String customPropertyFile : customPropertyFiles) {
+			String filename = customPropertyFile;
 			try {
 				filename = VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(filename);
 				files.add(filename);
@@ -1680,8 +1668,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	protected void updateTasks(Preferences prefs) {
 		if (oldCustomTasks != null) {
-			for (int i = 0; i < oldCustomTasks.length; i++) {
-				Task oldTask = oldCustomTasks[i];
+			for (Task oldTask : oldCustomTasks) {
 				prefs.setToDefault(IAntCoreConstants.PREFIX_TASK + oldTask.getTaskName());
 			}
 			oldCustomTasks = null;
@@ -1692,19 +1679,18 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			return;
 		}
 		StringBuilder tasks = new StringBuilder();
-		for (int i = 0; i < customTasks.length; i++) {
-			tasks.append(customTasks[i].getTaskName());
+		for (Task customTask : customTasks) {
+			tasks.append(customTask.getTaskName());
 			tasks.append(',');
-			prefs.setValue(IAntCoreConstants.PREFIX_TASK + customTasks[i].getTaskName(), customTasks[i].getClassName() + "," //$NON-NLS-1$
-					+ customTasks[i].getLibraryEntry().getLabel());
+			prefs.setValue(IAntCoreConstants.PREFIX_TASK + customTask.getTaskName(), customTask.getClassName() + "," //$NON-NLS-1$
+					+ customTask.getLibraryEntry().getLabel());
 		}
 		prefs.setValue(IAntCoreConstants.PREFERENCE_TASKS, tasks.toString());
 	}
 
 	protected void updateTypes(Preferences prefs) {
 		if (oldCustomTypes != null) {
-			for (int i = 0; i < oldCustomTypes.length; i++) {
-				Type oldType = oldCustomTypes[i];
+			for (Type oldType : oldCustomTypes) {
 				prefs.setToDefault(IAntCoreConstants.PREFIX_TYPE + oldType.getTypeName());
 			}
 			oldCustomTypes = null;
@@ -1715,19 +1701,18 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			return;
 		}
 		StringBuilder types = new StringBuilder();
-		for (int i = 0; i < customTypes.length; i++) {
-			types.append(customTypes[i].getTypeName());
+		for (Type customType : customTypes) {
+			types.append(customType.getTypeName());
 			types.append(',');
-			prefs.setValue(IAntCoreConstants.PREFIX_TYPE + customTypes[i].getTypeName(), customTypes[i].getClassName() + "," //$NON-NLS-1$
-					+ customTypes[i].getLibraryEntry().getLabel());
+			prefs.setValue(IAntCoreConstants.PREFIX_TYPE + customType.getTypeName(), customType.getClassName() + "," //$NON-NLS-1$
+					+ customType.getLibraryEntry().getLabel());
 		}
 		prefs.setValue(IAntCoreConstants.PREFERENCE_TYPES, types.toString());
 	}
 
 	protected void updateProperties(Preferences prefs) {
 		if (oldCustomProperties != null) {
-			for (int i = 0; i < oldCustomProperties.length; i++) {
-				Property oldProperty = oldCustomProperties[i];
+			for (Property oldProperty : oldCustomProperties) {
 				prefs.setToDefault(IAntCoreConstants.PREFIX_PROPERTY + oldProperty.getName());
 			}
 			oldCustomProperties = null;
@@ -1738,10 +1723,10 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			return;
 		}
 		StringBuilder properties = new StringBuilder();
-		for (int i = 0; i < customProperties.length; i++) {
-			properties.append(customProperties[i].getName());
+		for (Property customProperty : customProperties) {
+			properties.append(customProperty.getName());
 			properties.append(',');
-			prefs.setValue(IAntCoreConstants.PREFIX_PROPERTY + customProperties[i].getName(), customProperties[i].getValue(false));
+			prefs.setValue(IAntCoreConstants.PREFIX_PROPERTY + customProperty.getName(), customProperty.getValue(false));
 		}
 		prefs.setValue(IAntCoreConstants.PREFERENCE_PROPERTIES, properties.toString());
 	}
@@ -1769,8 +1754,8 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		}
 		if (changed) {
 			StringBuilder entries = new StringBuilder();
-			for (int i = 0; i < additionalEntries.length; i++) {
-				entries.append(additionalEntries[i].getLabel());
+			for (IAntClasspathEntry additionalEntry : additionalEntries) {
+				entries.append(additionalEntry.getLabel());
 				entries.append(',');
 			}
 			serialized = entries.toString();
@@ -1807,8 +1792,8 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			return;
 		}
 		StringBuilder entries = new StringBuilder();
-		for (int i = 0; i < antHomeEntries.length; i++) {
-			entries.append(antHomeEntries[i].getLabel());
+		for (IAntClasspathEntry antHomeEntry : antHomeEntries) {
+			entries.append(antHomeEntry.getLabel());
 			entries.append(',');
 		}
 
@@ -1817,8 +1802,8 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	protected void updatePropertyFiles(Preferences prefs) {
 		StringBuilder files = new StringBuilder();
-		for (int i = 0; i < customPropertyFiles.length; i++) {
-			files.append(customPropertyFiles[i]);
+		for (String customPropertyFile : customPropertyFiles) {
+			files.append(customPropertyFile);
 			files.append(',');
 		}
 
@@ -1896,20 +1881,17 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	public URL[] getRemoteAntURLs() {
 		List<URL> result = new ArrayList<>(40);
 		if (antHomeEntries != null) {
-			for (int i = 0; i < antHomeEntries.length; i++) {
-				IAntClasspathEntry entry = antHomeEntries[i];
+			for (IAntClasspathEntry entry : antHomeEntries) {
 				result.add(entry.getEntryURL());
 			}
 		}
 		if (additionalEntries != null && additionalEntries.length > 0) {
-			for (int i = 0; i < additionalEntries.length; i++) {
-				IAntClasspathEntry entry = additionalEntries[i];
+			for (IAntClasspathEntry entry : additionalEntries) {
 				result.add(entry.getEntryURL());
 			}
 		}
 		if (extraClasspathURLs != null) {
-			for (int i = 0; i < extraClasspathURLs.size(); i++) {
-				IAntClasspathEntry entry = extraClasspathURLs.get(i);
+			for (AntClasspathEntry entry : extraClasspathURLs) {
 				if (!entry.isEclipseRuntimeRequired()) {
 					result.add(entry.getEntryURL());
 				}

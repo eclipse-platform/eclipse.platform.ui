@@ -125,8 +125,8 @@ public class ProgressBuildListener implements BuildListener {
 
 	protected int computeWork(List<Target> targets) {
 		int result = 0;
-		for (int i = 0; i < targets.size(); i++) {
-			result = result + countTarget(targets.get(i), new ArrayList<>());
+		for (Target target : targets) {
+			result = result + countTarget(target, new ArrayList<>());
 		}
 		return result;
 	}
@@ -149,9 +149,8 @@ public class ProgressBuildListener implements BuildListener {
 			}
 		}
 		// we have to handle antcall tasks as well
-		Task[] tasks = target.getTasks();
-		for (int i = 0; i < tasks.length; i++) {
-			if (tasks[i] instanceof CallTarget) {
+		for (Task task : target.getTasks()) {
+			if (task instanceof CallTarget) {
 				// As we do not have access to the information (at least in Ant 1.4.1)
 				// describing what target is executed by this antcall task, we assume
 				// a scenario where it depends on all targets of the project but itself.
