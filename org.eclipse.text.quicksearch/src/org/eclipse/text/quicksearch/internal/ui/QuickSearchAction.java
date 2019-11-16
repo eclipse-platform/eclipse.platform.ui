@@ -21,16 +21,20 @@ public class QuickSearchAction implements IWorkbenchWindowActionDelegate {
 
 	private IWorkbenchWindow window;
 
+	@Override
 	public void run(IAction action) {
 		QuickSearchHandler.doQuickSearch(window);
 	}
 
+	@Override
 	public void selectionChanged(IAction action, ISelection selection) {
 	}
 
+	@Override
 	public void dispose() {
 	}
 
+	@Override
 	public void init(IWorkbenchWindow window) {
 		this.window = window;
 	}

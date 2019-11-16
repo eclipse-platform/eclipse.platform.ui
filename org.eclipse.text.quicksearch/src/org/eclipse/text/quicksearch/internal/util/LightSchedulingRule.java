@@ -36,14 +36,17 @@ public class LightSchedulingRule implements ISchedulingRule {
 		this.name = name;
 	}
 
+	@Override
 	public boolean contains(ISchedulingRule rule) {
 		return rule == this;
 	}
 
+	@Override
 	public boolean isConflicting(ISchedulingRule rule) {
 		return rule == this || rule.contains(this);
 	}
 
+	@Override
 	public String toString() {
 		return name;
 	}

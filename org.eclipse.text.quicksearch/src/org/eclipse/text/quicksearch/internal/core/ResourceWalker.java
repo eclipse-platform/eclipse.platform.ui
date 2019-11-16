@@ -48,6 +48,7 @@ public abstract class ResourceWalker extends Job {
 			this.resource = r;
 		}
 
+		@Override
 		public int compareTo(QItem other) {
 			return Double.compare(other.priority, this.priority);
 		}
@@ -116,6 +117,7 @@ public abstract class ResourceWalker extends Job {
 		this.schedule();
 	}
 
+	@Override
 	public IStatus run(IProgressMonitor monitor) {
 		//TODO: progress reporting?
 		while (!suspend && queue!=null) {

@@ -35,9 +35,11 @@ public class TableResizeHelper {
 
 	public void enableResizing() {
 		ControlListener resizeListener = new ControlListener() {
+			@Override
 			public void controlResized(ControlEvent e) {
 				resizeTable();
 			}
+			@Override
 			public void controlMoved(ControlEvent e) {
 			}
 		};
