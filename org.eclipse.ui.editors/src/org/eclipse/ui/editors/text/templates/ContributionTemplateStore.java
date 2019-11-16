@@ -20,7 +20,6 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 
@@ -109,9 +108,7 @@ public class ContributionTemplateStore extends TemplateStore {
 	@Override
 	protected void loadContributedTemplates() throws IOException {
 		IConfigurationElement[] extensions= getTemplateExtensions();
-		Collection<TemplatePersistenceData> contributed= readContributedTemplates(extensions);
-		for (Iterator<TemplatePersistenceData> it= contributed.iterator(); it.hasNext();) {
-			TemplatePersistenceData data= it.next();
+		for (TemplatePersistenceData data : readContributedTemplates(extensions)) {
 			internalAdd(data);
 		}
 	}

@@ -133,9 +133,7 @@ public final class AnnotationTypeLookup {
 	 */
 	private void initializeMapping() {
 		fMapping= new HashMap<>();
-		List<AnnotationTypeMapping> mappings= getAnnotationTypeMappings();
-		for (int i= 0, l= mappings.size(); i < l; i++) {
-			AnnotationTypeMapping atm= mappings.get(i);
+		for (AnnotationTypeMapping atm : getAnnotationTypeMappings()) {
 			if (atm.isMarkerSeverityDefined()) {
 				Object severityMap= fMapping.get(atm.fMarkerType);
 				if (!(severityMap instanceof Map)) {

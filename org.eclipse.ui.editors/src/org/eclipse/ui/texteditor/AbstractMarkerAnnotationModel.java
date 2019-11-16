@@ -566,8 +566,7 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 
 		boolean isOK= true;
 
-		for (int i= 0; i < fInstantiatedMarkerUpdaters.size();  i++) {
-			IMarkerUpdater updater= fInstantiatedMarkerUpdaters.get(i);
+		for (IMarkerUpdater updater : fInstantiatedMarkerUpdaters) {
 			String markerType= updater.getMarkerType();
 			if (markerType == null || MarkerUtilities.isMarkerType(marker, markerType)) {
 
@@ -678,8 +677,8 @@ public abstract class AbstractMarkerAnnotationModel extends AnnotationModel impl
 		}
 
 		// add the markers of deleted positions back to the annotation model
-		for (Iterator<Annotation> e= fDeletedAnnotations.iterator(); e.hasNext();) {
-			Object o= e.next();
+		for (Annotation annotation : fDeletedAnnotations) {
+			Object o= annotation;
 			if (o instanceof MarkerAnnotation) {
 				MarkerAnnotation a= (MarkerAnnotation) o;
 				Position p= createPositionFromMarker(a.getMarker());

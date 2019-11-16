@@ -74,8 +74,8 @@ public class EditorAnnotationManager implements ISearchResultListener {
 		if (fHighlighter != null)
 			fHighlighter.dispose();
 
-		for (int i= 0; i < fResults.size(); i++) {
-			fResults.get(i).removeListener(this);
+		for (AbstractTextSearchResult result : fResults) {
+			result.removeListener(this);
 		}
 		fResults.clear();
 	}
@@ -88,21 +88,20 @@ public class EditorAnnotationManager implements ISearchResultListener {
 			fHighlighter= null;
 		}
 
-		for (int i= 0; i < fResults.size(); i++) {
-			AbstractTextSearchResult curr= fResults.get(i);
+		for (AbstractTextSearchResult curr : fResults) {
 			addAnnotations(curr);
 		}
 	}
 
 	public synchronized void setSearchResults(List<AbstractTextSearchResult> results) {
 		removeAllAnnotations();
-		for (int i= 0; i < fResults.size(); i++) {
-			fResults.get(i).removeListener(this);
+		for (AbstractTextSearchResult result : fResults) {
+			result.removeListener(this);
 		}
 		fResults.clear();
 
-		for (int i= 0; i < results.size(); i++) {
-			addSearchResult(results.get(i));
+		for (AbstractTextSearchResult result : results) {
+			addSearchResult(result);
 		}
 	}
 
@@ -231,8 +230,7 @@ public class EditorAnnotationManager implements ISearchResultListener {
 	private void removeAnnotations(AbstractTextSearchResult result) {
 		removeAllAnnotations();
 
-		for (int i= 0; i < fResults.size(); i++) {
-			AbstractTextSearchResult curr= fResults.get(i);
+		for (AbstractTextSearchResult curr : fResults) {
 			if (curr != result) {
 				addAnnotations(curr);
 			}

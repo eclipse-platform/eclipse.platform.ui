@@ -114,8 +114,8 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 		fPreferenceStores= new IPreferenceStore[preferenceStores.length];
 		System.arraycopy(preferenceStores, 0, fPreferenceStores, 0, preferenceStores.length);
 		// Create listeners
-		for (int i= 0, length= fPreferenceStores.length; i < length; i++) {
-			PropertyChangeListener listener= new PropertyChangeListener(fPreferenceStores[i]);
+		for (IPreferenceStore store : fPreferenceStores) {
+			PropertyChangeListener listener= new PropertyChangeListener(store);
 			fChildListeners.add(listener);
 		}
 	}
@@ -395,8 +395,7 @@ public class ChainedPreferenceStore implements IPreferenceStore {
 		} else {
 			// event from other than the visible store
 			boolean eventBeforeVisibleStore= false;
-			for (int i= 0, length= fPreferenceStores.length; i < length; i++) {
-				IPreferenceStore store= fPreferenceStores[i];
+			for (IPreferenceStore store : fPreferenceStores) {
 				if (store == visibleStore)
 					break;
 				if (store == childPreferenceStore) {

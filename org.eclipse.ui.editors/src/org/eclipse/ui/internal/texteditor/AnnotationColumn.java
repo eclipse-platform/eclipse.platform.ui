@@ -117,8 +117,7 @@ public class AnnotationColumn extends AbstractContributedRulerColumn implements 
 		if (store != null && fDelegate instanceof AnnotationRulerColumn) {
 			final AnnotationRulerColumn column= (AnnotationRulerColumn) fDelegate;
 			// initial set up
-			for (Iterator<AnnotationPreference> iter2= fAnnotationPreferences.getAnnotationPreferences().iterator(); iter2.hasNext();) {
-				AnnotationPreference preference= iter2.next();
+			for (AnnotationPreference preference : fAnnotationPreferences.getAnnotationPreferences()) {
 				String key= preference.getVerticalRulerPreferenceKey();
 				boolean showAnnotation= true;
 				if (key != null && store.contains(key))

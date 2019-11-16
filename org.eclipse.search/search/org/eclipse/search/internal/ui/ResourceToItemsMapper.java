@@ -57,6 +57,7 @@ class ResourceToItemsMapper {
 	 * Must be called from the UI thread.
 	 * @param changedResource changed resources
 	 */
+	@SuppressWarnings("unchecked")
 	public void resourceChanged(IResource changedResource) {
 		Object obj= fResourceToItem.get(changedResource);
 		if (obj == null) {
@@ -64,10 +65,8 @@ class ResourceToItemsMapper {
 		} else if (obj instanceof Item) {
 			updateItem((Item) obj);
 		} else { // List of Items
-			@SuppressWarnings("unchecked")
-			List<Item> list= (List<Item>) obj;
-			for (int k= 0; k < list.size(); k++) {
-				updateItem(list.get(k));
+			for (Item element : (List<Item>) obj) {
+				updateItem(element);
 			}
 		}
 	}

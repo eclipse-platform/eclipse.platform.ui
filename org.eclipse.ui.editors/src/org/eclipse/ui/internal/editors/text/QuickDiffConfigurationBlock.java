@@ -17,7 +17,6 @@ package org.eclipse.ui.internal.editors.text;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -161,10 +160,8 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 	}
 
 	private String[][] createQuickDiffReferenceListModel() {
-		List<ReferenceProviderDescriptor> descriptors= new QuickDiff().getReferenceProviderDescriptors();
 		ArrayList<String[]> listModelItems= new ArrayList<>();
-		for (Iterator<ReferenceProviderDescriptor> it= descriptors.iterator(); it.hasNext();) {
-			ReferenceProviderDescriptor descriptor= it.next();
+		for (ReferenceProviderDescriptor descriptor : new QuickDiff().getReferenceProviderDescriptors()) {
 			String label= LegacyActionTools.removeMnemonics(descriptor.getLabel());
 			listModelItems.add(new String[] { descriptor.getId(), label });
 		}

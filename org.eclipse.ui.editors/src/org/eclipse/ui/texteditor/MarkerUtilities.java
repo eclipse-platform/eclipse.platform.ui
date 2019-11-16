@@ -105,12 +105,9 @@ public final class MarkerUtilities {
 			HashMap<String, String[]> allTypes= new HashMap<>();
 			IExtensionPoint point= Platform.getExtensionRegistry().getExtensionPoint(ResourcesPlugin.PI_RESOURCES, ResourcesPlugin.PT_MARKERS);
 			if (point != null) {
-				IExtension[] extensions = point.getExtensions();
-				for (IExtension extension : extensions) {
+				for (IExtension extension : point.getExtensions()) {
 					ArrayList<String> types= new ArrayList<>();
-					IConfigurationElement[] configElements= extension.getConfigurationElements();
-					for (int j= 0; j < configElements.length; ++j) {
-						IConfigurationElement element= configElements[j];
+					for (IConfigurationElement element : extension.getConfigurationElements()) {
 						if (element.getName().equalsIgnoreCase("super")) { //$NON-NLS-1$
 							String type = element.getAttribute("type"); //$NON-NLS-1$
 							if (type != null) {

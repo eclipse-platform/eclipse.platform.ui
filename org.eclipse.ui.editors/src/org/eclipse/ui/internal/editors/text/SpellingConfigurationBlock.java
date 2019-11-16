@@ -15,7 +15,6 @@ package org.eclipse.ui.internal.editors.text;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.swt.SWT;
@@ -521,8 +520,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 
 	@Override
 	public void performOk() {
-		for (Iterator<ISpellingPreferenceBlock> it= fProviderPreferences.values().iterator(); it.hasNext();) {
-			final ISpellingPreferenceBlock block= it.next();
+		for (ISpellingPreferenceBlock block : fProviderPreferences.values()) {
 			ISafeRunnable runnable= new ISafeRunnable() {
 				@Override
 				public void run() throws Exception {
@@ -539,8 +537,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 	@Override
 	public void performDefaults() {
 		restoreFromPreferences();
-		for (Iterator<ISpellingPreferenceBlock> it= fProviderPreferences.values().iterator(); it.hasNext();) {
-			final ISpellingPreferenceBlock block= it.next();
+		for (ISpellingPreferenceBlock block : fProviderPreferences.values()) {
 			ISafeRunnable runnable= new ISafeRunnable() {
 				@Override
 				public void run() throws Exception {
@@ -556,8 +553,7 @@ class SpellingConfigurationBlock implements IPreferenceConfigurationBlock {
 
 	@Override
 	public void dispose() {
-		for (Iterator<ISpellingPreferenceBlock> it= fProviderPreferences.values().iterator(); it.hasNext();) {
-			final ISpellingPreferenceBlock block= it.next();
+		for (ISpellingPreferenceBlock block : fProviderPreferences.values()) {
 			ISafeRunnable runnable= new ISafeRunnable() {
 				@Override
 				public void run() throws Exception {

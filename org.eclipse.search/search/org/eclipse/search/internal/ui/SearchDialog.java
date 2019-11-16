@@ -813,8 +813,7 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 
 	@Override
 	public boolean close() {
-		for (int i= 0; i < fDescriptors.size(); i++) {
-			SearchPageDescriptor desc= fDescriptors.get(i);
+		for (SearchPageDescriptor desc : fDescriptors) {
 			desc.dispose();
 		}
 		return super.close();

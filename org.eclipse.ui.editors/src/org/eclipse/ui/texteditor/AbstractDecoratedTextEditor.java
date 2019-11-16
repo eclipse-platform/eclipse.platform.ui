@@ -21,7 +21,6 @@ import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 import java.util.Iterator;
-import java.util.List;
 
 import com.ibm.icu.text.BreakIterator;
 import com.ibm.icu.text.MessageFormat;
@@ -1935,9 +1934,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 		final IColumnSupport support= getAdapter(IColumnSupport.class);
 		IPreferenceStore store= EditorsUI.getPreferenceStore();
 		final RulerColumnPreferenceAdapter adapter= new RulerColumnPreferenceAdapter(store, AbstractTextEditor.PREFERENCE_RULER_CONTRIBUTIONS);
-		List<RulerColumnDescriptor> descriptors= RulerColumnRegistry.getDefault().getColumnDescriptors();
-		for (Iterator<RulerColumnDescriptor> t= descriptors.iterator(); t.hasNext();) {
-			final RulerColumnDescriptor descriptor= t.next();
+		for (RulerColumnDescriptor descriptor : RulerColumnRegistry.getDefault().getColumnDescriptors()) {
 			if (!descriptor.isIncludedInMenu() || !support.isColumnSupported(descriptor))
 				continue;
 			final boolean isVisible= support.isColumnVisible(descriptor);

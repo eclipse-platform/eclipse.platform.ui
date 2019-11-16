@@ -15,7 +15,6 @@ package org.eclipse.ui.internal.editors.text;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.swt.SWT;
@@ -464,8 +463,7 @@ public class AccessibilityPreferencePage extends PreferencePage implements IWork
 
 		initializeFields();
 
-		for (Iterator<SelectionListener> iterator= fMasterSlaveListeners.iterator(); iterator.hasNext();) {
-			SelectionListener listener= iterator.next();
+		for (SelectionListener listener : fMasterSlaveListeners) {
 			listener.widgetSelected(null);
 		}
 

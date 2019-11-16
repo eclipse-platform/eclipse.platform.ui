@@ -182,8 +182,8 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 		fWorkspace.run(new IWorkspaceRunnable() {
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
-				for (int i= 0; i < markers.length; ++i) {
-					markers[i].delete();
+				for (IMarker marker : markers) {
+					marker.delete();
 				}
 			}
 		}, null, IWorkspace.AVOID_UPDATE, null);
