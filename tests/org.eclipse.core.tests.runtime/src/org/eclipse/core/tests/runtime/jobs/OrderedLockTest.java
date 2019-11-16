@@ -63,8 +63,8 @@ public class OrderedLockTest extends TestCase {
 		} catch (InterruptedException e) {
 		}
 		kill(allRunnables);
-		for (int i = 0; i < allRunnables.size(); i++) {
-			allRunnables.get(i).isDone();
+		for (LockAcquiringRunnable runnable : allRunnables) {
+			runnable.isDone();
 		}
 		//the underlying array has to be empty
 		assertTrue("Locks not removed from graph.", manager.isEmpty());
@@ -84,8 +84,8 @@ public class OrderedLockTest extends TestCase {
 		} catch (InterruptedException e) {
 		}
 		kill(allRunnables);
-		for (int i = 0; i < allRunnables.size(); i++) {
-			allRunnables.get(i).isDone();
+		for (LockAcquiringRunnable runnable : allRunnables) {
+			runnable.isDone();
 		}
 		//the underlying array has to be empty
 		assertTrue("Locks not removed from graph.", manager.isEmpty());

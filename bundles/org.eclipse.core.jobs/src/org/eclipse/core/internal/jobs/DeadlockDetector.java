@@ -693,8 +693,8 @@ class DeadlockDetector {
 		StringWriter sWriter = new StringWriter();
 		PrintWriter out = new PrintWriter(sWriter, true);
 		out.println(" :: "); //$NON-NLS-1$
-		for (int j = 0; j < locks.size(); j++) {
-			out.print(" " + locks.get(j) + ','); //$NON-NLS-1$
+		for (ISchedulingRule lock : locks) {
+			out.print(" " + lock + ','); //$NON-NLS-1$
 		}
 		out.println();
 		for (int i = 0; i < graph.length; i++) {

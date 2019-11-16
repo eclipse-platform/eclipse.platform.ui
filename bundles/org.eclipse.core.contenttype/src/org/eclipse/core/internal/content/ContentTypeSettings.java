@@ -31,8 +31,8 @@ public class ContentTypeSettings implements IContentTypeSettings, IContentTypeIn
 		Preferences contentTypeNode = ContentTypeManager.getInstance().getPreferences(context).node(contentTypeId);
 		String key = ContentType.getPreferenceKey(type);
 		List<String> existingValues = Util.parseItemsIntoList(contentTypeNode.get(key, null));
-		for (int i = 0; i < existingValues.size(); i++)
-			if (existingValues.get(i).equalsIgnoreCase(fileSpec))
+		for (String existingValue : existingValues)
+			if (existingValue.equalsIgnoreCase(fileSpec))
 				// don't do anything if already exists
 				return;
 		existingValues.add(fileSpec);
