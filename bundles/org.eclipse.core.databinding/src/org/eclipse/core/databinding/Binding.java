@@ -182,4 +182,17 @@ public abstract class Binding extends ValidationStatusProvider {
 	public IObservableList<IObservable> getModels() {
 		return Observables.staticObservableList(context.getValidationRealm(), Collections.singletonList(model));
 	}
+
+	/**
+	 * @param observable the observable that is checked for disposal before the
+	 *                   runnable gets executed.
+	 * @param runnable   the Runnable to execute in the observable's realm.
+	 */
+	static final void execAfterDisposalCheck(final IObservable observable, final Runnable runnable) {
+		observable.getRealm().exec(() -> {
+			if (!observable.isDisposed()) {
+				runnable.run();
+			}
+		});
+	}
 }

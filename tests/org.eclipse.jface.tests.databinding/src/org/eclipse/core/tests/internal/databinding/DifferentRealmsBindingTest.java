@@ -23,9 +23,9 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.list.ComputedList;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.ObservableList;
 import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.set.ComputedSet;
 import org.eclipse.core.databinding.observable.set.IObservableSet;
@@ -44,8 +44,10 @@ import org.junit.Test;
 
 public class DifferentRealmsBindingTest {
 
-	ThreadRealm targetAndModelRealm = new ThreadRealm();
 	ThreadRealm validationRealm = new ThreadRealm();
+	ThreadRealm targetRealm = new ThreadRealm();
+	ThreadRealm modelRealm = new ThreadRealm();
+	ThreadRealm mainThread = new ThreadRealm();
 
 	List<IStatus> errorStatusses = new ArrayList<>();
 
@@ -59,54 +61,65 @@ public class DifferentRealmsBindingTest {
 	@Before
 	public void setUp() throws Exception {
 		errorStatusses.clear();
-		new Thread() {
-			@Override
-			public void run() {
-				targetAndModelRealm.init(Thread.currentThread());
-				targetAndModelRealm.block();
-			}
-		}.start();
+		initRealm(targetRealm, true);
+		initRealm(modelRealm, true);
+		initRealm(validationRealm, false);
+		mainThread.init(Thread.currentThread());
 
-		validationRealm.init(Thread.currentThread());
 		dbc = new DataBindingContext(validationRealm);
 		Policy.setLog(logger);
 	}
 
+	private void initRealm(final ThreadRealm realm, final boolean block) {
+		new Thread() {
+			@Override
+			public void run() {
+				realm.init(Thread.currentThread());
+				if (block) {
+					realm.block();
+				}
+			}
+		}.start();
+		if (block) {
+			realm.waitUntilBlocking();
+		}
+	}
+
 	@After
 	public void tearDown() throws Exception {
-		dbc.dispose();
+		validationRealm.exec(() -> dbc.dispose());
 	}
 
 	@Test
 	public void testListBindingValidationRealm() throws Throwable {
-		final ObservableList model = new WritableList(targetAndModelRealm);
-		final ObservableList target = new WritableList(targetAndModelRealm);
+		final IObservableList<?> model = new WritableList<>(targetRealm);
+		final IObservableList<?> target = new WritableList<>(targetRealm);
 
 		dbc.bindList(target, model);
-		targetAndModelRealm.waitUntilBlocking();
-		targetAndModelRealm.processQueue();
-		targetAndModelRealm.unblock();
+		targetRealm.waitUntilBlocking();
+		targetRealm.processQueue();
+		targetRealm.unblock();
 		assertTrue(errorStatusses.toString(), errorStatusses.isEmpty());
 	}
 
 	@Test
 	public void testSetBindingValidationRealm() throws Throwable {
-		final ObservableSet model = new WritableSet(targetAndModelRealm);
-		final ObservableSet target = new WritableSet(targetAndModelRealm);
+		final IObservableSet<?> model = new WritableSet<>(targetRealm);
+		final IObservableSet<?> target = new WritableSet<>(targetRealm);
 
 		dbc.bindSet(target, model);
-		targetAndModelRealm.waitUntilBlocking();
-		targetAndModelRealm.processQueue();
-		targetAndModelRealm.unblock();
+		targetRealm.waitUntilBlocking();
+		targetRealm.processQueue();
+		targetRealm.unblock();
 		assertTrue(errorStatusses.toString(), errorStatusses.isEmpty());
 	}
 
 	@Test
 	public void testBindingCanBeCreatedOutsideOfValidationRealm() throws Exception {
-		final ObservableSet<String> model = new WritableSet<>(targetAndModelRealm);
-		final ObservableSet<String> target = new WritableSet<>(targetAndModelRealm);
+		final ObservableSet<String> model = new WritableSet<>(targetRealm);
+		final ObservableSet<String> target = new WritableSet<>(targetRealm);
 
-		targetAndModelRealm.unblock();
+		targetRealm.unblock();
 
 		AtomicReference<Exception> exceptionOccured = new AtomicReference<>();
 		Thread t = new Thread() {
@@ -127,61 +140,119 @@ public class DifferentRealmsBindingTest {
 
 	@Test
 	public void testBindComputedListToWritableListInDifferentRealm() {
-		// The validationRealm is the current realm.
-		final IObservableValue<String> modelValue = new WritableValue<>(validationRealm);
-		final IObservableList<String> model = new ComputedList<String>(validationRealm) {
+		final IObservableValue<String> modelValue = new WritableValue<>(mainThread);
+		final IObservableList<String> model = new ComputedList<String>(mainThread) {
 			@Override
 			protected List<String> calculate() {
 				return Collections.singletonList(modelValue.getValue());
 			}
 		};
-		final IObservableList<String> target = new WritableList<>(targetAndModelRealm);
+		final IObservableList<String> target = new WritableList<>(targetRealm);
 
 		dbc.bindList(target, model);
 		modelValue.setValue("Test");
-		targetAndModelRealm.waitUntilBlocking();
-		targetAndModelRealm.processQueue();
-		targetAndModelRealm.unblock();
+		targetRealm.waitUntilBlocking();
+		targetRealm.processQueue();
+		targetRealm.unblock();
 		assertTrue(errorStatusses.toString(), errorStatusses.isEmpty());
 	}
 
 	@Test
 	public void testBindComputedSetToWritableSetInDifferentRealm() {
-		// The validationRealm is the current realm.
-		final IObservableValue<String> modelValue = new WritableValue<>(validationRealm);
-		final IObservableSet<String> model = new ComputedSet<String>(validationRealm) {
+		final IObservableValue<String> modelValue = new WritableValue<>(mainThread);
+		final IObservableSet<String> model = new ComputedSet<String>(mainThread) {
 			@Override
 			protected Set<String> calculate() {
 				return Collections.singleton(modelValue.getValue());
 			}
 		};
-		final IObservableSet<String> target = new WritableSet<>(targetAndModelRealm);
+		final IObservableSet<String> target = new WritableSet<>(targetRealm);
 
 		dbc.bindSet(target, model);
 		modelValue.setValue("Test");
-		targetAndModelRealm.waitUntilBlocking();
-		targetAndModelRealm.processQueue();
-		targetAndModelRealm.unblock();
+		targetRealm.waitUntilBlocking();
+		targetRealm.processQueue();
+		targetRealm.unblock();
 		assertTrue(errorStatusses.toString(), errorStatusses.isEmpty());
 	}
 
 	@Test
 	public void testBindComputedValueToWritableValueInDifferentRealm() {
-		// The validationRealm is the current realm.
-		final IObservableValue<String> modelValue = new WritableValue<>(validationRealm);
-		final IObservableValue<String> model = new ComputedValue<String>(validationRealm) {
+		final IObservableValue<String> modelValue = new WritableValue<>(mainThread);
+		final IObservableValue<String> model = new ComputedValue<String>(mainThread) {
 			@Override
 			protected String calculate() {
 				return modelValue.getValue();
 			}
 		};
-		final IObservableValue<String> target = new WritableValue<>(targetAndModelRealm);
+		final IObservableValue<String> target = new WritableValue<>(targetRealm);
 
 		dbc.bindValue(target, model);
 		modelValue.setValue("Test");
-		targetAndModelRealm.waitUntilBlocking();
-		targetAndModelRealm.processQueue();
-		targetAndModelRealm.unblock();
+		targetRealm.waitUntilBlocking();
+		targetRealm.processQueue();
+		targetRealm.unblock();
 		assertTrue(errorStatusses.toString(), errorStatusses.isEmpty());
+	}
+
+	@Test
+	public void testSetBindingUpdatesDontInterferWithObservableDisposing() throws Exception {
+		final IObservableSet<String> model = new WritableSet<>(modelRealm);
+		final IObservableSet<String> target = new WritableSet<>(targetRealm);
+		dbc.bindSet(target, model);
+
+		waitForBindingInitiated();
+
+		modelRealm.exec(() -> model.add("one"));
+
+		testDisposeRaceCondition(target);
+	}
+
+	@Test
+	public void testListBindingUpdatesDontInterferWithObservableDisposing() throws Exception {
+		final IObservableList<String> model = new WritableList<>(modelRealm);
+		final IObservableList<String> target = new WritableList<>(targetRealm);
+		dbc.bindList(target, model);
+
+		waitForBindingInitiated();
+
+		modelRealm.exec(() -> model.add("one"));
+
+		testDisposeRaceCondition(target);
+	}
+
+	@Test
+	public void testValueBindingUpdatesDontInterferWithObservableDisposing() throws Exception {
+		final IObservableValue<String> model = new WritableValue<>(modelRealm);
+		final IObservableValue<String> target = new WritableValue<>(targetRealm);
+		dbc.bindValue(target, model);
+
+		waitForBindingInitiated();
+
+		modelRealm.exec(() -> model.setValue("one"));
+
+		testDisposeRaceCondition(target);
+	}
+
+	private void testDisposeRaceCondition(final IObservable target) {
+		modelRealm.processQueue();
+		targetRealm.waitUntilBlocking();
+
+		target.dispose();
+
+		modelRealm.unblock();
+		targetRealm.processQueue();
+		targetRealm.unblock();
+		validationRealm.unblock();
+
+		assertTrue(errorStatusses.toString(), errorStatusses.isEmpty());
+	}
+
+	private void waitForBindingInitiated() {
+		modelRealm.waitUntilBlocking();
+		modelRealm.processQueue();
+
+		targetRealm.waitUntilBlocking();
+		targetRealm.processQueue();
 	}
 }

@@ -163,7 +163,7 @@ class ValueBinding<M, T> extends Binding {
 			return;
 		}
 
-		source.getRealm().exec(() -> {
+		execAfterDisposalCheck(source, () -> {
 			boolean destinationRealmReached = false;
 			final MultiStatus multiStatus = BindingStatus.ok();
 			try {
@@ -199,7 +199,7 @@ class ValueBinding<M, T> extends Binding {
 
 				// Set value
 				destinationRealmReached = true;
-				destination.getRealm().exec(() -> {
+				execAfterDisposalCheck(destination, () -> {
 					if (destination == target) {
 						updatingTarget = true;
 					} else {

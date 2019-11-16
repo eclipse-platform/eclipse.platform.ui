@@ -96,7 +96,7 @@ public class ListBinding<M, T> extends Binding {
 	@Override
 	protected void postInit() {
 		if (modelToTarget.getUpdatePolicy() == UpdateListStrategy.POLICY_UPDATE) {
-			model.getRealm().exec(() -> {
+			execAfterDisposalCheck(model, () -> {
 				model.addListChangeListener(modelChangeListener);
 				updateModelToTarget();
 			});
@@ -105,7 +105,7 @@ public class ListBinding<M, T> extends Binding {
 		}
 
 		if (targetToModel.getUpdatePolicy() == UpdateListStrategy.POLICY_UPDATE) {
-			target.getRealm().exec(() -> {
+			execAfterDisposalCheck(target, () -> {
 				target.addListChangeListener(targetChangeListener);
 				if (modelToTarget.getUpdatePolicy() == UpdateListStrategy.POLICY_NEVER) {
 					// we have to sync from target to model, if the other
@@ -123,7 +123,7 @@ public class ListBinding<M, T> extends Binding {
 
 	@Override
 	public void updateModelToTarget() {
-		model.getRealm().exec(() -> {
+		execAfterDisposalCheck(model, () -> {
 			ListDiff<M> diff = Diffs.computeListDiff(Collections.emptyList(), model);
 			doUpdate(model, target, diff, modelToTarget, true, true);
 		});
@@ -131,7 +131,7 @@ public class ListBinding<M, T> extends Binding {
 
 	@Override
 	public void updateTargetToModel() {
-		target.getRealm().exec(() -> {
+		execAfterDisposalCheck(target, () -> {
 			ListDiff<T> diff = Diffs.computeListDiff(Collections.emptyList(), target);
 			doUpdate(target, model, diff, targetToModel, true, true);
 		});
@@ -172,7 +172,7 @@ public class ListBinding<M, T> extends Binding {
 			diff.getDifferences();
 		}
 
-		destination.getRealm().exec(() -> {
+		execAfterDisposalCheck(destination, () -> {
 			if (destination == target) {
 				updatingTarget = true;
 			} else {
