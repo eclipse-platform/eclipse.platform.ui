@@ -134,13 +134,10 @@ public class DocumentFetcher {
 	private Map<IFile, IDocument> evalNonFileBufferDocuments() {
 		Map<IFile, IDocument> result= new HashMap<>();
 		IWorkbench workbench= PlatformUI.getWorkbench();
-		IWorkbenchWindow[] windows= workbench.getWorkbenchWindows();
-		for (int i= 0; i < windows.length; i++) {
-			IWorkbenchPage[] pages= windows[i].getPages();
-			for (int x= 0; x < pages.length; x++) {
-				IEditorReference[] editorRefs= pages[x].getEditorReferences();
-				for (int z= 0; z < editorRefs.length; z++) {
-					IEditorPart ep= editorRefs[z].getEditor(false);
+		for (IWorkbenchWindow window : workbench.getWorkbenchWindows()) {
+			for (IWorkbenchPage page : window.getPages()) {
+				for (IEditorReference editorRef : page.getEditorReferences()) {
+					IEditorPart ep= editorRef.getEditor(false);
 					if (ep instanceof ITextEditor && ep.isDirty()) { // only dirty editors
 						evaluateTextEditor(result, ep);
 					}
