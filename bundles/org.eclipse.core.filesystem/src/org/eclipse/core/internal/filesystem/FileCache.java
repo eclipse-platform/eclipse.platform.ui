@@ -124,8 +124,8 @@ public class FileCache {
 		if (target.isDirectory()) {
 			File[] children = target.listFiles();
 			if (children != null) {
-				for (int i = 0, imax = children.length; i < imax; i++) {
-					clearImmutableFlag(children[i]);
+				for (File element : children) {
+					clearImmutableFlag(element);
 				}
 			}
 		} else {

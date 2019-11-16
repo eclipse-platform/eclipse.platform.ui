@@ -51,8 +51,7 @@ public class MemoryTree {
 		 * @return
 		 */
 		Node getChild(String name) {
-			for (int i = 0, imax = children.size(); i < imax; i++) {
-				Node child = children.get(i);
+			for (Node child : children) {
 				if (child.getInfo(false).getName().equals(name)) {
 					return child;
 				}

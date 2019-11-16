@@ -67,10 +67,9 @@ public class MultiProjectBuildTest extends AbstractBuilderTest {
 	protected void dirty(final IProject[] projects) throws CoreException {
 		getWorkspace().run((IWorkspaceRunnable) monitor -> {
 			for (IProject project : projects) {
-				IResource[] members = project.members();
-				for (int j = 0; j < members.length; j++) {
-					if (members[j].getType() == IResource.FILE && !members[j].getName().equals(IProjectDescription.DESCRIPTION_FILE_NAME)) {
-						((IFile) members[j]).setContents(getRandomContents(), true, true, null);
+				for (IResource member : project.members()) {
+					if (member.getType() == IResource.FILE && !member.getName().equals(IProjectDescription.DESCRIPTION_FILE_NAME)) {
+						((IFile) member).setContents(getRandomContents(), true, true, null);
 					}
 				}
 			}

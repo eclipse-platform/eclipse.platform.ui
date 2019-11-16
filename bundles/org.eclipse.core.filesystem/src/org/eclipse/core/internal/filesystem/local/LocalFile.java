@@ -237,15 +237,15 @@ public class LocalFile extends FileStore {
 				list = EMPTY_STRING_ARRAY;
 			int parentLength = pathToDelete.length();
 			boolean failedRecursive = false;
-			for (int i = 0, imax = list.length; i < imax; i++) {
+			for (String element : list) {
 				if (monitor.isCanceled()) {
 					throw new OperationCanceledException();
 				}
 				// Optimized creation of child path object
-				StringBuilder childBuffer = new StringBuilder(parentLength + list[i].length() + 1);
+				StringBuilder childBuffer = new StringBuilder(parentLength + element.length() + 1);
 				childBuffer.append(pathToDelete);
 				childBuffer.append(File.separatorChar);
-				childBuffer.append(list[i]);
+				childBuffer.append(element);
 				String childName = childBuffer.toString();
 				// Try best effort on all children so put logical OR at end.
 				failedRecursive = !internalDelete(new java.io.File(childName), childName, status, monitor) || failedRecursive;

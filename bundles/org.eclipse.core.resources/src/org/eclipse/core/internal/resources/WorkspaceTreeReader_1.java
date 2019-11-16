@@ -46,8 +46,7 @@ public class WorkspaceTreeReader_1 extends WorkspaceTreeReader {
 		try {
 			ArrayList<BuilderPersistentInfo> infos = null;
 			String projectName = null;
-			for (int i = 0; i < buildersToBeLinked.size(); i++) {
-				BuilderPersistentInfo info = buildersToBeLinked.get(i);
+			for (BuilderPersistentInfo info : buildersToBeLinked) {
 				if (!info.getProjectName().equals(projectName)) {
 					if (infos != null) { // if it is not the first iteration
 						IProject project = workspace.getRoot().getProject(projectName);

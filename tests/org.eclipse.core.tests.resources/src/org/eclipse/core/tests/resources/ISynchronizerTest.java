@@ -261,10 +261,9 @@ public class ISynchronizerTest extends ResourceTest {
 		final IProject[] projects = getWorkspace().getRoot().getProjects();
 		IWorkspaceRunnable body = monitor -> {
 			for (IProject project : projects) {
-				IResource[] children = project.members();
-				for (int j = 0; j < children.length; j++) {
-					if (!children[j].getName().equals(IProjectDescription.DESCRIPTION_FILE_NAME)) {
-						children[j].delete(false, getMonitor());
+				for (IResource element : project.members()) {
+					if (!element.getName().equals(IProjectDescription.DESCRIPTION_FILE_NAME)) {
+						element.delete(false, getMonitor());
 					}
 				}
 			}
@@ -300,8 +299,7 @@ public class ISynchronizerTest extends ResourceTest {
 		// remove the sync info for the immediate children of the projects.
 		body = monitor -> {
 			for (IProject project : projects) {
-				IResource[] children = project.members(true);
-				for (IResource element : children) {
+				for (IResource element : project.members(true)) {
 					synchronizer.setSyncInfo(qname, element, null);
 				}
 			}

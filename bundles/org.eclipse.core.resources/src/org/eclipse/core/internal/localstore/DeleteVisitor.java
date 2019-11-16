@@ -132,8 +132,8 @@ public class DeleteVisitor implements IUnifiedTreeVisitor, ICoreConstants {
 	protected boolean shouldSkip(IResource resource) {
 		if (skipList == null)
 			return false;
-		for (int i = 0; i < skipList.size(); i++)
-			if (equals(resource, skipList.get(i)))
+		for (Resource element : skipList)
+			if (equals(resource, element))
 				return true;
 		return false;
 	}

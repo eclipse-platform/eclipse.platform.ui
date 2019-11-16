@@ -595,8 +595,8 @@ public class MarkerTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("1.0", e);
 		}
-		for (int i = 0; i < markers.length; i++) {
-			assertTrue("1.1", !markers[i].exists());
+		for (IMarker marker : markers) {
+			assertTrue("1.1", !marker.exists());
 		}
 
 		// Check that an empty collection of markers can be removed.
