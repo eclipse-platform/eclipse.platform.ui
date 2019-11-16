@@ -159,7 +159,12 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 		if (position.getOffset() > -1 && position.getLength() > -1) {
 			try {
 				int startLine= document.getLineOfOffset(position.getOffset());
-				int endLine= document.getLineOfOffset(position.getOffset() + position.getLength());
+				int end= position.getOffset() + position.getLength();
+				// Bug 347628: this method expects that the offset after the position range is the
+				// offset of the first line after this projected line range. In other words position
+				// comprise the whole projected range including the last lines delimiter. If position
+				// ends at document end the next offset is not the next line because there is no more content.
+				int endLine= end != document.getLength() ? document.getLineOfOffset(end) : document.getNumberOfLines();
 				if (startLine <= line && line < endLine) {
 					if (annotation.isCollapsed()) {
 						int captionOffset;
