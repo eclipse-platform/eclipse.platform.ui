@@ -84,8 +84,8 @@ public class NfmParser {
 	private static void collect1(Dfm dfm, List<Dfm> dfms) {
 		Object[] follows = dfm.getValues();
 		if (follows != null) {
-			for (int i = 0; i < follows.length; i++) {
-				Dfm follow = (Dfm) follows[i];
+			for (Object follow2 : follows) {
+				Dfm follow = (Dfm) follow2;
 				if (!dfms.contains(follow)) {
 					dfms.add(follow);
 					collect1(follow, dfms);
@@ -125,9 +125,7 @@ public class NfmParser {
 	 * ((a|a),b,(a|a))*.
 	 */
 	private void detect(ArrayList<Dfm> dfms, HashMap<Dfm, Dfm> duplicates) throws ParseError {
-		for (Iterator<Dfm> iter = dfms.iterator(); iter.hasNext();) {
-			Dfm dfm = iter.next();
-
+		for (Dfm dfm : dfms) {
 			Object[] accepts = dfm.getKeys();
 			Object[] follows = dfm.getValues();
 			if (accepts != null) {
@@ -149,9 +147,7 @@ public class NfmParser {
 
 		// once more for removal
 
-		for (Iterator<Dfm> iter = dfms.iterator(); iter.hasNext();) {
-			Dfm dfm = iter.next();
-
+		for (Dfm dfm : dfms) {
 			// record conflicts
 			Object[] accepts = dfm.getKeys();
 			Object[] follows = dfm.getValues();

@@ -87,9 +87,7 @@ public class FileFilter extends ViewerFilter {
 	private boolean traverse(IContainer container, Set<IResource> set) {
 		boolean added = false;
 		try {
-			IResource[] resources = container.members();
-			for (int i = 0; i < resources.length; i++) {
-				IResource resource = resources[i];
+			for (IResource resource : container.members()) {
 				if (resource instanceof IFile) {
 					IFile file = (IFile) resource;
 					String ext = file.getFileExtension();

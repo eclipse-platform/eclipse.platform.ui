@@ -101,9 +101,9 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 	@Override
 	public synchronized void handleDebugEvents(DebugEvent[] events) {
 		// printReceived(events);
-		for (int i = 0; i < events.length; i++) {
-			if (accept(events[i])) {
-				fEvent = events[i];
+		for (DebugEvent event : events) {
+			if (accept(event)) {
+				fEvent = event;
 				fEventSet = events;
 				unregister();
 				notifyAll();
@@ -116,8 +116,8 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 	 * Prints a message indicating which event was received.
 	 */
 	protected void printReceived(DebugEvent[] events) {
-		for (int i = 0; i < events.length; i++) {
-			System.out.println(this + " got " + events[i]); //$NON-NLS-1$
+		for (DebugEvent event : events) {
+			System.out.println(this + " got " + event); //$NON-NLS-1$
 		}
 	}
 

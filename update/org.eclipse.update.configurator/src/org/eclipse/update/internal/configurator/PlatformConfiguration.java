@@ -217,9 +217,9 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 
 		SiteEntry[] sites = config.getSites();
 		ArrayList<ISiteEntry> enabledSites = new ArrayList<>(sites.length);
-		for (int i = 0; i < sites.length; i++) {
-			if (sites[i].isEnabled())
-				enabledSites.add(sites[i]);
+		for (SiteEntry site : sites) {
+			if (site.isEnabled())
+				enabledSites.add(site);
 		}
 		return enabledSites.toArray(new ISiteEntry[enabledSites.size()]);
 	}
@@ -276,21 +276,20 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		if (config == null)
 			config = new Configuration();
 
-		SiteEntry[] sites = config.getSites();
-		for (int i = 0; i < sites.length; i++) {
+		for (SiteEntry site : config.getSites()) {
 			// find out what site contains the feature and configure it
 			try {
-				URL url = new URL(sites[i].getURL(), FEATURES + "/" + entry.getFeatureIdentifier() + "_" + entry.getFeatureVersion() + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				URL url = new URL(site.getURL(), FEATURES + "/" + entry.getFeatureIdentifier() + "_" + entry.getFeatureVersion() + "/"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 				try {
 					url = resolvePlatformURL(url, getBasePathLocation(url, config.getInstallURL(), config.getURL()));
 				} catch (IOException e) {
 				}
 				if (new File(url.getFile()).exists())
-					sites[i].addFeatureEntry(entry);
+					site.addFeatureEntry(entry);
 				else {
-					url = new URL(sites[i].getURL(), FEATURES + "/" + entry.getFeatureIdentifier() + "/"); //$NON-NLS-1$ //$NON-NLS-2$
+					url = new URL(site.getURL(), FEATURES + "/" + entry.getFeatureIdentifier() + "/"); //$NON-NLS-1$ //$NON-NLS-2$
 					if (new File(url.getFile()).exists())
-						sites[i].addFeatureEntry(entry);
+						site.addFeatureEntry(entry);
 				}
 			} catch (MalformedURLException e) {
 			}
@@ -312,11 +311,9 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	@Override
 	public IFeatureEntry[] getConfiguredFeatureEntries() {
 		ArrayList<IFeatureEntry> configFeatures = new ArrayList<>();
-		SiteEntry[] sites = config.getSites();
-		for (int i = 0; i < sites.length; i++) {
-			FeatureEntry[] features = sites[i].getFeatureEntries();
-			for (int j = 0; j < features.length; j++)
-				configFeatures.add(features[j]);
+		for (SiteEntry site : config.getSites()) {
+			for (FeatureEntry feature : site.getFeatureEntries())
+				configFeatures.add(feature);
 		}
 		return configFeatures.toArray(new FeatureEntry[configFeatures.size()]);
 	}
@@ -326,9 +323,8 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		if (id == null)
 			return null;
 
-		SiteEntry[] sites = config.getSites();
-		for (int i = 0; i < sites.length; i++) {
-			FeatureEntry f = sites[i].getFeatureEntry(id);
+		for (SiteEntry site : config.getSites()) {
+			FeatureEntry f = site.getFeatureEntry(id);
 			if (f != null)
 				return f;
 		}
@@ -399,13 +395,11 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 		ArrayList<URL> path = new ArrayList<>();
 		Utils.debug("computed plug-in path:"); //$NON-NLS-1$
 
-		ISiteEntry[] sites = getConfiguredSites();
 		URL pathURL;
-		for (int i = 0; i < sites.length; i++) {
-			String[] plugins = sites[i].getPlugins();
-			for (int j = 0; j < plugins.length; j++) {
+		for (ISiteEntry site : getConfiguredSites()) {
+			for (String plugin : site.getPlugins()) {
 				try {
-					pathURL = new URL(((SiteEntry) sites[i]).getResolvedURL(), plugins[j]);
+					pathURL = new URL(((SiteEntry) site).getResolvedURL(), plugin);
 					path.add(pathURL);
 					Utils.debug("   " + pathURL.toString()); //$NON-NLS-1$
 				} catch (MalformedURLException e) {
@@ -420,12 +414,10 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	public Set<String> getPluginPaths() {
 
 		HashSet<String> paths = new HashSet<>();
-		ISiteEntry[] sites = getConfiguredSites();
-
-		for (int i = 0; i < sites.length; i++) {
-			String[] plugins = sites[i].getPlugins();
-			for (int j = 0; j < plugins.length; j++) {
-				paths.add(plugins[j]);
+	
+		for (ISiteEntry site : getConfiguredSites()) {
+			for (String plugin : site.getPlugins()) {
+				paths.add(plugin);
 			}
 		}
 
@@ -445,10 +437,9 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 				Utils.debug("Site " + sites[i].getURL() + " is not a SiteEntry"); //$NON-NLS-1$ //$NON-NLS-2$
 				continue;
 			}
-			PluginEntry[] plugins = ((SiteEntry) sites[i]).getPluginEntries();
-			for (int j = 0; j < plugins.length; j++) {
-				allPlugins.add(plugins[j]);
-				Utils.debug("   " + plugins[j].getURL()); //$NON-NLS-1$
+			for (PluginEntry plugin : ((SiteEntry) sites[i]).getPluginEntries()) {
+				allPlugins.add(plugin);
+				Utils.debug("   " + plugin.getURL()); //$NON-NLS-1$
 			}
 		}
 		return allPlugins.toArray(new PluginEntry[0]);
@@ -483,11 +474,10 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 	public synchronized void refresh() {
 		// Reset computed values. Will be lazily refreshed
 		// on next access
-		ISiteEntry[] sites = getConfiguredSites();
-		for (int i = 0; i < sites.length; i++) {
-			if (sites[i].isUpdateable() && sites[i].getSitePolicy().getType() != ISitePolicy.MANAGED_ONLY) {
+		for (ISiteEntry site : getConfiguredSites()) {
+			if (site.isUpdateable() && site.getSitePolicy().getType() != ISitePolicy.MANAGED_ONLY) {
 				// reset site entry
-				((SiteEntry) sites[i]).refresh();
+				((SiteEntry) site).refresh();
 			}
 		}
 	}
@@ -781,10 +771,9 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			return featuresChangeStamp;
 
 		long result = 0;
-		ISiteEntry[] sites = config.getSites();
-		for (int i = 0; i < sites.length; i++) {
-			if (sites[i].getSitePolicy().getType() != ISitePolicy.MANAGED_ONLY) {
-				result = Math.max(result, sites[i].getFeaturesChangeStamp());
+		for (ISiteEntry site : config.getSites()) {
+			if (site.getSitePolicy().getType() != ISitePolicy.MANAGED_ONLY) {
+				result = Math.max(result, site.getFeaturesChangeStamp());
 			}
 		}
 		featuresChangeStamp = result;
@@ -797,10 +786,9 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 			return pluginsChangeStamp;
 
 		long result = 0;
-		ISiteEntry[] sites = config.getSites();
-		for (int i = 0; i < sites.length; i++) {
-			if (sites[i].getSitePolicy().getType() != ISitePolicy.MANAGED_ONLY) {
-				result = Math.max(result, sites[i].getPluginsChangeStamp());
+		for (ISiteEntry site : config.getSites()) {
+			if (site.getSitePolicy().getType() != ISitePolicy.MANAGED_ONLY) {
+				result = Math.max(result, site.getPluginsChangeStamp());
 			}
 		}
 		pluginsChangeStamp = result;
@@ -999,12 +987,11 @@ public class PlatformConfiguration implements IPlatformConfiguration, IConfigura
 
 	private void reconcile() throws CoreException {
 		long lastChange = config.getDate().getTime();
-		SiteEntry[] sites = config.getSites();
-		for (int s = 0; s < sites.length; s++) {
-			if (sites[s].isUpdateable() && sites[s].getSitePolicy().getType() != ISitePolicy.MANAGED_ONLY) {
-				long siteTimestamp = sites[s].getChangeStamp();
+		for (SiteEntry site : config.getSites()) {
+			if (site.isUpdateable() && site.getSitePolicy().getType() != ISitePolicy.MANAGED_ONLY) {
+				long siteTimestamp = site.getChangeStamp();
 				if (siteTimestamp > lastChange)
-					sites[s].loadFromDisk(lastChange);
+					site.loadFromDisk(lastChange);
 			}
 		}
 		config.setDirty(true);

@@ -72,9 +72,9 @@ class OverlayPreferenceStore implements IPreferenceStore {
 	}
 
 	private OverlayKey findOverlayKey(String key) {
-		for (int i = 0; i < fOverlayKeys.length; i++) {
-			if (fOverlayKeys[i].fKey.equals(key))
-				return fOverlayKeys[i];
+		for (OverlayKey overlayKey : fOverlayKeys) {
+			if (overlayKey.fKey.equals(key))
+				return overlayKey;
 		}
 		return null;
 	}
@@ -138,8 +138,8 @@ class OverlayPreferenceStore implements IPreferenceStore {
 	}
 
 	public void propagate() {
-		for (int i = 0; i < fOverlayKeys.length; i++)
-			propagateProperty(fStore, fOverlayKeys[i], fParent);
+		for (OverlayKey key : fOverlayKeys)
+			propagateProperty(fStore, key, fParent);
 	}
 
 	private void loadProperty(IPreferenceStore orgin, OverlayKey key, IPreferenceStore target, boolean forceInitialization) {
@@ -190,13 +190,13 @@ class OverlayPreferenceStore implements IPreferenceStore {
 	}
 
 	public void load() {
-		for (int i = 0; i < fOverlayKeys.length; i++)
-			loadProperty(fParent, fOverlayKeys[i], fStore, true);
+		for (OverlayKey key : fOverlayKeys)
+			loadProperty(fParent, key, fStore, true);
 	}
 
 	public void loadDefaults() {
-		for (int i = 0; i < fOverlayKeys.length; i++)
-			setToDefault(fOverlayKeys[i].fKey);
+		for (OverlayKey key : fOverlayKeys)
+			setToDefault(key.fKey);
 	}
 
 	public void start() {

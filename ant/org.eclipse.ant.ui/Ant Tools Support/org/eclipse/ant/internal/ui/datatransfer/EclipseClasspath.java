@@ -87,8 +87,7 @@ public class EclipseClasspath {
 		// see AbstractJavaLaunchConfigurationDelegate
 		runtimeEntries = JavaRuntime.computeUnresolvedRuntimeClasspath(conf);
 		List<IClasspathEntry> classpathEntries = new ArrayList<>(runtimeEntries.length);
-		for (int i = 0; i < runtimeEntries.length; i++) {
-			IRuntimeClasspathEntry entry = runtimeEntries[i];
+		for (IRuntimeClasspathEntry entry : runtimeEntries) {
 			if (bootstrap && (entry.getClasspathProperty() == IRuntimeClasspathEntry.BOOTSTRAP_CLASSES) || !bootstrap
 					&& (entry.getClasspathProperty() != IRuntimeClasspathEntry.BOOTSTRAP_CLASSES)) {
 				// NOTE: See AbstractJavaLaunchConfigurationDelegate.getBootpathExt()
@@ -118,12 +117,12 @@ public class EclipseClasspath {
 	}
 
 	private void handle(IClasspathEntry[] entries) throws JavaModelException {
-		for (int i = 0; i < entries.length; i++) {
-			handleSources(entries[i]);
-			handleVariables(entries[i]);
-			handleJars(entries[i]);
-			handleLibraries(entries[i]);
-			handleProjects(entries[i]);
+		for (IClasspathEntry entry : entries) {
+			handleSources(entry);
+			handleVariables(entry);
+			handleJars(entry);
+			handleLibraries(entry);
+			handleProjects(entry);
 		}
 	}
 
@@ -144,19 +143,17 @@ public class EclipseClasspath {
 			String classDirAbsolute = (classDirPath != null) ? ExportUtil.resolve(classDirPath) : defaultClassDirAbsolute;
 			rawClassPathEntries.add(classDir);
 			rawClassPathEntriesAbsolute.add(classDirAbsolute);
-			IPath[] inclusions = entry.getInclusionPatterns();
 			List<String> inclusionList = new ArrayList<>();
-			for (int j = 0; j < inclusions.length; j++) {
-				if (inclusions[j] != null) {
-					inclusionList.add(ExportUtil.removeProjectRoot(inclusions[j].toString(), project.getProject()));
+			for (IPath inclusion : entry.getInclusionPatterns()) {
+				if (inclusion != null) {
+					inclusionList.add(ExportUtil.removeProjectRoot(inclusion.toString(), project.getProject()));
 				}
 			}
 			inclusionLists.add(inclusionList);
-			IPath[] exclusions = entry.getExclusionPatterns();
 			List<String> exclusionList = new ArrayList<>();
-			for (int j = 0; j < exclusions.length; j++) {
-				if (exclusions[j] != null) {
-					exclusionList.add(ExportUtil.removeProjectRoot(exclusions[j].toString(), project.getProject()));
+			for (IPath exclusion : entry.getExclusionPatterns()) {
+				if (exclusion != null) {
+					exclusionList.add(ExportUtil.removeProjectRoot(exclusion.toString(), project.getProject()));
 				}
 			}
 			exclusionLists.add(exclusionList);

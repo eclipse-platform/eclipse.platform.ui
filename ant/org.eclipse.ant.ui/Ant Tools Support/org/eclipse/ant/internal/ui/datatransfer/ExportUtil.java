@@ -229,8 +229,7 @@ public class ExportUtil {
 	}
 
 	private static void addClasspathProjects(List<IJavaProject> projects, IClasspathEntry[] entries) {
-		for (int i = 0; i < entries.length; i++) {
-			IClasspathEntry classpathEntry = entries[i];
+		for (IClasspathEntry classpathEntry : entries) {
 			if (classpathEntry.getContentKind() == IPackageFragmentRoot.K_SOURCE && classpathEntry.getEntryKind() == IClasspathEntry.CPE_PROJECT) {
 				// found required project on build path
 				String subProjectRoot = classpathEntry.getPath().toString();
@@ -255,9 +254,7 @@ public class ExportUtil {
 	}
 
 	private static void getClasspathProjectsRecursive(IJavaProject project, LinkedList<IJavaProject> result) throws JavaModelException {
-		List<IJavaProject> projects = getClasspathProjects(project);
-		for (Iterator<IJavaProject> iter = projects.iterator(); iter.hasNext();) {
-			IJavaProject javaProject = iter.next();
+		for (IJavaProject javaProject : getClasspathProjects(project)) {
 			if (!result.contains(javaProject)) {
 				result.addFirst(javaProject);
 				getClasspathProjectsRecursive(javaProject, result); // recursion
@@ -321,9 +318,7 @@ public class ExportUtil {
 	 * @throws CoreException
 	 */
 	public static IMarker getCyclicDependencyMarker(IJavaProject javaProject) throws CoreException {
-		IMarker[] markers = javaProject.getProject().findMarkers(IJavaModelMarker.BUILDPATH_PROBLEM_MARKER, false, IResource.DEPTH_ONE);
-		for (int i = 0; i < markers.length; i++) {
-			IMarker marker = markers[i];
+		for (IMarker marker : javaProject.getProject().findMarkers(IJavaModelMarker.BUILDPATH_PROBLEM_MARKER, false, IResource.DEPTH_ONE)) {
 			String cycleAttr = (String) marker.getAttribute(IJavaModelMarker.CYCLE_DETECTED);
 			if (cycleAttr != null && cycleAttr.equals("true")) //$NON-NLS-1$
 			{
@@ -522,8 +517,8 @@ public class ExportUtil {
 	 */
 	public static String toString(Collection<String> c, String separator) {
 		StringBuilder b = new StringBuilder();
-		for (Iterator<String> iter = c.iterator(); iter.hasNext();) {
-			b.append(iter.next());
+		for (String string : c) {
+			b.append(string);
 			b.append(separator);
 		}
 		if (c.size() > 0) {
@@ -541,8 +536,7 @@ public class ExportUtil {
 	 */
 	public static List<String> removeDuplicates(List<String> l) {
 		List<String> res = new ArrayList<>();
-		for (Iterator<String> iter = l.iterator(); iter.hasNext();) {
-			String element = iter.next();
+		for (String element : l) {
 			if (!res.contains(element)) {
 				res.add(element);
 			}
@@ -613,8 +607,7 @@ public class ExportUtil {
 				}
 			}
 		} else if (status.isOK()) {
-			for (Iterator<IFile> iterator = files.iterator(); iterator.hasNext();) {
-				IFile file = iterator.next();
+			for (IFile file : files) {
 				confirmedFiles.add(file);
 			}
 		}

@@ -132,9 +132,7 @@ public class EditorTestHelper {
 
 	public static boolean isCalm() {
 		IJobManager jobManager = Job.getJobManager();
-		Job[] jobs = jobManager.find(null);
-		for (int i = 0; i < jobs.length; i++) {
-			Job job = jobs[i];
+		for (Job job : jobManager.find(null)) {
 			int state = job.getState();
 			// System.out.println(job.getName() + ": " + getStateName(state));
 			if (state == Job.RUNNING || state == Job.WAITING) {

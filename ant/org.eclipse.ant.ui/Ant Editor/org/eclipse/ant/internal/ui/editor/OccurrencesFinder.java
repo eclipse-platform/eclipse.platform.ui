@@ -88,8 +88,8 @@ public class OccurrencesFinder {
 		for (IAntElement currentNode : usages) {
 			List<Integer> offsets = currentNode.computeIdentifierOffsets(identifier);
 			if (offsets != null) {
-				for (int i = 0; i < offsets.size(); i++) {
-					positions.add(new Position(offsets.get(i).intValue(), length));
+				for (Integer offset : offsets) {
+					positions.add(new Position(offset.intValue(), length));
 				}
 			}
 		}

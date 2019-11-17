@@ -161,8 +161,8 @@ public class InternalAntRunner {
 		// what kind of list it will return. We need a list that
 		// implements the method List.remove(Object) and ArrayList does.
 		ArrayList<String> result = new ArrayList<String>(args.length);
-		for (int i = 0; i < args.length; i++) {
-			result.add(args[i]);
+		for (String arg : args) {
+			result.add(arg);
 		}
 		return result;
 	}
@@ -235,8 +235,8 @@ public class InternalAntRunner {
 			return;
 		}
 		StringBuilder sb = new StringBuilder();
-		for (int i = 0; i < extraArguments.length; i++) {
-			sb.append(extraArguments[i]);
+		for (String extraArgument : extraArguments) {
+			sb.append(extraArgument);
 			sb.append(' ');
 		}
 		project.log(MessageFormat.format(RemoteAntMessages.getString("InternalAntRunner.Arguments__{0}_2"), new Object[] { sb.toString().trim() })); //$NON-NLS-1$
@@ -600,8 +600,7 @@ public class InternalAntRunner {
 	private void fireBuildStarted(Project project) {
 		if (!isVersionCompatible("1.5")) { //$NON-NLS-1$
 			BuildEvent event = new BuildEvent(project);
-			for (Iterator<BuildListener> iterator = project.getBuildListeners().iterator(); iterator.hasNext();) {
-				BuildListener listener = iterator.next();
+			for (BuildListener listener : project.getBuildListeners()) {
 				listener.buildStarted(event);
 			}
 		} else {
@@ -1095,9 +1094,7 @@ public class InternalAntRunner {
 
 	@SuppressWarnings("unused")
 	private void processMinusDProperties(List<String> commands) {
-		String[] args = commands.toArray(new String[commands.size()]);
-		for (int i = 0; i < args.length; i++) {
-			String arg = args[i];
+		for (String arg : commands) {
 			if (arg.startsWith("-D")) { //$NON-NLS-1$
 				String name = arg.substring(2, arg.length());
 				String value = null;
@@ -1118,7 +1115,7 @@ public class InternalAntRunner {
 					userProperties = new HashMap<String, String>();
 				}
 				userProperties.put(name, value);
-				commands.remove(args[i]);
+				commands.remove(arg);
 			}
 		}
 	}

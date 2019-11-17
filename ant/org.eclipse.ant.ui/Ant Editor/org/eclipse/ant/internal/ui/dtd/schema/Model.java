@@ -110,8 +110,8 @@ public class Model implements IModel {
 		copy.fLeaf = fLeaf;
 		if (fContents != null) {
 			copy.fContentsList = new LinkedList<>();
-			for (int i = 0; i < fContents.length; i++) {
-				copy.fContentsList.add(fContents[i]);
+			for (IModel content : fContents) {
+				copy.fContentsList.add(content);
 			}
 		} else if (fContentsList != null) {
 			copy.fContentsList = new LinkedList<>();

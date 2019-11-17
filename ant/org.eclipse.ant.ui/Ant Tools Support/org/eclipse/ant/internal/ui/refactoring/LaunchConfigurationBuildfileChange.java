@@ -121,8 +121,7 @@ public class LaunchConfigurationBuildfileChange extends Change {
 	 */
 	private static List<Change> createChangesForProjectRename(ILaunchConfiguration[] configs, String projectName, String newProjectName) throws CoreException {
 		List<Change> changes = new ArrayList<>();
-		for (int i = 0; i < configs.length; i++) {
-			ILaunchConfiguration launchConfiguration = configs[i];
+		for (ILaunchConfiguration launchConfiguration : configs) {
 			String launchConfigurationProjectName = launchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
 			if (projectName.equals(launchConfigurationProjectName)) {
 				LaunchConfigurationBuildfileChange change = new LaunchConfigurationBuildfileChange(launchConfiguration, null, null, newProjectName, false);
@@ -142,8 +141,7 @@ public class LaunchConfigurationBuildfileChange extends Change {
 	 */
 	private static List<Change> createChangesForBuildfileRename(IFile buildfile, ILaunchConfiguration[] configs, String projectName, String newBuildfileName) throws CoreException {
 		List<Change> changes = new ArrayList<>();
-		for (int i = 0; i < configs.length; i++) {
-			ILaunchConfiguration launchConfiguration = configs[i];
+		for (ILaunchConfiguration launchConfiguration : configs) {
 			String launchConfigurationProjectName = launchConfiguration.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, (String) null);
 			if (projectName.equals(launchConfigurationProjectName)) {
 				LaunchConfigurationBuildfileChange change = new LaunchConfigurationBuildfileChange(launchConfiguration, buildfile.getName(), newBuildfileName, null, false);
