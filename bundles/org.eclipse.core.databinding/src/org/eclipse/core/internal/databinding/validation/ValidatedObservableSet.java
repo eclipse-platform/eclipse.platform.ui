@@ -120,13 +120,11 @@ public class ValidatedObservableSet<E> extends ObservableSet<E> {
 	}
 
 	private void applyDiff(SetDiff<? extends E> diff, Set<E> set) {
-		for (Iterator<? extends E> iterator = diff.getRemovals().iterator(); iterator
-				.hasNext();) {
-			set.remove(iterator.next());
+		for (E removal : diff.getRemovals()) {
+			set.remove(removal);
 		}
-		for (Iterator<? extends E> iterator = diff.getAdditions().iterator(); iterator
-				.hasNext();) {
-			set.add(iterator.next());
+		for (E addition : diff.getAdditions()) {
+			set.add(addition);
 		}
 	}
 

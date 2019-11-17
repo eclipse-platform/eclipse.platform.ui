@@ -107,8 +107,7 @@ public abstract class AbstractOperation implements IUndoableOperation {
 	@Override
 	public final boolean hasContext(IUndoContext context) {
 		Assert.isNotNull(context);
-		for (int i = 0; i < contexts.size(); i++) {
-			IUndoContext otherContext = contexts.get(i);
+		for (IUndoContext otherContext : contexts) {
 			// have to check both ways because one context may be more general
 			// in
 			// its matching rules than another.

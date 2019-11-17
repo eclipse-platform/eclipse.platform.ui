@@ -501,8 +501,7 @@ public abstract class MultiValidator extends ValidationStatusProvider {
 			// Update the staleness state by checking whether any of the current
 			// dependencies is stale.
 			stale = false;
-			for (Iterator<IObservable> iter = targets.iterator(); iter.hasNext();) {
-				IObservable dependency = iter.next();
+			for (IObservable dependency : targets) {
 				if (dependency.isStale()) {
 					stale = true;
 					break;

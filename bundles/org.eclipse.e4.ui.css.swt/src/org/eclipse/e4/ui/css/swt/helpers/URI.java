@@ -1250,9 +1250,8 @@ public final class URI
 		if (value == null) {
 			return false;
 		}
-		for (int i = 0, len = value.length; i < len; i++)
-		{
-			if (!validSegment(value[i])) {
+		for (String segment : value) {
+			if (!validSegment(segment)) {
 			return false;
 		}
 		}
@@ -1267,10 +1266,9 @@ public final class URI
 		if (value == null) {
 			return null;
 		}
-		for (int i = 0, len = value.length; i < len; i++)
-		{
-			if (!validSegment(value[i])) {
-			return value[i];
+		for (String segment : value) {
+			if (!validSegment(segment)) {
+			return segment;
 		}
 		}
 		return null;

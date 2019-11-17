@@ -146,8 +146,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 		}
 		// the triggering operation remains, check all the children
 		ArrayList<IUndoableOperation> toBeRemoved = new ArrayList<>();
-		for (int i = 0; i < children.size(); i++) {
-			IUndoableOperation child = children.get(i);
+		for (IUndoableOperation child : children) {
 			if (child.hasContext(context)) {
 				if (child.getContexts().length == 1) {
 					toBeRemoved.add(child);
@@ -157,8 +156,8 @@ public final class TriggeredOperations extends AbstractOperation implements
 				recompute = true;
 			}
 		}
-		for (int i = 0; i < toBeRemoved.size(); i++) {
-			remove(toBeRemoved.get(i));
+		for (IUndoableOperation operation : toBeRemoved) {
+			remove(operation);
 		}
 		if (recompute) {
 			recomputeContexts();
@@ -256,8 +255,8 @@ public final class TriggeredOperations extends AbstractOperation implements
 	 */
 	@Override
 	public void dispose() {
-		for (int i = 0; i < children.size(); i++) {
-			(children.get(i)).dispose();
+		for (IUndoableOperation operation : children) {
+			operation.dispose();
 		}
 		if (triggeringOperation != null) {
 			triggeringOperation.dispose();
@@ -273,9 +272,8 @@ public final class TriggeredOperations extends AbstractOperation implements
 			IUndoContext[] contexts = triggeringOperation.getContexts();
 			allContexts.addAll(Arrays.asList(contexts));
 		}
-		for (int i = 0; i < children.size(); i++) {
-			IUndoContext[] contexts = children.get(i).getContexts();
-			for (IUndoContext context : contexts) {
+		for (IUndoableOperation operation : children) {
+			for (IUndoContext context : operation.getContexts()) {
 				if (!allContexts.contains(context)) {
 					allContexts.add(context);
 				}
@@ -376,8 +374,7 @@ public final class TriggeredOperations extends AbstractOperation implements
 			}
 		}
 		// Now check all the children
-		for (int i = 0; i < children.size(); i++) {
-			IUndoableOperation child = children.get(i);
+		for (IUndoableOperation child : children) {
 			if (child.hasContext(original)) {
 				if (child instanceof IContextReplacingOperation) {
 					((IContextReplacingOperation) child).replaceContext(

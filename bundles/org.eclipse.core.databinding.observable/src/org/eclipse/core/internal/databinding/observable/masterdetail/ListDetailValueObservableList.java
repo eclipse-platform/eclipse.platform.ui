@@ -111,8 +111,7 @@ public class ListDetailValueObservableList<M, E> extends
 
 	@Override
 	protected synchronized void firstListenerAdded() {
-		for (int i = 0; i < detailList.size(); i++) {
-			IObservableValue<E> detail = detailList.get(i);
+		for (IObservableValue<E> detail : detailList) {
 			detail.addValueChangeListener(detailValueListener);
 			detail.addStaleListener(detailStaleListener);
 			if (detail.isStale()) {
@@ -127,8 +126,7 @@ public class ListDetailValueObservableList<M, E> extends
 			return;
 		}
 
-		for (int i = 0; i < detailList.size(); i++) {
-			IObservableValue<E> detail = detailList.get(i);
+		for (IObservableValue<E> detail : detailList) {
 			detail.removeValueChangeListener(detailValueListener);
 			detail.removeStaleListener(detailStaleListener);
 		}

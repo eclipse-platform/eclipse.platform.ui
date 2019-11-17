@@ -303,9 +303,9 @@ public class ProgressServiceImpl implements IProgressService {
 	private void setUserInterfaceActive(boolean active) {
 		Shell[] shells = getDisplay().getShells();
 		if (active) {
-			for (int i = 0; i < shells.length; i++) {
-				if (!shells[i].isDisposed()) {
-					shells[i].setEnabled(active);
+			for (Shell shell : shells) {
+				if (!shell.isDisposed()) {
+					shell.setEnabled(active);
 				}
 			}
 		} else {

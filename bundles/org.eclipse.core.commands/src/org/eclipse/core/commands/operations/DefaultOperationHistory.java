@@ -1066,8 +1066,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 				}
 				// recheck all the limits. We do this at the end so the index
 				// doesn't change during replacement
-				for (int i = 0; i < allContexts.size(); i++) {
-					IUndoContext context = allContexts.get(i);
+				for (IUndoContext context : allContexts) {
 					forceUndoLimit(context, getLimit(context));
 				}
 			}
@@ -1099,8 +1098,7 @@ public final class DefaultOperationHistory implements IOperationHistory {
 			}
 			// recheck all the limits. We do this at the end so the index
 			// doesn't change during replacement
-			for (int i = 0; i < allContexts.size(); i++) {
-				IUndoContext context = allContexts.get(i);
+			for (IUndoContext context : allContexts) {
 				forceRedoLimit(context, getLimit(context));
 			}
 		}
