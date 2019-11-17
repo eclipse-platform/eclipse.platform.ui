@@ -46,10 +46,9 @@ public class AntViewDropAdapter extends DropTargetAdapter {
 	public void drop(DropTargetEvent event) {
 		Object data = event.data;
 		if (data instanceof String[]) {
-			final String[] strings = (String[]) data;
 			BusyIndicator.showWhile(null, () -> {
-				for (int i = 0; i < strings.length; i++) {
-					processString(strings[i]);
+				for (String string : (String[]) data) {
+					processString(string);
 				}
 			});
 		}
@@ -68,9 +67,8 @@ public class AntViewDropAdapter extends DropTargetAdapter {
 			return;
 		}
 		String name = buildFile.getFullPath().toString();
-		AntProjectNode[] existingProjects = view.getProjects();
-		for (int j = 0; j < existingProjects.length; j++) {
-			AntProjectNodeProxy existingProject = (AntProjectNodeProxy) existingProjects[j];
+		for (AntProjectNode node : view.getProjects()) {
+			AntProjectNodeProxy existingProject = (AntProjectNodeProxy) node;
 			if (existingProject.getBuildFileName().equals(name)) {
 				// Don't parse projects that have already been added.
 				return;

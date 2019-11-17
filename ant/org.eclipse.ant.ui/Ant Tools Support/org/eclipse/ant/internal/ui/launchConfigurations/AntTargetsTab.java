@@ -333,9 +333,8 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		int ok = dialog.open();
 		if (ok == Window.OK) {
 			fOrderedTargets.clear();
-			Object[] targets = dialog.getTargets();
-			for (int i = 0; i < targets.length; i++) {
-				fOrderedTargets.add((AntTargetNode) targets[i]);
+			for (Object target : dialog.getTargets()) {
+				fOrderedTargets.add((AntTargetNode) target);
 				updateSelectionCount();
 				updateLaunchConfigurationDialog();
 			}
@@ -577,11 +576,9 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 
 			if (exceptions[0] != null) {
 				IStatus exceptionStatus = exceptions[0].getStatus();
-				IStatus[] children = exceptionStatus.getChildren();
 				StringBuilder message = new StringBuilder(exceptions[0].getMessage());
-				for (int i = 0; i < children.length; i++) {
+				for (IStatus childStatus : exceptionStatus.getChildren()) {
 					message.append(' ');
-					IStatus childStatus = children[i];
 					message.append(childStatus.getMessage());
 				}
 				setErrorMessage(message.toString());
@@ -597,8 +594,8 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			AntTargetNode target = fAllTargets[0];
 			AntProjectNode projectNode = target.getProjectNode();
 			setErrorMessageFromNode(projectNode);
-			for (int i = 0; i < fAllTargets.length; i++) {
-				target = fAllTargets[i];
+			for (AntTargetNode mytarget : fAllTargets) {
+				target = mytarget;
 				if (target.isDefaultTarget()) {
 					fDefaultTarget = target;
 				}
@@ -703,11 +700,11 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 
 		setExecuteInput(allTargetNodes);
 		fTableViewer.setAllChecked(false);
-		for (int i = 0; i < targetNames.length; i++) {
-			for (int j = 0; j < fAllTargets.length; j++) {
-				if (targetNames[i].equals(fAllTargets[j].getTargetName())) {
-					fOrderedTargets.add(fAllTargets[j]);
-					fTableViewer.setChecked(fAllTargets[j], true);
+		for (String targetName : targetNames) {
+			for (AntTargetNode mytarget : fAllTargets) {
+				if (targetName.equals(mytarget.getTargetName())) {
+					fOrderedTargets.add(mytarget);
+					fTableViewer.setChecked(mytarget, true);
 				}
 			}
 		}

@@ -51,8 +51,8 @@ public class AntSourceContainer extends AbstractSourceContainer {
 				IPath canonicalPath = new Path(osFile.getCanonicalPath());
 				IFile[] files = fRoot.findFilesForLocationURI(canonicalPath.makeAbsolute().toFile().toURI());
 				if (files.length > 0) {
-					for (int i = 0; i < files.length; i++) {
-						sources.add(files[i]);
+					for (IFile file : files) {
+						sources.add(file);
 					}
 				} else {
 					sources.add(new LocalFileStorage(osFile));

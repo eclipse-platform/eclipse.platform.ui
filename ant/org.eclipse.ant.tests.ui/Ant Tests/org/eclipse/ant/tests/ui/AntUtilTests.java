@@ -281,8 +281,7 @@ public class AntUtilTests extends AbstractAntUITest {
 	 */
 	private void assertContains(String targetName, AntTargetNode[] targets) {
 		boolean found = false;
-		for (int i = 0; i < targets.length; i++) {
-			AntTargetNode target = targets[i];
+		for (AntTargetNode target : targets) {
 			String foundName = target.getTargetName();
 			if (targetName.equals(foundName)) {
 				found = true;

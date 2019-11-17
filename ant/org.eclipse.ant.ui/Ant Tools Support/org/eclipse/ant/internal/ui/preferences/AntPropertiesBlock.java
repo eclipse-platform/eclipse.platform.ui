@@ -177,8 +177,8 @@ public class AntPropertiesBlock {
 
 		Object[] existingFiles = getPropertyFiles();
 		List<IFile> propFiles = new ArrayList<>(existingFiles.length);
-		for (int j = 0; j < existingFiles.length; j++) {
-			String file = (String) existingFiles[j];
+		for (Object existingFile : existingFiles) {
+			String file = (String) existingFile;
 			try {
 				propFiles.add(AntUtil.getFileForLocation(VariablesPlugin.getDefault().getStringVariableManager().performStringSubstitution(file), null));
 			}
@@ -189,9 +189,8 @@ public class AntPropertiesBlock {
 
 		FileSelectionDialog dialog = new FileSelectionDialog(propertyTableViewer.getControl().getShell(), propFiles, title, message, filterExtension, filterMessage);
 		if (dialog.open() == Window.OK) {
-			Object[] elements = dialog.getResult();
-			for (int i = 0; i < elements.length; i++) {
-				IFile file = (IFile) elements[i];
+			for (Object element : dialog.getResult()) {
+				IFile file = (IFile) element;
 				String varExpression = VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", file.getFullPath().toString()); //$NON-NLS-1$
 				((AntContentProvider) fileTableViewer.getContentProvider()).add(varExpression);
 			}
@@ -429,9 +428,7 @@ public class AntPropertiesBlock {
 			return;
 		}
 		IPath filterPath = new Path(dialog.getFilterPath());
-		String[] results = dialog.getFileNames();
-		for (int i = 0; i < results.length; i++) {
-			String fileName = results[i];
+		for (String fileName : dialog.getFileNames()) {
 			IPath path = filterPath.append(fileName).makeAbsolute();
 			((AntContentProvider) fileTableViewer.getContentProvider()).add(path.toOSString());
 		}
@@ -498,9 +495,8 @@ public class AntPropertiesBlock {
 	}
 
 	private boolean overwrite(String name) {
-		Object[] properties = getProperties();
-		for (int i = 0; i < properties.length; i++) {
-			Property property = (Property) properties[i];
+		for (Object prop : getProperties()) {
+			Property property = (Property) prop;
 			String propertyName = property.getName();
 			if (propertyName.equals(name)) {
 				if (property.isDefault()) {

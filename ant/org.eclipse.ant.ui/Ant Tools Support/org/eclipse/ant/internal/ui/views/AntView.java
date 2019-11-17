@@ -496,9 +496,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	 * Removes all projects from the view
 	 */
 	public void removeAllProjects() {
-		AntProjectNode[] projects = getProjects();
-		for (int i = 0; i < projects.length; i++) {
-			AntProjectNode node = projects[i];
+		for (AntProjectNode node : getProjects()) {
 			node.dispose();
 		}
 		fInput.clear();
@@ -544,8 +542,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		if (projects.length < 1) {
 			return;
 		}
-		for (int i = 0; i < projects.length; i++) {
-			IMemento projectMemento = projects[i];
+		for (IMemento projectMemento : projects) {
 			String pathString = projectMemento.getString(KEY_PATH);
 			if (!ResourcesPlugin.getWorkspace().getRoot().getFile(new Path(pathString)).exists()) {
 				// If the file no longer exists, don't add it.
@@ -584,10 +581,8 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		StringWriter writer = new StringWriter();
 		AntProjectNode[] projects = getProjects();
 		if (projects.length > 0) {
-			AntProjectNode project;
 			IMemento projectMemento;
-			for (int i = 0; i < projects.length; i++) {
-				project = projects[i];
+			for (AntProjectNode project : projects) {
 				projectMemento = memento.createChild(TAG_PROJECT);
 				projectMemento.putString(KEY_PATH, project.getBuildFileName());
 				projectMemento.putString(KEY_NAME, project.getLabel());
@@ -651,13 +646,11 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	public void resourceChanged(IResourceChangeEvent event) {
 		IResourceDelta delta = event.getDelta();
 		if (delta != null) {
-			AntProjectNode projects[] = getProjects();
-			IPath buildFilePath;
-			for (int i = 0; i < projects.length; i++) {
-				buildFilePath = new Path(projects[i].getBuildFileName());
+			for (AntProjectNode project : getProjects()) {
+				IPath buildFilePath = new Path(project.getBuildFileName());
 				IResourceDelta change = delta.findMember(buildFilePath);
 				if (change != null) {
-					handleChangeDelta(change, projects[i]);
+					handleChangeDelta(change, project);
 				}
 			}
 		}

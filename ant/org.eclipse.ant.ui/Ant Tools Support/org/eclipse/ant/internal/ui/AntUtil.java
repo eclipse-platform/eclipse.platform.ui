@@ -200,13 +200,11 @@ public final class AntUtil {
 		String allArgs = config.getAttribute(IExternalToolConstants.ATTR_TOOL_ARGUMENTS, (String) null);
 		Map<String, String> properties = new HashMap<>();
 		if (allArgs != null) {
-			String[] arguments = ExternalToolsUtil.parseStringIntoList(allArgs);
 			// filter arguments to avoid resolving variables that will prompt the user
 			List<String> filtered = new ArrayList<>();
 			Pattern pattern = Pattern.compile("\\$\\{.*_prompt.*\\}"); //$NON-NLS-1$
 			IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
-			for (int i = 0; i < arguments.length; i++) {
-				String arg = arguments[i];
+			for (String arg : ExternalToolsUtil.parseStringIntoList(allArgs)) {
 				if (arg.startsWith("-D")) { //$NON-NLS-1$
 					if (!pattern.matcher(arg).find()) {
 						filtered.add(manager.performStringSubstitution(arg, false));

@@ -373,13 +373,11 @@ public class AntStackFrame extends AntDebugElement implements IStackFrame {
 	 */
 	public AntProperty findProperty(String propertyName) {
 		try {
-			IVariable[] groups = getVariables();
-			for (int i = 0; i < groups.length; i++) {
-				AntProperties propertiesGrouping = (AntProperties) groups[i];
+			for (IVariable group : getVariables()) {
+				AntProperties propertiesGrouping = (AntProperties) group;
 				AntPropertiesValue value = (AntPropertiesValue) propertiesGrouping.getValue();
-				IVariable[] properties = value.getVariables();
-				for (int j = 0; j < properties.length; j++) {
-					AntProperty property = (AntProperty) properties[j];
+				for (IVariable currproperty : value.getVariables()) {
+					AntProperty property = (AntProperty) currproperty;
 					if (property.getName().equals(propertyName)) {
 						return property;
 					}

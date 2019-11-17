@@ -192,8 +192,8 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 		Map<String, String> properties = null;
 		if (items.length > 0) {
 			properties = new HashMap<>(items.length);
-			for (int i = 0; i < items.length; i++) {
-				Property property = (Property) items[i];
+			for (Object item : items) {
+				Property property = (Property) item;
 				properties.put(property.getName(), property.getValue(false));
 			}
 		}
@@ -204,8 +204,8 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 		String files = null;
 		if (items.length > 0) {
 			StringBuilder buff = new StringBuilder();
-			for (int i = 0; i < items.length; i++) {
-				String path = (String) items[i];
+			for (Object item : items) {
+				String path = (String) item;
 				buff.append(path);
 				buff.append(',');
 			}
@@ -271,9 +271,7 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 	private void updateTargetsTab() {
 		// the properties have changed...set the targets tab to
 		// need to be recomputed
-		ILaunchConfigurationTab[] tabs = getLaunchConfigurationDialog().getTabs();
-		for (int i = 0; i < tabs.length; i++) {
-			ILaunchConfigurationTab tab = tabs[i];
+		for (ILaunchConfigurationTab tab : getLaunchConfigurationDialog().getTabs()) {
 			if (tab instanceof AntTargetsTab) {
 				((AntTargetsTab) tab).setDirty(true);
 				break;
