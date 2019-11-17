@@ -140,8 +140,8 @@ public class PageSite implements IPageSite, INestable {
 	protected void dispose() {
 		if (menuExtenders != null) {
 			HashSet managers = new HashSet(menuExtenders.size());
-			for (int i = 0; i < menuExtenders.size(); i++) {
-				PopupMenuExtender ext = (PopupMenuExtender) menuExtenders.get(i);
+			for (Object menuExtender : menuExtenders) {
+				PopupMenuExtender ext = (PopupMenuExtender) menuExtender;
 				managers.add(ext.getManager());
 				ext.dispose();
 			}

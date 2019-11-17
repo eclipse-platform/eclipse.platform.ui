@@ -16,7 +16,6 @@ package org.eclipse.ui.internal.util;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.eclipse.jface.resource.ColorDescriptor;
 import org.eclipse.jface.resource.DeviceResourceDescriptor;
@@ -231,8 +230,8 @@ public final class Descriptors {
 
 		if (oldData instanceof List) {
 			// Check for existing data
-			for (Iterator<?> iter = ((List<?>) oldData).iterator(); iter.hasNext();) {
-				ResourceMethod method = (ResourceMethod) iter.next();
+			for (Object element : ((List<?>) oldData)) {
+				ResourceMethod method = (ResourceMethod) element;
 
 				if (method.id == methodName) {
 					return method;

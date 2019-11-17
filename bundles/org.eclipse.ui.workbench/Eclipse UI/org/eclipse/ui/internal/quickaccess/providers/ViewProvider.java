@@ -16,7 +16,6 @@
 package org.eclipse.ui.internal.quickaccess.providers;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
@@ -71,9 +70,7 @@ public class ViewProvider extends QuickAccessProvider {
 		}
 
 		if (idToElement.isEmpty()) {
-			List<MPartDescriptor> descriptors = application.getDescriptors();
-			for (int i = 0; i < descriptors.size(); i++) {
-				MPartDescriptor descriptor = descriptors.get(i);
+			for (MPartDescriptor descriptor : application.getDescriptors()) {
 				String uri = descriptor.getContributionURI();
 				if (uri != null) {
 					String id = descriptor.getElementId();

@@ -360,33 +360,21 @@ public class WorkbenchPage implements IWorkbenchPage {
 		try {
 			service.deferUpdates(true);
 			if (newPersp != null) {
-				List<IActionSetDescriptor> newAlwaysOn = newPersp.getAlwaysOnActionSets();
-				for (int i = 0; i < newAlwaysOn.size(); i++) {
-					IActionSetDescriptor descriptor = newAlwaysOn.get(i);
-
+				for (IActionSetDescriptor descriptor : newPersp.getAlwaysOnActionSets()) {
 					actionSets.showAction(descriptor);
 				}
 
-				List<IActionSetDescriptor> newAlwaysOff = newPersp.getAlwaysOffActionSets();
-				for (int i = 0; i < newAlwaysOff.size(); i++) {
-					IActionSetDescriptor descriptor = newAlwaysOff.get(i);
-
+				for (IActionSetDescriptor descriptor : newPersp.getAlwaysOffActionSets()) {
 					actionSets.maskAction(descriptor);
 				}
 			}
 
 			if (oldPersp != null) {
-				List<IActionSetDescriptor> oldAlwaysOn = oldPersp.getAlwaysOnActionSets();
-				for (int i = 0; i < oldAlwaysOn.size(); i++) {
-					IActionSetDescriptor descriptor = oldAlwaysOn.get(i);
-
+				for (IActionSetDescriptor descriptor : oldPersp.getAlwaysOnActionSets()) {
 					actionSets.hideAction(descriptor);
 				}
 
-				List<IActionSetDescriptor> oldAlwaysOff = oldPersp.getAlwaysOffActionSets();
-				for (int i = 0; i < oldAlwaysOff.size(); i++) {
-					IActionSetDescriptor descriptor = oldAlwaysOff.get(i);
-
+				for (IActionSetDescriptor descriptor : oldPersp.getAlwaysOffActionSets()) {
 					actionSets.unmaskAction(descriptor);
 				}
 			}
@@ -811,13 +799,13 @@ public class WorkbenchPage implements IWorkbenchPage {
 				service.deferUpdates(true);
 
 				// show the new
-				for (int i = 0; i < newActionSets.size(); i++) {
-					actionSets.showAction(newActionSets.get(i));
+				for (IActionSetDescriptor newActionSet : newActionSets) {
+					actionSets.showAction(newActionSet);
 				}
 
 				// hide the old
-				for (int i = 0; i < oldActionSets.size(); i++) {
-					actionSets.hideAction(oldActionSets.get(i));
+				for (IActionSetDescriptor oldActionSet : oldActionSets) {
+					actionSets.hideAction(oldActionSet);
 				}
 
 				oldActionSets = newActionSets;

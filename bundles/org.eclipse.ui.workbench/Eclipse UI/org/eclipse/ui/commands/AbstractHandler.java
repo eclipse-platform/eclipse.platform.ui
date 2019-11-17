@@ -124,8 +124,8 @@ public abstract class AbstractHandler extends org.eclipse.core.commands.Abstract
 			final org.eclipse.ui.commands.HandlerEvent legacyEvent = new org.eclipse.ui.commands.HandlerEvent(this,
 					attributesChanged, previousAttributes);
 
-			for (int i = 0; i < handlerListeners.size(); i++) {
-				handlerListeners.get(i).handlerChanged(legacyEvent);
+			for (IHandlerListener handlerListener : handlerListeners) {
+				handlerListener.handlerChanged(legacyEvent);
 			}
 		}
 	}
@@ -141,8 +141,8 @@ public abstract class AbstractHandler extends org.eclipse.core.commands.Abstract
 		}
 
 		if (handlerListeners != null) {
-			for (int i = 0; i < handlerListeners.size(); i++) {
-				handlerListeners.get(i).handlerChanged(handlerEvent);
+			for (IHandlerListener handlerListener : handlerListeners) {
+				handlerListener.handlerChanged(handlerEvent);
 			}
 		}
 

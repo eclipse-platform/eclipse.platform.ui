@@ -61,8 +61,8 @@ public class ViewerActionBuilder extends PluginActionBuilder {
 	 */
 	public void dispose() {
 		if (cache != null) {
-			for (int i = 0; i < cache.size(); i++) {
-				((BasicContribution) cache.get(i)).dispose();
+			for (Object contribution : cache) {
+				((BasicContribution) contribution).dispose();
 			}
 			cache = null;
 		}
@@ -171,8 +171,8 @@ public class ViewerActionBuilder extends PluginActionBuilder {
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			if (actions != null) {
-				for (int i = 0; i < actions.size(); i++) {
-					PluginAction proxy = actions.get(i).getAction();
+				for (ActionDescriptor action : actions) {
+					PluginAction proxy = action.getAction();
 					proxy.selectionChanged(event);
 				}
 			}

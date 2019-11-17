@@ -268,8 +268,8 @@ public final class NonLocalUndoUserApprover implements IOperationApprover {
 				}
 			}
 		}
-		for (int i = 0; i < elementsAndAdapters.size(); i++) {
-			if (elementsAndAdapters.get(i).equals(someObject)) {
+		for (Object elementOrAdapter : elementsAndAdapters) {
+			if (elementOrAdapter.equals(someObject)) {
 				return true;
 			}
 		}

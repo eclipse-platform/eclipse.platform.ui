@@ -360,8 +360,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 			super.dispose();
 			colorRegistry.removeListener(listener);
 			fontRegistry.removeListener(listener);
-			for (Iterator<Image> i = images.values().iterator(); i.hasNext();) {
-				i.next().dispose();
+			for (Image image : images.values()) {
+				image.dispose();
 			}
 			images.clear();
 
@@ -378,8 +378,8 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 		 * Clears and disposes all fonts.
 		 */
 		public void clearFontCache() {
-			for (Iterator<Font> i = fonts.values().iterator(); i.hasNext();) {
-				i.next().dispose();
+			for (Font font : fonts.values()) {
+				font.dispose();
 			}
 			fonts.clear();
 		}

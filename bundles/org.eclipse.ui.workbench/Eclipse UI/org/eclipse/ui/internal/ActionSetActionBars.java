@@ -14,7 +14,6 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
@@ -109,8 +108,8 @@ public class ActionSetActionBars extends SubActionBars2 {
 		}
 
 		// remove items from this action set that are in other action bars
-		for (int i = 0; i < adjunctContributions.size(); i++) {
-			ContributionItem item = (ContributionItem) adjunctContributions.get(i);
+		for (IContributionItem adjunctContribution : adjunctContributions) {
+			ContributionItem item = (ContributionItem) adjunctContribution;
 			IContributionManager parent = item.getParent();
 			if (parent != null) {
 				parent.remove(item);
@@ -303,8 +302,7 @@ public class ActionSetActionBars extends SubActionBars2 {
 
 		// 2. Need to set visibility for all adjunct actions
 		if (adjunctContributions.size() > 0) {
-			for (Iterator<IContributionItem> i = adjunctContributions.iterator(); i.hasNext();) {
-				IContributionItem item = i.next();
+			for (IContributionItem item : adjunctContributions) {
 				if (item instanceof ContributionItem) {
 					item.setVisible(set);
 					IContributionManager manager = ((ContributionItem) item).getParent();

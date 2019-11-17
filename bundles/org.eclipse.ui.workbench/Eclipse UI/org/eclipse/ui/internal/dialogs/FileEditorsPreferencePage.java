@@ -17,7 +17,6 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.core.runtime.Assert;
@@ -286,14 +285,14 @@ public class FileEditorsPreferencePage extends PreferencePage implements IWorkbe
 	public void dispose() {
 		super.dispose();
 		if (imagesToDispose != null) {
-			for (Iterator<Image> e = imagesToDispose.iterator(); e.hasNext();) {
-				e.next().dispose();
+			for (Image image : imagesToDispose) {
+				image.dispose();
 			}
 			imagesToDispose = null;
 		}
 		if (editorsToImages != null) {
-			for (Iterator<Image> e = editorsToImages.values().iterator(); e.hasNext();) {
-				e.next().dispose();
+			for (Image image : editorsToImages.values()) {
+				image.dispose();
 			}
 			editorsToImages = null;
 		}

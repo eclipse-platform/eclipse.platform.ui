@@ -16,7 +16,6 @@ package org.eclipse.ui.internal.activities;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -138,8 +137,8 @@ final class Activity implements IActivity {
 		}
 
 		if (activityListeners != null) {
-			for (int i = 0; i < activityListeners.size(); i++) {
-				activityListeners.get(i).activityChanged(activityEvent);
+			for (IActivityListener activityListener : activityListeners) {
+				activityListener.activityChanged(activityEvent);
 			}
 		}
 	}
@@ -202,8 +201,8 @@ final class Activity implements IActivity {
 
 	public boolean isMatch(String string) {
 		if (isDefined()) {
-			for (Iterator<IActivityPatternBinding> iterator = activityPatternBindings.iterator(); iterator.hasNext();) {
-				ActivityPatternBinding activityPatternBinding = (ActivityPatternBinding) iterator.next();
+			for (IActivityPatternBinding iActivityPatternBinding : activityPatternBindings) {
+				ActivityPatternBinding activityPatternBinding = (ActivityPatternBinding) iActivityPatternBinding;
 
 				if (activityPatternBinding.isMatch(string)) {
 					return true;

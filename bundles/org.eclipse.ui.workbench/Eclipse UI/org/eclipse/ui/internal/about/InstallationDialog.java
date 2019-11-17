@@ -94,8 +94,7 @@ public class InstallationDialog extends TrayDialog implements IInstallationPageC
 				}
 			}
 			if (buttons != null) {
-				for (int i = 0; i < buttons.size(); i++) {
-					Button button = buttons.get(i);
+				for (Button button : buttons) {
 					button.setVisible(true);
 					setButtonLayoutData(metrics, button, true);
 					GridData data = (GridData) button.getLayoutData();

@@ -114,8 +114,8 @@ final class Category implements ICategory {
 		}
 
 		if (categoryListeners != null) {
-			for (int i = 0; i < categoryListeners.size(); i++) {
-				categoryListeners.get(i).categoryChanged(categoryEvent);
+			for (ICategoryListener categoryListener : categoryListeners) {
+				categoryListener.categoryChanged(categoryEvent);
 			}
 		}
 	}

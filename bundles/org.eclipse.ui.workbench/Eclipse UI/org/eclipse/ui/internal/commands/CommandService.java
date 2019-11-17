@@ -247,8 +247,7 @@ public final class CommandService implements ICommandService, IUpdateService {
 			return;
 		}
 
-		for (Iterator<IElementReference> i = callbackRefs.iterator(); i.hasNext();) {
-			final IElementReference callbackRef = i.next();
+		for (IElementReference callbackRef : callbackRefs) {
 			final Map<?, ?> parms = Collections.unmodifiableMap((Map<?, ?>) callbackRef.getParameters());
 			ISafeRunnable run = new ISafeRunnable() {
 				@Override

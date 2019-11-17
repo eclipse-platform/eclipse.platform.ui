@@ -516,9 +516,7 @@ public class CoolBarToTrimManager extends ContributionManager implements ICoolBa
 
 	@Override
 	public IContributionItem remove(IContributionItem item) {
-		final List<MToolBar> children = modelService.findElements(window, null, MToolBar.class, null);
-		for (int i = 0; i < children.size(); i++) {
-			final MToolBar child = children.get(i);
+		for (final MToolBar child : modelService.findElements(window, null, MToolBar.class, null)) {
 			final Object obj = child.getTransientData().get(OBJECT);
 			if (obj != null && obj.equals(item)) {
 				if (child instanceof MToolBarElement) {

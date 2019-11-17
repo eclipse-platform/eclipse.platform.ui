@@ -594,8 +594,8 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
 			addAll(contributors, getResourceContributors(resourceClass));
 		}
 		if (commonClasses != null && !commonClasses.isEmpty()) {
-			for (int i = 0; i < commonClasses.size(); i++) {
-				List results = getObjectContributors((Class) commonClasses.get(i));
+			for (Object commonClass : commonClasses) {
+				List results = getObjectContributors((Class) commonClass);
 				addAll(contributors, results);
 			}
 		}
@@ -631,8 +631,8 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
 	 * this class.
 	 */
 	private static void addAll(Collection collection, List toAdd) {
-		for (int i = 0, size = toAdd.size(); i < size; ++i) {
-			collection.add(toAdd.get(i));
+		for (Object element : toAdd) {
+			collection.add(element);
 		}
 	}
 
@@ -759,9 +759,9 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
 		ArrayList results = new ArrayList(4);
 		ArrayList superClasses = new ArrayList(4);
 		if (!classesEmpty) {
-			for (int j = 0; j < classes.size(); j++) {
-				if (classes.get(j) != null) {
-					superClasses.add(classes.get(j));
+			for (Object clazz : classes) {
+				if (clazz != null) {
+					superClasses.add(clazz);
 				}
 			}
 			// Just keep the first super class
@@ -916,9 +916,7 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
 			return null;
 		}
 
-		for (int i = 0; i < objects.size(); i++) {
-			Object object = objects.get(i);
-
+		for (Object object : objects) {
 			if (object instanceof IAdaptable) {
 				if (resourceMappingClass.isInstance(object)) {
 					continue;
@@ -975,10 +973,10 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
 	private Class getCommonClass(Class class1, Class class2) {
 		List list1 = computeCombinedOrder(class1);
 		List list2 = computeCombinedOrder(class2);
-		for (int i = 0; i < list1.size(); i++) {
-			for (int j = 0; j < list2.size(); j++) {
-				Class candidate1 = (Class) list1.get(i);
-				Class candidate2 = (Class) list2.get(j);
+		for (Object element1 : list1) {
+			for (Object element2 : list2) {
+				Class candidate1 = (Class) element1;
+				Class candidate2 = (Class) element2;
 				if (candidate1.equals(candidate2)) {
 					return candidate1;
 				}

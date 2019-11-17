@@ -72,8 +72,7 @@ public class EditorActionBuilder extends PluginActionBuilder {
 
 		public void editorChanged(IEditorPart editor) {
 			if (actions != null) {
-				for (int i = 0; i < actions.size(); i++) {
-					ActionDescriptor ad = actions.get(i);
+				for (ActionDescriptor ad : actions) {
 					EditorPluginAction action = (EditorPluginAction) ad.getAction();
 					action.editorChanged(editor);
 				}
@@ -94,15 +93,15 @@ public class EditorActionBuilder extends PluginActionBuilder {
 
 		@Override
 		public void dispose() {
-			for (int i = 0; i < cache.size(); i++) {
-				((EditorContribution) cache.get(i)).dispose();
+			for (Object contribution : cache) {
+				((EditorContribution) contribution).dispose();
 			}
 		}
 
 		public ActionDescriptor[] getExtendedActions() {
 			ArrayList<ActionDescriptor> results = new ArrayList<>();
-			for (int i = 0; i < cache.size(); i++) {
-				EditorContribution ec = (EditorContribution) cache.get(i);
+			for (Object contribution : cache) {
+				EditorContribution ec = (EditorContribution) contribution;
 				if (ec.actions != null) {
 					results.addAll(ec.actions);
 				}
@@ -112,16 +111,16 @@ public class EditorActionBuilder extends PluginActionBuilder {
 
 		@Override
 		public void init(IActionBars bars, IWorkbenchPage page) {
-			for (int i = 0; i < cache.size(); i++) {
-				((EditorContribution) cache.get(i)).contribute(bars.getMenuManager(), false, bars.getToolBarManager(),
+			for (Object contribution : cache) {
+				((EditorContribution) contribution).contribute(bars.getMenuManager(), false, bars.getToolBarManager(),
 						true);
 			}
 		}
 
 		@Override
 		public void setActiveEditor(IEditorPart editor) {
-			for (int i = 0; i < cache.size(); i++) {
-				((EditorContribution) cache.get(i)).editorChanged(editor);
+			for (Object contribution : cache) {
+				((EditorContribution) contribution).editorChanged(editor);
 			}
 		}
 	}

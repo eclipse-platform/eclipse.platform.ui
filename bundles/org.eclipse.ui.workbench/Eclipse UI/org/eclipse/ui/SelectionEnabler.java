@@ -299,8 +299,7 @@ public final class SelectionEnabler {
 		if (classes.isEmpty()) {
 			return true;
 		}
-		for (int i = 0; i < classes.size(); i++) {
-			SelectionClass sc = classes.get(i);
+		for (SelectionClass sc : classes) {
 			if (verifyClass(sel, sc.className)) {
 				return true;
 			}
@@ -488,8 +487,7 @@ public final class SelectionEnabler {
 		if (classes.isEmpty()) {
 			return true;
 		}
-		for (int i = 0; i < classes.size(); i++) {
-			SelectionClass sc = classes.get(i);
+		for (SelectionClass sc : classes) {
 			if (verifyClass(element, sc.className) == false) {
 				continue;
 			}

@@ -175,8 +175,8 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 	 * @param perspToDelete
 	 */
 	public void deletePerspectives(ArrayList<IPerspectiveDescriptor> perspToDelete) {
-		for (int i = 0; i < perspToDelete.size(); i++) {
-			deletePerspective(perspToDelete.get(i));
+		for (IPerspectiveDescriptor descriptor : perspToDelete) {
+			deletePerspective(descriptor);
 		}
 	}
 

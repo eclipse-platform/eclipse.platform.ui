@@ -56,12 +56,12 @@ public abstract class AbstractActivityRegistry implements IActivityRegistry {
 
 	protected void fireActivityRegistryChanged() {
 		if (activityRegistryListeners != null) {
-			for (int i = 0; i < activityRegistryListeners.size(); i++) {
+			for (IActivityRegistryListener activityRegistryListener : activityRegistryListeners) {
 				if (activityRegistryEvent == null) {
 					activityRegistryEvent = new ActivityRegistryEvent(this);
 				}
 
-				activityRegistryListeners.get(i).activityRegistryChanged(activityRegistryEvent);
+				activityRegistryListener.activityRegistryChanged(activityRegistryEvent);
 			}
 		}
 	}

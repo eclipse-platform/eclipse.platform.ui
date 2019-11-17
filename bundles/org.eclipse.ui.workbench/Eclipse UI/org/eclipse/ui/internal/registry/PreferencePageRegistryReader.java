@@ -80,8 +80,7 @@ public class PreferencePageRegistryReader extends CategorizedPageRegistryReader 
 
 	@Override
 	Object findNode(String id) {
-		for (int i = 0; i < nodes.size(); i++) {
-			WorkbenchPreferenceNode node = nodes.get(i);
+		for (WorkbenchPreferenceNode node : nodes) {
 			if (node.getId().equals(id)) {
 				return node;
 			}

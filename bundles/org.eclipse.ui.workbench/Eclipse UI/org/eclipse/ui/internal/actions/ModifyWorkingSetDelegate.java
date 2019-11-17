@@ -180,9 +180,7 @@ public class ModifyWorkingSetDelegate extends AbstractWorkingSetPulldownDelegate
 
 	@Override
 	public void fillMenu(Menu menu) {
-		List menuItems = getItems();
-		for (int i = 0; i < menuItems.size(); i++) {
-			Object object = menuItems.get(i);
+		for (Object object : getItems()) {
 			if (object instanceof IAction) {
 				ActionContributionItem item = new ActionContributionItem((IAction) object);
 				item.fill(menu, -1);
@@ -286,9 +284,7 @@ public class ModifyWorkingSetDelegate extends AbstractWorkingSetPulldownDelegate
 	}
 
 	private void fillMenu(IMenuManager menu) {
-		List menuItems = getItems();
-		for (int i = 0; i < menuItems.size(); i++) {
-			Object object = menuItems.get(i);
+		for (Object object : getItems()) {
 			if (object instanceof IAction) {
 				menu.add((IAction) object);
 			} else {

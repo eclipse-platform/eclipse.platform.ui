@@ -483,8 +483,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 		}
 
 		pageChangeListeners.clear();
-		for (int i = 0; i < nestedEditors.size(); ++i) {
-			IEditorPart editor = nestedEditors.get(i);
+		for (IEditorPart editor : nestedEditors) {
 			disposePart(editor);
 		}
 		nestedEditors.clear();
@@ -492,8 +491,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 			((IDisposable) pageContainerSite).dispose();
 			pageContainerSite = null;
 		}
-		for (int i = 0; i < pageSites.size(); i++) {
-			IServiceLocator sl = pageSites.get(i);
+		for (IServiceLocator sl : pageSites) {
 			if (sl instanceof IDisposable) {
 				((IDisposable) sl).dispose();
 			}

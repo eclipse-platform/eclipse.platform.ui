@@ -120,8 +120,8 @@ final class ActivityPersistanceHelper {
 	 */
 	protected Set<String> buildDependencies(IActivityManager activityManager, String activityId) {
 		Set<String> set = new HashSet<>();
-		for (Iterator<String> i = activityManager.getDefinedActivityIds().iterator(); i.hasNext();) {
-			IActivity activity = activityManager.getActivity(i.next());
+		for (String id : activityManager.getDefinedActivityIds()) {
+			IActivity activity = activityManager.getActivity(id);
 			for (IActivityRequirementBinding binding : activity.getActivityRequirementBindings()) {
 				if (activityId.equals(binding.getRequiredActivityId())) {
 					set.addAll(buildDependencies(activityManager, activity.getId()));

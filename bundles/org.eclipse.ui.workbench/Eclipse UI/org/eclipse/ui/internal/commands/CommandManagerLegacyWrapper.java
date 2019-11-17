@@ -226,8 +226,8 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 			throw new NullPointerException();
 		}
 		if (commandManagerListeners != null) {
-			for (int i = 0; i < commandManagerListeners.size(); i++) {
-				commandManagerListeners.get(i).commandManagerChanged(commandManagerEvent);
+			for (ICommandManagerListener commandManagerListener : commandManagerListeners) {
+				commandManagerListener.commandManagerChanged(commandManagerEvent);
 			}
 		}
 	}

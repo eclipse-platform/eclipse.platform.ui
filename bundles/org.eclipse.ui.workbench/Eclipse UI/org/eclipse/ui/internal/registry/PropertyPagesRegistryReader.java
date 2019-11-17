@@ -165,8 +165,8 @@ public class PropertyPagesRegistryReader extends CategorizedPageRegistryReader {
 	private void registerContributors(RegistryPageContributor contributor, List<String> objectClassNames) {
 
 		pages.add(contributor);
-		for (Iterator<String> iter = objectClassNames.iterator(); iter.hasNext();) {
-			manager.registerContributor(contributor, iter.next());
+		for (String className : objectClassNames) {
+			manager.registerContributor(contributor, className);
 		}
 
 	}

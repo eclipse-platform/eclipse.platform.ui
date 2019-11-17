@@ -303,14 +303,12 @@ public abstract class PartSite implements IWorkbenchPartSite {
 	public void dispose() {
 		if (menuExtenders != null) {
 			HashSet<MenuManager> managers = new HashSet<>(menuExtenders.size());
-			for (int i = 0; i < menuExtenders.size(); i++) {
-				PopupMenuExtender ext = menuExtenders.get(i);
+			for (PopupMenuExtender ext : menuExtenders) {
 				managers.add(ext.getManager());
 				ext.dispose();
 			}
 			if (managers.size() > 0) {
-				for (Iterator<MenuManager> iterator = managers.iterator(); iterator.hasNext();) {
-					MenuManager mgr = iterator.next();
+				for (MenuManager mgr : managers) {
 					mgr.dispose();
 				}
 			}
@@ -515,8 +513,7 @@ public abstract class PartSite implements IWorkbenchPartSite {
 			return new String[0];
 		}
 		ArrayList<String> menuIds = new ArrayList<>(menuExtenders.size());
-		for (Iterator<PopupMenuExtender> iter = menuExtenders.iterator(); iter.hasNext();) {
-			final PopupMenuExtender extender = iter.next();
+		for (PopupMenuExtender extender : menuExtenders) {
 			menuIds.addAll(extender.getMenuIds());
 		}
 		return menuIds.toArray(new String[menuIds.size()]);

@@ -261,8 +261,7 @@ public class ShowViewMenu extends ContributionItem {
 		ArrayList views = getParts(page);
 		ArrayList result = new ArrayList(views.size() + actions.size());
 
-		for (int i = 0; i < actions.size(); i++) {
-			Object element = actions.get(i);
+		for (Object element : actions) {
 			if (result.indexOf(element) < 0) {
 				result.add(element);
 			}

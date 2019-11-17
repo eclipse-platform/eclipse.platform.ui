@@ -2666,10 +2666,9 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 						WorkbenchMessages.FilteredItemsSelectionDialog_cacheRefreshJob_checkDuplicates,
 						lastFilteredItems.size());
 				HashMap<String, Object> helperMap = new HashMap<>();
-				for (int i = 0; i < lastFilteredItems.size(); i++) {
+				for (Object item : lastFilteredItems) {
 					if (reset || subMonitor.isCanceled())
 						return;
-					Object item = lastFilteredItems.get(i);
 
 					if (!(item instanceof ItemsListSeparator)) {
 						Object previousItem = helperMap.put(getElementName(item), item);

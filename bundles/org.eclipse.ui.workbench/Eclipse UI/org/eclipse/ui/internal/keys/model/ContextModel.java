@@ -104,10 +104,8 @@ public class ContextModel extends CommonModel {
 	 */
 	public void filterContexts(boolean actionSets, boolean internal) {
 		// Remove undesired contexts
-		for (int i = 0; i < contexts.size(); i++) {
+		for (ContextElement contextElement : contexts) {
 			boolean removeContext = false;
-			ContextElement contextElement = contexts.get(i);
-
 			if (actionSets == true && contextElement.getId().equalsIgnoreCase(CONTEXT_ID_ACTION_SETS)) {
 				removeContext = true;
 			} else {

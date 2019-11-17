@@ -17,7 +17,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.core.runtime.CoreException;
@@ -447,8 +446,8 @@ class NewWizardNewPage implements ISelectionChangedListener {
 
 		// hook a listener to get rid of cached images.
 		descImageCanvas.addDisposeListener(e -> {
-			for (Iterator<Image> i = imageTable.values().iterator(); i.hasNext();) {
-				i.next().dispose();
+			for (Image image : imageTable.values()) {
+				image.dispose();
 			}
 			imageTable.clear();
 		});

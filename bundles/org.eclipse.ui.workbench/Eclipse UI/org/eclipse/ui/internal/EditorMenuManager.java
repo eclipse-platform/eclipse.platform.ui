@@ -45,8 +45,7 @@ public class EditorMenuManager extends SubMenuManager {
 			}
 			// update the wrapped menus
 			if (wrappers != null) {
-				for (int i = 0; i < wrappers.size(); i++) {
-					EditorMenuManager manager = wrappers.get(i);
+				for (EditorMenuManager manager : wrappers) {
 					manager.setEnabledAllowed(enabledAllowed);
 				}
 			}

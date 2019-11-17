@@ -295,9 +295,9 @@ public class ShowInMenu extends ContributionItem implements IWorkbenchContributi
 		if (targetList != null) {
 			String[] partIds = targetList.getShowInTargetIds();
 			if (partIds != null) {
-				for (int i = 0; i < partIds.length; ++i) {
-					if (!targetIds.contains(partIds[i])) {
-						targetIds.add(partIds[i]);
+				for (String partId : partIds) {
+					if (!targetIds.contains(partId)) {
+						targetIds.add(partId);
 					}
 				}
 			}

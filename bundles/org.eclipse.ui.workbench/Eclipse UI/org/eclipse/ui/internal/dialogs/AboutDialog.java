@@ -143,8 +143,7 @@ public class AboutDialog extends TrayDialog {
 	@Override
 	public boolean close() {
 		// dispose all images
-		for (int i = 0; i < images.size(); ++i) {
-			Image image = images.get(i);
+		for (Image image : images) {
 			image.dispose();
 		}
 		return super.close();

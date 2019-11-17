@@ -85,8 +85,7 @@ public class ObjectActionContributor extends PluginActionBuilder implements IObj
 
 		// Easy case out if no actions
 		if (currentContribution.actions != null) {
-			for (int i = 0; i < currentContribution.actions.size(); i++) {
-				ActionDescriptor ad = currentContribution.actions.get(i);
+			for (ActionDescriptor ad : currentContribution.actions) {
 				String id = ad.getAction().getOverrideActionId();
 				if (id != null) {
 					actionIdOverrides.add(id);
@@ -132,8 +131,7 @@ public class ObjectActionContributor extends PluginActionBuilder implements IObj
 		final IStructuredSelection selection = ssel;
 
 		// Generate menu.
-		for (int i = 0; i < currentContribution.actions.size(); i++) {
-			ActionDescriptor ad = currentContribution.actions.get(i);
+		for (ActionDescriptor ad : currentContribution.actions) {
 			if (!actionIdOverrides.contains(ad.getId())) {
 				currentContribution.contributeMenuAction(ad, menu, true);
 				// Update action for the current selection and part.
@@ -180,8 +178,7 @@ public class ObjectActionContributor extends PluginActionBuilder implements IObj
 		}
 
 		// Generate menu.
-		for (int i = 0; i < currentContribution.menus.size(); i++) {
-			IConfigurationElement menuElement = currentContribution.menus.get(i);
+		for (IConfigurationElement menuElement : currentContribution.menus) {
 			currentContribution.contributeMenu(menuElement, menu, true);
 		}
 		return true;

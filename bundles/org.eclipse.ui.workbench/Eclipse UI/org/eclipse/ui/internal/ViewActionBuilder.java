@@ -56,8 +56,8 @@ public class ViewActionBuilder extends PluginActionBuilder {
 		}
 
 		ArrayList results = new ArrayList();
-		for (int i = 0; i < cache.size(); i++) {
-			BasicContribution bc = (BasicContribution) cache.get(i);
+		for (Object element : cache) {
+			BasicContribution bc = (BasicContribution) element;
 			if (bc.actions != null) {
 				results.addAll(bc.actions);
 			}
@@ -78,8 +78,8 @@ public class ViewActionBuilder extends PluginActionBuilder {
 
 	public void dispose() {
 		if (cache != null) {
-			for (int i = 0; i < cache.size(); i++) {
-				((BasicContribution) cache.get(i)).disposeActions();
+			for (Object element : cache) {
+				((BasicContribution) element).disposeActions();
 			}
 		}
 	}

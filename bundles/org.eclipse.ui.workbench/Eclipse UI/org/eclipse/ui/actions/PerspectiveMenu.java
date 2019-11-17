@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.core.commands.ExecutionException;
@@ -190,8 +189,7 @@ public abstract class PerspectiveMenu extends ContributionItem {
 		 * the activity/capability mechanism.
 		 */
 		final List<IAction> actions = new ArrayList<>(persps.size());
-		for (Iterator<IPerspectiveDescriptor> i = persps.iterator(); i.hasNext();) {
-			final IPerspectiveDescriptor descriptor = i.next();
+		for (IPerspectiveDescriptor descriptor : persps) {
 			final IAction action = getAction(descriptor.getId());
 			if (action != null) {
 				if (WorkbenchActivityHelper.filterItem(action)) {
@@ -202,8 +200,8 @@ public abstract class PerspectiveMenu extends ContributionItem {
 		}
 
 		// Go through and add each of the actions to the menu manager.
-		for (Iterator<IAction> i = actions.iterator(); i.hasNext();) {
-			manager.add(i.next());
+		for (IAction action : actions) {
+			manager.add(action);
 		}
 
 		if (PrefUtil.getAPIPreferenceStore().getBoolean(IWorkbenchPreferenceConstants.SHOW_OTHER_IN_PERSPECTIVE_MENU)) {

@@ -16,7 +16,6 @@ package org.eclipse.ui.internal.actions;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import org.eclipse.jface.action.IAction;
@@ -139,8 +138,8 @@ public abstract class AbstractWorkingSetPulldownDelegate
 
 		IWorkingSet[][] typedSets = new IWorkingSet[map.keySet().size()][];
 		int i = 0;
-		for (Iterator<String> iter = map.keySet().iterator(); iter.hasNext();) {
-			List<IWorkingSet> setsOfType = map.get(iter.next());
+		for (String setType : map.keySet()) {
+			List<IWorkingSet> setsOfType = map.get(setType);
 			typedSets[i] = new IWorkingSet[setsOfType.size()];
 			setsOfType.toArray(typedSets[i++]);
 		}

@@ -215,8 +215,8 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 			Activator.trace(Policy.DEBUG_CONTEXTS_FLAG, "Disposing " + this, null);//$NON-NLS-1$
 		}
 		if (menuExtenders != null) {
-			for (int i = 0; i < menuExtenders.size(); i++) {
-				((PopupMenuExtender) menuExtenders.get(i)).dispose();
+			for (Object menuExtender : menuExtenders) {
+				((PopupMenuExtender) menuExtender).dispose();
 			}
 			menuExtenders = null;
 		}

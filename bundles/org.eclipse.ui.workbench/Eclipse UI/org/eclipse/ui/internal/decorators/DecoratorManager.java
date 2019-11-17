@@ -1023,8 +1023,8 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 		for (IConfigurationElement addedElement : addedExtension.getConfigurationElements()) {
 			DecoratorRegistryReader reader = new DecoratorRegistryReader();
 			reader.readElement(addedElement);
-			for (Iterator<DecoratorDefinition> j = reader.getValues().iterator(); j.hasNext();) {
-				addDecorator(j.next());
+			for (DecoratorDefinition decoratorDefinition : reader.getValues()) {
+				addDecorator(decoratorDefinition);
 			}
 		}
 	}

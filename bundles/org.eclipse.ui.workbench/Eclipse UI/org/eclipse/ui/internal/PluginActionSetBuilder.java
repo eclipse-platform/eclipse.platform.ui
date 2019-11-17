@@ -90,19 +90,17 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 		readElements(new IConfigurationElement[] { set.getConfigElement() });
 
 		if (cache != null) {
-			for (int i = 0; i < cache.size(); i++) {
-				ActionSetContribution contribution = (ActionSetContribution) cache.get(i);
+			for (Object element : cache) {
+				ActionSetContribution contribution = (ActionSetContribution) element;
 				contribution.contribute(actionSet.getBars(), true, true);
 				if (contribution.isAdjunctContributor()) {
 					adjunctContributions.add(contribution);
 				}
 			}
 		}
-		for (int i = 0; i < adjunctContributions.size(); i++) {
-			ActionSetContribution contribution = adjunctContributions.get(i);
+		for (ActionSetContribution contribution : adjunctContributions) {
 			ActionSetActionBars bars = actionSet.getBars();
-			for (int j = 0; j < contribution.adjunctActions.size(); j++) {
-				ActionDescriptor adjunctAction = contribution.adjunctActions.get(j);
+			for (ActionDescriptor adjunctAction : contribution.adjunctActions) {
 				contribution.contributeAdjunctCoolbarAction(adjunctAction, bars);
 			}
 		}
@@ -224,11 +222,9 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 	 */
 	protected void processAdjunctContributions() {
 		// Contribute the adjunct contributions.
-		for (int i = 0; i < adjunctContributions.size(); i++) {
-			ActionSetContribution contribution = adjunctContributions.get(i);
+		for (ActionSetContribution contribution : adjunctContributions) {
 			ActionSetActionBars bars = actionSet.getBars();
-			for (int j = 0; j < contribution.adjunctActions.size(); j++) {
-				ActionDescriptor adjunctAction = contribution.adjunctActions.get(j);
+			for (ActionDescriptor adjunctAction : contribution.adjunctActions) {
 				contribution.contributeAdjunctCoolbarAction(adjunctAction, bars);
 			}
 		}
@@ -255,8 +251,8 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 			// See bug 66374 for more details.
 			// WorkbenchPlugin.getDefault().getActionSetRegistry().addCache(set.getDesc().getId(),
 			// cache);
-			for (int i = 0; i < cache.size(); i++) {
-				ActionSetContribution contribution = (ActionSetContribution) cache.get(i);
+			for (Object element : cache) {
+				ActionSetContribution contribution = (ActionSetContribution) element;
 				contribution.contribute(actionSet.getBars(), true, true);
 				if (contribution.isAdjunctContributor()) {
 					adjunctContributions.add(contribution);
@@ -335,15 +331,13 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 			IMenuManager menuMgr = bars.getMenuManager();
 			IToolBarManager toolBarMgr = bars.getToolBarManager();
 			if (menus != null && menuMgr != null) {
-				for (int i = 0; i < menus.size(); i++) {
-					IConfigurationElement menuElement = menus.get(i);
+				for (IConfigurationElement menuElement : menus) {
 					contributeMenu(menuElement, menuMgr, menuAppendIfMissing);
 				}
 			}
 
 			if (actions != null) {
-				for (int i = 0; i < actions.size(); i++) {
-					ActionDescriptor ad = actions.get(i);
+				for (ActionDescriptor ad : actions) {
 					if (menuMgr != null) {
 						contributeMenuAction(ad, menuMgr, menuAppendIfMissing);
 					}
@@ -705,12 +699,11 @@ public class PluginActionSetBuilder extends PluginActionBuilder {
 		String id = set.getDesc().getId();
 
 		if (cache != null) {
-			for (int i = 0; i < cache.size(); i++) {
-				ActionSetContribution contribution = (ActionSetContribution) cache.get(i);
+			for (Object element : cache) {
+				ActionSetContribution contribution = (ActionSetContribution) element;
 				contribution.revokeContribution((WorkbenchWindow) window, actionSet.getBars(), id);
 				if (contribution.isAdjunctContributor()) {
-					for (int j = 0; j < contribution.adjunctActions.size(); j++) {
-						ActionDescriptor adjunctAction = contribution.adjunctActions.get(j);
+					for (ActionDescriptor adjunctAction : contribution.adjunctActions) {
 						contribution.revokeAdjunctCoolbarAction(adjunctAction, actionSet.getBars());
 					}
 				}

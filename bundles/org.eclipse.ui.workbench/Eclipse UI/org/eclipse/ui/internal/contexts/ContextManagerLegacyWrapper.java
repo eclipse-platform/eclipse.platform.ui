@@ -193,8 +193,8 @@ public final class ContextManagerLegacyWrapper
 		}
 
 		if (contextManagerListeners != null) {
-			for (int i = 0; i < contextManagerListeners.size(); i++) {
-				contextManagerListeners.get(i).contextManagerChanged(contextManagerEvent);
+			for (IContextManagerListener contextManagerListener : contextManagerListeners) {
+				contextManagerListener.contextManagerChanged(contextManagerEvent);
 			}
 		}
 	}

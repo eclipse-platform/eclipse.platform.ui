@@ -433,12 +433,10 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			colorAndFontThemeId = currentColorsAndFontsTheme.getId();
 		}
 
-		List<ColorsAndFontsTheme> colorsAndFontsThemes = (List<ColorsAndFontsTheme>) colorsAndFontsThemeCombo
-				.getInput();
-
-		for (int i = 0; i < colorsAndFontsThemes.size(); i++) {
-			if (colorsAndFontsThemes.get(i).getId().equals(colorAndFontThemeId)) {
-				ISelection selection = new StructuredSelection(colorsAndFontsThemes.get(i));
+		for (ColorsAndFontsTheme theme : (List<ColorsAndFontsTheme>) colorsAndFontsThemeCombo
+				.getInput()) {
+			if (theme.getId().equals(colorAndFontThemeId)) {
+				ISelection selection = new StructuredSelection(theme);
 				colorsAndFontsThemeCombo.setSelection(selection);
 				break;
 			}
