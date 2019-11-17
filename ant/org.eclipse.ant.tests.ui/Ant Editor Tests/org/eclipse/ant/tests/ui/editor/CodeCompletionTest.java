@@ -290,14 +290,14 @@ public class CodeCompletionTest extends AbstractAntUITest {
 		assertContains("pretest", proposals); //$NON-NLS-1$
 		assertContains("test2", proposals); //$NON-NLS-1$
 
-		for (int i = 0; i < proposals.length; i++) {
-			String displayString = proposals[i].getDisplayString();
+		for (ICompletionProposal proposal : proposals) {
+			String displayString = proposal.getDisplayString();
 			if (displayString.equals("main")) { //$NON-NLS-1$
-				assertEquals(AntUIImages.getImage(IAntUIConstants.IMG_ANT_DEFAULT_TARGET), proposals[i].getImage());
+				assertEquals(AntUIImages.getImage(IAntUIConstants.IMG_ANT_DEFAULT_TARGET), proposal.getImage());
 			} else if (displayString.equals("pretest")) { //$NON-NLS-1$
-				assertEquals(AntUIImages.getImage(IAntUIConstants.IMG_ANT_TARGET), proposals[i].getImage());
+				assertEquals(AntUIImages.getImage(IAntUIConstants.IMG_ANT_TARGET), proposal.getImage());
 			} else if (displayString.equals("test2")) { //$NON-NLS-1$
-				assertEquals(AntUIImages.getImage(IAntUIConstants.IMG_ANT_TARGET_INTERNAL), proposals[i].getImage());
+				assertEquals(AntUIImages.getImage(IAntUIConstants.IMG_ANT_TARGET_INTERNAL), proposal.getImage());
 			} else {
 				fail("Unknown completion proposal detected: " + displayString); //$NON-NLS-1$
 			}
@@ -322,14 +322,14 @@ public class CodeCompletionTest extends AbstractAntUITest {
 		assertContains("task2", proposals); //$NON-NLS-1$
 		assertContains("task3", proposals); //$NON-NLS-1$
 
-		for (int i = 0; i < proposals.length; i++) {
-			String displayString = proposals[i].getDisplayString();
+		for (ICompletionProposal proposal : proposals) {
+			String displayString = proposal.getDisplayString();
 			if (displayString.equals("task3")) { //$NON-NLS-1$
-				assertEquals(AntUIImages.getImage(IAntUIConstants.IMG_ANT_DEFAULT_TARGET), proposals[i].getImage());
+				assertEquals(AntUIImages.getImage(IAntUIConstants.IMG_ANT_DEFAULT_TARGET), proposal.getImage());
 			} else if (displayString.equals("task")) { //$NON-NLS-1$
-				assertEquals(AntUIImages.getImage(IAntUIConstants.IMG_ANT_TARGET), proposals[i].getImage());
+				assertEquals(AntUIImages.getImage(IAntUIConstants.IMG_ANT_TARGET), proposal.getImage());
 			} else if (displayString.equals("task2")) { //$NON-NLS-1$
-				assertEquals(AntUIImages.getImage(IAntUIConstants.IMG_ANT_TARGET_INTERNAL), proposals[i].getImage());
+				assertEquals(AntUIImages.getImage(IAntUIConstants.IMG_ANT_TARGET_INTERNAL), proposal.getImage());
 			} else {
 				fail("Unknown completion proposal detected: " + displayString); //$NON-NLS-1$
 			}
@@ -352,12 +352,12 @@ public class CodeCompletionTest extends AbstractAntUITest {
 		assertContains("task", proposals); //$NON-NLS-1$
 		assertContains("task3", proposals); //$NON-NLS-1$
 
-		for (int i = 0; i < proposals.length; i++) {
-			String displayString = proposals[i].getDisplayString();
+		for (ICompletionProposal proposal : proposals) {
+			String displayString = proposal.getDisplayString();
 			if (displayString.equals("task3")) { //$NON-NLS-1$
-				assertEquals(AntUIImages.getImage(IAntUIConstants.IMG_ANT_DEFAULT_TARGET), proposals[i].getImage());
+				assertEquals(AntUIImages.getImage(IAntUIConstants.IMG_ANT_DEFAULT_TARGET), proposal.getImage());
 			} else if (displayString.equals("task")) { //$NON-NLS-1$
-				assertEquals(AntUIImages.getImage(IAntUIConstants.IMG_ANT_TARGET), proposals[i].getImage());
+				assertEquals(AntUIImages.getImage(IAntUIConstants.IMG_ANT_TARGET), proposal.getImage());
 			} else {
 				fail("Unknown completion proposal detected: " + displayString); //$NON-NLS-1$
 			}
@@ -423,8 +423,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
 	 */
 	private void assertContains(String displayString, ICompletionProposal[] proposalArray) {
 		boolean found = false;
-		for (int i = 0; i < proposalArray.length; i++) {
-			ICompletionProposal proposal = proposalArray[i];
+		for (ICompletionProposal proposal : proposalArray) {
 			String proposalDisplayString = proposal.getDisplayString();
 			if (displayString.equals(proposalDisplayString)) {
 				found = true;
@@ -439,8 +438,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
 	 */
 	private void assertDoesNotContain(String displayString, ICompletionProposal[] proposalArray) {
 		boolean found = false;
-		for (int i = 0; i < proposalArray.length; i++) {
-			ICompletionProposal proposal = proposalArray[i];
+		for (ICompletionProposal proposal : proposalArray) {
 			String proposalDisplayString = proposal.getDisplayString();
 			if (displayString.equals(proposalDisplayString)) {
 				found = true;

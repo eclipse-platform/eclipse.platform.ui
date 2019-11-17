@@ -112,16 +112,16 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 		IAntClasspathEntry[] userEntries = prefs.getAdditionalClasspathEntries();
 		List<IRuntimeClasspathEntry> rtes = new ArrayList<>(antClasspathEntries.length + userEntries.length);
 		IAntClasspathEntry entry;
-		for (int i = 0; i < antClasspathEntries.length; i++) {
-			entry = antClasspathEntries[i];
+		for (IAntClasspathEntry antClasspathEntry : antClasspathEntries) {
+			entry = antClasspathEntry;
 			if (!separateVM || (separateVM && !entry.isEclipseRuntimeRequired())) {
 				rtes.add(JavaRuntime.newStringVariableClasspathEntry(entry.getLabel()));
 			}
 		}
 		boolean haveToolsEntry = false;
 		String path;
-		for (int i = 0; i < userEntries.length; i++) {
-			entry = userEntries[i];
+		for (IAntClasspathEntry userEntry : userEntries) {
+			entry = userEntry;
 			path = entry.getLabel();
 			IPath toolsPath = new Path(path);
 			if (toolsPath.lastSegment().equals("tools.jar")) { //$NON-NLS-1$
@@ -230,8 +230,7 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 							return name.endsWith(".jar"); //$NON-NLS-1$
 						}
 					});
-					for (int j = 0; j < names.length; j++) {
-						String jarName = names[j];
+					for (String jarName : names) {
 						fgSWTEntries.add(JavaRuntime.newArchiveRuntimeClasspathEntry(fragmentPath.append(jarName)));
 					}
 				}

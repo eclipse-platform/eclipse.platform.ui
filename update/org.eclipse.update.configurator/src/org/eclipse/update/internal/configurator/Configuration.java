@@ -56,9 +56,8 @@ public class Configuration implements IConfigurationConstants {
 	public void setLinkedConfig(Configuration linkedConfig) {
 		this.linkedConfig = linkedConfig;
 		// make all the sites read-only
-		SiteEntry[] linkedSites = linkedConfig.getSites();
-		for (int i=0; i<linkedSites.length; i++)
-			linkedSites[i].setUpdateable(false);
+		for (SiteEntry linkedSite : linkedConfig.getSites())
+			linkedSite.setUpdateable(false);
 	}
 	
 	public Configuration getLinkedConfig() {
@@ -161,11 +160,10 @@ public class Configuration implements IConfigurationConstants {
 			}
 
 			// collect site entries
-			SiteEntry[] list = sites.values().toArray(new SiteEntry[0]);
-			for (int i = 0; i < list.length; i++) {
-				if (linkedConfig != null && linkedConfig.getSiteEntry(list[i].getURL().toExternalForm()) != null)
+			for (SiteEntry element : sites.values()) {
+				if (linkedConfig != null && linkedConfig.getSiteEntry(element.getURL().toExternalForm()) != null)
 					continue;
-				Element siteElement = list[i].toXML(doc);
+				Element siteElement = element.toXML(doc);
 				configElement.appendChild(siteElement);
 			}
 			
@@ -193,9 +191,8 @@ public class Configuration implements IConfigurationConstants {
 	}
 	
 	public boolean unconfigureFeatureEntry(IPlatformConfiguration.IFeatureEntry feature) {
-		SiteEntry[] sites = getSites();
-		for (int i=0; i<sites.length; i++)
-			if (sites[i].unconfigureFeatureEntry(feature))
+		for (SiteEntry site : getSites())
+			if (site.unconfigureFeatureEntry(feature))
 				return true;
 		return false;
 	}

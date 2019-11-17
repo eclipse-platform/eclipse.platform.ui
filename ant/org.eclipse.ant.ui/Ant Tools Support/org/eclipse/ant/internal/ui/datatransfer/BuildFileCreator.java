@@ -148,8 +148,7 @@ public class BuildFileCreator {
 
 		// determine files to create/change
 		List<IFile> files = new ArrayList<>();
-		for (Iterator<IJavaProject> iter = projects.iterator(); iter.hasNext();) {
-			IJavaProject currentProject = iter.next();
+		for (IJavaProject currentProject : projects) {
 			IFile file = currentProject.getProject().getFile(BuildFileCreator.BUILD_XML);
 			files.add(file);
 		}
@@ -249,8 +248,7 @@ public class BuildFileCreator {
 		// <property name="x" value="y"/>
 		boolean first = true;
 		Node node = root.getFirstChild();
-		for (Iterator<String> iterator = variable2valueMap.keySet().iterator(); iterator.hasNext();) {
-			String key = iterator.next();
+		for (String key : variable2valueMap.keySet()) {
 			String value = variable2valueMap.get(key);
 			Element prop = doc.createElement("property"); //$NON-NLS-1$
 			prop.setAttribute(IAntCoreConstants.NAME, key);
@@ -302,10 +300,9 @@ public class BuildFileCreator {
 		if (files == null) {
 			return;
 		}
-		for (int i = 0; i < files.length; i++) {
+		for (File file : files) {
 			// import file if it is an XML document with marker comment as first
 			// child
-			File file = files[i];
 			Document docCandidate;
 			try {
 				docCandidate = ExportUtil.parseXmlFile(file);
@@ -364,8 +361,7 @@ public class BuildFileCreator {
 		element.setAttribute("id", pathid); //$NON-NLS-1$
 		visited.add(pathid);
 		variable2valueMap.putAll(classpath.variable2valueMap);
-		for (Iterator<String> iter = ExportUtil.removeDuplicates(classpath.rawClassPathEntries).iterator(); iter.hasNext();) {
-			String entry = iter.next();
+		for (String entry : ExportUtil.removeDuplicates(classpath.rawClassPathEntries)) {
 			if (EclipseClasspath.isProjectReference(entry)) {
 				Element pathElement = doc.createElement("path"); //$NON-NLS-1$
 				IJavaProject referencedProject = EclipseClasspath.resolveProjectReference(entry);
@@ -422,13 +418,12 @@ public class BuildFileCreator {
 		if (visited.add(entry)) {
 			Element userElement = doc.createElement("path"); //$NON-NLS-1$
 			userElement.setAttribute("id", name); //$NON-NLS-1$
-			IClasspathEntry entries[] = container.getClasspathEntries();
-			for (int i = 0; i < entries.length; i++) {
-				String jarFile = entries[i].getPath().toString();
+			for (IClasspathEntry cpentry : container.getClasspathEntries()) {
+				String jarFile = cpentry.getPath().toString();
 				// use ECLIPSE_HOME variable for library jars
 				if (EclipseClasspath.isLibraryReference(entry)) {
 					IPath home = JavaCore.getClasspathVariable("ECLIPSE_HOME"); //$NON-NLS-1$
-					if (home != null && home.isPrefixOf(entries[i].getPath())) {
+					if (home != null && home.isPrefixOf(cpentry.getPath())) {
 						variable2valueMap.put("ECLIPSE_HOME", home.toString()); //$NON-NLS-1$
 						jarFile = "${ECLIPSE_HOME}" + jarFile.substring(home.toString().length()); //$NON-NLS-1$
 					} else if (!new File(jarFile).exists() && jarFile.startsWith('/' + projectName)
@@ -482,8 +477,7 @@ public class BuildFileCreator {
 	 * Add properties of sub-projects to internal properties map.
 	 */
 	public void addSubProperties(IJavaProject subproject, EclipseClasspath classpath) throws JavaModelException {
-		for (Iterator<IJavaProject> iterator = ExportUtil.getClasspathProjectsRecursive(subproject).iterator(); iterator.hasNext();) {
-			IJavaProject subProject = iterator.next();
+		for (IJavaProject subProject : ExportUtil.getClasspathProjectsRecursive(subproject)) {
 			String location = subProject.getProject().getName() + ".location"; //$NON-NLS-1$
 			// add subproject properties to variable2valueMap
 			String subProjectRoot = ExportUtil.getProjectRoot(subProject);
@@ -507,9 +501,7 @@ public class BuildFileCreator {
 		// </target>
 		Element element = doc.createElement("target"); //$NON-NLS-1$
 		element.setAttribute(IAntCoreConstants.NAME, "init"); //$NON-NLS-1$
-		List<String> classDirsUnique = ExportUtil.removeDuplicates(classDirs);
-		for (Iterator<String> iterator = classDirsUnique.iterator(); iterator.hasNext();) {
-			String classDir = iterator.next();
+		for (String classDir : ExportUtil.removeDuplicates(classDirs)) {
 			if (!classDir.equals(".") && !EclipseClasspath.isReference(classDir)) { //$NON-NLS-1$
 				Element pathElement = doc.createElement("mkdir"); //$NON-NLS-1$
 				pathElement.setAttribute(IAntCoreConstants.DIR, classDir);
@@ -592,9 +584,7 @@ public class BuildFileCreator {
 		// </target>
 		Element element = doc.createElement("target"); //$NON-NLS-1$
 		element.setAttribute(IAntCoreConstants.NAME, "clean"); //$NON-NLS-1$
-		List<String> classDirUnique = ExportUtil.removeDuplicates(classDirs);
-		for (Iterator<String> iterator = classDirUnique.iterator(); iterator.hasNext();) {
-			String classDir = iterator.next();
+		for (String classDir : ExportUtil.removeDuplicates(classDirs)) {
 			if (!classDir.equals(".") && //$NON-NLS-1$
 					!EclipseClasspath.isReference(classDir)) {
 				Element deleteElement = doc.createElement("delete"); //$NON-NLS-1$
@@ -630,9 +620,7 @@ public class BuildFileCreator {
 		Element element = doc.createElement("target"); //$NON-NLS-1$
 		element.setAttribute(IAntCoreConstants.NAME, "cleanall"); //$NON-NLS-1$
 		element.setAttribute("depends", "clean"); //$NON-NLS-1$ //$NON-NLS-2$
-		List<IJavaProject> subProjects = ExportUtil.getClasspathProjectsRecursive(project);
-		for (Iterator<IJavaProject> iterator = subProjects.iterator(); iterator.hasNext();) {
-			IJavaProject subProject = iterator.next();
+		for (IJavaProject subProject : ExportUtil.getClasspathProjectsRecursive(project)) {
 			Element antElement = doc.createElement("ant"); //$NON-NLS-1$
 			antElement.setAttribute("antfile", BUILD_XML); //$NON-NLS-1$
 			antElement.setAttribute(IAntCoreConstants.DIR, "${" + subProject.getProject().getName() + ".location}"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -667,9 +655,7 @@ public class BuildFileCreator {
 		// </target>
 		element = doc.createElement("target"); //$NON-NLS-1$
 		element.setAttribute(IAntCoreConstants.NAME, "build-subprojects"); //$NON-NLS-1$
-		List<IJavaProject> subProjects = ExportUtil.getClasspathProjectsRecursive(project);
-		for (Iterator<IJavaProject> iterator = subProjects.iterator(); iterator.hasNext();) {
-			IJavaProject subProject = iterator.next();
+		for (IJavaProject subProject : ExportUtil.getClasspathProjectsRecursive(project)) {
 			Element antElement = doc.createElement("ant"); //$NON-NLS-1$
 			antElement.setAttribute("antfile", BUILD_XML); //$NON-NLS-1$
 			antElement.setAttribute(IAntCoreConstants.DIR, "${" + subProject.getProject().getName() + ".location}"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -786,13 +772,10 @@ public class BuildFileCreator {
 	 */
 	private void createBuildRef() throws JavaModelException {
 		Set<IJavaProject> refProjects = new TreeSet<>(ExportUtil.getJavaProjectComparator());
-		IJavaProject[] projects = project.getJavaModel().getJavaProjects();
-		for (int i = 0; i < projects.length; i++) {
-			List<IJavaProject> subProjects = ExportUtil.getClasspathProjects(projects[i]);
-			for (Iterator<IJavaProject> iter = subProjects.iterator(); iter.hasNext();) {
-				IJavaProject p = iter.next();
-				if (projectName.equals(p.getProject().getName())) {
-					refProjects.add(projects[i]);
+		for (IJavaProject javaProject : project.getJavaModel().getJavaProjects()) {
+			for (IJavaProject subProject : ExportUtil.getClasspathProjects(javaProject)) {
+				if (projectName.equals(subProject.getProject().getName())) {
+					refProjects.add(javaProject);
 				}
 			}
 		}
@@ -805,8 +788,7 @@ public class BuildFileCreator {
 		element.setAttribute(IAntCoreConstants.NAME, "build-refprojects"); //$NON-NLS-1$
 		element.setAttribute(IAntCoreConstants.DESCRIPTION, "Build all projects which " + //$NON-NLS-1$
 				"reference this project. Useful to propagate changes."); //$NON-NLS-1$
-		for (Iterator<IJavaProject> iter = refProjects.iterator(); iter.hasNext();) {
-			IJavaProject p = iter.next();
+		for (IJavaProject p : refProjects) {
 			String location = p.getProject().getName() + ".location"; //$NON-NLS-1$
 			String refProjectRoot = ExportUtil.getProjectRoot(p);
 			String relativePath = ExportUtil.getRelativePath(refProjectRoot, projectRoot);
@@ -908,8 +890,7 @@ public class BuildFileCreator {
 		// </bootclasspath>
 		Element bootclasspathElement = doc.createElement("bootclasspath"); //$NON-NLS-1$
 		boolean bootclasspathUsed = false;
-		for (Iterator<String> iter = srcDirs.iterator(); iter.hasNext();) {
-			String entry = iter.next();
+		for (String entry : srcDirs) {
 			if (EclipseClasspath.isUserSystemLibraryReference(entry)) {
 				Element pathElement = doc.createElement("path"); //$NON-NLS-1$
 				pathElement.setAttribute("refid", ExportUtil.removePrefixAndSuffix(entry, "${", "}")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -943,10 +924,8 @@ public class BuildFileCreator {
 		// <classpath refid="project.classpath"/>
 		// </java>
 		// </target>
-		ILaunchConfiguration[] confs = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations();
 		boolean junitUsed = false;
-		for (int i = 0; i < confs.length; i++) {
-			ILaunchConfiguration conf = confs[i];
+		for (ILaunchConfiguration conf : DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurations()) {
 			if (!projectName.equals(conf.getAttribute(IJavaLaunchConfigurationConstants.ATTR_PROJECT_NAME, IAntCoreConstants.EMPTY_STRING))) {
 				continue;
 			}
@@ -1123,8 +1102,7 @@ public class BuildFileCreator {
 			IType[] types = ExportUtil.findTestsInContainer(container);
 			Set<IType> sortedTypes = new TreeSet<>(ExportUtil.getITypeComparator());
 			sortedTypes.addAll(Arrays.asList(types));
-			for (Iterator<IType> iter = sortedTypes.iterator(); iter.hasNext();) {
-				IType type = iter.next();
+			for (IType type : sortedTypes) {
 				Element testElement = doc.createElement("test"); //$NON-NLS-1$
 				testElement.setAttribute(IAntCoreConstants.NAME, type.getFullyQualifiedName());
 				testElement.setAttribute("todir", "${junit.output.dir}"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -1259,8 +1237,7 @@ public class BuildFileCreator {
 	 *            name of value attribute
 	 */
 	private static void addElements(Map<String, String> map, Document doc, Element element, String elementName, String keyAttributeName, String valueAttributeName) {
-		for (Iterator<String> iter = map.keySet().iterator(); iter.hasNext();) {
-			String key = iter.next();
+		for (String key : map.keySet()) {
 			String value = map.get(key);
 			Element itemElement = doc.createElement(elementName);
 			itemElement.setAttribute(keyAttributeName, key);

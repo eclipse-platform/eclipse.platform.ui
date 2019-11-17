@@ -499,9 +499,9 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 		int[] array = BuilderCoreUtils.buildTypesToArray(kinds);
 		assertNotNull("The build kinds array cannot be null", array); //$NON-NLS-1$
 		boolean contains = true;
-		for (int i = 0; i < array.length; i++) {
-			contains &= (array[i] == IncrementalProjectBuilder.AUTO_BUILD) | (array[i] == IncrementalProjectBuilder.CLEAN_BUILD)
-					| (array[i] == IncrementalProjectBuilder.FULL_BUILD) | (array[i] == IncrementalProjectBuilder.INCREMENTAL_BUILD);
+		for (int element : array) {
+			contains &= (element == IncrementalProjectBuilder.AUTO_BUILD) | (element == IncrementalProjectBuilder.CLEAN_BUILD)
+					| (element == IncrementalProjectBuilder.FULL_BUILD) | (element == IncrementalProjectBuilder.INCREMENTAL_BUILD);
 			if (!contains) {
 				break;
 			}

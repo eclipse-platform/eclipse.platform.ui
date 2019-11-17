@@ -79,8 +79,7 @@ public class ConsoleLineTracker implements IConsoleLineTrackerExtension {
 
 	public static List<String> getAllMessages() {
 		List<String> all = new ArrayList<>(lines.size());
-		for (int i = 0; i < lines.size(); i++) {
-			IRegion lineRegion = lines.get(i);
+		for (IRegion lineRegion : lines) {
 			try {
 				all.add(console.getDocument().get(lineRegion.getOffset(), lineRegion.getLength()));
 			}

@@ -51,9 +51,9 @@ public class AntViewTests extends AbstractAntUITest {
 	private AddBuildFilesAction getAddBuildFilesAction(IToolBarManager toolBarMgr) {
 		IContributionItem[] actions = toolBarMgr.getItems();
 		if (actions != null && actions.length > 0) {
-			for (int i = 0; i < actions.length; i++) {
-				if (actions[i] instanceof ActionContributionItem) {
-					ActionContributionItem actionItem = (ActionContributionItem) actions[i];
+			for (IContributionItem action : actions) {
+				if (action instanceof ActionContributionItem) {
+					ActionContributionItem actionItem = (ActionContributionItem) action;
 					if (actionItem.getAction() instanceof AddBuildFilesAction) {
 						return (AddBuildFilesAction) actionItem.getAction();
 					}

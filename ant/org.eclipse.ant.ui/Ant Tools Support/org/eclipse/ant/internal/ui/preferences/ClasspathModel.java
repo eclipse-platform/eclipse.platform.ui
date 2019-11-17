@@ -172,8 +172,7 @@ public class ClasspathModel extends AbstractClasspathEntry {
 
 	public void removeAll(Object[] entries) {
 
-		for (int i = 0; i < entries.length; i++) {
-			Object object = entries[i];
+		for (Object object : entries) {
 			if (object instanceof ClasspathEntry) {
 				IClasspathEntry entryParent = ((ClasspathEntry) object).getParent();
 				if (entryParent instanceof GlobalClasspathEntries) {
@@ -193,8 +192,8 @@ public class ClasspathModel extends AbstractClasspathEntry {
 			fAntHomeEntry = createGlobalEntry(entries, name, false, true, ANT_HOME);
 		} else {
 			fAntHomeEntry.removeAll();
-			for (int i = 0; i < entries.length; i++) {
-				fAntHomeEntry.addEntry(new ClasspathEntry(entries[i], fAntHomeEntry));
+			for (IAntClasspathEntry entry : entries) {
+				fAntHomeEntry.addEntry(new ClasspathEntry(entry, fAntHomeEntry));
 			}
 		}
 	}
@@ -203,8 +202,8 @@ public class ClasspathModel extends AbstractClasspathEntry {
 
 		GlobalClasspathEntries global = new GlobalClasspathEntries(name, this, canBeRemoved, type);
 
-		for (int i = 0; i < entries.length; i++) {
-			global.addEntry(new ClasspathEntry(entries[i], global));
+		for (IAntClasspathEntry entry : entries) {
+			global.addEntry(new ClasspathEntry(entry, global));
 		}
 
 		if (addEntry) {
@@ -219,8 +218,8 @@ public class ClasspathModel extends AbstractClasspathEntry {
 			fUserGlobalEntry = createGlobalEntry(entries, name, true, true, GLOBAL_USER);
 		} else {
 			fUserGlobalEntry.removeAll();
-			for (int i = 0; i < entries.length; i++) {
-				fUserGlobalEntry.addEntry(new ClasspathEntry(entries[i], fUserGlobalEntry));
+			for (IAntClasspathEntry entry : entries) {
+				fUserGlobalEntry.addEntry(new ClasspathEntry(entry, fUserGlobalEntry));
 			}
 		}
 	}
@@ -231,8 +230,8 @@ public class ClasspathModel extends AbstractClasspathEntry {
 			fContributedGlobalEntry = createGlobalEntry(entries, name, false, true, CONTRIBUTED);
 		} else {
 			fContributedGlobalEntry.removeAll();
-			for (int i = 0; i < entries.length; i++) {
-				fContributedGlobalEntry.addEntry(new ClasspathEntry(entries[i], fContributedGlobalEntry));
+			for (IAntClasspathEntry entry : entries) {
+				fContributedGlobalEntry.addEntry(new ClasspathEntry(entry, fContributedGlobalEntry));
 			}
 		}
 	}

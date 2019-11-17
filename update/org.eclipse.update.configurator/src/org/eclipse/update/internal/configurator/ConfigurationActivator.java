@@ -27,6 +27,7 @@ import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.update.configurator.IPlatformConfiguration;
+import org.eclipse.update.configurator.IPlatformConfiguration.IFeatureEntry;
 import org.eclipse.update.configurator.IPlatformConfigurationFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -98,8 +99,8 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			//don't register the service if this bundle has already registered it declaratively
 			ServiceReference<?>[] refs = getBundleContext().getServiceReferences(serviceName, null);
 			if (refs != null) {
-				for (int i = 0; i < refs.length; i++)
-					if (PI_CONFIGURATOR.equals(refs[i].getBundle().getSymbolicName()))
+				for (ServiceReference<?> ref : refs)
+					if (PI_CONFIGURATOR.equals(ref.getBundle().getSymbolicName()))
 						return;
 			}
 		} catch (InvalidSyntaxException e) {
@@ -220,9 +221,9 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 
 		IPlatformConfiguration.IFeatureEntry[] features = configuration.getConfiguredFeatureEntries();
 		ArrayList<IBundleGroup> bundleGroups = new ArrayList<>(features.length);
-		for (int i = 0; i < features.length; i++) {
-			if (features[i] instanceof FeatureEntry && ((FeatureEntry) features[i]).hasBranding())
-				bundleGroups.add((IBundleGroup) features[i]);
+		for (IFeatureEntry feature : features) {
+			if (feature instanceof FeatureEntry && ((FeatureEntry) feature).hasBranding())
+				bundleGroups.add((IBundleGroup) feature);
 		}
 		return bundleGroups.toArray(new IBundleGroup[bundleGroups.size()]);
 	}
