@@ -676,8 +676,8 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 			Object root = getRoot();
 			for (Object element : elements) {
 				boolean add = true;
-				for (int j = 0; j < filters.size(); j++) {
-					add = filters.get(j).select(this, root, element);
+				for (ViewerFilter filter : filters) {
+					add = filter.select(this, root, element);
 					if (!add) {
 						break;
 					}
@@ -1307,8 +1307,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		}
 
 		if (filters != null) {
-			for (int i = 0, n = filters.size(); i < n; ++i) {
-				ViewerFilter filter = filters.get(i);
+			for (ViewerFilter filter : filters) {
 				if (filter.isFilterProperty(element, property)) {
 					return true;
 				}

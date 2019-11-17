@@ -359,9 +359,9 @@ public abstract class Window implements IShellProvider {
 		// disposed images from the array passed to the shell.
 		if (defaultImages != null && defaultImages.length > 0) {
 			ArrayList<Image> nonDisposedImages = new ArrayList<>(defaultImages.length);
-			for (int i = 0; i < defaultImages.length; ++i) {
-				if (defaultImages[i] != null && !defaultImages[i].isDisposed()) {
-					nonDisposedImages.add(defaultImages[i]);
+			for (Image defaultImage : defaultImages) {
+				if (defaultImage != null && !defaultImage.isDisposed()) {
+					nonDisposedImages.add(defaultImage);
 				}
 			}
 

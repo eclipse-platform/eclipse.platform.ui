@@ -89,8 +89,8 @@ public abstract class WizardSelectionPage extends WizardPage {
 	public void dispose() {
 		super.dispose();
 		// notify nested wizards
-		for (int i = 0; i < selectedWizardNodes.size(); i++) {
-			selectedWizardNodes.get(i).dispose();
+		for (IWizardNode selectedWizardNode : selectedWizardNodes) {
+			selectedWizardNode.dispose();
 		}
 	}
 

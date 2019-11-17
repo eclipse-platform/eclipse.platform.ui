@@ -155,8 +155,8 @@ public abstract class Wizard implements IWizard, IShellProvider {
 	@Override
 	public boolean canFinish() {
 		// Default implementation is to check if all pages are complete.
-		for (int i = 0; i < pages.size(); i++) {
-			if (!pages.get(i).isPageComplete()) {
+		for (IWizardPage page : pages) {
+			if (!page.isPageComplete()) {
 				return false;
 			}
 		}
@@ -174,8 +174,7 @@ public abstract class Wizard implements IWizard, IShellProvider {
 	@Override
 	public void createPageControls(Composite pageContainer) {
 		// the default behavior is to create all the pages controls
-		for (int i = 0; i < pages.size(); i++) {
-			IWizardPage page = pages.get(i);
+		for (IWizardPage page : pages) {
 			page.createControl(pageContainer);
 			// page is responsible for ensuring the created control is
 			// accessible
@@ -196,9 +195,9 @@ public abstract class Wizard implements IWizard, IShellProvider {
 	@Override
 	public void dispose() {
 		// notify pages
-		for (int i = 0; i < pages.size(); i++) {
+		for (IWizardPage page : pages) {
 			try {
-				pages.get(i).dispose();
+				page.dispose();
 			} catch (Exception e) {
 				Status status = new Status(IStatus.ERROR, Policy.JFACE, IStatus.ERROR, e.getMessage(), e);
 				Policy.getLog().log(status);
@@ -241,8 +240,7 @@ public abstract class Wizard implements IWizard, IShellProvider {
 
 	@Override
 	public IWizardPage getPage(String name) {
-		for (int i = 0; i < pages.size(); i++) {
-			IWizardPage page = pages.get(i);
+		for (IWizardPage page : pages) {
 			String pageName = page.getName();
 			if (pageName.equals(name)) {
 				return page;

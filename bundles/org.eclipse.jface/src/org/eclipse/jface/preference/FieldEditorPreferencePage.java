@@ -155,8 +155,7 @@ public abstract class FieldEditorPreferencePage extends PreferencePage
 		int numColumns = calcNumberOfColumns();
 		((GridLayout) fieldEditorParent.getLayout()).numColumns = numColumns;
 		if (fields != null) {
-			for (int i = 0; i < fields.size(); i++) {
-				FieldEditor fieldEditor = fields.get(i);
+			for (FieldEditor fieldEditor : fields) {
 				fieldEditor.adjustForNumColumns(numColumns);
 			}
 		}

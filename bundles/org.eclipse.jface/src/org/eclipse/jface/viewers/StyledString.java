@@ -431,11 +431,9 @@ public class StyledString implements CharSequence {
 		if (hasRuns()) {
 			ArrayList<StyleRange> res = new ArrayList<>();
 
-			List<StyleRun> styleRuns = getStyleRuns();
 			int offset = 0;
 			Styler style = null;
-			for (int i = 0; i < styleRuns.size(); i++) {
-				StyleRun curr = styleRuns.get(i);
+			for (StyleRun curr : getStyleRuns()) {
 				if (isDifferentStyle(curr.style, style)) {
 					if (curr.offset > offset && style != null) {
 						res.add(createStyleRange(offset, curr.offset, style));

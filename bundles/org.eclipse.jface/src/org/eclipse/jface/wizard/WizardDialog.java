@@ -873,8 +873,7 @@ public class WizardDialog extends TitleAreaDialog implements IWizardContainer2, 
 	 */
 	private boolean hardClose() {
 		// inform wizards
-		for (int i = 0; i < createdWizards.size(); i++) {
-			IWizard createdWizard = createdWizards.get(i);
+		for (IWizard createdWizard : createdWizards) {
 			try {
 				createdWizard.dispose();
 			} catch (Exception e) {

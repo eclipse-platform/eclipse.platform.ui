@@ -287,9 +287,7 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 		SafeRunnable runnable = new SafeRunnable(){
 			@Override
 			public void run() throws Exception {
-				List<IPreferenceNode> nodes = preferenceManager.getElements(PreferenceManager.PRE_ORDER);
-				for (int i = 0; i < nodes.size(); i++) {
-					IPreferenceNode node = nodes.get(i);
+				for (IPreferenceNode node : preferenceManager.getElements(PreferenceManager.PRE_ORDER)) {
 					node.disposeResources();
 				}
 
