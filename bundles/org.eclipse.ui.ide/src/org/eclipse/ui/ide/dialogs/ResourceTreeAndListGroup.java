@@ -212,9 +212,8 @@ public class ResourceTreeAndListGroup extends EventManager {
 	 *	@param treeElement java.lang.Object
 	 */
 	private boolean areAllChildrenWhiteChecked(Object treeElement) {
-		Object[] children = treeContentProvider.getChildren(treeElement);
-		for (int i = 0; i < children.length; ++i) {
-			if (!whiteCheckedTreeItems.contains(children[i])) {
+		for (Object element : treeContentProvider.getChildren(treeElement)) {
+			if (!whiteCheckedTreeItems.contains(element)) {
 				return false;
 			}
 		}
@@ -409,12 +408,9 @@ public class ResourceTreeAndListGroup extends EventManager {
 						expandedTreeNodes.add(item);
 						if (whiteCheckedTreeItems.contains(item)) {
 							//If this is the first expansion and this is a white checked node then check the children
-							Object[] children = treeContentProvider
-									.getChildren(item);
-							for (int i = 0; i < children.length; ++i) {
+							for (Object child : treeContentProvider.getChildren(item)) {
 								if (!whiteCheckedTreeItems
-										.contains(children[i])) {
-									Object child = children[i];
+										.contains(child)) {
 									setWhiteChecked(child, true);
 									treeViewer.setChecked(child, true);
 									checkedStateStore.put(child,
@@ -524,12 +520,11 @@ public class ResourceTreeAndListGroup extends EventManager {
 	 */
 	public boolean isEveryItemChecked() {
 		//Iterate through the children of the root as the root is not in the store
-		Object[] children = treeContentProvider.getChildren(root);
-		for (int i = 0; i < children.length; ++i) {
-			if (!whiteCheckedTreeItems.contains(children[i])) {
-				if (!treeViewer.getGrayed(children[i]))
+		for (Object element : treeContentProvider.getChildren(root)) {
+			if (!whiteCheckedTreeItems.contains(element)) {
+				if (!treeViewer.getGrayed(element))
 					return false;
-				if (!isEveryChildrenChecked(children[i]))
+				if (!isEveryChildrenChecked(element))
 					return false;
 			}
 		}
@@ -550,12 +545,11 @@ public class ResourceTreeAndListGroup extends EventManager {
 			if (listItems.length != checked.size())
 				return false;
 		}
-		Object[] children = treeContentProvider.getChildren(treeElement);
-		for (int i = 0; i < children.length; ++i) {
-			if (!whiteCheckedTreeItems.contains(children[i])) {
-				if (!treeViewer.getGrayed(children[i]))
+		for (Object element : treeContentProvider.getChildren(treeElement)) {
+			if (!whiteCheckedTreeItems.contains(element)) {
+				if (!treeViewer.getGrayed(element))
 					return false;
-				if (!isEveryChildrenChecked(children[i]))
+				if (!isEveryChildrenChecked(element))
 					return false;
 			}
 		}

@@ -15,7 +15,6 @@
 package org.eclipse.ui.internal.ide.handlers;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.commands.ExecutionEvent;
@@ -126,8 +125,8 @@ public final class OpenResourceHandler extends Action implements IHandler,
 			}
 
 			try {
-				for (Iterator<IFile> it = files.iterator(); it.hasNext();) {
-					IDE.openEditor(page, it.next(), true);
+				for (IFile iFile : files) {
+					IDE.openEditor(page, iFile, true);
 				}
 			} catch (final PartInitException e) {
 				throw new ExecutionException("error opening file in editor", e); //$NON-NLS-1$

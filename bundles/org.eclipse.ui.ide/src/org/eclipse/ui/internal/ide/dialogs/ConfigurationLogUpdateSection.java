@@ -16,14 +16,12 @@ package org.eclipse.ui.internal.ide.dialogs;
 import java.io.PrintWriter;
 import java.text.DateFormat;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
 import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
-import org.eclipse.equinox.p2.query.IQueryResult;
 import org.eclipse.equinox.p2.query.QueryUtil;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.PlatformAdmin;
@@ -71,17 +69,15 @@ public class ConfigurationLogUpdateSection implements ISystemSummarySection {
 			// Since this code is only called in the Help -> About -> Configuration Details case we
 			// won't worry too much about performance here and we will sort the query results
 			// afterwards, but before printing them out.
-			IQueryResult<IInstallableUnit> result = profile.available(QueryUtil.createIUAnyQuery(), null);
 			SortedSet<String> sorted = new TreeSet<>();
-			for (Iterator<IInstallableUnit> iter = result.iterator(); iter.hasNext();) {
-				IInstallableUnit unit = iter.next();
+			for (IInstallableUnit unit : profile.available(QueryUtil.createIUAnyQuery(), null)) {
 				sorted.add(NLS.bind(IDEWorkbenchMessages.ConfigurationLogUpdateSection_IU, unit.getId(), unit.getVersion()));
 			}
 			if (!sorted.isEmpty()) {
 				writer.println(IDEWorkbenchMessages.ConfigurationLogUpdateSection_IUHeader);
 				writer.println();
-				for (Iterator<String> iter = sorted.iterator(); iter.hasNext();)
-					writer.println(iter.next());
+				for (String string : sorted)
+					writer.println(string);
 			}
 		} finally {
 			context.ungetService(reference);
@@ -115,8 +111,8 @@ public class ConfigurationLogUpdateSection implements ISystemSummarySection {
 			if (!sorted.isEmpty()) {
 				writer.println(IDEWorkbenchMessages.ConfigurationLogUpdateSection_bundleHeader);
 				writer.println();
-				for (Iterator<String> iter = sorted.iterator(); iter.hasNext();)
-					writer.println(iter.next());
+				for (String string : sorted)
+					writer.println(string);
 			}
 		} finally {
 			context.ungetService(reference);

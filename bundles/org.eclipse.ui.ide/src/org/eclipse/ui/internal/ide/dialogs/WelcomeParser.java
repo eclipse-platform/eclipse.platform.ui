@@ -239,8 +239,7 @@ public class WelcomeParser extends DefaultHandler {
 		protected WelcomeItem constructWelcomeItem() {
 			if (isFormatWrapped()) {
 				// replace all line delimiters with a space
-				for (int i = 0; i < wrapRanges.size(); i++) {
-					int[] range = wrapRanges.get(i);
+				for (int[] range : wrapRanges) {
 					int start = range[0];
 					int length = range[1];
 					for (int j = start; j < start + length; j++) {

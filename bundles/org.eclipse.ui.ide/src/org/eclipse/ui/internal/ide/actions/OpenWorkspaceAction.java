@@ -14,7 +14,6 @@
 package org.eclipse.ui.internal.ide.actions;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.equinox.app.IApplication;
@@ -169,8 +168,7 @@ public class OpenWorkspaceAction extends Action implements ActionFactory.IWorkbe
 				dropDownMenuMgr = null;
 			}
 			if (menus.size()>0) {
-				for (Iterator<Menu> i = menus.iterator(); i.hasNext();) {
-					Menu m = i.next();
+				for (Menu m : menus) {
 					if (!m.isDisposed()) {
 						m.dispose();
 					}

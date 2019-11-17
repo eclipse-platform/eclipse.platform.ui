@@ -145,8 +145,7 @@ public class MarkerFilter implements Cloneable {
 	 *            list to be filled in with types
 	 */
 	public void addAllSubTypes(List<MarkerType> types) {
-		for (int i = 0; i < rootTypes.size(); i++) {
-			MarkerType rootType = rootTypes.get(i);
+		for (MarkerType rootType : rootTypes) {
 			addAllSubTypes(types, rootType);
 		}
 	}

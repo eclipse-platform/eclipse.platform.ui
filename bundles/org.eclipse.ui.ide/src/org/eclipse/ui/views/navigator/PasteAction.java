@@ -86,11 +86,7 @@ import org.eclipse.ui.part.ResourceTransfer;
 	 * @return the actual target of the paste action
 	 */
 	private IResource getTarget() {
-		List selectedResources = getSelectedResources();
-
-		for (int i = 0; i < selectedResources.size(); i++) {
-			IResource resource = (IResource) selectedResources.get(i);
-
+		for (IResource resource : getSelectedResources()) {
 			if (resource instanceof IProject && !((IProject) resource).isOpen()) {
 				return null;
 			}
@@ -220,10 +216,9 @@ import org.eclipse.ui.part.ResourceTransfer;
 
 		// can paste files and folders to a single selection (file, folder,
 		// open project) or multiple file selection with the same parent
-		List selectedResources = getSelectedResources();
+		List<? extends IResource> selectedResources = getSelectedResources();
 		if (selectedResources.size() > 1) {
-			for (int i = 0; i < selectedResources.size(); i++) {
-				IResource resource = (IResource) selectedResources.get(i);
+			for (IResource resource : selectedResources) {
 				if (resource.getType() != IResource.FILE) {
 					return false;
 				}

@@ -1075,8 +1075,8 @@ public class ResourceInfoPage extends PropertyPage {
 		if (!changes.isEmpty()) {
 			StringBuilder message = new StringBuilder(IDEWorkbenchMessages.ResourceInfo_recursiveChangesSummary)
 					.append('\n');
-			for (int i = 0; i < changes.size(); i++) {
-				message.append(((IResourceChange) changes.get(i)).getMessage());
+			for (Object change : changes) {
+				message.append(((IResourceChange) change).getMessage());
 			}
 			message.append(IDEWorkbenchMessages.ResourceInfo_recursiveChangesQuestion);
 
@@ -1108,9 +1108,9 @@ public class ResourceInfoPage extends PropertyPage {
 					iterationMonitor.subTask(NLS
 							.bind(IDEWorkbenchMessages.ResourceInfo_recursiveChangesSubTaskName,
 									childResource.getFullPath()));
-					for (int i = 0; i < changes.size(); i++) {
+					for (Object change : changes) {
 						iterationMonitor.split(1);
-						((IResourceChange) changes.get(i))
+						((IResourceChange) change)
 								.performChange(childResource);
 					}
 				}
