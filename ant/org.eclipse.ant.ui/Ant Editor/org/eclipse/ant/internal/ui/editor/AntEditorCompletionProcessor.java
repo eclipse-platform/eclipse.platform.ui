@@ -287,9 +287,9 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 		} else {
 			ICompletionProposal[] templateProposals = determineTemplateProposalsForContext(documentOffset);
 			List<ICompletionProposal> templateProposalList = new ArrayList<>(templateProposals.length);
-			for (int i = 0; i < templateProposals.length; i++) {
-				if (templateProposals[i].getDisplayString().toLowerCase().startsWith(prefix)) {
-					templateProposalList.add(templateProposals[i]);
+			for (ICompletionProposal templateProposal : templateProposals) {
+				if (templateProposal.getDisplayString().toLowerCase().startsWith(prefix)) {
+					templateProposalList.add(templateProposal);
 				}
 			}
 			matchingTemplateProposals = templateProposalList.toArray(new ICompletionProposal[templateProposalList.size()]);
@@ -331,8 +331,7 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 		}
 
 		List<ICompletionProposal> matches = new ArrayList<>();
-		for (int i = 0; i < templates.length; i++) {
-			Template template = templates[i];
+		for (Template template : templates) {
 			try {
 				context.getContextType().validate(template.getPattern());
 			}
@@ -821,7 +820,9 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 				proposalInfo += MessageFormat.format(AntEditorMessages.getString("AntEditorCompletionProcessor.59"), new Object[] { deflt }); //$NON-NLS-1$
 			}
 
-			ICompletionProposal proposal = new AntCompletionProposal(replacementString, cursorPosition - prefix.length(), prefix.length(), attributeName.length() + 2, null, attributeName, proposalInfo, AntCompletionProposal.TASK_PROPOSAL);
+			ICompletionProposal proposal = new AntCompletionProposal(replacementString, cursorPosition
+					- prefix.length(), prefix.length(), attributeName.length()
+							+ 2, null, attributeName, proposalInfo, AntCompletionProposal.TASK_PROPOSAL);
 			proposals.add(proposal);
 		}
 	}
@@ -857,7 +858,8 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 				proposalInfo += AntEditorMessages.getString("AntEditorCompletionProcessor.2"); //$NON-NLS-1$
 			}
 
-			ICompletionProposal proposal = new AntCompletionProposal(replacementString, replacementOffset, prefixLength, elementName.length() + 2, null, elementName, proposalInfo, AntCompletionProposal.TASK_PROPOSAL);
+			ICompletionProposal proposal = new AntCompletionProposal(replacementString, replacementOffset, prefixLength, elementName.length()
+					+ 2, null, elementName, proposalInfo, AntCompletionProposal.TASK_PROPOSAL);
 			proposals.add(proposal);
 		}
 	}
@@ -902,11 +904,10 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 			if (attribute != null) {
 				String[] items = attribute.getEnum();
 				if (items != null) {
-					String item;
-					for (int i = 0; i < items.length; i++) {
-						item = items[i];
+					for (String item : items) {
 						if (prefix.length() == 0 || item.toLowerCase().startsWith(prefix)) {
-							proposals.add(new AntCompletionProposal(item, cursorPosition - prefix.length(), prefix.length(), item.length(), null, item, null, AntCompletionProposal.TASK_PROPOSAL));
+							proposals.add(new AntCompletionProposal(item, cursorPosition
+									- prefix.length(), prefix.length(), item.length(), null, item, null, AntCompletionProposal.TASK_PROPOSAL));
 						}
 					}
 				}
@@ -963,23 +964,23 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 
 	private void addEnumeratedAttributeValueProposals(Class<?> type, String prefix, List<ICompletionProposal> proposals) throws InstantiationException, IllegalAccessException {
 		EnumeratedAttribute ea = (EnumeratedAttribute) type.newInstance();
-		String[] values = ea.getValues();
 		String enumerated;
-		for (int i = 0; i < values.length; i++) {
-			enumerated = values[i].toLowerCase();
+		for (String value : ea.getValues()) {
+			enumerated = value.toLowerCase();
 			if (prefix.length() == 0 || enumerated.startsWith(prefix)) {
-				proposals.add(new AntCompletionProposal(enumerated, cursorPosition - prefix.length(), prefix.length(), enumerated.length(), null, enumerated, null, AntCompletionProposal.TASK_PROPOSAL));
+				proposals.add(new AntCompletionProposal(enumerated, cursorPosition
+						- prefix.length(), prefix.length(), enumerated.length(), null, enumerated, null, AntCompletionProposal.TASK_PROPOSAL));
 			}
 		}
 	}
 
 	private void addBooleanAttributeValueProposals(String prefix, List<ICompletionProposal> proposals) {
-		String[] booleanValues = new String[] { "true", "false", "on", "off", "yes", "no" }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
 		String booleanAssist;
-		for (int i = 0; i < booleanValues.length; i++) {
-			booleanAssist = booleanValues[i].toLowerCase();
+		for (String booleanValue : new String[] { "true", "false", "on", "off", "yes", "no" }) { //$NON-NLS-1$ //$NON-NLS-2$//$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$ //$NON-NLS-6$
+			booleanAssist = booleanValue.toLowerCase();
 			if (prefix.length() == 0 || booleanAssist.startsWith(prefix)) {
-				proposals.add(new AntCompletionProposal(booleanAssist, cursorPosition - prefix.length(), prefix.length(), booleanAssist.length(), null, booleanAssist, null, AntCompletionProposal.TASK_PROPOSAL));
+				proposals.add(new AntCompletionProposal(booleanAssist, cursorPosition
+						- prefix.length(), prefix.length(), booleanAssist.length(), null, booleanAssist, null, AntCompletionProposal.TASK_PROPOSAL));
 			}
 		}
 	}
@@ -1081,8 +1082,8 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 					currentProposalMode = PROPOSAL_MODE_NONE;
 				}
 				String elementName;
-				for (int i = 0; i < accepts.length; i++) {
-					elementName = accepts[i];
+				for (String accept : accepts) {
+					elementName = accept;
 					if (prefix.length() == 0 || elementName.toLowerCase().startsWith(prefix)) {
 						proposal = newCompletionProposal(document, prefix, elementName);
 						proposals.add(proposal);
@@ -1217,7 +1218,8 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 				StringBuilder displayString = new StringBuilder("</"); //$NON-NLS-1$
 				displayString.append(openElementName);
 				displayString.append('>');
-				proposal = new AntCompletionProposal(replaceString.toString(), cursorPosition - prefix.length(), prefix.length(), replaceString.length(), null, displayString.toString(), AntEditorMessages.getString("AntEditorCompletionProcessor.39"), AntCompletionProposal.TAG_CLOSING_PROPOSAL); //$NON-NLS-1$
+				proposal = new AntCompletionProposal(replaceString.toString(), cursorPosition
+						- prefix.length(), prefix.length(), replaceString.length(), null, displayString.toString(), AntEditorMessages.getString("AntEditorCompletionProcessor.39"), AntCompletionProposal.TAG_CLOSING_PROPOSAL); //$NON-NLS-1$
 			}
 		}
 
@@ -1897,7 +1899,8 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 		TriggerSequence[] triggers = bindingSvc.getActiveBindingsFor(getContentAssistCommand());
 		String message;
 		if (triggers.length > 0) {
-			message = MessageFormat.format(AntEditorMessages.getString("AntEditorCompletionProcessor.63"), new Object[] { triggers[0].format(), showMessage }); //$NON-NLS-1$
+			message = MessageFormat.format(AntEditorMessages.getString("AntEditorCompletionProcessor.63"), new Object[] { triggers[0].format(), //$NON-NLS-1$
+					showMessage });
 		} else {
 			message = MessageFormat.format(AntEditorMessages.getString("AntEditorCompletionProcessor.64"), new Object[] { showMessage }); //$NON-NLS-1$
 		}

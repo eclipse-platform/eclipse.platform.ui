@@ -111,9 +111,7 @@ public class AntClasspathTab extends JavaClasspathTab {
 	@Override
 	public void entriesChanged(IClasspathViewer viewer) {
 		super.entriesChanged(viewer);
-		ILaunchConfigurationTab[] tabs = getLaunchConfigurationDialog().getTabs();
-		for (int i = 0; i < tabs.length; i++) {
-			ILaunchConfigurationTab tab = tabs[i];
+		for (ILaunchConfigurationTab tab : getLaunchConfigurationDialog().getTabs()) {
 			if (tab instanceof AntTargetsTab) {
 				((AntTargetsTab) tab).setDirty(true);
 			}
@@ -139,10 +137,8 @@ public class AntClasspathTab extends JavaClasspathTab {
 	private boolean validateAntHome() {
 		ClasspathModel model = getModel();
 		IClasspathEntry userEntry = model.getUserEntry();
-		IClasspathEntry[] entries = userEntry.getEntries();
-		for (int i = 0; i < entries.length; i++) {
-			ClasspathEntry entry = (ClasspathEntry) entries[i];
-			IRuntimeClasspathEntry runtimeEntry = entry.getDelegate();
+		for (IClasspathEntry entry : userEntry.getEntries()) {
+			IRuntimeClasspathEntry runtimeEntry = ((ClasspathEntry) entry).getDelegate();
 			if (runtimeEntry instanceof AntHomeClasspathEntry) {
 				try {
 					((AntHomeClasspathEntry) runtimeEntry).resolveAntHome();

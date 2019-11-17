@@ -16,8 +16,6 @@ package org.eclipse.ant.tests.core;
 import java.io.File;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.AntRunner;
@@ -48,6 +46,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.progress.UIJob;
+
+import junit.framework.TestCase;
 
 /**
  * Tests for Ant core
@@ -245,10 +245,9 @@ public abstract class AbstractAntTest extends TestCase {
 	 * Returns the target with the given name in the given build file or <code>null</code> if no such target can be found.
 	 */
 	protected TargetInfo getTarget(String buildFileName, String targetName) throws CoreException {
-		TargetInfo[] infos = getTargets(buildFileName);
-		for (int i = 0, numTargets = infos.length; i < numTargets; i++) {
-			if (infos[i].getName().equals(targetName)) {
-				return infos[i];
+		for (TargetInfo info : getTargets(buildFileName)) {
+			if (info.getName().equals(targetName)) {
+				return info;
 			}
 		}
 		return null;

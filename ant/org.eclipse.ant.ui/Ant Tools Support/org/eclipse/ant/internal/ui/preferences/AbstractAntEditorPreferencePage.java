@@ -291,8 +291,7 @@ public abstract class AbstractAntEditorPreferencePage extends PreferencePage imp
 	 */
 	private IStatus getMostSevere(List<IStatus> statusList) {
 		IStatus max = null;
-		for (int i = 0; i < statusList.size(); i++) {
-			IStatus curr = statusList.get(i);
+		for (IStatus curr : statusList) {
 			if (curr.matches(IStatus.ERROR)) {
 				return curr;
 			}

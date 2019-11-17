@@ -309,8 +309,8 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 
 		overlayKeys.add(new OverlayPreferenceStore.OverlayKey(OverlayPreferenceStore.STRING, AntEditorPreferenceConstants.BUILDFILE_NAMES_TO_IGNORE));
 
-		for (int i = 0; i < fSyntaxColorListModel.length; i++) {
-			String colorKey = fSyntaxColorListModel[i][1];
+		for (String[] colorModel : fSyntaxColorListModel) {
+			String colorKey = colorModel[1];
 			addTextKeyToCover(overlayKeys, colorKey);
 		}
 
@@ -406,9 +406,9 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 
 		initializeFields();
 
-		for (int i = 0, n = fSyntaxColorListModel.length; i < n; i++) {
-			fHighlightingColorList.add(new HighlightingColorListItem(fSyntaxColorListModel[i][0], fSyntaxColorListModel[i][1], fSyntaxColorListModel[i][1]
-					+ AntEditorPreferenceConstants.EDITOR_BOLD_SUFFIX, fSyntaxColorListModel[i][1]
+		for (String[] colorModel : fSyntaxColorListModel) {
+			fHighlightingColorList.add(new HighlightingColorListItem(colorModel[0], colorModel[1], colorModel[1]
+					+ AntEditorPreferenceConstants.EDITOR_BOLD_SUFFIX, colorModel[1]
 					+ AntEditorPreferenceConstants.EDITOR_ITALIC_SUFFIX, null));
 		}
 		fHighlightingColorListViewer.setInput(fHighlightingColorList);
@@ -659,16 +659,14 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 
 	private void initializeWorkingValues() {
 		fWorkingValues = new HashMap<>(fProblemPreferenceKeys.length);
-		for (int i = 0; i < fProblemPreferenceKeys.length; i++) {
-			String key = fProblemPreferenceKeys[i];
+		for (String key : fProblemPreferenceKeys) {
 			fWorkingValues.put(key, getPreferenceStore().getString(key));
 		}
 	}
 
 	private void restoreWorkingValuesToDefaults() {
 		fWorkingValues = new HashMap<>(fProblemPreferenceKeys.length);
-		for (int i = 0; i < fProblemPreferenceKeys.length; i++) {
-			String key = fProblemPreferenceKeys[i];
+		for (String key : fProblemPreferenceKeys) {
 			fWorkingValues.put(key, getPreferenceStore().getDefaultString(key));
 		}
 		updateControls();

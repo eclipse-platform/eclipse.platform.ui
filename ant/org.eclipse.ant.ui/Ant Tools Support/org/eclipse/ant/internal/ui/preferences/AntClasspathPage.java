@@ -131,8 +131,8 @@ public class AntClasspathPage implements IAntBlockContainer {
 		}
 
 		List<IAntClasspathEntry> entries = new ArrayList<>(urls.length);
-		for (int i = 0; i < urls.length; i++) {
-			AntClasspathEntry entry = new AntClasspathEntry(urls[i]);
+		for (URL url : urls) {
+			AntClasspathEntry entry = new AntClasspathEntry(url);
 			entries.add(entry);
 		}
 		if (toolsJarEntry != null) {

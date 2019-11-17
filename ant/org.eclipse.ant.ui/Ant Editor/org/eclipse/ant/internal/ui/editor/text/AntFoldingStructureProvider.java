@@ -52,8 +52,7 @@ public class AntFoldingStructureProvider {
 		Annotation[] deletions = computeDifferences(model, currentRegions);
 
 		Map<Annotation, Position> additionsMap = new HashMap<>();
-		for (Iterator<Position> iter = currentRegions.iterator(); iter.hasNext();) {
-			Position position = iter.next();
+		for (Position position : currentRegions) {
 			IAntElement node = fPositionToElement.get(position);
 			additionsMap.put(new ProjectionAnnotation(node.collapseProjection()), position);
 		}

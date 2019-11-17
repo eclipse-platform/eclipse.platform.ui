@@ -413,8 +413,7 @@ public class AntBuildfileExportPage extends WizardPage {
 	 * warnings.
 	 */
 	private void findCyclicProjects(Set<IJavaProject> projects, List<String> errors, List<String> warnings) throws CoreException {
-		for (Iterator<IJavaProject> iter = projects.iterator(); iter.hasNext();) {
-			IJavaProject javaProject = iter.next();
+		for (IJavaProject javaProject : projects) {
 			IMarker marker = ExportUtil.getCyclicDependencyMarker(javaProject);
 			if (marker != null) {
 				Integer severityAttr = (Integer) marker.getAttribute(IMarker.SEVERITY);

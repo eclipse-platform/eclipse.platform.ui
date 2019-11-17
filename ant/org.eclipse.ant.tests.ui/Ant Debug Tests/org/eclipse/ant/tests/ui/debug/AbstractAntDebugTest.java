@@ -128,8 +128,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 				// no links have been added
 				return null;
 			}
-			for (int i = 0; i < positions.length; i++) {
-				Position position = positions[i];
+			for (Position position : positions) {
 				if (offset >= position.getOffset() && offset <= (position.getOffset() + position.getLength())) {
 					return ((ConsoleHyperlinkPosition) position).getHyperLink();
 				}
@@ -541,9 +540,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 		if (debugTarget != null && !(debugTarget.isTerminated() || debugTarget.isDisconnected())) {
 			DebugEventWaiter waiter = new DebugElementEventWaiter(DebugEvent.TERMINATE, debugTarget);
 			removeAllBreakpoints();
-			IThread[] threads = debugTarget.getThreads();
-			for (int i = 0; i < threads.length; i++) {
-				IThread thread = threads[i];
+			for (IThread thread : debugTarget.getThreads()) {
 				try {
 					if (thread.isSuspended()) {
 						thread.resume();

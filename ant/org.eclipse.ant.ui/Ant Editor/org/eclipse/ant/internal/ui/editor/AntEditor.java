@@ -1217,9 +1217,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		if (config == null) {
 			return; // editor has been disposed.
 		}
-		IAutoEditStrategy[] strategies = config.getAutoEditStrategies(getViewer(), null);
-		for (int i = 0; i < strategies.length; i++) {
-			IAutoEditStrategy strategy = strategies[i];
+		for (IAutoEditStrategy strategy : config.getAutoEditStrategies(getViewer(), null)) {
 			if (strategy instanceof AntAutoEditStrategy) {
 				((AntAutoEditStrategy) strategy).reconciled();
 			}
@@ -1400,8 +1398,8 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		if (annotationModel instanceof IAnnotationModelExtension) {
 			((IAnnotationModelExtension) annotationModel).replaceAnnotations(fOccurrenceAnnotations, null);
 		} else {
-			for (int i = 0, length = fOccurrenceAnnotations.length; i < length; i++) {
-				annotationModel.removeAnnotation(fOccurrenceAnnotations[i]);
+			for (Annotation annotation : fOccurrenceAnnotations) {
+				annotationModel.removeAnnotation(annotation);
 			}
 		}
 		fOccurrenceAnnotations = null;

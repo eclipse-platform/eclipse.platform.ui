@@ -158,8 +158,7 @@ public final class AntLaunchingUtil {
 	 */
 	public static String getAntHome(ILaunchConfiguration configuration) throws CoreException {
 		IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedRuntimeClasspath(configuration);
-		for (int i = 0; i < entries.length; i++) {
-			IRuntimeClasspathEntry entry = entries[i];
+		for (IRuntimeClasspathEntry entry : entries) {
 			if (entry.getType() == IRuntimeClasspathEntry.OTHER) {
 				IRuntimeClasspathEntry2 entry2 = (IRuntimeClasspathEntry2) entry;
 				if (entry2.getTypeId().equals(AntHomeClasspathEntry.TYPE_ID)) {
@@ -212,8 +211,7 @@ public final class AntLaunchingUtil {
 		IRuntimeClasspathEntry[] unresolved = JavaRuntime.computeUnresolvedRuntimeClasspath(config);
 		// don't consider bootpath entries
 		List<IRuntimeClasspathEntry> userEntries = new ArrayList<>(unresolved.length);
-		for (int i = 0; i < unresolved.length; i++) {
-			IRuntimeClasspathEntry entry = unresolved[i];
+		for (IRuntimeClasspathEntry entry : unresolved) {
 			if (entry.getClasspathProperty() == IRuntimeClasspathEntry.USER_CLASSES) {
 				userEntries.add(entry);
 			}
@@ -368,8 +366,7 @@ public final class AntLaunchingUtil {
 			if (oldAntHome != null) {
 				IRuntimeClasspathEntry[] entries = JavaRuntime.computeUnresolvedRuntimeClasspath(workingCopy);
 				List<String> mementos = new ArrayList<>(entries.length);
-				for (int i = 0; i < entries.length; i++) {
-					IRuntimeClasspathEntry entry = entries[i];
+				for (IRuntimeClasspathEntry entry : entries) {
 					if (entry.getType() == IRuntimeClasspathEntry.OTHER) {
 						IRuntimeClasspathEntry2 entry2 = (IRuntimeClasspathEntry2) entry;
 						if (entry2.getTypeId().equals(AntHomeClasspathEntry.TYPE_ID)) {

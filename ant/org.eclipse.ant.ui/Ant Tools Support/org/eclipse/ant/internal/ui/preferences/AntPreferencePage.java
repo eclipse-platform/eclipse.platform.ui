@@ -300,9 +300,9 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 	 */
 	@Override
 	public boolean performCancel() {
-		for (int i = 0; i < fAppearanceColorListModel.length; i++) {
-			String preference = fAppearanceColorListModel[i][1];
-			PreferenceConverter.setValue(getPreferenceStore(), preference, StringConverter.asRGB(fAppearanceColorListModel[i][2]));
+		for (String[] colorModel : fAppearanceColorListModel) {
+			String preference = colorModel[1];
+			PreferenceConverter.setValue(getPreferenceStore(), preference, StringConverter.asRGB(colorModel[2]));
 		}
 		return super.performCancel();
 	}
@@ -349,8 +349,8 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 	@Override
 	protected void initialize() {
 		super.initialize();
-		for (int i = 0; i < fAppearanceColorListModel.length; i++) {
-			fConsoleColorList.add(fAppearanceColorListModel[i][0]);
+		for (String[] colorModel : fAppearanceColorListModel) {
+			fConsoleColorList.add(colorModel[0]);
 		}
 		fConsoleColorList.getDisplay().asyncExec(() -> {
 			if (fConsoleColorList != null && !fConsoleColorList.isDisposed()) {
@@ -365,8 +365,8 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 	 */
 	@Override
 	protected void performDefaults() {
-		for (int i = 0; i < fAppearanceColorListModel.length; i++) {
-			String key = fAppearanceColorListModel[i][1];
+		for (String[] colorModel : fAppearanceColorListModel) {
+			String key = colorModel[1];
 			PreferenceConverter.setValue(getPreferenceStore(), key, PreferenceConverter.getDefaultColor(getPreferenceStore(), key));
 		}
 		handleAppearanceColorListSelection();

@@ -145,9 +145,7 @@ public class AntClasspathBlock {
 	private List<IAntClasspathEntry> getOrderedSelection(IClasspathEntry parent) {
 		List<IAntClasspathEntry> targets = new ArrayList<>();
 		List<?> selection = ((IStructuredSelection) treeViewer.getSelection()).toList();
-		IAntClasspathEntry[] entries = parent.getEntries();
-		for (int i = 0; i < entries.length; i++) {
-			IAntClasspathEntry target = entries[i];
+		for (IAntClasspathEntry target : parent.getEntries()) {
 			if (selection.contains(target)) {
 				targets.add(target);
 			}
@@ -250,11 +248,9 @@ public class AntClasspathBlock {
 			return;
 		}
 		IPath filterPath = new Path(dialog.getFilterPath());
-		String[] results = dialog.getFileNames();
 		AntClasspathContentProvider contentProvider = (AntClasspathContentProvider) treeViewer.getContentProvider();
 		contentProvider.setRefreshEnabled(false);
-		for (int i = 0; i < results.length; i++) {
-			String jarName = results[i];
+		for (String jarName : dialog.getFileNames()) {
 			try {
 				IPath path = filterPath.append(jarName).makeAbsolute();
 				URL url = new URL(IAntCoreConstants.FILE_PROTOCOL + path.toOSString());
@@ -288,11 +284,10 @@ public class AntClasspathBlock {
 			IAntClasspathEntry entry = iterator.next();
 			URL url = entry.getEntryURL();
 			if (url != null) {
-				String file = url.getFile();
-				if (file != null && file.length() > 0) {
-					IFile[] files = ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(new Path(file).toFile().toURI());
-					for (int i = 0; i < files.length; i++) {
-						selectedPaths.add(files[i].getFullPath());
+				String fileName = url.getFile();
+				if (fileName != null && fileName.length() > 0) {
+					for (IFile file : ResourcesPlugin.getWorkspace().getRoot().findFilesForLocationURI(new Path(fileName).toFile().toURI())) {
+						selectedPaths.add(file.getFullPath());
 					}
 				}
 			}
@@ -303,8 +298,8 @@ public class AntClasspathBlock {
 		if (paths != null && paths.length > 0) {
 			AntClasspathContentProvider contentProvider = (AntClasspathContentProvider) treeViewer.getContentProvider();
 			contentProvider.setRefreshEnabled(false);
-			for (int i = 0; i < paths.length; i++) {
-				String varExpression = VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", paths[i].toString()); //$NON-NLS-1$
+			for (IPath path : paths) {
+				String varExpression = VariablesPlugin.getDefault().getStringVariableManager().generateVariableExpression("workspace_loc", path.toString()); //$NON-NLS-1$
 				contentProvider.add(currentParent, varExpression);
 			}
 			contentProvider.setRefreshEnabled(true);
@@ -500,8 +495,8 @@ public class AntClasspathBlock {
 		String[] names = rootDir.list();
 		if (names != null) {
 			Arrays.sort(names);
-			for (int i = 0; i < names.length; i++) {
-				File file = new File(rootDir, names[i]);
+			for (String name : names) {
+				File file = new File(rootDir, name);
 				if (file.isFile() && file.getPath().endsWith(".jar")) { //$NON-NLS-1$
 					try {
 						URL url = new URL(IAntCoreConstants.FILE_PROTOCOL + file.getAbsolutePath());
@@ -572,16 +567,14 @@ public class AntClasspathBlock {
 			return Collections.EMPTY_LIST;
 		}
 		List<String> found = new ArrayList<>(2);
-		for (int i = 0; i < classpathEntries.length; i++) {
+		for (Object entry : classpathEntries) {
 			String file;
-			Object entry = classpathEntries[i];
 			if (entry instanceof URL) {
 				file = ((URL) entry).getFile();
 			} else {
 				file = entry.toString();
 			}
-			for (int j = 0; j < suffixes.length; j++) {
-				String suffix = suffixes[j];
+			for (String suffix : suffixes) {
 				if (file.endsWith(suffix)) {
 					found.add(suffix);
 				}

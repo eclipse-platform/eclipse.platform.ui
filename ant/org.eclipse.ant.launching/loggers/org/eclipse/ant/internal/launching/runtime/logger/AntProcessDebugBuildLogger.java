@@ -286,8 +286,8 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 		}
 		int lineNumber = fDebugState.getLineNumber(location);
 		File locationFile = new File(fDebugState.getFileName(location));
-		for (int i = 0; i < fBreakpoints.size(); i++) {
-			ILineBreakpoint breakpoint = (ILineBreakpoint) fBreakpoints.get(i);
+		for (IBreakpoint bp : fBreakpoints) {
+			ILineBreakpoint breakpoint = (ILineBreakpoint) bp;
 			int breakpointLineNumber;
 			try {
 				if (!breakpoint.isEnabled()) {

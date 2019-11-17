@@ -152,8 +152,7 @@ public class AntJRETab extends JavaJRETab {
 				IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
 				String[] arguments = ExternalToolsUtil.parseStringIntoList(args);
 				if (arguments != null) {
-					for (int i = 0; i < arguments.length; i++) {
-						String arg = arguments[i];
+					for (String arg : arguments) {
 						if (arg.equals("-logger")) { //$NON-NLS-1$
 							userLogger = true;
 							break;

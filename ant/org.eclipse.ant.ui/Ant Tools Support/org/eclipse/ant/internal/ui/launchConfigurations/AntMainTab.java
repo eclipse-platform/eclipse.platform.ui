@@ -244,9 +244,7 @@ public class AntMainTab extends ExternalToolsMainTab {
 	private void updateTargetsTab() {
 		// the location has changed...set the targets tab to
 		// need to be recomputed
-		ILaunchConfigurationTab[] tabs = getLaunchConfigurationDialog().getTabs();
-		for (int i = 0; i < tabs.length; i++) {
-			ILaunchConfigurationTab tab = tabs[i];
+		for (ILaunchConfigurationTab tab : getLaunchConfigurationDialog().getTabs()) {
 			if (tab instanceof AntTargetsTab) {
 				((AntTargetsTab) tab).setDirty(true);
 				break;

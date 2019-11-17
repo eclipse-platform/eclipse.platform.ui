@@ -303,9 +303,8 @@ public class AntBuilderTargetsTab extends AbstractLaunchConfigurationTab {
 		catch (CoreException e) {
 			AntUIPlugin.log("Error reading configuration", e); //$NON-NLS-1$
 		}
-		int buildTypes[] = BuilderCoreUtils.buildTypesToArray(buildKindString);
-		for (int i = 0; i < buildTypes.length; i++) {
-			switch (buildTypes[i]) {
+		for (int buildType : BuilderCoreUtils.buildTypesToArray(buildKindString)) {
+			switch (buildType) {
 				case IncrementalProjectBuilder.FULL_BUILD:
 					fAfterCleanTargetText.setEnabled(true);
 					break;

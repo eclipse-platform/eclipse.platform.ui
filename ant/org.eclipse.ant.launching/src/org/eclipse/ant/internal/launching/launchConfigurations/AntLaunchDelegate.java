@@ -391,16 +391,13 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
 		if (propertyFiles == null) { // global
-			String[] files = prefs.getCustomPropertyFiles();
-			for (int i = 0; i < files.length; i++) {
-				String path = files[i];
+			for (String path : prefs.getCustomPropertyFiles()) {
 				commandLine.append(" -propertyfile \""); //$NON-NLS-1$
 				commandLine.append(path);
 				commandLine.append('\"');
 			}
 		} else {// "local" configuration
-			for (int i = 0; i < propertyFiles.length; i++) {
-				String path = propertyFiles[i];
+			for (String path : propertyFiles) {
 				commandLine.append(" -propertyfile \""); //$NON-NLS-1$
 				commandLine.append(path);
 				commandLine.append('\"');
@@ -435,8 +432,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 		}
 		boolean useGlobalProperties = userProperties == null || (separateVM && userProperties.size() == numberOfEclipseProperties);
 		if (useGlobalProperties) {
-			for (Iterator<Property> iter = properties.iterator(); iter.hasNext();) {
-				Property property = iter.next();
+			for (Property property : properties) {
 				String key = property.getName();
 				String value = property.getValue(false);
 				if (value != null) {
@@ -497,9 +493,9 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 		commandLine.append('\"');
 
 		if (targets != null) {
-			for (int i = 0; i < targets.length; i++) {
+			for (String target : targets) {
 				commandLine.append(" \""); //$NON-NLS-1$
-				commandLine.append(targets[i]);
+				commandLine.append(target);
 				commandLine.append('\"');
 			}
 		}
@@ -584,8 +580,8 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 		delegate.preLaunchCheck(copy, ILaunchManager.RUN_MODE, subMonitor);
 		delegate.launch(copy, ILaunchManager.RUN_MODE, launch, subMonitor);
 		final IProcess[] processes = launch.getProcesses();
-		for (int i = 0; i < processes.length; i++) {
-			setProcessAttributes(processes[i], idStamp, null);
+		for (IProcess process : processes) {
+			setProcessAttributes(process, idStamp, null);
 		}
 
 		if (AntLaunchingUtil.isLaunchInBackground(copy)) {
@@ -599,10 +595,9 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 			IDebugEventSetListener listener = new IDebugEventSetListener() {
 				@Override
 				public void handleDebugEvents(DebugEvent[] events) {
-					for (int i = 0; i < events.length; i++) {
-						DebugEvent event = events[i];
-						for (int j = 0, numProcesses = processes.length; j < numProcesses; j++) {
-							if (event.getSource() == processes[j] && event.getKind() == DebugEvent.TERMINATE) {
+					for (DebugEvent event : events) {
+						for (IProcess process : processes) {
+							if (event.getSource() == process && event.getKind() == DebugEvent.TERMINATE) {
 								terminated.set(true);
 								break;
 							}

@@ -80,8 +80,7 @@ public class AntModelCore implements IBreakpointsListener {
 		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
 			@Override
 			public void run(IProgressMonitor monitor) throws CoreException {
-				for (int i = 0; i < breakpoints.length; i++) {
-					IBreakpoint breakpoint = breakpoints[i];
+				for (IBreakpoint breakpoint : breakpoints) {
 					if (breakpoint instanceof AntLineBreakpoint) {
 						IMarker marker = breakpoint.getMarker();
 						if (marker.exists()) {

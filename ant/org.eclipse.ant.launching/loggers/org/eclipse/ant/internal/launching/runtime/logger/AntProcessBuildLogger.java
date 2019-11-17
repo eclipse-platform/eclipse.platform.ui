@@ -185,9 +185,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 	 */
 	protected AntProcess getAntProcess(String processId) {
 		if (fProcess == null && processId != null) {
-			IProcess[] all = DebugPlugin.getDefault().getLaunchManager().getProcesses();
-			for (int i = 0; i < all.length; i++) {
-				IProcess process = all[i];
+			for (IProcess process : DebugPlugin.getDefault().getLaunchManager().getProcesses()) {
 				if (process instanceof AntProcess && processId.equals(process.getAttribute(AbstractEclipseBuildLogger.ANT_PROCESS_ID))) {
 					fProcess = (AntProcess) process;
 					break;

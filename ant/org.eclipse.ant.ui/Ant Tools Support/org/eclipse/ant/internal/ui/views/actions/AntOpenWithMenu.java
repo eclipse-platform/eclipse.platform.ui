@@ -211,8 +211,7 @@ public class AntOpenWithMenu extends ContributionItem {
 		boolean defaultFound = false;
 		boolean antFound = false;
 		List<String> alreadyAddedEditors = new ArrayList<>(editors.length);
-		for (int i = 0; i < editors.length; i++) {
-			IEditorDescriptor editor = editors[i];
+		for (IEditorDescriptor editor : editors) {
 			if (alreadyAddedEditors.contains(editor.getId())) {
 				continue;
 			}

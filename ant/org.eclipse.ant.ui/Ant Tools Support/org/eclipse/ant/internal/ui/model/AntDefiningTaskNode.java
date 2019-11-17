@@ -158,14 +158,14 @@ public class AntDefiningTaskNode extends AntTaskNode {
 
 		StringBuilder buff = new StringBuilder();
 		File file = null;
-		for (int i = 0; i < antClasspath.length; i++) {
+		for (URL url : antClasspath) {
 			try {
 				try {
-					URL thisURL = URIUtil.toURI(antClasspath[i]).toURL();
+					URL thisURL = URIUtil.toURI(url).toURL();
 					file = URIUtil.toFile(FileLocator.toFileURL(thisURL).toURI());
 				}
 				catch (URISyntaxException e) {
-					file = new File(FileLocator.toFileURL(antClasspath[i]).getPath());
+					file = new File(FileLocator.toFileURL(url).getPath());
 					AntUIPlugin.log(e);
 					e.printStackTrace();
 				}

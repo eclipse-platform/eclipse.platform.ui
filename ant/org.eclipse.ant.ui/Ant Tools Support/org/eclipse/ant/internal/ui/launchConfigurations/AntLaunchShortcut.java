@@ -180,9 +180,8 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 		IContainer lparent = parent;
 		IResource file = null;
 		while (file == null || file.getType() != IResource.FILE) {
-			for (int i = 0; i < names.length; i++) {
-				String string = names[i];
-				file = lparent.findMember(string);
+			for (String name : names) {
+				file = lparent.findMember(name);
 				if (file != null && file.getType() == IResource.FILE) {
 					break;
 				}
@@ -212,12 +211,12 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 				ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
 				ArrayList<ILaunchConfiguration> list = new ArrayList<>();
 				IPath location = null;
-				for (int i = 0; i < configs.length; i++) {
-					if (configs[i].exists()) {
+				for (ILaunchConfiguration config : configs) {
+					if (config.exists()) {
 						try {
-							location = ExternalToolsUtil.getLocation(configs[i]);
+							location = ExternalToolsUtil.getLocation(config);
 							if (location != null && location.equals(filepath)) {
-								list.add(configs[i]);
+								list.add(config);
 							}
 						}
 						catch (CoreException ce) {
@@ -433,11 +432,10 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 				ILaunchConfigurationType type = manager.getLaunchConfigurationType(IAntLaunchConstants.ID_ANT_LAUNCH_CONFIGURATION_TYPE);
 				if (type != null) {
 					try {
-						ILaunchConfiguration[] configs = manager.getLaunchConfigurations(type);
-						for (int i = 0; i < configs.length; i++) {
+						for (ILaunchConfiguration config : manager.getLaunchConfigurations(type)) {
 							try {
-								if (filePath.equals(ExternalToolsUtil.getLocation(configs[i]))) {
-									validConfigs.add(configs[i]);
+								if (filePath.equals(ExternalToolsUtil.getLocation(config))) {
+									validConfigs.add(config);
 								}
 							}
 							catch (CoreException ce) {

@@ -473,8 +473,7 @@ public class AntModel implements IAntModel {
 		if (fProperties != null) {
 			Pattern pattern = Pattern.compile("\\$\\{.*_prompt.*\\}"); //$NON-NLS-1$
 			IStringVariableManager manager = VariablesPlugin.getDefault().getStringVariableManager();
-			for (Iterator<String> iter = fProperties.keySet().iterator(); iter.hasNext();) {
-				String name = iter.next();
+			for (String name : fProperties.keySet()) {
 				String value = fProperties.get(name);
 				if (!pattern.matcher(value).find()) {
 					try {
@@ -552,8 +551,7 @@ public class AntModel implements IAntModel {
 	private void setGlobalProperties(Project project) {
 		List<Property> properties = AntCorePlugin.getPlugin().getPreferences().getProperties();
 		if (properties != null) {
-			for (Iterator<Property> iter = properties.iterator(); iter.hasNext();) {
-				Property property = iter.next();
+			for (Property property : properties) {
 				String value = property.getValue(true);
 				if (value != null) {
 					project.setUserProperty(property.getName(), value);
@@ -642,11 +640,9 @@ public class AntModel implements IAntModel {
 		}
 		String buildFileNames = AntUIPlugin.getDefault().getCombinedPreferenceStore().getString(AntEditorPreferenceConstants.BUILDFILE_NAMES_TO_IGNORE);
 		if (buildFileNames.length() > 0) {
-			String[] names = AntUtil.parseString(buildFileNames, ","); //$NON-NLS-1$
 			String editedFileName = getEditedFile().getName();
-			for (int i = 0; i < names.length; i++) {
-				String string = names[i];
-				if (string.trim().equals(editedFileName)) {
+			for (String fileName : AntUtil.parseString(buildFileNames, ",")) { //$NON-NLS-1$
+				if (fileName.trim().equals(editedFileName)) {
 					fDoNotReportProblems = true;
 					return fDoNotReportProblems;
 				}
@@ -1839,8 +1835,7 @@ public class AntModel implements IAntModel {
 				// update the data structures for the new node as the offset may have changed.
 				List<String> tasks = fDefinerNodeIdentifierToDefinedTasks.get(nodeIdentifier);
 				if (tasks != null) {
-					for (Iterator<String> iter = tasks.iterator(); iter.hasNext();) {
-						String taskName = iter.next();
+					for (String taskName : tasks) {
 						fTaskNameToDefiningNode.put(taskName, node);
 					}
 				}

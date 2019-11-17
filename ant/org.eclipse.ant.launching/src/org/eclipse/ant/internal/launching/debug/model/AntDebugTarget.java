@@ -407,12 +407,10 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 		if (!manager.isEnabled()) {
 			return;
 		}
-		IBreakpoint[] breakpoints = manager.getBreakpoints(IAntDebugConstants.ID_ANT_DEBUG_MODEL);
-		for (int i = 0; i < breakpoints.length; i++) {
-			IBreakpoint breakpoint = breakpoints[i];
+		for (IBreakpoint breakpoint : manager.getBreakpoints(IAntDebugConstants.ID_ANT_DEBUG_MODEL)) {
 			try {
 				if (breakpoint.isEnabled()) {
-					breakpointAdded(breakpoints[i]);
+					breakpointAdded(breakpoint);
 				}
 			}
 			catch (CoreException e) {
@@ -478,10 +476,9 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 		String[] datum = event.split(DebugMessageIds.MESSAGE_DELIMITER);
 		String fileName = datum[1];
 		int lineNumber = Integer.parseInt(datum[2]);
-		IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(IAntDebugConstants.ID_ANT_DEBUG_MODEL);
 		boolean found = false;
-		for (int i = 0; i < breakpoints.length; i++) {
-			ILineBreakpoint lineBreakpoint = (ILineBreakpoint) breakpoints[i];
+		for (IBreakpoint breakpoint : DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(IAntDebugConstants.ID_ANT_DEBUG_MODEL)) {
+			ILineBreakpoint lineBreakpoint = (ILineBreakpoint) breakpoint;
 			if (setThreadBreakpoint(lineBreakpoint, lineNumber, fileName)) {
 				found = true;
 				break;
@@ -536,8 +533,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	 */
 	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
-		for (int i = 0; i < events.length; i++) {
-			DebugEvent event = events[i];
+		for (DebugEvent event : events) {
 			if (event.getKind() == DebugEvent.TERMINATE && event.getSource().equals(fProcess)) {
 				terminated();
 			}
@@ -551,9 +547,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 	 */
 	@Override
 	public void breakpointManagerEnablementChanged(boolean enabled) {
-		IBreakpoint[] breakpoints = DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(IAntDebugConstants.ID_ANT_DEBUG_MODEL);
-		for (int i = 0; i < breakpoints.length; i++) {
-			IBreakpoint breakpoint = breakpoints[i];
+		for (IBreakpoint breakpoint : DebugPlugin.getDefault().getBreakpointManager().getBreakpoints(IAntDebugConstants.ID_ANT_DEBUG_MODEL)) {
 			if (enabled) {
 				breakpointAdded(breakpoint);
 			} else {

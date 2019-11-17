@@ -327,10 +327,8 @@ public abstract class AntPage {
 
 		Object[] elements = contentProvider.getElements(tableViewer.getInput());
 		List<Object> contents = new ArrayList<>(elements.length);
-		Object element;
 		AntObject antObject;
-		for (int i = 0; i < elements.length; i++) {
-			element = elements[i];
+		for (Object element : elements) {
 			if (element instanceof AntObject) {
 				antObject = (AntObject) element;
 				if (forDisplay) {

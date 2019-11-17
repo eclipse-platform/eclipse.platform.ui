@@ -117,17 +117,12 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 		ArrayList<IRuntimeClasspathEntry> libs = new ArrayList<>(40);
 		AntCorePreferences preferences = AntCorePlugin.getPlugin().getPreferences();
 		if (antHomeLocation == null) {
-			IAntClasspathEntry[] entries = preferences.getAntHomeClasspathEntries();
-			for (int i = 0; i < entries.length; i++) {
-				IAntClasspathEntry entry = entries[i];
+			for (IAntClasspathEntry entry : preferences.getAntHomeClasspathEntries()) {
 				libs.add(JavaRuntime.newStringVariableClasspathEntry(entry.getLabel()));
 			}
 		} else {
-			File lib = resolveAntHome();
 			IPath libDir = new Path(antHomeLocation).append("lib"); //$NON-NLS-1$
-			String[] fileNames = lib.list();
-			for (int i = 0; i < fileNames.length; i++) {
-				String name = fileNames[i];
+			for (String name : resolveAntHome().list()) {
 				IPath path = new Path(name);
 				String fileExtension = path.getFileExtension();
 				if ("jar".equalsIgnoreCase(fileExtension)) { //$NON-NLS-1$
