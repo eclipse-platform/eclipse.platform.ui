@@ -45,8 +45,8 @@ public class SWTEventHelper {
 
 	public static void pressKeyCodeCombination(Display display, int[] keyCodes,
 			boolean runEventQueue) {
-		for (int i = 0; i < keyCodes.length; i++)
-			keyCodeDown(display, keyCodes[i], runEventQueue);
+		for (int keyCode : keyCodes)
+			keyCodeDown(display, keyCode, runEventQueue);
 		for (int i = keyCodes.length - 1; i >= 0; i--)
 			keyCodeUp(display, keyCodes[i], runEventQueue);
 	}
@@ -94,8 +94,8 @@ public class SWTEventHelper {
 
 	public static void pressKeyCharCombination(Display display,
 			char[] keyChars, boolean runEventQueue) {
-		for (int i = 0; i < keyChars.length; i++)
-			keyCharDown(display, keyChars[i], runEventQueue);
+		for (char keyChar : keyChars)
+			keyCharDown(display, keyChar, runEventQueue);
 		for (int i = keyChars.length - 1; i >= 0; i--)
 			keyCharUp(display, keyChars[i], runEventQueue);
 	}

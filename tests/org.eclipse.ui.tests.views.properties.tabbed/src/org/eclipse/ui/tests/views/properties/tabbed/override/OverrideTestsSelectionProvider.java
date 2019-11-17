@@ -74,9 +74,8 @@ public class OverrideTestsSelectionProvider implements ISelectionProvider {
 	 */
 	public void selectionChanged(final SelectionChangedEvent event) {
 		// pass on the notification to listeners
-		Object[] listeners = selectionChangedListeners.getListeners();
-		for (int i = 0; i < listeners.length; ++i) {
-			final ISelectionChangedListener l = (ISelectionChangedListener) listeners[i];
+		for (Object listener : selectionChangedListeners.getListeners()) {
+			final ISelectionChangedListener l = (ISelectionChangedListener) listener;
 			l.selectionChanged(event);
 		}
 	}

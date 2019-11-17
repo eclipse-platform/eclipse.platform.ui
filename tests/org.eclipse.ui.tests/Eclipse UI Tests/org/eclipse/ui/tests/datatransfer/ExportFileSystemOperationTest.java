@@ -210,8 +210,7 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 	}
 
 	private void verifyFiles(List<IResource> resources) {
-		for (int i = 0; i < resources.size(); i++){
-			IResource resource = resources.get(i);
+		for (IResource resource : resources) {
 			assertTrue(
 				"Export should have exported " + resource.getName(),
 				isFile(resource));
@@ -244,8 +243,7 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 		assertEquals("Export failed to Export all directories",
 				folderCount, directories.size());
 
-		for (int i = 0; i < directories.size(); i++) {
-			File directory = directories.get(i);
+		for (File directory : directories) {
 			assertTrue("Export failed to export directory " + directory.getName(), directory.exists());
 			verifyFolder(directory);
 		}

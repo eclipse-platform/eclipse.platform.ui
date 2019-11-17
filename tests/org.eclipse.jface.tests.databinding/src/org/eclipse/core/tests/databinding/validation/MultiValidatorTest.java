@@ -24,7 +24,6 @@ import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.databinding.DataBindingContext;
@@ -396,8 +395,8 @@ public class MultiValidatorTest extends AbstractDefaultRealmTestCase {
 		validator = new MultiValidator() {
 			@Override
 			protected IStatus validate() {
-				for (Iterator<DependencyObservable> it = dependencies.iterator(); it.hasNext();)
-					ObservableTracker.getterCalled(it.next());
+				for (DependencyObservable dependencyObservable : dependencies)
+					ObservableTracker.getterCalled(dependencyObservable);
 				return null;
 			}
 		};

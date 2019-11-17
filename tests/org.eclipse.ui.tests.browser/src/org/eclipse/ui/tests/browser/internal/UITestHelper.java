@@ -72,11 +72,7 @@ public class UITestHelper {
 			dialog = new PreferenceDialogWrapper(getShell(), manager);
 			dialog.create();
 
-			for (Iterator<IPreferenceNode> iterator = manager.getElements(PreferenceManager.PRE_ORDER)
-					.iterator();
-				 iterator.hasNext();)
-			{
-				IPreferenceNode node = iterator.next();
+			for (IPreferenceNode node : manager.getElements(PreferenceManager.PRE_ORDER)) {
 				if ( node.getId().equals(id) ) {
 					dialog.showPage(node);
 					break;

@@ -90,8 +90,7 @@ public abstract class ViewerComparatorTest extends ViewerTestCase {
 		 * @param change
 		 */
 		public void fireModelChanged(ComparatorModelChange change) {
-			for (int i = 0; i < fListeners.size(); ++i) {
-				IComparatorModelListener listener = fListeners.get(i);
+			for (IComparatorModelListener listener : fListeners) {
 				listener.modelChanged(change);
 			}
 		}
