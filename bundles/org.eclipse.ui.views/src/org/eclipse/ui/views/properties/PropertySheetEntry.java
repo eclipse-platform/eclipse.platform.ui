@@ -552,8 +552,8 @@ public class PropertySheetEntry extends EventManager implements IPropertySheetEn
 		}
 
 		// Dispose of entries which are no longer needed
-		for (int i = 0; i < entriesToDispose.size(); i++) {
-			((IPropertySheetEntry) entriesToDispose.get(i)).dispose();
+		for (PropertySheetEntry element : entriesToDispose) {
+			((IPropertySheetEntry) element).dispose();
 		}
 	}
 

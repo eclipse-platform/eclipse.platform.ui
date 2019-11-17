@@ -151,8 +151,8 @@ public class TabbedPropertyRegistryClassSectionFilter {
 		ArrayList<String> result = new ArrayList<>();
 		// add classes
 		List<Class<?>> classes = computeClassOrder(target);
-		for (Iterator<Class<?>> i = classes.iterator(); i.hasNext();) {
-			result.add(i.next().getName());
+		for (Class<?> curclass : classes) {
+			result.add(curclass.getName());
 		}
 		// add interfaces
 		result.addAll(computeInterfaceOrder(classes));
@@ -172,8 +172,8 @@ public class TabbedPropertyRegistryClassSectionFilter {
 	private List<String> computeInterfaceOrder(List<Class<?>> classes) {
 		List<String> result = new ArrayList<>(4);
 		Map<Class<?>, Class<?>> seen = new HashMap<>(4);
-		for (Iterator<Class<?>> iter = classes.iterator(); iter.hasNext();) {
-			Class<?>[] interfaces = iter.next().getInterfaces();
+		for (Class<?> curclass : classes) {
+			Class<?>[] interfaces = curclass.getInterfaces();
 			internalComputeInterfaceOrder(interfaces, result, seen);
 		}
 		return result;
@@ -189,8 +189,8 @@ public class TabbedPropertyRegistryClassSectionFilter {
 				newInterfaces.add(interfac);
 			}
 		}
-		for (Iterator<Class<?>> iter = newInterfaces.iterator(); iter.hasNext();) {
-			internalComputeInterfaceOrder(iter.next().getInterfaces(), result, seen);
+		for (Class<?> curclass : newInterfaces) {
+			internalComputeInterfaceOrder(curclass.getInterfaces(), result, seen);
 		}
 	}
 }

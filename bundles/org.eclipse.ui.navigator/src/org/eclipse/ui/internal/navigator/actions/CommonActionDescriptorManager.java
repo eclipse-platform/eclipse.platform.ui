@@ -125,8 +125,7 @@ public class CommonActionDescriptorManager {
 				}
 			}
 		}
-		for (int i = 0, len = list.size(); i < len; i++) {
-			CommonActionProviderDescriptor desc = list.get(i);
+		for (CommonActionProviderDescriptor desc : list) {
 			outMap.put(desc.getDefinedId(), desc);
 		}
 	}

@@ -878,9 +878,9 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 				desc.resourcesSorted = true;
 			}
 			folderNames.removeAll();
-			for (int i = 0; i < desc.resources.size(); i++) {
+			for (Object element : desc.resources) {
 				TableItem newItem = new TableItem(folderNames, SWT.NONE);
-				IResource r = (IResource) desc.resources.get(i);
+				IResource r = (IResource) element;
 				newItem.setText(getParentLabel(r));
 				newItem.setImage(getParentImage(r));
 				newItem.setData(r);
