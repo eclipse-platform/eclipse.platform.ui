@@ -80,8 +80,8 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension, IInformati
 		HTMLPrinter.addPageProlog(buffer);
 		HTMLPrinter.addSmallHeader(buffer, AntEditorTextMessages.XMLTextHover_4);
 		HTMLPrinter.startBulletList(buffer);
-		for (int i = 0; i < list.length; i++) {
-			HTMLPrinter.addBullet(buffer, list[i]);
+		for (String element : list) {
+			HTMLPrinter.addBullet(buffer, element);
 		}
 		HTMLPrinter.endBulletList(buffer);
 		HTMLPrinter.addPageEpilog(buffer);
@@ -200,16 +200,16 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension, IInformati
 		HTMLPrinter.addPageProlog(buffer);
 		if (includes != null && includes.length > 0) {
 			HTMLPrinter.addSmallHeader(buffer, AntEditorTextMessages.XMLTextHover_5);
-			for (int i = 0; i < includes.length; i++) {
-				HTMLPrinter.addBullet(buffer, includes[i]);
+			for (String include : includes) {
+				HTMLPrinter.addBullet(buffer, include);
 			}
 		}
 		HTMLPrinter.addParagraph(buffer, IAntCoreConstants.EMPTY_STRING);
 		HTMLPrinter.addParagraph(buffer, IAntCoreConstants.EMPTY_STRING);
 		if (excludes != null && excludes.length > 0) {
 			HTMLPrinter.addSmallHeader(buffer, AntEditorTextMessages.XMLTextHover_6);
-			for (int i = 0; i < excludes.length; i++) {
-				HTMLPrinter.addBullet(buffer, excludes[i]);
+			for (String exclude : excludes) {
+				HTMLPrinter.addBullet(buffer, exclude);
 			}
 		}
 		HTMLPrinter.addPageEpilog(buffer);

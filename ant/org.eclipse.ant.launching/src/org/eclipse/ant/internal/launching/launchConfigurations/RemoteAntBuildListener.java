@@ -22,7 +22,6 @@ import java.net.Socket;
 import java.net.SocketException;
 import java.net.SocketTimeoutException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -285,9 +284,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 	protected IProcess getProcess() {
 		if (fProcess == null) {
 			if (fProcessId != null) {
-				IProcess[] all = DebugPlugin.getDefault().getLaunchManager().getProcesses();
-				for (int i = 0; i < all.length; i++) {
-					IProcess process = all[i];
+				for (IProcess process : DebugPlugin.getDefault().getLaunchManager().getProcesses()) {
 					if (fProcessId.equals(process.getAttribute(AbstractEclipseBuildLogger.ANT_PROCESS_ID))) {
 						fProcess = process;
 						break;
@@ -364,8 +361,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 			return;
 		}
 		if (fMessageQueue != null) {
-			for (Iterator<String> iter = fMessageQueue.iterator(); iter.hasNext();) {
-				String oldMessage = iter.next();
+			for (String oldMessage : fMessageQueue) {
 				monitor.append(oldMessage);
 			}
 			fMessageQueue = null;
@@ -400,8 +396,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 	 */
 	@Override
 	public void launchesRemoved(ILaunch[] launches) {
-		for (int i = 0; i < launches.length; i++) {
-			ILaunch launch = launches[i];
+		for (ILaunch launch : launches) {
 			if (launch.equals(fLaunch)) {
 				shutDown();
 				return;

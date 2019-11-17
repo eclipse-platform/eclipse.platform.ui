@@ -80,8 +80,7 @@ public class SearchForBuildFilesAction extends Action {
 					 * Returns whether or not the given build file already exists in the ant view.
 					 */
 					private boolean alreadyAdded(String buildFileName) {
-						for (int j = 0; j < existingProjects.length; j++) {
-							AntProjectNode existingProject = existingProjects[j];
+						for (AntProjectNode existingProject : existingProjects) {
 							if (existingProject.getBuildFileName().equals(buildFileName)) {
 								return true;
 							}

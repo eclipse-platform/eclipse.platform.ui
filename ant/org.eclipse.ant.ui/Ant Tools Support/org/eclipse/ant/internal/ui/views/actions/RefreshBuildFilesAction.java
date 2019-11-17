@@ -62,9 +62,8 @@ public class RefreshBuildFilesAction extends Action implements IUpdate {
 		final Set<AntProjectNode> projects = getSelectedProjects();
 		if (projects.isEmpty()) {
 			// If no selection, add all
-			AntProjectNode[] allProjects = fView.getProjects();
-			for (int i = 0; i < allProjects.length; i++) {
-				projects.add(allProjects[i]);
+			for (AntProjectNode antproject : fView.getProjects()) {
+				projects.add(antproject);
 			}
 		}
 		final Iterator<AntProjectNode> iter = projects.iterator();

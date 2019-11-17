@@ -71,9 +71,7 @@ public class ProjectCreator {
 			if (classpath == null) {
 				return;
 			}
-			String[] classpaths = classpath.list();
-			for (int i = 0; i < classpaths.length; i++) {
-				String cp = classpaths[i];
+			for (String cp : classpath.list()) {
 				File classpathEntry = new File(cp);
 				if (classpathEntry.isFile()) {
 					addLibrary(javaProject, new Path(classpathEntry.getAbsolutePath()), monitor);
@@ -90,9 +88,7 @@ public class ProjectCreator {
 	}
 
 	private void createSourceDirectories(File destDir, String destDirName, org.apache.tools.ant.types.Path sourceDirs, IJavaProject javaProject, IProgressMonitor monitor) throws CoreException {
-		String[] sourceDirectories = sourceDirs.list();
-		for (int i = 0; i < sourceDirectories.length; i++) {
-			String srcDir = sourceDirectories[i];
+		for (String srcDir : sourceDirs.list()) {
 			File srcDirectory = new File(srcDir);
 			String srcDirectoryName = srcDirectory.getName();
 			String destDirPath = destDir == null ? srcDir : destDir.getAbsolutePath();
@@ -170,8 +166,8 @@ public class ProjectCreator {
 
 	private void addToClasspath(IJavaProject jproject, IClasspathEntry cpe, IProgressMonitor monitor) throws JavaModelException {
 		IClasspathEntry[] oldEntries = jproject.getRawClasspath();
-		for (int i = 0; i < oldEntries.length; i++) {
-			if (oldEntries[i].equals(cpe)) {
+		for (IClasspathEntry oldEntry : oldEntries) {
+			if (oldEntry.equals(cpe)) {
 				return;
 			}
 		}

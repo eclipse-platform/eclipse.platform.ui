@@ -190,10 +190,10 @@ public class XmlDocumentFormatter {
 
 			String startOfTag = String.valueOf(buf);
 
-			for (int i = 0; i < tagReaders.length; i++) {
-				if (startOfTag.startsWith(tagReaders[i].getStartOfTag())) {
-					tagReaders[i].setReader(reader);
-					return tagReaders[i];
+			for (TagReader tagReader : tagReaders) {
+				if (startOfTag.startsWith(tagReader.getStartOfTag())) {
+					tagReader.setReader(reader);
+					return tagReader;
 				}
 			}
 			// else

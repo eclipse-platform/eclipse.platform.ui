@@ -127,13 +127,12 @@ public class ProjectHelper {
 	}
 
 	private static void addFiles(File dir, List<File> collection) throws IOException {
-		File[] files = dir.listFiles();
 		List<File> subDirs = new ArrayList<>(2);
-		for (int i = 0; i < files.length; i++) {
-			if (files[i].isFile()) {
-				collection.add(files[i]);
-			} else if (files[i].isDirectory()) {
-				subDirs.add(files[i]);
+		for (File file : dir.listFiles()) {
+			if (file.isFile()) {
+				collection.add(file);
+			} else if (file.isDirectory()) {
+				subDirs.add(file);
 			}
 		}
 		Iterator<File> iter = subDirs.iterator();

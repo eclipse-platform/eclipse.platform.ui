@@ -307,12 +307,10 @@ public class SearchForBuildFilesDialog extends InputDialog {
 			validateInput();
 			return;
 		}
-		IAdaptable[] elements = set.getElements();
 		searchScopes = new ArrayList<>();
-		for (int i = 0; i < elements.length; i++) {
+		for (IAdaptable adaptable : set.getElements()) {
 			// Try to get an IResource object from each element
 			IResource resource = null;
-			IAdaptable adaptable = elements[i];
 			if (adaptable instanceof IResource) {
 				resource = (IResource) adaptable;
 			} else {

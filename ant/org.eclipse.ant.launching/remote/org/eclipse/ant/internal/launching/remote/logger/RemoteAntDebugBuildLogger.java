@@ -334,8 +334,7 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 		}
 		String fileName = fDebugState.getFileName(location);
 		int lineNumber = fDebugState.getLineNumber(location);
-		for (int i = 0; i < fBreakpoints.size(); i++) {
-			RemoteAntBreakpoint breakpoint = fBreakpoints.get(i);
+		for (RemoteAntBreakpoint breakpoint : fBreakpoints) {
 			if (breakpoint.isAt(fileName, lineNumber)) {
 				return breakpoint;
 			}

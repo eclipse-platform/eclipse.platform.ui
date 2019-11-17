@@ -136,10 +136,9 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 
 		if (policy.getType() == ISitePolicy.USER_EXCLUDE) {
 			ArrayList<String> detectedPlugins = new ArrayList<>(Arrays.asList(getDetectedPlugins()));
-			String[] excludedPlugins = policy.getList();
-			for (int i = 0; i < excludedPlugins.length; i++) {
-				if (detectedPlugins.contains(excludedPlugins[i]))
-					detectedPlugins.remove(excludedPlugins[i]);
+			for (String excludedPlugin : policy.getList()) {
+				if (detectedPlugins.contains(excludedPlugin))
+					detectedPlugins.remove(excludedPlugin);
 			}
 			return detectedPlugins.toArray(new String[0]);
 		}
@@ -169,21 +168,18 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		
 		// cache all the plugin entries for faster lookup later
 		Map<VersionedIdentifier, PluginEntry> cachedPlugins = new HashMap<>(pluginEntries.size());
-		for (int i=0; i<pluginEntries.size(); i++) {
-			PluginEntry p = pluginEntries.get(i);
+		for (PluginEntry p : pluginEntries) {
 			cachedPlugins.put(p.getVersionedIdentifier(), p);
 		}
 		
 		ArrayList<PluginEntry> managedPlugins = new ArrayList<>();
-		for (Iterator<IFeatureEntry> iterator=featureEntries.values().iterator(); iterator.hasNext();) {
-			IFeatureEntry feature = iterator.next();
+		for (IFeatureEntry feature : featureEntries.values()) {
 			if (!(feature instanceof FeatureEntry))
 				continue;
 			
-			PluginEntry[] plugins = ((FeatureEntry)feature).getPluginEntries();
-			for (int i=0; i<plugins.length; i++)
-				if (cachedPlugins.containsKey(plugins[i].getVersionedIdentifier()))
-					managedPlugins.add(cachedPlugins.get(plugins[i].getVersionedIdentifier()));
+			for (PluginEntry plugin : ((FeatureEntry)feature).getPluginEntries())
+				if (cachedPlugins.containsKey(plugin.getVersionedIdentifier()))
+					managedPlugins.add(cachedPlugins.get(plugin.getVersionedIdentifier()));
 					
 		}
 		return managedPlugins.toArray(new PluginEntry[managedPlugins.size()]);
@@ -193,8 +189,8 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		String[] pluginURLs = getPlugins();
 		// hash the array, for faster lookups
 		HashMap<String, String> map = new HashMap<>(pluginURLs.length);
-		for (int i=0; i<pluginURLs.length; i++)
-			map.put(pluginURLs[i], pluginURLs[i]);
+		for (String pluginURL : pluginURLs)
+			map.put(pluginURL, pluginURL);
 		
 		if (pluginEntries == null)
 				detectPlugins();
@@ -276,11 +272,11 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 				return valid;
 			});
 		
-			for (int index = 0; index < dirs.length; index++) {
+			for (File dir : dirs) {
 				try {
-					File featureXML = new File(dirs[index], FEATURE_XML);
+					File featureXML = new File(dir, FEATURE_XML);
 					if (featureXML.lastModified() <= featuresChangeStamp &&
-						dirs[index].lastModified() <= featuresChangeStamp)
+						dir.lastModified() <= featuresChangeStamp)
 						continue;
 					URL featureURL = featureXML.toURL();
 					FeatureEntry featureEntry = featureParser.parse(featureURL);
@@ -314,12 +310,11 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		File pluginsDir = new File(resolvedURL.getFile(), PLUGINS);
 		
 		if (pluginsDir.exists() && pluginsDir.isDirectory()) {
-			File[] files = pluginsDir.listFiles();
-			for (int i = 0; i < files.length; i++) {
-				if(files[i].isDirectory()){
-					detectUnpackedPlugin(files[i], compareTimeStamps);
-				}else if(files[i].getName().endsWith(".jar")){ //$NON-NLS-1$
-					detectPackedPlugin(files[i], compareTimeStamps);
+			for (File file : pluginsDir.listFiles()) {
+				if(file.isDirectory()){
+					detectUnpackedPlugin(file, compareTimeStamps);
+				}else if(file.getName().endsWith(".jar")){ //$NON-NLS-1$
+					detectPackedPlugin(file, compareTimeStamps);
 				}else{
 					// not bundle file
 				}
@@ -526,16 +521,16 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 			//        code executes early on the startup sequence we need to be
 			//        extremely mindful of performance issues.
 			// In fact, we should get the last modified from the connection
-			for (int i = 0; i < targets.length; i++)
-				result ^= targets[i].hashCode();
+			for (String target : targets)
+				result ^= target.hashCode();
 			Utils.debug("*WARNING* computing stamp using URL hashcodes only"); //$NON-NLS-1$
 		} else {
 			// compute stamp across local targets
 			File rootFile = new File(resolvedURL.getFile().replace('/', File.separatorChar));
 			if (rootFile.exists()) {
 				File f = null;
-				for (int i = 0; i < targets.length; i++) {
-					f = new File(rootFile, targets[i]);
+				for (String target : targets) {
+					f = new File(rootFile, target);
 					if (f.exists())
 						result = Math.max(result, f.lastModified());
 				}
@@ -667,9 +662,8 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		
 		// collect feature entries
 //		configElement.setAttribute(CFG_FEATURE_ENTRY_DEFAULT, defaultFeature);
-		FeatureEntry[] feats = getFeatureEntries();
-		for (int i = 0; i < feats.length; i++) {
-			Element featureElement = feats[i].toXML(doc);
+		for (FeatureEntry feat : getFeatureEntries()) {
+			Element featureElement = feat.toXML(doc);
 			siteElement.appendChild(featureElement);
 		}
 		
@@ -688,24 +682,23 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 			if (!featureXML.exists())
 				deletedFeatures.add(feature.getFeatureIdentifier());
 		}
-		for(Iterator<String> it=deletedFeatures.iterator(); it.hasNext();){
-			featureEntries.remove(it.next());
+		for (String string : deletedFeatures) {
+			featureEntries.remove(string);
 		}
 	}
 	
 	private void validatePluginEntries() {
 		File root = new File(resolvedURL.getFile().replace('/', File.separatorChar));
 		Collection<PluginEntry> deletedPlugins = new ArrayList<>();
-		for (int i=0; i<pluginEntries.size(); i++) {
-			PluginEntry plugin = pluginEntries.get(i);
+		for (PluginEntry plugin : pluginEntries) {
 			// Note: in the future, we can check for absolute url as well.
 			//       For now, feature url is plugins/org.eclipse.foo/plugin.xml
 			File pluginLocation = new File(root, plugin.getURL());
 			if (!pluginLocation.exists())
 				deletedPlugins.add(plugin);
 		}
-		for(Iterator<PluginEntry> it=deletedPlugins.iterator(); it.hasNext();){
-			pluginEntries.remove(it.next());
+		for (PluginEntry pluginEntry : deletedPlugins) {
+			pluginEntries.remove(pluginEntry);
 		}
 	}
 	
@@ -718,10 +711,9 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 	}
 	
 	public FeatureEntry getFeatureEntry(String id) {
-		FeatureEntry[] features = getFeatureEntries();
-		for (int i=0; i<features.length; i++)
-			if (features[i].getFeatureIdentifier().equals(id)) 
-				return features[i];
+		for (FeatureEntry feature : getFeatureEntries())
+			if (feature.getFeatureIdentifier().equals(id)) 
+				return feature;
 		return null;
 	}
 	

@@ -20,7 +20,6 @@ import java.io.PrintWriter;
 import java.io.StringReader;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -245,8 +244,8 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 		message.append(fProcessId);
 		sendMessage(message.toString());
 		if (fEventQueue != null) {
-			for (Iterator<BuildEvent> iter = fEventQueue.iterator(); iter.hasNext();) {
-				processEvent(iter.next());
+			for (BuildEvent buildEvent : fEventQueue) {
+				processEvent(buildEvent);
 			}
 			fEventQueue = null;
 		}
@@ -274,7 +273,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 				return;
 			}
 			if (fEventQueue == null) {
-				fEventQueue = new ArrayList<BuildEvent>(10);
+				fEventQueue = new ArrayList<>(10);
 			}
 			fEventQueue.add(event);
 			return;
