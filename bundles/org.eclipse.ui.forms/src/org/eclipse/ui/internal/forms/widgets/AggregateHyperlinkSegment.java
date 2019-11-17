@@ -45,8 +45,7 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements
 	public boolean advanceLocator(GC gc, int wHint, Locator loc,
 			Hashtable<String, Object> objectTable, boolean computeHeightOnly) {
 		boolean newLine = false;
-		for (int i = 0; i < segments.size(); i++) {
-			ParagraphSegment segment = segments.get(i);
+		for (ParagraphSegment segment : segments) {
 			if (segment.advanceLocator(gc, wHint, loc, objectTable,
 					computeHeightOnly))
 				newLine = true;
@@ -73,8 +72,7 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements
 	@Override
 	public void paint(GC gc, boolean hover, Hashtable<String, Object> resourceTable,
 			boolean selected, SelectionData selData, Rectangle repaintRegion) {
-		for (int i = 0; i < segments.size(); i++) {
-			ParagraphSegment segment = segments.get(i);
+		for (ParagraphSegment segment : segments) {
 			segment.paint(gc, hover, resourceTable, selected, selData,
 					repaintRegion);
 		}
@@ -83,8 +81,8 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements
 	@Override
 	public String getText() {
 		StringBuilder buf = new StringBuilder();
-		for (int i = 0; i < segments.size(); i++) {
-			IHyperlinkSegment segment = (IHyperlinkSegment) segments.get(i);
+		for (ParagraphSegment psegment : segments) {
+			IHyperlinkSegment segment = (IHyperlinkSegment) psegment;
 			buf.append(segment.getText());
 		}
 		return buf.toString();
@@ -93,8 +91,8 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements
 	@Override
 	public void paintFocus(GC gc, Color bg, Color fg, boolean selected,
 			Rectangle repaintRegion) {
-		for (int i = 0; i < segments.size(); i++) {
-			IHyperlinkSegment segment = (IHyperlinkSegment) segments.get(i);
+		for (ParagraphSegment psegment : segments) {
+			IHyperlinkSegment segment = (IHyperlinkSegment) psegment;
 			segment.paintFocus(gc, bg, fg, selected, repaintRegion);
 		}
 	}
@@ -116,8 +114,8 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements
 
 	@Override
 	public boolean contains(int x, int y) {
-		for (int i = 0; i < segments.size(); i++) {
-			IHyperlinkSegment segment = (IHyperlinkSegment) segments.get(i);
+		for (ParagraphSegment psegment : segments) {
+			IHyperlinkSegment segment = (IHyperlinkSegment) psegment;
 			if (segment.contains(x, y))
 				return true;
 		}
@@ -126,8 +124,8 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements
 
 	@Override
 	public boolean intersects(Rectangle rect) {
-		for (int i = 0; i < segments.size(); i++) {
-			IHyperlinkSegment segment = (IHyperlinkSegment) segments.get(i);
+		for (ParagraphSegment psegment : segments) {
+			IHyperlinkSegment segment = (IHyperlinkSegment) psegment;
 			if (segment.intersects(rect))
 				return true;
 		}
@@ -137,8 +135,7 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements
 	@Override
 	public void layout(GC gc, int width, Locator locator,
 			Hashtable<String, Object> resourceTable, boolean selected) {
-		for (int i = 0; i < segments.size(); i++) {
-			ParagraphSegment segment = segments.get(i);
+		for (ParagraphSegment segment : segments) {
 			segment.layout(gc, width, locator, resourceTable, selected);
 		}
 	}
@@ -146,16 +143,14 @@ public class AggregateHyperlinkSegment extends ParagraphSegment implements
 	@Override
 	public void computeSelection(GC gc, Hashtable<String, Object> resourceTable,
 			SelectionData selData) {
-		for (int i = 0; i < segments.size(); i++) {
-			ParagraphSegment segment = segments.get(i);
+		for (ParagraphSegment segment : segments) {
 			segment.computeSelection(gc, resourceTable, selData);
 		}
 	}
 
 	@Override
 	public void clearCache(String fontId) {
-		for (int i = 0; i < segments.size(); i++) {
-			ParagraphSegment segment = segments.get(i);
+		for (ParagraphSegment segment : segments) {
 			segment.clearCache(fontId);
 		}
 	}

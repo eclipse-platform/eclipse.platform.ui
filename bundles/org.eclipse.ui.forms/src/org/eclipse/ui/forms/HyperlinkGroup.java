@@ -183,8 +183,7 @@ public final class HyperlinkGroup extends HyperlinkSettings {
 		super.setBackground(bg);
 		isBackgroundSet = true;
 		if (links != null) {
-			for (int i = 0; i < links.size(); i++) {
-				Hyperlink label = links.get(i);
+			for (Hyperlink label : links) {
 				label.setBackground(bg);
 			}
 		}
@@ -201,8 +200,7 @@ public final class HyperlinkGroup extends HyperlinkSettings {
 		super.setForeground(fg);
 		isForegroundSet = true;
 		if (links != null) {
-			for (int i = 0; i < links.size(); i++) {
-				Hyperlink label = links.get(i);
+			for (Hyperlink label : links) {
 				label.setForeground(fg);
 			}
 		}
@@ -218,8 +216,7 @@ public final class HyperlinkGroup extends HyperlinkSettings {
 	public void setHyperlinkUnderlineMode(int mode) {
 		super.setHyperlinkUnderlineMode(mode);
 		if (links != null) {
-			for (int i = 0; i < links.size(); i++) {
-				Hyperlink label = links.get(i);
+			for (Hyperlink label : links) {
 				label.setUnderlined(mode == UNDERLINE_ALWAYS);
 			}
 		}

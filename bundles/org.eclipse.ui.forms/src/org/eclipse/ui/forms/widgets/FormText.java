@@ -1689,8 +1689,8 @@ public class FormText extends Canvas {
 				}
 			}
 		}
-		for (int i = 0; i < imagesToRemove.size(); i++) {
-			resourceTable.remove(imagesToRemove.get(i));
+		for (String element : imagesToRemove) {
+			resourceTable.remove(element);
 		}
 	}
 

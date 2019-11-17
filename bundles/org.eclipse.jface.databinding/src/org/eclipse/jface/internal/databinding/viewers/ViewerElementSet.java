@@ -80,8 +80,8 @@ public class ViewerElementSet<E> implements Set<E> {
 	@Override
 	public boolean addAll(Collection<? extends E> c) {
 		boolean changed = false;
-		for (Iterator<? extends E> iterator = c.iterator(); iterator.hasNext();)
-			changed |= wrappedSet.add(new ViewerElementWrapper<>(iterator.next(),
+		for (E name : c)
+			changed |= wrappedSet.add(new ViewerElementWrapper<>(name,
 					comparer));
 		return changed;
 	}
@@ -100,8 +100,8 @@ public class ViewerElementSet<E> implements Set<E> {
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean containsAll(Collection<?> c) {
-		for (Iterator<?> iterator = c.iterator(); iterator.hasNext();)
-			if (!wrappedSet.contains(new ViewerElementWrapper<>((E) iterator.next(), comparer)))
+		for (Object name : c)
+			if (!wrappedSet.contains(new ViewerElementWrapper<>((E) name, comparer)))
 				return false;
 		return true;
 	}
@@ -141,8 +141,8 @@ public class ViewerElementSet<E> implements Set<E> {
 	@Override
 	public boolean removeAll(Collection<?> c) {
 		boolean changed = false;
-		for (Iterator<?> iterator = c.iterator(); iterator.hasNext();)
-			changed |= remove(iterator.next());
+		for (Object name : c)
+			changed |= remove(name);
 		return changed;
 	}
 

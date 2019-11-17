@@ -413,8 +413,7 @@ public class MessageManager implements IMessageManager {
 	 * Finds the message with the provided key in the provided list.
 	 */
 	private Message findMessage(Object key, ArrayList<Message> list) {
-		for (int i = 0; i < list.size(); i++) {
-			Message message = list.get(i);
+		for (Message message : list) {
 			if (message.getKey().equals(key))
 				return message;
 		}

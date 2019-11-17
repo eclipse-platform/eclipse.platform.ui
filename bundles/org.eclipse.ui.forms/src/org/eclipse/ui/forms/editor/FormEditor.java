@@ -264,8 +264,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 	@Override
 	public boolean isDirty() {
 		if (pages != null) {
-			for (int i = 0; i < pages.size(); i++) {
-				Object page = pages.get(i);
+			for (Object page : pages) {
 				if (page instanceof IFormPage) {
 					IFormPage fpage = (IFormPage) page;
 					if (fpage.isDirty())
@@ -292,8 +291,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 
 	protected void commitPages(boolean onSave) {
 		if (pages != null) {
-			for (int i = 0; i < pages.size(); i++) {
-				Object page = pages.get(i);
+			for (Object page : pages) {
 				if (page instanceof IFormPage) {
 					IFormPage fpage = (IFormPage)page;
 					IManagedForm mform = fpage.getManagedForm();
@@ -403,8 +401,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 	@Override
 	public void dispose() {
 		super.dispose();
-		for (int i = 0; i < pages.size(); i++) {
-			Object page = pages.get(i);
+		for (Object page : pages) {
 			if (page instanceof IFormPage) {
 				IFormPage fpage = (IFormPage) page;
 				// don't dispose source pages because they will
@@ -534,10 +531,9 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 	 * @return page with the matching id or <code>null</code> if not found.
 	 */
 	public IFormPage findPage(String pageId) {
-		for (int i = 0; i < pages.size(); i++) {
-			Object page = pages.get(i);
+		for (Object page : pages) {
 			if (page instanceof IFormPage) {
-				IFormPage fpage = (IFormPage) pages.get(i);
+				IFormPage fpage = (IFormPage) page;
 				if (fpage.getId().equals(pageId))
 					return fpage;
 			}
@@ -576,8 +572,7 @@ public abstract class FormEditor extends MultiPageEditorPart  {
 	 * @see #setActivePage(String, Object)
 	 */
 	public IFormPage selectReveal(Object pageInput) {
-		for (int i = 0; i < pages.size(); i++) {
-			Object page = pages.get(i);
+		for (Object page : pages) {
 			if (page instanceof IFormPage) {
 				IFormPage fpage = (IFormPage) page;
 				if (fpage.selectReveal(pageInput))

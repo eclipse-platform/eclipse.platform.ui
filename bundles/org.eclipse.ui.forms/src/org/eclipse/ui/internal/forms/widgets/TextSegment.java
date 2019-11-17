@@ -348,8 +348,7 @@ public class TextSegment extends ParagraphSegment {
 			Rectangle repaintRegion) {
 		if (areaRectangles == null)
 			return;
-		for (int i = 0; i < areaRectangles.size(); i++) {
-			AreaRectangle areaRectangle = areaRectangles.get(i);
+		for (AreaRectangle areaRectangle : areaRectangles) {
 			Rectangle br = areaRectangle.rect;
 			int bx = br.x;
 			int by = br.y;
@@ -402,8 +401,7 @@ public class TextSegment extends ParagraphSegment {
 		int descent = fm.getDescent();
 
 		// paint area rectangles of the segment
-		for (int i = 0; i < areaRectangles.size(); i++) {
-			AreaRectangle areaRectangle = areaRectangles.get(i);
+		for (AreaRectangle areaRectangle : areaRectangles) {
 			Rectangle rect = areaRectangle.rect;
 			String text = areaRectangle.getText();
 			Point extent = gc.textExtent(text);
@@ -450,8 +448,7 @@ public class TextSegment extends ParagraphSegment {
 				gc.setFont(newFont);
 		}
 
-		for (int i = 0; i < areaRectangles.size(); i++) {
-			AreaRectangle areaRectangle = areaRectangles.get(i);
+		for (AreaRectangle areaRectangle : areaRectangles) {
 			Rectangle rect = areaRectangle.rect;
 			String text = areaRectangle.getText();
 			Point extent = gc.textExtent(text);

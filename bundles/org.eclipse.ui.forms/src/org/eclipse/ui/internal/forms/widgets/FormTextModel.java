@@ -97,8 +97,7 @@ public class FormTextModel {
 		if (paragraphs == null)
 			return ""; //$NON-NLS-1$
 		StringBuilder sbuf = new StringBuilder();
-		for (int i = 0; i < paragraphs.size(); i++) {
-			Paragraph paragraph = paragraphs.get(i);
+		for (Paragraph paragraph : paragraphs) {
 			String text = paragraph.getAccessibleText();
 			sbuf.append(text);
 		}
@@ -621,9 +620,8 @@ public class FormTextModel {
 		if (selectableSegments != null || paragraphs == null)
 			return selectableSegments;
 		Vector<ParagraphSegment> result = new Vector<>();
-		for (int i = 0; i < paragraphs.size(); i++) {
-			Paragraph p = paragraphs.get(i);
-			ParagraphSegment[] segments = p.getSegments();
+		for (Paragraph paragraph : paragraphs) {
+			ParagraphSegment[] segments = paragraph.getSegments();
 			for (ParagraphSegment segment : segments) {
 				if (segment instanceof IFocusSelectable)
 					result.add(segment);
@@ -674,9 +672,8 @@ public class FormTextModel {
 	}
 
 	public ParagraphSegment findSegmentAt(int x, int y) {
-		for (int i = 0; i < paragraphs.size(); i++) {
-			Paragraph p = paragraphs.get(i);
-			ParagraphSegment segment = p.findSegmentAt(x, y);
+		for (Paragraph paragraph : paragraphs) {
+			ParagraphSegment segment = paragraph.findSegmentAt(x, y);
 			if (segment != null)
 				return segment;
 		}
@@ -684,9 +681,8 @@ public class FormTextModel {
 	}
 
 	public void clearCache(String fontId) {
-		for (int i = 0; i < paragraphs.size(); i++) {
-			Paragraph p = paragraphs.get(i);
-			p.clearCache(fontId);
+		for (Paragraph paragraph : paragraphs) {
+			paragraph.clearCache(fontId);
 		}
 	}
 
