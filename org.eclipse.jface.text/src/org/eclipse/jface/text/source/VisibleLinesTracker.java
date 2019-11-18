@@ -1,5 +1,5 @@
-/**
- *  Copyright (c) 2018 Angelo ZERR.
+/*******************************************************************************
+ *  Copyright (c) 2018, 2019 Angelo ZERR and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -9,8 +9,9 @@
  *  SPDX-License-Identifier: EPL-2.0
  *
  *  Contributors:
- *  Angelo Zerr <angelo.zerr@gmail.com> - Bug 527720 - [CodeMining] Line number in vertical ruler can be not synchronized with line header annotation
- */
+ *      Angelo Zerr <angelo.zerr@gmail.com> - Bug 527720 - [CodeMining] Line number in vertical ruler can be not synchronized with line header annotation
+ *      Thomas Wolf <thomas.wolf@paranor.ch> - Bug 553133
+ *******************************************************************************/
 package org.eclipse.jface.text.source;
 
 import java.util.LinkedHashSet;
@@ -24,8 +25,7 @@ import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.JFaceTextUtil;
 
 /**
- * Class to track line height change of visible lines of a given {@link StyledText}.
- *
+ * Tracks line height changes of visible lines of a given {@link StyledText}.
  */
 class VisibleLinesTracker implements PaintListener {
 
@@ -37,9 +37,14 @@ class VisibleLinesTracker implements PaintListener {
 	private final ITextViewer viewer;
 
 	/**
-	 * The previous bottom line index.
+	 * The previous bottom model line index.
 	 */
-	private int oldBottom= -1;
+	private int oldModelBottom= -1;
+
+	/**
+	 * The previous bottom widget line index.
+	 */
+	private int oldWidgetBottom= -1;
 
 	/**
 	 * The previous bottom line pixel.
@@ -65,23 +70,20 @@ class VisibleLinesTracker implements PaintListener {
 	public void paintControl(PaintEvent e) {
 		StyledText textWidget= viewer.getTextWidget();
 		// track if bottom line index or bottom line pixel changed.
-		if (oldBottom == -1) {
-			oldBottom= JFaceTextUtil.getPartialBottomIndex(viewer);
-			oldBottomPixel= JFaceTextUtil.getLinePixel(textWidget, oldBottom);
+		if (oldModelBottom == -1) {
+			oldWidgetBottom= JFaceTextUtil.getPartialBottomIndex(textWidget);
+			oldModelBottom= JFaceTextUtil.widgetLine2ModelLine(viewer, oldWidgetBottom);
+			oldBottomPixel= JFaceTextUtil.getLinePixel(textWidget, oldWidgetBottom);
 			return;
 		}
-		int newBottom= JFaceTextUtil.getPartialBottomIndex(viewer);
-		if (newBottom != oldBottom) {
-			oldBottom= newBottom;
-			oldBottomPixel= JFaceTextUtil.getLinePixel(textWidget, oldBottom);
-			handlers.forEach(handler -> handler.accept(textWidget));
-			return;
-		}
-		int newBottomPixel= JFaceTextUtil.getLinePixel(textWidget, newBottom);
-		if (newBottomPixel != oldBottomPixel) {
+		int newWidgetBottom= JFaceTextUtil.getPartialBottomIndex(textWidget);
+		int newModelBottom= JFaceTextUtil.widgetLine2ModelLine(viewer, newWidgetBottom);
+		int newBottomPixel= JFaceTextUtil.getLinePixel(textWidget, newWidgetBottom);
+		if (newWidgetBottom != oldWidgetBottom || newModelBottom != oldModelBottom || newBottomPixel != oldBottomPixel) {
+			oldWidgetBottom= newWidgetBottom;
+			oldModelBottom= newModelBottom;
 			oldBottomPixel= newBottomPixel;
 			handlers.forEach(handler -> handler.accept(textWidget));
-			return;
 		}
 	}
 
