@@ -227,6 +227,7 @@
             <keywordReference id="org.eclipse.ui.editors.tabWidth"/>
             <keywordReference id="org.eclipse.ui.editors.lineNumber"/>
             <keywordReference id="org.eclipse.ui.editors.printMargin"/>
+            <keywordReference id="org.eclipse.ui.editors.annotationCodeMining"/>
       </page>
       <page
             name="%PreferencePages.Annotations"
@@ -286,6 +287,9 @@
       <keyword
             label="%preferenceKeywords.printMargin"
             id="org.eclipse.ui.editors.printMargin"/>
+      <keyword
+            label="%preferenceKeywords.annotationCodeMining"
+            id="org.eclipse.ui.editors.annotationCodeMining"/>
       <keyword
             label="%preferenceKeywords.annotations"
             id="org.eclipse.ui.editors.annotations"/>
