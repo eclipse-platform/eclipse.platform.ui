@@ -72,15 +72,15 @@ public class TextPresentationTest {
 	}
 
 	private StyleRange createStyleRange(int start, int end, int style) {
-		return createStyleRange(start, end, null, null, style);
+		return createStyleRange(start, end, style, null, null);
 	}
 
-	private StyleRange createStyleRange(int start, int end, Color foreground, Color background, int style) {
+	private StyleRange createStyleRange(int start, int end, int style, Color foreground, Color background) {
 		return new StyleRange(start, end - start, foreground, background, style);
 	}
 
-	private StyleRange createStyleRange(int start, int end, int foreground, int background, int style) {
-		return createStyleRange(start, end, createColor(foreground, foreground, foreground), createColor(background, background, background), style);
+	private StyleRange createStyleRange(int start, int end, int style, int foreground, int background) {
+		return createStyleRange(start, end, style, createColor(foreground, foreground, foreground), createColor(background, background, background));
 	}
 
 	private Display fDisplay= Display.getDefault();
@@ -151,11 +151,11 @@ public class TextPresentationTest {
 	 */
 	@Test
 	public void testMergeStyleRange1() {
-		StyleRange range= createStyleRange(0, 2, 1, -1, NORMAL);
+		StyleRange range= createStyleRange(0, 2, NORMAL, 1, -1);
 		fTextPresentation.mergeStyleRange(range);
 
 		StyleRange[] expectedAllRanges= new StyleRange[] {
-				createStyleRange(0, 2, 1, -1, NORMAL),
+				createStyleRange(  0,   2, NORMAL, 1, -1),
 				createStyleRange(  2,   4, NORMAL),
 				createStyleRange(  4,  20, BOLD),
 				createStyleRange( 20,  47, NORMAL),
@@ -166,7 +166,7 @@ public class TextPresentationTest {
 		};
 
 		StyleRange[] expectedNonDefaultRanges= new StyleRange[] {
-				createStyleRange(0, 2, 1, -1, NORMAL),
+				createStyleRange(  0,   2, NORMAL, 1, -1),
 				createStyleRange(  4,  20, BOLD),
 				createStyleRange( 47,  54, BOLD),
 				createStyleRange( 96, 102, BOLD),
@@ -180,7 +180,7 @@ public class TextPresentationTest {
 	 */
 	@Test
 	public void testMergeStyleRange2() {
-		StyleRange range= createStyleRange(138, 140, 1, -1, NORMAL);
+		StyleRange range= createStyleRange(138, 140, NORMAL, 1, -1);
 		fTextPresentation.mergeStyleRange(range);
 
 		StyleRange[] expectedAllRanges= new StyleRange[] {
@@ -191,14 +191,14 @@ public class TextPresentationTest {
 				createStyleRange( 54,  96, NORMAL),
 				createStyleRange( 96, 102, BOLD),
 				createStyleRange(102, 138, NORMAL),
-				createStyleRange(138, 140, 1, -1, NORMAL),
+				createStyleRange(138, 140, NORMAL, 1, -1),
 		};
 
 		StyleRange[] expectedNonDefaultRanges= new StyleRange[] {
 				createStyleRange(  4,  20, BOLD),
 				createStyleRange( 47,  54, BOLD),
 				createStyleRange( 96, 102, BOLD),
-				createStyleRange(138, 140, 1, -1, NORMAL),
+				createStyleRange(138, 140, NORMAL, 1, -1),
 		};
 
 		checkRegions(expectedAllRanges, expectedNonDefaultRanges);
@@ -209,13 +209,13 @@ public class TextPresentationTest {
 	 */
 	@Test
 	public void testMergeStyleRange3() {
-		StyleRange range= createStyleRange(20, 22, 1, -1, NORMAL);
+		StyleRange range= createStyleRange(20, 22, NORMAL, 1, -1);
 		fTextPresentation.mergeStyleRange(range);
 
 		StyleRange[] expectedAllRanges= new StyleRange[] {
 				createStyleRange(  0,   4, NORMAL),
 				createStyleRange(  4,  20, BOLD),
-				createStyleRange(20, 22, 1, -1, NORMAL),
+				createStyleRange( 20,  22, NORMAL, 1, -1),
 				createStyleRange( 22,  47, NORMAL),
 				createStyleRange( 47,  54, BOLD),
 				createStyleRange( 54,  96, NORMAL),
@@ -225,7 +225,7 @@ public class TextPresentationTest {
 
 		StyleRange[] expectedNonDefaultRanges= new StyleRange[] {
 				createStyleRange(  4,  20, BOLD),
-				createStyleRange(20, 22, 1, -1, NORMAL),
+				createStyleRange( 20,  22, NORMAL, 1, -1),
 				createStyleRange( 47,  54, BOLD),
 				createStyleRange( 96, 102, BOLD),
 		};
@@ -238,14 +238,14 @@ public class TextPresentationTest {
 	 */
 	@Test
 	public void testMergeStyleRange4() {
-		StyleRange range= createStyleRange(22, 24, 1, -1, NORMAL);
+		StyleRange range= createStyleRange(22, 24, NORMAL, 1, -1);
 		fTextPresentation.mergeStyleRange(range);
 
 		StyleRange[] expectedAllRanges= new StyleRange[] {
 				createStyleRange(  0,   4, NORMAL),
 				createStyleRange(  4,  20, BOLD),
 				createStyleRange( 20,  22, NORMAL),
-				createStyleRange(22, 24, 1, -1, NORMAL),
+				createStyleRange( 22,  24, NORMAL, 1, -1),
 				createStyleRange( 24,  47, NORMAL),
 				createStyleRange( 47,  54, BOLD),
 				createStyleRange( 54,  96, NORMAL),
@@ -255,7 +255,7 @@ public class TextPresentationTest {
 
 		StyleRange[] expectedNonDefaultRanges= new StyleRange[] {
 				createStyleRange(  4,  20, BOLD),
-				createStyleRange(22, 24, 1, -1, NORMAL),
+				createStyleRange( 22,  24, NORMAL, 1, -1),
 				createStyleRange( 47,  54, BOLD),
 				createStyleRange( 96, 102, BOLD),
 		};
@@ -268,14 +268,14 @@ public class TextPresentationTest {
 	 */
 	@Test
 	public void testMergeStyleRange5() {
-		StyleRange range= createStyleRange(45, 47, 1, -1, NORMAL);
+		StyleRange range= createStyleRange(45, 47, NORMAL, 1, -1);
 		fTextPresentation.mergeStyleRange(range);
 
 		StyleRange[] expectedAllRanges= new StyleRange[] {
 				createStyleRange(  0,   4, NORMAL),
 				createStyleRange(  4,  20, BOLD),
 				createStyleRange( 20,  45, NORMAL),
-				createStyleRange(45, 47, 1, -1, NORMAL),
+				createStyleRange( 45,  47, NORMAL, 1, -1),
 				createStyleRange( 47,  54, BOLD),
 				createStyleRange( 54,  96, NORMAL),
 				createStyleRange( 96, 102, BOLD),
@@ -284,7 +284,7 @@ public class TextPresentationTest {
 
 		StyleRange[] expectedNonDefaultRanges= new StyleRange[] {
 				createStyleRange(  4,  20, BOLD),
-				createStyleRange(45, 47, 1, -1, NORMAL),
+				createStyleRange( 45,  47, NORMAL, 1, -1),
 				createStyleRange( 47,  54, BOLD),
 				createStyleRange( 96, 102, BOLD),
 		};
@@ -297,14 +297,14 @@ public class TextPresentationTest {
 	 */
 	@Test
 	public void testMergeStyleRange6() {
-		StyleRange range= createStyleRange(47, 49, 1, -1, NORMAL);
+		StyleRange range= createStyleRange(47, 49, NORMAL, 1, -1);
 		fTextPresentation.mergeStyleRange(range);
 
 		StyleRange[] expectedAllRanges= new StyleRange[] {
 				createStyleRange(  0,   4, NORMAL),
 				createStyleRange(  4,  20, BOLD),
 				createStyleRange( 20,  47, NORMAL),
-				createStyleRange(47, 49, 1, -1, BOLD),
+				createStyleRange( 47,  49, BOLD, 1, -1),
 				createStyleRange( 49,  54, BOLD),
 				createStyleRange( 54,  96, NORMAL),
 				createStyleRange( 96, 102, BOLD),
@@ -313,7 +313,7 @@ public class TextPresentationTest {
 
 		StyleRange[] expectedNonDefaultRanges= new StyleRange[] {
 				createStyleRange(  4,  20, BOLD),
-				createStyleRange(47, 49, 1, -1, BOLD),
+				createStyleRange( 47,  49, BOLD, 1, -1),
 				createStyleRange( 49,  54, BOLD),
 				createStyleRange( 96, 102, BOLD),
 		};
@@ -326,7 +326,7 @@ public class TextPresentationTest {
 	 */
 	@Test
 	public void testMergeStyleRange7() {
-		StyleRange range= createStyleRange(49, 51, 1, -1, NORMAL);
+		StyleRange range= createStyleRange(49, 51, NORMAL, 1, -1);
 		fTextPresentation.mergeStyleRange(range);
 
 		StyleRange[] expectedAllRanges= new StyleRange[] {
@@ -334,7 +334,7 @@ public class TextPresentationTest {
 				createStyleRange(  4,  20, BOLD),
 				createStyleRange( 20,  47, NORMAL),
 				createStyleRange( 47,  49, BOLD),
-				createStyleRange(49, 51, 1, -1, BOLD),
+				createStyleRange( 49,  51, BOLD, 1, -1),
 				createStyleRange( 51,  54, BOLD),
 				createStyleRange( 54,  96, NORMAL),
 				createStyleRange( 96, 102, BOLD),
@@ -344,7 +344,7 @@ public class TextPresentationTest {
 		StyleRange[] expectedNonDefaultRanges= new StyleRange[] {
 				createStyleRange(  4,  20, BOLD),
 				createStyleRange( 47,  49, BOLD),
-				createStyleRange(49, 51, 1, -1, BOLD),
+				createStyleRange( 49,  51, BOLD, 1, -1),
 				createStyleRange( 51,  54, BOLD),
 				createStyleRange( 96, 102, BOLD),
 		};
@@ -357,7 +357,7 @@ public class TextPresentationTest {
 	 */
 	@Test
 	public void testMergeStyleRange8() {
-		StyleRange range= createStyleRange(52, 54, 1, -1, NORMAL);
+		StyleRange range= createStyleRange(52, 54, NORMAL, 1, -1);
 		fTextPresentation.mergeStyleRange(range);
 
 		StyleRange[] expectedAllRanges= new StyleRange[] {
@@ -365,7 +365,7 @@ public class TextPresentationTest {
 				createStyleRange(  4,  20, BOLD),
 				createStyleRange( 20,  47, NORMAL),
 				createStyleRange( 47,  52, BOLD),
-				createStyleRange(52, 54, 1, -1, BOLD),
+				createStyleRange( 52,  54, BOLD, 1, -1),
 				createStyleRange( 54,  96, NORMAL),
 				createStyleRange( 96, 102, BOLD),
 				createStyleRange(102, 140, NORMAL),
@@ -374,7 +374,7 @@ public class TextPresentationTest {
 		StyleRange[] expectedNonDefaultRanges= new StyleRange[] {
 				createStyleRange(  4,  20, BOLD),
 				createStyleRange( 47,  52, BOLD),
-				createStyleRange(52, 54, 1, -1, BOLD),
+				createStyleRange( 52,  54, BOLD, 1, -1),
 				createStyleRange( 96, 102, BOLD),
 		};
 
@@ -386,15 +386,15 @@ public class TextPresentationTest {
 	 */
 	@Test
 	public void testMergeStyleRange9() {
-		StyleRange range= createStyleRange(45, 49, 1, -1, NORMAL);
+		StyleRange range= createStyleRange(45, 49, NORMAL, 1, -1);
 		fTextPresentation.mergeStyleRange(range);
 
 		StyleRange[] expectedAllRanges= new StyleRange[] {
 				createStyleRange(  0,   4, NORMAL),
 				createStyleRange(  4,  20, BOLD),
 				createStyleRange( 20,  45, NORMAL),
-				createStyleRange(45, 47, 1, -1, NORMAL),
-				createStyleRange(47, 49, 1, -1, BOLD),
+				createStyleRange( 45,  47, NORMAL, 1, -1),
+				createStyleRange( 47,  49, BOLD,   1, -1),
 				createStyleRange( 49,  54, BOLD),
 				createStyleRange( 54,  96, NORMAL),
 				createStyleRange( 96, 102, BOLD),
@@ -403,8 +403,8 @@ public class TextPresentationTest {
 
 		StyleRange[] expectedNonDefaultRanges= new StyleRange[] {
 				createStyleRange(  4,  20, BOLD),
-				createStyleRange(45, 47, 1, -1, NORMAL),
-				createStyleRange(47, 49, 1, -1, BOLD),
+				createStyleRange( 45,  47, NORMAL, 1, -1),
+				createStyleRange( 47,  49, BOLD,   1, -1),
 				createStyleRange( 49,  54, BOLD),
 				createStyleRange( 96, 102, BOLD),
 		};
@@ -417,7 +417,7 @@ public class TextPresentationTest {
 	 */
 	@Test
 	public void testMergeStyleRange10() {
-		StyleRange range= createStyleRange(52, 56, 1, -1, NORMAL);
+		StyleRange range= createStyleRange(52, 56, NORMAL, 1, -1);
 		fTextPresentation.mergeStyleRange(range);
 
 		StyleRange[] expectedAllRanges= new StyleRange[] {
@@ -425,8 +425,8 @@ public class TextPresentationTest {
 				createStyleRange(  4,  20, BOLD),
 				createStyleRange( 20,  47, NORMAL),
 				createStyleRange( 47,  52, BOLD),
-				createStyleRange(52, 54, 1, -1, BOLD),
-				createStyleRange(54, 56, 1, -1, NORMAL),
+				createStyleRange( 52,  54, BOLD,   1, -1),
+				createStyleRange( 54,  56, NORMAL, 1, -1),
 				createStyleRange( 56,  96, NORMAL),
 				createStyleRange( 96, 102, BOLD),
 				createStyleRange(102, 140, NORMAL),
@@ -435,8 +435,8 @@ public class TextPresentationTest {
 		StyleRange[] expectedNonDefaultRanges= new StyleRange[] {
 				createStyleRange(  4,  20, BOLD),
 				createStyleRange( 47,  52, BOLD),
-				createStyleRange(52, 54, 1, -1, BOLD),
-				createStyleRange(54, 56, 1, -1, NORMAL),
+				createStyleRange( 52,  54, BOLD,   1, -1),
+				createStyleRange( 54,  56, NORMAL, 1, -1),
 				createStyleRange( 96, 102, BOLD),
 		};
 
@@ -448,16 +448,16 @@ public class TextPresentationTest {
 	 */
 	@Test
 	public void testMergeStyleRange11() {
-		StyleRange range= createStyleRange(45, 56, 1, -1, NORMAL);
+		StyleRange range= createStyleRange(45, 56, NORMAL, 1, -1);
 		fTextPresentation.mergeStyleRange(range);
 
 		StyleRange[] expectedAllRanges= new StyleRange[] {
 				createStyleRange(  0,   4, NORMAL),
 				createStyleRange(  4,  20, BOLD),
 				createStyleRange( 20,  45, NORMAL),
-				createStyleRange(45, 47, 1, -1, NORMAL),
-				createStyleRange(47, 54, 1, -1, BOLD),
-				createStyleRange(54, 56, 1, -1, NORMAL),
+				createStyleRange( 45,  47, NORMAL, 1, -1),
+				createStyleRange( 47,  54, BOLD,   1, -1),
+				createStyleRange( 54,  56, NORMAL, 1, -1),
 				createStyleRange( 56,  96, NORMAL),
 				createStyleRange( 96, 102, BOLD),
 				createStyleRange(102, 140, NORMAL),
@@ -465,9 +465,9 @@ public class TextPresentationTest {
 
 		StyleRange[] expectedNonDefaultRanges= new StyleRange[] {
 				createStyleRange(  4,  20, BOLD),
-				createStyleRange(45, 47, 1, -1, NORMAL),
-				createStyleRange(47, 54, 1, -1, BOLD),
-				createStyleRange(54, 56, 1, -1, NORMAL),
+				createStyleRange( 45,  47, NORMAL, 1, -1),
+				createStyleRange( 47,  54, BOLD,   1, -1),
+				createStyleRange( 54,  56, NORMAL, 1, -1),
 				createStyleRange( 96, 102, BOLD),
 		};
 
@@ -479,7 +479,7 @@ public class TextPresentationTest {
 	 */
 	@Test
 	public void testMergeStyleRange12() {
-		StyleRange range= createStyleRange(52, 98, 1, -1, NORMAL);
+		StyleRange range= createStyleRange(52, 98, NORMAL, 1, -1);
 		fTextPresentation.mergeStyleRange(range);
 
 		StyleRange[] expectedAllRanges= new StyleRange[] {
@@ -487,9 +487,9 @@ public class TextPresentationTest {
 				createStyleRange(  4,  20, BOLD),
 				createStyleRange( 20,  47, NORMAL),
 				createStyleRange( 47,  52, BOLD),
-				createStyleRange(52, 54, 1, -1, BOLD),
-				createStyleRange(54, 96, 1, -1, NORMAL),
-				createStyleRange(96, 98, 1, -1, BOLD),
+				createStyleRange( 52,  54, BOLD,   1, -1),
+				createStyleRange( 54,  96, NORMAL, 1, -1),
+				createStyleRange( 96,  98, BOLD,   1, -1),
 				createStyleRange( 98, 102, BOLD),
 				createStyleRange(102, 140, NORMAL),
 		};
@@ -497,9 +497,9 @@ public class TextPresentationTest {
 		StyleRange[] expectedNonDefaultRanges= new StyleRange[] {
 				createStyleRange(  4,  20, BOLD),
 				createStyleRange( 47,  52, BOLD),
-				createStyleRange(52, 54, 1, -1, BOLD),
-				createStyleRange(54, 96, 1, -1, NORMAL),
-				createStyleRange(96, 98, 1, -1, BOLD),
+				createStyleRange( 52,  54, BOLD,   1, -1),
+				createStyleRange( 54,  96, NORMAL, 1, -1),
+				createStyleRange( 96,  98, BOLD,   1, -1),
 				createStyleRange( 98, 102, BOLD),
 		};
 
@@ -511,13 +511,13 @@ public class TextPresentationTest {
 	 */
 	@Test
 	public void testMergeStyleRange13() {
-		StyleRange range= createStyleRange(20, 47, 1, -1, NORMAL);
+		StyleRange range= createStyleRange(20, 47, NORMAL, 1, -1);
 		fTextPresentation.mergeStyleRange(range);
 
 		StyleRange[] expectedAllRanges= new StyleRange[] {
 				createStyleRange(  0,   4, NORMAL),
 				createStyleRange(  4,  20, BOLD),
-				createStyleRange(20, 47, 1, -1, NORMAL),
+				createStyleRange( 20,  47, NORMAL, 1, -1),
 				createStyleRange( 47,  54, BOLD),
 				createStyleRange( 54,  96, NORMAL),
 				createStyleRange( 96, 102, BOLD),
@@ -526,7 +526,7 @@ public class TextPresentationTest {
 
 		StyleRange[] expectedNonDefaultRanges= new StyleRange[] {
 				createStyleRange(  4,  20, BOLD),
-				createStyleRange(20, 47, 1, -1, NORMAL),
+				createStyleRange( 20,  47, NORMAL, 1, -1),
 				createStyleRange( 47,  54, BOLD),
 				createStyleRange( 96, 102, BOLD),
 		};
@@ -539,14 +539,14 @@ public class TextPresentationTest {
 	 */
 	@Test
 	public void testMergeStyleRange14() {
-		StyleRange range= createStyleRange(47, 54, 1, -1, NORMAL);
+		StyleRange range= createStyleRange(47, 54, NORMAL, 1, -1);
 		fTextPresentation.mergeStyleRange(range);
 
 		StyleRange[] expectedAllRanges= new StyleRange[] {
 				createStyleRange(  0,   4, NORMAL),
 				createStyleRange(  4,  20, BOLD),
 				createStyleRange( 20,  47, NORMAL),
-				createStyleRange(47, 54, 1, -1, BOLD),
+				createStyleRange( 47,  54, BOLD, 1, -1),
 				createStyleRange( 54,  96, NORMAL),
 				createStyleRange( 96, 102, BOLD),
 				createStyleRange(102, 140, NORMAL),
@@ -554,7 +554,7 @@ public class TextPresentationTest {
 
 		StyleRange[] expectedNonDefaultRanges= new StyleRange[] {
 				createStyleRange(  4,  20, BOLD),
-				createStyleRange(47, 54, 1, -1, BOLD),
+				createStyleRange( 47,  54, BOLD, 1, -1),
 				createStyleRange( 96, 102, BOLD),
 		};
 
@@ -564,50 +564,50 @@ public class TextPresentationTest {
 	@Test
 	public void testMergeStyleRanges1() {
 		StyleRange[] ranges= new StyleRange[] {
-				createStyleRange(0, 2, 1, -1, NORMAL), // at start of first existing
-				createStyleRange(20, 22, 1, -1, NORMAL), // at start of existing default
-				createStyleRange(24, 26, 1, -1, NORMAL), // within existing default
-				createStyleRange(45, 47, 1, -1, NORMAL), // at end of existing default
-				createStyleRange(47, 49, 1, -1, NORMAL), // at start of existing non-default
-				createStyleRange(50, 51, 1, -1, NORMAL), // within existing non-default
-				createStyleRange(52, 54, 1, -1, NORMAL), // at end of existing non-default
-				createStyleRange(138, 140, 1, -1, NORMAL), // at end of last existing
+				createStyleRange(  0,   2, NORMAL, 1, -1), // at start of first existing
+				createStyleRange( 20,  22, NORMAL, 1, -1), // at start of existing default
+				createStyleRange( 24,  26, NORMAL, 1, -1), // within existing default
+				createStyleRange( 45,  47, NORMAL, 1, -1), // at end of existing default
+				createStyleRange( 47,  49, NORMAL, 1, -1), // at start of existing non-default
+				createStyleRange( 50,  51, NORMAL, 1, -1), // within existing non-default
+				createStyleRange( 52,  54, NORMAL, 1, -1), // at end of existing non-default
+				createStyleRange(138, 140, NORMAL, 1, -1), // at end of last existing
 		};
 		fTextPresentation.mergeStyleRanges(ranges);
 
 		StyleRange[] expectedAllRanges= new StyleRange[] {
-				createStyleRange(0, 2, 1, -1, NORMAL),
+				createStyleRange(  0,   2, NORMAL, 1, -1),
 				createStyleRange(  2,   4, NORMAL),
 				createStyleRange(  4,  20, BOLD),
-				createStyleRange(20, 22, 1, -1, NORMAL),
+				createStyleRange( 20,  22, NORMAL, 1, -1),
 				createStyleRange( 22,  24, NORMAL),
-				createStyleRange(24, 26, 1, -1, NORMAL),
+				createStyleRange( 24,  26, NORMAL, 1, -1),
 				createStyleRange( 26,  45, NORMAL),
-				createStyleRange(45, 47, 1, -1, NORMAL),
-				createStyleRange(47, 49, 1, -1, BOLD),
+				createStyleRange( 45,  47, NORMAL, 1, -1),
+				createStyleRange( 47,  49, BOLD,   1, -1),
 				createStyleRange( 49,  50, BOLD),
-				createStyleRange(50, 51, 1, -1, BOLD),
+				createStyleRange( 50,  51, BOLD,   1, -1),
 				createStyleRange( 51,  52, BOLD),
-				createStyleRange(52, 54, 1, -1, BOLD),
+				createStyleRange( 52,  54, BOLD,   1, -1),
 				createStyleRange( 54,  96, NORMAL),
 				createStyleRange( 96, 102, BOLD),
 				createStyleRange(102, 138, NORMAL),
-				createStyleRange(138, 140, 1, -1, NORMAL),
+				createStyleRange(138, 140, NORMAL, 1, -1),
 		};
 
 		StyleRange[] expectedNonDefaultRanges= new StyleRange[] {
-				createStyleRange(0, 2, 1, -1, NORMAL),
+				createStyleRange(  0,   2, NORMAL, 1, -1),
 				createStyleRange(  4,  20, BOLD),
-				createStyleRange(20, 22, 1, -1, NORMAL),
-				createStyleRange(24, 26, 1, -1, NORMAL),
-				createStyleRange(45, 47, 1, -1, NORMAL),
-				createStyleRange(47, 49, 1, -1, BOLD),
+				createStyleRange( 20,  22, NORMAL, 1, -1),
+				createStyleRange( 24,  26, NORMAL, 1, -1),
+				createStyleRange( 45,  47, NORMAL, 1, -1),
+				createStyleRange( 47,  49, BOLD,   1, -1),
 				createStyleRange( 49,  50, BOLD),
-				createStyleRange(50, 51, 1, -1, BOLD),
+				createStyleRange( 50,  51, BOLD,   1, -1),
 				createStyleRange( 51,  52, BOLD),
-				createStyleRange(52, 54, 1, -1, BOLD),
+				createStyleRange( 52,  54, BOLD,   1, -1),
 				createStyleRange( 96, 102, BOLD),
-				createStyleRange(138, 140, 1, -1, NORMAL),
+				createStyleRange(138, 140, NORMAL, 1, -1),
 		};
 
 		checkRegions(expectedAllRanges, expectedNonDefaultRanges);
