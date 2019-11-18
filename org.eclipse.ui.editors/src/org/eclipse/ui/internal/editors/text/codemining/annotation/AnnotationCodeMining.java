@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Altran Netherlands B.V. and others.
+# * Copyright (c) 2018 Altran Netherlands B.V. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -48,9 +48,13 @@ public class AnnotationCodeMining extends LineHeaderCodeMining {
 		super(lineNumber, document, provider, action);
 		this.annotationAccess= annotationAccess;
 
-		setLabel(annotation.getText());
+		setLabel(sanitizeLabel(annotation.getText()));
 
 		this.annotation= annotation;
+	}
+
+	private static String sanitizeLabel(String label) {
+		return label.replace('\r', ' ').replace('\n', ' ');
 	}
 
 	@Override
