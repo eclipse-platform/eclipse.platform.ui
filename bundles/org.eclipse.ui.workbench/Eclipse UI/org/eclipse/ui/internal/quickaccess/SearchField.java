@@ -163,7 +163,6 @@ public class SearchField {
 	private void openMenuFor(ToolBar toolBar, ToolItem quickAccessToolItem) {
 		Menu menu = new Menu(toolBar);
 
-		new MenuItem(menu, SWT.SEPARATOR);
 		addShowTextItem(menu, quickAccessToolItem);
 
 		Rectangle bounds = toolBar.getBounds();
