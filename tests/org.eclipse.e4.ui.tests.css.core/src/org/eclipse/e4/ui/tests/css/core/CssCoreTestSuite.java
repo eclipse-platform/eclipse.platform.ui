@@ -16,6 +16,7 @@
 package org.eclipse.e4.ui.tests.css.core;
 
 import org.eclipse.e4.ui.css.core.impl.engine.AbstractCSSEngineTest;
+import org.eclipse.e4.ui.tests.css.core.dom.CSSPropertyHandlerProviderTest;
 import org.eclipse.e4.ui.tests.css.core.parser.CascadeTest;
 import org.eclipse.e4.ui.tests.css.core.parser.FontFaceRulesTest;
 import org.eclipse.e4.ui.tests.css.core.parser.ImportTest;
@@ -43,7 +44,8 @@ import org.junit.runner.RunWith;
 	CSSEngineTest.class,
 	ImportTest.class,
 	InheritTest.class,
-	AbstractCSSEngineTest.class
+	AbstractCSSEngineTest.class,
+	CSSPropertyHandlerProviderTest.class
 })
 public class CssCoreTestSuite {
 }

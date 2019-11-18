@@ -20,11 +20,11 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.core.exceptions.UnsupportedClassCSSPropertyException;
-import org.eclipse.e4.ui.css.core.utils.StringUtils;
 import org.w3c.dom.css.CSSStyleDeclaration;
 
 /**
@@ -139,8 +139,8 @@ AbstractCSSPropertyHandlerProvider {
 	 */
 	protected String getHandlerClassName(String property) {
 		StringBuilder handlerClassName = new StringBuilder("CSSProperty"); //$NON-NLS-1$
-		String[] s = StringUtils.split(property, "-"); //$NON-NLS-1$
-		for (String p : s) {
+		for (StringTokenizer t = new StringTokenizer(property, "-"); t.hasMoreTokens();) {
+			String p = t.nextToken();
 			handlerClassName.append(p.substring(0, 1).toUpperCase());
 			handlerClassName.append(p.substring(1));
 		}
