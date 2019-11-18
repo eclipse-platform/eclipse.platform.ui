@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 IBM Corporation and others.
+ * Copyright (c) 2007, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -46,8 +46,8 @@ public abstract class AbstractEntry extends PlatformObject implements IWorkbench
 	}
 
 	@Override
-	public Object[] getChildren(Object parent) {
-		return children.toArray();
+	public AbstractEntry[] getChildren(Object parent) {
+		return children.toArray(new AbstractEntry[children.size()]);
 	}
 
 	/**
