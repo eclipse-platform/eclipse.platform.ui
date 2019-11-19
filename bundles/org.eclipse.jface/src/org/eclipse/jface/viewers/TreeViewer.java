@@ -47,7 +47,7 @@ import org.eclipse.swt.widgets.Widget;
  * <p>
  * As of 3.2, TreeViewer supports multiple equal elements (each with a
  * different parent chain) in the tree. This support requires that clients
- * enable the element map by calling <code>setUseHashLookup(true)</code>.
+ * enable the element map by calling <code>setUseHashlookup(true)</code>.
  * </p>
  * <p>
  * Content providers for tree viewers must implement either the

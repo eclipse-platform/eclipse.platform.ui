@@ -1745,10 +1745,15 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * Configures whether this structured viewer uses an internal hash table to
 	 * speed up the mapping between elements and SWT items. This must be called
 	 * before the viewer is given an input (via <code>setInput</code>).
-	 *
-	 * @param enable
-	 *            <code>true</code> to enable hash lookup, and
-	 *            <code>false</code> to disable it
+	 * <p>
+	 * Note: enabling hash lookup requires from client code that elements managed by
+	 * the viewer properly implement {@link #hashCode()} and {@link #equals(Object)}
+	 * and that equal elements are not added to the same parent in the tree (each
+	 * equal element should have a different parent chain).
+	 * </p>
+	 * 
+	 * @param enable <code>true</code> to enable hash lookup, and <code>false</code>
+	 *               to disable it
 	 */
 	public void setUseHashlookup(boolean enable) {
 		Assert.isTrue(getInput() == null,
