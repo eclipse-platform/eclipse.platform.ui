@@ -15,7 +15,9 @@ t SPDX-License-Identifier: EPL-2.0
 package org.eclipse.e4.ui.internal.workbench;
 
 import java.util.List;
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.EventTopic;
 import org.eclipse.e4.ui.di.UIEventTopic;
@@ -42,6 +44,14 @@ public class PartOnTopManager {
 
 	@Inject
 	private EModelService modelService;
+	
+	/**
+	 * @param context
+	 */
+	@PostConstruct
+	public void init(IEclipseContext context) {
+		context.set(PartOnTopManager.class, this);
+	}
 
 	/**
 	 * This event listener sets the initial onTop state, when a widget for an
