@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christoph Läubrich - Bug 552773 - Simplify logging in platform code base
  *******************************************************************************/
 
 package org.eclipse.ui.internal.cheatsheets.composite.views;
@@ -19,14 +20,11 @@ import java.lang.reflect.Constructor;
 import java.net.URL;
 
 import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
-import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 import org.eclipse.ui.internal.cheatsheets.Messages;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
 import org.eclipse.ui.internal.provisional.cheatsheets.TaskEditor;
@@ -58,8 +56,7 @@ public class TaskEditorManager {
 				extClass = bundle.loadClass(className);
 			} catch (Exception e) {
 				String message = NLS.bind(Messages.ERROR_LOADING_CLASS, (new Object[] {className}));
-				Status status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
-				CheatSheetPlugin.getPlugin().getLog().log(status);
+				CheatSheetPlugin.getPlugin().getLog().error(message, e);
 			}
 			try {
 				if (extClass != null) {
@@ -68,8 +65,7 @@ public class TaskEditorManager {
 				}
 			} catch (Exception e) {
 				String message = NLS.bind(Messages.ERROR_CREATING_CLASS, (new Object[] {className}));
-				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
-				CheatSheetPlugin.getPlugin().getLog().log(status);
+				CheatSheetPlugin.getPlugin().getLog().error(message, e);
 			}
 
 			return editorInstance;

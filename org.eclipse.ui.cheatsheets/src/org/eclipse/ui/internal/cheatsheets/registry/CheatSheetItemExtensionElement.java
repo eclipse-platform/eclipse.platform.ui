@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2017 IBM Corporation and others.
+ * Copyright (c) 2002, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christoph Läubrich - Bug 552773 - Simplify logging in platform code base
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.registry;
 
@@ -18,13 +19,10 @@ import java.lang.reflect.Constructor;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.cheatsheets.AbstractItemExtensionElement;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
-import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 import org.eclipse.ui.internal.cheatsheets.Messages;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.model.WorkbenchAdapter;
@@ -121,8 +119,7 @@ public class CheatSheetItemExtensionElement extends WorkbenchAdapter implements 
 			extClass = bundle.loadClass(className);
 		} catch (Exception e) {
 			String message = NLS.bind(Messages.ERROR_LOADING_CLASS, (new Object[] {className}));
-			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
-			CheatSheetPlugin.getPlugin().getLog().log(status);
+			CheatSheetPlugin.getPlugin().getLog().error(message, e);
 		}
 		try {
 			if (extClass != null) {
@@ -131,8 +128,7 @@ public class CheatSheetItemExtensionElement extends WorkbenchAdapter implements 
 			}
 		} catch (Exception e) {
 			String message = NLS.bind(Messages.ERROR_CREATING_CLASS, (new Object[] {className}));
-			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
-			CheatSheetPlugin.getPlugin().getLog().log(status);
+			CheatSheetPlugin.getPlugin().getLog().error(message, e);
 		}
 
 		if (extElement != null){

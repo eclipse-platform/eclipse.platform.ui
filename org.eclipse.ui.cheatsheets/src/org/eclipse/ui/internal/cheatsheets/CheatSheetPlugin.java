@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2002, 2016 IBM Corporation and others.
+ *  Copyright (c) 2002, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Christoph Läubrich - Bug 552773 - Simplify logging in platform code base
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets;
 
@@ -132,8 +133,7 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 				documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder();
 				documentBuilder.setEntityResolver(new LocalEntityResolver());
 			} catch (Exception e) {
-				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, Messages.ERROR_CREATING_DOCUMENT_BUILDER, e);
-				CheatSheetPlugin.getPlugin().getLog().log(status);
+				CheatSheetPlugin.getPlugin().getLog().error(Messages.ERROR_CREATING_DOCUMENT_BUILDER, e);
 			}
 		}
 		return documentBuilder;
@@ -145,9 +145,7 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 	public static synchronized void logError(String message, Throwable ex) {
 		if (message == null)
 			message = ""; //$NON-NLS-1$
-		Status errorStatus = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK,
-				message, ex);
-		CheatSheetPlugin.getPlugin().getLog().log(errorStatus);
+		CheatSheetPlugin.getPlugin().getLog().error(message, ex);
 	}
 
 	@Override
@@ -258,8 +256,7 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 			@Override
 			public void handleException(Throwable e) {
 				String message = Messages.ERROR_READING_STATE_FILE;
-				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
-				CheatSheetPlugin.getPlugin().getLog().log(status);
+				CheatSheetPlugin.getPlugin().getLog().error(message, e);
 			}
 		});
 	}
@@ -287,8 +284,7 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 			// Do nothing, the file will not exist the first time the workbench in used.
 		} catch (Exception e) {
 			String message = Messages.ERROR_READING_STATE_FILE;
-			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
-			CheatSheetPlugin.getPlugin().getLog().log(status);
+			CheatSheetPlugin.getPlugin().getLog().error(message, e);
 			memento = null;
 		} finally {
 			try {
@@ -297,8 +293,7 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 			} catch (IOException e) {
 				// Not much to do, just catch the exception and keep going.
 				String message = Messages.ERROR_READING_STATE_FILE;
-				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
-				CheatSheetPlugin.getPlugin().getLog().log(status);
+				CheatSheetPlugin.getPlugin().getLog().error(message, e);
 			}
 		}
 		return memento;
@@ -327,8 +322,7 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 			@Override
 			public void handleException(Throwable e) {
 				String message = Messages.ERROR_WRITING_STATE_FILE;
-				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
-				CheatSheetPlugin.getPlugin().getLog().log(status);
+				CheatSheetPlugin.getPlugin().getLog().error(message, e);
 			}
 		});
 	}
@@ -360,8 +354,7 @@ public class CheatSheetPlugin extends AbstractUIPlugin {
 					writer.close();
 			} catch (IOException e) {
 				String message = Messages.ERROR_WRITING_STATE_FILE;
-				IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
-				CheatSheetPlugin.getPlugin().getLog().log(status);
+				CheatSheetPlugin.getPlugin().getLog().error(message, e);
 			}
 		}
 	}

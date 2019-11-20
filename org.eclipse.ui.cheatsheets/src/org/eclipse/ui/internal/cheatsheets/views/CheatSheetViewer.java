@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Tom Hofmann, Perspectix AG - https://bugs.eclipse.org/bugs/show_bug.cgi?id=291750
  *     Asma Smaoui - CEA LIST - https://bugs.eclipse.org/bugs/show_bug.cgi?id=517379
+ *     Christoph Läubrich - Bug 552773 - Simplify logging in platform code base
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.views;
 
@@ -514,8 +515,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 			// Log the exception
 			String stateFile = saveHelper.getStateFile(currentID).toOSString();
 			String message = NLS.bind(Messages.ERROR_APPLYING_STATE_DATA_LOG, (new Object[] {stateFile, currentID}));
-			IStatus status = new Status(IStatus.ERROR, ICheatSheetResource.CHEAT_SHEET_PLUGIN_ID, IStatus.OK, message, e);
-			CheatSheetPlugin.getPlugin().getLog().log(status);
+			CheatSheetPlugin.getPlugin().getLog().error(message, e);
 
 			// Set the currentID to null so it is not saved during internalDispose()
 			currentID = null;
