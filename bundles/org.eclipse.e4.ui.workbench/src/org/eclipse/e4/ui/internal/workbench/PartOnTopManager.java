@@ -19,7 +19,6 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.core.di.extensions.EventTopic;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -39,7 +38,6 @@ import org.osgi.service.event.Event;
  * The {@link PartOnTopManager} is used to calculate the parts, which are on
  * top. This means all parts that can be directly seen by a user in the UI.
  */
-@SuppressWarnings("restriction")
 public class PartOnTopManager {
 
 	@Inject
@@ -85,7 +83,7 @@ public class PartOnTopManager {
 	@Inject
 	@Optional
 	public void subscribeTopicSelectedElement(
-			@EventTopic(UIEvents.ElementContainer.TOPIC_SELECTEDELEMENT) Event event) {
+			@UIEventTopic(UIEvents.ElementContainer.TOPIC_SELECTEDELEMENT) Event event) {
 
 		Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
 		Object oldValue = event.getProperty(UIEvents.EventTags.OLD_VALUE);
