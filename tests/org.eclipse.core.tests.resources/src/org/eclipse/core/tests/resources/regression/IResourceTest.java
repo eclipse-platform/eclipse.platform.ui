@@ -15,16 +15,18 @@
 package org.eclipse.core.tests.resources.regression;
 
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
+import org.eclipse.core.tests.resources.ResourceDeltaVerifier;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 public class IResourceTest extends ResourceTest {
 
-	private boolean DISABLED = true;
+	private final boolean DISABLED = true;
 
 	public static Test suite() {
 		return new TestSuite(IResourceTest.class);
@@ -166,7 +168,7 @@ public class IResourceTest extends ResourceTest {
 		final boolean[] seen = new boolean[] {false};
 		final boolean[] phantomSeen = new boolean[] {false};
 		class DeltaVisitor implements IResourceDeltaVisitor {
-			private boolean[] mySeen;
+			private final boolean[] mySeen;
 
 			DeltaVisitor(boolean[] mySeen) {
 				this.mySeen = mySeen;
@@ -693,6 +695,43 @@ public class IResourceTest extends ResourceTest {
 			project.delete(true, true, null);
 		} catch (CoreException e) {
 			fail("3.0", e);
+		}
+	}
+
+	/**
+	 * 553269: Eclipse sends unexpected ENCODING change after closing/opening
+	 * project with explicit encoding settings changed in the same session
+	 */
+	public void testBug553269() throws Exception {
+		IWorkspace workspace = getWorkspace();
+		IProject project = workspace.getRoot().getProject("MyProject");
+		IFolder settingsFolder = project.getFolder(".settings");
+		IFile settingsFile = settingsFolder.getFile("org.eclipse.core.resources.prefs");
+		project.create(null);
+		project.open(null);
+		project.setDefaultCharset(StandardCharsets.UTF_8.name(), null);
+
+		assertTrue("Preferences saved", settingsFile.exists());
+
+		project.close(null);
+
+		ResourceDeltaVerifier verifier = new ResourceDeltaVerifier();
+		workspace.addResourceChangeListener(verifier, IResourceChangeEvent.POST_CHANGE);
+		// We expect only OPEN change, the original code generated
+		// IResourceDelta.OPEN | IResourceDelta.ENCODING
+		verifier.addExpectedChange(project, IResourceDelta.CHANGED, IResourceDelta.OPEN);
+
+		// This is irrelevant for the test but verifier verifies entire delta...
+		verifier.addExpectedChange(settingsFolder, IResourceDelta.ADDED, 0);
+		verifier.addExpectedChange(settingsFile, IResourceDelta.ADDED, 0);
+		verifier.addExpectedChange(project.getFile(".project"), IResourceDelta.ADDED, 0);
+
+		try {
+			project.open(null);
+			assertTrue(verifier.getMessage(), verifier.isDeltaValid());
+		} finally {
+			workspace.removeResourceChangeListener(verifier);
+			project.delete(true, true, null);
 		}
 	}
 }

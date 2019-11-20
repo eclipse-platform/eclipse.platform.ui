@@ -116,6 +116,10 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 		modStamp = IResource.NULL_STAMP;
 	}
 
+	public void clearCharsetGenerationCount() {
+		charsetAndContentId = getContentId();
+	}
+
 	public synchronized void clearSessionProperties() {
 		sessionProperties = null;
 	}

@@ -627,6 +627,7 @@ public class Project extends Container implements IProject {
 		info.clear(M_OPEN);
 		info.clearSessionProperties();
 		info.clearModificationStamp();
+		info.clearCharsetGenerationCount();
 		info.setSyncInfo(null);
 	}
 
