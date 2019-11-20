@@ -24,16 +24,16 @@ import org.eclipse.core.runtime.content.IContentTypeMatcher;
 public class ProjectInfo extends ResourceInfo {
 
 	/** The description of this object */
-	protected ProjectDescription description = null;
+	protected ProjectDescription description;
 
 	/** The list of natures for this project */
-	protected HashMap<String, IProjectNature> natures = null;
+	protected HashMap<String, IProjectNature> natures;
 
 	/** The property store for this resource (used only by the compatibility fragment) */
-	protected Object propertyStore = null;
+	protected Object propertyStore;
 
 	/** The content type matcher for this project. */
-	protected IContentTypeMatcher matcher = null;
+	protected IContentTypeMatcher matcher;
 
 	/**
 	 * Discards stale natures on this project after project description
@@ -41,6 +41,13 @@ public class ProjectInfo extends ResourceInfo {
 	 */
 	public synchronized void discardNatures() {
 		natures = null;
+	}
+
+	/**
+	 * Default constructor (for easier debugging)
+	 */
+	public ProjectInfo() {
+		super();
 	}
 
 	/**

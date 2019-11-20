@@ -35,7 +35,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	 * This field stores the resource modification stamp in the lower two bytes,
 	 * and the character set generation count in the higher two bytes.
 	 */
-	protected volatile int charsetAndContentId = 0;
+	protected volatile int charsetAndContentId;
 
 	/**
 	 * The file system root that this resource is stored in
@@ -43,7 +43,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	protected FileStoreRoot fileStoreRoot;
 
 	/** Set of flags which reflect various states of the info (used, derived, ...). */
-	protected int flags = 0;
+	protected int flags;
 
 	/** Local sync info */
 	// thread safety: (Concurrency004)
@@ -56,14 +56,14 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	protected volatile int markerAndSyncStamp;
 
 	/** The collection of markers for this resource. */
-	protected MarkerSet markers = null;
+	protected MarkerSet markers;
 
 	/** Modification stamp */
-	protected long modStamp = 0;
+	protected long modStamp;
 
 	/** Unique node identifier */
 	// thread safety: (Concurrency004)
-	protected volatile long nodeId = 0;
+	protected volatile long nodeId;
 
 	/**
 	 * The properties which are maintained for the lifecycle of the workspace.
@@ -72,7 +72,7 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	 * interface so we ensure that we get it right since we are making certain
 	 * assumptions about the object type w.r.t. casting.
 	 */
-	protected ObjectMap<QualifiedName, Object> sessionProperties = null;
+	protected ObjectMap<QualifiedName, Object> sessionProperties;
 
 	/**
 	 * The table of sync information.
@@ -81,7 +81,14 @@ public class ResourceInfo implements IElementTreeData, ICoreConstants, IStringPo
 	 * interface so we ensure that we get it right since we are making certain
 	 * assumptions about the object type w.r.t. casting.
 	 */
-	protected ObjectMap<QualifiedName, Object> syncInfo = null;
+	protected ObjectMap<QualifiedName, Object> syncInfo;
+
+	/**
+	 * Default constructor (for easier debugging)
+	 */
+	public ResourceInfo() {
+		super();
+	}
 
 	/**
 	 * Returns the integer value stored in the indicated part of this info's flags.
