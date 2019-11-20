@@ -93,12 +93,10 @@ public class WrappedPageBook extends Composite {
 		Control oldPage = currentPage;
 		currentPage = page;
 		// show new page
-		if (page != null) {
-			if (!page.isDisposed()) {
-				//page.setVisible(true);
-				layout(true);
-				page.setVisible(true);
-			}
+		if (!page.isDisposed()) {
+			// page.setVisible(true);
+			layout(true);
+			page.setVisible(true);
 		}
 		// hide old *after* new page has been made visible in order to avoid
 		// flashing
