@@ -14,6 +14,10 @@
 
 package org.eclipse.ui.tests.adaptable;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Iterator;
 
 import org.eclipse.core.expressions.ICountable;
@@ -21,15 +25,15 @@ import org.eclipse.core.expressions.IIterable;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.StructuredSelection;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * @since 3.3
  *
  */
-public class SelectionAdapterTest extends TestCase {
+public class SelectionAdapterTest {
 
+	@Test
 	public void testBasicSelectionEmpty() {
 		ISelection empty = new ISelection() {
 
@@ -45,6 +49,7 @@ public class SelectionAdapterTest extends TestCase {
 		assertFalse(iterate.iterator().hasNext());
 	}
 
+	@Test
 	public void testBasicSelection() {
 		ISelection selection = new ISelection() {
 
@@ -63,6 +68,7 @@ public class SelectionAdapterTest extends TestCase {
 		assertTrue(o == selection);
 	}
 
+	@Test
 	public void testStructuredSelectionEmpty() {
 		StructuredSelection selection = new StructuredSelection();
 		ICountable countable = Platform.getAdapterManager().getAdapter(selection, ICountable.class);
@@ -72,6 +78,7 @@ public class SelectionAdapterTest extends TestCase {
 		assertFalse(iterate.iterator().hasNext());
 	}
 
+	@Test
 	public void testStructuredSelectionOne() {
 		String obj = "me";
 		StructuredSelection selection = new StructuredSelection(obj);
@@ -86,6 +93,7 @@ public class SelectionAdapterTest extends TestCase {
 		assertFalse(iterator.hasNext());
 	}
 
+	@Test
 	public void testStructuredSelection() {
 		String obj = "me";
 		String obj2 = "you";

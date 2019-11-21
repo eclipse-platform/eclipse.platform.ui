@@ -27,14 +27,18 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Test that Working Sets adapt to resource mappings
  */
+@RunWith(JUnit4.class)
 public class WorkingSetTestCase extends UITestCase {
 
-	public WorkingSetTestCase(String testName) {
-		super(testName);
+	public WorkingSetTestCase() {
+		super(WorkingSetTestCase.class.getSimpleName());
 	}
 
 	private ResourceMapping getResourceMapping(IWorkingSet set) {
@@ -68,6 +72,7 @@ public class WorkingSetTestCase extends UITestCase {
 		return project;
 	}
 
+	@Test
 	public void testWorkSetAdaptation() throws CoreException {
 
 		// First, test that the set adapts to a ResourceMapping

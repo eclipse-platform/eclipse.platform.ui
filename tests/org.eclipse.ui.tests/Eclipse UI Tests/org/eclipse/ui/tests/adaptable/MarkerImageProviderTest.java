@@ -20,19 +20,24 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests the markerImageProviders extension point.
  */
+@RunWith(JUnit4.class)
 public class MarkerImageProviderTest extends UITestCase {
 
-	public MarkerImageProviderTest(String testName) {
-		super(testName);
+	public MarkerImageProviderTest() {
+		super(MarkerImageProviderTest.class.getSimpleName());
 	}
 
 	/**
 	 * Tests the static form of the extension, where just a file path is given.
 	 */
+	@Test
 	public void testStatic() {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IMarker marker = null;
@@ -51,6 +56,7 @@ public class MarkerImageProviderTest extends UITestCase {
 	/**
 	 * Tests the dynamic form of the extension, where an IMarkerImageProvider class is given.
 	 */
+	@Test
 	public void testDynamic() {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IMarker marker = null;
