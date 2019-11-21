@@ -715,9 +715,15 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 						// Dont copy empty pixels from last time.
 						goodPixels= fLastHeight;
 					}
-					bufferGC.copyArea(0, dy, size.x, goodPixels - dy, 0, 0);
-					bufferY= goodPixels - dy;
-					bufferH= height - bufferY;
+					if (dy < goodPixels) {
+						bufferGC.copyArea(0, dy, size.x, goodPixels - dy, 0, 0);
+						bufferY= goodPixels - dy;
+						bufferH= height - bufferY;
+					} else {
+						// Redraw everything.
+						height= size.y;
+						dy= 0;
+					}
 				} else if (dy < 0 && -dy < height) {
 					bufferGC.copyArea(0, 0, size.x, height + dy, 0, -dy);
 					bufferY= 0;
