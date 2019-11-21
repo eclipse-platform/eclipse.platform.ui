@@ -228,6 +228,7 @@ public class ProgressContantsTest extends ProgressTestCase {
 		// This variant is optimized to test a ConcurrentModificationException or NPE.
 		// It tries to stop multiple jobs with KEEPONE_PROPERTY at the same time.
 		jobs.clear();
+		progressView.getViewer().setMaxDisplayed(100);
 		for (int i = 0; i < 20; i++) {
 			DummyFamilyJob job = new DummyFamilyJob("OK Job " + i, Status.OK_STATUS);
 			job.setProperty(IProgressConstants.KEEPONE_PROPERTY, Boolean.TRUE);
