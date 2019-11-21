@@ -112,7 +112,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	private static IDEWorkbenchAdvisor workbenchAdvisor = null;
 
 	/**
-	 * Ordered map of versioned feature ids -> info that are new for this
+	 * Ordered map of versioned feature ids -gt; info that are new for this
 	 * session; <code>null</code> if uninitialized. Key type:
 	 * <code>String</code>, Value type: <code>AboutInfo</code>.
 	 */
@@ -554,11 +554,11 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	}
 
 	/**
-	 * Returns the map of versioned feature ids -> info object for all installed
+	 * Returns the map of versioned feature ids -&gt; info object for all installed
 	 * features. The format of the versioned feature id (the key of the map) is
 	 * featureId + ":" + versionId.
 	 *
-	 * @return map of versioned feature ids -> info object (key type:
+	 * @return map of versioned feature ids -&gt; info object (key type:
 	 *         <code>String</code>, value type: <code>AboutInfo</code>)
 	 * @since 3.0
 	 */

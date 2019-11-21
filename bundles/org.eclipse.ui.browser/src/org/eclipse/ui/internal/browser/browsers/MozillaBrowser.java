@@ -45,8 +45,8 @@ public class MozillaBrowser extends AbstractWebBrowser {
 	/**
 	 * Constructor
 	 *
-	 * @executable executable filename to launch
-	 * @executableName name of the program to display when error occurs
+	 * @param executable executable filename to launch
+	 * @param executableName name of the program to display when error occurs
 	 */
 	public MozillaBrowser(String id, String executable, String parameters) {
 		super(id);
@@ -134,12 +134,11 @@ public class MozillaBrowser extends AbstractWebBrowser {
 
 		/**
 		 * On some OSes 0 is always returned by netscape -remote. It is
-		 * necessary to examine ouput to find out failure
+		 * necessary to examine output to find out failure
 		 *
 		 * @param outputs
 		 * @param errors
-		 * @return @throws
-		 *         InterruptedException
+		 * @return
 		 */
 		private boolean errorsInOutput(StreamConsumer outputs,
 				StreamConsumer errors) {

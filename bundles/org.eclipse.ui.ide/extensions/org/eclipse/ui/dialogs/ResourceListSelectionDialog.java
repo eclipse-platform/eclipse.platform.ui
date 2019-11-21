@@ -864,7 +864,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 	 * A new resource has been selected. Change the contents of the folder names
 	 * list.
 	 *
-	 * @desc resource descriptor of the selected resource
+	 * @param desc resource descriptor of the selected resource
 	 */
 	private void updateFolders(final ResourceDescriptor desc) {
 		BusyIndicator.showWhile(getShell().getDisplay(), () -> {

@@ -90,7 +90,7 @@ public class StringToNumberConverterTest {
 	/**
 	 * Takes a java.math.BigDecimal and returns an ICU formatted string for it.
 	 * These tests depend on ICU to reliably format test strings for comparison.
-	 * Java < 1.5 DecimalFormat did not format/parse BigDecimals properly,
+	 * Java &lt; 1.5 DecimalFormat did not format/parse BigDecimals properly,
 	 * converting them via doubleValue(), so we have a dependency for this unit test on ICU4J.
 	 * See Bug #180392 for more info.
 	 * @param bd

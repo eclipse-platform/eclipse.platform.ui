@@ -20,7 +20,7 @@ import org.eclipse.urischeme.internal.registration.RegistrationWindows;
 
 /**
  * Interface for registration or uri schemes in the different operating systems
- * (MacOSX, Linux and Windows)<br />
+ * (MacOSX, Linux and Windows)<br>
  * Call <code>getInstance()</code> to get an OS specific instance.
  *
  */

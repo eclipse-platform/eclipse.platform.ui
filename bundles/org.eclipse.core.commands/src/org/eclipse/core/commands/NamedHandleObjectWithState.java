@@ -48,7 +48,7 @@ abstract class NamedHandleObjectWithState extends NamedHandleObject implements
 	private Map<String, State> states;
 
 	/**
-	 * Constructs a new instance of <code>NamedHandleObject<WithState/code>.
+	 * Constructs a new instance of <code>NamedHandleObjectWithState/code>.
 	 *
 	 * @param id
 	 *            The identifier for this handle; must not be <code>null</code>.

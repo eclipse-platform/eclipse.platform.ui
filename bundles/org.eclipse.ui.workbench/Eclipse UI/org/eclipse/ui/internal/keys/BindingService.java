@@ -420,7 +420,7 @@ public final class BindingService implements IBindingService {
 	 *
 	 * @param current  the existing binding
 	 * @param addition the incoming binding
-	 * @return an int indicating current > addition
+	 * @return an int indicating current &gt; addition
 	 */
 	private int compareTo(Binding current, Binding addition) {
 		final Scheme s1 = manager.getScheme(current.getSchemeId());

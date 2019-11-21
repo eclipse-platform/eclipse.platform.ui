@@ -131,7 +131,7 @@ public class NewWizardAction extends Action implements ActionFactory.IWorkbenchA
 	 * Sets the id of the category of wizards to show or <code>null</code> to show
 	 * all categories.
 	 *
-	 * @param id the wizards's category id; may be </<code>null</code>
+	 * @param id the wizards's category id; may be <code>null</code>
 	 */
 	public void setCategoryId(String id) {
 		categoryId = id;

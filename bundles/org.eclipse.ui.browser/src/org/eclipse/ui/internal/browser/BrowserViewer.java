@@ -63,8 +63,8 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * A Web browser widget. It extends the Eclipse SWT Browser widget by adding an
- * optional toolbar complete with a URL combo box, history, back & forward, and
- * refresh buttons.
+ * optional toolbar complete with a URL combo box, history, back &amp; forward,
+ * and refresh buttons.
  * <p>
  * Use the style bits to choose which toolbars are available within the browser
  * composite. You can access the embedded SWT Browser directly using the

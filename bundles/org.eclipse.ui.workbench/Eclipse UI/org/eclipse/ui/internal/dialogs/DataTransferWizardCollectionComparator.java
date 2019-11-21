@@ -20,12 +20,12 @@ import org.eclipse.ui.internal.registry.WizardsRegistryReader;
 
 /**
  * A Viewer element sorter that sorts Elements by their name attribute. Note
- * that capitalization differences are not considered by this sorter, so a < B <
- * c.
+ * that capitalization differences are not considered by this sorter, so a &lt;
+ * B &lt; c.
  *
  * NOTE exceptions to the above: an element with the system's reserved category
  * for Other Wizards will always be sorted such that it will ultimately be
- * placed at the end of the sorted result, and an elemen with the reserved
+ * placed at the end of the sorted result, and an element with the reserved
  * category name for General wizards will always be placed at the beginning of
  * the sorted result.
  *

@@ -2337,7 +2337,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 * Raw result of the searching (unsorted, unfiltered).
 		 * <p>
 		 * Standard object flow:
-		 * <code>items -> lastSortedItems -> lastFilteredItems</code>
+		 * {@code items -> lastSortedItems -> lastFilteredItems}
 		 */
 		private Set<Object> items;
 
@@ -2355,7 +2355,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 * Result of the last filtering.
 		 * <p>
 		 * Standard object flow:
-		 * <code>items -> lastSortedItems -> lastFilteredItems</code>
+		 * {@code items -> lastSortedItems -> lastFilteredItems}
 		 */
 		private List<Object> lastFilteredItems;
 
@@ -2363,7 +2363,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		 * Result of the last sorting.
 		 * <p>
 		 * Standard object flow:
-		 * <code>items -> lastSortedItems -> lastFilteredItems</code>
+		 * {@code items -> lastSortedItems -> lastFilteredItems}
 		 */
 		private List<Object> lastSortedItems;
 

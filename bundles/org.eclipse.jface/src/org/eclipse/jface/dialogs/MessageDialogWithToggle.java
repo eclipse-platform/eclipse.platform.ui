@@ -719,7 +719,7 @@ public class MessageDialogWithToggle extends MessageDialog {
 
 	/**
 	 * Attempt to find a standard JFace button id that matches the specified
-	 * button label. If a LinkedHashMap<String, Integer> with custom button
+	 * button label. If a {@literal LinkedHashMap<String, Integer>} with custom button
 	 * labels and custom button ids was set, this method first searches the Map
 	 * to find the button id that matches the specific button label. If no match
 	 * can be found at all, use the default id provided.

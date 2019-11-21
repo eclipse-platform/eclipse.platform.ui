@@ -159,7 +159,7 @@ public class DesktopFileWriter {
 
 	/**
 	 * Returns the minimal content for a .desktop file needed for registering mime
-	 * types in Linux.<br />
+	 * types in Linux.<br>
 	 *
 	 * The caller can call {@link #DesktopFileWriter(List)} afterwards to create an
 	 * instance.

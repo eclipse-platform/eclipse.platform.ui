@@ -848,10 +848,11 @@ public class LazySortedCollection {
 	/**
 	 * Retains the n smallest items in the collection, removing the rest. When
 	 * this method returns, the size of the collection will be n. Note that
-	 * this is a no-op if n > the current size of the collection.
-	 *
+	 * this is a no-op if n &gt; the current size of the collection.
+	 * <p>
 	 * Temporarily package visibility until the implementation of FastProgressReporter
 	 * is finished.
+	 * </p>
 	 *
 	 * @param n number of items to retain
 	 * @param mon progress monitor

@@ -387,7 +387,7 @@ public class UtilTest {
 		}
 
 		/**
-		 * @see {@link #fireSourceChanged(int, Map)}
+		 * @see #fireSourceChanged(int, Map)
 		 */
 		public void fireSourceChanged() {
 			fireSourceChanged(0, sourceState);

@@ -113,7 +113,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	/**
 	 * The OSGi splash property.
 	 *
-	 * @sicne 3.4
+	 * @since 3.4
 	 */
 	private static final String PROP_SPLASH_HANDLE = "org.eclipse.equinox.launcher.splash.handle"; //$NON-NLS-1$
 
@@ -328,7 +328,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	/**
 	 * Checks to see if the provided element has the syntax for an executable
 	 * extension with a given name that resides in a bundle that is already active.
-	 * Determining the bundle happens in one of two ways:<br/>
+	 * Determining the bundle happens in one of two ways:<br>
 	 * <ul>
 	 * <li>The element has an attribute with the specified name or element text in
 	 * the form <code>bundle.id/class.name[:optional attributes]</code></li>
@@ -353,7 +353,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 
 	/**
 	 * Returns the bundle that contains the class referenced by an executable
-	 * extension. Determining the bundle happens in one of two ways:<br/>
+	 * extension. Determining the bundle happens in one of two ways:<br>
 	 * <ul>
 	 * <li>The element has an attribute with the specified name or element text in
 	 * the form <code>bundle.id/class.name[:optional attributes]</code></li>

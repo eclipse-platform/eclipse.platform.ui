@@ -55,7 +55,7 @@ public class DisjointSet<T> {
 	}
 
 	/**
-	 * Map of Object -> Node, where each key is an object in the
+	 * Map of Object -&gt; Node, where each key is an object in the
 	 * disjoint set, and the Node represents its position and rank
 	 * within the set.
 	 */

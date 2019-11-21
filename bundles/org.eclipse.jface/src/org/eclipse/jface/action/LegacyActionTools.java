@@ -45,7 +45,7 @@ public final class LegacyActionTools {
 
 	/**
 	 * Table of string representations of keys (key type: <code>Integer</code>,
-	 * value type: <code>String</code>); <code>null</code>> if not yet
+	 * value type: <code>String</code>); <code>null</code> if not yet
 	 * initialized.
 	 *
 	 * @see #findKeyString

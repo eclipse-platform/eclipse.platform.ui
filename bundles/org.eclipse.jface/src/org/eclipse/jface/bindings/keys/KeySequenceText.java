@@ -532,7 +532,7 @@ public final class KeySequenceText {
 
 	/**
 	 * The listener that makes sure that the text widget remains up-to-date with
-	 * regards to external modification of the text (e.g., cut & pasting).
+	 * regards to external modification of the text (e.g., cut &amp; pasting).
 	 */
 	private final UpdateSequenceListener updateSequenceListener = new UpdateSequenceListener();
 

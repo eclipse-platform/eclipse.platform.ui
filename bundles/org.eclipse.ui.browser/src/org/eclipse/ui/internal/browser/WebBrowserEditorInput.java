@@ -285,7 +285,7 @@ public class WebBrowserEditorInput implements IEditorInput,
 	}
 
 	/**
-	 * Returns the browser id. Browsers with a set id will always & only be
+	 * Returns the browser id. Browsers with a set id will always &amp; only be
 	 * replaced by browsers with the same id.
 	 *
 	 * @return String

@@ -175,11 +175,11 @@ public class RenameResourceAction extends WorkspaceAction {
 	/**
 	 * Check if the user wishes to overwrite the supplied resource
 	 *
-	 * @returns true if there is no collision or delete was successful
 	 * @param shell
 	 *            the shell to create the dialog in
 	 * @param destination -
 	 *            the resource to be overwritten
+	 * @return true if there is no collision or delete was successful
 	 */
 	private boolean checkOverwrite(final Shell shell,
 			final IResource destination) {
@@ -364,7 +364,7 @@ public class RenameResourceAction extends WorkspaceAction {
 	/**
 	 * Get the Tree being edited.
 	 *
-	 * @returnTree
+	 * @return Tree
 	 */
 	private Tree getTree() {
 		return this.navigatorTree;

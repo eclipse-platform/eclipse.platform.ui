@@ -768,7 +768,7 @@ public class EventDetailsDialog extends TrayDialog {
 	 * Filters stack trace. Every stack trace line is compared against all patterns.
 	 * If line contains any of pattern strings, it's excluded from output.
 	 *
-	 * @returns filtered stack trace
+	 * @return filtered stack trace
 	 * @since 3.4
 	 */
 	private String filterStack(String stack) {

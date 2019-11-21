@@ -66,9 +66,9 @@ public class MarkerSortUtil {
 
 	/**
 	 * Sorts [first,middle] in the array of [first,last] using a variant of
-	 * modified heapsort, such that
+	 * modified heapsort, such that {@literal
 	 * array[first]<array[first+1]<...<array[middle] and
-	 * array[middle]<arra[middle+1||middle+2|| ....last]
+	 * array[middle]<arra[middle+1||middle+2|| ....last]}
 	 *
 	 * @param array
 	 * @param first
@@ -405,9 +405,9 @@ public class MarkerSortUtil {
 	/**
 	 *
 	 * Sorts [from,first+k-1] in the array of [from,entries.length-1] using a variant of
-	 * modified heapsort, such that
+	 * modified heapsort, such that {@literal
 	 * array[from]<array[from+1]<...<array[from+k-1] and
-	 * array[from+k-1]<arra[from+k||from+k+1||from+k+2|| ....entries.length-1]
+	 * array[from+k-1]<arra[from+k||from+k+1||from+k+2|| ....entries.length-1]}
 	 *
 	 * Note: if k is greater than a number,the sorting happens in batches of
 	 * that number, this for performance reasons.

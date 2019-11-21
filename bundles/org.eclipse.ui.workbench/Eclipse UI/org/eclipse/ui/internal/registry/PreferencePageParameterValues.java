@@ -30,7 +30,7 @@ import org.eclipse.ui.internal.WorkbenchMessages;
  * <p>
  * To disambiguate preference pages with the same local label, names are
  * constructed incorporating the full path of preference page labels. For
- * instance names like <code>General > Appearance</code> and
+ * instance names like <code>General &gt; Appearance</code> and
  * <code>Java &gt; Appearance</code> avoid the problem of trying to put two
  * <code>Appearance</code> keys into the parameter values map.
  * </p>

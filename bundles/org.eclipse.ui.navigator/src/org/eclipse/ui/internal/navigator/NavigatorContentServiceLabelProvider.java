@@ -164,7 +164,7 @@ public class NavigatorContentServiceLabelProvider extends EventManager
 	 * Search for a styled text label and take overrides into account.
 	 * Uses only simple ITreeContentProvider.getParent() style semantics.
 	 *
-	 * @returns the styled text or <code>null</code> if no extension has been found that provides a label
+	 * @return the styled text or <code>null</code> if no extension has been found that provides a label
 	 */
 	private StyledString findStyledText(NavigatorContentExtension foundExtension, Object anElement) {
 		ICommonLabelProvider labelProvider= foundExtension.getLabelProvider();

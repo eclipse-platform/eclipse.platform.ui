@@ -177,7 +177,7 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	private Map<String, List> inactivePluginsWithSaveablesProviders;
 
 	/**
-	 * a TreeMap (NavigatorContentDescriptor->SaveablesProvider) which uses
+	 * a TreeMap (NavigatorContentDescriptor-&gt;SaveablesProvider) which uses
 	 * ExtensionPriorityComparator.INSTANCE as its Comparator
 	 */
 	private Map<NavigatorContentDescriptor, SaveablesProvider> saveablesProviderMap;

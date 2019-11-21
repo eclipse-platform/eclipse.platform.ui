@@ -35,7 +35,7 @@ import org.eclipse.ui.views.IViewRegistry;
 public class ViewContentProvider implements ITreeContentProvider {
 
 	/**
-	 * Child cache. Map from Object->Object[]. Our hasChildren() method is expensive
+	 * Child cache. Map from Object-&gt;Object[]. Our hasChildren() method is expensive
 	 * so it's better to cache the results of getChildren().
 	 */
 	private Map<Object, Object[]> childMap = new HashMap<>();
@@ -167,7 +167,7 @@ public class ViewContentProvider implements ITreeContentProvider {
 	}
 
 	/**
-	 * Remove Eclipse introview from this list, as it opened via the Help -> Welcome
+	 * Remove Eclipse introview from this list, as it opened via the Help -&gt; Welcome
 	 * menu
 	 */
 	private boolean isIntroView(String id) {

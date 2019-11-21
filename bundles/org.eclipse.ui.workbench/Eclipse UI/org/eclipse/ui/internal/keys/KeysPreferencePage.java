@@ -239,7 +239,7 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 
 	/**
 	 * The translated names for the columns when they are the primary sort key
-	 * (e.g., ">Category<").
+	 * (e.g., {@literal ">Category<"}).
 	 */
 	private static final String[] SORTED_COLUMN_NAMES = new String[VIEW_TOTAL_COLUMNS];
 

@@ -139,9 +139,9 @@ public class NumberToStringConverterTest {
 	/**
 	 * Takes a java.math.BigDecimal and returns an ICU formatted string for it,
 	 * when ICU is available, otherwise platform default. Note that
-	 * Java < 1.5 did not format BigDecimals properly, truncating them via doubleValue(),
+	 * Java &lt; 1.5 did not format BigDecimals properly, truncating them via doubleValue(),
 	 * so this method will return bad results, Data Binding will not, so
-	 * the test will FAIL on Java < 1.5 under these conditions.
+	 * the test will FAIL on Java &lt; 1.5 under these conditions.
 	 * @param bd
 	 * @return
 	 * @throws ClassNotFoundException

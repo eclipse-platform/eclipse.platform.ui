@@ -110,7 +110,7 @@ public class InternalDialog extends TrayDialog {
 	 */
 	private TableViewer statusListViewer;
 	/**
-	 * Composite on the left bottom corner. Allows for opening support tray & Error
+	 * Composite on the left bottom corner. Allows for opening support tray &amp; Error
 	 * Log.
 	 */
 	private Composite linkComposite;

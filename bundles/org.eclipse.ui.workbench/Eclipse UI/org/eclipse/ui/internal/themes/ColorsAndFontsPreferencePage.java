@@ -546,7 +546,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	private Font appliedDialogFont;
 
 	/**
-	 * Map of definition ColorDefinition->RGB capturing the explicit changes made by
+	 * Map of definition ColorDefinition-&gt;RGB capturing the explicit changes made by
 	 * the user. These changes need to be stored into the preference store.
 	 */
 	private Map<ColorDefinition, RGB> colorPreferencesToSet = new HashMap<>(7);
@@ -554,7 +554,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	private CascadingColorRegistry colorRegistry;
 
 	/**
-	 * Map of definition id->RGB capturing the temporary changes caused by a
+	 * Map of definition id-&gt;RGB capturing the temporary changes caused by a
 	 * 'defaultsTo' color change.
 	 */
 	private Map<String, RGB> colorValuesToSet = new HashMap<>(7);
@@ -622,7 +622,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	private Button expandAllButton;
 
 	/**
-	 * Map of definition FontDefinition->FontData[] capturing the changes explicitly
+	 * Map of definition FontDefinition-&gt;FontData[] capturing the changes explicitly
 	 * made by the user. These changes need to be stored into the preference store.
 	 */
 	private Map<FontDefinition, FontData[]> fontPreferencesToSet = new HashMap<>(7);
@@ -634,7 +634,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	private Button fontSystemButton;
 
 	/**
-	 * Map of definition id->FontData[] capturing the temporary changes caused by a
+	 * Map of definition id-&gt;FontData[] capturing the temporary changes caused by a
 	 * 'defaultsTo' font change.
 	 *
 	 * @deprecated in this page, we should only care about preferences, preference
@@ -650,7 +650,7 @@ public final class ColorsAndFontsPreferencePage extends PreferencePage implement
 	private Composite previewComposite;
 
 	/**
-	 * A mapping from PresentationCategory->Composite for the created previews.
+	 * A mapping from PresentationCategory-&gt;Composite for the created previews.
 	 */
 	private Map<ThemeElementCategory, Composite> previewMap = new HashMap<>(7);
 

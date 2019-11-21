@@ -33,8 +33,8 @@ import org.eclipse.swt.widgets.Text;
 
 /**
  * This snippet shows how to use the {@link ISideEffect} class with conditional
- * elements in it.<br/>
- * <br/>
+ * elements in it.<br>
+ * <br>
  * Also see the following part of the ISideEffect's JavaDoc:
  *
  * <ul>

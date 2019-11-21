@@ -228,7 +228,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 	 * use his previously "equal" colleagues to retrieve the expected reference
 	 * count
 	 *
-	 * @key object to find known, previously equal one
+	 * @param key object to find known, previously equal one
 	 * @return fixed key or given key
 	 */
 	private Saveable fixKeyIfKnown(Saveable key) {

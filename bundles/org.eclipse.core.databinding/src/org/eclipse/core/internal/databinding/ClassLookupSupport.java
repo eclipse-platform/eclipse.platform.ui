@@ -60,7 +60,7 @@ public class ClassLookupSupport {
 
 	/**
 	 * Builds and returns a table of adapters for the given adaptable type. The
-	 * table is keyed by adapter class name. The value is the <b>sole<b> factory
+	 * table is keyed by adapter class name. The value is the <b>sole</b> factory
 	 * that defines that adapter. Note that if multiple adapters technically
 	 * define the same property, only the first found in the search order is
 	 * considered.

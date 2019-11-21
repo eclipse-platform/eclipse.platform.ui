@@ -72,12 +72,12 @@ public abstract class AbstractWidgetFactory<F extends AbstractWidgetFactory<?, ?
 	/**
 	 * Adds a property like image, text, enabled, listeners, ... to the widget.
 	 *
-	 * <br/>
+	 * <br>
 	 * Example:
 	 *
 	 * <pre>
 	 * public LabelFactory text(String text) {
-	 * 	addProperty(l -> l.setText(text));
+	 * 	addProperty(l -&gt; l.setText(text));
 	 * 	return this;
 	 * }
 	 * </pre>

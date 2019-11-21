@@ -229,7 +229,7 @@ public class WizardArchiveFileResourceExportPage1 extends
 	 * The Finish button was pressed.  Try to do the required work now and answer
 	 * a boolean indicating success.  If false is returned then the wizard will
 	 * not close.
-	 * @returns boolean
+	 * @return boolean
 	 */
 	@Override
 	public boolean finish() {

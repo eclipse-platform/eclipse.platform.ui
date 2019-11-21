@@ -148,7 +148,7 @@ public class LogView extends ViewPart implements LogListener {
 	private Action fExportLogEntryAction;
 
 	/**
-	 * Action called when user selects "Group by -> ..." from menu.
+	 * Action called when user selects "Group by -&gt; ..." from menu.
 	 */
 	class GroupByAction extends Action {
 		private int groupBy;

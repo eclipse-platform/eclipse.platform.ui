@@ -12,7 +12,7 @@ package org.eclipse.urischeme.internal.registration;
 
 /**
  * Interface having all the static methods and also methods which perform
- * actions in the windows registry.<br />
+ * actions in the windows registry.<br>
  * This interface is predominantly used by WindowsRegistry.
  *
  */

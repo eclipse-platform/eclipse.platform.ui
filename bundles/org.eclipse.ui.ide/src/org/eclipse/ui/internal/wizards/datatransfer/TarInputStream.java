@@ -82,7 +82,7 @@ public class TarInputStream extends FilterInputStream
 	 * Skips ahead to the position of the given entry in the file.
 	 *
 	 * @param entry
-	 * @returns false if the entry has already been passed
+	 * @return false if the entry has already been passed
 	 * @throws TarException
 	 * @throws IOException
 	 */

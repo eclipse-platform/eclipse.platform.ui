@@ -141,7 +141,7 @@ public class WebBrowserPreference {
 	 * Sets whether the internal, system and external browser is used
 	 *
 	 * @param choice
-	 *            </code>INTERNAL</code>, <code>SYSTEM</code> and <code>EXTERNAL</code>
+	 *            <code>INTERNAL</code>, <code>SYSTEM</code> and <code>EXTERNAL</code>
 	 */
 	public static void setBrowserChoice(int choice) {
 		IScopeContext instanceScope = InstanceScope.INSTANCE;

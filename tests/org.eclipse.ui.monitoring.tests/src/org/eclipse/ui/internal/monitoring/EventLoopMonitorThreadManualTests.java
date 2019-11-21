@@ -107,7 +107,7 @@ public class EventLoopMonitorThreadManualTests {
 	 * http://www.ams.org/journals/mcom/1973-27-124/S0025-5718-1973-0327722-7/S0025-5718-1973-0327722-7.pdf
 	 *
 	 * <p>
-	 * At 80ns/call, the sequence will have a period of >23382 years (== (2^63-1) * 80ns)
+	 * At 80ns/call, the sequence will have a period of &gt;23382 years (== (2^63-1) * 80ns)
 	 */
 	protected static final long PN63_GENERATOR_POLY = (3L << 62) | 1;
 

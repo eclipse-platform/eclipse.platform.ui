@@ -1338,7 +1338,7 @@ public class ExtendedMarkersView extends ViewPart {
 	 * Update the direction indicator as column is now the primary column.
 	 *
 	 * @param column
-	 * @field {@link MarkerField}
+	 * @param field
 	 */
 	void updateDirectionIndicator(TreeColumn column, MarkerField field) {
 		viewer.getTree().setSortColumn(column);

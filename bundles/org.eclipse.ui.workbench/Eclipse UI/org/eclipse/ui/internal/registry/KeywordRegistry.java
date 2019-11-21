@@ -53,7 +53,7 @@ public final class KeywordRegistry implements IExtensionChangeHandler {
 	}
 
 	/**
-	 * Map of id->labels.
+	 * Map of id-&gt;labels.
 	 */
 	private Map internalKeywordMap = new HashMap();
 
