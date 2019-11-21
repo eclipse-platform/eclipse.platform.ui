@@ -32,10 +32,15 @@ import org.eclipse.ui.tests.harness.util.CallHistory;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests the IPartService, IPartListener and IPartListener2 interfaces.
  */
+@RunWith(JUnit4.class)
 public class IPartServiceTest extends UITestCase {
 
 	private IWorkbenchWindow fWindow;
@@ -137,8 +142,8 @@ public class IPartServiceTest extends UITestCase {
 
 	private CallHistory history2 = new CallHistory(partListener2);
 
-	public IPartServiceTest(String testName) {
-		super(testName);
+	public IPartServiceTest() {
+		super(IPartServiceTest.class.getSimpleName());
 	}
 
 	/**
@@ -165,6 +170,7 @@ public class IPartServiceTest extends UITestCase {
 	/**
 	 * Tests the addPartListener method on IWorkbenchPage's part service.
 	 */
+	@Test
 	public void testAddPartListenerToPage() throws Throwable {
 		// From Javadoc: "Adds the given listener for part lifecycle events.
 		// Has no effect if an identical listener is already registered."
@@ -197,6 +203,7 @@ public class IPartServiceTest extends UITestCase {
 		fPage.removePartListener(partListener2);
 	}
 
+	@Test
 	public void testLocalPartService() throws Throwable {
 		IPartService service = fWindow
 				.getService(IPartService.class);
@@ -242,6 +249,7 @@ public class IPartServiceTest extends UITestCase {
 	/**
 	 * Tests the addPartListener method on IWorkbenchWindow's part service.
 	 */
+	@Test
 	public void testAddPartListenerToWindow() throws Throwable {
 		// From Javadoc: "Adds the given listener for part lifecycle events.
 		// Has no effect if an identical listener is already registered."
@@ -279,6 +287,7 @@ public class IPartServiceTest extends UITestCase {
 	/**
 	 * Tests the removePartListener method on IWorkbenchPage's part service.
 	 */
+	@Test
 	public void testRemovePartListenerFromPage() throws Throwable {
 		// From Javadoc: "Removes the given part listener.
 		// Has no affect if an identical listener is not registered."
@@ -300,6 +309,7 @@ public class IPartServiceTest extends UITestCase {
 	/**
 	 * Tests the removePartListener method on IWorkbenchWindow's part service.
 	 */
+	@Test
 	public void testRemovePartListenerFromWindow() throws Throwable {
 		// From Javadoc: "Removes the given part listener.
 		// Has no affect if an identical listener is not registered."
@@ -326,6 +336,7 @@ public class IPartServiceTest extends UITestCase {
 	 * (regression) IWorkbenchPage#findView returns non-null value after part
 	 * has been closed
 	 */
+	@Test
 	public void testPartHiddenWhenClosedAndUnshared() throws Throwable {
 		IPartListener2 listener = new TestPartListener2() {
 			@Override
@@ -351,6 +362,8 @@ public class IPartServiceTest extends UITestCase {
 	 * Includes regression test for:
 	 *   Bug 60039 [ViewMgmt] (regression) IWorkbenchPage#findView returns non-null value after part has been closed
 	 */
+	@Test
+	@Ignore
 	public void XXXtestPartHiddenWhenClosedAndShared() throws Throwable {
 		IPartListener2 listener = new TestPartListener2() {
 			@Override
@@ -380,6 +393,7 @@ public class IPartServiceTest extends UITestCase {
 	/**
 	 * Tests the partHidden method by activating another view in the same folder.
 	 */
+	@Test
 	public void testPartHiddenWhenObscured() throws Throwable {
 		final boolean[] eventReceived = { false };
 		IPartListener2 listener = new TestPartListener2() {
@@ -407,6 +421,7 @@ public class IPartServiceTest extends UITestCase {
 	 * Tests the partVisible method by showing a view when it is not
 	 * open in any other perspectives.
 	 */
+	@Test
 	public void testPartVisibleWhenOpenedUnshared() throws Throwable {
 		final boolean[] eventReceived = { false };
 		IPartListener2 listener = new TestPartListener2() {
@@ -432,6 +447,7 @@ public class IPartServiceTest extends UITestCase {
 	 * Tests the partVisible method by showing a view when it is already
 	 * open in another perspective.
 	 */
+	@Test
 	public void testPartVisibleWhenOpenedShared() throws Throwable {
 		final boolean[] eventReceived = { false };
 		IPartListener2 listener = new TestPartListener2() {
@@ -465,6 +481,7 @@ public class IPartServiceTest extends UITestCase {
 	 *
 	 * @throws Throwable
 	 */
+	@Test
 	public void testPartHiddenBeforeClosing() throws Throwable {
 
 		final boolean[] eventReceived = {false, false};
@@ -508,6 +525,7 @@ public class IPartServiceTest extends UITestCase {
 	 * Tests the partVisible method by activating a view obscured by
 	 * another view in the same folder.
 	 */
+	@Test
 	public void testPartVisibleWhenObscured() throws Throwable {
 		final boolean[] eventReceived = { false };
 		IPartListener2 listener = new TestPartListener2() {
@@ -583,6 +601,7 @@ public class IPartServiceTest extends UITestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public void testEditorFoundWhenOpened() throws Throwable {
 		final String editorId = MockEditorPart.ID1;
 		IProject proj = FileUtil.createProject("IPartServiceTest");

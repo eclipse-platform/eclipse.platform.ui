@@ -32,7 +32,12 @@ import org.eclipse.ui.tests.harness.util.CallHistory;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class IDeprecatedWorkbenchPageTest extends UITestCase {
 
 	private IWorkbenchPage fActivePage;
@@ -41,8 +46,8 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 
 	private IProject proj;
 
-	public IDeprecatedWorkbenchPageTest(String testName) {
-		super(testName);
+	public IDeprecatedWorkbenchPageTest() {
+		super(IDeprecatedWorkbenchPageTest.class.getSimpleName());
 	}
 
 	@Override
@@ -64,6 +69,7 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 	/**
 	 * tests both of the following: setEditorAreaVisible() isEditorAreaVisible()
 	 */
+	@Test
 	public void testGet_SetEditorAreaVisible() throws Throwable {
 		fActivePage.setEditorAreaVisible(true);
 		assertTrue(fActivePage.isEditorAreaVisible() == true);
@@ -72,6 +78,7 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 		assertTrue(fActivePage.isEditorAreaVisible() == false);
 	}
 
+	@Test
 	public void testGetPerspective() throws Throwable {
 		assertNotNull(fActivePage.getPerspective());
 
@@ -80,6 +87,7 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 		assertEquals(EmptyPerspective.PERSP_ID, page.getPerspective().getId());
 	}
 
+	@Test
 	public void testSetPerspective() throws Throwable {
 		IPerspectiveDescriptor per = PlatformUI.getWorkbench()
 				.getPerspectiveRegistry().findPerspectiveWithId(
@@ -88,16 +96,19 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 		assertEquals(per, fActivePage.getPerspective());
 	}
 
+	@Test
 	public void testGetLabel() {
 		assertNotNull(fActivePage.getLabel());
 	}
 
+	@Test
 	public void testGetInput() throws Throwable {
 		IAdaptable input = getPageInput();
 		IWorkbenchPage page = fWin.openPage(input);
 		assertEquals(input, page.getInput());
 	}
 
+	@Test
 	public void testActivate() throws Throwable {
 		MockViewPart part = (MockViewPart) fActivePage
 				.showView(MockViewPart.ID);
@@ -123,6 +134,7 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 		assertTrue(listener.getCallHistory().contains("partActivated"));
 	}
 
+	@Test
 	public void testBringToTop() throws Throwable {
 		proj = FileUtil.createProject("testOpenEditor");
 		IEditorPart part = IDE.openEditor(fActivePage, FileUtil.createFile(
@@ -143,6 +155,7 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 		assertEquals(callTrace.contains("partBroughtToTop"), true);
 	}
 
+	@Test
 	public void testGetWorkbenchWindow() {
 		/*
 		 * Commented out because until test case can be updated to work with new
@@ -154,6 +167,7 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 		 */
 	}
 
+	@Test
 	public void testShowView() throws Throwable {
 		/*
 		 * javadoc: Shows a view in this page and give it focus
@@ -178,6 +192,7 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 	/**
 	 * openEditor(IFile input)
 	 */
+	@Test
 	public void testOpenEditor() throws Throwable {
 		proj = FileUtil.createProject("testOpenEditor");
 
@@ -229,6 +244,7 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 	/**
 	 * openEditor(IFile input, String editorID)
 	 */
+	@Test
 	public void testOpenEditor2() throws Throwable {
 		proj = FileUtil.createProject("testOpenEditor");
 		final IFile file = FileUtil.createFile("asfasdasdf", proj);
@@ -261,6 +277,7 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 	/**
 	 * openEditor(IEditorInput input,String editorId)
 	 */
+	@Test
 	public void testOpenEditor3() throws Throwable {
 		proj = FileUtil.createProject("testOpenEditor");
 		final String id = MockEditorPart.ID1;
@@ -293,6 +310,7 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 	/**
 	 * openEditor(IEditorInput input, String editorId, boolean activate)
 	 */
+	@Test
 	public void testOpenEditor4() throws Throwable {
 		proj = FileUtil.createProject("testOpenEditor");
 		final String id = MockEditorPart.ID1;
@@ -372,6 +390,7 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 	/**
 	 * openEditor(IMarker marker)
 	 */
+	@Test
 	public void testOpenEditor5() throws Throwable {
 		proj = FileUtil.createProject("testOpenEditor");
 		IMarker marker = FileUtil.createFile("aa.mock2", proj).createMarker(
@@ -419,6 +438,7 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 	/**
 	 * openEditor(IMarker marker, boolean activate)
 	 */
+	@Test
 	public void testOpenEditor6() throws Throwable {
 		proj = FileUtil.createProject("testOpenEditor");
 		IMarker marker = FileUtil.createFile("aa.mock2", proj).createMarker(
@@ -538,6 +558,7 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 		assertEquals(listenerCall.contains("partActivated"), true);
 	}
 
+	@Test
 	public void testFindView() throws Throwable {
 		String id = MockViewPart.ID3;
 		// id of valid, but not open view
@@ -551,6 +572,7 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 		assertNull(fActivePage.findView(id));
 	}
 
+	@Test
 	public void testGetViews() throws Throwable {
 		int totalBefore = fActivePage.getViews().length;
 
@@ -563,6 +585,7 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 		assertEquals(fActivePage.getViews().length, totalBefore);
 	}
 
+	@Test
 	public void testHideView() throws Throwable {
 		IViewPart view = fActivePage.showView(MockViewPart.ID3);
 
@@ -571,6 +594,8 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 		assertTrue(callTrace.contains("dispose"));
 	}
 
+	@Test
+	@Ignore
 	public void XXXtestClose() throws Throwable {
 		IWorkbenchPage page = openTestPage(fWin);
 
@@ -590,6 +615,7 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 		assertEquals(fWin.getActivePage(), fActivePage);
 	}
 
+	@Test
 	public void testCloseEditor() throws Throwable {
 		proj = FileUtil.createProject("testOpenEditor");
 		final IFile file = FileUtil.createFile("test.mock1", proj);
@@ -641,6 +667,7 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 		assertEquals(callTrace.contains("dispose"), true);
 	}
 
+	@Test
 	public void testCloseAllEditors() throws Throwable {
 		int total = 5;
 		final IFile[] files = new IFile[total];
@@ -685,6 +712,7 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testSaveEditor() throws Throwable {
 		proj = FileUtil.createProject("testOpenEditor");
 		final IFile file = FileUtil.createFile("test.mock1", proj);
@@ -728,6 +756,8 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 				.verifyOrder(new String[] { "isDirty", "doSave" }), true);
 	}
 
+	@Test
+	@Ignore
 	public void XXXtestSaveAllEditors() throws Throwable {
 		int total = 3;
 
@@ -782,6 +812,7 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testGetEditors() throws Throwable {
 		proj = FileUtil.createProject("testOpenEditor");
 		int totalBefore = fActivePage.getEditors().length;
@@ -805,6 +836,8 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 		assertEquals(fActivePage.getEditors().length, 0);
 	}
 
+	@Test
+	@Ignore
 	public void XXXtestShowActionSet() {
 		String id = MockActionDelegate.ACTION_SET_ID;
 
@@ -827,6 +860,8 @@ public class IDeprecatedWorkbenchPageTest extends UITestCase {
 //		assertEquals(facade.getActionSetCount(fActivePage), totalBefore + 1);
 	}
 
+	@Test
+	@Ignore
 	public void XXXtestHideActionSet() {
 //		int totalBefore = facade.getActionSetCount(fActivePage);
 		// FIXME: No implementation

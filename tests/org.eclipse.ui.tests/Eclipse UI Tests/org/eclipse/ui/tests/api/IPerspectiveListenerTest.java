@@ -18,7 +18,11 @@ import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class IPerspectiveListenerTest extends UITestCase implements
 		IPerspectiveListener {
 	private int fEvent;
@@ -35,8 +39,8 @@ public class IPerspectiveListenerTest extends UITestCase implements
 	public static final int NONE = 0x00, OPEN = 0x01, CLOSED = 0x02,
 			ACTIVATED = 0x04, CHANGED = 0x08;
 
-	public IPerspectiveListenerTest(String testName) {
-		super(testName);
+	public IPerspectiveListenerTest() {
+		super(IPerspectiveListenerTest.class.getSimpleName());
 	}
 
 	@Override
@@ -53,6 +57,7 @@ public class IPerspectiveListenerTest extends UITestCase implements
 		super.doTearDown();
 	}
 
+	@Test
 	public void testPerspectiveActivated() {
 		/*
 		 * Commented out because until test case can be updated to work
@@ -66,6 +71,7 @@ public class IPerspectiveListenerTest extends UITestCase implements
 		 */
 	}
 
+	@Test
 	public void testPerspectiveChanged() {
 		/*
 		 * Commented out because until test case can be updated to work

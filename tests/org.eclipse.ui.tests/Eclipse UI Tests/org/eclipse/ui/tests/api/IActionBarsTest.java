@@ -29,10 +29,14 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
 import org.eclipse.ui.tests.harness.util.ActionUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Test the lifecycle of an action delegate.
  */
+@RunWith(JUnit4.class)
 public class IActionBarsTest extends UITestCase {
 
 	protected IWorkbenchWindow fWindow;
@@ -55,8 +59,8 @@ public class IActionBarsTest extends UITestCase {
 	/**
 	 * Constructor for IActionDelegateTest
 	 */
-	public IActionBarsTest(String testName) {
-		super(testName);
+	public IActionBarsTest() {
+		super(IActionBarsTest.class.getSimpleName());
 	}
 
 	@Override
@@ -66,6 +70,7 @@ public class IActionBarsTest extends UITestCase {
 		fPage = fWindow.getActivePage();
 	}
 
+	@Test
 	public void testGetMenuManager() throws Throwable {
 		// From Javadoc: "Returns the menu manager."
 
@@ -76,6 +81,7 @@ public class IActionBarsTest extends UITestCase {
 		assertNotNull(mgr);
 	}
 
+	@Test
 	public void testGetStatusLineManager() throws Throwable {
 		// From Javadoc: "Returns the status line manager."
 
@@ -86,6 +92,7 @@ public class IActionBarsTest extends UITestCase {
 		assertNotNull(mgr);
 	}
 
+	@Test
 	public void testGetToolBarManager() throws Throwable {
 		// From Javadoc: "Returns the tool bar manager."
 
@@ -96,6 +103,7 @@ public class IActionBarsTest extends UITestCase {
 		assertNotNull(mgr);
 	}
 
+	@Test
 	public void testGetGlobalActionHandler() throws Throwable {
 		// From Javadoc: "Returns the global action handler for
 		// the action with the given id.
@@ -129,6 +137,7 @@ public class IActionBarsTest extends UITestCase {
 				.getGlobalActionHandler(IWorkbenchActionConstants.UNDO));
 	}
 
+		@Test
 		public void testSetGlobalActionHandler() throws Throwable {
 			// From Javadoc: "Returns the global action handler for
 			// the action with the given id.

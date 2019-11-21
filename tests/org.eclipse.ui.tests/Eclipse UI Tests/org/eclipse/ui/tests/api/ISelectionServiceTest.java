@@ -22,10 +22,15 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.SelectionProviderView;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests the ISelectionService class.
  */
+@RunWith(JUnit4.class)
 public class ISelectionServiceTest extends UITestCase implements
 		ISelectionListener {
 	private IWorkbenchWindow fWindow;
@@ -39,8 +44,8 @@ public class ISelectionServiceTest extends UITestCase implements
 
 	private IWorkbenchPart eventPart;
 
-	public ISelectionServiceTest(String testName) {
-		super(testName);
+	public ISelectionServiceTest() {
+		super(ISelectionServiceTest.class.getSimpleName());
 	}
 
 	@Override
@@ -53,6 +58,7 @@ public class ISelectionServiceTest extends UITestCase implements
 	/**
 	 * Tests the addSelectionListener method.
 	 */
+	@Test
 	public void testAddSelectionListener() throws Throwable {
 		// From Javadoc: "Adds the given selection listener.
 		// Has no effect if an identical listener is already registered."
@@ -72,6 +78,7 @@ public class ISelectionServiceTest extends UITestCase implements
 	/**
 	 * Tests the removePageListener method.
 	 */
+	@Test
 	public void testRemoveSelectionListener() throws Throwable {
 		// From Javadoc: "Removes the given selection listener.
 		// Has no affect if an identical listener is not registered."
@@ -92,6 +99,8 @@ public class ISelectionServiceTest extends UITestCase implements
 	/**
 	 * Tests getActivePage.
 	 */
+	@Test
+	@Ignore
 	public void XXXtestGetSelection() throws Throwable {
 		// From Javadoc: "Returns the current selection in the active part.
 		// If the selection in the active part is <em>undefined</em> (the
@@ -121,6 +130,7 @@ public class ISelectionServiceTest extends UITestCase implements
 	/**
 	 * Tests getting a selection service local to the part site
 	 */
+	@Test
 	public void testLocalSelectionService() throws Throwable {
 		Object sel1 = "Selection 1";
 
@@ -164,6 +174,7 @@ public class ISelectionServiceTest extends UITestCase implements
 	 * Test event firing for inactive parts. In this scenario the event should
 	 * not be fired.
 	 */
+	@Test
 	public void testSelectionEventWhenInactive() throws Throwable {
 		Object sel1 = "Selection 1", sel2 = "Selection 2";
 
@@ -194,6 +205,7 @@ public class ISelectionServiceTest extends UITestCase implements
 	/**
 	 * Test event firing when activated.
 	 */
+	@Test
 	public void testSelectionEventWhenActivated() throws Throwable {
 		// From Javadoc: "Adds the given selection listener.
 		// Has no effect if an identical listener is already registered."

@@ -27,19 +27,26 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests the IWorkbench interface.
  */
+@RunWith(JUnit4.class)
 public class IWorkbenchTest extends UITestCase {
 
-	public IWorkbenchTest(String testName) {
-		super(testName);
+	public IWorkbenchTest() {
+		super(IWorkbenchTest.class.getSimpleName());
 	}
 
 	/**
 	 * Tests the activation of two windows.
 	 */
+	@Test
+	@Ignore
 	public void XXXtestGetActiveWorkbenchWindow() throws Throwable {
 		IWorkbenchWindow win1, win2;
 
@@ -68,26 +75,31 @@ public class IWorkbenchTest extends UITestCase {
 		// Cleanup in tearDown.
 	}
 
+	@Test
 	public void testGetEditorRegistry() throws Throwable {
 		IEditorRegistry reg = fWorkbench.getEditorRegistry();
 		assertNotNull(reg);
 	}
 
+	@Test
 	public void testGetPerspectiveRegistry() throws Throwable {
 		IPerspectiveRegistry reg = fWorkbench.getPerspectiveRegistry();
 		assertNotNull(reg);
 	}
 
+	@Test
 	public void testGetPrefereneManager() throws Throwable {
 		PreferenceManager mgr = fWorkbench.getPreferenceManager();
 		assertNotNull(mgr);
 	}
 
+	@Test
 	public void testGetSharedImages() throws Throwable {
 		ISharedImages img = fWorkbench.getSharedImages();
 		assertNotNull(img);
 	}
 
+	@Test
 	public void testGetWorkingSetManager() throws Throwable {
 		IWorkingSetManager workingSetManager = fWorkbench
 				.getWorkingSetManager();
@@ -105,6 +117,7 @@ public class IWorkbenchTest extends UITestCase {
 		workingSetManager.removeWorkingSet(workingSet);
 	}
 
+	@Test
 	public void testGetWorkbenchWindows() throws Throwable {
 		IWorkbenchWindow[] wins = fWorkbench.getWorkbenchWindows();
 		assertEquals(ArrayUtil.checkNotNull(wins), true);
@@ -131,6 +144,8 @@ public class IWorkbenchTest extends UITestCase {
 	/**
 	 * openWorkbenchWindow(String, IAdaptable)
 	 */
+	@Test
+	@Ignore
 	public void XXXtestOpenWorkbenchWindow() throws Throwable {
 		// open a window with valid perspective
 		IWorkbenchWindow win = null;
@@ -160,6 +175,8 @@ public class IWorkbenchTest extends UITestCase {
 	/**
 	 * openWorkbenchWindow(IAdaptable)
 	 */
+	@Test
+	@Ignore
 	public void XXXtestOpenWorkbenchWindow2() throws Throwable {
 		// open a window with valid perspective
 		IWorkbenchWindow win = null;
@@ -181,6 +198,8 @@ public class IWorkbenchTest extends UITestCase {
 		}
 	}
 
+	@Test
+	@Ignore
 	public void testOpenPage1() throws Throwable {
 		IWorkbenchWindow win = null;
 		//IWorkbenchPage page1, page2;
@@ -231,6 +250,8 @@ public class IWorkbenchTest extends UITestCase {
 		}
 	}
 
+	@Test
+	@Ignore
 	public void testOpenPage2() throws Throwable {
 		IWorkbenchWindow win = null;
 		//IWorkbenchPage page1, page2;
@@ -283,6 +304,8 @@ public class IWorkbenchTest extends UITestCase {
 	 * close() couldn't be tested because calling close() would lead to early termination
 	 * to entire test suites
 	 */
+	@Test
+	@Ignore
 	public void testClose() {
 	}
 }

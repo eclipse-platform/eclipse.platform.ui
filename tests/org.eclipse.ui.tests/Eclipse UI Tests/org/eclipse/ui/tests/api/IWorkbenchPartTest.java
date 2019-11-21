@@ -17,6 +17,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.CallHistory;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
 
 /**
  * This is a test for IWorkbenchPart.  Since IWorkbenchPart is an
@@ -43,6 +44,7 @@ public abstract class IWorkbenchPartTest extends UITestCase {
 		fPage = fWindow.getActivePage();
 	}
 
+	@Test
 	public void testOpenAndClose() throws Throwable {
 		// Open a part.
 		MockPart part = openPart(fPage);

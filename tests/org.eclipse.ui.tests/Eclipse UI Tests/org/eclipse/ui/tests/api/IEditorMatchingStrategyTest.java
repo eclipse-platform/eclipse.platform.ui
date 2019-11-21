@@ -21,20 +21,25 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests the <code>IEditorMatchingStrategyTest</code> API and behaviour.
  *
  * @since 3.1
  */
+@RunWith(JUnit4.class)
 public class IEditorMatchingStrategyTest extends UITestCase {
 
 	private static final String MATCHING_EDITOR_ID = "org.eclipse.ui.tests.api.MockMatchingEditorPart1";
 
-	public IEditorMatchingStrategyTest(String testName) {
-		super(testName);
+	public IEditorMatchingStrategyTest() {
+		super(IEditorMatchingStrategyTest.class.getSimpleName());
 	}
 
+	@Test
 	public void testOpenMatchingEditor() throws Exception {
 		IProject proj = FileUtil.createProject("IEditorMatchingStrategyTest");
 		IFile file1 = FileUtil.createFile("plugin.xml", proj);
@@ -54,6 +59,7 @@ public class IEditorMatchingStrategyTest extends UITestCase {
 		assertNotSame(editor1, editor4);
 	}
 
+	@Test
 	public void testFindMatchingEditor() throws Exception {
 		IProject proj = FileUtil.createProject("IEditorMatchingStrategyTest");
 		IFile file1 = FileUtil.createFile("plugin.xml", proj);

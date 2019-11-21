@@ -21,12 +21,16 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.CallHistory;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * This is a test for IEditorPart.  Since IEditorPart is an
  * interface this test verifies the IEditorPart lifecycle rather
  * than the implementation.
  */
+@RunWith(JUnit4.class)
 public class IEditorActionBarContributorTest extends UITestCase {
 
 	protected IWorkbenchWindow fWindow;
@@ -38,8 +42,8 @@ public class IEditorActionBarContributorTest extends UITestCase {
 	/**
 	 * Constructor for IEditorPartTest
 	 */
-	public IEditorActionBarContributorTest(String testName) {
-		super(testName);
+	public IEditorActionBarContributorTest() {
+		super(IEditorActionBarContributorTest.class.getSimpleName());
 	}
 
 	@Override
@@ -49,6 +53,7 @@ public class IEditorActionBarContributorTest extends UITestCase {
 		fPage = fWindow.getActivePage();
 	}
 
+	@Test
 	public void testInit() throws Throwable {
 		// From javadoc: "Initializes this contributor, which is expected to
 		// add contributions as required to the given action bars and global
@@ -69,6 +74,7 @@ public class IEditorActionBarContributorTest extends UITestCase {
 		fPage.closeAllEditors(false);
 	}
 
+	@Test
 	public void testSetActiveEditor() throws Throwable {
 		// From javadoc: "Sets the active editor for the contributor."
 

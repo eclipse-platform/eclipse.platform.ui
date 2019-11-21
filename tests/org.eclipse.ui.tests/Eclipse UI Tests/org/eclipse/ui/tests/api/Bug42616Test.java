@@ -16,6 +16,9 @@ package org.eclipse.ui.tests.api;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Test to ensure that <code>WorkbenchPlugin.createExtension()</code> will only
@@ -24,15 +27,14 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  *
  * @since 3.0
  */
+@RunWith(JUnit4.class)
 public class Bug42616Test extends UITestCase {
 
-	/**
-	 * @param testName
-	 */
-	public Bug42616Test(String testName) {
-		super(testName);
+	public Bug42616Test() {
+		super(Bug42616Test.class.getSimpleName());
 	}
 
+	@Test
 	public void testErrorCondition() {
 		try {
 			WorkbenchPlugin.createExtension(null, null);

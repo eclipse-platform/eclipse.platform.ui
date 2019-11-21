@@ -30,7 +30,11 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.tests.menus.ObjectContributionClasses.IA;
 import org.eclipse.ui.tests.menus.ObjectContributionClasses.ICommon;
 import org.eclipse.ui.tests.menus.ObjectContributionClasses.IModelElement;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class IWorkingSetTest extends UITestCase {
 	static final String WORKING_SET_NAME_1 = "ws1";
 
@@ -40,8 +44,8 @@ public class IWorkingSetTest extends UITestCase {
 
 	IWorkingSet fWorkingSet;
 
-	public IWorkingSetTest(String testName) {
-		super(testName);
+	public IWorkingSetTest() {
+		super(IWorkingSetTest.class.getSimpleName());
 	}
 
 	@Override
@@ -63,10 +67,12 @@ public class IWorkingSetTest extends UITestCase {
 		workingSetManager.removeWorkingSet(fWorkingSet);
 		super.doTearDown();
 	}
+	@Test
 	public void testGetElements() throws Throwable {
 		assertEquals(fWorkspace.getRoot(), fWorkingSet.getElements()[0]);
 	}
 
+	@Test
 	public void testGetId() throws Throwable {
 		assertEquals(null, fWorkingSet.getId());
 		fWorkingSet.setId("bogusId");
@@ -75,10 +81,12 @@ public class IWorkingSetTest extends UITestCase {
 		assertEquals(null, fWorkingSet.getId());
 	}
 
+	@Test
 	public void testGetName() throws Throwable {
 		assertEquals(WORKING_SET_NAME_1, fWorkingSet.getName());
 	}
 
+	@Test
 	public void testSetElements() throws Throwable {
 		boolean exceptionThrown = false;
 
@@ -102,6 +110,7 @@ public class IWorkingSetTest extends UITestCase {
 		assertEquals(0, fWorkingSet.getElements().length);
 	}
 
+	@Test
 	public void testSetId() throws Throwable {
 		assertEquals(null, fWorkingSet.getId());
 		fWorkingSet.setId("bogusId");
@@ -110,6 +119,7 @@ public class IWorkingSetTest extends UITestCase {
 		assertEquals(null, fWorkingSet.getId());
 	}
 
+	@Test
 	public void testSetName() throws Throwable {
 		boolean exceptionThrown = false;
 
@@ -141,6 +151,7 @@ public class IWorkingSetTest extends UITestCase {
 		assertEquals(" ", fWorkingSet.getName());
 	}
 
+	@Test
 	public void testNoDuplicateWorkingSetName() throws Throwable {
 		/* get workingSetManager */
 		IWorkingSetManager workingSetManager = fWorkbench
@@ -178,6 +189,7 @@ public class IWorkingSetTest extends UITestCase {
 		workingSetManager.removeWorkingSet(wSet);
 	}
 
+	@Test
 	public void testNoDuplicateWorkingSetNamesDifferentLabels()
 			throws Throwable {
 		/* get workingSetManager */
@@ -209,6 +221,7 @@ public class IWorkingSetTest extends UITestCase {
 		assertTrue(exceptionThrown);
 	}
 
+	@Test
 	public void testIsEmpty() {
 		fWorkingSet.setElements(new IAdaptable[] {});
 		assertTrue(fWorkingSet.isEmpty());
@@ -222,6 +235,7 @@ public class IWorkingSetTest extends UITestCase {
 	}
 
 
+	@Test
 	public void testApplicableTo_ResourceWorkingSet() {
 		fWorkingSet.setId("org.eclipse.ui.resourceWorkingSetPage");
 		assertEquals("org.eclipse.ui.resourceWorkingSetPage", fWorkingSet
@@ -232,6 +246,7 @@ public class IWorkingSetTest extends UITestCase {
 		assertTrue(adapted[0] instanceof IWorkspaceRoot);
 	}
 
+	@Test
 	public void testApplicableTo_DirectComparison() {
 
 		fWorkingSet.setId("org.eclipse.ui.tests.api.MockWorkingSet");
@@ -241,6 +256,7 @@ public class IWorkingSetTest extends UITestCase {
 		assertTrue(adapted[0] instanceof Foo);
 	}
 
+	@Test
 	public void testApplicableTo_Inheritance() {
 		fWorkingSet.setId("org.eclipse.ui.tests.api.MockWorkingSet");
 		Bar myBar = new Bar();
@@ -249,6 +265,7 @@ public class IWorkingSetTest extends UITestCase {
 		assertTrue(adapted[0] instanceof Bar);
 	}
 
+	@Test
 	public void testApplicableTo_Adapter1() {
 		fWorkingSet.setId("org.eclipse.ui.tests.api.MockWorkingSet");
 		ToFoo tc = new ToFoo();
@@ -257,6 +274,7 @@ public class IWorkingSetTest extends UITestCase {
 		assertTrue(adapted[0] instanceof Foo);
 	}
 
+	@Test
 	public void testApplicableTo_AdapterManager1() {
 		fWorkingSet.setId("org.eclipse.ui.tests.api.MockWorkingSet");
 		IAImpl ia = new IAImpl();
@@ -268,6 +286,7 @@ public class IWorkingSetTest extends UITestCase {
 	/**
 	 * Tests that adaptable=false is working.  ModelElement has a registered adapter to IResource that should not be used.
 	 */
+	@Test
 	public void testApplicableTo_AdapterManager2() {
 		fWorkingSet.setId("org.eclipse.ui.tests.api.MockWorkingSet");
 		ModelElement element = new ModelElement();
@@ -278,6 +297,7 @@ public class IWorkingSetTest extends UITestCase {
 	 * Tests to verify that we don't fall down in the event that the factory
 	 * throws an exception while restoring a working set.
 	 */
+	@Test
 	public void testBadFactory_Restore() {
 		fWorkingSet
 				.setElements(new IAdaptable[] { new BadElementFactory.BadElementInstance() });
@@ -300,6 +320,7 @@ public class IWorkingSetTest extends UITestCase {
 	 * Tests to verify that we don't fall down in the event that the persistable
 	 * throws an exception while saving a working set.
 	 */
+	@Test
 	public void testBadFactory_Save() {
 		fWorkingSet
 				.setElements(new IAdaptable[] { new BadElementFactory.BadElementInstance() });

@@ -23,24 +23,26 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * SessionRestoreTest runs the second half of our session
  * presistance tests.
  *
  */
+@RunWith(JUnit4.class)
 public class DeprecatedSessionRestoreTest extends UITestCase {
 
-	/**
-	 * Construct an instance.
-	 */
-	public DeprecatedSessionRestoreTest(String arg) {
-		super(arg);
+	public DeprecatedSessionRestoreTest() {
+		super(DeprecatedSessionRestoreTest.class.getSimpleName());
 	}
 
 	/**
 	 * Generates a session state in the workbench.
 	 */
+	@Test
 	public void testRestoreSession() throws Throwable {
 		IWorkbenchWindow[] windows;
 		IWorkbenchPage[] pages;

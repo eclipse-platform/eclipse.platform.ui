@@ -18,6 +18,7 @@ import java.util.Arrays;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
 
 /**
  * Test the lifecycle of an action delegate.
@@ -42,6 +43,7 @@ public abstract class IActionDelegateTest extends UITestCase {
 		fPage = fWindow.getActivePage();
 	}
 
+	@Test
 	public void testRun() throws Throwable {
 		// Create the action.
 		Object obj = createActionWidget();
@@ -56,6 +58,7 @@ public abstract class IActionDelegateTest extends UITestCase {
 				Arrays.toString(delegate.callHistory.verifyAndReturnOrder(testNames)));
 	}
 
+	@Test
 	public void testSelectionChanged() throws Throwable {
 		// Create the delegate by running it.
 		Object obj = createActionWidget();

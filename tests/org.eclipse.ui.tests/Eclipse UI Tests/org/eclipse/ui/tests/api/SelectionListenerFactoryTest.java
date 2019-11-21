@@ -30,10 +30,14 @@ import org.eclipse.ui.SelectionListenerFactory.ISelectionModel;
 import org.eclipse.ui.SelectionListenerFactory.Predicates;
 import org.eclipse.ui.tests.SelectionProviderView;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests the ISelectionService class.
  */
+@RunWith(JUnit4.class)
 public class SelectionListenerFactoryTest extends UITestCase implements ISelectionListener {
 	/**
 	 *
@@ -48,8 +52,8 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 
 	private int fCounter;
 
-	public SelectionListenerFactoryTest(String testName) {
-		super(testName);
+	public SelectionListenerFactoryTest() {
+		super(SelectionListenerFactoryTest.class.getSimpleName());
 	}
 
 	@Override
@@ -70,6 +74,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Tests the emptySelection Predicate block
 	 */
+	@Test
 	public void testEmptySelectionListener() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createListener(view, this, Predicates.emptySelection);
@@ -82,6 +87,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Tests the emptySelection Predicate allow
 	 */
+	@Test
 	public void testEmptySelectionListener2() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createListener(view, this, Predicates.emptySelection);
@@ -94,6 +100,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Tests the prevention of offering the same selection twice from the same part.
 	 */
+	@Test
 	public void testAlreadyDeliveredPart1() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createListener(view, this, Predicates.alreadyDelivered);
@@ -108,6 +115,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	 * Tests the prevention of offering the same selection twice from the same part
 	 * but allow from another part.
 	 */
+	@Test
 	public void testAlreadyDeliveredPart2() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		SelectionProviderView view2 = (SelectionProviderView) fPage.showView(SelectionProviderView.ID_2);
@@ -122,6 +130,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Tests the prevention of offering the same selection twice from any part 1.
 	 */
+	@Test
 	public void testAlreadyDeliveredAnyPartPart1() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createListener(view, this,
@@ -139,6 +148,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Tests the prevention of offering the same selection twice from any part 2.
 	 */
+	@Test
 	public void testAlreadyDeliveredAnyPartPart2() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createListener(view, this,
@@ -153,6 +163,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Tests if the selection is received when the selection part is visible.
 	 */
+	@Test
 	public void testSelectionPartVisibleT1() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createListener(view, this,
@@ -167,6 +178,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	 * Tests that the selection is not received when the selection part is
 	 * invisible.
 	 */
+	@Test
 	public void testSelectionPartVisibleT2() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID, null,
 				IWorkbenchPage.VIEW_CREATE);
@@ -182,6 +194,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	 * Tests that the selection is not received when the selection part is
 	 * invisible.
 	 */
+	@Test
 	public void testSelectionPartVisibleT3() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID, null,
 				IWorkbenchPage.VIEW_CREATE);
@@ -195,6 +208,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Tests if the selection is received when the selection part is visible.
 	 */
+	@Test
 	public void testSelectionPartVisibleT4() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createVisibleListener(view, this, m -> true);
@@ -207,6 +221,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Tests that the selection is not received from my own part 1.
 	 */
+	@Test
 	public void testSelfMuteT1() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createListener(view, this, Predicates.selfMute);
@@ -219,6 +234,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Tests that the selection is not received from my own part 2.
 	 */
+	@Test
 	public void testSelfMuteT2() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		SelectionProviderView view2 = (SelectionProviderView) fPage.showView(SelectionProviderView.ID_2);
@@ -232,6 +248,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Tests that the selection is received when the target part is visible.
 	 */
+	@Test
 	public void testTargetPartVisibleT1() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createListener(view, this, Predicates.targetPartVisible);
@@ -245,6 +262,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Tests that the selection is not received when the target part is invisible.
 	 */
+	@Test
 	public void testTargetPartVisibleT2() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createListener(view, this, Predicates.targetPartVisible);
@@ -260,6 +278,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Tests that the target part receives the current selection when it pops up.
 	 */
+	@Test
 	public void testDeliverDelayed() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createListener(view, this, Predicates.targetPartVisible);
@@ -277,6 +296,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	 * Tests that the selection is not received when the selection part is
 	 * invisible.
 	 */
+	@Test
 	public void testSelfMuteT3() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		SelectionProviderView view2 = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
@@ -292,6 +312,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	 * Tests that the selection is not received when the selection part is
 	 * invisible.
 	 */
+	@Test
 	public void testSelfMuteT4() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createVisibleSelfMutedListener(view, this,
@@ -306,6 +327,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	 * Tests that the selection is not received when the selection part is
 	 * invisible.
 	 */
+	@Test
 	public void testSelfMuteT5() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		SelectionProviderView view2 = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
@@ -320,6 +342,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Tests minimum selection block.
 	 */
+	@Test
 	public void testMinimumSelectionSizeT1() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createListener(view, this,
@@ -333,6 +356,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Tests minimum selection positive.
 	 */
+	@Test
 	public void testMinimumSelectionSizeT2() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createListener(view, this,
@@ -347,6 +371,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	 * Tests that the selection is not received when the selection part is
 	 * invisible.
 	 */
+	@Test
 	public void testMinimumSelectionSizeT3() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createListener(view, this,
@@ -360,6 +385,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Tests minimum selection negative on the selection type.
 	 */
+	@Test
 	public void testMinimumSelectionSizeT4() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createListener(view, this,
@@ -374,6 +400,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	 * Tests that the selection is not received when the selection part is
 	 * invisible.
 	 */
+	@Test
 	public void testSelectionSizeT1() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createListener(view, this, Predicates.selectionSize(4));
@@ -387,6 +414,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	 * Tests that the selection is not received when the selection part is
 	 * invisible.
 	 */
+	@Test
 	public void testSelectionSizeT2() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createListener(view, this, Predicates.selectionSize(3));
@@ -399,6 +427,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Test 1 for the {@link Predicates#adaptsTo(Class)} predicate.
 	 */
+	@Test
 	public void testAdaptsToT1() throws Throwable {
 
 		IAdapterFactory f = new IAdapterFactory() {
@@ -431,6 +460,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Test 2 for the {@link Predicates#adaptsTo(Class)} predicate.
 	 */
+	@Test
 	public void testAdaptsToT2() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createListener(view, this,
@@ -444,6 +474,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Test 3 for the {@link Predicates#adaptsTo(Class)} predicate.
 	 */
+	@Test
 	public void testAdaptsToT3() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createListener(view, this,
@@ -457,6 +488,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Test 4 for the {@link Predicates#adaptsTo(Class)} predicate.
 	 */
+	@Test
 	public void testAdaptsToT4() throws Throwable {
 
 		IAdapterFactory f = new IAdapterFactory() {
@@ -489,6 +521,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Test 5 for the {@link Predicates#adaptsTo(Class)} predicate.
 	 */
+	@Test
 	public void testAdaptsToT5() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createListener(view, this,
@@ -502,6 +535,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Tests user defined predicate 1.
 	 */
+	@Test
 	public void testUserPredicate() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createListener(view, this, m -> false);
@@ -514,6 +548,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Tests user defined predicate 2.
 	 */
+	@Test
 	public void testUserPredicateT2() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createListener(view, this,
@@ -527,6 +562,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Tests user defined predicate 3.
 	 */
+	@Test
 	public void testUserPredicateT3() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createListener(view, this,
@@ -541,6 +577,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Tests user defined predicate 4.
 	 */
+	@Test
 	public void testUserPredicateT4() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createListener(view, this,
@@ -554,6 +591,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Create listener factory method test.
 	 */
+	@Test
 	public void testCreateListenerTest() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		try {
@@ -585,6 +623,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Test the decorate method 1.
 	 */
+	@Test
 	public void testDecorateT1() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createVisibleListener(view, this);
@@ -606,6 +645,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Test the decorate method 2.
 	 */
+	@Test
 	public void testDecorateT2() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createVisibleListener(view, this);
@@ -633,6 +673,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Test the decorate method 3.
 	 */
+	@Test
 	public void testDecorateT3() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createVisibleListener(view, this);
@@ -648,6 +689,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Test the decorate method 4.
 	 */
+	@Test
 	public void testDecorateT4() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createVisibleListener(view, this);
@@ -663,6 +705,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Test the decorate method 5.
 	 */
+	@Test
 	public void testDecorateT5() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createVisibleListener(view, this);
@@ -678,6 +721,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Tests selection type
 	 */
+	@Test
 	public void testSelectionTypeT1() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createListener(view, this,
@@ -691,6 +735,7 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	/**
 	 * Tests selection type
 	 */
+	@Test
 	public void testSelectionTypeT2() throws Throwable {
 		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
 		ISelectionListener listener = SelectionListenerFactory.createListener(view, this,

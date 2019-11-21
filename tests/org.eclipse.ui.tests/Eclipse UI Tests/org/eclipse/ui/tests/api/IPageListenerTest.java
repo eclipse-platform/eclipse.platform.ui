@@ -17,6 +17,8 @@ import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * Tests the IPageListener class.
@@ -54,6 +56,8 @@ public class IPageListenerTest extends UITestCase implements IPageListener {
 	/**
 	 * Tests the pageOpened method.
 	 */
+	@Test
+	@Ignore
 	public void testPageOpened() throws Throwable {
 		/*
 		 * Commented out because until test case can be updated to work
@@ -75,6 +79,8 @@ public class IPageListenerTest extends UITestCase implements IPageListener {
 	/**
 	 * Tests the pageClosed method.
 	 */
+	@Test
+	@Ignore
 	public void testPageClosed() throws Throwable {
 		/*
 		 * Commented out because until test case can be updated to work
@@ -97,6 +103,8 @@ public class IPageListenerTest extends UITestCase implements IPageListener {
 	/**
 	 * Tests the pageActivated method.
 	 */
+	@Test
+	@Ignore
 	public void testPageActivate() throws Throwable {
 		/*
 		 * Commented out because until test case can be updated to work

@@ -15,16 +15,21 @@ package org.eclipse.ui.tests.api;
 
 import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class StartupTest extends UITestCase {
 
 	/**
 	 * Construct an instance.
 	 */
-	public StartupTest(String arg) {
-		super(arg);
+	public StartupTest() {
+		super(StartupTest.class.getSimpleName());
 	}
 
+	@Test
 	public void testStartup() {
 		assertTrue("Startup - explicit", StartupClass.getEarlyStartupCalled());
 		assertTrue("Startup - implicit", TestPlugin.getEarlyStartupCalled());

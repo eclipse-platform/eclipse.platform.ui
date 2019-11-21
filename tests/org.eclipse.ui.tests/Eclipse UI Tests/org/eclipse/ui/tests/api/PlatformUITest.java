@@ -13,26 +13,25 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertNotNull;
 
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
+import org.junit.Test;
 
 /**
  * Tests the PlatformUI class.
  */
-public class PlatformUITest extends TestCase {
+public class PlatformUITest {
 
-	public PlatformUITest(String testName) {
-		super(testName);
-	}
-
+	@Test
 	public void testGetWorkbench() throws Throwable {
 		// From Javadoc: "Returns the workbench interface."
 		IWorkbench wb = PlatformUI.getWorkbench();
 		assertNotNull(wb);
 	}
 
+	@Test
 	public void testPLUGIN_ID() {
 		// From Javadoc: "Identifies the workbench plugin."
 		assertNotNull(PlatformUI.PLUGIN_ID);

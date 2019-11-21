@@ -21,12 +21,16 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * SessionCreateTest runs the first half of our session
  * presistance tests.
  *
  */
+@RunWith(JUnit4.class)
 public class SessionCreateTest extends UITestCase {
 
 	private IWorkbenchWindow[] oldWindows;
@@ -42,13 +46,14 @@ public class SessionCreateTest extends UITestCase {
 	/**
 	 * Construct an instance.
 	 */
-	public SessionCreateTest(String arg) {
-		super(arg);
+	public SessionCreateTest() {
+		super(SessionCreateTest.class.getSimpleName());
 	}
 
 	/**
 	 * Generates a session state in the workbench.
 	 */
+	@Test
 	public void testSessionCreation() throws Throwable {
 		IWorkbenchWindow window;
 		IWorkbenchPage page;

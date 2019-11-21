@@ -20,10 +20,14 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.ActionUtil;
 import org.eclipse.ui.tests.harness.util.FileUtil;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests the lifecycle for an editor action delegate.
  */
+@RunWith(JUnit4.class)
 public class IEditorActionDelegateTest extends IActionDelegateTest {
 
 	public static String EDITOR_ID = "org.eclipse.ui.tests.api.IEditorActionDelegateTest";
@@ -33,10 +37,11 @@ public class IEditorActionDelegateTest extends IActionDelegateTest {
 	/**
 	 * Constructor for IWorkbenchWindowActionDelegateTest
 	 */
-	public IEditorActionDelegateTest(String testName) {
-		super(testName);
+	public IEditorActionDelegateTest() {
+		super(IEditorActionDelegateTest.class.getSimpleName());
 	}
 
+	@Test
 	public void testSetActiveEditor() throws Throwable {
 		// When an action delegate is run the
 		// setActiveEditor, selectionChanged, and run methods should

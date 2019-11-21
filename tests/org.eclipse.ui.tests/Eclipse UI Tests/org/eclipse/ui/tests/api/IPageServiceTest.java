@@ -16,15 +16,21 @@ package org.eclipse.ui.tests.api;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IPageService;
 import org.eclipse.ui.IPerspectiveDescriptor;
+import org.eclipse.ui.IPerspectiveListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests the IPageService class.
  */
+@RunWith(JUnit4.class)
 public class IPageServiceTest extends UITestCase implements IPageListener,
 		org.eclipse.ui.IPerspectiveListener {
 	private IWorkbenchWindow fWindow;
@@ -33,8 +39,8 @@ public class IPageServiceTest extends UITestCase implements IPageListener,
 
 	private boolean perspEventReceived;
 
-	public IPageServiceTest(String testName) {
-		super(testName);
+	public IPageServiceTest() {
+		super(IPageServiceTest.class.getSimpleName());
 	}
 
 	@Override
@@ -43,6 +49,7 @@ public class IPageServiceTest extends UITestCase implements IPageListener,
 		fWindow = openTestWindow();
 	}
 
+	@Test
 	public void testLocalPageService() throws Throwable {
 		IWorkbenchPage page = fWindow.openPage(EmptyPerspective.PERSP_ID,
 				getPageInput());
@@ -72,6 +79,7 @@ public class IPageServiceTest extends UITestCase implements IPageListener,
 	/**
 	 * Tests the addPageListener method.
 	 */
+	@Test
 	public void testAddPageListener() throws Throwable {
 		/*
 		 * Commented out because until test case can be updated to work
@@ -99,6 +107,8 @@ public class IPageServiceTest extends UITestCase implements IPageListener,
 	/**
 	 * Tests the removePageListener method.
 	 */
+	@Test
+	@Ignore
 	public void XXXtestRemovePageListener() throws Throwable {
 		// From Javadoc: "Removes the given page listener.
 		// Has no affect if an identical listener is not registered."
@@ -118,6 +128,7 @@ public class IPageServiceTest extends UITestCase implements IPageListener,
 	/**
 	 * Tests getActivePage.
 	 */
+	@Test
 	public void testGetActivePage() throws Throwable {
 		/*
 		 * Commented out because until test case can be updated to work
@@ -151,6 +162,7 @@ public class IPageServiceTest extends UITestCase implements IPageListener,
 	/**
 	 * Tests the addPerspectiveListener method.
 	 */
+	@Test
 	public void testAddPerspectiveListener() throws Throwable {
 		/*
 		 * Commented out because until test case can be updated to work
@@ -180,6 +192,8 @@ public class IPageServiceTest extends UITestCase implements IPageListener,
 	/**
 	 * Tests the removePerspectiveListener method.
 	 */
+	@Test
+	@Ignore
 	public void XXXtestRemovePerspectiveListener() throws Throwable {
 		// From Javadoc: "Removes the given page's perspective listener.
 		// Has no affect if an identical listener is not registered."

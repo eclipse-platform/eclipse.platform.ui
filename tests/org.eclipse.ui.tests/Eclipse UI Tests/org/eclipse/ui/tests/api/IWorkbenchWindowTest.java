@@ -19,13 +19,18 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class IWorkbenchWindowTest extends UITestCase {
 
 	private IWorkbenchWindow fWin;
 
-	public IWorkbenchWindowTest(String testName) {
-		super(testName);
+	public IWorkbenchWindowTest() {
+		super(IWorkbenchWindowTest.class.getSimpleName());
 	}
 
 	@Override
@@ -34,6 +39,7 @@ public class IWorkbenchWindowTest extends UITestCase {
 		fWin = openTestWindow();
 	}
 
+	@Test
 	public void testClose() throws Throwable {
 		assertEquals(fWin.close(), true);
 		assertEquals(
@@ -41,6 +47,7 @@ public class IWorkbenchWindowTest extends UITestCase {
 				false);
 	}
 
+	@Test
 	public void testGetActivePage() throws Throwable {
 		/*
 		 * Commented out because until test case can be updated to work
@@ -65,6 +72,8 @@ public class IWorkbenchWindowTest extends UITestCase {
 		 */
 	}
 
+	@Test
+	@Ignore
 	public void XXXtestSetActivePage() throws Throwable {
 		openTestPage(fWin, 5);
 		IWorkbenchPage[] pages = fWin.getPages();
@@ -78,6 +87,7 @@ public class IWorkbenchWindowTest extends UITestCase {
 		assertNull(fWin.getActivePage());
 	}
 
+	@Test
 	public void testGetPages() throws Throwable {
 		/*
 		 * Commented out because until test case can be updated to work
@@ -100,11 +110,13 @@ public class IWorkbenchWindowTest extends UITestCase {
 		 */
 	}
 
+	@Test
 	public void testGetShell() {
 		Shell sh = fWin.getShell();
 		assertNotNull(sh);
 	}
 
+	@Test
 	public void testGetWorkbench() {
 		IWorkbenchWindow win = fWorkbench.getActiveWorkbenchWindow();
 		assertEquals(win.getWorkbench(), fWorkbench);
@@ -113,6 +125,7 @@ public class IWorkbenchWindowTest extends UITestCase {
 	/**
 	 * tests openPage(String)
 	 */
+	@Test
 	public void testOpenPage() throws Throwable {
 		/*
 		 * Commented out because until test case can be updated to work
@@ -133,6 +146,7 @@ public class IWorkbenchWindowTest extends UITestCase {
 	/**
 	 * tests openPage(String, IAdaptable)
 	 */
+	@Test
 	public void testOpenPage2() throws Throwable {
 		/*
 		 * Commented out because until test case can be updated to work
@@ -162,6 +176,7 @@ public class IWorkbenchWindowTest extends UITestCase {
 		 */
 	}
 
+	@Test
 	public void testIsApplicationMenu() {
 		String[] ids = { IWorkbenchActionConstants.M_FILE,
 				IWorkbenchActionConstants.M_WINDOW, };

@@ -15,18 +15,23 @@ package org.eclipse.ui.tests.api;
 
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Test cases for the <code>IPageLayout</code> API.
  *
  * @since 3.2
  */
+@RunWith(JUnit4.class)
 public class IPageLayoutTest extends UITestCase {
 
-	public IPageLayoutTest(String testName) {
-		super(testName);
+	public IPageLayoutTest() {
+		super(IPageLayoutTest.class.getSimpleName());
 	}
 
+	@Test
 	public void testGetDescriptor() {
 		EmptyPerspective.setLastPerspective(null);
 		openTestWindow(EmptyPerspective.PERSP_ID);

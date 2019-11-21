@@ -13,32 +13,34 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
+import org.junit.Before;
+import org.junit.Test;
 
-public class IFileEditorMappingTest extends TestCase {
+public class IFileEditorMappingTest {
 	private IFileEditorMapping[] fMappings;
 
-	public IFileEditorMappingTest(String testName) {
-		super(testName);
-	}
-
-	@Override
+	@Before
 	public void setUp() {
 		fMappings = PlatformUI.getWorkbench().getEditorRegistry()
 				.getFileEditorMappings();
 	}
 
+	@Test
 	public void testGetName() throws Throwable {
 		for (IFileEditorMapping fMapping : fMappings) {
 			assertNotNull(fMapping.getName());
 		}
 	}
 
+	@Test
 	public void testGetLabel() throws Throwable {
 		String label;
 		for (IFileEditorMapping fMapping : fMappings) {
@@ -49,12 +51,14 @@ public class IFileEditorMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testGetExtension() throws Throwable {
 		for (IFileEditorMapping fMapping : fMappings) {
 			assertNotNull(fMapping.getExtension());
 		}
 	}
 
+	@Test
 	public void testGetEditors() throws Throwable {
 		IEditorDescriptor[] editors;
 
@@ -64,6 +68,7 @@ public class IFileEditorMappingTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testGetImageDescriptor() throws Throwable {
 		for (IFileEditorMapping fMapping : fMappings) {
 			assertNotNull(fMapping.getImageDescriptor());
@@ -71,6 +76,7 @@ public class IFileEditorMappingTest extends TestCase {
 	}
 
 	//how do i set the default editor?
+	@Test
 	public void testGetDefaultEditor() throws Throwable {
 		/*		for( int i = 0; i < fMappings.length; i ++ )
 		 assertNotNull( fMappings[ i ].getDefaultEditor() );*/

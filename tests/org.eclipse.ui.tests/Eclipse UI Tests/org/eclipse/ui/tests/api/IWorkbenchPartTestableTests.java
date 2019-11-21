@@ -30,28 +30,30 @@ import org.eclipse.ui.testing.IWorkbenchPartTestable;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Ignore;
-import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.3
  *
  */
-@RunWith(JUnit38ClassRunner.class)
-@Ignore("No enabled tests")
+@RunWith(JUnit4.class)
 public class IWorkbenchPartTestableTests extends UITestCase {
 
 	/**
 	 * @param testName
 	 */
-	public IWorkbenchPartTestableTests(String testName) {
-		super(testName);
+	public IWorkbenchPartTestableTests() {
+		super(IWorkbenchPartTestableTests.class.getSimpleName());
 	}
 
 	/**
 	 * Iterate over all parts to ensure that they all return a part testable
 	 * that contains a real composite.
 	 */
+	@Test
+	@Ignore
 	public void XXXtestGetComposite() throws CoreException {
 		IWorkbenchPage page = openTestWindow(IDE.RESOURCE_PERSPECTIVE_ID)
 				.getActivePage();

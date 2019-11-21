@@ -22,6 +22,9 @@ import org.eclipse.jface.resource.ResourceLocator;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.tests.harness.util.ImageTests;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests to ensure that various icon scenarios work. These are tested on editors
@@ -30,15 +33,14 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  *
  * @since 3.0
  */
+@RunWith(JUnit4.class)
 public class EditorIconTest extends UITestCase {
 
-	/**
-	 * @param testName
-	 */
-	public EditorIconTest(String testName) {
-		super(testName);
+	public EditorIconTest() {
+		super(EditorIconTest.class.getSimpleName());
 	}
 
+	@Test
 	public void testDependantBundleIcon() {
 		Image i1 = null;
 		Image i2 = null;
@@ -60,6 +62,7 @@ public class EditorIconTest extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testNonDependantBundleIcon() {
 		Image i1 = null;
 		Image i2 = null;
@@ -81,6 +84,7 @@ public class EditorIconTest extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testBadIcon() {
 		Image i1 = null;
 		Image i2 = null;
@@ -105,6 +109,7 @@ public class EditorIconTest extends UITestCase {
 	/**
 	 * Tests undocumented support for platform:/plugin/... URLs.
 	 */
+	@Test
 	public void testBug395126() {
 		ImageDescriptor imageDescriptor = ResourceLocator.imageDescriptorFromBundle("org.eclipse.jface",
 				"platform:/plugin/org.eclipse.jface/$nl$/icons/full/message_error.png")
@@ -123,6 +128,7 @@ public class EditorIconTest extends UITestCase {
 	/**
 	 * Tests undocumented support for platform:/plugin/... URLs.
 	 */
+	@Test
 	public void testBug395126_missing() {
 		ImageDescriptor imageDescriptor = ResourceLocator.imageDescriptorFromBundle("org.eclipse.jface",
 				"platform:/plugin/org.eclipse.jface/$nl$/icons/does-not-exist.gif").orElse(null);
@@ -140,6 +146,7 @@ public class EditorIconTest extends UITestCase {
 	/**
 	 * Tests undocumented support for arbitrary URLs.
 	 */
+	@Test
 	public void testBug474072() throws Exception {
 		URL url = FileLocator.find(new URL("platform:/plugin/org.eclipse.jface/$nl$/icons/full/message_error.png"));
 		ImageDescriptor imageDescriptor = ResourceLocator.imageDescriptorFromBundle("org.eclipse.jface", url.toString())
@@ -158,6 +165,7 @@ public class EditorIconTest extends UITestCase {
 	/**
 	 * Tests undocumented support for arbitrary URLs.
 	 */
+	@Test
 	public void testBug474072_missing() throws Exception {
 		String url = FileLocator.find(new URL("platform:/plugin/org.eclipse.jface/$nl$/icons/full/message_error.png"))
 				.toString();

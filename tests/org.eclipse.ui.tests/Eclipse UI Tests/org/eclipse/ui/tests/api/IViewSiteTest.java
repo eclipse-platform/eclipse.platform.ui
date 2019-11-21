@@ -17,14 +17,18 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class IViewSiteTest extends IWorkbenchPartSiteTest {
 
 	/**
 	 * Constructor for IViewPartSiteTest
 	 */
-	public IViewSiteTest(String testName) {
-		super(testName);
+	public IViewSiteTest() {
+		super(IViewSiteTest.class.getSimpleName());
 	}
 
 	/**
@@ -52,6 +56,7 @@ public class IViewSiteTest extends IWorkbenchPartSiteTest {
 		return page.showView(MockViewPart.ID);
 	}
 
+	@Test
 	public void testGetActionBars() throws Throwable {
 		// From Javadoc: "Returns the action bars for this part site."
 

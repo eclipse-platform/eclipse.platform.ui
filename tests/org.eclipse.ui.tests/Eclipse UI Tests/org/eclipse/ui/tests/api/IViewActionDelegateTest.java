@@ -15,10 +15,14 @@ package org.eclipse.ui.tests.api;
 
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.ui.tests.harness.util.ActionUtil;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests the lifecycle for a view action delegate.
  */
+@RunWith(JUnit4.class)
 public class IViewActionDelegateTest extends IActionDelegateTest {
 
 	public static String TEST_VIEW_ID = "org.eclipse.ui.tests.api.IViewActionDelegateTest";
@@ -26,10 +30,11 @@ public class IViewActionDelegateTest extends IActionDelegateTest {
 	/**
 	 * Constructor for IWorkbenchWindowActionDelegateTest
 	 */
-	public IViewActionDelegateTest(String testName) {
-		super(testName);
+	public IViewActionDelegateTest() {
+		super(IViewActionDelegateTest.class.getSimpleName());
 	}
 
+	@Test
 	public void testInit() throws Throwable {
 		// When an action delegate is run the
 		// init, selectionChanged, and run methods should

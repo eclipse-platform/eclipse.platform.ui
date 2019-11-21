@@ -13,7 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
-import junit.framework.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+
 import junit.framework.TestSuite;
 
 /**
@@ -21,21 +23,10 @@ import junit.framework.TestSuite;
  * workaround for problems running the suites from the
  * command line.
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	IWorkbenchTest.class,
+	IWorkbenchWindowTest.class,
+})
 public class IWorkbenchTestSuite extends TestSuite {
-
-	/**
-	 * Returns the suite.  This is required to
-	 * use the JUnit Launcher.
-	 */
-	public static Test suite() {
-		return new IWorkbenchTestSuite();
-	}
-
-	/**
-	 * Construct the test suite.
-	 */
-	public IWorkbenchTestSuite() {
-		addTest(new TestSuite(IWorkbenchTest.class));
-		addTest(new TestSuite(IWorkbenchWindowTest.class));
-	}
 }

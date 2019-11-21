@@ -29,18 +29,22 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.CallHistory;
 import org.eclipse.ui.tests.harness.util.FileUtil;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * This is a test for IEditorPart. Since IEditorPart is an interface this test
  * verifies the IEditorPart lifecycle rather than the implementation.
  */
+@RunWith(JUnit4.class)
 public class IEditorPartTest extends IWorkbenchPartTest {
 
 	/**
 	 * Constructor for IEditorPartTest
 	 */
-	public IEditorPartTest(String testName) {
-		super(testName);
+	public IEditorPartTest() {
+		super(IEditorPartTest.class.getSimpleName());
 	}
 
 	/**
@@ -69,6 +73,7 @@ public class IEditorPartTest extends IWorkbenchPartTest {
 	 *
 	 * @see ISaveablePart#isSaveOnCloseNeeded()
 	 */
+	@Test
 	public void testOpenAndCloseSaveNotNeeded() throws Throwable {
 		// Open a part.
 		MockEditorPart part = (MockEditorPart) openPart(fPage);
@@ -83,6 +88,7 @@ public class IEditorPartTest extends IWorkbenchPartTest {
 		assertFalse(history.contains("doSave"));
 	}
 
+	@Test
 	public void testOpenAndCloseWithNoMemento() throws Throwable {
 		IProject proj = FileUtil.createProject("IEditorPartTest");
 		IFile file = FileUtil.createFile("IEditorPartTest.txt", proj);
@@ -95,6 +101,7 @@ public class IEditorPartTest extends IWorkbenchPartTest {
 		assertFalse(history.contains("restoreState"));
 	}
 
+	@Test
 	public void testGetShellAfterClose() throws Throwable {
 		IProject proj = FileUtil.createProject("IEditorPartTest");
 		IFile file = FileUtil.createFile("IEditorPartTest.txt", proj);

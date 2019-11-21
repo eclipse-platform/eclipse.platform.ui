@@ -21,14 +21,18 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.tests.harness.util.FileUtil;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class IEditorSiteTest extends IWorkbenchPartSiteTest {
 
 	/**
 	 * Constructor for IEditorSiteTest
 	 */
-	public IEditorSiteTest(String testName) {
-		super(testName);
+	public IEditorSiteTest() {
+		super(IEditorSiteTest.class.getSimpleName());
 	}
 
 	/**
@@ -58,6 +62,7 @@ public class IEditorSiteTest extends IWorkbenchPartSiteTest {
 		return IDE.openEditor(page, file, true);
 	}
 
+	@Test
 	public void testGetActionBarContributor() throws Throwable {
 		// From Javadoc: "Returns the editor action bar contributor for
 		// this editor.

@@ -20,6 +20,7 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
 
 /**
  * Tests the site for an IWorkbenchPart.
@@ -44,6 +45,7 @@ public abstract class IWorkbenchPartSiteTest extends UITestCase {
 		fPage = fWindow.getActivePage();
 	}
 
+	@Test
 	public void testGetId() throws Throwable {
 		// From Javadoc: "Returns the part registry extension id for
 		// this workbench site's part."
@@ -53,6 +55,7 @@ public abstract class IWorkbenchPartSiteTest extends UITestCase {
 		assertEquals(getTestPartId(), site.getId());
 	}
 
+	@Test
 	public void testGetPage() throws Throwable {
 		// From Javadoc: "Returns the page containing this workbench
 		// site's part."
@@ -62,6 +65,7 @@ public abstract class IWorkbenchPartSiteTest extends UITestCase {
 		assertEquals(fPage, site.getPage());
 	}
 
+	@Test
 	public void testGetPluginId() throws Throwable {
 		// From Javadoc: "Returns the unique identifier of the
 		// plug-in that defines this workbench site's part."
@@ -71,6 +75,7 @@ public abstract class IWorkbenchPartSiteTest extends UITestCase {
 		assertEquals(getTestPartPluginId(), site.getPluginId());
 	}
 
+	@Test
 	public void testGetRegisteredName() throws Throwable {
 		// From Javadoc: "Returns the registered name for this
 		// workbench site's part."
@@ -80,6 +85,7 @@ public abstract class IWorkbenchPartSiteTest extends UITestCase {
 		assertEquals(getTestPartName(), site.getRegisteredName());
 	}
 
+	@Test
 	public void testGetShell() throws Throwable {
 		// From Javadoc: "Returns the shell containing this
 		// workbench site's part"
@@ -89,6 +95,7 @@ public abstract class IWorkbenchPartSiteTest extends UITestCase {
 		assertEquals(fWindow.getShell(), site.getShell());
 	}
 
+	@Test
 	public void testGetWorkbenchWindow() throws Throwable {
 		// From Javadoc: "Returns the workbench window
 		// containing this workbench site's part."
@@ -98,6 +105,7 @@ public abstract class IWorkbenchPartSiteTest extends UITestCase {
 		assertEquals(fWindow, site.getWorkbenchWindow());
 	}
 
+	@Test
 	public void testGetSelectionProvider() throws Throwable {
 		// From Javadoc: "'Get' returns the selection provider
 		// for this workbench site's part.
@@ -109,6 +117,7 @@ public abstract class IWorkbenchPartSiteTest extends UITestCase {
 		assertEquals(mock.getSelectionProvider(), site.getSelectionProvider());
 	}
 
+	@Test
 	public void testSetSelectionProvider() throws Throwable {
 		// From Javadoc: 'Set' sets the selection provider.
 
@@ -124,6 +133,7 @@ public abstract class IWorkbenchPartSiteTest extends UITestCase {
 		assertEquals(provider, site.getSelectionProvider());
 	}
 
+	@Test
 	public void testINestableService() throws Throwable {
 		IWorkbenchPart part = createTestPart(fPage);
 		IWorkbenchPartSite site = part.getSite();

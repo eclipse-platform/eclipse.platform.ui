@@ -29,7 +29,11 @@ import org.eclipse.ui.dialogs.IWorkingSetSelectionDialog;
 import org.eclipse.ui.dialogs.WorkingSetConfigurationBlock;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class IWorkingSetManagerTest extends UITestCase {
 	static final String WORKING_SET_NAME_1 = "ws1";
 
@@ -58,8 +62,8 @@ public class IWorkingSetManagerTest extends UITestCase {
 		}
 	}
 
-	public IWorkingSetManagerTest(String testName) {
-		super(testName);
+	public IWorkingSetManagerTest() {
+		super(IWorkingSetManagerTest.class.getSimpleName());
 	}
 
 	@Override
@@ -85,6 +89,7 @@ public class IWorkingSetManagerTest extends UITestCase {
 	/**
 	 * Tests the utility method found on the WorkingSetConfigurationBlock.
 	 */
+	@Test
 	public void testConfigBlockFilter() {
 		final String [] setIds = new String[] {"5", "2", "4", "1", "3" };
 
@@ -107,6 +112,7 @@ public class IWorkingSetManagerTest extends UITestCase {
 
 	}
 
+	@Test
 	public void testAddPropertyChangeListener() throws Throwable {
 		IPropertyChangeListener listener = new TestPropertyChangeListener();
 		fWorkingSetManager.addPropertyChangeListener(listener);
@@ -151,6 +157,7 @@ public class IWorkingSetManagerTest extends UITestCase {
 		assertEquals(fWorkingSet, fChangeNewValue);
 	}
 
+	@Test
 	public void testAddRecentWorkingSet() throws Throwable {
 		fWorkingSetManager.addRecentWorkingSet(fWorkingSet);
 		fWorkingSetManager.addWorkingSet(fWorkingSet);
@@ -165,6 +172,7 @@ public class IWorkingSetManagerTest extends UITestCase {
 				fWorkingSet }, fWorkingSetManager.getRecentWorkingSets()));
 	}
 
+	@Test
 	public void testAddWorkingSet() throws Throwable {
 		fWorkingSetManager.addWorkingSet(fWorkingSet);
 		assertTrue(ArrayUtil.equals(new IWorkingSet[] { fWorkingSet },
@@ -181,6 +189,7 @@ public class IWorkingSetManagerTest extends UITestCase {
 				fWorkingSetManager.getWorkingSets()));
 	}
 
+	@Test
 	public void testCreateWorkingSet() throws Throwable {
 		IWorkingSet workingSet2 = fWorkingSetManager.createWorkingSet(
 				WORKING_SET_NAME_2, new IAdaptable[] { fWorkspace.getRoot() });
@@ -195,6 +204,7 @@ public class IWorkingSetManagerTest extends UITestCase {
 				.getElements()));
 	}
 
+	@Test
 	public void testCreateWorkingSetFromMemento() throws Throwable {
 		IWorkingSet workingSet2 = fWorkingSetManager.createWorkingSet(
 				WORKING_SET_NAME_2, new IAdaptable[] { fWorkspace.getRoot() });
@@ -207,6 +217,7 @@ public class IWorkingSetManagerTest extends UITestCase {
 				restoredWorkingSet2.getElements()));
 	}
 
+	@Test
 	public void testCreateWorkingSetSelectionDialog() throws Throwable {
 		IWorkbenchWindow window = openTestWindow();
 		IWorkingSetSelectionDialog dialog = fWorkingSetManager
@@ -215,6 +226,7 @@ public class IWorkingSetManagerTest extends UITestCase {
 		assertNotNull(dialog);
 	}
 
+	@Test
 	public void testGetRecentWorkingSets() throws Throwable {
 		assertEquals(0, fWorkingSetManager.getRecentWorkingSets().length);
 
@@ -235,6 +247,7 @@ public class IWorkingSetManagerTest extends UITestCase {
 				fWorkingSetManager.getRecentWorkingSets()));
 	}
 
+	@Test
 	public void testRecentWorkingSetsLength() throws Throwable {
 		int oldMRULength =  fWorkingSetManager.getRecentWorkingSetsLength();
 		try {
@@ -275,6 +288,7 @@ public class IWorkingSetManagerTest extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testGetWorkingSet() throws Throwable {
 		assertNull(fWorkingSetManager.getWorkingSet(WORKING_SET_NAME_1));
 
@@ -286,6 +300,7 @@ public class IWorkingSetManagerTest extends UITestCase {
 		assertNull(fWorkingSetManager.getWorkingSet(null));
 	}
 
+	@Test
 	public void testGetWorkingSets() throws Throwable {
 		assertTrue(ArrayUtil.equals(new IWorkingSet[] {}, fWorkingSetManager
 				.getWorkingSets()));
@@ -337,6 +352,7 @@ public class IWorkingSetManagerTest extends UITestCase {
 
 	}
 
+	@Test
 	public void testRemovePropertyChangeListener() throws Throwable {
 		IPropertyChangeListener listener = new TestPropertyChangeListener();
 
@@ -350,6 +366,7 @@ public class IWorkingSetManagerTest extends UITestCase {
 		assertEquals("", fChangeProperty);
 	}
 
+	@Test
 	public void testRemoveWorkingSet() throws Throwable {
 		fWorkingSetManager.removeWorkingSet(fWorkingSet);
 		assertTrue(ArrayUtil.equals(new IWorkingSet[] {}, fWorkingSetManager
@@ -364,6 +381,7 @@ public class IWorkingSetManagerTest extends UITestCase {
 				fWorkingSetManager.getWorkingSets()));
 	}
 
+	@Test
 	public void testRemoveWorkingSetAfterRename() throws Throwable {
 		/* get workingSetManager */
 		IWorkingSetManager workingSetManager =
@@ -398,6 +416,7 @@ public class IWorkingSetManagerTest extends UITestCase {
 	 *
 	 * @throws Throwable
 	 */
+	@Test
 	public void testListenerSafety() throws Throwable {
 		final boolean[] result = new boolean[1];
 		// add a bogus listener that dies unexpectedly

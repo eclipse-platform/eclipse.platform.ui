@@ -20,6 +20,9 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.ActionUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Test the lifecycle of an action filter.
@@ -37,6 +40,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  * 		redTrueAction -&gt; (name = red) (flag = true)
  * </pre>
  */
+@RunWith(JUnit4.class)
 public class IActionFilterTest extends UITestCase {
 
 	protected IWorkbenchWindow fWindow;
@@ -47,8 +51,8 @@ public class IActionFilterTest extends UITestCase {
 
 	protected String DYNAMIC_MENU_VIEW_ID = "org.eclipse.ui.tests.api.IActionFilterTest2";
 
-	public IActionFilterTest(String testName) {
-		super(testName);
+	public IActionFilterTest() {
+		super(IActionFilterTest.class.getSimpleName());
 	}
 
 	@Override
@@ -58,10 +62,12 @@ public class IActionFilterTest extends UITestCase {
 		fPage = fWindow.getActivePage();
 	}
 
+	@Test
 	public void testStaticLifecycle() throws Throwable {
 		testLifecycle(STATIC_MENU_VIEW_ID);
 	}
 
+	@Test
 	public void testDynamicLifecycle() throws Throwable {
 		testLifecycle(DYNAMIC_MENU_VIEW_ID);
 	}
@@ -90,10 +96,12 @@ public class IActionFilterTest extends UITestCase {
 		assertTrue(filter.getCalled());
 	}
 
+	@Test
 	public void testDynamicMenuContribution() throws Throwable {
 		testMenu(DYNAMIC_MENU_VIEW_ID);
 	}
 
+	@Test
 	public void testStaticMenuContribution() throws Throwable {
 		testMenu(STATIC_MENU_VIEW_ID);
 	}

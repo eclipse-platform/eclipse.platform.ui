@@ -13,27 +13,29 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveRegistry;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
-public class IPerspectiveRegistryTest extends TestCase {
+public class IPerspectiveRegistryTest {
 
 	private IPerspectiveRegistry fReg;
 
-	public IPerspectiveRegistryTest(String testName) {
-		super(testName);
-	}
-
-	@Override
+	@Before
 	public void setUp() {
 		fReg = PlatformUI.getWorkbench().getPerspectiveRegistry();
 	}
 
+	@Test
 	public void testFindPerspectiveWithId() {
 		IPerspectiveDescriptor pers = (IPerspectiveDescriptor) ArrayUtil
 				.pickRandom(fReg.getPerspectives());
@@ -60,6 +62,7 @@ public class IPerspectiveRegistryTest extends TestCase {
 	 assertNull( suspect );
 	 }
 	 */
+	@Test
 	public void testGetDefaultPerspective() {
 		String id = fReg.getDefaultPerspective();
 		assertNotNull(id);
@@ -68,6 +71,7 @@ public class IPerspectiveRegistryTest extends TestCase {
 		assertNotNull(suspect);
 	}
 
+	@Test
 	public void testSetDefaultPerspective() {
 		IPerspectiveDescriptor pers = (IPerspectiveDescriptor) ArrayUtil
 				.pickRandom(fReg.getPerspectives());
@@ -76,6 +80,7 @@ public class IPerspectiveRegistryTest extends TestCase {
 		assertEquals(pers.getId(), fReg.getDefaultPerspective());
 	}
 
+	@Test
 	public void testGetPerspectives() throws Throwable {
 		IPerspectiveDescriptor[] pers = fReg.getPerspectives();
 		assertNotNull(pers);
@@ -85,6 +90,8 @@ public class IPerspectiveRegistryTest extends TestCase {
 		}
 	}
 
+	@Test
+	@Ignore
 	public void XXXtestDeleteClonedPerspective() {
 		IWorkbenchPage page = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getActivePage();

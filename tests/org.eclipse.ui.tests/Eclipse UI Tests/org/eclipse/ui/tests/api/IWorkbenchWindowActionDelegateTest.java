@@ -18,19 +18,25 @@ import java.util.Arrays;
 import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.tests.harness.util.ActionUtil;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests the lifecycle for a window action delegate.
  */
+@RunWith(JUnit4.class)
 public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
 
 	/**
 	 * Constructor for IWorkbenchWindowActionDelegateTest
 	 */
-	public IWorkbenchWindowActionDelegateTest(String testName) {
-		super(testName);
+	public IWorkbenchWindowActionDelegateTest() {
+		super(IWorkbenchWindowActionDelegateTest.class.getSimpleName());
 	}
 
+	@Test
 	@Override
 	public void testRun() throws Throwable {
 		// Run the action.
@@ -45,6 +51,7 @@ public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
 		assertEquals(Arrays.toString(testNames), Arrays.toString(delegate.callHistory.verifyAndReturnOrder(testNames)));
 	}
 
+	@Test
 	public void testLazyInit() {
 		// Action set shouldn't be shown / initialized on startup
 		int count = NotInitializedWorkbenchWindowActionDelegate.INIT_COUNT.intValue();
@@ -65,26 +72,30 @@ public class IWorkbenchWindowActionDelegateTest extends IActionDelegateTest {
 	}
 
 	// Bug 48799.  Commented out testDispose to avoid a test failure.  This should be a temporary solution.
-	//	public void testDispose() throws Throwable {
-	//		// Run the action.
-	//		testRun();
-	//
-	//		// Get the action.
-	//		MockActionDelegate delegate = getDelegate();
-	//		assertNotNull(delegate);
-	//
-	//		// Dispose action.
-	//		// Verify that the dispose method is called.
-	//		delegate.callHistory.clear();
-	//		removeAction();
-	//		assertTrue(delegate.callHistory.contains("dispose"));
-	//	}
+	@Test
+	@Ignore("Bug 48799")
+	public void testDispose() throws Throwable {
+		// Run the action.
+		testRun();
+
+		// Get the action.
+		MockActionDelegate delegate = getDelegate();
+		assertNotNull(delegate);
+
+		// Dispose action.
+		// Verify that the dispose method is called.
+		delegate.callHistory.clear();
+		removeAction();
+		assertTrue(delegate.callHistory.contains("dispose"));
+	}
 
 	/**
 	 * Regression test for bug 81422.  Tests to ensure that dispose() is only
 	 * called once if the delegate implements both IWorkbenchWindowActionDelegate
 	 * and IActionDelegate2.
 	 */
+	@Test
+	@Ignore
 	public void XXXtestDisposeWorkbenchWindowActionDelegateBug81422() {
 		String id = MockWorkbenchWindowActionDelegate.SET_ID;
 		fPage.showActionSet(id);

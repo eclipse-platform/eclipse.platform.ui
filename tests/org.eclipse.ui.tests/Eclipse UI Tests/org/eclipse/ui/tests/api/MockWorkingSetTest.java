@@ -13,16 +13,20 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests the WorkingSetDescriptor and WorkingSetRegistry.
  */
-public class MockWorkingSetTest extends TestCase {
+public class MockWorkingSetTest {
 	static final String WORKING_SET_ID = "org.eclipse.ui.tests.api.MockWorkingSet";
 
 	static final String WORKING_SET_NAME = "Mock Working Set";
@@ -31,19 +35,15 @@ public class MockWorkingSetTest extends TestCase {
 
 	WorkingSetRegistry fRegistry;
 
-	public MockWorkingSetTest(String name) {
-		super(name);
-	}
-
 	/**
 	 * @see junit.framework.TestCase#setUp()
 	 */
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		fRegistry = WorkbenchPlugin.getDefault().getWorkingSetRegistry();
 	}
 
+	@Test
 	public void testWorkingSetDescriptor() throws Throwable {
 		WorkingSetDescriptor workingSetDescriptor = fRegistry
 				.getWorkingSetDescriptor(WORKING_SET_ID);
@@ -55,6 +55,7 @@ public class MockWorkingSetTest extends TestCase {
 				.getPageClassName());
 	}
 
+	@Test
 	public void testWorkingSetRegistry() throws Throwable {
 		WorkingSetDescriptor[] workingSetDescriptors = fRegistry
 				.getWorkingSetDescriptors();

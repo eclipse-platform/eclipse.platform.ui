@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -21,28 +23,14 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.registry.WizardsRegistryReader;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * @since 3.1
  */
-public class Bug75118Test extends TestCase {
+public class Bug75118Test {
 
-	/**
-	 *
-	 */
-	public Bug75118Test() {
-		super();
-	}
-
-	/**
-	 * @param name
-	 */
-	public Bug75118Test(String name) {
-		super(name);
-	}
-
+	@Test
 	public void testWizards() {
 		WizardsRegistryReader reader = new WizardsRegistryReader(
 				PlatformUI.PLUGIN_ID, IWorkbenchRegistryConstants.PL_NEW);

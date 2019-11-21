@@ -24,10 +24,14 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.progress.UIJob;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.1
  */
+@RunWith(JUnit4.class)
 public class UIJobTest extends UITestCase {
 
 	protected IWorkbenchWindow fWindow;
@@ -37,8 +41,8 @@ public class UIJobTest extends UITestCase {
 	/**
 	 * Constructor for IEditorPartTest
 	 */
-	public UIJobTest(String testName) {
-		super(testName);
+	public UIJobTest() {
+		super(UIJobTest.class.getSimpleName());
 	}
 
 	@Override
@@ -62,6 +66,7 @@ public class UIJobTest extends UITestCase {
 	 * @throws Exception
 	 * @since 3.1
 	 */
+	@Test
 	public void testJoin() throws Exception {
 
 		uiJobFinished = false;

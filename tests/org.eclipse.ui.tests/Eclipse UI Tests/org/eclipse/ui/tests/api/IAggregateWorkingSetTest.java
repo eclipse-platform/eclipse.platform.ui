@@ -37,7 +37,12 @@ import org.eclipse.ui.internal.AggregateWorkingSet;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class IAggregateWorkingSetTest extends UITestCase {
 
 	static final String WORKING_SET_NAME = "testws";
@@ -49,8 +54,8 @@ public class IAggregateWorkingSetTest extends UITestCase {
 	List<IWorkingSet> backup;
 	IAggregateWorkingSet fWorkingSet;
 
-	public IAggregateWorkingSetTest(String testName) {
-		super(testName);
+	public IAggregateWorkingSetTest() {
+		super(IAggregateWorkingSetTest.class.getSimpleName());
 	}
 
 	@Override
@@ -89,6 +94,7 @@ public class IAggregateWorkingSetTest extends UITestCase {
 		super.doTearDown();
 	}
 
+	@Test
 	public void testSaveWSet() throws Throwable {
 		//<possible client code>
 		IWorkingSetManager workingSetManager = fWorkbench
@@ -105,6 +111,7 @@ public class IAggregateWorkingSetTest extends UITestCase {
 		IMemento memento=XMLMemento.createWriteRoot(IWorkbenchConstants.TAG_WORKING_SET);
 		set.saveState(memento);
 	}
+	@Test
 	public void testGetElemets() throws Throwable {
 		//<possible client code>
 		IWorkingSetManager workingSetManager = fWorkbench
@@ -152,6 +159,7 @@ public class IAggregateWorkingSetTest extends UITestCase {
 	 *
 	 * @throws Throwable
 	 */
+	@Test
 	public void testWorkingSetCycle() throws Throwable {
 		IWorkingSetManager manager = fWorkbench.getWorkingSetManager();
 
@@ -185,6 +193,7 @@ public class IAggregateWorkingSetTest extends UITestCase {
 	 * Tests cleanup of the cycle from an aggregate working set.
 	 * @throws Throwable
 	 */
+	@Test
 	public void testCycleCleanup() throws Throwable {
 		IWorkingSetManager manager = fWorkbench.getWorkingSetManager();
 
@@ -244,6 +253,8 @@ public class IAggregateWorkingSetTest extends UITestCase {
 	 * memento of aggregates
 	 */
 	/* TODO test must be enabled after bug 479217 is fixed */
+	@Test
+	@Ignore("Bug 479217")
 	public void XXXtestWorkingSetSaveRestoreAggregates() throws Throwable {
 		IWorkingSetManager manager = fWorkbench.getWorkingSetManager();
 		String nameA = "A";
@@ -338,6 +349,7 @@ public class IAggregateWorkingSetTest extends UITestCase {
 	}
 
 	/* test which passes as long as bug 479217 is not fixed */
+	@Test
 	public void testWorkingSetSaveNeverRestoresAggregate() throws Throwable {
 		IWorkingSetManager manager = fWorkbench.getWorkingSetManager();
 		String nameA = "A";

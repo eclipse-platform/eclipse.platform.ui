@@ -33,11 +33,15 @@ import org.eclipse.ui.internal.SaveablesList;
 import org.eclipse.ui.tests.harness.util.CallHistory;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.5
  *
  */
+@RunWith(JUnit4.class)
 public class SaveablesListTest extends UITestCase {
 
 	private IWorkbenchWindow fWin;
@@ -46,8 +50,8 @@ public class SaveablesListTest extends UITestCase {
 
 	private IWorkbenchPage page;
 
-	public SaveablesListTest(String testName) {
-		super(testName);
+	public SaveablesListTest() {
+		super(SaveablesListTest.class.getSimpleName());
 	}
 
 	@Override
@@ -73,6 +77,7 @@ public class SaveablesListTest extends UITestCase {
 		super.doTearDown();
 	}
 
+	@Test
 	public void testPreclosePartsWithSaveOptions_SaveAll() throws Throwable {
 		int total = 5;
 		final IFile[] files = new IFile[total];
@@ -114,6 +119,7 @@ public class SaveablesListTest extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testPreclosePartsWithSaveOptions_DiscardAll() throws Throwable {
 		int total = 5;
 		final IFile[] files = new IFile[total];
@@ -155,6 +161,7 @@ public class SaveablesListTest extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testPreclosePartsWithSaveOptions_SaveFew() throws Throwable {
 		int total = 5;
 		final IFile[] files = new IFile[total];
