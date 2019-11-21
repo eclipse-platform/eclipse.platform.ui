@@ -14,28 +14,28 @@
 
 package org.eclipse.ui.tests.activities;
 
-import java.util.Iterator;
-
 import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.IActivityManager;
 import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.activities.NotDefinedException;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests that the Persistance class is catching malformed registry entries.
  *
  * @since 3.1
  */
+@RunWith(JUnit4.class)
 public class PersistanceTest extends UITestCase {
 
-	/**
-	 * @param testName
-	 */
-	public PersistanceTest(String testName) {
-		super(testName);
+	public PersistanceTest() {
+		super(PersistanceTest.class.getSimpleName());
 	}
 
+	@Test
 	public void testCategoryPermutations() {
 		try {
 			IActivityManager manager = fWorkbench.getActivitySupport().getActivityManager();
@@ -46,8 +46,8 @@ public class PersistanceTest extends UITestCase {
 			assertTrue(category.isDefined());
 			assertNotNull(category.getDescription());
 
-			for (Iterator<String> i = manager.getDefinedCategoryIds().iterator(); i.hasNext();) {
-				if (manager.getCategory(i.next()).getName().equals("org.eclipse.ui.PT.C3")) {
+			for (String string : manager.getDefinedCategoryIds()) {
+				if (manager.getCategory(string).getName().equals("org.eclipse.ui.PT.C3")) {
 					fail("Found category that should not be.");
 				}
 			}
@@ -57,24 +57,28 @@ public class PersistanceTest extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testActivityRequirementBindings() {
 		IActivityManager manager = fWorkbench.getActivitySupport().getActivityManager();
 		IActivity activity  = manager.getActivity("org.eclipse.ui.PT.A2");
 		assertTrue(activity.getActivityRequirementBindings().isEmpty());
 	}
 
+	@Test
 	public void testActivityPatternBindings() {
 		IActivityManager manager = fWorkbench.getActivitySupport().getActivityManager();
 		IActivity activity  = manager.getActivity("org.eclipse.ui.PT.A2");
 		assertTrue(activity.getActivityPatternBindings().isEmpty());
 	}
 
+	@Test
 	public void testCategoryActivityBindings() {
 		IActivityManager manager = fWorkbench.getActivitySupport().getActivityManager();
 		ICategory category  = manager.getCategory("org.eclipse.ui.PT.C2");
 		assertTrue(category.getCategoryActivityBindings().isEmpty());
 	}
 
+	@Test
 	public void testActivityPermutations() {
 		try {
 			IActivityManager manager = fWorkbench.getActivitySupport().getActivityManager();
@@ -85,8 +89,8 @@ public class PersistanceTest extends UITestCase {
 			assertTrue(activity.isDefined());
 			assertNotNull(activity.getDescription());
 
-			for (Iterator<String> i = manager.getDefinedActivityIds().iterator(); i.hasNext();) {
-				if (manager.getActivity(i.next()).getName().equals("org.eclipse.ui.PT.A3")) {
+			for (String string : manager.getDefinedActivityIds()) {
+				if (manager.getActivity(string).getName().equals("org.eclipse.ui.PT.A3")) {
 					fail("Found activity that should not be.");
 				}
 			}

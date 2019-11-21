@@ -25,11 +25,16 @@ import org.eclipse.ui.menus.IContributionRoot;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.3
  *
  */
+@RunWith(JUnit4.class)
 public class MenusTest extends UITestCase {
 
 	private TestFactory factory;
@@ -83,11 +88,8 @@ public class MenusTest extends UITestCase {
 		}
 	}
 
-	/**
-	 * @param testName
-	 */
-	public MenusTest(String testName) {
-		super(testName);
+	public MenusTest() {
+		super(MenusTest.class.getSimpleName());
 	}
 
 	@Override
@@ -113,6 +115,7 @@ public class MenusTest extends UITestCase {
 		super.doTearDown();
 	}
 
+	@Test
 	public void testNoNamespaceFactory() {
 		window.getWorkbench().getActivitySupport().setEnabledActivityIds(
 				Collections.singleton("menuTest1")); // enable the foo
@@ -134,6 +137,8 @@ public class MenusTest extends UITestCase {
 
 	}
 
+	@Test
+	@Ignore
 	public void XXXtestMenuVisibilityWithCustomFactory() {
 		window.getWorkbench().getActivitySupport().setEnabledActivityIds(
 				Collections.singleton("menuTest1")); // enable the foo

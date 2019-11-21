@@ -37,12 +37,16 @@ import org.eclipse.ui.activities.WorkbenchTriggerPointAdvisor;
 import org.eclipse.ui.internal.activities.MutableActivityManager;
 import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  *
  * The dynamic test manipualtes the categories, activities and their definitions
  * and ensures that their content and their listeners are behaving properly.
  */
+@RunWith(JUnit4.class)
 public class DynamicTest extends UITestCase {
 	private MutableActivityManager activityManager;
 
@@ -74,14 +78,8 @@ public class DynamicTest extends UITestCase {
 
 	static final int DEFAULT_ENABLED_CHANGED = 11;
 
-	/**
-	 * Constructor.
-	 *
-	 * @param testName
-	 *            Test's name.
-	 */
-	public DynamicTest(String testName) {
-		super(testName);
+	public DynamicTest() {
+		super(DynamicTest.class.getSimpleName());
 		fixedModelRegistry = new DynamicModelActivityRegistry();
 		activityManager = new MutableActivityManager(new WorkbenchTriggerPointAdvisor(), fixedModelRegistry);
 		listenerType = -1;
@@ -91,6 +89,7 @@ public class DynamicTest extends UITestCase {
 	 * Test sizes of what has been read.
 	 *
 	 */
+	@Test
 	public void testSizes() {
 		assertTrue(activityManager.getDefinedCategoryIds().size() == 6);
 		assertTrue(activityManager.getDefinedActivityIds().size() == 18);
@@ -101,6 +100,7 @@ public class DynamicTest extends UITestCase {
 	 * Test activity bindings.
 	 *
 	 */
+	@Test
 	public void testActivityPatternBindings() {
 		IActivity first_activity = activityManager
 				.getActivity((String) activityManager.getDefinedActivityIds()
@@ -123,6 +123,7 @@ public class DynamicTest extends UITestCase {
 	 * Test the enabled activities.
 	 *
 	 */
+	@Test
 	public void testEnabledActivities() {
 		// Add an enabled activity
 		Set<String> compareSet;
@@ -142,6 +143,7 @@ public class DynamicTest extends UITestCase {
 	 * Test the identifier listener.
 	 *
 	 */
+	@Test
 	public void testIdentifiersListener() {
 		final IIdentifier enabledIdentifier = activityManager
 				.getIdentifier("org.eclipse.pattern3"); //$NON-NLS-1$
@@ -198,6 +200,7 @@ public class DynamicTest extends UITestCase {
 	 * Test the activity manager listener.
 	 *
 	 */
+	@Test
 	public void testActivityManagerListener() {
 		activityManager.addActivityManagerListener(activityManagerEvent -> {
 			switch (listenerType) {
@@ -248,6 +251,7 @@ public class DynamicTest extends UITestCase {
 	 * Test the activity listener.
 	 *
 	 */
+	@Test
 	public void testActivityListener() {
 		final String activity_to_listen_name = "Activity 18"; //$NON-NLS-1$
 		final IActivity activity_to_listen = activityManager
@@ -353,6 +357,7 @@ public class DynamicTest extends UITestCase {
 	 * Test the category listener.
 	 *
 	 */
+	@Test
 	public void testCategoryListener() {
 		final ICategory category_to_listen = activityManager
 				.getCategory((String) activityManager.getDefinedCategoryIds()
@@ -424,6 +429,7 @@ public class DynamicTest extends UITestCase {
 	/**
 	 * Tests to ensure dynamism with regard to the extension registry.
 	 */
+	@Test
 	public void testDynamicRegistry() {
 		IWorkbenchActivitySupport was = PlatformUI.getWorkbench()
 				.getActivitySupport();

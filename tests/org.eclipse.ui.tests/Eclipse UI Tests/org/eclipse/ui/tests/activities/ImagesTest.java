@@ -23,23 +23,25 @@ import org.eclipse.ui.internal.IWorkbenchGraphicConstants;
 import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.tests.harness.util.ImageTests;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.1
  */
+@RunWith(JUnit4.class)
 public class ImagesTest extends UITestCase {
 
 	private Image defaultImage;
 	private Image image1;
 	private Image image2;
 
-	/**
-	 * @param testName
-	 */
-	public ImagesTest(String testName) {
-		super(testName);
+	public ImagesTest() {
+		super(ImagesTest.class.getSimpleName());
 	}
 
+	@Test
 	public void testActivityImages() {
 		IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
 		IActivity activity1 = support.getActivityManager().getActivity("org.eclipse.activity1");
@@ -66,6 +68,7 @@ public class ImagesTest extends UITestCase {
 	}
 
 
+	@Test
 	public void testCategoryImages() {
 		IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
 		ICategory category1 = support.getActivityManager().getCategory("org.eclipse.category1");

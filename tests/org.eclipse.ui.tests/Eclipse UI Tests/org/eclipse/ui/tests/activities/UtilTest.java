@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.activities;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -35,15 +40,16 @@ import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.services.IEvaluationService;
-
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests various utility methods on WorkbenchActivityHelper as well as other misc. activities functionality.
  *
  * @since 3.1
  */
-public class UtilTest extends TestCase {
+public class UtilTest {
 
 	private Set<String> rememberedSet;
 
@@ -54,16 +60,10 @@ public class UtilTest extends TestCase {
 	public static final String ID5 = "org.eclipse.ui.tests.util.5";
 
 	/**
-	 * @param name
-	 */
-	public UtilTest(String name) {
-		super(name);
-	}
-
-	/**
 	 * Asserts that if you enable cat 1 then cat 3 would also be enabled (they
 	 * contain the same activity).
 	 */
+	@Test
 	public void testGetEnabledCategories1() {
 		Set<String> ids = WorkbenchActivityHelper.getEnabledCategories(getActivityManager(), ID1);
 		assertEquals(1, ids.size());
@@ -74,6 +74,7 @@ public class UtilTest extends TestCase {
 	 * Asserts that if you enable cat 2 then cat 1 and cat 3 would also be
 	 * enabled. Cat 2 has activity 2, which depends on activity 1.
 	 */
+	@Test
 	public void testGetEnabledCategories2() {
 		Set<String> ids = WorkbenchActivityHelper.getEnabledCategories(getActivityManager(), ID2);
 		assertEquals(2, ids.size());
@@ -85,6 +86,7 @@ public class UtilTest extends TestCase {
 	 * Asserts that if you enable cat 3 then cat 1 would also be enabled (they
 	 * contain the same activity).
 	 */
+	@Test
 	public void testGetEnabledCategories3() {
 		Set<String> ids = WorkbenchActivityHelper.getEnabledCategories(getActivityManager(), ID3);
 		assertEquals(1, ids.size());
@@ -94,6 +96,7 @@ public class UtilTest extends TestCase {
 	/**
 	 * Asserts that if you enable cat 4 then no other categories would change..
 	 */
+	@Test
 	public void testGetEnabledCategories4() {
 		Set<String> ids = WorkbenchActivityHelper.getEnabledCategories(getActivityManager(), ID4);
 		assertEquals(0, ids.size());
@@ -102,6 +105,7 @@ public class UtilTest extends TestCase {
 	/**
 	 * Asserts that if you enable cat 5 then cat 4 will become enabled
 	 */
+	@Test
 	public void testGetEnabledCategories5() {
 		Set<String> ids = WorkbenchActivityHelper.getEnabledCategories(getActivityManager(), ID5);
 		assertEquals(1, ids.size());
@@ -112,6 +116,7 @@ public class UtilTest extends TestCase {
 	 * Asserts that if you enable cat 1 when it's activity is already enabled
 	 * then no categories would change.
 	 */
+	@Test
 	public void testGetEnabledCategories1_A() {
 		HashSet<String> set = new HashSet<>();
 		set.add(ID1);
@@ -123,6 +128,7 @@ public class UtilTest extends TestCase {
 	 * Asserts that if you enable cat 2 when it's activity is already enabled
 	 * then no categories would change.
 	 */
+	@Test
 	public void testGetEnabledCategories2_A() {
 		HashSet<String> set = new HashSet<>();
 		set.add(ID2);
@@ -134,6 +140,7 @@ public class UtilTest extends TestCase {
 	 * Asserts that if you enable cat 3 when it's activity is already enabled
 	 * then no categories would change.
 	 */
+	@Test
 	public void testGetEnabledCategories3_A() {
 		HashSet<String> set = new HashSet<>();
 		set.add(ID1);
@@ -145,6 +152,7 @@ public class UtilTest extends TestCase {
 	 * Asserts that if you enable cat 4 when it's activity is already enabled
 	 * then no categories would change.
 	 */
+	@Test
 	public void testGetEnabledCategories4_A() {
 		HashSet<String> set = new HashSet<>();
 		set.add(ID4);
@@ -156,6 +164,7 @@ public class UtilTest extends TestCase {
 	 * Asserts that if you enable cat 5 when activity 4 is already enabled
 	 * then no categories would change.
 	 */
+	@Test
 	public void testGetEnabledCategories5_Aa() {
 		HashSet<String> set = new HashSet<>();
 		set.add(ID4);
@@ -167,6 +176,7 @@ public class UtilTest extends TestCase {
 	 * Asserts that if you enable cat 5 when activity 5 is already enabled
 	 * then cat 4 would change.
 	 */
+	@Test
 	public void testGetEnabledCategories5_Ab() {
 		HashSet<String> set = new HashSet<>();
 		set.add(ID5);
@@ -180,6 +190,7 @@ public class UtilTest extends TestCase {
 	 * Asserts that if you disable cat 1 then cat 3 would also be disabled (they
 	 * contain the same activity).
 	 */
+	@Test
 	public void testGetDisabledCategories1() {
 		enableAll();
 		Set<String> ids = WorkbenchActivityHelper.getDisabledCategories(getActivityManager(), ID1);
@@ -190,6 +201,7 @@ public class UtilTest extends TestCase {
 	/**
 	 * Asserts that if you disable cat 2 then cat 1 and cat 3 would also be disabled.
 	 */
+	@Test
 	public void testGetDisabledCategories2() {
 		enableAll();
 		Set<String> ids = WorkbenchActivityHelper.getDisabledCategories(getActivityManager(), ID2);
@@ -201,6 +213,7 @@ public class UtilTest extends TestCase {
 	/**
 	 * Asserts that if you disable cat 3 then cat 1 would also be disabled.
 	 */
+	@Test
 	public void testGetDisabledCategories3() {
 		enableAll();
 		Set<String> ids = WorkbenchActivityHelper.getDisabledCategories(getActivityManager(), ID3);
@@ -211,6 +224,7 @@ public class UtilTest extends TestCase {
 	/**
 	 * Asserts that if you disable cat 4 then no other categories would also be disabled.
 	 */
+	@Test
 	public void testGetDisabledCategories4() {
 		enableAll();
 		Set<String> ids = WorkbenchActivityHelper.getDisabledCategories(getActivityManager(), ID4);
@@ -220,6 +234,7 @@ public class UtilTest extends TestCase {
 	/**
 	 * Asserts that if you disable cat 5 then cat 4 would also be disabled.
 	 */
+	@Test
 	public void testGetDisabledCategories5() {
 		enableAll();
 		Set<String> ids = WorkbenchActivityHelper.getDisabledCategories(getActivityManager(), ID5);
@@ -230,6 +245,7 @@ public class UtilTest extends TestCase {
 	/**
 	 * Asserts that the enabled category count for activity 1 is 2 (cat 1 and 3).
 	 */
+	@Test
 	public void testCategoryCount1_A() {
 		enableAll();
 		Set<String> ids = WorkbenchActivityHelper.getEnabledCategoriesForActivity(getActivityManager(), ID1);
@@ -241,6 +257,7 @@ public class UtilTest extends TestCase {
 	/**
 	 * Asserts that the enabled category count for activity 2 is 1 (cat 2).
 	 */
+	@Test
 	public void testCategoryCount2_A() {
 		enableAll();
 		Set<String> ids = WorkbenchActivityHelper.getEnabledCategoriesForActivity(getActivityManager(), ID2);
@@ -251,6 +268,7 @@ public class UtilTest extends TestCase {
 	/**
 	 * Asserts that the enabled category count for activity 4 is 2 (cat 4 and 5).
 	 */
+	@Test
 	public void testCategoryCount4_A() {
 		enableAll();
 		Set<String> ids = WorkbenchActivityHelper.getEnabledCategoriesForActivity(getActivityManager(), ID4);
@@ -262,6 +280,7 @@ public class UtilTest extends TestCase {
 	/**
 	 * Asserts that the enabled category count for activity 5 is 1 (cat 5).
 	 */
+	@Test
 	public void testCategoryCount5_A() {
 		enableAll();
 		Set<String> ids = WorkbenchActivityHelper.getEnabledCategoriesForActivity(getActivityManager(), ID5);
@@ -273,6 +292,7 @@ public class UtilTest extends TestCase {
 	 * Test the activity property tester.  Test the isActivityEnabled property
 	 *
 	 */
+	@Test
 	public void testPropertyTester1() {
 		enableAll();
 		EvaluationContext context = new EvaluationContext(null, PlatformUI.getWorkbench());
@@ -313,6 +333,7 @@ public class UtilTest extends TestCase {
 	 * Test the activity property tester.  Test the isCategoryEnabled property
 	 *
 	 */
+	@Test
 	public void testPropertyTester2() {
 		enableAll();
 		EvaluationContext context = new EvaluationContext(null, PlatformUI.getWorkbench());
@@ -388,6 +409,7 @@ public class UtilTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testExpressionEnablement() throws Exception {
 		IPluginContribution filterExp = new IPluginContribution() {
 			@Override
@@ -555,6 +577,7 @@ public class UtilTest extends TestCase {
 	/**
 	 * Tests non-regular Expression Pattern bindings.
 	 */
+	@Test
 	public void testNonRegExpressionPattern() {
 		final String ACTIVITY_NON_REG_EXP = "org.eclipse.activityNonRegExp";
 
@@ -587,6 +610,7 @@ public class UtilTest extends TestCase {
 	 * expression and setting disabled of an activity enabled by expression both
 	 * behave as expected. Ie: it's a no-op.
 	 */
+	@Test
 	public void testSetEnabledExpressionActivity() {
 		try {
 			TestSourceProvider testSourceProvider = new TestSourceProvider();
@@ -623,15 +647,13 @@ public class UtilTest extends TestCase {
 		}
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		rememberedSet = getActivityManager().getEnabledActivityIds();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() throws Exception {
 		PlatformUI.getWorkbench().getActivitySupport().setEnabledActivityIds(
 				rememberedSet);
 	}

@@ -27,12 +27,16 @@ import org.eclipse.ui.activities.NotDefinedException;
 import org.eclipse.ui.internal.activities.ActivityRequirementBinding;
 import org.eclipse.ui.internal.activities.CategoryActivityBinding;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  *
  * The static test reads activity definitions from the plugin.xml (in
  * org.eclipse.ui.tests) file and valides its content.
  */
+@RunWith(JUnit4.class)
 public class StaticTest extends UITestCase {
 	private IActivityManager activityManager;
 
@@ -42,14 +46,8 @@ public class StaticTest extends UITestCase {
 
 	private List<Object> patternActivityIds;
 
-	/**
-	 * Constructor.
-	 *
-	 * @param testName
-	 *            Test's name.
-	 */
-	public StaticTest(String testName) {
-		super(testName);
+	public StaticTest() {
+		super(StaticTest.class.getSimpleName());
 		activityManager = PlatformUI.getWorkbench().getActivitySupport()
 				.getActivityManager();
 		populateIds();
@@ -81,6 +79,7 @@ public class StaticTest extends UITestCase {
 	 * Test the activity manager's content.
 	 *
 	 */
+	@Test
 	public void testActivityManager() {
 		// Check the defined category Ids
 		assertTrue(activityManager.getDefinedCategoryIds().containsAll(
@@ -105,6 +104,7 @@ public class StaticTest extends UITestCase {
 	 * Test an activitie's content.
 	 *
 	 */
+	@Test
 	public void testActivity() {
 		IActivity first_activity = activityManager
 				.getActivity((String) activityIds.toArray()[0]);
@@ -147,6 +147,7 @@ public class StaticTest extends UITestCase {
 	 * Test a category's content.
 	 *
 	 */
+	@Test
 	public void testCategory() {
 		ICategory first_category = activityManager
 				.getCategory((String) categoryIds.toArray()[0]);

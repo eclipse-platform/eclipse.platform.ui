@@ -15,11 +15,13 @@
 
 package org.eclipse.ui.tests.activities;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.regex.Pattern;
 
 import org.eclipse.ui.internal.activities.PatternUtil;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Test for:
@@ -28,12 +30,13 @@ import junit.framework.TestCase;
  * @since 3.4
  * @author Jan Diederich
  */
-public class PatternUtilTest extends TestCase {
+public class PatternUtilTest {
 
 	/**
 	 * Tests if the quote function of ActivityPatternBinding works.
 	 */
-	public static void testQuotePattern() {
+	@Test
+	public void testQuotePattern() {
 		assertTrue(PatternUtil.quotePattern("abcd").equals("\\Qabcd\\E"));
 		assertTrue(PatternUtil.quotePattern("Test\\Q").equals("\\QTest\\Q\\E"));
 		assertTrue(PatternUtil.quotePattern("Test\\Q\\E").equals(
@@ -55,6 +58,6 @@ public class PatternUtilTest extends TestCase {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		testQuotePattern();
+		new PatternUtilTest().testQuotePattern();
 	}
 }
