@@ -46,12 +46,12 @@ import org.eclipse.ui.intro.IIntroPart;
  * <li>ID attribute of this model class is the id of the picked implementation element.</li>
  * <li>Style attribute in this model class is the style of the picked implementation element.</li>
  * <li>HTMLHeadContent in this model class is the HEAD element under the picked implementation
- * element, only if the implementation element is a Browser implmenetation.</li>
+ * element, only if the implementation element is a Browser implementation.</li>
  * <li>The UI model class, AbstractIntroPartImplementation, that represents the IntroPart
  * implementation is cached here for quick access. It is used by intro url actions for manipulation
  * of UI.<br>
  * INTRO:This really should be in a UI model class.
- * <ul>
+ * </ul>
  */
 public class IntroPartPresentation extends AbstractIntroElement {
 

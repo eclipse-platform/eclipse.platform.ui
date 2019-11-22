@@ -31,7 +31,7 @@ import org.eclipse.help.webapp.IFilter;
 
 /**
  * Injects breadcrumbs at the top of help documents, e.g.
- * "Workbench User Guide > Concepts > Workbench".
+ * "Workbench User Guide &gt; Concepts &gt; Workbench".
  */
 public class BreadcrumbsFilter implements IFilter {
 

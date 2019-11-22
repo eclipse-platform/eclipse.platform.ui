@@ -23,22 +23,29 @@ public class BlockedTaskFinder {
 
 	private Set<ICompositeCheatSheetTask> stateChangedTasks;
 	private Set<ICompositeCheatSheetTask> impactedTasks;
+	
 	/**
-	 * Find which tasks have either become blocked or unblocked so that they
-	 * can be added to the list of change events.
-	 * @param stateChangedTasks The set of tasks which has changed
+	 * Find which tasks have either become blocked or unblocked so that they can
+	 * be added to the list of change events.
+	 * 
+	 * @param stateChangedTasks
+	 *            The set of tasks which has changed
 	 * @return The set of tasks which have become blocked or unblocked by the
-	 * change of state and were not in the original set. The algorithm will sometimes add tasks to
-	 * the result set which were not actually impacted but this is not a major problem
-	 * since it only means that extra events get sent to the explorer. For updates other
-	 * than resets the number of extra events is very low.
-	 *
-	 * This takes several steps.
-	 * <li> If a  group is completed, skipped or reset add any non-started children.
-	 * <li> Determine all successors of tasks whose state has changed that are not in the change set
-	 * <li> Add the successor and its children to the list if not started
+	 *         change of state and were not in the original set. The algorithm
+	 *         will sometimes add tasks to the result set which were not
+	 *         actually impacted but this is not a major problem since it only
+	 *         means that extra events get sent to the explorer. For updates
+	 *         other than resets the number of extra events is very low.
+	 *         <p>
+	 *         This takes several steps.
+	 *         <ul>
+	 *         <li>If a group is completed, skipped or reset add any non-started
+	 *         children.
+	 *         <li>Determine all successors of tasks whose state has changed
+	 *         that are not in the change set
+	 *         <li>Add the successor and its children to the list if not started
+	 *         </ul>
 	 */
-
 	public Set<ICompositeCheatSheetTask> findBlockedTaskChanges(Set<ICompositeCheatSheetTask> stateChangedTasks) {
 		this.stateChangedTasks = stateChangedTasks;
 		impactedTasks = new HashSet<>();

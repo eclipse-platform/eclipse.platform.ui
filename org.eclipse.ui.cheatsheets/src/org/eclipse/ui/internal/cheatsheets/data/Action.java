@@ -21,7 +21,7 @@ import org.eclipse.ui.internal.cheatsheets.views.CheatSheetManager;
 import org.w3c.dom.Node;
 
 /**
- * Class that represents an <ACTION> element in a cheatsheet. This class stores all
+ * Class that represents an {@literal <ACTION>} element in a cheatsheet. This class stores all
  * of the attributes associated with an Action and is capable of executing that Action.
  */
 public class Action extends AbstractExecutable {
@@ -54,7 +54,7 @@ public class Action extends AbstractExecutable {
 	/**
 	 *  This method allows you to specify the class to be run when the perform button is pressed for this
 	 * item in the cheat sheet.
-	 * @param classname the class to be run by the item in the cheat sheet
+	 * @param aclass the class to be run by the item in the cheat sheet
 	 */
 	public void setClass(String aclass) {
 		this.actionClass = aclass;

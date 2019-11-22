@@ -84,7 +84,7 @@ public class SubItem extends AbstractSubItem implements IExecutableItem, IPerfor
 	}
 
 	/**
-	 * @param Executable The Executable to set.
+	 * @param executable The Executable to set.
 	 */
 	@Override
 	public void setExecutable(AbstractExecutable executable) {

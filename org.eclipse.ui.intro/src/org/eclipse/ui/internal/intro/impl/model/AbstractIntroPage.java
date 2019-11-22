@@ -411,7 +411,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
 
 
 	/**
-	 * Override parent behavior to add support for HEAD & Title element in pages
+	 * Override parent behavior to add support for HEAD &amp; Title element in pages
 	 * only, and not in divs.
 	 *
 	 * @see org.eclipse.ui.internal.intro.impl.model.AbstractIntroContainer#getModelChild(org.eclipse.core.runtime.IConfigurationElement)
@@ -642,12 +642,14 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
 	/**
 	 * Resolves the full page. It is called just before the page needs to be
 	 * displayed.
+	 * <ul>
 	 * <li>adds a BASE child to the DOM HEAD element, if one is not defined.
 	 * All intro documents must have a base defined to resolve all urls.</li>
 	 * <li>resolves all includes in the page. This means importing target DOM.
 	 * </li>
 	 * <li>resolves all XHTML attributes for resources, eg: src, href
 	 * attributes.</li>
+	 * </ul>
 	 */
 	protected void resolvePage() {
 		// insert base meta-tag,
@@ -725,7 +727,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
 	/**
 	 * Find the target Element pointed to by the path in the include. It is
 	 * assumed that configId always points to an external config, and not the
-	 * same config of the inlcude.
+	 * same config of the include.
 	 *
 	 * @param include
 	 * @param path
@@ -759,7 +761,7 @@ public abstract class AbstractIntroPage extends AbstractIntroContainer {
 	 * @param results
 	 *            two object array that will return the target intro page as the
 	 *            first result, and the actual target DOM Element as the second
-	 *            result. It is gauranteed to not be null. Content may be null.
+	 *            result. It is guaranteed to not be null. Content may be null.
 	 * @return target DOM element
 	 */
 	public Object[] findDOMTarget(IntroModelRoot model, String path) {

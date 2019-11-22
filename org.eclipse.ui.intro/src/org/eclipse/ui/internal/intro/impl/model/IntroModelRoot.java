@@ -54,7 +54,7 @@ import org.w3c.dom.Node;
  * <li>if an attribute is not included in the markup, its value will be null in
  * the model.</li>
  * <li>Resources in plugin.xml are not implicitly resolved against $nl$.
- * Resources in pages are implicitly resolved against $nl$
+ * Resources in pages are implicitly resolved against $nl$</li>
  * <li>the current page id is set silently when loading the model. You do not
  * need the event notification on model load.</li>
  * <li>Children of a given parent (ie: model root, page, or group) *must* have
@@ -76,10 +76,10 @@ import org.w3c.dom.Node;
  * the group in the page as a path. Again this is because extensions extends
  * anchors that already have a path, not a resolved path.</li>
  * <li>Pages and shared groups that are contributed through extensions become
- * children of the atrget configuration, and so any includes they may have will
+ * children of the target configuration, and so any includes they may have will
  * be resolved correctly.</li>
  * <li>An infinite loop can occur if page A includes from page B and page B in
- * turn includes from page A. ie: cyclic includes. For performnace, accept.
+ * turn includes from page A. ie: cyclic includes. For performance, accept.
  * </li>
  * <li>When resolving includes, if the target is a container, it must be
  * resolved to resolve its includes correctly. Otherwise, included includes will
@@ -94,12 +94,11 @@ import org.w3c.dom.Node;
  * is a must, null the DOM class instance the minute you are done. This is
  * because you want the VM to garbage collect the DOM model. Keeping a reference
  * to the DOM model from the Intro model will prevent that.</li>
- * </ol>
  * <li>(since 3.0.2) several passes are used to resolve contributions to
  * anchors that themselves where contributed through an extension. Each time a
  * contribution is resolved, the model tries to resolve all unresolved
- * contribution, recursively.
- * </ul>
+ * contribution, recursively.</li>
+ * </ol>
  */
 public class IntroModelRoot extends AbstractIntroContainer {
 
@@ -150,7 +149,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
 	}
 
 	/**
-	 * Model root. Takes a configElement that represents <config>in the
+	 * Model root. Takes a configElement that represents {@literal <config>} in the
 	 * plugin.xml markup AND all the extension contributed to this model through
 	 * the configExtension point.
 	 */
@@ -661,7 +660,7 @@ public class IntroModelRoot extends AbstractIntroContainer {
 
 
 	/**
-	 * Updates the inherited styles based on the style attribtes defined in the
+	 * Updates the inherited styles based on the style attributes defined in the
 	 * configExtension. If we are extending a shared group do nothing. For
 	 * inherited alt-styles, we have to cache the bundle from which we inherited
 	 * the styles to be able to access resources in that plugin.
@@ -773,8 +772,8 @@ public class IntroModelRoot extends AbstractIntroContainer {
 	 * Sets the current page. If the model does not have a page with the passed
 	 * id, the message is logged, and the model retains its old current page.
 	 *
-	 * @param currentPageId
-	 *            The currentPageId to set. *
+	 * @param pageId
+	 *            The currentPageId to set.
 	 * @param fireEvent
 	 *            flag to indicate if event notification is needed.
 	 * @return true if the model has a page with the passed id, false otherwise.

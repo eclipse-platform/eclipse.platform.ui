@@ -382,7 +382,7 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
 	/**
 	 * Find the target element pointed to by the path in the include. It is
 	 * assumed that configId always points to an external config, and not the
-	 * same config of the inlcude.
+	 * same config of the include.
 	 *
 	 * @param include
 	 * @param path
@@ -579,13 +579,13 @@ public abstract class AbstractIntroContainer extends AbstractBaseIntroElement {
 
 	/**
 	 * Creates a clone of the given target node. A clone is create by simply
-	 * recreating that protion of the model.
+	 * recreating that portion of the model.
 	 *
 	 * Note: looked into the clonable interface in Java, but it was not used
 	 * because it makes modifications/additions to the model harder to maintain.
 	 * Will revisit later.
 	 *
-	 * @param targer
+	 * @param target
 	 * @return
 	 */
 	protected AbstractIntroElement cloneTarget(AbstractIntroElement target) {

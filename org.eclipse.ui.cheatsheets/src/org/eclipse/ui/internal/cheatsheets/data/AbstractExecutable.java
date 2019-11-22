@@ -91,8 +91,8 @@ public abstract class AbstractExecutable {
 
 	/**
 	 * Indicates this action is to be used if and only if the value of the condition attribute
-	 * of the containing <perform-when> element matches this string value. This attribute is
-	 * ignored if the <action> element is not a child of  a <perform-when> element.
+	 * of the containing {@literal <perform-when>} element matches this string value. This attribute is
+	 * ignored if the {@literal <action>} element is not a child of a {@literal <perform-when>} element.
 	 * @param when The expression to use when determine if this action should be used.
 	 */
 	public void setWhen(String when) {

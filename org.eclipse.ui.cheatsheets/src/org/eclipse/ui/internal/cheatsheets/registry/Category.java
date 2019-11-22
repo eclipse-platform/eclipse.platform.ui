@@ -83,9 +83,9 @@ public class Category implements IWorkbenchAdapter, IPluginContribution,
 	 * the specified configuration element.
 	 *
 	 * @param configElement
-	 *            the <code>IConfigurationElement<code> containing
+	 *            the <code>IConfigurationElement</code> containing
 	 * 		the ID, label, and optional parent category path.
-	 * @throws WorkbenchException if the ID or label is <code>null</code
+	 * @throws WorkbenchException if the ID or label is <code>null</code>
 	 */
 	public Category(IConfigurationElement configElement)
 			throws WorkbenchException {

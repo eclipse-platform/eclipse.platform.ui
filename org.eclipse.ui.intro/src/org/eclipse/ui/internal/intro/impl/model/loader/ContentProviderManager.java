@@ -24,8 +24,8 @@ import org.eclipse.ui.intro.config.IIntroContentProvider;
 import org.eclipse.ui.intro.config.IIntroContentProviderSite;
 
 /**
- * Class for handling/caching all the loaded Intro Content providers, from all loaded models. <br>
- * <br />
+ * Class for handling/caching all the loaded Intro Content providers, from all loaded models.
+ * <p>
  * Design notes:
  * <ul>
  * <li>content providers are only ever created once. The init method is only called once, and so

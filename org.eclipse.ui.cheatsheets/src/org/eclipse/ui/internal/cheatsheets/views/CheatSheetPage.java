@@ -105,7 +105,7 @@ public class CheatSheetPage extends Page implements IMenuContributor {
 	}
 
 	/**
-	 * Creates the cheatsheet's title areawhich will consists of a title and
+	 * Creates the cheatsheet's title area which will consists of a title and
 	 * image.
 	 *
 	 * @param parent

@@ -241,7 +241,7 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 	/***************************************************************************
 	 * Persists all working sets. Should only be called by the webapp working
 	 * set dialog. Saves the working sets in the persistence store (cookie)
-	 * format: curentWorkingSetName|name1&href11&href12|name2&href22
+	 * format: {@literal curentWorkingSetName|name1&href11&href12|name2&href22}
 	 */
 	private void saveState() throws IOException {
 		saveContents();

@@ -95,7 +95,7 @@ public class ServletResources {
 
 	/**
 	 * Returns a string from a property file, with underlined access key. Access
-	 * key can be specified in the label by &amp: character following character
+	 * key can be specified in the label by &amp; character following character
 	 * in the label that is to serve as access key It uses 'name' as a the key
 	 * to retrieve from the webapp.properties file.
 	 *

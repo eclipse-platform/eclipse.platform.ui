@@ -54,8 +54,8 @@ public class MozillaBrowserAdapter implements IBrowser {
 	/**
 	 * Constructor
 	 *
-	 * @executable executable filename to launch
-	 * @executableName name of the program to display when error occurs
+	 * @param executable     executable filename to launch
+	 * @param executableName name of the program to display when error occurs
 	 */
 	MozillaBrowserAdapter(String executable, String executableName) {
 		this.uiThread = Thread.currentThread();
@@ -181,12 +181,11 @@ public class MozillaBrowserAdapter implements IBrowser {
 
 		/**
 		 * On some OSes 0 is always returned by netscape -remote. It is
-		 * necessary to examine ouput to find out failure
+		 * necessary to examine output to find out failure
 		 *
 		 * @param outputs
 		 * @param errors
-		 * @return @throws
-		 *         InterruptedException
+		 * @return
 		 */
 		private boolean errorsInOutput(StreamConsumer outputs, StreamConsumer errors) {
 			try {

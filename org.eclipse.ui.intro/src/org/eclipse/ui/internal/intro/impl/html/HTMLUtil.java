@@ -22,8 +22,10 @@ import java.util.Set;
  */
 public final class HTMLUtil {
 	/**
-	 * Creates an HTML opening element of the form <elementName
-	 * elementAttributes>
+	 * Creates an HTML opening element of the form
+	 * <pre>{@code
+	 * <elementName elementAttributes>
+	 * }</pre>
 	 *
 	 * @param elementName
 	 *            the name of the element to create
@@ -52,7 +54,10 @@ public final class HTMLUtil {
 	}
 
 	/**
-	 * Creates an HTML start tag of the form <elementName>
+	 * Creates an HTML start tag of the form
+	 * <pre>{@code
+	 * <elementName>
+	 * }</pre>
 	 *
 	 * @param elementName
 	 *            the name of the element to create
@@ -66,8 +71,11 @@ public final class HTMLUtil {
 	}
 
 	/**
-	 * Creates an HTML start tag of the form <elementName>and inserts a line
-	 * break after the start tag
+	 * Creates an HTML start tag of the form
+	 * <pre>{@code
+	 * <elementName>
+	 * }</pre>
+	 * and inserts a line break after the start tag
 	 *
 	 * @param elementName
 	 *            the name of the element to create
@@ -78,7 +86,10 @@ public final class HTMLUtil {
 	}
 
 	/**
-	 * Creates an HTML closing element of the form </elementName>
+	 * Creates an HTML closing element of the form
+	 * <pre>{@code
+	 * </elementName>
+	 * }</pre>
 	 *
 	 * @param elementName
 	 *            the name of the closing element to create
@@ -98,7 +109,7 @@ public final class HTMLUtil {
 
 	/**
 	 * Given a map of attribute names and values, this method will create a
-	 * StringBuilder of the attributes in the form: attrName="attrValue". These
+	 * StringBuilder of the attributes in the form: <code>attrName="attrValue"</code>. These
 	 * attributes can appear in the start tag of an HTML element.
 	 *
 	 * @param attributes
@@ -125,7 +136,7 @@ public final class HTMLUtil {
 	}
 
 	/**
-	 * Creates an HTML attribute of the form attrName="attrValue"
+	 * Creates an HTML attribute of the form <code>attrName="attrValue"</code>
 	 *
 	 * @param attrName
 	 *            the name of the attribute

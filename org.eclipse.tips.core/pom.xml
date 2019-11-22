@@ -22,6 +22,6 @@
   </parent>
   <groupId>org.eclipse.ui</groupId>
   <artifactId>org.eclipse.tips.core</artifactId>
-  <version>0.1.500-SNAPSHOT</version>
+  <version>0.1.600-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>

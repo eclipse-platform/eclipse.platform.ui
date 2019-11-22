@@ -188,7 +188,7 @@ public class ICTable {
 
 
 	/**
-	 * @param rics the ordered remote InfoCenters
+	 * @param ics the ordered remote InfoCenters
 	 */
 	public void update(List<IC> ics) {
 		viewer.getContentProvider().inputChanged(viewer, null, ics);

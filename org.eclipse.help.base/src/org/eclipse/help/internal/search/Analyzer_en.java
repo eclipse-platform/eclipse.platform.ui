@@ -28,7 +28,7 @@ import org.apache.lucene.analysis.en.PorterStemFilter;
 
 /**
  * Lucene Analyzer for English.
- * LowerCaseAndDigitsTokenizer->StopFilter->PorterStemFilter
+ * LowerCaseAndDigitsTokenizer-&gt;StopFilter-&gt;PorterStemFilter
  */
 public final class Analyzer_en extends Analyzer {
 	/**

@@ -61,7 +61,7 @@ public class IntroText extends AbstractBaseIntroElement {
 	}
 
 	/**
-	 * @return true if the content of this text element has any " <" which makes
+	 * @return true if the content of this text element has any "&lt;" which makes
 	 *         it formatted.
 	 */
 	public boolean checkIfFormatted() {

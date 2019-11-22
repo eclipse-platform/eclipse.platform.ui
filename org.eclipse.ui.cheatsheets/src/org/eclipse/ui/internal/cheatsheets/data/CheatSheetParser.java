@@ -105,20 +105,27 @@ public class CheatSheetParser implements IStatusContainer {
 	}
 
 	/**
-	 * Converts any characters required to escaped by an XML parser to
-	 * their escaped counterpart.
+	 * Converts any characters required to escaped by an XML parser to their
+	 * escaped counterpart.
 	 *
-	 * Characters			XML escaped counterpart
-	 * <			->		&lt;
-	 * >			->		&gt;
-	 * &			->		&amp;
-	 * '			->		&apos;
-	 * "			->		&quot;
+	 * <pre>
+	 * {@code
+	 * Characters           XML escaped counterpart
+	 * <            ->      &lt;
+	 * >            ->      &gt;
+	 * &            ->      &amp;
+	 * '            ->      &apos;
+	 * "            ->      &quot;
+	 * }
+	 * </pre>
+	 * 
+	 * Tags that will be ignored {@literal <b>, </b> and <br/>
+	 * }.
 	 *
-	 * Tags that will be ignored <b>, </b> and <br/>.
-	 *
-	 * @param text the string buffer to have its characters escaped
-	 * @return string buffer with any of the characters requiring XML escaping escaped
+	 * @param text
+	 *            the string buffer to have its characters escaped
+	 * @return string buffer with any of the characters requiring XML escaping
+	 *         escaped
 	 */
 	private StringBuilder escapeXMLCharacters(StringBuilder text) {
 		// Set the maximum length of the tags to ignore

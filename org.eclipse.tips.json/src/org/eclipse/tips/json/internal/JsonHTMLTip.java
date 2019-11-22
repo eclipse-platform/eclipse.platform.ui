@@ -37,7 +37,7 @@ public class JsonHTMLTip extends Tip implements IJsonTip, IHtmlTip {
 	private JsonObject fJsonObject;
 
 	/**
-	 * Creates the tip out od the passed Json object.
+	 * Creates the tip out of the passed Json object.
 	 *
 	 * @param jsonObject the json object
 	 * @param provider   the provider

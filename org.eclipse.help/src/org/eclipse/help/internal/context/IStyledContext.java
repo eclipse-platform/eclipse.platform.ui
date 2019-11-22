@@ -27,7 +27,7 @@ public interface IStyledContext extends IContext {
 	/**
 	 * Returns the text description for this context with bold markers
 	 *
-	 * @return String with <@#$b>and </@#$b> to mark bold range (as
+	 * @return String with {@literal <@#$b> and </@#$b>} to mark bold range (as
 	 *         IContext.getText() used to in 2.x)
 	 */
 	public String getStyledText();

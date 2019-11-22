@@ -127,7 +127,9 @@ public class HTMLDocParser {
 	/**
 	 * Private. Parses HTML to extract document encoding specified in HTTP
 	 * equivalent META tag in the document header. Example of such META tag is
+	 * <pre>{@code
 	 * <META HTTP-EQUIV="content-type" CONTENT="text/html; charset=UTF-8">
+	 * }</pre>
 	 *
 	 * @return String or null if encoding not found
 	 */

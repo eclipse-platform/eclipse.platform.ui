@@ -241,7 +241,7 @@ public abstract class TipProvider {
 	/**
 	 * Get a list of tips filtered by the passed predicate.
 	 *
-	 * @param a {@link Predicate} targeting a Tip object or null to return all tips
+	 * @param predicate a {@link Predicate} targeting a Tip object or null to return all tips
 	 * @return an unmodifiable list of tips.
 	 */
 	public synchronized List<Tip> getTips(Predicate<Tip> predicate) {

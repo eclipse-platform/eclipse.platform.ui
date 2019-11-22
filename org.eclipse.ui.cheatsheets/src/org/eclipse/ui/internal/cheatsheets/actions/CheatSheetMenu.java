@@ -200,7 +200,7 @@ public class CheatSheetMenu extends ContributionItem {
 	 * is a good guideline to follow).
 	 * </p>
 	 *
-	 * @return an <code>ArrayList<code> of cheatsheet items <code>CheatSheetElement</code>
+	 * @return an <code>ArrayList</code> of cheatsheet items <code>CheatSheetElement</code>
 	 */
 	protected ArrayList<CheatSheetElement> getCheatSheetItems() {
 		ArrayList<CheatSheetElement> list = new ArrayList<>(MAX_CHEATSHEET_ITEMS);
@@ -309,9 +309,9 @@ public class CheatSheetMenu extends ContributionItem {
 
 	/**
 	 * Sets the showActive flag.  If <code>showActive == true</code> then the
-	 * active cheatsheet is hilighted with a check mark.
+	 * active cheatsheet is highlighted with a check mark.
 	 *
-	 * @param the new showActive flag
+	 * @param b the new showActive flag
 	 */
 	protected void showActive(boolean b) {
 		showActive = b;

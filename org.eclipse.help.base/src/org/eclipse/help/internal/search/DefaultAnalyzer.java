@@ -29,7 +29,7 @@ import com.ibm.icu.text.BreakIterator;
 
 
 /**
- * Lucene Analyzer. LowerCaseFilter->StandardTokenizer
+ * Lucene Analyzer. LowerCaseFilter-&gt;StandardTokenizer
  */
 public final class DefaultAnalyzer extends Analyzer {
 

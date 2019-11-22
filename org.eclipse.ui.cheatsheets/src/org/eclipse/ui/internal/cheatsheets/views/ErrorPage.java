@@ -131,7 +131,7 @@ public class ErrorPage extends Page {
 	}
 
 	/**
-	 * Creates the cheatsheet's title areawhich will consists
+	 * Creates the cheatsheet's title area which will consists
 	 * of a title and image.
 	 *
 	 * @param parent the SWT parent for the title area composite

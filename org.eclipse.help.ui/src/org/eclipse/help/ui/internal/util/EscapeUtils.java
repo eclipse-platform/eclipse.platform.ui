@@ -22,7 +22,7 @@ package org.eclipse.help.ui.internal.util;
 public class EscapeUtils {
 
 	/**
-	 * Replace every occurrence of &, <, >, ', " by an escape character
+	 * Replace every occurrence of {@code &, <, >, ', "} by an escape character
 	 * Replace tabs with spaces
 	 * @param value the original string, may not be null
 	 * @return the escaped string
@@ -32,7 +32,7 @@ public class EscapeUtils {
 	}
 
 	/**
-	 * Replace every occurrence of &, <, >, ', " by an escape character
+	 * Replace every occurrence of {@code &, <, >, ', "} by an escape character
 	 * but allow <b> and </b> through
 	 * Replace tabs with spaces
 	 * @param value the original string, may not be null
@@ -47,8 +47,8 @@ public class EscapeUtils {
 	}
 
 	/**
-	* Escape any ampersands used in a label
-	**/
+	 * Escape any ampersands used in a label
+	 */
 	public static String escapeForLabel(String message) {
 		// Make the most common case - i.e. no ampersand the
 		// most efficient

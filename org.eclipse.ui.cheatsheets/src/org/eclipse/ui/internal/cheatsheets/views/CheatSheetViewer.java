@@ -612,6 +612,7 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	 * </p>
 	 * <p>
 	 * For implementors this is a multi-step process:
+	 * </p>
 	 * <ol>
 	 *   <li>Create one or more controls within the parent.</li>
 	 *   <li>Set the parent layout as needed.</li>
@@ -620,7 +621,6 @@ public class CheatSheetViewer implements ICheatSheetViewer, IMenuContributor {
 	 *   <li>Register a selection provider with the <code>ISelectionService</code>
 	 *     (optional). </li>
 	 * </ol>
-	 * </p>
 	 *
 	 * @param parent the parent control
 	 */

@@ -102,7 +102,7 @@ public class CheatSheetHelpPart extends AbstractFormPart implements IHelpPart {
 	/**
 	 * Returns the part's unique identifier.
 	 *
-	 * @param the unique id for the part
+	 * @return the unique id for the part
 	 */
 	@Override
 	public String getId() {
@@ -145,7 +145,7 @@ public class CheatSheetHelpPart extends AbstractFormPart implements IHelpPart {
 	/**
 	 * Sets the visibility of the part.
 	 *
-	 * @param whether or not the part should be visible
+	 * @param visible whether or not the part should be visible
 	 */
 	@Override
 	public void setVisible(boolean visible) {

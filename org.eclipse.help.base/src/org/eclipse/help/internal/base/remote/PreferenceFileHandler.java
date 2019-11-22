@@ -139,8 +139,7 @@ public class PreferenceFileHandler {
 	/**
 	 * This methods writes the remote infocenters in the table model to the preferences.ini.
 	 *
-	 * @param List
-	 *            of RemoteIC Objects
+	 * @param remoteICs List of RemoteIC Objects
 	 *
 	 */
 	public static void commitRemoteICs(RemoteIC[] remoteICs) {

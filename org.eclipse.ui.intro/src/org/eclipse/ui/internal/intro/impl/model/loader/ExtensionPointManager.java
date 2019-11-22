@@ -20,7 +20,7 @@ import org.eclipse.ui.internal.intro.impl.util.Log;
 
 /**
  * Manages all Intro plugin extension points. Currently, there are two:
- * org.eclipse.ui.intro.config & org.eclipse.ui.intro.configExtension. <br>
+ * org.eclipse.ui.intro.config &amp; org.eclipse.ui.intro.configExtension. <br>
  * The model is lazily loaded on per need basis. This happens when a page is
  * asked for its children, or when the model is trying to resolve includes or
  * extensions. <br>

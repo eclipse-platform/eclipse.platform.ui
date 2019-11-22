@@ -243,10 +243,9 @@ public class PageStyleManager extends SharedStyleManager {
 	/**
 	 * Finds the description text of the given group. Looks for the Text child
 	 * element whos id is specified as follows:
-	 * <p>
-	 * <pageId>. <path_to_group>.description-id= <id of child description Text
-	 * element>
-	 * </p>
+	 * <pre>{@code
+	 * <pageId>. <path_to_group>.description-id= <id of child description Text element>
+	 * }</pre>
 	 * If not found, use the default description style.
 	 *
 	 * Returns null if no default style found, or any id in path is null.
@@ -266,9 +265,9 @@ public class PageStyleManager extends SharedStyleManager {
 	/**
 	 * Finds the description text of the associated page. Looks for the Text
 	 * child element whos id is specified as follows:
-	 * <p>
+	 * <pre>{@code
 	 * <pageId>.description-id= <id of child description Text element>
-	 * </p>
+	 * }</pre>
 	 * If not found, use the default description style.
 	 *
 	 * Returns null if no default style found, or any id in path is null.
@@ -301,9 +300,9 @@ public class PageStyleManager extends SharedStyleManager {
 	/**
 	 * Finds the subtitle of the associated page. Looks for the Text child
 	 * element whose id is specified as follows:
-	 * <p>
+	 * <pre>{@code
 	 * <pageId>.description-id= <id of child description Text element>
-	 * </p>
+	 * }</pre>
 	 * If not found, use the default description style.
 	 *
 	 * @param group

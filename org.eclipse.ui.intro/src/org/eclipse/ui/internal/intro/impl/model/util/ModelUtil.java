@@ -67,7 +67,7 @@ public class ModelUtil {
 	 * Checks to see if the passed string is a valid URL (has a protocol), if
 	 * yes, returns it as is. If no, treats it as a resource relative to the
 	 * declaring plugin. Return the plugin relative location, fully qualified.
-	 * Retruns null if the passed string itself is null.
+	 * Returns null if the passed string itself is null.
 	 *
 	 * @param resource
 	 * @param pluginDesc
@@ -87,7 +87,7 @@ public class ModelUtil {
 	 * Checks to see if the passed string is a valid URL (has a protocol), if
 	 * yes, returns it as is. If no, treats it as a resource relative to the
 	 * declaring plugin. Return the plugin relative location, fully qualified.
-	 * Retruns null if the passed string itself is null.
+	 * Returns null if the passed string itself is null.
 	 *
 	 * @param resource
 	 * @param pluginDesc

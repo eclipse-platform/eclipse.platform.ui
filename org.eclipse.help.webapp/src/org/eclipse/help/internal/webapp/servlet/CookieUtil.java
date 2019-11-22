@@ -149,8 +149,8 @@ public class CookieUtil {
 
 	/**
 	 * Saves string in multiple browser cookies. Cookies can store limited
-	 * length string. This method will attemt to split string among multiple
-	 * cookies. The following cookies will be set name1=length <substing1
+	 * length string. This method will attempt to split string among multiple
+	 * cookies. The following cookies will be set name1=length &lt;substing1
 	 * name2=substring2 ... namen=substringn
 	 *
 	 * @param data

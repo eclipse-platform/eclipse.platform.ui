@@ -151,7 +151,7 @@ public class HelpDisplay {
 	 * Display help to search view for given query and selected topic.
 	 *
 	 * @param searchQuery
-	 *            search query in URL format key=value&key=value
+	 *            search query in URL format {@literal key=value&key=value }
 	 * @param topic
 	 *            selected from the search results
 	 */
