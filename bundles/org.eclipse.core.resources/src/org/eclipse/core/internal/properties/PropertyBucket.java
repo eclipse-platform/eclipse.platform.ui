@@ -201,7 +201,8 @@ public class PropertyBucket extends Bucket {
 	/** Version number for the current implementation file's format.
 	 * <p>
 	 * Version 1:
-	 * <pre>
+	 * </p>
+	 * <pre> {@code
 	 * FILE ::= VERSION_ID ENTRY+
 	 * ENTRY ::= PATH PROPERTY_COUNT PROPERTY+
 	 * PATH ::= string (does not contain project name)
@@ -212,8 +213,7 @@ public class PropertyBucket extends Bucket {
 	 * QNAME -> byte string
 	 * UUID ::= byte[16]
 	 * LAST_MODIFIED ::= byte[8]
-	 * </pre>
-	 * </p>
+	 * }</pre>
 	 */
 	private static final byte VERSION = 1;
 

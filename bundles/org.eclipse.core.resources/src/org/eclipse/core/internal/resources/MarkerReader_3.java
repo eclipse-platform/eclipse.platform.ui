@@ -44,6 +44,7 @@ public class MarkerReader_3 extends MarkerReader {
 	}
 
 	/**
+	 * <pre> {@code
 	 * SAVE_FILE -> VERSION_ID RESOURCE+
 	 * VERSION_ID -> int
 	 * RESOURCE -> RESOURCE_PATH MARKERS_SIZE MARKER+
@@ -63,6 +64,7 @@ public class MarkerReader_3 extends MarkerReader {
 	 * STRING_VALUE -> byte String
 	 * NULL_VALUE -> byte
 	 * CREATION_TIME -> long
+	 * }</pre>
 	 */
 	@Override
 	public void read(DataInputStream input, boolean generateDeltas) throws IOException, CoreException {

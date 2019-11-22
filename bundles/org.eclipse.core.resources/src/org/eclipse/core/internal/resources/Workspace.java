@@ -48,7 +48,6 @@ import org.xml.sax.InputSource;
 /**
  * The workspace class is the monolithic nerve center of the resources plugin.
  * All interesting functionality stems from this class.
- * </p>
  * <p>
  * The lifecycle of the resources plugin is encapsulated by the {@link #open(IProgressMonitor)}
  * and {@link #close(IProgressMonitor)} methods.  A closed workspace is completely
@@ -58,6 +57,7 @@ import org.xml.sax.InputSource;
  * <p>
  * All modifications to the workspace occur within the context of a workspace operation.
  * A workspace operation is implemented using the following sequence:
+ * </p>
  * <pre>
  * 	try {
  *		prepareOperation(...);
@@ -71,6 +71,7 @@ import org.xml.sax.InputSource;
  * Workspace operations can be nested arbitrarily. A "top level" workspace operation
  * is an operation that is not nested within another workspace operation in the current
  * thread.
+ * <p>
  * See the javadoc of {@link #prepareOperation(ISchedulingRule, IProgressMonitor)},
  * {@link #beginOperation(boolean)}, and {@link #endOperation(ISchedulingRule, boolean)}
  * for more details.

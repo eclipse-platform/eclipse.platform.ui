@@ -39,6 +39,7 @@ public class SyncInfoReader_3 extends SyncInfoReader {
 	}
 
 	/**
+	 * <pre> {@code
 	 * SAVE_FILE -> VERSION_ID RESOURCE+
 	 * VERSION_ID -> int
 	 * RESOURCE -> RESOURCE_PATH SIZE SYNCINFO*
@@ -49,7 +50,7 @@ public class SyncInfoReader_3 extends SyncInfoReader {
 	 * INDEX -> byte int
 	 * QNAME -> byte String
 	 * BYTES -> byte[]
-	 *
+	 * }</pre>
 	 */
 	@Override
 	public void readSyncInfo(DataInputStream input) throws IOException, CoreException {

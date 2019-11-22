@@ -134,8 +134,7 @@ public class WorkspacePreferences extends WorkspaceDescription {
 	}
 
 	/**
-	 * @see org.eclipse.core.internal.resources.
-	 * WorkspaceDescription#getBuildOrder(boolean)
+	 * @see org.eclipse.core.internal.resources.WorkspaceDescription#getBuildOrder(boolean)
 	 */
 	@Override
 	public String[] getBuildOrder(boolean makeCopy) {

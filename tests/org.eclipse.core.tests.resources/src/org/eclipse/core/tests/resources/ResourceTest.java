@@ -233,7 +233,7 @@ public abstract class ResourceTest extends CoreTest {
 	/**
 	 * Assert whether or not the given resource exists in the local
 	 * store. Use the resource manager to ensure that we have a
-	 * correct Path -> File mapping.
+	 * correct Path -&gt; File mapping.
 	 */
 	public void assertExistsInFileSystem(IResource resource) {
 		assertExistsInFileSystem("", resource); //$NON-NLS-1$
@@ -249,7 +249,7 @@ public abstract class ResourceTest extends CoreTest {
 	/**
 	 * Assert whether or not the given resource exists in the local
 	 * store. Use the resource manager to ensure that we have a
-	 * correct Path -> File mapping.
+	 * correct Path -&gt; File mapping.
 	 */
 	public void assertExistsInFileSystem(String message, IResource resource) {
 		if (!existsInFileSystem(resource)) {
@@ -519,7 +519,7 @@ public abstract class ResourceTest extends CoreTest {
 
 	/**
 	 * Delete the given resource from the local store. Use the resource
-	 * manager to ensure that we have a correct Path -> File mapping.
+	 * manager to ensure that we have a correct Path -&gt; File mapping.
 	 */
 	public void ensureDoesNotExistInFileSystem(IResource resource) {
 		IPath path = resource.getLocation();
@@ -569,7 +569,7 @@ public abstract class ResourceTest extends CoreTest {
 
 	/**
 	 * Create the given file in the local store. Use the resource manager
-	 * to ensure that we have a correct Path -> File mapping.
+	 * to ensure that we have a correct Path -&gt; File mapping.
 	 */
 	public void ensureExistsInFileSystem(IFile file) {
 		createFileInFileSystem(((Resource) file).getStore());
@@ -577,7 +577,7 @@ public abstract class ResourceTest extends CoreTest {
 
 	/**
 	 * Create the given folder in the local store. Use the resource
-	 * manager to ensure that we have a correct Path -> File mapping.
+	 * manager to ensure that we have a correct Path -&gt; File mapping.
 	 */
 	public void ensureExistsInFileSystem(IResource resource) {
 		if (resource instanceof IFile) {

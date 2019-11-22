@@ -20,7 +20,7 @@ import org.eclipse.osgi.util.NLS;
 
 /**
  * Data trees can be viewed as generic multi-leaf trees.  The tree points to a single
- * rootNode, and each node can contain an arbitrary number of children.<p>
+ * rootNode, and each node can contain an arbitrary number of children.
  *
  * <p>Internally, data trees can be either complete trees (DataTree class), or delta
  * trees (<code>DeltaDataTree</code> class).  A DataTree is a stand-alone tree

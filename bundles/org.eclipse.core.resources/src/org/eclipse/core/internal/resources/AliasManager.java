@@ -121,12 +121,12 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 	}
 
 	/**
-	 * Maintains a mapping of FileStore->IResource, such that multiple resources
+	 * Maintains a mapping of FileStore-&gt;IResource, such that multiple resources
 	 * mapped from the same location are tolerated.
 	 */
 	class LocationMap {
 		/**
-		 * Map of FileStore->IResource OR FileStore->ArrayList of (IResource)
+		 * Map of FileStore-&gt;IResource OR FileStore-&gt;ArrayList of (IResource)
 		 */
 		private final SortedMap<IFileStore, Object> map = new TreeMap<>(getComparator());
 
@@ -316,7 +316,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 	private final FindAliasesDoit findAliases = new FindAliasesDoit();
 
 	/**
-	 * This maps IFileStore ->IResource, associating a file system location
+	 * This maps IFileStore -&gt; IResource, associating a file system location
 	 * with the projects and/or linked resources that are rooted at that location.
 	 */
 	protected final LocationMap locationsMap = new LocationMap();
@@ -489,7 +489,7 @@ public class AliasManager implements IManager, ILifecycleListener, IResourceChan
 	 * is based on segments, so that paths with the most segments in common will
 	 * always be adjacent.  This is equivalent to the natural order on the path
 	 * strings, with the extra condition that the path separator is ordered
-	 * before all other characters. (Ex: "/foo" < "/foo/zzz" < "/fooaaa").
+	 * before all other characters. (Ex: "/foo" &lt; "/foo/zzz" &lt; "/fooaaa").
 	 */
 	Comparator<IFileStore> getComparator() {
 		return new Comparator<IFileStore>() {

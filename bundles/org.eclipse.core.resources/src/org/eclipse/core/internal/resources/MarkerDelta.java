@@ -105,8 +105,8 @@ public class MarkerDelta implements IMarkerDelta, IMarkerSetElement {
 	}
 
 	/**
-	 * Merge two Maps of (IPath->MarkerSet) representing changes.  Use the old
-	 * map to store the result so we don't have to build a new map to return.
+	 * Merge two Maps of (IPath-&gt;MarkerSet) representing changes. Use the old map
+	 * to store the result so we don't have to build a new map to return.
 	 */
 	public static Map<IPath, MarkerSet> merge(Map<IPath, MarkerSet> oldChanges, Map<IPath, MarkerSet> newChanges) {
 		if (oldChanges == null)
@@ -130,6 +130,7 @@ public class MarkerDelta implements IMarkerDelta, IMarkerSetElement {
 	 * Merge two sets of marker changes.  Both sets must be on the same resource. Use the original set
 	 * of changes to store the result so we don't have to build a completely different set to return.
 	 *
+	 * <pre>
 	 * add + add = N/A
 	 * add + remove = nothing (no delta)
 	 * add + change = add
@@ -139,6 +140,7 @@ public class MarkerDelta implements IMarkerDelta, IMarkerSetElement {
 	 * change + add = N/A
 	 * change + change = change  (note: info held onto by the marker delta should be that of the oldest change, and not replaced when composed)
 	 * change + remove = remove (note: info held onto by the marker delta should be that of the oldest change, and not replaced when changed to a remove)
+	 * </pre>
 	 */
 	protected static MarkerSet merge(MarkerSet oldChanges, IMarkerSetElement[] newChanges) {
 		if (oldChanges == null) {

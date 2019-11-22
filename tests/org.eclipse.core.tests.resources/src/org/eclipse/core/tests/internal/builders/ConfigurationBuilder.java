@@ -25,7 +25,7 @@ import org.junit.Assert;
 public class ConfigurationBuilder extends TestBuilder {
 	public static final String BUILDER_NAME = "org.eclipse.core.tests.resources.configbuilder";
 
-	/** Stores IBuildConfiguration -> ConfigurationBuilder */
+	/** Stores IBuildConfiguration -&gt; ConfigurationBuilder */
 	private static HashMap<IBuildConfiguration, ConfigurationBuilder> builders = new HashMap<>();
 	/** Order in which builders have been run */
 	static List<IBuildConfiguration> buildOrder = new ArrayList<>();

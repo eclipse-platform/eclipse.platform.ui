@@ -57,7 +57,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	// Static + Dynamic project level references
 	protected IProject[] staticRefs = EMPTY_PROJECT_ARRAY;
 	protected IProject[] dynamicRefs = EMPTY_PROJECT_ARRAY;
-	/** Map from config name in this project -> build configurations in other projects */
+	/** Map from config name in this project -&gt; build configurations in other projects */
 	protected HashMap<String, IBuildConfiguration[]> dynamicConfigRefs = new HashMap<>(1);
 
 	// Cache of the build configurations
@@ -81,19 +81,19 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	protected final Object cachedRefsMutex = new Object();
 
 	/**
-	 * Map of (IPath -> LinkDescription) pairs for each linked resource
+	 * Map of (IPath -&gt; LinkDescription) pairs for each linked resource
 	 * in this project, where IPath is the project relative path of the resource.
 	 */
 	protected HashMap<IPath, LinkDescription> linkDescriptions = null;
 
 	/**
-	 * Map of (IPath -> LinkedList<FilterDescription>) pairs for each filtered resource
+	 * Map of {@literal (IPath -> LinkedList<FilterDescription>)} pairs for each filtered resource
 	 * in this project, where IPath is the project relative path of the resource.
 	 */
 	protected HashMap<IPath, LinkedList<FilterDescription>> filterDescriptions = null;
 
 	/**
-	 * Map of (String -> VariableDescription) pairs for each variable in this
+	 * Map of (String -&gt; VariableDescription) pairs for each variable in this
 	 * project, where String is the name of the variable.
 	 */
 	protected HashMap<String, VariableDescription> variableDescriptions = null;
@@ -187,7 +187,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	/**
 	 * Helper to fetch projects from an array of build configuration references
 	 * @param refs
-	 * @return List<IProject>
+	 * @return {@literal List<IProject>}
 	 */
 	private Collection<IProject> getProjectsFromBuildConfigRefs(IBuildConfiguration[] refs) {
 		LinkedHashSet<IProject> projects = new LinkedHashSet<>(refs.length);
@@ -380,7 +380,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	}
 
 	/**
-	 * Returns the map of link descriptions (IPath (project relative path) -> LinkDescription).
+	 * Returns the map of link descriptions (IPath (project relative path) -&gt; LinkDescription).
 	 * Since this method is only used internally, it never creates a copy.
 	 * Returns null if the project does not have any linked resources.
 	 */
@@ -389,16 +389,17 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	}
 
 	/**
-	 * Returns the map of filter descriptions (IPath (project relative path) -> LinkedList<FilterDescription>).
-	 * Since this method is only used internally, it never creates a copy.
-	 * Returns null if the project does not have any filtered resources.
+	 * Returns the map of filter descriptions (IPath (project relative path) -&gt;
+	 * {@literal LinkedList<FilterDescription>}). Since this method is only used
+	 * internally, it never creates a copy. Returns null if the project does not
+	 * have any filtered resources.
 	 */
 	public HashMap<IPath, LinkedList<FilterDescription>> getFilters() {
 		return filterDescriptions;
 	}
 
 	/**
-	 * Returns the map of variable descriptions (String (variable name) ->
+	 * Returns the map of variable descriptions (String (variable name) -&gt;
 	 * VariableDescription). Since this method is only used internally, it never
 	 * creates a copy. Returns null if the project does not have any variables.
 	 */
@@ -474,7 +475,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	}
 
 	/**
-	 * Helper method to compare two maps of Configuration Name -> IBuildConfigurationReference[]
+	 * Helper method to compare two maps of Configuration Name -&gt; IBuildConfigurationReference[]
 	 * @return boolean indicating if there are differences between the two maps
 	 */
 	private static boolean configRefsHaveChanges(Map<String, IBuildConfiguration[]> m1, Map<String, IBuildConfiguration[]> m2) {
@@ -663,7 +664,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	}
 
 	/**
-	 * Sets the map of link descriptions (String name -> LinkDescription).
+	 * Sets the map of link descriptions (String name -&gt; LinkDescription).
 	 * Since this method is only used internally, it never creates a copy. May
 	 * pass null if this project does not have any linked resources
 	 */
@@ -672,7 +673,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	}
 
 	/**
-	 * Sets the map of filter descriptions (String name -> LinkedList<LinkDescription>).
+	 * Sets the map of filter descriptions {@literal (String name -> LinkedList<LinkDescription>)}.
 	 * Since this method is only used internally, it never creates a copy. May
 	 * pass null if this project does not have any filtered resources
 	 */
@@ -681,7 +682,7 @@ public class ProjectDescription extends ModelObject implements IProjectDescripti
 	}
 
 	/**
-	 * Sets the map of variable descriptions (String name ->
+	 * Sets the map of variable descriptions (String name -&gt;
 	 * VariableDescription). Since this method is only used internally, it never
 	 * creates a copy. May pass null if this project does not have any variables
 	 */

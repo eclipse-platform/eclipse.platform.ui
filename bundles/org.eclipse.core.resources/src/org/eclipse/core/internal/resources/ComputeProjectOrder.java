@@ -45,7 +45,7 @@ public class ComputeProjectOrder {
 	 * defined, the graph can be queried for the depth-first finish time of each
 	 * vertex.
 	 * <p>
-	 * Ref: Cormen, Leiserson, and Rivest <it>Introduction to Algorithms</it>,
+	 * Ref: Cormen, Leiserson, and Rivest <i>Introduction to Algorithms</i>,
 	 * McGraw-Hill, 1990. The depth-first search algorithm is in section 23.3.
 	 * </p>
 	 */
@@ -548,8 +548,8 @@ public class ComputeProjectOrder {
 	 * If there are no constraints on the order of the vertexes, they are returned
 	 * in the reverse order of how they are supplied.
 	 * </p>
-	 * <p> Ref: Cormen, Leiserson, and Rivest <it>Introduction to
-	 * Algorithms</it>, McGraw-Hill, 1990. The strongly-connected-components
+	 * <p> Ref: Cormen, Leiserson, and Rivest <i>Introduction to
+	 * Algorithms</i>, McGraw-Hill, 1990. The strongly-connected-components
 	 * algorithm is in section 23.5.
 	 * </p>
 	 *
@@ -674,8 +674,8 @@ public class ComputeProjectOrder {
 	}
 
 	/**
-	 * Builds a digraph excluding the nodes that do not match filter, but keeps transitive edges. Ie if A->B->C and B is removed,
-	 * result would be A->C.
+	 * Builds a digraph excluding the nodes that do not match filter, but keeps transitive edges. Ie if A-&gt;B-&gt;C and B is removed,
+	 * result would be A-&gt;C.
 	 *
 	 * Complexity is O(#edge + #vertex). It implements a dynamic recursive deep-first graph traversing algorithm to compute
 	 * resutling edges.

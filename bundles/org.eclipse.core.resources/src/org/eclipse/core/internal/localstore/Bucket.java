@@ -146,7 +146,7 @@ public abstract class Bucket {
 	static final String INDEXES_DIR_NAME = ".indexes"; //$NON-NLS-1$
 
 	/**
-	 * Map of the history entries in this bucket. Maps (String -> byte[][] or String[][]),
+	 * Map of the history entries in this bucket. Maps (String -&gt; byte[][] or String[][]),
 	 * where the key is the path of the object we are storing history for, and
 	 * the value is the history entry data (UUID,timestamp) pairs.
 	 */

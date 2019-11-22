@@ -21,7 +21,7 @@ import org.eclipse.core.tools.metadata.*;
 
 /**
  * A strategy for reading .markers files version 3. Layout:
- * <pre>
+ * <pre> {@code
  * SAVE_FILE -> VERSION_ID RESOURCE+
  * VERSION_ID -> int
  * RESOURCE -> RESOURCE_PATH MARKERS_SIZE MARKER+
@@ -41,7 +41,7 @@ import org.eclipse.core.tools.metadata.*;
  * STRING_VALUE -> byte String
  * NULL_VALUE -> byte
  * CREATION_TIME -> long
- * </pre> 
+ * }</pre> 
  */
 
 public class MarkersDumpingStrategy_3 implements IStringDumpingStrategy {

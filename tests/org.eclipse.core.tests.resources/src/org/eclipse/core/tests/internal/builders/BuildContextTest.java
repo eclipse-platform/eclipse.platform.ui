@@ -104,7 +104,7 @@ public class BuildContextTest extends AbstractBuilderTest {
 	}
 
 	/**
-	 * p0 --> p1 --> p2
+	 * p0 --&gt; p1 --&gt; p2
 	 * @throws CoreException
 	 */
 	private void setupSimpleReferences() throws CoreException {

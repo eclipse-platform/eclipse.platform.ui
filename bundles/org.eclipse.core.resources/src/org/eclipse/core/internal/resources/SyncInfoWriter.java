@@ -48,6 +48,7 @@ public class SyncInfoWriter {
 	}
 
 	/**
+	 * <pre> {@code
 	 * SAVE_FILE -> VERSION_ID RESOURCE+
 	 * VERSION_ID -> int
 	 * RESOURCE -> RESOURCE_PATH SIZE SYNCINFO*
@@ -58,6 +59,7 @@ public class SyncInfoWriter {
 	 * INDEX -> byte int
 	 * QNAME -> byte String
 	 * BYTES -> byte[]
+	 * }</pre>
 	 */
 	public void saveSyncInfo(ResourceInfo info, IPathRequestor requestor, DataOutputStream output, List<QualifiedName> writtenPartners) throws IOException {
 		Map<QualifiedName, Object> table = info.getSyncInfo(false);
@@ -91,6 +93,7 @@ public class SyncInfoWriter {
 	}
 
 	/**
+	 * <pre> {@code
 	 * SNAP_FILE -> [VERSION_ID RESOURCE]*
 	 * VERSION_ID -> int
 	 * RESOURCE -> RESOURCE_PATH SIZE SYNCINFO*
@@ -99,6 +102,7 @@ public class SyncInfoWriter {
 	 * SYNCINFO -> QNAME BYTES
 	 * QNAME -> String String
 	 * BYTES -> byte[]
+	 * }</pre>
 	 */
 	public void snapSyncInfo(ResourceInfo info, IPathRequestor requestor, DataOutputStream output) throws IOException {
 		if (!info.isSet(ICoreConstants.M_SYNCINFO_SNAP_DIRTY))

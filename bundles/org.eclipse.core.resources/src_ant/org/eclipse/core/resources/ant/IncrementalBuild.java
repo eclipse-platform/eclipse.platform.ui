@@ -99,8 +99,8 @@ public class IncrementalBuild extends Task {
 	}
 
 	/**
-	 * Sets the receiver's kind> attribute.  This value must be one
-	 * of: <code>IncrementalBuild.KIND_FULL</code>,
+	 * Sets the receiver's kind attribute. This value must be one of:
+	 * <code>IncrementalBuild.KIND_FULL</code>,
 	 * <code>IncrementalBuild.KIND_AUTO</code>,
 	 * <code>IncrementalBuild.KIND_INCREMENTAL</code>,
 	 * <code>IncrementalBuild.KIND_CLEAN</code>.

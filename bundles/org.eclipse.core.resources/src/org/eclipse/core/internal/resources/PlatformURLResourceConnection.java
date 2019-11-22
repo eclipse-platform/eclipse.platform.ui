@@ -24,8 +24,8 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.osgi.util.NLS;
 
 /**
- * Platform URL support
- * platform:/resource/<path>/<resource>  maps to resource in current workspace
+ * Platform URL support {@literal platform:/resource/<path>/<resource>} maps to
+ * resource in current workspace
  */
 public class PlatformURLResourceConnection extends PlatformURLConnection {
 

@@ -30,7 +30,7 @@ import org.eclipse.core.tests.resources.regression.SimpleBuilder;
  * Tests that triggering a project build from multiple jobs does not cause assertion failures,
  * e.g. due to adding builders to the {@link BuildCommand} in parallel.
  *
- * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=517411">Eclipse bug 517411<a/>
+ * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=517411">Eclipse bug 517411</a>
  */
 public class BuildProjectFromMultipleJobsTest extends ResourceTest {
 
@@ -82,7 +82,7 @@ public class BuildProjectFromMultipleJobsTest extends ResourceTest {
 	 *
 	 * Repeats this several times, to ensure that no exceptions are thrown due to the build from parallel threads.
 	 *
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=517411">Eclipse bug 517411<a/>
+	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=517411">Eclipse bug 517411</a>
 	 */
 	public void test10IterationsWithBuildsFrom8Jobs() throws Exception {
 		IProgressMonitor monitor = new NullProgressMonitor();

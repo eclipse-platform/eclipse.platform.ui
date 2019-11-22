@@ -67,6 +67,7 @@ public class MarkerWriter {
 	}
 
 	/**
+	 * <pre> {@code
 	 * SAVE_FILE -> VERSION_ID RESOURCE+
 	 * VERSION_ID -> int
 	 * RESOURCE -> RESOURCE_PATH MARKERS_SIZE MARKER+
@@ -86,7 +87,7 @@ public class MarkerWriter {
 	 * STRING_VALUE -> byte String
 	 * NULL_VALUE -> byte
 	 * CREATION_TIME -> long
-	 *
+	 * }</pre>
 	 */
 	public void save(ResourceInfo info, IPathRequestor requestor, DataOutputStream output, List<String> writtenTypes) throws IOException {
 		// phantom resources don't have markers
@@ -116,6 +117,7 @@ public class MarkerWriter {
 	/**
 	 * Snapshot the markers for the specified resource to the given output stream.
 	 *
+	 * <pre> {@code
 	 * SNAP_FILE -> [VERSION_ID RESOURCE]*
 	 * VERSION_ID -> int (used for backwards compatibiliy)
 	 * RESOURCE -> RESOURCE_PATH MARKER_SIZE MARKER+
@@ -135,6 +137,7 @@ public class MarkerWriter {
 	 * STRING_VALUE -> byte String
 	 * NULL_VALUE -> byte
 	 * CREATION_TIME -> long
+	 * }</pre>
 	 */
 	public void snap(ResourceInfo info, IPathRequestor requestor, DataOutputStream output) throws IOException {
 		// phantom resources don't have markers

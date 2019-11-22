@@ -32,15 +32,15 @@ import org.eclipse.core.tests.harness.PerformanceTestResult;
  * For benchmarking operations that should be instantaneous, use the
  * startBench(), stopBench() methods.  Here is an example:
  *
- *	<code>
+ *	<pre><code>
  * 	String benchName = "myOperation";
  * 	int repeat = 500;
  *	startBench();
- *	for (int i = 0; i < repeat; i++) {
+ *	for (int i = 0; i &lt; repeat; i++) {
  *		//run the operation to be tested here
  *	}
  *	stopBench(benchName, repeat);
- *	</code>
+ *	</code></pre>
  * Note that only one operation can be tested at a time with this mechanism.
  *
  * If an instance of this class is run using a LoggingPerformanceTestResult,

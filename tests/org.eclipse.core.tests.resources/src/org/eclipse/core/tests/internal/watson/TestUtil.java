@@ -84,7 +84,7 @@ abstract class TestUtil extends WatsonTest implements IPathConstants {
 	/**
 	 * Asserts that two trees are equal. If they are not
 	 * an AssertionFailedError is thrown.
-	 * @param message the detail message for this assertion
+	 * @param msg	 the detail message for this assertion
 	 * @param expected the expected value of a tree
 	 * @param actual the actual value of a tree
 	 * @param depth The depth to compare to.

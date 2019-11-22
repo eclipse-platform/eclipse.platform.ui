@@ -20,7 +20,7 @@ import org.eclipse.core.tools.metadata.IStringDumpingStrategy;
 
 /**
  * A strategy for reading .syncinfo.snap files version 3. Layout:
- * <pre>
+ * <pre> {@code
  * SNAP_FILE -> [VERSION_ID RESOURCE]*
  * VERSION_ID -> int
  * RESOURCE -> RESOURCE_PATH SIZE SYNCINFO*
@@ -29,7 +29,7 @@ import org.eclipse.core.tools.metadata.IStringDumpingStrategy;
  * SYNCINFO -> QNAME BYTES
  * QNAME -> String String
  * BYTES -> byte[]
- * </pre>
+ * }</pre>
  */
 class SyncInfoSnapshotDumpingStrategy_3 implements IStringDumpingStrategy {
 	@Override

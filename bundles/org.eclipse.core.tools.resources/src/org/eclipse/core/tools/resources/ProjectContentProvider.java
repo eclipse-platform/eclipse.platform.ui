@@ -34,7 +34,7 @@ import org.eclipse.jface.viewers.Viewer;
  *   <li>the builders associated to this project. For each builder it shows:<ul>
  *       <li>the builder's name;</li>        
  *       <li>the arguments;</li>
- *       <li>persistent info (interesting projects &amp; last built tree);</li> * 
+ *       <li>persistent info (interesting projects &amp; last built tree);</li>
  *   </ul></li> 
  
  *   <li>the natures associated to this project. For each nature it shows:<ul>

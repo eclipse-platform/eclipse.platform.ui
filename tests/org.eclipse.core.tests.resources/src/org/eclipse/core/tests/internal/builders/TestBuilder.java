@@ -26,7 +26,7 @@ import org.junit.Assert;
 public abstract class TestBuilder extends IncrementalProjectBuilder {
 
 	/**
-	 * A test specific call-back which can be ticked on #getRule(...) & #build(...)
+	 * A test specific call-back which can be ticked on #getRule(...) &amp; #build(...)
 	 */
 	public static class BuilderRuleCallback {
 		IncrementalProjectBuilder builder;

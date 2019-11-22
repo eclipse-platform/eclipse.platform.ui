@@ -44,6 +44,7 @@ public class MarkerSnapshotReader_2 extends MarkerSnapshotReader {
 	}
 
 	/**
+	 * <pre> {@code
 	 * SNAP_FILE -> [VERSION_ID RESOURCE]*
 	 * VERSION_ID -> int (used for backwards compatibiliy)
 	 * RESOURCE -> RESOURCE_PATH MARKER_SIZE MARKER+
@@ -63,6 +64,7 @@ public class MarkerSnapshotReader_2 extends MarkerSnapshotReader {
 	 * STRING_VALUE -> byte String
 	 * NULL_VALUE -> byte
 	 * CREATION_TIME -> long
+	 * }</pre>
 	 */
 	@Override
 	public void read(DataInputStream input) throws IOException, CoreException {

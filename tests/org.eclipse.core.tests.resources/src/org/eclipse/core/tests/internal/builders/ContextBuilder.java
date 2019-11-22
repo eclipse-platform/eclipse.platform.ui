@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 public class ContextBuilder extends TestBuilder {
 	public static final String BUILDER_NAME = "org.eclipse.core.tests.resources.contextbuilder";
 
-	/** Stores IBuildConfiguration -> ContextBuilder */
+	/** Stores IBuildConfiguration -&gt; ContextBuilder */
 	private static HashMap<IBuildConfiguration, ContextBuilder> builders = new HashMap<>();
 	/** The context information for the last run of this builder */
 	IBuildContext contextForLastBuild = null;

@@ -26,7 +26,7 @@ public class SignaledBuilder extends IncrementalProjectBuilder {
 	public static final String BUILDER_ID = "org.eclipse.core.tests.resources.sigbuilder";
 
 	/**
-	 * associate IProject->SignaledBuilder
+	 * associate IProject-&gt;SignaledBuilder
 	 */
 	private static HashMap<IProject, SignaledBuilder> instances = new HashMap<>(10);
 	protected boolean wasExecuted;

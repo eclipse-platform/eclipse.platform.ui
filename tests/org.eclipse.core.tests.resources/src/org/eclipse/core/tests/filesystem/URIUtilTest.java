@@ -99,7 +99,7 @@ public class URIUtilTest extends FileSystemTest {
 
 	/**
 	 * Test API methods {@link org.eclipse.core.filesystem.URIUtil#toURI(IPath)},
-	 * {@link org.eclipse.core.filesystem.URIUtil#toURI(String)))} results equality
+	 * {@link org.eclipse.core.filesystem.URIUtil#toURI(String)} results equality
 	 */
 	public void testToURIAbsolute() {
 		String pathString = null;
@@ -116,7 +116,7 @@ public class URIUtilTest extends FileSystemTest {
 
 	/**
 	 * Test API methods {@link org.eclipse.core.filesystem.URIUtil#toURI(IPath)},
-	 * {@link org.eclipse.core.filesystem.URIUtil#toURI(String)))} results equality
+	 * {@link org.eclipse.core.filesystem.URIUtil#toURI(String)} results equality
 	 */
 	public void testToURIRelative() {
 		String pathString = "test/path with/spaces to_file.txt";
@@ -129,7 +129,7 @@ public class URIUtilTest extends FileSystemTest {
 	}
 
 	/**
-	 * Test API methods {@link org.eclipse.core.filesystem.URIUtil#toURI(org.eclipse.core.runtime.IPath))}.
+	 * Test API methods {@link org.eclipse.core.filesystem.URIUtil#toURI(org.eclipse.core.runtime.IPath)}.
 	 * {@link org.eclipse.core.filesystem.URIUtil#toPath(URI)} transformation with relative and absolute paths
 	 */
 	public void testFromPathToURI() {

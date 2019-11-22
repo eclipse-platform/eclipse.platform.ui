@@ -28,7 +28,7 @@ public class InternalFileSystemCore implements IRegistryChangeListener {
 	private static final InternalFileSystemCore INSTANCE = new InternalFileSystemCore();
 
 	/**
-	 * A map (String -> (IConfigurationElement or IFileSystem)) mapping URI
+	 * A map (String -&gt; (IConfigurationElement or IFileSystem)) mapping URI
 	 * scheme to the file system for that scheme.  If the corresponding file
 	 * system has never been accessed, then the map contains the configuration
 	 * element for the extension.  Once the file system has been created, the

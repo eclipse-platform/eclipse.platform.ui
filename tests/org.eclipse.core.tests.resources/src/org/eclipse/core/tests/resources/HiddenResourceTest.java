@@ -746,7 +746,7 @@ public class HiddenResourceTest extends ResourceTest {
 	/**
 	 * Tests whether {@link IFile#create(java.io.InputStream, int, IProgressMonitor)},
 	 * {@link IFolder#create(int, boolean, IProgressMonitor)}
-	 * and {@link IProject#create(IProjectDescription, int, IProgressMonitor)
+	 * and {@link IProject#create(IProjectDescription, int, IProgressMonitor)}
 	 * handles {@link IResource#HIDDEN} flag properly.
 	 */
 	public void testCreateHiddenResources() {

@@ -21,8 +21,7 @@ import org.eclipse.core.tools.metadata.*;
 
 /**
  * A strategy for reading .markers.snap files version 1. Layout:
- * <pre>
-
+ * <pre> {@code
  * SNAP_FILE -> [VERSION_ID RESOURCE]*
  * VERSION_ID -> int (used for backwards compatibiliy)
  * RESOURCE -> RESOURCE_PATH MARKER_SIZE MARKER+
@@ -41,7 +40,7 @@ import org.eclipse.core.tools.metadata.*;
  * INTEGER_VALUE -> byte int
  * STRING_VALUE -> byte String
  * NULL_VALUE -> byte
- * </pre>
+ * }</pre>
  */
 class MarkersSnapshotDumpingStrategy_1 implements IStringDumpingStrategy {
 	@Override

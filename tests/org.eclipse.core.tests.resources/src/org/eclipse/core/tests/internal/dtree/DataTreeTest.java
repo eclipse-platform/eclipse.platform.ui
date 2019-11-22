@@ -255,8 +255,8 @@ public class DataTreeTest extends TestCase {
 	 * Answer the key of the child with the given index of the
 	 * specified node.<p>
 	 *
-	 * @param: NodeKey, int
-	 * @return: NodeKey
+	 * @param NodeKey, int
+	 * @return NodeKey
 	 *
 	 * @exception ObjectNotFoundException
 	 * 	parentKey does not exist in the receiver

@@ -22,6 +22,7 @@ import java.util.Arrays;
  * <p>
  * Allows to enter a list of Strings, and then perform the
  * following checks:
+ * </p>
  * <ul>
  *   <li>{@link #containsAsPrefix(String)} - check whether a given
  *       String s is a prefix of any String in the pool.</li>
@@ -41,7 +42,7 @@ import java.util.Arrays;
  * </ul>
  * The PrefixPool grows as needed when adding Strings. Typically,
  * it is used for prefix checks on absolute paths of a tree.
- * </p><p>
+ * <p>
  * This class is not thread-safe: no two threads may add or
  * check items at the same time.
  *

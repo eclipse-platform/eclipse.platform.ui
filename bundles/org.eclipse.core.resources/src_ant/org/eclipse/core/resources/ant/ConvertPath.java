@@ -27,7 +27,7 @@ import org.eclipse.core.runtime.Platform;
  * resource does not exist, the property is set to <code>false</code>.
  * <p>
  * The attribute "property" must be specified, as well as only one of "fileSystemPath" or "resourcePath".
- * <p><p>
+ * <p>
  * Example:<p>
  *	&lt;eclipse.convertPath fileSystemPath="D:\MyWork\MyProject" property="myProject.resourcePath"/&gt;
  */

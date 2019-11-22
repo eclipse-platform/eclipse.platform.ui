@@ -107,7 +107,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	protected long persistSyncInfo = 0l;
 
 	/**
-	 * In-memory representation of plugins saved state. Maps String (plugin id)-> SavedState.
+	 * In-memory representation of plugins saved state. Maps String (plugin id)-&gt; SavedState.
 	 * This map is accessed from API that is not synchronized, so it requires
 	 * independent synchronization. This is accomplished using a synchronized
 	 * wrapper map.
@@ -115,7 +115,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	protected Map<String, SavedState> savedStates;
 
 	/**
-	 * Ids of plugins that participate on a workspace save. Maps String (plugin id)-> ISaveParticipant.
+	 * Ids of plugins that participate on a workspace save. Maps String (plugin id)-&gt; ISaveParticipant.
 	 * This map is accessed from API that is not synchronized, so it requires
 	 * independent synchronization. This is accomplished using a synchronized
 	 * wrapper map.
@@ -353,7 +353,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	/**
 	 * Returns a table mapping having the plug-in id as the key and the old tree
 	 * as the value.
-	 * This table is based on the union of the current savedStates</code>
+	 * This table is based on the union of the current <code>savedStates</code>
 	 * and the given table of contexts.  The specified tree is used as the tree for
 	 * any newly created saved states.  This method is used to compute the set of
 	 * saved states to be written out.
@@ -740,7 +740,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	/**
 	 * Restores the contents of this project.  Throw
 	 * an exception if the project could not be restored.
-	 * @return <code><code>true</code> if the project data was restored successfully,
+	 * @return <code>true</code> if the project data was restored successfully,
 	 * and <code>false</code> if non-critical problems occurred while restoring.
 	 * @exception CoreException if the project could not be restored.
 	 */
@@ -773,7 +773,7 @@ public class SaveManager implements IElementInfoFlattener, IManager, IStringPool
 	 * Restores the contents of this project from a refresh snapshot, if possible.
 	 * Throws an exception if the snapshot is found but an error occurs when reading
 	 * the file.
-	 * @return <code><code>true</code> if the project data was restored successfully,
+	 * @return <code>true</code> if the project data was restored successfully,
 	 * and <code>false</code> if the refresh snapshot was not found or could not be opened.
 	 * @exception CoreException if an error occurred reading the snapshot file.
 	 */

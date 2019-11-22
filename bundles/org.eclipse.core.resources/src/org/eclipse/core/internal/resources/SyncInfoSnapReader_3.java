@@ -45,6 +45,7 @@ public class SyncInfoSnapReader_3 extends SyncInfoSnapReader {
 	}
 
 	/**
+	 * <pre> {@code
 	 * SNAP_FILE -> [VERSION_ID RESOURCE]*
 	 * VERSION_ID -> int
 	 * RESOURCE -> RESOURCE_PATH SIZE SYNCINFO*
@@ -53,6 +54,7 @@ public class SyncInfoSnapReader_3 extends SyncInfoSnapReader {
 	 * SYNCINFO -> QNAME BYTES
 	 * QNAME -> String String
 	 * BYTES -> byte[]
+	 * }</pre>
 	 */
 	@Override
 	public void readSyncInfo(DataInputStream input) throws IOException {

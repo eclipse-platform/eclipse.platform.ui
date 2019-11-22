@@ -58,7 +58,7 @@ public class MarkerTypeDefinitionCache {
 	}
 
 	/**
-	 * The marker type definitions.  Maps String (markerId) -> MarkerTypeDefinition
+	 * The marker type definitions.  Maps String (markerId) -&gt; MarkerTypeDefinition
 	 */
 	protected HashMap<String, MarkerTypeDefinition> definitions;
 

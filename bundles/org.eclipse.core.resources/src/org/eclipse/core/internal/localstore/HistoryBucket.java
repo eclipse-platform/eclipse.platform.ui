@@ -224,6 +224,7 @@ public class HistoryBucket extends Bucket {
 	 * Version number for the current implementation file's format.
 	 * <p>
 	 * Version 2 (3.1 M5):
+	 * </p>
 	 * <pre>
 	 * FILE ::= VERSION_ID ENTRY+
 	 * ENTRY ::= PATH STATE_COUNT STATE+
@@ -233,9 +234,9 @@ public class HistoryBucket extends Bucket {
 	 * UUID	 ::= byte[16]
 	 * LAST_MODIFIED ::= byte[8]
 	 * </pre>
-	 * </p>
 	 * <p>
 	 * Version 1 (3.1 M4):
+	 * </p>
 	 * <pre>
 	 * FILE ::= VERSION_ID ENTRY+
 	 * ENTRY ::= PATH STATE_COUNT STATE+
@@ -245,7 +246,6 @@ public class HistoryBucket extends Bucket {
 	 * UUID	 ::= byte[16]
 	 * LAST_MODIFIED ::= byte[8]
 	 * </pre>
-	 * </p>
 	 */
 	public final static byte VERSION = 2;
 

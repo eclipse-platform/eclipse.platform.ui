@@ -37,7 +37,7 @@ public class ResourceDeltaInfo {
 	}
 
 	/**
-	 * Table of all marker deltas, IPath -> MarkerSet
+	 * Table of all marker deltas, IPath -&gt; MarkerSet
 	 */
 	public Map<IPath, MarkerSet> getMarkerDeltas() {
 		return allMarkerDeltas;

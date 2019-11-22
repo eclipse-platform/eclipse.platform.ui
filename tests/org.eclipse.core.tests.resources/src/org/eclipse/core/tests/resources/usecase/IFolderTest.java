@@ -61,12 +61,12 @@ public class IFolderTest extends IResourceTest {
 
 	/**
 	 * Create a project in an open solution. Don't open the project.
-	 * Contruct a folder handle & check its initial state.
+	 * Contruct a folder handle &amp; check its initial state.
 	 * Try creating the folder in the unopened project.
 	 * Open the project.
-	 * Create the folder & check its state further.
-	 * Construct a nested folder handle & check its initial state.
-	 * Create the nested folder & check its further.
+	 * Create the folder &amp; check its state further.
+	 * Construct a nested folder handle &amp; check its initial state.
+	 * Create the nested folder &amp; check its further.
 	 * Delete the nested folder.
 	 * Delete the parent folder.
 	 * Close the workspace.

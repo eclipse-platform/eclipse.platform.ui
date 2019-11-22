@@ -1993,7 +1993,7 @@ public class LinkedResourceTest extends ResourceTest {
 	}
 
 	/**
-	 * Create a project with a linked resource at depth > 2, and refresh it.
+	 * Create a project with a linked resource at depth &gt; 2, and refresh it.
 	 */
 	public void testRefreshDeepLink() {
 		IFolder link = nonExistingFolderInExistingFolder;

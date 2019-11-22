@@ -661,8 +661,8 @@ public class FilteredResourceTest extends ResourceTest {
 	 * Main tree:
 	 * existingProject/existingFolderInExsitingProject/existingFolderInExistingFolder
 	 * Links:
-	 * otherExistingProject/nonExistingFolderInOtherExistingProject => existingProject/existingFolderInExsitingProject  (filter * of type folder)
-	 * otherExistingProject/nonExistingFolder2InOtherExistingProject => existingProject/existingFolderInExsitingProject/existingFolderInExistingFolder
+	 * otherExistingProject/nonExistingFolderInOtherExistingProject =&gt; existingProject/existingFolderInExsitingProject  (filter * of type folder)
+	 * otherExistingProject/nonExistingFolder2InOtherExistingProject =&gt; existingProject/existingFolderInExsitingProject/existingFolderInExistingFolder
 	 * This is a regression test for Bug 268518.
 	 */
 	public void testCreateFilterOnLinkedFolderWithAlias() {
@@ -806,8 +806,8 @@ public class FilteredResourceTest extends ResourceTest {
 	 * Main tree:
 	 * existingProject/existingFolderInExsitingProject/existingFolderInExistingFolder
 	 * Links:
-	 * otherExistingProject/nonExistingFolderInOtherExistingProject => existingProject/existingFolderInExsitingProject  (filter * of type folder)
-	 * otherExistingProject/nonExistingFolder2InOtherExistingProject => existingProject/existingFolderInExsitingProject/existingFolderInExistingFolder
+	 * otherExistingProject/nonExistingFolderInOtherExistingProject =&gt; existingProject/existingFolderInExsitingProject  (filter * of type folder)
+	 * otherExistingProject/nonExistingFolder2InOtherExistingProject =&gt; existingProject/existingFolderInExsitingProject/existingFolderInExistingFolder
 	 * This is a regression test for Bug 268518.
 	 */
 	public void testCreateFilterOnLinkedFolderWithAlias2() {

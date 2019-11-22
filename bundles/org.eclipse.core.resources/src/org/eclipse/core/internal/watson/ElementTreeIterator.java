@@ -29,18 +29,18 @@ import org.eclipse.core.runtime.Path;
  * that node, and a callback for requesting the full path of that node.
  * <p>
  * <b>Example:</b>
- <code><pre>
- // printing a crude representation of the poster child
- IElementContentVisitor visitor=
-     new IElementContentVisitor() {
-   public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
-     System.out.println(requestor.requestPath() + " -> " + elementContents);
-     return true;
-   }
- });
- ElementTreeIterator iterator = new ElementTreeIterator(tree, Path.ROOT);
- iterator.iterate(visitor);
- </pre></code>
+ * <pre><code>
+ * // printing a crude representation of the poster child
+ * IElementContentVisitor visitor=
+ *     new IElementContentVisitor() {
+ *   public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
+ *     System.out.println(requestor.requestPath() + " -&gt; " + elementContents);
+ *     return true;
+ *   }
+ * });
+ * ElementTreeIterator iterator = new ElementTreeIterator(tree, Path.ROOT);
+ * iterator.iterate(visitor);
+ * </code></pre>
  */
 public class ElementTreeIterator implements IPathRequestor {
 	//for path requestor

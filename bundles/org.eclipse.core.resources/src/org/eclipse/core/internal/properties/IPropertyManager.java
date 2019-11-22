@@ -70,9 +70,9 @@ public interface IPropertyManager extends IManager {
 	void setProperty(IResource target, QualifiedName name, String value) throws CoreException;
 
 	/**
-	 * Returns a map (<propertyKey: QualifiedName -> value: String>) containing
-	 * all properties defined for the given resource. In case no properties can
-	 * be found, returns an empty map.
+	 * Returns a map {@literal (<propertyKey: QualifiedName -> value: String>)}
+	 * containing all properties defined for the given resource. In case no
+	 * properties can be found, returns an empty map.
 	 */
 	Map<QualifiedName, String> getProperties(IResource resource) throws CoreException;
 }

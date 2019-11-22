@@ -29,7 +29,7 @@ import org.eclipse.core.tests.harness.PerformanceTestRunner;
  * This test is meant to be run manually, and not integrated into the
  * automated test suite. Requires large project data (thousands of folders)
  * to be available on a slow file system (bigSiteLocation). Modify
- * bigSiteLocation to suit your needs, then run-as > JUnit Plug-in Test.
+ * bigSiteLocation to suit your needs, then run-as &gt; JUnit Plug-in Test.
  */
 public class ProjectSnapshotPerfManualTest extends ResourceTest {
 	/** big site default volume (windows) */

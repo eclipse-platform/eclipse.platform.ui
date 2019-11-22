@@ -100,11 +100,11 @@ public class IProjectTest extends IResourceTest {
 
 	/**
 	 * Create a solution in an open workspace. Don't open the solution.
-	 * Construct a project handle & check its initial state.
+	 * Construct a project handle &amp; check its initial state.
 	 * Try creating the project in the unopened solution.
-	 * Set/get comment & owner after creating the project but before opening. Is this proper?
+	 * Set/get comment &amp; owner after creating the project but before opening. Is this proper?
 	 * Open the solution.
-	 * Create the project & check its state further.
+	 * Create the project &amp; check its state further.
 	 * Delete the project.
 	 * Close the workspace.
 	 *

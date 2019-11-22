@@ -151,7 +151,7 @@ public class BuildCommand extends ModelObject implements ICommand {
 	}
 
 	/**
-	 * @return A copy of the internal map {@link IBuildConfiguration} -> {@link IncrementalProjectBuilder} if
+	 * @return A copy of the internal map {@link IBuildConfiguration} -&gt; {@link IncrementalProjectBuilder} if
 	 * this build command supports multiple configurations. Otherwise return the {@link IncrementalProjectBuilder}
 	 * associated with this build command.
 	 */

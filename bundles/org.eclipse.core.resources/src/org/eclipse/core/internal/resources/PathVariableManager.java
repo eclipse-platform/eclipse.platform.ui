@@ -46,8 +46,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	}
 
 	/**
-	 * @see org.eclipse.core.resources.
-	 * IPathVariableManager#addChangeListener(IPathVariableChangeListener)
+	 * @see org.eclipse.core.resources.IPathVariableManager#addChangeListener(IPathVariableChangeListener)
 	 */
 	@Override
 	public void addChangeListener(IPathVariableChangeListener listener) {
@@ -187,8 +186,7 @@ public class PathVariableManager implements IPathVariableManager, IManager {
 	}
 
 	/**
-	 * @see org.eclipse.core.resources.
-	 * IPathVariableManager#removeChangeListener(IPathVariableChangeListener)
+	 * @see org.eclipse.core.resources.IPathVariableManager#removeChangeListener(IPathVariableChangeListener)
 	 */
 	@Override
 	public void removeChangeListener(IPathVariableChangeListener listener) {

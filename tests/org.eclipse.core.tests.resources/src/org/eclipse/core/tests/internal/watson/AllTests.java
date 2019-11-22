@@ -18,7 +18,6 @@ import junit.framework.*;
 public class AllTests extends TestCase {
 	/**
 	 * AllTests constructor comment.
-	 * @param name java.lang.String
 	 */
 	public AllTests() {
 		super(null);

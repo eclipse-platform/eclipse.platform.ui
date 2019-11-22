@@ -70,8 +70,8 @@ public class IFileTest extends IResourceTest {
 
 	/**
 	 * Create a folder in an open project.
-	 * Contruct a file handle "in" the folder & check its initial state.
-	 * Create the file & check its state further.
+	 * Contruct a file handle "in" the folder &amp; check its initial state.
+	 * Create the file &amp; check its state further.
 	 * Delete the file.
 	 *
 	 * TBD:
