@@ -31,8 +31,7 @@
         basestylesheeturi="css/e4-dark_mac.css"
         id="org.eclipse.e4.ui.css.theme.e4_dark"
         label="%theme.dark"
-        os="macosx"
-        os_version="10.14,10.15">
+        os="macosx">
     </theme>
       <theme
             basestylesheeturi="css/e4_default_gtk.css"
