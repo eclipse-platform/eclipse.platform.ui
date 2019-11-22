@@ -95,7 +95,7 @@ public class DebugEventWaiter implements IDebugEventSetListener {
 	/**
 	 * Handles debug events.
 	 * 
-	 * @see IDebugEventListener
+	 * @see IDebugEventSetListener
 	 * @see #accept(DebugEvent)
 	 */
 	@Override

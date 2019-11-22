@@ -89,7 +89,7 @@ public interface IAntModel {
 	/**
 	 * Returns the Eclipse resource for the buildfile this Ant model represents
 	 * 
-	 * @return the Eclipse resource or <code>null</null> if the buildfile is not in the workspace
+	 * @return the Eclipse resource or <code>null</code> if the buildfile is not in the workspace
 	 */
 	IFile getFile();
 
@@ -213,7 +213,7 @@ public interface IAntModel {
 	/**
 	 * Adds a task element to the Ant model Only called if <code>canGetTaskInfo()</code>() is <code>true</code>
 	 * 
-	 * @param task
+	 * @param newTask
 	 *            the new Apache Ant task
 	 * @param parentTask
 	 *            the parent Apache Ant task or <code>null</code>

@@ -86,9 +86,9 @@ public class FoldingActionGroup extends ActionGroup {
 	/**
 	 * Returns <code>true</code> if the group is enabled.
 	 * 
-	 * <pre>
+	 * <pre>{@code
 	 * Invariant: isEnabled() <=> fViewer and all actions are != null.
-	 * </pre>
+	 * }</pre>
 	 * 
 	 * @return <code>true</code> if the group is enabled
 	 */

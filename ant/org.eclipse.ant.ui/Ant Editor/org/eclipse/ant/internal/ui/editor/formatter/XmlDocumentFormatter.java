@@ -421,7 +421,7 @@ public class XmlDocumentFormatter {
 	}
 
 	/**
-	 * Indent char is a space char but not a line delimiters. <code>== Character.isWhitespace(ch) && ch != '\n' && ch != '\r'</code>
+	 * Indent char is a space char but not a line delimiters. {@code == Character.isWhitespace(ch) && ch != '\n' && ch != '\r'}
 	 */
 	public static boolean isIndentChar(char ch) {
 		return Character.isWhitespace(ch) && !isLineDelimiterChar(ch);

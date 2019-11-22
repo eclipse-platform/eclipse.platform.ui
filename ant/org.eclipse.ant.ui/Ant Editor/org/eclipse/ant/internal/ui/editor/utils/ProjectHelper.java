@@ -60,7 +60,7 @@ import org.xml.sax.ext.LexicalHandler;
 public class ProjectHelper extends ProjectHelper2 {
 
 	/**
-	 * helper for path -> URI and URI -> path conversions.
+	 * helper for path -&gt; URI and URI -&gt; path conversions.
 	 */
 	private static FileUtils fu = null;
 

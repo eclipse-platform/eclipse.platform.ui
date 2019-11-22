@@ -885,10 +885,10 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 	/**
 	 * Returns all possible values for the specified attribute of the specified task.
 	 * 
-	 * @param aTaskName
+	 * @param taskName
 	 *            the name of the task that the specified attribute belongs to.
 	 * 
-	 * @param anAttributeName
+	 * @param attributeName
 	 *            the name of the attribute for that the value shall be completed
 	 * 
 	 * @param prefix
@@ -1469,7 +1469,7 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 	 * 
 	 * @param aDocumentStringToPrefix
 	 *            the String that contains the whole string of the currently edited file from the beginning up to the prefix for code completion.
-	 *            Example: '<project default="name"><property '.
+	 *            Example: {@literal '<project default="name"><property '}.
 	 * 
 	 * @return the extracted task string or <code>null</code> if no string could be extracted.
 	 */

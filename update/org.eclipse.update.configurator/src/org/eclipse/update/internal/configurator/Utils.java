@@ -329,15 +329,15 @@ public class Utils {
 	 * <p>
 	 * For example, assume resource bundle plugin.properties contains
 	 * name = Project Name
-	 * <pre>
-	 *     resolveNLString(b,"Hello World") returns "Hello World"</li>
-	 *     resolveNLString(b,"%name") returns "Project Name"</li>
-	 *     resolveNLString(b,"%name Hello World") returns "Project Name"</li>
-	 *     resolveNLString(b,"%abcd Hello World") returns "Hello World"</li>
-	 *     resolveNLString(b,"%abcd") returns "%abcd"</li>
-	 *     resolveNLString(b,"%%name") returns "%name"</li>
-	 * </pre>
 	 * </p>
+	 * <pre>
+	 *     resolveNLString(b,"Hello World") returns "Hello World"
+	 *     resolveNLString(b,"%name") returns "Project Name"
+	 *     resolveNLString(b,"%name Hello World") returns "Project Name"
+	 *     resolveNLString(b,"%abcd Hello World") returns "Hello World"
+	 *     resolveNLString(b,"%abcd") returns "%abcd"
+	 *     resolveNLString(b,"%%name") returns "%name"
+	 * </pre>
 	 * 
 	 * @param resourceBundle resource bundle.
 	 * @param string translatable string from model

@@ -248,7 +248,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 	}
 	
 	/**
-	 * Detect new features (timestamp > current site timestamp)
+	 * Detect new features (timestamp &gt; current site timestamp)
 	 * and validates existing features (they might have been removed)
 	 */
 	private void detectFeatures() {
@@ -296,7 +296,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 	}
 	
 	/**
-	 * Detect new plugins (timestamp > current site timestamp)
+	 * Detect new plugins (timestamp &gt; current site timestamp)
 	 * and validates existing plugins (they might have been removed)
 	 */
 	private void detectPlugins() {

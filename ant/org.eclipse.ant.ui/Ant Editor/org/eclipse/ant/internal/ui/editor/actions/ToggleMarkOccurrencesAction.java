@@ -26,7 +26,8 @@ import org.eclipse.ui.texteditor.ITextEditor;
 import org.eclipse.ui.texteditor.TextEditorAction;
 
 /**
- * A toolbar action which toggles the {@linkplain org.eclipse.ant.internal.ui.preferences#EDITOR_MARK_OCCURRENCES mark occurrences preference}.
+ * A toolbar action which toggles the {@linkplain org.eclipse.ant.internal.ui.preferences.AntEditorPreferenceConstants#EDITOR_MARK_OCCURRENCES mark
+ * occurrences preference}.
  * 
  * @since 3.1
  */

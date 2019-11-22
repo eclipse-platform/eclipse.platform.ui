@@ -21,7 +21,7 @@ import org.eclipse.ant.internal.ui.dtd.util.FactoryObject;
  * Non-deterministic finite state machine node.
  * <p>
  * 
- * Following Aho & Ullman, nfm nodes contain two transition links. The graph is constructed so that no node requires more than two links. There are
+ * Following Aho &amp; Ullman, nfm nodes contain two transition links. The graph is constructed so that no node requires more than two links. There are
  * exactly these kinds of nodes:
  * 
  * <pre>

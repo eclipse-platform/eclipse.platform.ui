@@ -82,11 +82,11 @@ public class dumper {
 	/**
 	 * Dump dfm as a series of states.
 	 * 
-	 * <pre>
+	 * <pre>{@code
 	 * S0  a=>S1 b=>S2 
 	 * S1  c=>S2
 	 * S2* d=>S2
-	 * </pre>
+	 * }</pre>
 	 * 
 	 * Where * indicates accepting state.
 	 * 

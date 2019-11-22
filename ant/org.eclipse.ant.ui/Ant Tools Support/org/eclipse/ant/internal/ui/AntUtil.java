@@ -131,7 +131,7 @@ public final class AntUtil {
 	 * 
 	 * @param configuration
 	 *            launch configuration
-	 * @return map of properties (name --> value), or <code>null</code>
+	 * @return map of properties (name --&gt; value), or <code>null</code>
 	 * @throws CoreException
 	 *             if unable to access the associated attribute
 	 */

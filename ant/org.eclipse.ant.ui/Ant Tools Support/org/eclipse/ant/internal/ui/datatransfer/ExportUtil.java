@@ -268,7 +268,7 @@ public class ExportUtil {
 	/**
 	 * Sort projects according to General -&gt; Workspace -&gt; Build Order.
 	 * 
-	 * @param projects
+	 * @param javaProjects
 	 *            list of IJavaProject objects
 	 * @return list of IJavaProject objects with new order
 	 */

@@ -19,14 +19,14 @@ package org.eclipse.ant.tests.ui.editor;
 
 import java.util.List;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntModel;
 import org.eclipse.ant.internal.ui.model.IAntElement;
 import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
 import org.eclipse.jface.text.BadLocationException;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Tests the correct creation of the outline for an xml file.
@@ -147,7 +147,7 @@ public class AntEditorContentOutlineTests extends AbstractAntUITest {
 	}
 
 	/**
-	 * Tests whether the outline can handle a build file with only the <project></project> tags.
+	 * Tests whether the outline can handle a build file with only the {@literal <project></project>} tags.
 	 */
 	public void testWithProjectOnlyBuildFile() {
 		AntModel model = getAntModel("projectOnly.xml"); //$NON-NLS-1$

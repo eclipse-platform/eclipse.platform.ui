@@ -1110,7 +1110,7 @@ public class InternalAntRunner {
 	 * <li><b>-main</b> <em>&lt;class&gt;</em> - override Ant's normal entry point</li>
 	 * </ul>
 	 * 
-	 * @param list
+	 * @param commands
 	 *            the raw command line arguments passed in from the application
 	 * @return <code>true</code> if it is OK to run with the given list of arguments <code>false</code> otherwise
 	 */

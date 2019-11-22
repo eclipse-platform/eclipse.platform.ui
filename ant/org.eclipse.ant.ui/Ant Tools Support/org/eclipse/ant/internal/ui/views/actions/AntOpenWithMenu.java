@@ -261,7 +261,7 @@ public class AntOpenWithMenu extends ContributionItem {
 	/**
 	 * Opens the given editor on the selected file.
 	 * 
-	 * @param editor
+	 * @param editorDescriptor
 	 *            the editor descriptor, or <code>null</code> for the system editor
 	 */
 	private void openEditor(IEditorDescriptor editorDescriptor) {
@@ -299,7 +299,8 @@ public class AntOpenWithMenu extends ContributionItem {
 								IDE.openEditor(fPage, fileResource, true);
 							}
 							catch (PartInitException e) {
-								AntUIPlugin.log(MessageFormat.format(AntViewActionMessages.AntViewOpenWithMenu_Editor_failed, new Object[] { fileResource.getLocation().toOSString() }), e);
+								AntUIPlugin.log(MessageFormat.format(AntViewActionMessages.AntViewOpenWithMenu_Editor_failed, new Object[] {
+										fileResource.getLocation().toOSString() }), e);
 							}
 						}
 						break;

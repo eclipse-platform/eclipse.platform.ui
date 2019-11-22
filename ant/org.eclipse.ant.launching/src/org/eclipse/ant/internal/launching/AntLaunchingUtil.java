@@ -55,7 +55,7 @@ import com.ibm.icu.text.MessageFormat;
  * General utility class dealing with Ant build files
  */
 public final class AntLaunchingUtil {
-	public static final String ATTRIBUTE_SEPARATOR = ","; //$NON-NLS-1$;
+	public static final String ATTRIBUTE_SEPARATOR = ","; //$NON-NLS-1$
 	public static final char ANT_CLASSPATH_DELIMITER = '*';
 	public static final String ANT_HOME_CLASSPATH_PLACEHOLDER = "G"; //$NON-NLS-1$
 	public static final String ANT_GLOBAL_USER_CLASSPATH_PLACEHOLDER = "UG"; //$NON-NLS-1$
@@ -137,7 +137,7 @@ public final class AntLaunchingUtil {
 	 * 
 	 * @param configuration
 	 *            launch configuration
-	 * @return map of properties (name --> value), or <code>null</code>
+	 * @return map of properties (name --&gt; value), or <code>null</code>
 	 * @throws CoreException
 	 *             if unable to access the associated attribute
 	 */

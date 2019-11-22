@@ -135,13 +135,30 @@ public class AntUIImages {
 	/**
 	 * Initialize the image registry by declaring all of the required graphics. This involves creating JFace image descriptors describing how to
 	 * create/find the image should it be needed. The image is not actually allocated until requested.
+	 *
+	 * Prefix conventions
 	 * 
-	 * Prefix conventions Wizard Banners WIZBAN_ Preference Banners PREF_BAN_ Property Page Banners PROPBAN_ Color toolbar CTOOL_ Enable toolbar
-	 * ETOOL_ Disable toolbar DTOOL_ Local enabled toolbar ELCL_ Local Disable toolbar DLCL_ Object large OBJL_ Object small OBJS_ View VIEW_ Product
-	 * images PROD_ Misc images MISC_
-	 * 
-	 * Where are the images? The images (typically gifs) are found in the same location as this plugin class. This may mean the same package directory
-	 * as the package holding this class. The images are declared using this.getClass() to ensure they are looked up via this plugin class.
+	 * <pre>
+	 *      Wizard Banners          WIZBAN_
+	 *      Preference Banners      PREF_BAN_
+	 *      Property Page Banners   PROPBAN_
+	 *      Color toolbar           CTOOL_
+	 *      Enable toolbar          ETOOL_
+	 *      Disable toolbar         DTOOL_
+	 *      Local enabled toolbar   ELCL_
+	 *      Local Disable toolbar   DLCL_
+	 *      Object large            OBJL_
+	 *      Object small            OBJS_
+	 *      View                    VIEW_
+	 *      Product images          PROD_
+	 *      Misc images             MISC_
+	 * </pre>
+	 *
+	 * Where are the images?
+	 * <p>
+	 * The images (typically gifs) are found in the same location as this plugin class. This may mean the same package directory as the package
+	 * holding this class. The images are declared using this.getClass() to ensure they are looked up via this plugin class.
+	 * </p>
 	 * 
 	 * @see org.eclipse.jface.resource.ImageRegistry
 	 */
@@ -152,16 +169,14 @@ public class AntUIImages {
 	}
 
 	/**
-	 * Returns the <code>Image<code> identified by the given key,
-	 * or <code>null</code> if it does not exist.
+	 * Returns the <code>Image</code> identified by the given key, or <code>null</code> if it does not exist.
 	 */
 	public static Image getImage(String key) {
 		return getImageRegistry().get(key);
 	}
 
 	/**
-	 * Returns the <code>ImageDescriptor<code> identified by the given key,
-	 * or <code>null</code> if it does not exist.
+	 * Returns the <code>ImageDescriptor</code> identified by the given key, or <code>null</code> if it does not exist.
 	 */
 	public static ImageDescriptor getImageDescriptor(String key) {
 		return getImageRegistry().getDescriptor(key);

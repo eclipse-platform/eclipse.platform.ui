@@ -223,8 +223,6 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	/**
 	 * Adds actions to the context menu
 	 * 
-	 * @param viewer
-	 *            the viewer who's menu we're configuring
 	 * @param menu
 	 *            The menu to contribute to
 	 */
@@ -576,8 +574,8 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 	}
 
 	/**
-	 * Saves the state of the viewer into the dialog settings. Works around the issues of {@link #saveState()} not being called when a view is closed
-	 * while the workbench is still running
+	 * Saves the state of the viewer into the dialog settings. Works around the issues of {@link #saveState(IMemento))} not being called when a view
+	 * is closed while the workbench is still running
 	 * 
 	 * @since 3.5.500
 	 */

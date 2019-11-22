@@ -40,7 +40,7 @@ public class AntFoldingStructureProvider {
 	private IDocument fDocument;
 
 	/**
-	 * A mapping of the foldable position to the <code>AntElementNode<code> that represent that region
+	 * A mapping of the foldable position to the <code>AntElementNode</code> that represent that region
 	 */
 	private Map<Position, IAntElement> fPositionToElement = new HashMap<>();
 

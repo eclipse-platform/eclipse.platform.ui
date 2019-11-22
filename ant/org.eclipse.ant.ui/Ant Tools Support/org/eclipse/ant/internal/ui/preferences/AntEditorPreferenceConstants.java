@@ -85,9 +85,9 @@ public class AntEditorPreferenceConstants {
 	public static final String FORMATTER_TAB_CHAR = "formatter_tab_char"; //$NON-NLS-1$
 
 	/**
-	 * A named preference that specifies if the Ant formatter aligns the final &quote&gt&quote in multi-line element tags
+	 * A named preference that specifies if the Ant formatter aligns the final {@literal ">"} in multi-line element tags
 	 * <p>
-	 * Value is of type <code>Boolean</code>. If <code>true</code> the final &quote&gt&quote in multi-line element tags are aligned by the formatter.
+	 * Value is of type <code>Boolean</code>. If <code>true</code> the final {@literal ">"} in multi-line element tags are aligned by the formatter.
 	 * </p>
 	 */
 	public static final String FORMATTER_ALIGN = "formatter_align"; //$NON-NLS-1$

@@ -88,9 +88,9 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 	}
 
 	/**
-	 * Create button area & buttons
+	 * Create button area &amp; buttons
 	 * 
-	 * @param comp
+	 * @param parent
 	 */
 	private void createButtons(Composite parent) {
 		Composite comp = new Composite(parent, SWT.NONE);

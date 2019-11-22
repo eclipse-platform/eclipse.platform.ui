@@ -38,11 +38,13 @@ public class Nfm implements FactoryObject {
 	 * Construct an nfm such that:
 	 * 
 	 * <pre>
+	 * {@code
 	 * start  stop
 	 *   |      |
 	 * +---+  +---+
 	 * | s |->|   |
 	 * +---+  +---+
+	 * }
 	 * </pre>
 	 * 
 	 * In all pictures, boxes are NfmNodes.
@@ -58,11 +60,13 @@ public class Nfm implements FactoryObject {
 	 * Construct an nfm that "wraps" an existing nfm x such that:
 	 * 
 	 * <pre>
+	 * {@code
 	 * start                            stop
 	 *   |                                |
 	 * +---+  +---------+  +---------+  +---+
 	 * |   |->| x start |  | x stop  |->|   |
 	 * +---+  +---------+  +---------+  +---+
+	 * }
 	 * </pre>
 	 */
 	private static Nfm nfm(Nfm x) {
@@ -88,6 +92,7 @@ public class Nfm implements FactoryObject {
 	 * "Star" an existing nfm x.
 	 * 
 	 * <pre>
+	 * {@code
 	 * start                            stop
 	 *   |                                |
 	 * +---+  +---------+  +---------+  +---+
@@ -96,6 +101,7 @@ public class Nfm implements FactoryObject {
 	 *   |         |            |         |
 	 *   |         +-----<------+         |
 	 *   +------>-------------------------+
+	 * }
 	 * </pre>
 	 * 
 	 * Frees x.
@@ -111,9 +117,10 @@ public class Nfm implements FactoryObject {
 	}
 
 	/**
-	 * "Question" an existing nfm x: x => x?
+	 * "Question" an existing nfm x: x =&gt; x?
 	 * 
 	 * <pre>
+	 * {@code
 	 * start                            stop
 	 *   |                                |
 	 * +---+  +---------+  +---------+  +---+
@@ -121,6 +128,7 @@ public class Nfm implements FactoryObject {
 	 * +---+  +---------+  +---------+  +---+
 	 *   |                                |
 	 *   +---------------->---------------+
+	 * }
 	 * </pre>
 	 * 
 	 * Frees x.
@@ -134,9 +142,10 @@ public class Nfm implements FactoryObject {
 	}
 
 	/**
-	 * "Plus" an existing nfm x -> x+
+	 * "Plus" an existing nfm x -&gt; x+
 	 * 
 	 * <pre>
+	 * {@code
 	 * start                            stop
 	 *   |                                |
 	 * +---+  +---------+  +---------+  +---+
@@ -144,6 +153,7 @@ public class Nfm implements FactoryObject {
 	 * +---+  +---------+  +---------+  +---+
 	 *             |            |
 	 *             +-----<------+
+	 * }
 	 * </pre>
 	 * 
 	 * Frees x.
@@ -157,9 +167,10 @@ public class Nfm implements FactoryObject {
 	}
 
 	/**
-	 * "Or" two existing nfms x,y -> x|y
+	 * "Or" two existing nfms x,y -&gt; x|y
 	 * 
 	 * <pre>
+	 * {@code
 	 * start                            stop
 	 *   |                                |
 	 * +---+  +---------+  +---------+  +---+
@@ -169,6 +180,7 @@ public class Nfm implements FactoryObject {
 	 *   |    +---------+  +---------+    |
 	 *   +--->| y start |  | y stop  |-->-+
 	 *        +---------+  +---------+
+	 * }
 	 * </pre>
 	 * 
 	 * Frees x and y.
@@ -185,17 +197,19 @@ public class Nfm implements FactoryObject {
 	}
 
 	/**
-	 * "Comma" two existing nfms x,y -> x,y
+	 * "Comma" two existing nfms x,y -&gt; x,y
 	 * 
 	 * <p>
 	 * Re-uses x so that x.stop is first transformed to y.start and then x.stop is reset to y.stop. This is as efficient as possible.
 	 * 
 	 * <pre>
+	 * {@code
 	 * x start      former x stop   x stop
 	 *     |               |           |
 	 * +---------+  +----------+  +--------+
 	 * | x start |  | y start  |->| y stop |
 	 * +---------+  +----------+  +--------+
+	 * }
 	 * </pre>
 	 * 
 	 * Frees y, returns x modified.
@@ -210,7 +224,7 @@ public class Nfm implements FactoryObject {
 	}
 
 	/**
-	 * "{min,*}" an existing nfm x -> x[0],x[1],...,x[min-1],x[min]* Frees x.
+	 * "{min,*}" an existing nfm x -&gt; x[0],x[1],...,x[min-1],x[min]* Frees x.
 	 */
 	public static Nfm getUnbounded(Nfm x, int min) {
 		if (min == 0)
@@ -228,7 +242,7 @@ public class Nfm implements FactoryObject {
 	}
 
 	/**
-	 * "{min,max}" an existing nfm x -> x[0],x[1],...,x[min-1],x[min]?,...,x[max-1]? Frees or returns x.
+	 * "{min,max}" an existing nfm x -&gt; x[0],x[1],...,x[min-1],x[min]?,...,x[max-1]? Frees or returns x.
 	 */
 	public static Nfm getMinMax(Nfm x, int min, int max) {
 		if (max == Integer.MAX_VALUE)

@@ -43,10 +43,10 @@ import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * The <code>TaskDescriptionProvider</code> provides the additional descriptions for tasks and attributes for the code assist.
- * <P>
+ * <p>
  * Descriptions for task are originally provided with the XML file <code>TASKS_DESCRIPTION_XML_FILE_NAME</code>. This file is parsed by the provider
  * and requested descriptions are returned.
- * <P>
+ * </p>
  */
 public class TaskDescriptionProvider {
 

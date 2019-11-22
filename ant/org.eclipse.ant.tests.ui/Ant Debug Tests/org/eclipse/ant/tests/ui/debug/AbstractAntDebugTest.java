@@ -278,8 +278,8 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	 * 
 	 * @param config
 	 *            the configuration to launch
-	 * @param whether
-	 *            to register the launch
+	 * @param register
+	 *            whether to register the launch
 	 * @return thread in which the first suspend event occurred
 	 */
 	protected AntThread launchToBreakpoint(ILaunchConfiguration config, boolean register) throws CoreException {
@@ -419,7 +419,7 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	 * Resumes the given thread, and waits for a suspend event caused by the specified line breakpoint. Returns the thread in which the suspend event
 	 * occurs.
 	 * 
-	 * @param thread
+	 * @param resumeThread
 	 *            thread to resume
 	 * @return thread in which the first suspend event occurs
 	 * @throws CoreException
@@ -516,8 +516,8 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 	 * 
 	 * @param lineNumber
 	 *            line number
-	 * @param file
-	 *            the build file
+	 * @param buildFileName
+	 *            the build file name
 	 */
 	protected AntLineBreakpoint createLineBreakpoint(int lineNumber, String buildFileName) throws CoreException {
 		return new AntLineBreakpoint(getIFile(buildFileName), lineNumber);
