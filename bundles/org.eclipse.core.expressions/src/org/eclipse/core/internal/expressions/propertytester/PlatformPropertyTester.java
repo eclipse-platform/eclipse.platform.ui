@@ -25,11 +25,13 @@ import org.eclipse.core.runtime.Platform;
  * not a given bundle is installed in the running environment, as well as
  * the id of the currently active product.
  * <p>
- * For example:<br />
- * &lt;test property="org.eclipse.core.runtime.product" value="org.eclipse.sdk.ide"/&gt; <br />
- * &lt;test property="org.eclipse.core.runtime.isBundleInstalled" args="org.eclipse.core.expressions"/&gt; <br />
+ * For example:
+ * </p>
+ * <pre>
+ * &lt;test property="org.eclipse.core.runtime.product" value="org.eclipse.sdk.ide"/&gt;
+ * &lt;test property="org.eclipse.core.runtime.isBundleInstalled" args="org.eclipse.core.expressions"/&gt;
  * &lt;test property="org.eclipse.core.runtime.bundleState" args="org.eclipse.core.expressions" value="ACTIVE"/&gt;
- * <p>
+ * </pre>
  */
 public class PlatformPropertyTester extends PropertyTester {
 

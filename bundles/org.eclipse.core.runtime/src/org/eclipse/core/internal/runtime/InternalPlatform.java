@@ -633,7 +633,7 @@ public final class InternalPlatform {
 
 	/**
 	 * Shutdown runtime pieces in this order:
-	 * Content[auto shutdown] -> Preferences[auto shutdown] -> Registry -> Jobs
+	 * Content[auto shutdown] -&gt; Preferences[auto shutdown] -&gt; Registry -&gt; Jobs.
 	 * The "auto" shutdown takes place before this code is executed
 	 */
 	public void stop(BundleContext bundleContext) {

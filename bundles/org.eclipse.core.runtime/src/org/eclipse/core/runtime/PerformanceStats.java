@@ -113,7 +113,7 @@ public class PerformanceStats {
 
 	/**
 	 * Maximum allowed durations for each event.
-	 * Maps String (event name) -> Long (threshold)
+	 * Maps String (event name) -&gt; Long (threshold)
 	 */
 	private final static Map<String, Long> thresholdMap = Collections.synchronizedMap(new HashMap<String, Long>());
 

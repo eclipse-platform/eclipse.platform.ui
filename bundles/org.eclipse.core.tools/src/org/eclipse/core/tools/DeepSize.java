@@ -19,15 +19,21 @@ import java.util.*;
 
 /**
  * How to use DeepSize:
+ * 
+ * <pre>
+ * {@code
  * DeepSize result= DeepSize.deepSize(anObject);
  * int size= result.getSize(); // accumulated size of transitive closure of anObject
  * Hashtable sizes= result.getSizes(); // hashtable of internal results: class name-> sum of shallowsize of instances of class
  * Hashtable counts= result.getCounts(); // hashtable of internal results: class name -> instances of class
+ * }</pre>
  * Additional function
+ * <pre>
  * DeepSize d= new DeepSize();
  * d.setIgnoreTypeNames(aSet); // don't consider instances of classes named in aSet as part of the size
  * d.ignore(anObject); // don't consider anObject as part of the size
  * d.deepCompute(anObject); // advanced compute method - computes the size given the additional ignore configuration
+ * </pre>
  */
 public class DeepSize {
 	/**

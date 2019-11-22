@@ -77,7 +77,7 @@ public abstract class AbstractTreeContentProvider implements ITreeContentProvide
 	 * Returns the parent for the given element, or <code>null</code>
 	 * indicating that the parent can't be computed.
 	 *
-	 * @return <coded>element</code>'s parent node or null, if it is a root node
+	 * @return <code>element</code>'s parent node or null, if it is a root node
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(
 	 * java.lang.Object)
 	 * @see org.eclipse.core.tools.TreeContentProviderNode#getParent()
@@ -97,7 +97,7 @@ public abstract class AbstractTreeContentProvider implements ITreeContentProvide
 	 * @return true, if <code>element</code> has children, false otherwise
 	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(
 	 * java.lang.Object)
-	 * @see org.eclipse.core.tools.TreeContentProviderNode#hasChildren() *
+	 * @see org.eclipse.core.tools.TreeContentProviderNode#hasChildren()
 	 */
 	@Override
 	public boolean hasChildren(Object element) {

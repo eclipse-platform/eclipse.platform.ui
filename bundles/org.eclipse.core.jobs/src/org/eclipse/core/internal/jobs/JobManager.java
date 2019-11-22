@@ -43,7 +43,7 @@ import org.eclipse.osgi.util.NLS;
  * never happen, or a deadlock will occur. To prevent deadlocks, this is the
  * order that locks must be acquired.
  *
- * WorkerPool -> JobManager.implicitJobs -> JobManager.lock ->
+ * WorkerPool -&gt; JobManager.implicitJobs -&gt; JobManager.lock -&gt;
  * InternalJob.jobStateLock or InternalJobGroup.jobGroupStateLock
  *
  * @ThreadSafe

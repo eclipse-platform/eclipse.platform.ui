@@ -62,7 +62,7 @@ class ThreadJob extends Job {
 	private ISchedulingRule[] ruleStack;
 	/**
 	 * Rule stack pointer.
-	 * INV: 0 <= top <= ruleStack.length
+	 * INV: {@code 0 <= top <= ruleStack.length}
 	 * @GuardedBy("JobManager.implicitJobs")
 	 */
 	private int top;
@@ -164,15 +164,15 @@ class ThreadJob extends Job {
 	/**
 	 * A reentrant method which will run given <code>ThreadJob</code> immediately if there
 	 * are no existing jobs with conflicting rules, or block until the rule can be acquired.
-	 * <p>
+	 * <ul>
 	 * <li>If given job must block, the <code>LockListener</code> is given a chance to override.
 	 * <li>If override is not granted, then this method will block until the rule is available.
-	 * <li>If <code>LockListener#canBlock</code> returns <tt>true</tt>, then the <code>monitor</code>
+	 * <li>If <code>LockListener#canBlock</code> returns <code>true</code>, then the <code>monitor</code>
 	 * <i>will not</i> be periodically checked for cancellation. It will only be rechecked if this
 	 * thread is interrupted.
-	 * <li>If <code>LockListener#canBlock</code> returns <tt>false</tt> the
+	 * <li>If <code>LockListener#canBlock</code> returns <code>false</code> the
 	 * <code>monitor</code> <i>will</i> be checked periodically for cancellation.
-	 * <p>
+	 * </ul>
 	 * When a UI is present, it is recommended that the <code>LockListener</code>
 	 * should not allow the UI thread to block without checking the <code>monitor</code>. This
 	 * ensures that the UI remains responsive.

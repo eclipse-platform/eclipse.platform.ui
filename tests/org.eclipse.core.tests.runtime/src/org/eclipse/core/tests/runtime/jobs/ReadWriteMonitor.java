@@ -25,9 +25,9 @@ public class ReadWriteMonitor {
 	private final Set<Thread> blockedThreads = Collections.synchronizedSet(new HashSet<>());
 	private ILock lock;
 	/**
-	 * <0 : writing (cannot go beyond -1, i.e one concurrent writer)
-	 * =0 : idle
-	 * >0 : reading (number of concurrent readers)
+	 * &lt;0 : writing (cannot go beyond -1, i.e one concurrent writer)<br>
+	 * =0 : idle<br>
+	 * &gt;0 : reading (number of concurrent readers)
 	 */
 	private int status = 0;
 

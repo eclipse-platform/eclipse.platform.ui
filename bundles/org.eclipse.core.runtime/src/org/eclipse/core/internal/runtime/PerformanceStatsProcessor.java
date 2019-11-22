@@ -40,7 +40,7 @@ public class PerformanceStatsProcessor extends Job {
 
 	/**
 	 * Event failures that have occurred but have not yet been broadcast.
-	 * Maps (PerformanceStats -> Long).
+	 * Maps (PerformanceStats -&gt; Long).
 	 */
 	private final HashMap<PerformanceStats,Long> failures = new HashMap<>();
 

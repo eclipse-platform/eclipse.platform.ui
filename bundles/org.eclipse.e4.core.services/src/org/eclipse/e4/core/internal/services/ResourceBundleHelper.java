@@ -118,6 +118,7 @@ public class ResourceBundleHelper {
 	 * {@link Locale} out of an OSGi {@link Bundle}.
 	 * <p>
 	 * Following URIs are supported:
+	 * </p>
 	 * <ul>
 	 * <li>platform:/[plugin|fragment]/[Bundle-SymbolicName]<br>
 	 * Load the OSGi resource bundle out of the bundle/fragment named [Bundle-SymbolicName]</li>
@@ -129,7 +130,6 @@ public class ResourceBundleHelper {
 	 * named [Bundle-SymbolicName]. Note that the class needs to be a subtype of
 	 * {@link ResourceBundle}.</li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @param contributionURI
 	 *            The URI that points to a {@link ResourceBundle}
@@ -233,6 +233,7 @@ public class ResourceBundleHelper {
 	 * <p>
 	 * If the value for this system property is set to an empty String the default search order for
 	 * ResourceBundles is used:
+	 * </p>
 	 * <ul>
 	 * <li>bn + Ls + "_" + Cs + "_" + Vs</li>
 	 * <li>bn + Ls + "_" + Cs</li>
@@ -242,6 +243,7 @@ public class ResourceBundleHelper {
 	 * <li>bn + Ld</li>
 	 * <li>bn</li>
 	 * </ul>
+	 * <p>
 	 * Where bn is this bundle's localization basename, Ls, Cs and Vs are the specified locale
 	 * (language, country, variant) and Ld, Cd and Vd are the default locale (language, country,
 	 * variant).
@@ -249,6 +251,7 @@ public class ResourceBundleHelper {
 	 * <p>
 	 * If Ls equals the value of <code>equinox.root.locale</code> then the following search order is
 	 * used:
+	 * </p>
 	 * <ul>
 	 * <li>bn + Ls + "_" + Cs + "_" + Vs</li>
 	 * <li>bn + Ls + "_" + Cs</li>
@@ -259,9 +262,10 @@ public class ResourceBundleHelper {
 	 * <li>bn + Ld</li>
 	 * <li>bn</li>
 	 * </ul>
-	 * </p>
+	 * <p>
 	 * If <code>equinox.root.locale=en</code> and en_XX or en is asked for then this allows the root
 	 * file to be used instead of falling back to the default locale.
+	 * </p>
 	 *
 	 * @param baseName
 	 *            the base name of the resource bundle, a fully qualified class name
@@ -326,6 +330,7 @@ public class ResourceBundleHelper {
 	 * <p>
 	 * If the value for this system property is set to an empty String the default search order for
 	 * ResourceBundles is used:
+	 * </p>
 	 * <ul>
 	 * <li>bn + Ls + "_" + Cs + "_" + Vs</li>
 	 * <li>bn + Ls + "_" + Cs</li>
@@ -335,6 +340,7 @@ public class ResourceBundleHelper {
 	 * <li>bn + Ld</li>
 	 * <li>bn</li>
 	 * </ul>
+	 * <p>
 	 * Where bn is this bundle's localization basename, Ls, Cs and Vs are the specified locale
 	 * (language, country, variant) and Ld, Cd and Vd are the default locale (language, country,
 	 * variant).
@@ -342,6 +348,7 @@ public class ResourceBundleHelper {
 	 * <p>
 	 * If Ls equals the value of <code>equinox.root.locale</code> then the following search order is
 	 * used:
+	 * </p>
 	 * <ul>
 	 * <li>bn + Ls + "_" + Cs + "_" + Vs</li>
 	 * <li>bn + Ls + "_" + Cs</li>
@@ -352,9 +359,10 @@ public class ResourceBundleHelper {
 	 * <li>bn + Ld</li>
 	 * <li>bn</li>
 	 * </ul>
-	 * </p>
+	 * <p>
 	 * If <code>equinox.root.locale=en</code> and en_XX or en is asked for then this allows the root
 	 * file to be used instead of falling back to the default locale.
+	 * </p>
 	 *
 	 * @param baseName
 	 *            the base name of the resource bundle, a fully qualified class name
@@ -381,6 +389,7 @@ public class ResourceBundleHelper {
 	 * <p>
 	 * If the value for this system property is set to an empty String the default search order for
 	 * ResourceBundles is used:
+	 * </p>
 	 * <ul>
 	 * <li>bn + Ls + "_" + Cs + "_" + Vs</li>
 	 * <li>bn + Ls + "_" + Cs</li>
@@ -390,6 +399,7 @@ public class ResourceBundleHelper {
 	 * <li>bn + Ld</li>
 	 * <li>bn</li>
 	 * </ul>
+	 * <p>
 	 * Where bn is this bundle's localization basename, Ls, Cs and Vs are the specified locale
 	 * (language, country, variant) and Ld, Cd and Vd are the default locale (language, country,
 	 * variant).
@@ -397,6 +407,7 @@ public class ResourceBundleHelper {
 	 * <p>
 	 * If Ls equals the value of <code>equinox.root.locale</code> then the following search order is
 	 * used:
+	 * </p>
 	 * <ul>
 	 * <li>bn + Ls + "_" + Cs + "_" + Vs</li>
 	 * <li>bn + Ls + "_" + Cs</li>
@@ -407,9 +418,10 @@ public class ResourceBundleHelper {
 	 * <li>bn + Ld</li>
 	 * <li>bn</li>
 	 * </ul>
-	 * </p>
+	 * <p>
 	 * If <code>equinox.root.locale=en</code> and en_XX or en is asked for then this allows the root
 	 * file to be used instead of falling back to the default locale.
+	 * </p>
 	 *
 	 * @param baseName
 	 *            the base name of the resource bundle, a fully qualified class name

@@ -30,15 +30,14 @@ import javax.inject.Qualifier;
  * </p>
  * <p>
  * Example usage:
- *
+ * </p>
  * <pre>
  *   public class Car {
- *     @Inject
- *     &#064;void handle(@Optional @EventTopic("org/eclipse/e4/some/event/topic") Payload payload);
+ *     &#064;Inject
+ *     void handle(&#064;Optional &#064;EventTopic("org/eclipse/e4/some/event/topic") Payload payload);
  *     ...
  *   }
  * </pre>
- * </p>
  * <p>
  * The value stored under the event's "org.eclipse.e4.data" property is injected unless
  * the class of the injected variable is org.osgi.service.event.Event. In that case the whole event

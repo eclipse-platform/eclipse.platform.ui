@@ -33,6 +33,7 @@ import javax.inject.Qualifier;
  * The {@link org.osgi.framework.Bundle} injected will be the
  * {@link org.osgi.framework.Bundle} that supplied the class of the object
  * instance. For example, in:
+ * </p>
  *
  * <pre>
  * class A {
@@ -49,7 +50,6 @@ import javax.inject.Qualifier;
  * {@link org.osgi.framework.BundleContext} for the bundle that supplies class
  * B, not class A.
  *
- * </p>
  */
 @Qualifier
 @Documented

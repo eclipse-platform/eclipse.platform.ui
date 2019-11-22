@@ -126,15 +126,15 @@ public class MessageFactoryServiceImpl implements IMessageFactoryService {
 	 * {@link ResourceBundle}. As there are several options to specify the location of the
 	 * {@link ResourceBundle} to load, the following search order is used:
 	 * <ol>
-	 * <li>URI location<br/>
+	 * <li>URI location<br>
 	 * If the message class is annotated with <code>@Message</code> and the <i>contributorURI</i>
 	 * attribute is set, the {@link ResourceBundle} is searched at the specified location</li>
-	 * <li>Relative location<br/>
+	 * <li>Relative location<br>
 	 * If the message class is not annotated with <code>@Message</code> and a contributorURI
 	 * attribute value or there is no {@link ResourceBundle} found at the specified location, a
 	 * {@link ResourceBundle} with the same name in the same package as the message class is
 	 * searched.</li>
-	 * <li>Bundle localization<br/>
+	 * <li>Bundle localization<br>
 	 * If there is no {@link ResourceBundle} found by URI or relative location, the OSGi
 	 * {@link ResourceBundle} configured in the MANIFEST.MF is tried to load.</li>
 	 * </ol>

@@ -41,7 +41,7 @@ import org.eclipse.core.runtime.Platform;
 public class Expressions {
 
 	/**
-	 * Cache to optimize instanceof computation. Weak Map of Class->Map(String, Boolean). Avoid
+	 * Cache to optimize instanceof computation. Weak Map of Class-&gt;Map(String, Boolean). Avoid
 	 * conflicts caused by multiple classloader contributions with the same class name. It's a rare
 	 * occurrence but is supported by the OSGi classloader.
 	 */
@@ -211,7 +211,7 @@ public class Expressions {
 	 * @param var the variable to turn into an <code>IIterable</code>
 	 * @param expression the expression referring to the variable
 	 *
-	 * @return the <code>IIterable</code> or <code>null<code> if a corresponding adapter isn't loaded yet
+	 * @return the <code>IIterable</code> or <code>null</code> if a corresponding adapter isn't loaded yet
 	 *
 	 * @throws CoreException if the var can't be adapted to an <code>IIterable</code>
 	 */
@@ -240,7 +240,7 @@ public class Expressions {
 	 * @param var the variable to turn into an <code>ICountable</code>
 	 * @param expression the expression referring to the variable
 	 *
-	 * @return the <code>ICountable</code> or <code>null<code> if a corresponding adapter isn't loaded yet
+	 * @return the <code>ICountable</code> or <code>null</code> if a corresponding adapter isn't loaded yet
 	 *
 	 * @throws CoreException if the var can't be adapted to an <code>ICountable</code>
 	 */

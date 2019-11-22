@@ -41,7 +41,7 @@ class ImplicitJobs {
 	private final Set<ISchedulingRule> suspendedRules = new HashSet<>(20);
 
 	/**
-	 * Maps (Thread->ThreadJob), threads to the currently running job for that
+	 * Maps (Thread-&gt;ThreadJob), threads to the currently running job for that
 	 * thread.
 	 * @GuardedBy("this")
 	 */
