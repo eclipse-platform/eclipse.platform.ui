@@ -1086,7 +1086,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	 *   <li>CONTEXT_SELECTOR
 	 *   <li>PROPOSAL_SELECTOR
 	 *   <li>CONTEXT_INFO_POPUP
-	 * <ul>
+	 * </ul>
 	 * @param type the listener type for which to acquire
 	 * @return <code>true</code> if the widget token could be acquired
 	 * @since 2.0
@@ -1114,7 +1114,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	 *   <li>CONTEXT_SELECTOR
 	 *   <li>PROPOSAL_SELECTOR
 	 *   <li>CONTEXT_INFO_POPUP
-	 * <ul>
+	 * </ul>
 	 * Returns whether the listener could be added successfully. A listener
 	 * can not be added if the widget token could not be acquired.
 	 *
@@ -1169,7 +1169,7 @@ public class ContentAssistant2 implements IContentAssistant, IContentAssistantEx
 	 *   <li>CONTEXT_SELECTOR
 	 *   <li>PROPOSAL_SELECTOR
 	 *   <li>CONTEXT_INFO_POPUP
-	 * <ul>
+	 * </ul>
 	 *
 	 * @param type the listener type
 	 * @since 2.0

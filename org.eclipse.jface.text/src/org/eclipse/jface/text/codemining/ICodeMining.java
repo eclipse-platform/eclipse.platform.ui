@@ -58,6 +58,7 @@ public interface ICodeMining {
 	 *
 	 * <p>
 	 * The returned label can have several values:
+	 * </p>
 	 * <ul>
 	 * <li><code>null</code> when mining is not resolved</li>
 	 * <li><code>null</code> when mining is resolved means that mining was resolved with an error and it will not
@@ -65,7 +66,6 @@ public interface ICodeMining {
 	 * <li>empty when mining is resolved means that mining will not be displayed</li>
 	 * <li>non empty when mining must be displayed</li>
 	 * </ul>
-	 * </p>
 	 *
 	 * @return the label may be set early in the class lifecycle, or upon completion of the future
 	 *         provided by {@link #resolve(ITextViewer, IProgressMonitor)} operation.

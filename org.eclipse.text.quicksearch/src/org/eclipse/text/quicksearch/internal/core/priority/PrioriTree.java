@@ -178,7 +178,7 @@ public class PrioriTree extends DefaultPriorityFunction {
 
 	/**
 	 * Locate tree node corresponding to a given path.
-	 * @param fullPath
+	 * @param path
 	 * @return The node or null if no corresponding node exists in the tree.
 	 */
 	private PrioriTree lookup(IPath path) {

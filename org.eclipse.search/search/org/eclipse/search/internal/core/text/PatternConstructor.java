@@ -270,8 +270,10 @@ public class PatternConstructor {
 	 * Copied from {@link FindReplaceDocumentAdapter}}
 	 *
 	 * FindReplaceDocumentAdapter with contributions from:
-	 * Cagatay Calli <ccalli@gmail.com> - [find/replace] retain caps when replacing - https://bugs.eclipse.org/bugs/show_bug.cgi?id=28949
-	 * Cagatay Calli <ccalli@gmail.com> - [find/replace] define & fix behavior of retain caps with other escapes and text before \C - https://bugs.eclipse.org/bugs/show_bug.cgi?id=217061
+	 * <ul>
+	 * <li>Cagatay Calli &lt;ccalli@gmail.com&gt; - [find/replace] retain caps when replacing - https://bugs.eclipse.org/bugs/show_bug.cgi?id=28949
+	 * <li>Cagatay Calli &lt;ccalli@gmail.com&gt; - [find/replace] define &amp; fix behavior of retain caps with other escapes and text before \C - https://bugs.eclipse.org/bugs/show_bug.cgi?id=217061
+	 * </ul>
 	 */
 	private static class ReplaceStringConstructor {
 

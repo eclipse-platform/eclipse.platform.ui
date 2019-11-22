@@ -314,13 +314,13 @@ abstract public class AbstractInformationControlManager {
 	private Anchor fAnchor= ANCHOR_BOTTOM;
 
 	/**
-	 * The anchor sequence used to layout the information control if the original anchor
-	 * can not be used because the information control would not fit in the display client area.
+	 * The anchor sequence used to layout the information control if the original anchor can not be
+	 * used because the information control would not fit in the display client area.
 	 * <p>
-	 * The fallback anchor for a given anchor is the one that comes directly after the given anchor or
-	 * is the first one in the sequence if the given anchor is the last one in the sequence.
-	 * <p>
+	 * The fallback anchor for a given anchor is the one that comes directly after the given anchor
+	 * or is the first one in the sequence if the given anchor is the last one in the sequence.
 	 * </p>
+	 * <p>
 	 * Note: This sequence is ignored if the original anchor is not contained in this sequence.
 	 * </p>
 	 *

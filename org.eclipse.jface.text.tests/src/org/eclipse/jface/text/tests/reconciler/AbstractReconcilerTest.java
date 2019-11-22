@@ -45,11 +45,10 @@ import org.eclipse.jface.text.tests.TestTextViewer;
  * Reconciler tests. Uses barrier synchronization and a call log to assert
  * correct order of reconciling events.
  *
- * TODO test reconciler arguments (delay > 0 etc.)
- * TODO incremental reconciler tests
- *
  * @since 3.1
  */
+// TODO test reconciler arguments (delay > 0 etc.)
+// TODO incremental reconciler tests
 public class AbstractReconcilerTest {
 
 	/**

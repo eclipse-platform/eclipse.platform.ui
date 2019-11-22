@@ -29,16 +29,16 @@ import org.eclipse.jface.preference.IPreferenceStore;
  * </p>
  *
  * <dl>
- * <dt>show infos <i>(default: <tt>false</tt>)</i></dt>
+ * <dt>show infos <i>(default: <code>false</code>)</i></dt>
  * <dd>Whether INFO-level annotations should be shown as code minings.</dd>
  *
- * <dt>show warnings <i>(default: <tt>false</tt>)</i></dt>
+ * <dt>show warnings <i>(default: <code>false</code>)</i></dt>
  * <dd>Whether WARNING-level annotations should be shown as code minings.</dd>
  *
- * <dt>show errors <i>(default: <tt>false</tt>)</i></dt>
+ * <dt>show errors <i>(default: <code>false</code>)</i></dt>
  * <dd>Whether ERROR-level annotations should be shown as code minings.</dd>
  *
- * <dt>Maximum annotations shown <i>(default: <tt>100</tt>)</i></dt>
+ * <dt>Maximum annotations shown <i>(default: <code>100</code>)</i></dt>
  * <dd>How many annotations should be shown at most as code minings. Mainly to prevent bad editor
  * performance.</dd>
  * </dl>

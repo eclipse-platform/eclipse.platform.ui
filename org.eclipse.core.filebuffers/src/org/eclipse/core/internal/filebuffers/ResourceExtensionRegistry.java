@@ -32,7 +32,7 @@ import org.eclipse.core.filebuffers.LocationKind;
 
 /**
  * This is a special {@link ExtensionsRegistry} that is
- * optimized for <code>IFile<code>s..
+ * optimized for <code>IFile</code>s..
  *
  * @since 3.3
  */

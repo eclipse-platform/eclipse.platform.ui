@@ -269,7 +269,7 @@ public class StatusLineContributionItem extends ContributionItem implements ISta
 	}
 
 	/**
-	 * Escapes '&' with '&' in the given text.
+	 * Escapes '&amp;' with '&amp;' in the given text.
 	 *
 	 * @param text the text to escape, can be <code>null</code>
 	 * @return the escaped string or <code>null</code> if text was <code>null</code>

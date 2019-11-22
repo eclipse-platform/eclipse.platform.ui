@@ -27,12 +27,12 @@ import org.eclipse.jface.text.AbstractLineTracker.DelimiterInfo;
  * delimiters to subclasses. Assuming that '\n' is the only line delimiter, this abstract
  * implementation defines the following line scheme:
  * <ul>
- * <li> "" -> [0,0]
- * <li> "a" -> [0,1]
- * <li> "\n" -> [0,1], [1,0]
- * <li> "a\n" -> [0,2], [2,0]
- * <li> "a\nb" -> [0,2], [2,1]
- * <li> "a\nbc\n" -> [0,2], [2,3], [5,0]
+ * <li> "" -&gt; [0,0]
+ * <li> "a" -&gt; [0,1]
+ * <li> "\n" -&gt; [0,1], [1,0]
+ * <li> "a\n" -&gt; [0,2], [2,0]
+ * <li> "a\nb" -&gt; [0,2], [2,1]
+ * <li> "a\nbc\n" -&gt; [0,2], [2,3], [5,0]
  * </ul>
  * <p>
  * This class must be subclassed.
@@ -208,7 +208,7 @@ abstract class TreeLineTracker implements ILineTracker {
 	 * This means that for offsets smaller than the length, the following holds:
 	 * </p>
 	 * <p>
-	 * <code>line.offset <= offset < line.offset + offset.length</code>.
+	 * <code>line.offset &lt;= offset &lt; line.offset + offset.length</code>.
 	 * </p>
 	 * <p>
 	 * If <code>offset</code> is the document length, then this is true:

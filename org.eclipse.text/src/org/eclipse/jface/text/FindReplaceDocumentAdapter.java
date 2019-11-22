@@ -263,7 +263,7 @@ public class FindReplaceDocumentAdapter implements CharSequence {
 	}
 
 	/**
-	 * Substitutes \R in a regex find pattern with (?>\r\n?|\n)
+	 * Substitutes \R in a regex find pattern with {@code (?>\r\n?|\n)}
 	 *
 	 * @param findString the original find pattern
 	 * @return the transformed find pattern

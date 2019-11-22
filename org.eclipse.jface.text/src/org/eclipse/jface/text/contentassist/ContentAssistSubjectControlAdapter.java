@@ -277,7 +277,7 @@ class ContentAssistSubjectControlAdapter implements IContentAssistSubjectControl
 	 *
 	 * @param contentAssistant the content assistant
 	 * @param controller the additional info controller, or <code>null</code>
-	 * @param asynchronous <true> if this content assistant should present the proposals
+	 * @param asynchronous <code>true</code> if this content assistant should present the proposals
 	 *            asynchronously, <code>false</code> otherwise
 	 * @return the completion proposal popup
 	 */

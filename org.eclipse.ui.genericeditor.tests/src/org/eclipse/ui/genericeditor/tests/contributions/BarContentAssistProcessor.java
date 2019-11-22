@@ -68,7 +68,7 @@ public class BarContentAssistProcessor implements IContentAssistProcessor {
 	}
 
 	/**
-	 * Creates context info "idx= <word index in #PROPOSAL>" at the end of a word.
+	 * Creates context info "idx= &lt;word index in #PROPOSAL&gt;" at the end of a word.
 	 **/
 	@Override
 	public IContextInformation[] computeContextInformation(ITextViewer viewer, int offset) {

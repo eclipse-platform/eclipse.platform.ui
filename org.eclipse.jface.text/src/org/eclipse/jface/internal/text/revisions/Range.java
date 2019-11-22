@@ -232,7 +232,7 @@ public final class Range implements ILineRange, Cloneable {
 	 *
 	 * @param remaining the number of lines to remain in the receiver, must be in [1, {@link #length() length})
 	 * @return the split off range
-	 * @throws LineIndexOutOfBoundsException if <code>remaining</code>&gt;= {@link #length()} or <code>remaining</code>&ltt;= 0
+	 * @throws LineIndexOutOfBoundsException if <code>remaining</code>&gt;= {@link #length()} or <code>remaining</code>&lt;= 0
 	 */
 	public Range split(int remaining) throws LineIndexOutOfBoundsException {
 		if (!(remaining < length())) // assert before modification

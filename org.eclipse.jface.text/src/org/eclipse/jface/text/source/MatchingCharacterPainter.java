@@ -279,7 +279,7 @@ public final class MatchingCharacterPainter implements IPainter, PaintListener {
 	 *
 	 * @param sourceViewer the source viewer
 	 * @return a region denoting the current signed selection, for a resulting RtoL selections
-	 *         length is < 0
+	 *         length is &lt; 0
 	 * @since 3.8
 	 */
 	private static final IRegion getSignedSelection(ISourceViewer sourceViewer) {
