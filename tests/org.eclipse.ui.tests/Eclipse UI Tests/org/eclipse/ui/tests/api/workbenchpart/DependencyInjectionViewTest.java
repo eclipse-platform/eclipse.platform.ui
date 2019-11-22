@@ -25,20 +25,22 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.4
  *
  */
+@RunWith(JUnit4.class)
 public class DependencyInjectionViewTest extends UITestCase {
 
-	/**
-	 * @param testName
-	 */
-	public DependencyInjectionViewTest(String testName) {
-		super(testName);
+	public DependencyInjectionViewTest() {
+		super(DependencyInjectionViewTest.class.getSimpleName());
 	}
 
+	@Test
 	public void testDependencyInjectionLifecycle() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
 		IWorkbenchPage page = window.getActivePage();

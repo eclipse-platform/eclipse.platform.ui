@@ -21,16 +21,18 @@ import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.0
  */
+@RunWith(JUnit4.class)
 public class OverriddenTitleTest extends UITestCase {
-	/**
-	 * @param testName
-	 */
-	public OverriddenTitleTest(String testName) {
-		super(testName);
+
+	public OverriddenTitleTest() {
+		super(OverriddenTitleTest.class.getSimpleName());
 	}
 
 	IWorkbenchWindow window;
@@ -119,30 +121,35 @@ public class OverriddenTitleTest extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testDefaults() throws Throwable {
 		verifySettings("OverriddenTitle", "OverriddenTitleView",
 				"OverriddenTitle");
 		verifyEvents(false, false, false);
 	}
 
+	@Test
 	public void testCustomName() throws Throwable {
 		view.setPartName("CustomPartName");
 		verifySettings("OverriddenTitle", "CustomPartName", "OverriddenTitle");
 		verifyEvents(false, true, false);
 	}
 
+	@Test
 	public void testEmptyContentDescription() throws Throwable {
 		view.setContentDescription("");
 		verifySettings("OverriddenTitle", "OverriddenTitleView", "");
 		verifyEvents(false, false, true);
 	}
 
+	@Test
 	public void testCustomTitle() throws Throwable {
 		view.customSetTitle("CustomTitle");
 		verifySettings("CustomTitle", "OverriddenTitleView", "CustomTitle");
 		verifyEvents(true, false, true);
 	}
 
+	@Test
 	public void testCustomContentDescription() throws Throwable {
 		view.setContentDescription("CustomContentDescription");
 		verifySettings("OverriddenTitle", "OverriddenTitleView",
@@ -150,6 +157,7 @@ public class OverriddenTitleTest extends UITestCase {
 		verifyEvents(false, false, true);
 	}
 
+	@Test
 	public void testCustomNameAndContentDescription() throws Throwable {
 		view.setPartName("CustomName");
 		view.setContentDescription("CustomContentDescription");

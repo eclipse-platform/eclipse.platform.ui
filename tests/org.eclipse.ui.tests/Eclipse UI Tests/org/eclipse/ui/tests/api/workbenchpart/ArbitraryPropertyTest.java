@@ -26,10 +26,14 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.0
  */
+@RunWith(JUnit4.class)
 public class ArbitraryPropertyTest extends UITestCase {
 	/**
 	 *
@@ -43,11 +47,8 @@ public class ArbitraryPropertyTest extends UITestCase {
 
 	static final String VIEW_ID = "org.eclipse.ui.tests.workbenchpart.OverriddenTitleView";
 
-	/**
-	 * @param testName
-	 */
-	public ArbitraryPropertyTest(String testName) {
-		super(testName);
+	public ArbitraryPropertyTest() {
+		super(ArbitraryPropertyTest.class.getSimpleName());
 	}
 
 	IWorkbenchWindow window;
@@ -81,6 +82,7 @@ public class ArbitraryPropertyTest extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testViewProperties() throws Exception {
 		OverriddenTitleView view = (OverriddenTitleView) page.showView(VIEW_ID);
 		IViewReference ref = (IViewReference) page.getReference(view);
@@ -108,6 +110,7 @@ public class ArbitraryPropertyTest extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testEditorProperties() throws Exception {
 		IFileEditorInput input = new IFileEditorInput() {
 			@Override

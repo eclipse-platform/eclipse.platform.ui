@@ -21,19 +21,21 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests bug 56822 -- NPE thrown when setTitle(null) is called.
  *
  * @since 3.0
  */
+@RunWith(JUnit4.class)
 public class ViewPartTitleTest extends UITestCase {
 
-	/**
-	 * @param testName
-	 */
-	public ViewPartTitleTest(String testName) {
-		super(testName);
+	public ViewPartTitleTest() {
+		super(ViewPartTitleTest.class.getSimpleName());
 	}
 
 	IWorkbenchWindow window;
@@ -132,6 +134,7 @@ public class ViewPartTitleTest extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testDefaults() throws Throwable {
 		verifySettings("EmptyView", "EmptyView", "");
 		verifyEvents(false, false, false);
@@ -143,6 +146,7 @@ public class ViewPartTitleTest extends UITestCase {
 	 *
 	 * @throws Throwable
 	 */
+	@Test
 	public void testNullTitle() throws Throwable {
 		view.setTitle(null);
 
@@ -150,18 +154,22 @@ public class ViewPartTitleTest extends UITestCase {
 		verifyEvents(true, false, false);
 	}
 
+	@Test
+	@Ignore
 	public void XXXtestCustomName() throws Throwable {
 		view.setPartName("CustomPartName");
 		verifySettings("CustomPartName", "CustomPartName", "");
 		verifyEvents(true, true, false);
 	}
 
+	@Test
 	public void testCustomTitle() throws Throwable {
 		view.setTitle("CustomTitle");
 		verifySettings("CustomTitle", "EmptyView", "CustomTitle");
 		verifyEvents(true, false, true);
 	}
 
+	@Test
 	public void testCustomContentDescription() throws Throwable {
 		view.setContentDescription("CustomContentDescription");
 		verifySettings("EmptyView (CustomContentDescription)", "EmptyView",
@@ -169,6 +177,8 @@ public class ViewPartTitleTest extends UITestCase {
 		verifyEvents(true, false, true);
 	}
 
+	@Test
+	@Ignore
 	public void XXXtestCustomNameAndContentDescription() throws Throwable {
 		view.setPartName("CustomName");
 		view.setContentDescription("CustomContentDescription");

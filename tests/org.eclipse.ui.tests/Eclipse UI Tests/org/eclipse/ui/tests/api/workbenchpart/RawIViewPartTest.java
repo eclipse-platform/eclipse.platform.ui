@@ -21,17 +21,20 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 
 /**
  * @since 3.0
  */
+@RunWith(JUnit4.class)
 public class RawIViewPartTest extends UITestCase {
-	/**
-	 * @param testName
-	 */
-	public RawIViewPartTest(String testName) {
-		super(testName);
+
+	public RawIViewPartTest() {
+		super(RawIViewPartTest.class.getSimpleName());
 	}
 
 	IWorkbenchWindow window;
@@ -127,11 +130,14 @@ public class RawIViewPartTest extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testDefaults() throws Throwable {
 		verifySettings("SomeTitle", "RawIViewPart", "SomeTitle");
 		verifyEvents(false, false, false);
 	}
 
+	@Test
+	@Ignore
 	public void XXXtestCustomTitle() throws Throwable {
 		view.setTitle("CustomTitle");
 		verifySettings("CustomTitle", "RawIViewPart", "CustomTitle");
@@ -142,6 +148,8 @@ public class RawIViewPartTest extends UITestCase {
 	 * Ensures that the content description is empty when the title is the same
 	 * as the default part name
 	 */
+	@Test
+	@Ignore
 	public void XXXtestEmptyContentDescription() throws Throwable {
 		view.setTitle("RawIViewPart");
 		verifySettings("RawIViewPart", "RawIViewPart", "");

@@ -18,20 +18,22 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.4
  *
  */
+@RunWith(JUnit4.class)
 public class LifecycleViewTest extends UITestCase {
 
-	/**
-	 * @param testName
-	 */
-	public LifecycleViewTest(String testName) {
-		super(testName);
+	public LifecycleViewTest() {
+		super(LifecycleViewTest.class.getSimpleName());
 	}
 
+	@Test
 	public void testLifecycle() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
 		IWorkbenchPage page = window.getActivePage();
