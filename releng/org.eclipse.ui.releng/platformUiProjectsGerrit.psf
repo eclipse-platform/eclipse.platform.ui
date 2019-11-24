@@ -40,6 +40,7 @@
 <project reference="1.0,https://git.eclipse.org/r/platform/eclipse.platform.ui,master,bundles/org.eclipse.jface.databinding"/>
 <project reference="1.0,https://git.eclipse.org/r/platform/eclipse.platform.ui,master,examples/org.eclipse.jface.examples.databinding"/>
 <project reference="1.0,https://git.eclipse.org/r/platform/eclipse.platform.ui,master,examples/org.eclipse.jface.snippets"/>
+<project reference="1.0,https://git.eclipse.org/r/platform/eclipse.platform.ui,master,tests/org.eclipse.jface.tests"/>
 <project reference="1.0,https://git.eclipse.org/r/platform/eclipse.platform.ui,master,tests/org.eclipse.jface.tests.databinding"/>
 <project reference="1.0,https://git.eclipse.org/r/platform/eclipse.platform.ui,master,tests/org.eclipse.jface.tests.databinding.conformance"/>
 <project reference="1.0,https://git.eclipse.org/r/platform/eclipse.platform.releng,master,bundles/org.eclipse.test"/>
