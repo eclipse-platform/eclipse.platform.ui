@@ -15,17 +15,19 @@ package org.eclipse.jface.text.contentassist;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 import org.eclipse.osgi.util.NLS;
 
@@ -54,7 +56,14 @@ import org.eclipse.jface.text.TextUtilities;
 class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 
 	private static final int MAX_WAIT_IN_MS= 50; // TODO make it a preference
-	private List<CompletableFuture<List<ICompletionProposal>>> fFutures;
+
+	/**
+	 * This is only used and set when populating the dialog is async (ie computation takes more than
+	 * MAX_WAIT_IN_MS
+	 */
+	private CompletableFuture<?> fAggregatedPopulateFuture;
+
+	private Collection<CompletableFuture<?>> toCancelFutures= new LinkedList<>();
 
 	private static final class ComputingProposal implements ICompletionProposal, ICompletionProposalExtension {
 
@@ -62,7 +71,7 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 		private final int fSize;
 		private int fRemaining;
 
-		public ComputingProposal(int offset, int size) {
+		ComputingProposal(int offset, int size) {
 			fSize= size;
 			fRemaining = size;
 			fOffset = offset;
@@ -121,7 +130,7 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 			return -1;
 		}
 
-		public void setRemaining(int size) {
+		void setRemaining(int size) {
 			this.fRemaining = size;
 		}
 	}
@@ -155,8 +164,7 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 			fFilterOffset= fInvocationOffset;
 			fLastCompletionOffset= fFilterOffset;
 			// start invocation of processors as Futures, and make them populate the proposals upon completion
-			fFutures= buildCompletionFuturesOrJobs(fInvocationOffset);
-			runFutures(fInvocationOffset, null, true, autoActivated, true);
+			computeAndPopulateProposals(fInvocationOffset, null, true, autoActivated, true);
 		} else {
 			fLastCompletionOffset= fFilterOffset;
 			handleRepeatedInvocation();
@@ -168,94 +176,92 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 	@Override
 	void handleRepeatedInvocation() {
 		cancelFutures();
-		fFutures= buildCompletionFuturesOrJobs(fInvocationOffset);
-		runFutures(fInvocationOffset, null, false, false, false);
+		computeAndPopulateProposals(fInvocationOffset, null, false, false, false);
 	}
 
-	private List<ICompletionProposal> runFutures(int offset, Consumer<List<ICompletionProposal>> callback, boolean createSelector, boolean autoActivated, boolean autoInsert) {
-		List<ICompletionProposal> computedProposals= Collections.synchronizedList(new ArrayList<>());
-		List<CompletableFuture<Void>> populateFutures= new ArrayList<>(fFutures.size());
-		for (CompletableFuture<List<ICompletionProposal>> future : fFutures) {
-			populateFutures.add(future.thenAccept(proposals -> computedProposals.addAll(proposals)));
-		}
+	private void computeAndPopulateProposals(int offset, Consumer<List<ICompletionProposal>> callback, boolean createSelector, boolean autoActivated, boolean autoInsert) {
+		List<CompletableFuture<List<ICompletionProposal>>> computationFutures= buildCompletionFuturesOrJobs(offset);
+		toCancelFutures.addAll(computationFutures);
+		fComputedProposals= Collections.synchronizedList(new ArrayList<>());
+		List<CompletableFuture<Void>> populateFutures= computationFutures.stream().map(future -> future.thenAccept(fComputedProposals::addAll)).collect(Collectors.toList());
+		toCancelFutures.addAll(populateFutures);
+		CompletableFuture<?> aggregatedPopulateFuture= CompletableFuture.allOf(populateFutures.toArray(new CompletableFuture[populateFutures.size()]));
+		toCancelFutures.add(aggregatedPopulateFuture);
 
-		long requestBeginningTimestamp= System.currentTimeMillis();
-		long stillRemainingThreeshold= MAX_WAIT_IN_MS;
-		for (CompletableFuture<?> future : populateFutures) {
-			try {
-				future.get(stillRemainingThreeshold, TimeUnit.MILLISECONDS);
-			} catch (TimeoutException | ExecutionException | InterruptedException ex) {
-				// future failed or took more time than we want to wait
-			}
-			stillRemainingThreeshold= MAX_WAIT_IN_MS - (System.currentTimeMillis() - requestBeginningTimestamp);
-			if (stillRemainingThreeshold < 0) {
-				// we already spent too much time (more than MAX_WAIT_IN_MS), stop waiting.
-				break;
-			}
+		boolean useAsyncMode= false;
+		try {
+			aggregatedPopulateFuture.get(MAX_WAIT_IN_MS, TimeUnit.MILLISECONDS);
+		} catch (TimeoutException e) {
+			useAsyncMode= true;
+		} catch (ExecutionException | InterruptedException ex) {
+			// nothing to do
 		}
-		fComputedProposals= computedProposals;
-		if (stillRemainingThreeshold > 0) { // everything ready in time, go synchronous
-			int count= computedProposals.size();
-			if (count == 0 && hideWhenNoProposals(autoActivated))
-				return computedProposals;
+		if (!useAsyncMode) {
+			int count= fComputedProposals.size();
+			if (count == 0 && hideWhenNoProposals(autoActivated)) {
+				return;
+			}
 
-			if (autoInsert && count == 1 && !autoActivated && canAutoInsert(computedProposals.get(0))) {
-				insertProposal(computedProposals.get(0), (char) 0, 0, offset);
+			if (autoInsert && count == 1 && !autoActivated && canAutoInsert(fComputedProposals.get(0))) {
+				insertProposal(fComputedProposals.get(0), (char) 0, 0, offset);
 				hide();
 			} else {
 				if (createSelector) {
 					createProposalSelector();
 				}
 				if (callback != null) {
-					callback.accept(computedProposals);
+					callback.accept(fComputedProposals);
 				} else {
-					setProposals(computedProposals, false);
+					setProposals(fComputedProposals, false);
 					displayProposals();
 				}
 			}
-		} else { // processors took too much time, go asynchronous
+		} else {
 			if (createSelector) {
 				createProposalSelector();
 			}
-			ComputingProposal computingProposal= new ComputingProposal(offset, fFutures.size());
-			computedProposals.add(0, computingProposal);
+			ComputingProposal computingProposal= new ComputingProposal(offset, populateFutures.size());
+			fComputedProposals.add(0, computingProposal);
 			setProposals(fComputedProposals, false);
-			Set<CompletableFuture<Void>> remaining= Collections.synchronizedSet(new HashSet<>(populateFutures));
-			for (CompletableFuture<Void> populateFuture : populateFutures) {
-				populateFuture.thenRun(() -> {
-					remaining.removeIf(CompletableFuture::isDone);
-					computingProposal.setRemaining(remaining.size());
-					if (remaining.isEmpty()) {
-						computedProposals.remove(computingProposal);
-					}
-					List<ICompletionProposal> newProposals= new ArrayList<>(computedProposals);
-					fComputedProposals= newProposals;
-					Control control= fContentAssistSubjectControlAdapter.getControl();
-					if (!control.isDisposed()) {
-						control.getDisplay().asyncExec(() -> {
-							// Don't run anything if offset has changed while runnable was scheduled (i.e. filtering might have occurred for fast CA)
-							if (offset == fInvocationOffset) {
-								if (autoInsert && !autoActivated && remaining.isEmpty() && newProposals.size() == 1 && canAutoInsert(newProposals.get(0))) {
-									if (Helper.okToUse(fProposalShell)) {
-										insertProposal(newProposals.get(0), (char) 0, 0, offset);
-										hide();
-									}
-									return;
-								}
-								if (remaining.isEmpty() && callback != null) {
-									callback.accept(newProposals);
-								} else {
-									setProposals(newProposals, false);
-									displayProposals();
-								}
+			AtomicInteger remaining= new AtomicInteger(populateFutures.size());
+			populateFutures= populateFutures.stream().map(future -> future.thenRun(() -> {
+				computingProposal.setRemaining(remaining.decrementAndGet());
+				if (remaining.get() == 0) {
+					fComputedProposals.remove(computingProposal);
+				}
+				Control control= fContentAssistSubjectControlAdapter.getControl();
+				if (!control.isDisposed() && offset == fInvocationOffset) {
+					control.getDisplay().asyncExec(() -> {
+						// Don't run anything if offset has changed while runnable was scheduled (i.e. filtering might have occurred for fast CA)
+						if (offset != fInvocationOffset) {
+							return;
+						}
+						if (autoInsert
+								&& !autoActivated
+								&& !fComputedProposals.contains(computingProposal)
+								&& fComputedProposals.size() == 1
+								&& remaining.get() == 0
+								&& canAutoInsert(fComputedProposals.get(0))) {
+							if (Helper.okToUse(fProposalShell)) {
+								insertProposal(fComputedProposals.get(0), (char) 0, 0, offset);
+								hide();
 							}
-						});
-					}
-				});
-			}
-			displayProposals();
+							return;
+						}
+						if (!fComputedProposals.contains(computingProposal) && callback != null) {
+							callback.accept(fComputedProposals);
+						} else {
+							setProposals(fComputedProposals, false);
+							displayProposals();
+						}
+					});
+				}
+			})).collect(Collectors.toList());
+			toCancelFutures.addAll(populateFutures);
+			fAggregatedPopulateFuture= CompletableFuture.allOf(populateFutures.toArray(new CompletableFuture[populateFutures.size()]));
+			toCancelFutures.add(fAggregatedPopulateFuture);
 		}
-		return computedProposals;
+		displayProposals();
 	}
 
 	@Override
@@ -276,8 +282,7 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 		fFilterOffset= fInvocationOffset;
 		fLastCompletionOffset= fFilterOffset;
 
-		fFutures= buildCompletionFuturesOrJobs(fInvocationOffset);
-		fFilteredProposals= runFutures(fInvocationOffset, (List<ICompletionProposal> proposals) -> {
+		computeAndPopulateProposals(fInvocationOffset, (List<ICompletionProposal> proposals) -> {
 			ensureDocumentListenerInstalled();
 			if (!proposals.isEmpty() && completeCommonPrefix()) {
 				hide();
@@ -287,6 +292,7 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 				displayProposals();
 			}
 		}, true, false, true);
+		fFilteredProposals= new ArrayList<>(fComputedProposals);
 		return getErrorMessage();
 	}
 
@@ -306,26 +312,15 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 	}
 
 	void cancelFutures() {
-		if (fFutures != null) {
-			for (Future<?> future : fFutures) {
-				future.cancel(true);
-			}
-			fFutures= null;
-		}
+		toCancelFutures.forEach(future -> future.cancel(true));
+		toCancelFutures.clear();
 	}
 
 	@Override
 	protected List<ICompletionProposal> computeFilteredProposals(int offset, DocumentEvent event) {
-		if(fComputedProposals != null && !fComputedProposals.isEmpty() && fComputedProposals.get(0) instanceof ComputingProposal) {
-			Set<CompletableFuture<List<ICompletionProposal>>> remaining = Collections.synchronizedSet(new HashSet<>(fFutures));
-			for (CompletableFuture<List<ICompletionProposal>> future : fFutures) {
-				future.thenRun(() -> {
-					remaining.removeIf(CompletableFuture::isDone);
-					if (remaining.isEmpty()) {
-						filterProposals();
-					}
-				});
-			}
+		if (fAggregatedPopulateFuture != null && !fAggregatedPopulateFuture.isDone()) {
+			// user typed a char & computation still pending -> let all futures complete then invoke "filterProposals" upon completion
+			fAggregatedPopulateFuture.thenRun(this::filterProposals);
 			return fComputedProposals;
 		}
 		return super.computeFilteredProposals(offset, event);
