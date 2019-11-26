@@ -98,6 +98,10 @@ public class IOConsoleViewer extends TextConsoleViewer {
 	protected void handleVerifyEvent(VerifyEvent e) {
 		final IConsoleDocumentPartitioner partitioner = (IConsoleDocumentPartitioner) getDocument()
 				.getDocumentPartitioner();
+		if (partitioner == null) {
+			e.doit = false;
+			return;
+		}
 		final IConsoleDocumentPartitionerExtension partitionerExt = (IConsoleDocumentPartitionerExtension) partitioner;
 
 		final StyledTextContent content = getTextWidget().getContent();

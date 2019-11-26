@@ -32,6 +32,7 @@ import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentAdapter;
 import org.eclipse.jface.text.IDocumentListener;
+import org.eclipse.jface.text.IDocumentPartitioner;
 import org.eclipse.jface.text.IPositionUpdater;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.JFaceTextUtil;
@@ -376,9 +377,13 @@ public class TextConsoleViewer extends SourceViewer implements LineStyleListener
 			int offset = event.lineOffset;
 			int length = event.lineText.length();
 
-			StyleRange[] partitionerStyles = ((IConsoleDocumentPartitioner) document.getDocumentPartitioner()).getStyleRanges(offset, length);
-			if (partitionerStyles != null) {
-				Collections.addAll(ranges, partitionerStyles);
+			IDocumentPartitioner partitioner = document.getDocumentPartitioner();
+			if (partitioner instanceof IConsoleDocumentPartitioner) {
+				StyleRange[] partitionerStyles = ((IConsoleDocumentPartitioner) partitioner).getStyleRanges(offset,
+						length);
+				if (partitionerStyles != null) {
+					Collections.addAll(ranges, partitionerStyles);
+				}
 			}
 
 			try {

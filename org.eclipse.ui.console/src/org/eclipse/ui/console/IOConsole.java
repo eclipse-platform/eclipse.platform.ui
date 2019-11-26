@@ -321,8 +321,8 @@ public class IOConsole extends TextConsole {
 		}
 
 		final IDocument document = partitioner.getDocument();
-		document.setDocumentPartitioner(null);
 		partitioner.disconnect();
+		document.setDocumentPartitioner(null);
 
 		super.dispose();
 	}
