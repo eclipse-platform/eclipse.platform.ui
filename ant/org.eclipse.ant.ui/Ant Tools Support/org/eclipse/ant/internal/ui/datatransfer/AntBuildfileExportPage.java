@@ -250,7 +250,7 @@ public class AntBuildfileExportPage extends WizardPage {
 
 	private void updateEnablement() {
 		boolean complete = true;
-		if (fSelectedJavaProjects.size() == 0) {
+		if (fSelectedJavaProjects.isEmpty()) {
 			setErrorMessage(DataTransferMessages.AntBuildfileExportPage_18);
 			complete = false;
 		}
@@ -318,7 +318,7 @@ public class AntBuildfileExportPage extends WizardPage {
 		final Set<IJavaProject> projects;
 		try {
 			projects = getProjects(true);
-			if (projects.size() == 0) {
+			if (projects.isEmpty()) {
 				return false;
 			}
 		}

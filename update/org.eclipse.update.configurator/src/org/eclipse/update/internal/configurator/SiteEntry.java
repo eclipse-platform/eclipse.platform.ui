@@ -549,7 +549,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 	}
 
 	public boolean isExternallyLinkedSite() {
-		return (linkFileName != null && !linkFileName.trim().equals("")); //$NON-NLS-1$
+		return (linkFileName != null && !linkFileName.trim().isEmpty());
 	}
 
 	public synchronized void refresh() {

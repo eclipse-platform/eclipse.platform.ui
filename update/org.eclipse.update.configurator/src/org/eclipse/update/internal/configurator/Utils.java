@@ -351,7 +351,7 @@ public class Utils {
 
 		String s = string.trim();
 
-		if (s.equals("")) //$NON-NLS-1$
+		if (s.isEmpty())
 			return string;
 
 		if (!s.startsWith(KEY_PREFIX))

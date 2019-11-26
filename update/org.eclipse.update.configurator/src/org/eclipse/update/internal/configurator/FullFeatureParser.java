@@ -103,8 +103,8 @@ public class FullFeatureParser extends DefaultHandler implements IConfigurationC
 		String id = attributes.getValue("id"); //$NON-NLS-1$
 		String ver = attributes.getValue("version"); //$NON-NLS-1$
 
-		if (id == null || id.trim().equals("") //$NON-NLS-1$
-		|| ver == null || ver.trim().equals("")) { //$NON-NLS-1$
+		if (id == null || id.trim().isEmpty()
+		|| ver == null || ver.trim().isEmpty()) {
 			System.out.println(NLS.bind(Messages.FeatureParser_IdOrVersionInvalid, (new String[] { id, ver})));
 		} else {
 //			String label = attributes.getValue("label"); //$NON-NLS-1$

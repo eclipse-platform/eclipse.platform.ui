@@ -218,7 +218,7 @@ public class ConfigurationParser extends DefaultHandler implements IConfiguratio
 			site.setEnabled(true);
 
 		String linkname = attributes.getValue(CFG_LINK_FILE); 
-		if (linkname != null && !linkname.equals("")) { //$NON-NLS-1$
+		if (linkname != null && !linkname.isEmpty()) {
 			site.setLinkFileName(linkname.replace('/', File.separatorChar));
 		}
 

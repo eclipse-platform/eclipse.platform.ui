@@ -87,7 +87,7 @@ public class AntThread extends AntDebugElement implements IThread {
 	@Override
 	public synchronized IStackFrame[] getStackFrames() throws DebugException {
 		if (isSuspended()) {
-			if (fFrames.size() == 0) {
+			if (fFrames.isEmpty()) {
 				getStackFrames0();
 			}
 		}
@@ -108,9 +108,9 @@ public class AntThread extends AntDebugElement implements IThread {
 			}
 			int attempts = 0;
 			try {
-				while (fFrames.size() == 0 && !isTerminated()) {
+				while (fFrames.isEmpty() && !isTerminated()) {
 					fFrames.wait(50);
-					if (attempts == 20 && fFrames.size() == 0 && !isTerminated()) {
+					if (attempts == 20 && fFrames.isEmpty() && !isTerminated()) {
 						throwDebugException(DebugModelMessages.AntThread_3);
 					}
 					attempts++;
@@ -150,7 +150,7 @@ public class AntThread extends AntDebugElement implements IThread {
 	@Override
 	public synchronized IStackFrame getTopStackFrame() throws DebugException {
 		if (isSuspended()) {
-			if (fFrames.size() == 0) {
+			if (fFrames.isEmpty()) {
 				getStackFrames0();
 			}
 			if (fFrames.size() > 0) {

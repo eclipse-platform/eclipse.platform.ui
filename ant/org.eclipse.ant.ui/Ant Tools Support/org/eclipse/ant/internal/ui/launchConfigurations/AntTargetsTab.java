@@ -752,7 +752,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 				configuration.setAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, (String) null);
 				return;
 			}
-		} else if (fOrderedTargets.size() == 0) {
+		} else if (fOrderedTargets.isEmpty()) {
 			configuration.setAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, (String) null);
 			return;
 		}
@@ -846,7 +846,7 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 */
 	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
-		if (fOrderedTargets.size() == 0) {
+		if (fOrderedTargets.isEmpty()) {
 			// set the dirty flag so that the state will be reinitialized on activation
 			setDirty(true);
 		}

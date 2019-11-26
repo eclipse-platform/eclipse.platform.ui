@@ -229,7 +229,7 @@ public class BuildFileCreator {
 		if (vars) {
 			debuglevel.add("vars"); //$NON-NLS-1$
 		}
-		if (debuglevel.size() == 0) {
+		if (debuglevel.isEmpty()) {
 			debuglevel.add("none"); //$NON-NLS-1$
 		}
 		variable2valueMap.put("debuglevel", ExportUtil.toString(debuglevel, ",")); //$NON-NLS-1$ //$NON-NLS-2$

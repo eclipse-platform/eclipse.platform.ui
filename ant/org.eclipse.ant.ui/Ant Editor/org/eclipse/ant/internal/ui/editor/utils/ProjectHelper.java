@@ -421,7 +421,7 @@ public class ProjectHelper extends ProjectHelper2 {
 		 * @return If the given project name is valid or not.
 		 */
 		private boolean isCurrentProjectNameValid(String currentProjectName) {
-			return currentProjectName != null && !currentProjectName.equals(""); //$NON-NLS-1$
+			return currentProjectName != null && !currentProjectName.isEmpty();
 		}
 
 		/*

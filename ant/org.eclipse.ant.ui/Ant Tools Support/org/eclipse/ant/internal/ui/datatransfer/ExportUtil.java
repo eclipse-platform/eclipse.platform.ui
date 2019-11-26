@@ -595,7 +595,7 @@ public class ExportUtil {
 	 */
 	public static Set<IFile> validateEdit(Shell shell, List<IFile> files) throws CoreException {
 		Set<IFile> confirmedFiles = new TreeSet<>(getIFileComparator());
-		if (files.size() == 0) {
+		if (files.isEmpty()) {
 			return confirmedFiles;
 		}
 		IStatus status = files.get(0).getWorkspace().validateEdit(files.toArray(new IFile[files.size()]), shell);

@@ -1361,7 +1361,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		OccurrencesFinder finder = new OccurrencesFinder(this, antModel, document, selection.getOffset());
 		positions = finder.perform();
 
-		if (positions == null || positions.size() == 0) {
+		if (positions == null || positions.isEmpty()) {
 			if (!fStickyOccurrenceAnnotations) {
 				removeOccurrenceAnnotations();
 			}
