@@ -655,7 +655,7 @@ public class SiteEntry implements IPlatformConfiguration.ISiteEntry, IConfigurat
 		siteElement.setAttribute(CFG_POLICY, typeString); 
 		String[] list = getSitePolicy().getList();
 		if (list.length > 0) {
-			StringBuffer sb = new StringBuffer(256);
+			StringBuilder sb = new StringBuilder(256);
 			for (int i=0; i<list.length-1; i++) {
 				sb.append(list[i]);
 				sb.append(',');

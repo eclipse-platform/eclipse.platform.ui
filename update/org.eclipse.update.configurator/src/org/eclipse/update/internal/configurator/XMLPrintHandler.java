@@ -31,27 +31,27 @@ public class XMLPrintHandler {
 	public static final String XML_SLASH = "/"; //$NON-NLS-1$
 
 	public static void printBeginElement(Writer xmlWriter, String elementString) throws IOException{
-		StringBuffer temp = new StringBuffer(XML_BEGIN_TAG);
+		StringBuilder temp = new StringBuilder(XML_BEGIN_TAG);
 		temp.append(elementString).append(XML_END_TAG).append("\n"); //$NON-NLS-1$
 		xmlWriter.write(temp.toString());
 
 	}
 
 	public static void printEndElement(Writer xmlWriter, String elementString) throws IOException{
-		StringBuffer temp = new StringBuffer(XML_BEGIN_TAG);
+		StringBuilder temp = new StringBuilder(XML_BEGIN_TAG);
 		temp.append(XML_SLASH).append(elementString).append(XML_END_TAG).append("\n"); //$NON-NLS-1$
 		xmlWriter.write(temp.toString());
 
 	}
 
 	public static void printHead(Writer xmlWriter, String encoding) throws IOException {
-		StringBuffer temp = new StringBuffer(XML_HEAD);
+		StringBuilder temp = new StringBuilder(XML_HEAD);
 		temp.append(encoding).append(XML_DBL_QUOTES).append(XML_HEAD_END_TAG).append("\n"); //$NON-NLS-1$
 		xmlWriter.write(temp.toString());
 	}
 
 	public static String wrapAttributeForPrint(String attribute, String value) throws IOException {
-		StringBuffer temp = new StringBuffer(XML_SPACE);
+		StringBuilder temp = new StringBuilder(XML_SPACE);
 		temp.append(attribute).append(XML_EQUAL).append(XML_DBL_QUOTES)
 				.append(encode(value).toString()).append(XML_DBL_QUOTES);
 		return temp.toString();
@@ -71,7 +71,7 @@ public class XMLPrintHandler {
 		}
 		case Node.ELEMENT_NODE: {
 			//get the attribute list for this node.
-			StringBuffer tempElementString = new StringBuffer(node.getNodeName());
+			StringBuilder tempElementString = new StringBuilder(node.getNodeName());
 			NamedNodeMap attributeList = node.getAttributes();
 			if ( attributeList != null ) {
 				for(int i= 0; i <attributeList.getLength();i++){

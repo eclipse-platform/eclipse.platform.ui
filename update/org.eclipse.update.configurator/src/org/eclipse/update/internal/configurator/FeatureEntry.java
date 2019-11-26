@@ -249,7 +249,7 @@ public class FeatureEntry
 			URL[] urls = branding.getWindowImagesURLs();
 			if (urls == null)
 				return null;
-			StringBuffer windowImagesURLs = new StringBuffer();
+			StringBuilder windowImagesURLs = new StringBuilder();
 			for (int i=0; i<urls.length; i++){
 				windowImagesURLs.append(urls[i].toExternalForm());
 				if (i != urls.length-1)
