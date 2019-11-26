@@ -143,10 +143,10 @@ public class ProgressViewTests extends ProgressTestCase {
 //		DummyJob sleepJob = new DummyJob("7. Not yet started Job", Status.OK_STATUS);
 //		sleepJob.schedule(TimeUnit.MINUTES.toMillis(2));
 //		allJobs.add(sleepJob);
-		DummyJob keptJob = new DummyJob("8. Finished and kept Job", Status.OK_STATUS);
-		keptJob.setProperty(IProgressConstants.KEEP_PROPERTY, true);
-		keptJob.schedule();
-		allJobs.add(keptJob);
+//		DummyJob keptJob = new DummyJob("8. Finished and kept Job", Status.OK_STATUS);
+//		keptJob.setProperty(IProgressConstants.KEEP_PROPERTY, true);
+//		keptJob.schedule();
+//		allJobs.add(keptJob);
 
 		try {
 			ArrayList<DummyJob> shuffledJobs = new ArrayList<>(jobsToSchedule);
