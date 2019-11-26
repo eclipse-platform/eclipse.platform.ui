@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -1056,7 +1056,13 @@ public class LaunchView extends AbstractDebugView
 		getViewSite().getActionBars().updateActionBars();
 
 		// Update system property used by contributed actions.
-		System.setProperty(IDebugUIConstants.DEBUG_VIEW_TOOBAR_VISIBLE, Boolean.toString(show));
+		if (!Boolean.toString(show).equals(System.getProperty(IDebugUIConstants.DEBUG_VIEW_TOOBAR_VISIBLE))) {
+			try {
+				System.setProperty(IDebugUIConstants.DEBUG_VIEW_TOOBAR_VISIBLE, Boolean.toString(show));
+			} catch (SecurityException ex) {
+				// ignore
+			}
+		}
 	}
 
 	@Override
@@ -1374,8 +1380,15 @@ public class LaunchView extends AbstractDebugView
 	public void partActivated(IWorkbenchPartReference partRef) {
 		// Ensure that the system property matches the debug toolbar state.
 		// Bug 385400
-		System.setProperty(IDebugUIConstants.DEBUG_VIEW_TOOBAR_VISIBLE,
-				Boolean.toString(isDebugToolbarShownInPerspective(getSite().getPage().getPerspective())) );
+		String debugToolBarShown = Boolean
+				.toString(isDebugToolbarShownInPerspective(getSite().getPage().getPerspective()));
+		if (!(debugToolBarShown.equals(System.getProperty(IDebugUIConstants.DEBUG_VIEW_TOOBAR_VISIBLE)))) {
+			try {
+				System.setProperty(IDebugUIConstants.DEBUG_VIEW_TOOBAR_VISIBLE, debugToolBarShown);
+			} catch (SecurityException ex) {
+				// ignore
+			}
+		}
 	}
 
 	@Override
