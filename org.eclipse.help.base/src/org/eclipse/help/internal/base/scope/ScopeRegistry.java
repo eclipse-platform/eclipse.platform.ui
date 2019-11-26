@@ -121,7 +121,7 @@ public class ScopeRegistry {
 				scopes.add(scope);
 		}
 
-		if (scopes.size()==0)
+		if (scopes.isEmpty())
 			return null;
 		if (scopes.size()==1)
 			return scopes.get(0);
@@ -219,14 +219,14 @@ public class ScopeRegistry {
 					return format(next,current);
 				next+=current;
 			}
-			if (next.equals("")) //$NON-NLS-1$
+			if (next.isEmpty()) 
 				return null;
 			return next;
 		}
 
 		private String format(String next,char current)
 		{
-			if (next.equals("")) //$NON-NLS-1$
+			if (next.isEmpty()) 
 			{
 				cursor++;
 				return current+""; //$NON-NLS-1$

@@ -517,7 +517,7 @@ public class SearchData extends ActivitiesData {
 				workingSetCol.add(ws);
 			}
 		}
-		if (workingSetCol.size() == 0) {
+		if (workingSetCol.isEmpty()) {
 			return null;
 		}
 		return workingSetCol

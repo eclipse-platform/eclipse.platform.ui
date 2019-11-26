@@ -162,7 +162,7 @@ public class CheatSheetCollectionElement extends WorkbenchAdapter implements IPl
 	 * Returns true if this element has no children and no cheatsheets.
 	 */
 	public boolean isEmpty() {
-		return childCollections.size() == 0 && cheatsheets.size() == 0;
+		return childCollections.isEmpty() && cheatsheets.size() == 0;
 	}
 
 	/**

@@ -244,12 +244,12 @@ public class EngineResultSection {
 	}
 
 	public synchronized void completed() {
-		if (hits.size() == 0 && !searchResults.isDisposed())
+		if (hits.isEmpty() && !searchResults.isDisposed())
 			asyncUpdateResults(false, false);
 	}
 
 	public synchronized void canceling() {
-		if (hits.size() == 0 && !searchResults.isDisposed()) {
+		if (hits.isEmpty() && !searchResults.isDisposed()) {
 			StringBuilder buff = new StringBuilder();
 			buff.append("<form>"); //$NON-NLS-1$
 			buff.append("<p><span color=\"summary\">");//$NON-NLS-1$

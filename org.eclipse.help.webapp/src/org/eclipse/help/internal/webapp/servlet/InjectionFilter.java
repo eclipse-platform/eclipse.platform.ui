@@ -93,7 +93,7 @@ public class InjectionFilter implements IFilter {
 
 		needsLiveHelp = !enabled && HelpBasePlugin.getActivitySupport().getDocumentMessageUsesLiveHelp(addNarrow);
 
-		if (cssIncludes.size() == 0 && !addDisabled)
+		if (cssIncludes.isEmpty() && !addDisabled)
 			return out;
 
 		IPath path = new Path(pathInfo);

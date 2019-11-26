@@ -33,7 +33,7 @@ public class CheckTocAction implements IWorkbenchWindowActionDelegate {
 	public static List<BrokenLink> errors = new ArrayList<>();
 
 	public static void showErrors() {
-		if (errors.size() == 0) {
+		if (errors.isEmpty()) {
 			reportStatus("No errors detected in load");
 		}
 		for (int i = 0; i < errors.size(); i++) {

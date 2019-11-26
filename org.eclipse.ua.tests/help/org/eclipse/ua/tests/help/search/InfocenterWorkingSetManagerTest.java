@@ -460,7 +460,7 @@ public class InfocenterWorkingSetManagerTest {
 
 	private void checkCookies(MockServletResponse resp) {
 		String illegalChars = resp.getIllegalCharatersFound();
-		if (illegalChars.equals("") || illegalChars.equals("<")) {
+		if (illegalChars.isEmpty() || illegalChars.equals("<")) {
 			return;
 		}
 		fail("Cookie contains these illegal characters " + illegalChars + '"');

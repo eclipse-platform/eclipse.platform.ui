@@ -84,7 +84,7 @@ public class ICPreferences {
 
 		for (int i=0;i<names.length;i++)
 		{
-			if (!names[i].equals("")) //$NON-NLS-1$
+			if (!names[i].isEmpty())
 			{
 				try {
 					IC ic = new IC(

@@ -104,8 +104,7 @@ class IndexingOperation {
 		removeStaleDocuments(subMonitor.split(numRemoved), staleDocs);
 		checkCancelled(pm);
 		// 2. merge prebult plugin indexes and addjust
-		addNewDocuments(subMonitor.split(10 * numAdded), newDocs,
-				staleDocs.size() == 0);
+		addNewDocuments(subMonitor.split(10 * numAdded), newDocs, staleDocs.isEmpty());
 
 		pm.done();
 		BaseHelpSystem.getLocalSearchManager().clearSearchParticipants();
@@ -156,7 +155,7 @@ class IndexingOperation {
 		Map<String, String[]> docsToDelete = calculateNewToRemove(newDocs, prebuiltDocs);
 		SubMonitor subMonitor = SubMonitor.convert(pm, 10 * docsToIndex.size() + docsToDelete.size());
 		checkCancelled(pm);
-		addDocuments(subMonitor.split(10 * docsToIndex.size()), docsToIndex, docsToDelete.size() == 0);
+		addDocuments(subMonitor.split(10 * docsToIndex.size()), docsToIndex, docsToDelete.isEmpty());
 		checkCancelled(pm);
 		removeNewDocuments(subMonitor.split(docsToDelete.size()), docsToDelete);
 		pm.done();
@@ -195,7 +194,7 @@ class IndexingOperation {
 	 */
 	private void removeNewDocuments(IProgressMonitor pm, Map<String, String[]> docsToDelete)
 			throws IndexingException {
-		if (docsToDelete.size() == 0) {
+		if (docsToDelete.isEmpty()) {
 			return;
 		}
 		pm = new LazyProgressMonitor(pm);
@@ -463,7 +462,7 @@ class IndexingOperation {
 
 	private void add(String href, Set<String> hrefs) {
 		if (href != null
-				&& !href.equals("") && !href.startsWith("http://") && !href.startsWith("https://")) //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				&& !href.isEmpty() && !href.startsWith("http://") && !href.startsWith("https://")) //$NON-NLS-1$ //$NON-NLS-2$
 			hrefs.add(href);
 	}
 

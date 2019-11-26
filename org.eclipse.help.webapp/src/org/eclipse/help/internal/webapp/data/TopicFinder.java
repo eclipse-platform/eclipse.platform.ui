@@ -215,7 +215,7 @@ public class TopicFinder {
 	 * @return -1 if the toc is not found
 	 */
 	private int findTocContainingTopic(String topic) {
-		if (topic == null || topic.equals("")) //$NON-NLS-1$
+		if (topic == null || topic.isEmpty()) 
 			return -1;
 
 		int index = topic.indexOf("/topic/"); //$NON-NLS-1$
@@ -246,7 +246,7 @@ public class TopicFinder {
 		if (index != -1)
 			topic = topic.substring(0, index);
 
-		if (topic == null || topic.equals("")) //$NON-NLS-1$
+		if (topic == null || topic.isEmpty()) 
 			return -1;
 
 		// try to find in enabled tocs first
@@ -303,7 +303,7 @@ public class TopicFinder {
 		if (index != -1)
 			topic = topic.substring(0, index);
 
-		if (topic == null || topic.equals("")) //$NON-NLS-1$
+		if (topic == null || topic.isEmpty()) 
 			return null;
 
 		if (selectedToc < 0)

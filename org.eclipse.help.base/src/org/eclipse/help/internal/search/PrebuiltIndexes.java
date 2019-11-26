@@ -46,7 +46,7 @@ public class PrebuiltIndexes {
 		List<PluginIndex> indexes = new ArrayList<>(set);
 		for (int i = 0; i < indexes.size();) {
 			PluginIndex index = indexes.get(i);
-			if (index.getPaths().size() == 0) {
+			if (index.getPaths().isEmpty()) {
 				set.remove(index);
 			}
 			i++;

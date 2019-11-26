@@ -782,7 +782,7 @@ public class CustomizationContentsArea {
 			return;
 		String pid = product.getId();
 		StringBuilder sbuf = new StringBuilder();
-		if (introRootPages.size() == 0) {
+		if (introRootPages.isEmpty()) {
 			// An empty string means no preference so special value needed
 			// to indicate no root pages.
 			sbuf.append(NO_ROOT_PAGES);

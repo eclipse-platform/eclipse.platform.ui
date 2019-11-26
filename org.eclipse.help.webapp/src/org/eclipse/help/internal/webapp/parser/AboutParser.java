@@ -69,7 +69,7 @@ public class AboutParser extends ResultParser {
 			|| service == Utils.ABOUT_PLUGIN)
 			return;
 
-		if (element != null && !currentTag.equals("")) { //$NON-NLS-1$
+		if (element != null && !currentTag.isEmpty()) {
 
 			Properties properties = element.getProps();
 			if (properties != null) {

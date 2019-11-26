@@ -240,7 +240,7 @@ public class History {
 	}
 
 	public boolean currentLocationIsUrl() {
-		if (history.size() == 0) {
+		if (history.isEmpty()) {
 			return false;
 		}
 		return getCurrentLocation().isURL();

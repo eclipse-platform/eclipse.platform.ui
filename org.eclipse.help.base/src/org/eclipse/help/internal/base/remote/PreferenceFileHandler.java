@@ -95,7 +95,7 @@ public class PreferenceFileHandler {
 		String [] currEntries;
 		String [] updatedArray=null;
 
-		if(!preferenceEntry.equals("")) //$NON-NLS-1$
+		if(!preferenceEntry.isEmpty())
 			currEntries=preferenceEntry.split(PREFERENCE_ENTRY_DELIMITER);
 		else
 			currEntries = new String[0];

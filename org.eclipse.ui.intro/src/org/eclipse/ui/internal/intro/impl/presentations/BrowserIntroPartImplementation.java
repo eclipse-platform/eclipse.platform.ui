@@ -599,7 +599,7 @@ public class BrowserIntroPartImplementation extends
 	public void propertyChanged(Object source, int propId) {
 		if (propId == IntroModelRoot.CURRENT_PAGE_PROPERTY_ID) {
 			String pageId = getModel().getCurrentPageId();
-			if (pageId == null || pageId.equals("")) //$NON-NLS-1$
+			if (pageId == null || pageId.isEmpty())
 				// page ID was not set properly. exit.
 				return;
 			// update the presentation's content based on the model changes

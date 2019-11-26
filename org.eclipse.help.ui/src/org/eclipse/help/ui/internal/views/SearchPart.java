@@ -640,7 +640,7 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 				eds.add(ed);
 			}
 		}
-		if (entries.size() == 0)
+		if (entries.isEmpty())
 			return;
 		FederatedSearchEntry[] array = entries.toArray(new FederatedSearchEntry[entries.size()]);
 		if (scopeSection.isExpanded()) {

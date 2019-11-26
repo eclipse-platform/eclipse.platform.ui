@@ -79,7 +79,7 @@ public class LoadTocAction implements IWorkbenchWindowActionDelegate {
 
 	public static void showErrors() {
 		if (errors == null) return;
-		if (errors.size() == 0) {
+		if (errors.isEmpty()) {
 			reportStatus("Testing complete, no errors found");
 		} else {
 			reportStatus("Testing complete, errors found");

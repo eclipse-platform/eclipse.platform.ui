@@ -46,7 +46,7 @@ public class HighlightFilter implements IFilter {
 		}
 
 		Collection<String> keywords = getWords(req);
-		if (keywords.size() == 0) {
+		if (keywords.isEmpty()) {
 			return out;
 		}
 		keywords = removeWildCards(keywords);

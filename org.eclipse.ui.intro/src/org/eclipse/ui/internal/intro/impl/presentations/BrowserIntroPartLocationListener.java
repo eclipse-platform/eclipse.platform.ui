@@ -52,7 +52,7 @@ public class BrowserIntroPartLocationListener implements LocationListener {
 		IntroModelRoot model = implementation.getModel();
 		IntroURLParser parser = new IntroURLParser(url);
 		if (!parser.hasProtocol() || parser.getHost() == null
-				|| parser.getHost().equals("")) //$NON-NLS-1$
+				|| parser.getHost().isEmpty())
 			// This will filter out two navigation events fired by the browser
 			// on a setText. (about:blank and
 			// res://C:\WINDOWS\System32\shdoclc.dll/navcancl.htm on windows,

@@ -260,7 +260,7 @@ public class QueryBuilder {
 		// Get queries for parts separated by OR
 		List<Query> requiredQueries = getRequiredQueries(searchTokens, fieldNames,
 				boosts);
-		if (requiredQueries.size() == 0)
+		if (requiredQueries.isEmpty())
 			return null;
 		else if (requiredQueries.size() <= 1)
 			return requiredQueries.get(0);

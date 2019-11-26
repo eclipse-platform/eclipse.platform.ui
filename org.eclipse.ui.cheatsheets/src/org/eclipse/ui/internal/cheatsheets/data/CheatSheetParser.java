@@ -887,7 +887,7 @@ public class CheatSheetParser implements IStatusContainer {
 			}
 		}
 
-		if(al.size() == 0) {
+		if(al.isEmpty()) {
 			String message = NLS.bind(Messages.WARNING_PARSING_UNKNOWN_ATTRIBUTE, (new Object[] {item.getNodeName(), node.getNodeName()}));
 			addStatus(IStatus.WARNING, message, null);
 		}

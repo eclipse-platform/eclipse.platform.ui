@@ -127,7 +127,7 @@ public class PageData {
 			return;
 		}
 		GroupData gd = findDefaultGroup();
-		if (gd==null && groups.size()==0) {
+		if (gd==null && groups.isEmpty()) {
 			// add bottoms as the default group
 			gd = new GroupData(P_BOTTOM_LEFT, true);
 			groups.add(gd);
@@ -188,7 +188,7 @@ public class PageData {
 		if (hidden!=null && hidden.contains(extensionId))
 			return null;
 		// create the default: pick the last group
-		if (groups.size()==0) return null;
+		if (groups.isEmpty()) return null;
 		GroupData last = groups.get(groups.size()-1);
 		return id + "/" + last.getPath() + "/" + IUniversalIntroConstants.DEFAULT_ANCHOR;  //$NON-NLS-1$//$NON-NLS-2$
 	}

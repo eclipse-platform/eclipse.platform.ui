@@ -67,7 +67,7 @@ public class ProductPreferences {
 		List<String> primaryOrdering = getPrimaryTocOrdering();
 		@SuppressWarnings("unchecked")
 		List<String>[] secondaryOrdering = new List[0];
-		if (primaryOrdering == null || primaryOrdering.size() == 0) {
+		if (primaryOrdering == null || primaryOrdering.isEmpty()) {
 			secondaryOrdering = getSecondaryTocOrderings();
 		}
 		return getOrderedList(itemsToOrder, primaryOrdering, secondaryOrdering, nameIdMap);

@@ -102,7 +102,7 @@ public class StyledLineWrapper implements StyledTextContent {
 
 	@Override
 	public int getLineCount() {
-		if (lines.size() == 0)
+		if (lines.isEmpty())
 			return 1;
 		return lines.size();
 	}
@@ -114,7 +114,7 @@ public class StyledLineWrapper implements StyledTextContent {
 
 	@Override
 	public int getOffsetAtLine(int line) {
-		if (lines.size() == 0)
+		if (lines.isEmpty())
 			return 0;
 		int offset = 0;
 		for (int i = 0; i < line; i++)

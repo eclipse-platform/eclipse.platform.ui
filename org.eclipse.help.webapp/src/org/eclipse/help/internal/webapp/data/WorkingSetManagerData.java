@@ -221,7 +221,7 @@ public class WorkingSetManagerData extends RequestData {
 		for (String criterion : criteria) {
 			if(category.contains(criterion)){
 				List<String> allValuesInCategory = Arrays.asList(getCriterionValueIds(criterion));
-				if(0 == allValuesInCategory.size()){
+				if(allValuesInCategory.isEmpty()){
 					continue;
 				}
 				Set<String> elements = selectedElements.get(criterion);
