@@ -44,11 +44,13 @@ import org.eclipse.ui.quickaccess.QuickAccessElement;
  */
 public class CommandProvider extends QuickAccessProvider {
 
-	private IEvaluationContext currentSnapshot;
+	private IEclipseContext context;
+	private ExpressionContext evaluationContext;
 
-	public void setSnapshot(IEvaluationContext c) {
+	public void setContext(IEclipseContext context) {
 		reset();
-		currentSnapshot = c;
+		this.context = context;
+		this.evaluationContext = new ExpressionContext(context);
 	}
 
 	private final Map<String, CommandElement> idToCommand;
@@ -97,7 +99,7 @@ public class CommandProvider extends QuickAccessProvider {
 
 			final Command command = commandService.getCommand(currentCommandId);
 			ParameterizedCommand pcmd = new ParameterizedCommand(command, null);
-			if (command != null && ehandlerService.canExecute(pcmd)) {
+			if (command != null && ehandlerService.canExecute(pcmd, context)) {
 				try {
 					Collection<ParameterizedCommand> combinations = ParameterizedCommand.generateCombinations(command);
 					for (ParameterizedCommand pc : combinations) {
@@ -125,9 +127,8 @@ public class CommandProvider extends QuickAccessProvider {
 
 	EHandlerService getEHandlerService() {
 		if (ehandlerService == null) {
-			if (currentSnapshot instanceof ExpressionContext) {
-				IEclipseContext ctx = ((ExpressionContext) currentSnapshot).eclipseContext;
-				ehandlerService = ctx.get(EHandlerService.class);
+			if (context != null) {
+				ehandlerService = context.get(EHandlerService.class);
 			} else {
 				ehandlerService = PlatformUI.getWorkbench().getService(EHandlerService.class);
 			}
@@ -137,9 +138,8 @@ public class CommandProvider extends QuickAccessProvider {
 
 	ICommandService getCommandService() {
 		if (commandService == null) {
-			if (currentSnapshot instanceof ExpressionContext) {
-				IEclipseContext ctx = ((ExpressionContext) currentSnapshot).eclipseContext;
-				commandService = ctx.get(ICommandService.class);
+			if (context != null) {
+				commandService = context.get(ICommandService.class);
 			} else {
 				commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
 			}
@@ -149,9 +149,8 @@ public class CommandProvider extends QuickAccessProvider {
 
 	IHandlerService getHandlerService() {
 		if (handlerService == null) {
-			if (currentSnapshot instanceof ExpressionContext) {
-				IEclipseContext ctx = ((ExpressionContext) currentSnapshot).eclipseContext;
-				handlerService = ctx.get(IHandlerService.class);
+			if (context != null) {
+				handlerService = context.get(IHandlerService.class);
 			} else {
 				handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
 			}
@@ -161,9 +160,8 @@ public class CommandProvider extends QuickAccessProvider {
 
 	public ICommandImageService getCommandImageService() {
 		if (commandImageService == null) {
-			if (currentSnapshot instanceof ExpressionContext) {
-				IEclipseContext ctx = ((ExpressionContext) currentSnapshot).eclipseContext;
-				commandImageService = ctx.get(ICommandImageService.class);
+			if (context != null) {
+				commandImageService = context.get(ICommandImageService.class);
 			} else {
 				commandImageService = PlatformUI.getWorkbench().getService(ICommandImageService.class);
 			}
@@ -171,8 +169,8 @@ public class CommandProvider extends QuickAccessProvider {
 		return commandImageService;
 	}
 
-	public IEvaluationContext getContextSnapshot() {
-		return currentSnapshot;
+	public IEvaluationContext getEvaluationContext() {
+		return evaluationContext;
 	}
 
 	@Override
@@ -181,10 +179,8 @@ public class CommandProvider extends QuickAccessProvider {
 		synchronized (idToCommand) {
 			idToCommand.clear();
 		}
-		if (currentSnapshot instanceof ExpressionContext) {
-			((ExpressionContext) currentSnapshot).eclipseContext.dispose();
-		}
-		currentSnapshot = null;
+		evaluationContext = null;
+		context = null;
 	}
 
 	@Override

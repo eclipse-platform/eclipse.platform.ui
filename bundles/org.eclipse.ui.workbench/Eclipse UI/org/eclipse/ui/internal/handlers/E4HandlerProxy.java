@@ -69,7 +69,9 @@ public class E4HandlerProxy implements IHandler2, IHandlerListener, IElementUpda
 		if (handler instanceof IHandler2) {
 			Object ctx = staticContext;
 			if (ctx == null) {
-				ctx = new ExpressionContext(application.getContext());
+				if (context != null) {
+					ctx = new ExpressionContext(context != null ? context : application.getContext());
+				}
 			}
 			((IHandler2) handler).setEnabled(ctx);
 		}

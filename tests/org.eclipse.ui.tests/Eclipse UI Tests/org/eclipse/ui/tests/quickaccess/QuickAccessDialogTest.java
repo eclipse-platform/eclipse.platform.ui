@@ -17,6 +17,7 @@ package org.eclipse.ui.tests.quickaccess;
 
 import static org.junit.Assert.assertNotEquals;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
@@ -27,6 +28,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
+import org.eclipse.core.commands.Command;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.swt.SWT;
@@ -36,7 +38,10 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.quickaccess.QuickAccessDialog;
 import org.eclipse.ui.internal.quickaccess.QuickAccessMessages;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
@@ -379,6 +384,31 @@ public class QuickAccessDialogTest extends UITestCase {
 		assertTrue("Not enough quick access items for simple filter",
 				DisplayHelper.waitForCondition(table.getDisplay(), TIMEOUT, () -> table.getItemCount() > 3));
 		assertTrue("Non-prefix match first", table.getItem(0).getText(1).toLowerCase().startsWith("p"));
+	}
+
+	public void testCommandEnableContext() throws Exception {
+		ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
+		Command command = commandService.getCommand("org.eclipse.ui.window.splitEditor");
+		assertTrue(command.isDefined());
+
+		File tmpFile = File.createTempFile("blah", ".txt");
+		tmpFile.deleteOnExit();
+		IDE.openEditor(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage(), tmpFile.toURI(),
+				"org.eclipse.ui.DefaultTextEditor", true);
+
+		QuickAccessDialog dialog = new QuickAccessDialog(activeWorkbenchWindow, null) {
+			@Override
+			protected IDialogSettings getDialogSettings() {
+				return dialogSettings;
+			}
+		};
+		dialog.open();
+		Text text = dialog.getQuickAccessContents().getFilterText();
+		Table table = dialog.getQuickAccessContents().getTable();
+		text.setText("Toggle Split");
+		assertTrue("Not enough quick access items for simple filter",
+				DisplayHelper.waitForCondition(table.getDisplay(), TIMEOUT, () -> table.getItemCount() > 1));
+		assertTrue("Non-prefix match first", table.getItem(0).getText(1).toLowerCase().startsWith("toggle split"));
 	}
 
 	private List<String> getAllEntries(Table table) {

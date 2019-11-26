@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.e4.core.commands.ExpressionContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.jface.bindings.TriggerSequence;
@@ -117,7 +116,7 @@ public class QuickAccessDialog extends PopupDialog {
 
 		BusyIndicator.showWhile(window.getShell() == null ? null : window.getShell().getDisplay(), () -> {
 			final CommandProvider commandProvider = new CommandProvider();
-			commandProvider.setSnapshot(new ExpressionContext(model.getContext().getActiveLeaf()));
+			commandProvider.setContext(model.getContext().getActiveLeaf());
 			List<QuickAccessProvider> providers = new ArrayList<>();
 			previousPicksProvider = new PreviousPicksProvider(MAXIMUM_NUMBER_OF_ELEMENTS);
 			previousPicksProvider.setElementsInitializer(() -> restorePreviousEntries(providers));

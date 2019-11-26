@@ -56,9 +56,10 @@ public class CommandElement extends QuickAccessElement {
 	@Override
 	public void execute() {
 		if (provider != null) {
-			if (provider.getHandlerService() != null && provider.getContextSnapshot() != null) {
+			if (provider.getHandlerService() != null && provider.getEvaluationContext() != null) {
 				try {
-					provider.getHandlerService().executeCommandInContext(command, null, provider.getContextSnapshot());
+					provider.getHandlerService().executeCommandInContext(command, null,
+							provider.getEvaluationContext());
 				} catch (Exception ex) {
 					StatusUtil.handleStatus(ex, StatusManager.SHOW | StatusManager.LOG);
 				}
