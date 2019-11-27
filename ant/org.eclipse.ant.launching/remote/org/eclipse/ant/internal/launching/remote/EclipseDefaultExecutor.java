@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -33,7 +33,7 @@ public class EclipseDefaultExecutor extends DefaultExecutor {
 	@SuppressWarnings("unused")
 	@Override
 	public void executeTargets(Project project, String[] targetNames) throws BuildException {
-		Vector<String> v = new Vector<>();
+		Vector<String> v = new Vector<String>();
 		v.addAll(Arrays.asList(targetNames));
 		project.addReference(IAntCoreConstants.TARGET_VECTOR_NAME, v);
 		super.executeTargets(project, targetNames);
