@@ -91,6 +91,10 @@ Text[style~='SWT.READ_ONLY'] {
     color: #bbbbbb;
 }
 
+Shell Tree, Shell Table, Shell List {
+	background-color: #2F2F2F;
+}
+
 DatePicker,
 DatePicker > Text,
 ScheduleDatePicker,
