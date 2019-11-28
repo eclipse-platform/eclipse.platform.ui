@@ -133,7 +133,9 @@ public abstract class WorkspaceModifyOperation implements IRunnableWithProgress,
 		} catch (CoreException e) {
 			throw new InvocationTargetException(e);
 		} catch (OperationCanceledException e) {
-			throw new InterruptedException(e.getMessage());
+			InterruptedException interruptedException = new InterruptedException(e.getMessage());
+			interruptedException.initCause(e);
+			throw interruptedException;
 		}
 		// Re-throw the InvocationTargetException, if any occurred
 		if (iteHolder[0] != null) {
