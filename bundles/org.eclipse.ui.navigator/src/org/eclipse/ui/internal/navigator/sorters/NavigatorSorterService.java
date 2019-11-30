@@ -55,7 +55,7 @@ public class NavigatorSorterService implements INavigatorSorterService, Visibili
 	}
 
 	private synchronized void computeSortOnlyDescriptors() {
-		List<INavigatorContentDescriptor> sortOnlyList = new ArrayList<INavigatorContentDescriptor>();
+		List<INavigatorContentDescriptor> sortOnlyList = new ArrayList<>();
 		for (INavigatorContentDescriptor descriptor : NavigatorContentDescriptorManager.getInstance()
 				.getSortOnlyContentDescriptors()) {
 			if (contentService.isActive(descriptor.getId())) {

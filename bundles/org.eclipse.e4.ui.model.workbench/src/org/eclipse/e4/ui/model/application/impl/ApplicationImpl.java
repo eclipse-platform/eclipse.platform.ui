@@ -542,7 +542,7 @@ public class ApplicationImpl extends ElementContainerImpl<MWindow> implements MA
 	@Override
 	public MCommand getCommand(final String elementId) {
 		if (elementIdToCommandMap == null) {
-			Map<String, MCommand> result = new HashMap<String, MCommand>();
+			Map<String, MCommand> result = new HashMap<>();
 			for (MCommand command : getCommands()) {
 				MCommand otherCommand = result.put(command.getElementId(), command);
 				if (otherCommand != null) {
