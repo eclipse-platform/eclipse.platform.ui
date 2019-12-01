@@ -33,7 +33,11 @@ import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class ImportOperationTest extends UITestCase implements IOverwriteQuery {
 
 	private static final String[] directoryNames = { "dir1", "dir2" };
@@ -44,8 +48,8 @@ public class ImportOperationTest extends UITestCase implements IOverwriteQuery {
 
 	private IProject project;
 
-	public ImportOperationTest(String testName) {
-		super(testName);
+	public ImportOperationTest() {
+		super(ImportOperationTest.class.getSimpleName());
 	}
 
 	private void createSubDirectory(String parentName, String newDirName)
@@ -117,6 +121,7 @@ public class ImportOperationTest extends UITestCase implements IOverwriteQuery {
 		}
 	}
 
+	@Test
 	public void testGetStatus() throws Exception {
 		project = FileUtil.createProject("ImportGetStatus");
 		File element = new File(localDirectory);
@@ -128,6 +133,7 @@ public class ImportOperationTest extends UITestCase implements IOverwriteQuery {
 		assertTrue(operation.getStatus().getCode() == IStatus.OK);
 	}
 
+	@Test
 	public void testImportList() throws Exception {
 		project = FileUtil.createProject("ImportList");
 		File element = new File(localDirectory);
@@ -140,6 +146,7 @@ public class ImportOperationTest extends UITestCase implements IOverwriteQuery {
 		verifyFiles(directoryNames.length);
 	}
 
+	@Test
 	public void testImportSource() throws Exception {
 		project = FileUtil.createProject("ImportSource");
 		ImportOperation operation = new ImportOperation(project.getFullPath(),
@@ -149,6 +156,7 @@ public class ImportOperationTest extends UITestCase implements IOverwriteQuery {
 		verifyFiles(directoryNames.length);
 	}
 
+	@Test
 	public void testImportSourceList() throws Exception {
 		project = FileUtil.createProject("ImportSourceList");
 		File element = new File(localDirectory + File.separator
@@ -162,6 +170,7 @@ public class ImportOperationTest extends UITestCase implements IOverwriteQuery {
 		verifyFiles(importElements.size());
 	}
 
+	@Test
 	public void testSetContext() throws Exception {
 		project = FileUtil.createProject("ImportSetContext");
 		File element = new File(localDirectory);
@@ -174,6 +183,7 @@ public class ImportOperationTest extends UITestCase implements IOverwriteQuery {
 		operation.setContext(openTestWindow().getShell());
 	}
 
+	@Test
 	public void testSetCreateContainerStructure() throws Exception {
 		project = FileUtil.createProject("ImportSetCreateContainerStructure");
 		File element = new File(localDirectory);
@@ -203,6 +213,7 @@ public class ImportOperationTest extends UITestCase implements IOverwriteQuery {
 		}
 	}
 
+	@Test
 	public void testSetFilesToImport() throws Exception {
 		project = FileUtil.createProject("ImportSetFilesToImport");
 		File element = new File(localDirectory + File.separator
@@ -217,6 +228,7 @@ public class ImportOperationTest extends UITestCase implements IOverwriteQuery {
 		verifyFiles(importElements.size());
 	}
 
+	@Test
 	public void testSetOverwriteResources() throws Exception {
 		project = FileUtil.createProject("ImportSetOverwriteResources");
 		File element = new File(localDirectory);

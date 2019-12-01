@@ -31,7 +31,11 @@ import org.eclipse.ui.dialogs.IOverwriteQuery;
 import org.eclipse.ui.internal.wizards.datatransfer.FileSystemExportOperation;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class ExportFileSystemOperationTest extends UITestCase implements
 		IOverwriteQuery {
 
@@ -43,8 +47,8 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 
 	private IProject project;
 
-	public ExportFileSystemOperationTest(String testName) {
-		super(testName);
+	public ExportFileSystemOperationTest() {
+		super(ExportFileSystemOperationTest.class.getSimpleName());
 	}
 
 	@Override
@@ -104,6 +108,7 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 		}
 	}
 
+	@Test
 	public void testGetStatus() throws Exception {
 		List<IResource> resources = new ArrayList<>();
 		resources.add(project);
@@ -115,6 +120,7 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 	}
 
 	/* Export a project, with all directories */
+	@Test
 	public void testExportRootResource() throws Exception {
 		List<IResource> resources = new ArrayList<>();
 		resources.add(project);
@@ -127,6 +133,7 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 	}
 
 	/* Export a project, create all leadup folders. */
+	@Test
 	public void testExportResources() throws Exception {
 		List<IResource> resources = new ArrayList<>();
 		IResource[] members = project.members();
@@ -140,6 +147,7 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 	}
 
 	/* Export folders, do not create leadup folders. */
+	@Test
 	public void testExportFolderCreateDirectoryStructure() throws Exception {
 		List<IResource> resources = new ArrayList<>();
 		IResource[] members = project.members();
@@ -160,6 +168,7 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 	}
 
 	/* Export files, do not create leadup folders. */
+	@Test
 	public void testExportFilesCreateDirectoryStructure() throws Exception {
 		List<IResource> resources = new ArrayList<>();
 		IResource[] members = project.members();
@@ -185,6 +194,7 @@ public class ExportFileSystemOperationTest extends UITestCase implements
 	}
 
 	/* Export files, overwrite - do not create container directories or lead up folders. */
+	@Test
 	public void testExportOverwrite() throws Exception {
 		List<IProject> resources = new ArrayList<>();
 		resources.add(project);

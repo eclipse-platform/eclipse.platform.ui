@@ -40,7 +40,11 @@ import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.wizards.datatransfer.ImportOperation;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class ImportArchiveOperationTest extends UITestCase implements IOverwriteQuery {
 	private static final String DATA_PATH_PREFIX = "data/org.eclipse.datatransferArchives/";
 
@@ -62,8 +66,8 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
 
 	private URL tarFileURL;
 
-	public ImportArchiveOperationTest(String testName) {
-		super(testName);
+	public ImportArchiveOperationTest() {
+		super(ImportArchiveOperationTest.class.getSimpleName());
 	}
 
 	@Override
@@ -108,6 +112,7 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
 				new Path(DATA_PATH_PREFIX).append(zipFileName + ".tar"), null));
 	}
 
+	@Test
 	public void testZipGetStatus() throws Exception {
 		setup(ARCHIVE_SOURCE_PROPERTY);
 		project = FileUtil.createProject("ImportZipGetStatus");
@@ -128,6 +133,7 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
 		assertTrue(operation.getStatus().getCode() == IStatus.OK);
 	}
 
+	@Test
 	public void testTarGetStatus() throws Exception {
 		setup(ARCHIVE_SOURCE_PROPERTY);
 		project = FileUtil.createProject("ImportTarGetStatus");
@@ -146,6 +152,7 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
 		assertTrue(operation.getStatus().getCode() == IStatus.OK);
 	}
 
+	@Test
 	public void testZipImport() throws Exception {
 		setup(ARCHIVE_SOURCE_PROPERTY);
 		project = FileUtil.createProject("ImportZip");
@@ -171,6 +178,7 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
 	}
 
 
+	@Test
 	public void testTarImport() throws Exception {
 		setup(ARCHIVE_SOURCE_PROPERTY);
 		project = FileUtil.createProject("ImportTar");
@@ -191,6 +199,7 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
 		verifyFiles(directoryNames.length, false);
 	}
 
+	@Test
 	public void testTarSetOverwriteResources() throws Exception {
 		setup(ARCHIVE_SOURCE_PROPERTY);
 		project = FileUtil.createProject("ImportTarSetOverwriteResources");
@@ -212,6 +221,7 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
 		verifyFiles(directoryNames.length, false);
 	}
 
+	@Test
 	public void testZipSetOverwriteResources() throws Exception {
 		setup(ARCHIVE_SOURCE_PROPERTY);
 		project = FileUtil.createProject("ImporZiprSetOverwriteResources");
@@ -237,6 +247,7 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
 		verifyFiles(directoryNames.length, false);
 	}
 
+	@Test
 	public void testZipWithFileAtRoot() throws Exception {
 		setup(ARCHIVE_115800_PROPERTY);
 		project = FileUtil.createProject("ImportZipWithFileAtRoot");
@@ -262,6 +273,7 @@ public class ImportArchiveOperationTest extends UITestCase implements IOverwrite
 	}
 
 
+	@Test
 	public void testTarWithFileAtRoot() throws Exception {
 		setup(ARCHIVE_115800_PROPERTY);
 		project = FileUtil.createProject("ImportTarWithFileAtRoot");

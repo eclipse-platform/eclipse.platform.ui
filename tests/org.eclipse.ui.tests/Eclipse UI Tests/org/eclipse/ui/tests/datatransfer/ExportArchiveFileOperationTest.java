@@ -43,7 +43,11 @@ import org.eclipse.ui.internal.wizards.datatransfer.TarException;
 import org.eclipse.ui.internal.wizards.datatransfer.TarFile;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class ExportArchiveFileOperationTest extends UITestCase implements
 		IOverwriteQuery {
 
@@ -63,8 +67,8 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 	private boolean flattenPaths = false;
 	private boolean excludeProjectPath = false;
 
-	public ExportArchiveFileOperationTest(String testName) {
-		super(testName);
+	public ExportArchiveFileOperationTest() {
+		super(ExportArchiveFileOperationTest.class.getSimpleName());
 	}
 
 	@Override
@@ -72,6 +76,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 		return "";
 	}
 
+	@Test
 	public void testExportStatus(){
 		List<IProject> resources = new ArrayList<>();
 		resources.add(project);
@@ -81,6 +86,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 		assertTrue(operation.getStatus().getCode() == IStatus.OK);
 	}
 
+	@Test
 	public void testExportZip() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + ZIP_FILE_EXT;
 		List<IProject> resources = new ArrayList<>();
@@ -96,6 +102,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 
 	}
 
+	@Test
 	public void testExportZipCompressed() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + ZIP_FILE_EXT;
 		List<IProject> resources = new ArrayList<>();
@@ -109,6 +116,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 		verifyCompressed(ZIP_FILE_EXT);
 	}
 
+	@Test
 	public void testExportZipCreateSelectedDirectories() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + ZIP_FILE_EXT;
 		List<IResource> resources = new ArrayList<>();
@@ -134,6 +142,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 		verifyFolders(directoryNames.length + emptyDirectoryNames.length, ZIP_FILE_EXT);
 	}
 
+	@Test
 	public void testExportZipCreateSelectedDirectoriesProject() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + ZIP_FILE_EXT;
 		ArchiveFileExportOperation operation = new ArchiveFileExportOperation(project, filePath);
@@ -155,6 +164,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 
 	}
 
+	@Test
 	public void testExportZipCreateSelectedDirectoriesWithFolders() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + ZIP_FILE_EXT;
 		List<IResource> resources = new ArrayList<>();
@@ -175,6 +185,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 		verifyFolders(directoryNames.length + emptyDirectoryNames.length, ZIP_FILE_EXT);
 	}
 
+	@Test
 	public void testExportZipCreateSelectedDirectoriesCompressed() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + ZIP_FILE_EXT;
 		List<IResource> resources = new ArrayList<>();
@@ -201,6 +212,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 		verifyFolders(directoryNames.length + emptyDirectoryNames.length, ZIP_FILE_EXT);
 	}
 
+	@Test
 	public void testExportTar() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + TAR_FILE_EXT;
 		List<IResource> resources = new ArrayList<>();
@@ -215,6 +227,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 		verifyFolders(directoryNames.length + emptyDirectoryNames.length, TAR_FILE_EXT);
 	}
 
+	@Test
 	public void testExportTarCompressed() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + TAR_FILE_EXT;
 		List<IResource> resources = new ArrayList<>();
@@ -228,6 +241,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 		verifyCompressed(TAR_FILE_EXT);
 	}
 
+	@Test
 	public void testExportTarCreateSelectedDirectories() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + TAR_FILE_EXT;
 		List<IResource> resources = new ArrayList<>();
@@ -253,6 +267,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 		verifyFolders(directoryNames.length + emptyDirectoryNames.length, TAR_FILE_EXT);
 	}
 
+	@Test
 	public void testExportTarCreateSelectedDirectoriesWithFolders() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + TAR_FILE_EXT;
 		List<IResource> resources = new ArrayList<>();
@@ -274,6 +289,7 @@ public class ExportArchiveFileOperationTest extends UITestCase implements
 
 	}
 
+	@Test
 	public void testExportTarCreateSelectedDirectoriesCompressed() throws Exception {
 		filePath = localDirectory + "/" + FILE_NAME + "." + TAR_FILE_EXT;
 		List<IResource> resources = new ArrayList<>();
