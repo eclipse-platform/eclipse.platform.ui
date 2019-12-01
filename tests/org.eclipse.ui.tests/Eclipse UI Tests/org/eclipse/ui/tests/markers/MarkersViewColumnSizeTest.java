@@ -14,18 +14,22 @@
 
 package org.eclipse.ui.tests.markers;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+
+import junit.framework.TestSuite;
 
 /**
  * @since 3.4
  *
  */
+@RunWith(JUnit4.class)
 public class MarkersViewColumnSizeTest extends UITestCase {
 
 	public static TestSuite suite() {
@@ -35,6 +39,10 @@ public class MarkersViewColumnSizeTest extends UITestCase {
 		return ts;
 	}
 
+	public MarkersViewColumnSizeTest() {
+		super(MarkersViewColumnSizeTest.class.getSimpleName());
+	}
+
 	/**
 	 * @param testName
 	 */
@@ -42,6 +50,8 @@ public class MarkersViewColumnSizeTest extends UITestCase {
 		super(name);
 	}
 
+
+	@Test
 	public void testColumnCreate() {
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();
@@ -66,6 +76,7 @@ public class MarkersViewColumnSizeTest extends UITestCase {
 
 	}
 
+	@Test
 	public void testColumnRestore() {
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();

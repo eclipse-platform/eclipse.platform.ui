@@ -24,24 +24,25 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.views.markers.MarkerViewUtil;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * MarkerViewUtilTest are the test for the marker view util.
  *
  * @since 3.13
  */
+@RunWith(JUnit4.class)
 public class MarkerViewUtilTest extends UITestCase {
 
 	private IProject project;
 
 	/**
 	 * Create a new instance of the receiver.
-	 *
-	 * @param testName
-	 *            name of the test
 	 */
-	public MarkerViewUtilTest(String testName) {
-		super(testName);
+	public MarkerViewUtilTest() {
+		super(MarkerViewUtilTest.class.getSimpleName());
 	}
 
 	@Override
@@ -65,6 +66,7 @@ public class MarkerViewUtilTest extends UITestCase {
 		super.doTearDown();
 	}
 
+	@Test
 	public void testShowMarkers() throws CoreException {
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 		IWorkbenchPage page = window.getActivePage();

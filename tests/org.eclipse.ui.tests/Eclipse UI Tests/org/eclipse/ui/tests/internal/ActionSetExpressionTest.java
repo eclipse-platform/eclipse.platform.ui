@@ -19,14 +19,17 @@ import org.eclipse.jface.action.SubContributionItem;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.tests.api.ListView;
 import org.eclipse.ui.tests.harness.util.ActionUtil;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * This class contains tests for action set enablement
  */
+@RunWith(JUnit4.class)
 public class ActionSetExpressionTest extends ActionExpressionTest {
 
-	public ActionSetExpressionTest(String testName) {
-		super(testName);
+	public ActionSetExpressionTest() {
+		super(ActionSetExpressionTest.class.getSimpleName());
 	}
 
 	/**

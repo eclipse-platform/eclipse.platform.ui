@@ -29,26 +29,24 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Ignore;
-import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Test for Bug 41931.
  *
  * @since 3.0
  */
-@RunWith(JUnit38ClassRunner.class)
+@RunWith(JUnit4.class)
 @Ignore
 public class Bug41931Test extends UITestCase {
 
 	/**
 	 * Constructs a new instance of this test case.
-	 *
-	 * @param testName
-	 *            The name of the test
 	 */
-	public Bug41931Test(String testName) {
-		super(testName);
+	public Bug41931Test() {
+		super(Bug41931Test.class.getSimpleName());
 	}
 
 	/**
@@ -58,6 +56,7 @@ public class Bug41931Test extends UITestCase {
 	 * @throws CoreException
 	 *             If the test project cannot be created or opened.
 	 */
+	@Test
 	public void testBringToTop() throws CoreException {
 		// Open a window.
 		IWorkbenchWindow window = openTestWindow();

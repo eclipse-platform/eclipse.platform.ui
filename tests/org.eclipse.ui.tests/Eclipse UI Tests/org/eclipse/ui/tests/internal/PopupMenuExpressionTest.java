@@ -16,14 +16,18 @@ package org.eclipse.ui.tests.internal;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.ui.tests.api.ListView;
 import org.eclipse.ui.tests.harness.util.ActionUtil;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * This class contains tests for popup menu visibility
  */
+@RunWith(JUnit4.class)
 public class PopupMenuExpressionTest extends ActionExpressionTest {
 
-	public PopupMenuExpressionTest(String testName) {
-		super(testName);
+	public PopupMenuExpressionTest() {
+		super(PopupMenuExpressionTest.class.getSimpleName());
 	}
 
 	/**
@@ -47,6 +51,7 @@ public class PopupMenuExpressionTest extends ActionExpressionTest {
 		}
 	}
 
+	@Test
 	public void testExpressionEnabledAction() throws Throwable {
 		// Setup.
 		ListView view = showListView();

@@ -29,8 +29,9 @@ import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Ignore;
-import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests various sources keyed off the workbench window.
@@ -38,17 +39,14 @@ import org.junit.runner.RunWith;
  * @since 3.3
  *
  */
-@RunWith(JUnit38ClassRunner.class)
+@RunWith(JUnit4.class)
 @Ignore("Disabled due 544032, see also 485167")
 public class WorkbenchWindowSubordinateSourcesTests extends UITestCase {
 
 	private WorkbenchWindow window;
 
-	/**
-	 * @param testName
-	 */
-	public WorkbenchWindowSubordinateSourcesTests(String testName) {
-		super(testName);
+	public WorkbenchWindowSubordinateSourcesTests() {
+		super(WorkbenchWindowSubordinateSourcesTests.class.getSimpleName());
 	}
 
 	@Override
@@ -57,6 +55,7 @@ public class WorkbenchWindowSubordinateSourcesTests extends UITestCase {
 		processEvents();
 	}
 
+	@Test
 	public void testIsCoolbarVisible() {
 		IEvaluationService service = window.getService(IEvaluationService.class);
 		IEvaluationContext context = service.getCurrentState();
@@ -82,6 +81,7 @@ public class WorkbenchWindowSubordinateSourcesTests extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testIsStatusLineVisible() {
 		IEvaluationService service = window.getService(IEvaluationService.class);
 		IEvaluationContext context = service.getCurrentState();
@@ -106,6 +106,7 @@ public class WorkbenchWindowSubordinateSourcesTests extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testIsPerspectiveBarVisible() {
 		IEvaluationService service = window.getService(IEvaluationService.class);
 		IEvaluationContext context = service.getCurrentState();
@@ -139,6 +140,7 @@ public class WorkbenchWindowSubordinateSourcesTests extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testPerspectiveId() throws Exception {
 		IEvaluationService service = window.getService(IEvaluationService.class);
 		WithExpression with = new WithExpression(ISources.ACTIVE_WORKBENCH_WINDOW_ACTIVE_PERSPECTIVE_NAME);

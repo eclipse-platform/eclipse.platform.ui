@@ -23,10 +23,11 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.navigator.AbstractNavigatorTest;
 import org.junit.Ignore;
-import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
-@RunWith(JUnit38ClassRunner.class)
+@RunWith(JUnit4.class)
 @Ignore
 public class ResourceMappingMarkersTest extends AbstractNavigatorTest {
 
@@ -35,8 +36,8 @@ public class ResourceMappingMarkersTest extends AbstractNavigatorTest {
 	 *
 	 * @param testName
 	 */
-	public ResourceMappingMarkersTest(String testName) {
-		super(testName);
+	public ResourceMappingMarkersTest() {
+		super(ResourceMappingMarkersTest.class.getSimpleName());
 	}
 
 	/**
@@ -50,6 +51,7 @@ public class ResourceMappingMarkersTest extends AbstractNavigatorTest {
 		createTestFile();
 	}
 
+	@Test
 	public void testResourceMappings() {
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();

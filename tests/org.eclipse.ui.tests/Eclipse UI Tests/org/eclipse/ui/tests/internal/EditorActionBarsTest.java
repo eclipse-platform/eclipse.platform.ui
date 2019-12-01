@@ -38,14 +38,15 @@ import org.eclipse.ui.tests.api.MockViewPart;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Ignore;
-import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * This class contains tests for the editor action bars
  * implementation.
  */
-@RunWith(JUnit38ClassRunner.class)
+@RunWith(JUnit4.class)
 @Ignore
 public class EditorActionBarsTest extends UITestCase {
 
@@ -58,8 +59,8 @@ public class EditorActionBarsTest extends UITestCase {
 	/**
 	 * Constructor for IEditorPartTest
 	 */
-	public EditorActionBarsTest(String testName) {
-		super(testName);
+	public EditorActionBarsTest() {
+		super(EditorActionBarsTest.class.getSimpleName());
 	}
 
 	@Override
@@ -77,6 +78,7 @@ public class EditorActionBarsTest extends UITestCase {
 	 * out of synch with the state of the IAction
 	 * </p>
 	 */
+	@Test
 	public void testActionEnablementWhenActive() throws Throwable {
 		// Open an editor.
 		MockEditorPart editor = openEditor(fPage, "1");
@@ -100,6 +102,7 @@ public class EditorActionBarsTest extends UITestCase {
 	 * out of synch with the state of the IAction
 	 * </p>
 	 */
+	@Test
 	public void testActionEnablementWhenInactive() throws Throwable {
 		// Open an editor.
 		MockEditorPart editor = openEditor(fPage, "2");
@@ -125,6 +128,7 @@ public class EditorActionBarsTest extends UITestCase {
 		verifyToolItemState(contributor, true);
 	}
 
+	@Test
 	public void testCoolBarContribution() throws Throwable {
 
 		MockEditorPart editor = openEditor(fPage, "3");
@@ -226,6 +230,7 @@ public class EditorActionBarsTest extends UITestCase {
 	 * See bug 239945 for details.
 	 * @throws Throwable
 	 */
+	@Test
 	public void test239945() throws Throwable {
 		// Test a cool bar with a single separator
 		CoolBarManager coolBarManager = new CoolBarManager();

@@ -20,17 +20,22 @@ import org.eclipse.swt.dnd.Transfer;
 import org.eclipse.swt.dnd.URLTransfer;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.5
  *
  */
+@RunWith(JUnit4.class)
 public class TextHandlerTest extends UITestCase {
 
-	public TextHandlerTest(String testName) {
-		super(testName);
+	public TextHandlerTest() {
+		super(TextHandlerTest.class.getSimpleName());
 	}
 
+	@Test
 	public void testEditableText() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
 		TextControlView view = (TextControlView) window.getActivePage()
@@ -98,6 +103,7 @@ public class TextHandlerTest extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testNonEditableText() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
 		TextControlView view = (TextControlView) window.getActivePage()

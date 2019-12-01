@@ -15,6 +15,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.internal;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 
 import org.eclipse.core.resources.IFile;
@@ -29,6 +32,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.actions.TextActionHandler;
 import org.eclipse.ui.views.navigator.ResourceNavigator;
+import org.junit.Test;
 
 /**
  * bug 99858 [IDE] Error upon deleting a project. Tests that our delete code no
@@ -44,10 +48,6 @@ public class Bug99858Test extends ResourceActionTest {
 		super();
 	}
 
-	public Bug99858Test(String name) {
-		super(name);
-	}
-
 	/**
 	 * Create a project with some files, close it, and delete it. With the
 	 * changes in runtime to throw a CoreException from IContainer#members(),
@@ -56,6 +56,7 @@ public class Bug99858Test extends ResourceActionTest {
 	 * @throws Throwable
 	 *             if it goes wrong
 	 */
+	@Test
 	public void testDeleteClosedProject() throws Throwable {
 		IWorkbenchPage page = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow().getActivePage();

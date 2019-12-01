@@ -20,11 +20,15 @@ import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class PerspectiveSwitcherTest extends UITestCase {
 
-	public PerspectiveSwitcherTest(String testName) {
-		super(testName);
+	public PerspectiveSwitcherTest() {
+		super(PerspectiveSwitcherTest.class.getSimpleName());
 	}
 
 	/**
@@ -32,6 +36,7 @@ public class PerspectiveSwitcherTest extends UITestCase {
 	 * docked at the other side of the window even if the 'Open Perspective'
 	 * contribution item is not there.
 	 */
+	@Test
 	public void testCreateBarManagerBug274486() {
 		// we want to move the perspective bar to the other side so that it will
 		// be recreated, TOP_RIGHT and TOP_LEFT should switch to LEFT, LEFT

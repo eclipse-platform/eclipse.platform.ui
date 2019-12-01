@@ -22,18 +22,19 @@ import org.eclipse.ui.internal.AnimationEngine;
 import org.eclipse.ui.internal.AnimationFeedbackBase;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.5
  *
  */
+@RunWith(JUnit4.class)
 public class AnimationEngineTest extends UITestCase {
 
-	/**
-	 * @param testName
-	 */
-	public AnimationEngineTest(String testName) {
-		super(testName);
+	public AnimationEngineTest() {
+		super(AnimationEngineTest.class.getSimpleName());
 	}
 
 	private class TestFeedback extends AnimationFeedbackBase {
@@ -93,6 +94,7 @@ public class AnimationEngineTest extends UITestCase {
 	 * </ol>
 	 * @throws InterruptedException
 	 */
+	@Test
 	public void testAnimationEngine() throws InterruptedException {
 		// Ensure that animations are turned on
 		setPreference(PrefUtil.getAPIPreferenceStore(), IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, true);

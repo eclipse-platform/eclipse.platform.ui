@@ -24,45 +24,54 @@ import java.util.List;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Ignore;
-import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
-@RunWith(JUnit38ClassRunner.class)
+@RunWith(JUnit4.class)
 @Ignore
 public class WorkbenchPageTest extends UITestCase {
 
-	public WorkbenchPageTest(String testName) {
-		super(testName);
+	public WorkbenchPageTest() {
+		super(WorkbenchPageTest.class.getSimpleName());
 	}
 
+	@Test
 	public void test1() {
 		assertOrderAfterPerformedShowIn(asList("a", "b", "c"));
 	}
 
+	@Test
 	public void test2() {
 		assertOrderAfterPerformedShowIn(asList("c", "a", "b"), "c");
 	}
 
+	@Test
 	public void test3() {
 		assertOrderAfterPerformedShowIn(asList("b", "c", "a"), "c", "b");
 	}
 
+	@Test
 	public void test4() {
 		assertOrderAfterPerformedShowIn(asList("a", "b", "c"), "a");
 	}
 
+	@Test
 	public void test5() {
 		assertOrderAfterPerformedShowIn(asList("b", "a", "c"), "b", "b");
 	}
 
+	@Test
 	public void test6() {
 		assertOrderAfterPerformedShowIn(asList("b", "c", "a"), "b", "c", "b");
 	}
 
+	@Test
 	public void test7() {
 		assertOrderAfterPerformedShowIn(asList("a", "b", "c"), "d");
 	}
 
+	@Test
 	public void test8() {
 		assertOrderAfterPerformedShowIn(asList("b", "a", "c"), "d", "b");
 	}

@@ -17,22 +17,25 @@ import java.util.List;
 import org.eclipse.ui.views.markers.internal.MarkerFilter;
 import org.eclipse.ui.views.markers.internal.MarkerType;
 import org.eclipse.ui.views.markers.internal.ProblemFilter;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class DeclarativeFilterDeclarationTest extends DeclarativeFilterTest {
 
 	/**
 	 * The DeclarativeFilterActivityTest is a test that the
 	 * declarative filters are removed by activities
-	 *
-	 * @param testName
 	 */
-	public DeclarativeFilterDeclarationTest(String testName) {
-		super(testName);
+	public DeclarativeFilterDeclarationTest() {
+		super(DeclarativeFilterDeclarationTest.class.getSimpleName());
 	}
 
 	/**
 	 * Test the filter on any error.
 	 */
+	@Test
 	public void testAnyErrorFilter() {
 		String filterName = PROBLEM_TEST_ON_ANY_ERROR;
 		ProblemFilter filter = getFilter(filterName);
@@ -49,6 +52,7 @@ public class DeclarativeFilterDeclarationTest extends DeclarativeFilterTest {
 	/**
 	 * Test the filter on selected warning.
 	 */
+	@Test
 	public void testSelectedWarning() {
 		String filterName = PROBLEM_TEST_ON_SELECTED_WARNING;
 		ProblemFilter filter = getFilter(filterName);
@@ -65,6 +69,7 @@ public class DeclarativeFilterDeclarationTest extends DeclarativeFilterTest {
 	/**
 	 * Test the filter on selected and children infos.
 	 */
+	@Test
 	public void testInfoAndChildren() {
 		String filterName = PROBLEM_TEST_INFO_AND_CHILDREN;
 		ProblemFilter filter = getFilter(filterName);
@@ -81,6 +86,7 @@ public class DeclarativeFilterDeclarationTest extends DeclarativeFilterTest {
 	/**
 	 * Test the filter on same container.
 	 */
+	@Test
 	public void testSameContainer() {
 		String filterName = PROBLEM_TEST_SAME_CONTAINER_NO_SEVERITY;
 		ProblemFilter filter = getFilter(filterName);
@@ -95,6 +101,7 @@ public class DeclarativeFilterDeclarationTest extends DeclarativeFilterTest {
 	/**
 	 * Test the filter on description.
 	 */
+	@Test
 	public void testDescription() {
 		String filterName = PROBLEM_TEST_ON_METHOD;
 		ProblemFilter filter = getFilter(filterName);
@@ -108,6 +115,7 @@ public class DeclarativeFilterDeclarationTest extends DeclarativeFilterTest {
 	/**
 	 * Test the filter not on description.
 	 */
+	@Test
 	public void testNotOnDescription() {
 		String filterName = PROBLEM_TEST_NOT_ON_METHOD;
 		ProblemFilter filter = getFilter(filterName);
@@ -121,6 +129,7 @@ public class DeclarativeFilterDeclarationTest extends DeclarativeFilterTest {
 	/**
 	 * Test the filter on problem types.
 	 */
+	@Test
 	public void testProblemTypes() {
 		String filterName = PROBLEM_TEST_ON_PROBLEM;
 		ProblemFilter filter = getFilter(filterName);

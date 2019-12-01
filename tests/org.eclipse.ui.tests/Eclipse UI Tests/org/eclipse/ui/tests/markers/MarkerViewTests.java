@@ -20,6 +20,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * MarkerViewTests are the tests for the marker view.
@@ -27,17 +30,17 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  * @since 3.4
  *
  */
+@RunWith(JUnit4.class)
 public class MarkerViewTests extends UITestCase {
 
 	/**
 	 * Create a new instance of the receiver.
-	 *
-	 * @param testName
 	 */
-	public MarkerViewTests(String testName) {
-		super(testName);
+	public MarkerViewTests() {
+		super(MarkerViewTests.class.getSimpleName());
 	}
 
+	@Test
 	public void testOpenView() {
 		IWorkbenchWindow window = PlatformUI.getWorkbench()
 				.getActiveWorkbenchWindow();

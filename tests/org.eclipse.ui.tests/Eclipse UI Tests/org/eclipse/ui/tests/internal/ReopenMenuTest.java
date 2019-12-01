@@ -14,16 +14,17 @@
 
 package org.eclipse.ui.tests.internal;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.ui.internal.ReopenEditorMenu;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * @since 3.4
  *
  */
-public class ReopenMenuTest extends TestCase {
+public class ReopenMenuTest {
 	private static class TextInfo {
 		int index;
 		String filename;
@@ -57,13 +58,7 @@ public class ReopenMenuTest extends TestCase {
 					"&4 AReallyLongNameLazyFoxJumpsSomeStupid...",
 					"AReallyLongNameLazyFoxJumpsSomeStupid... &4"), };
 
-	/**
-	 * @param name
-	 */
-	public ReopenMenuTest(String name) {
-		super(name);
-	}
-
+	@Test
 	public void testLtr() {
 		for (int i = 0; i < data.length; i++) {
 			TextInfo info = data[i];
@@ -75,6 +70,7 @@ public class ReopenMenuTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testRtl() {
 		for (int i = 0; i < data.length; i++) {
 			TextInfo info = data[i];

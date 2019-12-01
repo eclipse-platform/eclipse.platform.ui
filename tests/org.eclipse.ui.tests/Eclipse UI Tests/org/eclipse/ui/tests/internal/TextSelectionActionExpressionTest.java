@@ -28,17 +28,21 @@ import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.ActionUtil;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * This class contains tests for text selection action enablement
  */
+@RunWith(JUnit4.class)
 public class TextSelectionActionExpressionTest extends UITestCase {
 	protected IWorkbenchWindow fWindow;
 
 	protected IWorkbenchPage fPage;
 
-	public TextSelectionActionExpressionTest(String testName) {
-		super(testName);
+	public TextSelectionActionExpressionTest() {
+		super(TextSelectionActionExpressionTest.class.getSimpleName());
 	}
 
 	@Override
@@ -48,6 +52,7 @@ public class TextSelectionActionExpressionTest extends UITestCase {
 		fPage = fWindow.getActivePage();
 	}
 
+	@Test
 	public void testAnyTextAction() throws Throwable {
 		// Setup.
 		ExtendedTextEditor editor = showTextEditor("anyText.exttxt");
@@ -75,6 +80,7 @@ public class TextSelectionActionExpressionTest extends UITestCase {
 		testAction(mgr, "anyText", true);
 	}
 
+	@Test
 	public void testEmptyTextAction() throws Throwable {
 		// Setup.
 		ExtendedTextEditor editor = showTextEditor("emptyText.exttxt");
@@ -102,6 +108,7 @@ public class TextSelectionActionExpressionTest extends UITestCase {
 		testAction(mgr, "emptyText", true);
 	}
 
+	@Test
 	public void testHelloTextAction() throws Throwable {
 		// Setup.
 		ExtendedTextEditor editor = showTextEditor("helloText.exttxt");

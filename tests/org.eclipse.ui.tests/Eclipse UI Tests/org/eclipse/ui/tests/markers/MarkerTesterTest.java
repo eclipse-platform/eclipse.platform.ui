@@ -26,6 +26,9 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  *
@@ -33,13 +36,14 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  * @author Prakash G.R.
  *
  */
+@RunWith(JUnit4.class)
 public class MarkerTesterTest extends UITestCase {
 
 	private static final String MARKER_NAMESPACE = "org.eclipse.ui.ide.marker";
 	private IProject project;
 
-	public MarkerTesterTest(String testName) {
-		super(testName);
+	public MarkerTesterTest() {
+		super(MarkerTesterTest.class.getSimpleName());
 	}
 
 	@Override
@@ -63,6 +67,7 @@ public class MarkerTesterTest extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testSeverity() throws Exception {
 
 		IMarker errorMarker = project.createMarker(IMarker.PROBLEM);
@@ -89,6 +94,7 @@ public class MarkerTesterTest extends UITestCase {
 
 	}
 
+	@Test
 	public void testType() throws Exception {
 
 		IMarker problemMarker = project.createMarker(IMarker.PROBLEM);
@@ -108,6 +114,7 @@ public class MarkerTesterTest extends UITestCase {
 		assertEquals(EvaluationResult.TRUE, result);
 	}
 
+	@Test
 	public void testSuperType() throws Exception {
 
 		IMarker problemMarker = project.createMarker(IMarker.PROBLEM);
@@ -124,6 +131,7 @@ public class MarkerTesterTest extends UITestCase {
 		assertEquals(EvaluationResult.FALSE, result);
 	}
 
+	@Test
 	public void testPriority() throws Exception {
 
 		IMarker highPriority = project.createMarker(IMarker.PROBLEM);
@@ -149,6 +157,7 @@ public class MarkerTesterTest extends UITestCase {
 		assertEquals(EvaluationResult.TRUE, result);
 	}
 
+	@Test
 	public void testDone() throws Exception {
 
 		IMarker done = project.createMarker(IMarker.TASK);
@@ -182,6 +191,7 @@ public class MarkerTesterTest extends UITestCase {
 		assertEquals(EvaluationResult.FALSE, result);
 	}
 
+	@Test
 	public void testMessage() throws Exception {
 
 		IMarker someTaskMarker = project.createMarker(IMarker.TASK);
@@ -217,6 +227,7 @@ public class MarkerTesterTest extends UITestCase {
 
 	}
 
+	@Test
 	public void testResourceType() throws Exception {
 
 		IMarker someTaskMarker = project.createMarker(IMarker.TASK);

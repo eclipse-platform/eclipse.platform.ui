@@ -21,6 +21,7 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.api.ListElement;
 import org.eclipse.ui.tests.api.ListView;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
 
 /**
  * This class contains tests for popup menu enablement
@@ -49,6 +50,7 @@ public abstract class ActionExpressionTest extends UITestCase {
 		fPage = fWindow.getActivePage();
 	}
 
+	@Test
 	public void testAllAction() throws Throwable {
 		// Setup.
 		ListView view = showListView();
@@ -71,6 +73,7 @@ public abstract class ActionExpressionTest extends UITestCase {
 		testAction(mgr, "allAction_v2", true);
 	}
 
+	@Test
 	public void testRedAction() throws Throwable {
 		// Setup.
 		ListView view = showListView();
@@ -93,6 +96,7 @@ public abstract class ActionExpressionTest extends UITestCase {
 		testAction(mgr, "redAction_v2", true);
 	}
 
+	@Test
 	public void testNotRedAction() throws Throwable {
 		// Setup.
 		ListView view = showListView();
@@ -115,6 +119,7 @@ public abstract class ActionExpressionTest extends UITestCase {
 		testAction(mgr, "notRedAction_v2", false);
 	}
 
+	@Test
 	public void testTrueAction() throws Throwable {
 		// Setup.
 		ListView view = showListView();
@@ -137,6 +142,7 @@ public abstract class ActionExpressionTest extends UITestCase {
 		testAction(mgr, "trueAction_v2", true);
 	}
 
+	@Test
 	public void testRedOrBlueAction() throws Throwable {
 		// Setup.
 		ListView view = showListView();
@@ -159,6 +165,7 @@ public abstract class ActionExpressionTest extends UITestCase {
 		testAction(mgr, "redOrBlueAction_v2", true);
 	}
 
+	@Test
 	public void testRedAndTrueAction() throws Throwable {
 		// Setup.
 		ListView view = showListView();
@@ -181,6 +188,7 @@ public abstract class ActionExpressionTest extends UITestCase {
 		testAction(mgr, "redAndTrueAction_v2", true);
 	}
 
+	@Test
 	public void testPluginStateActions() throws Throwable {
 		// Setup.
 		ListView view = showListView();
@@ -194,6 +202,7 @@ public abstract class ActionExpressionTest extends UITestCase {
 		testAction(mgr, "pluginActivatedAction_v2", true);
 	}
 
+	@Test
 	public void testSystemPropertyAction() throws Throwable {
 		// Setup.
 		ListView view = showListView();

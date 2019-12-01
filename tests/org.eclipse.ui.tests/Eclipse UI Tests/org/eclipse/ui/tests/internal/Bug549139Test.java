@@ -36,6 +36,11 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.CloseResourceAction;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.TestName;
 
 /**
  * Bug 549139 - DeleteResourceAction should check with registered ModelProviders
@@ -44,6 +49,9 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
 public class Bug549139Test extends ResourceActionTest {
 
 	private static final String TEST_MANAGER_ID = "org.eclipse.ui.tests.org.eclipse.ui.tests.internal.Bug549139Test.TestModelProvider";
+
+	@Rule
+	public TestName name = new TestName();
 
 	public static class TestModelProvider extends ModelProvider {
 
@@ -67,30 +75,25 @@ public class Bug549139Test extends ResourceActionTest {
 		super();
 	}
 
-	public Bug549139Test(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp2() throws Exception {
 		testProject = createTestProject(getName());
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown2() throws Exception {
 		if (testProject.exists()) {
 			boolean force = true;
 			testProject.delete(force, new NullProgressMonitor());
 		}
 		UITestCase.waitForJobs(0, 30_000);
-		super.tearDown();
 	}
 
 	/**
 	 * Registers a model provider, creates a project with some files and closes it.
 	 * Assert that the model provider was asked to confirm the close.
 	 */
+	@Test
 	public void testCloseChecksWithModelProvider() throws Throwable {
 		String testProjectName = getName();
 
@@ -121,6 +124,7 @@ public class Bug549139Test extends ResourceActionTest {
 	 * Registers a model provider, creates a project with some files and deletes it.
 	 * Assert that the model provider was asked to confirm the delete.
 	 */
+	@Test
 	public void testDeleteChecksWithModelProvider() throws Throwable {
 		String testProjectName = getName();
 
@@ -134,6 +138,10 @@ public class Bug549139Test extends ResourceActionTest {
 		lastValidatedResourceName = testModelProvider.getLastValidatedResourceName();
 		assertNotEquals("expected test ModelProvider to be called after delete action", testProjectName,
 				lastValidatedResourceName);
+	}
+
+	private String getName() {
+		return name.getMethodName();
 	}
 
 	private void runDeleteActionOnproject() {

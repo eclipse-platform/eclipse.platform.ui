@@ -24,18 +24,19 @@ import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Ignore;
-import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.6
  */
-@RunWith(JUnit38ClassRunner.class)
+@RunWith(JUnit4.class)
 @Ignore
 public class StickyViewManagerTest extends UITestCase {
 
-	public StickyViewManagerTest(String testName) {
-		super(testName);
+	public StickyViewManagerTest() {
+		super(StickyViewManagerTest.class.getSimpleName());
 	}
 
 	@Override
@@ -50,6 +51,7 @@ public class StickyViewManagerTest extends UITestCase {
 	 * sticky behaviour across all their instances (regardless of whether the
 	 * instance has a secondary id or not).
 	 */
+	@Test
 	public void testMultipleStickyViewAcrossPerspectivesBug280656()
 			throws Exception {
 		IWorkbenchPage page = fWorkbench.getActiveWorkbenchWindow()
@@ -80,6 +82,7 @@ public class StickyViewManagerTest extends UITestCase {
 	 * Tests that hiding multi-instance sticky views from one perspective
 	 * subsequently causes them to be hidden in all other perspectives.
 	 */
+	@Test
 	public void testRemovedMultipleStickyViewAcrossPerspectives()
 			throws Exception {
 		// first we show the special test views
@@ -115,6 +118,7 @@ public class StickyViewManagerTest extends UITestCase {
 	 * Ensures that views that are not defined to be sticky are not indirectly
 	 * affected as a side-effect of the sticky view management code.
 	 */
+	@Test
 	public void testRemovedMultipleStickyViewAcrossPerspectives2()
 			throws Exception {
 		IPerspectiveRegistry registry = fWorkbench.getPerspectiveRegistry();

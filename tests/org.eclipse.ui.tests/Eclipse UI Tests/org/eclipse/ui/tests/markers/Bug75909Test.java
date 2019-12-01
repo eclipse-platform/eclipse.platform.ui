@@ -14,6 +14,10 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.markers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,10 +34,9 @@ import org.eclipse.ui.tests.internal.TestMemento;
 import org.eclipse.ui.views.markers.internal.MarkerType;
 import org.eclipse.ui.views.markers.internal.ProblemFilter;
 import org.junit.Ignore;
-import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.Test;
 import org.junit.runner.RunWith;
-
-import junit.framework.TestCase;
+import org.junit.runners.JUnit4;
 
 /**
  * Testing for https://bugs.eclipse.org/bugs/show_bug.cgi?id=75909 .
@@ -47,9 +50,9 @@ import junit.framework.TestCase;
  * @since 3.1
  *
  */
-@RunWith(JUnit38ClassRunner.class)
+@RunWith(JUnit4.class)
 @Ignore
-public class Bug75909Test extends TestCase {
+public class Bug75909Test {
 
 	private static final int OLD_SETTINGS_SELECTED = 4;
 
@@ -68,6 +71,7 @@ public class Bug75909Test extends TestCase {
 	 *
 	 * @throws Throwable
 	 */
+	@Test
 	public void testBasicFilter() throws Throwable {
 		ProblemFilter filter = new ProblemFilter("Bug75909Test");
 		filter.resetState();
@@ -93,6 +97,7 @@ public class Bug75909Test extends TestCase {
 	 *
 	 * @throws Throwable
 	 */
+	@Test
 	public void testRestoreOldState() throws Throwable {
 		IDialogSettings settings = new DialogSettings("Workbench");
 		loadSettings(settings, Bug75909Test.OLD_DIALOG_SETTINGS_XML);
@@ -120,6 +125,7 @@ public class Bug75909Test extends TestCase {
 	 *
 	 * @throws Throwable
 	 */
+	@Test
 	public void testRestoreNewStateMissingId() throws Throwable {
 		IMemento settings = createMissingMemento();
 
@@ -178,6 +184,7 @@ public class Bug75909Test extends TestCase {
 	 *
 	 * @throws Throwable
 	 */
+	@Test
 	public void testSaveState() throws Throwable {
 		ProblemFilter filter = new ProblemFilter("Bug75909Test");
 		filter.resetState();

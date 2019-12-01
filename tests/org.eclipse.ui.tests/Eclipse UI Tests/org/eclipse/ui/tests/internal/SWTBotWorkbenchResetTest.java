@@ -23,20 +23,21 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Test for Bug 511729 — Improve robustness to SWTBot.resetWorkbench()
  */
+@RunWith(JUnit4.class)
 public class SWTBotWorkbenchResetTest extends UITestCase {
 
 	/**
 	 * Constructs a new instance of this test case.
-	 *
-	 * @param testName
-	 *            The name of the test
 	 */
-	public SWTBotWorkbenchResetTest(String testName) {
-		super(testName);
+	public SWTBotWorkbenchResetTest() {
+		super(SWTBotWorkbenchResetTest.class.getSimpleName());
 	}
 
 	/**
@@ -44,6 +45,7 @@ public class SWTBotWorkbenchResetTest extends UITestCase {
 	 * hidden. Then perform resetWorkbench(), and verify view parts are restored
 	 * and appear healthy.
 	 */
+	@Test
 	public void testResetWorkbench() throws CoreException {
 		IWorkbenchWindow window = openTestWindow(IDE.RESOURCE_PERSPECTIVE_ID);
 		window.getWorkbench().showPerspective("org.eclipse.ui.tests.api.ViewPerspective", window);

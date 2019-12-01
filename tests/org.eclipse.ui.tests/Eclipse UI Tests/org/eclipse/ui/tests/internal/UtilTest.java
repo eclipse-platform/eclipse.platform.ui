@@ -14,18 +14,17 @@
 
 package org.eclipse.ui.tests.internal;
 
-import org.eclipse.ui.internal.util.Util;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import org.eclipse.ui.internal.util.Util;
+import org.junit.Test;
 
 /**
  * @since 3.5
  */
-public class UtilTest extends TestCase {
-	public UtilTest(String name) {
-		super(name);
-	}
+public class UtilTest {
 
+	@Test
 	public void testBasicSplit() {
 		final String field = "field1";
 		String[] result = Util.split(field, ',');
@@ -33,6 +32,7 @@ public class UtilTest extends TestCase {
 		assertEquals(field, result[0]);
 	}
 
+	@Test
 	public void testBasic2Split() {
 		final String field = "field1,field2";
 		String[] result = Util.split(field, ',');
@@ -41,6 +41,7 @@ public class UtilTest extends TestCase {
 		assertEquals("field2", result[1]);
 	}
 
+	@Test
 	public void testBasic3Split() {
 		final String field = "field1,field3,field2";
 		String[] result = Util.split(field, ',');
@@ -50,6 +51,7 @@ public class UtilTest extends TestCase {
 		assertEquals("field2", result[2]);
 	}
 
+	@Test
 	public void testNothingSplit() {
 		final String field = "";
 		String[] result = Util.split(field, ',');
@@ -57,18 +59,21 @@ public class UtilTest extends TestCase {
 		assertEquals(0, result[0].length());
 	}
 
+	@Test
 	public void testNothingUsefulSplit() {
 		final String field = ",";
 		String[] result = Util.split(field, ',');
 		assertEquals(0, result.length);
 	}
 
+	@Test
 	public void testNothingUseful2Split() {
 		final String field = ",,";
 		String[] result = Util.split(field, ',');
 		assertEquals(0, result.length);
 	}
 
+	@Test
 	public void testNothingUsefulSpaceSplit() {
 		final String field = " ,";
 		String[] result = Util.split(field, ',');
@@ -76,6 +81,7 @@ public class UtilTest extends TestCase {
 		assertEquals(" ", result[0]);
 	}
 
+	@Test
 	public void testNothingUsefulSpaceSplit2() {
 		final String field = ", ";
 		String[] result = Util.split(field, ',');
@@ -84,6 +90,7 @@ public class UtilTest extends TestCase {
 		assertEquals(" ", result[1]);
 	}
 
+	@Test
 	public void testNothingUsefulSpaceSplit3() {
 		final String field = " , ";
 		String[] result = Util.split(field, ',');
@@ -92,6 +99,7 @@ public class UtilTest extends TestCase {
 		assertEquals(" ", result[1]);
 	}
 
+	@Test
 	public void test2Delimiters() {
 		final String field = "field1,,field3,field2";
 		String[] result = Util.split(field, ',');
@@ -102,6 +110,7 @@ public class UtilTest extends TestCase {
 		assertEquals("field2", result[3]);
 	}
 
+	@Test
 	public void test3Delimiters() {
 		final String field = "field1,,,field3,field2";
 		String[] result = Util.split(field, ',');

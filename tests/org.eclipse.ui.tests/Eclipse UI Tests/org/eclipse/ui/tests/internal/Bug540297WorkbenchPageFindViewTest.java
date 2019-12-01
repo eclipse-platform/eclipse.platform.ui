@@ -25,12 +25,16 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests for bug 540297. Call {@link IWorkbenchPage#findView(String)} while the
  * view is open in some perspective and window, and see if the find view method
  * behaves properly.
  */
+@RunWith(JUnit4.class)
 public class Bug540297WorkbenchPageFindViewTest extends UITestCase {
 
 	public static class MyPerspective implements IPerspectiveFactory {
@@ -66,8 +70,8 @@ public class Bug540297WorkbenchPageFindViewTest extends UITestCase {
 	private IPerspectiveDescriptor activePerspective;
 	private IPerspectiveDescriptor inactivePerspective;
 
-	public Bug540297WorkbenchPageFindViewTest(String testName) {
-		super(testName);
+	public Bug540297WorkbenchPageFindViewTest() {
+		super(Bug540297WorkbenchPageFindViewTest.class.getSimpleName());
 	}
 
 	@Override
@@ -123,6 +127,7 @@ public class Bug540297WorkbenchPageFindViewTest extends UITestCase {
 	 * Also checks that the second window cannot find the view, since the view was
 	 * never open in that window.
 	 */
+	@Test
 	public void testFindViewInFirstWindowAndActivePerspective() throws Exception {
 		showView(firstWindowActivePage);
 		assertCanFindView(firstWindowActivePage);
@@ -136,6 +141,7 @@ public class Bug540297WorkbenchPageFindViewTest extends UITestCase {
 	 * Also checks that the second window cannot find the view, since the view was
 	 * never open in that window.
 	 */
+	@Test
 	public void testFindViewInFirstWindowAndInactivePerspective() throws Exception {
 		showViewInInactivePerspective(firstWindowActivePage);
 		assertCannotFindView(secondWindowActivePage);
@@ -150,6 +156,7 @@ public class Bug540297WorkbenchPageFindViewTest extends UITestCase {
 	 * Also checks that the second window cannot find the view, since the view was
 	 * never open in that window.
 	 */
+	@Test
 	public void testFindViewInFirstWindowAndInactivePerspectiveWithOpenAndClose() throws Exception {
 		showViewInInactivePerspective(firstWindowActivePage);
 		showAndHideView(firstWindowActivePage);
@@ -164,6 +171,7 @@ public class Bug540297WorkbenchPageFindViewTest extends UITestCase {
 	 * Also checks that the first window cannot find the view, since the view was
 	 * never open in that window.
 	 */
+	@Test
 	public void testFindViewInSecondWindowAndActivePerspective() throws Exception {
 		showView(secondWindowActivePage);
 		assertCanFindView(secondWindowActivePage);
@@ -178,6 +186,7 @@ public class Bug540297WorkbenchPageFindViewTest extends UITestCase {
 	 * Also checks that the first window cannot find the view, since the view was
 	 * never open in that window.
 	 */
+	@Test
 	public void testFindViewInSecondWindowAndInactivePerspective() throws Exception {
 		showViewInInactivePerspective(secondWindowActivePage);
 		assertCannotFindView(firstWindowActivePage);
@@ -192,6 +201,7 @@ public class Bug540297WorkbenchPageFindViewTest extends UITestCase {
 	 * Also checks that the first window cannot find the view, since the view was
 	 * never open in that window.
 	 */
+	@Test
 	public void testFindViewInSecondWindowAndInactivePerspectiveWithOpenAndClose() throws Exception {
 		showViewInInactivePerspective(secondWindowActivePage);
 		showAndHideView(secondWindowActivePage);

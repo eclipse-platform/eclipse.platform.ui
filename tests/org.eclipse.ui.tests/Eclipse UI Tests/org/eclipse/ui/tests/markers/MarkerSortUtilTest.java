@@ -21,11 +21,15 @@ import org.eclipse.ui.internal.views.markers.MarkerSortUtil;
 import org.eclipse.ui.internal.views.markers.MockMarkerEntry;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.views.markers.MarkerItem;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.5
  *
  */
+@RunWith(JUnit4.class)
 public class MarkerSortUtilTest extends UITestCase {
 
 	private static final int ARRAYSIZE = 100000;
@@ -41,10 +45,12 @@ public class MarkerSortUtilTest extends UITestCase {
 
 	}
 
+	@Test
 	public void testPartialSort() {
 		sortToLimit(ARRAYSIZE,ARRAYSIZE/2);
 	}
 
+	@Test
 	public void testCompleteSort() {
 		sortToLimit(ARRAYSIZE,ARRAYSIZE);
 	}

@@ -16,6 +16,9 @@ package org.eclipse.ui.tests.markers;
 
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * MarkerSupportTests are tests for the markerSupport extension
@@ -23,21 +26,21 @@ import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
  * @since 3.2
  *
  */
+@RunWith(JUnit4.class)
 public class MarkerSupportRegistryTests extends UITestCase {
 
 	/**
 	 * Create an instance of the receiver.
-	 *
-	 * @param testName
 	 */
-	public MarkerSupportRegistryTests(String testName) {
-		super(testName);
+	public MarkerSupportRegistryTests() {
+		super(MarkerSupportRegistryTests.class.getSimpleName());
 	}
 
 	/**
 	 * Test that the marker categories expected are found.
 	 *
 	 */
+	@Test
 	public void testMarkerCategories() {
 		doTestCategory("org.eclipse.ui.tests.categoryTestMarker");
 		doTestCategory("org.eclipse.ui.tests.testmarker");

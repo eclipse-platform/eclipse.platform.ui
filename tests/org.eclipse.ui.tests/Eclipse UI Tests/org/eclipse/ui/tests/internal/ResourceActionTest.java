@@ -6,14 +6,14 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.actions.DeleteResourceAction;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.operations.AdvancedValidationUserApprover;
-
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
 
 /**
  * @since 3.5
  *
  */
-public abstract class ResourceActionTest extends TestCase {
+public abstract class ResourceActionTest {
 
 	/**
 	 *
@@ -22,23 +22,14 @@ public abstract class ResourceActionTest extends TestCase {
 		super();
 	}
 
-	/**
-	 * @param name the test name
-	 */
-	public ResourceActionTest(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		AdvancedValidationUserApprover.AUTOMATED_MODE = true;
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		AdvancedValidationUserApprover.AUTOMATED_MODE = false;
-		super.tearDown();
 	}
 
 	protected static void joinDeleteResourceActionJobs() {

@@ -27,7 +27,11 @@ import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class Bug78470Test extends UITestCase {
 
 	public static class MyPerspective implements IPerspectiveFactory {
@@ -63,12 +67,13 @@ public class Bug78470Test extends UITestCase {
 		}
 	}
 
-	public Bug78470Test(String testName) {
-		super(testName);
+	public Bug78470Test() {
+		super(Bug78470Test.class.getSimpleName());
 	}
 
 	boolean partVisibleExecuted = false;
 
+	@Test
 	public void test78470() throws Exception {
 		IWorkbench workbench = getWorkbench();
 		final IWorkbenchWindow activeWorkbenchWindow = workbench
