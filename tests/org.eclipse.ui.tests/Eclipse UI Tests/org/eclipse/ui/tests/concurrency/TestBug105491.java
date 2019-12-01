@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.concurrency;
 
+import static org.junit.Assert.fail;
+
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IResource;
@@ -27,8 +29,7 @@ import org.eclipse.jface.util.Util;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests the following sequence of events:
@@ -43,7 +44,7 @@ import junit.framework.TestCase;
  * NOTE: This bug has not yet been fixed.  This test illustrates the problem, but must
  * not be added to the parent test suite until the problem has been fixed.
  */
-public class TestBug105491 extends TestCase {
+public class TestBug105491 {
 	class TransferTestOperation extends WorkspaceModifyOperation {
 		@Override
 		public void execute(final IProgressMonitor pm) {
@@ -77,13 +78,10 @@ public class TestBug105491 extends TestCase {
 		super();
 	}
 
-	public TestBug105491(String name) {
-		super(name);
-	}
-
 	/**
 	 * Performs the test
 	 */
+	@Test
 	public void testBug() throws CoreException {
 		if (Thread.interrupted()) {
 			fail("Thread was interrupted at start of test");

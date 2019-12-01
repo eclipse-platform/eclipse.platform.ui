@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.concurrency;
 
+import static org.junit.Assert.fail;
+
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -21,14 +23,14 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.IThreadListener;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Makes ModalContext thread crash and hang the IDE
  */
-public class ModalContextCrashTest extends TestCase {
+public class ModalContextCrashTest {
 
+	@Test
 	public void testCrash() throws Exception {
 		IRunnableWithProgress operation = new CrashingRunnable();
 		try{

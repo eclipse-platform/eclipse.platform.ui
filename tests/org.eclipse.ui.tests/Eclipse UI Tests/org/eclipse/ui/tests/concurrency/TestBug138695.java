@@ -14,16 +14,18 @@
 
 package org.eclipse.ui.tests.concurrency;
 
-import junit.framework.*;
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.ui.progress.UIJob;
+import org.junit.Test;
 
 /**
  * @since 3.2
  *
  */
-public class TestBug138695 extends TestCase {
+public class TestBug138695 {
 	class SampleJob extends UIJob {
 
 		/**
@@ -70,10 +72,7 @@ public class TestBug138695 extends TestCase {
 
 	}
 
-	public static Test suite() {
-		return new TestSuite(TestBug138695.class);
-	}
-
+	@Test
 	public void testManyThreads() {
 		for (int i = 0; i < 1000; i++) {
 			SampleJob job = new SampleJob();

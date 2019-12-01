@@ -14,6 +14,10 @@
 
 package org.eclipse.ui.tests.concurrency;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,35 +29,35 @@ import org.eclipse.core.runtime.jobs.ILock;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * This tests the simple traditional deadlock of a thread holding a lock trying
  * to perform a syncExec, while the UI thread is waiting for that lock.
  * UISynchronizer and UILockListener conspire to prevent deadlock in this case.
  */
-public class SyncExecWhileUIThreadWaitsForLock extends TestCase {
+public class SyncExecWhileUIThreadWaitsForLock {
 
 	private List<IStatus> reportedErrors;
 	private ILogListener listener;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		reportedErrors = new ArrayList<>();
 		listener = (status, plugin) -> reportedErrors.add(status);
 		WorkbenchPlugin.getDefault().getLog().addLogListener(listener);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		if (listener != null) {
 			WorkbenchPlugin.getDefault().getLog().removeLogListener(listener);
 		}
-		super.tearDown();
 	}
 
+	@Test
 	public void testDeadlock() {
 		if (Thread.interrupted()) {
 			fail("Thread was interrupted at start of test");

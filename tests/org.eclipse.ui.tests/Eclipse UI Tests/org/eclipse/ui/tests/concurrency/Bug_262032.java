@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.concurrency;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -21,17 +25,15 @@ import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.tests.harness.TestBarrier;
 import org.eclipse.swt.widgets.Display;
+import org.junit.Test;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
 
 /**
  * Test for an issue where a lock, held by the UI thread
  * is released while the UI thread is actually performing work
  * having acquired it...
  */
-public class Bug_262032 extends TestCase {
+public class Bug_262032 {
 
 	ISchedulingRule identityRule = new ISchedulingRule() {
 		@Override
@@ -43,10 +45,6 @@ public class Bug_262032 extends TestCase {
 			return rule == this;
 		}
 	};
-
-	public static Test suite() {
-		return new TestSuite(Bug_262032.class);
-	}
 
 	volatile boolean concurrentAccess = false;
 
@@ -70,6 +68,7 @@ public class Bug_262032 extends TestCase {
 	 * <p>
 	 * The result is concurrent running in a locked region.
 	 */
+	@Test
 	public void testBug262032() {
 		final ILock lock = Job.getJobManager().newLock();
 		final TestBarrier tb1 = new TestBarrier(-1);

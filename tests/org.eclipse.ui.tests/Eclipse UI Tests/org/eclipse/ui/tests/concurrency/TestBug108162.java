@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.concurrency;
 
+import static org.junit.Assert.assertTrue;
+
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.resources.IResource;
@@ -24,8 +26,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.actions.WorkspaceModifyOperation;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests the following sequence of events:
@@ -36,7 +37,7 @@ import junit.framework.TestCase;
  * This sequence would cause a deadlock, so an exception is thrown by ModalContext.
  * This test asserts that the exception is thrown and that deadlock does not occur.
  */
-public class TestBug108162 extends TestCase {
+public class TestBug108162 {
 	class LockAcquiringOperation extends WorkspaceModifyOperation {
 		@Override
 		public void execute(final IProgressMonitor pm) {
@@ -50,13 +51,10 @@ public class TestBug108162 extends TestCase {
 		super();
 	}
 
-	public TestBug108162(String name) {
-		super(name);
-	}
-
 	/**
 	 * Performs the test
 	 */
+	@Test
 	public void testBug() throws CoreException {
 		workspace.run((IWorkspaceRunnable) monitor -> {
 			ProgressMonitorDialog dialog = new ProgressMonitorDialog(new Shell());

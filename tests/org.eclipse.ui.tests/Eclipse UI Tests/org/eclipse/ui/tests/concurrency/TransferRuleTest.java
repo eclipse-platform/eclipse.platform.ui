@@ -23,12 +23,16 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.operation.IThreadListener;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests IJobManger#transferRule in conjunction with ModalContext.run.
  * This also exercises the IThreadListener API to allow the runnable to transfer
  * and obtain the rule owned by the calling thread.
  */
+@RunWith(JUnit4.class)
 public class TransferRuleTest extends UITestCase {
 	class TestRule implements ISchedulingRule {
 		@Override
@@ -84,10 +88,11 @@ public class TransferRuleTest extends UITestCase {
 		}
 	}
 
-	public TransferRuleTest(String name) {
-		super(name);
+	public TransferRuleTest() {
+		super(TransferRuleTest.class.getSimpleName());
 	}
 
+	@Test
 	public void testModalContextTransfer() {
 		ISchedulingRule rule = new TestRule();
 		TestRunnable runnable = new TestRunnable(rule);

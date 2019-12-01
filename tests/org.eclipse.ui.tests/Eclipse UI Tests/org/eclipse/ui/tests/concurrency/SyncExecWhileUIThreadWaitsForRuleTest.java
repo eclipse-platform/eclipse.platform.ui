@@ -14,13 +14,15 @@
 
 package org.eclipse.ui.tests.concurrency;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.widgets.Display;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * This tests the simple traditional deadlock of a thread holding a scheduling rule trying
@@ -28,7 +30,7 @@ import junit.framework.TestCase;
  * UISynchronizer and UILockListener conspire to prevent deadlock in this case.
  * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=296056.
  */
-public class SyncExecWhileUIThreadWaitsForRuleTest extends TestCase {
+public class SyncExecWhileUIThreadWaitsForRuleTest {
 	class TestRule implements ISchedulingRule {
 		@Override
 		public boolean contains(ISchedulingRule rule) {
@@ -41,6 +43,7 @@ public class SyncExecWhileUIThreadWaitsForRuleTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testDeadlock() {
 		final ISchedulingRule rule = new TestRule();
 		final boolean[] blocked = new boolean[] {false};
