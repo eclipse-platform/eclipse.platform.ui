@@ -26,6 +26,9 @@ import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * This tests whether we are leaking handlers after their submission has been
@@ -33,16 +36,14 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  *
  * @since 3.1
  */
+@RunWith(JUnit4.class)
 public class Bug87856Test extends UITestCase {
 
 	/**
 	 * Constructs a new instance of <code>Bug87856Test</code>.
-	 *
-	 * @param name
-	 *            The name of the test
 	 */
-	public Bug87856Test(final String name) {
-		super(name);
+	public Bug87856Test() {
+		super(Bug87856Test.class.getSimpleName());
 	}
 
 	/**
@@ -50,6 +51,7 @@ public class Bug87856Test extends UITestCase {
 	 * leak handlers when the process loop is run. Basically, we're checking to
 	 * see that removing a handler submission really works.
 	 */
+	@Test
 	public final void testHandlerLeak() {
 		final IWorkbenchCommandSupport commandSupport = fWorkbench
 				.getCommandSupport();

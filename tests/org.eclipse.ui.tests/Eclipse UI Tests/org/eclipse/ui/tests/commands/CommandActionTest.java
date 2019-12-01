@@ -25,11 +25,15 @@ import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.actions.CommandAction;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.3
  *
  */
+@RunWith(JUnit4.class)
 public class CommandActionTest extends UITestCase {
 	// you can find these commands in org.eclipse.ui.tests/plugin.xml
 	private static final String PREFIX = "tests.commands.CCT.";
@@ -92,13 +96,12 @@ public class CommandActionTest extends UITestCase {
 		}
 	}
 
-	/**
-	 * @param testName
-	 */
-	public CommandActionTest(String testName) {
-		super(testName);
+
+	public CommandActionTest() {
+		super(CommandActionTest.class.getSimpleName());
 	}
 
+	@Test
 	public void testCommandId() throws Exception {
 
 		// create a command action for CMD1_ID, which takes no parameters.
@@ -109,6 +112,7 @@ public class CommandActionTest extends UITestCase {
 		assertEquals(1, cmd1Handler.count);
 	}
 
+	@Test
 	public void testParameterizedCommand() throws Exception {
 
 		// create a command action for CMD2_id which takes parameters.

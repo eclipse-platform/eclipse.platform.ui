@@ -19,6 +19,9 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests a bug found in
@@ -30,14 +33,16 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  *
  * @since 3.2
  */
+@RunWith(JUnit4.class)
 public class Bug125792Test extends UITestCase {
 
-	public Bug125792Test(final String name) {
-		super(name);
+	public Bug125792Test() {
+		super(Bug125792Test.class.getSimpleName());
 	}
 
 	private static final String COMMAND_ID = "org.eclipse.ui.tests.commands.bug125792";
 
+	@Test
 	public void testParameterizedCommand_generateCombinations()
 			throws CommandException {
 		Command command = getCommandService().getCommand(COMMAND_ID);

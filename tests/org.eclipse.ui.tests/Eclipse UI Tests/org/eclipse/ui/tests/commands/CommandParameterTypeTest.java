@@ -26,7 +26,11 @@ import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class CommandParameterTypeTest extends UITestCase {
 
 	static final String SUBTRACT = "org.eclipse.ui.tests.commands.subtractInteger";
@@ -37,12 +41,9 @@ public class CommandParameterTypeTest extends UITestCase {
 
 	/**
 	 * Constructs a new instance of <code>CommandParameterTypeTest</code>.
-	 *
-	 * @param name
-	 *            The name of the test
 	 */
-	public CommandParameterTypeTest(String testName) {
-		super(testName);
+	public CommandParameterTypeTest() {
+		super(CommandParameterTypeTest.class.getSimpleName());
 	}
 
 	/**
@@ -52,6 +53,7 @@ public class CommandParameterTypeTest extends UITestCase {
 	 * parameter type infrastructure including obtaining parameter types and
 	 * performing stringToObject and objectToString conversions.
 	 */
+	@Test
 	public void testSubtract() throws CommandException {
 		testSubtract(8, 5, 3);
 		testSubtract(-4, 12, -16);
@@ -61,6 +63,7 @@ public class CommandParameterTypeTest extends UITestCase {
 	 * Test subtract again with invalid parameters and check for failure
 	 * exception.
 	 */
+	@Test
 	public void testSubtractTypeError() {
 		try {
 			// try to pass a Boolean instead of an Integer
@@ -115,6 +118,7 @@ public class CommandParameterTypeTest extends UITestCase {
 	 * Tests AbstractParameterValueConverter.convertToObject for the Integer
 	 * converter used in this test suite.
 	 */
+	@Test
 	public void testConvertStringToInteger() throws CommandException {
 		testConvertStringToInteger("33", 33, false);
 		testConvertStringToInteger("-1", -1, false);
@@ -149,6 +153,7 @@ public class CommandParameterTypeTest extends UITestCase {
 	 * Tests AbstractParameterValueConverter.convertToString for the Integer
 	 * converter used in this test suite.
 	 */
+	@Test
 	public void testConvertIntegerToString() throws CommandException {
 		testConvertIntegerToString(Integer.valueOf(6), "6", false);
 		testConvertIntegerToString(Integer.valueOf(0), "0", false);
@@ -183,6 +188,7 @@ public class CommandParameterTypeTest extends UITestCase {
 	 * Tests ParameterType.isCompatible for various values with the Integer
 	 * parameter type used in this test suite.
 	 */
+	@Test
 	public void testIsCompatible() throws CommandException {
 		ICommandService commandService = getCommandService();
 		ParameterType type = commandService.getParameterType(TYPE);
@@ -199,6 +205,7 @@ public class CommandParameterTypeTest extends UITestCase {
 	 * multiple commands - just make sure we can at least find the subtract
 	 * command used elsewhere in this test suite.
 	 */
+	@Test
 	public void testFindIntegerParamCommand() throws CommandException {
 		Integer value = Integer.valueOf(6);
 
@@ -260,6 +267,7 @@ public class CommandParameterTypeTest extends UITestCase {
 	 * Test {@link Command#getReturnType()}, making sure we can get the return
 	 * type of the subtract command.
 	 */
+	@Test
 	public void testGetReturnType() throws CommandException {
 		ICommandService commandService = getCommandService();
 		Command command = commandService.getCommand(SUBTRACT);
@@ -281,6 +289,7 @@ public class CommandParameterTypeTest extends UITestCase {
 	 * Test {@link ParameterizedCommand}, making sure the order of
 	 * the parameters is not important.
 	 */
+	@Test
 	public void testUnrelevantOrder() throws NotDefinedException {
 		ICommandService commandService = getCommandService();
 		Command command = commandService.getCommand(SUBTRACT);

@@ -22,12 +22,16 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.IExecutionListener;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests some of the API on command manager.
  *
  * @since 3.1
  */
+@RunWith(JUnit4.class)
 public final class CommandManagerTest extends UITestCase {
 
 	/**
@@ -90,14 +94,12 @@ public final class CommandManagerTest extends UITestCase {
 
 	/**
 	 * Constructs a new instance of <code>CommandManagerTest</code>.
-	 *
-	 * @param name
-	 *            The name of the test
 	 */
-	public CommandManagerTest(String testName) {
-		super(testName);
+	public CommandManagerTest() {
+		super(CommandManagerTest.class.getSimpleName());
 	}
 
+	@Test
 	public final void testExecutionListener() {
 		final String commandId = "myCommand";
 		final CommandManager commandManager = new CommandManager();

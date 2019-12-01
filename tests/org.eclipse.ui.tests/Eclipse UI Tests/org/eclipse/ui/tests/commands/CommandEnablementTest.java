@@ -61,14 +61,15 @@ import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.ISourceProviderService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Ignore;
-import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.3
  *
  */
-@RunWith(JUnit38ClassRunner.class)
+@RunWith(JUnit4.class)
 @Ignore("broke during e4 transition and still need adjustments")
 public class CommandEnablementTest extends UITestCase {
 
@@ -97,11 +98,8 @@ public class CommandEnablementTest extends UITestCase {
 	private IContextActivation contextActivation1;
 	private IContextActivation contextActivation2;
 
-	/**
-	 * @param testName
-	 */
-	public CommandEnablementTest(String testName) {
-		super(testName);
+	public CommandEnablementTest() {
+		super(CommandEnablementTest.class.getSimpleName());
 	}
 
 	@Override
@@ -240,6 +238,7 @@ public class CommandEnablementTest extends UITestCase {
 
 	}
 
+	@Test
 	public void testRestoreContributedUI() throws Exception {
 
 		Field iconField = CommandContributionItem.class.getDeclaredField("icon");
@@ -305,6 +304,7 @@ public class CommandEnablementTest extends UITestCase {
 	}
 
 
+	@Test
 	public void testEnablementForNormalHandlers() throws Exception {
 		activation1 = handlerService.activateHandler(CMD1_ID, normalHandler1,
 				new ActiveContextExpression(CONTEXT_TEST1,
@@ -346,6 +346,7 @@ public class CommandEnablementTest extends UITestCase {
 		return null;
 	}
 
+	@Test
 	public void testEventsForNormalHandlers() throws Exception {
 		// incremented for every change that should change enablement
 		int enabledChangedCount = 0;
@@ -395,6 +396,7 @@ public class CommandEnablementTest extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testEventsForDisabledHandlers() throws Exception {
 		// incremented for every change that should change enablement
 		int enabledChangedCount = 0;
@@ -438,6 +440,7 @@ public class CommandEnablementTest extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testEventsForEnabledHandlers() throws Exception {
 		// incremented for every change that should change enablement
 		int enabledChangedCount = 0;
@@ -502,6 +505,7 @@ public class CommandEnablementTest extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testCommandWithHandlerProxy() throws Exception {
 		IConfigurationElement handlerProxyConfig = null;
 		String commandId = null;
@@ -545,6 +549,7 @@ public class CommandEnablementTest extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testEnablementWithHandlerProxy() throws Exception {
 		IConfigurationElement handlerProxyConfig = null;
 		String commandId = null;
@@ -603,6 +608,7 @@ public class CommandEnablementTest extends UITestCase {
 		assertTrue(listener.lastChange);
 	}
 
+	@Test
 	public void testEnablementForLocalContext() throws Exception {
 		openTestWindow("org.eclipse.ui.resourcePerspective");
 		activation1 = handlerService.activateHandler(CMD1_ID, contextHandler,

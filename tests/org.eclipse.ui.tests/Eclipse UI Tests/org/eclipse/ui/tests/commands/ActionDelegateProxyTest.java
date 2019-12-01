@@ -31,14 +31,15 @@ import org.eclipse.ui.tests.api.workbenchpart.MenuContributionHarness;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Ignore;
-import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.3
  *
  */
-@RunWith(JUnit38ClassRunner.class)
+@RunWith(JUnit4.class)
 @Ignore("broke during e4 transition and still need adjustments")
 public class ActionDelegateProxyTest extends UITestCase {
 	/**
@@ -51,13 +52,11 @@ public class ActionDelegateProxyTest extends UITestCase {
 	private static final String GO_COMMAND = "org.eclipse.ui.tests.simplyGo";
 	private static final String STAY_COMMAND = "org.eclipse.ui.tests.simplyStay";
 
-	/**
-	 * @param testName
-	 */
-	public ActionDelegateProxyTest(String testName) {
-		super(testName);
+	public ActionDelegateProxyTest() {
+		super(ActionDelegateProxyTest.class.getSimpleName());
 	}
 
+	@Test
 	public void testViewDelegate() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
 		IWorkbenchPage page = window.getActivePage();
@@ -87,6 +86,7 @@ public class ActionDelegateProxyTest extends UITestCase {
 		assertEquals(2, mch.getCount());
 	}
 
+	@Test
 	public void testWWActionDelegate() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
 		window.getActivePage().showActionSet(DELEGATE_ACTION_SET_ID);
@@ -98,6 +98,7 @@ public class ActionDelegateProxyTest extends UITestCase {
 
 	private static final String contents = "one\ntwo\nthree\n";
 
+	@Test
 	public void testEditorActionDelegate() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
 		window.getActivePage().closeAllEditors(false);

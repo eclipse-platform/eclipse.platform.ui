@@ -27,12 +27,16 @@ import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.NotHandledException;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * A test for whether the select all handler will send a selection event.
  *
  * @since 3.1
  */
+@RunWith(JUnit4.class)
 public final class Bug74982Test extends UITestCase {
 
 	/**
@@ -42,12 +46,9 @@ public final class Bug74982Test extends UITestCase {
 
 	/**
 	 * Constructs a new instance of <code>Bug74982Test</code>.
-	 *
-	 * @param name
-	 *            The name of the test
 	 */
-	public Bug74982Test(final String name) {
-		super(name);
+	public Bug74982Test() {
+		super(Bug74982Test.class.getSimpleName());
 	}
 
 	/**
@@ -63,6 +64,7 @@ public final class Bug74982Test extends UITestCase {
 	 *             <code>WorkbenchCommandSupport</code> class is broken in
 	 *             some way.
 	 */
+	@Test
 	public final void testSelectAllHandlerSendsSelectionEvent()
 			throws ExecutionException, NotHandledException {
 		// Create a dialog with a text widget.

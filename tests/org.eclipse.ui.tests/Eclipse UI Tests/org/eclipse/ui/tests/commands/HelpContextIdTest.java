@@ -26,12 +26,16 @@ import org.eclipse.ui.ISources;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests the new help context identifier support on commands and handlers.
  *
  * @since 3.2
  */
+@RunWith(JUnit4.class)
 public final class HelpContextIdTest extends UITestCase {
 
 	private static final String COMMAND_HELP_ID = "org.eclipse.ui.tests.commandHelp";
@@ -44,12 +48,9 @@ public final class HelpContextIdTest extends UITestCase {
 
 	/**
 	 * Constructs a new instance of <code>HelpContextIdTest</code>
-	 *
-	 * @param testName
-	 *            The name of the test; may be <code>null</code>.
 	 */
-	public HelpContextIdTest(final String testName) {
-		super(testName);
+	public HelpContextIdTest() {
+		super(HelpContextIdTest.class.getSimpleName());
 	}
 
 	/**
@@ -60,6 +61,7 @@ public final class HelpContextIdTest extends UITestCase {
 	 *             If the command defined in the registry is somehow not
 	 *             defined.
 	 */
+	@Test
 	public final void testHelpContextId() throws NotDefinedException {
 		final ICommandService commandService = fWorkbench
 				.getService(ICommandService.class);

@@ -44,12 +44,16 @@ import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.views.contentoutline.ContentOutline;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests various aspects of command state.
  *
  * @since 3.2
  */
+@RunWith(JUnit4.class)
 public class HandlerActivationTest extends UITestCase {
 	static class ActTestHandler extends AbstractHandler {
 		public String contextId;
@@ -137,12 +141,9 @@ public class HandlerActivationTest extends UITestCase {
 
 	/**
 	 * Constructor for <code>HandlerActivationTest</code>.
-	 *
-	 * @param name
-	 *            The name of the test
 	 */
-	public HandlerActivationTest(String name) {
-		super(name);
+	public HandlerActivationTest() {
+		super(HandlerActivationTest.class.getSimpleName());
 		services = PlatformUI.getWorkbench();
 		contextService = services
 				.getService(IContextService.class);
@@ -260,6 +261,7 @@ public class HandlerActivationTest extends UITestCase {
 	}
 
 
+	@Test
 	public void testExceptionThrowingHandler(){
 
 		try {
@@ -273,6 +275,7 @@ public class HandlerActivationTest extends UITestCase {
 	}
 
 
+	@Test
 	public void testBasicHandler() throws Exception {
 
 		createHandlerActivation(C1_ID, H1,
@@ -297,6 +300,7 @@ public class HandlerActivationTest extends UITestCase {
 		assertFalse("Should not be handled", cmd.isHandled());
 	}
 
+	@Test
 	public void testForBreak123() throws Exception {
 		createHandlerActivation(C1_ID, H1,
 				new String[] { ISources.ACTIVE_CONTEXT_NAME });
@@ -309,6 +313,7 @@ public class HandlerActivationTest extends UITestCase {
 		doTestForBreak();
 	}
 
+	@Test
 	public void testForBreak132() throws Exception {
 		createHandlerActivation(C1_ID, H1,
 				new String[] { ISources.ACTIVE_CONTEXT_NAME });
@@ -321,6 +326,7 @@ public class HandlerActivationTest extends UITestCase {
 		doTestForBreak();
 	}
 
+	@Test
 	public void testForBreak213() throws Exception {
 		createHandlerActivation(C2_ID, H2,
 				new String[] { ISources.ACTIVE_CONTEXT_NAME,
@@ -333,6 +339,7 @@ public class HandlerActivationTest extends UITestCase {
 		doTestForBreak();
 	}
 
+	@Test
 	public void testForBreak231() throws Exception {
 		createHandlerActivation(C2_ID, H2,
 				new String[] { ISources.ACTIVE_CONTEXT_NAME,
@@ -345,6 +352,7 @@ public class HandlerActivationTest extends UITestCase {
 		doTestForBreak();
 	}
 
+	@Test
 	public void testForBreak312() throws Exception {
 		createHandlerActivation(C3_ID, H3, new String[] {
 				ISources.ACTIVE_CONTEXT_NAME, ISources.ACTIVE_SHELL_NAME });
@@ -357,6 +365,7 @@ public class HandlerActivationTest extends UITestCase {
 		doTestForBreak();
 	}
 
+	@Test
 	public void testForBreak321() throws Exception {
 		createHandlerActivation(C3_ID, H3, new String[] {
 				ISources.ACTIVE_CONTEXT_NAME, ISources.ACTIVE_SHELL_NAME });
@@ -369,6 +378,7 @@ public class HandlerActivationTest extends UITestCase {
 		doTestForBreak();
 	}
 
+	@Test
 	public void testForNegativeNumber() throws Exception {
 		String c5_id = C_PREFIX + ISources.ACTIVE_MENU_NAME;
 		String h5 = C_PREFIX + "h5";
@@ -385,6 +395,7 @@ public class HandlerActivationTest extends UITestCase {
 		assertHandlerIsExecuted(cmd, h5);
 	}
 
+	@Test
 	public void testTwoHandlers() throws Exception {
 		createHandlerActivation(C1_ID, H1,
 				new String[] { ISources.ACTIVE_CONTEXT_NAME });
@@ -421,6 +432,7 @@ public class HandlerActivationTest extends UITestCase {
 		assertTrue("Will still be handled", cmd.isHandled());
 	}
 
+	@Test
 	public void testLocalContext() throws Exception {
 		IWorkbenchWindow window = openTestWindow("org.eclipse.ui.resourcePerspective");
 		OutlineOnlyHandler handler = new OutlineOnlyHandler();

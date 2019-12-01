@@ -17,6 +17,9 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.actions.RetargetAction;
 import org.eclipse.ui.commands.ActionHandler;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * This test whether an ActionHandler will update its internal cache of
@@ -24,6 +27,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  *
  * @since 3.0.1
  */
+@RunWith(JUnit4.class)
 public class Bug70503Test extends UITestCase {
 
 	private class PubliclyRetargettableAction extends RetargetAction {
@@ -56,12 +60,9 @@ public class Bug70503Test extends UITestCase {
 
 	/**
 	 * Constructor for Bug70503Test.
-	 *
-	 * @param name
-	 *            The name of the test
 	 */
-	public Bug70503Test(String name) {
-		super(name);
+	public Bug70503Test() {
+		super(Bug70503Test.class.getSimpleName());
 	}
 
 	/**
@@ -71,6 +72,7 @@ public class Bug70503Test extends UITestCase {
 	 * to make sure that the updates are happening.
 	 *
 	 */
+	@Test
 	public final void testHandlerChangeCausesUpdate() {
 		final PubliclyRetargettableAction retargetAction = new PubliclyRetargettableAction(
 				"actionID", "text");

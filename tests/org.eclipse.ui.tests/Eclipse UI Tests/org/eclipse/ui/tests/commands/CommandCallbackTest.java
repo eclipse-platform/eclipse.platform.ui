@@ -36,11 +36,15 @@ import org.eclipse.ui.menus.UIElement;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.services.IServiceScopes;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.3
  *
  */
+@RunWith(JUnit4.class)
 public class CommandCallbackTest extends UITestCase {
 
 	private static final String HOST_PARAM_ID = "host";
@@ -58,11 +62,8 @@ public class CommandCallbackTest extends UITestCase {
 	private CallbackHandler cmd1Handler;
 	private CallbackHandler cmd2Handler;
 
-	/**
-	 * @param testName
-	 */
-	public CommandCallbackTest(String testName) {
-		super(testName);
+	public CommandCallbackTest() {
+		super(CommandCallbackTest.class.getSimpleName());
 	}
 
 	@Override
@@ -152,6 +153,7 @@ public class CommandCallbackTest extends UITestCase {
 
 	}
 
+	@Test
 	public void testNoParametersNoCallbacks() throws Exception {
 		ParameterizedCommand pc1 = new ParameterizedCommand(cmd1, null);
 		ParameterizedCommand pc2 = new ParameterizedCommand(cmd1, null);
@@ -173,6 +175,7 @@ public class CommandCallbackTest extends UITestCase {
 		assertEquals(0, cmd1Handler.callbacks);
 	}
 
+	@Test
 	public void testNoParametersWithCallbacks() throws Exception {
 		ParameterizedCommand pc1 = new ParameterizedCommand(cmd1, null);
 		ParameterizedCommand pc2 = new ParameterizedCommand(cmd1, null);
@@ -197,6 +200,7 @@ public class CommandCallbackTest extends UITestCase {
 		assertEquals(0, cmd1Handler.callbacks);
 	}
 
+	@Test
 	public void testParametersWithCallbacks() throws Exception {
 		IParameter parmProt = cmd2.getParameter(PROT_PARAM_ID);
 		IParameter parmHost = cmd2.getParameter(HOST_PARAM_ID);
@@ -239,6 +243,7 @@ public class CommandCallbackTest extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testParmsToSameCommand() throws Exception {
 		IParameter parmProt = cmd2.getParameter(PROT_PARAM_ID);
 		IParameter parmHost = cmd2.getParameter(HOST_PARAM_ID);
@@ -293,6 +298,7 @@ public class CommandCallbackTest extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testParmsToDifferentProtocol() throws Exception {
 		IParameter parmProt = cmd2.getParameter(PROT_PARAM_ID);
 		IParameter parmHost = cmd2.getParameter(HOST_PARAM_ID);
@@ -360,6 +366,7 @@ public class CommandCallbackTest extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testCommandThroughWindow() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
 		ICommandService cs = window
@@ -397,6 +404,7 @@ public class CommandCallbackTest extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testCallbackCleanup() throws Exception {
 		ParameterizedCommand pc1 = new ParameterizedCommand(cmd1, null);
 		ParameterizedCommand pc2 = new ParameterizedCommand(cmd1, null);

@@ -27,15 +27,16 @@ import org.eclipse.ui.menus.UIElement;
 import org.eclipse.ui.services.IServiceLocator;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Ignore;
-import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.5
  * @author Prakash G.R.
  *
  */
-@RunWith(JUnit38ClassRunner.class)
+@RunWith(JUnit4.class)
 @Ignore("broke during e4 transition and still need adjustments")
 public class RadioStateTest extends UITestCase {
 
@@ -55,6 +56,7 @@ public class RadioStateTest extends UITestCase {
 				.getService(IHandlerService.class);
 	}
 
+	@Test
 	public void testRadioValues() throws Exception {
 
 		Command command1 = commandService
@@ -122,6 +124,7 @@ public class RadioStateTest extends UITestCase {
 	MyUIElement element2b;
 	MyUIElement element3b;
 
+	@Test
 	public void testMultipleContributions() throws Exception{
 
 		Command command1 = commandService.getCommand("org.eclipse.ui.tests.radioStateCommand1");

@@ -24,6 +24,9 @@ import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.tests.statushandlers.TestStatusHandler;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * A tests whether is active will log an exception if the command is not
@@ -31,6 +34,7 @@ import org.eclipse.ui.tests.statushandlers.TestStatusHandler;
  *
  * @since 3.1
  */
+@RunWith(JUnit4.class)
 public final class Bug73756Test extends UITestCase {
 
 	private static String CMD_ID = "a command that is not defined";
@@ -48,12 +52,9 @@ public final class Bug73756Test extends UITestCase {
 
 	/**
 	 * Constructs a new instance of <code>Bug73756Test</code>.
-	 *
-	 * @param name
-	 *            The name of the test
 	 */
-	public Bug73756Test(final String name) {
-		super(name);
+	public Bug73756Test() {
+		super(Bug73756Test.class.getSimpleName());
 	}
 
 	@Override
@@ -68,6 +69,7 @@ public final class Bug73756Test extends UITestCase {
 	 * <code>isActive()</code> for a bogus command identifier. A log listener
 	 * flips a boolean flag if a log message is written.
 	 */
+	@Test
 	public final void testUndefinedCommandIsActiveLogged() throws Exception {
 		TestStatusHandler.install();
 

@@ -21,6 +21,9 @@ import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Test serialization and deserialization of ParameterizedCommands. See <a
@@ -28,16 +31,14 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  *
  * @since 3.2
  */
+@RunWith(JUnit4.class)
 public class CommandSerializationTest extends UITestCase {
 
 	/**
 	 * Constructs a new instance of <code>CommandSerializationTest</code>.
-	 *
-	 * @param name
-	 *            The name of the test
 	 */
-	public CommandSerializationTest(String testName) {
-		super(testName);
+	public CommandSerializationTest() {
+		super(CommandSerializationTest.class.getSimpleName());
 	}
 
 	private final String showPerspectiveCommandId = "org.eclipse.ui.perspectives.showPerspective";
@@ -47,6 +48,7 @@ public class CommandSerializationTest extends UITestCase {
 	 *
 	 * @throws CommandException
 	 */
+	@Test
 	public void testSerializeShowPerspective() throws CommandException {
 
 		testDeserializeAndSerialize(showPerspectiveCommandId,
@@ -63,6 +65,7 @@ public class CommandSerializationTest extends UITestCase {
 	 *
 	 * @throws CommandException
 	 */
+	@Test
 	public void testSerializeShowResourcePerspective() throws CommandException {
 
 		final String serializedShowResourcePerspectiveCommand = "org.eclipse.ui.perspectives.showPerspective(org.eclipse.ui.perspectives.showPerspective.perspectiveId=org.eclipse.ui.resourcePerspective)";
@@ -81,6 +84,7 @@ public class CommandSerializationTest extends UITestCase {
 	 *
 	 * @throws CommandException
 	 */
+	@Test
 	public void testZeroParameterCommand() throws CommandException {
 		final String zeroParameterCommandId = "org.eclipse.ui.tests.commands.zeroParameterCommand";
 
@@ -98,6 +102,7 @@ public class CommandSerializationTest extends UITestCase {
 	 *
 	 * @throws CommandException
 	 */
+	@Test
 	public void testOneParameterCommand() throws CommandException {
 		final String oneParameterCommandId = "org.eclipse.ui.tests.commands.oneParameterCommand";
 		final String paramId1 = "param1.1";
@@ -131,6 +136,7 @@ public class CommandSerializationTest extends UITestCase {
 	 *
 	 * @throws CommandException
 	 */
+	@Test
 	public void testTwoParameterCommand() throws CommandException {
 		final String twoParameterCommandId = "org.eclipse.ui.tests.commands.twoParameterCommand";
 		final String paramId1 = "param2.1";
@@ -162,6 +168,7 @@ public class CommandSerializationTest extends UITestCase {
 	 *
 	 * @throws CommandException
 	 */
+	@Test
 	public void testThreeParameterCommand() throws CommandException {
 		final String threeParameterCommandId = "org.eclipse.ui.tests.commands.threeParameterCommand";
 		final String paramId1 = "param3.1";
@@ -199,6 +206,7 @@ public class CommandSerializationTest extends UITestCase {
 	 *
 	 * @throws CommandException
 	 */
+	@Test
 	public void testFunnyNamesCommand() throws CommandException {
 		final String funnyNamesCommandId = "org.eclipse.ui.tests.command.with.f=%)(,unny.name";
 		final String funnyNamesCommandIdEncoded = "org.eclipse.ui.tests.command.with.f%=%%%)%(%,unny.name";
@@ -218,6 +226,7 @@ public class CommandSerializationTest extends UITestCase {
 				new String[] { funnyValue });
 	}
 
+	@Test
 	public void testMalformedSerializationStrings() {
 		// try a missing closing ')'
 		expectSerializationException(showPerspectiveCommandId + "(");
@@ -226,6 +235,7 @@ public class CommandSerializationTest extends UITestCase {
 		expectSerializationException("some.command.foo%bar");
 	}
 
+	@Test
 	public void testUndefinedCommands() {
 		expectNotDefinedException("this.command.ain't.defined(i.hope)");
 	}

@@ -31,11 +31,15 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.103
  *
  */
+@RunWith(JUnit4.class)
 public class CommandExecutionTest extends UITestCase {
 	static class Pair {
 		public Pair(String a, Object b) {
@@ -90,11 +94,8 @@ public class CommandExecutionTest extends UITestCase {
 		}
 	}
 
-	/**
-	 * @param testName
-	 */
-	public CommandExecutionTest(String testName) {
-		super(testName);
+	public CommandExecutionTest() {
+		super(CommandExecutionTest.class.getSimpleName());
 	}
 
 	private void compare(String[] calls, ArrayList<Pair> methods) {
@@ -104,6 +105,7 @@ public class CommandExecutionTest extends UITestCase {
 		assertEquals(calls.length, methods.size());
 	}
 
+	@Test
 	public void testCommandServiceExecute() throws Exception {
 		EL listener = new EL();
 		ICommandService cmdService = getWorkbench()
@@ -123,6 +125,7 @@ public class CommandExecutionTest extends UITestCase {
 		verifyHandlerUtilAccessDuringPreExecute(listener);
 	}
 
+	@Test
 	public void testCommandExecute() throws Exception {
 		EL listener = new EL();
 		ICommandService cmdService = getWorkbench()
@@ -156,6 +159,7 @@ public class CommandExecutionTest extends UITestCase {
 				listener.wbw);
 	}
 
+	@Test
 	public void testCommandListenerExecute() throws Exception {
 		EL listener = new EL();
 		ICommandService cmdService = getWorkbench()
@@ -178,6 +182,7 @@ public class CommandExecutionTest extends UITestCase {
 		verifyHandlerUtilAccessDuringPreExecute(listener);
 	}
 
+	@Test
 	public void testCommandServiceExecuteRefresh() throws Exception {
 		EL listener = new EL();
 		ICommandService cmdService = getWorkbench()
@@ -197,6 +202,7 @@ public class CommandExecutionTest extends UITestCase {
 		verifyHandlerUtilAccessDuringPreExecute(listener);
 	}
 
+	@Test
 	public void testCommandExecuteRefresh() throws Exception {
 		EL listener = new EL();
 		ICommandService cmdService = getWorkbench()
@@ -219,6 +225,7 @@ public class CommandExecutionTest extends UITestCase {
 		verifyHandlerUtilAccessDuringPreExecute(listener);
 	}
 
+	@Test
 	public void testCommandListenerExecuteRefresh() throws Exception {
 		EL listener = new EL();
 		ICommandService cmdService = getWorkbench()
@@ -241,6 +248,7 @@ public class CommandExecutionTest extends UITestCase {
 		verifyHandlerUtilAccessDuringPreExecute(listener);
 	}
 
+	@Test
 	public void testCommandServiceExecuteClosePart() throws Exception {
 		getWorkbench().getActiveWorkbenchWindow().getActivePage()
 				.showView(IPageLayout.ID_PROGRESS_VIEW);
@@ -262,6 +270,7 @@ public class CommandExecutionTest extends UITestCase {
 		verifyHandlerUtilAccessDuringPreExecute(listener);
 	}
 
+	@Test
 	public void testCommandExecuteClosePart() throws Exception {
 		getWorkbench().getActiveWorkbenchWindow().getActivePage()
 				.showView(IPageLayout.ID_PROGRESS_VIEW);
@@ -286,6 +295,7 @@ public class CommandExecutionTest extends UITestCase {
 		verifyHandlerUtilAccessDuringPreExecute(listener);
 	}
 
+	@Test
 	public void testCommandListenerExecuteClosePart() throws Exception {
 		getWorkbench().getActiveWorkbenchWindow().getActivePage()
 				.showView(IPageLayout.ID_PROGRESS_VIEW);

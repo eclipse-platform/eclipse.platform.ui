@@ -30,8 +30,9 @@ import org.eclipse.ui.commands.NotHandledException;
 import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Ignore;
-import org.junit.internal.runners.JUnit38ClassRunner;
+import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests that dialogs will inherit the handlers from the workbench window, if
@@ -40,18 +41,15 @@ import org.junit.runner.RunWith;
  *
  * @since 3.0
  */
-@RunWith(JUnit38ClassRunner.class)
+@RunWith(JUnit4.class)
 @Ignore("broke during e4 transition and still need adjustments")
 public final class Bug66182Test extends UITestCase {
 
 	/**
 	 * Constructor for Bug66182Test.
-	 *
-	 * @param name
-	 *            The name of the test
 	 */
-	public Bug66182Test(final String name) {
-		super(name);
+	public Bug66182Test() {
+		super(Bug66182Test.class.getSimpleName());
 	}
 
 	/**
@@ -67,6 +65,8 @@ public final class Bug66182Test extends UITestCase {
 	 *             Indicates that no handler was found where one should have
 	 *             been found.
 	 */
+	@Test
+	@Ignore
 	public final void testDialogHandlers() throws ExecutionException,
 			NotHandledException {
 		// Open a test window.
@@ -151,6 +151,8 @@ public final class Bug66182Test extends UITestCase {
 	 *             Indicates that no handler was found where one should have
 	 *             been found.
 	 */
+	@Test
+	@Ignore
 	public final void testFallbackToWindow() throws ExecutionException,
 			NotHandledException {
 		// Open a test window.
@@ -221,6 +223,7 @@ public final class Bug66182Test extends UITestCase {
 	 *             Indicates that no handler was found where one should have
 	 *             been found.
 	 */
+	@Test
 	public final void testFallbackToWindowBlockedByDialog()
 			throws ExecutionException, NotHandledException {
 		// Open a test window.
@@ -285,6 +288,8 @@ public final class Bug66182Test extends UITestCase {
 	 *             Indicates that no handler was found where one should have
 	 *             been found.
 	 */
+	@Test
+	@Ignore
 	public final void testWindow() throws ExecutionException,
 			NotHandledException {
 		// Open a test window.

@@ -27,22 +27,23 @@ import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * A test for whether part identifiers work properly for HandlerSubmissions.
  *
  * @since 3.1
  */
+@RunWith(JUnit4.class)
 public final class Bug74990Test extends UITestCase {
 
 	/**
 	 * Constructs a new instance of <code>Bug74990Test</code>.
-	 *
-	 * @param name
-	 *            The name of the test
 	 */
-	public Bug74990Test(final String name) {
-		super(name);
+	public Bug74990Test() {
+		super(Bug74990Test.class.getSimpleName());
 	}
 
 	/**
@@ -56,6 +57,7 @@ public final class Bug74990Test extends UITestCase {
 	 *             handler is tied.
 	 *
 	 */
+	@Test
 	public final void testPartIdSubmission() throws PartInitException {
 		// Define a command.
 		final String testCommandId = "org.eclipse.ui.tests.commands.Bug74990";
