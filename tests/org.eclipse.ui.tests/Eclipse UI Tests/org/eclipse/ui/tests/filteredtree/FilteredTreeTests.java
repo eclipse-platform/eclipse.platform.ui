@@ -29,7 +29,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.dialogs.PatternFilter;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class FilteredTreeTests extends UITestCase {
 	private FilteredTree fTreeViewer;
 	private TestElement fRootElement;
@@ -72,18 +76,17 @@ public class FilteredTreeTests extends UITestCase {
 
 	}
 
-	/**
-	 * @param testName
-	 */
-	public FilteredTreeTests(String testName) {
-		super(testName);
+	public FilteredTreeTests() {
+		super(FilteredTreeTests.class.getSimpleName());
 	}
 
+	@Test
 	public void testCreateFilteredTree(){
 		runFilteredTreeTest(SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL
 				| SWT.BORDER);
 	}
 
+	@Test
 	public void testCreateCheckboxFilteredTree(){
 		runFilteredTreeTest(SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL
 				| SWT.BORDER | SWT.CHECK);
@@ -91,6 +94,7 @@ public class FilteredTreeTests extends UITestCase {
 	/*
 	 * Tests creation of a subclass of filtered tree, using alternate constructor.
 	 */
+	@Test
 	public void testCreateMyFilteredTree(){
 		fRootElement = TestElement.createModel(DEPTH, NUM_ITEMS);
 		final int treeStyle = SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL |SWT.FLAT;
@@ -110,6 +114,7 @@ public class FilteredTreeTests extends UITestCase {
 		dialog.close();
 	}
 
+	@Test
 	public void testAddAndRemovePattern() {
 		Dialog dialog = createFilteredTreeDialog();
 

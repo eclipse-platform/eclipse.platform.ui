@@ -22,21 +22,26 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.ide.IEditorAssociationOverride;
 import org.eclipse.ui.internal.registry.EditorDescriptor;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests the <code>IDE</code> API and behaviour.
  *
  * @since 3.5
  */
+@RunWith(JUnit4.class)
 public class IDETest extends UITestCase {
 
-	public IDETest(String testName) {
-		super(testName);
+	public IDETest() {
+		super(IDETest.class.getSimpleName());
 	}
 
 	static EditorDescriptor descriptor1 = EditorDescriptor.createForProgram("echo");
 	static EditorDescriptor descriptor2 = EditorDescriptor.createForProgram("ps");
 
+	@Test
 	public void testOverrideEditorAssociations() throws Exception {
 		IEditorDescriptor[] descriptors = new IEditorDescriptor[] { descriptor1 };
 		IEditorDescriptor[] descriptors2 = IDE.overrideEditorAssociations((IEditorInput) null, null, descriptors);

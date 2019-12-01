@@ -20,19 +20,22 @@ import java.util.List;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.ui.WorkbenchEncoding;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * The EncodingTestCase is the suite that tests the 3.1
  * encoding support.
  */
+@RunWith(JUnit4.class)
 public class EncodingTestCase extends UITestCase {
 
 	/**
 	 * Create a new instance of the receiver.
-	 * @param testName
 	 */
-	public EncodingTestCase(String testName) {
-		super(testName);
+	public EncodingTestCase() {
+		super(EncodingTestCase.class.getSimpleName());
 	}
 
 	/**
@@ -40,6 +43,7 @@ public class EncodingTestCase extends UITestCase {
 	 * suite includes an invalid one.
 	 *
 	 */
+	@Test
 	public void testWorkbenchEncodings() {
 		List<String> encodings = WorkbenchEncoding.getDefinedEncodings();
 

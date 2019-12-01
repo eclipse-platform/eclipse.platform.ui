@@ -26,24 +26,26 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests [I]FileEditorInput API.
  *
  * @since 3.1
  */
+@RunWith(JUnit4.class)
 public class FileEditorInputTest extends UITestCase {
 
-	/**
-	 * @param testName
-	 */
-	public FileEditorInputTest(String testName) {
-		super(testName);
+	public FileEditorInputTest() {
+		super(FileEditorInputTest.class.getSimpleName());
 	}
 
 	/**
 	 * Regression test for bug 72337 - [IDE] FileEditorInput .equals() not implemented against interface
 	 */
+	@Test
 	@SuppressWarnings("unlikely-arg-type")
 	public void testBug72337() {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();

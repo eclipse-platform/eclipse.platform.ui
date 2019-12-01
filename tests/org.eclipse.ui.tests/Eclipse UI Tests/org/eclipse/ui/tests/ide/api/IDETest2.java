@@ -25,10 +25,13 @@ import org.eclipse.ui.IEditorDescriptor;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * More tests for the <code>IDE</code> API and behaviour.
  */
+@RunWith(JUnit4.class)
 public class IDETest2 extends UITestCase {
 	private final Set<IFileStore> storesToDelete = new HashSet<>();
 
@@ -43,8 +46,8 @@ public class IDETest2 extends UITestCase {
 		super.doTearDown();
 	}
 
-	public IDETest2(String testName) {
-		super(testName);
+	public IDETest2() {
+		super(IDETest2.class.getSimpleName());
 	}
 
 	/**

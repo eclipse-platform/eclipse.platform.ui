@@ -15,30 +15,25 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.fieldassist;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.jface.fieldassist.FieldDecorationRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
+import org.junit.Test;
 
 /**
  * Tests the Operations Framework API.
  *
  * @since 3.1
  */
-public class FieldAssistAPITest extends TestCase {
+public class FieldAssistAPITest {
 
 	public FieldAssistAPITest() {
 		super();
 	}
 
-	/**
-	 * @param testName
-	 */
-	public FieldAssistAPITest(String name) {
-		super(name);
-	}
-
+	@Test
 	public void testFieldDecorationRegistry() {
 		int originalMaxHeight = FieldDecorationRegistry.getDefault()
 				.getMaximumDecorationHeight();

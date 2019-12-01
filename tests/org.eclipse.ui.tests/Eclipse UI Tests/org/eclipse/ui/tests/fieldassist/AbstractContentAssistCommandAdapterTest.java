@@ -20,6 +20,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerService;
+import org.junit.Test;
 
 public abstract class AbstractContentAssistCommandAdapterTest extends
 		AbstractFieldAssistTestCase {
@@ -32,6 +33,7 @@ public abstract class AbstractContentAssistCommandAdapterTest extends
 				IWorkbenchCommandConstants.EDIT_CONTENT_ASSIST, null);
 	}
 
+	@Test
 	public void testHandlerPromptsPopup() throws Exception {
 		getFieldAssistWindow().open();
 
@@ -54,6 +56,7 @@ public abstract class AbstractContentAssistCommandAdapterTest extends
 	 * <li>The list shows up (the bug was reporting that the list disappeared)</li>
 	 * </ol>
 	 */
+	@Test
 	public void testBug271339EmptyAutoActivationCharacters() throws Exception {
 		getFieldAssistWindow().open();
 
@@ -77,6 +80,7 @@ public abstract class AbstractContentAssistCommandAdapterTest extends
 	 * autoactivation characters have been set</li>
 	 * </ol>
 	 */
+	@Test
 	public void testBug271339EmptyAutoActivationCharacters2() throws Exception {
 		getFieldAssistWindow().open();
 
@@ -100,6 +104,7 @@ public abstract class AbstractContentAssistCommandAdapterTest extends
 	 * <li>the popup should remain open</li>
 	 * </ol>
 	 */
+	@Test
 	public void testBug271339EmptyAutoActivationCharacters3() throws Exception {
 		getFieldAssistWindow().open();
 
