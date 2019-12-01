@@ -22,23 +22,28 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests to check the addition of a new perspective once the perspective
  * registry is loaded.
  */
+@RunWith(JUnit4.class)
 public class PerspectiveTests extends DynamicTestCase {
 
 	private static final String PERSPECTIVE_ID = "org.eclipse.newPerspective1.newPerspective1";
 
-	public PerspectiveTests(String testName) {
-		super(testName);
+	public PerspectiveTests() {
+		super(PerspectiveTests.class.getSimpleName());
 	}
 
 	/**
 	 * Tests to ensure that the descriptor is added and removed with bundle
 	 * loading/unloading.
 	 */
+	@Test
 	public void testFindPerspectiveInRegistry() {
 		IPerspectiveRegistry reg = PlatformUI.getWorkbench()
 				.getPerspectiveRegistry();
@@ -57,6 +62,7 @@ public class PerspectiveTests extends DynamicTestCase {
 	 * Tests that the perspective is closed if it is the currently active
 	 * perspective.
 	 */
+	@Test
 	public void testPerspectiveClose1() {
 		IPerspectiveRegistry reg = PlatformUI.getWorkbench()
 				.getPerspectiveRegistry();
@@ -83,6 +89,7 @@ public class PerspectiveTests extends DynamicTestCase {
 	 * Tests that the perspective is closed if it is not the currently active
 	 * perspective.
 	 */
+	@Test
 	public void testPerspectiveClose2() {
 		IPerspectiveRegistry reg = PlatformUI.getWorkbench()
 				.getPerspectiveRegistry();

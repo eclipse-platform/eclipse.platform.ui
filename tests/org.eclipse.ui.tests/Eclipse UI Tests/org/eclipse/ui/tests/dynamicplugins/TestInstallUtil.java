@@ -25,9 +25,7 @@ import org.osgi.framework.FrameworkEvent;
 import org.osgi.framework.FrameworkListener;
 import org.osgi.framework.wiring.FrameworkWiring;
 
-import junit.framework.TestCase;
-
-public class TestInstallUtil extends TestCase {
+public class TestInstallUtil {
 	static BundleContext context;
 
 	public static void setContext(BundleContext newContext) {

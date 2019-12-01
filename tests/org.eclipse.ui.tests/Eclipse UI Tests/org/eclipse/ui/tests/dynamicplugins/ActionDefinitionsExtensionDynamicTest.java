@@ -17,6 +17,9 @@ import org.eclipse.core.commands.common.NamedHandleObject;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests whether the "org.eclipse.ui.actionDefinitions" extension point can be
@@ -24,18 +27,16 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
  *
  * @since 3.1.1
  */
+@RunWith(JUnit4.class)
 public final class ActionDefinitionsExtensionDynamicTest extends
 		DynamicTestCase {
 
 	/**
 	 * Constructs a new instance of
 	 * <code>ActionDefinitionsExtensionDynamicTest</code>.
-	 *
-	 * @param testName
-	 *            The name of the test; may be <code>null</code>.
 	 */
-	public ActionDefinitionsExtensionDynamicTest(final String testName) {
-		super(testName);
+	public ActionDefinitionsExtensionDynamicTest() {
+		super(ActionDefinitionsExtensionDynamicTest.class.getSimpleName());
 	}
 
 	/**
@@ -75,6 +76,7 @@ public final class ActionDefinitionsExtensionDynamicTest extends
 	 * the extension. It tests that the data then exists, and unloads the
 	 * extension. It tests that the data then doesn't exist.
 	 */
+	@Test
 	public final void testActionDefinitions() {
 		final ICommandService service = getWorkbench().getAdapter(ICommandService.class);
 		NamedHandleObject namedHandleObject;

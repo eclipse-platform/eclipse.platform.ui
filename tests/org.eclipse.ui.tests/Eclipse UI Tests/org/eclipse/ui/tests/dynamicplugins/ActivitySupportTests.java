@@ -19,11 +19,15 @@ import org.eclipse.ui.activities.IActivity;
 import org.eclipse.ui.activities.ICategory;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.tests.harness.util.ImageTests;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class ActivitySupportTests extends DynamicTestCase {
 
-	public ActivitySupportTests(String testName) {
-		super(testName);
+	public ActivitySupportTests() {
+		super(ActivitySupportTests.class.getSimpleName());
 	}
 
 	@Override
@@ -41,6 +45,7 @@ public class ActivitySupportTests extends DynamicTestCase {
 		return "data/org.eclipse.newActivitySupport1";
 	}
 
+	@Test
 	public void testActivityImages() {
 		IActivity baselineActivity = getWorkbench().getActivitySupport()
 				.getActivityManager().getActivity("someBogusActivityId");
@@ -126,6 +131,7 @@ public class ActivitySupportTests extends DynamicTestCase {
 	}
 
 
+	@Test
 	public void testCategoryImages() {
 		ICategory baselineCategory = getWorkbench().getActivitySupport()
 				.getActivityManager().getCategory("someBogusCategoryId");

@@ -19,12 +19,16 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.views.markers.internal.MarkerGroup;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
 import org.eclipse.ui.views.markers.internal.ProblemFilter;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Test the loading and unloading of the marker support components.
  *
  * @since 3.2
  */
+@RunWith(JUnit4.class)
 public class MarkerSupportTests extends DynamicTestCase {
 
 	public static final String FILTER1 = "filter1";
@@ -42,10 +46,11 @@ public class MarkerSupportTests extends DynamicTestCase {
 	/**
 	 * @param testName
 	 */
-	public MarkerSupportTests(String testName) {
-		super(testName);
+	public MarkerSupportTests() {
+		super(MarkerSupportTests.class.getSimpleName());
 	}
 
+	@Test
 	public void testFilters() {
 		assertFalse(hasFilter(FILTER1));
 		assertFalse(hasFilter(FILTER2));
@@ -60,6 +65,7 @@ public class MarkerSupportTests extends DynamicTestCase {
 		assertFalse(hasFilter(FILTER3));
 	}
 
+	@Test
 	public void testMarkerGroup() {
 		assertFalse(hasMarkerGroup());
 		getBundle();
@@ -68,6 +74,7 @@ public class MarkerSupportTests extends DynamicTestCase {
 		assertFalse(hasMarkerGroup());
 	}
 
+	@Test
 	public void testCategories() {
 		assertFalse(hasCategory());
 		getBundle();
@@ -76,6 +83,7 @@ public class MarkerSupportTests extends DynamicTestCase {
 		assertFalse(hasCategory());
 	}
 
+	@Test
 	public void testHierarchies() {
 		assertFalse(hasHierarchy());
 		getBundle();

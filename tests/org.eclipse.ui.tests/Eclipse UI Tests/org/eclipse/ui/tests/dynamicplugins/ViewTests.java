@@ -29,20 +29,25 @@ import org.eclipse.ui.views.IStickyViewDescriptor;
 import org.eclipse.ui.views.IViewCategory;
 import org.eclipse.ui.views.IViewDescriptor;
 import org.eclipse.ui.views.IViewRegistry;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests to ensure the addition of new views with dynamic plug-ins.
  */
+@RunWith(JUnit4.class)
 public class ViewTests extends DynamicTestCase {
 
 	private static final String VIEW_ID1 = "org.eclipse.newView1.newView1";
 	private static final String VIEW_ID2 = "org.eclipse.newView1.newView2";
 	private static final String CATEGORY_ID = "org.eclipse.newView1.newCategory1";
 
-	public ViewTests(String testName) {
-		super(testName);
+	public ViewTests() {
+		super(ViewTests.class.getSimpleName());
 	}
 
+	@Test
 	public void testViewClosure() throws CoreException {
 		IWorkbenchWindow window = openTestWindow(IDE.RESOURCE_PERSPECTIVE_ID);
 		getBundle();
@@ -65,6 +70,7 @@ public class ViewTests extends DynamicTestCase {
 		assertNull(window.getActivePage().findView(VIEW_ID1));
 	}
 
+	@Test
 	public void testViewWithoutCategory() {
 			IViewRegistry registry = WorkbenchPlugin.getDefault().getViewRegistry();
 
@@ -85,6 +91,7 @@ public class ViewTests extends DynamicTestCase {
 		}
 	}
 
+	@Test
 	public void testViewWithCategory() {
 		IViewRegistry registry = WorkbenchPlugin.getDefault().getViewRegistry();
 
@@ -105,6 +112,7 @@ public class ViewTests extends DynamicTestCase {
 		}
 	}
 
+	@Test
 	public void testStickyViewProperties() {
 		ViewRegistry registry = (ViewRegistry)WorkbenchPlugin.getDefault().getViewRegistry();
 		IStickyViewDescriptor [] descs = registry.getStickyViews();
@@ -147,6 +155,7 @@ public class ViewTests extends DynamicTestCase {
 		assertEquals(IPageLayout.BOTTOM, desc.getLocation());
 	}
 
+	@Test
 	public void testCategoryViewContainmentProperties() {
 		ViewRegistry registry = (ViewRegistry)WorkbenchPlugin.getDefault().getViewRegistry();
 

@@ -26,10 +26,14 @@ import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.tests.leaks.LeakTests;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.1
  */
+@RunWith(JUnit4.class)
 public class IntroTests extends DynamicTestCase {
 
 	private static final String PRODUCT_ID = "org.eclipse.ui.tests.someProduct";
@@ -39,10 +43,11 @@ public class IntroTests extends DynamicTestCase {
 	/**
 	 * @param testName
 	 */
-	public IntroTests(String testName) {
-		super(testName);
+	public IntroTests() {
+		super(IntroTests.class.getSimpleName());
 	}
 
+	@Test
 	public void testIntroClosure() {
 		getBundle();
 		Workbench workbench = Workbench.getInstance();
@@ -65,6 +70,7 @@ public class IntroTests extends DynamicTestCase {
 		assertNull(workbench.getIntroManager().getIntro());
 	}
 
+	@Test
 	public void testIntroProperties() {
 		IIntroRegistry registry = WorkbenchPlugin.getDefault().getIntroRegistry();
 		assertNull(registry.getIntroForProduct(PRODUCT_ID));

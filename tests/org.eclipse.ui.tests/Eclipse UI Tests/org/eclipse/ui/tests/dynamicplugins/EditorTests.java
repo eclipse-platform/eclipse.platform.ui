@@ -31,18 +31,20 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.tests.leaks.LeakTests;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.1
  */
+@RunWith(JUnit4.class)
 public class EditorTests extends DynamicTestCase {
 
 	private static final String EDITOR_ID = "org.eclipse.newEditor1.newEditor1";
-	/**
-	 * @param testName
-	 */
-	public EditorTests(String testName) {
-		super(testName);
+
+	public EditorTests() {
+		super(EditorTests.class.getSimpleName());
 	}
 
 	@Override
@@ -60,6 +62,7 @@ public class EditorTests extends DynamicTestCase {
 		return "data/org.eclipse.newEditor1";
 	}
 
+	@Test
 	public void testEditorClosure() throws CoreException {
 		IWorkbenchWindow window = openTestWindow(IDE.RESOURCE_PERSPECTIVE_ID);
 		IFile file = getFile();
@@ -81,6 +84,7 @@ public class EditorTests extends DynamicTestCase {
 		assertEquals(0, window.getActivePage().getEditors().length);
 	}
 
+	@Test
 	public void testEditorProperties() throws Exception {
 		IEditorRegistry registry = WorkbenchPlugin.getDefault().getEditorRegistry();
 

@@ -24,32 +24,20 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkingSet;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.intro.IIntroPart;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.AllTests;
+import org.junit.runners.JUnit4;
 import org.osgi.framework.Bundle;
-
-import junit.framework.TestSuite;
 
 /**
  * @since 3.3
  */
-@RunWith(AllTests.class)
+@RunWith(JUnit4.class)
 public class WorkingSetTests extends DynamicTestCase {
 
-	public static TestSuite suite() {
-		TestSuite ts = new TestSuite();
-		//ts.addTest(new WorkingSetTests("testClass"));
-		ts.addTest(new WorkingSetTests("testWorkingSetUpdater"));
-		ts.addTest(new WorkingSetTests("testWorkingSetWithBasicElementAdapter"));
-		ts.addTest(new WorkingSetTests("testWorkingSetWithCustomElementAdapter"));
-		return ts;
-	}
-
-	/**
-	 * @param testName
-	 */
-	public WorkingSetTests(String testName) {
-		super(testName);
+	public WorkingSetTests() {
+		super(WorkingSetTests.class.getSimpleName());
 	}
 
 	@Override
@@ -57,6 +45,8 @@ public class WorkingSetTests extends DynamicTestCase {
 		return "org.eclipse.ui.dynamic.DynamicWorkingSetElementAdapter";
 	}
 
+	@Test
+	@Ignore
 	@Override
 	public void testClass() throws Exception {
 		super.testClass();
@@ -82,6 +72,7 @@ public class WorkingSetTests extends DynamicTestCase {
 	 * Tests to ensure that the working set updater is unloaded after the bundle
 	 * is unloaded.
 	 */
+	@Test
 	public void testWorkingSetUpdater() throws ClassNotFoundException {
 		final PropertyChangeEvent[] events = new PropertyChangeEvent[1];
 		IWorkingSetManager workingSetManager = PlatformUI.getWorkbench()
@@ -163,6 +154,7 @@ public class WorkingSetTests extends DynamicTestCase {
 	 * the basic element adapter then it will be invoked even before the bundle
 	 * is activated.
 	 */
+	@Test
 	public void testWorkingSetWithBasicElementAdapter() {
 		IWorkingSetManager workingSetManager = PlatformUI.getWorkbench()
 				.getWorkingSetManager();
@@ -210,6 +202,7 @@ public class WorkingSetTests extends DynamicTestCase {
 	 * the it's own element adapter then it will be not cause bundle activation
 	 * early.
 	 */
+	@Test
 	public void testWorkingSetWithCustomElementAdapter()
 			throws ClassNotFoundException {
 		IWorkingSetManager workingSetManager = PlatformUI.getWorkbench()

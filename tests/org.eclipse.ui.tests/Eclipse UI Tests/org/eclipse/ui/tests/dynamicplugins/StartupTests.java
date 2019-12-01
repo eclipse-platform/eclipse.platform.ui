@@ -17,17 +17,19 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.osgi.framework.Bundle;
 
 /**
  * @since 3.1
  */
+@RunWith(JUnit4.class)
 public class StartupTests extends DynamicTestCase {
-	/**
-	 * @param testName
-	 */
-	public StartupTests(String testName) {
-		super(testName);
+
+	public StartupTests() {
+		super(StartupTests.class.getSimpleName());
 	}
 
 	/**
@@ -40,6 +42,7 @@ public class StartupTests extends DynamicTestCase {
 	 * @throws IllegalArgumentException
 	 * @throws IllegalAccessException
 	 */
+	@Test
 	public void testStartupRun() throws ClassNotFoundException,
 			SecurityException, NoSuchFieldException, IllegalArgumentException,
 			IllegalAccessException {

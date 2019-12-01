@@ -19,16 +19,21 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.menus.IMenuService;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.5
  */
+@RunWith(JUnit4.class)
 public class DynamicContributionTest extends DynamicTestCase {
 
-	public DynamicContributionTest(String testName) {
-		super(testName);
+	public DynamicContributionTest() {
+		super(DynamicContributionTest.class.getSimpleName());
 	}
 
+	@Test
 	public void testMenuContribution() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
 		IMenuService menus = window

@@ -17,19 +17,24 @@ import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.dialogs.WorkbenchPreferenceNode;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.1
  */
+@RunWith(JUnit4.class)
 public class PreferencePageTests extends DynamicTestCase {
 
 	/**
 	 * @param testName
 	 */
-	public PreferencePageTests(String testName) {
-		super(testName);
+	public PreferencePageTests() {
+		super(PreferencePageTests.class.getSimpleName());
 	}
 
+	@Test
 	public void testPreferences() {
 		PreferenceManager preferenceManager = PlatformUI.getWorkbench().getPreferenceManager();
 		assertNull(preferenceManager.find("dynamic.parentPage"));

@@ -16,21 +16,23 @@ package org.eclipse.ui.tests.dynamicplugins;
 import org.eclipse.ui.WorkbenchEncoding;
 import org.eclipse.ui.ide.IDEEncoding;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.1
  */
+@RunWith(JUnit4.class)
 public class EncodingTests extends DynamicTestCase {
 
 	private static final String ENCODING = "Cp1257";
-	/**
-	 * @param testName
-	 */
-	public EncodingTests(String testName) {
-		super(testName);
-		// TODO Auto-generated constructor stub
+
+	public EncodingTests() {
+		super(EncodingTests.class.getSimpleName());
 	}
 
+	@Test
 	public void testWorkbenchEncodings() {
 		assertFalse(WorkbenchEncoding.getDefinedEncodings().contains(ENCODING));
 		getBundle();
@@ -39,6 +41,7 @@ public class EncodingTests extends DynamicTestCase {
 		assertFalse(WorkbenchEncoding.getDefinedEncodings().contains(ENCODING));
 	}
 
+	@Test
 	public void testIDEEncodings() {
 		assertFalse(IDEEncoding.getIDEEncodings().contains(ENCODING));
 		getBundle();

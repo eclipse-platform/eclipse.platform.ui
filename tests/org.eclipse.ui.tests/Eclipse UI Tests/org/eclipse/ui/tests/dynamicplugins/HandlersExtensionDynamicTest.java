@@ -19,6 +19,9 @@ import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests whether the "org.eclipse.ui.handlers" extension point can be added and
@@ -26,16 +29,14 @@ import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
  *
  * @since 3.1.1
  */
+@RunWith(JUnit4.class)
 public final class HandlersExtensionDynamicTest extends DynamicTestCase {
 
 	/**
 	 * Constructs a new instance of <code>HandlersExtensionDynamicTest</code>.
-	 *
-	 * @param testName
-	 *            The name of the test; may be <code>null</code>.
 	 */
-	public HandlersExtensionDynamicTest(final String testName) {
-		super(testName);
+	public HandlersExtensionDynamicTest() {
+		super(HandlersExtensionDynamicTest.class.getSimpleName());
 	}
 
 	/**
@@ -75,6 +76,7 @@ public final class HandlersExtensionDynamicTest extends DynamicTestCase {
 	 * the extension. It tests that the data then exists, and unloads the
 	 * extension. It tests that the data then doesn't exist.
 	 */
+	@Test
 	public final void testHandlers() {
 		final ICommandService commandService = getWorkbench().getAdapter(ICommandService.class);
 		Command command;

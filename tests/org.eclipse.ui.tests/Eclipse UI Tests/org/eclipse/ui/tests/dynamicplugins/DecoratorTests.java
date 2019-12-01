@@ -17,23 +17,25 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.decorators.DecoratorDefinition;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.1
  */
+@RunWith(JUnit4.class)
 public class DecoratorTests extends DynamicTestCase {
 
 	public static final String FULL1 = "fullDecorator1";
 	public static final String LIGHT1 = "lightDecorator1";
 	public static final String LIGHT2 = "lightDecorator2";
 
-	/**
-	 * @param testName
-	 */
-	public DecoratorTests(String testName) {
-		super(testName);
+	public DecoratorTests() {
+		super(DecoratorTests.class.getSimpleName());
 	}
 
+	@Test
 	public void testDecorators() {
 		assertFalse(hasDecorator(FULL1));
 		assertFalse(hasDecorator(LIGHT1));

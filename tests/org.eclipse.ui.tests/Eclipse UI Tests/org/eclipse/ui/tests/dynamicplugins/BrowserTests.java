@@ -15,19 +15,18 @@ package org.eclipse.ui.tests.dynamicplugins;
 
 import org.eclipse.ui.internal.browser.WorkbenchBrowserSupport;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.junit.Test;
 
 /**
  * @since 3.1
  */
 public class BrowserTests extends DynamicTestCase {
 
-	/**
-	 * @param testName
-	 */
-	public BrowserTests(String testName) {
-		super(testName);
+	public BrowserTests() {
+		super(BrowserTests.class.getSimpleName());
 	}
 
+	@Test
 	public void testBrowserSupport() {
 		WorkbenchBrowserSupport support = (WorkbenchBrowserSupport) WorkbenchBrowserSupport.getInstance();
 		try {

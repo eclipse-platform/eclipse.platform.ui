@@ -17,21 +17,24 @@ import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.dialogs.PropertyPageManager;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.1
  */
+@RunWith(JUnit4.class)
 public class PropertyPageTests extends DynamicTestCase {
 
 	private static final String PROPERTYPAGE = "dynamicPropertyPage1";
-	/**
-	 * @param testName
-	 */
-	public PropertyPageTests(String testName) {
-		super(testName);
+
+	public PropertyPageTests() {
+		super(PropertyPageTests.class.getSimpleName());
 	}
 
 
+	@Test
 	public void testPropertyPageCount() {
 		PropertyPageContributorManager manager = PropertyPageContributorManager.getManager();
 		int size = manager.getContributors().size();
@@ -41,6 +44,7 @@ public class PropertyPageTests extends DynamicTestCase {
 		assertEquals(size, manager.getContributors().size());
 	}
 
+	@Test
 	public void testPropertyPageContribution() {
 		PropertyPageContributorManager cManager = PropertyPageContributorManager.getManager();
 		PropertyPageManager manager;

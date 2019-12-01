@@ -27,11 +27,15 @@ import org.eclipse.ui.statushandlers.AbstractStatusHandler;
 import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.tests.leaks.LeakTests;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests to ensure the addition and removal of new status handlers with dynamic
  * plug-ins.
  */
+@RunWith(JUnit4.class)
 public class StatusHandlerTests extends DynamicTestCase {
 
 	private static final String STATUS_HANDLER_ID1 = "org.eclipse.newStatusHandler1.newStatusHandler1";
@@ -42,17 +46,15 @@ public class StatusHandlerTests extends DynamicTestCase {
 
 	private static final String PLUGIN_PREFIX2 = "plugin";
 
-	/**
-	 * @param testName
-	 */
-	public StatusHandlerTests(String testName) {
-		super(testName);
+	public StatusHandlerTests() {
+		super(StatusHandlerTests.class.getSimpleName());
 	}
 
 	/**
 	 * Tests to ensure that the status handlers are removed when the plugin is
 	 * unloaded.
 	 */
+	@Test
 	public void testStatusHandlerRemoval() throws CoreException {
 		getBundle();
 
@@ -92,6 +94,7 @@ public class StatusHandlerTests extends DynamicTestCase {
 	 * Tests to ensure that the status handlers are removed when the plugin is
 	 * unloaded.
 	 */
+	@Test
 	public void testStatusHandlerRemoval2() throws CoreException {
 		getBundle();
 
@@ -144,6 +147,7 @@ public class StatusHandlerTests extends DynamicTestCase {
 	 * Tests to ensure that the status handlers are removed when the plugin is
 	 * unloaded. Checks if the default product handlers are handled correctly.
 	 */
+	@Test
 	public void testProductBindingRemoval() throws CoreException {
 		getBundle();
 

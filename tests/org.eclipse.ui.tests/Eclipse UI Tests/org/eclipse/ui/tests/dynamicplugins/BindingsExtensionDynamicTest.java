@@ -23,6 +23,9 @@ import org.eclipse.jface.contexts.IContextIds;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.keys.IBindingService;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests whether the "org.eclipse.ui.bindings" extension point can be added and
@@ -30,16 +33,14 @@ import org.eclipse.ui.keys.IBindingService;
  *
  * @since 3.1.1
  */
+@RunWith(JUnit4.class)
 public final class BindingsExtensionDynamicTest extends DynamicTestCase {
 
 	/**
 	 * Constructs a new instance of <code>BindingsExtensionDynamicTest</code>.
-	 *
-	 * @param testName
-	 *            The name of the test; may be <code>null</code>.
 	 */
-	public BindingsExtensionDynamicTest(final String testName) {
-		super(testName);
+	public BindingsExtensionDynamicTest() {
+		super(BindingsExtensionDynamicTest.class.getSimpleName());
 	}
 
 	/**
@@ -82,6 +83,7 @@ public final class BindingsExtensionDynamicTest extends DynamicTestCase {
 	 * @throws ParseException
 	 *             If "M1+W" can't be parsed by the extension point.
 	 */
+	@Test
 	public void testBindings() throws ParseException {
 		final IBindingService bindingService = getWorkbench().getAdapter(IBindingService.class);
 		final TriggerSequence triggerSequence = KeySequence.getInstance("M1+W");

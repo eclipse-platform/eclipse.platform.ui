@@ -30,11 +30,15 @@ import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.tests.leaks.LeakTests;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests to ensure the addition of new action sets with dynamic plug-ins.
  */
 
+@RunWith(JUnit4.class)
 public class ActionSetTests extends DynamicTestCase {
 
 	/**
@@ -43,10 +47,11 @@ public class ActionSetTests extends DynamicTestCase {
 	private static final String ACTION_SET_ID = "org.eclipse.newActionSet1.newActionSet1";
 	private static final String PART_ID = "org.eclipse.ui.tests.part1";
 
-	public ActionSetTests(String testName) {
-		super(testName);
+	public ActionSetTests() {
+		super(ActionSetTests.class.getSimpleName());
 	}
 
+	@Test
 	public void testActionSets() throws Exception {
 		WorkbenchWindow window = (WorkbenchWindow) openTestWindow();
 		boolean [] found = new boolean[] {false};
@@ -130,6 +135,7 @@ public class ActionSetTests extends DynamicTestCase {
 		return WorkbenchPlugin.getDefault().getActionSetRegistry();
 	}
 
+	@Test
 	public void testActionSetPartAssociations() {
 		assertEquals(0, getActionSetRegistry().getActionSetsFor(PART_ID).length);
 		getBundle();

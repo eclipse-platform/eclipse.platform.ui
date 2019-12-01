@@ -16,8 +16,6 @@ package org.eclipse.ui.tests.dynamicplugins;
 import java.util.HashSet;
 import java.util.Random;
 
-import junit.framework.TestSuite;
-
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
@@ -34,25 +32,25 @@ import org.eclipse.ui.internal.ObjectActionContributorManager;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.1
  */
+@RunWith(JUnit4.class)
 public class ObjectContributionTests extends DynamicTestCase {
 
 	private static final String GROUP_ID = "#OC";
 	private static final String OBJECT_ACTION_ID = "org.eclipse.newOC1";
 	private static final String VIEWER_ACTION_ID = "org.eclipse.newOC2";
 
-	public static TestSuite suite() {
-		return new TestSuite(ObjectContributionTests.class);
-	}
-
 	/**
 	 * @param testName
 	 */
-	public ObjectContributionTests(String testName) {
-		super(testName);
+	public ObjectContributionTests() {
+		super(ObjectContributionTests.class.getSimpleName());
 	}
 
 	@Override
@@ -70,6 +68,7 @@ public class ObjectContributionTests extends DynamicTestCase {
 		return "data/org.eclipse.newOC1";
 	}
 
+	@Test
 	public void testViewerContributions() {
 		IWorkbenchWindow window = openTestWindow(IDE.RESOURCE_PERSPECTIVE_ID);
 		IWorkbenchPart part = window.getActivePage().getActivePart();
@@ -124,6 +123,7 @@ public class ObjectContributionTests extends DynamicTestCase {
 		menu.add(new GroupMarker(GROUP_ID));
 	}
 
+	@Test
 	public void testObjectContribtions() {
 		IWorkbenchWindow window = openTestWindow(IDE.RESOURCE_PERSPECTIVE_ID);
 		IWorkbenchPart part = window.getActivePage().getActivePart();

@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.tests.leaks.LeakTests;
+import org.junit.Test;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleException;
 
@@ -152,6 +153,7 @@ public abstract class DynamicTestCase extends UITestCase implements
 	 * @throws Exception
 	 * @since 3.1
 	 */
+	@Test
 	public void testClass() throws Exception {
 		String className = getMarkerClass();
 		if (className == null) {

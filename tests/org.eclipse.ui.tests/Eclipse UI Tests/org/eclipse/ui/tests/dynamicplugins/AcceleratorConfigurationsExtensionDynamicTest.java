@@ -17,6 +17,9 @@ import org.eclipse.core.commands.common.NamedHandleObject;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.keys.IBindingService;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests whether the "org.eclipse.ui.acceleratorConfigurations" extension point
@@ -24,18 +27,16 @@ import org.eclipse.ui.keys.IBindingService;
  *
  * @since 3.1.1
  */
+@RunWith(JUnit4.class)
 public final class AcceleratorConfigurationsExtensionDynamicTest extends
 		DynamicTestCase {
 
 	/**
 	 * Constructs a new instance of
 	 * <code>AcceleratorConfigurationsExtensionDynamicTest</code>.
-	 *
-	 * @param testName
-	 *            The name of the test; may be <code>null</code>.
 	 */
-	public AcceleratorConfigurationsExtensionDynamicTest(final String testName) {
-		super(testName);
+	public AcceleratorConfigurationsExtensionDynamicTest() {
+		super(AcceleratorConfigurationsExtensionDynamicTest.class.getSimpleName());
 	}
 
 	/**
@@ -75,6 +76,7 @@ public final class AcceleratorConfigurationsExtensionDynamicTest extends
 	 * the extension. It tests that the data then exists, and unloads the
 	 * extension. It tests that the data then doesn't exist.
 	 */
+	@Test
 	public final void testAcceleratorConfigurations() {
 		final IBindingService service = getWorkbench().getAdapter(IBindingService.class);
 		NamedHandleObject namedHandleObject;

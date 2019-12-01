@@ -29,6 +29,9 @@ import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.keys.IBindingService;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests whether the "org.eclipse.ui.commands" extension point can be added and
@@ -36,16 +39,14 @@ import org.eclipse.ui.keys.IBindingService;
  *
  * @since 3.1.1
  */
+@RunWith(JUnit4.class)
 public final class CommandsExtensionDynamicTest extends DynamicTestCase {
 
 	/**
 	 * Constructs a new instance of <code>CommandsExtensionDynamicTest</code>.
-	 *
-	 * @param testName
-	 *            The name of the test; may be <code>null</code>.
 	 */
-	public CommandsExtensionDynamicTest(final String testName) {
-		super(testName);
+	public CommandsExtensionDynamicTest() {
+		super(CommandsExtensionDynamicTest.class.getSimpleName());
 	}
 
 	/**
@@ -88,6 +89,7 @@ public final class CommandsExtensionDynamicTest extends DynamicTestCase {
 	 * @throws ParseException
 	 *             If "M1+W" can't be parsed by the extension point.
 	 */
+	@Test
 	public final void testCommands() throws ParseException {
 		final IBindingService bindingService = getWorkbench().getAdapter(IBindingService.class);
 		final ICommandService commandService = getWorkbench().getAdapter(ICommandService.class);
@@ -284,6 +286,7 @@ public final class CommandsExtensionDynamicTest extends DynamicTestCase {
 		}
 	}
 
+	@Test
 	public void testNonExistingHandler() {
 		IHandlerService handlerService = getWorkbench()
 				.getService(IHandlerService.class);

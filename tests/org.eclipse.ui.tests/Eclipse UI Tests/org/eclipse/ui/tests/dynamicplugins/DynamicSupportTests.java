@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dynamicplugins;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import java.lang.ref.ReferenceQueue;
 import java.lang.ref.WeakReference;
 
@@ -21,29 +26,21 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.dynamichelpers.ExtensionTracker;
 import org.eclipse.core.runtime.dynamichelpers.IExtensionTracker;
 import org.eclipse.ui.tests.leaks.LeakTests;
-
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 3.1
  */
-public class DynamicSupportTests extends TestCase {
+public class DynamicSupportTests {
 
 	private IExtensionTracker tracker;
 	private IExtension e1, e2;
 	private Object o1, o2;
 
-	/**
-	 * @param name
-	 */
-	public DynamicSupportTests(String name) {
-		super(name);
-	}
-
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		tracker = new ExtensionTracker();
 		IExtension [] elements = Platform.getExtensionRegistry().getExtensionPoint("org.eclipse.ui.views").getExtensions();
 		assertNotNull(elements);
@@ -55,12 +52,12 @@ public class DynamicSupportTests extends TestCase {
 		o2 = new WeakReference<>(o1);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() throws Exception {
 		((ExtensionTracker)tracker).close();
 	}
 
+	@Test
 	public void testConfigurationElementTracker1() {
 		tracker.registerObject(e1, o1, IExtensionTracker.REF_WEAK);
 		Object [] results = tracker.getObjects(e1);
@@ -69,6 +66,7 @@ public class DynamicSupportTests extends TestCase {
 		assertEquals(o1, results[0]);
 	}
 
+	@Test
 	public void testConfigurationElementTracker2() throws Exception {
 		tracker.registerObject(e1, o1, IExtensionTracker.REF_WEAK);
 		ReferenceQueue<Object> queue = new ReferenceQueue<>();
@@ -80,6 +78,7 @@ public class DynamicSupportTests extends TestCase {
 		assertEquals(0, results.length);
 	}
 
+	@Test
 	public void testConfigurationElementTracker3() {
 		tracker.registerObject(e2, o2, IExtensionTracker.REF_WEAK);
 		Object [] results = tracker.getObjects(e2);
@@ -88,6 +87,7 @@ public class DynamicSupportTests extends TestCase {
 		assertEquals(o2, results[0]);
 	}
 
+	@Test
 	public void testConfigurationElementTracker4() throws Exception {
 		tracker.registerObject(e1, o1, IExtensionTracker.REF_STRONG);
 		ReferenceQueue<Object> queue = new ReferenceQueue<>();

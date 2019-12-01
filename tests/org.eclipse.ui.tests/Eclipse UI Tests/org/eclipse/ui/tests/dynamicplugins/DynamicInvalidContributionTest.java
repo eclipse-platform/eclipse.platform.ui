@@ -16,16 +16,21 @@ package org.eclipse.ui.tests.dynamicplugins;
 
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.5
  */
+@RunWith(JUnit4.class)
 public class DynamicInvalidContributionTest extends DynamicTestCase {
 
-	public DynamicInvalidContributionTest(String testName) {
-		super(testName);
+	public DynamicInvalidContributionTest() {
+		super(DynamicInvalidContributionTest.class.getSimpleName());
 	}
 
+	@Test
 	public void testInvalidMenuContribution() throws Exception {
 		// open a window
 		IWorkbenchWindow window = openTestWindow();
