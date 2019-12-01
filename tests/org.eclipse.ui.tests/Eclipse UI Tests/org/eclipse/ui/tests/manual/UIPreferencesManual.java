@@ -27,10 +27,6 @@ import org.eclipse.ui.tests.dialogs.UIPreferencesAuto;
 
 public class UIPreferencesManual extends UIPreferencesAuto {
 
-	public UIPreferencesManual(String name) {
-		super(name);
-	}
-
 	/**
 	 * Test the bad update preference page by generating all
 	 * of the dialog errors.

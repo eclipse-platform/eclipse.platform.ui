@@ -35,10 +35,10 @@ import org.eclipse.ui.tests.harness.util.DialogCheck;
 import org.eclipse.ui.wizards.newresource.BasicNewFileResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewFolderResourceWizard;
 import org.eclipse.ui.wizards.newresource.BasicNewProjectResourceWizard;
+import org.junit.Ignore;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class UIWizards extends TestCase {
+public class UIWizards {
 	private static final int SIZING_WIZARD_WIDTH = 470;
 
 	private static final int SIZING_WIZARD_HEIGHT = 550;
@@ -46,10 +46,6 @@ public class UIWizards extends TestCase {
 	private static final int SIZING_WIZARD_WIDTH_2 = 500;
 
 	private static final int SIZING_WIZARD_HEIGHT_2 = 500;
-
-	public UIWizards(String name) {
-		super(name);
-	}
 
 	private Shell getShell() {
 		return DialogCheck.getShell();
@@ -114,6 +110,7 @@ public class UIWizards extends TestCase {
 		return dialog;
 	}
 
+	@Test
 	public void testExportResources() {//reference: ExportResourcesAction
 		Dialog dialog = exportWizard(null);
 		DialogCheck.assertDialog(dialog);
@@ -121,16 +118,22 @@ public class UIWizards extends TestCase {
 
 	/**
 	 * 1GJWD2E: ITPUI:ALL - Test classes should not be released in public packages.
-	 *
-	 public void testFileSystemExport() {
-	 Dialog dialog = exportWizard( DataTransferTestStub.newFileSystemResourceExportPage1(null) );
-	 DialogCheck.assertDialog(dialog);
-	 }
-	 public void testZipFileExport() {
-	 Dialog dialog = exportWizard( DataTransferTestStub.newZipFileResourceExportPage1(null) );
-	 DialogCheck.assertDialog(dialog);
-	 }
 	 */
+	@Test
+	@Ignore("1GJWD2E: ITPUI:ALL")
+	public void testFileSystemExport() {
+//		Dialog dialog = exportWizard(DataTransferTestStub.newFileSystemResourceExportPage1(null));
+//		DialogCheck.assertDialog(dialog);
+	}
+
+	@Test
+	@Ignore("1GJWD2E: ITPUI:ALL")
+	public void testZipFileExport() {
+//		Dialog dialog = exportWizard(DataTransferTestStub.newZipFileResourceExportPage1(null));
+//		DialogCheck.assertDialog(dialog);
+	}
+
+	@Test
 	public void testImportResources() {//reference: ImportResourcesAction
 		Dialog dialog = importWizard(null);
 		DialogCheck.assertDialog(dialog);
@@ -138,16 +141,23 @@ public class UIWizards extends TestCase {
 
 	/**
 	 * 1GJWD2E: ITPUI:ALL - Test classes should not be released in public packages.
-	 *
-	 public void testFileSystemImport() {
-	 Dialog dialog = importWizard( DataTransferTestStub.newFileSystemResourceImportPage1(WorkbenchPlugin.getDefault().getWorkbench(), StructuredSelection.EMPTY) );
-	 DialogCheck.assertDialog(dialog);
-	 }
-	 public void testZipFileImport() {
-	 Dialog dialog = importWizard( DataTransferTestStub.newZipFileResourceImportPage1(null) );
-	 DialogCheck.assertDialog(dialog);
-	 }
 	 */
+	@Test
+	@Ignore("1GJWD2E: ITPUI:ALL")
+	public void testFileSystemImport() {
+//		Dialog dialog = importWizard(DataTransferTestStub.newFileSystemResourceImportPage1(
+//				WorkbenchPlugin.getDefault().getWorkbench(), StructuredSelection.EMPTY));
+//		DialogCheck.assertDialog(dialog);
+	}
+
+	@Test
+	@Ignore("1GJWD2E: ITPUI:ALL")
+	public void testZipFileImport() {
+//		Dialog dialog = importWizard(DataTransferTestStub.newZipFileResourceImportPage1(null));
+//		DialogCheck.assertDialog(dialog);
+	}
+
+	@Test
 	public void testNewFile() {
 		BasicNewFileResourceWizard wizard = new BasicNewFileResourceWizard();
 		wizard.init(PlatformUI.getWorkbench(), new StructuredSelection());
@@ -160,6 +170,7 @@ public class UIWizards extends TestCase {
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testNewFolder() {
 		BasicNewFolderResourceWizard wizard = new BasicNewFolderResourceWizard();
 		wizard.init(PlatformUI.getWorkbench(), new StructuredSelection());
@@ -172,6 +183,7 @@ public class UIWizards extends TestCase {
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testNewProjectPage1() {
 		BasicNewProjectResourceWizard wizard = new BasicNewProjectResourceWizard();
 		wizard.init(PlatformUI.getWorkbench(), null);
@@ -188,6 +200,7 @@ public class UIWizards extends TestCase {
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testNewProjectPage2() {
 		BasicNewProjectResourceWizard wizard = new BasicNewProjectResourceWizard();
 		wizard.init(PlatformUI.getWorkbench(), null);
@@ -211,6 +224,7 @@ public class UIWizards extends TestCase {
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testNewProject() {
 		// Create wizard selection wizard.
 		NewWizard wizard = new NewWizard();
@@ -246,6 +260,7 @@ public class UIWizards extends TestCase {
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testNewResource() {
 		NewWizard wizard = new NewWizard();
 		ISelection selection = getWorkbench().getActiveWorkbenchWindow()

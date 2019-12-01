@@ -33,16 +33,20 @@ import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests the WorkingSetNewWizard.
  * Tests input validation, presence of type page and correct edit page
  * and wizard page texts.
  */
+@RunWith(JUnit4.class)
 public class UINewWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 
-	public UINewWorkingSetWizardAuto(String name) {
-		super(name);
+	public UINewWorkingSetWizardAuto() {
+		super(UINewWorkingSetWizardAuto.class.getSimpleName());
 	}
 
 	@Override
@@ -51,6 +55,7 @@ public class UINewWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 		super.doSetUp();
 	}
 
+	@Test
 	public void testTypePage() throws Throwable {
 		IWizardPage page = fWizardDialog.getCurrentPage();
 		WorkingSetDescriptor[] descriptors = getEditableWorkingSetDescriptors();
@@ -88,6 +93,7 @@ public class UINewWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 		}
 	}
 
+	@Test
 	public void testEditPage() throws Throwable {
 		WorkingSetRegistry registry = WorkbenchPlugin.getDefault()
 				.getWorkingSetRegistry();

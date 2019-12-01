@@ -16,7 +16,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dialogs;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.fail;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -48,15 +48,13 @@ import org.eclipse.ui.internal.dialogs.ShowViewDialog;
 import org.eclipse.ui.internal.registry.PerspectiveRegistry;
 import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
+import org.junit.Ignore;
+import org.junit.Test;
 
-public class UIDialogs extends TestCase {
+public class UIDialogs {
 	private static final String PROJECT_SELECTION_MESSAGE = "Select Project";
 
 	private static final String FILTER_SELECTION_MESSAGE = ResourceNavigatorMessages.FilterSelection_message;
-
-	public UIDialogs(String name) {
-		super(name);
-	}
 
 	private Shell getShell() {
 		return DialogCheck.getShell();
@@ -66,18 +64,21 @@ public class UIDialogs extends TestCase {
 		return PlatformUI.getWorkbench();
 	}
 
+	@Test
 	public void testAbout() {
 		Dialog dialog = null;
 		dialog = new AboutDialog(getShell());
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testAddProjects() {
 		Dialog dialog = new ListSelectionDialog(getShell(), null, ArrayContentProvider.getInstance(),
 				new LabelProvider(), PROJECT_SELECTION_MESSAGE);
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testCopyMoveProject() {
 		IProject dummyProject = ResourcesPlugin.getWorkspace().getRoot()
 				.getProject("DummyProject");
@@ -86,12 +87,15 @@ public class UIDialogs extends TestCase {
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testCopyMoveResource() {
 		Dialog dialog = new ContainerSelectionDialog(getShell(), null, true,
 				"Select Destination");
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
+	@Ignore("CustomizePerspectiveDialog not implemented")
 	public void testEditActionSetsDialog() {
 		fail("CustomizePerspectiveDialog not implemented");
 //        Dialog dialog;
@@ -115,41 +119,56 @@ public class UIDialogs extends TestCase {
 //        }
 	}
 
+	@Test
 	public void testEditorSelection() {
 		Dialog dialog = new EditorSelectionDialog(getShell());
 		DialogCheck.assertDialog(dialog);
 	}
 
 	/**
-	 * 1GJWD2E: ITPUI:ALL - Test classes should not be released in public
-	 * packages. public void testFindReplace() { Dialog dialog =
-	 * TextEditorTestStub.newFindReplaceDialog( getShell() );
-	 * DialogCheck.assertDialog(dialog); } public void testGotoResource() {
-	 * Dialog dialog = NavigatorTestStub.newGotoResourceDialog(getShell(), new
-	 * IResource[0]); DialogCheck.assertDialog(dialog); }
+	 * 1GJWD2E: ITPUI:ALL - Test classes should not be released in public packages.
 	 */
+	@Test
+	@Ignore("1GJWD2E: ITPUI:ALL")
+	public void testFindReplace() {
+//		Dialog dialog = TextEditorTestStub.newFindReplaceDialog(getShell());
+//		DialogCheck.assertDialog(dialog);
+	}
+
+	@Test
+	@Ignore("1GJWD2E: ITPUI:ALL")
+	public void testGotoResource() {
+//		Dialog dialog = NavigatorTestStub.newGotoResourceDialog(getShell(), new IResource[0]);
+//		DialogCheck.assertDialog(dialog);
+	}
+
+	@Test
 	public void testNavigatorFilter() {
 		Dialog dialog = new ListSelectionDialog(getShell(), null, ArrayContentProvider.getInstance(),
 				new LabelProvider(), FILTER_SELECTION_MESSAGE);
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testNewFileType() {
 		Dialog dialog = new FileExtensionDialog(getShell());
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testProgressInformation() {
 		ProgressMonitorDialog dialog = new ProgressMonitorDialog(getShell());
 		dialog.setBlockOnOpen(true);
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testSaveAs() {
 		Dialog dialog = new SaveAsDialog(getShell());
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testSavePerspective() {
 		PerspectiveRegistry reg = (PerspectiveRegistry) WorkbenchPlugin
 				.getDefault().getPerspectiveRegistry();
@@ -165,6 +184,8 @@ public class UIDialogs extends TestCase {
 	}
 
 	// see bug 211350
+	@Test
+	@Ignore("PerspectiveRegistry.getCustomPersp not implemented")
 	public void testLoadNotExistingPerspective() {
 		fail("PerspectiveRegistry.getCustomPersp not implemented");
 //    	final String fakePerspectivID = "fakeperspetive";
@@ -177,17 +198,20 @@ public class UIDialogs extends TestCase {
 //		}
 	}
 
+	@Test
 	public void testSelectPerspective() {
 		Dialog dialog = new SelectPerspectiveDialog(getShell(), PlatformUI
 				.getWorkbench().getPerspectiveRegistry());
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testSelectTypes() {
 		Dialog dialog = new TypeFilteringDialog(getShell(), null);
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testShowView() {
 
 		IWorkbench workbench = getWorkbench();
@@ -202,10 +226,15 @@ public class UIDialogs extends TestCase {
 		Dialog dialog = new ShowViewDialog(shell, app, window, modelService, partService, ctx);
 		DialogCheck.assertDialog(dialog);
 	}
+	
 	/**
-	 * 1GJWD2E: ITPUI:ALL - Test classes should not be released in public
-	 * packages. public void testTaskFilters() { Dialog dialog =
-	 * TaskListTestStub.newFiltersDialog( getShell() );
-	 * DialogCheck.assertDialog(dialog); }
+	 * 1GJWD2E: ITPUI:ALL - Test classes should not be released in public packages.
 	 */
+	@Test
+	@Ignore("1GJWD2E: ITPUI:ALL")
+	public void testTaskFilters() {
+//		Dialog dialog = TaskListTestStub.newFiltersDialog(getShell());
+//		DialogCheck.assertDialog(dialog);
+	}
+
 }

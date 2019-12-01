@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dialogs;
 
-import junit.framework.TestCase;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.MultiStatus;
 import org.eclipse.core.runtime.Status;
@@ -22,12 +20,9 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
+import org.junit.Test;
 
-public class UIErrorDialogs extends TestCase {
-
-	public UIErrorDialogs(String name) {
-		super(name);
-	}
+public class UIErrorDialogs {
 
 	private Shell getShell() {
 		return DialogCheck.getShell();
@@ -51,6 +46,7 @@ public class UIErrorDialogs extends TestCase {
 				mainStatus, IStatus.ERROR);
 	}
 
+	@Test
 	public void testErrorClipboard() {
 		Dialog dialog = getMultiStatusErrorDialog();
 		DialogCheck.assertDialog(dialog);

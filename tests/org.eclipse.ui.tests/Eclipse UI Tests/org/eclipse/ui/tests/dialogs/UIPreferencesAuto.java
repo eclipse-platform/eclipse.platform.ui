@@ -22,14 +22,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class UIPreferencesAuto extends TestCase {
-
-	public UIPreferencesAuto(String name) {
-		super(name);
-	}
+public class UIPreferencesAuto {
 
 	protected Shell getShell() {
 		return DialogCheck.getShell();
@@ -58,42 +53,50 @@ public class UIPreferencesAuto extends TestCase {
 	}
 
 
+	@Test
 	public void testWorkbenchPref() {
 		Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.Workbench");
 		DialogCheck.assertDialogTexts(dialog);
 	}
 
+	@Test
 	public void testAppearancePref() {
 		Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.Views");
 		DialogCheck.assertDialogTexts(dialog);
 	}
 
+	@Test
 	public void testDefaultTextEditorPref() {
 		Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.TextEditor");
 		DialogCheck.assertDialogTexts(dialog);
 	}
 
+	@Test
 	public void testFileEditorsPref() {
 		Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.FileEditors");
 		DialogCheck.assertDialogTexts(dialog);
 	}
 
+	@Test
 	public void testLocalHistoryPref() {
 		Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.FileStates");
 		DialogCheck.assertDialogTexts(dialog);
 	}
 
+	@Test
 	public void testPerspectivesPref() {
 		Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.Perspectives");
 		DialogCheck.assertDialogTexts(dialog);
 	}
 
 	//Only really checking if this opens without an exception
+	@Test
 	public void testFontEditorsPref() {
 		Dialog dialog = getPreferenceDialog("org.eclipse.ui.tests.dialogs.FontFieldEditorTestPreferencePage");
 		DialogCheck.assertDialogTexts(dialog);
 	}
 
+	@Test
 	public void testInfoProp() {
 		/*
 		 * Commented out because it generates a failure
@@ -105,6 +108,7 @@ public class UIPreferencesAuto extends TestCase {
 		 */
 	}
 
+	@Test
 	public void testProjectReferencesProp() {
 		/*
 		 * Commented out because it generates a failure
@@ -120,6 +124,7 @@ public class UIPreferencesAuto extends TestCase {
 	 * Test the editors preference page and toggle the
 	 * enable state twice to be sure there are no errors.
 	 */
+	@Test
 	public void testFieldEditorEnablePref() {
 
 		PreferenceDialogWrapper dialog = null;

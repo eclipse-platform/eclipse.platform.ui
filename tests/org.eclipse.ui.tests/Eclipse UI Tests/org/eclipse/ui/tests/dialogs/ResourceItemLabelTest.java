@@ -32,6 +32,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests that resources are highlighted to match user search input. See Bug
@@ -39,17 +42,15 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  *
  * @since 3.14
  */
+@RunWith(JUnit4.class)
 public class ResourceItemLabelTest extends UITestCase {
 
 	/**
 	 * Constructs a new instance of <code>ResourceItemlLabelTest</code>.
-	 *
-	 * @param name
-	 *            The name of the test to be run.
 	 */
 
-	public ResourceItemLabelTest(String name) {
-		super(name);
+	public ResourceItemLabelTest() {
+		super(ResourceItemLabelTest.class.getSimpleName());
 	}
 
 	private IProject project;
@@ -68,6 +69,7 @@ public class ResourceItemLabelTest extends UITestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testSubstringMatch() throws Exception {
 		Position[] atBeginning = { new Position(0, 2) };
 		compareStyleRanges(atBeginning, getStyleRanges("te", "test.txt"), "test.txt", "");
@@ -84,6 +86,7 @@ public class ResourceItemLabelTest extends UITestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testCamelCaseMatch() throws Exception {
 		Position[] atBeginning = { new Position(0, 1), new Position(4, 1) };
 		compareStyleRanges(atBeginning, getStyleRanges("TT", "ThisTest.txt"), "ThisTest.txt", "");
@@ -106,6 +109,7 @@ public class ResourceItemLabelTest extends UITestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testPatternMatch() throws Exception {
 		Position[] questionMark = { new Position(0, 1), new Position(2, 2) };
 		compareStyleRanges(questionMark, getStyleRanges("t?st", "test.txt"), "test.txt", "");
@@ -125,6 +129,7 @@ public class ResourceItemLabelTest extends UITestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testBug529451() throws Exception {
 		Position[] basic = { new Position(4, 1) };
 		compareStyleRanges(basic, getStyleRanges("*$", "test$.txt"), "test$.txt", "");
@@ -138,6 +143,7 @@ public class ResourceItemLabelTest extends UITestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testDisableAutoPrefixMatching() throws Exception {
 		Position[] questionMark = { new Position(0, 1), new Position(4, 4) };
 		compareStyleRanges(questionMark, getStyleRanges("M*file<", "Makefile"), "Makefile", "");
@@ -154,6 +160,7 @@ public class ResourceItemLabelTest extends UITestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testExtensionMatch() throws Exception {
 		Position[] basic = { new Position(8, 3) };
 		compareStyleRanges(basic, getStyleRanges(".MF", "MANIFEST.MF"), "MANIFEST.MF", "");
@@ -176,6 +183,7 @@ public class ResourceItemLabelTest extends UITestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testBug528301() throws Exception {
 		Position[] withSameLettersBeforeCamel = { new Position(0, 1), new Position(3, 1), new Position(5, 1) };
 		compareStyleRanges(withSameLettersBeforeCamel, getStyleRanges("ABC", "AbcBzCz.txt"), "AbcBzCz.txt", "");
@@ -190,6 +198,7 @@ public class ResourceItemLabelTest extends UITestCase {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testBug531610() throws Exception {
 		IFolder folder = project.getFolder("folder");
 		IFile fileB = folder.getFile("file");

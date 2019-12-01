@@ -22,14 +22,9 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class TextMessageDialogsAuto extends TestCase {
-
-	public TextMessageDialogsAuto(String name) {
-		super(name);
-	}
+public class TextMessageDialogsAuto {
 
 	private Shell getShell() {
 		return DialogCheck.getShell();
@@ -63,6 +58,7 @@ public class TextMessageDialogsAuto extends TestCase {
 				IDialogConstants.NO_LABEL);
 	}
 
+	@Test
 	public void testCloseFileDeleted() {
 		Dialog dialog = null;
 		ResourceBundle bundle = ResourceBundle
@@ -77,12 +73,14 @@ public class TextMessageDialogsAuto extends TestCase {
 		DialogCheck.assertDialogTexts(dialog);
 	}
 
+	@Test
 	public void testErrorClosing() {
 		Dialog dialog = getQuestionDialog(WorkbenchMessages.Error,
 				WorkbenchMessages.ErrorClosingNoArg);
 		DialogCheck.assertDialogTexts(dialog);
 	}
 
+	@Test
 	public void testFileChanged() {
 		MessageDialog dialog = null;
 		ResourceBundle bundle = ResourceBundle
@@ -95,6 +93,7 @@ public class TextMessageDialogsAuto extends TestCase {
 		}
 		DialogCheck.assertDialogTexts(dialog);
 	}
+	@Test
 	public void testSaveFileDeleted() {
 		MessageDialog dialog = null;
 		ResourceBundle bundle = ResourceBundle
@@ -108,6 +107,7 @@ public class TextMessageDialogsAuto extends TestCase {
 		DialogCheck.assertDialogTexts(dialog);
 	}
 
+	@Test
 	public void testUpdateConflict() {
 		MessageDialog dialog = null;
 		ResourceBundle bundle = ResourceBundle

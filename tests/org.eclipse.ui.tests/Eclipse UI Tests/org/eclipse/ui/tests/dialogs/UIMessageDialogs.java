@@ -25,10 +25,9 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.views.navigator.ResourceNavigatorMessages;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class UIMessageDialogs extends TestCase {
+public class UIMessageDialogs {
 	private static final String DUMMY_RESOURCE = "Dummy.resource";
 
 	private static final String DUMMY_PROJECT = "DummyProject";
@@ -37,10 +36,6 @@ public class UIMessageDialogs extends TestCase {
 
 	private static final String DUMMY_RELATIVE_PATH = "\\" + DUMMY_PROJECT
 			+ "\\" + DUMMY_RESOURCE;
-
-	public UIMessageDialogs(String name) {
-		super(name);
-	}
 
 	private Shell getShell() {
 		return DialogCheck.getShell();
@@ -85,6 +80,7 @@ public class UIMessageDialogs extends TestCase {
 				IDialogConstants.OK_LABEL);
 	}
 
+	@Test
 	public void testAbortPageFlipping() {
 		Dialog dialog = getWarningDialog(JFaceResources
 				.getString("AbortPageFlippingDialog.title"), JFaceResources
@@ -93,11 +89,13 @@ public class UIMessageDialogs extends TestCase {
 	}
 
 
+	@Test
 	public void testCopyOverwrite() {
 		Dialog dialog = getQuestionDialog("Exists","Overwrite?");
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testDeleteProject() {
 		String title ="Delete Project";
 		String msg = NLS.bind("Delete", (new Object[] {
@@ -108,6 +106,7 @@ public class UIMessageDialogs extends TestCase {
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testDeleteReadOnlyCheck() {
 		Dialog dialog = new MessageDialog(getShell(),"Delete?", null,
 				"This?",
@@ -119,16 +118,19 @@ public class UIMessageDialogs extends TestCase {
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testDeleteResource() {
 		Dialog dialog = getQuestionDialog("Delete","Delete?");
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testDeleteResources() {
 		Dialog dialog = getQuestionDialog("Delete","OK?");
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testDropOverwrite() {
 		Dialog dialog = new MessageDialog(
 				getShell(),
@@ -142,17 +144,20 @@ public class UIMessageDialogs extends TestCase {
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testErrorClosing() {
 		Dialog dialog = getQuestionDialog(WorkbenchMessages.Error,
 				WorkbenchMessages.ErrorClosingNoArg);
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testFileExtensionEmpty() {
 		Dialog dialog = getInformationDialog("","");
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testFileNameWrong() {
 		Dialog dialog = getInformationDialog(
 				"Invalid",
@@ -160,22 +165,26 @@ public class UIMessageDialogs extends TestCase {
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testFileTypeExists() {
 		Dialog dialog = getInformationDialog("Exists",
 				"Already Exists");
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testInvalidType_1() {
 		Dialog dialog = getWarningDialog("Invalid?", "Is this invalid?");
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testInvalidType_2() {
 		Dialog dialog = getWarningDialog("Invalid",  "Is this invalid?");
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testMoveReadOnlyCheck() {
 		Dialog dialog = new MessageDialog(getShell(), "Move", null, "OK to move",
 				MessageDialog.QUESTION, 0,
@@ -202,16 +211,19 @@ public class UIMessageDialogs extends TestCase {
 	 DialogCheck.assertDialog(dialog);
 	 }
 	 */
+	@Test
 	public void testNoPropertyPage() {
 		Dialog dialog = getInformationDialog(WorkbenchMessages.PropertyDialog_messageTitle, NLS.bind(WorkbenchMessages.PropertyDialog_noPropertyMessage, (new Object[] { "DummyPropertyPage" })));
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testOperationNotAvailable() {
 		Dialog dialog = getInformationDialog(WorkbenchMessages.Information, "Not available");
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testOverwritePerspective() {
 		Dialog dialog = new MessageDialog(getShell(), WorkbenchMessages.SavePerspective_overwriteTitle, null,
 				NLS.bind(WorkbenchMessages.SavePerspective_overwriteQuestion, (new Object[] { "Dummy Perspective" })),
@@ -222,6 +234,7 @@ public class UIMessageDialogs extends TestCase {
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testRefreshDeleteProject() {
 		Dialog dialog = new MessageDialog(getShell(), "Refresh", null,
 				NLS.bind("deleted location", (new Object[] {
@@ -232,11 +245,13 @@ public class UIMessageDialogs extends TestCase {
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testRenameOverwrite() {
 		Dialog dialog = getQuestionDialog("Exists","Overwrite");
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testResetPerspective() {
 		Dialog dialog = new MessageDialog(getShell(), WorkbenchMessages.ResetPerspective_title, null, NLS.bind(WorkbenchMessages.ResetPerspective_message, (new Object[] { "Dummy Perspective" })),
 				MessageDialog.QUESTION, 0,
@@ -245,18 +260,21 @@ public class UIMessageDialogs extends TestCase {
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testSaveAsOverwrite() {
 		Dialog dialog = new MessageDialog(getShell(), "OK?", null, "Overwrite?", MessageDialog.QUESTION, 0,
 				IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL, IDialogConstants.CANCEL_LABEL);
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testSaveChanges() {
 		Dialog dialog = new MessageDialog(getShell(), WorkbenchMessages.Save_Resource, null, NLS.bind(WorkbenchMessages.EditorManager_saveChangesQuestion, (new Object[] { DUMMY_RESOURCE })), MessageDialog.QUESTION,
 				0, WorkbenchMessages.Save, WorkbenchMessages.Dont_Save, IDialogConstants.CANCEL_LABEL);
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testWizardClosing() {
 		Dialog dialog = new MessageDialog(getShell(), JFaceResources
 				.getString("WizardClosingDialog.title"), null, JFaceResources
@@ -266,6 +284,7 @@ public class UIMessageDialogs extends TestCase {
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testWizardOverwrite() {
 		Dialog dialog = new MessageDialog(getShell(), "OK?", null, "Exists", MessageDialog.QUESTION, 0,
 				IDialogConstants.YES_LABEL,

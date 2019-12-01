@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.tests.dialogs;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -28,6 +30,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog;
+import org.junit.Test;
 
 public class UIFilteredResourcesSelectionDialogAuto extends
 		UIAbstractFilteredResourcesSelectionDialog {
@@ -37,6 +40,7 @@ public class UIFilteredResourcesSelectionDialogAuto extends
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testReadHistory() throws Exception {
 
 		final MockedFilteredResourcesSelectionDialog dialog = createDialog();

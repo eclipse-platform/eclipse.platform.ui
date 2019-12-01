@@ -34,17 +34,12 @@ import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.dialogs.PropertyPageManager;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class DeprecatedUIPreferences extends TestCase {
+public class DeprecatedUIPreferences {
 	private IProject _project;
 
 	private static final String PROJECT_NAME = "DummyProject";
-
-	public DeprecatedUIPreferences(String name) {
-		super(name);
-	}
 
 	private Shell getShell() {
 		return DialogCheck.getShell();
@@ -135,41 +130,49 @@ public class DeprecatedUIPreferences extends TestCase {
 		return dialog;
 	}
 
+	@Test
 	public void testWorkbenchPref() {
 		Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.Workbench");
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testAppearancePref() {
 		Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.Views");
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testDefaultTextEditorPref() {
 		Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.TextEditor");
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testFileEditorsPref() {
 		Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.FileEditors");
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testLocalHistoryPref() {
 		Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.FileStates");
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testPerspectivesPref() {
 		Dialog dialog = getPreferenceDialog("org.eclipse.ui.preferencePages.Perspectives");
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testInfoProp() {
 		Dialog dialog = getPropertyDialog("org.eclipse.ui.propertypages.info.file");
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testProjectReferencesProp() {
 		Dialog dialog = getPropertyDialog("org.eclipse.ui.propertypages.project.reference");
 		DialogCheck.assertDialog(dialog);

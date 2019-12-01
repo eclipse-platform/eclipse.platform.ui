@@ -13,16 +13,17 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dialogs;
 
+import static org.junit.Assert.assertEquals;
+
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.ui.internal.dialogs.cpd.TreeManager;
 import org.eclipse.ui.internal.dialogs.cpd.TreeManager.TreeItem;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class TreeManagerTest extends TestCase {
+public class TreeManagerTest {
 
 	private static final List<String> STATE_NAMES;
 
@@ -51,6 +52,7 @@ public class TreeManagerTest extends TestCase {
 				expectedState, checkState);
 	}
 
+	@Test
 	public void testSingleEntry() throws Exception {
 		TreeManager manager = new TreeManager();
 		TreeItem item = manager.new TreeItem("item");
@@ -74,6 +76,7 @@ public class TreeManagerTest extends TestCase {
 		assertState(item, CHECKSTATE_UNCHECKED);
 	}
 
+	@Test
 	public void testSingleChildAffectsParent() throws Exception {
 		TreeManager manager = new TreeManager();
 		TreeItem parent = manager.new TreeItem("parent");
@@ -105,6 +108,7 @@ public class TreeManagerTest extends TestCase {
 		assertState(child, CHECKSTATE_UNCHECKED);
 	}
 
+	@Test
 	public void testTwoChildrenAffectParent() throws Exception {
 		TreeManager manager = new TreeManager();
 		TreeItem parent = manager.new TreeItem("parent");
@@ -135,6 +139,7 @@ public class TreeManagerTest extends TestCase {
 		assertState(daughter, CHECKSTATE_UNCHECKED);
 	}
 
+	@Test
 	public void testCheckUncheckChildAt3Deep() throws Exception {
 		TreeManager manager = new TreeManager();
 		TreeItem grandparent = manager.new TreeItem("grandparent");
@@ -174,6 +179,7 @@ public class TreeManagerTest extends TestCase {
 		assertState(child, CHECKSTATE_UNCHECKED);
 	}
 
+	@Test
 	public void testCauseGrayAt3Deep() throws Exception {
 		TreeManager manager = new TreeManager();
 		TreeItem grandparent = manager.new TreeItem("grandparent");
@@ -210,6 +216,7 @@ public class TreeManagerTest extends TestCase {
 		assertState(child2, CHECKSTATE_UNCHECKED);
 	}
 
+	@Test
 	public void testCheckUncheckChildAt5Deep() throws Exception {
 		TreeManager manager = new TreeManager();
 		TreeItem items[] = new TreeItem[5];
@@ -231,6 +238,7 @@ public class TreeManagerTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testCauseGrayAt5Deep() throws Exception {
 		TreeManager manager = new TreeManager();
 		TreeItem items[] = new TreeItem[4];
@@ -275,6 +283,7 @@ public class TreeManagerTest extends TestCase {
 		assertState(child2, CHECKSTATE_UNCHECKED);
 	}
 
+	@Test
 	public void testChildrenInMultipleBranchesAffectAncestors() throws Exception {
 		TreeManager manager = new TreeManager();
 		TreeItem root = manager.new TreeItem("root");
@@ -371,6 +380,7 @@ public class TreeManagerTest extends TestCase {
 		assertState(itemB2, CHECKSTATE_UNCHECKED);
 	}
 
+	@Test
 	public void testMultipleChildrenInOneBranchAffectParent() throws Exception {
 		TreeManager manager = new TreeManager();
 		TreeItem root = manager.new TreeItem("root");
@@ -443,6 +453,7 @@ public class TreeManagerTest extends TestCase {
 		assertState(items[4], CHECKSTATE_UNCHECKED);
 	}
 
+	@Test
 	public void testParentAffectsSingleChild() throws Exception {
 		TreeManager manager = new TreeManager();
 		TreeItem parent = manager.new TreeItem("parent");
@@ -474,6 +485,7 @@ public class TreeManagerTest extends TestCase {
 		assertState(child, CHECKSTATE_UNCHECKED);
 	}
 
+	@Test
 	public void testParentAffectsTwoChildren() throws Exception {
 		TreeManager manager = new TreeManager();
 		TreeItem parent = manager.new TreeItem("parent");
@@ -513,6 +525,7 @@ public class TreeManagerTest extends TestCase {
 		assertState(daughter, CHECKSTATE_UNCHECKED);
 	}
 
+	@Test
 	public void testParentAffectsMultipleChildrenInOneBranch() throws Exception {
 		TreeManager manager = new TreeManager();
 		TreeItem root = manager.new TreeItem("root");
@@ -540,6 +553,7 @@ public class TreeManagerTest extends TestCase {
 		assertState(items[4], CHECKSTATE_UNCHECKED);
 	}
 
+	@Test
 	public void testParentAffectsDescendantsInMultipleBranches() throws Exception {
 		TreeManager manager = new TreeManager();
 		TreeItem root = manager.new TreeItem("root");
@@ -576,6 +590,7 @@ public class TreeManagerTest extends TestCase {
 		assertState(itemB2, CHECKSTATE_UNCHECKED);
 	}
 
+	@Test
 	public void testCheckUncheckParentWithDescendants5Deep() throws Exception {
 		TreeManager manager = new TreeManager();
 		TreeItem items[] = new TreeItem[5];
@@ -597,6 +612,7 @@ public class TreeManagerTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testChangeOnGray() throws Exception {
 		TreeManager manager = new TreeManager();
 		TreeItem root = manager.new TreeItem("root");
@@ -646,6 +662,7 @@ public class TreeManagerTest extends TestCase {
 		assertState(itemB, CHECKSTATE_CHECKED);
 	}
 
+	@Test
 	public void testCheckUncheckItemWithAncestorsAndDescendants() throws Exception {
 		TreeManager manager = new TreeManager();
 		TreeItem items[] = new TreeItem[5];

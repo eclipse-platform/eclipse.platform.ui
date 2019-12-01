@@ -28,14 +28,14 @@ import org.eclipse.ui.IMemento;
 import org.eclipse.ui.XMLMemento;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.model.ResourceFactory;
-
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
 
 /**
  * @since 3.3
  *
  */
-public class UIAbstractFilteredResourcesSelectionDialog extends TestCase {
+public class UIAbstractFilteredResourcesSelectionDialog {
 
 	// -----------------------
 	// implementation dependent !
@@ -117,10 +117,8 @@ public class UIAbstractFilteredResourcesSelectionDialog extends TestCase {
 		return NONHISTORY_FILES;
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-
+	@Before
+	public void setUp() throws Exception {
 		initializeProject();
 
 		// ------------------------
@@ -154,9 +152,8 @@ public class UIAbstractFilteredResourcesSelectionDialog extends TestCase {
 		settings.put(HISTORY_SETTINGS, writer.getBuffer().toString());
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() throws Exception {
 		finalizeProject();
 	}
 

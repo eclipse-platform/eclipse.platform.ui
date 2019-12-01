@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.dialogs;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.util.ResourceBundle;
 
 import org.eclipse.jface.dialogs.Dialog;
@@ -20,14 +22,9 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class TextMessageDialogs extends TestCase {
-
-	public TextMessageDialogs(String name) {
-		super(name);
-	}
+public class TextMessageDialogs {
 
 	private Shell getShell() {
 		return DialogCheck.getShell();
@@ -73,6 +70,7 @@ public class TextMessageDialogs extends TestCase {
 				MessageDialog.QUESTION, 0, IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL);
 	}
 
+	@Test
 	public void testCloseFileDeleted() {
 		Dialog dialog = getConfirmDialog(
 				getEditorString("Editor_error_activated_deleted_close_title"),
@@ -80,6 +78,7 @@ public class TextMessageDialogs extends TestCase {
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testFileChanged() {
 		MessageDialog dialog = getQuestionDialog(
 				getEditorString("Editor_error_activated_outofsync_title"),
@@ -88,6 +87,7 @@ public class TextMessageDialogs extends TestCase {
 	}
 
 
+	@Test
 	public void testSaveFileDeleted() {
 		MessageDialog dialog = new MessageDialog(
 				getShell(),
@@ -100,6 +100,7 @@ public class TextMessageDialogs extends TestCase {
 		DialogCheck.assertDialog(dialog);
 	}
 
+	@Test
 	public void testUpdateConflict() {
 		MessageDialog dialog = getQuestionDialog(
 				getEditorString("Editor_error_save_outofsync_title"),

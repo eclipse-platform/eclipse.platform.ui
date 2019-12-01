@@ -19,6 +19,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
+import org.junit.Test;
 
 public class UIFilteredResourcesSelectionDialog extends
 		UIAbstractFilteredResourcesSelectionDialog {
@@ -27,6 +28,7 @@ public class UIFilteredResourcesSelectionDialog extends
 	 * It is possible to verify dialog's appearance on sample data. To test
 	 * different table contents, change the pattern.
 	 */
+	@Test
 	public void testVerifyDialog() {
 		final IContainer input = ResourcesPlugin.getWorkspace().getRoot();
 		final FilteredResourcesSelectionDialog dialog = new FilteredResourcesSelectionDialog(

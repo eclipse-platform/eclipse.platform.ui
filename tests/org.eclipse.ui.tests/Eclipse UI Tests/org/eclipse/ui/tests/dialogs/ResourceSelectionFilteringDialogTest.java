@@ -26,11 +26,15 @@ import org.eclipse.ui.dialogs.FilteredResourcesSelectionDialog;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class ResourceSelectionFilteringDialogTest extends UITestCase {
 
-	public ResourceSelectionFilteringDialogTest(String testName) {
-		super(testName);
+	public ResourceSelectionFilteringDialogTest() {
+		super(ResourceSelectionFilteringDialogTest.class.getSimpleName());
 	}
 
 	private static SeeThroughFilteredResourcesSelectionDialog createDialog() {
@@ -52,6 +56,7 @@ public class ResourceSelectionFilteringDialogTest extends UITestCase {
 		project.open(null);
 	}
 
+	@Test
 	public void testMatch() throws CoreException {
 		File folder = new File(project.getLocation().toFile(), "a/b/c");
 		folder.mkdirs();

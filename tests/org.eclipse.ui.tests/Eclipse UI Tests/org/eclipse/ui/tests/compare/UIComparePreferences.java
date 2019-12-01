@@ -23,14 +23,9 @@ import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.tests.dialogs.PreferenceDialogWrapper;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class UIComparePreferences extends TestCase {
-
-	public UIComparePreferences(String name) {
-		super(name);
-	}
+public class UIComparePreferences {
 
 	private Shell getShell() {
 		return DialogCheck.getShell();
@@ -58,6 +53,7 @@ public class UIComparePreferences extends TestCase {
 		return dialog;
 	}
 
+	@Test
 	public void testCompareViewersPref() {
 		Dialog dialog = getPreferenceDialog("org.eclipse.compare.internal.ComparePreferencePage");
 		DialogCheck.assertDialog(dialog);

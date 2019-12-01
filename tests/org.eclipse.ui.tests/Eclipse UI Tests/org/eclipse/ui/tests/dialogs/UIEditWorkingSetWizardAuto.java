@@ -31,17 +31,21 @@ import org.eclipse.ui.internal.dialogs.WorkingSetEditWizard;
 import org.eclipse.ui.internal.registry.WorkingSetRegistry;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests the WorkingSetEditWizard
  * Tests input validation, presence of correct edit page and
  * wizard page texts.
  */
+@RunWith(JUnit4.class)
 public class UIEditWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 	IWorkingSetPage fDefaultEditPage;
 
-	public UIEditWorkingSetWizardAuto(String name) {
-		super(name);
+	public UIEditWorkingSetWizardAuto() {
+		super(UIEditWorkingSetWizardAuto.class.getSimpleName());
 	}
 
 	@Override
@@ -53,6 +57,7 @@ public class UIEditWorkingSetWizardAuto extends UIWorkingSetWizardsAuto {
 		super.doSetUp();
 	}
 
+	@Test
 	public void testEditPage() throws Throwable {
 		IWizardPage page = fWizardDialog.getCurrentPage();
 		assertTrue(page instanceof IWorkingSetPage);
