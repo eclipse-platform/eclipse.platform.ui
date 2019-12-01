@@ -41,6 +41,9 @@ import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.tests.api.MockViewPart;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Very simple leak tests to determine if any of our heavy objects are not being
@@ -49,6 +52,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  *
  * @since 3.1
  */
+@RunWith(JUnit4.class)
 public class LeakTests extends UITestCase {
 	private IWorkbenchPage fActivePage;
 
@@ -56,11 +60,8 @@ public class LeakTests extends UITestCase {
 
 	private IProject proj;
 
-	/**
-	 * @param testName
-	 */
-	public LeakTests(String testName) {
-		super(testName);
+	public LeakTests() {
+		super(LeakTests.class.getSimpleName());
 	}
 
 	public static void checkRef(ReferenceQueue<?> queue, Reference<?> ref)
@@ -108,6 +109,7 @@ public class LeakTests extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testSimpleEditorLeak() throws Exception {
 		proj = FileUtil.createProject("testEditorLeaks");
 
@@ -126,6 +128,7 @@ public class LeakTests extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testSimpleViewLeak() throws Exception {
 		ReferenceQueue queue = new ReferenceQueue();
 		IViewPart view = fActivePage.showView(MockViewPart.ID);
@@ -141,6 +144,7 @@ public class LeakTests extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testBug255005ServiceLeak() throws Exception {
 		ReferenceQueue queue = new ReferenceQueue();
 		IViewPart view = fActivePage.showView(MockViewPart.ID);
@@ -179,6 +183,7 @@ public class LeakTests extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testBug255005SiteLeak() throws Exception {
 		ReferenceQueue queue = new ReferenceQueue();
 		IViewPart view = fActivePage.showView(MockViewPart.ID);
@@ -219,6 +224,7 @@ public class LeakTests extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testBug265449PropertiesLeak() throws Exception {
 		// create a project to be selected by the 'Navigator'
 		proj = FileUtil.createProject("projectToSelect");
@@ -250,6 +256,7 @@ public class LeakTests extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testTextEditorContextMenu() throws Exception {
 		proj = FileUtil.createProject("testEditorLeaks");
 
@@ -277,6 +284,7 @@ public class LeakTests extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testSimpleWindowLeak() throws Exception {
 		// turn off window management so that we dont have a reference to our
 		// new
@@ -307,6 +315,7 @@ public class LeakTests extends UITestCase {
 	 * is destroyed prior to closing them.
 	 * See bug https://bugs.eclipse.org/bugs/show_bug.cgi?id=123296
 	 */
+	@Test
 	public void testDestroyedDialogLeaks() throws Exception {
 		ReferenceQueue queue = new ReferenceQueue();
 		// Use SaveAs dialog because it's simple to invoke and utilizes

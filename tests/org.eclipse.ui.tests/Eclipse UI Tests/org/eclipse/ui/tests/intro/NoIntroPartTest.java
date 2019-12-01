@@ -19,20 +19,20 @@ import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.tests.api.IWorkbenchPartTest;
 import org.eclipse.ui.tests.api.MockPart;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.0
  */
+@RunWith(JUnit4.class)
 public class NoIntroPartTest extends IWorkbenchPartTest {
 
 	private IntroDescriptor oldDesc;
 
-	/**
-	 * @param testName
-	 */
-	public NoIntroPartTest(String testName) {
-		super(testName);
-		// TODO Auto-generated constructor stub
+	public NoIntroPartTest() {
+		super(NoIntroPartTest.class.getSimpleName());
 	}
 
 	@Override
@@ -49,6 +49,7 @@ public class NoIntroPartTest extends IWorkbenchPartTest {
 	}
 
 	//only test open..shouldn't work.
+	@Test
 	@Override
 	public void testOpenAndClose() throws Throwable {
 		// Open a part.

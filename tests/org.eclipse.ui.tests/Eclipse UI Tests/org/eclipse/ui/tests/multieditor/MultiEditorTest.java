@@ -53,6 +53,9 @@ import org.eclipse.ui.part.MultiEditorInput;
 import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.api.MockEditorPart;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import junit.framework.TestSuite;
 
@@ -61,6 +64,7 @@ import junit.framework.TestSuite;
  *
  * @since 3.1
  */
+@RunWith(JUnit4.class)
 public class MultiEditorTest extends UITestCase {
 	private static final String ACTION_TOOLTIP = "MultiEditorActionThing";
 
@@ -113,8 +117,8 @@ public class MultiEditorTest extends UITestCase {
 	 */
 	private EditorErrorListener fErrorListener;
 
-	public MultiEditorTest(String tc) {
-		super(tc);
+	public MultiEditorTest() {
+		super(MultiEditorTest.class.getSimpleName());
 	}
 
 	/**
@@ -128,6 +132,7 @@ public class MultiEditorTest extends UITestCase {
 	 * @throws Throwable
 	 *             on an error
 	 */
+	@Test
 	public void testOpenBasicEditor() throws Throwable {
 		final String[] simpleFiles = { TEST01_TXT, TEST02_TXT };
 
@@ -153,6 +158,7 @@ public class MultiEditorTest extends UITestCase {
 	 *
 	 * @throws Throwable
 	 */
+	@Test
 	public void testOpenTestFile() throws Throwable {
 		final String[] simpleFiles = { TEST01_TXT, TEST03_ETEST };
 
@@ -201,6 +207,7 @@ public class MultiEditorTest extends UITestCase {
 				((TiledEditor) multiEditor).callHistory
 						.verifyOrder(gEditorCloseTrace));
 	}
+	@Test
 	public void testDirty() throws Throwable {
 		IWorkbenchWindow window = openTestWindow();
 		WorkbenchPage page = (WorkbenchPage) window.getActivePage();
@@ -262,6 +269,7 @@ public class MultiEditorTest extends UITestCase {
 	 * @throws Throwable
 	 *             on an error
 	 */
+	@Test
 	public void testTrackCoolBar() throws Throwable {
 		final String[] simpleFiles = { TEST01_TXT, TEST02_TXT,
 				TEST04_PROPERTIES, BUILD_XML, TEST03_ETEST };

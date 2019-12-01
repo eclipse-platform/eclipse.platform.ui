@@ -27,21 +27,22 @@ import org.eclipse.ui.internal.intro.IntroDescriptor;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.0
  */
+@RunWith(JUnit4.class)
 public class IntroTest2 extends UITestCase {
 
 	IWorkbenchWindow window = null;
 
 	private IntroDescriptor oldDesc;
 
-	/**
-	 * @param testName
-	 */
-	public IntroTest2(String testName) {
-		super(testName);
+	public IntroTest2() {
+		super(IntroTest2.class.getSimpleName());
 	}
 
 	/**
@@ -50,6 +51,7 @@ public class IntroTest2 extends UITestCase {
 	 * other perspective.
 	 * See bug 174213
 	 */
+	@Test
 	public void testPerspectiveChangeWith33StickyBehavior() {
 		IWorkbench workbench = window.getWorkbench();
 		IIntroPart part = workbench.getIntroManager().showIntro(window, false);

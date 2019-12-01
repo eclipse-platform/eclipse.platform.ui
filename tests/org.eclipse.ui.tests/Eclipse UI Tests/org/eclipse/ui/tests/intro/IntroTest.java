@@ -32,27 +32,30 @@ import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.0
  */
+@RunWith(JUnit4.class)
 public class IntroTest extends UITestCase {
 
 	IWorkbenchWindow window = null;
 
 	private IntroDescriptor oldDesc;
 
-	/**
-	 * @param testName
-	 */
-	public IntroTest(String testName) {
-		super(testName);
+	public IntroTest() {
+		super(IntroTest.class.getSimpleName());
 	}
 
+	@Test
 	public void testCloseInEmptyPerspective() {
 		testClose(EmptyPerspective.PERSP_ID);
 	}
 
+	@Test
 	public void testCloseInNonEmptyPerspective() {
 		testClose("org.eclipse.ui.resourcePerspective");
 	}
@@ -71,6 +74,7 @@ public class IntroTest extends UITestCase {
 		assertTrue(((WorkbenchWindow) window).getPerspectiveBarVisible());
 	}
 
+	@Test
 	public void testShow() {
 		IIntroManager introManager = window.getWorkbench().getIntroManager();
 		IIntroPart part = introManager.showIntro(window, false);
@@ -86,6 +90,7 @@ public class IntroTest extends UITestCase {
 		assertNull(introManager.getIntro());
 	}
 
+	@Test
 	public void testCreateProblemsView() throws Exception {
 		IIntroManager introManager= window.getWorkbench().getIntroManager();
 		IIntroPart part= introManager.showIntro(window, false);
@@ -103,6 +108,7 @@ public class IntroTest extends UITestCase {
 		assertNull(introManager.getIntro());
 	}
 
+	@Test
 	public void testActivateProblemsView() throws Exception {
 		IIntroManager introManager= window.getWorkbench().getIntroManager();
 		IIntroPart part= introManager.showIntro(window, false);
@@ -120,6 +126,7 @@ public class IntroTest extends UITestCase {
 		assertNull(introManager.getIntro());
 	}
 
+	@Test
 	public void testStandby() {
 		IWorkbench workbench = window.getWorkbench();
 		IIntroPart part = workbench.getIntroManager().showIntro(window, false);
@@ -136,6 +143,7 @@ public class IntroTest extends UITestCase {
 	 * exists), change back to the first perspective, close the intro, ensure
 	 * that it no longer exists.
 	 */
+	@Test
 	public void testPerspectiveChange() {
 		// These tests are hard-wired to the pre-3.3 zoom behaviour
 		// Run them anyway to ensure that we preserve the 3.0 mechanism
@@ -164,6 +172,7 @@ public class IntroTest extends UITestCase {
 	 * See bug 174213
 	 * See IntroTest2.java
 	 */
+	@Test
 	public void testPerspectiveChangeWith32StickyBehavior() {
 		IWorkbench workbench = window.getWorkbench();
 		IIntroPart part = workbench.getIntroManager().showIntro(window, false);
@@ -189,6 +198,7 @@ public class IntroTest extends UITestCase {
 		assertNotNull(viewPart);
 	}
 
+	@Test
 	public void testPerspectiveReset() {
 		IWorkbench workbench = window.getWorkbench();
 		IIntroPart part = workbench.getIntroManager().showIntro(window, false);
@@ -211,6 +221,7 @@ public class IntroTest extends UITestCase {
 	 * Test to ensure that the part is properly nulled out when the intro is
 	 * closed via the view close mechanism.
 	 */
+	@Test
 	public void testViewClosure() {
 		IWorkbench workbench = window.getWorkbench();
 		IIntroPart part = workbench.getIntroManager().showIntro(window, false);

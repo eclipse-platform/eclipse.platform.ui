@@ -44,7 +44,11 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiEditorInput;
 import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class AbstractMultiEditorTest extends UITestCase {
 
 	private static final String PROJECT_NAME = "TiledEditorProject";
@@ -60,10 +64,11 @@ public class AbstractMultiEditorTest extends UITestCase {
 
 	private EditorErrorListener fErrorListener;
 
-	public AbstractMultiEditorTest(String tc) {
-		super(tc);
+	public AbstractMultiEditorTest() {
+		super(AbstractMultiEditorTest.class.getSimpleName());
 	}
 
+	@Test
 	public void testBug317102() throws Throwable {
 		final String[] simpleFiles = { TEST01_TXT, TEST03_ETEST };
 

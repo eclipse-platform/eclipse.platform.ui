@@ -25,19 +25,20 @@ import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.tests.api.IWorkbenchPartTest;
 import org.eclipse.ui.tests.api.MockPart;
 import org.eclipse.ui.tests.harness.util.CallHistory;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.0
  */
+@RunWith(JUnit4.class)
 public class IntroPartTest extends IWorkbenchPartTest {
 
 	private IntroDescriptor oldDesc;
 
-	/**
-	 * @param testName
-	 */
-	public IntroPartTest(String testName) {
-		super(testName);
+	public IntroPartTest() {
+		super(IntroPartTest.class.getSimpleName());
 	}
 
 	@Override
@@ -53,6 +54,7 @@ public class IntroPartTest extends IWorkbenchPartTest {
 				.closeIntro((IIntroPart) part));
 	}
 
+	@Test
 	@Override
 	public void testOpenAndClose() throws Throwable {
 		// Open a part.
@@ -72,6 +74,7 @@ public class IntroPartTest extends IWorkbenchPartTest {
 	 *
 	 * @throws Throwable
 	 */
+	@Test
 	public void testImage() throws Throwable {
 		MockPart part = openPart(fPage);
 		ImageDescriptor imageDescriptor = getIntroDesc().getImageDescriptor();
