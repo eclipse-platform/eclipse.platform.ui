@@ -27,6 +27,9 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.api.MockViewPart;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Test that the contexts activated through their local services are only in
@@ -34,6 +37,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  *
  * @since 3.2
  */
+@RunWith(JUnit4.class)
 public class PartContextTest extends UITestCase {
 	/**
 	 *
@@ -47,10 +51,11 @@ public class PartContextTest extends UITestCase {
 
 	public static final String WINDOW_CONTEXT_ID = "org.eclipse.ui.tests.contexts.WorkbenchWindow";
 
-	public PartContextTest(String name) {
-		super(name);
+	public PartContextTest() {
+		super(PartContextTest.class.getSimpleName());
 	}
 
+	@Test
 	public void testBasicContextActivation() throws Exception {
 		IContextService globalService = getWorkbench()
 				.getService(IContextService.class);
@@ -67,6 +72,7 @@ public class PartContextTest extends UITestCase {
 		checkActiveContext(globalService, MockViewPart5.PART_CONTEXT_ID, false);
 	}
 
+	@Test
 	public void testContextActivation() throws Exception {
 		IContextService globalService = getWorkbench()
 				.getService(IContextService.class);
@@ -99,6 +105,7 @@ public class PartContextTest extends UITestCase {
 		checkActiveContext(globalService, MockViewPart5.PART_CONTEXT_ID, false);
 	}
 
+	@Test
 	public void testWindowContextActivation() throws Exception {
 		IContextService globalService = getWorkbench()
 				.getService(IContextService.class);
@@ -123,6 +130,7 @@ public class PartContextTest extends UITestCase {
 	 * @throws Exception
 	 *             on error
 	 */
+	@Test
 	public void testPageBookPageContextActivation() throws Exception {
 		IContextService globalService = getWorkbench()
 				.getService(IContextService.class);

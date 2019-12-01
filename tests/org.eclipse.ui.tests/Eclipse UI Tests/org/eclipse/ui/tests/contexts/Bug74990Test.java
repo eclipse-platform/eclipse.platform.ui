@@ -20,22 +20,23 @@ import org.eclipse.ui.contexts.EnabledSubmission;
 import org.eclipse.ui.contexts.IContext;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * A test for whether part identifiers work properly for EnabledSubmissions.
  *
  * @since 3.1
  */
+@RunWith(JUnit4.class)
 public final class Bug74990Test extends UITestCase {
 
 	/**
 	 * Constructs a new instance of <code>Bug74990Test</code>.
-	 *
-	 * @param name
-	 *            The name of the test
 	 */
-	public Bug74990Test(final String name) {
-		super(name);
+	public Bug74990Test() {
+		super(Bug74990Test.class.getSimpleName());
 	}
 
 	/**
@@ -49,6 +50,7 @@ public final class Bug74990Test extends UITestCase {
 	 *             handler is tied.
 	 *
 	 */
+	@Test
 	public final void testPartIdSubmission() throws PartInitException {
 		// Define a command.
 		final String testContextId = "org.eclipse.ui.tests.contexts.Bug74990";

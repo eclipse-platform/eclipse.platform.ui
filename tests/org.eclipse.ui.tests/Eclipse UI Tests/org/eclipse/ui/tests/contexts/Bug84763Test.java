@@ -33,6 +33,9 @@ import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.contexts.IContextIds;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * A test case covering the scenario described in Bug 84763. The problem was
@@ -42,6 +45,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  *
  * @since 3.1
  */
+@RunWith(JUnit4.class)
 public final class Bug84763Test extends UITestCase {
 
 	/**
@@ -72,12 +76,9 @@ public final class Bug84763Test extends UITestCase {
 
 	/**
 	 * Constructor for <code>Bug84763Test</code>.
-	 *
-	 * @param name
-	 *            The name of the test
 	 */
-	public Bug84763Test(final String name) {
-		super(name);
+	public Bug84763Test() {
+		super(Bug84763Test.class.getSimpleName());
 	}
 
 	/**
@@ -128,6 +129,7 @@ public final class Bug84763Test extends UITestCase {
 	 * @throws ParseException
 	 *             If "CTRL+F" cannot be parsed for some reason.
 	 */
+	@Test
 	public void testWindowChildWhenDialog() throws NotDefinedException,
 			ParseException {
 		// Define the contexts to use.
