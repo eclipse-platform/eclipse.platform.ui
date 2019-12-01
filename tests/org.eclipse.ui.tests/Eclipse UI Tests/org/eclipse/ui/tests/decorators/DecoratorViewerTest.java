@@ -25,6 +25,7 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.tests.navigator.AbstractNavigatorTest;
+import org.junit.Test;
 
 /**
  * DecoratorViewerTest is the abstract class of the tests for the viewers.
@@ -56,6 +57,7 @@ public abstract class DecoratorViewerTest extends AbstractNavigatorTest {
 	 * @throws CoreException
 	 * @throws InterruptedException
 	 */
+	@Test
 	public void testBackground() throws PartInitException, CoreException,
 			InterruptedException {
 
@@ -96,6 +98,7 @@ public abstract class DecoratorViewerTest extends AbstractNavigatorTest {
 	 * @throws CoreException
 	 * @throws InterruptedException
 	 */
+	@Test
 	public void testForeground() throws PartInitException, CoreException,
 			InterruptedException {
 
@@ -152,6 +155,7 @@ public abstract class DecoratorViewerTest extends AbstractNavigatorTest {
 	 * @throws CoreException
 	 * @throws InterruptedException
 	 */
+	@Test
 	public void testFont() throws PartInitException, CoreException,
 			InterruptedException {
 

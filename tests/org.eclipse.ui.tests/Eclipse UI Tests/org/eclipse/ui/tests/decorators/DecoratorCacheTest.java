@@ -26,17 +26,21 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.navigator.AbstractNavigatorTest;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.4
  *
  */
+@RunWith(JUnit4.class)
 public class DecoratorCacheTest extends AbstractNavigatorTest {
 
 	protected DecoratingLabelProvider dlp;
 
-	public DecoratorCacheTest(String name) {
-		super(name);
+	public DecoratorCacheTest() {
+		super(DecoratorCacheTest.class.getSimpleName());
 	}
 
 	protected StructuredViewer createViewer(Composite parent) {
@@ -50,6 +54,7 @@ public class DecoratorCacheTest extends AbstractNavigatorTest {
 
 	}
 
+	@Test
 	public void testDecoratorCacheIsDisposed() {
 
 		Display fDisplay = Display.getCurrent();

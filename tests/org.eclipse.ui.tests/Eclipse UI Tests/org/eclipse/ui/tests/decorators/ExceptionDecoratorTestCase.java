@@ -22,10 +22,13 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.decorators.DecoratorDefinition;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @version 	1.0
  */
+@RunWith(JUnit4.class)
 public class ExceptionDecoratorTestCase extends DecoratorEnablementTestCase {
 	private Collection<DecoratorDefinition> problemDecorators = new ArrayList<>();
 
@@ -35,8 +38,8 @@ public class ExceptionDecoratorTestCase extends DecoratorEnablementTestCase {
 	 * Constructor for DecoratorTestCase.
 	 * @param testName
 	 */
-	public ExceptionDecoratorTestCase(String testName) {
-		super(testName);
+	public ExceptionDecoratorTestCase() {
+		super(ExceptionDecoratorTestCase.class.getSimpleName());
 	}
 
 	/**

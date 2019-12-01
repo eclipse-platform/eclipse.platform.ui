@@ -19,6 +19,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.decorators.DecoratorDefinition;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.tests.navigator.AbstractNavigatorTest;
+import org.junit.Test;
 
 /**
  * @version 	1.0
@@ -76,6 +77,7 @@ public abstract class DecoratorEnablementTestCase extends AbstractNavigatorTest
 	/**
 	 * Test enabling the contributor
 	 */
+	@Test
 	public void testEnableDecorator()  {
 		getDecoratorManager().clearCaches();
 		definition.setEnabled(true);
@@ -86,6 +88,7 @@ public abstract class DecoratorEnablementTestCase extends AbstractNavigatorTest
 	/**
 	 * Test disabling the contributor
 	 */
+	@Test
 	public void testDisableDecorator() {
 		getDecoratorManager().clearCaches();
 		definition.setEnabled(false);

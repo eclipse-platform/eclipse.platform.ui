@@ -16,18 +16,22 @@ package org.eclipse.ui.tests.decorators;
 
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.decorators.DecoratorDefinition;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.2
  *
  */
+@RunWith(JUnit4.class)
 public class BadIndexDecoratorTestCase extends DecoratorEnablementTestCase {
 
 	/**
 	 * @param testName
 	 */
-	public BadIndexDecoratorTestCase(String testName) {
-		super(testName);
+	public BadIndexDecoratorTestCase() {
+		super(BadIndexDecoratorTestCase.class.getSimpleName());
 	}
 
 	/**
@@ -55,6 +59,7 @@ public class BadIndexDecoratorTestCase extends DecoratorEnablementTestCase {
 	 * Turn off an on the bad index decorator without
 	 * generating an exception.
 	 */
+	@Test
 	public void testNoException() {
 
 		updated = false;

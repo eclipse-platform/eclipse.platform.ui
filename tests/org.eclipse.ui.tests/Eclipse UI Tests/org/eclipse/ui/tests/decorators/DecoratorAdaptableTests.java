@@ -25,11 +25,15 @@ import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.decorators.LightweightDecoratorManager;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.tests.menus.ObjectContributionClasses;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class DecoratorAdaptableTests extends UITestCase {
 
-	public DecoratorAdaptableTests(String testName) {
-		super(testName);
+	public DecoratorAdaptableTests() {
+		super(DecoratorAdaptableTests.class.getSimpleName());
 	}
 
 	private DecoratorManager getDecoratorManager() {
@@ -80,6 +84,7 @@ public class DecoratorAdaptableTests extends UITestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public final void testAdaptables() {
 		// Assert that decorators contributed to ICommon are applied to the given object
 		assertDecorated("1",
@@ -107,6 +112,7 @@ public class DecoratorAdaptableTests extends UITestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public final void testNonAdaptableContributions() {
 		assertDecorated("1",
 				new String[] {TestUnadaptableDecoratorContributor.SUFFIX},
@@ -132,6 +138,7 @@ public class DecoratorAdaptableTests extends UITestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public final void testContributorResourceAdapter() throws CoreException {
 
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();

@@ -19,10 +19,14 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.decorators.DecoratorDefinition;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.tests.navigator.AbstractNavigatorTest;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @version 1.0
  */
+@RunWith(JUnit4.class)
 public class DecoratorTestCase extends AbstractNavigatorTest implements
 		ILabelProviderListener {
 
@@ -32,11 +36,9 @@ public class DecoratorTestCase extends AbstractNavigatorTest implements
 
 	/**
 	 * Constructor for DecoratorTestCase.
-	 *
-	 * @param testName
 	 */
-	public DecoratorTestCase(String testName) {
-		super(testName);
+	public DecoratorTestCase() {
+		super(DecoratorTestCase.class.getSimpleName());
 	}
 
 	/**
@@ -76,6 +78,7 @@ public class DecoratorTestCase extends AbstractNavigatorTest implements
 	/**
 	 * Test enabling the contributor
 	 */
+	@Test
 	public void testEnableDecorator() {
 		getDecoratorManager().clearCaches();
 		definition.setEnabled(true);
@@ -86,6 +89,7 @@ public class DecoratorTestCase extends AbstractNavigatorTest implements
 	/**
 	 * Test disabling the contributor
 	 */
+	@Test
 	public void testDisableDecorator() {
 		getDecoratorManager().clearCaches();
 		definition.setEnabled(false);
@@ -95,6 +99,7 @@ public class DecoratorTestCase extends AbstractNavigatorTest implements
 	/**
 	 * Refresh the test decorator.
 	 */
+	@Test
 	public void testRefreshContributor() {
 
 		updated = false;
