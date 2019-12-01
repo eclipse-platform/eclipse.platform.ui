@@ -21,6 +21,9 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.menus.IMenuService;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  *
@@ -28,12 +31,14 @@ import org.eclipse.ui.menus.IMenuService;
  * @author Prakash G.R.
  *
  */
+@RunWith(JUnit4.class)
 public class DynamicMenuTest extends MenuTestCase {
 
-	public DynamicMenuTest(String testName) {
-		super(testName);
+	public DynamicMenuTest() {
+		super(DynamicMenuTest.class.getSimpleName());
 	}
 
+	@Test
 	public void testDynamicMenu() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
 		IMenuService menus = window
@@ -71,6 +76,7 @@ public class DynamicMenuTest extends MenuTestCase {
 
 	}
 
+	@Test
 	public void testDynamicMenuMultiOpen() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
 		IMenuService menus = window

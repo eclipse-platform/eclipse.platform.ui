@@ -22,6 +22,9 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  *
@@ -29,12 +32,14 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  * @author Prakash G.R.
  *
  */
+@RunWith(JUnit4.class)
 public class Bug231304Test extends UITestCase {
 
-	public Bug231304Test(String testName) {
-		super(testName);
+	public Bug231304Test() {
+		super(Bug231304Test.class.getSimpleName());
 	}
 
+	@Test
 	public void testToolTip() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
 		IMenuService menus = window

@@ -48,6 +48,9 @@ import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.tests.api.workbenchpart.EmptyView;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.tests.menus.ObjectContributionClasses.ICommon;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests that object contributions are enabled and shown correctly in pop-up
@@ -58,17 +61,15 @@ import org.eclipse.ui.tests.menus.ObjectContributionClasses.ICommon;
  *
  * @since 3.0
  */
+@RunWith(JUnit4.class)
 public final class ObjectContributionTest extends UITestCase {
 
 	/**
 	 * Constructs a new instance of <code>ObjectContributionTest</code> with
 	 * the name of the test.
-	 *
-	 * @param name
-	 *            The name of the test; may be <code>null</code>.
 	 */
-	public ObjectContributionTest(final String name) {
-		super(name);
+	public ObjectContributionTest() {
+		super(ObjectContributionTest.class.getSimpleName());
 	}
 
 	/**
@@ -80,6 +81,7 @@ public final class ObjectContributionTest extends UITestCase {
 	 *             If a problem occurs when creating the project or file, or if
 	 *             the project can't be opened.
 	 */
+	@Test
 	public final void testObjectStateContentType() throws CoreException {
 		// Create an XML file with <project> as its root element.
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -107,6 +109,7 @@ public final class ObjectContributionTest extends UITestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public final void testContributorResourceAdapter() throws CoreException {
 
 		final IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -178,6 +181,7 @@ public final class ObjectContributionTest extends UITestCase {
 	 */
 	// This test fails (locally) if 'org.eclipse.ui.examples.adapterservice' is part
 	// of the launch configuration, see Bug 366541
+	@Test
 	public final void testAdaptables() throws PartInitException {
 		assertPopupMenus("1", new String[] { "ICommon.1" },
 				new StructuredSelection(
@@ -237,6 +241,7 @@ public final class ObjectContributionTest extends UITestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public final void testDuplicateAdaptables() throws PartInitException {
 		assertPopupMenus("1", new String[] { "ICommon.1" },
 				new StructuredSelection(
@@ -276,6 +281,7 @@ public final class ObjectContributionTest extends UITestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public final void testNonAdaptableContributions() throws PartInitException {
 		assertPopupMenus("1", new String[] { "ICommon.2" },
 				new StructuredSelection(new Object[] {

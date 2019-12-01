@@ -22,20 +22,22 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.menus.WorkbenchWindowControlContribution;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.11
  *
  */
+@RunWith(JUnit4.class)
 public class DynamicToolbarTest extends MenuTestCase {
 
-	/**
-	 * @param testName
-	 */
-	public DynamicToolbarTest(String testName) {
-		super(testName);
+	public DynamicToolbarTest() {
+		super(DynamicToolbarTest.class.getSimpleName());
 	}
 
+	@Test
 	public void testDynamicMenu() throws Exception {
 		ToolBarManager manager = new ToolBarManager();
 		try {

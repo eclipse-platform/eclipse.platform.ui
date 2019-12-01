@@ -13,7 +13,9 @@
  ******************************************************************************/
 package org.eclipse.ui.tests.menus;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
@@ -21,17 +23,19 @@ import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.ui.internal.menus.MenuHelper;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
+import org.junit.Test;
 
 /**
  * @since 4.2.2
  */
-public class MenuHelperTest extends TestCase {
+public class MenuHelperTest {
 	private IExtensionRegistry registry = RegistryFactory.getRegistry();
 
 	/**
 	 * Verify that MenuHelper#getIconURI(IConfigElement,String) looks unresolved
 	 * items in the ISharedImages.
 	 */
+	@Test
 	public void test391232() {
 		IExtension extension = registry
 				.getExtension("org.eclipse.ui.tests.MenuHelperTest");

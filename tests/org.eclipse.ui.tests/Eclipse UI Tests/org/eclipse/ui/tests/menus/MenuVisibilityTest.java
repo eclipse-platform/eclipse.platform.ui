@@ -53,22 +53,23 @@ import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.api.workbenchpart.MenuContributionHarness;
 import org.eclipse.ui.tests.commands.ActiveContextExpression;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.3
  *
  */
+@RunWith(JUnit4.class)
 public class MenuVisibilityTest extends UITestCase {
 
 	private static final String EXTENSION_ID = "org.eclipse.ui.tests.menusX1";
 	private static final String LOCATION = "menu:foo";
 	private static final String COMMAND_ID = "org.eclipse.ui.tests.commandEnabledVisibility";
 
-	/**
-	 * @param testName
-	 */
-	public MenuVisibilityTest(String testName) {
-		super(testName);
+	public MenuVisibilityTest() {
+		super(MenuVisibilityTest.class.getSimpleName());
 	}
 
 	private IContextService contextService;
@@ -76,6 +77,7 @@ public class MenuVisibilityTest extends UITestCase {
 	private IWorkbenchWindow window;
 	private IContextActivation activeContext;
 
+	@Test
 	public void testBasicContribution() throws Exception {
 
 		IAction a = new Action() {
@@ -129,6 +131,7 @@ public class MenuVisibilityTest extends UITestCase {
 		manager.dispose();
 	}
 
+	@Test
 	public void testExtensionContributionExpression() throws Exception {
 		IAction a = new Action() {
 			@Override
@@ -207,6 +210,7 @@ public class MenuVisibilityTest extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testVisibilityTracksEnablement() throws Exception {
 		final MenuManager manager = new MenuManager();
 		final CommandContributionItemParameter parm = new CommandContributionItemParameter(
@@ -257,6 +261,7 @@ public class MenuVisibilityTest extends UITestCase {
 		manager.dispose();
 	}
 
+	@Test
 	public void testMenuManagerEnablement_Check_Bug_552659_Regression() {
 		IContributionItem item = new ContributionItem() {
 		};
@@ -298,6 +303,7 @@ public class MenuVisibilityTest extends UITestCase {
 		parentMenuManager.dispose();
 	}
 
+	@Test
 	public void testMenuManagerVisibilityAndEnablement() {
 		IContributionItem item = new ContributionItem() {
 		};

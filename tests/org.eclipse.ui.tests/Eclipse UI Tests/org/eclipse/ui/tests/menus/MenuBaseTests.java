@@ -22,6 +22,9 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.tests.menus.DeclaredProgrammaticFactory.MyItem;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Performs a number of basic tests for the org.eclipse.ui.menus
@@ -37,6 +40,7 @@ import org.eclipse.ui.tests.menus.DeclaredProgrammaticFactory.MyItem;
  * @since 3.3
  *
  */
+@RunWith(JUnit4.class)
 public class MenuBaseTests extends MenuTestCase {
 	String[] expectedIds = {
 			"MenuTest.BasicCmdItem",
@@ -84,13 +88,11 @@ public class MenuBaseTests extends MenuTestCase {
 			"MyItem"
 		};
 
-	/**
-	 * @param testName
-	 */
-	public MenuBaseTests(String testName) {
-		super(testName);
+	public MenuBaseTests() {
+		super(MenuBaseTests.class.getSimpleName());
 	}
 
+	@Test
 	public void testBasicPopulation() throws Exception {
 		MenuManager manager = new MenuManager(null, TEST_CONTRIBUTIONS_CACHE_ID);
 		menuService.populateContributionManager(manager, "menu:"
@@ -110,6 +112,7 @@ public class MenuBaseTests extends MenuTestCase {
 		manager.dispose();
 	}
 
+	@Test
 	public void testBasicMenuPopulation() throws Exception {
 		MenuManager manager = new MenuManager("Test Menu", TEST_CONTRIBUTIONS_CACHE_ID);
 		menuService.populateContributionManager(manager, "menu:"

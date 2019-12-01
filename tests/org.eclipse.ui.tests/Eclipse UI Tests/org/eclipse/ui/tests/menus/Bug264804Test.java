@@ -27,18 +27,23 @@ import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.tests.api.ListElement;
 import org.eclipse.ui.tests.api.ListView;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.5
  * @author Prakash G.R.
  *
  */
+@RunWith(JUnit4.class)
 public class Bug264804Test extends UITestCase {
 
-	public Bug264804Test(String testName) {
-		super(testName);
+	public Bug264804Test() {
+		super(Bug264804Test.class.getSimpleName());
 	}
 
+	@Test
 	public void testPopup() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
 

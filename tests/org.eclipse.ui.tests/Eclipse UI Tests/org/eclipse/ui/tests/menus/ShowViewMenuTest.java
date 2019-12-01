@@ -17,16 +17,20 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.ShowViewMenu;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.5
  */
+@RunWith(JUnit4.class)
 public class ShowViewMenuTest extends UITestCase {
 
 	private IWorkbenchWindow workbenchWindow;
 
-	public ShowViewMenuTest(String testName) {
-		super(testName);
+	public ShowViewMenuTest() {
+		super(ShowViewMenuTest.class.getSimpleName());
 	}
 
 	@Override
@@ -42,6 +46,7 @@ public class ShowViewMenuTest extends UITestCase {
 	 * Tests for Bug 56368 starts here *
 	 ***********************************/
 
+	@Test
 	public void testMenuOnlyHasShowViewAction() {
 		Menu swtMenu = new Menu(workbenchWindow.getShell());
 		ShowViewMenu showViewMenu = new ShowViewMenu(workbenchWindow, "id"); //$NON-NLS-1$
@@ -52,6 +57,7 @@ public class ShowViewMenuTest extends UITestCase {
 		assertEquals("Only the 'Other...' action should be available", 1, swtMenu.getItemCount());
 	}
 
+	@Test
 	public void testFastViewMenuVariantOnlyHasShowViewAction() {
 		Menu swtMenu = new Menu(workbenchWindow.getShell());
 		ShowViewMenu showViewMenu = new ShowViewMenu(workbenchWindow,
