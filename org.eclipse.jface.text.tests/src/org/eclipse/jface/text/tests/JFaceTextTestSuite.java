@@ -20,6 +20,8 @@ import org.junit.runners.Suite.SuiteClasses;
 import org.eclipse.jface.text.tests.codemining.CodeMiningProjectionViewerTest;
 import org.eclipse.jface.text.tests.codemining.CodeMiningTest;
 import org.eclipse.jface.text.tests.contentassist.AsyncContentAssistTest;
+import org.eclipse.jface.text.tests.contentassist.ContextInformationPresenterTest;
+import org.eclipse.jface.text.tests.contentassist.ContextInformationTest;
 import org.eclipse.jface.text.tests.contentassist.FilteringAsyncContentAssistTests;
 import org.eclipse.jface.text.tests.reconciler.AbstractReconcilerTest;
 import org.eclipse.jface.text.tests.rules.DefaultPartitionerTest;
@@ -51,6 +53,8 @@ import org.eclipse.jface.text.tests.templates.persistence.TemplatePersistenceDat
 		DefaultPairMatcherTest2.class,
 		AsyncContentAssistTest.class,
 		FilteringAsyncContentAssistTests.class,
+		ContextInformationTest.class,
+		ContextInformationPresenterTest.class,
 
 		AbstractReconcilerTest.class,
 
