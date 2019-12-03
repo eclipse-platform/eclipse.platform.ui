@@ -2120,6 +2120,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				.toArray(IContextInformationValidator[]::new);
 		if (validators.length == 0) {
 			return null;
+		} else if (validators.length == 1) {
+			return validators[0];
 		}
 		return new CompositeContextInformationValidator(validators);
 	}
@@ -2146,6 +2148,8 @@ public class ContentAssistant implements IContentAssistant, IContentAssistantExt
 				.toArray(IContextInformationValidator[]::new);
 		if (validators.length == 0) {
 			return null;
+		} else if (validators.length == 1) {
+			return validators[0];
 		}
 		return new CompositeContextInformationValidator(validators);
 	}

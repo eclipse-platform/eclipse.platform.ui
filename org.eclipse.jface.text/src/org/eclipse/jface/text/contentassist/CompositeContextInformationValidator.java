@@ -13,8 +13,9 @@ package org.eclipse.jface.text.contentassist;
 import java.util.Arrays;
 
 import org.eclipse.jface.text.ITextViewer;
+import org.eclipse.jface.text.TextPresentation;
 
-class CompositeContextInformationValidator implements IContextInformationValidator {
+class CompositeContextInformationValidator implements IContextInformationValidator, IContextInformationPresenter {
 
 	private final IContextInformationValidator[] children;
 
@@ -30,6 +31,14 @@ class CompositeContextInformationValidator implements IContextInformationValidat
 	@Override
 	public boolean isContextInformationValid(int offset) {
 		return Arrays.stream(children).anyMatch(child -> child.isContextInformationValid(offset));
+	}
+
+	@Override
+	public boolean updatePresentation(int offset, TextPresentation presentation) {
+		if (children.length == 1 && children[0] instanceof IContextInformationPresenter) {
+			return ((IContextInformationPresenter) children[0]).updatePresentation(offset, presentation);
+		}
+		return false;
 	}
 
 }
