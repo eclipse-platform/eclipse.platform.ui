@@ -93,7 +93,7 @@ public final class KeyStroke implements Comparable {
 			throw new NullPointerException();
 		}
 
-		return new KeyStroke(new TreeSet(Collections.singletonList(modifierKey)), naturalKey);
+		return new KeyStroke(new TreeSet<>(Collections.singletonList(modifierKey)), naturalKey);
 	}
 
 	/**
@@ -108,7 +108,7 @@ public final class KeyStroke implements Comparable {
 	 */
 	public static KeyStroke getInstance(ModifierKey[] modifierKeys, NaturalKey naturalKey) {
 		Util.assertInstance(modifierKeys, ModifierKey.class);
-		return new KeyStroke(new TreeSet(Arrays.asList(modifierKeys)), naturalKey);
+		return new KeyStroke(new TreeSet<>(Arrays.asList(modifierKeys)), naturalKey);
 	}
 
 	/**
@@ -119,7 +119,7 @@ public final class KeyStroke implements Comparable {
 	 *         not to be <code>null</code>.
 	 */
 	public static KeyStroke getInstance(NaturalKey naturalKey) {
-		return new KeyStroke(Util.EMPTY_SORTED_SET, naturalKey);
+		return new KeyStroke(Collections.unmodifiableSortedSet(new TreeSet<>()), naturalKey);
 	}
 
 	/**
@@ -133,7 +133,7 @@ public final class KeyStroke implements Comparable {
 	 * @param naturalKey   the natural key. May be <code>null</code>.
 	 * @return a key stroke. Guaranteed not to be <code>null</code>.
 	 */
-	public static KeyStroke getInstance(SortedSet modifierKeys, NaturalKey naturalKey) {
+	public static KeyStroke getInstance(SortedSet<ModifierKey> modifierKeys, NaturalKey naturalKey) {
 		return new KeyStroke(modifierKeys, naturalKey);
 	}
 
@@ -151,7 +151,7 @@ public final class KeyStroke implements Comparable {
 			throw new NullPointerException();
 		}
 
-		SortedSet modifierKeys = new TreeSet();
+		SortedSet<ModifierKey> modifierKeys = new TreeSet<>();
 		NaturalKey naturalKey = null;
 		StringTokenizer stringTokenizer = new StringTokenizer(string, KEY_DELIMITERS, true);
 		int i = 0;
@@ -162,7 +162,7 @@ public final class KeyStroke implements Comparable {
 			if (i % 2 == 0) {
 				if (stringTokenizer.hasMoreTokens()) {
 					token = token.toUpperCase(Locale.ENGLISH);
-					ModifierKey modifierKey = (ModifierKey) ModifierKey.modifierKeysByName.get(token);
+					ModifierKey modifierKey = ModifierKey.modifierKeysByName.get(token);
 
 					if (modifierKey == null || !modifierKeys.add(modifierKey)) {
 						throw new ParseException(
@@ -177,7 +177,7 @@ public final class KeyStroke implements Comparable {
 					naturalKey = (NaturalKey) CharacterKey.characterKeysByName.get(token);
 
 					if (naturalKey == null) {
-						naturalKey = (NaturalKey) SpecialKey.specialKeysByName.get(token);
+						naturalKey = SpecialKey.specialKeysByName.get(token);
 					}
 
 					if (naturalKey == null) {
@@ -215,7 +215,7 @@ public final class KeyStroke implements Comparable {
 	/**
 	 * The set of modifier keys for this key stroke.
 	 */
-	private SortedSet modifierKeys;
+	private SortedSet<ModifierKey> modifierKeys;
 
 	/**
 	 * The set of modifier keys for this key stroke in the form of an array. Used
@@ -238,10 +238,10 @@ public final class KeyStroke implements Comparable {
 	 *                     <code>ModifierKey</code>.
 	 * @param naturalKey   the natural key. May be <code>null</code>.
 	 */
-	private KeyStroke(SortedSet modifierKeys, NaturalKey naturalKey) {
+	private KeyStroke(SortedSet<ModifierKey> modifierKeys, NaturalKey naturalKey) {
 		this.modifierKeys = Util.safeCopy(modifierKeys, ModifierKey.class);
 		this.naturalKey = naturalKey;
-		this.modifierKeysAsArray = (ModifierKey[]) this.modifierKeys.toArray(new ModifierKey[this.modifierKeys.size()]);
+		this.modifierKeysAsArray = this.modifierKeys.toArray(new ModifierKey[this.modifierKeys.size()]);
 	}
 
 	/**
@@ -290,7 +290,7 @@ public final class KeyStroke implements Comparable {
 	 *         not to be <code>null</code>. If this set is not empty, it is
 	 *         guaranteed to only contain instances of <code>ModifierKey</code>.
 	 */
-	public Set getModifierKeys() {
+	public Set<ModifierKey> getModifierKeys() {
 		return Collections.unmodifiableSet(modifierKeys);
 	}
 

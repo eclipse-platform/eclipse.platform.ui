@@ -15,7 +15,6 @@ package org.eclipse.ui.internal.themes;
 
 import java.util.HashSet;
 import java.util.Set;
-
 import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.swt.graphics.Font;
@@ -61,8 +60,8 @@ public class CascadingFontRegistry extends FontRegistry {
 	}
 
 	@Override
-	public Set getKeySet() {
-		Set keyUnion = new HashSet(super.getKeySet());
+	public Set<String> getKeySet() {
+		Set<String> keyUnion = new HashSet<>(super.getKeySet());
 		keyUnion.addAll(parent.getKeySet());
 		return keyUnion;
 	}

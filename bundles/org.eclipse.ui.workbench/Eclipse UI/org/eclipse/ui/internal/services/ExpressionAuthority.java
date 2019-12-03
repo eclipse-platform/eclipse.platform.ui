@@ -19,7 +19,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Map;
-
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.IEvaluationContext;
@@ -67,7 +66,7 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 	 * consulted whenever a contribution is made. This collection only contains
 	 * instances of <code>ISourceProvider</code>.
 	 */
-	private final Collection providers = new ArrayList();
+	private final Collection<ISourceProvider> providers = new ArrayList<>();
 
 	/**
 	 * Constructs a new instance of <code>ExpressionAuthority</code>.
@@ -132,10 +131,10 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 	 * @return <code>true</code> if there is at least one expression that evaluates
 	 *         to <code>true</code>; <code>false</code> otherwise.
 	 */
-	protected final boolean evaluate(final Collection collection) {
-		final Iterator iterator = collection.iterator();
+	protected final boolean evaluate(final Collection<IEvaluationResultCache> collection) {
+		final Iterator<IEvaluationResultCache> iterator = collection.iterator();
 		while (iterator.hasNext()) {
-			final IEvaluationResultCache cache = (IEvaluationResultCache) iterator.next();
+			final IEvaluationResultCache cache = iterator.next();
 			if (evaluate(cache)) {
 				return true;
 			}

@@ -17,6 +17,7 @@ package org.eclipse.ui.internal.wizards.preferences;
 import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -25,6 +26,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.IPreferenceFilter;
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.core.runtime.preferences.PreferenceFilterEntry;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -560,7 +562,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements Listen
 				}
 
 				@Override
-				public Map getMapping(String scope) {
+				public Map<String, PreferenceFilterEntry[]> getMapping(String scope) {
 					return null;
 				}
 			};
@@ -778,7 +780,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements Listen
 	 * @param newEntry the entry to add to the history
 	 */
 	protected String[] addToHistory(String[] history, String newEntry) {
-		java.util.ArrayList l = new java.util.ArrayList(Arrays.asList(history));
+		ArrayList<String> l = new ArrayList<>(Arrays.asList(history));
 		addToHistory(l, newEntry);
 		String[] r = new String[l.size()];
 		l.toArray(r);
@@ -793,7 +795,7 @@ public abstract class WizardPreferencesPage extends WizardPage implements Listen
 	 * @param history  the current history
 	 * @param newEntry the entry to add to the history
 	 */
-	protected void addToHistory(List history, String newEntry) {
+	protected void addToHistory(List<String> history, String newEntry) {
 		history.remove(newEntry);
 		history.add(0, newEntry);
 

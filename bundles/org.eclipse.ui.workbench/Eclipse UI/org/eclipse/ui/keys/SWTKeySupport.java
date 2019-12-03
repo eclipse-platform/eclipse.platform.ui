@@ -39,7 +39,7 @@ public final class SWTKeySupport {
 	 * @return The equivalent key stroke; never <code>null</code>.
 	 */
 	public static KeyStroke convertAcceleratorToKeyStroke(int accelerator) {
-		final SortedSet modifierKeys = new TreeSet();
+		final SortedSet<ModifierKey> modifierKeys = new TreeSet<>();
 		NaturalKey naturalKey;
 
 		if ((accelerator & SWT.ALT) != 0) {
@@ -316,10 +316,10 @@ public final class SWTKeySupport {
 	 */
 	public static int convertKeyStrokeToAccelerator(final KeyStroke keyStroke) {
 		int accelerator = 0;
-		final Iterator iterator = keyStroke.getModifierKeys().iterator();
+		final Iterator<ModifierKey> iterator = keyStroke.getModifierKeys().iterator();
 
 		while (iterator.hasNext()) {
-			final ModifierKey modifierKey = (ModifierKey) iterator.next();
+			final ModifierKey modifierKey = iterator.next();
 
 			if (modifierKey == ModifierKey.ALT) {
 				accelerator |= SWT.ALT;

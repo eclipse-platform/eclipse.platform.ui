@@ -104,7 +104,7 @@ public final class KeySequence implements Comparable {
 			throw new NullPointerException();
 		}
 
-		List keyStrokes = new ArrayList(keySequence.getKeyStrokes());
+		List<KeyStroke> keyStrokes = new ArrayList<>(keySequence.getKeyStrokes());
 		keyStrokes.add(keyStroke);
 		return new KeySequence(keyStrokes);
 	}
@@ -139,7 +139,7 @@ public final class KeySequence implements Comparable {
 	 *                   it must only contain instances of <code>KeyStroke</code>.
 	 * @return a key sequence. Guaranteed not to be <code>null</code>.
 	 */
-	public static KeySequence getInstance(List keyStrokes) {
+	public static KeySequence getInstance(List<KeyStroke> keyStrokes) {
 		return new KeySequence(keyStrokes);
 	}
 
@@ -153,7 +153,7 @@ public final class KeySequence implements Comparable {
 	public static KeySequence getInstance(final org.eclipse.jface.bindings.keys.KeySequence newKeySequence) {
 		final org.eclipse.jface.bindings.keys.KeyStroke[] newKeyStrokes = newKeySequence.getKeyStrokes();
 		final int newKeyStrokesCount = newKeyStrokes.length;
-		final List legacyKeyStrokes = new ArrayList(newKeyStrokesCount);
+		final List<KeyStroke> legacyKeyStrokes = new ArrayList<>(newKeyStrokesCount);
 
 		for (int i = 0; i < newKeyStrokesCount; i++) {
 			final org.eclipse.jface.bindings.keys.KeyStroke newKeyStroke = newKeyStrokes[i];
@@ -178,7 +178,7 @@ public final class KeySequence implements Comparable {
 			throw new NullPointerException();
 		}
 
-		List keyStrokes = new ArrayList();
+		List<KeyStroke> keyStrokes = new ArrayList<>();
 		StringTokenizer stringTokenizer = new StringTokenizer(string, KEY_STROKE_DELIMITERS);
 
 		while (stringTokenizer.hasMoreTokens()) {
@@ -210,7 +210,7 @@ public final class KeySequence implements Comparable {
 	/**
 	 * The list of key strokes for this key sequence.
 	 */
-	private List keyStrokes;
+	private List<KeyStroke> keyStrokes;
 
 	/**
 	 * Constructs an instance of <code>KeySequence</code> given a list of key
@@ -220,11 +220,11 @@ public final class KeySequence implements Comparable {
 	 *                   must not be <code>null</code>. If this list is not empty,
 	 *                   it must only contain instances of <code>KeyStroke</code>.
 	 */
-	private KeySequence(List keyStrokes) {
+	private KeySequence(List<KeyStroke> keyStrokes) {
 		this.keyStrokes = Util.safeCopy(keyStrokes, KeyStroke.class);
 
 		for (int i = 0; i < this.keyStrokes.size() - 1; i++) {
-			KeyStroke keyStroke = (KeyStroke) this.keyStrokes.get(i);
+			KeyStroke keyStroke = this.keyStrokes.get(i);
 
 			if (!keyStroke.isComplete()) {
 				throw new IllegalArgumentException();
@@ -281,7 +281,7 @@ public final class KeySequence implements Comparable {
 	 *         guaranteed not to be <code>null</code>. If this list is not empty, it
 	 *         is guaranteed to only contain instances of <code>KeyStroke</code>.
 	 */
-	public List getKeyStrokes() {
+	public List<KeyStroke> getKeyStrokes() {
 		return keyStrokes;
 	}
 
@@ -303,7 +303,7 @@ public final class KeySequence implements Comparable {
 	 * @return <code>true</code>, iff the key sequence is complete.
 	 */
 	public boolean isComplete() {
-		return keyStrokes.isEmpty() || ((KeyStroke) keyStrokes.get(keyStrokes.size() - 1)).isComplete();
+		return keyStrokes.isEmpty() || keyStrokes.get(keyStrokes.size() - 1).isComplete();
 	}
 
 	/**

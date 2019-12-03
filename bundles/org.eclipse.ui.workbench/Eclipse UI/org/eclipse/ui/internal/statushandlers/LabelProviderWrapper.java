@@ -149,12 +149,12 @@ public class LabelProviderWrapper extends ViewerComparator implements ITableLabe
 	 */
 	private ILabelDecorator messageDecorator;
 
-	private Map dialogState;
+	private Map<Object, Object> dialogState;
 
 	/**
 	 * @param dialogState
 	 */
-	public LabelProviderWrapper(Map dialogState) {
+	public LabelProviderWrapper(Map<Object, Object> dialogState) {
 		this.dialogState = dialogState;
 	}
 
@@ -428,7 +428,7 @@ public class LabelProviderWrapper extends ViewerComparator implements ITableLabe
 	}
 
 	private boolean isMulti() {
-		return ((Collection) dialogState.get(IStatusDialogConstants.STATUS_ADAPTERS)).size() > 1;
+		return ((Collection<?>) dialogState.get(IStatusDialogConstants.STATUS_ADAPTERS)).size() > 1;
 	}
 
 	/**

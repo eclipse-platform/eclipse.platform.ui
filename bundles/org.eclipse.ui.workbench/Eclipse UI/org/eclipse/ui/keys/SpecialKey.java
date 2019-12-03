@@ -16,7 +16,6 @@ package org.eclipse.ui.keys;
 
 import java.util.SortedMap;
 import java.util.TreeMap;
-
 import org.eclipse.jface.bindings.keys.IKeyLookup;
 import org.eclipse.jface.bindings.keys.KeyLookupFactory;
 
@@ -45,7 +44,7 @@ public final class SpecialKey extends NaturalKey {
 	 * An internal map used to lookup instances of <code>SpecialKey</code> given the
 	 * formal string representation of a special key.
 	 */
-	static SortedMap specialKeysByName = new TreeMap();
+	static SortedMap<String, SpecialKey> specialKeysByName = new TreeMap<>();
 
 	/**
 	 * The single static instance of <code>SpecialKey</code> which represents the

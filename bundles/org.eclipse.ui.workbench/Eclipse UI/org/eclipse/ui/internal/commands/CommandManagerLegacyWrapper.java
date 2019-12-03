@@ -44,6 +44,7 @@ import org.eclipse.ui.internal.handlers.LegacyHandlerWrapper;
 import org.eclipse.ui.internal.keys.SchemeLegacyWrapper;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.KeySequence;
+import org.eclipse.ui.keys.KeyStroke;
 
 /**
  * Provides support for the old <code>ICommandManager</code> interface.
@@ -76,7 +77,7 @@ public final class CommandManagerLegacyWrapper implements ICommandManager,
 		if (keySequence == null) {
 			return false;
 		}
-		List<KeySequence> keyStrokes = keySequence.getKeyStrokes();
+		List<KeyStroke> keyStrokes = keySequence.getKeyStrokes();
 		int size = keyStrokes.size();
 		if (size == 0 || size > 4 || !keySequence.isComplete()) {
 			return false;

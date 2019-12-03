@@ -222,14 +222,14 @@ public abstract class QuickMenuCreator {
 	}
 
 	private Point[] getIncludedPositions(Rectangle[] rectangles, Rectangle widgetBounds) {
-		List result = new ArrayList();
+		List<Point> result = new ArrayList<>();
 		for (Rectangle rectangle : rectangles) {
 			Rectangle intersect = widgetBounds.intersection(rectangle);
 			if (intersect != null && intersect.height == rectangle.height) {
 				result.add(new Point(intersect.x, intersect.y + intersect.height));
 			}
 		}
-		return (Point[]) result.toArray(new Point[result.size()]);
+		return result.toArray(new Point[result.size()]);
 	}
 
 	private Point findBestLocation(Point[] points, Point relativeCursor) {

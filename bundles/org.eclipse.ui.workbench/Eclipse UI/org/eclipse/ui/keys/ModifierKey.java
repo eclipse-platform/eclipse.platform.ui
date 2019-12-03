@@ -16,7 +16,6 @@ package org.eclipse.ui.keys;
 
 import java.util.SortedMap;
 import java.util.TreeMap;
-
 import org.eclipse.jface.bindings.keys.IKeyLookup;
 import org.eclipse.jface.bindings.keys.KeyLookupFactory;
 import org.eclipse.jface.util.Util;
@@ -44,7 +43,7 @@ public final class ModifierKey extends Key {
 	 * An internal map used to lookup instances of <code>ModifierKey</code> given
 	 * the formal string representation of a modifier key.
 	 */
-	static SortedMap modifierKeysByName = new TreeMap();
+	static SortedMap<String, ModifierKey> modifierKeysByName = new TreeMap<>();
 
 	/**
 	 * The single static instance of <code>ModifierKey</code> which represents the

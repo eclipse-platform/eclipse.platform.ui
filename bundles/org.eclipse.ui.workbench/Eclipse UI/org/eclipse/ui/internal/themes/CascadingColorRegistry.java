@@ -60,8 +60,8 @@ public class CascadingColorRegistry extends ColorRegistry {
 	}
 
 	@Override
-	public Set getKeySet() {
-		Set keyUnion = new HashSet(super.getKeySet());
+	public Set<String> getKeySet() {
+		Set<String> keyUnion = new HashSet<>(super.getKeySet());
 		keyUnion.addAll(parent.getKeySet());
 		return keyUnion;
 	}

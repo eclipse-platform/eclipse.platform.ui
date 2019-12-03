@@ -65,7 +65,7 @@ public class StatusHandlerDescriptor implements IPluginContribution {
 
 			IConfigurationElement parameters[] = configElement.getChildren(IWorkbenchRegistryConstants.TAG_PARAMETER);
 
-			Map params = new HashMap();
+			Map<String, String> params = new HashMap<>();
 
 			for (IConfigurationElement configElement : parameters) {
 				params.put(configElement.getAttribute(IWorkbenchRegistryConstants.ATT_NAME),

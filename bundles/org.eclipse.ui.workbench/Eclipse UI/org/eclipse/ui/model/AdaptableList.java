@@ -139,7 +139,7 @@ public class AdaptableList extends WorkbenchAdapter implements IAdaptable {
 	 * @return the elements in the list
 	 * @since 3.1
 	 */
-	public Object[] getTypedChildren(Class type) {
+	public Object[] getTypedChildren(Class<?> type) {
 		return children.toArray((Object[]) Array.newInstance(type, children.size()));
 	}
 

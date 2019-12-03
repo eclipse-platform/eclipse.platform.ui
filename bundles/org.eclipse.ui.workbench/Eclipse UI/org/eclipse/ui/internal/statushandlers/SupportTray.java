@@ -52,13 +52,13 @@ import org.eclipse.ui.statushandlers.StatusAdapter;
  */
 public class SupportTray extends DialogTray implements ISelectionChangedListener {
 
-	private Map dialogState;
+	private Map<Object, Object> dialogState;
 
 	/**
 	 * @param dialogState
 	 * @param listener
 	 */
-	public SupportTray(Map dialogState, Listener listener) {
+	public SupportTray(Map<Object, Object> dialogState, Listener listener) {
 		this.closeListener = listener;
 		this.dialogState = dialogState;
 		this.hideSupportButtons = getBooleanValue(IStatusDialogConstants.HIDE_SUPPORT_BUTTON);
