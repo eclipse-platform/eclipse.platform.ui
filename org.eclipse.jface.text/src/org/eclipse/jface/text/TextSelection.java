@@ -25,7 +25,7 @@ import org.eclipse.core.runtime.Platform;
  * generated from a selection provider, it only remembers its offset and length
  * and computes the remaining information on request.</p>
  */
-public class TextSelection implements ITextSelection {
+public class TextSelection implements ITextSelection, IMultiTextSelection {
 
 	/**
 	 * Debug option for asserting valid offset and length.
@@ -224,6 +224,11 @@ public class TextSelection implements ITextSelection {
 		}
 		sb.append("]"); //$NON-NLS-1$
 		return sb.toString();
+	}
+
+	@Override
+	public IRegion[] getRegions() {
+		return new IRegion[] { new Region(getOffset(), getLength()) };
 	}
 }
 

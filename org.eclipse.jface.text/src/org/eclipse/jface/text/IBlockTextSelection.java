@@ -71,11 +71,13 @@ public interface IBlockTextSelection extends ITextSelection {
 	 */
 	@Override
 	String getText();
+
 	/**
 	 * Returns a non-empty array containing the selected text range for each line covered by the
 	 * selection.
 	 *
 	 * @return an array containing a the covered text range for each line covered by the receiver
+	 * @see IMultiTextSelection#getRegions()
 	 */
 	IRegion[] getRegions();
 }

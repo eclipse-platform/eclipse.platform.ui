@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 import org.osgi.framework.Bundle;
@@ -131,6 +132,7 @@ import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.IFindReplaceTargetExtension;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IMarkRegionTarget;
+import org.eclipse.jface.text.IMultiTextSelection;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.IRewriteTarget;
 import org.eclipse.jface.text.ISelectionValidator;
@@ -1190,72 +1192,65 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			StyledText st= fSourceViewer.getTextWidget();
 			if (st == null || st.isDisposed())
 				return;
-			int caretOffset= st.getCaretOffset();
-			int lineNumber= st.getLineAtOffset(caretOffset);
-			int lineOffset= st.getOffsetAtLine(lineNumber);
+			boolean caretAtBeginningOfSelection = st.getCaretOffset() == st.getSelection().x;
+			Point firstSelection = st.getSelection();
+			int[] ranges = st.getSelectionRanges();
+			List<Point> newSelection = new ArrayList<>(ranges.length / 2);
+			for (int j = 0; j < ranges.length; j += 2) {
+				int offset = ranges[j];
+				int length = ranges[j + 1];
+				int caretOffset = caretAtBeginningOfSelection ? offset : offset + length;
+				int lineNumber = st.getLineAtOffset(caretOffset);
+				int lineOffset = st.getOffsetAtLine(lineNumber);
+				int lineLength;
+				int caretOffsetInDocument;
+				final IDocument document = fSourceViewer.getDocument();
 
-			int lineLength;
-			int caretOffsetInDocument;
-			final IDocument document= fSourceViewer.getDocument();
+				try {
+					caretOffsetInDocument = widgetOffset2ModelOffset(fSourceViewer, caretOffset);
+					lineLength = document.getLineInformationOfOffset(caretOffsetInDocument).getLength();
+				} catch (BadLocationException ex) {
+					return;
+				}
+				int lineEndOffset = lineOffset + lineLength;
 
-			try {
-				caretOffsetInDocument= widgetOffset2ModelOffset(fSourceViewer, caretOffset);
-				lineLength= document.getLineInformationOfOffset(caretOffsetInDocument).getLength();
-			} catch (BadLocationException ex) {
-				return;
+				int delta = lineEndOffset - st.getCharCount();
+				if (delta > 0) {
+					lineEndOffset -= delta;
+					lineLength -= delta;
+				}
+				String line = ""; //$NON-NLS-1$
+				if (lineLength > 0)
+					line = st.getText(lineOffset, lineEndOffset - 1);
+
+				// Remember current selection
+				Point oldSelection = new Point(offset, offset + length);
+
+				// The new caret position
+				int newCaretOffset = -1;
+
+				if (isSmartHomeEndEnabled) {
+					// Compute the line end offset
+					int i = getLineEndPosition(document, line, lineLength, caretOffsetInDocument);
+					newCaretOffset = (caretOffset - lineOffset == i) ? lineEndOffset : lineOffset + i;
+				} else if (caretOffset < lineEndOffset) {
+						// to end of line
+						newCaretOffset = lineEndOffset;
+				}
+
+				if (newCaretOffset == -1) {
+					newCaretOffset = caretOffset;
+				}
+
+				newSelection.add(new Point(
+						fDoSelect ? (caretOffset < oldSelection.y ? oldSelection.y : oldSelection.x) : newCaretOffset,
+						newCaretOffset));
+
 			}
-			int lineEndOffset= lineOffset + lineLength;
-
-			int delta= lineEndOffset - st.getCharCount();
-			if (delta > 0) {
-				lineEndOffset -= delta;
-				lineLength -= delta;
-			}
-
-			String line= ""; //$NON-NLS-1$
-			if (lineLength > 0)
-				line= st.getText(lineOffset, lineEndOffset - 1);
-
-			// Remember current selection
-			Point oldSelection= st.getSelection();
-
-			// The new caret position
-			int newCaretOffset= -1;
-
-			if (isSmartHomeEndEnabled) {
-				// Compute the line end offset
-				int i= getLineEndPosition(document, line, lineLength, caretOffsetInDocument);
-
-				if (caretOffset - lineOffset == i)
-					// to end of line
-					newCaretOffset= lineEndOffset;
-				else
-					// to end of text
-					newCaretOffset= lineOffset + i;
-
-			} else {
-
-				if (caretOffset < lineEndOffset)
-					// to end of line
-					newCaretOffset= lineEndOffset;
-
-			}
-
-			if (newCaretOffset == -1)
-				newCaretOffset= caretOffset;
-			else
-				st.setCaretOffset(newCaretOffset);
-
-			st.setCaretOffset(newCaretOffset);
-			if (fDoSelect) {
-				if (caretOffset < oldSelection.y)
-					st.setSelection(oldSelection.y, newCaretOffset);
-				else
-					st.setSelection(oldSelection.x, newCaretOffset);
-			} else
-				st.setSelection(newCaretOffset);
-
-			fireSelectionChanged(oldSelection);
+			st.setSelectionRanges(newSelection.stream().flatMapToInt(
+					p -> caretAtBeginningOfSelection ? IntStream.of(p.y, p.x - p.y) : IntStream.of(p.x, p.y - p.x))
+					.toArray());
+			fireSelectionChanged(firstSelection);
 		}
 	}
 
@@ -1326,70 +1321,60 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			StyledText st= fSourceViewer.getTextWidget();
 			if (st == null || st.isDisposed())
 				return;
+			boolean caretAtBeginningOfSelection = st.getCaretOffset() == st.getSelection().x;
+			Point firstSelection = st.getSelection();
+			int[] ranges = st.getSelectionRanges();
+			List<Point> newSelection = new ArrayList<>(ranges.length / 2);
+			for (int j = 0; j < ranges.length; j += 2) {
+				int offset = ranges[j];
+				int length = ranges[j + 1];
+				int caretOffset = caretAtBeginningOfSelection ? offset : offset + length;
+				int lineNumber = st.getLineAtOffset(caretOffset);
+				int lineOffset = st.getOffsetAtLine(lineNumber);
+				int lineLength;
+				int caretOffsetInDocument;
+				final IDocument document = fSourceViewer.getDocument();
 
-			int caretOffset= st.getCaretOffset();
-			int lineNumber= st.getLineAtOffset(caretOffset);
-			int lineOffset= st.getOffsetAtLine(lineNumber);
+				try {
+					caretOffsetInDocument = widgetOffset2ModelOffset(fSourceViewer, caretOffset);
+					lineLength = document.getLineInformationOfOffset(caretOffsetInDocument).getLength();
+				} catch (BadLocationException ex) {
+					return;
+				}
+				int lineEndOffset = lineOffset + lineLength;
 
-			int lineLength;
-			int caretOffsetInDocument;
-			final IDocument document= fSourceViewer.getDocument();
+				String line = ""; //$NON-NLS-1$
+				if (lineLength > 0) {
+					int end = lineOffset + lineLength - 1;
+					end = Math.min(end, st.getCharCount() - 1);
+					line = st.getText(lineOffset, end);
+				}
 
-			try {
-				caretOffsetInDocument= widgetOffset2ModelOffset(fSourceViewer, caretOffset);
-				lineLength= document.getLineInformationOfOffset(caretOffsetInDocument).getLength();
-			} catch (BadLocationException ex) {
-				return;
-			}
+				// Remember current selection
+				Point oldSelection = new Point(offset, offset + length);
 
-			String line= ""; //$NON-NLS-1$
-			if (lineLength > 0) {
-				int end= lineOffset + lineLength - 1;
-				end= Math.min(end, st.getCharCount() -1);
-				line= st.getText(lineOffset, end);
-			}
+				// The new caret position
+				int newCaretOffset = -1;
 
-			// Remember current selection
-			Point oldSelection= st.getSelection();
-
-			// The new caret position
-			int newCaretOffset= -1;
-
-			if (isSmartHomeEndEnabled) {
-
-				// Compute the line start offset
-				int index= getLineStartPosition(document, line, lineLength, caretOffsetInDocument);
-
-				if (caretOffset - lineOffset == index)
+				if (isSmartHomeEndEnabled) {
+					// Compute the line start offset
+					int index = getLineStartPosition(document, line, lineLength, caretOffsetInDocument);
+					newCaretOffset = (caretOffset - lineOffset == index) ? lineOffset : lineOffset + index;
+				} else if (caretOffset > lineOffset) {
 					// to beginning of line
-					newCaretOffset= lineOffset;
-				else
-					// to beginning of text
-					newCaretOffset= lineOffset + index;
+					newCaretOffset = lineOffset;
+				}
 
-			} else {
-
-				if (caretOffset > lineOffset)
-					// to beginning of line
-					newCaretOffset= lineOffset;
+				newSelection.add(new Point(
+					fDoSelect ? (caretOffset < oldSelection.y ? oldSelection.y : oldSelection.x) : newCaretOffset,
+					newCaretOffset));
 			}
+			st.setSelectionRanges(newSelection.stream().flatMapToInt(
+					p -> caretAtBeginningOfSelection ? IntStream.of(p.y, p.x - p.y) : IntStream.of(p.x, p.y - p.x))
+					.toArray());
 
-			if (newCaretOffset == -1)
-				newCaretOffset= caretOffset;
-			else
-				st.setCaretOffset(newCaretOffset);
-
-			if (fDoSelect) {
-				if (caretOffset < oldSelection.y)
-					st.setSelection(oldSelection.y, newCaretOffset);
-				else
-					st.setSelection(oldSelection.x, newCaretOffset);
-			} else
-				st.setSelection(newCaretOffset);
-
-			fireSelectionChanged(oldSelection);
+			fireSelectionChanged(firstSelection);
 		}
-
 	}
 
 	/**
@@ -2944,7 +2929,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 2.1
 	 */
 	protected void doSetSelection(ISelection selection) {
-		if (selection instanceof ITextSelection) {
+		if (selection instanceof IMultiTextSelection && ((IMultiTextSelection) selection).getRegions().length > 1) {
+			getSourceViewer().getSelectionProvider().setSelection(selection);
+		} else if (selection instanceof ITextSelection) {
 			ITextSelection textSelection= (ITextSelection) selection;
 			selectAndReveal(textSelection.getOffset(), textSelection.getLength());
 		}

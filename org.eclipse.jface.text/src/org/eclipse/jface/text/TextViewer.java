@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.regex.PatternSyntaxException;
 
@@ -65,8 +66,6 @@ import org.eclipse.swt.widgets.ScrollBar;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.runtime.Assert;
-
-import org.eclipse.text.edits.TextEdit;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.internal.text.NonDeletingPositionUpdater;
@@ -1077,7 +1076,7 @@ public class TextViewer extends Viewer implements
 	 */
 	private final class ViewerState {
 		/** The position tracking the selection. */
-		private Position fSelection;
+		private Position[] fSelections;
 		/** <code>true</code> if {@link #fSelection} was originally backwards. */
 		private boolean fReverseSelection;
 		/** <code>true</code> if the selection has been updated while in redraw(off) mode. */
@@ -1108,24 +1107,26 @@ public class TextViewer extends Viewer implements
 		 *
 		 * @return the normalized selection
 		 */
-		public Point getSelection() {
-			if (fSelection == null)
-				return new Point(-1, -1);
-			return new Point(fSelection.getOffset(), fSelection.getLength());
+		public Point[] getSelection() {
+			if (fSelections == null)
+				return new Point[0];
+			return Arrays.stream(fSelections).map(position -> new Point(position.getOffset(), position.getLength())).toArray(Point[]::new);
 		}
 
 		/**
 		 * Updates the selection.
 		 *
-		 * @param offset the new selection offset
-		 * @param length the new selection length
+		 * @param selections new selections
 		 */
-		public void updateSelection(int offset, int length) {
+		public void updateSelection(Position[] selections) {
 			fSelectionSet= true;
-			if (fSelection == null)
-				fSelection= new Position(offset, length);
-			else
-				updatePosition(fSelection, offset, length);
+			if (fSelections == null) {
+				fSelections= Arrays.copyOf(selections, selections.length);
+			} else {
+				fSelections= Arrays.stream(selections)
+						.map(position -> new Position(position.getOffset(), position.getLength())) /*force deleted=false*/
+						.toArray(Position[]::new);
+			}
 		}
 
 		/**
@@ -1138,18 +1139,18 @@ public class TextViewer extends Viewer implements
 		public void restore(boolean restoreViewport) {
 			if (isConnected())
 				disconnect();
-			if (fSelection != null) {
-				if (fSelection instanceof ColumnPosition) {
-					ColumnPosition cp= (ColumnPosition)fSelection;
+			if (fSelections != null && fSelections.length > 0) {
+				if (fSelections[0] instanceof ColumnPosition) {
+					ColumnPosition cp= (ColumnPosition) fSelections[0];
 					IDocument document= fDocument;
 					try {
-						int startLine= document.getLineOfOffset(fSelection.getOffset());
+						int startLine= document.getLineOfOffset(cp.getOffset());
 						int startLineOffset= document.getLineOffset(startLine);
-						int selectionEnd= fSelection.getOffset() + fSelection.getLength();
+						int selectionEnd= cp.getOffset() + cp.getLength();
 						int endLine= document.getLineOfOffset(selectionEnd);
 						int endLineOffset= document.getLineOffset(endLine);
 						int tabs= getTextWidget().getTabs();
-						int startColumn= fSelection.getOffset() - startLineOffset + cp.fStartColumn;
+						int startColumn= cp.getOffset() - startLineOffset + cp.fStartColumn;
 						int endColumn= selectionEnd - endLineOffset + cp.fEndColumn;
 						setSelection(new BlockTextSelection(document, startLine, startColumn, endLine, endColumn, tabs));
 					} catch (BadLocationException e) {
@@ -1157,13 +1158,11 @@ public class TextViewer extends Viewer implements
 						setSelectedRange(cp.getOffset(), cp.getLength());
 					}
 				} else {
-					int offset= fSelection.getOffset();
-					int length= fSelection.getLength();
-					if (fReverseSelection) {
-						offset+= length;
-						length= -length;
-					}
-					setSelectedRange(offset, length);
+					setSelectedRanges(Arrays.stream(fSelections)
+							.map(position -> fReverseSelection
+									? new Region(position.getOffset() + position.getLength(), -position.getLength())
+									: new Region(position.getOffset(), position.getLength()))
+							.toArray(IRegion[]::new));
 				}
 				if (restoreViewport)
 					updateViewport();
@@ -1177,7 +1176,7 @@ public class TextViewer extends Viewer implements
 		 */
 		private void updateViewport() {
 			if (fSelectionSet) {
-				revealRange(fSelection.getOffset(), fSelection.getLength());
+				revealRange(fSelections[0].getOffset(), fSelections[0].getLength());
 			} else if (fStableLine != null) {
 				int stableLine;
 				try {
@@ -1216,17 +1215,25 @@ public class TextViewer extends Viewer implements
 					IBlockTextSelection bts= (IBlockTextSelection) selection;
 					int startVirtual= Math.max(0, bts.getStartColumn() - document.getLineInformationOfOffset(bts.getOffset()).getLength());
 					int endVirtual= Math.max(0, bts.getEndColumn() - document.getLineInformationOfOffset(bts.getOffset() + bts.getLength()).getLength());
-					fSelection= new ColumnPosition(bts.getOffset(), bts.getLength(), startVirtual, endVirtual);
+					fSelections= new Position[] { new ColumnPosition(bts.getOffset(), bts.getLength(), startVirtual, endVirtual) };
+				} else if (selection instanceof IMultiTextSelection && ((IMultiTextSelection) selection).getRegions().length > 1) {
+					IMultiTextSelection multiSelection= (IMultiTextSelection) selection;
+					fSelections= Arrays.stream(multiSelection.getRegions())
+							.map(region -> new Position(region.getOffset(), region.getLength()))
+							.toArray(Position[]::new);
+					fReverseSelection= (fTextWidget.getCaretOffset() == fSelections[0].getOffset());
 				} else {
 					Point range= fTextWidget.getSelectionRange();
 					int caretOffset= fTextWidget.getCaretOffset();
 					fReverseSelection= caretOffset == range.x;
 					Point selectionRange= getSelectedRange();
-					fSelection= new Position(selectionRange.x, selectionRange.y);
+					fSelections= new Position[] { new Position(selectionRange.x, selectionRange.y) };
 				}
 
 				fSelectionSet= false;
-				fUpdaterDocument.addPosition(fUpdaterCategory, fSelection);
+				for (Position position : fSelections) {
+					fUpdaterDocument.addPosition(fUpdaterCategory, position);
+				}
 
 				int stableLine= getStableLine();
 				int stableWidgetLine= modelLine2WidgetLine(stableLine);
@@ -1242,20 +1249,6 @@ public class TextViewer extends Viewer implements
 				// ignore and disconnect
 				disconnect();
 			}
-		}
-
-		/**
-		 * Updates a position with the given information and clears its deletion state.
-		 *
-		 * @param position the position to update
-		 * @param offset the new selection offset
-		 * @param length the new selection length
-		 */
-		private void updatePosition(Position position, int offset, int length) {
-			position.setOffset(offset);
-			position.setLength(length);
-			// http://bugs.eclipse.org/bugs/show_bug.cgi?id=32795
-			position.isDeleted= false;
 		}
 
 		/**
@@ -1291,7 +1284,9 @@ public class TextViewer extends Viewer implements
 		private void disconnect() {
 			Assert.isTrue(isConnected());
 			try {
-				fUpdaterDocument.removePosition(fUpdaterCategory, fSelection);
+				for (Position selection : fSelections) {
+					fUpdaterDocument.removePosition(fUpdaterCategory, selection);
+				}
 				fUpdaterDocument.removePosition(fUpdaterCategory, fStableLine);
 				fUpdaterDocument.removePositionUpdater(fUpdater);
 				fUpdater= null;
@@ -1513,7 +1508,7 @@ public class TextViewer extends Viewer implements
 	 * Last selection range sent to selection change listeners.
 	 * @since 3.0
 	 */
-	private IRegion fLastSentSelectionChange;
+	private IRegion[] fLastSentSelectionChange;
 	/**
 	 * The registered post selection changed listeners.
 	 * @since 3.0
@@ -2251,9 +2246,13 @@ public class TextViewer extends Viewer implements
 
 	@Override
 	public Point getSelectedRange() {
-
-		if (!redraws() && fViewerState != null)
-			return fViewerState.getSelection();
+		// TODO multi-cursor: this method is by designed single selection
+		if (!redraws() && fViewerState != null) {
+			Point[] selections= fViewerState.getSelection();
+			if (selections.length > 0) {
+				return selections[0];
+			}
+		}
 
 		if (fTextWidget != null) {
 			Point p= fTextWidget.getSelectionRange();
@@ -2267,26 +2266,46 @@ public class TextViewer extends Viewer implements
 
 	@Override
 	public void setSelectedRange(int selectionOffset, int selectionLength) {
+		setSelectedRanges(new IRegion[] { new Region(selectionOffset, selectionLength) });
+	}
 
+	private static Position toPosition(IRegion region) {
+		return region.getLength() < 0 ? new Position(region.getOffset() + region.getLength(), -region.getLength()) : new Position(region.getOffset(), region.getLength());
+	}
+
+	/**
+	 *
+	 * @param ranges are in model (document) domain
+	 */
+	private void setSelectedRanges(IRegion[] ranges) {
 		if (!redraws()) {
 			if (fViewerState != null)
-				fViewerState.updateSelection(selectionOffset, selectionLength);
+				fViewerState.updateSelection(Arrays.stream(ranges).map(TextViewer::toPosition).toArray(Position[]::new));
 			return;
 		}
 
 		if (fTextWidget == null)
 			return;
 
-		IRegion widgetSelection= modelRange2ClosestWidgetRange(new Region(selectionOffset, selectionLength));
-		if (widgetSelection != null) {
-
-			int[] selectionRange= new int[] { widgetSelection.getOffset(), widgetSelection.getLength() };
-			validateSelectionRange(selectionRange);
-			if (selectionRange[0] >= 0) {
-				fTextWidget.setSelectionRange(selectionRange[0], selectionRange[1]);
-				selectionChanged(selectionRange[0], selectionRange[1]);
-			}
+		IRegion[] widgetSelection= Arrays.stream(ranges)
+				.map(range -> new Region(range.getOffset(), range.getLength()))
+				.map(this::modelRange2ClosestWidgetRange)
+				.filter(Objects::nonNull)
+				.map(range -> new int[] { range.getOffset(), range.getLength() })
+				.map(range -> {
+					validateSelectionRange(range);
+					return range;
+				})
+				.map(rangeAsArray -> new Region(rangeAsArray[0], rangeAsArray[1]))
+				.filter(widgetRange -> widgetRange.getOffset() >= 0)
+				.toArray(IRegion[]::new);
+		int[] widgetRanges= new int[2 * widgetSelection.length];
+		for (int i= 0; i < widgetSelection.length; i++) {
+			widgetRanges[2 * i]= widgetSelection[i].getOffset();
+			widgetRanges[2 * i + 1]= widgetSelection[i].getLength();
 		}
+		fTextWidget.setSelectionRanges(widgetRanges);
+		selectionChanged(widgetSelection);
 	}
 
 	/**
@@ -2415,6 +2434,14 @@ public class TextViewer extends Viewer implements
 			}
 			if (reveal)
 				revealRange(s.getOffset(), s.getLength());
+		} else if (selection instanceof IMultiTextSelection) {
+			IMultiTextSelection multiSelection= (IMultiTextSelection) selection;
+			setSelectedRanges(Arrays.stream(multiSelection.getRegions())
+					.map(region -> new Region(region.getOffset(), region.getLength()))
+					.toArray(IRegion[]::new));
+			if (reveal && multiSelection.getRegions().length > 0) {
+				revealRange(multiSelection.getRegions()[0].getOffset(), multiSelection.getRegions()[0].getLength());
+			}
 		} else if (selection instanceof ITextSelection) {
 			ITextSelection s= (ITextSelection) selection;
 			setSelectedRange(s.getOffset(), s.getLength());
@@ -2466,11 +2493,14 @@ public class TextViewer extends Viewer implements
 			}
 		}
 
-		Point p= getSelectedRange();
-		if (p.x == -1 || p.y == -1)
-			return TextSelection.emptySelection();
-
-		return new TextSelection(getDocument(), p.x, p.y);
+		int[] ranges= fTextWidget.getSelectionRanges();
+		IRegion[] selectedRanges= new IRegion[ranges.length / 2];
+		for (int i= 0; i < selectedRanges.length; i++) {
+			int start= widgetOffset2ModelOffset(ranges[2 * i]);
+			int end= widgetOffset2ModelOffset(ranges[2 * i] + ranges[2 * i + 1]);
+			selectedRanges[i]= new Region(start, end - start);
+		}
+		return toSelection(selectedRanges);
 	}
 
 	/**
@@ -2595,9 +2625,13 @@ public class TextViewer extends Viewer implements
 	 * @param length the length of the newly selected range in the visible document
 	 */
 	protected void selectionChanged(int offset, int length) {
+		selectionChanged(new IRegion[] { new Region(offset, length) });
+	}
+
+	private void selectionChanged(IRegion[] widgetRanges) {
 		updateSelectionCache();
 		queuePostSelectionChanged(true);
-		fireSelectionChanged(offset, length);
+		fireSelectionChanged(widgetRanges);
 	}
 
 	/**
@@ -2608,19 +2642,32 @@ public class TextViewer extends Viewer implements
 	 * @since 3.0
 	 */
 	protected void fireSelectionChanged(int offset, int length) {
+		fireSelectionChanged(new Region[] { new Region(offset, length) });
+	}
+
+	private void fireSelectionChanged(IRegion[] widgetRanges) {
 		if (redraws()) {
-			if (length < 0) {
-				length= -length;
-				offset= offset + length;
-			}
-			IRegion r= widgetRange2ModelRange(new Region(offset, length));
-			if ((r != null && !r.equals(fLastSentSelectionChange)) || r == null)  {
-				fLastSentSelectionChange= r;
-				ISelection selection= r != null ? new TextSelection(getDocument(), r.getOffset(), r.getLength()) : TextSelection.emptySelection();
-				SelectionChangedEvent event= new SelectionChangedEvent(this, selection);
+			IRegion[] ranges = Arrays.stream(widgetRanges)
+					.map(range -> range.getLength() < 0 ? new Region(range.getOffset() + range.getLength(), -range.getLength()) : range)
+				.map(this::widgetRange2ModelRange)
+				.filter(Objects::nonNull)
+				.toArray(IRegion[]::new);
+			if (ranges.length == 0 || !Arrays.equals(ranges, fLastSentSelectionChange)) {
+				fLastSentSelectionChange= ranges;
+				SelectionChangedEvent event= new SelectionChangedEvent(this, toSelection(ranges));
 				fireSelectionChanged(event);
 			}
 		}
+	}
+
+	private ITextSelection toSelection(IRegion[] ranges) {
+		ITextSelection selection= TextSelection.emptySelection();
+		if (ranges.length == 1) {
+			selection= new TextSelection(getDocument(), ranges[0].getOffset(), ranges[0].getLength());
+		} else if (ranges.length > 1) {
+			selection= new MultiTextSelection(getDocument(), ranges);
+		}
+		return selection;
 	}
 
 	/**
@@ -3646,12 +3693,16 @@ public class TextViewer extends Viewer implements
 				return;
 		}
 
+		ITextSelection selection= (ITextSelection)getSelection();
 		if (fTextWidget.getBlockSelection() && (e.text == null || e.text.length() < 2)) {
 			Point sel = fTextWidget.getSelection();
 			if (fTextWidget.getLineAtOffset(sel.x) != fTextWidget.getLineAtOffset(sel.y)) {
-				verifyEventInBlockSelection(e);
+				verifyEventInMultiOrBlockSelection(e);
 				return;
 			}
+		} else if (selection instanceof IMultiTextSelection && ((IMultiTextSelection) selection).getRegions().length > 1) {
+			verifyEventInMultiOrBlockSelection(e);
+			return;
 		}
 
 		IRegion modelRange= event2ModelRange(e);
@@ -3716,9 +3767,8 @@ public class TextViewer extends Viewer implements
 	 * Simulates typing behavior in block selection mode.
 	 *
 	 * @param e the verify event.
-	 * @since 3.5
 	 */
-	private void verifyEventInBlockSelection(final VerifyEvent e) {
+	private void verifyEventInMultiOrBlockSelection(final VerifyEvent e) {
 		/*
 		 Implementation Note: StyledText sends a sequence of n events
 		 for a single character typed, where n is the number of affected lines. Since
@@ -3739,12 +3789,8 @@ public class TextViewer extends Viewer implements
 					ISelection selection= getSelection();
 					int length= e.text.length();
 					if (length == 0 && e.character == '\0') {
-						// backspace in StyledText block selection mode...
-						TextEdit edit= processor.backspace(selection);
-						edit.apply(fDocument, TextEdit.UPDATE_REGIONS);
-						ISelection empty= processor.makeEmpty(selection, true);
-						setSelection(empty);
-					} else {
+						processor.doBackspace(selection);
+					} else if (selection instanceof IBlockTextSelection) {
 						int lines= processor.getCoveredLines(selection);
 						String delim= fDocument.getLegalLineDelimiters()[0];
 						StringBuilder text= new StringBuilder(lines * length + (lines - 1) * delim.length());
@@ -3754,6 +3800,8 @@ public class TextViewer extends Viewer implements
 							text.append(e.text);
 						}
 						processor.doReplace(selection, text.toString());
+					} else if (selection instanceof IMultiTextSelection) {
+						processor.doReplace(selection, e.text);
 					}
 				} catch (BadLocationException x) {
 					if (TRACE_ERRORS)
@@ -3901,8 +3949,7 @@ public class TextViewer extends Viewer implements
 			// Workaround to fix bug 434791 during 4.4 RC2. Will be replaced by official API during 4.5.
 			case -100:
 				if (fLastSentSelectionChange != null) {
-					ISelection lastSelection= new TextSelection(getDocument(), fLastSentSelectionChange.getOffset(), fLastSentSelectionChange.getLength());
-					fireSelectionChanged(new SelectionChangedEvent(this, lastSelection));
+					fireSelectionChanged(new SelectionChangedEvent(this, toSelection(fLastSentSelectionChange)));
 				}
 				return;
 
@@ -3910,7 +3957,7 @@ public class TextViewer extends Viewer implements
 	}
 
 	private void delete() {
-		if (!fTextWidget.getBlockSelection()) {
+		if (!fTextWidget.getBlockSelection() && fTextWidget.getSelectionRanges().length < 2) {
 			fTextWidget.invokeAction(ST.DELETE_NEXT);
 		} else {
 			wrapCompoundChange(() -> {
@@ -3928,7 +3975,7 @@ public class TextViewer extends Viewer implements
 
 	private void paste() {
 //		ignoreAutoEditStrategies(true);
-		if (!fTextWidget.getBlockSelection()) {
+		if (fTextWidget.getSelectionRanges().length < 2) { // single selection
 			fTextWidget.paste();
 		} else {
 			wrapCompoundChange(() -> {

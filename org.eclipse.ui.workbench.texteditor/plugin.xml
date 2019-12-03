@@ -425,6 +425,12 @@
 	        id="org.eclipse.ui.edit.text.toggleBlockSelectionMode">
 	  </command>
 	  <command
+	        name="%toMultiSelection.label"
+	        description="%toMultiSelection.description"
+	        categoryId="org.eclipse.ui.category.edit"
+	        id="org.eclipse.ui.edit.text.toMultiSelection">
+	  </command>
+	  <command
 	        name="%toggleWordWrap.label"
 	        description="%toggleWordWrap.description"
 	        categoryId="org.eclipse.ui.category.edit"
@@ -1347,6 +1353,18 @@
             class="org.eclipse.ui.texteditor.TextZoomOutHandler"
             commandId="org.eclipse.ui.edit.text.zoomOut">
       </handler>
+      <handler
+            class="org.eclipse.ui.internal.texteditor.ToMultiSelectionHandler"
+            commandId="org.eclipse.ui.edit.text.toMultiSelection">
+         <enabledWhen>
+            <with
+                 variable="activeEditor">
+              <instanceof
+                    value="org.eclipse.ui.texteditor.ITextEditor">
+              </instanceof>
+           </with>
+         </enabledWhen>
+      </handler>
    </extension>
    <extension
          point="org.eclipse.ui.menus">
@@ -1355,6 +1373,13 @@
             locationURI="menu:edit?after=selectAll">
          <command
                commandId="org.eclipse.ui.edit.text.toggleBlockSelectionMode"
+               style="push">
+            <visibleWhen
+                  checkEnabled="true">
+            </visibleWhen>
+         </command>
+         <command
+               commandId="org.eclipse.ui.edit.text.toMultiSelection"
                style="push">
             <visibleWhen
                   checkEnabled="true">
