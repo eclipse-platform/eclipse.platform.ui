@@ -722,8 +722,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	}
 
 	/**
-	 * Collapses all nodes of the viewer's tree, starting with the root. This
-	 * method is equivalent to <code>collapseToLevel(ALL_LEVELS)</code>.
+	 * Collapses all nodes of the viewer's tree, starting with the root. This method
+	 * is equivalent to <code>collapseToLevel(ALL_LEVELS)</code>.
 	 */
 	public void collapseAll() {
 		Object root = getRoot();
@@ -733,20 +733,28 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	}
 
 	/**
-	 * Collapses the subtree rooted at the given element or tree path to the
-	 * given level.
+	 * Collapses the subtree rooted at the given element or tree path to the given
+	 * level.
+	 * <p>
+	 * Note that the default implementation of this method does turn redraw off via
+	 * this operation via a call to <code>setRedraw</code>
+	 * </p>
 	 *
-	 * @param elementOrTreePath
-	 *            the element or tree path
-	 * @param level
-	 *            non-negative level, or <code>ALL_LEVELS</code> to collapse
-	 *            all levels of the tree
+	 * @param elementOrTreePath the element or tree path
+	 * @param level             non-negative level, or <code>ALL_LEVELS</code> to
+	 *                          collapse all levels of the tree
 	 */
 	public void collapseToLevel(Object elementOrTreePath, int level) {
 		Assert.isNotNull(elementOrTreePath);
-		Widget w = internalGetWidgetToSelect(elementOrTreePath);
-		if (w != null) {
-			internalCollapseToLevel(w, level);
+		Control control = getControl();
+		try {
+			control.setRedraw(false);
+			Widget w = internalGetWidgetToSelect(elementOrTreePath);
+			if (w != null) {
+				internalCollapseToLevel(w, level);
+			}
+		} finally {
+			control.setRedraw(true);
 		}
 	}
 
@@ -1590,10 +1598,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	/**
 	 * Recursively collapses the subtree rooted at the given widget to the given
 	 * level.
-	 * <p>
-	 * Note that the default implementation of this method does not call
-	 * <code>setRedraw</code>.
-	 * </p>
 	 *
 	 * @param widget the widget
 	 * @param level  non-negative level, or <code>ALL_LEVELS</code> to collapse all
