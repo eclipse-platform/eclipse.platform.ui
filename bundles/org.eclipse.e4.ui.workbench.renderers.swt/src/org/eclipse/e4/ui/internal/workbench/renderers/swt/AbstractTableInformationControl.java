@@ -19,7 +19,6 @@ import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.ColorRegistry;
 import org.eclipse.jface.resource.JFaceColors;
 import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
@@ -168,17 +167,7 @@ public abstract class AbstractTableInformationControl {
 
 		table.addSelectionListener(SelectionListener.widgetDefaultSelectedAdapter(e -> gotoSelectedElement()));
 
-		/*
-		 * Bug in GTK, see SWT bug: 62405 Editor drop down performance slow on
-		 * Linux-GTK on mouse move. Rather then removing the support altogether
-		 * this feature has been worked around for GTK only as we expect that
-		 * newer versions of GTK will no longer exhibit this quality and we will
-		 * be able to have the desired support running on all platforms. See
-		 * comment https://bugs.eclipse.org/bugs/show_bug.cgi?id=62405#c22 TODO:
-		 * remove this code once bug 62405 is fixed for the mainstream GTK
-		 * version
-		 */
-		final int ignoreEventCount = Util.isGtk() ? 4 : 1;
+		final int ignoreEventCount = 1;
 
 		table.addMouseMoveListener(new MouseMoveListener() {
 			TableItem fLastItem = null;
