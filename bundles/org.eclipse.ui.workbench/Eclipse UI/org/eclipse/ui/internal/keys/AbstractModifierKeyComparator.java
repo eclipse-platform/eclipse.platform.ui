@@ -16,12 +16,10 @@ package org.eclipse.ui.internal.keys;
 import java.util.Comparator;
 import org.eclipse.ui.keys.ModifierKey;
 
-abstract class AbstractModifierKeyComparator implements Comparator {
+abstract class AbstractModifierKeyComparator implements Comparator<ModifierKey> {
 
 	@Override
-	public int compare(Object left, Object right) {
-		ModifierKey modifierKeyLeft = (ModifierKey) left;
-		ModifierKey modifierKeyRight = (ModifierKey) right;
+	public int compare(ModifierKey modifierKeyLeft, ModifierKey modifierKeyRight) {
 		int modifierKeyLeftRank = rank(modifierKeyLeft);
 		int modifierKeyRightRank = rank(modifierKeyRight);
 

@@ -15,7 +15,6 @@
 package org.eclipse.ui.internal.keys;
 
 import java.util.Comparator;
-
 import org.eclipse.ui.keys.ModifierKey;
 
 /**
@@ -23,12 +22,10 @@ import org.eclipse.ui.keys.ModifierKey;
  *
  * @since 3.0
  */
-public class AlphabeticModifierKeyComparator implements Comparator {
+public class AlphabeticModifierKeyComparator implements Comparator<ModifierKey> {
 
 	@Override
-	public int compare(Object left, Object right) {
-		ModifierKey modifierKeyLeft = (ModifierKey) left;
-		ModifierKey modifierKeyRight = (ModifierKey) right;
+	public int compare(ModifierKey modifierKeyLeft, ModifierKey modifierKeyRight) {
 		return modifierKeyLeft.toString().compareTo(modifierKeyRight.toString());
 	}
 }

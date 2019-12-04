@@ -156,7 +156,7 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 	 * purposes.
 	 *
 	 */
-	private Hashtable registeredIDTable;
+	private Hashtable<String, StackTraceElement> registeredIDTable;
 
 	/**
 	 * Handles dynamic removal of the help system.
@@ -855,12 +855,12 @@ public final class WorkbenchHelpSystem implements IWorkbenchHelpSystem {
 		}
 
 		if (registeredIDTable == null)
-			registeredIDTable = new Hashtable();
+			registeredIDTable = new Hashtable<>();
 
 		if (!registeredIDTable.containsKey(contextId))
 			registeredIDTable.put(contextId, currentElement);
 		else if (!registeredIDTable.get(contextId).equals(currentElement)) {
-			StackTraceElement initialElement = (StackTraceElement) registeredIDTable.get(contextId);
+			StackTraceElement initialElement = registeredIDTable.get(contextId);
 			String error = "UI Duplicate Context ID found: '" + contextId + "'\n" + //$NON-NLS-1$ //$NON-NLS-2$
 					" 1 at " + initialElement + '\n' + //$NON-NLS-1$
 					" 2 at " + currentElement; //$NON-NLS-1$

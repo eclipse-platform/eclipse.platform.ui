@@ -1084,7 +1084,7 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 			keyController.getBindingModel().setSelectedElement((ModelElement) data);
 		}
 		if (data instanceof Binding && fFilteredTree != null) {
-			BindingElement be = (BindingElement) keyController.getBindingModel().getBindingToElement().get(data);
+			BindingElement be = keyController.getBindingModel().getBindingToElement().get(data);
 			fFilteredTree.getViewer().setSelection(new StructuredSelection(be), true);
 		}
 		if (data instanceof ParameterizedCommand) {

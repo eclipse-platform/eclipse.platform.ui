@@ -17,6 +17,7 @@ package org.eclipse.ui.internal.keys;
 import java.util.List;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher;
+import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
@@ -80,7 +81,7 @@ public class WorkbenchKeyboard {
 	 * @see org.eclipse.e4.ui.bindings.keys.KeyBindingDispatcher#press(java.util.List,
 	 *      org.eclipse.swt.widgets.Event)
 	 */
-	public boolean press(List potentialKeyStrokes, Event event) {
+	public boolean press(List<KeyStroke> potentialKeyStrokes, Event event) {
 		return delegate.press(potentialKeyStrokes, event);
 	}
 
@@ -100,7 +101,7 @@ public class WorkbenchKeyboard {
 	 * @param ctrlShiftT
 	 * @return
 	 */
-	public static List generatePossibleKeyStrokes(Event event) {
+	public static List<KeyStroke> generatePossibleKeyStrokes(Event event) {
 		return KeyBindingDispatcher.generatePossibleKeyStrokes(event);
 	}
 }

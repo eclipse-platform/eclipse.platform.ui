@@ -56,7 +56,7 @@ public class IntroRegistry implements IIntroRegistry {
 		IExtension[] extensions = point.getExtensions();
 		extensions = RegistryReader.orderExtensions(extensions);
 
-		ArrayList list = new ArrayList(extensions.length);
+		ArrayList<IIntroDescriptor> list = new ArrayList<>(extensions.length);
 		for (IExtension extension : extensions) {
 			IConfigurationElement[] elements = extension.getConfigurationElements();
 			for (IConfigurationElement element : elements) {
@@ -72,7 +72,7 @@ public class IntroRegistry implements IIntroRegistry {
 			}
 		}
 
-		return (IIntroDescriptor[]) list.toArray(new IIntroDescriptor[list.size()]);
+		return list.toArray(new IIntroDescriptor[list.size()]);
 	}
 
 	@Override

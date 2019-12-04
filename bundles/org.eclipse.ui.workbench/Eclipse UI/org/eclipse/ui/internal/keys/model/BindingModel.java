@@ -126,14 +126,14 @@ public class BindingModel extends CommonModel {
 	/**
 	 * @return Returns the bindingToElement.
 	 */
-	public Map getBindingToElement() {
+	public Map<Binding, BindingElement> getBindingToElement() {
 		return bindingToElement;
 	}
 
 	/**
 	 * @return Returns the commandToElement.
 	 */
-	public Map getCommandToElement() {
+	public Map<ParameterizedCommand, BindingElement> getCommandToElement() {
 		return commandToElement;
 	}
 
@@ -435,7 +435,7 @@ public class BindingModel extends CommonModel {
 	 * @param bindingToElement The bindingToElement to set.
 	 */
 	public void setBindingToElement(Map<Binding, BindingElement> bindingToElement) {
-		Map old = this.bindingToElement;
+		Map<Binding, BindingElement> old = this.bindingToElement;
 		this.bindingToElement = bindingToElement;
 		controller.firePropertyChange(this, PROP_BINDING_ELEMENT_MAP, old, bindingToElement);
 	}

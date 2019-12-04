@@ -328,7 +328,7 @@ public class KeyController {
 							: selectedElement.getId();
 					final KeyBinding binding = new KeyBinding(keySequence, keyBinding.getParameterizedCommand(),
 							activeSchemeId, activeContextId, null, null, null, Binding.USER);
-					Map<KeyBinding, BindingElement> bindingToElement = bindingModel.getBindingToElement();
+					Map<Binding, BindingElement> bindingToElement = bindingModel.getBindingToElement();
 					bindingToElement.remove(keyBinding);
 					if (keyBinding.getType() == Binding.USER) {
 						fBindingManager.removeBinding(keyBinding);

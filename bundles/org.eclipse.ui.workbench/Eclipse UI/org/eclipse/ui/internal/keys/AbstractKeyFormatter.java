@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.ResourceBundle;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.keys.IKeyFormatter;
 import org.eclipse.ui.keys.Key;
@@ -69,9 +68,9 @@ public abstract class AbstractKeyFormatter implements IKeyFormatter {
 	public String format(KeySequence keySequence) {
 		StringBuilder stringBuffer = new StringBuilder();
 
-		Iterator keyStrokeItr = keySequence.getKeyStrokes().iterator();
+		Iterator<KeyStroke> keyStrokeItr = keySequence.getKeyStrokes().iterator();
 		while (keyStrokeItr.hasNext()) {
-			stringBuffer.append(format((KeyStroke) keyStrokeItr.next()));
+			stringBuffer.append(format(keyStrokeItr.next()));
 
 			if (keyStrokeItr.hasNext()) {
 				stringBuffer.append(getKeyStrokeDelimiter());
@@ -86,12 +85,12 @@ public abstract class AbstractKeyFormatter implements IKeyFormatter {
 		String keyDelimiter = getKeyDelimiter();
 
 		// Format the modifier keys, in sorted order.
-		SortedSet modifierKeys = new TreeSet(getModifierKeyComparator());
+		SortedSet<ModifierKey> modifierKeys = new TreeSet<>(getModifierKeyComparator());
 		modifierKeys.addAll(keyStroke.getModifierKeys());
 		StringBuilder stringBuffer = new StringBuilder();
-		Iterator modifierKeyItr = modifierKeys.iterator();
+		Iterator<ModifierKey> modifierKeyItr = modifierKeys.iterator();
 		while (modifierKeyItr.hasNext()) {
-			stringBuffer.append(format((ModifierKey) modifierKeyItr.next()));
+			stringBuffer.append(format(modifierKeyItr.next()));
 			stringBuffer.append(keyDelimiter);
 		}
 

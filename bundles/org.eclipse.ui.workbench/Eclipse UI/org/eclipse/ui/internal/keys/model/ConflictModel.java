@@ -158,7 +158,7 @@ public class ConflictModel extends CommonModel {
 				Binding b = (Binding) i.next();
 				if (binding != b && b.getContextId().equals(binding.getContextId())
 						&& b.getSchemeId().equals(binding.getSchemeId())) {
-					BindingElement element = (BindingElement) bindingModel.getBindingToElement().get(b);
+					BindingElement element = bindingModel.getBindingToElement().get(b);
 					if (element != null) {
 						localConflicts.add(element);
 					}
