@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Nöbauer - Bug 553765
  *******************************************************************************/
 package org.eclipse.jface.resource;
 
@@ -95,7 +96,7 @@ class ImageDataImageDescriptor extends ImageDescriptor {
 		if (originalImage != null) {
 			return System.identityHashCode(originalImage);
 		}
-		return dataProvider.getImageData(100).hashCode();
+		return dataProvider.hashCode();
 	}
 
 	@Override

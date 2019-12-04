@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2017 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,8 +10,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Stefan Nöbauer - Bug 553765
  *******************************************************************************/
 package org.eclipse.jface.tests.images;
+
+import java.util.Objects;
 
 import org.eclipse.jface.resource.ColorDescriptor;
 import org.eclipse.jface.resource.DeviceResourceDescriptor;
@@ -24,6 +27,9 @@ import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Device;
 import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.ImageData;
+import org.eclipse.swt.graphics.ImageDataProvider;
+import org.eclipse.swt.graphics.PaletteData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
 import org.junit.Assert;
@@ -123,10 +129,16 @@ public class ResourceManagerTest extends TestCase {
 				new TestDescriptor(ColorDescriptor.createFrom(testColor2)),
 				new TestDescriptor(ColorDescriptor.createFrom(testColor)),
 				new TestDescriptor(ColorDescriptor.createFrom(testColor)),
-				new TestDescriptor(ColorDescriptor.createFrom(testColor2)) };
+
+				new TestDescriptor(ColorDescriptor.createFrom(testColor2)), // 20
+				new TestDescriptor(ImageDescriptor.createFromImageDataProvider(new MyImageDataProvider("1"))),
+				new TestDescriptor(ImageDescriptor.createFromImageDataProvider(new MyImageDataProvider("1"))),
+				new TestDescriptor(ImageDescriptor.createFromImageDataProvider(new MyImageDataProvider("2"))),
+
+		};
 
 		// Let the tests know how many duplicates are in the array
-		numDupes = 11;
+		numDupes = 12;
 	}
 
 	@Override
@@ -270,6 +282,17 @@ public class ResourceManagerTest extends TestCase {
 
 	}
 
+	public void testImageDataResourceAllocations() throws Exception {
+		// These arrays are indices into the descriptors array. For example, {0,1,7}
+		// is a quick shorthand to indicate we should allocate resources 0, 1, and 7.
+		int[] gResources = { 21, 22, 23 };
+
+		// Allocate a bunch of global resources
+		allocateResources(globalResourceManager, gResources);
+
+		Assert.assertEquals(2, TestDescriptor.refCount);
+	}
+
 	/*
 	 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=135088
 	 */
@@ -289,5 +312,50 @@ public class ResourceManagerTest extends TestCase {
 
 		// Destroy the resource we created
 		globalResourceManager.destroy(descriptor);
+	}
+
+	/**
+	 * ImageDataProvider to identify identical ImageData by the given ID.
+	 */
+	private static class MyImageDataProvider implements ImageDataProvider {
+		private final String id;
+
+		public MyImageDataProvider(String id) {
+			this.id = id;
+		}
+
+		@Override
+		public ImageData getImageData(int zoom) {
+			PaletteData paletteData = new PaletteData(new RGB(255, 0, 0), new RGB(0, 255, 0));
+			ImageData imageData = new ImageData(48, 48, 1, paletteData);
+			for (int x = 11; x < 35; x++) {
+				for (int y = 11; y < 35; y++) {
+					imageData.setPixel(x, y, 1);
+				}
+			}
+
+			return imageData;
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hashCode(id);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			MyImageDataProvider other = (MyImageDataProvider) obj;
+			return Objects.equals(id, other.id);
+		}
+
 	}
 }
