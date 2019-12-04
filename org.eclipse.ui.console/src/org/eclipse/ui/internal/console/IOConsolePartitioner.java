@@ -265,7 +265,8 @@ public class IOConsolePartitioner
 	 */
 	public void streamsClosed() {
 		if (streamsClosed) {
-			log(IStatus.ERROR, "Streams are already closed."); //$NON-NLS-1$
+			String msg = "Streams are already closed.";//$NON-NLS-1$
+			log(IStatus.ERROR, msg, new IllegalStateException(msg));
 			return;
 		}
 		streamsClosed = true;
@@ -1379,6 +1380,10 @@ public class IOConsolePartitioner
 
 	private static void log(int status, String msg) {
 		ConsolePlugin.log(new Status(status, ConsolePlugin.getUniqueIdentifier(), msg));
+	}
+
+	private static void log(int status, String msg, Throwable t) {
+		ConsolePlugin.log(new Status(status, ConsolePlugin.getUniqueIdentifier(), msg, t));
 	}
 
 	/**
