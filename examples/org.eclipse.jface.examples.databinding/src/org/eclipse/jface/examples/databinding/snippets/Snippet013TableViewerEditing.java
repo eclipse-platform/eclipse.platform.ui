@@ -31,8 +31,8 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.databinding.viewers.ObservableValueEditingSupport;
-import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.viewers.CellEditor;
 import org.eclipse.jface.viewers.ColumnViewer;
 import org.eclipse.jface.viewers.TableViewer;
@@ -134,6 +134,7 @@ public class Snippet013TableViewerEditing {
 			people.add(new Person("Lars Vogel"));
 			people.add(new Person("Simon Scholz"));
 			people.add(new Person("Stefan Xenos"));
+			people.add(new Person("Jens Lideström"));
 		}
 
 		public List<Person> getPeople() {
