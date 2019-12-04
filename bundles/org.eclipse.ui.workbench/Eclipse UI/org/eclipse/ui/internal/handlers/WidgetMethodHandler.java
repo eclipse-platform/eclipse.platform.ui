@@ -143,7 +143,7 @@ public class WidgetMethodHandler extends AbstractHandler implements IExecutableE
 	 */
 	protected void swingInvokeLater(Runnable methodRunnable)
 			throws ClassNotFoundException, NoSuchMethodException, IllegalAccessException, InvocationTargetException {
-		final Class swingUtilitiesClass = Class.forName("javax.swing.SwingUtilities"); //$NON-NLS-1$
+		final Class<?> swingUtilitiesClass = Class.forName("javax.swing.SwingUtilities"); //$NON-NLS-1$
 		final Method swingUtilitiesInvokeLaterMethod = swingUtilitiesClass.getMethod("invokeLater", //$NON-NLS-1$
 				Runnable.class);
 		swingUtilitiesInvokeLaterMethod.invoke(swingUtilitiesClass, methodRunnable);
@@ -169,7 +169,7 @@ public class WidgetMethodHandler extends AbstractHandler implements IExecutableE
 		 * LegacyGlueFocusTraversalPolicy which causes endless recursions in some
 		 * situations.
 		 */
-		Class keyboardFocusManagerClass = null;
+		Class<?> keyboardFocusManagerClass = null;
 		try {
 			keyboardFocusManagerClass = Class.forName("java.awt.KeyboardFocusManager"); //$NON-NLS-1$
 		} catch (ClassNotFoundException e) {
@@ -185,7 +185,7 @@ public class WidgetMethodHandler extends AbstractHandler implements IExecutableE
 			return keyboardFocusManagerGetFocusOwner.invoke(keyboardFocusManager);
 		}
 		// Use JRE 1.3 API
-		final Class focusManagerClass = Class.forName("javax.swing.FocusManager"); //$NON-NLS-1$
+		final Class<?> focusManagerClass = Class.forName("javax.swing.FocusManager"); //$NON-NLS-1$
 		final Method focusManagerGetCurrentManagerMethod = focusManagerClass.getMethod("getCurrentManager"); //$NON-NLS-1$
 		final Object focusManager = focusManagerGetCurrentManagerMethod.invoke(focusManagerClass);
 		final Method focusManagerGetFocusOwner = focusManagerClass.getMethod("getFocusOwner"); //$NON-NLS-1$
@@ -211,7 +211,7 @@ public class WidgetMethodHandler extends AbstractHandler implements IExecutableE
 		Method method = null;
 
 		if (focusControl != null) {
-			final Class clazz = focusControl.getClass();
+			final Class<?> clazz = focusControl.getClass();
 			try {
 				method = clazz.getMethod(methodName);
 			} catch (NoSuchMethodException e) {
@@ -231,7 +231,7 @@ public class WidgetMethodHandler extends AbstractHandler implements IExecutableE
 			try {
 				final Object focusComponent = getFocusComponent();
 				if (focusComponent != null) {
-					final Class clazz = focusComponent.getClass();
+					final Class<?> clazz = focusComponent.getClass();
 
 					try {
 						method = clazz.getMethod(methodName);

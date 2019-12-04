@@ -62,7 +62,7 @@ import org.eclipse.ui.services.IEvaluationService;
  */
 public final class HandlerProxy extends AbstractHandlerWithState implements IElementUpdater {
 
-	private static Map CEToProxyMap = new HashMap();
+	private static Map<IConfigurationElement, HandlerProxy> CEToProxyMap = new HashMap<>();
 
 	/**
 	 *
@@ -196,7 +196,7 @@ public final class HandlerProxy extends AbstractHandlerWithState implements IEle
 
 	public static void updateStaleCEs(IConfigurationElement[] replacements) {
 		for (IConfigurationElement replacement : replacements) {
-			HandlerProxy proxy = (HandlerProxy) CEToProxyMap.get(replacement);
+			HandlerProxy proxy = CEToProxyMap.get(replacement);
 			if (proxy != null)
 				proxy.configurationElement = replacement;
 		}

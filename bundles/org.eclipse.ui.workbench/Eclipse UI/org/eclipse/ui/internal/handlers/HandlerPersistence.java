@@ -18,13 +18,13 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
 import org.eclipse.core.commands.IHandler;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.IRegistryChangeEvent;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
@@ -69,7 +69,7 @@ public final class HandlerPersistence extends RegistryPersistence {
 	 * flush the activations when the registry is re-read. This value is never
 	 * <code>null</code>
 	 */
-	private final Collection handlerActivations = new ArrayList();
+	private final Collection<IHandlerActivation> handlerActivations = new ArrayList<>();
 
 	/**
 	 * The handler service with which this persistence class is associated. This
@@ -101,9 +101,9 @@ public final class HandlerPersistence extends RegistryPersistence {
 	 */
 	private void clearActivations(final IHandlerService handlerService) {
 		handlerService.deactivateHandlers(handlerActivations);
-		Iterator i = handlerActivations.iterator();
+		Iterator<IHandlerActivation> i = handlerActivations.iterator();
 		while (i.hasNext()) {
-			IHandlerActivation activation = (IHandlerActivation) i.next();
+			IHandlerActivation activation = i.next();
 			if (activation.getHandler() != null) {
 				try {
 					activation.getHandler().dispose();
@@ -255,7 +255,7 @@ public final class HandlerPersistence extends RegistryPersistence {
 	 */
 	private void readHandlersFromRegistry(final IConfigurationElement[] configurationElements,
 			final int configurationElementCount) {
-		final List warningsToLog = new ArrayList(1);
+		final List<IStatus> warningsToLog = new ArrayList<>(1);
 
 		for (int i = 0; i < configurationElementCount; i++) {
 			final IConfigurationElement configurationElement = configurationElements[i];
@@ -311,7 +311,7 @@ public final class HandlerPersistence extends RegistryPersistence {
 	 */
 	private void readHandlerSubmissionsFromRegistry(final IConfigurationElement[] configurationElements,
 			final int configurationElementCount) {
-		final List warningsToLog = new ArrayList(1);
+		final List<IStatus> warningsToLog = new ArrayList<>(1);
 
 		for (int i = 0; i < configurationElementCount; i++) {
 			final IConfigurationElement configurationElement = configurationElements[i];

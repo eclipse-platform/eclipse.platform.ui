@@ -39,7 +39,7 @@ public class SelectAllHandler extends WidgetMethodHandler {
 	/**
 	 * The parameters for a single point select all.
 	 */
-	private static final Class[] METHOD_PARAMETERS = { Point.class };
+	private static final Class<?>[] METHOD_PARAMETERS = { Point.class };
 
 	@Override
 	public final Object execute(final ExecutionEvent event) throws ExecutionException {

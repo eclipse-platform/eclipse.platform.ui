@@ -16,7 +16,6 @@ package org.eclipse.ui.internal.handlers;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 
 /**
@@ -38,7 +37,7 @@ public final class ActionCommandMappingService implements IActionCommandMappingS
 	 * The map of action identifiers ({@link String}) to command identifiers
 	 * ({@link String}). This value is never <code>null</code>.
 	 */
-	private final Map mapping = new HashMap();
+	private final Map<String, String> mapping = new HashMap<>();
 
 	@Override
 	public String getCommandId(final String actionId) {
@@ -46,7 +45,7 @@ public final class ActionCommandMappingService implements IActionCommandMappingS
 			throw new NullPointerException("Cannot get the command identifier for a null action id"); //$NON-NLS-1$
 		}
 
-		return (String) mapping.get(actionId);
+		return mapping.get(actionId);
 	}
 
 	@Override

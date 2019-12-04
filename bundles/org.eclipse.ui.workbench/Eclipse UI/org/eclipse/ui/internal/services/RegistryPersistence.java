@@ -108,7 +108,7 @@ public abstract class RegistryPersistence implements IDisposable, IWorkbenchRegi
 	 * @param element       The element from which the warning originates; may be
 	 *                      <code>null</code>.
 	 */
-	protected static final void addWarning(final List warningsToLog, final String message,
+	protected static final void addWarning(final List<IStatus> warningsToLog, final String message,
 			final IConfigurationElement element) {
 		addWarning(warningsToLog, message, element, null, null, null);
 	}
@@ -125,7 +125,7 @@ public abstract class RegistryPersistence implements IDisposable, IWorkbenchRegi
 	 * @param id            The identifier of the item for which a warning is being
 	 *                      logged; may be <code>null</code>.
 	 */
-	protected static final void addWarning(final List warningsToLog, final String message,
+	protected static final void addWarning(final List<IStatus> warningsToLog, final String message,
 			final IConfigurationElement element, final String id) {
 		addWarning(warningsToLog, message, element, id, null, null);
 	}
@@ -136,7 +136,7 @@ public abstract class RegistryPersistence implements IDisposable, IWorkbenchRegi
 	 *
 	 * @param warningsToLog       The collection of warnings to be logged; must not
 	 *                            be <code>null</code>.
-	 * @param message             The mesaage to log; must not be <code>null</code>.
+	 * @param message             The message to log; must not be <code>null</code>.
 	 * @param element             The element from which the warning originates; may
 	 *                            be <code>null</code>.
 	 * @param id                  The identifier of the item for which a warning is
@@ -146,7 +146,7 @@ public abstract class RegistryPersistence implements IDisposable, IWorkbenchRegi
 	 * @param extraAttributeValue The value of the extra attribute to be logged; may
 	 *                            be <code>null</code>.
 	 */
-	protected static final void addWarning(final List warningsToLog, final String message,
+	protected static final void addWarning(final List<IStatus> warningsToLog, final String message,
 			final IConfigurationElement element, final String id, final String extraAttributeName,
 			final String extraAttributeValue) {
 		String statusMessage = message;
@@ -192,7 +192,7 @@ public abstract class RegistryPersistence implements IDisposable, IWorkbenchRegi
 	 *         <code>false</code> otherwise.
 	 */
 	protected static final boolean checkClass(final IConfigurationElement configurationElement,
-			final List warningsToLog, final String message, final String id) {
+			final List<IStatus> warningsToLog, final String message, final String id) {
 		// Check to see if we have a handler class.
 		if ((configurationElement.getAttribute(ATT_CLASS) == null)
 				&& (configurationElement.getChildren(TAG_CLASS).length == 0)) {
@@ -225,11 +225,11 @@ public abstract class RegistryPersistence implements IDisposable, IWorkbenchRegi
 	 * @param message       The message to include in the log entry; must not be
 	 *                      <code>null</code>.
 	 */
-	protected static final void logWarnings(final List warningsToLog, final String message) {
+	protected static final void logWarnings(final List<IStatus> warningsToLog, final String message) {
 		// If there were any warnings, then log them now.
 		if ((warningsToLog != null) && (!warningsToLog.isEmpty())) {
 			final IStatus status = new MultiStatus(WorkbenchPlugin.PI_WORKBENCH, 0,
-					(IStatus[]) warningsToLog.toArray(new IStatus[warningsToLog.size()]), message, null);
+					warningsToLog.toArray(new IStatus[warningsToLog.size()]), message, null);
 			WorkbenchPlugin.log(status);
 		}
 	}
@@ -302,7 +302,7 @@ public abstract class RegistryPersistence implements IDisposable, IWorkbenchRegi
 	 */
 	protected static final ParameterizedCommand readParameterizedCommand(
 			final IConfigurationElement configurationElement, final ICommandService commandService,
-			final List warningsToLog, final String message, final String id) {
+			final List<IStatus> warningsToLog, final String message, final String id) {
 		final String commandId = readRequired(configurationElement, ATT_COMMAND_ID, warningsToLog, message, id);
 		if (commandId == null) {
 			return null;
@@ -331,13 +331,13 @@ public abstract class RegistryPersistence implements IDisposable, IWorkbenchRegi
 	 *         <code>null</code> if none can be found.
 	 */
 	protected static final ParameterizedCommand readParameters(final IConfigurationElement configurationElement,
-			final List warningsToLog, final Command command) {
+			final List<IStatus> warningsToLog, final Command command) {
 		final IConfigurationElement[] parameterElements = configurationElement.getChildren(TAG_PARAMETER);
 		if ((parameterElements == null) || (parameterElements.length == 0)) {
 			return new ParameterizedCommand(command, null);
 		}
 
-		final Collection parameters = new ArrayList();
+		final Collection<Parameterization> parameters = new ArrayList<>();
 		for (final IConfigurationElement parameterElement : parameterElements) {
 			// Read out the id.
 			final String id = parameterElement.getAttribute(ATT_ID);
@@ -388,7 +388,7 @@ public abstract class RegistryPersistence implements IDisposable, IWorkbenchRegi
 		}
 
 		return new ParameterizedCommand(command,
-				(Parameterization[]) parameters.toArray(new Parameterization[parameters.size()]));
+				parameters.toArray(new Parameterization[parameters.size()]));
 	}
 
 	/**
@@ -405,7 +405,7 @@ public abstract class RegistryPersistence implements IDisposable, IWorkbenchRegi
 	 * @return The required attribute; may be <code>null</code> if missing.
 	 */
 	protected static final String readRequired(final IConfigurationElement configurationElement, final String attribute,
-			final List warningsToLog, final String message) {
+			final List<IStatus> warningsToLog, final String message) {
 		return readRequired(configurationElement, attribute, warningsToLog, message, null);
 	}
 
@@ -426,7 +426,7 @@ public abstract class RegistryPersistence implements IDisposable, IWorkbenchRegi
 	 * @return The required attribute; may be <code>null</code> if missing.
 	 */
 	protected static final String readRequired(final IConfigurationElement configurationElement, final String attribute,
-			final List warningsToLog, final String message, final String id) {
+			final List<IStatus> warningsToLog, final String message, final String id) {
 		final String value = configurationElement.getAttribute(attribute);
 		if ((value == null) || (value.length() == 0)) {
 			addWarning(warningsToLog, message, configurationElement, id);
@@ -455,7 +455,7 @@ public abstract class RegistryPersistence implements IDisposable, IWorkbenchRegi
 	 *         <code>null</code>.
 	 */
 	protected static final Expression readWhenElement(final IConfigurationElement parentElement,
-			final String whenElementName, final String id, final List warningsToLog) {
+			final String whenElementName, final String id, final List<IStatus> warningsToLog) {
 		// Check to see if we have an when expression.
 		final IConfigurationElement[] whenElements = parentElement.getChildren(whenElementName);
 		Expression whenExpression = null;
