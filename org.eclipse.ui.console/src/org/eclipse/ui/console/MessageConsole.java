@@ -127,7 +127,9 @@ public class MessageConsole extends IOConsole {
 	 * @return a new message stream connected to this console
 	 */
 	public MessageConsoleStream newMessageStream() {
-		return new MessageConsoleStream(this, this.getCharset());
+		MessageConsoleStream messageConsoleStream = new MessageConsoleStream(this, this.getCharset());
+		addOpenStream(messageConsoleStream);
+		return messageConsoleStream;
 	}
 
 	@Override

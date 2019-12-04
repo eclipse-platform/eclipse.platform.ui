@@ -168,9 +168,7 @@ public class IOConsole extends TextConsole {
 	 */
 	public IOConsoleOutputStream newOutputStream() {
 		IOConsoleOutputStream outputStream = new IOConsoleOutputStream(this, this.charset);
-		synchronized(openStreams) {
-			openStreams.add(outputStream);
-		}
+		addOpenStream(outputStream);
 		return outputStream;
 	}
 
@@ -401,5 +399,16 @@ public class IOConsole extends TextConsole {
 	 */
 	public void setCarriageReturnAsControlCharacter(boolean carriageReturnAsControlCharacter) {
 		partitioner.setCarriageReturnAsControlCharacter(carriageReturnAsControlCharacter);
+	}
+
+	/**
+	 * Registers a stream that will be managed by this console.
+	 * 
+	 * @param stream The stream which will be closed on {@link #dispose()}.
+	 */
+	void addOpenStream(Closeable stream) {
+		synchronized (openStreams) {
+			openStreams.add(stream);
+		}
 	}
 }
