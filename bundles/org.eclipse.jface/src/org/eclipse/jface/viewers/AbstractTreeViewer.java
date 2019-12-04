@@ -1041,7 +1041,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * method is equivalent to <code>expandToLevel(ALL_LEVELS)</code>.
 	 */
 	public void expandAll() {
-		expandToLevel(ALL_LEVELS, false);
+		expandToLevel(ALL_LEVELS, true);
 	}
 
 	/**
@@ -1065,18 +1065,18 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *            levels of the tree
 	 */
 	public void expandToLevel(int level) {
-		expandToLevel(level, false);
+		expandToLevel(level, true);
 	}
 
 	/**
 	 * Expands the root of the viewer's tree to the given level.
 	 *
-	 * @param level
-	 *            non-negative level, or <code>ALL_LEVELS</code> to expand all
-	 *            levels of the tree
-	 * @param disableRedraw
-	 *            <code>true</code> when drawing operations should be disabled
-	 *            during expansion.
+	 * @param level         non-negative level, or <code>ALL_LEVELS</code> to expand
+	 *                      all levels of the tree
+	 * @param disableRedraw <code>true</code> when drawing operations should be
+	 *                      disabled during expansion. <code>true</code> when
+	 *                      drawing operations should be enabled during expansion.
+	 *                      Prefer using true as this results in a faster UI
 	 * @since 3.14
 	 */
 	public void expandToLevel(int level, boolean disableRedraw) {
@@ -1097,7 +1097,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 *            levels of the tree
 	 */
 	public void expandToLevel(Object elementOrTreePath, int level) {
-		expandToLevel(elementOrTreePath, level, false);
+		expandToLevel(elementOrTreePath, level, true);
 	}
 
 	/**
@@ -1105,14 +1105,14 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * element becomes visible in this viewer's tree control, and then expands the
 	 * subtree rooted at the given element to the given level.
 	 *
-	 * @param elementOrTreePath
-	 *            the element
-	 * @param level
-	 *            non-negative level, or <code>ALL_LEVELS</code> to expand all
-	 *            levels of the tree
-	 * @param disableRedraw
-	 *            <code>true</code> when drawing operations should be disabled
-	 *            during expansion.
+	 * @param elementOrTreePath the element
+	 * @param level             non-negative level, or <code>ALL_LEVELS</code> to
+	 *                          expand all levels of the tree
+	 * @param disableRedraw     <code>true</code> when drawing operations should be
+	 *                          disabled during expansion. <code>false</code> when
+	 *                          drawing operations should be enabled during
+	 *                          expansion. Prefer true as this results in a faster
+	 *                          UI.
 	 * @since 3.14
 	 */
 	public void expandToLevel(Object elementOrTreePath, int level, boolean disableRedraw) {
