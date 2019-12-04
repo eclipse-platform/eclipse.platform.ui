@@ -25,7 +25,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
  */
 public class PreferenceNodeFilter extends ViewerFilter {
 
-	Collection ids = new HashSet();
+	Collection<String> ids = new HashSet<>();
 
 	/**
 	 * Create a new instance of the receiver on a list of filteredIds.

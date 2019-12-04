@@ -129,7 +129,7 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
 		createLabel(contents, fLowerListLabel);
 		createLowerList(contents);
 		setListElements(fElements);
-		List initialSelections = getInitialElementSelections();
+		List<Object> initialSelections = getInitialElementSelections();
 		if (!initialSelections.isEmpty()) {
 			Object element = initialSelections.get(0);
 			setSelection(new Object[] { element });
@@ -210,7 +210,7 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
 		int indices[] = getSelectionIndices();
 		fLowerList.removeAll();
 		int elementCount = 0;
-		List elements = new ArrayList(indices.length * 5);
+		List<Object[]> elements = new ArrayList<>(indices.length * 5);
 		for (int index : indices) {
 			Object[] foldedElements = getFoldedElements(index);
 			if (foldedElements != null) {
@@ -221,9 +221,9 @@ public class TwoPaneElementSelector extends AbstractElementListSelectionDialog {
 		if (elementCount > 0) {
 			fQualifierElements = new Object[elementCount];
 			int destPos = 0;
-			Iterator iterator = elements.iterator();
+			Iterator<Object[]> iterator = elements.iterator();
 			while (iterator.hasNext()) {
-				Object[] objects = (Object[]) iterator.next();
+				Object[] objects = iterator.next();
 				System.arraycopy(objects, 0, fQualifierElements, destPos, objects.length);
 				destPos = destPos + objects.length;
 			}

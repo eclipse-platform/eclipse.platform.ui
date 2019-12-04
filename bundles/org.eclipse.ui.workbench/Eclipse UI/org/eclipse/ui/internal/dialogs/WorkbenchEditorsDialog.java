@@ -92,11 +92,11 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 
 	private int sortColumn;
 
-	private List elements = new ArrayList();
+	private List<Adapter> elements = new ArrayList<>();
 
-	private HashMap imageCache = new HashMap(11);
+	private HashMap<ImageDescriptor, Image> imageCache = new HashMap<>(11);
 
-	private HashMap disabledImageCache = new HashMap(11);
+	private HashMap<ImageDescriptor, Image> disabledImageCache = new HashMap<>(11);
 
 	private boolean reverse = false;
 
@@ -352,12 +352,12 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 			}
 		});
 		editorsTable.addDisposeListener(e -> {
-			for (Iterator images1 = imageCache.values().iterator(); images1.hasNext();) {
-				Image i1 = (Image) images1.next();
+			for (Iterator<Image> images1 = imageCache.values().iterator(); images1.hasNext();) {
+				Image i1 = images1.next();
 				i1.dispose();
 			}
-			for (Iterator images2 = disabledImageCache.values().iterator(); images2.hasNext();) {
-				Image i2 = (Image) images2.next();
+			for (Iterator<Image> images2 = disabledImageCache.values().iterator(); images2.hasNext();) {
+				Image i2 = images2.next();
 				i2.dispose();
 			}
 		});
@@ -409,7 +409,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		}
 
 		// collect all instantiated editors that have been selected
-		List selectedEditors = new ArrayList();
+		List<IWorkbenchPart> selectedEditors = new ArrayList<>();
 		for (TableItem item : items) {
 			Adapter e = (Adapter) item.getData();
 			if (e.editorRef != null) {
@@ -458,7 +458,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		if (items.length == 0) {
 			return new TableItem[0];
 		}
-		ArrayList cleanItems = new ArrayList(items.length);
+		ArrayList<TableItem> cleanItems = new ArrayList<>(items.length);
 		for (TableItem item : items) {
 			Adapter editor = (Adapter) item.getData();
 			if (!editor.isDirty()) {
@@ -477,7 +477,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		if (allItems.length == 0) {
 			return allItems;
 		}
-		ArrayList invertedSelection = new ArrayList(allItems.length - selectedItems.length);
+		ArrayList<TableItem> invertedSelection = new ArrayList<>(allItems.length - selectedItems.length);
 		outerLoop: for (TableItem allItem : allItems) {
 			for (TableItem selectedItem : selectedItems) {
 				if (allItem == selectedItem) {
@@ -526,7 +526,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 
 		// remove all the items
 		editorsTable.removeAll();
-		elements = new ArrayList();
+		elements = new ArrayList<>();
 		if (showAllPersp) {
 			for (IWorkbenchWindow workbenchWindow : window.getWorkbench().getWorkbenchWindows()) {
 				updateEditors(workbenchWindow.getPages());
@@ -541,9 +541,9 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		// sort the items
 		sort();
 
-		List selection = new ArrayList(selectedItems.length);
-		for (Iterator iterator = elements.iterator(); iterator.hasNext();) {
-			Adapter e = (Adapter) iterator.next();
+		List<TableItem> selection = new ArrayList<>(selectedItems.length);
+		for (Iterator<Adapter> iterator = elements.iterator(); iterator.hasNext();) {
+			Adapter e = iterator.next();
 			TableItem item = new TableItem(editorsTable, SWT.NULL);
 			updateItem(item, e);
 
@@ -556,7 +556,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		}
 
 		// set the selection back to the table
-		editorsTable.setSelection((TableItem[]) selection.toArray(new TableItem[selection.size()]));
+		editorsTable.setSelection(selection.toArray(new TableItem[selection.size()]));
 
 		// update the buttons, because the selection may have changed
 		updateButtons();
@@ -638,7 +638,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 	 * A helper inner class to adapt EditorHistoryItem and IEditorPart in the same
 	 * type.
 	 */
-	private class Adapter implements Comparable {
+	private class Adapter implements Comparable<Adapter> {
 		IEditorReference editorRef;
 
 		IEditorInput input;
@@ -727,7 +727,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 					}
 				}
 				if (imageDesc != null) {
-					image = (Image) disabledImageCache.get(imageDesc);
+					image = disabledImageCache.get(imageDesc);
 					if (image == null) {
 						Image enabled = imageDesc.createImage();
 						Image disabled = new Image(editorsTable.getDisplay(), enabled, SWT.IMAGE_DISABLE);
@@ -763,8 +763,7 @@ public class WorkbenchEditorsDialog extends SelectionDialog {
 		}
 
 		@Override
-		public int compareTo(Object another) {
-			Adapter adapter = (Adapter) another;
+		public int compareTo(Adapter adapter) {
 			int result = collator.compare(getText()[sortColumn], adapter.getText()[sortColumn]);
 			if (result == 0) {
 				int column = sortColumn == 0 ? 1 : 0;

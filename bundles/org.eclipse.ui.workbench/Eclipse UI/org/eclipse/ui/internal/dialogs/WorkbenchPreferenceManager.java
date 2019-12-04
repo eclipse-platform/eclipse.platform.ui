@@ -65,10 +65,10 @@ public class WorkbenchPreferenceManager extends PreferenceManager implements IEx
 	 *
 	 * @param pageContributions
 	 */
-	public void addPages(Collection pageContributions) {
+	public void addPages(Collection<?> pageContributions) {
 
 		// Add the contributions to the manager
-		Iterator iterator = pageContributions.iterator();
+		Iterator<?> iterator = pageContributions.iterator();
 		while (iterator.hasNext()) {
 			Object next = iterator.next();
 			if (next instanceof WorkbenchPreferenceNode) {

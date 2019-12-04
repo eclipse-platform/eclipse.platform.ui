@@ -53,7 +53,7 @@ public final class SplashHandlerFactory {
 			return null;
 
 		IExtension[] extensions = point.getExtensions();
-		Map idToSplash = new HashMap(); // String->ConfigurationElement
+		Map<String, IConfigurationElement> idToSplash = new HashMap<>();
 		String[] targetId = new String[1];
 		for (IExtension extension : extensions) {
 			IConfigurationElement[] children = extension.getConfigurationElements();
@@ -77,7 +77,7 @@ public final class SplashHandlerFactory {
 	 * @return a splash matching the target id from this element or
 	 *         <code>null</code>
 	 */
-	private static AbstractSplashHandler processElement(IConfigurationElement configurationElement, Map idToSplash,
+	private static AbstractSplashHandler processElement(IConfigurationElement configurationElement, Map<String,IConfigurationElement> idToSplash,
 			String[] targetId, IProduct product) {
 		String type = configurationElement.getName();
 		if (IWorkbenchRegistryConstants.TAG_SPLASH_HANDLER.equals(type)) {
@@ -98,7 +98,7 @@ public final class SplashHandlerFactory {
 				// found the target ID
 				targetId[0] = configurationElement.getAttribute(IWorkbenchRegistryConstants.ATT_SPLASH_ID);
 				// check all currently located splashes
-				IConfigurationElement splashElement = (IConfigurationElement) idToSplash.get(targetId[0]);
+				IConfigurationElement splashElement = idToSplash.get(targetId[0]);
 				if (splashElement != null)
 					return create(splashElement);
 			}

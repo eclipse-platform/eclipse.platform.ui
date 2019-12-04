@@ -363,7 +363,7 @@ public class RegistryPageContributor implements IPropertyPageContributor, IAdapt
 	 *
 	 * @return Collection
 	 */
-	public Collection getSubPages() {
+	public Collection<RegistryPageContributor> getSubPages() {
 		return subPages;
 	}
 

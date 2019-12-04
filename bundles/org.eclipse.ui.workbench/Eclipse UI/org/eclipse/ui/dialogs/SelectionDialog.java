@@ -43,7 +43,7 @@ public abstract class SelectionDialog extends TrayDialog {
 	private Object[] result;
 
 	// a collection of the initially-selected elements
-	private List initialSelections = new ArrayList();
+	private List<Object> initialSelections = new ArrayList<>();
 
 	// title of dialog
 	private String title;
@@ -110,7 +110,7 @@ public abstract class SelectionDialog extends TrayDialog {
 	 * @return the list of initial selected elements or null
 	 */
 	@Deprecated
-	protected List getInitialSelections() {
+	protected List<?> getInitialSelections() {
 		if (initialSelections.isEmpty()) {
 			return null;
 		}
@@ -122,7 +122,7 @@ public abstract class SelectionDialog extends TrayDialog {
 	 *
 	 * @return List
 	 */
-	protected List getInitialElementSelections() {
+	protected List<Object> getInitialElementSelections() {
 		return initialSelections;
 	}
 
@@ -161,8 +161,7 @@ public abstract class SelectionDialog extends TrayDialog {
 	 * @param selectedElements the array of elements to select
 	 */
 	public void setInitialSelections(Object... selectedElements) {
-		initialSelections = new ArrayList(selectedElements.length);
-		initialSelections.addAll(Arrays.asList(selectedElements));
+		initialSelections = Arrays.asList(selectedElements);
 	}
 
 	/**
@@ -170,7 +169,7 @@ public abstract class SelectionDialog extends TrayDialog {
 	 *
 	 * @param selectedElements the List of elements to select
 	 */
-	public void setInitialElementSelections(List selectedElements) {
+	public void setInitialElementSelections(List<Object> selectedElements) {
 		initialSelections = selectedElements;
 	}
 
@@ -190,7 +189,7 @@ public abstract class SelectionDialog extends TrayDialog {
 	 * @param newResult list of selected elements, or <code>null</code> if Cancel
 	 *                  was pressed
 	 */
-	protected void setResult(List newResult) {
+	protected void setResult(List<?> newResult) {
 		if (newResult == null) {
 			result = null;
 		} else {
