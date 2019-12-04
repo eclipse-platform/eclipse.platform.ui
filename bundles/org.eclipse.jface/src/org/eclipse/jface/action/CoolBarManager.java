@@ -293,7 +293,10 @@ public class CoolBarManager extends ContributionManager implements ICoolBarManag
 	 * @return the associated cool item, or <code>null</code> if not found
 	 */
 	private CoolItem findCoolItem(IContributionItem item) {
-		CoolItem[] coolItems = (coolBar == null) ? null : coolBar.getItems();
+		if (!coolBarExist()) {
+			return null;
+		}
+		CoolItem[] coolItems = coolBar.getItems();
 		return findCoolItem(coolItems, item);
 	}
 
