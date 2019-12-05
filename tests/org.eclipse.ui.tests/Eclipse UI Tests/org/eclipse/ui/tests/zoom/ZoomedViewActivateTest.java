@@ -14,17 +14,19 @@
 package org.eclipse.ui.tests.zoom;
 
 import org.eclipse.ui.IWorkbenchPart;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.1
  */
+@RunWith(JUnit4.class)
 public class ZoomedViewActivateTest extends ActivateTest {
 
-	/**
-	 * @param name
-	 */
-	public ZoomedViewActivateTest(String name) {
-		super(name);
+	public ZoomedViewActivateTest() {
+		super(ZoomedViewActivateTest.class.getSimpleName());
 	}
 
 	@Override
@@ -46,6 +48,8 @@ public class ZoomedViewActivateTest extends ActivateTest {
 	 * <p>Test: Zoom a view then activate an editor</p>
 	 * <p>Expected result: page unzooms</p>
 	 */
+	@Test
+	@Ignore
 	public void testActivateEditor() {
 		// We allow an editor to be activated *without* unzooming
 		System.out.println("Bogus Test: " + getName());

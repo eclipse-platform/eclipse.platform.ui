@@ -14,17 +14,22 @@
 package org.eclipse.ui.tests.zoom;
 
 import org.eclipse.ui.IWorkbenchPart;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.1
  */
+@RunWith(JUnit4.class)
 public class ZoomedEditorCloseTest extends CloseTest {
 
 	/**
 	 * @param name
 	 */
-	public ZoomedEditorCloseTest(String name) {
-		super(name);
+	public ZoomedEditorCloseTest() {
+		super(ZoomedEditorCloseTest.class.getSimpleName());
 	}
 
 	@Override
@@ -49,6 +54,8 @@ public class ZoomedEditorCloseTest extends CloseTest {
 	 *    in the currently zoomed stack. It also ensures that activation never moves from
 	 *    an editor to a view when an editor is closed.</p>
 	 */
+	@Test
+	@Ignore
 	public void testCloseZoomedUnstackedEditorAfterActivatingView() {
 		System.out.println("Bogus test: we don't unsoom in this case");
 //        IWorkbenchPart previousActive = stackedView1;
@@ -72,6 +79,7 @@ public class ZoomedEditorCloseTest extends CloseTest {
 	 *    to a view when the active editor is closed. Activating an editor in a different stack first
 	 *    ensures that activation WILL move between editor stacks to follow the activation order.</p>
 	 */
+	@Test
 	public void testCloseUnzoomedStackedEditorAfterActivatingView() {
 		page.activate(editor3);
 		page.activate(unstackedView);

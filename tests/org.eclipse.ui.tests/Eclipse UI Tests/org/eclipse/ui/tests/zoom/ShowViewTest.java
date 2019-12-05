@@ -19,32 +19,42 @@ import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.junit.Assert;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class ShowViewTest extends ZoomTestCase {
-	public ShowViewTest(String name) {
-		super(name);
+	public ShowViewTest() {
+		super(ShowViewTest.class.getSimpleName());
 	}
 
-// Commented out until the (possible) ambiguity in bug 91775 is resolved
-//    /**
-//     * <p>Test: Zoom a view, create a new view in the same stack using the
-//     *    IWorkbenchPage.VIEW_VISIBLE flag</p>
-//     * <p>Expected result: the new view is zoomed and active</p>
-//     */
-//    public void testCreateViewAndMakeVisibleInZoomedStack() {
-//        zoom(stackedView1);
-//        IViewPart newPart = showRegularView(ZoomPerspectiveFactory.STACK1_PLACEHOLDER1,
-//                IWorkbenchPage.VIEW_VISIBLE);
-//
-//        Assert.assertTrue(page.getActivePart() == newPart);
-//        Assert.assertTrue(isZoomed(newPart));
-//    }
+	/**
+	 * <p>
+	 * Test: Zoom a view, create a new view in the same stack using the
+	 * IWorkbenchPage.VIEW_VISIBLE flag
+	 * </p>
+	 * <p>
+	 * Expected result: the new view is zoomed and active
+	 * </p>
+	 */
+	@Test
+	@Ignore("Commented out until the (possible) ambiguity in bug 91775 is resolved")
+	public void testCreateViewAndMakeVisibleInZoomedStack() {
+		zoom(stackedView1);
+		IViewPart newPart = showRegularView(ZoomPerspectiveFactory.STACK1_PLACEHOLDER1, IWorkbenchPage.VIEW_VISIBLE);
+
+		Assert.assertTrue(page.getActivePart() == newPart);
+		Assert.assertTrue(isZoomed(newPart));
+	}
 
 	/**
 	 * <p>Test: Zoom a view, create a new view in the same stack using the
 	 *    IWorkbenchPage.VIEW_CREATE flag, then bring it to top using </p>
 	 * <p>Expected result: the new view is zoomed and active</p>
 	 */
+	@Test
 	public void testCreateViewAndBringToTop() {
 		zoom(stackedView1);
 		IViewPart newPart = showRegularView(ZoomPerspectiveFactory.STACK1_PLACEHOLDER1,
@@ -62,6 +72,7 @@ public class ShowViewTest extends ZoomTestCase {
 	 * <p>Expected result: no change in zoom or activation. The newly created view is obscured by the zoom,
 	 *    but will be the top view in its (currently invisible) stack.</p>
 	 */
+	@Test
 	public void testCreateViewAndBringToTopInOtherStack() {
 		zoom(unstackedView);
 		IViewPart newPart = showRegularView(ZoomPerspectiveFactory.STACK1_PLACEHOLDER1, IWorkbenchPage.VIEW_CREATE);
@@ -85,6 +96,7 @@ public class ShowViewTest extends ZoomTestCase {
 	 * <p>Expected result: no change in zoom or activation. The newly created view is obscured by the zoom,
 	 *    but will be the top view in its (currently invisible) stack.</p>
 	 */
+	@Test
 	public void testCreateViewAndMakeVisibleInOtherStack() {
 		zoom(unstackedView);
 		IViewPart newPart = showRegularView(ZoomPerspectiveFactory.STACK1_PLACEHOLDER1, IWorkbenchPage.VIEW_VISIBLE);
@@ -105,6 +117,7 @@ public class ShowViewTest extends ZoomTestCase {
 	 * <p>Expected result: No change to zoom or activation. The new view was brought to the top
 	 *    of its stack.</p>
 	 */
+	@Test
 	public void testCreateViewAndMakeVisibleWhileEditorZoomed() {
 		zoom(editor1);
 		IViewPart newPart = showRegularView(ZoomPerspectiveFactory.STACK1_PLACEHOLDER1, IWorkbenchPage.VIEW_VISIBLE);
@@ -124,6 +137,7 @@ public class ShowViewTest extends ZoomTestCase {
 	 *    IWorkbenchPage.VIEW_ACTIVATE flag</p>
 	 * <p>Expected result: the new view is zoomed and active</p>
 	 */
+	@Test
 	public void testCreateViewAndActivateInZoomedStack() {
 		zoom(stackedView1);
 		IViewPart newPart = showRegularView(ZoomPerspectiveFactory.STACK1_PLACEHOLDER1, IWorkbenchPage.VIEW_ACTIVATE);
@@ -137,6 +151,7 @@ public class ShowViewTest extends ZoomTestCase {
 	 *    IWorkbenchPage.VIEW_CREATE flag</p>
 	 * <p>Expected result: no change in activation or zoom</p>
 	 */
+	@Test
 	public void testCreateViewInZoomedStack() {
 		zoom(stackedView1);
 		showRegularView(ZoomPerspectiveFactory.STACK1_PLACEHOLDER1,
@@ -151,6 +166,7 @@ public class ShowViewTest extends ZoomTestCase {
 	 *    IWorkbenchPage.VIEW_ACTIVATE flag</p>
 	 * <p>Expected result: the page is unzoomed and the new view is active</p>
 	 */
+	@Test
 	public void testCreateViewAndActivateInOtherStack() {
 		zoom(unstackedView);
 		IViewPart newPart = showRegularView(ZoomPerspectiveFactory.STACK1_PLACEHOLDER1, IWorkbenchPage.VIEW_ACTIVATE);
@@ -164,6 +180,7 @@ public class ShowViewTest extends ZoomTestCase {
 	 *    IWorkbenchPage.VIEW_CREATE flag</p>
 	 * <p>Expected result: No change to zoom or activation. The newly created view is hidden</p>
 	 */
+	@Test
 	public void testCreateViewInOtherStack() {
 		zoom(unstackedView);
 		showRegularView(ZoomPerspectiveFactory.STACK1_PLACEHOLDER1, IWorkbenchPage.VIEW_CREATE);
@@ -176,6 +193,7 @@ public class ShowViewTest extends ZoomTestCase {
 	 * <p>Test: Zoom an editor, create a new view using the IWorkbenchPage.VIEW_ACTIVATE mode</p>
 	 * <p>Expected result: the page is unzoomed and the new view is active</p>
 	 */
+	@Test
 	public void testCreateViewAndActivateWhileEditorZoomed() {
 		zoom(editor1);
 		IViewPart newPart = showRegularView(ZoomPerspectiveFactory.STACK1_PLACEHOLDER1, IWorkbenchPage.VIEW_ACTIVATE);
@@ -188,6 +206,7 @@ public class ShowViewTest extends ZoomTestCase {
 	 * <p>Test: Zoom an editor, create a new view using the IWorkbenchPage.VIEW_CREATE mode</p>
 	 * <p>Expected result: The editor remains zoomed and active.</p>
 	 */
+	@Test
 	public void testCreateViewWhileEditorZoomed() {
 		zoom(editor1);
 		showRegularView(ZoomPerspectiveFactory.STACK1_PLACEHOLDER1, IWorkbenchPage.VIEW_CREATE);

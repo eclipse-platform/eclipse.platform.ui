@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.themes;
 
+import static org.junit.Assert.assertFalse;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.Mockito.doReturn;
@@ -35,11 +36,11 @@ import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine.StylingPrefe
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
+import org.junit.Test;
 import org.osgi.service.event.Event;
 
-import junit.framework.TestCase;
-
-public class StylingPreferencesHandlerTest extends TestCase {
+public class StylingPreferencesHandlerTest {
+	@Test
 	public void testHandleEvent() throws Exception {
 		//given
 		IEclipsePreferences pref1 = mock(IEclipsePreferences.class);
@@ -65,6 +66,7 @@ public class StylingPreferencesHandlerTest extends TestCase {
 		verify(themeEngine, times(1)).applyStyles(pref2, false);
 	}
 
+	@Test
 	public void testResetOverriddenPreferences() throws Exception {
 		//given
 		IEclipsePreferences pref1 = mock(IEclipsePreferences.class);
@@ -90,6 +92,7 @@ public class StylingPreferencesHandlerTest extends TestCase {
 		verify(handler, times(1)).removeOverriddenPropertyNames(pref2);
 	}
 
+	@Test
 	public void testGetPreferences() {
 		Set<IEclipsePreferences> result = new StylingPreferencesHandler(mock(Display.class)) {
 			@Override
@@ -101,6 +104,7 @@ public class StylingPreferencesHandlerTest extends TestCase {
 		assertFalse(result.isEmpty());
 	}
 
+	@Test
 	public void testAddOnDisplayDisposed() throws Exception {
 		//given
 		final Listener listener = mock(Listener.class);
@@ -119,6 +123,7 @@ public class StylingPreferencesHandlerTest extends TestCase {
 		verify(display, times(1)).addListener(SWT.Dispose, listener);
 	}
 
+	@Test
 	public void testOnDisplayDisposedListener() throws Exception {
 		//given
 		StylingPreferencesHandlerTestable handler = spy(new StylingPreferencesHandlerTestable(mock(Display.class)));

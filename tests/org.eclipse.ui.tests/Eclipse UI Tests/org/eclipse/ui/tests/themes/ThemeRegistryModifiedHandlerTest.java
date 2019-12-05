@@ -16,7 +16,6 @@ package org.eclipse.ui.tests.themes;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
-import junit.framework.TestCase;
 
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ColorRegistry;
@@ -26,6 +25,7 @@ import org.eclipse.ui.internal.themes.FontDefinition;
 import org.eclipse.ui.internal.themes.ThemeRegistry;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager.ThemeRegistryModifiedHandler;
 import org.eclipse.ui.themes.ITheme;
+import org.junit.Test;
 import org.osgi.service.event.Event;
 
 import static org.mockito.Mockito.*;
@@ -34,7 +34,8 @@ import static org.mockito.Mockito.*;
  * @since 3.5
  *
  */
-public class ThemeRegistryModifiedHandlerTest extends TestCase {
+public class ThemeRegistryModifiedHandlerTest {
+	@Test
 	public void testHandleEvent() throws Exception {
 		//given
 		FontDefinition fontDefinition1 = mock(FontDefinition.class);
@@ -79,6 +80,7 @@ public class ThemeRegistryModifiedHandlerTest extends TestCase {
 		verify(handler, times(1)).sendThemeDefinitionChangedEvent();
 	}
 
+	@Test
 	public void testPopulateThemeRegistries() throws Exception {
 		//given
 		FontDefinition fontDefinition1 = mock(FontDefinition.class);

@@ -14,16 +14,21 @@
 package org.eclipse.ui.tests.zoom;
 
 import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class OpenEditorTest extends ZoomTestCase {
-	public OpenEditorTest(String name) {
-		super(name);
+	public OpenEditorTest() {
+		super(OpenEditorTest.class.getSimpleName());
 	}
 
 	/**
 	 * <p>Test: Zoom an editor then open an existing editor in the same stack. Do not force activation.</p>
 	 * <p>Expected result: the new editor is zoomed and active</p>
 	 */
+	@Test
 	public void testOpenExistingEditorInZoomedStack() {
 		zoom(editor1);
 		openEditor(file2, false);
@@ -37,6 +42,7 @@ public class OpenEditorTest extends ZoomTestCase {
 	 *
 	 * <p>Note: the expected result changed intentionally on 05/04/18</p>
 	 */
+	@Test
 	public void testOpenNewEditorWhileViewZoomed() {
 		close(editor1);
 
@@ -51,6 +57,7 @@ public class OpenEditorTest extends ZoomTestCase {
 	 * <p>Test: Zoom an editor then open a new editor in the same stack. Do not force activation.</p>
 	 * <p>Expected result: the new editor is zoomed and active</p>
 	 */
+	@Test
 	public void testOpenNewEditorInZoomedStack() {
 		close(editor2);
 
@@ -64,6 +71,7 @@ public class OpenEditorTest extends ZoomTestCase {
 	 * <p>Test: Open an existing editor while a view is zoomed. Do not force activation.</p>
 	 * <p>Expected result: the page remains zoomed, the view is active</p>
 	 */
+	@Test
 	public void testOpenExistingEditorWhileViewZoomed() {
 		zoom(stackedView1);
 		openEditor(file1, false);
@@ -76,6 +84,7 @@ public class OpenEditorTest extends ZoomTestCase {
 	 * <p>Test: Open an existing editor while a view is zoomed. Use the activate-on-open mode.</p>
 	 * <p>Expected result: the page is unzoomed, the view is active</p>
 	 */
+	@Test
 	public void testOpenAndActivateExistingEditorWhileViewZoomed() {
 		zoom(stackedView1);
 		openEditor(file1, true);
@@ -88,6 +97,7 @@ public class OpenEditorTest extends ZoomTestCase {
 	 * <p>Test: Open a new editor while a view is zoomed. Use the activate-on-open mode.</p>
 	 * <p>Expected result: the page is unzoomed, the view is active</p>
 	 */
+	@Test
 	public void testOpenAndActivateNewEditorWhileViewZoomed() {
 		close(editor1);
 
@@ -102,6 +112,7 @@ public class OpenEditorTest extends ZoomTestCase {
 	 * <p>Test: Zoom an editor then open an existing in the same stack. Use the activate-on-open mode.</p>
 	 * <p>Expected result: the new editor is zoomed and active</p>
 	 */
+	@Test
 	public void testOpenAndActivateExistingEditorInZoomedStack() {
 		zoom(editor1);
 		openEditor(file2, true);
@@ -114,6 +125,7 @@ public class OpenEditorTest extends ZoomTestCase {
 	 * <p>Test: Zoom an editor then open a new editor in the same stack. Use the activate-on-open mode.</p>
 	 * <p>Expected result: the new editor is zoomed and active</p>
 	 */
+	@Test
 	public void testOpenAndActivateNewEditorInZoomedStack() {
 		close(editor2);
 
@@ -128,6 +140,7 @@ public class OpenEditorTest extends ZoomTestCase {
 	 * <p>Test: Zoom an editor then open an existing editor in a different stack. Do not force activation.</p>
 	 * <p>Expected result: the page remains zoomed and the original editor is active</p>
 	 */
+	@Test
 	public void testOpenExistingEditorInOtherStack() {
 		zoom(editor3);
 		openEditor(file2, false);
@@ -140,6 +153,7 @@ public class OpenEditorTest extends ZoomTestCase {
 	 * <p>Test: Zoom an editor then open an existing editor in a different stack. Use the activate-on-open mode.</p>
 	 * <p>Expected result: the page is unzoomed and the new editor and active</p>
 	 */
+	@Test
 	public void testOpenAndActivateExistingEditorInOtherStack() {
 		zoom(editor3);
 		openEditor(file2, true);

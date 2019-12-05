@@ -14,6 +14,7 @@
 package org.eclipse.ui.tests.zoom;
 
 import org.eclipse.ui.IWorkbenchPart;
+import org.junit.Test;
 
 /**
  * This class contains tests that apply to both views and editors. Subclasses
@@ -34,6 +35,7 @@ public abstract class CloseTest extends ZoomTestCase {
 	 * <p>Test: Zoom a part and hide an inactive fast view</p>
 	 * <p>Expected result: Part remains zoomed</p>
 	 */
+	@Test
 	public void testCloseInactiveFastView() {
 		IWorkbenchPart zoomPart = getStackedPart1();
 
@@ -48,6 +50,7 @@ public abstract class CloseTest extends ZoomTestCase {
 	 * <p>Test: Zoom a part, activate a fast view, then hide the fast view</p>
 	 * <p>Expected result: Part remains zoomed</p>
 	 */
+	@Test
 	public void testCloseActiveFastView() {
 		IWorkbenchPart zoomPart = getStackedPart1();
 
@@ -65,6 +68,7 @@ public abstract class CloseTest extends ZoomTestCase {
 	 * <p>Note: This ensures that when the active part is closed, it will try to activate a part that
 	 *    doesn't affect the zoom even if something else was activated more recently.</p>
 	 */
+	@Test
 	public void testCloseZoomedStackedPartAfterActivatingView() {
 		IWorkbenchPart zoomPart = getStackedPart1();
 		IWorkbenchPart otherStackedPart = getStackedPart2();
@@ -84,6 +88,7 @@ public abstract class CloseTest extends ZoomTestCase {
 	 * <p>Note: This ensures that when the active part is closed, it will try to activate a part that
 	 *    doesn't affect the zoom even if something else was activated more recently.</p>
 	 */
+	@Test
 	public void testCloseZoomedStackedPartAfterActivatingEditor() {
 		IWorkbenchPart zoomPart = getStackedPart1();
 		IWorkbenchPart otherStackedPart = getStackedPart2();
@@ -103,6 +108,7 @@ public abstract class CloseTest extends ZoomTestCase {
 	 * <p>Note: This isn't really a zoom test, but it ensures that the behavior tested by
 	 *    testHideZoomedStackedPartAfterActivatingEditor does not affect activation when there is no zoom.</p>
 	 */
+	@Test
 	public void testCloseUnzoomedStackedPartAfterActivatingEditor() {
 		IWorkbenchPart activePart = getStackedPart1();
 		IWorkbenchPart unstackedPart = editor3;
@@ -121,6 +127,7 @@ public abstract class CloseTest extends ZoomTestCase {
 	 * <p>Note: This ensures that the activation list is used if there is nothing available
 	 *    in the currently zoomed stack.</p>
 	 */
+	@Test
 	public void testCloseZoomedUnstackedPartAfterActivatingEditor() {
 		IWorkbenchPart previousActive = editor1;
 		IWorkbenchPart zoomedPart = getUnstackedPart();
@@ -137,6 +144,7 @@ public abstract class CloseTest extends ZoomTestCase {
 	 * <p>Test: Zoom a stacked part and close an inactive, unstacked editor.</p>
 	 * <p>Expected result: No change in activation or zoom</p>
 	 */
+	@Test
 	public void testCloseHiddenUnstackedEditor() {
 		IWorkbenchPart zoomedPart = getStackedPart1();
 
@@ -153,6 +161,7 @@ public abstract class CloseTest extends ZoomTestCase {
 	 * <p>Test: Zoom a stacked part and close an inactive, unstacked view.</p>
 	 * <p>Expected result: No change in activation or zoom</p>
 	 */
+	@Test
 	public void testCloseHiddenUnstackedView() {
 		IWorkbenchPart zoomedPart = getStackedPart1();
 

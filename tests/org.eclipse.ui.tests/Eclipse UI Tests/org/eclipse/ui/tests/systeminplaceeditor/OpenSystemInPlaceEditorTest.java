@@ -30,11 +30,8 @@ import org.eclipse.ui.WorkbenchException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Ignore;
-import org.junit.internal.runners.JUnit38ClassRunner;
 import org.junit.runner.RunWith;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runners.JUnit4;
 
 
 /**
@@ -48,23 +45,15 @@ import junit.framework.TestSuite;
  *
  * @since 3.4
  */
-@RunWith(JUnit38ClassRunner.class)
+@RunWith(JUnit4.class)
 @Ignore
 public class OpenSystemInPlaceEditorTest extends UITestCase {
 
-
-	public static Test suite() {
-		return new TestSuite(OpenSystemInPlaceEditorTest.class);
-	}
-
-
 	/**
 	 * Creates the test object.
-	 *
-	 * @param testName the test name
 	 */
-	public OpenSystemInPlaceEditorTest(String testName) {
-		super(testName);
+	public OpenSystemInPlaceEditorTest() {
+		super(OpenSystemInPlaceEditorTest.class.getSimpleName());
 	}
 
 	public void testWorkspaceFile() throws Exception {

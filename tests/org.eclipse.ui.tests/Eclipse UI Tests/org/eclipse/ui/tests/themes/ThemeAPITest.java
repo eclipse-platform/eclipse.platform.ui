@@ -31,12 +31,16 @@ import org.eclipse.ui.internal.themes.ThemeElementHelper;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests the theme API.
  *
  * @since 3.0
  */
+@RunWith(JUnit4.class)
 public class ThemeAPITest extends ThemeTest {
 
 	/**
@@ -152,11 +156,8 @@ public class ThemeAPITest extends ThemeTest {
 	 */
 	private static final String BAD_COLOR3 = "badColor3";
 
-	/**
-	 * @param testName
-	 */
-	public ThemeAPITest(String testName) {
-		super(testName);
+	public ThemeAPITest() {
+		super(ThemeAPITest.class.getSimpleName());
 	}
 
 	private void checkEvents(ThemePropertyListener listener, Object source,
@@ -190,6 +191,7 @@ public class ThemeAPITest extends ThemeTest {
 		}
 	}
 
+	@Test
 	public void testBooleanDataConversion() {
 		ITheme defaultTheme = getDefaultTheme();
 		assertEquals(false, defaultTheme.getBoolean(DATA1));
@@ -199,6 +201,7 @@ public class ThemeAPITest extends ThemeTest {
 		assertEquals(true, defaultTheme.getBoolean(BOOL1));
 	}
 
+	@Test
 	public void testColorCascadeEvents() {
 		ITheme currentTheme = fManager.getCurrentTheme();
 		assertNotNull(currentTheme);
@@ -221,12 +224,14 @@ public class ThemeAPITest extends ThemeTest {
 		currentTheme.removePropertyChangeListener(themeListener);
 	}
 
+	@Test
 	public void testColorFactory() {
 		ITheme defaultTheme = getDefaultTheme();
 		assertEquals(TestColorFactory.RGB, defaultTheme.getColorRegistry()
 				.getRGB(FACTORYCOLOR));
 	}
 
+	@Test
 	public void testColorPreferenceListener_def_swtcolor() {
 		IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
 		ITheme defaultTheme = getDefaultTheme();
@@ -234,6 +239,7 @@ public class ThemeAPITest extends ThemeTest {
 		testOverrideColorPreference(defaultTheme, store, SWTCOLOR);
 	}
 
+	@Test
 	public void testColorPreferenceListener_def_rgbcolor() {
 		IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
 		ITheme defaultTheme = getDefaultTheme();
@@ -241,6 +247,7 @@ public class ThemeAPITest extends ThemeTest {
 		testOverrideColorPreference(defaultTheme, store, RGBCOLOR);
 	}
 
+	@Test
 	public void testColorPreferenceListener_def_defaultedcolor() {
 		IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
 		ITheme defaultTheme = getDefaultTheme();
@@ -248,6 +255,7 @@ public class ThemeAPITest extends ThemeTest {
 		testOverrideColorPreference(defaultTheme, store, DEFAULTEDCOLOR);
 	}
 
+	@Test
 	public void testColorPreferenceListener_def_nooverridecolor() {
 		IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
 		ITheme defaultTheme = getDefaultTheme();
@@ -255,6 +263,7 @@ public class ThemeAPITest extends ThemeTest {
 		testOverrideColorPreference(defaultTheme, store, NOOVERRIDECOLOR);
 	}
 
+	@Test
 	public void testColorPreferenceListener_th1_swtcolor() {
 		IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
 		ITheme theme1 = getTheme1();
@@ -262,6 +271,7 @@ public class ThemeAPITest extends ThemeTest {
 		testOverrideColorPreference(theme1, store, SWTCOLOR);
 	}
 
+	@Test
 	public void testColorPreferenceListener_th1_rgbcolor() {
 		IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
 		ITheme theme1 = getTheme1();
@@ -269,6 +279,7 @@ public class ThemeAPITest extends ThemeTest {
 		testOverrideColorPreference(theme1, store, RGBCOLOR);
 	}
 
+	@Test
 	public void testColorPreferenceListener_th1_defaultedcolor() {
 		IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
 		ITheme theme1 = getTheme1();
@@ -276,6 +287,7 @@ public class ThemeAPITest extends ThemeTest {
 		testOverrideColorPreference(theme1, store, DEFAULTEDCOLOR);
 	}
 
+	@Test
 	public void testColorPreferenceListener_th1_nooverridecolor() {
 		IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
 		ITheme theme1 = getTheme1();
@@ -283,6 +295,7 @@ public class ThemeAPITest extends ThemeTest {
 		testOverrideColorPreference(theme1, store, NOOVERRIDECOLOR);
 	}
 
+	@Test
 	public void testDataKeySet_data1() {
 		ITheme defaultTheme = getDefaultTheme();
 		Set<String> themeKeys = defaultTheme.keySet();
@@ -290,6 +303,7 @@ public class ThemeAPITest extends ThemeTest {
 		assertTrue(themeKeys.contains(DATA1));
 	}
 
+	@Test
 	public void testDataKeySet_data2() {
 		ITheme defaultTheme = getDefaultTheme();
 		Set<String> themeKeys = defaultTheme.keySet();
@@ -297,6 +311,7 @@ public class ThemeAPITest extends ThemeTest {
 		assertTrue(themeKeys.contains(DATA2));
 	}
 
+	@Test
 	public void testDataKeySet_int1() {
 		ITheme defaultTheme = getDefaultTheme();
 		Set<String> themeKeys = defaultTheme.keySet();
@@ -304,6 +319,7 @@ public class ThemeAPITest extends ThemeTest {
 		assertTrue(themeKeys.contains(INT1));
 	}
 
+	@Test
 	public void testDataKeySet_bool1() {
 		ITheme defaultTheme = getDefaultTheme();
 		Set<String> themeKeys = defaultTheme.keySet();
@@ -311,6 +327,7 @@ public class ThemeAPITest extends ThemeTest {
 		assertTrue(themeKeys.contains(BOOL1));
 	}
 
+	@Test
 	public void testDataKeySet_BOGUSKEY() {
 		ITheme defaultTheme = getDefaultTheme();
 		Set<String> themeKeys = defaultTheme.keySet();
@@ -318,30 +335,35 @@ public class ThemeAPITest extends ThemeTest {
 		assertFalse(themeKeys.contains(BOGUSKEY));
 	}
 
+	@Test
 	public void testDataOverride_data1() {
 		ITheme theme1 = getTheme1();
 
 		assertEquals(OVERRIDE1, theme1.getString(DATA1));
 	}
 
+	@Test
 	public void testDataOverride_data2() {
 		ITheme theme1 = getTheme1();
 
 		assertEquals(VALUE2, theme1.getString(DATA2));
 	}
 
+	@Test
 	public void testDefaultedColor_rgbcolor() {
 		ITheme defaultTheme = getDefaultTheme();
 		assertEquals(defaultTheme.getColorRegistry().getRGB(RGBCOLOR),
 				defaultTheme.getColorRegistry().getRGB(DEFAULTEDCOLOR));
 	}
 
+	@Test
 	public void testDefaultedColor_defaultedcolor() {
 		ITheme defaultTheme = getDefaultTheme();
 		assertEquals(defaultTheme.getColorRegistry().getRGB(DEFAULTEDCOLOR),
 				defaultTheme.getColorRegistry().getRGB(DEFAULTEDCOLOR2));
 	}
 
+	@Test
 	public void testDefaultedColor_defaultedcolor2() {
 		ITheme defaultTheme = getDefaultTheme();
 
@@ -349,6 +371,7 @@ public class ThemeAPITest extends ThemeTest {
 				defaultTheme.getColorRegistry().getRGB(DEFAULTEDCOLOR3));
 	}
 
+	@Test
 	public void testDefaultedFont_valfont() {
 		ITheme defaultTheme = getDefaultTheme();
 		assertArrayEquals(
@@ -356,6 +379,7 @@ public class ThemeAPITest extends ThemeTest {
 				defaultTheme.getFontRegistry().getFontData(DEFAULTEDFONT));
 	}
 
+	@Test
 	public void testDefaultedFont_defaultedfont() {
 		ITheme defaultTheme = getDefaultTheme();
 		assertArrayEquals(defaultTheme.getFontRegistry().getFontData(
@@ -363,6 +387,7 @@ public class ThemeAPITest extends ThemeTest {
 				DEFAULTEDFONT2));
 	}
 
+	@Test
 	public void testDefaultedFont_defaultedfont2() {
 		ITheme defaultTheme = getDefaultTheme();
 		assertArrayEquals(defaultTheme.getFontRegistry().getFontData(
@@ -370,12 +395,14 @@ public class ThemeAPITest extends ThemeTest {
 				DEFAULTEDFONT3));
 	}
 
+	@Test
 	public void testDefaultedFontOverride_valfont() {
 		ITheme theme1 = getTheme1();
 		assertArrayEquals(theme1.getFontRegistry().getFontData(VALFONT),
 				theme1.getFontRegistry().getFontData(DEFAULTEDFONT));
 	}
 
+	@Test
 	public void testDefaultedFontOverride_defaultedfont2() {
 		ITheme theme1 = getTheme1();
 
@@ -384,6 +411,7 @@ public class ThemeAPITest extends ThemeTest {
 				DEFAULTEDFONT2));
 	}
 
+	@Test
 	public void testDefaultedFontOverride_defaultedfont3() {
 		ITheme theme1 = getTheme1();
 
@@ -392,12 +420,14 @@ public class ThemeAPITest extends ThemeTest {
 				.getFontData(DEFAULTEDFONT3));
 	}
 
+	@Test
 	public void testDefaultedOverrideColor_rgbcolor() {
 		ITheme theme1 = getTheme1();
 		assertEquals(theme1.getColorRegistry().getRGB(RGBCOLOR), theme1
 				.getColorRegistry().getRGB(DEFAULTEDCOLOR));
 	}
 
+	@Test
 	public void testDefaultedOverrideColor_defaultedcolor2() {
 		ITheme theme1 = getTheme1();
 		assertEquals(new RGB(9, 9, 9), theme1.getColorRegistry().getRGB(
@@ -405,18 +435,21 @@ public class ThemeAPITest extends ThemeTest {
 
 	}
 
+	@Test
 	public void testDefaultedOverrideColor_defaultedcolor3() {
 		ITheme theme1 = getTheme1();
 		assertEquals(theme1.getColorRegistry().getRGB(DEFAULTEDCOLOR2),
 				theme1.getColorRegistry().getRGB(DEFAULTEDCOLOR3));
 	}
 
+	@Test
 	public void testFontPreferenceListener_def_novalfont() {
 		IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
 		ITheme defaultTheme = getDefaultTheme();
 		testOverrideFontPreference(defaultTheme, store, NOVALFONT);
 	}
 
+	@Test
 	public void testFontPreferenceListener_def_valfont() {
 		IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
 		ITheme defaultTheme = getDefaultTheme();
@@ -424,6 +457,7 @@ public class ThemeAPITest extends ThemeTest {
 		testOverrideFontPreference(defaultTheme, store, VALFONT);
 	}
 
+	@Test
 	public void testFontPreferenceListener_def_defaultedfont() {
 		IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
 		ITheme defaultTheme = getDefaultTheme();
@@ -431,6 +465,7 @@ public class ThemeAPITest extends ThemeTest {
 		testOverrideFontPreference(defaultTheme, store, DEFAULTEDFONT);
 	}
 
+	@Test
 	public void testFontPreferenceListener_def_nooverridefont() {
 		IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
 		ITheme defaultTheme = getDefaultTheme();
@@ -438,6 +473,7 @@ public class ThemeAPITest extends ThemeTest {
 		testOverrideFontPreference(defaultTheme, store, NOOVERRIDEFONT);
 	}
 
+	@Test
 	public void testFontPreferenceListener_th1_valfont() {
 		IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
 		ITheme theme1 = getTheme1();
@@ -445,6 +481,7 @@ public class ThemeAPITest extends ThemeTest {
 		testOverrideFontPreference(theme1, store, VALFONT);
 	}
 
+	@Test
 	public void testFontPreferenceListener_th1_novalfont() {
 		IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
 		ITheme theme1 = getTheme1();
@@ -452,6 +489,7 @@ public class ThemeAPITest extends ThemeTest {
 		testOverrideFontPreference(theme1, store, NOVALFONT);
 	}
 
+	@Test
 	public void testFontPreferenceListener_th1_defaultedfont() {
 		IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
 		ITheme theme1 = getTheme1();
@@ -459,6 +497,7 @@ public class ThemeAPITest extends ThemeTest {
 		testOverrideFontPreference(theme1, store, DEFAULTEDFONT);
 	}
 
+	@Test
 	public void testFontPreferenceListener_th1_nooverridefont() {
 		IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
 		ITheme theme1 = getTheme1();
@@ -466,11 +505,13 @@ public class ThemeAPITest extends ThemeTest {
 		testOverrideFontPreference(theme1, store, NOOVERRIDEFONT);
 	}
 
+	@Test
 	public void testGetBadTheme() {
 		ITheme badTheme = fManager.getTheme(BOGUSID);
 		assertNull(badTheme);
 	}
 
+	@Test
 	public void testIntDataConversion() {
 		ITheme defaultTheme = getDefaultTheme();
 		assertEquals(0, defaultTheme.getInt(DATA1));
@@ -480,6 +521,7 @@ public class ThemeAPITest extends ThemeTest {
 		assertEquals(3133, defaultTheme.getInt(INT1));
 	}
 
+	@Test
 	public void testNoValFont() {
 		ITheme defaultTheme = getDefaultTheme();
 		assertArrayEquals(defaultTheme.getFontRegistry().defaultFont()
@@ -487,6 +529,7 @@ public class ThemeAPITest extends ThemeTest {
 				NOVALFONT));
 	}
 
+	@Test
 	public void testNoValFontOverride() {
 		ITheme theme1 = getTheme1();
 		assertArrayEquals(new FontData[] { new FontData("Courier", 10,
@@ -521,6 +564,7 @@ public class ThemeAPITest extends ThemeTest {
 		assertArrayEquals(oldFont, theme.getFontRegistry().getFontData(font));
 	}
 
+	@Test
 	public void testPlatformColor() {
 		ITheme defaultTheme = getDefaultTheme();
 		RGB rgb = null;
@@ -541,6 +585,7 @@ public class ThemeAPITest extends ThemeTest {
 				PLATFORMCOLOR));
 	}
 
+	@Test
 	public void testPlatformFont() {
 		ITheme defaultTheme = getDefaultTheme();
 		FontData[] data = null;
@@ -555,18 +600,21 @@ public class ThemeAPITest extends ThemeTest {
 				PLATFORMFONT));
 	}
 
+	@Test
 	public void testRGBColor() {
 		ITheme defaultTheme = getDefaultTheme();
 		assertEquals(new RGB(1, 1, 2), defaultTheme.getColorRegistry().getRGB(
 				RGBCOLOR));
 	}
 
+	@Test
 	public void testRGBColorOverride() {
 		ITheme theme1 = getTheme1();
 		assertEquals(new RGB(2, 1, 1), theme1.getColorRegistry().getRGB(
 				RGBCOLOR));
 	}
 
+	@Test
 	public void testSetTheme() {
 		ThemePropertyListener listener = new ThemePropertyListener();
 		fManager.addPropertyChangeListener(listener);
@@ -587,6 +635,7 @@ public class ThemeAPITest extends ThemeTest {
 		fManager.removePropertyChangeListener(listener);
 	}
 
+	@Test
 	public void testStringData() {
 		ITheme defaultTheme = getDefaultTheme();
 		assertEquals("value1", defaultTheme.getString(DATA1));
@@ -596,18 +645,21 @@ public class ThemeAPITest extends ThemeTest {
 		assertEquals(null, defaultTheme.getString(BOGUSKEY));
 	}
 
+	@Test
 	public void testSWTColor() {
 		ITheme defaultTheme = getDefaultTheme();
 		assertEquals(Display.getDefault().getSystemColor(SWT.COLOR_DARK_BLUE)
 				.getRGB(), defaultTheme.getColorRegistry().getRGB(SWTCOLOR));
 	}
 
+	@Test
 	public void testSWTColorOverride() {
 		ITheme theme1 = getTheme1();
 		assertEquals(Display.getDefault().getSystemColor(SWT.COLOR_DARK_GREEN)
 				.getRGB(), theme1.getColorRegistry().getRGB(SWTCOLOR));
 	}
 
+	@Test
 	public void testThemeDescription_default() {
 		ITheme defaultTheme = getDefaultTheme();
 		assertEquals(IThemeManager.DEFAULT_THEME, defaultTheme.getId());
@@ -615,12 +667,14 @@ public class ThemeAPITest extends ThemeTest {
 		assertNotNull(defaultTheme.getLabel());
 	}
 
+	@Test
 	public void testThemeDescription_theme1() {
 		ITheme theme1 = getTheme1();
 		assertEquals(THEME1, theme1.getId());
 		assertEquals("test theme 1", theme1.getLabel());
 	}
 
+	@Test
 	public void testValFont() {
 		ITheme defaultTheme = getDefaultTheme();
 		assertArrayEquals(
@@ -634,6 +688,7 @@ public class ThemeAPITest extends ThemeTest {
 	 * first value encountered for a given font/colour is the only one used.
 	 */
 
+	@Test
 	public void testThemeExtensionName() {
 		ITheme ext1 = fManager.getTheme(EXTENDED_THEME1);
 		ITheme ext2 = fManager.getTheme(EXTENDED_THEME2);
@@ -644,6 +699,7 @@ public class ThemeAPITest extends ThemeTest {
 		assertEquals("Extended Theme 3", ext3.getLabel());
 	}
 
+	@Test
 	public void testThemeExtensionData() {
 		ITheme ext1 = fManager.getTheme(EXTENDED_THEME1);
 		assertNotNull(ext1.getString("d1"));
@@ -651,6 +707,7 @@ public class ThemeAPITest extends ThemeTest {
 		assertNotNull(ext1.getString("d2"));
 	}
 
+	@Test
 	public void testThemeExtensionColor() {
 		ITheme ext1 = fManager.getTheme(EXTENDED_THEME1);
 		assertEquals(Display.getDefault().getSystemColor(SWT.COLOR_RED)
@@ -660,6 +717,7 @@ public class ThemeAPITest extends ThemeTest {
 				.getRGB(), ext1.getColorRegistry().getRGB(RGBCOLOR));
 	}
 
+	@Test
 	public void testThemeExtensionFont() {
 		ITheme ext1 = fManager.getTheme(EXTENDED_THEME1);
 
@@ -677,6 +735,7 @@ public class ThemeAPITest extends ThemeTest {
 	 * Tests to ensure that a color with a bogus value doesn't take down the
 	 * workbench.
 	 */
+	@Test
 	public void testBadColor1() {
 		ITheme defaultTheme = getDefaultTheme();
 		assertEquals(new RGB(0,0,0), defaultTheme.getColorRegistry().getRGB(BAD_COLOR1)); // doesn't look like an RGB
@@ -685,6 +744,7 @@ public class ThemeAPITest extends ThemeTest {
 	/**
 	 * Tests to ensure that a color with extra spaces doesn't take down the workbench.
 	 */
+	@Test
 	public void testBadColor2() {
 		assertEquals(new RGB(0,0,1), getDefaultTheme().getColorRegistry().getRGB(BAD_COLOR2)); // rgb with extra spaces
 	}
@@ -692,6 +752,7 @@ public class ThemeAPITest extends ThemeTest {
 	/**
 	 * Tests to ensure that a color with extra spaces doesn't take down the workbench.
 	 */
+	@Test
 	public void testBadColor3() {
 		assertEquals(new RGB(0,0,0), getDefaultTheme().getColorRegistry().getRGB(BAD_COLOR3)); // rgb with extra characters
 	}

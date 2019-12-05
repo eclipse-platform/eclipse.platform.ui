@@ -14,6 +14,8 @@
 package org.eclipse.ui.tests.zoom;
 
 import org.eclipse.ui.IWorkbenchPart;
+import org.junit.Ignore;
+import org.junit.Test;
 
 public abstract class ActivateTest extends ZoomTestCase {
 	public ActivateTest(String name) {
@@ -28,6 +30,7 @@ public abstract class ActivateTest extends ZoomTestCase {
 	 * <p>Test: Zoom a part and activate it</p>
 	 * <p>Expected result: Part remains zoomed</p>
 	 */
+	@Test
 	public void testZoomAndActivate() {
 		IWorkbenchPart stacked1 = getStackedPart1();
 
@@ -42,6 +45,7 @@ public abstract class ActivateTest extends ZoomTestCase {
 	 * <p>Test: Zoom a view then activate another view in the same stack</p>
 	 * <p>Expected result: Stack remains zoomed</p>
 	 */
+	@Test
 	public void testActivateSameStack() {
 		IWorkbenchPart stacked1 = getStackedPart1();
 		IWorkbenchPart stacked2 = getStackedPart2();
@@ -60,6 +64,8 @@ public abstract class ActivateTest extends ZoomTestCase {
 	 * <p>Test: Zoom a view than activate a view in a different stack</p>
 	 * <p>Expected result: page unzooms</p>
 	 */
+	@Test
+	@Ignore
 	public void testActivateOtherStack() {
 		// We allow an editor to be activated *without* unzooming
 		System.out.println("Bogus Test: " + getName());
@@ -79,6 +85,7 @@ public abstract class ActivateTest extends ZoomTestCase {
 	 *
 	 * @since 3.1
 	 */
+	@Test
 	public void testResetPerspective() {
 		IWorkbenchPart zoomedPart = getStackedPart1();
 

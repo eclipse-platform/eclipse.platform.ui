@@ -14,17 +14,21 @@
 package org.eclipse.ui.tests.zoom;
 
 import org.eclipse.ui.IWorkbenchPart;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.1
  */
+@RunWith(JUnit4.class)
 public class ZoomedViewCloseTest extends CloseTest {
 
 	/**
 	 * @param name
 	 */
-	public ZoomedViewCloseTest(String name) {
-		super(name);
+	public ZoomedViewCloseTest() {
+		super(ZoomedViewCloseTest.class.getSimpleName());
 	}
 
 	@Override
@@ -49,6 +53,7 @@ public class ZoomedViewCloseTest extends CloseTest {
 	 * <p>Note: The behavior of this test changed intentionally on 050416. Closing the active editor
 	 *    no longer unzooms if a view is zoomed.</p>
 	 */
+	@Test
 	public void testCloseActiveEditorWhileViewZoomed() {
 		page.activate(editor1);
 		zoom(stackedView1);
@@ -64,6 +69,7 @@ public class ZoomedViewCloseTest extends CloseTest {
 	 * <p>Note: This ensures that the activation list is used if there is nothing available
 	 *    in the currently zoomed stack.</p>
 	 */
+	@Test
 	public void testCloseZoomedUnstackedViewAfterActivatingView() {
 		IWorkbenchPart previousActive = stackedView1;
 		IWorkbenchPart zoomedPart = getUnstackedPart();
@@ -82,6 +88,7 @@ public class ZoomedViewCloseTest extends CloseTest {
 	 * <p>Note: This isn't really a zoom test, but it ensures that activation
 	 *    will move between stacks when there is no zoom.</p>
 	 */
+	@Test
 	public void testCloseUnzoomedStackedViewAfterActivatingView() {
 		IWorkbenchPart activePart = getStackedPart1();
 		IWorkbenchPart unstackedPart = unstackedView;

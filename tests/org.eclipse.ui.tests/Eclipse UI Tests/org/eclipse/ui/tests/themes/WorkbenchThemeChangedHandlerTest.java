@@ -15,6 +15,7 @@
 package org.eclipse.ui.tests.themes;
 
 import static org.eclipse.ui.internal.themes.WorkbenchThemeManager.EMPTY_COLOR_VALUE;
+import static org.junit.Assert.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyObject;
 import static org.mockito.ArgumentMatchers.eq;
@@ -42,15 +43,15 @@ import org.eclipse.ui.internal.themes.ThemeRegistry;
 import org.eclipse.ui.internal.themes.ThemesExtension;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager.WorkbenchThemeChangedHandler;
+import org.junit.Test;
 import org.osgi.service.event.Event;
-
-import junit.framework.TestCase;
 
 /**
  * @since 3.5
  *
  */
-public class WorkbenchThemeChangedHandlerTest extends TestCase {
+public class WorkbenchThemeChangedHandlerTest {
+	@Test
 	public void testOverrideThemeDefinitions() throws Exception {
 		//given
 		IStylingEngine stylingEngine = mock(IStylingEngine.class);
@@ -117,6 +118,7 @@ public class WorkbenchThemeChangedHandlerTest extends TestCase {
 		verify(handler, times(1)).sendThemeRegistryRestyledEvent();
 	}
 
+	@Test
 	public void testOverrideThemeDefinitionsWhenDefinitionModifiedByUser() throws Exception {
 		//given
 		IStylingEngine stylingEngine = mock(IStylingEngine.class);
@@ -184,6 +186,7 @@ public class WorkbenchThemeChangedHandlerTest extends TestCase {
 				any(IPreferenceStore.class));
 	}
 
+	@Test
 	public void testAddThemeDefinitions() throws Exception {
 		//given
 		IStylingEngine stylingEngine = mock(IStylingEngine.class);
@@ -237,6 +240,7 @@ public class WorkbenchThemeChangedHandlerTest extends TestCase {
 		verify(handler, times(1)).sendThemeRegistryRestyledEvent();
 	}
 
+	@Test
 	public void testOverrideAndAddThemeDefinitions() throws Exception {
 		//given
 		IStylingEngine stylingEngine = mock(IStylingEngine.class);
@@ -311,6 +315,7 @@ public class WorkbenchThemeChangedHandlerTest extends TestCase {
 		verify(handler, times(1)).sendThemeRegistryRestyledEvent();
 	}
 
+	@Test
 	public void testResetThemeRegistries() throws Exception {
 		//given
 		FontData[] fontData = new FontData[0];

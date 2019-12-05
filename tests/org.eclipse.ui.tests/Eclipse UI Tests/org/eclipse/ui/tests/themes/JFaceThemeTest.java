@@ -22,16 +22,20 @@ import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.ui.themes.ITheme;
 import org.eclipse.ui.themes.IThemeManager;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests the pushing down of current theme changes into JFace.
  *
  * @since 3.0
  */
+@RunWith(JUnit4.class)
 public class JFaceThemeTest extends ThemeTest {
 
-	public JFaceThemeTest(String testName) {
-		super(testName);
+	public JFaceThemeTest() {
+		super(JFaceThemeTest.class.getSimpleName());
 	}
 
 	private void setAndTest(String themeId, IPropertyChangeListener listener) {
@@ -68,6 +72,7 @@ public class JFaceThemeTest extends ThemeTest {
 	/**
 	 * TODO: detailed checking of the events
 	 */
+	@Test
 	public void testPushdown() {
 		ThemePropertyListener listener = new ThemePropertyListener();
 		setAndTest(THEME1, listener);
@@ -81,6 +86,7 @@ public class JFaceThemeTest extends ThemeTest {
 	/**
 	 * Tests to ensure correct behavior of getColorDescriptor methods.
 	 */
+	@Test
 	public void testDefaultColorDescriptor() {
 		ColorDescriptor desc = getDefaultTheme().getColorRegistry()
 				.getColorDescriptor("somegarbage");
