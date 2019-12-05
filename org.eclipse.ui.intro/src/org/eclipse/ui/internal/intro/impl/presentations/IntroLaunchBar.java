@@ -100,8 +100,6 @@ public class IntroLaunchBar {
 	@Optional
 	private IntroLaunchBarElement element;
 
-	protected boolean simple;
-
 	@Inject
 	@Optional
 	private IntroTheme theme;
@@ -137,8 +135,8 @@ public class IntroLaunchBar {
 		@Override
 		protected Point computeSize(Composite composite, int wHint, int hHint, boolean changed) {
 			boolean vertical = (getOrientation() & SWT.VERTICAL) != 0;
-			int marginWidth = vertical ? 1 : simple ? 3 : 7;
-			int marginHeight = !vertical ? 1 : simple ? 3 : 7;
+			int marginWidth = vertical ? 1 : 3;
+			int marginHeight = !vertical ? 1 : 3;
 			int width = 0;
 			int height = 0;
 
@@ -164,8 +162,8 @@ public class IntroLaunchBar {
 		@Override
 		protected void layout(Composite composite, boolean changed) {
 			boolean vertical = (getOrientation() & SWT.VERTICAL) != 0;
-			int marginWidth = vertical ? 1 : simple ? 4 : 7;
-			int marginHeight = !vertical ? 1 : simple ? 4 : 7;
+			int marginWidth = vertical ? 1 : 4;
+			int marginHeight = !vertical ? 1 : 4;
 
 			Point tsize = toolBarManager.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
 			Rectangle carea = composite.getClientArea();
@@ -277,7 +275,6 @@ public class IntroLaunchBar {
 
 	@PostConstruct
 	void init(Composite parent, MToolControl trimControl) {
-		simple = true;
 		this.trimControl = trimControl;
 		this.lastPageId = trimControl.getPersistedState().get(LAST_PAGE_ID);
 
@@ -363,63 +360,8 @@ public class IntroLaunchBar {
 		gc.drawRectangle(0, 0, size.x - 1, size.y - 1);
 	}
 
-	private void paintLeft(GC gc) {
-		int[] top = simple ? SIMPLE_TOP_RIGHT_CORNER : TOP_RIGHT_CORNER;
-		int[] bot = simple ? SIMPLE_BOTTOM_RIGHT_CORNER : BOTTOM_RIGHT_CORNER;
-		int[] shape = new int[top.length + bot.length + 4];
-		int index = 0;
-		Point size = container.getSize();
-		int x = size.x - 1;
-		int y = 0;
-		index = fillShape(shape, top, index, x, y, false);
-		y = size.y - 1;
-		index = fillShape(shape, bot, index, x, y, true);
-		shape[index++] = -1;
-		shape[index++] = size.y - 1;
-		shape[index++] = -1;
-		shape[index++] = 0;
-		gc.fillPolygon(shape);
-		gc.drawPolygon(shape);
-	}
 
-	private void paintBottom(GC gc) {
-		int[] left = simple ? SIMPLE_TOP_LEFT_CORNER : TOP_LEFT_CORNER;
-		int[] right = simple ? SIMPLE_TOP_RIGHT_CORNER : TOP_RIGHT_CORNER;
-		int[] shape = new int[left.length + right.length + 4];
-		int index = 0;
-		Point size = container.getSize();
-		int x = 0;
-		int y = 0;
-		index = fillShape(shape, left, index, x, y, false);
-		x = size.x - 1;
-		index = fillShape(shape, right, index, x, y, false);
-		shape[index++] = size.x - 1;
-		shape[index++] = size.y;
-		shape[index++] = 0;
-		shape[index++] = size.y;
-		gc.fillPolygon(shape);
-		gc.drawPolygon(shape);
-	}
 
-	private void paintRight(GC gc) {
-		int[] top = simple ? SIMPLE_TOP_LEFT_CORNER : TOP_LEFT_CORNER;
-		int[] bot = simple ? SIMPLE_BOTTOM_LEFT_CORNER : BOTTOM_LEFT_CORNER;
-		int[] shape = new int[top.length + bot.length + 4];
-		int index = 0;
-		Point size = container.getSize();
-		int x = 0;
-		int y = 0;
-		index = fillShape(shape, top, index, x, y, false);
-		shape[index++] = size.x;
-		shape[index++] = 0;
-		shape[index++] = size.x;
-		shape[index++] = size.y - 1;
-		x = 0;
-		y = size.y - 1;
-		fillShape(shape, bot, index, x, y, true);
-		gc.fillPolygon(shape);
-		gc.drawPolygon(shape);
-	}
 
 
 	private int fillShape(int[] shape, int[] points, int index, int x, int y, boolean reverse) {
