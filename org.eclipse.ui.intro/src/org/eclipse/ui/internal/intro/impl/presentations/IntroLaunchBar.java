@@ -137,8 +137,8 @@ public class IntroLaunchBar {
 		@Override
 		protected Point computeSize(Composite composite, int wHint, int hHint, boolean changed) {
 			boolean vertical = (getOrientation() & SWT.VERTICAL) != 0;
-			int marginWidth = vertical | isPlain() ? 1 : simple ? 3 : 7;
-			int marginHeight = !vertical | isPlain() ? 1 : simple ? 3 : 7;
+			int marginWidth = vertical ? 1 : simple ? 3 : 7;
+			int marginHeight = !vertical ? 1 : simple ? 3 : 7;
 			int width = 0;
 			int height = 0;
 
@@ -164,8 +164,8 @@ public class IntroLaunchBar {
 		@Override
 		protected void layout(Composite composite, boolean changed) {
 			boolean vertical = (getOrientation() & SWT.VERTICAL) != 0;
-			int marginWidth = vertical | isPlain() ? 1 : simple ? 4 : 7;
-			int marginHeight = !vertical | isPlain() ? 1 : simple ? 4 : 7;
+			int marginWidth = vertical ? 1 : simple ? 4 : 7;
+			int marginHeight = !vertical ? 1 : simple ? 4 : 7;
 
 			Point tsize = toolBarManager.getControl().computeSize(SWT.DEFAULT, SWT.DEFAULT, changed);
 			Rectangle carea = composite.getClientArea();
@@ -299,15 +299,6 @@ public class IntroLaunchBar {
 		settings.put(S_STORED_LOCATION, toSWT(getLocation()));
 	}
 
-	/**
-	 * Not supported anymore as of the removal of the presentation API
-	 * TODO remove usage, see Bug 446171
-	 *
-	 * @return
-	 */
-	protected boolean isPlain() {
-		return true;
-	}
 
 	public void createControl(Composite parent) {
 		container = new Composite(parent, SWT.NULL);
@@ -367,25 +358,9 @@ public class IntroLaunchBar {
 		gc.setForeground(color);
 		if (bg != null)
 			gc.setBackground(bg);
-		if (isPlain()) {
-			Point size = container.getSize();
-			gc.fillRectangle(0, 0, size.x, size.y);
-			gc.drawRectangle(0, 0, size.x - 1, size.y - 1);
-		} else {
-			switch (getLocation()) {
-			case LEFT:
-				paintLeft(gc);
-				break;
-			case RIGHT:
-				paintRight(gc);
-				break;
-			case BOTTOM:
-				paintBottom(gc);
-				break;
-			case TOP:
-				break;
-			}
-		}
+		Point size = container.getSize();
+		gc.fillRectangle(0, 0, size.x, size.y);
+		gc.drawRectangle(0, 0, size.x - 1, size.y - 1);
 	}
 
 	private void paintLeft(GC gc) {
