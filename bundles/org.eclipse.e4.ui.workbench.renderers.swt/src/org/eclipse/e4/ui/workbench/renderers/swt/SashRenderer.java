@@ -50,16 +50,16 @@ public class SashRenderer extends SWTPartRenderer {
 		forceLayout((MElementContainer<MUIElement>) element);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Inject
 	@Optional
 	private void subscribeTopicSashWeightChanged(@UIEventTopic(UIEvents.UIElement.TOPIC_CONTAINERDATA) Event event) {
-		// Ensure that this event is for a MPartSashContainer
+		// Ensure that this event is for a child of a MPartSashContainer
 		MUIElement element = (MUIElement) event.getProperty(UIEvents.EventTags.ELEMENT);
-		if (element.getRenderer() != SashRenderer.this) {
+		MElementContainer<MUIElement> parent = element.getParent();
+		if (parent.getRenderer() != SashRenderer.this) {
 			return;
 		}
-		forceLayout((MElementContainer<MUIElement>) element);
+		forceLayout(parent);
 	}
 
 	/**
