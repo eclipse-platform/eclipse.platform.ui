@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2012 IBM Corporation and others.
+ * Copyright (c) 2007, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 552144
  *******************************************************************************/
 
 package org.eclipse.ui.tests;
@@ -134,6 +135,11 @@ public class StyledStringHighlighterTest extends UITestCase {
 	@Test
 	public void testCaseInsensitivity() {
 		assertHighlightedRegions("abc123def", "aBC123dEf", new int[] { 0, 9 });
+	}
+
+	@Test
+	public void testCapitalizedText() {
+		assertHighlightedRegions("JavaElement.java", "JE", new int[] { 0, 1, 4, 5 });
 	}
 
 	@Test

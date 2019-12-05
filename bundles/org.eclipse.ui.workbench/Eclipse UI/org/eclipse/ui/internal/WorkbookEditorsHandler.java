@@ -11,7 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Marc-Andre Laperle (Ericsson) - Bug 413278
- *     Patrik Suzzi <psuzzi@itemis.com> - Bug 497618, 368977, 504088, 506019, 486859
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 497618, 368977, 504088, 506019, 486859, 552144
  ******************************************************************************/
 
 package org.eclipse.ui.internal;
@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer;
-import org.eclipse.e4.ui.workbench.swt.internal.copy.SearchPattern;
 import org.eclipse.jface.viewers.BoldStylerProvider;
 import org.eclipse.jface.viewers.ColumnViewerToolTipSupport;
 import org.eclipse.jface.viewers.StyledCellLabelProvider;
@@ -39,6 +38,7 @@ import org.eclipse.swt.graphics.Font;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
+import org.eclipse.ui.dialogs.SearchPattern;
 import org.eclipse.ui.dialogs.StyledStringHighlighter;
 import org.eclipse.ui.themes.ITheme;
 
@@ -112,12 +112,8 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 		if (pattern.length() == 0) {
 			searchPattern = null;
 		} else {
-			SearchPattern patternMatcher = new SearchPattern();
-			if (pattern.indexOf('*') != 0 && pattern.indexOf('?') != 0) {
-				pattern = '*' + pattern;
-			}
-			patternMatcher.setPattern(pattern);
-			searchPattern = patternMatcher;
+			searchPattern = new SearchPattern();
+			searchPattern.setPattern(pattern);
 		}
 	}
 
@@ -131,6 +127,7 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 
 		tableViewerColumn.setLabelProvider(new StyledCellLabelProvider() {
 
+			/* called once for each element in the table */
 			@Override
 			public void update(ViewerCell cell) {
 				Object element = cell.getElement();

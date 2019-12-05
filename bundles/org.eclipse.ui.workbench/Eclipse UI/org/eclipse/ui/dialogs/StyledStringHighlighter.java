@@ -1,3 +1,17 @@
+/*******************************************************************************
+ * Copyright (c) 2019 Uenal Akkaya and others.
+ *
+ * This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License 2.0
+ * which accompanies this distribution, and is available at
+ * https://www.eclipse.org/legal/epl-2.0/
+ *
+ * SPDX-License-Identifier: EPL-2.0
+ *
+ * Contributors:
+ *     Uenal Akkaya - initial API and implementation
+ *     Patrik Suzzi <psuzzi@gmail.com> - Bug 552144
+ *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
 import java.util.regex.Matcher;
@@ -15,8 +29,12 @@ import org.eclipse.jface.viewers.StyledString.Styler;
  */
 public class StyledStringHighlighter implements IStyledStringHighlighter {
 
+	private static final String QUOTE_START = "(\\Q"; //$NON-NLS-1$
+	private static final String QUOTE_END = "\\E)"; //$NON-NLS-1$
+	private static final String DOT_STAR_LAZY = ".*?"; //$NON-NLS-1$
+	private static final String DOT = "."; //$NON-NLS-1$
 	private static final String QMARK = "?"; //$NON-NLS-1$
-	private static final String ASTERISK = "*"; //$NON-NLS-1$
+	private static final String STAR = "*"; //$NON-NLS-1$
 	private static final char TERMINATOR = '<';
 
 	@Override
@@ -27,13 +45,11 @@ public class StyledStringHighlighter implements IStyledStringHighlighter {
 		StyledString styledString = new StyledString(text);
 
 		if (pattern == null || pattern.isEmpty() //
-				|| ASTERISK.equals(pattern) || QMARK.equals(pattern)) {
+				|| STAR.equals(pattern) || QMARK.equals(pattern)) {
 			return styledString;
 		}
 
-		pattern = removeEndTerminator(pattern);
-		pattern = replaceConsecutiveAsterisks(pattern);
-		pattern = escapeSpecialCharacters(pattern);
+		pattern = transformWildcardToRegex(pattern);
 
 		try {
 			highlight(text, pattern, styledString, styler);
@@ -44,41 +60,69 @@ public class StyledStringHighlighter implements IStyledStringHighlighter {
 		return styledString;
 	}
 
-	private String removeEndTerminator(String filterPattern) {
-		int numEndTerminators = 0;
-		for (int i = filterPattern.length() - 1; i >= 0; i--) {
-			if (filterPattern.charAt(i) == TERMINATOR) {
-				numEndTerminators++;
+	/**
+	 * Transform the provided wildcard-based pattern into a corresponding regex.
+	 * <p>
+	 * The provided pattern must not be empty.
+	 * <p>
+	 * Each uppercase letter starts its own Group
+	 *
+	 * @param pattern search text with wildcards.
+	 * @return regex
+	 */
+	private static final String transformWildcardToRegex(String pattern) {
+		char[] chars = pattern.toCharArray();
+		int len = chars.length;
+		StringBuilder sb = new StringBuilder();
+		boolean quoting = false;
+		boolean prevStar = false;
+		boolean prevChar = false;
+		for (int i = 0; i < len; i++) {
+			char c = chars[i];
+			boolean isWild = isWildcard(c);
+			if (isWild) {
+				if (quoting) {
+					sb.append(QUOTE_END);
+					quoting = false;
+				}
+				if (c == '*') {
+					if (prevStar) {
+						continue;
+					}
+					sb.append(DOT_STAR_LAZY);
+				} else {
+					sb.append(DOT);
+				}
+				if (i < len - 1 && !isWildcard(chars[i + 1])) {
+					sb.append(QUOTE_START);
+					quoting = true;
+				}
 			} else {
-				break;
+				if (!quoting) {
+					sb.append(QUOTE_START);
+					quoting = true;
+				}
+				if (prevChar && Character.isUpperCase(c)) {
+					sb.append(QUOTE_END);
+					sb.append(DOT_STAR_LAZY);
+					sb.append(QUOTE_START);
+				}
+				if (c != TERMINATOR) {
+					sb.append(c);
+				}
+				if (i == len - 1) {
+					sb.append(QUOTE_END);
+					quoting = false;
+				}
 			}
+			prevChar = !isWild;
+			prevStar = c == '*';
 		}
-		return filterPattern.substring(0, filterPattern.length() - numEndTerminators);
+		return sb.toString();
 	}
 
-	private String replaceConsecutiveAsterisks(String filterPattern) {
-		return filterPattern.replaceAll("(\\*)\\1+", ASTERISK); //$NON-NLS-1$
-	}
-
-	private String escapeSpecialCharacters(String filterPattern) {
-		boolean startsWithSpecialChar = filterPattern.startsWith(ASTERISK) || filterPattern.startsWith(QMARK);
-		boolean endsWithSpecialChar = filterPattern.endsWith(ASTERISK) || filterPattern.endsWith(QMARK);
-		// replace all asterisk and question marks for use of regex, remaining texts are
-		// marked as quotations to ignore at regex parsing
-		filterPattern = filterPattern.replace(ASTERISK, "\\E).*(\\Q"); //$NON-NLS-1$
-		filterPattern = filterPattern.replace(QMARK, "\\E).(\\Q"); //$NON-NLS-1$
-
-		if (!startsWithSpecialChar) {
-			filterPattern = "(\\Q" + filterPattern; //$NON-NLS-1$
-		}
-		if (!endsWithSpecialChar) {
-			filterPattern = filterPattern + "\\E)"; //$NON-NLS-1$
-		}
-
-		int start = (filterPattern.startsWith("\\E)") ? 3 : 0); //$NON-NLS-1$
-		int end = filterPattern.length() - (filterPattern.endsWith("(\\Q") ? 3 : 0); //$NON-NLS-1$
-
-		return filterPattern.substring(start, end);
+	private static final boolean isWildcard(char c) {
+		return c == '?' || c == '*';
 	}
 
 	private void highlight(String text, String filterPattern, StyledString styledString, Styler boldStyler) {
