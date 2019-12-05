@@ -15,6 +15,14 @@
 
 package org.eclipse.ui.tests.statushandlers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.concurrent.Semaphore;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantLock;
@@ -62,10 +70,11 @@ import org.eclipse.ui.statushandlers.WorkbenchErrorHandler;
 import org.eclipse.ui.statushandlers.WorkbenchStatusDialogManager;
 import org.eclipse.ui.tests.concurrency.FreezeMonitor;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class StatusDialogManagerTest extends TestCase {
+public class StatusDialogManagerTest {
 
 	private static final String ACTION_NAME = "actionname";
 	private static final String JOB_NAME = "jobname";
@@ -81,9 +90,8 @@ public class StatusDialogManagerTest extends TestCase {
 	private boolean automatedMode;
 	WorkbenchStatusDialogManager wsdm;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		automatedMode = ErrorDialog.AUTOMATED_MODE;
 		wsdm = new WorkbenchStatusDialogManager(null, null);
 		ErrorDialog.AUTOMATED_MODE = false;
@@ -91,6 +99,7 @@ public class StatusDialogManagerTest extends TestCase {
 		FreezeMonitor.expectCompletionIn(60_000);
 	}
 
+	@Test
 	public void testBlockingAppearance() {
 		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_1), true);
 		Shell shell = StatusDialogUtil.getStatusShell();
@@ -98,6 +107,7 @@ public class StatusDialogManagerTest extends TestCase {
 		assertTrue((shell.getStyle() & SWT.APPLICATION_MODAL) == SWT.APPLICATION_MODAL);
 	}
 
+	@Test
 	public void testNonBlockingAppearance() {
 		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_1), false);
 		Shell shell = StatusDialogUtil.getStatusShell();
@@ -105,6 +115,7 @@ public class StatusDialogManagerTest extends TestCase {
 		assertFalse((shell.getStyle() & SWT.APPLICATION_MODAL) == SWT.APPLICATION_MODAL);
 	}
 
+	@Test
 	public void testModalitySwitch1() {
 		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_1), false);
 		Shell shell = StatusDialogUtil.getStatusShell();
@@ -117,6 +128,7 @@ public class StatusDialogManagerTest extends TestCase {
 		assertTrue((shell.getStyle() & SWT.APPLICATION_MODAL) == SWT.APPLICATION_MODAL);
 	}
 
+	@Test
 	public void testCheckingForMessageDuplication1() {
 		IStatus status = new IStatus() {
 
@@ -177,6 +189,7 @@ public class StatusDialogManagerTest extends TestCase {
 	/**
 	 * Preserving details selection and state
 	 */
+	@Test
 	public void testModalitySwitch2() {
 		final StatusAdapter[] passed = new StatusAdapter[] { null };
 		final Composite[] details = new Composite[] { null };
@@ -196,6 +209,7 @@ public class StatusDialogManagerTest extends TestCase {
 	/**
 	 * Preserving support selection and state
 	 */
+	@Test
 	public void testModalitySwitch3() {
 		final StatusAdapter[] passed = new StatusAdapter[] { null };
 		final Composite[] support = new Composite[] { null };
@@ -215,6 +229,7 @@ public class StatusDialogManagerTest extends TestCase {
 	/**
 	 * Be sure that label provider is not disposed during modality switch.
 	 */
+	@Test
 	public void testModalitySwitch4() {
 		final boolean[] disposed = new boolean[] { false };
 		ITableLabelProvider provider = new ITableLabelProvider() {
@@ -267,6 +282,7 @@ public class StatusDialogManagerTest extends TestCase {
 	 * Simple status without exception Check primary and secondary message.
 	 * Verify invisible action button.
 	 */
+	@Test
 	public void testWithStatusAdapter1() {
 		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_1), false);
 		Label titleLabel = StatusDialogUtil.getTitleLabel();
@@ -287,6 +303,7 @@ public class StatusDialogManagerTest extends TestCase {
 		assertTrue(((GridData) layoutData).exclude);
 	}
 
+	@Test
 	public void testWithStatusAdapterAndLabelProvider1(){
 		wsdm.setMessageDecorator(new ILabelDecorator(){
 
@@ -337,6 +354,7 @@ public class StatusDialogManagerTest extends TestCase {
 	 * Simple status with title. Check primary and secondary message. Verify
 	 * closing.
 	 */
+	@Test
 	public void testWithStatusAdapter2() {
 		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_1, TITLE),
 				false);
@@ -359,6 +377,7 @@ public class StatusDialogManagerTest extends TestCase {
 	/**
 	 * Simple status with exception with message
 	 */
+	@Test
 	public void testWithStatusAdapter3() {
 		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_1,
 				NPE_WITH_MESSAGE), false);
@@ -374,6 +393,7 @@ public class StatusDialogManagerTest extends TestCase {
 	/**
 	 * Simple status with exception without message
 	 */
+	@Test
 	public void testWithStatusAdapter4() {
 		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_1, NPE), false);
 
@@ -389,6 +409,7 @@ public class StatusDialogManagerTest extends TestCase {
 	/**
 	 * Simple status from job
 	 */
+	@Test
 	public void testWithStatusAdapter5() {
 		String message = "testmessage";
 		StatusAdapter statusAdapter = new StatusAdapter(new Status(
@@ -414,6 +435,7 @@ public class StatusDialogManagerTest extends TestCase {
 	/**
 	 * Simple status from job with action
 	 */
+	@Test
 	public void testWithStatusAdapter6() {
 		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_1, JOB_NAME,
 				ACTION_NAME), false);
@@ -447,6 +469,7 @@ public class StatusDialogManagerTest extends TestCase {
 	 * Tests if status dialog passes status adapter to the support provider
 	 * tests if status dialog extends its height &amp; width
 	 */
+	@Test
 	public void testSupport1() {
 		StatusAdapter statusAdapter = createStatusAdapter(MESSAGE_1);
 		final StatusAdapter[] passed = new StatusAdapter[] { null };
@@ -459,6 +482,7 @@ public class StatusDialogManagerTest extends TestCase {
 	/**
 	 * Tests if support area appears by default if appropriate flag is set up.
 	 */
+	@Test
 	public void testSupport2(){
 		StatusAdapter statusAdapter = createStatusAdapter(MESSAGE_1);
 		wsdm.setProperty(IStatusDialogConstants.SHOW_SUPPORT, Boolean.TRUE);
@@ -473,6 +497,7 @@ public class StatusDialogManagerTest extends TestCase {
 	 * Tests if details can be closed and opened 2 times tests if correct status
 	 * adapter is passed to details
 	 */
+	@Test
 	public void testDetails1() {
 		StatusAdapter statusAdapter = createStatusAdapter(MESSAGE_1);
 		final StatusAdapter[] passed = new StatusAdapter[] { null };
@@ -508,6 +533,7 @@ public class StatusDialogManagerTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testNullLabelProvider(){
 		try {
 			wsdm.setStatusListLabelProvider(null);
@@ -518,6 +544,7 @@ public class StatusDialogManagerTest extends TestCase {
 	}
 
 	//bug 235254
+	@Test
 	public void testNonNullLabelProvider(){
 		try {
 			final boolean [] called = new boolean[]{false};
@@ -565,6 +592,7 @@ public class StatusDialogManagerTest extends TestCase {
 	/**
 	 * Verifies that correct status adapter is passed to the support area
 	 */
+	@Test
 	public void testList1() {
 		StatusAdapter statusAdapter1 = createStatusAdapter(MESSAGE_1);
 		StatusAdapter statusAdapter2 = createStatusAdapter(MESSAGE_2);
@@ -610,6 +638,7 @@ public class StatusDialogManagerTest extends TestCase {
 	/**
 	 * Verifies that correct status adapter is passed to details
 	 */
+	@Test
 	public void testList2() {
 		StatusAdapter statusAdapter1 = createStatusAdapter(MESSAGE_1);
 		StatusAdapter statusAdapter2 = createStatusAdapter(MESSAGE_2);
@@ -640,6 +669,7 @@ public class StatusDialogManagerTest extends TestCase {
 	 * Tests secondary message and the list element for normal and job status
 	 * adapter
 	 */
+	@Test
 	public void testList3() {
 		StatusAdapter sa1 = createStatusAdapter(MESSAGE_1);
 		StatusAdapter sa2 = createStatusAdapter(MESSAGE_2, JOB_NAME,
@@ -663,6 +693,7 @@ public class StatusDialogManagerTest extends TestCase {
 		assertEquals(JOB_NAME, table.getItem(1).getText());
 	}
 
+	@Test
 	public void testBug260937(){
 		WorkbenchStatusDialogManager wsdm = new WorkbenchStatusDialogManager(
 				IStatus.CANCEL, null);
@@ -675,6 +706,7 @@ public class StatusDialogManagerTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testBug276371(){
 		StatusAdapter bomb = new StatusAdapter(new Status(IStatus.ERROR,
 				"org.eclipse.ui.tests", "bomb"){
@@ -703,6 +735,7 @@ public class StatusDialogManagerTest extends TestCase {
 	}
 
 	// checking if the statuses are correctly ignored.
+	@Test
 	public void testOKStatus1() {
 		try {
 			wsdm.addStatusAdapter(new StatusAdapter(Status.OK_STATUS), false);
@@ -718,6 +751,7 @@ public class StatusDialogManagerTest extends TestCase {
 				wsdm.getStatusAdapters().size());
 	}
 
+	@Test
 	public void testOKStatus2(){
 		final WorkbenchStatusDialogManager wsdm[] = new WorkbenchStatusDialogManager[] { null };
 		WorkbenchErrorHandler weh = new WorkbenchErrorHandler() {
@@ -734,6 +768,7 @@ public class StatusDialogManagerTest extends TestCase {
 		assertEquals(1, wsdm[0].getStatusAdapters().size());
 	}
 
+	@Test
 	public void testBug211933() {
 		MultiStatus multi = new MultiStatus("testplugin", 0, "message", null);
 		multi.add(new Status(IStatus.CANCEL, "testplugin", "message 1"));
@@ -754,6 +789,7 @@ public class StatusDialogManagerTest extends TestCase {
 		assertTrue(wsdm[0].getStatusAdapters().contains(sa));
 	}
 
+	@Test
 	public void testBug275867(){
 		StatusAdapter statusAdapter = createStatusAdapter(MESSAGE_1);
 		final StatusAdapter[] passed = new StatusAdapter[] { null };
@@ -767,6 +803,7 @@ public class StatusDialogManagerTest extends TestCase {
 	}
 
 	//error link present
+	@Test
 	public void testBug278965_1() {
 		final WorkbenchStatusDialogManager wsdm[] = new WorkbenchStatusDialogManager[] { null };
 		WorkbenchErrorHandler weh = new WorkbenchErrorHandler() {
@@ -800,6 +837,7 @@ public class StatusDialogManagerTest extends TestCase {
 	}
 
 	//error link hidden
+	@Test
 	public void testBug278965_2(){
 		final WorkbenchStatusDialogManager wsdm[] = new WorkbenchStatusDialogManager[] { null };
 		WorkbenchErrorHandler weh = new WorkbenchErrorHandler() {
@@ -821,6 +859,7 @@ public class StatusDialogManagerTest extends TestCase {
 	}
 
 	//two statuses, present
+	@Test
 	public void testBug278965_3(){
 		final WorkbenchStatusDialogManager wsdm[] = new WorkbenchStatusDialogManager[] { null };
 		WorkbenchErrorHandler weh = new WorkbenchErrorHandler() {
@@ -853,6 +892,7 @@ public class StatusDialogManagerTest extends TestCase {
 	}
 
 	// two statuses, details, resize
+	@Test
 	public void testBug288770_1(){
 		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_1), false);
 		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_2), false);
@@ -873,6 +913,7 @@ public class StatusDialogManagerTest extends TestCase {
 	}
 
 	// status, details, status, resize
+	@Test
 	public void testBug288770_2(){
 		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_1), false);
 		assertTrue("Details should be closed initially", StatusDialogUtil
@@ -892,6 +933,7 @@ public class StatusDialogManagerTest extends TestCase {
 				newHeight);
 	}
 
+	@Test
 	public void testBug288770_3(){
 		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_1), false);
 		assertTrue("Details should be closed initially", StatusDialogUtil
@@ -909,6 +951,7 @@ public class StatusDialogManagerTest extends TestCase {
 		assertTrue("List should resize when details are closed", height < newHeight);
 	}
 
+	@Test
 	public void testBug288770_4(){
 		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_1), false);
 		assertTrue("Details should be closed initially", StatusDialogUtil
@@ -931,6 +974,7 @@ public class StatusDialogManagerTest extends TestCase {
 		assertTrue("List should resize when details are closed", height < newHeight);
 	}
 
+	@Test
 	public void testBug288765() {
 		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_1), false);
 		selectWidget(StatusDialogUtil.getDetailsButton());
@@ -950,6 +994,7 @@ public class StatusDialogManagerTest extends TestCase {
 		assertTrue(newSize.height > sizeY);
 	}
 
+	@Test
 	public void testIgnoringOpenTrayOnShow() {
 		wsdm.enableDefaultSupportArea(true);
 		wsdm.enableErrorDialogCompatibility();
@@ -971,6 +1016,7 @@ public class StatusDialogManagerTest extends TestCase {
 		assertNull("Tray should not be opened", manager.getDialog().getTray());
 	}
 
+	@Test
 	public void testAutoOpeningTrayOnShow() {
 		wsdm.enableDefaultSupportArea(true);
 		wsdm.enableErrorDialogCompatibility();
@@ -987,6 +1033,7 @@ public class StatusDialogManagerTest extends TestCase {
 	 * Change the modality. Test if tray still opened.
 	 * Select adapter without status. Test if tray closed.
 	 */
+	@Test
 	public void testModalitySwitch5() {
 		wsdm.enableDefaultSupportArea(true);
 		StatusAdapter sa = createStatusAdapter(MESSAGE_1, new NullPointerException());
@@ -1009,6 +1056,7 @@ public class StatusDialogManagerTest extends TestCase {
 		assertNull(StatusDialogUtil.getSupportLink());
 	}
 
+	@Test
 	public void testSupportLinkVisibility1(){
 		wsdm.enableDefaultSupportArea(true);
 		StatusAdapter sa = createStatusAdapter(MESSAGE_1, new NullPointerException());
@@ -1022,6 +1070,7 @@ public class StatusDialogManagerTest extends TestCase {
 		assertNull(StatusDialogUtil.getSupportLink());
 	}
 
+	@Test
 	public void testSupportLinkVisibility2() {
 		wsdm.enableDefaultSupportArea(true);
 		StatusAdapter sa = createStatusAdapter(MESSAGE_1);
@@ -1035,6 +1084,7 @@ public class StatusDialogManagerTest extends TestCase {
 		assertNotNull(StatusDialogUtil.getSupportLink());
 	}
 
+	@Test
 	public void testProvidingCustomSupportAreaProvider() {
 		final boolean[] consulted = new boolean[]{false};
 		AbstractStatusAreaProvider customProvider = new AbstractStatusAreaProvider() {
@@ -1060,6 +1110,7 @@ public class StatusDialogManagerTest extends TestCase {
 		assertTrue("Custom support area provider should be consulted", consulted[0]);
 	}
 
+	@Test
 	public void testDeadlockFromBug501681() throws Exception {
 		assertNotNull("Test must run in UI thread", Display.getCurrent());
 
@@ -1340,8 +1391,8 @@ public class StatusDialogManagerTest extends TestCase {
 		return sa;
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		Shell shell = StatusDialogUtil.getStatusShell();
 		FreezeMonitor.done();
 		if (shell != null) {
@@ -1353,7 +1404,6 @@ public class StatusDialogManagerTest extends TestCase {
 		wsdm = null;
 		ErrorDialog.AUTOMATED_MODE = automatedMode;
 		Policy.setErrorSupportProvider(null);
-		super.tearDown();
 	}
 
 	// based on window.getInitialLocation

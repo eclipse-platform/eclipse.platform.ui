@@ -32,16 +32,20 @@ import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService;
 import org.eclipse.ui.internal.progress.WorkbenchSiteProgressService.SiteUpdateJob;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.5
  * @author Prakash G.R.
  */
-public class WorkbenchSiteProgressServiceTest extends UITestCase{
+@RunWith(JUnit4.class)
+public class WorkbenchSiteProgressServiceTest extends UITestCase {
 
 
-	public WorkbenchSiteProgressServiceTest(String testName) {
-		super(testName);
+	public WorkbenchSiteProgressServiceTest() {
+		super(WorkbenchSiteProgressServiceTest.class.getSimpleName());
 	}
 
 	private IWorkbenchPart activePart;
@@ -71,6 +75,7 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase{
 		updateJob.run(new NullProgressMonitor());
 	}
 
+	@Test
 	public void testWaitCursor() throws Exception {
 		// Fire a job with cursor set to true and check the cursor
 
@@ -121,6 +126,7 @@ public class WorkbenchSiteProgressServiceTest extends UITestCase{
 		assertNull(cursor); // no jobs, no cursor
 	}
 
+	@Test
 	public void testWaitCursorConcurrentJobs() throws Exception {
 		// Fire two jobs, first one with cursor & delay,
 		// the second one without any cursor or delay.

@@ -38,10 +38,14 @@ import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Test opening and closing of items.
  */
+@RunWith(JUnit4.class)
 public class OpenCloseTest extends UITestCase {
 	/**
 	 *
@@ -54,12 +58,9 @@ public class OpenCloseTest extends UITestCase {
 
 	/**
 	 * Constructor.
-	 *
-	 * @param testName
-	 *            Test's name.
 	 */
-	public OpenCloseTest(String testName) {
-		super(testName);
+	public OpenCloseTest() {
+		super(OpenCloseTest.class.getSimpleName());
 		workbenchWindow = (WorkbenchWindow) PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 	}
 
@@ -67,6 +68,7 @@ public class OpenCloseTest extends UITestCase {
 	 * Test the opening and closing of a file.
 	 *
 	 */
+	@Test
 	public void testOpenCloseFile() {
 		IWorkbenchPage page = workbenchWindow.getActivePage();
 		try {
@@ -90,6 +92,7 @@ public class OpenCloseTest extends UITestCase {
 	 * Test opening and closing of workbench window.
 	 *
 	 */
+	@Test
 	public void testOpenCloseWorkbenchWindow() {
 		IWorkbenchWindow secondWorkbenchWindow = null;
 		try {
@@ -106,6 +109,7 @@ public class OpenCloseTest extends UITestCase {
 	 * Test open and close of perspective.
 	 *
 	 */
+	@Test
 	public void testOpenClosePerspective() {
 		ICommandService commandService = fWorkbench.getService(ICommandService.class);
 		Command command = commandService.getCommand("org.eclipse.ui.window.closePerspective");
@@ -135,6 +139,7 @@ public class OpenCloseTest extends UITestCase {
 	 * Test open and close of view.
 	 *
 	 */
+	@Test
 	public void testOpenCloseView() {
 		IViewPart consoleView = null;
 		try {
@@ -153,6 +158,7 @@ public class OpenCloseTest extends UITestCase {
 	 * Test open and close intro.
 	 *
 	 */
+	@Test
 	public void testOpenCloseIntro() {
 		IIntroPart introPart = null;
 		for (int index = 0; index < numIterations; index++) {

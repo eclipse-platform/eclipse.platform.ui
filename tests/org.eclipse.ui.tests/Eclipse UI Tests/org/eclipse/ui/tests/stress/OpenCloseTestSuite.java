@@ -13,27 +13,18 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.stress;
 
-import junit.framework.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+
 import junit.framework.TestSuite;
 
 /**
  * Test all areas of the UI API.
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	OpenCloseTest.class,
+})
 public class OpenCloseTestSuite extends TestSuite {
-
-	/**
-	 * Returns the suite.  This is required to
-	 * use the JUnit Launcher.
-	 */
-	public static Test suite() {
-		return new OpenCloseTestSuite();
-	}
-
-	/**
-	 * Construct the test suite.
-	 */
-	public OpenCloseTestSuite() {
-		addTest(new TestSuite(OpenCloseTest.class));
-
-	}
+	//
 }

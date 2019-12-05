@@ -14,6 +14,10 @@
 
 package org.eclipse.ui.tests.statushandlers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -30,33 +34,33 @@ import org.eclipse.ui.internal.statushandlers.IStatusDialogConstants;
 import org.eclipse.ui.internal.statushandlers.LabelProviderWrapper;
 import org.eclipse.ui.statushandlers.IStatusAdapterConstants;
 import org.eclipse.ui.statushandlers.StatusAdapter;
-
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * @since 3.5
  *
  */
-public class LabelProviderWrapperTest extends TestCase {
+public class LabelProviderWrapperTest {
 
 	private LabelProviderWrapper wrapper;
 	private Map<Object, Object> dialogState = new HashMap<>();
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		dialogState = new HashMap<>();
 		dialogState.put(IStatusDialogConstants.STATUS_ADAPTERS, new HashSet<>());
 		((Collection) dialogState.get(IStatusDialogConstants.STATUS_ADAPTERS)).add(Status.OK_STATUS);
 		wrapper = new LabelProviderWrapper(dialogState);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() throws Exception {
 		wrapper = null;
 	}
 
+	@Test
 	public void testDisposing(){
 		final boolean[] disposed = new boolean[]{false};
 		ITableLabelProvider provider = new ITableLabelProvider() {
@@ -94,6 +98,7 @@ public class LabelProviderWrapperTest extends TestCase {
 		assertTrue("Provider should be disposed", disposed[0]);
 	}
 
+	@Test
 	public void testImages(){
 		StatusAdapter saError = new StatusAdapter(new Status(IStatus.ERROR, "org.eclipse.ui.tests", "errorMessage"));
 		assertEquals(wrapper.getSWTImage(SWT.ICON_ERROR), wrapper.getImage(saError));
@@ -114,6 +119,7 @@ public class LabelProviderWrapperTest extends TestCase {
 	/*
 	 *	StatusAdapter contains all information necessary to display the dialog.
 	 */
+	@Test
 	public void testProvidedText_1(){
 		final String title = "title";
 		final String message = "errorMessage";
@@ -132,6 +138,7 @@ public class LabelProviderWrapperTest extends TestCase {
 	}
 
 
+	@Test
 	public void testDecorating(){
 		dialogState.put(IStatusDialogConstants.DECORATOR, new ILabelDecorator() {
 			@Override

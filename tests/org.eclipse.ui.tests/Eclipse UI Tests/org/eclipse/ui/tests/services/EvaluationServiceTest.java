@@ -64,14 +64,14 @@ import org.junit.FixMethodOrder;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.BlockJUnit4ClassRunner;
+import org.junit.runners.JUnit4;
 import org.junit.runners.MethodSorters;
 
 /**
  * @since 3.3
  *
  */
-@RunWith(BlockJUnit4ClassRunner.class)
+@RunWith(JUnit4.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class EvaluationServiceTest extends UITestCase {
 	/**
@@ -80,9 +80,6 @@ public class EvaluationServiceTest extends UITestCase {
 	private static final String CHECK_HANDLER_ID = "org.eclipse.ui.tests.services.checkHandler";
 	private static final String CONTEXT_ID1 = "org.eclipse.ui.command.contexts.evaluationService1";
 
-	/**
-	 * @param testName
-	 */
 	public EvaluationServiceTest() {
 		super(EvaluationServiceTest.class.getName());
 	}

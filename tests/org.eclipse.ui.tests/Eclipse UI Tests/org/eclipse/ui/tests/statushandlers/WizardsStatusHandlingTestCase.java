@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.statushandlers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.internal.registry.RegistryMessages;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -34,15 +37,15 @@ import org.eclipse.ui.statushandlers.StatusAdapter;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.tests.harness.util.DialogCheck;
 import org.eclipse.ui.tests.harness.util.UITestCase;
-
-import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Test;
 
 /**
  * Tests whether the errors in wizards are handled properly
  *
  * @since 3.3
  */
-public class WizardsStatusHandlingTestCase extends TestCase {
+public class WizardsStatusHandlingTestCase {
 
 	private static int SEVERITY = IStatus.ERROR;
 
@@ -66,13 +69,8 @@ public class WizardsStatusHandlingTestCase extends TestCase {
 
 	private static String FAULTY_WIZARD_NAME = "FaultyExportWizard";
 
-	public WizardsStatusHandlingTestCase(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() throws Exception {
 		TestStatusHandler.uninstall();
 	}
 
@@ -102,6 +100,7 @@ public class WizardsStatusHandlingTestCase extends TestCase {
 		return dialog;
 	}
 
+	@Test
 	public void testWizardWithNoDefaultContructor() throws Exception {
 		UITestCase.processEvents();
 

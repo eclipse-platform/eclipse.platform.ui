@@ -14,6 +14,11 @@
 
 package org.eclipse.ui.tests.statushandlers;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,15 +37,14 @@ import org.eclipse.ui.internal.statushandlers.IStatusDialogConstants;
 import org.eclipse.ui.internal.statushandlers.StackTraceSupportArea;
 import org.eclipse.ui.internal.statushandlers.SupportTray;
 import org.eclipse.ui.statushandlers.StatusAdapter;
+import org.junit.After;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class SupportTrayTest extends TestCase {
+public class SupportTrayTest {
 
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() throws Exception {
 		Policy.setErrorSupportProvider(null);
 	}
 
@@ -58,6 +62,7 @@ public class SupportTrayTest extends TestCase {
 		}
 	}
 
+	@Test
 	public void testDefaultSupportProviderEnablement(){
 		Map<Object, Object> dialogState = new HashMap<>();
 		Status status = new Status(IStatus.ERROR, "org.eclipse.ui.test",
@@ -73,6 +78,7 @@ public class SupportTrayTest extends TestCase {
 		assertTrue(st.getSupportProvider() instanceof StackTraceSupportArea);
 	}
 
+	@Test
 	public void testJFacePolicySupportProvider(){
 		Map<Object, Object> dialogState = new HashMap<>();
 		StatusAdapter sa = new StatusAdapter(Status.OK_STATUS);
@@ -110,6 +116,7 @@ public class SupportTrayTest extends TestCase {
 		assertEquals(Status.OK_STATUS, _status[0]);
 	}
 
+	@Test
 	public void testJFacePolicyOverDefaultPreference() {
 		Map<Object, Object> dialogState = new HashMap<>();
 		StatusAdapter sa = new StatusAdapter(Status.OK_STATUS);
@@ -128,6 +135,7 @@ public class SupportTrayTest extends TestCase {
 		assertEquals(provider, st.getSupportProvider());
 	}
 
+	@Test
 	public void testSelfClosure(){
 		final TrayDialog td[] = new TrayDialog[] { null };
 		try {
