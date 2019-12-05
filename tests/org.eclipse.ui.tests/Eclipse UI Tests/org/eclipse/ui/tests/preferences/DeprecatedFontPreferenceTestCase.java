@@ -22,6 +22,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * The FontPreferenceTestCase tests adding fonts to
@@ -29,6 +32,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  * are bogus
  */
 
+@RunWith(JUnit4.class)
 public class DeprecatedFontPreferenceTestCase extends UITestCase {
 
 	public String BAD_FONT_DEFINITION = "BadFont-regular-10";
@@ -41,10 +45,9 @@ public class DeprecatedFontPreferenceTestCase extends UITestCase {
 
 	/**
 	 * Constructor for FontPreferenceTestCase.
-	 * @param testName
 	 */
-	public DeprecatedFontPreferenceTestCase(String testName) {
-		super(testName);
+	public DeprecatedFontPreferenceTestCase() {
+		super(DeprecatedFontPreferenceTestCase.class.getSimpleName());
 	}
 
 	@Override
@@ -74,6 +77,7 @@ public class DeprecatedFontPreferenceTestCase extends UITestCase {
 	 * we should find should be the first one in the list.
 	 */
 
+	@Test
 	public void testGoodFontDefinition() {
 
 		FontRegistry fontRegistry = JFaceResources.getFontRegistry();
@@ -93,6 +97,7 @@ public class DeprecatedFontPreferenceTestCase extends UITestCase {
 	 * second one comes back as valid.
 	 */
 
+	@Test
 	public void testBadFirstFontDefinition() {
 
 		FontRegistry fontRegistry = JFaceResources.getFontRegistry();
@@ -112,6 +117,7 @@ public class DeprecatedFontPreferenceTestCase extends UITestCase {
 	 * is missing.
 	 */
 
+	@Test
 	public void testNoFontDefinition() {
 
 		FontRegistry fontRegistry = JFaceResources.getFontRegistry();

@@ -24,7 +24,11 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class DialogSettingsCustomizationTest extends UITestCase {
 
 	// See AbstractUIPlugin
@@ -37,8 +41,8 @@ public class DialogSettingsCustomizationTest extends UITestCase {
 	private Path dialogSettingsPathBackup;
 	private String rootUrlValue;
 
-	public DialogSettingsCustomizationTest(String name) {
-		super(name);
+	public DialogSettingsCustomizationTest() {
+		super(DialogSettingsCustomizationTest.class.getSimpleName());
 	}
 
 	@Override
@@ -67,12 +71,14 @@ public class DialogSettingsCustomizationTest extends UITestCase {
 		super.doTearDown();
 	}
 
+	@Test
 	public void testDialogSettingsContributedByBundle() throws Exception {
 		assertDefaultBundleValueIsSet();
 		setPreference(PlatformUI.getPreferenceStore(), KEY_DEFAULT_DIALOG_SETTINGS_ROOTURL, rootUrlValue);
 		assertCustomValueIsSet();
 	}
 
+	@Test
 	public void testDialogSettingsContributedByFileUrl() throws Exception {
 		String rootUrl = FileLocator.toFileURL(new URL(rootUrlValue)).toString();
 		assertDefaultBundleValueIsSet();

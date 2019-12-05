@@ -17,17 +17,22 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.ui.preferences.WorkingCopyManager;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.osgi.service.prefs.BackingStoreException;
 
+@RunWith(JUnit4.class)
 public class WorkingCopyPreferencesTestCase extends UITestCase {
 
-	public WorkingCopyPreferencesTestCase(String name) {
-		super(name);
+	public WorkingCopyPreferencesTestCase() {
+		super(WorkingCopyPreferencesTestCase.class.getSimpleName());
 	}
 
 	/*
 	 * See bug 94926 - WorkingCopyPreferences.remove(key) not working
 	 */
+	@Test
 	public void testRemoveKey() {
 
 		// set the value in the real node
@@ -53,6 +58,7 @@ public class WorkingCopyPreferencesTestCase extends UITestCase {
 		assertNull("3.0", eNode.get(key, null));
 	}
 
+	@Test
 	public void testRemoveNode() {
 		// set the value in the real node
 		String key = "key";

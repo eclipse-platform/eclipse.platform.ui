@@ -37,11 +37,15 @@ import org.eclipse.ui.internal.progress.ProgressInfoItem;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.progress.IProgressConstants2;
 import org.eclipse.ui.tests.TestPlugin;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.6
  * @author Prakash G.R. (grprakash@in.ibm.com)
  */
+@RunWith(JUnit4.class)
 public class ProgressContantsTest extends ProgressTestCase {
 
 	/**
@@ -64,10 +68,11 @@ public class ProgressContantsTest extends ProgressTestCase {
 		}
 	}
 
-	public ProgressContantsTest(String testName) {
-		super(testName);
+	public ProgressContantsTest() {
+		super(ProgressContantsTest.class.getSimpleName());
 	}
 
+	@Test
 	public void testCommandProperty() throws Exception {
 
 		openProgressView();
@@ -102,6 +107,7 @@ public class ProgressContantsTest extends ProgressTestCase {
 		service.deactivateHandler(record);
 	}
 
+	@Test
 	public void testCommandPropertyEnablement() throws Exception {
 		openProgressView();
 
@@ -150,6 +156,7 @@ public class ProgressContantsTest extends ProgressTestCase {
 		return null;
 	}
 
+	@Test
 	public void testKeepProperty() throws Exception {
 		openProgressView();
 
@@ -190,6 +197,7 @@ public class ProgressContantsTest extends ProgressTestCase {
 		assertTrue(warningJobFound);
 	}
 
+	@Test
 	public void testKeepOneProperty() throws Exception {
 		openProgressView();
 

@@ -19,20 +19,22 @@ import java.util.Collection;
 import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.dialogs.RegistryPageContributor;
 import org.eclipse.ui.tests.navigator.AbstractNavigatorTest;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.2
  *
  */
+@RunWith(JUnit4.class)
 public class PropertyPageEnablementTest extends AbstractNavigatorTest {
 
 	/**
 	 * Create an instance of the receiver.
-	 *
-	 * @param testName
 	 */
-	public PropertyPageEnablementTest(String testName) {
-		super(testName);
+	public PropertyPageEnablementTest() {
+		super(PropertyPageEnablementTest.class.getSimpleName());
 	}
 
 	@Override
@@ -45,6 +47,7 @@ public class PropertyPageEnablementTest extends AbstractNavigatorTest {
 	 * Test the AND condition property page which should only work for files.
 	 *
 	 */
+	@Test
 	public void testAndPage() {
 
 		Collection<RegistryPageContributor> contributors = PropertyPageContributorManager.getManager()
@@ -76,6 +79,7 @@ public class PropertyPageEnablementTest extends AbstractNavigatorTest {
 	 * folders.
 	 *
 	 */
+	@Test
 	public void testOrPage() {
 
 		boolean found = false;
@@ -110,6 +114,7 @@ public class PropertyPageEnablementTest extends AbstractNavigatorTest {
 	 * Test the instance of property page which should only work for projects.
 	 *
 	 */
+	@Test
 	public void testInstanceOfPage() {
 
 		Collection<RegistryPageContributor> contributors = PropertyPageContributorManager.getManager()

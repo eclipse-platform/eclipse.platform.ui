@@ -29,6 +29,9 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * The FontPreferenceTestCase tests adding fonts to
@@ -36,6 +39,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  * are bogus
  */
 
+@RunWith(JUnit4.class)
 public class FontPreferenceTestCase extends UITestCase {
 
 	public String BAD_FONT_DEFINITION = "BadFont-regular-10";
@@ -48,10 +52,9 @@ public class FontPreferenceTestCase extends UITestCase {
 
 	/**
 	 * Constructor for FontPreferenceTestCase.
-	 * @param testName
 	 */
-	public FontPreferenceTestCase(String testName) {
-		super(testName);
+	public FontPreferenceTestCase() {
+		super(FontPreferenceTestCase.class.getSimpleName());
 	}
 
 	@Override
@@ -82,6 +85,7 @@ public class FontPreferenceTestCase extends UITestCase {
 	 * we should find should be the first one in the list.
 	 */
 
+	@Test
 	public void testGoodFontDefinition() {
 
 		FontRegistry fontRegistry = JFaceResources.getFontRegistry();
@@ -101,6 +105,7 @@ public class FontPreferenceTestCase extends UITestCase {
 	 * second one comes back as valid.
 	 */
 
+	@Test
 	public void testBadFirstFontDefinition() {
 
 		FontRegistry fontRegistry = JFaceResources.getFontRegistry();
@@ -120,6 +125,7 @@ public class FontPreferenceTestCase extends UITestCase {
 	 * is missing.
 	 */
 
+	@Test
 	public void testNoFontDefinition() {
 
 		FontRegistry fontRegistry = JFaceResources.getFontRegistry();
@@ -140,6 +146,7 @@ public class FontPreferenceTestCase extends UITestCase {
 	 * The test added to assess results of accessing FontRegistry from a non-UI
 	 * thread. See bug 230360.
 	 */
+	@Test
 	public void testNonUIThreadFontAccess() {
 		// create a separate font registry to avoid contaminating other tests
 		final FontRegistry fontRegistry = new FontRegistry("org.eclipse.jface.resource.jfacefonts"); //$NON-NLS-1$

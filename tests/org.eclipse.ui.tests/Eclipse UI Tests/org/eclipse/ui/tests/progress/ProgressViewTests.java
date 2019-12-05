@@ -29,19 +29,20 @@ import org.eclipse.ui.internal.progress.ProgressInfoItem;
 import org.eclipse.ui.internal.progress.TaskInfo;
 import org.eclipse.ui.progress.IProgressConstants;
 import org.eclipse.ui.tests.TestPlugin;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.6
  * @author Prakash G.R.
  *
  */
+@RunWith(JUnit4.class)
 public class ProgressViewTests extends ProgressTestCase {
 
-	/**
-	 * @param testName
-	 */
-	public ProgressViewTests(String testName) {
-		super(testName);
+	public ProgressViewTests() {
+		super(ProgressViewTests.class.getSimpleName());
 	}
 
 	@Override
@@ -57,6 +58,7 @@ public class ProgressViewTests extends ProgressTestCase {
 	}
 
 
+	@Test
 	public void testClearTaskInfo() throws Exception {
 		// test for
 		openProgressView();
@@ -75,6 +77,7 @@ public class ProgressViewTests extends ProgressTestCase {
 		assertEquals(1, count2);
 	}
 
+	@Test
 	public void testNoUpdatesIfHidden() throws Exception {
 		// test for
 		openProgressView();
@@ -116,6 +119,7 @@ public class ProgressViewTests extends ProgressTestCase {
 		assertEquals(0, count2);
 	}
 
+	@Test
 	public void testItemOrder() throws Exception {
 		openProgressView();
 		ArrayList<DummyJob> jobsToSchedule = new ArrayList<>();

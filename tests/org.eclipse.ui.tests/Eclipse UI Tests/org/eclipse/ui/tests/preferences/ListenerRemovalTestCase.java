@@ -19,11 +19,15 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.3
  *
  */
+@RunWith(JUnit4.class)
 public class ListenerRemovalTestCase extends UITestCase {
 
 	class TestPropertyListener implements IPropertyChangeListener {
@@ -42,13 +46,11 @@ public class ListenerRemovalTestCase extends UITestCase {
 		}
 	}
 
-	/**
-	 * @param testName
-	 */
-	public ListenerRemovalTestCase(String testName) {
-		super(testName);
+	public ListenerRemovalTestCase() {
+		super(ListenerRemovalTestCase.class.getSimpleName());
 	}
 
+	@Test
 	public void testRemoveLastListener() {
 
 		TestPropertyListener testListener = new TestPropertyListener();

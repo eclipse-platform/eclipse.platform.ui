@@ -22,15 +22,20 @@ import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class ScopedPreferenceStoreTestCase extends UITestCase {
 
 	final String DEFAULT_DEFAULT_STRING = "";
 
-	public ScopedPreferenceStoreTestCase(String name) {
-		super(name);
+	public ScopedPreferenceStoreTestCase() {
+		super(ScopedPreferenceStoreTestCase.class.getSimpleName());
 	}
 
+	@Test
 	public void testNeedsSaving() {
 		IScopeContext context = InstanceScope.INSTANCE;
 		String qualifier = "org.eclipse.ui.tests.preferences";
@@ -69,6 +74,7 @@ public class ScopedPreferenceStoreTestCase extends UITestCase {
 		assertFalse("4.1", store.needsSaving());
 	}
 
+	@Test
 	public void testRestoreDefaults() {
 		IScopeContext context = InstanceScope.INSTANCE;
 		String qualifier = "org.eclipse.ui.tests.preferences#testRestoreDefaults";
