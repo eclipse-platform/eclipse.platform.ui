@@ -14,12 +14,14 @@
  *******************************************************************************/
 package org.eclipse.help.internal.workingset;
 
+import java.util.ArrayDeque;
+import java.util.Deque;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.help.*;
-import org.eclipse.help.internal.util.*;
-import org.w3c.dom.*;
+import org.eclipse.help.IHelpResource;
+import org.eclipse.help.ITopic;
+import org.w3c.dom.Element;
 
 /**
  * Makes help resources adaptable and persistable
@@ -76,7 +78,7 @@ public class AdaptableTopic extends AdaptableHelpResource {
 			// traverse TOC and fill in the topicMap
 			topicMap = new HashMap<>();
 			topicMap.put(getHref(), element);
-			FastStack<ITopic> stack = new FastStack<>();
+			Deque<ITopic> stack = new ArrayDeque<>();
 			ITopic[] topics = getSubtopics();
 			for (ITopic topic : topics)
 				stack.push(topic);
