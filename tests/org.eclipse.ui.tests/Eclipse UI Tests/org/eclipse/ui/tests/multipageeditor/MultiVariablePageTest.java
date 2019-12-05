@@ -38,6 +38,9 @@ import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.MultiPageEditorPart;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * <p>
@@ -51,6 +54,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  *
  * @since 3.2
  */
+@RunWith(JUnit4.class)
 public class MultiVariablePageTest extends UITestCase {
 
 	private static final String FILE_CONTENTS = "#section01\nsection 1\n#section02\nsection 2\nwith info\n#section03\nLast page\n";
@@ -63,8 +67,8 @@ public class MultiVariablePageTest extends UITestCase {
 
 	private int fPostCalled;
 
-	public MultiVariablePageTest(String testName) {
-		super(testName);
+	public MultiVariablePageTest() {
+		super(MultiVariablePageTest.class.getSimpleName());
 	}
 
 	/**
@@ -74,6 +78,7 @@ public class MultiVariablePageTest extends UITestCase {
 	 *
 	 * @throws Throwable
 	 */
+	@Test
 	public void testSetActivePage() throws Throwable {
 		// Open a new test window.
 		// Create and open a blurb file.
@@ -105,6 +110,7 @@ public class MultiVariablePageTest extends UITestCase {
 	 *
 	 * @throws Throwable
 	 */
+	@Test
 	public void testRemovePage() throws Throwable {
 		// Open a new test window.
 		// Create and open a blurb file.
@@ -134,6 +140,7 @@ public class MultiVariablePageTest extends UITestCase {
 	 * @throws Throwable
 	 *             on error cases
 	 */
+	@Test
 	public void testPostSelection() throws Throwable {
 		// Open a new test window.
 		IWorkbenchWindow window = openTestWindow();
@@ -192,6 +199,7 @@ public class MultiVariablePageTest extends UITestCase {
 	 * @throws Throwable
 	 *             on error
 	 */
+	@Test
 	public void testContextActivation() throws Throwable {
 		IContextService globalService = getWorkbench()
 				.getService(IContextService.class);
@@ -254,6 +262,7 @@ public class MultiVariablePageTest extends UITestCase {
 
 	}
 
+	@Test
 	public void testPageChangeListeners() throws Throwable {
 		// Open a new test window.
 		// Create and open a blurb file.
@@ -349,23 +358,27 @@ public class MultiVariablePageTest extends UITestCase {
 		assertEquals(4, listener.pageChangeCount);
 	}
 
+	@Test
 	public void testPagePartListener() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
 		IWorkbenchPage page = window.getActivePage();
 		testOneEditor(window, page);
 	}
 
+	@Test
 	public void testPagePartListener2() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
 		IWorkbenchPage page = window.getActivePage();
 		testTwoEditors(window, page);
 	}
 
+	@Test
 	public void testPageWindowListener() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
 		testOneEditor(window, window.getPartService());
 	}
 
+	@Test
 	public void testPageWindowListener2() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
 		testTwoEditors(window, window.getPartService());

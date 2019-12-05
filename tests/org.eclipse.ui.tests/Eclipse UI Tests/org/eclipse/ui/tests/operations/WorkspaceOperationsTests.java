@@ -65,6 +65,9 @@ import org.eclipse.ui.ide.undo.MoveResourcesOperation;
 import org.eclipse.ui.ide.undo.UpdateMarkersOperation;
 import org.eclipse.ui.internal.operations.AdvancedValidationUserApprover;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests the undo of various workspace operations. Uses the following workspace
@@ -85,6 +88,7 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  *
  * @since 3.3
  */
+@RunWith(JUnit4.class)
 public class WorkspaceOperationsTests extends UITestCase {
 
 	IProject testProject, targetProject;
@@ -352,11 +356,8 @@ public class WorkspaceOperationsTests extends UITestCase {
 		}
 	}
 
-	/**
-	 * @param testName
-	 */
-	public WorkspaceOperationsTests(String name) {
-		super(name);
+	public WorkspaceOperationsTests() {
+		super(WorkspaceOperationsTests.class.getSimpleName());
 	}
 
 	@Override
@@ -649,6 +650,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		}
 	}
 
+	@Test
 	public void testCreateSingleMarkerUndoRedo() throws ExecutionException,
 			CoreException {
 		String[] types = new String[] { IMarker.BOOKMARK };
@@ -666,6 +668,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		validateCreatedMarkers(1, markers, attrs, types);
 	}
 
+	@Test
 	public void testCreateMultipleMarkersSingleTypeUndoRedo()
 			throws ExecutionException, CoreException {
 		String[] types = new String[] { CUSTOM_TYPE, CUSTOM_TYPE, CUSTOM_TYPE };
@@ -688,6 +691,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		validateCreatedMarkers(3, markers, attrs, types);
 	}
 
+	@Test
 	public void testCreateMultipleMarkerTypesUndoRedo()
 			throws ExecutionException, CoreException {
 		String[] types = new String[] { IMarker.BOOKMARK, IMarker.TASK,
@@ -710,6 +714,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		validateCreatedMarkers(3, markers, attrs, types);
 	}
 
+	@Test
 	public void testUpdateSingleMarkerUndoRedo() throws ExecutionException,
 			CoreException {
 		CreateMarkersOperation op = new CreateMarkersOperation(
@@ -734,6 +739,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 
 	}
 
+	@Test
 	public void testUpdateMultipleMarkerUndoRedo() throws ExecutionException,
 			CoreException {
 		String[] types = new String[] { IMarker.BOOKMARK, IMarker.TASK,
@@ -761,6 +767,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 
 	}
 
+	@Test
 	public void testUpdateAndMergeSingleMarkerUndoRedo()
 			throws ExecutionException, CoreException {
 		CreateMarkersOperation op = new CreateMarkersOperation(
@@ -785,6 +792,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 
 	}
 
+	@Test
 	public void testUpdateAndMergeMultipleMarkerUndoRedo()
 			throws ExecutionException, CoreException {
 		String[] types = new String[] { IMarker.BOOKMARK, IMarker.TASK,
@@ -811,6 +819,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 				mergedUpdatedAttributes }, types);
 	}
 
+	@Test
 	public void testDeleteMarkersUndoRedo() throws ExecutionException,
 			CoreException {
 		String[] types = new String[] { IMarker.BOOKMARK, IMarker.TASK,
@@ -841,6 +850,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 	/*
 	 * Test that the undo is invalid because one of the markers was deleted.
 	 */
+	@Test
 	public void testCreateMarkerUndoInvalid() throws ExecutionException,
 			CoreException {
 		String[] types = new String[] { IMarker.BOOKMARK, IMarker.TASK,
@@ -865,6 +875,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 	/*
 	 * Test that the undo is invalid because one of the resources was deleted.
 	 */
+	@Test
 	public void testCreateMarkerUndoInvalid2() throws ExecutionException,
 			CoreException {
 		String[] types = new String[] { IMarker.BOOKMARK, IMarker.TASK,
@@ -885,6 +896,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 				.canUndo());
 	}
 
+	@Test
 	public void testUpdateMarkersInvalid() throws ExecutionException,
 			CoreException {
 		String[] types = new String[] { IMarker.BOOKMARK, IMarker.TASK,
@@ -911,6 +923,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 				.canUndo());
 	}
 
+	@Test
 	public void testUpdateMarkersInvalid2() throws ExecutionException,
 			CoreException {
 		String[] types = new String[] { IMarker.BOOKMARK, IMarker.TASK,
@@ -936,6 +949,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 				.canUndo());
 	}
 
+	@Test
 	public void testProjectCreateUndoRedo() throws ExecutionException,
 			CoreException {
 		CreateProjectOperation op = new CreateProjectOperation(
@@ -951,6 +965,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertTrue("Project not restored properly", snap.isValid());
 	}
 
+	@Test
 	public void testProjectMoveUndoRedo() throws ExecutionException,
 			CoreException {
 		URI projectTargetLocation = URIUtil.toURI(URIUtil.toPath(
@@ -972,6 +987,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertTrue("Project contents were altered", snap.isValid());
 	}
 
+	@Test
 	public void testProjectMoveInvalidLocationUndoRedo()
 			throws ExecutionException {
 		// invalid target - already used by another project
@@ -981,6 +997,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		executeExpectFail(op);
 	}
 
+	@Test
 	public void testProjectCopyUndoRedo() throws ExecutionException,
 			CoreException {
 		CopyProjectOperation op = new CopyProjectOperation(testProject,
@@ -1001,12 +1018,14 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertTrue("Source project was altered", snap.isValid());
 	}
 
+	@Test
 	public void testProjectClosedCopyUndoRedo() throws ExecutionException,
 			CoreException {
 		testProject.close(getMonitor());
 		testProjectCopyUndoRedo();
 	}
 
+	@Test
 	public void testProjectCopyAndChangeLocationUndoRedo()
 			throws ExecutionException, CoreException {
 		URI projectTargetLocation = URIUtil.toURI(URIUtil.toPath(
@@ -1034,12 +1053,14 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertTrue("Source project was altered", snap.isValid());
 	}
 
+	@Test
 	public void testProjectClosedCopyAndChangeLocationUndoRedo()
 			throws ExecutionException, CoreException {
 		testProject.close(getMonitor());
 		testProjectCopyAndChangeLocationUndoRedo();
 	}
 
+	@Test
 	public void testProjectCopyAndChangeToInvalidLocationUndoRedo()
 			throws ExecutionException {
 		// invalid target - already used by another project
@@ -1049,6 +1070,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		executeExpectFail(op);
 	}
 
+	@Test
 	public void testProjectRenameUndoRedo() throws ExecutionException,
 			CoreException {
 		MoveResourcesOperation op = new MoveResourcesOperation(testProject,
@@ -1069,6 +1091,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertTrue("Project content was altered on redo rename", snap.isValid());
 	}
 
+	@Test
 	public void testProjectDeleteUndoRedo() throws ExecutionException, CoreException {
 		ProjectSnapshot snap = new ProjectSnapshot(testProject);
 
@@ -1090,6 +1113,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		undo();
 	}
 
+	@Test
 	public void test223956() throws ExecutionException, CoreException {
 		// put a marker on a file contained in the test project
 		Map[] attrs = new Map[] { getInitialMarkerAttributes()};
@@ -1107,6 +1131,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertTrue("Marker should have been restored in child file", testFileWithContent.findMarkers(IMarker.BOOKMARK, false, IResource.DEPTH_ZERO).length == 1);
 	}
 
+	@Test
 	public void test201441() throws ExecutionException, CoreException {
 		String utf8 = "UTF-8";
 		// set the charset on the project explicitly
@@ -1120,12 +1145,14 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertEquals("Character set not restored", testProject.getDefaultCharset(), utf8);
 	}
 
+	@Test
 	public void testProjectClosedDeleteUndoRedo() throws ExecutionException,
 			CoreException {
 		testProject.close(getMonitor());
 		testProjectDeleteUndoRedo();
 	}
 
+	@Test
 	public void testProjectDeleteWithContentUndoRedo()
 			throws ExecutionException {
 		DeleteResourcesOperation op = new DeleteResourcesOperation(
@@ -1139,12 +1166,14 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertFalse("Redo delete failed", testProject.exists());
 	}
 
+	@Test
 	public void testProjectClosedDeleteWithContentUndoRedo()
 			throws ExecutionException, CoreException {
 		testProject.close(getMonitor());
 		testProjectDeleteWithContentUndoRedo();
 	}
 
+	@Test
 	public void testFolderCreateLeafUndoRedo() throws ExecutionException {
 		IFolder folder = getWorkspaceRoot().getFolder(
 				testProject.getFullPath().append(TEST_NEWFOLDER_NAME));
@@ -1160,6 +1189,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertTrue("Folder recreation failed", folder.exists());
 	}
 
+	@Test
 	public void testFolderCreateNestedInProjectUndoRedo()
 			throws ExecutionException {
 		// uses a nested path to force creation of nonexistent parents
@@ -1184,6 +1214,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertTrue("Folder recreation failed", folder.exists());
 	}
 
+	@Test
 	public void testFolderCreateNestedInFolderUndoRedo()
 			throws ExecutionException {
 		// Uses a nested path to force creation of nonexistent parents.
@@ -1210,6 +1241,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertTrue("Folder recreation failed", folder.exists());
 	}
 
+	@Test
 	public void testDeleteNestedResourcesUndoRedo()
 			throws ExecutionException {
 		// Creates nested folders and then tests that mass deletion of these records only the
@@ -1239,6 +1271,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 
 	}
 
+	@Test
 	public void testFolderCreateLinkedUndoRedo() throws ExecutionException {
 		IFolder folder = getWorkspaceRoot().getFolder(
 				testProject.getFullPath().append(TEST_NEWFOLDER_NAME));
@@ -1256,6 +1289,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertTrue("Folder was not recreated as a link", folder.isLinked());
 	}
 
+	@Test
 	public void testFolderCreateLinkedNestedUndoRedo()
 			throws ExecutionException {
 		// Use nested name with uncreated parents
@@ -1282,6 +1316,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertTrue("Folder was not recreated as a link", folder.isLinked());
 	}
 
+	@Test
 	public void testFolderMoveUndoRedo() throws ExecutionException,
 			CoreException {
 		IPath targetPath = targetProject.getFullPath().append(
@@ -1306,6 +1341,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertTrue("Folder content was altered", snap.isValid(targetProject));
 	}
 
+	@Test
 	public void testRedundantSubFolderMoveUndoRedo() throws ExecutionException,
 			CoreException {
 		IPath targetPath = targetProject.getFullPath();
@@ -1331,6 +1367,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertTrue("Folder content was altered", snap.isValid(targetProject));
 	}
 
+	@Test
 	public void testRedundantFolderFileMoveUndoRedo()
 			throws ExecutionException, CoreException {
 		IPath targetPath = targetProject.getFullPath();
@@ -1356,6 +1393,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertTrue("Folder content was altered", snap.isValid(targetProject));
 	}
 
+	@Test
 	public void testFolderCopyUndoRedo() throws ExecutionException,
 			CoreException {
 		// copying with same name to a new project
@@ -1378,6 +1416,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertTrue("Source folder was altered", snap.isValid(testProject));
 	}
 
+	@Test
 	public void testFolderCopyLinkUndoRedo() throws ExecutionException,
 			CoreException {
 		// copying with same name to a new project
@@ -1401,6 +1440,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertTrue("Source folder was altered", snap.isValid(testFolder));
 	}
 
+	@Test
 	public void testFolderCopyRenameUndoRedo() throws ExecutionException,
 			CoreException {
 		// copying with a different name to the same project
@@ -1427,6 +1467,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 
 	}
 
+	@Test
 	public void testFolderRenameUndoRedo() throws ExecutionException,
 			CoreException {
 		MoveResourcesOperation op = new MoveResourcesOperation(testFolder,
@@ -1452,6 +1493,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 				.isValid(testProject));
 	}
 
+	@Test
 	public void testFolderDeleteUndoRedo() throws ExecutionException,
 			CoreException {
 		DeleteResourcesOperation op = new DeleteResourcesOperation(
@@ -1467,6 +1509,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertFalse("Redo delete failed", testSubFolder.exists());
 	}
 
+	@Test
 	public void testNestedRedundantFolderDeleteUndoRedo()
 			throws ExecutionException, CoreException {
 		DeleteResourcesOperation op = new DeleteResourcesOperation(
@@ -1484,6 +1527,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertFalse("Redo delete failed", testFolder.exists());
 	}
 
+	@Test
 	public void testNestedRedundantFileDeleteUndoRedo()
 			throws ExecutionException, CoreException {
 		DeleteResourcesOperation op = new DeleteResourcesOperation(
@@ -1502,6 +1546,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertFalse("Redo delete failed", testFolder.exists());
 	}
 
+	@Test
 	public void testFolderDeleteLinkedUndoRedo() throws ExecutionException,
 			CoreException {
 		DeleteResourcesOperation op = new DeleteResourcesOperation(
@@ -1518,6 +1563,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertFalse("Redo delete failed", testLinkedFolder.exists());
 	}
 
+	@Test
 	public void testFileCreateLeafUndoRedo() throws ExecutionException,
 			CoreException {
 		IFile file = getWorkspaceRoot().getFile(
@@ -1536,6 +1582,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 				.getParent()));
 	}
 
+	@Test
 	public void testFileCreateNestedInProjectUndoRedo()
 			throws ExecutionException, CoreException {
 		// Uses file name with non-existent folder parents
@@ -1563,6 +1610,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 				.getParent()));
 	}
 
+	@Test
 	public void testFileCreateNestedInFolderUndoRedo()
 			throws ExecutionException, CoreException {
 		// Uses file name with non-existent folder parents.
@@ -1592,6 +1640,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 				.getParent()));
 	}
 
+	@Test
 	public void testFileCreateLinkedUndoRedo() throws ExecutionException,
 			CoreException {
 		IFile file = getWorkspaceRoot().getFile(
@@ -1616,6 +1665,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 				readContent(testFileWithContent));
 	}
 
+	@Test
 	public void testFileCreateLinkedNestedUndoRedo() throws ExecutionException,
 			CoreException {
 		IFile file = getWorkspaceRoot().getFile(
@@ -1646,6 +1696,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 				readContent(testFileWithContent));
 	}
 
+	@Test
 	public void testFileMoveUndoRedo() throws ExecutionException, CoreException {
 		// Moving from a folder in one project to the top level of another
 		// project
@@ -1670,6 +1721,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertTrue("File content was altered", snap.isValid(targetProject));
 	}
 
+	@Test
 	public void testFileMoveAndOverwriteUndoRedo() throws ExecutionException,
 			CoreException {
 		// Moving a file from a folder inside that the same folder on top of an
@@ -1703,6 +1755,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 				.isValid(testFolder));
 	}
 
+	@Test
 	public void testFileCopyUndoRedo() throws ExecutionException, CoreException {
 		// copying with same name to a new project
 		CopyResourcesOperation op = new CopyResourcesOperation(
@@ -1724,6 +1777,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertTrue("Source file was altered", snap.isValid(testFolder));
 	}
 
+	@Test
 	public void testFileCopyLinkUndoRedo() throws ExecutionException,
 			CoreException {
 		// copying with same name to a new project
@@ -1746,6 +1800,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertTrue("Source file was altered", snap.isValid(testFolder));
 	}
 
+	@Test
 	public void testFileCopyRenameUndoRedo() throws ExecutionException,
 			CoreException {
 		// copying with a different name to the same project
@@ -1771,6 +1826,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertTrue("Source folder was altered", snap.isValid(testFolder));
 	}
 
+	@Test
 	public void testFileCopyAndOverwriteUndoRedo() throws ExecutionException,
 			CoreException {
 		// Copying from a file in a folder to the same folder on top of an
@@ -1799,6 +1855,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 				.isValid(testFolder));
 	}
 
+	@Test
 	public void testFileRenameUndoRedo() throws ExecutionException,
 			CoreException {
 		MoveResourcesOperation op = new MoveResourcesOperation(
@@ -1824,6 +1881,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 				.isValid(testProject));
 	}
 
+	@Test
 	public void testFileDeleteUndoRedo() throws ExecutionException,
 			CoreException {
 		DeleteResourcesOperation op = new DeleteResourcesOperation(
@@ -1840,6 +1898,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertFalse("Redo delete failed", testFileWithContent.exists());
 	}
 
+	@Test
 	public void testFileLinkedDeleteUndoRedo() throws ExecutionException,
 			CoreException {
 		DeleteResourcesOperation op = new DeleteResourcesOperation(
@@ -1856,6 +1915,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertFalse("Redo delete failed", testLinkedFile.exists());
 	}
 
+	@Test
 	public void testFileAndFolderMoveSameDests() throws ExecutionException,
 			CoreException {
 		IPath targetPath = targetProject.getFullPath();
@@ -1899,6 +1959,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertTrue("File content was altered", snapFile.isValid(targetProject));
 	}
 
+	@Test
 	public void testFileAndFolderCopyDifferentDests()
 			throws ExecutionException, CoreException {
 		// copying a file and folder to different destination projects,
@@ -1945,6 +2006,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 				.isValid(targetProject));
 	}
 
+	@Test
 	public void testFileAndFolderCopyDifferentNames()
 			throws ExecutionException, CoreException {
 		// copying a file and folder to a new project, assigning new names to a
@@ -1992,6 +2054,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 				.isValid(targetProject));
 	}
 
+	@Test
 	public void testRedundantFileAndFolderCopy() throws CoreException,
 			ExecutionException {
 		// copying a file which is a child of a folder, keeping same name to a
@@ -2031,6 +2094,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 				.isValid(testFolder));
 	}
 
+	@Test
 	public void testFileAndFolderCopySameDests() throws ExecutionException,
 			CoreException {
 		// copying a file and folder, keeping same name to a new project
@@ -2069,6 +2133,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 				.isValid(targetProject));
 	}
 
+	@Test
 	public void testWorkspaceUndoMonitor() throws ExecutionException,
 			CoreException {
 		// First we copy the project to the target location
@@ -2129,6 +2194,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		assertFalse("Operation should be invalid", op2.canUndo());
 	}
 
+	@Test
 	public void testProjectCopyUndoInvalid() throws ExecutionException,
 			CoreException {
 		// Create a new copy of a project
@@ -2141,6 +2207,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		undoExpectFail(op);
 	}
 
+	@Test
 	public void test162655() throws ExecutionException, CoreException {
 		DeleteResourcesOperation op = new DeleteResourcesOperation(
 				new IResource[] { testProject }, "testProjectDelete", false);
@@ -2157,6 +2224,7 @@ public class WorkspaceOperationsTests extends UITestCase {
 		undoExpectFail(op);
 	}
 
+	@Test
 	public void test250125() throws ExecutionException {
 		IFolder folder = getWorkspaceRoot().getFolder(
 				testProject.getFullPath().append(TEST_NEWFOLDER_NAME));

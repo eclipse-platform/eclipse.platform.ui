@@ -15,13 +15,16 @@
 package org.eclipse.ui.tests.operations;
 
 import org.eclipse.core.commands.ExecutionException;
+import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
-import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Stress tests the Operations Framework API to find any interaction problems
@@ -29,17 +32,15 @@ import org.eclipse.ui.tests.harness.util.UITestCase;
  *
  * @since 3.1
  */
+@RunWith(JUnit4.class)
 public class WorkbenchOperationStressTests extends UITestCase {
 
 	static int STRESS_TEST_REPETITIONS = 2000;
 
 	static int OPEN_WINDOW_REPETITIONS = 2;
 
-	/**
-	 * @param testName
-	 */
-	public WorkbenchOperationStressTests(String name) {
-		super(name);
+	public WorkbenchOperationStressTests() {
+		super(WorkbenchOperationStressTests.class.getSimpleName());
 	}
 
 	/*
@@ -49,6 +50,7 @@ public class WorkbenchOperationStressTests extends UITestCase {
 	 * In progress - this still isn't catching the case from the bug, but is a good
 	 * start.
 	 */
+	@Test
 	public void test115761() throws ExecutionException {
 		for (int j = 0; j < OPEN_WINDOW_REPETITIONS; j++) {
 			IWorkbenchWindow secondWorkbenchWindow = null;

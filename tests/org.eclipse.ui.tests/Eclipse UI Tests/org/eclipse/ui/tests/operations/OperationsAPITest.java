@@ -14,18 +14,23 @@
 
 package org.eclipse.ui.tests.operations;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.AbstractOperation;
 import org.eclipse.core.commands.operations.DefaultOperationHistory;
 import org.eclipse.core.commands.operations.ICompositeOperation;
+import org.eclipse.core.commands.operations.IOperationApprover;
 import org.eclipse.core.commands.operations.IOperationApprover2;
+import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.IOperationHistoryListener;
 import org.eclipse.core.commands.operations.IUndoContext;
 import org.eclipse.core.commands.operations.IUndoableOperation;
-import org.eclipse.core.commands.operations.IOperationApprover;
-import org.eclipse.core.commands.operations.IOperationHistory;
 import org.eclipse.core.commands.operations.LinearUndoEnforcer;
 import org.eclipse.core.commands.operations.ObjectUndoContext;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
@@ -37,13 +42,16 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.tests.internal.ForcedException;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests the Operations Framework API.
  *
  * @since 3.1
  */
-public class OperationsAPITest extends TestCase {
+public class OperationsAPITest {
 
 	// number of operations to perform a stress test
 	static int STRESS_NUM = 5000;
@@ -61,15 +69,8 @@ public class OperationsAPITest extends TestCase {
 		super();
 	}
 
-	/**
-	 * @param testName
-	 */
-	public OperationsAPITest(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		history = new DefaultOperationHistory();
 		contextA = new ObjectUndoContext("A");
 		contextB = new ObjectUndoContext("B");
@@ -139,13 +140,13 @@ public class OperationsAPITest extends TestCase {
 
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() throws Exception {
 		history.removeOperationHistoryListener(listener);
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
 	}
 
+	@Test
 	public void testContextDispose() throws ExecutionException {
 		assertSame(history.getUndoOperation(contextA), op6);
 		assertSame(history.getUndoOperation(contextC), op6);
@@ -165,6 +166,7 @@ public class OperationsAPITest extends TestCase {
 		assertEquals(ops.length, 2);
 	}
 
+	@Test
 	public void testContextHistories() throws ExecutionException {
 		assertSame(history.getUndoOperation(contextA), op6);
 		assertSame(history.getUndoOperation(contextB), op5);
@@ -180,6 +182,7 @@ public class OperationsAPITest extends TestCase {
 		assertSame(history.getUndoOperation(contextA), op6);
 	}
 
+	@Test
 	public void testHistoryLimit() throws ExecutionException {
 		history.setLimit(contextA, 2);
 		assertTrue(history.getUndoHistory(contextA).length == 2);
@@ -196,6 +199,7 @@ public class OperationsAPITest extends TestCase {
 		assertTrue(history.getUndoHistory(contextB).length == 1);
 	}
 
+	@Test
 	public void testLocalHistoryLimits() throws ExecutionException {
 		history.setLimit(contextC, 2);
 		assertTrue(history.getUndoHistory(contextC).length == 2);
@@ -217,6 +221,7 @@ public class OperationsAPITest extends TestCase {
 		assertTrue(history.getUndoHistory(contextA).length == 0);
 	}
 
+	@Test
 	public void testOpenOperation() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
@@ -235,6 +240,7 @@ public class OperationsAPITest extends TestCase {
 		assertFalse("Operation should not have context", op.hasContext(contextB));
 	}
 
+	@Test
 	public void testExceptionDuringOpenOperation() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
@@ -280,6 +286,7 @@ public class OperationsAPITest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test94459() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
@@ -295,6 +302,7 @@ public class OperationsAPITest extends TestCase {
 		assertFalse("Operation should not have context", op.hasContext(contextA));
 	}
 
+	@Test
 	public void test94459AllContextsEmpty() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
@@ -316,6 +324,7 @@ public class OperationsAPITest extends TestCase {
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=123316
 	 * The expected behavior has changed.
 	 */
+	@Test
 	public void test94400() throws ExecutionException {
 		UnredoableTestOperation op = new UnredoableTestOperation("troubled op");
 		op.addContext(contextA);
@@ -330,6 +339,7 @@ public class OperationsAPITest extends TestCase {
 	 * Similar to the test above, except that we are going to change the
 	 * operation history limit and check that we disposed the operation properly.
 	 */
+	@Test
 	public void test123316() throws ExecutionException {
 		UnredoableTestOperation op = new UnredoableTestOperation("troubled op");
 		op.addContext(contextA);
@@ -340,6 +350,7 @@ public class OperationsAPITest extends TestCase {
 	}
 
 
+	@Test
 	public void testUnsuccessfulOpenOperation() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
@@ -359,6 +370,7 @@ public class OperationsAPITest extends TestCase {
 		assertTrue("ADDED should not have been sent while batching", add == 0);
 	}
 
+	@Test
 	public void testNotAddedOpenOperation() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
@@ -377,6 +389,7 @@ public class OperationsAPITest extends TestCase {
 		assertTrue("ADDED should not have occurred or be sent while batching", add == 0);
 	}
 
+	@Test
 	public void testMultipleOpenOperation() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
 		boolean failure = false;
@@ -401,6 +414,7 @@ public class OperationsAPITest extends TestCase {
 		assertSame("First operation should be closed", op, comp1);
 	}
 
+	@Test
 	public void testAbortedOpenOperation() throws ExecutionException {
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
 		history.openOperation(new TriggeredOperations(op1, history), IOperationHistory.EXECUTE);
@@ -416,6 +430,7 @@ public class OperationsAPITest extends TestCase {
 		assertTrue("Open operation should be flushed", op == op3);
 	}
 
+	@Test
 	public void testOperationApproval() throws ExecutionException {
 		history.addOperationApprover(new LinearUndoEnforcer());
 		// the first undo should be fine
@@ -456,6 +471,7 @@ public class OperationsAPITest extends TestCase {
 		assertFalse(history.undo(contextC, null, null).isOK());
 	}
 
+	@Test
 	public void testOperationFailure() throws ExecutionException {
 		history.addOperationApprover(new IOperationApprover() {
 
@@ -488,6 +504,7 @@ public class OperationsAPITest extends TestCase {
 		assertSame(history.getUndoOperation(contextB), op5);
 	}
 
+	@Test
 	public void testOperationRedo() throws ExecutionException {
 		history.undo(contextB, null, null);
 		history.undo(contextB, null, null);
@@ -506,6 +523,7 @@ public class OperationsAPITest extends TestCase {
 		assertTrue(history.canUndo(contextC));
 	}
 
+	@Test
 	public void testOperationUndo() throws ExecutionException {
 		history.undo(contextA, null, null);
 		history.undo(contextA, null, null);
@@ -519,11 +537,13 @@ public class OperationsAPITest extends TestCase {
 		assertTrue("Should be able to undo in c3", history.canUndo(contextC));
 	}
 
+	@Test
 	public void testHistoryFactory() {
 		IOperationHistory anotherHistory = OperationHistoryFactory.getOperationHistory();
 		assertNotNull(anotherHistory);
 	}
 
+	@Test
 	public void testOperationChanged() {
 		history.operationChanged(op1);
 		history.operationChanged(op2);
@@ -577,6 +597,7 @@ public class OperationsAPITest extends TestCase {
 		history.execute(op, null, null);
 	}
 
+	@Test
 	public void test87675_split() throws ExecutionException {
 		setup87675();
 		IUndoableOperation op;
@@ -612,6 +633,7 @@ public class OperationsAPITest extends TestCase {
 		assertTrue("Local edit C should be refactoring edit", op == localC);
 	}
 
+	@Test
 	public void test87675_undoredo() throws ExecutionException {
 		setup87675();
 		IUndoableOperation op;
@@ -659,6 +681,7 @@ public class OperationsAPITest extends TestCase {
 
 	}
 
+	@Test
 	public void testOperationApprover2() throws ExecutionException {
 		// clear out the history
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
@@ -691,6 +714,7 @@ public class OperationsAPITest extends TestCase {
 		assertTrue(preExec == 1 && postExec == 1);
 	}
 
+	@Test
 	public void testReplaceContext() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
@@ -721,6 +745,7 @@ public class OperationsAPITest extends TestCase {
 
 	// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=128117
 	// Test that context is removed from a triggered operations.
+	@Test
 	public void test128117simple() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
@@ -743,6 +768,7 @@ public class OperationsAPITest extends TestCase {
 
 	// See https://bugs.eclipse.org/bugs/show_bug.cgi?id=128117
 	// Test that context is removed from a triggered operations after recompute of contexts.
+	@Test
 	public void test128117complex() throws ExecutionException {
 		// clear out history which will also reset operation execution counts
 		history.dispose(IOperationHistory.GLOBAL_UNDO_CONTEXT, true, true, false);
@@ -765,6 +791,7 @@ public class OperationsAPITest extends TestCase {
 		assertFalse("Operation should have removed top level context", op.hasContext(context));
 	}
 
+	@Test
 	public void testStressTestAPI() throws ExecutionException {
 		history.setLimit(contextA, STRESS_NUM);
 		for (int i=0; i < STRESS_NUM; i++) {
@@ -785,6 +812,7 @@ public class OperationsAPITest extends TestCase {
 		}
 	}
 
+	@Test
 	public void test159305() throws ExecutionException {
 		final int [] approvalCount = new int[1];
 		IOperationApprover approver;

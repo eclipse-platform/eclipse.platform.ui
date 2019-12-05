@@ -33,7 +33,12 @@ import org.eclipse.ui.tests.harness.util.ActionUtil;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.views.navigator.ResourceNavigator;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class ResourceNavigatorTest extends UITestCase {
 	private IWorkbenchPage activePage;
 
@@ -51,10 +56,9 @@ public class ResourceNavigatorTest extends UITestCase {
 
 	/**
 	 * Constructor for ResourceNavigatorTest.
-	 * @param testName
 	 */
-	public ResourceNavigatorTest(String testName) {
-		super(testName);
+	public ResourceNavigatorTest() {
+		super(ResourceNavigatorTest.class.getSimpleName());
 	}
 
 	@Override
@@ -111,27 +115,29 @@ public class ResourceNavigatorTest extends UITestCase {
 	}
 
 	/*
-	 * This test should be moved to an interactive test suite as this
-	 * test causes a dialog to popup when the resource is deleted by
-	 * the delete action
-	 *
-	 public void testGlobalDeleteAction() throws Throwable {
-	 setupView();
-	 setupResources();
-
-	 // Select a file
-	 IStructuredSelection sel = new StructuredSelection(f1);
-	 ((ResourceNavigator) view).selectReveal(sel);
-
-	 // Now try the delete action
-	 ActionUtil.runActionUsingPath(this, workbenchWindow, IWorkbenchActionConstants.M_EDIT + '/' + IWorkbenchActionConstants.DELETE);
-
-	 // Make sure the resource was deleted
-	 assertTrue("Selected file was not deleted via Edit->Delete action.", p1.findMember(f1.getName()) == null);
-	 f1 = null;
-	 }
+	 * This test should be moved to an interactive test suite as this test causes a
+	 * dialog to popup when the resource is deleted by the delete action
 	 */
+	@Test
+	@Ignore
+	public void testGlobalDeleteAction() throws Throwable {
+		setupView();
+		setupResources();
 
+		// Select a file
+		IStructuredSelection sel = new StructuredSelection(f1);
+		((ResourceNavigator) view).selectReveal(sel);
+
+		// Now try the delete action
+		ActionUtil.runActionUsingPath(this, workbenchWindow,
+				IWorkbenchActionConstants.M_EDIT + '/' + IWorkbenchActionConstants.DELETE);
+
+		// Make sure the resource was deleted
+		assertTrue("Selected file was not deleted via Edit->Delete action.", p1.findMember(f1.getName()) == null);
+		f1 = null;
+	}
+
+	@Test
 	public void testSelectReveal() throws Throwable {
 		setupView();
 		setupResources();
@@ -162,6 +168,7 @@ public class ResourceNavigatorTest extends UITestCase {
 				resource2.equals(p2));
 	}
 
+	@Test
 	public void testWorkingSet() throws Throwable {
 		setupView();
 		setupResources();

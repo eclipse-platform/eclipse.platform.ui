@@ -21,12 +21,16 @@ import org.eclipse.core.commands.operations.ObjectUndoContext;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests the Operations Framework API.
  *
  * @since 3.1
  */
+@RunWith(JUnit4.class)
 public class WorkbenchOperationHistoryTests extends UITestCase {
 	IUndoContext context, contextA, contextB;
 
@@ -37,8 +41,8 @@ public class WorkbenchOperationHistoryTests extends UITestCase {
 	/**
 	 * @param testName
 	 */
-	public WorkbenchOperationHistoryTests(String name) {
-		super(name);
+	public WorkbenchOperationHistoryTests() {
+		super(WorkbenchOperationHistoryTests.class.getSimpleName());
 	}
 
 	@Override
@@ -77,11 +81,13 @@ public class WorkbenchOperationHistoryTests extends UITestCase {
 		super.doTearDown();
 	}
 
+	@Test
 	public void testWorkspaceAdapter() {
 		IUndoContext workspaceContext = ResourcesPlugin.getWorkspace().getAdapter(IUndoContext.class);
 		assertTrue("Should have context registered on workspace", workspaceContext == context);
 	}
 
+	@Test
 	public void testMatchingContext() {
 		IUndoContext newContext = new IUndoContext() {
 			@Override

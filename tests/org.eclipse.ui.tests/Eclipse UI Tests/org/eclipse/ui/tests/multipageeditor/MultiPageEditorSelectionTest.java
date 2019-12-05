@@ -31,15 +31,19 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.views.properties.PropertySheet;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class MultiPageEditorSelectionTest extends UITestCase {
 
 	private static final String MTEST01_FILE = "mtest01.multivar";
 
 	private static final String PROJECT_NAME = "MultiPageEditorSelction";
 
-	public MultiPageEditorSelectionTest(String testName) {
-		super(testName);
+	public MultiPageEditorSelectionTest() {
+		super(MultiPageEditorSelectionTest.class.getSimpleName());
 	}
 
 	@Override
@@ -52,6 +56,7 @@ public class MultiPageEditorSelectionTest extends UITestCase {
 		super.doTearDown();
 	}
 
+	@Test
 	public void testPostSelection() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
 		IEditorPart part = openEditor(window, MTEST01_FILE);
@@ -67,6 +72,7 @@ public class MultiPageEditorSelectionTest extends UITestCase {
 		assertTrue(called[0]);
 	}
 
+	@Test
 	public void testPropertiesView() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
 		IEditorPart part = openEditor(window, MTEST01_FILE);
@@ -84,6 +90,7 @@ public class MultiPageEditorSelectionTest extends UITestCase {
 		assertFalse(tree.getItemCount() == 0);
 	}
 
+	@Test
 	public void testPropertiesView2() throws Exception {
 		IWorkbenchWindow window = openTestWindow();
 		IEditorPart part = openEditor(window, MTEST01_FILE);

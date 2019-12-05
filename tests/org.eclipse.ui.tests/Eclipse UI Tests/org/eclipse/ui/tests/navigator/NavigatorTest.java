@@ -18,20 +18,25 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.ui.PartInitException;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests the Resource Navigator view.
  */
+@RunWith(JUnit4.class)
 public class NavigatorTest extends AbstractNavigatorTest {
 
-	public NavigatorTest(String testName) {
-		super(testName);
+	public NavigatorTest() {
+		super(NavigatorTest.class.getSimpleName());
 	}
 
 	/**
 	 * Tests that the Navigator is initially populated with
 	 * the correct elements from the workspace.
 	 */
+	@Test
 	public void testInitialPopulation() throws CoreException, PartInitException {
 		createTestFile();
 		showNav();
@@ -47,6 +52,7 @@ public class NavigatorTest extends AbstractNavigatorTest {
 	/**
 	 * Tests that the Navigator updates properly when a file is added to the workbench.
 	 */
+	@Test
 	public void testFileAddition() throws CoreException, PartInitException {
 		createTestFolder(); // create the project and folder before the Navigator is shown
 		showNav();

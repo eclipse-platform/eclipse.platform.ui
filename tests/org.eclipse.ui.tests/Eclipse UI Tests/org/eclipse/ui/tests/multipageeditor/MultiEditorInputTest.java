@@ -13,7 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.multipageeditor;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -21,27 +22,19 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiEditorInput;
+import org.junit.Test;
 
 /**
  * Tests the API of <code>MultiPageEditorInput</code>.
  *
  * @since 3.1
  */
-public class MultiEditorInputTest extends TestCase {
-
-	/**
-	 * Constructs a new instance of <code>MultiPageEditorInputTest</code>.
-	 *
-	 * @param name
-	 *            The name of the test to be run.
-	 */
-	public MultiEditorInputTest(String name) {
-		super(name);
-	}
+public class MultiEditorInputTest {
 
 	/**
 	 * Tests the equals and hashCode methods.
 	 */
+	@Test
 	public void testEqualsAndHash() {
 		String ea = "dummy.editor.id.A";
 		String eb = "dummy.editor.id.B";

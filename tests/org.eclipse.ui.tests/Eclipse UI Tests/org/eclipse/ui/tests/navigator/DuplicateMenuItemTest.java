@@ -22,22 +22,26 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.junit.Assert;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * The DuplicateMenuItemTest is a class for testing the popups
  * and window menus for the navigator to check for duplicate menu
  * entries.
  */
+@RunWith(JUnit4.class)
 public class DuplicateMenuItemTest extends AbstractNavigatorTest {
 
 	/**
 	 * Constructor for DuplicateMenuItemTest.
-	 * @param testName
 	 */
-	public DuplicateMenuItemTest(String testName) {
-		super(testName);
+	public DuplicateMenuItemTest() {
+		super(DuplicateMenuItemTest.class.getSimpleName());
 	}
 
+	@Test
 	public void testSelection() {
 
 		IStructuredSelection selection = new StructuredSelection(testProject);

@@ -23,11 +23,14 @@ import org.eclipse.ui.internal.ErrorEditorPart;
 import org.eclipse.ui.internal.part.NullEditorInput;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
+@RunWith(JUnit4.class)
 public class MultiPageEditorPartTest extends UITestCase {
 
-	public MultiPageEditorPartTest(String testName) {
-		super(testName);
+	public MultiPageEditorPartTest() {
+		super(MultiPageEditorPartTest.class.getSimpleName());
 	}
 
 	@Override
