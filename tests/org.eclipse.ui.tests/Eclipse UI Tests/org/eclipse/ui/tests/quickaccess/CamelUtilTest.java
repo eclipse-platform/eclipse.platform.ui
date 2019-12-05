@@ -13,12 +13,14 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.quickaccess;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.ui.internal.quickaccess.CamelUtil;
+import org.junit.Test;
 
-public class CamelUtilTest extends TestCase {
+public class CamelUtilTest {
 
+	@Test
 	public void testIsIgnoredForCamelCase() {
 		assertEquals(true, CamelUtil.isSeparatorForCamelCase(' '));
 		assertEquals(true, CamelUtil.isSeparatorForCamelCase('.'));
@@ -30,6 +32,7 @@ public class CamelUtilTest extends TestCase {
 		assertEquals(false, CamelUtil.isSeparatorForCamelCase('1'));
 	}
 
+	@Test
 	public void testGetCamelCase() {
 		assertEquals("", CamelUtil.getCamelCase(""));
 		assertEquals("a", CamelUtil.getCamelCase("a"));
@@ -41,6 +44,7 @@ public class CamelUtilTest extends TestCase {
 		assertEquals("sjree", CamelUtil.getCamelCase("SomeJRE - Example"));
 	}
 
+	@Test
 	public void testGetNextCamelIndex() {
 		assertEquals(-1, CamelUtil.getNextCamelIndex("", 0));
 		assertEquals(1, CamelUtil.getNextCamelIndex("aB", 0));
@@ -49,6 +53,7 @@ public class CamelUtilTest extends TestCase {
 		assertEquals(2, CamelUtil.getNextCamelIndex("a b ", 1));
 	}
 
+	@Test
 	public void testGetCamelCaseIndices() {
 		assertArrayEquals(new int[][] {}, CamelUtil.getCamelCaseIndices("some string", 0, 0));
 		assertArrayEquals(new int[][] {{0,0}}, CamelUtil.getCamelCaseIndices("some string", 0, 1));

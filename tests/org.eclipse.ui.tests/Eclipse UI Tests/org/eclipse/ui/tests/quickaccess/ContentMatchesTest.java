@@ -26,12 +26,16 @@ import org.eclipse.ui.internal.quickaccess.QuickAccessDialog;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.hamcrest.Matchers;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests the content of quick access for given requests
  *
  * @since 3.14
  */
+@RunWith(JUnit4.class)
 public class ContentMatchesTest extends UITestCase {
 
 	private static final int TIMEOUT = 3000;
@@ -41,8 +45,8 @@ public class ContentMatchesTest extends UITestCase {
 	/**
 	 * @param testName
 	 */
-	public ContentMatchesTest(String testName) {
-		super(testName);
+	public ContentMatchesTest() {
+		super(ContentMatchesTest.class.getSimpleName());
 	}
 
 	@Override
@@ -59,6 +63,7 @@ public class ContentMatchesTest extends UITestCase {
 		dialog.close();
 	}
 
+	@Test
 	public void testFindPreferenceByKeyword() throws Exception {
 		Text text = quickAccessContents.getFilterText();
 		text.setText("whitespace");
@@ -68,6 +73,7 @@ public class ContentMatchesTest extends UITestCase {
 		));
 	}
 
+	@Test
 	public void testRequestWithWhitespace() throws Exception {
 		Text text = quickAccessContents.getFilterText();
 		text.setText("text white");
@@ -77,6 +83,7 @@ public class ContentMatchesTest extends UITestCase {
 		));
 	}
 
+	@Test
 	public void testFindCommandByDescription() throws Exception {
 		Text text = quickAccessContents.getFilterText();
 		text.setText("rename ltk");

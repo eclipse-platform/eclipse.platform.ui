@@ -38,6 +38,10 @@ import org.eclipse.ui.views.properties.PropertySheet;
 import org.eclipse.ui.views.properties.PropertySheetEntry;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 import org.eclipse.ui.views.properties.TextPropertyDescriptor;
+import org.junit.Ignore;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  *  The class implements a test for the workbench's default
@@ -49,6 +53,7 @@ import org.eclipse.ui.views.properties.TextPropertyDescriptor;
  * properties.
  */
 
+@RunWith(JUnit4.class)
 public class PropertySheetAuto extends UITestCase {
 
 	/**
@@ -229,8 +234,8 @@ public class PropertySheetAuto extends UITestCase {
 	private static final String[] models = new String[] { "Thunderbird",
 			"Deville", "Viper", "320i", "Camry", "Ultima", "Prelude", "V70" };
 
-	public PropertySheetAuto(String name) {
-		super(name);
+	public PropertySheetAuto() {
+		super(PropertySheetAuto.class.getSimpleName());
 	}
 
 	/**
@@ -295,6 +300,7 @@ public class PropertySheetAuto extends UITestCase {
 	 * Supply selection events with a random car selection. All of these should go to
 	 * the properties view because it is visible.
 	 */
+	@Test
 	public void testInput() throws Throwable {
 		PropertySheetPerspectiveFactory.applyPerspective(activePage);
 		PropertySheet propView = (PropertySheet) createTestParts(activePage);
@@ -337,6 +343,8 @@ public class PropertySheetAuto extends UITestCase {
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=267425
 	 * </p>
 	 */
+	@Test
+	@Ignore
 	public void XtestInputIfHiddenBug69953() throws Throwable {
 		PropertySheetPerspectiveFactory2.applyPerspective(activePage);
 		PropertySheet propView = (PropertySheet) createTestParts(activePage);
@@ -373,6 +381,7 @@ public class PropertySheetAuto extends UITestCase {
 	 * visible again, it should show car selection from the (restored) original
 	 * source view.
 	 */
+	@Test
 	public void testInputIfHiddenByMaximizeBug509405() throws Throwable {
 		PropertySheetPerspectiveFactory3.applyPerspective(activePage);
 		IViewPart projectExplorer = activePage.showView(IPageLayout.ID_PROJECT_EXPLORER);
@@ -438,6 +447,7 @@ public class PropertySheetAuto extends UITestCase {
 	 * visible again, it should show car selection from the (still visible)
 	 * original source view.
 	 */
+	@Test
 	public void testInputIfHidden2Bug69953() throws Throwable {
 		PropertySheetPerspectiveFactory3.applyPerspective(activePage);
 		PropertySheet propView = (PropertySheet) createTestParts(activePage);
@@ -498,6 +508,7 @@ public class PropertySheetAuto extends UITestCase {
 	 * became visible again, it should show car selection from the (still
 	 * visible) original source view.
 	 */
+	@Test
 	public void testInputIfHiddenAndSelectionNotChangesBug485154() throws Throwable {
 		PropertySheetPerspectiveFactory3.applyPerspective(activePage);
 		PropertySheet propView = (PropertySheet) createTestParts(activePage);
@@ -598,6 +609,7 @@ public class PropertySheetAuto extends UITestCase {
 	 * if it's saveable.
 	 * See  Bug 125386 [PropertiesView] Properties view should delegate Save back to source part
 	 */
+	@Test
 	public void testSaveableRetargeting() throws Throwable {
 		PropertySheetPerspectiveFactory.applyPerspective(activePage);
 		IWorkbenchPart propView = createTestParts(activePage);

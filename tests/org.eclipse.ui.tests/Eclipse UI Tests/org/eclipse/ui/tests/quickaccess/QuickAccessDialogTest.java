@@ -46,11 +46,15 @@ import org.eclipse.ui.internal.quickaccess.QuickAccessDialog;
 import org.eclipse.ui.internal.quickaccess.QuickAccessMessages;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests the quick access UI
  * @since 3.4
  */
+@RunWith(JUnit4.class)
 public class QuickAccessDialogTest extends UITestCase {
 
 	private static final int TIMEOUT = 3000;
@@ -61,11 +65,8 @@ public class QuickAccessDialogTest extends UITestCase {
 	private IDialogSettings dialogSettings;
 	private IWorkbenchWindow activeWorkbenchWindow;
 
-	/**
-	 * @param testName
-	 */
-	public QuickAccessDialogTest(String testName) {
-		super(testName);
+	public QuickAccessDialogTest() {
+		super(QuickAccessDialogTest.class.getSimpleName());
 	}
 
 	@Override
@@ -94,6 +95,7 @@ public class QuickAccessDialogTest extends UITestCase {
 	 * Tests that the shell opens when the command is activated
 	 * @throws Exception
 	 */
+	@Test
 	public void testOpenByCommand() throws Exception {
 		IHandlerService handlerService = getWorkbench().getActiveWorkbenchWindow()
 				.getService(IHandlerService.class);
@@ -109,6 +111,7 @@ public class QuickAccessDialogTest extends UITestCase {
 	/**
 	 * Test that changing the filter text works correctly
 	 */
+	@Test
 	public void testTextFilter(){
 		QuickAccessDialog dialog = new QuickAccessDialog(activeWorkbenchWindow, null) {
 			@Override
@@ -138,6 +141,7 @@ public class QuickAccessDialogTest extends UITestCase {
 		assertTrue("Too many quick access items for size of table", newCount < MAXIMUM_NUMBER_OF_ELEMENTS);
 	}
 
+	@Test
 	public void testContributedElement() {
 		QuickAccessDialog dialog = new QuickAccessDialog(activeWorkbenchWindow, null) {
 			@Override
@@ -157,6 +161,7 @@ public class QuickAccessDialogTest extends UITestCase {
 		);
 	}
 
+	@Test
 	public void testLongRunningComputerDoesntFreezeUI() throws InterruptedException {
 		QuickAccessDialog dialog = new QuickAccessDialog(activeWorkbenchWindow, null) {
 			@Override
@@ -203,6 +208,7 @@ public class QuickAccessDialogTest extends UITestCase {
 	 * Tests that activating the handler again toggles the show all setting and that the setting changes the results
 	 * Also tests that closing and reopening the shell resets show all
 	 */
+	@Test
 	public void testShowAll() throws Exception {
 		// Open the shell
 		QuickAccessDialog dialog = new QuickAccessDialog(activeWorkbenchWindow, null) {
@@ -259,6 +265,7 @@ public class QuickAccessDialogTest extends UITestCase {
 				newTable.getItemCount() < allCount);
 	}
 
+	@Test
 	public void testPreviousChoicesAvailable() {
 		// add one selection to history
 		QuickAccessDialog dialog = new QuickAccessDialog(activeWorkbenchWindow, null) {
@@ -305,6 +312,7 @@ public class QuickAccessDialogTest extends UITestCase {
 		processEventsUntil(() -> enterPressed.widget.isDisposed(), 500);
 	}
 
+	@Test
 	public void testPreviousChoicesAvailableForExtension() {
 		// add one selection to history
 		QuickAccessDialog dialog = new QuickAccessDialog(activeWorkbenchWindow, null) {
@@ -336,6 +344,7 @@ public class QuickAccessDialogTest extends UITestCase {
 								.anyMatch(TestQuickAccessComputer::isContributedItem)));
 	}
 
+	@Test
 	public void testPreviousChoicesAvailableForIncrementalExtension() {
 		QuickAccessDialog dialog = new QuickAccessDialog(activeWorkbenchWindow, null) {
 			@Override
@@ -370,6 +379,7 @@ public class QuickAccessDialogTest extends UITestCase {
 				));
 	}
 
+	@Test
 	public void testPrefixMatchHavePriority() {
 		QuickAccessDialog dialog = new QuickAccessDialog(activeWorkbenchWindow, null) {
 			@Override
@@ -386,6 +396,7 @@ public class QuickAccessDialogTest extends UITestCase {
 		assertTrue("Non-prefix match first", table.getItem(0).getText(1).toLowerCase().startsWith("p"));
 	}
 
+	@Test
 	public void testCommandEnableContext() throws Exception {
 		ICommandService commandService = PlatformUI.getWorkbench().getService(ICommandService.class);
 		Command command = commandService.getCommand("org.eclipse.ui.window.splitEditor");

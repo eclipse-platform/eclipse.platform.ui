@@ -20,15 +20,19 @@ import org.eclipse.ui.part.IShowInTarget;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.views.properties.PropertySheet;
 import org.eclipse.ui.views.properties.PropertyShowInContext;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.4
  *
  */
+@RunWith(JUnit4.class)
 public class ShowInPropertySheetTest extends AbstractPropertySheetTest {
 
-	public ShowInPropertySheetTest(String testName) {
-		super(testName);
+	public ShowInPropertySheetTest() {
+		super(ShowInPropertySheetTest.class.getSimpleName());
 	}
 
 	@Override
@@ -47,6 +51,7 @@ public class ShowInPropertySheetTest extends AbstractPropertySheetTest {
 	/**
 	 * Tries to get the IShowInTarget adapter
 	 */
+	@Test
 	public void testGetIShowInTargetAdapter() {
 		Object adapter = propertySheet.getAdapter(IShowInTarget.class);
 		assertNotNull("No IShowInTarget adapter returned", adapter);
@@ -56,6 +61,7 @@ public class ShowInPropertySheetTest extends AbstractPropertySheetTest {
 	/**
 	 * Tests ShowIn PropertySheet with various inputs
 	 */
+	@Test
 	public void testShowInPropertySheet() {
 		IShowInTarget showInTarget = propertySheet
 				.getAdapter(IShowInTarget.class);
@@ -67,6 +73,7 @@ public class ShowInPropertySheetTest extends AbstractPropertySheetTest {
 	/**
 	 * Tests ShowIn PropertySheet with various inputs
 	 */
+	@Test
 	public void testShowInPropertySheetWithNull() {
 		IShowInTarget showInTarget = propertySheet
 				.getAdapter(IShowInTarget.class);
@@ -76,6 +83,7 @@ public class ShowInPropertySheetTest extends AbstractPropertySheetTest {
 	/**
 	 * Tests ShowIn PropertySheet with various inputs
 	 */
+	@Test
 	public void testShowInPropertySheetWithNullContext() {
 		IShowInTarget showInTarget = propertySheet
 				.getAdapter(IShowInTarget.class);
@@ -85,6 +93,7 @@ public class ShowInPropertySheetTest extends AbstractPropertySheetTest {
 	/**
 	 * Tests ShowIn PropertySheet with various inputs
 	 */
+	@Test
 	public void testShowInPropertySheetWithNullPart() {
 		IShowInTarget showInTarget = propertySheet
 				.getAdapter(IShowInTarget.class);

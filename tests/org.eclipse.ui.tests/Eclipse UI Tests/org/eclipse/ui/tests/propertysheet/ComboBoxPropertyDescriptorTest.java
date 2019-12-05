@@ -13,19 +13,23 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.propertysheet;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertSame;
 
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.ui.views.properties.ComboBoxLabelProvider;
 import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test for new functionality pertaining to Bug 21013.
  *
  * @since 3.0
  */
-public class ComboBoxPropertyDescriptorTest extends TestCase {
+public class ComboBoxPropertyDescriptorTest {
 
 	private String ID = "ID"; //$NON-NLS-1$
 
@@ -35,20 +39,19 @@ public class ComboBoxPropertyDescriptorTest extends TestCase {
 
 	private ComboBoxPropertyDescriptor descriptor;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		descriptor = new ComboBoxPropertyDescriptor(ID, NAME, values);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
+	@After
+	public void tearDown() throws Exception {
 	}
 
 	/**
 	 * Tests the case where the user does not set an ILabelProvider.
 	 */
+	@Test
 	public void testGetDefaultLabelProvider() {
 		ILabelProvider provider = descriptor.getLabelProvider();
 		assertEquals("Default label provider is of the wrong type", //$NON-NLS-1$
@@ -82,6 +85,7 @@ public class ComboBoxPropertyDescriptorTest extends TestCase {
 	/**
 	 * Tests the case where the user sets their own ILabelProvider.
 	 */
+	@Test
 	public void testSetGetLabelProvider() {
 		ILabelProvider provider = new LabelProvider();
 		descriptor.setLabelProvider(provider);

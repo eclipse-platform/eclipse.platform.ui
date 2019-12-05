@@ -50,11 +50,15 @@ import org.eclipse.ui.views.properties.PropertySheet;
 import org.eclipse.ui.views.properties.PropertySheetEntry;
 import org.eclipse.ui.views.properties.PropertySheetPage;
 import org.eclipse.ui.views.properties.PropertyShowInContext;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 import org.osgi.framework.Bundle;
 
 /**
  * @since 3.4
  */
+@RunWith(JUnit4.class)
 public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 
 	/**
@@ -91,8 +95,8 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 
 	private IProject project;
 
-	public MultiInstancePropertySheetTest(String testName) {
-		super(testName);
+	public MultiInstancePropertySheetTest() {
+		super(MultiInstancePropertySheetTest.class.getSimpleName());
 	}
 
 	@Override
@@ -140,6 +144,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	 *
 	 * @throws PartInitException
 	 */
+	@Test
 	public void testDefaultPage() throws PartInitException {
 		PropertySheet propertySheet = (PropertySheet) activePage
 				.showView(IPageLayout.ID_PROP_SHEET);
@@ -152,6 +157,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	 *
 	 * @throws PartInitException
 	 */
+	@Test
 	public void testDefaultPageAdapter() throws PartInitException {
 		PropertySheet propertySheet = (PropertySheet) activePage
 				.showView(IPageLayout.ID_PROP_SHEET);
@@ -163,6 +169,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	 *
 	 * @throws PartInitException
 	 */
+	@Test
 	public void testAllowsMultiple() throws PartInitException {
 		activePage.showView(IPageLayout.ID_PROP_SHEET);
 		try {
@@ -178,6 +185,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	 *
 	 * @throws Throwable
 	 */
+	@Test
 	public void testFollowsSelection() throws Throwable {
 		// selection before selection changes
 		TestPropertySheetPage firstPage = (TestPropertySheetPage) propertySheet
@@ -199,6 +207,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	 *
 	 * @throws Throwable
 	 */
+	@Test
 	public void testFollowsParts() throws Throwable {
 		// selection before selection changes
 		TestPropertySheetPage firstPage = (TestPropertySheetPage) propertySheet
@@ -227,6 +236,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	 *
 	 * @throws Throwable
 	 */
+	@Test
 	public void testPinning() throws Throwable {
 		// execute the pin action on the property sheet
 		IAction action = getPinPropertySheetAction(propertySheet);
@@ -264,6 +274,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	 *
 	 * @throws Throwable
 	 */
+	@Test
 	public void testUnpinningWhenPinnedPartIsClosed() throws Throwable {
 		// execute the pin action on the property sheet
 		IAction action = getPinPropertySheetAction(propertySheet);
@@ -284,6 +295,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	 * @throws NotDefinedException
 	 * @throws ExecutionException
 	 */
+	@Test
 	public void testNewPropertySheet() throws Exception {
 		assertEquals(1, countPropertySheetViews());
 		Platform.addLogListener(logListener);
@@ -298,6 +310,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	 * Test if the PropertySheet's new handler creates a new instance without
 	 * errors if the original view has no selection
 	 */
+	@Test
 	public void testNewPropertySheetNoSelection() throws Exception {
 		activePage.hideView(selectionProviderView);
 		propertySheet = (PropertySheet) activePage.showView(IPageLayout.ID_PROP_SHEET);
@@ -340,6 +353,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	 * @throws NotDefinedException
 	 * @throws ExecutionException
 	 */
+	@Test
 	public void testParentIsPinned() throws Exception {
 		executeNewPropertySheetHandler();
 
@@ -352,6 +366,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	 *
 	 * @throws Throwable
 	 */
+	@Test
 	public void testPinningWithMultipleInstances() throws Throwable {
 		executeNewPropertySheetHandler();
 		testPinning();
@@ -364,6 +379,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testBug268676HidingPinnedTargetPart() throws CoreException {
 		IPerspectiveDescriptor desc = activePage.getWorkbenchWindow().getWorkbench()
 				.getPerspectiveRegistry().findPerspectiveWithId(IDE.RESOURCE_PERSPECTIVE_ID);
@@ -505,6 +521,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	 *
 	 * @see #testBug278514(String, boolean)
 	 */
+	@Test
 	public void testBug278514NormalProperties() throws Exception {
 		testBug278514(IPageLayout.ID_RES_NAV, true);
 	}
@@ -517,10 +534,12 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	 *
 	 * @see #testBug278514(String, boolean)
 	 */
+	@Test
 	public void testBug278514TabbedProperties() throws Exception {
 		testBug278514(IPageLayout.ID_PROJECT_EXPLORER, false);
 	}
 
+	@Test
 	public void testPageDispose() throws Exception {
 		// close all perspectives
 		activePage.closeAllPerspectives(false, false);
@@ -555,6 +574,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	 *
 	 * @see #testBug425525(String, boolean)
 	 */
+	@Test
 	public void testInitialSelectionWithNormalProperties() throws Exception {
 		testBug425525(IPageLayout.ID_RES_NAV, true);
 	}
@@ -567,6 +587,7 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	 *
 	 * @see #testBug425525(String, boolean)
 	 */
+	@Test
 	public void testInitialSelectionWithTabbedProperties() throws Exception {
 		testBug425525(IPageLayout.ID_PROJECT_EXPLORER, false);
 	}

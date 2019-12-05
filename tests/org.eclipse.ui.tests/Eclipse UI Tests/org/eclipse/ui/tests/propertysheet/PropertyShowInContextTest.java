@@ -21,21 +21,26 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.part.ShowInContext;
 import org.eclipse.ui.views.properties.PropertyShowInContext;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * @since 3.5
  *
  */
+@RunWith(JUnit4.class)
 public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 
-	public PropertyShowInContextTest(String testName) {
-		super(testName);
+	public PropertyShowInContextTest() {
+		super(PropertyShowInContextTest.class.getSimpleName());
 	}
 
 	/**
 	 * Test method for
 	 * {@link org.eclipse.ui.views.properties.PropertyShowInContext#hashCode()}.
 	 */
+	@Test
 	public final void testHashCode() {
 		ShowInContext psc1 = new PropertyShowInContext(null, (ISelection) null);
 		ShowInContext psc2 = new PropertyShowInContext(null, (ISelection) null);
@@ -46,6 +51,7 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	 * Test method for
 	 * {@link org.eclipse.ui.views.properties.PropertyShowInContext#hashCode()}.
 	 */
+	@Test
 	public final void testHashCode2() {
 		ShowInContext psc1 = new PropertyShowInContext(null,
 				StructuredSelection.EMPTY);
@@ -60,6 +66,7 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	 *
 	 * @throws PartInitException
 	 */
+	@Test
 	public final void testHashCode3() throws PartInitException {
 		IViewPart showView = activePage.showView(IPageLayout.ID_PROP_SHEET);
 		ShowInContext psc1 = new PropertyShowInContext(showView,
@@ -77,6 +84,7 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	 *
 	 * @throws PartInitException
 	 */
+	@Test
 	public final void testHashCode4() throws PartInitException {
 		IViewPart showView = activePage.showView(IPageLayout.ID_PROP_SHEET);
 		ShowInContext psc1 = new PropertyShowInContext(showView,
@@ -95,6 +103,7 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	 *
 	 * @throws PartInitException
 	 */
+	@Test
 	public final void testHashCode5() throws PartInitException {
 		IViewPart showView = activePage.showView(IPageLayout.ID_PROP_SHEET);
 		ShowInContext showInContext = new ShowInContext(null, null);
@@ -109,6 +118,7 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	 *
 	 * @throws PartInitException
 	 */
+	@Test
 	public final void testHashCode6() throws PartInitException {
 		IViewPart showView = activePage.showView(IPageLayout.ID_PROP_SHEET);
 		ShowInContext psc1 = new PropertyShowInContext(showView,
@@ -124,6 +134,7 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	 *
 	 * @throws PartInitException
 	 */
+	@Test
 	public final void testHashCode7() throws PartInitException {
 		IViewPart showView = activePage.showView(IPageLayout.ID_PROP_SHEET);
 		ShowInContext psc1 = new PropertyShowInContext(showView,
@@ -138,6 +149,7 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	 * {@link org.eclipse.ui.views.properties.PropertyShowInContext#equals(Object)}
 	 * .
 	 */
+	@Test
 	public final void testEquals() {
 		ShowInContext psc1 = new PropertyShowInContext(null,
 				StructuredSelection.EMPTY);
@@ -153,6 +165,7 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	 * {@link org.eclipse.ui.views.properties.PropertyShowInContext#equals(Object)}
 	 * .
 	 */
+	@Test
 	public final void testEquals2() {
 		ShowInContext psc1 = new PropertyShowInContext(null,
 				StructuredSelection.EMPTY);
@@ -168,6 +181,7 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	 *
 	 * @throws PartInitException
 	 */
+	@Test
 	public final void testEquals3() throws PartInitException {
 		IViewPart showView = activePage.showView(IPageLayout.ID_PROP_SHEET);
 		ShowInContext psc1 = new PropertyShowInContext(showView,
@@ -186,6 +200,7 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	 *
 	 * @throws PartInitException
 	 */
+	@Test
 	public final void testEquals4() throws PartInitException {
 		IViewPart showView = activePage.showView(IPageLayout.ID_PROP_SHEET);
 		ShowInContext psc1 = new PropertyShowInContext(showView,
@@ -205,6 +220,7 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	 *
 	 * @throws PartInitException
 	 */
+	@Test
 	public final void testEquals5() throws PartInitException {
 		IViewPart showView = activePage.showView(IPageLayout.ID_PROP_SHEET);
 		ShowInContext showInContext = new ShowInContext(null, null);
@@ -220,6 +236,7 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	 *
 	 * @throws PartInitException
 	 */
+	@Test
 	public final void testEqualsNullInput() throws PartInitException {
 		IViewPart showView = activePage.showView(IPageLayout.ID_PROP_SHEET);
 		ShowInContext psc1 = new PropertyShowInContext(showView,
@@ -237,6 +254,7 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	 *
 	 * @throws PartInitException
 	 */
+	@Test
 	public final void testEqualsNullInputBoth() throws PartInitException {
 		IViewPart showView = activePage.showView(IPageLayout.ID_PROP_SHEET);
 		ShowInContext psc1 = new PropertyShowInContext(showView,
@@ -254,6 +272,7 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	 *
 	 * @throws PartInitException
 	 */
+	@Test
 	public final void testEqualsNonNullInput() throws PartInitException {
 		IViewPart showView = activePage.showView(IPageLayout.ID_PROP_SHEET);
 		ShowInContext psc1 = new PropertyShowInContext(showView,
@@ -271,6 +290,7 @@ public class PropertyShowInContextTest extends AbstractPropertySheetTest {
 	 *
 	 * @throws PartInitException
 	 */
+	@Test
 	public final void testEquals7() throws PartInitException {
 		IViewPart showView = activePage.showView(IPageLayout.ID_PROP_SHEET);
 		ShowInContext psc1 = new PropertyShowInContext(showView,
