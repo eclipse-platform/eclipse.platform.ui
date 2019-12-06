@@ -100,6 +100,9 @@ import org.eclipse.swt.widgets.Text;
 public abstract class FilteredContributionDialog extends SaveDialogBoundsSettingsDialog {
 
 	private static final int MAX_RESULTS = 500;
+	private static final int DIALOG_MINIMUM_WIDTH = 600;
+	private static final int DIALOG_MINIMUM_HEIGHT = 350;
+
 	private Image contributionTypeImage;
 	private TableViewer viewer;
 	private static final String PREF_SEARCHSCOPE = "searchScope"; //$NON-NLS-1$
@@ -245,6 +248,12 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 
 	public void setStatus(final String message) {
 		getShell().getDisplay().asyncExec(() -> lblStatus.setText(message));
+	}
+
+	@Override
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
+		newShell.setMinimumSize(DIALOG_MINIMUM_WIDTH, DIALOG_MINIMUM_HEIGHT);
 	}
 
 	@Override
@@ -618,11 +627,6 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 		filterLocations = null;
 		refreshSearch();
 		updateUiState();
-	}
-
-	@Override
-	protected boolean isResizable() {
-		return true;
 	}
 
 	public List<String> getFilterPackages() {

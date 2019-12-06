@@ -83,11 +83,6 @@ SaveDialogBoundsSettingsDialog {
 
 	protected abstract String getListItemInformation(ElementClass listItem);
 
-	@Override
-	protected boolean isResizable() {
-		return true;
-	}
-
 	protected IBaseLabelProvider getLabelProvider() {
 		return new DelegatingStyledCellLabelProvider(new DefaultStyledLabelProvider());
 	}

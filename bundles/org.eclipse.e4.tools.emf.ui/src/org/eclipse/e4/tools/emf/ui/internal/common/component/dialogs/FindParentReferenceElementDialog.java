@@ -38,7 +38,6 @@ import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.edit.command.SetCommand;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
-import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.fieldassist.AutoCompleteField;
 import org.eclipse.jface.fieldassist.ComboContentAdapter;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -74,7 +73,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
 
-public class FindParentReferenceElementDialog extends TitleAreaDialog {
+public class FindParentReferenceElementDialog extends SaveDialogBoundsSettingsDialog {
 
 	private static final String XPATH_URI = "xpath:/"; //$NON-NLS-1$
 
@@ -110,11 +109,6 @@ public class FindParentReferenceElementDialog extends TitleAreaDialog {
 			return (ClassContributionCollector) context.getService(ref);
 		}
 		return null;
-	}
-
-	@Override
-	protected boolean isResizable() {
-		return true;
 	}
 
 	@Override

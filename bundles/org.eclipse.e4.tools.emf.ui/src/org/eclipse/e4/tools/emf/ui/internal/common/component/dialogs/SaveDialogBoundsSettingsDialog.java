@@ -14,9 +14,8 @@
  *******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs;
 
-import org.eclipse.e4.tools.emf.ui.common.Plugin;
-
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.e4.tools.emf.ui.common.Plugin;
 import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
@@ -30,6 +29,8 @@ public abstract class SaveDialogBoundsSettingsDialog extends TitleAreaDialog {
 	private static final String DIALOG_ORIGIN_Y = "DIALOG_Y_ORIGIN"; //$NON-NLS-1$
 	private static final String DIALOG_WIDTH = "DIALOG_WIDTH"; //$NON-NLS-1$
 	private static final String DIALOG_HEIGHT = "DIALOG_HEIGHT"; //$NON-NLS-1$
+	private static final int DIALOG_MINIMUM_HEIGHT = 300;
+	private static final int DIALOG_MINIMUM_WIDTH = 400;
 
 	private IDialogSettings dialogSettings = new DialogSettings(Plugin.ID);
 
@@ -54,6 +55,17 @@ public abstract class SaveDialogBoundsSettingsDialog extends TitleAreaDialog {
 		} catch (BackingStoreException e) {
 			e.printStackTrace();
 		}
+	}
+
+	@Override
+	protected void configureShell(Shell newShell) {
+		super.configureShell(newShell);
+		newShell.setMinimumSize(DIALOG_MINIMUM_WIDTH, DIALOG_MINIMUM_HEIGHT);
+	}
+
+	@Override
+	protected boolean isResizable() {
+		return true;
 	}
 
 	@Override

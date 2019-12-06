@@ -228,11 +228,6 @@ public abstract class AbstractIconDialogWithHardcodedScope extends SaveDialogBou
 	}
 
 	@Override
-	protected boolean isResizable() {
-		return true;
-	}
-
-	@Override
 	protected void okPressed() {
 		value = null;
 		IStructuredSelection s = (IStructuredSelection) viewer.getSelection();

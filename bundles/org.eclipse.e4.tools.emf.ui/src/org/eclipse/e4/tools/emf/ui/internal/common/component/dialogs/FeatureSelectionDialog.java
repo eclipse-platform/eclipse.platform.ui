@@ -76,11 +76,6 @@ public class FeatureSelectionDialog extends SaveDialogBoundsSettingsDialog {
 	}
 
 	@Override
-	protected boolean isResizable() {
-		return true;
-	}
-
-	@Override
 	protected Control createDialogArea(Composite parent) {
 		getShell().setText(Messages.FeatureSelectionDialog_ShellTitle);
 		setTitle(Messages.FeatureSelectionDialog_DialogTitle);
