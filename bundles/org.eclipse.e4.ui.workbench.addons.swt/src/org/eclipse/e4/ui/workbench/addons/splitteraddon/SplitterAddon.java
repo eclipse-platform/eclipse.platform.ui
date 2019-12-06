@@ -18,6 +18,7 @@ import java.util.List;
 import javax.inject.Inject;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MCompositePart;
@@ -34,11 +35,17 @@ import org.osgi.service.event.Event;
  * an MPart and takes the appropriate steps to split / unsplit the part
  */
 public class SplitterAddon {
+
+	private static final String DISABLE_SPLITTER_ADDON = "DisableSplitterAddon";
+
 	@Inject
 	EModelService ms;
 
 	@Inject
 	EPartService ps;
+
+	@Inject
+	MApplication app;
 
 	/**
 	 * Handles changes in tags
@@ -49,6 +56,11 @@ public class SplitterAddon {
 	@Optional
 	private void subscribeTopicTagsChanged(
 			@UIEventTopic(UIEvents.ApplicationElement.TOPIC_TAGS) Event event) {
+
+		if (app.getTags().contains(DISABLE_SPLITTER_ADDON)) {
+			return;
+		}
+
 		Object changedObj = event.getProperty(EventTags.ELEMENT);
 
 		if (!(changedObj instanceof MPart)) {

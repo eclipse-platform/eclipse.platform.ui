@@ -18,6 +18,7 @@ package org.eclipse.e4.ui.workbench.addons.dndaddon;
 import javax.inject.Inject;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.workbench.UIEvents;
@@ -31,9 +32,19 @@ import org.osgi.service.event.Event;
  */
 public class DnDAddon {
 
+	private static final String DISABLE_DND_ADDON = "DisableDnDAddon";
+
+	@Inject
+	MApplication app;
+
 	@Inject
 	@Optional
 	void subscribeTopicWidget(@UIEventTopic(UIEvents.UIElement.TOPIC_WIDGET) Event event) {
+
+		if (app.getTags().contains(DISABLE_DND_ADDON)) {
+			return;
+		}
+
 		MUIElement changedElement = (MUIElement) event.getProperty(EventTags.ELEMENT);
 		if (!(changedElement instanceof MWindow)) {
 			return;

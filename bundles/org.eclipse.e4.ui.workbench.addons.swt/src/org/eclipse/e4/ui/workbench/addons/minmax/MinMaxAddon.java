@@ -30,6 +30,7 @@ import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.AnimationEngine;
 import org.eclipse.e4.ui.internal.workbench.swt.FaderAnimationFeedback;
 import org.eclipse.e4.ui.model.application.MAddon;
+import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.SideValue;
 import org.eclipse.e4.ui.model.application.ui.advanced.MArea;
@@ -63,6 +64,8 @@ import org.osgi.service.event.Event;
  */
 public class MinMaxAddon {
 
+	private static final String DISABLE_MINMAX_ADDON = "DisableMinMaxAddon";
+
 	private static final String MIN_MAXIMIZEABLE_CHILDREN_AREA_TAG = IPresentationEngine.MIN_MAXIMIZEABLE_CHILDREN_AREA_TAG;
 
 	/**
@@ -92,6 +95,9 @@ public class MinMaxAddon {
 
 	@Inject
 	MAddon minMaxAddon;
+
+	@Inject
+	MApplication app;
 
 	private CTabFolder2Adapter CTFButtonListener = new CTabFolder2Adapter() {
 		private MUIElement getElementToChange(CTabFolderEvent event) {
@@ -218,6 +224,11 @@ public class MinMaxAddon {
 	@Inject
 	@Optional
 	private void subscribeTopicWidget(@UIEventTopic(UIEvents.UIElement.TOPIC_WIDGET) Event event) {
+
+		if (app.getTags().contains(DISABLE_MINMAX_ADDON)) {
+			return;
+		}
+
 		final MUIElement changedElement = (MUIElement) event.getProperty(EventTags.ELEMENT);
 		if (!(changedElement instanceof MPartStack) && !(changedElement instanceof MArea)) {
 			return;
@@ -258,6 +269,11 @@ public class MinMaxAddon {
 	@Optional
 	private void subscribeTopicChildren(
 			@UIEventTopic(UIEvents.ElementContainer.TOPIC_CHILDREN) Event event) {
+
+		if (app.getTags().contains(DISABLE_MINMAX_ADDON)) {
+			return;
+		}
+
 		final MUIElement changedElement = (MUIElement) event.getProperty(EventTags.ELEMENT);
 		MWindow window = modelService.getTopLevelWindowFor(changedElement);
 
@@ -304,6 +320,11 @@ public class MinMaxAddon {
 	@Optional
 	private void subscribeTopicSelectedElement(
 			@UIEventTopic(UIEvents.ElementContainer.TOPIC_SELECTEDELEMENT) Event event) {
+
+		if (app.getTags().contains(DISABLE_MINMAX_ADDON)) {
+			return;
+		}
+
 		final MUIElement changedElement = (MUIElement) event.getProperty(EventTags.ELEMENT);
 		if (!(changedElement instanceof MPerspectiveStack)) {
 			return;
@@ -374,6 +395,10 @@ public class MinMaxAddon {
 			return;
 		}
 
+		if (app.getTags().contains(DISABLE_MINMAX_ADDON)) {
+			return;
+		}
+
 		Object changedObj = event.getProperty(EventTags.ELEMENT);
 
 		if (!(changedObj instanceof MUIElement)) {
@@ -411,6 +436,11 @@ public class MinMaxAddon {
 	@Optional
 	private void subscribeTopicElementId(
 			@UIEventTopic(UIEvents.ApplicationElement.TOPIC_ELEMENTID) Event event) {
+
+		if (app.getTags().contains(DISABLE_MINMAX_ADDON)) {
+			return;
+		}
+
 		Object changedObject = event.getProperty(EventTags.ELEMENT);
 
 		// Only care about MPerspective id changes
@@ -452,6 +482,11 @@ public class MinMaxAddon {
 	@Optional
 	private void subscribeTopicPerspSaved(
 			@UIEventTopic(UIEvents.UILifeCycle.PERSPECTIVE_SAVED) Event event) {
+
+		if (app.getTags().contains(DISABLE_MINMAX_ADDON)) {
+			return;
+		}
+
 		final MPerspective savedPersp = (MPerspective) event.getProperty(EventTags.ELEMENT);
 		String cache = getTrimCache(savedPersp);
 		minMaxAddon.getPersistedState().put(savedPersp.getElementId(), cache);
@@ -499,6 +534,11 @@ public class MinMaxAddon {
 	@Optional
 	private void subscribeTopicPerspReset(
 			@UIEventTopic(UIEvents.UILifeCycle.PERSPECTIVE_RESET) Event event) {
+
+		if (app.getTags().contains(DISABLE_MINMAX_ADDON)) {
+			return;
+		}
+
 		final MPerspective resetPersp = (MPerspective) event.getProperty(EventTags.ELEMENT);
 
 		// Find any minimized stacks and show their trim
@@ -518,6 +558,11 @@ public class MinMaxAddon {
 	@Optional
 	private void subscribeTopicPerspOpened(
 			@UIEventTopic(UIEvents.UILifeCycle.PERSPECTIVE_OPENED) Event event) {
+
+		if (app.getTags().contains(DISABLE_MINMAX_ADDON)) {
+			return;
+		}
+
 		final MPerspective openedPersp = (MPerspective) event.getProperty(EventTags.ELEMENT);
 
 		// Find any minimized stacks and show their trim
