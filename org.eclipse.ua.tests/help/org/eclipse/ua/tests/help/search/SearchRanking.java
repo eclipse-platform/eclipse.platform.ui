@@ -31,7 +31,7 @@ import org.junit.Test;
 public class SearchRanking {
 
 	public SearchHit[] findHits(String searchWord) {
-		ISearchQuery query = new SearchQuery(searchWord, false, new ArrayList<String>(), Platform.getNL());
+		ISearchQuery query = new SearchQuery(searchWord, false, new ArrayList<>(), Platform.getNL());
 		SearchResults collector = new SearchResults(null, 10, Platform.getNL());
 		BaseHelpSystem.getSearchManager().search(query, collector, new NullProgressMonitor());
 		return collector.getSearchHits();

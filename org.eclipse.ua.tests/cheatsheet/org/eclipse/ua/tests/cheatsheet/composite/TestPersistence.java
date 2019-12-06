@@ -102,7 +102,7 @@ public class TestPersistence {
 		helper.saveCompositeState(model, null);
 
 		createCompositeCheatSheet();
-		model.loadState(new Hashtable<String, String>());
+		model.loadState(new Hashtable<>());
 		assertEquals(ICompositeCheatSheetTask.IN_PROGRESS, task1.getState());
 		assertEquals(ICompositeCheatSheetTask.COMPLETED, task2.getState());
 	}
@@ -132,7 +132,7 @@ public class TestPersistence {
 		helper.saveCompositeState(model, null);
 
 		createCompositeCheatSheet();
-		model.loadState(new Hashtable<String, String>());
+		model.loadState(new Hashtable<>());
 		editor1.setInput(task1, model.getTaskMemento(task1.getId()));
 		editor2.setInput(task2, model.getTaskMemento(task2.getId()));
 		assertEquals(value1, editor1.getValue());

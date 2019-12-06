@@ -235,7 +235,7 @@ public class PrebuiltIndexCompatibility {
 		if ("file".equals(resolved.getProtocol())) { //$NON-NLS-1$
 			String filePath = resolved.getFile();
 			QueryBuilder queryBuilder = new QueryBuilder("eclipse", new AnalyzerDescriptor("en-us"));
-			Query luceneQuery = queryBuilder.getLuceneQuery(new ArrayList<String>() , false);
+			Query luceneQuery = queryBuilder.getLuceneQuery(new ArrayList<>() , false);
 			IndexSearcher searcher;
 			try (Directory luceneDirectory = new NIOFSDirectory(new File(filePath).toPath())) {
 				searcher = new IndexSearcher(DirectoryReader.open(luceneDirectory));

@@ -463,7 +463,7 @@ public class SearchData extends ActivitiesData {
 		String fieldSearchStr = request.getParameter("fieldSearch"); //$NON-NLS-1$
 		boolean fieldSearch = fieldSearchStr != null ? Boolean.parseBoolean(
 				fieldSearchStr) : false;
-		return new SearchQuery(searchWord == null ? "" : searchWord, fieldSearch, new ArrayList<String>(), //$NON-NLS-1$
+		return new SearchQuery(searchWord == null ? "" : searchWord, fieldSearch, new ArrayList<>(), //$NON-NLS-1$
 				getLocale());
 	}
 

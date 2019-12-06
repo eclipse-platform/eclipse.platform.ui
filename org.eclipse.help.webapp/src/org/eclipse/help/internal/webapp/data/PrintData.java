@@ -296,7 +296,7 @@ public class PrintData extends RequestData {
 	 */
 	public void generateContent(Writer out) throws IOException {
 		int topicsGenerated = 0;
-		generateContent(getTopic(), null, topicsGenerated, new HashSet<String>(), out);
+		generateContent(getTopic(), null, topicsGenerated, new HashSet<>(), out);
 	}
 
 	/*

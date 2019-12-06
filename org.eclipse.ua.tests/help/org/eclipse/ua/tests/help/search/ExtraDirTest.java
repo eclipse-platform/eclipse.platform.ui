@@ -151,7 +151,7 @@ public class ExtraDirTest {
 
 		// run test
 		final Set<String> unexpectedHrefs = new HashSet<>();
-		ISearchQuery query = new SearchQuery(searchWord, false, new ArrayList<String>(), Platform.getNL());
+		ISearchQuery query = new SearchQuery(searchWord, false, new ArrayList<>(), Platform.getNL());
 		SearchResults collector = new SearchResults(workingSets, 500, Platform.getNL());
 		BaseHelpSystem.getSearchManager().search(query, collector, new NullProgressMonitor());
 		SearchHit[] hits = collector.getSearchHits();

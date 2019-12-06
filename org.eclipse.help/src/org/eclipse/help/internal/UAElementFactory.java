@@ -77,7 +77,7 @@ public class UAElementFactory {
 	private static final Map<String, Class<?>> classByElementName;
 
 	static {
-		classByElementName = Collections.synchronizedMap(new HashMap<String, Class<?>>());
+		classByElementName = Collections.synchronizedMap(new HashMap<>());
 		classByElementName.put(Anchor.NAME, Anchor.class);
 		classByElementName.put(Include.NAME, Include.class);
 		classByElementName.put(Toc.NAME, Toc.class);

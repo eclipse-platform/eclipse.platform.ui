@@ -63,7 +63,7 @@ public class MetaKeywords {
 	}
 
 	private SearchHit[] getResultDescriptions(String searchWord, String nl) {
-		ISearchQuery query = new SearchQuery(searchWord, false, new ArrayList<String>(), nl);
+		ISearchQuery query = new SearchQuery(searchWord, false, new ArrayList<>(), nl);
 		SearchResults collector = new SearchResults(null, 500, nl);
 		BaseHelpSystem.getSearchManager().search(query, collector, new NullProgressMonitor());
 		return collector.getSearchHits();
