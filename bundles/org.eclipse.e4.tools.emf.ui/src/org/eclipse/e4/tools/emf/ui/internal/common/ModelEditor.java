@@ -133,8 +133,11 @@ import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VModelFragm
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VModelImportsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPartDescriptor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPartDescriptorMenuEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPartDescriptorTrimEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPartMenuEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPartTrimEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPerspectiveControlEditor;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPerspectiveTrimEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VPerspectiveWindowsEditor;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VRootBindingContexts;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.virtual.VSnippetsEditor;
@@ -260,8 +263,10 @@ public class ModelEditor implements IGotoObject {
 	public static final String VIRTUAL_PERSPECTIVE_WINDOWS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_PERSPECTIVE_WINDOWS"; //$NON-NLS-1$
 	public static final String VIRTUAL_WINDOW_WINDOWS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_WINDOW_WINDOWS"; //$NON-NLS-1$
 	public static final String VIRTUAL_WINDOW_CONTROLS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_WINDOW_CONTROLS"; //$NON-NLS-1$
+	public static final String VIRTUAL_PART_TRIMS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_PART_TRIMS"; //$NON-NLS-1$
 	public static final String VIRTUAL_PART_DESCRIPTORS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_PART_DESCRIPTORS"; //$NON-NLS-1$
 	public static final String VIRTUAL_PARTDESCRIPTOR_MENU = "org.eclipse.e4.tools.emf.ui.VIRTUAL_PARTDESCRIPTOR_MENU"; //$NON-NLS-1$
+	public static final String VIRTUAL_PARTDESCRIPTOR_TRIMS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_PART_DESCRIPTOR_TRIMS"; //$NON-NLS-1$
 	public static final String VIRTUAL_TRIMMED_WINDOW_TRIMS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_TRIMMED_WINDOW_TRIMS"; //$NON-NLS-1$
 	public static final String VIRTUAL_ADDONS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_ADDONS"; //$NON-NLS-1$
 	public static final String VIRTUAL_MENU_CONTRIBUTIONS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_MENU_CONTRIBUTIONS"; //$NON-NLS-1$
@@ -277,11 +282,13 @@ public class ModelEditor implements IGotoObject {
 	public static final String VIRTUAL_MENUELEMENTS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_MENUELEMENTS"; //$NON-NLS-1$
 	public static final String VIRTUAL_ROOT_CONTEXTS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_ROOT_CONTEXTS"; //$NON-NLS-1$
 	public static final String VIRTUAL_PERSPECTIVE_CONTROLS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_PERSPECTIVE_CONTROLS"; //$NON-NLS-1$
+	public static final String VIRTUAL_PERSPECTIVE_TRIMS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_PERSPECTIVE_TRIMS"; //$NON-NLS-1$
 	public static final String VIRTUAL_SNIPPETS = "org.eclipse.e4.tools.emf.ui.VIRTUAL_SNIPPETS"; //$NON-NLS-1$
 
 	public static final int TAB_FORM = 0;
 	public static final int TAB_XMI = 1;
 	public static final int TAB_LIST = 2;
+
 
 
 	/**
@@ -1143,6 +1150,7 @@ public class ModelEditor implements IGotoObject {
 
 	private void registerVirtualEditors() {
 		registerEditor(VIRTUAL_PART_MENU, VPartMenuEditor.class);
+		registerEditor(VIRTUAL_PART_TRIMS, VPartTrimEditor.class);
 		registerEditor(VIRTUAL_HANDLER, VHandlerEditor.class);
 		registerEditor(VIRTUAL_CONTROLS, VControlsEditor.class);
 		registerEditor(VIRTUAL_BINDING_TABLE, VBindingTableEditor.class);
@@ -1154,6 +1162,7 @@ public class ModelEditor implements IGotoObject {
 		registerEditor(VIRTUAL_WINDOW_SNIPPETS, VSnippetsEditor.class);
 		registerEditor(VIRTUAL_PART_DESCRIPTORS, VPartDescriptor.class);
 		registerEditor(VIRTUAL_PARTDESCRIPTOR_MENU, VPartDescriptorMenuEditor.class);
+		registerEditor(VIRTUAL_PARTDESCRIPTOR_TRIMS, VPartDescriptorTrimEditor.class);
 		registerEditor(VIRTUAL_TRIMMED_WINDOW_TRIMS, VWindowTrimEditor.class);
 		registerEditor(VIRTUAL_ADDONS, VApplicationAddons.class);
 		registerEditor(VIRTUAL_MENU_CONTRIBUTIONS, VMenuContributionsEditor.class);
@@ -1166,6 +1175,7 @@ public class ModelEditor implements IGotoObject {
 		registerEditor(VIRTUAL_PARAMETERS, VItemParametersEditor.class);
 		registerEditor(VIRTUAL_ROOT_CONTEXTS, VRootBindingContexts.class);
 		registerEditor(VIRTUAL_PERSPECTIVE_CONTROLS, VPerspectiveControlEditor.class);
+		registerEditor(VIRTUAL_PERSPECTIVE_TRIMS, VPerspectiveTrimEditor.class);
 		registerEditor(VIRTUAL_SNIPPETS, VSnippetsEditor.class);
 	}
 

@@ -424,9 +424,25 @@ public class E4Properties {
 	}
 
 	@SuppressWarnings("unchecked")
-	public static IListProperty<MTrimmedWindow, MTrimBar> trimBars() {
+	public static IListProperty<MTrimmedWindow, MTrimBar> windowTrimBars() {
 		return EMFProperties.list(
 				org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl.Literals.TRIMMED_WINDOW__TRIM_BARS);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static IListProperty<MPart, MTrimBar> partTrimBars() {
+		return EMFProperties
+				.list(org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl.Literals.PART__TRIM_BARS);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static IListProperty<MPartDescriptor, MTrimBar> partDescriptorTrimBars() {
+		return EMFProperties.list(BasicPackageImpl.Literals.PART_DESCRIPTOR__TRIM_BARS);
+	}
+
+	@SuppressWarnings("unchecked")
+	public static IListProperty<MPerspective, MTrimBar> perspectiveTrimBars() {
+		return EMFProperties.list(AdvancedPackageImpl.Literals.PERSPECTIVE__TRIM_BARS);
 	}
 
 	@SuppressWarnings("unchecked")

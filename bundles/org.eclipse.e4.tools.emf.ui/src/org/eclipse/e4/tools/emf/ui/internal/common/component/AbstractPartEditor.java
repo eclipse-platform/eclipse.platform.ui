@@ -319,6 +319,8 @@ public abstract class AbstractPartEditor<M extends MPart> extends AbstractCompon
 				Messages.PartEditor_Menus));
 		list.add(new VirtualEntry<>(ModelEditor.VIRTUAL_HANDLER, E4Properties.handlers(), part,
 				Messages.PartEditor_Handlers));
+		list.add(new VirtualEntry<>(ModelEditor.VIRTUAL_PART_TRIMS, E4Properties.partTrimBars(), part,
+				Messages.PartEditor_TrimBars));
 
 		if (part.getToolbar() != null) {
 			list.add(0, part.getToolbar());

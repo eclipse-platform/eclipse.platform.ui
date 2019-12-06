@@ -142,8 +142,8 @@ public class VSnippetsEditor extends AbstractComponentEditor<MSnippetContainer> 
 				handleAdd(BasicPackageImpl.Literals.WINDOW);
 			}
 		});
-		actions.add(new Action(Messages.VWindowTrimEditor_AddWindowTrim,
-				createImageDescriptor(ResourceProvider.IMG_WindowTrim)) {
+		actions.add(new Action(Messages.VWindowTrimEditor_AddTrim,
+		    createImageDescriptor(ResourceProvider.IMG_WindowTrim)) {
 			@Override
 			public void run() {
 				handleAdd(BasicPackageImpl.Literals.TRIM_BAR);

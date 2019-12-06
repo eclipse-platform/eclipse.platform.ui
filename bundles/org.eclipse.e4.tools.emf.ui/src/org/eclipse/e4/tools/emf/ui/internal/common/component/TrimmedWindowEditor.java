@@ -37,7 +37,7 @@ public class TrimmedWindowEditor extends WindowEditor {
 			return list;
 		}
 
-		list.add(new VirtualEntry<>(ModelEditor.VIRTUAL_TRIMMED_WINDOW_TRIMS, E4Properties.trimBars(),
+		list.add(new VirtualEntry<>(ModelEditor.VIRTUAL_TRIMMED_WINDOW_TRIMS, E4Properties.windowTrimBars(),
 				(MTrimmedWindow) element, Messages.TrimmedWindowEditor_TrimBars));
 		return list;
 	}

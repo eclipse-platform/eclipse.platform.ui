@@ -341,22 +341,24 @@ public class PartDescriptorEditor extends AbstractComponentEditor<MPartDescripto
 	@Override
 	public IObservableList<?> getChildList(final Object element) {
 		final WritableList<Object> list = new WritableList<>();
-		final MPartDescriptor window = (MPartDescriptor) element;
+		final MPartDescriptor partDescriptor = (MPartDescriptor) element;
 
 		if (getEditor().isModelFragment() && Util.isImport((EObject) element)) {
 			return list;
 		}
 
-		list.add(new VirtualEntry<>(ModelEditor.VIRTUAL_PARTDESCRIPTOR_MENU, E4Properties.partDescriptorMenus(), window,
+		list.add(new VirtualEntry<>(ModelEditor.VIRTUAL_PARTDESCRIPTOR_MENU, E4Properties.partDescriptorMenus(), partDescriptor,
 				Messages.PartDescriptorEditor_Menus));
-		list.add(new VirtualEntry<>(ModelEditor.VIRTUAL_HANDLER, E4Properties.handlers(), window,
+		list.add(new VirtualEntry<>(ModelEditor.VIRTUAL_HANDLER, E4Properties.handlers(), partDescriptor,
 				Messages.PartDescriptorEditor_Handlers));
+		list.add(new VirtualEntry<>(ModelEditor.VIRTUAL_PARTDESCRIPTOR_TRIMS, E4Properties.partDescriptorTrimBars(),
+				partDescriptor, Messages.PartDescriptorEditor_TrimBars));
 
-		if (window.getToolbar() != null) {
-			list.add(0, window.getToolbar());
+		if (partDescriptor.getToolbar() != null) {
+			list.add(0, partDescriptor.getToolbar());
 		}
 
-		E4Properties.partDescriptorToolbar().observe(window).addValueChangeListener(event -> {
+		E4Properties.partDescriptorToolbar().observe(partDescriptor).addValueChangeListener(event -> {
 			if (event.diff.getOldValue() != null) {
 				list.remove(event.diff.getOldValue());
 				if (getMaster().getValue() == element && !createRemoveToolBar.isDisposed()) {

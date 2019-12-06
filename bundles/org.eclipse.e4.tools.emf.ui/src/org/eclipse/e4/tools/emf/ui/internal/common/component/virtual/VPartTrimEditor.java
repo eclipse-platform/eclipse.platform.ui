@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010 BestSolution.at and others.
+ * Copyright (c) 2019 Airbus Defence and Space GmbH and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,40 +9,39 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- * Tom Schindl <tom.schindl@bestsolution.at> - initial API and implementation
- * Steven Spungin <steven@spungin.tv> - Ongoing maintenance
+ * Benedikt Kuntz <benedikt.kuntz@airbus.com> - initial API and implementation
  ******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
 import java.util.List;
 
-import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
-import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.basic.MPart;
+import org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl.Literals;
 import org.eclipse.emf.ecore.EReference;
 
-public class VWindowTrimEditor extends AbstractVTrimEditor<MTrimmedWindow> {
+public class VPartTrimEditor extends AbstractVTrimEditor<MPart> {
 
 	@Override
 	protected String getActionLabel() {
-		return Messages.VWindowTrimEditor_AddTrim;
+		return Messages.VPartTrimEditor_AddTrim;
 	}
 
 	@Override
 	protected List<?> getTrimBars(Object master) {
-		if (master instanceof MTrimmedWindow) {
-			return ((MTrimmedWindow) master).getTrimBars();
+		if (master instanceof MPart) {
+			return ((MPart) master).getTrimBars();
 		}
 		return null;
 	}
 
 	@Override
 	protected EReference getTrimBarFeature() {
-		return BasicPackageImpl.Literals.TRIMMED_WINDOW__TRIM_BARS;
+		return Literals.PART__TRIM_BARS;
 	}
 
 	@Override
 	public String getLabel(Object element) {
-		return Messages.VWindowTrimEditor_TreeLabel;
+		return Messages.VPartTrimEditor_TreeLabel;
 	}
 
 	@Override
@@ -52,7 +51,7 @@ public class VWindowTrimEditor extends AbstractVTrimEditor<MTrimmedWindow> {
 
 	@Override
 	public String getDescription(Object element) {
-		return Messages.VWindowTrimEditor_TreeLabelDescription;
+		return Messages.VPartTrimEditor_TreeLabelDescription;
 	}
 
 }

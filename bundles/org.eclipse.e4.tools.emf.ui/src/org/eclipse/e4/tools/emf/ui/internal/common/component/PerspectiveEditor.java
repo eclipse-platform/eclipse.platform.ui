@@ -305,6 +305,8 @@ public class PerspectiveEditor extends AbstractComponentEditor<MPerspective> {
 				Messages.WindowEditor_Windows));
 		list.add(new VirtualEntry<>(ModelEditor.VIRTUAL_PERSPECTIVE_CONTROLS, E4Properties.children(), perspective,
 				Messages.PerspectiveEditor_Controls));
+		list.add(new VirtualEntry<>(ModelEditor.VIRTUAL_PERSPECTIVE_TRIMS, E4Properties.perspectiveTrimBars(),
+				perspective, Messages.PerspectiveEditor_TrimBars));
 
 		return list;
 	}
