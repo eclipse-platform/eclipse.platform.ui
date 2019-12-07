@@ -132,8 +132,8 @@ public class BindingMessages {
 	 * Returns a formatted string with the given key in the resource bundle for
 	 * JFace Data Binding.
 	 *
-	 * @param key
-	 * @param arguments
+	 * @param key       key of the format string
+	 * @param arguments arguments for the format string
 	 * @return formatted string, the key if the key is invalid
 	 */
 	public static String formatString(String key, Object[] arguments) {

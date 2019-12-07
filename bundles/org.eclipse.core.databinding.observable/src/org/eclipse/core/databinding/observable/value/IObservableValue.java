@@ -66,12 +66,12 @@ public interface IObservableValue<T> extends IObservable {
 
 	/**
 	 *
-	 * @param listener
+	 * @param listener the change listener to add; not <code>null</code>
 	 */
 	public void addValueChangeListener(IValueChangeListener<? super T> listener);
 
 	/**
-	 * @param listener
+	 * @param listener the change listener to remove; not <code>null</code>
 	 */
 	public void removeValueChangeListener(IValueChangeListener<? super T> listener);
 }

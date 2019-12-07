@@ -26,7 +26,7 @@ public abstract class AbstractObservable extends ChangeManager implements IObser
 	private boolean disposed = false;
 
 	/**
-	 * @param realm
+	 * @param realm the realm to use; not <code>null</code>
 	 */
 	public AbstractObservable(Realm realm) {
 		super(realm);

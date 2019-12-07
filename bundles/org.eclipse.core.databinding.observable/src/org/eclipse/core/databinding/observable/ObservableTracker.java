@@ -206,9 +206,10 @@ public class ObservableTracker {
 	/**
 	 * Runs the given runnable without tracking dependencies.
 	 *
-	 * @param runnable
+	 * @param runnable the runnable to execute
 	 *
 	 * @since 1.1
+	 * @see #setIgnore(boolean)
 	 */
 	public static void runAndIgnore(Runnable runnable) {
 		setIgnore(true);
@@ -241,7 +242,7 @@ public class ObservableTracker {
 	 * on automatic updates from the object without explicitly attaching a
 	 * listener.
 	 *
-	 * @param observable
+	 * @param observable the observable whose getter was called
 	 */
 	public static void getterCalled(IObservable observable) {
 		if (observable.isDisposed())

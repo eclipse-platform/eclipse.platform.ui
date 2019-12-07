@@ -30,10 +30,11 @@ public class BindingStatus extends MultiStatus {
 	/**
 	 * Constructs a new instance.
 	 *
-	 * @param pluginId
-	 * @param code
-	 * @param message
-	 * @param exception
+	 * @param pluginId  the unique identifier of the relevant plug-in
+	 * @param code      the plug-in-specific status code
+	 * @param message   a human-readable message, localized to the current locale
+	 * @param exception a low-level exception, or <code>null</code> if not
+	 *                  applicable
 	 */
 	public BindingStatus(String pluginId, int code, String message,
 			Throwable exception) {

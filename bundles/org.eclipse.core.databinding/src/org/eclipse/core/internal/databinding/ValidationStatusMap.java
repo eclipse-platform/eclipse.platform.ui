@@ -47,7 +47,7 @@ public class ValidationStatusMap extends ObservableMap<Binding, IStatus> {
 	private IChangeListener markDirtyChangeListener = event -> markDirty();
 
 	/**
-	 * @param realm
+	 * @param realm    the realm to use; not <code>null</code>
 	 * @param bindings
 	 */
 	public ValidationStatusMap(Realm realm, WritableList<Binding> bindings) {

@@ -41,6 +41,8 @@ public class DecoratingObservableValue<T> extends DecoratingObservable
 	 * @param decorated
 	 *            the observable value being decorated
 	 * @param disposeDecoratedOnDispose
+	 *            whether the decorated observable should be disposed when the
+	 *            decorator is disposed
 	 */
 	public DecoratingObservableValue(IObservableValue<T> decorated,
 			boolean disposeDecoratedOnDispose) {

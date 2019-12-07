@@ -35,8 +35,8 @@ public class AnonymousPojoListProperty<S, E> extends DelegatingListProperty<S, E
 	private Map<Class<S>, IListProperty<S, E>> delegates;
 
 	/**
-	 * @param propertyName
-	 * @param elementType
+	 * @param propertyName property name
+	 * @param elementType  type of elements
 	 */
 	public AnonymousPojoListProperty(String propertyName, Class<E> elementType) {
 		super(elementType);

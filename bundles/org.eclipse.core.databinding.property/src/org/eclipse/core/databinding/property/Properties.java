@@ -47,7 +47,10 @@ public class Properties {
 	 * each property in the given array.
 	 *
 	 * @param domainSet
+	 *            the set of elements whose properties will be observed
 	 * @param properties
+	 *            array of value properties to observe on each element in the
+	 *            domain map's {@link Map#values() values} collection
 	 * @return an array of observable maps where each map observes the
 	 *         corresponding value property of the given domain set
 	 */

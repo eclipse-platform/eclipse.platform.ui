@@ -306,7 +306,7 @@ public abstract class MapDiff<K, V> implements IDiff {
 	 * Returns the old value for the given key, which must be an element of
 	 * {@link #getRemovedKeys()} or {@link #getChangedKeys()}.
 	 *
-	 * @param key
+	 * @param key the key
 	 * @return the old value for the given key.
 	 */
 	public abstract V getOldValue(Object key);
@@ -315,7 +315,7 @@ public abstract class MapDiff<K, V> implements IDiff {
 	 * Returns the new value for the given key, which must be an element of
 	 * {@link #getChangedKeys()} or {@link #getAddedKeys()}.
 	 *
-	 * @param key
+	 * @param key the key
 	 * @return the new value for the given key.
 	 */
 	public abstract V getNewValue(Object key);

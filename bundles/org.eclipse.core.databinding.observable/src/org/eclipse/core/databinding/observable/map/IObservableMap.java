@@ -66,12 +66,12 @@ public interface IObservableMap<K, V> extends Map<K, V>, IObservable {
 	Object getValueType();
 
 	/**
-	 * @param listener
+	 * @param listener the change listener to add; not <code>null</code>
 	 */
 	void addMapChangeListener(IMapChangeListener<? super K, ? super V> listener);
 
 	/**
-	 * @param listener
+	 * @param listener the change listener to remove; not <code>null</code>
 	 */
 	void removeMapChangeListener(IMapChangeListener<? super K, ? super V> listener);
 

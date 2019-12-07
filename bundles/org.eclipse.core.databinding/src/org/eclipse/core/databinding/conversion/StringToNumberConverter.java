@@ -261,8 +261,8 @@ public class StringToNumberConverter<T extends Number> extends NumberFormatConve
 	}
 
 	/**
-	 * @param numberFormat
-	 * @param primitive
+	 * @param numberFormat number format used by the converter
+	 * @param primitive    <code>true</code> if the convert to type is an int
 	 * @return to Integer converter with the provided numberFormat
 	 */
 	public static StringToNumberConverter<Integer> toInteger(NumberFormat numberFormat, boolean primitive) {
@@ -281,8 +281,8 @@ public class StringToNumberConverter<T extends Number> extends NumberFormatConve
 	}
 
 	/**
-	 * @param numberFormat
-	 * @param primitive
+	 * @param numberFormat number format used by the converter
+	 * @param primitive    <code>true</code> if the convert to type is a double
 	 * @return to Double converter with the provided numberFormat
 	 */
 	public static StringToNumberConverter<Double> toDouble(NumberFormat numberFormat, boolean primitive) {
@@ -301,8 +301,8 @@ public class StringToNumberConverter<T extends Number> extends NumberFormatConve
 	}
 
 	/**
-	 * @param numberFormat
-	 * @param primitive
+	 * @param numberFormat number format used by the converter
+	 * @param primitive    <code>true</code> if the convert to type is a long
 	 * @return to Long converter with the provided numberFormat
 	 */
 	public static StringToNumberConverter<Long> toLong(NumberFormat numberFormat, boolean primitive) {
@@ -321,8 +321,8 @@ public class StringToNumberConverter<T extends Number> extends NumberFormatConve
 	}
 
 	/**
-	 * @param numberFormat
-	 * @param primitive
+	 * @param numberFormat number format used by the converter
+	 * @param primitive    <code>true</code> if the convert to type is a float
 	 * @return to Float converter with the provided numberFormat
 	 */
 	public static StringToNumberConverter<Float> toFloat(NumberFormat numberFormat, boolean primitive) {
@@ -339,7 +339,7 @@ public class StringToNumberConverter<T extends Number> extends NumberFormatConve
 	}
 
 	/**
-	 * @param numberFormat
+	 * @param numberFormat number format used by the converter
 	 * @return to BigInteger converter with the provided numberFormat
 	 */
 	public static StringToNumberConverter<BigInteger> toBigInteger(NumberFormat numberFormat) {
@@ -356,7 +356,7 @@ public class StringToNumberConverter<T extends Number> extends NumberFormatConve
 	}
 
 	/**
-	 * @param numberFormat
+	 * @param numberFormat number format used by the converter
 	 * @return to BigDecimal converter with the provided numberFormat
 	 * @since 1.2
 	 */
@@ -376,8 +376,8 @@ public class StringToNumberConverter<T extends Number> extends NumberFormatConve
 	}
 
 	/**
-	 * @param numberFormat
-	 * @param primitive
+	 * @param numberFormat number format used by the converter
+	 * @param primitive    <code>true</code> if the convert to type is a short
 	 * @return to Short converter with the provided numberFormat
 	 * @since 1.2
 	 */
@@ -398,8 +398,8 @@ public class StringToNumberConverter<T extends Number> extends NumberFormatConve
 	}
 
 	/**
-	 * @param numberFormat
-	 * @param primitive
+	 * @param numberFormat number format used by the converter
+	 * @param primitive    <code>true</code> if the convert to type is a byte
 	 * @return to Byte converter with the provided numberFormat
 	 * @since 1.2
 	 */

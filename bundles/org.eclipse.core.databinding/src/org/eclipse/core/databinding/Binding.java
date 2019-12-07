@@ -50,13 +50,13 @@ public abstract class Binding extends ValidationStatusProvider {
 	}
 
 	/**
-	 * Initializes this binding with the given context and adds it to the list
-	 * of bindings of the context.
+	 * Initializes this binding with the given context and adds it to the list of
+	 * bindings of the context.
 	 * <p>
 	 * Subclasses may extend, but must call the super implementation.
 	 * </p>
 	 *
-	 * @param context
+	 * @param context the data binding context
 	 */
 	public final void init(DataBindingContext context) {
 		this.context = context;

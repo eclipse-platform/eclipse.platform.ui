@@ -63,11 +63,11 @@ public class WritableMap<K, V> extends ObservableMap<K, V> {
 	}
 
 	/**
-	 * Constructs a new WritableMap on the default realm with the specified key
-	 * and value types.
+	 * Constructs a new WritableMap on the default realm with the specified key and
+	 * value types.
 	 *
-	 * @param keyType
-	 * @param valueType
+	 * @param keyType   the type of the keys in this map
+	 * @param valueType the type of the values in this map
 	 * @since 1.2
 	 */
 	public WritableMap(Object keyType, Object valueType) {
@@ -75,12 +75,12 @@ public class WritableMap<K, V> extends ObservableMap<K, V> {
 	}
 
 	/**
-	 * Constructs a new WritableMap on the given realm with the specified key
-	 * and value types.
+	 * Constructs a new WritableMap on the given realm with the specified key and
+	 * value types.
 	 *
-	 * @param realm
-	 * @param keyType
-	 * @param valueType
+	 * @param realm     the realm
+	 * @param keyType   the type of the keys in this map
+	 * @param valueType the type of the values in this map
 	 * @since 1.2
 	 */
 	public WritableMap(Realm realm, Object keyType, Object valueType) {

@@ -56,7 +56,7 @@ public class WritableSet<E> extends ObservableSet<E> {
 	 * the given collection. Changes to the given collection after calling this
 	 * method do not affect the contents of the created WritableSet.
 	 *
-	 * @param c
+	 * @param c elements to initialize this set with
 	 * @param elementType
 	 *            can be <code>null</code>
 	 */
@@ -68,7 +68,7 @@ public class WritableSet<E> extends ObservableSet<E> {
 	 * Constructs a new empty instance in the given realm and a
 	 * <code>null</code> element type.
 	 *
-	 * @param realm
+	 * @param realm the realm
 	 */
 	public WritableSet(Realm realm) {
 		this(realm, new HashSet<E>(), null);
@@ -80,8 +80,8 @@ public class WritableSet<E> extends ObservableSet<E> {
 	 * given collection after calling this method do not affect the contents of
 	 * the created WritableSet.
 	 *
-	 * @param realm
-	 * @param c
+	 * @param realm the realm
+	 * @param c elements to initialize this set with
 	 * @param elementType
 	 *            can be <code>null</code>
 	 */

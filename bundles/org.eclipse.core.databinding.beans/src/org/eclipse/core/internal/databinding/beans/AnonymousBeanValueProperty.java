@@ -37,8 +37,8 @@ public class AnonymousBeanValueProperty<S, T> extends DelegatingValueProperty<S,
 	private Map<Class<S>, IValueProperty<S, T>> delegates;
 
 	/**
-	 * @param propertyName
-	 * @param valueType
+	 * @param propertyName property name
+	 * @param valueType    type of values
 	 */
 	public AnonymousBeanValueProperty(String propertyName, Class<T> valueType) {
 		super(valueType);

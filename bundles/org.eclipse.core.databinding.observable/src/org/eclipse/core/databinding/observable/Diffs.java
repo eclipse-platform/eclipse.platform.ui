@@ -560,10 +560,9 @@ public class Diffs {
 	/**
 	 * Creates a diff between two values
 	 *
-	 * @param <T>
-	 *            the value type
-	 * @param oldValue
-	 * @param newValue
+	 * @param <T>      the value type
+	 * @param oldValue the old value
+	 * @param newValue the new value
 	 * @return a value diff
 	 */
 	public static <T> ValueDiff<T> createValueDiff(final T oldValue, final T newValue) {
@@ -584,8 +583,8 @@ public class Diffs {
 	/**
 	 * @param <E>
 	 *            the set element type
-	 * @param additions
-	 * @param removals
+	 * @param additions the added elements
+	 * @param removals the removed elements
 	 * @return a set diff
 	 */
 	public static <E> SetDiff<E> createSetDiff(Set<? extends E> additions, Set<? extends E> removals) {
@@ -610,7 +609,7 @@ public class Diffs {
 	/**
 	 * @param <E>
 	 *            the list element type
-	 * @param difference
+	 * @param difference the entry to describe the added or removed element
 	 * @return a list diff with one differing entry
 	 */
 	public static <E> ListDiff<E> createListDiff(ListDiffEntry<E> difference) {
@@ -620,8 +619,8 @@ public class Diffs {
 	/**
 	 * @param <E>
 	 *            the list element type
-	 * @param difference1
-	 * @param difference2
+	 * @param difference1 the first entry to describe the added or removed element
+	 * @param difference2 the second entry to describe the added or removed element
 	 * @return a list diff with two differing entries
 	 */
 	public static <E> ListDiff<E> createListDiff(ListDiffEntry<E> difference1,
@@ -642,7 +641,7 @@ public class Diffs {
 	 *
 	 * @param <E>
 	 *            the list element type
-	 * @param differences
+	 * @param differences a list of entries describing additions and/or removals from a list
 	 * @return a list diff with the given entries
 	 */
 	@SafeVarargs
@@ -661,7 +660,7 @@ public class Diffs {
 	 *
 	 * @param <E>
 	 *            the list element type
-	 * @param differences
+	 * @param differences a list of entries describing additions and/or removals from a list
 	 * @return a list diff with the given entries
 	 * @since 1.6
 	 */
@@ -676,11 +675,11 @@ public class Diffs {
 	}
 
 	/**
-	 * @param <E>
-	 *            the list element type
-	 * @param position
-	 * @param isAddition
-	 * @param element
+	 * @param <E>        the list element type
+	 * @param position   position where list is changed
+	 * @param isAddition <code>true</code> if element is added or <code>false</code>
+	 *                   if removed
+	 * @param element    the added or removed element
 	 * @return a list diff entry
 	 */
 	public static <E> ListDiffEntry<E> createListDiffEntry(final int position,
@@ -707,12 +706,10 @@ public class Diffs {
 	/**
 	 * Creates a MapDiff representing the addition of a single added key
 	 *
-	 * @param <K>
-	 *            the type of keys maintained by this map
-	 * @param <V>
-	 *            the type of mapped values
-	 * @param addedKey
-	 * @param newValue
+	 * @param <K>      the type of keys maintained by this map
+	 * @param <V>      the type of mapped values
+	 * @param addedKey key added to map
+	 * @param newValue value of the added key
 	 * @return a map diff
 	 */
 	public static <K, V> MapDiff<K, V> createMapDiffSingleAdd(final K addedKey,
@@ -747,13 +744,11 @@ public class Diffs {
 	}
 
 	/**
-	 * @param <K>
-	 *            the type of keys maintained by this map
-	 * @param <V>
-	 *            the type of mapped values
-	 * @param existingKey
-	 * @param oldValue
-	 * @param newValue
+	 * @param <K>         the type of keys maintained by this map
+	 * @param <V>         the type of mapped values
+	 * @param existingKey key of the changed element
+	 * @param oldValue    old value for key
+	 * @param newValue    new value for key
 	 * @return a map diff
 	 */
 	public static <K, V> MapDiff<K, V> createMapDiffSingleChange(
@@ -788,12 +783,10 @@ public class Diffs {
 	}
 
 	/**
-	 * @param <K>
-	 *            the type of keys maintained by this map
-	 * @param <V>
-	 *            the type of mapped values
-	 * @param removedKey
-	 * @param oldValue
+	 * @param <K>        the type of keys maintained by this map
+	 * @param <V>        the type of mapped values
+	 * @param removedKey key removed from map
+	 * @param oldValue   value of the removed key
 	 * @return a map diff
 	 */
 	public static <K, V> MapDiff<K, V> createMapDiffSingleRemove(
@@ -828,11 +821,9 @@ public class Diffs {
 	}
 
 	/**
-	 * @param <K>
-	 *            the type of keys maintained by this map
-	 * @param <V>
-	 *            the type of mapped values
-	 * @param copyOfOldMap
+	 * @param <K>          the type of keys maintained by this map
+	 * @param <V>          the type of mapped values
+	 * @param copyOfOldMap map content before removal
 	 * @return a map diff
 	 */
 	public static <K, V> MapDiff<K, V> createMapDiffRemoveAll(
@@ -867,15 +858,13 @@ public class Diffs {
 	}
 
 	/**
-	 * @param <K>
-	 *            the type of keys maintained by this map
-	 * @param <V>
-	 *            the type of mapped values
-	 * @param addedKeys
-	 * @param removedKeys
-	 * @param changedKeys
-	 * @param oldValues
-	 * @param newValues
+	 * @param <K>         the type of keys maintained by this map
+	 * @param <V>         the type of mapped values
+	 * @param addedKeys   the keys added to map
+	 * @param removedKeys the keys removed from map
+	 * @param changedKeys the keys with changed values
+	 * @param oldValues   map of removed key values and old values of changed keys
+	 * @param newValues   map of added key values and new values of changed keys
 	 * @return a map diff
 	 */
 	public static <K, V> MapDiff<K, V> createMapDiff(Set<? extends K> addedKeys, Set<? extends K> removedKeys,

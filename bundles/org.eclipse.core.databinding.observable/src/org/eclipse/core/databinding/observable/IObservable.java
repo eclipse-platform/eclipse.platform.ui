@@ -53,28 +53,28 @@ public interface IObservable {
 	/**
 	 * Adds the given change listener to the list of change listeners. Change
 	 * listeners are notified about changes of the state of this observable in a
-	 * generic way, without specifying the change that happened. To get the
-	 * changed state, a change listener needs to query for the current state of
-	 * this observable.
+	 * generic way, without specifying the change that happened. To get the changed
+	 * state, a change listener needs to query for the current state of this
+	 * observable.
 	 *
-	 * @param listener
+	 * @param listener the listener to add; not <code>null</code>
 	 */
 	public void addChangeListener(IChangeListener listener);
 
 	/**
-	 * Removes the given change listener from the list of change listeners. Has
-	 * no effect if the given listener is not registered as a change listener.
+	 * Removes the given change listener from the list of change listeners. Has no
+	 * effect if the given listener is not registered as a change listener.
 	 *
-	 * @param listener
+	 * @param listener the listener to remove; not <code>null</code>
 	 */
 	public void removeChangeListener(IChangeListener listener);
 
 	/**
-	 * Adds the given stale listener to the list of stale listeners. Stale
-	 * listeners are notified when an observable object becomes stale, not when
-	 * is becomes non-stale.
+	 * Adds the given stale listener to the list of stale listeners. Stale listeners
+	 * are notified when an observable object becomes stale, not when is becomes
+	 * non-stale.
 	 *
-	 * @param listener
+	 * @param listener the listener to add; not <code>null</code>
 	 *
 	 * @see #isStale()
 	 */
@@ -84,7 +84,7 @@ public interface IObservable {
 	 * Removes the given stale listener from the list of stale listeners. Has no
 	 * effect if the given listener is not registered as a stale listener.
 	 *
-	 * @param listener
+	 * @param listener the listener to remove; not <code>null</code>
 	 */
 	public void removeStaleListener(IStaleListener listener);
 

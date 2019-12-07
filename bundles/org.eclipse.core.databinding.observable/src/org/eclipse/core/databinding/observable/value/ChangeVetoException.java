@@ -20,7 +20,7 @@ package org.eclipse.core.databinding.observable.value;
 public class ChangeVetoException extends RuntimeException {
 
 	/**
-	 * @param string
+	 * @param string exception message
 	 */
 	public ChangeVetoException(String string) {
 		super(string);

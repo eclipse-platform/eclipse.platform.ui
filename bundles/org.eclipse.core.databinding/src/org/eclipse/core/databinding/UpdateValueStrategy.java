@@ -215,11 +215,11 @@ public class UpdateValueStrategy<S, D> extends UpdateStrategy<S, D> {
 
 	/**
 	 * Tries to create a validator that can validate values of type fromType.
-	 * Returns <code>null</code> if no validator could be created. Either toType
-	 * or modelDescription can be <code>null</code>, but not both.
+	 * Returns <code>null</code> if no validator could be created. Either toType or
+	 * modelDescription can be <code>null</code>, but not both.
 	 *
-	 * @param fromType
-	 * @param toType
+	 * @param fromType the source type to validate
+	 * @param toType   the desired target type
 	 * @return an IValidator, or <code>null</code> if unsuccessful
 	 */
 	protected IValidator<S> createValidator(Object fromType, Object toType) {
@@ -233,13 +233,12 @@ public class UpdateValueStrategy<S, D> extends UpdateStrategy<S, D> {
 	/**
 	 * Fills out default values based upon the provided <code>source</code> and
 	 * <code>destination</code>. If the strategy is to default values it will
-	 * attempt to default a converter. If the converter can be defaulted an
-	 * attempt is made to default the {@link #validateAfterGet(Object) after get
-	 * validator}. If a validator cannot be defaulted it will be
-	 * <code>null</code>.
+	 * attempt to default a converter. If the converter can be defaulted an attempt
+	 * is made to default the {@link #validateAfterGet(Object) after get validator}.
+	 * If a validator cannot be defaulted it will be <code>null</code>.
 	 *
-	 * @param source
-	 * @param destination
+	 * @param source      source observable, to be used for its type
+	 * @param destination destination observable, to be used for its type
 	 */
 	protected void fillDefaults(IObservableValue<? extends S> source, IObservableValue<? super D> destination) {
 		Object sourceType = source.getValueType();
@@ -366,10 +365,10 @@ public class UpdateValueStrategy<S, D> extends UpdateStrategy<S, D> {
 	}
 
 	/**
-	 * Sets the validator to be invoked after the source value is converted to
-	 * the type of the destination observable.
+	 * Sets the validator to be invoked after the source value is converted to the
+	 * type of the destination observable.
 	 *
-	 * @param validator
+	 * @param validator the new validator
 	 * @return the receiver, to enable method call chaining
 	 */
 	public UpdateValueStrategy<S, D> setAfterConvertValidator(IValidator<? super D> validator) {
@@ -378,10 +377,10 @@ public class UpdateValueStrategy<S, D> extends UpdateStrategy<S, D> {
 	}
 
 	/**
-	 * Sets the validator to be invoked after the source value is retrieved at
-	 * the beginning of the synchronization process.
+	 * Sets the validator to be invoked after the source value is retrieved at the
+	 * beginning of the synchronization process.
 	 *
-	 * @param validator
+	 * @param validator the new validator
 	 * @return the receiver, to enable method call chaining
 	 */
 	public UpdateValueStrategy<S, D> setAfterGetValidator(IValidator<? super S> validator) {
@@ -393,7 +392,7 @@ public class UpdateValueStrategy<S, D> extends UpdateStrategy<S, D> {
 	 * Sets the validator to be invoked before the value is to be set on the
 	 * destination at the end of the synchronization process.
 	 *
-	 * @param validator
+	 * @param validator the new validator
 	 * @return the receiver, to enable method call chaining
 	 */
 	public UpdateValueStrategy<S, D> setBeforeSetValidator(IValidator<? super D> validator) {
@@ -408,7 +407,7 @@ public class UpdateValueStrategy<S, D> extends UpdateStrategy<S, D> {
 	 * If the converter throws any exceptions they are reported as validation
 	 * errors, using the exception message.
 	 *
-	 * @param converter
+	 * @param converter the new converter
 	 * @return the receiver, to enable method call chaining
 	 */
 	public UpdateValueStrategy<S, D> setConverter(IConverter<? super S, ? extends D> converter) {
@@ -420,12 +419,12 @@ public class UpdateValueStrategy<S, D> extends UpdateStrategy<S, D> {
 	 * Validates the value after it is converted.
 	 * <p>
 	 * Default implementation will use the
-	 * {@link #setAfterConvertValidator(IValidator) validator} if one exists. If
-	 * one does not exist no validation will occur.
+	 * {@link #setAfterConvertValidator(IValidator) validator} if one exists. If one
+	 * does not exist no validation will occur.
 	 * </p>
 	 *
-	 * @param value
-	 * @return an ok status
+	 * @param value value to validate
+	 * @return validation status
 	 */
 	public IStatus validateAfterConvert(D value) {
 		return afterConvertValidator == null ? Status.OK_STATUS
@@ -435,13 +434,12 @@ public class UpdateValueStrategy<S, D> extends UpdateStrategy<S, D> {
 	/**
 	 * Validates the value after it is retrieved from the source.
 	 * <p>
-	 * Default implementation will use the
-	 * {@link #setAfterGetValidator(IValidator) validator} if one exists. If one
-	 * does not exist no validation will occur.
+	 * Default implementation will use the {@link #setAfterGetValidator(IValidator)
+	 * validator} if one exists. If one does not exist no validation will occur.
 	 * </p>
 	 *
-	 * @param value
-	 * @return an ok status
+	 * @param value value to validate
+	 * @return validation status
 	 */
 	public IStatus validateAfterGet(S value) {
 		return afterGetValidator == null ? Status.OK_STATUS : afterGetValidator
@@ -451,13 +449,12 @@ public class UpdateValueStrategy<S, D> extends UpdateStrategy<S, D> {
 	/**
 	 * Validates the value before it is set on the destination.
 	 * <p>
-	 * Default implementation will use the
-	 * {@link #setBeforeSetValidator(IValidator) validator} if one exists. If
-	 * one does not exist no validation will occur.
+	 * Default implementation will use the {@link #setBeforeSetValidator(IValidator)
+	 * validator} if one exists. If one does not exist no validation will occur.
 	 * </p>
 	 *
-	 * @param value
-	 * @return an ok status
+	 * @param value value to validate
+	 * @return validation status
 	 */
 	public IStatus validateBeforeSet(D value) {
 		return beforeSetValidator == null ? Status.OK_STATUS
@@ -465,11 +462,11 @@ public class UpdateValueStrategy<S, D> extends UpdateStrategy<S, D> {
 	}
 
 	/**
-	 * Sets the current value of the given observable to the given value.
-	 * Clients may extend but must call the super implementation.
+	 * Sets the current value of the given observable to the given value. Clients
+	 * may extend but must call the super implementation.
 	 *
-	 * @param observableValue
-	 * @param value
+	 * @param observableValue observable to change
+	 * @param value           new value to set
 	 * @return status
 	 */
 	protected IStatus doSet(IObservableValue<? super D> observableValue, D value) {

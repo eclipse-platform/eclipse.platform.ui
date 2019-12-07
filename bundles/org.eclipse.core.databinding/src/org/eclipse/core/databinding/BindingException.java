@@ -32,7 +32,7 @@ public class BindingException extends RuntimeException {
 	/**
 	 * Creates a new BindingException with the given message.
 	 *
-	 * @param message
+	 * @param message the exceptions message
 	 */
 	public BindingException(String message) {
 		super(message);
@@ -41,8 +41,8 @@ public class BindingException extends RuntimeException {
 	/**
 	 * Creates a new BindingException with the given message and cause.
 	 *
-	 * @param message
-	 * @param cause
+	 * @param message the exceptions message
+	 * @param cause   the cause for this exception; might be <code>null</code>
 	 */
 	public BindingException(String message, Throwable cause) {
 		super(message);

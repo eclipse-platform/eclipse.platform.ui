@@ -157,8 +157,8 @@ public class NumberToStringConverter extends Converter<Object, String> {
 	}
 
 	/**
-	 * @param numberFormat
-	 * @param primitive
+	 * @param numberFormat number format used by the converter
+	 * @param primitive    <code>true</code> if the type is a double
 	 * @return Double converter with the provided numberFormat
 	 */
 	public static NumberToStringConverter fromDouble(NumberFormat numberFormat,
@@ -177,8 +177,8 @@ public class NumberToStringConverter extends Converter<Object, String> {
 	}
 
 	/**
-	 * @param numberFormat
-	 * @param primitive
+	 * @param numberFormat number format used by the converter
+	 * @param primitive    <code>true</code> if the type is a long
 	 * @return Long convert with the provided numberFormat
 	 */
 	public static NumberToStringConverter fromLong(NumberFormat numberFormat,
@@ -197,8 +197,8 @@ public class NumberToStringConverter extends Converter<Object, String> {
 	}
 
 	/**
-	 * @param numberFormat
-	 * @param primitive
+	 * @param numberFormat number format used by the converter
+	 * @param primitive    <code>true</code> if the type is a float
 	 * @return Float converter with the provided numberFormat
 	 */
 	public static NumberToStringConverter fromFloat(NumberFormat numberFormat,
@@ -217,8 +217,8 @@ public class NumberToStringConverter extends Converter<Object, String> {
 	}
 
 	/**
-	 * @param numberFormat
-	 * @param primitive
+	 * @param numberFormat number format used by the converter
+	 * @param primitive    <code>true</code> if the type is a int
 	 * @return Integer converter with the provided numberFormat
 	 */
 	public static NumberToStringConverter fromInteger(
@@ -235,7 +235,7 @@ public class NumberToStringConverter extends Converter<Object, String> {
 	}
 
 	/**
-	 * @param numberFormat
+	 * @param numberFormat number format used by the converter
 	 * @return BigInteger converter with the provided numberFormat
 	 */
 	public static NumberToStringConverter fromBigInteger(
@@ -252,7 +252,7 @@ public class NumberToStringConverter extends Converter<Object, String> {
 	}
 
 	/**
-	 * @param numberFormat
+	 * @param numberFormat number format used by the converter
 	 * @return BigDecimal converter with the provided numberFormat
 	 * @since 1.2
 	 */
@@ -272,8 +272,8 @@ public class NumberToStringConverter extends Converter<Object, String> {
 	}
 
 	/**
-	 * @param numberFormat
-	 * @param primitive
+	 * @param numberFormat number format used by the converter
+	 * @param primitive    <code>true</code> if the type is a short
 	 * @return Short converter with the provided numberFormat
 	 * @since 1.2
 	 */
@@ -294,8 +294,8 @@ public class NumberToStringConverter extends Converter<Object, String> {
 	}
 
 	/**
-	 * @param numberFormat
-	 * @param primitive
+	 * @param numberFormat number format used by the converter
+	 * @param primitive    <code>true</code> if the type is a byte
 	 * @return Byte converter with the provided numberFormat
 	 * @since 1.2
 	 */

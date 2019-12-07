@@ -33,12 +33,12 @@ public class ClassLookupSupport {
 	private static HashMap<Class<?>, List<Class<?>>> classSearchOrderLookup;
 
 	/**
-	 * For a given class or interface, return an array containing the given type
-	 * and all its direct and indirect supertypes.
+	 * For a given class or interface, return an array containing the given type and
+	 * all its direct and indirect supertypes.
 	 *
-	 * @param type
-	 * @return an array containing the given type and all its direct and
-	 *         indirect supertypes
+	 * @param type the requested type
+	 * @return an array containing the given type and all its direct and indirect
+	 *         supertypes
 	 */
 	public static Class<?>[] getTypeHierarchyFlattened(Class<?> type) {
 		List<Class<?>> classes = null;

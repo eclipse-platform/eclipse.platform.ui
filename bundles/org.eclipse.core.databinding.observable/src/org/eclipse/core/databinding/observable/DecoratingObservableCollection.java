@@ -29,8 +29,9 @@ public class DecoratingObservableCollection<E> extends DecoratingObservable impl
 	private IObservableCollection<E> decorated;
 
 	/**
-	 * @param decorated
-	 * @param disposeDecoratedOnDispose
+	 * @param decorated                 the observable being decorated.
+	 * @param disposeDecoratedOnDispose whether the decorated observable should be
+	 *                                  disposed when the decorator is disposed
 	 */
 	public DecoratingObservableCollection(IObservableCollection<E> decorated,
 			boolean disposeDecoratedOnDispose) {

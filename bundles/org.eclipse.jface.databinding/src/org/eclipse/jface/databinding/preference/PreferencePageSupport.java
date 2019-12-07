@@ -42,8 +42,8 @@ public class PreferencePageSupport extends DialogPageSupport {
 	 * be called reflecting the new validation result, and the preference page's
 	 * error message will be updated according to the current validation result.
 	 *
-	 * @param preferencePage
-	 * @param dbc
+	 * @param preferencePage the preference page to show validation errors on
+	 * @param dbc the binding context to connect
 	 * @return an instance of PreferencePageSupport
 	 */
 	public static PreferencePageSupport create(PreferencePage preferencePage,

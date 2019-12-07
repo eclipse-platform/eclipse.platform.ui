@@ -492,7 +492,7 @@ final public class PojoObservables {
 	 *            the realm to use
 	 * @param propertyName
 	 *            the name of the property
-	 * @param elementType
+	 * @param elementType the element type of the returned list property
 	 * @return an observable list factory
 	 *
 	 * @deprecated use <code>PojoProperties</code> instead
@@ -509,7 +509,7 @@ final public class PojoObservables {
 	 *
 	 * @param propertyName
 	 *            the name of the property
-	 * @param elementType
+	 * @param elementType the element type of the returned list property
 	 * @return an observable list factory
 	 * @since 1.2
 	 *
@@ -637,8 +637,8 @@ final public class PojoObservables {
 	 * <code>MasterDetailObservables.detailValue(master, valueFactory(realm,
 	 propertyName), propertyType)</code>
 	 *
-	 * @param realm
-	 * @param master
+	 * @param realm the realm
+	 * @param master the master observable value
 	 * @param propertyName
 	 *            the property name. May be nested e.g. "parent.name"
 	 * @param propertyType
@@ -671,7 +671,7 @@ final public class PojoObservables {
 	 * Helper method for
 	 * <code>MasterDetailObservables.detailValue(master, valueFactory(master.getRealm, propertyName), propertyType)</code>
 	 *
-	 * @param master
+	 * @param master the master observable value
 	 * @param propertyName
 	 *            the property name. May be nested e.g. "parent.name"
 	 * @param propertyType
@@ -698,9 +698,9 @@ final public class PojoObservables {
 	 * <code>MasterDetailObservables.detailList(master, listFactory(realm,
 	 propertyName, propertyType), propertyType)</code>
 	 *
-	 * @param realm
-	 * @param master
-	 * @param propertyName
+	 * @param realm the realm
+	 * @param master the observable value
+	 * @param propertyName name of the property
 	 * @param propertyType
 	 *            can be <code>null</code>
 	 * @return an observable list that tracks the named property for the current
@@ -728,8 +728,8 @@ final public class PojoObservables {
 	 * Helper method for
 	 * <code>MasterDetailObservables.detailList(master, listFactory(master.getRealm(), propertyName, propertyType), propertyType)</code>
 	 *
-	 * @param master
-	 * @param propertyName
+	 * @param master the master observable value
+	 * @param propertyName name of the property
 	 * @param propertyType
 	 *            can be <code>null</code>
 	 * @return an observable list that tracks the named property for the current
@@ -754,9 +754,9 @@ final public class PojoObservables {
 	 * <code>MasterDetailObservables.detailSet(master, setFactory(realm,
 	 propertyName), propertyType)</code>
 	 *
-	 * @param realm
-	 * @param master
-	 * @param propertyName
+	 * @param realm the realm
+	 * @param master the master observable value
+	 * @param propertyName the property name
 	 * @param propertyType
 	 *            can be <code>null</code>
 	 * @return an observable set that tracks the named property for the current
@@ -784,8 +784,8 @@ final public class PojoObservables {
 	 * Helper method for
 	 * <code>MasterDetailObservables.detailSet(master, setFactory(master.getRealm(), propertyName), propertyType)</code>
 	 *
-	 * @param master
-	 * @param propertyName
+	 * @param master the observable value
+	 * @param propertyName the property name
 	 * @param propertyType
 	 *            can be <code>null</code>
 	 * @return an observable set that tracks the named property for the current
@@ -809,9 +809,9 @@ final public class PojoObservables {
 	 * Helper method for
 	 * <code>MasterDetailObservables.detailMap(master, mapFactory(realm, propertyName))</code>
 	 *
-	 * @param realm
-	 * @param master
-	 * @param propertyName
+	 * @param realm the realm
+	 * @param master the observable value
+	 * @param propertyName name of the property
 	 * @return an observable map that tracks the map-type named property for the
 	 *         current value of the master observable value.
 	 * @deprecated Use {@link #observeDetailMap(IObservableValue, String)}
@@ -834,8 +834,8 @@ final public class PojoObservables {
 	 * Helper method for
 	 * <code>MasterDetailObservables.detailMap(master, mapFactory(master.getRealm(), propertyName))</code>
 	 *
-	 * @param master
-	 * @param propertyName
+	 * @param master the master observable value
+	 * @param propertyName name of the property
 	 * @return an observable map that tracks the map-type named property for the
 	 *         current value of the master observable value.
 	 * @since 1.2

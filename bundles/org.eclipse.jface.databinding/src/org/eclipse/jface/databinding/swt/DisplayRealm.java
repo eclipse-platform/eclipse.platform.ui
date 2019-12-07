@@ -33,7 +33,7 @@ public class DisplayRealm extends Realm {
 	/**
 	 * Returns the realm representing the UI thread for the given display.
 	 *
-	 * @param display
+	 * @param display the display to get realm for
 	 * @return the realm representing the UI thread for the given display
 	 */
 	public static Realm getRealm(final Display display) {

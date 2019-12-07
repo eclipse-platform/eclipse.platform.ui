@@ -36,12 +36,11 @@ public class DecoratingObservableSet<E> extends
 	private ISetChangeListener<E> setChangeListener;
 
 	/**
-	 * Constructs a DecoratingObservableSet which decorates the given
-	 * observable.
+	 * Constructs a DecoratingObservableSet which decorates the given observable.
 	 *
-	 * @param decorated
-	 *            the observable set being decorated
-	 * @param disposeDecoratedOnDispose
+	 * @param decorated                 the observable set being decorated
+	 * @param disposeDecoratedOnDispose whether the decorated observable should be
+	 *                                  disposed when the decorator is disposed
 	 */
 	public DecoratingObservableSet(IObservableSet<E> decorated,
 			boolean disposeDecoratedOnDispose) {

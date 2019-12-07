@@ -54,8 +54,8 @@ public class TitleAreaDialogSupport {
 	 * Upon any validation result change, the dialog's error message will be
 	 * updated according to the current validation result.
 	 *
-	 * @param dialog
-	 * @param dbc
+	 * @param dialog the dialog to show validation errors on
+	 * @param dbc the binding context to connect
 	 * @return an instance of TitleAreaDialogSupport
 	 */
 	public static TitleAreaDialogSupport create(TitleAreaDialog dialog,

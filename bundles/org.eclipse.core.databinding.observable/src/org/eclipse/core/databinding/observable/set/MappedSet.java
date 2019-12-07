@@ -112,8 +112,8 @@ public class MappedSet extends ObservableSet {
 	private IObservableSet input;
 
 	/**
-	 * @param input
-	 * @param map
+	 * @param input input set with keys from the map
+	 * @param map   the map to map
 	 */
 	public MappedSet(IObservableSet input, IObservableMap map) {
 		super(input.getRealm(), Collections.EMPTY_SET, Object.class);
@@ -130,7 +130,7 @@ public class MappedSet extends ObservableSet {
 	}
 
 	/**
-	 * @param mapValue
+	 * @param mapValue map value to add
 	 * @return true if the given mapValue was an addition
 	 */
 	protected boolean handleAddition(Object mapValue) {
@@ -144,7 +144,7 @@ public class MappedSet extends ObservableSet {
 	}
 
 	/**
-	 * @param mapValue
+	 * @param mapValue map value to remove
 	 * @return true if the given mapValue has been removed
 	 */
 	protected boolean handleRemoval(Object mapValue) {

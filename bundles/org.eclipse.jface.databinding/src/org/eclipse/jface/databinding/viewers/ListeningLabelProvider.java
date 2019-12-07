@@ -38,7 +38,7 @@ public abstract class ListeningLabelProvider<E> extends ViewerLabelProvider {
 	private IObservableSet<E> items;
 
 	/**
-	 * @param itemsThatNeedLabels
+	 * @param itemsThatNeedLabels the managed elements
 	 */
 	public ListeningLabelProvider(IObservableSet<E> itemsThatNeedLabels) {
 		this.items = itemsThatNeedLabels;
@@ -49,12 +49,12 @@ public abstract class ListeningLabelProvider<E> extends ViewerLabelProvider {
 	}
 
 	/**
-	 * @param next
+	 * @param next element to remove listener from
 	 */
 	protected abstract void removeListenerFrom(E next);
 
 	/**
-	 * @param next
+	 * @param next element to add listener to
 	 */
 	protected abstract void addListenerTo(E next);
 

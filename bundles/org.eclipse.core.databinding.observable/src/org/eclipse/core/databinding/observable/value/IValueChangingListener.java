@@ -36,6 +36,7 @@ public interface IValueChangingListener<T> extends IObservablesListener {
 	 * may be used non-locally.
 	 *
 	 * @param event
+	 *            the event
 	 */
 	public void handleValueChanging(ValueChangingEvent<T> event);
 

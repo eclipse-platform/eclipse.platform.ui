@@ -131,15 +131,15 @@ public abstract class ComputedObservableMap<K, V> extends AbstractObservableMap<
 	}
 
 	/**
-	 * @param keySet
+	 * @param keySet the key set
 	 */
 	public ComputedObservableMap(IObservableSet<K> keySet) {
 		this(keySet, null);
 	}
 
 	/**
-	 * @param keySet
-	 * @param valueType
+	 * @param keySet    the key set
+	 * @param valueType the value type
 	 * @since 1.2
 	 */
 	public ComputedObservableMap(IObservableSet<K> keySet, Object valueType) {
@@ -268,24 +268,24 @@ public abstract class ComputedObservableMap<K, V> extends AbstractObservableMap<
 	}
 
 	/**
-	 * @param removedKey
+	 * @param removedKey element to remove listener from
 	 */
 	protected abstract void unhookListener(K removedKey);
 
 	/**
-	 * @param addedKey
+	 * @param addedKey element to add listener to
 	 */
 	protected abstract void hookListener(K addedKey);
 
 	/**
-	 * @param key
+	 * @param key the key
 	 * @return the value for the given key
 	 */
 	protected abstract V doGet(K key);
 
 	/**
-	 * @param key
-	 * @param value
+	 * @param key   the key
+	 * @param value key's new value
 	 * @return the old value for the given key
 	 */
 	protected abstract V doPut(K key, V value);

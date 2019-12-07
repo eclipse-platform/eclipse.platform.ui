@@ -40,12 +40,11 @@ public class DecoratingObservableList<E> extends
 	private IListChangeListener<E> listChangeListener;
 
 	/**
-	 * Constructs a DecoratingObservableList which decorates the given
-	 * observable.
+	 * Constructs a DecoratingObservableList which decorates the given observable.
 	 *
-	 * @param decorated
-	 *            the observable list being decorated
-	 * @param disposeDecoratedOnDispose
+	 * @param decorated                 the observable list being decorated
+	 * @param disposeDecoratedOnDispose whether the decorated observable should be
+	 *                                  disposed when the decorator is disposed
 	 */
 	public DecoratingObservableList(IObservableList<E> decorated,
 			boolean disposeDecoratedOnDispose) {

@@ -63,10 +63,10 @@ public class SetBinding<M, T> extends Binding {
 
 
 	/**
-	 * @param target
-	 * @param model
-	 * @param modelToTargetStrategy
-	 * @param targetToModelStrategy
+	 * @param target                the target side set
+	 * @param model                 the model side set
+	 * @param modelToTargetStrategy strategy to copy model to target elements
+	 * @param targetToModelStrategy strategy to copy target to model elements
 	 */
 	public SetBinding(IObservableSet<T> target, IObservableSet<M> model,
 			UpdateSetStrategy<? super T, ? extends M> targetToModelStrategy,

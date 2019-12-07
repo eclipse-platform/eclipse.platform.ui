@@ -52,8 +52,8 @@ public class DialogPageSupport {
 	 * away. Upon any validation result change, the dialog page's error message
 	 * will be updated according to the current validation result.
 	 *
-	 * @param dialogPage
-	 * @param dbc
+	 * @param dialogPage the dialog page to show validation errors on
+	 * @param dbc the binding context to connect
 	 * @return an instance of WizardPageSupport
 	 */
 	public static DialogPageSupport create(DialogPage dialogPage,
@@ -103,8 +103,8 @@ public class DialogPageSupport {
 	protected boolean currentStatusStale;
 
 	/**
-	 * @param dialogPage
-	 * @param dbc
+	 * @param dialogPage the dialog page to show validation errors on
+	 * @param dbc the binding context to connect
 	 * @noreference This constructor is not intended to be referenced by
 	 *              clients.
 	 */

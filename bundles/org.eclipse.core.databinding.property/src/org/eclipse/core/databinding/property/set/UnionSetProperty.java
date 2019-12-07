@@ -39,15 +39,15 @@ public class UnionSetProperty<S, E> extends SetProperty<S, E> {
 	private final Object elementType;
 
 	/**
-	 * @param properties
+	 * @param properties the property sets to unify
 	 */
 	public UnionSetProperty(ISetProperty<S, E>[] properties) {
 		this(properties, null);
 	}
 
 	/**
-	 * @param properties
-	 * @param elementType
+	 * @param properties  the property sets to unify
+	 * @param elementType the element type or <code>null</code>
 	 */
 	public UnionSetProperty(ISetProperty<S, E>[] properties, Object elementType) {
 		this.properties = properties;

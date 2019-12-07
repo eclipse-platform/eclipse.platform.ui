@@ -50,7 +50,7 @@ public class SWTObservables {
 	/**
 	 * Returns the realm representing the UI thread for the given display.
 	 *
-	 * @param display
+	 * @param display the display to get realm for
 	 * @return the realm representing the UI thread for the given display
 	 * @deprecated please use {@link DisplayRealm#getRealm(Display)} instead.
 	 */
@@ -115,6 +115,7 @@ public class SWTObservables {
 	 * </ul>
 	 *
 	 * @param widget
+	 *            the widget to observe
 	 * @return an observable value tracking the enabled state of the given
 	 *         widget.
 	 * @since 1.5
@@ -169,6 +170,7 @@ public class SWTObservables {
 	 * </ul>
 	 *
 	 * @param widget
+	 *            the widget to observe
 	 * @return an observable value tracking the tooltip text of the given item
 	 *
 	 * @since 1.3
@@ -208,6 +210,7 @@ public class SWTObservables {
 	 * </ul>
 	 *
 	 * @param widget
+	 *            the widget to observe
 	 * @return observable value
 	 * @throws IllegalArgumentException
 	 *             if <code>control</code> type is unsupported
@@ -233,6 +236,7 @@ public class SWTObservables {
 	 * </ul>
 	 *
 	 * @param control
+	 *            the control to observe
 	 * @return observable value
 	 * @throws IllegalArgumentException
 	 *             if <code>control</code> type is unsupported
@@ -253,6 +257,7 @@ public class SWTObservables {
 	 * </ul>
 	 *
 	 * @param control
+	 *            the control to observe
 	 * @return observable value
 	 * @throws IllegalArgumentException
 	 *             if <code>control</code> type is unsupported
@@ -273,6 +278,7 @@ public class SWTObservables {
 	 * </ul>
 	 *
 	 * @param control
+	 *            the control to observe
 	 * @return observable value
 	 * @throws IllegalArgumentException
 	 *             if <code>control</code> type is unsupported
@@ -292,6 +298,7 @@ public class SWTObservables {
 	 * </ul>
 	 *
 	 * @param control
+	 *            the control to observe
 	 * @param events
 	 *            array of SWT event types to register for change events. May
 	 *            include {@link SWT#None}, {@link SWT#Modify},
@@ -316,6 +323,7 @@ public class SWTObservables {
 	 * </ul>
 	 *
 	 * @param control
+	 *            the control to observe
 	 * @param event
 	 *            event type to register for change events
 	 * @return observable value
@@ -346,6 +354,7 @@ public class SWTObservables {
 	 * </ul>
 	 *
 	 * @param widget
+	 *            the widget to observe
 	 * @return observable value
 	 * @throws IllegalArgumentException
 	 *             if the type of <code>widget</code> is unsupported
@@ -375,6 +384,7 @@ public class SWTObservables {
 	 * </ul>
 	 *
 	 * @param control
+	 *            the control to observe
 	 * @return observable value
 	 * @throws IllegalArgumentException
 	 *             if <code>control</code> type is unsupported
@@ -394,6 +404,7 @@ public class SWTObservables {
 	 * </ul>
 	 *
 	 * @param widget
+	 *            the widget to observe
 	 * @return an observable observing the message attribute of the provided
 	 *         <code>widget</code>.
 	 * @since 1.3
@@ -415,6 +426,7 @@ public class SWTObservables {
 	 * </ul>
 	 *
 	 * @param widget
+	 *            the widget to observe
 	 * @return observable value
 	 * @throws IllegalArgumentException
 	 *             if <code>widget</code> type is unsupported
@@ -436,6 +448,7 @@ public class SWTObservables {
 	 * </ul>
 	 *
 	 * @param control
+	 *            the control to observe
 	 * @return observable list
 	 * @throws IllegalArgumentException
 	 *             if <code>control</code> type is unsupported
@@ -457,6 +470,7 @@ public class SWTObservables {
 	 * </ul>
 	 *
 	 * @param control
+	 *            the control to observe
 	 * @return observable value
 	 * @throws IllegalArgumentException
 	 *             if <code>control</code> type is unsupported
@@ -574,6 +588,7 @@ public class SWTObservables {
 	 * </ul>
 	 *
 	 * @param control
+	 *            the control to observe
 	 * @return observable value
 	 * @throws IllegalArgumentException
 	 *             if <code>control</code> type is unsupported

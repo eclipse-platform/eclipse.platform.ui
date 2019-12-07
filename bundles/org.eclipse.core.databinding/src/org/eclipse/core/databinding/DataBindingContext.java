@@ -167,11 +167,11 @@ public class DataBindingContext {
 	}
 
 	/**
-	 * Returns an update value strategy to be used for copying values from the
-	 * from value to the to value. Clients may override.
+	 * Returns an update value strategy to be used for copying values from the from
+	 * value to the to value. Clients may override.
 	 *
-	 * @param fromValue
-	 * @param toValue
+	 * @param fromValue from model value
+	 * @param toValue   to target value
 	 * @return a update value strategy
 	 */
 	protected <M, T> UpdateValueStrategy<M, T> createModelToTargetUpdateValueStrategy(
@@ -180,11 +180,11 @@ public class DataBindingContext {
 	}
 
 	/**
-	 * Returns an update value strategy to be used for copying values from the
-	 * from value to the to value. Clients may override.
+	 * Returns an update value strategy to be used for copying values from the from
+	 * value to the to value. Clients may override.
 	 *
-	 * @param fromValue
-	 * @param toValue
+	 * @param fromValue from target value
+	 * @param toValue   to model value
 	 * @return a update value strategy
 	 */
 	protected <T, M> UpdateValueStrategy<T, M> createTargetToModelUpdateValueStrategy(
@@ -254,8 +254,11 @@ public class DataBindingContext {
 	}
 
 	/**
-	 * @param modelObservableList
-	 * @param targetObservableList
+	 * Returns an update value strategy to be used for copying value list from the
+	 * model list to the target list. Clients may override.
+	 *
+	 * @param modelObservableList  from model list
+	 * @param targetObservableList to target list
 	 * @return an update list strategy
 	 */
 	protected <M, T> UpdateListStrategy<M, T> createModelToTargetUpdateListStrategy(
@@ -265,8 +268,11 @@ public class DataBindingContext {
 	}
 
 	/**
-	 * @param targetObservableList
-	 * @param modelObservableList
+	 * Returns an update value strategy to be used for copying value list from the
+	 * target list to the model list. Clients may override.
+	 *
+	 * @param targetObservableList from target list
+	 * @param modelObservableList  to model list
 	 * @return an update list strategy
 	 */
 	protected <T, M> UpdateListStrategy<T, M> createTargetToModelUpdateListStrategy(
@@ -331,8 +337,11 @@ public class DataBindingContext {
 	}
 
 	/**
-	 * @param targetObservableSet
-	 * @param modelObservableSet
+	 * Returns an update value strategy to be used for copying value set from the
+	 * target set to the model set. Clients may override.
+	 *
+	 * @param targetObservableSet from target set
+	 * @param modelObservableSet  to model set
 	 * @return a default set update strategy
 	 * @since 1.1
 	 */
@@ -343,8 +352,11 @@ public class DataBindingContext {
 	}
 
 	/**
-	 * @param modelObservableSet
-	 * @param targetObservableSet
+	 * Returns an update value strategy to be used for copying value set from the
+	 * model set to the target set. Clients may override.
+	 *
+	 * @param modelObservableSet  from model set
+	 * @param targetObservableSet to target set
 	 * @return a default set update strategy
 	 * @since 1.1
 	 */
@@ -463,6 +475,7 @@ public class DataBindingContext {
 	 * Removes the given binding.
 	 *
 	 * @param binding
+	 *            The binding to remove.
 	 * @return <code>true</code> if was associated with the context,
 	 *         <code>false</code> if not
 	 */
@@ -474,6 +487,7 @@ public class DataBindingContext {
 	 * Removes the validation status provider.
 	 *
 	 * @param validationStatusProvider
+	 *            The validation status provider to remove.
 	 * @return <code>true</code> if was associated with the context,
 	 *         <code>false</code> if not
 	 * @since 1.1

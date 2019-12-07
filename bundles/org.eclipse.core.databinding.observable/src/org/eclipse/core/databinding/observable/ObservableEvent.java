@@ -29,7 +29,7 @@ public abstract class ObservableEvent extends EventObject {
 	/**
 	 * Creates a new observable event.
 	 *
-	 * @param source
+	 * @param source source of this event
 	 */
 	public ObservableEvent(IObservable source) {
 		super(source);

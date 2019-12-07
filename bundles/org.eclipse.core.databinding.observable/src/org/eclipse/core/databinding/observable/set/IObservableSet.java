@@ -43,12 +43,12 @@ import org.eclipse.core.databinding.observable.IObservableCollection;
 public interface IObservableSet<E> extends Set<E>, IObservableCollection<E> {
 
 	/**
-	 * @param listener
+	 * @param listener the change listener to add; not <code>null</code>
 	 */
 	public void addSetChangeListener(ISetChangeListener<? super E> listener);
 
 	/**
-	 * @param listener
+	 * @param listener the change listener to remove; not <code>null</code>
 	 */
 	public void removeSetChangeListener(ISetChangeListener<? super E> listener);
 

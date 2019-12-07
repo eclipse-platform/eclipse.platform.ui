@@ -27,8 +27,9 @@ import org.eclipse.core.databinding.observable.Diffs;
 public class DecoratingVetoableValue<T> extends DecoratingObservableValue<T>
 		implements IVetoableValue<T> {
 	/**
-	 * @param decorated
-	 * @param disposeDecoratedOnDispose
+	 * @param decorated                 the observable value being decorated
+	 * @param disposeDecoratedOnDispose whether the decorated observable should be
+	 *                                  disposed when the decorator is disposed
 	 */
 	public DecoratingVetoableValue(IObservableValue<T> decorated,
 			boolean disposeDecoratedOnDispose) {
@@ -63,7 +64,7 @@ public class DecoratingVetoableValue<T> extends DecoratingObservableValue<T>
 	 * Notifies listeners about a pending change, and returns true if no
 	 * listener vetoed the change.
 	 *
-	 * @param diff
+	 * @param diff the pending change
 	 * @return false if the change was vetoed, true otherwise
 	 */
 	protected boolean fireValueChanging(ValueDiff<T> diff) {

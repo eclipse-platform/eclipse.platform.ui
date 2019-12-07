@@ -182,7 +182,7 @@ public abstract class ObservableValueEditingSupport<E, M, T> extends EditingSupp
 	/**
 	 * Creates the observable value for the CellEditor.
 	 *
-	 * @param cellEditor
+	 * @param cellEditor editor to create observable for
 	 * @return observable value
 	 */
 	protected abstract IObservableValue<T> doCreateCellEditorObservable(CellEditor cellEditor);
@@ -190,8 +190,8 @@ public abstract class ObservableValueEditingSupport<E, M, T> extends EditingSupp
 	/**
 	 * Creates the observable value for the element.
 	 *
-	 * @param element
-	 * @param cell
+	 * @param element element to create observable for
+	 * @param cell    elements viewer cell
 	 * @return observable value
 	 */
 	protected abstract IObservableValue<M> doCreateElementObservable(E element, ViewerCell cell);
@@ -202,9 +202,9 @@ public abstract class ObservableValueEditingSupport<E, M, T> extends EditingSupp
 	 * strategies} are used with the target to model updating on
 	 * {@link UpdateValueStrategy#POLICY_CONVERT}.
 	 *
-	 * @param target
-	 * @param model
-	 * @return binding
+	 * @param target the target
+	 * @param model  the model
+	 * @return binding created binding
 	 */
 	// TODO j: These values are converted, do not need to be the same
 	protected Binding createBinding(IObservableValue<T> target, IObservableValue<M> model) {

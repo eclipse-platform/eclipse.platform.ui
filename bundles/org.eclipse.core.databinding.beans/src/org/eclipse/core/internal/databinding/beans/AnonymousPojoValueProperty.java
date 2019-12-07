@@ -37,8 +37,8 @@ public class AnonymousPojoValueProperty<S, T> extends DelegatingValueProperty<S,
 	private Map<Class<S>, IValueProperty<S, T>> delegates;
 
 	/**
-	 * @param propertyName
-	 * @param valueType
+	 * @param propertyName property name
+	 * @param valueType    type of values
 	 */
 	public AnonymousPojoValueProperty(String propertyName, Class<T> valueType) {
 		super(valueType);

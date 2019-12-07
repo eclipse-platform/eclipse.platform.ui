@@ -78,7 +78,7 @@ public abstract class AbstractObservableList<E> extends AbstractList<E>
 	private volatile boolean disposed = false;
 
 	/**
-	 * @param realm
+	 * @param realm the realm; not <code>null</code>
 	 *
 	 */
 	public AbstractObservableList(Realm realm) {

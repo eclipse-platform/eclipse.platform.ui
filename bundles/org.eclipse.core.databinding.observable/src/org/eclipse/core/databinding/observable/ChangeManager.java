@@ -34,8 +34,7 @@ import org.eclipse.core.runtime.ListenerList;
 	private final Realm realm;
 
 	/**
-	 * @param realm
-	 *
+	 * @param realm the realm to use; not <code>null</code>
 	 */
 	/* package */ChangeManager(Realm realm) {
 		Assert.isNotNull(realm, "Realm cannot be null"); //$NON-NLS-1$
@@ -43,8 +42,8 @@ import org.eclipse.core.runtime.ListenerList;
 	}
 
 	/**
-	 * @param listenerType
-	 * @param listener
+	 * @param listenerType arbitrary object to identify a type of the listener
+	 * @param listener     the listener to add; not <code>null</code>
 	 */
 	@SuppressWarnings("unchecked")
 	protected void addListener(Object listenerType,
@@ -75,8 +74,8 @@ import org.eclipse.core.runtime.ListenerList;
 	}
 
 	/**
-	 * @param listenerType
-	 * @param listener
+	 * @param listenerType arbitrary object to identify a type of the listener
+	 * @param listener     the listener to remove; not <code>null</code>
 	 */
 	protected void removeListener(Object listenerType,
 			IObservablesListener listener) {

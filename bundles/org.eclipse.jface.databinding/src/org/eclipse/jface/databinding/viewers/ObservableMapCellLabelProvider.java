@@ -57,7 +57,7 @@ public class ObservableMapCellLabelProvider extends CellLabelProvider {
 	/**
 	 * Creates a new label provider that tracks changes to one attribute.
 	 *
-	 * @param attributeMap
+	 * @param attributeMap attribute map to track
 	 */
 	public ObservableMapCellLabelProvider(IObservableMap<?, ?> attributeMap) {
 		this(new IObservableMap[] { attributeMap });
@@ -68,7 +68,7 @@ public class ObservableMapCellLabelProvider extends CellLabelProvider {
 	 * attribute. This constructor should be used by subclasses that override
 	 * {@link #update(ViewerCell)} and make use of more than one attribute.
 	 *
-	 * @param attributeMaps
+	 * @param attributeMaps attribute maps to track
 	 */
 	@SuppressWarnings("unchecked")
 	protected ObservableMapCellLabelProvider(IObservableMap<?, ?>[] attributeMaps) {

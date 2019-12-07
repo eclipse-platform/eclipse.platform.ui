@@ -34,7 +34,7 @@ public interface IObservableFactory<T, E extends IObservable> {
 	/**
 	 * Creates an observable for the given target object.
 	 *
-	 * @param target
+	 * @param target the target object
 	 * @return the new observable
 	 */
 	public E createObservable(T target);

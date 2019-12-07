@@ -117,12 +117,12 @@ import com.ibm.icu.text.NumberFormat;
 	}
 
 	/**
-	 * Tries to create a converter that can convert from values of type
-	 * fromType. Returns <code>null</code> if no converter could be created.
-	 * Either toType or modelDescription can be <code>null</code>, but not both.
+	 * Tries to create a converter that can convert from values of type fromType.
+	 * Returns <code>null</code> if no converter could be created. Either toType or
+	 * modelDescription can be <code>null</code>, but not both.
 	 *
-	 * @param fromType
-	 * @param toType
+	 * @param fromType source type
+	 * @param toType   target type
 	 * @return an IConverter, or <code>null</code> if unsuccessful
 	 */
 	protected IConverter<?, ?> createConverter(Object fromType, Object toType) {
@@ -637,12 +637,11 @@ import com.ibm.icu.text.NumberFormat;
 	}
 
 	/**
-	 * Returns {@link Boolean#TRUE} if the from type is assignable to the to
-	 * type, or {@link Boolean#FALSE} if it not, or <code>null</code> if
-	 * unknown.
+	 * Returns {@link Boolean#TRUE} if the from type is assignable to the to type,
+	 * or {@link Boolean#FALSE} if it not, or <code>null</code> if unknown.
 	 *
-	 * @param fromType
-	 * @param toType
+	 * @param fromType source type to assign
+	 * @param toType   target type to check assignability against
 	 * @return whether fromType is assignable to toType, or <code>null</code> if
 	 *         unknown
 	 */
@@ -677,11 +676,11 @@ import com.ibm.icu.text.NumberFormat;
 	/**
 	 * Converts the value from the source type to the destination type.
 	 * <p>
-	 * Default implementation will use the setConverter(IConverter), if one
-	 * exists. If no converter exists no conversion occurs.
+	 * Default implementation will use the setConverter(IConverter), if one exists.
+	 * If no converter exists no conversion occurs.
 	 * </p>
 	 *
-	 * @param value
+	 * @param value source value to convert
 	 * @return the converted value
 	 */
 	@SuppressWarnings("unchecked")

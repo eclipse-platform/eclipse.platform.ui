@@ -53,7 +53,7 @@ public class ValidationStatus extends Status {
 	/**
 	 * Creates a new validation error status with the given message.
 	 *
-	 * @param message
+	 * @param message the validation message
 	 * @return a new error status with the given message
 	 */
 	public static IStatus error(String message) {
@@ -63,7 +63,7 @@ public class ValidationStatus extends Status {
 	/**
 	 * Creates a new validation cancel status with the given message.
 	 *
-	 * @param message
+	 * @param message the validation message
 	 * @return a new cancel status with the given message
 	 */
 	public static IStatus cancel(String message) {
@@ -74,8 +74,8 @@ public class ValidationStatus extends Status {
 	 * Creates a new validation error status with the given message and
 	 * exception.
 	 *
-	 * @param message
-	 * @param exception
+	 * @param message the validation message
+	 * @param exception the validation exception
 	 * @return a new error status with the given message and exception
 	 */
 	public static IStatus error(String message, Throwable exception) {
@@ -85,7 +85,7 @@ public class ValidationStatus extends Status {
 	/**
 	 * Creates a new validation warning status with the given message.
 	 *
-	 * @param message
+	 * @param message the validation message
 	 * @return a new warning status with the given message
 	 */
 	public static IStatus warning(String message) {
@@ -95,7 +95,7 @@ public class ValidationStatus extends Status {
 	/**
 	 * Creates a new validation info status with the given message.
 	 *
-	 * @param message
+	 * @param message the validation message
 	 * @return a new info status with the given message
 	 */
 	public static IStatus info(String message) {

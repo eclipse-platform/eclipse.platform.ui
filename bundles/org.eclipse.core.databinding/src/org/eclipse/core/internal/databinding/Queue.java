@@ -37,7 +37,7 @@ public class Queue {
 	/**
 	 * Adds the given object to the end of the queue.
 	 *
-	 * @param o
+	 * @param o object to add
 	 */
 	public void enqueue(Object o) {
 		Entry oldLast = last;

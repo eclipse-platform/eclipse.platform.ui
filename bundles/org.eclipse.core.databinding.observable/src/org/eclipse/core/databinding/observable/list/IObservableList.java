@@ -46,16 +46,16 @@ public interface IObservableList<E> extends List<E>, IObservableCollection<E> {
 	/**
 	 * Adds the given list change listener to the list of list change listeners.
 	 *
-	 * @param listener
+	 * @param listener the change listener to add; not <code>null</code>
 	 */
 	void addListChangeListener(IListChangeListener<? super E> listener);
 
 	/**
 	 * Removes the given list change listener from the list of list change
-	 * listeners. Has no effect if the given listener is not registered as a
-	 * list change listener.
+	 * listeners. Has no effect if the given listener is not registered as a list
+	 * change listener.
 	 *
-	 * @param listener
+	 * @param listener the change listener to remove; not <code>null</code>
 	 */
 	void removeListChangeListener(IListChangeListener<? super E> listener);
 

@@ -34,7 +34,7 @@ public interface IListChangeListener<E> extends IObservablesListener {
 	 * method because it may be reused for other change notifications. The diff
 	 * object referenced by the event is immutable and may be used non-locally.
 	 *
-	 * @param event
+	 * @param event the list change event
 	 */
 	void handleListChange(ListChangeEvent<? extends E> event);
 }

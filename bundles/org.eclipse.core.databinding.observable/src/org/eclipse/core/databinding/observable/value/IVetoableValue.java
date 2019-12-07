@@ -33,12 +33,12 @@ package org.eclipse.core.databinding.observable.value;
 public interface IVetoableValue<T> extends IObservableValue<T> {
 
 	/**
-	 * @param listener
+	 * @param listener the listener to add; not <code>null</code>
 	 */
 	public void addValueChangingListener(IValueChangingListener<T> listener);
 
 	/**
-	 * @param listener
+	 * @param listener the listener to remove; not <code>null</code>
 	 */
 	public void removeValueChangingListener(IValueChangingListener<T> listener);
 

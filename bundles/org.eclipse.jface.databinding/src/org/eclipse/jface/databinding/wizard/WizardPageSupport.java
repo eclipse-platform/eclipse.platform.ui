@@ -57,8 +57,8 @@ public class WizardPageSupport extends DialogPageSupport {
 	 * reflecting the new validation result, and the wizard page's error message
 	 * will be updated according to the current validation result.
 	 *
-	 * @param wizardPage
-	 * @param dbc
+	 * @param wizardPage the wizard page to show validation errors on
+	 * @param dbc the binding context to connect
 	 * @return an instance of WizardPageSupport
 	 */
 	public static WizardPageSupport create(WizardPage wizardPage,

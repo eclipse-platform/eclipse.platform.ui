@@ -35,8 +35,8 @@ public class AnonymousPojoSetProperty<S, E> extends DelegatingSetProperty<S, E> 
 	private Map<Class<S>, ISetProperty<S, E>> delegates;
 
 	/**
-	 * @param propertyName
-	 * @param elementType
+	 * @param propertyName property name
+	 * @param elementType  type of elements
 	 */
 	public AnonymousPojoSetProperty(String propertyName, Class<E> elementType) {
 		super(elementType);

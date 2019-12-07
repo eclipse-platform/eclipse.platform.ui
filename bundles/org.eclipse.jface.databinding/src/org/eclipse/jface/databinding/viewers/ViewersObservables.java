@@ -77,7 +77,7 @@ public class ViewersObservables {
 	 * first element of the structured selection as returned by
 	 * {@link IStructuredSelection#getFirstElement()}.
 	 *
-	 * @param selectionProvider
+	 * @param selectionProvider provider to get selection from; not <code>null</code>
 	 * @return the observable value tracking the (single) selection of the given
 	 *         selection provider
 	 *
@@ -127,7 +127,7 @@ public class ViewersObservables {
 	 * based on the requested change to the observable list. The affected
 	 * methods are <code>add</code>, <code>addAll</code>, and <code>set</code>.
 	 *
-	 * @param selectionProvider
+	 * @param selectionProvider provider to get selection from; not <code>null</code>
 	 * @return the observable value tracking the (multi) selection of the given
 	 *         selection provider
 	 *
@@ -228,6 +228,7 @@ public class ViewersObservables {
 	 * methods are <code>add</code>, <code>addAll</code>, and <code>set</code>.
 	 *
 	 * @param viewer
+	 *            The viewer on which to track the selection.
 	 * @return the observable value tracking the (multi) selection of the given
 	 *         selection provider
 	 *

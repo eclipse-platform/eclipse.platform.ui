@@ -37,6 +37,7 @@ public abstract class DuplexingObservableValue<T> extends AbstractObservableValu
 	 * to use if the list is empty or contains multiple different values.
 	 *
 	 * @param <T>
+	 *            the type of value being observed
 	 *
 	 * @param target
 	 *            the observable list
@@ -76,15 +77,15 @@ public abstract class DuplexingObservableValue<T> extends AbstractObservableValu
 	private PrivateInterface privateInterface;
 
 	/**
-	 * @param target
+	 * @param target the observed target list
 	 */
 	public DuplexingObservableValue(IObservableList<T> target) {
 		this(target, target.getElementType());
 	}
 
 	/**
-	 * @param target
-	 * @param valueType
+	 * @param target    the observed target list
+	 * @param valueType the value type or <code>null</code>
 	 */
 	public DuplexingObservableValue(IObservableList<T> target, Object valueType) {
 		super(target.getRealm());

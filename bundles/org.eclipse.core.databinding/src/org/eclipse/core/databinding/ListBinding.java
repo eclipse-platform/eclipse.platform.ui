@@ -61,10 +61,10 @@ public class ListBinding<M, T> extends Binding {
 	};
 
 	/**
-	 * @param target
-	 * @param model
-	 * @param modelToTargetStrategy
-	 * @param targetToModelStrategy
+	 * @param target                the target side list
+	 * @param model                 the model side list
+	 * @param modelToTargetStrategy strategy to copy model to target elements
+	 * @param targetToModelStrategy strategy to copy target to model elements
 	 */
 	public ListBinding(IObservableList<T> target, IObservableList<M> model,
 			UpdateListStrategy<? super T, ? extends M> targetToModelStrategy,

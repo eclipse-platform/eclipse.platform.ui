@@ -27,7 +27,7 @@ public interface IDisposeListener extends IObservablesListener {
 	 * given event object must only be used locally in this method because it
 	 * may be reused for other dispose notifications.
 	 *
-	 * @param event
+	 * @param event the dispose event
 	 */
 	public void handleDispose(DisposeEvent event);
 }

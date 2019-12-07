@@ -37,9 +37,9 @@ public class AnonymousBeanMapProperty<S, K, V> extends DelegatingMapProperty<S, 
 	private Map<Class<S>, IMapProperty<S, K, V>> delegates;
 
 	/**
-	 * @param propertyName
-	 * @param keyType
-	 * @param valueType
+	 * @param propertyName property name
+	 * @param keyType      type of keys
+	 * @param valueType    type of values
 	 */
 	public AnonymousBeanMapProperty(String propertyName, Class<?> keyType, Class<?> valueType) {
 		super(keyType, valueType);

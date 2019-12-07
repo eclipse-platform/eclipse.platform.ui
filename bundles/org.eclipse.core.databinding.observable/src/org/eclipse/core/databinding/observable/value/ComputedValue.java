@@ -120,24 +120,22 @@ public abstract class ComputedValue<T> extends AbstractObservableValue<T> {
 	}
 
 	/**
-	 * @param valueType
-	 *            can be <code>null</code>
+	 * @param valueType can be <code>null</code>
 	 */
 	public ComputedValue(Object valueType) {
 		this(Realm.getDefault(), valueType);
 	}
 
 	/**
-	 * @param realm
-	 *
+	 * @param realm the realm to use; not <code>null</code>
 	 */
 	public ComputedValue(Realm realm) {
 		this(realm, null);
 	}
 
 	/**
-	 * @param realm
-	 * @param valueType
+	 * @param realm     the realm to use; not <code>null</code>
+	 * @param valueType can be <code>null</code>
 	 */
 	public ComputedValue(Realm realm, Object valueType) {
 		super(realm);

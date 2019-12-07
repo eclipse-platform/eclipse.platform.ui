@@ -34,8 +34,8 @@ public class AnonymousBeanSetProperty<S, E> extends DelegatingSetProperty<S, E> 
 	private Map<Class<S>, ISetProperty<S, E>> delegates;
 
 	/**
-	 * @param propertyName
-	 * @param elementType
+	 * @param propertyName property name
+	 * @param elementType  type of elements
 	 */
 	public AnonymousBeanSetProperty(String propertyName, Class<E> elementType) {
 		super(elementType);

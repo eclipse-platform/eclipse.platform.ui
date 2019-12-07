@@ -45,7 +45,7 @@ public abstract class AbstractVetoableValue<T> extends
 	}
 
 	/**
-	 * @param realm
+	 * @param realm the realm
 	 */
 	public AbstractVetoableValue(Realm realm) {
 		super(realm);
@@ -67,10 +67,10 @@ public abstract class AbstractVetoableValue<T> extends
 	}
 
 	/**
-	 * Sets the value. Invoked after performing veto checks. Should not fire
-	 * change events.
+	 * Sets the value. Invoked after performing veto checks. Should not fire change
+	 * events.
 	 *
-	 * @param value
+	 * @param value the approved value to set
 	 */
 	protected abstract void doSetApprovedValue(T value);
 
@@ -87,10 +87,10 @@ public abstract class AbstractVetoableValue<T> extends
 	}
 
 	/**
-	 * Notifies listeners about a pending change, and returns true if no
-	 * listener vetoed the change.
+	 * Notifies listeners about a pending change, and returns true if no listener
+	 * vetoed the change.
 	 *
-	 * @param diff
+	 * @param diff the pending change
 	 * @return false if the change was vetoed, true otherwise
 	 */
 	protected boolean fireValueChanging(ValueDiff<T> diff) {

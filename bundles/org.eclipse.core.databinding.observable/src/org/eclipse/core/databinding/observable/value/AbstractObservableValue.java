@@ -45,7 +45,7 @@ abstract public class AbstractObservableValue<T> extends AbstractObservable
 	}
 
 	/**
-	 * @param realm
+	 * @param realm the realm to use; not <code>null</code>
 	 */
 	public AbstractObservableValue(Realm realm) {
 		super(realm);
@@ -73,7 +73,7 @@ abstract public class AbstractObservableValue<T> extends AbstractObservable
 	 * Template method for setting the value of the observable. By default the
 	 * method throws an {@link UnsupportedOperationException}.
 	 *
-	 * @param value
+	 * @param value the value to set
 	 */
 	protected void doSetValue(T value) {
 		throw new UnsupportedOperationException();

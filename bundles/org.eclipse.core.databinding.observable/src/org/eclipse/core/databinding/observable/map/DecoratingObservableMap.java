@@ -42,12 +42,11 @@ public class DecoratingObservableMap<K, V> extends DecoratingObservable
 	private IMapChangeListener<K, V> mapChangeListener;
 
 	/**
-	 * Constructs a DecoratingObservableMap which decorates the given
-	 * observable.
+	 * Constructs a DecoratingObservableMap which decorates the given observable.
 	 *
-	 * @param decorated
-	 *            the observable map being decorated
-	 * @param disposeDecoratedOnDispose
+	 * @param decorated                 the observable map being decorated
+	 * @param disposeDecoratedOnDispose whether the decorated observable should be
+	 *                                  disposed when the decorator is disposed
 	 */
 	public DecoratingObservableMap(IObservableMap<K, V> decorated,
 			boolean disposeDecoratedOnDispose) {

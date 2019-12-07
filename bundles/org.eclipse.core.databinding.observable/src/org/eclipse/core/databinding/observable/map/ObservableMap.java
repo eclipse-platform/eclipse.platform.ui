@@ -48,15 +48,17 @@ public class ObservableMap<K, V> extends AbstractObservable implements IObservab
 	private boolean stale = false;
 
 	/**
-	 * @param wrappedMap
+	 * @param wrappedMap backing store for the map data, used to implement all map
+	 *                   operations
 	 */
 	public ObservableMap(Map<K, V> wrappedMap) {
 		this(Realm.getDefault(), wrappedMap);
 	}
 
 	/**
-	 * @param realm
-	 * @param wrappedMap
+	 * @param realm      the realm to use; not <code>null</code>
+	 * @param wrappedMap backing store for the map data, used to implement all map
+	 *                   operations
 	 */
 	public ObservableMap(Realm realm, Map<K, V> wrappedMap) {
 		super(realm);

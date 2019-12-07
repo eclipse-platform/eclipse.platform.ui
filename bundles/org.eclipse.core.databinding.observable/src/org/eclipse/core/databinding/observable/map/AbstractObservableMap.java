@@ -96,7 +96,7 @@ public abstract class AbstractObservableMap<K, V> extends AbstractMap<K, V>
 	}
 
 	/**
-	 * @param realm
+	 * @param realm the realm; not <code>null</code>
 	 */
 	public AbstractObservableMap(Realm realm) {
 		Assert.isNotNull(realm, "Realm cannot be null"); //$NON-NLS-1$
@@ -223,7 +223,7 @@ public abstract class AbstractObservableMap<K, V> extends AbstractMap<K, V>
 	/**
 	 * Sets the stale state. Must be invoked from the current realm.
 	 *
-	 * @param stale
+	 * @param stale the new stale state
 	 */
 	public void setStale(boolean stale) {
 		checkRealm();
@@ -252,7 +252,7 @@ public abstract class AbstractObservableMap<K, V> extends AbstractMap<K, V>
 	/**
 	 * Fires map change events. Must be invoked from current realm.
 	 *
-	 * @param diff
+	 * @param diff the change
 	 */
 	protected void fireMapChange(MapDiff<K, V> diff) {
 		checkRealm();

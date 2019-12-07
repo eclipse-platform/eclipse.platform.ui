@@ -22,7 +22,7 @@ package org.eclipse.core.databinding.observable;
 public abstract class ChangeSupport extends ChangeManager {
 
 	/**
-	 * @param realm
+	 * @param realm the realm
 	 */
 	public ChangeSupport(Realm realm) {
 		super(realm);
@@ -58,35 +58,35 @@ public abstract class ChangeSupport extends ChangeManager {
 	protected abstract void lastListenerRemoved();
 
 	/**
-	 * @param listener
+	 * @param listener the listener to add; not <code>null</code>
 	 */
 	public void addChangeListener(IChangeListener listener) {
 		addListener(ChangeEvent.TYPE, listener);
 	}
 
 	/**
-	 * @param listener
+	 * @param listener the listener to remove; not <code>null</code>
 	 */
 	public void removeChangeListener(IChangeListener listener) {
 		removeListener(ChangeEvent.TYPE, listener);
 	}
 
 	/**
-	 * @param listener
+	 * @param listener the listener to add; not <code>null</code>
 	 */
 	public void addStaleListener(IStaleListener listener) {
 		addListener(StaleEvent.TYPE, listener);
 	}
 
 	/**
-	 * @param listener
+	 * @param listener the listener to remove; not <code>null</code>
 	 */
 	public void removeStaleListener(IStaleListener listener) {
 		removeListener(StaleEvent.TYPE, listener);
 	}
 
 	/**
-	 * @param listener
+	 * @param listener the listener to add; not <code>null</code>
 	 * @since 1.2
 	 */
 	public void addDisposeListener(IDisposeListener listener) {
@@ -94,7 +94,7 @@ public abstract class ChangeSupport extends ChangeManager {
 	}
 
 	/**
-	 * @param listener
+	 * @param listener the listener to remove; not <code>null</code>
 	 * @since 1.2
 	 */
 	public void removeDisposeListener(IDisposeListener listener) {

@@ -129,7 +129,7 @@ public abstract class Realm {
 	 * logged and not re-thrown. If the runnable implements {@link ISafeRunnable},
 	 * the exception is passed to its <code>handleException</code> method.
 	 *
-	 * @param runnable
+	 * @param runnable {@link Runnable} to execute
 	 */
 	protected static void safeRun(final Runnable runnable) {
 		ISafeRunnable safeRunnable;
@@ -166,7 +166,7 @@ public abstract class Realm {
 	 * running it. Otherwise, the exception will be logged.
 	 * </p>
 	 *
-	 * @param runnable
+	 * @param runnable {@link Runnable} to execute
 	 */
 	public void exec(Runnable runnable) {
 		if (isCurrent()) {
@@ -190,7 +190,7 @@ public abstract class Realm {
 	 * Subclasses should use {@link #safeRun(Runnable)} to run the runnable.
 	 * </p>
 	 *
-	 * @param runnable
+	 * @param runnable {@link Runnable} to execute
 	 */
 	public void asyncExec(Runnable runnable) {
 		synchronized (workQueue) {
@@ -215,8 +215,8 @@ public abstract class Realm {
 	 * Subclasses should use {@link #safeRun(Runnable)} to run the runnable.
 	 * </p>
 	 *
-	 * @param milliseconds
-	 * @param runnable
+	 * @param milliseconds wait time before executing the runnable
+	 * @param runnable {@link Runnable} to execute
 	 * @since 1.2
 	 */
 	public void timerExec(int milliseconds, final Runnable runnable) {
@@ -285,7 +285,7 @@ public abstract class Realm {
 	 * only protected access.
 	 * </p>
 	 *
-	 * @param runnable
+	 * @param runnable {@link Runnable} to execute
 	 */
 	protected void syncExec(Runnable runnable) {
 		SyncRunnable syncRunnable = new SyncRunnable(runnable);
@@ -328,8 +328,8 @@ public abstract class Realm {
 	 * {@link Runnable#run()} and resets the previous realm after completion.
 	 * Note that this will not set the given realm as the current realm.
 	 *
-	 * @param realm
-	 * @param runnable
+	 * @param realm default realm for the runnable
+	 * @param runnable {@link Runnable} to execute
 	 */
 	public static void runWithDefault(Realm realm, Runnable runnable) {
 		Realm oldRealm = Realm.getDefault();

@@ -31,8 +31,8 @@ public abstract class Converter<F, T> implements IConverter<F, T> {
 	private Object toType;
 
 	/**
-	 * @param fromType
-	 * @param toType
+	 * @param fromType type of source values
+	 * @param toType   type of converted values
 	 */
 	public Converter(Object fromType, Object toType) {
 		this.fromType = fromType;

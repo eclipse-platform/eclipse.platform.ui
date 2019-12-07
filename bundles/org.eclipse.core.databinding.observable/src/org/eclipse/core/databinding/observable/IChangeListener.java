@@ -39,7 +39,7 @@ public interface IChangeListener extends IObservablesListener {
 	 * must only be used locally in this method because it may be reused for
 	 * other change notifications.
 	 *
-	 * @param event
+	 * @param event the change event
 	 */
 	public void handleChange(ChangeEvent event);
 

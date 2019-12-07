@@ -55,14 +55,14 @@ public class ObservableMapLabelProvider extends LabelProvider implements ITableL
 	};
 
 	/**
-	 * @param attributeMap
+	 * @param attributeMap the tracked attribute map
 	 */
 	public ObservableMapLabelProvider(IObservableMap<?, ?> attributeMap) {
 		this(new IObservableMap[] { attributeMap });
 	}
 
 	/**
-	 * @param attributeMaps
+	 * @param attributeMaps the tracked attribute maps
 	 */
 	@SuppressWarnings("unchecked")
 	public ObservableMapLabelProvider(IObservableMap<?, ?>[] attributeMaps) {

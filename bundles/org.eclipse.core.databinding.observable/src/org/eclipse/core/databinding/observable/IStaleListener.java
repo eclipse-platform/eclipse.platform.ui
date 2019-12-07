@@ -28,7 +28,7 @@ public interface IStaleListener extends IObservablesListener {
 	 * event object must only be used locally in this method because it may be
 	 * reused for other change notifications.
 	 *
-	 * @param staleEvent
+	 * @param staleEvent the stale event
 	 */
 	public void handleStale(StaleEvent staleEvent);
 

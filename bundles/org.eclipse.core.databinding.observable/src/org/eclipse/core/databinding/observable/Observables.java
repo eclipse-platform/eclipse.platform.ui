@@ -147,6 +147,7 @@ public class Observables {
 	 * Returns an observable value with the given constant value.
 	 *
 	 * @param <T>
+	 *            the value type
 	 *
 	 * @param realm
 	 *            the observable's realm
@@ -182,6 +183,7 @@ public class Observables {
 	 * Returns an observable value with the given constant value.
 	 *
 	 * @param <T>
+	 *            the value type
 	 *
 	 * @param value
 	 *            the observable's constant value
@@ -218,6 +220,7 @@ public class Observables {
 	 * set.
 	 *
 	 * @param <E>
+	 *            the element type
 	 *
 	 * @param set
 	 *            the set to wrap in an unmodifiable set
@@ -427,6 +430,7 @@ public class Observables {
 	 * given set.
 	 *
 	 * @param <E>
+	 *            the element type
 	 *
 	 * @param realm
 	 *            the realm of the returned set
