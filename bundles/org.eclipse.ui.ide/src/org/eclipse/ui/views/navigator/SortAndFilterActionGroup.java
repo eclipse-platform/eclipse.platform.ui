@@ -43,7 +43,7 @@ public class SortAndFilterActionGroup extends ResourceNavigatorActionGroup {
 	/**
 	 * Constructor.
 	 *
-	 * @param navigator
+	 * @param navigator the resource navigator
 	 */
 	public SortAndFilterActionGroup(IResourceNavigator navigator) {
 		super(navigator);

@@ -227,7 +227,7 @@ public class ImageHyperlink extends Hyperlink {
 	/**
 	 * Sets the image to show when link is activated.
 	 *
-	 * @param activeImage
+	 * @param activeImage image to set
 	 *
 	 */
 	public void setActiveImage(Image activeImage) {
@@ -246,7 +246,7 @@ public class ImageHyperlink extends Hyperlink {
 	/**
 	 * Sets the image to show when link is hover state (on mouse over).
 	 *
-	 * @param hoverImage
+	 * @param hoverImage image to set
 	 */
 	public void setHoverImage(Image hoverImage) {
 		this.hoverImage = hoverImage;
@@ -264,7 +264,7 @@ public class ImageHyperlink extends Hyperlink {
 	/**
 	 * Sets the image to show when link is in the normal state.
 	 *
-	 * @param image
+	 * @param image image to set
 	 */
 	public void setImage(Image image) {
 		this.image = image;

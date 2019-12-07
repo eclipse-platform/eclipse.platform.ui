@@ -243,7 +243,7 @@ public abstract class WizardDataTransferPage extends WizardPage implements Liste
 	 * <code>IOverwriteQuery</code> method asks the user whether the existing
 	 * resource at the given path should be overwritten.
 	 *
-	 * @param pathString
+	 * @param pathString desired path which might be overwritten
 	 * @return the user's reply: one of <code>"YES"</code>, <code>"NO"</code>,
 	 *         <code>"ALL"</code>, or <code>"CANCEL"</code>
 	 */

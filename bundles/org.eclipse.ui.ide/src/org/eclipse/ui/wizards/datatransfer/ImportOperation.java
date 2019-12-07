@@ -945,7 +945,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
 	/**
 	 * Set Whether groups and links will be created instead of files and folders
 	 *
-	 * @param virtualFolders
+	 * @param virtualFolders the desired behaviour
 	 * @since 3.6
 	 */
 	public void setVirtualFolders(boolean virtualFolders) {
@@ -955,7 +955,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
 	/**
 	 * Set Whether links will be created instead of files and folders
 	 *
-	 * @param links
+	 * @param links the desired behaviour
 	 * @since 3.6
 	 */
 	public void setCreateLinks(boolean links) {
@@ -965,7 +965,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
 	/**
 	 * Set a variable relative to which the links are created
 	 *
-	 * @param variable
+	 * @param variable base for relative links
 	 * @since 3.6
 	 */
 	public void setRelativeVariable(String variable) {

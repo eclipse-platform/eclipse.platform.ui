@@ -77,7 +77,7 @@ public class IDEWorkbenchErrorHandler extends WorkbenchErrorHandler {
 	private final Map<IStatus, ?> map = Collections.synchronizedMap(new WeakHashMap<>());
 
 	/**
-	 * @param configurer
+	 * @param configurer the workbench configurer
 	 */
 	public IDEWorkbenchErrorHandler(IWorkbenchConfigurer configurer) {
 		workbenchConfigurer = configurer;

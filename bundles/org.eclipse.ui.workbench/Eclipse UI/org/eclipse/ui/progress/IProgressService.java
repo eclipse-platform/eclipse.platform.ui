@@ -118,7 +118,7 @@ public interface IProgressService extends IRunnableContext {
 	 * Get the icon that has been registered for a Job by checking if the job
 	 * belongs to any of the registered families.
 	 *
-	 * @param job
+	 * @param job job to get icon for
 	 * @return Icon or <code>null</code> if there isn't one.
 	 * @see IProgressService#registerIconForFamily(ImageDescriptor,Object)
 	 */
@@ -135,8 +135,8 @@ public interface IProgressService extends IRunnableContext {
 	 *
 	 * @param runnable The runnable to execute and show the progress for.
 	 * @see IProgressService#getLongOperationTime
-	 * @throws InvocationTargetException
-	 * @throws InterruptedException
+	 * @throws InvocationTargetException if executed operation failed
+	 * @throws InterruptedException if operation is interrupted
 	 */
 	void busyCursorWhile(IRunnableWithProgress runnable) throws InvocationTargetException, InterruptedException;
 

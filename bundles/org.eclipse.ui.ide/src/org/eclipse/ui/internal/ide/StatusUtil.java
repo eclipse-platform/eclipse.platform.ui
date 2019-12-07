@@ -75,9 +75,11 @@ public class StatusUtil {
 	 * This method must not be called outside the workbench.
 	 *
 	 * Utility method for creating status.
-	 * @param severity
-	 * @param message
-	 * @param exception
+	 *
+	 * @param severity  severity of the status
+	 * @param message   status message
+	 * @param exception an exception to add; must not be <code>null</code> if
+	 *                  message is <code>null</code> or empty
 	 * @return {@link IStatus}
 	 */
 	public static IStatus newStatus(int severity, String message, Throwable exception) {
@@ -103,7 +105,7 @@ public class StatusUtil {
 	 * Utility method for creating error status messages delegating to
 	 * <code>StatusUtil{@link #newStatus(int, String, Throwable)}</code>.
 	 *
-	 * @param exception
+	 * @param exception an exception to add to the error status
 	 * @return {@link IStatus}
 	 */
 	public static IStatus newError(Throwable exception) {
@@ -114,9 +116,10 @@ public class StatusUtil {
 	 * This method must not be called outside the workbench.
 	 *
 	 * Utility method for creating status.
-	 * @param children
-	 * @param message
-	 * @param exception
+	 * 
+	 * @param children  list of statuses; might contain nested multi-statuses
+	 * @param message   status message
+	 * @param exception optional status exception
 	 * @return {@link IStatus}
 	 */
 	public static IStatus newStatus(List<IStatus> children, String message,

@@ -81,8 +81,8 @@ public final class TabContents {
 	/**
 	 * Creates page's sections controls.
 	 *
-	 * @param parent
-	 * @param page
+	 * @param parent the parent composite
+	 * @param page   the page
 	 */
 	public void createControls(Composite parent,
 			final TabbedPropertySheetPage page) {
@@ -171,8 +171,8 @@ public final class TabContents {
 	/**
 	 * Sets page's sections input objects.
 	 *
-	 * @param part
-	 * @param selection
+	 * @param part      The active workbench part.
+	 * @param selection The active selection in the workbench part.
 	 */
 	public void setInput(final IWorkbenchPart part, final ISelection selection) {
 		for (final ISection section : sections) {

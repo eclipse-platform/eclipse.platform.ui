@@ -207,10 +207,10 @@ public class ResourceDragAndDropEditor {
 	}
 
 	/**
-	 * Sets the enabled state of the group's widgets.
-	 * Does nothing if called prior to calling <code>createContents</code>.
-
-	 * @param enableLinking
+	 * Sets the enabled state of the group's widgets. Does nothing if called prior
+	 * to calling <code>createContents</code>.
+	 *
+	 * @param enableLinking linking state to set
 	 */
 	public void setEnabled(boolean enableLinking) {
 		folderPref.setEnabled(enableLinking);

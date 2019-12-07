@@ -33,7 +33,7 @@ public class LayoutCache {
 	/**
 	 * Creates a cache for the given array of controls
 	 *
-	 * @param controls
+	 * @param controls controls to cache
 	 */
 	public LayoutCache(Control[] controls) {
 		rebuildCache(controls);
@@ -42,7 +42,7 @@ public class LayoutCache {
 	/**
 	 * Returns the size cache for the given control
 	 *
-	 * @param idx
+	 * @param idx control's index
 	 * @return the size cache for the given control
 	 */
 	public SizeCache getCache(int idx) {
@@ -54,7 +54,7 @@ public class LayoutCache {
 	 * controls that were used last time, this method does nothing. Otherwise,
 	 * the cache is flushed and a new cache is created for the new controls.
 	 *
-	 * @param controls
+	 * @param controls new controls to cache
 	 */
 	public void setControls(Control[] controls) {
 		// If the number of controls has changed, discard the entire cache
@@ -106,7 +106,7 @@ public class LayoutCache {
 	 * Flushes the cache for the given control. This should be called if exactly
 	 * one of the controls has changed but the remaining controls remain unmodified
 	 *
-	 * @param controlIndex
+	 * @param controlIndex index of control to flush
 	 */
 	public void flush(int controlIndex) {
 		caches[controlIndex].flush();

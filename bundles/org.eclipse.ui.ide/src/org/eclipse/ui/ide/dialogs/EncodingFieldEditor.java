@@ -58,9 +58,13 @@ public final class EncodingFieldEditor extends AbstractEncodingFieldEditor {
 	/**
 	 * Create a new instance of the receiver on the preference called name
 	 * with a label of labelText.
+	 *
 	 * @param name
+	 *            the name of the preference this field editor works on
 	 * @param labelText
+	 *            the label text of the field editor
 	 * @param parent
+	 *            the parent of the field editor's control
 	 */
 	public EncodingFieldEditor(String name, String labelText, Composite parent) {
 		super();

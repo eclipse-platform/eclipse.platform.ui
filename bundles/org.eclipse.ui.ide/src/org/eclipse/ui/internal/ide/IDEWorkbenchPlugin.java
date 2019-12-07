@@ -116,15 +116,15 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 		super();
 		inst = this;
 	}
+
 	/**
-	 * Creates an extension.  If the extension plugin has not
-	 * been loaded a busy cursor will be activated during the duration of
-	 * the load.
+	 * Creates an extension. If the extension plugin has not been loaded a busy
+	 * cursor will be activated during the duration of the load.
 	 *
-	 * @param element the config element defining the extension
+	 * @param element        the config element defining the extension
 	 * @param classAttribute the name of the attribute carrying the class
 	 * @return Object the extension object
-	 * @throws CoreException
+	 * @throws CoreException if extension creation failed
 	 */
 	public static Object createExtension(final IConfigurationElement element,
 			final String classAttribute) throws CoreException {
@@ -311,18 +311,21 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 
 		return infos.toArray(new AboutInfo[infos.size()]);
 	}
+	
 	/**
-	 * Get the workbench image with the given path relative to
-	 * ICON_PATH.
-	 * @param relativePath
-	 * @return ImageDescriptor
+	 * Get the workbench image with the given path relative to ICON_PATH.
+	 * 
+	 * @param relativePath relative path of image
+	 * @return ImageDescriptor or <code>null</code>
 	 */
 	public static ImageDescriptor getIDEImageDescriptor(String relativePath){
 		return ResourceLocator.imageDescriptorFromBundle(IDE_WORKBENCH, ICONS_PATH + relativePath).orElse(null);
 	}
+	
 	/**
 	 * Return the resourceManager used by this plug-in.
-	 * @return
+	 * 
+	 * @return the resource manager
 	 */
 	public ResourceManager getResourceManager() {
 		if(resourceManager == null){

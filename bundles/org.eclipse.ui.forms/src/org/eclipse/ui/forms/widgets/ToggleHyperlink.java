@@ -86,10 +86,11 @@ public abstract class ToggleHyperlink extends AbstractHyperlink {
 		});
 		initAccessible();
 	}
+	
 	/**
 	 * Sets the color of the decoration.
 	 *
-	 * @param decorationColor
+	 * @param decorationColor color to set
 	 */
 	public void setDecorationColor(Color decorationColor) {
 		this.decorationColor = decorationColor;

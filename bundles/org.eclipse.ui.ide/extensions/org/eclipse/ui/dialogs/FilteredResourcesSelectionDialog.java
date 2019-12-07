@@ -940,9 +940,9 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 		/**
 		 * Creates new ResourceFilter instance
 		 *
-		 * @param container
+		 * @param container   filtered container
 		 * @param showDerived flag which determine showing derived elements
-		 * @param typeMask
+		 * @param typeMask    filter type mask. See {@link IResource#getType()} types.
 		 */
 		public ResourceFilter(IContainer container, boolean showDerived, int typeMask) {
 			super();

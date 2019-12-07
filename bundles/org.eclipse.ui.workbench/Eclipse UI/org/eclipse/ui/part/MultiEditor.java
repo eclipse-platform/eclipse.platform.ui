@@ -48,7 +48,7 @@ public abstract class MultiEditor extends AbstractMultiEditor {
 	/**
 	 * Updates the gradient in the title bar.
 	 *
-	 * @param editor
+	 * @param editor the editor to update; not <code>null</code>
 	 */
 	public void updateGradient(IEditorPart editor) {
 		boolean activeEditor = editor == getSite().getPage().getActiveEditor();

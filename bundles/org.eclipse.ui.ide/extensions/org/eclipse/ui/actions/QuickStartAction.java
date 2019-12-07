@@ -62,7 +62,7 @@ public class QuickStartAction extends Action implements
 	/**
 	 * Create an instance of this class.
 	 * <p>
-	 * This consructor added to support calling the action from the welcome
+	 * This constructor added to support calling the action from the welcome
 	 * page.
 	 * </p>
 	 */
@@ -153,7 +153,7 @@ public class QuickStartAction extends Action implements
 	 *
 	 * @param featureId the about info for the feature
 	 * @return <code>true</code> if successful, <code>false</code> otherwise
-	 * @throws WorkbenchException
+	 * @throws WorkbenchException if operation failed
 	 */
 	public boolean openWelcomePage(String featureId) throws WorkbenchException {
 		AboutInfo feature = findFeature(featureId);

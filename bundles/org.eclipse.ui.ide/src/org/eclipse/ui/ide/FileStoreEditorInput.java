@@ -66,7 +66,7 @@ public class FileStoreEditorInput implements IURIEditorInput, IPersistableElemen
 	private WorkbenchAdapter workbenchAdapter = new WorkbenchAdapter();
 
 	/**
-	 * @param fileStore
+	 * @param fileStore the file store; not <code>null</code>
 	 */
 	public FileStoreEditorInput(IFileStore fileStore) {
 		Assert.isNotNull(fileStore);

@@ -342,7 +342,7 @@ public final class NavigatorActionService extends ActionGroup implements IMement
 
 	/**
 	 *
-	 * @param aProviderDescriptor
+	 * @param aProviderDescriptor descriptor of action provider to get
 	 * @return a CommonActionProvider
 	 * @noreference This method is not intended to be referenced by clients.
 	 */

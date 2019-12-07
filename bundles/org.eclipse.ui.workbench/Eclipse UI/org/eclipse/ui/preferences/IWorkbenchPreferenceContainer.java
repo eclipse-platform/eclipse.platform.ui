@@ -47,7 +47,7 @@ public interface IWorkbenchPreferenceContainer {
 	/**
 	 * Register a job to be run after the container has been closed.
 	 *
-	 * @param job
+	 * @param job job to register
 	 */
 	void registerUpdateJob(Job job);
 

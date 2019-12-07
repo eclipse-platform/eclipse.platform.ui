@@ -142,7 +142,7 @@ public abstract class CommonDragAdapterAssistant {
 	 * Accept and remember the content service this assistant is associated
 	 * with.
 	 *
-	 * @param aContentService
+	 * @param aContentService associated content service
 	 */
 	public final void setContentService(INavigatorContentService aContentService) {
 		contentService = aContentService;

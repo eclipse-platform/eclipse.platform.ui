@@ -29,14 +29,16 @@ public abstract class MarkerFieldFilter {
 
 	/**
 	 * Return whether or not marker should be filtered by the receiver.
-	 * @param item
+	 *
+	 * @param item item to test
 	 * @return boolean <code>true</code> if the marker should be shown.
 	 */
 	public abstract boolean select(MarkerItem item);
 
 	/**
 	 * Initialise the receiver with the values in the values Map.
-	 * @param values
+	 *
+	 * @param values filter specific arguments
 	 * @see FiltersContributionParameters
 	 */
 	public void initialize(Map/*<String, String>*/ values) {
@@ -45,7 +47,8 @@ public abstract class MarkerFieldFilter {
 
 	/**
 	 * Populate the working copy with the copy of whatever fields are required.
-	 * @param copy
+	 *
+	 * @param copy object to populate
 	 */
 	public void populateWorkingCopy(MarkerFieldFilter copy){
 		copy.field = this.field;
@@ -53,7 +56,8 @@ public abstract class MarkerFieldFilter {
 
 	/**
 	 * Set the field for the receiver.
-	 * @param markerField
+	 *
+	 * @param markerField the field
 	 */
 	public final void setField(MarkerField markerField) {
 		field = markerField;
@@ -69,16 +73,18 @@ public abstract class MarkerFieldFilter {
 	}
 
 	/**
-	 * Save any of the relevant state for the receiver in the memento
-	 * so that it can be used to restore the user settings.
-	 * @param memento
+	 * Save any of the relevant state for the receiver in the memento so that it can
+	 * be used to restore the user settings.
+	 * 
+	 * @param memento the memento to save in
 	 * @see #loadSettings(IMemento)
 	 */
 	public abstract void saveSettings(IMemento memento) ;
 
 	/**
 	 * Load any settings for the receiver from the memento.
-	 * @param memento
+	 * 
+	 * @param memento the memento to load from
 	 * @see #saveSettings(IMemento)
 	 */
 	public abstract void loadSettings(IMemento memento) ;

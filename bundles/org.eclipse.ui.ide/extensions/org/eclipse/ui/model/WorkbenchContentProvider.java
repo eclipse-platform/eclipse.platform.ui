@@ -107,7 +107,7 @@ public class WorkbenchContentProvider extends BaseWorkbenchContentProvider
 	/**
 	 * Process the resource delta.
 	 *
-	 * @param delta
+	 * @param delta delta to process; not <code>null</code>
 	 */
 	protected void processDelta(IResourceDelta delta) {
 

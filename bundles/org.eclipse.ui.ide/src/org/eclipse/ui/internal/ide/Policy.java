@@ -63,7 +63,7 @@ public class Policy {
 	/**
 	 * Handle the core exception.
 	 *
-	 * @param exception
+	 * @param exception exception to handle
 	 */
 	public static void handle(CoreException exception) {
 		// Only log if in debug mode

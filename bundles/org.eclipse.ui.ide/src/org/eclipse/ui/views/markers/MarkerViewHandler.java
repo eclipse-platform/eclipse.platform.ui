@@ -44,7 +44,7 @@ public abstract class MarkerViewHandler extends AbstractHandler {
 	/**
 	 * Get the view this event occurred on.
 	 *
-	 * @param event
+	 * @param event the event
 	 * @return {@link MarkerSupportView} or <code>null</code>
 	 */
 	public MarkerSupportView getView(ExecutionEvent event) {
@@ -57,10 +57,15 @@ public abstract class MarkerViewHandler extends AbstractHandler {
 	/**
 	 * Execute the specified undoable operation
 	 *
-	 * @param operation
-	 * @param title
-	 * @param monitor
-	 * @param uiInfo
+	 * @param operation the operation to be executed and then added to the history
+	 * @param title     a title (or <code>null</code>) used to log failure
+	 * @param monitor   the progress monitor to be used (or <code>null</code>)
+	 *                  during the operation.
+	 * @param uiInfo    the IAdaptable (or <code>null</code>) provided by the caller
+	 *                  in order to supply UI information for prompting the user if
+	 *                  necessary. When this parameter is not <code>null</code>, it
+	 *                  should minimally contain an adapter for the
+	 *                  org.eclipse.swt.widgets.Shell.class.
 	 */
 	public void execute(IUndoableOperation operation, String title,
 			IProgressMonitor monitor, IAdaptable uiInfo) {
@@ -81,13 +86,13 @@ public abstract class MarkerViewHandler extends AbstractHandler {
 	}
 
 	/**
-	 * Get the selected markers for the receiver in the view from event. If the
-	 * view cannot be found then return an empty array.
+	 * Get the selected markers for the receiver in the view from event. If the view
+	 * cannot be found then return an empty array.
 	 *
 	 * This is run using {@link Display#syncExec(Runnable)} so that it can be called
 	 * outside of the UI {@link Thread}.
 	 *
-	 * @param event
+	 * @param event the event
 	 * @return {@link IMarker}[]
 	 */
 	public IMarker[] getSelectedMarkers(ExecutionEvent event) {

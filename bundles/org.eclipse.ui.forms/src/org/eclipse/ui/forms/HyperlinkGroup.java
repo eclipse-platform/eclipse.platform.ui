@@ -129,12 +129,13 @@ public final class HyperlinkGroup extends HyperlinkSettings {
 	public Hyperlink getLastActivated() {
 		return lastActivated;
 	}
+
 	/**
 	 * Adds a hyperlink to the group to be jointly managed. Hyperlink will be
-	 * managed until it is disposed. Settings like colors, cursors and modes
-	 * will affect all managed hyperlinks.
+	 * managed until it is disposed. Settings like colors, cursors and modes will
+	 * affect all managed hyperlinks.
 	 *
-	 * @param link
+	 * @param link link to add in group
 	 */
 
 	public void add(Hyperlink link) {

@@ -21,16 +21,18 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.part.ShowInContext;
 
 /**
- * @since 3.4
+ * Carries the context for the Show In action. This implementation carries a
+ * workbench part and a selection.
  *
+ * @since 3.4
  */
 public class PropertyShowInContext extends ShowInContext {
 
 	private IWorkbenchPart part;
 
 	/**
-	 * @param aPart
-	 * @param selection
+	 * @param aPart     the part
+	 * @param selection the selection or <code>null</code>
 	 */
 	public PropertyShowInContext(IWorkbenchPart aPart, ISelection selection) {
 		super(null, selection);
@@ -38,8 +40,8 @@ public class PropertyShowInContext extends ShowInContext {
 	}
 
 	/**
-	 * @param aPart
-	 * @param aShowInContext
+	 * @param aPart          the part
+	 * @param aShowInContext an existing context to initialize from
 	 */
 	public PropertyShowInContext(IWorkbenchPart aPart,
 			ShowInContext aShowInContext) {

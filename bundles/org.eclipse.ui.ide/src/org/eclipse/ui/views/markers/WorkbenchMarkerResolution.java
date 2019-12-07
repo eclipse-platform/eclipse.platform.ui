@@ -30,10 +30,10 @@ public abstract class WorkbenchMarkerResolution implements IMarkerResolution2 {
 	/**
 	 * Iterate through the list of supplied markers. Return any that can also have
 	 * the receiver applied to them.
-	 * @param markers
+	 * 
+	 * @param markers the markers to check
 	 * @return IMarker[]
-	 *
-	 * */
+	 */
 	public abstract IMarker[] findOtherMarkers(IMarker[] markers);
 
 	/**

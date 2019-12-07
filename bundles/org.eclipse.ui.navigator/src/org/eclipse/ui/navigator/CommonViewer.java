@@ -122,7 +122,7 @@ public class CommonViewer extends TreeViewer {
 	/**
 	 * Sets the {@link ICommonViewerMapper} to work with this viewer.
 	 *
-	 * @param mapper
+	 * @param mapper the mapper
 	 * @since 3.4
 	 */
 	public void setMapper(ICommonViewerMapper mapper) {

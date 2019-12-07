@@ -79,7 +79,7 @@ public class ScrolledForm extends SharedScrolledComposite {
 	/**
 	 * Passes the menu to the body.
 	 *
-	 * @param menu
+	 * @param menu menu to set
 	 */
 	@Override
 	public void setMenu(Menu menu) {

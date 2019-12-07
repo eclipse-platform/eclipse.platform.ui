@@ -101,11 +101,10 @@ public class ReadOnlyStateChecker {
 	}
 
 	/**
-	 * Check the supplied resources to see if they are read only. If so then
-	 * prompt the user to see if they can be deleted.Return those that were
-	 * accepted.
+	 * Check the supplied resources to see if they are read only. If so then prompt
+	 * the user to see if they can be deleted.Return those that were accepted.
 	 *
-	 * @param itemsToCheck
+	 * @param itemsToCheck resources to check
 	 * @return the resulting selected resources
 	 */
 	public IResource[] checkReadOnlyResources(IResource[] itemsToCheck) {

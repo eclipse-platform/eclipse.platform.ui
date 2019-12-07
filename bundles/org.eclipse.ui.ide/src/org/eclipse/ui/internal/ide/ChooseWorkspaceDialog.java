@@ -82,7 +82,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 	private Form recentWorkspacesForm;
 
 	/**
-	 * Create a modal dialog on the arugment shell, using and updating the
+	 * Create a modal dialog on the argument shell, using and updating the
 	 * argument data object.
 	 * @param parentShell the parent shell for this dialog
 	 * @param launchData the launch data from past launches

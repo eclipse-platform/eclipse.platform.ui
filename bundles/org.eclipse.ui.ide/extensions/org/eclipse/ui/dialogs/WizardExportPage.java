@@ -817,7 +817,7 @@ public abstract class WizardExportPage extends WizardDataTransferPage {
 	/**
 	 * Set the resource whos name we will display.
 	 *
-	 * @param resource
+	 * @param resource the resource to display
 	 */
 	protected void setResourceToDisplay(IResource resource) {
 		setResourceFieldValue(resource.getFullPath().makeRelative().toString());

@@ -103,8 +103,9 @@ public class PropertyDescriptor implements IPropertyDescriptor {
 
 	/**
 	 * Creates a new property descriptor with the given id and display name
-	 * @param id
-	 * @param displayName
+	 * 
+	 * @param id          property id
+	 * @param displayName display name
 	 */
 	public PropertyDescriptor(Object id, String displayName) {
 		Assert.isNotNull(id);

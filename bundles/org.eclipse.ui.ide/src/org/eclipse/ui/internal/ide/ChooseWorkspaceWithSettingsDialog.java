@@ -88,10 +88,13 @@ public class ChooseWorkspaceWithSettingsDialog extends ChooseWorkspaceDialog {
 	/**
 	 * Open a new instance of the receiver.
 	 *
-	 * @param parentShell
-	 * @param launchData
-	 * @param suppressAskAgain
-	 * @param centerOnMonitor
+	 * @param parentShell      the parent shell for this dialog
+	 * @param launchData       the launch data from past launches
+	 * @param suppressAskAgain true means the dialog will not have a "don't ask
+	 *                         again" button
+	 * @param centerOnMonitor  indicates whether the dialog should be centered on
+	 *                         the monitor or according to it's parent if there is
+	 *                         one
 	 */
 	public ChooseWorkspaceWithSettingsDialog(Shell parentShell,
 			ChooseWorkspaceData launchData, boolean suppressAskAgain,

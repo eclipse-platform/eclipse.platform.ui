@@ -186,7 +186,12 @@ public interface IWorkbenchHelpSystem {
 	 * according to the implementation of the help system. Help resources that
 	 * already have a protocol will be unchanged.
 	 *
-	 * @param href
+	 * @param href         the URL of the help resource.
+	 *                     <p>
+	 *                     Valid href are as described in
+	 *                     {@link org.eclipse.help.IHelpResource#getHref()
+	 *                     IHelpResource.getHref()}
+	 *                     </p>
 	 * @param documentOnly if <code>true</code>, the resulting URL must point at the
 	 *                     document referenced by href. Otherwise, it can be a URL
 	 *                     that contains additional elements like navigation that

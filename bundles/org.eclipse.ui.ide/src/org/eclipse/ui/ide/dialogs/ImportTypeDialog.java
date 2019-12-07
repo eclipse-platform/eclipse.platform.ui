@@ -180,7 +180,7 @@ public class ImportTypeDialog extends TrayDialog {
 	}
 
 	/** Set the project that is the destination of the import operation
-	 * @param resource
+	 * @param resource the resource
 	 */
 	public void setResource(IResource resource) {
 		receivingResource = resource;

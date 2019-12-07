@@ -49,6 +49,8 @@ public class NewPropertySheetHandler extends AbstractHandler {
 	 * then creates a new instance if necessary.
 	 *
 	 * @param event
+	 *            An event containing all the information about the current
+	 *            state of the application; must not be <code>null</code>.
 	 * @return an instance for the given context
 	 * @see org.eclipse.core.commands.IHandler#execute(org.eclipse.core.commands.ExecutionEvent)
 	 */
@@ -73,13 +75,11 @@ public class NewPropertySheetHandler extends AbstractHandler {
 	}
 
 	/**
-	 * @param event
-	 *            {@link ExecutionEvent} for which the
-	 *            {@link PropertyShowInContext} is requested
-	 * @return a {@link PropertyShowInContext} containing the the
-	 *         {@link ISelection} and {@link IWorkbenchPart} for the given
-	 *         {@link ExecutionEvent}
-	 * @throws ExecutionException
+	 * @param event {@link ExecutionEvent} for which the
+	 *              {@link PropertyShowInContext} is requested
+	 * @return a {@link PropertyShowInContext} containing the the {@link ISelection}
+	 *         and {@link IWorkbenchPart} for the given {@link ExecutionEvent}
+	 * @throws ExecutionException If the active part variable is not found.
 	 */
 	protected PropertyShowInContext getShowInContext(ExecutionEvent event)
 			throws ExecutionException {
@@ -100,12 +100,12 @@ public class NewPropertySheetHandler extends AbstractHandler {
 	/**
 	 * Returns a PropertySheet instance
 	 *
-	 * @param event
-	 * @param context
-	 *            a {@link ShowInContext} to handle
+	 * @param event   {@link ExecutionEvent} for which the {@link PropertySheet} is
+	 *                requested
+	 * @param context a {@link ShowInContext} to handle
 	 * @return a PropertySheet that can handle the given {@link ShowInContext}
-	 * @throws PartInitException
-	 * @throws ExecutionException
+	 * @throws PartInitException  if the view could not be initialized
+	 * @throws ExecutionException If the active part variable is not found.
 	 */
 	protected PropertySheet findPropertySheet(ExecutionEvent event,
 			PropertyShowInContext context) throws PartInitException,

@@ -27,11 +27,11 @@ import org.eclipse.ui.internal.views.markers.MarkerSupportInternalUtilities;
 public abstract class MarkerItem {
 
 	/**
-	 * Return the boolean associated with attributeName or defaultValue if it is
-	 * not found.
+	 * Return the boolean associated with attributeName or defaultValue if it is not
+	 * found.
 	 *
-	 * @param attribute
-	 * @param defaultValue
+	 * @param attribute    the attribute
+	 * @param defaultValue the defaultValue if the value is not set
 	 * @return <code>boolean</code>
 	 */
 	public boolean getAttributeValue(String attribute, boolean defaultValue) {
@@ -43,9 +43,8 @@ public abstract class MarkerItem {
 	/**
 	 * Get the value of the attribute in the enclosed marker.
 	 *
-	 * @param attribute
-	 * @param defaultValue
-	 *            the defaultValue if the value is not set
+	 * @param attribute    the attribute
+	 * @param defaultValue the defaultValue if the value is not set
 	 * @return int
 	 */
 	public int getAttributeValue(String attribute, int defaultValue) {
@@ -57,9 +56,8 @@ public abstract class MarkerItem {
 	/**
 	 * Get the String value of the attribute in the enclosed marker.
 	 *
-	 * @param attribute
-	 * @param defaultValue
-	 *            the defaultValue if the value is not set
+	 * @param attribute    the attribute
+	 * @param defaultValue the defaultValue if the value is not set
 	 * @return String
 	 */
 	public String getAttributeValue(String attribute, String defaultValue) {

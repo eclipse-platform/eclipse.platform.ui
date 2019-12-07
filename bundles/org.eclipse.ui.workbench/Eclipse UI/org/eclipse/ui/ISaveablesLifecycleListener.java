@@ -45,7 +45,7 @@ public interface ISaveablesLifecycleListener {
 	/**
 	 * Handle the given event. This method must be called on the UI thread.
 	 *
-	 * @param event
+	 * @param event the event
 	 */
 	void handleLifecycleEvent(SaveablesLifecycleEvent event);
 

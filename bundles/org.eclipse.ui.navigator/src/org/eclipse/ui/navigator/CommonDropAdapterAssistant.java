@@ -270,10 +270,12 @@ public abstract class CommonDropAdapterAssistant {
 
 	/**
 	 * Sets the {@link CommonDropAdapter}.
-	 * @param dropAdapter
+	 *
+	 * @param dropAdapter the drop adapter
 	 *
 	 * @noreference This method is not intended to be referenced by clients.
-	 * @nooverride This method is not intended to be re-implemented or extended by clients.
+	 * @nooverride This method is not intended to be re-implemented or extended by
+	 *             clients.
 	 */
 	public void setCommonDropAdapter(CommonDropAdapter dropAdapter) {
 		_dropAdapter = dropAdapter;

@@ -40,7 +40,7 @@ public abstract class SettingsTransfer {
 	/**
 	 * Transfer the settings to a workspace rooted at newWorkspacwe
 	 *
-	 * @param newWorkspaceRoot
+	 * @param newWorkspaceRoot root of the new workspace
 	 * @return {@link IStatus} the status of the transfer.
 	 */
 	public abstract IStatus transferSettings(IPath newWorkspaceRoot);
@@ -48,7 +48,7 @@ public abstract class SettingsTransfer {
 	/**
 	 * Return the name for the receiver.
 	 *
-	 * @return String
+	 * @return receiver name
 	 */
 	public abstract String getName();
 

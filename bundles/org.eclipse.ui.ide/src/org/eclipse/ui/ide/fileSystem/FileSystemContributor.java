@@ -41,9 +41,9 @@ public abstract class FileSystemContributor {
 
 	/**
 	 * Return a URI for the supplied String from the user.
-	 * @param string
-	 * @return URI or <code>null</code> if the string is
-	 * invalid.
+	 * 
+	 * @param string string to convert
+	 * @return URI or <code>null</code> if the string is invalid.
 	 */
 	public URI getURI(String string){
 		return URIUtil.toURI(string);

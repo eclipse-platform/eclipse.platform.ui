@@ -95,9 +95,9 @@ public abstract class AbstractMultiEditor extends EditorPart {
 	}
 
 	/**
-	 * @param site
-	 * @param input
-	 * @throws PartInitException
+	 * @param site  the editor site
+	 * @param input the editor input
+	 * @exception PartInitException if this editor was not initialized successfully
 	 *
 	 * @see IEditorPart#init(IEditorSite, IEditorInput)
 	 */

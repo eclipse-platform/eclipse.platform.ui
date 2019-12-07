@@ -44,9 +44,10 @@ public abstract class SaveablesProvider implements IDisposable {
 	}
 
 	/**
-	 * Initializes this SaveablesProvider with the given listener, and calls the hook method doInit().
+	 * Initializes this SaveablesProvider with the given listener, and calls the
+	 * hook method doInit().
 	 *
-	 * @param listener
+	 * @param listener listener for lifecycle events
 	 */
 	final public void init(ISaveablesLifecycleListener listener) {
 		this.listener = listener;
@@ -63,7 +64,7 @@ public abstract class SaveablesProvider implements IDisposable {
 	 * Notifies the listener that the given models were opened in this model
 	 * provider. This method must be called on the UI thread.
 	 *
-	 * @param models
+	 * @param models the affected saveables
 	 */
 	final protected void fireSaveablesOpened(Saveable[] models) {
 		listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this,
@@ -74,7 +75,7 @@ public abstract class SaveablesProvider implements IDisposable {
 	 * Notifies the listener that the given models are about to be closed in
 	 * this model provider. This method must be called on the UI thread.
 	 *
-	 * @param models
+	 * @param models the affected saveables
 	 * @param force
 	 *            true if the closing may be canceled by the user
 	 * @return true if the listener vetoed the closing (may be ignored if force
@@ -92,7 +93,7 @@ public abstract class SaveablesProvider implements IDisposable {
 	 * Notifies the listener that the given models were closed in this model
 	 * provider. This method must be called on the UI thread.
 	 *
-	 * @param models
+	 * @param models the affected saveables
 	 */
 	final protected void fireSaveablesClosed(Saveable[] models) {
 		listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this,
@@ -103,7 +104,7 @@ public abstract class SaveablesProvider implements IDisposable {
 	 * Notifies the listener that the given models' dirty state has changed.
 	 * This method must be called on the UI thread.
 	 *
-	 * @param models
+	 * @param models the affected saveables
 	 */
 	final protected void fireSaveablesDirtyChanged(Saveable[] models) {
 		listener.handleLifecycleEvent(new SaveablesLifecycleEvent(this,
@@ -123,7 +124,7 @@ public abstract class SaveablesProvider implements IDisposable {
 	 * Returns the elements representing the given saveable. It is recommended
 	 * that a saveable be represented by only one element.
 	 *
-	 * @param saveable
+	 * @param saveable the savable
 	 * @return the elements representing the given saveable (array may be empty)
 	 */
 	public abstract Object[] getElements(Saveable saveable);
@@ -132,7 +133,7 @@ public abstract class SaveablesProvider implements IDisposable {
 	 * Returns the saveable for the given element, or null if the element does
 	 * not represent a saveable.
 	 *
-	 * @param element
+	 * @param element the element
 	 * @return the saveable for the given element, or null
 	 */
 	public abstract Saveable getSaveable(Object element);

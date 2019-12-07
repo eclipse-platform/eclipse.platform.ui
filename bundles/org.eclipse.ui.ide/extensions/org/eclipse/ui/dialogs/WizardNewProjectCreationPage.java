@@ -95,9 +95,10 @@ public class WizardNewProjectCreationPage extends WizardPage {
 	/**
 	 * Creates a new project creation wizard page.
 	 *
-	 * @param pageName
-	 * @param selection
-	 * @param workingSetTypes
+	 * @param pageName        the name of this page
+	 * @param selection       the current workbench selection
+	 * @param workingSetTypes an array of working set type IDs that will restrict
+	 *                        what types of working sets can be chosen in this group
 	 *
 	 * @deprecated default placement of the working set group has been removed. If
 	 *             you wish to use the working set block please call

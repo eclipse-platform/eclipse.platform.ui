@@ -106,7 +106,7 @@ public final class IDEEncoding {
 	/**
 	 * Add value to the list of workbench encodings.
 	 *
-	 * @param value
+	 * @param value encoding to add
 	 */
 	public static void addIDEEncoding(String value) {
 

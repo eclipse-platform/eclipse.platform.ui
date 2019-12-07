@@ -78,7 +78,7 @@ public abstract class ResourceDescription {
 	 * @param monitor
 	 *            the progress monitor to use
 	 * @return a resource that has the attributes of this resource description
-	 * @throws CoreException
+	 * @throws CoreException if creation failed
 	 */
 	public abstract IResource createResource(IProgressMonitor monitor) throws CoreException;
 
@@ -90,7 +90,7 @@ public abstract class ResourceDescription {
 	 *            the resource handle
 	 * @param monitor
 	 *            the progress monitor to be used when creating the resource
-	 * @throws CoreException
+	 * @throws CoreException if creation failed
 	 */
 	public abstract void createExistentResourceFromHandle(IResource resource,
 			IProgressMonitor monitor) throws CoreException;
@@ -112,7 +112,7 @@ public abstract class ResourceDescription {
 	 *            the resource whose state is to be recorded.
 	 * @param monitor
 	 *            the progress monitor to be used
-	 * @throws CoreException
+	 * @throws CoreException in case of error
 	 */
 	public abstract void recordStateFromHistory(IResource resource,
 			IProgressMonitor monitor) throws CoreException;

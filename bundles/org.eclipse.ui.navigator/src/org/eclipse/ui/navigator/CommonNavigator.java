@@ -280,10 +280,11 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 
 	/**
 	 * <p>
-	 * Returns the tool tip text for the given element. Used as the tool tip
-	 * text for the current frame, and for the view title tooltip.
+	 * Returns the tool tip text for the given element. Used as the tool tip text
+	 * for the current frame, and for the view title tooltip.
 	 * </p>
-	 * @param anElement
+	 * 
+	 * @param anElement element to get text for
 	 * @return the tool tip text
 	 * @since 3.4
 	 *
@@ -713,7 +714,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 
 
 	/**
-	 * @param mode
+	 * @param mode new root mode
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @nooverride This method is not intended to be re-implemented or extended by clients.
 	 * @since 3.4
@@ -734,7 +735,7 @@ public class CommonNavigator extends ViewPart implements ISetSelectionTarget, IS
 	}
 
 	/**
-	 * @param label
+	 * @param label new working set label
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @nooverride This method is not intended to be re-implemented or extended by clients.
 	 * @since 3.4

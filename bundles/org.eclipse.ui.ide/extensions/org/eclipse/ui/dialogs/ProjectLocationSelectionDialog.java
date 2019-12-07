@@ -73,8 +73,8 @@ public class ProjectLocationSelectionDialog extends SelectionStatusDialog {
 	 * Create a ProjectLocationSelectionDialog on the supplied project parented by
 	 * the parentShell.
 	 *
-	 * @param parentShell
-	 * @param existingProject
+	 * @param parentShell     the dialog's parent shell
+	 * @param existingProject project shown in the dialog
 	 */
 	public ProjectLocationSelectionDialog(Shell parentShell, IProject existingProject) {
 		super(parentShell);

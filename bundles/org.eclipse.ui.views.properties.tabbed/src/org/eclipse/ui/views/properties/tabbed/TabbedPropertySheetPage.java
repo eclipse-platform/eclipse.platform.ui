@@ -613,7 +613,7 @@ public class TabbedPropertySheetPage
 	 * entries corresponding to the disposed TabContents objects are also
 	 * removed.
 	 *
-	 * @param tabs
+	 * @param tabs tabs to dispose
 	 * @since 3.6
 	 */
 	protected void disposeTabs(Collection tabs) {

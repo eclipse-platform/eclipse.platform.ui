@@ -134,10 +134,13 @@ public interface IManagedForm {
 	void dirtyStateChanged();
 
 	/**
-	 * Commits the dirty form. All pending changes in the widgets are flushed
-	 * into the model.
+	 * Commits the dirty form. All pending changes in the widgets are flushed into
+	 * the model.
 	 *
-	 * @param onSave
+	 * @param onSave indicates if commit is called during 'save' operation or for
+	 *               some other reason (for example, if form is contained in a
+	 *               wizard or a multi-page editor and the user is about to leave
+	 *               the page).
 	 */
 	void commit(boolean onSave);
 

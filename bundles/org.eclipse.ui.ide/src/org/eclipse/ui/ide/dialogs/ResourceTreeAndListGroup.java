@@ -147,19 +147,19 @@ public class ResourceTreeAndListGroup extends EventManager {
 	private static int PREFERRED_HEIGHT = 150;
 
 	/**
-	 *	Create an instance of this class.  Use this constructor if you wish to specify
-	 *	the width and/or height of the combined widget (to only hard-code one of the
-	 *	sizing dimensions, specify the other dimension's value as -1)
+	 * Create an instance of this class. Use this constructor if you wish to specify
+	 * the width and/or height of the combined widget (to only hard-code one of the
+	 * sizing dimensions, specify the other dimension's value as -1)
 	 *
-	 * @param parent
-	 * @param rootObject
-	 * @param treeContentProvider
-	 * @param treeLabelProvider
-	 * @param listContentProvider
-	 * @param listLabelProvider
-	 * @param style
-	 * @param useHeightHint If true then use the height hint
-	 *  to make this group big enough
+	 * @param parent              the parent composite
+	 * @param rootObject          the root object to represent in the tree
+	 * @param treeContentProvider content provider for the tree part
+	 * @param treeLabelProvider   label provider for the tree elements
+	 * @param listContentProvider content provider for the list part
+	 * @param listLabelProvider   label provider for the list elements
+	 * @param style               style for the composite
+	 * @param useHeightHint       If true then use the height hint to make this
+	 *                            group big enough
 	 *
 	 */
 	public ResourceTreeAndListGroup(Composite parent, Object rootObject,
@@ -717,8 +717,9 @@ public class ResourceTreeAndListGroup extends EventManager {
 	}
 
 	/**
-	 *	Set the initial checked state of the passed list element to true.
-	 * @param element
+	 * Set the initial checked state of the passed list element to true.
+	 *
+	 * @param element the element to set
 	 */
 	public void initialCheckListItem(Object element) {
 		Object parent = treeContentProvider.getParent(element);
@@ -731,9 +732,10 @@ public class ResourceTreeAndListGroup extends EventManager {
 	}
 
 	/**
-	 * Set the initial checked state of the passed element to true,
-	 * as well as to all of its children and associated list elements
-	 * @param element
+	 * Set the initial checked state of the passed element to true, as well as to
+	 * all of its children and associated list elements
+	 *
+	 * @param element the element to set
 	 */
 	public void initialCheckTreeItem(Object element) {
 		treeItemChecked(element, true);
@@ -874,9 +876,10 @@ public class ResourceTreeAndListGroup extends EventManager {
 	}
 
 	/**
-	 * Select or de-select all of the elements in the tree depending on the value of the selection
-	 * boolean. Be sure to update the displayed files as well.
-	 * @param selection
+	 * Select or de-select all of the elements in the tree depending on the value of
+	 * the selection boolean. Be sure to update the displayed files as well.
+	 *
+	 * @param selection the new selection state
 	 */
 	public void setAllSelections(final boolean selection) {
 		//If there is no root there is nothing to select
@@ -924,9 +927,10 @@ public class ResourceTreeAndListGroup extends EventManager {
 	}
 
 	/**
-	 * Set the root of the widget to be new Root. Regenerate all of the tables and lists from this
-	 * value.
-	 * @param newRoot
+	 * Set the root of the widget to be new Root. Regenerate all of the tables and
+	 * lists from this value.
+	 * 
+	 * @param newRoot the new root object
 	 */
 	public void setRoot(Object newRoot) {
 		this.root = newRoot;

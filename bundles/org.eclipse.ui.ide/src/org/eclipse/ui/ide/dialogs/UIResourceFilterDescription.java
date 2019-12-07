@@ -41,7 +41,7 @@ public abstract class UIResourceFilterDescription {
 	abstract public FileInfoMatcherDescription getFileInfoMatcherDescription();
 
 	/**
-	 * @param iResourceFilterDescription
+	 * @param iResourceFilterDescription description to wrap; not <code>null</code>
 	 * @return a UIResourceFilterDescription
 	 */
 	public static UIResourceFilterDescription wrap(

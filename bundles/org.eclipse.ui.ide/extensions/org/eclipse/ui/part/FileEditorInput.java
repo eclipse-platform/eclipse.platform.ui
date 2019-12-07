@@ -48,9 +48,10 @@ public class FileEditorInput extends PlatformObject implements IFileEditorInput,
 	private IFile file;
 
 	/**
-	 * Return whether or not file is local. Only {@link IFile}s with a local
-	 * value should call {@link IPathEditorInput#getPath()}
-	 * @param file
+	 * Return whether or not file is local. Only {@link IFile}s with a local value
+	 * should call {@link IPathEditorInput#getPath()}
+	 * 
+	 * @param file the file to check; not <code>null</code>
 	 * @return boolean <code>true</code> if the file has a local implementation.
 	 * @since 3.4
 	 */

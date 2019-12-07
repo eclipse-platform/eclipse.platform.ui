@@ -51,8 +51,8 @@ public class ProjectLocationMoveDialog extends SelectionDialog {
 	 * Create a ProjectLocationMoveDialog on the supplied project parented by the
 	 * parentShell.
 	 *
-	 * @param parentShell
-	 * @param existingProject
+	 * @param parentShell     dialogs parent shell
+	 * @param existingProject project to be moved
 	 */
 	public ProjectLocationMoveDialog(Shell parentShell, IProject existingProject) {
 		super(parentShell);

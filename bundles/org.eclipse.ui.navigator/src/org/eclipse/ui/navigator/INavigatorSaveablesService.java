@@ -45,9 +45,9 @@ public interface INavigatorSaveablesService {
 	 * representing a saveable is found, or a root element is reached.
 	 * </p>
 	 *
-	 * @param source
-	 * @param viewer
-	 * @param listener
+	 * @param source the source of possible saveables
+	 * @param viewer associated viewer
+	 * @param listener listener to inform about events on saveables of the source
 	 *
 	 */
 	public void init(ISaveablesSource source, StructuredViewer viewer,

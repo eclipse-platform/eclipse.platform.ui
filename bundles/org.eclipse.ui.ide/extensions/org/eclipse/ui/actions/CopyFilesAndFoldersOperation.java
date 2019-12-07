@@ -1872,10 +1872,11 @@ public class CopyFilesAndFoldersOperation {
 	}
 
 	/**
-	 * Set whether or not virtual folders and links will be created under the destination
-	 * container.
+	 * Set whether or not virtual folders and links will be created under the
+	 * destination container.
 	 *
-	 * @param value
+	 * @param value <code>true</code> to create virtual folders and links under
+	 *              destination container
 	 * @since 3.6
 	 */
 	public void setVirtualFolders(boolean value) {
@@ -1885,7 +1886,7 @@ public class CopyFilesAndFoldersOperation {
 	/**
 	 * Set whether or not links will be created under the destination container.
 	 *
-	 * @param value
+	 * @param value <code>true</code> to create links under destination container
 	 * @since 3.6
 	 */
 	public void setCreateLinks(boolean value) {
@@ -1895,7 +1896,7 @@ public class CopyFilesAndFoldersOperation {
 	/**
 	 * Set a variable relative to which the links are created
 	 *
-	 * @param variable
+	 * @param variable base for relative links
 	 * @since 3.6
 	 */
 	public void setRelativeVariable(String variable) {

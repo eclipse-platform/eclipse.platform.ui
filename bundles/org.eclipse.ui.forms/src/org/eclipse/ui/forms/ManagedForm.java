@@ -69,8 +69,8 @@ public class ManagedForm implements IManagedForm {
 	/**
 	 * Creates a managed form that will use the provided toolkit and
 	 *
-	 * @param toolkit
-	 * @param form
+	 * @param toolkit existing toolkit to use
+	 * @param form    form to manage
 	 */
 	public ManagedForm(FormToolkit toolkit, ScrolledForm form) {
 		this.form = form;

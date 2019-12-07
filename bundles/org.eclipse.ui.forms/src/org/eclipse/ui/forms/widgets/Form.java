@@ -696,7 +696,7 @@ public class Form extends Composite {
 	 * Adds a message hyperlink listener. If at least one listener is present,
 	 * messages will be rendered as hyperlinks.
 	 *
-	 * @param listener
+	 * @param listener the listener to add; not <code>null</code>
 	 * @see #removeMessageHyperlinkListener(IHyperlinkListener)
 	 * @since 3.3
 	 */
@@ -707,7 +707,7 @@ public class Form extends Composite {
 	/**
 	 * Remove the message hyperlink listener.
 	 *
-	 * @param listener
+	 * @param listener the listener to remove; not <code>null</code>
 	 * @see #addMessageHyperlinkListener(IHyperlinkListener)
 	 * @since 3.3
 	 */

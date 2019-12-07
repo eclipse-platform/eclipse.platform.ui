@@ -41,14 +41,14 @@ public abstract class FilterConfigurationArea {
 	/**
 	 * Apply the current settings to the filter.
 	 *
-	 * @param filter
+	 * @param filter filter to update
 	 */
 	public abstract void apply(MarkerFieldFilter filter);
 
 	/**
 	 * Create the contents of the configuration area in the parent.
 	 *
-	 * @param parent
+	 * @param parent the parent composite
 	 */
 	public abstract void createContents(Composite parent);
 
@@ -74,7 +74,7 @@ public abstract class FilterConfigurationArea {
 	/**
 	 * Initialise {@link FontMetrics} for the receiver.
 	 *
-	 * @param control
+	 * @param control control to get font from
 	 */
 	protected void initializeFontMetrics(Control control) {
 		GC gc = new GC(control);
@@ -87,7 +87,7 @@ public abstract class FilterConfigurationArea {
 	/**
 	 * Initialise the receiver using the filter.
 	 *
-	 * @param filter
+	 * @param filter filter to use
 	 */
 	public abstract void initialize(MarkerFieldFilter filter);
 
@@ -96,7 +96,7 @@ public abstract class FilterConfigurationArea {
 	 * be called by the marker support framework directly after
 	 * instantiation of the receiver.
 	 *
-	 * @param markerField
+	 * @param markerField field to set
 	 */
 	public final void setField(MarkerField markerField) {
 		field = markerField;
@@ -104,7 +104,8 @@ public abstract class FilterConfigurationArea {
 
 	/**
 	 * Set the standard button data for the button.
-	 * @param button
+	 * 
+	 * @param button button to change
 	 */
 	protected void setButtonLayoutData(Button button) {
 		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL);

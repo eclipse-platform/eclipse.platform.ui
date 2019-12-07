@@ -126,10 +126,10 @@ public class Section extends ExpandableComposite {
 	}
 
 	/**
-	 * Sets the description text. Has no effect if DESCRIPTION style was not
-	 * used to create the control.
+	 * Sets the description text. Has no effect if DESCRIPTION style was not used to
+	 * create the control.
 	 *
-	 * @param description
+	 * @param description new description text; not <code>null</code>
 	 */
 	public void setDescription(String description) {
 		if (descriptionControl instanceof Label)

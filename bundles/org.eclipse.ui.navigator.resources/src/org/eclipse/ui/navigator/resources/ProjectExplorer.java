@@ -272,7 +272,7 @@ public final class ProjectExplorer extends CommonNavigator implements ISecondary
 	}
 
 	/**
-	 * @param mode
+	 * @param mode root mode to set
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @since 3.4
 	 */
@@ -292,7 +292,7 @@ public final class ProjectExplorer extends CommonNavigator implements ISecondary
 	}
 
 	/**
-	 * @param label
+	 * @param label working set label
 	 * @noreference This method is not intended to be referenced by clients.
 	 * @since 3.4
 	 */

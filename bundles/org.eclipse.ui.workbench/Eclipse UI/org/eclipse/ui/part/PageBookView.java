@@ -193,8 +193,8 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		/**
 		 * Creates a new page record initialized to the given part and page.
 		 *
-		 * @param part
-		 * @param page
+		 * @param part the part
+		 * @param page the page
 		 */
 		public PageRec(IWorkbenchPart part, IPage page) {
 			this.part = part;
@@ -1044,7 +1044,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	/**
 	 * Make sure that the part is not considered if it is hidden.
 	 *
-	 * @param part
+	 * @param part the part which got hidden
 	 * @since 3.5
 	 */
 	protected void partHidden(IWorkbenchPart part) {
@@ -1070,8 +1070,8 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	}
 
 	/**
-	 * @param viewStack
-	 * @param part
+	 * @param viewStack view parts to check; might be <code>null</code>
+	 * @param part      part to search in viewStack; might be <code>null</code>
 	 * @return <code>true</code> if the part is in the viewStack
 	 */
 	private boolean containsPart(IViewPart[] viewStack, IWorkbenchPart part) {
@@ -1089,7 +1089,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	/**
 	 * Make sure that the part is not considered if it is hidden.
 	 *
-	 * @param part
+	 * @param part the part which got visible
 	 * @since 3.5
 	 */
 	protected void partVisible(IWorkbenchPart part) {

@@ -89,7 +89,7 @@ public interface ISection {
 
 	/**
 	 * Notifies the section that the workbench selection has changed.
-	 * @param part The active workench part.
+	 * @param part The active workbench part.
 	 * @param selection The active selection in the workbench part.
 	 */
 	public abstract void setInput(IWorkbenchPart part, ISelection selection);
