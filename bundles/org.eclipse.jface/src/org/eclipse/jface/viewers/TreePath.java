@@ -222,7 +222,8 @@ public final class TreePath {
 
 	/**
 	 * Returns a copy of this tree path with the given segment added at the end.
-	 * @param newSegment
+	 *
+	 * @param newSegment the segment to be added
 	 * @return a tree path
 	 */
 	public TreePath createChildPath(Object newSegment) {

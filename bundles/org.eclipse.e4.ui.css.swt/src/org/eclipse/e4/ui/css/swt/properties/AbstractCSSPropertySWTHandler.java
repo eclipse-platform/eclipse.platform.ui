@@ -55,12 +55,13 @@ public abstract class AbstractCSSPropertySWTHandler implements ICSSPropertyHandl
 	 * CSSValue <code>value</code> (ex : red) into the SWT
 	 * <code>control</code> (ex : SWT Text, SWT Label).
 	 *
-	 * @param control
-	 * @param property
-	 * @param value
-	 * @param pseudo
-	 * @param engine
-	 * @throws Exception
+	 * @param control  SWT control to change
+	 * @param property CSS Property
+	 * @param value    CSS value
+	 * @param pseudo   the pseudo class to use, or <code>null</code> if none is
+	 *                 required
+	 * @param engine   CSS Engine
+	 * @throws Exception if applying CSS failed
 	 */
 	protected abstract void applyCSSProperty(Control control, String property,
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception;
@@ -70,11 +71,13 @@ public abstract class AbstractCSSPropertySWTHandler implements ICSSPropertyHandl
 	 * background-color) from the SWT <code>control</code> (ex : SWT Text, SWT
 	 * Label).
 	 *
-	 * @param control
-	 * @param property
-	 * @param engine
-	 * @return
-	 * @throws Exception
+	 * @param control  SWT control to change
+	 * @param property CSS Property
+	 * @param pseudo   the pseudo class to use, or <code>null</code> if none is
+	 *                 required
+	 * @param engine   CSS Engine
+	 * @return retrieved CSS properties or <code>null</code>
+	 * @throws Exception if retrieving CSS failed
 	 */
 	protected abstract String retrieveCSSProperty(Control control,
 			String property, String pseudo, CSSEngine engine) throws Exception;

@@ -56,7 +56,7 @@ public interface IOperatingSystemRegistration {
 	 * Takes the given schemes and fills information like whether they are
 	 * registered for this instance and the handler location.
 	 *
-	 * @param schemes
+	 * @param schemes The schemes that should be checked for registrations.
 	 * @return schemes with information
 	 * @throws Exception something went wrong
 	 */

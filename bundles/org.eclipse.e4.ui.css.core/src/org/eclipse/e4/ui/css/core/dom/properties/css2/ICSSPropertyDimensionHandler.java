@@ -20,7 +20,7 @@ import org.w3c.dom.css.CSSValue;
 /**
  * CSS2 Dimension Property Handler.
  *
- * @see http://www.w3schools.com/css/css_reference.asp#dimension
+ * @see <a href="https://www.w3schools.com/css/css_dimension.asp">w3schools</a>
  */
 public interface ICSSPropertyDimensionHandler extends ICSSPropertyHandler {
 

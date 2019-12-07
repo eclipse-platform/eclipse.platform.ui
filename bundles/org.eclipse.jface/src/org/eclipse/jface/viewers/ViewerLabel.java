@@ -62,8 +62,8 @@ public class ViewerLabel {
 	 * Create a new instance of the receiver with the supplied initial text and
 	 * image.
 	 *
-	 * @param initialText
-	 * @param initialImage
+	 * @param initialText  initial text
+	 * @param initialImage initial image
 	 */
 	public ViewerLabel(String initialText, Image initialImage) {
 		startText = initialText;

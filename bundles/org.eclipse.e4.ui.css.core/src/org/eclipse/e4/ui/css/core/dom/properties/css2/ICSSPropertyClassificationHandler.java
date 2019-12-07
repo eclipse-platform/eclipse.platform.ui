@@ -20,7 +20,7 @@ import org.w3c.dom.css.CSSValue;
 /**
  * CSS2 Classification Property Handler.
  *
- * @see http://www.w3schools.com/css/css_reference.asp#classification
+ * @see "http://www.w3schools.com/css/css_reference.asp#classification"
  */
 public interface ICSSPropertyClassificationHandler extends ICSSPropertyHandler {
 

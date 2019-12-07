@@ -20,7 +20,7 @@ import org.w3c.dom.css.CSSValue;
 /**
  * CSS Padding Handler.
  *
- * @see http://www.w3schools.com/css/css_reference.asp#padding
+ * @see <a href="https://www.w3schools.com/css/css_padding.asp">w3schools</a>
  */
 
 public interface ICSSPropertyPaddingHandler extends ICSSPropertyHandler {

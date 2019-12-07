@@ -225,7 +225,7 @@ public final class GridDataFactory {
 	 * </p>
 	 *
 	 * @see GridLayoutFactory#generateLayout(org.eclipse.swt.widgets.Composite)
-	 * @param theControl
+	 * @param theControl the control to get factory with default values for
 	 * @return a GridDataFactory initialized with defaults that GridLayoutFactory would have assigned
 	 * @since 3.3
 	 */
@@ -243,7 +243,7 @@ public final class GridDataFactory {
 	 * </p>
 	 *
 	 * @see GridLayoutFactory#generateLayout(org.eclipse.swt.widgets.Composite)
-	 * @param theControl
+	 * @param theControl the control to change
 	 * @param hSpan number of columns spanned by the control
 	 * @param vSpan number of rows spanned by the control
 	 * @since 3.3
@@ -262,7 +262,7 @@ public final class GridDataFactory {
 	 * </p>
 	 *
 	 * @see GridLayoutFactory#generateLayout(org.eclipse.swt.widgets.Composite)
-	 * @param theControl
+	 * @param theControl the control to change
 	 * @param span The x coordinate indicates the number of
 	 * columns spanned, and the y coordinate indicates the number of rows.
 	 * @since 3.3

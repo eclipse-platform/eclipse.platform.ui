@@ -31,7 +31,7 @@ public interface IFontDecorator {
 	 * Return the font for element or <code>null</code> if there
 	 * is not one.
 	 *
-	 * @param element
+	 * @param element the element to get font for
 	 * @return Font or <code>null</code>
 	 */
 	public Font decorateFont(Object element);

@@ -51,7 +51,7 @@ public interface ICheckStateProvider {
 	 * the {@link ICheckStateProvider#isGrayed(Object)} method will determine
 	 * whether the check box displays a check mark ("checked") or a box
 	 * ("grayed").
-	 * @param element
+	 * @param element the element to get state for
 	 * @return true if the element should be checked or grayed, false if it
 	 * 		should be unchecked
 	 */
@@ -61,7 +61,7 @@ public interface ICheckStateProvider {
 	 * Indicates whether the check box associated with an element, when checked
 	 * as indicated by the {@link ICheckStateProvider#isChecked(Object)} method,
 	 * should display the gray (boxed) state instead of the check mark.
-	 * @param element
+	 * @param element the element to get state for
 	 * @return true if the element should be gray
 	 */
 	public boolean isGrayed(Object element);

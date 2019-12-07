@@ -42,7 +42,7 @@ public interface IUriSchemeExtensionReader {
 	 *
 	 * @param uriScheme The URI scheme
 	 * @return The handler implementation for the given URI scheme
-	 * @throws CoreException
+	 * @throws CoreException if creation failed; implementation dependent
 	 */
 	IUriSchemeHandler getHandlerFromExtensionPoint(String uriScheme) throws CoreException;
 

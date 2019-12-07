@@ -246,7 +246,7 @@ public class PreferenceNode implements IPreferenceNode {
 	/**
 	 * Set the current page to be newPage.
 	 *
-	 * @param newPage
+	 * @param newPage page to set
 	 */
 	public void setPage(IPreferencePage newPage) {
 		page = newPage;

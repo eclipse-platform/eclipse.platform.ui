@@ -44,40 +44,64 @@ public interface ECommandService {
 	public ParameterizedCommand createCommand(String id);
 
 	/**
-	 * @param id
-	 * @param name
-	 * @param description
-	 * @return
+	 * @param id          - Category to define
+	 * @param name        - The name of this category; must not be <code>null</code>
+	 * @param description - The description for this category; may be
+	 *                    <code>null</code>
+	 * @return the defined category
 	 * @noreference
 	 */
 	public Category defineCategory(String id, String name, String description);
 
 	/**
-	 * @param id
-	 * @param name
-	 * @param description
-	 * @param category
-	 * @param parameters
-	 * @return
+	 * @param id          - Command to define
+	 * @param name        - The name of this command; must not be <code>null</code>
+	 * @param description - The description for this command; may be
+	 *                    <code>null</code>
+	 * @param category    - The category for this command; must not be
+	 *                    <code>null</code>
+	 * @param parameters  - The parameters understood by this command. This value
+	 *                    may be either <code>null</code> or empty if the command
+	 *                    does not accept parameters
+	 * @return the defined command
 	 * @noreference
 	 */
 	public Command defineCommand(String id, String name, String description, Category category,
 			IParameter[] parameters);
 
 	/**
-	 * @param id
-	 * @param name
-	 * @param description
-	 * @param category
-	 * @param parameters
-	 * @param helpContextId
-	 * @return
+	 * @param id            - Command to define
+	 * @param name          - The name of this command; must not be
+	 *                      <code>null</code>
+	 * @param description   - The description for this command; may be
+	 *                      <code>null</code>
+	 * @param category      - The category for this command; must not be
+	 *                      <code>null</code>
+	 * @param parameters    - The parameters understood by this command. This value
+	 *                      may be either <code>null</code> or empty if the command
+	 *                      does not accept parameters
+	 * @param helpContextId - The identifier of the help context to associate with
+	 *                      this command; may be <code>null</code> if this command
+	 *                      does not have any help associated with it
+	 * @return the defined command
 	 * @noreference
 	 */
 	public Command defineCommand(String id, String name, String description, Category category,
 			IParameter[] parameters,String helpContextId);
 
+	/**
+	 * Get category for id.
+	 * 
+	 * @param categoryId - The category id
+	 * @return the category for id
+	 */
 	public Category getCategory(String categoryId);
 
+	/**
+	 * Get command for id.
+	 * 
+	 * @param commandId - The command id
+	 * @return the command for id
+	 */
 	public Command getCommand(String commandId);
 }

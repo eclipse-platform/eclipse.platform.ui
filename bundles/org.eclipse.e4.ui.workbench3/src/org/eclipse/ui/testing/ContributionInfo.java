@@ -30,7 +30,7 @@ public class ContributionInfo {
 	/**
 	 * Creates a new instance.
 	 *
-	 * @param bundleId
+	 * @param bundleId the bundle ID
 	 * @param elementType
 	 *            a localized string describing the contribution (e.g., 'view',
 	 *            'editor', 'preference page')

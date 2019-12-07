@@ -62,10 +62,9 @@ public class PreferenceManager {
 	}
 
 	/**
-	 * Creates a new preference manager with the given
-	 * path separator.
+	 * Creates a new preference manager with the given path separator.
 	 *
-	 * @param separatorChar
+	 * @param separatorChar preference node separator
 	 */
 	public PreferenceManager(final char separatorChar) {
 		this(separatorChar, new PreferenceNode(ROOT_NODE_ID));
@@ -246,7 +245,7 @@ public class PreferenceManager {
 	}
 
 	/**
-	 * Removes the given prefreence node if it is managed by
+	 * Removes the given preference node if it is managed by
 	 * this contribution manager.
 	 *
 	 * @param node the node to remove

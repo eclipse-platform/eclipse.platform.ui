@@ -202,14 +202,15 @@ public abstract class ToolTip {
 	}
 
 	/**
-	 * Set to <code>false</code> if display bounds should not be respected or
-	 * to <code>true</code> if the tooltip is should repositioned to not
-	 * overlap the display bounds.
+	 * Set to <code>false</code> if display bounds should not be respected or to
+	 * <code>true</code> if the tooltip is should repositioned to not overlap the
+	 * display bounds.
 	 * <p>
 	 * Default is <code>true</code>
 	 * </p>
 	 *
-	 * @param respectDisplayBounds
+	 * @param respectDisplayBounds <code>false</code> if tooltip is allowed to
+	 *                             overlap display bounds
 	 */
 	public void setRespectDisplayBounds(boolean respectDisplayBounds) {
 		this.respectDisplayBounds = respectDisplayBounds;
@@ -225,15 +226,16 @@ public abstract class ToolTip {
 	}
 
 	/**
-	 * Set to <code>false</code> if monitor bounds should not be respected or
-	 * to <code>true</code> if the tooltip is should repositioned to not
-	 * overlap the monitors bounds. The monitor the tooltip belongs to is the
-	 * same is control's monitor the tooltip is shown for.
+	 * Set to <code>false</code> if monitor bounds should not be respected or to
+	 * <code>true</code> if the tooltip is should repositioned to not overlap the
+	 * monitors bounds. The monitor the tooltip belongs to is the same is control's
+	 * monitor the tooltip is shown for.
 	 * <p>
 	 * Default is <code>true</code>
 	 * </p>
 	 *
-	 * @param respectMonitorBounds
+	 * @param respectMonitorBounds <code>false</code> if tooltip is allowed to
+	 *                             overlap monitor bounds
 	 */
 	public void setRespectMonitorBounds(boolean respectMonitorBounds) {
 		this.respectMonitorBounds = respectMonitorBounds;

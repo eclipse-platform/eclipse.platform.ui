@@ -20,7 +20,7 @@ import org.eclipse.emf.common.util.URI;
  * This interface describes a utility that is used to load ImageDesc's from
  * {@link URI}s
  *
- * @param <ImageDesc> The image desciptor type.
+ * @param <ImageDesc> The image descriptor type.
  *
  * @noimplement This interface is not intended to be implemented by clients.
  * @since 1.0
@@ -30,7 +30,7 @@ public interface IResourceUtilities<ImageDesc> {
 	/**
 	 * Loads an ImageDesc from the given {@link URI}.
 	 *
-	 * @param iconPath
+	 * @param iconPath the URI to load
 	 * @return the ImageDesc from the given URI or <code>null</code>
 	 */
 	public ImageDesc imageDescriptorFromURI(URI iconPath);

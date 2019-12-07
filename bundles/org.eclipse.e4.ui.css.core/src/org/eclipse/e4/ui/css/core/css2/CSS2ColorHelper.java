@@ -44,8 +44,8 @@ public class CSS2ColorHelper {
 	 * Return w3c {@link RGBColor} from string value. Format String value is
 	 * hexadecimal like #FFFFFF or color name like white.
 	 *
-	 * @param value
-	 * @return
+	 * @param value string representation of color
+	 * @return parsed color
 	 */
 	public static RGBColor getRGBColor(String value) {
 		if (value.startsWith("#") && value.length() == 7) {
@@ -73,9 +73,9 @@ public class CSS2ColorHelper {
 	 * (Hexa, color name or rgb format) of the color string is managed with
 	 * <code>config</code> {@link ICSSValueConverterConfig}.
 	 *
-	 * @param rgbColor
-	 * @param config
-	 * @return
+	 * @param rgbColor the color to get string representation for
+	 * @param config   optional config to influence string format
+	 * @return string representation of rgbColor
 	 */
 	public static String getColorStringValue(RGBColor rgbColor, ICSSValueConverterConfig config) {
 		if (config instanceof ICSSValueConverterColorConfig) {
@@ -104,8 +104,8 @@ public class CSS2ColorHelper {
 	 * Return rgb (ex : rgb(0,0,0)) color string value from w3c
 	 * <code>rgbColor</code> instance.
 	 *
-	 * @param rgbColor
-	 * @return
+	 * @param rgbColor the color to get string representation for
+	 * @return rgbColor as rgb(r, g, b) string
 	 */
 	public static String getRGBColorStringValue(RGBColor rgbColor) {
 		String result = "rgb(";
@@ -125,8 +125,8 @@ public class CSS2ColorHelper {
 	 * Return hexadecimal (ex : #FFFFFF) color string value from w3c
 	 * <code>rgbColor</code> instance.
 	 *
-	 * @param rgbColor
-	 * @return
+	 * @param rgbColor the color to get string representation for
+	 * @return rgbColor as hexa string
 	 */
 	public static String getHexaColorStringValue(RGBColor rgbColor) {
 		String result = "#";
@@ -151,8 +151,9 @@ public class CSS2ColorHelper {
 	/**
 	 * Return the Hexa color (ex : #FFFFFF) from color name (ex : white).
 	 *
-	 * @param colorName
-	 * @return
+	 * @param colorName name of the desired color
+	 * @return hex representation of named color or <code>null</code> if unknown
+	 *         color
 	 */
 	public static String getHexaColorFromColorName(String colorName) {
 		return colorNamesMap.get(colorName);
@@ -162,8 +163,8 @@ public class CSS2ColorHelper {
 	 * Return true if <code>value</code> is color name (ex : white) and false
 	 * otherwise.
 	 *
-	 * @param value
-	 * @return
+	 * @param value name of color to check
+	 * @return <code>true</code> if name is a known named color
 	 */
 	public static boolean isColorName(String value) {
 		return (colorNamesMap.get(value) != null);
@@ -172,8 +173,8 @@ public class CSS2ColorHelper {
 	/**
 	 * Return the color name (ex : white) from Hexa color (ex : #FFFFFF).
 	 *
-	 * @param hexaColor
-	 * @return
+	 * @param hexaColor hexa color to check for explicit color name
+	 * @return color name if or <code>null</code> if color has no name
 	 */
 	public static String getColorNameFromHexaColor(String hexaColor) {
 		hexaColor = hexaColor.toUpperCase();

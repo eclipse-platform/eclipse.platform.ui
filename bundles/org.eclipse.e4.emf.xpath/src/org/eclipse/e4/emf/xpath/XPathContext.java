@@ -54,7 +54,7 @@ public interface XPathContext {
 	 *
 	 * @param xpath
 	 *            to iterate
-	 * @return Iterator<Object>
+	 * @return Iterator&lt;Object&gt;
 	 */
 	<O> Iterator<O> iterate(String xpath);
 }

@@ -20,7 +20,7 @@ import org.w3c.dom.css.CSSValue;
 /**
  * CSS2 Font Property Handler.
  *
- * @see http://www.w3schools.com/css/css_reference.asp#font
+ * @see <a href="https://www.w3schools.com/css/css_font.asp">w3schools</a>
  */
 public interface ICSSPropertyFontHandler extends ICSSPropertyHandler {
 

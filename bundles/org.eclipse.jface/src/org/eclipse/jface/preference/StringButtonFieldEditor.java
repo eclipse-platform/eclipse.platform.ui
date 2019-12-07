@@ -99,7 +99,8 @@ public abstract class StringButtonFieldEditor extends StringFieldEditor {
 
 	/**
 	 * Get the change control. Create it in parent if required.
-	 * @param parent
+	 * 
+	 * @param parent the parent composite
 	 * @return Button
 	 */
 	protected Button getChangeControl(Composite parent) {

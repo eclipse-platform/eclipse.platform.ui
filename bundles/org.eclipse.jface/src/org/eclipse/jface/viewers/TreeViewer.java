@@ -374,7 +374,7 @@ public class TreeViewer extends AbstractTreeViewer {
 	 *
 	 * @param elementOrTreePath
 	 *            the element, or tree path
-	 * @param count
+	 * @param count new number of children
 	 *
 	 * @since 3.2
 	 */
@@ -923,7 +923,7 @@ public class TreeViewer extends AbstractTreeViewer {
 	 *
 	 * @param elementOrTreePath
 	 *            the element, or tree path
-	 * @param hasChildren
+	 * @param hasChildren the new state for the element or tree path
 	 *
 	 * @since 3.3
 	 */

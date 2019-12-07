@@ -20,7 +20,7 @@ import org.w3c.dom.css.CSSValue;
 /**
  * CSS2 Text Property Handler.
  *
- * @see http://www.w3schools.com/css/css_reference.asp#text
+ * @see <a href="https://www.w3schools.com/css/css_text.asp">w3schools</a>
  */
 public interface ICSSPropertyTextHandler extends ICSSPropertyHandler {
 

@@ -234,7 +234,7 @@ public class Policy {
 	/**
 	 * Set the error support provider for error dialogs.
 	 *
-	 * @param provider
+	 * @param provider provider to set
 	 * @since 3.3
 	 */
 	public static void setErrorSupportProvider(ErrorSupportProvider provider) {
@@ -255,7 +255,7 @@ public class Policy {
 	/**
 	 * Log the Exception to the logger.
 	 *
-	 * @param exception
+	 * @param exception exception to log
 	 * @since 3.4
 	 */
 	public static void logException(Exception exception) {

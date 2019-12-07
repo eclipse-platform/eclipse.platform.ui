@@ -20,7 +20,7 @@ import org.w3c.dom.css.CSSValue;
 /**
  * CSS2 Background Property Handler.
  *
- * @see http://www.w3schools.com/css/css_reference.asp#background
+ * @see <a href="https://www.w3schools.com/css/css_background.asp">w3schools</a>
  */
 public interface ICSSPropertyBackgroundHandler extends ICSSPropertyHandler {
 

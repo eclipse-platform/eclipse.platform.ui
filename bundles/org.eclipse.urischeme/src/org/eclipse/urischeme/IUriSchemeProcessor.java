@@ -32,7 +32,7 @@ public interface IUriSchemeProcessor {
 	 *
 	 * @param uriScheme the scheme of the URI
 	 * @param uri       the complete URI
-	 * @throws CoreException
+	 * @throws CoreException if URI handling failed; implementation dependent
 	 */
 	void handleUri(String uriScheme, String uri) throws CoreException;
 }

@@ -373,7 +373,8 @@ public abstract class DialogPage implements IDialogPage, IMessageProvider {
 
 	/**
 	 * Set the control for the receiver.
-	 * @param newControl
+	 * 
+	 * @param newControl control to set
 	 */
 	protected void setControl(Control newControl) {
 		control = newControl;

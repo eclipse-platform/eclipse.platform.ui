@@ -32,7 +32,7 @@ public class DeviceResourceException extends RuntimeException {
 	 * Creates a DeviceResourceException indicating an error attempting to
 	 * create a resource and an embedded low-level exception describing the cause
 	 *
-	 * @param missingResource
+	 * @param missingResource the failed resource
 	 * @param cause cause of the exception (or null if none)
 	 */
 	public DeviceResourceException(DeviceResourceDescriptor missingResource, Throwable cause) {
@@ -45,7 +45,7 @@ public class DeviceResourceException extends RuntimeException {
 	 * Creates a DeviceResourceException indicating an error attempting to
 	 * create a resource
 	 *
-	 * @param missingResource
+	 * @param missingResource the failed resource
 	 */
 	public DeviceResourceException(DeviceResourceDescriptor missingResource) {
 		this(missingResource, null);

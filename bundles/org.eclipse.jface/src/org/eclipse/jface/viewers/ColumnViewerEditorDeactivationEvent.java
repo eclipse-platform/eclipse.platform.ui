@@ -51,7 +51,7 @@ public class ColumnViewerEditorDeactivationEvent extends EventObject {
 	public static final int EDITOR_SAVED = 2;
 
 	/**
-	 * @param source
+	 * @param source The object on which the Event initially occurred.
 	 */
 	public ColumnViewerEditorDeactivationEvent(Object source) {
 		super(source);

@@ -229,7 +229,7 @@ public abstract class ContributionItem implements IContributionItem {
 	 * The ID for this contribution item. It should be set once either in the
 	 * constructor or using this method.
 	 *
-	 * @param itemId
+	 * @param itemId new item id
 	 * @since 3.4
 	 * @see #getId()
 	 */

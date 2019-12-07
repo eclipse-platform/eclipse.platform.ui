@@ -304,10 +304,12 @@ public abstract class PreferencePage extends DialogPage implements
 
 
 	/**
-	 * Apply the dialog font to the composite and it's children
-	 * if it is set. Subclasses may override if they wish to
-	 * set the font themselves.
-	 * @param composite
+	 * Apply the dialog font to the composite and it's children if it is set.
+	 * Subclasses may override if they wish to set the font themselves.
+	 *
+	 * @param composite the composite to apply the font to. Font will also be
+	 *                  applied to its children. If the control is <code>null</code>
+	 *                  nothing happens.
 	 */
 	protected void applyDialogFont(Composite composite) {
 		Dialog.applyDialogFont(composite);

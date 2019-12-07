@@ -330,9 +330,9 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		}
 
 		/**
-		 * Apply the fonts and colors to the control if
-		 * required.
-		 * @param control
+		 * Apply the fonts and colors to the control if required.
+		 *
+		 * @param control control to apply font and color on
 		 */
 		public void applyFontsAndColors(TableItem control) {
 
@@ -354,9 +354,9 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 		}
 
 		/**
-		 * Apply the fonts and colors to the control if
-		 * required.
-		 * @param control
+		 * Apply the fonts and colors to the control if required.
+		 *
+		 * @param control control to apply font and color on
 		 */
 		public void applyFontsAndColors(TreeItem control) {
 			if(usedDecorators){
@@ -378,21 +378,26 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 
 		/**
 		 * Set the background color.
-		 * @param background
+		 * 
+		 * @param background color to set
 		 */
 		public void setBackground(Color background) {
 			this.background = background;
 		}
+		
 		/**
 		 * Set the font.
-		 * @param font
+		 * 
+		 * @param font font to set
 		 */
 		public void setFont(Font font) {
 			this.font = font;
 		}
+		
 		/**
 		 * Set the foreground color.
-		 * @param foreground
+		 * 
+		 * @param foreground color to set
 		 */
 		public void setForeground(Color foreground) {
 			this.foreground = foreground;
@@ -602,11 +607,11 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * Returns the widget in this viewer's control which represents the given
 	 * element if it is the viewer's input.
 	 * <p>
-	 * This method is internal to the framework; subclassers should not call
-	 * this method.
+	 * This method is internal to the framework; subclassers should not call this
+	 * method.
 	 * </p>
 	 *
-	 * @param element
+	 * @param element the element to find the representing widget for
 	 * @return the corresponding widget, or <code>null</code> if none
 	 */
 	protected abstract Widget doFindInputItem(Object element);
@@ -615,11 +620,11 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * Returns the widget in this viewer's control which represent the given
 	 * element. This method searches all the children of the input element.
 	 * <p>
-	 * This method is internal to the framework; subclassers should not call
-	 * this method.
+	 * This method is internal to the framework; subclassers should not call this
+	 * method.
 	 * </p>
 	 *
-	 * @param element
+	 * @param element the element to find the representing widget for
 	 * @return the corresponding widget, or <code>null</code> if none
 	 */
 	protected abstract Widget doFindItem(Object element);
@@ -637,8 +642,8 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * this method.
 	 * </p>
 	 *
-	 * @param item
-	 * @param element element
+	 * @param item widget item to update
+	 * @param element the element to represent
 	 * @param fullMap
 	 *            <code>true</code> if mappings are added and removed, and
 	 *            <code>false</code> if only the new map gets installed
@@ -1606,9 +1611,9 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	}
 
 	/**
-	 * Assert that the content provider is of one of the
-	 * supported types.
-	 * @param provider
+	 * Assert that the content provider is of one of the supported types.
+	 *
+	 * @param provider content provider to check
 	 */
 	protected void assertContentProviderType(IContentProvider provider) {
 		Assert.isTrue(provider instanceof IStructuredContentProvider);
@@ -1819,8 +1824,9 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 
 	/**
 	 * Hook for testing.
-	 * @param element
-	 * @return Widget
+	 *
+	 * @param element the element
+	 * @return the corresponding widget, or <code>null</code> if none
 	 */
 	public Widget testFindItem(Object element) {
 		return findItem(element);
@@ -1828,8 +1834,9 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 
 	/**
 	 * Hook for testing.
-	 * @param element
-	 * @return Widget[]
+	 *
+	 * @param element the element
+	 * @return the corresponding widgets
 	 * @since 3.2
 	 */
 	public Widget[] testFindItems(Object element) {

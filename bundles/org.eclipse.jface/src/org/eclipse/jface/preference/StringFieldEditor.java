@@ -410,7 +410,7 @@ public class StringFieldEditor extends FieldEditor {
 	/**
 	 * Create the text widget.
 	 *
-	 * @param parent
+	 * @param parent the parent composite
 	 * @return The widget
 	 * @since 3.17
 	 */

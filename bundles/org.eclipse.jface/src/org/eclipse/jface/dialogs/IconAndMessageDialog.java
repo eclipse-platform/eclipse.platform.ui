@@ -220,7 +220,7 @@ public abstract class IconAndMessageDialog extends Dialog {
 	/**
 	 * Create the dialog area and the button bar for the receiver.
 	 *
-	 * @param parent
+	 * @param parent the parent composite
 	 */
 	protected void createDialogAndButtonArea(Composite parent) {
 		// create the dialog area and button bar

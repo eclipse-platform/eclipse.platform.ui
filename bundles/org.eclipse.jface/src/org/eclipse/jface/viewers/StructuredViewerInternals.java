@@ -38,15 +38,15 @@ public class StructuredViewerInternals {
 		/**
 		 * Call when an element is associated with an Item
 		 *
-		 * @param element
-		 * @param item
+		 * @param element the element
+		 * @param item    the item
 		 */
 		void associate(Object element, Item item);
 
 		/**
 		 * Called when an Item is no longer associated
 		 *
-		 * @param item
+		 * @param item the item
 		 */
 		void disassociate(Item item);
 
@@ -54,7 +54,7 @@ public class StructuredViewerInternals {
 		 * Called when an element has been filtered out.
 		 *
 		 * @since 3.6
-		 * @param element
+		 * @param element the filtered element
 		 */
 		void filteredOut(Object element);
 	}
@@ -78,7 +78,9 @@ public class StructuredViewerInternals {
 	 * Nothing to see here. Returns the items for the given element.
 	 *
 	 * @param viewer
+	 *            the viewer
 	 * @param element
+	 *            the element
 	 * @return the Widgets corresponding to the element
 	 *
 	 * @noreference This method is not intended to be referenced by clients.

@@ -20,7 +20,7 @@ import org.w3c.dom.css.CSSValue;
 /**
  * CSS Border Margin Handler.
  *
- * @see http://www.w3schools.com/css/css_reference.asp#margin
+ * @see <a href="https://www.w3schools.com/css/css_margin.asp">w3schools</a>
  */
 
 public interface ICSSPropertyMarginHandler extends ICSSPropertyHandler {

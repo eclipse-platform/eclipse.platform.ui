@@ -1268,7 +1268,7 @@ public final class BindingManager extends HandleObjectManager implements
 	}
 
 	/**
-	 * @param command
+	 * @param command the command to get trigger for sequence
 	 * @return
 	 * 		a trigger sequence, or <code>null</code>
 	 * @since 3.4

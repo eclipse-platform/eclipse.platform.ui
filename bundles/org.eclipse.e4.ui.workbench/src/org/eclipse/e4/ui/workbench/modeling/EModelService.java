@@ -528,7 +528,7 @@ public interface EModelService {
 	 * the current UI Model. This is used in cases where it is necessary to know if an element is in
 	 * the 'shared area' or outside of any perspective.
 	 *
-	 * @param element
+	 * @param element the element of interest
 	 * @return The location of the element in the UI, will be one of:
 	 *         <ul>
 	 *         <li><b>NOT_IN_UI:</b> The element is not in the UI model at all</li>

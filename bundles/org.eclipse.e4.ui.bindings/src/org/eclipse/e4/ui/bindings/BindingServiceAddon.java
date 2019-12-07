@@ -28,7 +28,7 @@ import org.eclipse.e4.ui.bindings.internal.ContextSet;
  */
 public final class BindingServiceAddon {
 	/**
-	 * @param context
+	 * @param context the e4 context
 	 */
 	@PostConstruct
 	public void init(IEclipseContext context) {

@@ -1721,13 +1721,12 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	}
 
 	/**
-	 * This method takes a tree path or an element. If the argument is not a
-	 * tree path, returns the parent of the given element or <code>null</code>
-	 * if the parent is not known. If the argument is a tree path with more than
-	 * one segment, returns its parent tree path, otherwise returns
-	 * <code>null</code>.
+	 * This method takes a tree path or an element. If the argument is not a tree
+	 * path, returns the parent of the given element or <code>null</code> if the
+	 * parent is not known. If the argument is a tree path with more than one
+	 * segment, returns its parent tree path, otherwise returns <code>null</code>.
 	 *
-	 * @param elementOrTreePath
+	 * @param elementOrTreePath the element or path to find parent for
 	 * @return the parent element, or parent path, or <code>null</code>
 	 *
 	 * @since 3.2
@@ -2854,8 +2853,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 * Not to be called by clients. Return the items to be refreshed as part of
 	 * an update. elementChildren are the new elements.
 	 *
-	 * @param widget
-	 * @param elementChildren
+	 * @param widget widget to get children for
+	 * @param elementChildren unused
 	 * @since 3.4
 	 * @return Item[]
 	 *
@@ -2945,7 +2944,8 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Returns the tree path for the given item.
-	 * @param item
+	 * 
+	 * @param item item to get path for
 	 * @return {@link TreePath}
 	 *
 	 * @since 3.2

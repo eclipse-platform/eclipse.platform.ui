@@ -179,8 +179,8 @@ public class TableViewer extends AbstractTableViewer {
 	/**
 	 * Create a new row with style at index
 	 *
-	 * @param style
-	 * @param rowIndex
+	 * @param style    the row's style
+	 * @param rowIndex index of the new row
 	 * @return ViewerRow
 	 * @since 3.3
 	 */

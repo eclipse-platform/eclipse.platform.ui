@@ -166,7 +166,7 @@ public interface IDialogSettings {
 	 * @param reader
 	 *            a Reader specifying the stream where the settings are read
 	 *            from.
-	 * @throws IOException
+	 * @throws IOException on IO problem while loading
 	 */
 	void load(Reader reader) throws IOException;
 
@@ -176,7 +176,7 @@ public interface IDialogSettings {
 	 *
 	 * @param fileName
 	 *            the name of the file the settings are read from.
-	 * @throws IOException
+	 * @throws IOException on IO problem while loading
 	 */
 	void load(String fileName) throws IOException;
 
@@ -260,7 +260,7 @@ public interface IDialogSettings {
 	 *
 	 * @param writer
 	 *            a Writer specifying the stream the settings are written in.
-	 * @throws IOException
+	 * @throws IOException on IO problem while saving
 	 */
 	void save(Writer writer) throws IOException;
 
@@ -269,7 +269,7 @@ public interface IDialogSettings {
 	 *
 	 * @param fileName
 	 *            the name of the file the settings are written in.
-	 * @throws IOException
+	 * @throws IOException on IO problem while saving
 	 */
 	void save(String fileName) throws IOException;
 }

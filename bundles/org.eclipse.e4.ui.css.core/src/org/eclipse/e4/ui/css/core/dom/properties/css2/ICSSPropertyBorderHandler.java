@@ -20,7 +20,7 @@ import org.w3c.dom.css.CSSValue;
 /**
  * CSS2 Border Property Handler.
  *
- * @see http://www.w3schools.com/css/css_reference.asp#border
+ * @see <a href="https://www.w3schools.com/css/css_border.asp">w3schools</a>
  */
 public interface ICSSPropertyBorderHandler extends ICSSPropertyHandler {
 

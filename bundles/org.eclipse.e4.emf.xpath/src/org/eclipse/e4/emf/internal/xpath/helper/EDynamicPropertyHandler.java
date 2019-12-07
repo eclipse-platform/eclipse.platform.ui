@@ -25,7 +25,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 /**
  * A dynamic property handler for EMF classes.
  *
- * @author Karsten Thoms <karsten.thoms@itemis.de>
+ * @author Karsten Thoms &lt;karsten.thoms@itemis.de&gt;
  */
 public class EDynamicPropertyHandler implements DynamicPropertyHandler {
 	private Map<EClass, String[]> eClass2PropNames = new HashMap<>();

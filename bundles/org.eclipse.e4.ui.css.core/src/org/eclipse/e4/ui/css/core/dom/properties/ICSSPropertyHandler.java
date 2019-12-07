@@ -30,36 +30,33 @@ public interface ICSSPropertyHandler {
 
 	/**
 	 * Apply CSS Property <code>property</code> (ex : background-color) with
-	 * CSSValue <code>value</code> (ex : red) into the <code>element</code> (ex
-	 * : Swing Component, SWT Widget).
+	 * CSSValue <code>value</code> (ex : red) into the <code>element</code> (ex :
+	 * Swing Component, SWT Widget).
 	 *
-	 * @param element
-	 *            Swing Component, SWT Widget...
-	 * @param property
-	 *            CSS Property
-	 * @param value
-	 *            CSS value
-	 * @param pseudo
-	 * @param engine
-	 *            CSS Engine
-	 * @return
-	 * @throws Exception
+	 * @param element  Swing Component, SWT Widget...
+	 * @param property CSS Property
+	 * @param value    CSS value
+	 * @param pseudo   the pseudo class to use, or <code>null</code> if none is
+	 *                 required
+	 * @param engine   CSS Engine
+	 * @return weather CSS property was applied or not
+	 * @throws Exception if applying CSS failed
 	 */
 	public boolean applyCSSProperty(Object element, String property, CSSValue value, String pseudo, CSSEngine engine)
 			throws Exception;
 
 	/**
 	 * Retrieve CSS value (ex : red) of CSS Property <code>property</code> (ex :
-	 * background-color) from the <code>element</code> (ex : Swing Component,
-	 * SWT Widget).
+	 * background-color) from the <code>element</code> (ex : Swing Component, SWT
+	 * Widget).
 	 *
-	 * @param element
-	 * @param property
-	 *            CSS Property
-	 * @param engine
-	 *            CSS Engine
-	 * @return retrieved CSS properties or null
-	 * @throws Exception
+	 * @param element  Swing Component, SWT Widget...
+	 * @param property CSS Property
+	 * @param pseudo   the pseudo class to use, or <code>null</code> if none is
+	 *                 required
+	 * @param engine   CSS Engine
+	 * @return retrieved CSS properties or <code>null</code>
+	 * @throws Exception if retrieving CSS failed
 	 */
 	public default String retrieveCSSProperty(Object element, String property, String pseudo, CSSEngine engine)
 			throws Exception {

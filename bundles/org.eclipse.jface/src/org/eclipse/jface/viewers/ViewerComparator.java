@@ -69,7 +69,7 @@ public class ViewerComparator {
 	 * comparator to be able to compare the {@link String}s provided by the
 	 * viewer's label provider.
 	 *
-	 * @param comparator
+	 * @param comparator the comparator to use
 	 */
 	public ViewerComparator(Comparator<? super String> comparator) {
 		this.comparator = comparator;

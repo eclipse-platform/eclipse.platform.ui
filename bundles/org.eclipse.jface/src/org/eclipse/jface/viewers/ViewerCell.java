@@ -128,7 +128,7 @@ public class ViewerCell {
 	/**
 	 * Set the background color of the cell.
 	 *
-	 * @param background
+	 * @param background color to set
 	 */
 	public void setBackground(Color background) {
 		row.setBackground(columnIndex, background);
@@ -138,7 +138,7 @@ public class ViewerCell {
 	/**
 	 * Set the foreground color of the cell.
 	 *
-	 * @param foreground
+	 * @param foreground color to set
 	 */
 	public void setForeground(Color foreground) {
 		row.setForeground(columnIndex, foreground);
@@ -148,7 +148,7 @@ public class ViewerCell {
 	/**
 	 * Set the font of the cell.
 	 *
-	 * @param font
+	 * @param font font to set
 	 */
 	public void setFont(Font font) {
 		row.setFont(columnIndex, font);
@@ -158,7 +158,7 @@ public class ViewerCell {
 	/**
 	 * Set the text for the cell.
 	 *
-	 * @param text
+	 * @param text text to set
 	 */
 	public void setText(String text) {
 		row.setText(columnIndex, text);
@@ -168,7 +168,7 @@ public class ViewerCell {
 	/**
 	 * Set the Image for the cell.
 	 *
-	 * @param image
+	 * @param image image to set
 	 */
 	public void setImage(Image image) {
 		row.setImage(columnIndex, image);
@@ -203,7 +203,7 @@ public class ViewerCell {
 	/**
 	 * Set the columnIndex.
 	 *
-	 * @param column
+	 * @param column the column index to set
 	 */
 	void setColumn(int column) {
 		columnIndex = column;
@@ -213,8 +213,9 @@ public class ViewerCell {
 	/**
 	 * Set the row to rowItem and the columnIndex to column.
 	 *
-	 * @param rowItem
-	 * @param column
+	 * @param rowItem the row item to set
+	 * @param column  the column index to set
+	 * @param element the element to set
 	 */
 	void update(ViewerRow rowItem, int column, Object element) {
 		row = rowItem;

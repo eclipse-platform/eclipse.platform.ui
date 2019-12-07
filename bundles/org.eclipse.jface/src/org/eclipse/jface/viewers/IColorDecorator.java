@@ -31,7 +31,7 @@ public interface IColorDecorator {
 	/**
 	 * Return the foreground Color for element or <code>null</code> if there
 	 * is not one.
-	 * @param element
+	 * @param element the element to get foreground color for
 	 * @return Color or <code>null</code>
 	 */
 	public Color decorateForeground(Object element);
@@ -39,7 +39,7 @@ public interface IColorDecorator {
 	/**
 	 * Return the background Color for element or <code>null</code> if there
 	 * is not one.
-	 * @param element
+	 * @param element the element to get background color for
 	 * @return Color or <code>null</code>
 	 */
 	public Color decorateBackground(Object element);

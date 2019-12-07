@@ -59,7 +59,7 @@ public class TreeColumnViewerLabelProvider extends
 	/**
 	 * Create a new instance of the receiver with the supplied labelProvider.
 	 *
-	 * @param labelProvider
+	 * @param labelProvider the label provider
 	 */
 	public TreeColumnViewerLabelProvider(IBaseLabelProvider labelProvider) {
 		super(labelProvider);
@@ -68,8 +68,8 @@ public class TreeColumnViewerLabelProvider extends
 	/**
 	 * Update the label for the element with TreePath.
 	 *
-	 * @param label
-	 * @param elementPath
+	 * @param label       the label to update
+	 * @param elementPath the path of the element being decorated
 	 */
 	public void updateLabel(ViewerLabel label, TreePath elementPath) {
 		treePathProvider.updateLabel(label, elementPath);

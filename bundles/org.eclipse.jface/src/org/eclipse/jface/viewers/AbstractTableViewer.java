@@ -1004,8 +1004,8 @@ public abstract class AbstractTableViewer extends ColumnViewer {
 	 * method will not call the content provider to verify. <strong>Note that
 	 * this method will materialize a TableItem the given index.</strong>.
 	 *
-	 * @param element
-	 * @param index
+	 * @param element the new element
+	 * @param index the index of the table item to replace
 	 * @see ILazyContentProvider
 	 *
 	 * @since 3.1

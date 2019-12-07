@@ -211,7 +211,7 @@ public class ColorRegistry extends ResourceRegistry {
 	 *
 	 * @since 3.1
 	 *
-	 * @param symbolicName
+	 * @param symbolicName symbolic color name
 	 * @return the color descriptor associated with the given symbolic color
 	 *         name or an unspecified sentinel.
 	 */
@@ -224,8 +224,8 @@ public class ColorRegistry extends ResourceRegistry {
 	 * name. If this name does not exist within the registry the supplied
 	 * default value will be used.
 	 *
-	 * @param symbolicName
-	 * @param defaultValue
+	 * @param symbolicName symbolic color name
+	 * @param defaultValue return value if symbolic color name is unknown
 	 * @return the color descriptor associated with the given symbolic color
 	 *         name or the default
 	 * @since 3.4
