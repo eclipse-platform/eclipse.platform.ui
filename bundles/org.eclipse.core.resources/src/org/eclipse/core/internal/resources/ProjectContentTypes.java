@@ -121,7 +121,7 @@ public class ProjectContentTypes {
 				return false;
 			node = node.node(CONTENT_TYPE_PREF_NODE);
 			return node.getBoolean(PREF_LOCAL_CONTENT_TYPE_SETTINGS, false);
-		} catch (BackingStoreException e) {
+		} catch (BackingStoreException | IllegalStateException | IllegalArgumentException e) {
 			// exception treated when retrieving the project preferences
 		}
 		return false;
