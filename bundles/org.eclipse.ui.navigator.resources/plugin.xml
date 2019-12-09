@@ -279,7 +279,7 @@
             id="org.eclipse.ui.navigator.resources.filters.startsWithDot"
             name="%filters.startsWithDot.name"
             description="%filters.startsWithDot.description"
-            activeByDefault="false"
+            activeByDefault="true"
             >
          <filterExpression>
          	<and>
