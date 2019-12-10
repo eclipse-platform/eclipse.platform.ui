@@ -20,6 +20,7 @@ import java.util.List;
 import org.akrogen.tkui.css.core.engine.CSSEngine;
 import org.akrogen.tkui.css.swt.engine.CSSSWTEngineImpl;
 import org.akrogen.tkui.css.swt.engine.table.viewers.MyCSSLabelProvider;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -56,21 +57,7 @@ public class CSSSWTTableViewerEngineTest {
 			}
 
 			final TableViewer tableViewer = new TableViewer(panel1);
-			tableViewer.setContentProvider(new IStructuredContentProvider() {
-				public void dispose() {
-					// TODO Auto-generated method stub
-
-				}
-
-				public Object[] getElements(Object inputElement) {
-					return datas.toArray();
-				}
-
-				public void inputChanged(Viewer viewer, Object oldInput,
-						Object newInput) {
-
-				}
-			});
+			tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 			tableViewer.setLabelProvider(new MyCSSLabelProvider(engine,
 					tableViewer));
 

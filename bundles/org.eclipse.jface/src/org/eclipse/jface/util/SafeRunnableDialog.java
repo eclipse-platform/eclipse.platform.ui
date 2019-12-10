@@ -21,8 +21,8 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellLabelProvider;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -162,12 +162,12 @@ class SafeRunnableDialog extends ErrorDialog {
 		data.heightHint = convertHeightInCharsToPixels(10);
 		data.horizontalSpan = 2;
 		control.setLayoutData(data);
-		statusListViewer.setContentProvider(getStatusContentProvider());
+		statusListViewer.setContentProvider(ArrayContentProvider.getInstance());
 		statusListViewer.setLabelProvider(getStatusListLabelProvider());
 		statusListViewer
 				.addSelectionChangedListener(event -> handleSelectionChange());
 		applyDialogFont(parent);
-		statusListViewer.setInput(this);
+		statusListViewer.setInput(statuses);
 	}
 
 	/**
@@ -180,31 +180,6 @@ class SafeRunnableDialog extends ErrorDialog {
 			@Override
 			public void update(ViewerCell cell) {
 				cell.setText(((IStatus) cell.getElement()).getMessage());
-
-			}
-		};
-	}
-
-	/**
-	 * Return the content provider for the statuses.
-	 *
-	 * @return IStructuredContentProvider
-	 */
-	private IStructuredContentProvider getStatusContentProvider() {
-		return new IStructuredContentProvider() {
-			@Override
-			public Object[] getElements(Object inputElement) {
-				return statuses.toArray();
-			}
-
-			@Override
-			public void dispose() {
-
-			}
-
-			@Override
-			public void inputChanged(Viewer viewer, Object oldInput,
-					Object newInput) {
 
 			}
 		};

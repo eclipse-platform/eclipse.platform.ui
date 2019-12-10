@@ -14,9 +14,9 @@
 
 package org.eclipse.ui.internal.ide.dialogs;
 
+import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -65,28 +65,10 @@ public class FileSystemSelectionArea {
 			}
 		});
 
-		fileSystems.setContentProvider(new IStructuredContentProvider() {
+		fileSystems.setContentProvider(ArrayContentProvider.getInstance());
 
-			@Override
-			public void dispose() {
-				// Nothing to do
-			}
-
-			@Override
-			public Object[] getElements(Object inputElement) {
-				return FileSystemSupportRegistry.getInstance()
-						.getConfigurations();
-			}
-
-			@Override
-			public void inputChanged(org.eclipse.jface.viewers.Viewer viewer,
-					Object oldInput, Object newInput) {
-				// Nothing to do
-			}
-
-		});
-
-		fileSystems.setInput(this);
+		fileSystems.setInput(FileSystemSupportRegistry.getInstance()
+				.getConfigurations());
 		fileSystems.setSelection(new StructuredSelection(
 				FileSystemSupportRegistry.getInstance()
 						.getDefaultConfiguration()));
