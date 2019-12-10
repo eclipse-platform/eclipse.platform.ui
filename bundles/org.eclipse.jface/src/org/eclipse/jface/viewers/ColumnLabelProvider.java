@@ -14,6 +14,9 @@
 
 package org.eclipse.jface.viewers;
 
+import java.util.Objects;
+import java.util.function.Function;
+
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -66,6 +69,68 @@ public class ColumnLabelProvider extends CellLabelProvider implements
 	@Override
 	public String getText(Object element) {
 		return element == null ? "" : element.toString();//$NON-NLS-1$
+	}
+
+	/**
+	 * Creates a {@link ColumnLabelProvider} which implements the {@link #getText}
+	 * method by calling the argument function.
+	 *
+	 * @param textFunction the function which returns the text
+	 * @return The new ColumnLabelProvider
+	 * @since 3.19
+	 */
+	public static ColumnLabelProvider createTextProvider(Function<Object, String> textFunction) {
+		Objects.requireNonNull(textFunction);
+		return new ColumnLabelProvider() {
+			@Override
+			public String getText(Object e) {
+				return textFunction.apply(e);
+			}
+		};
+	}
+
+	/**
+	 * Creates a {@link ColumnLabelProvider} which implements the {@link #getImage}
+	 * method by calling the argument function.
+	 *
+	 * @param imageFunction the function which returns the image
+	 * @return The new ColumnLabelProvider
+	 * @since 3.19
+	 */
+	public static ColumnLabelProvider createImageProvider(Function<Object, Image> imageFunction) {
+		Objects.requireNonNull(imageFunction);
+		return new ColumnLabelProvider() {
+			@Override
+			public Image getImage(Object e) {
+				return imageFunction.apply(e);
+			}
+		};
+	}
+
+	/**
+	 * Creates a {@link ColumnLabelProvider} which implements both the
+	 * {@link #getText} and {@link #getImage} methods by calling the argument
+	 * functions.
+	 *
+	 * @param textFunction  the function which returns the text
+	 * @param imageFunction the function which returns the image
+	 * @return The new ColumnLabelProvider
+	 * @since 3.19
+	 */
+	public static ColumnLabelProvider createTextImageProvider(Function<Object, String> textFunction,
+			Function<Object, Image> imageFunction) {
+		Objects.requireNonNull(textFunction);
+		Objects.requireNonNull(imageFunction);
+		return new ColumnLabelProvider() {
+			@Override
+			public String getText(Object e) {
+				return textFunction.apply(e);
+			}
+			@Override
+			public Image getImage(Object e) {
+				return imageFunction.apply(e);
+			}
+		};
 	}
 
 }
