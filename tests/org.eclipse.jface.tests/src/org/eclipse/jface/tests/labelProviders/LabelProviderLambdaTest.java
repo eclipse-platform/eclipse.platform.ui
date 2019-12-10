@@ -11,14 +11,13 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
-import org.eclipse.ui.PlatformUI;
 
 import junit.framework.TestCase;
 
 public class LabelProviderLambdaTest extends TestCase {
 
 	protected static Shell initializeShell() {
-		Display display = PlatformUI.getWorkbench().getDisplay();
+		Display display = Display.getDefault();
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
 		return shell;
