@@ -36,7 +36,7 @@ class MultiFacetedObject implements IAdaptable, Greeter {
 	public void greet() {
 		System.out.println("Hello, my name is " + name);
 	}
-	
+
 	public String identify() {
 		return "I am the MultiFacetedObject named " + name;
 	}

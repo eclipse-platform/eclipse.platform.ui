@@ -303,7 +303,7 @@ public class JobsView {
 				SubMonitor subMonitor = SubMonitor.convert(monitor, "Run in dialog", 100);//$NON-NLS-1$
 
 				for (int i = 0; i < 100; i++) {
-					subMonitor.split(1); 
+					subMonitor.split(1);
 					try {
 						Thread.sleep(100);
 					} catch (InterruptedException e) {

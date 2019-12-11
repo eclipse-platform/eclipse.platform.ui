@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -24,7 +24,7 @@ import org.eclipse.ui.examples.adapterservice.snippets.SnippetSetup;
 
 /**
  * This snippet demonstrates user of the Adapter service.
- * 
+ *
  */
 public class AdapterSnippet implements IApplication{
 	@Inject
@@ -42,7 +42,7 @@ public class AdapterSnippet implements IApplication{
 	 */
 	void tryAdapters(Object someObject) {
 		System.out.println("The object to be adapted is " + someObject);
-		
+
 		MultiFacetedObject object = adapter.adapt(someObject, MultiFacetedObject.class);
 		if (object != null) {
 			System.out.println(object.identify());
@@ -66,7 +66,7 @@ public class AdapterSnippet implements IApplication{
 	public Object start(IApplicationContext context) throws Exception {
 		// Inject services into this snippet
 		SnippetSetup.setup(this);
-		
+
 		tryAdapters(new MultiFacetedObject("Fred"));
 		return IApplication.EXIT_OK;
 	}
@@ -74,6 +74,6 @@ public class AdapterSnippet implements IApplication{
 	@Override
 	public void stop() {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
