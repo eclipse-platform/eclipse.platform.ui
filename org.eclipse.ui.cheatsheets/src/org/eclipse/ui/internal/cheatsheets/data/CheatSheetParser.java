@@ -118,7 +118,7 @@ public class CheatSheetParser implements IStatusContainer {
 	 * "            ->      &quot;
 	 * }
 	 * </pre>
-	 * 
+	 *
 	 * Tags that will be ignored {@literal <b>, </b> and <br/>
 	 * }.
 	 *

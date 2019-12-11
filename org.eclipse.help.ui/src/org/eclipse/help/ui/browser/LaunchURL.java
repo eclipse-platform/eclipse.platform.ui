@@ -46,7 +46,7 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
  * the extension can specify a nested class element with a class attribute and
  * URL specified in a parameter sub-element. For example:
  * </p>
- * 
+ *
  * <pre>
  *          &lt;class class="org.eclipse.help.ui.browser.LaunchURL"&gt;
  *              &lt;parameter name="url" value="http://eclipse.org/" /&gt;

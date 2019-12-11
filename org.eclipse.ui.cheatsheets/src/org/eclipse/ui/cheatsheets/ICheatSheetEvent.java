@@ -18,7 +18,7 @@ package org.eclipse.ui.cheatsheets;
  * <p>
  * Events over the life time of a running cheat sheet follow this pattern:
  * </p>
- * 
+ *
  * <pre>
  * opened { started | restored } { restarted | completed }* closed
  * </pre>

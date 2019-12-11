@@ -23,11 +23,11 @@ public class BlockedTaskFinder {
 
 	private Set<ICompositeCheatSheetTask> stateChangedTasks;
 	private Set<ICompositeCheatSheetTask> impactedTasks;
-	
+
 	/**
 	 * Find which tasks have either become blocked or unblocked so that they can
 	 * be added to the list of change events.
-	 * 
+	 *
 	 * @param stateChangedTasks
 	 *            The set of tasks which has changed
 	 * @return The set of tasks which have become blocked or unblocked by the

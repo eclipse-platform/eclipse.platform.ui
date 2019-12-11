@@ -235,7 +235,7 @@ public class HyperlinkHandler implements MouseListener, MouseTrackListener, Pain
 	public void setForeground(Color newForeground) {
 		foreground = newForeground;
 	}
-	
+
 	/**
 	 * @param newHyperlinkCursorUsed
 	 *                                   boolean

@@ -40,7 +40,7 @@ public abstract class HelpServer {
 	/**
 	 * Stop a server application. If an application of this name has not been
 	 * started do nothing
-	 * 
+	 *
 	 * @param webappName the name of a running web application
 	 * @throws CoreException If there was any error during stopping.
 	 */
