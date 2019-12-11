@@ -13,7 +13,10 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.dom;
 
+import java.util.Arrays;
+import java.util.stream.Stream;
 import org.eclipse.e4.ui.css.core.dom.CSSStylableElement;
+import org.eclipse.e4.ui.css.core.dom.IStreamingNodeList;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Composite;
@@ -25,7 +28,7 @@ import org.w3c.dom.Node;
  * {@link CSSStylableElement} implementation which wrap SWT {@link Composite}.
  *
  */
-public class CompositeElement extends ControlElement {
+public class CompositeElement extends ControlElement implements IStreamingNodeList {
 	private static final String BACKGROUND_OVERRIDDEN_BY_CSS_MARKER = "bgOverriddenByCSS";
 
 	public CompositeElement(Composite composite, CSSEngine engine) {
@@ -65,6 +68,11 @@ public class CompositeElement extends ControlElement {
 		if (widget instanceof Composite && !(widget instanceof CTabFolder)) {
 			widget.setData(BACKGROUND_OVERRIDDEN_BY_CSS_MARKER, true);
 		}
+	}
+
+	@Override
+	public Stream<Node> stream() {
+		return Arrays.stream(getComposite().getChildren()).map(this::getElement);
 	}
 
 }

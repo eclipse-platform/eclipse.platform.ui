@@ -34,6 +34,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.BiConsumer;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -42,6 +43,7 @@ import org.eclipse.e4.ui.css.core.dom.ChildVisibilityAwareElement;
 import org.eclipse.e4.ui.css.core.dom.ExtendedCSSRule;
 import org.eclipse.e4.ui.css.core.dom.ExtendedDocumentCSS;
 import org.eclipse.e4.ui.css.core.dom.IElementProvider;
+import org.eclipse.e4.ui.css.core.dom.IStreamingNodeList;
 import org.eclipse.e4.ui.css.core.dom.parsers.CSSParser;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyCompositeHandler;
 import org.eclipse.e4.ui.css.core.dom.properties.ICSSPropertyHandler;
@@ -247,6 +249,19 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 		return s;
 	}
 
+	private void processNodeList(NodeList nodes, BiConsumer<Node, Boolean> consumer, boolean applyStylesToChildNodes) {
+		if (nodes instanceof IStreamingNodeList) {
+			((IStreamingNodeList) nodes).stream().forEach(child -> {
+				consumer.accept(child, applyStylesToChildNodes);
+			});
+		} else {
+			int length = nodes.getLength();
+			for (int k = 0; k < length; k++) {
+				consumer.accept(nodes.item(k), applyStylesToChildNodes);
+			}
+		}
+	}
+
 	/**
 	 * Return true if <code>source</code> is valid and false otherwise.
 	 *
@@ -422,9 +437,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 					? ((ChildVisibilityAwareElement) elt).getVisibleChildNodes()
 							: elt.getChildNodes();
 					if (nodes != null) {
-						for (int k = 0; k < nodes.getLength(); k++) {
-							applyStyles(nodes.item(k), applyStylesToChildNodes);
-						}
+						processNodeList(nodes, this::applyStyles, applyStylesToChildNodes);
 						onStylesAppliedToChildNodes(elt, nodes);
 					}
 		}
@@ -442,9 +455,14 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 		if (parentNode instanceof ChildVisibilityAwareElement) {
 			NodeList l = ((ChildVisibilityAwareElement) parentNode).getVisibleChildNodes();
 			if (l != null) {
-				for (int i = 0; i < l.getLength(); i++) {
-					if (l.item(i) == elt) {
-						return true;
+				if (l instanceof IStreamingNodeList) {
+					return ((IStreamingNodeList) l).stream().anyMatch(node -> node == elt);
+				} else {
+					int length = l.getLength();
+					for (int i = 0; i < length; i++) {
+						if (l.item(i) == elt) {
+							return true;
+						}
 					}
 				}
 			}
@@ -598,14 +616,18 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	/*--------------- Apply inline style -----------------*/
 
 	@Override
-	public void applyInlineStyle(Object node, boolean applyStylesToChildNodes) throws IOException {
+	public void applyInlineStyle(Object node, boolean applyStylesToChildNodes) {
 		Element elt = getElement(node);
 		if (elt != null) {
 			if (elt instanceof CSSStylableElement) {
 				CSSStylableElement stylableElement = (CSSStylableElement) elt;
 				String style = stylableElement.getCSSStyle();
 				if (style != null && style.length() > 0) {
-					parseAndApplyStyleDeclaration(stylableElement.getNativeWidget(), style);
+					try {
+						parseAndApplyStyleDeclaration(stylableElement.getNativeWidget(), style);
+					} catch (IOException e) {
+						handleExceptions(e);
+					}
 				}
 			}
 			if (applyStylesToChildNodes) {
@@ -614,9 +636,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 				 */
 				NodeList nodes = elt.getChildNodes();
 				if (nodes != null) {
-					for (int k = 0; k < nodes.getLength(); k++) {
-						applyInlineStyle(nodes.item(k), applyStylesToChildNodes);
-					}
+					processNodeList(nodes, this::applyInlineStyle, applyStylesToChildNodes);
 				}
 			}
 		}
@@ -673,9 +693,7 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 				 */
 				NodeList nodes = elt.getChildNodes();
 				if (nodes != null) {
-					for (int k = 0; k < nodes.getLength(); k++) {
-						applyDefaultStyleDeclaration(nodes.item(k), applyStylesToChildNodes);
-					}
+					processNodeList(nodes, this::applyDefaultStyleDeclaration, applyStylesToChildNodes);
 					onStylesAppliedToChildNodes(elt, nodes);
 				}
 			}
