@@ -275,7 +275,7 @@ public class StringMatcher {
 	/**
 	 * Parses the given pattern into segments separated by wildcard &#39;*&#39;
 	 * characters.
-	 * 
+	 *
 	 */
 	private void parseWildCards() {
 		if (fPattern.startsWith("*")) { //$NON-NLS-1$

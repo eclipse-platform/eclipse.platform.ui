@@ -37,7 +37,7 @@ import org.eclipse.ui.internal.wizards.newresource.ResourceMessages;
  * <p>
  * Example:
  * </p>
- * 
+ *
  * <pre>
  * IWorkbenchWizard wizard = new BasicNewFileResourceWizard();
  * wizard.init(workbench, selection);
@@ -50,7 +50,7 @@ import org.eclipse.ui.internal.wizards.newresource.ResourceMessages;
  * workspace path is created, the dialog closes, and the call to
  * <code>open</code> returns.
  * </p>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class BasicNewFileResourceWizard extends BasicNewResourceWizard {

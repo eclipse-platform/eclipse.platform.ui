@@ -52,7 +52,7 @@ import org.eclipse.swt.widgets.Shell;
  *
  * Necessary to know whether and where tests are hanging if a timeout occurred
  * during tests.
- * 
+ *
  * @since 0.15
  *
  */

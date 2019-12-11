@@ -27,7 +27,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 /**
  * The FiltersContentProvider provides the elements for use by the list dialog
  * for selecting the patterns to apply.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noreference This class is not intended to be referenced by clients.

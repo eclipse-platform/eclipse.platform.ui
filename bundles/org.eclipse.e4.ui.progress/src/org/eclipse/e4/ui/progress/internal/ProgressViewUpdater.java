@@ -299,7 +299,7 @@ public class ProgressViewUpdater implements IJobProgressManagerListener {
 
 	/**
 	 * Refresh the supplied JobInfo.
-	 * 
+	 *
 	 * @param info
 	 */
 	public void refresh(JobInfo info) {

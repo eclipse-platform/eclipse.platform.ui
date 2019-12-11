@@ -17,7 +17,7 @@ import java.util.ArrayList;
 
 /**
  * A string pattern matcher, supporting ?*? and ??? wildcards.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noreference This class is not intended to be referenced by clients.

@@ -41,7 +41,7 @@ import org.eclipse.ui.plugin.AbstractUIPlugin;
  * <p>
  * Example:
  * </p>
- * 
+ *
  * <pre>
  * IWizard wizard = new ZipFileImportWizard();
  * wizard.init(workbench, selection);

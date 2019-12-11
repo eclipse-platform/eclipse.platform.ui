@@ -102,7 +102,7 @@ import org.eclipse.ui.statushandlers.StatusManager;
  * name is created, the dialog closes, and the call to <code>open</code>
  * returns.
  * </p>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class BasicNewProjectResourceWizard extends BasicNewResourceWizard

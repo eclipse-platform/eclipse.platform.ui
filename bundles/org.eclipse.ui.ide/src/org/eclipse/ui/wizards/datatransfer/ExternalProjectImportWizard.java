@@ -32,7 +32,7 @@ import org.eclipse.ui.internal.wizards.datatransfer.WizardProjectsImportPage;
  * <p>
  * Example:
  * </p>
- * 
+ *
  * <pre>
  * IWizard wizard = new ExternalProjectImportWizard();
  * wizard.init(workbench, selection);
@@ -44,7 +44,7 @@ import org.eclipse.ui.internal.wizards.datatransfer.WizardProjectsImportPage;
  * user. When the user hits Finish, a project is created with the location
  * specified by the user.
  * </p>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 

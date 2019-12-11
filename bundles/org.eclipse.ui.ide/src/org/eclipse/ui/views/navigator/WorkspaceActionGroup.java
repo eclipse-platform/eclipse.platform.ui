@@ -52,7 +52,7 @@ import org.eclipse.ui.internal.ide.StatusUtil;
 /**
  * This is the action group for workspace actions such as Build, Refresh Local,
  * and Open/Close Project.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noreference This class is not intended to be referenced by clients.

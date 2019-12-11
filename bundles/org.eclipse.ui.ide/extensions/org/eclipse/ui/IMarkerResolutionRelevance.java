@@ -18,7 +18,7 @@ package org.eclipse.ui;
  * the marker which can be used to sort all the marker resolutions. Resolutions
  * with higher relevance should be listed before resolutions with lower
  * relevance.
- * 
+ *
  * @since 3.14
  */
 public interface IMarkerResolutionRelevance {

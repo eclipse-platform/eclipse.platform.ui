@@ -23,7 +23,7 @@ import org.eclipse.ui.PlatformUI;
 
 /**
  * Command to open a {@link SmartImportWizard}
- * 
+ *
  * @since 3.12
  *
  */

@@ -1750,7 +1750,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 * and that equal elements are not added to the same parent in the tree (each
 	 * equal element should have a different parent chain).
 	 * </p>
-	 * 
+	 *
 	 * @param enable <code>true</code> to enable hash lookup, and <code>false</code>
 	 *               to disable it
 	 */

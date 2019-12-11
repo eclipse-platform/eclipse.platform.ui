@@ -60,7 +60,7 @@ public class ResourceWorkingSetFilter extends ViewerFilter {
 				workingSet.isEmpty())) {
 			return true;
 		}
-		
+
 		IResource resource = Adapters.adapt(element, IResource.class);
 		if (resource != null) {
 			return isEnclosed(resource);

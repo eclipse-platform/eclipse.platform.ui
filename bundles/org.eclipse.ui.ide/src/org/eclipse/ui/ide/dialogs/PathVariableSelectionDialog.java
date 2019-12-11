@@ -49,7 +49,7 @@ import org.eclipse.ui.internal.ide.dialogs.PathVariablesGroup;
  * <p>
  * Example:
  * </p>
- * 
+ *
  * <pre>
  * PathVariableSelectionDialog dialog = new PathVariableSelectionDialog(getShell(), IResource.FOLDER);
  * dialog.open();

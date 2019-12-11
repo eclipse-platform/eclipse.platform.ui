@@ -44,14 +44,14 @@ import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
  * <p>
  * Example usage:
  * </p>
- * 
+ *
  * <pre>
  * textActionHandler = new TextActionHandler(this.getViewSite().getActionBars());
  * textActionHandler.addText((Text) textCellEditor1.getControl());
  * textActionHandler.addText((Text) textCellEditor2.getControl());
  * textActionHandler.setSelectAllAction(selectAllAction);
  * </pre>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class TextActionHandler {

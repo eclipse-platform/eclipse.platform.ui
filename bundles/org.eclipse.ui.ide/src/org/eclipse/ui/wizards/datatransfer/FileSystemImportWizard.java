@@ -38,7 +38,7 @@ import org.eclipse.ui.internal.wizards.datatransfer.WizardFileSystemResourceImpo
  * <p>
  * Example:
  * </p>
- * 
+ *
  * <pre>
  * IWizard wizard = new FileSystemImportWizard();
  * wizard.init(workbench, selection);
@@ -50,7 +50,7 @@ import org.eclipse.ui.internal.wizards.datatransfer.WizardFileSystemResourceImpo
  * user. When the user hits Finish, the user-selected files are imported into
  * the workspace, the dialog closes, and the call to <code>open</code> returns.
  * </p>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class FileSystemImportWizard extends Wizard implements IImportWizard {

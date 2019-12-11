@@ -739,7 +739,7 @@ public class EventDetailsDialog extends TrayDialog {
 
 	/**
 	 * Loads filters from preferences.
-	 * 
+	 *
 	 * @return filters from preferences or empty array
 	 *
 	 * @since 3.4
@@ -800,7 +800,7 @@ public class EventDetailsDialog extends TrayDialog {
 
 	/**
 	 * Stores the current state in the dialog settings.
-	 * 
+	 *
 	 * @since 2.0
 	 */
 	private void storeSettings() {
@@ -865,7 +865,7 @@ public class EventDetailsDialog extends TrayDialog {
 
 	/**
 	 * Utility method to get all top level elements of the Log View
-	 * 
+	 *
 	 * @return top level elements of the Log View
 	 */
 	private AbstractEntry[] getElements() {

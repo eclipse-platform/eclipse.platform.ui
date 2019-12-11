@@ -42,7 +42,7 @@ public class PartOnTopManager {
 
 	@Inject
 	private EModelService modelService;
-	
+
 	/**
 	 * @param context
 	 */

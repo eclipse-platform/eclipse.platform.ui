@@ -56,7 +56,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  * The amount of resources which can be transferred is limited to
  * <code>MAX_RESOURCES_TO_TRANSFER</code> elements.
  * </p>
- * 
+ *
  * @see org.eclipse.jface.viewers.StructuredViewer
  * @see org.eclipse.swt.dnd.DropTarget
  * @see org.eclipse.swt.dnd.DragSource

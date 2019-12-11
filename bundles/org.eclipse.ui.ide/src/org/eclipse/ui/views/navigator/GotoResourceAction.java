@@ -21,7 +21,7 @@ import org.eclipse.ui.PlatformUI;
 /**
  * Implements the go to resource action. Opens a dialog and set the navigator
  * selection with the resource selected by the user.
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noreference This class is not intended to be referenced by clients.
