@@ -160,7 +160,7 @@ public interface IContentTypeManager extends IContentTypeMatcher {
 	 * identified by this string. This provides a simple way for detecting whether a
 	 * content type is text-based:
 	 * </p>
-	 * 
+	 *
 	 * <pre>
 	 * IContentType text = Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
 	 * IContentType someType = ...;

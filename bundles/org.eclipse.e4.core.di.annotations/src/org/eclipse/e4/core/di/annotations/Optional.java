@@ -43,14 +43,14 @@ import javax.inject.Qualifier;
  * </p>
  *
  * Example usage:
- * 
+ *
  * <pre>
  *   public class Car {
  *     &#064;Inject &#064;Optional void setOverdrive(OverdriveMode mode);
  *     ...
  *   }
  * </pre>
- * 
+ *
  * @since 1.3
  */
 @Qualifier

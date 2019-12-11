@@ -19,7 +19,7 @@ import java.util.*;
 
 /**
  * How to use DeepSize:
- * 
+ *
  * <pre>
  * {@code
  * DeepSize result= DeepSize.deepSize(anObject);

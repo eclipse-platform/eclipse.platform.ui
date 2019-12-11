@@ -43,7 +43,7 @@ import org.osgi.framework.Constants;
  * This interface must only be used by plug-ins
  * which explicitly require the org.eclipse.core.runtime.compatibility plug-in.
  * </p>
- * 
+ *
  * @noextend This interface is not intended to be extended by clients.
  * @noreference This interface is not intended to be referenced by clients.
  * @noimplement This interface is not intended to be implemented by clients.

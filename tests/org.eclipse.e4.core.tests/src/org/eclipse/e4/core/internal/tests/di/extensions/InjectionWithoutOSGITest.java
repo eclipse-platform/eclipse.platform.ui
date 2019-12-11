@@ -30,7 +30,7 @@ import org.osgi.service.prefs.BackingStoreException;
 /**
  * This test should be execute without an OSGI runtime running to verfiy BR
  * 513883
- * 
+ *
  * @author jonas
  *
  */
