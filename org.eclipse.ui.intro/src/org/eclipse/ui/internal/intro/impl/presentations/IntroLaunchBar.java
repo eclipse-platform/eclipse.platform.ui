@@ -360,27 +360,6 @@ public class IntroLaunchBar {
 		gc.drawRectangle(0, 0, size.x - 1, size.y - 1);
 	}
 
-
-
-
-
-	private int fillShape(int[] shape, int[] points, int index, int x, int y, boolean reverse) {
-		int fill = points.length;
-		for (int i = 0; i < points.length / 2; i++) {
-			if (!reverse) {
-				shape[index++] = x + points[2 * i];
-				shape[index++] = y + points[2 * i + 1];
-			} else {
-				shape[index + fill - 2 - 2 * i] = x + points[2 * i];
-				shape[index + fill - 1 - 2 * i] = y + points[2 * i + 1];
-			}
-		}
-		if (reverse) {
-			index += fill;
-		}
-		return index;
-	}
-
 	private void computeColors(Display display) {
 		if (element.getBackground() != null) {
 			String value = resolveColor(element.getBackground());
