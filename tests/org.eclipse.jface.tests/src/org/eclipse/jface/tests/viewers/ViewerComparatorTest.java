@@ -86,7 +86,7 @@ public abstract class ViewerComparatorTest extends ViewerTestCase {
 
 		/**
 		 * Fires a model changed event to all listeners.
-		 * 
+		 *
 		 * @param change
 		 */
 		public void fireModelChanged(ComparatorModelChange change) {

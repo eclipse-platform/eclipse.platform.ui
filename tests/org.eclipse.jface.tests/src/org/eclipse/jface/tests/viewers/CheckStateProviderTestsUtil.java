@@ -24,7 +24,7 @@ import org.eclipse.jface.viewers.ViewerFilter;
 
 /**
  * Utilities for testing ICheckStateProviders.
- * 
+ *
  * @since 3.5
  */
 public class CheckStateProviderTestsUtil {
@@ -33,7 +33,7 @@ public class CheckStateProviderTestsUtil {
 	/**
 	 * An ICheckStateProvider which records whether its isChecked and isGrayed
 	 * methods are invoked.
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public static class TestMethodsInvokedCheckStateProvider implements ICheckStateProvider {
@@ -61,7 +61,7 @@ public class CheckStateProviderTestsUtil {
 	/**
 	 * An ICheckStateProvider which provides a consistent variety of states for
 	 * input elements based on the parameter provided in the constructor.
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public static final class TestCheckStateProvider extends TestMethodsInvokedCheckStateProvider {
@@ -69,7 +69,7 @@ public class CheckStateProviderTestsUtil {
 
 		/**
 		 * A value from 0 to 2 which will change the checkstate assignments.
-		 * 
+		 *
 		 * @param shift
 		 */
 		public TestCheckStateProvider(int shift) {
@@ -91,7 +91,7 @@ public class CheckStateProviderTestsUtil {
 
 	/**
 	 * A sorter for TestElements.
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public static final class Sorter extends ViewerComparator {
@@ -103,7 +103,7 @@ public class CheckStateProviderTestsUtil {
 
 	/**
 	 * A filter for TestElements.
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public static final class Filter extends ViewerFilter {

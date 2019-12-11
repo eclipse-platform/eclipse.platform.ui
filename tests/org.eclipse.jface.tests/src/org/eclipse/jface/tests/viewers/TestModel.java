@@ -33,7 +33,7 @@ public class TestModel {
 
 	/**
 	 * Fires a model changed event to all listeners.
-	 * 
+	 *
 	 * @param change
 	 */
 	public void fireModelChanged(TestModelChange change) {

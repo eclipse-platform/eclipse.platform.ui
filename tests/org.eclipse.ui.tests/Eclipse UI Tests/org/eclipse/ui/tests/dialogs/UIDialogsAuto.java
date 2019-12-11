@@ -217,7 +217,7 @@ public class UIDialogsAuto {
 		Dialog dialog = new ShowViewDialog(shell, app, window, modelService, partService, ctx);
 		DialogCheck.assertDialogTexts(dialog);
 	}
-	
+
 	/**
 	 * 1GJWD2E: ITPUI:ALL - Test classes should not be released in public packages.
 	 */

@@ -177,7 +177,7 @@ public abstract class AbstractFieldAssistTestCase {
 
 	/**
 	 * Sends an SWT KeyDown event for the specified keystroke
-	 * 
+	 *
 	 * @param keystroke the character that has been pressed
 	 */
 	protected void sendKeyDownToControl(KeyStroke keystroke) {

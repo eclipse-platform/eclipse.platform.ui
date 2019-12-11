@@ -226,7 +226,7 @@ public class UIDialogs {
 		Dialog dialog = new ShowViewDialog(shell, app, window, modelService, partService, ctx);
 		DialogCheck.assertDialog(dialog);
 	}
-	
+
 	/**
 	 * 1GJWD2E: ITPUI:ALL - Test classes should not be released in public packages.
 	 */

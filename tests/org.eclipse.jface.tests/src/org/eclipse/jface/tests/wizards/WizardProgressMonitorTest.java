@@ -164,7 +164,7 @@ public class WizardProgressMonitorTest extends TestCase {
 	 * #getProgressMonitorPart method and returns a monitor without the stop button
 	 * will fail gracefully. That is, the runnable will run as expected. See
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=287887#c57
-	 * 
+	 *
 	 * @throws Exception
 	 */
 	public void testProgressMonitorWithoutStopButtonBug287887() throws Exception {

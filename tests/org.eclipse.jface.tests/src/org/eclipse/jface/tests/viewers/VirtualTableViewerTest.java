@@ -83,7 +83,7 @@ public class VirtualTableViewerTest extends TableViewerTest {
 	/**
 	 * Checks if update occurred. Updates for virtual items will be skipped if, for
 	 * instance, another window is in the foreground.
-	 * 
+	 *
 	 * @return <code>true</code> if update occurred
 	 */
 	protected boolean updateTable() {
