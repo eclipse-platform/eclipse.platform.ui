@@ -92,9 +92,7 @@
     background-color: #505f70;
     color: #9ac9d8;
 }
-.MPart FormHeading {
-    background: #505f70;
-}
+
 .MPart FormHeading,
 .MPart FormHeading > TitleRegion {
     swt-background-mode: none;
