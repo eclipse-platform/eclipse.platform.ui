@@ -224,16 +224,18 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 			fComputedProposals.add(0, computingProposal);
 			setProposals(fComputedProposals, false);
 			AtomicInteger remaining= new AtomicInteger(populateFutures.size());
+			final List<ICompletionProposal> requestSpecificProposals= fComputedProposals; //fComputedProposals can be changed/reset later
 			populateFutures= populateFutures.stream().map(future -> future.thenRun(() -> {
 				computingProposal.setRemaining(remaining.decrementAndGet());
 				if (remaining.get() == 0) {
-					fComputedProposals.remove(computingProposal);
+					requestSpecificProposals.remove(computingProposal);
 				}
 				Control control= fContentAssistSubjectControlAdapter.getControl();
 				if (!control.isDisposed() && offset == fInvocationOffset) {
 					control.getDisplay().asyncExec(() -> {
-						// Don't run anything if offset has changed while runnable was scheduled (i.e. filtering might have occurred for fast CA)
-						if (offset != fInvocationOffset) {
+						// Skip if offset has changed while runnable was scheduled
+						// nor when completion "session" was modified or canceled.
+						if (offset != fInvocationOffset || fComputedProposals != requestSpecificProposals) {
 							return;
 						}
 						if (autoInsert
