@@ -50,7 +50,7 @@ abstract public class RunAndTrack {
 	 * Use this method to wrap calls to external code. For instance, while in {@link #changed(IEclipseContext)}.
 	 * consider calling listeners from this method. This wrapper will pause dependency recording while
 	 * in the 3rd party code, reducing potential dependency circularity issues.
-	 * @param runnable
+	 * @param runnable the runnable to execute
 	 */
 	synchronized protected void runExternalCode(Runnable runnable) {
 		Stack<Computation> computationStack = EclipseContext.getCalculatedComputations();
