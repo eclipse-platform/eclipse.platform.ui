@@ -79,7 +79,6 @@ import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.action.SubContributionItem;
 import org.eclipse.jface.internal.MenuManagerEventHelper;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
@@ -988,11 +987,6 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		IContributionItem[] items = menuManager.getItems();
 		for (int src = 0, dest = 0; src < items.length; src++, dest++) {
 			IContributionItem item = items[src];
-
-			if (item instanceof SubContributionItem) {
-				// get the wrapped contribution item
-				item = ((SubContributionItem) item).getInnerItem();
-			}
 
 			if (item instanceof MenuManager) {
 				MenuManager childManager = (MenuManager) item;

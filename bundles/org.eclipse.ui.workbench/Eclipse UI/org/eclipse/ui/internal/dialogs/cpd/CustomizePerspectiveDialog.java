@@ -1515,8 +1515,6 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		window.fillActionBars(customizeActionBars,
 				ActionBarAdvisor.FILL_PROXY | ActionBarAdvisor.FILL_MENU_BAR | ActionBarAdvisor.FILL_COOL_BAR);
 
-		window.fill(customizeActionBars.menuRenderer, customizeActionBars.mainMenu, customizeActionBars.menuManager);
-
 		// Populate the action bars with the action sets' data
 		for (ActionSet actionSet : actionSets) {
 			ActionSetDescriptor descriptor = actionSet.descriptor;

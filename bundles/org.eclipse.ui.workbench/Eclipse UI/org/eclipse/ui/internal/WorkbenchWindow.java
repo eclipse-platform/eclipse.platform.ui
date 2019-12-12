@@ -62,7 +62,6 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.internal.workbench.E4Workbench;
-import org.eclipse.e4.ui.internal.workbench.OpaqueElementUtil;
 import org.eclipse.e4.ui.internal.workbench.PartServiceSaveHandler;
 import org.eclipse.e4.ui.internal.workbench.URIHelper;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.IUpdateService;
@@ -81,8 +80,6 @@ import org.eclipse.e4.ui.model.application.ui.basic.MTrimmedWindow;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuSeparator;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
 import org.eclipse.e4.ui.model.internal.Position;
 import org.eclipse.e4.ui.model.internal.PositionInfo;
@@ -102,7 +99,6 @@ import org.eclipse.e4.ui.workbench.renderers.swt.TrimmedPartLayout;
 import org.eclipse.e4.ui.workbench.swt.factories.IRendererFactory;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.jface.action.AbstractGroupMarker;
 import org.eclipse.jface.action.CoolBarManager;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
@@ -184,7 +180,6 @@ import org.eclipse.ui.internal.handlers.IActionCommandMappingService;
 import org.eclipse.ui.internal.handlers.LegacyHandlerService;
 import org.eclipse.ui.internal.menus.IActionSetsListener;
 import org.eclipse.ui.internal.menus.LegacyActionPersistence;
-import org.eclipse.ui.internal.menus.MenuHelper;
 import org.eclipse.ui.internal.menus.SlaveMenuService;
 import org.eclipse.ui.internal.misc.UIListenerLogging;
 import org.eclipse.ui.internal.progress.ProgressRegion;
@@ -881,7 +876,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 				renderer = (MenuManagerRenderer) rendererFactory.getRenderer(mainMenu, null);
 				renderer.linkModelToManager(mainMenu, menuManager);
-				fill(renderer, mainMenu, menuManager);
+				renderer.reconcileManagerToModel(menuManager, mainMenu);
 				model.setMainMenu(mainMenu);
 				final Menu menu = (Menu) engine.createGui(mainMenu, model.getWidget(), model.getContext());
 				shell.setMenuBar(menu);
@@ -1467,37 +1462,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 			}
 		}
 		return null;
-	}
-
-	public void fill(MenuManagerRenderer renderer, MMenu menu, IMenuManager manager) {
-		for (IContributionItem item : manager.getItems()) {
-			if (item instanceof MenuManager) {
-				MenuManager menuManager = (MenuManager) item;
-				MMenu subMenu = MenuHelper.createMenu(menuManager);
-				if (subMenu != null) {
-					renderer.linkModelToContribution(subMenu, item);
-					renderer.linkModelToManager(subMenu, menuManager);
-					fill(renderer, subMenu, menuManager);
-					menu.getChildren().add(subMenu);
-				}
-			} else if (item instanceof AbstractGroupMarker) {
-				MMenuSeparator separator = modelService.createModelElement(MMenuSeparator.class);
-				separator.setVisible(item.isVisible());
-				separator.setElementId(item.getId());
-				if (item instanceof GroupMarker) {
-					separator.getTags().add(MenuManagerRenderer.GROUP_MARKER);
-				}
-				menu.getChildren().add(separator);
-				manager.remove(item);
-			} else {
-				MMenuItem menuItem = OpaqueElementUtil.createOpaqueMenuItem();
-				menuItem.setElementId(item.getId());
-				menuItem.setVisible(item.isVisible());
-				OpaqueElementUtil.setOpaqueItem(menuItem, item);
-				menu.getChildren().add(menuItem);
-				renderer.linkModelToContribution(menuItem, item);
-			}
-		}
 	}
 
 	public static String getId(IConfigurationElement element) {
@@ -2546,8 +2510,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		if (getShell() == null || getShell().isDisposed() || updateDisabled || updatesDeferred()) {
 			return;
 		}
-		// updateAll required in order to enable accelerators on pull-down menus
-		getMenuBarManager().update(false);
+
+		if (mainMenu != null) {
+			renderer.reconcileManagerToModel(menuManager, mainMenu);
+		}
 
 		try {
 			getShell().setLayoutDeferred(true);
