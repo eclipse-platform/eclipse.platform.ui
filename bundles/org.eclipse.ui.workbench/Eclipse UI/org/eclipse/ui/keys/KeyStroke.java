@@ -133,7 +133,7 @@ public final class KeyStroke implements Comparable {
 	 * @param naturalKey   the natural key. May be <code>null</code>.
 	 * @return a key stroke. Guaranteed not to be <code>null</code>.
 	 */
-	public static KeyStroke getInstance(SortedSet<ModifierKey> modifierKeys, NaturalKey naturalKey) {
+	public static KeyStroke getInstance(SortedSet modifierKeys, NaturalKey naturalKey) {
 		return new KeyStroke(modifierKeys, naturalKey);
 	}
 
@@ -290,7 +290,7 @@ public final class KeyStroke implements Comparable {
 	 *         not to be <code>null</code>. If this set is not empty, it is
 	 *         guaranteed to only contain instances of <code>ModifierKey</code>.
 	 */
-	public Set<ModifierKey> getModifierKeys() {
+	public Set getModifierKeys() {
 		return Collections.unmodifiableSet(modifierKeys);
 	}
 

@@ -139,7 +139,7 @@ public final class KeySequence implements Comparable {
 	 *                   it must only contain instances of <code>KeyStroke</code>.
 	 * @return a key sequence. Guaranteed not to be <code>null</code>.
 	 */
-	public static KeySequence getInstance(List<KeyStroke> keyStrokes) {
+	public static KeySequence getInstance(List keyStrokes) {
 		return new KeySequence(keyStrokes);
 	}
 
@@ -281,7 +281,7 @@ public final class KeySequence implements Comparable {
 	 *         guaranteed not to be <code>null</code>. If this list is not empty, it
 	 *         is guaranteed to only contain instances of <code>KeyStroke</code>.
 	 */
-	public List<KeyStroke> getKeyStrokes() {
+	public List getKeyStrokes() {
 		return keyStrokes;
 	}
 
