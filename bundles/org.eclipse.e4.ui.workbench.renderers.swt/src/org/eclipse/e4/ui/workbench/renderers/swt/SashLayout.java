@@ -16,6 +16,7 @@ package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.ui.model.application.ui.MGenericTile;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
@@ -135,13 +136,20 @@ public class SashLayout extends Layout {
 			try {
 				layoutUpdateInProgress = true;
 				adjustWeights(sashesToDrag, e.x, e.y);
-				try {
-					host.setRedraw(false);
-					host.layout();
-				} finally {
-					host.setRedraw(true);
+				// FIXME SWT Win requires a synchronous layout call to update the UI
+				// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=558392
+				// once this is fixed, the requestLayout call should be sufficient
+				if (Platform.getOS().equals(Platform.OS_WIN32)) {
+					try {
+						host.setRedraw(false);
+						host.layout();
+					} finally {
+						host.setRedraw(true);
+					}
+					host.update();
+				} else {
+					host.requestLayout();
 				}
-				host.update();
 			} finally {
 				layoutUpdateInProgress = false;
 			}

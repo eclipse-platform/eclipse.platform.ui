@@ -15,6 +15,7 @@
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import javax.inject.Inject;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
@@ -75,13 +76,21 @@ public class SashRenderer extends SWTPartRenderer {
 		}
 
 		Composite s = (Composite) pscModel.getWidget();
-		Layout layout = s.getLayout();
-		if (layout instanceof SashLayout) {
-			if (((SashLayout) layout).layoutUpdateInProgress) {
-				return;
+
+		// FIXME SWT Win requires a synchronous layout call to update the UI
+		// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=558392
+		// once this is fixed, the requestLayout call should be sufficient
+		if (Platform.getOS().equals(Platform.OS_WIN32)) {
+			Layout layout = s.getLayout();
+			if (layout instanceof SashLayout) {
+				if (((SashLayout) layout).layoutUpdateInProgress) {
+					return;
+				}
 			}
+			s.layout(true, true);
+		} else {
+			s.requestLayout();
 		}
-		s.layout(true, true);
 	}
 
 	@Override
@@ -108,8 +117,7 @@ public class SashRenderer extends SWTPartRenderer {
 		Composite sashComposite = null;
 		MPartSashContainer psc = (MPartSashContainer) element;
 		for (MPartSashContainerElement psce : psc.getChildren()) {
-			if (psce instanceof MPartSashContainer
-					&& psce.getWidget() instanceof Composite) {
+			if (psce instanceof MPartSashContainer && psce.getWidget() instanceof Composite) {
 				// 'Adopt' the previous root's layout / composite
 				sashComposite = (Composite) psce.getWidget();
 				bindWidget(psce, new Rectangle(0, 0, 0, 0));
@@ -168,8 +176,7 @@ public class SashRenderer extends SWTPartRenderer {
 	}
 
 	/*
-	 * Container data is used by the SashLayout to determine the size of the
-	 * control
+	 * Container data is used by the SashLayout to determine the size of the control
 	 */
 	private static void ensureLayoutWeight(MUIElement element) {
 		int weight = DEFAULT_WEIGHT;
