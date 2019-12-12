@@ -30,7 +30,7 @@ public class MinMaxProcessor {
 
 		// prevent multiple copies
 		for (MAddon addon : addons) {
-			if (addon.getContributionURI().contains("ui.workbench.addons.minmax.MinMaxAddon")) {
+			if (addon.getContributionURI().contains("ui.workbench.addons.minmax.MinMaxAddon")) { //$NON-NLS-1$
 				return;
 			}
 		}

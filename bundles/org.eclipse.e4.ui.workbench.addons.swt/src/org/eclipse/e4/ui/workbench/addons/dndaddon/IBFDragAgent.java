@@ -87,7 +87,7 @@ public class IBFDragAgent extends DragAgent {
 	private void attachToCursor(DnDInfo info) {
 		frame = (ImageBasedFrame) dragElement.getWidget();
 		dragElement.setVisible(false);
-		dragElement.getTags().add("LockVisibility");
+		dragElement.getTags().add("LockVisibility"); //$NON-NLS-1$
 
 		if (ds == null) {
 			ds = new Shell(dndManager.getDragShell(), SWT.NO_TRIM);
@@ -121,7 +121,7 @@ public class IBFDragAgent extends DragAgent {
 
 	@Override
 	public void dragFinished(boolean performDrop, DnDInfo info) {
-		dragElement.getTags().remove("LockVisibility");
+		dragElement.getTags().remove("LockVisibility"); //$NON-NLS-1$
 		dragElement.setVisible(true);
 
 		super.dragFinished(performDrop, info);

@@ -30,7 +30,7 @@ public class DnDProcessor {
 
 		// prevent multiple copies
 		for (MAddon addon : addons) {
-			if (addon.getContributionURI().contains("ui.workbench.addons.dndaddon.DnDAddon")) {
+			if (addon.getContributionURI().contains("ui.workbench.addons.dndaddon.DnDAddon")) { //$NON-NLS-1$
 				return;
 			}
 		}

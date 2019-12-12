@@ -32,7 +32,7 @@ public class SplitterProcessor {
 		// prevent multiple copies
 		for (MAddon addon : addons) {
 			if (addon.getContributionURI().contains(
-					"ui.workbench.addons.splitteraddon.SplitterAddon")) {
+					"ui.workbench.addons.splitteraddon.SplitterAddon")) { //$NON-NLS-1$
 				return;
 			}
 		}

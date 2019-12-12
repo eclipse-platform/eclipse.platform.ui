@@ -240,7 +240,7 @@ public class CleanupAddon {
 					}
 				}
 			} else {
-				Shell limbo = (Shell) app.getContext().get("limbo");
+				Shell limbo = (Shell) app.getContext().get("limbo"); //$NON-NLS-1$
 
 				// Reparent the control to 'limbo'
 				Composite curParent = ctrl.getParent();

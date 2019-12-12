@@ -29,7 +29,7 @@ import org.eclipse.swt.widgets.Display;
  *
  */
 abstract class DragAgent {
-	private static final String DRAG_PLACEHOLDER_ID = "Drag Placerholder";
+	private static final String DRAG_PLACEHOLDER_ID = "Drag Placerholder"; //$NON-NLS-1$
 	protected MUIElement dragElement;
 
 	protected DnDManager dndManager;
