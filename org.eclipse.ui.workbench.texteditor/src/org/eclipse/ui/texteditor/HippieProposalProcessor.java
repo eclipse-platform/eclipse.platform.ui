@@ -15,8 +15,14 @@
 package org.eclipse.ui.texteditor;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
@@ -40,9 +46,6 @@ import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
 
-import org.eclipse.ui.IEditorInput;
-import org.eclipse.ui.IEditorPart;
-import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.texteditor.HippieCompletionEngine;
@@ -284,39 +287,50 @@ public final class HippieProposalProcessor implements IContentAssistProcessor {
 	}
 
 	/**
-	 * Create the array of suggestions. It scans all open text editors and prefers suggestions from
-	 * the currently open editor. It also adds the empty suggestion at the end.
+	 * Create the array of suggestions. It scans for other documents or editors,
+	 * and prefers suggestions from the currently open editor. It also adds the
+	 * empty suggestion at the end.
 	 *
-	 * @param viewer the viewer
-	 * @param offset the offset
-	 * @param prefix the prefix to search for
-	 * @return the list of all possible suggestions in the currently open editors
-	 * @throws BadLocationException if accessing the current document fails
+	 * @param viewer
+	 *            the viewer
+	 * @param offset
+	 *            the offset
+	 * @param prefix
+	 *            the prefix to search for
+	 * @return the list of all possible suggestions in the currently open
+	 *         editors
+	 * @throws BadLocationException
+	 *             if accessing the current document fails
 	 */
 	private List<String> getSuggestions(ITextViewer viewer, int offset, String prefix) throws BadLocationException {
-
 		ArrayList<String> suggestions= createSuggestionsFromOpenDocument(viewer, offset, prefix);
 		IDocument currentDocument= viewer.getDocument();
-
-		IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		IEditorReference editorReferences[]= window.getActivePage().getEditorReferences();
-
-		for (int i= 0; i < editorReferences.length; i++) {
-			IEditorPart editor= editorReferences[i].getEditor(false); // don't create!
-			if (editor instanceof ITextEditor) {
-				ITextEditor textEditor= (ITextEditor) editor;
-				IEditorInput input= textEditor.getEditorInput();
-				IDocument doc= textEditor.getDocumentProvider().getDocument(input);
-				if (!currentDocument.equals(doc))
-					suggestions.addAll(fEngine.getCompletionsForward(doc, prefix, 0, false));
+		for (ITextEditor editor : findTextEditors()) {
+			IDocument doc = editor.getDocumentProvider().getDocument(editor.getEditorInput());
+			if (doc != null && !doc.equals(currentDocument)) {
+				suggestions.addAll(fEngine.getCompletionsForward(doc, prefix, 0, false));
 			}
 		}
 		// add the empty suggestion
 		suggestions.add(""); //$NON-NLS-1$
+		return fEngine.makeUnique(suggestions);
+	}
 
-		List<String> uniqueSuggestions= fEngine.makeUnique(suggestions);
-
-		return uniqueSuggestions;
+	private Collection<ITextEditor> findTextEditors() {
+		IWorkbenchWindow window= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		Stream<IWorkbenchWindow> windows = null;
+		if (window != null) {
+			windows = Collections.singleton(window).stream();
+		} else {
+			windows = Arrays.stream(PlatformUI.getWorkbench().getWorkbenchWindows());
+		}
+		return windows.flatMap(aWindow -> Arrays.stream(aWindow.getPages())) //
+				.flatMap(workbenchPage -> Arrays.stream(workbenchPage.getEditorReferences())) //
+				.map(editorRef -> editorRef.getEditor(false)) //
+				.filter(Objects::nonNull) //
+				.filter(ITextEditor.class::isInstance) //
+				.map(ITextEditor.class::cast) //
+				.collect(Collectors.toSet());
 	}
 
 	@Override
