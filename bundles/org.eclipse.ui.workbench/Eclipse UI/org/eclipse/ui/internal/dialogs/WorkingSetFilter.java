@@ -15,14 +15,15 @@
 package org.eclipse.ui.internal.dialogs;
 
 import java.util.Set;
+
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.IWorkingSet;
 
 public class WorkingSetFilter extends ViewerFilter {
-	Set<String> workingSetIds;
+	Set workingSetIds;
 
-	public WorkingSetFilter(Set<String> workingSetIds) {
+	public WorkingSetFilter(Set workingSetIds) {
 		this.workingSetIds = workingSetIds;
 	}
 

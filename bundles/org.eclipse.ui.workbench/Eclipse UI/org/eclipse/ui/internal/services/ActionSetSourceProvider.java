@@ -83,7 +83,7 @@ public final class ActionSetSourceProvider extends AbstractSourceProvider implem
 
 	@Override
 	public Map getCurrentState() {
-		final Map<String, IActionSetDescriptor[]> currentState = new HashMap<>();
+		final Map currentState = new HashMap();
 		currentState.put(ISources.ACTIVE_ACTION_SETS_NAME, activeActionSets);
 		return currentState;
 	}

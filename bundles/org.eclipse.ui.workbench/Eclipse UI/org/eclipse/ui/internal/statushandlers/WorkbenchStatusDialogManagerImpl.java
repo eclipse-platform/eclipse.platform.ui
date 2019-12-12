@@ -477,7 +477,7 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 	 *
 	 * @return dialog state.
 	 */
-	public Map<Object, Object> getDialogState() {
+	public Map getDialogState() {
 		return dialogState;
 	}
 

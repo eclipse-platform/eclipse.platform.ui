@@ -179,7 +179,7 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
 		if (!recursive) {
 			return null;
 		}
-		for (Iterator<?> iterator = children.iterator(); iterator.hasNext();) {
+		for (Iterator iterator = children.iterator(); iterator.hasNext();) {
 			WizardCollectionElement child = (WizardCollectionElement) iterator.next();
 			WorkbenchWizardElement result = child.findWizard(searchId, true);
 			if (result != null) {
@@ -248,12 +248,12 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
 	 */
 	private IWizardDescriptor[] getWizardsExpression(IWizardDescriptor[] wizardDescriptors) {
 		int size = wizardDescriptors.length;
-		List<IWizardDescriptor> result = new ArrayList<>(size);
+		List result = new ArrayList(size);
 		for (int i = 0; i < size; i++) {
 			if (!WorkbenchActivityHelper.restrictUseOf(wizardDescriptors[i]))
 				result.add(wizardDescriptors[i]);
 		}
-		return result.toArray(new IWizardDescriptor[result.size()]);
+		return (IWizardDescriptor[]) result.toArray(new IWizardDescriptor[result.size()]);
 	}
 
 	/**
@@ -277,13 +277,13 @@ public class WizardCollectionElement extends AdaptableList implements IPluginCon
 	private WorkbenchWizardElement[] getWorkbenchWizardElementsExpression(
 			WorkbenchWizardElement[] workbenchWizardElements) {
 		int size = workbenchWizardElements.length;
-		List<WorkbenchWizardElement> result = new ArrayList<>(size);
+		List result = new ArrayList(size);
 		for (int i = 0; i < size; i++) {
 			WorkbenchWizardElement element = workbenchWizardElements[i];
 			if (!WorkbenchActivityHelper.restrictUseOf(element))
 				result.add(element);
 		}
-		return result.toArray(new WorkbenchWizardElement[result.size()]);
+		return (WorkbenchWizardElement[]) result.toArray(new WorkbenchWizardElement[result.size()]);
 	}
 
 	/**

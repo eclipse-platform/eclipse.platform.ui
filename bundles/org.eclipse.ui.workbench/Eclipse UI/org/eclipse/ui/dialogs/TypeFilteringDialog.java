@@ -52,7 +52,7 @@ import org.eclipse.ui.internal.registry.EditorRegistry;
 public class TypeFilteringDialog extends SelectionDialog {
 	Button addTypesButton;
 
-	Collection<String> initialSelections;
+	Collection initialSelections;
 
 	// the visual selection widget group
 	CheckboxTableViewer listViewer;
@@ -79,7 +79,7 @@ public class TypeFilteringDialog extends SelectionDialog {
 	 * @param preselections of String - a Collection of String to define the
 	 *                      preselected types
 	 */
-	public TypeFilteringDialog(Shell parentShell, Collection<String> preselections) {
+	public TypeFilteringDialog(Shell parentShell, Collection preselections) {
 		super(parentShell);
 		setTitle(WorkbenchMessages.TypesFiltering_title);
 		this.initialSelections = preselections;
@@ -97,7 +97,7 @@ public class TypeFilteringDialog extends SelectionDialog {
 	 * @param filterText    - the title of the text entry field for other
 	 *                      extensions.
 	 */
-	public TypeFilteringDialog(Shell parentShell, Collection<String> preselections, String filterText) {
+	public TypeFilteringDialog(Shell parentShell, Collection preselections, String filterText) {
 		this(parentShell, preselections);
 		this.filterTitle = filterText;
 	}
@@ -170,10 +170,10 @@ public class TypeFilteringDialog extends SelectionDialog {
 			}
 		}
 		// Now add in the ones not selected to the user defined list
-		Iterator<String> initialIterator = this.initialSelections.iterator();
+		Iterator initialIterator = this.initialSelections.iterator();
 		StringBuilder entries = new StringBuilder();
 		while (initialIterator.hasNext()) {
-			String nextExtension = initialIterator.next();
+			String nextExtension = (String) initialIterator.next();
 			if (!selectedMappings.contains(nextExtension)) {
 				if (entries.length() != 0) {
 					entries.append(',');

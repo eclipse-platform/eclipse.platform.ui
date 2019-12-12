@@ -224,7 +224,7 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 		addSelectionButtons(composite);
 
 		listViewer.setInput(Arrays.asList(WorkbenchPlugin.getDefault().getWorkingSetManager().getWorkingSets()));
-		List<Object> initialElementSelections = getInitialElementSelections();
+		List initialElementSelections = getInitialElementSelections();
 		if (multiSelect) {
 			listViewer.setCheckedElements(initialElementSelections.toArray());
 		} else if (!initialElementSelections.isEmpty()) {
@@ -268,7 +268,7 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 	@Override
 	protected Control createContents(Composite parent) {
 		Control control = super.createContents(parent);
-		List<Object> selections = getInitialElementSelections();
+		List selections = getInitialElementSelections();
 		if (!selections.isEmpty()) {
 			listViewer.setSelection(new StructuredSelection(selections), true);
 		}
@@ -356,10 +356,10 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 	 */
 	private void restoreAddedWorkingSets() {
 		IWorkingSetManager manager = WorkbenchPlugin.getDefault().getWorkingSetManager();
-		Iterator<IWorkingSet> iterator = getAddedWorkingSets().iterator();
+		Iterator iterator = getAddedWorkingSets().iterator();
 
 		while (iterator.hasNext()) {
-			manager.removeWorkingSet(iterator.next());
+			manager.removeWorkingSet(((IWorkingSet) iterator.next()));
 		}
 	}
 
@@ -384,14 +384,14 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 	 */
 	private void restoreRemovedWorkingSets() {
 		IWorkingSetManager manager = WorkbenchPlugin.getDefault().getWorkingSetManager();
-		Iterator<IWorkingSet> iterator = getRemovedWorkingSets().iterator();
+		Iterator iterator = getRemovedWorkingSets().iterator();
 
 		while (iterator.hasNext()) {
-			manager.addWorkingSet(iterator.next());
+			manager.addWorkingSet(((IWorkingSet) iterator.next()));
 		}
 		iterator = getRemovedMRUWorkingSets().iterator();
 		while (iterator.hasNext()) {
-			manager.addRecentWorkingSet(iterator.next());
+			manager.addRecentWorkingSet(((IWorkingSet) iterator.next()));
 		}
 	}
 

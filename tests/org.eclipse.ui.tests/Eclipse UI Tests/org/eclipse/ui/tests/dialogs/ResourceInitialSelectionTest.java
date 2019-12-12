@@ -288,7 +288,7 @@ public class ResourceInitialSelectionTest extends UITestCase {
 	@Test
 	public void testMultiSelectionAndTwoInitialSelectionsWithInitialPattern() {
 		boolean hasMultiSelection = true;
-		List<Object> initialSelection = asList(FILES.get("foo.txt"), FILES.get("bar.txt"));
+		List<IFile> initialSelection = asList(FILES.get("foo.txt"), FILES.get("bar.txt"));
 
 		dialog = createDialog(hasMultiSelection);
 		dialog.setInitialPattern("**");

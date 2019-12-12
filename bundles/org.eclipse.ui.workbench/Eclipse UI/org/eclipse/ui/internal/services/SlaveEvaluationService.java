@@ -31,11 +31,11 @@ public class SlaveEvaluationService implements IEvaluationService {
 
 	private IEvaluationService parentService;
 
-	private Collection<ISourceProvider> sourceProviders = new ArrayList<>();
+	private Collection sourceProviders = new ArrayList();
 
-	private Collection<IPropertyChangeListener> serviceListeners = new ArrayList<>();
+	private Collection serviceListeners = new ArrayList();
 
-	private Collection<IEvaluationReference> evaluationReferences = new ArrayList<>();
+	private Collection evaluationReferences = new ArrayList();
 
 	/**
 	 * @param parent

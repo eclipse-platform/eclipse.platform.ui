@@ -35,7 +35,7 @@ public class WizardContentProvider implements ITreeContentProvider {
 	@Override
 	public Object[] getChildren(Object parentElement) {
 		if (parentElement instanceof WizardCollectionElement) {
-			ArrayList<Object> list = new ArrayList<>();
+			ArrayList list = new ArrayList();
 			WizardCollectionElement element = (WizardCollectionElement) parentElement;
 
 			for (Object childCollection : element.getChildren()) {
@@ -55,7 +55,7 @@ public class WizardContentProvider implements ITreeContentProvider {
 		} else if (parentElement instanceof AdaptableList) {
 			AdaptableList aList = (AdaptableList) parentElement;
 			Object[] children = aList.getChildren();
-			ArrayList<Object> list = new ArrayList<>(children.length);
+			ArrayList list = new ArrayList(children.length);
 			for (Object element : children) {
 				handleChild(element, list);
 			}
@@ -96,7 +96,7 @@ public class WizardContentProvider implements ITreeContentProvider {
 	 * @param list    the <code>Collection</code> to add to.
 	 * @since 3.0
 	 */
-	private void handleChild(Object element, ArrayList<Object> list) {
+	private void handleChild(Object element, ArrayList list) {
 		if (element instanceof WizardCollectionElement) {
 			if (hasChildren(element)) {
 				list.add(element);
