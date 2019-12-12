@@ -120,15 +120,19 @@ public abstract class Bucket {
 		public final static int RETURN = 2;
 
 		/**
-		 * Called after the bucket has been visited (and saved).
-		 * @throws CoreException
+		 * Called after the bucket has been visited and saved.
+		 *
+		 * @throws CoreException allows implementation to throw on error
 		 */
 		public void afterSaving(Bucket bucket) throws CoreException {
 			// empty implementation, subclasses to override
 		}
 
 		/**
-		 * @throws CoreException
+		 * Called after the bucket has been visited but before saved.
+		 *
+		 * @throws CoreException allows implementation to throw on error. Throwing an
+		 *                       exception prevents saving.
 		 */
 		public void beforeSaving(Bucket bucket) throws CoreException {
 			// empty implementation, subclasses to override
@@ -169,12 +173,14 @@ public abstract class Bucket {
 	}
 
 	/**
-	 * Applies the given visitor to this bucket index.
-	 * @param visitor
-	 * @param filter
-	 * @param depth the number of trailing segments that can differ from the filter
+	 * Applies the given visitor to this bucket index and save changes.
+	 *
+	 * @param visitor the processor for the bucket entries
+	 * @param filter  a filter to skip bucket entries
+	 * @param depth   the number of trailing segments that can differ from the
+	 *                filter
 	 * @return one of STOP, RETURN or CONTINUE constants
-	 * @exception CoreException
+	 * @exception CoreException thrown by the visitor or from a failed save
 	 */
 	public final int accept(Visitor visitor, IPath filter, int depth) throws CoreException {
 		if (entries.isEmpty())

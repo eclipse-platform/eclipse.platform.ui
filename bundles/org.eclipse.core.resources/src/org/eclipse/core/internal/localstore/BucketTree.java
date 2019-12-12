@@ -55,9 +55,13 @@ public class BucketTree {
 
 	/**
 	 * From a starting point in the tree, visit all nodes under it.
-	 * @param visitor
-	 * @param base
-	 * @param depth
+	 * 
+	 * @param visitor the processor for the bucket entries
+	 * @param base    the base path to start the tree at
+	 * @param depth   the max depth to decent the tree
+	 *
+	 * @exception CoreException thrown by the visitor or failure to load/save the
+	 *                          bucket
 	 */
 	public void accept(Bucket.Visitor visitor, IPath base, int depth) throws CoreException {
 		if (Path.ROOT.equals(base)) {

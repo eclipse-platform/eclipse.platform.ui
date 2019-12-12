@@ -47,7 +47,6 @@ public class WorkspaceTest extends ResourceTest {
 	/**
 	 * All of the WorkspaceTests build on each other. This test must
 	 * be run last of all to clean up from all previous tests in this class.
-	 * @throws Exception
 	 */
 	public void doCleanup() throws Exception {
 		IPath location = getWorkspace().getRoot().getLocation().append("testProject");

@@ -50,7 +50,7 @@ public class FileCache {
 	 * Public accessor to obtain the singleton file cache instance,
 	 * creating the cache lazily if necessary.
 	 * @return The file cache instance
-	 * @throws CoreException
+	 * @throws CoreException If the file cache could not be created
 	 */
 	public static FileCache getCache() throws CoreException {
 		synchronized (creationLock) {
@@ -76,10 +76,11 @@ public class FileCache {
 
 	/**
 	 * Implements {@link FileStore#toLocalFile(int, IProgressMonitor)}
-	 * @param source 
-	 * @param monitor
+	 * @param source source data to cache on disk
+	 * @param monitor 
+	 *            monitor to indicate progress and receive cancellation
 	 * @return The cached file
-	 * @throws CoreException
+	 * @throws CoreException on errors using the source filestore or writing the cache file
 	 */
 	public java.io.File cache(IFileStore source, IProgressMonitor monitor) throws CoreException {
 		try {

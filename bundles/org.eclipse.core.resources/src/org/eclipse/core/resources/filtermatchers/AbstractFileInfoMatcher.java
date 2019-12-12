@@ -44,8 +44,9 @@ public abstract class AbstractFileInfoMatcher {
 
 	/**
 	 * Sets initialization data for this matcher.
-	 * @param project
-	 * @param arguments
+	 *
+	 * @param project   project this matcher works on
+	 * @param arguments matcher specific initialization argument
 	 * @throws CoreException if initialization failed
 	 */
 	public abstract void initialize(IProject project, Object arguments) throws CoreException;

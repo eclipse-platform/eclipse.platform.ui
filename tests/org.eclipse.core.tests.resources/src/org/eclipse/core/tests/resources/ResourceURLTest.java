@@ -135,7 +135,6 @@ public class ResourceURLTest extends ResourceTest {
 
 	/**
 	 * Tests decoding of normalized URLs containing spaces
-	 * @throws CoreException
 	 */
 	public void testSpaces() {
 		IProject project = getWorkspace().getRoot().getProject("My Project");

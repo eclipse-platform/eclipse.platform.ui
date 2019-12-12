@@ -264,7 +264,10 @@ public class ResourceContentProvider extends AbstractTreeContentProvider {
 	 * 
 	 * @param markerNode the marker's node
 	 * @param marker the marker object
-	 * @throws CoreException 
+	 * @throws CoreException if this method fails. Reasons include:
+	 * <ul>
+	 * <li>This marker does not exist.</li>
+	 * </ul>
 	 */
 	protected void extractMarkerAttributes(TreeContentProviderNode markerNode, IMarker marker) throws CoreException {
 

@@ -85,7 +85,7 @@ public interface IModelProviderDescriptor {
 	 * @param traversals the traversals being tested
 	 * @return the subset of these traversals that overlap with the resources
 	 * that match this descriptor
-	 * @throws CoreException
+	 * @throws CoreException in case of error; depends on actual implementation
 	 */
 	ResourceTraversal[] getMatchingTraversals(ResourceTraversal[] traversals) throws CoreException;
 

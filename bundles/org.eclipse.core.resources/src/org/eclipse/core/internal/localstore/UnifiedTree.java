@@ -83,11 +83,12 @@ public class UnifiedTree {
 	}
 
 	/**
-	 * Pass in a a root for the tree, a file tree containing all of the entries for this
-	 * tree and a flag indicating whether the UnifiedTree should consult the fileTree where
-	 * possible for entries
-	 * @param root
-	 * @param fileTree
+	 * Pass in a a root for the tree, a file tree containing all of the entries for
+	 * this tree and a flag indicating whether the UnifiedTree should consult the
+	 * fileTree where possible for entries
+	 *
+	 * @param root     root of the tree. Must be file or folder.
+	 * @param fileTree an {@link IFileTree} which is used to build the unified tree
 	 */
 	public UnifiedTree(IResource root, IFileTree fileTree) {
 		this(root);

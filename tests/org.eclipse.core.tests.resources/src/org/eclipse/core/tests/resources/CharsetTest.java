@@ -419,7 +419,6 @@ public class CharsetTest extends ResourceTest {
 	 * Test for getting charset on an IFile:
 	 * #getContentDescription() checks file sync state(), always returning the
 	 * correct content description, whereas getCharset() uses the cached charset if available.
-	 * @throws Exception
 	 */
 	public void testBug186984() throws Exception {
 		getResourcesPreferences().putBoolean(ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH, false);

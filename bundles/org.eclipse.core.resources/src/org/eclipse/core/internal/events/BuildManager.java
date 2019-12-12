@@ -402,7 +402,6 @@ public class BuildManager implements ICoreConstants, IManager, ILifecycleListene
 	/**
 	 * Runs all builders on all the given project configs, in the order that
 	 * they are given.
-	 * @param buildJobGroup
 	 * @return A status indicating if the build succeeded or failed
 	 */
 	public IStatus buildParallel(Digraph<IBuildConfiguration> configs, IBuildConfiguration[] requestedConfigs, int trigger, JobGroup buildJobGroup, IProgressMonitor monitor) {

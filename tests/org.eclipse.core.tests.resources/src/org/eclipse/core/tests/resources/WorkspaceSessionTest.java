@@ -46,7 +46,9 @@ public class WorkspaceSessionTest extends ResourceTest {
 
 	/**
 	 * Constructor for WorkspaceSessionTest.
+	 *
 	 * @param name
+	 *            name of the TestCase
 	 */
 	public WorkspaceSessionTest(String name) {
 		super(name);

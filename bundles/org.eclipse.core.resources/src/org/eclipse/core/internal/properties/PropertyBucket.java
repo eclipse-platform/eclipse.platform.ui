@@ -32,7 +32,8 @@ public class PropertyBucket extends Bucket {
 		};
 		private static final String[][] EMPTY_DATA = new String[0][];
 		/**
-		 * value is a String[][] of {{propertyKey.qualifier, propertyKey.localName, propertyValue}}
+		 * value is an array of qualified-key value pairs String[][] of
+		 * {{propertyKey.qualifier, propertyKey.localName, propertyValue}}
 		 */
 		private String[][] value;
 
@@ -130,8 +131,9 @@ public class PropertyBucket extends Bucket {
 		}
 
 		/**
-		 * @param path
-		 * @param value is a String[][] {{propertyKey, propertyValue}}
+		 * @param path  a path to identify this property entry
+		 * @param value an array of qualified-key value pairs
+		 *              (<code>String[][] {{propertyKey.qualifier, propertyKey.localName, propertyValue}}</code>)
 		 */
 		protected PropertyEntry(IPath path, String[][] value) {
 			super(path);

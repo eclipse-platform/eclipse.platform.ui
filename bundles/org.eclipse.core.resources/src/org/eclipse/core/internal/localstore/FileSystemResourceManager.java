@@ -525,8 +525,9 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	}
 
 	/**
-	 * Never returns null
-	 * @param target
+	 * Never returns null.
+	 *
+	 * @param target the resource to get a store for
 	 * @return The file store for this resource
 	 */
 	public IFileStore getStore(IResource target) {
@@ -1039,9 +1040,10 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 
 	/**
 	 * The storage location for a resource has changed; update the location.
-	 * @param target
-	 * @param info
-	 * @param location
+	 *
+	 * @param target   the changed resource
+	 * @param info     the resource info to update
+	 * @param location the new storage location
 	 */
 	public void setLocation(IResource target, ResourceInfo info, URI location) {
 		FileStoreRoot oldRoot = info.getFileStoreRoot();

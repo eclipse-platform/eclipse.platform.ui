@@ -113,7 +113,7 @@ public abstract class ModelProvider extends PlatformObject {
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *     reporting is not desired
 	 * @return the resource mappings that cover the given resource.
-	 * @exception CoreException
+	 * @exception CoreException in case of error; depends on actual implementation
 	 */
 	public ResourceMapping[] getMappings(IResource resource, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
 		return new ResourceMapping[0];
@@ -133,7 +133,7 @@ public abstract class ModelProvider extends PlatformObject {
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *     reporting is not desired
 	 * @return the set of mappings that cover the given resources
-	 * @exception CoreException
+	 * @exception CoreException in case of error; depends on actual implementation
 	 */
 	public ResourceMapping[] getMappings(IResource[] resources, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
 		Set<ResourceMapping> mappings = new HashSet<>();
@@ -186,7 +186,7 @@ public abstract class ModelProvider extends PlatformObject {
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *     reporting is not desired
 	 * @return a set of traversals that cover the given mappings
-	 * @exception CoreException
+	 * @exception CoreException in case of error; depends on actual implementation
 	 */
 	public ResourceTraversal[] getTraversals(ResourceMapping[] mappings, ResourceMappingContext context, IProgressMonitor monitor) throws CoreException {
 		SubMonitor subMonitor = SubMonitor.convert(monitor, mappings.length);

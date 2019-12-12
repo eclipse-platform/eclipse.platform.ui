@@ -152,7 +152,9 @@ public abstract class ResourceTest extends CoreTest {
 
 	/**
 	 * Creates a new ResourceTest
-	 * @param name java.lang.String
+	 *
+	 * @param name
+	 *            name of the TestCase
 	 */
 	public ResourceTest(String name) {
 		super(name);
@@ -867,9 +869,11 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Modifies the content of the given file in the file system by
-	 * appending an 'f'.
+	 * Modifies the content of the given file in the file system by appending an
+	 * 'f'.
+	 *
 	 * @param file
+	 *            the file system file to extend
 	 */
 	protected void modifyInFileSystem(IFile file) {
 		String m = getClassName() + ".modifyInFileSystem(IFile): ";
@@ -888,9 +892,10 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Modifies the content of the given file in the workspace by
-	 * appending a 'w'.
+	 * Modifies the content of the given file in the workspace by appending a 'w'.
+	 *
 	 * @param file
+	 *            the workspace file to extend
 	 */
 	protected void modifyInWorkspace(IFile file) throws CoreException {
 		String newContent = readStringInWorkspace(file) + "w";
@@ -899,9 +904,10 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Returns the content of the given file in the file system as a
-	 * byte array.
+	 * Returns the content of the given file in the file system as a byte array.
+	 *
 	 * @param file
+	 *            file system file to read
 	 */
 	protected byte[] readBytesInFileSystem(IFile file) {
 		String m = getClassName() + ".readBytesInFileSystem(IFile): ";
@@ -923,8 +929,10 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Returns the content of the given file in the workspace as a
-	 * byte array.
+	 * Returns the content of the given file in the workspace as a byte array.
+	 *
+	 * @param file
+	 *            workspace file to read
 	 */
 	protected byte[] readBytesInWorkspace(IFile file) {
 		String m = getClassName() + ".readBytesInWorkspace(IFile): ";
@@ -940,18 +948,20 @@ public abstract class ResourceTest extends CoreTest {
 	}
 
 	/**
-	 * Returns the content of the given file in the file system as a
-	 * String (UTF8).
+	 * Returns the content of the given file in the file system as a String (UTF8).
+	 *
 	 * @param file
+	 *            file system file to read
 	 */
 	protected String readStringInFileSystem(IFile file) {
 		return new String(readBytesInFileSystem(file), StandardCharsets.UTF_8);
 	}
 
 	/**
-	 * Returns the content of the given file in the workspace as a
-	 * String (UTF8).
+	 * Returns the content of the given file in the workspace as a String (UTF8).
+	 *
 	 * @param file
+	 *            workspace file to read
 	 */
 	protected String readStringInWorkspace(IFile file) {
 		return new String(readBytesInWorkspace(file), StandardCharsets.UTF_8);

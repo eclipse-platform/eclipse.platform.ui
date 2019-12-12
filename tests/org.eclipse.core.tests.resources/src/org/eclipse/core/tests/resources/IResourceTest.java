@@ -78,8 +78,11 @@ public class IResourceTest extends ResourceTest {
 	ResourceDeltaVerifier verifier;
 
 	/**
-	 * @return Set
+	 * Get all files and directories in given directory recursive.
+	 *
 	 * @param dir
+	 *            the directory to start with
+	 * @return set of files and directories in given directory and sub-directories
 	 */
 	static protected Set<File> getAllFilesForDirectory(File dir) {
 		Set<File> result = new HashSet<>(50);
@@ -97,8 +100,14 @@ public class IResourceTest extends ResourceTest {
 	}
 
 	/**
-	 * @return Set
-	 * @param resource IResource
+	 * Get all files and directories in given resource recursive.
+	 *
+	 * @param resource
+	 *            the resource to start with. Resource can be a file in which case
+	 *            the result will only contain the file.
+	 * @param considerUnsyncLocalFiles
+	 *            if <code>true</code> force reading from filesystem
+	 * @return set of files and directories under given resource
 	 */
 	static protected Set<File> getAllFilesForResource(IResource resource, boolean considerUnsyncLocalFiles) throws CoreException {
 		Set<File> result = new HashSet<>(50);

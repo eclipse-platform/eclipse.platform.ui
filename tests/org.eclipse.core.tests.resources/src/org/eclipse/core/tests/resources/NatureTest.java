@@ -47,7 +47,9 @@ public class NatureTest extends ResourceTest {
 
 	/**
 	 * Constructor for NatureTest.
+	 *
 	 * @param name
+	 *            name of the TestCase
 	 */
 	public NatureTest(String name) {
 		super(name);
@@ -361,7 +363,6 @@ public class NatureTest extends ResourceTest {
 	 * to check if natures value is cached properly.
 	 *
 	 * See Bug 338055.
-	 * @throws Exception
 	 */
 	public void testBug338055() throws Exception {
 		final boolean finished[] = new boolean[] {false};
