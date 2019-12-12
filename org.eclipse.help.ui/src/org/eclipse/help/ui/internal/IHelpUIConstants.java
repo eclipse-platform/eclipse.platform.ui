@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -53,6 +53,8 @@ public interface IHelpUIConstants {
 	public static final String IMAGE_D_MAGNIFY = "dlcl16/magnify_font.png"; //$NON-NLS-1$
 	public static final String IMAGE_D_REDUCE = "dlcl16/reduce_font.png"; //$NON-NLS-1$
 	public static final String IMAGE_COLLAPSE_ALL = "elcl16/collapseall.png"; //$NON-NLS-1$
+	public static final String IMAGE_CLOSE = "elcl16/close.png"; //$NON-NLS-1$
+	public static final String IMAGE_CLOSE_HOT = "elcl16/close_hot.png"; //$NON-NLS-1$
 	public static final String IMAGE_SYNC_TOC = "elcl16/synch_toc_nav.png"; //$NON-NLS-1$
 	public static final String IMAGE_SHOW_ALL = "elcl16/show_all.png"; //$NON-NLS-1$
 	public static final String IMAGE_DOC_OVR = "ovr16/doc_co.png"; //$NON-NLS-1$
