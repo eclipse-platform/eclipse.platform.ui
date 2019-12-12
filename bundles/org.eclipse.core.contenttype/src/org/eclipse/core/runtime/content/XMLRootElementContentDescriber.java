@@ -41,6 +41,7 @@ import org.xml.sax.InputSource;
  * @deprecated Use {@link XMLRootElementContentDescriber2} instead
  * @noinstantiate This class is not intended to be instantiated by clients.
  */
+@Deprecated
 public final class XMLRootElementContentDescriber extends XMLContentDescriber implements IExecutableExtension {
 	private static final String DTD_TO_FIND = "dtd"; //$NON-NLS-1$
 	private static final String ELEMENT_TO_FIND = "element"; //$NON-NLS-1$

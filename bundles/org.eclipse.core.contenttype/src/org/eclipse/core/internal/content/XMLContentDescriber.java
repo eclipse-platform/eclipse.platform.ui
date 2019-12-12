@@ -44,5 +44,6 @@ package org.eclipse.core.internal.content;
  *
  * @deprecated As of 3.5, replaced by {@link org.eclipse.core.runtime.content.XMLContentDescriber}
  */
+@Deprecated
 public class XMLContentDescriber extends org.eclipse.core.runtime.content.XMLContentDescriber {
 }

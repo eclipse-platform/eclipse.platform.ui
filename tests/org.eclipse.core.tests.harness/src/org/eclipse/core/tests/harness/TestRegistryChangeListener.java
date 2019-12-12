@@ -96,6 +96,7 @@ public class TestRegistryChangeListener implements IRegistryChangeListener {
 	 *
 	 * @deprecated use {@link #eventTypeReceived(long)} instead
 	 */
+	@Deprecated
 	public synchronized IRegistryChangeEvent getEvent(long timeout) {
 		if (!events.isEmpty()) {
 			return events.remove(0);
