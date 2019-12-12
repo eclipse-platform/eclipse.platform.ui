@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: e4 Progress Examples Plug-in
 Bundle-SymbolicName: org.eclipse.e4.ui.examples.job;singleton:=true
-Bundle-Version: 0.2.100.qualifier
+Bundle-Version: 0.2.200.qualifier
 Bundle-Vendor: Eclipse.org
 Export-Package: org.eclipse.e4.ui.examples.jobs,
  org.eclipse.e4.ui.examples.jobs.views
