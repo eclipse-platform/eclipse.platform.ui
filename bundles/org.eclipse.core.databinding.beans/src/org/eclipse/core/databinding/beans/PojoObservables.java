@@ -42,6 +42,7 @@ import org.eclipse.core.internal.databinding.beans.BeanPropertyHelper;
  *
  * @deprecated use <code>PojoProperties</code> instead
  */
+@Deprecated
 @SuppressWarnings({ "rawtypes", "unchecked" })
 final public class PojoObservables {
 
@@ -57,6 +58,7 @@ final public class PojoObservables {
 	 *         property of the given pojo
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableValue observeValue(Object pojo, String propertyName) {
 		return observeValue(Realm.getDefault(), pojo, propertyName);
 	}
@@ -76,6 +78,7 @@ final public class PojoObservables {
 	 *
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableValue observeValue(Realm realm, Object pojo, String propertyName) {
 		return PojoProperties.value((Class<Object>) pojo.getClass(), propertyName).observe(realm, pojo);
 	}
@@ -97,6 +100,7 @@ final public class PojoObservables {
 	 *
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableMap observeMap(IObservableSet domain,
 			String propertyName) {
 		return PojoProperties.value(propertyName).observeDetail(domain);
@@ -117,6 +121,7 @@ final public class PojoObservables {
 	 *
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableMap observeMap(IObservableSet domain,
 			Class pojoClass, String propertyName) {
 		return PojoProperties.value(pojoClass, propertyName).observeDetail(
@@ -141,6 +146,7 @@ final public class PojoObservables {
 	 *
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableMap[] observeMaps(IObservableSet domain,
 			String[] propertyNames) {
 		IObservableMap[] result = new IObservableMap[propertyNames.length];
@@ -166,6 +172,7 @@ final public class PojoObservables {
 	 *
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableMap[] observeMaps(IObservableSet domain,
 			Class pojoClass, String[] propertyNames) {
 		IObservableMap[] result = new IObservableMap[propertyNames.length];
@@ -189,6 +196,7 @@ final public class PojoObservables {
 	 *         given pojo object
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableMap observeMap(Realm realm, Object pojo,
 			String propertyName) {
 		return observeMap(realm, pojo, propertyName, null, null);
@@ -216,6 +224,7 @@ final public class PojoObservables {
 	 *
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableMap observeMap(Realm realm, Object pojo,
 			String propertyName, Class keyType, Class valueType) {
 		return PojoProperties.map(pojo.getClass(), propertyName, keyType,
@@ -235,6 +244,7 @@ final public class PojoObservables {
 	 * @since 1.2
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableMap observeMap(Object pojo, String propertyName) {
 		return observeMap(Realm.getDefault(), pojo, propertyName, null, null);
 	}
@@ -259,6 +269,7 @@ final public class PojoObservables {
 	 *
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableMap observeMap(Object pojo, String propertyName,
 			Class keyType, Class valueType) {
 		return observeMap(Realm.getDefault(), pojo, propertyName, keyType,
@@ -282,6 +293,7 @@ final public class PojoObservables {
 	 *
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableList observeList(Realm realm, Object pojo,
 			String propertyName) {
 		return observeList(realm, pojo, propertyName, null);
@@ -303,6 +315,7 @@ final public class PojoObservables {
 	 *
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableList observeList(Object pojo, String propertyName) {
 		return observeList(Realm.getDefault(), pojo, propertyName);
 	}
@@ -331,6 +344,7 @@ final public class PojoObservables {
 	 *         of the given bean object
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableList observeList(Realm realm, Object pojo,
 			String propertyName, Class elementType) {
 		return PojoProperties.list(pojo.getClass(), propertyName, elementType)
@@ -360,6 +374,7 @@ final public class PojoObservables {
 	 * @since 1.2
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableList observeList(Object pojo, String propertyName,
 			Class elementType) {
 		return observeList(Realm.getDefault(), pojo, propertyName, elementType);
@@ -379,6 +394,7 @@ final public class PojoObservables {
 	 *         the given pojo object
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableSet observeSet(Realm realm, Object pojo,
 			String propertyName) {
 		return observeSet(realm, pojo, propertyName, null);
@@ -398,6 +414,7 @@ final public class PojoObservables {
 	 *
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableSet observeSet(Object pojo, String propertyName) {
 		return observeSet(Realm.getDefault(), pojo, propertyName);
 	}
@@ -422,6 +439,7 @@ final public class PojoObservables {
 	 *
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableSet observeSet(Realm realm, Object pojo,
 			String propertyName, Class elementType) {
 		return PojoProperties.set(pojo.getClass(), propertyName, elementType)
@@ -447,6 +465,7 @@ final public class PojoObservables {
 	 *
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableSet observeSet(Object pojo, String propertyName,
 			Class elementType) {
 		return observeSet(Realm.getDefault(), pojo, propertyName, elementType);
@@ -464,6 +483,7 @@ final public class PojoObservables {
 	 *
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableFactory valueFactory(final Realm realm,
 			final String propertyName) {
 		return PojoProperties.value(propertyName).valueFactory(realm);
@@ -480,6 +500,7 @@ final public class PojoObservables {
 	 *
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableFactory valueFactory(String propertyName) {
 		return valueFactory(Realm.getDefault(), propertyName);
 	}
@@ -497,6 +518,7 @@ final public class PojoObservables {
 	 *
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableFactory listFactory(final Realm realm,
 			final String propertyName, final Class elementType) {
 		return PojoProperties.list(propertyName, elementType)
@@ -515,6 +537,7 @@ final public class PojoObservables {
 	 *
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableFactory listFactory(String propertyName,
 			Class elementType) {
 		return listFactory(Realm.getDefault(), propertyName, elementType);
@@ -532,6 +555,7 @@ final public class PojoObservables {
 	 *
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableFactory setFactory(final Realm realm,
 			final String propertyName) {
 		return PojoProperties.set(propertyName).setFactory(realm);
@@ -548,6 +572,7 @@ final public class PojoObservables {
 	 *
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableFactory setFactory(String propertyName) {
 		return setFactory(Realm.getDefault(), propertyName);
 	}
@@ -569,6 +594,7 @@ final public class PojoObservables {
 	 *
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableFactory setFactory(final Realm realm,
 			final String propertyName, final Class elementType) {
 		return PojoProperties.set(propertyName, elementType).setFactory(realm);
@@ -590,6 +616,7 @@ final public class PojoObservables {
 	 *
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableFactory setFactory(String propertyName,
 			Class elementType) {
 		return setFactory(Realm.getDefault(), propertyName, elementType);
@@ -610,6 +637,7 @@ final public class PojoObservables {
 	 *
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableFactory mapPropertyFactory(final Realm realm,
 			final String propertyName) {
 		return PojoProperties.map(propertyName).mapFactory(realm);
@@ -628,6 +656,7 @@ final public class PojoObservables {
 	 *
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableFactory mapPropertyFactory(String propertyName) {
 		return mapPropertyFactory(Realm.getDefault(), propertyName);
 	}
@@ -684,6 +713,7 @@ final public class PojoObservables {
 	 *
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableValue observeDetailValue(IObservableValue master,
 			String propertyName, Class propertyType) {
 		Class pojoClass = null;
@@ -740,6 +770,7 @@ final public class PojoObservables {
 	 *
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableList observeDetailList(IObservableValue master,
 			String propertyName, Class propertyType) {
 		Class pojoClass = null;
@@ -796,6 +827,7 @@ final public class PojoObservables {
 	 *
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableSet observeDetailSet(IObservableValue master,
 			String propertyName, Class propertyType) {
 		Class pojoClass = null;
@@ -842,6 +874,7 @@ final public class PojoObservables {
 	 *
 	 * @deprecated use <code>PojoProperties</code> instead
 	 */
+	@Deprecated
 	public static IObservableMap observeDetailMap(IObservableValue master,
 			String propertyName) {
 		Class pojoClass = null;

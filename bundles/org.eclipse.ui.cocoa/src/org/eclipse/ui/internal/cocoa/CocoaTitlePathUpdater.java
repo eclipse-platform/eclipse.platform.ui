@@ -25,6 +25,7 @@ import org.eclipse.ui.internal.tweaklets.TitlePathUpdater;
  */
 public class CocoaTitlePathUpdater extends TitlePathUpdater {
 
+	@Override
 	public void updateTitlePath(Shell window, String path) {
 		if (window == null || window.isDisposed())
 			return;

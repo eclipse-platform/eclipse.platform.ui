@@ -697,6 +697,7 @@ public class UIEvents {
 		 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=530887">Bug
 		 *      530887</a>
 		 */
+		@Deprecated
 		String DIRTYABLE = "dirtyable"; //$NON-NLS-1$
 		String MENUS = "menus"; //$NON-NLS-1$
 		String TOOLBAR = "toolbar"; //$NON-NLS-1$
@@ -744,6 +745,7 @@ public class UIEvents {
 		 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=531054">Bug
 		 *      531054 </a>
 		 */
+		@Deprecated
 		String TOPIC_DIALOGS = "org/eclipse/e4/ui/model/application/Application/dialogs/*"; //$NON-NLS-1$
 
 		// Attributes that can be tested in event handlers
