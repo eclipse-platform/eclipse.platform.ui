@@ -227,6 +227,10 @@ public abstract class WorkbenchPart extends EventManager
 			return;
 		}
 		imageDescriptor = ResourceLocator.imageDescriptorFromBundle(configElement.getContributor().getName(), strIcon);
+		if (!imageDescriptor.isPresent()) {
+			ImageDescriptor shared = PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(strIcon);
+			imageDescriptor = Optional.ofNullable(shared);
+		}
 		imageDescriptor.ifPresent(d -> titleImage = JFaceResources.getResources().createImageWithDefault(d));
 	}
 

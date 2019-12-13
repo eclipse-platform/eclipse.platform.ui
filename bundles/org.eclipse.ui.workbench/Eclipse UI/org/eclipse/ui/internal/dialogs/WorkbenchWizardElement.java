@@ -170,7 +170,8 @@ public class WorkbenchWizardElement extends WorkbenchAdapter
 				return null;
 			}
 			imageDescriptor = ResourceLocator
-					.imageDescriptorFromBundle(configurationElement.getNamespaceIdentifier(), iconName).orElse(null);
+					.imageDescriptorFromBundle(configurationElement.getNamespaceIdentifier(), iconName)
+					.orElse(PlatformUI.getWorkbench().getSharedImages().getImageDescriptor(iconName));
 		}
 		return imageDescriptor;
 	}
