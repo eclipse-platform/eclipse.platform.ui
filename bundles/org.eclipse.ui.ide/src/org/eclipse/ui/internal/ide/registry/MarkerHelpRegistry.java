@@ -43,6 +43,8 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleEvent;
+import org.osgi.framework.BundleListener;
 
 /**
  * This class is a registry for marker help contexts and resolutions.
@@ -51,8 +53,7 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 	/**
 	 * Table of queries for marker F1 help.
 	 */
-	private Map<MarkerQuery,
-			Map<MarkerQueryResult, Collection<IConfigurationElement>>> helpQueries = new HashMap<>();
+	private Map<MarkerQuery, Map<MarkerQueryResult, Collection<IConfigurationElement>>> helpQueries;
 
 	/**
 	 * Sorted list of help queries. Used to ensure that the "most specific"
@@ -63,7 +64,7 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 	/**
 	 * Table of queries for marker resolutions
 	 */
-	private Map<MarkerQuery, Map<MarkerQueryResult, Collection<IConfigurationElement>>> resolutionQueries = new LinkedHashMap<>();
+	private Map<MarkerQuery, Map<MarkerQueryResult, Collection<IConfigurationElement>>> resolutionQueries;
 
 	/**
 	 * Help context id attribute in configuration element
@@ -74,6 +75,42 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 	 * Help context provider attribute name in configuration element
 	 */
 	private static final String ATT_PROVIDER = "helpContextProvider"; //$NON-NLS-1$
+
+	/**
+	 * Placeholder for errors in generator
+	 */
+	private static final IMarkerResolutionGenerator GENERATOR_ERROR = marker -> null;
+
+	/**
+	 * Placeholder for not yet active generators
+	 */
+	private static final IMarkerResolutionGenerator GENERATOR_NOT_ACTIVE = marker -> new IMarkerResolution[0];
+
+	/**
+	 * Placeholder for errors in help provider
+	 */
+	private static final IMarkerHelpContextProvider DUMMY_HELP_PROVIDER = new IMarkerHelpContextProvider() {
+
+		@Override
+		public boolean hasHelpContextForMarker(IMarker marker) {
+			return false;
+		}
+
+		@Override
+		public String getHelpContextForMarker(IMarker marker) {
+			return null;
+		}
+	};
+
+	/**
+	 * Map of known marker resolution generators
+	 */
+	private Map<IConfigurationElement, IMarkerResolutionGenerator> generatorMap;
+
+	/**
+	 * Map of known marker help context providers
+	 */
+	private Map<IConfigurationElement, IMarkerHelpContextProvider> helpProviderMap;
 
 	/**
 	 * Resolution class attribute name in configuration element
@@ -105,6 +142,16 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 		}
 	}
 
+	/**
+	 *
+	 */
+	public MarkerHelpRegistry() {
+		helpQueries = new HashMap<>();
+		resolutionQueries = new LinkedHashMap<>();
+		generatorMap = new HashMap<>();
+		helpProviderMap = new HashMap<>();
+	}
+
 	@Override
 	public String getHelp(IMarker marker) {
 		if (sortedHelpQueries == null) {
@@ -132,23 +179,32 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 							// It does not have a helpContextProvider. Return the static helpContextId.
 							return element.getAttribute(ATT_HELP);
 						}
-						try {
-							// It has a helpContextProvider. Use it to get a help context id
-							IMarkerHelpContextProvider provider = (IMarkerHelpContextProvider) element
-									.createExecutableExtension(ATT_PROVIDER);
-							String res;
-							if (provider.hasHelpContextForMarker(marker)
-									&& (res = provider.getHelpContextForMarker(marker)) != null)
-								return res;
-						} catch (CoreException e) {
-							Policy.handle(e);
+						// It has a helpContextProvider. Use it to get a help context id
+						IMarkerHelpContextProvider provider = createHelpProvider(element);
+						String res;
+						if (provider.hasHelpContextForMarker(marker)
+								&& (res = provider.getHelpContextForMarker(marker)) != null) {
+							return res;
 						}
-
 					}
 				}
 			}
 		}
 		return null;
+	}
+
+	private IMarkerHelpContextProvider createHelpProvider(IConfigurationElement element) {
+		IMarkerHelpContextProvider provider = getHelpProvider(element);
+		if (provider == null) {
+			try {
+				provider = (IMarkerHelpContextProvider) element.createExecutableExtension(ATT_PROVIDER);
+			} catch (CoreException e) {
+				provider = DUMMY_HELP_PROVIDER;
+				Policy.handle(e);
+			}
+		}
+		putHelpProvider(element, provider);
+		return provider;
 	}
 
 	@Override
@@ -164,13 +220,13 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 
 				if (resultsTable.containsKey(result)) {
 
-					Iterator<IConfigurationElement> elements = resultsTable.get(result)
-							.iterator();
+					Iterator<IConfigurationElement> elements = resultsTable.get(result).iterator();
 					while (elements.hasNext()) {
 						IConfigurationElement element = elements.next();
-
-						if (hasResolution(marker, element))
+						IMarkerResolutionGenerator generator = createGenerator(element);
+						if (hasResolution(marker, element, generator)) {
 							return true;
+						}
 					}
 				}
 			}
@@ -184,51 +240,97 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 	 *
 	 * @param marker
 	 * @param element
+	 * @param generator
 	 * @return boolean <code>true</code> if there is a resolution.
 	 */
-	private boolean hasResolution(IMarker marker, IConfigurationElement element) {
-		IMarkerResolutionGenerator generator = null;
-		if (Platform.getBundle(element.getContributor().getName()).getState() == Bundle.ACTIVE) {
-			// The element's plugin is loaded so we instantiate
-			// the resolution
-			try {
-				generator = (IMarkerResolutionGenerator) element
-						.createExecutableExtension(ATT_CLASS);
-			} catch (CoreException e) {
-				Policy.handle(e);
-			}
-			if (generator != null) {
-				if (generator instanceof IMarkerResolutionGenerator2) {
-					if (((IMarkerResolutionGenerator2) generator)
-							.hasResolutions(marker)) {
-						return true;
-					}
-				} else {
-					IMarkerResolution[] resolutions = generator
-							.getResolutions(marker);
-					if (resolutions == null) {
-						StatusManager.getManager().handle(
-								new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.ERROR,
-										"Failure in " + generator.getClass().getName()+ //$NON-NLS-1$
-										" from plugin " + element.getContributor().getName()+//$NON-NLS-1$
-										": getResolutions(IMarker) must not return null",//$NON-NLS-1$
-										null),StatusManager.LOG);
-
-						return false;
-					} else if (resolutions.length > 0) {
-						// there is at least one resolution
-						return true;
-					}
-				}
-			}
-		} else {
+	private boolean hasResolution(IMarker marker, IConfigurationElement element, IMarkerResolutionGenerator generator) {
+		if (generator == null || generator == GENERATOR_ERROR) {
+			// error happened, no resolution here
+			return false;
+		}
+		if (generator == GENERATOR_NOT_ACTIVE) {
 			// The element's plugin in not loaded so we assume
 			// the generator will produce resolutions for the marker
 			return true;
 		}
+		if (generator instanceof IMarkerResolutionGenerator2) {
+			if (((IMarkerResolutionGenerator2) generator).hasResolutions(marker)) {
+				return true;
+			}
+		} else {
+			IMarkerResolution[] resolutions = generator.getResolutions(marker);
+			if (resolutions == null) {
+				StatusManager.getManager().handle(new Status(IStatus.ERROR, IDEWorkbenchPlugin.IDE_WORKBENCH,
+						IStatus.ERROR, "Failure in " + generator.getClass().getName() + //$NON-NLS-1$
+								" from plugin " + element.getContributor().getName() + //$NON-NLS-1$
+								": getResolutions(IMarker) must not return null", //$NON-NLS-1$
+						null), StatusManager.LOG);
+
+				return false;
+			} else if (resolutions.length > 0) {
+				// there is at least one resolution
+				return true;
+			}
+		}
 		return false;
 	}
 
+	private IMarkerResolutionGenerator createGenerator(IConfigurationElement element) {
+		IMarkerResolutionGenerator generator = getGenerator(element);
+		if (generator != null) {
+			return generator;
+		}
+		Bundle bundle = Platform.getBundle(element.getContributor().getName());
+		if (bundle.getState() == Bundle.ACTIVE) {
+			// The element's plugin is loaded so we instantiate
+			// the resolution
+			try {
+				generator = (IMarkerResolutionGenerator) element.createExecutableExtension(ATT_CLASS);
+			} catch (CoreException e) {
+				Policy.handle(e);
+				generator = GENERATOR_ERROR;
+			}
+		} else {
+			generator = GENERATOR_NOT_ACTIVE;
+			bundle.getBundleContext().addBundleListener(new BundleListener() {
+				@Override
+				public void bundleChanged(BundleEvent b) {
+					if (b.getType() == BundleEvent.STARTED && bundle.getState() == Bundle.ACTIVE) {
+						bundle.getBundleContext().removeBundleListener(this);
+						putGenerator(element, null);
+					}
+				}
+			});
+		}
+		putGenerator(element, generator);
+		return generator;
+	}
+
+	private IMarkerResolutionGenerator getGenerator(IConfigurationElement element) {
+		synchronized (generatorMap) {
+			return generatorMap.get(element);
+		}
+	}
+
+	private IMarkerResolutionGenerator putGenerator(IConfigurationElement element,
+			IMarkerResolutionGenerator generator) {
+		synchronized (generatorMap) {
+			return generatorMap.put(element, generator);
+		}
+	}
+
+	private IMarkerHelpContextProvider getHelpProvider(IConfigurationElement element) {
+		synchronized (helpProviderMap) {
+			return helpProviderMap.get(element);
+		}
+	}
+
+	private IMarkerHelpContextProvider putHelpProvider(IConfigurationElement element,
+			IMarkerHelpContextProvider generator) {
+		synchronized (helpProviderMap) {
+			return helpProviderMap.put(element, generator);
+		}
+	}
 
 	@Override
 	public IMarkerResolution[] getResolutions(IMarker marker) {
