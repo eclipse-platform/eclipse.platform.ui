@@ -65,44 +65,23 @@ public class SashLayout extends Layout {
 
 	public boolean layoutUpdateInProgress = false;
 
+	/**
+	 * Remember last cursor set on the sash to prevent repeated setCursor calls.
+	 * Value can be <code>0</code> which means default cursor was set or one of the
+	 * SWT.CURSOR_* constants.
+	 */
+	int lastCursor = 0;
+
 	public SashLayout(final Composite host, MUIElement root) {
 		this.root = root;
 		this.host = host;
 
-		host.addMouseTrackListener(MouseTrackListener.mouseExitAdapter(e -> host.setCursor(null)));
+		host.addMouseTrackListener(MouseTrackListener.mouseExitAdapter(e -> {
+			host.setCursor(null);
+			lastCursor = 0;
+		}));
 
-		host.addMouseMoveListener(e -> {
-			if (!draggingSashes) {
-				// Set the cursor feedback
-				List<SashRect> sashList = getSashRects(e.x, e.y);
-				if (sashList.isEmpty()) {
-					host.setCursor(host.getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
-				} else if (sashList.size() == 1) {
-					if (sashList.get(0).container.isHorizontal())
-						host.setCursor(host.getDisplay().getSystemCursor(
-								SWT.CURSOR_SIZEWE));
-					else
-						host.setCursor(host.getDisplay().getSystemCursor(
-								SWT.CURSOR_SIZENS));
-				} else {
-					host.setCursor(host.getDisplay().getSystemCursor(SWT.CURSOR_SIZEALL));
-				}
-			} else {
-				try {
-					layoutUpdateInProgress = true;
-				adjustWeights(sashesToDrag, e.x, e.y);
-					try {
-						host.setRedraw(false);
-						host.layout();
-					} finally {
-						host.setRedraw(true);
-					}
-					host.update();
-				} finally {
-					layoutUpdateInProgress = false;
-			}
-			}
-		});
+		host.addMouseMoveListener(this::onMouseMove);
 
 		host.addMouseListener(new MouseAdapter() {
 			@Override
@@ -124,6 +103,49 @@ public class SashLayout extends Layout {
 				}
 			}
 		});
+	}
+
+	/**
+	 * Used to update the layout while dragging or to update the cursor to show
+	 * possible drag directions otherwise.
+	 *
+	 * @param e the mouse event
+	 */
+	private void onMouseMove(MouseEvent e) {
+		if (!draggingSashes) {
+			// Set the cursor feedback
+			List<SashRect> sashList = getSashRects(e.x, e.y);
+			final int newCursor;
+			if (sashList.isEmpty()) {
+				newCursor = SWT.CURSOR_ARROW;
+			} else if (sashList.size() == 1) {
+				if (sashList.get(0).container.isHorizontal()) {
+					newCursor = SWT.CURSOR_SIZEWE;
+				} else {
+					newCursor = SWT.CURSOR_SIZENS;
+				}
+			} else {
+				newCursor = SWT.CURSOR_SIZEALL;
+			}
+			if (lastCursor != newCursor) {
+				host.setCursor(host.getDisplay().getSystemCursor(newCursor));
+				lastCursor = newCursor;
+			}
+		} else {
+			try {
+				layoutUpdateInProgress = true;
+				adjustWeights(sashesToDrag, e.x, e.y);
+				try {
+					host.setRedraw(false);
+					host.layout();
+				} finally {
+					host.setRedraw(true);
+				}
+				host.update();
+			} finally {
+				layoutUpdateInProgress = false;
+			}
+		}
 	}
 
 	@Override
@@ -204,8 +226,7 @@ public class SashLayout extends Layout {
 		List<SashRect> srs = new ArrayList<>();
 		Rectangle target = new Rectangle(x - 5, y - 5, 10, 10);
 		for (SashRect sr : sashes) {
-			if (!sr.container.getTags().contains(IPresentationEngine.NO_MOVE)
-					&& sr.rect.intersects(target))
+			if (sr.rect.intersects(target) && !sr.container.getTags().contains(IPresentationEngine.NO_MOVE))
 				srs.add(sr);
 		}
 		return srs;
