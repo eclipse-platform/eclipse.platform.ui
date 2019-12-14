@@ -78,7 +78,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.apache.tools.ant.DefaultLogger#printMessage(java.lang.String, java.io.PrintStream, int)
 	 */
 	@Override
@@ -146,7 +146,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.apache.tools.ant.BuildListener#buildFinished(org.apache.tools.ant.BuildEvent)
 	 */
 	@Override
@@ -166,19 +166,19 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 		}
 
 		StringBuilder message = new StringBuilder();
-		message.append(StringUtils.LINE_SEP);
+		message.append(System.lineSeparator());
 		message.append(RemoteAntMessages.getString("RemoteAntBuildLogger.1")); //$NON-NLS-1$
-		message.append(StringUtils.LINE_SEP);
+		message.append(System.lineSeparator());
 		if (Project.MSG_VERBOSE <= this.msgOutputLevel || !(exception instanceof BuildException)) {
 			message.append(StringUtils.getStackTrace(exception));
 		} else {
 			if (exception instanceof BuildException) {
-				message.append(exception.toString()).append(StringUtils.LINE_SEP);
+				message.append(exception.toString()).append(System.lineSeparator());
 			} else {
-				message.append(exception.getMessage()).append(StringUtils.LINE_SEP);
+				message.append(exception.getMessage()).append(System.lineSeparator());
 			}
 		}
-		message.append(StringUtils.LINE_SEP);
+		message.append(System.lineSeparator());
 		printMessage(message.toString(), out, Project.MSG_ERR);
 	}
 
@@ -217,7 +217,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	@Override
@@ -253,7 +253,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.apache.tools.ant.BuildListener#messageLogged(org.apache.tools.ant.BuildEvent)
 	 */
 	@SuppressWarnings("unused")
@@ -273,7 +273,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 				return;
 			}
 			if (fEventQueue == null) {
-				fEventQueue = new ArrayList<>(10);
+				fEventQueue = new ArrayList<BuildEvent>(10);
 			}
 			fEventQueue.add(event);
 			return;
@@ -402,7 +402,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
 	 */
 	@Override

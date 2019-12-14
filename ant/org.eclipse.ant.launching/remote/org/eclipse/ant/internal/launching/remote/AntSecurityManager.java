@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -20,13 +20,6 @@ import java.net.InetAddress;
 import java.net.SocketPermission;
 import java.security.Permission;
 import java.util.PropertyPermission;
-
-import org.eclipse.ant.core.AntCorePlugin;
-import org.eclipse.ant.core.AntSecurityException;
-import org.eclipse.ant.internal.launching.AntLaunching;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 
 /**
  * A security manager that always throws an <code>AntSecurityException</code> if the calling thread attempts to cause the Java Virtual Machine to
@@ -302,7 +295,10 @@ public class AntSecurityManager extends SecurityManager {
 				}
 				logException(e);
 			}
-			catch (IllegalAccessException | IllegalArgumentException e) {
+			catch (IllegalArgumentException e) {
+				logException(e);
+			}
+			catch (IllegalAccessException e) {
 				logException(e);
 			}
 		}
@@ -327,7 +323,10 @@ public class AntSecurityManager extends SecurityManager {
 				}
 				logException(e);
 			}
-			catch (IllegalAccessException | IllegalArgumentException e) {
+			catch (IllegalAccessException e) {
+				logException(e);
+			}
+			catch (IllegalArgumentException e) {
 				logException(e);
 			}
 		}
@@ -352,7 +351,10 @@ public class AntSecurityManager extends SecurityManager {
 				}
 				logException(e);
 			}
-			catch (IllegalAccessException | IllegalArgumentException e) {
+			catch (IllegalAccessException e) {
+				logException(e);
+			}
+			catch (IllegalArgumentException e) {
 				logException(e);
 			}
 		}
@@ -366,10 +368,10 @@ public class AntSecurityManager extends SecurityManager {
 		try {
 			if (fSecurityManager != null) {
 				final Method m = fSecurityManager.getClass().getMethod("checkTopLevelWindow", Object.class); //$NON-NLS-1$
-				return (boolean) m.invoke(fSecurityManager, window);
+				return (Boolean) m.invoke(fSecurityManager, window);
 			}
 			final Method m = SecurityManager.class.getMethod("checkTopLevelWindow", Object.class); //$NON-NLS-1$
-			return (boolean) m.invoke(new SecurityManager(), window);
+			return (Boolean) m.invoke(new SecurityManager(), window);
 		}
 		catch (NoSuchMethodException e) {
 			logDeprecatedAccess(e);
@@ -380,7 +382,10 @@ public class AntSecurityManager extends SecurityManager {
 			}
 			logException(e);
 		}
-		catch (IllegalAccessException | IllegalArgumentException e) {
+		catch (IllegalAccessException e) {
+			logException(e);
+		}
+		catch (IllegalArgumentException e) {
 			logException(e);
 		}
 		return false;
@@ -394,10 +399,10 @@ public class AntSecurityManager extends SecurityManager {
 		try {
 			if (fSecurityManager != null) {
 				final Method m = fSecurityManager.getClass().getMethod("getInCheck"); //$NON-NLS-1$
-				return (boolean) m.invoke(fSecurityManager);
+				return (Boolean) m.invoke(fSecurityManager);
 			}
 			final Method m = SecurityManager.class.getMethod("getInCheck"); //$NON-NLS-1$
-			return (boolean) m.invoke(new SecurityManager());
+			return (Boolean) m.invoke(new SecurityManager());
 		}
 		catch (NoSuchMethodException e) {
 			logDeprecatedAccess(e);
@@ -408,17 +413,21 @@ public class AntSecurityManager extends SecurityManager {
 			}
 			logException(e);
 		}
-		catch (IllegalAccessException | IllegalArgumentException e) {
+		catch (IllegalAccessException e) {
+			logException(e);
+		}
+		catch (IllegalArgumentException e) {
 			logException(e);
 		}
 		return false;
 	}
 
 	private static void logDeprecatedAccess(Throwable e) {
-		Platform.getLog(AntCorePlugin.getPlugin().getBundle()).log(new Status(IStatus.WARNING, AntLaunching.PLUGIN_ID, RemoteAntMessages.getString("AntSecurityManager.deprecatedMethod"), e));  //$NON-NLS-1$
+		System.err.println(RemoteAntMessages.getString("AntSecurityManager.deprecatedMethod")); //$NON-NLS-1$
+		e.printStackTrace();
 	}
 
 	private static void logException(Throwable e) {
-		Platform.getLog(AntCorePlugin.getPlugin().getBundle()).log(new Status(IStatus.ERROR, AntLaunching.PLUGIN_ID, e.getLocalizedMessage(), e));
+		e.printStackTrace();
 	}
 }
