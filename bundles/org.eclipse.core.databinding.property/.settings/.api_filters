@@ -1,13 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.core.databinding.property" version="2">
-    <resource path="META-INF/MANIFEST.MF">
-        <filter comment="Bug 531748: Add type parameters to JFace and Beans databinding" id="926941240">
-            <message_arguments>
-                <message_argument value="1.7.0"/>
-                <message_argument value="1.6.400"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/core/databinding/property/list/ListProperty.java" type="org.eclipse.core.databinding.property.list.ListProperty">
         <filter comment="Bug 531748 - Databinding framework classes have the right to use non-api interfaces" id="576725006">
             <message_arguments>
