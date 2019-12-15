@@ -1094,7 +1094,9 @@ public class InternalAntRunner {
 
 	@SuppressWarnings("unused")
 	private void processMinusDProperties(List<String> commands) {
-		for (String arg : commands) {
+		String[] args = commands.toArray(new String[commands.size()]);
+		for (int i = 0; i < args.length; i++) {
+			String arg = args[i];
 			if (arg.startsWith("-D")) { //$NON-NLS-1$
 				String name = arg.substring(2, arg.length());
 				String value = null;
@@ -1115,7 +1117,7 @@ public class InternalAntRunner {
 					userProperties = new HashMap<String, String>();
 				}
 				userProperties.put(name, value);
-				commands.remove(arg);
+				commands.remove(args[i]);
 			}
 		}
 	}
