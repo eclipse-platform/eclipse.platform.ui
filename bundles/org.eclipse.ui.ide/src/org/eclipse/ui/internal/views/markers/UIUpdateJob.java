@@ -44,8 +44,7 @@ class UIUpdateJob extends WorkbenchJob {
 	 *            the markers view base class
 	 */
 	public UIUpdateJob(ExtendedMarkersView view) {
-		super(view.getSite().getShell().getDisplay(),
-				MarkerMessages.MarkerView_19);
+		super(view.getSite().getShell().getDisplay(), MarkerMessages.MarkerView_19);
 		this.view = view;
 		updating = false;
 	}
@@ -63,15 +62,11 @@ class UIUpdateJob extends WorkbenchJob {
 		Markers clone = view.getActiveViewerInputClone();
 		try {
 			updating = true;
-			monitor.beginTask(MarkerMessages.MarkerView_19,
-					IProgressMonitor.UNKNOWN);
+			monitor.beginTask(MarkerMessages.MarkerView_19, IProgressMonitor.UNKNOWN);
 
 			if (monitor.isCanceled()) {
 				return Status.CANCEL_STATUS;
 			}
-
-			//view.indicateUpdating(MarkerMessages.MarkerView_19,
-			//		true);
 
 			// If there is only one category and the user has no saved state
 			// show it
@@ -122,7 +117,6 @@ class UIUpdateJob extends WorkbenchJob {
 			if (view.isVisible()) {
 				viewer.getTree().setRedraw(true);
 				view.updateStatusLine(viewer.getStructuredSelection());
-//				view.updateCategoryLabels();
 			}
 			updating = false;
 		}
