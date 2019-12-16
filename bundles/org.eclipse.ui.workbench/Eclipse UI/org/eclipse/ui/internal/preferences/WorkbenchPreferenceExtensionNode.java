@@ -108,14 +108,15 @@ public abstract class WorkbenchPreferenceExtensionNode extends WorkbenchPreferen
 			return keywordLabelCache;
 		}
 
-		keywordLabelCache = new ArrayList<>(refs.size());
+		Collection<String> labels = new ArrayList<>(refs.size());
+
 		for (String reference : refs) {
 			String label = KeywordRegistry.getInstance().getKeywordLabel(reference);
 			if (label != null) {
-				keywordLabelCache.add(label);
+				labels.add(label);
 			}
 		}
-
+		keywordLabelCache = labels;
 		return keywordLabelCache;
 	}
 
