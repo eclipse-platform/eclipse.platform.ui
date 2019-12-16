@@ -37,13 +37,12 @@ public class TestUnitButtonFactory extends AbstractFactoryTest {
 	public void createsButtonWithAllProperties() {
 		final SelectionEvent[] raisedEvents = new SelectionEvent[1];
 		Button button = ButtonFactory.newButton(SWT.NONE).text("Test Button").image(image)
-				.onSelect(e -> raisedEvents[0] = e).data("test").create(shell);
+				.onSelect(e -> raisedEvents[0] = e).create(shell);
 
 		button.notifyListeners(SWT.Selection, new Event());
 
 		assertEquals("Test Button", button.getText());
 		assertEquals(image, button.getImage());
-		assertEquals("test", button.getData());
 
 		assertEquals(1, button.getListeners(SWT.Selection).length);
 		assertNotNull(raisedEvents[0]);

@@ -87,4 +87,21 @@ public abstract class AbstractWidgetFactory<F extends AbstractWidgetFactory<?, ?
 	protected final void addProperty(Property<W> property) {
 		this.properties.add(property);
 	}
+
+	/**
+	 * Sets the application defined widget data associated with the receiver to be
+	 * the argument. The <em>widget data</em> is a single, unnamed field that is
+	 * stored with every widget.
+	 *
+	 * @param data the widget data
+	 * @return this
+	 *
+	 * @see Widget#setData(Object)
+	 *
+	 * @since 3.21
+	 */
+	public F data(Object data) {
+		addProperty(b -> b.setData(data));
+		return cast(this);
+	}
 }
