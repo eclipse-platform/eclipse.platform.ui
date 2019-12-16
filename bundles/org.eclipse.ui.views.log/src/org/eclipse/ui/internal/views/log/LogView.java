@@ -213,7 +213,6 @@ public class LogView extends ViewPart implements LogListener {
 		composite.setLayout(layout);
 		composite.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		readLogFile();
 		createViewer(composite);
 		getSite().setSelectionProvider(fFilteredTree.getViewer());
 		createActions();
@@ -224,6 +223,9 @@ public class LogView extends ViewPart implements LogListener {
 		makeHoverShell();
 
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(fFilteredTree, IHelpContextIds.LOG_VIEW);
+
+		readLogFile();
+
 		getSite().getWorkbenchWindow().addPerspectiveListener(new IPerspectiveListener2() {
 
 			@Override
@@ -675,7 +677,9 @@ public class LogView extends ViewPart implements LogListener {
 		writeSettings();
 		this.logReaderServiceTracker.close();
 
-		fClipboard.dispose();
+		if (fClipboard != null) {
+			fClipboard.dispose();
+		}
 		if (fTextShell != null)
 			fTextShell.dispose();
 		fLabelProvider.disconnect(this);
@@ -857,9 +861,7 @@ public class LogView extends ViewPart implements LogListener {
 	 * Reads the chosen backing log file
 	 */
 	void readLogFile() {
-		final Display display = getSite().getShell().getDisplay();
-		display.asyncExec(() -> setContentDescription(Messages.LogView_readLog_loading));
-
+		setContentDescription(Messages.LogView_readLog_loading);
 		fetchLogEntries().thenAccept(this::updateLogViewer);
 	}
 
@@ -883,14 +885,37 @@ public class LogView extends ViewPart implements LogListener {
 		groups.clear();
 		group(entries);
 		limitEntriesCount();
-		String titleSummary = getTitleSummary();
+		setContentDescription(getTitleSummary());
 
-		final Display display = getSite().getShell().getDisplay();
-		display.asyncExec(() -> {
-			setContentDescription(titleSummary);
-			fFilteredTree.getViewer().refresh();
-			fFilteredTree.setEnabled(true);
+		getDisplay().asyncExec(() -> {
+			if (!isDisposed()) {
+				fFilteredTree.getViewer().refresh();
+				fFilteredTree.setEnabled(true);
+			}
 		});
+	}
+
+	private Display getDisplay() {
+		return PlatformUI.getWorkbench().getDisplay();
+	}
+
+	@Override
+	protected void setContentDescription(String description) {
+		Runnable uiTask = () -> {
+			if (!isDisposed()) {
+				super.setContentDescription(description);
+			}
+		};
+		if (Display.getCurrent() == null) {
+			// We might be called from non UI thread
+			getDisplay().asyncExec(uiTask);
+		} else {
+			uiTask.run();
+		}
+	}
+
+	private boolean isDisposed() {
+		return fFilteredTree == null || fFilteredTree.isDisposed();
 	}
 
 	private boolean isEclipseStartTime(Date date) {
