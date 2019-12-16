@@ -1495,56 +1495,6 @@ public class ExtendedMarkersView extends ViewPart {
 		scheduleUpdate(0L);
 	}
 
-	//See Bug 294303
-	//void indicateUpdating(final String message, final boolean updateLabels) {
-	//	Display display = getSite().getShell().getDisplay();
-	//	if (Display.getCurrent() == display) {
-	//		setContentDescription(message != null ? message
-	//				: getStatusMessage());
-	//		if (updateLabels) {
-	//			updateCategoryLabels();
-	//		}
-	//		return;
-	//	}
-	//	WorkbenchJob job = new WorkbenchJob(display,
-	//			MarkerMessages.MarkerView_queueing_updates) {
-	//		public IStatus runInUIThread(IProgressMonitor monitor) {
-	//				setContentDescription(message != null ? message
-	//						: getStatusMessage());
-	//				if (updateLabels) {
-	//					updateCategoryLabels();
-	//				}
-	//				return Status.OK_STATUS;
-	//		}
-	//	};
-	//	job.setPriority(Job.INTERACTIVE);
-	//	job.schedule();
-	//  //see Bug 293305
-	//	//	if (block) {
-	//	//		try {
-	//	//			if (display.getSyncThread() != Thread.currentThread()) {
-	//	//				job.join();
-	//	//			}
-	//	//		} catch (InterruptedException e) {
-	//	//		}
-	//	//	}
-	//}
-	//
-	//void updateCategoryLabels() {
-	//	if (builder.isShowingHierarchy()) {
-	//		MarkerCategory[] categories =getActiveViewerInputClone().getCategories();
-	//		boolean refreshing = builder.isBuilding()
-	//				|| builder.getMarkerListener().isUpdating()
-	//				|| builder.getMarkerListener().workspaceBuilding();
-	//		for (int i = 0; i < categories.length; i++) {
-	//			categories[i].refreshing = refreshing;
-	//		}
-	//		if (categories != null && categories.length > 1) {
-	//			viewer.update(categories, null);
-	//		}
-	//	}
-	//}
-
 	/**
 	 * @return the viewer
 	 */
