@@ -34,7 +34,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.osgi.framework.Version;
 
 /**
  * @since 3.1
@@ -238,16 +237,11 @@ public class CoreTest extends TestCase {
 		String[] envp = {};
 		try {
 			Process p;
-			if (isWindowsVistaOrHigher()) {
-				if (isDir) {
-					String[] cmd = {"cmd", "/c", "mklink", "/d", linkName, linkTarget};
-					p = Runtime.getRuntime().exec(cmd, envp, basedir);
-				} else {
-					String[] cmd = {"cmd", "/c", "mklink", linkName, linkTarget};
-					p = Runtime.getRuntime().exec(cmd, envp, basedir);
-				}
+			if (isDir) {
+				String[] cmd = { "cmd", "/c", "mklink", "/d", linkName, linkTarget };
+				p = Runtime.getRuntime().exec(cmd, envp, basedir);
 			} else {
-				String[] cmd = {"ln", "-s", linkTarget, linkName};
+				String[] cmd = { "cmd", "/c", "mklink", linkName, linkTarget };
 				p = Runtime.getRuntime().exec(cmd, envp, basedir);
 			}
 			int exitcode = p.waitFor();
@@ -267,23 +261,19 @@ public class CoreTest extends TestCase {
 	 */
 	protected boolean canCreateSymLinks() {
 		if (canCreateSymLinks == null) {
-			if (isWindowsVistaOrHigher()) {
-				// Creation of a symbolic link on Windows requires administrator privileges,
-				// so it may or may not be possible.
-				IPath tempDir = getTempDir();
-				String linkName = FileSystemHelper.getRandomLocation(tempDir).lastSegment();
-				try {
-					// Try to create a symlink.
-					createSymLink(tempDir.toFile(), linkName, "testTarget", false);
-					// Clean up if the link was created.
-					new File(tempDir.toFile(), linkName).delete();
-					canCreateSymLinks = Boolean.TRUE;
-				} catch (AssertionFailedError e) {
-					// This exception indicates that creation of the symlink failed.
-					canCreateSymLinks = Boolean.FALSE;
-				}
-			} else {
+			// Creation of a symbolic link on Windows requires administrator privileges,
+			// so it may or may not be possible.
+			IPath tempDir = getTempDir();
+			String linkName = FileSystemHelper.getRandomLocation(tempDir).lastSegment();
+			try {
+				// Try to create a symlink.
+				createSymLink(tempDir.toFile(), linkName, "testTarget", false);
+				// Clean up if the link was created.
+				new File(tempDir.toFile(), linkName).delete();
 				canCreateSymLinks = Boolean.TRUE;
+			} catch (AssertionFailedError e) {
+				// This exception indicates that creation of the symlink failed.
+				canCreateSymLinks = Boolean.FALSE;
 			}
 		}
 		return canCreateSymLinks.booleanValue();
@@ -372,27 +362,6 @@ public class CoreTest extends TestCase {
 		return System.currentTimeMillis() + "-" + Math.random();
 	}
 
-	protected static boolean isWindowsMinVersion(int major, int minor, int micro) {
-		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			try {
-				Version v = Version.parseVersion(System.getProperty("org.osgi.framework.os.version")); //$NON-NLS-1$
-				System.out.println("Windows version: " + Version.parseVersion(System.getProperty("org.osgi.framework.os.version")));
-				return v.compareTo(new Version(major, minor, micro)) >= 0;
-			} catch (IllegalArgumentException e) {
-				/* drop down to returning false */
-			}
-
-		}
-		return false;
-	}
-
-	/**
-	 * Test if running on Windows Vista or higher.
-	 * @return <code>true</code> if running on Windows Vista or higher.
-	 */
-	protected static boolean isWindowsVistaOrHigher() {
-		return isWindowsMinVersion(6, 0, 0);
-	}
 
 	/**
 	 * Copy the data from the input stream to the output stream.
