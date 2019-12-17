@@ -18,6 +18,7 @@
 
 package org.eclipse.ui.internal.dialogs;
 
+import static org.eclipse.jface.viewers.LabelProvider.createTextProvider;
 import static org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants.ATT_COLOR_AND_FONT_ID;
 import static org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants.ATT_OS_VERSION;
 import static org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants.ATT_THEME_ASSOCIATION;
@@ -132,12 +133,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		highContrastMode = parent.getDisplay().getHighContrast();
 
 		themeIdCombo = new ComboViewer(comp, SWT.READ_ONLY);
-		themeIdCombo.setLabelProvider(new LabelProvider() {
-			@Override
-			public String getText(Object element) {
-				return ((ITheme) element).getLabel();
-			}
-		});
+		themeIdCombo.setLabelProvider(createTextProvider(element -> ((ITheme) element).getLabel()));
 		themeIdCombo.setContentProvider(new ArrayContentProvider());
 		themeIdCombo.setInput(getCSSThemes(highContrastMode));
 		themeIdCombo.getCombo().setEnabled(!highContrastMode);
