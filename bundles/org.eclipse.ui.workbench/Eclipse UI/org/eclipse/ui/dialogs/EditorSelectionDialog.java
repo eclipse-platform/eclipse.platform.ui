@@ -18,6 +18,8 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
+import static org.eclipse.jface.viewers.LabelProvider.createTextImageProvider;
+
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -34,7 +36,6 @@ import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.osgi.util.NLS;
@@ -272,19 +273,13 @@ public class EditorSelectionDialog extends Dialog {
 		editorTable.setFont(font);
 		data.heightHint = tree.getItemHeight() * 12;
 		editorTableViewer.setContentProvider(new TreeArrayContentProvider());
-		editorTableViewer.setLabelProvider(new LabelProvider() {
-			@Override
-			public String getText(Object element) {
-				IEditorDescriptor d = (IEditorDescriptor) element;
-				return TextProcessor.process(d.getLabel(), "."); //$NON-NLS-1$
-			}
-
-			@Override
-			public Image getImage(Object element) {
-				IEditorDescriptor d = (IEditorDescriptor) element;
-				return (Image) resourceManager.get(d.getImageDescriptor());
-			}
-		});
+		editorTableViewer.setLabelProvider(createTextImageProvider(element-> {
+			IEditorDescriptor d = (IEditorDescriptor) element;
+			return TextProcessor.process(d.getLabel(), "."); //$NON-NLS-1$
+		}, element -> {
+			IEditorDescriptor d = (IEditorDescriptor) element;
+			return (Image) resourceManager.get(d.getImageDescriptor());
+		}));
 
 		browseExternalEditorsButton = new Button(contents, SWT.PUSH);
 		browseExternalEditorsButton.setText(WorkbenchMessages.EditorSelection_browse);
