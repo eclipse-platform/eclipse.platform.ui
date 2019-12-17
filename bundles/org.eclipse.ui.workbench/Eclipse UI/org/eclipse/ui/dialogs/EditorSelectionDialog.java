@@ -37,7 +37,6 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
-import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.osgi.util.TextProcessor;
 import org.eclipse.swt.SWT;
@@ -82,16 +81,6 @@ public class EditorSelectionDialog extends Dialog {
 	private static class TreeArrayContentProvider implements ITreeContentProvider {
 
 		private static final Object[] EMPTY = new Object[0];
-
-		@Override
-		public void dispose() {
-			//
-		}
-
-		@Override
-		public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
-			//
-		}
 
 		@Override
 		public Object[] getElements(Object inputElement) {
