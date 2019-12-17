@@ -138,12 +138,8 @@ public class FindParentReferenceElementDialog extends SaveDialogBoundsSettingsDi
 		final Combo combo = new Combo(parentForCombo, SWT.NONE);
 		eClassViewer = new ComboViewer(combo);
 		combo.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
-		eClassViewer.setLabelProvider(new LabelProvider() {
-			@Override
-			public String getText(Object element) {
-				return ((EClass) element).getName();
-			}
-		});
+		eClassViewer.setLabelProvider(LabelProvider.createTextProvider(element -> ((EClass) element).getName()));
+
 		eClassViewer.setContentProvider(new ArrayContentProvider());
 		final List<EClass> eClassList = getExtendableClasses();
 		eClassViewer.setComparator(new ViewerComparator() {
