@@ -34,7 +34,6 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
-import org.osgi.framework.Version;
 
 /**
  * @since 3.1
@@ -51,8 +50,9 @@ public class CoreTest extends TestCase {
 	public static void debug(String message) {
 		String id = "org.eclipse.core.tests.harness/debug";
 		String option = Platform.getDebugOption(id);
-		if (Boolean.TRUE.toString().equalsIgnoreCase(option))
+		if (Boolean.TRUE.toString().equalsIgnoreCase(option)) {
 			System.out.println(message);
+		}
 	}
 
 	/**
@@ -64,23 +64,26 @@ public class CoreTest extends TestCase {
 		if (e instanceof CoreException) {
 			IStatus status = ((CoreException) e).getStatus();
 			//if the status does not have an exception, print the stack for this one
-			if (status.getException() == null)
+			if (status.getException() == null) {
 				e.printStackTrace();
+			}
 			write(status, 0);
-		} else
+		} else {
 			e.printStackTrace();
+		}
 		AssertionFailedError assertFail = new AssertionFailedError(message + ": " + e);
 		assertFail.initCause(e);
 		throw assertFail;
 	}
 
 	private static void indent(OutputStream output, int indent) {
-		for (int i = 0; i < indent; i++)
+		for (int i = 0; i < indent; i++) {
 			try {
 				output.write("\t".getBytes());
 			} catch (IOException e) {
 				// ignore
 			}
+		}
 	}
 
 	public static void log(String pluginID, IStatus status) {
@@ -113,8 +116,9 @@ public class CoreTest extends TestCase {
 
 		if (status.isMultiStatus()) {
 			IStatus[] children = status.getChildren();
-			for (IStatus element : children)
+			for (IStatus element : children) {
 				write(element, indent + 1);
+			}
 		}
 	}
 
@@ -133,8 +137,9 @@ public class CoreTest extends TestCase {
 	 * @since 3.2
 	 */
 	protected void assertClose(InputStream stream) {
-		if (stream == null)
+		if (stream == null) {
 			return;
+		}
 		try {
 			stream.close();
 		} catch (IOException e) {
@@ -149,8 +154,9 @@ public class CoreTest extends TestCase {
 	 * @since 3.2
 	 */
 	protected void assertClose(OutputStream stream) {
-		if (stream == null)
+		if (stream == null) {
 			return;
+		}
 		try {
 			stream.close();
 		} catch (IOException e) {
@@ -159,14 +165,18 @@ public class CoreTest extends TestCase {
 	}
 
 	protected void assertEquals(String message, Object[] expected, Object[] actual) {
-		if (expected == null && actual == null)
+		if (expected == null && actual == null) {
 			return;
-		if (expected == null || actual == null)
+		}
+		if (expected == null || actual == null) {
 			fail(message);
-		if (expected.length != actual.length)
+		}
+		if (expected.length != actual.length) {
 			fail(message);
-		for (int i = 0; i < expected.length; i++)
+		}
+		for (int i = 0; i < expected.length; i++) {
 			assertEquals(message, expected[i], actual[i]);
+		}
 	}
 
 	protected void assertEquals(String message, Object[] expected, Object[] actual, boolean orderImportant) {
@@ -176,24 +186,31 @@ public class CoreTest extends TestCase {
 			return;
 		}
 		// otherwise use this method and check that the arrays are equal in any order
-		if (expected == null && actual == null)
+		if (expected == null && actual == null) {
 			return;
-		if (expected == actual)
+		}
+		if (expected == actual) {
 			return;
-		if (expected == null || actual == null)
+		}
+		if (expected == null || actual == null) {
 			assertTrue(message + ".1", false);
-		if (expected.length != actual.length)
+		}
+		if (expected.length != actual.length) {
 			assertTrue(message + ".2", false);
+		}
 		boolean[] found = new boolean[expected.length];
 		for (Object element : expected) {
 			for (int j = 0; j < expected.length; j++) {
-				if (!found[j] && element.equals(actual[j]))
+				if (!found[j] && element.equals(actual[j])) {
 					found[j] = true;
+				}
 			}
 		}
-		for (int i = 0; i < found.length; i++)
-			if (!found[i])
+		for (int i = 0; i < found.length; i++) {
+			if (!found[i]) {
 				assertTrue(message + ".3." + i, false);
+			}
+		}
 	}
 
 	/**
@@ -220,16 +237,11 @@ public class CoreTest extends TestCase {
 		String[] envp = {};
 		try {
 			Process p;
-			if (isWindowsVistaOrHigher()) {
-				if (isDir) {
-					String[] cmd = {"cmd", "/c", "mklink", "/d", linkName, linkTarget};
-					p = Runtime.getRuntime().exec(cmd, envp, basedir);
-				} else {
-					String[] cmd = {"cmd", "/c", "mklink", linkName, linkTarget};
-					p = Runtime.getRuntime().exec(cmd, envp, basedir);
-				}
+			if (isDir) {
+				String[] cmd = { "cmd", "/c", "mklink", "/d", linkName, linkTarget };
+				p = Runtime.getRuntime().exec(cmd, envp, basedir);
 			} else {
-				String[] cmd = {"ln", "-s", linkTarget, linkName};
+				String[] cmd = { "cmd", "/c", "mklink", linkName, linkTarget };
 				p = Runtime.getRuntime().exec(cmd, envp, basedir);
 			}
 			int exitcode = p.waitFor();
@@ -249,23 +261,19 @@ public class CoreTest extends TestCase {
 	 */
 	protected boolean canCreateSymLinks() {
 		if (canCreateSymLinks == null) {
-			if (isWindowsVistaOrHigher()) {
-				// Creation of a symbolic link on Windows requires administrator privileges,
-				// so it may or may not be possible.
-				IPath tempDir = getTempDir();
-				String linkName = FileSystemHelper.getRandomLocation(tempDir).lastSegment();
-				try {
-					// Try to create a symlink.
-					createSymLink(tempDir.toFile(), linkName, "testTarget", false);
-					// Clean up if the link was created.
-					new File(tempDir.toFile(), linkName).delete();
-					canCreateSymLinks = Boolean.TRUE;
-				} catch (AssertionFailedError e) {
-					// This exception indicates that creation of the symlink failed.
-					canCreateSymLinks = Boolean.FALSE;
-				}
-			} else {
+			// Creation of a symbolic link on Windows requires administrator privileges,
+			// so it may or may not be possible.
+			IPath tempDir = getTempDir();
+			String linkName = FileSystemHelper.getRandomLocation(tempDir).lastSegment();
+			try {
+				// Try to create a symlink.
+				createSymLink(tempDir.toFile(), linkName, "testTarget", false);
+				// Clean up if the link was created.
+				new File(tempDir.toFile(), linkName).delete();
 				canCreateSymLinks = Boolean.TRUE;
+			} catch (AssertionFailedError e) {
+				// This exception indicates that creation of the symlink failed.
+				canCreateSymLinks = Boolean.FALSE;
 			}
 		}
 		return canCreateSymLinks.booleanValue();
@@ -354,27 +362,6 @@ public class CoreTest extends TestCase {
 		return System.currentTimeMillis() + "-" + Math.random();
 	}
 
-	protected static boolean isWindowsMinVersion(int major, int minor, int micro) {
-		if (Platform.getOS().equals(Platform.OS_WIN32)) {
-			try {
-				Version v = Version.parseVersion(System.getProperty("org.osgi.framework.os.version")); //$NON-NLS-1$
-				System.out.println("Windows version: " + Version.parseVersion(System.getProperty("org.osgi.framework.os.version")));
-				return v.compareTo(new Version(major, minor, micro)) >= 0;
-			} catch (IllegalArgumentException e) {
-				/* drop down to returning false */
-			}
-
-		}
-		return false;
-	}
-
-	/**
-	 * Test if running on Windows Vista or higher.
-	 * @return <code>true</code> if running on Windows Vista or higher.
-	 */
-	protected static boolean isWindowsVistaOrHigher() {
-		return isWindowsMinVersion(6, 0, 0);
-	}
 
 	/**
 	 * Copy the data from the input stream to the output stream.
@@ -384,8 +371,9 @@ public class CoreTest extends TestCase {
 		try {
 			try {
 				int c = 0;
-				while ((c = input.read()) != -1)
+				while ((c = input.read()) != -1) {
 					output.write(c);
+				}
 			} finally {
 				input.close();
 				output.close();
@@ -403,8 +391,9 @@ public class CoreTest extends TestCase {
 	public void transferDataWithoutClose(InputStream input, OutputStream output) {
 		try {
 			int c = 0;
-			while ((c = input.read()) != -1)
+			while ((c = input.read()) != -1) {
 				output.write(c);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			assertTrue(e.toString(), false);
@@ -412,8 +401,9 @@ public class CoreTest extends TestCase {
 	}
 
 	public static void assertSame(String message, int expected, int actual) {
-		if (expected == actual)
+		if (expected == actual) {
 			return;
+		}
 		failNotSame(message, expected, actual);
 	}
 
@@ -427,8 +417,9 @@ public class CoreTest extends TestCase {
 	}
 
 	public static void assertSame(String message, boolean expected, boolean actual) {
-		if (expected == actual)
+		if (expected == actual) {
 			return;
+		}
 		failNotSame(message, expected, actual);
 	}
 
@@ -442,8 +433,9 @@ public class CoreTest extends TestCase {
 	}
 
 	public static void assertSame(String message, float expected, float actual) {
-		if (expected == actual)
+		if (expected == actual) {
 			return;
+		}
 		failNotSame(message, expected, actual);
 	}
 
@@ -457,8 +449,9 @@ public class CoreTest extends TestCase {
 	}
 
 	public static void assertSame(String message, double expected, double actual) {
-		if (expected == actual)
+		if (expected == actual) {
 			return;
+		}
 		failNotSame(message, expected, actual);
 	}
 
@@ -472,8 +465,9 @@ public class CoreTest extends TestCase {
 	}
 
 	public static void assertSame(String message, long expected, long actual) {
-		if (expected == actual)
+		if (expected == actual) {
 			return;
+		}
 		failNotSame(message, expected, actual);
 	}
 
