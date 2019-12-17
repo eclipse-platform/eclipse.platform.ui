@@ -440,7 +440,7 @@ public class IntroLaunchBar {
 			}
 		};
 		action.setToolTipText(Messages.IntroLaunchBar_restore_tooltip);
-		action.setImageDescriptor(ImageUtil.createImageDescriptor("full/etool16/restore_welcome.gif")); //$NON-NLS-1$
+		action.setImageDescriptor(ImageUtil.createImageDescriptor("full/etool16/restore_welcome.png")); //$NON-NLS-1$
 		// toolBarManager.add(closeAction);
 		toolBarManager.add(action);
 		toolBarManager.add(new Separator());
