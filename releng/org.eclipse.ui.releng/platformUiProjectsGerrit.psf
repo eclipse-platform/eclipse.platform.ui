@@ -25,6 +25,7 @@
 <project reference="1.0,https://git.eclipse.org/r/platform/eclipse.platform.ui,master,bundles/org.eclipse.e4.ui.css.swt"/>
 <project reference="1.0,https://git.eclipse.org/r/platform/eclipse.platform.ui,master,bundles/org.eclipse.e4.ui.css.swt.theme"/>
 <project reference="1.0,https://git.eclipse.org/r/platform/eclipse.platform.ui,master,bundles/org.eclipse.e4.ui.di"/>
+<project reference="1.0,https://git.eclipse.org/r/platform/eclipse.platform.ui,master,bundles/org.eclipse.e4.ui.ide"/>
 <project reference="1.0,https://git.eclipse.org/r/platform/eclipse.platform.ui,master,bundles/org.eclipse.e4.ui.model.workbench"/>
 <project reference="1.0,https://git.eclipse.org/r/platform/eclipse.platform.ui,master,bundles/org.eclipse.e4.ui.services"/>
 <project reference="1.0,https://git.eclipse.org/r/platform/eclipse.platform.ui,master,tests/org.eclipse.e4.ui.tests"/>

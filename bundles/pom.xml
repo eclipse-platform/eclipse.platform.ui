@@ -33,6 +33,7 @@
     <module>org.eclipse.e4.ui.css.swt.theme</module>
     <module>org.eclipse.e4.ui.di</module>
     <module>org.eclipse.e4.ui.dialogs</module>
+    <module>org.eclipse.e4.ui.ide</module>
     <module>org.eclipse.e4.ui.model.workbench</module>
     <module>org.eclipse.e4.ui.progress</module>
     <module>org.eclipse.e4.ui.services</module>
