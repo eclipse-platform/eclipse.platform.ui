@@ -48,6 +48,7 @@ import org.eclipse.swt.widgets.Text;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.DialogPage;
@@ -1290,7 +1291,8 @@ public class TextEditorDefaultsPreferencePage extends PreferencePage implements 
 		GridLayout layout= new GridLayout();
 		layout.marginHeight= 0;
 		layout.marginWidth= 0;
-		layout.horizontalSpacing= 0;
+		// The spacing between the controls is different on GTK
+		layout.horizontalSpacing= Platform.WS_GTK.equals(Platform.getWS()) ? 4 : 0;
 		layout.numColumns= 2;
 		composite.setLayout(layout);
 		composite.setLayoutData(gd);
