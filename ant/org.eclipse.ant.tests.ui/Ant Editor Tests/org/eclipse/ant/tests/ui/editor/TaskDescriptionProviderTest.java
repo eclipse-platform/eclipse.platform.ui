@@ -16,11 +16,8 @@
 
 package org.eclipse.ant.tests.ui.editor;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
-import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
 import org.eclipse.ant.internal.ui.editor.TaskDescriptionProvider;
+import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
 
 /**
  * Tests the tasks description provider.
@@ -62,7 +59,4 @@ public class TaskDescriptionProviderTest extends AbstractAntUITest {
 		assertEquals("yes", required); //$NON-NLS-1$
 	}
 
-	public static Test suite() {
-		return new TestSuite(TaskDescriptionProviderTest.class);
-	}
 }

@@ -25,9 +25,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.core.AntCorePreferences;
 import org.eclipse.ant.core.Property;
@@ -63,10 +60,6 @@ public class CodeCompletionTest extends AbstractAntUITest {
 		super(name);
 	}
 
-	public static Test suite() {
-		return new TestSuite(CodeCompletionTest.class);
-	}
-
 	/**
 	 * Tests the code completion for attributes of tasks.
 	 */
@@ -83,8 +76,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
 		String displayString = proposal.getDisplayString();
 		assertTrue(displayString.equals("id") //$NON-NLS-1$
 				|| displayString.equals("taskname") //$NON-NLS-1$
-				|| displayString.equals(IAntCoreConstants.DESCRIPTION)
-				|| displayString.equals(IAntCoreConstants.FILE)
+				|| displayString.equals(IAntCoreConstants.DESCRIPTION) || displayString.equals(IAntCoreConstants.FILE)
 				|| displayString.equals("preservelastmodified - (true | false | on | off | yes | no)") //$NON-NLS-1$
 				|| displayString.equals("tofile") //$NON-NLS-1$
 				|| displayString.equals("todir") //$NON-NLS-1$
@@ -231,8 +223,8 @@ public class CodeCompletionTest extends AbstractAntUITest {
 			processor.setCursorPosition(lineOffset + columnNumber);
 			ICompletionProposal[] proposals = processor.getPropertyProposals(getCurrentDocument(), "", lineOffset + columnNumber); //$NON-NLS-1$
 			assertTrue(proposals.length >= 3);
-			assertContains("eclipse.home", proposals); //contributed //$NON-NLS-1$
-			assertContains("property.ui.testing2", proposals); //contributed //$NON-NLS-1$
+			assertContains("eclipse.home", proposals); // contributed //$NON-NLS-1$
+			assertContains("property.ui.testing2", proposals); // contributed //$NON-NLS-1$
 			assertContains("test", proposals); //$NON-NLS-1$
 		}
 		finally {
@@ -265,7 +257,8 @@ public class CodeCompletionTest extends AbstractAntUITest {
 		processor.setLineNumber(lineNumber);
 		processor.setColumnNumber(columnNumber);
 		processor.setCursorPosition(lineOffset + columnNumber);
-		proposals = processor.getTargetAttributeValueProposals(getCurrentDocument(), getCurrentDocument().get(0, lineOffset + columnNumber), "", "depends"); //$NON-NLS-1$ //$NON-NLS-2$
+		proposals = processor.getTargetAttributeValueProposals(getCurrentDocument(), getCurrentDocument().get(0, lineOffset
+				+ columnNumber), "", "depends"); //$NON-NLS-1$ //$NON-NLS-2$
 		assertTrue(proposals.length == 7);
 		assertContains("main", proposals); //$NON-NLS-1$
 		// XXX why do we not want a valid proposal?
@@ -911,6 +904,7 @@ public class CodeCompletionTest extends AbstractAntUITest {
 		processor.setCursorPosition(lineOffset + columnNumber);
 		ICompletionProposal[] proposals = processor.getProposalsFromDocument(getCurrentDocument(), ""); //$NON-NLS-1$
 		// true false yes no on off
+		System.out.println("Proposals length:" + proposals.length); //$NON-NLS-1$
 		assertTrue(proposals.length == 6);
 		assertContains("true", proposals); //$NON-NLS-1$
 		assertContains("no", proposals); //$NON-NLS-1$

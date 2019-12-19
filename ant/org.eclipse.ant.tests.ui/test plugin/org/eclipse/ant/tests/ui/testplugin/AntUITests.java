@@ -52,28 +52,28 @@ public class AntUITests extends TestSuite {
 
 		TestSuite suite = new AntUITests();
 		suite.setName("Ant UI Unit Tests"); //$NON-NLS-1$
-		suite.addTest(new TestSuite(BuildTests.class));
-		suite.addTest(new TestSuite(SeparateVMTests.class));
-		suite.addTest(new TestSuite(AntEditorTests.class));
-		suite.addTest(new TestSuite(CodeCompletionTest.class));
-		suite.addTest(new TestSuite(TaskDescriptionProviderTest.class));
-		suite.addTest(new TestSuite(AntEditorContentOutlineTests.class));
-		suite.addTest(new TestSuite(MigrationTests.class));
-		suite.addTest(new TestSuite(BuilderCoreUtilsTests.class));
-		suite.addTest(new TestSuite(ModelProjectTests.class));
-		suite.addTest(new TestSuite(FormattingPreferencesTest.class));
-		suite.addTest(new TestSuite(XmlDocumentFormatterTest.class));
-		suite.addTest(new TestSuite(XmlTagFormatterTest.class));
-		suite.addTest(new TestSuite(XmlFormatterTest.class));
-		suite.addTest(new TestSuite(AntUtilTests.class));
-		suite.addTest(new TestSuite(AntViewTests.class));
-		suite.addTest(new TestSuite(BreakpointTests.class));
-		suite.addTest(new TestSuite(RunToLineTests.class));
-		suite.addTest(new TestSuite(SteppingTests.class));
-		suite.addTest(new TestSuite(PropertyTests.class));
-		suite.addTest(new TestSuite(OccurrencesFinderTests.class));
-		suite.addTest(new TestSuite(StackTests.class));
-		suite.addTest(new TestSuite(APITests.class));
+		suite.addTestSuite(BuildTests.class);
+		suite.addTestSuite(SeparateVMTests.class);
+		suite.addTestSuite(AntEditorTests.class);
+		suite.addTestSuite(CodeCompletionTest.class);
+		suite.addTestSuite(TaskDescriptionProviderTest.class);
+		suite.addTestSuite(AntEditorContentOutlineTests.class);
+		suite.addTestSuite(MigrationTests.class);
+		suite.addTestSuite(BuilderCoreUtilsTests.class);
+		suite.addTestSuite(ModelProjectTests.class);
+		suite.addTestSuite(FormattingPreferencesTest.class);
+		suite.addTestSuite(XmlDocumentFormatterTest.class);
+		suite.addTestSuite(XmlTagFormatterTest.class);
+		suite.addTestSuite(XmlFormatterTest.class);
+		suite.addTestSuite(AntUtilTests.class);
+		suite.addTestSuite(AntViewTests.class);
+		suite.addTestSuite(BreakpointTests.class);
+		suite.addTestSuite(RunToLineTests.class);
+		suite.addTestSuite(SteppingTests.class);
+		suite.addTestSuite(PropertyTests.class);
+		suite.addTestSuite(OccurrencesFinderTests.class);
+		suite.addTestSuite(StackTests.class);
+		suite.addTestSuite(APITests.class);
 		return suite;
 	}
 }

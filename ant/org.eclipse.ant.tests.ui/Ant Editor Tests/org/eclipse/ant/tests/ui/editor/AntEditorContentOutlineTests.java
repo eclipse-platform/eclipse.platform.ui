@@ -25,9 +25,6 @@ import org.eclipse.ant.internal.ui.model.IAntElement;
 import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
 import org.eclipse.jface.text.BadLocationException;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 /**
  * Tests the correct creation of the outline for an xml file.
  * 
@@ -202,9 +199,5 @@ public class AntEditorContentOutlineTests extends AbstractAntUITest {
 		assertTrue("Target with name starting with '-' should be internal", model.getTargetNode("-internal2").isInternal()); //$NON-NLS-1$ //$NON-NLS-2$
 		assertFalse("Target with description attribute should not be internal", model.getTargetNode("non-internal").isInternal()); //$NON-NLS-1$ //$NON-NLS-2$
 		assertFalse("Default target should not be internal", model.getTargetNode("-default").isInternal()); //$NON-NLS-1$ //$NON-NLS-2$
-	}
-
-	public static Test suite() {
-		return new TestSuite(AntEditorContentOutlineTests.class);
 	}
 }

@@ -299,7 +299,8 @@ public class AntEditorTests extends AbstractAntUITest {
 		assertNotNull(region);
 		IDocument doc = editor.getDocumentProvider().getDocument(editor.getEditorInput());
 		String text = doc.get(region.getOffset(), region.getLength());
-		assertTrue("Region incorrect. Expected length of 7 and text of \"compile\", length was " + region.getLength() + " and text was " + text, region.getLength() == 7 && "compile".equals(text)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+		assertTrue("Region incorrect. Expected length of 7 and text of \"compile\", length was " + region.getLength() + " and text was " //$NON-NLS-1$ //$NON-NLS-2$
+				+ text, region.getLength() == 7 && "compile".equals(text)); //$NON-NLS-1$
 	}
 
 	public void testOpenImport() throws PartInitException {
@@ -328,11 +329,6 @@ public class AntEditorTests extends AbstractAntUITest {
 		return offset;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see junit.framework.TestCase#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		EditorTestHelper.closeAllEditors();

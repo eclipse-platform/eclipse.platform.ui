@@ -14,9 +14,6 @@
 
 package org.eclipse.ant.tests.ui.performance;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.ant.tests.ui.AbstractAntUIBuildPerformanceTest;
 import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.core.runtime.CoreException;
@@ -29,10 +26,6 @@ public class SeparateVMTests extends AbstractAntUIBuildPerformanceTest {
 
 	public SeparateVMTests(String name) {
 		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(SeparateVMTests.class);
 	}
 
 	/**

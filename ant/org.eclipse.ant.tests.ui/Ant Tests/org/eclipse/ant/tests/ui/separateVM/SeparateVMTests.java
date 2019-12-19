@@ -38,19 +38,12 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.console.IHyperlink;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 public class SeparateVMTests extends AbstractAntUIBuildTest {
 
 	protected static final String PLUGIN_VERSION = "org.apache.ant_1.10.7"; //$NON-NLS-1$
 
 	public SeparateVMTests(String name) {
 		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(SeparateVMTests.class);
 	}
 
 	/**

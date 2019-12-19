@@ -14,11 +14,11 @@
 
 package org.eclipse.ant.tests.ui.testplugin;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.ant.tests.ui.editor.performance.OpenAntEditorTest;
 import org.eclipse.ant.tests.ui.performance.SeparateVMTests;
+
+import junit.framework.Test;
+import junit.framework.TestSuite;
 
 /**
  * Performance Test suite for the Ant UI. All of the tests in this suite rely on the setup that occurs in the ProjectCreationDecorator suite. It must
@@ -30,8 +30,8 @@ public class AntUIPerformanceTests extends TestSuite {
 
 		TestSuite suite = new AntUIPerformanceTests();
 		suite.setName("Ant UI Performance Unit Tests"); //$NON-NLS-1$
-		suite.addTest(new TestSuite(OpenAntEditorTest.class));
-		suite.addTest(new TestSuite(SeparateVMTests.class));
+		suite.addTestSuite(OpenAntEditorTest.class);
+		suite.addTestSuite(SeparateVMTests.class);
 		// suite.addTest(new TestSuite(NonInitialTypingTest.class));
 		// suite.addTest(new TestSuite(OpenLaunchConfigurationDialogTests.class));
 		return suite;
