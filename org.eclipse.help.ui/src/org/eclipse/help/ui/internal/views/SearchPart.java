@@ -421,23 +421,19 @@ public class SearchPart extends AbstractFormPart implements IHelpPart, IHelpUICo
 			EngineDescriptor desc = descriptors[i];
 			loadEngine(desc, container, toolkit);
 		}
-		engineObserver = new Observer() {
-
-			@Override
-			public void update(Observable o, Object arg) {
-				EngineDescriptorManager.DescriptorEvent event = (EngineDescriptorManager.DescriptorEvent) arg;
-				int kind = event.getKind();
-				EngineDescriptor desc = event.getDescriptor();
-				if (kind == IHelpUIConstants.ADD) {
-					advancedLink.dispose();
-					loadEngine(desc, container, toolkit);
-					createAdvancedLink(container, toolkit);
-					parent.reflow();
-				} else if (kind == IHelpUIConstants.REMOVE) {
-					removeEngine(desc);
-				} else {
-					updateEngine(desc);
-				}
+		engineObserver = (o, arg) -> {
+			EngineDescriptorManager.DescriptorEvent event = (EngineDescriptorManager.DescriptorEvent) arg;
+			int kind = event.getKind();
+			EngineDescriptor desc = event.getDescriptor();
+			if (kind == IHelpUIConstants.ADD) {
+				advancedLink.dispose();
+				loadEngine(desc, container, toolkit);
+				createAdvancedLink(container, toolkit);
+				parent.reflow();
+			} else if (kind == IHelpUIConstants.REMOVE) {
+				removeEngine(desc);
+			} else {
+				updateEngine(desc);
 			}
 		};
 

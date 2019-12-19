@@ -34,8 +34,6 @@ import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
 import org.eclipse.ui.internal.intro.impl.model.IntroPage;
 import org.eclipse.ui.internal.intro.impl.model.loader.ExtensionPointManager;
 import org.eclipse.ui.internal.intro.impl.presentations.BrowserIntroPartImplementation;
-import org.eclipse.ui.intro.config.IIntroContentProvider;
-import org.eclipse.ui.intro.config.IIntroContentProviderSite;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -134,11 +132,8 @@ public class IntroModelSerializerTest {
 		while (iter.hasNext()) {
 			AbstractIntroPage page = iter.next();
 			BrowserIntroPartImplementation impl = new BrowserIntroPartImplementation();
-			String xhtml = impl.generateXHTMLPage(page, new IIntroContentProviderSite() {
-				@Override
-				public void reflow(IIntroContentProvider provider, boolean incremental) {
-					// dummy site
-				}
+			String xhtml = impl.generateXHTMLPage(page, (provider, incremental) -> {
+				// dummy site
 			});
 			xhtml = XHTMLUtil.removeEnvironmentSpecificContent(xhtml);
 			// filter windows-specific newline

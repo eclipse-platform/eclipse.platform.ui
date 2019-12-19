@@ -16,8 +16,6 @@ package org.eclipse.ui.internal.cheatsheets.composite.views;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -205,14 +203,11 @@ public class CompositeCheatSheetPage extends Page implements ISelectionChangedLi
 		} else {
 			updateSelectedTask(model.getRootTask());
 		}
-		model.addObserver(new Observer() {
-			@Override
-			public void update(Observable o, Object arg) {
-				ICompositeCheatSheetTask task = (ICompositeCheatSheetTask)arg;
-				if (currentExplorer!=null)
-					currentExplorer.taskUpdated(task);
-				updateTask(task);
-			}
+		model.addObserver((o, arg) -> {
+			ICompositeCheatSheetTask task = (ICompositeCheatSheetTask)arg;
+			if (currentExplorer!=null)
+				currentExplorer.taskUpdated(task);
+			updateTask(task);
 		});
 	}
 

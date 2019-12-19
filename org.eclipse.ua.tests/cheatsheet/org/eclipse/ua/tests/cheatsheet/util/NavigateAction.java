@@ -24,12 +24,9 @@ public class NavigateAction extends Action implements ICheatSheetAction {
 	private static void go(String newSheet) {
 		final String finalNewSheet = newSheet;
 		try {
-			Display.getCurrent().asyncExec( new Runnable() {
-				@Override
-				public void run() {
-					OpenCheatSheetAction csAction = new OpenCheatSheetAction( finalNewSheet );
-					csAction.run();
-				}
+			Display.getCurrent().asyncExec( () -> {
+				OpenCheatSheetAction csAction = new OpenCheatSheetAction( finalNewSheet );
+				csAction.run();
 			} );
 		}
 		catch(Exception ex) {
