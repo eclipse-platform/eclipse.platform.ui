@@ -66,7 +66,7 @@ public class URLHyperlink implements IHyperlink {
 
 	@Override
 	public String getHyperlinkText() {
-		return MessageFormat.format(HyperlinkMessages.getString("URLHyperlink.hyperlinkText"), new Object[] { fURLString }); //$NON-NLS-1$
+		return MessageFormat.format(HyperlinkMessages.getString("URLHyperlink.hyperlinkText"), fURLString); //$NON-NLS-1$
 	}
 
 	/**

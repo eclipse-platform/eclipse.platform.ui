@@ -30,7 +30,7 @@ public class NLSUtility {
 	 * @return the formatted string
 	 */
 	public static String format(String message, Object argument) {
-		return MessageFormat.format(message, new Object[] { argument });
+		return MessageFormat.format(message, argument);
 	}
 
 	/**

@@ -38,7 +38,7 @@ class TemplatePersistenceMessages {
 	}
 
 	public static String getFormattedString(String key, Object arg) {
-		return MessageFormat.format(getString(key), new Object[] { arg });
+		return MessageFormat.format(getString(key), arg);
 	}
 
 	public static String getFormattedString(String key, Object[] args) {

@@ -80,6 +80,6 @@ class HTMLMessages {
 		}
 		if (arg == null)
 			arg= ""; //$NON-NLS-1$
-		return MessageFormat.format(format, new Object[] { arg });
+		return MessageFormat.format(format, arg);
 	}
 }

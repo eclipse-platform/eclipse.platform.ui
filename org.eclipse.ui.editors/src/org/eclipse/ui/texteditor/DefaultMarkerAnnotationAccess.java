@@ -275,8 +275,8 @@ public class DefaultMarkerAnnotationAccess implements IAnnotationAccess, IAnnota
 		// backward compatibility, ignore exceptions, just don't paint
 		try {
 
-			Method method= annotation.getClass().getMethod("paint", new Class[] { GC.class, Canvas.class, Rectangle.class }); //$NON-NLS-1$
-			method.invoke(annotation, new Object[] {gc, canvas, bounds });
+			Method method= annotation.getClass().getMethod("paint", GC.class, Canvas.class, Rectangle.class); //$NON-NLS-1$
+			method.invoke(annotation, gc, canvas, bounds);
 
 		} catch (SecurityException x) {
 		} catch (IllegalArgumentException x) {

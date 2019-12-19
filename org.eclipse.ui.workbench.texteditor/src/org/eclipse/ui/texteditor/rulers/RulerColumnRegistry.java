@@ -261,22 +261,25 @@ public final class RulerColumnRegistry {
 	}
 
 	private void noteInvalidExtension(IConfigurationElement element, InvalidRegistryObjectException x) {
-		String message= MessageFormat.format(RulerColumnMessages.RulerColumnRegistry_invalid_msg, new Object[] {ExtensionPointHelper.findId(element)});
+		String message= MessageFormat.format(RulerColumnMessages.RulerColumnRegistry_invalid_msg, ExtensionPointHelper.findId(element));
 		warnUser(message, x);
 	}
 
 	private void noteUnknownTarget(RulerColumnDescriptor desc, String referencedId) {
-		String message= MessageFormat.format(RulerColumnMessages.RulerColumnRegistry_unresolved_placement_msg, new Object[] {QUALIFIED_EXTENSION_POINT, referencedId, desc.getName(), desc.getContributor()});
+		String message= MessageFormat.format(RulerColumnMessages.RulerColumnRegistry_unresolved_placement_msg,
+				QUALIFIED_EXTENSION_POINT, referencedId, desc.getName(), desc.getContributor());
 		warnUser(message, null);
 	}
 
 	private void noteCycle(RulerColumnDescriptor desc, RulerColumnDescriptor target) {
-		String message= MessageFormat.format(RulerColumnMessages.RulerColumnRegistry_cyclic_placement_msg, new Object[] {QUALIFIED_EXTENSION_POINT, target.getName(), desc.getName(), desc.getContributor()});
+		String message= MessageFormat.format(RulerColumnMessages.RulerColumnRegistry_cyclic_placement_msg, QUALIFIED_EXTENSION_POINT,
+				target.getName(), desc.getName(), desc.getContributor());
 		warnUser(message, null);
 	}
 
 	private void noteDuplicateId(RulerColumnDescriptor desc) {
-		String message= MessageFormat.format(RulerColumnMessages.RulerColumnRegistry_duplicate_id_msg, new Object[] {QUALIFIED_EXTENSION_POINT, desc.getId(), desc.getContributor()});
+		String message= MessageFormat.format(RulerColumnMessages.RulerColumnRegistry_duplicate_id_msg, QUALIFIED_EXTENSION_POINT,
+				desc.getId(), desc.getContributor());
 		warnUser(message, null);
 	}
 

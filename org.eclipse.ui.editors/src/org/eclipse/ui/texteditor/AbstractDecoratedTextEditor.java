@@ -1938,7 +1938,7 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			if (!descriptor.isIncludedInMenu() || !support.isColumnSupported(descriptor))
 				continue;
 			final boolean isVisible= support.isColumnVisible(descriptor);
-			IAction action= new Action(MessageFormat.format(TextEditorMessages.AbstractDecoratedTextEditor_show_ruler_label, new Object[] {descriptor.getName()}), IAction.AS_CHECK_BOX) {
+			IAction action= new Action(MessageFormat.format(TextEditorMessages.AbstractDecoratedTextEditor_show_ruler_label, descriptor.getName()), IAction.AS_CHECK_BOX) {
 				@Override
 				public void run() {
 					if (descriptor.isGlobal())

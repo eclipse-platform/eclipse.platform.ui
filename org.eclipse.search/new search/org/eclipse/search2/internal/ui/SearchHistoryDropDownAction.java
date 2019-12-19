@@ -41,7 +41,7 @@ class SearchHistoryDropDownAction extends Action implements IMenuCreator {
 
 			String label= escapeAmp(search.getLabel());
 			if (InternalSearchUI.getInstance().isQueryRunning(search.getQuery()))
-				label= MessageFormat.format(SearchMessages.SearchDropDownAction_running_message, new Object[] { label });
+				label= MessageFormat.format(SearchMessages.SearchDropDownAction_running_message, label);
 			// fix for bug 38049
 			if (label.indexOf('@') >= 0)
 				label+= '@';

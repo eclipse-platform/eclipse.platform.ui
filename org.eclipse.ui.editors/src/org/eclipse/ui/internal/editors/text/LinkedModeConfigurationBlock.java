@@ -205,13 +205,13 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 
 	private List<String[]> getStyles(Object type) {
 		if (type.equals(MASTER))
-			return Arrays.asList(new String[][] {BOX, DASHED_BOX, HIGHLIGHT, UNDERLINE, SQUIGGLES});
+			return Arrays.asList(BOX, DASHED_BOX, HIGHLIGHT, UNDERLINE, SQUIGGLES);
 		if (type.equals(SLAVE))
-			return Arrays.asList(new String[][] {BOX, DASHED_BOX, HIGHLIGHT, UNDERLINE, SQUIGGLES});
+			return Arrays.asList(BOX, DASHED_BOX, HIGHLIGHT, UNDERLINE, SQUIGGLES);
 		if (type.equals(TARGET))
-			return Arrays.asList(new String[][] {BOX, DASHED_BOX, HIGHLIGHT, UNDERLINE, SQUIGGLES});
+			return Arrays.asList(BOX, DASHED_BOX, HIGHLIGHT, UNDERLINE, SQUIGGLES);
 		if (type.equals(EXIT))
-			return Arrays.asList(new String[][] {IBEAM});
+			return Arrays.asList(new String[][] { IBEAM });
 		return new ArrayList<>();
 	}
 
