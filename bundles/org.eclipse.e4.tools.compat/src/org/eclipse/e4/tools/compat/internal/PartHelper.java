@@ -47,7 +47,7 @@ public class PartHelper {
 				final Class<?> clazz = Platform.getBundle("org.eclipse.e4.ui.model.workbench").loadClass( //$NON-NLS-1$
 						"org.eclipse.e4.ui.model.application.ui.basic.MPart"); //$NON-NLS-1$
 				final Object instance = site.getService(clazz);
-				final Method m = clazz.getMethod("getContext", new Class[0]); //$NON-NLS-1$
+				final Method m = clazz.getMethod("getContext"); //$NON-NLS-1$
 				IEclipseContext ctx = (IEclipseContext) m.invoke(instance);
 				final IEclipseContext rv = ctx;
 				while (ctx.getParent() != null) {

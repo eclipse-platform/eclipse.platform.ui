@@ -231,13 +231,11 @@ public class FindContributionDialog extends TitleAreaDialog {
 			}
 		});
 
-		viewer.setFilters(new ViewerFilter[] { new ViewerFilter() {
-
+		viewer.setFilters(new ViewerFilter() {
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				ContributionData cd = (ContributionData) element;
-				if ("show-bundles".equals(mode)) { //$NON-NLS-1$
-					// only add first item from each bundle
+				if ("show-bundles".equals(mode)) {
 					boolean found = false;
 					for (Iterator<?> it = list.iterator(); it.hasNext();) {
 						ContributionData cd2 = (ContributionData) it.next();
@@ -250,27 +248,26 @@ public class FindContributionDialog extends TitleAreaDialog {
 						}
 					}
 					return true;
-				} else if ("show-packages".equals(mode)) { //$NON-NLS-1$
+				} else if ("show-packages".equals(mode)) {
 					if (bundleFilter != null && bundleFilter.isEmpty() == false) {
 						if (!bundleFilter.equals(cd.bundleName)) {
 							return false;
 						}
 					}
 					String packageName;
-					int last = cd.className.lastIndexOf("."); //$NON-NLS-1$
+					int last = cd.className.lastIndexOf(".");
 					if (last >= 0) {
 						packageName = cd.className.substring(0, last);
 					} else {
-						packageName = ""; //$NON-NLS-1$
+						packageName = "";
 					}
-					// only add first item from each package
 					boolean found = false;
 					for (Iterator<?> it = list.iterator(); it.hasNext();) {
 						boolean matches = false;
 						ContributionData cd2 = (ContributionData) it.next();
-						if (packageName.isEmpty() && cd2.className.contains(".") == false) { //$NON-NLS-1$
+						if (packageName.isEmpty() && cd2.className.contains(".") == false) {
 							matches = true;
-						} else if (cd2.className.startsWith(packageName + ".")) { //$NON-NLS-1$
+						} else if (cd2.className.startsWith(packageName + ".")) {
 							matches = true;
 						}
 						if (matches) {
@@ -282,7 +279,7 @@ public class FindContributionDialog extends TitleAreaDialog {
 						}
 					}
 					return true;
-				} else if ("show-icons".equals(mode)) { //$NON-NLS-1$
+				} else if ("show-icons".equals(mode)) {
 					if (cd.iconPath == null) {
 						return false;
 					}
@@ -292,7 +289,7 @@ public class FindContributionDialog extends TitleAreaDialog {
 						}
 					}
 					if (packageFilter != null && packageFilter.isEmpty() == false) {
-						if (!cd.className.startsWith(packageFilter + ".")) { //$NON-NLS-1$
+						if (!cd.className.startsWith(packageFilter + ".")) {
 							return false;
 						}
 					}
@@ -304,15 +301,14 @@ public class FindContributionDialog extends TitleAreaDialog {
 						}
 					}
 					if (packageFilter != null && packageFilter.isEmpty() == false) {
-						if (!cd.className.startsWith(packageFilter + ".")) { //$NON-NLS-1$
+						if (!cd.className.startsWith(packageFilter + ".")) {
 							return false;
 						}
 					}
-
 					return true;
 				}
 			}
-		} });
+		});
 
 		StringBuilder sbFind = new StringBuilder();
 

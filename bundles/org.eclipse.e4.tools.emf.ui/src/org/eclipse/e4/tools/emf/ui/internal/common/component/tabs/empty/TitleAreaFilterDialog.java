@@ -71,13 +71,12 @@ public class TitleAreaFilterDialog extends TitleAreaDialog {
 		viewer.setLabelProvider(labelProvider);
 		viewer.setContentProvider(ArrayContentProvider.getInstance());
 
-		viewer.setFilters(new ViewerFilter[] { new ViewerFilter() {
-
+		viewer.setFilters(new ViewerFilter() {
 			@Override
 			public boolean select(Viewer viewer, Object parentElement, Object element) {
 				return isFiltered(element, text.getText());
 			}
-		} });
+		});
 
 		text.addModifyListener(e -> viewer.refresh());
 

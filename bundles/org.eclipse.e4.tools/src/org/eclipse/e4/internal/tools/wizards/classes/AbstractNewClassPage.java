@@ -457,7 +457,7 @@ public abstract class AbstractNewClassPage extends WizardPage {
 		dialog.setHelpAvailable(false);
 		final IPackageFragment pack = clazz.getPackageFragment();
 		if (pack != null) {
-			dialog.setInitialSelections(new Object[] { pack });
+			dialog.setInitialSelections(pack);
 		}
 
 		if (dialog.open() == Window.OK) {

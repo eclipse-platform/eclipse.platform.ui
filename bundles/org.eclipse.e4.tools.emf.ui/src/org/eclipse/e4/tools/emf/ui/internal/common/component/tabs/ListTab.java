@@ -466,7 +466,7 @@ public class ListTab implements IViewEObjects {
 				public void widgetSelected(SelectionEvent e) {
 					filterByItemName = null;
 					filterByAttrName = null;
-					tvResults.setFilters(new ViewerFilter[0]);
+					tvResults.setFilters();
 					filterByItem.setText(Messages.ListTab_filterByItem + ELIPSIS);
 					filterByAttribute.setText(Messages.ListTab_markAttribute + ELIPSIS);
 				}
@@ -896,7 +896,7 @@ public class ListTab implements IViewEObjects {
 				}
 
 			};
-			tvResults.setFilters(new ViewerFilter[] { viewerFilter });
+			tvResults.setFilters(viewerFilter);
 			filterByItem.setText(Messages.ListTab_filterByItem + ELIPSIS + "(" + filterByItemName + ")"); //$NON-NLS-1$//$NON-NLS-2$
 			filterByAttribute.setText(Messages.ListTab_filterByAttribute + ELIPSIS);
 		}
@@ -941,7 +941,7 @@ public class ListTab implements IViewEObjects {
 						}
 					}
 				};
-				tvResults.setFilters(new ViewerFilter[] { viewerFilter });
+				tvResults.setFilters(viewerFilter);
 				filterByAttribute.setText(Messages.ListTab_filterByAttribute + ELIPSIS + "(" + filterByAttrName + ")"); //$NON-NLS-1$//$NON-NLS-2$
 				filterByItem.setText(Messages.ListTab_filterByItem + ELIPSIS);
 
