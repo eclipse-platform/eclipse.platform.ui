@@ -14,7 +14,6 @@
 
 /*******************************************************************************
  * The following bugs are referred to in this style sheet
- * 1.) Bug 419482 - Cascading policy in CSS
  * 2.) Bug 430052 - Imported rules cannot be overridden
  *******************************************************************************/
 
@@ -113,120 +112,37 @@ ImageBasedFrame,
 
 /* ###################### Global Styles ########################## */
 
-TabFolder,
-/* the following are required due to Bug 419482: */
-TabFolder > Composite > TabFolder,
-TabFolder > Composite > * > TabFolder,
-DocCommentOwnerComposite > Group > TabFolder,
-TabFolder > Composite > ScrolledComposite > TabFolder,
-Shell > Composite > Composite > TabFolder,
-Composite > Composite > Composite > Group > TabFolder,
-Shell > Composite > Composite > Composite > TabFolder,
-ScrolledComposite > Composite > Composite > Composite > TabFolder,
-Shell > Composite > Composite > Composite > Composite > Composite > TabFolder,
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > TabFolder,
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > * > TabFolder {
+TabFolder {
     /* background-color is not applied to the whole button,
        but text color is changed, so it appear light on light */
     background-color: #515658;
     color: #222;
 }
 
-Button,
-/* the following are required due to Bug 419482: */
-Composite > Button,
-TabFolder > Composite > Button,
-TabFolder > Composite > * > Button,
-DocCommentOwnerComposite > Group > Button,
-TabFolder > Composite > ScrolledComposite > Button,
-Shell > Composite > Composite > Button,
-Composite > Composite > Composite > Group > Button,
-Shell > Composite > Composite > Composite > Button,
-ScrolledComposite > Composite > Composite > Composite > Button,
-Shell > Composite > Composite > Composite > Composite > Composite > Button,
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > Button,
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > * > Button,
-.MPart Button,
-.MPartStack.active .MPart Button {
+Button {
     /* background-color is not applied to the whole button,
        but text color is changed, so it appear light on light */
     background-color: #2F2F2F;
     color: #CCCCCC;
 }
-Button[style~='SWT.CHECK'],
-/* the following are required due to Bug 419482: */
-Composite > Button[style~='SWT.CHECK'],
-TabFolder > Composite > Button[style~='SWT.CHECK'],
-TabFolder > Composite > * > Button[style~='SWT.CHECK'],
-DocCommentOwnerComposite > Group > Button[style~='SWT.CHECK'],
-TabFolder > Composite > ScrolledComposite > Button[style~='SWT.CHECK'],
-Shell > Composite > Composite > Button[style~='SWT.CHECK'],
-Composite > Composite > Composite > Group > Button[style~='SWT.CHECK'],
-Shell > Composite > Composite > Composite > Button[style~='SWT.CHECK'],
-ScrolledComposite > Composite > Composite > Composite > Button[style~='SWT.CHECK'],
-Shell > Composite > Composite > Composite > Composite > Composite > Button[style~='SWT.CHECK'],
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > Button[style~='SWT.CHECK'],
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > * > Button[style~='SWT.CHECK'],
-.MPart Button[style~='SWT.CHECK'],
-.MPartStack.active .MPart Button[style~='SWT.CHECK'] {
+Button[style~='SWT.CHECK'] {
     /* currently, Button object isn't consistent (eg. also a checkbox is seen as Button) */
     /* so, css rules applied to Button have to be overridden for non-Button matches */
     background-color: #515658;
     color: #ddd;
 }
-Button[style~='SWT.RADIO'],
-/* the following are required due to Bug 419482: */
-Composite > Button[style~='SWT.RADIO'],
-TabFolder > Composite > Button[style~='SWT.RADIO'],
-TabFolder > Composite > * > Button[style~='SWT.RADIO'],
-DocCommentOwnerComposite > Group > Button[style~='SWT.RADIO'],
-TabFolder > Composite > ScrolledComposite > Button[style~='SWT.RADIO'],
-Shell > Composite > Composite > Button[style~='SWT.RADIO'],
-Composite > Composite > Composite > Group > Button[style~='SWT.RADIO'],
-Shell > Composite > Composite > Composite > Button[style~='SWT.RADIO'],
-ScrolledComposite > Composite > Composite > Composite > Button[style~='SWT.RADIO'],
-Shell > Composite > Composite > Composite > Composite > Composite > Button[style~='SWT.RADIO'],
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > Button[style~='SWT.RADIO'],
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > * > Button[style~='SWT.RADIO'],
-.MPart Button[style~='SWT.RADIO'],
-.MPartStack.active .MPart Button[style~='SWT.RADIO'] {
+Button[style~='SWT.RADIO'] {
     /* currently, Button object isn't consistent (eg. also a checkbox is seen as Button) */
     /* so, css rules applied to Button have to be overridden for non-Button matches */
     background-color: #515658;
     color: #ddd;
 }
 
-Combo,
-/* the following are required due to Bug 419482: */
-Composite > Combo,
-TabFolder > Composite > Combo,
-TabFolder > Composite > * > Combo,
-DocCommentOwnerComposite > Group > Combo,
-TabFolder > Composite > ScrolledComposite > Combo,
-Shell > Composite > Composite > Combo,
-Composite > Composite > Composite > Group > Combo,
-Shell > Composite > Composite > Composite > Combo,
-ScrolledComposite > Composite > Composite > Composite > Combo,
-Shell > Composite > Composite > Composite > Composite > Composite > Combo,
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > Combo,
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > * > Combo {
+Combo {
     background-color: #949DA5; 
     color: #222;  /* background of drop-drown list is hard-coded to white */
 }
-Combo:selected,
-/* the following are required due to Bug 419482: */
-Composite > Combo:selected,
-TabFolder > Composite > Combo:selected,
-TabFolder > Composite > * > Combo:selected,
-DocCommentOwnerComposite > Group > Combo:selected,
-TabFolder > Composite > ScrolledComposite > Combo:selected,
-Shell > Composite > Composite > Combo:selected,
-Composite > Composite > Composite > Group > Combo:selected,
-Shell > Composite > Composite > Composite > Combo:selected,
-ScrolledComposite > Composite > Composite > Composite > Combo:selected,
-Shell > Composite > Composite > Composite > Composite > Composite > Combo:selected,
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > Combo:selected,
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > * > Combo:selected {
+Combo:selected {
     background-color: #41464A;
     color: #FFF;
 }

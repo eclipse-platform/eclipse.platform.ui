@@ -14,7 +14,6 @@
 
 /*******************************************************************************
  * The following bugs are referred to in this style sheet
- * 1.) Bug 419482 - Cascading policy in CSS
  * 2.) Bug 430052 - Imported rules cannot be overridden
  *******************************************************************************/
 
@@ -106,57 +105,15 @@ ImageBasedFrame,
 
 /* Use unset to set the foreground/background color to null */
 
-Table[swt-lines-visible=true],
-/* the following are required due to Bug 419482 (see <1>): */
-Composite > Table[swt-lines-visible=true],
-TabFolder > Composite > Table[swt-lines-visible=true],
-TabFolder > Composite > * > Table[swt-lines-visible=true],
-DocCommentOwnerComposite > Group > Table[swt-lines-visible=true],
-TabFolder > Composite > ScrolledComposite > Table[swt-lines-visible=true],
-Shell > Composite > Composite > Table[swt-lines-visible=true],
-Composite > Composite > Composite > Group > Table[swt-lines-visible=true],
-Shell > Composite > Composite > Composite > Table[swt-lines-visible=true],
-ScrolledComposite > Composite > Composite > Composite > Table[swt-lines-visible=true],
-Shell > Composite > Composite > Composite > Composite > Composite > Table[swt-lines-visible=true],
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > Table[swt-lines-visible=true],
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > * > Table[swt-lines-visible=true] {
+Table[swt-lines-visible=true] {
     background-color: unset;
 }
 
-Tree[swt-lines-visible=true],
-RegistryFilteredTree[swt-lines-visible=true],
-/* the following are required due to Bug 419482 (see <1>): */
-Composite > Tree[swt-lines-visible=true],
-TabFolder > Composite > Tree[swt-lines-visible=true],
-TabFolder > Composite > * > Tree[swt-lines-visible=true],
-DocCommentOwnerComposite > Group > Tree[swt-lines-visible=true],
-TabFolder > Composite > ScrolledComposite > Tree[swt-lines-visible=true],
-Shell > Composite > Composite > Tree[swt-lines-visible=true],
-Composite > Composite > Composite > Group > Tree[swt-lines-visible=true],
-Shell > Composite > Composite > Composite > Tree[swt-lines-visible=true],
-ScrolledComposite > Composite > Composite > Composite > Tree[swt-lines-visible=true],
-Shell > Composite > Composite > Composite > Composite > Composite > Tree[swt-lines-visible=true],
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > Tree[swt-lines-visible=true],
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > * > Tree[swt-lines-visible=true] {
+Tree[swt-lines-visible=true] {
     background-color: unset;
 }
 
-Button,
-/* the following are required due to Bug 419482: */
-Composite > Button,
-TabFolder > Composite > Button,
-TabFolder > Composite > * > Button,
-DocCommentOwnerComposite > Group > Button,
-TabFolder > Composite > ScrolledComposite > Button,
-Shell > Composite > Composite > Button,
-Composite > Composite > Composite > Group > Button,
-Shell > Composite > Composite > Composite > Button,
-ScrolledComposite > Composite > Composite > Composite > Button,
-Shell > Composite > Composite > Composite > Composite > Composite > Button,
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > Button,
-Shell[style~='SWT.RADIO'][style~='SWT.CASCADE'][style~='SWT.SHADOW_ETCHED_IN'][style~='SWT.SHADOW_ETCHED_OUT'][style~='SWT.RESIZE'][style~='SWT.MENU'][style~='SWT.FULL_SELECTION'][style~='SWT.DATE'] > Composite > * > Button,
-.MPart Button,
-.MPartStack.active .MPart Button {
+Button  {
     background-color: unset;
     color: unset;
 }
