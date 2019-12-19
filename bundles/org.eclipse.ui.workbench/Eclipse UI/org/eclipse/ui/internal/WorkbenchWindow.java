@@ -199,7 +199,6 @@ import org.eclipse.ui.internal.services.ServiceLocator;
 import org.eclipse.ui.internal.services.WorkbenchLocationService;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.keys.IBindingService;
-import org.eclipse.ui.menus.CommandContributionItem;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.model.WorkbenchPartLabelProvider;
 import org.eclipse.ui.services.IEvaluationService;
@@ -1480,13 +1479,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 					renderer.linkModelToManager(subMenu, menuManager);
 					fill(renderer, subMenu, menuManager);
 					menu.getChildren().add(subMenu);
-				}
-			} else if (item instanceof CommandContributionItem) {
-				CommandContributionItem cci = (CommandContributionItem) item;
-				MMenuItem menuItem = MenuHelper.createItem(application, cci);
-				manager.remove(item);
-				if (menuItem != null) {
-					menu.getChildren().add(menuItem);
 				}
 			} else if (item instanceof AbstractGroupMarker) {
 				MMenuSeparator separator = modelService.createModelElement(MMenuSeparator.class);

@@ -46,10 +46,8 @@ import org.eclipse.e4.ui.model.application.ui.MCoreExpression;
 import org.eclipse.e4.ui.model.application.ui.MExpression;
 import org.eclipse.e4.ui.model.application.ui.impl.UiFactoryImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.ItemType;
-import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolItem;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuFactoryImpl;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
@@ -361,34 +359,6 @@ public class MenuHelper {
 		subMenu.setLabel(manager.getMenuText());
 		subMenu.setElementId(manager.getId());
 		return subMenu;
-	}
-
-	public static MMenuItem createItem(MApplication application, CommandContributionItem cci) {
-		MCommand command = getMCommand(application, cci);
-		if (command != null) {
-			CommandContributionItemParameter data = cci.getData();
-			MHandledMenuItem menuItem = MenuFactoryImpl.eINSTANCE.createHandledMenuItem();
-			menuItem.setCommand(command);
-			menuItem.setContributorURI(command.getContributorURI());
-			if (data.label != null) {
-				menuItem.setLabel(data.label);
-			} else {
-				menuItem.setLabel(command.getCommandName());
-			}
-			if (data.mnemonic != null) {
-				menuItem.setMnemonics(data.mnemonic);
-			}
-			if (data.icon != null) {
-				menuItem.setIconURI(getIconURI(data.icon, application.getContext()));
-			} else {
-				menuItem.setIconURI(getIconURI(command.getElementId(), application.getContext(),
-						ICommandImageService.TYPE_DEFAULT));
-			}
-			String itemId = cci.getId();
-			menuItem.setElementId(itemId == null ? command.getElementId() : itemId);
-			return menuItem;
-		}
-		return null;
 	}
 
 	public static MHandledToolItem createToolItem(MApplication application, CommandContributionItem cci) {
