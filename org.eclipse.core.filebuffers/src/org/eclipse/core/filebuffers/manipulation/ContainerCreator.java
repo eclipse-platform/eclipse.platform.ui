@@ -68,47 +68,44 @@ public class ContainerCreator {
 	 * 							either the project or folders for the given container fails
 	 */
 	public IContainer createContainer(IProgressMonitor progressMonitor) throws CoreException {
-		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				SubMonitor subMonitor = SubMonitor.convert(monitor, FileBuffersMessages.ContainerCreator_task_creatingContainer, fContainerFullPath.segmentCount());
-				if (fContainer != null)
-					return;
+		IWorkspaceRunnable runnable= monitor -> {
+			SubMonitor subMonitor = SubMonitor.convert(monitor, FileBuffersMessages.ContainerCreator_task_creatingContainer, fContainerFullPath.segmentCount());
+			if (fContainer != null)
+				return;
 
-				// Does the container exist already?
-				IWorkspaceRoot root= fWorkspace.getRoot();
-				IResource found= root.findMember(fContainerFullPath);
-				if (found instanceof IContainer) {
-					fContainer= (IContainer) found;
-					return;
-				} else if (found != null) {
-					// fContainerFullPath specifies a file as directory
-					throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, NLSUtility.format(FileBuffersMessages.ContainerCreator_destinationMustBeAContainer, fContainerFullPath), null));
+			// Does the container exist already?
+			IWorkspaceRoot root= fWorkspace.getRoot();
+			IResource found= root.findMember(fContainerFullPath);
+			if (found instanceof IContainer) {
+				fContainer= (IContainer) found;
+				return;
+			} else if (found != null) {
+				// fContainerFullPath specifies a file as directory
+				throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, NLSUtility.format(FileBuffersMessages.ContainerCreator_destinationMustBeAContainer, fContainerFullPath), null));
+			}
+
+			// Create the containers for the given path
+			fContainer= root;
+			for (int i = 0; i < fContainerFullPath.segmentCount(); i++) {
+				String currentSegment = fContainerFullPath.segment(i);
+				IResource resource = fContainer.findMember(currentSegment);
+				if (resource != null) {
+					if (resource instanceof IContainer) {
+						fContainer= (IContainer) resource;
+						subMonitor.split(1);
+					} else {
+						// fContainerFullPath specifies a file as directory
+						throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, NLSUtility.format(FileBuffersMessages.ContainerCreator_destinationMustBeAContainer, resource.getFullPath()), null));
+					}
 				}
-
-				// Create the containers for the given path
-				fContainer= root;
-				for (int i = 0; i < fContainerFullPath.segmentCount(); i++) {
-					String currentSegment = fContainerFullPath.segment(i);
-					IResource resource = fContainer.findMember(currentSegment);
-					if (resource != null) {
-						if (resource instanceof IContainer) {
-							fContainer= (IContainer) resource;
-							subMonitor.split(1);
-						} else {
-							// fContainerFullPath specifies a file as directory
-							throw new CoreException(new Status(IStatus.ERROR, FileBuffersPlugin.PLUGIN_ID, IStatus.OK, NLSUtility.format(FileBuffersMessages.ContainerCreator_destinationMustBeAContainer, resource.getFullPath()), null));
-						}
+				else {
+					if (i == 0) {
+						IProject projectHandle= createProjectHandle(root, currentSegment);
+						fContainer= createProject(projectHandle, subMonitor.split(1));
 					}
 					else {
-						if (i == 0) {
-							IProject projectHandle= createProjectHandle(root, currentSegment);
-							fContainer= createProject(projectHandle, subMonitor.split(1));
-						}
-						else {
-							IFolder folderHandle= createFolderHandle(fContainer, currentSegment);
-							fContainer= createFolder(folderHandle, subMonitor.split(1));
-						}
+						IFolder folderHandle= createFolderHandle(fContainer, currentSegment);
+						fContainer= createFolder(folderHandle, subMonitor.split(1));
 					}
 				}
 			}

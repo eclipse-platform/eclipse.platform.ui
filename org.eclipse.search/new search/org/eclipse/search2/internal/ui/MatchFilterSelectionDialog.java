@@ -14,8 +14,6 @@
 package org.eclipse.search2.internal.ui;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -220,12 +218,7 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 			}
 		});
 
-		fLimitElementsField.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				performLimitTextModified();
-			}
-		});
+		fLimitElementsField.addModifyListener(e -> performLimitTextModified());
 		fLimitElementsCheckbox.setSelection(fLimitElementCount != -1);
 		fLimitElementsField.setText(String.valueOf(fLastLimit));
 		fLimitElementsField.setEnabled(fLimitElementsCheckbox.getSelection());

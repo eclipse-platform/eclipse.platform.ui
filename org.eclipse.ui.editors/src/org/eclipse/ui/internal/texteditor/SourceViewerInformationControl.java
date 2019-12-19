@@ -449,12 +449,7 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 
 	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
-		return new IInformationControlCreator() {
-			@Override
-			public IInformationControl createInformationControl(Shell parent) {
-				return new SourceViewerInformationControl(parent, true, fSymbolicFontName, null);
-			}
-		};
+		return parent -> new SourceViewerInformationControl(parent, true, fSymbolicFontName, null);
 	}
 
 	@Override

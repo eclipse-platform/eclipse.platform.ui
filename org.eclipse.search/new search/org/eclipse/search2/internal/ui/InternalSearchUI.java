@@ -27,7 +27,6 @@ import org.eclipse.core.runtime.jobs.Job;
 
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PlatformUI;
@@ -218,23 +217,20 @@ public class InternalSearchUI {
 
 	private IStatus doRunSearchInForeground(final SearchJobRecord rec, IRunnableContext context) {
 		try {
-			context.run(true, true, new IRunnableWithProgress() {
-				@Override
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					searchJobStarted(rec);
-					try {
-						IStatus status= rec.query.run(monitor);
-						if (status.matches(IStatus.CANCEL)) {
-							throw new InterruptedException();
-						}
-						if (!status.isOK()) {
-							throw new InvocationTargetException(new CoreException(status));
-						}
-					} catch (OperationCanceledException e) {
+			context.run(true, true, monitor -> {
+				searchJobStarted(rec);
+				try {
+					IStatus status= rec.query.run(monitor);
+					if (status.matches(IStatus.CANCEL)) {
 						throw new InterruptedException();
-					} finally {
-						searchJobFinished(rec);
 					}
+					if (!status.isOK()) {
+						throw new InvocationTargetException(new CoreException(status));
+					}
+				} catch (OperationCanceledException e) {
+					throw new InterruptedException();
+				} finally {
+					searchJobFinished(rec);
 				}
 			});
 		} catch (InvocationTargetException e) {

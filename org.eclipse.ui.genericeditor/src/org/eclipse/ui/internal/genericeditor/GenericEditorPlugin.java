@@ -22,7 +22,6 @@ import org.eclipse.jface.text.quickassist.IQuickAssistProcessor;
 import org.eclipse.jface.text.reconciler.IReconciler;
 import org.eclipse.jface.text.source.ICharacterPairMatcher;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.genericeditor.hover.TextHoverRegistry;
 import org.eclipse.ui.internal.genericeditor.preferences.GenericEditorPluginPreferenceInitializer;
@@ -59,13 +58,10 @@ public class GenericEditorPlugin extends AbstractUIPlugin {
 		super.start(context);
 
 		if (PlatformUI.isWorkbenchRunning()) {
-			themeListener = new IPropertyChangeListener() {
-				@Override
-				public void propertyChange(PropertyChangeEvent event) {
-					if (IThemeManager.CHANGE_CURRENT_THEME.equals(event.getProperty()))
-						GenericEditorPluginPreferenceInitializer
-								.setThemeBasedPreferences(GenericEditorPreferenceConstants.getPreferenceStore(), true);
-				}
+			themeListener = event -> {
+				if (IThemeManager.CHANGE_CURRENT_THEME.equals(event.getProperty()))
+					GenericEditorPluginPreferenceInitializer
+							.setThemeBasedPreferences(GenericEditorPreferenceConstants.getPreferenceStore(), true);
 			};
 			PlatformUI.getWorkbench().getThemeManager().addPropertyChangeListener(themeListener);
 		}

@@ -65,12 +65,7 @@ public class RemoveTrailingWhitespaceHandler extends FileBufferOperationHandler 
 		if (containsOnlyFiles(resources))
 			return files;
 
-		final IFilter filter= new IFilter() {
-			@Override
-			public boolean accept(IResource resource) {
-				return resource != null && isAcceptableLocation(resource.getFullPath());
-			}
-		};
+		final IFilter filter= resource -> resource != null && isAcceptableLocation(resource.getFullPath());
 
 		SelectResourcesDialog dialog= new SelectResourcesDialog(getShell(), TextEditorMessages.RemoveTrailingWhitespaceHandler_dialog_title, TextEditorMessages.RemoveTrailingWhitespaceHandler_dialog_description, filter);
 		dialog.setInput(resources);

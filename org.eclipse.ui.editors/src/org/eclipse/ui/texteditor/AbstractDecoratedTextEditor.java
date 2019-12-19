@@ -510,16 +510,13 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 	@Override
 	protected IMenuListener createContextMenuListener() {
 		final IMenuListener superListener= super.createContextMenuListener();
-		return new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager menu) {
-				if (!getOverviewRulerContextMenuId().equals(menu.getId())) {
-					superListener.menuAboutToShow(menu);
-					return;
-				}
-				setFocus();
-				overviewRulerContextMenuAboutToShow(menu);
+		return menu -> {
+			if (!getOverviewRulerContextMenuId().equals(menu.getId())) {
+				superListener.menuAboutToShow(menu);
+				return;
 			}
+			setFocus();
+			overviewRulerContextMenuAboutToShow(menu);
 		};
 	}
 
@@ -1409,15 +1406,12 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 			return (T) getAnnotationAccess();
 
 		if (adapter == IShowInSource.class) {
-			return (T) new IShowInSource() {
-				@Override
-				public ShowInContext getShowInContext() {
-					ISelection selection= null;
-					ISelectionProvider selectionProvider= getSelectionProvider();
-					if (selectionProvider != null)
-						selection= selectionProvider.getSelection();
-					return new ShowInContext(getEditorInput(), selection);
-				}
+			return (T) (IShowInSource) () -> {
+				ISelection selection= null;
+				ISelectionProvider selectionProvider= getSelectionProvider();
+				if (selectionProvider != null)
+					selection= selectionProvider.getSelection();
+				return new ShowInContext(getEditorInput(), selection);
 			};
 		}
 

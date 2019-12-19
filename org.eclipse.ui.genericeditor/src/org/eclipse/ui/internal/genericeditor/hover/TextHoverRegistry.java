@@ -24,8 +24,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.core.runtime.IRegistryChangeEvent;
-import org.eclipse.core.runtime.IRegistryChangeListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -88,12 +86,7 @@ public final class TextHoverRegistry {
 	}
 
 	public TextHoverRegistry(IPreferenceStore preferenceStore) {
-		Platform.getExtensionRegistry().addRegistryChangeListener(new IRegistryChangeListener() {
-			@Override
-			public void registryChanged(IRegistryChangeEvent event) {
-				outOfSync = true;
-			}
-		}, EXTENSION_POINT_ID);
+		Platform.getExtensionRegistry().addRegistryChangeListener(event -> outOfSync = true, EXTENSION_POINT_ID);
 	}
 
 	public List<ITextHover> getAvailableHovers(ISourceViewer sourceViewer, ITextEditor editor, Set<IContentType> contentTypes) {

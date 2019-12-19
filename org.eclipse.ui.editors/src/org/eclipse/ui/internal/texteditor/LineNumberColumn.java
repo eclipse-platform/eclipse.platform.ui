@@ -29,7 +29,6 @@ import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.window.Window;
 
@@ -241,91 +240,45 @@ public class LineNumberColumn extends AbstractContributedRulerColumn implements 
 		// listen to changes
 		fDispatcher= new PropertyEventDispatcher(store);
 
-		fDispatcher.addPropertyChangeListener(FG_COLOR_KEY, new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				updateForegroundColor(store, fDelegate);
-				fDelegate.redraw();
-			}
+		fDispatcher.addPropertyChangeListener(FG_COLOR_KEY, event -> {
+			updateForegroundColor(store, fDelegate);
+			fDelegate.redraw();
 		});
-		IPropertyChangeListener backgroundHandler= new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				updateBackgroundColor(store, fDelegate);
-				fDelegate.redraw();
-			}
+		IPropertyChangeListener backgroundHandler= event -> {
+			updateBackgroundColor(store, fDelegate);
+			fDelegate.redraw();
 		};
 		fDispatcher.addPropertyChangeListener(BG_COLOR_KEY, backgroundHandler);
 		fDispatcher.addPropertyChangeListener(USE_DEFAULT_BG_KEY, backgroundHandler);
 
-		fDispatcher.addPropertyChangeListener(LINE_NUMBER_KEY, new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				// only handle quick diff on/off information, but not ruler visibility (handled by AbstractDecoratedTextEditor)
-				updateLineNumbersVisibility(fDelegate);
-			}
-		});
+		fDispatcher.addPropertyChangeListener(LINE_NUMBER_KEY, event -> updateLineNumbersVisibility(fDelegate));
 
-		fDispatcher.addPropertyChangeListener(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_CHARACTER_MODE, new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				updateCharacterMode(store, fDelegate);
-			}
-		});
+		fDispatcher.addPropertyChangeListener(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_CHARACTER_MODE, event -> updateCharacterMode(store, fDelegate));
 
-		fDispatcher.addPropertyChangeListener(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_RENDERING_MODE, new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				updateRevisionRenderingMode(store, fDelegate);
-			}
-		});
+		fDispatcher.addPropertyChangeListener(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_RENDERING_MODE, event -> updateRevisionRenderingMode(store, fDelegate));
 
-		fDispatcher.addPropertyChangeListener(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_SHOW_AUTHOR, new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				updateRevisionAuthorVisibility(store, fDelegate);
-			}
-		});
+		fDispatcher.addPropertyChangeListener(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_SHOW_AUTHOR, event -> updateRevisionAuthorVisibility(store, fDelegate));
 
-		fDispatcher.addPropertyChangeListener(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_SHOW_REVISION, new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				updateRevisionIdVisibility(store, fDelegate);
-			}
-		});
+		fDispatcher.addPropertyChangeListener(AbstractDecoratedTextEditorPreferenceConstants.REVISION_RULER_SHOW_REVISION, event -> updateRevisionIdVisibility(store, fDelegate));
 
-		fDispatcher.addPropertyChangeListener(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON, new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				updateQuickDiffVisibility(fDelegate);
-			}
-		});
+		fDispatcher.addPropertyChangeListener(AbstractDecoratedTextEditorPreferenceConstants.QUICK_DIFF_ALWAYS_ON, event -> updateQuickDiffVisibility(fDelegate));
 
 		if (changedPref != null) {
-			fDispatcher.addPropertyChangeListener(changedPref.getColorPreferenceKey(), new IPropertyChangeListener() {
-				@Override
-				public void propertyChange(PropertyChangeEvent event) {
-					updateChangedColor(changedPref, store, fDelegate);
-					fDelegate.redraw();
-				}
+			fDispatcher.addPropertyChangeListener(changedPref.getColorPreferenceKey(), event -> {
+				updateChangedColor(changedPref, store, fDelegate);
+				fDelegate.redraw();
 			});
 		}
 		if (addedPref != null) {
-			fDispatcher.addPropertyChangeListener(addedPref.getColorPreferenceKey(), new IPropertyChangeListener() {
-				@Override
-				public void propertyChange(PropertyChangeEvent event) {
-					updateAddedColor(addedPref, store, fDelegate);
-					fDelegate.redraw();
-				}
+			fDispatcher.addPropertyChangeListener(addedPref.getColorPreferenceKey(), event -> {
+				updateAddedColor(addedPref, store, fDelegate);
+				fDelegate.redraw();
 			});
 		}
 		if (deletedPref != null) {
-			fDispatcher.addPropertyChangeListener(deletedPref.getColorPreferenceKey(), new IPropertyChangeListener() {
-				@Override
-				public void propertyChange(PropertyChangeEvent event) {
-					updateDeletedColor(deletedPref, store, fDelegate);
-					fDelegate.redraw();
-				}
+			fDispatcher.addPropertyChangeListener(deletedPref.getColorPreferenceKey(), event -> {
+				updateDeletedColor(deletedPref, store, fDelegate);
+				fDelegate.redraw();
 			});
 		}
 	}

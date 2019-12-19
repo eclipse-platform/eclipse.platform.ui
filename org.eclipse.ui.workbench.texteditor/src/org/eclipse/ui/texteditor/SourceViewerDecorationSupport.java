@@ -262,12 +262,7 @@ public class SourceViewerDecorationSupport {
 
 		fPreferenceStore= store;
 		if (fPreferenceStore != null) {
-			fPropertyChangeListener= new IPropertyChangeListener() {
-				@Override
-				public void propertyChange(PropertyChangeEvent event) {
-					handlePreferenceStoreChanged(event);
-				}
-			};
+			fPropertyChangeListener= event -> handlePreferenceStoreChanged(event);
 			fPreferenceStore.addPropertyChangeListener(fPropertyChangeListener);
 		}
 

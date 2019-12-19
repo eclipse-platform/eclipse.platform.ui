@@ -16,13 +16,11 @@ package org.eclipse.jface.contentassist;
 import java.util.HashMap;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
@@ -56,12 +54,7 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 
 		private InternalDocument() {
 			super(fText.getText());
-			fModifyListener= new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					set(fText.getText());
-				}
-			};
+			fModifyListener= e -> set(fText.getText());
 			fText.addModifyListener(fModifyListener);
 		}
 
@@ -148,13 +141,7 @@ public class TextContentAssistSubjectAdapter extends AbstractControlContentAssis
 	@Override
 	public boolean addSelectionListener(final SelectionListener selectionListener) {
 		fText.addSelectionListener(selectionListener);
-		Listener listener= new Listener() {
-			@Override
-			public void handleEvent(Event e) {
-				selectionListener.widgetSelected(new SelectionEvent(e));
-
-			}
-		};
+		Listener listener= e -> selectionListener.widgetSelected(new SelectionEvent(e));
 		fText.addListener(SWT.Modify, listener);
 		fModifyListeners.put(selectionListener, listener);
 		return true;

@@ -15,13 +15,10 @@ package org.eclipse.jface.text.source.projection;
 
 import java.util.Iterator;
 
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.resource.JFaceResources;
 
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.Position;
@@ -158,12 +155,7 @@ class ProjectionAnnotationHover implements IAnnotationHover, IAnnotationHoverExt
 	@Override
 	public IInformationControlCreator getHoverControlCreator() {
 		if (fInformationControlCreator == null) {
-			fInformationControlCreator= new IInformationControlCreator() {
-				@Override
-				public IInformationControl createInformationControl(Shell parent) {
-					return new SourceViewerInformationControl(parent, false, JFaceResources.TEXT_FONT, null);
-				}
-			};
+			fInformationControlCreator= parent -> new SourceViewerInformationControl(parent, false, JFaceResources.TEXT_FONT, null);
 		}
 		return fInformationControlCreator;
 	}
@@ -171,12 +163,7 @@ class ProjectionAnnotationHover implements IAnnotationHover, IAnnotationHoverExt
 	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
 		if (fInformationPresenterControlCreator == null) {
-			fInformationPresenterControlCreator= new IInformationControlCreator() {
-				@Override
-				public IInformationControl createInformationControl(Shell parent) {
-					return new SourceViewerInformationControl(parent, true, JFaceResources.TEXT_FONT, null);
-				}
-			};
+			fInformationPresenterControlCreator= parent -> new SourceViewerInformationControl(parent, true, JFaceResources.TEXT_FONT, null);
 		}
 		return fInformationPresenterControlCreator;
 	}

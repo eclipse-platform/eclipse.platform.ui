@@ -25,7 +25,6 @@ import org.osgi.service.prefs.BackingStoreException;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 
 import org.eclipse.text.templates.ContextTypeRegistry;
 import org.eclipse.text.templates.TemplatePersistenceData;
@@ -123,21 +122,18 @@ public class TemplateStoreCore {
 	 */
 	public void startListeningForPreferenceChanges() {
 		if (fPropertyListener == null) {
-			fPropertyListener= new IPreferenceChangeListener() {
-				@Override
-				public void preferenceChange(PreferenceChangeEvent event) {
-					/*
-					 * Don't load if we are in the process of saving ourselves. We are in sync anyway after the
-					 * save operation, and clients may trigger reloading by listening to preference store
-					 * updates.
-					 */
-					if (!fIgnorePreferenceStoreChanges && fKey.equals(event.getKey()))
-						try {
-							load();
-						} catch (IOException x) {
-							handleException(x);
-						}
-				}
+			fPropertyListener= event -> {
+				/*
+				 * Don't load if we are in the process of saving ourselves. We are in sync anyway after the
+				 * save operation, and clients may trigger reloading by listening to preference store
+				 * updates.
+				 */
+				if (!fIgnorePreferenceStoreChanges && fKey.equals(event.getKey()))
+					try {
+						load();
+					} catch (IOException x) {
+						handleException(x);
+					}
 			};
 			fPreferenceStore.addPreferenceChangeListener(fPropertyListener);
 		}

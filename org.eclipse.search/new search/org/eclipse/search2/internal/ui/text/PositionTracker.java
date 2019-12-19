@@ -282,12 +282,9 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 	@Override
 	public void bufferDisposed(IFileBuffer buffer) {
 		final int[] trackCount= new int[1];
-		doForExistingMatchesIn(buffer, new IFileBufferMatchOperation() {
-			@Override
-			public void run(ITextFileBuffer textBuffer, Match match) {
-				trackCount[0]++;
-				untrackPosition(textBuffer, match);
-			}
+		doForExistingMatchesIn(buffer, (textBuffer, match) -> {
+			trackCount[0]++;
+			untrackPosition(textBuffer, match);
 		});
 	}
 
@@ -299,14 +296,11 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 	@Override
 	public void bufferContentReplaced(IFileBuffer buffer) {
 		final int[] trackCount= new int[1];
-		doForExistingMatchesIn(buffer, new IFileBufferMatchOperation() {
-			@Override
-			public void run(ITextFileBuffer textBuffer, Match match) {
-				trackCount[0]++;
-				AbstractTextSearchResult result= fMatchesToSearchResults.get(match);
-				untrackPosition(textBuffer, match);
-				trackPosition(result, textBuffer, match);
-			}
+		doForExistingMatchesIn(buffer, (textBuffer, match) -> {
+			trackCount[0]++;
+			AbstractTextSearchResult result= fMatchesToSearchResults.get(match);
+			untrackPosition(textBuffer, match);
+			trackPosition(result, textBuffer, match);
 		});
 	}
 
@@ -320,30 +314,27 @@ public class PositionTracker implements IQueryListener, ISearchResultListener, I
 		if (isDirty)
 			return;
 		final int[] trackCount= new int[1];
-		doForExistingMatchesIn(buffer, new IFileBufferMatchOperation() {
-			@Override
-			public void run(ITextFileBuffer textBuffer, Match match) {
-				trackCount[0]++;
-				Position pos= fMatchesToPositions.get(match);
-				if (pos != null) {
-					if (pos.isDeleted()) {
-						AbstractTextSearchResult result= fMatchesToSearchResults.get(match);
-						// might be that the containing element has been removed.
-						if (result != null) {
-							result.removeMatch(match);
-						}
-						untrackPosition(textBuffer, match);
-					} else {
-						if (match.getBaseUnit() == Match.UNIT_LINE) {
-							try {
-								pos= convertToLinePosition(pos, textBuffer.getDocument());
-							} catch (BadLocationException e) {
-								SearchPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, SearchPlugin.getID(), 0, e.getLocalizedMessage(), e));
-							}
-						}
-						match.setOffset(pos.getOffset());
-						match.setLength(pos.getLength());
+		doForExistingMatchesIn(buffer, (textBuffer, match) -> {
+			trackCount[0]++;
+			Position pos= fMatchesToPositions.get(match);
+			if (pos != null) {
+				if (pos.isDeleted()) {
+					AbstractTextSearchResult result= fMatchesToSearchResults.get(match);
+					// might be that the containing element has been removed.
+					if (result != null) {
+						result.removeMatch(match);
 					}
+					untrackPosition(textBuffer, match);
+				} else {
+					if (match.getBaseUnit() == Match.UNIT_LINE) {
+						try {
+							pos= convertToLinePosition(pos, textBuffer.getDocument());
+						} catch (BadLocationException e) {
+							SearchPlugin.getDefault().getLog().log(new Status(IStatus.ERROR, SearchPlugin.getID(), 0, e.getLocalizedMessage(), e));
+						}
+					}
+					match.setOffset(pos.getOffset());
+					match.setLength(pos.getLength());
 				}
 			}
 		});

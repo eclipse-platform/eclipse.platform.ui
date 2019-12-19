@@ -24,8 +24,6 @@ import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.RGB;
@@ -330,12 +328,9 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 				}
 			});
 
-			fTable.addTraverseListener(new TraverseListener() {
-				@Override
-				public void keyTraversed(TraverseEvent e) {
-					if (e.keyCode == SWT.ESC) {
-						fManager.hideInformationControl();
-					}
+			fTable.addTraverseListener(e -> {
+				if (e.keyCode == SWT.ESC) {
+					fManager.hideInformationControl();
 				}
 			});
 		}
@@ -385,13 +380,10 @@ public class MultipleHyperlinkPresenter extends DefaultHyperlinkPresenter implem
 
 		@Override
 		public IInformationControlCreator getHoverControlCreator() {
-			return new IInformationControlCreator() {
-				@Override
-				public IInformationControl createInformationControl(Shell parent) {
-					Color foregroundColor= fTextViewer.getTextWidget().getForeground();
-					Color backgroundColor= fTextViewer.getTextWidget().getBackground();
-					return new LinkListInformationControl(parent, fManager, foregroundColor, backgroundColor);
-				}
+			return parent -> {
+				Color foregroundColor= fTextViewer.getTextWidget().getForeground();
+				Color backgroundColor= fTextViewer.getTextWidget().getBackground();
+				return new LinkListInformationControl(parent, fManager, foregroundColor, backgroundColor);
 			};
 		}
 	}

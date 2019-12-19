@@ -785,12 +785,7 @@ public class SearchView extends PageBookView implements ISearchResultViewPart, I
 		if (superAdapter != null)
 			return (T) superAdapter;
 		if (adapter == IShowInSource.class) {
-			return (T) new IShowInSource() {
-				@Override
-				public ShowInContext getShowInContext() {
-					return new ShowInContext(null, getSelectionProvider().getSelection());
-				}
-			};
+			return (T) (IShowInSource) () -> new ShowInContext(null, getSelectionProvider().getSelection());
 		}
 		return null;
 	}

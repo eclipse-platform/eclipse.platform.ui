@@ -18,7 +18,6 @@ import java.util.Iterator;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IMarkerDelta;
@@ -179,12 +178,9 @@ public class ResourceMarkerAnnotationModel extends AbstractMarkerAnnotationModel
 
 	@Override
 	protected void deleteMarkers(final IMarker[] markers) throws CoreException {
-		fWorkspace.run(new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				for (IMarker marker : markers) {
-					marker.delete();
-				}
+		fWorkspace.run((IWorkspaceRunnable) monitor -> {
+			for (IMarker marker : markers) {
+				marker.delete();
 			}
 		}, null, IWorkspace.AVOID_UPDATE, null);
 	}

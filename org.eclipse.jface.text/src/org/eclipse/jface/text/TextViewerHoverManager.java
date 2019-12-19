@@ -15,7 +15,6 @@ package org.eclipse.jface.text;
 
 
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
@@ -87,30 +86,17 @@ class TextViewerHoverManager extends AbstractHoverInformationControlManager impl
 	public TextViewerHoverManager(TextViewer textViewer, IInformationControlCreator creator) {
 		super(creator);
 		fTextViewer= textViewer;
-		fStopper= new ITextListener() {
-			@Override
-			public void textChanged(TextEvent event) {
-				synchronized (fMutex) {
-					if (fThread != null) {
-						fThread.interrupt();
-						fThread= null;
-					}
+		fStopper= event -> {
+			synchronized (fMutex) {
+				if (fThread != null) {
+					fThread.interrupt();
+					fThread= null;
 				}
 			}
 		};
-		fViewportListener= new IViewportListener() {
-			@Override
-			public void viewportChanged(int verticalOffset) {
-				fProcessMouseHoverEvent= false;
-			}
-		};
+		fViewportListener= verticalOffset -> fProcessMouseHoverEvent= false;
 		fTextViewer.addViewportListener(fViewportListener);
-		fMouseMoveListener= new MouseMoveListener() {
-			@Override
-			public void mouseMove(MouseEvent event) {
-				fProcessMouseHoverEvent= true;
-			}
-		};
+		fMouseMoveListener= event -> fProcessMouseHoverEvent= true;
 		fTextViewer.getTextWidget().addMouseMoveListener(fMouseMoveListener);
 	}
 

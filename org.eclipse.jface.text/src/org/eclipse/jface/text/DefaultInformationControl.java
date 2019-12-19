@@ -411,12 +411,7 @@ public class DefaultInformationControl extends AbstractInformationControl implem
 
 	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
-		return new IInformationControlCreator() {
-			@Override
-			public IInformationControl createInformationControl(Shell parent) {
-				return new DefaultInformationControl(parent, (ToolBarManager) null, fPresenter);
-			}
-		};
+		return parent -> new DefaultInformationControl(parent, (ToolBarManager) null, fPresenter);
 	}
 
 }

@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.core.resources.IMarker;
@@ -382,12 +381,9 @@ public final class MarkerUtilities {
 	 */
 	public static void createMarker(final IResource resource, final Map<String, Object> attributes, final String markerType) throws CoreException {
 
-		IWorkspaceRunnable r= new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				IMarker marker= resource.createMarker(markerType);
-				marker.setAttributes(attributes);
-			}
+		IWorkspaceRunnable r= monitor -> {
+			IMarker marker= resource.createMarker(markerType);
+			marker.setAttributes(attributes);
 		};
 
 		resource.getWorkspace().run(r, null,IWorkspace.AVOID_UPDATE, null);

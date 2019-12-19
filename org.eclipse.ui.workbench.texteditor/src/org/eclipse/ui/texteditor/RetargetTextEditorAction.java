@@ -18,7 +18,6 @@ package org.eclipse.ui.texteditor;
 
 import java.util.ResourceBundle;
 
-import org.eclipse.swt.events.HelpEvent;
 import org.eclipse.swt.events.HelpListener;
 
 import org.eclipse.jface.action.IAction;
@@ -46,12 +45,7 @@ public final class RetargetTextEditorAction extends ResourceAction {
 	 */
 	private HelpListener fLocalHelpListener;
 	/** The listener to pick up changes of the target action. */
-	private IPropertyChangeListener fListener= new IPropertyChangeListener() {
-		@Override
-		public void propertyChange(PropertyChangeEvent event) {
-			update(event);
-		}
-	};
+	private IPropertyChangeListener fListener= event -> update(event);
 
 	/**
 	 * Creates a new action. The action configures its initial visual
@@ -204,21 +198,18 @@ public final class RetargetTextEditorAction extends ResourceAction {
 	 * @since 2.1
 	 */
 	private void installHelpListener() {
-		super.setHelpListener(new HelpListener() {
-			@Override
-			public void helpRequested(HelpEvent e) {
-				HelpListener listener= null;
-				if (fAction != null) {
-					// if we have a handler, see if it has a help listener
-					listener= fAction.getHelpListener();
-					if (listener == null)
-						// use our own help listener
-						listener= fLocalHelpListener;
-				}
-				if (listener != null)
-					// pass on the event
-					listener.helpRequested(e);
+		super.setHelpListener(e -> {
+			HelpListener listener= null;
+			if (fAction != null) {
+				// if we have a handler, see if it has a help listener
+				listener= fAction.getHelpListener();
+				if (listener == null)
+					// use our own help listener
+					listener= fLocalHelpListener;
 			}
+			if (listener != null)
+				// pass on the event
+				listener.helpRequested(e);
 		});
 	}
 

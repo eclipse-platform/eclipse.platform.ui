@@ -221,17 +221,14 @@ public class ResourceTextFileBufferManager extends TextFileBufferManager {
 
 	@Override
 	public void validateState(final IFileBuffer[] fileBuffers, IProgressMonitor monitor, final Object computationContext) throws CoreException {
-		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor progressMonitor) throws CoreException {
-				IFileBuffer[] toValidate= findFileBuffersToValidate(fileBuffers);
-				validationStateAboutToBeChanged(toValidate);
-				try {
-					IStatus status= validateEdit(toValidate, computationContext);
-					validationStateChanged(toValidate, true, status);
-				} catch (RuntimeException x) {
-					validationStateChangedFailed(toValidate);
-				}
+		IWorkspaceRunnable runnable= progressMonitor -> {
+			IFileBuffer[] toValidate= findFileBuffersToValidate(fileBuffers);
+			validationStateAboutToBeChanged(toValidate);
+			try {
+				IStatus status= validateEdit(toValidate, computationContext);
+				validationStateChanged(toValidate, true, status);
+			} catch (RuntimeException x) {
+				validationStateChangedFailed(toValidate);
 			}
 		};
 		ResourcesPlugin.getWorkspace().run(runnable, computeValidateStateRule(fileBuffers), IWorkspace.AVOID_UPDATE, monitor);

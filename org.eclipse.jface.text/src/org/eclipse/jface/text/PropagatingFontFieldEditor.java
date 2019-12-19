@@ -22,8 +22,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.jface.preference.FontFieldEditor;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 
 
 /**
@@ -118,12 +116,9 @@ public class PropagatingFontFieldEditor extends FontFieldEditor {
 	 * @param targetKey the key to be used in the target preference store
 	 */
 	public static void startPropagate(final IPreferenceStore source, final String sourceKey, final IPreferenceStore target, final String targetKey) {
-		source.addPropertyChangeListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				if (sourceKey.equals(event.getProperty()))
-					propagateFont(source, sourceKey, target, targetKey);
-			}
+		source.addPropertyChangeListener(event -> {
+			if (sourceKey.equals(event.getProperty()))
+				propagateFont(source, sourceKey, target, targetKey);
 		});
 
 		propagateFont(source, sourceKey, target, targetKey);

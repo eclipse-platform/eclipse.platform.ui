@@ -13,11 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.texteditor;
 
-import org.eclipse.swt.widgets.Shell;
-
 import org.eclipse.jface.resource.JFaceResources;
 
-import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.source.ILineRange;
 import org.eclipse.jface.text.source.ISourceViewer;
@@ -50,24 +47,16 @@ public class TextChangeHover extends LineChangeHover {
 
 	@Override
 	public IInformationControlCreator getHoverControlCreator() {
-		return new IInformationControlCreator() {
-			@Override
-			public IInformationControl createInformationControl(Shell parent) {
-				SourceViewerInformationControl control= new SourceViewerInformationControl(parent, false, JFaceResources.TEXT_FONT, EditorsUI.getTooltipAffordanceString());
-				control.setHorizontalScrollPixel(fLastScrollIndex);
-				return control;
-			}
+		return parent -> {
+			SourceViewerInformationControl control= new SourceViewerInformationControl(parent, false, JFaceResources.TEXT_FONT, EditorsUI.getTooltipAffordanceString());
+			control.setHorizontalScrollPixel(fLastScrollIndex);
+			return control;
 		};
 	}
 
 	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
-		return new IInformationControlCreator() {
-			@Override
-			public IInformationControl createInformationControl(Shell parent) {
-				return new SourceViewerInformationControl(parent, true, JFaceResources.TEXT_FONT, null);
-			}
-		};
+		return parent -> new SourceViewerInformationControl(parent, true, JFaceResources.TEXT_FONT, null);
 	}
 
 }

@@ -157,12 +157,9 @@ public class FileDocumentProviderTest {
 		// Put an UI event in the queue which will stop the workspace lock job
 		// after a delay so that we can verify the UI events are still
 		// dispatched after the call to refreshFile() below
-		Display.getCurrent().timerExec(500, new Runnable() {
-			@Override
-			public void run() {
-				stopLockingFlag.set(true);
-				System.out.println("UI event dispatched, lock removed");
-			}
+		Display.getCurrent().timerExec(500, () -> {
+			stopLockingFlag.set(true);
+			System.out.println("UI event dispatched, lock removed");
 		});
 
 		// Original code will lock UI thread here because it will try to acquire
@@ -189,12 +186,9 @@ public class FileDocumentProviderTest {
 		// Put an UI event in the queue which will stop the workspace lock job
 		// after a delay so that we can verify the UI events are still
 		// dispatched after the call to refreshFile() below
-		Display.getCurrent().timerExec(500, new Runnable() {
-			@Override
-			public void run() {
-				stopLockingFlag.set(true);
-				System.out.println("UI event dispatched, lock removed");
-			}
+		Display.getCurrent().timerExec(500, () -> {
+			stopLockingFlag.set(true);
+			System.out.println("UI event dispatched, lock removed");
 		});
 
 		// Original code will lock UI thread here because it will try to acquire
@@ -218,12 +212,9 @@ public class FileDocumentProviderTest {
 
 		// Put an UI event in the queue which will stop the workspace lock job
 		// after a delay
-		Display.getCurrent().timerExec(600, new Runnable() {
-			@Override
-			public void run() {
-				stopLockingFlag.set(true);
-				System.out.println("UI event dispatched, lock removed");
-			}
+		Display.getCurrent().timerExec(600, () -> {
+			stopLockingFlag.set(true);
+			System.out.println("UI event dispatched, lock removed");
 		});
 
 		// Original code will lock UI thread here because it will try to acquire
@@ -355,18 +346,15 @@ class LockJob extends WorkspaceJob {
 
 	@Override
 	public IStatus runInWorkspace(IProgressMonitor monitor) throws CoreException {
-		IWorkspaceRunnable workspaceRunnable = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor pm) throws CoreException {
-				try {
-					run2();
-				} catch (Exception e) {
-					// Re-throw as OperationCanceledException, which will be
-					// caught and re-thrown as InterruptedException below.
-					throw new OperationCanceledException(e.getMessage());
-				}
-				// CoreException and OperationCanceledException are propagated
+		IWorkspaceRunnable workspaceRunnable = pm -> {
+			try {
+				run2();
+			} catch (Exception e) {
+				// Re-throw as OperationCanceledException, which will be
+				// caught and re-thrown as InterruptedException below.
+				throw new OperationCanceledException(e.getMessage());
 			}
+			// CoreException and OperationCanceledException are propagated
 		};
 		ResourcesPlugin.getWorkspace().run(workspaceRunnable,
 				resource, IResource.NONE, monitor);

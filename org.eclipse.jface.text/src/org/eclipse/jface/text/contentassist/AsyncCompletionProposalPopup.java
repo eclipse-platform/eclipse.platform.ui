@@ -35,7 +35,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Control;
 
-import org.eclipse.core.runtime.ISafeRunnable;
 import org.eclipse.core.runtime.SafeRunner;
 
 import org.eclipse.jface.contentassist.IContentAssistSubjectControl;
@@ -348,15 +347,12 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 		for (IContentAssistProcessor processor : processors) {
 			futures.add(CompletableFuture.supplyAsync(() -> {
 				AtomicReference<List<ICompletionProposal>> result= new AtomicReference<>();
-				SafeRunner.run(new ISafeRunnable() {
-					@Override
-					public void run() throws Exception {
-						ICompletionProposal[] proposals= processor.computeCompletionProposals(fViewer, invocationOffset);
-						if (proposals == null) {
-							result.set(Collections.emptyList());
-						} else {
-							result.set(Arrays.asList(proposals));
-						}
+				SafeRunner.run(() -> {
+					ICompletionProposal[] proposals= processor.computeCompletionProposals(fViewer, invocationOffset);
+					if (proposals == null) {
+						result.set(Collections.emptyList());
+					} else {
+						result.set(Arrays.asList(proposals));
 					}
 				});
 				List<ICompletionProposal> proposals= result.get();

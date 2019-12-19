@@ -24,7 +24,6 @@ import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.resources.IFile;
 
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -265,12 +264,7 @@ public class EncodingActionGroup extends ActionGroup {
 
 			String title= TextEditorMessages.Editor_ConvertEncoding_Custom_dialog_title;
 			String message= TextEditorMessages.Editor_ConvertEncoding_Custom_dialog_message;
-			IInputValidator inputValidator = new IInputValidator() {
-				@Override
-				public String isValid(String newText) {
-					return (newText == null || newText.isEmpty()) ? " " : null; //$NON-NLS-1$
-				}
-			};
+			IInputValidator inputValidator = newText -> (newText == null || newText.isEmpty()) ? " " : null;
 
 			String initialValue= encodingSupport.getEncoding();
 			if (initialValue == null)
@@ -356,12 +350,7 @@ public class EncodingActionGroup extends ActionGroup {
 		IMenuManager editMenu= menuManager.findMenuUsingPath(IWorkbenchActionConstants.M_EDIT);
 		if (editMenu != null && !fRetargetActions.isEmpty()) {
 			MenuManager subMenu= new MenuManager(TextEditorMessages.Editor_ConvertEncoding_submenu_label);
-			subMenu.addMenuListener(new IMenuListener() {
-				@Override
-				public void menuAboutToShow(IMenuManager manager) {
-					update();
-				}
-			});
+			subMenu.addMenuListener(manager -> update());
 
 			Iterator<RetargetTextEditorAction> e= fRetargetActions.iterator();
 			subMenu.add(e.next());

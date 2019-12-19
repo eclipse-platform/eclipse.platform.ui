@@ -21,8 +21,6 @@ import java.util.List;
 import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -49,10 +47,8 @@ import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
@@ -122,12 +118,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 			fHistorySizeTextField= new Text(ancestor, SWT.BORDER | SWT.RIGHT);
 			fHistorySizeTextField.setTextLimit(2);
 			fHistorySizeTextField.setText(String.valueOf(fHistorySize));
-			fHistorySizeTextField.addModifyListener(new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					validateDialogState();
-				}
-			});
+			fHistorySizeTextField.addModifyListener(e -> validateDialogState());
 
 			GridData gridData= new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1);
 			gridData.widthHint= convertWidthInCharsToPixels(6);
@@ -332,12 +323,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 		fRemoveButton.setLayoutData(new GridData(GridData.BEGINNING, GridData.BEGINNING, false, false));
 		SWTUtil.setButtonDimensionHint(fRemoveButton);
 
-		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				validateDialogState();
-			}
-		});
+		fViewer.addSelectionChangedListener(event -> validateDialogState());
 
 		fLink= new Link(parent, SWT.NONE);
 		configureHistoryLink();

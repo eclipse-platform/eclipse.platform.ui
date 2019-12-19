@@ -90,12 +90,7 @@ public class ConvertLineDelimitersAction extends FileBufferOperationAction {
 			return filterUnacceptableFiles(files);
 		}
 
-		final IFilter filter= new IFilter() {
-			@Override
-			public boolean accept(IResource resource) {
-				return resource != null && isAcceptableLocation(resource.getFullPath());
-			}
-		};
+		final IFilter filter= resource -> resource != null && isAcceptableLocation(resource.getFullPath());
 
 		SelectResourcesDialog dialog= new SelectResourcesDialog(getShell(), getDialogTitle(), TextEditorMessages.ConvertLineDelimitersAction_dialog_description, filter) {
 			@Override

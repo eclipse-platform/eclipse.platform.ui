@@ -35,8 +35,6 @@ import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.events.ShellAdapter;
 import org.eclipse.swt.events.ShellEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
@@ -445,45 +443,42 @@ class FindReplaceDialog extends Dialog {
 		Composite statusBar= createStatusAndCloseButton(panel);
 		setGridData(statusBar, SWT.FILL, true, SWT.BOTTOM, false);
 
-		panel.addTraverseListener(new TraverseListener() {
-			@Override
-			public void keyTraversed(TraverseEvent e) {
-				if (e.detail == SWT.TRAVERSE_RETURN) {
-					if (!Util.isMac()) {
-						Control controlWithFocus= getShell().getDisplay().getFocusControl();
-						if (controlWithFocus != null && (controlWithFocus.getStyle() & SWT.PUSH) == SWT.PUSH)
-							return;
-					}
-					Event event= new Event();
-					event.type= SWT.Selection;
-					event.stateMask= e.stateMask;
-					fFindNextButton.notifyListeners(SWT.Selection, event);
-					e.doit= false;
+		panel.addTraverseListener(e -> {
+			if (e.detail == SWT.TRAVERSE_RETURN) {
+				if (!Util.isMac()) {
+					Control controlWithFocus= getShell().getDisplay().getFocusControl();
+					if (controlWithFocus != null && (controlWithFocus.getStyle() & SWT.PUSH) == SWT.PUSH)
+						return;
 				}
-				else if (e.detail == SWT.TRAVERSE_MNEMONIC) {
-					Character mnemonic= Character.valueOf(Character.toLowerCase(e.character));
-					if (fMnemonicButtonMap.containsKey(mnemonic)) {
-						Button button= fMnemonicButtonMap.get(mnemonic);
-						if ((fFindField.isFocusControl() || fReplaceField.isFocusControl() || (button.getStyle() & SWT.PUSH) != 0)
-								&& button.isEnabled()) {
-							Event event= new Event();
-							event.type= SWT.Selection;
-							event.stateMask= e.stateMask;
-							if ((button.getStyle() & SWT.RADIO) != 0) {
-								Composite buttonParent= button.getParent();
-								if (buttonParent != null) {
-									Control[] children= buttonParent.getChildren();
-									for (int i= 0; i < children.length; i++)
-										((Button)children[i]).setSelection(false);
-								}
-								button.setSelection(true);
-							} else {
-								button.setSelection(!button.getSelection());
+				Event event1= new Event();
+				event1.type= SWT.Selection;
+				event1.stateMask= e.stateMask;
+				fFindNextButton.notifyListeners(SWT.Selection, event1);
+				e.doit= false;
+			}
+			else if (e.detail == SWT.TRAVERSE_MNEMONIC) {
+				Character mnemonic= Character.valueOf(Character.toLowerCase(e.character));
+				if (fMnemonicButtonMap.containsKey(mnemonic)) {
+					Button button= fMnemonicButtonMap.get(mnemonic);
+					if ((fFindField.isFocusControl() || fReplaceField.isFocusControl() || (button.getStyle() & SWT.PUSH) != 0)
+							&& button.isEnabled()) {
+						Event event2= new Event();
+						event2.type= SWT.Selection;
+						event2.stateMask= e.stateMask;
+						if ((button.getStyle() & SWT.RADIO) != 0) {
+							Composite buttonParent= button.getParent();
+							if (buttonParent != null) {
+								Control[] children= buttonParent.getChildren();
+								for (int i= 0; i < children.length; i++)
+									((Button)children[i]).setSelection(false);
 							}
-							button.notifyListeners(SWT.Selection, event);
-							e.detail= SWT.TRAVERSE_NONE;
-							e.doit= true;
+							button.setSelection(true);
+						} else {
+							button.setSelection(!button.getSelection());
 						}
+						button.notifyListeners(SWT.Selection, event2);
+						e.detail= SWT.TRAVERSE_NONE;
+						e.doit= true;
 					}
 				}
 			}
@@ -661,12 +656,7 @@ class FindReplaceDialog extends Dialog {
 	 */
 	private Composite createInputPanel(Composite parent) {
 
-		ModifyListener listener= new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updateButtonState();
-			}
-		};
+		ModifyListener listener= e -> updateButtonState();
 
 		Composite panel= new Composite(parent, SWT.NULL);
 		GridLayout layout= new GridLayout();

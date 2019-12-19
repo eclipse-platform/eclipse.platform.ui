@@ -31,7 +31,6 @@ import org.eclipse.core.runtime.IContributor;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.ILog;
-import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
@@ -90,13 +89,7 @@ public class MarkerAnnotationOrderTest {
 		final ArrayList<IStatus> list= new ArrayList<>(2);
 		Bundle bundle= Platform.getBundle(EditorsUI.PLUGIN_ID);
 		ILog log= Platform.getLog(bundle);
-		log.addLogListener(new ILogListener() {
-
-			@Override
-			public void logging(IStatus status, String plugin) {
-				list.add(status);
-			}
-		});
+		log.addLogListener((status, plugin) -> list.add(status));
 
 		TestMarkerAnnotationModel t1= new TestMarkerAnnotationModel();
 		Position position= new Position(0);

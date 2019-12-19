@@ -29,7 +29,6 @@ import org.eclipse.text.templates.TemplateStoreCore;
 import org.eclipse.jface.preference.IPersistentPreferenceStore;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
  * A collection of templates. Clients may instantiate this class. In order to
@@ -111,21 +110,18 @@ public class TemplateStore extends TemplateStoreCore {
 	@Override
 	public final void startListeningForPreferenceChanges() {
 		if (fPropertyListener == null) {
-			fPropertyListener= new IPropertyChangeListener() {
-				@Override
-				public void propertyChange(PropertyChangeEvent event) {
-					/*
-					 * Don't load if we are in the process of saving ourselves. We are in sync anyway after the
-					 * save operation, and clients may trigger reloading by listening to preference store
-					 * updates.
-					 */
-					if (!fIgnorePreferenceStoreChanges && getKey().equals(event.getProperty()))
-						try {
-							load();
-						} catch (IOException x) {
-							handleException(x);
-						}
-				}
+			fPropertyListener= event -> {
+				/*
+				 * Don't load if we are in the process of saving ourselves. We are in sync anyway after the
+				 * save operation, and clients may trigger reloading by listening to preference store
+				 * updates.
+				 */
+				if (!fIgnorePreferenceStoreChanges && getKey().equals(event.getProperty()))
+					try {
+						load();
+					} catch (IOException x) {
+						handleException(x);
+					}
 			};
 			fPreferenceStore.addPropertyChangeListener(fPropertyListener);
 		}

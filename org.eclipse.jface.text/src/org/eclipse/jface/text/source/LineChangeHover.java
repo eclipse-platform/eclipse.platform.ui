@@ -17,13 +17,11 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.jface.action.ToolBarManager;
 
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.information.IInformationProviderExtension2;
 
@@ -313,11 +311,6 @@ public class LineChangeHover implements IAnnotationHover, IAnnotationHoverExtens
 
 	@Override
 	public IInformationControlCreator getInformationPresenterControlCreator() {
-		return new IInformationControlCreator() {
-			@Override
-			public IInformationControl createInformationControl(Shell parent) {
-				return new DefaultInformationControl(parent, (ToolBarManager)null, null);
-			}
-		};
+		return parent -> new DefaultInformationControl(parent, (ToolBarManager)null, null);
 	}
 }

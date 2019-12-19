@@ -16,7 +16,6 @@ package org.eclipse.jface.text.source.projection;
 import java.util.Iterator;
 
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Composite;
@@ -214,25 +213,22 @@ class ProjectionRulerColumn extends AnnotationRulerColumn {
 		});
 
 		// install mouse move listener
-		control.addMouseMoveListener(new MouseMoveListener() {
-			@Override
-			public void mouseMove(MouseEvent e) {
-				boolean redraw= false;
-				ProjectionAnnotation annotation= findAnnotation(toDocumentLineNumber(e.y), false);
-				if (annotation != fCurrentAnnotation) {
-					if (fCurrentAnnotation != null) {
-						fCurrentAnnotation.setRangeIndication(false);
-						redraw= true;
-					}
-					fCurrentAnnotation= annotation;
-					if (fCurrentAnnotation != null && !fCurrentAnnotation.isCollapsed()) {
-						fCurrentAnnotation.setRangeIndication(true);
-						redraw= true;
-					}
+		control.addMouseMoveListener(e -> {
+			boolean redraw= false;
+			ProjectionAnnotation annotation= findAnnotation(toDocumentLineNumber(e.y), false);
+			if (annotation != fCurrentAnnotation) {
+				if (fCurrentAnnotation != null) {
+					fCurrentAnnotation.setRangeIndication(false);
+					redraw= true;
 				}
-				if (redraw)
-					redraw();
+				fCurrentAnnotation= annotation;
+				if (fCurrentAnnotation != null && !fCurrentAnnotation.isCollapsed()) {
+					fCurrentAnnotation.setRangeIndication(true);
+					redraw= true;
+				}
 			}
+			if (redraw)
+				redraw();
 		});
 		return control;
 	}

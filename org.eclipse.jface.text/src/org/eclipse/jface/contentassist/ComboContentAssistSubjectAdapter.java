@@ -16,7 +16,6 @@ package org.eclipse.jface.contentassist;
 import java.util.HashMap;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -24,7 +23,6 @@ import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 
 import org.eclipse.core.runtime.Assert;
@@ -66,12 +64,7 @@ public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssi
 
 		private InternalDocument() {
 			super(fCombo.getText());
-			fModifyListener= new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					set(fCombo.getText());
-				}
-			};
+			fModifyListener= e -> set(fCombo.getText());
 			fCombo.addModifyListener(fModifyListener);
 		}
 
@@ -165,16 +158,7 @@ public class ComboContentAssistSubjectAdapter extends AbstractControlContentAssi
 	@Override
 	public boolean addSelectionListener(final SelectionListener selectionListener) {
 		fCombo.addSelectionListener(selectionListener);
-		Listener listener= new Listener() {
-			/*
-			 * @see org.eclipse.swt.events.ModifyListener#modifyText(org.eclipse.swt.events.ModifyEvent)
-			 */
-			@Override
-			public void handleEvent(Event e) {
-				selectionListener.widgetSelected(new SelectionEvent(e));
-
-			}
-		};
+		Listener listener= e -> selectionListener.widgetSelected(new SelectionEvent(e));
 		fCombo.addListener(SWT.Modify, listener);
 		fModifyListeners.put(selectionListener, listener);
 		return true;

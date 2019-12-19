@@ -23,7 +23,6 @@ import org.eclipse.core.runtime.Status;
 
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 
 import org.eclipse.jface.text.source.ISharedTextColors;
 
@@ -205,12 +204,9 @@ public class EditorsPlugin extends AbstractUIPlugin {
 		super.start(context);
 
 		if (PlatformUI.isWorkbenchRunning()) {
-			fThemeListener= new IPropertyChangeListener() {
-				@Override
-				public void propertyChange(PropertyChangeEvent event) {
-					if (IThemeManager.CHANGE_CURRENT_THEME.equals(event.getProperty()))
-						EditorsPluginPreferenceInitializer.setThemeBasedPreferences(getPreferenceStore(), true);
-				}
+			fThemeListener= event -> {
+				if (IThemeManager.CHANGE_CURRENT_THEME.equals(event.getProperty()))
+					EditorsPluginPreferenceInitializer.setThemeBasedPreferences(getPreferenceStore(), true);
 			};
 			PlatformUI.getWorkbench().getThemeManager().addPropertyChangeListener(fThemeListener);
 		}

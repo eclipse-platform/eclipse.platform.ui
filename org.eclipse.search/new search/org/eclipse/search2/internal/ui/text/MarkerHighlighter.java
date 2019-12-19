@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
@@ -47,15 +46,12 @@ public class MarkerHighlighter extends Highlighter {
 	@Override
 	public void addHighlights(final Match[] matches) {
 		try {
-			SearchPlugin.getWorkspace().run(new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-					for (Match match : matches) {
-						IMarker marker;
-						marker = createMarker(match);
-						if (marker != null)
-							fMatchesToAnnotations.put(match, marker);
-					}
+			SearchPlugin.getWorkspace().run((IWorkspaceRunnable) monitor -> {
+				for (Match match : matches) {
+					IMarker marker;
+					marker = createMarker(match);
+					if (marker != null)
+						fMatchesToAnnotations.put(match, marker);
 				}
 			}, fFile, IWorkspace.AVOID_UPDATE, null);
 		} catch (CoreException e) {

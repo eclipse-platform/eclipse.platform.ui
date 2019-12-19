@@ -21,7 +21,6 @@ import java.util.StringTokenizer;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.RGB;
-import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IAdaptable;
@@ -31,7 +30,6 @@ import org.eclipse.jface.preference.IPreferenceStore;
 
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.DefaultTextHover;
-import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.ITextHoverExtension;
@@ -390,12 +388,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 	 * @since 3.3
 	 */
 	private IInformationControlCreator getQuickAssistAssistantInformationControlCreator() {
-		return new IInformationControlCreator() {
-			@Override
-			public IInformationControl createInformationControl(Shell parent) {
-				return new DefaultInformationControl(parent, EditorsPlugin.getAdditionalInfoAffordanceString());
-			}
-		};
+		return parent -> new DefaultInformationControl(parent, EditorsPlugin.getAdditionalInfoAffordanceString());
 	}
 
 	/**
@@ -441,12 +434,7 @@ public class TextSourceViewerConfiguration extends SourceViewerConfiguration {
 
 		@Override
 		public IInformationControlCreator getHoverControlCreator() {
-			return new IInformationControlCreator() {
-				@Override
-				public IInformationControl createInformationControl(Shell parent) {
-					return new DefaultInformationControl(parent, EditorsUI.getTooltipAffordanceString());
-				}
-			};
+			return parent -> new DefaultInformationControl(parent, EditorsUI.getTooltipAffordanceString());
 		}
 	}
 

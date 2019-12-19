@@ -19,7 +19,6 @@ import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.events.MouseMoveListener;
 import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.GC;
@@ -197,12 +196,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 		fCanvas.setBackground(getDefaultBackground());
 		fCanvas.setFont(getFont());
 
-		fCanvas.addPaintListener(new PaintListener() {
-			@Override
-			public void paintControl(PaintEvent event) {
-				AbstractRulerColumn.this.paintControl(event);
-			}
-		});
+		fCanvas.addPaintListener(event -> AbstractRulerColumn.this.paintControl(event));
 
 		fCanvas.addMouseListener(fMouseHandler);
 		fCanvas.addMouseMoveListener(fMouseHandler);

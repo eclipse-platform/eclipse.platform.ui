@@ -21,8 +21,6 @@ import static org.junit.Assert.assertTrue;
 import org.junit.Test;
 
 import org.eclipse.search.ui.ISearchQuery;
-import org.eclipse.search.ui.ISearchResultListener;
-import org.eclipse.search.ui.SearchResultEvent;
 import org.eclipse.search.ui.text.AbstractTextSearchResult;
 import org.eclipse.search.ui.text.Match;
 import org.eclipse.search.ui.text.MatchEvent;
@@ -180,16 +178,13 @@ public class TestSearchResult {
 		ISearchQuery query= new NullQuery();
 		AbstractTextSearchResult result= (AbstractTextSearchResult) query.getSearchResult();
 
-		result.addListener(new ISearchResultListener() {
-			@Override
-			public void searchResultChanged(SearchResultEvent e) {
-				if (e instanceof MatchEvent) {
-					MatchEvent evt= (MatchEvent) e;
-					if (evt.getKind() == MatchEvent.ADDED) {
-						wasAdded[0]= true;
-					} else {
-						wasRemoved[0]= true;
-					}
+		result.addListener(e -> {
+			if (e instanceof MatchEvent) {
+				MatchEvent evt= (MatchEvent) e;
+				if (evt.getKind() == MatchEvent.ADDED) {
+					wasAdded[0]= true;
+				} else {
+					wasRemoved[0]= true;
 				}
 			}
 		});
@@ -224,16 +219,13 @@ public class TestSearchResult {
 		ISearchQuery query= new NullQuery();
 		AbstractTextSearchResult result= (AbstractTextSearchResult) query.getSearchResult();
 
-		result.addListener(new ISearchResultListener() {
-			@Override
-			public void searchResultChanged(SearchResultEvent e) {
-				if (e instanceof MatchEvent) {
-					MatchEvent evt= (MatchEvent) e;
-					if (evt.getKind() == MatchEvent.ADDED) {
-						wasAdded[0]= true;
-					} else {
-						wasRemoved[0]= true;
-					}
+		result.addListener(e -> {
+			if (e instanceof MatchEvent) {
+				MatchEvent evt= (MatchEvent) e;
+				if (evt.getKind() == MatchEvent.ADDED) {
+					wasAdded[0]= true;
+				} else {
+					wasRemoved[0]= true;
 				}
 			}
 		});

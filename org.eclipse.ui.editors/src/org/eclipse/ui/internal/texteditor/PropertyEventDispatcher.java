@@ -28,12 +28,7 @@ public final class PropertyEventDispatcher {
 	private final Map<Object, Object> fHandlerMap= new HashMap<>();
 	private final Map<Object, Object> fReverseMap= new HashMap<>();
 	private final IPreferenceStore fStore;
-	private final IPropertyChangeListener fListener= new IPropertyChangeListener() {
-		@Override
-		public void propertyChange(PropertyChangeEvent event) {
-			firePropertyChange(event);
-		}
-	};
+	private final IPropertyChangeListener fListener= event -> firePropertyChange(event);
 	public PropertyEventDispatcher(IPreferenceStore store) {
 		Assert.isLegal(store != null);
 		fStore= store;
