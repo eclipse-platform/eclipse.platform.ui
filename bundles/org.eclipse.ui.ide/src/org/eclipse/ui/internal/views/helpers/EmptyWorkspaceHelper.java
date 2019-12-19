@@ -212,6 +212,9 @@ public final class EmptyWorkspaceHelper {
 	private void recreateEmptyArea() {
 		disposeEmptyArea();
 
+		// forces to re-create wizard actions, fixes Bug 552374
+		projectWizardActions = null;
+
 		// re-read the project wizards and re-create the empty area
 		createEmptyArea(displayArea);
 		if (control != null && !control.isDisposed()) {
