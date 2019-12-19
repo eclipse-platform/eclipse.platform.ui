@@ -14,6 +14,9 @@
 package org.eclipse.debug.core.model;
 
 
+import java.nio.charset.Charset;
+import java.nio.charset.IllegalCharsetNameException;
+import java.nio.charset.UnsupportedCharsetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -281,7 +284,15 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 			return new NullStreamsProxy(getSystemProcess());
 		}
 		String encoding = getLaunch().getAttribute(DebugPlugin.ATTR_CONSOLE_ENCODING);
-		return new StreamsProxy(getSystemProcess(), encoding);
+		Charset charset = null;
+		if (encoding != null) {
+			try {
+				charset = Charset.forName(encoding);
+			} catch (UnsupportedCharsetException | IllegalCharsetNameException e) {
+				DebugPlugin.log(e);
+			}
+		}
+		return new StreamsProxy(getSystemProcess(), charset);
 	}
 
 	/**

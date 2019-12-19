@@ -16,6 +16,7 @@ package org.eclipse.debug.internal.core;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.Charset;
 import java.util.Vector;
 
 import org.eclipse.debug.core.DebugPlugin;
@@ -52,9 +53,9 @@ public class InputStreamMonitor {
 	private boolean fClosed = false;
 
 	/**
-	 * The encoding of the input stream.
+	 * The charset of the input stream.
 	 */
-	private String fEncoding;
+	private Charset fCharset;
 
 	/**
 	 * Creates an input stream monitor which writes to system in via the given output stream.
@@ -66,16 +67,17 @@ public class InputStreamMonitor {
 	}
 
 	/**
-	 * Creates an input stream monitor which writes to system in via the given output stream.
+	 * Creates an input stream monitor which writes to system in via the given
+	 * output stream.
 	 *
 	 * @param stream output stream
-	 * @param encoding stream encoding or <code>null</code> for system default
+	 * @param charset stream charset or <code>null</code> for system default
 	 */
-	public InputStreamMonitor(OutputStream stream, String encoding) {
-		fStream= stream;
+	public InputStreamMonitor(OutputStream stream, Charset charset) {
+		fStream = stream;
 		fQueue = new Vector<>();
-		fLock= new Object();
-		fEncoding= encoding;
+		fLock = new Object();
+		fCharset = charset;
 	}
 
 	/**
@@ -139,8 +141,8 @@ public class InputStreamMonitor {
 			String text = fQueue.firstElement();
 			fQueue.removeElementAt(0);
 			try {
-				if (fEncoding != null) {
-					fStream.write(text.getBytes(fEncoding));
+				if (fCharset != null) {
+					fStream.write(text.getBytes(fCharset));
 				} else {
 					fStream.write(text.getBytes());
 				}

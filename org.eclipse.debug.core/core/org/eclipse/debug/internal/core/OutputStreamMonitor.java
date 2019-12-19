@@ -18,6 +18,7 @@ import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.core.runtime.ISafeRunnable;
@@ -74,20 +75,20 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 
 	private long lastSleep;
 
-	private String fEncoding;
+	private Charset fCharset;
 
 	private final AtomicBoolean fDone;
 
 	/**
-	 * Creates an output stream monitor on the
-	 * given stream (connected to system out or err).
+	 * Creates an output stream monitor on the given stream (connected to system
+	 * out or err).
 	 *
 	 * @param stream input stream to read from
-	 * @param encoding stream encoding or <code>null</code> for system default
+	 * @param charset stream charset or <code>null</code> for system default
 	 */
-	public OutputStreamMonitor(InputStream stream, String encoding) {
+	public OutputStreamMonitor(InputStream stream, Charset charset) {
 		fStream = new BufferedInputStream(stream, 8192);
-		fEncoding = encoding;
+		fCharset = charset;
 		fContents= new StringBuilder();
 		fDone = new AtomicBoolean(false);
 	}
@@ -149,7 +150,7 @@ public class OutputStreamMonitor implements IFlushableStreamMonitor {
 		long currentTime = lastSleep;
 		char[] chars = new char[BUFFER_SIZE];
 		int read = 0;
-		try (InputStreamReader reader = (fEncoding == null ? new InputStreamReader(fStream) : new InputStreamReader(fStream, fEncoding))) {
+		try (InputStreamReader reader = (fCharset == null ? new InputStreamReader(fStream) : new InputStreamReader(fStream, fCharset))) {
 			while (read >= 0) {
 				try {
 					if (fKilled) {

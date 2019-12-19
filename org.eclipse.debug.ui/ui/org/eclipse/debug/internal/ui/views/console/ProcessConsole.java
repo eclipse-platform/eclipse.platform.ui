@@ -630,7 +630,11 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 	}
 
 	/**
-	 * This class listens to a specified IO stream
+	 * This class listens to a specified stream monitor to get notified on output
+	 * from the process connected to console.
+	 * <p>
+	 * Received output will be redirected to given {@link IOConsoleOutputStream} to
+	 * get it shown in console and to {@link #fFileOutputStream} if set.
 	 */
 	private class StreamListener implements IStreamListener {
 
@@ -640,9 +644,8 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 
 		private String fStreamId;
 
-		private boolean fFlushed = false;
-
-		private boolean fListenerRemoved = false;
+		/** Flag to remember if stream was already closed. */
+		private boolean fStreamClosed = false;
 
 		public StreamListener(String streamIdentifier, IStreamMonitor monitor, IOConsoleOutputStream stream) {
 			this.fStreamId = streamIdentifier;
@@ -650,58 +653,49 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 			this.fStream = stream;
 			fStreamMonitor.addListener(this);
 			//fix to bug 121454. Ensure that output to fast processes is processed.
-			streamAppended(null, monitor);
+			flushAndDisableBuffer(monitor);
+		}
+
+		/**
+		 * Process existing content in monitor and flush and disable buffering if it is
+		 * a {@link IFlushableStreamMonitor}.
+		 *
+		 * @param monitor the monitor which might have buffered content
+		 */
+		private void flushAndDisableBuffer(IStreamMonitor monitor) {
+			String contents;
+			synchronized (monitor) {
+				contents = monitor.getContents();
+				if (monitor instanceof IFlushableStreamMonitor) {
+					IFlushableStreamMonitor m = (IFlushableStreamMonitor) monitor;
+					m.flushContents();
+					m.setBuffered(false);
+				}
+			}
+			streamAppended(contents, monitor);
 		}
 
 		@Override
 		public void streamAppended(String text, IStreamMonitor monitor) {
-			String encoding = getEncoding();
-			if (fFlushed) {
-				try {
-					if (fStream != null) {
-						if (encoding == null) {
-							fStream.write(text);
+			if (text == null || text.length() == 0) {
+				return;
+			}
+			try {
+				if (fStream != null) {
+					fStream.write(text);
+				}
+				if (fFileOutputStream != null) {
+					Charset charset = getCharset();
+					synchronized (fFileOutputStream) {
+						if (charset == null) {
+							fFileOutputStream.write(text.getBytes());
 						} else {
-							fStream.write(text.getBytes(encoding));
+							fFileOutputStream.write(text.getBytes(charset));
 						}
-					}
-					if (fFileOutputStream != null) {
-						synchronized (fFileOutputStream) {
-							if (encoding == null) {
-								fFileOutputStream.write(text.getBytes());
-							} else {
-								fFileOutputStream.write(text.getBytes(encoding));
-							}
-						}
-					}
-				} catch (IOException e) {
-					DebugUIPlugin.log(e);
-				}
-			} else {
-				String contents = null;
-				synchronized (fStreamMonitor) {
-					fFlushed = true;
-					contents = fStreamMonitor.getContents();
-					if (fStreamMonitor instanceof IFlushableStreamMonitor) {
-						IFlushableStreamMonitor m = (IFlushableStreamMonitor) fStreamMonitor;
-						m.flushContents();
-						m.setBuffered(false);
 					}
 				}
-				try {
-					if (contents != null && contents.length() > 0) {
-						if (fStream != null) {
-							fStream.write(contents);
-						}
-						if (fFileOutputStream != null) {
-							synchronized (fFileOutputStream) {
-								fFileOutputStream.write(contents.getBytes());
-							}
-						}
-					}
-				} catch (IOException e) {
-					DebugUIPlugin.log(e);
-				}
+			} catch (IOException e) {
+				DebugUIPlugin.log(e);
 			}
 		}
 
@@ -711,22 +705,20 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 			}
 			synchronized (fStreamMonitor) {
 				fStreamMonitor.removeListener(this);
-				if (!fFlushed) {
-					String contents = fStreamMonitor.getContents();
-					streamAppended(contents, fStreamMonitor);
-				}
-				fListenerRemoved = true;
+				fStreamClosed = true;
+
 				try {
 					if (fStream != null) {
 						fStream.close();
 					}
 				} catch (IOException e) {
+					DebugUIPlugin.log(e);
 				}
 			}
 		}
 
 		public void dispose() {
-			if (!fListenerRemoved) {
+			if (!fStreamClosed) {
 				closeStream();
 			}
 			fStream = null;

@@ -15,6 +15,7 @@ package org.eclipse.debug.internal.core;
 
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 
 import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
@@ -43,20 +44,21 @@ public class StreamsProxy implements IStreamsProxy, IStreamsProxy2 {
 	 * <code>false</code> by default.
 	 */
 	private boolean fClosed;
+	
 	/**
-	 * Creates a <code>StreamsProxy</code> on the streams
-	 * of the given system process.
+	 * Creates a <code>StreamsProxy</code> on the streams of the given system
+	 * process.
 	 *
 	 * @param process system process to create a streams proxy on
-	 * @param encoding the process's encoding or <code>null</code> if default
+	 * @param charset the process's charset or <code>null</code> if default
 	 */
-	public StreamsProxy(Process process, String encoding) {
+	public StreamsProxy(Process process, Charset charset) {
 		if (process == null) {
 			return;
 		}
-		fOutputMonitor= new OutputStreamMonitor(process.getInputStream(), encoding);
-		fErrorMonitor= new OutputStreamMonitor(process.getErrorStream(), encoding);
-		fInputMonitor= new InputStreamMonitor(process.getOutputStream(), encoding);
+		fOutputMonitor = new OutputStreamMonitor(process.getInputStream(), charset);
+		fErrorMonitor = new OutputStreamMonitor(process.getErrorStream(), charset);
+		fInputMonitor = new InputStreamMonitor(process.getOutputStream(), charset);
 		fOutputMonitor.startMonitoring();
 		fErrorMonitor.startMonitoring();
 		fInputMonitor.startMonitoring();
