@@ -120,5 +120,4 @@ public class LabelProvider extends BaseLabelProvider implements ILabelProvider {
 			}
 		};
 	}
-
 }
