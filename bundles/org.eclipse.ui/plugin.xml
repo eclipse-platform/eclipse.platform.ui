@@ -1609,6 +1609,14 @@
             %FontsPreference.TitleFontDescription
          </description>
       </fontDefinition>
+       <fontDefinition
+            label="%FontsPreference.TreeTableFont"
+            categoryId="org.eclipse.ui.presentation.default"
+            id="org.eclipse.ui.workbench.TREE_TABLE_FONT">
+         <description>
+            %FontsPreference.TitleFontDescription
+         </description>
+      </fontDefinition>
       <colorDefinition
             label="%Color.errorText"
             value="COLOR_RED"
