@@ -26,14 +26,6 @@
 	  </consoleLineTracker>
   </extension>
   
-  <extension
-         point="org.eclipse.ant.core.extraClasspathEntries">
-      <extraClasspathEntry
-            library="lib/antUITestsSupport.jar"
-            eclipseRuntime="false">
-      </extraClasspathEntry>
-   </extension>
-   
     <extension point="org.eclipse.ant.core.antTasks">
 	    <antTask 
 	    	name="coolUITask" 
