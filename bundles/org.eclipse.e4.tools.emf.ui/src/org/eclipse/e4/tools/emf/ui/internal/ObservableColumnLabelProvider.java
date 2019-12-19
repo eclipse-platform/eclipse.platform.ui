@@ -17,7 +17,6 @@ import java.util.Set;
 
 import org.eclipse.core.databinding.observable.map.IMapChangeListener;
 import org.eclipse.core.databinding.observable.map.IObservableMap;
-import org.eclipse.core.databinding.observable.map.MapChangeEvent;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.jface.viewers.ViewerCell;
@@ -28,13 +27,10 @@ import org.eclipse.swt.graphics.Image;
 public class ObservableColumnLabelProvider<M> extends CellLabelProvider {
 	private IObservableMap<M, ?>[] attributeMaps;
 
-	private IMapChangeListener<M, Object> mapChangeListener = new IMapChangeListener<M, Object>() {
-		@Override
-		public void handleMapChange(MapChangeEvent<? extends M, ?> event) {
-			Set<? extends M> affectedElements = event.diff.getChangedKeys();
-			LabelProviderChangedEvent newEvent = new LabelProviderChangedEvent(ObservableColumnLabelProvider.this, affectedElements.toArray());
-			fireLabelProviderChanged(newEvent);
-		}
+	private IMapChangeListener<M, Object> mapChangeListener = event -> {
+		Set<? extends M> affectedElements = event.diff.getChangedKeys();
+		LabelProviderChangedEvent newEvent = new LabelProviderChangedEvent(ObservableColumnLabelProvider.this, affectedElements.toArray());
+		fireLabelProviderChanged(newEvent);
 	};
 
 	/**

@@ -19,9 +19,7 @@ import javax.inject.Named;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResourceChangeEvent;
-import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.core.di.annotations.Optional;
@@ -65,23 +63,13 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 		super(null);
 
 		this.project = project;
-		this.project.getWorkspace().addResourceChangeListener(new IResourceChangeListener() {
-
-			@Override
-			public void resourceChanged(IResourceChangeEvent event) {
-				if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
-					try {
-						event.getDelta().accept(new IResourceDeltaVisitor() {
-
-							@Override
-							public boolean visit(IResourceDelta delta) throws CoreException {
-								return ProjectOSGiTranslationProvider.this.visit(delta);
-							}
-						});
-					} catch (final CoreException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+		this.project.getWorkspace().addResourceChangeListener(event -> {
+			if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
+				try {
+					event.getDelta().accept(delta -> ProjectOSGiTranslationProvider.this.visit(delta));
+				} catch (final CoreException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
 				}
 			}
 		});
@@ -271,12 +259,7 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 				final String resourceName = toResourceName(bundleName, "properties"); //$NON-NLS-1$
 				InputStream stream = null;
 				try {
-					stream = AccessController.doPrivileged(new PrivilegedExceptionAction<InputStream>() {
-						@Override
-						public InputStream run() throws IOException {
-							return getResourceAsStream(resourceName);
-						}
-					});
+					stream = AccessController.doPrivileged((PrivilegedExceptionAction<InputStream>) () -> getResourceAsStream(resourceName));
 				} catch (final PrivilegedActionException e) {
 					throw (IOException) e.getException();
 				}

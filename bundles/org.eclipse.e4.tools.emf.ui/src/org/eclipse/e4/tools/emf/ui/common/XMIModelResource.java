@@ -15,7 +15,6 @@ package org.eclipse.e4.tools.emf.ui.common;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.EventObject;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +28,6 @@ import org.eclipse.e4.ui.internal.workbench.E4XMIResource;
 import org.eclipse.e4.ui.internal.workbench.E4XMIResourceFactory;
 import org.eclipse.emf.common.command.BasicCommandStack;
 import org.eclipse.emf.common.command.Command;
-import org.eclipse.emf.common.command.CommandStackListener;
 import org.eclipse.emf.common.command.CompoundCommand;
 import org.eclipse.emf.common.util.TreeIterator;
 import org.eclipse.emf.common.util.URI;
@@ -59,13 +57,9 @@ public class XMIModelResource implements IModelResource {
 
 		final ResourceSet resourceSet = new ResourceSetImpl();
 		final BasicCommandStack commandStack = new BasicCommandStack();
-		commandStack.addCommandStackListener(new CommandStackListener() {
-
-			@Override
-			public void commandStackChanged(EventObject event) {
-				fireDirtyChanged();
-				fireCommandStackChanged();
-			}
+		commandStack.addCommandStackListener(event -> {
+			fireDirtyChanged();
+			fireCommandStackChanged();
 		});
 		editingDomain = new AdapterFactoryEditingDomain(adapterFactory, commandStack, resourceSet);
 		resourceSet.getResourceFactoryRegistry().getExtensionToFactoryMap()

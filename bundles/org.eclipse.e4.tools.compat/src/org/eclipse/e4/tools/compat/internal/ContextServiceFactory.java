@@ -26,13 +26,10 @@ import org.eclipse.e4.ui.css.swt.theme.IThemeManager;
 import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.e4.ui.services.IStylingEngine;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Widget;
-import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.ISelectionService;
-import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
@@ -135,21 +132,17 @@ public class ContextServiceFactory extends AbstractServiceFactory {
 			windowContext.set(ISelectionService.class, window.getSelectionService());
 
 			windowContext.declareModifiable(IServiceConstants.ACTIVE_SELECTION);
-			window.getSelectionService().addSelectionListener(new ISelectionListener() {
-
-				@Override
-				public void selectionChanged(IWorkbenchPart part, ISelection selection) {
-					if (!selection.isEmpty()) {
-						if (selection instanceof IStructuredSelection) {
-							final IStructuredSelection s = (IStructuredSelection) selection;
-							if (s.size() == 1) {
-								windowContext.set(IServiceConstants.ACTIVE_SELECTION, s.getFirstElement());
-							} else {
-								windowContext.set(IServiceConstants.ACTIVE_SELECTION, s.toList());
-							}
+			window.getSelectionService().addSelectionListener((part, selection) -> {
+				if (!selection.isEmpty()) {
+					if (selection instanceof IStructuredSelection) {
+						final IStructuredSelection s = (IStructuredSelection) selection;
+						if (s.size() == 1) {
+							windowContext.set(IServiceConstants.ACTIVE_SELECTION, s.getFirstElement());
 						} else {
-							windowContext.set(IServiceConstants.ACTIVE_SELECTION, selection);
+							windowContext.set(IServiceConstants.ACTIVE_SELECTION, s.toList());
 						}
+					} else {
+						windowContext.set(IServiceConstants.ACTIVE_SELECTION, selection);
 					}
 				}
 			});
