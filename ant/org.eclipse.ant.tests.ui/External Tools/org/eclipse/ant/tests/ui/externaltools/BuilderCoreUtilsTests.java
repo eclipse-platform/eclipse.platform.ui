@@ -34,18 +34,10 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
  */
 public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 
-	/**
-	 * Constructor
-	 */
 	public BuilderCoreUtilsTests() {
 		super("BuilderCoreUtils Tests"); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -61,7 +53,8 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	 * @throws Exception
 	 */
 	public void testConfigFromBuildCommandArgs1() throws Exception {
-		ILaunchConfiguration config = BuilderCoreUtils.configFromBuildCommandArgs(getProject(), new HashMap<>(), new String[] { BuilderCoreUtils.VERSION_1_0 });
+		ILaunchConfiguration config = BuilderCoreUtils.configFromBuildCommandArgs(getProject(), new HashMap<>(), new String[] {
+				BuilderCoreUtils.VERSION_1_0 });
 		assertNull("There should be no configuration returned without the config handle and arguments", config); //$NON-NLS-1$
 	}
 
@@ -156,7 +149,8 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	}
 
 	/**
-	 * Tests the {@link BuilderCoreUtils#configureTriggers(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.resources.ICommand)} method <br>
+	 * Tests the {@link BuilderCoreUtils#configureTriggers(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.resources.ICommand)} method
+	 * <br>
 	 * <br>
 	 * Tests that the triggers are configured for a full build of the default target after a clean
 	 * 
@@ -177,7 +171,8 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	}
 
 	/**
-	 * Tests the {@link BuilderCoreUtils#configureTriggers(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.resources.ICommand)} method <br>
+	 * Tests the {@link BuilderCoreUtils#configureTriggers(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.resources.ICommand)} method
+	 * <br>
 	 * <br>
 	 * Tests that the triggers are configured for a full build of a specific targets 'def' and 'clean'
 	 * 
@@ -198,7 +193,8 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	}
 
 	/**
-	 * Tests the {@link BuilderCoreUtils#configureTriggers(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.resources.ICommand)} method <br>
+	 * Tests the {@link BuilderCoreUtils#configureTriggers(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.resources.ICommand)} method
+	 * <br>
 	 * <br>
 	 * Tests that the triggers are configured for an incremental AND full build with default targets <br>
 	 * <br>
@@ -222,7 +218,8 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	}
 
 	/**
-	 * Tests the {@link BuilderCoreUtils#configureTriggers(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.resources.ICommand)} method <br>
+	 * Tests the {@link BuilderCoreUtils#configureTriggers(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.resources.ICommand)} method
+	 * <br>
 	 * <br>
 	 * Tests that the triggers are configured for an incremental AND full build with the targets 'def' and 'inc' <br>
 	 * <br>
@@ -246,7 +243,8 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	}
 
 	/**
-	 * Tests the {@link BuilderCoreUtils#configureTriggers(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.resources.ICommand)} method <br>
+	 * Tests the {@link BuilderCoreUtils#configureTriggers(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.resources.ICommand)} method
+	 * <br>
 	 * <br>
 	 * Tests that the triggers are configured for an auto build
 	 * 
@@ -267,7 +265,8 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	}
 
 	/**
-	 * Tests the {@link BuilderCoreUtils#configureTriggers(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.resources.ICommand)} method <br>
+	 * Tests the {@link BuilderCoreUtils#configureTriggers(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.resources.ICommand)} method
+	 * <br>
 	 * <br>
 	 * Tests that the triggers are configured for an auto build with the targets 'def' and 'auto'
 	 * 
@@ -288,7 +287,8 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	}
 
 	/**
-	 * Tests the {@link BuilderCoreUtils#configureTriggers(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.resources.ICommand)} method <br>
+	 * Tests the {@link BuilderCoreUtils#configureTriggers(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.resources.ICommand)} method
+	 * <br>
 	 * <br>
 	 * Tests that the triggers are configured for a clean build
 	 * 
@@ -309,7 +309,8 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	}
 
 	/**
-	 * Tests the {@link BuilderCoreUtils#configureTriggers(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.resources.ICommand)} method <br>
+	 * Tests the {@link BuilderCoreUtils#configureTriggers(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.resources.ICommand)} method
+	 * <br>
 	 * <br>
 	 * Tests that the triggers are configured for a clean build with the targets 'def' and 'clean'
 	 * 
@@ -330,7 +331,8 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	}
 
 	/**
-	 * Tests the {@link BuilderCoreUtils#configureTriggers(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.resources.ICommand)} method <br>
+	 * Tests the {@link BuilderCoreUtils#configureTriggers(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.resources.ICommand)} method
+	 * <br>
 	 * <br>
 	 * Tests that the triggers are configured for a full + incremental build with the targets 'def' and 'inc' specified for after clean targets and
 	 * manual targets respectively
@@ -342,8 +344,8 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 		args.put(IAntLaunchConstants.ATTR_ANT_AFTER_CLEAN_TARGETS, "def"); //$NON-NLS-1$
 		args.put(IAntLaunchConstants.ATTR_ANT_MANUAL_TARGETS, "inc"); //$NON-NLS-1$
 		args.put(IExternalToolConstants.ATTR_LOCATION, getBuildFile(EXT_BUILD_FILE_NAME).getAbsolutePath());
-		args.put(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, IExternalToolConstants.BUILD_TYPE_CLEAN
-				+ "," + IExternalToolConstants.BUILD_TYPE_INCREMENTAL); //$NON-NLS-1$
+		args.put(IExternalToolConstants.ATTR_RUN_BUILD_KINDS, IExternalToolConstants.BUILD_TYPE_CLEAN + "," //$NON-NLS-1$
+				+ IExternalToolConstants.BUILD_TYPE_INCREMENTAL);
 		ILaunchConfiguration config = createExternalToolBuilder(getProject(), "testConfigureTriggers9", args); //$NON-NLS-1$
 		assertNotNull("the test builder must not be null", config); //$NON-NLS-1$
 		ICommand command = createBuildCommand(config);
@@ -355,7 +357,8 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 	}
 
 	/**
-	 * Tests the {@link BuilderCoreUtils#configureTriggers(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.resources.ICommand)} method <br>
+	 * Tests the {@link BuilderCoreUtils#configureTriggers(org.eclipse.debug.core.ILaunchConfiguration, org.eclipse.core.resources.ICommand)} method
+	 * <br>
 	 * <br>
 	 * Tests that the triggers are configured for a full + incremental build with the targets 'def' and 'inc' specified for after clean targets and
 	 * manual targets respectively

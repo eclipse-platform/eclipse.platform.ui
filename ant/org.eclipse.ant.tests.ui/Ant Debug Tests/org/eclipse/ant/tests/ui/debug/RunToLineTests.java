@@ -50,12 +50,6 @@ public class RunToLineTests extends AbstractAntDebugTest {
 
 	class MyListener implements IPerspectiveListener2 {
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.IPerspectiveListener2#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor,
-		 * org.eclipse.ui.IWorkbenchPartReference, java.lang.String)
-		 */
 		@Override
 		public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, IWorkbenchPartReference partRef, String changeId) {
 			if (partRef.getTitle().equals("breakpoints.xml") && changeId == IWorkbenchPage.CHANGE_EDITOR_OPEN) { //$NON-NLS-1$
@@ -66,22 +60,11 @@ public class RunToLineTests extends AbstractAntDebugTest {
 			}
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.IPerspectiveListener#perspectiveActivated(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor)
-		 */
 		@Override
 		public void perspectiveActivated(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 			// do nothing
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.ui.IPerspectiveListener#perspectiveChanged(org.eclipse.ui.IWorkbenchPage, org.eclipse.ui.IPerspectiveDescriptor,
-		 * java.lang.String)
-		 */
 		@Override
 		public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, String changeId) {
 			// do nothing

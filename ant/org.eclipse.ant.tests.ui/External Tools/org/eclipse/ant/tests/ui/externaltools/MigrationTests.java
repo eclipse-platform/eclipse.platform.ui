@@ -30,9 +30,6 @@ import org.eclipse.debug.ui.RefreshTab;
  */
 public class MigrationTests extends AbstractExternalToolTest {
 
-	/**
-	 * Constructor
-	 */
 	public MigrationTests() {
 		super("Migration Tests"); //$NON-NLS-1$
 	}

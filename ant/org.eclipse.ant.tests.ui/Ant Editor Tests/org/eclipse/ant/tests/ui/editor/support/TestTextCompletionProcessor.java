@@ -180,23 +180,11 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
 		fEditedFile = aFile;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.editor.AntEditorCompletionProcessor#getTargetAttributeValueProposals(org.eclipse.jface.text.IDocument,
-	 * java.lang.String, java.lang.String, java.lang.String)
-	 */
 	@Override
 	public ICompletionProposal[] getTargetAttributeValueProposals(IDocument document, String textToSearch, String prefix, String attributeName) {
 		return super.getTargetAttributeValueProposals(document, textToSearch, prefix, attributeName);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.editor.AntEditorCompletionProcessor#getAntCallAttributeValueProposals(org.eclipse.jface.text.IDocument,
-	 * java.lang.String, java.lang.String)
-	 */
 	@Override
 	public ICompletionProposal[] getAntCallAttributeValueProposals(IDocument document, String prefix, String attributeName) {
 		return super.getAntCallAttributeValueProposals(document, prefix, attributeName);
@@ -221,40 +209,19 @@ public class TestTextCompletionProcessor extends AntEditorCompletionProcessor {
 		return getDtd().getElement(elementName) != null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.editor.AntEditorCompletionProcessor#getProposalsFromDocument(org.eclipse.jface.text.IDocument,
-	 * java.lang.String)
-	 */
 	@Override
 	public ICompletionProposal[] getProposalsFromDocument(IDocument document, String prefix) {
 		return super.getProposalsFromDocument(document, prefix);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.editor.AntEditorCompletionProcessor#getBuildFileProposals(org.eclipse.jface.text.IDocument, java.lang.String)
-	 */
 	public ICompletionProposal[] getBuildFileProposals(String text, String prefix) {
 		return super.getBuildFileProposals(new Document(text), prefix);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.editor.AntEditorCompletionProcessor#determineTemplateProposals(org.eclipse.jface.text.ITextViewer, int)
-	 */
 	public ICompletionProposal[] determineTemplateProposals() {
 		return super.determineTemplateProposals(fViewer, cursorPosition);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(org.eclipse.jface.text.ITextViewer, int)
-	 */
 	public ICompletionProposal[] computeCompletionProposals(int documentOffset) {
 		return super.computeCompletionProposals(fViewer, documentOffset);
 	}

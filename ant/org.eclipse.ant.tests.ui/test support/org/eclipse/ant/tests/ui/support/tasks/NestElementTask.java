@@ -42,11 +42,6 @@ public class NestElementTask extends Task {
 		e = nestedElement;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.Task#execute()
-	 */
 	@Override
 	public void execute() throws BuildException {
 		Echo echo = new Echo();

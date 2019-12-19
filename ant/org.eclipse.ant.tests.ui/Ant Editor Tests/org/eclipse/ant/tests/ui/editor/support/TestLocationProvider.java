@@ -29,11 +29,6 @@ public class TestLocationProvider extends LocationProvider {
 		this.buildFile = buildFile;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.editor.outline.ILocationProvider#getLocation()
-	 */
 	@Override
 	public IPath getLocation() {
 		return new Path(buildFile.getAbsolutePath());

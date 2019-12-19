@@ -81,11 +81,13 @@ public class dumper {
 	/**
 	 * Dump dfm as a series of states.
 	 * 
-	 * <pre>{@code
+	 * <pre>
+	 * {@code
 	 * S0  a=>S1 b=>S2 
 	 * S1  c=>S2
 	 * S2* d=>S2
-	 * }</pre>
+	 * }
+	 * </pre>
 	 * 
 	 * Where * indicates accepting state.
 	 * 
@@ -139,9 +141,6 @@ public class dumper {
 			this.n = n;
 		}
 
-		/**
-		 * @see java.lang.Comparable#compareTo(java.lang.Object)
-		 */
 		@Override
 		public int compareTo(State other) {
 			return n.intValue() < other.n.intValue() ? -1 : (n.intValue() == other.n.intValue() ? 0 : 1);

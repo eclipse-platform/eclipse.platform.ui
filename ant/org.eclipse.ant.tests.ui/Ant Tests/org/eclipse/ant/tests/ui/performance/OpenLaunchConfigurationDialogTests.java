@@ -85,11 +85,6 @@ public class OpenLaunchConfigurationDialogTests extends PerformanceTestCase {
 		stopMeasuring();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.test.performance.PerformanceTestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
@@ -101,11 +96,6 @@ public class OpenLaunchConfigurationDialogTests extends PerformanceTestCase {
 		EditorTestHelper.runEventQueue();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.test.performance.PerformanceTestCase#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		super.tearDown();

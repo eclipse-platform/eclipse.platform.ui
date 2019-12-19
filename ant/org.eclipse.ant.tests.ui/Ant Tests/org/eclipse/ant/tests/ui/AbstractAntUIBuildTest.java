@@ -14,13 +14,13 @@
 
 package org.eclipse.ant.tests.ui;
 
-import junit.framework.TestResult;
-
 import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.console.IHyperlink;
+
+import junit.framework.TestResult;
 
 public abstract class AbstractAntUIBuildTest extends AbstractAntUITest {
 
@@ -91,11 +91,6 @@ public abstract class AbstractAntUIBuildTest extends AbstractAntUITest {
 		Display.getDefault().asyncExec(() -> link.linkActivated());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest#launch(java.lang.String, java.lang.String)
-	 */
 	@Override
 	protected void launch(String buildFileName, String arguments) throws CoreException {
 		super.launch(buildFileName, arguments);

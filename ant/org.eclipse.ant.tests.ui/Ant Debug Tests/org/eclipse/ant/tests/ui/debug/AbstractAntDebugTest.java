@@ -788,11 +788,6 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 		debugUIPreferences.setValue(IDebugUIConstants.PREF_ACTIVATE_WORKBENCH, activate);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see junit.framework.TestCase#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		if (fEventSet != null) {
@@ -807,11 +802,6 @@ public abstract class AbstractAntDebugTest extends AbstractAntUIBuildTest {
 		super.tearDown();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();
