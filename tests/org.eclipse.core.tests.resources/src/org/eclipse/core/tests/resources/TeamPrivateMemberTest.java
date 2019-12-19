@@ -17,7 +17,6 @@ import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 
 public class TeamPrivateMemberTest extends ResourceTest {
 	public TeamPrivateMemberTest() {
@@ -628,12 +627,7 @@ public class TeamPrivateMemberTest extends ResourceTest {
 		final ResourceDeltaVerifier listener = new ResourceDeltaVerifier();
 		getWorkspace().addResourceChangeListener(listener);
 		try {
-			IWorkspaceRunnable body = new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) {
-					ensureExistsInWorkspace(resources, true);
-				}
-			};
+			IWorkspaceRunnable body = monitor -> ensureExistsInWorkspace(resources, true);
 			try {
 				listener.addExpectedChange(resources, IResourceDelta.ADDED, IResource.NONE);
 				listener.addExpectedChange(project, IResourceDelta.ADDED, IResourceDelta.OPEN);
@@ -652,12 +646,9 @@ public class TeamPrivateMemberTest extends ResourceTest {
 		// set the folder to be team private and do the same test
 		getWorkspace().addResourceChangeListener(listener);
 		try {
-			IWorkspaceRunnable body = new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) {
-					ensureExistsInWorkspace(resources, true);
-					setTeamPrivateMember("2.0", folder, true, IResource.DEPTH_ZERO);
-				}
+			IWorkspaceRunnable body = monitor -> {
+				ensureExistsInWorkspace(resources, true);
+				setTeamPrivateMember("2.0", folder, true, IResource.DEPTH_ZERO);
 			};
 			try {
 				listener.reset();
@@ -677,12 +668,9 @@ public class TeamPrivateMemberTest extends ResourceTest {
 		// set all resources to be team private and do the same test
 		getWorkspace().addResourceChangeListener(listener);
 		try {
-			IWorkspaceRunnable body = new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) {
-					ensureExistsInWorkspace(resources, true);
-					setTeamPrivateMember("3.0", project, true, IResource.DEPTH_INFINITE);
-				}
+			IWorkspaceRunnable body = monitor -> {
+				ensureExistsInWorkspace(resources, true);
+				setTeamPrivateMember("3.0", project, true, IResource.DEPTH_INFINITE);
 			};
 			try {
 				listener.reset();
@@ -796,16 +784,13 @@ public class TeamPrivateMemberTest extends ResourceTest {
 	}
 
 	protected void assertTeamPrivateMember(final String message, IResource root, final boolean value, int depth) {
-		IResourceVisitor visitor = new IResourceVisitor() {
-			@Override
-			public boolean visit(IResource resource) {
-				boolean expected = false;
-				if (resource.getType() == IResource.FILE || resource.getType() == IResource.FOLDER) {
-					expected = value;
-				}
-				assertEquals(message + resource.getFullPath(), expected, resource.isTeamPrivateMember());
-				return true;
+		IResourceVisitor visitor = resource -> {
+			boolean expected = false;
+			if (resource.getType() == IResource.FILE || resource.getType() == IResource.FOLDER) {
+				expected = value;
 			}
+			assertEquals(message + resource.getFullPath(), expected, resource.isTeamPrivateMember());
+			return true;
 		};
 		try {
 			root.accept(visitor, depth, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);
@@ -815,16 +800,13 @@ public class TeamPrivateMemberTest extends ResourceTest {
 	}
 
 	protected void setTeamPrivateMember(final String message, IResource root, final boolean value, int depth) {
-		IResourceVisitor visitor = new IResourceVisitor() {
-			@Override
-			public boolean visit(IResource resource) {
-				try {
-					resource.setTeamPrivateMember(value);
-				} catch (CoreException e) {
-					fail(message + resource.getFullPath(), e);
-				}
-				return true;
+		IResourceVisitor visitor = resource -> {
+			try {
+				resource.setTeamPrivateMember(value);
+			} catch (CoreException e) {
+				fail(message + resource.getFullPath(), e);
 			}
+			return true;
 		};
 		try {
 			root.accept(visitor, depth, IContainer.INCLUDE_TEAM_PRIVATE_MEMBERS);

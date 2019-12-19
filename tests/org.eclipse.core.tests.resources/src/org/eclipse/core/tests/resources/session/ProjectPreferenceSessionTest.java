@@ -70,19 +70,16 @@ public class ProjectPreferenceSessionTest extends WorkspaceSessionTest {
 	public void testDeleteFileBeforeLoad2() {
 		IProject project = getProject("testDeleteFileBeforeLoad");
 		Platform.getPreferencesService().getRootNode().node(ProjectScope.SCOPE).node(project.getName());
-		ILogListener listener = new ILogListener() {
-			@Override
-			public void logging(IStatus status, String plugin) {
-				if (!Platform.PI_RUNTIME.equals(plugin)) {
-					return;
-				}
-				Throwable t = status.getException();
-				if (t == null) {
-					return;
-				}
-				if (t instanceof BackingStoreException) {
-					fail("1.0", t);
-				}
+		ILogListener listener = (status, plugin) -> {
+			if (!Platform.PI_RUNTIME.equals(plugin)) {
+				return;
+			}
+			Throwable t = status.getException();
+			if (t == null) {
+				return;
+			}
+			if (t instanceof BackingStoreException) {
+				fail("1.0", t);
 			}
 		};
 		try {

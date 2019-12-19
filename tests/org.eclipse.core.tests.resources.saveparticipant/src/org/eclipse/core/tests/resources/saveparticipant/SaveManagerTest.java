@@ -107,14 +107,12 @@ public class SaveManagerTest extends WorkspaceSessionTest {
 	}
 
 	protected void touch(IProject project) throws CoreException {
-		project.accept(new IResourceVisitor() {
-			public boolean visit(IResource resource) throws CoreException {
-				if (resource.getType() == IResource.FILE) {
-					resource.touch(null);
-					return false;
-				}
-				return true;
+		project.accept(resource -> {
+			if (resource.getType() == IResource.FILE) {
+				resource.touch(null);
+				return false;
 			}
+			return true;
 		});
 	}
 }

@@ -424,22 +424,19 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 		viewer = new TreeViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL);
 		viewer.setContentProvider(new ViewContentProvider());
 		viewer.setLabelProvider(new ViewLabelProvider());
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection sel = (IStructuredSelection) event.getSelection();
-				IStructuredSelection newSelection = emptySelection;
-				if (!sel.isEmpty() && sel.size() == 1) {
-					Object first = sel.getFirstElement();
-					if (first instanceof IMarker) {
-						IMarker marker = (IMarker) first;
-						propertySource.setSourceMarker(marker);
-						newSelection = new StructuredSelection(propertySource);
-					}
+		viewer.addSelectionChangedListener(event -> {
+			IStructuredSelection sel = (IStructuredSelection) event.getSelection();
+			IStructuredSelection newSelection = emptySelection;
+			if (!sel.isEmpty() && sel.size() == 1) {
+				Object first = sel.getFirstElement();
+				if (first instanceof IMarker) {
+					IMarker marker = (IMarker) first;
+					propertySource.setSourceMarker(marker);
+					newSelection = new StructuredSelection(propertySource);
 				}
-
-				getSite().getSelectionProvider().setSelection(newSelection);
 			}
+
+			getSite().getSelectionProvider().setSelection(newSelection);
 		});
 
 		pagePartListener = new PagePartListener();
@@ -472,12 +469,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 	void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				MarkerView.this.fillContextMenu(manager);
-			}
-		});
+		menuMgr.addMenuListener(manager -> MarkerView.this.fillContextMenu(manager));
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);
@@ -577,12 +569,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 			return;
 		// could have been called from a non-UI thread.
 		// handle appropriately
-		Display.getDefault().asyncExec(new Runnable() {
-			@Override
-			public void run() {
-				viewer.setInput(currentResource);
-			}
-		});
+		Display.getDefault().asyncExec(() -> viewer.setInput(currentResource));
 	}
 
 	/**

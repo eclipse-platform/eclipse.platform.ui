@@ -129,23 +129,16 @@ public class Bug_378156 extends ResourceTest {
 		SignaledBuilder builder = SignaledBuilder.getInstance(project1);
 		builder.reset();
 
-		getWorkspace().run(new IWorkspaceRunnable() {
-
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				//modify the file so autobuild is needed
-				file.setContents(getRandomContents(), IResource.NONE, null);
-				//create a nested operation that immediately cancels
-				try {
-					getWorkspace().run(new IWorkspaceRunnable() {
-						@Override
-						public void run(IProgressMonitor monitor) {
-							throw new OperationCanceledException();
-						}
-					}, null);
-				} catch (OperationCanceledException e) {
-					//don't let this propagate - we changed our mind about canceling
-				}
+		getWorkspace().run((IWorkspaceRunnable) monitor -> {
+			//modify the file so autobuild is needed
+			file.setContents(getRandomContents(), IResource.NONE, null);
+			//create a nested operation that immediately cancels
+			try {
+				getWorkspace().run((IWorkspaceRunnable) monitor1 -> {
+					throw new OperationCanceledException();
+				}, null);
+			} catch (OperationCanceledException e) {
+				//don't let this propagate - we changed our mind about canceling
 			}
 		}, null);
 		waitForBuild();

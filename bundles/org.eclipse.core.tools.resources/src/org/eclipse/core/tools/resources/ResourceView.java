@@ -89,12 +89,7 @@ public class ResourceView extends SpyView {
 
 		final MenuManager menuMgr = new MenuManager();
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				manager.add(copyAction);
-			}
-		});
+		menuMgr.addMenuListener(manager -> manager.add(copyAction));
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
 	}
@@ -139,12 +134,7 @@ public class ResourceView extends SpyView {
 		ISelectionService selectionService = getSite().getPage().getWorkbenchWindow().getSelectionService();
 
 		// creates a selection listener that ignores who generated the event	
-		selectionListener = new ISelectionListener() {
-			@Override
-			public void selectionChanged(IWorkbenchPart part, ISelection sel) {
-				processSelection(sel);
-			}
-		};
+		selectionListener = (part, sel) -> processSelection(sel);
 
 		selectionService.addSelectionListener(selectionListener);
 
@@ -249,12 +239,7 @@ public class ResourceView extends SpyView {
 			// if there is a delta, something has changed
 			if (resourceDelta != null) {
 				// so rebuild the resource view contents with the new state
-				Display.getDefault().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						loadResource(currentResource);
-					}
-				});
+				Display.getDefault().asyncExec(() -> loadResource(currentResource));
 			}
 		}
 	}

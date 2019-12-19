@@ -589,26 +589,18 @@ public class ProjectPreferencesTest extends ResourceTest {
 		}
 
 		// add a log listener to ensure that no errors are reported silently
-		ILogListener logListener = new ILogListener() {
-			@Override
-			public void logging(IStatus status, String plugin) {
-				Throwable exception = status.getException();
-				if (exception == null || !(exception instanceof CoreException)) {
-					return;
-				}
-				if (IResourceStatus.WORKSPACE_LOCKED == ((CoreException) exception).getStatus().getCode()) {
-					fail("3.0");
-				}
+		ILogListener logListener = (status, plugin) -> {
+			Throwable exception = status.getException();
+			if (exception == null || !(exception instanceof CoreException)) {
+				return;
+			}
+			if (IResourceStatus.WORKSPACE_LOCKED == ((CoreException) exception).getStatus().getCode()) {
+				fail("3.0");
 			}
 		};
 
 		// listener to react to changes in the workspace
-		IResourceChangeListener rclistener = new IResourceChangeListener() {
-			@Override
-			public void resourceChanged(IResourceChangeEvent event) {
-				new ProjectScope(project).getNode(qualifier);
-			}
-		};
+		IResourceChangeListener rclistener = event -> new ProjectScope(project).getNode(qualifier);
 
 		// add the listeners
 		Platform.addLogListener(logListener);

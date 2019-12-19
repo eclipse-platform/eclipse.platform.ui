@@ -239,12 +239,7 @@ public class LocalHistoryBrowserView extends ViewPart {
 	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				LocalHistoryBrowserView.this.fillContextMenu(manager);
-			}
-		});
+		menuMgr.addMenuListener(manager -> LocalHistoryBrowserView.this.fillContextMenu(manager));
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);
@@ -312,12 +307,7 @@ public class LocalHistoryBrowserView extends ViewPart {
 	}
 
 	private void hookDoubleClickAction() {
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				doubleClickAction.run();
-			}
-		});
+		viewer.addDoubleClickListener(event -> doubleClickAction.run());
 	}
 
 	protected void showMessage(String message) {

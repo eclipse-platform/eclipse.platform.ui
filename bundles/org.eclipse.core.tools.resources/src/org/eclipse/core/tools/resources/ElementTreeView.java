@@ -188,27 +188,24 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 			phantomCount = 0;
 			hiddenCount = 0;
 			syncInfoCount = 0;
-			IElementContentVisitor visitor = new IElementContentVisitor() {
-				@Override
-				public boolean visitElement(ElementTree tree, IPathRequestor requestor, Object elementContents) {
-					ResourceInfo info = (ResourceInfo) elementContents;
-					if (info == null)
-						return true;
-					resourceCount++;
-					if (info.isSet(ICoreConstants.M_TEAM_PRIVATE_MEMBER))
-						teamPrivateCount++;
-					if (info.isSet(ICoreConstants.M_PHANTOM))
-						phantomCount++;
-					if (info.isSet(ICoreConstants.M_HIDDEN))
-						hiddenCount++;
-					MarkerSet markers = info.getMarkers();
-					if (markers != null)
-						markerCount += markers.size();
-					Map<QualifiedName, Object> syncInfo = SpySupport.getSyncInfo(info);
-					if (syncInfo != null)
-						syncInfoCount += syncInfo.size();
+			IElementContentVisitor visitor = (tree, requestor, elementContents) -> {
+				ResourceInfo info = (ResourceInfo) elementContents;
+				if (info == null)
 					return true;
-				}
+				resourceCount++;
+				if (info.isSet(ICoreConstants.M_TEAM_PRIVATE_MEMBER))
+					teamPrivateCount++;
+				if (info.isSet(ICoreConstants.M_PHANTOM))
+					phantomCount++;
+				if (info.isSet(ICoreConstants.M_HIDDEN))
+					hiddenCount++;
+				MarkerSet markers = info.getMarkers();
+				if (markers != null)
+					markerCount += markers.size();
+				Map<QualifiedName, Object> syncInfo = SpySupport.getSyncInfo(info);
+				if (syncInfo != null)
+					syncInfoCount += syncInfo.size();
+				return true;
 			};
 			new ElementTreeIterator(workspace.getElementTree(), Path.ROOT).iterate(visitor);
 		}
@@ -325,12 +322,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 		private List<Map.Entry<Object, Integer>> sortEntrySet(Set<Map.Entry<Object, Integer>> set) {
 			List<Map.Entry<Object, Integer>> result = new ArrayList<>();
 			result.addAll(set);
-			Collections.sort(result, new Comparator<Map.Entry<Object, Integer>>() {
-				@Override
-				public int compare(Map.Entry<Object, Integer> arg0, Map.Entry<Object, Integer> arg1) {
-					return arg1.getValue().intValue() - arg0.getValue().intValue();
-				}
-			});
+			Collections.sort(result, (arg0, arg1) -> arg1.getValue().intValue() - arg0.getValue().intValue());
 			return result;
 		}
 
@@ -372,14 +364,11 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 			buffer.append("Potential savings of using unique strings: " + prettyPrint(savings) + "\n");
 
 			//post changes to UI thread
-			viewer.getControl().getDisplay().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					if (!viewer.getControl().isDisposed()) {
-						IDocument doc = viewer.getDocument();
-						doc.set(buffer.toString());
-						viewer.setDocument(doc);
-					}
+			viewer.getControl().getDisplay().asyncExec(() -> {
+				if (!viewer.getControl().isDisposed()) {
+					IDocument doc = viewer.getDocument();
+					doc.set(buffer.toString());
+					viewer.setDocument(doc);
 				}
 			});
 		}

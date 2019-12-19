@@ -136,32 +136,29 @@ public class DeltaView extends SpyView implements IResourceChangeListener {
 			return;
 
 		// we need to access UI widgets from a SWT thread 
-		Runnable update = new Runnable() {
-			@Override
-			public void run() {
-				// the view might have been disposed at the moment this code runs
-				if (parent.isDisposed())
-					return;
+		Runnable update = () -> {
+			// the view might have been disposed at the moment this code runs
+			if (parent.isDisposed())
+				return;
 
-				// updates viewer document, appending new delta information     
-				IDocument doc = viewer.getDocument();
-				StringBuilder contents = new StringBuilder(doc.get());
-				contents.append('\n');
+			// updates viewer document, appending new delta information     
+			IDocument doc = viewer.getDocument();
+			StringBuilder contents = new StringBuilder(doc.get());
+			contents.append('\n');
 
-				// asks for a string representation for the delta
-				contents.append(delta.toDeepDebugString());
+			// asks for a string representation for the delta
+			contents.append(delta.toDeepDebugString());
 
-				// save current number of lines
-				int previousNOL = doc.getNumberOfLines();
+			// save current number of lines
+			int previousNOL = doc.getNumberOfLines();
 
-				// sets the viewer document's new contents
-				// ensuring there will be no more than MAX_SIZE chars in it 						
-				int length = contents.length();
-				doc.set(contents.substring(length - (Math.min(MAX_SIZE, length))));
+			// sets the viewer document's new contents
+			// ensuring there will be no more than MAX_SIZE chars in it 						
+			int length = contents.length();
+			doc.set(contents.substring(length - (Math.min(MAX_SIZE, length))));
 
-				// ensures the added content will be immediately visible
-				viewer.setTopIndex(previousNOL + 1);
-			}
+			// ensures the added content will be immediately visible
+			viewer.setTopIndex(previousNOL + 1);
 		};
 		// run our code in the SWT thread
 		parent.getDisplay().syncExec(update);

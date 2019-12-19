@@ -81,13 +81,10 @@ public class ProjectView extends SpyView {
 
 		final MenuManager menuMgr = new MenuManager();
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				manager.add(copyAction);
-				// Other plug-ins can contribute their actions here
-				manager.add(new Separator("Additions")); //$NON-NLS-1$
-			}
+		menuMgr.addMenuListener(manager -> {
+			manager.add(copyAction);
+			// Other plug-ins can contribute their actions here
+			manager.add(new Separator("Additions")); //$NON-NLS-1$
 		});
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
@@ -130,12 +127,7 @@ public class ProjectView extends SpyView {
 	 */
 	private void addSelectionListener() {
 		ISelectionService selectionService = getSite().getPage().getWorkbenchWindow().getSelectionService();
-		selectionListener = new ISelectionListener() {
-			@Override
-			public void selectionChanged(IWorkbenchPart part, ISelection sel) {
-				processSelection(sel);
-			}
-		};
+		selectionListener = (part, sel) -> processSelection(sel);
 		selectionService.addSelectionListener(selectionListener);
 		processSelection(selectionService.getSelection());
 	}
@@ -210,12 +202,7 @@ public class ProjectView extends SpyView {
 				return;
 
 			// rebuild the project view contents with the new state
-			Display.getDefault().asyncExec(new Runnable() {
-				@Override
-				public void run() {
-					loadResource(currentResource);
-				}
-			});
+			Display.getDefault().asyncExec(() -> loadResource(currentResource));
 		}
 	}
 
