@@ -28,7 +28,6 @@ import org.eclipse.e4.ui.model.LocalizationHelper;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MBindingContext;
 import org.eclipse.e4.ui.workbench.UIEvents;
-import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
 /**
@@ -95,26 +94,23 @@ public class ContextProcessingAddon {
 	}
 
 	private void registerModelListeners() {
-		additionHandler = new EventHandler() {
-			@Override
-			public void handleEvent(Event event) {
-				Object elementObj = event.getProperty(UIEvents.EventTags.ELEMENT);
-				if (elementObj instanceof MBindingContext) {
-					if (UIEvents.isADD(event)) {
-						for (Object newObj : UIEvents.asIterable(event,
-								UIEvents.EventTags.NEW_VALUE)) {
-							if (newObj instanceof MBindingContext) {
-								MBindingContext newCtx = (MBindingContext) newObj;
-								defineContexts((MBindingContext) elementObj, newCtx);
-							}
+		additionHandler = event -> {
+			Object elementObj = event.getProperty(UIEvents.EventTags.ELEMENT);
+			if (elementObj instanceof MBindingContext) {
+				if (UIEvents.isADD(event)) {
+					for (Object newObj : UIEvents.asIterable(event,
+							UIEvents.EventTags.NEW_VALUE)) {
+						if (newObj instanceof MBindingContext) {
+							MBindingContext newCtx = (MBindingContext) newObj;
+							defineContexts((MBindingContext) elementObj, newCtx);
 						}
-					} else if (UIEvents.isREMOVE(event)) {
-						for (Object oldObj : UIEvents.asIterable(event,
-								UIEvents.EventTags.OLD_VALUE)) {
-							if (oldObj instanceof MBindingContext) {
-								MBindingContext oldCtx = (MBindingContext) oldObj;
-								undefineContext(oldCtx);
-							}
+					}
+				} else if (UIEvents.isREMOVE(event)) {
+					for (Object oldObj : UIEvents.asIterable(event,
+							UIEvents.EventTags.OLD_VALUE)) {
+						if (oldObj instanceof MBindingContext) {
+							MBindingContext oldCtx = (MBindingContext) oldObj;
+							undefineContext(oldCtx);
 						}
 					}
 				}

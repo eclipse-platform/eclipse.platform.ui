@@ -18,7 +18,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
-import org.eclipse.e4.ui.css.core.engine.CSSErrorHandler;
 import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.e4.ui.css.swt.engine.CSSSWTEngineImpl;
 import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
@@ -50,12 +49,7 @@ public class ThemeEngineManager implements IThemeManager {
 			return cssEngine;
 		}
 		cssEngine = new CSSSWTEngineImpl(display, true);
-		cssEngine.setErrorHandler(new CSSErrorHandler() {
-			@Override
-			public void error(Exception e) {
-				logError(e.getMessage(), e);
-			}
-		});
+		cssEngine.setErrorHandler(e -> logError(e.getMessage(), e));
 		WidgetElement.setEngine(display, cssEngine);
 		return cssEngine;
 	}

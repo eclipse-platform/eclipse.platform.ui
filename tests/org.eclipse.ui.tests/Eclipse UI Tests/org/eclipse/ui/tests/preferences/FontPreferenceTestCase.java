@@ -158,13 +158,11 @@ public class FontPreferenceTestCase extends UITestCase {
 		final boolean[] errorLogged = new boolean[] { false };
 		ILogger logger = Policy.getLog();
 		try {
-			Policy.setLog(new ILogger() {
-				@Override
-				public void log(IStatus status) {
-					if (status != null && status.getSeverity() == IStatus.ERROR && status.getPlugin().equals(Policy.JFACE)) {
-						errorLogged[0] = true;
-					}
-				}} );
+			Policy.setLog(status -> {
+				if (status != null && status.getSeverity() == IStatus.ERROR && status.getPlugin().equals(Policy.JFACE)) {
+					errorLogged[0] = true;
+				}
+			} );
 
 
 			Job job = new Job("Non-UI thread FontRegistry Access Test") {

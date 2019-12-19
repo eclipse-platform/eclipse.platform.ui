@@ -17,9 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.Objects;
 
-import org.eclipse.e4.ui.css.core.dom.IElementProvider;
 import org.eclipse.e4.ui.css.core.dom.parsers.CSSParser;
-import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.w3c.dom.Element;
@@ -42,17 +40,13 @@ public class AbstractCSSEngineTest {
 			}
 
 		};
-		objectUnderTest.setElementProvider(new IElementProvider() {
-
-			@Override
-			public Element getElement(Object element, CSSEngine engine) {
-				// throws NPE if parameter is null
-				Objects.requireNonNull(element);
-				if (element instanceof Element) {
-					return (Element) element;
-				}
-				return null;
+		objectUnderTest.setElementProvider((element, engine) -> {
+			// throws NPE if parameter is null
+			Objects.requireNonNull(element);
+			if (element instanceof Element) {
+				return (Element) element;
 			}
+			return null;
 		});
 	}
 

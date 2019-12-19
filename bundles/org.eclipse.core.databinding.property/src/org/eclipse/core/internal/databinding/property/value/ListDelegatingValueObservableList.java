@@ -26,7 +26,6 @@ import java.util.ListIterator;
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
-import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.list.AbstractObservableList;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -83,12 +82,7 @@ public class ListDelegatingValueObservableList<S, T extends S, E> extends Abstra
 		}
 	};
 
-	private IStaleListener staleListener = new IStaleListener() {
-		@Override
-		public void handleStale(StaleEvent staleEvent) {
-			fireStale();
-		}
-	};
+	private IStaleListener staleListener = staleEvent -> fireStale();
 
 	/**
 	 * @param masterList

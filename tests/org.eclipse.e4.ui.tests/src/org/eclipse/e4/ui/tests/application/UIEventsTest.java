@@ -47,7 +47,6 @@ import org.eclipse.e4.ui.workbench.UIEvents.UILabel;
 import org.eclipse.e4.ui.workbench.UIEvents.Window;
 import org.eclipse.emf.common.notify.Notifier;
 import org.junit.Test;
-import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
 public class UIEventsTest extends HeadlessApplicationElementTest {
@@ -59,17 +58,14 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		String[] attIds;
 		boolean[] hasFired;
 
-		EventHandler attListener = new EventHandler() {
-			@Override
-			public void handleEvent(Event event) {
-				assertTrue(event.getTopic().equals(topic),
-						"Incorrect Topic: " + event.getTopic()); //$NON-NLS-1$
+		EventHandler attListener = event -> {
+			assertTrue(event.getTopic().equals(topic),
+					"Incorrect Topic: " + event.getTopic()); //$NON-NLS-1$
 
-				String attId = (String) event.getProperty(EventTags.ATTNAME);
-				int attIndex = getAttIndex(attId);
-				assertTrue(attIndex >= 0, "Unknown Attribite: " + attId); //$NON-NLS-1$
-				hasFired[attIndex] = true;
-			}
+			String attId = (String) event.getProperty(EventTags.ATTNAME);
+			int attIndex = getAttIndex(attId);
+			assertTrue(attIndex >= 0, "Unknown Attribite: " + attId); //$NON-NLS-1$
+			hasFired[attIndex] = true;
 		};
 
 		public EventTester(String name, String topic, String[] attIds,
@@ -348,12 +344,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		assertFalse("child context has same IEventBroker", appEB == childEB);
 
 		final boolean seen[] = { false };
-		childEB.subscribe(testTopic, new EventHandler() {
-			@Override
-			public void handleEvent(Event event) {
-				seen[0] = true;
-			}
-		});
+		childEB.subscribe(testTopic, event -> seen[0] = true);
 
 		// ensure the EBs are wired up
 		assertFalse(seen[0]);

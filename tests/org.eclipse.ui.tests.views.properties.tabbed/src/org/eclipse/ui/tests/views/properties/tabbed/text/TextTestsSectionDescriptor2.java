@@ -36,13 +36,7 @@ public class TextTestsSectionDescriptor2 extends TextTestsSectionDescriptor {
 	 */
 	@Override
 	public IFilter getFilter() {
-		return new IFilter() {
-
-			@Override
-			public boolean select(Object toTest) {
-				return false;
-			}
-		};
+		return toTest -> false;
 	}
 
 }

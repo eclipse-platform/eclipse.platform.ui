@@ -48,7 +48,6 @@ import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.emf.ecore.EObject;
-import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
 public class HeadlessContextPresentationEngine implements IPresentationEngine {
@@ -89,37 +88,34 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 
 	@PostConstruct
 	void postConstruct() {
-		childHandler = new EventHandler() {
-			@Override
-			public void handleEvent(Event event) {
-				if (UIEvents.isADD(event)) {
-					for (Object element : UIEvents.asIterable(event,
-							UIEvents.EventTags.NEW_VALUE)) {
-						if (element instanceof MUIElement) {
-							Object parent = event
-									.getProperty(UIEvents.EventTags.ELEMENT);
-							IEclipseContext parentContext = getParentContext((MUIElement) element);
-							if (element instanceof MContext) {
-								IEclipseContext context = ((MContext) element)
-										.getContext();
-								if (context != null
-										&& context.getParent() != parentContext) {
-									context.deactivate();
-								}
+		childHandler = event -> {
+			if (UIEvents.isADD(event)) {
+				for (Object element : UIEvents.asIterable(event,
+						UIEvents.EventTags.NEW_VALUE)) {
+					if (element instanceof MUIElement) {
+						Object parent = event
+								.getProperty(UIEvents.EventTags.ELEMENT);
+						IEclipseContext parentContext = getParentContext((MUIElement) element);
+						if (element instanceof MContext) {
+							IEclipseContext context = ((MContext) element)
+									.getContext();
+							if (context != null
+									&& context.getParent() != parentContext) {
+								context.deactivate();
 							}
-							createGui((MUIElement) element, parent,
-									parentContext);
+						}
+						createGui((MUIElement) element, parent,
+								parentContext);
 
-							if (parent instanceof MPartStack) {
-								MPartStack stack = (MPartStack) parent;
-								List<MStackElement> children = stack
-										.getChildren();
-								MStackElement stackElement = (MStackElement) element;
-								if (children.size() == 1
-										&& stackElement.isVisible()
-										&& stackElement.isToBeRendered()) {
-									stack.setSelectedElement(stackElement);
-								}
+						if (parent instanceof MPartStack) {
+							MPartStack stack = (MPartStack) parent;
+							List<MStackElement> children = stack
+									.getChildren();
+							MStackElement stackElement = (MStackElement) element;
+							if (children.size() == 1
+									&& stackElement.isVisible()
+									&& stackElement.isToBeRendered()) {
+								stack.setSelectedElement(stackElement);
 							}
 						}
 					}
@@ -130,25 +126,22 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 		eventBroker.subscribe(UIEvents.ElementContainer.TOPIC_CHILDREN,
 				childHandler);
 
-		activeChildHandler = new EventHandler() {
-			@Override
-			public void handleEvent(Event event) {
-				Object element = event
-						.getProperty(UIEvents.EventTags.NEW_VALUE);
-				if (element instanceof MUIElement) {
-					Object parent = event
-							.getProperty(UIEvents.EventTags.ELEMENT);
-					if (parent instanceof MGenericStack) {
-						MUIElement uiElement = (MUIElement) element;
-						IEclipseContext parentContext = getParentContext(uiElement);
-						createGui(uiElement, parent, parentContext);
+		activeChildHandler = event -> {
+			Object element = event
+					.getProperty(UIEvents.EventTags.NEW_VALUE);
+			if (element instanceof MUIElement) {
+				Object parent = event
+						.getProperty(UIEvents.EventTags.ELEMENT);
+				if (parent instanceof MGenericStack) {
+					MUIElement uiElement = (MUIElement) element;
+					IEclipseContext parentContext = getParentContext(uiElement);
+					createGui(uiElement, parent, parentContext);
 
-						if (parent instanceof MPerspectiveStack) {
-							MPerspective perspective = (MPerspective) uiElement;
-							adjustPlaceholders(perspective);
-							parentContext.get(EPartService.class)
-									.switchPerspective(perspective);
-						}
+					if (parent instanceof MPerspectiveStack) {
+						MPerspective perspective = (MPerspective) uiElement;
+						adjustPlaceholders(perspective);
+						parentContext.get(EPartService.class)
+								.switchPerspective(perspective);
 					}
 				}
 			}
@@ -157,19 +150,16 @@ public class HeadlessContextPresentationEngine implements IPresentationEngine {
 		eventBroker.subscribe(UIEvents.ElementContainer.TOPIC_SELECTEDELEMENT,
 				activeChildHandler);
 
-		toBeRenderedHandler = new EventHandler() {
-			@Override
-			public void handleEvent(Event event) {
-				MUIElement element = (MUIElement) event
-						.getProperty(UIEvents.EventTags.ELEMENT);
-				Boolean value = (Boolean) event
-						.getProperty(UIEvents.EventTags.NEW_VALUE);
-				if (value.booleanValue()) {
-					createGui(element, element.getParent(),
-							getParentContext(element));
-				} else {
-					removeGui(element);
-				}
+		toBeRenderedHandler = event -> {
+			MUIElement element = (MUIElement) event
+					.getProperty(UIEvents.EventTags.ELEMENT);
+			Boolean value = (Boolean) event
+					.getProperty(UIEvents.EventTags.NEW_VALUE);
+			if (value.booleanValue()) {
+				createGui(element, element.getParent(),
+						getParentContext(element));
+			} else {
+				removeGui(element);
 			}
 		};
 

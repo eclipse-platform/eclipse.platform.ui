@@ -28,7 +28,6 @@ import java.util.Properties;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.ILogListener;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -66,12 +65,7 @@ public class SorterTest extends NavigatorTestBase {
 
 		refreshViewer();
 
-		ILogListener ll = new ILogListener() {
-			@Override
-			public void logging(IStatus status, String plugin) {
-				_statusCount++;
-			}
-		};
+		ILogListener ll = (status, plugin) -> _statusCount++;
 
 		NavigatorPlugin.getDefault().getLog().addLogListener(ll);
 

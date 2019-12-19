@@ -35,13 +35,7 @@ public class SelectionAdapterTest {
 
 	@Test
 	public void testBasicSelectionEmpty() {
-		ISelection empty = new ISelection() {
-
-			@Override
-			public boolean isEmpty() {
-				return true;
-			}
-		};
+		ISelection empty = () -> true;
 		ICountable countable = Platform.getAdapterManager().getAdapter(empty, ICountable.class);
 		assertEquals(0, countable.count());
 
@@ -51,13 +45,7 @@ public class SelectionAdapterTest {
 
 	@Test
 	public void testBasicSelection() {
-		ISelection selection = new ISelection() {
-
-			@Override
-			public boolean isEmpty() {
-				return false;
-			}
-		};
+		ISelection selection = () -> false;
 		ICountable countable = Platform.getAdapterManager().getAdapter(selection, ICountable.class);
 		assertEquals(1, countable.count());
 

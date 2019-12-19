@@ -21,7 +21,6 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Collections;
-import java.util.Map;
 
 import javax.inject.Named;
 
@@ -321,13 +320,7 @@ public class HandlerTest {
 
 			@Override
 			public IParameterValues getValues() throws ParameterValuesException {
-				return new IParameterValues() {
-
-					@Override
-					public Map<?, ?> getParameterValues() {
-						return Collections.emptyMap();
-					}
-				};
+				return () -> Collections.emptyMap();
 			}
 
 			@Override

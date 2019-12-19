@@ -18,7 +18,6 @@ import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 
 import org.eclipse.core.runtime.ICoreRunnable;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -28,32 +27,29 @@ public class FreezeMonitor {
 
 	public static void expectCompletionIn(final long millis) {
 		done();
-		monitorJob = Job.create("FreezeMonitor", new ICoreRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) {
-				if (monitor.isCanceled()) {
-					throw new OperationCanceledException();
-				}
-				StringBuilder result = new StringBuilder();
-				result.append("Possible frozen test case\n");
-				ThreadMXBean threadStuff = ManagementFactory.getThreadMXBean();
-				ThreadInfo[] allThreads = threadStuff.getThreadInfo(threadStuff.getAllThreadIds(), 200);
-				for (ThreadInfo threadInfo : allThreads) {
-					result.append("\"");
-					result.append(threadInfo.getThreadName());
-					result.append("\": ");
-					result.append(threadInfo.getThreadState());
-					result.append("\n");
-					final StackTraceElement[] elements = threadInfo.getStackTrace();
-					for (StackTraceElement element : elements) {
-						result.append("    ");
-						result.append(element);
-						result.append("\n");
-					}
-					result.append("\n");
-				}
-				System.out.println(result.toString());
+		monitorJob = Job.create("FreezeMonitor", (ICoreRunnable) monitor -> {
+			if (monitor.isCanceled()) {
+				throw new OperationCanceledException();
 			}
+			StringBuilder result = new StringBuilder();
+			result.append("Possible frozen test case\n");
+			ThreadMXBean threadStuff = ManagementFactory.getThreadMXBean();
+			ThreadInfo[] allThreads = threadStuff.getThreadInfo(threadStuff.getAllThreadIds(), 200);
+			for (ThreadInfo threadInfo : allThreads) {
+				result.append("\"");
+				result.append(threadInfo.getThreadName());
+				result.append("\": ");
+				result.append(threadInfo.getThreadState());
+				result.append("\n");
+				final StackTraceElement[] elements = threadInfo.getStackTrace();
+				for (StackTraceElement element : elements) {
+					result.append("    ");
+					result.append(element);
+					result.append("\n");
+				}
+				result.append("\n");
+			}
+			System.out.println(result.toString());
 		});
 		monitorJob.schedule(millis);
 	}

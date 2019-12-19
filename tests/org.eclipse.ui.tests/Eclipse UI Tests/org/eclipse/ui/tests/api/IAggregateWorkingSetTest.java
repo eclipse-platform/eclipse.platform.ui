@@ -25,7 +25,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IAggregateWorkingSet;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkingSet;
@@ -397,34 +396,30 @@ public class IAggregateWorkingSetTest extends UITestCase {
 			// every client which wants to see components of the working set
 			// *before* the restoreWorkingSetState() is done, can silently (!!!)
 			// damage the AggregateWorkingSet being restored
-			IPropertyChangeListener badListener = new IPropertyChangeListener() {
-
-				@Override
-				public void propertyChange(PropertyChangeEvent event) {
-					if (event.getProperty() != IWorkingSetManager.CHANGE_WORKING_SET_ADD) {
-						return;
+			IPropertyChangeListener badListener = event -> {
+				if (event.getProperty() != IWorkingSetManager.CHANGE_WORKING_SET_ADD) {
+					return;
+				}
+				// simply resolve the working set before the manager creates
+				// another one
+				Object ws = event.getNewValue();
+				if (!(ws instanceof AggregateWorkingSet)) {
+					return;
+				}
+				AggregateWorkingSet aws = (AggregateWorkingSet) ws;
+				IMemento m = readField(AbstractWorkingSet.class, "workingSetMemento", IMemento.class, aws);
+				IWorkingSet[] sets = aws.getComponents();
+				if (m != null) {
+					IMemento[] msets = m.getChildren(IWorkbenchConstants.TAG_WORKING_SET);
+					if (msets.length != sets.length) {
+						// KABOOM!
+						error.set("Working set lost due the bad listener! " + "restored: " + Arrays.toString(sets)
+								+ ", expected: " + Arrays.toString(msets));
 					}
-					// simply resolve the working set before the manager creates
-					// another one
-					Object ws = event.getNewValue();
-					if (!(ws instanceof AggregateWorkingSet)) {
-						return;
-					}
-					AggregateWorkingSet aws = (AggregateWorkingSet) ws;
-					IMemento m = readField(AbstractWorkingSet.class, "workingSetMemento", IMemento.class, aws);
-					IWorkingSet[] sets = aws.getComponents();
-					if (m != null) {
-						IMemento[] msets = m.getChildren(IWorkbenchConstants.TAG_WORKING_SET);
-						if (msets.length != sets.length) {
-							// KABOOM!
-							error.set("Working set lost due the bad listener! " + "restored: " + Arrays.toString(sets)
-									+ ", expected: " + Arrays.toString(msets));
-						}
-					} else {
-						if (nameB.equals(aws.getName()) && sets.length != 2) {
-							// someone was faster
-							error.set("Working set lost due the bad listener! " + "restored: " + Arrays.toString(sets));
-						}
+				} else {
+					if (nameB.equals(aws.getName()) && sets.length != 2) {
+						// someone was faster
+						error.set("Working set lost due the bad listener! " + "restored: " + Arrays.toString(sets));
 					}
 				}
 			};

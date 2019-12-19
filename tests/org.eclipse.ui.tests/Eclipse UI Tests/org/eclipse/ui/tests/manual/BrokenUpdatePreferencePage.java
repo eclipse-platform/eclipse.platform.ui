@@ -16,7 +16,6 @@ package org.eclipse.ui.tests.manual;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -37,13 +36,10 @@ import org.eclipse.ui.internal.util.PrefUtil;
 public class BrokenUpdatePreferencePage extends PreferencePage implements
 		IWorkbenchPreferencePage {
 
-	private IPropertyChangeListener badListener = new IPropertyChangeListener() {
-		@Override
-		public void propertyChange(PropertyChangeEvent event) {
-			//Intentionally generate an error
-			String[] strings = new String[1];
-			System.out.println(strings[2]);
-		}
+	private IPropertyChangeListener badListener = event -> {
+		//Intentionally generate an error
+		String[] strings = new String[1];
+		System.out.println(strings[2]);
 	};
 
 	FontData[] data;

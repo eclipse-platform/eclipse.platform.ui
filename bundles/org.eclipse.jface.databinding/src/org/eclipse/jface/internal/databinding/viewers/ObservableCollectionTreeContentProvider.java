@@ -114,12 +114,7 @@ public abstract class ObservableCollectionTreeContentProvider<E> implements ITre
 		viewerObservable = new WritableValue<>(realm);
 		viewerUpdater = null;
 
-		elementSetFactory = new IObservableFactory<Viewer, IObservableSet<E>>() {
-			@Override
-			public IObservableSet<E> createObservable(Viewer target) {
-				return ObservableViewerElementSet.withComparer(realm, null, getElementComparer(target));
-			}
-		};
+		elementSetFactory = target -> ObservableViewerElementSet.withComparer(realm, null, getElementComparer(target));
 		knownElements = MasterDetailObservables.detailSet(viewerObservable, elementSetFactory, null);
 		unmodifiableKnownElements = Observables.unmodifiableObservableSet(knownElements);
 
