@@ -51,7 +51,6 @@ import org.eclipse.debug.ui.IDebugView;
 import org.eclipse.debug.ui.IDetailPane2;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.MenuManager;
@@ -76,14 +75,10 @@ import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.text.source.SourceViewerConfiguration;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyEvent;
@@ -472,14 +467,10 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 
 	private void installWhitespacePreferenceListener() {
 		IPreferenceStore store = EditorsUI.getPreferenceStore();
-		fPreferenceStorePropertyChangeListener = new IPropertyChangeListener() {
-
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				String property = event.getProperty();
-				if (AbstractTextEditor.PREFERENCE_SHOW_WHITESPACE_CHARACTERS.equals(property)) {
-					toggleWhitespaceCharacterPainter();
-				}
+		fPreferenceStorePropertyChangeListener = event -> {
+			String property = event.getProperty();
+			if (AbstractTextEditor.PREFERENCE_SHOW_WHITESPACE_CHARACTERS.equals(property)) {
+				toggleWhitespaceCharacterPainter();
 			}
 		};
 		store.addPropertyChangeListener(fPreferenceStorePropertyChangeListener);
@@ -535,12 +526,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 		});
 
 		// Add the selection listener so selection dependent actions get updated.
-		fSourceViewer.getSelectionProvider().addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				updateSelectionDependentActions();
-			}
-		});
+		fSourceViewer.getSelectionProvider().addSelectionChangedListener(event -> updateSelectionDependentActions());
 
 		// Add a focus listener to update actions when details area gains focus
 		fSourceViewer.getControl().addFocusListener(new FocusAdapter() {
@@ -579,20 +565,17 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 
 		// disposed controls don't get a FocusOut event, make sure all actions
 		// have been deactivated
-		fSourceViewer.getControl().addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				if (fHasFocus) {
-					setGlobalAction(IDebugView.SELECT_ALL_ACTION, null);
-					setGlobalAction(IDebugView.CUT_ACTION, null);
-					setGlobalAction(IDebugView.COPY_ACTION, null);
-					setGlobalAction(IDebugView.PASTE_ACTION, null);
-					setGlobalAction(IDebugView.FIND_ACTION, null);
-					setGlobalAction(getAction(DETAIL_ASSIGN_VALUE_ACTION)
-							.getActionDefinitionId(), null);
-					setGlobalAction(getAction(DETAIL_CONTENT_ASSIST_ACTION)
-							.getActionDefinitionId(), null);
-				}
+		fSourceViewer.getControl().addDisposeListener(e -> {
+			if (fHasFocus) {
+				setGlobalAction(IDebugView.SELECT_ALL_ACTION, null);
+				setGlobalAction(IDebugView.CUT_ACTION, null);
+				setGlobalAction(IDebugView.COPY_ACTION, null);
+				setGlobalAction(IDebugView.PASTE_ACTION, null);
+				setGlobalAction(IDebugView.FIND_ACTION, null);
+				setGlobalAction(getAction(DETAIL_ASSIGN_VALUE_ACTION)
+						.getActionDefinitionId(), null);
+				setGlobalAction(getAction(DETAIL_CONTENT_ASSIST_ACTION)
+						.getActionDefinitionId(), null);
 			}
 		});
 
@@ -681,12 +664,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 	protected void createDetailContextMenu(Control menuControl) {
 		MenuManager menuMgr= new MenuManager();
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager mgr) {
-				fillDetailContextMenu(mgr);
-			}
-		});
+		menuMgr.addMenuListener(mgr -> fillDetailContextMenu(mgr));
 		Menu menu= menuMgr.createContextMenu(menuControl);
 		menuControl.setMenu(menu);
 

@@ -34,8 +34,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -273,12 +271,7 @@ public class ExternalToolsBuilderTab extends AbstractLaunchConfigurationTab {
 			}
 		});
 
-		fFileText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updateLaunchConfigurationDialog();
-			}
-		});
+		fFileText.addModifyListener(e -> updateLaunchConfigurationDialog());
 
 		fVariables.addSelectionListener(new SelectionListener() {
 			@Override

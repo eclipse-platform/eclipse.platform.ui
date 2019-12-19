@@ -50,15 +50,11 @@ import org.eclipse.debug.ui.ILaunchConfigurationTab;
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.BaseLabelProvider;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ICheckStateProvider;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.window.Window;
@@ -466,12 +462,7 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 					updateLaunchConfigurationDialog();
 				}
 			};
-			treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-				@Override
-				public void selectionChanged(SelectionChangedEvent event) {
-					buts.updateWidgetEnablement();
-				}
-			});
+			treeViewer.addSelectionChangedListener(event -> buts.updateWidgetEnablement());
 
 			treeViewer.getTree().addSelectionListener(new SelectionAdapter(){
 				@Override
@@ -480,12 +471,9 @@ public class GroupLaunchConfigurationTabGroup extends AbstractLaunchConfiguratio
 				}
 			});
 
-			treeViewer.addCheckStateListener(new ICheckStateListener(){
-				@Override
-				public void checkStateChanged(CheckStateChangedEvent event) {
-					((GroupLaunchElement)event.getElement()).enabled = event.getChecked();
-					updateLaunchConfigurationDialog();
-				}
+			treeViewer.addCheckStateListener(event -> {
+				((GroupLaunchElement)event.getElement()).enabled = event.getChecked();
+				updateLaunchConfigurationDialog();
 			});
 			buts.updateWidgetEnablement();
 			GridData layoutData = new GridData(GridData.GRAB_VERTICAL);

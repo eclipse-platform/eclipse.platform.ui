@@ -25,7 +25,6 @@ import org.eclipse.core.commands.HandlerEvent;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.debug.core.IRequest;
 import org.eclipse.debug.internal.ui.commands.actions.DebugCommandService;
-import org.eclipse.debug.internal.ui.commands.actions.ICommandParticipant;
 import org.eclipse.debug.internal.ui.commands.actions.IEnabledTarget;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
@@ -228,12 +227,7 @@ public abstract class DebugCommandHandler extends AbstractHandler {
 		DebugCommandService service = DebugCommandService.getService(window);
 		return service.executeCommand(
 			getCommandType(), targets,
-			new ICommandParticipant() {
-				@Override
-				public void requestDone(org.eclipse.debug.core.IRequest request) {
-					DebugCommandHandler.this.postExecute(request, targets);
-				}
-			});
+			request -> DebugCommandHandler.this.postExecute(request, targets));
 	}
 
 	/**

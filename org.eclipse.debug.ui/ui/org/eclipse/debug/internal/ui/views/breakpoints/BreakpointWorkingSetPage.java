@@ -31,8 +31,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -85,14 +83,7 @@ public class BreakpointWorkingSetPage extends WizardPage implements IWorkingSetP
 		label.setLayoutData(gd);
 		fWorkingSetName= new Text(composite, SWT.SINGLE | SWT.BORDER);
 		fWorkingSetName.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
-		fWorkingSetName.addModifyListener(
-			new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					validateInput();
-				}
-			}
-		);
+		fWorkingSetName.addModifyListener(e -> validateInput());
 		fWorkingSetName.setFocus();
 		label= new Label(composite, SWT.WRAP);
 		label.setText(DebugUIViewsMessages.BreakpointWorkingSetPage_3);

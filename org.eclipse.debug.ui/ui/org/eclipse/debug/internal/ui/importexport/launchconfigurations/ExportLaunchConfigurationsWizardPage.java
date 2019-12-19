@@ -49,15 +49,11 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchCategoryFilter;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Image;
@@ -185,12 +181,9 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 				updateCheckedState(element);
 			}
 		}
-		fViewer.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				updateCheckedState(event.getElement());
-				setPageComplete(isComplete());
-			}
+		fViewer.addCheckStateListener(event -> {
+			updateCheckedState(event.getElement());
+			setPageComplete(isComplete());
 		});
 		Composite buttoncomp = SWTFactory.createComposite(parent, parent.getFont(), 2, 2, GridData.FILL_HORIZONTAL, 0, 0);
 		Button button = SWTFactory.createPushButton(buttoncomp, WizardMessages.ExportLaunchConfigurationsWizardPage_8, null);
@@ -277,12 +270,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 		fFilePath = SWTFactory.createText(comp, SWT.SINGLE | SWT.BORDER, 1);
 		String opath = getDialogSettings().get(OLD_PATH);
 		fFilePath.setText((opath == null ? IInternalDebugCoreConstants.EMPTY_STRING : opath));
-		fFilePath.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				setPageComplete(isComplete());
-			}
-		});
+		fFilePath.addModifyListener(e -> setPageComplete(isComplete()));
 		Button button = SWTFactory.createPushButton(comp, WizardMessages.ExportLaunchConfigurationsWizardPage_0, null, GridData.END);
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
