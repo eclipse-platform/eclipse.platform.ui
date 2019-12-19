@@ -18,7 +18,6 @@
 
 /*******************************************************************************
  * The following bugs are referred to in this style sheet
- * 1.) Bug 419482 - Cascading policy in CSS
  * 2.) Bug 419377 - Setting a property to 'inherit' is not supported
  * 3.) Bug 430051 - Regression for CTabRendering when drawing bottom tabs
  * 5.) Bug 430278 - Add support for styling Scrollbars
@@ -72,7 +71,8 @@ CCombo {
     background-color:#515658;
     color:#eeeeee;
 }
-
+Composite > StyledText,
+Shell [style~='SWT.DROP_DOWN'] > StyledText, /* for eg. folded code popup (but it's ignored) */
 SashForm > StyledText {
 	/*	Fix StyledText inside a SashForm */
     background-color:#515658;
@@ -103,14 +103,6 @@ ScheduleDatePicker > Text {
     color:#eeeeee;
 }
 
-
-Composite > StyledText,
-Shell [style~='SWT.DROP_DOWN'] > StyledText, /* for eg. folded code popup (but it's ignored) */
-/* the following are required due to Bug 419482 (see <1>): */
-ScrolledComposite > Composite > Composite > Composite > StyledText {
-    background-color:#515658;
-    color:#eeeeee;
-}
 
 ScrolledFormText,
 FormText {
