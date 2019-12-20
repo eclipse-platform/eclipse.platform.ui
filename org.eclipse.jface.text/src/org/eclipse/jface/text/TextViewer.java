@@ -2633,7 +2633,8 @@ public class TextViewer extends Viewer implements
 		List<ISelectionChangedListener> listeners= fPostSelectionChangedListeners;
 		if (listeners != null) {
 			listeners= new ArrayList<>(listeners);
-			for (ISelectionChangedListener l : listeners) {
+			for (int i= 0; i < listeners.size(); i++) {
+				ISelectionChangedListener l= listeners.get(i);
 				l.selectionChanged(event);
 			}
 		}
@@ -2703,7 +2704,8 @@ public class TextViewer extends Viewer implements
 				event= ((SlaveDocumentEvent) event).getMasterEvent();
 
 			TextEvent e= new TextEvent(cmd.start, cmd.length, cmd.text, cmd.preservedText, event, redraws());
-			for (ITextListener l : textListeners) {
+			for (int i= 0; i < textListeners.size(); i++) {
+				ITextListener l= textListeners.get(i);
 				l.textChanged(e);
 			}
 		}
@@ -2745,7 +2747,8 @@ public class TextViewer extends Viewer implements
 	protected void fireInputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
 		List<ITextInputListener> listener= fTextInputListeners;
 		if (listener != null) {
-			for (ITextInputListener l : listener) {
+			for (int i= 0; i < listener.size(); i++) {
+				ITextInputListener l= listener.get(i);
 				l.inputDocumentAboutToBeChanged(oldInput, newInput);
 			}
 		}
@@ -2761,7 +2764,8 @@ public class TextViewer extends Viewer implements
 	protected void fireInputDocumentChanged(IDocument oldInput, IDocument newInput) {
 		List<ITextInputListener> listener= fTextInputListeners;
 		if (listener != null) {
-			for (ITextInputListener l : listener) {
+			for (int i= 0; i < listener.size(); i++) {
+				ITextInputListener l= listener.get(i);
 				l.inputDocumentChanged(oldInput, newInput);
 			}
 		}
@@ -2978,7 +2982,8 @@ public class TextViewer extends Viewer implements
 			int topPixel= fTextWidget.getTopPixel();
 			if (topPixel >= 0 && topPixel != fLastTopPixel) {
 				if (fViewportListeners != null) {
-					for (IViewportListener l : fViewportListeners) {
+					for (int i= 0; i < fViewportListeners.size(); i++) {
+						IViewportListener l= fViewportListeners.get(i);
 						l.viewportChanged(topPixel);
 					}
 				}
@@ -4746,7 +4751,9 @@ public class TextViewer extends Viewer implements
 		 * and let them apply their presentation.
 		 */
 		if (fTextPresentationListeners != null) {
-			for (ITextPresentationListener listener : new ArrayList<>(fTextPresentationListeners)) {
+			ArrayList<ITextPresentationListener> listeners= new ArrayList<>(fTextPresentationListeners);
+			for (int i= 0, size= listeners.size(); i < size; i++) {
+				ITextPresentationListener listener= listeners.get(i);
 				listener.applyTextPresentation(presentation);
 			}
 		}
