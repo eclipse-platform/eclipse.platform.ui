@@ -49,11 +49,6 @@ public class AntTargetNode extends AntElementNode {
 		isExtension = true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		if (fLabel == null) {
@@ -93,11 +88,6 @@ public class AntTargetNode extends AntElementNode {
 		return (target.getDescription() == null || getTargetName().startsWith("-")) && !isDefaultTarget(); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.editor.model.AntElementNode#getBaseImageDescriptor()
-	 */
 	@Override
 	protected ImageDescriptor getBaseImageDescriptor() {
 		ImageDescriptor base = null;
@@ -111,11 +101,6 @@ public class AntTargetNode extends AntElementNode {
 		return base;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.editor.model.AntElementNode#reset()
-	 */
 	@Override
 	public void reset() {
 		super.reset();
@@ -139,11 +124,6 @@ public class AntTargetNode extends AntElementNode {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#collapseProjection()
-	 */
 	@Override
 	public boolean collapseProjection() {
 		IPreferenceStore store = AntUIPlugin.getDefault().getPreferenceStore();
@@ -162,11 +142,6 @@ public class AntTargetNode extends AntElementNode {
 		return targetName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#containsOccurrence(java.lang.String)
-	 */
 	@Override
 	public boolean containsOccurrence(String identifier) {
 		if (getTargetName().equals(identifier)) {
@@ -193,11 +168,6 @@ public class AntTargetNode extends AntElementNode {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getOccurrencesIdentifier()
-	 */
 	@Override
 	public String getOccurrencesIdentifier() {
 		return getTargetName();
@@ -253,11 +223,6 @@ public class AntTargetNode extends AntElementNode {
 		return results;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#isRegionPotentialReference(org.eclipse.jface.text.IRegion)
-	 */
 	@Override
 	public boolean isRegionPotentialReference(IRegion region) {
 		boolean superOK = super.isRegionPotentialReference(region);
@@ -279,11 +244,6 @@ public class AntTargetNode extends AntElementNode {
 		return checkReferenceRegion(region, textToSearch, "unless"); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#isFromDeclaration(org.eclipse.jface.text.IRegion)
-	 */
 	@Override
 	public boolean isFromDeclaration(IRegion region) {
 		String textToSearch = getAntModel().getText(getOffset(), getLength());

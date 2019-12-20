@@ -41,11 +41,6 @@ public class VariableInputDialog extends Dialog {
 		setShellStyle(SWT.RESIZE | getShellStyle());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite inner = (Composite) super.createDialogArea(parent);
@@ -82,11 +77,6 @@ public class VariableInputDialog extends Dialog {
 		createButton(parent, IDialogConstants.CANCEL_ID, IDialogConstants.CANCEL_LABEL, false);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-	 */
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
@@ -104,11 +94,6 @@ public class VariableInputDialog extends Dialog {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 		String variableString = fText.getText();
@@ -124,11 +109,6 @@ public class VariableInputDialog extends Dialog {
 		return fVariableString;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#getDialogBoundsSettings()
-	 */
 	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
 		IDialogSettings settings = AntUIPlugin.getDefault().getDialogSettings();

@@ -99,11 +99,6 @@ public class AntCodeAssistPreferencePage extends AbstractAntEditorPreferencePage
 		fAutoInsertTriggerLabel.setEnabled(autoactivation);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		getOverlayStore().load();
@@ -127,21 +122,11 @@ public class AntCodeAssistPreferencePage extends AbstractAntEditorPreferencePage
 		initializeFields();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.preferences.AbstractAntEditorPreferencePage#handleDefaults()
-	 */
 	@Override
 	protected void handleDefaults() {
 		updateAutoactivationControls();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.preferences.AbstractAntEditorPreferencePage#getHelpContextId()
-	 */
 	@Override
 	protected String getHelpContextId() {
 		return IAntUIHelpContextIds.ANT_EDITOR_CONTENTASSIST_PREFERENCE_PAGE;

@@ -60,11 +60,6 @@ public class AntEditorDocumentProvider extends TextFileDocumentProvider {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createAnnotationModel(org.eclipse.core.resources.IFile)
-	 */
 	@Override
 	protected IAnnotationModel createAnnotationModel(IFile file) {
 		return new AntAnnotationModel(file);
@@ -75,9 +70,6 @@ public class AntEditorDocumentProvider extends TextFileDocumentProvider {
 		return new AntModel(document, requestor, new LocationProvider(element instanceof IEditorInput ? (IEditorInput) element : null));
 	}
 
-	/*
-	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createFileInfo(java.lang.Object)
-	 */
 	@Override
 	protected FileInfo createFileInfo(Object element) throws CoreException {
 		FileInfo info = super.createFileInfo(element);
@@ -124,12 +116,6 @@ public class AntEditorDocumentProvider extends TextFileDocumentProvider {
 		return xmlInfo;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#disposeFileInfo(java.lang.Object,
-	 * org.eclipse.ui.editors.text.TextFileDocumentProvider.FileInfo)
-	 */
 	@Override
 	protected void disposeFileInfo(Object element, FileInfo info) {
 		if (info instanceof AntFileInfo) {
@@ -156,9 +142,6 @@ public class AntEditorDocumentProvider extends TextFileDocumentProvider {
 		super.disposeFileInfo(element, info);
 	}
 
-	/*
-	 * @see org.eclipse.ui.editors.text.TextFileDocumentProvider#createEmptyFileInfo()
-	 */
 	@Override
 	protected FileInfo createEmptyFileInfo() {
 		return new AntFileInfo();

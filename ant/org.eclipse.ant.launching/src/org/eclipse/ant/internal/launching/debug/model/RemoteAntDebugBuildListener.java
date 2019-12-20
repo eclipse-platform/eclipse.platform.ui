@@ -251,61 +251,31 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 		super.shutDown();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#resume()
-	 */
 	@Override
 	public void resume() {
 		sendRequest(DebugMessageIds.RESUME);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.launching.debug.IAntDebugController#terminate()
-	 */
 	@Override
 	public void terminate() {
 		// do nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#suspend()
-	 */
 	@Override
 	public void suspend() {
 		sendRequest(DebugMessageIds.SUSPEND);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#stepInto()
-	 */
 	@Override
 	public void stepInto() {
 		sendRequest(DebugMessageIds.STEP_INTO);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#stepOver()
-	 */
 	@Override
 	public void stepOver() {
 		sendRequest(DebugMessageIds.STEP_OVER);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#handleBreakpoint(IBreakpoint, boolean)
-	 */
 	@Override
 	public void handleBreakpoint(IBreakpoint breakpoint, boolean add) {
 		if (fTarget == null || !fTarget.supportsBreakpoint(breakpoint)) {
@@ -338,31 +308,16 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#getProperties()
-	 */
 	@Override
 	public void getProperties() {
 		sendRequest(DebugMessageIds.PROPERTIES);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#getStackFrames()
-	 */
 	@Override
 	public void getStackFrames() {
 		sendRequest(DebugMessageIds.STACK);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.debug.IAntDebugController#unescapeString(java.lang.StringBuffer)
-	 */
 	@Override
 	public StringBuffer unescapeString(StringBuffer property) {
 		if (property.indexOf("\\r") == -1 && property.indexOf("\\n") == -1) { //$NON-NLS-1$ //$NON-NLS-2$

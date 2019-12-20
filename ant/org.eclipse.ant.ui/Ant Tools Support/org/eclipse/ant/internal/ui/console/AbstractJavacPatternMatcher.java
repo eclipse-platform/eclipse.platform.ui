@@ -47,11 +47,6 @@ public abstract class AbstractJavacPatternMatcher implements IPatternMatchListen
 	protected static final Integer fgWarningType = Integer.valueOf(IMarker.SEVERITY_WARNING);
 	protected static final Integer fgErrorType = Integer.valueOf(IMarker.SEVERITY_ERROR);
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.console.IPatternMatchListenerDelegate#connect(org.eclipse.ui.console.TextConsole)
-	 */
 	@Override
 	public void connect(TextConsole console) {
 		fConsole = console;
@@ -62,11 +57,6 @@ public abstract class AbstractJavacPatternMatcher implements IPatternMatchListen
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.console.IPatternMatchListenerDelegate#disconnect()
-	 */
 	@Override
 	public void disconnect() {
 		fConsole = null;

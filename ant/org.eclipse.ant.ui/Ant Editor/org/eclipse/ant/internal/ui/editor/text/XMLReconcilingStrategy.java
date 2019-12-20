@@ -50,52 +50,26 @@ public class XMLReconcilingStrategy implements IReconcilingStrategy, IReconcilin
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.IRegion)
-	 */
 	@Override
 	public void reconcile(IRegion partition) {
 		internalReconcile();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#reconcile(org.eclipse.jface.text.reconciler.DirtyRegion,
-	 * org.eclipse.jface.text.IRegion)
-	 */
 	@Override
 	public void reconcile(DirtyRegion dirtyRegion, IRegion subRegion) {
 		internalReconcile();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategy#setDocument(org.eclipse.jface.text.IDocument)
-	 */
 	@Override
 	public void setDocument(IDocument document) {
 		// do nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension#setProgressMonitor(org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public void setProgressMonitor(IProgressMonitor monitor) {
 		// do nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.reconciler.IReconcilingStrategyExtension#initialReconcile()
-	 */
 	@Override
 	public void initialReconcile() {
 		internalReconcile();

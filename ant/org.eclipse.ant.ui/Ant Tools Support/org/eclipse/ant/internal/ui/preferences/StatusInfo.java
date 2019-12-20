@@ -74,11 +74,6 @@ public class StatusInfo implements IStatus {
 		return fSeverity == IStatus.ERROR;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.IStatus#getMessage()
-	 */
 	@Override
 	public String getMessage() {
 		return fStatusMessage;

@@ -285,21 +285,11 @@ public class Nfm implements FactoryObject {
 
 	// Below here is factory stuff
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.dtd.util.FactoryObject#next()
-	 */
 	@Override
 	public FactoryObject next() {
 		return fNext;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.dtd.util.FactoryObject#next(org.eclipse.ant.internal.ui.dtd.util.FactoryObject)
-	 */
 	@Override
 	public void next(FactoryObject obj) {
 		fNext = (Nfm) obj;

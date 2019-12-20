@@ -21,11 +21,6 @@ import org.eclipse.jface.text.ITextViewer;
 
 public class AntDoubleClickStrategy implements ITextDoubleClickStrategy {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.ITextDoubleClickStrategy#doubleClicked(org.eclipse.jface.text.ITextViewer)
-	 */
 	@Override
 	public void doubleClicked(ITextViewer textViewer) {
 		int offset = textViewer.getSelectedRange().x;

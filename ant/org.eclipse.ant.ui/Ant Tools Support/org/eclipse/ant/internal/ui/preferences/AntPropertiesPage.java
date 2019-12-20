@@ -116,31 +116,16 @@ public class AntPropertiesPage implements IAntBlockContainer {
 		return files;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.preferences.IAntBlockContainer#setMessage(java.lang.String)
-	 */
 	@Override
 	public void setMessage(String message) {
 		preferencePage.setMessage(message);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.preferences.IAntBlockContainer#setErrorMessage(java.lang.String)
-	 */
 	@Override
 	public void setErrorMessage(String message) {
 		preferencePage.setErrorMessage(message);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.preferences.IAntBlockContainer#createPushButton(org.eclipse.swt.widgets.Composite, java.lang.String)
-	 */
 	@Override
 	public Button createPushButton(Composite parent, String buttonText) {
 		Button button = new Button(parent, SWT.PUSH);
@@ -150,11 +135,6 @@ public class AntPropertiesPage implements IAntBlockContainer {
 		return button;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.preferences.IAntBlockContainer#update()
-	 */
 	@Override
 	public void update() {
 		// do nothing

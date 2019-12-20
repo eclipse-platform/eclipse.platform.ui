@@ -67,31 +67,16 @@ public class AntContentProvider implements IStructuredContentProvider {
 		tableViewer.setSelection(new StructuredSelection(o), true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-	 */
 	@Override
 	public void dispose() {
 		// do nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(java.lang.Object)
-	 */
 	@Override
 	public Object[] getElements(Object inputElement) {
 		return elements.toArray();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		tableViewer = (TableViewer) viewer;
@@ -139,11 +124,6 @@ public class AntContentProvider implements IStructuredContentProvider {
 	protected ViewerComparator getComparator() {
 		if (fComparator == null) {
 			fComparator = new ViewerComparator() {
-				/*
-				 * (non-Javadoc)
-				 * 
-				 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-				 */
 				@Override
 				public int compare(Viewer viewer, Object e1, Object e2) {
 					return e1.toString().compareToIgnoreCase(e2.toString());

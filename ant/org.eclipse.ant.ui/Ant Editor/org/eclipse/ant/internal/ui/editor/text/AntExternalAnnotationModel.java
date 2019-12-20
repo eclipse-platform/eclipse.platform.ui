@@ -30,21 +30,11 @@ public class AntExternalAnnotationModel extends AnnotationModel implements IProb
 	private List<XMLProblemAnnotation> fGeneratedAnnotations = new ArrayList<>();
 	private List<IProblem> fCollectedProblems = new ArrayList<>();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblemRequestor#acceptProblem(org.eclipse.ant.internal.ui.editor.outline.IProblem)
-	 */
 	@Override
 	public void acceptProblem(IProblem problem) {
 		fCollectedProblems.add(problem);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblemRequestor#acceptProblem(org.eclipse.ant.internal.ui.editor.outline.IProblem)
-	 */
 	@Override
 	public void endReporting() {
 		boolean temporaryProblemsChanged = false;
@@ -99,11 +89,6 @@ public class AntExternalAnnotationModel extends AnnotationModel implements IProb
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.IProblemRequestor#beginReporting()
-	 */
 	@Override
 	public void beginReporting() {
 		// do nothing

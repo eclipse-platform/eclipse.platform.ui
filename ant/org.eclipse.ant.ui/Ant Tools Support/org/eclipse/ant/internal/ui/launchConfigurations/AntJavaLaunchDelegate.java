@@ -24,12 +24,6 @@ import org.eclipse.jdt.launching.JavaLaunchDelegate;
  * Used by the AntLaunchDelegate for Ant builds in a separate VM The sub-classing is needed to be able to launch an Ant build from a non-Java project
  */
 public class AntJavaLaunchDelegate extends JavaLaunchDelegate {
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.ILaunchConfigurationDelegate2#preLaunchCheck(org.eclipse.debug.core.ILaunchConfiguration, java.lang.String,
-	 * org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public boolean preLaunchCheck(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		try {
@@ -42,11 +36,6 @@ public class AntJavaLaunchDelegate extends JavaLaunchDelegate {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jdt.launching.AbstractJavaLaunchConfigurationDelegate#getProgramArguments(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public String getProgramArguments(ILaunchConfiguration configuration) throws CoreException {
 		try {

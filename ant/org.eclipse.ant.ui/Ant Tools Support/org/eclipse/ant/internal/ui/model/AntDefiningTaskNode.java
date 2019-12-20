@@ -190,11 +190,6 @@ public class AntDefiningTaskNode extends AntTaskNode {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#setLength(int)
-	 */
 	@Override
 	public void setLength(int length) {
 		super.setLength(length);

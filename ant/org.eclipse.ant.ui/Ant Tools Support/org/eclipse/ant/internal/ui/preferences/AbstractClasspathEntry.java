@@ -24,31 +24,16 @@ public abstract class AbstractClasspathEntry implements IClasspathEntry {
 	protected List<IAntClasspathEntry> fChildEntries = new ArrayList<>();
 	protected IClasspathEntry fParent = null;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.preferences.IClasspathEntry#getEntries()
-	 */
 	@Override
 	public IAntClasspathEntry[] getEntries() {
 		return fChildEntries.toArray(new IAntClasspathEntry[fChildEntries.size()]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.preferences.IClasspathEntry#hasEntries()
-	 */
 	@Override
 	public boolean hasEntries() {
 		return !fChildEntries.isEmpty();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.preferences.IClasspathEntry#getParent()
-	 */
 	@Override
 	public IClasspathEntry getParent() {
 		return fParent;
@@ -62,31 +47,16 @@ public abstract class AbstractClasspathEntry implements IClasspathEntry {
 		fParent = parent;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.core.IAntClasspathEntry#getEntryURL()
-	 */
 	@Override
 	public URL getEntryURL() {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.core.IAntClasspathEntry#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		return toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.core.IAntClasspathEntry#isEclipseRuntimeRequired()
-	 */
 	@Override
 	public boolean isEclipseRuntimeRequired() {
 		return false;

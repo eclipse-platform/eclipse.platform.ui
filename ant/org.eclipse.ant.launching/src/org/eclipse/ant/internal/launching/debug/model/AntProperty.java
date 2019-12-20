@@ -42,73 +42,46 @@ public class AntProperty extends AntDebugElement implements IVariable, Comparabl
 		fValue = new AntValue(target, value);
 	}
 
-	/*
-	 * @see org.eclipse.debug.core.model.IVariable#getValue()
-	 */
 	@Override
 	public IValue getValue() {
 		return fValue;
 	}
 
-	/*
-	 * @see org.eclipse.debug.core.model.IVariable#getName()
-	 */
 	@Override
 	public String getName() {
 		return fName;
 	}
 
-	/*
-	 * @see org.eclipse.debug.core.model.IVariable#getReferenceTypeName()
-	 */
 	@Override
 	public String getReferenceTypeName() {
 		return ""; //$NON-NLS-1$
 	}
 
-	/*
-	 * @see org.eclipse.debug.core.model.IVariable#hasValueChanged()
-	 */
 	@Override
 	public boolean hasValueChanged() {
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.debug.core.model.IValueModification#setValue(java.lang.String)
-	 */
 	@Override
 	public void setValue(String expression) {
 		// do nothing
 	}
 
-	/*
-	 * @see org.eclipse.debug.core.model.IValueModification#setValue(org.eclipse.debug.core.model.IValue)
-	 */
 	@Override
 	public void setValue(IValue value) {
 		// do nothing
 	}
 
-	/*
-	 * @see org.eclipse.debug.core.model.IValueModification#supportsValueModification()
-	 */
 	@Override
 	public boolean supportsValueModification() {
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(java.lang.String)
-	 */
 	@Override
 	public boolean verifyValue(String expression) {
 		return false;
 	}
 
-	/*
-	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(org.eclipse.debug.core.model.IValue)
-	 */
 	@Override
 	public boolean verifyValue(IValue value) {
 		return false;
@@ -127,11 +100,6 @@ public class AntProperty extends AntDebugElement implements IVariable, Comparabl
 		return fLabel;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
 	@Override
 	public int compareTo(AntProperty other) {
 		return fName.compareToIgnoreCase(other.getName());

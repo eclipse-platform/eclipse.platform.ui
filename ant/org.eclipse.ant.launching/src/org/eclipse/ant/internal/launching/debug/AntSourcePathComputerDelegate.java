@@ -26,12 +26,6 @@ import org.eclipse.debug.core.sourcelookup.ISourcePathComputerDelegate;
  */
 public class AntSourcePathComputerDelegate implements ISourcePathComputerDelegate {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.sourcelookup.ISourcePathComputerDelegate#computeSourceContainers(org.eclipse.debug.core.ILaunchConfiguration,
-	 * org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	public ISourceContainer[] computeSourceContainers(ILaunchConfiguration configuration, IProgressMonitor monitor) throws CoreException {
 		return new ISourceContainer[] { new AntSourceContainer() };

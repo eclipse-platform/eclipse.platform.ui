@@ -73,11 +73,6 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 	private static final int MAX_TARGET_APPEND_LENGTH = 30;
 	private static final String DEFAULT_TARGET = "default"; //$NON-NLS-1$
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchShortcut#launch(org.eclipse.jface.viewers.ISelection, java.lang.String)
-	 */
 	@Override
 	public void launch(ISelection selection, String mode) {
 		if (selection instanceof IStructuredSelection) {
@@ -323,7 +318,8 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 				}
 			}
 			catch (CoreException exception) {
-				reportError(MessageFormat.format(AntLaunchConfigurationMessages.AntLaunchShortcut_Exception_launching, new Object[] { filePath.toFile().getName() }), exception);
+				reportError(MessageFormat.format(AntLaunchConfigurationMessages.AntLaunchShortcut_Exception_launching, new Object[] {
+						filePath.toFile().getName() }), exception);
 				return;
 			}
 			launch(mode, configuration);
@@ -478,11 +474,6 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchShortcut#launch(org.eclipse.ui.IEditorPart, java.lang.String)
-	 */
 	@Override
 	public void launch(IEditorPart editor, String mode) {
 		IEditorInput input = editor.getEditorInput();
@@ -539,11 +530,6 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 		fShowDialog = showDialog;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchConfigurations(org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public ILaunchConfiguration[] getLaunchConfigurations(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
@@ -578,11 +564,6 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchConfigurations(org.eclipse.ui.IEditorPart)
-	 */
 	@Override
 	public ILaunchConfiguration[] getLaunchConfigurations(IEditorPart editor) {
 		IEditorInput input = editor.getEditorInput();
@@ -605,11 +586,6 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchableResource(org.eclipse.jface.viewers.ISelection)
-	 */
 	@Override
 	public IResource getLaunchableResource(ISelection selection) {
 		if (selection instanceof IStructuredSelection) {
@@ -634,11 +610,6 @@ public class AntLaunchShortcut implements ILaunchShortcut2 {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchShortcut2#getLaunchableResource(org.eclipse.ui.IEditorPart)
-	 */
 	@Override
 	public IResource getLaunchableResource(IEditorPart editor) {
 		IEditorInput input = editor.getEditorInput();

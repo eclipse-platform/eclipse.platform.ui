@@ -120,51 +120,26 @@ public class Dfm extends MapHolder implements IDfm, FactoryObject {
 		return getIndirectStringMap(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.dtd.util.FactoryObject#next()
-	 */
 	@Override
 	public FactoryObject next() {
 		return fNext;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.dtd.util.FactoryObject#next(org.eclipse.ant.internal.ui.dtd.util.FactoryObject)
-	 */
 	@Override
 	public void next(FactoryObject obj) {
 		fNext = (Dfm) obj;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.dtd.IDfm#isAny()
-	 */
 	@Override
 	public boolean isAny() {
 		return any;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.dtd.IDfm#isEmpty()
-	 */
 	@Override
 	public boolean isEmpty() {
 		return empty;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.dtd.IDfm#getAtom(java.lang.String)
-	 */
 	@Override
 	public IAtom getAtom(String name) {
 		Object[] allKeys = getKeys();
@@ -179,11 +154,6 @@ public class Dfm extends MapHolder implements IDfm, FactoryObject {
 		return (IAtom) allKeys[index];
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.dtd.IDfm#advance(java.lang.String, java.lang.String)
-	 */
 	@Override
 	public IDfm advance(String namespace, String localname) {
 		// no namespace support here

@@ -34,11 +34,6 @@ public class AntDocumentSetupParticipant implements IDocumentSetupParticipant {
 	public AntDocumentSetupParticipant() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.filebuffers.IDocumentSetupParticipant#setup(org.eclipse.jface.text.IDocument)
-	 */
 	@Override
 	public void setup(IDocument document) {
 		if (document instanceof IDocumentExtension3) {

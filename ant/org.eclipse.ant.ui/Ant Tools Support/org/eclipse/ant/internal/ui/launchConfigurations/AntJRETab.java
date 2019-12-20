@@ -49,11 +49,6 @@ public class AntJRETab extends JavaJRETab {
 	private VMArgumentsBlock fVMArgumentsBlock = new VMArgumentsBlock();
 	private AntWorkingDirectoryBlock fWorkingDirectoryBlock = new AntWorkingDirectoryBlock();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);
@@ -68,19 +63,9 @@ public class AntJRETab extends JavaJRETab {
 		((GridData) fWorkingDirectoryBlock.getControl().getLayoutData()).horizontalSpan = 2;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab#getDefaultJREDescriptor()
-	 */
 	@Override
 	protected JREDescriptor getDefaultJREDescriptor() {
 		return new JREDescriptor() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jdt.internal.debug.ui.jres.JREDescriptor#getDescription()
-			 */
 			@Override
 			public String getDescription() {
 				return AntLaunchConfigurationMessages.AntJRETab_2;
@@ -88,19 +73,9 @@ public class AntJRETab extends JavaJRETab {
 		};
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jdt.debug.ui.launchConfigurations.JavaJRETab#getSpecificJREDescriptor()
-	 */
 	@Override
 	protected JREDescriptor getSpecificJREDescriptor() {
 		return new JREDescriptor() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jdt.internal.debug.ui.jres.JREDescriptor#getDescription()
-			 */
 			@Override
 			public String getDescription() {
 				return AntLaunchConfigurationMessages.AntJRETab_3;
@@ -108,11 +83,6 @@ public class AntJRETab extends JavaJRETab {
 		};
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	@SuppressWarnings("deprecation")
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
@@ -177,11 +147,6 @@ public class AntJRETab extends JavaJRETab {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		super.initializeFrom(configuration);
@@ -192,21 +157,11 @@ public class AntJRETab extends JavaJRETab {
 		fVMArgumentsBlock.setEnabled(separateVM);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public boolean isValid(ILaunchConfiguration config) {
 		return super.isValid(config) && fWorkingDirectoryBlock.isValid(config);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setLaunchConfigurationDialog(org.eclipse.debug.ui.ILaunchConfigurationDialog)
-	 */
 	@Override
 	public void setLaunchConfigurationDialog(ILaunchConfigurationDialog dialog) {
 		super.setLaunchConfigurationDialog(dialog);
@@ -214,11 +169,6 @@ public class AntJRETab extends JavaJRETab {
 		fVMArgumentsBlock.setLaunchConfigurationDialog(dialog);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getErrorMessage()
-	 */
 	@Override
 	public String getErrorMessage() {
 		String m = super.getErrorMessage();
@@ -228,11 +178,6 @@ public class AntJRETab extends JavaJRETab {
 		return m;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getMessage()
-	 */
 	@Override
 	public String getMessage() {
 		String m = super.getMessage();
@@ -242,21 +187,11 @@ public class AntJRETab extends JavaJRETab {
 		return m;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		setLaunchConfigurationWorkingCopy(workingCopy);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy config) {
 		super.setDefaults(config);
@@ -307,11 +242,6 @@ public class AntJRETab extends JavaJRETab {
 		config.setAttribute(IJavaLaunchConfigurationConstants.ATTR_VM_INSTALL_TYPE, vmTypeID);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing

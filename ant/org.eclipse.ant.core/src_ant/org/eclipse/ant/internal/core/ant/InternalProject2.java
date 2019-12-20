@@ -19,11 +19,6 @@ import org.apache.tools.ant.types.Path;
 
 public class InternalProject2 extends Project {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.Project#createClassLoader(org.apache.tools.ant.types.Path)
-	 */
 	@Override
 	public AntClassLoader createClassLoader(Path path) {
 		AntClassLoader loader = super.createClassLoader(path);

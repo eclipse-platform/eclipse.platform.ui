@@ -59,11 +59,6 @@ public abstract class AbstractAntTest extends TestCase {
 	public static final String ANT_TEST_BUILD_LISTENER = "org.eclipse.ant.tests.core.support.testloggers.TestBuildListener"; //$NON-NLS-1$
 	private static boolean welcomeClosed = false;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see junit.framework.TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();

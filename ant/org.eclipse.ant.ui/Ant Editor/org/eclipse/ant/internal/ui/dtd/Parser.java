@@ -183,19 +183,11 @@ public class Parser {
 			fDelegate = new StringReader(document);
 		}
 
-		/**
-		 * @see java.io.Reader#close()
-		 */
 		@Override
 		public void close() throws IOException {
 			fDelegate.close();
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.io.Reader#read(char[], int, int)
-		 */
 		@Override
 		public int read(char[] cbuf, int off, int len) throws IOException {
 			return fDelegate.read(cbuf, off, len);
@@ -209,9 +201,6 @@ public class Parser {
 			this.reader = reader;
 		}
 
-		/**
-		 * @see org.xml.sax.EntityResolver#resolveEntity(java.lang.String, java.lang.String)
-		 */
 		@Override
 		public InputSource resolveEntity(String publicId, String systemId) {
 			if (publicId.equals(INTERNAL) && systemId.equals(INTERNAL))

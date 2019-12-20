@@ -294,21 +294,11 @@ public final class AntUtil {
 		}
 		final IFile file = getFileForLocation(buildFile.getAbsolutePath(), null);
 		LocationProvider provider = new LocationProvider(null) {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ant.internal.ui.model.LocationProvider#getFile()
-			 */
 			@Override
 			public IFile getFile() {
 				return file;
 			}
 
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.ant.internal.ui.model.LocationProvider#getLocation()
-			 */
 			@Override
 			public IPath getLocation() {
 				if (file == null) {

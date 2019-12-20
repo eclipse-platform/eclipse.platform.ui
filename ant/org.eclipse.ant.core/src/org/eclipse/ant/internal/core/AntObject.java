@@ -95,11 +95,6 @@ public abstract class AntObject {
 		fLibraryEntry = libraryEntry;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		if (fURI == null || fURI.equals(IAntCoreConstants.EMPTY_STRING) || fURI.equals("antlib:org.apache.tools.ant")) { //$NON-NLS-1$

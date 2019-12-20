@@ -60,11 +60,6 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 		fTargets = targets;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		getShell().setText(AntLaunchConfigurationMessages.TargetOrderDialog_Order_Targets_1);
@@ -250,11 +245,6 @@ public class TargetOrderDialog extends Dialog implements ISelectionChangedListen
 		fDown.setEnabled(down);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-	 */
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);

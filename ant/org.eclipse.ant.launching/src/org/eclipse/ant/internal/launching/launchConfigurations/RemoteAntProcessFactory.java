@@ -24,11 +24,6 @@ import org.eclipse.debug.core.model.IProcess;
 
 public class RemoteAntProcessFactory implements IProcessFactory {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.IProcessFactory#newProcess(org.eclipse.debug.core.ILaunch, java.lang.Process, java.lang.String, java.util.Map)
-	 */
 	@Override
 	public IProcess newProcess(ILaunch launch, Process process, String label, Map<String, String> attributes) {
 		if (attributes == null) {

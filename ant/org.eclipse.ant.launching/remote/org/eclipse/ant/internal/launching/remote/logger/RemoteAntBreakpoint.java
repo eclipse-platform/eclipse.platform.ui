@@ -45,11 +45,6 @@ public class RemoteAntBreakpoint {
 		return buffer.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof RemoteAntBreakpoint)) {
@@ -59,11 +54,6 @@ public class RemoteAntBreakpoint {
 		return other.getLineNumber() == fLineNumber && other.getFile().equals(fFile);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return fFileName.hashCode() + fLineNumber;

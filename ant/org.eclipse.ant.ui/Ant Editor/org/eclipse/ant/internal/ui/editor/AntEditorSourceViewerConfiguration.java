@@ -79,11 +79,6 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 		fEditor = editor;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getContentAssistant(ISourceViewer)
-	 */
 	@Override
 	public IContentAssistant getContentAssistant(ISourceViewer sourceViewer) {
 		fContentAssistant = new ContentAssistant();
@@ -122,11 +117,6 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 		return fContentAssistant;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getReconciler(org.eclipse.jface.text.source.ISourceViewer)
-	 */
 	@Override
 	public IReconciler getReconciler(ISourceViewer sourceViewer) {
 		NotifyingReconciler reconciler = new NotifyingReconciler(new XMLReconcilingStrategy(fEditor));
@@ -194,11 +184,6 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getContentFormatter(org.eclipse.jface.text.source.ISourceViewer)
-	 */
 	@Override
 	public IContentFormatter getContentFormatter(ISourceViewer sourceViewer) {
 
@@ -213,11 +198,6 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 		return formatter;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getInformationPresenter(org.eclipse.jface.text.source.ISourceViewer)
-	 */
 	@Override
 	public IInformationPresenter getInformationPresenter(ISourceViewer sourceViewer) {
 		InformationPresenter presenter = new InformationPresenter(getInformationPresenterControlCreator());
@@ -248,11 +228,6 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 		};
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getIndentPrefixes(org.eclipse.jface.text.source.ISourceViewer, java.lang.String)
-	 */
 	@Override
 	public String[] getIndentPrefixes(ISourceViewer sourceViewer, String contentType) {
 		List<String> list = new ArrayList<>();

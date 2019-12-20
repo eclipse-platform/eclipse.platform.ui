@@ -208,11 +208,6 @@ public class AntClasspathPage implements IAntBlockContainer {
 		return top;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.preferences.IAntBlockContainer#update()
-	 */
 	@Override
 	public void update() {
 		if (fAntClasspathBlock.isValidated()) {
@@ -229,31 +224,16 @@ public class AntClasspathPage implements IAntBlockContainer {
 		fPreferencePage.setValid(valid);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.preferences.IAntBlockContainer#setMessage(java.lang.String)
-	 */
 	@Override
 	public void setMessage(String message) {
 		fPreferencePage.setMessage(message);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.preferences.IAntBlockContainer#setErrorMessage(java.lang.String)
-	 */
 	@Override
 	public void setErrorMessage(String message) {
 		fPreferencePage.setErrorMessage(message);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.preferences.IAntBlockContainer#createPushButton(org.eclipse.swt.widgets.Composite, java.lang.String)
-	 */
 	@Override
 	public Button createPushButton(Composite parent, String buttonText) {
 		Button button = new Button(parent, SWT.PUSH);

@@ -27,11 +27,6 @@ public class AntUIPreferenceInitializer extends AbstractPreferenceInitializer {
 		super();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
-	 */
 	@Override
 	public void initializeDefaultPreferences() {
 		IPreferenceStore prefs = AntUIPlugin.getDefault().getPreferenceStore();

@@ -34,11 +34,6 @@ public class URLFieldEditor extends StringButtonFieldEditor {
 		setErrorMessage(AntPreferencesMessages.URLFieldEditor_0);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.StringFieldEditor#doCheckState()
-	 */
 	@Override
 	protected boolean doCheckState() {
 		String text = getTextControl().getText();
@@ -54,8 +49,7 @@ public class URLFieldEditor extends StringButtonFieldEditor {
 	}
 
 	/*
-	 * (non-Javadoc) Method declared on StringButtonFieldEditor. Opens the directory chooser dialog and returns the <code>URL</code> of the selected
-	 * directory.
+	 * Opens the directory chooser dialog and returns the <code>URL</code> of the selected directory.
 	 */
 	@Override
 	protected String changePressed() {

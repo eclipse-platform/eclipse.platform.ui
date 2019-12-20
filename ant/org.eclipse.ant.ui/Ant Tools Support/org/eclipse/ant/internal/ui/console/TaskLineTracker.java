@@ -25,42 +25,25 @@ public class TaskLineTracker implements IConsoleLineTrackerExtension {
 
 	private IConsole fConsole;
 
-	/**
-	 * Constructor for TaskLineTracker.
-	 */
 	public TaskLineTracker() {
 		super();
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#init(org.eclipse.debug.ui.console.IConsole)
-	 */
 	@Override
 	public void init(IConsole console) {
 		fConsole = console;
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#lineAppended(org.eclipse.jface.text.IRegion)
-	 */
 	@Override
 	public void lineAppended(IRegion line) {
 		TaskLinkManager.processNewLine(fConsole, line);
 	}
 
-	/**
-	 * @see org.eclipse.debug.ui.console.IConsoleLineTracker#dispose()
-	 */
 	@Override
 	public void dispose() {
 		fConsole = null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.console.IConsoleLineTrackerExtension#consoleClosed()
-	 */
 	@Override
 	public void consoleClosed() {
 		TaskLinkManager.dispose(fConsole.getProcess());

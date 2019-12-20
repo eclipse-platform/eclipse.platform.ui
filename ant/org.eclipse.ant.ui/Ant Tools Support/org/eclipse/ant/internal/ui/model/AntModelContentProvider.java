@@ -22,31 +22,16 @@ public class AntModelContentProvider implements ITreeContentProvider {
 
 	protected static final Object[] EMPTY_ARRAY = new Object[0];
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IContentProvider#dispose()
-	 */
 	@Override
 	public void dispose() {
 		// do nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IContentProvider#inputChanged(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		// do nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getChildren(Object)
-	 */
 	@Override
 	public Object[] getChildren(Object parentNode) {
 		if (parentNode instanceof AntElementNode) {
@@ -61,32 +46,17 @@ public class AntModelContentProvider implements ITreeContentProvider {
 		return EMPTY_ARRAY;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#getParent(Object)
-	 */
 	@Override
 	public Object getParent(Object aNode) {
 		AntElementNode tempElement = (AntElementNode) aNode;
 		return tempElement.getParentNode();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ITreeContentProvider#hasChildren(Object)
-	 */
 	@Override
 	public boolean hasChildren(Object aNode) {
 		return ((AntElementNode) aNode).hasChildren();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.IStructuredContentProvider#getElements(Object)
-	 */
 	@Override
 	public Object[] getElements(Object inputElement) {
 		if (inputElement instanceof IAntModel) {

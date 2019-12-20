@@ -80,43 +80,26 @@ public class Element extends Atom implements IElement {
 		fMap.put(attribute.getName(), attribute);
 	}
 
-	/**
-	 * @see org.eclipse.ant.internal.ui.dtd.IElement#getAttributes()
-	 */
 	@Override
 	public Map<String, IAttribute> getAttributes() {
 		return fMap;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.dtd.IElement#isMixed()
-	 */
 	@Override
 	public IModel getContentModel() {
 		return fModel;
 	}
 
-	/**
-	 * @see org.eclipse.ant.internal.ui.dtd.IElement#isText()
-	 */
 	@Override
 	public boolean isText() {
 		return fText;
 	}
 
-	/**
-	 * @see org.eclipse.ant.internal.ui.dtd.IElement#isUndefined()
-	 */
 	@Override
 	public boolean isUndefined() {
 		return fUndefined;
 	}
 
-	/**
-	 * @see org.eclipse.ant.internal.ui.dtd.IElement#getDfm()
-	 */
 	@Override
 	public IDfm getDfm() {
 		Dfm dfm = fElementDfm;
@@ -162,17 +145,11 @@ public class Element extends Atom implements IElement {
 	private boolean fAny;
 	private boolean fEmpty;
 
-	/**
-	 * @see org.eclipse.ant.internal.ui.dtd.IElement#isAny()
-	 */
 	@Override
 	public boolean isAny() {
 		return fAny;
 	}
 
-	/**
-	 * @see org.eclipse.ant.internal.ui.dtd.IElement#isEmpty()
-	 */
 	@Override
 	public boolean isEmpty() {
 		return fEmpty;

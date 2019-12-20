@@ -15,7 +15,6 @@
 package org.eclipse.ant.internal.ui.editor.templates;
 
 import org.eclipse.ant.internal.ui.model.IAntModel;
-
 import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
@@ -38,11 +37,6 @@ public class AntContext extends DocumentTemplateContext {
 		fAntModel = model;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.templates.TemplateContext#evaluate(org.eclipse.jface.text.templates.Template)
-	 */
 	@Override
 	public TemplateBuffer evaluate(Template template) throws BadLocationException, TemplateException {
 		if (!canEvaluate(template))
@@ -92,11 +86,6 @@ public class AntContext extends DocumentTemplateContext {
 		return fAntModel;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.templates.DocumentTemplateContext#getEnd()
-	 */
 	@Override
 	public int getEnd() {
 		int start = getCompletionOffset();
@@ -120,11 +109,6 @@ public class AntContext extends DocumentTemplateContext {
 		return end;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.templates.DocumentTemplateContext#getStart()
-	 */
 	@Override
 	public int getStart() {
 		int replacementOffset = getCompletionOffset();

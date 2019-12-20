@@ -29,7 +29,6 @@ import org.apache.tools.ant.Project;
 import org.apache.tools.ant.PropertyHelper;
 import org.apache.tools.ant.UnknownElement;
 import org.apache.tools.ant.types.Path;
-
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 
 /**
@@ -43,22 +42,12 @@ public class AntModelProject extends Project {
 	 * Delegate to maintain property chaining - to make sure our project is alerted to new properties being set
 	 */
 	class AntPropertyHelper implements PropertyHelper.PropertySetter {
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.apache.tools.ant.PropertyHelper.PropertySetter#setNew(java.lang.String, java.lang.Object, org.apache.tools.ant.PropertyHelper)
-		 */
 		@Override
 		public boolean setNew(String property, Object value, PropertyHelper propertyHelper) {
 			setNewProperty(property, value.toString());
 			return false;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.apache.tools.ant.PropertyHelper.PropertySetter#set(java.lang.String, java.lang.Object, org.apache.tools.ant.PropertyHelper)
-		 */
 		@Override
 		public boolean set(String property, Object value, PropertyHelper propertyHelper) {
 			return false;
@@ -82,11 +71,6 @@ public class AntModelProject extends Project {
 		PropertyHelper.getPropertyHelper(this).add(new AntPropertyHelper());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.Project#setNewProperty(java.lang.String, java.lang.String)
-	 */
 	@Override
 	public void setNewProperty(String name, String value) {
 		if (PropertyHelper.getPropertyHelper(this).getProperty(name) != null) {
@@ -101,11 +85,6 @@ public class AntModelProject extends Project {
 		super.setProperty(name, value);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.Project#fireBuildFinished(java.lang.Throwable)
-	 */
 	@Override
 	public void fireBuildFinished(Throwable exception) {
 		super.fireBuildFinished(exception);
@@ -138,11 +117,6 @@ public class AntModelProject extends Project {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.Project#getProperty(java.lang.String)
-	 */
 	@Override
 	public String getProperty(String name) {
 		// override as we cannot remove properties from the Apache Ant project
@@ -153,11 +127,6 @@ public class AntModelProject extends Project {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.Project#addIdReference(java.lang.String, java.lang.Object)
-	 */
 	@Override
 	public void addIdReference(String id, Object value) {
 		// XXX hack because we cannot look up references by id in Ant 1.8.x
@@ -165,11 +134,6 @@ public class AntModelProject extends Project {
 		idrefs.put(id, value);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.Project#getReference(java.lang.String)
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getReference(String key) {
@@ -185,11 +149,6 @@ public class AntModelProject extends Project {
 		return ref;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.Project#getProperties()
-	 */
 	@Override
 	public Hashtable<String, Object> getProperties() {
 		// override as we cannot remove properties from the Apache Ant project
@@ -199,11 +158,6 @@ public class AntModelProject extends Project {
 		return allProps;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.Project#setBaseDir(java.io.File)
-	 */
 	@Override
 	public void setBaseDir(File baseDir) throws BuildException {
 		super.setBaseDir(baseDir);
@@ -218,11 +172,6 @@ public class AntModelProject extends Project {
 		fCurrentConfiguringPropertyNode = node;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.Project#createClassLoader(org.apache.tools.ant.types.Path)
-	 */
 	@Override
 	public AntClassLoader createClassLoader(Path path) {
 		synchronized (loaderLock) {

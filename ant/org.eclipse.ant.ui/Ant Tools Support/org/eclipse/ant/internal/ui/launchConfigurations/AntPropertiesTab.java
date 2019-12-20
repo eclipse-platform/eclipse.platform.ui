@@ -54,11 +54,6 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 	private AntPropertiesBlock fAntPropertiesBlock = new AntPropertiesBlock(this);
 	private boolean fSeparateJRE = true;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite top = new Composite(parent, SWT.NONE);
@@ -102,31 +97,16 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return AntUIImages.getImage(IAntUIConstants.IMG_PROPERTY);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
-	 */
 	@Override
 	public String getName() {
 		return AntLaunchConfigurationMessages.AntPropertiesTab_P_roperties_8;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		fSeparateJRE = AntUtil.isSeparateJREAntBuild(configuration);
@@ -175,11 +155,6 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 		fUseDefaultButton.setSelection(true);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		if (fUseDefaultButton.getSelection()) {
@@ -217,51 +192,26 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 		fAntPropertiesBlock.saveSettings();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		// do nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.preferences.IAntBlockContainer#createPushButton(org.eclipse.swt.widgets.Composite, java.lang.String)
-	 */
 	@Override
 	public void setMessage(String message) {
 		super.setMessage(message);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.preferences.IAntBlockContainer#createPushButton(org.eclipse.swt.widgets.Composite, java.lang.String)
-	 */
 	@Override
 	public void setErrorMessage(String message) {
 		super.setErrorMessage(message);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.preferences.IAntBlockContainer#createPushButton(org.eclipse.swt.widgets.Composite, java.lang.String)
-	 */
 	@Override
 	public Button createPushButton(Composite parent, String buttonText) {
 		return super.createPushButton(parent, buttonText, null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.preferences.IAntBlockContainer#update()
-	 */
 	@Override
 	public void update() {
 		updateTargetsTab();
@@ -279,11 +229,6 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		if (fSeparateJRE != AntUtil.isSeparateJREAntBuild(workingCopy)) {
@@ -292,11 +237,6 @@ public class AntPropertiesTab extends AbstractLaunchConfigurationTab implements 
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		// do nothing

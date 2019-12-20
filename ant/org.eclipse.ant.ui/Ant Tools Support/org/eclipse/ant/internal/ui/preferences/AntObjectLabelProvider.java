@@ -31,17 +31,11 @@ import org.eclipse.ui.ide.IDE;
  */
 public class AntObjectLabelProvider extends LabelProvider implements ITableLabelProvider {
 
-	/*
-	 * (non-Javadoc) Method declared on IBaseLabelProvider.
-	 */
 	@Override
 	public void dispose() {
 		// do nothing
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on ITableLabelProvider.
-	 */
 	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
 		if (columnIndex != 0) {
@@ -66,9 +60,6 @@ public class AntObjectLabelProvider extends LabelProvider implements ITableLabel
 		return PlatformUI.getWorkbench().getSharedImages().getImage(ISharedImages.IMG_OBJ_FILE);
 	}
 
-	/*
-	 * (non-Javadoc) Method declared on ITableLabelProvider.
-	 */
 	@Override
 	public String getColumnText(Object element, int columnIndex) {
 		if (element instanceof Property) {

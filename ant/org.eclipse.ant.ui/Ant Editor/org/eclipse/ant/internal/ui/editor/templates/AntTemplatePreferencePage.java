@@ -35,9 +35,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.templates.TemplatePreferencePage;
 
-/**
- * @see org.eclipse.jface.preference.PreferencePage
- */
 public class AntTemplatePreferencePage extends TemplatePreferencePage {
 
 	private FormattingPreferences fFormattingPreferences = new FormattingPreferences();
@@ -48,11 +45,6 @@ public class AntTemplatePreferencePage extends TemplatePreferencePage {
 		setContextTypeRegistry(AntTemplateAccess.getDefault().getContextTypeRegistry());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
-	 */
 	@Override
 	@SuppressWarnings("deprecation")
 	public boolean performOk() {
@@ -61,11 +53,6 @@ public class AntTemplatePreferencePage extends TemplatePreferencePage {
 		return ok;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.texteditor.templates.TemplatePreferencePage#createViewer(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected SourceViewer createViewer(Composite parent) {
 		SourceViewer viewer = new SourceViewer(parent, null, SWT.BORDER | SWT.V_SCROLL | SWT.H_SCROLL);
@@ -82,19 +69,11 @@ public class AntTemplatePreferencePage extends TemplatePreferencePage {
 		return viewer;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.texteditor.templates.TemplatePreferencePage#getFormatterPreferenceKey()
-	 */
 	@Override
 	protected String getFormatterPreferenceKey() {
 		return AntEditorPreferenceConstants.TEMPLATES_USE_CODEFORMATTER;
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.templates.TemplatePreferencePage#updateViewerInput()
-	 */
 	@Override
 	protected void updateViewerInput() {
 		IStructuredSelection selection = (IStructuredSelection) getTableViewer().getSelection();
@@ -114,21 +93,11 @@ public class AntTemplatePreferencePage extends TemplatePreferencePage {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.texteditor.templates.TemplatePreferencePage#isShowFormatterSetting()
-	 */
 	@Override
 	protected boolean isShowFormatterSetting() {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @org.eclipse.jface.preference.PreferencePage#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		super.createControl(parent);

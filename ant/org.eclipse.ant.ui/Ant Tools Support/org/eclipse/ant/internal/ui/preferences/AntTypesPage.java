@@ -40,11 +40,6 @@ public class AntTypesPage extends AntPage {
 		super(preferencePage);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.preferences.AntPage#addButtonsToButtonGroup(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected void addButtonsToButtonGroup(Composite parent) {
 		createPushButton(parent, AntPreferencesMessages.AntTypesPage_2, ADD_BUTTON);
@@ -87,11 +82,6 @@ public class AntTypesPage extends AntPage {
 		return item;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.preferences.AntPage#edit(org.eclipse.jface.viewers.IStructuredSelection)
-	 */
 	@Override
 	protected void edit(IStructuredSelection selection) {
 		Type type = (Type) selection.getFirstElement();
@@ -125,22 +115,12 @@ public class AntTypesPage extends AntPage {
 		return dialog;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.preferences.AntPage#initialize()
-	 */
 	@Override
 	protected void initialize() {
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
 		setInput(prefs.getTypes());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.preferences.AntPage#getHelpContextId()
-	 */
 	@Override
 	protected String getHelpContextId() {
 		return IAntUIHelpContextIds.ANT_TYPES_PAGE;

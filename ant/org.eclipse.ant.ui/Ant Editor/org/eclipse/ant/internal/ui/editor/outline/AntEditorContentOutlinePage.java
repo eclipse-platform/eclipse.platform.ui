@@ -39,12 +39,9 @@ import org.eclipse.ant.internal.ui.model.AntTaskNode;
 import org.eclipse.ant.internal.ui.model.IAntModel;
 import org.eclipse.ant.internal.ui.model.IAntModelListener;
 import org.eclipse.ant.internal.ui.views.actions.AntOpenWithMenu;
-
 import org.eclipse.core.resources.IFile;
-
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ListenerList;
-
 import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -59,18 +56,14 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.viewers.ViewerFilter;
-
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
-
 import org.eclipse.ui.IWorkbenchActionConstants;
 import org.eclipse.ui.part.IPageSite;
 import org.eclipse.ui.part.IShowInSource;
 import org.eclipse.ui.part.ShowInContext;
-
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
-
 import org.eclipse.ui.views.contentoutline.ContentOutlinePage;
 
 /**
@@ -133,11 +126,6 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	}
 
 	private class AntOutlineComparator extends ViewerComparator {
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-		 */
 		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			if (!(e1 instanceof AntElementNode && e2 instanceof AntElementNode)) {
@@ -282,11 +270,6 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		fTogglePresentation.setEditor(editor);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.IPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (fMenu != null) {
@@ -482,11 +465,6 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Class<T> key) {
@@ -496,11 +474,6 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.IShowInSource#getShowInContext()
-	 */
 	@Override
 	public ShowInContext getShowInContext() {
 		IFile file = null;

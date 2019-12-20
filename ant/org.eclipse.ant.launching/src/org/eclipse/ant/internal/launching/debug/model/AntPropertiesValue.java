@@ -17,6 +17,7 @@ package org.eclipse.ant.internal.launching.debug.model;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.core.model.IVariable;
 
@@ -28,52 +29,27 @@ public class AntPropertiesValue extends AntDebugElement implements IValue {
 		super(target);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IValue#getReferenceTypeName()
-	 */
 	@Override
 	public String getReferenceTypeName() {
 		return ""; //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IValue#getValueString()
-	 */
 	@Override
 	public String getValueString() {
 		return ""; //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IValue#isAllocated()
-	 */
 	@Override
 	public boolean isAllocated() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IValue#getVariables()
-	 */
 	@Override
 	public IVariable[] getVariables() {
 		Collections.sort(fProperties);
 		return fProperties.toArray(new IVariable[fProperties.size()]);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IValue#hasVariables()
-	 */
 	@Override
 	public boolean hasVariables() {
 		return true;

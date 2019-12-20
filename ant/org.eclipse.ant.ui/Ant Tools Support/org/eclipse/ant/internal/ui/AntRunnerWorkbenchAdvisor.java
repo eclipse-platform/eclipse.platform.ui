@@ -31,21 +31,11 @@ public class AntRunnerWorkbenchAdvisor extends WorkbenchAdvisor {
 		fContext = context;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.application.WorkbenchAdvisor#getInitialWindowPerspectiveId()
-	 */
 	@Override
 	public String getInitialWindowPerspectiveId() {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.application.WorkbenchAdvisor#preStartup()
-	 */
 	@Override
 	public void preStartup() {
 		try {
@@ -62,11 +52,6 @@ public class AntRunnerWorkbenchAdvisor extends WorkbenchAdvisor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.application.WorkbenchAdvisor#openWindows()
-	 */
 	@Override
 	public boolean openWindows() {
 		return false;

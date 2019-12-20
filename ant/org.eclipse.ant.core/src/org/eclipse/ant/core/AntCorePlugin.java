@@ -171,11 +171,7 @@ public class AntCorePlugin extends Plugin {
 		plugin = this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.Plugin#stop(org.osgi.framework.BundleContext)
-	 * 
+	/**
 	 * @since 3.1
 	 */
 	@Override
@@ -188,11 +184,7 @@ public class AntCorePlugin extends Plugin {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
-	 * 
+	/**
 	 * @since 3.1
 	 */
 	@Override

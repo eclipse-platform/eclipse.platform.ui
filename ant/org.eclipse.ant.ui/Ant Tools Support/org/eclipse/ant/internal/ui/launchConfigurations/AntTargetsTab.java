@@ -113,11 +113,6 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 	 * A comparator which can sort targets by name or description, in forward or reverse order.
 	 */
 	private class AntTargetsComparator extends ViewerComparator {
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-		 */
 		@Override
 		public int compare(Viewer viewer, Object e1, Object e2) {
 			if (!(e1 instanceof AntTargetNode && e2 instanceof AntTargetNode)) {
@@ -153,11 +148,6 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Font font = parent.getFont();
@@ -533,11 +523,6 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			final CoreException[] exceptions = new CoreException[1];
 			try {
 				IRunnableWithProgress operation = new IRunnableWithProgress() {
-					/*
-					 * (non-Javadoc)
-					 * 
-					 * @see org.eclipse.jface.operation.IRunnableWithProgress#run(org.eclipse.core.runtime.IProgressMonitor)
-					 */
 					@Override
 					public void run(IProgressMonitor monitor) {
 						try {
@@ -620,21 +605,11 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		// do nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		fInitializing = true;
@@ -726,11 +701,6 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		updateSelectionCount();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		// attribute added in 3.0, so null must be used instead of false for backwards compatibility
@@ -772,31 +742,16 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		configuration.setAttribute(IAntLaunchConstants.ATTR_ANT_TARGETS, targets);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getName()
-	 */
 	@Override
 	public String getName() {
 		return AntLaunchConfigurationMessages.AntTargetsTab_Tar_gets_14;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return AntUIImages.getImage(IAntUIConstants.IMG_TAB_ANT_TARGETS);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#isValid(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public boolean isValid(ILaunchConfiguration launchConfig) {
 		if (fAllTargets == null || isDirty()) {
@@ -816,22 +771,12 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		return super.isValid(launchConfig);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.AbstractLaunchConfigurationTab#setDirty(boolean)
-	 */
 	@Override
 	protected void setDirty(boolean dirty) {
 		// provide package visibility
 		super.setDirty(dirty);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		if (isDirty()) {
@@ -839,11 +784,6 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#deactivated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void deactivated(ILaunchConfigurationWorkingCopy workingCopy) {
 		if (fOrderedTargets.isEmpty()) {

@@ -23,11 +23,6 @@ public class AntDTDNode extends AntElementNode {
 		super(name);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.editor.model.AntElementNode#isStructuralNode()
-	 */
 	@Override
 	public boolean isStructuralNode() {
 		return false;

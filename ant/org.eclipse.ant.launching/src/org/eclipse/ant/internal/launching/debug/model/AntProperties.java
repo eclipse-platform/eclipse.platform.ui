@@ -28,11 +28,6 @@ public class AntProperties extends AntDebugElement implements IVariable {
 		fName = name;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IVariable#getValue()
-	 */
 	@Override
 	public synchronized IValue getValue() throws DebugException {
 		int attempts = 0;
@@ -55,81 +50,41 @@ public class AntProperties extends AntDebugElement implements IVariable {
 		return fValue;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IVariable#getName()
-	 */
 	@Override
 	public String getName() {
 		return fName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IVariable#getReferenceTypeName()
-	 */
 	@Override
 	public String getReferenceTypeName() {
 		return ""; //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IVariable#hasValueChanged()
-	 */
 	@Override
 	public boolean hasValueChanged() {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IValueModification#setValue(java.lang.String)
-	 */
 	@Override
 	public void setValue(String expression) {
 		// do nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IValueModification#setValue(org.eclipse.debug.core.model.IValue)
-	 */
 	@Override
 	public void setValue(IValue value) {
 		fValue = value;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IValueModification#supportsValueModification()
-	 */
 	@Override
 	public boolean supportsValueModification() {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(java.lang.String)
-	 */
 	@Override
 	public boolean verifyValue(String expression) {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IValueModification#verifyValue(org.eclipse.debug.core.model.IValue)
-	 */
 	@Override
 	public boolean verifyValue(IValue value) {
 		return false;

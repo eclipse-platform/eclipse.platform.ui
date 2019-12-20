@@ -55,21 +55,11 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 		setPreferenceStore(AntUIPlugin.getDefault().getPreferenceStore());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchPreferencePage#init(org.eclipse.ui.IWorkbench)
-	 */
 	@Override
 	public void init(IWorkbench workbench) {
 		// do nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.PreferencePage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(getControl(), IAntUIHelpContextIds.ANT_RUNTIME_PREFERENCE_PAGE);
@@ -100,11 +90,6 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 		return folder;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
-	 */
 	@Override
 	protected void performDefaults() {
 		super.performDefaults();
@@ -116,11 +101,6 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 		propertiesPage.performDefaults();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.IPreferencePage#performOk()
-	 */
 	@Override
 	public boolean performOk() {
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
@@ -165,11 +145,6 @@ public class AntRuntimePreferencePage extends PreferencePage implements IWorkben
 		return super.performOk();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.DialogPage#setButtonLayoutData(org.eclipse.swt.widgets.Button)
-	 */
 	@Override
 	protected GridData setButtonLayoutData(Button button) {
 		return super.setButtonLayoutData(button);

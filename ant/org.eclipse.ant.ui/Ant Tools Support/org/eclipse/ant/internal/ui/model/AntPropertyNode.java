@@ -86,11 +86,6 @@ public class AntPropertyNode extends AntTaskNode {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.editor.model.AntElementNode#getBaseImageDescriptor()
-	 */
 	@Override
 	protected ImageDescriptor getBaseImageDescriptor() {
 		return AntUIImages.getImageDescriptor(IAntUIConstants.IMG_PROPERTY);
@@ -146,11 +141,6 @@ public class AntPropertyNode extends AntTaskNode {
 		fProperties.put(propertyName, value);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getReferencedElement(int)
-	 */
 	@Override
 	public String getReferencedElement(int offset) {
 		if (fReferencedName != null) {
@@ -166,11 +156,6 @@ public class AntPropertyNode extends AntTaskNode {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#containsOccurrence(java.lang.String)
-	 */
 	@Override
 	public boolean containsOccurrence(String identifier) {
 		if (!getTask().getTaskName().equals("property")) { //$NON-NLS-1$
@@ -183,11 +168,6 @@ public class AntPropertyNode extends AntTaskNode {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getOccurrencesIdentifier()
-	 */
 	@Override
 	public String getOccurrencesIdentifier() {
 		if (fOccurrencesIdentifier == null) {
@@ -196,11 +176,6 @@ public class AntPropertyNode extends AntTaskNode {
 		return fOccurrencesIdentifier;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#isRegionPotentialReference(org.eclipse.jface.text.IRegion)
-	 */
 	@Override
 	public boolean isRegionPotentialReference(IRegion region) {
 		boolean superOK = super.isRegionPotentialReference(region);
@@ -218,7 +193,8 @@ public class AntPropertyNode extends AntTaskNode {
 			if (valueOffset > -1) {
 				boolean inValue = region.getOffset() >= (getOffset() + valueOffset);
 				if (inValue) {
-					if ("{".equals(getAntModel().getText(region.getOffset() - 1, 1)) || "}".equals(getAntModel().getText(region.getOffset() + region.getLength(), 1))) { //$NON-NLS-1$ //$NON-NLS-2$
+					if ("{".equals(getAntModel().getText(region.getOffset() - 1, 1)) //$NON-NLS-1$
+							|| "}".equals(getAntModel().getText(region.getOffset() + region.getLength(), 1))) { //$NON-NLS-1$
 						return true;
 					}
 					// reference is not in the value and not within a property de-reference
@@ -262,11 +238,6 @@ public class AntPropertyNode extends AntTaskNode {
 		return results;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#isFromDeclaration(org.eclipse.jface.text.IRegion)
-	 */
 	@Override
 	public boolean isFromDeclaration(IRegion region) {
 		if (fBaseLabel == null) {

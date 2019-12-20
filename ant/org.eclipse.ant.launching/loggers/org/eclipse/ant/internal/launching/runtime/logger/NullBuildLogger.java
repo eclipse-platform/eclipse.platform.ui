@@ -108,11 +108,6 @@ public class NullBuildLogger extends AbstractEclipseBuildLogger implements Build
 		// do nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.BuildListener#messageLogged(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public void messageLogged(BuildEvent event) {
 		logMessage(event.getMessage(), event.getPriority());

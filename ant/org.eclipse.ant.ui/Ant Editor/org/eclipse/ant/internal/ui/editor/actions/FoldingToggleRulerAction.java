@@ -31,12 +31,6 @@ public class FoldingToggleRulerAction extends AbstractRulerActionDelegate {
 	private TextOperationAction fAction;
 	private ITextEditor fTextEditor;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.texteditor.AbstractRulerActionDelegate#createAction(org.eclipse.ui.texteditor.ITextEditor,
-	 * org.eclipse.jface.text.source.IVerticalRulerInfo)
-	 */
 	@Override
 	protected IAction createAction(ITextEditor editor, IVerticalRulerInfo rulerInfo) {
 		fTextEditor = editor;
@@ -45,22 +39,12 @@ public class FoldingToggleRulerAction extends AbstractRulerActionDelegate {
 		return fAction;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IEditorActionDelegate#setActiveEditor(org.eclipse.jface.action.IAction, org.eclipse.ui.IEditorPart)
-	 */
 	@Override
 	public void setActiveEditor(IAction callerAction, IEditorPart targetEditor) {
 		fUIAction = callerAction;
 		super.setActiveEditor(callerAction, targetEditor);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.action.IMenuListener#menuAboutToShow(org.eclipse.jface.action.IMenuManager)
-	 */
 	@Override
 	public void menuAboutToShow(IMenuManager manager) {
 		update();

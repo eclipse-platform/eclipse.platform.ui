@@ -23,11 +23,6 @@ import org.apache.tools.ant.input.InputRequest;
  */
 public class AntTestInputHandler extends DefaultInputHandler {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.input.InputHandler#handleInput(org.apache.tools.ant.input.InputRequest)
-	 */
 	@Override
 	public void handleInput(InputRequest request) throws BuildException {
 		if (System.getProperty("eclipse.ant.noInput") != null) { //$NON-NLS-1$

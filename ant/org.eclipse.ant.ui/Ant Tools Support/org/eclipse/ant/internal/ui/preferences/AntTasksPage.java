@@ -40,11 +40,6 @@ public class AntTasksPage extends AntPage {
 		super(preferencePage);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.preferences.AntPage#addButtonsToButtonGroup(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected void addButtonsToButtonGroup(Composite parent) {
 		createPushButton(parent, AntPreferencesMessages.AntTasksPage_1, ADD_BUTTON);
@@ -101,11 +96,6 @@ public class AntTasksPage extends AntPage {
 		return item;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.preferences.AntPage#edit(org.eclipse.jface.viewers.IStructuredSelection)
-	 */
 	@Override
 	protected void edit(IStructuredSelection selection) {
 		Task task = (Task) selection.getFirstElement();
@@ -124,22 +114,12 @@ public class AntTasksPage extends AntPage {
 		updateContent(task);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.preferences.AntPage#initialize()
-	 */
 	@Override
 	protected void initialize() {
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
 		setInput(prefs.getTasks());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.preferences.AntPage#getHelpContextId()
-	 */
 	@Override
 	protected String getHelpContextId() {
 		return IAntUIHelpContextIds.ANT_TASKS_PAGE;

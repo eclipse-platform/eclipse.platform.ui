@@ -56,11 +56,6 @@ public class TagRule extends MultiLineRule {
 		return super.sequenceDetected(scanner, sequence, eofAllowed);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.rules.PatternRule#endSequenceDetected(org.eclipse.jface.text.rules.ICharacterScanner)
-	 */
 	@Override
 	protected boolean endSequenceDetected(ICharacterScanner scanner) {
 		int c;

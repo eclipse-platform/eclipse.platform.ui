@@ -19,14 +19,10 @@ import java.util.List;
 
 import org.eclipse.ant.internal.launching.debug.IAntDebugConstants;
 import org.eclipse.ant.internal.launching.debug.IAntDebugController;
-
 import org.eclipse.core.externaltools.internal.IExternalToolConstants;
-import org.eclipse.core.variables.VariablesPlugin;
-
-import org.eclipse.core.runtime.CoreException;
-
 import org.eclipse.core.resources.IMarkerDelta;
-
+import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
@@ -94,41 +90,21 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 		DebugPlugin.getDefault().addDebugEventListener(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IDebugTarget#getProcess()
-	 */
 	@Override
 	public IProcess getProcess() {
 		return fProcess;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IDebugTarget#getThreads()
-	 */
 	@Override
 	public IThread[] getThreads() {
 		return fThreads;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IDebugTarget#hasThreads()
-	 */
 	@Override
 	public boolean hasThreads() throws DebugException {
 		return !fTerminated && fThreads.length > 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IDebugTarget#getName()
-	 */
 	@Override
 	public String getName() throws DebugException {
 		if (fName == null) {
@@ -143,11 +119,6 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 		return fName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IDebugTarget#supportsBreakpoint(org.eclipse.debug.core.model.IBreakpoint)
-	 */
 	@Override
 	public boolean supportsBreakpoint(IBreakpoint breakpoint) {
 		if (breakpoint.getModelIdentifier().equals(IAntDebugConstants.ID_ANT_DEBUG_MODEL)) {
@@ -158,91 +129,46 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IDebugElement#getDebugTarget()
-	 */
 	@Override
 	public IDebugTarget getDebugTarget() {
 		return this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IDebugElement#getLaunch()
-	 */
 	@Override
 	public ILaunch getLaunch() {
 		return fLaunch;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
-	 */
 	@Override
 	public boolean canTerminate() {
 		return !fTerminated;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
-	 */
 	@Override
 	public boolean isTerminated() {
 		return fTerminated;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
-	 */
 	@Override
 	public void terminate() throws DebugException {
 		terminated();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.ISuspendResume#canResume()
-	 */
 	@Override
 	public boolean canResume() {
 		return !fTerminated && fSuspended;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.ISuspendResume#canSuspend()
-	 */
 	@Override
 	public boolean canSuspend() {
 		return !fTerminated && !fSuspended;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.ISuspendResume#isSuspended()
-	 */
 	@Override
 	public boolean isSuspended() {
 		return fSuspended;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.ISuspendResume#resume()
-	 */
 	@Override
 	public void resume() throws DebugException {
 		fSuspended = false;
@@ -265,21 +191,11 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 		fThread.fireSuspendEvent(detail);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.ISuspendResume#suspend()
-	 */
 	@Override
 	public void suspend() throws DebugException {
 		fController.suspend();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.IBreakpointListener#breakpointAdded(org.eclipse.debug.core.model.IBreakpoint)
-	 */
 	@Override
 	public void breakpointAdded(IBreakpoint breakpoint) {
 		if (!fTerminated) {
@@ -295,12 +211,6 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.IBreakpointListener#breakpointRemoved(org.eclipse.debug.core.model.IBreakpoint,
-	 * org.eclipse.core.resources.IMarkerDelta)
-	 */
 	@Override
 	public void breakpointRemoved(IBreakpoint breakpoint, IMarkerDelta delta) {
 		if (!fTerminated) {
@@ -313,12 +223,6 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.IBreakpointListener#breakpointChanged(org.eclipse.debug.core.model.IBreakpoint,
-	 * org.eclipse.core.resources.IMarkerDelta)
-	 */
 	@Override
 	public void breakpointChanged(IBreakpoint breakpoint, IMarkerDelta delta) {
 		if (supportsBreakpoint(breakpoint)) {
@@ -335,51 +239,26 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IDisconnect#canDisconnect()
-	 */
 	@Override
 	public boolean canDisconnect() {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IDisconnect#disconnect()
-	 */
 	@Override
 	public void disconnect() throws DebugException {
 		// do nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IDisconnect#isDisconnected()
-	 */
 	@Override
 	public boolean isDisconnected() {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrieval#supportsStorageRetrieval()
-	 */
 	@Override
 	public boolean supportsStorageRetrieval() {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IMemoryBlockRetrieval#getMemoryBlock(long, long)
-	 */
 	@Override
 	public IMemoryBlock getMemoryBlock(long startAddress, long length) throws DebugException {
 		return null;
@@ -498,7 +377,8 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 
 	private boolean setThreadBreakpoint(ILineBreakpoint lineBreakpoint, int lineNumber, String fileName) {
 		try {
-			if (lineBreakpoint.getLineNumber() == lineNumber && fileName.equals(lineBreakpoint.getMarker().getResource().getLocation().toOSString())) {
+			if (lineBreakpoint.getLineNumber() == lineNumber
+					&& fileName.equals(lineBreakpoint.getMarker().getResource().getLocation().toOSString())) {
 				fThread.setBreakpoints(new IBreakpoint[] { lineBreakpoint });
 				return true;
 			}
@@ -526,11 +406,6 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.IDebugEventSetListener#handleDebugEvents(org.eclipse.debug.core.DebugEvent[])
-	 */
 	@Override
 	public void handleDebugEvents(DebugEvent[] events) {
 		for (DebugEvent event : events) {

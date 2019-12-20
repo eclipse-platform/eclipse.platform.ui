@@ -25,11 +25,6 @@ public class EclipseDefaultExecutor extends DefaultExecutor {
 
 	private static final EclipseSingleCheckExecutor SUB_EXECUTOR = new EclipseSingleCheckExecutor();
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.Executor#executeTargets(org.apache.tools.ant.Project, java.lang.String[])
-	 */
 	@SuppressWarnings("unused")
 	@Override
 	public void executeTargets(Project project, String[] targetNames) throws BuildException {
@@ -39,11 +34,6 @@ public class EclipseDefaultExecutor extends DefaultExecutor {
 		super.executeTargets(project, targetNames);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.Executor#getSubProjectExecutor()
-	 */
 	@Override
 	public Executor getSubProjectExecutor() {
 		return SUB_EXECUTOR;

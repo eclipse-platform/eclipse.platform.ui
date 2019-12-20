@@ -79,43 +79,22 @@ public class AntCompletionProposal implements ICompletionProposal, ICompletionPr
 		fType = type;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#apply(org.eclipse.jface.text.ITextViewer, char, int, int)
-	 */
 	@Override
 	public void apply(ITextViewer viewer, char trigger, int stateMask, int offset) {
 		apply(viewer.getDocument());
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#selected(org.eclipse.jface.text.ITextViewer, boolean)
-	 */
 	@Override
 	public void selected(ITextViewer viewer, boolean smartToggle) {
 		// do nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#unselected(org.eclipse.jface.text.ITextViewer)
-	 */
 	@Override
 	public void unselected(ITextViewer viewer) {
 		// do nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#validate(org.eclipse.jface.text.IDocument, int,
-	 * org.eclipse.jface.text.DocumentEvent)
-	 */
 	@Override
 	public boolean validate(IDocument document, int offset, DocumentEvent event) {
 		String enteredText = IAntCoreConstants.EMPTY_STRING;
@@ -158,11 +137,6 @@ public class AntCompletionProposal implements ICompletionProposal, ICompletionPr
 		return valid;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#apply(org.eclipse.jface.text.IDocument)
-	 */
 	@Override
 	public void apply(IDocument document) {
 		try {
@@ -173,31 +147,16 @@ public class AntCompletionProposal implements ICompletionProposal, ICompletionPr
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getSelection(org.eclipse.jface.text.IDocument)
-	 */
 	@Override
 	public Point getSelection(IDocument document) {
 		return new Point(fReplacementOffset + fCursorPosition, 0);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getAdditionalProposalInfo()
-	 */
 	@Override
 	public String getAdditionalProposalInfo() {
 		return fAdditionalProposalInfo;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getDisplayString()
-	 */
 	@Override
 	public String getDisplayString() {
 		if (fDisplayString != null) {
@@ -206,31 +165,16 @@ public class AntCompletionProposal implements ICompletionProposal, ICompletionPr
 		return fReplacementString;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getImage()
-	 */
 	@Override
 	public Image getImage() {
 		return fImage;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposal#getContextInformation()
-	 */
 	@Override
 	public IContextInformation getContextInformation() {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return getDisplayString();

@@ -16,6 +16,7 @@ package org.eclipse.ant.internal.ui.preferences;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+
 import org.eclipse.ant.core.IAntClasspathEntry;
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
@@ -39,11 +40,6 @@ public class ClasspathEntry extends AbstractClasspathEntry {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IAntClasspathEntry) {
@@ -54,21 +50,11 @@ public class ClasspathEntry extends AbstractClasspathEntry {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return getLabel().hashCode();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		if (fEntry != null) {
@@ -89,11 +75,6 @@ public class ClasspathEntry extends AbstractClasspathEntry {
 		return fVariableString;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.core.IAntClasspathEntry#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		if (fEntry == null) {
@@ -102,11 +83,6 @@ public class ClasspathEntry extends AbstractClasspathEntry {
 		return fEntry.getLabel();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.core.IAntClasspathEntry#getEntryURL()
-	 */
 	@Override
 	public URL getEntryURL() {
 		if (fEntry != null) {
@@ -129,11 +105,6 @@ public class ClasspathEntry extends AbstractClasspathEntry {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.core.IAntClasspathEntry#isEclipseRuntimeRequired()
-	 */
 	@Override
 	public boolean isEclipseRuntimeRequired() {
 		if (fEntry == null) {

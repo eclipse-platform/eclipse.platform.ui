@@ -25,11 +25,6 @@ import org.eclipse.swt.graphics.Image;
  */
 public class TargetTableLabelProvider extends AntModelLabelProvider implements ITableLabelProvider {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnImage(java.lang.Object, int)
-	 */
 	@Override
 	public Image getColumnImage(Object element, int columnIndex) {
 		if (columnIndex == 0) {
@@ -38,11 +33,6 @@ public class TargetTableLabelProvider extends AntModelLabelProvider implements I
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ITableLabelProvider#getColumnText(java.lang.Object, int)
-	 */
 	@Override
 	public String getColumnText(Object element, int columnIndex) {
 		if (columnIndex == 0) {

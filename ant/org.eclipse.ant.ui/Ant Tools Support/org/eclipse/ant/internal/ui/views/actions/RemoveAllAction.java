@@ -41,11 +41,6 @@ public class RemoveAllAction extends Action implements IUpdate {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.texteditor.IUpdate#update()
-	 */
 	@Override
 	public void update() {
 		setEnabled(view.getViewer().getTree().getItemCount() != 0);

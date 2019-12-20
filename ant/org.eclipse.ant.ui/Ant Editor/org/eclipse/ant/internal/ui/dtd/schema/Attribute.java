@@ -13,7 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.dtd.schema;
 
-import org.eclipse.ant.internal.ui.dtd.*;
+import org.eclipse.ant.internal.ui.dtd.IAttribute;
+import org.eclipse.ant.internal.ui.dtd.IElement;
 
 /**
  * Attr contains information about a single attribute.
@@ -41,61 +42,31 @@ public class Attribute extends Atom implements IAttribute {
 		fElement = element;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.dtd.IAttribute#getType()
-	 */
 	@Override
 	public String getType() {
 		return fType;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.dtd.IAttribute#getEnum()
-	 */
 	@Override
 	public String[] getEnum() {
 		return fEnum;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.dtd.IAttribute#getElement()
-	 */
 	@Override
 	public IElement getElement() {
 		return fElement;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.dtd.IAttribute#getDefault()
-	 */
 	@Override
 	public String getDefault() {
 		return fDefault;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.dtd.IAttribute#isFixed()
-	 */
 	@Override
 	public boolean isFixed() {
 		return fFixed;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.dtd.IAttribute#isRequired()
-	 */
 	@Override
 	public boolean isRequired() {
 		return fRequired;

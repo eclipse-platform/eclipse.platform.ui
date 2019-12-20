@@ -23,11 +23,6 @@ import org.apache.tools.ant.helper.SingleCheckExecutor;
 
 public class EclipseSingleCheckExecutor extends SingleCheckExecutor {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.Executor#executeTargets(org.apache.tools.ant.Project, java.lang.String[])
-	 */
 	@SuppressWarnings("unused")
 	@Override
 	public void executeTargets(Project project, String[] targetNames) throws BuildException {
@@ -37,11 +32,6 @@ public class EclipseSingleCheckExecutor extends SingleCheckExecutor {
 		super.executeTargets(project, targetNames);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.Executor#getSubProjectExecutor()
-	 */
 	@Override
 	public Executor getSubProjectExecutor() {
 		return this;

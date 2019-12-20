@@ -15,6 +15,7 @@
 package org.eclipse.ant.internal.launching.launchConfigurations;
 
 import java.util.Map;
+
 import org.eclipse.debug.core.ILaunch;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.core.model.RuntimeProcess;
@@ -29,11 +30,6 @@ public class RemoteAntRuntimeProcess extends RuntimeProcess {
 		super(launch, process, name, attributes);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.RuntimeProcess#createStreamsProxy()
-	 */
 	@Override
 	protected IStreamsProxy createStreamsProxy() {
 		return new AntStreamsProxy();

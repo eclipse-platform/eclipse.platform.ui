@@ -40,11 +40,6 @@ public class AntImportNode extends AntTaskNode {
 		return fFile;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.editor.model.AntElementNode#getBaseImageDescriptor()
-	 */
 	@Override
 	protected ImageDescriptor getBaseImageDescriptor() {
 		return AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_IMPORT);
@@ -101,11 +96,6 @@ public class AntImportNode extends AntTaskNode {
 		return file;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getReferencedElement(int)
-	 */
 	@Override
 	public String getReferencedElement(int offset) {
 		if (fFile != null) {

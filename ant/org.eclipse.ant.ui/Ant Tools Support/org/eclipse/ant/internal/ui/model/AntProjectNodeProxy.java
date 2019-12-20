@@ -87,11 +87,6 @@ public class AntProjectNodeProxy extends AntProjectNode {
 		parseBuildFile(false);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntProjectNode#getDescription()
-	 */
 	@Override
 	public String getDescription() {
 		if (fProject == null) {
@@ -100,11 +95,6 @@ public class AntProjectNodeProxy extends AntProjectNode {
 		return super.getDescription();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		if (fProject == null) {
@@ -114,11 +104,6 @@ public class AntProjectNodeProxy extends AntProjectNode {
 		return fName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getChildNodes()
-	 */
 	@Override
 	public List<IAntElement> getChildNodes() {
 		if (fProject == null) {
@@ -148,21 +133,11 @@ public class AntProjectNodeProxy extends AntProjectNode {
 		return super.getDefaultTargetName();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#hasChildren()
-	 */
 	@Override
 	public boolean hasChildren() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (fProject != null) {
@@ -170,11 +145,6 @@ public class AntProjectNodeProxy extends AntProjectNode {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#isErrorNode()
-	 */
 	@Override
 	public boolean isErrorNode() {
 		if (fProject == null) {
@@ -183,11 +153,6 @@ public class AntProjectNodeProxy extends AntProjectNode {
 		return getRealNode().isErrorNode();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getProblemMessage()
-	 */
 	@Override
 	public String getProblemMessage() {
 		if (isErrorNode()) {
@@ -196,11 +161,6 @@ public class AntProjectNodeProxy extends AntProjectNode {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#isWarningNode()
-	 */
 	@Override
 	public boolean isWarningNode() {
 		if (fProject == null) {
@@ -216,11 +176,6 @@ public class AntProjectNodeProxy extends AntProjectNode {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getAntModel()
-	 */
 	@Override
 	protected IAntModel getAntModel() {
 		if (fProject == null) {
@@ -229,11 +184,6 @@ public class AntProjectNodeProxy extends AntProjectNode {
 		return super.getAntModel();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getLength()
-	 */
 	@Override
 	public int getLength() {
 		if (fProject == null) {
@@ -246,11 +196,6 @@ public class AntProjectNodeProxy extends AntProjectNode {
 		return realNode.getLength();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getOffset()
-	 */
 	@Override
 	public int getOffset() {
 		if (fProject == null) {
@@ -263,11 +208,6 @@ public class AntProjectNodeProxy extends AntProjectNode {
 		return realNode.getOffset();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getSelectionLength()
-	 */
 	@Override
 	public int getSelectionLength() {
 		if (fProject == null) {
@@ -280,11 +220,6 @@ public class AntProjectNodeProxy extends AntProjectNode {
 		return realNode.getSelectionLength();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getBuildFileResource()
-	 */
 	@Override
 	public IFile getBuildFileResource() {
 		if (fProject == null) {
@@ -295,11 +230,6 @@ public class AntProjectNodeProxy extends AntProjectNode {
 		return super.getBuildFileResource();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return getLabel();

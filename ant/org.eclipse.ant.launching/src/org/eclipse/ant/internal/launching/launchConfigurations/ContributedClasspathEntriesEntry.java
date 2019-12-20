@@ -68,41 +68,21 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 	public ContributedClasspathEntriesEntry() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jdt.internal.launching.AbstractRuntimeClasspathEntry#buildMemento(org.w3c.dom.Document, org.w3c.dom.Element)
-	 */
 	@Override
 	protected void buildMemento(Document document, Element memento) throws CoreException {
 		// do nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jdt.internal.launching.IRuntimeClasspathEntry2#initializeFrom(org.w3c.dom.Element)
-	 */
 	@Override
 	public void initializeFrom(Element memento) throws CoreException {
 		// do nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getTypeId()
-	 */
 	@Override
 	public String getTypeId() {
 		return TYPE_ID;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getRuntimeClasspathEntries(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public IRuntimeClasspathEntry[] getRuntimeClasspathEntries(ILaunchConfiguration configuration) throws CoreException {
 		boolean separateVM = AntLaunchingUtil.isSeparateJREAntBuild(configuration);
@@ -267,51 +247,26 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#getName()
-	 */
 	@Override
 	public String getName() {
 		return AntLaunchConfigurationMessages.ContributedClasspathEntriesEntry_1;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry#getType()
-	 */
 	@Override
 	public int getType() {
 		return IRuntimeClasspathEntry.OTHER;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jdt.launching.IRuntimeClasspathEntry2#isComposite()
-	 */
 	@Override
 	public boolean isComposite() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		return obj instanceof ContributedClasspathEntriesEntry;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return getClass().hashCode();

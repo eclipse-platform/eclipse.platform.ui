@@ -23,11 +23,6 @@ public class AntCommentNode extends AntElementNode {
 		super("AntComment"); //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.editor.model.AntElementNode#isStructuralNode()
-	 */
 	@Override
 	public boolean isStructuralNode() {
 		return false;

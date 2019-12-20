@@ -30,23 +30,14 @@ public final class CheatSheetStandbyContent implements IStandbyContentPart {
 	private Composite container;
 	private String input;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.intro.internal.parts.IStandbyContentPart#init(org.eclipse.ui.intro.IIntroPart)
-	 */
+	@Override
 	public void init(IIntroPart introPart, IMemento memento) {
 		//this.introPart = introPart;
 		// try to restore last state.
 		input = getCachedInput(memento);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.intro.internal.parts.IStandbyContentPart#createControl(org.eclipse.swt.widgets.Composite,
-	 *      org.eclipse.ui.forms.widgets.FormToolkit)
-	 */
+	@Override
 	public void createPartControl(Composite parent, FormToolkit toolkit) {
 		container = toolkit.createComposite(parent);
 		FillLayout layout = new FillLayout();
@@ -57,21 +48,12 @@ public final class CheatSheetStandbyContent implements IStandbyContentPart {
 		viewer.createPartControl(container);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.intro.internal.parts.IStandbyContentPart#getControl()
-	 */
+	@Override
 	public Control getControl() {
 		return container;
 	}
 
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.intro.internal.parts.IStandbyContentPart#setInput(java.lang.Object)
-	 */
+	@Override
 	public void setInput(Object input) {
 		// if the new input is null, use cacched input from momento.
 		if (input != null)
@@ -79,29 +61,17 @@ public final class CheatSheetStandbyContent implements IStandbyContentPart {
 		viewer.setInput(this.input);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.intro.internal.parts.IStandbyContentPart#setFocus()
-	 */
+	@Override
 	public void setFocus() {
 		viewer.setFocus();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.intro.internal.parts.IStandbyContentPart#dispose()
-	 */
+	@Override
 	public void dispose() {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.intro.config.IStandbyContentPart#saveState(org.eclipse.ui.IMemento)
-	 */
+	@Override
 	public void saveState(IMemento memento) {
 		String currentCheatSheetId = viewer.getCheatSheetID();
 		if (currentCheatSheetId != null)

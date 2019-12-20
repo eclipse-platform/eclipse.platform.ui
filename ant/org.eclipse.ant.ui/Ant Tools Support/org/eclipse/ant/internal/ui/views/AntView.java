@@ -169,11 +169,6 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		});
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.eclipse.ui.IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createPartControl(Composite parent) {
 		initializeActions();
@@ -301,11 +296,6 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		projectViewer.setLabelProvider(new AntModelLabelProvider());
 		projectViewer.setInput(fInput);
 		projectViewer.setComparator(new ViewerComparator() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-			 */
 			@Override
 			public int compare(Viewer viewer, Object e1, Object e2) {
 				if (e1 instanceof AntProjectNode && e2 instanceof AntProjectNode || e1 instanceof AntTargetNode && e2 instanceof AntTargetNode) {
@@ -505,11 +495,6 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		projectViewer.refresh();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IViewPart#init(org.eclipse.ui.IViewSite, org.eclipse.ui.IMemento)
-	 */
 	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
@@ -611,21 +596,11 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IViewPart#saveState(org.eclipse.ui.IMemento)
-	 */
 	@Override
 	public void saveState(IMemento memento) {
 		saveViewerState();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
-	 */
 	@Override
 	public void dispose() {
 		saveViewerState();
@@ -637,11 +612,6 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		ResourcesPlugin.getWorkspace().removeResourceChangeListener(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.resources.IResourceChangeListener#resourceChanged(org.eclipse.core.resources.IResourceChangeEvent)
-	 */
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
 		IResourceDelta delta = event.getDelta();
@@ -703,11 +673,6 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.IShowInSource#getShowInContext()
-	 */
 	@Override
 	public ShowInContext getShowInContext() {
 		AntElementNode node = getSelectionNode();
@@ -752,11 +717,6 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		return fInternalTargetFilter;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchPart#setFocus()
-	 */
 	@Override
 	public void setFocus() {
 		if (getViewer() != null) {

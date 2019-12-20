@@ -51,11 +51,6 @@ public class SWTInputHandler extends DefaultInputHandler {
 	protected InputRequest fRequest;
 	private boolean fFirstValidation = true;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.input.InputHandler#handleInput(org.apache.tools.ant.input.InputRequest)
-	 */
 	@Override
 	public void handleInput(InputRequest request) throws BuildException {
 		if (System.getProperty("eclipse.ant.noInput") != null) { //$NON-NLS-1$

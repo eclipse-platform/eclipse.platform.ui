@@ -41,9 +41,6 @@ public class AntAnnotationModel extends ResourceMarkerAnnotationModel implements
 		super(file);
 	}
 
-	/*
-	 * @see org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel#createMarkerAnnotation(org.eclipse.core.resources.IMarker)
-	 */
 	@Override
 	protected MarkerAnnotation createMarkerAnnotation(IMarker marker) {
 		String markerType = MarkerUtilities.getMarkerType(marker);
@@ -68,31 +65,16 @@ public class AntAnnotationModel extends ResourceMarkerAnnotationModel implements
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblemRequestor#acceptProblem(org.eclipse.ant.internal.ui.editor.outline.IProblem)
-	 */
 	@Override
 	public void acceptProblem(IProblem problem) {
 		fCollectedProblems.add(problem);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblemRequestor#acceptProblem(org.eclipse.ant.internal.ui.editor.outline.IProblem)
-	 */
 	@Override
 	public void beginReporting() {
 		// do nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblemRequestor#acceptProblem(org.eclipse.ant.internal.ui.editor.outline.IProblem)
-	 */
 	@Override
 	public void endReporting() {
 		boolean temporaryProblemsChanged = false;
@@ -135,11 +117,6 @@ public class AntAnnotationModel extends ResourceMarkerAnnotationModel implements
 			fireModelChanged(new AnnotationModelEvent(this));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.texteditor.AbstractMarkerAnnotationModel#isAcceptable(org.eclipse.core.resources.IMarker)
-	 */
 	@Override
 	protected boolean isAcceptable(IMarker marker) {
 		if (super.isAcceptable(marker)) {

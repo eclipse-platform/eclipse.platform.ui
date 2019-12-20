@@ -26,11 +26,6 @@ public class DocTypeRule extends MultiLineRule {
 		super("<!DOCTYPE", ">", token); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.rules.PatternRule#endSequenceDetected(org.eclipse.jface.text.rules.ICharacterScanner)
-	 */
 	@Override
 	protected boolean endSequenceDetected(ICharacterScanner scanner) {
 		int c;

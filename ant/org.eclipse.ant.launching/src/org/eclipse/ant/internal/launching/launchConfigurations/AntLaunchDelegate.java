@@ -702,11 +702,6 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 		return buf.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getBuildOrder (org.eclipse.debug.core.ILaunchConfiguration, java.lang.String)
-	 */
 	@Override
 	protected IProject[] getBuildOrder(ILaunchConfiguration configuration, String mode) throws CoreException {
 		String scopeKey = ATTR_BUILD_SCOPE;
@@ -756,11 +751,6 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 		return fgSWTLibraryLocation;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#getBreakpoints (org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	protected IBreakpoint[] getBreakpoints(ILaunchConfiguration configuration) {
 		IBreakpointManager breakpointManager = DebugPlugin.getDefault().getBreakpointManager();
@@ -771,12 +761,6 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 		return breakpointManager.getBreakpoints(IAntDebugConstants.ID_ANT_DEBUG_MODEL);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.LaunchConfigurationDelegate#saveBeforeLaunch (org.eclipse.debug.core.ILaunchConfiguration, java.lang.String,
-	 * org.eclipse.core.runtime.IProgressMonitor)
-	 */
 	@Override
 	protected boolean saveBeforeLaunch(ILaunchConfiguration configuration, String mode, IProgressMonitor monitor) throws CoreException {
 		if (IExternalToolConstants.ID_EXTERNAL_TOOLS_BUILDER_LAUNCH_CATEGORY.equals(configuration.getType().getCategory())) {

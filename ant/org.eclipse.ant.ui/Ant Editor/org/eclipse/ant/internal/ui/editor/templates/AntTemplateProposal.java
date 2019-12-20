@@ -29,12 +29,6 @@ public class AntTemplateProposal extends TemplateProposal {
 		super(template, context, region, image, relevance);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.contentassist.ICompletionProposalExtension2#validate(org.eclipse.jface.text.IDocument, int,
-	 * org.eclipse.jface.text.DocumentEvent)
-	 */
 	@Override
 	public boolean validate(IDocument document, int offset, DocumentEvent event) {
 		try {

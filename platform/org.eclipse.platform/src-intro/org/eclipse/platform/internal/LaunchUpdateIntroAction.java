@@ -34,6 +34,7 @@ public class LaunchUpdateIntroAction implements IIntroAction {
 		//nothing to do
 	}
 
+	@Override
 	public void run(IIntroSite site, Properties params) {
 		Shell currentShell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
 		currentShell.getDisplay().asyncExec(() -> {

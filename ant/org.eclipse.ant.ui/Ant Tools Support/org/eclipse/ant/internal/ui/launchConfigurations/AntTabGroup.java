@@ -36,11 +36,6 @@ import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsB
 
 public class AntTabGroup extends AbstractLaunchConfigurationTabGroup {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	@SuppressWarnings("deprecation")
 	public void initializeFrom(ILaunchConfiguration configuration) {
@@ -59,11 +54,6 @@ public class AntTabGroup extends AbstractLaunchConfigurationTabGroup {
 		super.initializeFrom(configuration);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#createTabs(org.eclipse.debug.ui.ILaunchConfigurationDialog, java.lang.String)
-	 */
 	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		RefreshTab refresh = new RefreshTab();
@@ -83,11 +73,6 @@ public class AntTabGroup extends AbstractLaunchConfigurationTabGroup {
 		setTabs(tabs);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		// set default name for script

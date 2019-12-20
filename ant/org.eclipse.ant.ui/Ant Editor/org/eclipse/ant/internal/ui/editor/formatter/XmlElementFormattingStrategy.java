@@ -46,11 +46,6 @@ public class XmlElementFormattingStrategy extends ContextBasedFormattingStrategy
 		this.prefs = prefs;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.formatter.IFormattingStrategyExtension#format()
-	 */
 	@Override
 	public void format() {
 

@@ -104,11 +104,6 @@ public abstract class AntPage {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.preferences.AntPage#buttonPressed(int)
-	 */
 	private void buttonPressed(int buttonId) {
 		switch (buttonId) {
 			case ADD_BUTTON:

@@ -62,11 +62,6 @@ public class AntSourceViewerConfiguration extends TextSourceViewerConfiguration 
 		return tagScanner;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getPresentationReconciler(org.eclipse.jface.text.source.ISourceViewer)
-	 */
 	@Override
 	public IPresentationReconciler getPresentationReconciler(ISourceViewer sourceViewer) {
 		PresentationReconciler reconciler = new PresentationReconciler();
@@ -146,8 +141,9 @@ public class AntSourceViewerConfiguration extends TextSourceViewerConfiguration 
 
 		boolean activeValue = (textAttribute.getStyle() & styleAttribute) == styleAttribute;
 		if (activeValue != eventValue) {
-			textAttribute = new TextAttribute(textAttribute.getForeground(), textAttribute.getBackground(), eventValue ? textAttribute.getStyle()
-					| styleAttribute : textAttribute.getStyle() & ~styleAttribute);
+			textAttribute = new TextAttribute(textAttribute.getForeground(), textAttribute.getBackground(), eventValue
+					? textAttribute.getStyle() | styleAttribute
+					: textAttribute.getStyle() & ~styleAttribute);
 		}
 		return textAttribute;
 	}
@@ -171,22 +167,12 @@ public class AntSourceViewerConfiguration extends TextSourceViewerConfiguration 
 		return textAttribute;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredContentTypes(org.eclipse.jface.text.source.ISourceViewer)
-	 */
 	@Override
 	public String[] getConfiguredContentTypes(ISourceViewer sourceViewer) {
 		return new String[] { IDocument.DEFAULT_CONTENT_TYPE, AntEditorPartitionScanner.XML_COMMENT, AntEditorPartitionScanner.XML_TAG,
 				AntEditorPartitionScanner.XML_CDATA, AntEditorPartitionScanner.XML_DTD };
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getTabWidth(org.eclipse.jface.text.source.ISourceViewer)
-	 */
 	@Override
 	public int getTabWidth(ISourceViewer sourceViewer) {
 		return fPreferenceStore.getInt(AbstractDecoratedTextEditorPreferenceConstants.EDITOR_TAB_WIDTH);
@@ -194,28 +180,16 @@ public class AntSourceViewerConfiguration extends TextSourceViewerConfiguration 
 
 	public boolean affectsTextPresentation(PropertyChangeEvent event) {
 		String property = event.getProperty();
-		return property.startsWith(IAntEditorColorConstants.TEXT_COLOR)
-				|| property.startsWith(IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR)
+		return property.startsWith(IAntEditorColorConstants.TEXT_COLOR) || property.startsWith(IAntEditorColorConstants.PROCESSING_INSTRUCTIONS_COLOR)
 				|| property.startsWith(IAntEditorColorConstants.STRING_COLOR) || property.startsWith(IAntEditorColorConstants.TAG_COLOR)
 				|| property.startsWith(IAntEditorColorConstants.XML_COMMENT_COLOR) || property.startsWith(IAntEditorColorConstants.XML_DTD_COLOR);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getConfiguredDocumentPartitioning(org.eclipse.jface.text.source.ISourceViewer)
-	 */
 	@Override
 	public String getConfiguredDocumentPartitioning(ISourceViewer sourceViewer) {
 		return AntDocumentSetupParticipant.ANT_PARTITIONING;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.source.SourceViewerConfiguration#getDoubleClickStrategy(org.eclipse.jface.text.source.ISourceViewer,
-	 * java.lang.String)
-	 */
 	@Override
 	public ITextDoubleClickStrategy getDoubleClickStrategy(ISourceViewer sourceViewer, String contentType) {
 		if (AntEditorPartitionScanner.XML_TAG.equals(contentType)) {

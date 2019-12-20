@@ -37,11 +37,6 @@ public class AntProjectNode extends AntElementNode {
 		fModel = antModel;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		if (fLabel == null) {
@@ -57,11 +52,6 @@ public class AntProjectNode extends AntElementNode {
 		return fLabel;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.editor.model.AntElementNode#getBaseImageDescriptor()
-	 */
 	@Override
 	protected ImageDescriptor getBaseImageDescriptor() {
 		return AntUIImages.getImageDescriptor(IAntUIConstants.IMG_ANT_PROJECT);
@@ -81,11 +71,6 @@ public class AntProjectNode extends AntElementNode {
 		return fModel;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.editor.model.AntElementNode#reset()
-	 */
 	@Override
 	public void reset() {
 		super.reset();
@@ -127,21 +112,11 @@ public class AntProjectNode extends AntElementNode {
 		project.setCurrentConfiguringProperty(node);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getProjectNode()
-	 */
 	@Override
 	public AntProjectNode getProjectNode() {
 		return this;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#containsOccurrence(java.lang.String)
-	 */
 	@Override
 	public boolean containsOccurrence(String identifier) {
 		return identifier.equals(getDefaultTargetName());
@@ -161,11 +136,6 @@ public class AntProjectNode extends AntElementNode {
 		return results;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#isRegionPotentialReference(org.eclipse.jface.text.IRegion)
-	 */
 	@Override
 	public boolean isRegionPotentialReference(IRegion region) {
 		if (!super.isRegionPotentialReference(region)) {

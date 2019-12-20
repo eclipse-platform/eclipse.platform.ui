@@ -45,11 +45,6 @@ public class InternalProject extends Project {
 		super();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.Project#init()
-	 */
 	@Override
 	public void init() throws BuildException {
 		setJavaVersionProperty();
@@ -72,11 +67,6 @@ public class InternalProject extends Project {
 		setSystemProperties();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.Project#createDataType(java.lang.String)
-	 */
 	@Override
 	public Object createDataType(String typeName) throws BuildException {
 		if (typeNameToClass == null) {
@@ -174,11 +164,6 @@ public class InternalProject extends Project {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.Project#getDataTypeDefinitions()
-	 */
 	@Override
 	public Hashtable<String, Class<?>> getDataTypeDefinitions() {
 		if (typeNameToClass == null) {
@@ -187,11 +172,6 @@ public class InternalProject extends Project {
 		return typeNameToClass;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.Project#addDataTypeDefinition(java.lang.String, java.lang.Class)
-	 */
 	@Override
 	public void addDataTypeDefinition(String typeName, Class<?> typeClass) {
 		getDataTypeDefinitions();

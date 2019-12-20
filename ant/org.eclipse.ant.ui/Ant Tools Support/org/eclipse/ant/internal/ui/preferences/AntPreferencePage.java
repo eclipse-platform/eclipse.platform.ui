@@ -81,31 +81,16 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 			this.defaultvalue = defaultvalue;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.preference.IntegerFieldEditor#doStore()
-		 */
 		@Override
 		protected void doStore() {
 			InstanceScope.INSTANCE.getNode(node).putInt(key, Integer.parseInt(getStringValue()));
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.preference.FieldEditor#load()
-		 */
 		@Override
 		public void load() {
 			setStringValue(Integer.toString(Platform.getPreferencesService().getInt(node, key, defaultvalue, null)));
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see org.eclipse.jface.preference.FieldEditor#loadDefault()
-		 */
 		@Override
 		public void loadDefault() {
 			setStringValue(Integer.toString(DefaultScope.INSTANCE.getNode(AntLaunching.getUniqueIdentifier()).getInt(key, defaultvalue)));
@@ -137,11 +122,6 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		setPreferenceStore(AntUIPlugin.getDefault().getPreferenceStore());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#createFieldEditors()
-	 */
 	@Override
 	protected void createFieldEditors() {
 		storeAppliedValues();
@@ -373,21 +353,11 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		super.performDefaults();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		getPreferenceStore().removePropertyChangeListener(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(IAntUIPreferenceConstants.ANT_TOOLS_JAR_WARNING)) {

@@ -117,11 +117,6 @@ public class XMLAnnotationHover implements IAnnotationHover {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.source.IAnnotationHover#getHoverInfo(org.eclipse.jface.text.source.ISourceViewer, int)
-	 */
 	@Override
 	public String getHoverInfo(ISourceViewer sourceViewer, int lineNumber) {
 		List<Annotation> xmlAnnotations = getXMLAnnotationsForLine(sourceViewer, lineNumber);

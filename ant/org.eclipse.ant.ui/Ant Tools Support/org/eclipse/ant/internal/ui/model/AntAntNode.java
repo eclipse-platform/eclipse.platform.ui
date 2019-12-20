@@ -63,11 +63,6 @@ public class AntAntNode extends AntTaskNode {
 		setBaseLabel(label.toString());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.AntElementNode#getReferencedElement(int)
-	 */
 	@Override
 	public String getReferencedElement(int offset) {
 		if (fFile != null) {

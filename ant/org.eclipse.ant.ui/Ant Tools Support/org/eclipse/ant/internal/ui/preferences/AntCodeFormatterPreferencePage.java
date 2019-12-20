@@ -154,21 +154,11 @@ public class AntCodeFormatterPreferencePage extends AbstractAntEditorPreferenceP
 		return XmlFormatter.format(content, prefs);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.preferences.AbstractAntEditorPreferencePage#handleDefaults()
-	 */
 	@Override
 	protected void handleDefaults() {
 		// do nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.IDialogPage#dispose()
-	 */
 	@Override
 	public void dispose() {
 		super.dispose();
@@ -177,11 +167,6 @@ public class AntCodeFormatterPreferencePage extends AbstractAntEditorPreferenceP
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.preferences.AbstractAntEditorPreferencePage#getHelpContextId()
-	 */
 	@Override
 	protected String getHelpContextId() {
 		return IAntUIHelpContextIds.ANT_EDITOR_FORMATTER_PREFERENCE_PAGE;

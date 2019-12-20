@@ -34,22 +34,12 @@ public class AntClasspathEntry implements IAntClasspathEntry {
 	private boolean eclipseRequired = false;
 	private URL url = null;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.core.IAntClasspathEntry#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 
 		return entryString;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.core.IAntClasspathEntry#getEntryURL()
-	 */
 	@Override
 	public URL getEntryURL() {
 		if (url != null) {
@@ -88,11 +78,6 @@ public class AntClasspathEntry implements IAntClasspathEntry {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IAntClasspathEntry) {
@@ -103,31 +88,16 @@ public class AntClasspathEntry implements IAntClasspathEntry {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return entryString.hashCode();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#toString()
-	 */
 	@Override
 	public String toString() {
 		return getLabel();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.core.IAntClasspathEntry#isEclipseRuntimeRequired()
-	 */
 	@Override
 	public boolean isEclipseRuntimeRequired() {
 		return eclipseRequired;

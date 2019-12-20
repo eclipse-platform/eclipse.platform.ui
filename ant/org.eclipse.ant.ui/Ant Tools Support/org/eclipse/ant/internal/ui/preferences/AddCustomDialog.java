@@ -109,11 +109,6 @@ public class AddCustomDialog extends StatusDialog {
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite topComposite = (Composite) super.createDialogArea(parent);
@@ -158,11 +153,6 @@ public class AddCustomDialog extends StatusDialog {
 		});
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-	 */
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
@@ -187,7 +177,8 @@ public class AddCustomDialog extends StatusDialog {
 			file.close();
 		}
 		catch (IOException e) {
-			AntUIPlugin.log(MessageFormat.format(AntPreferencesMessages.AddCustomDialog_Could_not_close_zip_file__0__4, new Object[] { file.getName() }), e);
+			AntUIPlugin.log(MessageFormat.format(AntPreferencesMessages.AddCustomDialog_Could_not_close_zip_file__0__4, new Object[] {
+					file.getName() }), e);
 			return false;
 		}
 
@@ -547,22 +538,12 @@ public class AddCustomDialog extends StatusDialog {
 		};
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#cancelPressed()
-	 */
 	@Override
 	protected void cancelPressed() {
 		clearProviderCache();
 		super.cancelPressed();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#okPressed()
-	 */
 	@Override
 	protected void okPressed() {
 		clearProviderCache();
@@ -627,11 +608,6 @@ public class AddCustomDialog extends StatusDialog {
 		this.className = className;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.window.Window#create()
-	 */
 	@Override
 	public void create() {
 		super.create();

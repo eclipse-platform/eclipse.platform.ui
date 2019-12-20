@@ -50,11 +50,6 @@ public class AntEnvironmentTab extends EnvironmentTab {
 		Dialog.applyDialogFont(parent);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#activated(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void activated(ILaunchConfigurationWorkingCopy workingCopy) {
 		updateWidgetsEnabled(workingCopy);

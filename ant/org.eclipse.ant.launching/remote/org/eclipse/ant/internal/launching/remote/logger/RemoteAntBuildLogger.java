@@ -76,11 +76,6 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 	private String fLastFileName = null;
 	private String fLastTaskName = null;
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.apache.tools.ant.DefaultLogger#printMessage(java.lang.String, java.io.PrintStream, int)
-	 */
 	@Override
 	protected void printMessage(String message, PrintStream stream, int priority) {
 		marshalMessage(priority, message);
@@ -144,11 +139,6 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 		fWriter.println(msg);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.apache.tools.ant.BuildListener#buildFinished(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public void buildFinished(BuildEvent event) {
 		if (!fSentProcessId) {
@@ -215,11 +205,6 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 		return result.toString();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public void targetStarted(BuildEvent event) {
 		if (!fSentProcessId) {
@@ -251,11 +236,6 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.apache.tools.ant.BuildListener#messageLogged(org.apache.tools.ant.BuildEvent)
-	 */
 	@SuppressWarnings("unused")
 	@Override
 	public void messageLogged(BuildEvent event) {
@@ -400,11 +380,6 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 		sendMessage(message.toString());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public void buildStarted(BuildEvent event) {
 		establishConnection();

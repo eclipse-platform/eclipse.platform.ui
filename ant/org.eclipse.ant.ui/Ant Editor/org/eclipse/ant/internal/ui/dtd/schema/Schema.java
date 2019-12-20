@@ -28,17 +28,11 @@ public class Schema implements ISchema {
 	private HashMap<String, IElement> fElementMap = new HashMap<>();
 	private Exception fErrorException;
 
-	/**
-	 * @see org.eclipse.ant.internal.ui.dtd.ISchema#getElement(java.lang.String)
-	 */
 	@Override
 	public IElement getElement(String qname) {
 		return fElementMap.get(qname);
 	}
 
-	/**
-	 * @see org.eclipse.ant.internal.ui.dtd.ISchema#getElements()
-	 */
 	@Override
 	public IElement[] getElements() {
 		return fElementMap.values().toArray(new IElement[fElementMap.values().size()]);
@@ -64,11 +58,6 @@ public class Schema implements ISchema {
 		fErrorException = e;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.dtd.ISchema#getErrorException()
-	 */
 	@Override
 	public Exception getErrorException() {
 		return fErrorException;

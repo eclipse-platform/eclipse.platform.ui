@@ -20,11 +20,6 @@ import org.apache.tools.ant.input.InputRequest;
 
 public class ProxyInputHandler implements InputHandler {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.input.InputHandler#handleInput(org.apache.tools.ant.input.InputRequest)
-	 */
 	@Override
 	public void handleInput(InputRequest request) throws BuildException {
 		new SWTInputHandler().handleInput(request);

@@ -332,11 +332,6 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension, IInformati
 		return r;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.ITextHoverExtension#getHoverControlCreator()
-	 */
 	@Override
 	public IInformationControlCreator getHoverControlCreator() {
 		return new IInformationControlCreator() {
@@ -360,9 +355,7 @@ public class XMLTextHover implements ITextHover, ITextHoverExtension, IInformati
 		return null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.information.IInformationProviderExtension2#getInformationPresenterControlCreator()
-	 * 
+	/**
 	 * @since 3.3
 	 */
 	@Override

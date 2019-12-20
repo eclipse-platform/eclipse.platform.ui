@@ -14,7 +14,6 @@
 package org.eclipse.ant.internal.ui.model;
 
 import org.eclipse.core.resources.IResource;
-
 import org.eclipse.core.runtime.IAdapterFactory;
 
 /**
@@ -22,11 +21,6 @@ import org.eclipse.core.runtime.IAdapterFactory;
  */
 public class AntElementAdapterFactory implements IAdapterFactory {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapter(java.lang.Object, java.lang.Class)
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T> T getAdapter(Object adaptableObject, Class<T> adapterType) {
@@ -39,11 +33,6 @@ public class AntElementAdapterFactory implements IAdapterFactory {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.IAdapterFactory#getAdapterList()
-	 */
 	@Override
 	public Class<?>[] getAdapterList() {
 		return new Class[] { IResource.class };

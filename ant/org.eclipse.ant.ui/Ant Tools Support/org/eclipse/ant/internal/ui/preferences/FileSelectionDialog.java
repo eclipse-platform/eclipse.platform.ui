@@ -73,11 +73,6 @@ public class FileSelectionDialog extends ElementTreeSelectionDialog {
 		setValidator(validator);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.Dialog#createDialogArea(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createDialogArea(Composite parent) {
 
@@ -118,11 +113,6 @@ public class FileSelectionDialog extends ElementTreeSelectionDialog {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.window.Window#close()
-	 */
 	@Override
 	public boolean close() {
 		IDialogSettings settings = AntUIPlugin.getDefault().getDialogSettings();

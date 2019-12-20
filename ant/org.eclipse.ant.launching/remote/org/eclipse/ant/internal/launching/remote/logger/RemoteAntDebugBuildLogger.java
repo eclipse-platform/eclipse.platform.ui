@@ -155,11 +155,6 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 		shutDown();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.antsupport.logger.RemoteAntBuildLogger#shutDown()
-	 */
 	@Override
 	protected synchronized void shutDown() {
 		if (fRequestWriter != null) {
@@ -190,11 +185,6 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 		super.shutDown();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public synchronized void buildStarted(BuildEvent event) {
 		fDebugState = new AntDebugState(this);
@@ -216,11 +206,6 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 		waitIfSuspended();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.launching.remote.logger.RemoteAntBuildLogger#buildFinished(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public synchronized void buildFinished(BuildEvent event) {
 		super.buildFinished(event);
@@ -242,33 +227,18 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.BuildListener#taskStarted(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public synchronized void taskStarted(BuildEvent event) {
 		super.taskStarted(event);
 		fDebugState.taskStarted(event);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.BuildListener#taskFinished(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public synchronized void taskFinished(BuildEvent event) {
 		super.taskFinished(event);
 		fDebugState.taskFinished();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.antsupport.logger.util.IDebugBuildLogger#waitIfSuspended()
-	 */
 	@Override
 	public synchronized void waitIfSuspended() {
 		String detail = null;
@@ -387,11 +357,6 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public synchronized void targetStarted(BuildEvent event) {
 		fDebugState.targetStarted(event);
@@ -402,22 +367,12 @@ public class RemoteAntDebugBuildLogger extends RemoteAntBuildLogger implements I
 		super.targetStarted(event);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.BuildListener#targetFinished(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public synchronized void targetFinished(BuildEvent event) {
 		super.targetFinished(event);
 		fDebugState.setTargetExecuting(null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.antsupport.logger.RemoteAntBuildLogger#configure(java.util.Map)
-	 */
 	@Override
 	public synchronized void configure(Map<String, String> userProperties) {
 		super.configure(userProperties);

@@ -67,11 +67,6 @@ public class AntOpenWithMenu extends ContributionItem {
 		this.fPage = page;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.action.IContributionItem#dispose()
-	 */
 	@Override
 	public void dispose() {
 		super.dispose();
@@ -155,11 +150,6 @@ public class AntOpenWithMenu extends ContributionItem {
 			menuItem.setImage(image);
 		}
 		Listener listener = new Listener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-			 */
 			@Override
 			public void handleEvent(Event event) {
 				switch (event.type) {
@@ -176,11 +166,6 @@ public class AntOpenWithMenu extends ContributionItem {
 		menuItem.addListener(SWT.Selection, listener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.action.IContributionItem#fill(org.eclipse.swt.widgets.Menu, int)
-	 */
 	@Override
 	public void fill(Menu menu, int index) {
 		IFile fileResource = fNode.getIFile();
@@ -193,11 +178,6 @@ public class AntOpenWithMenu extends ContributionItem {
 
 		IEditorDescriptor[] editors = fRegistry.getEditors(fileResource.getName());
 		Arrays.sort(editors, new Comparator<IEditorDescriptor>() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-			 */
 			@Override
 			public int compare(IEditorDescriptor o1, IEditorDescriptor o2) {
 				String s1 = o1.getLabel();
@@ -247,11 +227,6 @@ public class AntOpenWithMenu extends ContributionItem {
 		createDefaultMenuItem(menu, fileResource);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.action.IContributionItem#isDynamic()
-	 */
 	@Override
 	public boolean isDynamic() {
 		return true;
@@ -283,11 +258,6 @@ public class AntOpenWithMenu extends ContributionItem {
 		menuItem.setText(AntViewActionMessages.AntViewOpenWithMenu_Default_Editor_4);
 
 		Listener listener = new Listener() {
-			/*
-			 * (non-Javadoc)
-			 * 
-			 * @see org.eclipse.swt.widgets.Listener#handleEvent(org.eclipse.swt.widgets.Event)
-			 */
 			@Override
 			public void handleEvent(Event event) {
 				switch (event.type) {

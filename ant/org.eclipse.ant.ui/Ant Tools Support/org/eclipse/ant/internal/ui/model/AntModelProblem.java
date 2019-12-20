@@ -40,41 +40,21 @@ public class AntModelProblem extends Region implements IProblem {
 		fLineNumber = lineNumber;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblem#getMessage()
-	 */
 	@Override
 	public String getMessage() {
 		return fEscapedMessage;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblem#isError()
-	 */
 	@Override
 	public boolean isError() {
 		return fSeverity == SEVERITY_ERROR || fSeverity == SEVERITY_FATAL_ERROR;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblem#isWarning()
-	 */
 	@Override
 	public boolean isWarning() {
 		return fSeverity == SEVERITY_WARNING;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.IRegion#getLength()
-	 */
 	@Override
 	public int getLength() {
 		if (fAdjustedLength != -1) {
@@ -90,11 +70,6 @@ public class AntModelProblem extends Region implements IProblem {
 		fAdjustedLength = adjustedLength;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblem#getLineNumber()
-	 */
 	@Override
 	public int getLineNumber() {
 		return fLineNumber;
@@ -136,11 +111,6 @@ public class AntModelProblem extends Region implements IProblem {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.editor.outline.IProblem#getUnmodifiedMessage()
-	 */
 	@Override
 	public String getUnmodifiedMessage() {
 		return fMessage;
@@ -158,11 +128,6 @@ public class AntModelProblem extends Region implements IProblem {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object o) {
 		boolean equal = super.equals(o);

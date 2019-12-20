@@ -21,11 +21,6 @@ import org.eclipse.jface.text.source.IAnnotationModel;
 
 public class AnnotationModelFactory implements IAnnotationModelFactory {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.filebuffers.IAnnotationModelFactory#createAnnotationModel(org.eclipse.core.runtime.IPath)
-	 */
 	@Override
 	public IAnnotationModel createAnnotationModel(IPath location) {
 		IFile file = FileBuffers.getWorkspaceFileAtLocation(location);

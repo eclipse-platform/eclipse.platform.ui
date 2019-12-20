@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.launching.debug.model;
 
-import com.ibm.icu.text.MessageFormat;
-
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,6 +26,8 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.LineBreakpoint;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * Ant line breakpoint
@@ -80,7 +80,8 @@ public class AntLineBreakpoint extends LineBreakpoint {
 				attributes.put(IBreakpoint.ENABLED, Boolean.TRUE);
 				attributes.put(IMarker.LINE_NUMBER, Integer.valueOf(lineNumber));
 				attributes.put(IBreakpoint.ID, IAntDebugConstants.ID_ANT_DEBUG_MODEL);
-				attributes.put(IMarker.MESSAGE, MessageFormat.format(DebugModelMessages.AntLineBreakpoint_0, new Object[] { Integer.toString(lineNumber) }));
+				attributes.put(IMarker.MESSAGE, MessageFormat.format(DebugModelMessages.AntLineBreakpoint_0, new Object[] {
+						Integer.toString(lineNumber) }));
 				ensureMarker().setAttributes(attributes);
 
 				register(register);
@@ -89,11 +90,6 @@ public class AntLineBreakpoint extends LineBreakpoint {
 		run(getMarkerRule(resource), wr);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IBreakpoint#getModelIdentifier()
-	 */
 	@Override
 	public String getModelIdentifier() {
 		return IAntDebugConstants.ID_ANT_DEBUG_MODEL;

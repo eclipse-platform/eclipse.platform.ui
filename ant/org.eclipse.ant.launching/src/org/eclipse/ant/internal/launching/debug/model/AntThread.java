@@ -79,11 +79,6 @@ public class AntThread extends AntDebugElement implements IThread {
 		super(target);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IThread#getStackFrames()
-	 */
 	@Override
 	public synchronized IStackFrame[] getStackFrames() throws DebugException {
 		if (isSuspended()) {
@@ -122,31 +117,16 @@ public class AntThread extends AntDebugElement implements IThread {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IThread#hasStackFrames()
-	 */
 	@Override
 	public boolean hasStackFrames() throws DebugException {
 		return isSuspended();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IThread#getPriority()
-	 */
 	@Override
 	public int getPriority() throws DebugException {
 		return 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IThread#getTopStackFrame()
-	 */
 	@Override
 	public synchronized IStackFrame getTopStackFrame() throws DebugException {
 		if (isSuspended()) {
@@ -160,21 +140,11 @@ public class AntThread extends AntDebugElement implements IThread {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IThread#getName()
-	 */
 	@Override
 	public String getName() {
 		return "Thread [Ant Build]"; //$NON-NLS-1$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IThread#getBreakpoints()
-	 */
 	@Override
 	public IBreakpoint[] getBreakpoints() {
 		if (fBreakpoints == null) {
@@ -193,41 +163,21 @@ public class AntThread extends AntDebugElement implements IThread {
 		fBreakpoints = breakpoints;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.ISuspendResume#canResume()
-	 */
 	@Override
 	public boolean canResume() {
 		return isSuspended();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.ISuspendResume#canSuspend()
-	 */
 	@Override
 	public boolean canSuspend() {
 		return !isSuspended();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.ISuspendResume#isSuspended()
-	 */
 	@Override
 	public boolean isSuspended() {
 		return getDebugTarget().isSuspended();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.ISuspendResume#resume()
-	 */
 	@Override
 	public synchronized void resume() throws DebugException {
 		aboutToResume(DebugEvent.CLIENT_REQUEST, false);
@@ -243,61 +193,31 @@ public class AntThread extends AntDebugElement implements IThread {
 		aboutToResume(DebugEvent.CLIENT_REQUEST, false);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.ISuspendResume#suspend()
-	 */
 	@Override
 	public synchronized void suspend() throws DebugException {
 		getDebugTarget().suspend();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IStep#canStepInto()
-	 */
 	@Override
 	public boolean canStepInto() {
 		return isSuspended();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IStep#canStepOver()
-	 */
 	@Override
 	public boolean canStepOver() {
 		return isSuspended();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IStep#canStepReturn()
-	 */
 	@Override
 	public boolean canStepReturn() {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IStep#isStepping()
-	 */
 	@Override
 	public boolean isStepping() {
 		return fStepping;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IStep#stepInto()
-	 */
 	@Override
 	public synchronized void stepInto() throws DebugException {
 		aboutToResume(DebugEvent.STEP_INTO, true);
@@ -322,52 +242,27 @@ public class AntThread extends AntDebugElement implements IThread {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IStep#stepOver()
-	 */
 	@Override
 	public synchronized void stepOver() throws DebugException {
 		aboutToResume(DebugEvent.STEP_OVER, true);
 		((AntDebugTarget) getDebugTarget()).stepOver();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.IStep#stepReturn()
-	 */
 	@Override
 	public synchronized void stepReturn() throws DebugException {
 		// do nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.ITerminate#canTerminate()
-	 */
 	@Override
 	public boolean canTerminate() {
 		return !isTerminated();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.ITerminate#isTerminated()
-	 */
 	@Override
 	public boolean isTerminated() {
 		return getDebugTarget().isTerminated();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.model.ITerminate#terminate()
-	 */
 	@Override
 	public void terminate() throws DebugException {
 		fFrames.clear();

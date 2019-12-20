@@ -14,7 +14,6 @@
 package org.eclipse.ant.internal.ui.editor;
 
 import org.eclipse.ant.internal.ui.editor.text.XMLTextHover;
-
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.hyperlink.AbstractHyperlinkDetector;
@@ -27,12 +26,6 @@ public class AntElementHyperlinkDetector extends AbstractHyperlinkDetector {
 	public AntElementHyperlinkDetector() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.hyperlink.IHyperlinkDetector#detectHyperlinks(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion,
-	 * boolean)
-	 */
 	@Override
 	public IHyperlink[] detectHyperlinks(ITextViewer textViewer, IRegion region, boolean canShowMultipleHyperlinks) {
 		if (region == null) {

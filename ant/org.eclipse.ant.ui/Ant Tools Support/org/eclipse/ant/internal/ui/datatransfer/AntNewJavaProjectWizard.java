@@ -28,11 +28,6 @@ public class AntNewJavaProjectWizard extends Wizard implements INewWizard {
 		super();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.wizard.IWizard#addPages()
-	 */
 	@Override
 	public void addPages() {
 		super.addPages();
@@ -40,11 +35,6 @@ public class AntNewJavaProjectWizard extends Wizard implements INewWizard {
 		addPage(fMainPage);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IWorkbenchWizard#init(org.eclipse.ui.IWorkbench, org.eclipse.jface.viewers.IStructuredSelection)
-	 */
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection currentSelection) {
 		setWindowTitle(DataTransferMessages.AntNewJavaProjectWizard_0);
@@ -52,21 +42,11 @@ public class AntNewJavaProjectWizard extends Wizard implements INewWizard {
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.wizard.IWizard#performCancel()
-	 */
 	@Override
 	public boolean performCancel() {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.wizard.IWizard#performFinish()
-	 */
 	@Override
 	public boolean performFinish() {
 		return (fMainPage.createProject() != null);

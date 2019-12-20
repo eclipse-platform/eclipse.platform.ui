@@ -22,11 +22,6 @@ import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsB
 
 public class AntBuilderTabGroup extends AbstractLaunchConfigurationTabGroup {
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTabGroup#createTabs(org.eclipse.debug.ui.ILaunchConfigurationDialog, java.lang.String)
-	 */
 	@Override
 	public void createTabs(ILaunchConfigurationDialog dialog, String mode) {
 		RefreshTab refresh = new RefreshTab();

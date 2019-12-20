@@ -123,33 +123,21 @@ public class Model implements IModel {
 		return copy;
 	}
 
-	/**
-	 * @see org.eclipse.ant.internal.ui.dtd.IModel#getKind()
-	 */
 	@Override
 	public int getKind() {
 		return 0;
 	}
 
-	/**
-	 * @see org.eclipse.ant.internal.ui.dtd.IModel#getMinOccurs()
-	 */
 	@Override
 	public int getMinOccurs() {
 		return fMin;
 	}
 
-	/**
-	 * @see org.eclipse.ant.internal.ui.dtd.IModel#getMaxOccurs()
-	 */
 	@Override
 	public int getMaxOccurs() {
 		return fMax;
 	}
 
-	/**
-	 * @see org.eclipse.ant.internal.ui.dtd.IModel#getContents()
-	 */
 	@Override
 	public IModel[] getContents() {
 		// A model contents may be referred to many times
@@ -164,27 +152,16 @@ public class Model implements IModel {
 		return fContents;
 	}
 
-	/**
-	 * @see org.eclipse.ant.internal.ui.dtd.IModel#getLeaf()
-	 */
 	@Override
 	public IAtom getLeaf() {
 		return fLeaf;
 	}
 
-	/**
-	 * @see org.eclipse.ant.internal.ui.dtd.IModel#getOperator()
-	 */
 	@Override
 	public String getOperator() {
 		return fOps[fKind];
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.dtd.IModel#stringRep()
-	 */
 	@Override
 	public String stringRep() {
 		StringBuffer buf = new StringBuffer();

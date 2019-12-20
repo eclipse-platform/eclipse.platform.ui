@@ -147,11 +147,6 @@ public final class AntHandler extends DefaultHandler {
 		return new InputSource(new StringReader(IAntCoreConstants.EMPTY_STRING));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.xml.sax.ContentHandler#startElement(java.lang.String, java.lang.String, java.lang.String, org.xml.sax.Attributes)
-	 */
 	@Override
 	public final void startElement(final String uri, final String elementName, final String qualifiedName, final Attributes attributes) throws SAXException {
 		fLevel++;
@@ -173,19 +168,13 @@ public final class AntHandler extends DefaultHandler {
 		}
 
 		// top level Ant elements
-		if (fLevel == 1
-				&& (MACRODEF.equals(elementName) || TASKDEF.equals(elementName) || TYPEDEF.equals(elementName) || PROPERTY.equals(elementName)
-						|| CLASSPATH.equals(elementName) || PATH.equals(elementName) || IMPORT.equals(elementName))) {
+		if (fLevel == 1 && (MACRODEF.equals(elementName) || TASKDEF.equals(elementName) || TYPEDEF.equals(elementName) || PROPERTY.equals(elementName)
+				|| CLASSPATH.equals(elementName) || PATH.equals(elementName) || IMPORT.equals(elementName))) {
 			fAntElementFound = true;
 			throw new StopParsingException();
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.xml.sax.ContentHandler#endElement(java.lang.String, java.lang.String, java.lang.String)
-	 */
 	@Override
 	public void endElement(String uri, String localName, String qName) throws SAXException {
 		super.endElement(uri, localName, qName);

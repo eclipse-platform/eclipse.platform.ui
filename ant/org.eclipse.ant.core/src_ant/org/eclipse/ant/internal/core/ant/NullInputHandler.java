@@ -27,11 +27,6 @@ public class NullInputHandler implements InputHandler {
 	public NullInputHandler() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.input.InputHandler#handleInput(org.apache.tools.ant.input.InputRequest)
-	 */
 	@Override
 	public void handleInput(InputRequest request) throws BuildException {
 		// do nothing

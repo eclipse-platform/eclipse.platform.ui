@@ -102,12 +102,6 @@ public class AntAutoEditStrategy extends DefaultIndentLineAutoEditStrategy {
 		return false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.IAutoEditStrategy#customizeDocumentCommand(org.eclipse.jface.text.IDocument,
-	 * org.eclipse.jface.text.DocumentCommand)
-	 */
 	@Override
 	public void customizeDocumentCommand(IDocument d, DocumentCommand c) {
 

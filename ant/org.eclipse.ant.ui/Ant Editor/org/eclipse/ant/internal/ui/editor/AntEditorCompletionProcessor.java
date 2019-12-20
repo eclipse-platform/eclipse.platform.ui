@@ -249,11 +249,6 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeCompletionProposals(org.eclipse.jface.text.ITextViewer, int)
-	 */
 	@Override
 	public ICompletionProposal[] computeCompletionProposals(ITextViewer refViewer, int documentOffset) {
 		this.viewer = refViewer;
@@ -521,7 +516,8 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 			target = itr.next();
 			targetName = target.getName();
 			if (targetName.toLowerCase().startsWith(prefix) && targetName.length() > 0) {
-				defaultProposals.add(new AntCompletionProposal(targetName, cursorPosition - prefix.length(), prefix.length(), targetName.length(), getTargetImage(targetName), targetName, target.getDescription(), AntCompletionProposal.TASK_PROPOSAL));
+				defaultProposals.add(new AntCompletionProposal(targetName, cursorPosition
+						- prefix.length(), prefix.length(), targetName.length(), getTargetImage(targetName), targetName, target.getDescription(), AntCompletionProposal.TASK_PROPOSAL));
 			}
 		}
 		ICompletionProposal[] proposals = new ICompletionProposal[defaultProposals.size()];
@@ -584,7 +580,8 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 		for (String targetName : targetNames) {
 			Target currentTarget = targets.get(targetName);
 			if (currentTarget instanceof ExtensionPoint) {
-				extensions.add(new AntCompletionProposal(targetName, cursorPosition - prefix.length(), prefix.length(), targetName.length(), getTargetImage(targetName), targetName, targets.get(targetName).getDescription(), AntCompletionProposal.TASK_PROPOSAL));
+				extensions.add(new AntCompletionProposal(targetName, cursorPosition
+						- prefix.length(), prefix.length(), targetName.length(), getTargetImage(targetName), targetName, targets.get(targetName).getDescription(), AntCompletionProposal.TASK_PROPOSAL));
 			}
 
 		}
@@ -613,7 +610,8 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 				continue;
 			}
 			if (targetName.toLowerCase().startsWith(prefix) && targetName.length() > 0) {
-				proposals.add(new AntCompletionProposal(targetName, cursorPosition - prefix.length(), prefix.length(), targetName.length(), getTargetImage(targetName), targetName, targets.get(targetName).getDescription(), AntCompletionProposal.TASK_PROPOSAL));
+				proposals.add(new AntCompletionProposal(targetName, cursorPosition
+						- prefix.length(), prefix.length(), targetName.length(), getTargetImage(targetName), targetName, targets.get(targetName).getDescription(), AntCompletionProposal.TASK_PROPOSAL));
 			}
 		}
 		return proposals.toArray(new ICompletionProposal[proposals.size()]);
@@ -667,7 +665,8 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 		}
 		ArrayList<ICompletionProposal> proposals = new ArrayList<>(possibleDependencies.size());
 		for (String targetName : possibleDependencies) {
-			ICompletionProposal proposal = new AntCompletionProposal(targetName, cursorPosition - prefix.length(), prefix.length(), targetName.length(), getTargetImage(targetName), targetName, targets.get(targetName).getDescription(), AntCompletionProposal.TASK_PROPOSAL);
+			ICompletionProposal proposal = new AntCompletionProposal(targetName, cursorPosition
+					- prefix.length(), prefix.length(), targetName.length(), getTargetImage(targetName), targetName, targets.get(targetName).getDescription(), AntCompletionProposal.TASK_PROPOSAL);
 			proposals.add(proposal);
 		}
 		return proposals.toArray(new ICompletionProposal[proposals.size()]);
@@ -880,7 +879,8 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 			}
 		}
 
-		ICompletionProposal proposal = new AntCompletionProposal(replacementString, cursorPosition - prefix.length(), prefix.length(), attrName.length() + 2, null, displayString, proposalInfo, AntCompletionProposal.TASK_PROPOSAL);
+		ICompletionProposal proposal = new AntCompletionProposal(replacementString, cursorPosition
+				- prefix.length(), prefix.length(), attrName.length() + 2, null, displayString, proposalInfo, AntCompletionProposal.TASK_PROPOSAL);
 		proposals.add(proposal);
 	}
 
@@ -1707,11 +1707,6 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 		autoActivationChars = activationSet;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#extractPrefix(org.eclipse.jface.text.ITextViewer, int)
-	 */
 	@Override
 	protected String extractPrefix(ITextViewer textViewer, int offset) {
 		return getPrefixFromDocument(textViewer.getDocument().get(), offset);
@@ -1732,22 +1727,11 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 		return 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#getTemplates(java.lang.String)
-	 */
 	@Override
 	protected Template[] getTemplates(String contextTypeId) {
 		return AntTemplateAccess.getDefault().getTemplateStore().getTemplates(contextTypeId);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#getContextType(org.eclipse.jface.text.ITextViewer,
-	 * org.eclipse.jface.text.IRegion)
-	 */
 	@Override
 	protected TemplateContextType getContextType(ITextViewer textViewer, IRegion region) {
 		switch (determineProposalMode(textViewer.getDocument(), cursorPosition, getCurrentPrefix())) {
@@ -1769,22 +1753,11 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#getImage(org.eclipse.jface.text.templates.Template)
-	 */
 	@Override
 	protected Image getImage(Template template) {
 		return AntUIImages.getImage(IAntUIConstants.IMG_TEMPLATE_PROPOSAL);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#createContext(org.eclipse.jface.text.ITextViewer,
-	 * org.eclipse.jface.text.IRegion)
-	 */
 	@Override
 	protected TemplateContext createContext(ITextViewer contextViewer, IRegion region) {
 		TemplateContextType contextType = getContextType(contextViewer, region);
@@ -1803,12 +1776,6 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.templates.TemplateCompletionProcessor#createProposal(org.eclipse.jface.text.templates.Template,
-	 * org.eclipse.jface.text.templates.TemplateContext, org.eclipse.jface.text.Region, int)
-	 */
 	@Override
 	protected ICompletionProposal createProposal(Template template, TemplateContext context, IRegion region, int relevance) {
 		AntTemplateProposal proposal = new AntTemplateProposal(template, context, region, getImage(template), relevance);
@@ -1859,11 +1826,6 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 		TaskDescriptionProvider.reset();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.contentassist.ICompletionListener#assistSessionStarted(org.eclipse.jface.text.contentassist.ContentAssistEvent)
-	 */
 	@Override
 	public void assistSessionStarted(ContentAssistEvent event) {
 		IContentAssistant assistant = event.assistant;
@@ -1872,23 +1834,12 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.contentassist.ICompletionListener#assistSessionEnded(org.eclipse.jface.text.contentassist.ContentAssistEvent)
-	 */
 	@Override
 	public void assistSessionEnded(ContentAssistEvent event) {
 		fContentAssistant = null;
 		fTemplatesOnly = false;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.contentassist.ICompletionListener#selectionChanged(org.eclipse.jface.text.contentassist.ICompletionProposal,
-	 * boolean)
-	 */
 	@Override
 	public void selectionChanged(ICompletionProposal proposal, boolean smartToggle) {
 		// do nothing

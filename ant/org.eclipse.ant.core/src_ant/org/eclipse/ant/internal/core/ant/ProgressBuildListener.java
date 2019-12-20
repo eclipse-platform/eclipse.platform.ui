@@ -113,11 +113,6 @@ public class ProgressBuildListener implements BuildListener {
 		monitors.getMainMonitor().beginTask(IAntCoreConstants.EMPTY_STRING, work);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public void buildStarted(BuildEvent event) {
 		checkCanceled();
@@ -160,11 +155,6 @@ public class ProgressBuildListener implements BuildListener {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.BuildListener#buildFinished(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public void buildFinished(BuildEvent event) {
 		ProjectMonitors monitors = projects.get(mainProject);
@@ -178,11 +168,6 @@ public class ProgressBuildListener implements BuildListener {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public void targetStarted(BuildEvent event) {
 		checkCanceled();
@@ -224,11 +209,6 @@ public class ProgressBuildListener implements BuildListener {
 		return monitors;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.BuildListener#targetFinished(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public void targetFinished(BuildEvent event) {
 		checkCanceled();
@@ -248,11 +228,6 @@ public class ProgressBuildListener implements BuildListener {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.BuildListener#taskStarted(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public void taskStarted(BuildEvent event) {
 		checkCanceled();
@@ -280,11 +255,6 @@ public class ProgressBuildListener implements BuildListener {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.BuildListener#taskFinished(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public void taskFinished(BuildEvent event) {
 		checkCanceled();
@@ -301,11 +271,6 @@ public class ProgressBuildListener implements BuildListener {
 		currentTaskThread = null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.apache.tools.ant.BuildListener#messageLogged(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public void messageLogged(BuildEvent event) {
 		checkCanceled();

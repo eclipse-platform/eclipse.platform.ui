@@ -46,11 +46,6 @@ public class AddBuildFilesAction extends Action {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IAntUIHelpContextIds.ADD_BUILDFILE_ACTION);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
 		String title = AntViewActionMessages.AddBuildFilesAction_2;

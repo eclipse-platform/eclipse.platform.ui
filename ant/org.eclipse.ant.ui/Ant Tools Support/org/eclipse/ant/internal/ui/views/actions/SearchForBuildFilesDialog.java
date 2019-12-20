@@ -391,11 +391,11 @@ public class SearchForBuildFilesDialog extends InputDialog {
 			// The character "." must be escaped in regex
 			String input = getInput();
 			// replace "." with "\\."
-			input = input.replaceAll("\\.", "\\\\."); //$NON-NLS-1$ //$NON-NLS-2$ 
+			input = input.replaceAll("\\.", "\\\\."); //$NON-NLS-1$ //$NON-NLS-2$
 			// replace "*" with ".*"
 			input = input.replaceAll("\\*", "\\.\\*"); //$NON-NLS-1$ //$NON-NLS-2$
 			// replace "?" with ".?"
-			input = input.replaceAll("\\?", "\\.\\?"); //$NON-NLS-1$ //$NON-NLS-2$ 
+			input = input.replaceAll("\\?", "\\.\\?"); //$NON-NLS-1$ //$NON-NLS-2$
 			pattern = Pattern.compile(input);
 		}
 
@@ -415,22 +415,12 @@ public class SearchForBuildFilesDialog extends InputDialog {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.window.Window#configureShell(org.eclipse.swt.widgets.Shell)
-	 */
 	@Override
 	protected void configureShell(Shell shell) {
 		super.configureShell(shell);
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(shell, IAntUIHelpContextIds.SEARCH_FOR_BUILDFILES_DIALOG);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.dialogs.InputDialog#validateInput()
-	 */
 	@Override
 	protected void validateInput() {
 		String errorMessage = null;

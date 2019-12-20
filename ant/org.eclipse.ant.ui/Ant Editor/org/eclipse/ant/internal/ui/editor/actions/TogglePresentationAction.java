@@ -41,11 +41,6 @@ public class TogglePresentationAction extends TextEditorAction implements IPrope
 		setImageDescriptor(AntUIImages.getImageDescriptor(IAntUIConstants.IMG_SEGMENT_EDIT));
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
 
@@ -70,11 +65,6 @@ public class TogglePresentationAction extends TextEditorAction implements IPrope
 		fStore.addPropertyChangeListener(this);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.texteditor.IUpdate#update()
-	 */
 	@Override
 	public void update() {
 		ITextEditor editor = getTextEditor();
@@ -83,11 +73,6 @@ public class TogglePresentationAction extends TextEditorAction implements IPrope
 		setEnabled(editor != null);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.texteditor.TextEditorAction#setEditor(org.eclipse.ui.texteditor.ITextEditor)
-	 */
 	@Override
 	public void setEditor(ITextEditor editor) {
 
@@ -134,11 +119,6 @@ public class TogglePresentationAction extends TextEditorAction implements IPrope
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-	 */
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (event.getProperty().equals(AntEditorPreferenceConstants.EDITOR_SHOW_SEGMENTS)) {

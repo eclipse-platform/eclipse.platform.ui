@@ -30,11 +30,6 @@ public class AntTemplateVariableTextHover implements ITextHover {
 	public AntTemplateVariableTextHover() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.ITextHover#getHoverInfo(org.eclipse.jface.text.ITextViewer, org.eclipse.jface.text.IRegion)
-	 */
 	@Override
 	public String getHoverInfo(ITextViewer textViewer, IRegion subject) {
 		try {
@@ -60,11 +55,6 @@ public class AntTemplateVariableTextHover implements ITextHover {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.ITextHover#getHoverRegion(org.eclipse.jface.text.ITextViewer, int)
-	 */
 	@Override
 	public IRegion getHoverRegion(ITextViewer textViewer, int offset) {
 		if (textViewer != null) {

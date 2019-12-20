@@ -100,11 +100,6 @@ public class AntSourceViewerInformationControl implements IInformationControl, I
 		return viewer;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.IInformationControl#setInformation(java.lang.String)
-	 */
 	@Override
 	public void setInformation(String content) {
 		if (content == null) {
@@ -116,51 +111,26 @@ public class AntSourceViewerInformationControl implements IInformationControl, I
 		fViewer.setDocument(document);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.IInformationControl#setSizeConstraints(int, int)
-	 */
 	@Override
 	public void setSizeConstraints(int maxWidth, int maxHeight) {
 		// do nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.IInformationControl#computeSizeHint()
-	 */
 	@Override
 	public Point computeSizeHint() {
 		return fShell.computeSize(SWT.DEFAULT, SWT.DEFAULT);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.IInformationControl#setVisible(boolean)
-	 */
 	@Override
 	public void setVisible(boolean visible) {
 		fShell.setVisible(visible);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.IInformationControl#setSize(int, int)
-	 */
 	@Override
 	public void setSize(int width, int height) {
 		fShell.setSize(width, height);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.IInformationControl#setLocation(org.eclipse.swt.graphics.Point)
-	 */
 	@Override
 	public void setLocation(Point location) {
 		Rectangle trim = fShell.computeTrim(0, 0, 0, 0);
@@ -170,11 +140,6 @@ public class AntSourceViewerInformationControl implements IInformationControl, I
 		fShell.setLocation(location);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.IInformationControl#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (fShell != null && !fShell.isDisposed()) {
@@ -185,62 +150,32 @@ public class AntSourceViewerInformationControl implements IInformationControl, I
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.IInformationControl#addDisposeListener(org.eclipse.swt.events.DisposeListener)
-	 */
 	@Override
 	public void addDisposeListener(DisposeListener listener) {
 		fShell.addDisposeListener(listener);
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.IInformationControl#removeDisposeListener(org.eclipse.swt.events.DisposeListener)
-	 */
 	@Override
 	public void removeDisposeListener(DisposeListener listener) {
 		fShell.removeDisposeListener(listener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.IInformationControl#setForegroundColor(org.eclipse.swt.graphics.Color)
-	 */
 	@Override
 	public void setForegroundColor(Color foreground) {
 		fText.setForeground(foreground);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.IInformationControl#setBackgroundColor(org.eclipse.swt.graphics.Color)
-	 */
 	@Override
 	public void setBackgroundColor(Color background) {
 		fText.setBackground(background);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.IInformationControl#isFocusControl()
-	 */
 	@Override
 	public boolean isFocusControl() {
 		return fText.isFocusControl();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.IInformationControl#setFocus()
-	 */
 	@Override
 	public void setFocus() {
 		fShell.forceFocus();
@@ -248,42 +183,22 @@ public class AntSourceViewerInformationControl implements IInformationControl, I
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.IInformationControl#addFocusListener(org.eclipse.swt.events.FocusListener)
-	 */
 	@Override
 	public void addFocusListener(FocusListener listener) {
 		fText.addFocusListener(listener);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.IInformationControl#removeFocusListener(org.eclipse.swt.events.FocusListener)
-	 */
 	@Override
 	public void removeFocusListener(FocusListener listener) {
 		fText.removeFocusListener(listener);
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.text.IInformationControlExtension#hasContents()
-	 */
 	@Override
 	public boolean hasContents() {
 		return fText.getCharCount() > 0;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
-	 */
 	@Override
 	public void widgetDisposed(DisposeEvent e) {
 		fShell = null;

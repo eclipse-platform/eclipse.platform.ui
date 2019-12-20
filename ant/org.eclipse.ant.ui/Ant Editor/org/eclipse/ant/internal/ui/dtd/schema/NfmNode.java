@@ -21,8 +21,8 @@ import org.eclipse.ant.internal.ui.dtd.util.FactoryObject;
  * Non-deterministic finite state machine node.
  * <p>
  * 
- * Following Aho &amp; Ullman, nfm nodes contain two transition links. The graph is constructed so that no node requires more than two links. There are
- * exactly these kinds of nodes:
+ * Following Aho &amp; Ullman, nfm nodes contain two transition links. The graph is constructed so that no node requires more than two links. There
+ * are exactly these kinds of nodes:
  * 
  * <pre>
  * 	Symbol	Next1	Next2	Meaning
@@ -84,21 +84,11 @@ public class NfmNode implements FactoryObject {
 
 	// Below here is factory stuff
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.dtd.util.FactoryObject#next()
-	 */
 	@Override
 	public FactoryObject next() {
 		return next;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.dtd.util.FactoryObject#next(org.eclipse.ant.internal.ui.dtd.util.FactoryObject)
-	 */
 	@Override
 	public void next(FactoryObject obj) {
 		next = (NfmNode) obj;

@@ -44,11 +44,6 @@ public class InternalTargetFilter extends ViewerFilter {
 		return result;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.jface.viewers.ViewerFilter#filter(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object[])
-	 */
 	@Override
 	public Object[] filter(Viewer viewer, Object parent, Object[] elements) {
 		fFiltered = 0;

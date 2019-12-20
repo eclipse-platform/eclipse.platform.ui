@@ -78,22 +78,12 @@ public class AntViewDropAdapter extends DropTargetAdapter {
 		view.addProject(project);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.swt.dnd.DropTargetListener#dragEnter(org.eclipse.swt.dnd.DropTargetEvent)
-	 */
 	@Override
 	public void dragEnter(DropTargetEvent event) {
 		event.detail = DND.DROP_COPY;
 		super.dragEnter(event);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.swt.dnd.DropTargetListener#dragOperationChanged(org.eclipse.swt.dnd.DropTargetEvent)
-	 */
 	@Override
 	public void dragOperationChanged(DropTargetEvent event) {
 		event.detail = DND.DROP_COPY;

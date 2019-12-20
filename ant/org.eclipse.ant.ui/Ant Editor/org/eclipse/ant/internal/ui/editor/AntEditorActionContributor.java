@@ -93,11 +93,6 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.part.EditorActionBarContributor#init(org.eclipse.ui.IActionBars)
-	 */
 	@Override
 	public void init(IActionBars bars) {
 		super.init(bars);
@@ -111,32 +106,17 @@ public class AntEditorActionContributor extends TextEditorActionContributor {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IEditorActionBarContributor#setActiveEditor(org.eclipse.ui.IEditorPart)
-	 */
 	@Override
 	public void setActiveEditor(IEditorPart part) {
 		doSetActiveEditor(part);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IEditorActionBarContributor#dispose()
-	 */
 	@Override
 	public void dispose() {
 		doSetActiveEditor(null);
 		super.dispose();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.IEditorActionBarContributor#init(org.eclipse.ui.IActionBars, org.eclipse.ui.IWorkbenchPage)
-	 */
 	@Override
 	public void init(IActionBars bars, IWorkbenchPage page) {
 		super.init(bars, page);

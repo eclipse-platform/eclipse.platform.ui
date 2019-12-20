@@ -49,11 +49,6 @@ public class AntMainTab extends ExternalToolsMainTab {
 	private Button fSetInputHandlerButton;
 	private IFile fNewFile;
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#initializeFrom(org.eclipse.debug.core.ILaunchConfiguration)
-	 */
 	@Override
 	public void initializeFrom(ILaunchConfiguration configuration) {
 		super.initializeFrom(configuration);
@@ -66,11 +61,6 @@ public class AntMainTab extends ExternalToolsMainTab {
 		updateCheckButtons(configuration);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#performApply(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy)
-	 */
 	@Override
 	public void performApply(ILaunchConfigurationWorkingCopy configuration) {
 		super.performApply(configuration);
@@ -142,11 +132,6 @@ public class AntMainTab extends ExternalToolsMainTab {
 		return file;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.ui.ILaunchConfigurationTab#createControl(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 		Composite mainComposite = new Composite(parent, SWT.NONE);
@@ -185,13 +170,6 @@ public class AntMainTab extends ExternalToolsMainTab {
 		});
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsMainTab#setDefaults(org.eclipse.debug.core.ILaunchConfigurationWorkingCopy
-	 * )
-	 */
 	@Override
 	public void setDefaults(ILaunchConfigurationWorkingCopy configuration) {
 		super.setDefaults(configuration);
@@ -210,11 +188,6 @@ public class AntMainTab extends ExternalToolsMainTab {
 		fSetInputHandlerButton.setSelection(setInputHandler);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsMainTab#handleWorkspaceLocationButtonSelected()
-	 */
 	@Override
 	protected void handleWorkspaceLocationButtonSelected() {
 		FileSelectionDialog dialog;
@@ -231,11 +204,6 @@ public class AntMainTab extends ExternalToolsMainTab {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsMainTab#getWorkingDirectoryLabel()
-	 */
 	@Override
 	protected String getWorkingDirectoryLabel() {
 		return AntLaunchConfigurationMessages.AntMainTab_3;
@@ -252,11 +220,6 @@ public class AntMainTab extends ExternalToolsMainTab {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsMainTab#getLocationLabel()
-	 */
 	@Override
 	protected String getLocationLabel() {
 		return AntLaunchConfigurationMessages.AntMainTab_6;

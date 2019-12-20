@@ -369,31 +369,16 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 		monitor.append(message);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.ILaunchesListener#launchesAdded(org.eclipse.debug .core.ILaunch[])
-	 */
 	@Override
 	public void launchesAdded(ILaunch[] launches) {
 		// do nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.ILaunchesListener#launchesChanged(org.eclipse. debug.core.ILaunch[])
-	 */
 	@Override
 	public void launchesChanged(ILaunch[] launches) {
 		// do nothing
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.debug.core.ILaunchesListener#launchesRemoved(org.eclipse. debug.core.ILaunch[])
-	 */
 	@Override
 	public void launchesRemoved(ILaunch[] launches) {
 		for (ILaunch launch : launches) {

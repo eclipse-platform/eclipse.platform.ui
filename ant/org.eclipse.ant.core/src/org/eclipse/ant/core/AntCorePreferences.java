@@ -90,41 +90,21 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			this.bundle = bundle;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.ClassLoader#findClass(java.lang.String)
-		 */
 		@Override
 		public Class<?> findClass(String name) throws ClassNotFoundException {
 			return bundle.loadClass(name);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.ClassLoader#findResource(java.lang.String)
-		 */
 		@Override
 		public URL findResource(String name) {
 			return bundle.getResource(name);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.ClassLoader#findResources(java.lang.String)
-		 */
 		@Override
 		protected Enumeration<URL> findResources(String name) throws IOException {
 			return bundle.getResources(name);
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Object#equals(java.lang.Object)
-		 */
 		@Override
 		public boolean equals(Object obj) {
 			if (!(obj instanceof WrappedClassLoader)) {
@@ -133,11 +113,6 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			return bundle == ((WrappedClassLoader) obj).bundle;
 		}
 
-		/*
-		 * (non-Javadoc)
-		 * 
-		 * @see java.lang.Object#hashCode()
-		 */
 		@Override
 		public int hashCode() {
 			return bundle.hashCode();

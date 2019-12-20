@@ -149,51 +149,26 @@ public class AntElementNode implements IAdaptable, IAntElement {
 	public AntElementNode() {
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.IAntElement#getName()
-	 */
 	@Override
 	public String getName() {
 		return fName;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.IAntElement#getLabel()
-	 */
 	@Override
 	public String getLabel() {
 		return getName();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.IAntElement#getChildNodes()
-	 */
 	@Override
 	public List<IAntElement> getChildNodes() {
 		return fChildNodes;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.IAntElement#getParentNode()
-	 */
 	@Override
 	public IAntElement getParentNode() {
 		return fParent;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.IAntElement#getProjectNode()
-	 */
 	@Override
 	public AntProjectNode getProjectNode() {
 		IAntElement projectParent = getParentNode();
@@ -267,41 +242,21 @@ public class AntElementNode implements IAdaptable, IAntElement {
 		return fFilePath;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.IAntElement#getOffset()
-	 */
 	@Override
 	public int getOffset() {
 		return fOffset;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.IAntElement#setOffset(int)
-	 */
 	@Override
 	public void setOffset(int anOffset) {
 		fOffset = anOffset;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.IAntElement#getLength()
-	 */
 	@Override
 	public int getLength() {
 		return fLength;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.IAntElement#setLength(int)
-	 */
 	@Override
 	public void setLength(int aLength) {
 		fLength = aLength;
@@ -318,41 +273,21 @@ public class AntElementNode implements IAdaptable, IAntElement {
 		return "Ant Element Node: " + getLabel() + " Offset: " + getOffset() + " Length: " + getLength(); //$NON-NLS-1$//$NON-NLS-2$ //$NON-NLS-3$
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.IAntElement#isErrorNode()
-	 */
 	@Override
 	public boolean isErrorNode() {
 		return fProblemSeverity == AntModelProblem.SEVERITY_ERROR || fProblemSeverity == AntModelProblem.SEVERITY_FATAL_ERROR;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.IAntElement#isWarningNode()
-	 */
 	@Override
 	public boolean isWarningNode() {
 		return fProblemSeverity == AntModelProblem.SEVERITY_WARNING;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.IAntElement#setProblemSeverity(int)
-	 */
 	@Override
 	public void setProblemSeverity(int severity) {
 		fProblemSeverity = severity;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.IAntElement#isExternal()
-	 */
 	@Override
 	public boolean isExternal() {
 		return fIsExternal;
@@ -411,11 +346,6 @@ public class AntElementNode implements IAdaptable, IAntElement {
 		return sb;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object o2) {
 		Object o1 = this;
@@ -439,21 +369,11 @@ public class AntElementNode implements IAdaptable, IAntElement {
 		return e1.getElementPath().equals(e2.getElementPath());
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return getElementPath().hashCode();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.IAntElement#getSelectionLength()
-	 */
 	@Override
 	public int getSelectionLength() {
 		return fSelectionLength;
@@ -463,11 +383,6 @@ public class AntElementNode implements IAdaptable, IAntElement {
 		this.fSelectionLength = selectionLength;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.IAntElement#getNode(int)
-	 */
 	@Override
 	public AntElementNode getNode(int sourceOffset) {
 		synchronized (this) {
@@ -520,11 +435,6 @@ public class AntElementNode implements IAdaptable, IAntElement {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.IAntElement#setProblem(org.eclipse.ant.internal.ui.model.IProblem)
-	 */
 	@Override
 	public void setProblem(IProblem problem) {
 		fProblem = problem;
@@ -548,11 +458,6 @@ public class AntElementNode implements IAdaptable, IAntElement {
 		}
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.IAntElement#getImportNode()
-	 */
 	@Override
 	public AntElementNode getImportNode() {
 		return fImportNode;
@@ -562,11 +467,6 @@ public class AntElementNode implements IAdaptable, IAntElement {
 		fImportNode = importNode;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.IAntElement#hasChildren()
-	 */
 	@Override
 	public boolean hasChildren() {
 		if (fChildNodes == null) {
@@ -612,11 +512,6 @@ public class AntElementNode implements IAdaptable, IAntElement {
 		return locationProvider.getFile();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.core.runtime.IAdaptable#getAdapter(java.lang.Class)
-	 */
 	@Override
 	public <T> T getAdapter(Class<T> adapter) {
 		return Platform.getAdapterManager().getAdapter(this, adapter);
@@ -632,11 +527,6 @@ public class AntElementNode implements IAdaptable, IAntElement {
 		return true;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.IAntElement#collapseProjection()
-	 */
 	@Override
 	public boolean collapseProjection() {
 		return false;
@@ -658,31 +548,16 @@ public class AntElementNode implements IAdaptable, IAntElement {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.IAntElement#getProblemMessage()
-	 */
 	@Override
 	public String getProblemMessage() {
 		return fProblemMessage;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.IAntElement#setProblemMessage(java.lang.String)
-	 */
 	@Override
 	public void setProblemMessage(String problemMessage) {
 		fProblemMessage = problemMessage;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.IAntElement#containsOccurrence(java.lang.String)
-	 */
 	@Override
 	public boolean containsOccurrence(String identifier) {
 		return false;
@@ -708,11 +583,6 @@ public class AntElementNode implements IAdaptable, IAntElement {
 		return region.getOffset() >= fOffset;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see org.eclipse.ant.internal.ui.model.IAntElement#computeIdentifierOffsets(java.lang.String)
-	 */
 	@Override
 	public List<Integer> computeIdentifierOffsets(String identifier) {
 		return null;
