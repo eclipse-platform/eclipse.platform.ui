@@ -46,7 +46,10 @@ import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.jface.internal.text.html.BrowserInformationControl;
 import org.eclipse.jface.internal.text.html.HTMLPrinter;
+import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.preference.JFacePreferences;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.IPropertyChangeListener;
 
 import org.eclipse.jface.text.AbstractReusableInformationControlCreator;
 import org.eclipse.jface.text.BadLocationException;
@@ -148,6 +151,11 @@ public final class RevisionPainter {
 		 */
 		private final Map<Revision, RGB> fFocusColors= new HashMap<>();
 
+		/** Cached gradient start and stop values. */
+		private RGB fGradientStart;
+
+		private RGB fGradientStop;
+
 		/**
 		 * Sets the revision information, which is needed to compute the relative age of a revision.
 		 *
@@ -157,7 +165,8 @@ public final class RevisionPainter {
 			fRevisions= null;
 			fColors.clear();
 			fFocusColors.clear();
-
+			fGradientStart= null;
+			fGradientStop= null;
 			if (info == null)
 				return;
 			List<Long> revisions= new ArrayList<>();
@@ -168,6 +177,11 @@ public final class RevisionPainter {
 			fRevisions= revisions;
 		}
 
+		private RGB getRGB(String key, RGB defaultValue) {
+			RGB rgb= JFaceResources.getColorRegistry().getRGB(key);
+			return rgb != null ? rgb : defaultValue;
+		}
+
 		private RGB adaptColor(Revision revision, boolean focus) {
 			RGB rgb;
 			float scale;
@@ -176,8 +190,14 @@ public final class RevisionPainter {
 				if (index == -1 || fRevisions.isEmpty()) {
 					rgb= getBackground().getRGB();
 				} else {
-					// gradient from intense red for most recent to faint yellow for oldest
-					RGB[] gradient= Colors.palette(BY_DATE_START_COLOR, BY_DATE_END_COLOR, fRevisions.size());
+					if (fGradientStart == null) {
+						fGradientStart= getRGB(JFacePreferences.REVISION_NEWEST_COLOR, BY_DATE_START_COLOR);
+					}
+					if (fGradientStop == null) {
+						fGradientStop= getRGB(JFacePreferences.REVISION_OLDEST_COLOR, BY_DATE_END_COLOR);
+					}
+					// gradient from most recent to oldest
+					RGB[] gradient= Colors.palette(fGradientStart, fGradientStop, fRevisions.size());
 					rgb= gradient[gradient.length - index - 1];
 				}
 				scale= 0.99f;
@@ -590,6 +610,26 @@ public final class RevisionPainter {
 	 */
 	private int fLastWidth= -1;
 
+	/** The JFace preference store, or {@code null} if there is none. */
+	private IPreferenceStore fPreferences;
+
+	/** Listens on {@link #fPreferences} to update the ruler when colors change. */
+	private final IPropertyChangeListener fColorListener= event -> {
+		String property= event.getProperty();
+		if (property == null) {
+			return;
+		}
+		switch (property) {
+			case JFacePreferences.REVISION_NEWEST_COLOR:
+			case JFacePreferences.REVISION_OLDEST_COLOR:
+				fLastWidth= -1; // Recalculate colors
+				postRedraw();
+				break;
+			default:
+				break;
+		}
+	};
+
 	/**
 	 * Creates a new revision painter for a vertical ruler column.
 	 *
@@ -656,6 +696,15 @@ public final class RevisionPainter {
 	 */
 	public void setParentRuler(CompositeRuler parentRuler) {
 		fParentRuler= parentRuler;
+		if (parentRuler != null) {
+			fPreferences= JFacePreferences.getPreferenceStore();
+			if (fPreferences != null) {
+				fPreferences.addPropertyChangeListener(fColorListener);
+			}
+		} else if (fPreferences != null) {
+			fPreferences.removePropertyChangeListener(fColorListener);
+			fPreferences= null;
+		}
 	}
 
 	/**
