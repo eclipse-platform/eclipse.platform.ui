@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -872,7 +872,7 @@ public class PartServiceImpl implements EPartService {
 				}
 			}
 		}
-
+		MElementContainer<MUIElement> sharedPlaceHolderParent = null;
 		if (sharedPart == null || secondaryId) {
 			MPartDescriptor descriptor = modelService.getPartDescriptor(id);
 			sharedPart = modelService.createPart(descriptor);
@@ -896,6 +896,7 @@ public class PartServiceImpl implements EPartService {
 				List<MPlaceholder> phs = modelService.findElements(parent, descId, MPlaceholder.class);
 				if (phs.size() == 1) {
 					MPlaceholder ph = phs.get(0);
+					sharedPlaceHolderParent = ph.getParent();
 					sharedPart.setCloseable(ph.isCloseable());
 					sharedPart.getTags().addAll(ph.getTags());
 				}
@@ -907,16 +908,19 @@ public class PartServiceImpl implements EPartService {
 			sharedWindow.getSharedElements().add(sharedPart);
 		}
 
-		return createSharedPart(sharedPart);
+		return createSharedPart(sharedPart, sharedPlaceHolderParent);
 	}
 
-	private MPlaceholder createSharedPart(MPart sharedPart) {
+	private MPlaceholder createSharedPart(MPart sharedPart, MElementContainer<MUIElement> sharedPlaceHolderParent) {
 		// Create and return a reference to the shared part
 		MPlaceholder sharedPartRef = modelService.createModelElement(MPlaceholder.class);
 		sharedPartRef.setElementId(sharedPart.getElementId());
 		sharedPartRef.setRef(sharedPart);
 		sharedPartRef.setCloseable(sharedPart.isCloseable());
 		sharedPartRef.getTags().addAll(sharedPart.getTags());
+		if (sharedPlaceHolderParent != null) {
+			sharedPartRef.setParent(sharedPlaceHolderParent);
+		}
 		return sharedPartRef;
 	}
 
@@ -1033,7 +1037,7 @@ public class PartServiceImpl implements EPartService {
 			// need to spawn another one as we don't want to reuse the same one and end up
 			// shifting that placeholder to the current container during the add operation
 					|| (placeholder.getParent() != null && !isInContainer(placeholder))) {
-				placeholder = createSharedPart(part);
+				placeholder = createSharedPart(part, null);
 				part.setCurSharedRef(placeholder);
 			}
 		}
