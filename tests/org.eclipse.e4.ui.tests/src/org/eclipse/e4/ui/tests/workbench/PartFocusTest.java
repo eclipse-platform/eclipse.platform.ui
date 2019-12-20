@@ -53,6 +53,7 @@ import org.osgi.framework.FrameworkUtil;
  * Ensure that setting focus to a widget within an non-active part causes the
  * part to be activated while not changing the focus.
  */
+@Ignore("See bug 505678")
 public class PartFocusTest {
 
 	protected IEclipseContext appContext;

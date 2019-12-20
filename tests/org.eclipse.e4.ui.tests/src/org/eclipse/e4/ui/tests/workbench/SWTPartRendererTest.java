@@ -34,8 +34,10 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore
 public class SWTPartRendererTest {
 	private SWTPartRenderer renderer;
 	private Shell shell;

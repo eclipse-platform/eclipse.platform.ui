@@ -44,8 +44,10 @@ import org.eclipse.e4.ui.tests.workbench.MWindowTest;
 import org.eclipse.e4.ui.tests.workbench.ModelAssemblerFragmentOrderingTests;
 import org.eclipse.e4.ui.tests.workbench.ModelAssemblerTests;
 import org.eclipse.e4.ui.tests.workbench.ModelServiceImplTest;
+import org.eclipse.e4.ui.tests.workbench.PartFocusTest;
 import org.eclipse.e4.ui.tests.workbench.PartOnTopManagerTest;
 import org.eclipse.e4.ui.tests.workbench.PartRenderingEngineTests;
+import org.eclipse.e4.ui.tests.workbench.SWTPartRendererTest;
 import org.eclipse.e4.ui.tests.workbench.SashRendererTest;
 import org.eclipse.e4.ui.tests.workbench.TopoSortTests;
 import org.eclipse.e4.ui.workbench.renderers.swt.StackRendererTest;
@@ -84,8 +86,7 @@ import org.junit.runners.Suite;
 		ModelRobustnessTest.class,
 		ResourceHandlerTest.class,
 		InjectionEventTest.class,
-		// Commented out due the bug 505678
-		// PartFocusTest.class,
+		PartFocusTest.class,
 		ModelElementTest.class,
 		StackRendererTest.class,
 		TabStateHandlerTest.class,
@@ -95,8 +96,10 @@ import org.junit.runners.Suite;
 		ExtensionsSortTests.class,
 		HandlerActivationTest.class,
 		ModelAssemblerTests.class,
-		ModelAssemblerFragmentOrderingTests.class, E4ResourceTest.class, AreaRendererTest.class,
-		// SWTPartRendererTest.class,
+		ModelAssemblerFragmentOrderingTests.class,
+		E4ResourceTest.class,
+		AreaRendererTest.class,
+		SWTPartRendererTest.class,
 		ModelServiceImplTest.class
 })
 public class UIAllTests {
