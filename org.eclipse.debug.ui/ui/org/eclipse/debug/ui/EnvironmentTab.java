@@ -412,12 +412,8 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 
 		// Setup environment variable name column
 		final TableViewerColumn tcv1 = new TableViewerColumn(environmentTable, SWT.NONE, 0);
-		tcv1.setLabelProvider(new ColumnLabelProvider() {
-			@Override
-			public String getText(Object element) {
-				return ((EnvironmentVariable) element).getName();
-			}
-		});
+		tcv1.setLabelProvider(
+				ColumnLabelProvider.createTextProvider(element -> ((EnvironmentVariable) element).getName()));
 
 		TableColumn tc1 = tcv1.getColumn();
 		tc1.setText(envTableColumnHeaders[0]);
@@ -438,12 +434,8 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 
 		// Setup environment variable value column
 		final TableViewerColumn tcv2 = new TableViewerColumn(environmentTable, SWT.NONE, 1);
-		tcv2.setLabelProvider(new ColumnLabelProvider() {
-			@Override
-			public String getText(Object element) {
-				return ((EnvironmentVariable) element).getValue();
-			}
-		});
+		tcv2.setLabelProvider(
+				ColumnLabelProvider.createTextProvider(element -> ((EnvironmentVariable) element).getName()));
 
 		TableColumn tc2 = tcv2.getColumn();
 		tc2.setText(envTableColumnHeaders[1]);
