@@ -93,6 +93,24 @@ public final class JFacePreferences {
 	 */
 	public static final String INFORMATION_FOREGROUND_COLOR = "org.eclipse.ui.workbench.INFORMATION_FOREGROUND"; //$NON-NLS-1$
 
+	/**
+	 * The color used for the background of the newest revision when revisions are
+	 * shown in a ruler. Together with {@link #REVISION_OLDEST_COLOR} a gradient is
+	 * defined.
+	 *
+	 * @since 3.19
+	 */
+	public static final String REVISION_NEWEST_COLOR = "org.eclipse.jface.REVISION_NEWEST_COLOR"; //$NON-NLS-1$
+
+	/**
+	 * The color used for the background of the oldest revision when revisions are
+	 * shown in a ruler. Together with {@link #REVISION_NEWEST_COLOR} a gradient is
+	 * defined.
+	 *
+	 * @since 3.19
+	 */
+	public static final String REVISION_OLDEST_COLOR = "org.eclipse.jface.REVISION_OLDEST_COLOR"; //$NON-NLS-1$
+
 	private static IPreferenceStore preferenceStore;
 
 	/**

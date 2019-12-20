@@ -1,13 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.jface" version="2">
-    <resource path="META-INF/MANIFEST.MF">
-        <filter comment="Iterable interface implements all new methods with defaults so there is no incompatibility" id="923795461">
-            <message_arguments>
-                <message_argument value="3.18.0"/>
-                <message_argument value="3.16.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/jface/viewers/ColumnViewerEditor.java" type="org.eclipse.jface.viewers.ColumnViewerEditor">
         <filter comment="Highly unlikely that TABBING_CYCLE_IN_VIEWER is already implemented by clients." id="336658481">
             <message_arguments>

@@ -1693,6 +1693,24 @@
             %Color.contentAssistForegroundDesc
          </description>
       </colorDefinition>
+      <colorDefinition
+            label="%Color.revisionNewest"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            value="199,134,57"
+            id="org.eclipse.jface.REVISION_NEWEST_COLOR">
+         <description>
+            %Color.revisionNewestDesc
+         </description>
+      </colorDefinition>
+      <colorDefinition
+            label="%Color.revisionOldest"
+            categoryId="org.eclipse.ui.workbenchMisc"
+            value="241,225,206"
+            id="org.eclipse.jface.REVISION_OLDEST_COLOR">
+         <description>
+            %Color.revisionOldestDesc
+         </description>
+      </colorDefinition>
       
       <data
       	name="org.eclipse.ui.workbench.ACTIVE_TAB_HIGHLIGHT" value="true">
