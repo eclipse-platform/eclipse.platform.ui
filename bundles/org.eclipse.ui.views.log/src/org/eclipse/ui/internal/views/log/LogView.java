@@ -887,12 +887,7 @@ public class LogView extends ViewPart implements LogListener {
 		limitEntriesCount();
 		setContentDescription(getTitleSummary());
 
-		getDisplay().asyncExec(() -> {
-			if (!isDisposed()) {
-				fFilteredTree.getViewer().refresh();
-				fFilteredTree.setEnabled(true);
-			}
-		});
+		asyncRefresh(false);
 	}
 
 	private Display getDisplay() {
@@ -1170,6 +1165,7 @@ public class LogView extends ViewPart implements LogListener {
 					TreeViewer viewer = fFilteredTree.getViewer();
 					viewer.refresh();
 					viewer.expandToLevel(2);
+					fTree.setEnabled(true);
 					fDeleteLogAction.setEnabled(
 							fInputFile.exists() && fInputFile.equals(Platform.getLogFileLocation().toFile()));
 					fOpenLogAction.setEnabled(fInputFile.exists());
@@ -1185,13 +1181,17 @@ public class LogView extends ViewPart implements LogListener {
 						}
 					}
 				}
+				if (!isDisposed()) {
+					fFilteredTree.getViewer().refresh();
+					fFilteredTree.setEnabled(true);
+				}
 			});
 		}
 	}
 
 	@Override
 	public void setFocus() {
-		if (fFilteredTree != null) {
+		if (!isDisposed()) {
 			if (fMemento.getBoolean(P_SHOW_FILTER_TEXT).booleanValue()) {
 				Text filterControl = fFilteredTree.getFilterControl();
 				if (filterControl != null && !filterControl.isDisposed()) {
