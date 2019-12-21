@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -175,16 +175,16 @@ public class NullBuildLogger extends AbstractEclipseBuildLogger implements Build
 		}
 		fHandledException = exception;
 		StringBuilder message = new StringBuilder();
-		message.append(StringUtils.LINE_SEP);
+		message.append(System.lineSeparator());
 		message.append(RuntimeMessages.NullBuildLogger_1);
-		message.append(StringUtils.LINE_SEP);
+		message.append(System.lineSeparator());
 		if (Project.MSG_VERBOSE <= fMessageOutputLevel || !(exception instanceof BuildException)) {
 			message.append(StringUtils.getStackTrace(exception));
 		} else {
 			if (exception instanceof BuildException) {
-				message.append(exception.toString()).append(StringUtils.LINE_SEP);
+				message.append(exception.toString()).append(System.lineSeparator());
 			} else {
-				message.append(exception.getMessage()).append(StringUtils.LINE_SEP);
+				message.append(exception.getMessage()).append(System.lineSeparator());
 			}
 		}
 
