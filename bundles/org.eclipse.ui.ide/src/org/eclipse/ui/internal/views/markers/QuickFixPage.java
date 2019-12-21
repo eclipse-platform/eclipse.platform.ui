@@ -319,9 +319,8 @@ public class QuickFixPage extends WizardPage {
 					return Util.getResourceName(marker);
 
 				// Is the location override set?
-				String locationString = marker.getAttribute(IMarker.LOCATION,
-						MarkerSupportInternalUtilities.EMPTY_STRING);
-				if (locationString.length() > 0) {
+				String locationString = marker.getAttribute(IMarker.LOCATION, MarkerItemDefaults.LOCATION_DEFAULT);
+				if (!MarkerItemDefaults.LOCATION_DEFAULT.equals(locationString)) {
 					return locationString;
 				}
 

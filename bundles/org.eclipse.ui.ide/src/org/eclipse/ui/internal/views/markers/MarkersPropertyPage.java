@@ -301,7 +301,7 @@ public class MarkersPropertyPage extends PropertyPage {
 		if (line.length() == 0) {
 			String location = Util.getProperty(IMarker.LOCATION, marker);
 			if (location.length() == 0) {
-				locationText.setText(MarkerSupportInternalUtilities.EMPTY_STRING);
+				locationText.setText(MarkerItemDefaults.LOCATION_DEFAULT);
 			} else {
 				locationText.setText(location);
 			}

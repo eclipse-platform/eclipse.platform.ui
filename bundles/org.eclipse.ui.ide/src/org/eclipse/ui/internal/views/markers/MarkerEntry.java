@@ -264,7 +264,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 
 
 		// Is the location override set?
-		String locationString = getAttributeValue(IMarker.LOCATION, MarkerSupportInternalUtilities.EMPTY_STRING);
+		String locationString = getAttributeValue(IMarker.LOCATION, MarkerItemDefaults.LOCATION_DEFAULT);
 		if (locationString.length() > 0) {
 			getCache().put(LOCATION_STRING, locationString);
 			return locationString;
