@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -32,14 +32,16 @@ class InputHandlerSetter {
 			handler = new DefaultInputHandler();
 		} else {
 			try {
-				handler = (InputHandler) (Class.forName(inputHandlerClassname).newInstance());
+				handler = (InputHandler) (Class.forName(inputHandlerClassname).getConstructor().newInstance());
 			}
 			catch (ClassCastException e) {
-				String msg = MessageFormat.format(RemoteAntMessages.getString("InternalAntRunner.The_specified_input_handler_class_{0}_does_not_implement_the_org.apache.tools.ant.input.InputHandler_interface_5"), new Object[] { inputHandlerClassname }); //$NON-NLS-1$
+				String msg = MessageFormat.format(RemoteAntMessages.getString("InternalAntRunner.The_specified_input_handler_class_{0}_does_not_implement_the_org.apache.tools.ant.input.InputHandler_interface_5"), new Object[] { //$NON-NLS-1$
+						inputHandlerClassname });
 				throw new BuildException(msg, e);
 			}
 			catch (Exception e) {
-				String msg = MessageFormat.format(RemoteAntMessages.getString("InternalAntRunner.Unable_to_instantiate_specified_input_handler_class_{0}___{1}_6"), new Object[] { inputHandlerClassname, e.getClass().getName() }); //$NON-NLS-1$
+				String msg = MessageFormat.format(RemoteAntMessages.getString("InternalAntRunner.Unable_to_instantiate_specified_input_handler_class_{0}___{1}_6"), new Object[] { //$NON-NLS-1$
+						inputHandlerClassname, e.getClass().getName() });
 				throw new BuildException(msg, e);
 			}
 		}

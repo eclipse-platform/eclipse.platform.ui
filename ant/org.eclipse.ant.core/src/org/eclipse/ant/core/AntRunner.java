@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2011 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -235,7 +235,7 @@ public class AntRunner implements IApplication {
 		ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
 		try {
 			classInternalAntRunner = getInternalAntRunner();
-			runner = classInternalAntRunner.newInstance();
+			runner = classInternalAntRunner.getConstructor().newInstance();
 			basicConfigure(classInternalAntRunner, runner);
 
 			// get the info for each targets
@@ -317,7 +317,7 @@ public class AntRunner implements IApplication {
 		ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();
 		try {
 			classInternalAntRunner = getInternalAntRunner();
-			runner = classInternalAntRunner.newInstance();
+			runner = classInternalAntRunner.getConstructor().newInstance();
 			// set build file
 			Method setBuildFileLocation = classInternalAntRunner.getMethod("setBuildFileLocation", new Class[] { String.class }); //$NON-NLS-1$
 			setBuildFileLocation.invoke(runner, new Object[] { buildFileLocation });
@@ -509,7 +509,7 @@ public class AntRunner implements IApplication {
 			ClassLoader loader = getClassLoader();
 			Thread.currentThread().setContextClassLoader(loader);
 			Class<?> classInternalAntRunner = loader.loadClass("org.eclipse.ant.internal.core.ant.InternalAntRunner"); //$NON-NLS-1$
-			Object runner = classInternalAntRunner.newInstance();
+			Object runner = classInternalAntRunner.getConstructor().newInstance();
 			Method run = classInternalAntRunner.getMethod("run", new Class[] { Object.class }); //$NON-NLS-1$
 			run.invoke(runner, new Object[] { argArray });
 		}

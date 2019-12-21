@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2015 GEBIT Gesellschaft fuer EDV-Beratung
+ * Copyright (c) 2002, 2019 GEBIT Gesellschaft fuer EDV-Beratung
  * und Informatik-Technologien mbH, 
  * Berlin, Duesseldorf, Frankfurt (Germany) and others.
  *
@@ -950,10 +950,8 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 			try {
 				addEnumeratedAttributeValueProposals(attributeType, prefix, proposals);
 			}
-			catch (InstantiationException e) {
-				// do nothing
-			}
-			catch (IllegalAccessException e) {
+			catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+					| SecurityException e) {
 				// do nothing
 			}
 		} else if (Reference.class == attributeType) {
@@ -961,8 +959,8 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 		}
 	}
 
-	private void addEnumeratedAttributeValueProposals(Class<?> type, String prefix, List<ICompletionProposal> proposals) throws InstantiationException, IllegalAccessException {
-		EnumeratedAttribute ea = (EnumeratedAttribute) type.newInstance();
+	private void addEnumeratedAttributeValueProposals(Class<?> type, String prefix, List<ICompletionProposal> proposals) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+		EnumeratedAttribute ea = (EnumeratedAttribute) type.getConstructor().newInstance();
 		String enumerated;
 		for (String value : ea.getValues()) {
 			enumerated = value.toLowerCase();

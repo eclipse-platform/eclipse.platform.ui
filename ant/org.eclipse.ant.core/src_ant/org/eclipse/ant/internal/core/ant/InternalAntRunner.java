@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2017 IBM Corporation and others.
+ *  Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -236,7 +236,7 @@ public class InternalAntRunner {
 				for (Iterator<String> iterator = buildListeners.iterator(); iterator.hasNext();) {
 					className = iterator.next();
 					Class<?> listener = Class.forName(className);
-					project.addBuildListener((BuildListener) listener.newInstance());
+					project.addBuildListener((BuildListener) listener.getConstructor().newInstance());
 				}
 			}
 		}
@@ -798,7 +798,7 @@ public class InternalAntRunner {
 			buildLogger = new DefaultLogger();
 		} else if (!IAntCoreConstants.EMPTY_STRING.equals(loggerClassname)) {
 			try {
-				buildLogger = (BuildLogger) (Class.forName(loggerClassname).newInstance());
+				buildLogger = (BuildLogger) (Class.forName(loggerClassname).getConstructor().newInstance());
 			}
 			catch (ClassCastException e) {
 				String message = MessageFormat.format(InternalAntMessages.InternalAntRunner_not_an_instance_of_apache_ant_BuildLogger, new Object[] {

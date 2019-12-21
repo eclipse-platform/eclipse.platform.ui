@@ -178,7 +178,7 @@ public class InternalAntRunner {
 				for (String className : buildListeners) {
 					clazz = className;
 					Class<?> listener = Class.forName(className);
-					project.addBuildListener((BuildListener) listener.newInstance());
+					project.addBuildListener((BuildListener) listener.getConstructor().newInstance());
 				}
 			}
 		}
@@ -565,7 +565,7 @@ public class InternalAntRunner {
 			buildLogger = new DefaultLogger();
 		} else if (!IAntCoreConstants.EMPTY_STRING.equals(loggerClassname)) {
 			try {
-				buildLogger = (BuildLogger) (Class.forName(loggerClassname).newInstance());
+				buildLogger = (BuildLogger) (Class.forName(loggerClassname).getConstructor().newInstance());
 			}
 			catch (ClassCastException e) {
 				String message = MessageFormat.format(RemoteAntMessages.getString("InternalAntRunner.{0}_which_was_specified_to_perform_logging_is_not_an_instance_of_org.apache.tools.ant.BuildLogger._2"), new Object[] { //$NON-NLS-1$

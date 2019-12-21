@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,8 @@
  *     asifrc@terpmail.umd.edu - bug 366337 (https://bugs.eclipse.org/bugs/show_bug.cgi?id=366337)
  *******************************************************************************/
 package org.eclipse.ant.core;
+
+import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -102,14 +104,11 @@ public class Property {
 				return null;
 			}
 			try {
-				valueProvider = (IAntPropertyValueProvider) cls.newInstance();
+				valueProvider = (IAntPropertyValueProvider) cls.getConstructor().newInstance();
 			}
-			catch (InstantiationException e) {
+			catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
+					| SecurityException e) {
 				AntCorePlugin.log(e);
-				return null;
-			}
-			catch (IllegalAccessException ex) {
-				AntCorePlugin.log(ex);
 				return null;
 			}
 			loader = null;
