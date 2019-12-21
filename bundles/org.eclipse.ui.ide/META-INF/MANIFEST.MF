@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %Plugin.name
 Bundle-SymbolicName: org.eclipse.ui.ide; singleton:=true
-Bundle-Version: 3.16.200.qualifier
+Bundle-Version: 3.17.0.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.ui.internal.ide.IDEWorkbenchPlugin
 Bundle-ActivationPolicy: lazy
@@ -65,6 +65,7 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="[3.7.0,4.0.0)";resolu
  org.eclipse.e4.ui.workbench;bundle-version="[1.3.0,2.0.0)",
  org.eclipse.e4.core.commands;bundle-version="[0.11.0,1.0.0)",
  org.eclipse.e4.ui.model.workbench;bundle-version="[2.0.0,3.0.0)",
+ org.eclipse.e4.ui.ide;bundle-version="[0.1.0,1.0.0)";visibility:=reexport,
  org.eclipse.e4.core.di;bundle-version="[1.6.0,2.0.0)",
  org.eclipse.e4.core.di.extensions;bundle-version="[0.14.0,1.0.0)",
  org.eclipse.osgi.services;bundle-version="3.5.0",
