@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2013 IBM Corporation and others.
+ * Copyright (c) 2004, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -246,7 +246,7 @@ public class SWTInputHandler extends DefaultInputHandler {
 
 	private int convertHorizontalDLUsToPixels(int dlus) {
 		// round to the nearest pixel
-		return (fFontMetrics.getAverageCharWidth() * dlus + 4 / 2) / 4;
+		return (int) ((fFontMetrics.getAverageCharacterWidth() * dlus + 4 / 2) / 4);
 	}
 
 	protected void initializeDialogUnits(Control control) {
