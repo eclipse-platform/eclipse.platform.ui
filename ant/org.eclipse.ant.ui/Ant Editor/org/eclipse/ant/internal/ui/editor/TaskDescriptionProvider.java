@@ -29,7 +29,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.IProgressService;
@@ -112,12 +111,7 @@ public class TaskDescriptionProvider {
 	public static TaskDescriptionProvider getDefault() {
 		if (fgDefault == null) {
 			fgDefault = new TaskDescriptionProvider();
-			IRunnableWithProgress runnable = new IRunnableWithProgress() {
-				@Override
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					fgDefault.initialize();
-				}
-			};
+			IRunnableWithProgress runnable = monitor -> fgDefault.initialize();
 
 			IProgressService service = PlatformUI.getWorkbench().getProgressService();
 			try {

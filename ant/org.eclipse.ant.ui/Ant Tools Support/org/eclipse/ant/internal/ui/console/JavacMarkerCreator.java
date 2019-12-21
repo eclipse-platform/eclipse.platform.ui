@@ -26,7 +26,6 @@ import org.eclipse.core.resources.IResourceRuleFactory;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.ui.views.console.ProcessConsole;
@@ -109,24 +108,21 @@ public class JavacMarkerCreator {
 	}
 
 	private void createMarkers(final IFile file, final List<MarkerInfo> infos) {
-		IWorkspaceRunnable wr = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
+		IWorkspaceRunnable wr = monitor -> {
 
-				try {
-					for (MarkerInfo info : infos) {
-						IMarker marker = file.createMarker(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER);
-						Map<String, Object> attributes = new HashMap<>(3);
-						attributes.put(IMarker.LINE_NUMBER, Integer.valueOf(info.fLineNumber));
-						String message = getMessage(info);
-						attributes.put(IMarker.MESSAGE, message);
-						attributes.put(IMarker.SEVERITY, info.fType);
-						marker.setAttributes(attributes);
-					}
+			try {
+				for (MarkerInfo info : infos) {
+					IMarker marker = file.createMarker(IJavaModelMarker.JAVA_MODEL_PROBLEM_MARKER);
+					Map<String, Object> attributes = new HashMap<>(3);
+					attributes.put(IMarker.LINE_NUMBER, Integer.valueOf(info.fLineNumber));
+					String message = getMessage(info);
+					attributes.put(IMarker.MESSAGE, message);
+					attributes.put(IMarker.SEVERITY, info.fType);
+					marker.setAttributes(attributes);
 				}
-				catch (CoreException e) {
-					AntUIPlugin.log(e.getStatus());
-				}
+			}
+			catch (CoreException e) {
+				AntUIPlugin.log(e.getStatus());
 			}
 		};
 		run(getMarkerRule(file), wr);

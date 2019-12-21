@@ -33,11 +33,9 @@ import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.viewers.IColorProvider;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -486,12 +484,7 @@ public class AntEditorPreferencePage extends AbstractAntEditorPreferencePage {
 		gd.heightHint = convertHeightInCharsToPixels(5);
 		previewer.setLayoutData(gd);
 
-		fHighlightingColorListViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				handleSyntaxColorListSelection();
-			}
-		});
+		fHighlightingColorListViewer.addSelectionChangedListener(event -> handleSyntaxColorListSelection());
 
 		foregroundColorButton.addSelectionListener(new SelectionListener() {
 			@Override

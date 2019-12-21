@@ -34,7 +34,6 @@ import org.eclipse.ant.launching.IAntLaunchConstants;
 import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.core.variables.IStringVariableManager;
@@ -46,12 +45,8 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TableLayout;
@@ -394,26 +389,18 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 		fTableViewer.setContentProvider(new AntModelContentProvider());
 		fTableViewer.setComparator(new AntTargetsComparator());
 
-		fTableViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				ISelection selection = event.getSelection();
-				if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
-					IStructuredSelection ss = (IStructuredSelection) selection;
-					Object element = ss.getFirstElement();
-					boolean checked = !fTableViewer.getChecked(element);
-					fTableViewer.setChecked(element, checked);
-					updateOrderedTargets(element, checked);
-				}
+		fTableViewer.addDoubleClickListener(event -> {
+			ISelection selection = event.getSelection();
+			if (!selection.isEmpty() && selection instanceof IStructuredSelection) {
+				IStructuredSelection ss = (IStructuredSelection) selection;
+				Object element = ss.getFirstElement();
+				boolean checked = !fTableViewer.getChecked(element);
+				fTableViewer.setChecked(element, checked);
+				updateOrderedTargets(element, checked);
 			}
 		});
 
-		fTableViewer.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				updateOrderedTargets(event.getElement(), event.getChecked());
-			}
-		});
+		fTableViewer.addCheckStateListener(event -> updateOrderedTargets(event.getElement(), event.getChecked()));
 
 		TableColumn[] columns = fTableViewer.getTable().getColumns();
 		for (int i = 0; i < columns.length; i++) {
@@ -522,15 +509,12 @@ public class AntTargetsTab extends AbstractLaunchConfigurationTab {
 			}
 			final CoreException[] exceptions = new CoreException[1];
 			try {
-				IRunnableWithProgress operation = new IRunnableWithProgress() {
-					@Override
-					public void run(IProgressMonitor monitor) {
-						try {
-							fAllTargets = AntUtil.getTargets(expandedLocation, fLaunchConfiguration);
-						}
-						catch (CoreException ce) {
-							exceptions[0] = ce;
-						}
+				IRunnableWithProgress operation = monitor -> {
+					try {
+						fAllTargets = AntUtil.getTargets(expandedLocation, fLaunchConfiguration);
+					}
+					catch (CoreException ce) {
+						exceptions[0] = ce;
 					}
 				};
 

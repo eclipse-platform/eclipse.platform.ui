@@ -28,7 +28,6 @@ import org.eclipse.ant.internal.ui.editor.actions.TogglePresentationAction;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntImportNode;
 import org.eclipse.ant.internal.ui.model.AntModel;
-import org.eclipse.ant.internal.ui.model.AntModelChangeEvent;
 import org.eclipse.ant.internal.ui.model.AntModelContentProvider;
 import org.eclipse.ant.internal.ui.model.AntModelCore;
 import org.eclipse.ant.internal.ui.model.AntModelLabelProvider;
@@ -42,7 +41,6 @@ import org.eclipse.ant.internal.ui.views.actions.AntOpenWithMenu;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.ListenerList;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
@@ -307,12 +305,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 
 		MenuManager manager = new MenuManager("#PopUp"); //$NON-NLS-1$
 		manager.setRemoveAllWhenShown(true);
-		manager.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager menuManager) {
-				contextMenuAboutToShow(menuManager);
-			}
-		});
+		manager.addMenuListener(menuManager -> contextMenuAboutToShow(menuManager));
 		fMenu = manager.createContextMenu(viewer.getTree());
 		viewer.getTree().setMenu(fMenu);
 
@@ -331,12 +324,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 
 		fOpenWithMenu = new AntOpenWithMenu(this.getSite().getPage());
 
-		viewer.addPostSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				firePostSelectionChanged(event.getSelection());
-			}
-		});
+		viewer.addPostSelectionChangedListener(event -> firePostSelectionChanged(event.getSelection()));
 
 		site.getActionBars().setGlobalActionHandler(ITextEditorActionDefinitionIds.TOGGLE_SHOW_SELECTED_ELEMENT_ONLY, fTogglePresentation);
 	}
@@ -373,18 +361,15 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 	}
 
 	private IAntModelListener createAntModelChangeListener() {
-		return new IAntModelListener() {
-			@Override
-			public void antModelChanged(final AntModelChangeEvent event) {
-				if (event.getModel() == fModel && !getControl().isDisposed()) {
-					getControl().getDisplay().asyncExec(() -> {
-						Control ctrl = getControl();
-						if (ctrl != null && !ctrl.isDisposed()) {
-							getTreeViewer().refresh();
-							updateTreeExpansion();
-						}
-					});
-				}
+		return event -> {
+			if (event.getModel() == fModel && !getControl().isDisposed()) {
+				getControl().getDisplay().asyncExec(() -> {
+					Control ctrl = getControl();
+					if (ctrl != null && !ctrl.isDisposed()) {
+						getTreeViewer().refresh();
+						updateTreeExpansion();
+					}
+				});
 			}
 		};
 	}

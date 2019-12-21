@@ -32,7 +32,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.jdt.core.IJavaModel;
 import org.eclipse.jdt.core.IJavaProject;
@@ -41,13 +40,10 @@ import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -123,16 +119,13 @@ public class AntBuildfileExportPage extends WizardPage {
 			}
 		});
 		fTableViewer.setLabelProvider(new WorkbenchLabelProvider());
-		fTableViewer.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				if (event.getChecked()) {
-					fSelectedJavaProjects.add((IJavaProject) event.getElement());
-				} else {
-					fSelectedJavaProjects.remove(event.getElement());
-				}
-				updateEnablement();
+		fTableViewer.addCheckStateListener(event -> {
+			if (event.getChecked()) {
+				fSelectedJavaProjects.add((IJavaProject) event.getElement());
+			} else {
+				fSelectedJavaProjects.remove(event.getElement());
 			}
+			updateEnablement();
 		});
 
 		initializeProjects();
@@ -221,12 +214,7 @@ public class AntBuildfileExportPage extends WizardPage {
 		junitdirText.setText("junit"); //$NON-NLS-1$
 		junitdirText.setLayoutData(data);
 
-		ModifyListener listener = new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updateEnablement();
-			}
-		};
+		ModifyListener listener = e -> updateEnablement();
 		buildfilenameText.addModifyListener(listener);
 		junitdirText.addModifyListener(listener);
 	}
@@ -322,38 +310,35 @@ public class AntBuildfileExportPage extends WizardPage {
 			setErrorMessage(MessageFormat.format(DataTransferMessages.AntBuildfileExportPage_10, new Object[] { e.toString() }));
 			return false;
 		}
-		IRunnableWithProgress runnable = new IRunnableWithProgress() {
-			@Override
-			public void run(IProgressMonitor pm) throws InterruptedException {
-				SubMonitor localmonitor = SubMonitor.convert(pm, DataTransferMessages.AntBuildfileExportPage_creating_build_files, projects.size());
-				Exception problem = null;
-				try {
-					BuildFileCreator.setOptions(buildfilenameText.getText(), junitdirText.getText(), compatibilityCheckbox.getSelection(), compilerCheckbox.getSelection());
-					projectNames.addAll(BuildFileCreator.createBuildFiles(projects, getShell(), localmonitor.newChild(projects.size())));
-				}
-				catch (JavaModelException e) {
-					problem = e;
-				}
-				catch (TransformerConfigurationException e) {
-					problem = e;
-				}
-				catch (ParserConfigurationException e) {
-					problem = e;
-				}
-				catch (TransformerException e) {
-					problem = e;
-				}
-				catch (IOException e) {
-					problem = e;
-				}
-				catch (CoreException e) {
-					problem = e;
-				}
+		IRunnableWithProgress runnable = pm -> {
+			SubMonitor localmonitor = SubMonitor.convert(pm, DataTransferMessages.AntBuildfileExportPage_creating_build_files, projects.size());
+			Exception problem = null;
+			try {
+				BuildFileCreator.setOptions(buildfilenameText.getText(), junitdirText.getText(), compatibilityCheckbox.getSelection(), compilerCheckbox.getSelection());
+				projectNames.addAll(BuildFileCreator.createBuildFiles(projects, getShell(), localmonitor.newChild(projects.size())));
+			}
+			catch (JavaModelException e1) {
+				problem = e1;
+			}
+			catch (TransformerConfigurationException e2) {
+				problem = e2;
+			}
+			catch (ParserConfigurationException e3) {
+				problem = e3;
+			}
+			catch (TransformerException e4) {
+				problem = e4;
+			}
+			catch (IOException e5) {
+				problem = e5;
+			}
+			catch (CoreException e6) {
+				problem = e6;
+			}
 
-				if (problem != null) {
-					AntUIPlugin.log(problem);
-					setErrorMessage(MessageFormat.format(DataTransferMessages.AntBuildfileExportPage_10, new Object[] { problem.toString() }));
-				}
+			if (problem != null) {
+				AntUIPlugin.log(problem);
+				setErrorMessage(MessageFormat.format(DataTransferMessages.AntBuildfileExportPage_10, new Object[] { problem.toString() }));
 			}
 		};
 

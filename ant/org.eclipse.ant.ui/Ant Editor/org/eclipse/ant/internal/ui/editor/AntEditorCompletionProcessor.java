@@ -78,7 +78,6 @@ import org.eclipse.ant.internal.ui.model.AntTaskNode;
 import org.eclipse.ant.internal.ui.model.IAntElement;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.text.BadLocationException;
@@ -1785,18 +1784,15 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 
 	protected ISchema getDtd() {
 		if (fgDtd == null) {
-			IRunnableWithProgress runnable = new IRunnableWithProgress() {
-				@Override
-				public void run(IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					try {
-						fgDtd = parseDtd();
-					}
-					catch (IOException e) {
-						AntUIPlugin.log(e);
-					}
-					catch (ParseError e) {
-						AntUIPlugin.log(e);
-					}
+			IRunnableWithProgress runnable = monitor -> {
+				try {
+					fgDtd = parseDtd();
+				}
+				catch (IOException e1) {
+					AntUIPlugin.log(e1);
+				}
+				catch (ParseError e2) {
+					AntUIPlugin.log(e2);
 				}
 			};
 

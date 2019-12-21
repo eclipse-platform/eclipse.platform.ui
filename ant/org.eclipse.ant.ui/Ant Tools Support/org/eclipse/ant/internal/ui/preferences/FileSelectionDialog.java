@@ -56,19 +56,16 @@ public class FileSelectionDialog extends ElementTreeSelectionDialog {
 		setInput(ResourcesPlugin.getWorkspace().getRoot());
 		setComparator(new ResourceComparator(ResourceComparator.NAME));
 
-		ISelectionStatusValidator validator = new ISelectionStatusValidator() {
-			@Override
-			public IStatus validate(Object[] selection) {
-				if (selection.length == 0) {
+		ISelectionStatusValidator validator = selection -> {
+			if (selection.length == 0) {
+				return new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), 0, IAntCoreConstants.EMPTY_STRING, null);
+			}
+			for (int i = 0; i < selection.length; i++) {
+				if (!(selection[i] instanceof IFile)) {
 					return new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), 0, IAntCoreConstants.EMPTY_STRING, null);
 				}
-				for (int i = 0; i < selection.length; i++) {
-					if (!(selection[i] instanceof IFile)) {
-						return new Status(IStatus.ERROR, AntUIPlugin.getUniqueIdentifier(), 0, IAntCoreConstants.EMPTY_STRING, null);
-					}
-				}
-				return new Status(IStatus.OK, AntUIPlugin.getUniqueIdentifier(), 0, IAntCoreConstants.EMPTY_STRING, null);
 			}
+			return new Status(IStatus.OK, AntUIPlugin.getUniqueIdentifier(), 0, IAntCoreConstants.EMPTY_STRING, null);
 		};
 		setValidator(validator);
 	}

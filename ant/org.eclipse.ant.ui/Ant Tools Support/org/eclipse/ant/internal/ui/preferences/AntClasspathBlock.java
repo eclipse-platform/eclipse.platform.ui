@@ -37,9 +37,7 @@ import org.eclipse.jdt.ui.wizards.BuildPathDialogAccess;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -348,12 +346,7 @@ public class AntClasspathBlock {
 		treeViewer = new TreeViewer(tree);
 		treeViewer.setContentProvider(antContentProvider);
 		treeViewer.setLabelProvider(labelProvider);
-		treeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				tableSelectionChanged((IStructuredSelection) event.getSelection(), (AntClasspathContentProvider) treeViewer.getContentProvider());
-			}
-		});
+		treeViewer.addSelectionChangedListener(event -> tableSelectionChanged((IStructuredSelection) event.getSelection(), (AntClasspathContentProvider) treeViewer.getContentProvider()));
 	}
 
 	public void createContents(Composite parent) {

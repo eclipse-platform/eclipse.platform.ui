@@ -44,7 +44,6 @@ import org.eclipse.ant.internal.ui.editor.text.IReconcilingParticipant;
 import org.eclipse.ant.internal.ui.editor.text.XMLTextHover;
 import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntModel;
-import org.eclipse.ant.internal.ui.model.AntModelChangeEvent;
 import org.eclipse.ant.internal.ui.model.AntModelCore;
 import org.eclipse.ant.internal.ui.model.AntProjectNode;
 import org.eclipse.ant.internal.ui.model.IAntElement;
@@ -70,8 +69,6 @@ import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IDocumentListener;
-import org.eclipse.jface.text.IInformationControl;
-import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.text.ISelectionValidator;
 import org.eclipse.jface.text.ISynchronizable;
@@ -444,13 +441,10 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	/**
 	 * Selection changed listener for the outline view.
 	 */
-	protected ISelectionChangedListener fSelectionChangedListener = new ISelectionChangedListener() {
-		@Override
-		public void selectionChanged(SelectionChangedEvent event) {
-			fSelectionSetFromOutline = false;
-			doSelectionChanged(event);
-			fSelectionSetFromOutline = true;
-		}
+	protected ISelectionChangedListener fSelectionChangedListener = event -> {
+		fSelectionSetFromOutline = false;
+		doSelectionChanged(event);
+		fSelectionSetFromOutline = true;
 	};
 
 	private IAntModelListener fAntModelListener;
@@ -541,18 +535,14 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		setSourceViewerConfiguration(new AntEditorSourceViewerConfiguration(this));
 		setDocumentProvider(AntUIPlugin.getDefault().getDocumentProvider());
 
-		fAntModelListener = new IAntModelListener() {
-
-			@Override
-			public void antModelChanged(AntModelChangeEvent event) {
-				AntModel model = getAntModel();
-				if (event.getModel() == model) {
-					if (event.isPreferenceChange()) {
-						updateEditorImage(model);
-					}
-					if (fFoldingStructureProvider != null) {
-						fFoldingStructureProvider.updateFoldingRegions(model);
-					}
+		fAntModelListener = event -> {
+			AntModel model = getAntModel();
+			if (event.getModel() == model) {
+				if (event.isPreferenceChange()) {
+					updateEditorImage(model);
+				}
+				if (fFoldingStructureProvider != null) {
+					fFoldingStructureProvider.updateFoldingRegions(model);
 				}
 			}
 		};
@@ -574,12 +564,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		}
 
 		if (key == IShowInTargetList.class) {
-			return (T) new IShowInTargetList() {
-				@Override
-				public String[] getShowInTargetIds() {
-					return new String[] { JavaUI.ID_PACKAGES, IPageLayout.ID_PROJECT_EXPLORER };
-				}
-			};
+			return (T) (IShowInTargetList) () -> new String[] { JavaUI.ID_PACKAGES, IPageLayout.ID_PROJECT_EXPLORER };
 		}
 
 		if (key == IToggleBreakpointsTarget.class) {
@@ -963,12 +948,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 
 	private void createFoldingSupport(ProjectionViewer projectionViewer) {
 		fProjectionSupport = new ProjectionSupport(projectionViewer, getAnnotationAccess(), getSharedColors());
-		fProjectionSupport.setHoverControlCreator(new IInformationControlCreator() {
-			@Override
-			public IInformationControl createInformationControl(Shell shell) {
-				return new AntSourceViewerInformationControl(shell);
-			}
-		});
+		fProjectionSupport.setHoverControlCreator(shell -> new AntSourceViewerInformationControl(shell));
 		fProjectionSupport.install();
 		((ProjectionViewer) getViewer()).addProjectionListener(this);
 

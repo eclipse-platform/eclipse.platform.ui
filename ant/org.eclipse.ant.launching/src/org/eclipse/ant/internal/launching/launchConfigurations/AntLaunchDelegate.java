@@ -592,15 +592,12 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 			}
 		} else {
 			final AtomicBoolean terminated = new AtomicBoolean(false);
-			IDebugEventSetListener listener = new IDebugEventSetListener() {
-				@Override
-				public void handleDebugEvents(DebugEvent[] events) {
-					for (DebugEvent event : events) {
-						for (IProcess process : processes) {
-							if (event.getSource() == process && event.getKind() == DebugEvent.TERMINATE) {
-								terminated.set(true);
-								break;
-							}
+			IDebugEventSetListener listener = events -> {
+				for (DebugEvent event : events) {
+					for (IProcess process : processes) {
+						if (event.getSource() == process && event.getKind() == DebugEvent.TERMINATE) {
+							terminated.set(true);
+							break;
 						}
 					}
 				}

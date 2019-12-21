@@ -16,7 +16,6 @@
 package org.eclipse.ant.internal.launching.launchConfigurations;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URI;
@@ -187,12 +186,7 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 					if (!bundleFolder.isDirectory()) {
 						continue;
 					}
-					String[] names = bundleFolder.list(new FilenameFilter() {
-						@Override
-						public boolean accept(File dir, String name) {
-							return name.endsWith(".jar"); //$NON-NLS-1$
-						}
-					});
+					String[] names = bundleFolder.list((dir, name) -> name.endsWith(".jar")); //$NON-NLS-1$
 					for (String jarName : names) {
 						fgSWTEntries.add(JavaRuntime.newArchiveRuntimeClasspathEntry(fragmentPath.append(jarName)));
 					}

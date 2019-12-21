@@ -31,7 +31,6 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -105,15 +104,12 @@ public class SearchForBuildFilesDialog extends InputDialog {
 	 * Creates a new dialog to search for build files.
 	 */
 	public SearchForBuildFilesDialog() {
-		super(Display.getCurrent().getActiveShell(), AntViewActionMessages.SearchForBuildFilesDialog_Search_for_Build_Files_1, AntViewActionMessages.SearchForBuildFilesDialog__Input, settings.get(IAntUIPreferenceConstants.ANTVIEW_LAST_SEARCH_STRING), new IInputValidator() {
-			@Override
-			public String isValid(String newText) {
-				String trimmedText = newText.trim();
-				if (trimmedText.length() == 0) {
-					return AntViewActionMessages.SearchForBuildFilesDialog_Build_name_cannot_be_empty_3;
-				}
-				return null;
+		super(Display.getCurrent().getActiveShell(), AntViewActionMessages.SearchForBuildFilesDialog_Search_for_Build_Files_1, AntViewActionMessages.SearchForBuildFilesDialog__Input, settings.get(IAntUIPreferenceConstants.ANTVIEW_LAST_SEARCH_STRING), newText -> {
+			String trimmedText = newText.trim();
+			if (trimmedText.length() == 0) {
+				return AntViewActionMessages.SearchForBuildFilesDialog_Build_name_cannot_be_empty_3;
 			}
+			return null;
 		});
 	}
 

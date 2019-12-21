@@ -289,12 +289,7 @@ public class BuildFileCreator {
 	public void createImports() {
 		// <import file="javadoc.xml"/>
 		File dir = new File(projectRoot);
-		FilenameFilter filter = new FilenameFilter() {
-			@Override
-			public boolean accept(File acceptDir, String name) {
-				return name.endsWith(".xml"); //$NON-NLS-1$
-			}
-		};
+		FilenameFilter filter = (acceptDir, name) -> name.endsWith(".xml"); //$NON-NLS-1$
 
 		File[] files = dir.listFiles(filter);
 		if (files == null) {

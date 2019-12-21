@@ -130,13 +130,10 @@ public class AntModel implements IAntModel {
 	private AntEditorMarkerUpdater fMarkerUpdater = null;
 	private List<AntElementNode> fNonStructuralNodes = new ArrayList<>(1);
 
-	private IPreferenceChangeListener fCoreListener = new IPreferenceChangeListener() {
-		@Override
-		public void preferenceChange(PreferenceChangeEvent event) {
-			if (IAntCoreConstants.PREFERENCE_CLASSPATH_CHANGED.equals(event.getKey())) {
-				if (Boolean.parseBoolean((String) event.getNewValue()) == true) {
-					reconcileForPropertyChange(true);
-				}
+	private IPreferenceChangeListener fCoreListener = event -> {
+		if (IAntCoreConstants.PREFERENCE_CLASSPATH_CHANGED.equals(event.getKey())) {
+			if (Boolean.parseBoolean((String) event.getNewValue()) == true) {
+				reconcileForPropertyChange(true);
 			}
 		}
 	};

@@ -25,11 +25,7 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
@@ -177,19 +173,11 @@ public abstract class AntPage {
 		tableViewer = new TableViewer(table);
 		tableViewer.setContentProvider(contentProvider);
 		tableViewer.setLabelProvider(this.labelProvider);
-		tableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				tableSelectionChanged((IStructuredSelection) event.getSelection());
-			}
-		});
+		tableViewer.addSelectionChangedListener(event -> tableSelectionChanged((IStructuredSelection) event.getSelection()));
 
-		tableViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				if (!event.getSelection().isEmpty() && editButton.isEnabled()) {
-					edit((IStructuredSelection) event.getSelection());
-				}
+		tableViewer.addDoubleClickListener(event -> {
+			if (!event.getSelection().isEmpty() && editButton.isEnabled()) {
+				edit((IStructuredSelection) event.getSelection());
 			}
 		});
 		ArrayList<ColumnSorter> sorters = new ArrayList<>(fTableColumnHeaders.length);

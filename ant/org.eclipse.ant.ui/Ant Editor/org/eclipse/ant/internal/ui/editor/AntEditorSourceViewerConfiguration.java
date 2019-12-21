@@ -41,7 +41,6 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.text.DefaultInformationControl;
 import org.eclipse.jface.text.IAutoEditStrategy;
 import org.eclipse.jface.text.IDocument;
-import org.eclipse.jface.text.IInformationControl;
 import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextHover;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
@@ -56,7 +55,6 @@ import org.eclipse.jface.text.source.IAnnotationHover;
 import org.eclipse.jface.text.source.ISourceViewer;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.widgets.Shell;
 
 /**
  * The source viewer configuration for the Ant Editor.
@@ -138,12 +136,7 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 	 */
 	@Override
 	public IInformationControlCreator getInformationControlCreator(ISourceViewer sourceViewer) {
-		return new IInformationControlCreator() {
-			@Override
-			public IInformationControl createInformationControl(Shell parent) {
-				return new DefaultInformationControl(parent, false);
-			}
-		};
+		return parent -> new DefaultInformationControl(parent, false);
 	}
 
 	/*
@@ -220,12 +213,7 @@ public class AntEditorSourceViewerConfiguration extends AntSourceViewerConfigura
 	 * @since 3.1
 	 */
 	public static IInformationControlCreator getInformationPresenterControlCreator() {
-		return new IInformationControlCreator() {
-			@Override
-			public IInformationControl createInformationControl(Shell parent) {
-				return new DefaultInformationControl(parent, true);
-			}
-		};
+		return parent -> new DefaultInformationControl(parent, true);
 	}
 
 	@Override

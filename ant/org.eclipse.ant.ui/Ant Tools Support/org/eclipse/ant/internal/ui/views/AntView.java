@@ -50,17 +50,12 @@ import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -202,12 +197,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		Control menuControl = viewer.getControl();
 		MenuManager menuMgr = new MenuManager("#PopUp"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager mgr) {
-				fillContextMenu(mgr);
-			}
-		});
+		menuMgr.addMenuListener(mgr -> fillContextMenu(mgr));
 		Menu menu = menuMgr.createContextMenu(menuControl);
 		menuControl.setMenu(menu);
 
@@ -305,19 +295,11 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 			}
 		});
 
-		projectViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				handleSelectionChanged((IStructuredSelection) event.getSelection());
-			}
-		});
+		projectViewer.addSelectionChangedListener(event -> handleSelectionChanged((IStructuredSelection) event.getSelection()));
 
-		projectViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				if (!event.getSelection().isEmpty()) {
-					handleProjectViewerDoubleClick();
-				}
+		projectViewer.addDoubleClickListener(event -> {
+			if (!event.getSelection().isEmpty()) {
+				handleProjectViewerDoubleClick();
 			}
 		});
 

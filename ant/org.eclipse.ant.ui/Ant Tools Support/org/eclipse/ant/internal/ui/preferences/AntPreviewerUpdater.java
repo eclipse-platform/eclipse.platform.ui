@@ -25,8 +25,6 @@ import org.eclipse.jface.text.source.SourceViewer;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.custom.StyledText;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.RGB;
@@ -59,16 +57,10 @@ class AntPreviewerUpdater {
 
 		initializeViewerColors(viewer, preferenceStore);
 
-		final IPropertyChangeListener fontChangeListener = new IPropertyChangeListener() {
-			/*
-			 * @see org.eclipse.jface.util.IPropertyChangeListener#propertyChange(org.eclipse.jface.util.PropertyChangeEvent)
-			 */
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty().equals(JFaceResources.TEXT_FONT)) {
-					Font font = JFaceResources.getFont(JFaceResources.TEXT_FONT);
-					viewer.getTextWidget().setFont(font);
-				}
+		final IPropertyChangeListener fontChangeListener = event -> {
+			if (event.getProperty().equals(JFaceResources.TEXT_FONT)) {
+				Font font = JFaceResources.getFont(JFaceResources.TEXT_FONT);
+				viewer.getTextWidget().setFont(font);
 			}
 		};
 		final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
@@ -113,15 +105,9 @@ class AntPreviewerUpdater {
 				viewer.getDocument().set(contents);
 			}
 		};
-		viewer.getTextWidget().addDisposeListener(new DisposeListener() {
-			/*
-			 * @see org.eclipse.swt.events.DisposeListener#widgetDisposed(org.eclipse.swt.events.DisposeEvent)
-			 */
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				preferenceStore.removePropertyChangeListener(propertyChangeListener);
-				JFaceResources.getFontRegistry().removeListener(fontChangeListener);
-			}
+		viewer.getTextWidget().addDisposeListener(e -> {
+			preferenceStore.removePropertyChangeListener(propertyChangeListener);
+			JFaceResources.getFontRegistry().removeListener(fontChangeListener);
 		});
 		JFaceResources.getFontRegistry().addListener(fontChangeListener);
 		preferenceStore.addPropertyChangeListener(propertyChangeListener);

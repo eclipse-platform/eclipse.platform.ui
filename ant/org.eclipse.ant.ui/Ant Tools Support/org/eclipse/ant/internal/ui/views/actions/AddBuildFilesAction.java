@@ -26,9 +26,7 @@ import org.eclipse.ant.internal.ui.model.AntProjectNodeProxy;
 import org.eclipse.ant.internal.ui.preferences.FileSelectionDialog;
 import org.eclipse.ant.internal.ui.views.AntView;
 import org.eclipse.core.resources.IFile;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 
@@ -61,19 +59,16 @@ public class AddBuildFilesAction extends Action {
 		}
 
 		try {
-			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(new IRunnableWithProgress() {
-				@Override
-				public void run(IProgressMonitor monitor) {
-					monitor.beginTask(AntViewActionMessages.AddBuildFilesAction_3, result.length);
-					for (int i = 0; i < result.length && !monitor.isCanceled(); i++) {
-						Object file = result[i];
-						if (file instanceof IFile) {
-							String buildFileName = ((IFile) file).getFullPath().toString();
-							final AntProjectNode project = new AntProjectNodeProxy(buildFileName);
-							project.getName();
-							monitor.worked(1);
-							Display.getDefault().asyncExec(() -> view.addProject(project));
-						}
+			PlatformUI.getWorkbench().getProgressService().busyCursorWhile(monitor -> {
+				monitor.beginTask(AntViewActionMessages.AddBuildFilesAction_3, result.length);
+				for (int i = 0; i < result.length && !monitor.isCanceled(); i++) {
+					Object file = result[i];
+					if (file instanceof IFile) {
+						String buildFileName = ((IFile) file).getFullPath().toString();
+						final AntProjectNode project = new AntProjectNodeProxy(buildFileName);
+						project.getName();
+						monitor.worked(1);
+						Display.getDefault().asyncExec(() -> view.addProject(project));
 					}
 				}
 			});

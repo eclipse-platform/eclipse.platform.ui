@@ -27,7 +27,6 @@ import org.eclipse.jface.dialogs.DialogPage;
 import org.eclipse.jface.dialogs.IMessageProvider;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -65,23 +64,17 @@ public abstract class AbstractAntEditorPreferencePage extends PreferencePage imp
 	};
 
 	private Map<Text, String> fTextFields = new HashMap<>();
-	private ModifyListener fTextFieldListener = new ModifyListener() {
-		@Override
-		public void modifyText(ModifyEvent e) {
-			if (fInitialized) {
-				Text text = (Text) e.widget;
-				fOverlayStore.setValue(fTextFields.get(text), text.getText());
-			}
+	private ModifyListener fTextFieldListener = e -> {
+		if (fInitialized) {
+			Text text = (Text) e.widget;
+			fOverlayStore.setValue(fTextFields.get(text), text.getText());
 		}
 	};
 
 	private Map<Text, String[]> fNumberFields = new HashMap<>();
-	private ModifyListener fNumberFieldListener = new ModifyListener() {
-		@Override
-		public void modifyText(ModifyEvent e) {
-			if (fInitialized) {
-				numberFieldChanged((Text) e.widget);
-			}
+	private ModifyListener fNumberFieldListener = e -> {
+		if (fInitialized) {
+			numberFieldChanged((Text) e.widget);
 		}
 	};
 

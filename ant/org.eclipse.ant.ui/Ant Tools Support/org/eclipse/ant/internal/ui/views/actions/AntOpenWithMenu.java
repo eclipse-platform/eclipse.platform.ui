@@ -15,7 +15,6 @@ package org.eclipse.ant.internal.ui.views.actions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -30,7 +29,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.program.Program;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -149,18 +147,15 @@ public class AntOpenWithMenu extends ContributionItem {
 		if (image != null) {
 			menuItem.setImage(image);
 		}
-		Listener listener = new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				switch (event.type) {
-					case SWT.Selection:
-						if (menuItem.getSelection()) {
-							openEditor(descriptor);
-						}
-						break;
-					default:
-						break;
-				}
+		Listener listener = event -> {
+			switch (event.type) {
+				case SWT.Selection:
+					if (menuItem.getSelection()) {
+						openEditor(descriptor);
+					}
+					break;
+				default:
+					break;
 			}
 		};
 		menuItem.addListener(SWT.Selection, listener);
@@ -177,14 +172,11 @@ public class AntOpenWithMenu extends ContributionItem {
 		IEditorDescriptor preferredEditor = IDE.getDefaultEditor(fileResource); // may be null
 
 		IEditorDescriptor[] editors = fRegistry.getEditors(fileResource.getName());
-		Arrays.sort(editors, new Comparator<IEditorDescriptor>() {
-			@Override
-			public int compare(IEditorDescriptor o1, IEditorDescriptor o2) {
-				String s1 = o1.getLabel();
-				String s2 = o2.getLabel();
-				// Return true if elementTwo is 'greater than' elementOne
-				return s1.compareToIgnoreCase(s2);
-			}
+		Arrays.sort(editors, (o1, o2) -> {
+			String s1 = o1.getLabel();
+			String s2 = o2.getLabel();
+			// Return true if elementTwo is 'greater than' elementOne
+			return s1.compareToIgnoreCase(s2);
 		});
 		IEditorDescriptor antEditor = fRegistry.findEditor("org.eclipse.ant.internal.ui.editor.AntEditor"); //$NON-NLS-1$
 
@@ -257,25 +249,22 @@ public class AntOpenWithMenu extends ContributionItem {
 		menuItem.setSelection(IDE.getDefaultEditor(fileResource) == null);
 		menuItem.setText(AntViewActionMessages.AntViewOpenWithMenu_Default_Editor_4);
 
-		Listener listener = new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				switch (event.type) {
-					case SWT.Selection:
-						if (menuItem.getSelection()) {
-							IDE.setDefaultEditor(fileResource, null);
-							try {
-								IDE.openEditor(fPage, fileResource, true);
-							}
-							catch (PartInitException e) {
-								AntUIPlugin.log(MessageFormat.format(AntViewActionMessages.AntViewOpenWithMenu_Editor_failed, new Object[] {
-										fileResource.getLocation().toOSString() }), e);
-							}
+		Listener listener = event -> {
+			switch (event.type) {
+				case SWT.Selection:
+					if (menuItem.getSelection()) {
+						IDE.setDefaultEditor(fileResource, null);
+						try {
+							IDE.openEditor(fPage, fileResource, true);
 						}
-						break;
-					default:
-						break;
-				}
+						catch (PartInitException e) {
+							AntUIPlugin.log(MessageFormat.format(AntViewActionMessages.AntViewOpenWithMenu_Editor_failed, new Object[] {
+									fileResource.getLocation().toOSString() }), e);
+						}
+					}
+					break;
+				default:
+					break;
 			}
 		};
 

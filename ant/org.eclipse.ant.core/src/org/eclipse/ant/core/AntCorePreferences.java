@@ -51,7 +51,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.core.variables.IDynamicVariable;
 import org.eclipse.core.variables.VariablesPlugin;
@@ -139,25 +138,22 @@ public class AntCorePreferences implements IPropertyChangeListener {
 		}
 	}
 
-	private IPreferenceChangeListener prefListener = new IPreferenceChangeListener() {
-		@Override
-		public void preferenceChange(PreferenceChangeEvent event) {
-			String property = event.getKey();
-			if (property.equals(IAntCoreConstants.PREFERENCE_TASKS) || property.startsWith(IAntCoreConstants.PREFIX_TASK)) {
-				restoreTasks();
-			} else if (property.equals(IAntCoreConstants.PREFERENCE_TYPES) || property.startsWith(IAntCoreConstants.PREFIX_TYPE)) {
-				restoreTypes();
-			} else if (property.equals(IAntCoreConstants.PREFERENCE_ANT_HOME_ENTRIES)) {
-				restoreAntHomeEntries();
-			} else if (property.equals(IAntCoreConstants.PREFERENCE_ADDITIONAL_ENTRIES)) {
-				restoreAdditionalEntries();
-			} else if (property.equals(IAntCoreConstants.PREFERENCE_ANT_HOME)) {
-				restoreAntHome();
-			} else if (property.equals(IAntCoreConstants.PREFERENCE_PROPERTIES) || property.startsWith(IAntCoreConstants.PREFIX_PROPERTY)) {
-				restoreCustomProperties();
-			} else if (property.equals(IAntCoreConstants.PREFERENCE_PROPERTY_FILES)) {
-				restoreCustomPropertyFiles();
-			}
+	private IPreferenceChangeListener prefListener = event -> {
+		String property = event.getKey();
+		if (property.equals(IAntCoreConstants.PREFERENCE_TASKS) || property.startsWith(IAntCoreConstants.PREFIX_TASK)) {
+			restoreTasks();
+		} else if (property.equals(IAntCoreConstants.PREFERENCE_TYPES) || property.startsWith(IAntCoreConstants.PREFIX_TYPE)) {
+			restoreTypes();
+		} else if (property.equals(IAntCoreConstants.PREFERENCE_ANT_HOME_ENTRIES)) {
+			restoreAntHomeEntries();
+		} else if (property.equals(IAntCoreConstants.PREFERENCE_ADDITIONAL_ENTRIES)) {
+			restoreAdditionalEntries();
+		} else if (property.equals(IAntCoreConstants.PREFERENCE_ANT_HOME)) {
+			restoreAntHome();
+		} else if (property.equals(IAntCoreConstants.PREFERENCE_PROPERTIES) || property.startsWith(IAntCoreConstants.PREFIX_PROPERTY)) {
+			restoreCustomProperties();
+		} else if (property.equals(IAntCoreConstants.PREFERENCE_PROPERTY_FILES)) {
+			restoreCustomPropertyFiles();
 		}
 	};
 
@@ -967,12 +963,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 			return urls;
 		}
 
-		File[] matches = location.listFiles(new FilenameFilter() {
-			@Override
-			public boolean accept(File dir, String name) {
-				return name.toLowerCase().endsWith(extension);
-			}
-		});
+		File[] matches = location.listFiles((FilenameFilter) (dir, name) -> name.toLowerCase().endsWith(extension));
 
 		urls = new URL[matches.length];
 		for (int i = 0; i < matches.length; ++i) {

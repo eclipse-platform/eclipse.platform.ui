@@ -52,7 +52,6 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -86,39 +85,31 @@ public class AntNewJavaProjectPage extends WizardPage {
 	private Button fLinkButton;
 
 	private IAntModel fAntModel;
+	private TableViewer fTableViewer;
 
-	private ModifyListener fLocationModifyListener = new ModifyListener() {
-		@Override
-		public void modifyText(ModifyEvent e) {
-			// no lexical or position, has task info
-			fAntModel = AntUtil.getAntModel(getProjectLocationFieldValue(), false, false, true);
-			AntProjectNode projectNode = fAntModel == null ? null : fAntModel.getProjectNode();
-			if (fAntModel != null && projectNode != null) {
-				setProjectName(); // page will be validated on setting the project name
-				List<AntTaskNode> javacNodes = new ArrayList<>();
-				getJavacNodes(javacNodes, projectNode);
-				fTableViewer.setInput(javacNodes.toArray());
-				if (!javacNodes.isEmpty()) {
-					fTableViewer.setSelection(new StructuredSelection(javacNodes.get(0)));
-				}
-				fTableViewer.getControl().setEnabled(true);
-			} else {
-				fTableViewer.setInput(new Object[] {});
-				fTableViewer.getControl().setEnabled(false);
+	private ModifyListener fLocationModifyListener = e -> {
+		// no lexical or position, has task info
+		fAntModel = AntUtil.getAntModel(getProjectLocationFieldValue(), false, false, true);
+		AntProjectNode projectNode = fAntModel == null ? null : fAntModel.getProjectNode();
+		if (fAntModel != null && projectNode != null) {
+			setProjectName(); // page will be validated on setting the project name
+			List<AntTaskNode> javacNodes = new ArrayList<>();
+			getJavacNodes(javacNodes, projectNode);
+			fTableViewer.setInput(javacNodes.toArray());
+			if (!javacNodes.isEmpty()) {
+				fTableViewer.setSelection(new StructuredSelection(javacNodes.get(0)));
 			}
-			setPageComplete(validatePage());
+			fTableViewer.getControl().setEnabled(true);
+		} else {
+			fTableViewer.setInput(new Object[] {});
+			fTableViewer.getControl().setEnabled(false);
 		}
+		setPageComplete(validatePage());
 	};
 
-	private ModifyListener fNameModifyListener = new ModifyListener() {
-		@Override
-		public void modifyText(ModifyEvent e) {
-			setPageComplete(validatePage());
-		}
-	};
+	private ModifyListener fNameModifyListener = e -> setPageComplete(validatePage());
 
 	private static final int SIZING_TEXT_FIELD_WIDTH = 250;
-	private TableViewer fTableViewer;
 
 	public AntNewJavaProjectPage() {
 		super("newPage"); //$NON-NLS-1$

@@ -34,11 +34,8 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
@@ -152,15 +149,12 @@ public class AntPropertiesBlock {
 	/**
 	 * Selection changed listener that delegates selection events.
 	 */
-	private ISelectionChangedListener tableListener = new ISelectionChangedListener() {
-		@Override
-		public void selectionChanged(SelectionChangedEvent event) {
-			if (tablesEnabled) {
-				if (event.getSource() == propertyTableViewer) {
-					propertyTableSelectionChanged((IStructuredSelection) event.getSelection());
-				} else if (event.getSource() == fileTableViewer) {
-					fileTableSelectionChanged((IStructuredSelection) event.getSelection());
-				}
+	private ISelectionChangedListener tableListener = event -> {
+		if (tablesEnabled) {
+			if (event.getSource() == propertyTableViewer) {
+				propertyTableSelectionChanged((IStructuredSelection) event.getSelection());
+			} else if (event.getSource() == fileTableViewer) {
+				fileTableSelectionChanged((IStructuredSelection) event.getSelection());
 			}
 		}
 	};
@@ -219,12 +213,9 @@ public class AntPropertiesBlock {
 			// do nothing
 		}
 		propertyTableViewer = createTableViewer(top, true, false, idx, direction);
-		propertyTableViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				if (!event.getSelection().isEmpty() && editButton.isEnabled()) {
-					edit();
-				}
+		propertyTableViewer.addDoubleClickListener(event -> {
+			if (!event.getSelection().isEmpty() && editButton.isEnabled()) {
+				edit();
 			}
 		});
 

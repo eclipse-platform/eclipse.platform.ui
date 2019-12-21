@@ -35,20 +35,15 @@ import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.StatusDialog;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -145,12 +140,7 @@ public class AddCustomDialog extends StatusDialog {
 		nameField.setLayoutData(data);
 		nameField.setFont(topComposite.getFont());
 		nameField.setText(name);
-		nameField.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				updateStatus();
-			}
-		});
+		nameField.addModifyListener(e -> updateStatus());
 	}
 
 	@Override
@@ -307,23 +297,15 @@ public class AddCustomDialog extends StatusDialog {
 		FileSystemElement dummyRoot = new FileSystemElement("Dummy", null, true); //$NON-NLS-1$
 		this.selectionGroup = new TreeAndListGroup(parent, dummyRoot, getFolderProvider(), new WorkbenchLabelProvider(), getFileProvider(), new WorkbenchLabelProvider(), SWT.NONE, 400, 150, false);
 
-		ISelectionChangedListener listener = new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				updateStatus();
-			}
-		};
+		ISelectionChangedListener listener = event -> updateStatus();
 
 		WorkbenchViewerComparator comparator = new WorkbenchViewerComparator();
 		this.selectionGroup.setTreeComparator(comparator);
 		this.selectionGroup.setListSorter(comparator);
 		this.selectionGroup.addSelectionChangedListener(listener);
-		selectionGroup.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				if (getButton(IDialogConstants.OK_ID).isEnabled()) {
-					buttonPressed(IDialogConstants.OK_ID);
-				}
+		selectionGroup.addDoubleClickListener(event -> {
+			if (getButton(IDialogConstants.OK_ID).isEnabled()) {
+				buttonPressed(IDialogConstants.OK_ID);
 			}
 		});
 	}

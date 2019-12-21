@@ -25,7 +25,6 @@ import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
@@ -77,16 +76,13 @@ public class AntModelCore implements IBreakpointsListener {
 	 * @see org.eclipse.debug.core.IBreakpointsListener#breakpointsAdded(org.eclipse.debug.core.model.IBreakpoint[])
 	 */
 	private void updateBreakpointMessages(final IBreakpoint[] breakpoints) {
-		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				for (IBreakpoint breakpoint : breakpoints) {
-					if (breakpoint instanceof AntLineBreakpoint) {
-						IMarker marker = breakpoint.getMarker();
-						if (marker.exists()) {
-							int lineNumber = marker.getAttribute(IMarker.LINE_NUMBER, 0);
-							marker.setAttribute(IMarker.MESSAGE, MessageFormat.format(DebugModelMessages.AntLineBreakpoint_0, new Object[] { Integer.toString(lineNumber) }));
-						}
+		IWorkspaceRunnable runnable = monitor -> {
+			for (IBreakpoint breakpoint : breakpoints) {
+				if (breakpoint instanceof AntLineBreakpoint) {
+					IMarker marker = breakpoint.getMarker();
+					if (marker.exists()) {
+						int lineNumber = marker.getAttribute(IMarker.LINE_NUMBER, 0);
+						marker.setAttribute(IMarker.MESSAGE, MessageFormat.format(DebugModelMessages.AntLineBreakpoint_0, new Object[] { Integer.toString(lineNumber) }));
 					}
 				}
 			}
