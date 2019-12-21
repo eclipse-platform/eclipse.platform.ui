@@ -36,7 +36,7 @@ public abstract class AbstractCompositeFactory<F extends AbstractCompositeFactor
 	 * @param factoryClass
 	 * @param controlCreator
 	 */
-	AbstractCompositeFactory(Class<F> factoryClass, WidgetSupplier<C, Composite> controlCreator) {
+	protected AbstractCompositeFactory(Class<F> factoryClass, WidgetSupplier<C, Composite> controlCreator) {
 		super(factoryClass, controlCreator);
 	}
 
