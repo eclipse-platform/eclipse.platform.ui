@@ -306,26 +306,17 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		fConsoleColorSelector.setColorValue(rgb);
 	}
 
-	/**
-	 * @see FieldEditorPreferencePage#createContents(org.eclipse.swt.widgets.Composite)
-	 */
 	@Override
 	protected Control createContents(Composite parent) {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IAntUIHelpContextIds.ANT_PREFERENCE_PAGE);
 		return super.createContents(parent);
 	}
 
-	/**
-	 * @see IWorkbenchPreferencePage#init(IWorkbench)
-	 */
 	@Override
 	public void init(IWorkbench workbench) {
 		// do nothing
 	}
 
-	/**
-	 * @see org.eclipse.jface.preference.FieldEditorPreferencePage#initialize()
-	 */
 	@Override
 	protected void initialize() {
 		super.initialize();
@@ -340,9 +331,6 @@ public class AntPreferencePage extends FieldEditorPreferencePage implements IWor
 		});
 	}
 
-	/**
-	 * @see org.eclipse.jface.preference.PreferencePage#performDefaults()
-	 */
 	@Override
 	protected void performDefaults() {
 		for (String[] colorModel : fAppearanceColorListModel) {

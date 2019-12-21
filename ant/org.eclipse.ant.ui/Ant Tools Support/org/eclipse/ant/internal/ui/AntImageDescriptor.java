@@ -51,9 +51,6 @@ public class AntImageDescriptor extends CompositeImageDescriptor {
 		setFlags(flags);
 	}
 
-	/**
-	 * @see CompositeImageDescriptor#getSize()
-	 */
 	@Override
 	protected Point getSize() {
 		if (fSize == null) {
@@ -63,9 +60,6 @@ public class AntImageDescriptor extends CompositeImageDescriptor {
 		return fSize;
 	}
 
-	/**
-	 * @see Object#equals(java.lang.Object)
-	 */
 	@Override
 	public boolean equals(Object object) {
 		if (!(object instanceof AntImageDescriptor)) {
@@ -76,17 +70,11 @@ public class AntImageDescriptor extends CompositeImageDescriptor {
 		return (getBaseImage().equals(other.getBaseImage()) && getFlags() == other.getFlags());
 	}
 
-	/**
-	 * @see Object#hashCode()
-	 */
 	@Override
 	public int hashCode() {
 		return getBaseImage().hashCode() | getFlags();
 	}
 
-	/**
-	 * @see CompositeImageDescriptor#drawCompositeImage(int, int)
-	 */
 	@Override
 	protected void drawCompositeImage(int width, int height) {
 		drawImage(createCachedImageDataProvider(getBaseImage()), 0, 0);

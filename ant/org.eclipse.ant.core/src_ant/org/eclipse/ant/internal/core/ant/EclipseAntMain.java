@@ -32,17 +32,11 @@ public class EclipseAntMain extends Main {
 		projectHelpMain.startAnt(args, null, null);
 	}
 
-	/*
-	 * @see org.apache.tools.ant.Main#exit(int)
-	 */
 	@Override
 	protected void exit(int exitCode) {
 		// disallow system exit
 	}
 
-	/*
-	 * @see org.apache.tools.ant.Main#addBuildListeners(org.apache.tools.ant.Project)
-	 */
 	@Override
 	protected void addBuildListeners(Project project) {
 		for (BuildListener listener : fEclipseAntProject.getBuildListeners()) {

@@ -611,9 +611,6 @@ public class AntRunner implements IApplication {
 		return run(contextArguments.get(IApplicationContext.APPLICATION_ARGS));
 	}
 
-	/*
-	 * @see org.eclipse.equinox.app.IApplication#stop()
-	 */
 	@Override
 	public void stop() {
 		if (progressMonitor != null) {

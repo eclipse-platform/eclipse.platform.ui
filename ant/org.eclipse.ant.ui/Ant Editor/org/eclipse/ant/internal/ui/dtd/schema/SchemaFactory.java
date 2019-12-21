@@ -68,9 +68,6 @@ public class SchemaFactory implements DeclHandler {
 		return fSchema;
 	}
 
-	/**
-	 * @see org.xml.sax.ext.DeclHandler#attributeDecl(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
-	 */
 	@Override
 	public void attributeDecl(String eName, String aName, String type, String valueDefault, String value) {
 		Element element = getElement(eName);
@@ -139,9 +136,6 @@ public class SchemaFactory implements DeclHandler {
 		return values.toArray(new String[values.size()]);
 	}
 
-	/**
-	 * @see org.xml.sax.ext.DeclHandler#elementDecl(java.lang.String, java.lang.String)
-	 */
 	@Override
 	public void elementDecl(String name, String model) throws SAXException {
 		Element element = getElement(name);
@@ -177,7 +171,8 @@ public class SchemaFactory implements DeclHandler {
 		fBuf = model.toCharArray();
 		fLen = fBuf.length;
 		if (fBuf[0] != '(') {
-			throw new SAXException(MessageFormat.format(AntDTDSchemaMessages.SchemaFactory_Start_with_left_parenthesis, new Object[] { fElement.getName() }));
+			throw new SAXException(MessageFormat.format(AntDTDSchemaMessages.SchemaFactory_Start_with_left_parenthesis, new Object[] {
+					fElement.getName() }));
 		}
 
 		boolean ortext = model.startsWith("(#PCDATA|"); //$NON-NLS-1$
@@ -265,17 +260,11 @@ public class SchemaFactory implements DeclHandler {
 		}
 	}
 
-	/**
-	 * @see org.xml.sax.ext.DeclHandler#externalEntityDecl(java.lang.String, java.lang.String, java.lang.String)
-	 */
 	@Override
 	public void externalEntityDecl(String name, String publicId, String systemId) {
 		// do nothing
 	}
 
-	/**
-	 * @see org.xml.sax.ext.DeclHandler#internalEntityDecl(java.lang.String, java.lang.String)
-	 */
 	@Override
 	public void internalEntityDecl(String name, String value) {
 		// do nothing

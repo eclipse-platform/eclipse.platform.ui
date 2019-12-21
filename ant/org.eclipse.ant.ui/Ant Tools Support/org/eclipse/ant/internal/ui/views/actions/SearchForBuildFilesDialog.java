@@ -395,9 +395,6 @@ public class SearchForBuildFilesDialog extends InputDialog {
 			pattern = Pattern.compile(input);
 		}
 
-		/**
-		 * @see org.eclipse.core.resources.IResourceProxyVisitor#visit(org.eclipse.core.resources.IResourceProxy)
-		 */
 		@Override
 		public boolean visit(IResourceProxy proxy) {
 			if (proxy.getType() == IResource.FILE) {

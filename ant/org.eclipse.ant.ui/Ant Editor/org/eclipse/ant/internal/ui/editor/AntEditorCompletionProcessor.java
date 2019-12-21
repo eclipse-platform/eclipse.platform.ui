@@ -353,41 +353,26 @@ public class AntEditorCompletionProcessor extends TemplateCompletionProcessor im
 		return combinedProposals;
 	}
 
-	/**
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#computeContextInformation(ITextViewer, int)
-	 */
 	@Override
 	public IContextInformation[] computeContextInformation(ITextViewer refViewer, int documentOffset) {
 		return new IContextInformation[0];
 	}
 
-	/**
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getCompletionProposalAutoActivationCharacters()
-	 */
 	@Override
 	public char[] getCompletionProposalAutoActivationCharacters() {
 		return autoActivationChars;
 	}
 
-	/**
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationAutoActivationCharacters()
-	 */
 	@Override
 	public char[] getContextInformationAutoActivationCharacters() {
 		return null;
 	}
 
-	/**
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getContextInformationValidator()
-	 */
 	@Override
 	public IContextInformationValidator getContextInformationValidator() {
 		return null;
 	}
 
-	/**
-	 * @see org.eclipse.jface.text.contentassist.IContentAssistProcessor#getErrorMessage()
-	 */
 	@Override
 	public String getErrorMessage() {
 		return errorMessage;

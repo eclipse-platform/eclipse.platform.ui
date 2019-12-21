@@ -29,7 +29,6 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.DirectoryDialog;
-import org.eclipse.ui.actions.SelectionListenerAction;
 
 /**
  * Edits the Ant Home classpath entry.
@@ -88,9 +87,6 @@ public class EditAntHomeEntryAction extends RuntimeClasspathAction {
 		getViewer().addEntries(new IRuntimeClasspathEntry[] { new AntHomeClasspathEntry(path) });
 	}
 
-	/**
-	 * @see SelectionListenerAction#updateSelection(IStructuredSelection)
-	 */
 	@Override
 	protected boolean updateSelection(IStructuredSelection selection) {
 		return true;

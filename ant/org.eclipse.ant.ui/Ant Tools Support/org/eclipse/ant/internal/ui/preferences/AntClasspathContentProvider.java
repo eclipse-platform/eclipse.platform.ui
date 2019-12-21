@@ -91,9 +91,6 @@ public class AntClasspathContentProvider implements ITreeContentProvider {
 		refresh();
 	}
 
-	/**
-	 * @see ITreeContentProvider#getParent(Object)
-	 */
 	@Override
 	public Object getParent(Object element) {
 		if (element instanceof ClasspathEntry) {
@@ -106,9 +103,6 @@ public class AntClasspathContentProvider implements ITreeContentProvider {
 		return null;
 	}
 
-	/**
-	 * @see ITreeContentProvider#hasChildren(Object)
-	 */
 	@Override
 	public boolean hasChildren(Object element) {
 		if (element instanceof ClasspathEntry) {

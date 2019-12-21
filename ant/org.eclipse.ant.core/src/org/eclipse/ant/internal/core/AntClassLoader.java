@@ -37,9 +37,6 @@ public class AntClassLoader extends URLClassLoader {
 		fPluginLoaders = pluginLoaders;
 	}
 
-	/*
-	 * @see java.net.URLClassLoader#findClass(java.lang.String)
-	 */
 	@Override
 	protected Class<?> findClass(String name) throws ClassNotFoundException {
 		Class<?> result = null;
@@ -83,9 +80,6 @@ public class AntClassLoader extends URLClassLoader {
 		}
 	}
 
-	/*
-	 * @see java.net.URLClassLoader#findResource(java.lang.String)
-	 */
 	@Override
 	public URL findResource(String name) {
 		if (fAllowPluginLoading || !(name.startsWith(ANT_URL_PREFIX))) {
@@ -122,9 +116,6 @@ public class AntClassLoader extends URLClassLoader {
 		return null;
 	}
 
-	/*
-	 * @see java.net.URLClassLoader#findResources(java.lang.String)
-	 */
 	@Override
 	public Enumeration<URL> findResources(String name) throws IOException {
 		ClassLoader originalClassLoader = Thread.currentThread().getContextClassLoader();

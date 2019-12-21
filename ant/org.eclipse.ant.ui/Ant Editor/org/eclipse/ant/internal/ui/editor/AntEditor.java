@@ -167,9 +167,6 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 			}
 		}
 
-		/*
-		 * @see org.eclipse.jface.viewers.ISelectionChangedListener#selectionChanged(org.eclipse.jface.viewers.SelectionChangedEvent)
-		 */
 		@Override
 		public void selectionChanged(SelectionChangedEvent event) {
 			AntModel model = getAntModel();
@@ -251,9 +248,6 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 					|| LinkedModeModel.hasInstalledModel(fDocument);
 		}
 
-		/*
-		 * @see Job#run(org.eclipse.core.runtime.IProgressMonitor)
-		 */
 		@Override
 		public IStatus run(IProgressMonitor progressMonitor) {
 
@@ -368,27 +362,17 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 			}
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.IDocumentListener#documentAboutToBeChanged(org.eclipse.jface.text.DocumentEvent)
-		 */
 		@Override
 		public void documentAboutToBeChanged(DocumentEvent event) {
 			if (fOccurrencesFinderJob != null)
 				fOccurrencesFinderJob.doCancel();
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.IDocumentListener#documentChanged(org.eclipse.jface.text.DocumentEvent)
-		 */
 		@Override
 		public void documentChanged(DocumentEvent event) {
 			// do nothing
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentAboutToBeChanged(org.eclipse.jface.text.IDocument,
-		 * org.eclipse.jface.text.IDocument)
-		 */
 		@Override
 		public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
 			if (oldInput == null)
@@ -397,9 +381,6 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 			oldInput.removeDocumentListener(this);
 		}
 
-		/*
-		 * @see org.eclipse.jface.text.ITextInputListener#inputDocumentChanged(org.eclipse.jface.text.IDocument, org.eclipse.jface.text.IDocument)
-		 */
 		@Override
 		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
 			if (newInput == null)
@@ -414,9 +395,6 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 	 * @since 3.1
 	 */
 	private class ActivationListener extends ShellAdapter {
-		/*
-		 * @see org.eclipse.swt.events.ShellAdapter#shellActivated(org.eclipse.swt.events.ShellEvent)
-		 */
 		@Override
 		public void shellActivated(ShellEvent e) {
 			if (fMarkOccurrenceAnnotations && isActivePart()) {
@@ -428,9 +406,6 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 			}
 		}
 
-		/*
-		 * @see org.eclipse.swt.events.ShellAdapter#shellDeactivated(org.eclipse.swt.events.ShellEvent)
-		 */
 		@Override
 		public void shellDeactivated(ShellEvent e) {
 			if (fMarkOccurrenceAnnotations && isActivePart())
@@ -738,9 +713,6 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 		super.handlePreferenceStoreChanged(event);
 	}
 
-	/*
-	 * @see org.eclipse.ui.editors.text.TextEditor#doSetInput(org.eclipse.ui.IEditorInput)
-	 */
 	@Override
 	protected void doSetInput(IEditorInput input) throws CoreException {
 		fAntModel = null;

@@ -41,9 +41,6 @@ public class RemoveProjectAction extends Action implements IUpdate {
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IAntUIHelpContextIds.REMOVE_PROJECT_ACTION);
 	}
 
-	/**
-	 * @see org.eclipse.jface.action.IAction#run()
-	 */
 	@Override
 	public void run() {
 		IStructuredSelection selection = (IStructuredSelection) view.getViewer().getSelection();
@@ -59,9 +56,6 @@ public class RemoveProjectAction extends Action implements IUpdate {
 		view.removeProjects(projectNodes);
 	}
 
-	/**
-	 * @see org.eclipse.ui.texteditor.IUpdate#update()
-	 */
 	@Override
 	public void update() {
 		IStructuredSelection selection = (IStructuredSelection) view.getViewer().getSelection();

@@ -194,17 +194,11 @@ public class Model implements IModel {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.ant.internal.ui.dtd.IModel#getQualifier()
-	 */
 	@Override
 	public String getQualifier() {
 		return fMin == 1 ? (fMax == UNBOUNDED ? "+" : IAntCoreConstants.EMPTY_STRING) : (fMax == UNBOUNDED ? "*" : "?"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
-	/**
-	 * @see org.eclipse.ant.internal.ui.dtd.IModel#toNfm()
-	 */
 	@Override
 	public Nfm toNfm() {
 		Nfm nfm = null;

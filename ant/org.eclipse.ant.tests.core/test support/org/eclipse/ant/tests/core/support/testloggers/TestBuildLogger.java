@@ -16,7 +16,6 @@ package org.eclipse.ant.tests.core.support.testloggers;
 import java.io.PrintStream;
 
 import org.apache.tools.ant.BuildEvent;
-import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.BuildLogger;
 import org.apache.tools.ant.Project;
 import org.eclipse.ant.core.AntSecurityException;
@@ -38,9 +37,6 @@ public class TestBuildLogger implements BuildLogger {
 	public TestBuildLogger() {
 	}
 
-	/**
-	 * @see org.apache.tools.ant.BuildLogger#setMessageOutputLevel(int)
-	 */
 	@Override
 	public void setMessageOutputLevel(int level) {
 		fMessageOutputLevel = level;
@@ -50,25 +46,16 @@ public class TestBuildLogger implements BuildLogger {
 		return fMessageOutputLevel;
 	}
 
-	/**
-	 * @see org.apache.tools.ant.BuildLogger#setEmacsMode(boolean)
-	 */
 	@Override
 	public void setEmacsMode(boolean emacsMode) {
 		// do nothing
 	}
 
-	/**
-	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public void buildStarted(BuildEvent event) {
 		AntTestChecker.getDefault().buildStarted(event.getProject().getName());
 	}
 
-	/**
-	 * @see org.apache.tools.ant.BuildListener#buildFinished(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public void buildFinished(BuildEvent event) {
 		handleException(event);
@@ -76,9 +63,6 @@ public class TestBuildLogger implements BuildLogger {
 		AntTestChecker.getDefault().buildFinished();
 	}
 
-	/**
-	 * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public void targetStarted(BuildEvent event) {
 		AntTestChecker.getDefault().targetStarted(event.getTarget().getName());
@@ -88,35 +72,23 @@ public class TestBuildLogger implements BuildLogger {
 		}
 	}
 
-	/**
-	 * @see org.apache.tools.ant.BuildListener#targetFinished(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public void targetFinished(BuildEvent event) {
 		handleException(event);
 		AntTestChecker.getDefault().targetFinished();
 	}
 
-	/**
-	 * @see org.apache.tools.ant.BuildListener#taskStarted(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public void taskStarted(BuildEvent event) {
 		AntTestChecker.getDefault().taskStarted(event.getTask().getTaskName());
 	}
 
-	/**
-	 * @see org.apache.tools.ant.BuildListener#taskFinished(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public void taskFinished(BuildEvent event) {
 		handleException(event);
 		AntTestChecker.getDefault().targetFinished();
 	}
 
-	/**
-	 * @see BuildListener#messageLogged(BuildEvent)
-	 */
 	@Override
 	public void messageLogged(BuildEvent event) {
 		if (event.getPriority() > getMessageOutputLevel()) {
@@ -134,9 +106,6 @@ public class TestBuildLogger implements BuildLogger {
 		return fOut;
 	}
 
-	/**
-	 * @see org.apache.tools.ant.BuildLogger#setErrorPrintStream(java.io.PrintStream)
-	 */
 	@Override
 	public void setErrorPrintStream(PrintStream err) {
 		// this build logger logs to "null" unless
@@ -148,9 +117,6 @@ public class TestBuildLogger implements BuildLogger {
 		}
 	}
 
-	/**
-	 * @see org.apache.tools.ant.BuildLogger#setOutputPrintStream(java.io.PrintStream)
-	 */
 	@Override
 	public void setOutputPrintStream(PrintStream output) {
 		// this build logger logs to "null" unless

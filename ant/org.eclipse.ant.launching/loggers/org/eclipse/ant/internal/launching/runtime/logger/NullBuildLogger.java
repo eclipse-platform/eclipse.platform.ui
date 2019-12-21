@@ -36,9 +36,6 @@ public class NullBuildLogger extends AbstractEclipseBuildLogger implements Build
 	 */
 	protected Throwable fHandledException = null;
 
-	/**
-	 * @see org.apache.tools.ant.BuildLogger#setMessageOutputLevel(int)
-	 */
 	@Override
 	public void setMessageOutputLevel(int level) {
 		fMessageOutputLevel = level;
@@ -48,25 +45,16 @@ public class NullBuildLogger extends AbstractEclipseBuildLogger implements Build
 		return fMessageOutputLevel;
 	}
 
-	/**
-	 * @see org.apache.tools.ant.BuildLogger#setEmacsMode(boolean)
-	 */
 	@Override
 	public void setEmacsMode(boolean emacsMode) {
 		fEmacsMode = emacsMode;
 	}
 
-	/**
-	 * @see org.apache.tools.ant.BuildListener#buildStarted(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public void buildStarted(BuildEvent event) {
 		// do nothing
 	}
 
-	/**
-	 * @see org.apache.tools.ant.BuildListener#buildFinished(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public void buildFinished(BuildEvent event) {
 		String message = handleException(event);
@@ -76,33 +64,21 @@ public class NullBuildLogger extends AbstractEclipseBuildLogger implements Build
 		fHandledException = null;
 	}
 
-	/**
-	 * @see org.apache.tools.ant.BuildListener#targetStarted(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public void targetStarted(BuildEvent event) {
 		// do nothing
 	}
 
-	/**
-	 * @see org.apache.tools.ant.BuildListener#targetFinished(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public void targetFinished(BuildEvent event) {
 		// do nothing
 	}
 
-	/**
-	 * @see org.apache.tools.ant.BuildListener#taskStarted(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public void taskStarted(BuildEvent event) {
 		// do nothing
 	}
 
-	/**
-	 * @see org.apache.tools.ant.BuildListener#taskFinished(org.apache.tools.ant.BuildEvent)
-	 */
 	@Override
 	public void taskFinished(BuildEvent event) {
 		// do nothing
@@ -121,9 +97,6 @@ public class NullBuildLogger extends AbstractEclipseBuildLogger implements Build
 		return fOut;
 	}
 
-	/**
-	 * @see org.apache.tools.ant.BuildLogger#setErrorPrintStream(java.io.PrintStream)
-	 */
 	@Override
 	public void setErrorPrintStream(PrintStream err) {
 		// this build logger logs to "null" unless
@@ -135,9 +108,6 @@ public class NullBuildLogger extends AbstractEclipseBuildLogger implements Build
 		}
 	}
 
-	/**
-	 * @see org.apache.tools.ant.BuildLogger#setOutputPrintStream(java.io.PrintStream)
-	 */
 	@Override
 	public void setOutputPrintStream(PrintStream output) {
 		// this build logger logs to "null" unless

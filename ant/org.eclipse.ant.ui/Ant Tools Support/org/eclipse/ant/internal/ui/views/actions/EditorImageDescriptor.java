@@ -56,9 +56,6 @@ public class EditorImageDescriptor extends ImageDescriptor {
 		return createImage();
 	}
 
-	/**
-	 * @see org.eclipse.jface.resource.ImageDescriptor#getImageData()
-	 */
 	@Override
 	public ImageData getImageData() {
 

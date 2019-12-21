@@ -33,25 +33,16 @@ public class AntStreamsProxy implements IStreamsProxy {
 	private AntStreamMonitor fVerboseMonitor = new AntStreamMonitor();
 	private AntStreamMonitor fWarningMonitor = new AntStreamMonitor();
 
-	/**
-	 * @see org.eclipse.debug.core.model.IStreamsProxy#getErrorStreamMonitor()
-	 */
 	@Override
 	public IStreamMonitor getErrorStreamMonitor() {
 		return fErrorMonitor;
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.model.IStreamsProxy#getOutputStreamMonitor()
-	 */
 	@Override
 	public IStreamMonitor getOutputStreamMonitor() {
 		return fOutputMonitor;
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.model.IStreamsProxy#write(java.lang.String)
-	 */
 	@Override
 	public void write(String input) {
 		// do nothing

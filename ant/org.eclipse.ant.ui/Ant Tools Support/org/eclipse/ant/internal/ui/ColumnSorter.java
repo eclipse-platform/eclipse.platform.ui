@@ -89,9 +89,6 @@ public abstract class ColumnSorter extends ViewerComparator {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.jface.viewers.ViewerComparator#compare(org.eclipse.jface.viewers.Viewer, java.lang.Object, java.lang.Object)
-	 */
 	@Override
 	public int compare(Viewer viewer, Object e1, Object e2) {
 		String text1 = getCompareText(e1, this.columnidx);

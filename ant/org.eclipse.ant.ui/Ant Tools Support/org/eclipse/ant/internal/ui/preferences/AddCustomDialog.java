@@ -201,9 +201,6 @@ public class AddCustomDialog extends StatusDialog {
 			sourceNameField.add(entry.getLabel());
 		}
 		sourceNameField.addKeyListener(new KeyAdapter() {
-			/*
-			 * @see KeyListener.keyPressed
-			 */
 			@Override
 			public void keyPressed(KeyEvent e) {
 				// If there has been a key pressed then mark as dirty
@@ -212,9 +209,6 @@ public class AddCustomDialog extends StatusDialog {
 		});
 
 		sourceNameField.addFocusListener(new FocusAdapter() {
-			/*
-			 * @see FocusListener.focusLost(FocusEvent)
-			 */
 			@Override
 			public void focusLost(FocusEvent e) {
 				// Clear the flag to prevent constant update

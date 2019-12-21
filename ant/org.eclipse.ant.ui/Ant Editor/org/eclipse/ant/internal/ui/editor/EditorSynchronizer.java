@@ -40,25 +40,16 @@ public class EditorSynchronizer implements ILinkedModeListener {
 		fEditor.setInLinkedMode(true, fWasOccurrencesOn);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.link.ILinkedModeListener#left(org.eclipse.jface.text.link.LinkedModeModel, int)
-	 */
 	@Override
 	public void left(LinkedModeModel environment, int flags) {
 		fEditor.setInLinkedMode(false, fWasOccurrencesOn);
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.link.ILinkedModeListener#suspend(org.eclipse.jface.text.link.LinkedModeModel)
-	 */
 	@Override
 	public void suspend(LinkedModeModel environment) {
 		// do nothing
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.link.ILinkedModeListener#resume(org.eclipse.jface.text.link.LinkedModeModel, int)
-	 */
 	@Override
 	public void resume(LinkedModeModel environment, int flags) {
 		// do nothing

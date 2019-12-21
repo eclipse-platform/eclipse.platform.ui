@@ -13,9 +13,10 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.dtd.util;
 
-import com.ibm.icu.text.MessageFormat;
 import java.util.Comparator;
 import java.util.Iterator;
+
+import com.ibm.icu.text.MessageFormat;
 
 /**
  * @author Bob Foster
@@ -146,9 +147,6 @@ public class SortedMap implements FactoryObject {
 			fIndex = -1;
 		}
 
-		/**
-		 * @see java.util.Iterator#hasNext()
-		 */
 		@Override
 		public boolean hasNext() {
 			Object[] array = SortedMap.this.fHolder.getKeys();
@@ -157,9 +155,6 @@ public class SortedMap implements FactoryObject {
 			return fIndex + 1 < array.length;
 		}
 
-		/**
-		 * @see java.util.Iterator#next()
-		 */
 		@Override
 		public Object next() {
 			Object[] array = SortedMap.this.fHolder.getKeys();
@@ -168,9 +163,6 @@ public class SortedMap implements FactoryObject {
 			return array[++fIndex];
 		}
 
-		/**
-		 * @see java.util.Iterator#remove()
-		 */
 		@Override
 		public void remove() {
 			SortedMap.this.remove(fIndex);
@@ -182,7 +174,8 @@ public class SortedMap implements FactoryObject {
 	public void remove(int i) {
 		Object[] values = fHolder.getValues();
 		if (values == null) {
-			throw new IllegalArgumentException(MessageFormat.format(AntDTDUtilMessages.SortedMap_remove__0___in_empty_map_2, new Object[] { Integer.toString(i) }));
+			throw new IllegalArgumentException(MessageFormat.format(AntDTDUtilMessages.SortedMap_remove__0___in_empty_map_2, new Object[] {
+					Integer.toString(i) }));
 		}
 		fSet.remove(i);
 		Object[] tmp = new Object[values.length - 1];

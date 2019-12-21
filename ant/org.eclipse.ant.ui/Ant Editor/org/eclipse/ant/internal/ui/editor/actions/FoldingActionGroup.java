@@ -86,9 +86,11 @@ public class FoldingActionGroup extends ActionGroup {
 	/**
 	 * Returns <code>true</code> if the group is enabled.
 	 * 
-	 * <pre>{@code
+	 * <pre>
+	 * {@code
 	 * Invariant: isEnabled() <=> fViewer and all actions are != null.
-	 * }</pre>
+	 * }
+	 * </pre>
 	 * 
 	 * @return <code>true</code> if the group is enabled
 	 */
@@ -96,9 +98,6 @@ public class FoldingActionGroup extends ActionGroup {
 		return fViewer != null;
 	}
 
-	/*
-	 * @see org.eclipse.ui.actions.ActionGroup#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (isEnabled()) {
@@ -121,9 +120,6 @@ public class FoldingActionGroup extends ActionGroup {
 		}
 	}
 
-	/*
-	 * @see org.eclipse.ui.actions.ActionGroup#updateActionBars()
-	 */
 	@Override
 	public void updateActionBars() {
 		update();

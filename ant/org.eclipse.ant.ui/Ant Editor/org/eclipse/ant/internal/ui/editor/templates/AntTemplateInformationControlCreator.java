@@ -26,9 +26,6 @@ public class AntTemplateInformationControlCreator implements IInformationControl
 	public AntTemplateInformationControlCreator() {
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlCreator#createInformationControl(org.eclipse.swt.widgets.Shell)
-	 */
 	@Override
 	public IInformationControl createInformationControl(Shell parent) {
 		fControl = new AntSourceViewerInformationControl(parent);
@@ -36,17 +33,11 @@ public class AntTemplateInformationControlCreator implements IInformationControl
 		return fControl;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlCreatorExtension#canReuse(org.eclipse.jface.text.IInformationControl)
-	 */
 	@Override
 	public boolean canReuse(IInformationControl control) {
 		return fControl == control && fControl != null;
 	}
 
-	/*
-	 * @see org.eclipse.jface.text.IInformationControlCreatorExtension#canReplace(org.eclipse.jface.text.IInformationControlCreator)
-	 */
 	@Override
 	public boolean canReplace(IInformationControlCreator creator) {
 		return (creator != null && getClass() == creator.getClass());

@@ -43,9 +43,6 @@ public class AntVariableResolver extends TemplateVariableResolver {
 		}
 	};
 
-	/*
-	 * @see org.eclipse.jface.text.templates.TemplateVariableResolver#resolveAll(org.eclipse.jface.text.templates.TemplateContext)
-	 */
 	@Override
 	protected String[] resolveAll(TemplateContext context) {
 		String[] proposals = new String[] { "${srcDir}", "${dstDir}" }; //$NON-NLS-1$ //$NON-NLS-2$

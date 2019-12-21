@@ -22,9 +22,6 @@ import org.eclipse.debug.ui.ILaunchConfigurationDialog;
  */
 public class RunAntStatusHandler implements IStatusHandler {
 
-	/**
-	 * @see org.eclipse.debug.core.IStatusHandler#handleStatus(org.eclipse.core.runtime.IStatus, java.lang.Object)
-	 */
 	@Override
 	public Object handleStatus(IStatus status, Object source) {
 		ILaunchConfigurationDialog dialog = (ILaunchConfigurationDialog) source;

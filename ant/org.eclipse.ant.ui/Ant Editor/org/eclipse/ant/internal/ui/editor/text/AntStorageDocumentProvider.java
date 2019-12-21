@@ -24,9 +24,6 @@ import org.eclipse.ui.editors.text.StorageDocumentProvider;
  */
 public class AntStorageDocumentProvider extends StorageDocumentProvider {
 
-	/*
-	 * @see org.eclipse.ui.editors.text.StorageDocumentProvider#setupDocument(java.lang.Object, org.eclipse.jface.text.IDocument)
-	 */
 	@Override
 	protected void setupDocument(Object element, IDocument document) {
 		if (document != null) {

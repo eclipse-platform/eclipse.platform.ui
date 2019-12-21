@@ -20,9 +20,7 @@ import java.util.List;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
-
 import org.eclipse.jface.resource.ImageDescriptor;
-
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.IWorkbenchAdapter;
@@ -198,17 +196,11 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 		this.populated = true;
 	}
 
-	/**
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getChildren(java.lang.Object)
-	 */
 	@Override
 	public Object[] getChildren(Object o) {
 		return getFolders().toArray();
 	}
 
-	/**
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getImageDescriptor(java.lang.Object)
-	 */
 	@Override
 	public ImageDescriptor getImageDescriptor(Object object) {
 		if (isDirectory()) {
@@ -217,17 +209,11 @@ class MinimizedFileSystemElement implements IWorkbenchAdapter, IAdaptable {
 		return PlatformUI.getWorkbench().getEditorRegistry().getImageDescriptor(name);
 	}
 
-	/**
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getLabel(java.lang.Object)
-	 */
 	@Override
 	public String getLabel(Object o) {
 		return name;
 	}
 
-	/**
-	 * @see org.eclipse.ui.model.IWorkbenchAdapter#getParent(java.lang.Object)
-	 */
 	@Override
 	public Object getParent(Object o) {
 		return parent;

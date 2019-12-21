@@ -26,25 +26,16 @@ public class AntStreamMonitor implements IFlushableStreamMonitor {
 	private ListenerList<IStreamListener> fListeners = new ListenerList<>(1);
 	private boolean fBuffered = true;
 
-	/**
-	 * @see org.eclipse.debug.core.model.IStreamMonitor#addListener(org.eclipse.debug.core.IStreamListener)
-	 */
 	@Override
 	public void addListener(IStreamListener listener) {
 		fListeners.add(listener);
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.model.IStreamMonitor#getContents()
-	 */
 	@Override
 	public String getContents() {
 		return fContents.toString();
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.model.IStreamMonitor#removeListener(org.eclipse.debug.core.IStreamListener)
-	 */
 	@Override
 	public void removeListener(IStreamListener listener) {
 		fListeners.remove(listener);
@@ -64,25 +55,16 @@ public class AntStreamMonitor implements IFlushableStreamMonitor {
 		}
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.model.IFlushableStreamMonitor#flushContents()
-	 */
 	@Override
 	public void flushContents() {
 		fContents.setLength(0);
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.model.IFlushableStreamMonitor#isBuffered()
-	 */
 	@Override
 	public boolean isBuffered() {
 		return fBuffered;
 	}
 
-	/**
-	 * @see org.eclipse.debug.core.model.IFlushableStreamMonitor#setBuffered(boolean)
-	 */
 	@Override
 	public void setBuffered(boolean buffer) {
 		fBuffered = buffer;

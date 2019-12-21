@@ -15,7 +15,6 @@ package org.eclipse.ant.internal.ui.preferences;
 
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.core.runtime.IStatus;
-
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.graphics.Color;
@@ -85,9 +84,6 @@ public class MessageLine extends CLabel {
 		setBackground(fNormalMsgAreaBackground);
 	}
 
-	/*
-	 * @see Widget#dispose()
-	 */
 	@Override
 	public void dispose() {
 		if (fErrorMsgAreaBackground != null) {

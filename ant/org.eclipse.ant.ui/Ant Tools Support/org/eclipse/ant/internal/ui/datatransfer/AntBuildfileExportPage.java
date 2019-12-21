@@ -75,9 +75,6 @@ public class AntBuildfileExportPage extends WizardPage {
 		setDescription(DataTransferMessages.AntBuildfileExportPage_1);
 	}
 
-	/*
-	 * @see IDialogPage#createControl(Composite)
-	 */
 	@Override
 	public void createControl(Composite parent) {
 

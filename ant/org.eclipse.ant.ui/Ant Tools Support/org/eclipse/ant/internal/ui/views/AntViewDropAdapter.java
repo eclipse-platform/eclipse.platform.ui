@@ -39,9 +39,6 @@ public class AntViewDropAdapter extends DropTargetAdapter {
 		this.view = view;
 	}
 
-	/**
-	 * @see org.eclipse.swt.dnd.DropTargetListener#drop(org.eclipse.swt.dnd.DropTargetEvent)
-	 */
 	@Override
 	public void drop(DropTargetEvent event) {
 		Object data = event.data;
