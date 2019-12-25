@@ -25,13 +25,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * Snippet -1.
- *
- * Hello, no databinding. Bind changes in a GUI to a Model object but don't
- * worry about propogating changes from the Model to the GUI -- using *manual*
- * code. (0xffffffff is -1 in 32-bit two's complement binary arithmatic)
+ * Snippet which updates the GUI without any databinding. Bind changes in a GUI
+ * to a Model object but don't worry about propagating changes from the Model to
+ * the GUI -- using *manual* code.
  */
-public class Snippet0xffffffff {
+public class Snippet_NoDatabinding {
 	public static void main(String[] args) {
 		ViewModel viewModel = new ViewModel();
 		Shell shell = new View(viewModel).createShell();
