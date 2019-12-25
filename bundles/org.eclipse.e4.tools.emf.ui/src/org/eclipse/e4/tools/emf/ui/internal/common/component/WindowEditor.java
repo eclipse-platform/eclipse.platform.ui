@@ -366,16 +366,20 @@ public class WindowEditor extends AbstractComponentEditor<MWindow> {
 		}
 
 		E4Properties.mainMenu().observe(window).addValueChangeListener(event -> {
+			if (createRemoveMainMenu.isDisposed() || getMaster().isDisposed()) {
+				return;
+			}
+
 			if (event.diff.getOldValue() != null) {
 				list.remove(event.diff.getOldValue());
-				if (getMaster().getValue() == element && !createRemoveMainMenu.isDisposed()) {
+				if (getMaster().getValue() == element) {
 					createRemoveMainMenu.setSelection(false);
 				}
 			}
 
 			if (event.diff.getNewValue() != null) {
 				list.add(0, event.diff.getNewValue());
-				if (getMaster().getValue() == element && !createRemoveMainMenu.isDisposed()) {
+				if (getMaster().getValue() == element) {
 					createRemoveMainMenu.setSelection(true);
 				}
 			}
