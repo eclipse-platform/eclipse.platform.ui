@@ -71,7 +71,7 @@ import org.eclipse.swt.widgets.Text;
  * <code>AppModelId.java</code>.
  */
 public class ExportIdsHandler {
-	public static final String DEFAULT_APPMODELID_CLASSNAME = "AppModelId";
+	public static final String DEFAULT_APPMODELID_CLASSNAME = "AppModelId"; //$NON-NLS-1$
 
 	@Execute
 	public void execute(@Named(IServiceConstants.ACTIVE_SHELL) Shell shell, @Translation Messages messages, IModelResource resource, IResourcePool pool, IProject project) {

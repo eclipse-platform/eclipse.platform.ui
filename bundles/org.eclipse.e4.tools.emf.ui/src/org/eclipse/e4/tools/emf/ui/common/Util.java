@@ -327,7 +327,7 @@ public class Util {
 						IResource r = rd.getResource();
 						if (r instanceof IFile)
 						{
-							if ("e4xmi".equals(((IFile) r).getFileExtension())) {
+							if ("e4xmi".equals(((IFile) r).getFileExtension())) { //$NON-NLS-1$
 								modelResourceSet = null;
 								break;
 							}
@@ -428,7 +428,7 @@ public class Util {
 	 */
 	public static boolean referenceIsModelFragmentCompliant(EReference r) {
 		String t = r.getEReferenceType().getName();
-		return (r.isContainment() && !t.equals("StringToStringMap") && !t.equals("StringToObjectMap"));
+		return (r.isContainment() && !t.equals("StringToStringMap") && !t.equals("StringToObjectMap")); //$NON-NLS-1$ //$NON-NLS-2$
 
 	}
 

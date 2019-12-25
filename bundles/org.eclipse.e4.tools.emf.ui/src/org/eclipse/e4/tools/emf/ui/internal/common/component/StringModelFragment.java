@@ -229,7 +229,7 @@ public class StringModelFragment extends AbstractComponentEditor<MStringModelFra
 		}
 
 		// known ID for application are directly filtered.
-		if ("xpath:/".equals(parentElementId) || "org.eclipse.e4.legacy.ide.application".equals(parentElementId)) {
+		if ("xpath:/".equals(parentElementId) || "org.eclipse.e4.legacy.ide.application".equals(parentElementId)) { //$NON-NLS-1$//$NON-NLS-2$
 			return ApplicationPackageImpl.eINSTANCE.getApplication();
 		}
 
@@ -237,7 +237,7 @@ public class StringModelFragment extends AbstractComponentEditor<MStringModelFra
 		// set... this resource set is cached by Util...
 		ResourceSet resourceSet = Util.getModelElementResources();
 
-		String xpath = parentElementId.startsWith("xpath:") ? parentElementId.substring(6) : null;
+		String xpath = parentElementId.startsWith("xpath:") ? parentElementId.substring(6) : null; //$NON-NLS-1$
 
 		for (final Resource res : resourceSet.getResources()) {
 			final TreeIterator<EObject> it = EcoreUtil.getAllContents(res, true);
@@ -382,8 +382,8 @@ public class StringModelFragment extends AbstractComponentEditor<MStringModelFra
 
 			KeyStroke keyStroke;
 			try {
-				char[] autoactivationChar = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.".toCharArray();
-				keyStroke = KeyStroke.getInstance("Ctrl+Space");
+				char[] autoactivationChar = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ.".toCharArray(); //$NON-NLS-1$
+				keyStroke = KeyStroke.getInstance("Ctrl+Space"); //$NON-NLS-1$
 				ContentProposalAdapter adapter = new ContentProposalAdapter(featureText, new TextContentAdapter(),
 						new StringModelFragmentProposalProvider(this, featureText), keyStroke, autoactivationChar);
 				adapter.setProposalAcceptanceStyle(ContentProposalAdapter.PROPOSAL_REPLACE);
@@ -479,12 +479,12 @@ public class StringModelFragment extends AbstractComponentEditor<MStringModelFra
 					if (Util.referenceIsModelFragmentCompliant(r) && r.getName().startsWith(text.getText())) {
 						String content = r.getName();
 						sb.setLength(0);
-						sb.append(content).append(": ");
+						sb.append(content).append(": "); //$NON-NLS-1$
 						final EClassifier type = ModelUtils.getTypeArgument(this.fragment.getSelectedContainer(),
 								r.getEGenericType());
 						if (r.isMany()) {
 							// List<Container>
-							sb.append("List<").append(type.getName()).append(">");
+							sb.append("List<").append(type.getName()).append(">"); //$NON-NLS-1$ //$NON-NLS-2$
 						} else {
 							// TypeOfTheClass
 							sb.append(type.getName());
@@ -505,6 +505,7 @@ public class StringModelFragment extends AbstractComponentEditor<MStringModelFra
 
 	}
 
+	@Override
 	public void dispose() {
 		if (composite != null) {
 			composite.dispose();
@@ -642,7 +643,7 @@ public class StringModelFragment extends AbstractComponentEditor<MStringModelFra
 			// bound to feature name
 
 			// We must manage especially snippets (see bug 531219) No other solution ...
-			if ("snippets".equals(featurename)) {
+			if ("snippets".equals(featurename)) { //$NON-NLS-1$
 				result = new ArrayList<>();
 				for (EClass c : VSnippetsEditor.SNIPPET_CHILDREN) {
 					result.add(new FeatureClass(c.getName(), c));
@@ -688,7 +689,7 @@ public class StringModelFragment extends AbstractComponentEditor<MStringModelFra
 
 	// Fix bug 531054 -> This code could be removed when Dialog and WizardDialog
 	// will disappear from model !
-	static private final List<String> excludeNames = Arrays.asList("Dialog", "WizardDialog");
+	static private final List<String> excludeNames = Arrays.asList("Dialog", "WizardDialog"); //$NON-NLS-1$ //$NON-NLS-2$
 
 	// Fix bug 531054 -> This code could be removed when DIalog and WizardDialog
 	// will be definitively removed from code (after 2020).

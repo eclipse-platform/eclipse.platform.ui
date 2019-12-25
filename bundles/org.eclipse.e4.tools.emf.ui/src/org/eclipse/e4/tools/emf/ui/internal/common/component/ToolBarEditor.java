@@ -201,9 +201,10 @@ public class ToolBarEditor extends AbstractComponentEditor<MToolBar> {
 			pickList.setSelection(new StructuredSelection(defaultStruct));
 		}
 
-		ControlFactory.createCheckBox(parent, "To Be Rendered", getMaster(), context,
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context,
 				WidgetProperties.buttonSelection(), E4Properties.toBeRendered(getEditingDomain()));
-		ControlFactory.createCheckBox(parent, "Visible", getMaster(), context, WidgetProperties.buttonSelection(),
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_Visible, getMaster(), context,
+				WidgetProperties.buttonSelection(),
 				E4Properties.visible(getEditingDomain()));
 
 		item = new CTabItem(folder, SWT.NONE);

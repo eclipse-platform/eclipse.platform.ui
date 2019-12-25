@@ -272,7 +272,7 @@ public class WindowEditor extends AbstractComponentEditor<MWindow> {
 			createRemoveMainMenu.setLayoutData(new GridData(GridData.BEGINNING, GridData.CENTER, false, false, 2, 1));
 		}
 
-		ControlFactory.createCheckBox(parent, "To Be Rendered", getMaster(), context,
+		ControlFactory.createCheckBox(parent, Messages.ModelTooling_UIElement_ToBeRendered, getMaster(), context,
 				WidgetProperties.buttonSelection(), E4Properties.toBeRendered(getEditingDomain()));
 		ControlFactory.createCheckBox(parent, "Visible", getMaster(), context, WidgetProperties.buttonSelection(), //$NON-NLS-1$
 				E4Properties.visible(getEditingDomain()));

@@ -13,32 +13,39 @@ import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.emf.databinding.EMFUpdateValueStrategy;
-import org.eclipse.emf.databinding.internal.EMFValueProperty;
+import org.eclipse.emf.databinding.IEMFValueProperty;
+import org.eclipse.emf.databinding.edit.IEMFEditValueProperty;
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EDataType;
 import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.edit.command.SetCommand;
 
 /**
- * An updater to deal with unsettable primitive attributes on EMF objects. EMF's {@link EMFEditValueProperty}/
- * {@link EMFValueProperty} does an eGet to
+ * An updater to deal with unsettable primitive attributes on EMF objects. EMF's
+ * {@link IEMFEditValueProperty}/ {@link IEMFValueProperty} does an eGet to
  * retrieve the attribute value, with no regard as to whether the attribute is
  * unset. If the attribute is unset, then eGet() will return the default value.
  *
  * This implementation makes several assumptions:
  * <ul>
- * <li>Assumes that these unsettable attributes have a nonsensical default value that can be used to detect an eGet of
- * an unset attribute.</li>
- * <li>Assumes that we are using EMFEditObservables so that changes are described using {@link SetCommand}, such that we
- * can provide {@link SetCommand#UNSET_VALUE} to remove a value.</li>
+ * <li>Assumes that these unsettable attributes have a nonsensical default value
+ * that can be used to detect an eGet of an unset attribute.</li>
+ * <li>Assumes that we are using EMFEditObservables so that changes are
+ * described using {@link SetCommand}, such that we can provide
+ * {@link SetCommand#UNSET_VALUE} to remove a value.</li>
  * </ul>
  * See the following discussions for background details:
  * <ul>
- * <li><a href="http://www.eclipse.org/forums/index.php?t=msg&th=165026/">Dynamic eGet for unsettable attributes</a></li>
- * <li><a href="http://www.eclipsezone.com/eclipse/forums/t114431.html?start=15"> Creating a ComboViewer for an
- * EReference</a> particularly the later postings from Tom Schindl on handling null values</li>
- * <li><a href="http://www.eclipse.org/forums/index.php?t=msg&th=174967/"> ObservableMapCellLabelProvider doesn't work
- * well with unsettable features</a></li>
+ * <li><a href=
+ * "http://www.eclipse.org/forums/index.php?t=msg&th=165026/">Dynamic eGet for
+ * unsettable attributes</a></li>
+ * <li><a href=
+ * "http://www.eclipsezone.com/eclipse/forums/t114431.html?start=15"> Creating a
+ * ComboViewer for an EReference</a> particularly the later postings from Tom
+ * Schindl on handling null values</li>
+ * <li><a href="http://www.eclipse.org/forums/index.php?t=msg&th=174967/">
+ * ObservableMapCellLabelProvider doesn't work well with unsettable
+ * features</a></li>
  * </ul>
  */
 public class UnsettableUpdateValueStrategy extends EMFUpdateValueStrategy {
@@ -90,7 +97,7 @@ public class UnsettableUpdateValueStrategy extends EMFUpdateValueStrategy {
 						}
 						// If the value
 						if (fromObject == SetCommand.UNSET_VALUE || fromObject == null
-							|| fromObject.equals(eAttribute.getDefaultValue())) {
+								|| fromObject.equals(eAttribute.getDefaultValue())) {
 							return ""; //$NON-NLS-1$
 						}
 						return eFactory.convertToString(eDataType, fromObject);

@@ -577,6 +577,7 @@ public class ContributionDataFile implements IFile {
 	@Override
 	public InputStream getContents() throws CoreException {
 		URL url;
+		@SuppressWarnings("resource")
 		ZipFile zip = null;
 		try {
 			if (path.getFileExtension().equals("jar")) { //$NON-NLS-1$
@@ -595,7 +596,7 @@ public class ContributionDataFile implements IFile {
 				ret = url.openStream();
 			} catch (final Exception e) {
 				return new BufferedInputStream(new FileInputStream(data.installLocation
-					+ "/" + data.resourceRelativePath)); //$NON-NLS-1$
+						+ "/" + data.resourceRelativePath)); //$NON-NLS-1$
 			}
 			return ret;
 		} catch (final MalformedURLException e) {

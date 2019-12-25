@@ -257,7 +257,22 @@ public abstract class AbstractComponentEditor<M> {
 	 * @return
 	 */
 	private ImageDescriptor getImageDescriptorFromUri(String uri) {
+		ImageDescriptor result = null;
 
+		URL url = findPlatformImage(uri);
+
+		if (url != null) {
+			ImageDescriptor imageDesc = ImageDescriptor.createFromURL(url);
+			Image scaled = Util.scaleImage(imageDesc.createImage(), MAX_IMG_SIZE);
+			createdImages.add(scaled);
+			result = ImageDescriptor.createFromImage(scaled);
+		}
+
+		return result;
+	}
+
+	@SuppressWarnings("resource")
+	private static URL findPlatformImage(String uri) {
 		// SEVERAL CASES are possible here :
 		// * uri = platform:/plugin/myplugin/icons/image.gif
 		// * uri = platform:/resource/myplugin/icons/image.gif
@@ -270,7 +285,6 @@ public abstract class AbstractComponentEditor<M> {
 		// case, we must rather use platform:/resource/.
 		// Used ideas from the ImageTooltip code around line 70 to fix this
 
-		ImageDescriptor result = null;
 		InputStream stream = null;
 		URL url = null;
 
@@ -312,15 +326,7 @@ public abstract class AbstractComponentEditor<M> {
 			} catch (final IOException ex) {
 			}
 		}
-
-		if (url != null) {
-			ImageDescriptor imageDesc = ImageDescriptor.createFromURL(url);
-			Image scaled = Util.scaleImage(imageDesc.createImage(), MAX_IMG_SIZE);
-			createdImages.add(scaled);
-			result = ImageDescriptor.createFromImage(scaled);
-		}
-
-		return result;
+		return url;
 	}
 
 	public Image getImage(Object element) {

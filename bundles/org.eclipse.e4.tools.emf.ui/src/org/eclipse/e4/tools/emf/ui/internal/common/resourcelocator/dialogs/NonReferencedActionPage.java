@@ -281,7 +281,7 @@ public class NonReferencedActionPage extends WizardPage {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					if (btnUseAnyway.getSelection()) {
-						setAction(NonReferencedAction.USE_ANYWAY, () -> context.set("resolvedFile", file));
+						setAction(NonReferencedAction.USE_ANYWAY, () -> context.set("resolvedFile", file)); //$NON-NLS-1$
 					}
 				}
 			});
@@ -409,6 +409,7 @@ public class NonReferencedActionPage extends WizardPage {
 
 		// Get source bundle version from manifest
 		String version = null;
+		@SuppressWarnings("resource")
 		InputStream srcStream = null;
 		try {
 			Manifest manifestSource;

@@ -447,6 +447,7 @@ public class NonReferencedResourceDialog extends TitleAreaDialog {
 
 		// Get source bundle version from manifest
 		String version = null;
+		@SuppressWarnings("resource")
 		InputStream srcStream = null;
 		try {
 			Manifest manifestSource;

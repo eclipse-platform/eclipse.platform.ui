@@ -42,7 +42,7 @@ public interface IEditorFeature {
 
 		@Override
 		public String toString() {
-			return "FeatureClass : " + label;
+			return "FeatureClass : " + label; //$NON-NLS-1$
 		}
 	}
 
