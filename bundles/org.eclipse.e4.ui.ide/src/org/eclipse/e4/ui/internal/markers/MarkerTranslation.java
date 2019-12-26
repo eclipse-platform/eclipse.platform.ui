@@ -18,6 +18,9 @@ import java.util.function.Consumer;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.ILog;
+import org.eclipse.core.runtime.Platform;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * An adapter that retrieves attribute values from a marker instance to be shown
@@ -35,15 +38,22 @@ import org.eclipse.core.runtime.CoreException;
  *
  * @see IMarker
  */
-public final class MarkerAdapter {
+public final class MarkerTranslation {
 
 	private final Consumer<CoreException> reporter;
+
+	/**
+	 * Use {@link ILog} of enclosing bundle as {@link CoreException} consumer
+	 */
+	public MarkerTranslation() {
+		this(e -> Platform.getLog(FrameworkUtil.getBundle(MarkerTranslation.class)).log(e.getStatus()));
+	}
 
 	/**
 	 *
 	 * @param reporter for a {@link CoreException} if any of them will be thrown
 	 */
-	public MarkerAdapter(Consumer<CoreException> reporter) {
+	public MarkerTranslation(Consumer<CoreException> reporter) {
 		Objects.requireNonNull(reporter);
 		this.reporter = reporter;
 	}

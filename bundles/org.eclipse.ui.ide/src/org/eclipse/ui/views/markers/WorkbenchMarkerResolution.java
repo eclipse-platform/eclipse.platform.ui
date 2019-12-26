@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,14 +10,15 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 558623
  *******************************************************************************/
 
 package org.eclipse.ui.views.markers;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.e4.ui.internal.markers.MarkerTranslation;
 import org.eclipse.ui.IMarkerResolution2;
-import org.eclipse.ui.views.markers.internal.Util;
 
 /**
  * WorkbenchMarkerResolution is the resolution that can be grouped
@@ -30,7 +31,7 @@ public abstract class WorkbenchMarkerResolution implements IMarkerResolution2 {
 	/**
 	 * Iterate through the list of supplied markers. Return any that can also have
 	 * the receiver applied to them.
-	 * 
+	 *
 	 * @param markers the markers to check
 	 * @return IMarker[]
 	 */
@@ -45,9 +46,9 @@ public abstract class WorkbenchMarkerResolution implements IMarkerResolution2 {
 	 * @param monitor The monitor to report progress
 	 */
 	public void run(IMarker[] markers, IProgressMonitor monitor) {
-
+		MarkerTranslation markerAdapter = new MarkerTranslation();
 		for (IMarker marker : markers) {
-			monitor.subTask(Util.getProperty(IMarker.MESSAGE, marker));
+			monitor.subTask(markerAdapter.message(marker).orElse("")); //$NON-NLS-1$
 			run(marker);
 		}
 	}
