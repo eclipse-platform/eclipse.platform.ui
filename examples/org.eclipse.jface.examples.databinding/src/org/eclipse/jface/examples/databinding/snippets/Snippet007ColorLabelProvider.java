@@ -50,7 +50,6 @@ import org.eclipse.swt.widgets.TableColumn;
  * to provide colors.
  */
 public class Snippet007ColorLabelProvider {
-	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		final List<Person> persons = new ArrayList<>();
 		persons.add(new Person("Fiona Apple", Person.FEMALE));

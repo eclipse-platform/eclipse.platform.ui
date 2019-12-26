@@ -83,7 +83,6 @@ public class SnippetComputedValueViewerSelection {
 					// Since an IObservableList and a ObservableListContentProvider is used the
 					// input list can simply be modified and automatically gets reflected in the
 					// viewer
-					@SuppressWarnings("unchecked")
 					List<String> list = tableViewer.getStructuredSelection().toList();
 					input.removeAll(list);
 				}
