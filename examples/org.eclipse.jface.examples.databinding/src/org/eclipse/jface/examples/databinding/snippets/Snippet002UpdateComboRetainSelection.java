@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.beans.IBeanValueProperty;
 import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.IObservableList;
@@ -129,7 +130,7 @@ public class Snippet002UpdateComboRetainSelection {
 	static class View {
 		private ViewModel viewModel;
 		/**
-		 * used to make a new choices array unique
+		 * This field is used to make a new choices array unique.
 		 */
 		static int count;
 
@@ -168,9 +169,11 @@ public class Snippet002UpdateComboRetainSelection {
 
 			// This demonstrates a problem with Java generics:
 			// It is hard to produce a class object with type List<String>
-			IObservableList<String> list = MasterDetailObservables.detailList(BeanProperties
-					.value(ViewModel.class, "choices", (Class<List<String>>) (Object) List.class).observe(viewModel),
-					getListDetailFactory(), String.class);
+			IBeanValueProperty<ViewModel, List<String>> choices = BeanProperties
+					.value(ViewModel.class, "choices", (Class<List<String>>) (Object) List.class);
+
+			IObservableList<String> list = MasterDetailObservables.detailList(choices.observe(viewModel),
+					createListDetailFactory(), String.class);
 			bindingContext.bindList(WidgetProperties.items().observe(combo), list);
 			bindingContext.bindValue(WidgetProperties.text().observe(combo),
 					BeanProperties.value(ViewModel.class, "text").observe(viewModel));
@@ -181,7 +184,7 @@ public class Snippet002UpdateComboRetainSelection {
 		}
 	}
 
-	private static IObservableFactory<Collection<String>, IObservableList<String>> getListDetailFactory() {
+	private static IObservableFactory<Collection<String>, IObservableList<String>> createListDetailFactory() {
 		return target -> {
 			WritableList<String> list = WritableList.withElementType(String.class);
 			list.addAll(target);

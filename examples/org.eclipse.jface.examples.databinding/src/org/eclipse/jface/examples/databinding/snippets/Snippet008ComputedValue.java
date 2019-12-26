@@ -18,10 +18,8 @@ package org.eclipse.jface.examples.databinding.snippets;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.UpdateValueStrategy;
-import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
-import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
@@ -36,8 +34,8 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * Snippet that demostrates a simple use case using ComputedValue to format a
- * name as the user enters first and last name.
+ * Snippet that demonstrates a simple use case using {@link ComputedValue} to
+ * format a name as the user enters first and last name.
  */
 public class Snippet008ComputedValue {
 	public static void main(String[] args) {
@@ -59,106 +57,68 @@ public class Snippet008ComputedValue {
 		Shell shell = new Shell();
 		shell.setLayout(new FillLayout());
 
-		final UI ui = new UI(shell);
-		final Data data = new Data();
+		final Composite ui = new Composite(shell, SWT.NONE);
+
+		WritableValue<String> firstNameValue = new WritableValue<>();
+		WritableValue<String> lastNameValue = new WritableValue<>();
+
+		GridLayoutFactory.swtDefaults().numColumns(2).applyTo(ui);
+
+		new Label(ui, SWT.NONE).setText("First Name:");
+		new Label(ui, SWT.NONE).setText("Last Name");
+
+		GridDataFactory dataFactory = GridDataFactory.swtDefaults().align(SWT.FILL, SWT.FILL).grab(true, false);
+		Text firstName = new Text(ui, SWT.BORDER);
+		dataFactory.applyTo(firstName);
+
+		Text lastName = new Text(ui, SWT.BORDER);
+		dataFactory.applyTo(lastName);
+
+		dataFactory = GridDataFactory.swtDefaults().span(2, 1).grab(true, false).align(SWT.FILL, SWT.BEGINNING);
+		Label label = new Label(ui, SWT.NONE);
+		label.setText("Formatted Name:");
+		dataFactory.applyTo(label);
+
+		Text formattedName = new Text(ui, SWT.BORDER);
+		formattedName.setEditable(false);
+		dataFactory.applyTo(formattedName);
 
 		// Bind the UI to the Data
 		DataBindingContext bindingContext = new DataBindingContext();
-		bindingContext.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.Modify).observe(ui.firstName),
-				data.firstName);
-		bindingContext.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.Modify).observe(ui.lastName),
-				data.lastName);
 
-		// Construct the formatted name observable
-		FormattedName formattedName = new FormattedName(data.firstName, data.lastName);
+		bindingContext.bindValue(WidgetProperties.text(SWT.Modify).observe(firstName), firstNameValue);
+		bindingContext.bindValue(WidgetProperties.text(SWT.Modify).observe(lastName), lastNameValue);
+
+		//
+		// Creates the formatted name on change of the first or last name observables.
+		//
+		// The key to understanding ComputedValue is understanding that it knows of the
+		// observables that are queried without being told. This is done with
+		// ObservableTracker voodoo. When calculate() is invoked
+		// ObservableTracker records the observables that are queried. It
+		// then exposes those observables and ComputedValue can listen to
+		// changes in those objects and react accordingly.
+		//
+		ComputedValue<String> name = new ComputedValue<String>() {
+			@Override
+			protected String calculate() {
+				String lastName = lastNameValue.getValue();
+				String firstName = firstNameValue.getValue();
+				String lastNameOrDefault = lastName == null || lastName.isEmpty() ? "[Last Name]" : lastName;
+				String firstNameOrDefault = firstName == null || firstName.isEmpty() ? "[First Name]" : firstName;
+
+				return lastNameOrDefault + ", " + firstNameOrDefault;
+			}
+		};
 
 		// Bind the formatted name Text to the formatted name observable
-		bindingContext.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.None).observe(ui.formattedName),
-				formattedName, new UpdateValueStrategy<String, String>(false, UpdateValueStrategy.POLICY_NEVER), null);
+		bindingContext.bindValue(WidgetProperties.text(SWT.None).observe(formattedName), name,
+				new UpdateValueStrategy<String, String>(false, UpdateValueStrategy.POLICY_NEVER), null);
 
 		shell.pack();
 		shell.open();
+
 		return shell;
 	}
 
-	/**
-	 * Creates the formatted name on change of the first or last name observables.
-	 * <p>
-	 * The key to understanding ComputedValue is understanding that it knows of the
-	 * observables that are queried without being told. This is done with
-	 * {@link ObservableTracker} voodoo. When calculate() is invoked
-	 * <code>ObservableTracker</code> records the observables that are queried. It
-	 * then exposes those observables and <code>ComputedValue</code> can listen to
-	 * changes in those objects and react accordingly.
-	 */
-	static class FormattedName extends ComputedValue<String> {
-		private IObservableValue<String> firstName;
-
-		private IObservableValue<String> lastName;
-
-		FormattedName(IObservableValue<String> firstName, IObservableValue<String> lastName) {
-			this.firstName = firstName;
-			this.lastName = lastName;
-		}
-
-		@Override
-		protected String calculate() {
-			String lastName = this.lastName.getValue();
-			String firstName = this.firstName.getValue();
-			lastName = (lastName != null && lastName.length() > 0) ? lastName : "[Last Name]";
-			firstName = (firstName != null && firstName.length() > 0) ? firstName : "[First Name]";
-
-			StringBuilder buffer = new StringBuilder();
-			buffer.append(lastName).append(", ").append(firstName);
-
-			return buffer.toString();
-		}
-	}
-
-	static class Data {
-		final WritableValue<String> firstName;
-
-		final WritableValue<String> lastName;
-
-		Data() {
-			firstName = new WritableValue<>("", String.class);
-			lastName = new WritableValue<>("", String.class);
-		}
-	}
-
-	/**
-	 * Composite that creates the UI.
-	 */
-	static class UI extends Composite {
-		final Text firstName;
-
-		final Text lastName;
-
-		final Text formattedName;
-
-		UI(Composite parent) {
-			super(parent, SWT.NONE);
-
-			GridLayoutFactory.swtDefaults().numColumns(2).applyTo(this);
-
-			new Label(this, SWT.NONE).setText("First Name:");
-			new Label(this, SWT.NONE).setText("Last Name");
-
-			GridDataFactory gdf = GridDataFactory.swtDefaults().align(SWT.FILL, SWT.FILL).grab(true, false);
-			firstName = new Text(this, SWT.BORDER);
-			gdf.applyTo(firstName);
-
-			lastName = new Text(this, SWT.BORDER);
-			gdf.applyTo(lastName);
-
-			gdf = GridDataFactory.swtDefaults().span(2, 1).grab(true, false).align(SWT.FILL, SWT.BEGINNING);
-			Label label = new Label(this, SWT.NONE);
-			label.setText("Formatted Name:");
-			gdf.applyTo(label);
-
-			formattedName = new Text(this, SWT.BORDER);
-			formattedName.setEditable(false);
-			gdf.applyTo(formattedName);
-		}
-	}
 }

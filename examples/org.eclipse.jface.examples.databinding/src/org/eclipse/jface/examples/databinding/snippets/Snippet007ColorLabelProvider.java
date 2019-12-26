@@ -29,6 +29,7 @@ import org.eclipse.core.databinding.observable.map.IObservableMap;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
 import org.eclipse.jface.databinding.viewers.ObservableMapLabelProvider;
+import org.eclipse.jface.examples.databinding.snippets.Snippet007ColorLabelProvider.Person.Gender;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableColorProvider;
@@ -46,8 +47,8 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 
 /**
- * An example showing how to create a {@link ILabelProvider label provider} that
- * to provide colors.
+ * An example showing how to create a {@link ILabelProvider} that to provide
+ * colors.
  */
 public class Snippet007ColorLabelProvider {
 	public static void main(String[] args) {
@@ -67,11 +68,11 @@ public class Snippet007ColorLabelProvider {
 	}
 
 	private static Shell createShell() {
-		final List<Person> persons = new ArrayList<>();
-		persons.add(new Person("Fiona Apple", Person.FEMALE));
-		persons.add(new Person("Elliot Smith", Person.MALE));
-		persons.add(new Person("Diana Krall", Person.FEMALE));
-		persons.add(new Person("David Gilmour", Person.MALE));
+		List<Person> persons = new ArrayList<>();
+		persons.add(new Person("Fiona Apple", Gender.FEMALE));
+		persons.add(new Person("Elliot Smith", Gender.MALE));
+		persons.add(new Person("Diana Krall", Gender.FEMALE));
+		persons.add(new Person("David Gilmour", Gender.MALE));
 
 		Shell shell = new Shell();
 		shell.setText("Gender Bender");
@@ -97,52 +98,11 @@ public class Snippet007ColorLabelProvider {
 
 		// This does not have to correspond to the columns in the table,
 		// we just list all attributes that affect the table content
-		IObservableMap<Person, ?>[] attributes = new IObservableMap[2];
-		attributes[0] = BeanProperties.value(Person.class, "name")
-				.observeDetail(contentProvider.getKnownElements());
-		attributes[1] = BeanProperties.value(Person.class, "gender")
-				.observeDetail(contentProvider.getKnownElements());
+		IObservableMap<Person, ?>[] attributes = new IObservableMap[] {
+				BeanProperties.value(Person.class, "name").observeDetail(contentProvider.getKnownElements()),
+				BeanProperties.value(Person.class, "gender").observeDetail(contentProvider.getKnownElements()) };
 
-		class ColorLabelProvider extends ObservableMapLabelProvider implements ITableColorProvider {
-			Color male = shell.getDisplay().getSystemColor(SWT.COLOR_BLUE);
-
-			Color female = new Color(shell.getDisplay(), 255, 192, 203);
-
-			ColorLabelProvider(IObservableMap<?, ?>[] attributes) {
-				super(attributes);
-			}
-
-			// To drive home the point that attributes does not have to match the columns in
-			// the table, we change the column text as follows:
-			@Override
-			public String getColumnText(Object element, int index) {
-				if (index == 0) {
-					return Integer.toString(persons.indexOf(element) + 1);
-				}
-				return ((Person) element).getName();
-			}
-
-			@Override
-			public Color getBackground(Object element, int index) {
-				return null;
-			}
-
-			@Override
-			public Color getForeground(Object element, int index) {
-				if (index == 0) {
-					return null;
-				}
-				Person person = (Person) element;
-				return (person.getGender() == Person.MALE) ? male : female;
-			}
-
-			@Override
-			public void dispose() {
-				super.dispose();
-				female.dispose();
-			}
-		}
-		viewer.setLabelProvider(new ColorLabelProvider(attributes));
+		viewer.setLabelProvider(new ColorLabelProvider(attributes, shell.getDisplay(), persons));
 
 		viewer.setInput(observableList);
 
@@ -150,13 +110,14 @@ public class Snippet007ColorLabelProvider {
 
 		Button button = new Button(shell, SWT.PUSH);
 		button.setText("Toggle Gender");
+
 		button.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 				IStructuredSelection selection = viewer.getStructuredSelection();
 				if (selection != null && !selection.isEmpty()) {
 					Person person = (Person) selection.getFirstElement();
-					person.setGender((person.getGender() == Person.MALE) ? Person.FEMALE : Person.MALE);
+					person.setGender(person.getGender() == Gender.MALE ? Gender.FEMALE : Gender.MALE);
 				}
 			}
 		});
@@ -167,17 +128,16 @@ public class Snippet007ColorLabelProvider {
 	}
 
 	static class Person {
-		static final int MALE = 0;
-
-		static final int FEMALE = 1;
+		enum Gender {
+			MALE, FEMALE
+		}
 
 		private String name;
-
-		private int gender;
+		private Gender gender;
 
 		private PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
-		Person(String name, int gender) {
+		Person(String name, Gender gender) {
 			this.name = name;
 			this.gender = gender;
 		}
@@ -194,12 +154,55 @@ public class Snippet007ColorLabelProvider {
 			changeSupport.removePropertyChangeListener(listener);
 		}
 
-		public int getGender() {
+		public Gender getGender() {
 			return gender;
 		}
 
-		void setGender(int gender) {
+		void setGender(Gender gender) {
 			changeSupport.firePropertyChange("gender", this.gender, this.gender = gender);
+		}
+	}
+
+	static class ColorLabelProvider extends ObservableMapLabelProvider implements ITableColorProvider {
+		private Color maleColor;
+		private Color femaleColor;
+		private List<Person> persons;
+
+		ColorLabelProvider(IObservableMap<?, ?>[] attributes, Display display, List<Person> persons) {
+			super(attributes);
+			this.persons = persons;
+			this.maleColor = new Color(display, 255, 192, 203);
+			this.femaleColor = display.getSystemColor(SWT.COLOR_BLUE);
+		}
+
+		// To drive home the point that attributes does not have to match the columns in
+		// the table, we change the column text as follows:
+		@Override
+		public String getColumnText(Object element, int index) {
+			if (index == 0) {
+				return Integer.toString(persons.indexOf(element) + 1);
+			}
+			return ((Person) element).getName();
+		}
+
+		@Override
+		public Color getBackground(Object element, int index) {
+			return null;
+		}
+
+		@Override
+		public Color getForeground(Object element, int index) {
+			if (index == 0) {
+				return null;
+			}
+			Person person = (Person) element;
+			return person.getGender() == Gender.MALE ? maleColor : femaleColor;
+		}
+
+		@Override
+		public void dispose() {
+			super.dispose();
+			femaleColor.dispose();
 		}
 	}
 }

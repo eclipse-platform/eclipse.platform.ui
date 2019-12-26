@@ -107,14 +107,7 @@ public class Snippet026AnonymousBeanProperties {
 		private Set<Contact> contacts = new TreeSet<>();
 
 		ContactGroup(String name) {
-			this.name = checkNull(name);
-		}
-
-		private String checkNull(String string) {
-			if (string == null) {
-				throw new NullPointerException();
-			}
-			return string;
+			this.name = name;
 		}
 
 		public String getName() {
@@ -122,7 +115,7 @@ public class Snippet026AnonymousBeanProperties {
 		}
 
 		public void setName(String name) {
-			firePropertyChange("name", this.name, this.name = checkNull(name));
+			firePropertyChange("name", this.name, this.name = name);
 		}
 
 		public Set<Contact> getContacts() {
@@ -153,16 +146,9 @@ public class Snippet026AnonymousBeanProperties {
 		private String name;
 		private String status;
 
-		private String checkNull(String string) {
-			if (string == null) {
-				throw new NullPointerException();
-			}
-			return string;
-		}
-
 		public Contact(String name, String status) {
-			this.name = checkNull(name);
-			this.status = checkNull(status);
+			this.name = name;
+			this.status = status;
 		}
 
 		public String getName() {
@@ -170,7 +156,7 @@ public class Snippet026AnonymousBeanProperties {
 		}
 
 		public void setName(String name) {
-			firePropertyChange("name", this.name, this.name = checkNull(name));
+			firePropertyChange("name", this.name, this.name = name);
 		}
 
 		public String getStatus() {
@@ -178,7 +164,7 @@ public class Snippet026AnonymousBeanProperties {
 		}
 
 		public void setStatus(String status) {
-			firePropertyChange("status", this.status, this.status = checkNull(status));
+			firePropertyChange("status", this.status, this.status = status);
 		}
 
 		@Override
@@ -270,7 +256,7 @@ public class Snippet026AnonymousBeanProperties {
 		}
 	}
 
-	private static final String[] statuses = new String[] { "Online", "Idle", "Busy", "Offline" };
+	private static final String[] STATUSES = new String[] { "Online", "Idle", "Busy", "Offline" };
 
 	private ApplicationModel createDefaultModel() {
 		ContactGroup swtGroup = new ContactGroup("SWT");
@@ -374,7 +360,7 @@ public class Snippet026AnonymousBeanProperties {
 				BeanProperties.value("name").observeDetail(selection));
 
 		statusViewer.setContentProvider(new ArrayContentProvider());
-		statusViewer.setInput(statuses);
+		statusViewer.setInput(STATUSES);
 
 		bindingContext.bindValue(ViewerProperties.singleSelection().observe(statusViewer),
 				BeanProperties.value("status").observeDetail(selection));

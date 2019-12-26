@@ -45,7 +45,6 @@ public class Snippet023ConditionalVisibility {
 				}
 			}
 		});
-
 		display.dispose();
 	}
 

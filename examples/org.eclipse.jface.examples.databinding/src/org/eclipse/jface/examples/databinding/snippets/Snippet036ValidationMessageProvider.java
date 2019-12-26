@@ -113,11 +113,11 @@ public class Snippet036ValidationMessageProvider {
 			createTextLine(container, "Age", WritableValue.withValueType(Integer.class));
 			createTextLine(container, "Birthday", WritableValue.withValueType(Date.class));
 
-			// Attach the DBC's validation to the wizard
-			WizardPageSupport wps = WizardPageSupport.create(this, bindingContext);
+			// Attach the databinding validation to the wizard
+			WizardPageSupport support = WizardPageSupport.create(this, bindingContext);
 
 			// Use our CustomMessageProvider
-			wps.setValidationMessageProvider(new CustomMessageProvider(bindingMapName));
+			support.setValidationMessageProvider(new CustomMessageProvider(bindingMapName));
 		}
 
 		private <T> void createTextLine(Composite parent, String labelText, IObservableValue<T> modelValue) {
@@ -165,12 +165,10 @@ public class Snippet036ValidationMessageProvider {
 
 	/**
 	 * Custom {@link IValidationMessageProvider} which does the following:
-	 * <ul>
-	 * <li>Every validation message of a binding is prefixed by the binding's name,
-	 * if available.</li>
-	 * <li>Validation errors due to empty, required fields are not displayed as
-	 * errors but as simple text without any icon.</li>
-	 * </ul>
+	 * <p>
+	 * 1) Every validation message of a binding is prefixed by the binding's name,
+	 * if available. 2) Validation errors due to empty, required fields are not
+	 * displayed as errors but as simple text without any icon.
 	 */
 	private static final class CustomMessageProvider extends ValidationMessageProvider {
 

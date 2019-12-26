@@ -31,7 +31,6 @@ import org.eclipse.jface.resource.ResourceManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
@@ -58,18 +57,20 @@ public class Snippet015DelayTextModifyEvents {
 		Shell shell = new Shell();
 		shell.setLayout(new GridLayout(3, false));
 
-		final Label field1 = createLabel(shell, SWT.NONE, "Field 1 ");
+		final Label field1 = new Label(shell, SWT.NONE);
+		field1.setText("Field 1 ");
 
 		Text text1 = new Text(shell, SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).hint(200, SWT.DEFAULT).applyTo(text1);
-		createLabel(shell, SWT.NONE, "200 ms delay");
+		new Label(shell, SWT.NONE).setText("200 ms delay");
 
-		Label field2 = createLabel(shell, SWT.NONE, "Field 2 ");
+		Label field2 = new Label(shell, SWT.NONE);
+		field2.setText("Field 2 ");
 
 		Text text2 = new Text(shell, SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, false).hint(200, SWT.DEFAULT).applyTo(text2);
 
-		createLabel(shell, SWT.NONE, "2000 ms delay");
+		new Label(shell, SWT.NONE).setText("2000 ms delay");
 
 		IObservableValue<String> delayed1 = WidgetProperties.text(SWT.Modify).observeDelayed(200, text1);
 		IObservableValue<String> delayed2 = WidgetProperties.text(SWT.Modify).observeDelayed(2000, text2);
@@ -83,8 +84,10 @@ public class Snippet015DelayTextModifyEvents {
 		IObservableValue<Boolean> stale1 = Observables.observeStale(delayed1);
 		IObservableValue<Boolean> stale2 = Observables.observeStale(delayed2);
 
-		String info = "Pending changes are applied immediately if the observed control loses focus, or enter is pressed.";
-		GridDataFactory.fillDefaults().span(3, 1).hint(300, SWT.DEFAULT).applyTo(createLabel(shell, SWT.WRAP, info));
+		Label info = new Label(shell, SWT.WRAP);
+		info.setText(
+				"Pending changes are applied immediately if the observed control loses focus, or enter is pressed.");
+		GridDataFactory.fillDefaults().span(3, 1).hint(300, SWT.DEFAULT).applyTo(info);
 
 		DataBindingContext bindingContext = new DataBindingContext();
 
@@ -108,7 +111,7 @@ public class Snippet015DelayTextModifyEvents {
 
 		text1.addTraverseListener(e -> {
 			if (e.detail == SWT.TRAVERSE_RETURN) {
-				// Calling getValue on a delayed observables flushes its value
+				// Calling getValue on a delayed observable flushes its value
 				delayed1.getValue();
 			}
 		});
@@ -117,11 +120,5 @@ public class Snippet015DelayTextModifyEvents {
 		shell.open();
 
 		return shell;
-	}
-
-	private static Label createLabel(Composite parent, int style, String text) {
-		Label label = new Label(parent, style);
-		label.setText(text);
-		return label;
 	}
 }

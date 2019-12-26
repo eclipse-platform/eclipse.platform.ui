@@ -32,7 +32,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.databinding.fieldassist.ControlDecorationSupport;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.jface.databinding.swt.ISWTObservableValue;
 import org.eclipse.jface.databinding.swt.WidgetSideEffects;
 import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.layout.GridLayoutFactory;
@@ -250,9 +249,9 @@ public class Snippet039SideEffectMigration {
 
 		private void bindData() {
 			// Create the observables, which should be bound by the SideEffect
-			ISWTObservableValue<String> personFirstNameTextObservable = WidgetProperties.text(SWT.Modify)
+			IObservableValue<String> personFirstNameTextObservable = WidgetProperties.text(SWT.Modify)
 					.observe(personFirstNameText);
-			ISWTObservableValue<String> personLastNameTextObservable = WidgetProperties.text(SWT.Modify)
+			IObservableValue<String> personLastNameTextObservable = WidgetProperties.text(SWT.Modify)
 					.observe(personLastNameText);
 
 			ISideEffectFactory sideEffectFactory = WidgetSideEffects.createFactory(personFirstNameText);
