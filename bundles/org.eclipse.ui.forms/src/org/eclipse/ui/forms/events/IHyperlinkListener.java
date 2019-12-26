@@ -95,7 +95,7 @@ public interface IHyperlinkListener {
 	 * {@link #linkActivated(HyperlinkEvent)} method, given a lambda expression or a
 	 * method reference.
 	 *
-	 * @param c the consumer of the event
+	 * @param consumer the consumer of the event
 	 * @return IHyperlinkListener
 	 * @since 3.9
 	 */
