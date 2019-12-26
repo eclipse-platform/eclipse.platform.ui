@@ -201,6 +201,10 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 			protected IStatus validate() {
 				Integer field1 = middleField1.getValue();
 				Integer field2 = middleField2.getValue();
+				if (field1 == null | field2 == null) {
+					return ValidationStatus.error("The fields must all be non-empty");
+				}
+
 				if (Math.abs(field1) % 2 != Math.abs(field2) % 2) {
 					return ValidationStatus.error("Fields 1 and 2 must be both even or both odd");
 				}
