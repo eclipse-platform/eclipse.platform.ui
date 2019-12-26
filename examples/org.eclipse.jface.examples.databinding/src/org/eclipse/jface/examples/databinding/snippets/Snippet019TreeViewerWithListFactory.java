@@ -89,8 +89,9 @@ public class Snippet019TreeViewerWithListFactory {
 		shell.open();
 		shell.layout();
 		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch())
+			if (!display.readAndDispatch()) {
 				display.sleep();
+			}
 		}
 	}
 
@@ -185,11 +186,13 @@ public class Snippet019TreeViewerWithListFactory {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				Bean copy = clipboard.getValue();
-				if (copy == null)
+				if (copy == null) {
 					return;
+				}
 				Bean parent = getSelectedBean();
-				if (parent == null)
+				if (parent == null) {
 					parent = input;
+				}
 
 				List<Bean> list = new ArrayList<>(parent.getList());
 				list.add(copy);
@@ -247,8 +250,9 @@ public class Snippet019TreeViewerWithListFactory {
 
 	private Bean getSelectedBean() {
 		IStructuredSelection selection = beanViewer.getStructuredSelection();
-		if (selection.isEmpty())
+		if (selection.isEmpty()) {
 			return null;
+		}
 		return (Bean) selection.getFirstElement();
 	}
 
@@ -295,14 +299,16 @@ public class Snippet019TreeViewerWithListFactory {
 		}
 
 		public List<Bean> getList() {
-			if (list == null)
+			if (list == null) {
 				return null;
+			}
 			return new ArrayList<>(list);
 		}
 
 		public void setList(List<Bean> list) {
-			if (list != null)
+			if (list != null) {
 				list = new ArrayList<>(list);
+			}
 			changeSupport.firePropertyChange("list", this.list, this.list = list);
 		}
 

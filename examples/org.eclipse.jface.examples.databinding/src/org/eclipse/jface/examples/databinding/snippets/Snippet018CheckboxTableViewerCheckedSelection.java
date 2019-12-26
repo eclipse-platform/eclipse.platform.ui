@@ -69,9 +69,11 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 
 			Shell shell = new View(viewModel).createShell();
 			shell.open();
-			while (!shell.isDisposed())
-				if (!display.readAndDispatch())
+			while (!shell.isDisposed()) {
+				if (!display.readAndDispatch()) {
 					display.sleep();
+				}
+			}
 		});
 		display.dispose();
 	}
@@ -279,8 +281,9 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 
 			addPersonButton.addListener(SWT.Selection, event -> {
 				InputDialog dlg = new InputDialog(shell, "Add Person", "Enter name:", "<Name>", newText -> {
-					if (newText == null || newText.length() == 0)
+					if (newText == null || newText.length() == 0) {
 						return "Name cannot be empty";
+					}
 					return null;
 				});
 				if (dlg.open() == Window.OK) {
@@ -293,11 +296,13 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 
 			removePersonButton.addListener(SWT.Selection, event -> {
 				IStructuredSelection selected = peopleViewer.getStructuredSelection();
-				if (selected.isEmpty())
+				if (selected.isEmpty()) {
 					return;
+				}
 				Person person = (Person) selected.getFirstElement();
-				if (MessageDialog.openConfirm(shell, "Remove person", "Remove " + person.getName() + "?"))
+				if (MessageDialog.openConfirm(shell, "Remove person", "Remove " + person.getName() + "?")) {
 					people.remove(person);
+				}
 			});
 
 			ViewerSupport.bind(peopleViewer, people, BeanProperties.values(Person.class, "name", "friends"));

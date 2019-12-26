@@ -123,8 +123,9 @@ public class Snippet007ColorLabelProvider {
 
 				@Override
 				public Color getForeground(Object element, int index) {
-					if (index == 0)
+					if (index == 0) {
 						return null;
+					}
 					Person person = (Person) element;
 					return (person.getGender() == Person.MALE) ? male : female;
 				}
@@ -158,8 +159,9 @@ public class Snippet007ColorLabelProvider {
 			shell.open();
 
 			while (!shell.isDisposed()) {
-				if (!display.readAndDispatch())
+				if (!display.readAndDispatch()) {
 					display.sleep();
+				}
 			}
 		});
 		display.dispose();

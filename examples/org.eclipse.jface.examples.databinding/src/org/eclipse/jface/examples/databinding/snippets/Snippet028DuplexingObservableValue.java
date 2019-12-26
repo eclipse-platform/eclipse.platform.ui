@@ -77,8 +77,9 @@ public class Snippet028DuplexingObservableValue {
 			shell.open();
 			shell.layout();
 			while (!shell.isDisposed()) {
-				if (!display.readAndDispatch())
+				if (!display.readAndDispatch()) {
 					display.sleep();
+				}
 			}
 		});
 	}
@@ -235,7 +236,7 @@ public class Snippet028DuplexingObservableValue {
 		movies.add(new MovieInfo("Wanted", "June 27, 2008", "Timur Bekmambetov", "Michael Brandt"));
 
 		ViewerSupport.bind(viewer, movies,
-				BeanProperties.values(MovieInfo.class, new String[] { "title", "releaseDate", "director", "writer" }));
+				BeanProperties.values(MovieInfo.class, "title", "releaseDate", "director", "writer"));
 
 		// Select Batman Begins and The Dark Knight, which have the same
 		// director and writer

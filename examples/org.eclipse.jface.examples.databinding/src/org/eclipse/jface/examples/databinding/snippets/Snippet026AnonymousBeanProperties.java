@@ -113,8 +113,9 @@ public class Snippet026AnonymousBeanProperties {
 		}
 
 		private String checkNull(String string) {
-			if (string == null)
+			if (string == null) {
 				throw new NullPointerException();
+			}
 			return string;
 		}
 
@@ -155,8 +156,9 @@ public class Snippet026AnonymousBeanProperties {
 		private String status;
 
 		private String checkNull(String string) {
-			if (string == null)
+			if (string == null) {
 				throw new NullPointerException();
+			}
 			return string;
 		}
 
@@ -184,8 +186,9 @@ public class Snippet026AnonymousBeanProperties {
 		@Override
 		public int compareTo(Contact that) {
 			int result = this.name.compareTo(that.name);
-			if (result == 0)
+			if (result == 0) {
 				result = this.status.compareTo(that.status);
+			}
 			return result;
 		}
 	}
@@ -219,8 +222,9 @@ public class Snippet026AnonymousBeanProperties {
 
 		@Override
 		protected Set<Contact> doGetSet(ContactGroup source) {
-			if (source == null)
+			if (source == null) {
 				return Collections.emptySet();
+			}
 			return source.getContacts();
 		}
 
@@ -277,8 +281,9 @@ public class Snippet026AnonymousBeanProperties {
 		shell.open();
 		shell.layout();
 		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch())
+			if (!display.readAndDispatch()) {
 				display.sleep();
+			}
 		}
 	}
 
@@ -360,10 +365,12 @@ public class Snippet026AnonymousBeanProperties {
 			@SuppressWarnings("unchecked")
 			@Override
 			protected ISetProperty<Object, Object> doGetDelegate(Object source) {
-				if (source instanceof ApplicationModel)
+				if (source instanceof ApplicationModel) {
 					return (ISetProperty<Object, Object>) (Object) modelGroups;
-				if (source instanceof ContactGroup)
+				}
+				if (source instanceof ContactGroup) {
 					return (ISetProperty<Object, Object>) (Object) groupContacts;
+				}
 				return null;
 			}
 		};

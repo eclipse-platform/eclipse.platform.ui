@@ -80,8 +80,9 @@ public class Snippet012CompositeUpdater {
 			shell.pack();
 			shell.open();
 			while (!shell.isDisposed()) {
-				if (!display.readAndDispatch())
+				if (!display.readAndDispatch()) {
 					display.sleep();
+				}
 			}
 		});
 		display.dispose();

@@ -59,8 +59,9 @@ public class Snippet022ComputedListCombo {
 		shell.pack();
 		shell.open();
 		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch())
+			if (!display.readAndDispatch()) {
 				display.sleep();
+			}
 		}
 		display.dispose();
 	}
@@ -103,10 +104,12 @@ public class Snippet022ComputedListCombo {
 			protected List<Thing> calculate() {
 				List<Thing> result = new ArrayList<>();
 				for (Thing thing : model) {
-					if (femaleObservable.getValue() && !thing.female)
+					if (femaleObservable.getValue() && !thing.female) {
 						continue;
-					if (maleObservable.getValue() && !thing.male)
+					}
+					if (maleObservable.getValue() && !thing.male) {
 						continue;
+					}
 					result.add(thing);
 				}
 				return result;

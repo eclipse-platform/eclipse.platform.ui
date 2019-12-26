@@ -71,8 +71,9 @@ public class Snippet030DateAndTimeObservableValue {
 			shell.pack();
 			shell.open();
 			while (!shell.isDisposed()) {
-				if (!display.readAndDispatch())
+				if (!display.readAndDispatch()) {
 					display.sleep();
+				}
 			}
 		});
 	}

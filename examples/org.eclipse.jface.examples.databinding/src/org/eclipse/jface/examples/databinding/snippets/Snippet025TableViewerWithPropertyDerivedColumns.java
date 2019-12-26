@@ -217,8 +217,9 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 			final TableColumn column = new TableColumn(duckFamily, SWT.NONE);
 			column.setText(string);
 			column.pack();
-			if (column.getWidth() < 100)
+			if (column.getWidth() < 100) {
 				column.setWidth(100);
+			}
 		}
 
 		protected void bindGUI(DataBindingContext dbc) {
@@ -232,8 +233,8 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 			});
 
 			ViewerSupport.bind(peopleViewer, viewModel.getPeople(),
-					BeanProperties.values(Person.class, new String[] { "name", "mother.name", "father.name",
-							"mother.mother.name", "mother.father.name", "father.mother.name", "father.father.name" }));
+					BeanProperties.values(Person.class, "name", "mother.name", "father.name", "mother.mother.name",
+							"mother.father.name", "father.mother.name", "father.father.name"));
 
 			IObservableValue<Person> masterSelection = ViewerProperties.singleSelection(Person.class)
 					.observe(peopleViewer);

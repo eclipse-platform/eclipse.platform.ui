@@ -73,8 +73,9 @@ public class Snippet011ValidateMultipleBindingsSnippet {
 		shell.open();
 		Display display = shell.getDisplay();
 		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch())
+			if (!display.readAndDispatch()) {
 				display.sleep();
+			}
 		}
 		display.dispose();
 	}

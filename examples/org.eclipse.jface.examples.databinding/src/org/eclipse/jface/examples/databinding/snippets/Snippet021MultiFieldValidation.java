@@ -195,11 +195,11 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 
 	private void bindEvensAndOddsGroup(DataBindingContext dbc) {
 		IObservableValue<String> targetField1 = WidgetProperties.text(SWT.Modify).observe(field1Target);
-		final IObservableValue<Integer> middleField1 = new WritableValue<>(Integer.valueOf(0), Integer.TYPE);
+		final IObservableValue<Integer> middleField1 = new WritableValue<>(0, Integer.TYPE);
 		dbc.bindValue(targetField1, middleField1);
 
 		IObservableValue<String> targetField2 = WidgetProperties.text(SWT.Modify).observe(field2Target);
-		final IObservableValue<Integer> middleField2 = new WritableValue<>(Integer.valueOf(0), Integer.TYPE);
+		final IObservableValue<Integer> middleField2 = new WritableValue<>(0, Integer.TYPE);
 		dbc.bindValue(targetField2, middleField2);
 
 		MultiValidator validator = new MultiValidator() {
@@ -207,15 +207,16 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 			protected IStatus validate() {
 				Integer field1 = middleField1.getValue();
 				Integer field2 = middleField2.getValue();
-				if (Math.abs(field1.intValue()) % 2 != Math.abs(field2.intValue()) % 2)
+				if (Math.abs(field1) % 2 != Math.abs(field2) % 2) {
 					return ValidationStatus.error("Fields 1 and 2 must be both even or both odd");
+				}
 				return null;
 			}
 		};
 		dbc.addValidationStatusProvider(validator);
 
-		IObservableValue<Integer> modelField1 = new WritableValue<>(Integer.valueOf(1), Integer.TYPE);
-		IObservableValue<Integer> modelField2 = new WritableValue<>(Integer.valueOf(4), Integer.TYPE);
+		IObservableValue<Integer> modelField1 = new WritableValue<>(1, Integer.TYPE);
+		IObservableValue<Integer> modelField2 = new WritableValue<>(4, Integer.TYPE);
 		dbc.bindValue(validator.observeValidatedValue(middleField1), modelField1);
 		dbc.bindValue(validator.observeValidatedValue(middleField2), modelField2);
 
@@ -254,12 +255,13 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				IStructuredSelection selection = addendsTarget.getStructuredSelection();
-				if (!selection.isEmpty())
+				if (!selection.isEmpty()) {
 					targetAddends.remove(selection.getFirstElement());
+				}
 			}
 		});
 
-		IObservableValue<Integer> modelSum = new WritableValue<>(Integer.valueOf(5), Integer.TYPE);
+		IObservableValue<Integer> modelSum = new WritableValue<>(5, Integer.TYPE);
 		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(sumModelValue), modelSum);
 
 		IObservableList<Integer> modelAddends = new WritableList<>(new ArrayList<>(), Integer.TYPE);
@@ -272,8 +274,9 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 				for (int i : targetAddends) {
 					actualSum += i;
 				}
-				if (sum != actualSum)
+				if (sum != actualSum) {
 					return ValidationStatus.error("Sum of addends is " + actualSum + ", expecting " + sum);
+				}
 				return ValidationStatus.ok();
 			}
 		};

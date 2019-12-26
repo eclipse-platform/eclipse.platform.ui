@@ -73,8 +73,9 @@ public class Snippet008ComputedValue {
 			shell.pack();
 			shell.open();
 			while (!shell.isDisposed()) {
-				if (!display.readAndDispatch())
+				if (!display.readAndDispatch()) {
 					display.sleep();
+				}
 			}
 		});
 		display.dispose();

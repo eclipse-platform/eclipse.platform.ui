@@ -91,8 +91,9 @@ public class Snippet020TreeViewerWithSetFactory {
 		shell.open();
 		shell.layout();
 		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch())
+			if (!display.readAndDispatch()) {
 				display.sleep();
+			}
 		}
 	}
 
@@ -158,10 +159,11 @@ public class Snippet020TreeViewerWithSetFactory {
 				Bean bean = (Bean) selectedItem.getData();
 				TreeItem parentItem = selectedItem.getParentItem();
 				Bean parent;
-				if (parentItem == null)
+				if (parentItem == null) {
 					parent = input;
-				else
+				} else {
 					parent = (Bean) parentItem.getData();
+				}
 
 				Set<Bean> set = new HashSet<>(parent.getSet());
 				set.remove(bean);
@@ -184,11 +186,13 @@ public class Snippet020TreeViewerWithSetFactory {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
 				Bean copy = clipboard.getValue();
-				if (copy == null)
+				if (copy == null) {
 					return;
+				}
 				Bean parent = getSelectedBean();
-				if (parent == null)
+				if (parent == null) {
 					parent = input;
+				}
 
 				Set<Bean> set = new HashSet<>(parent.getSet());
 				set.add(copy);
@@ -247,8 +251,9 @@ public class Snippet020TreeViewerWithSetFactory {
 
 	private Bean getSelectedBean() {
 		IStructuredSelection selection = beanViewer.getStructuredSelection();
-		if (selection.isEmpty())
+		if (selection.isEmpty()) {
 			return null;
+		}
 		return (Bean) selection.getFirstElement();
 	}
 
@@ -295,14 +300,16 @@ public class Snippet020TreeViewerWithSetFactory {
 		}
 
 		public Set<Bean> getSet() {
-			if (set == null)
+			if (set == null) {
 				return null;
+			}
 			return new HashSet<>(set);
 		}
 
 		public void setSet(Set<Bean> set) {
-			if (set != null)
+			if (set != null) {
 				set = new HashSet<>(set);
+			}
 			changeSupport.firePropertyChange("set", this.set, this.set = set);
 		}
 

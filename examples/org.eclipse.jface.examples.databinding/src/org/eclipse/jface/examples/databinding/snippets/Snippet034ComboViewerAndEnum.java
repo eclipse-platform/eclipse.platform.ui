@@ -51,7 +51,7 @@ public class Snippet034ComboViewerAndEnum {
 		System.out.println("person.getGender() = " + model.getGender());
 	}
 
-	static enum Gender {
+	enum Gender {
 		Male, Female, Unknown;
 	}
 

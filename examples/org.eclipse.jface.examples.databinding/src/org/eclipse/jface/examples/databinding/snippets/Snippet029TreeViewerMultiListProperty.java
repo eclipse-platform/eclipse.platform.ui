@@ -68,8 +68,9 @@ public class Snippet029TreeViewerMultiListProperty {
 			shell.open();
 			shell.layout();
 			while (!shell.isDisposed()) {
-				if (!display.readAndDispatch())
+				if (!display.readAndDispatch()) {
 					display.sleep();
+				}
 			}
 		});
 	}
@@ -208,10 +209,12 @@ public class Snippet029TreeViewerMultiListProperty {
 
 			@Override
 			public Image getImage(Object element) {
-				if (element instanceof Catalog)
+				if (element instanceof Catalog) {
 					return catalogImage;
-				if (element instanceof CatalogItem)
+				}
+				if (element instanceof CatalogItem) {
 					return catalogItemImage;
+				}
 				return super.getImage(element);
 			}
 

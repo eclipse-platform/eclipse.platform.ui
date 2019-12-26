@@ -69,8 +69,9 @@ public class Snippet033CrossValidationControlDecoration {
 			shell.pack();
 			shell.open();
 			while (!shell.isDisposed()) {
-				if (!display.readAndDispatch())
+				if (!display.readAndDispatch()) {
 					display.sleep();
+				}
 			}
 		});
 	}
@@ -139,8 +140,9 @@ public class Snippet033CrossValidationControlDecoration {
 
 		@Override
 		protected IStatus validate() {
-			if (start.getValue().compareTo(end.getValue()) > 0)
+			if (start.getValue().compareTo(end.getValue()) > 0) {
 				return ValidationStatus.error(errorMessage);
+			}
 			return ValidationStatus.ok();
 		}
 	}
