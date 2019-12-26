@@ -80,9 +80,9 @@ public class Snippet015DelayTextModifyEvents {
 		String info = "Pending changes are applied immediately if the observed control loses focus.";
 		GridDataFactory.fillDefaults().span(3, 1).hint(300, SWT.DEFAULT).applyTo(createLabel(shell, SWT.WRAP, info));
 
-		DataBindingContext dbc = new DataBindingContext();
+		DataBindingContext bindingContext = new DataBindingContext();
 
-		dbc.bindValue(delayed1, delayed2);
+		bindingContext.bindValue(delayed1, delayed2);
 
 		// Sometimes it is useful to do a manual value flush when of the delayed
 		// observables. This can be done in the following two ways.
@@ -91,7 +91,7 @@ public class Snippet015DelayTextModifyEvents {
 			if (e.detail == SWT.TRAVERSE_RETURN) {
 				// The DataBindingContext update methods can also be used to update
 				// observables in bulk
-				dbc.updateTargets();
+				bindingContext.updateTargets();
 			}
 		});
 

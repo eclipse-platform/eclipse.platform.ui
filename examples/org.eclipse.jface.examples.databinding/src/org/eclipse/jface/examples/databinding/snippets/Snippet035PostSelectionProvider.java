@@ -44,7 +44,7 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class Snippet035PostSelectionProvider {
 
-	private DataBindingContext dbc;
+	private DataBindingContext bindingContext;
 
 	private ListViewer listViewer;
 
@@ -68,7 +68,7 @@ public class Snippet035PostSelectionProvider {
 		shell.setText("Post Selections");
 		shell.setLayout(new GridLayout(1, false));
 
-		dbc = new DataBindingContext();
+		bindingContext = new DataBindingContext();
 
 		createTableSection(shell);
 		createFieldSection(shell);
@@ -101,13 +101,13 @@ public class Snippet035PostSelectionProvider {
 		Label selectionLabel = createLabelField(section, "Selection:");
 		IViewerObservableValue<String> selectionObservable = ViewerProperties.singleSelection(String.class)
 				.observe(listViewer);
-		dbc.bindValue(WidgetProperties.text().observe(selectionLabel), selectionObservable);
+		bindingContext.bindValue(WidgetProperties.text().observe(selectionLabel), selectionObservable);
 
 		// Post selection
 		Label postSelectionLabel = createLabelField(section, "Post selection:");
 		IViewerObservableValue<String> postSelectionObservable = ViewerProperties.singlePostSelection(String.class)
 				.observe(listViewer);
-		dbc.bindValue(WidgetProperties.text().observe(postSelectionLabel), postSelectionObservable);
+		bindingContext.bindValue(WidgetProperties.text().observe(postSelectionLabel), postSelectionObservable);
 	}
 
 	private Group createSectionGroup(Composite parent, int numColumns) {

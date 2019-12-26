@@ -254,16 +254,16 @@ public class Snippet019TreeViewerWithListFactory {
 		return (Bean) selection.getFirstElement();
 	}
 
-	private void initExtraBindings(DataBindingContext dbc) {
+	private void initExtraBindings(DataBindingContext bindingContext) {
 		final IObservableValue<Bean> beanViewerSelection = ViewerProperties.singleSelection(Bean.class)
 				.observe(beanViewer);
 		IObservableValue<Boolean> beanSelected = ComputedValue.create(() -> beanViewerSelection.getValue() != null);
-		dbc.bindValue(WidgetProperties.enabled().observe(addChildBeanButton), beanSelected);
-		dbc.bindValue(WidgetProperties.enabled().observe(removeBeanButton), beanSelected);
+		bindingContext.bindValue(WidgetProperties.enabled().observe(addChildBeanButton), beanSelected);
+		bindingContext.bindValue(WidgetProperties.enabled().observe(removeBeanButton), beanSelected);
 
 		clipboard = new WritableValue<>();
-		dbc.bindValue(WidgetProperties.enabled().observe(copyButton), beanSelected);
-		dbc.bindValue(WidgetProperties.enabled().observe(pasteButton),
+		bindingContext.bindValue(WidgetProperties.enabled().observe(copyButton), beanSelected);
+		bindingContext.bindValue(WidgetProperties.enabled().observe(pasteButton),
 				ComputedValue.create(() -> clipboard.getValue() != null));
 
 		ViewerSupport.bind(beanViewer, input, BeanProperties.list("list", Bean.class),

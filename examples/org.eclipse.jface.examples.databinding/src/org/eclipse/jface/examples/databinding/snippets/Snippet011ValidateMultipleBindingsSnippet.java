@@ -52,13 +52,13 @@ public class Snippet011ValidateMultipleBindingsSnippet {
 		View view = new View(shell);
 		final Model model = new Model();
 
-		DataBindingContext dbc = new DataBindingContext();
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(view.text1), model.value1,
+		DataBindingContext bindingContext = new DataBindingContext();
+		bindingContext.bindValue(WidgetProperties.text(SWT.Modify).observe(view.text1), model.value1,
 				new UpdateValueStrategy<String, String>()
 						.setAfterConvertValidator(new CrossFieldValidator(model.value2)),
 				null);
 
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(view.text2), model.value2,
+		bindingContext.bindValue(WidgetProperties.text(SWT.Modify).observe(view.text2), model.value2,
 				new UpdateValueStrategy<String, String>()
 						.setAfterConvertValidator(new CrossFieldValidator(model.value1)),
 				null);

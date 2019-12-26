@@ -152,11 +152,11 @@ public class Snippet003UpdateComboBindUsingViewer {
 			// Print value out first
 			System.out.println(viewModel.getText());
 
-			DataBindingContext dbc = new DataBindingContext();
+			DataBindingContext bindingContext = new DataBindingContext();
 			ViewerSupport.bind(viewer, BeanProperties.list(ViewModel.class, "choices", String.class).observe(viewModel),
 					Properties.selfValue(String.class));
 
-			dbc.bindValue(ViewerProperties.singleSelection().observe(viewer),
+			bindingContext.bindValue(ViewerProperties.singleSelection().observe(viewer),
 					BeanProperties.value(ViewModel.class, "text").observe(viewModel));
 
 			shell.pack();

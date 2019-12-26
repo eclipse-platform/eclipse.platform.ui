@@ -236,16 +236,16 @@ public class Snippet028DuplexingObservableValue {
 		// director and writer
 		viewer.setSelection(new StructuredSelection(new Object[] { movies.get(1), movies.get(3) }));
 
-		DataBindingContext dbc = new DataBindingContext();
+		DataBindingContext bindingContext = new DataBindingContext();
 
 		IObservableList<MovieInfo> selections = ViewerProperties.multipleSelection(MovieInfo.class).observe(viewer);
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(title), DuplexingObservableValue
+		bindingContext.bindValue(WidgetProperties.text(SWT.Modify).observe(title), DuplexingObservableValue
 				.withDefaults(BeanProperties.value("title").observeDetail(selections), "", "<Multiple titles>"));
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(releaseDate), DuplexingObservableValue
+		bindingContext.bindValue(WidgetProperties.text(SWT.Modify).observe(releaseDate), DuplexingObservableValue
 				.withDefaults(BeanProperties.value("releaseDate").observeDetail(selections), "", "<Multiple dates>"));
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(director), DuplexingObservableValue
+		bindingContext.bindValue(WidgetProperties.text(SWT.Modify).observe(director), DuplexingObservableValue
 				.withDefaults(BeanProperties.value("director").observeDetail(selections), "", "<Multiple directors>"));
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(writer), DuplexingObservableValue
+		bindingContext.bindValue(WidgetProperties.text(SWT.Modify).observe(writer), DuplexingObservableValue
 				.withDefaults(BeanProperties.value("writer").observeDetail(selections), "", "<Multiple writers>"));
 	}
 }

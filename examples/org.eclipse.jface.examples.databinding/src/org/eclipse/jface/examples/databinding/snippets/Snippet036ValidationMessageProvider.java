@@ -94,7 +94,7 @@ public class Snippet036ValidationMessageProvider {
 
 	private static final class MessageProviderWizardPage extends WizardPage {
 
-		private DataBindingContext dbc;
+		private DataBindingContext bindingContext;
 		private Map<Binding, String> bindingMapName;
 
 		protected MessageProviderWizardPage() {
@@ -105,7 +105,7 @@ public class Snippet036ValidationMessageProvider {
 
 		@Override
 		public void createControl(Composite parent) {
-			dbc = new DataBindingContext();
+			bindingContext = new DataBindingContext();
 			bindingMapName = new HashMap<>();
 
 			// Create the container composite
@@ -119,7 +119,7 @@ public class Snippet036ValidationMessageProvider {
 			createTextLine(container, "Birthday", WritableValue.withValueType(Date.class));
 
 			// Attach the DBC's validation to the wizard
-			WizardPageSupport wps = WizardPageSupport.create(this, dbc);
+			WizardPageSupport wps = WizardPageSupport.create(this, bindingContext);
 
 			// Use our CustomMessageProvider
 			wps.setValidationMessageProvider(new CustomMessageProvider(bindingMapName));
@@ -139,7 +139,7 @@ public class Snippet036ValidationMessageProvider {
 			IObservableValue<String> textObservable = WidgetProperties.text(SWT.Modify).observe(text);
 
 			// Bind the Text to the model and attach a RequiredValidator
-			Binding binding = dbc.bindValue(textObservable, modelValue,
+			Binding binding = bindingContext.bindValue(textObservable, modelValue,
 					new UpdateValueStrategy<String, T>().setAfterConvertValidator(new RequiredValidator()),
 					new UpdateValueStrategy<>());
 

@@ -222,7 +222,7 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 			}
 		}
 
-		protected void bindGUI(DataBindingContext dbc) {
+		protected void bindGUI(DataBindingContext bindingContext) {
 			TableViewer peopleViewer = new TableViewer(duckFamily);
 			peopleViewer.addFilter(new ViewerFilter() {
 				@Override
@@ -238,19 +238,19 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 			IObservableValue<Person> masterSelection = ViewerProperties.singleSelection(Person.class)
 					.observe(peopleViewer);
 
-			dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(nameText),
+			bindingContext.bindValue(WidgetProperties.text(SWT.Modify).observe(nameText),
 					BeanProperties.value(Person.class, "name").observeDetail(masterSelection));
 
 			ComboViewer mothercomboViewer = new ComboViewer(motherCombo);
 			ViewerSupport.bind(mothercomboViewer, viewModel.getPeople(), BeanProperties.value(Person.class, "name"));
 
-			dbc.bindValue(ViewerProperties.singleSelection().observe(mothercomboViewer),
+			bindingContext.bindValue(ViewerProperties.singleSelection().observe(mothercomboViewer),
 					BeanProperties.value(Person.class, "mother").observeDetail(masterSelection));
 
 			ComboViewer fatherComboViewer = new ComboViewer(fatherCombo);
 			ViewerSupport.bind(fatherComboViewer, viewModel.getPeople(), BeanProperties.value(Person.class, "name"));
 
-			dbc.bindValue(ViewerProperties.singleSelection().observe(fatherComboViewer),
+			bindingContext.bindValue(ViewerProperties.singleSelection().observe(fatherComboViewer),
 					BeanProperties.value(Person.class, "father").observeDetail(masterSelection));
 		}
 	}

@@ -152,8 +152,8 @@ public class Snippet013TableViewerEditing {
 
 		private CellEditor cellEditor;
 
-		public InlineEditingSupport(ColumnViewer viewer, DataBindingContext dbc) {
-			super(viewer, dbc);
+		public InlineEditingSupport(ColumnViewer viewer, DataBindingContext bindingContext) {
+			super(viewer, bindingContext);
 			cellEditor = new TextCellEditor((Composite) viewer.getControl());
 		}
 

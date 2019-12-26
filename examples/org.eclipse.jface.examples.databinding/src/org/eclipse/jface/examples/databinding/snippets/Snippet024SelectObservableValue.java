@@ -91,8 +91,8 @@ public class Snippet024SelectObservableValue {
 			radioGroup.addOption(color, WidgetProperties.buttonSelection().observe(button));
 		}
 
-		DataBindingContext dbc = new DataBindingContext();
-		dbc.bindValue(radioGroup, listViewerSelection);
+		DataBindingContext bindingContext = new DataBindingContext();
+		bindingContext.bindValue(radioGroup, listViewerSelection);
 	}
 
 	public static class Color {

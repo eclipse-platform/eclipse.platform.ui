@@ -179,22 +179,22 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 	}
 
 	private void bindUI() {
-		DataBindingContext dbc = new DataBindingContext();
+		DataBindingContext bindingContext = new DataBindingContext();
 
-		bindEvensAndOddsGroup(dbc);
-		bindSumAndAddendsGroup(dbc);
+		bindEvensAndOddsGroup(bindingContext);
+		bindSumAndAddendsGroup(bindingContext);
 
-		WizardPageSupport.create(this, dbc);
+		WizardPageSupport.create(this, bindingContext);
 	}
 
-	private void bindEvensAndOddsGroup(DataBindingContext dbc) {
+	private void bindEvensAndOddsGroup(DataBindingContext bindingContext) {
 		IObservableValue<String> targetField1 = WidgetProperties.text(SWT.Modify).observe(field1Target);
 		final IObservableValue<Integer> middleField1 = new WritableValue<>(0, int.class);
-		dbc.bindValue(targetField1, middleField1);
+		bindingContext.bindValue(targetField1, middleField1);
 
 		IObservableValue<String> targetField2 = WidgetProperties.text(SWT.Modify).observe(field2Target);
 		final IObservableValue<Integer> middleField2 = new WritableValue<>(0, int.class);
-		dbc.bindValue(targetField2, middleField2);
+		bindingContext.bindValue(targetField2, middleField2);
 
 		MultiValidator validator = new MultiValidator() {
 			@Override
@@ -207,21 +207,21 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 				return null;
 			}
 		};
-		dbc.addValidationStatusProvider(validator);
+		bindingContext.addValidationStatusProvider(validator);
 
 		IObservableValue<Integer> modelField1 = new WritableValue<>(1, int.class);
 		IObservableValue<Integer> modelField2 = new WritableValue<>(4, int.class);
-		dbc.bindValue(validator.observeValidatedValue(middleField1), modelField1);
-		dbc.bindValue(validator.observeValidatedValue(middleField2), modelField2);
+		bindingContext.bindValue(validator.observeValidatedValue(middleField1), modelField1);
+		bindingContext.bindValue(validator.observeValidatedValue(middleField2), modelField2);
 
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(field1ModelValue), modelField1);
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(field2ModelValue), modelField2);
+		bindingContext.bindValue(WidgetProperties.text(SWT.Modify).observe(field1ModelValue), modelField1);
+		bindingContext.bindValue(WidgetProperties.text(SWT.Modify).observe(field2ModelValue), modelField2);
 	}
 
-	private void bindSumAndAddendsGroup(DataBindingContext dbc) {
+	private void bindSumAndAddendsGroup(DataBindingContext bindingContext) {
 		IObservableValue<String> targetSum = WidgetProperties.text(SWT.Modify).observe(sumTarget);
 		final IObservableValue<Integer> middleSum = new WritableValue<>(0, int.class);
-		dbc.bindValue(targetSum, middleSum);
+		bindingContext.bindValue(targetSum, middleSum);
 
 		final IObservableList<Integer> targetAddends = new WritableList<>(new ArrayList<>(), int.class);
 		addendsTarget.setContentProvider(new ObservableListContentProvider<>());
@@ -256,7 +256,7 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 		});
 
 		IObservableValue<Integer> modelSum = new WritableValue<>(5, int.class);
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(sumModelValue), modelSum);
+		bindingContext.bindValue(WidgetProperties.text(SWT.Modify).observe(sumModelValue), modelSum);
 
 		IObservableList<Integer> modelAddends = new WritableList<>(new ArrayList<>(), int.class);
 
@@ -274,13 +274,13 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 				return ValidationStatus.ok();
 			}
 		};
-		dbc.addValidationStatusProvider(validator);
+		bindingContext.addValidationStatusProvider(validator);
 
 		addendsModelValue.setContentProvider(new ObservableListContentProvider<>());
 		addendsModelValue.setInput(modelAddends);
 
-		dbc.bindValue(validator.observeValidatedValue(middleSum), modelSum);
-		dbc.bindList(validator.observeValidatedList(targetAddends), modelAddends);
+		bindingContext.bindValue(validator.observeValidatedValue(middleSum), modelSum);
+		bindingContext.bindList(validator.observeValidatedList(targetAddends), modelAddends);
 	}
 
 	static class MultiFieldValidationWizard extends Wizard {

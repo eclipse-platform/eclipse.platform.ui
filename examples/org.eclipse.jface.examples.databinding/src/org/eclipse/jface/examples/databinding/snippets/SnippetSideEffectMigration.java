@@ -155,14 +155,14 @@ public class SnippetSideEffectMigration {
 		}
 
 		private void bindData() {
-			DataBindingContext dbc = new DataBindingContext();
+			DataBindingContext bindingContext = new DataBindingContext();
 
 			IObservableValue<String> personFirstNameObservable = BeanProperties
 					.value(ObservableBeanPerson.PROPERTY_FIRST_NAME, String.class).observe(person);
 			IObservableValue<String> personFirstNameTextObservable = WidgetProperties.text(SWT.Modify)
 					.observe(personFirstNameText);
 
-			dbc.bindValue(personFirstNameTextObservable, personFirstNameObservable,
+			bindingContext.bindValue(personFirstNameTextObservable, personFirstNameObservable,
 					new UpdateValueStrategy<String, String>().setAfterConvertValidator(obj -> {
 						if (obj == null || obj.isEmpty()) {
 							return ValidationStatus.error("First Name may not be empty");
@@ -175,7 +175,7 @@ public class SnippetSideEffectMigration {
 			IObservableValue<String> personLastNameTextObservable = WidgetProperties.text(SWT.Modify)
 					.observe(personLastNameText);
 
-			dbc.bindValue(personLastNameTextObservable, personLastNameObservable,
+			bindingContext.bindValue(personLastNameTextObservable, personLastNameObservable,
 					new UpdateValueStrategy<String, String>().setAfterConvertValidator(obj -> {
 						if (obj == null || obj.isEmpty()) {
 							return ValidationStatus.error("Last Name may not be empty");
@@ -183,12 +183,12 @@ public class SnippetSideEffectMigration {
 						return Status.OK_STATUS;
 					}), null);
 
-			IObservableList<ValidationStatusProvider> validationStatusProviders = dbc.getValidationStatusProviders();
+			IObservableList<ValidationStatusProvider> validationStatusProviders = bindingContext.getValidationStatusProviders();
 			for (ValidationStatusProvider statusProvider : validationStatusProviders) {
 				ControlDecorationSupport.create(statusProvider, SWT.TOP | SWT.LEFT);
 			}
 
-			personFirstNameText.addDisposeListener(e -> dbc.dispose());
+			personFirstNameText.addDisposeListener(e -> bindingContext.dispose());
 		}
 	}
 

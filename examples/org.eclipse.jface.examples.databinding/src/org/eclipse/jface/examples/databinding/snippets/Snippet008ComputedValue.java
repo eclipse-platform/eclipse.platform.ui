@@ -50,17 +50,17 @@ public class Snippet008ComputedValue {
 			final Data data = new Data();
 
 			// Bind the UI to the Data
-			DataBindingContext dbc = new DataBindingContext();
-			dbc.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.Modify).observe(ui.firstName),
+			DataBindingContext bindingContext = new DataBindingContext();
+			bindingContext.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.Modify).observe(ui.firstName),
 					data.firstName);
-			dbc.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.Modify).observe(ui.lastName),
+			bindingContext.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.Modify).observe(ui.lastName),
 					data.lastName);
 
 			// Construct the formatted name observable
 			FormattedName formattedName = new FormattedName(data.firstName, data.lastName);
 
 			// Bind the formatted name Text to the formatted name observable
-			dbc.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.None).observe(ui.formattedName),
+			bindingContext.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.None).observe(ui.formattedName),
 					formattedName, new UpdateValueStrategy<String, String>(false, UpdateValueStrategy.POLICY_NEVER),
 					null);
 

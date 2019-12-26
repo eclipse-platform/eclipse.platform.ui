@@ -180,22 +180,22 @@ public class Snippet027ExternalValidator extends WizardPage {
 	}
 
 	private void bindUI() {
-		DataBindingContext dbc = new DataBindingContext();
+		DataBindingContext bindingContext = new DataBindingContext();
 
 		final IObservableValue<String> name = BeanProperties.value(Contact.class, "name", String.class)
 				.observe(contact);
 
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(nameValue), name, null, null);
+		bindingContext.bindValue(WidgetProperties.text(SWT.Modify).observe(nameValue), name, null, null);
 
 		final IObservableValue<String> email = BeanProperties.value(Contact.class, "email", String.class)
 				.observe(contact);
 
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(emailValue), email, null, null);
+		bindingContext.bindValue(WidgetProperties.text(SWT.Modify).observe(emailValue), email, null, null);
 
 		final IObservableValue<String> phone = BeanProperties.value(Contact.class, "phoneNumber", String.class)
 				.observe(contact);
 
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(phoneNumberValue), phone, null, null);
+		bindingContext.bindValue(WidgetProperties.text(SWT.Modify).observe(phoneNumberValue), phone, null, null);
 
 		MultiValidator validator = new MultiValidator() {
 			@Override
@@ -211,9 +211,9 @@ public class Snippet027ExternalValidator extends WizardPage {
 				return contact.validate();
 			}
 		};
-		dbc.addValidationStatusProvider(validator);
+		bindingContext.addValidationStatusProvider(validator);
 
-		WizardPageSupport.create(this, dbc);
+		WizardPageSupport.create(this, bindingContext);
 	}
 
 	static class ExternalValidationWizard extends Wizard {

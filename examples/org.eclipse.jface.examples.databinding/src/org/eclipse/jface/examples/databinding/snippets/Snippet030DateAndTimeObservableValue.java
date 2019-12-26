@@ -103,18 +103,18 @@ public class Snippet030DateAndTimeObservableValue {
 	}
 
 	private void bindUI() {
-		DataBindingContext dbc = new DataBindingContext();
+		DataBindingContext bindingContext = new DataBindingContext();
 
 		IObservableValue<Date> model = WritableValue.withValueType(Date.class);
 		model.setValue(new Date());
 
-		dbc.bindValue(WidgetProperties.text().observe(modelText), model);
+		bindingContext.bindValue(WidgetProperties.text().observe(modelText), model);
 
 		final IObservableValue<Date> timeSelection = WidgetProperties.dateTimeSelection().observe(time);
 
-		dbc.bindValue(new DateAndTimeObservableValue(WidgetProperties.dateTimeSelection().observe(date), timeSelection),
+		bindingContext.bindValue(new DateAndTimeObservableValue(WidgetProperties.dateTimeSelection().observe(date), timeSelection),
 				model);
-		dbc.bindValue(
+		bindingContext.bindValue(
 				new DateAndTimeObservableValue(WidgetProperties.dateTimeSelection().observe(calendar), timeSelection),
 				model);
 

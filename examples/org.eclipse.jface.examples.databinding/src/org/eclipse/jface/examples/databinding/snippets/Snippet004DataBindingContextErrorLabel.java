@@ -59,15 +59,15 @@ public class Snippet004DataBindingContextErrorLabel {
 			errorLabel.setForeground(display.getSystemColor(SWT.COLOR_RED));
 			GridDataFactory.swtDefaults().hint(200, SWT.DEFAULT).applyTo(errorLabel);
 
-			DataBindingContext dbc = new DataBindingContext();
+			DataBindingContext bindingContext = new DataBindingContext();
 
 			// Bind the text to the value
-			dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(text), value,
+			bindingContext.bindValue(WidgetProperties.text(SWT.Modify).observe(text), value,
 					new UpdateValueStrategy<String, String>().setAfterConvertValidator(new FiveValidator()), null);
 
-			// Bind the error label to the validation error on the dbc
-			dbc.bindValue(WidgetProperties.text().observe(errorLabel),
-					new AggregateValidationStatus(dbc.getBindings(), AggregateValidationStatus.MAX_SEVERITY));
+			// Bind the error label to the validation error on the bindingContext
+			bindingContext.bindValue(WidgetProperties.text().observe(errorLabel),
+					new AggregateValidationStatus(bindingContext.getBindings(), AggregateValidationStatus.MAX_SEVERITY));
 
 			shell.pack();
 			shell.open();

@@ -67,14 +67,14 @@ public class Snippet014WizardDialog {
 
 		@Override
 		public void createControl(Composite parent) {
-			DataBindingContext dbc = new DataBindingContext();
-			WizardPageSupport.create(this, dbc);
+			DataBindingContext bindingContext = new DataBindingContext();
+			WizardPageSupport.create(this, bindingContext);
 			Composite composite = new Composite(parent, SWT.NONE);
 			Label label = new Label(composite, SWT.NONE);
 			label.setText("Enter a number between 0 and 9:");
 			Text text = new Text(composite, SWT.BORDER);
 
-			dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(text),
+			bindingContext.bindValue(WidgetProperties.text(SWT.Modify).observe(text),
 					((SampleWizard) getWizard()).getModel().intValue,
 					new UpdateValueStrategy<String, Integer>().setAfterConvertValidator(new SingleDigitValidator()),
 					null);
@@ -91,14 +91,14 @@ public class Snippet014WizardDialog {
 
 		@Override
 		public void createControl(Composite parent) {
-			DataBindingContext dbc = new DataBindingContext();
-			WizardPageSupport.create(this, dbc);
+			DataBindingContext bindingContext = new DataBindingContext();
+			WizardPageSupport.create(this, bindingContext);
 			Composite composite = new Composite(parent, SWT.NONE);
 			Label label = new Label(composite, SWT.NONE);
 			label.setText("Enter a date:");
 			Text text = new Text(composite, SWT.BORDER);
 
-			dbc.bindValue(WidgetProperties.text().observe(text), ((SampleWizard) getWizard()).getModel().dateValue);
+			bindingContext.bindValue(WidgetProperties.text().observe(text), ((SampleWizard) getWizard()).getModel().dateValue);
 
 			GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(composite);
 			setControl(composite);

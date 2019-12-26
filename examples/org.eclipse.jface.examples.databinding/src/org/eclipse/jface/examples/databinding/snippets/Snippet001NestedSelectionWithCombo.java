@@ -191,10 +191,10 @@ public class Snippet001NestedSelectionWithCombo {
 			peopleListViewer.setContentProvider(new ArrayContentProvider());
 			peopleListViewer.setInput(viewModel.getPeople());
 
-			DataBindingContext dbc = new DataBindingContext(realm);
+			DataBindingContext bindingContext = new DataBindingContext(realm);
 			IObservableValue<Person> selectedPerson = ViewerProperties.singleSelection(Person.class)
 					.observe(peopleListViewer);
-			dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(name),
+			bindingContext.bindValue(WidgetProperties.text(SWT.Modify).observe(name),
 					BeanProperties.value(Person.class, "name", String.class).observeDetail(selectedPerson));
 
 			ComboViewer cityViewer = new ComboViewer(city);
@@ -202,7 +202,7 @@ public class Snippet001NestedSelectionWithCombo {
 			cityViewer.setInput(viewModel.getCities());
 
 			IObservableValue<String> citySelection = ViewerProperties.singleSelection(String.class).observe(cityViewer);
-			dbc.bindValue(citySelection,
+			bindingContext.bindValue(citySelection,
 					BeanProperties.value(Person.class, "city", String.class).observeDetail(selectedPerson));
 
 			GridLayoutFactory.swtDefaults().applyTo(shell);

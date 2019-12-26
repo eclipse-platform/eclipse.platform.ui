@@ -373,18 +373,18 @@ public class Snippet026AnonymousBeanProperties {
 
 		final IObservableValue<Object> selection = ViewerProperties.singleSelection().observe(contactViewer);
 
-		DataBindingContext dbc = new DataBindingContext();
+		DataBindingContext bindingContext = new DataBindingContext();
 
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(nameText),
+		bindingContext.bindValue(WidgetProperties.text(SWT.Modify).observe(nameText),
 				BeanProperties.value("name").observeDetail(selection));
 
 		statusViewer.setContentProvider(new ArrayContentProvider());
 		statusViewer.setInput(statuses);
 
-		dbc.bindValue(ViewerProperties.singleSelection().observe(statusViewer),
+		bindingContext.bindValue(ViewerProperties.singleSelection().observe(statusViewer),
 				BeanProperties.value("status").observeDetail(selection));
 
-		dbc.bindValue(WidgetProperties.enabled().observe(statusViewer.getControl()),
+		bindingContext.bindValue(WidgetProperties.enabled().observe(statusViewer.getControl()),
 				ComputedValue.create(() -> selection.getValue() instanceof Contact));
 	}
 }
