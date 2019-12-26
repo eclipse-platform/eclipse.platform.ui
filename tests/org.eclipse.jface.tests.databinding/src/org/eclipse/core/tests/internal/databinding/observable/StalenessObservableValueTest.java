@@ -15,13 +15,23 @@
 
 package org.eclipse.core.tests.internal.databinding.observable;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.eclipse.core.databinding.observable.AbstractObservable;
 import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.core.internal.databinding.observable.StalenessObservableValue;
 import org.eclipse.jface.databinding.conformance.ObservableValueContractTest;
 import org.eclipse.jface.databinding.conformance.delegate.AbstractObservableValueContractDelegate;
+import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
+import org.junit.Test;
 
 import junit.framework.TestSuite;
 
@@ -30,7 +40,40 @@ import junit.framework.TestSuite;
  *
  * @since 1.1
  */
-public class StalenessObservableValueTest {
+public class StalenessObservableValueTest extends AbstractDefaultRealmTestCase {
+
+	/**
+	 * Test that {@link StalenessObservableValue#getValue} returns the new value
+	 * when called inside the value change listener.
+	 */
+	@Test
+	public void valueDuringListenerCallback() {
+		IObservableValue<String> source = new WritableValue<String>("a", String.class);
+		IObservableValue<String> delayed = Observables.observeDelayedValue(1, source);
+		IObservableValue<Boolean> stale = Observables.observeStale(delayed);
+
+		AtomicInteger nrStaleEvents = new AtomicInteger();
+
+		stale.addValueChangeListener(e -> {
+			if (nrStaleEvents.incrementAndGet() == 1) {
+				assertTrue(stale.getValue());
+				assertTrue(e.diff.getNewValue());
+				assertFalse(e.diff.getOldValue());
+			} else {
+				assertFalse(stale.getValue());
+				assertFalse(e.diff.getNewValue());
+				assertTrue(e.diff.getOldValue());
+			}
+		});
+
+		source.setValue("b");
+
+		// Makes the observable non-stale
+		delayed.getValue();
+
+		assertEquals(2, nrStaleEvents.get());
+	}
+
 	public static void addConformanceTest(TestSuite suite) {
 		suite.addTest(ObservableValueContractTest.suite(new Delegate()));
 	}
@@ -71,7 +114,7 @@ public class StalenessObservableValueTest {
 
 	static class Delegate extends AbstractObservableValueContractDelegate {
 		@Override
-		public IObservableValue createObservableValue(Realm realm) {
+		public IObservableValue<?> createObservableValue(Realm realm) {
 			return new StalenessObservableValueStub(new ObservableStub(realm));
 		}
 
@@ -82,7 +125,7 @@ public class StalenessObservableValueTest {
 		}
 
 		@Override
-		public Object getValueType(IObservableValue observable) {
+		public Object getValueType(IObservableValue<?> observable) {
 			return Boolean.TYPE;
 		}
 	}

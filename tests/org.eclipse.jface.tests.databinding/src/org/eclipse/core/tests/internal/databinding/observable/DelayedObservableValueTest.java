@@ -19,6 +19,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IObservable;
 import org.eclipse.core.databinding.observable.Observables;
@@ -110,6 +112,28 @@ public class DelayedObservableValueTest extends AbstractDefaultRealmTestCase {
 
 		assertEquals(newValue, target.getValue());
 		assertEquals(newValue, delayed.getValue());
+	}
+
+	@Test
+	public void testStaleListener() {
+		AtomicInteger nrEvents = new AtomicInteger();
+
+		delayed.addStaleListener(e -> {
+			nrEvents.incrementAndGet();
+			// Staleness state should be updated before firing event
+			assertTrue(delayed.isStale());
+		});
+
+		target.setValue(newValue);
+
+		assertTrue(delayed.isStale());
+		assertEquals(1, nrEvents.get());
+
+		delayed.getValue();
+		assertFalse(delayed.isStale());
+
+		// There is no non-stale event so nrEvents is not incremented
+		assertEquals(1, nrEvents.get());
 	}
 
 	@Test

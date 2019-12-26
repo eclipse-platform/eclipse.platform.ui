@@ -188,12 +188,14 @@ public class DelayedObservableValue<T> extends AbstractObservableValue<T>
 	}
 
 	private void makeDirty() {
+		// Schedule updater before firing event
+		cancelScheduledUpdate(); // if any
+		scheduleUpdate();
+
 		if (!dirty) {
 			dirty = true;
 			fireStale();
 		}
-		cancelScheduledUpdate(); // if any
-		scheduleUpdate();
 	}
 
 	private void cancelScheduledUpdate() {
