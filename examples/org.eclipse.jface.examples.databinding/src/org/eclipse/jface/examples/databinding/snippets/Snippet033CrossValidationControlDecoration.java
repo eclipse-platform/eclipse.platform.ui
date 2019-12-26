@@ -36,19 +36,13 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-/**
- * @since 3.2
- *
- */
 public class Snippet033CrossValidationControlDecoration {
 	protected Shell shell;
 	private DateTime startDate;
 	private DateTime endDate;
 
 	/**
-	 * Launch the application
-	 *
-	 * @param args
+	 * Launch the application.
 	 */
 	public static void main(String[] args) {
 		try {
@@ -60,7 +54,7 @@ public class Snippet033CrossValidationControlDecoration {
 	}
 
 	/**
-	 * Open the window
+	 * Open the window.
 	 */
 	public void open() {
 		final Display display = Display.getDefault();

@@ -52,10 +52,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Text;
 
-/**
- * @since 3.2
- *
- */
 public class Snippet021MultiFieldValidation extends WizardPage {
 
 	private List list_1;
@@ -72,7 +68,7 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 	private ListViewer addendsModelValue;
 
 	/**
-	 * Create the wizard
+	 * Create the wizard.
 	 */
 	public Snippet021MultiFieldValidation() {
 		super("snippet021");
@@ -81,9 +77,7 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 	}
 
 	/**
-	 * Create contents of the wizard
-	 *
-	 * @param parent
+	 * Create contents of the wizard.
 	 */
 	@Override
 	public void createControl(Composite parent) {
@@ -91,7 +85,7 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 		final GridLayout gridLayout = new GridLayout();
 		gridLayout.numColumns = 2;
 		container.setLayout(gridLayout);
-		//
+
 		setControl(container);
 
 		final Group bothEvenOrGroup = new Group(container, SWT.NONE);
@@ -195,11 +189,11 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 
 	private void bindEvensAndOddsGroup(DataBindingContext dbc) {
 		IObservableValue<String> targetField1 = WidgetProperties.text(SWT.Modify).observe(field1Target);
-		final IObservableValue<Integer> middleField1 = new WritableValue<>(0, Integer.TYPE);
+		final IObservableValue<Integer> middleField1 = new WritableValue<>(0, int.class);
 		dbc.bindValue(targetField1, middleField1);
 
 		IObservableValue<String> targetField2 = WidgetProperties.text(SWT.Modify).observe(field2Target);
-		final IObservableValue<Integer> middleField2 = new WritableValue<>(0, Integer.TYPE);
+		final IObservableValue<Integer> middleField2 = new WritableValue<>(0, int.class);
 		dbc.bindValue(targetField2, middleField2);
 
 		MultiValidator validator = new MultiValidator() {
@@ -215,8 +209,8 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 		};
 		dbc.addValidationStatusProvider(validator);
 
-		IObservableValue<Integer> modelField1 = new WritableValue<>(1, Integer.TYPE);
-		IObservableValue<Integer> modelField2 = new WritableValue<>(4, Integer.TYPE);
+		IObservableValue<Integer> modelField1 = new WritableValue<>(1, int.class);
+		IObservableValue<Integer> modelField2 = new WritableValue<>(4, int.class);
 		dbc.bindValue(validator.observeValidatedValue(middleField1), modelField1);
 		dbc.bindValue(validator.observeValidatedValue(middleField2), modelField2);
 
@@ -226,10 +220,10 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 
 	private void bindSumAndAddendsGroup(DataBindingContext dbc) {
 		IObservableValue<String> targetSum = WidgetProperties.text(SWT.Modify).observe(sumTarget);
-		final IObservableValue<Integer> middleSum = new WritableValue<>(0, Integer.TYPE);
+		final IObservableValue<Integer> middleSum = new WritableValue<>(0, int.class);
 		dbc.bindValue(targetSum, middleSum);
 
-		final IObservableList<Integer> targetAddends = new WritableList<>(new ArrayList<>(), Integer.TYPE);
+		final IObservableList<Integer> targetAddends = new WritableList<>(new ArrayList<>(), int.class);
 		addendsTarget.setContentProvider(new ObservableListContentProvider<>());
 		addendsTarget.setInput(targetAddends);
 
@@ -261,10 +255,10 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 			}
 		});
 
-		IObservableValue<Integer> modelSum = new WritableValue<>(5, Integer.TYPE);
+		IObservableValue<Integer> modelSum = new WritableValue<>(5, int.class);
 		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(sumModelValue), modelSum);
 
-		IObservableList<Integer> modelAddends = new WritableList<>(new ArrayList<>(), Integer.TYPE);
+		IObservableList<Integer> modelAddends = new WritableList<>(new ArrayList<>(), int.class);
 
 		MultiValidator validator = new MultiValidator() {
 			@Override

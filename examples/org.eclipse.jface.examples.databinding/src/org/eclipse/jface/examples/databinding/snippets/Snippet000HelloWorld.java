@@ -57,15 +57,15 @@ public class Snippet000HelloWorld {
 		});
 	}
 
-	// The data model class. This is normally a persistent class of some sort.
-	//
-	// In this example, we only push changes from the GUI to the model, so we
-	// don't worry about implementing JavaBeans bound properties. If we need
-	// our GUI to automatically reflect changes in the Person object, the
-	// Person object would need to implement the JavaBeans property change
-	// listener methods.
+	/**
+	 * The data model class.
+	 * <p>
+	 * In this example, we only push changes from the GUI to the model, so we don't
+	 * worry about implementing JavaBeans bound properties. If we need our GUI to
+	 * automatically reflect changes in the Person object, the Person object would
+	 * need to implement the JavaBeans property change listener methods.
+	 */
 	static class Person {
-		// A property...
 		String name = "HelloWorld";
 
 		public String getName() {
@@ -82,12 +82,9 @@ public class Snippet000HelloWorld {
 		}
 	}
 
-	// The View's model--the root of our Model graph for this particular GUI.
-	//
-	// Typically each View class has a corresponding ViewModel class.
-	// The ViewModel is responsible for getting the objects to edit from the
-	// DAO. Since this snippet doesn't have any persistent objects to
-	// retrieve, this ViewModel just instantiates a model object to edit.
+	/**
+	 * The View's model--the root of our Model graph for this particular GUI.
+	 */
 	static class ViewModel {
 		// The model to bind
 		private Person person = new Person();
@@ -97,7 +94,7 @@ public class Snippet000HelloWorld {
 		}
 	}
 
-	// The GUI view
+	/** The GUI view. */
 	static class View {
 		private ViewModel viewModel;
 		private Text textName;
@@ -123,7 +120,6 @@ public class Snippet000HelloWorld {
 			bindingContext.bindValue(WidgetProperties.text(SWT.Modify).observe(textName),
 					PojoProperties.value("name").observe(person));
 
-			// Open and return the Shell
 			shell.pack();
 			shell.open();
 			return shell;

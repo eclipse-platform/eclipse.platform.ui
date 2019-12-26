@@ -26,8 +26,6 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.Shell;
 
-/**
- */
 public class Snippet005MenuUpdater {
 	public static void main(String[] args) {
 		final Display display = new Display();
@@ -50,6 +48,7 @@ public class Snippet005MenuUpdater {
 			fileItem.setText("&Test Menu");
 			final Menu submenu = new Menu(shell, SWT.DROP_DOWN);
 			fileItem.setMenu(submenu);
+
 			new MenuUpdater(submenu) {
 				@Override
 				protected void updateMenu() {

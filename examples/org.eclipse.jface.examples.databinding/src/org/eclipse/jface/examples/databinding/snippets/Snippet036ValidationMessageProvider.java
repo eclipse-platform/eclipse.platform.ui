@@ -108,50 +108,50 @@ public class Snippet036ValidationMessageProvider {
 			dbc = new DataBindingContext();
 			bindingMapName = new HashMap<>();
 
-			// Create the container composite.
+			// Create the container composite
 			Composite container = new Composite(parent, SWT.NULL);
 			GridLayoutFactory.fillDefaults().numColumns(2).margins(5, 5).spacing(15, 5).applyTo(container);
 			setControl(container);
 
-			// Create the input fields.
+			// Create the input fields
 			createTextLine(container, "Name", WritableValue.withValueType(String.class));
 			createTextLine(container, "Age", WritableValue.withValueType(Integer.class));
 			createTextLine(container, "Birthday", WritableValue.withValueType(Date.class));
 
-			// Attach the DBC's validation to the wizard.
+			// Attach the DBC's validation to the wizard
 			WizardPageSupport wps = WizardPageSupport.create(this, dbc);
 
-			// Use our CustomMessageProvider.
+			// Use our CustomMessageProvider
 			wps.setValidationMessageProvider(new CustomMessageProvider(bindingMapName));
 		}
 
 		private <T> void createTextLine(Composite parent, String labelText, IObservableValue<T> modelValue) {
-			// Create the Label.
+			// Create the Label
 			Label label = new Label(parent, SWT.LEFT);
 			label.setText(labelText);
 			GridDataFactory.fillDefaults().align(SWT.LEFT, SWT.CENTER).applyTo(label);
 
-			// Create the Text.
+			// Create the Text
 			final Text text = new Text(parent, SWT.BORDER);
 			GridDataFactory.fillDefaults().grab(true, false).applyTo(text);
 
-			// Create the Text observable.
+			// Create the Text observable
 			IObservableValue<String> textObservable = WidgetProperties.text(SWT.Modify).observe(text);
 
-			// Bind the Text to the model and attach a RequiredValidator.
+			// Bind the Text to the model and attach a RequiredValidator
 			Binding binding = dbc.bindValue(textObservable, modelValue,
 					new UpdateValueStrategy<String, T>().setAfterConvertValidator(new RequiredValidator()),
 					new UpdateValueStrategy<>());
 
-			// Custom control decoration for "required" validation.
+			// Custom control decoration for "required" validation
 			ControlDecorationUpdater decorationUpdater = new ControlDecorationUpdater() {
 
 				@Override
 				protected Image getImage(IStatus status) {
 					// For required validations, we do not want to display an
-					// error icon since the user has not done anything wrong.
+					// error icon since the user has not done anything wrong
 					if (text.getText().length() == 0) {
-						// Display a "required" decoration (asterisk).
+						// Display a "required" decoration (asterisk)
 						FieldDecoration fieldDecoration = FieldDecorationRegistry.getDefault()
 								.getFieldDecoration(FieldDecorationRegistry.DEC_REQUIRED);
 						return fieldDecoration.getImage();
@@ -160,10 +160,10 @@ public class Snippet036ValidationMessageProvider {
 				}
 			};
 
-			// Attach the control decoration.
+			// Attach the control decoration
 			ControlDecorationSupport.create(binding, SWT.TOP, null, decorationUpdater);
 
-			// Map the created binding to its name, i.e. the Label's text.
+			// Map the created binding to its name, i.e. the Label's text
 			bindingMapName.put(binding, labelText);
 		}
 	}
@@ -205,10 +205,10 @@ public class Snippet036ValidationMessageProvider {
 				IStatus status = binding.getValidationStatus().getValue();
 
 				// For required validations, we do not want to display an error
-				// icon since the user has not done anything wrong.
+				// icon since the user has not done anything wrong
 				if (status.matches(IStatus.ERROR)) {
 					IObservableValue<?> target = (IObservableValue<?>) binding.getTarget();
-					// If the input is empty, we do not display any error icon.
+					// If the input is empty, we do not display any error icon
 					if ("".equals(target.getValue())) {
 						return IMessageProvider.NONE;
 					}

@@ -40,10 +40,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Text;
 
-/**
- * @since 1.1
- *
- */
 public class Snippet006Spreadsheet {
 
 	private static final int COUNTER_UPDATE_DELAY = 1000;
@@ -119,11 +115,6 @@ public class Snippet006Spreadsheet {
 			}
 		}
 
-		/**
-		 * @param s
-		 * @return
-		 * @throws ParseException
-		 */
 		private double eval(String s) throws ParseException {
 			if (s.length() == 0) {
 				return 0;
@@ -131,7 +122,7 @@ public class Snippet006Spreadsheet {
 			char character = s.charAt(0);
 			if (Character.isLetter(character)) {
 				character = Character.toLowerCase(character);
-				// reference to other cell
+				// Reference to other cell
 				int columnIndex = character - 'a';
 				int rowIndex = 0;
 				rowIndex = NumberFormat.getNumberInstance().parse(s.substring(1)).intValue() - 1;
@@ -187,7 +178,7 @@ public class Snippet006Spreadsheet {
 			};
 
 			if (FUNKY_COUNTER) {
-				// counter in A1
+				// Counter in A1
 				display.asyncExec(new Runnable() {
 					@Override
 					public void run() {
@@ -197,27 +188,23 @@ public class Snippet006Spreadsheet {
 				});
 			}
 
-			// create a TableCursor to navigate around the table
+			// Create a TableCursor to navigate around the table
 			final TableCursor cursor = new TableCursor(table, SWT.NONE);
-			// create an editor to edit the cell when the user hits "ENTER"
-			// while over a cell in the table
+			// Create an editor to edit the cell when the user hits "ENTER" while over a
+			// cell in the table
 			final ControlEditor editor = new ControlEditor(cursor);
 			editor.grabHorizontal = true;
 			editor.grabVertical = true;
 
 			cursor.addSelectionListener(new SelectionAdapter() {
-				// when the TableEditor is over a cell, select the
-				// corresponding row
-				// in
-				// the table
+				// When the TableEditor is over a cell, select the corresponding row in the
+				// table
 				@Override
 				public void widgetSelected(SelectionEvent e) {
 					table.setSelection(new TableItem[] { cursor.getRow() });
 				}
 
-				// when the user hits "ENTER" in the TableCursor, pop up a
-				// text
-				// editor so that
+				// When the user hits "ENTER" in the TableCursor, pop up a text editor so that
 				// they can change the text of the cell
 				@Override
 				public void widgetDefaultSelected(SelectionEvent e) {
@@ -229,8 +216,7 @@ public class Snippet006Spreadsheet {
 					text.addKeyListener(new KeyAdapter() {
 						@Override
 						public void keyPressed(KeyEvent e) {
-							// close the text editor and copy the data over
-							// when the user hits "ENTER"
+							// Close the text editor and copy the data over when the user hits "ENTER"
 							if (e.character == SWT.CR) {
 								TableItem row = cursor.getRow();
 								int rowIndex = table.indexOf(row);
@@ -238,8 +224,7 @@ public class Snippet006Spreadsheet {
 								cellFormulas[rowIndex][columnIndex].setValue(text.getText());
 								text.dispose();
 							}
-							// close the text editor when the user hits
-							// "ESC"
+							// Close the text editor when the user hits "ESC"
 							if (e.character == SWT.ESC) {
 								text.dispose();
 							}
@@ -250,8 +235,7 @@ public class Snippet006Spreadsheet {
 				}
 			});
 			// Hide the TableCursor when the user hits the "MOD1" or "MOD2"
-			// key.
-			// This alows the user to select multiple items in the table.
+			// key. This allows the user to select multiple items in the table.
 			cursor.addKeyListener(new KeyAdapter() {
 				@Override
 				public void keyPressed(KeyEvent e) {
@@ -262,8 +246,7 @@ public class Snippet006Spreadsheet {
 				}
 			});
 			// Show the TableCursor when the user releases the "MOD2" or
-			// "MOD1" key.
-			// This signals the end of the multiple selection task.
+			// "MOD1" key. This signals the end of the multiple selection task.
 			table.addKeyListener(new KeyAdapter() {
 				@Override
 				public void keyReleased(KeyEvent e) {

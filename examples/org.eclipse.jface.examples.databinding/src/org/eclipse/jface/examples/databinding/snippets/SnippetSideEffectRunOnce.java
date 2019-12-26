@@ -34,9 +34,6 @@ import org.eclipse.swt.widgets.Shell;
  * {@link ISideEffect#runOnce(java.util.function.Supplier, java.util.function.Consumer)}
  * method to react properly, when an observable is changed inside an async
  * action, e.g., a Job.
- *
- * @since 3.2
- *
  */
 public class SnippetSideEffectRunOnce {
 	public static void main(String[] args) {
@@ -69,7 +66,6 @@ public class SnippetSideEffectRunOnce {
 			ISideEffect.consumeOnceAsync(loadJsonFromRemote::getValue, label::setText);
 			GridLayoutFactory.fillDefaults().numColumns(2).generateLayout(shell);
 
-			// Open and return the Shell
 			shell.pack();
 			shell.open();
 			shell.setSize(400, 100);
@@ -81,15 +77,13 @@ public class SnippetSideEffectRunOnce {
 	/**
 	 * Create an {@link IObservableValue}, which will contain JSON once it has been
 	 * loaded.
-	 *
-	 * @return {@link IObservableValue}
 	 */
 	public static IObservableValue<String> loadJsonFromRemote() {
 		IObservableValue<String> json = new WritableValue<>();
 
 		Job loadJsonJob = Job.create("Loading JSON from remote...", monitor -> {
 
-			// mimic a delay of a real json call
+			// Mimic a delay of a real JSON call
 			try {
 				TimeUnit.SECONDS.sleep(3);
 			} catch (InterruptedException e) {

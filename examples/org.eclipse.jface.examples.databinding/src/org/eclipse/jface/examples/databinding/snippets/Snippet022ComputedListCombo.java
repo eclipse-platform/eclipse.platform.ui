@@ -38,10 +38,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 
-/**
- * @since 3.2
- *
- */
 public class Snippet022ComputedListCombo {
 	private static WritableList<Thing> model;
 
@@ -66,9 +62,6 @@ public class Snippet022ComputedListCombo {
 		display.dispose();
 	}
 
-	/**
-	 *
-	 */
 	protected void createModel() {
 		model = new WritableList<>();
 		model.add(new Thing("Alice", true, false));
@@ -81,9 +74,6 @@ public class Snippet022ComputedListCombo {
 		model.add(new Thing("Nail", false, false));
 	}
 
-	/**
-	 * @param shell
-	 */
 	protected void createControls(Shell shell) {
 		Composite composite = new Composite(shell, SWT.NONE);
 		Group group = new Group(composite, SWT.NONE);
@@ -98,6 +88,7 @@ public class Snippet022ComputedListCombo {
 		GridDataFactory.defaultsFor(combo).align(SWT.BEGINNING, SWT.BEGINNING).applyTo(combo);
 		ComboViewer viewer = new ComboViewer(combo);
 		viewer.setContentProvider(new ObservableListContentProvider<>());
+
 		// We should really have an out-of-the box filtered list...
 		IObservableList<Thing> filteredList = new ComputedList<Thing>() {
 			@Override

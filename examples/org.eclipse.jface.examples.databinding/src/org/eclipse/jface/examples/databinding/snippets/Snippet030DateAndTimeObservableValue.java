@@ -35,10 +35,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-/**
- * @since 3.2
- *
- */
 public class Snippet030DateAndTimeObservableValue {
 	protected Shell shell;
 	private Text modelText;
@@ -48,9 +44,7 @@ public class Snippet030DateAndTimeObservableValue {
 	private Button syncTime;
 
 	/**
-	 * Launch the application
-	 *
-	 * @param args
+	 * Launch the application.
 	 */
 	public static void main(String[] args) {
 		try {
@@ -62,7 +56,7 @@ public class Snippet030DateAndTimeObservableValue {
 	}
 
 	/**
-	 * Open the window
+	 * Open the window.
 	 */
 	public void open() {
 		final Display display = Display.getDefault();

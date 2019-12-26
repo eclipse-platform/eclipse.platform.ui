@@ -40,8 +40,6 @@ import org.eclipse.swt.widgets.Text;
 /**
  * Snippet that displays how to bind the validation error of the
  * {@link DataBindingContext} to a label. http://www.eclipse.org
- *
- * @since 3.2
  */
 public class Snippet004DataBindingContextErrorLabel {
 	public static void main(String[] args) {
@@ -63,11 +61,11 @@ public class Snippet004DataBindingContextErrorLabel {
 
 			DataBindingContext dbc = new DataBindingContext();
 
-			// Bind the text to the value.
+			// Bind the text to the value
 			dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(text), value,
 					new UpdateValueStrategy<String, String>().setAfterConvertValidator(new FiveValidator()), null);
 
-			// Bind the error label to the validation error on the dbc.
+			// Bind the error label to the validation error on the dbc
 			dbc.bindValue(WidgetProperties.text().observe(errorLabel),
 					new AggregateValidationStatus(dbc.getBindings(), AggregateValidationStatus.MAX_SEVERITY));
 
@@ -84,8 +82,6 @@ public class Snippet004DataBindingContextErrorLabel {
 
 	/**
 	 * Validator that returns validation errors for any value other than 5.
-	 *
-	 * @since 3.2
 	 */
 	private static class FiveValidator implements IValidator<String> {
 		@Override

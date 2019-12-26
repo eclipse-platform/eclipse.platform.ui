@@ -139,9 +139,8 @@ public class Snippet014WizardDialog {
 	public static void main(String[] args) {
 		Display display = new Display();
 
-		// note that the "runWithDefault" will be done for you if you are using
-		// the
-		// Workbench as opposed to just JFace/SWT.
+		// Note that the "runWithDefault" will be done for you if you are using
+		// the Workbench as opposed to just JFace/SWT
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
 			IWizard wizard = new SampleWizard();
 			WizardDialog dialog = new WizardDialog(null, wizard);

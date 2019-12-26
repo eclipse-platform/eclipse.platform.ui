@@ -57,7 +57,7 @@ public class Snippet009TableViewer {
 		});
 	}
 
-	// Minimal JavaBeans support
+	/** Helper class for implementing JavaBeans support. */
 	public static abstract class AbstractModelObject {
 		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
@@ -82,9 +82,13 @@ public class Snippet009TableViewer {
 		}
 	}
 
-	// The data model class. This is normally a persistent class of some sort.
+	/**
+	 * The data model class.
+	 * <p>
+	 * This example implements full JavaBeans bound properties so that changes to
+	 * instances of this class will automatically be propagated to the UI.
+	 */
 	static class Person extends AbstractModelObject {
-		// A property...
 		String name = "John Smith";
 
 		public Person(String name) {
@@ -102,14 +106,11 @@ public class Snippet009TableViewer {
 		}
 	}
 
-	// The View's model--the root of our Model graph for this particular GUI.
-	//
-	// Typically each View class has a corresponding ViewModel class.
-	// The ViewModel is responsible for getting the objects to edit from the
-	// data access tier. Since this snippet doesn't have any persistent objects
-	// ro retrieve, this ViewModel just instantiates a model object to edit.
+	/**
+	 * The View's model--the root of our Model graph for this particular GUI.
+	 */
 	static class ViewModel {
-		// The model to bind
+		/** The model to bind. */
 		private List<Person> people = new LinkedList<>();
 		{
 			people.add(new Person("Steve Northover"));
@@ -126,7 +127,7 @@ public class Snippet009TableViewer {
 		}
 	}
 
-	// The GUI view
+	/** The GUI view. */
 	static class View {
 		private ViewModel viewModel;
 		private Table committers;
@@ -144,14 +145,13 @@ public class Snippet009TableViewer {
 			committers.setLinesVisible(true);
 			TableColumn column = new TableColumn(committers, SWT.NONE);
 
-			// Set up data binding.
+			// Set up data binding
 			TableViewer peopleViewer = new TableViewer(committers);
 			ViewerSupport.bind(peopleViewer, new WritableList<>(viewModel.getPeople(), Person.class),
 					BeanProperties.value(Person.class, "name"));
 
 			column.pack();
 
-			// Open and return the Shell
 			shell.setSize(100, 300);
 			shell.open();
 			return shell;

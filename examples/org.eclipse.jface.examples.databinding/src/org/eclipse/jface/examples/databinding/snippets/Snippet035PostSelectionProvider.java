@@ -97,13 +97,13 @@ public class Snippet035PostSelectionProvider {
 	private void createFieldSection(Composite parent) {
 		final Group section = createSectionGroup(parent, 2);
 
-		// normal selection
+		// Normal selection
 		Label selectionLabel = createLabelField(section, "Selection:");
 		IViewerObservableValue<String> selectionObservable = ViewerProperties.singleSelection(String.class)
 				.observe(listViewer);
 		dbc.bindValue(WidgetProperties.text().observe(selectionLabel), selectionObservable);
 
-		// post selection
+		// Post selection
 		Label postSelectionLabel = createLabelField(section, "Post selection:");
 		IViewerObservableValue<String> postSelectionObservable = ViewerProperties.singlePostSelection(String.class)
 				.observe(listViewer);

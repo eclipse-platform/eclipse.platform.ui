@@ -28,8 +28,8 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
-import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -64,9 +64,7 @@ public class Snippet019TreeViewerWithListFactory {
 	private IObservableValue<Bean> clipboard;
 
 	/**
-	 * Launch the application
-	 *
-	 * @param args
+	 * Launch the application.
 	 */
 	public static void main(String[] args) {
 		Display display = Display.getDefault();
@@ -81,7 +79,7 @@ public class Snippet019TreeViewerWithListFactory {
 	}
 
 	/**
-	 * Open the window
+	 * Open the window.
 	 */
 	public void open() {
 		final Display display = Display.getDefault();
@@ -96,7 +94,7 @@ public class Snippet019TreeViewerWithListFactory {
 	}
 
 	/**
-	 * Create contents of the window
+	 * Create contents of the window.
 	 */
 	protected void createContents() {
 		shell = new Shell();
@@ -226,7 +224,7 @@ public class Snippet019TreeViewerWithListFactory {
 		final GridData gd_beanValue = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		beanText.setLayoutData(gd_beanValue);
 		m_bindingContext = initDataBindings();
-		//
+
 		initExtraBindings(m_bindingContext);
 	}
 

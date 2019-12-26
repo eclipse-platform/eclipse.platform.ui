@@ -43,9 +43,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * This snippet demonstrates how to integrate an external validator
- *
- * @since 3.5
+ * This snippet demonstrates how to integrate an external validator.
  */
 public class Snippet027ExternalValidator extends WizardPage {
 
@@ -55,7 +53,7 @@ public class Snippet027ExternalValidator extends WizardPage {
 
 	private Contact contact;
 
-	// Minimal JavaBeans support
+	/** Helper class for implementing JavaBeans support. */
 	public static abstract class AbstractModelObject {
 		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
@@ -138,7 +136,7 @@ public class Snippet027ExternalValidator extends WizardPage {
 	}
 
 	/**
-	 * Create the wizard
+	 * Create the wizard.
 	 */
 	public Snippet027ExternalValidator() {
 		super("snippet024");
@@ -147,9 +145,7 @@ public class Snippet027ExternalValidator extends WizardPage {
 	}
 
 	/**
-	 * Create contents of the wizard
-	 *
-	 * @param parent
+	 * Create contents of the wizard.
 	 */
 	@Override
 	public void createControl(Composite parent) {
@@ -205,7 +201,7 @@ public class Snippet027ExternalValidator extends WizardPage {
 			@Override
 			protected IStatus validate() {
 
-				// Everything accessed here will trigger re-validation.
+				// Everything accessed here will trigger re-validation
 				name.getValue();
 				email.getValue();
 				phone.getValue();

@@ -33,10 +33,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
 
-/**
- * @since 3.2
- *
- */
 public class Snippet012CompositeUpdater {
 
 	public static void main(String[] args) {
@@ -100,8 +96,7 @@ public class Snippet012CompositeUpdater {
 			timer.schedule(new TimerTask() {
 				@Override
 				public void run() {
-					// we have to get onto the realm (UI thread) to perform the
-					// increment
+					// We have to get onto the realm (UI thread) to perform the increment
 					getRealm().asyncExec(() -> setValue(getValue() + 1));
 					scheduleIncrementTask();
 				}

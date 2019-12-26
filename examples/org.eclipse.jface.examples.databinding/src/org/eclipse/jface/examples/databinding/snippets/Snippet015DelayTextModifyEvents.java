@@ -55,8 +55,8 @@ public class Snippet015DelayTextModifyEvents {
 		final ISWTObservableValue<String> delayed1 = WidgetProperties.text(SWT.Modify).observeDelayed(200, text1);
 		final ISWTObservableValue<String> delayed2 = WidgetProperties.text(SWT.Modify).observeDelayed(2000, text2);
 
-		// (In a real application,you would want to dispose the resource manager
-		// when you are done with it)
+		// (In a real application,you would want to dispose the resource manager when
+		// you are done with it)
 		ResourceManager resourceManager = new LocalResourceManager(JFaceResources.getResources());
 		final Font shellFont = shell.getFont();
 		final Font italicFont = resourceManager.createFont(FontDescriptor.createFrom(shellFont).setStyle(SWT.ITALIC));

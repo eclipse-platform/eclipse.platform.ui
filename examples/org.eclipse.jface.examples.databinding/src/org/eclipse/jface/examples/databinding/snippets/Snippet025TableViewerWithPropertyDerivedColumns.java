@@ -26,8 +26,8 @@ import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
-import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.viewers.ComboViewer;
@@ -67,7 +67,7 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 		});
 	}
 
-	// Minimal JavaBeans support
+	/** Helper class for implementing JavaBeans support. */
 	public static abstract class AbstractModelObject {
 		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
@@ -94,9 +94,13 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 
 	private static Person UNKNOWN = new Person("unknown", null, null);
 
-	// The data model class. This is normally a persistent class of some sort.
+	/**
+	 * The data model class.
+	 * <p>
+	 * This example implements full JavaBeans bound properties so that changes to
+	 * instances of this class will automatically be propagated to the UI.
+	 */
 	static class Person extends AbstractModelObject {
-		// A property...
 		String name = "Donald Duck";
 		Person mother;
 		Person father;
@@ -132,12 +136,9 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 		}
 	}
 
-	// The View's model--the root of our Model graph for this particular GUI.
-	//
-	// Typically each View class has a corresponding ViewModel class.
-	// The ViewModel is responsible for getting the objects to edit from the
-	// data access tier. Since this snippet doesn't have any persistent objects
-	// ro retrieve, this ViewModel just instantiates a model object to edit.
+	/**
+	 * The View's model--the root of our Model graph for this particular GUI.
+	 */
 	static class ViewModel {
 		// The model to bind
 		private IObservableList<Person> people = new WritableList<>();
@@ -164,7 +165,7 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 		}
 	}
 
-	// The GUI view
+	/** The GUI view. */
 	static class View {
 		private ViewModel viewModel;
 		private Table duckFamily;
@@ -207,7 +208,6 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 			bindGUI(bindingContext);
 
 			GridLayoutFactory.swtDefaults().numColumns(2).applyTo(shell);
-			// Open and return the Shell
 			shell.setSize(800, 300);
 			shell.open();
 			return shell;
@@ -223,7 +223,6 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 		}
 
 		protected void bindGUI(DataBindingContext dbc) {
-			// Since we're using a JFace Viewer, we do first wrap our Table...
 			TableViewer peopleViewer = new TableViewer(duckFamily);
 			peopleViewer.addFilter(new ViewerFilter() {
 				@Override

@@ -20,8 +20,8 @@ import org.eclipse.core.databinding.observable.sideeffect.ISideEffectFactory;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.databinding.swt.WidgetSideEffects;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
@@ -35,16 +35,13 @@ import org.eclipse.swt.widgets.Text;
 /**
  * This snippet shows how to use the {@link ISideEffect} class to bind a
  * {@link Text} widget to a {@link Task} and the other way round.
- *
- * @since 3.2
- *
  */
 public class SnippetSideEffectTwoWayBinding {
 	public static void main(String[] args) {
 		Display display = new Display();
 
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			// create the Task model object
+			// Create the Task model object
 			Task task = new Task();
 			final Shell shell = new View(task).createShell();
 			Display display1 = Display.getCurrent();
@@ -56,15 +53,11 @@ public class SnippetSideEffectTwoWayBinding {
 		});
 	}
 
-	// Observable Task model
+	/** Observable Task model */
 	static class Task {
 
 		private WritableValue<String> summary = new WritableValue<>("Learn Databinding", String.class);
 
-		/**
-		 * @return the task's summary
-		 * @TrackedGetter
-		 */
 		public String getSummary() {
 			return summary.getValue();
 		}
@@ -88,11 +81,11 @@ public class SnippetSideEffectTwoWayBinding {
 			GridLayoutFactory.fillDefaults().applyTo(shell);
 			GridDataFactory gridDataFactory = GridDataFactory.fillDefaults().grab(true, false);
 
-			// create a Text widget, which will be bound to the Task summary
+			// Create a Text widget, which will be bound to the Task summary
 			summaryText = new Text(shell, SWT.BORDER);
 			gridDataFactory.applyTo(summaryText);
 
-			// create a Button to modify the model at runtime
+			// Create a Button to modify the model at runtime
 			Button setSummaryBtn = new Button(shell, SWT.PUSH);
 			gridDataFactory.applyTo(setSummaryBtn);
 			setSummaryBtn.setText("Set Task summary to \"done learning\"");
@@ -103,8 +96,7 @@ public class SnippetSideEffectTwoWayBinding {
 				}
 			});
 
-			// add a print Button to show the current task summary in the system
-			// output
+			// Add a print Button to show the current task summary in the system output
 			Button printButton = new Button(shell, SWT.PUSH);
 			gridDataFactory.applyTo(printButton);
 			printButton.setText("Print Task summary");
@@ -117,7 +109,6 @@ public class SnippetSideEffectTwoWayBinding {
 
 			bindData();
 
-			// Open and return the Shell
 			shell.pack();
 			shell.open();
 
@@ -128,7 +119,7 @@ public class SnippetSideEffectTwoWayBinding {
 
 			ISideEffectFactory sideEffectFactory = WidgetSideEffects.createFactory(summaryText);
 
-			// create the observables, which should be bound by the SideEffect
+			// Create the observables, which should be bound by the SideEffect
 			IObservableValue<String> textModifyObservable = WidgetProperties.text(SWT.Modify).observe(summaryText);
 
 			sideEffectFactory.create(task::getSummary, summaryText::setText);

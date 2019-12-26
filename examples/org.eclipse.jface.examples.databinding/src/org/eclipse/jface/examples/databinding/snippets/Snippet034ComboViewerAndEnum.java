@@ -55,15 +55,15 @@ public class Snippet034ComboViewerAndEnum {
 		Male, Female, Unknown;
 	}
 
-	// The data model class. This is normally a persistent class of some sort.
-	//
-	// In this example, we only push changes from the GUI to the model, so we
-	// don't worry about implementing JavaBeans bound properties. If we need
-	// our GUI to automatically reflect changes in the Person object, the
-	// Person object would need to implement the JavaBeans property change
-	// listener methods.
+	/**
+	 * The data model class.
+	 * <p>
+	 * In this example, we only push changes from the GUI to the model, so we don't
+	 * worry about implementing JavaBeans bound properties. If we need our GUI to
+	 * automatically reflect changes in the Person object, the Person object would
+	 * need to implement the JavaBeans property change listener methods.
+	 */
 	static class Person {
-		// A property...
 		String name;
 		Gender gender;
 
@@ -89,7 +89,7 @@ public class Snippet034ComboViewerAndEnum {
 		}
 	}
 
-	// The GUI view
+	/** The GUI view. */
 	static class View {
 		private Person viewModel;
 		private Text name;
@@ -129,7 +129,6 @@ public class Snippet034ComboViewerAndEnum {
 			IObservableValue<Gender> genderObservable = ViewerProperties.singleSelection(Gender.class).observe(gender);
 			bindingContext.bindValue(genderObservable, PojoProperties.value(Person.class, "gender").observe(viewModel));
 
-			// Open and return the Shell
 			shell.pack();
 			shell.open();
 			return shell;

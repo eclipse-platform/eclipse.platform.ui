@@ -28,8 +28,8 @@ import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
-import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -66,9 +66,7 @@ public class Snippet020TreeViewerWithSetFactory {
 	static int counter = 0;
 
 	/**
-	 * Launch the application
-	 *
-	 * @param args
+	 * Launch the application.
 	 */
 	public static void main(String[] args) {
 		Display display = Display.getDefault();
@@ -83,7 +81,7 @@ public class Snippet020TreeViewerWithSetFactory {
 	}
 
 	/**
-	 * Open the window
+	 * Open the window-
 	 */
 	public void open() {
 		final Display display = Display.getDefault();
@@ -98,7 +96,7 @@ public class Snippet020TreeViewerWithSetFactory {
 	}
 
 	/**
-	 * Create contents of the window
+	 * Create contents of the window.
 	 */
 	protected void createContents() {
 		shell = new Shell();
@@ -144,6 +142,7 @@ public class Snippet020TreeViewerWithSetFactory {
 				set.add(child);
 				parent.setSet(set);
 
+				// TODO: Remove?
 				// beanViewer.setSelection(new StructuredSelection(parent));
 				// beanText.selectAll();
 				// beanText.setFocus();

@@ -32,10 +32,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-/**
- * @since 3.2
- *
- */
 public class Snippet023ConditionalVisibility {
 	public static void main(String[] args) {
 		Display display = new Display();
@@ -59,9 +55,6 @@ public class Snippet023ConditionalVisibility {
 	Text toText;
 	Text fromText;
 
-	/**
-	 * @param shell
-	 */
 	private void createControls(Shell shell) {
 		Composite composite = new Composite(shell, SWT.NONE);
 		Group radioGroup = new Group(composite, SWT.NONE);

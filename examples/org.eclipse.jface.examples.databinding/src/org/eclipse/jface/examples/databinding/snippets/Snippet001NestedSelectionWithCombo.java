@@ -45,11 +45,11 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * Demonstrates nested selection.<br>
- * At the first level, user may select a person.<br>
- * At the second level, user may select a city to associate with the
- * selected<br>
- * person or edit the person's name.
+ * Demonstrates nested selection.
+ * <p>
+ * At the first level, user may select a person. At the second level, user may
+ * select a city to associate with the selected person or edit the person's
+ * name.
  */
 public class Snippet001NestedSelectionWithCombo {
 	public static void main(String[] args) {
@@ -65,7 +65,7 @@ public class Snippet001NestedSelectionWithCombo {
 		}
 	}
 
-	// Minimal JavaBeans support
+	/** Helper class for implementing JavaBeans support. */
 	public static abstract class AbstractModelObject {
 		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
@@ -90,20 +90,19 @@ public class Snippet001NestedSelectionWithCombo {
 		}
 	}
 
-	// The data model class. This is normally a persistent class of some sort.
-	//
-	// This example implements full JavaBeans bound properties so that changes
-	// to instances of this class will automatically be propogated to the UI.
+	/**
+	 * The data model class.
+	 * <p>
+	 * This example implements full JavaBeans bound properties so that changes to
+	 * instances of this class will automatically be propagated to the UI.
+	 */
 	public static class Person extends AbstractModelObject {
-		// Constructor
 		public Person(String name, String city) {
 			this.name = name;
 			this.city = city;
 		}
 
-		// Some JavaBean bound properties...
 		String name;
-
 		String city;
 
 		public String getName() {
@@ -127,14 +126,14 @@ public class Snippet001NestedSelectionWithCombo {
 		}
 	}
 
-	// The View's model--the root of our GUI's Model graph
-	//
-	// Typically each View class has a corresponding ViewModel class.
-	// The ViewModel is responsible for getting the objects to edit from the
-	// DAO. Since this snippet doesn't have any persistent objects to
-	// retrieve, this ViewModel just instantiates some objects to edit.
-	//
-	// This ViewModel also implements JavaBean bound properties.
+	/**
+	 * The View's model--the root of our Model graph for this particular GUI.
+	 * <p>
+	 * Typically each View class has a corresponding ViewModel class. The ViewModel
+	 * is responsible for getting the objects to edit from the DAO. Since this
+	 * snippet doesn't have any persistent objects to retrieve, this ViewModel just
+	 * instantiates a model object to edit.
+	 */
 	static class ViewModel extends AbstractModelObject {
 		// The model to bind
 		private ArrayList<Person> people = new ArrayList<>();
@@ -163,7 +162,7 @@ public class Snippet001NestedSelectionWithCombo {
 		}
 	}
 
-	// The GUI view
+	/** The GUI view. */
 	static class View {
 		private ViewModel viewModel;
 
@@ -208,7 +207,6 @@ public class Snippet001NestedSelectionWithCombo {
 
 			GridLayoutFactory.swtDefaults().applyTo(shell);
 
-			// Open and return the Shell
 			shell.pack();
 			shell.open();
 			return shell;

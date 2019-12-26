@@ -48,13 +48,8 @@ import org.eclipse.swt.widgets.TableColumn;
 /**
  * An example showing how to create a {@link ILabelProvider label provider} that
  * to provide colors.
- *
- * @since 3.2
  */
 public class Snippet007ColorLabelProvider {
-	/**
-	 * @param args
-	 */
 	@SuppressWarnings("unchecked")
 	public static void main(String[] args) {
 		final List<Person> persons = new ArrayList<>();
@@ -87,8 +82,8 @@ public class Snippet007ColorLabelProvider {
 
 			viewer.setContentProvider(contentProvider);
 
-			// this does not have to correspond to the columns in the table,
-			// we just list all attributes that affect the table content.
+			// This does not have to correspond to the columns in the table,
+			// we just list all attributes that affect the table content
 			IObservableMap<Person, ?>[] attributes = new IObservableMap[2];
 			attributes[0] = BeanProperties.value(Person.class, "name")
 					.observeDetail(contentProvider.getKnownElements());
@@ -104,10 +99,8 @@ public class Snippet007ColorLabelProvider {
 					super(attributes);
 				}
 
-				// to drive home the point that attributes does not have to
-				// match
-				// the columns
-				// in the table, we change the column text as follows:
+				// To drive home the point that attributes does not have to match the columns in
+				// the table, we change the column text as follows:
 				@Override
 				public String getColumnText(Object element, int index) {
 					if (index == 0) {
@@ -183,18 +176,10 @@ public class Snippet007ColorLabelProvider {
 			this.gender = gender;
 		}
 
-		/**
-		 * Returns the name. Method declared public to satisfy Java bean conventions
-		 *
-		 * @return the name
-		 */
 		public String getName() {
 			return name;
 		}
 
-		/**
-		 * @param listener
-		 */
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
 			changeSupport.addPropertyChangeListener(listener);
 		}
@@ -203,11 +188,6 @@ public class Snippet007ColorLabelProvider {
 			changeSupport.removePropertyChangeListener(listener);
 		}
 
-		/**
-		 * Returns the gender. Method declared public to satisfy Java bean conventions
-		 *
-		 * @return the gender
-		 */
 		public int getGender() {
 			return gender;
 		}

@@ -80,19 +80,9 @@ public class Snippet011ValidateMultipleBindingsSnippet {
 		display.dispose();
 	}
 
-	/**
-	 * @since 3.2
-	 *
-	 */
 	private static final class CrossFieldValidator implements IValidator<String> {
-		/**
-		 *
-		 */
 		private final IObservableValue<String> other;
 
-		/**
-		 * @param model
-		 */
 		private CrossFieldValidator(IObservableValue<String> other) {
 			this.other = other;
 		}

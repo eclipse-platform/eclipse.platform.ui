@@ -38,13 +38,8 @@ import org.eclipse.swt.widgets.Text;
 /**
  * Snippet that demostrates a simple use case using ComputedValue to format a
  * name as the user enters first and last name.
- *
- * @since 3.2
  */
 public class Snippet008ComputedValue {
-	/**
-	 * @param args
-	 */
 	public static void main(String[] args) {
 		final Display display = new Display();
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
@@ -54,18 +49,17 @@ public class Snippet008ComputedValue {
 			final UI ui = new UI(shell);
 			final Data data = new Data();
 
-			// Bind the UI to the Data.
+			// Bind the UI to the Data
 			DataBindingContext dbc = new DataBindingContext();
 			dbc.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.Modify).observe(ui.firstName),
 					data.firstName);
 			dbc.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.Modify).observe(ui.lastName),
 					data.lastName);
 
-			// Construct the formatted name observable.
+			// Construct the formatted name observable
 			FormattedName formattedName = new FormattedName(data.firstName, data.lastName);
 
-			// Bind the formatted name Text to the formatted name
-			// observable.
+			// Bind the formatted name Text to the formatted name observable
 			dbc.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.None).observe(ui.formattedName),
 					formattedName, new UpdateValueStrategy<String, String>(false, UpdateValueStrategy.POLICY_NEVER),
 					null);
@@ -90,9 +84,6 @@ public class Snippet008ComputedValue {
 	 * <code>ObservableTracker</code> records the observables that are queried. It
 	 * then exposes those observables and <code>ComputedValue</code> can listen to
 	 * changes in those objects and react accordingly.
-	 * </p>
-	 *
-	 * @since 3.2
 	 */
 	static class FormattedName extends ComputedValue<String> {
 		private IObservableValue<String> firstName;
@@ -131,8 +122,6 @@ public class Snippet008ComputedValue {
 
 	/**
 	 * Composite that creates the UI.
-	 *
-	 * @since 3.2
 	 */
 	static class UI extends Composite {
 		final Text firstName;

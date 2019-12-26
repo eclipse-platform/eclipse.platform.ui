@@ -45,8 +45,6 @@ import org.eclipse.swt.widgets.Shell;
 /**
  * Shows how to bind a Combo so that when update its items, the selection is
  * retained if at all possible.
- *
- * @since 3.2
  */
 public class Snippet002UpdateComboRetainSelection {
 	public static void main(String[] args) {
@@ -68,7 +66,7 @@ public class Snippet002UpdateComboRetainSelection {
 		display.dispose();
 	}
 
-	// Minimal JavaBeans support
+	/** Helper class for implementing JavaBeans support. */
 	public static abstract class AbstractModelObject {
 		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
@@ -93,7 +91,7 @@ public class Snippet002UpdateComboRetainSelection {
 		}
 	}
 
-	// The View's model--the root of our Model graph for this particular GUI.
+	/** The View's model--the root of our Model graph for this particular GUI. */
 	public static class ViewModel extends AbstractModelObject {
 		private String text = "beef";
 
@@ -126,7 +124,7 @@ public class Snippet002UpdateComboRetainSelection {
 		}
 	}
 
-	// The GUI view
+	/** The GUI view. */
 	static class View {
 		private ViewModel viewModel;
 		/**
@@ -168,7 +166,7 @@ public class Snippet002UpdateComboRetainSelection {
 			DataBindingContext dbc = new DataBindingContext();
 
 			// This demonstrates a problem with Java generics:
-			// It is hard to produce a class object with type List<String>.
+			// It is hard to produce a class object with type List<String>
 			@SuppressWarnings("unchecked")
 			IObservableList<String> list = MasterDetailObservables.detailList(BeanProperties
 					.value(ViewModel.class, "choices", (Class<List<String>>) (Object) List.class).observe(viewModel),
@@ -177,7 +175,6 @@ public class Snippet002UpdateComboRetainSelection {
 			dbc.bindValue(WidgetProperties.text().observe(combo),
 					BeanProperties.value(ViewModel.class, "text").observe(viewModel));
 
-			// Open and return the Shell
 			shell.pack();
 			shell.open();
 			return shell;

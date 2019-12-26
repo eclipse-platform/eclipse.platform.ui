@@ -26,8 +26,8 @@ import org.eclipse.core.databinding.observable.list.WritableList;
 import org.eclipse.core.databinding.observable.value.DuplexingObservableValue;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
-import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
@@ -40,10 +40,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 
-/**
- * @since 3.2
- *
- */
 public class Snippet028DuplexingObservableValue {
 	protected Shell shell;
 	private TableViewer viewer;
@@ -54,9 +50,7 @@ public class Snippet028DuplexingObservableValue {
 	private Text writer;
 
 	/**
-	 * Launch the application
-	 *
-	 * @param args
+	 * Launch the application.
 	 */
 	public static void main(String[] args) {
 		try {
@@ -68,7 +62,7 @@ public class Snippet028DuplexingObservableValue {
 	}
 
 	/**
-	 * Open the window
+	 * Open the window.
 	 */
 	public void open() {
 		final Display display = Display.getDefault();
@@ -148,7 +142,7 @@ public class Snippet028DuplexingObservableValue {
 		bindUI();
 	}
 
-	// Minimal JavaBeans support
+	/** Helper class for implementing JavaBeans support. */
 	public static abstract class AbstractModelObject {
 		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 

@@ -43,31 +43,24 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 /**
- * <p>
  * This snippet shows how to migrate from the usage of the
  * {@link DataBindingContext} to the {@link ISideEffect} approach.
- * </p>
  * <p>
  * So basically two logically equal applications are implemented with the two
  * different approaches. The two bindData() methods in the view implementations
  * are the most interesting concerning the databinding migration.
- * </p>
  * <p>
  * The "old" {@link DataBindingContext} approach is shown by the
  * {@link ObservableBeanPerson} and {@link ObservableView} classes, and the
  * {@link TrackedPerson} and {@link TrackedView} classes introduce the "new"
  * {@link ISideEffect} approach.
- * </p>
- *
- * @since 3.2
- *
  */
 public class SnippetSideEffectMigration {
 	public static void main(String[] args) {
 		Display display = new Display();
 
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			// create the Person model object
+			// Create the Person model object
 			ObservableBeanPerson observableBeanPerson = new ObservableBeanPerson();
 			Shell observableShell = new ObservableView(observableBeanPerson).createShell();
 
@@ -82,7 +75,7 @@ public class SnippetSideEffectMigration {
 		});
 	}
 
-	// Observable Person model
+	/** Observable Person model. */
 	static class ObservableBeanPerson {
 
 		public static final String PROPERTY_FIRST_NAME = "firstName";
@@ -155,7 +148,6 @@ public class SnippetSideEffectMigration {
 
 			GridLayoutFactory.fillDefaults().numColumns(2).generateLayout(shell);
 
-			// Open and return the Shell
 			shell.pack();
 			shell.open();
 
@@ -200,39 +192,25 @@ public class SnippetSideEffectMigration {
 		}
 	}
 
-	// Observable Person model
+	/** Observable Person model. */
 	static class TrackedPerson {
 
 		private WritableValue<String> firstName = new WritableValue<>("Simon", String.class);
 
 		private WritableValue<String> lastName = new WritableValue<>("Scholz", String.class);
 
-		/**
-		 * @return the person's first name
-		 * @TrackedGetter
-		 */
 		public String getFirstName() {
 			return firstName.getValue();
 		}
 
-		/**
-		 * @param firstName The first name to set.
-		 */
 		public void setFirstName(String firstName) {
 			this.firstName.setValue(firstName);
 		}
 
-		/**
-		 * @return the person's last name.
-		 * @TrackedGetter
-		 */
 		public String getLastName() {
 			return lastName.getValue();
 		}
 
-		/**
-		 * @param lastName The last name to set.
-		 */
 		public void setLastName(String lastName) {
 			this.lastName.setValue(lastName);
 		}
@@ -264,7 +242,6 @@ public class SnippetSideEffectMigration {
 
 			GridLayoutFactory.fillDefaults().numColumns(2).generateLayout(shell);
 
-			// Open and return the Shell
 			shell.pack();
 			shell.open();
 
@@ -272,7 +249,7 @@ public class SnippetSideEffectMigration {
 		}
 
 		private void bindData() {
-			// create the observables, which should be bound by the SideEffect
+			// Create the observables, which should be bound by the SideEffect
 			ISWTObservableValue<String> personFirstNameTextObservable = WidgetProperties.text(SWT.Modify)
 					.observe(personFirstNameText);
 			ISWTObservableValue<String> personLastNameTextObservable = WidgetProperties.text(SWT.Modify)

@@ -36,18 +36,12 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-/**
- * @since 3.2
- *
- */
 public class Snippet029TreeViewerMultiListProperty {
 	protected Shell shell;
 	private TreeViewer viewer;
 
 	/**
-	 * Launch the application
-	 *
-	 * @param args
+	 * Launch the application.
 	 */
 	public static void main(String[] args) {
 		try {
@@ -59,7 +53,7 @@ public class Snippet029TreeViewerMultiListProperty {
 	}
 
 	/**
-	 * Open the window
+	 * Open the window.
 	 */
 	public void open() {
 		final Display display = Display.getDefault();
@@ -89,7 +83,7 @@ public class Snippet029TreeViewerMultiListProperty {
 		bindUI();
 	}
 
-	// Minimal JavaBeans support
+	/** Helper class for implementing JavaBeans support. */
 	public static abstract class AbstractModelObject {
 		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 

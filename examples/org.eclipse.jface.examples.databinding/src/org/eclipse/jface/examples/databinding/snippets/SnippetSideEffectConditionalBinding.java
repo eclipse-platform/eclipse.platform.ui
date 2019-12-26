@@ -49,16 +49,13 @@ import org.eclipse.swt.widgets.Text;
  * the observables it affects, it is impossible for it to get out of sync with
  * the underlying data.
  * </ul>
- *
- * @since 3.2
- *
  */
 public class SnippetSideEffectConditionalBinding {
 	public static void main(String[] args) {
 		Display display = new Display();
 
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			// create the Person model object
+			// Create the Person model object
 			Person person = new Person();
 			final Shell shell = new View(person).createShell();
 			Display display1 = Display.getCurrent();
@@ -70,39 +67,25 @@ public class SnippetSideEffectConditionalBinding {
 		});
 	}
 
-	// Observable Person model
+	/** Observable Person model. */
 	static class Person {
 
 		private WritableValue<String> firstName = new WritableValue<>("Simon", String.class);
 
 		private WritableValue<String> lastName = new WritableValue<>("Scholz", String.class);
 
-		/**
-		 * @return the person's first name
-		 * @TrackedGetter
-		 */
 		public String getFirstName() {
 			return firstName.getValue();
 		}
 
-		/**
-		 * @param firstName The summary to set.
-		 */
 		public void setFirstName(String firstName) {
 			this.firstName.setValue(firstName);
 		}
 
-		/**
-		 * @return Returns the description.
-		 * @TrackedGetter
-		 */
 		public String getLastName() {
 			return lastName.getValue();
 		}
 
-		/**
-		 * @param lastName The last name to set.
-		 */
 		public void setLastName(String lastName) {
 			this.lastName.setValue(lastName);
 		}
@@ -137,15 +120,14 @@ public class SnippetSideEffectConditionalBinding {
 			changeNameButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					// if the showDescriptionButton isn't checked this won't
-					// cause the ISideEffect to be run
+					// If the showDescriptionButton isn't checked this won't cause the ISideEffect
+					// to be run
 					person.setLastName("Xenos");
 				}
 			});
 
 			bindData();
 
-			// Open and return the Shell
 			shell.pack();
 			shell.open();
 
@@ -157,14 +139,14 @@ public class SnippetSideEffectConditionalBinding {
 			IObservableValue<Boolean> showDescription = WidgetProperties.buttonSelection()
 					.observe(showDescriptionButton);
 
-			// create a conditional ISideEffect
+			// Create a conditional ISideEffect
 			ISideEffect personNameSideEffect = ISideEffect.create(() -> {
 				String name = showDescription.getValue() ? person.getFirstName() + " " + person.getLastName()
 						: person.getFirstName();
 				personNameText.setText(name);
 			});
 
-			// dispose the ISideEffect object on dispose
+			// Dispose the ISideEffect object on dispose
 			personNameText.addDisposeListener(e -> {
 				personNameSideEffect.dispose();
 			});

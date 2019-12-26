@@ -37,8 +37,8 @@ import org.eclipse.core.databinding.property.set.ISetProperty;
 import org.eclipse.core.databinding.property.set.SimpleSetProperty;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
-import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.TreeViewer;
@@ -53,10 +53,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 
-/**
- * @since 3.2
- *
- */
 public class Snippet026AnonymousBeanProperties {
 	private ComboViewer statusViewer;
 	private Combo combo;
@@ -79,7 +75,7 @@ public class Snippet026AnonymousBeanProperties {
 	private Shell shell;
 	private Tree tree;
 
-	// Minimal JavaBeans support
+	/** Helper class for implementing JavaBeans support. */
 	public static abstract class AbstractModelObject {
 		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
@@ -289,9 +285,6 @@ public class Snippet026AnonymousBeanProperties {
 
 	private static final String[] statuses = new String[] { "Online", "Idle", "Busy", "Offline" };
 
-	/**
-	 * @return
-	 */
 	private ApplicationModel createDefaultModel() {
 		ContactGroup swtGroup = new ContactGroup("SWT");
 		swtGroup.addContact(new Contact("Steve Northover", "Busy"));

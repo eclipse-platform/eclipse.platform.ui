@@ -32,8 +32,8 @@ import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
-import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.databinding.viewers.ViewerSupport;
+import org.eclipse.jface.databinding.viewers.typed.ViewerProperties;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.layout.GridDataFactory;
@@ -110,7 +110,7 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 		person.setFriends(new HashSet<>(Arrays.asList(friends)));
 	}
 
-	// Minimal JavaBeans support
+	/** Helper class for implementing JavaBeans support. */
 	public static abstract class AbstractModelObject {
 		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
@@ -135,7 +135,12 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 		}
 	}
 
-	// The data model class.
+	/**
+	 * The data model class.
+	 * <p>
+	 * This example implements full JavaBeans bound properties so that changes to
+	 * instances of this class will automatically be propagated to the UI.
+	 */
 	static class Person extends AbstractModelObject {
 		private String name;
 		private Set<Person> friends = new HashSet<>();
@@ -162,13 +167,9 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 		}
 	}
 
-	// The View's model--the root of our Model graph for this particular GUI.
-	//
-	// Typically each View class has a corresponding ViewModel class.
-	//
-	// The ViewModel is responsible for getting the objects to edit from the
-	// data access tier. Since this snippet doesn't have any persistent objects
-	// to retrieve, this ViewModel just instantiates a model object to edit.
+	/**
+	 * The View's model--the root of our Model graph for this particular GUI.
+	 */
 	static class ViewModel extends AbstractModelObject {
 		private List<Person> people = new ArrayList<>();
 
@@ -181,7 +182,7 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 		}
 	}
 
-	// The GUI view
+	/** The GUI view. */
 	static class View {
 		private ViewModel viewModel;
 
@@ -207,7 +208,6 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 			// Bind UI
 			bindUI();
 
-			// Open and return the Shell
 			shell.setSize(shell.computeSize(400, SWT.DEFAULT));
 			shell.open();
 			return shell;

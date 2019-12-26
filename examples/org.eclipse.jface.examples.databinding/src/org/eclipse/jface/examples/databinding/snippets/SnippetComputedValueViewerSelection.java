@@ -80,10 +80,9 @@ public class SnippetComputedValueViewerSelection {
 			deleteSelectionButton.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
-					// since an IObservableList and a
-					// ObservableListContentProvider is used the input list can
-					// simply be modified and automatically gets reflected in
-					// the viewer.
+					// Since an IObservableList and a ObservableListContentProvider is used the
+					// input list can simply be modified and automatically gets reflected in the
+					// viewer
 					@SuppressWarnings("unchecked")
 					List<String> list = tableViewer.getStructuredSelection().toList();
 					input.removeAll(list);
@@ -99,17 +98,16 @@ public class SnippetComputedValueViewerSelection {
 		}
 
 		private void bindData() {
-
-			// observe the selection list of a viewer
+			// Observe the selection list of a viewer
 			IViewerObservableList<String> viewerSelectionObservable = ViewerProperties.multipleSelection(String.class)
 					.observe(tableViewer);
-			// track whether the selection list is empty or not
+			// Track whether the selection list is empty or not
 			// (viewerSelectionObservable.isEmpty() is a tracked getter!)
 			IObservableValue<Boolean> hasSelectionObservable = ComputedValue
 					.create(() -> !viewerSelectionObservable.isEmpty());
 
-			// once the selection state(Boolean) changes the ISideEffect will
-			// update the button
+			// Once the selection state(Boolean) changes the ISideEffect will update the
+			// button
 			ISideEffect deleteButtonEnablementSideEffect = ISideEffect.create(hasSelectionObservable::getValue,
 					deleteSelectionButton::setEnabled);
 
