@@ -81,15 +81,14 @@ public class Snippet008ComputedValue {
 	}
 
 	/**
-	 * Creates the formatted name on change of the first or last name
-	 * observables.
+	 * Creates the formatted name on change of the first or last name observables.
 	 * <p>
-	 * The key to understanding ComputedValue is understanding that it knows of
-	 * the observables that are queried without being told. This is done with
+	 * The key to understanding ComputedValue is understanding that it knows of the
+	 * observables that are queried without being told. This is done with
 	 * {@link ObservableTracker} voodoo. When calculate() is invoked
-	 * <code>ObservableTracker</code> records the observables that are
-	 * queried. It then exposes those observables and <code>ComputedValue</code>
-	 * can listen to changes in those objects and react accordingly.
+	 * <code>ObservableTracker</code> records the observables that are queried. It
+	 * then exposes those observables and <code>ComputedValue</code> can listen to
+	 * changes in those objects and react accordingly.
 	 * </p>
 	 *
 	 * @since 3.2
@@ -108,10 +107,8 @@ public class Snippet008ComputedValue {
 		protected String calculate() {
 			String lastName = this.lastName.getValue();
 			String firstName = this.firstName.getValue();
-			lastName = (lastName != null && lastName.length() > 0) ? lastName
-					: "[Last Name]";
-			firstName = (firstName != null && firstName.length() > 0) ? firstName
-					: "[First Name]";
+			lastName = (lastName != null && lastName.length() > 0) ? lastName : "[Last Name]";
+			firstName = (firstName != null && firstName.length() > 0) ? firstName : "[First Name]";
 
 			StringBuilder buffer = new StringBuilder();
 			buffer.append(lastName).append(", ").append(firstName);
@@ -151,16 +148,14 @@ public class Snippet008ComputedValue {
 			new Label(this, SWT.NONE).setText("First Name:");
 			new Label(this, SWT.NONE).setText("Last Name");
 
-			GridDataFactory gdf = GridDataFactory.swtDefaults().align(SWT.FILL,
-					SWT.FILL).grab(true, false);
+			GridDataFactory gdf = GridDataFactory.swtDefaults().align(SWT.FILL, SWT.FILL).grab(true, false);
 			firstName = new Text(this, SWT.BORDER);
 			gdf.applyTo(firstName);
 
 			lastName = new Text(this, SWT.BORDER);
 			gdf.applyTo(lastName);
 
-			gdf = GridDataFactory.swtDefaults().span(2, 1).grab(true, false)
-					.align(SWT.FILL, SWT.BEGINNING);
+			gdf = GridDataFactory.swtDefaults().span(2, 1).grab(true, false).align(SWT.FILL, SWT.BEGINNING);
 			Label label = new Label(this, SWT.NONE);
 			label.setText("Formatted Name:");
 			gdf.applyTo(label);

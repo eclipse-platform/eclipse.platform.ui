@@ -79,8 +79,8 @@ public class SnippetSideEffectRunOnce {
 	}
 
 	/**
-	 * Create an {@link IObservableValue}, which will contain JSON once it has
-	 * been loaded.
+	 * Create an {@link IObservableValue}, which will contain JSON once it has been
+	 * loaded.
 	 *
 	 * @return {@link IObservableValue}
 	 */

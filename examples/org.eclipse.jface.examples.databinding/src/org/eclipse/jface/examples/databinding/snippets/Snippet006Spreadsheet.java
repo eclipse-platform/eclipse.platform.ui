@@ -63,8 +63,8 @@ public class Snippet006Spreadsheet {
 	private static boolean FUNKY_COUNTER = false;
 
 	/**
-	 * // * If true, all formulas (except for row 1 and column A) will be the
-	 * sum of the values of their left and top neighbouring cells.
+	 * // * If true, all formulas (except for row 1 and column A) will be the sum of
+	 * the values of their left and top neighbouring cells.
 	 */
 	private static boolean FUNKY_FORMULAS = true;
 
@@ -134,11 +134,9 @@ public class Snippet006Spreadsheet {
 				// reference to other cell
 				int columnIndex = character - 'a';
 				int rowIndex = 0;
-				rowIndex = NumberFormat.getNumberInstance().parse(
-						s.substring(1)).intValue() - 1;
+				rowIndex = NumberFormat.getNumberInstance().parse(s.substring(1)).intValue() - 1;
 				String value = cellValues[rowIndex][columnIndex].getValue();
-				return value.length() == 0 ? 0 : NumberFormat
-						.getNumberInstance().parse(value).doubleValue();
+				return value.length() == 0 ? 0 : NumberFormat.getNumberInstance().parse(value).doubleValue();
 			}
 			return NumberFormat.getNumberInstance().parse(s).doubleValue();
 		}
@@ -302,8 +300,7 @@ public class Snippet006Spreadsheet {
 	}
 
 	private static String cellReference(int rowIndex, int columnIndex) {
-		return "" + ((char) ('A' + columnIndex))
-				+ (rowIndex + 1);
+		return "" + ((char) ('A' + columnIndex)) + (rowIndex + 1);
 	}
 
 }

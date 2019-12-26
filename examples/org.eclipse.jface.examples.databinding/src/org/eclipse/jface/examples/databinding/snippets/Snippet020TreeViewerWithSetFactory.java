@@ -115,9 +115,7 @@ public class Snippet020TreeViewerWithSetFactory {
 		rowLayout.marginBottom = 0;
 		rowLayout.pack = false;
 		group.setLayout(rowLayout);
-		group
-				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false,
-						2, 1));
+		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 2, 1));
 
 		final Button addRootButton = new Button(group, SWT.NONE);
 		addRootButton.addSelectionListener(new SelectionAdapter() {
@@ -222,8 +220,7 @@ public class Snippet020TreeViewerWithSetFactory {
 		itemNameLabel.setText("Item Name");
 
 		beanText = new Text(shell, SWT.BORDER);
-		final GridData gd_beanValue = new GridData(SWT.FILL, SWT.CENTER, true,
-				false);
+		final GridData gd_beanValue = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		beanText.setLayoutData(gd_beanValue);
 		m_bindingContext = initDataBindings();
 		//
@@ -239,8 +236,7 @@ public class Snippet020TreeViewerWithSetFactory {
 				.observe(beanViewer);
 		IObservableValue<String> textTextObserveWidget = WidgetProperties.text(SWT.Modify).observe(beanText);
 		IObservableValue<String> treeViewerValueObserveDetailValue = BeanProperties
-				.value(Bean.class, "text", String.class)
-				.observeDetail(treeViewerSelectionObserveSelection);
+				.value(Bean.class, "text", String.class).observeDetail(treeViewerSelectionObserveSelection);
 
 		DataBindingContext bindingContext = new DataBindingContext();
 
@@ -260,18 +256,16 @@ public class Snippet020TreeViewerWithSetFactory {
 		final IObservableValue<Bean> beanViewerSelection = ViewerProperties.singleSelection(Bean.class)
 				.observe(beanViewer);
 		IObservableValue<Boolean> beanSelected = ComputedValue.create(() -> beanViewerSelection.getValue() != null);
-		dbc.bindValue(WidgetProperties.enabled().observe(addChildBeanButton),
-				beanSelected);
-		dbc.bindValue(WidgetProperties.enabled().observe(removeBeanButton),
-				beanSelected);
+		dbc.bindValue(WidgetProperties.enabled().observe(addChildBeanButton), beanSelected);
+		dbc.bindValue(WidgetProperties.enabled().observe(removeBeanButton), beanSelected);
 
 		clipboard = new WritableValue<>();
 		dbc.bindValue(WidgetProperties.enabled().observe(copyButton), beanSelected);
 		dbc.bindValue(WidgetProperties.enabled().observe(pasteButton),
 				ComputedValue.create(() -> clipboard.getValue() != null));
 
-		ViewerSupport.bind(beanViewer, input, BeanProperties.set("set",
-				Bean.class), BeanProperties.value(Bean.class, "text"));
+		ViewerSupport.bind(beanViewer, input, BeanProperties.set("set", Bean.class),
+				BeanProperties.value(Bean.class, "text"));
 	}
 
 	static class Bean {
@@ -297,8 +291,7 @@ public class Snippet020TreeViewerWithSetFactory {
 		}
 
 		public void setText(String value) {
-			changeSupport.firePropertyChange("text", this.text,
-					this.text = value);
+			changeSupport.firePropertyChange("text", this.text, this.text = value);
 		}
 
 		public Set<Bean> getSet() {

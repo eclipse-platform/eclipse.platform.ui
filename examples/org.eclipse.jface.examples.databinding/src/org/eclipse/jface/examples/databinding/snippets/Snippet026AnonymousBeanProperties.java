@@ -81,33 +81,26 @@ public class Snippet026AnonymousBeanProperties {
 
 	// Minimal JavaBeans support
 	public static abstract class AbstractModelObject {
-		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(
-				this);
+		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
 			propertyChangeSupport.addPropertyChangeListener(listener);
 		}
 
-		public void addPropertyChangeListener(String propertyName,
-				PropertyChangeListener listener) {
-			propertyChangeSupport.addPropertyChangeListener(propertyName,
-					listener);
+		public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+			propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
 		}
 
 		public void removePropertyChangeListener(PropertyChangeListener listener) {
 			propertyChangeSupport.removePropertyChangeListener(listener);
 		}
 
-		public void removePropertyChangeListener(String propertyName,
-				PropertyChangeListener listener) {
-			propertyChangeSupport.removePropertyChangeListener(propertyName,
-					listener);
+		public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+			propertyChangeSupport.removePropertyChangeListener(propertyName, listener);
 		}
 
-		protected void firePropertyChange(String propertyName, Object oldValue,
-				Object newValue) {
-			propertyChangeSupport.firePropertyChange(propertyName, oldValue,
-					newValue);
+		protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+			propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
 		}
 	}
 
@@ -185,8 +178,7 @@ public class Snippet026AnonymousBeanProperties {
 		}
 
 		public void setStatus(String status) {
-			firePropertyChange("status", this.status,
-					this.status = checkNull(status));
+			firePropertyChange("status", this.status, this.status = checkNull(status));
 		}
 
 		@Override
@@ -215,9 +207,9 @@ public class Snippet026AnonymousBeanProperties {
 
 	/**
 	 * Set property for the "contacts" property of a ContactGroup. Since
-	 * ContactGroup does not have a setContacts() method we have to write our
-	 * own property to apply set changes incrementally through the addContact
-	 * and removeContact methods.
+	 * ContactGroup does not have a setContacts() method we have to write our own
+	 * property to apply set changes incrementally through the addContact and
+	 * removeContact methods.
 	 */
 	public static class ContactGroupContactsProperty extends SimpleSetProperty<ContactGroup, Contact> {
 		@Override
@@ -290,8 +282,7 @@ public class Snippet026AnonymousBeanProperties {
 		}
 	}
 
-	private static final String[] statuses = new String[] { "Online", "Idle",
-			"Busy", "Offline" };
+	private static final String[] statuses = new String[] { "Online", "Idle", "Busy", "Offline" };
 
 	/**
 	 * @return
@@ -347,8 +338,7 @@ public class Snippet026AnonymousBeanProperties {
 		nameLabel.setText("Name");
 
 		nameText = new Text(shell, SWT.BORDER);
-		final GridData gd_nameText = new GridData(SWT.FILL, SWT.CENTER, true,
-				false);
+		final GridData gd_nameText = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		nameText.setLayoutData(gd_nameText);
 
 		final Label statusLabel = new Label(shell, SWT.NONE);
@@ -362,10 +352,10 @@ public class Snippet026AnonymousBeanProperties {
 
 	private void bindUI() {
 		ISetProperty<Object, Object> treeChildrenProperty = new DelegatingSetProperty<Object, Object>() {
-			ISetProperty<ApplicationModel, ContactGroup> modelGroups = BeanProperties.set(
-					ApplicationModel.class, "groups", ContactGroup.class);
-			ISetProperty<ContactGroup, Contact> groupContacts = BeanProperties.set(ContactGroup.class,
-					"contacts", Contact.class);
+			ISetProperty<ApplicationModel, ContactGroup> modelGroups = BeanProperties.set(ApplicationModel.class,
+					"groups", ContactGroup.class);
+			ISetProperty<ContactGroup, Contact> groupContacts = BeanProperties.set(ContactGroup.class, "contacts",
+					Contact.class);
 
 			@SuppressWarnings("unchecked")
 			@Override

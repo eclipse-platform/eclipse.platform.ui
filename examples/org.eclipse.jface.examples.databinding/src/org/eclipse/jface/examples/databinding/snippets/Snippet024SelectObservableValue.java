@@ -72,8 +72,7 @@ public class Snippet024SelectObservableValue {
 
 		final ListViewer listViewer = new ListViewer(shell, SWT.BORDER);
 		listViewer.setContentProvider(new ArrayContentProvider());
-		listViewer.getList().setLayoutData(
-				new GridData(SWT.FILL, SWT.FILL, true, true));
+		listViewer.getList().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		final Group group = new Group(shell, SWT.NONE);
 		group.setText("Radio Group");
@@ -118,8 +117,7 @@ public class Snippet024SelectObservableValue {
 		}
 
 		public static Color[] values() {
-			return new Color[] { RED, ORANGE, YELLOW, GREEN, BLUE, INDIGO,
-					VIOLET };
+			return new Color[] { RED, ORANGE, YELLOW, GREEN, BLUE, INDIGO, VIOLET };
 		}
 	}
 }

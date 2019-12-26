@@ -87,18 +87,15 @@ public class Snippet030DateAndTimeObservableValue {
 		new Label(shell, SWT.NONE).setText("Model date + time");
 		modelText = new Text(shell, SWT.BORDER);
 		modelText.setEditable(false);
-		modelText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false,
-				2, 1));
+		modelText.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 2, 1));
 
 		new Label(shell, SWT.NONE).setText("Target date (SWT.DATE)");
 		date = new DateTime(shell, SWT.DATE | SWT.BORDER);
-		date.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2,
-				1));
+		date.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
 
 		new Label(shell, SWT.NONE).setText("Target date (SWT.CALENDAR)");
 		calendar = new DateTime(shell, SWT.CALENDAR);
-		calendar.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false,
-				2, 1));
+		calendar.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false, 2, 1));
 
 		new Label(shell, SWT.NONE).setText("Target time");
 		time = new DateTime(shell, SWT.TIME | SWT.BORDER);
@@ -120,10 +117,11 @@ public class Snippet030DateAndTimeObservableValue {
 
 		final IObservableValue<Date> timeSelection = WidgetProperties.dateTimeSelection().observe(time);
 
-		dbc.bindValue(new DateAndTimeObservableValue(WidgetProperties.dateTimeSelection().observe(date),
-				timeSelection), model);
-		dbc.bindValue(new DateAndTimeObservableValue(
-				WidgetProperties.dateTimeSelection().observe(calendar), timeSelection), model);
+		dbc.bindValue(new DateAndTimeObservableValue(WidgetProperties.dateTimeSelection().observe(date), timeSelection),
+				model);
+		dbc.bindValue(
+				new DateAndTimeObservableValue(WidgetProperties.dateTimeSelection().observe(calendar), timeSelection),
+				model);
 
 		syncTime.addListener(SWT.Selection, new Listener() {
 			Runnable runnable = new Runnable() {

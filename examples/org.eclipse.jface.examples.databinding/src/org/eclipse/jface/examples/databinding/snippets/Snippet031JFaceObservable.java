@@ -50,8 +50,7 @@ public class Snippet031JFaceObservable {
 			}
 		});
 		// Print the results
-		System.out.println("person.getName() = "
-				+ viewModel.getPerson().getName());
+		System.out.println("person.getName() = " + viewModel.getPerson().getName());
 	}
 
 	// The data model class. This is normally a persistent class of some sort.
@@ -68,16 +67,14 @@ public class Snippet031JFaceObservable {
 		}
 
 		public void setName(String name) {
-			fireChange(new PropertyChangeEvent(this, NAME_PROPERTY, this.name,
-					this.name = name));
+			fireChange(new PropertyChangeEvent(this, NAME_PROPERTY, this.name, this.name = name));
 		}
 
 		public void addPropertyChangeListener(IPropertyChangeListener listener) {
 			addListenerObject(listener);
 		}
 
-		public void removePropertyChangeListener(
-				IPropertyChangeListener listener) {
+		public void removePropertyChangeListener(IPropertyChangeListener listener) {
 			removeListenerObject(listener);
 		}
 

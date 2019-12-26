@@ -93,8 +93,7 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 		setFriends(wendy, new Person[] { stan });
 		setFriends(butters, new Person[0]);
 
-		Person[] people = new Person[] { stan, kyle, eric, kenny, wendy,
-				butters };
+		Person[] people = new Person[] { stan, kyle, eric, kenny, wendy, butters };
 		viewModel.setPeople(Arrays.asList(people));
 		return viewModel;
 	}
@@ -111,33 +110,26 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 
 	// Minimal JavaBeans support
 	public static abstract class AbstractModelObject {
-		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(
-				this);
+		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
 			propertyChangeSupport.addPropertyChangeListener(listener);
 		}
 
-		public void addPropertyChangeListener(String propertyName,
-				PropertyChangeListener listener) {
-			propertyChangeSupport.addPropertyChangeListener(propertyName,
-					listener);
+		public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+			propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
 		}
 
 		public void removePropertyChangeListener(PropertyChangeListener listener) {
 			propertyChangeSupport.removePropertyChangeListener(listener);
 		}
 
-		public void removePropertyChangeListener(String propertyName,
-				PropertyChangeListener listener) {
-			propertyChangeSupport.removePropertyChangeListener(propertyName,
-					listener);
+		public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+			propertyChangeSupport.removePropertyChangeListener(propertyName, listener);
 		}
 
-		protected void firePropertyChange(String propertyName, Object oldValue,
-				Object newValue) {
-			propertyChangeSupport.firePropertyChange(propertyName, oldValue,
-					newValue);
+		protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+			propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
 		}
 	}
 
@@ -159,8 +151,7 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 		}
 
 		public void setFriends(Set<Person> friends) {
-			firePropertyChange("friends", this.friends,
-					this.friends = new HashSet<>(friends));
+			firePropertyChange("friends", this.friends, this.friends = new HashSet<>(friends));
 		}
 
 		@Override
@@ -184,8 +175,7 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 		}
 
 		public void setPeople(List<Person> people) {
-			firePropertyChange("people", this.people,
-					this.people = new ArrayList<>(people));
+			firePropertyChange("people", this.people, this.people = new ArrayList<>(people));
 		}
 	}
 
@@ -228,10 +218,8 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 			new Label(shell, SWT.NONE).setText("People");
 
 			Composite buttons = new Composite(shell, SWT.NONE);
-			GridDataFactory.swtDefaults().align(SWT.RIGHT, SWT.CENTER).applyTo(
-					buttons);
-			GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(true)
-					.applyTo(buttons);
+			GridDataFactory.swtDefaults().align(SWT.RIGHT, SWT.CENTER).applyTo(buttons);
+			GridLayoutFactory.fillDefaults().numColumns(2).equalWidth(true).applyTo(buttons);
 			addPersonButton = new Button(buttons, SWT.PUSH);
 			addPersonButton.setText("Add");
 			GridDataFactory.fillDefaults().applyTo(addPersonButton);
@@ -240,13 +228,11 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 			GridDataFactory.fillDefaults().applyTo(removePersonButton);
 
 			Composite peopleComposite = new Composite(shell, SWT.NONE);
-			GridDataFactory.fillDefaults().grab(true, true).span(2, 1).applyTo(
-					peopleComposite);
+			GridDataFactory.fillDefaults().grab(true, true).span(2, 1).applyTo(peopleComposite);
 			TableColumnLayout peopleColumnLayout = new TableColumnLayout();
 			peopleComposite.setLayout(peopleColumnLayout);
 
-			peopleViewer = new TableViewer(peopleComposite, SWT.SINGLE
-					| SWT.BORDER | SWT.FULL_SELECTION);
+			peopleViewer = new TableViewer(peopleComposite, SWT.SINGLE | SWT.BORDER | SWT.FULL_SELECTION);
 
 			Table peopleTable = peopleViewer.getTable();
 			peopleTable.setHeaderVisible(true);
@@ -254,25 +240,21 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 
 			TableColumn nameColumn = new TableColumn(peopleTable, SWT.NONE);
 			nameColumn.setText("Name");
-			peopleColumnLayout.setColumnData(nameColumn,
-					new ColumnWeightData(1));
+			peopleColumnLayout.setColumnData(nameColumn, new ColumnWeightData(1));
 
 			TableColumn friendsColumn = new TableColumn(peopleTable, SWT.NONE);
 			friendsColumn.setText("Friends");
-			peopleColumnLayout.setColumnData(friendsColumn,
-					new ColumnWeightData(3));
+			peopleColumnLayout.setColumnData(friendsColumn, new ColumnWeightData(3));
 
 			new Label(shell, SWT.NONE).setText("Name");
 
 			personName = new Text(shell, SWT.BORDER);
-			GridDataFactory.fillDefaults().grab(true, false)
-					.applyTo(personName);
+			GridDataFactory.fillDefaults().grab(true, false).applyTo(personName);
 
 			new Label(shell, SWT.NONE).setText("Friends");
 
 			Composite friendsComposite = new Composite(shell, SWT.NONE);
-			GridDataFactory.fillDefaults().grab(true, true).applyTo(
-					friendsComposite);
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(friendsComposite);
 			TableColumnLayout friendsColumnLayout = new TableColumnLayout();
 			friendsComposite.setLayout(friendsColumnLayout);
 
@@ -282,14 +264,11 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 			Table friendsTable = friendsViewer.getTable();
 			friendsTable.setHeaderVisible(true);
 			friendsTable.setLinesVisible(true);
-			TableColumn friendNameColumn = new TableColumn(friendsTable,
-					SWT.NONE);
+			TableColumn friendNameColumn = new TableColumn(friendsTable, SWT.NONE);
 			friendNameColumn.setText("Name");
-			friendsColumnLayout.setColumnData(friendNameColumn,
-					new ColumnWeightData(1));
+			friendsColumnLayout.setColumnData(friendNameColumn, new ColumnWeightData(1));
 
-			GridDataFactory.fillDefaults().grab(true, true).applyTo(
-					friendsViewer.getTable());
+			GridDataFactory.fillDefaults().grab(true, true).applyTo(friendsViewer.getTable());
 		}
 
 		private void bindUI() {
@@ -326,7 +305,7 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 			final IObservableValue<Person> selectedPerson = ViewerProperties.singleSelection(Person.class)
 					.observe(peopleViewer);
 
-			IObservableValue<Boolean> personSelected =  ComputedValue.create(() -> selectedPerson.getValue() != null);
+			IObservableValue<Boolean> personSelected = ComputedValue.create(() -> selectedPerson.getValue() != null);
 			dbc.bindValue(WidgetProperties.enabled().observe(removePersonButton), personSelected);
 			dbc.bindValue(WidgetProperties.enabled().observe(friendsViewer.getTable()), personSelected);
 

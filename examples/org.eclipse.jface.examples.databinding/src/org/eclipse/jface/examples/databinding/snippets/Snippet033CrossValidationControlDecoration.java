@@ -105,10 +105,8 @@ public class Snippet033CrossValidationControlDecoration {
 		IObservableValue<Date> startDateObservable = WidgetProperties.dateTimeSelection().observe(startDate);
 		IObservableValue<Date> endDateObservable = WidgetProperties.dateTimeSelection().observe(endDate);
 
-		ControlDecorationSupport.create(new DateRangeValidator(
-				startDateObservable, endDateObservable,
-				"Start date must be on or before end date"), SWT.LEFT
-				| SWT.CENTER);
+		ControlDecorationSupport.create(new DateRangeValidator(startDateObservable, endDateObservable,
+				"Start date must be on or before end date"), SWT.LEFT | SWT.CENTER);
 
 		// Customize the decoration's description text and image
 		ControlDecorationUpdater decorationUpdater = new ControlDecorationUpdater() {
@@ -119,14 +117,13 @@ public class Snippet033CrossValidationControlDecoration {
 
 			@Override
 			protected Image getImage(IStatus status) {
-				return status.isOK() ? null : Display.getCurrent()
-						.getSystemImage(SWT.ICON_ERROR);
+				return status.isOK() ? null : Display.getCurrent().getSystemImage(SWT.ICON_ERROR);
 			}
 		};
-		ControlDecorationSupport.create(new DateRangeValidator(Observables
-				.constantObservableValue(new Date()), startDateObservable,
-				"Choose a starting date later than today"), SWT.LEFT | SWT.TOP,
-				(Composite) null, decorationUpdater);
+		ControlDecorationSupport.create(
+				new DateRangeValidator(Observables.constantObservableValue(new Date()), startDateObservable,
+						"Choose a starting date later than today"),
+				SWT.LEFT | SWT.TOP, (Composite) null, decorationUpdater);
 	}
 
 	private static class DateRangeValidator extends MultiValidator {

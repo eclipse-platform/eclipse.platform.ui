@@ -59,8 +59,8 @@ public class Snippet010MasterDetail {
 			IObservableValue<Person> selection = ViewerProperties.singleSelection(Person.class).observe(viewer);
 
 			// 2. Observe the name property of the current selection.
-			IObservableValue<String> detailObservable = BeanProperties
-					.value(Person.class, "name", String.class).observeDetail(selection);
+			IObservableValue<String> detailObservable = BeanProperties.value(Person.class, "name", String.class)
+					.observeDetail(selection);
 
 			// 3. Bind the Text widget to the name detail (selection's
 			// name).

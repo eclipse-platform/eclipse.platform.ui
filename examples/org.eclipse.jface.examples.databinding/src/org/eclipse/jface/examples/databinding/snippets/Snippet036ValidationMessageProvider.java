@@ -110,24 +110,19 @@ public class Snippet036ValidationMessageProvider {
 
 			// Create the container composite.
 			Composite container = new Composite(parent, SWT.NULL);
-			GridLayoutFactory.fillDefaults().numColumns(2).margins(5, 5)
-					.spacing(15, 5).applyTo(container);
+			GridLayoutFactory.fillDefaults().numColumns(2).margins(5, 5).spacing(15, 5).applyTo(container);
 			setControl(container);
 
 			// Create the input fields.
-			createTextLine(container, "Name", WritableValue
-					.withValueType(String.class));
-			createTextLine(container, "Age", WritableValue
-					.withValueType(Integer.class));
-			createTextLine(container, "Birthday", WritableValue
-					.withValueType(Date.class));
+			createTextLine(container, "Name", WritableValue.withValueType(String.class));
+			createTextLine(container, "Age", WritableValue.withValueType(Integer.class));
+			createTextLine(container, "Birthday", WritableValue.withValueType(Date.class));
 
 			// Attach the DBC's validation to the wizard.
 			WizardPageSupport wps = WizardPageSupport.create(this, dbc);
 
 			// Use our CustomMessageProvider.
-			wps.setValidationMessageProvider(new CustomMessageProvider(
-					bindingMapName));
+			wps.setValidationMessageProvider(new CustomMessageProvider(bindingMapName));
 		}
 
 		private <T> void createTextLine(Composite parent, String labelText, IObservableValue<T> modelValue) {
@@ -157,9 +152,8 @@ public class Snippet036ValidationMessageProvider {
 					// error icon since the user has not done anything wrong.
 					if (text.getText().length() == 0) {
 						// Display a "required" decoration (asterisk).
-						FieldDecoration fieldDecoration = FieldDecorationRegistry
-								.getDefault().getFieldDecoration(
-										FieldDecorationRegistry.DEC_REQUIRED);
+						FieldDecoration fieldDecoration = FieldDecorationRegistry.getDefault()
+								.getFieldDecoration(FieldDecorationRegistry.DEC_REQUIRED);
 						return fieldDecoration.getImage();
 					}
 					return super.getImage(status);
@@ -167,8 +161,7 @@ public class Snippet036ValidationMessageProvider {
 			};
 
 			// Attach the control decoration.
-			ControlDecorationSupport.create(binding, SWT.TOP, null,
-					decorationUpdater);
+			ControlDecorationSupport.create(binding, SWT.TOP, null, decorationUpdater);
 
 			// Map the created binding to its name, i.e. the Label's text.
 			bindingMapName.put(binding, labelText);
@@ -178,14 +171,13 @@ public class Snippet036ValidationMessageProvider {
 	/**
 	 * Custom {@link IValidationMessageProvider} which does the following:
 	 * <ul>
-	 * <li>Every validation message of a binding is prefixed by the binding's
-	 * name, if available.</li>
+	 * <li>Every validation message of a binding is prefixed by the binding's name,
+	 * if available.</li>
 	 * <li>Validation errors due to empty, required fields are not displayed as
 	 * errors but as simple text without any icon.</li>
 	 * </ul>
 	 */
-	private static final class CustomMessageProvider extends
-			ValidationMessageProvider {
+	private static final class CustomMessageProvider extends ValidationMessageProvider {
 
 		private final Map<Binding, String> bindingMapName;
 

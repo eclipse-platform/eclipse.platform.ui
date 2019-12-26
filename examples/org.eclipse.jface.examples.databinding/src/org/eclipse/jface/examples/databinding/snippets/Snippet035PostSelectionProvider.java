@@ -83,14 +83,12 @@ public class Snippet035PostSelectionProvider {
 		Group section = createSectionGroup(parent, 1);
 
 		listViewer = new ListViewer(section, SWT.SINGLE | SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, true).hint(250, 250).applyTo(
-				listViewer.getList());
+		GridDataFactory.fillDefaults().grab(true, true).hint(250, 250).applyTo(listViewer.getList());
 
 		listViewer.setContentProvider(new ArrayContentProvider());
 		listViewer.setLabelProvider(new LabelProvider());
 
-		String[] names = new String[] { "John Doe", "Steve Northover",
-				"Grant Gayed", "Veronika Irvine", "Mike Wilson",
+		String[] names = new String[] { "John Doe", "Steve Northover", "Grant Gayed", "Veronika Irvine", "Mike Wilson",
 				"Christophe Cornu", "Lynne Kues", "Silenio Quarti" };
 
 		listViewer.setInput(names);
@@ -114,8 +112,8 @@ public class Snippet035PostSelectionProvider {
 
 	private Group createSectionGroup(Composite parent, int numColumns) {
 		Group section = new Group(parent, SWT.SHADOW_ETCHED_IN);
-		GridLayoutFactory.fillDefaults().numColumns(numColumns).equalWidth(
-				false).margins(5, 5).spacing(15, 5).applyTo(section);
+		GridLayoutFactory.fillDefaults().numColumns(numColumns).equalWidth(false).margins(5, 5).spacing(15, 5)
+				.applyTo(section);
 		GridDataFactory.fillDefaults().grab(true, true).applyTo(section);
 		return section;
 	}

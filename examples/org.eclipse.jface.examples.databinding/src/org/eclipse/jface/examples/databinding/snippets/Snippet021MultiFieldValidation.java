@@ -95,8 +95,7 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 		setControl(container);
 
 		final Group bothEvenOrGroup = new Group(container, SWT.NONE);
-		bothEvenOrGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
-				false));
+		bothEvenOrGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		bothEvenOrGroup.setText("Numbers must be both even or both odd");
 		final GridLayout gridLayout_1 = new GridLayout();
 		gridLayout_1.numColumns = 3;
@@ -113,31 +112,26 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 		field1Label.setText("Field 1");
 
 		field1Target = new Text(bothEvenOrGroup, SWT.BORDER);
-		final GridData gd_field1Target = new GridData(SWT.FILL, SWT.CENTER,
-				true, false);
+		final GridData gd_field1Target = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		field1Target.setLayoutData(gd_field1Target);
 
 		field1ModelValue = new Text(bothEvenOrGroup, SWT.READ_ONLY | SWT.BORDER);
-		final GridData gd_field1ModelValue = new GridData(SWT.FILL, SWT.CENTER,
-				true, false);
+		final GridData gd_field1ModelValue = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		field1ModelValue.setLayoutData(gd_field1ModelValue);
 
 		final Label field2Label = new Label(bothEvenOrGroup, SWT.NONE);
 		field2Label.setText("Field 2");
 
 		field2Target = new Text(bothEvenOrGroup, SWT.BORDER);
-		final GridData gd_field2Target = new GridData(SWT.FILL, SWT.CENTER,
-				true, false);
+		final GridData gd_field2Target = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		field2Target.setLayoutData(gd_field2Target);
 
 		field2ModelValue = new Text(bothEvenOrGroup, SWT.READ_ONLY | SWT.BORDER);
-		final GridData gd_field2ModelValue = new GridData(SWT.FILL, SWT.CENTER,
-				true, false);
+		final GridData gd_field2ModelValue = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		field2ModelValue.setLayoutData(gd_field2ModelValue);
 
 		final Group sumOfAllGroup = new Group(container, SWT.NONE);
-		sumOfAllGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,
-				true));
+		sumOfAllGroup.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true));
 		sumOfAllGroup.setText("Addends must add up to sum");
 		final GridLayout gridLayout_2 = new GridLayout();
 		gridLayout_2.numColumns = 3;
@@ -154,13 +148,11 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 		expectedSumLabel.setText("Sum");
 
 		sumTarget = new Text(sumOfAllGroup, SWT.BORDER);
-		final GridData gd_sumTarget = new GridData(SWT.FILL, SWT.CENTER, true,
-				false);
+		final GridData gd_sumTarget = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		sumTarget.setLayoutData(gd_sumTarget);
 
 		sumModelValue = new Text(sumOfAllGroup, SWT.READ_ONLY | SWT.BORDER);
-		final GridData gd_sumModelValue = new GridData(SWT.FILL, SWT.CENTER,
-				true, false);
+		final GridData gd_sumModelValue = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		sumModelValue.setLayoutData(gd_sumModelValue);
 
 		final Label addendsLabel = new Label(sumOfAllGroup, SWT.NONE);
@@ -168,12 +160,9 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 
 		addendsTarget = new ListViewer(sumOfAllGroup, SWT.V_SCROLL | SWT.BORDER);
 		list_1 = addendsTarget.getList();
-		list_1
-				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 1,
-						2));
+		list_1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 1, 2));
 
-		addendsModelValue = new ListViewer(sumOfAllGroup, SWT.V_SCROLL
-				| SWT.BORDER);
+		addendsModelValue = new ListViewer(sumOfAllGroup, SWT.V_SCROLL | SWT.BORDER);
 		list = addendsModelValue.getList();
 		list.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 1, 2));
 
@@ -185,13 +174,11 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 		composite.setLayout(gridLayout_3);
 
 		addAddendButton = new Button(composite, SWT.NONE);
-		addAddendButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false,
-				false));
+		addAddendButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
 		addAddendButton.setText("Add");
 
 		removeAddendButton = new Button(composite, SWT.NONE);
-		removeAddendButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER,
-				false, false));
+		removeAddendButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false));
 		removeAddendButton.setText("Remove");
 
 		bindUI();
@@ -232,10 +219,8 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 		dbc.bindValue(validator.observeValidatedValue(middleField1), modelField1);
 		dbc.bindValue(validator.observeValidatedValue(middleField2), modelField2);
 
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(field1ModelValue),
-				modelField1);
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(field2ModelValue),
-				modelField2);
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(field1ModelValue), modelField1);
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(field2ModelValue), modelField2);
 	}
 
 	private void bindSumAndAddendsGroup(DataBindingContext dbc) {
@@ -250,8 +235,7 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 		addAddendButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(final SelectionEvent e) {
-				InputDialog dialog = new InputDialog(getShell(),
-						"Input addend", "Enter an integer addend", "0",
+				InputDialog dialog = new InputDialog(getShell(), "Input addend", "Enter an integer addend", "0",
 						newText -> {
 							try {
 								Integer.valueOf(newText);
@@ -289,8 +273,7 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 					actualSum += i;
 				}
 				if (sum != actualSum)
-					return ValidationStatus.error("Sum of addends is "
-							+ actualSum + ", expecting " + sum);
+					return ValidationStatus.error("Sum of addends is " + actualSum + ", expecting " + sum);
 				return ValidationStatus.ok();
 			}
 		};

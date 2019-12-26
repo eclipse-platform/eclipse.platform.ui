@@ -47,7 +47,8 @@ import org.eclipse.swt.widgets.Text;
 /**
  * Demonstrates nested selection.<br>
  * At the first level, user may select a person.<br>
- * At the second level, user may select a city to associate with the selected<br>
+ * At the second level, user may select a city to associate with the
+ * selected<br>
  * person or edit the person's name.
  */
 public class Snippet001NestedSelectionWithCombo {
@@ -66,33 +67,26 @@ public class Snippet001NestedSelectionWithCombo {
 
 	// Minimal JavaBeans support
 	public static abstract class AbstractModelObject {
-		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(
-				this);
+		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
 			propertyChangeSupport.addPropertyChangeListener(listener);
 		}
 
-		public void addPropertyChangeListener(String propertyName,
-				PropertyChangeListener listener) {
-			propertyChangeSupport.addPropertyChangeListener(propertyName,
-					listener);
+		public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+			propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
 		}
 
 		public void removePropertyChangeListener(PropertyChangeListener listener) {
 			propertyChangeSupport.removePropertyChangeListener(listener);
 		}
 
-		public void removePropertyChangeListener(String propertyName,
-				PropertyChangeListener listener) {
-			propertyChangeSupport.removePropertyChangeListener(propertyName,
-					listener);
+		public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+			propertyChangeSupport.removePropertyChangeListener(propertyName, listener);
 		}
 
-		protected void firePropertyChange(String propertyName, Object oldValue,
-				Object newValue) {
-			propertyChangeSupport.firePropertyChange(propertyName, oldValue,
-					newValue);
+		protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+			propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
 		}
 	}
 
@@ -201,8 +195,7 @@ public class Snippet001NestedSelectionWithCombo {
 			DataBindingContext dbc = new DataBindingContext(realm);
 			IObservableValue<Person> selectedPerson = ViewerProperties.singleSelection(Person.class)
 					.observe(peopleListViewer);
-			dbc.bindValue(
-					WidgetProperties.text(SWT.Modify).observe(name),
+			dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(name),
 					BeanProperties.value(Person.class, "name", String.class).observeDetail(selectedPerson));
 
 			ComboViewer cityViewer = new ComboViewer(city);

@@ -174,8 +174,7 @@ public class Snippet007ColorLabelProvider {
 
 		private int gender;
 
-		private PropertyChangeSupport changeSupport = new PropertyChangeSupport(
-				this);
+		private PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 
 		Person(String name, int gender) {
 			this.name = name;
@@ -183,8 +182,7 @@ public class Snippet007ColorLabelProvider {
 		}
 
 		/**
-		 * Returns the name. Method declared public to satisfy Java bean
-		 * conventions
+		 * Returns the name. Method declared public to satisfy Java bean conventions
 		 *
 		 * @return the name
 		 */
@@ -204,8 +202,7 @@ public class Snippet007ColorLabelProvider {
 		}
 
 		/**
-		 * Returns the gender. Method declared public to satisfy Java bean
-		 * conventions
+		 * Returns the gender. Method declared public to satisfy Java bean conventions
 		 *
 		 * @return the gender
 		 */
@@ -214,8 +211,7 @@ public class Snippet007ColorLabelProvider {
 		}
 
 		void setGender(int gender) {
-			changeSupport.firePropertyChange("gender", this.gender,
-					this.gender = gender);
+			changeSupport.firePropertyChange("gender", this.gender, this.gender = gender);
 		}
 	}
 }

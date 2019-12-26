@@ -53,15 +53,15 @@ public class Snippet011ValidateMultipleBindingsSnippet {
 		final Model model = new Model();
 
 		DataBindingContext dbc = new DataBindingContext();
-		dbc.bindValue(
-				WidgetProperties.text(SWT.Modify).observe(view.text1), model.value1,
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(view.text1), model.value1,
 				new UpdateValueStrategy<String, String>()
-						.setAfterConvertValidator(new CrossFieldValidator(model.value2)), null);
+						.setAfterConvertValidator(new CrossFieldValidator(model.value2)),
+				null);
 
-		dbc.bindValue(
-				WidgetProperties.text(SWT.Modify).observe(view.text2), model.value2,
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(view.text2), model.value2,
 				new UpdateValueStrategy<String, String>()
-					.setAfterConvertValidator(new CrossFieldValidator(model.value1)), null);
+						.setAfterConvertValidator(new CrossFieldValidator(model.value1)),
+				null);
 
 		// DEBUG - print to show value change
 		model.value1.addValueChangeListener(event -> System.out.println("Value 1: " + model.value1.getValue()));

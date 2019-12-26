@@ -90,8 +90,7 @@ public class Snippet029TreeViewerMultiListProperty {
 
 	// Minimal JavaBeans support
 	public static abstract class AbstractModelObject {
-		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(
-				this);
+		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
 			propertyChangeSupport.addPropertyChangeListener(listener);
@@ -136,8 +135,7 @@ public class Snippet029TreeViewerMultiListProperty {
 		}
 
 		public void setCatalogs(List<Catalog> catalogs) {
-			firePropertyChange("catalogs", this.catalogs,
-					this.catalogs = catalogs);
+			firePropertyChange("catalogs", this.catalogs, this.catalogs = catalogs);
 		}
 
 		public List<CatalogItem> getItems() {
@@ -199,8 +197,8 @@ public class Snippet029TreeViewerMultiListProperty {
 		IListProperty<AbstractModelObject, AbstractModelObject> childrenProperty = new MultiListProperty<>(
 				BeanProperties.list("catalogs"), BeanProperties.list("items"));
 
-		ObservableListTreeContentProvider<AbstractModelObject> contentProvider =
-				new ObservableListTreeContentProvider<>(childrenProperty.listFactory(), null);
+		ObservableListTreeContentProvider<AbstractModelObject> contentProvider = new ObservableListTreeContentProvider<>(
+				childrenProperty.listFactory(), null);
 		viewer.setContentProvider(contentProvider);
 
 		ObservableMapLabelProvider labelProvider = new ObservableMapLabelProvider(

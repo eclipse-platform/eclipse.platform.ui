@@ -92,31 +92,26 @@ public class Snippet028DuplexingObservableValue {
 		gridLayout.numColumns = 4;
 		shell.setLayout(gridLayout);
 
-		viewer = new TableViewer(shell, SWT.FULL_SELECTION | SWT.MULTI
-				| SWT.BORDER);
+		viewer = new TableViewer(shell, SWT.FULL_SELECTION | SWT.MULTI | SWT.BORDER);
 		table = viewer.getTable();
 		table.setLinesVisible(true);
 		table.setHeaderVisible(true);
 		table.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 4, 1));
 
-		final TableColumn newColumnTableColumn_1 = new TableColumn(table,
-				SWT.NONE);
+		final TableColumn newColumnTableColumn_1 = new TableColumn(table, SWT.NONE);
 		newColumnTableColumn_1.setWidth(120);
 		newColumnTableColumn_1.setText("Movie");
 
-		final TableColumn newColumnTableColumn = new TableColumn(table,
-				SWT.NONE);
+		final TableColumn newColumnTableColumn = new TableColumn(table, SWT.NONE);
 
 		newColumnTableColumn.setWidth(120);
 		newColumnTableColumn.setText("Release Date");
 
-		final TableColumn newColumnTableColumn_2 = new TableColumn(table,
-				SWT.NONE);
+		final TableColumn newColumnTableColumn_2 = new TableColumn(table, SWT.NONE);
 		newColumnTableColumn_2.setWidth(120);
 		newColumnTableColumn_2.setText("Director");
 
-		final TableColumn newColumnTableColumn_3 = new TableColumn(table,
-				SWT.NONE);
+		final TableColumn newColumnTableColumn_3 = new TableColumn(table, SWT.NONE);
 		newColumnTableColumn_3.setWidth(120);
 		newColumnTableColumn_3.setText("Writer");
 
@@ -134,23 +129,19 @@ public class Snippet028DuplexingObservableValue {
 		scoreLabel.setText("Writer");
 
 		title = new Text(shell, SWT.BORDER);
-		final GridData gd_title = new GridData(SWT.FILL, SWT.CENTER, true,
-				false);
+		final GridData gd_title = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		title.setLayoutData(gd_title);
 
 		releaseDate = new Text(shell, SWT.BORDER);
-		final GridData gd_releaseDate = new GridData(SWT.FILL, SWT.CENTER,
-				true, false);
+		final GridData gd_releaseDate = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		releaseDate.setLayoutData(gd_releaseDate);
 
 		director = new Text(shell, SWT.BORDER);
-		final GridData gd_director = new GridData(SWT.FILL, SWT.CENTER, true,
-				false);
+		final GridData gd_director = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		director.setLayoutData(gd_director);
 
 		writer = new Text(shell, SWT.BORDER);
-		final GridData gd_writer = new GridData(SWT.FILL, SWT.CENTER, true,
-				false);
+		final GridData gd_writer = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		writer.setLayoutData(gd_writer);
 
 		bindUI();
@@ -158,33 +149,26 @@ public class Snippet028DuplexingObservableValue {
 
 	// Minimal JavaBeans support
 	public static abstract class AbstractModelObject {
-		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(
-				this);
+		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
 			propertyChangeSupport.addPropertyChangeListener(listener);
 		}
 
-		public void addPropertyChangeListener(String propertyName,
-				PropertyChangeListener listener) {
-			propertyChangeSupport.addPropertyChangeListener(propertyName,
-					listener);
+		public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+			propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
 		}
 
 		public void removePropertyChangeListener(PropertyChangeListener listener) {
 			propertyChangeSupport.removePropertyChangeListener(listener);
 		}
 
-		public void removePropertyChangeListener(String propertyName,
-				PropertyChangeListener listener) {
-			propertyChangeSupport.removePropertyChangeListener(propertyName,
-					listener);
+		public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+			propertyChangeSupport.removePropertyChangeListener(propertyName, listener);
 		}
 
-		protected void firePropertyChange(String propertyName, Object oldValue,
-				Object newValue) {
-			propertyChangeSupport.firePropertyChange(propertyName, oldValue,
-					newValue);
+		protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+			propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
 		}
 	}
 
@@ -194,8 +178,7 @@ public class Snippet028DuplexingObservableValue {
 		private String director;
 		private String writer;
 
-		public MovieInfo(String title, String releaseDate, String director,
-				String writer) {
+		public MovieInfo(String title, String releaseDate, String director, String writer) {
 			this.title = title;
 			this.releaseDate = releaseDate;
 			this.director = director;
@@ -215,8 +198,7 @@ public class Snippet028DuplexingObservableValue {
 		}
 
 		public void setReleaseDate(String releaseDate) {
-			firePropertyChange("releaseDate", this.releaseDate,
-					this.releaseDate = releaseDate);
+			firePropertyChange("releaseDate", this.releaseDate, this.releaseDate = releaseDate);
 		}
 
 		public String getDirector() {
@@ -224,8 +206,7 @@ public class Snippet028DuplexingObservableValue {
 		}
 
 		public void setDirector(String director) {
-			firePropertyChange("director", this.director,
-					this.director = director);
+			firePropertyChange("director", this.director, this.director = director);
 		}
 
 		public String getWriter() {
@@ -239,59 +220,37 @@ public class Snippet028DuplexingObservableValue {
 
 	private void bindUI() {
 		IObservableList<MovieInfo> movies = new WritableList<>();
-		movies.add(new MovieInfo("007: Quantum of Solace", "October 31, 2008",
-				"Marc Forster", "Robert Wade"));
-		movies.add(new MovieInfo("Batman Begins", "June 15, 2005",
-				"Christopher Nolan", "David S. Goyer"));
-		movies.add(new MovieInfo("Cloverfield", "January 18, 2008",
-				"Matt Reeves", "Drew Goddard"));
-		movies.add(new MovieInfo("The Dark Knight", "July 18, 2008",
-				"Christopher Nolan", "David S. Goyer"));
-		movies.add(new MovieInfo("Finding Nemo", "May 30, 2003",
-				"Andrew Stanton", "Andrew Stanton"));
-		movies.add(new MovieInfo("Get Smart", "June 20, 2008", "Peter Segal",
-				"Tom J. Astle"));
-		movies.add(new MovieInfo(
-				"Indiana Jones and the Kingdom of the Crystal Skull",
-				"May 22, 2008", "Steven Spielberg", "Drunken Lemurs"));
-		movies.add(new MovieInfo("Iron Man", "May 2, 2008", "Jon Favreau",
-				"Mark Fergus"));
-		movies.add(new MovieInfo("Raiders of the Lost Ark", "June 12, 1981",
-				"Steven Spielberg", "George Lucas"));
-		movies.add(new MovieInfo("Valkyrie", "December 25, 2008",
-				"Bryan Singer", "Christopher McQuarrie"));
-		movies.add(new MovieInfo("Wall-E", "June 27, 2008", "Andrew Stanton",
-				"Andrew Stanton"));
-		movies.add(new MovieInfo("Wanted", "June 27, 2008",
-				"Timur Bekmambetov", "Michael Brandt"));
+		movies.add(new MovieInfo("007: Quantum of Solace", "October 31, 2008", "Marc Forster", "Robert Wade"));
+		movies.add(new MovieInfo("Batman Begins", "June 15, 2005", "Christopher Nolan", "David S. Goyer"));
+		movies.add(new MovieInfo("Cloverfield", "January 18, 2008", "Matt Reeves", "Drew Goddard"));
+		movies.add(new MovieInfo("The Dark Knight", "July 18, 2008", "Christopher Nolan", "David S. Goyer"));
+		movies.add(new MovieInfo("Finding Nemo", "May 30, 2003", "Andrew Stanton", "Andrew Stanton"));
+		movies.add(new MovieInfo("Get Smart", "June 20, 2008", "Peter Segal", "Tom J. Astle"));
+		movies.add(new MovieInfo("Indiana Jones and the Kingdom of the Crystal Skull", "May 22, 2008",
+				"Steven Spielberg", "Drunken Lemurs"));
+		movies.add(new MovieInfo("Iron Man", "May 2, 2008", "Jon Favreau", "Mark Fergus"));
+		movies.add(new MovieInfo("Raiders of the Lost Ark", "June 12, 1981", "Steven Spielberg", "George Lucas"));
+		movies.add(new MovieInfo("Valkyrie", "December 25, 2008", "Bryan Singer", "Christopher McQuarrie"));
+		movies.add(new MovieInfo("Wall-E", "June 27, 2008", "Andrew Stanton", "Andrew Stanton"));
+		movies.add(new MovieInfo("Wanted", "June 27, 2008", "Timur Bekmambetov", "Michael Brandt"));
 
-		ViewerSupport.bind(viewer, movies, BeanProperties.values(
-				MovieInfo.class, new String[] { "title", "releaseDate",
-						"director", "writer" }));
+		ViewerSupport.bind(viewer, movies,
+				BeanProperties.values(MovieInfo.class, new String[] { "title", "releaseDate", "director", "writer" }));
 
 		// Select Batman Begins and The Dark Knight, which have the same
 		// director and writer
-		viewer.setSelection(new StructuredSelection(new Object[] {
-				movies.get(1), movies.get(3) }));
+		viewer.setSelection(new StructuredSelection(new Object[] { movies.get(1), movies.get(3) }));
 
 		DataBindingContext dbc = new DataBindingContext();
 
 		IObservableList<MovieInfo> selections = ViewerProperties.multipleSelection(MovieInfo.class).observe(viewer);
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(title),
-				DuplexingObservableValue.withDefaults(BeanProperties.value(
-						"title").observeDetail(selections), "",
-						"<Multiple titles>"));
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(releaseDate),
-				DuplexingObservableValue.withDefaults(BeanProperties.value(
-						"releaseDate").observeDetail(selections), "",
-						"<Multiple dates>"));
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(director),
-				DuplexingObservableValue.withDefaults(BeanProperties.value(
-						"director").observeDetail(selections), "",
-						"<Multiple directors>"));
-		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(writer),
-				DuplexingObservableValue.withDefaults(BeanProperties.value(
-						"writer").observeDetail(selections), "",
-						"<Multiple writers>"));
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(title), DuplexingObservableValue
+				.withDefaults(BeanProperties.value("title").observeDetail(selections), "", "<Multiple titles>"));
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(releaseDate), DuplexingObservableValue
+				.withDefaults(BeanProperties.value("releaseDate").observeDetail(selections), "", "<Multiple dates>"));
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(director), DuplexingObservableValue
+				.withDefaults(BeanProperties.value("director").observeDetail(selections), "", "<Multiple directors>"));
+		dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(writer), DuplexingObservableValue
+				.withDefaults(BeanProperties.value("writer").observeDetail(selections), "", "<Multiple writers>"));
 	}
 }

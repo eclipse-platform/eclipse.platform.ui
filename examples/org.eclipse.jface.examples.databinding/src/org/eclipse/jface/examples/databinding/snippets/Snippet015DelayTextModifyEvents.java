@@ -42,30 +42,24 @@ public class Snippet015DelayTextModifyEvents {
 		final Label field1 = createLabel(shell, SWT.NONE, "Field 1 ");
 
 		Text text1 = new Text(shell, SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, false).hint(200, SWT.DEFAULT)
-				.applyTo(text1);
+		GridDataFactory.fillDefaults().grab(true, false).hint(200, SWT.DEFAULT).applyTo(text1);
 		createLabel(shell, SWT.NONE, "200 ms delay");
 
 		final Label field2 = createLabel(shell, SWT.NONE, "Field 2 ");
 
 		Text text2 = new Text(shell, SWT.BORDER);
-		GridDataFactory.fillDefaults().grab(true, false).hint(200, SWT.DEFAULT)
-				.applyTo(text2);
+		GridDataFactory.fillDefaults().grab(true, false).hint(200, SWT.DEFAULT).applyTo(text2);
 
 		createLabel(shell, SWT.NONE, "2000 ms delay");
 
-		final ISWTObservableValue<String> delayed1 = WidgetProperties.text(SWT.Modify)
-				.observeDelayed(200, text1);
-		final ISWTObservableValue<String> delayed2 = WidgetProperties.text(SWT.Modify)
-				.observeDelayed(2000, text2);
+		final ISWTObservableValue<String> delayed1 = WidgetProperties.text(SWT.Modify).observeDelayed(200, text1);
+		final ISWTObservableValue<String> delayed2 = WidgetProperties.text(SWT.Modify).observeDelayed(2000, text2);
 
 		// (In a real application,you would want to dispose the resource manager
 		// when you are done with it)
-		ResourceManager resourceManager = new LocalResourceManager(
-				JFaceResources.getResources());
+		ResourceManager resourceManager = new LocalResourceManager(JFaceResources.getResources());
 		final Font shellFont = shell.getFont();
-		final Font italicFont = resourceManager.createFont(FontDescriptor
-				.createFrom(shellFont).setStyle(SWT.ITALIC));
+		final Font italicFont = resourceManager.createFont(FontDescriptor.createFrom(shellFont).setStyle(SWT.ITALIC));
 
 		final IObservableValue<Boolean> stale1 = Observables.observeStale(delayed1);
 		new ControlUpdater(field2) {
@@ -84,8 +78,7 @@ public class Snippet015DelayTextModifyEvents {
 		};
 
 		String info = "Pending changes are applied immediately if the observed control loses focus.";
-		GridDataFactory.fillDefaults().span(3, 1).hint(300, SWT.DEFAULT).applyTo(
-				createLabel(shell, SWT.WRAP, info));
+		GridDataFactory.fillDefaults().span(3, 1).hint(300, SWT.DEFAULT).applyTo(createLabel(shell, SWT.WRAP, info));
 
 		DataBindingContext dbc = new DataBindingContext();
 

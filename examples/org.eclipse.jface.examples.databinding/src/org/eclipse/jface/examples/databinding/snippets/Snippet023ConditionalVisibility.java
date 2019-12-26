@@ -84,8 +84,7 @@ public class Snippet023ConditionalVisibility {
 		Label toLabel = new Label(rangeGroup, SWT.NONE);
 		toLabel.setText("To:");
 		toText = new Text(rangeGroup, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
-		GridLayoutFactory.swtDefaults().numColumns(2)
-				.generateLayout(rangeGroup);
+		GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(rangeGroup);
 
 		final Group textGroup = new Group(oneOfTwo, SWT.NONE);
 		textGroup.setText("Text");

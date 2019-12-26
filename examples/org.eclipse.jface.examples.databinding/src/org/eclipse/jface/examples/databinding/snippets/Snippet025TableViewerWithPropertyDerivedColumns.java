@@ -69,33 +69,26 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 
 	// Minimal JavaBeans support
 	public static abstract class AbstractModelObject {
-		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(
-				this);
+		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
 			propertyChangeSupport.addPropertyChangeListener(listener);
 		}
 
-		public void addPropertyChangeListener(String propertyName,
-				PropertyChangeListener listener) {
-			propertyChangeSupport.addPropertyChangeListener(propertyName,
-					listener);
+		public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+			propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
 		}
 
 		public void removePropertyChangeListener(PropertyChangeListener listener) {
 			propertyChangeSupport.removePropertyChangeListener(listener);
 		}
 
-		public void removePropertyChangeListener(String propertyName,
-				PropertyChangeListener listener) {
-			propertyChangeSupport.removePropertyChangeListener(propertyName,
-					listener);
+		public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+			propertyChangeSupport.removePropertyChangeListener(propertyName, listener);
 		}
 
-		protected void firePropertyChange(String propertyName, Object oldValue,
-				Object newValue) {
-			propertyChangeSupport.firePropertyChange(propertyName, oldValue,
-					newValue);
+		protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+			propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
 		}
 	}
 
@@ -189,8 +182,7 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 			Shell shell = new Shell(display);
 			duckFamily = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION);
 			duckFamily.setHeaderVisible(true);
-			GridDataFactory.defaultsFor(duckFamily).span(2, 1).applyTo(
-					duckFamily);
+			GridDataFactory.defaultsFor(duckFamily).span(2, 1).applyTo(duckFamily);
 			createColumn("Name");
 			createColumn("Mother");
 			createColumn("Father");
@@ -234,17 +226,14 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 			TableViewer peopleViewer = new TableViewer(duckFamily);
 			peopleViewer.addFilter(new ViewerFilter() {
 				@Override
-				public boolean select(Viewer viewer, Object parentElement,
-						Object element) {
+				public boolean select(Viewer viewer, Object parentElement, Object element) {
 					return element != UNKNOWN;
 				}
 			});
 
 			ViewerSupport.bind(peopleViewer, viewModel.getPeople(),
-					BeanProperties.values(Person.class, new String[] { "name",
-							"mother.name", "father.name", "mother.mother.name",
-							"mother.father.name", "father.mother.name",
-							"father.father.name" }));
+					BeanProperties.values(Person.class, new String[] { "name", "mother.name", "father.name",
+							"mother.mother.name", "mother.father.name", "father.mother.name", "father.father.name" }));
 
 			IObservableValue<Person> masterSelection = ViewerProperties.singleSelection(Person.class)
 					.observe(peopleViewer);
@@ -253,19 +242,16 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 					BeanProperties.value(Person.class, "name").observeDetail(masterSelection));
 
 			ComboViewer mothercomboViewer = new ComboViewer(motherCombo);
-			ViewerSupport.bind(mothercomboViewer, viewModel.getPeople(),
-					BeanProperties.value(Person.class, "name"));
+			ViewerSupport.bind(mothercomboViewer, viewModel.getPeople(), BeanProperties.value(Person.class, "name"));
 
 			dbc.bindValue(ViewerProperties.singleSelection().observe(mothercomboViewer),
 					BeanProperties.value(Person.class, "mother").observeDetail(masterSelection));
 
 			ComboViewer fatherComboViewer = new ComboViewer(fatherCombo);
-			ViewerSupport.bind(fatherComboViewer, viewModel.getPeople(),
-					BeanProperties.value(Person.class, "name"));
+			ViewerSupport.bind(fatherComboViewer, viewModel.getPeople(), BeanProperties.value(Person.class, "name"));
 
-			dbc.bindValue(ViewerProperties.singleSelection().observe(
-					fatherComboViewer), BeanProperties.value(Person.class,
-					"father").observeDetail(masterSelection));
+			dbc.bindValue(ViewerProperties.singleSelection().observe(fatherComboViewer),
+					BeanProperties.value(Person.class, "father").observeDetail(masterSelection));
 		}
 	}
 }

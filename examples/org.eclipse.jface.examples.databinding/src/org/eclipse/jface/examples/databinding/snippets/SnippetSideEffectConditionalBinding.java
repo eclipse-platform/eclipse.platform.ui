@@ -86,8 +86,7 @@ public class SnippetSideEffectConditionalBinding {
 		}
 
 		/**
-		 * @param firstName
-		 *            The summary to set.
+		 * @param firstName The summary to set.
 		 */
 		public void setFirstName(String firstName) {
 			this.firstName.setValue(firstName);
@@ -102,8 +101,7 @@ public class SnippetSideEffectConditionalBinding {
 		}
 
 		/**
-		 * @param lastName
-		 *            The last name to set.
+		 * @param lastName The last name to set.
 		 */
 		public void setLastName(String lastName) {
 			this.lastName.setValue(lastName);

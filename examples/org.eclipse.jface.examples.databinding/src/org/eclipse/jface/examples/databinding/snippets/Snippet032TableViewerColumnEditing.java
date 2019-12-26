@@ -173,8 +173,7 @@ public class Snippet032TableViewerColumnEditing {
 			layoutData.horizontalSpan = 2;
 			committers.setLayoutData(layoutData);
 
-			GridData fieldLayoutData = new GridData(SWT.FILL, SWT.BEGINNING,
-					true, false);
+			GridData fieldLayoutData = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
 			selectedCommitterName = new Label(shell, SWT.NONE);
 			selectedCommitterName.setLayoutData(fieldLayoutData);
 
@@ -210,12 +209,11 @@ public class Snippet032TableViewerColumnEditing {
 			IValueProperty<CellEditor, String> cellEditorControlText = CellEditorProperties.control()
 					.value(WidgetProperties.text(SWT.Modify));
 
-			columnName.setEditingSupport(ObservableValueEditingSupport.create(
-					peopleViewer, bindingContext, new TextCellEditor(committers), cellEditorControlText, propName));
+			columnName.setEditingSupport(ObservableValueEditingSupport.create(peopleViewer, bindingContext,
+					new TextCellEditor(committers), cellEditorControlText, propName));
 
-			columnFirstName.setEditingSupport(ObservableValueEditingSupport
-					.create(peopleViewer, bindingContext, new TextCellEditor(committers), cellEditorControlText,
-							propFirstname));
+			columnFirstName.setEditingSupport(ObservableValueEditingSupport.create(peopleViewer, bindingContext,
+					new TextCellEditor(committers), cellEditorControlText, propFirstname));
 
 			ObservableListContentProvider<Person> contentProvider = new ObservableListContentProvider<>();
 			peopleViewer.setContentProvider(contentProvider);
@@ -232,11 +230,9 @@ public class Snippet032TableViewerColumnEditing {
 			// bind selectedCommitter labels to the name and firstname of the
 			// current selection
 			IObservableValue<Person> selection = ViewerProperties.singleSelection(Person.class).observe(peopleViewer);
-			bindingContext.bindValue(
-					WidgetProperties.text().observe(selectedCommitterName),
+			bindingContext.bindValue(WidgetProperties.text().observe(selectedCommitterName),
 					BeanProperties.value(Person.class, "name", String.class).observeDetail(selection));
-			bindingContext.bindValue(
-					WidgetProperties.text().observe(selectedCommitterFirstName),
+			bindingContext.bindValue(WidgetProperties.text().observe(selectedCommitterFirstName),
 					BeanProperties.value(Person.class, "firstName", String.class).observeDetail(selection));
 		}
 	}

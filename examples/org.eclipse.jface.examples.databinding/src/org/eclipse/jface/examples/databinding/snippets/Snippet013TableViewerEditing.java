@@ -225,8 +225,7 @@ public class Snippet013TableViewerEditing {
 			// bind selectedCommitter label to the name of the current selection
 			IObservableValue<Person> selection = ViewerProperties.singleSelection(Person.class).observe(peopleViewer);
 			bindingContext.bindValue(WidgetProperties.text().observe(selectedCommitter),
-					BeanProperties.value(Person.class, "name", String.class)
-					.observeDetail(selection));
+					BeanProperties.value(Person.class, "name", String.class).observeDetail(selection));
 		}
 	}
 

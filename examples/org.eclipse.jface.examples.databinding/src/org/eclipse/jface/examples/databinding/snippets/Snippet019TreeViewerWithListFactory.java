@@ -113,9 +113,7 @@ public class Snippet019TreeViewerWithListFactory {
 		rowLayout.marginBottom = 0;
 		rowLayout.pack = false;
 		group.setLayout(rowLayout);
-		group
-				.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false,
-						2, 1));
+		group.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false, 2, 1));
 
 		final Button addRootButton = new Button(group, SWT.NONE);
 		addRootButton.addSelectionListener(new SelectionAdapter() {
@@ -222,8 +220,7 @@ public class Snippet019TreeViewerWithListFactory {
 		itemNameLabel.setText("Item Name");
 
 		beanText = new Text(shell, SWT.BORDER);
-		final GridData gd_beanValue = new GridData(SWT.FILL, SWT.CENTER, true,
-				false);
+		final GridData gd_beanValue = new GridData(SWT.FILL, SWT.CENTER, true, false);
 		beanText.setLayoutData(gd_beanValue);
 		m_bindingContext = initDataBindings();
 		//
@@ -272,8 +269,7 @@ public class Snippet019TreeViewerWithListFactory {
 	}
 
 	static class Bean {
-		/* package */PropertyChangeSupport changeSupport = new PropertyChangeSupport(
-				this);
+		/* package */PropertyChangeSupport changeSupport = new PropertyChangeSupport(this);
 		private String text;
 		private List<Bean> list;
 

@@ -166,8 +166,7 @@ public class SnippetSideEffectMigration {
 			DataBindingContext dbc = new DataBindingContext();
 
 			IObservableValue<String> personFirstNameObservable = BeanProperties
-					.value(ObservableBeanPerson.PROPERTY_FIRST_NAME, String.class)
-					.observe(person);
+					.value(ObservableBeanPerson.PROPERTY_FIRST_NAME, String.class).observe(person);
 			IObservableValue<String> personFirstNameTextObservable = WidgetProperties.text(SWT.Modify)
 					.observe(personFirstNameText);
 
@@ -217,8 +216,7 @@ public class SnippetSideEffectMigration {
 		}
 
 		/**
-		 * @param firstName
-		 *            The first name to set.
+		 * @param firstName The first name to set.
 		 */
 		public void setFirstName(String firstName) {
 			this.firstName.setValue(firstName);
@@ -233,8 +231,7 @@ public class SnippetSideEffectMigration {
 		}
 
 		/**
-		 * @param lastName
-		 *            The last name to set.
+		 * @param lastName The last name to set.
 		 */
 		public void setLastName(String lastName) {
 			this.lastName.setValue(lastName);

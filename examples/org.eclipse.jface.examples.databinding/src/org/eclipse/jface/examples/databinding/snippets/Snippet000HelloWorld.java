@@ -120,8 +120,7 @@ public class Snippet000HelloWorld {
 			DataBindingContext bindingContext = new DataBindingContext();
 			person = viewModel.getPerson();
 
-			bindingContext.bindValue(
-					WidgetProperties.text(SWT.Modify).observe(textName),
+			bindingContext.bindValue(WidgetProperties.text(SWT.Modify).observe(textName),
 					PojoProperties.value("name").observe(person));
 
 			// Open and return the Shell

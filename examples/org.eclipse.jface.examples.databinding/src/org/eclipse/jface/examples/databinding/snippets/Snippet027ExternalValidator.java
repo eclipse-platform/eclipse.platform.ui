@@ -57,33 +57,26 @@ public class Snippet027ExternalValidator extends WizardPage {
 
 	// Minimal JavaBeans support
 	public static abstract class AbstractModelObject {
-		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(
-				this);
+		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
 			propertyChangeSupport.addPropertyChangeListener(listener);
 		}
 
-		public void addPropertyChangeListener(String propertyName,
-				PropertyChangeListener listener) {
-			propertyChangeSupport.addPropertyChangeListener(propertyName,
-					listener);
+		public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+			propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
 		}
 
 		public void removePropertyChangeListener(PropertyChangeListener listener) {
 			propertyChangeSupport.removePropertyChangeListener(listener);
 		}
 
-		public void removePropertyChangeListener(String propertyName,
-				PropertyChangeListener listener) {
-			propertyChangeSupport.removePropertyChangeListener(propertyName,
-					listener);
+		public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+			propertyChangeSupport.removePropertyChangeListener(propertyName, listener);
 		}
 
-		protected void firePropertyChange(String propertyName, Object oldValue,
-				Object newValue) {
-			propertyChangeSupport.firePropertyChange(propertyName, oldValue,
-					newValue);
+		protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+			propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
 		}
 	}
 
@@ -130,16 +123,14 @@ public class Snippet027ExternalValidator extends WizardPage {
 
 		public IStatus validate() {
 			if (name.indexOf(' ') == -1) {
-				return ValidationStatus
-						.error("Please enter both first and last name separated by a space.");
+				return ValidationStatus.error("Please enter both first and last name separated by a space.");
 			}
 			if (email.indexOf('@') == -1) {
-				return ValidationStatus
-				.error("Please enter a valid email address containing '@'.");
+				return ValidationStatus.error("Please enter a valid email address containing '@'.");
 			}
 			if (!phoneNumber.startsWith("+")) {
 				return ValidationStatus
-				.error("Please enter the phone number in international format starting with '+'.");
+						.error("Please enter the phone number in international format starting with '+'.");
 			}
 			return Status.OK_STATUS;
 		}
@@ -187,8 +178,7 @@ public class Snippet027ExternalValidator extends WizardPage {
 		phoneNumberValue = new Text(container, SWT.BORDER);
 		phoneNumberValue.setLayoutData(gd);
 
-		contact = new Contact("BorisBokowski", "boris.at.somecompany.com",
-				"1-123-456-7890");
+		contact = new Contact("BorisBokowski", "boris.at.somecompany.com", "1-123-456-7890");
 
 		bindUI();
 	}

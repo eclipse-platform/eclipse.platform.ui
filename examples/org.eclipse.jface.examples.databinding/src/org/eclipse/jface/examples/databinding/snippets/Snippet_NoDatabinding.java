@@ -43,39 +43,31 @@ public class Snippet_NoDatabinding {
 		}
 
 		// Print the results
-		System.out.println("person.getName() = "
-				+ viewModel.getPerson().getName());
+		System.out.println("person.getName() = " + viewModel.getPerson().getName());
 	}
 
 	// Minimal JavaBeans support
 	public static abstract class AbstractModelObject {
-		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(
-				this);
+		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
 			propertyChangeSupport.addPropertyChangeListener(listener);
 		}
 
-		public void addPropertyChangeListener(String propertyName,
-				PropertyChangeListener listener) {
-			propertyChangeSupport.addPropertyChangeListener(propertyName,
-					listener);
+		public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+			propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
 		}
 
 		public void removePropertyChangeListener(PropertyChangeListener listener) {
 			propertyChangeSupport.removePropertyChangeListener(listener);
 		}
 
-		public void removePropertyChangeListener(String propertyName,
-				PropertyChangeListener listener) {
-			propertyChangeSupport.removePropertyChangeListener(propertyName,
-					listener);
+		public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+			propertyChangeSupport.removePropertyChangeListener(propertyName, listener);
 		}
 
-		protected void firePropertyChange(String propertyName, Object oldValue,
-				Object newValue) {
-			propertyChangeSupport.firePropertyChange(propertyName, oldValue,
-					newValue);
+		protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+			propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
 		}
 	}
 
@@ -141,12 +133,11 @@ public class Snippet_NoDatabinding {
 				// conversion
 				viewModel.getPerson().setName(text);
 			});
-			viewModel.person.addPropertyChangeListener("name",
-					evt -> display.asyncExec(() -> {
-						final String newName = viewModel.person.getName();
-						// conversion
-						name.setText(newName);
-					}));
+			viewModel.person.addPropertyChangeListener("name", evt -> display.asyncExec(() -> {
+				final String newName = viewModel.person.getName();
+				// conversion
+				name.setText(newName);
+			}));
 
 			// Open and return the Shell
 			shell.pack();

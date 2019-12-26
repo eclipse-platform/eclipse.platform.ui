@@ -70,33 +70,26 @@ public class Snippet017TableViewerWithDerivedColumns {
 
 	// Minimal JavaBeans support
 	public static abstract class AbstractModelObject {
-		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(
-				this);
+		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
 		public void addPropertyChangeListener(PropertyChangeListener listener) {
 			propertyChangeSupport.addPropertyChangeListener(listener);
 		}
 
-		public void addPropertyChangeListener(String propertyName,
-				PropertyChangeListener listener) {
-			propertyChangeSupport.addPropertyChangeListener(propertyName,
-					listener);
+		public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+			propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
 		}
 
 		public void removePropertyChangeListener(PropertyChangeListener listener) {
 			propertyChangeSupport.removePropertyChangeListener(listener);
 		}
 
-		public void removePropertyChangeListener(String propertyName,
-				PropertyChangeListener listener) {
-			propertyChangeSupport.removePropertyChangeListener(propertyName,
-					listener);
+		public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+			propertyChangeSupport.removePropertyChangeListener(propertyName, listener);
 		}
 
-		protected void firePropertyChange(String propertyName, Object oldValue,
-				Object newValue) {
-			propertyChangeSupport.firePropertyChange(propertyName, oldValue,
-					newValue);
+		protected void firePropertyChange(String propertyName, Object oldValue, Object newValue) {
+			propertyChangeSupport.firePropertyChange(propertyName, oldValue, newValue);
 		}
 	}
 
@@ -205,8 +198,7 @@ public class Snippet017TableViewerWithDerivedColumns {
 			Shell shell = new Shell(display);
 			duckFamily = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION);
 			duckFamily.setHeaderVisible(true);
-			GridDataFactory.defaultsFor(duckFamily).span(2, 1).applyTo(
-					duckFamily);
+			GridDataFactory.defaultsFor(duckFamily).span(2, 1).applyTo(duckFamily);
 			createColumn("Name");
 			createColumn("Mother");
 			createColumn("Father");
@@ -215,8 +207,7 @@ public class Snippet017TableViewerWithDerivedColumns {
 
 			new Label(shell, SWT.NONE).setText("Name:");
 			nameText = new Text(shell, SWT.BORDER);
-			GridDataFactory.defaultsFor(nameText).grab(true, false).applyTo(
-					nameText);
+			GridDataFactory.defaultsFor(nameText).grab(true, false).applyTo(nameText);
 
 			new Label(shell, SWT.NONE).setText("Mother:");
 			motherCombo = new Combo(shell, SWT.READ_ONLY);

@@ -52,8 +52,7 @@ public class Snippet014WizardDialog {
 			@Override
 			public IStatus validate(Integer value) {
 				if (value == null) {
-					return ValidationStatus
-							.info("Please enter a value.");
+					return ValidationStatus.info("Please enter a value.");
 				}
 				if (value < 0 || value > 9) {
 					return ValidationStatus.error("Value must be between 0 and 9.");
@@ -63,8 +62,7 @@ public class Snippet014WizardDialog {
 		}
 
 		protected FirstWizardPage() {
-			super("First", "First Page", ImageDescriptor
-					.createFromImage(new Image(Display.getDefault(), 16, 16)));
+			super("First", "First Page", ImageDescriptor.createFromImage(new Image(Display.getDefault(), 16, 16)));
 		}
 
 		@Override
@@ -78,19 +76,17 @@ public class Snippet014WizardDialog {
 
 			dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(text),
 					((SampleWizard) getWizard()).getModel().intValue,
-					new UpdateValueStrategy<String, Integer>()
-						.setAfterConvertValidator(new SingleDigitValidator()), null);
+					new UpdateValueStrategy<String, Integer>().setAfterConvertValidator(new SingleDigitValidator()),
+					null);
 
-			GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(
-					composite);
+			GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(composite);
 			setControl(composite);
 		}
 	}
 
 	static class SecondWizardPage extends WizardPage {
 		protected SecondWizardPage() {
-			super("Second", "Second Page", ImageDescriptor
-					.createFromImage(new Image(Display.getDefault(), 16, 16)));
+			super("Second", "Second Page", ImageDescriptor.createFromImage(new Image(Display.getDefault(), 16, 16)));
 		}
 
 		@Override
@@ -102,11 +98,9 @@ public class Snippet014WizardDialog {
 			label.setText("Enter a date:");
 			Text text = new Text(composite, SWT.BORDER);
 
-			dbc.bindValue(WidgetProperties.text().observe(text),
-							((SampleWizard) getWizard()).getModel().dateValue);
+			dbc.bindValue(WidgetProperties.text().observe(text), ((SampleWizard) getWizard()).getModel().dateValue);
 
-			GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(
-					composite);
+			GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(composite);
 			setControl(composite);
 		}
 	}
