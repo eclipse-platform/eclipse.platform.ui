@@ -21,6 +21,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.widgets.WidgetFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -28,7 +29,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -83,9 +83,8 @@ public class Snippet060DialogWithURLImageButtons {
 
 			@Override
 			protected Control createContents(Composite parent) {
-				Label label = new Label(parent, SWT.CENTER);
-				label.setText("Dialog with Url Image Buttons");
-				label.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
+				WidgetFactory.label(SWT.CENTER).text("Dialog with Url Image Buttons")
+						.layoutData(new GridData(GridData.FILL_HORIZONTAL)).create(parent);
 				return super.createContents(parent);
 			}
 		};

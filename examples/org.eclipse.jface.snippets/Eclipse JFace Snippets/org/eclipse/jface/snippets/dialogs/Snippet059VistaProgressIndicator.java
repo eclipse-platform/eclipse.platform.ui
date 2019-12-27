@@ -15,12 +15,12 @@
 package org.eclipse.jface.snippets.dialogs;
 
 import org.eclipse.jface.dialogs.ProgressIndicator;
+import org.eclipse.jface.widgets.WidgetFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -37,15 +37,13 @@ public class Snippet059VistaProgressIndicator {
 		shell.setLayout(new GridLayout());
 		shell.setSize(300, 100);
 
-		new Label(shell, SWT.CENTER).setText("Snippet059VistaProgressIndicator");
+		WidgetFactory.label(SWT.CENTER).text("Snippet059VistaProgressIndicator").create(shell);
 
-		ProgressIndicator indicator = new ProgressIndicator(shell,
-				SWT.HORIZONTAL);
+		ProgressIndicator indicator = new ProgressIndicator(shell, SWT.HORIZONTAL);
 
-		Color backgroundColor = shell.getDisplay().getSystemColor(
-				SWT.COLOR_CYAN);
+		Color backgroundColor = shell.getDisplay().getSystemColor(SWT.COLOR_CYAN);
 
-		indicator.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
+		indicator.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		indicator.setBackground(backgroundColor);
 		shell.open();
 
@@ -56,8 +54,7 @@ public class Snippet059VistaProgressIndicator {
 
 	}
 
-	private static void performProgressOn(Display display,
-			ProgressIndicator indicator) {
+	private static void performProgressOn(Display display, ProgressIndicator indicator) {
 
 		indicator.beginTask(200);
 		indicator.showNormal();

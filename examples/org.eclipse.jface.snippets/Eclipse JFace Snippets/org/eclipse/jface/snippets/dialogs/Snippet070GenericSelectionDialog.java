@@ -26,6 +26,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.ListViewer;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.widgets.WidgetFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -42,7 +43,7 @@ import org.eclipse.swt.widgets.Shell;
 public class Snippet070GenericSelectionDialog {
 
 	public Snippet070GenericSelectionDialog(final Shell shell) {
-		Label text = new Label(shell, SWT.CENTER);
+		Label text = WidgetFactory.label(SWT.CENTER).create(shell);
 		List<Model> models = getSampleModelElements();
 
 		GenericSelectionDialog genericSelectionDialog = new GenericSelectionDialog(shell, models, models.get(0),
@@ -152,13 +153,9 @@ public class Snippet070GenericSelectionDialog {
 			listViewer.getList().setLayoutData(data);
 			listViewer.getList().setFont(parent.getFont());
 			// Set the label provider
-			listViewer.setLabelProvider(new LabelProvider() {
-				@Override
-				public String getText(Object element) {
-					// Return the features's label.
-					return element == null ? "" : ((Model) element).getName(); //$NON-NLS-1$
-				}
-			});
+			LabelProvider labelProvider = LabelProvider
+					.createTextProvider(element -> element == null ? "" : ((Model) element).getName());
+			listViewer.setLabelProvider(labelProvider);
 
 			// Set the content provider
 			listViewer.setContentProvider(ArrayContentProvider.getInstance());

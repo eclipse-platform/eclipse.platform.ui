@@ -17,6 +17,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
+import org.eclipse.jface.widgets.WidgetFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
@@ -24,7 +25,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -38,12 +38,12 @@ public class Snippet012DialogWithImageButtons {
 
 		Dialog dia = new Dialog(shell) {
 			private ImageDescriptor getImageDescriptor(String path) {
-				if( registry == null ) {
+				if (registry == null) {
 					registry = new ImageRegistry(shell.getDisplay());
 				}
 
 				ImageDescriptor desc = registry.getDescriptor(path);
-				if( desc == null ) {
+				if (desc == null) {
 					desc = ImageDescriptor.createFromFile(Snippet012DialogWithImageButtons.class, path);
 					registry.put(path, desc);
 				}
@@ -54,7 +54,7 @@ public class Snippet012DialogWithImageButtons {
 			@Override
 			protected Button createButton(Composite parent, int id, String label, boolean defaultButton) {
 				Button b = super.createButton(parent, id, label, defaultButton);
-				if( id == IDialogConstants.OK_ID ) {
+				if (id == IDialogConstants.OK_ID) {
 					b.setImage(getImageDescriptor("filesave.png").createImage()); //$NON-NLS-1$
 					// reset the button layout
 					setButtonLayoutData(b);
@@ -70,9 +70,8 @@ public class Snippet012DialogWithImageButtons {
 
 			@Override
 			protected Control createContents(Composite parent) {
-				Label label = new Label(parent, SWT.CENTER);
-				label.setText("Update Snippet012DialogWithImageButtons ...");
-				label.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
+				WidgetFactory.label(SWT.CENTER).text("Update Snippet012DialogWithImageButtons...")
+						.layoutData(new GridData(GridData.FILL_HORIZONTAL)).create(parent);
 				return super.createContents(parent);
 			}
 		};
@@ -81,18 +80,19 @@ public class Snippet012DialogWithImageButtons {
 
 	public static void main(String[] args) {
 
-		Display display = new Display ();
+		Display display = new Display();
 		Shell shell = new Shell(display);
 		shell.setLayout(new FillLayout());
 
-		shell.open ();
+		shell.open();
 
 		new Snippet012DialogWithImageButtons(shell);
 
-		while (!shell.isDisposed ()) {
-			if (!display.readAndDispatch ()) display.sleep ();
+		while (!shell.isDisposed()) {
+			if (!display.readAndDispatch())
+				display.sleep();
 		}
 
-		display.dispose ();
+		display.dispose();
 	}
 }
