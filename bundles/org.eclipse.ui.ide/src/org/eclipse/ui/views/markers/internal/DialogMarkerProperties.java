@@ -26,7 +26,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-import org.eclipse.e4.ui.internal.markers.MarkerTranslation;
+import org.eclipse.e4.ui.internal.workspace.markers.Translation;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -63,7 +63,7 @@ public class DialogMarkerProperties extends TrayDialog {
 	/**
 	 * The marker adapter to represent the marker
 	 */
-	private final MarkerTranslation markerAdapter = new MarkerTranslation();
+	private final Translation translation = new Translation();
 
 	/**
 	 * The marker being shown, or <code>null</code> for a new marker
@@ -415,7 +415,7 @@ public class DialogMarkerProperties extends TrayDialog {
 			updateDialogForNewMarker();
 			return;
 		}
-		descriptionText.setText(markerAdapter.message(marker).orElse("")); //$NON-NLS-1$
+		descriptionText.setText(translation.message(marker).orElse("")); //$NON-NLS-1$
 		if (creationTime != null) {
 			creationTime.setText(Util.getCreationTime(marker));
 		}

@@ -17,7 +17,7 @@ package org.eclipse.ui.views.markers;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.e4.ui.internal.markers.MarkerTranslation;
+import org.eclipse.e4.ui.internal.workspace.markers.Translation;
 import org.eclipse.ui.IMarkerResolution2;
 
 /**
@@ -46,9 +46,9 @@ public abstract class WorkbenchMarkerResolution implements IMarkerResolution2 {
 	 * @param monitor The monitor to report progress
 	 */
 	public void run(IMarker[] markers, IProgressMonitor monitor) {
-		MarkerTranslation markerAdapter = new MarkerTranslation();
+		Translation translation = new Translation();
 		for (IMarker marker : markers) {
-			monitor.subTask(markerAdapter.message(marker).orElse("")); //$NON-NLS-1$
+			monitor.subTask(translation.message(marker).orElse("")); //$NON-NLS-1$
 			run(marker);
 		}
 	}

@@ -22,7 +22,7 @@ import java.util.Map;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.e4.ui.internal.markers.MarkerTranslation;
+import org.eclipse.e4.ui.internal.workspace.markers.Translation;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -474,7 +474,7 @@ public class QuickFixPage extends WizardPage {
 		} else {
 
 			try {
-				MarkerTranslation markerAdapter = new MarkerTranslation();
+				Translation translation = new Translation();
 				getWizard().getContainer().run(false, true, monitor1 -> {
 					monitor1.beginTask(MarkerMessages.MarkerResolutionDialog_Fixing, checked.length);
 					for (Object checkedElement : checked) {
@@ -484,7 +484,7 @@ public class QuickFixPage extends WizardPage {
 							return;
 						}
 						IMarker marker = (IMarker) checkedElement;
-						monitor1.subTask(markerAdapter.message(marker).orElse("")); //$NON-NLS-1$
+						monitor1.subTask(translation.message(marker).orElse("")); //$NON-NLS-1$
 						resolution.run(marker);
 						monitor1.worked(1);
 					}

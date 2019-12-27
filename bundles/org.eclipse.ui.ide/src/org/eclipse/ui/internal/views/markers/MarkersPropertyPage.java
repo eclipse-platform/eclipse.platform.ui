@@ -26,7 +26,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
-import org.eclipse.e4.ui.internal.markers.MarkerTranslation;
+import org.eclipse.e4.ui.internal.workspace.markers.Translation;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -60,7 +60,7 @@ import org.eclipse.ui.views.markers.internal.Util;
  */
 public class MarkersPropertyPage extends PropertyPage {
 
-	private final MarkerTranslation markerAdapter = new MarkerTranslation();
+	private final Translation translation = new Translation();
 	private Text descriptionText;
 	private IMarker marker;
 
@@ -175,7 +175,7 @@ public class MarkersPropertyPage extends PropertyPage {
 		gridData.widthHint = gridData.heightHint = 0;
 		gridData.grabExcessHorizontalSpace = true;
 		descriptionText.setLayoutData(gridData);
-		descriptionText.setText(markerAdapter.message(marker).orElse("")); //$NON-NLS-1$
+		descriptionText.setText(translation.message(marker).orElse("")); //$NON-NLS-1$
 		descriptionText.setEditable(Util.isEditable(marker));
 
 		copyButton = new Button(textContainer, SWT.PUSH);

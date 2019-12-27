@@ -17,7 +17,7 @@ package org.eclipse.ui.views.markers.internal;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.e4.ui.internal.markers.MarkerTranslation;
+import org.eclipse.e4.ui.internal.workspace.markers.Translation;
 
 import com.ibm.icu.text.CollationKey;
 import com.ibm.icu.text.Collator;
@@ -31,7 +31,7 @@ import com.ibm.icu.text.Collator;
  */
 public class ConcreteMarker extends MarkerNode{
 
-	private final MarkerTranslation markerAdapter = new MarkerTranslation();
+	private final Translation translation = new Translation();
 
 	private String description;
 
@@ -85,7 +85,7 @@ public class ConcreteMarker extends MarkerNode{
 	public void refresh() {
 		clearCache();
 
-		description = markerAdapter.message(marker).orElse(""); //$NON-NLS-1$
+		description = translation.message(marker).orElse(""); //$NON-NLS-1$
 		resourceName = Util.getResourceName(marker);
 		inFolder = Util.getContainerName(marker);
 		shortFolder = null;

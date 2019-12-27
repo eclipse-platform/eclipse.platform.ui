@@ -10,7 +10,7 @@
  * Contributors:
  *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - initial API and implementation
  *******************************************************************************/
-package org.eclipse.e4.ui.internal.markers;
+package org.eclipse.e4.ui.internal.workspace.markers;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -23,8 +23,7 @@ import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.FrameworkUtil;
 
 /**
- * An adapter that retrieves attribute values from a marker instance to be shown
- * in UI.
+ * Translates attribute values from a marker instance to UI-friendly form.
  *
  * As the class is intended to directly serve UI, it cannot afford fail-fast
  * strategy. On the other hand, retrieving an attribute from an arbitrary marker
@@ -38,22 +37,22 @@ import org.osgi.framework.FrameworkUtil;
  *
  * @see IMarker
  */
-public final class MarkerTranslation {
+public final class Translation {
 
 	private final Consumer<CoreException> reporter;
 
 	/**
 	 * Use {@link ILog} of enclosing bundle as {@link CoreException} consumer
 	 */
-	public MarkerTranslation() {
-		this(e -> Platform.getLog(FrameworkUtil.getBundle(MarkerTranslation.class)).log(e.getStatus()));
+	public Translation() {
+		this(e -> Platform.getLog(FrameworkUtil.getBundle(Translation.class)).log(e.getStatus()));
 	}
 
 	/**
 	 *
 	 * @param reporter for a {@link CoreException} if any of them will be thrown
 	 */
-	public MarkerTranslation(Consumer<CoreException> reporter) {
+	public Translation(Consumer<CoreException> reporter) {
 		Objects.requireNonNull(reporter);
 		this.reporter = reporter;
 	}
