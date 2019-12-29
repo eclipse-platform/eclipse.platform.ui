@@ -33,16 +33,15 @@ import org.eclipse.swt.widgets.Text;
 public class Snippet034ComboViewerAndEnum {
 
 	public static void main(String[] args) {
-		Display display = new Display();
+		final Display display = new Display();
 		final Person model = new Person("Pat", Gender.Unknown);
 
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			final Shell shell = new View(model).createShell();
-			// The SWT event loop
-			Display display1 = Display.getCurrent();
+			Shell shell = new View(model).createShell();
+
 			while (!shell.isDisposed()) {
-				if (!display1.readAndDispatch()) {
-					display1.sleep();
+				if (!display.readAndDispatch()) {
+					display.sleep();
 				}
 			}
 		});

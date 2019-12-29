@@ -52,19 +52,20 @@ import org.eclipse.swt.widgets.Text;
  */
 public class SnippetSideEffectConditionalBinding {
 	public static void main(String[] args) {
-		Display display = new Display();
+		final Display display = new Display();
 
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
 			// Create the Person model object
-			Person person = new Person();
-			final Shell shell = new View(person).createShell();
-			Display display1 = Display.getCurrent();
+			final Shell shell = new View(new Person()).createShell();
+
 			while (!shell.isDisposed()) {
-				if (!display1.readAndDispatch()) {
-					display1.sleep();
+				if (!display.readAndDispatch()) {
+					display.sleep();
 				}
 			}
 		});
+
+		display.dispose();
 	}
 
 	/** Observable Person model. */
@@ -102,8 +103,7 @@ public class SnippetSideEffectConditionalBinding {
 		}
 
 		public Shell createShell() {
-			Display display = Display.getDefault();
-			Shell shell = new Shell(display);
+			Shell shell = new Shell();
 			GridLayoutFactory.swtDefaults().applyTo(shell);
 			GridDataFactory gridDataFactory = GridDataFactory.fillDefaults().grab(true, false);
 

@@ -67,6 +67,18 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 	private ListViewer addendsTarget;
 	private ListViewer addendsModelValue;
 
+	public static void main(String[] args) {
+		final Display display = new Display();
+
+		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
+			IWizard wizard = new MultiFieldValidationWizard();
+			WizardDialog dialog = new WizardDialog(null, wizard);
+			dialog.open();
+		});
+
+		display.dispose();
+	}
+
 	/**
 	 * Create the wizard.
 	 */
@@ -302,25 +314,5 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 		public boolean performFinish() {
 			return true;
 		}
-	}
-
-	public static void main(String[] args) {
-		Display display = new Display();
-
-		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			IWizard wizard = new MultiFieldValidationWizard();
-			WizardDialog dialog = new WizardDialog(null, wizard);
-			dialog.open();
-
-			// The SWT event loop
-			Display display1 = Display.getCurrent();
-			while (dialog.getShell() != null && !dialog.getShell().isDisposed()) {
-				if (!display1.readAndDispatch()) {
-					display1.sleep();
-				}
-			}
-		});
-
-		display.dispose();
 	}
 }

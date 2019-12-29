@@ -16,10 +16,10 @@
 package org.eclipse.jface.examples.databinding.snippets;
 
 import org.eclipse.core.databinding.observable.Realm;
+import org.eclipse.core.databinding.observable.sideeffect.ISideEffect;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
-import org.eclipse.jface.internal.databinding.provisional.swt.ControlUpdater;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
@@ -34,28 +34,25 @@ import org.eclipse.swt.widgets.Text;
 
 public class Snippet023ConditionalVisibility {
 	public static void main(String[] args) {
-		Display display = new Display();
-		final Shell shell = new Shell(display);
-		shell.setLayout(new GridLayout(1, false));
+		final Display display = new Display();
 
-		Realm.runWithDefault(DisplayRealm.getRealm(display),
-				() -> new Snippet023ConditionalVisibility().createControls(shell));
+		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
+			Shell shell = createShell();
 
-		shell.pack();
-		shell.open();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
+			while (!shell.isDisposed()) {
+				if (!display.readAndDispatch()) {
+					display.sleep();
+				}
 			}
-		}
+		});
+
 		display.dispose();
 	}
 
-	Text text;
-	Text toText;
-	Text fromText;
+	private static Shell createShell() {
+		Shell shell = new Shell();
+		shell.setLayout(new GridLayout(1, false));
 
-	private void createControls(Shell shell) {
 		Composite composite = new Composite(shell, SWT.NONE);
 		Group radioGroup = new Group(composite, SWT.NONE);
 		radioGroup.setText("Type");
@@ -73,18 +70,18 @@ public class Snippet023ConditionalVisibility {
 		rangeGroup.setText("Range");
 		Label fromLabel = new Label(rangeGroup, SWT.NONE);
 		fromLabel.setText("From:");
-		fromText = new Text(rangeGroup, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
+		new Text(rangeGroup, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 
 		Label toLabel = new Label(rangeGroup, SWT.NONE);
 		toLabel.setText("To:");
-		toText = new Text(rangeGroup, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
+		new Text(rangeGroup, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 		GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(rangeGroup);
 
 		final Group textGroup = new Group(oneOfTwo, SWT.NONE);
 		textGroup.setText("Text");
 		Label label = new Label(textGroup, SWT.NONE);
 		label.setText("Text:");
-		text = new Text(textGroup, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
+		new Text(textGroup, SWT.SINGLE | SWT.LEAD | SWT.BORDER);
 		GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(textGroup);
 
 		GridLayoutFactory.swtDefaults().numColumns(2).generateLayout(composite);
@@ -92,18 +89,21 @@ public class Snippet023ConditionalVisibility {
 		final IObservableValue<Boolean> rangeSelected = WidgetProperties.buttonSelection().observe(rangeButton);
 		final IObservableValue<Boolean> textSelected = WidgetProperties.buttonSelection().observe(textButton);
 
-		// Note that ControlUpdater is not API.
-		new ControlUpdater(oneOfTwo) {
-			@Override
-			protected void updateControl() {
-				if (rangeSelected.getValue()) {
-					stackLayout.topControl = rangeGroup;
-					oneOfTwo.layout();
-				} else if (textSelected.getValue()) {
-					stackLayout.topControl = textGroup;
-					oneOfTwo.layout();
-				}
+		ISideEffect.create(() -> {
+			// Get both values up front so that the observable tracker records them
+			boolean isRange = rangeSelected.getValue();
+			boolean isText = textSelected.getValue();
+			if (isRange) {
+				stackLayout.topControl = rangeGroup;
+				oneOfTwo.layout();
+			} else if (isText) {
+				stackLayout.topControl = textGroup;
+				oneOfTwo.layout();
 			}
-		};
+		});
+
+		shell.pack();
+		shell.open();
+		return shell;
 	}
 }

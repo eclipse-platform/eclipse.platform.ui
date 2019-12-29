@@ -53,7 +53,6 @@ public class Snippet020TreeViewerWithSetFactory {
 
 	private Button pasteButton;
 	private Button copyButton;
-	private Shell shell;
 	private Button addChildBeanButton;
 	private Button removeBeanButton;
 	private TreeViewer beanViewer;
@@ -70,36 +69,25 @@ public class Snippet020TreeViewerWithSetFactory {
 	 */
 	public static void main(String[] args) {
 		Display display = Display.getDefault();
+
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			try {
-				Snippet020TreeViewerWithSetFactory window = new Snippet020TreeViewerWithSetFactory();
-				window.open();
-			} catch (Exception e) {
-				e.printStackTrace();
+			Shell shell = new Snippet020TreeViewerWithSetFactory().createShell();
+
+			while (!shell.isDisposed()) {
+				if (!display.readAndDispatch()) {
+					display.sleep();
+				}
 			}
 		});
-	}
 
-	/**
-	 * Open the window-
-	 */
-	public void open() {
-		final Display display = Display.getDefault();
-		createContents();
-		shell.open();
-		shell.layout();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
+		display.dispose();
 	}
 
 	/**
 	 * Create contents of the window.
 	 */
-	protected void createContents() {
-		shell = new Shell();
+	protected Shell createShell() {
+		Shell shell = new Shell();
 		final GridLayout gridLayout_1 = new GridLayout();
 		gridLayout_1.numColumns = 2;
 		shell.setLayout(gridLayout_1);
@@ -228,6 +216,11 @@ public class Snippet020TreeViewerWithSetFactory {
 		m_bindingContext = initDataBindings();
 		//
 		initExtraBindings(m_bindingContext);
+
+		shell.open();
+		shell.layout();
+
+		return shell;
 	}
 
 	private static Bean createBean(String name) {

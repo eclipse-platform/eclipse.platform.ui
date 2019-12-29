@@ -46,11 +46,11 @@ import org.eclipse.swt.widgets.Shell;
 public class Snippet003UpdateComboBindUsingViewer {
 	public static void main(String[] args) {
 		final Display display = new Display();
+
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
 			ViewModel viewModel = new ViewModel();
 			Shell shell = new View(viewModel).createShell();
 
-			// The SWT event loop
 			while (!shell.isDisposed()) {
 				if (!display.readAndDispatch()) {
 					display.sleep();
@@ -59,6 +59,7 @@ public class Snippet003UpdateComboBindUsingViewer {
 			// Print the results
 			System.out.println(viewModel.getText());
 		});
+
 		display.dispose();
 	}
 
@@ -129,7 +130,7 @@ public class Snippet003UpdateComboBindUsingViewer {
 
 		public Shell createShell() {
 			// Build a UI
-			Shell shell = new Shell(Display.getCurrent());
+			Shell shell = new Shell();
 			shell.setLayout(new RowLayout(SWT.VERTICAL));
 
 			Combo combo = new Combo(shell, SWT.BORDER | SWT.READ_ONLY);

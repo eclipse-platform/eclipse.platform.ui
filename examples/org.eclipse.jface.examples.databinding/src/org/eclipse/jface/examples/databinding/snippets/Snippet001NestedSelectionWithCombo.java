@@ -53,16 +53,19 @@ import org.eclipse.swt.widgets.Text;
  */
 public class Snippet001NestedSelectionWithCombo {
 	public static void main(String[] args) {
-		ViewModel viewModel = new ViewModel();
-		Shell shell = new View(viewModel).createShell();
+		final Display display = new Display();
 
-		// The SWT event loop
-		Display display = Display.getCurrent();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
+		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
+			Shell shell = new View().createShell();
+
+			while (!shell.isDisposed()) {
+				if (!display.readAndDispatch()) {
+					display.sleep();
+				}
 			}
-		}
+		});
+
+		display.dispose();
 	}
 
 	/** Helper class for implementing JavaBeans support. */
@@ -126,15 +129,8 @@ public class Snippet001NestedSelectionWithCombo {
 		}
 	}
 
-	/**
-	 * The View's model--the root of our Model graph for this particular GUI.
-	 * <p>
-	 * Typically each View class has a corresponding ViewModel class. The ViewModel
-	 * is responsible for getting the objects to edit from the DAO. Since this
-	 * snippet doesn't have any persistent objects to retrieve, this ViewModel just
-	 * instantiates a model object to edit.
-	 */
-	static class ViewModel extends AbstractModelObject {
+	/** The GUI view. */
+	static class View {
 		// The model to bind
 		private ArrayList<Person> people = new ArrayList<>();
 		{
@@ -153,27 +149,9 @@ public class Snippet001NestedSelectionWithCombo {
 			cities.add("Lost Mine");
 		}
 
-		public ArrayList<Person> getPeople() {
-			return people;
-		}
-
-		public ArrayList<String> getCities() {
-			return cities;
-		}
-	}
-
-	/** The GUI view. */
-	static class View {
-		private ViewModel viewModel;
-
-		public View(ViewModel viewModel) {
-			this.viewModel = viewModel;
-		}
-
 		public Shell createShell() {
 			// Build a UI
-			Shell shell = new Shell(Display.getCurrent());
-			Realm realm = DisplayRealm.getRealm(shell.getDisplay());
+			Shell shell = new Shell();
 
 			List peopleList = new List(shell, SWT.BORDER);
 			peopleList.setLayoutData(new GridData(SWT.FILL, SWT.END, true, false));
@@ -186,12 +164,12 @@ public class Snippet001NestedSelectionWithCombo {
 
 			ListViewer peopleListViewer = new ListViewer(peopleList);
 			IObservableMap<Person, String> attributeMap = BeanProperties.value(Person.class, "name", String.class)
-					.observeDetail(Observables.staticObservableSet(realm, new HashSet<>(viewModel.getPeople())));
+					.observeDetail(Observables.staticObservableSet(new HashSet<>(people)));
 			peopleListViewer.setLabelProvider(new ObservableMapLabelProvider(attributeMap));
 			peopleListViewer.setContentProvider(new ArrayContentProvider());
-			peopleListViewer.setInput(viewModel.getPeople());
+			peopleListViewer.setInput(people);
 
-			DataBindingContext bindingContext = new DataBindingContext(realm);
+			DataBindingContext bindingContext = new DataBindingContext();
 			IObservableValue<Person> selectedPerson = ViewerProperties.singleSelection(Person.class)
 					.observe(peopleListViewer);
 			bindingContext.bindValue(WidgetProperties.text(SWT.Modify).observe(name),
@@ -199,7 +177,7 @@ public class Snippet001NestedSelectionWithCombo {
 
 			ComboViewer cityViewer = new ComboViewer(city);
 			cityViewer.setContentProvider(new ArrayContentProvider());
-			cityViewer.setInput(viewModel.getCities());
+			cityViewer.setInput(cities);
 
 			IObservableValue<String> citySelection = ViewerProperties.singleSelection(String.class).observe(cityViewer);
 			bindingContext.bindValue(citySelection,

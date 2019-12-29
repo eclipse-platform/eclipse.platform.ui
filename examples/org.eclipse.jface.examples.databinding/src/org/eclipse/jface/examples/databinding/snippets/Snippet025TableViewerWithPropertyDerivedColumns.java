@@ -50,21 +50,17 @@ public class Snippet025TableViewerWithPropertyDerivedColumns {
 	public static void main(String[] args) {
 		final Display display = new Display();
 
-		// Set up data binding. In an RCP application, the threading Realm
-		// will be set for you automatically by the Workbench. In an SWT
-		// application, you can do this once, wrapping your binding
-		// method call.
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			ViewModel viewModel = new ViewModel();
-			Shell shell = new View(viewModel).createShell();
+			Shell shell = new View(new ViewModel()).createShell();
 
-			// The SWT event loop
 			while (!shell.isDisposed()) {
 				if (!display.readAndDispatch()) {
 					display.sleep();
 				}
 			}
 		});
+
+		display.dispose();
 	}
 
 	/** Helper class for implementing JavaBeans support. */

@@ -36,44 +36,30 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 public class Snippet030DateAndTimeObservableValue {
-	protected Shell shell;
 	private Text modelText;
 	private DateTime date;
 	private DateTime calendar;
 	private DateTime time;
 	private Button syncTime;
 
-	/**
-	 * Launch the application.
-	 */
 	public static void main(String[] args) {
-		try {
-			Snippet030DateAndTimeObservableValue window = new Snippet030DateAndTimeObservableValue();
-			window.open();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Open the window.
-	 */
-	public void open() {
 		final Display display = Display.getDefault();
+
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			createContents();
-			shell.pack();
-			shell.open();
+			Shell shell = new Snippet030DateAndTimeObservableValue().createShell();
+
 			while (!shell.isDisposed()) {
 				if (!display.readAndDispatch()) {
 					display.sleep();
 				}
 			}
 		});
+
+		display.dispose();
 	}
 
-	protected void createContents() {
-		shell = new Shell();
+	private Shell createShell() {
+		Shell shell = new Shell();
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 3;
 		shell.setLayout(layout);
@@ -100,6 +86,11 @@ public class Snippet030DateAndTimeObservableValue {
 		syncTime.setText("Sync with system time");
 
 		bindUI();
+
+		shell.pack();
+		shell.open();
+
+		return shell;
 	}
 
 	private void bindUI() {

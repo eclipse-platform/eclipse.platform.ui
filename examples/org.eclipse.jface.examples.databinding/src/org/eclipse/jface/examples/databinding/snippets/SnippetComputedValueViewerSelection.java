@@ -39,16 +39,19 @@ import org.eclipse.swt.widgets.Shell;
 
 public class SnippetComputedValueViewerSelection {
 	public static void main(String[] args) {
-		Display display = new Display();
+		final Display display = new Display();
 
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			final Shell shell = new View().createShell();
+			Shell shell = new View().createShell();
+
 			while (!shell.isDisposed()) {
 				if (!display.readAndDispatch()) {
 					display.sleep();
 				}
 			}
 		});
+
+		display.dispose();
 	}
 
 	static class View {
@@ -57,8 +60,7 @@ public class SnippetComputedValueViewerSelection {
 		private TableViewer tableViewer;
 
 		public Shell createShell() {
-			Display display = Display.getDefault();
-			Shell shell = new Shell(display);
+			Shell shell = new Shell();
 			GridLayoutFactory.swtDefaults().numColumns(2).applyTo(shell);
 
 			tableViewer = new TableViewer(shell);

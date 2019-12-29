@@ -37,8 +37,26 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 public class Snippet015DelayTextModifyEvents {
+	public static void main(String[] args) {
+		final Display display = new Display();
 
-	private static void createControls(Shell shell) {
+		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
+			Shell shell = createShell();
+
+			while (!shell.isDisposed()) {
+				if (!display.readAndDispatch()) {
+					display.sleep();
+				}
+			}
+		});
+
+		display.dispose();
+	}
+
+	private static Shell createShell() {
+		Shell shell = new Shell();
+		shell.setLayout(new GridLayout(3, false));
+
 		final Label field1 = createLabel(shell, SWT.NONE, "Field 1 ");
 
 		Text text1 = new Text(shell, SWT.BORDER);
@@ -103,6 +121,11 @@ public class Snippet015DelayTextModifyEvents {
 				delayed1.setValue(text1.getText());
 			}
 		});
+
+		shell.pack();
+		shell.open();
+
+		return shell;
 	}
 
 	private static Label createLabel(Composite parent, int style, String text) {
@@ -110,26 +133,4 @@ public class Snippet015DelayTextModifyEvents {
 		label.setText(text);
 		return label;
 	}
-
-	public static void main(String[] args) {
-		final Display display = new Display();
-
-		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			Shell shell = new Shell();
-			shell.setLayout(new GridLayout(3, false));
-
-			createControls(shell);
-
-			shell.pack();
-			shell.open();
-			while (!shell.isDisposed()) {
-				if (!display.readAndDispatch()) {
-					display.sleep();
-				}
-			}
-		});
-
-		display.dispose();
-	}
-
 }

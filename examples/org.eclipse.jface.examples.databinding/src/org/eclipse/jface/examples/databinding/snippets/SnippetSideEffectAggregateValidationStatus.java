@@ -36,6 +36,7 @@ public class SnippetSideEffectAggregateValidationStatus {
 	public static void main(String[] args) {
 		final Display display = new Display();
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> run(display));
+
 		display.dispose();
 	}
 

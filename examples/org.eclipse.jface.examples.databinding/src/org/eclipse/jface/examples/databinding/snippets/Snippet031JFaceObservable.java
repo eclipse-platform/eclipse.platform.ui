@@ -36,21 +36,19 @@ public class Snippet031JFaceObservable {
 	public static final String NAME_PROPERTY = "name_property";
 
 	public static void main(String[] args) {
-		Display display = new Display();
-		final ViewModel viewModel = new ViewModel();
+		final Display display = new Display();
 
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			final Shell shell = new View(viewModel).createShell();
-			// The SWT event loop
-			Display display1 = Display.getCurrent();
+			final Shell shell = new View(new ViewModel()).createShell();
+
 			while (!shell.isDisposed()) {
-				if (!display1.readAndDispatch()) {
-					display1.sleep();
+				if (!display.readAndDispatch()) {
+					display.sleep();
 				}
 			}
 		});
 		// Print the results
-		System.out.println("person.getName() = " + viewModel.getPerson().getName());
+		System.out.println("person.getName() = " + new ViewModel().getPerson().getName());
 	}
 
 	/**

@@ -54,10 +54,8 @@ public class Snippet013TableViewerEditing {
 	public static void main(String[] args) {
 		final Display display = new Display();
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			ViewModel viewModel = new ViewModel();
-			Shell shell = new View(viewModel).createShell();
+			Shell shell = new View(new ViewModel()).createShell();
 
-			// The SWT event loop
 			while (!shell.isDisposed()) {
 				if (!display.readAndDispatch()) {
 					display.sleep();

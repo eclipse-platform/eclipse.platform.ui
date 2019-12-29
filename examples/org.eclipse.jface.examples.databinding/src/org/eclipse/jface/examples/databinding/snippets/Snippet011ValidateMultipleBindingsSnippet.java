@@ -42,11 +42,23 @@ import org.eclipse.swt.widgets.Text;
  */
 public class Snippet011ValidateMultipleBindingsSnippet {
 	public static void main(String[] args) {
-		Realm.runWithDefault(DisplayRealm.getRealm(Display.getDefault()),
-				() -> Snippet011ValidateMultipleBindingsSnippet.run());
+		final Display display = new Display();
+
+		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
+			Shell shell = createShell();
+
+			while (!shell.isDisposed()) {
+				if (!display.readAndDispatch()) {
+					display.sleep();
+				}
+			}
+			display.dispose();
+		});
+
+		display.dispose();
 	}
 
-	private static void run() {
+	private static Shell createShell() {
 		Shell shell = new Shell();
 
 		View view = new View(shell);
@@ -71,13 +83,7 @@ public class Snippet011ValidateMultipleBindingsSnippet {
 
 		shell.pack();
 		shell.open();
-		Display display = shell.getDisplay();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
-		display.dispose();
+		return shell;
 	}
 
 	private static final class CrossFieldValidator implements IValidator<String> {

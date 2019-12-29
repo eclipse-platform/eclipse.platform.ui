@@ -58,22 +58,24 @@ public class Snippet026AnonymousBeanProperties {
 	private Combo combo;
 	private Text nameText;
 	private TreeViewer contactViewer;
+	private ApplicationModel model;
+	private Tree tree;
 
 	public static void main(String[] args) {
-		Display display = new Display();
+		final Display display = new Display();
+
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			try {
-				Snippet026AnonymousBeanProperties window = new Snippet026AnonymousBeanProperties();
-				window.open();
-			} catch (Exception e) {
-				e.printStackTrace();
+			Shell shell = new Snippet026AnonymousBeanProperties().createShell();
+
+			while (!shell.isDisposed()) {
+				if (!display.readAndDispatch()) {
+					display.sleep();
+				}
 			}
 		});
-	}
 
-	private ApplicationModel model;
-	private Shell shell;
-	private Tree tree;
+		display.dispose();
+	}
 
 	/** Helper class for implementing JavaBeans support. */
 	public static abstract class AbstractModelObject {
@@ -268,21 +270,6 @@ public class Snippet026AnonymousBeanProperties {
 		}
 	}
 
-	public void open() {
-		model = createDefaultModel();
-
-		final Display display = Display.getDefault();
-		createContents();
-		bindUI();
-		shell.open();
-		shell.layout();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
-	}
-
 	private static final String[] statuses = new String[] { "Online", "Idle", "Busy", "Offline" };
 
 	private ApplicationModel createDefaultModel() {
@@ -311,8 +298,10 @@ public class Snippet026AnonymousBeanProperties {
 	/**
 	 * Create contents of the window
 	 */
-	protected void createContents() {
-		shell = new Shell();
+	protected Shell createShell() {
+		model = createDefaultModel();
+
+		Shell shell = new Shell();
 		shell.setSize(379, 393);
 		shell.setText("Snippet026AnonymousBeanProperties");
 		final GridLayout gridLayout = new GridLayout();
@@ -346,6 +335,12 @@ public class Snippet026AnonymousBeanProperties {
 		statusViewer = new ComboViewer(shell, SWT.READ_ONLY);
 		combo = statusViewer.getCombo();
 		combo.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
+
+		bindUI();
+
+		shell.open();
+		shell.layout();
+		return shell;
 	}
 
 	private void bindUI() {

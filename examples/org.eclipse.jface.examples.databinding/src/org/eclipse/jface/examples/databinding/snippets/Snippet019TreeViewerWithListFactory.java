@@ -52,7 +52,6 @@ public class Snippet019TreeViewerWithListFactory {
 
 	private Button pasteButton;
 	private Button copyButton;
-	private Shell shell;
 	private Button addChildBeanButton;
 	private Button removeBeanButton;
 	private TreeViewer beanViewer;
@@ -67,37 +66,25 @@ public class Snippet019TreeViewerWithListFactory {
 	 * Launch the application.
 	 */
 	public static void main(String[] args) {
-		Display display = Display.getDefault();
+		final Display display = new Display();
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			try {
-				Snippet019TreeViewerWithListFactory window = new Snippet019TreeViewerWithListFactory();
-				window.open();
-			} catch (Exception e) {
-				e.printStackTrace();
+			Shell shell = new Snippet019TreeViewerWithListFactory().createShell();
+
+			while (!shell.isDisposed()) {
+				if (!display.readAndDispatch()) {
+					display.sleep();
+				}
 			}
 		});
-	}
 
-	/**
-	 * Open the window.
-	 */
-	public void open() {
-		final Display display = Display.getDefault();
-		createContents();
-		shell.open();
-		shell.layout();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
+		display.dispose();
 	}
 
 	/**
 	 * Create contents of the window.
 	 */
-	protected void createContents() {
-		shell = new Shell();
+	private Shell createShell() {
+		Shell shell = new Shell();
 		final GridLayout gridLayout_1 = new GridLayout();
 		gridLayout_1.numColumns = 2;
 		shell.setLayout(gridLayout_1);
@@ -226,6 +213,11 @@ public class Snippet019TreeViewerWithListFactory {
 		m_bindingContext = initDataBindings();
 
 		initExtraBindings(m_bindingContext);
+
+		shell.open();
+		shell.layout();
+
+		return shell;
 	}
 
 	private static Bean createBean(String name) {

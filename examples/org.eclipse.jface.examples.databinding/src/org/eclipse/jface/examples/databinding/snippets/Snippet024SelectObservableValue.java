@@ -37,34 +37,24 @@ import org.eclipse.swt.widgets.Shell;
  * Demonstrate usage of SelectObservableValue
  */
 public class Snippet024SelectObservableValue {
-	protected Shell shell;
-
 	public static void main(String[] args) {
 		final Display display = Display.getDefault();
+
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			try {
-				Snippet024SelectObservableValue window = new Snippet024SelectObservableValue();
-				window.open();
-			} catch (Exception e) {
-				e.printStackTrace();
+			Shell shell = createShell();
+
+			while (!shell.isDisposed()) {
+				if (!display.readAndDispatch()) {
+					display.sleep();
+				}
 			}
 		});
+
+		display.dispose();
 	}
 
-	public void open() {
-		final Display display = Display.getDefault();
-		createContents();
-		shell.open();
-		shell.layout();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
-	}
-
-	protected void createContents() {
-		shell = new Shell();
+	private static Shell createShell() {
+		Shell shell = new Shell();
 		shell.setSize(400, 300);
 		shell.setLayout(new GridLayout(2, true));
 		shell.setText("Snippet024SelectObservableValue");
@@ -93,6 +83,10 @@ public class Snippet024SelectObservableValue {
 
 		DataBindingContext bindingContext = new DataBindingContext();
 		bindingContext.bindValue(radioGroup, listViewerSelection);
+
+		shell.open();
+		shell.layout();
+		return shell;
 	}
 
 	public static class Color {

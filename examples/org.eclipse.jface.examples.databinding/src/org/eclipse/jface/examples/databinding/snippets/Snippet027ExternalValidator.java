@@ -53,6 +53,18 @@ public class Snippet027ExternalValidator extends WizardPage {
 
 	private Contact contact;
 
+	public static void main(String[] args) {
+		final Display display = new Display();
+
+		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
+			IWizard wizard = new ExternalValidationWizard();
+			WizardDialog dialog = new WizardDialog(null, wizard);
+			dialog.open();
+		});
+
+		display.dispose();
+	}
+
 	/** Helper class for implementing JavaBeans support. */
 	public static abstract class AbstractModelObject {
 		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
@@ -231,25 +243,5 @@ public class Snippet027ExternalValidator extends WizardPage {
 		public boolean performFinish() {
 			return true;
 		}
-	}
-
-	public static void main(String[] args) {
-		Display display = new Display();
-
-		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			IWizard wizard = new ExternalValidationWizard();
-			WizardDialog dialog = new WizardDialog(null, wizard);
-			dialog.open();
-
-			// The SWT event loop
-			Display display1 = Display.getCurrent();
-			while (dialog.getShell() != null && !dialog.getShell().isDisposed()) {
-				if (!display1.readAndDispatch()) {
-					display1.sleep();
-				}
-			}
-		});
-
-		display.dispose();
 	}
 }

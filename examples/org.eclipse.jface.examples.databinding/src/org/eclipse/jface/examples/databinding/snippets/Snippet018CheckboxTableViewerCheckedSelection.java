@@ -62,19 +62,17 @@ import org.eclipse.swt.widgets.Text;
  */
 public class Snippet018CheckboxTableViewerCheckedSelection {
 	public static void main(String[] args) {
-		// The SWT event loop
 		final Display display = Display.getDefault();
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			ViewModel viewModel = createSampleModel();
+			Shell shell = new View(createSampleModel()).createShell();
 
-			Shell shell = new View(viewModel).createShell();
-			shell.open();
 			while (!shell.isDisposed()) {
 				if (!display.readAndDispatch()) {
 					display.sleep();
 				}
 			}
 		});
+
 		display.dispose();
 	}
 
@@ -200,8 +198,7 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 
 		public Shell createShell() {
 			// Build a UI
-			final Display display = Display.getCurrent();
-			shell = new Shell(display);
+			shell = new Shell();
 
 			createUI(shell);
 
@@ -210,6 +207,7 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 
 			shell.setSize(shell.computeSize(400, SWT.DEFAULT));
 			shell.open();
+
 			return shell;
 		}
 

@@ -58,17 +58,18 @@ public class Snippet032TableViewerColumnEditing {
 
 	public static void main(String[] args) {
 		final Display display = new Display();
-		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			ViewModel viewModel = new ViewModel();
-			Shell shell = new View(viewModel).createShell();
 
-			// The SWT event loop
+		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
+			Shell shell = new View(new ViewModel()).createShell();
+
 			while (!shell.isDisposed()) {
 				if (!display.readAndDispatch()) {
 					display.sleep();
 				}
 			}
 		});
+
+		display.dispose();
 	}
 
 	/** Helper class for implementing JavaBeans support. */

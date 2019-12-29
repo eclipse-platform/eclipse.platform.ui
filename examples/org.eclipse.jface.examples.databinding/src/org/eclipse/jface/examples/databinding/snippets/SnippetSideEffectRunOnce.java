@@ -37,25 +37,25 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class SnippetSideEffectRunOnce {
 	public static void main(String[] args) {
-		Display display = new Display();
+		final Display display = new Display();
 
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			final Shell shell = new View().createShell();
-			// The SWT event loop
-			Display d = Display.getCurrent();
+			Shell shell = new View().createShell();
+
 			while (!shell.isDisposed()) {
-				if (!d.readAndDispatch()) {
-					d.sleep();
+				if (!display.readAndDispatch()) {
+					display.sleep();
 				}
 			}
 		});
+
+		display.dispose();
 	}
 
 	static class View {
 
 		public Shell createShell() {
-			Display display = Display.getDefault();
-			Shell shell = new Shell(display);
+			Shell shell = new Shell();
 
 			Label label = new Label(shell, SWT.CENTER);
 			label.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));

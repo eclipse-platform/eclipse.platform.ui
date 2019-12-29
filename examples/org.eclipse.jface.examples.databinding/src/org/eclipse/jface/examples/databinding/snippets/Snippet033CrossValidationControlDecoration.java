@@ -37,41 +37,27 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 public class Snippet033CrossValidationControlDecoration {
-	protected Shell shell;
 	private DateTime startDate;
 	private DateTime endDate;
 
-	/**
-	 * Launch the application.
-	 */
 	public static void main(String[] args) {
-		try {
-			Snippet033CrossValidationControlDecoration window = new Snippet033CrossValidationControlDecoration();
-			window.open();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Open the window.
-	 */
-	public void open() {
 		final Display display = Display.getDefault();
+
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			createContents();
-			shell.pack();
-			shell.open();
+			Shell shell = new Snippet033CrossValidationControlDecoration().createShell();
+
 			while (!shell.isDisposed()) {
 				if (!display.readAndDispatch()) {
 					display.sleep();
 				}
 			}
 		});
+
+		display.dispose();
 	}
 
-	protected void createContents() {
-		shell = new Shell();
+	protected Shell createShell() {
+		Shell shell = new Shell();
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 4;
 		shell.setLayout(layout);
@@ -94,6 +80,8 @@ public class Snippet033CrossValidationControlDecoration {
 		endDate.setLayoutData(gd_endDate);
 
 		bindUI();
+
+		return shell;
 	}
 
 	private void bindUI() {

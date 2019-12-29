@@ -42,37 +42,43 @@ import org.eclipse.swt.widgets.Text;
 public class Snippet008ComputedValue {
 	public static void main(String[] args) {
 		final Display display = new Display();
+
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			Shell shell = new Shell(display);
-			shell.setLayout(new FillLayout());
-
-			final UI ui = new UI(shell);
-			final Data data = new Data();
-
-			// Bind the UI to the Data
-			DataBindingContext bindingContext = new DataBindingContext();
-			bindingContext.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.Modify).observe(ui.firstName),
-					data.firstName);
-			bindingContext.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.Modify).observe(ui.lastName),
-					data.lastName);
-
-			// Construct the formatted name observable
-			FormattedName formattedName = new FormattedName(data.firstName, data.lastName);
-
-			// Bind the formatted name Text to the formatted name observable
-			bindingContext.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.None).observe(ui.formattedName),
-					formattedName, new UpdateValueStrategy<String, String>(false, UpdateValueStrategy.POLICY_NEVER),
-					null);
-
-			shell.pack();
-			shell.open();
+			Shell shell = createShell();
 			while (!shell.isDisposed()) {
 				if (!display.readAndDispatch()) {
 					display.sleep();
 				}
 			}
 		});
+
 		display.dispose();
+	}
+
+	private static Shell createShell() {
+		Shell shell = new Shell();
+		shell.setLayout(new FillLayout());
+
+		final UI ui = new UI(shell);
+		final Data data = new Data();
+
+		// Bind the UI to the Data
+		DataBindingContext bindingContext = new DataBindingContext();
+		bindingContext.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.Modify).observe(ui.firstName),
+				data.firstName);
+		bindingContext.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.Modify).observe(ui.lastName),
+				data.lastName);
+
+		// Construct the formatted name observable
+		FormattedName formattedName = new FormattedName(data.firstName, data.lastName);
+
+		// Bind the formatted name Text to the formatted name observable
+		bindingContext.bindValue((IObservableValue<String>) WidgetProperties.text(SWT.None).observe(ui.formattedName),
+				formattedName, new UpdateValueStrategy<String, String>(false, UpdateValueStrategy.POLICY_NEVER), null);
+
+		shell.pack();
+		shell.open();
+		return shell;
 	}
 
 	/**

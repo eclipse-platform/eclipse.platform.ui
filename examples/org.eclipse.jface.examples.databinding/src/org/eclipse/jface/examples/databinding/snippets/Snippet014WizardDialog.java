@@ -47,6 +47,16 @@ import org.eclipse.swt.widgets.Text;
  */
 public class Snippet014WizardDialog {
 
+	public static void main(String[] args) {
+		final Display display = new Display();
+
+		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
+			IWizard wizard = new SampleWizard();
+			WizardDialog dialog = new WizardDialog(null, wizard);
+			dialog.open();
+		});
+	}
+
 	static class FirstWizardPage extends WizardPage {
 		private final class SingleDigitValidator implements IValidator<Integer> {
 			@Override
@@ -135,24 +145,4 @@ public class Snippet014WizardDialog {
 		}
 
 	}
-
-	public static void main(String[] args) {
-		Display display = new Display();
-
-		// Note that the "runWithDefault" will be done for you if you are using
-		// the Workbench as opposed to just JFace/SWT
-		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			IWizard wizard = new SampleWizard();
-			WizardDialog dialog = new WizardDialog(null, wizard);
-			dialog.open();
-			// The SWT event loop
-			Display display1 = Display.getCurrent();
-			while (dialog.getShell() != null && !dialog.getShell().isDisposed()) {
-				if (!display1.readAndDispatch()) {
-					display1.sleep();
-				}
-			}
-		});
-	}
-
 }

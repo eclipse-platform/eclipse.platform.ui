@@ -32,16 +32,16 @@ public class Snippet016TableUpdater {
 		final Display display = new Display();
 
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			final Shell shell = createShell(display);
-			GridLayoutFactory.fillDefaults().generateLayout(shell);
-			shell.open();
-			// The SWT event loop
+			Shell shell = createShell();
+
 			while (!shell.isDisposed()) {
 				if (!display.readAndDispatch()) {
 					display.sleep();
 				}
 			}
 		});
+
+		display.dispose();
 	}
 
 	static class Stuff {
@@ -63,7 +63,7 @@ public class Snippet016TableUpdater {
 		}
 	}
 
-	protected static Shell createShell(final Display display) {
+	protected static Shell createShell() {
 		Shell shell = new Shell();
 		Table t = new Table(shell, SWT.BORDER | SWT.FULL_SELECTION | SWT.VIRTUAL);
 		t.setHeaderVisible(true);
@@ -76,13 +76,17 @@ public class Snippet016TableUpdater {
 				item.setText(element.toString());
 			}
 		};
-		display.timerExec(2000, new Runnable() {
+		shell.getDisplay().timerExec(2000, new Runnable() {
 			@Override
 			public void run() {
-				list.add(new Stuff(display));
-				display.timerExec(2000, this);
+				list.add(new Stuff(shell.getDisplay()));
+				shell.getDisplay().timerExec(2000, this);
 			}
 		});
+
+		GridLayoutFactory.fillDefaults().generateLayout(shell);
+		shell.open();
+
 		return shell;
 	}
 

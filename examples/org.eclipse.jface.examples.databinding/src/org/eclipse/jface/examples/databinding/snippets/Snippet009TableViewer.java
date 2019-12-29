@@ -40,15 +40,9 @@ public class Snippet009TableViewer {
 	public static void main(String[] args) {
 		final Display display = Display.getDefault();
 
-		// In an RCP application, the threading Realm will be set for you
-		// automatically by the Workbench. In an SWT application, you can do
-		// this once, wrpping your binding method call.
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
+			Shell shell = new View(new ViewModel()).createShell();
 
-			ViewModel viewModel = new ViewModel();
-			Shell shell = new View(viewModel).createShell();
-
-			// The SWT event loop
 			while (!shell.isDisposed()) {
 				if (!display.readAndDispatch()) {
 					display.sleep();

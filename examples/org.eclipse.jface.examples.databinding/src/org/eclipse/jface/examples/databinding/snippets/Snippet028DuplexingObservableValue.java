@@ -41,7 +41,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
 
 public class Snippet028DuplexingObservableValue {
-	protected Shell shell;
 	private TableViewer viewer;
 	private Table table;
 	private Text releaseDate;
@@ -49,37 +48,24 @@ public class Snippet028DuplexingObservableValue {
 	private Text director;
 	private Text writer;
 
-	/**
-	 * Launch the application.
-	 */
 	public static void main(String[] args) {
-		try {
-			Snippet028DuplexingObservableValue window = new Snippet028DuplexingObservableValue();
-			window.open();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
+		final Display display = new Display();
 
-	/**
-	 * Open the window.
-	 */
-	public void open() {
-		final Display display = Display.getDefault();
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			createContents();
-			shell.open();
-			shell.layout();
+			Shell shell = new Snippet028DuplexingObservableValue().createShell();
+
 			while (!shell.isDisposed()) {
 				if (!display.readAndDispatch()) {
 					display.sleep();
 				}
 			}
 		});
+
+		display.dispose();
 	}
 
-	protected void createContents() {
-		shell = new Shell();
+	protected Shell createShell() {
+		Shell shell = new Shell();
 		shell.setSize(509, 375);
 		shell.setText("Snippet028DuplexingObservableValue.java");
 		final GridLayout gridLayout = new GridLayout();
@@ -140,6 +126,10 @@ public class Snippet028DuplexingObservableValue {
 		writer.setLayoutData(gd_writer);
 
 		bindUI();
+
+		shell.open();
+		shell.layout();
+		return shell;
 	}
 
 	/** Helper class for implementing JavaBeans support. */

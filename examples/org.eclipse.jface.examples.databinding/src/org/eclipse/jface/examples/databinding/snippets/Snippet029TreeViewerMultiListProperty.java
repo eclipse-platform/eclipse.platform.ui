@@ -37,40 +37,26 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 public class Snippet029TreeViewerMultiListProperty {
-	protected Shell shell;
 	private TreeViewer viewer;
 
-	/**
-	 * Launch the application.
-	 */
 	public static void main(String[] args) {
-		try {
-			Snippet029TreeViewerMultiListProperty window = new Snippet029TreeViewerMultiListProperty();
-			window.open();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	/**
-	 * Open the window.
-	 */
-	public void open() {
 		final Display display = Display.getDefault();
+
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			createContents();
-			shell.open();
-			shell.layout();
+			Shell shell = new Snippet029TreeViewerMultiListProperty().createShell();
+
 			while (!shell.isDisposed()) {
 				if (!display.readAndDispatch()) {
 					display.sleep();
 				}
 			}
 		});
+
+		display.dispose();
 	}
 
-	protected void createContents() {
-		shell = new Shell();
+	protected Shell createShell() {
+		Shell shell = new Shell();
 		shell.setSize(509, 375);
 		shell.setText("Snippet029TreeViewerMultiListProperty.java");
 		final GridLayout gridLayout = new GridLayout();
@@ -81,6 +67,10 @@ public class Snippet029TreeViewerMultiListProperty {
 		viewer = new TreeViewer(shell, SWT.FULL_SELECTION | SWT.MULTI | SWT.BORDER);
 
 		bindUI();
+
+		shell.open();
+		shell.layout();
+		return shell;
 	}
 
 	/** Helper class for implementing JavaBeans support. */

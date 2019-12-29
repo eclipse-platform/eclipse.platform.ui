@@ -42,19 +42,20 @@ import org.eclipse.swt.widgets.Text;
  */
 public class Snippet000HelloWorld {
 	public static void main(String[] args) {
-		Display display = new Display();
-		final ViewModel viewModel = new ViewModel();
+		final Display display = new Display();
 
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			final Shell shell = new View(viewModel).createShell();
-			// The SWT event loop
-			Display display1 = Display.getCurrent();
+			ViewModel viewModel = new ViewModel();
+			Shell shell = new View(viewModel).createShell();
+
 			while (!shell.isDisposed()) {
-				if (!display1.readAndDispatch()) {
-					display1.sleep();
+				if (!display.readAndDispatch()) {
+					display.sleep();
 				}
 			}
 		});
+
+		display.dispose();
 	}
 
 	/**
@@ -105,8 +106,7 @@ public class Snippet000HelloWorld {
 		}
 
 		public Shell createShell() {
-			Display display = Display.getDefault();
-			Shell shell = new Shell(display);
+			Shell shell = new Shell();
 			shell.setLayout(new GridLayout(1, false));
 			textName = new Text(shell, SWT.BORDER);
 			Button button = new Button(shell, SWT.PUSH);

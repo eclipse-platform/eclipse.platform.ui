@@ -38,16 +38,15 @@ import org.eclipse.swt.widgets.Text;
  */
 public class SnippetSideEffectTwoWayBinding {
 	public static void main(String[] args) {
-		Display display = new Display();
+		final Display display = new Display();
 
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
 			// Create the Task model object
-			Task task = new Task();
-			final Shell shell = new View(task).createShell();
-			Display display1 = Display.getCurrent();
+			final Shell shell = new View(new Task()).createShell();
+
 			while (!shell.isDisposed()) {
-				if (!display1.readAndDispatch()) {
-					display1.sleep();
+				if (!display.readAndDispatch()) {
+					display.sleep();
 				}
 			}
 		});
@@ -76,8 +75,7 @@ public class SnippetSideEffectTwoWayBinding {
 		}
 
 		public Shell createShell() {
-			Display display = Display.getDefault();
-			Shell shell = new Shell(display);
+			Shell shell = new Shell();
 			GridLayoutFactory.fillDefaults().applyTo(shell);
 			GridDataFactory gridDataFactory = GridDataFactory.fillDefaults().grab(true, false);
 

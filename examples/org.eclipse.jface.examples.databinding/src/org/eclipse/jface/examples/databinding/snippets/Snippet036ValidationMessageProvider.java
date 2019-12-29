@@ -58,20 +58,15 @@ import org.eclipse.swt.widgets.Text;
 public class Snippet036ValidationMessageProvider {
 
 	public static void main(String[] args) {
-		Display display = new Display();
+		final Display display = new Display();
 
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
 			IWizard wizard = new MessageProviderWizard();
 			WizardDialog wizardDialog = new WizardDialog(null, wizard);
 			wizardDialog.open();
-
-			Display display1 = Display.getCurrent();
-			while (wizardDialog.getShell() != null && !wizardDialog.getShell().isDisposed()) {
-				if (!display1.readAndDispatch()) {
-					display1.sleep();
-				}
-			}
 		});
+
+		display.dispose();
 	}
 
 	private static final class MessageProviderWizard extends Wizard {

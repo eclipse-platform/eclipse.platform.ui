@@ -42,23 +42,18 @@ public class Snippet022ComputedListCombo {
 	private static WritableList<Thing> model;
 
 	public static void main(String[] args) {
-		Display display = new Display();
-		final Shell shell = new Shell(display);
-		shell.setLayout(new GridLayout(1, false));
+		final Display display = new Display();
 
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
-			Snippet022ComputedListCombo snippet = new Snippet022ComputedListCombo();
-			snippet.createModel();
-			snippet.createControls(shell);
+			Shell shell = new Snippet022ComputedListCombo().createShell();
+
+			while (!shell.isDisposed()) {
+				if (!display.readAndDispatch()) {
+					display.sleep();
+				}
+			}
 		});
 
-		shell.pack();
-		shell.open();
-		while (!shell.isDisposed()) {
-			if (!display.readAndDispatch()) {
-				display.sleep();
-			}
-		}
 		display.dispose();
 	}
 
@@ -74,7 +69,12 @@ public class Snippet022ComputedListCombo {
 		model.add(new Thing("Nail", false, false));
 	}
 
-	protected void createControls(Shell shell) {
+	protected Shell createShell() {
+		createModel();
+
+		Shell shell = new Shell();
+		shell.setLayout(new GridLayout(1, false));
+
 		Composite composite = new Composite(shell, SWT.NONE);
 		Group group = new Group(composite, SWT.NONE);
 		group.setText("Filter");
@@ -109,6 +109,11 @@ public class Snippet022ComputedListCombo {
 		viewer.setInput(filteredList);
 		GridLayoutFactory.swtDefaults().applyTo(group);
 		GridLayoutFactory.swtDefaults().applyTo(composite);
+
+		shell.pack();
+		shell.open();
+
+		return shell;
 	}
 
 	static class Thing {

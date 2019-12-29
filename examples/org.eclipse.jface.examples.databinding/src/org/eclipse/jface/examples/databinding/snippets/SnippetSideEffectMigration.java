@@ -57,7 +57,7 @@ import org.eclipse.swt.widgets.Text;
  */
 public class SnippetSideEffectMigration {
 	public static void main(String[] args) {
-		Display display = new Display();
+		final Display display = new Display();
 
 		Realm.runWithDefault(DisplayRealm.getRealm(display), () -> {
 			// Create the Person model object

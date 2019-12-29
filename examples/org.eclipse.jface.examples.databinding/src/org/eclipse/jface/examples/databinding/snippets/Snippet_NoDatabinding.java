@@ -31,19 +31,20 @@ import org.eclipse.swt.widgets.Text;
  */
 public class Snippet_NoDatabinding {
 	public static void main(String[] args) {
-		ViewModel viewModel = new ViewModel();
-		Shell shell = new View(viewModel).createShell();
+		final Display display = new Display();
+		View view = new View(new ViewModel());
+		Shell shell = view.createShell();
 
 		// The SWT event loop
-		Display display = Display.getCurrent();
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch()) {
 				display.sleep();
 			}
 		}
+		display.dispose();
 
 		// Print the results
-		System.out.println("person.getName() = " + viewModel.getPerson().getName());
+		System.out.println("person.getName() = " + view.viewModel.getPerson().getName());
 	}
 
 	/** Helper class for implementing JavaBeans support. */
@@ -105,7 +106,7 @@ public class Snippet_NoDatabinding {
 
 	/** The GUI view. */
 	static class View {
-		private ViewModel viewModel;
+		private ViewModel viewModel = new ViewModel();
 
 		public View(ViewModel viewModel) {
 			this.viewModel = viewModel;
@@ -113,8 +114,7 @@ public class Snippet_NoDatabinding {
 
 		public Shell createShell() {
 			// Build a UI
-			final Display display = Display.getCurrent();
-			Shell shell = new Shell(display);
+			Shell shell = new Shell();
 			shell.setLayout(new RowLayout(SWT.VERTICAL));
 
 			final Text name = new Text(shell, SWT.BORDER);
@@ -127,7 +127,7 @@ public class Snippet_NoDatabinding {
 				// conversion
 				viewModel.getPerson().setName(text);
 			});
-			viewModel.person.addPropertyChangeListener("name", evt -> display.asyncExec(() -> {
+			viewModel.person.addPropertyChangeListener("name", evt -> shell.getDisplay().asyncExec(() -> {
 				final String newName = viewModel.person.getName();
 				// conversion
 				name.setText(newName);
