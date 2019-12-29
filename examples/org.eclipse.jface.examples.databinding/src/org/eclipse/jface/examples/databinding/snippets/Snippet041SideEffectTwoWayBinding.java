@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Text;
  * This snippet shows how to use the {@link ISideEffect} class to bind a
  * {@link Text} widget to a {@link Task} and the other way round.
  */
-public class SnippetSideEffectTwoWayBinding {
+public class Snippet041SideEffectTwoWayBinding {
 	public static void main(String[] args) {
 		final Display display = new Display();
 

@@ -31,7 +31,7 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
-public class SnippetSideEffectAggregateValidationStatus {
+public class Snippet042SideEffectAggregateValidationStatus {
 
 	public static void main(String[] args) {
 		final Display display = new Display();

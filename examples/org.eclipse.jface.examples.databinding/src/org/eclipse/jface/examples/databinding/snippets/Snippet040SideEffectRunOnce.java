@@ -35,7 +35,7 @@ import org.eclipse.swt.widgets.Shell;
  * method to react properly, when an observable is changed inside an async
  * action, e.g., a Job.
  */
-public class SnippetSideEffectRunOnce {
+public class Snippet040SideEffectRunOnce {
 	public static void main(String[] args) {
 		final Display display = new Display();
 

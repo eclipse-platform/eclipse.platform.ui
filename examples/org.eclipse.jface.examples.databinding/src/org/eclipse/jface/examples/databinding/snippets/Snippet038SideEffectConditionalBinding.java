@@ -50,7 +50,7 @@ import org.eclipse.swt.widgets.Text;
  * the underlying data.
  * </ul>
  */
-public class SnippetSideEffectConditionalBinding {
+public class Snippet038SideEffectConditionalBinding {
 	public static void main(String[] args) {
 		final Display display = new Display();
 

@@ -55,7 +55,7 @@ import org.eclipse.swt.widgets.Text;
  * {@link TrackedPerson} and {@link TrackedView} classes introduce the "new"
  * {@link ISideEffect} approach.
  */
-public class SnippetSideEffectMigration {
+public class Snippet039SideEffectMigration {
 	public static void main(String[] args) {
 		final Display display = new Display();
 

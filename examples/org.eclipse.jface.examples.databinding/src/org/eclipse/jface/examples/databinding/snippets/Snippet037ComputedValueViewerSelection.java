@@ -37,7 +37,7 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
-public class SnippetComputedValueViewerSelection {
+public class Snippet037ComputedValueViewerSelection {
 	public static void main(String[] args) {
 		final Display display = new Display();
 
