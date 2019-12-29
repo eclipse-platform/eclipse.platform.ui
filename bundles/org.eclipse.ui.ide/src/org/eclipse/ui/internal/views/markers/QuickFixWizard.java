@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 558673
  *******************************************************************************/
 
 package org.eclipse.ui.internal.views.markers;
@@ -17,17 +18,20 @@ package org.eclipse.ui.internal.views.markers;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.SubMonitor;
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.e4.ui.internal.workspace.markers.Translation;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.wizard.IWizardPage;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.statushandlers.StatusManager;
+import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
 /**
@@ -42,6 +46,7 @@ class QuickFixWizard extends Wizard {
 	private Map<IMarkerResolution, Collection<IMarker>> resolutionMap;
 	private String description;
 	private IWorkbenchPartSite partSite;
+	private QuickFixPage quickFixPage;
 
 	/**
 	 * Create the wizard with the map of resolutions.
@@ -59,38 +64,73 @@ class QuickFixWizard extends Wizard {
 		setDefaultPageImageDescriptor(IDEInternalWorkbenchImages
 				.getImageDescriptor(IDEInternalWorkbenchImages.IMG_DLGBAN_QUICKFIX_DLG));
 		setNeedsProgressMonitor(true);
-
 	}
 
 	@Override
 	public void addPages() {
-		super.addPages();
-		addPage(new QuickFixPage(description, selectedMarkers, resolutionMap, partSite));
+		quickFixPage = new QuickFixPage(description, selectedMarkers, resolutionMap, partSite);
+		addPage(quickFixPage);
 	}
 
 	@Override
 	public boolean performFinish() {
-		IRunnableWithProgress finishRunnable = mon -> {
-			IWizardPage[] pages = getPages();
-			SubMonitor subMonitor = SubMonitor.convert(mon, MarkerMessages.MarkerResolutionDialog_Fixing,
-					(10 * pages.length) + 1);
-			subMonitor.worked(1);
-			for (IWizardPage page : pages) {
-				// Allow for cancel event processing
-				getShell().getDisplay().readAndDispatch();
-				QuickFixPage wizardPage = (QuickFixPage) page;
-				wizardPage.performFinish(subMonitor.split(10));
-			}
-		};
-
+		Optional<IMarkerResolution> resolution = quickFixPage.getSelectedMarkerResolution();
+		if (!resolution.isPresent()) {
+			return true; // for backward compatibility
+		}
+		final IMarker[] markers = quickFixPage.getCheckedMarkers();
+		if (markers.length == 0) {
+			return true; // for backward compatibility
+		}
+		IRunnableWithProgress finishRunnable = monitor -> processResolution(resolution.get(), markers, monitor);
 		try {
 			getContainer().run(false, true, finishRunnable);
 		} catch (InvocationTargetException | InterruptedException e) {
 			StatusManager.getManager().handle(StatusUtil.newError(e));
 			return false;
 		}
-
 		return true;
+	}
+
+	/**
+	 * Runs the resolution in UI thread. It should be in UI because a lot of
+	 * resolutions expect to be executed in the UI thread at the moment. We can
+	 * think about some interface to mark resolutions that are ready to be executed
+	 * outside of the UI thread.
+	 *
+	 * @param resolution the resolution to run
+	 * @param markers    the array of markers to resolve
+	 * @param monitor    progress callback
+	 */
+	private void processResolution(final IMarkerResolution resolution, final IMarker[] markers,
+			IProgressMonitor monitor) {
+		monitor.beginTask(MarkerMessages.MarkerResolutionDialog_Fixing, markers.length);
+		ensureRepaint();
+		if (resolution instanceof WorkbenchMarkerResolution) {
+			((WorkbenchMarkerResolution) resolution).run(markers, monitor);
+		} else {
+			Translation translation = new Translation();
+			for (IMarker marker : markers) {
+				ensureRepaint();
+				if (monitor.isCanceled()) {
+					return;
+				}
+				monitor.subTask(translation.message(marker).orElse("")); //$NON-NLS-1$
+				resolution.run(marker);
+				monitor.worked(1);
+			}
+		}
+	}
+
+	/**
+	 * org.eclipse.jface.wizard.ProgressMonitorPart needs to take a breath
+	 */
+	private void ensureRepaint() {
+		final Display display = getShell().getDisplay();
+		boolean dispatch = true;
+		while (dispatch) {
+			dispatch = display.readAndDispatch();
+		}
 	}
 
 }

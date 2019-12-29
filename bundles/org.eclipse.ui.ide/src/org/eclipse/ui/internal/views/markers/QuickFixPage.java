@@ -10,19 +10,17 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 558623
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 558623, Bug 558673
  *******************************************************************************/
 
 package org.eclipse.ui.internal.views.markers;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Optional;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.e4.ui.internal.workspace.markers.Translation;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -64,8 +62,6 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
-import org.eclipse.ui.statushandlers.StatusManager;
-import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.Util;
 
@@ -287,14 +283,12 @@ public class QuickFixPage extends WizardPage {
 
 			@Override
 			public Object[] getElements(Object inputElement) {
-				IMarkerResolution selected = (IMarkerResolution) resolutionsList.getStructuredSelection()
-						.getFirstElement();
-				if (selected == null) {
-					return new Object[0];
-				}
-
-				if (resolutions.containsKey(selected)) {
-					return resolutions.get(selected).toArray();
+				Optional<IMarkerResolution> selected = getSelectedMarkerResolution();
+				if (selected.isPresent()) {
+					IMarkerResolution resolution = selected.get();
+					if (resolutions.containsKey(resolution)) {
+						return resolutions.get(resolution).toArray();
+					}
 				}
 				return MarkerSupportInternalUtilities.EMPTY_MARKER_ARRAY;
 			}
@@ -439,62 +433,25 @@ public class QuickFixPage extends WizardPage {
 	}
 
 	/**
-	 * Finish has been pressed. Process the resolutions. monitor the monitor to
-	 * report to.
+	 * Returns the selected marker resolution.
+	 *
+	 * @return <code>java.util.Optional&lt;IMarkerResolution&gt;</code> or
+	 *         {@link Optional#empty()}
 	 */
-	/**
-	 * @param monitor
-	 */
-	/**
-	 * @param monitor
-	 */
-	void performFinish(IProgressMonitor monitor) {
+	Optional<IMarkerResolution> getSelectedMarkerResolution() {
+		return Optional.ofNullable((IMarkerResolution) resolutionsList.getStructuredSelection().getFirstElement());
+	}
 
-		IMarkerResolution resolution = (IMarkerResolution) resolutionsList.getStructuredSelection()
-				.getFirstElement();
-		if (resolution == null) {
-			return;
-		}
+	/**
+	 * Returns an array of {@link IMarker} checked in the viewer
+	 *
+	 * @return an array of checked markers
+	 */
+	IMarker[] getCheckedMarkers() {
 		Object[] checked = markersTable.getCheckedElements();
-		if (checked.length == 0) {
-			return;
-		}
-		if (resolution instanceof WorkbenchMarkerResolution) {
-
-			try {
-				getWizard().getContainer().run(false, true, monitor1 -> {
-					IMarker[] markers = new IMarker[checked.length];
-					System.arraycopy(checked, 0, markers, 0, checked.length);
-					((WorkbenchMarkerResolution) resolution).run(markers, monitor1);
-				});
-			} catch (InvocationTargetException | InterruptedException e) {
-				StatusManager.getManager().handle(MarkerSupportInternalUtilities.errorFor(e));
-			}
-
-		} else {
-
-			try {
-				Translation translation = new Translation();
-				getWizard().getContainer().run(false, true, monitor1 -> {
-					monitor1.beginTask(MarkerMessages.MarkerResolutionDialog_Fixing, checked.length);
-					for (Object checkedElement : checked) {
-						// Allow paint events and wake up the button
-						getShell().getDisplay().readAndDispatch();
-						if (monitor1.isCanceled()) {
-							return;
-						}
-						IMarker marker = (IMarker) checkedElement;
-						monitor1.subTask(translation.message(marker).orElse("")); //$NON-NLS-1$
-						resolution.run(marker);
-						monitor1.worked(1);
-					}
-				});
-			} catch (InvocationTargetException | InterruptedException e) {
-				StatusManager.getManager().handle(
-						MarkerSupportInternalUtilities.errorFor(e));
-			}
-
-		}
+		IMarker[] markers = new IMarker[checked.length];
+		System.arraycopy(checked, 0, markers, 0, checked.length);
+		return markers;
 	}
 
 }
