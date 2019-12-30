@@ -17,9 +17,9 @@ import org.eclipse.swt.widgets.ScrollBar;
 /**
  * @since 1.10.0
  */
-public class ScrollBarVisibleProperty extends WidgetBooleanValueProperty<ScrollBar> {
+public class ScrollBarVisibleProperty extends VisibleProperty<ScrollBar> {
 	@Override
-	boolean doGetBooleanValue(ScrollBar source) {
+	protected boolean doGetVisibleValue(ScrollBar source) {
 		return source.getVisible();
 	}
 

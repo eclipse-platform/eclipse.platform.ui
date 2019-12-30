@@ -17,9 +17,9 @@ import org.eclipse.swt.widgets.ToolTip;
 /**
  * @since 1.10.0
  */
-public class ToolTipVisibleProperty extends WidgetBooleanValueProperty<ToolTip> {
+public class ToolTipVisibleProperty extends VisibleProperty<ToolTip> {
 	@Override
-	boolean doGetBooleanValue(ToolTip source) {
+	protected boolean doGetVisibleValue(ToolTip source) {
 		return source.getVisible();
 	}
 

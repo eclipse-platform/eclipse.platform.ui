@@ -17,9 +17,9 @@ import org.eclipse.swt.widgets.ToolBar;
 /**
  * @since 1.10.0
  */
-public class ToolBarVisibleProperty extends WidgetBooleanValueProperty<ToolBar> {
+public class ToolBarVisibleProperty extends VisibleProperty<ToolBar> {
 	@Override
-	boolean doGetBooleanValue(ToolBar source) {
+	protected boolean doGetVisibleValue(ToolBar source) {
 		return source.getVisible();
 	}
 

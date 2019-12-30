@@ -17,9 +17,9 @@ import org.eclipse.swt.widgets.Menu;
 /**
  * @since 1.10.0
  */
-public class MenuVisibleProperty extends WidgetBooleanValueProperty<Menu> {
+public class MenuVisibleProperty extends VisibleProperty<Menu> {
 	@Override
-	boolean doGetBooleanValue(Menu source) {
+	protected boolean doGetVisibleValue(Menu source) {
 		return source.getVisible();
 	}
 

@@ -22,9 +22,9 @@ import org.eclipse.swt.widgets.Control;
  * @since 3.3
  *
  */
-public class ControlVisibleProperty<S extends Control> extends WidgetBooleanValueProperty<S> {
+public class ControlVisibleProperty<S extends Control> extends VisibleProperty<S> {
 	@Override
-	boolean doGetBooleanValue(S source) {
+	protected boolean doGetVisibleValue(S source) {
 		return source.getVisible();
 	}
 
