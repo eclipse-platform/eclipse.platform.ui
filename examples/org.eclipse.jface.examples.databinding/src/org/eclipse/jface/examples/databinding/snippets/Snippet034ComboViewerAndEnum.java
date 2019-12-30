@@ -15,8 +15,14 @@
 
 package org.eclipse.jface.examples.databinding.snippets;
 
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
+
 import org.eclipse.core.databinding.DataBindingContext;
+import org.eclipse.core.databinding.UpdateValueStrategy;
+import org.eclipse.core.databinding.beans.typed.BeanProperties;
 import org.eclipse.core.databinding.beans.typed.PojoProperties;
+import org.eclipse.core.databinding.conversion.EnumConverters;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
@@ -26,6 +32,7 @@ import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -73,8 +80,9 @@ public class Snippet034ComboViewerAndEnum {
 	 * need to implement the JavaBeans property change listener methods.
 	 */
 	static class Person {
-		String name;
-		Gender gender;
+		private String name;
+		private Gender gender;
+		private PropertyChangeSupport propertyChangeSupport = new PropertyChangeSupport(this);
 
 		public Person(String name, Gender gender) {
 			this.name = name;
@@ -85,8 +93,10 @@ public class Snippet034ComboViewerAndEnum {
 			return name;
 		}
 
-		public void setName(String name) {
-			this.name = name;
+		public void setName(String newName) {
+			String old = this.name;
+			this.name = newName;
+			propertyChangeSupport.firePropertyChange("name", old, name);
 		}
 
 		public Gender getGender() {
@@ -94,8 +104,19 @@ public class Snippet034ComboViewerAndEnum {
 		}
 
 		public void setGender(Gender newGender) {
+			Gender old = this.gender;
 			this.gender = newGender;
+			propertyChangeSupport.firePropertyChange("gender", old, gender);
 		}
+
+		public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+			propertyChangeSupport.addPropertyChangeListener(propertyName, listener);
+		}
+
+		public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+			propertyChangeSupport.removePropertyChangeListener(propertyName, listener);
+		}
+
 	}
 
 	/** The GUI view. */
@@ -103,6 +124,7 @@ public class Snippet034ComboViewerAndEnum {
 		private Person viewModel;
 		private Text name;
 		private ComboViewer gender;
+		private Label genderText;
 
 		public View(Person viewModel) {
 			this.viewModel = viewModel;
@@ -120,6 +142,7 @@ public class Snippet034ComboViewerAndEnum {
 
 			name = new Text(shell, SWT.BORDER);
 			gender = new ComboViewer(shell, SWT.READ_ONLY);
+			genderText = new Label(shell, SWT.NONE);
 
 			// Here's the first key to binding a combo to an Enum:
 			// First give it an ArrayContentProvider,
@@ -138,10 +161,15 @@ public class Snippet034ComboViewerAndEnum {
 			bindingContext.bindValue(ViewerProperties.singleSelection(Gender.class).observe(gender),
 					PojoProperties.value(Person.class, "gender").observe(viewModel));
 
+			// The EnumConverters class is convenient when binding an enum in a situation
+			// where a Viewer can not be used
+			bindingContext.bindValue(WidgetProperties.text().observe(genderText),
+					BeanProperties.value(Person.class, "gender", Gender.class).observe(viewModel), null,
+					UpdateValueStrategy.create(EnumConverters.toString(Gender.class)));
+
 			shell.pack();
 			shell.open();
 			return shell;
 		}
 	}
-
 }
