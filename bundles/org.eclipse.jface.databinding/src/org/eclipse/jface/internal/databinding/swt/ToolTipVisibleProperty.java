@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2020 Matthew Hall and others.
+ * Copyright (c) 2020 Jens Lidestrom and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -8,33 +8,28 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
- * Contributors:
- *     Matthew Hall - initial API and implementation (bug 194734)
  ******************************************************************************/
 
 package org.eclipse.jface.internal.databinding.swt;
 
-import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.ToolTip;
 
 /**
- * @param <S> type of the source object
- *
- * @since 3.3
- *
+ * @since 1.10.0
  */
-public class ControlVisibleProperty<S extends Control> extends WidgetBooleanValueProperty<S> {
+public class ToolTipVisibleProperty extends WidgetBooleanValueProperty<ToolTip> {
 	@Override
-	boolean doGetBooleanValue(S source) {
+	boolean doGetBooleanValue(ToolTip source) {
 		return source.getVisible();
 	}
 
 	@Override
-	void doSetBooleanValue(S source, boolean value) {
+	void doSetBooleanValue(ToolTip source, boolean value) {
 		source.setVisible(value);
 	}
 
 	@Override
 	public String toString() {
-		return "Control.visible <boolean>"; //$NON-NLS-1$
+		return "ToolTip.visible <boolean>"; //$NON-NLS-1$
 	}
 }

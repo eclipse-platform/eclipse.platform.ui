@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Matthew Hall and others.
+ * Copyright (c) 2008, 2020 Matthew Hall and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -31,7 +31,6 @@ import org.eclipse.jface.internal.databinding.swt.ControlFontProperty;
 import org.eclipse.jface.internal.databinding.swt.ControlForegroundProperty;
 import org.eclipse.jface.internal.databinding.swt.ControlLocationProperty;
 import org.eclipse.jface.internal.databinding.swt.ControlSizeProperty;
-import org.eclipse.jface.internal.databinding.swt.ControlVisibleProperty;
 import org.eclipse.jface.internal.databinding.swt.DateTimeSelectionProperty;
 import org.eclipse.jface.internal.databinding.swt.ListSelectionProperty;
 import org.eclipse.jface.internal.databinding.swt.MenuItemSelectionProperty;
@@ -50,6 +49,7 @@ import org.eclipse.jface.internal.databinding.swt.WidgetSingleSelectionIndexProp
 import org.eclipse.jface.internal.databinding.swt.WidgetTextProperty;
 import org.eclipse.jface.internal.databinding.swt.WidgetTextWithEventsProperty;
 import org.eclipse.jface.internal.databinding.swt.WidgetTooltipTextProperty;
+import org.eclipse.jface.internal.databinding.swt.WidgetVisibleProperty;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CCombo;
 import org.eclipse.swt.custom.CLabel;
@@ -80,6 +80,7 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.ToolTip;
 import org.eclipse.swt.widgets.TrayItem;
@@ -440,12 +441,16 @@ public class WidgetProperties {
 
 	/**
 	 * Returns a value property for observing the visibility state of a
-	 * {@link Control}.
+	 * {@link Control}, {@link Menu}, {@link ScrollBar}, {@link ToolBar} or
+	 * {@link ToolTip}.
+	 *
+	 * @see Control#getVisible
 	 *
 	 * @return a value property for observing the visibility state of a
-	 *         {@link Control}.
+	 *         {@link Control}, {@link Menu}, {@link ScrollBar}, {@link ToolBar} or
+	 *         {@link ToolTip}.
 	 */
-	public static <S extends Control> IWidgetValueProperty<S, Boolean> visible() {
-		return new ControlVisibleProperty<>();
+	public static <S extends Widget> IWidgetValueProperty<S, Boolean> visible() {
+		return new WidgetVisibleProperty<>();
 	}
 }
