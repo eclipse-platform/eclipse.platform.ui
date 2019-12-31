@@ -16,10 +16,13 @@ package org.eclipse.jface.examples.databinding.snippets;
 
 import java.util.Date;
 
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.list.WritableList;
+import org.eclipse.core.databinding.observable.sideeffect.ISideEffect;
+import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
-import org.eclipse.jface.internal.databinding.provisional.swt.MenuUpdater;
+import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
@@ -63,28 +66,34 @@ public class Snippet005MenuUpdater {
 		final Menu submenu = new Menu(shell, SWT.DROP_DOWN);
 		fileItem.setMenu(submenu);
 
-		new MenuUpdater(submenu) {
-			@Override
-			protected void updateMenu() {
-				System.out.println("updating menu");
-				MenuItem[] items = submenu.getItems();
-				int itemIndex = 0;
-				for (String s : menuItemStrings) {
-					MenuItem item;
-					if (itemIndex < items.length) {
-						item = items[itemIndex++];
-					} else {
-						item = new MenuItem(submenu, SWT.NONE);
-					}
-					item.setText(s);
-				}
-				while (itemIndex < items.length) {
-					items[itemIndex++].dispose();
-				}
+		IObservableValue<Boolean> visible = WidgetProperties.visible().observe(submenu);
+
+		ISideEffect.create(() -> {
+			ObservableTracker.getterCalled(menuItemStrings);
+			if (!visible.getValue()) {
+				return;
 			}
-		};
+
+			System.out.println("updating menu");
+			MenuItem[] items = submenu.getItems();
+			int itemIndex = 0;
+
+			for (String s : menuItemStrings) {
+				MenuItem item;
+				if (itemIndex < items.length) {
+					item = items[itemIndex++];
+				} else {
+					item = new MenuItem(submenu, SWT.NONE);
+				}
+				item.setText(s);
+			}
+			while (itemIndex < items.length) {
+				items[itemIndex++].dispose();
+			}
+		});
 
 		shell.open();
 		return shell;
 	}
+
 }
