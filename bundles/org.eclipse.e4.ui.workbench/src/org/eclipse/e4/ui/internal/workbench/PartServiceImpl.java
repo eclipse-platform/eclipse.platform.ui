@@ -858,21 +858,36 @@ public class PartServiceImpl implements EPartService {
 		// check for existing parts if necessary
 		boolean secondaryId = false;
 		String descId = id;
+		MElementContainer<MUIElement> sharedPlaceHolderParent = null;
 		if (!force) {
 			int colonIndex = id.indexOf(':');
 			if (colonIndex >= 0) {
-				secondaryId = true;
-				descId = id.substring(0, colonIndex);
-				descId += ":*"; //$NON-NLS-1$
+				for (MUIElement element : sharedWindow.getSharedElements()) {
+					if (element.getElementId().equals(descId)) {
+						sharedPart = (MPart) element;
+						MPlaceholder ph = sharedPart.getCurSharedRef();
+						if (ph != null) {
+							sharedPlaceHolderParent = ph.getParent();
+						}
+						break;
+					}
+				}
+				if (sharedPart == null) {
+					secondaryId = true;
+					descId = id.substring(0, colonIndex);
+					descId += ":*"; //$NON-NLS-1$
+				}
 			}
-			for (MUIElement element : sharedWindow.getSharedElements()) {
-				if (element.getElementId().equals(descId)) {
-					sharedPart = (MPart) element;
-					break;
+			if (sharedPart == null) {
+				for (MUIElement element : sharedWindow.getSharedElements()) {
+					if (element.getElementId().equals(descId)) {
+						sharedPart = (MPart) element;
+						break;
+					}
 				}
 			}
 		}
-		MElementContainer<MUIElement> sharedPlaceHolderParent = null;
+
 		if (sharedPart == null || secondaryId) {
 			MPartDescriptor descriptor = modelService.getPartDescriptor(id);
 			sharedPart = modelService.createPart(descriptor);
