@@ -80,8 +80,7 @@ public class ProgressManager extends ProgressProvider {
 	final private Map<Job, JobInfo> jobs = Collections
 			.synchronizedMap(new HashMap<Job, JobInfo>());
 
-	final Map<Job, JobMonitor> runnableMonitors = Collections
-			.synchronizedMap(new HashMap<Job, JobMonitor>());
+	final Map<Job, JobMonitor> runnableMonitors = new HashMap<>();
 
 	final private Map<Object, Collection<IJobBusyListener>> familyListeners = Collections
 			.synchronizedMap(new HashMap<>());
@@ -181,7 +180,6 @@ public class ProgressManager extends ProgressProvider {
 	 * @return IProgressMonitor
 	 */
 	public JobMonitor progressFor(Job job) {
-
 		synchronized (runnableMonitors) {
 			JobMonitor monitor = runnableMonitors.get(job);
 			if (monitor == null) {
@@ -191,7 +189,6 @@ public class ProgressManager extends ProgressProvider {
 
 			return monitor;
 		}
-
 	}
 
 	@Override
@@ -288,10 +285,12 @@ public class ProgressManager extends ProgressProvider {
 
 		@Override
 		public void done() {
-			JobInfo info = getJobInfo(job);
-			info.clearTaskInfo();
-			info.clearChildren();
-			runnableMonitors.remove(job);
+			synchronized (runnableMonitors) {
+				JobInfo info = getJobInfo(job);
+				info.clearTaskInfo();
+				info.clearChildren();
+				runnableMonitors.remove(job);
+			}
 			if (listener != null) {
 				listener.done();
 			}
@@ -424,8 +423,7 @@ public class ProgressManager extends ProgressProvider {
 					next.decrementBusy(event.getJob());
 				}
 
-				final JobInfo info = getJobInfo(event.getJob());
-				removeJobInfo(info);
+				removeJob(event.getJob());
 				//TODO E4
 //				if (event.getResult() != null
 //						&& event.getResult().getSeverity() == IStatus.ERROR
@@ -582,7 +580,7 @@ public class ProgressManager extends ProgressProvider {
 		}
 
 		for (IJobProgressManagerListener listener : listeners) {
-			if (!isCurrentDisplaying(info.getJob(), listener.showsDebug())) {
+			if (!isNeverDisplaying(info.getJob(), listener.showsDebug())) {
 				listener.refreshJobInfo(info);
 			}
 		}
@@ -614,22 +612,36 @@ public class ProgressManager extends ProgressProvider {
 	}
 
 	/**
+	 * Refresh the content providers as a result of a deletion of job.
+	 *
+	 * @param job the job to remove information about
+	 * @return the removed job info
+	 */
+	public JobInfo removeJob(Job job) {
+		synchronized (runnableMonitors) {
+			JobInfo info = getJobInfo(job);
+			jobs.remove(job);
+			runnableMonitors.remove(job);
+
+			for (IJobProgressManagerListener listener : listeners) {
+				if (!isNeverDisplaying(info.getJob(), listener.showsDebug())) {
+					listener.removeJob(info);
+				}
+			}
+			return info;
+		}
+	}
+
+	/**
 	 * Refresh the content providers as a result of a deletion of info.
 	 *
-	 * @param info
-	 *            JobInfo
+	 * @param info JobInfo
+	 * @deprecated use the more thread safe {@link #removeJob(Job)} instead. See bug
+	 *             558655.
 	 */
+	@Deprecated
 	public void removeJobInfo(JobInfo info) {
-
-		Job job = info.getJob();
-		jobs.remove(job);
-		runnableMonitors.remove(job);
-
-		for (IJobProgressManagerListener listener : listeners) {
-			if (!isCurrentDisplaying(info.getJob(), listener.showsDebug())) {
-				listener.removeJob(info);
-			}
-		}
+		removeJob(info.getJob());
 	}
 
 	/**
@@ -891,7 +903,7 @@ public class ProgressManager extends ProgressProvider {
 	 */
 	boolean checkForStaleness(Job job) {
 		if (job.getState() == Job.NONE) {
-			removeJobInfo(getJobInfo(job));
+			removeJob(job);
 			return true;
 		}
 		return false;
