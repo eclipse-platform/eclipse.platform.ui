@@ -22,8 +22,6 @@ import static org.junit.Assert.assertTrue;
 
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.jface.databinding.conformance.util.ValueChangeEventTracker;
-import org.eclipse.jface.databinding.swt.ISWTObservableValue;
-import org.eclipse.jface.databinding.swt.SWTObservables;
 import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
@@ -65,48 +63,47 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testSetValueEnabled() throws Exception {
-		ISWTObservableValue observableValue = SWTObservables.observeEnabled(shell);
-		Boolean value = Boolean.FALSE;
-		observableValue.setValue(value);
+		IObservableValue<Boolean> observableValue = WidgetProperties.enabled().observe(shell);
+		observableValue.setValue(false);
 		assertFalse(shell.isEnabled());
 	}
 
 	@Test
 	public void testGetValueEnabled() throws Exception {
-		ISWTObservableValue value = SWTObservables.observeEnabled(shell);
+		IObservableValue<Boolean> value = WidgetProperties.enabled().observe(shell);
 		shell.setEnabled(false);
-		assertEquals(Boolean.FALSE, value.getValue());
+		assertFalse(value.getValue());
 	}
 
 	@Test
 	public void testGetValueTypeEnabled() throws Exception {
-		ISWTObservableValue value = SWTObservables.observeEnabled(shell);
+		IObservableValue<Boolean> value = WidgetProperties.enabled().observe(shell);
 		assertEquals(boolean.class, value.getValueType());
 	}
 
 	@Test
 	public void testSetValueVisible() throws Exception {
-		ISWTObservableValue value = SWTObservables.observeVisible(shell);
-		value.setValue(Boolean.FALSE);
+		IObservableValue<Boolean> value = WidgetProperties.visible().observe(shell);
+		value.setValue(false);
 		assertFalse(shell.isVisible());
 	}
 
 	@Test
 	public void testGetValueVisible() throws Exception {
-		ISWTObservableValue value = SWTObservables.observeVisible(shell);
+		IObservableValue<Boolean> value = WidgetProperties.visible().observe(shell);
 		shell.setVisible(false);
-		assertEquals(Boolean.FALSE, value.getValue());
+		assertFalse(value.getValue());
 	}
 
 	@Test
 	public void testGetValueTypeVisible() throws Exception {
-		ISWTObservableValue value = SWTObservables.observeVisible(shell);
-		assertEquals(Boolean.TYPE, value.getValueType());
+		IObservableValue<Boolean> value = WidgetProperties.visible().observe(shell);
+		assertEquals(boolean.class, value.getValueType());
 	}
 
 	@Test
 	public void testSetValueForeground() throws Exception {
-		ISWTObservableValue value = SWTObservables.observeForeground(shell);
+		IObservableValue<Color> value = WidgetProperties.foreground().observe(shell);
 
 		Color color = shell.getDisplay().getSystemColor(SWT.COLOR_BLACK);
 
@@ -116,7 +113,7 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testGetValueForeground() throws Exception {
-		ISWTObservableValue value = SWTObservables.observeForeground(shell);
+		IObservableValue<Color> value = WidgetProperties.foreground().observe(shell);
 
 		Color color = shell.getDisplay().getSystemColor(SWT.COLOR_BLACK);
 		shell.setForeground(color);
@@ -125,13 +122,13 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testGetValueTypeForgroundColor() throws Exception {
-		ISWTObservableValue value = SWTObservables.observeForeground(shell);
+		IObservableValue<Color> value = WidgetProperties.foreground().observe(shell);
 		assertEquals(Color.class, value.getValueType());
 	}
 
 	@Test
 	public void testGetValueBackground() throws Exception {
-		ISWTObservableValue value = SWTObservables.observeBackground(shell);
+		IObservableValue<Color> value = WidgetProperties.background().observe(shell);
 
 		Color color = shell.getDisplay().getSystemColor(SWT.COLOR_BLACK);
 		shell.setBackground(color);
@@ -140,7 +137,7 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testSetValueBackground() throws Exception {
-		ISWTObservableValue value = SWTObservables.observeBackground(shell);
+		IObservableValue<Color> value = WidgetProperties.background().observe(shell);
 
 		Color color = shell.getDisplay().getSystemColor(SWT.COLOR_BLACK);
 
@@ -150,19 +147,19 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testGetValueTypeBackgroundColor() throws Exception {
-		ISWTObservableValue value = SWTObservables.observeBackground(shell);
+		IObservableValue<Color> value = WidgetProperties.background().observe(shell);
 		assertEquals(Color.class, value.getValueType());
 	}
 
 	@Test
 	public void testGetValueTypeTooltip() throws Exception {
-		ISWTObservableValue value = SWTObservables.observeTooltipText(shell);
+		IObservableValue<String> value = WidgetProperties.tooltipText().observe(shell);
 		assertEquals(String.class, value.getValueType());
 	}
 
 	@Test
 	public void testSetValueFont() throws Exception {
-		ISWTObservableValue value = SWTObservables.observeFont(shell);
+		IObservableValue<Font> value = WidgetProperties.font().observe(shell);
 
 		Font font = JFaceResources.getDialogFont();
 
@@ -172,7 +169,7 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testGetValueFont() throws Exception {
-		ISWTObservableValue value = SWTObservables.observeFont(shell);
+		IObservableValue<Font> value = WidgetProperties.font().observe(shell);
 
 		Font font = JFaceResources.getDialogFont();
 		shell.setFont(font);
@@ -181,29 +178,27 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 
 	@Test
 	public void testGetValueTypeFont() throws Exception {
-		ISWTObservableValue value = SWTObservables.observeFont(shell);
+		IObservableValue<Font> value = WidgetProperties.font().observe(shell);
 		assertEquals(Font.class, value.getValueType());
 	}
 
 	@Test
 	public void testSetValueTooltipText() throws Exception {
-		ISWTObservableValue value = SWTObservables.observeTooltipText(shell);
-		String text = "text";
-		value.setValue(text);
-		assertEquals(text, shell.getToolTipText());
+		IObservableValue<String> value = WidgetProperties.tooltipText().observe(shell);
+		value.setValue("text");
+		assertEquals("text", shell.getToolTipText());
 	}
 
 	@Test
 	public void testGetValueTooltipText() throws Exception {
-		ISWTObservableValue value = SWTObservables.observeTooltipText(shell);
-		String text = "text";
-		shell.setToolTipText(text);
-		assertEquals(text, value.getValue());
+		IObservableValue<String> value = WidgetProperties.tooltipText().observe(shell);
+		shell.setToolTipText("text");
+		assertEquals("text", value.getValue());
 	}
 
 	@Test
 	public void testGetValueTypeTooltipText() throws Exception {
-		ISWTObservableValue value = SWTObservables.observeTooltipText(shell);
+		IObservableValue<String> value = WidgetProperties.tooltipText().observe(shell);
 		assertEquals(String.class, value.getValueType());
 	}
 
@@ -230,8 +225,8 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 		System.out.println("focus control (1): " + focus + ", c2? " + (focus == c2));
 		System.out.println("active shell (4): " + shell.getDisplay().getActiveShell());
 
-		IObservableValue value = WidgetProperties.focused().observe(c2);
-		ValueChangeEventTracker tracker = ValueChangeEventTracker.observe(value);
+		IObservableValue<Boolean> value = WidgetProperties.focused().observe(c2);
+		ValueChangeEventTracker<Boolean> tracker = ValueChangeEventTracker.observe(value);
 
 		assertTrue(c2.setFocus());
 
@@ -243,11 +238,11 @@ public class ControlObservableValueTest extends AbstractDefaultRealmTestCase {
 		System.out.println("Value (should be true): " + value.getValue());
 		Screenshots.takeScreenshot(getClass(), getClass().getSimpleName(), System.out);
 
-		assertEquals(Boolean.TRUE, value.getValue());
+		assertTrue(value.getValue());
 
 		assertEquals(1, tracker.count);
-		assertEquals(Boolean.FALSE, tracker.event.diff.getOldValue());
-		assertEquals(Boolean.TRUE, tracker.event.diff.getNewValue());
+		assertFalse(tracker.event.diff.getOldValue());
+		assertTrue(tracker.event.diff.getNewValue());
 	}
 
 	private void processDisplayQueue() {
