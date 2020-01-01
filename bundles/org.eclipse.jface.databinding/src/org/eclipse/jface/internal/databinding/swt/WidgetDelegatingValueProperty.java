@@ -30,7 +30,7 @@ import org.eclipse.swt.widgets.Widget;
  * @since 3.3
  */
 @SuppressWarnings("deprecation")
-abstract class WidgetDelegatingValueProperty<S extends Widget, T> extends DelegatingValueProperty<S, T>
+public abstract class WidgetDelegatingValueProperty<S extends Widget, T> extends DelegatingValueProperty<S, T>
 		implements IWidgetValueProperty<S, T> {
 
 	RuntimeException notSupported(Object source) {
@@ -38,9 +38,14 @@ abstract class WidgetDelegatingValueProperty<S extends Widget, T> extends Delega
 				"Widget [" + source.getClass().getName() + "] is not supported."); //$NON-NLS-1$//$NON-NLS-2$
 	}
 
+	/**
+	 */
 	public WidgetDelegatingValueProperty() {
 	}
 
+	/**
+	 * @param valueType
+	 */
 	public WidgetDelegatingValueProperty(Object valueType) {
 		super(valueType);
 	}
