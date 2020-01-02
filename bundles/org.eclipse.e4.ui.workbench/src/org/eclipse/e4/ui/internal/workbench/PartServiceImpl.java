@@ -862,14 +862,22 @@ public class PartServiceImpl implements EPartService {
 		if (!force) {
 			int colonIndex = id.indexOf(':');
 			if (colonIndex >= 0) {
-				for (MUIElement element : sharedWindow.getSharedElements()) {
-					if (element.getElementId().equals(descId)) {
-						sharedPart = (MPart) element;
-						MPlaceholder ph = sharedPart.getCurSharedRef();
-						if (ph != null) {
-							sharedPlaceHolderParent = ph.getParent();
+				String remId = ""; //$NON-NLS-1$
+				try {
+					remId = id.substring(colonIndex + 1);
+				} catch (StringIndexOutOfBoundsException e) {
+					// do nothing
+				}
+				if (!remId.trim().equals("*")) {//$NON-NLS-1$
+					for (MUIElement element : sharedWindow.getSharedElements()) {
+						if (element.getElementId().equals(descId)) {
+							sharedPart = (MPart) element;
+							MPlaceholder ph = sharedPart.getCurSharedRef();
+							if (ph != null) {
+								sharedPlaceHolderParent = ph.getParent();
+							}
+							break;
 						}
-						break;
 					}
 				}
 				if (sharedPart == null) {
