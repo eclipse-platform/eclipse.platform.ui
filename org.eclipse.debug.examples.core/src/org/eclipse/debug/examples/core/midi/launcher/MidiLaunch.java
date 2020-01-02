@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -87,7 +87,7 @@ public class MidiLaunch extends Launch implements ISuspendResume {
 
 	@Override
 	public boolean canTerminate() {
-		return getSequencer().isOpen();
+		return fSequencer.isOpen();
 	}
 
 	@Override
@@ -100,10 +100,11 @@ public class MidiLaunch extends Launch implements ISuspendResume {
 
 	@Override
 	public void terminate() throws DebugException {
-		getSequencer().stop();
-		getSequencer().close();
+		fSequencer.stop();
+		fSequencer.close();
 		fireTerminate();
-		DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[]{new DebugEvent(getSequencer(), DebugEvent.TERMINATE)});
+		DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] {
+				new DebugEvent(fSequencer, DebugEvent.TERMINATE) });
 	}
 
 	@Override
@@ -129,16 +130,16 @@ public class MidiLaunch extends Launch implements ISuspendResume {
 
 	@Override
 	public void resume() throws DebugException {
-		getSequencer().start();
+		fSequencer.start();
 		fireChanged();
-		fireEvent(new DebugEvent(getSequencer(), DebugEvent.RESUME, DebugEvent.CLIENT_REQUEST));
+		fireEvent(new DebugEvent(fSequencer, DebugEvent.RESUME, DebugEvent.CLIENT_REQUEST));
 	}
 
 	@Override
 	public void suspend() throws DebugException {
-		getSequencer().stop();
+		fSequencer.stop();
 		fireChanged();
-		fireEvent(new DebugEvent(getSequencer(), DebugEvent.SUSPEND, DebugEvent.CLIENT_REQUEST));
+		fireEvent(new DebugEvent(fSequencer, DebugEvent.SUSPEND, DebugEvent.CLIENT_REQUEST));
 	}
 
 	/**

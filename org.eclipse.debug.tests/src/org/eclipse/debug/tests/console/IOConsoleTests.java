@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Paul Pazderski and others.
+ * Copyright (c) 2019, 2020 Paul Pazderski and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -158,24 +158,23 @@ public class IOConsoleTests extends AbstractDebugTest {
 		}
 
 		c.closeOutputStream();
-		if (c.getConsole().getInputStream() != null) {
-			c.getConsole().getInputStream().close();
-		}
 
-		if (expectedInputLines.length > 0) {
-			assertNotNull(c.getConsole().getInputStream());
-			assertTrue("InputStream is empty.", c.getConsole().getInputStream().available() > 0);
+		try (InputStream consoleIn = c.getConsole().getInputStream()) {
+			if (expectedInputLines.length > 0) {
+				assertNotNull(consoleIn);
+				assertTrue("InputStream is empty.", consoleIn.available() > 0);
 
-			final List<String> inputLines = new ArrayList<>();
-			try (BufferedReader reader = new BufferedReader(new InputStreamReader(c.getConsole().getInputStream(), c.getConsole().getCharset()))) {
-				String line;
-				while (reader.ready() && (line = reader.readLine()) != null) {
-					inputLines.add(line);
+				final List<String> inputLines = new ArrayList<>();
+				try (BufferedReader reader = new BufferedReader(new InputStreamReader(consoleIn, c.getConsole().getCharset()))) {
+					String line;
+					while (reader.ready() && (line = reader.readLine()) != null) {
+						inputLines.add(line);
+					}
 				}
-			}
-			assertEquals("Input contains to many/few lines.", expectedInputLines.length, inputLines.size());
-			for (int i = 0; i < expectedInputLines.length; i++) {
-				assertEquals("Content of input line " + i + " not as expected.", expectedInputLines[i], inputLines.get(i));
+				assertEquals("Input contains to many/few lines.", expectedInputLines.length, inputLines.size());
+				for (int i = 0; i < expectedInputLines.length; i++) {
+					assertEquals("Content of input line " + i + " not as expected.", expectedInputLines[i], inputLines.get(i));
+				}
 			}
 		}
 		c.waitForScheduledJobs();
@@ -277,7 +276,9 @@ public class IOConsoleTests extends AbstractDebugTest {
 		// streams are open and to prevent premature console closing
 		c.getDefaultOutputStream();
 		try (InputStream in = new ByteArrayInputStream(new byte[0])) {
-			c.getConsole().getInputStream().close();
+			try (InputStream defaultIn = c.getConsole().getInputStream()) {
+				// just close input stream
+			}
 			c.getConsole().setInputStream(in);
 		}
 		closeConsole(c);
