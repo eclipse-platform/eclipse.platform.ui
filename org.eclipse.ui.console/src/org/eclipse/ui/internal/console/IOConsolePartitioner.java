@@ -781,36 +781,7 @@ public class IOConsolePartitioner
 			pendingPartitions.notifyAll();
 		}
 		synchronized (partitions) {
-			if (isHandleControlCharacters()) {
-				applyStreamOutput(pendingCopy, size);
-			} else {
-				// Old implementation of output appending. The control character aware variant
-				// {@link #applyStreamOutput(List, int)} should do exactly the same if control
-				// character processing is disabled but since there is not so much time for
-				// testing in current development cycle the old implementation is used to
-				// process output when control character interpretation is disabled.
-				// TODO remove in next development cycle
-				final StringBuilder addedContent = new StringBuilder(size);
-				IOConsolePartition lastPartition = getPartitionByIndex(partitions.size() - 1);
-				int nextOffset = document.getLength();
-				for (PendingPartition pendingPartition : pendingCopy) {
-					if (lastPartition == null || lastPartition.getOutputStream() != pendingPartition.stream) {
-						lastPartition = new IOConsolePartition(nextOffset, pendingPartition.stream);
-						partitions.add(lastPartition);
-					}
-					final int pendingLength = pendingPartition.text.length();
-					lastPartition.setLength(lastPartition.getLength() + pendingLength);
-					nextOffset += pendingLength;
-					addedContent.append(pendingPartition.text);
-				}
-				try {
-					updateType = DocUpdateType.OUTPUT;
-					document.replace(document.getLength(), 0, addedContent.toString());
-					outputOffset += addedContent.length();
-				} catch (BadLocationException e) {
-					log(e);
-				}
-			}
+			applyStreamOutput(pendingCopy, size);
 		}
 		checkFinished();
 		checkBufferSize();
