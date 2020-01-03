@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     Tom Hochstein (Freescale) - Bug 407522 - Perspective reset not working correctly
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 422040, 431992, 472654
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 456729, 404348, 421178, 420956, 424638, 460503
+ *     Rolf Theunissen <rolf.theunissen@gmail.com> - Bug 558765
  *******************************************************************************/
 package org.eclipse.ui.internal.dialogs.cpd;
 
@@ -29,11 +30,15 @@ import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.bindings.EBindingService;
 import org.eclipse.e4.ui.internal.workbench.OpaqueElementUtil;
+import org.eclipse.e4.ui.internal.workbench.RenderedElementUtil;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.commands.MParameter;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
+import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimBar;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
+import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MDynamicMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MItem;
@@ -53,8 +58,10 @@ import org.eclipse.jface.action.ContributionItem;
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
+import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.SubContributionItem;
+import org.eclipse.jface.action.SubMenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -128,8 +135,10 @@ import org.eclipse.ui.internal.intro.IIntroConstants;
 import org.eclipse.ui.internal.registry.ActionSetDescriptor;
 import org.eclipse.ui.internal.registry.ActionSetRegistry;
 import org.eclipse.ui.internal.registry.IActionSetDescriptor;
+import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.menus.CommandContributionItem;
+import org.eclipse.ui.menus.CommandContributionItemParameter;
 import org.eclipse.ui.model.WorkbenchViewerComparator;
 import org.eclipse.ui.part.PageBook;
 import org.eclipse.ui.views.IViewCategory;
@@ -279,6 +288,11 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	 */
 	class DynamicContributionItem extends DisplayItem {
 		private List<MenuItem> preview;
+
+		public DynamicContributionItem(String label, IContributionItem item) {
+			super(WorkbenchMessages.HideItems_dynamicItemName + " - " + label, item); //$NON-NLS-1$
+			preview = new ArrayList<>();
+		}
 
 		public DynamicContributionItem(IContributionItem item) {
 			super(WorkbenchMessages.HideItems_dynamicItemName, item);
@@ -1709,7 +1723,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	}
 
 	private static String getActionSetID(MUIElement item) {
-		String id = (String) item.getTransientData().get("ActionSet"); //$NON-NLS-1$
+		String id = (String) item.getTransientData().get(IWorkbenchRegistryConstants.TAG_ACTION_SET);
 		if (id != null) {
 			return id;
 		}
@@ -1759,156 +1773,195 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 	}
 
 	private void createMenuEntries(MMenu menu, DisplayItem parent) {
-		Map<IContributionItem, IContributionItem> findDynamics = new HashMap<>();
 		DynamicContributionItem dynamicEntry = null;
 
-		if (menu.getParent() != null) {
-			// Search for any dynamic menu entries which will be handled later
-			IContributionManager manager = menuMngrRenderer.getManager(menu);
-			if (manager != null) {
-				IContributionItem[] items = manager.getItems();
-				for (int i = 0; i < items.length; i++) {
-					IContributionItem ci = items[i];
-					if (ci.isDynamic()) {
-						findDynamics.put(i > 0 ? items[i - 1] : null, ci);
-					}
-				}
-				// If there is an item with no preceding item, set it up to be
-				// added first.
-				if (findDynamics.containsKey(null)) {
-					IContributionItem item = findDynamics.get(null);
-					dynamicEntry = new DynamicContributionItem(item);
-					dynamicEntry.setCheckState(getMenuItemIsVisible(dynamicEntry));
-					dynamicEntry.setActionSet(idToActionSet.get(getActionSetID(item)));
-					parent.addChild(dynamicEntry);
-				}
-			}
-		}
-
+		Map<IContributionItem, DisplayItem> processedOpaqueItems = new HashMap<>();
 		for (MMenuElement menuItem : menu.getChildren()) {
-			dynamicEntry = createMenuEntry(parent, findDynamics, dynamicEntry, menuItem);
+			dynamicEntry = createMenuEntry(parent, dynamicEntry, menuItem, processedOpaqueItems);
 		}
 	}
 
-	private DynamicContributionItem createMenuEntry(DisplayItem parent,
-			Map<IContributionItem, IContributionItem> findDynamics, DynamicContributionItem dynamicEntry,
-			MMenuElement menuItem) {
-		String text = menuItem.getLocalizedLabel();
-		if (text == null || text.length() == 0) {
-			text = menuItem.getLabel();
+	private DynamicContributionItem createMenuEntry(DisplayItem parent, DynamicContributionItem dynamicEntry,
+			MMenuElement menuItem, Map<IContributionItem, DisplayItem> processedOpaqueItems) {
+		if (!menuItem.isToBeRendered()) {
+			return null;
 		}
-		if ((text != null && text.length() != 0) || (menuItem instanceof MHandledMenuItem)
-				|| menuItem.getWidget() != null) {
-			IContributionItem contributionItem;
-			if (menuItem instanceof MMenu) {
-				contributionItem = menuMngrRenderer.getManager((MMenu) menuItem);
-			} else {
-				contributionItem = menuMngrRenderer.getContribution(menuItem);
-			}
-			if (contributionItem == null) {
-				return dynamicEntry;
-			}
-			if (dynamicEntry != null && contributionItem.equals(dynamicEntry.getIContributionItem())) {
-				// If the last item added is the item meant to go before the
-				// given dynamic entry, add the dynamic entry so it is in
-				// the correct order.
-				dynamicEntry.addCurrentItem((MenuItem) menuItem.getWidget());
-				// TODO: might not work
-			} else {
-				ImageDescriptor iconDescriptor = null;
-				String iconURI = menuItem.getIconURI();
-				if (iconURI != null && iconURI.length() > 0) {
-					iconDescriptor = resUtils.imageDescriptorFromURI(URI.createURI(iconURI));
-				}
 
-				if (menuItem.getWidget() instanceof MenuItem) {
-					MenuItem item = (MenuItem) menuItem.getWidget();
-					if (text == null) {
-						if ("".equals(item.getText())) { //$NON-NLS-1$
-							return dynamicEntry;
-						}
-						text = item.getText();
-					}
-					if (iconDescriptor == null) {
-						Image image = item.getImage();
-						if (image != null) {
-							iconDescriptor = ImageDescriptor.createFromImage(image);
-						}
-					}
-				} else if (menuItem instanceof MHandledMenuItem) {
-					MHandledMenuItem hmi = (MHandledMenuItem) menuItem;
-					final String i18nLabel = hmi.getLocalizedLabel();
-					if (i18nLabel != null) {
-						text = i18nLabel;
-					} else if (hmi.getWbCommand() != null) {
-						try {
-							text = hmi.getWbCommand().getName();
-						} catch (NotDefinedException e) {
-							// we'll just ignore a failure
-						}
-					}
-				}
-				DisplayItem menuEntry = new DisplayItem(text, contributionItem);
+		if (menuItem instanceof MMenu) {
+			MenuManager manager = menuMngrRenderer.getManager((MMenu) menuItem);
 
-				if (iconDescriptor != null) {
-					menuEntry.setImageDescriptor(iconDescriptor);
-				}
-				menuEntry.setActionSet(idToActionSet.get(getActionSetID(menuItem)));
-				parent.addChild(menuEntry);
-
-				if (ActionFactory.NEW.getId().equals(contributionItem.getId())) {
-					initializeNewWizardsMenu(menuEntry);
-					wizards = menuEntry;
-				} else if (SHORTCUT_CONTRIBUTION_ITEM_ID_OPEN_PERSPECTIVE.equals(contributionItem.getId())) {
-					initializePerspectivesMenu(menuEntry);
-					perspectives = menuEntry;
-				} else if (SHORTCUT_CONTRIBUTION_ITEM_ID_SHOW_VIEW.equals(contributionItem.getId())) {
-					initializeViewsMenu(menuEntry);
-					views = menuEntry;
+			ImageDescriptor iconDescriptor;
+			DisplayItem menuEntry;
+			if (OpaqueElementUtil.isOpaqueMenu(menuItem)) {
+				if (processedOpaqueItems.containsKey(manager)) {
+					// Manager already processed as wrapped item, which determines the position
+					// Still the child entries must be added
+					menuEntry = processedOpaqueItems.get(manager);
 				} else {
-					if (menuItem instanceof MMenu) {// TODO:menuItem any
-													// other instance
-						createMenuEntries((MMenu) menuItem, menuEntry);
-					}
+					menuEntry = new DisplayItem(manager.getMenuText(), manager);
+					parent.addChild(menuEntry);
 				}
-
-				if (menuEntry.getChildren().isEmpty()) {
-					menuEntry.setCheckState(getMenuItemIsVisible(menuEntry));
-				}
-
-				if (iconDescriptor == null) {
-					if (parent.getParent() == null) {
-						menuEntry.setImageDescriptor(menuImageDescriptor);
-					} else if (menuEntry.getChildrenCount() > 0) {
-						menuEntry.setImageDescriptor(submenuImageDescriptor);
-					}
-				}
-			}
-			if (findDynamics.containsKey(contributionItem)) {
-				IContributionItem item = findDynamics.get(contributionItem);
-				dynamicEntry = new DynamicContributionItem(item);
-				dynamicEntry.setCheckState(getMenuItemIsVisible(dynamicEntry));
-				dynamicEntry.setActionSet(idToActionSet.get(getActionSetID(contributionItem)));
-				parent.addChild(dynamicEntry);
+				iconDescriptor = manager.getImageDescriptor();
 			} else {
-				return dynamicEntry;
+				menuEntry = new DisplayItem(menuItem.getLocalizedLabel(), manager);
+				iconDescriptor = getIconDescriptor(menuItem);
+				parent.addChild(menuEntry);
 			}
+
+			if (iconDescriptor != null) {
+				menuEntry.setImageDescriptor(iconDescriptor);
+			} else if (parent.getParent() == null) {
+				menuEntry.setImageDescriptor(menuImageDescriptor);
+			} else {
+				menuEntry.setImageDescriptor(submenuImageDescriptor);
+			}
+
+			menuEntry.setActionSet(idToActionSet.get(getActionSetID(menuItem)));
+
+			// Compatibility sub-menus for some opaque menus
+			String managerId = manager != null ? manager.getId() : null;
+			if (ActionFactory.NEW.getId().equals(managerId)) {
+				initializeNewWizardsMenu(menuEntry);
+				wizards = menuEntry;
+			} else if (SHORTCUT_CONTRIBUTION_ITEM_ID_OPEN_PERSPECTIVE.equals(managerId)) {
+				initializePerspectivesMenu(menuEntry);
+				perspectives = menuEntry;
+			} else if (SHORTCUT_CONTRIBUTION_ITEM_ID_SHOW_VIEW.equals(managerId)) {
+				initializeViewsMenu(menuEntry);
+				views = menuEntry;
+			} else {
+				createMenuEntries((MMenu) menuItem, menuEntry);
+			}
+
+			if (menuEntry.getChildren().isEmpty()) {
+				menuEntry.setCheckState(getMenuItemIsVisible(menuEntry));
+			}
+		} else if (RenderedElementUtil.isRenderedMenuItem(menuItem)) {
+			IContributionItem contributionItem = menuMngrRenderer.getContribution(menuItem);
+
+			if (dynamicEntry == null || !contributionItem.equals(dynamicEntry.getIContributionItem())) {
+				// Only create one dynamic item for multiple (successive) dynamic contribution
+				// items
+				dynamicEntry = new DynamicContributionItem(contributionItem);
+				dynamicEntry.setActionSet(idToActionSet.get(getActionSetID(menuItem)));
+				dynamicEntry.setCheckState(getMenuItemIsVisible(dynamicEntry));
+				parent.addChild(dynamicEntry);
+			}
+
+			if (menuItem.getWidget() != null) {
+				// TODO See Bug 558766: add children; widgets are no longer available
+				dynamicEntry.addCurrentItem((MenuItem) menuItem.getWidget());
+			}
+
+			return dynamicEntry;
 		} else if (OpaqueElementUtil.isOpaqueMenuItem(menuItem)) {
 			IContributionItem contributionItem = menuMngrRenderer.getContribution(menuItem);
-			if (contributionItem instanceof ActionContributionItem) {
+
+			if (contributionItem instanceof SubContributionItem) {
+				// get the wrapped contribution item
+				contributionItem = ((SubContributionItem) contributionItem).getInnerItem();
+			}
+			if (contributionItem instanceof SubMenuManager) {
+				// get the wrapped contribution item
+				contributionItem = (IMenuManager) ((SubMenuManager) contributionItem).getParent();
+			}
+
+			if (processedOpaqueItems.containsKey(contributionItem)) {
+				// Only the first occurrence of an item will be shown
+				return null;
+			}
+
+			if (contributionItem.isDynamic()) {
+				if (dynamicEntry == null || !contributionItem.equals(dynamicEntry.getIContributionItem())) {
+					// Only create one dynamic item for multiple (successive) dynamic contribution
+					// items
+					dynamicEntry = new DynamicContributionItem(contributionItem);
+					dynamicEntry.setActionSet(idToActionSet.get(getActionSetID(contributionItem)));
+					dynamicEntry.setCheckState(getMenuItemIsVisible(dynamicEntry));
+					parent.addChild(dynamicEntry);
+					processedOpaqueItems.put(contributionItem, dynamicEntry);
+				}
+
+				if (menuItem.getWidget() != null) {
+					// TODO See Bug 558766: add children; widgets are no longer available
+					dynamicEntry.addCurrentItem((MenuItem) menuItem.getWidget());
+				}
+
+				return dynamicEntry;
+			} else if (contributionItem instanceof CommandContributionItem) {
+				CommandContributionItem cci = (CommandContributionItem) contributionItem;
+				CommandContributionItemParameter data = cci.getData();
+				DisplayItem menuEntry = new DisplayItem(data.label, contributionItem);
+				menuEntry.setImageDescriptor(data.icon);
+				menuEntry.setActionSet(idToActionSet.get(getActionSetID(contributionItem)));
+				menuEntry.setCheckState(getMenuItemIsVisible(menuEntry));
+				parent.addChild(menuEntry);
+				processedOpaqueItems.put(contributionItem, menuEntry);
+			} else if (contributionItem instanceof ActionContributionItem) {
 				final IAction action = ((ActionContributionItem) contributionItem).getAction();
 				DisplayItem menuEntry = new DisplayItem(action.getText(), contributionItem);
 				menuEntry.setImageDescriptor(action.getImageDescriptor());
 				menuEntry.setActionSet(idToActionSet.get(getActionSetID(contributionItem)));
+				menuEntry.setCheckState(getMenuItemIsVisible(menuEntry));
 				parent.addChild(menuEntry);
-				if (menuEntry.getChildren().isEmpty()) {
-					menuEntry.setCheckState(getMenuItemIsVisible(menuEntry));
+				processedOpaqueItems.put(contributionItem, menuEntry);
+			} else if (contributionItem instanceof MenuManager) {
+				MenuManager manager = (MenuManager) contributionItem;
+				DisplayItem menuEntry = new DisplayItem(manager.getMenuText(), contributionItem);
+				menuEntry.setImageDescriptor(manager.getImageDescriptor());
+				menuEntry.setActionSet(idToActionSet.get(getActionSetID(contributionItem)));
+				menuEntry.setCheckState(getMenuItemIsVisible(menuEntry));
+				parent.addChild(menuEntry);
+
+				// The child entries will be processes when the not-wrapped item is processed,
+				// see MMenu case
+				processedOpaqueItems.put(contributionItem, menuEntry);
+			}
+		} else if (menuItem instanceof MDynamicMenuContribution) {
+			IContributionItem contributionItem = menuMngrRenderer.getContribution(menuItem);
+			dynamicEntry = new DynamicContributionItem(menuItem.getLocalizedLabel(), contributionItem);
+			dynamicEntry.setImageDescriptor(getIconDescriptor(menuItem));
+			dynamicEntry.setActionSet(idToActionSet.get(getActionSetID(menuItem)));
+			dynamicEntry.setCheckState(getMenuItemIsVisible(dynamicEntry));
+
+			// TODO See Bug 558766: add children
+
+			parent.addChild(dynamicEntry);
+		} else if (menuItem instanceof MDirectMenuItem) {
+			IContributionItem contributionItem = menuMngrRenderer.getContribution(menuItem);
+			DisplayItem menuEntry = new DisplayItem(menuItem.getLocalizedLabel(), contributionItem);
+			menuEntry.setImageDescriptor(getIconDescriptor(menuItem));
+			menuEntry.setActionSet(idToActionSet.get(getActionSetID(menuItem)));
+			menuEntry.setCheckState(getMenuItemIsVisible(menuEntry));
+			parent.addChild(menuEntry);
+		} else if (menuItem instanceof MHandledMenuItem) {
+			IContributionItem contributionItem = menuMngrRenderer.getContribution(menuItem);
+
+			MHandledMenuItem hmi = (MHandledMenuItem) menuItem;
+			String text = hmi.getLocalizedLabel();
+			if (text == null && hmi.getWbCommand() != null) {
+				try {
+					text = hmi.getWbCommand().getName();
+				} catch (NotDefinedException e) {
+					// we'll just ignore a failure
 				}
 			}
-		} else {
-			return dynamicEntry;
+
+			DisplayItem menuEntry = new DisplayItem(text, contributionItem);
+			menuEntry.setImageDescriptor(getIconDescriptor(menuItem));
+			menuEntry.setActionSet(idToActionSet.get(getActionSetID(menuItem)));
+			menuEntry.setCheckState(getMenuItemIsVisible(menuEntry));
+			parent.addChild(menuEntry);
 		}
-		return dynamicEntry;
+		return null;
+	}
+
+	private ImageDescriptor getIconDescriptor(MUILabel item) {
+		String iconURI = item.getIconURI();
+		if (iconURI != null && iconURI.length() > 0) {
+			return resUtils.imageDescriptorFromURI(URI.createURI(iconURI));
+		}
+		return null;
 	}
 
 	private boolean getMenuItemIsVisible(DisplayItem item) {
@@ -2015,11 +2068,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		if (element instanceof MItem) {
 			text = getToolTipText((MItem) element);
 		}
-		ImageDescriptor iconDescriptor = null;
-		String iconURI = element instanceof MItem ? ((MItem) element).getIconURI() : null;
-		if (iconURI != null && iconURI.length() > 0) {
-			iconDescriptor = resUtils.imageDescriptorFromURI(URI.createURI(iconURI));
-		}
+		ImageDescriptor iconDescriptor = element instanceof MItem ? getIconDescriptor((MItem) element) : null;
 		if (element.getWidget() instanceof ToolItem) {
 			ToolItem item = (ToolItem) element.getWidget();
 			if (text == null) {
