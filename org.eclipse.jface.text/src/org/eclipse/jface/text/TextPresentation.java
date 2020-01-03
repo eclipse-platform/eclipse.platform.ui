@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -98,7 +98,7 @@ public class TextPresentation {
 			try {
 				StyleRange r= fRanges.get(fIndex++);
 				return createWindowRelativeRange(fWindow, r);
-			} catch (ArrayIndexOutOfBoundsException x) {
+			} catch (IndexOutOfBoundsException x) {
 				throw new NoSuchElementException();
 			} finally {
 				if (fSkipDefaults)
@@ -109,11 +109,6 @@ public class TextPresentation {
 		@Override
 		public boolean hasNext() {
 			return fIndex < fLength;
-		}
-
-		@Override
-		public void remove() {
-			throw new UnsupportedOperationException();
 		}
 
 		/**
@@ -132,7 +127,7 @@ public class TextPresentation {
 		 */
 		protected void computeIndex() {
 			while (fIndex < fLength && skip(fRanges.get(fIndex)))
-				++ fIndex;
+				++fIndex;
 		}
 	}
 
@@ -651,15 +646,11 @@ public class TextPresentation {
 	 */
 	public StyleRange getFirstStyleRange() {
 		try {
-
 			StyleRange range= fRanges.get(getFirstIndexInWindow(fResultWindow));
 			return createWindowRelativeRange(fResultWindow, range);
-
-		} catch (NoSuchElementException x) {
-		} catch (IndexOutOfBoundsException x) {
+		} catch (NoSuchElementException | IndexOutOfBoundsException x) {
+			return null;
 		}
-
-		return null;
 	}
 
 	/**
@@ -669,13 +660,9 @@ public class TextPresentation {
 	 */
 	public StyleRange getLastStyleRange() {
 		try {
-
 			StyleRange range= fRanges.get(getFirstIndexAfterWindow(fResultWindow) - 1);
 			return createWindowRelativeRange(fResultWindow, range);
-
-		} catch (NoSuchElementException x) {
-			return null;
-		} catch (IndexOutOfBoundsException x) {
+		} catch (NoSuchElementException | IndexOutOfBoundsException x) {
 			return null;
 		}
 	}

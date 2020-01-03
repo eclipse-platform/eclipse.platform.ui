@@ -16,10 +16,12 @@ package org.eclipse.jface.text.tests;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.junit.After;
 import org.junit.Before;
@@ -1248,6 +1250,29 @@ public class TextPresentationTest {
 			assertArrayEquals(fAllRanges, text.getStyleRanges());
 		} finally {
 			shell.dispose();
+		}
+	}
+	
+	@Test
+	public void testIterator() {
+		// Test read over iterator end
+		Iterator<StyleRange> e= fTextPresentation.getAllStyleRangeIterator();
+		try {
+			for (int i= 0; i < 1000; i++) {
+				e.next();
+			}
+			fail("Iterator has no end.");
+		} catch (NoSuchElementException ex) {
+			// expected
+		}
+		e= fTextPresentation.getNonDefaultStyleRangeIterator();
+		try {
+			for (int i= 0; i < 1000; i++) {
+				e.next();
+			}
+			fail("Iterator has no end.");
+		} catch (NoSuchElementException ex) {
+			// expected
 		}
 	}
 
