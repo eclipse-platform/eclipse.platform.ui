@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2019 IBM Corporation and others.
+ * Copyright (c) 2007, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 558673
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - ongoing support
  *******************************************************************************/
 
 package org.eclipse.ui.internal.views.markers;
@@ -18,7 +18,9 @@ package org.eclipse.ui.internal.views.markers;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -29,8 +31,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
-import org.eclipse.ui.internal.ide.StatusUtil;
-import org.eclipse.ui.statushandlers.StatusManager;
 import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 
@@ -46,21 +46,29 @@ class QuickFixWizard extends Wizard {
 	private Map<IMarkerResolution, Collection<IMarker>> resolutionMap;
 	private String description;
 	private IWorkbenchPartSite partSite;
+	private final Consumer<Throwable> reporter;
 	private QuickFixPage quickFixPage;
 
 	/**
 	 * Create the wizard with the map of resolutions.
 	 *
-	 * @param description the description of the problem
+	 * @param description     the description of the problem
 	 * @param selectedMarkers the markers that were selected
-	 * @param resolutions Map key {@link IMarkerResolution} value {@link IMarker} []
-	 * @param site the {@link IWorkbenchPartSite} to open the markers in
+	 * @param resolutions     Map key {@link IMarkerResolution} value
+	 *                        {@link IMarker} []
+	 * @param site            the {@link IWorkbenchPartSite} to open the markers in
+	 * @param reporter        used to report failures during
+	 *                        {@link Wizard#performFinish()} call
 	 */
-	public QuickFixWizard(String description, IMarker[] selectedMarkers, Map<IMarkerResolution, Collection<IMarker>> resolutions, IWorkbenchPartSite site) {
+	public QuickFixWizard(String description, IMarker[] selectedMarkers,
+			Map<IMarkerResolution, Collection<IMarker>> resolutions, IWorkbenchPartSite site,
+			Consumer<Throwable> reporter) {
+		Objects.requireNonNull(reporter);
 		this.selectedMarkers= selectedMarkers;
 		this.resolutionMap = resolutions;
 		this.description = description;
-		partSite = site;
+		this.partSite = site;
+		this.reporter = reporter;
 		setDefaultPageImageDescriptor(IDEInternalWorkbenchImages
 				.getImageDescriptor(IDEInternalWorkbenchImages.IMG_DLGBAN_QUICKFIX_DLG));
 		setNeedsProgressMonitor(true);
@@ -86,7 +94,7 @@ class QuickFixWizard extends Wizard {
 		try {
 			getContainer().run(false, true, finishRunnable);
 		} catch (InvocationTargetException | InterruptedException e) {
-			StatusManager.getManager().handle(StatusUtil.newError(e));
+			reporter.accept(e);
 			return false;
 		}
 		return true;
