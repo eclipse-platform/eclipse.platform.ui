@@ -26,10 +26,10 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.e4.ui.internal.workspace.markers.Translation;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMarkerResolution;
-import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.views.markers.WorkbenchMarkerResolution;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
@@ -45,7 +45,7 @@ class QuickFixWizard extends Wizard {
 	private IMarker[] selectedMarkers;
 	private Map<IMarkerResolution, Collection<IMarker>> resolutionMap;
 	private String description;
-	private IWorkbenchPartSite partSite;
+	private final Consumer<StructuredViewer> showMarkers;
 	private final Consumer<Throwable> reporter;
 	private QuickFixPage quickFixPage;
 
@@ -56,18 +56,18 @@ class QuickFixWizard extends Wizard {
 	 * @param selectedMarkers the markers that were selected
 	 * @param resolutions     Map key {@link IMarkerResolution} value
 	 *                        {@link IMarker} []
-	 * @param site            the {@link IWorkbenchPartSite} to open the markers in
+	 * @param showMarkers     the consumer to show markers
 	 * @param reporter        used to report failures during
 	 *                        {@link Wizard#performFinish()} call
 	 */
 	public QuickFixWizard(String description, IMarker[] selectedMarkers,
-			Map<IMarkerResolution, Collection<IMarker>> resolutions, IWorkbenchPartSite site,
+			Map<IMarkerResolution, Collection<IMarker>> resolutions, Consumer<StructuredViewer> showMarkers,
 			Consumer<Throwable> reporter) {
 		Objects.requireNonNull(reporter);
 		this.selectedMarkers= selectedMarkers;
 		this.resolutionMap = resolutions;
 		this.description = description;
-		this.partSite = site;
+		this.showMarkers = showMarkers;
 		this.reporter = reporter;
 		setDefaultPageImageDescriptor(IDEInternalWorkbenchImages
 				.getImageDescriptor(IDEInternalWorkbenchImages.IMG_DLGBAN_QUICKFIX_DLG));
@@ -76,7 +76,7 @@ class QuickFixWizard extends Wizard {
 
 	@Override
 	public void addPages() {
-		quickFixPage = new QuickFixPage(description, selectedMarkers, resolutionMap, partSite);
+		quickFixPage = new QuickFixPage(description, selectedMarkers, resolutionMap, showMarkers);
 		addPage(quickFixPage);
 	}
 

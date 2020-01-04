@@ -32,6 +32,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.wizard.IWizard;
 import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -146,8 +147,9 @@ public class QuickFixHandler extends MarkerViewHandler {
 			String description = NLS.bind(
 					MarkerMessages.MarkerResolutionDialog_Description,
 					markerDescription);
+			Consumer<StructuredViewer> showMarkers = v -> new ShowMarkers(v, view.getSite());
 			Consumer<Throwable> reporter = t -> StatusManager.getManager().handle(StatusUtil.newError(t));
-			Wizard wizard = new QuickFixWizard(description, selectedMarkers, resolutionsMap, view.getSite(), reporter);
+			Wizard wizard = new QuickFixWizard(description, selectedMarkers, resolutionsMap, showMarkers, reporter);
 			wizard.setWindowTitle(MarkerMessages.resolveMarkerAction_dialogTitle);
 			WizardDialog dialog = new QuickFixWizardDialog(view.getSite().getShell(), wizard);
 			dialog.open();

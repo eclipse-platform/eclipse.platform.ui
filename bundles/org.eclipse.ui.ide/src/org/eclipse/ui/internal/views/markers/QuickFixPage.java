@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2019 IBM Corporation and others.
+ * Copyright (c) 2007, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 558623, Bug 558673
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - ongoing support
  *******************************************************************************/
 
 package org.eclipse.ui.internal.views.markers;
@@ -18,8 +18,8 @@ package org.eclipse.ui.internal.views.markers;
 import java.util.Collection;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 
-import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -27,12 +27,12 @@ import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableLayout;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -56,11 +56,7 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolution2;
 import org.eclipse.ui.IMarkerResolutionRelevance;
-import org.eclipse.ui.IWorkbenchPartSite;
-import org.eclipse.ui.OpenAndLinkWithEditorHelper;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.Util;
@@ -77,25 +73,25 @@ public class QuickFixPage extends WizardPage {
 
 	private TableViewer resolutionsList;
 	private CheckboxTableViewer markersTable;
-	private IWorkbenchPartSite site;
 	private IMarker[] selectedMarkers;
+	private final Consumer<StructuredViewer> showMarkers;
 
 
 	/**
 	 * Create a new instance of the receiver.
 	 *
 	 * @param problemDescription the description of the problem being fixed
-	 * @param selectedMarkers the selected markers
-	 * @param resolutions {@link Map} with key of {@link IMarkerResolution} and value of
-	 *            {@link Collection} of {@link IMarker}
-	 * @param site The IWorkbenchPartSite to show markers
+	 * @param selectedMarkers    the selected markers
+	 * @param resolutions        {@link Map} with key of {@link IMarkerResolution}
+	 *                           and value of {@link Collection} of {@link IMarker}
+	 * @param showMarkers        the consumer to show markers
 	 */
 	public QuickFixPage(String problemDescription, IMarker[] selectedMarkers, Map<IMarkerResolution, Collection<IMarker>> resolutions,
-			IWorkbenchPartSite site) {
+			Consumer<StructuredViewer> showMarkers) {
 		super(problemDescription);
 		this.selectedMarkers= selectedMarkers;
 		this.resolutions = resolutions;
-		this.site = site;
+		this.showMarkers = showMarkers;
 		setTitle(MarkerMessages.resolveMarkerAction_dialogTitle);
 		setMessage(problemDescription);
 	}
@@ -367,36 +363,7 @@ public class QuickFixPage extends WizardPage {
 			}
 
 		});
-
-		new OpenAndLinkWithEditorHelper(markersTable) {
-
-			{ setLinkWithEditor(false); }
-
-			@Override
-			protected void activate(ISelection selection) {
-				open(selection, true);
-			}
-
-			/** Not supported*/
-			@Override
-			protected void linkToEditor(ISelection selection) {
-			}
-
-			@Override
-			protected void open(ISelection selection, boolean activate) {
-				if (selection.isEmpty())
-					return;
-				IMarker marker = (IMarker) ((IStructuredSelection) selection)
-						.getFirstElement();
-				if (marker != null && marker.getResource() instanceof IFile) {
-					try {
-						IDE.openEditor(site.getPage(), marker, activate);
-					} catch (PartInitException e) {
-						MarkerSupportInternalUtilities.showViewError(e);
-					}
-				}
-			}
-		};
+		showMarkers.accept(markersTable);
 		markersTable.setInput(this);
 	}
 
