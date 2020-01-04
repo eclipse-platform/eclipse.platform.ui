@@ -88,7 +88,6 @@ public class MarkerSupportInternalUtilities {
 	static final CollationKey EMPTY_COLLATION_KEY = Collator.getInstance()
 			.getCollationKey(MarkerSupportInternalUtilities.EMPTY_STRING);
 
-	static final IMarker[] EMPTY_MARKER_ARRAY = new IMarker[0];
 	static final MarkerSupportItem[] EMPTY_MARKER_ITEM_ARRAY = new MarkerSupportItem[0];
 	static final IResource[] EMPTY_RESOURCE_ARRAY = new IResource[0];
 

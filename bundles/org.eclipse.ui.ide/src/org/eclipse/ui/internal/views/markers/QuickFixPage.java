@@ -276,6 +276,9 @@ public class QuickFixPage extends WizardPage {
 		createTableColumns();
 
 		markersTable.setContentProvider(new IStructuredContentProvider() {
+
+			private final IMarker[] noMarkers = new IMarker[0];
+
 			@Override
 			public void dispose() {
 
@@ -290,7 +293,7 @@ public class QuickFixPage extends WizardPage {
 						return resolutions.get(resolution).toArray();
 					}
 				}
-				return MarkerSupportInternalUtilities.EMPTY_MARKER_ARRAY;
+				return noMarkers;
 			}
 
 			@Override

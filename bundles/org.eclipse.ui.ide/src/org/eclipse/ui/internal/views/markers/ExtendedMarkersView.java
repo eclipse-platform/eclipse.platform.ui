@@ -152,6 +152,8 @@ public class ExtendedMarkersView extends ViewPart {
 
 	private static final String TAG_COLUMN_WIDTHS = "columnWidths"; //$NON-NLS-1$
 
+	private final IMarker[] noMarkers = new IMarker[0];
+
 	private MarkerContentGenerator generator;
 	private CachedMarkerBuilder builder;
 	private Collection<String> categoriesToExpand;
@@ -586,7 +588,7 @@ public class ExtendedMarkersView extends ViewPart {
 			}
 		}
 		if (result.isEmpty()) {
-			return MarkerSupportInternalUtilities.EMPTY_MARKER_ARRAY;
+			return noMarkers;
 		}
 		IMarker[] markers = new IMarker[result.size()];
 		result.toArray(markers);
