@@ -20,6 +20,7 @@ import org.eclipse.osgi.util.NLS;
  * MarkerMessages is the class that handles the messages for the markers.
  *
  */
+@SuppressWarnings("javadoc")
 public class MarkerMessages extends NLS {
 
 	private static final String BUNDLE_NAME = "org.eclipse.ui.views.markers.internal.messages"; //$NON-NLS-1$
