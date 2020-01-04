@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2019 Eclipse Foundation and others.
+ *  Copyright (c) 2019-2020 Eclipse Foundation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  *  Contributors:
  *     Eclipse Foundation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - ongoing support
  *******************************************************************************/
 package org.eclipse.ui.internal.views.markers;
 
@@ -33,6 +34,16 @@ public interface MarkerItemDefaults {
 	 * @since 3.16
 	 */
 	String LOCATION_DEFAULT = ""; //$NON-NLS-1$
+
+	/**
+	 * The PATH_ATTRIBUTE is the tag for the attribute on a marker that can be used
+	 * to supply the String for the path rather than using the path of the
+	 * underlying resource.
+	 *
+	 * @see IMarker#getAttribute(java.lang.String)
+	 * @since 3.16
+	 */
+	String PATH_ATTRIBUTE = "org.eclipse.ui.views.markers.path";//$NON-NLS-1$
 
 	/**
 	 * {@linkplain MarkerItem} {@code path} default value constant.

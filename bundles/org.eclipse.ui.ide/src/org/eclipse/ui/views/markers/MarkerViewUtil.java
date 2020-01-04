@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - ongoing support
  *******************************************************************************/
 
 package org.eclipse.ui.views.markers;
@@ -22,6 +23,7 @@ import org.eclipse.ui.IPageLayout;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.internal.ide.Policy;
+import org.eclipse.ui.internal.views.markers.MarkerItemDefaults;
 import org.eclipse.ui.internal.views.markers.MarkerSupportInternalUtilities;
 
 /**
@@ -37,7 +39,7 @@ public class MarkerViewUtil {
 	 * @see IMarker#getAttribute(java.lang.String)
 	 * @since 3.2
 	 */
-	public static final String PATH_ATTRIBUTE = "org.eclipse.ui.views.markers.path";//$NON-NLS-1$
+	public static final String PATH_ATTRIBUTE = MarkerItemDefaults.PATH_ATTRIBUTE;
 
 	/**
 	 * The NAME_ATTRIBUTE is the tag for the attribute on a marker that can be
