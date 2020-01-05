@@ -65,4 +65,7 @@ public class Changes {
 			message= "MalformedTreeException"; //$NON-NLS-1$
 		return new CoreException(new Status(IStatus.ERROR, RefactoringCorePlugin.getPluginId(), IRefactoringCoreStatusCodes.BAD_LOCATION, message, e));
 	}
+
+	private Changes() {
+	}
 }

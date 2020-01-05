@@ -127,4 +127,7 @@ public class ContentStamps {
 		}
 		return false;
 	}
+
+	private ContentStamps() {
+	}
 }

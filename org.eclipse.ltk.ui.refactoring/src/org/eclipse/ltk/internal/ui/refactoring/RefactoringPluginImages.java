@@ -196,4 +196,7 @@ public class RefactoringPluginImages {
 		}
 		return null;
 	}
+
+	private RefactoringPluginImages() {
+	}
 }

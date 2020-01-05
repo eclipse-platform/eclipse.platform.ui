@@ -69,4 +69,7 @@ public class ResourceProcessors {
 			}
 		return resourcePath.toPortableString();
 	}
+
+	private ResourceProcessors() {
+	}
 }
