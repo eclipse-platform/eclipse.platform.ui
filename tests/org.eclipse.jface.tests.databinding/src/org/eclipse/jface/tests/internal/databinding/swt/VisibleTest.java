@@ -1,6 +1,7 @@
 package org.eclipse.jface.tests.internal.databinding.swt;
 
 import static org.eclipse.jface.databinding.conformance.swt.SWTMutableObservableValueContractTest.suite;
+import static org.junit.Assert.fail;
 
 import java.util.function.Function;
 
@@ -15,7 +16,9 @@ import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolTip;
+import org.eclipse.swt.widgets.Tracker;
 import org.eclipse.swt.widgets.Widget;
+import org.junit.Test;
 
 import junit.framework.TestSuite;
 
@@ -29,6 +32,17 @@ public class VisibleTest extends AbstractDefaultRealmTestCase {
 		suite.addTest(suite(new Delegate<>(shell -> new ToolTip(shell, SWT.BALLOON))));
 		suite.addTest(suite(new Delegate<>(shell -> new ToolBar(shell, SWT.HORIZONTAL))));
 		suite.addTest(suite(new Delegate<>(Shell::getHorizontalBar)));
+	}
+
+	@Test
+	public void testUnsupportedWidget() {
+		try {
+			// A widget that isn't supported
+			Tracker tracker = new Tracker(new Shell(), SWT.NONE);
+			WidgetProperties.visible().observe(tracker);
+			fail();
+		} catch (IllegalArgumentException exc) {
+		}
 	}
 
 	static class Delegate<W extends Widget> extends AbstractObservableValueContractDelegate {
