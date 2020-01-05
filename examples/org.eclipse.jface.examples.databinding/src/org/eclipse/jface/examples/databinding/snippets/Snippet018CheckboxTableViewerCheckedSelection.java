@@ -86,15 +86,14 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 		Person wendy = createPerson("Wendy");
 		Person butters = createPerson("Butters");
 
-		setFriends(stan, new Person[] { kyle, eric, kenny, wendy });
-		setFriends(kyle, new Person[] { stan, eric, kenny });
-		setFriends(eric, new Person[] { eric });
-		setFriends(kenny, new Person[] { stan, kyle, eric });
-		setFriends(wendy, new Person[] { stan });
-		setFriends(butters, new Person[0]);
+		stan.setFriends(kyle, eric, kenny, wendy);
+		kyle.setFriends(stan, eric, kenny);
+		eric.setFriends(eric);
+		kenny.setFriends(stan, kyle, eric);
+		wendy.setFriends(stan);
+		butters.setFriends();
 
-		Person[] people = new Person[] { stan, kyle, eric, kenny, wendy, butters };
-		viewModel.setPeople(Arrays.asList(people));
+		viewModel.setPeople(Arrays.asList(stan, kyle, eric, kenny, wendy, butters));
 		return viewModel;
 	}
 
@@ -102,10 +101,6 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 		Person person = new Person();
 		person.setName(name);
 		return person;
-	}
-
-	private static void setFriends(Person person, Person[] friends) {
-		person.setFriends(new HashSet<>(Arrays.asList(friends)));
 	}
 
 	/** Helper class for implementing JavaBeans support. */
@@ -155,6 +150,10 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 			return new HashSet<>(friends);
 		}
 
+		public void setFriends(Person... friends) {
+			setFriends(new HashSet<>(Arrays.asList(friends)));
+		}
+
 		public void setFriends(Set<Person> friends) {
 			firePropertyChange("friends", this.friends, this.friends = new HashSet<>(friends));
 		}
@@ -163,6 +162,7 @@ public class Snippet018CheckboxTableViewerCheckedSelection {
 		public String toString() {
 			return name;
 		}
+
 	}
 
 	/**

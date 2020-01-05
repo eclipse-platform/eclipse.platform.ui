@@ -195,8 +195,7 @@ public class Snippet007ColorLabelProvider {
 			if (index == 0) {
 				return null;
 			}
-			Person person = (Person) element;
-			return person.getGender() == Gender.MALE ? maleColor : femaleColor;
+			return ((Person) element).getGender() == Gender.MALE ? maleColor : femaleColor;
 		}
 
 		@Override
