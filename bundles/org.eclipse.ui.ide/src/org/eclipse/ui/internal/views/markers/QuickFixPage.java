@@ -50,14 +50,13 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.IMarkerResolution2;
 import org.eclipse.ui.IMarkerResolutionRelevance;
-import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.Util;
 
@@ -75,6 +74,7 @@ public class QuickFixPage extends WizardPage {
 	private CheckboxTableViewer markersTable;
 	private IMarker[] selectedMarkers;
 	private final Consumer<StructuredViewer> showMarkers;
+	private final Consumer<Control> bindHelp;
 
 
 	/**
@@ -85,13 +85,15 @@ public class QuickFixPage extends WizardPage {
 	 * @param resolutions        {@link Map} with key of {@link IMarkerResolution}
 	 *                           and value of {@link Collection} of {@link IMarker}
 	 * @param showMarkers        the consumer to show markers
+	 * @param bindHelp           the consumer to bind help system
 	 */
 	public QuickFixPage(String problemDescription, IMarker[] selectedMarkers, Map<IMarkerResolution, Collection<IMarker>> resolutions,
-			Consumer<StructuredViewer> showMarkers) {
+			Consumer<StructuredViewer> showMarkers, Consumer<Control> bindHelp) {
 		super(problemDescription);
 		this.selectedMarkers= selectedMarkers;
 		this.resolutions = resolutions;
 		this.showMarkers = showMarkers;
+		this.bindHelp = bindHelp;
 		setTitle(MarkerMessages.resolveMarkerAction_dialogTitle);
 		setMessage(problemDescription);
 	}
@@ -106,9 +108,7 @@ public class QuickFixPage extends WizardPage {
 		Composite control = new Composite(parent, SWT.NONE);
 		control.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		setControl(control);
-
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(control,
-				IWorkbenchHelpContextIds.PROBLEMS_VIEW);
+		bindHelp.accept(control);
 
 		FormLayout layout = new FormLayout();
 		layout.marginHeight = convertVerticalDLUsToPixels(IDialogConstants.VERTICAL_MARGIN);
@@ -118,7 +118,6 @@ public class QuickFixPage extends WizardPage {
 
 		Label resolutionsLabel = new Label(control, SWT.NONE);
 		resolutionsLabel.setText(MarkerMessages.MarkerResolutionDialog_Resolutions_List_Title);
-
 		resolutionsLabel.setLayoutData(new FormData());
 
 		createResolutionsList(control);

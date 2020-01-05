@@ -38,10 +38,12 @@ import org.eclipse.jface.wizard.Wizard;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
+import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
 import org.eclipse.ui.internal.ide.StatusUtil;
 import org.eclipse.ui.progress.IWorkbenchSiteProgressService;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -148,8 +150,11 @@ public class QuickFixHandler extends MarkerViewHandler {
 					MarkerMessages.MarkerResolutionDialog_Description,
 					markerDescription);
 			Consumer<StructuredViewer> showMarkers = v -> new ShowMarkers(v, view.getSite());
+			Consumer<Control> bindHelp = c -> PlatformUI.getWorkbench().getHelpSystem().setHelp(c,
+					IWorkbenchHelpContextIds.PROBLEMS_VIEW);
 			Consumer<Throwable> reporter = t -> StatusManager.getManager().handle(StatusUtil.newError(t));
-			Wizard wizard = new QuickFixWizard(description, selectedMarkers, resolutionsMap, showMarkers, reporter);
+			Wizard wizard = new QuickFixWizard(description, selectedMarkers, resolutionsMap, showMarkers, bindHelp,
+					reporter);
 			wizard.setWindowTitle(MarkerMessages.resolveMarkerAction_dialogTitle);
 			WizardDialog dialog = new QuickFixWizardDialog(view.getSite().getShell(), wizard);
 			dialog.open();

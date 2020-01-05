@@ -28,6 +28,7 @@ import org.eclipse.e4.ui.internal.workspace.markers.Translation;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.wizard.Wizard;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IMarkerResolution;
 import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
@@ -46,6 +47,7 @@ class QuickFixWizard extends Wizard {
 	private Map<IMarkerResolution, Collection<IMarker>> resolutionMap;
 	private String description;
 	private final Consumer<StructuredViewer> showMarkers;
+	private final Consumer<Control> bindHelp;
 	private final Consumer<Throwable> reporter;
 	private QuickFixPage quickFixPage;
 
@@ -57,17 +59,20 @@ class QuickFixWizard extends Wizard {
 	 * @param resolutions     Map key {@link IMarkerResolution} value
 	 *                        {@link IMarker} []
 	 * @param showMarkers     the consumer to show markers
+	 * @param bindHelp        the consumer to bind help system
 	 * @param reporter        used to report failures during
 	 *                        {@link Wizard#performFinish()} call
 	 */
 	public QuickFixWizard(String description, IMarker[] selectedMarkers,
 			Map<IMarkerResolution, Collection<IMarker>> resolutions, Consumer<StructuredViewer> showMarkers,
+			Consumer<Control> bindHelp,
 			Consumer<Throwable> reporter) {
 		Objects.requireNonNull(reporter);
 		this.selectedMarkers= selectedMarkers;
 		this.resolutionMap = resolutions;
 		this.description = description;
 		this.showMarkers = showMarkers;
+		this.bindHelp = bindHelp;
 		this.reporter = reporter;
 		setDefaultPageImageDescriptor(IDEInternalWorkbenchImages
 				.getImageDescriptor(IDEInternalWorkbenchImages.IMG_DLGBAN_QUICKFIX_DLG));
@@ -76,7 +81,7 @@ class QuickFixWizard extends Wizard {
 
 	@Override
 	public void addPages() {
-		quickFixPage = new QuickFixPage(description, selectedMarkers, resolutionMap, showMarkers);
+		quickFixPage = new QuickFixPage(description, selectedMarkers, resolutionMap, showMarkers, bindHelp);
 		addPage(quickFixPage);
 	}
 
