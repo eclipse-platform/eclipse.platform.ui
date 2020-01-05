@@ -28,6 +28,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
+import org.eclipse.jface.widgets.WidgetFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
@@ -169,8 +170,7 @@ public class Snippet027TreeLayout {
 	}
 
 	private TreeColumn createTreeColumn(Tree tree, String textColumn) {
-		TreeColumn column = new TreeColumn(tree, SWT.NONE);
-		column.setText(textColumn);
+		TreeColumn column = WidgetFactory.treeColumn(SWT.NONE).text(textColumn).create(tree);
 		column.setWidth(200);
 		return column;
 	}

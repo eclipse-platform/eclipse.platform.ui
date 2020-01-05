@@ -22,6 +22,7 @@ import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
+import org.eclipse.jface.widgets.WidgetFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
@@ -38,8 +39,7 @@ import org.eclipse.swt.widgets.TableColumn;
  */
 public class Snippet016TableLayout {
 
-	private class MyLabelProvider extends LabelProvider implements
-			ITableLabelProvider {
+	private class MyLabelProvider extends LabelProvider implements ITableLabelProvider {
 
 		@Override
 		public Image getColumnImage(Object element, int columnIndex) {
@@ -87,8 +87,8 @@ public class Snippet016TableLayout {
 	}
 
 	private TableColumn createTableColumn(Table table, String textColumn) {
-		TableColumn column = new TableColumn(table, SWT.NONE);
-		column.setText(textColumn);
+		// TODO: after Bug 558810 closed use it
+		TableColumn column = WidgetFactory.tableColumn(SWT.NONE).text(textColumn).create(table);
 		column.setMoveable(true);
 		return column;
 	}
