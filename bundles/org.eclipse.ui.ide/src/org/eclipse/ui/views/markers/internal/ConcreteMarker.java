@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,7 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 558623
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - ongoing support
  *******************************************************************************/
 package org.eclipse.ui.views.markers.internal;
 
@@ -86,7 +86,7 @@ public class ConcreteMarker extends MarkerNode{
 		clearCache();
 
 		description = translation.message(marker).orElse(""); //$NON-NLS-1$
-		resourceName = Util.getResourceName(marker);
+		resourceName = translation.name(marker).orElse(""); //$NON-NLS-1$
 		inFolder = Util.getContainerName(marker);
 		shortFolder = null;
 		line = marker.getAttribute(IMarker.LINE_NUMBER, -1);

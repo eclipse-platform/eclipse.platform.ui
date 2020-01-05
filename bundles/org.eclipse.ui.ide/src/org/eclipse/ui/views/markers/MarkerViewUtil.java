@@ -49,7 +49,7 @@ public class MarkerViewUtil {
 	 * @see IMarker#getAttribute(java.lang.String)
 	 * @since 3.2
 	 */
-	public static final String NAME_ATTRIBUTE = "org.eclipse.ui.views.markers.name";//$NON-NLS-1$
+	public static final String NAME_ATTRIBUTE = MarkerItemDefaults.NAME_ATTRIBUTE;
 
 	/**
 	 * Returns the id of the view used to show markers of the same type as the

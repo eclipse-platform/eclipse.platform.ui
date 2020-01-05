@@ -21,6 +21,7 @@ import java.util.Optional;
 import java.util.function.Consumer;
 
 import org.eclipse.core.resources.IMarker;
+import org.eclipse.e4.ui.internal.workspace.markers.Translation;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -299,6 +300,8 @@ public class QuickFixPage extends WizardPage {
 
 		markersTable.setLabelProvider(new ITableLabelProvider() {
 
+			private final Translation translation = new Translation();
+
 			@Override
 			public Image getColumnImage(Object element, int columnIndex) {
 				if (columnIndex == 0)
@@ -309,15 +312,14 @@ public class QuickFixPage extends WizardPage {
 			@Override
 			public String getColumnText(Object element, int columnIndex) {
 				IMarker marker =(IMarker) element;
-				if (columnIndex == 0)
-					return Util.getResourceName(marker);
-
+				if (columnIndex == 0) {
+					return translation.name(marker).orElse(""); //$NON-NLS-1$
+				}
 				// Is the location override set?
 				String locationString = marker.getAttribute(IMarker.LOCATION, MarkerItemDefaults.LOCATION_DEFAULT);
 				if (!MarkerItemDefaults.LOCATION_DEFAULT.equals(locationString)) {
 					return locationString;
 				}
-
 				// No override so use line number
 				int lineNumber = marker.getAttribute(IMarker.LINE_NUMBER, -1);
 				String lineNumberString=null;
@@ -333,13 +335,11 @@ public class QuickFixPage extends WizardPage {
 			@Override
 			public void addListener(ILabelProviderListener listener) {
 				// do nothing
-
 			}
 
 			@Override
 			public void dispose() {
 				// do nothing
-
 			}
 
 			@Override
@@ -350,7 +350,6 @@ public class QuickFixPage extends WizardPage {
 			@Override
 			public void removeListener(ILabelProviderListener listener) {
 				// do nothing
-
 			}
 		});
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2019 IBM Corporation and others.
+ * Copyright (c) 2007, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,7 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Mickael Istria (Red Hat Inc.) - Bug 486901
- *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 558623
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - ongoing support
  *******************************************************************************/
 package org.eclipse.ui.internal.views.markers;
 
@@ -333,7 +333,7 @@ public class MarkersPropertyPage extends PropertyPage {
 		Label resourceLabel = new Label(parent, SWT.NONE);
 		resourceLabel.setText(MarkerMessages.propertiesDialog_resource_text);
 		Text resourceText = createReadOnlyText(parent);
-		resourceText.setText(Util.getResourceName(marker));
+		translation.name(marker).ifPresent(n -> resourceText.setText(n));
 	}
 
 	@Override
@@ -381,7 +381,7 @@ public class MarkersPropertyPage extends PropertyPage {
 				.bind(MarkerMessages.qualifiedMarkerCommand_title,
 						new Object[] {
 								MarkerMessages.DialogMarkerProperties_Modify,
-								Util.getResourceName(marker) }), true);
+								translation.name(marker).orElse("") }), true); //$NON-NLS-1$
 
 		try {
 			PlatformUI.getWorkbench().getOperationSupport()

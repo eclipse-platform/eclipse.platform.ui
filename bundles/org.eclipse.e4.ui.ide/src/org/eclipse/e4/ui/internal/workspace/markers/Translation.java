@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 ArSysOp and others.
+ * Copyright (c) 2019-2020 ArSysOp and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -20,6 +20,7 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.internal.views.markers.MarkerItemDefaults;
 import org.osgi.framework.FrameworkUtil;
 
 /**
@@ -76,4 +77,25 @@ public final class Translation {
 		return Optional.empty();
 	}
 
+	/**
+	 * Retrieves the value of Translation#NAME_ATTRIBUTE if the marker has it.
+	 * Otherwise use the name of the resource.
+	 *
+	 * @param marker
+	 * @return the optional result
+	 */
+	public Optional<String> name(IMarker marker) {
+		if (!marker.exists()) {
+			return Optional.empty();
+		}
+		try {
+			Object name = marker.getAttribute(MarkerItemDefaults.NAME_ATTRIBUTE);
+			if (name != null) {
+				return Optional.of(name.toString());
+			}
+		} catch (CoreException e) {
+			reporter.accept(e);
+		}
+		return Optional.of(marker.getResource().getName());
+	}
 }
