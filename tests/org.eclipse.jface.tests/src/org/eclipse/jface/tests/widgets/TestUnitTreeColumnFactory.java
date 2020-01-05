@@ -4,7 +4,7 @@
 * This program and the accompanying materials
 * are made available under the terms of the Eclipse Public License 2.0
 * which accompanies this distribution, and is available at
-* https://www.eclipse.org/legal/epl-2.0/
+* https:www.eclipse.org/legal/epl-2.0/
 *
 * SPDX-License-Identifier: EPL-2.0
 *
@@ -15,6 +15,7 @@ package org.eclipse.jface.tests.widgets;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.eclipse.jface.widgets.TreeColumnFactory;
 import org.eclipse.jface.widgets.WidgetFactory;
@@ -38,7 +39,7 @@ public class TestUnitTreeColumnFactory extends AbstractFactoryTest {
 	}
 
 	@Test
-	public void createTreeColumn() {
+	public void createsTreeColumn() {
 		TreeColumn treeColumn = TreeColumnFactory.newTreeColumn(SWT.LEFT).create(tree);
 
 		assertEquals(tree.getColumn(0), treeColumn);
@@ -47,22 +48,49 @@ public class TestUnitTreeColumnFactory extends AbstractFactoryTest {
 	}
 
 	@Test
-	public void createTreeColumnWithAllProperties() {
+	public void setsSelectionListener() {
 		final SelectionEvent[] raisedEvents = new SelectionEvent[1];
-		TreeColumn treeColumn = TreeColumnFactory.newTreeColumn(SWT.NONE) //
-				.onSelect(e -> raisedEvents[0] = e) //
-				.align(SWT.LEFT) //
-				.tooltip("tooltip") //
-				.width(10) //
+		TreeColumn treeColumn = TreeColumnFactory.newTreeColumn(SWT.NONE).onSelect(e -> raisedEvents[0] = e)
 				.create(tree);
 
 		treeColumn.notifyListeners(SWT.Selection, new Event());
 
 		assertEquals(1, treeColumn.getListeners(SWT.Selection).length);
 		assertNotNull(raisedEvents[0]);
+	}
+
+	@Test
+	public void setsAlignment() {
+		TreeColumn treeColumn = TreeColumnFactory.newTreeColumn(SWT.NONE).align(SWT.LEFT).create(tree);
 
 		assertEquals(SWT.LEFT, treeColumn.getAlignment());
+	}
+
+	@Test
+	public void setsToolTip() {
+		TreeColumn treeColumn = TreeColumnFactory.newTreeColumn(SWT.NONE).tooltip("tooltip").create(tree);
+
 		assertEquals("tooltip", treeColumn.getToolTipText());
-		assertEquals(10, treeColumn.getWidth());
+	}
+
+	@Test
+	public void setsWidth() {
+		TreeColumn treeColumn = TreeColumnFactory.newTreeColumn(SWT.NONE).width(20).create(tree);
+
+		assertEquals(20, treeColumn.getWidth());
+	}
+
+	@Test
+	public void setsMoveable() {
+		TreeColumn treeColumn = TreeColumnFactory.newTreeColumn(SWT.NONE).moveable(true).create(tree);
+
+		assertTrue(treeColumn.getMoveable());
+	}
+
+	@Test
+	public void setsResizable() {
+		TreeColumn treeColumn = TreeColumnFactory.newTreeColumn(SWT.NONE).resizable(true).create(tree);
+
+		assertTrue(treeColumn.getResizable());
 	}
 }
