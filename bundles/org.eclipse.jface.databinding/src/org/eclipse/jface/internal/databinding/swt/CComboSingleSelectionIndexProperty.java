@@ -30,12 +30,12 @@ public class CComboSingleSelectionIndexProperty extends SingleSelectionIndexProp
 	}
 
 	@Override
-	int doGetIntValue(CCombo source) {
+	protected int doGetIntValue(CCombo source) {
 		return source.getSelectionIndex();
 	}
 
 	@Override
-	void doSetIntValue(CCombo source, int value) {
+	protected void doSetIntValue(CCombo source, int value) {
 		if (value == -1)
 			source.deselectAll();
 		else

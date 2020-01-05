@@ -22,12 +22,12 @@ import org.eclipse.swt.widgets.Label;
  */
 public class LabelTextProperty extends WidgetStringValueProperty<Label> {
 	@Override
-	String doGetStringValue(Label source) {
+	protected String doGetStringValue(Label source) {
 		return source.getText();
 	}
 
 	@Override
-	void doSetStringValue(Label source, String value) {
+	protected void doSetStringValue(Label source, String value) {
 		source.setText(value == null ? "" : value); //$NON-NLS-1$
 	}
 

@@ -39,12 +39,12 @@ public class ControlFocusedProperty<S extends Control> extends WidgetBooleanValu
 	}
 
 	@Override
-	public boolean doGetBooleanValue(S source) {
+	protected boolean doGetBooleanValue(S source) {
 		return source.isFocusControl();
 	}
 
 	@Override
-	public void doSetBooleanValue(S source, boolean value) {
+	protected void doSetBooleanValue(S source, boolean value) {
 		if (value)
 			source.setFocus();
 	}

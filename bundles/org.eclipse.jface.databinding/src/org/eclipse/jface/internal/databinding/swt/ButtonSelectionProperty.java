@@ -30,12 +30,12 @@ public class ButtonSelectionProperty extends WidgetBooleanValueProperty<Button> 
 	}
 
 	@Override
-	boolean doGetBooleanValue(Button source) {
+	protected boolean doGetBooleanValue(Button source) {
 		return source.getSelection();
 	}
 
 	@Override
-	void doSetBooleanValue(Button source, boolean value) {
+	protected void doSetBooleanValue(Button source, boolean value) {
 		source.setSelection(value);
 	}
 

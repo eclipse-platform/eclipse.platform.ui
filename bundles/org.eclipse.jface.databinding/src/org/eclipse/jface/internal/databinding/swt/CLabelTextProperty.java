@@ -22,12 +22,12 @@ import org.eclipse.swt.custom.CLabel;
  */
 public class CLabelTextProperty extends WidgetStringValueProperty<CLabel> {
 	@Override
-	String doGetStringValue(CLabel source) {
+	protected String doGetStringValue(CLabel source) {
 		return source.getText();
 	}
 
 	@Override
-	void doSetStringValue(CLabel source, String value) {
+	protected void doSetStringValue(CLabel source, String value) {
 		source.setText(value == null ? "" : value); //$NON-NLS-1$
 	}
 

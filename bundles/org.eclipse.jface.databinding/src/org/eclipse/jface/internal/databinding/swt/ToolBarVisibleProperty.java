@@ -24,7 +24,7 @@ public class ToolBarVisibleProperty extends VisibleProperty<ToolBar> {
 	}
 
 	@Override
-	void doSetBooleanValue(ToolBar source, boolean value) {
+	protected void doSetBooleanValue(ToolBar source, boolean value) {
 		source.setVisible(value);
 	}
 

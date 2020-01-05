@@ -22,12 +22,12 @@ import org.eclipse.swt.widgets.Item;
  */
 public class ItemTextProperty extends WidgetStringValueProperty<Item> {
 	@Override
-	String doGetStringValue(Item source) {
+	protected String doGetStringValue(Item source) {
 		return source.getText();
 	}
 
 	@Override
-	void doSetStringValue(Item source, String value) {
+	protected void doSetStringValue(Item source, String value) {
 		source.setText(value == null ? "" : value); //$NON-NLS-1$
 	}
 

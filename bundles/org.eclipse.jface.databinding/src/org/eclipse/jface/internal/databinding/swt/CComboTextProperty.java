@@ -30,12 +30,12 @@ public class CComboTextProperty extends WidgetStringValueProperty<CCombo> {
 	}
 
 	@Override
-	String doGetStringValue(CCombo source) {
+	protected String doGetStringValue(CCombo source) {
 		return source.getText();
 	}
 
 	@Override
-	void doSetStringValue(CCombo source, String value) {
+	protected void doSetStringValue(CCombo source, String value) {
 		source.setText(value != null ? value : ""); //$NON-NLS-1$
 	}
 

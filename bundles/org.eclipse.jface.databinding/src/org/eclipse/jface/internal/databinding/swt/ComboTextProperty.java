@@ -30,12 +30,12 @@ public class ComboTextProperty extends WidgetStringValueProperty<Combo> {
 	}
 
 	@Override
-	String doGetStringValue(Combo source) {
+	protected String doGetStringValue(Combo source) {
 		return source.getText();
 	}
 
 	@Override
-	void doSetStringValue(Combo source, String value) {
+	protected void doSetStringValue(Combo source, String value) {
 		source.setText(value != null ? value : ""); //$NON-NLS-1$
 	}
 

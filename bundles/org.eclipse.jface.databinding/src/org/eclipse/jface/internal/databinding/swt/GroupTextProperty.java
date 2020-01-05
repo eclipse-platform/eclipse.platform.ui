@@ -24,12 +24,12 @@ import org.eclipse.swt.widgets.Group;
 public class GroupTextProperty extends WidgetStringValueProperty<Group> {
 
 	@Override
-	String doGetStringValue(Group source) {
+	protected String doGetStringValue(Group source) {
 		return source.getText();
 	}
 
 	@Override
-	void doSetStringValue(Group source, String value) {
+	protected void doSetStringValue(Group source, String value) {
 		source.setText(value == null ? "" : value); //$NON-NLS-1$
 	}
 

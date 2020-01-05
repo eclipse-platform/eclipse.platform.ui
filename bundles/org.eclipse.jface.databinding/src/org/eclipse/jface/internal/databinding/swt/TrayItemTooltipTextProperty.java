@@ -23,12 +23,12 @@ import org.eclipse.swt.widgets.TrayItem;
  */
 public class TrayItemTooltipTextProperty extends WidgetStringValueProperty<TrayItem> {
 	@Override
-	String doGetStringValue(TrayItem source) {
+	protected String doGetStringValue(TrayItem source) {
 		return source.getToolTipText();
 	}
 
 	@Override
-	void doSetStringValue(TrayItem source, String value) {
+	protected void doSetStringValue(TrayItem source, String value) {
 		source.setToolTipText(value);
 	}
 

@@ -30,12 +30,12 @@ public class TableSingleSelectionIndexProperty extends SingleSelectionIndexPrope
 	}
 
 	@Override
-	int doGetIntValue(Table source) {
+	protected int doGetIntValue(Table source) {
 		return source.getSelectionIndex();
 	}
 
 	@Override
-	void doSetIntValue(Table source, int value) {
+	protected void doSetIntValue(Table source, int value) {
 		if (value == -1)
 			source.deselectAll();
 		else

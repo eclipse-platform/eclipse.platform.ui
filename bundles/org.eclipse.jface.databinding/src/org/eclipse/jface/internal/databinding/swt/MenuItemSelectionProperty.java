@@ -29,12 +29,12 @@ public class MenuItemSelectionProperty extends WidgetBooleanValueProperty<MenuIt
 	}
 
 	@Override
-	boolean doGetBooleanValue(MenuItem source) {
+	protected boolean doGetBooleanValue(MenuItem source) {
 		return source.getSelection();
 	}
 
 	@Override
-	void doSetBooleanValue(MenuItem source, boolean value) {
+	protected void doSetBooleanValue(MenuItem source, boolean value) {
 		source.setSelection(value);
 	}
 

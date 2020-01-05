@@ -22,12 +22,12 @@ import org.eclipse.swt.custom.CCombo;
  */
 public class CComboEditableProperty extends WidgetBooleanValueProperty<CCombo> {
 	@Override
-	boolean doGetBooleanValue(CCombo source) {
+	protected boolean doGetBooleanValue(CCombo source) {
 		return source.getEditable();
 	}
 
 	@Override
-	void doSetBooleanValue(CCombo source, boolean value) {
+	protected void doSetBooleanValue(CCombo source, boolean value) {
 		source.setEditable(value);
 	}
 

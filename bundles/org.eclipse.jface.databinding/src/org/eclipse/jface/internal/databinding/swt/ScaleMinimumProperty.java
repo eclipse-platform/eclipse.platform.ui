@@ -22,12 +22,12 @@ import org.eclipse.swt.widgets.Scale;
  */
 public class ScaleMinimumProperty extends WidgetIntValueProperty<Scale> {
 	@Override
-	int doGetIntValue(Scale source) {
+	protected int doGetIntValue(Scale source) {
 		return source.getMinimum();
 	}
 
 	@Override
-	void doSetIntValue(Scale source, int value) {
+	protected void doSetIntValue(Scale source, int value) {
 		source.setMinimum(value);
 	}
 

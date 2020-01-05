@@ -30,7 +30,7 @@ public class ListSelectionProperty extends WidgetStringValueProperty<List> {
 	}
 
 	@Override
-	String doGetStringValue(List source) {
+	protected String doGetStringValue(List source) {
 		int index = source.getSelectionIndex();
 		if (index >= 0)
 			return source.getItem(index);
@@ -38,7 +38,7 @@ public class ListSelectionProperty extends WidgetStringValueProperty<List> {
 	}
 
 	@Override
-	void doSetStringValue(List source, String value) {
+	protected void doSetStringValue(List source, String value) {
 		String items[] = source.getItems();
 		int index = -1;
 		if (items != null && value != null) {

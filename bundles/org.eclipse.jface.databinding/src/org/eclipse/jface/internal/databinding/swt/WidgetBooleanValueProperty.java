@@ -53,7 +53,7 @@ public abstract class WidgetBooleanValueProperty<S extends Widget> extends Widge
 		doSetBooleanValue(source, value);
 	}
 
-	abstract boolean doGetBooleanValue(S source);
+	protected abstract boolean doGetBooleanValue(S source);
 
-	abstract void doSetBooleanValue(S source, boolean value);
+	protected abstract void doSetBooleanValue(S source, boolean value);
 }

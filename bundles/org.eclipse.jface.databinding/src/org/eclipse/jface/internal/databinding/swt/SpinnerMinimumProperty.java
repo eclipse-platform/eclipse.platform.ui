@@ -22,12 +22,12 @@ import org.eclipse.swt.widgets.Spinner;
  */
 public class SpinnerMinimumProperty extends WidgetIntValueProperty<Spinner> {
 	@Override
-	int doGetIntValue(Spinner source) {
+	protected int doGetIntValue(Spinner source) {
 		return source.getMinimum();
 	}
 
 	@Override
-	void doSetIntValue(Spinner source, int value) {
+	protected void doSetIntValue(Spinner source, int value) {
 		source.setMinimum(value);
 	}
 

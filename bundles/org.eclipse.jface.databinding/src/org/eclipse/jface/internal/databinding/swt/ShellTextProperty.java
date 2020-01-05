@@ -22,12 +22,12 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class ShellTextProperty extends WidgetStringValueProperty<Shell> {
 	@Override
-	String doGetStringValue(Shell source) {
+	protected String doGetStringValue(Shell source) {
 		return source.getText();
 	}
 
 	@Override
-	void doSetStringValue(Shell source, String value) {
+	protected void doSetStringValue(Shell source, String value) {
 		source.setText(value == null ? "" : value); //$NON-NLS-1$
 	}
 

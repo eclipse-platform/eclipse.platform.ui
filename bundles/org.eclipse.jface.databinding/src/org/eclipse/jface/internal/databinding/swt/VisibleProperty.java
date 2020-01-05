@@ -41,7 +41,7 @@ public abstract class VisibleProperty<S extends Widget> extends WidgetBooleanVal
 	protected abstract boolean doGetVisibleValue(S source);
 
 	@Override
-	final boolean doGetBooleanValue(S source) {
+	final protected boolean doGetBooleanValue(S source) {
 		Boolean cachedVisibleValue = (Boolean) source.getData(CACHED_VALUE_KEY);
 		return cachedVisibleValue == null ? doGetVisibleValue(source) : cachedVisibleValue;
 	}

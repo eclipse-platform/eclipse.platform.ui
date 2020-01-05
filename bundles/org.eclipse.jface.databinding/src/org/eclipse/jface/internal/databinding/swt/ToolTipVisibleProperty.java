@@ -24,7 +24,7 @@ public class ToolTipVisibleProperty extends VisibleProperty<ToolTip> {
 	}
 
 	@Override
-	void doSetBooleanValue(ToolTip source, boolean value) {
+	protected void doSetBooleanValue(ToolTip source, boolean value) {
 		source.setVisible(value);
 	}
 

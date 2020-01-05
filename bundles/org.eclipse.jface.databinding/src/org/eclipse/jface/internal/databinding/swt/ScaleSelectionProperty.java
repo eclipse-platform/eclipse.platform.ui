@@ -30,12 +30,12 @@ public class ScaleSelectionProperty extends WidgetIntValueProperty<Scale> {
 	}
 
 	@Override
-	int doGetIntValue(Scale source) {
+	protected int doGetIntValue(Scale source) {
 		return source.getSelection();
 	}
 
 	@Override
-	void doSetIntValue(Scale source, int value) {
+	protected void doSetIntValue(Scale source, int value) {
 		source.setSelection(value);
 	}
 

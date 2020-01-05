@@ -30,12 +30,12 @@ public class CComboSelectionProperty extends WidgetStringValueProperty<CCombo> {
 	}
 
 	@Override
-	String doGetStringValue(CCombo source) {
+	protected String doGetStringValue(CCombo source) {
 		return source.getText();
 	}
 
 	@Override
-	void doSetStringValue(CCombo source, String value) {
+	protected void doSetStringValue(CCombo source, String value) {
 		String items[] = source.getItems();
 		int index = -1;
 		if (value == null) {

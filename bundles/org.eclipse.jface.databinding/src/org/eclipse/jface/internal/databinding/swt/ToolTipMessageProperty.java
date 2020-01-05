@@ -22,12 +22,12 @@ import org.eclipse.swt.widgets.ToolTip;
  */
 public class ToolTipMessageProperty extends WidgetStringValueProperty<ToolTip> {
 	@Override
-	String doGetStringValue(ToolTip source) {
+	protected String doGetStringValue(ToolTip source) {
 		return source.getMessage();
 	}
 
 	@Override
-	void doSetStringValue(ToolTip source, String value) {
+	protected void doSetStringValue(ToolTip source, String value) {
 		source.setMessage(value == null ? "" : value); //$NON-NLS-1$
 	}
 

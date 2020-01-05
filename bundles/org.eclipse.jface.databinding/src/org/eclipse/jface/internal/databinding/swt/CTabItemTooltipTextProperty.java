@@ -23,12 +23,12 @@ import org.eclipse.swt.custom.CTabItem;
  */
 public class CTabItemTooltipTextProperty extends WidgetStringValueProperty<CTabItem> {
 	@Override
-	String doGetStringValue(CTabItem source) {
+	protected String doGetStringValue(CTabItem source) {
 		return source.getToolTipText();
 	}
 
 	@Override
-	void doSetStringValue(CTabItem source, String value) {
+	protected void doSetStringValue(CTabItem source, String value) {
 		source.setToolTipText(value);
 	}
 

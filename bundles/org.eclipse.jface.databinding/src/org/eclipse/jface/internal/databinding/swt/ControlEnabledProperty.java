@@ -22,12 +22,12 @@ import org.eclipse.swt.widgets.Control;
  */
 public class ControlEnabledProperty extends WidgetBooleanValueProperty<Control> {
 	@Override
-	public boolean doGetBooleanValue(Control source) {
+	protected boolean doGetBooleanValue(Control source) {
 		return source.getEnabled();
 	}
 
 	@Override
-	void doSetBooleanValue(Control source, boolean value) {
+	protected void doSetBooleanValue(Control source, boolean value) {
 		source.setEnabled(value);
 	}
 

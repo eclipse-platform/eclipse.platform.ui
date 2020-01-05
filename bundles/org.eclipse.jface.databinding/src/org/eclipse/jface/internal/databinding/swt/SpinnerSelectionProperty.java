@@ -30,12 +30,12 @@ public class SpinnerSelectionProperty extends WidgetIntValueProperty<Spinner> {
 	}
 
 	@Override
-	int doGetIntValue(Spinner source) {
+	protected int doGetIntValue(Spinner source) {
 		return source.getSelection();
 	}
 
 	@Override
-	void doSetIntValue(Spinner source, int value) {
+	protected void doSetIntValue(Spinner source, int value) {
 		source.setSelection(value);
 	}
 

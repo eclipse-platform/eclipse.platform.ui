@@ -21,12 +21,12 @@ import org.eclipse.swt.widgets.Slider;
  */
 public class SliderMinimumProperty extends WidgetIntValueProperty<Slider> {
 	@Override
-	int doGetIntValue(Slider source) {
+	protected int doGetIntValue(Slider source) {
 		return source.getMinimum();
 	}
 
 	@Override
-	void doSetIntValue(Slider source, int value) {
+	protected void doSetIntValue(Slider source, int value) {
 		source.setMinimum(value);
 	}
 

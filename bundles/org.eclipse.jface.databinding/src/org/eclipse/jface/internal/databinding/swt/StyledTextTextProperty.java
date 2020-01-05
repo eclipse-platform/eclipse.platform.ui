@@ -63,12 +63,12 @@ public class StyledTextTextProperty extends WidgetStringValueProperty<StyledText
 	}
 
 	@Override
-	String doGetStringValue(StyledText source) {
+	protected String doGetStringValue(StyledText source) {
 		return source.getText();
 	}
 
 	@Override
-	void doSetStringValue(StyledText source, String value) {
+	protected void doSetStringValue(StyledText source, String value) {
 		source.setText(value == null ? "" : value); //$NON-NLS-1$
 	}
 

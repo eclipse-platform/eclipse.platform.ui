@@ -51,7 +51,7 @@ public abstract class WidgetIntValueProperty<S extends Widget> extends WidgetVal
 		doSetIntValue(source, value);
 	}
 
-	abstract int doGetIntValue(S source);
+	abstract protected int doGetIntValue(S source);
 
 	abstract void doSetIntValue(S source, int intValue);
 }

@@ -31,12 +31,12 @@ public class ListSingleSelectionIndexProperty extends
 	}
 
 	@Override
-	int doGetIntValue(List source) {
+	protected int doGetIntValue(List source) {
 		return source.getSelectionIndex();
 	}
 
 	@Override
-	void doSetIntValue(List source, int value) {
+	protected void doSetIntValue(List source, int value) {
 		if (value == -1)
 			source.deselectAll();
 		else

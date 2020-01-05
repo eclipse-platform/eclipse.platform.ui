@@ -63,12 +63,12 @@ public class TextTextProperty extends WidgetStringValueProperty<Text> {
 	}
 
 	@Override
-	String doGetStringValue(Text source) {
+	protected String doGetStringValue(Text source) {
 		return source.getText();
 	}
 
 	@Override
-	void doSetStringValue(Text source, String value) {
+	protected void doSetStringValue(Text source, String value) {
 		source.setText(value == null ? "" : value); //$NON-NLS-1$
 	}
 

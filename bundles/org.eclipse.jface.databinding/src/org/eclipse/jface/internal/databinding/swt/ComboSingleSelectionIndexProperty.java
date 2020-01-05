@@ -30,12 +30,12 @@ public class ComboSingleSelectionIndexProperty extends SingleSelectionIndexPrope
 	}
 
 	@Override
-	int doGetIntValue(Combo source) {
+	protected int doGetIntValue(Combo source) {
 		return source.getSelectionIndex();
 	}
 
 	@Override
-	void doSetIntValue(Combo source, int value) {
+	protected void doSetIntValue(Combo source, int value) {
 		if (value == -1)
 			source.deselectAll();
 		else

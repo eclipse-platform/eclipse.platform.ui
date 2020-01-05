@@ -23,12 +23,12 @@ import org.eclipse.swt.widgets.TabItem;
  */
 public class TabItemTooltipTextProperty extends WidgetStringValueProperty<TabItem> {
 	@Override
-	String doGetStringValue(TabItem source) {
+	protected String doGetStringValue(TabItem source) {
 		return source.getToolTipText();
 	}
 
 	@Override
-	void doSetStringValue(TabItem source, String value) {
+	protected void doSetStringValue(TabItem source, String value) {
 		source.setToolTipText(value);
 	}
 

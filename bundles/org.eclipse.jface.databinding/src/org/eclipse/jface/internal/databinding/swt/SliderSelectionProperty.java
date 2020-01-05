@@ -29,12 +29,12 @@ public class SliderSelectionProperty extends WidgetIntValueProperty<Slider> {
 	}
 
 	@Override
-	int doGetIntValue(Slider source) {
+	protected int doGetIntValue(Slider source) {
 		return source.getSelection();
 	}
 
 	@Override
-	void doSetIntValue(Slider source, int value) {
+	protected void doSetIntValue(Slider source, int value) {
 		source.setSelection(value);
 	}
 

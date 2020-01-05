@@ -22,12 +22,12 @@ import org.eclipse.swt.widgets.Control;
  */
 public class ControlTooltipTextProperty extends WidgetStringValueProperty<Control> {
 	@Override
-	String doGetStringValue(Control source) {
+	protected String doGetStringValue(Control source) {
 		return source.getToolTipText();
 	}
 
 	@Override
-	void doSetStringValue(Control source, String value) {
+	protected void doSetStringValue(Control source, String value) {
 		source.setToolTipText(value);
 	}
 

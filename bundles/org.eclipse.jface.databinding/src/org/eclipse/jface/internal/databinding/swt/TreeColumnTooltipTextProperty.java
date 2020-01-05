@@ -23,12 +23,12 @@ import org.eclipse.swt.widgets.TreeColumn;
  */
 public class TreeColumnTooltipTextProperty extends WidgetStringValueProperty<TreeColumn> {
 	@Override
-	String doGetStringValue(TreeColumn source) {
+	protected String doGetStringValue(TreeColumn source) {
 		return source.getToolTipText();
 	}
 
 	@Override
-	void doSetStringValue(TreeColumn source, String value) {
+	protected void doSetStringValue(TreeColumn source, String value) {
 		source.setToolTipText(value);
 	}
 

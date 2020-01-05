@@ -22,12 +22,12 @@ import org.eclipse.swt.widgets.Link;
  */
 public class LinkTextProperty extends WidgetStringValueProperty<Link> {
 	@Override
-	String doGetStringValue(Link source) {
+	protected String doGetStringValue(Link source) {
 		return source.getText();
 	}
 
 	@Override
-	void doSetStringValue(Link source, String value) {
+	protected void doSetStringValue(Link source, String value) {
 		source.setText(value == null ? "" : value); //$NON-NLS-1$
 	}
 

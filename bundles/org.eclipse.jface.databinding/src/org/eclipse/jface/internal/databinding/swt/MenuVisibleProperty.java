@@ -24,7 +24,7 @@ public class MenuVisibleProperty extends VisibleProperty<Menu> {
 	}
 
 	@Override
-	void doSetBooleanValue(Menu source, boolean value) {
+	protected void doSetBooleanValue(Menu source, boolean value) {
 		source.setVisible(value);
 	}
 

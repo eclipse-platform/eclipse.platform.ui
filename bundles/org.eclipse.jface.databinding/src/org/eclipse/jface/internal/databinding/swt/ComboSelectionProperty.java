@@ -30,12 +30,12 @@ public class ComboSelectionProperty extends WidgetStringValueProperty<Combo> {
 	}
 
 	@Override
-	String doGetStringValue(Combo source) {
+	protected String doGetStringValue(Combo source) {
 		return source.getText();
 	}
 
 	@Override
-	void doSetStringValue(Combo source, String value) {
+	protected void doSetStringValue(Combo source, String value) {
 		String items[] = source.getItems();
 		int index = -1;
 		if (items != null && value != null) {

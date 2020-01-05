@@ -41,7 +41,7 @@ public abstract class WidgetImageValueProperty<S extends Widget> extends WidgetV
 		doSetImageValue(source, value);
 	}
 
-	abstract Image doGetImageValue(S source);
+	protected abstract Image doGetImageValue(S source);
 
-	abstract void doSetImageValue(S source, Image value);
+	protected abstract void doSetImageValue(S source, Image value);
 }

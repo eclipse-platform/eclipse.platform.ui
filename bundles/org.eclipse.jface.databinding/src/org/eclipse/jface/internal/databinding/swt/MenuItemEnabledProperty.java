@@ -21,12 +21,12 @@ import org.eclipse.swt.widgets.MenuItem;
  */
 public class MenuItemEnabledProperty extends WidgetBooleanValueProperty<MenuItem> {
 	@Override
-	public boolean doGetBooleanValue(MenuItem source) {
+	protected boolean doGetBooleanValue(MenuItem source) {
 		return source.getEnabled();
 	}
 
 	@Override
-	void doSetBooleanValue(MenuItem source, boolean value) {
+	protected void doSetBooleanValue(MenuItem source, boolean value) {
 		source.setEnabled(value);
 	}
 

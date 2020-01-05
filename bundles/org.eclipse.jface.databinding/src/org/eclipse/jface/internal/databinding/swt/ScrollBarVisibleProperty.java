@@ -24,7 +24,7 @@ public class ScrollBarVisibleProperty extends VisibleProperty<ScrollBar> {
 	}
 
 	@Override
-	void doSetBooleanValue(ScrollBar source, boolean value) {
+	protected void doSetBooleanValue(ScrollBar source, boolean value) {
 		source.setVisible(value);
 	}
 

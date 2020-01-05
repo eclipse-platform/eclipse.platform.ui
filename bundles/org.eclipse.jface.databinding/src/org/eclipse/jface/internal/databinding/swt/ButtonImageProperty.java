@@ -23,12 +23,12 @@ import org.eclipse.swt.widgets.Button;
  */
 public class ButtonImageProperty extends WidgetImageValueProperty<Button> {
 	@Override
-	Image doGetImageValue(Button source) {
+	protected Image doGetImageValue(Button source) {
 		return source.getImage();
 	}
 
 	@Override
-	void doSetImageValue(Button source, Image value) {
+	protected void doSetImageValue(Button source, Image value) {
 		source.setImage(value);
 	}
 

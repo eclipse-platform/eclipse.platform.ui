@@ -22,12 +22,12 @@ import org.eclipse.swt.widgets.Text;
  */
 public class TextMessageProperty extends WidgetStringValueProperty<Text> {
 	@Override
-	String doGetStringValue(Text source) {
+	protected String doGetStringValue(Text source) {
 		return source.getMessage();
 	}
 
 	@Override
-	void doSetStringValue(Text source, String value) {
+	protected void doSetStringValue(Text source, String value) {
 		source.setMessage(value == null ? "" : value); //$NON-NLS-1$
 	}
 

@@ -29,7 +29,7 @@ public class ControlVisibleProperty<S extends Control> extends VisibleProperty<S
 	}
 
 	@Override
-	void doSetBooleanValue(S source, boolean value) {
+	protected void doSetBooleanValue(S source, boolean value) {
 		source.setVisible(value);
 	}
 

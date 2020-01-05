@@ -55,7 +55,7 @@ public abstract class WidgetStringValueProperty<S extends Widget> extends Widget
 		doSetStringValue(source, value);
 	}
 
-	abstract String doGetStringValue(S source);
+	protected abstract String doGetStringValue(S source);
 
-	abstract void doSetStringValue(S source, String value);
+	protected abstract void doSetStringValue(S source, String value);
 }
