@@ -20,14 +20,13 @@ import static org.junit.Assert.fail;
 import org.eclipse.core.databinding.BindingProperties;
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.property.value.IValueProperty;
-import org.eclipse.core.internal.databinding.ConverterValueProperty;
 import org.eclipse.core.internal.databinding.conversion.ObjectToStringConverter;
 import org.eclipse.jface.tests.databinding.AbstractDefaultRealmTestCase;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Tests for the {@link ConverterValueProperty} class.
+ * Tests for {@link BindingProperties#convertedValue}.
  */
 public class ConverterValuePropertyTest extends AbstractDefaultRealmTestCase {
 
@@ -45,7 +44,7 @@ public class ConverterValuePropertyTest extends AbstractDefaultRealmTestCase {
 	public void testGetValue() {
 		IValueProperty<Object, String> property = BindingProperties.convertedValue(converter);
 
-		assertEquals("123", property.getValue(Integer.valueOf(123)));
+		assertEquals("123", property.getValue(123));
 	}
 
 	@Test
@@ -62,7 +61,7 @@ public class ConverterValuePropertyTest extends AbstractDefaultRealmTestCase {
 		IValueProperty<Object, String> property = BindingProperties.convertedValue(converter);
 
 		try {
-			property.setValue(Integer.valueOf(123), "123");
+			property.setValue(123, "123");
 			fail("setting a value should trigger an exception!");
 		} catch (UnsupportedOperationException e) {
 			// expected exception

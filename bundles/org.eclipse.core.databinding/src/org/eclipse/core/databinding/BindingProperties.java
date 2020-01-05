@@ -23,7 +23,6 @@ import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.internal.databinding.BindingModelProperty;
 import org.eclipse.core.internal.databinding.BindingTargetProperty;
-import org.eclipse.core.internal.databinding.ConverterValueProperty;
 import org.eclipse.core.internal.databinding.DataBindingContextBindingsProperty;
 import org.eclipse.core.internal.databinding.DataBindingContextValidationStatusProvidersProperty;
 import org.eclipse.core.internal.databinding.ValidationStatusProviderModelsProperty;
@@ -129,9 +128,10 @@ public class BindingProperties {
 	 *         applying the given converter to the source object passed to the
 	 *         value property.
 	 *
+	 * @see Properties#convertedValue(Object, java.util.function.Function)
 	 * @since 1.4
 	 */
 	public static <S, T> IValueProperty<S, T> convertedValue(IConverter<S, T> converter) {
-		return new ConverterValueProperty<>(converter);
+		return Properties.convertedValue(converter.getToType(), converter::convert);
 	}
 }

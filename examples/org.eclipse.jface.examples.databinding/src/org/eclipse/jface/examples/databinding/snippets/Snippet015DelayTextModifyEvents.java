@@ -15,12 +15,11 @@
  ***********************************************************************************************************/
 package org.eclipse.jface.examples.databinding.snippets;
 
-import org.eclipse.core.databinding.BindingProperties;
 import org.eclipse.core.databinding.DataBindingContext;
-import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.property.Properties;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
@@ -92,8 +91,7 @@ public class Snippet015DelayTextModifyEvents {
 
 		DataBindingContext bindingContext = new DataBindingContext();
 
-		IValueProperty<Boolean, Font> fontProperty = BindingProperties
-				.convertedValue(IConverter.create(null, null, stale -> stale ? italicFont : shellFont));
+		IValueProperty<Boolean, Font> fontProperty = Properties.convertedValue(stale -> stale ? italicFont : shellFont);
 
 		bindingContext.bindValue(WidgetProperties.font().observe(field2), fontProperty.observeDetail(stale1));
 		bindingContext.bindValue(WidgetProperties.font().observe(field1), fontProperty.observeDetail(stale2));
