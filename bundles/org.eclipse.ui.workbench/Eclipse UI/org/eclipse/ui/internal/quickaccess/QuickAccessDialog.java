@@ -232,7 +232,7 @@ public class QuickAccessDialog extends PopupDialog {
 	@Override
 	protected Control createTitleControl(Composite parent) {
 		parent.getShell().setText(QuickAccessMessages.QuickAccessContents_QuickAccess);
-		filterText = new Text(parent, SWT.NONE);
+		filterText = new Text(parent, SWT.SEARCH | SWT.ICON_CANCEL);
 		GridDataFactory.fillDefaults().align(SWT.FILL, SWT.CENTER).grab(true, false).applyTo(filterText);
 		contents.hookFilterText(filterText);
 		filterText.addKeyListener(getKeyAdapter());
