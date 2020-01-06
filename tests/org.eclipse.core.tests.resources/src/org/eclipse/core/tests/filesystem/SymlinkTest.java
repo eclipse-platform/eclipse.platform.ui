@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 Wind River Systems, Inc. and others.
+ * Copyright (c) 2007, 2020 Wind River Systems, Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -35,7 +35,8 @@ public class SymlinkTest extends FileSystemTest {
 	 * target. The {@link java.io.File#exists() File.exists()} method on Windows checks for
 	 * existence of the symbolic link itself, not its target.
 	 */
-	private static final boolean SYMLINKS_ARE_FIRST_CLASS_FILES_OR_DIRECTORIES = isWindowsVistaOrHigher();
+	private static final boolean SYMLINKS_ARE_FIRST_CLASS_FILES_OR_DIRECTORIES = Platform.OS_WIN32
+			.equals(Platform.getOS()) ? true : false;
 	private static String specialCharName = "äöüß ÄÖÜ àÀâÂ µ²³úá"; //$NON-NLS-1$
 
 	protected IFileStore aDir, aFile; //actual Dir, File
@@ -361,12 +362,7 @@ public class SymlinkTest extends FileSystemTest {
 	}
 
 	public void testSymlinkEnabled() {
-		String os = Platform.getOS();
-		if (Platform.OS_LINUX.equals(os) || Platform.OS_MACOSX.equals(os) || isWindowsVistaOrHigher()) {
-			assertTrue(haveSymlinks());
-		} else {
-			assertFalse(haveSymlinks());
-		}
+		assertTrue(haveSymlinks());
 	}
 
 	/**
