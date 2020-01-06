@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2019 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -861,20 +861,50 @@ public class PartServiceImpl implements EPartService {
 		MPart sharedPart = null;
 
 		// check for existing parts if necessary
+		boolean secondaryId = false;
+		String descId = id;
 		if (!force) {
+			int colonIndex = id.indexOf(':');
+			if (colonIndex >= 0) {
+				secondaryId = true;
+				descId = id.substring(0, colonIndex);
+				descId += ":*"; //$NON-NLS-1$
+			}
 			for (MUIElement element : sharedWindow.getSharedElements()) {
-				if (element.getElementId().equals(id)) {
+				if (element.getElementId().equals(descId)) {
 					sharedPart = (MPart) element;
 					break;
 				}
 			}
 		}
-
-		if (sharedPart == null) {
+		MElementContainer<MUIElement> sharedPlaceHolderParent = null;
+		if (sharedPart == null || secondaryId) {
 			MPartDescriptor descriptor = modelService.getPartDescriptor(id);
 			sharedPart = createPart(descriptor);
 			if (sharedPart == null) {
 				return null;
+			}
+			MPart active = getActivePart();
+			if (secondaryId && active != null) {
+				MElementContainer<MUIElement> parent = active.getParent();
+				MPlaceholder sharedRef = active.getCurSharedRef();
+				if (sharedRef != null) {
+					parent = sharedRef.getParent();
+				}
+				while (!(MPerspective.class.isInstance(parent) || MWindow.class.isInstance(parent))) {
+					if (parent.getParent() == null) {
+						break;
+					}
+					parent = parent.getParent();
+				}
+
+				List<MPlaceholder> phs = modelService.findElements(parent, descId, MPlaceholder.class, null);
+				if (phs.size() == 1) {
+					MPlaceholder ph = phs.get(0);
+					sharedPlaceHolderParent = ph.getParent();
+					sharedPart.setCloseable(ph.isCloseable());
+					sharedPart.getTags().addAll(ph.getTags());
+				}
 			}
 
 			// Replace the id to ensure that multi-instance parts work correctly
@@ -883,17 +913,21 @@ public class PartServiceImpl implements EPartService {
 			sharedWindow.getSharedElements().add(sharedPart);
 		}
 
-		return createSharedPart(sharedPart);
+		return createSharedPart(sharedPart, sharedPlaceHolderParent);
 	}
 
-	private MPlaceholder createSharedPart(MPart sharedPart) {
+	private MPlaceholder createSharedPart(MPart sharedPart, MElementContainer<MUIElement> sharedPlaceHolderParent) {
 		// Create and return a reference to the shared part
 		MPlaceholder sharedPartRef = modelService.createModelElement(MPlaceholder.class);
 		sharedPartRef.setElementId(sharedPart.getElementId());
 		sharedPartRef.setRef(sharedPart);
+		sharedPartRef.setCloseable(sharedPart.isCloseable());
+		sharedPartRef.getTags().addAll(sharedPart.getTags());
+		if (sharedPlaceHolderParent != null) {
+			sharedPartRef.setParent(sharedPlaceHolderParent);
+		}
 		return sharedPartRef;
 	}
-
 	/**
 	 * Adds a part to the current container if it isn't already in the container. The part may still
 	 * be added to the container if the part supports having multiple copies of itself in a given
@@ -1008,7 +1042,7 @@ public class PartServiceImpl implements EPartService {
 			// need to spawn another one as we don't want to reuse the same one and end up
 			// shifting that placeholder to the current container during the add operation
 					|| (placeholder.getParent() != null && !isInContainer(placeholder))) {
-				placeholder = createSharedPart(part);
+						placeholder = createSharedPart(part, null);
 				part.setCurSharedRef(placeholder);
 			}
 		}
