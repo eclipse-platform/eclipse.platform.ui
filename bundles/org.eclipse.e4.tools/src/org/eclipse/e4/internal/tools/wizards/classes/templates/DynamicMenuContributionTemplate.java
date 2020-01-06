@@ -29,27 +29,27 @@ public class DynamicMenuContributionTemplate
   public String generate(Object argument)
   {
     final StringBuilder stringBuffer = new StringBuilder();
-     DynamicMenuContributionClass domainClass = (DynamicMenuContributionClass)argument; 
+     DynamicMenuContributionClass domainClass = (DynamicMenuContributionClass)argument;
     stringBuffer.append(TEXT_1);
-     if( domainClass.getPackageFragment() != null && domainClass.getPackageFragment().getElementName().trim().length() > 0 ) { 
+     if( domainClass.getPackageFragment() != null && domainClass.getPackageFragment().getElementName().trim().length() > 0 ) {
     stringBuffer.append(TEXT_2);
     stringBuffer.append( domainClass.getPackageFragment().getElementName() );
     stringBuffer.append(TEXT_3);
-     } 
+     }
     stringBuffer.append(TEXT_4);
-     if( domainClass.isUseAboutToHide() )  { 
+     if( domainClass.isUseAboutToHide() )  {
     stringBuffer.append(TEXT_5);
-     } 
+     }
     stringBuffer.append(TEXT_6);
     stringBuffer.append( domainClass.getName() );
     stringBuffer.append(TEXT_7);
     stringBuffer.append( domainClass.getAboutToShowMethodName() );
     stringBuffer.append(TEXT_8);
-     if( domainClass.isUseAboutToHide() )  { 
+     if( domainClass.isUseAboutToHide() )  {
     stringBuffer.append(TEXT_9);
     stringBuffer.append( domainClass.getAboutToHideMethodName() );
     stringBuffer.append(TEXT_10);
-     } 
+     }
     stringBuffer.append(TEXT_11);
     return stringBuffer.toString();
   }

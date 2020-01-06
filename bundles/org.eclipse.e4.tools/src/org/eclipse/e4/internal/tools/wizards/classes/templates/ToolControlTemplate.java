@@ -28,24 +28,24 @@ public class ToolControlTemplate
   public String generate(Object argument)
   {
     final StringBuilder stringBuffer = new StringBuilder();
-     ToolControlClass domainClass = (ToolControlClass)argument; 
-     if( domainClass.getPackageFragment() != null && domainClass.getPackageFragment().getElementName().trim().length() > 0 ) { 
+     ToolControlClass domainClass = (ToolControlClass)argument;
+     if( domainClass.getPackageFragment() != null && domainClass.getPackageFragment().getElementName().trim().length() > 0 ) {
     stringBuffer.append(TEXT_1);
     stringBuffer.append( domainClass.getPackageFragment().getElementName() );
     stringBuffer.append(TEXT_2);
-     } 
+     }
     stringBuffer.append(TEXT_3);
-     if( domainClass.isCreateDefaultConstructor() )  { 
+     if( domainClass.isCreateDefaultConstructor() )  {
     stringBuffer.append(TEXT_4);
-     } 
+     }
     stringBuffer.append(TEXT_5);
     stringBuffer.append( domainClass.getName() );
     stringBuffer.append(TEXT_6);
-     if( domainClass.isCreateDefaultConstructor() )  { 
+     if( domainClass.isCreateDefaultConstructor() )  {
     stringBuffer.append(TEXT_7);
     stringBuffer.append( domainClass.getName() );
     stringBuffer.append(TEXT_8);
-     } 
+     }
     stringBuffer.append(TEXT_9);
     stringBuffer.append( domainClass.getCreateGuiMethodName() );
     stringBuffer.append(TEXT_10);
