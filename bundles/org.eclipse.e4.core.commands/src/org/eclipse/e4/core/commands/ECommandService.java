@@ -91,7 +91,7 @@ public interface ECommandService {
 
 	/**
 	 * Get category for id.
-	 * 
+	 *
 	 * @param categoryId - The category id
 	 * @return the category for id
 	 */
@@ -99,7 +99,7 @@ public interface ECommandService {
 
 	/**
 	 * Get command for id.
-	 * 
+	 *
 	 * @param commandId - The command id
 	 * @return the command for id
 	 */
