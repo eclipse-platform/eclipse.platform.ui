@@ -18,11 +18,11 @@ import org.eclipse.core.tools.metadata.*;
 
 /**
  * A dumper for .markers files.
- * 
+ *
  * @see org.eclipse.core.tools.metadata.AbstractDumper
- * @see org.eclipse.core.tools.resources.metadata.MarkersDumpingStrategy_1 
+ * @see org.eclipse.core.tools.resources.metadata.MarkersDumpingStrategy_1
  * @see org.eclipse.core.tools.resources.metadata.MarkersDumpingStrategy_2
- * @see org.eclipse.core.tools.resources.metadata.MarkersDumpingStrategy_3  
+ * @see org.eclipse.core.tools.resources.metadata.MarkersDumpingStrategy_3
  */
 public class MarkersDumper extends MultiStrategyDumper {
 

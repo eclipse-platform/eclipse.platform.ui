@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * 	Martin Oberhuber (Wind River) - [170317] add symbolic link support to API
@@ -21,7 +21,7 @@ import org.eclipse.core.internal.filesystem.local.LocalFileNativesManager;
 /**
  * This class should be used by file system providers in their implementation
  * of API methods that return {@link IFileInfo} objects.
- * 
+ *
  * @since org.eclipse.core.filesystem 1.0
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -73,7 +73,7 @@ public class FileInfo implements IFileInfo {
 	/**
 	 * Creates a new file information object. All values except the file name
 	 * will have default values.
-	 * 
+	 *
 	 * @param name The name of this file
 	 */
 	public FileInfo(String name) {
@@ -83,7 +83,7 @@ public class FileInfo implements IFileInfo {
 
 	/**
 	 * Convenience method to clear a masked region of the attributes bit field.
-	 * 
+	 *
 	 * @param mask The mask to be cleared
 	 */
 	private void clear(int mask) {
@@ -195,7 +195,7 @@ public class FileInfo implements IFileInfo {
 
 	/**
 	 * Sets whether this is a file or directory.
-	 * 
+	 *
 	 * @param value <code>true</code> if this is a directory, and <code>false</code>
 	 * if this is a file.
 	 */
@@ -208,7 +208,7 @@ public class FileInfo implements IFileInfo {
 
 	/**
 	 * Sets whether this file or directory exists.
-	 * 
+	 *
 	 * @param value <code>true</code> if this file exists, and <code>false</code>
 	 * otherwise.
 	 */
@@ -221,7 +221,7 @@ public class FileInfo implements IFileInfo {
 
 	/**
 	 * Sets the error code indicating whether an I/O error was encountered when accessing the file.
-	 * 
+	 *
 	 * @param errorCode {@link IFileInfo#IO_ERROR} if this file has an I/O error,
 	 * and {@link IFileInfo#NONE} otherwise.
 	 * @since 1.4
@@ -238,7 +238,7 @@ public class FileInfo implements IFileInfo {
 	/**
 	 * Sets the length of this file. A value of {@link EFS#NONE}
 	 * indicates the file does not exist, is a directory, or the length could not be computed.
-	 * 
+	 *
 	 * @param value the length of this file, or {@link EFS#NONE}
 	 */
 	public void setLength(long value) {
@@ -247,7 +247,7 @@ public class FileInfo implements IFileInfo {
 
 	/**
 	 * Sets the name of this file.
-	 * 
+	 *
 	 * @param name The file name
 	 */
 	public void setName(String name) {
@@ -258,7 +258,7 @@ public class FileInfo implements IFileInfo {
 
 	/**
 	 * Sets or clears a String attribute, e.g. symbolic link target.
-	 * 
+	 *
 	 * @param attribute The kind of attribute to set. Currently only
 	 * {@link EFS#ATTRIBUTE_LINK_TARGET} is supported.
 	 * @param value The String attribute, or <code>null</code> to clear

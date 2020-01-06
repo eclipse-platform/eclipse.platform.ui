@@ -809,7 +809,7 @@ public class ResourceDeltaVerifier extends Assert implements IResourceChangeList
 
 	/**
 	 * Appends additional information to the current validation error message.
-	 * 
+	 *
 	 * @param message
 	 *            the additional information to append
 	 */

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -32,7 +32,7 @@ public class FileSystemAccess {
 	private static BundleContext context = FrameworkUtil.getBundle(FileSystemAccess.class).getBundleContext();
 
 	/**
-	 * Returns the local file system location that should be used for 
+	 * Returns the local file system location that should be used for
 	 * caching file data.
 	 */
 	public static IPath getCacheLocation() {

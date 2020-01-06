@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -62,7 +62,7 @@ public class FileCache {
 
 	/**
 	 * Creates a new file cache.
-	 * 
+	 *
 	 * @throws CoreException If the file cache could not be created
 	 */
 	private FileCache() throws CoreException {
@@ -77,7 +77,7 @@ public class FileCache {
 	/**
 	 * Implements {@link FileStore#toLocalFile(int, IProgressMonitor)}
 	 * @param source source data to cache on disk
-	 * @param monitor 
+	 * @param monitor
 	 *            monitor to indicate progress and receive cancellation
 	 * @return The cached file
 	 * @throws CoreException on errors using the source filestore or writing the cache file
@@ -153,7 +153,7 @@ public class FileCache {
 
 	/**
 	 * Returns a new unique directory in the given parent directory.
-	 * 
+	 *
 	 * @param parent
 	 * @param create <code>true</code> if the directory should
 	 * be created, and false otherwise.

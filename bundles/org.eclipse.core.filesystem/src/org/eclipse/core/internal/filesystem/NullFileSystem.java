@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -32,7 +32,7 @@ public class NullFileSystem extends FileSystem {
 
 	/**
 	 * Returns the instance of this file system
-	 * 
+	 *
 	 * @return The instance of this file system.
 	 */
 	public static IFileSystem getInstance() {

@@ -20,13 +20,13 @@ package org.eclipse.core.internal.dtree;
  */
 public class SpySupport {
 
-	/* 
+	/*
 	 * Class cannot be instantiated.
 	 */
 	private SpySupport() {
 		// not allowed
 	}
-	
+
 	public static AbstractDataTreeNode getRootNode(DeltaDataTree node) {
 		return node.getRootNode();
 	}

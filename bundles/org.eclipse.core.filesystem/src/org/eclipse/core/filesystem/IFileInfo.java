@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  * 	Martin Oberhuber (Wind River) - [170317] add symbolic link support to API
@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * not cause corresponding changes to any file on disk, and changes to files
  * on disk are not reflected in this object. At best, an IFileInfo represents a snapshot
  * of the state of a file at a particular moment in time.
- * 
+ *
  * @see IFileStore#fetchInfo(int, IProgressMonitor)
  * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
  * @since org.eclipse.core.filesystem 1.0
@@ -43,7 +43,7 @@ public interface IFileInfo extends Comparable<IFileInfo>, Cloneable {
 
 	/**
 	 * Returns whether this file or directory exists.
-	 * 
+	 *
 	 * @return <code>true</code> if this file exists, and <code>false</code>
 	 * if the file does not exist or an I/O error was encountered.
 	 */
@@ -51,7 +51,7 @@ public interface IFileInfo extends Comparable<IFileInfo>, Cloneable {
 
 	/**
 	 * Checks whether an I/O error was encountered while accessing this file or directory.
-	 * 
+	 *
 	 * @return {@link #IO_ERROR} if an I/O error was encountered, or {@link #NONE} otherwise.
 	 * @since 1.4
 	 */
@@ -63,7 +63,7 @@ public interface IFileInfo extends Comparable<IFileInfo>, Cloneable {
 	 * constants. Returns <code>false</code> if this file does not exist,
 	 * could not be accessed, or the provided attribute does not apply to this
 	 * file system.
-	 * 
+	 *
 	 * @param attribute The attribute to retrieve the value for
 	 * @return the value of the specified attribute for this file.
 	 * @see IFileSystem#attributes()
@@ -75,8 +75,8 @@ public interface IFileInfo extends Comparable<IFileInfo>, Cloneable {
 	 * must be one of the <code>EFS#ATTRIBUTE_*</code>
 	 * constants. Returns <code>null</code> if this file does not exist,
 	 * could not be accessed, or the provided attribute does not apply to this
-	 * file system.	 
-	 * 
+	 * file system.
+	 *
 	 * @param attribute The kind of attribute to return.  Currently only
 	 * {@link EFS#ATTRIBUTE_LINK_TARGET} is supported.
 	 * @return the value of the extended String attribute for this file.
@@ -89,10 +89,10 @@ public interface IFileInfo extends Comparable<IFileInfo>, Cloneable {
 	 * Returns the last modified time for this file, or {@link EFS#NONE}
 	 * if the file does not exist or the last modified time could not be computed.
 	 * <p>
-	 * The time is represented as the number of Universal Time (UT) 
+	 * The time is represented as the number of Universal Time (UT)
 	 * milliseconds since the epoch (00:00:00 GMT, January 1, 1970).
 	 * </p>
-	 * 
+	 *
 	 * @return the last modified time for this file, or {@link EFS#NONE}
 	 */
 	public long getLastModified();
@@ -100,15 +100,15 @@ public interface IFileInfo extends Comparable<IFileInfo>, Cloneable {
 	/**
 	 * Returns the length of this file, or {@link EFS#NONE}
 	 * if the file does not exist, or the length could not be computed.
-	 * For directories, the return value is unspecified. 
-	 * 
+	 * For directories, the return value is unspecified.
+	 *
 	 * @return the length of this file, or {@link EFS#NONE}
 	 */
 	public long getLength();
 
 	/**
 	 * Returns the name of this file.
-	 * 
+	 *
 	 * @return the name of this file.
 	 */
 	public String getName();
@@ -116,7 +116,7 @@ public interface IFileInfo extends Comparable<IFileInfo>, Cloneable {
 	/**
 	 * Returns whether this file is a directory, or <code>false</code> if this
 	 * file does not exist.
-	 * 
+	 *
 	 * @return <code>true</code> if this file is a directory, and <code>false</code>
 	 * otherwise.
 	 */
@@ -124,13 +124,13 @@ public interface IFileInfo extends Comparable<IFileInfo>, Cloneable {
 
 	/**
 	 * Sets the value of the specified attribute for this file info.  The attribute
-	 * must be one of the <code>EFS#ATTRIBUTE_*</code> constants.  
+	 * must be one of the <code>EFS#ATTRIBUTE_*</code> constants.
 	 * Note that not all attributes are applicable in a given file system.
 	 * <p>
 	 * Users must call {@link IFileStore#putInfo(IFileInfo, int, IProgressMonitor)}
 	 * before changes made to this info take effect in an underlying file.
 	 * </p>
-	 * 
+	 *
 	 * @param attribute The attribute to set the value for
 	 * @param value the value of the specified attribute for this file.
 	 * @see IFileSystem#attributes()
@@ -144,7 +144,7 @@ public interface IFileInfo extends Comparable<IFileInfo>, Cloneable {
 	 * Users must call {@link IFileStore#putInfo(IFileInfo, int, IProgressMonitor)}
 	 * before changes made to this info take effect in an underlying file.
 	 * </p>
-	 * 
+	 *
 	 * @param time the last modified time for this file, or {@link EFS#NONE}
 	 */
 	public void setLastModified(long time);

@@ -19,7 +19,7 @@ import org.eclipse.core.tools.metadata.*;
 /**
  * A dumper for .syncinfo files.
  *
- * @see org.eclipse.core.tools.metadata.AbstractDumper 
+ * @see org.eclipse.core.tools.metadata.AbstractDumper
  * @see org.eclipse.core.tools.resources.metadata.SyncInfoDumpingStrategy_2
  * @see org.eclipse.core.tools.resources.metadata.SyncInfoDumpingStrategy_3
  */

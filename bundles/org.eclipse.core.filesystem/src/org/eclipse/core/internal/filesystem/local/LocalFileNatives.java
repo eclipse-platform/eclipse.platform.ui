@@ -29,7 +29,7 @@ abstract class LocalFileNatives {
 	private static int nativeAttributes = -1;
 
 	/** instance of this library */
-	// The name convention is to use the plugin version at the time the library is changed.  
+	// The name convention is to use the plugin version at the time the library is changed.
 	private static final String LIBRARY_NAME = "localfile_1_0_0"; //$NON-NLS-1$
 
 	static {
@@ -66,7 +66,7 @@ abstract class LocalFileNatives {
 	 * file system implementation supports.
 	 * <p>
 	 * This is an optional method: if it has not been compiled
-	 * into the native library, the client must catch the 
+	 * into the native library, the client must catch the
 	 * resulting UnsatisfiedLinkError and handle attributes
 	 * as known by older version libraries.
 	 * </p>
@@ -78,14 +78,14 @@ abstract class LocalFileNatives {
 	/**
 	 * Return the value that the native library thinks
 	 * {@link IFileSystem#attributes()} should return.
-	 * 
+	 *
 	 * Returns -1 when the native library has not been
 	 * loaded, or is a version that does not support
 	 * this investigation method yet.
-	 * 
+	 *
 	 * @return an positive value that is a bit-mask
 	 *    suitable for use in {@link IFileSystem#attributes},
-	 *    or -1 if native attributes are not available. 
+	 *    or -1 if native attributes are not available.
 	 */
 	public static int attributes() {
 		return nativeAttributes;
@@ -94,9 +94,9 @@ abstract class LocalFileNatives {
 	/**
 	 * Copies file attributes from source to destination. The copyLastModified attribute
 	 * indicates whether the lastModified attribute should be copied.
-	 * @param source 
-	 * @param destination 
-	 * @param copyLastModified 
+	 * @param source
+	 * @param destination
+	 * @param copyLastModified
 	 * @return <code>true</code> for success, and <code>false</code> otherwise.
 	 */
 	public static boolean copyAttributes(String source, String destination, boolean copyLastModified) {
@@ -151,12 +151,12 @@ abstract class LocalFileNatives {
 	 */
 	private static final native boolean internalIsUnicode();
 
-	/** Set the extended attributes specified in the IResource attribute. Only attributes 
+	/** Set the extended attributes specified in the IResource attribute. Only attributes
 	 * that the platform supports will be set. */
 	private static final native boolean internalSetFileInfo(byte[] fileName, IFileInfo attribute);
 
-	/** Set the extended attributes specified in the IResource attribute object. Only 
-	 * attributes that the platform supports will be set. (Unicode version - should not 
+	/** Set the extended attributes specified in the IResource attribute object. Only
+	 * attributes that the platform supports will be set. (Unicode version - should not
 	 * be called if <code>isUnicode</code> is <code>false</code>). */
 	private static final native boolean internalSetFileInfoW(char[] fileName, IFileInfo attribute, int options);
 

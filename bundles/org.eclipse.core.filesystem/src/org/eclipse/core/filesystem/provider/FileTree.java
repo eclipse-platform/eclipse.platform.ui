@@ -16,12 +16,12 @@ package org.eclipse.core.filesystem.provider;
 import org.eclipse.core.filesystem.*;
 
 /**
- * The abstract superclass of all {@link IFileTree} implementations.  
+ * The abstract superclass of all {@link IFileTree} implementations.
  * <p>
  * Clients may subclass this class to provide a file tree for their particular
  * file system.
  * </p>
- * 
+ *
  * @since org.eclipse.core.filesystem 1.0
  */
 public abstract class FileTree implements IFileTree {

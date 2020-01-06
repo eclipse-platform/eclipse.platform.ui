@@ -55,7 +55,7 @@ public class BucketTree {
 
 	/**
 	 * From a starting point in the tree, visit all nodes under it.
-	 * 
+	 *
 	 * @param visitor the processor for the bucket entries
 	 * @param base    the base path to start the tree at
 	 * @param depth   the max depth to decent the tree

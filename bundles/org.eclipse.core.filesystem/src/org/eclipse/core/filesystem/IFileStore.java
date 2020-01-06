@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  * 		IBM Corporation - initial API and implementation
  * 		Martin Oberhuber (Wind River) - [170317] add symbolic link support to API
@@ -22,7 +22,7 @@ import org.eclipse.core.filesystem.provider.FileStore;
 import org.eclipse.core.runtime.*;
 
 /**
- * A file store is responsible for storage and retrieval of a single file in some file system.  
+ * A file store is responsible for storage and retrieval of a single file in some file system.
  * The actual protocols and media used for communicating with the file system
  * are abstracted away by this interface, apart from the store's ability
  * to represent itself as a hierarchical {@link java.net.URI}.
@@ -40,7 +40,7 @@ import org.eclipse.core.runtime.*;
  * will be case-sensitive and case-preserving only when representing case-sensitive
  * and case-preserving file systems.
  * </p>
- * 
+ *
  * @since org.eclipse.core.filesystem 1.0
  * @noimplement This interface is not intended to be implemented by clients. File store
  * implementations must subclass {@link FileStore} rather than implementing
@@ -49,14 +49,14 @@ import org.eclipse.core.runtime.*;
 public interface IFileStore extends IAdaptable {
 
 	/**
-	 * Returns an {@link IFileInfo} instance for each file and directory contained 
+	 * Returns an {@link IFileInfo} instance for each file and directory contained
 	 * within this store.
-	 * 
+	 *
 	 * @param options bit-wise or of option flag constants (currently only {@link EFS#NONE}
 	 * is applicable).
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
-	 * @return An array of information about the children of this store, or an empty 
+	 * @return An array of information about the children of this store, or an empty
 	 * array if this store has no children.
 	 * @exception CoreException if this method fails. Reasons include:
 	 * <ul>
@@ -68,7 +68,7 @@ public interface IFileStore extends IAdaptable {
 
 	/**
 	 * Returns the names of the files and directories contained within this store.
-	 * 
+	 *
 	 * @param options bit-wise or of option flag constants (currently only {@link EFS#NONE}
 	 * is applicable).
 	 * @param monitor a progress monitor, or <code>null</code> if progress
@@ -83,9 +83,9 @@ public interface IFileStore extends IAdaptable {
 	public String[] childNames(int options, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Returns an {@link IFileStore} instance for each file and directory contained 
+	 * Returns an {@link IFileStore} instance for each file and directory contained
 	 * within this store.
-	 * 
+	 *
 	 * @param options bit-wise or of option flag constants (currently only {@link EFS#NONE}
 	 * is applicable).
 	 * @param monitor a progress monitor, or <code>null</code> if progress
@@ -104,7 +104,7 @@ public interface IFileStore extends IAdaptable {
 	 * Copies the file represented by this store to the provided destination store.
 	 * Copying occurs with best-effort semantics; if some files cannot be copied,
 	 * exceptions are recorded but other files will continue to be copied if possible.
-	 * 
+	 *
 	 * <p>
 	 * The {@link EFS#OVERWRITE} option flag indicates how
 	 * this method deals with files that already exist at the copy destination. If
@@ -122,7 +122,7 @@ public interface IFileStore extends IAdaptable {
 	 *</p>
 	 * <p>
 	 * The {@link EFS#SHALLOW} option flag indicates how
-	 * this method deals with copying of directories. If the <code>SHALLOW</code> 
+	 * this method deals with copying of directories. If the <code>SHALLOW</code>
 	 * flag is present, then a directory will be copied but the files and directories
 	 * within it will not.  When this flag is not present, all child directories and files
 	 * of a directory are copied recursively.
@@ -132,7 +132,7 @@ public interface IFileStore extends IAdaptable {
 	 * deferred. Part of the copy task may be executed without rollback until
 	 * the exception occurs. The order of copy operations is not specified.
 	 * </p>
-	 * 
+	 *
 	 * @param destination The destination of the copy.
 	 * @param options bit-wise or of option flag constants (
 	 * {@link EFS#OVERWRITE} or {@link EFS#SHALLOW}).
@@ -144,9 +144,9 @@ public interface IFileStore extends IAdaptable {
 	 * <li> The parent of the destination file store does not exist.</li>
 	 * <li> The <code>OVERWRITE</code> flag is not specified and a
 	 * file of the same name already exists at the copy destination.</li>
-	 * <li> A file is being copied, but a directory of the same name already exists 
+	 * <li> A file is being copied, but a directory of the same name already exists
 	 * at the copy destination.</li>
-	 * <li> A directory is being copied, but a file of the same name already exists 
+	 * <li> A directory is being copied, but a file of the same name already exists
 	 * at the copy destination.</li>
 	 * </ul>
 	 */
@@ -160,10 +160,10 @@ public interface IFileStore extends IAdaptable {
 	 * exceptions are recorded but other files will continue to be deleted if possible.
 	 * </p>
 	 * <p>
-	 * Deletion of a file with attribute {@link EFS#ATTRIBUTE_SYMLINK} will always 
+	 * Deletion of a file with attribute {@link EFS#ATTRIBUTE_SYMLINK} will always
 	 * delete the link, rather than the target of the link.
 	 * </p>
-	 * 
+	 *
 	 * @param options bit-wise or of option flag constants (currently only {@link EFS#NONE}
 	 * is applicable).
 	 * @param monitor a progress monitor, or <code>null</code> if progress
@@ -181,7 +181,7 @@ public interface IFileStore extends IAdaptable {
 	 * system.  Returns a file info representing a non-existent file if the underlying
 	 * file system could not be contacted.
 	 * <p>
-	 * This is a convenience method, similar to: 
+	 * This is a convenience method, similar to:
 	 * <code>fetchInfo(EFS.NONE, null)</code>.
 	 * This method is intended as a convenience when dealing with fast,
 	 * highly available file systems such as the local file system.  Clients that
@@ -189,7 +189,7 @@ public interface IFileStore extends IAdaptable {
 	 * with remote file systems, should use {@link #fetchInfo(int, IProgressMonitor)}
 	 * instead.
 	 * </p>
-	 * 
+	 *
 	 * @return A structure containing information about this file.
 	 * @see #fetchInfo(int, IProgressMonitor)
 	 */
@@ -202,9 +202,9 @@ public interface IFileStore extends IAdaptable {
 	 * This method succeeds regardless of whether a corresponding
 	 * file currently exists in the underlying file system. In the case of a non-existent
 	 * file, the returned info will include the file's name and will return <code>false</code>
-	 * when IFileInfo#exists() is called, but all other information will assume default 
+	 * when IFileInfo#exists() is called, but all other information will assume default
 	 * values.
-	 * 
+	 *
 	 * @param options bit-wise or of option flag constants (currently only {@link EFS#NONE}
 	 * is applicable).
 	 * @param monitor a progress monitor, or <code>null</code> if progress
@@ -235,10 +235,10 @@ public interface IFileStore extends IAdaptable {
 	 * <p>
 	 * The provided path must not contain segments that are self references (".") or parent references ("..").
 	 * </p>
-	 * 
+	 *
 	 * @param path The path of the child store to return
 	 * @return A child file store.
-	 * 
+	 *
 	 * @deprecated use {@link #getFileStore(IPath)} instead
 	 */
 	@Deprecated
@@ -247,16 +247,16 @@ public interface IFileStore extends IAdaptable {
 	/**
 	 * Returns a handle to the member store identified by the given path. The
 	 * path is treated as relative to this store.
-	 * 
+	 *
 	 * <p>
 	 * This is a handle-only method; a store is provided regardless
 	 * of whether this store or the member store exists, or whether this store
 	 * represents a directory or not.
 	 * </p>
-	 * 
+	 *
 	 * @param path the path of the member store
 	 * @return the member store
-	 * 
+	 *
 	 * @since org.eclipse.core.filesystem 1.2
 	 */
 	public IFileStore getFileStore(IPath path);
@@ -266,7 +266,7 @@ public interface IFileStore extends IAdaptable {
 	 * this store.  This is a handle-only method; a child is provided regardless
 	 * of whether this store or the child store exists, or whether this store
 	 * represents a directory or not.
-	 * 
+	 *
 	 * @param name The name of the child store to return
 	 * @return A child file store.
 	 */
@@ -274,7 +274,7 @@ public interface IFileStore extends IAdaptable {
 
 	/**
 	 * Returns the file system this store belongs to.
-	 * 
+	 *
 	 * @return The file system this store belongs to.
 	 */
 	public IFileSystem getFileSystem();
@@ -297,7 +297,7 @@ public interface IFileStore extends IAdaptable {
 	 * is returned regardless of whether this store or the parent store exists. This
 	 * method returns <code>null</code> when this store represents the root
 	 * directory of a file system.
-	 * 
+	 *
 	 * @return The parent store, or <code>null</code> if this store is the root
 	 * of a file system.
 	 */
@@ -319,7 +319,7 @@ public interface IFileStore extends IAdaptable {
 	 * This is a handle only method; this test works regardless of whether
 	 * this store or the parameter store exists.
 	 * </p>
-	 * 
+	 *
 	 * @param other The store to test for parentage.
 	 * @return <code>true</code> if this store is a parent of the provided
 	 * store, and <code>false</code> otherwise.
@@ -327,7 +327,7 @@ public interface IFileStore extends IAdaptable {
 	public boolean isParentOf(IFileStore other);
 
 	/**
-	 * Creates a directory, and optionally its parent directories.  If the directory 
+	 * Creates a directory, and optionally its parent directories.  If the directory
 	 * already exists, this method has no effect.
 	 * <p>
 	 * The {@link EFS#SHALLOW} option flag indicates how
@@ -336,7 +336,7 @@ public interface IFileStore extends IAdaptable {
 	 * the parent directory does not exist.  When the flag is not present, all
 	 * necessary parent directories are also created.
 	 * </p>
-	 * 
+	 *
 	 * @param options bit-wise or of option flag constants ({@link EFS#SHALLOW}).
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
@@ -355,7 +355,7 @@ public interface IFileStore extends IAdaptable {
 	 * Moves the file represented by this store to the provided destination store.
 	 * Moving occurs with best-effort semantics; if some files cannot be moved,
 	 * exceptions are recorded but other files will continue to be moved if possible.
-	 * 
+	 *
 	 * <p>
 	 * The {@link EFS#OVERWRITE} option flag indicates how
 	 * this method deals with files that already exist at the move destination. If
@@ -365,9 +365,9 @@ public interface IFileStore extends IAdaptable {
 	 * the destination are not overwritten and an exception is thrown indicating
 	 * what files could not be moved.
 	 * </p>
-	 * 
+	 *
 	 * @param destination The destination of the move.
-	 * @param options bit-wise or of option flag constants 
+	 * @param options bit-wise or of option flag constants
 	 * ({@link EFS#OVERWRITE}).
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
@@ -392,10 +392,10 @@ public interface IFileStore extends IAdaptable {
 	 * wrapper should be used, or some other form of content buffering.
 	 * </p>
 	 * <p>
-	 * It depends on the implementation how the limit of concurrently opened streams 
+	 * It depends on the implementation how the limit of concurrently opened streams
 	 * is handled. <code>CoreException</code> may be thrown, when the limit is exceeded.
 	 * </p>
-	 * 
+	 *
 	 * @param options bit-wise or of option flag constants (currently only {@link EFS#NONE}
 	 * is applicable).
 	 * @param monitor a progress monitor, or <code>null</code> if progress
@@ -423,7 +423,7 @@ public interface IFileStore extends IAdaptable {
 	 * wrapper should be used, or some other form of content buffering.
 	 * </p>
 	 * <p>
-	 * It depends on the implementation how the limit of concurrently opened streams 
+	 * It depends on the implementation how the limit of concurrently opened streams
 	 * is handled. <code>CoreException</code> may be thrown, when the limit is exceeded.
 	 * </p>
 	 * <p>
@@ -433,7 +433,7 @@ public interface IFileStore extends IAdaptable {
 	 * not specified, the contents of the existing file, if any, is truncated to zero
 	 * and the new output will be written from the start of the file.
 	 * </p>
-	 * 
+	 *
 	 * @param options bit-wise or of option flag constants ({@link EFS#APPEND}).
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
@@ -449,10 +449,10 @@ public interface IFileStore extends IAdaptable {
 	public OutputStream openOutputStream(int options, IProgressMonitor monitor) throws CoreException;
 
 	/**
-	 * Writes information about this file to the underlying file system. Only 
+	 * Writes information about this file to the underlying file system. Only
 	 * certain parts of the file information structure can be written using this
 	 * method, as specified by the option flags.  Other changed information
-	 * in the provided info will be ignored.  This method has no effect when no 
+	 * in the provided info will be ignored.  This method has no effect when no
 	 * option flags are provided.  The following example sets the last modified
 	 * time for a file store, leaving other values unchanged:
 	 * <pre>
@@ -461,7 +461,7 @@ public interface IFileStore extends IAdaptable {
 	 *    store.putInfo(info, EFS.SET_LAST_MODIFIED, monitor);
 	 * </pre>
 	 * <p>
-	 * The {@link EFS#SET_ATTRIBUTES} update flag controls 
+	 * The {@link EFS#SET_ATTRIBUTES} update flag controls
 	 * whether the file's attributes are changed.  When this flag is specified,
 	 * the <code>EFS#ATTRIBUTE_*</code> values, with
 	 * the exception of <code>EFS#ATTRIBUTE_DIRECTORY</code>,
@@ -472,7 +472,7 @@ public interface IFileStore extends IAdaptable {
 	 * </p>
 	 * <p>
 	 * Since Eclipse 3.6, implementations shall also make a best effort
-	 * to consult UNIX umask in order to set the same attributes for other access groups. 
+	 * to consult UNIX umask in order to set the same attributes for other access groups.
 	 * This setting of attributes for others may change the file system state even if an attribute
 	 * appears to be set for the current user already.
 	 * </p>
@@ -482,14 +482,14 @@ public interface IFileStore extends IAdaptable {
 	 * operations are not symmetrical.
 	 * </p>
 	 * <p>
-	 * The {@link EFS#SET_LAST_MODIFIED} update flag controls 
+	 * The {@link EFS#SET_LAST_MODIFIED} update flag controls
 	 * whether the file's last modified time is changed.  When this flag is specified,
 	 * the last modified time for the file in the underlying file system is updated
 	 * to the value in the provided info object.  Due to the different granularities
 	 * of file systems, the time that is set might not exact match the provided
 	 * time.
 	 * </p>
-	 * 
+	 *
 	 * @param info The file information instance containing the values to set.
 	 * @param options bit-wise or of option flag constants (
 	 * {@link EFS#SET_ATTRIBUTES} or {@link EFS#SET_LAST_MODIFIED}).
@@ -508,21 +508,21 @@ public interface IFileStore extends IAdaptable {
 	 * <p>
 	 * The {@link EFS#CACHE} option flag indicates whether this method
 	 * should return the actual underlying file or a cached local copy.
-	 * When the {@link EFS#CACHE} flag is specified, this method will return a 
+	 * When the {@link EFS#CACHE} flag is specified, this method will return a
 	 * cached local file with the same state and contents as this file. When
 	 * the {@link EFS#CACHE} flag is not specified, this method will return
 	 * the actual underlying local file, or <code>null</code> if this store
 	 * is not a local file.
 	 * <p>
-	 * In the case of a cached file, the returned file is intended to be used for 
-	 * read operations only. No guarantee is made about synchronization between 
-	 * the returned file and this store.  If the cached file is modified in any way, 
-	 * those changes may not be reflected in this store, but may affect other callers 
+	 * In the case of a cached file, the returned file is intended to be used for
+	 * read operations only. No guarantee is made about synchronization between
+	 * the returned file and this store.  If the cached file is modified in any way,
+	 * those changes may not be reflected in this store, but may affect other callers
 	 * who are using the local representation of this store.
 	 * </p>
 	 * <p>
 	 * While the implementation of this method may use caching to return the
-	 * same result for multiple calls to this method, it is guaranteed that the 
+	 * same result for multiple calls to this method, it is guaranteed that the
 	 * returned file will reflect the state of this file store at the time of this call.
 	 * As such, this method will always contact the backing file system of
 	 * this store, either to validate cache consistency or to fetch new contents.
@@ -550,7 +550,7 @@ public interface IFileStore extends IAdaptable {
 	 * Returns a string representation of this store.  The string will be translated
 	 * if applicable, and suitable for displaying in error messages to an end-user.
 	 * The actual format of the string is unspecified.
-	 * 
+	 *
 	 * @return A string representation of this store.
 	 */
 	@Override
@@ -560,7 +560,7 @@ public interface IFileStore extends IAdaptable {
 	 * Returns a URI instance corresponding to this store.  The resulting URI,
 	 * when passed to {@link EFS#getStore(URI)}, will return a store equal
 	 * to this instance.
-	 * 
+	 *
 	 * @return A URI corresponding to this store.
 	 * @see EFS#getStore(URI)
 	 */

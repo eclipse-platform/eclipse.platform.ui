@@ -32,7 +32,7 @@ import org.eclipse.core.tools.metadata.*;
  * TYPE -> INDEX | QNAME
  * INDEX -> int int
  * QNAME -> int String
- * BYTES -> byte[] 
+ * BYTES -> byte[]
  * }</pre>
  */
 class SyncInfoDumpingStrategy_2 implements IStringDumpingStrategy {

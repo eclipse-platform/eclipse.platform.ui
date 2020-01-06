@@ -42,10 +42,10 @@ public abstract class FileSystem extends PlatformObject implements IFileSystem {
 	}
 
 	/**
-	 * This is the default implementation of {@link IFileSystem#attributes()}.  
+	 * This is the default implementation of {@link IFileSystem#attributes()}.
 	 * This implementation always returns <code>0</code>.
 	 * Subclasses may override this method.
-	 * 
+	 *
 	 * @return The attributes supported by this file system
 	 * @see IFileSystem#attributes()
 	 */
@@ -55,10 +55,10 @@ public abstract class FileSystem extends PlatformObject implements IFileSystem {
 	}
 
 	/**
-	 * This is the default implementation of {@link IFileSystem#canDelete()}.  
+	 * This is the default implementation of {@link IFileSystem#canDelete()}.
 	 * This implementation always returns <code>false</code>.
 	 * Subclasses may override this method.
-	 * 
+	 *
 	 * @return <code>true</code> if this file system supports deletion, and
 	 * <code>false</code> otherwise.
 	 * @see IFileSystem#canDelete()
@@ -69,10 +69,10 @@ public abstract class FileSystem extends PlatformObject implements IFileSystem {
 	}
 
 	/**
-	 * This is the default implementation of {@link IFileSystem#canWrite()}.  
+	 * This is the default implementation of {@link IFileSystem#canWrite()}.
 	 * This implementation always returns <code>false</code>.
 	 * Subclasses may override this method.
-	 * 
+	 *
 	 * @return <code>true</code> if this file system allows modification, and
 	 * <code>false</code> otherwise.
 	 * @see IFileSystem#canWrite()
@@ -88,16 +88,16 @@ public abstract class FileSystem extends PlatformObject implements IFileSystem {
 	}
 
 	/**
-	 * This is the default implementation of {@link IFileSystem#getStore(IPath)}.  
-	 * This implementation forwards to {@link IFileSystem#getStore(URI)}, 
-	 * assuming that the provided path corresponds to the path component of the 
+	 * This is the default implementation of {@link IFileSystem#getStore(IPath)}.
+	 * This implementation forwards to {@link IFileSystem#getStore(URI)},
+	 * assuming that the provided path corresponds to the path component of the
 	 * URI for the file store.
 	 * <p>
 	 * Subclasses may override this method.  If it is not possible to create a file
 	 * store corresponding to the provided path for this file system, a file store
 	 * belonging to the null file system should be returned
 	 * </p>
-	 * 
+	 *
 	 * @param path A path to a file store within the scheme of this file system.
 	 * @return A handle to a file store in this file system
 	 * @see IFileSystem#getStore(IPath)
@@ -124,8 +124,8 @@ public abstract class FileSystem extends PlatformObject implements IFileSystem {
 	/**
 	 * {@inheritDoc}
 	 * <p>
-	 * This default implementation always returns <code>null</code>.  Subclasses 
-	 * that can efficiently provide an {@link IFileTree} rooted at the given file store 
+	 * This default implementation always returns <code>null</code>.  Subclasses
+	 * that can efficiently provide an {@link IFileTree} rooted at the given file store
 	 * should override.
 	 * @throws CoreException if fails.
 	 * @see IFileSystem#fetchFileTree(IFileStore, IProgressMonitor)
@@ -153,7 +153,7 @@ public abstract class FileSystem extends PlatformObject implements IFileSystem {
 	 * This method is called by the platform immediately after the
 	 * file system instance is created.  This method must not be
 	 * called by clients.
-	 * 
+	 *
 	 * @param aScheme The scheme of the file system.
 	 */
 	public final void initialize(String aScheme) {
@@ -166,9 +166,9 @@ public abstract class FileSystem extends PlatformObject implements IFileSystem {
 	}
 
 	/**
-	 * This is the default implementation of {@link IFileSystem#isCaseSensitive()}.  
+	 * This is the default implementation of {@link IFileSystem#isCaseSensitive()}.
 	 * This implementation always returns <code>true</code>. Subclasses may override this method.
-	 * 
+	 *
 	 * @return <code>true</code> if this file system is case sensitive, and
 	 * <code>false</code> otherwise.
 	 * @see IFileSystem#isCaseSensitive()

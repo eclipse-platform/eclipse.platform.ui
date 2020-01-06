@@ -7,8 +7,8 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
- * Contributors: 
+ *
+ * Contributors:
  * Geoff Longman - Initial API and implementation
  * IBM - Tightening integration with existing Platform
  * Geoff Longman - added ability to track extension registry changes

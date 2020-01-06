@@ -41,7 +41,7 @@ import org.eclipse.core.tools.metadata.*;
  * STRING_VALUE -> byte String
  * NULL_VALUE -> byte
  * CREATION_TIME -> long
- * }</pre> 
+ * }</pre>
  */
 
 public class MarkersDumpingStrategy_3 implements IStringDumpingStrategy {

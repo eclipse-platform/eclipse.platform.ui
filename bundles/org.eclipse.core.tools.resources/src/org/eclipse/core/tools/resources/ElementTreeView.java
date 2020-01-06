@@ -393,7 +393,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 
 	private IAction updateAction;
 
-	// The JFace widget used for showing the Element Tree info.  
+	// The JFace widget used for showing the Element Tree info.
 	protected TextViewer viewer;
 
 	/**
@@ -442,7 +442,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
 
-		// add the resource change listener		
+		// add the resource change listener
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
 
 		// populate the view with the initial data

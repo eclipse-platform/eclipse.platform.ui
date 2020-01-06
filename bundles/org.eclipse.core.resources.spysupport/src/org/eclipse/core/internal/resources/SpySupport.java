@@ -26,7 +26,7 @@ import org.eclipse.core.runtime.QualifiedName;
  */
 public class SpySupport {
 
-	/* 
+	/*
 	 * Class cannot be instantiated.
 	 */
 	private SpySupport() {
@@ -36,7 +36,7 @@ public class SpySupport {
 	 * Returns a copy of the session properties for the given resource. If the resource
 	 * is not accessible or any problems occur accessing it, then <code>null</code> is
 	 * returned.
-	 * 
+	 *
 	 * @param resource the resource to get the properties from
 	 * @return the resource's session properties or <code>null</code>
 	 */

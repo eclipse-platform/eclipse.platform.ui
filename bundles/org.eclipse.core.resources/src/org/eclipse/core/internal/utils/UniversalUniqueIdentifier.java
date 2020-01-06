@@ -83,9 +83,9 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 	/**
 	 Constructor that accepts the bytes to use for the instance.&nbsp;&nbsp; The format
 	 of the byte array is compatible with the <code>toBytes()</code> method.
-	
+
 	 <p>The constructor returns the undefined uuid if the byte array is invalid.
-	
+
 	 @see #toBytes()
 	 @see #BYTES_SIZE
 	 */
@@ -268,7 +268,7 @@ public class UniversalUniqueIdentifier implements java.io.Serializable {
 
 	/**
 	 This representation is compatible with the (byte[]) constructor.
-	
+
 	 @see #UniversalUniqueIdentifier(byte[])
 	 */
 	public byte[] toBytes() {

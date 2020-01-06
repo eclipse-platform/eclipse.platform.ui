@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -54,7 +54,7 @@ public class InternalFileSystemCore implements IRegistryChangeListener {
 
 	/**
 	 * Implements the method {@link EFS#getFileSystem(String)}
-	 * 
+	 *
 	 * @param scheme The URI scheme of the file system
 	 * @return The file system
 	 * @throws CoreException on filesystem related errors
@@ -84,7 +84,7 @@ public class InternalFileSystemCore implements IRegistryChangeListener {
 
 	/**
 	 * Implements the method {@link EFS#getLocalFileSystem()}
-	 * 
+	 *
 	 * @return The local file system
 	 */
 	public IFileSystem getLocalFileSystem() {
@@ -98,7 +98,7 @@ public class InternalFileSystemCore implements IRegistryChangeListener {
 
 	/**
 	 * Implements the method {@link EFS#getStore(URI)}
-	 * 
+	 *
 	 * @param uri The URI of the store to retrieve
 	 * @return The file store corresponding to the given URI
 	 * @throws CoreException on filesystem related errors or missing URI scheme

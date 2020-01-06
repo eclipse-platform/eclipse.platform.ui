@@ -51,7 +51,7 @@ public class LocalFileSystem extends FileSystem {
 
 	/**
 	 * Returns the instance of this file system
-	 * 
+	 *
 	 * @return The instance of this file system.
 	 */
 	public static IFileSystem getInstance() {

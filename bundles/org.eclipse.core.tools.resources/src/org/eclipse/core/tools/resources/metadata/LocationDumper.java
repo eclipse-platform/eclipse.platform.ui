@@ -20,9 +20,9 @@ import org.eclipse.core.tools.metadata.MultiStrategyDumper;
 
 /**
  * A dumper for .location files.
- *  
+ *
  * @see org.eclipse.core.tools.metadata.AbstractDumper
- * @see org.eclipse.core.tools.resources.metadata.LocationStrategy  
+ * @see org.eclipse.core.tools.resources.metadata.LocationStrategy
  */
 public class LocationDumper extends MultiStrategyDumper {
 

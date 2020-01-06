@@ -23,11 +23,11 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
 /**
- * Project Spy view. This view shows detailed information about the currently 
- * selected resource in any other view in the platform. For 
+ * Project Spy view. This view shows detailed information about the currently
+ * selected resource in any other view in the platform. For
  * details on the information being presented, see <code>ProjectContentProvider
  * </code> documentation (link below).
- * 
+ *
  * @see org.eclipse.core.tools.resources.ProjectContentProvider
  */
 public class ProjectView extends SpyView {
@@ -35,8 +35,8 @@ public class ProjectView extends SpyView {
 	/** JFace's tree component used to present project details. */
 	protected AbstractTreeViewer viewer;
 
-	/** 
-	 * Our listener to selection changes. Every time a new resource is 
+	/**
+	 * Our listener to selection changes. Every time a new resource is
 	 * selected, this view gets updated.
 	 */
 	private ISelectionListener selectionListener;
@@ -44,9 +44,9 @@ public class ProjectView extends SpyView {
 	/** The content provider for this view's TreeViewer. */
 	private ProjectContentProvider contentProvider;
 
-	/** 
-	 * Our listener to resource changes. Every time the current selected 
-	 * project is changed, this view gets updated.	 
+	/**
+	 * Our listener to resource changes. Every time the current selected
+	 * project is changed, this view gets updated.
 	 */
 	private IResourceChangeListener resourceChangeListener;
 
@@ -59,8 +59,8 @@ public class ProjectView extends SpyView {
 
 	/**
 	 * Creates this view widgets and actions.
-	 * 
-	 * @param parent the parent control 
+	 *
+	 * @param parent the parent control
 	 * @see IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
@@ -74,7 +74,7 @@ public class ProjectView extends SpyView {
 	}
 
 	/**
-	 * Creates and publishes this view's actions. 
+	 * Creates and publishes this view's actions.
 	 */
 	private void createActions() {
 		final IAction copyAction = new CopyStructuredSelectionAction(viewer);
@@ -92,13 +92,13 @@ public class ProjectView extends SpyView {
 
 	/**
 	 * Process the given selection. If it is not a structured selection, the event
-	 * is discarded. If the selection is a resource (or has a resource), 
+	 * is discarded. If the selection is a resource (or has a resource),
 	 * updates the resource view. Otherwise, the resource view is cleaned out.
-	 * 
-	 * @param selection the selection object to be processed 
+	 *
+	 * @param selection the selection object to be processed
 	 */
 	protected void processSelection(ISelection selection) {
-		// if it is not a strucutured selection, ignore	
+		// if it is not a strucutured selection, ignore
 		if (!(selection instanceof IStructuredSelection))
 			return;
 
@@ -122,7 +122,7 @@ public class ProjectView extends SpyView {
 	/**
 	 * Creates a selection listener that will be notified any time a selection has
 	 * changed in any place.
-	 * 
+	 *
 	 * @see #processSelection(ISelection)
 	 */
 	private void addSelectionListener() {
@@ -133,10 +133,10 @@ public class ProjectView extends SpyView {
 	}
 
 	/**
-	 * Loads a resource to be shown on this project view (or cleans it, 
-	 * if resource == null). 
+	 * Loads a resource to be shown on this project view (or cleans it,
+	 * if resource == null).
 	 * This method must be run in the SWT thread.
-	 * 
+	 *
 	 * @param resource the resource to be shown
 	 * @see ProjectContentProvider#inputChanged(Viewer, Object, Object)
 	 */
@@ -148,10 +148,10 @@ public class ProjectView extends SpyView {
 		// turn redraw off so the UI will reflect changes only after we are done
 		viewer.getControl().setRedraw(false);
 
-		// fires viewer update			
+		// fires viewer update
 		viewer.setInput(resource);
 
-		// shows all nodes in the resource tree		
+		// shows all nodes in the resource tree
 		viewer.expandAll();
 
 		// we are done, turn redraw on
@@ -160,7 +160,7 @@ public class ProjectView extends SpyView {
 
 	/**
 	 * Removes all listeners added.
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	@Override
@@ -173,8 +173,8 @@ public class ProjectView extends SpyView {
 	}
 
 	/**
-	 * Creates a resource change listener so we can know if the currently 
-	 * selected resource has changed.   
+	 * Creates a resource change listener so we can know if the currently
+	 * selected resource has changed.
 	 */
 	private void addResourceChangeListener() {
 		resourceChangeListener = new SelectedResourceChangeListener();

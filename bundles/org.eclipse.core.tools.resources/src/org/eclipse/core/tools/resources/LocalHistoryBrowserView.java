@@ -35,8 +35,8 @@ import org.eclipse.ui.part.DrillDownAdapter;
 import org.eclipse.ui.part.ViewPart;
 
 /**
- * Tree viewer class used to construct a view on the local history store. The 
- * tree navigates over the actual contents of the history store rather than 
+ * Tree viewer class used to construct a view on the local history store. The
+ * tree navigates over the actual contents of the history store rather than
  * going to the navigator and asking each file for its list of file states. This allows
  * the browser to see the deleted files for containers.
  */

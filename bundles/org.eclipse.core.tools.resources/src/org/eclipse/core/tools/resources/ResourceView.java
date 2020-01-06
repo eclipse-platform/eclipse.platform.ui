@@ -23,26 +23,26 @@ import org.eclipse.swt.widgets.*;
 import org.eclipse.ui.*;
 
 /**
- * Resource Spy view. This view shows detailed information about the currently 
- * selected resource in any other view in the platform. For 
+ * Resource Spy view. This view shows detailed information about the currently
+ * selected resource in any other view in the platform. For
  * details on the information being presented, see <code>ResourceContentProvider
  * </code> documentation (link below).
- * 
+ *
  * @see org.eclipse.core.tools.resources.ResourceContentProvider
  */
 public class ResourceView extends SpyView {
 	/** JFace's tree component used to present resource details. */
 	protected AbstractTreeViewer viewer;
 
-	/** 
-	 * Our listener to selection changes. Every time a new resource is 
+	/**
+	 * Our listener to selection changes. Every time a new resource is
 	 * selected, this view gets updated.
 	 */
 	private ISelectionListener selectionListener;
 
-	/** 
-	 * Our listener to resource changes. Every time the current selected 
-	 * resource is changed, this view gets updated.	 
+	/**
+	 * Our listener to resource changes. Every time the current selected
+	 * resource is changed, this view gets updated.
 	 */
 	private IResourceChangeListener resourceChangeListener;
 
@@ -58,9 +58,9 @@ public class ResourceView extends SpyView {
 
 	/**
 	 * Creates the SWT controls for the resource view.
-	 * 
+	 *
 	 * @param parent the parent control
-	 * @see IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite) 
+	 * @see IWorkbenchPart#createPartControl(org.eclipse.swt.widgets.Composite)
 	 */
 	@Override
 	public void createPartControl(Composite parent) {
@@ -74,7 +74,7 @@ public class ResourceView extends SpyView {
 	}
 
 	/**
-	 * Creates and publishes this view's actions. 
+	 * Creates and publishes this view's actions.
 	 */
 	private void createActions() {
 		IActionBars actionBars = this.getViewSite().getActionBars();
@@ -96,9 +96,9 @@ public class ResourceView extends SpyView {
 
 	/**
 	 * Process the given selection. If it is not an structured selection, the event
-	 * is discarded. If the selection is a resource (or maps to a resource), 
+	 * is discarded. If the selection is a resource (or maps to a resource),
 	 * updates the resource view. Otherwise, the resource view is cleaned out.
-	 * 
+	 *
 	 * @param sel the selection object to be processed
 	 */
 	protected void processSelection(ISelection sel) {
@@ -118,33 +118,33 @@ public class ResourceView extends SpyView {
 			else if (item instanceof IAdaptable)
 				resource = ((IAdaptable) item).getAdapter(IResource.class);
 		}
-		// loads the selected resource 
+		// loads the selected resource
 		if (resource != null)
 			loadResource(resource);
 	}
 
 	/**
-	 * Creates a selection listener that will call 
+	 * Creates a selection listener that will call
 	 * <code>processSelection(ISelection)</code> everytime a selection has
 	 * changed in any place.
-	 * 
+	 *
 	 * @see #processSelection(ISelection)
 	 */
 	private void addSelectionListener() {
 		ISelectionService selectionService = getSite().getPage().getWorkbenchWindow().getSelectionService();
 
-		// creates a selection listener that ignores who generated the event	
+		// creates a selection listener that ignores who generated the event
 		selectionListener = (part, sel) -> processSelection(sel);
 
 		selectionService.addSelectionListener(selectionListener);
 
-		// forces a call to processSelection() to recognize any existing selection	
+		// forces a call to processSelection() to recognize any existing selection
 		processSelection(selectionService.getSelection());
 
 	}
 
 	/**
-	 * Creates a resource change listener so we can know if the currently selected 
+	 * Creates a resource change listener so we can know if the currently selected
 	 * resource has changed or a marker has been added to or removed from it.
 	 */
 	private void addResourceChangeListener() {
@@ -153,9 +153,9 @@ public class ResourceView extends SpyView {
 	}
 
 	/**
-	 * Loads a resource to be shown on this resource view (or cleans it, if 
+	 * Loads a resource to be shown on this resource view (or cleans it, if
 	 * resource == null). This method must be run in the SWT thread.
-	 * 
+	 *
 	 * @param resource the resource to be shown on this view
 	 * @see ResourceContentProvider#inputChanged(Viewer, Object, Object)
 	 */
@@ -167,10 +167,10 @@ public class ResourceView extends SpyView {
 		// turn redraw off so the UI will reflect changes only after we are done
 		viewer.getControl().setRedraw(false);
 
-		// fires viewer update			
+		// fires viewer update
 		viewer.setInput(resource);
 
-		// shows all nodes in the resource tree		
+		// shows all nodes in the resource tree
 		viewer.expandAll();
 
 		// we are done, turn redraw on
@@ -179,7 +179,7 @@ public class ResourceView extends SpyView {
 
 	/**
 	 * Removes all listeners added.
-	 * 
+	 *
 	 * @see org.eclipse.ui.IWorkbenchPart#dispose()
 	 */
 	@Override
@@ -216,7 +216,7 @@ public class ResourceView extends SpyView {
 	}
 
 	/**
-	 * A resource change listener that is interested on changes in the resource 
+	 * A resource change listener that is interested on changes in the resource
 	 * being currently shown.
 	 */
 	private class SelectedResourceChangeListener implements IResourceChangeListener {

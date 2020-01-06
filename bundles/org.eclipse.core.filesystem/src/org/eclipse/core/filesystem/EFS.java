@@ -24,7 +24,7 @@ import org.eclipse.core.runtime.IProgressMonitor;
  * This class is the main entry point for clients of the Eclipse file system API.  This
  * class has factory methods for obtaining instances of file systems and file
  * stores, and provides constants for option values and error codes.
- * 
+ *
  * @since org.eclipse.core.filesystem 1.0
  * @noextend This class is not intended to be subclassed by clients.
  * @noinstantiate This class is not intended to be instantiated by clients.
@@ -36,7 +36,7 @@ public class EFS {
 	 */
 	public static final String PI_FILE_SYSTEM = "org.eclipse.core.filesystem"; //$NON-NLS-1$
 
-	/** 
+	/**
 	 * The simple identifier constant (value "<code>filesystems</code>") of
 	 * the extension point of the Core file system plug-in where plug-ins declare
 	 * file system implementations.
@@ -48,7 +48,7 @@ public class EFS {
 	 * take bit flags to indicate that "no bits are set".  This value is
 	 * also used as a default value in cases where a file system attribute
 	 * cannot be computed.
-	 * 
+	 *
 	 * @see IFileInfo#getLength()
 	 * @see IFileInfo#getLastModified()
 	 */
@@ -57,7 +57,7 @@ public class EFS {
 	/**
 	 * Option flag constant (value 1 &lt;&lt;0) indicating a file opened
 	 * for appending data to the end.
-	 * 
+	 *
 	 * @see IFileStore#openOutputStream(int, IProgressMonitor)
 	 */
 	public static final int APPEND = 1 << 0;
@@ -65,7 +65,7 @@ public class EFS {
 	/**
 	 * Option flag constant (value 1 &lt;&lt;1) indicating that existing
 	 * files may be overwritten.
-	 * 
+	 *
 	 * @see IFileStore#copy(IFileStore, int, IProgressMonitor)
 	 * @see IFileStore#move(IFileStore, int, IProgressMonitor)
 	 */
@@ -75,7 +75,7 @@ public class EFS {
 	 * Option flag constant (value 1 &lt;&lt;2) indicating that an
 	 * operation acts on a single file or directory, and not its parents
 	 * or children.
-	 * 
+	 *
 	 * @see IFileStore#copy(IFileStore, int, IProgressMonitor)
 	 * @see IFileStore#mkdir(int, IProgressMonitor)
 	 */
@@ -84,7 +84,7 @@ public class EFS {
 	/**
 	 * Option flag constant (value 1 &lt;&lt;10) indicating that a
 	 * file's attributes should be updated.
-	 * 
+	 *
 	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
 	 */
 	public static final int SET_ATTRIBUTES = 1 << 10;
@@ -92,7 +92,7 @@ public class EFS {
 	/**
 	 * Option flag constant (value 1 &lt;&lt;11) indicating that a
 	 * file's last modified time should be updated.
-	 * 
+	 *
 	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
 	 */
 	public static final int SET_LAST_MODIFIED = 1 << 11;
@@ -100,7 +100,7 @@ public class EFS {
 	/**
 	 * Option flag constant (value 1 &lt;&lt;12) indicating that
 	 * a cached representation of a file should be returned.
-	 * 
+	 *
 	 * @see IFileStore#toLocalFile(int, IProgressMonitor)
 	 */
 	public static final int CACHE = 1 << 12;
@@ -108,7 +108,7 @@ public class EFS {
 	/**
 	 * Attribute constant (value 1 &lt;&lt;1) indicating that a
 	 * file is read only.
-	 * 
+	 *
 	 * @see IFileStore#fetchInfo()
 	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
 	 * @see IFileInfo#getAttribute(int)
@@ -119,7 +119,7 @@ public class EFS {
 	/**
 	 * Attribute constant (value 1 &lt;&lt;21) indicating that a
 	 * file is marked with immutable flag.
-	 * 
+	 *
 	 * @see IFileStore#fetchInfo()
 	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
 	 * @see IFileInfo#getAttribute(int)
@@ -131,7 +131,7 @@ public class EFS {
 	/**
 	 * Attribute constant (value 1 &lt;&lt;22) indicating that a
 	 * file's owner has a read permission.
-	 * 
+	 *
 	 * @see IFileStore#fetchInfo()
 	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
 	 * @see IFileInfo#getAttribute(int)
@@ -143,7 +143,7 @@ public class EFS {
 	/**
 	 * Attribute constant (value 1 &lt;&lt;23) indicating that
 	 * file's owner has a write permission.
-	 * 
+	 *
 	 * @see IFileStore#fetchInfo()
 	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
 	 * @see IFileInfo#getAttribute(int)
@@ -155,7 +155,7 @@ public class EFS {
 	/**
 	 * Attribute constant (value 1 &lt;&lt;24) indicating that
 	 * file's owner has an execute permission.
-	 * 
+	 *
 	 * @see IFileStore#fetchInfo()
 	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
 	 * @see IFileInfo#getAttribute(int)
@@ -167,7 +167,7 @@ public class EFS {
 	/**
 	 * Attribute constant (value 1 &lt;&lt;25) indicating that
 	 * users in file's group have a read permission.
-	 * 
+	 *
 	 * @see IFileStore#fetchInfo()
 	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
 	 * @see IFileInfo#getAttribute(int)
@@ -179,7 +179,7 @@ public class EFS {
 	/**
 	 * Attribute constant (value 1 &lt;&lt;26) indicating that
 	 * users in file's group have a write permission.
-	 * 
+	 *
 	 * @see IFileStore#fetchInfo()
 	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
 	 * @see IFileInfo#getAttribute(int)
@@ -191,7 +191,7 @@ public class EFS {
 	/**
 	 * Attribute constant (value 1 &lt;&lt;27) indicating that
 	 * users in file's group have an execute permission.
-	 * 
+	 *
 	 * @see IFileStore#fetchInfo()
 	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
 	 * @see IFileInfo#getAttribute(int)
@@ -203,7 +203,7 @@ public class EFS {
 	/**
 	 * Attribute constant (value 1 &lt;&lt;28) indicating that
 	 * other users have a read permission.
-	 * 
+	 *
 	 * @see IFileStore#fetchInfo()
 	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
 	 * @see IFileInfo#getAttribute(int)
@@ -215,7 +215,7 @@ public class EFS {
 	/**
 	 * Attribute constant (value 1 &lt;&lt;29) indicating that
 	 * other users have a write permission.
-	 * 
+	 *
 	 * @see IFileStore#fetchInfo()
 	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
 	 * @see IFileInfo#getAttribute(int)
@@ -227,7 +227,7 @@ public class EFS {
 	/**
 	 * Attribute constant (value 1 &lt;&lt;30) indicating that
 	 * other users have an execute permission.
-	 * 
+	 *
 	 * @see IFileStore#fetchInfo()
 	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
 	 * @see IFileInfo#getAttribute(int)
@@ -239,7 +239,7 @@ public class EFS {
 	/**
 	 * Attribute constant (value 1 &lt;&lt;2) indicating that a
 	 * file is a executable.
-	 * 
+	 *
 	 * @see IFileStore#fetchInfo()
 	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
 	 * @see IFileInfo#getAttribute(int)
@@ -250,7 +250,7 @@ public class EFS {
 	/**
 	 * Attribute constant (value 1 &lt;&lt;3) indicating that a
 	 * file is an archive.
-	 * 
+	 *
 	 * @see IFileStore#fetchInfo()
 	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
 	 * @see IFileInfo#getAttribute(int)
@@ -261,7 +261,7 @@ public class EFS {
 	/**
 	 * Attribute constant (value 1 &lt;&lt;4) indicating that a
 	 * file is hidden.
-	 * 
+	 *
 	 * @see IFileStore#fetchInfo()
 	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
 	 * @see IFileInfo#getAttribute(int)
@@ -280,7 +280,7 @@ public class EFS {
 	 * type {@link #ATTRIBUTE_LINK_TARGET}.
 	 * </p>
 	 * <p>
-	 * Symbolic links are handled transparently, as implemented by the 
+	 * Symbolic links are handled transparently, as implemented by the
 	 * underlying operating system. This means, that all other attributes
 	 * of a {@link IFileInfo} apply to the link target instead of the link.
 	 * Reading or writing a file, or changing attributes applies to the
@@ -293,10 +293,10 @@ public class EFS {
 	 * Broken symbolic links (which do not reference any valid file or directory)
 	 * are being returned by {@link IFileStore#childInfos(int, IProgressMonitor)},
 	 * but {@link IFileInfo#exists()} returns <code>false</code> for these.
-	 * Operations like reading or writing on broken symbolic links throw 
-	 * a "file not found" exception.  
+	 * Operations like reading or writing on broken symbolic links throw
+	 * a "file not found" exception.
 	 * </p>
-	 * 
+	 *
 	 * @see IFileStore#fetchInfo()
 	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
 	 * @see IFileInfo#getAttribute(int)
@@ -314,7 +314,7 @@ public class EFS {
 	 * attribute is set by file system implementations based on the current
 	 * state of a link.
 	 * </p>
-	 * 
+	 *
 	 * @see IFileInfo#getStringAttribute(int)
 	 * @see FileInfo#setStringAttribute(int, String)
 	 * @see #ATTRIBUTE_SYMLINK
@@ -338,20 +338,20 @@ public class EFS {
 	 * Status code definitions
 	 */
 	// Errors [266-298]
-	/** Status code constant (value 268) indicating a store unexpectedly 
+	/** Status code constant (value 268) indicating a store unexpectedly
 	 * exists on the file system.
 	 * Severity: error. Category: file system.
 	 */
 	public static final int ERROR_EXISTS = 268;
 
-	/** Status code constant (value 269) indicating a store unexpectedly 
+	/** Status code constant (value 269) indicating a store unexpectedly
 	 * does not exist on the file system.
 	 * Severity: error. Category: file system.
 	 */
 	public static final int ERROR_NOT_EXISTS = 269;
 
 	/** Status code constant (value 270) indicating the file system location for
-	 * a store could not be computed. 
+	 * a store could not be computed.
 	 * Severity: error. Category: file system.
 	 */
 	public static final int ERROR_NO_LOCATION = 270;
@@ -375,7 +375,7 @@ public class EFS {
 	public static final int ERROR_DELETE = 273;
 
 	/** Status code constant (value 275) indicating this file system is not case
-	 * sensitive and a file that differs only in case unexpectedly exists on 
+	 * sensitive and a file that differs only in case unexpectedly exists on
 	 * the file system.
 	 * Severity: error. Category: file system.
 	 */
@@ -394,13 +394,13 @@ public class EFS {
 	 */
 	public static final int ERROR_PARENT_READ_ONLY = 277;
 
-	/** Status code constant (value 279) indicating that the 
+	/** Status code constant (value 279) indicating that the
 	 * file in the file system is marked as read-only.
 	 * Severity: error. Category: file system.
 	 */
 	public static final int ERROR_READ_ONLY = 279;
 
-	/** Status code constant (value 280) indicating that the 
+	/** Status code constant (value 280) indicating that the
 	 * file system failed to authenticate the request. This can be caused
 	 * by missing or incorrect authentication information being supplied.
 	 * Severity: error. Category: file system.
@@ -416,7 +416,7 @@ public class EFS {
 	/**
 	 * Creates an empty file information object.  The resulting information
 	 * will represent a non-existent file with no name and no attributes set.
-	 * 
+	 *
 	 * @see IFileStore#putInfo(IFileInfo, int, IProgressMonitor)
 	 * @return an empty file information object.
 	 */
@@ -426,7 +426,7 @@ public class EFS {
 
 	/**
 	 * Returns a file system corresponding to the given scheme.
-	 * 
+	 *
 	 * @param scheme The file system URI scheme
 	 * @return The corresponding file system for the given scheme
 	 * @exception CoreException if this method fails. Reasons include:
@@ -441,7 +441,7 @@ public class EFS {
 
 	/**
 	 * Returns the local file system.
-	 * 
+	 *
 	 * @return The local file system
 	 */
 	public static IFileSystem getLocalFileSystem() {
@@ -451,12 +451,12 @@ public class EFS {
 	/**
 	 * Returns the null file system.  The null file system can be used
 	 * to represent a non-existent or unresolved file system. An example
-	 * of a null file system is a file system whose location is relative to an undefined 
+	 * of a null file system is a file system whose location is relative to an undefined
 	 * variable, or a system whose scheme is unknown.
 	 * <p>
-	 * Basic handle-based queries can be performed on the null file system, but all 
+	 * Basic handle-based queries can be performed on the null file system, but all
 	 * operations that actually require file system access will fail.
-	 * 
+	 *
 	 * @return The null file system
 	 */
 	public static IFileSystem getNullFileSystem() {
@@ -465,7 +465,7 @@ public class EFS {
 
 	/**
 	 * Returns the file store corresponding to the provided URI.
-	 * 
+	 *
 	 * @param uri The URI of the file store to return
 	 * @return The file store
 	 * @exception CoreException if this method fails. Reasons include:

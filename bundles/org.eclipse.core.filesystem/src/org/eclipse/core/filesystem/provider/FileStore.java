@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     James Blackburn (Broadcom Corp.) - ongoing development
@@ -46,7 +46,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	/**
 	 * Transfers the contents of an input stream to an output stream, using a large
 	 * buffer.
-	 * 
+	 *
 	 * @param source The input stream to transfer
 	 * @param destination The destination stream of the transfer
 	 * @param length the size of the file or -1 if not known
@@ -119,7 +119,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 
 	/**
 	 * The default implementation of {@link IFileStore#copy(IFileStore, int, IProgressMonitor)}.
-	 * This implementation performs a copy by using other primitive methods. 
+	 * This implementation performs a copy by using other primitive methods.
 	 * Subclasses may override this method.
 	 */
 	@Override
@@ -133,9 +133,9 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	}
 
 	/**
-	 * Recursively copies a directory as specified by 
+	 * Recursively copies a directory as specified by
 	 * {@link IFileStore#copy(IFileStore, int, IProgressMonitor)}.
-	 * 
+	 *
 	 * @param sourceInfo The current file information for the source of the move
 	 * @param destination The destination of the copy.
 	 * @param options bit-wise or of option flag constants (
@@ -157,7 +157,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 		}
 		SubMonitor subMonitor = SubMonitor.convert(monitor, opWork);
 		subMonitor.subTask(NLS.bind(Messages.copying, toString()));
-		// create directory 
+		// create directory
 		destination.mkdir(EFS.NONE, subMonitor.newChild(1));
 		// copy attributes
 		transferAttributes(sourceInfo, destination);
@@ -171,9 +171,9 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	}
 
 	/**
-	 * Copies a file as specified by 
+	 * Copies a file as specified by
 	 * {@link IFileStore#copy(IFileStore, int, IProgressMonitor)}.
-	
+
 	 * @param sourceInfo The current file information for the source of the move
 	 * @param destination The destination of the copy.
 	 * @param options bit-wise or of option flag constants (
@@ -216,7 +216,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 * This implementation always throws an exception indicating that deletion
 	 * is not supported by this file system.  This method should be overridden
 	 * for all file systems on which deletion is supported.
-	 * 
+	 *
 	 * @param options bit-wise or of option flag constants
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
@@ -234,7 +234,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 * out for include whether the file system is case-sensitive, and whether trailing
 	 * slashes are considered significant. Subclasses that override this method
 	 * should also override {@link #hashCode()}.
-	 * 
+	 *
 	 * @param obj The object to compare with the receiver for equality
 	 * @return <code>true</code> if this object is equal to the provided object,
 	 * and <code>false</code> otherwise.
@@ -284,7 +284,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	/**
 	 * The default implementation of {@link IFileStore#getFileStore(IPath)}
 	 * Subclasses may override.
-	 * 
+	 *
 	 * @since org.eclipse.core.filesystem 1.2
 	 */
 	@Override
@@ -331,7 +331,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 * of equality based on equality of the file store's URI.  Subclasses that
 	 * override {@link #equals(Object)} should also override this method
 	 * to ensure the contract of {@link Object#hashCode()} is honored.
-	 * 
+	 *
 	 * @return A hash code value for this file store
 	 * @since org.eclipse.core.filesystem 1.1
 	 */
@@ -342,9 +342,9 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 
 	/**
 	 * The default implementation of {@link IFileStore#isParentOf(IFileStore)}.
-	 * This implementation performs parent calculation using other primitive methods. 
+	 * This implementation performs parent calculation using other primitive methods.
 	 * Subclasses may override this method.
-	 * 
+	 *
 	 * @param other The store to test for parentage.
 	 * @return <code>true</code> if this store is a parent of the provided
 	 * store, and <code>false</code> otherwise.
@@ -362,9 +362,9 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 
 	/**
 	 * The default implementation of {@link IFileStore#mkdir(int, IProgressMonitor)}.
-	 * This implementation always throws an exception indicating that this file system 
+	 * This implementation always throws an exception indicating that this file system
 	 * is read only. This method should be overridden for all writable file systems.
-	 * 
+	 *
 	 * @param options bit-wise or of option flag constants
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
@@ -377,7 +377,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 
 	/**
 	 * The default implementation of {@link IFileStore#move(IFileStore, int, IProgressMonitor)}.
-	 * This implementation performs a move by using other primitive methods. 
+	 * This implementation performs a move by using other primitive methods.
 	 * Subclasses may override this method.
 	 */
 	@Override
@@ -398,7 +398,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 
 	/**
 	 * The default implementation of {@link IFileStore#openOutputStream(int, IProgressMonitor)}.
-	 * This implementation always throws an exception indicating that this file system 
+	 * This implementation always throws an exception indicating that this file system
 	 * is read only. This method should be overridden for all writable file systems.
 	 * <p>
 	 * Implementations of this method are responsible for ensuring that the exact sequence
@@ -406,8 +406,8 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 * {@link #openInputStream(int, IProgressMonitor)}, unless there have been
 	 * intervening modifications to the file in the file system. For example, the implementation
 	 * of this method must not perform conversion of line terminator characters on text
-	 * data in the stream. 
-	 * 
+	 * data in the stream.
+	 *
 	 * @param options bit-wise or of option flag constants
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
@@ -420,9 +420,9 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 
 	/**
 	 * The default implementation of {@link IFileStore#putInfo(IFileInfo, int, IProgressMonitor)}.
-	 * This implementation always throws an exception indicating that this file system 
+	 * This implementation always throws an exception indicating that this file system
 	 * is read only. This method should be overridden for all writable file systems.
-	 * 
+	 *
 	 * @param options bit-wise or of option flag constants
 	 * @param monitor a progress monitor, or <code>null</code> if progress
 	 *    reporting and cancellation are not desired
@@ -450,7 +450,7 @@ public abstract class FileStore extends PlatformObject implements IFileStore {
 	 * Default implementation of {@link IFileStore#toString()}. This default implementation
 	 * returns a string equal to the one returned by #toURI().toString(). Subclasses
 	 * may override to provide a more specific string representation of this store.
-	 * 
+	 *
 	 * @return A string representation of this store.
 	 */
 	@Override

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -29,7 +29,7 @@ public class PropertiesIndexDumper extends AbstractDumper {
 		contents.append("version: ");
 		contents.append(version);
 		contents.append('\n');
-		int entryCount = source.readInt();		
+		int entryCount = source.readInt();
 		contents.append("entries: ");
 		contents.append(entryCount);
 		contents.append('\n');
@@ -72,7 +72,7 @@ public class PropertiesIndexDumper extends AbstractDumper {
 				contents.append('=');
 				contents.append(propertyValue);
 				contents.append('\n');
-				if (qualifier == null)					
+				if (qualifier == null)
 					throw new DumpException("Missing qualifier");
 				if (localName == null)
 					throw new DumpException("Missing local name");

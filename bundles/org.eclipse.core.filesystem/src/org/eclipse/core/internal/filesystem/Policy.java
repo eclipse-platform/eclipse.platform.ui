@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -26,7 +26,7 @@ public class Policy {
 	public static final String PI_FILE_SYSTEM = "org.eclipse.core.filesystem"; //$NON-NLS-1$
 
 	/**
-	 * Print a debug message to the console. 
+	 * Print a debug message to the console.
 	 * Pre-pend the message with the current date and the name of the current thread.
 	 */
 	public static void debug(String message) {

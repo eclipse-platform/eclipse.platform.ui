@@ -38,7 +38,7 @@ public interface IPropertyManager extends IManager {
 	 * <p>
 	 * The subtree under the given resource is traversed to the supplied depth.
 	 * </p>
-	 * 
+	 *
 	 * @param target the resource(tree) to delete properties from
 	 * @param depth  the max depth to delete properties from the resource(tree)
 	 */

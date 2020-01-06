@@ -32,26 +32,26 @@ import org.eclipse.jface.viewers.Viewer;
  * <ul>
  *   <li>project's name;</li>
  *   <li>the builders associated to this project. For each builder it shows:<ul>
- *       <li>the builder's name;</li>        
+ *       <li>the builder's name;</li>
  *       <li>the arguments;</li>
  *       <li>persistent info (interesting projects &amp; last built tree);</li>
- *   </ul></li> 
- 
+ *   </ul></li>
+
  *   <li>the natures associated to this project. For each nature it shows:<ul>
  *       <li>the nature's label &amp; Id;</li>
  *       <li>the nature sets it belongs to;</li>
- *       <li>the required natures;</li>  
- *   </ul></li> 
+ *       <li>the required natures;</li>
+ *   </ul></li>
  * </ul>
- * 
- * 
+ *
+ *
  * @see org.eclipse.core.tools.TreeContentProviderNode
  */
 public class ProjectContentProvider extends AbstractTreeContentProvider {
 
 	/**
-	 * Collects project info. Calls all other <code>extract...</code> methods. 
-	 * 
+	 * Collects project info. Calls all other <code>extract...</code> methods.
+	 *
 	 * @param project the project object from where to extract information
 	 */
 	protected void extractInfo(IProject project) {
@@ -67,7 +67,7 @@ public class ProjectContentProvider extends AbstractTreeContentProvider {
 
 	/**
 	 * Extracts basic project information.
-	 * 
+	 *
 	 * @param project the project from where to extract information
 	 */
 
@@ -76,9 +76,9 @@ public class ProjectContentProvider extends AbstractTreeContentProvider {
 	}
 
 	/**
-	 * Extracts builders information from the project info object, building a 'Builders' 
+	 * Extracts builders information from the project info object, building a 'Builders'
 	 * subtree in the project information tree.
-	 * 
+	 *
 	 * @param project the project from where to extract information
 	 * @param description the description from where to extract information
 	 */
@@ -88,7 +88,7 @@ public class ProjectContentProvider extends AbstractTreeContentProvider {
 		if (commands.length == 0)
 			return;
 
-		// tries to retrieve builder persistent info for all builders in this 
+		// tries to retrieve builder persistent info for all builders in this
 		// project's builder spec
 		Workspace workspace = (Workspace) ResourcesPlugin.getWorkspace();
 		BuildManager manager = workspace.getBuildManager();
@@ -111,7 +111,7 @@ public class ProjectContentProvider extends AbstractTreeContentProvider {
 			// extracts information about arguments
 			extractBuilderArguments(builderNode, commands[i].getArguments());
 
-			// extracts information from persistent info (if available) 
+			// extracts information from persistent info (if available)
 			if (allPersistInfo != null) {
 				//find persistent info for this builder
 				for (BuilderPersistentInfo info : allPersistInfo) {
@@ -125,8 +125,8 @@ public class ProjectContentProvider extends AbstractTreeContentProvider {
 	}
 
 	/**
-	 * Extracts information related to builder arguments for a given builder. 
-	 * 
+	 * Extracts information related to builder arguments for a given builder.
+	 *
 	 * @param builderNode the node where to add builder arguments nodes
 	 * @param builderArgs a map containing arguments for a builder
 	 */
@@ -144,9 +144,9 @@ public class ProjectContentProvider extends AbstractTreeContentProvider {
 
 	/**
 	 * Extracts builder persistent info, if any.
-	 * 
+	 *
 	 * @param builderNode the node where to add persistent info nodes
-	 * @param persistInfo the persistent info 
+	 * @param persistInfo the persistent info
 	 */
 	protected void extractBuilderPersistentInfo(TreeContentProviderNode builderNode, BuilderPersistentInfo persistInfo) {
 
@@ -170,7 +170,7 @@ public class ProjectContentProvider extends AbstractTreeContentProvider {
 	/**
 	 * Extracts from project description object all information regarding natures,
 	 * building a 'Natures' subtree in the projects information tree.
-	 * 
+	 *
 	 * @param description a project description
 	 */
 	protected void extractNaturesInfo(IProjectDescription description) {
@@ -188,7 +188,7 @@ public class ProjectContentProvider extends AbstractTreeContentProvider {
 			TreeContentProviderNode natureNode = createNode(nodeName);
 			naturesRoot.addChild(natureNode);
 
-			// we may not have the descriptor for this nature if (for instance) the 
+			// we may not have the descriptor for this nature if (for instance) the
 			// project was created in a different workspace with a plug-in that we don't have
 			if (descriptor != null) {
 				// lists nature sets to which the current nature belongs
@@ -214,7 +214,7 @@ public class ProjectContentProvider extends AbstractTreeContentProvider {
 
 	/**
 	 * Reconstructs this content provider data model upon the provided input object.
-	 *  
+	 *
 	 * @param input the new input object - must not be null
 	 */
 	@Override
@@ -229,7 +229,7 @@ public class ProjectContentProvider extends AbstractTreeContentProvider {
 
 	/**
 	 * Returns true if the input is a resource.
-	 * 
+	 *
 	 * @param input an input object
 	 * @return true if the provided input is a resource
 	 * @see org.eclipse.core.tools.AbstractTreeContentProvider#acceptInput(java.lang.Object)

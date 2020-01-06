@@ -19,10 +19,10 @@ import org.eclipse.core.tools.metadata.*;
 
 /**
  * A dumper for .markers.snap files.
- * 
+ *
  * @see org.eclipse.core.tools.metadata.AbstractDumper
  * @see org.eclipse.core.tools.resources.metadata.MarkersSnapshotDumpingStrategy_1
- * @see org.eclipse.core.tools.resources.metadata.MarkersSnapshotDumpingStrategy_2 
+ * @see org.eclipse.core.tools.resources.metadata.MarkersSnapshotDumpingStrategy_2
  */
 public class MarkersSnapshotDumper extends MultiStrategyDumper {
 

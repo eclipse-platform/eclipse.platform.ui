@@ -19,7 +19,7 @@ import org.eclipse.core.tools.metadata.*;
 
 /**
  * A dumper for .syncinfo.snap files.
- * 
+ *
  * @see org.eclipse.core.tools.resources.metadata.SyncInfoSnapshotDumpingStrategy_3
  */
 public class SyncInfoSnapshotDumper extends MultiStrategyDumper {

@@ -23,7 +23,7 @@ import org.eclipse.core.tools.metadata.*;
  * A strategy for reading .markers files version 1. Layout:
  * <pre> {@code
  * SAVE_FILE -> VERSION_ID RESOURCE+
- * VERSION_ID -> 
+ * VERSION_ID ->
  * RESOURCE -> RESOURCE_PATH MARKERS_SIZE MARKER*
  * RESOURCE_PATH -> String
  * MARKERS_SIZE -> int

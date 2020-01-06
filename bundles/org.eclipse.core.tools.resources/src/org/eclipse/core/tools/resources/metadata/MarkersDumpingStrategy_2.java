@@ -40,7 +40,7 @@ import org.eclipse.core.tools.metadata.*;
  * BOOLEAN_VALUE -> byte boolean
  * STRING_VALUE -> byte String
  * NULL_VALUE -> byte
- * }</pre> 
+ * }</pre>
  */
 public class MarkersDumpingStrategy_2 implements IStringDumpingStrategy {
 	@Override

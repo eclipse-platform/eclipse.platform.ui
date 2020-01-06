@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM - Initial API and implementation
  *******************************************************************************/
@@ -27,11 +27,11 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchPart;
 
 /**
- * Implements the Delta Spy view. This view uses a <code>TextViewer</code> to 
+ * Implements the Delta Spy view. This view uses a <code>TextViewer</code> to
  * show resource deltas resulting of workspace changes (it is a <code>
  * IResourceChangeListener</code>).
- * 
- * @see org.eclipse.core.resources.IResourceChangeListener  
+ *
+ * @see org.eclipse.core.resources.IResourceChangeListener
  */
 
 public class DeltaView extends SpyView implements IResourceChangeListener {
@@ -46,8 +46,8 @@ public class DeltaView extends SpyView implements IResourceChangeListener {
 	protected Composite parent;
 
 	/**
-	 * Constructs a <code>DeltaView</code> object, adding it as a workspace's 
-	 * resource change listener. 
+	 * Constructs a <code>DeltaView</code> object, adding it as a workspace's
+	 * resource change listener.
 	 */
 	public DeltaView() {
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(this);
@@ -55,7 +55,7 @@ public class DeltaView extends SpyView implements IResourceChangeListener {
 
 	/**
 	 * Creates this view's text widget and actions.
-	 * 
+	 *
 	 * @param aParent the parent control
 	 * @see IWorkbenchPart#createPartControl
 	 */
@@ -104,7 +104,7 @@ public class DeltaView extends SpyView implements IResourceChangeListener {
 
 	/**
 	 * Unregister this resource change listener.
-	 * 
+	 *
 	 * @see IWorkbenchPart#dispose
 	 */
 	@Override
@@ -115,12 +115,12 @@ public class DeltaView extends SpyView implements IResourceChangeListener {
 
 	/**
 	 * Updates view contents, appending new delta information. This method relies
-	 * on <code>ResourceDelta.toDeepDebugString()</code> to produce a string 
+	 * on <code>ResourceDelta.toDeepDebugString()</code> to produce a string
 	 * representation for a resource delta.
-	 *   
+	 *
 	 * @param event the resource change event
 	 * @see ResourceDelta#toDeepDebugString()
-	 * @see IResourceChangeListener#resourceChanged  
+	 * @see IResourceChangeListener#resourceChanged
 	 */
 	@Override
 	public void resourceChanged(IResourceChangeEvent event) {
@@ -135,13 +135,13 @@ public class DeltaView extends SpyView implements IResourceChangeListener {
 		if (delta == null)
 			return;
 
-		// we need to access UI widgets from a SWT thread 
+		// we need to access UI widgets from a SWT thread
 		Runnable update = () -> {
 			// the view might have been disposed at the moment this code runs
 			if (parent.isDisposed())
 				return;
 
-			// updates viewer document, appending new delta information     
+			// updates viewer document, appending new delta information
 			IDocument doc = viewer.getDocument();
 			StringBuilder contents = new StringBuilder(doc.get());
 			contents.append('\n');
@@ -153,7 +153,7 @@ public class DeltaView extends SpyView implements IResourceChangeListener {
 			int previousNOL = doc.getNumberOfLines();
 
 			// sets the viewer document's new contents
-			// ensuring there will be no more than MAX_SIZE chars in it 						
+			// ensuring there will be no more than MAX_SIZE chars in it
 			int length = contents.length();
 			doc.set(contents.substring(length - (Math.min(MAX_SIZE, length))));
 

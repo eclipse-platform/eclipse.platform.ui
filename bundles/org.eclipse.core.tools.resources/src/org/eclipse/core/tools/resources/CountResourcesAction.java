@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM - Initial API and implementation
  *******************************************************************************/
@@ -28,7 +28,7 @@ import org.eclipse.ui.*;
 
 /**
  * This action pops-up a <code>MessageDialog</code> showing the number of
- * resources (and their child resources) currently selected. 
+ * resources (and their child resources) currently selected.
  */
 public class CountResourcesAction implements IWorkbenchWindowActionDelegate {
 
@@ -38,7 +38,7 @@ public class CountResourcesAction implements IWorkbenchWindowActionDelegate {
 	/**
 	 * Executes this action, popping up a <code>MessageDialog</code> showing the
 	 * number of resources (and their child resources) currently selected.
-	 * 
+	 *
 	 * @param action the action proxy that handles the presentation portion of the
 	 *   action
 	 * @see org.eclipse.jface.action.Action#run()
@@ -58,7 +58,7 @@ public class CountResourcesAction implements IWorkbenchWindowActionDelegate {
 	/**
 	 * Returns a list of resources currently selected. If no resource is currently
 	 * selected, returns a list containing the workspace root.
-	 * 
+	 *
 	 * @return a list of resources
 	 */
 	@SuppressWarnings("rawtypes")
@@ -89,7 +89,7 @@ public class CountResourcesAction implements IWorkbenchWindowActionDelegate {
 	/**
 	 * Pops-up a <code>MessageDialog</code> showing the number of resources (and
 	 * their child resources) currently selected.
-	 * 
+	 *
 	 * @param resources a list containing all resources used as a starting point in
 	 * the search
 	 * @param count the number of resources found
@@ -113,7 +113,7 @@ public class CountResourcesAction implements IWorkbenchWindowActionDelegate {
 	 * interface. The conversion is a bare cast operation (if the object is instance
 	 * of <code>IResource</code>, or an adaptation (if the object is instance of
 	 * <code>IAdaptable</code>).
-	 * 
+	 *
 	 * @param object the object to be cast to <code>IResource</code>
 	 * @return a reference to an IResource corresponding to the object provided, or
 	 * null if it is not possible to convert the provided object to
@@ -135,8 +135,8 @@ public class CountResourcesAction implements IWorkbenchWindowActionDelegate {
 	/**
 	 * Counts the number of resources (and its sub-resources) in the list of
 	 * resources provided.
-	 * 
-	 * @param resources a <code>List</code> object containing resource objects 
+	 *
+	 * @param resources a <code>List</code> object containing resource objects
 	 * @return the number of resources found
 	 * @throws CoreException if a visited resource does not exist
 	 * @see IResource#accept(org.eclipse.core.resources.IResourceVisitor)
@@ -199,18 +199,18 @@ public class CountResourcesAction implements IWorkbenchWindowActionDelegate {
 	 * Eliminates from the resource list provided any redundant resources.
 	 * Redundant resources are resources that have any other resources in the list
 	 * as ancestors.
-	 * 
+	 *
 	 * @param resourcesList a <code>List</code> object containing resource objects.
 	 */
 	private void eliminateRedundancies(List<IResource> resourcesList) {
 		if (resourcesList.size() <= 1)
 			return;
 
-		//	we sort the resources list by path so it is easier to check for redundancies     
+		//	we sort the resources list by path so it is easier to check for redundancies
 		Collections.sort(resourcesList, (resource1, resource2) -> resource1.getFullPath().toString().compareTo(resource2.getFullPath().toString()));
 
-		// We iterate through the list removing any resource which is descendant 
-		// from any resource previously visited 
+		// We iterate through the list removing any resource which is descendant
+		// from any resource previously visited
 		Iterator<IResource> resourcesIter = resourcesList.iterator();
 		IResource last = resourcesIter.next();
 		while (resourcesIter.hasNext()) {
