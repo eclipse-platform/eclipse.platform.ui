@@ -599,7 +599,7 @@ public abstract class FieldEditor {
 
 	/**
 	 * Set the page to be the receiver.
-	 * 
+	 *
 	 * @param dialogPage the new receiver
 	 *
 	 * @since 3.1

@@ -1381,7 +1381,7 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 
 	/**
 	 * Sets the current page.
-	 * 
+	 *
 	 * @param currentPage page to set
 	 *
 	 * @since 3.1
@@ -1392,7 +1392,7 @@ public class PreferenceDialog extends TrayDialog implements IPreferencePageConta
 
 	/**
 	 * Set the treeViewer.
-	 * 
+	 *
 	 * @param treeViewer viewer to set
 	 *
 	 * @since 3.1

@@ -392,7 +392,7 @@ public class ApplicationWindow extends Window implements IRunnableContext {
 
 	/**
 	 * Create the status line if required.
-	 * 
+	 *
 	 * @param shell the shell to create status line into
 	 */
 	protected void createStatusLine(Shell shell) {

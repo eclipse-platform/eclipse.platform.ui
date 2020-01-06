@@ -2944,7 +2944,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 
 	/**
 	 * Returns the tree path for the given item.
-	 * 
+	 *
 	 * @param item item to get path for
 	 * @return {@link TreePath}
 	 *

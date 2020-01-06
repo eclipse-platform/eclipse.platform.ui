@@ -378,25 +378,25 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 
 		/**
 		 * Set the background color.
-		 * 
+		 *
 		 * @param background color to set
 		 */
 		public void setBackground(Color background) {
 			this.background = background;
 		}
-		
+
 		/**
 		 * Set the font.
-		 * 
+		 *
 		 * @param font font to set
 		 */
 		public void setFont(Font font) {
 			this.font = font;
 		}
-		
+
 		/**
 		 * Set the foreground color.
-		 * 
+		 *
 		 * @param foreground color to set
 		 */
 		public void setForeground(Color foreground) {
