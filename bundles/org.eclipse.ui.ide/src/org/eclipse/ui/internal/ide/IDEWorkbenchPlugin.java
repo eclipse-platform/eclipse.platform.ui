@@ -311,20 +311,20 @@ public class IDEWorkbenchPlugin extends AbstractUIPlugin {
 
 		return infos.toArray(new AboutInfo[infos.size()]);
 	}
-	
+
 	/**
 	 * Get the workbench image with the given path relative to ICON_PATH.
-	 * 
+	 *
 	 * @param relativePath relative path of image
 	 * @return ImageDescriptor or <code>null</code>
 	 */
 	public static ImageDescriptor getIDEImageDescriptor(String relativePath){
 		return ResourceLocator.imageDescriptorFromBundle(IDE_WORKBENCH, ICONS_PATH + relativePath).orElse(null);
 	}
-	
+
 	/**
 	 * Return the resourceManager used by this plug-in.
-	 * 
+	 *
 	 * @return the resource manager
 	 */
 	public ResourceManager getResourceManager() {

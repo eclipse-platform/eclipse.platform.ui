@@ -75,7 +75,7 @@ public abstract class MarkerFieldFilter {
 	/**
 	 * Save any of the relevant state for the receiver in the memento so that it can
 	 * be used to restore the user settings.
-	 * 
+	 *
 	 * @param memento the memento to save in
 	 * @see #loadSettings(IMemento)
 	 */
@@ -83,7 +83,7 @@ public abstract class MarkerFieldFilter {
 
 	/**
 	 * Load any settings for the receiver from the memento.
-	 * 
+	 *
 	 * @param memento the memento to load from
 	 * @see #saveSettings(IMemento)
 	 */

@@ -929,7 +929,7 @@ public class ResourceTreeAndListGroup extends EventManager {
 	/**
 	 * Set the root of the widget to be new Root. Regenerate all of the tables and
 	 * lists from this value.
-	 * 
+	 *
 	 * @param newRoot the new root object
 	 */
 	public void setRoot(Object newRoot) {

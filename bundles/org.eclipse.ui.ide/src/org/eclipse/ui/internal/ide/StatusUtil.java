@@ -116,7 +116,7 @@ public class StatusUtil {
 	 * This method must not be called outside the workbench.
 	 *
 	 * Utility method for creating status.
-	 * 
+	 *
 	 * @param children  list of statuses; might contain nested multi-statuses
 	 * @param message   status message
 	 * @param exception optional status exception

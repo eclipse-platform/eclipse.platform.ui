@@ -41,7 +41,7 @@ public abstract class FileSystemContributor {
 
 	/**
 	 * Return a URI for the supplied String from the user.
-	 * 
+	 *
 	 * @param string string to convert
 	 * @return URI or <code>null</code> if the string is invalid.
 	 */

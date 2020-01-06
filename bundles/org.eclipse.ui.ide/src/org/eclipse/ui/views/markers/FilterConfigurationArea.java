@@ -104,7 +104,7 @@ public abstract class FilterConfigurationArea {
 
 	/**
 	 * Set the standard button data for the button.
-	 * 
+	 *
 	 * @param button button to change
 	 */
 	protected void setButtonLayoutData(Button button) {
