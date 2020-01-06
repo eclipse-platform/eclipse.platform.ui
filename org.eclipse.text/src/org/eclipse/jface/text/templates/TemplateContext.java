@@ -119,7 +119,7 @@ public abstract class TemplateContext implements IAdaptable {
 	 *         in this context, <code>false</code> otherwise
 	 */
 	public abstract boolean canEvaluate(Template template);
-	
+
 	/**
 	 * Default implementation does nothing, clients can override to provide adapters.
 	 * {@inheritDoc}

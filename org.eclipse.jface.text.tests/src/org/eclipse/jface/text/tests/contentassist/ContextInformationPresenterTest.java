@@ -51,7 +51,7 @@ public class ContextInformationPresenterTest extends AbstractContentAssistTest {
 			if (info == null) { // Ignore unknown information
 				return false;
 			}
-			
+
 			int begin= info.getContextInformationPosition();
 			int end= begin + info.getContextDisplayString().length();
 			boolean style= (offset >= begin && offset <= end);
@@ -88,22 +88,22 @@ public class ContextInformationPresenterTest extends AbstractContentAssistTest {
 	@Test
 	public void testContextInfo_withStyledTextPresentation() throws Exception {
 		setupSourceViewer(createBarContentAssist(), BarContentAssistProcessor.PROPOSAL);
-		
+
 		final List<Shell> beforeShells= getCurrentShells();
-		
+
 		postSourceViewerKeyEvent(SWT.ARROW_RIGHT, 0, SWT.KeyDown);
 		selectAndReveal(4, 0);
 		processEvents();
-		
+
 		triggerContextInformation();
 		this.infoShell= findNewShell(beforeShells);
 		assertEquals("idx= 0", getInfoText(this.infoShell));
 		assertArrayEquals(new StyleRange[] {
 				new StyleRange(0, 3, null, null, SWT.BOLD)
 		}, getInfoStyleRanges(this.infoShell));
-		
+
 		emulatePressArrowKey(SWT.ARROW_RIGHT);
-		
+
 		assertEquals("idx= 0", getInfoText(this.infoShell));
 		assertArrayEquals(new StyleRange[] {
 		}, getInfoStyleRanges(this.infoShell));

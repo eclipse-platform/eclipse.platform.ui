@@ -47,19 +47,19 @@ public class ContextInformationTest extends AbstractContentAssistTest {
 	@Test
 	public void testContextInfo() throws Exception {
 		setupSourceViewer(createBarContentAssist(), BarContentAssistProcessor.PROPOSAL);
-		
+
 		final List<Shell> beforeShells= getCurrentShells();
-		
+
 		selectAndReveal(4, 0);
 		processEvents();
-		
+
 		triggerContextInformation();
 		this.infoShell= findNewShell(beforeShells);
 		assertEquals("idx= 0", getInfoText(this.infoShell));
-		
+
 		selectAndReveal(8, 0);
 		processEvents();
-		
+
 		triggerContextInformation();
 		this.infoShell= findNewShell(beforeShells);
 		assertEquals("idx= 1", getInfoText(this.infoShell));
@@ -68,47 +68,47 @@ public class ContextInformationTest extends AbstractContentAssistTest {
 	@Test
 	public void testContextInfo_hide_Bug512251() throws Exception {
 		setupSourceViewer(createBarContentAssist(), BarContentAssistProcessor.PROPOSAL);
-		
+
 		final List<Shell> beforeShells= getCurrentShells();
-		
+
 		selectAndReveal(4, 0);
 		processEvents();
-		
+
 		triggerContextInformation();
 		this.infoShell= findNewShell(beforeShells);
-		
+
 		selectAndReveal(8, 0);
 		processEvents();
-		
+
 		triggerContextInformation();
 		this.infoShell= findNewShell(beforeShells);
-		
+
 		// ITextEditorActionConstants.DELETE_LINE
 		getDocument().set("");
-		
+
 		new Accessor(getContentAssistant(), ContentAssistant.class).invoke("hide", new Object[0]);
 	}
 
 	@Test
 	public void testContextInfo_hide_focusOut() throws Exception {
 		setupSourceViewer(createBarContentAssist(), BarContentAssistProcessor.PROPOSAL);
-		
+
 		final List<Shell> beforeShells = getCurrentShells();
-		
+
 		selectAndReveal(4, 0);
 		processEvents();
-		
+
 		triggerContextInformation();
 		this.infoShell= findNewShell(beforeShells);
 		assertEquals("idx= 0", getInfoText(this.infoShell));
-		
+
 		selectAndReveal(8, 0);
 		processEvents();
-		
+
 		triggerContextInformation();
 		this.infoShell= findNewShell(beforeShells);
 		assertEquals("idx= 1", getInfoText(this.infoShell));
-		
+
 		// Hide all
 		getButton().setFocus();
 		processEvents();
@@ -118,28 +118,28 @@ public class ContextInformationTest extends AbstractContentAssistTest {
 	@Test
 	public void testContextInfo_hide_keyEsc() throws Exception {
 		setupSourceViewer(createBarContentAssist(), BarContentAssistProcessor.PROPOSAL);
-		
+
 		final List<Shell> beforeShells = getCurrentShells();
-		
+
 		selectAndReveal(4, 0);
 		processEvents();
-		
+
 		triggerContextInformation();
 		this.infoShell= findNewShell(beforeShells);
 		assertEquals("idx= 0", getInfoText(this.infoShell));
-		
+
 		selectAndReveal(8, 0);
 		processEvents();
-		
+
 		triggerContextInformation();
 		this.infoShell= findNewShell(beforeShells);
 		assertEquals("idx= 1", getInfoText(this.infoShell));
-		
+
 		emulatePressEscKey();
 		processEvents();
 		this.infoShell= findNewShell(beforeShells);
 		assertEquals("idx= 0", getInfoText(this.infoShell));
-		
+
 		emulatePressEscKey();
 		processEvents();
 		assertTrue(this.infoShell.isDisposed() || !this.infoShell.isVisible());
@@ -148,28 +148,28 @@ public class ContextInformationTest extends AbstractContentAssistTest {
 	@Test
 	public void testContextInfo_hide_validRange() throws Exception {
 		setupSourceViewer(createBarContentAssist(), BarContentAssistProcessor.PROPOSAL + '\n');
-		
+
 		final List<Shell> beforeShells = getCurrentShells();
-		
+
 		selectAndReveal(4, 0);
 		processEvents();
-		
+
 		triggerContextInformation();
 		this.infoShell= findNewShell(beforeShells);
 		assertEquals("idx= 0", getInfoText(this.infoShell));
-		
+
 		selectAndReveal(8, 0);
 		processEvents();
-		
+
 		triggerContextInformation();
 		this.infoShell= findNewShell(beforeShells);
 		assertEquals("idx= 1", getInfoText(this.infoShell));
-		
+
 		emulatePressArrowKey(SWT.ARROW_LEFT);
 		processEvents();
 		this.infoShell= findNewShell(beforeShells);
 		assertEquals("idx= 0", getInfoText(this.infoShell));
-		
+
 		emulatePressArrowKey(SWT.ARROW_DOWN);
 		processEvents();
 		assertTrue(this.infoShell.isDisposed() || !this.infoShell.isVisible());

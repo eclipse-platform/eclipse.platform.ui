@@ -1252,7 +1252,7 @@ public class TextPresentationTest {
 			shell.dispose();
 		}
 	}
-	
+
 	@Test
 	public void testIterator() {
 		// Test read over iterator end

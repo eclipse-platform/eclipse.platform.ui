@@ -32,14 +32,14 @@ import org.eclipse.ui.internal.views.minimap.MinimapWidget;
 /**
  * Minimap widget tests to check that changed of {@link ITextViewer} of the editor update the
  * {@link StyledText} of the Minimap:
- * 
+ *
  * <ul>
  * <li>check that {@link StyledText} content of minimap is synchronized with the text of the
  * {@link ITextViewer} of the editor.</li>
  * <li>check that {@link StyledText} styles of minimap is synchronized with the styles of the
  * {@link ITextViewer} of the editor.</li>
  * </ul>
- * 
+ *
  * @since 3.11
  */
 public class MinimapWidgetTest {

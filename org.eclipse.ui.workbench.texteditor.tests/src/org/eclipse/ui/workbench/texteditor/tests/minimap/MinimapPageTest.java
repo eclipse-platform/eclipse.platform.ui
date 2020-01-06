@@ -32,7 +32,7 @@ import org.eclipse.ui.texteditor.StatusTextEditor;
 /**
  * Test create of Minimap page which is possible only if {@link ITextViewer} can be get from the
  * {@link ITextEditor}.
- * 
+ *
  * @since 3.11
  */
 public class MinimapPageTest {

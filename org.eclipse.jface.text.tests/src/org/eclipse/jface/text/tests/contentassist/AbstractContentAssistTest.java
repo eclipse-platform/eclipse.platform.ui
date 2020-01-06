@@ -51,7 +51,7 @@ public class AbstractContentAssistTest {
 	private SourceViewer viewer;
 	private ContentAssistant assistant;
 	private Document document;
-	
+
 	private Button button;
 
 
@@ -71,21 +71,21 @@ public class AbstractContentAssistTest {
 		shell= new Shell();
 		shell.setSize(500, 280);
 		shell.setLayout(new GridLayout());
-		
+
 		viewer= new SourceViewer(shell, null, SWT.NONE);
 		viewer.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 		assistant= contentAssistant;
 		viewer.configure(createSourceViewerConfiguration());
-		
+
 		document= new Document();
 		if (initialText != null) {
 			document.set(initialText);
 		}
 		viewer.setDocument(document);
-		
+
 		button= new Button(shell, SWT.PUSH);
 		button.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false));
-		
+
 		shell.open();
 		Assert.assertTrue(new DisplayHelper() {
 			@Override

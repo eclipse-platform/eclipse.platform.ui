@@ -51,9 +51,9 @@ public class ScreenshotTest {
 	public void testWindowsTaskManagerScreenshots() throws Exception {
 		if (! Util.isWindows())
 			return;
-		
+
 		Display display= Display.getDefault();
-		
+
 		Event event= new Event();
 		event.type= SWT.KeyDown;
 		event.keyCode= SWT.CTRL;
@@ -63,7 +63,7 @@ public class ScreenshotTest {
 		event.character= SWT.ESC;
 		event.keyCode= SWT.ESC;
 		System.out.println("* ESC " + display.post(event));
-		
+
 		event.type= SWT.KeyUp;
 		System.out.println("* ESC up " + display.post(event));
 		event.character= 0;
@@ -71,33 +71,33 @@ public class ScreenshotTest {
 		System.out.println("* SHIFT up " + display.post(event));
 		event.keyCode= SWT.CTRL;
 		System.out.println("* CTRL up " + display.post(event));
-		
+
 		runEventQueue();
 		takeScreenshot(ScreenshotTest.class, testName.getMethodName() + 2, System.out);
-		
+
 		event.type= SWT.KeyDown;
 		event.character= SWT.ESC;
 		event.keyCode= SWT.ESC;
 		System.out.println("* ESC " + display.post(event));
 		event.type= SWT.KeyUp;
 		System.out.println("* ESC up " + display.post(event));
-		
+
 		runEventQueue();
 		takeScreenshot(ScreenshotTest.class, testName.getMethodName() + 3, System.out);
 	}
-	
+
 	/**
 	 * Takes a screenshot and dumps other debugging information to the given stream.
-	 * 
+	 *
 	 * <p>
 	 * Workaround for missing {@link junit.framework.TestCase#getName()} in JUnit 4:
 	 * </p>
-	 * 
+	 *
 	 * <pre>
 	 * &#64;Rule
 	 * public TestName testName = new TestName();
 	 * </pre>
-	 * 
+	 *
 	 * @param testClass test class that takes the screenshot
 	 * @param name screenshot identifier (e.g. test name)
 	 * @param out print stream to use for diagnostics.
@@ -105,7 +105,7 @@ public class ScreenshotTest {
 	 */
 	public static String takeScreenshot(Class<?> testClass, String name, PrintStream out) {
 		File resultsHtmlDir= getJunitReportOutput(); // ends up in testresults/linux.gtk.x86_6.0/<class>.<test>.png
-		
+
 		if (resultsHtmlDir == null) { // Fallback. Warning: uses same file location on all test platforms:
 			File eclipseDir= new File("").getAbsoluteFile(); // eclipse-testing/test-eclipse/eclipse
 			if (isRunByGerritHudsonJob())
@@ -113,12 +113,12 @@ public class ScreenshotTest {
 			else
 				resultsHtmlDir= new File(eclipseDir, "../../results/html/").getAbsoluteFile(); // ends up in testresults/html/<class>.<test>.png
 		}
-		
+
 		Display display= PlatformUI.getWorkbench().getDisplay();
-		
+
 		// Dump focus control, parents, and shells:
 		dumpDisplayState(display, System.out);
-		
+
 		// Take a screenshot:
 		GC gc = new GC(display);
 		Rectangle displayBounds= display.getBounds();
@@ -129,7 +129,7 @@ public class ScreenshotTest {
 
 		resultsHtmlDir.mkdirs();
 		String filename = new File(
-				resultsHtmlDir.getAbsolutePath(), 
+				resultsHtmlDir.getAbsolutePath(),
 				testClass.getName() + "." + name + ".png").getAbsolutePath();
 		ImageLoader loader = new ImageLoader();
 		loader.data = new ImageData[] { image.getImageData() };
@@ -173,7 +173,7 @@ public class ScreenshotTest {
 			} while (control != null);
 		}
 	}
-	
+
 	private static File getJunitReportOutput() {
 		String[] args= Platform.getCommandLineArgs();
 		for (int i= 0; i < args.length - 1; i++) {

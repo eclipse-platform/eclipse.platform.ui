@@ -240,7 +240,7 @@ public class ChangeRegionTest {
 		RangeUtil.assertEqualSingleRange(new LineRange(12, 5), r.getAdjustedRanges());
 		RangeUtil.assertEqualRange(new LineRange(12, 5), r.getAdjustedCoverage());
 	}
-	
+
 	@Test
 	public void testHunkOverStart() throws Exception {
 		ChangeRegion r;

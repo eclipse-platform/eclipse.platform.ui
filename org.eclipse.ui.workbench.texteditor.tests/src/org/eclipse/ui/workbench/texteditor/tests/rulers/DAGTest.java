@@ -48,7 +48,7 @@ public class DAGTest {
 		assertTrue(fDag.getSources().isEmpty());
 		assertTrue(fDag.getSinks().isEmpty());
 	}
-	
+
 	@Test
 	public void testIllegal() throws Exception {
 		assertFalse(fDag.addEdge(A, A));
@@ -73,7 +73,7 @@ public class DAGTest {
 		} catch (RuntimeException x) {
 		}
 	}
-	
+
 	@Test
 	public void testDag() throws Exception {
 		assertTrue(fDag.addEdge(A, B));
