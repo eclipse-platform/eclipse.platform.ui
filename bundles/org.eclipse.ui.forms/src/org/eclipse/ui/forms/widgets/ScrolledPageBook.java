@@ -33,7 +33,7 @@ public class ScrolledPageBook extends SharedScrolledComposite {
 	private Hashtable<Object, Control> pages;
 	private Composite emptyPage;
 	private Control currentPage;
-	
+
 	/**
 	 * Creates a new instance in the provided parent
 	 *
