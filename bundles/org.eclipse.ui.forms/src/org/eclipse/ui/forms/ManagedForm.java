@@ -120,7 +120,8 @@ public class ManagedForm implements IManagedForm {
 	 */
 	@Override
 	public void fireSelectionChanged(IFormPart part, ISelection selection) {
-		for (IFormPart cpart : parts) {
+		for (int i = 0; i < parts.size(); i++) {
+			IFormPart cpart = parts.get(i);
 			if (part.equals(cpart))
 				continue;
 			if (cpart instanceof IPartSelectionListener) {
