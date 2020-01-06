@@ -536,7 +536,7 @@ public class HelpIndexBuilder {
 			href = getAttribute(topic, "topic"); //$NON-NLS-1$
 		}
 		if (href != null
-				&& !href.isEmpty() && !href.startsWith("http://") && !href.startsWith("https://")) { //$NON-NLS-1$ //$NON-NLS-2$ 
+				&& !href.isEmpty() && !href.startsWith("http://") && !href.startsWith("https://")) { //$NON-NLS-1$ //$NON-NLS-2$
 			href = SearchIndex.getIndexableHref(href);
 			if (href != null)
 				hrefs.add(href);
@@ -545,7 +545,7 @@ public class HelpIndexBuilder {
 		for (int i = 0; i < subtopics.getLength(); i++) {
 			Element subtopic = (Element) subtopics.item(i);
 			href = getAttribute(subtopic, "href"); //$NON-NLS-1$
-			if (href != null && !href.isEmpty() && !href.startsWith("http://") && !href.startsWith("https://")) { //$NON-NLS-1$ //$NON-NLS-2$ 
+			if (href != null && !href.isEmpty() && !href.startsWith("http://") && !href.startsWith("https://")) { //$NON-NLS-1$ //$NON-NLS-2$
 				href = SearchIndex.getIndexableHref(href);
 				if (href != null)
 					hrefs.add(href);

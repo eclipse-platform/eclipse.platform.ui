@@ -219,14 +219,14 @@ public class ScopeRegistry {
 					return format(next,current);
 				next+=current;
 			}
-			if (next.isEmpty()) 
+			if (next.isEmpty())
 				return null;
 			return next;
 		}
 
 		private String format(String next,char current)
 		{
-			if (next.isEmpty()) 
+			if (next.isEmpty())
 			{
 				cursor++;
 				return current+""; //$NON-NLS-1$
