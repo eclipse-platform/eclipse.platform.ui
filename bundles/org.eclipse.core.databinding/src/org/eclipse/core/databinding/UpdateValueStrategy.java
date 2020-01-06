@@ -568,4 +568,15 @@ public class UpdateValueStrategy<S, D> extends UpdateStrategy<S, D> {
 		Objects.requireNonNull(converter);
 		return new UpdateValueStrategy<S, D>().setConverter(converter);
 	}
+
+	/**
+	 * Convenience method that creates an update strategy that never updates its
+	 * observables, using {@link #POLICY_NEVER} and no defaults.
+	 *
+	 * @return the update strategy
+	 * @since 1.8
+	 */
+	public static <S, D> UpdateValueStrategy<S, D> never() {
+		return new UpdateValueStrategy<>(false, POLICY_NEVER);
+	}
 }

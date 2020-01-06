@@ -113,7 +113,7 @@ public class Snippet008ComputedValue {
 
 		// Bind the formatted name Text to the formatted name observable
 		bindingContext.bindValue(WidgetProperties.text(SWT.None).observe(formattedName), name,
-				new UpdateValueStrategy<String, String>(false, UpdateValueStrategy.POLICY_NEVER), null);
+				UpdateValueStrategy.never(), null);
 
 		shell.pack();
 		shell.open();

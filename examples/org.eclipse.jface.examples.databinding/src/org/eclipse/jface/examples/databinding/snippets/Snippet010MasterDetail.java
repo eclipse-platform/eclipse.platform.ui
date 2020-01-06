@@ -74,7 +74,7 @@ public class Snippet010MasterDetail {
 
 		// 3. Bind the Text widget to the name detail (selection's name)
 		new DataBindingContext().bindValue(WidgetProperties.text(SWT.NONE).observe(name), detailObservable,
-				new UpdateValueStrategy<>(false, UpdateValueStrategy.POLICY_NEVER), null);
+				UpdateValueStrategy.never(), null);
 
 		shell.open();
 		return shell;

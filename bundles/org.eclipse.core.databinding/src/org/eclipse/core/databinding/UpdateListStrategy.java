@@ -299,4 +299,15 @@ public class UpdateListStrategy<S, D> extends UpdateStrategy<S, D> {
 		Objects.requireNonNull(converter);
 		return new UpdateListStrategy<S, D>().setConverter(converter);
 	}
+
+	/**
+	 * Convenience method that creates an update strategy that never updates its
+	 * observables, using {@link #POLICY_NEVER} and no defaults.
+	 *
+	 * @return the update strategy
+	 * @since 1.8
+	 */
+	public static <S, D> UpdateListStrategy<S, D> never() {
+		return new UpdateListStrategy<>(false, POLICY_NEVER);
+	}
 }

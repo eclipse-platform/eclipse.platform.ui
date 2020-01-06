@@ -596,7 +596,8 @@ new UpdateValueStrategy().setConverter(toDouble).setAfterGetValidator(validator)
 		Binding b = getDbc().bindValue(SWTObservables.observeText(text, SWT.Modify), BeansObservables.observeValue(account, "expiryDate"));
 		Text errorText = new Text(getComposite(), SWT.NONE);
 
-		getDbc().bindValue(SWTObservables.observeText(errorText, SWT.Modify), b.getValidationStatus(), new UpdateValueStrategy(false, UpdateValueStrategy.POLICY_NEVER), null);
+		getDbc().bindValue(SWTObservables.observeText(errorText, SWT.Modify), b.getValidationStatus(),
+				UpdateValueStrategy.never(), null);
 		assertTrue(b.getValidationStatus().getValue().isOK());
 		enterText(text, "foo");
 		assertFalse(b.getValidationStatus().getValue().isOK());
