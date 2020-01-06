@@ -61,15 +61,12 @@ public interface IConverter<F, T> {
 	public T convert(F fromObject);
 
 	/**
-	 * Create a converter
+	 * Creates a converter which calls the argument conversion function.
 	 *
-	 * @param fromType
-	 *            the from type
-	 * @param toType
-	 *            the to type
-	 * @param conversion
-	 *            the conversion method
-	 * @return a new converter instance
+	 * @param fromType   the from type
+	 * @param toType     the to type
+	 * @param conversion the conversion function
+	 * @return the new converter
 	 * @since 1.6
 	 */
 	public static <F, T> IConverter<F, T> create(Object fromType, Object toType, Function<F, T> conversion) {
@@ -89,5 +86,17 @@ public interface IConverter<F, T> {
 				return conversion.apply(fromObject);
 			}
 		};
+	}
+
+	/**
+	 * Creates an untyped converter which calls the argument conversion function.
+	 * null is used as the to and from types.
+	 *
+	 * @param conversion the conversion function
+	 * @return the new converter
+	 * @since 1.8
+	 */
+	public static <F, T> IConverter<F, T> create(Function<F, T> conversion) {
+		return create(null, null, conversion);
 	}
 }
