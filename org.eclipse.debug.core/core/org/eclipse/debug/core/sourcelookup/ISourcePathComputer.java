@@ -24,7 +24,7 @@ import org.eclipse.debug.core.DebugPlugin;
  * compute the path specific to a launch configuration. Following is an example
  * contribution.
  * </p>
- * 
+ *
  * <pre>
  * &lt;extension point=&quot;org.eclipse.debug.core.sourcePathComputers&quot;&gt;
  *    	&lt;sourcePathComputer
@@ -44,7 +44,7 @@ import org.eclipse.debug.core.DebugPlugin;
  * Clients contributing a source path computer provide an implementation of
  * {@link org.eclipse.debug.core.sourcelookup.ISourcePathComputerDelegate}.
  * </p>
- * 
+ *
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.

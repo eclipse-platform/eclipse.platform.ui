@@ -22,7 +22,7 @@ package org.eclipse.debug.core;
  * has an unique identifier specified by the <code>mode</code> attribute and a
  * human readable label specified by the <code>label</code> attribute.
  * </p>
- * 
+ *
  * <pre>
  *  &lt;extension point=&quot;org.eclipse.debug.core.launchModes&quot;&gt;
  *   &lt;launchMode
@@ -31,7 +31,7 @@ package org.eclipse.debug.core;
  *   &lt;/launchMode&gt;
  *  &lt;/extension&gt;
  * </pre>
- * 
+ *
  * @since 3.0
  * @noimplement This interface is not intended to be implemented by clients.
  * @noextend This interface is not intended to be extended by clients.

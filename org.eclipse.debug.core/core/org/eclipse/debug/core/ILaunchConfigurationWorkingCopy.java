@@ -304,7 +304,7 @@ public interface ILaunchConfigurationWorkingCopy extends ILaunchConfiguration, I
 	 * <p>
 	 * This method allows non-object attributes to be removed.
 	 * </p>
-	 * 
+	 *
 	 * @param attributeName the name of the attribute to remove
 	 * @return previous value of the attribute or <code>null</code>
 	 *

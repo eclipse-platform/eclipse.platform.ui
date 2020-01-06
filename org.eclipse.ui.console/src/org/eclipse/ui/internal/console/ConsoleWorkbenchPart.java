@@ -41,7 +41,7 @@ public class ConsoleWorkbenchPart implements IWorkbenchPart {
 
 	/**
 	 * Constructs a part for the given console that binds to the given site.
-	 * 
+	 *
 	 * @param console the console which is part of the part
 	 * @param site    the site to bind the part to
 	 */

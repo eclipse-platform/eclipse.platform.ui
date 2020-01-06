@@ -29,7 +29,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * <p>
  * Following is an example extension definition.
  * </p>
- * 
+ *
  * <pre>
  * &lt;extension point=&quot;org.eclipse.ui.console.consolePageParticipants&quot;&gt;
  *   &lt;consolePageParticipant
@@ -38,7 +38,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
  *   &lt;/consolePageParticipant&gt;
  * &lt;/extension&gt;
  * </pre>
- * 
+ *
  * The example page participant is contributed to all console pages. An optional
  * <code>enablement</code> attribute may be specified to control which consoles
  * a page participant is applicable to.
@@ -46,7 +46,7 @@ import org.eclipse.ui.part.IPageBookViewPage;
  * Clients contributing console page participant extensions are intended to
  * implement this interface.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public interface IConsolePageParticipant extends IAdaptable {

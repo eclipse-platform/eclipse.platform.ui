@@ -69,7 +69,7 @@ public class BreakpointContainerLabelProvider extends DebugElementLabelProvider 
 		Object lastSegment = path.getLastSegment();
 		if (lastSegment instanceof IBreakpointContainer) {
 			IBreakpointContainer container = (IBreakpointContainer) lastSegment;
-			
+
 			// Return true, gray if some breakpoints are enabled and some are disabled.
 			// return false if all breakpoints are either disabled or all are enabled.
 			boolean hasEnabled = false;

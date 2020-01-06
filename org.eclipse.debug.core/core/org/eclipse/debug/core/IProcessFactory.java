@@ -29,7 +29,7 @@ import org.eclipse.debug.core.model.IProcess;
  * <p>
  * Following is example plug-in XML that contributes a process factory.
  * </p>
- * 
+ *
  * <pre>
  * &lt;extension point="org.eclipse.debug.core.processFactories"&gt;
  *   &lt;processFactory
@@ -38,7 +38,7 @@ import org.eclipse.debug.core.model.IProcess;
  *   &lt;/processFactory&gt;
  * &lt;/extension&gt;
  * </pre>
- * 
+ *
  * The attributes are specified as follows:
  * <ul>
  * <li>id - a unique identifier for this extension point</li>
@@ -49,7 +49,7 @@ import org.eclipse.debug.core.model.IProcess;
  * Clients contributing a process factory are intended to implement this
  * interface.
  * </p>
- * 
+ *
  * @since 3.0
  */
 

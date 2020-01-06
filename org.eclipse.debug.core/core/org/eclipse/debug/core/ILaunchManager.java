@@ -214,7 +214,7 @@ public interface ILaunchManager {
 	 * <p>
 	 * Since 3.12, the returned configuration may be a launch configuration template.
 	 * </p>
-	 * 
+	 *
 	 * @param file launch configuration file
 	 * @return a handle to the launch configuration contained
 	 *  in the specified file
@@ -227,7 +227,7 @@ public interface ILaunchManager {
 	 * <p>
 	 * Since 3.12, the returned configuration may be a launch configuration template.
 	 * </p>
-	 * 
+	 *
 	 * @param memento launch configuration memento
 	 * @return a handle to the launch configuration specified by
 	 *  the given memento
@@ -263,7 +263,7 @@ public interface ILaunchManager {
 	/**
 	 * Returns all launch configurations defined in the workspace of the specified
 	 * kind(s) (configurations and/or prototypes).
-	 * 
+	 *
 	 * @param kinds bit mask of kinds of configurations to consider
 	 * @return all launch configurations defined in the workspace
 	 * @exception CoreException if an exception occurs retrieving configurations
@@ -278,7 +278,7 @@ public interface ILaunchManager {
 	/**
 	 * Returns all launch configurations of the specified type defined in the workspace
 	 * of the specified kind(s) (configurations and/or prototypes).
-	 * 
+	 *
 	 * @param type a launch configuration type
 	 * @param kinds bit mask of kinds of configurations to consider
 	 * @return all launch configurations of the specified type defined in the workspace

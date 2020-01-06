@@ -754,7 +754,7 @@ public class LaunchConfiguration extends PlatformObject implements ILaunchConfig
 					ILaunchDelegate del = getPreferredDelegate(modes);
 					if(del == null) {
 						del = getType().getPreferredDelegate(modes);
-					}	
+					}
 					if(del == null) {
 						IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(promptStatus);
 						IStatus status = null;

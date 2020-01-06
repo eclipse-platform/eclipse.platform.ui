@@ -26,7 +26,7 @@ import org.eclipse.debug.core.model.ILogicalStructureTypeDelegate2;
  * <p>
  * Following is example plug-in XML to define a logical structure type.
  * </p>
- * 
+ *
  * <pre>
  * &lt;extension point=&quot;org.eclipse.debug.core.logicalStructureTypes&quot;&gt;
  *  &lt;logicalStructureType
@@ -57,7 +57,7 @@ import org.eclipse.debug.core.model.ILogicalStructureTypeDelegate2;
  * logicalStructureProviders extensions may implement this interface to return a
  * collection of logical structure types applicable to a value.
  * </p>
- * 
+ *
  * @since 3.0
  * @see org.eclipse.debug.core.model.ILogicalStructureTypeDelegate
  * @see org.eclipse.debug.core.ILogicalStructureProvider

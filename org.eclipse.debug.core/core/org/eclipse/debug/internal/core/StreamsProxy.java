@@ -44,7 +44,7 @@ public class StreamsProxy implements IStreamsProxy, IStreamsProxy2 {
 	 * <code>false</code> by default.
 	 */
 	private boolean fClosed;
-	
+
 	/**
 	 * Creates a <code>StreamsProxy</code> on the streams of the given system
 	 * process.

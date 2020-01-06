@@ -28,7 +28,7 @@ public class PinConsoleAction extends Action implements IUpdate {
 
 	/**
 	 * Constructs a 'pin console' action.
-	 * 
+	 *
 	 * @param view the view to pin with this action
 	 */
 	public PinConsoleAction(IConsoleView view) {

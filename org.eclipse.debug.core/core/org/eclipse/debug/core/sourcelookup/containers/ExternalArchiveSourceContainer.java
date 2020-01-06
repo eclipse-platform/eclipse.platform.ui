@@ -172,11 +172,11 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 						fPotentialRoots.add(entry.getName());
 					} else {
 						String entryName = entry.getName();
-						int index = entryName.lastIndexOf('/'); 
+						int index = entryName.lastIndexOf('/');
 						while (index > 0) {
 							if (fPotentialRoots.add(entryName.substring(0, index + 1))) {
 								entryName = entryName.substring(0, index);
-								index = entryName.lastIndexOf('/'); 
+								index = entryName.lastIndexOf('/');
 							} else {
 								break;
 							}

@@ -161,7 +161,7 @@ public class ConsolePluginImages {
 	/**
 	 * Returns the <code>ImageDescriptor</code> identified by the given key, or
 	 * <code>null</code> if it does not exist.
-	 * 
+	 *
 	 * @param key the image's key
 	 * @return the <code>ImageDescriptor</code> identified by the given key, or
 	 *         <code>null</code> if it does not exist

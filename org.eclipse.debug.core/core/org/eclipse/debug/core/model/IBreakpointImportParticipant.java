@@ -33,7 +33,7 @@ import org.eclipse.debug.core.IBreakpointManager;
  * <p>
  * Following is an example of a breakpoint participant extension:
  * </p>
- * 
+ *
  * <pre>
  * &lt;extension point="org.eclipse.debug.core.breakpointImportParticipants"&gt;
  *  &lt;importParticipant

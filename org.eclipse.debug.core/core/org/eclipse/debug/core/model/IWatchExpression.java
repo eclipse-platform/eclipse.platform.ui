@@ -42,7 +42,7 @@ public interface IWatchExpression extends IErrorReportingExpression {
 	 * generally be asynchronous to avoid blocking the calling thread.
 	 */
 	void evaluate();
-	
+
 	/**
 	 * Sets the context for this watch expression, or <code>null</code> if none.
 	 * If the given context is valid for this expression, this expression may

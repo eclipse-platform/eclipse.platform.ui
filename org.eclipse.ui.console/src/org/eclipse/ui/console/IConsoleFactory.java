@@ -23,7 +23,7 @@ package org.eclipse.ui.console;
  * <p>
  * Following is an example console factory extension.
  * </p>
- * 
+ *
  * <pre>
  * &lt;extension point="org.eclipse.ui.console.consoleFactories"&gt;
  *   &lt;consoleFactory
@@ -43,7 +43,7 @@ package org.eclipse.ui.console;
  * Clients providing console factory extensions are intended to implement this
  * interface.
  * </p>
- * 
+ *
  * @since 3.1
  */
 public interface IConsoleFactory {

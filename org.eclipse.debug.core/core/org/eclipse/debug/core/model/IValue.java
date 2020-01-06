@@ -75,7 +75,7 @@ public interface IValue extends IDebugElement {
 	 * For example, if this value represents an object that has been garbage
 	 * collected, <code>false</code> is returned.
 	 * </p>
-	 * 
+	 *
 	 * @return whether this value is currently allocated
 	 * @exception DebugException if this method fails. Reasons include:
 	 *                <ul>

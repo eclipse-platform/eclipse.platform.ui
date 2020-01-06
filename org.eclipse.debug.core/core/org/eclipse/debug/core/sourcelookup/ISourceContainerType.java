@@ -26,7 +26,7 @@ package org.eclipse.debug.core.sourcelookup;
  * the work specific to the contributed type. Following is an example
  * contribution.
  * </p>
- * 
+ *
  * <pre>
  * &lt;extension point=&quot;org.eclipse.debug.core.sourceContainerTypes&quot;&gt;
  * 	&lt;sourceContainerType
@@ -41,7 +41,7 @@ package org.eclipse.debug.core.sourcelookup;
  * Clients contributing a source container type implement
  * {@link org.eclipse.debug.core.sourcelookup.ISourceContainerTypeDelegate}.
  * </p>
- * 
+ *
  * @see org.eclipse.debug.core.sourcelookup.ISourceContainer
  * @see org.eclipse.debug.core.sourcelookup.ISourceContainerTypeDelegate
  * @since 3.0

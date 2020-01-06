@@ -21,7 +21,7 @@ import org.eclipse.debug.core.model.IValue;
  * <p>
  * The following is an example of a logical structure provider extension:
  * </p>
- * 
+ *
  * <pre>
  *  &lt;extension point=&quot;org.eclipse.debug.core.logicalStructureProviders&quot;&gt;
  *   &lt;logicalStructureProvider
@@ -40,7 +40,7 @@ import org.eclipse.debug.core.model.IValue;
  * Clients contributing logical structure providers must implement this
  * interface.
  * </p>
- * 
+ *
  * @since 3.1
  * @see org.eclipse.debug.core.ILogicalStructureType
  */

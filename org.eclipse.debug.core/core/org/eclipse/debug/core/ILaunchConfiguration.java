@@ -518,7 +518,7 @@ public interface ILaunchConfiguration extends IAdaptable {
 	 * <code>launch(String, IProgressMontitor, boolean)</code> with a
 	 * <code>build</code> flag of <code>false</code>.
 	 * </p>
-	 * 
+	 *
 	 * @param mode the mode in which to launch, one of the mode constants
 	 *            defined by <code>ILaunchManager</code> - <code>RUN_MODE</code>
 	 *            or <code>DEBUG_MODE</code>.

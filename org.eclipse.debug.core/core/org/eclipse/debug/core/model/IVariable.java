@@ -69,7 +69,7 @@ public interface IVariable extends IDebugElement, IValueModification {
 	 *                </ul>
 	 */
 	String getName() throws DebugException;
-	
+
 	/**
 	 * Returns a description of the type of data this variable is declared to
 	 * reference. Note that the declared type of a variable and the concrete

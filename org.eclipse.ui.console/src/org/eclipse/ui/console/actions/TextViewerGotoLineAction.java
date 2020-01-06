@@ -66,7 +66,7 @@ public class TextViewerGotoLineAction extends TextViewerAction {
 	/**
 	 * Constructs a goto line action for the viewer using the provided resource
 	 * bundle.
-	 * 
+	 *
 	 * @param viewer the viewer to jump in
 	 */
 	public TextViewerGotoLineAction(ITextViewer viewer) {

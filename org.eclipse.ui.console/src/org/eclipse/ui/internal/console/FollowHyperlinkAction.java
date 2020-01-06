@@ -29,7 +29,7 @@ public class FollowHyperlinkAction extends Action {
 
 	/**
 	 * Constructs a follow link action.
-	 * 
+	 *
 	 * @param consoleViewer the viewer containing the link
 	 */
 	public FollowHyperlinkAction(TextConsoleViewer consoleViewer) {

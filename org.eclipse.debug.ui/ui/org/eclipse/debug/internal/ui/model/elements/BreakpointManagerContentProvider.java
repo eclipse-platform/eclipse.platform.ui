@@ -611,7 +611,7 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
 			IBreakpoint newBreakpoint = null;
 
 			Object[] children = container.getChildren();
-			
+
 			for (Object refChildElement : refContainer.getChildren()) {
 				Object element = getElement(children, refChildElement);
 

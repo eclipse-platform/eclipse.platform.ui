@@ -403,7 +403,7 @@ public class IOConsole extends TextConsole {
 
 	/**
 	 * Registers a stream that will be managed by this console.
-	 * 
+	 *
 	 * @param stream The stream which will be closed on {@link #dispose()}.
 	 */
 	void addOpenStream(Closeable stream) {
