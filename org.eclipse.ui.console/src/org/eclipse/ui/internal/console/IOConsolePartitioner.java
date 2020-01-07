@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,6 +16,7 @@
  *                          Bug 550618: getStyleRanges produced invalid overlapping styles
  *                          Bug 550621: Implementation of IConsoleDocumentPartitionerExtension
  *                          Bug 76936:  Support interpretation of \b and \r in console output
+ *                          Bug 365770: Race condition in console clearing
  *******************************************************************************/
 package org.eclipse.ui.internal.console;
 
@@ -419,9 +420,9 @@ public class IOConsolePartitioner
 	/**
 	 * Enforces the buffer size.
 	 * <p>
-	 * When the number of lines in the document exceeds the high water mark, the
-	 * beginning of the document is trimmed until the number of lines equals the low
-	 * water mark.
+	 * When the document length exceeds the high water mark, the beginning of the
+	 * document is trimmed until the document length is approximately the low water
+	 * mark.
 	 * </p>
 	 */
 	private void checkBufferSize() {
@@ -429,7 +430,7 @@ public class IOConsolePartitioner
 			int length = document.getLength();
 			if (length > highWaterMark) {
 				if (trimJob.getState() == Job.NONE) { // if the job isn't already running
-					trimJob.setOffset(length - lowWaterMark);
+					trimJob.setTrimLineOffset(length - lowWaterMark);
 					trimJob.schedule();
 				}
 			}
@@ -440,8 +441,14 @@ public class IOConsolePartitioner
 	 * Clears the console content.
 	 */
 	public void clearBuffer() {
-		trimJob.setOffset(-1);
-		trimJob.schedule();
+		synchronized (pendingPartitions) {
+			pendingPartitions.clear();
+			pendingSize = 0;
+		}
+		synchronized (partitions) {
+			trimJob.setTrimOffset(document.getLength());
+			trimJob.schedule();
+		}
 	}
 
 	@Override
@@ -1083,10 +1090,14 @@ public class IOConsolePartitioner
 	 */
 	private class TrimJob extends WorkbenchJob {
 
-		/**
-		 * Trims output up to the line containing the given offset, or all output if -1.
-		 */
+		/** Trims output up to given offset. */
 		private int truncateOffset;
+
+		/**
+		 * If <code>true</code> trim only to start of line containing the
+		 * {@link #truncateOffset}.
+		 */
+		private boolean truncateToOffsetLineStart;
 
 		/**
 		 * Creates a new job to trim the buffer.
@@ -1099,10 +1110,21 @@ public class IOConsolePartitioner
 		/**
 		 * Sets the trim offset.
 		 *
-		 * @param offset trims output up to the line containing the given offset
+		 * @param offset trims console content up to this offset
 		 */
-		public void setOffset(int offset) {
+		public void setTrimOffset(int offset) {
 			truncateOffset = offset;
+			truncateToOffsetLineStart = false;
+		}
+
+		/**
+		 * Sets the trim offset.
+		 *
+		 * @param offset trims output up to the line containing this offset
+		 */
+		public void setTrimLineOffset(int offset) {
+			truncateOffset = offset;
+			truncateToOffsetLineStart = true;
 		}
 
 		@Override
@@ -1112,46 +1134,45 @@ public class IOConsolePartitioner
 					return Status.OK_STATUS;
 				}
 
-				int length = document.getLength();
-				if (truncateOffset < length) {
-					try {
-						if (truncateOffset < 0) {
-							// clear
-							updateType = DocUpdateType.TRIM;
-							document.set(""); //$NON-NLS-1$
-						} else {
-							// overflow
-							int cutoffLine = document.getLineOfOffset(truncateOffset);
-							int cutOffset = document.getLineOffset(cutoffLine);
-
-							// set the new length of the first partition
-							IOConsolePartition partition = (IOConsolePartition) getPartition(cutOffset);
-							partition.setLength(partition.getOffset() + partition.getLength() - cutOffset);
-
-							updateType = DocUpdateType.TRIM;
-							document.replace(0, cutOffset, ""); //$NON-NLS-1$
-
-							// remove partitions and reset Partition offsets
-							int index = partitions.indexOf(partition);
-							for (int i = 0; i < index; i++) {
-								partitions.remove(0);
-							}
-
-							int offset = 0;
-							for (IOConsolePartition p : partitions) {
-								p.setOffset(offset);
-								offset += p.getLength();
-							}
-
-							// fix output offset
-							int removedLength = cutOffset;
-							outputOffset = Math.max(outputOffset - removedLength, 0);
-						}
-						if (ASSERT) {
-							checkPartitions();
-						}
-					} catch (BadLocationException e) {
+				try {
+					int length = document.getLength();
+					int cutOffset = truncateOffset;
+					if (truncateToOffsetLineStart) {
+						int cutoffLine = document.getLineOfOffset(truncateOffset);
+						cutOffset = document.getLineOffset(cutoffLine);
 					}
+					if (cutOffset >= length) {
+						updateType = DocUpdateType.TRIM;
+						document.set(""); //$NON-NLS-1$
+					} else {
+						// set the new length of the first partition
+						IOConsolePartition partition = getIOPartition(cutOffset);
+						partition.setLength(partition.getOffset() + partition.getLength() - cutOffset);
+
+						updateType = DocUpdateType.TRIM;
+						document.replace(0, cutOffset, ""); //$NON-NLS-1$
+
+						// remove partitions and reset Partition offsets
+						int index = partitions.indexOf(partition);
+						for (int i = 0; i < index; i++) {
+							partitions.remove(0);
+						}
+
+						int offset = 0;
+						for (IOConsolePartition p : partitions) {
+							p.setOffset(offset);
+							offset += p.getLength();
+						}
+
+						// fix output offset
+						int removedLength = cutOffset;
+						outputOffset = Math.max(outputOffset - removedLength, 0);
+					}
+					if (ASSERT) {
+						checkPartitions();
+					}
+				} catch (BadLocationException e) {
+					log(e);
 				}
 			}
 			return Status.OK_STATUS;

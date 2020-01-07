@@ -505,6 +505,17 @@ public final class IOConsoleTestUtil {
 	}
 
 	/**
+	 * Select all content in console.
+	 *
+	 * @return this {@link IOConsoleTestUtil} to chain methods
+	 * @see StyledText#setSelection(int, int)
+	 */
+	public IOConsoleTestUtil selectAll() {
+		textPanel.selectAll();
+		return this;
+	}
+
+	/**
 	 * Check if console content equals the expected content.
 	 *
 	 * @param expectedContent content expect in console

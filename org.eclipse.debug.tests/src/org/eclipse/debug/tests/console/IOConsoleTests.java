@@ -210,6 +210,23 @@ public class IOConsoleTests extends AbstractDebugTest {
 		c.clear().insertTypingAndVerify("I").write("O").verifyContent("IO").verifyPartitions();
 		c.insert("\r\n").clear();
 
+		c.insertTypingAndVerify("some user input").selectAll().backspace();
+		c.verifyContent("").verifyPartitions();
+
+		// test (almost) simultaneous write and clear
+		c.writeFast("to be removed").clear().verifyPartitions();
+		// Do not use clear() from test util here. Test requires an immediate
+		// write after clear. The util's clear() method blocks until console is
+		// actually cleared.
+		c.getConsole().clearConsole();
+		c.writeAndVerify("do not remove this").verifyPartitions().clear();
+		final String longString = String.join("", Collections.nCopies(1000, "012345678\n"));
+		c.getConsole().clearConsole();
+		c.writeAndVerify(longString).verifyPartitions().clear();
+		final String veryLongString = String.join("", Collections.nCopies(20000, "abcdefghi\n"));
+		c.getConsole().clearConsole();
+		c.writeAndVerify(veryLongString).verifyPartitions().clear();
+
 		closeConsole(c, "i", "I");
 	}
 
