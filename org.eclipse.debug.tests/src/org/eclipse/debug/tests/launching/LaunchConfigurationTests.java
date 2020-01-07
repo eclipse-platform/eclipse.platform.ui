@@ -1267,8 +1267,11 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		c2.doSave();
 
 		// file contents should be the same
-		char[] chars1 = getInputStreamAsCharArray(c1.getFile().getContents());
-		char[] chars2 = getInputStreamAsCharArray(c2.getFile().getContents());
+		char[] chars1, chars2;
+		try (InputStream in1 = c1.getFile().getContents(); InputStream in2 = c2.getFile().getContents()) {
+			chars1 = getInputStreamAsCharArray(in1);
+			chars2 = getInputStreamAsCharArray(in2);
+		}
 		assertEquals("Should be the same characters", chars1.length, chars2.length); //$NON-NLS-1$
 		for (int i = 0; i < chars2.length; i++) {
 			assertEquals("Should be the same character", chars1[i], chars2[i]); //$NON-NLS-1$
@@ -1345,8 +1348,11 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		c2.doSave();
 
 		// file contents should be the same
-		char[] chars1 = getInputStreamAsCharArray(c1.getFile().getContents());
-		char[] chars2 = getInputStreamAsCharArray(c2.getFile().getContents());
+		char[] chars1, chars2;
+		try (InputStream in1 = c1.getFile().getContents(); InputStream in2 = c2.getFile().getContents()) {
+			chars1 = getInputStreamAsCharArray(in1);
+			chars2 = getInputStreamAsCharArray(in2);
+		}
 		assertEquals("Should be the same characters", chars1.length, chars2.length); //$NON-NLS-1$
 		for (int i = 0; i < chars2.length; i++) {
 			assertEquals("Should be the same character", chars1[i], chars2[i]); //$NON-NLS-1$

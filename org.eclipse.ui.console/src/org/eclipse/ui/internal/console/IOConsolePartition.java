@@ -236,6 +236,26 @@ public class IOConsolePartition implements ITypedRegion {
 		return inputStream;
 	}
 
+	/**
+	 * Test if this partition belongs to the given input stream.
+	 *
+	 * @param in the input stream to test or <code>null</code>
+	 * @return <code>true</code> if this partition belongs to input stream
+	 */
+	boolean belongsTo(IOConsoleInputStream in) {
+		return inputStream == in;
+	}
+
+	/**
+	 * Test if this partition belongs to the given output stream.
+	 *
+	 * @param out the output stream to test or <code>null</code>
+	 * @return <code>true</code> if this partition belongs to output stream
+	 */
+	boolean belongsTo(IOConsoleOutputStream out) {
+		return outputStream == out;
+	}
+
 	@Override
 	public String toString() {
 		final StringBuilder sb = new StringBuilder(40);

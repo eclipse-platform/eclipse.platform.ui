@@ -52,6 +52,7 @@ public class StreamsProxy implements IStreamsProxy, IStreamsProxy2 {
 	 * @param process system process to create a streams proxy on
 	 * @param charset the process's charset or <code>null</code> if default
 	 */
+	@SuppressWarnings("resource")
 	public StreamsProxy(Process process, Charset charset) {
 		if (process == null) {
 			return;

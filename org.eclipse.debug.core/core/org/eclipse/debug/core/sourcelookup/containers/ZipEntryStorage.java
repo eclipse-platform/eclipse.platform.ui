@@ -38,6 +38,7 @@ import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
  * @since 3.0
  * @noextend This class is not intended to be subclassed by clients.
  */
+@SuppressWarnings("resource")
 public class ZipEntryStorage extends PlatformObject implements IStorage {
 
 	/**

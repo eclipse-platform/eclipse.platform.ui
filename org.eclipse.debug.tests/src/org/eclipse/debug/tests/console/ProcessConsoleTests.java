@@ -44,6 +44,7 @@ import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleManager;
+import org.eclipse.ui.console.IOConsoleInputStream;
 
 /**
  * Tests the ProcessConsole.
@@ -139,7 +140,9 @@ public class ProcessConsoleTests extends AbstractDebugTest {
 			final org.eclipse.debug.internal.ui.views.console.ProcessConsole console = new org.eclipse.debug.internal.ui.views.console.ProcessConsole(process, new ConsoleColorProvider(), StandardCharsets.UTF_8.toString());
 			try {
 				console.initialize();
-				console.getInputStream().appendData(input);
+				@SuppressWarnings("resource")
+				IOConsoleInputStream consoleIn = console.getInputStream();
+				consoleIn.appendData(input);
 				mockProcess.waitFor(testTimeout, TimeUnit.MILLISECONDS);
 			} finally {
 				console.destroy();

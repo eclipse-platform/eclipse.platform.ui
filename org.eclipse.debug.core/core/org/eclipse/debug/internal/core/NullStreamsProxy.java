@@ -24,6 +24,7 @@ public class NullStreamsProxy implements IStreamsProxy2 {
 	private NullStreamMonitor outputStreamMonitor;
 	private NullStreamMonitor errorStreamMonitor;
 
+	@SuppressWarnings("resource")
 	public NullStreamsProxy(Process process) {
 		outputStreamMonitor = new NullStreamMonitor(process.getInputStream());
 		errorStreamMonitor = new NullStreamMonitor(process.getErrorStream());

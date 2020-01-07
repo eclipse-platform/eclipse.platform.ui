@@ -274,14 +274,15 @@ public class IOConsoleTests extends AbstractDebugTest {
 		final IOConsoleTestUtil c = getTestUtil("Test input file");
 		// open default output stream to match usual behavior where two output
 		// streams are open and to prevent premature console closing
-		c.getDefaultOutputStream();
-		try (InputStream in = new ByteArrayInputStream(new byte[0])) {
-			try (InputStream defaultIn = c.getConsole().getInputStream()) {
-				// just close input stream
+		try (IOConsoleOutputStream defaultOutputStream = c.getDefaultOutputStream()) {
+			try (InputStream in = new ByteArrayInputStream(new byte[0])) {
+				try (InputStream defaultIn = c.getConsole().getInputStream()) {
+					// just close input stream
+				}
+				c.getConsole().setInputStream(in);
 			}
-			c.getConsole().setInputStream(in);
+			closeConsole(c);
 		}
-		closeConsole(c);
 		assertEquals("Test triggered errors in IOConsole.", 0, loggedErrors.get());
 	}
 
@@ -582,21 +583,23 @@ public class IOConsoleTests extends AbstractDebugTest {
 	 */
 	public void testTrim() throws Exception {
 		final IOConsoleTestUtil c = getTestUtil("Test trim");
-		try (IOConsoleOutputStream otherOut = c.getConsole().newOutputStream()) {
-			c.writeFast("first\n");
-			for (int i = 0; i < 20; i++) {
-				c.writeFast("0123456789\n", (i & 1) == 0 ? c.getDefaultOutputStream() : otherOut);
-			}
-			c.write("last\n");
-			c.verifyContentByLine("first", 0).verifyContentByLine("last", -2);
-			assertTrue("Document not filled.", c.getDocument().getNumberOfLines() > 15);
+		try (IOConsoleOutputStream defaultOut = c.getDefaultOutputStream()) {
+			try (IOConsoleOutputStream otherOut = c.getConsole().newOutputStream()) {
+				c.writeFast("first\n");
+				for (int i = 0; i < 20; i++) {
+					c.writeFast("0123456789\n", (i & 1) == 0 ? defaultOut : otherOut);
+				}
+				c.write("last\n");
+				c.verifyContentByLine("first", 0).verifyContentByLine("last", -2);
+				assertTrue("Document not filled.", c.getDocument().getNumberOfLines() > 15);
 
-			c.getConsole().setWaterMarks(50, 100);
-			c.waitForScheduledJobs();
-			c.verifyContentByOffset("0123456789", 0);
-			assertTrue("Document not trimmed.", c.getDocument().getNumberOfLines() < 15);
+				c.getConsole().setWaterMarks(50, 100);
+				c.waitForScheduledJobs();
+				c.verifyContentByOffset("0123456789", 0);
+				assertTrue("Document not trimmed.", c.getDocument().getNumberOfLines() < 15);
+			}
+			closeConsole(c);
 		}
-		closeConsole(c);
 	}
 
 	/**

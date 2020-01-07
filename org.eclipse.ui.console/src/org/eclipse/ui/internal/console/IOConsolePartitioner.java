@@ -643,6 +643,7 @@ public class IOConsolePartitioner
 	 *               and a new partition will start
 	 * @return the newly created partition (i.e. the right side of the split)
 	 */
+	@SuppressWarnings("resource") // suppress wrong 'not closed' warnings
 	private IOConsolePartition splitPartition(int offset) {
 		final int partitionIndex = findPartitionCandidate(offset);
 		final IOConsolePartition existingPartition = partitions.get(partitionIndex);
@@ -861,7 +862,7 @@ public class IOConsolePartitioner
 								Assert.isTrue(atOutputPartitionIndex == findPartitionCandidate(outputOffset - 1));
 							}
 						}
-						if (atOutputPartition == null || atOutputPartition.getOutputStream() != pending.stream) {
+						if (atOutputPartition == null || !atOutputPartition.belongsTo(pending.stream)) {
 							// no partitions yet or last partition is incompatible to reuse -> add new one
 							atOutputPartition = new IOConsolePartition(outputOffset, pending.stream);
 							partitions.add(atOutputPartition);
@@ -904,7 +905,7 @@ public class IOConsolePartitioner
 								atOutputPartition.getLength() - (outputOffset - atOutputPartition.getOffset()));
 						Assert.isTrue(chunkLength > 0); // do not remove since it can prevent an infinity loop
 
-						if (atOutputPartition.getOutputStream() != pending.stream) {
+						if (!atOutputPartition.belongsTo(pending.stream)) {
 							// new output is from other stream then overwritten output
 
 							// Note: this implementation ignores the possibility to reuse the partition
@@ -925,7 +926,7 @@ public class IOConsolePartitioner
 								atOutputPartition = splitPartition(outputOffset);
 								atOutputPartitionIndex++;
 							}
-							if (outputPartition == null || outputPartition.getOutputStream() != pending.stream) {
+							if (outputPartition == null || !outputPartition.belongsTo(pending.stream)) {
 								outputPartition = new IOConsolePartition(outputOffset, pending.stream);
 								partitions.add(atOutputPartitionIndex, outputPartition);
 								atOutputPartitionIndex++;

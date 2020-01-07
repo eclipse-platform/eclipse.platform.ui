@@ -122,6 +122,7 @@ public final class IOConsoleTestUtil {
 	 * @return this {@link IOConsoleTestUtil} to chain methods
 	 * @see #write(String)
 	 */
+	@SuppressWarnings("resource")
 	public IOConsoleTestUtil writeFast(final String s) throws IOException {
 		return writeFast(s, getDefaultOutputStream());
 	}
@@ -134,6 +135,7 @@ public final class IOConsoleTestUtil {
 	 * @return this {@link IOConsoleTestUtil} to chain methods
 	 * @see #writeFast(String)
 	 */
+	@SuppressWarnings("resource")
 	public IOConsoleTestUtil write(final String s) throws Exception {
 		return write(s, getDefaultOutputStream());
 	}
@@ -149,6 +151,7 @@ public final class IOConsoleTestUtil {
 	 * @param s content to write in output stream
 	 * @return this {@link IOConsoleTestUtil} to chain methods
 	 */
+	@SuppressWarnings("resource")
 	public IOConsoleTestUtil writeAndVerify(final String s) throws Exception {
 		return writeAndVerify(s, getDefaultOutputStream());
 	}
