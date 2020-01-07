@@ -21,6 +21,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
@@ -163,7 +165,7 @@ public class UpdateValueStrategy<S, D> extends UpdateStrategy<S, D> {
 	private int updatePolicy;
 
 	private static ValidatorRegistry validatorRegistry = new ValidatorRegistry();
-	private static HashMap<IConverter<?, ?>, IValidator<?>> validatorsByConverter = new HashMap<>();
+	private static ConcurrentMap<IConverter<?, ?>, IValidator<?>> validatorsByConverter = new ConcurrentHashMap<>();
 
 	protected boolean provideDefaults;
 
