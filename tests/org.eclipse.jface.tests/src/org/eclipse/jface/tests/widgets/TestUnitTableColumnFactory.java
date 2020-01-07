@@ -15,7 +15,6 @@ package org.eclipse.jface.tests.widgets;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 import org.eclipse.jface.widgets.TableColumnFactory;
 import org.eclipse.jface.widgets.WidgetFactory;
@@ -39,7 +38,7 @@ public class TestUnitTableColumnFactory extends AbstractFactoryTest {
 	}
 
 	@Test
-	public void createsTableColumn() {
+	public void createTableColumn() {
 		TableColumn tableColumn = TableColumnFactory.newTableColumn(SWT.CENTER).create(table);
 
 		assertEquals(table.getColumn(0), tableColumn);
@@ -48,49 +47,22 @@ public class TestUnitTableColumnFactory extends AbstractFactoryTest {
 	}
 
 	@Test
-	public void setsSelectionListener() {
+	public void createTableColumnWithAllProperties() {
 		final SelectionEvent[] raisedEvents = new SelectionEvent[1];
-		TableColumn tableColumn = TableColumnFactory.newTableColumn(SWT.NONE).onSelect(e -> raisedEvents[0] = e)
+		TableColumn tableColumn = TableColumnFactory.newTableColumn(SWT.NONE) //
+				.onSelect(e -> raisedEvents[0] = e) //
+				.align(SWT.LEFT) //
+				.tooltip("tooltip") //
+				.width(10) //
 				.create(table);
 
 		tableColumn.notifyListeners(SWT.Selection, new Event());
 
 		assertEquals(1, tableColumn.getListeners(SWT.Selection).length);
 		assertNotNull(raisedEvents[0]);
-	}
-
-	@Test
-	public void setsAlignment() {
-		TableColumn tableColumn = TableColumnFactory.newTableColumn(SWT.NONE).align(SWT.LEFT).create(table);
 
 		assertEquals(SWT.LEFT, tableColumn.getAlignment());
-	}
-
-	@Test
-	public void setsToolTip() {
-		TableColumn tableColumn = TableColumnFactory.newTableColumn(SWT.NONE).tooltip("tooltip").create(table);
-
 		assertEquals("tooltip", tableColumn.getToolTipText());
-	}
-
-	@Test
-	public void setsWidth() {
-		TableColumn tableColumn = TableColumnFactory.newTableColumn(SWT.NONE).width(10).create(table);
-
 		assertEquals(10, tableColumn.getWidth());
-	}
-
-	@Test
-	public void setsMoveable() {
-		TableColumn column = TableColumnFactory.newTableColumn(SWT.NONE).moveable(true).create(table);
-
-		assertTrue(column.getMoveable());
-	}
-
-	@Test
-	public void setsResizable() {
-		TableColumn column = TableColumnFactory.newTableColumn(SWT.NONE).resizable(true).create(table);
-
-		assertTrue(column.getResizable());
 	}
 }
