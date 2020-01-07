@@ -23,7 +23,7 @@ import java.util.List;
  * <!-- begin-model-doc -->
  * <p>
  * This is the base for the two different types of containment used in the model;
- * 'Stacks' (where only one element would be visible at a time) and 'Tiles' (where 
+ * 'Stacks' (where only one element would be visible at a time) and 'Tiles' (where
  * all the elements are visible at the same time.
  * </p><p>
  * All containers define the type of element that they are to contain. By design this is

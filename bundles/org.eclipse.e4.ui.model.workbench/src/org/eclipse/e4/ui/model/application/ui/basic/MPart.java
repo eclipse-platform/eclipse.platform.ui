@@ -66,9 +66,9 @@ public interface MPart extends MUIElement, MPartSashContainerElement, MStackElem
 	 * that are managed by the core UI:
 	 * </p>
 	 * <ul>
-	 * <li>If the menu is the part's id prefixed with "menu:" then it will appear as the 
+	 * <li>If the menu is the part's id prefixed with "menu:" then it will appear as the
 	 * drop down menu available from the view's toolbar.</li>
-	 * <li>If the menu is the part's id prefixed with "popup:" then it will appear as the 
+	 * <li>If the menu is the part's id prefixed with "popup:" then it will appear as the
 	 * ddefault context menu for this view.</li>
 	 * </ul>
 	 * <p>

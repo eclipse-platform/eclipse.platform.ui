@@ -120,19 +120,18 @@ public interface MPartDescriptor extends MApplicationElement, MUILabel, MHandler
 	 * <!-- end-user-doc -->
 	 * <!-- begin-model-doc -->
 	 * <p>
-	 * This defines the list of the menus associated with the part represented by this descriptor. 
+	 * This defines the list of the menus associated with the part represented by this descriptor.
 	 * There are two specific menus that are managed by the core UI:
 	 * </p>
 	 * <ul>
-	 * <li>If the menu is the part's id prefixed with "menu:" then it will appear as the 
+	 * <li>If the menu is the part's id prefixed with "menu:" then it will appear as the
 	 * drop down menu available from the view's toolbar.</li>
-	 * <li>If the menu is the part's id prefixed with "popup:" then it will appear as the 
+	 * <li>If the menu is the part's id prefixed with "popup:" then it will appear as the
 	 * default context menu for this view.</li>
 	 * </ul>
 	 * <p>
 	 * Other menus can be added here but have to be managed by the part itself...
 	 * </p>
-	 * 
 	 * <!-- end-model-doc -->
 	 * @return the value of the '<em>Menus</em>' containment reference list.
 	 * @model containment="true"
@@ -298,8 +297,8 @@ public interface MPartDescriptor extends MApplicationElement, MUILabel, MHandler
 	 * <!-- begin-model-doc -->
 	 * <p>
 	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
+	 * Add more detailed documentation by editing this comment in
+	 * org.eclipse.ui.model.workbench/model/UIElements.ecore.
 	 * There is a GenModel/documentation node under each type and attribute.
 	 * </p>
 	 * <!-- end-model-doc -->
@@ -318,8 +317,8 @@ public interface MPartDescriptor extends MApplicationElement, MUILabel, MHandler
 	 * <!-- begin-model-doc -->
 	 * <p>
 	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * org.eclipse.ui.model.workbench/model/UIElements.ecore. 
+	 * Add more detailed documentation by editing this comment in
+	 * org.eclipse.ui.model.workbench/model/UIElements.ecore.
 	 * There is a GenModel/documentation node under each type and attribute.
 	 * </p>
 	 * <!-- end-model-doc -->

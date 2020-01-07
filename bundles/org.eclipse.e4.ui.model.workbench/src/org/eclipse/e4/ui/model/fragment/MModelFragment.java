@@ -27,8 +27,8 @@ import org.eclipse.e4.ui.model.application.MApplicationElement;
  * <!-- begin-model-doc -->
  * <p>
  * <strong>Developers</strong>:
- * Add more detailed documentation by editing this comment in 
- * /org.eclipse.e4.ui.model.workbench/model/ModelFragment.ecore. 
+ * Add more detailed documentation by editing this comment in
+ * /org.eclipse.e4.ui.model.workbench/model/ModelFragment.ecore.
  * There is a GenModel/documentation node under each type and attribute.
  * </p>
  * @since 1.0
@@ -53,8 +53,8 @@ public interface MModelFragment {
 	 * <!-- begin-model-doc -->
 	 * <p>
 	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * /org.eclipse.e4.ui.model.workbench/model/ModelFragment.ecore. 
+	 * Add more detailed documentation by editing this comment in
+	 * /org.eclipse.e4.ui.model.workbench/model/ModelFragment.ecore.
 	 * There is a GenModel/documentation node under each type and attribute.
 	 * </p>
 	 * <!-- end-model-doc -->
@@ -73,8 +73,8 @@ public interface MModelFragment {
 	 * <!-- begin-model-doc -->
 	 * <p>
 	 * <strong>Developers</strong>:
-	 * Add more detailed documentation by editing this comment in 
-	 * /org.eclipse.e4.ui.model.workbench/model/ModelFragment.ecore. 
+	 * Add more detailed documentation by editing this comment in
+	 * /org.eclipse.e4.ui.model.workbench/model/ModelFragment.ecore.
 	 * There is a GenModel/documentation node under each type and attribute.
 	 * </p>
 	 * <!-- end-model-doc -->
