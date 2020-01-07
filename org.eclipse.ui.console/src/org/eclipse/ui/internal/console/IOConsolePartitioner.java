@@ -717,7 +717,7 @@ public class IOConsolePartitioner
 					}
 				} else {
 					// If we are in UI thread we cannot lock it, so process queued output.
-					processPendingPartitions();
+					queueJob.processPendingPartitions();
 				}
 			}
 		}
@@ -746,6 +746,16 @@ public class IOConsolePartitioner
 	 * received from output streams that is available before finishing.
 	 */
 	private class QueueProcessingJob extends UIJob {
+		/** The partition which contains the current output offset. */
+		private IOConsolePartition atOutputPartition = null;
+		/** The index of atOutputPartition in the partitions list. */
+		private int atOutputPartitionIndex = -1;
+		/** The pending number of characters to replace in document. */
+		private int replaceLength;
+		/** The pending content to be inserted in document. */
+		private StringBuilder content;
+		/** The offset in document where to apply the next replace. */
+		private int nextWriteOffset;
 
 		QueueProcessingJob() {
 			super("IOConsole Updater"); //$NON-NLS-1$
@@ -776,311 +786,334 @@ public class IOConsolePartitioner
 				return shouldRun;
 			}
 		}
-	}
 
-	/**
-	 * Process {@link #pendingPartitions}, append their content to document and
-	 * update partitioning.
-	 */
-	private void processPendingPartitions() {
-		final List<PendingPartition> pendingCopy;
-		final int size;
-		synchronized (pendingPartitions) {
-			pendingCopy = new ArrayList<>(pendingPartitions);
-			size = pendingSize;
-			pendingPartitions.clear();
-			pendingSize = 0;
-			pendingPartitions.notifyAll();
+		/**
+		 * Process {@link #pendingPartitions}, append their content to document and
+		 * update partitioning.
+		 */
+		private void processPendingPartitions() {
+			final List<PendingPartition> pendingCopy;
+			final int size;
+			synchronized (pendingPartitions) {
+				pendingCopy = new ArrayList<>(pendingPartitions);
+				size = pendingSize;
+				pendingPartitions.clear();
+				pendingSize = 0;
+				pendingPartitions.notifyAll();
+			}
+			synchronized (partitions) {
+				applyStreamOutput(pendingCopy, size);
+			}
+			checkFinished();
+			checkBufferSize();
 		}
-		synchronized (partitions) {
-			applyStreamOutput(pendingCopy, size);
-		}
-		checkFinished();
-		checkBufferSize();
-	}
 
-	/**
-	 * Apply content collected in pending partitions to document and update
-	 * partitioning structure.
-	 * <p>
-	 * This method is also responsible to interpret control characters if enabled
-	 * (see {@link #isHandleControlCharacters()}).
-	 * </p>
-	 *
-	 * @param pendingCopy the pending partitions to process
-	 * @param sizeHint    a hint for expected content length to initialize buffer
-	 *                    size. Does not have to be exact as long as it is not
-	 *                    negative.
-	 */
-	private void applyStreamOutput(List<PendingPartition> pendingCopy, int sizeHint) {
-		// local reference to get consistent parsing without blocking pattern changes
-		final Pattern controlPattern = controlCharacterPattern;
-		// Variables to collect required data to reduce number of document updates. The
-		// partitioning must be updated in smaller iterations as the actual document
-		// content. E.g. pending partitions are distinct on source output stream
-		// resulting in multiple partitions but if all the content is appended to the
-		// document there is only one update required to add the actual content.
-		int nextWriteOffset = outputOffset;
-		final StringBuilder content = new StringBuilder(sizeHint);
-		int replaceLength = 0;
-		// the partition which contains the current output offset
-		IOConsolePartition atOutputPartition = null;
-		// the index of atOutputPartition in the partitions list
-		int atOutputPartitionIndex = -1;
+		/**
+		 * Apply content collected in pending partitions to document and update
+		 * partitioning structure.
+		 * <p>
+		 * This method is also responsible to interpret control characters if enabled
+		 * (see {@link #isHandleControlCharacters()}).
+		 * </p>
+		 *
+		 * @param pendingCopy the pending partitions to process
+		 * @param sizeHint    a hint for expected content length to initialize buffer
+		 *                    size. Does not have to be exact as long as it is not
+		 *                    negative.
+		 */
+		private void applyStreamOutput(List<PendingPartition> pendingCopy, int sizeHint) {
+			// local reference to get consistent parsing without blocking pattern changes
+			final Pattern controlPattern = controlCharacterPattern;
+			// Variables to collect required data to reduce number of document updates. The
+			// partitioning must be updated in smaller iterations as the actual document
+			// content. E.g. pending partitions are distinct on source output stream
+			// resulting in multiple partitions but if all the content is appended to the
+			// document there is only one update required to add the actual content.
+			nextWriteOffset = outputOffset;
+			content = new StringBuilder(sizeHint);
+			replaceLength = 0;
+			atOutputPartition = null;
+			atOutputPartitionIndex = -1;
 
-		for (PendingPartition pending : pendingCopy) {
-			// create matcher to find control characters in pending content (if enabled)
-			final Matcher controlCharacterMatcher = controlPattern != null ? controlPattern.matcher(pending.text)
-					: null;
+			for (PendingPartition pending : pendingCopy) {
+				// create matcher to find control characters in pending content (if enabled)
+				final Matcher controlCharacterMatcher = controlPattern != null ? controlPattern.matcher(pending.text)
+						: null;
 
-			for (int textOffset = 0; textOffset < pending.text.length();) {
-				// Process pending content in chunks.
-				// Processing is primary split on control characters since there interpretation
-				// is easier if all content changes before are already applied.
-				// Additional processing splits may result while overwriting existing output and
-				// overwrite overlaps partitions.
-				final boolean foundControlCharacter;
-				final int partEnd;
-				if (controlCharacterMatcher != null && controlCharacterMatcher.find()) {
-					if (ASSERT) {
-						// check used pattern. Assert it matches only sequences of same characters.
-						final String match = controlCharacterMatcher.group();
-						Assert.isTrue(match.length() > 0);
-						final char matchedChar = match.charAt(0);
-						for (char c : match.toCharArray()) {
-							Assert.isTrue(c == matchedChar);
-						}
-					}
-					partEnd = controlCharacterMatcher.start();
-					foundControlCharacter = true;
-				} else {
-					partEnd = pending.text.length();
-					foundControlCharacter = false;
-				}
-
-				while (textOffset < partEnd) {
-					// Process content part. This part never contains control characters.
-					// Processing may require multiple iterations if we overwrite existing content
-					// which consists of distinct partitions.
-
-					if (outputOffset >= document.getLength()) {
-						// content is appended to document end (the easy case)
-						if (atOutputPartition == null) {
-							// get the last existing partition to try to expand it
-							atOutputPartitionIndex = partitions.size() - 1;
-							atOutputPartition = getPartitionByIndex(atOutputPartitionIndex);
-							if (ASSERT) {
-								Assert.isTrue(atOutputPartitionIndex == findPartitionCandidate(outputOffset - 1));
+				for (int textOffset = 0; textOffset < pending.text.length();) {
+					// Process pending content in chunks.
+					// Processing is primary split on control characters since there interpretation
+					// is easier if all content changes before are already applied.
+					// Additional processing splits may result while overwriting existing output and
+					// overwrite overlaps partitions.
+					final boolean foundControlCharacter;
+					final int partEnd;
+					if (controlCharacterMatcher != null && controlCharacterMatcher.find()) {
+						if (ASSERT) {
+							// check used pattern. Assert it matches only sequences of same characters.
+							final String match = controlCharacterMatcher.group();
+							Assert.isTrue(match.length() > 0);
+							final char matchedChar = match.charAt(0);
+							for (char c : match.toCharArray()) {
+								Assert.isTrue(c == matchedChar);
 							}
 						}
-						if (atOutputPartition == null || !atOutputPartition.belongsTo(pending.stream)) {
-							// no partitions yet or last partition is incompatible to reuse -> add new one
-							atOutputPartition = new IOConsolePartition(outputOffset, pending.stream);
-							partitions.add(atOutputPartition);
-							atOutputPartitionIndex = partitions.size() - 1;
-						}
-						final int appendedLength = partEnd - textOffset;
-						content.append(pending.text, textOffset, partEnd);
-						atOutputPartition.setLength(atOutputPartition.getLength() + appendedLength);
-						outputOffset += appendedLength;
-						textOffset = partEnd;
+						partEnd = controlCharacterMatcher.start();
+						foundControlCharacter = true;
 					} else {
-						// content overwrites existing console content (the tricky case)
-						if (atOutputPartition == null) {
-							// find partition where output will overwrite or create one if unpartitioned
-							atOutputPartitionIndex = findPartitionCandidate(outputOffset);
-							atOutputPartition = getPartitionByIndex(atOutputPartitionIndex);
-							if (atOutputPartition == null) {
-								atOutputPartition = new IOConsolePartition(outputOffset, pending.stream);
-								atOutputPartitionIndex++;
-								partitions.add(atOutputPartitionIndex, atOutputPartition);
-							}
-						}
-
-						// we do not overwrite input partitions at the moment so they need to be skipped
-						if (isInputPartition(atOutputPartition)) {
-							outputOffset = atOutputPartition.getOffset() + atOutputPartition.getLength();
-							atOutputPartitionIndex++;
-							atOutputPartition = getPartitionByIndex(atOutputPartitionIndex);
-
-							// apply document changes collected until now
-							applyOutputToDocument(content.toString(), nextWriteOffset, replaceLength);
-							content.setLength(0);
-							replaceLength = 0;
-							nextWriteOffset = outputOffset;
-							continue; // to check if next selected partition is also input or appending now
-						}
-
-						// limit chunks to overwrite only one existing partition at a time
-						final int chunkLength = Math.min(partEnd - textOffset,
-								atOutputPartition.getLength() - (outputOffset - atOutputPartition.getOffset()));
-						Assert.isTrue(chunkLength > 0); // do not remove since it can prevent an infinity loop
-
-						if (!atOutputPartition.belongsTo(pending.stream)) {
-							// new output is from other stream then overwritten output
-
-							// Note: this implementation ignores the possibility to reuse the partition
-							// where the overwrite chunk ends and expand it towards replace begin since this
-							// makes things code much more complex. In some cases this may leads to
-							// consecutive partitions which could be merged to one partition. Merging is not
-							// implemented at the moment.
-
-							// in this part outputPartition is used to partition the new content
-							// and atOutputPartition points to the partition whose content is overwritten
-							// i.e. the new partition grows and the old one must shrink
-							IOConsolePartition outputPartition = null;
-							if (atOutputPartition.getOffset() == outputOffset) {
-								// try to expand the partition before our output offset
-								outputPartition = getPartitionByIndex(atOutputPartitionIndex - 1);
-							} else {
-								// overwrite starts inside existing incompatible partition
-								atOutputPartition = splitPartition(outputOffset);
-								atOutputPartitionIndex++;
-							}
-							if (outputPartition == null || !outputPartition.belongsTo(pending.stream)) {
-								outputPartition = new IOConsolePartition(outputOffset, pending.stream);
-								partitions.add(atOutputPartitionIndex, outputPartition);
-								atOutputPartitionIndex++;
-							}
-
-							// update partitioning of the overwritten chunk
-							outputPartition.setLength(outputPartition.getLength() + chunkLength);
-							atOutputPartition.setOffset(atOutputPartition.getOffset() + chunkLength);
-							atOutputPartition.setLength(atOutputPartition.getLength() - chunkLength);
-
-							if (atOutputPartition.getLength() == 0) {
-								// overwritten partition is now empty and must be be removed
-								partitions.remove(atOutputPartitionIndex);
-								atOutputPartition = getPartitionByIndex(atOutputPartitionIndex);
-							}
-						}
-						content.append(pending.text, textOffset, textOffset + chunkLength);
-						replaceLength += chunkLength;
-						textOffset += chunkLength;
-						outputOffset += chunkLength;
-						if (atOutputPartition != null
-								&& outputOffset == atOutputPartition.getOffset() + atOutputPartition.getLength()) {
-							atOutputPartitionIndex++;
-							atOutputPartition = getPartitionByIndex(atOutputPartitionIndex);
-						}
+						partEnd = pending.text.length();
+						foundControlCharacter = false;
 					}
-				}
-				// finished processing of regular content before control characters
-				// now interpret control characters if any
-				if (controlCharacterMatcher != null && foundControlCharacter) {
-					// at first update console document since it is easier to interpret control
-					// characters on an up-to-date document and partitioning
-					applyOutputToDocument(content.toString(), nextWriteOffset, replaceLength);
-					content.setLength(0);
-					replaceLength = 0;
 
-					final String controlCharacterMatch = controlCharacterMatcher.group();
-					final char controlCharacter = controlCharacterMatch.charAt(0);
-					switch (controlCharacter) {
-					case '\b':
-						// move virtual output cursor one step back for each \b
-						// but stop at current line start and skip any input partitions
-						final int outputLineStartOffset = findOutputLineStartOffset(outputOffset);
-						int backStepCount = controlCharacterMatch.length();
-						if (partitions.size() == 0) {
-							outputOffset = 0;
-							break;
-						}
-						if (atOutputPartition == null) {
-							atOutputPartitionIndex = partitions.size() - 1;
-							atOutputPartition = getPartitionByIndex(atOutputPartitionIndex);
-						}
-						while (backStepCount > 0 && outputOffset > outputLineStartOffset) {
-							if (atOutputPartition != null && isInputPartition(atOutputPartition)) {
-								do {
-									outputOffset = atOutputPartition.getOffset() - 1;
-									atOutputPartitionIndex--;
-									atOutputPartition = getPartitionByIndex(atOutputPartitionIndex);
-								} while (atOutputPartition != null && isInputPartition(atOutputPartition));
-								backStepCount--;
-							}
-							if (atOutputPartition == null) {
+					partititonContent(pending.stream, pending.text, textOffset, partEnd);
+					textOffset = partEnd;
+
+					// finished processing of regular content before control characters
+					// now interpret control characters if any
+					if (controlCharacterMatcher != null && foundControlCharacter) {
+						// at first update console document since it is easier to interpret control
+						// characters on an up-to-date document and partitioning
+						applyOutputToDocument(content.toString(), nextWriteOffset, replaceLength);
+						content.setLength(0);
+						replaceLength = 0;
+
+						final String controlCharacterMatch = controlCharacterMatcher.group();
+						final char controlCharacter = controlCharacterMatch.charAt(0);
+						switch (controlCharacter) {
+						case '\b':
+							// move virtual output cursor one step back for each \b
+							// but stop at current line start and skip any input partitions
+							final int outputLineStartOffset = findOutputLineStartOffset(outputOffset);
+							int backStepCount = controlCharacterMatch.length();
+							if (partitions.size() == 0) {
 								outputOffset = 0;
 								break;
 							}
-							final int backSteps = Math.min(outputOffset - atOutputPartition.getOffset(), backStepCount);
-							outputOffset -= backSteps;
-							backStepCount -= backSteps;
-							atOutputPartitionIndex--;
+							if (atOutputPartition == null) {
+								atOutputPartitionIndex = partitions.size() - 1;
+								atOutputPartition = getPartitionByIndex(atOutputPartitionIndex);
+							}
+							while (backStepCount > 0 && outputOffset > outputLineStartOffset) {
+								if (atOutputPartition != null && isInputPartition(atOutputPartition)) {
+									do {
+										outputOffset = atOutputPartition.getOffset() - 1;
+										atOutputPartitionIndex--;
+										atOutputPartition = getPartitionByIndex(atOutputPartitionIndex);
+									} while (atOutputPartition != null && isInputPartition(atOutputPartition));
+									backStepCount--;
+								}
+								if (atOutputPartition == null) {
+									outputOffset = 0;
+									break;
+								}
+								final int backSteps = Math.min(outputOffset - atOutputPartition.getOffset(),
+										backStepCount);
+								outputOffset -= backSteps;
+								backStepCount -= backSteps;
+								atOutputPartitionIndex--;
+								atOutputPartition = getPartitionByIndex(atOutputPartitionIndex);
+							}
+							outputOffset = Math.max(outputOffset, outputLineStartOffset);
+							break;
+
+						case '\r':
+							// move virtual output cursor to start of output line
+							outputOffset = findOutputLineStartOffset(outputOffset);
+							atOutputPartitionIndex = -1;
+							atOutputPartition = null;
+							break;
+
+						default:
+							// should never happen as long as the used regex pattern is valid
+							log(IStatus.ERROR, "No implementation to handle control character 0x" //$NON-NLS-1$
+									+ Integer.toHexString(controlCharacter));
+							break;
+						}
+						nextWriteOffset = outputOffset;
+						textOffset = controlCharacterMatcher.end();
+					}
+				}
+			}
+			applyOutputToDocument(content.toString(), nextWriteOffset, replaceLength);
+		}
+
+		/**
+		 * If {@link IOConsolePartitioner#outputOffset} is at end of current content it
+		 * will simply append the new partition or extend the last existing if
+		 * applicable.
+		 * <p>
+		 * If output offset is within existing content the method will overwrite
+		 * existing content and handle all required replacements and adjustments of
+		 * existing partitions.
+		 * </p>
+		 *
+		 * @param stream    the stream the to be partitioned content belongs to aka the
+		 *                  stream which appended the content
+		 * @param text      the text to partition. Depending on given offsets only a
+		 *                  part of text is partitioned.
+		 * @param offset    the start offset (inclusive) within text to partition
+		 * @param endOffset the end offset (exclusive) within text to partition
+		 */
+		private void partititonContent(IOConsoleOutputStream stream, CharSequence text, int offset, int endOffset) {
+			int textOffset = offset;
+			while (textOffset < endOffset) {
+				// Process content part. This part never contains control characters.
+				// Processing may require multiple iterations if we overwrite existing content
+				// which consists of distinct partitions.
+
+				if (outputOffset >= document.getLength()) {
+					// content is appended to document end (the easy case)
+					if (atOutputPartition == null) {
+						// get the last existing partition to try to expand it
+						atOutputPartitionIndex = partitions.size() - 1;
+						atOutputPartition = getPartitionByIndex(atOutputPartitionIndex);
+						if (ASSERT) {
+							Assert.isTrue(atOutputPartitionIndex == findPartitionCandidate(outputOffset - 1));
+						}
+					}
+					if (atOutputPartition == null || !atOutputPartition.belongsTo(stream)) {
+						// no partitions yet or last partition is incompatible to reuse -> add new one
+						atOutputPartition = new IOConsolePartition(outputOffset, stream);
+						partitions.add(atOutputPartition);
+						atOutputPartitionIndex = partitions.size() - 1;
+					}
+					final int appendedLength = endOffset - textOffset;
+					content.append(text, textOffset, endOffset);
+					atOutputPartition.setLength(atOutputPartition.getLength() + appendedLength);
+					outputOffset += appendedLength;
+					textOffset = endOffset;
+				} else {
+					// content overwrites existing console content (the tricky case)
+					if (atOutputPartition == null) {
+						// find partition where output will overwrite or create one if unpartitioned
+						atOutputPartitionIndex = findPartitionCandidate(outputOffset);
+						atOutputPartition = getPartitionByIndex(atOutputPartitionIndex);
+						if (atOutputPartition == null) {
+							atOutputPartition = new IOConsolePartition(outputOffset, stream);
+							atOutputPartitionIndex++;
+							partitions.add(atOutputPartitionIndex, atOutputPartition);
+						}
+					}
+
+					// we do not overwrite input partitions at the moment so they need to be skipped
+					if (isInputPartition(atOutputPartition)) {
+						outputOffset = atOutputPartition.getOffset() + atOutputPartition.getLength();
+						atOutputPartitionIndex++;
+						atOutputPartition = getPartitionByIndex(atOutputPartitionIndex);
+
+						// apply document changes collected until now
+						applyOutputToDocument(content.toString(), nextWriteOffset, replaceLength);
+						content.setLength(0);
+						replaceLength = 0;
+						nextWriteOffset = outputOffset;
+						continue; // to check if next selected partition is also input or appending now
+					}
+
+					// limit chunks to overwrite only one existing partition at a time
+					final int chunkLength = Math.min(endOffset - textOffset,
+							atOutputPartition.getLength() - (outputOffset - atOutputPartition.getOffset()));
+					Assert.isTrue(chunkLength > 0); // do not remove since it can prevent an infinity loop
+
+					if (!atOutputPartition.belongsTo(stream)) {
+						// new output is from other stream then overwritten output
+
+						// Note: this implementation ignores the possibility to reuse the partition
+						// where the overwrite chunk ends and expand it towards replace begin since this
+						// makes things code much more complex. In some cases this may leads to
+						// consecutive partitions which could be merged to one partition. Merging is not
+						// implemented at the moment.
+
+						// in this part outputPartition is used to partition the new content
+						// and atOutputPartition points to the partition whose content is overwritten
+						// i.e. the new partition grows and the old one must shrink
+						IOConsolePartition outputPartition = null;
+						if (atOutputPartition.getOffset() == outputOffset) {
+							// try to expand the partition before our output offset
+							outputPartition = getPartitionByIndex(atOutputPartitionIndex - 1);
+						} else {
+							// overwrite starts inside existing incompatible partition
+							atOutputPartition = splitPartition(outputOffset);
+							atOutputPartitionIndex++;
+						}
+						if (outputPartition == null || !outputPartition.belongsTo(stream)) {
+							outputPartition = new IOConsolePartition(outputOffset, stream);
+							partitions.add(atOutputPartitionIndex, outputPartition);
+							atOutputPartitionIndex++;
+						}
+
+						// update partitioning of the overwritten chunk
+						outputPartition.setLength(outputPartition.getLength() + chunkLength);
+						atOutputPartition.setOffset(atOutputPartition.getOffset() + chunkLength);
+						atOutputPartition.setLength(atOutputPartition.getLength() - chunkLength);
+
+						if (atOutputPartition.getLength() == 0) {
+							// overwritten partition is now empty and must be be removed
+							partitions.remove(atOutputPartitionIndex);
 							atOutputPartition = getPartitionByIndex(atOutputPartitionIndex);
 						}
-						outputOffset = Math.max(outputOffset, outputLineStartOffset);
-						break;
+					}
+					content.append(text, textOffset, textOffset + chunkLength);
+					replaceLength += chunkLength;
+					textOffset += chunkLength;
+					outputOffset += chunkLength;
+					if (atOutputPartition != null
+							&& outputOffset == atOutputPartition.getOffset() + atOutputPartition.getLength()) {
+						atOutputPartitionIndex++;
+						atOutputPartition = getPartitionByIndex(atOutputPartitionIndex);
+					}
+				}
+			}
+		}
 
-					case '\r':
-						// move virtual output cursor to start of output line
-						outputOffset = findOutputLineStartOffset(outputOffset);
-						atOutputPartitionIndex = -1;
-						atOutputPartition = null;
-						break;
-
-					default:
-						// should never happen as long as the used regex pattern is valid
-						log(IStatus.ERROR, "No implementation to handle control character 0x" //$NON-NLS-1$
-								+ Integer.toHexString(controlCharacter));
+		/**
+		 * Find offset of line start from given output offset. This method ignores line
+		 * breaks partitioned as input. I.e. it looks at the document as if it only
+		 * consist of the output parts.
+		 *
+		 * @param outOffset offset where output should be written
+		 * @return the start offset of line where output should be written
+		 */
+		private int findOutputLineStartOffset(int outOffset) {
+			int outputLineStartOffset = 0;
+			try {
+				for (int lineIndex = document.getLineOfOffset(outOffset); lineIndex >= 0; lineIndex--) {
+					outputLineStartOffset = document.getLineOffset(lineIndex);
+					final IOConsolePartition lineBreakPartition = getIOPartition(outputLineStartOffset - 1);
+					if (lineBreakPartition == null || !isInputPartition(lineBreakPartition)) {
 						break;
 					}
-					nextWriteOffset = outputOffset;
-					textOffset = controlCharacterMatcher.end();
 				}
-			}
-		}
-		applyOutputToDocument(content.toString(), nextWriteOffset, replaceLength);
-	}
-
-	/**
-	 * Find offset of line start from given output offset. This method ignores line
-	 * breaks partitioned as input. I.e. it looks at the document as if it only
-	 * consist of the output parts.
-	 *
-	 * @param outOffset offset where output should be written
-	 * @return the start offset of line where output should be written
-	 */
-	private int findOutputLineStartOffset(int outOffset) {
-		int outputLineStartOffset = 0;
-		try {
-			for (int lineIndex = document.getLineOfOffset(outOffset); lineIndex >= 0; lineIndex--) {
-				outputLineStartOffset = document.getLineOffset(lineIndex);
-				final IOConsolePartition lineBreakPartition = getIOPartition(outputLineStartOffset - 1);
-				if (lineBreakPartition == null || !isInputPartition(lineBreakPartition)) {
-					break;
-				}
-			}
-		} catch (BadLocationException e) {
-			log(e);
-			outputLineStartOffset = 0;
-		}
-		if (ASSERT) {
-			Assert.isTrue(outputLineStartOffset <= outOffset);
-		}
-		return outputLineStartOffset;
-	}
-
-	/**
-	 * Apply content from output streams to document. It expects the partitioning
-	 * has or will update partitioning to reflect the change since it prevents this
-	 * partitioner's {@link #documentChanged2(DocumentEvent)} method from changing
-	 * partitioning.
-	 *
-	 * @param content       collected content from output streams
-	 * @param offset        offset where content is inserted
-	 * @param replaceLength length of overwritten old output
-	 */
-	private void applyOutputToDocument(String content, int offset, int replaceLength) {
-		if (content.length() > 0 || replaceLength > 0) {
-			if (ASSERT) {
-				Assert.isTrue(replaceLength <= content.length());
-			}
-			try {
-				updateType = DocUpdateType.OUTPUT;
-				document.replace(offset, replaceLength, content);
 			} catch (BadLocationException e) {
 				log(e);
+				outputLineStartOffset = 0;
+			}
+			if (ASSERT) {
+				Assert.isTrue(outputLineStartOffset <= outOffset);
+			}
+			return outputLineStartOffset;
+		}
+
+		/**
+		 * Apply content from output streams to document. It expects the partitioning
+		 * has or will update partitioning to reflect the change since it prevents this
+		 * partitioner's {@link #documentChanged2(DocumentEvent)} method from changing
+		 * partitioning.
+		 *
+		 * @param text   collected content from output streams; not <code>null</code>
+		 * @param offset offset in document where content is inserted
+		 * @param length length of overwritten old output
+		 */
+		private void applyOutputToDocument(String text, int offset, int length) {
+			if (text.length() > 0 || length > 0) {
+				if (ASSERT) {
+					Assert.isTrue(length <= text.length());
+				}
+				try {
+					updateType = DocUpdateType.OUTPUT;
+					document.replace(offset, length, text);
+				} catch (BadLocationException e) {
+					log(e);
+				}
 			}
 		}
 	}
