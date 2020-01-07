@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Paul Pazderski and others.
+ * Copyright (c) 2019, 2020 Paul Pazderski and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -109,7 +109,7 @@ public final class IOConsoleTestUtil {
 	 */
 	public IOConsoleTestUtil clear() throws Exception {
 		console.clearConsole();
-		waitForScheduledJobs();
+		flush();
 		TestCase.assertEquals("Console is not cleared.", 0, doc.getLength());
 		return this;
 	}
@@ -121,6 +121,7 @@ public final class IOConsoleTestUtil {
 	 * @param s content to write in output stream
 	 * @return this {@link IOConsoleTestUtil} to chain methods
 	 * @see #write(String)
+	 * @see #flush()
 	 */
 	@SuppressWarnings("resource")
 	public IOConsoleTestUtil writeFast(final String s) throws IOException {
@@ -164,6 +165,7 @@ public final class IOConsoleTestUtil {
 	 * @param out use this output stream instead of default one
 	 * @return this {@link IOConsoleTestUtil} to chain methods
 	 * @see #write(String, IOConsoleOutputStream)
+	 * @see #flush()
 	 */
 	public IOConsoleTestUtil writeFast(final String s, IOConsoleOutputStream out) throws IOException {
 		out.write(s);
@@ -181,7 +183,7 @@ public final class IOConsoleTestUtil {
 	 */
 	public IOConsoleTestUtil write(final String s, IOConsoleOutputStream out) throws Exception {
 		writeFast(s, out);
-		waitForScheduledJobs();
+		flush();
 		return this;
 	}
 
@@ -543,7 +545,7 @@ public final class IOConsoleTestUtil {
 			verifyContentByOffset(expectedContent, line.getOffset());
 			TestCase.assertEquals("Line " + l + " has wrong length.", expectedContent.length(), line.getLength());
 		} catch (BadLocationException e) {
-			TestCase.fail("Expected line not found in console document. Bad location!");
+			TestCase.fail("Expected line " + lineNum + " not found in console document. Bad location!");
 		}
 		return this;
 	}
@@ -562,7 +564,7 @@ public final class IOConsoleTestUtil {
 			final int len = Math.min(doc.getLength() - o, expectedContent.length());
 			TestCase.assertEquals("Expected string not found in console document.", expectedContent, doc.get(o, len));
 		} catch (BadLocationException ex) {
-			TestCase.fail("Expected string not found in console document. Bad location!");
+			TestCase.fail("Expected string '" + expectedContent + "' not found in console document. Bad location!");
 		}
 		return this;
 	}
@@ -704,6 +706,18 @@ public final class IOConsoleTestUtil {
 	}
 
 	/**
+	 * Ensure all pending write operations are fully applied on the console view
+	 * before returning.
+	 *
+	 * @return this {@link IOConsoleTestUtil} to chain methods
+	 */
+	public IOConsoleTestUtil flush() {
+		// overall this method is just a better name for waitForScheduledJobs
+		waitForScheduledJobs();
+		return this;
+	}
+
+	/**
 	 * Close the default output stream if it was used.
 	 */
 	public void closeOutputStream() {
@@ -747,7 +761,9 @@ public final class IOConsoleTestUtil {
 	/**
 	 * If <code>true</code> the util will work as if console is not in fixed
 	 * width mode. E.g. {@link #moveCaretToLineStart()} will move caret to
-	 * document line start not to widget line start.
+	 * document line start not to widget line start or
+	 * {@link #verifyContentByLine(String, int)} would check the line as seen
+	 * without fixed width.
 	 *
 	 * @see #ignoreFixedConsole
 	 */
@@ -756,11 +772,12 @@ public final class IOConsoleTestUtil {
 	}
 
 	/**
-	 * Enable compatibility mode. If set to <code>true</code> written for
+	 * Enable compatibility mode. If set to <code>true</code> tests written for
 	 * console without fixed width should work with any fixed width. Commands
 	 * like {@link #moveCaretToLineStart()} are modified to not move to begin of
 	 * widget line (maybe wrapped line) but to start it would have without fixed
-	 * width.
+	 * width or {@link #verifyContentByLine(String, int)} would check the line
+	 * as seen without fixed width.
 	 *
 	 * @see #ignoreFixedConsole
 	 */

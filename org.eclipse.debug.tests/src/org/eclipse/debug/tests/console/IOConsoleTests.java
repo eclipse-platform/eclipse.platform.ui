@@ -195,7 +195,7 @@ public class IOConsoleTests extends AbstractDebugTest {
 
 		c.writeAndVerify("Hello World!");
 		c.getDocument().replace(0, c.getContentLength(), "");
-		c.waitForScheduledJobs();
+		c.flush();
 		c.verifyContent("").verifyPartitions();
 
 		c.writeAndVerify("New console content.");
@@ -555,6 +555,49 @@ public class IOConsoleTests extends AbstractDebugTest {
 		}
 		closeConsole(c);
 		assertEquals("Test triggered errors in IOConsole.", 0, loggedErrors.get());
+	}
+
+	/**
+	 * Test handling of <code>\f</code>.
+	 */
+	public void testFormFeedControlCharacter() throws Exception {
+		final IOConsoleTestUtil c = getTestUtil("Test \\f");
+		c.getConsole().setHandleControlCharacters(true);
+		try (IOConsoleOutputStream err = c.getConsole().newOutputStream()) {
+			c.write("\f");
+			assertEquals("Wrong number of lines.", 2, c.getDocument().getNumberOfLines());
+			c.verifyContentByLine("", 0).verifyContentByLine("", 1);
+			c.writeAndVerify("output").writeFast("\f").write("more");
+			c.verifyContentByLine("output", 1);
+			c.verifyContentByLine("      more", 2);
+			c.clear();
+			c.writeFast("\f\f").writeFast("\f", err).write("\fend").verifyPartitions(2);
+			assertEquals("Wrong number of lines.", 5, c.getDocument().getNumberOfLines());
+			c.verifyContentByLine("end", 4);
+			c.clear();
+			c.write("1st\f2nd\f3rd").verifyPartitions();
+			c.verifyContentByLine("1st", 0);
+			c.verifyContentByLine("   2nd", 1);
+			c.verifyContentByLine("      3rd", 2);
+
+			// test form feed mixed with backspaces
+			c.clear();
+			c.write("first\f\b\bsecond");
+			c.verifyContentByLine("first", 0);
+			c.verifyContentByLine("   second", 1);
+			c.clear();
+			c.writeFast("><\b").writeFast("\f", err).write("abc").verifyPartitions(2);
+			c.verifyContentByLine("><", 0);
+			c.verifyContentByLine(" abc", 1);
+
+			// test with input partitions. At the moment input is
+			// considered for the indentation
+			c.clear();
+			c.writeAndVerify("foo").insertTyping("input").writeFast("bar").write("\f.", err).verifyPartitions(2);
+			c.verifyContentByLine("fooinputbar", 0);
+			c.verifyContentByLine("           .", 1);
+		}
+		closeConsole(c);
 	}
 
 	/**

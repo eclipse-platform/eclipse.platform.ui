@@ -17,6 +17,7 @@
  *                          Bug 550621: Implementation of IConsoleDocumentPartitionerExtension
  *                          Bug 76936:  Support interpretation of \b and \r in console output
  *                          Bug 365770: Race condition in console clearing
+ *                          Bug 553282: Support interpretation of \f and \v in console output
  *******************************************************************************/
 package org.eclipse.ui.internal.console;
 
@@ -97,12 +98,12 @@ public class IOConsolePartitioner
 	 * Pattern used to find supported ASCII control characters <b>except</b>
 	 * carriage return.
 	 */
-	private static final String CONTROL_CHARACTERS_PATTERN_STR = "(?:\b+)"; //$NON-NLS-1$
+	private static final String CONTROL_CHARACTERS_PATTERN_STR = "(?:\b+|\u000b+|\f+)"; //$NON-NLS-1$
 	/**
 	 * Pattern used to find supported ASCII control characters <b>including</b>
 	 * carriage return.
 	 */
-	private static final String CONTROL_CHARACTERS_WITH_CR_PATTERN_STR = "(?:\b+|\r+(?!\n))"; //$NON-NLS-1$
+	private static final String CONTROL_CHARACTERS_WITH_CR_PATTERN_STR = "(?:\b+|\u000b+|\f+|\r+(?!\n))"; //$NON-NLS-1$
 
 	/** The connected {@link IDocument} this partitioner manages. */
 	private IDocument document;
@@ -879,11 +880,11 @@ public class IOConsolePartitioner
 
 						final String controlCharacterMatch = controlCharacterMatcher.group();
 						final char controlCharacter = controlCharacterMatch.charAt(0);
+						final int outputLineStartOffset = findOutputLineStartOffset(outputOffset);
 						switch (controlCharacter) {
 						case '\b':
 							// move virtual output cursor one step back for each \b
 							// but stop at current line start and skip any input partitions
-							final int outputLineStartOffset = findOutputLineStartOffset(outputOffset);
 							int backStepCount = controlCharacterMatch.length();
 							if (partitions.size() == 0) {
 								outputOffset = 0;
@@ -914,13 +915,34 @@ public class IOConsolePartitioner
 								atOutputPartition = getPartitionByIndex(atOutputPartitionIndex);
 							}
 							outputOffset = Math.max(outputOffset, outputLineStartOffset);
+							nextWriteOffset = outputOffset;
 							break;
 
 						case '\r':
 							// move virtual output cursor to start of output line
-							outputOffset = findOutputLineStartOffset(outputOffset);
+							outputOffset = outputLineStartOffset;
 							atOutputPartitionIndex = -1;
 							atOutputPartition = null;
+							nextWriteOffset = outputOffset;
+							break;
+
+						case '\f':
+						case '\u000b': // \v
+							// Vertical tab does not override existing content. It will introduce a newline
+							// (at the end of current line even if output offset is inside the line) and
+							// indent the new line dependent on current output offset.
+							int indention = outputOffset - outputLineStartOffset;
+							final int vtabCount = controlCharacterMatch.length();
+							final StringBuilder vtab = new StringBuilder(indention + vtabCount);
+							for (int i = 0; i < vtabCount; i++) {
+								vtab.append(System.lineSeparator());
+							}
+							for (int i = 0; i < indention; i++) {
+								vtab.append(' ');
+							}
+							outputOffset = document.getLength();
+							nextWriteOffset = outputOffset;
+							partititonContent(pending.stream, vtab, 0, vtab.length());
 							break;
 
 						default:
@@ -929,12 +951,12 @@ public class IOConsolePartitioner
 									+ Integer.toHexString(controlCharacter));
 							break;
 						}
-						nextWriteOffset = outputOffset;
 						textOffset = controlCharacterMatcher.end();
 					}
 				}
 			}
 			applyOutputToDocument(content.toString(), nextWriteOffset, replaceLength);
+			content = null;
 		}
 
 		/**
