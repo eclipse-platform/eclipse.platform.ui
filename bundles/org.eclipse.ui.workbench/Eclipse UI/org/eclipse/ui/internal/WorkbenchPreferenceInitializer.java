@@ -101,7 +101,7 @@ public class WorkbenchPreferenceInitializer extends AbstractPreferenceInitialize
 
 		// Heap status preferences is stored in different node
 		IEclipsePreferences heapNode = context.getNode("org.eclipse.ui"); //$NON-NLS-1$
-		heapNode.putBoolean(IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR, true);
+		heapNode.putBoolean(IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR, false);
 		node.putInt(IHeapStatusConstants.PREF_UPDATE_INTERVAL, 500);
 		node.putBoolean(IHeapStatusConstants.PREF_SHOW_MAX, false);
 		node.putBoolean(IPreferenceConstants.OVERRIDE_PRESENTATION, false);
