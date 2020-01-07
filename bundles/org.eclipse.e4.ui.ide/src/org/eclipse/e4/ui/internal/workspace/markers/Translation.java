@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019-2020 ArSysOp and others.
+ * Copyright (c) 2019, 2020 ArSysOp and others.
  *
  * This program and the accompanying materials are made available under the
  * terms of the Eclipse Public License 2.0 which is available at
@@ -20,7 +20,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILog;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.ui.internal.views.markers.MarkerItemDefaults;
 import org.osgi.framework.FrameworkUtil;
 
 /**
@@ -41,6 +40,7 @@ import org.osgi.framework.FrameworkUtil;
 public final class Translation {
 
 	private final Consumer<CoreException> reporter;
+	private final NameAttribute nameAttribute;
 
 	/**
 	 * Use {@link ILog} of enclosing bundle as {@link CoreException} consumer
@@ -56,6 +56,7 @@ public final class Translation {
 	public Translation(Consumer<CoreException> reporter) {
 		Objects.requireNonNull(reporter);
 		this.reporter = reporter;
+		this.nameAttribute = new NameAttribute();
 	}
 
 	/**
@@ -89,7 +90,7 @@ public final class Translation {
 			return Optional.empty();
 		}
 		try {
-			Object name = marker.getAttribute(MarkerItemDefaults.NAME_ATTRIBUTE);
+			Object name = marker.getAttribute(nameAttribute.key());
 			if (name != null) {
 				return Optional.of(name.toString());
 			}
