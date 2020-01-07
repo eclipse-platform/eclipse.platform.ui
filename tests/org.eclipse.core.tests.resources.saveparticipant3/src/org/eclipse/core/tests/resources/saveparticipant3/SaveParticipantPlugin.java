@@ -43,6 +43,7 @@ public class SaveParticipantPlugin extends Plugin implements ISaveParticipant {
 		getWorkspace().removeSaveParticipant(getPluginId());
 	}
 
+	@Override
 	public void doneSaving(ISaveContext context) {
 		try {
 			writeExpectedSaveNumber(context.getSaveNumber());
@@ -83,6 +84,7 @@ public class SaveParticipantPlugin extends Plugin implements ISaveParticipant {
 		return ResourcesPlugin.getWorkspace();
 	}
 
+	@Override
 	public void prepareToSave(ISaveContext context) throws CoreException {
 		resetSaveLifecycleLog();
 		IStatus status = validate(context);
@@ -118,9 +120,11 @@ public class SaveParticipantPlugin extends Plugin implements ISaveParticipant {
 		saveLifecycleLog = new MultiStatus(getPluginId(), IStatus.OK, message, null);
 	}
 
+	@Override
 	public void rollback(ISaveContext context) {
 	}
 
+	@Override
 	public void saving(ISaveContext context) throws CoreException {
 	}
 

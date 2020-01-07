@@ -38,6 +38,7 @@ public class SaveParticipant3Plugin extends SaveParticipantPlugin {
 		return getFilePath(name + "." + saveNumber);
 	}
 
+	@Override
 	public void prepareToSave(ISaveContext context) throws CoreException {
 		resetSaveLifecycleLog();
 		context.needSaveNumber();
@@ -51,9 +52,11 @@ public class SaveParticipant3Plugin extends SaveParticipantPlugin {
 		context.map(file, realPath);
 	}
 
+	@Override
 	public void rollback(ISaveContext context) {
 	}
 
+	@Override
 	public void saving(ISaveContext context) throws CoreException {
 		if (shouldFail)
 			throw new CoreException(new Status(0, getPluginId(), 0, "fake failure", null));
