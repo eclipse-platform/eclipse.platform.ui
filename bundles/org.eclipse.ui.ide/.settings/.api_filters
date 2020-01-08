@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.ui.ide" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="Bug 558895 that increased bundle version was reverted" id="926941240">
+            <message_arguments>
+                <message_argument value="3.17.0"/>
+                <message_argument value="3.16.100"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/ui/views/bookmarkexplorer/BookmarkNavigator.java" type="org.eclipse.ui.views.bookmarkexplorer.BookmarkNavigator">
         <filter comment="Bug 550439 - Mark BookmarkNavigator and related API for deletion" id="338944126">
             <message_arguments>
