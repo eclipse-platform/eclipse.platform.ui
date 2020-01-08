@@ -180,7 +180,7 @@ public class UrlUtil {
 		prefix = ""; //$NON-NLS-1$
 		for (int d = 0; d < depth; d++) {
 			prefix += "../"; //$NON-NLS-1$
-		};
+		}
 		prefix += "topic"; //$NON-NLS-1$
 		return prefix;
 	}

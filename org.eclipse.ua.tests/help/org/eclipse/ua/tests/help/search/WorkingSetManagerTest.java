@@ -200,7 +200,7 @@ public class WorkingSetManagerTest {
 		createWsetWithAllTocs(mgr, "test1a");
 		WorkingSetScope scope = new WorkingSetScope("test1a", mgr, "scope");
 		Toc[] tocs = HelpPlugin.getTocManager().getTocs(Platform.getNL());
-		for (Toc toc : tocs) {;
+		for (Toc toc : tocs) {
 			ITopic[] topics = toc.getTopics();
 			for (ITopic topic : topics) {
 				assertTrue(scope.inScope(topic));
@@ -214,7 +214,7 @@ public class WorkingSetManagerTest {
 		createWsetWithAllTocs(mgr, "test1b");
 		WorkingSetScope scope = new WorkingSetScope("test1b", mgr, "scope");
 		Toc[] tocs = HelpPlugin.getTocManager().getTocs(Platform.getNL());
-		for (Toc toc : tocs) {;
+		for (Toc toc : tocs) {
 			ITopic[] topics = toc.getTopics();
 			for (ITopic topic : topics) {
 				ITopic[] subtopics = topic.getSubtopics();

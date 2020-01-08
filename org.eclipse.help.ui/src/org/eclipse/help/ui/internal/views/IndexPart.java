@@ -103,7 +103,7 @@ public class IndexPart extends HyperlinkTreePart implements IHelpUIConstants {
 	public String getSeeString(IIndexSee see) {
 		String seeText = see.isSeeAlso() ? Messages.SeeAlso : Messages.See;
 		String message = NLS.bind(seeText, see.getKeyword());
-		String[] path = IndexUtils.getPath(see);;
+		String[] path = IndexUtils.getPath(see);
 		for (int i = 1; i < path.length; i++) {
 			message = NLS.bind(Messages.SeeList, message,path[i]);
 		}
