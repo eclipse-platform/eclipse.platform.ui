@@ -4,3 +4,4 @@ Bug 407961 - Comparator log shows special problem that will require "touches"
 Bug 509973 - Comparator errors in I20170105-0320
 Bug 511251 - Comparator errors in I20170127-2200
 Bug 534597 - Unanticipated comparator errors in I20180511-2000
+Bug 558905 - Comparator error in I20200108-0025
