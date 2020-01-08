@@ -20,10 +20,10 @@ package org.eclipse.debug.core.model;
  *
  * <pre>
  *  &lt;extension point=&quot;org.eclipse.debug.core.stepFilters&quot;&gt;
- *   &lt;stepFilters
+ *   &lt;stepFilter
  *    class=&quot;com.example.ExampleStepFilters&quot;
  *    modelIdentifier=&quot;com.example.debug.model&quot;&gt;
- *   &lt;/stepFilters&gt;
+ *   &lt;/stepFilter&gt;
  * &lt;/extension&gt;
  * </pre>
  * <p>
