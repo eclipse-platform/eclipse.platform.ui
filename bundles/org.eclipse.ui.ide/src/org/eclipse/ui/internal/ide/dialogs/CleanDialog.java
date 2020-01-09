@@ -47,13 +47,11 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.actions.BuildAction;
@@ -91,10 +89,6 @@ public class CleanDialog extends MessageDialog {
 	}
 
 	private static final String DIALOG_SETTINGS_SECTION = "CleanDialogSettings"; //$NON-NLS-1$
-	private static final String DIALOG_ORIGIN_X = "DIALOG_X_ORIGIN"; //$NON-NLS-1$
-	private static final String DIALOG_ORIGIN_Y = "DIALOG_Y_ORIGIN"; //$NON-NLS-1$
-	private static final String DIALOG_WIDTH = "DIALOG_WIDTH"; //$NON-NLS-1$
-	private static final String DIALOG_HEIGHT = "DIALOG_HEIGHT"; //$NON-NLS-1$
 	private static final String TOGGLE_SELECTED = "TOGGLE_SELECTED"; //$NON-NLS-1$
 	private static final String BUILD_NOW = "BUILD_NOW"; //$NON-NLS-1$
 	private static final String BUILD_ALL = "BUILD_ALL"; //$NON-NLS-1$
@@ -205,7 +199,7 @@ public class CleanDialog extends MessageDialog {
 		area.setLayout(areaLayout);
 		area.setLayoutData(new GridData(GridData.FILL_BOTH));
 
-		IDialogSettings settings = getDialogSettings(DIALOG_SETTINGS_SECTION);
+		IDialogSettings settings = getDialogSettings();
 
 		alwaysCleanButton = new Button(area, SWT.CHECK);
 		alwaysCleanButton.setText(IDEWorkbenchMessages.CleanDialog_alwaysCleanAllButton);
@@ -407,65 +401,21 @@ public class CleanDialog extends MessageDialog {
 
 	@Override
 	public boolean close() {
-		persistDialogSettings(getShell(), DIALOG_SETTINGS_SECTION);
+		persistDialogSettings();
 		return super.close();
 	}
 
-	@Override
-	protected Point getInitialLocation(Point initialSize) {
-		Point p = getInitialLocation(DIALOG_SETTINGS_SECTION);
-		return p != null ? p : super.getInitialLocation(initialSize);
-	}
-
-	@Override
-	protected Point getInitialSize() {
-		Point p = super.getInitialSize();
-		return getInitialSize(DIALOG_SETTINGS_SECTION, p);
-	}
-
-	/**
-	 * Returns the initial location which is persisted in the IDE Plugin dialog settings
-	 * under the provided dialog setttings section name.
-	 * If location is not persisted in the settings, the <code>null</code> is returned.
-	 *
-	 * @param dialogSettingsSectionName The name of the dialog settings section
-	 * @return The initial location or <code>null</code>
-	 */
-	public Point getInitialLocation(String dialogSettingsSectionName) {
-		IDialogSettings settings = getDialogSettings(dialogSettingsSectionName);
-		try {
-			int x= settings.getInt(DIALOG_ORIGIN_X);
-			int y= settings.getInt(DIALOG_ORIGIN_Y);
-			return new Point(x,y);
-		} catch (NumberFormatException e) {
-		}
-		return null;
-	}
-
-	private IDialogSettings getDialogSettings(String dialogSettingsSectionName) {
+	private IDialogSettings getDialogSettings() {
 		IDialogSettings settings = IDEWorkbenchPlugin.getDefault().getDialogSettings();
-		IDialogSettings section = settings.getSection(dialogSettingsSectionName);
+		IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
 		if (section == null) {
-			section = settings.addNewSection(dialogSettingsSectionName);
+			section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
 		}
 		return section;
 	}
 
-	/**
-	 * Persists the location and dimensions of the shell and other user settings in the
-	 * plugin's dialog settings under the provided dialog settings section name
-	 *
-	 * @param shell The shell whose geometry is to be stored
-	 * @param dialogSettingsSectionName The name of the dialog settings section
-	 */
-	private void persistDialogSettings(Shell shell, String dialogSettingsSectionName) {
-		Point shellLocation = shell.getLocation();
-		Point shellSize = shell.getSize();
-		IDialogSettings settings = getDialogSettings(dialogSettingsSectionName);
-		settings.put(DIALOG_ORIGIN_X, shellLocation.x);
-		settings.put(DIALOG_ORIGIN_Y, shellLocation.y);
-		settings.put(DIALOG_WIDTH, shellSize.x);
-		settings.put(DIALOG_HEIGHT, shellSize.y);
+	private void persistDialogSettings() {
+		IDialogSettings settings = getDialogSettings();
 
 		if (buildNowButton != null) {
 			settings.put(BUILD_NOW, buildNowButton.getSelection());
@@ -477,29 +427,18 @@ public class CleanDialog extends MessageDialog {
 		settings.put(TOGGLE_SELECTED, !alwaysCleanButton.getSelection());
 	}
 
-	/**
-	 * Returns the initial size which is the larger of the <code>initialSize</code> or
-	 * the size persisted in the IDE UI Plugin dialog settings under the provided dialog setttings section name.
-	 * If no size is persisted in the settings, the <code>initialSize</code> is returned.
-	 *
-	 * @param initialSize The initialSize to compare against
-	 * @param dialogSettingsSectionName The name of the dialog settings section
-	 * @return the initial size
-	 */
-	private Point getInitialSize(String dialogSettingsSectionName, Point initialSize) {
-		IDialogSettings settings = getDialogSettings(dialogSettingsSectionName);
-		try {
-			int x, y;
-			x = settings.getInt(DIALOG_WIDTH);
-			y = settings.getInt(DIALOG_HEIGHT);
-			return new Point(Math.max(x, initialSize.x), Math.max(y, initialSize.y));
-		} catch (NumberFormatException e) {
-		}
-		return initialSize;
-	}
-
 	@Override
 	protected boolean isResizable() {
 		return true;
+	}
+
+	@Override
+	protected IDialogSettings getDialogBoundsSettings() {
+		return getDialogSettings();
+	}
+
+	@Override
+	protected int getDialogBoundsStrategy() {
+		return DIALOG_PERSISTSIZE;
 	}
 }
