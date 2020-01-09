@@ -14,7 +14,6 @@
 package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.swt.widgets.Shell;
@@ -23,7 +22,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 
 /**
  * Prefence dialog for the workbench including the ability to load/save
@@ -38,16 +36,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 	 * @since 3.1
 	 */
 	private static WorkbenchPreferenceDialog instance = null;
-
-	/**
-	 * The bounds of this dialog will be persisted in the dialog settings. This is
-	 * defined at the most concrete level of the hierarchy so that different
-	 * concrete implementations don't necessarily store their bounds in the same
-	 * settings.
-	 *
-	 * @since 3.2
-	 */
-	private static final String DIALOG_SETTINGS_SECTION = "WorkbenchPreferenceDialogSettings"; //$NON-NLS-1$
 
 	/**
 	 * Creates a workbench preference dialog to a particular preference page. It is
@@ -151,27 +139,6 @@ public class WorkbenchPreferenceDialog extends FilteredPreferenceDialog {
 			return null;
 		}
 		return node;
-	}
-
-	@Override
-	protected IDialogSettings getDialogBoundsSettings() {
-		IDialogSettings settings = WorkbenchPlugin.getDefault().getDialogSettings();
-		IDialogSettings section = settings.getSection(DIALOG_SETTINGS_SECTION);
-		if (section == null) {
-			section = settings.addNewSection(DIALOG_SETTINGS_SECTION);
-		}
-		return section;
-	}
-
-	/**
-	 * Overridden to persist only the location, not the size, since the current page
-	 * dictates the most appropriate size for the dialog.
-	 *
-	 * @since 3.2
-	 */
-	@Override
-	protected int getDialogBoundsStrategy() {
-		return DIALOG_PERSISTLOCATION;
 	}
 
 }
