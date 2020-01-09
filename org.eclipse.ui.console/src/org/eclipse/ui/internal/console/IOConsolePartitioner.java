@@ -669,7 +669,7 @@ public class IOConsolePartitioner
 	 * A stream has been appended, add to pendingPartions list and schedule
 	 * updateJob. updateJob is scheduled with a slight delay, this allows the
 	 * console to run the job less frequently and update the document with a greater
-	 * amount of data each time the job is run
+	 * amount of data each time the job is run.
 	 *
 	 * @param stream The stream that was written to.
 	 * @param s      The string that should be appended to the document.
@@ -701,11 +701,15 @@ public class IOConsolePartitioner
 			if (pendingSize > 160000) {
 				if (Display.getCurrent() == null) {
 					try {
-						pendingPartitions.wait();
+						// Block thread to give UI time to process pending output.
+						// Do not wait forever. Current thread and UI thread might share locks. An
+						// example is bug 421303 where current thread and UI thread both write to
+						// console and therefore both need the write lock for IOConsoleOutputStream.
+						pendingPartitions.wait(1000);
 					} catch (InterruptedException e) {
 					}
 				} else {
-					// if we are in UI thread we cannot lock it, so process queued output.
+					// If we are in UI thread we cannot lock it, so process queued output.
 					processPendingPartitions();
 				}
 			}

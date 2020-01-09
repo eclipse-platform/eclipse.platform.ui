@@ -28,8 +28,11 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.core.runtime.ILogListener;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.debug.tests.TestUtil;
 import org.eclipse.debug.tests.TestsPlugin;
@@ -747,6 +750,67 @@ public class IOConsoleTests extends AbstractDebugTest {
 		c.verifyPartitions();
 		closeConsole(c, "#");
 		assertEquals("Test triggered errors in IOConsole.", 0, loggedErrors.get());
+	}
+
+	/**
+	 * Regression test for deadlock in stream processing.
+	 */
+	public void testBug421303_StreamProcessingDeadlock() throws Exception {
+		// Test situation is that UI thread and another thread both write a
+		// large amount of output into same IOConsoleOutputStream at same time
+		// where the non-UI thread is writing first.
+		// Test includes a watchdog thread which will break the deadlock (if
+		// happened) so the test can end in a reasonable amount of time.
+		final IOConsoleTestUtil c = getTestUtil("Test Bug 421303 Stream processing deadlock");
+		final String veryLongString = String.join("", Collections.nCopies(20000, "0123456789"));
+		final Exception[] jobException = new Exception[1];
+		final AtomicBoolean deadlocked = new AtomicBoolean(false);
+		Job job = new Job("Async out") {
+			@Override
+			protected IStatus run(IProgressMonitor monitor) {
+				synchronized (c) {
+					c.notifyAll();
+				}
+				try {
+					c.writeFast(veryLongString);
+				} catch (IOException e) {
+					jobException[0] = e;
+				}
+				return Status.OK_STATUS;
+			}
+		};
+		Thread watchdog = new Thread(() -> {
+			try {
+				Thread.sleep(testTimeout);
+				synchronized (c) {
+					c.notifyAll();
+				}
+				if (job.getThread() != null && job.getThread().isAlive()) {
+					deadlocked.set(true);
+					job.getThread().interrupt();
+				}
+			} catch (InterruptedException e) {
+			}
+		}, "Watchdog");
+		watchdog.setDaemon(true);
+		watchdog.start();
+
+		synchronized (c) {
+			job.schedule();
+			c.wait();
+		}
+		// ensure other thread is writing first
+		Thread.yield();
+		Thread.sleep(50);
+		c.writeFast(veryLongString);
+
+		watchdog.interrupt();
+		watchdog.join(1000);
+		if (jobException[0] != null) {
+			throw jobException[0];
+		}
+		assertFalse("Deadlock in stream processing.", deadlocked.get());
+		closeConsole(c);
 	}
 
 	/**
