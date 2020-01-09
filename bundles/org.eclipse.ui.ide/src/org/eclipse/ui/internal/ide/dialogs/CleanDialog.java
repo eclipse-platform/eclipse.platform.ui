@@ -43,7 +43,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -233,18 +232,11 @@ public class CleanDialog extends MessageDialog {
 			projectNames.refresh();
 		});
 
-		filterText.addFocusListener(new FocusListener() {
-			@Override
-			public void focusLost(FocusEvent e) {
-				if (filterText.getText().equals(IDEWorkbenchMessages.CleanDialog_typeFilterText)) {
-					filterText.setText(""); //$NON-NLS-1$
-				}
+		filterText.addFocusListener(FocusListener.focusLostAdapter(e -> {
+			if (filterText.getText().equals(IDEWorkbenchMessages.CleanDialog_typeFilterText)) {
+				filterText.setText(""); //$NON-NLS-1$
 			}
-
-			@Override
-			public void focusGained(FocusEvent e) {
-			}
-		});
+		}));
 
 		createProjectSelectionTable(area);
 		if (!alwaysCleanButton.getSelection()) {
