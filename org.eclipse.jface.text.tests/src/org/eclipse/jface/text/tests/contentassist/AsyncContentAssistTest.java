@@ -15,13 +15,24 @@ package org.eclipse.jface.text.tests.contentassist;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.util.Arrays;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.eclipse.swt.widgets.Table;
+import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Widget;
 
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
@@ -83,5 +94,50 @@ public class AsyncContentAssistTest {
 		document.set("ab"); // Simulate user typing a key when popup visible
 		DisplayHelper.sleep(shell.getDisplay(), 1000);
 		assertNull(errorStatus);
+	}
+
+	@Test
+	public void testCompletePrefix() {
+		Shell shell = new Shell();
+		shell.setLayout(new FillLayout());
+		shell.setSize(500, 300);
+		SourceViewer viewer = new SourceViewer(shell, null, SWT.NONE);
+		Document document = new Document("b");
+		viewer.setDocument(document);
+		viewer.setSelectedRange(1, 0);
+		ContentAssistant contentAssistant = new ContentAssistant(true);
+		contentAssistant.addContentAssistProcessor(new BarContentAssistProcessor(), IDocument.DEFAULT_CONTENT_TYPE);
+		contentAssistant.enablePrefixCompletion(true);
+		contentAssistant.install(viewer);
+		shell.open();
+		Display display = shell.getDisplay();
+		final Set<Shell> beforeShells = Arrays.stream(display.getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
+		contentAssistant.showPossibleCompletions();
+		assertTrue("Completion item not shown", new DisplayHelper() {
+			@Override
+			protected boolean condition() {
+				Set<Shell> newShells = Arrays.stream(display.getShells()).filter(Shell::isVisible).collect(Collectors.toSet());
+				newShells.removeAll(beforeShells);
+				if (!newShells.isEmpty()) {
+					Table completionTable = findCompletionSelectionControl(newShells.iterator().next());
+					return Arrays.stream(completionTable.getItems()).map(TableItem::getText).anyMatch(item -> item.contains(BarContentAssistProcessor.PROPOSAL.substring(document.getLength())));
+				}
+				return false;
+			}
+		}.waitForCondition(display, 2000));
+	}
+
+	private static Table findCompletionSelectionControl(Widget control) {
+		if (control instanceof Table) {
+			return (Table)control;
+		} else if (control instanceof Composite) {
+			for (Widget child : ((Composite)control).getChildren()) {
+				Table res = findCompletionSelectionControl(child);
+				if (res != null) {
+					return res;
+				}
+			}
+		}
+		return null;
 	}
 }

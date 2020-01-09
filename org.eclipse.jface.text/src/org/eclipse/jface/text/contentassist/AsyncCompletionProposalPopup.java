@@ -286,15 +286,15 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 
 		computeAndPopulateProposals(fInvocationOffset, (List<ICompletionProposal> proposals) -> {
 			ensureDocumentListenerInstalled();
+			fFilteredProposals= proposals;
 			if (!proposals.isEmpty() && completeCommonPrefix()) {
 				hide();
 			} else {
-				fFilteredProposals= proposals;
 				setProposals(proposals, false);
 				displayProposals();
 			}
 		}, true, false, true);
-		fFilteredProposals= new ArrayList<>(fComputedProposals);
+		fFilteredProposals= new ArrayList<>(fComputedProposals != null ? fComputedProposals : Collections.emptyList());
 		return getErrorMessage();
 	}
 
