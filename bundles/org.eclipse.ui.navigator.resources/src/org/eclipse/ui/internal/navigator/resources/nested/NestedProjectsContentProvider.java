@@ -13,6 +13,7 @@
  ******************************************************************************/
 package org.eclipse.ui.internal.navigator.resources.nested;
 
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -35,10 +36,15 @@ import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorPlugin;
 import org.eclipse.ui.navigator.CommonViewer;
+import org.eclipse.ui.navigator.ICommonFilterDescriptor;
+import org.eclipse.ui.navigator.INavigatorFilterService;
 
 public class NestedProjectsContentProvider implements ITreeContentProvider, IResourceChangeListener {
 
 	public static final String EXTENSION_ID = "org.eclipse.ui.navigator.resources.nested.nestedProjectContentProvider"; //$NON-NLS-1$
+
+	private static final Object[] EMPTY_OBJECT_ARRAY = new Object[0];
+	private static final IProject[] EMPTY_PROJECT_ARRAY = new IProject[0];
 
 	private Command projectPresetionCommand;
 	private CommonViewer viewer;
@@ -69,17 +75,34 @@ public class NestedProjectsContentProvider implements ITreeContentProvider, IRes
 	public void inputChanged(Viewer viewer, Object oldInput, Object newInput) {
 		this.viewer = (CommonViewer)viewer;
 		NestedProjectsLabelProvider.viewersToUpdate.add(this.viewer);
+		ensureFiltersActivated();
+	}
+
+	private void ensureFiltersActivated() {
+		INavigatorFilterService filterService = this.viewer.getNavigatorContentService().getFilterService();
+		Set<String> filters = new HashSet<>();
+		for (ICommonFilterDescriptor desc : filterService.getVisibleFilterDescriptors()) {
+			if (filterService.isActive(desc.getId())) {
+				filters.add(desc.getId());
+			}
+		}
+		if (!filters.contains(HideTopLevelProjectIfNested.EXTENSION_ID)
+				|| !filters.contains(HideFolderWhenProjectIsShownAsNested.EXTENTSION_ID)) {
+			filters.add(HideTopLevelProjectIfNested.EXTENSION_ID);
+			filters.add(HideFolderWhenProjectIsShownAsNested.EXTENTSION_ID);
+			filterService.activateFilterIdsAndUpdateViewer(filters.toArray(new String[filters.size()]));
+		}
 	}
 
 	@Override
 	public Object[] getElements(Object inputElement) {
-		return null;
+		return EMPTY_OBJECT_ARRAY;
 	}
 
 	@Override
 	public IProject[] getChildren(Object parentElement) {
 		if (! (parentElement instanceof IContainer)) {
-			return null;
+			return EMPTY_PROJECT_ARRAY;
 		}
 		IContainer container = (IContainer)parentElement;
 		return NestedProjectManager.getInstance().getDirectChildrenProjects(container);
