@@ -359,7 +359,7 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 
 		menuManager.add(new Separator("FIND")); //$NON-NLS-1$
 		menuManager.add(fGlobalActions.get(ActionFactory.FIND.getId()));
-		menuManager.add(new FollowHyperlinkAction(fViewer));
+		menuManager.add(new FollowHyperlinkAction(fViewer.getHyperlink()));
 		menuManager.add(fClearOutputAction);
 
 		menuManager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
