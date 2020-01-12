@@ -29,9 +29,9 @@ import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.ConfigurationScope;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.jface.preference.PreferenceStore;
+import org.eclipse.tips.core.internal.LogUtil;
 import org.eclipse.tips.core.internal.TipManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
@@ -39,6 +39,46 @@ import org.osgi.service.prefs.BackingStoreException;
 
 /**
  * Internal class to store preferences.
+ *
+ * The preferences will first process command line options before accessing the
+ * default scope which can be loaded with a plug-in Customization file.
+ *
+ * <h2>Control Startup</h2> Without any option, the tips will be started in the
+ * background.
+ * <p>
+ * Command line option "org.eclipse.tips.startup.default" can be set in the
+ * following ways:
+ *
+ * <ul>
+ * <li><b>-Dorg.eclipse.tips.startup.default=dialog</b> (Show the dialog)</li>
+ * <li><b>-Dorg.eclipse.tips.startup.default=background</b> (Start in the
+ * background)</li>
+ * <li><b>-Dorg.eclipse.tips.startup.default=disable</b> (Do not start
+ * tips)</li>
+ * </ul>
+ *
+ * The -pluginCustomization program option can be used to provide startup
+ * defaults in a file:
+ *
+ * <pre>
+ * <b>-pluginCustomization /some/path/plugin_customization.ini</b>
+ *
+ * Inside the file:
+ * org.eclipse.tips.ide/activate_at_startup=&lt;dialog|background|disable&gt;
+ * </pre>
+ *
+ * <h2>Disable specific providers</h2> Without any option, all providers will be
+ * loaded.
+ *
+ * The -pluginCustomization program option can be used to disable specific
+ * providers:
+ *
+ * <pre>
+ * <b>-pluginCustomization /some/path/plugin_customization.ini</b>
+ *
+ * Inside the file:
+ * org.eclipse.tips.ide/disabled_providers=org.eclipse.tips.ide.internal.provider.TipsTipProvider,another.provider.id
+ * </pre>
  *
  */
 @SuppressWarnings("restriction")
@@ -50,6 +90,11 @@ public class TipsPreferences extends AbstractPreferenceInitializer {
 	 * Preference store key to indicate showing tips at startup.
 	 */
 	public static final String PREF_STARTUP_BEHAVIOR = "activate_at_startup"; //$NON-NLS-1$
+
+	private static final String PREF_STARTUP_BEHAVIOR_PROPERTY = "org.eclipse.tips.startup.default"; //$NON-NLS-1$
+	private static final String PREF_STARTUP_BEHAVIOR_DIALOG = "dialog"; //$NON-NLS-1$
+	private static final String PREF_STARTUP_BEHAVIOR_BACKGROUND = "background"; //$NON-NLS-1$
+	private static final String PREF_STARTUP_BEHAVIOR_DISABLE = "disable"; //$NON-NLS-1$
 
 	/**
 	 * Preference store key to indicate serving tips that the user as already seen.
@@ -68,14 +113,7 @@ public class TipsPreferences extends AbstractPreferenceInitializer {
 
 	@Override
 	public void initializeDefaultPreferences() {
-		IEclipsePreferences node = getPreferences();
-		node.putInt(PREF_STARTUP_BEHAVIOR, getDefaultStartupBehavior());
-		node.putBoolean(PREF_SERVE_READ_TIPS, false);
-		try {
-			node.flush();
-		} catch (BackingStoreException e) {
-			throw new RuntimeException(e);
-		}
+		// nothing needs to be done right now
 	}
 
 	/**
@@ -147,9 +185,12 @@ public class TipsPreferences extends AbstractPreferenceInitializer {
 		}
 	}
 
-	public static IEclipsePreferences getPreferences() {
-		IEclipsePreferences node = ConfigurationScope.INSTANCE.getNode(Constants.BUNDLE_ID);
-		return node;
+	/**
+	 * @return the preferences for this bundle
+	 */
+	private static IEclipsePreferences getPreferences() {
+		return ConfigurationScope.INSTANCE.getNode(Constants.BUNDLE_ID);
+
 	}
 
 	public static void log(IStatus status) {
@@ -175,55 +216,91 @@ public class TipsPreferences extends AbstractPreferenceInitializer {
 		String origin = "<unknown>"; //$NON-NLS-1$
 		if (stackTrace.length > 3) {
 			StackTraceElement ste = stackTrace[4];
-			String[] fqcn = ste.getClassName().split("\\.");
+			String[] fqcn = ste.getClassName().split("\\."); //$NON-NLS-1$
 			String clazz = fqcn[fqcn.length - 1];
-			origin = clazz + "#" + ste.getMethodName() + "(" + ste.getLineNumber() + ")";
+			origin = clazz + "#" + ste.getMethodName() + "(" + ste.getLineNumber() + ")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
 
 		String statusLine = pStatus.toString();
-		if (statusLine.endsWith(" null")) {
-			statusLine = statusLine.substring(0, statusLine.length() - " null".length());
+		if (statusLine.endsWith(" null")) { //$NON-NLS-1$
+			statusLine = statusLine.substring(0, statusLine.length() - " null".length()); //$NON-NLS-1$
 		}
-		return statusLine + " : " + origin;
+		return statusLine + " : " + origin; //$NON-NLS-1$
 	}
 
+	/**
+	 * Preferences are stored as strings but returned in TipManager form (int).
+	 *
+	 * @return the startup behavior
+	 *
+	 * @see TipManager#START_DIALOG
+	 * @see TipManager#START_BACKGROUND
+	 * @see TipManager#START_DISABLE
+	 */
 	public static int getStartupBehavior() {
-		return getPreferences().getInt(PREF_STARTUP_BEHAVIOR, getDefaultStartupBehavior());
+		String behavior = getPreferences().get(PREF_STARTUP_BEHAVIOR, null);
+		if (behavior == null) {
+			behavior = getDefaultStartupBehavior();
+		}
+		switch (behavior) {
+		case PREF_STARTUP_BEHAVIOR_DIALOG:
+			return TipManager.START_DIALOG;
+		case PREF_STARTUP_BEHAVIOR_BACKGROUND:
+			return TipManager.START_BACKGROUND;
+		case PREF_STARTUP_BEHAVIOR_DISABLE:
+			return TipManager.START_DISABLE;
+		default:
+			return TipManager.START_BACKGROUND;
+		}
 	}
 
-	private static int getDefaultStartupBehavior() {
-		String startupBehavior = System.getProperty("org.eclipse.tips.startup.default");
-		if ("dialog".equals(startupBehavior)) {
-			return TipManager.START_DIALOG;
-		} else if ("background".equals(startupBehavior)) {
-			return TipManager.START_BACKGROUND;
-		} else if ("disable".equals(startupBehavior)) {
-			return TipManager.START_DISABLE;
+	private static String getDefaultStartupBehavior() {
+		String startupBehavior = System.getProperty(PREF_STARTUP_BEHAVIOR_PROPERTY);
+		if (startupBehavior == null) {
+			return startupBehavior = DefaultScope.INSTANCE.getNode(Constants.BUNDLE_ID).get(PREF_STARTUP_BEHAVIOR,
+					PREF_STARTUP_BEHAVIOR_BACKGROUND);
 		}
-		return TipManager.START_BACKGROUND;
+		return startupBehavior;
 	}
 
 	public static boolean isServeReadTips() {
 		return getPreferences().getBoolean(PREF_SERVE_READ_TIPS, false);
 	}
 
+	/**
+	 * Sets the startup behavior of the tips framework which is one of the
+	 * TipManager#START* constants. If an invalid value is passed,
+	 * {@link TipManager#START_BACKGROUND} is assumed.
+	 *
+	 * @param startupBehavior {@link TipManager#START_BACKGROUND},
+	 *                        {@link TipManager#START_DIALOG} or
+	 *                        {@link TipManager#START_DISABLE}
+	 */
 	public static void setStartupBehavior(int startupBehavior) {
+		log(LogUtil.info("setStartupBehavior = '" + startupBehavior + "' 0=dialog, 1=background, 2=disable")); //$NON-NLS-1$ //$NON-NLS-2$
 		IEclipsePreferences node = getPreferences();
-		node.putInt(PREF_STARTUP_BEHAVIOR, startupBehavior);
+		if (startupBehavior == TipManager.START_DIALOG) {
+			node.put(PREF_STARTUP_BEHAVIOR, PREF_STARTUP_BEHAVIOR_DIALOG);
+		} else if (startupBehavior == TipManager.START_DISABLE) {
+			node.put(PREF_STARTUP_BEHAVIOR, PREF_STARTUP_BEHAVIOR_DISABLE);
+		} else {
+			node.put(PREF_STARTUP_BEHAVIOR, PREF_STARTUP_BEHAVIOR_BACKGROUND);
+		}
 		try {
 			node.flush();
 		} catch (BackingStoreException e) {
-			throw new RuntimeException(e);
+			log(LogUtil.error(e));
 		}
 	}
 
 	public static void setServeReadTips(boolean serveReadTips) {
+		log(LogUtil.info("Entering method setServeReadTips with boolean parameter = '" + serveReadTips + "'")); //$NON-NLS-1$ //$NON-NLS-2$
 		IEclipsePreferences node = getPreferences();
 		node.putBoolean(PREF_SERVE_READ_TIPS, serveReadTips);
 		try {
 			node.flush();
 		} catch (BackingStoreException e) {
-			throw new RuntimeException(e);
+			log(LogUtil.error(e));
 		}
 	}
 
@@ -246,12 +323,23 @@ public class TipsPreferences extends AbstractPreferenceInitializer {
 	 *         preference on the configuration scope.
 	 */
 	public static List<String> getDisabledProviderIds() {
-		IScopeContext[] scopes = { ConfigurationScope.INSTANCE, DefaultScope.INSTANCE };
-		IPreferencesService preferencesService = Platform.getPreferencesService();
-		String defaultValue = "";
-		String disabledProviderIdsPreference = preferencesService.getString(Constants.BUNDLE_ID,
-				PREF_DISABLED_PROVIDERS, defaultValue, scopes);
-		String[] disabledProviderIds = disabledProviderIdsPreference.split(",");
-		return Arrays.asList(disabledProviderIds);
+		String disabledProviderIds = getPreferences().get(PREF_DISABLED_PROVIDERS, null);
+		if (disabledProviderIds == null) {
+			disabledProviderIds = getDefaultDisabledProviderIds();
+		}
+		log(LogUtil.info("Disabled provider ids = '" + disabledProviderIds + "'")); //$NON-NLS-1$ //$NON-NLS-2$
+		String[] result = disabledProviderIds.split(","); //$NON-NLS-1$
+		return Arrays.asList(result);
+	}
+
+	/**
+	 * @return A list of default tip provider identifiers, which can be provided by
+	 *         a pluginCustomization file, or an empty string. Never null.
+	 */
+	private static String getDefaultDisabledProviderIds() {
+		String result = Platform.getPreferencesService().getString(Constants.BUNDLE_ID, PREF_DISABLED_PROVIDERS, "", //$NON-NLS-1$
+				new IScopeContext[] { DefaultScope.INSTANCE });
+		log(LogUtil.info("Default disabled provider ids = '" + result + "'")); //$NON-NLS-1$ //$NON-NLS-2$
+		return result;
 	}
 }
