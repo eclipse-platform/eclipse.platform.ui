@@ -29,48 +29,69 @@ public class StandardElementHandler extends ElementHandler {
 	@Override
 	public Expression create(ExpressionConverter converter, IConfigurationElement element) throws CoreException {
 		String name= element.getName();
-		if (ExpressionTagNames.INSTANCEOF.equals(name)) {
+		if (name == null) {
+			return null;
+		}
+
+		switch (name) {
+		case ExpressionTagNames.INSTANCEOF:
 			return new InstanceofExpression(element);
-		} else if (ExpressionTagNames.TEST.equals(name)) {
+		case ExpressionTagNames.TEST:
 			return new TestExpression(element);
-		} else if (ExpressionTagNames.OR.equals(name)) {
+		case ExpressionTagNames.OR:
+		{
 			OrExpression result= new OrExpression();
 			processChildren(converter, element, result);
 			return result;
-		} else if (ExpressionTagNames.AND.equals(name)) {
+		}
+		case ExpressionTagNames.AND:
+		{
 			AndExpression result= new AndExpression();
 			processChildren(converter, element, result);
 			return result;
-		} else if (ExpressionTagNames.NOT.equals(name)) {
+		}
+		case ExpressionTagNames.NOT:
 			return new NotExpression(converter.perform(element.getChildren()[0]));
-		} else if (ExpressionTagNames.WITH.equals(name)) {
+		case ExpressionTagNames.WITH:
+		{
 			WithExpression result= new WithExpression(element);
 			processChildren(converter, element, result);
 			return result;
-		} else if (ExpressionTagNames.ADAPT.equals(name)) {
+		}
+		case ExpressionTagNames.ADAPT:
+		{
 			AdaptExpression result= new AdaptExpression(element);
 			processChildren(converter, element, result);
 			return result;
-		} else if (ExpressionTagNames.ITERATE.equals(name)) {
+		}
+		case ExpressionTagNames.ITERATE:
+		{
 			IterateExpression result= new IterateExpression(element);
 			processChildren(converter, element, result);
 			return result;
-		} else if (ExpressionTagNames.COUNT.equals(name)) {
+		}
+		case ExpressionTagNames.COUNT:
 			return new CountExpression(element);
-		} else if (ExpressionTagNames.SYSTEM_TEST.equals(name)) {
+		case ExpressionTagNames.SYSTEM_TEST:
 			return new SystemTestExpression(element);
-		} else if (ExpressionTagNames.RESOLVE.equals(name)) {
+		case ExpressionTagNames.RESOLVE:
+		{
 			ResolveExpression result= new ResolveExpression(element);
 			processChildren(converter, element, result);
 			return result;
-		} else if (ExpressionTagNames.ENABLEMENT.equals(name)) {
+		}
+		case ExpressionTagNames.ENABLEMENT:
+		{
 			EnablementExpression result= new EnablementExpression(element);
 			processChildren(converter, element, result);
 			return result;
-		} else if (ExpressionTagNames.EQUALS.equals(name)) {
+		}
+		case ExpressionTagNames.EQUALS:
 			return new EqualsExpression(element);
-		} else if (ExpressionTagNames.REFERENCE.equals(name)) {
+		case ExpressionTagNames.REFERENCE:
 			return new ReferenceExpression(element);
+		default:
+			break;
 		}
 		return null;
 	}
@@ -78,19 +99,28 @@ public class StandardElementHandler extends ElementHandler {
 	@Override
 	public Expression create(ExpressionConverter converter, Element element) throws CoreException {
 		String name= element.getNodeName();
-		if (ExpressionTagNames.INSTANCEOF.equals(name)) {
+		if (name == null) {
+			return null;
+		}
+
+		switch (name) {
+		case ExpressionTagNames.INSTANCEOF:
 			return new InstanceofExpression(element);
-		} else if (ExpressionTagNames.TEST.equals(name)) {
+		case ExpressionTagNames.TEST:
 			return new TestExpression(element);
-		} else if (ExpressionTagNames.OR.equals(name)) {
+		case ExpressionTagNames.OR:
+		{
 			OrExpression result= new OrExpression();
 			processChildren(converter, element, result);
 			return result;
-		} else if (ExpressionTagNames.AND.equals(name)) {
+		}
+		case ExpressionTagNames.AND:
+		{
 			AndExpression result= new AndExpression();
 			processChildren(converter, element, result);
 			return result;
-		} else if (ExpressionTagNames.NOT.equals(name)) {
+		}
+		case ExpressionTagNames.NOT:
 			Node child = element.getFirstChild();
 			while (child != null) {
 				if (child.getNodeType() == Node.ELEMENT_NODE) {
@@ -98,34 +128,47 @@ public class StandardElementHandler extends ElementHandler {
 				}
 				child = child.getNextSibling();
 			}
-		} else if (ExpressionTagNames.WITH.equals(name)) {
+			break;
+		case ExpressionTagNames.WITH:
+		{
 			WithExpression result= new WithExpression(element);
 			processChildren(converter, element, result);
 			return result;
-		} else if (ExpressionTagNames.ADAPT.equals(name)) {
+		}
+		case ExpressionTagNames.ADAPT:
+		{
 			AdaptExpression result= new AdaptExpression(element);
 			processChildren(converter, element, result);
 			return result;
-		} else if (ExpressionTagNames.ITERATE.equals(name)) {
+		}
+		case ExpressionTagNames.ITERATE:
+		{
 			IterateExpression result= new IterateExpression(element);
 			processChildren(converter, element, result);
 			return result;
-		} else if (ExpressionTagNames.COUNT.equals(name)) {
+		}
+		case ExpressionTagNames.COUNT:
 			return new CountExpression(element);
-		} else if (ExpressionTagNames.SYSTEM_TEST.equals(name)) {
+		case ExpressionTagNames.SYSTEM_TEST:
 			return new SystemTestExpression(element);
-		} else if (ExpressionTagNames.RESOLVE.equals(name)) {
+		case ExpressionTagNames.RESOLVE:
+		{
 			ResolveExpression result= new ResolveExpression(element);
 			processChildren(converter, element, result);
 			return result;
-		} else if (ExpressionTagNames.ENABLEMENT.equals(name)) {
+		}
+		case ExpressionTagNames.ENABLEMENT:
+		{
 			EnablementExpression result= new EnablementExpression(element);
 			processChildren(converter, element, result);
 			return result;
-		} else if (ExpressionTagNames.EQUALS.equals(name)) {
+		}
+		case ExpressionTagNames.EQUALS:
 			return new EqualsExpression(element);
-		} else if (ExpressionTagNames.REFERENCE.equals(name)) {
+		case ExpressionTagNames.REFERENCE:
 			return new ReferenceExpression(element);
+		default:
+			break;
 		}
 		return null;
 	}

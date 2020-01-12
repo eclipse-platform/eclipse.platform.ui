@@ -184,12 +184,18 @@ public class SetupManager {
 				continue;
 			}
 			Element toParse = (Element) next;
-			if (toParse.getTagName().equals("eclipseArg")) {
+			switch (toParse.getTagName()) {
+			case "eclipseArg":
 				loadEclipseArgument(newSetup, toParse);
-			} else if (toParse.getTagName().equals("vmArg")) {
+				break;
+			case "vmArg":
 				loadVMArgument(newSetup, toParse);
-			} else if (toParse.getTagName().equals("systemProperty")) {
+				break;
+			case "systemProperty":
 				loadProperty(newSetup, toParse);
+				break;
+			default:
+				break;
 			}
 		}
 		setups.add(newSetup);

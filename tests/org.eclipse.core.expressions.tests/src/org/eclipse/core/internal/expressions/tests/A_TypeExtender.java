@@ -21,14 +21,21 @@ public class A_TypeExtender extends PropertyTester {
 
 	@Override
 	public boolean test(Object receiver, String property, Object[] args, Object expectedValue) {
-		if ("simple".equals(property)) { //$NON-NLS-1$
+		if (property == null) {
+			return false;
+		}
+
+		switch (property) {
+		case "simple": //$NON-NLS-1$
 			return "simple".equals(expectedValue); //$NON-NLS-1$
-		} else if ("overridden".equals(property)) { //$NON-NLS-1$
+		case "overridden": //$NON-NLS-1$
 			return "A".equals(expectedValue); //$NON-NLS-1$
-		} else if ("ordering".equals(property)) { //$NON-NLS-1$
+		case "ordering": //$NON-NLS-1$
 			return "A".equals(expectedValue); //$NON-NLS-1$
-		} else if ("chainOrdering".equals(property)) { //$NON-NLS-1$
+		case "chainOrdering": //$NON-NLS-1$
 			return "A".equals(expectedValue); //$NON-NLS-1$
+		default:
+			break;
 		}
 		Assert.isTrue(false);
 		return false;
