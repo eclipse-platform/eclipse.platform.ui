@@ -398,13 +398,18 @@ public class IntroPartPresentation extends AbstractIntroElement {
 
 		AbstractIntroPartImplementation implementation = null;
 		try {
-			if (implementationType.equals(BROWSER_IMPL_KIND))
+			switch (implementationType) {
+			case BROWSER_IMPL_KIND:
 				implementation = //null;
-				  new BrowserIntroPartImplementation();
-			else if (implementationType.equals(FORMS_IMPL_KIND))
+				new BrowserIntroPartImplementation();
+				break;
+			case FORMS_IMPL_KIND:
 				implementation = new FormIntroPartImplementation();
-			else
+				break;
+			default:
 				implementation = new TextIntroPartImplementation();
+				break;
+			}
 		} catch (Exception e) {
 			Log.error("Could not instantiate implementation " //$NON-NLS-1$
 					+ implementationType, e);

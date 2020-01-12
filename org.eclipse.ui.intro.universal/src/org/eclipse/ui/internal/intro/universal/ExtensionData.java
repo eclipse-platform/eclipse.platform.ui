@@ -73,18 +73,28 @@ public class ExtensionData extends BaseData {
 		this.name = name;
 		this.implicit = implicit;
 		if (importance != null) {
-			if (importance.equals(IUniversalIntroConstants.HIGH))
+			switch (importance) {
+			case IUniversalIntroConstants.HIGH:
 				fImportance = HIGH;
-			else if (importance.equals(IUniversalIntroConstants.MEDIUM))
+				break;
+			case IUniversalIntroConstants.MEDIUM:
 				fImportance = MEDIUM;
-			else if (importance.equals(IUniversalIntroConstants.LOW))
+				break;
+			case IUniversalIntroConstants.LOW:
 				fImportance = LOW;
-			else if (importance.equals(IUniversalIntroConstants.CALLOUT))
+				break;
+			case IUniversalIntroConstants.CALLOUT:
 				fImportance = CALLOUT;
-			else if (importance.equals(IUniversalIntroConstants.NEW))
+				break;
+			case IUniversalIntroConstants.NEW:
 				fImportance = NEW;
-			else if (importance.equals(IUniversalIntroConstants.HIDDEN))
+				break;
+			case IUniversalIntroConstants.HIDDEN:
 				fImportance = HIDDEN;
+				break;
+			default:
+				break;
+			}
 		}
 	}
 

@@ -155,63 +155,56 @@ public class IntroURL implements IIntroURL {
 		}
 
 		// check for all supported Intro actions first.
-		if (action.equals(CLOSE))
+		switch (action) {
+		case CLOSE:
 			return closeIntro();
-
-		else if (action.equals(SET_STANDBY_MODE))
+		case SET_STANDBY_MODE:
 			// Sets the state of the intro part. Does not care about passing
 			// input to the part.
 			return setStandbyState(getParameter(KEY_STANDBY));
-
-		else if (action.equals(SHOW_STANDBY))
+		case SHOW_STANDBY:
 			return handleStandbyState(getParameter(KEY_PART_ID),
-				getParameter(KEY_INPUT));
-
-		else if (action.equals(SHOW_HELP))
+					getParameter(KEY_INPUT));
+		case SHOW_HELP:
 			// display the full Help System.
 			return showHelp();
-
-		else if (action.equals(SHOW_HELP_TOPIC))
+		case SHOW_HELP_TOPIC:
 			// display a Help System Topic. It can be displayed in the Help
 			// system window, or embedded as an intro page.
 			// return showHelpTopic(getParameter(KEY_ID));
 			return showHelpTopic(getParameter(KEY_ID), getParameter(KEY_EMBED),
-				getParameter(KEY_EMBED_TARGET));
-
-		else if (action.equals(OPEN_BROWSER))
+					getParameter(KEY_EMBED_TARGET));
+		case OPEN_BROWSER:
 			// display url in external browser
 			return openBrowser(getParameter(KEY_URL),
-				getParameter(KEY_PLUGIN_ID));
-
-		if (action.equals(OPEN_URL))
+					getParameter(KEY_PLUGIN_ID));
+		default:
+			break;
+		}
+		switch (action) {
+		case OPEN_URL:
 			// display url embedded in intro browser.
 			return openURL(getParameter(KEY_URL), getParameter(KEY_PLUGIN_ID));
-
-		else if (action.equals(RUN_ACTION))
+		case RUN_ACTION:
 			// run an Intro action. Get the pluginId and the class keys. Pass
 			// the parameters and the standby state.
 			return runAction(getParameter(KEY_PLUGIN_ID),
-				getParameter(KEY_CLASS), parameters, getParameter(KEY_STANDBY));
-
-		else if (action.equals(EXECUTE))
+					getParameter(KEY_CLASS), parameters, getParameter(KEY_STANDBY));
+		case EXECUTE:
 			// execute a serialized command
 			return executeCommand(getParameter(KEY_COMAND), getParameter(KEY_STANDBY));
-
-		else if (action.equals(SHOW_PAGE))
+		case SHOW_PAGE:
 			// display an Intro Page.
 			return showPage(getParameter(KEY_ID), getParameter(KEY_STANDBY));
-
-		else if (action.equals(SHOW_MESSAGE))
+		case SHOW_MESSAGE:
 			return showMessage(getParameter(KEY_MESSAGE));
-
-		else if (action.equals(NAVIGATE))
+		case NAVIGATE:
 			return navigate(getParameter(KEY_DIRECTION));
-
-		else if (action.equals(SWITCH_TO_LAUNCH_BAR))
+		case SWITCH_TO_LAUNCH_BAR:
 			return switchToLaunchBar();
-
-		else
+		default:
 			return handleCustomAction();
+		}
 	}
 
 
