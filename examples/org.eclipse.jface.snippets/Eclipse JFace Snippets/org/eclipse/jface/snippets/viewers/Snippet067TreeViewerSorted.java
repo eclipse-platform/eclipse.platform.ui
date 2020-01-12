@@ -279,20 +279,23 @@ public class Snippet067TreeViewerSorted {
 		public Color getBackground(Object element, int columnIndex) {
 			String legendItemText = (String) element;
 			Display display = Display.getCurrent();
-			if (legendItemText.equals("Population > 1,000,000")) {
+			switch (legendItemText) {
+			case "Population > 1,000,000":
 				return display.getSystemColor(SWT.COLOR_RED);
-			} else if (legendItemText.equals("Population > 500,000")) {
+			case "Population > 500,000":
 				return display.getSystemColor(SWT.COLOR_GRAY);
-			} else if (legendItemText.equals("Population > 250,000")) {
+			case "Population > 250,000":
 				return display.getSystemColor(SWT.COLOR_YELLOW);
-			} else if (legendItemText.equals("Population > 50,000")) {
+			case "Population > 50,000":
 				return display.getSystemColor(SWT.COLOR_BLUE);
-			} else if (legendItemText.equals("Population > 25,000")) {
+			case "Population > 25,000":
 				return display.getSystemColor(SWT.COLOR_GREEN);
-			} else if (legendItemText.equals("Population > 5000")) {
+			case "Population > 5000":
 				return display.getSystemColor(SWT.COLOR_CYAN);
-			} else if (legendItemText.equals("Population <= 5000")) {
+			case "Population <= 5000":
 				return display.getSystemColor(SWT.COLOR_WHITE);
+			default:
+				break;
 			}
 
 			return null;

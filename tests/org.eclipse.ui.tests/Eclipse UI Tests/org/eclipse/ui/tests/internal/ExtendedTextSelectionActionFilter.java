@@ -42,15 +42,22 @@ public class ExtendedTextSelectionActionFilter implements IActionFilter {
 	@Override
 	public boolean testAttribute(Object target, String name, String value) {
 		ITextSelection sel = (ITextSelection) target;
-		if (name.equals(IS_EMPTY)) {
+		switch (name) {
+		case IS_EMPTY:
 			return (sel.getLength() == 0);
-		} else if (name.equals(TEXT)) {
+		case TEXT:
+		{
 			String text = sel.getText();
 			return (text.contains(value));
-		} else if (name.equals(CASE_INSENSITIVE_TEXT)) {
+		}
+		case CASE_INSENSITIVE_TEXT:
+		{
 			String text = sel.getText().toLowerCase();
 			value = value.toLowerCase();
 			return (text.contains(value));
+		}
+		default:
+			break;
 		}
 		return false;
 	}

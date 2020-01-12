@@ -246,19 +246,26 @@ public class PerspectiveExtensionReader extends RegistryReader {
 		boolean stack = false;
 		int intRelation = 0;
 		boolean fast = false;
-		if (relationship.equals(VAL_LEFT)) {
+		switch (relationship) {
+		case VAL_LEFT:
 			intRelation = IPageLayout.LEFT;
-		} else if (relationship.equals(VAL_RIGHT)) {
+			break;
+		case VAL_RIGHT:
 			intRelation = IPageLayout.RIGHT;
-		} else if (relationship.equals(VAL_TOP)) {
+			break;
+		case VAL_TOP:
 			intRelation = IPageLayout.TOP;
-		} else if (relationship.equals(VAL_BOTTOM)) {
+			break;
+		case VAL_BOTTOM:
 			intRelation = IPageLayout.BOTTOM;
-		} else if (relationship.equals(VAL_STACK)) {
+			break;
+		case VAL_STACK:
 			stack = true;
-		} else if (relationship.equals(VAL_FAST)) {
+			break;
+		case VAL_FAST:
 			fast = true;
-		} else {
+			break;
+		default:
 			return false;
 		}
 

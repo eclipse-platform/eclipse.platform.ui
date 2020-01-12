@@ -157,14 +157,17 @@ public class TopoSortTests {
 				return null;
 			}
 
-			if (id.equals("A")) {
+			switch (id) {
+			case "A":
 				return Collections.singleton("B");
-			} else if (id.equals("B")) {
+			case "B":
 				return Collections.singleton("C");
-			} else if (id.equals("C")) {
+			case "C":
 				return Collections.singleton("A");
-			} else if (id.equals("D")) {
+			case "D":
 				return Collections.singleton("A");
+			default:
+				break;
 			}
 			throw new IllegalArgumentException(id);
 		}
@@ -175,14 +178,17 @@ public class TopoSortTests {
 				return null;
 			}
 
-			if (id.equals("A")) {
+			switch (id) {
+			case "A":
 				return Arrays.asList("C", "D");
-			} else if (id.equals("B")) {
+			case "B":
 				return Collections.singleton("A");
-			} else if (id.equals("C")) {
+			case "C":
 				return Collections.singleton("B");
-			} else if (id.equals("D")) {
+			case "D":
 				return null;
+			default:
+				break;
 			}
 			throw new IllegalArgumentException(id);
 		}

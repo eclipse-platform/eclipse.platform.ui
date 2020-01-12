@@ -356,12 +356,19 @@ public class FormTextModel {
 		}
 		if (align != null) {
 			String value = align.getNodeValue().toLowerCase();
-			if (value.equals("top")) //$NON-NLS-1$
+			switch (value) {
+			case "top": //$NON-NLS-1$
 				segment.setVerticalAlignment(ObjectSegment.TOP);
-			else if (value.equals("middle")) //$NON-NLS-1$
+				break;
+			case "middle": //$NON-NLS-1$
 				segment.setVerticalAlignment(ObjectSegment.MIDDLE);
-			else if (value.equals("bottom")) //$NON-NLS-1$
+				break;
+			case "bottom": //$NON-NLS-1$
 				segment.setVerticalAlignment(ObjectSegment.BOTTOM);
+				break;
+			default:
+				break;
+			}
 		}
 	}
 

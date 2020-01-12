@@ -30,18 +30,27 @@ public class PerspectiveTagger {
 		}
 
 		// see bug 305557
-		if (id.equals("org.eclipse.jdt.ui.JavaPerspective")) { //$NON-NLS-1$
+		switch (id) {
+		case "org.eclipse.jdt.ui.JavaPerspective": //$NON-NLS-1$
 			tagJavaPerspective(perspective, modelService);
-		} else if (id.equals("org.eclipse.team.cvs.ui.cvsPerspective")) { //$NON-NLS-1$
+			break;
+		case "org.eclipse.team.cvs.ui.cvsPerspective": //$NON-NLS-1$
 			tagCVSPerspective(perspective, modelService);
-		} else if (id.equals("org.eclipse.team.ui.TeamSynchronizingPerspective")) { //$NON-NLS-1$
+			break;
+		case "org.eclipse.team.ui.TeamSynchronizingPerspective": //$NON-NLS-1$
 			tagTeamPerspective(perspective, modelService);
-		} else if (id.equals("org.eclipse.debug.ui.DebugPerspective")) { //$NON-NLS-1$
+			break;
+		case "org.eclipse.debug.ui.DebugPerspective": //$NON-NLS-1$
 			tagDebugPerspective(perspective, modelService);
-		} else if (id.equals("org.eclipse.ui.resourcePerspective")) { //$NON-NLS-1$
+			break;
+		case "org.eclipse.ui.resourcePerspective": //$NON-NLS-1$
 			tagResourcePerspective(perspective, modelService);
-		} else if (id.equals("org.eclipse.pde.ui.PDEPerspective")) { //$NON-NLS-1$
+			break;
+		case "org.eclipse.pde.ui.PDEPerspective": //$NON-NLS-1$
 			tagPluginDevelopmentPerspective(perspective, modelService);
+			break;
+		default:
+			break;
 		}
 	}
 

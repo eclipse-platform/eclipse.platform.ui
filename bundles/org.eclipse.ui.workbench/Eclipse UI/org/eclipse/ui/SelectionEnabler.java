@@ -406,23 +406,30 @@ public final class SelectionEnabler {
 		if (enablesFor == null) {
 			enablesFor = "*"; //$NON-NLS-1$
 		}
-		if (enablesFor.equals("*")) { //$NON-NLS-1$
+		switch (enablesFor) {
+		case "*": //$NON-NLS-1$
 			mode = ANY_NUMBER;
-		} else if (enablesFor.equals("?")) { //$NON-NLS-1$
+			break;
+		case "?": //$NON-NLS-1$
 			mode = NONE_OR_ONE;
-		} else if (enablesFor.equals("!")) { //$NON-NLS-1$
+			break;
+		case "!": //$NON-NLS-1$
 			mode = NONE;
-		} else if (enablesFor.equals("+")) { //$NON-NLS-1$
+			break;
+		case "+": //$NON-NLS-1$
 			mode = ONE_OR_MORE;
-		} else if (enablesFor.equals("multiple") //$NON-NLS-1$
-				|| enablesFor.equals("2+")) { //$NON-NLS-1$
+			break;
+		case "multiple": //$NON-NLS-1$
+		case "2+": //$NON-NLS-1$
 			mode = MULTIPLE;
-		} else {
+			break;
+		default:
 			try {
 				mode = Integer.parseInt(enablesFor);
 			} catch (NumberFormatException e) {
 				mode = UNKNOWN;
 			}
+			break;
 		}
 
 		// Get enablement block.

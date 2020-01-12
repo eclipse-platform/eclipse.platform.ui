@@ -210,15 +210,18 @@ public class CSSSWTColorHelper {
 				short primType = ((CSSPrimitiveValue) value).getPrimitiveType();
 
 				if (primType == CSSPrimitiveValue.CSS_IDENT) {
-					if (value.getCssText().equals("gradient")) {
+					switch (value.getCssText()) {
+					case "gradient":
 						// Skip the keyword "gradient"
 						continue;
-					} else if (value.getCssText().equals("linear")) {
+					case "linear":
 						gradient.setLinear(true);
 						continue;
-					} else if (value.getCssText().equals("radial")) {
+					case "radial":
 						gradient.setLinear(false);
 						continue;
+					default:
+						break;
 					}
 				}
 

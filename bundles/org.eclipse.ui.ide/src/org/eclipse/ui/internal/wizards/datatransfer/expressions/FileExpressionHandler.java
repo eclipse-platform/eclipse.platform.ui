@@ -34,14 +34,21 @@ public class FileExpressionHandler extends ElementHandler {
 	@Override
 	public Expression create(ExpressionConverter converter, IConfigurationElement element) {
 		String name = element.getName();
-		if (HasFileExpression.TAG.equals(name)) {
+		if (name == null) {
+			return null;
+		}
+
+		switch (name) {
+		case HasFileExpression.TAG:
 			return new HasFileExpression(element);
-		} else if (HasFileRecursivelyExpression.TAG.equals(name)) {
+		case HasFileRecursivelyExpression.TAG:
 			return new HasFileRecursivelyExpression(element);
-		} else if (HasFileWithSuffixRecursivelyExpression.TAG.equals(name)) {
+		case HasFileWithSuffixRecursivelyExpression.TAG:
 			return new HasFileWithSuffixRecursivelyExpression(element);
-		} else if (HasFolderExpression.TAG.equals(name)) {
+		case HasFolderExpression.TAG:
 			return new HasFolderExpression(element);
+		default:
+			break;
 		}
 		return null;
 	}

@@ -88,34 +88,37 @@ public abstract class WorkbenchResource extends WorkbenchAdapter implements
 			return false;
 		}
 		IResource res = (IResource) target;
-		if (name.equals(NAME)) {
+		switch (name) {
+		case NAME:
 			return SimpleWildcardTester.testWildcardIgnoreCase(value, res
 					.getName());
-		} else if (name.equals(PATH)) {
+		case PATH:
 			return SimpleWildcardTester.testWildcardIgnoreCase(value, res
 					.getFullPath().toString());
-		} else if (name.equals(EXTENSION)) {
+		case EXTENSION:
 			return SimpleWildcardTester.testWildcardIgnoreCase(value, res
 					.getFileExtension());
-		} else if (name.equals(READ_ONLY)) {
+		case READ_ONLY:
 			return (res.isReadOnly() == value.equalsIgnoreCase("true"));//$NON-NLS-1$
-		} else if (name.equals(PROJECT_NATURE)) {
+		case PROJECT_NATURE:
 			try {
 				IProject proj = res.getProject();
 				return proj.isAccessible() && proj.hasNature(value);
 			} catch (CoreException e) {
 				return false;
 			}
-		} else if (name.equals(PERSISTENT_PROPERTY)) {
+		case PERSISTENT_PROPERTY:
 			return testProperty(res, true, false, value);
-		} else if (name.equals(PROJECT_PERSISTENT_PROPERTY)) {
+		case PROJECT_PERSISTENT_PROPERTY:
 			return testProperty(res, true, true, value);
-		} else if (name.equals(SESSION_PROPERTY)) {
+		case SESSION_PROPERTY:
 			return testProperty(res, false, false, value);
-		} else if (name.equals(PROJECT_SESSION_PROPERTY)) {
+		case PROJECT_SESSION_PROPERTY:
 			return testProperty(res, false, true, value);
-		} else if (name.equals(CONTENT_TYPE_ID)) {
+		case CONTENT_TYPE_ID:
 			return testContentTypeProperty(res, value);
+		default:
+			break;
 		}
 		return false;
 	}
