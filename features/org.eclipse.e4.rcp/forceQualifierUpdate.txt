@@ -16,3 +16,4 @@ Needs a touch for felix.scr qualifier update
 Bug 539668 - Build failure in I20180930-1800
 Bug 543193 - IBuild I20190105-1800 failed due to unresolved project dependencies.
 Bug 553238 - Unanticipated comparator errors in I20191119-1800
+Bug 544571 - Felix scr 2.1.16 update
