@@ -617,7 +617,7 @@ public class ProjectPreferences extends EclipsePreferences {
 					table.put(VERSION_KEY, VERSION_VALUE);
 					// print the table to a string and remove the timestamp that Properties#store always adds
 					String s = removeTimestampFromTable(table);
-					String systemLineSeparator = System.getProperty("line.separator"); //$NON-NLS-1$
+					String systemLineSeparator = System.lineSeparator();
 					String fileLineSeparator = FileUtil.getLineSeparator(fileInWorkspace);
 					if (!systemLineSeparator.equals(fileLineSeparator))
 						s = s.replaceAll(systemLineSeparator, fileLineSeparator);

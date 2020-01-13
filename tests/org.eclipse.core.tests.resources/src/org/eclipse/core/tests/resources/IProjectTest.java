@@ -699,7 +699,7 @@ public class IProjectTest extends ResourceTest {
 
 	public void testProjectCreationLineSeparator() throws BackingStoreException, CoreException {
 		// make sure each line separator is different
-		String systemValue = System.getProperty("line.separator");
+		String systemValue = System.lineSeparator();
 		String newInstanceValue;
 		String newProjectValue;
 		if (systemValue.equals("\n")) {

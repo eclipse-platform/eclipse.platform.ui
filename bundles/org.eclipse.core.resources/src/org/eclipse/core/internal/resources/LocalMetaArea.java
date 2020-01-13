@@ -433,7 +433,7 @@ public class LocalMetaArea implements ICoreConstants {
 		path.toFile().getParentFile().mkdirs();
 		IPath tempPath = getBackupLocationFor(path);
 		try {
-			new ModelObjectWriter().write(description, path, tempPath, System.getProperty("line.separator")); //$NON-NLS-1$
+			new ModelObjectWriter().write(description, path, tempPath, System.lineSeparator());
 		} catch (IOException e) {
 			String message = NLS.bind(Messages.resources_writeWorkspaceMeta, path);
 			throw new ResourceException(IResourceStatus.FAILED_WRITE_METADATA, null, message, e);

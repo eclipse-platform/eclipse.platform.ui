@@ -318,7 +318,7 @@ public class FileUtil {
 		if (value != null)
 			return value;
 		// if there is no preference set, fall back to OS default value
-		return System.getProperty("line.separator"); //$NON-NLS-1$
+		return System.lineSeparator();
 	}
 
 	/**

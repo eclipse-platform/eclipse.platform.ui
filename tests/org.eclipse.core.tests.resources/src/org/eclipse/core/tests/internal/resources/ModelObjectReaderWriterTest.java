@@ -313,7 +313,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 	public void testConsistentWrite() throws Throwable {
 		String locationA = getTempDir().append("testPath1").toPortableString();
 		String locationB = getTempDir().append("testPath1").toPortableString();
-		String newline = System.getProperty("line.separator");
+		String newline = System.lineSeparator();
 		String expected = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + newline + "<projectDescription>" + newline + "	<name>MyProjectDescription</name>" + newline + "	<comment></comment>" + newline + "	<projects>" + newline + "	</projects>" + newline + "	<buildSpec>" + newline + "		<buildCommand>" + newline + "			<name>MyCommand</name>" + newline + "			<arguments>" + newline + "				<dictionary>" + newline + "					<key>aA</key>" + newline + "					<value>2 x ARGH!</value>" + newline + "				</dictionary>" + newline + "				<dictionary>" + newline + "					<key>b</key>" + newline + "					<value>ARGH!</value>" + newline + "				</dictionary>" + newline
 				+ "			</arguments>" + newline + "		</buildCommand>" + newline + "	</buildSpec>" + newline + "	<natures>" + newline + "	</natures>" + newline + "	<linkedResources>" + newline + "		<link>" + newline + "			<name>pathA</name>" + newline + "			<type>2</type>" + newline + "			<location>" + locationA + "</location>" + newline + "		</link>" + newline + "		<link>" + newline + "			<name>pathB</name>" + newline + "			<type>2</type>" + newline + "			<location>" + locationB + "</location>" + newline + "		</link>" + newline + "	</linkedResources>" + newline + "</projectDescription>" + newline;
 
@@ -341,7 +341,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		description.setLinkDescriptions(linkDescriptions);
 
 		ByteArrayOutputStream buffer = new ByteArrayOutputStream();
-		new ModelObjectWriter().write(description, buffer, System.getProperty("line.separator"));
+		new ModelObjectWriter().write(description, buffer, System.lineSeparator());
 		String result = buffer.toString();
 
 		// order of keys in serialized file should be exactly the same as expected
@@ -627,7 +627,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		description.setReferencedProjects(refProjects);
 
 		try (OutputStream output = tempStore.openOutputStream(EFS.NONE, getMonitor())) {
-			writer.write(description, output, System.getProperty("line.separator"));
+			writer.write(description, output, System.lineSeparator());
 		}
 
 		/* test read */
@@ -723,7 +723,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		desc.setMaxFileStateSize(123456789l);
 
 		SafeFileOutputStream output = new SafeFileOutputStream(location.toFile());
-		writer.write(desc, output, System.getProperty("line.separator"));
+		writer.write(desc, output, System.lineSeparator());
 		output.close();
 
 		/* test read */
@@ -759,7 +759,7 @@ public class ModelObjectReaderWriterTest extends ResourceTest {
 		OutputStream output = null;
 		try {
 			output = store.openOutputStream(EFS.NONE, getMonitor());
-			new ModelObjectWriter().write(description, output, System.getProperty("line.separator"));
+			new ModelObjectWriter().write(description, output, System.lineSeparator());
 		} finally {
 			assertClose(output);
 		}
