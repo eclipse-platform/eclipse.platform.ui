@@ -111,7 +111,7 @@ public class RefactoringHistorySerializationTests extends TestCase {
 	}
 
 	private static String convertLineDelimiters(String xml) {
-		String delimiter= System.getProperty("line.separator");
+		String delimiter= System.lineSeparator();
 		assertNotNull("Could not determine line separator.", delimiter);
 		if (!"\n".equals(delimiter))
 			xml= concatenate(convertIntoLines(xml), delimiter);
