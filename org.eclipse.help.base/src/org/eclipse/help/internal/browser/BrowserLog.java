@@ -33,7 +33,7 @@ public class BrowserLog {
 	private String logFileName;
 	private boolean newSession;
 	DateFormat formatter = new SimpleDateFormat("MMM dd, yyyy kk:mm:ss.SS"); //$NON-NLS-1$
-	String LN = System.getProperty("line.separator"); //$NON-NLS-1$
+	String LN = System.lineSeparator();
 	/**
 	 * Constructor
 	 */

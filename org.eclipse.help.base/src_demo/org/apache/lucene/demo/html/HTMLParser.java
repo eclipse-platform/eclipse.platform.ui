@@ -51,7 +51,7 @@ public class HTMLParser implements HTMLParserConstants {
   boolean inIgnoredTag = true;
   boolean afterTag = false;
   boolean afterSpace = false;
-  String eol = System.getProperty("line.separator"); //$NON-NLS-1$
+	String eol = System.lineSeparator();
   private LimitedSizeCharArrayWriter writer = new LimitedSizeCharArrayWriter(1000000);
   private Exception exception = null;
 
