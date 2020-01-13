@@ -1227,9 +1227,10 @@ public class ModelEditor implements IGotoObject {
 
 	public List<AbstractElementEditorContribution> getTabContributionsForClass(Class<?> clazz) {
 		final List<AbstractElementEditorContribution> ret = new ArrayList<>();
-		for (final Class<?> clasz : tabContributions.keySet()) {
+		for (Map.Entry<Class<?>, List<AbstractElementEditorContribution>> entry : tabContributions.entrySet()) {
+			Class<?> clasz = entry.getKey();
 			if (clasz.isAssignableFrom(clazz)) {
-				ret.addAll(tabContributions.get(clasz));
+				ret.addAll(entry.getValue());
 			}
 		}
 		return ret;

@@ -44,8 +44,8 @@ public class MarkDuplicateItemsBase extends AbstractHandler {
 	static Collection<EObject> getDuplicateList(String attName, Collection<EObject> all) {
 		Map<String, List<EObject>> map = getDuplicateMap(attName, all);
 		List<EObject> duplicates = new ArrayList<>();
-		for (String key : map.keySet()) {
-			List<EObject> list = map.get(key);
+		for (Map.Entry<String, List<EObject>> entry : map.entrySet()) {
+			List<EObject> list = entry.getValue();
 			if (list.size() > 1) {
 				duplicates.addAll(list);
 			}
