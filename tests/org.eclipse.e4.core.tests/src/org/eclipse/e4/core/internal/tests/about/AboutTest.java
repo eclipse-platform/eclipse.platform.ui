@@ -98,7 +98,7 @@ public class AboutTest {
 
 	@Test
 	public void testMultilineValue() throws Exception {
-		String lf = System.getProperty("line.separator");
+		String lf = System.lineSeparator();
 		String key = "A_MULTILINE_PROPERTY";
 		String value = "a" + "\n" + "b" + "\n" + "c";
 		String expected = "a" + lf + "b" + lf + "c";

@@ -172,7 +172,7 @@ public class SessionTestRunner {
 			if (stack != null) {
 				// build the stack trace line by line
 				stack.append(message);
-				stack.append(System.getProperty("line.separator"));
+				stack.append(System.lineSeparator());
 				return;
 			}
 		}

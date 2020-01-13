@@ -53,7 +53,7 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 		String id = "performance" + number;
 		String definition = generateContentType(number, id, baseTypeId, new String[] {DEFAULT_NAME}, null);
 		writer.write(definition);
-		writer.write(System.getProperty("line.separator"));
+		writer.write(System.lineSeparator());
 		return id;
 	}
 
@@ -186,7 +186,7 @@ public class ContentTypePerformanceTest extends RuntimeTest {
 			} catch (MalformedURLException e) {
 				fail(tag + ".0.5", e);
 			}
-			String eol = System.getProperty("line.separator");
+			String eol = System.lineSeparator();
 			try (Writer writer = new BufferedWriter(new FileWriter(pluginLocation.append("plugin.xml").toFile()),
 					0x10000)) {
 				writer.write("<plugin>");
