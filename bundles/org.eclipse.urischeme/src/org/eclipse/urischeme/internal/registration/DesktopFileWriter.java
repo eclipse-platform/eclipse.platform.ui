@@ -30,7 +30,7 @@ import java.util.function.Function;
  */
 public class DesktopFileWriter {
 
-	private static final String LINE_SEPARATOR = System.getProperty("line.separator"); //$NON-NLS-1$
+	private static final String LINE_SEPARATOR = System.lineSeparator();
 	private static final String EQUAL_SIGN = "="; //$NON-NLS-1$
 	private static final String KEY_MIME_TYPE = "MimeType"; //$NON-NLS-1$
 	private static final String KEY_EXEC = "Exec"; //$NON-NLS-1$

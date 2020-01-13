@@ -74,7 +74,7 @@ public class MarkerCopyHandler extends MarkerViewHandler {
 
 		MarkerField[] fields = view.getVisibleFields();
 
-		final String NEWLINE = System.getProperty("line.separator"); //$NON-NLS-1$
+		final String NEWLINE = System.lineSeparator();
 		final char DELIMITER = '\t';
 
 		// create header

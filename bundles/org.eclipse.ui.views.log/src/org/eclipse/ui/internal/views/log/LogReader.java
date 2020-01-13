@@ -193,7 +193,7 @@ class LogReader {
 			StringBuilder sb = new StringBuilder(current.getMessage());
 			String continuation = swriter.toString();
 			if (continuation.length() > 0)
-				sb.append(System.getProperty("line.separator")).append(continuation); //$NON-NLS-1$
+				sb.append(System.lineSeparator()).append(continuation);
 			current.setMessage(sb.toString());
 		}
 	}

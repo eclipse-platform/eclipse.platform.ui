@@ -33,7 +33,7 @@ import org.junit.Test;
 
 public class TestUnitDesktopFileWriter {
 
-	private static final String LINE_SEPARATOR = System.getProperty("line.separator"); //$NON-NLS-1$
+	private static final String LINE_SEPARATOR = System.lineSeparator();
 	private static final String NO_MIME = "";
 
 	@Test

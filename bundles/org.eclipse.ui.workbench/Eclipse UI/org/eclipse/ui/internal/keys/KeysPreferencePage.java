@@ -1233,7 +1233,7 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 								fileWriter.write(',');
 							}
 						}
-						fileWriter.write(System.getProperty("line.separator")); //$NON-NLS-1$
+						fileWriter.write(System.lineSeparator());
 					}
 
 				} finally {

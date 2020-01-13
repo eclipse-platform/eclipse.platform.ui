@@ -21,7 +21,7 @@ import org.junit.runner.Description;
  */
 public final class TestRunLogUtil {
 
-	private static final String LINE_BREAK = System.getProperty("line.separator"); //$NON-NLS-1$
+	private static final String LINE_BREAK = System.lineSeparator();
 
 	/**
 	 * A {@link TestWatcher} to log test start and end. Should be added as @Rule in

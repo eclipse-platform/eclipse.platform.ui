@@ -109,7 +109,7 @@ class CopyBookmarkAction extends BookmarkAction {
 		report.append(BookmarkMessages.ColumnResource_header).append('\t');
 		report.append(BookmarkMessages.ColumnFolder_header).append('\t');
 		report.append(BookmarkMessages.ColumnLocation_header);
-		report.append(System.getProperty("line.separator")); //$NON-NLS-1$
+		report.append(System.lineSeparator());
 
 		// write markers
 		for (IMarker marker : markers) {
@@ -118,7 +118,7 @@ class CopyBookmarkAction extends BookmarkAction {
 			report.append(MarkerUtil.getContainerName(marker)).append('\t');
 			int line = MarkerUtil.getLineNumber(marker);
 			report.append(NLS.bind(BookmarkMessages.LineIndicator_text, String.valueOf(line)));
-			report.append(System.getProperty("line.separator")); //$NON-NLS-1$
+			report.append(System.lineSeparator());
 		}
 
 		return report.toString();

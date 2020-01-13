@@ -465,7 +465,7 @@ public class BookmarkNavigator extends ViewPart {
 						.getLabelProvider();
 				for (int i = 0; i < markers.length; i++) {
 					if (i > 0) {
-						buffer.append(System.getProperty("line.separator")); //$NON-NLS-1$
+						buffer.append(System.lineSeparator());
 					}
 					String text = provider.getText(markers[i]);
 					if(text != null) {

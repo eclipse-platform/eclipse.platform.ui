@@ -301,7 +301,7 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 	}
 
 	private String getLineSeparator() {
-		return System.getProperty("line.separator"); //$NON-NLS-1$
+		return System.lineSeparator();
 	}
 
 	private void appendNewLine(StyledText text, String line, int indentLevel, int lineNumber) {

@@ -31,7 +31,7 @@ public class CopyMarkerDescriptionHandler extends MarkerViewHandler {
 	 * handler is executed.
 	 */
 	static String createMarkersReport(final IMarker[] markers) {
-		final String NEWLINE = System.getProperty("line.separator"); //$NON-NLS-1$
+		final String NEWLINE = System.lineSeparator();
 
 		final StringBuilder report = new StringBuilder();
 		for (int i = 0; i < markers.length; i++) {

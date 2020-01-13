@@ -470,7 +470,7 @@ public class KeyController {
 						buffer.append(ESCAPED_QUOTE + be.getTrigger().format() + ESCAPED_QUOTE + DELIMITER);
 						buffer.append(ESCAPED_QUOTE + be.getContext().getName() + ESCAPED_QUOTE + DELIMITER);
 						buffer.append(ESCAPED_QUOTE + be.getId() + ESCAPED_QUOTE);
-						buffer.append(System.getProperty("line.separator")); //$NON-NLS-1$
+						buffer.append(System.lineSeparator());
 						fileWriter.write(buffer.toString());
 					}
 

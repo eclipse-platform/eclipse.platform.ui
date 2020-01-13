@@ -169,7 +169,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 
 	static final String KEYS_PREFERENCE_PAGE_ID = "org.eclipse.ui.preferencePages.Keys"; //$NON-NLS-1$
 
-	static final String NEW_LINE = System.getProperty("line.separator"); //$NON-NLS-1$
+	static final String NEW_LINE = System.lineSeparator();
 
 	static final int MIN_TOOLTIP_WIDTH = 160;
 
