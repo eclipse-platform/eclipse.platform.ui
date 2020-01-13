@@ -838,7 +838,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 		if (fInitialLineDelimiter != null)
 			return fInitialLineDelimiter;
 
-		String sysLineDelimiter= System.getProperty("line.separator"); //$NON-NLS-1$
+		String sysLineDelimiter= System.lineSeparator();
 		String[] delimiters= getLegalLineDelimiters();
 		Assert.isTrue(delimiters.length > 0);
 		for (String delimiter : delimiters) {

@@ -803,7 +803,7 @@ public class TextFileBufferManager implements ITextFileBufferManager {
 	 * @since 3.3
 	 */
 	protected String getLineDelimiterPreference(IPath location, LocationKind locationKind) {
-		return System.getProperty("line.separator"); //$NON-NLS-1$
+		return System.lineSeparator();
 	}
 
 }

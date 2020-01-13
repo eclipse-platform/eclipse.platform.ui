@@ -164,7 +164,7 @@ public abstract class AbstractControlContentAssistSubjectAdapter implements ICon
 
 	@Override
 	public String getLineDelimiter() {
-		return System.getProperty("line.separator"); //$NON-NLS-1$
+		return System.lineSeparator();
 	}
 
 	/**

@@ -73,7 +73,7 @@ public class ConvertLineDelimitersAction extends TextEditorAction {
 		super(bundle, prefix, editor);
 		fLineDelimiter= lineDelimiter;
 
-		String platformLineDelimiter= System.getProperty("line.separator"); //$NON-NLS-1$
+		String platformLineDelimiter= System.lineSeparator();
 		setText(getString(getLabelKey(fLineDelimiter, platformLineDelimiter)));
 
 		update();

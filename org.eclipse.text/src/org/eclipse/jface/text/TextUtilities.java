@@ -506,7 +506,7 @@ public class TextUtilities {
 		if (lineDelimiter != null)
 			return lineDelimiter;
 
-		String sysLineDelimiter= System.getProperty("line.separator"); //$NON-NLS-1$
+		String sysLineDelimiter= System.lineSeparator();
 		String[] delimiters= document.getLegalLineDelimiters();
 		Assert.isTrue(delimiters.length > 0);
 		for (String delimiter : delimiters) {
