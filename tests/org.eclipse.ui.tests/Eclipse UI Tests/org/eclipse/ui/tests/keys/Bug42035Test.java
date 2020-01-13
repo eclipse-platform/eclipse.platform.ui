@@ -54,7 +54,7 @@ public class Bug42035Test extends UITestCase {
 		KeyStroke actualKeyStroke = null;
 
 		// Test the first-level match.
-		desiredKeyStroke = KeyStroke.getInstance(firstMatch); //$NON-NLS-1$
+		desiredKeyStroke = KeyStroke.getInstance(firstMatch);
 		actualKeyStroke = SWTKeySupport
 				.convertAcceleratorToKeyStroke(SWTKeySupport
 						.convertEventToUnmodifiedAccelerator(keyEvent));
@@ -62,7 +62,7 @@ public class Bug42035Test extends UITestCase {
 				"Unmodified character with all modifiers doesn't match.", desiredKeyStroke, actualKeyStroke); //$NON-NLS-1$
 
 		// Test the second-level match.
-		desiredKeyStroke = KeyStroke.getInstance(secondMatch); //$NON-NLS-1$
+		desiredKeyStroke = KeyStroke.getInstance(secondMatch);
 		actualKeyStroke = SWTKeySupport
 				.convertAcceleratorToKeyStroke(SWTKeySupport
 						.convertEventToUnshiftedModifiedAccelerator(keyEvent));
@@ -70,7 +70,7 @@ public class Bug42035Test extends UITestCase {
 				"Modified character with no shift doesn't match.", desiredKeyStroke, actualKeyStroke); //$NON-NLS-1$
 
 		// Test the third-level match.
-		desiredKeyStroke = KeyStroke.getInstance(thirdMatch); //$NON-NLS-1$
+		desiredKeyStroke = KeyStroke.getInstance(thirdMatch);
 		actualKeyStroke = SWTKeySupport
 				.convertAcceleratorToKeyStroke(SWTKeySupport
 						.convertEventToModifiedAccelerator(keyEvent));

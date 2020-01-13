@@ -59,13 +59,13 @@ public class Bug43597Test extends UITestCase {
 		Text text = new Text(shell, SWT.LEFT);
 		textFont = new Font(text.getDisplay(),
 				"Lucida Grande", 13, SWT.NORMAL);
-		text.setFont(textFont); //$NON-NLS-1$
+		text.setFont(textFont);
 		text.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		shell.pack();
 		shell.open();
 
 		// Set the text once, and get the font.
-		text.setText(metaCharacter); //$NON-NLS-1$
+		text.setText(metaCharacter);
 		Font fontBefore = text.getFont();
 
 		// Set the font again, and get the font afterward.

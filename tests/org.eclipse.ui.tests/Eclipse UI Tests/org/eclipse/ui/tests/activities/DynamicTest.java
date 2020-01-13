@@ -181,7 +181,7 @@ public class DynamicTest extends UITestCase {
 		// Add pattern binding
 		listenerType = 1;
 		fixedModelRegistry.addActivityPatternBinding("org.eclipse.activity1", //$NON-NLS-1$
-				"org.eclipse.pattern3"); //$NON-NLS-1$ //$NON-NLS-2$
+				"org.eclipse.pattern3"); //$NON-NLS-1$
 		assertTrue(listenerType == -1);
 		// Test correctenesss of identifier
 		Set<String> manipulatedIdentifiers = activityManager.getIdentifier(
@@ -234,7 +234,7 @@ public class DynamicTest extends UITestCase {
 		// Remove category
 		listenerType = 3;
 		fixedModelRegistry.removeCategory("org.eclipse.category7", //$NON-NLS-1$
-				"Category 7"); //$NON-NLS-1$ //$NON-NLS-2$
+				"Category 7"); //$NON-NLS-1$
 		assertTrue(listenerType == -1);
 		// Add activity
 		listenerType = 4;
@@ -243,7 +243,7 @@ public class DynamicTest extends UITestCase {
 		// Remove activity
 		listenerType = 4;
 		fixedModelRegistry.removeActivity("org.eclipse.activity19", //$NON-NLS-1$
-				"Activity 19"); //$NON-NLS-1$ //$NON-NLS-2$
+				"Activity 19"); //$NON-NLS-1$
 		assertTrue(listenerType == -1);
 	}
 
@@ -305,7 +305,7 @@ public class DynamicTest extends UITestCase {
 		// Add pattern binding
 		listenerType = 8;
 		fixedModelRegistry.addActivityPatternBinding("org.eclipse.activity18", //$NON-NLS-1$
-				"org.eclipse.pattern3"); //$NON-NLS-1$ //$NON-NLS-2$
+				"org.eclipse.pattern3"); //$NON-NLS-1$
 		assertTrue(listenerType == -1);
 		// Remove pattern binding
 		listenerType = 8;
@@ -315,7 +315,7 @@ public class DynamicTest extends UITestCase {
 		listenerType = 9;
 		fixedModelRegistry.addActivityRequirementBinding(
 				"org.eclipse.activity9", //$NON-NLS-1$
-				activity_to_listen.getId());//$NON-NLS-1$
+				activity_to_listen.getId());
 		assertTrue(listenerType == -1);
 		// Remove activity activity binding as parent
 		listenerType = 9;
@@ -382,7 +382,7 @@ public class DynamicTest extends UITestCase {
 		// Remove category, and change name
 		try {
 			fixedModelRegistry.removeCategory(category_to_listen.getId(),
-					category_to_listen.getName()); //$NON-NLS-1$
+					category_to_listen.getName());
 		} catch (NotDefinedException e) {
 			e.printStackTrace(System.err);
 		}
@@ -390,19 +390,19 @@ public class DynamicTest extends UITestCase {
 		// Add category
 		listenerType = 5;
 		fixedModelRegistry
-				.addCategory(category_to_listen.getId(), "Category 6"); //$NON-NLS-1$ //$NON-NLS-2$
+				.addCategory(category_to_listen.getId(), "Category 6"); //$NON-NLS-1$
 		assertTrue(listenerType == -1);
 		// Add category activity binding
 		listenerType = 8;
 		fixedModelRegistry.addCategoryActivityBinding((String) activityManager
 				.getDefinedActivityIds().toArray()[4], category_to_listen
-				.getId()); //$NON-NLS-1$
+				.getId());
 		assertTrue(listenerType == -1);
 		// Remove activity activity binding
 		listenerType = 8;
 		fixedModelRegistry.removeCategoryActivityBinding(
 				(String) activityManager.getDefinedActivityIds().toArray()[4],
-				category_to_listen.getId());//$NON-NLS-1$
+				category_to_listen.getId());
 		// Change category description
 		listenerType = 10;
 		fixedModelRegistry.updateCategoryDescription(

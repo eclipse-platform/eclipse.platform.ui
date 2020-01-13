@@ -66,21 +66,21 @@ public class Bug410426Test extends UITestCase {
 			ToolBar toolBar = manager.createControl(window.getShell());
 			manager.update(true);
 			ToolItem[] toolItems = toolBar.getItems();
-			assertEquals("Only four tool items should be created as there are four visible contributions on the six contributions:", 4, toolItems.length); //$NON-NLS-N$
+			assertEquals("Only four tool items should be created as there are four visible contributions on the six contributions:", 4, toolItems.length);
 		} finally {
 			menus.releaseContributions(manager);
 		}
 	}
 
 	private void populateTestToolbar(IMenuService menus, ToolBarManager manager) {
-		menus.populateContributionManager(manager, "toolbar:org.eclipse.ui.tests.toolbarContributionFromFactoryVisibilityTest"); //$NON-NLS-N$
+		menus.populateContributionManager(manager, "toolbar:org.eclipse.ui.tests.toolbarContributionFromFactoryVisibilityTest");
 	}
 
 	private void checkItem(String id, IContributionItem[] items, boolean expectedVisibility) {
 		IContributionItem item = getItemWithId(id, items);
 
 		assertNotNull(item);
-		assertEquals("The contribution item with id '" + id + "' has not the expected vibility:", expectedVisibility, item.isVisible()); //$NON-NLS-N$
+		assertEquals("The contribution item with id '" + id + "' has not the expected vibility:", expectedVisibility, item.isVisible());
 	}
 
 	private IContributionItem getItemWithId(String id, IContributionItem[] items) {
@@ -116,7 +116,7 @@ public class Bug410426Test extends UITestCase {
 		try {
 			populateTestToolbar(menus, manager);
 
-			assertTrue("We should not get these 'MenuManager cannot be cast to org.eclipse.jface.action.ContributionItem' ClassCastException.", cces.isEmpty()); //$NON-NLS-N$
+			assertTrue("We should not get these 'MenuManager cannot be cast to org.eclipse.jface.action.ContributionItem' ClassCastException.", cces.isEmpty());
 
 			// check the contributions count.
 			IContributionItem[] items = manager.getItems();

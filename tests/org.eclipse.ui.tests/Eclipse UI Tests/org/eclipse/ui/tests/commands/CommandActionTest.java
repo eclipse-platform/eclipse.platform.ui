@@ -126,7 +126,7 @@ public class CommandActionTest extends UITestCase {
 		map.put("host", "true");
 
 		CommandAction action2 = new CommandAction(PlatformUI.getWorkbench(),
-				CMD2_ID, map);//$NON-NLS-1$
+				CMD2_ID, map);
 		action2.run();
 		assertEquals(1, cmd2Handler.count);
 		assertNotNull(cmd2Handler.paramValue1);
@@ -138,7 +138,7 @@ public class CommandActionTest extends UITestCase {
 		map.put("protocol", "false"); //$NON-NLS-1$ //$NON-NLS-2$
 		map.put("host", "false");
 
-		action2 = new CommandAction(PlatformUI.getWorkbench(), CMD2_ID, map);//$NON-NLS-1$
+		action2 = new CommandAction(PlatformUI.getWorkbench(), CMD2_ID, map);
 		action2.run();
 		assertEquals(2, cmd2Handler.count);
 		assertNotNull(cmd2Handler.paramValue1);
