@@ -72,6 +72,7 @@ public class SequencerControlsModelProxy extends EventHandlerModelProxy {
 		return new DebugEventHandler[]{fHandler};
 	}
 
+	@SuppressWarnings("resource")
 	@Override
 	protected boolean containsEvent(DebugEvent event) {
 		if (event.getSource() instanceof SequencerControl) {

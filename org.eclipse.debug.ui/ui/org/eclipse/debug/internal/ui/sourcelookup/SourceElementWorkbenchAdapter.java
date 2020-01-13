@@ -41,6 +41,7 @@ public class SourceElementWorkbenchAdapter implements IWorkbenchAdapter {
 		}
 		return null;
 	}
+	@SuppressWarnings("resource")
 	@Override
 	public String getLabel(Object o) {
 		if (o instanceof LocalFileStorage) {

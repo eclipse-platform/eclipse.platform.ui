@@ -113,6 +113,7 @@ public abstract class SequencerControl {
 		DebugPlugin.getDefault().fireDebugEventSet(new DebugEvent[] {event});
 	}
 
+	@SuppressWarnings("resource")
 	@Override
 	public boolean equals(Object obj) {
 		if (obj != null) {
@@ -124,6 +125,7 @@ public abstract class SequencerControl {
 		return false;
 	}
 
+	@SuppressWarnings("resource")
 	@Override
 	public int hashCode() {
 		return getSequencer().hashCode() + getClass().hashCode();
