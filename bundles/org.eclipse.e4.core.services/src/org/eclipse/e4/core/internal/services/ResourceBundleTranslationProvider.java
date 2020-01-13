@@ -100,7 +100,7 @@ public class ResourceBundleTranslationProvider {
 
 			// if no succes, try to de-underscorify and recurse
 			if (result == null && key.contains("_")) { //$NON-NLS-1$
-				result = translate_rec(key.replace('_', '.')); //$NON-NLS-1$ //$NON-NLS-2$
+				result = translate_rec(key.replace('_', '.'));
 			}
 		}
 		return result;
