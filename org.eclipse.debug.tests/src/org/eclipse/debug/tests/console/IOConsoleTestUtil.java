@@ -367,7 +367,7 @@ public final class IOConsoleTestUtil {
 	 */
 	public IOConsoleTestUtil enter() {
 		// Note: newline will be replaced by
-		// System.getProperty("line.separator") so do not assume document length
+		// System.lineSeparator() so do not assume document length
 		// will increase by 1
 		insertTyping("\n");
 		return this;

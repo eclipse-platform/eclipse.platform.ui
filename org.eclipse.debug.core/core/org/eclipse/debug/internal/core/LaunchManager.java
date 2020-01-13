@@ -780,7 +780,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 					String line = reader.readLine();
 					String key = null;
 					String value = null;
-					String newLine = System.getProperty("line.separator"); //$NON-NLS-1$
+					String newLine = System.lineSeparator();
 					while (line != null) {
 						int func = line.indexOf("=()"); //$NON-NLS-1$
 						if (func > 0) {

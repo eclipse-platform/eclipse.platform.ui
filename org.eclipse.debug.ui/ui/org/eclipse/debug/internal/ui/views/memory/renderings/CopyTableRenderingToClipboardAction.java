@@ -75,7 +75,7 @@ public class CopyTableRenderingToClipboardAction extends Action
 		// get title of view tab
 		String label = fRendering.getLabel();
 		tableContents.append(label);
-		tableContents.append(System.getProperty("line.separator")); //$NON-NLS-1$
+		tableContents.append(System.lineSeparator());
 		tableContents.append(COLUMN_SEPERATOR);
 
 		int charsPerByte = fRendering.getNumCharsPerByte();
@@ -135,7 +135,7 @@ public class CopyTableRenderingToClipboardAction extends Action
 			tableContents.append(COLUMN_SEPERATOR);
 		}
 
-		tableContents.append(System.getProperty("line.separator")); //$NON-NLS-1$
+		tableContents.append(System.lineSeparator());
 		StringBuilder temp;
 
 		//get the column contents from all the rows
@@ -157,7 +157,7 @@ public class CopyTableRenderingToClipboardAction extends Action
 
 				tableContents.append(temp);
 			}
-			tableContents.append(System.getProperty("line.separator")); //$NON-NLS-1$
+			tableContents.append(System.lineSeparator());
 		}
 		return tableContents.toString();
 	}
