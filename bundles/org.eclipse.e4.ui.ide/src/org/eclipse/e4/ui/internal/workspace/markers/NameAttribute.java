@@ -28,7 +28,7 @@ public final class NameAttribute {
 
 	/**
 	 * Returns the key used to retrieve the name attribute
-	 * 
+	 *
 	 * @return the key
 	 */
 	public String key() {
