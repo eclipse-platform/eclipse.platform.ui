@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -34,7 +34,9 @@ public class FileUtil {
 	public static String getContents(Bundle bundle, String relativePath) throws IOException {
 		URL url = bundle.getEntry(relativePath);
 		if (url != null) {
-			return readString(url.openStream());
+			try (InputStream is = url.openStream()) {
+				return readString(is);
+			}
 		}
 		return null;
 	}

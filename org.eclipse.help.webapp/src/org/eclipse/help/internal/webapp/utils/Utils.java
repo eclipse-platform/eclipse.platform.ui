@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2017 IBM Corporation and others.
+ * Copyright (c) 2011, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -46,9 +46,9 @@ public class Utils {
 		if (is != null) {
 			Writer writer = new StringWriter();
 			char[] buffer = new char[1024];
-			try {
-				Reader reader = new BufferedReader(
-						new InputStreamReader(is, StandardCharsets.UTF_8));
+			try (Reader reader = new BufferedReader(
+						new InputStreamReader(is, StandardCharsets.UTF_8))){
+
 				int n;
 				while ((n = reader.read(buffer)) != -1) {
 					writer.write(buffer, 0, n);
