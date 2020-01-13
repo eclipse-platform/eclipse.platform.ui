@@ -57,7 +57,8 @@ public class CheckLinkAction implements ILiveHelpAction {
 		setPageNotFoundPreference("");
 		System.out.println("Start checking " + links.size() + " links");
 		int count = 0;
-		for (String next : links.keySet()) {
+		for (Map.Entry<String, String> entry : links.entrySet()) {
+			String next = entry.getKey();
 			count++;
 			if (count % 1000 == 0)  {
 				System.out.println("Checked " + count + " links");
@@ -82,7 +83,7 @@ public class CheckLinkAction implements ILiveHelpAction {
 				opened = false;
 			}
 			if (!opened) {
-				String containingPage = links.get(next);
+				String containingPage = entry.getValue();
 				System.out.println("Cannot open link from " + trimPath(containingPage)
 						+ " to " + trimPath(next));
 			}

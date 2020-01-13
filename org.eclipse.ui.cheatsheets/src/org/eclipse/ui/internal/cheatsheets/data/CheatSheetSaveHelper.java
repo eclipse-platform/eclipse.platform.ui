@@ -298,10 +298,11 @@ public class CheatSheetSaveHelper {
 		if (map == null) {
 			return;
 		}
-		for (String itemKey : map.keySet()) {
+		for (Map.Entry<String, String> entry : map.entrySet()) {
+			String itemKey = entry.getKey();
 			IMemento childMemento = memento.createChild(mapName);
 			childMemento.putString(IParserTags.MANAGERDATAKEY,(itemKey));
-			childMemento.putString(IParserTags.MANAGERDATAVALUE, map.get(itemKey));
+			childMemento.putString(IParserTags.MANAGERDATAVALUE, entry.getValue());
 		}
 	}
 

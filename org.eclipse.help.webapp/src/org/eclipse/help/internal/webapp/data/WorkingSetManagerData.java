@@ -262,8 +262,9 @@ public class WorkingSetManagerData extends RequestData {
 
 
 		List<CriterionResource> resources = new ArrayList<>();
-		for (String key : selectedElements.keySet()) {
-			Set<String> values = selectedElements.get(key);
+		for (Map.Entry<String, Set<String>> entry : selectedElements.entrySet()) {
+			String key = entry.getKey();
+			Set<String> values = entry.getValue();
 			CriterionResource resource = new CriterionResource(key, new ArrayList<>(values));
 			resources.add(resource);
 		}

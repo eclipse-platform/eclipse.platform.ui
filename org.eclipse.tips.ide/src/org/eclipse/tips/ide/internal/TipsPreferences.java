@@ -132,10 +132,11 @@ public class TipsPreferences extends AbstractPreferenceInitializer {
 	public static IStatus saveReadState(Map<String, List<Integer>> pReadTips) {
 		try {
 			File stateLocation = getStateLocation();
-			for (String child : pReadTips.keySet()) {
+			for (Map.Entry<String, List<Integer>> entry : pReadTips.entrySet()) {
+				String child = entry.getKey();
 				PreferenceStore store = new PreferenceStore(
 						new File(stateLocation, child.trim() + ".state").getAbsolutePath()); //$NON-NLS-1$
-				pReadTips.get(child).forEach(value -> store.setValue(value.toString(), value.intValue()));
+				entry.getValue().forEach(value -> store.setValue(value.toString(), value.intValue()));
 				store.setValue("provider", child); //$NON-NLS-1$
 				store.save();
 			}

@@ -147,8 +147,9 @@ public class CompositeCheatSheetSaveHelper {
 	}
 
 	private void saveMap(XMLMemento writeMemento, Map<String, String> data, String tag) {
-		for (String key : data.keySet()) {
-			String value = data.get(key);
+		for (Map.Entry<String, String> entry : data.entrySet()) {
+			String key = entry.getKey();
+			String value = entry.getValue();
 			IMemento childMemento = writeMemento.createChild(tag);
 			childMemento.putString(ICompositeCheatsheetTags.KEY, key);
 			childMemento.putString(ICompositeCheatsheetTags.VALUE, value);
