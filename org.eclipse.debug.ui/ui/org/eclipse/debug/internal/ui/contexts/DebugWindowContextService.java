@@ -250,7 +250,8 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 				}
 			}
 
-			outer: for (String listenerPartId : fListenersByPartId.keySet()) {
+			outer: for (Map.Entry<String, ListenerList<IDebugContextListener>> entry : fListenersByPartId.entrySet()) {
+				String listenerPartId = entry.getKey();
 				for (IDebugContextProvider provider : fProviders) {
 					String providerPartId = getCombinedPartId(provider.getPart());
 					if ((listenerPartId == null && providerPartId == null) ||
@@ -259,7 +260,7 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 						continue outer;
 					}
 				}
-				ListenerList<IDebugContextListener> listenersForPart = fListenersByPartId.get(listenerPartId);
+				ListenerList<IDebugContextListener> listenersForPart = entry.getValue();
 				if (listenersForPart != null) {
 					for (IDebugContextListener iDebugContextListener : listenersForPart) {
 						// no effect if listener already present
@@ -283,14 +284,15 @@ public class DebugWindowContextService implements IDebugContextService, IPartLis
 				retVal = new ListenerList<>();
 			}
 
-			outer: for (String listenerPartId : fPostListenersByPartId.keySet()) {
+			outer: for (Map.Entry<String, ListenerList<IDebugContextListener>> entry : fPostListenersByPartId.entrySet()) {
+				String listenerPartId = entry.getKey();
 				for (IDebugContextProvider provider : fProviders) {
 					String providerPartId = getCombinedPartId(provider.getPart());
 					if ((listenerPartId == null && providerPartId == null) || (listenerPartId != null && listenerPartId.equals(providerPartId))) {
 						continue outer;
 					}
 				}
-				ListenerList<IDebugContextListener> listenersForPart = fPostListenersByPartId.get(listenerPartId);
+				ListenerList<IDebugContextListener> listenersForPart = entry.getValue();
 				if (listenersForPart != null) {
 					for (IDebugContextListener iDebugContextListener : listenersForPart) {
 						// no effect if listener already present

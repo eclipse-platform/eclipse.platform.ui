@@ -122,8 +122,9 @@ public class EmbeddedBreakpointsViewer {
 			}
 			if(map != null) {
 				IDebugModelPresentation newpres = labelprovider.getPresentation();
-				for (String key : map.keySet()) {
-					newpres.setAttribute(key, map.get(key));
+				for (Map.Entry<String, Object> entry : map.entrySet()) {
+					String key = entry.getKey();
+					newpres.setAttribute(key, entry.getValue());
 				}
 			}
 		}

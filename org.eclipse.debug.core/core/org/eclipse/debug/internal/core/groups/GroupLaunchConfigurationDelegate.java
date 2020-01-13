@@ -321,7 +321,8 @@ public class GroupLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 		List<GroupLaunchElement> result = new ArrayList<>();
 		try {
 			Map<String, Object> attrs = configuration.getAttributes();
-			for (String attr : attrs.keySet()) {
+			for (Map.Entry<String, Object> entry : attrs.entrySet()) {
+				String attr = entry.getKey();
 				try {
 					if (attr.startsWith(MULTI_LAUNCH_CONSTANTS_PREFIX)) {
 						String prop = attr.substring(MULTI_LAUNCH_CONSTANTS_PREFIX.length() + 1);
@@ -332,7 +333,7 @@ public class GroupLaunchConfigurationDelegate extends LaunchConfigurationDelegat
 						if (name.equals(NAME_PROP)) {
 							GroupLaunchElement el = new GroupLaunchElement();
 							el.index = index;
-							el.name = (String) attrs.get(attr);
+							el.name = (String) entry.getValue();
 
 							Object actionParam = null;
 							String actionStr = (String) attrs.get(getProp(index, ACTION_PROP));

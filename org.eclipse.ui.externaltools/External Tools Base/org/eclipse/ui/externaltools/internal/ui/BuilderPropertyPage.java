@@ -1171,8 +1171,9 @@ public final class BuilderPropertyPage extends PropertyPage implements ICheckSta
 				if(oldArgs.size() != newArgs.size()) {
 					return true;
 				}
-				for (String key : oldArgs.keySet()) {
-					if (comparator.compare(oldArgs.get(key), newArgs.get(key)) != 0) {
+				for (Map.Entry<String, String> entry : oldArgs.entrySet()) {
+					String key = entry.getKey();
+					if (comparator.compare(entry.getValue(), newArgs.get(key)) != 0) {
 						return true;
 					}
 				}

@@ -94,8 +94,9 @@ public class ExpressionContentProvider extends VariableContentProvider {
 		findDelegates(delegateMap, notDelegated, updates);
 
 		// Batch the updates and send them to the delegates
-		for (IElementContentProvider delegate : delegateMap.keySet()) {
-			List<IViewerUpdate> updateList = delegateMap.get(delegate);
+		for (Map.Entry<IElementContentProvider, List<IViewerUpdate>> entry : delegateMap.entrySet()) {
+			IElementContentProvider delegate = entry.getKey();
+			List<IViewerUpdate> updateList = entry.getValue();
 			delegate.update(updateList.toArray(new IChildrenCountUpdate[updateList.size()]));
 		}
 		if (notDelegated.size() > 0){
@@ -111,8 +112,9 @@ public class ExpressionContentProvider extends VariableContentProvider {
 		findDelegates(delegateMap, notDelegated, updates);
 
 		// Batch the updates and send them to the delegates
-		for (IElementContentProvider delegate : delegateMap.keySet()) {
-			List<IViewerUpdate> updateList = delegateMap.get(delegate);
+		for (Map.Entry<IElementContentProvider, List<IViewerUpdate>> entry : delegateMap.entrySet()) {
+			IElementContentProvider delegate = entry.getKey();
+			List<IViewerUpdate> updateList = entry.getValue();
 			delegate.update(updateList.toArray(new IHasChildrenUpdate[updateList.size()]));
 		}
 		if (notDelegated.size() > 0){
@@ -128,8 +130,9 @@ public class ExpressionContentProvider extends VariableContentProvider {
 		findDelegates(delegateMap, notDelegated, updates);
 
 		// Batch the updates and send them to the delegates
-		for (IElementContentProvider delegate : delegateMap.keySet()) {
-			List<IViewerUpdate> updateList = delegateMap.get(delegate);
+		for (Map.Entry<IElementContentProvider, List<IViewerUpdate>> entry : delegateMap.entrySet()) {
+			IElementContentProvider delegate = entry.getKey();
+			List<IViewerUpdate> updateList = entry.getValue();
 			delegate.update(updateList.toArray(new IChildrenUpdate[updateList.size()]));
 		}
 		if (notDelegated.size() > 0){
