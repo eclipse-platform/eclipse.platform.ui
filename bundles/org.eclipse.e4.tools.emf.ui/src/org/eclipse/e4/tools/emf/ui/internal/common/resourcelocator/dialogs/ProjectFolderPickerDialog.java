@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 TwelveTone LLC and others.
+ * Copyright (c) 2014, 2020 TwelveTone LLC and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.e4.tools.emf.ui.internal.common.resourcelocator.dialogs;
 
+import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
 
@@ -146,7 +147,10 @@ public class ProjectFolderPickerDialog extends TitleAreaDialog {
 				if (element instanceof String) {
 					return new Image(Display.getDefault(), new URL(Messages.ProjectFolderPickerDialog_0).openStream());
 				}
-				return new Image(Display.getDefault(), new URL("platform:/plugin/org.eclipse.ui.ide/icons/full/obj16/folder.png").openStream()); //$NON-NLS-1$
+				try (InputStream is = new URL("platform:/plugin/org.eclipse.ui.ide/icons/full/obj16/folder.png") //$NON-NLS-1$
+						.openStream()) {
+					return new Image(Display.getDefault(), is);
+				}
 			} catch (Exception e) {
 				return super.getImage(element);
 			}
