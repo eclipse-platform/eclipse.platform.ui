@@ -67,8 +67,8 @@ public class AnnotationManagerTest {
 		EditorAnnotationManager.debugSetHighlighterType(EditorAnnotationManager.HIGHLIGHTER_ANNOTATION);
 		String[] fileNamePattern= { "*.java" };
 		FileTextSearchScope scope= FileTextSearchScope.newWorkspaceScope(fileNamePattern, false);
-		fQuery1= new FileSearchQuery("Test", false, true, scope);  //$NON-NLS-1$//$NON-NLS-2$
-		fQuery2= new FileSearchQuery("Test", false, true, scope); //$NON-NLS-1$//$NON-NLS-2$
+		fQuery1= new FileSearchQuery("Test", false, true, scope);  //$NON-NLS-1$
+		fQuery2= new FileSearchQuery("Test", false, true, scope); //$NON-NLS-1$
 	}
 
 	@After
