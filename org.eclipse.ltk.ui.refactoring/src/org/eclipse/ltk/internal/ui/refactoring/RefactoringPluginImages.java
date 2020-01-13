@@ -134,8 +134,9 @@ public class RefactoringPluginImages {
 	/* package */ static ImageRegistry getImageRegistry() {
 		if (fgImageRegistry == null) {
 			fgImageRegistry= new ImageRegistry();
-			for (String key : fgAvoidSWTErrorMap.keySet()) {
-				fgImageRegistry.put(key, fgAvoidSWTErrorMap.get(key));
+			for (java.util.Map.Entry<String, ImageDescriptor> entry : fgAvoidSWTErrorMap.entrySet()) {
+				String key = entry.getKey();
+				fgImageRegistry.put(key, entry.getValue());
 			}
 			fgAvoidSWTErrorMap= null;
 		}
