@@ -21,8 +21,6 @@ import org.eclipse.e4.ui.css.swt.helpers.CSSSWTColorHelper;
 import org.eclipse.e4.ui.css.swt.helpers.SWTElementHelpers;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.VerifyEvent;
-import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Control;
@@ -86,30 +84,6 @@ public class CSSPropertyTextSWTHandler extends AbstractCSSPropertyTextHandler {
 		String defaultText = (String) widget.getData(CSSSWTConstants.TEXT_KEY);
 		if (element instanceof Text) {
 			final Text text = (Text) widget;
-			VerifyListener listener = (VerifyListener) text
-					.getData("CSSModifyTextListener");
-			if (hasTextTransform(value)) {
-				if (listener == null) {
-					// Add ModifyListener
-					listener = new VerifyListener() {
-						@Override
-						public void verifyText(VerifyEvent e) {
-							// System.out.println(e);
-							// int start = e.start;
-							// int end = e.end;
-							// e.text = getTextTransform(e.text, text.getText(),
-							// value);
-						}
-					};
-					text.addVerifyListener(listener);
-					text.setData("CSSModifyTextListener", listener);
-				}
-			} else {
-				if (listener != null) {
-					text.removeVerifyListener(listener);
-					text.setData("CSSModifyTextListener", null);
-				}
-			}
 			String oldText = text.getText();
 			String newText = getTextTransform(text.getText(), value,
 					defaultText);
