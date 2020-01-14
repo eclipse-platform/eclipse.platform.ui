@@ -315,7 +315,7 @@ public class PropertyScenarios extends ScenariosTestCase {
 		IValidator validator = value -> {
 			String stringValue = (String) value;
 			try {
-				double doubleValue = new Double(stringValue).doubleValue();
+				double doubleValue = Double.parseDouble(stringValue);
 				if (doubleValue < 0.0) {
 					return ValidationStatus.error(cannotBeNegativeMessage);
 				}

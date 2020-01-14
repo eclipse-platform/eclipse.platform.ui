@@ -941,7 +941,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				PrefUtil.saveAPIPrefs();
 			}
 
-			if (Boolean.valueOf(getModel().getPersistedState().get(PERSISTED_STATE_RESTORED))) {
+			if (Boolean.parseBoolean(getModel().getPersistedState().get(PERSISTED_STATE_RESTORED))) {
 				SafeRunnable.run(new SafeRunnable() {
 
 					@Override

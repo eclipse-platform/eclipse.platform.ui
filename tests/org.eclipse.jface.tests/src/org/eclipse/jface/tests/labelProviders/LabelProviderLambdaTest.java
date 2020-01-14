@@ -46,7 +46,7 @@ public class LabelProviderLambdaTest extends TestCase {
 		shell.open();
 		Table table = (Table) viewer.getControl();
 		String firstElementText = table.getItem(0).getText();
-		assertEquals("rendered label", new Integer(0).toString(), firstElementText);
+		assertEquals("rendered label", Integer.valueOf(0).toString(), firstElementText);
 	}
 
 	public void testCreateTextImageProvider() {
@@ -59,7 +59,7 @@ public class LabelProviderLambdaTest extends TestCase {
 		Table table = (Table) viewer.getControl();
 		String firstElementText = table.getItem(0).getText();
 		LabelProvider provider = (LabelProvider) viewer.getLabelProvider();
-		assertEquals("same label text", new Integer(0).toString(), firstElementText);
+		assertEquals("same label text", Integer.valueOf(0).toString(), firstElementText);
 		assertEquals("same image", fgImage, provider.getImage(table.getItem(0)));
 
 	}
@@ -73,7 +73,7 @@ public class LabelProviderLambdaTest extends TestCase {
 		Table table = (Table) viewer.getControl();
 		LabelProvider provider = (LabelProvider) viewer.getLabelProvider();
 		String firstElementText = table.getItem(0).getText();
-		assertEquals("same label text", new Integer(0).toString(), firstElementText);
+		assertEquals("same label text", Integer.valueOf(0).toString(), firstElementText);
 		assertEquals("same image", fgImage, provider.getImage(table.getItem(0)));
 	}
 

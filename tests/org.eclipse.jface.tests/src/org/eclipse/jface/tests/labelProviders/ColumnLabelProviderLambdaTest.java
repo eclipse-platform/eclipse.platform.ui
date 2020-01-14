@@ -22,7 +22,7 @@ public class ColumnLabelProviderLambdaTest extends TestCase {
 		Integer[] model = (Integer[]) columnViewer.getViewer().getInput();
 		ColumnLabelProvider provider = (ColumnLabelProvider) columnViewer.getViewer().getLabelProvider(0);
 		String firstElementText = provider.getText(model[0]);
-		assertEquals("same label text", new Integer(0).toString(), firstElementText);
+		assertEquals("same label text", Integer.valueOf(0).toString(), firstElementText);
 	}
 
 	public void testCreateImageProvider() {
@@ -48,7 +48,7 @@ public class ColumnLabelProviderLambdaTest extends TestCase {
 		Integer[] model = (Integer[]) columnViewer.getViewer().getInput();
 		ColumnLabelProvider provider = (ColumnLabelProvider) columnViewer.getViewer().getLabelProvider(0);
 		String firstElementText = provider.getText(model[0]);
-		assertEquals("same label text", new Integer(0).toString(), firstElementText);
+		assertEquals("same label text", Integer.valueOf(0).toString(), firstElementText);
 		assertEquals("same image", fgImage, provider.getImage(model[0]));
 	}
 
