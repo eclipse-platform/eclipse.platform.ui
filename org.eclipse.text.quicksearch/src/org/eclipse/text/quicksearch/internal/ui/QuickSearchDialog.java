@@ -449,7 +449,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 				String[] _weights = settings.getArray(DIALOG_SASH_WEIGHTS);
 				int[] weights = new int[_weights.length];
 				for (int i = 0; i < weights.length; i++) {
-					weights[i] = Integer.valueOf(_weights[i]);
+					weights[i] = Integer.parseInt(_weights[i]);
 				}
 				sashForm.setWeights(weights);
 			}
