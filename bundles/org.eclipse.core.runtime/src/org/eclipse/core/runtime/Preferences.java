@@ -668,7 +668,7 @@ public class Preferences {
 			// mark as dirty since value did really change
 			dirty = true;
 			// report property change if getValue now returns different value
-			firePropertyChangeEvent(name, Double.valueOf(oldValue), new Double(value));
+			firePropertyChangeEvent(name, Double.valueOf(oldValue), Double.valueOf(value));
 		}
 	}
 
@@ -786,7 +786,7 @@ public class Preferences {
 			// mark as dirty since value did really change
 			dirty = true;
 			// report property change if getValue now returns different value
-			firePropertyChangeEvent(name, Float.valueOf(oldValue), new Float(value));
+			firePropertyChangeEvent(name, Float.valueOf(oldValue), Float.valueOf(value));
 		}
 	}
 
