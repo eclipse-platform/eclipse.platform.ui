@@ -25,8 +25,6 @@ import org.osgi.service.prefs.Preferences;
 
 public abstract class SaveDialogBoundsSettingsDialog extends TitleAreaDialog {
 
-	private static final String DIALOG_ORIGIN_X = "DIALOG_X_ORIGIN"; //$NON-NLS-1$
-	private static final String DIALOG_ORIGIN_Y = "DIALOG_Y_ORIGIN"; //$NON-NLS-1$
 	private static final String DIALOG_WIDTH = "DIALOG_WIDTH"; //$NON-NLS-1$
 	private static final String DIALOG_HEIGHT = "DIALOG_HEIGHT"; //$NON-NLS-1$
 	private static final int DIALOG_MINIMUM_HEIGHT = 300;
@@ -41,15 +39,11 @@ public abstract class SaveDialogBoundsSettingsDialog extends TitleAreaDialog {
 
 		dialogSettings.put(DIALOG_HEIGHT, preferences.getInt(DIALOG_HEIGHT, -1));
 		dialogSettings.put(DIALOG_WIDTH, preferences.getInt(DIALOG_WIDTH, -1));
-		dialogSettings.put(DIALOG_ORIGIN_X, preferences.getInt(DIALOG_ORIGIN_X, -1));
-		dialogSettings.put(DIALOG_ORIGIN_Y, preferences.getInt(DIALOG_ORIGIN_Y, -1));
 	}
 
 	private void saveDialogSettings() {
 		preferences.put(DIALOG_HEIGHT, dialogSettings.get(DIALOG_HEIGHT));
 		preferences.put(DIALOG_WIDTH, dialogSettings.get(DIALOG_WIDTH));
-		preferences.put(DIALOG_ORIGIN_X, dialogSettings.get(DIALOG_ORIGIN_X));
-		preferences.put(DIALOG_ORIGIN_Y, dialogSettings.get(DIALOG_ORIGIN_Y));
 		try {
 			preferences.flush();
 		} catch (BackingStoreException e) {
@@ -78,6 +72,11 @@ public abstract class SaveDialogBoundsSettingsDialog extends TitleAreaDialog {
 	@Override
 	protected IDialogSettings getDialogBoundsSettings() {
 		return dialogSettings;
+	}
+
+	@Override
+	protected int getDialogBoundsStrategy() {
+		return DIALOG_PERSISTSIZE;
 	}
 
 	public Preferences getPreferences() {
