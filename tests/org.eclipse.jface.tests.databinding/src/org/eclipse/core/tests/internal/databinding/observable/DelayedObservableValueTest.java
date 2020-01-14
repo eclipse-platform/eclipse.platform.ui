@@ -19,10 +19,13 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.core.databinding.observable.Diffs;
 import org.eclipse.core.databinding.observable.IObservable;
+import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
@@ -138,6 +141,23 @@ public class DelayedObservableValueTest extends AbstractDefaultRealmTestCase {
 
 		// There is no non-stale event so nrEvents is not incremented
 		assertEquals(1, nrEvents.get());
+	}
+
+	/**
+	 * Bug 525894. The target observable should not be captured by
+	 * {@link ObservableTracker}. That results in that the value change is observed
+	 * without the delay.
+	 */
+	@Test
+	public void testInnerObservableNotTracked() {
+		// Make the target dirty
+		target.setValue("test");
+
+		List<IObservable> tracked = Arrays.asList(ObservableTracker.runAndMonitor(() -> {
+			delayed.getValue();
+		}, null, null));
+
+		assertFalse(tracked.contains(target));
 	}
 
 	@Test
