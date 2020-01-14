@@ -822,7 +822,7 @@ public class FileSystemResourceManager implements ICoreConstants, IManager, Pref
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (ResourcesPlugin.PREF_LIGHTWEIGHT_AUTO_REFRESH.equals(event.getProperty()))
-			lightweightAutoRefreshEnabled = Boolean.valueOf(event.getNewValue().toString());
+			lightweightAutoRefreshEnabled = Boolean.parseBoolean(event.getNewValue().toString());
 	}
 
 	public InputStream read(IFile target, boolean force, IProgressMonitor monitor) throws CoreException {
