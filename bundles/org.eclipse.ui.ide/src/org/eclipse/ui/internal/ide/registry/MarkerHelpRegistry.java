@@ -19,6 +19,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -43,8 +44,10 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.statushandlers.StatusManager;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
+import org.osgi.framework.Constants;
 
 /**
  * This class is a registry for marker help contexts and resolutions.
@@ -85,6 +88,11 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 	 * Placeholder for not yet active generators
 	 */
 	private static final IMarkerResolutionGenerator GENERATOR_NOT_ACTIVE = marker -> new IMarkerResolution[0];
+
+	/**
+	 * Placeholder for not yet started generators
+	 */
+	private static final IMarkerResolutionGenerator GENERATOR_NOT_STARTED = marker -> new IMarkerResolution[0];
 
 	/**
 	 * Placeholder for errors in help provider
@@ -248,7 +256,7 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 			// error happened, no resolution here
 			return false;
 		}
-		if (generator == GENERATOR_NOT_ACTIVE) {
+		if (generator == GENERATOR_NOT_ACTIVE || generator == GENERATOR_NOT_STARTED) {
 			// The element's plugin in not loaded so we assume
 			// the generator will produce resolutions for the marker
 			return true;
@@ -277,32 +285,65 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 
 	private IMarkerResolutionGenerator createGenerator(IConfigurationElement element) {
 		IMarkerResolutionGenerator generator = getGenerator(element);
-		if (generator != null) {
+		if (generator != null && generator != GENERATOR_NOT_STARTED) {
 			return generator;
 		}
 		Bundle bundle = Platform.getBundle(element.getContributor().getName());
-		if (bundle.getState() == Bundle.ACTIVE) {
+		if (canLoadExtensionWithoutActivation(bundle)) {
 			// The element's plugin is loaded so we instantiate
 			// the resolution
-			try {
-				generator = (IMarkerResolutionGenerator) element.createExecutableExtension(ATT_CLASS);
-			} catch (CoreException e) {
-				Policy.handle(e);
-				generator = GENERATOR_ERROR;
-			}
+			generator = createGeneratorFromActiveBundle(element);
 		} else {
-			generator = GENERATOR_NOT_ACTIVE;
-			bundle.getBundleContext().addBundleListener(new BundleListener() {
-				@Override
-				public void bundleChanged(BundleEvent b) {
-					if (b.getType() == BundleEvent.STARTED && bundle.getState() == Bundle.ACTIVE) {
-						bundle.getBundleContext().removeBundleListener(this);
-						putGenerator(element, null);
+			BundleContext bundleContext = bundle.getBundleContext();
+			if (bundleContext != null) {
+				generator = GENERATOR_NOT_ACTIVE;
+				bundleContext.addBundleListener(new BundleListener() {
+					@Override
+					public void bundleChanged(BundleEvent b) {
+						if (b.getType() == BundleEvent.STARTED && canLoadExtensionWithoutActivation(bundle)) {
+							bundleContext.removeBundleListener(this);
+							if (getGenerator(element) == GENERATOR_NOT_ACTIVE) {
+								putGenerator(element, null);
+							}
+						}
 					}
+				});
+				// In case bundle state changed after the first call
+				if (canLoadExtensionWithoutActivation(bundle)) {
+					generator = createGeneratorFromActiveBundle(element);
 				}
-			});
+			} else {
+				generator = GENERATOR_NOT_STARTED;
+			}
 		}
 		putGenerator(element, generator);
+		return generator;
+	}
+
+	private static boolean canLoadExtensionWithoutActivation(Bundle bundle) {
+		int state = bundle.getState();
+		if (state == Bundle.ACTIVE) {
+			return true;
+		}
+		if (state == Bundle.RESOLVED) {
+			Dictionary<String, String> manifest = bundle.getHeaders();
+			if (manifest.get(Constants.BUNDLE_ACTIVATOR) == null
+					&& manifest.get(Constants.BUNDLE_ACTIVATIONPOLICY) == null) {
+				// Allow loading classes from bundles that will not automatically activate
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private static IMarkerResolutionGenerator createGeneratorFromActiveBundle(IConfigurationElement element) {
+		IMarkerResolutionGenerator generator;
+		try {
+			generator = (IMarkerResolutionGenerator) element.createExecutableExtension(ATT_CLASS);
+		} catch (CoreException e) {
+			Policy.handle(e);
+			generator = GENERATOR_ERROR;
+		}
 		return generator;
 	}
 
