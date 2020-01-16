@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2019 IBM Corporation and others.
+ * Copyright (c) 2011, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -60,38 +60,6 @@ import org.osgi.framework.Bundle;
 public class PrebuiltIndexCompatibility {
 
 	/**
-	 * Test index built with Lucene 1.9.1
-	 */
-	@Test(expected = IndexFormatTooOldException.class)
-	public void test1_9_1_IndexUnReadable() throws Exception {
-		checkReadable("data/help/searchindex/index191");
-	}
-
-	/**
-	 * Test index built with Lucene 2.9.1
-	 */
-	@Test(expected = IndexFormatTooOldException.class)
-	public void test2_9_1_IndexUnReadable() throws Exception {
-		checkReadable("data/help/searchindex/index291");
-	}
-
-	/**
-	 * Test index built with Lucene 3.5.0
-	 */
-	@Test(expected = IndexFormatTooOldException.class)
-	public void test3_5_0_IndexUnReadable() throws Exception {
-		checkReadable("data/help/searchindex/index350");
-	}
-
-	/**
-	 * Test index built with Lucene 6.1.0
-	 */
-	@Test(expected = IndexFormatTooOldException.class)
-	public void test6_1_0_IndexUnReadable() throws Exception {
-		checkReadable("data/help/searchindex/index610");
-	}
-
-	/**
 	 * Test index built with Lucene 7.0.0
 	 */
 	@Test(expected = IndexFormatTooOldException.class)
@@ -100,45 +68,20 @@ public class PrebuiltIndexCompatibility {
 	}
 
 	/**
-	 * Test index built with Lucene 8.0.0
+	 * Test index built with Lucene 8.0.0 IllegalArgumentException with message
+	 * proposing to add lucene-backward-codecs
 	 */
-	@Test
-	public void test8_0_0_IndexReadable() throws Exception {
+	@Test(expected = IllegalArgumentException.class)
+	public void test8_0_0_IndexUnReadable() throws Exception {
 		checkReadable("data/help/searchindex/index800");
 	}
 
 	/**
-	 ** Test compatibility of Lucene 1.9.1 index with current Lucene
+	 * Test index built with Lucene 8.4.1
 	 */
 	@Test
-	public void test1_9_1Compatible()
-	{
-		checkCompatible("data/help/searchindex/index191", false);
-	}
-
-	/**
-	 ** Test compatibility of Lucene 2.9.1 index with current Lucene
-	 */
-	@Test
-	public void test2_9_1Compatible()
-	{
-		checkCompatible("data/help/searchindex/index291", false);
-	}
-
-	/**
-	 ** Test compatibility of Lucene 3.5.0 index with current Lucene
-	 */
-	@Test
-	public void test3_5_0Compatible() {
-		checkCompatible("data/help/searchindex/index350", false);
-	}
-
-	/**
-	 ** Test compatibility of Lucene 6.1.0 index with current Lucene
-	 */
-	@Test
-	public void test6_1_0Compatible() {
-		checkCompatible("data/help/searchindex/index610", false);
+	public void test8_4_1_IndexReadable() throws Exception {
+		checkReadable("data/help/searchindex/index841");
 	}
 
 	/**
@@ -150,31 +93,8 @@ public class PrebuiltIndexCompatibility {
 	}
 
 	@Test
-	public void test1_9_1LuceneCompatible()
-	{
-		checkLuceneCompatible("1.9.1", false);
-	}
-
-	@Test
-	public void test1_4_103NotLuceneCompatible()
-	{
-		checkLuceneCompatible("1.4.103", false);
-	}
-
-	@Test
-	public void test2_9_1LuceneCompatible()
-	{
-		checkLuceneCompatible("2.9.1", false);
-	}
-
-	@Test
-	public void test3_5_0LuceneCompatible() {
-		checkLuceneCompatible("3.5.0", false);
-	}
-
-	@Test
-	public void test6_1_0LuceneCompatible() {
-		checkLuceneCompatible("6.1.0", false);
+	public void test8_0_0Compatible() {
+		checkCompatible("data/help/searchindex/index800", false);
 	}
 
 	@Test
@@ -184,12 +104,17 @@ public class PrebuiltIndexCompatibility {
 
 	@Test
 	public void test8_0_0LuceneCompatible() {
-		checkLuceneCompatible("8.0.0", true);
+		checkLuceneCompatible("8.0.0", false);
+	}
+
+	@Test
+	public void test8_4_1LuceneCompatible() {
+		checkLuceneCompatible("8.4.1", true);
 	}
 
 	@Test
 	public void testPluginIndexEqualToItself() {
-		PluginIndex index = createPluginIndex("data/help/searchindex/index610");
+		PluginIndex index = createPluginIndex("data/help/searchindex/index841");
 		assertTrue(index.equals(index));
 	}
 
@@ -198,8 +123,8 @@ public class PrebuiltIndexCompatibility {
 	 */
 	@Test
 	public void testPluginIndexEquality() {
-		PluginIndex index1a = createPluginIndex("data/help/searchindex/index610");
-		PluginIndex index1b = createPluginIndex("data/help/searchindex/index610");
+		PluginIndex index1a = createPluginIndex("data/help/searchindex/index841");
+		PluginIndex index1b = createPluginIndex("data/help/searchindex/index841");
 		assertTrue(index1a.equals(index1b));
 	}
 
@@ -208,8 +133,8 @@ public class PrebuiltIndexCompatibility {
 	 */
 	@Test
 	public void testPluginIndexHash() {
-		PluginIndex index1a = createPluginIndex("data/help/searchindex/index610");
-		PluginIndex index1b = createPluginIndex("data/help/searchindex/index610");
+		PluginIndex index1a = createPluginIndex("data/help/searchindex/index841");
+		PluginIndex index1b = createPluginIndex("data/help/searchindex/index841");
 		assertEquals(index1a.hashCode(), index1b.hashCode());
 	}
 
@@ -218,8 +143,8 @@ public class PrebuiltIndexCompatibility {
 	 */
 	@Test
 	public void testPluginIndexInequality() {
-		PluginIndex index1 = createPluginIndex("data/help/searchindex/index610");
-		PluginIndex index2 = createPluginIndex("data/help/searchindex/index350");
+		PluginIndex index1 = createPluginIndex("data/help/searchindex/index841");
+		PluginIndex index2 = createPluginIndex("data/help/searchindex/index800");
 		assertFalse(index1.equals(index2));
 	}
 

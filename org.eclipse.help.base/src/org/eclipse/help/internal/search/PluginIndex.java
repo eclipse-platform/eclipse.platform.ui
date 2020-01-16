@@ -154,7 +154,7 @@ public class PluginIndex {
 					.getProperty(SearchIndex.DEPENDENCIES_KEY_ANALYZER);
 			if (!targetIndex.isLuceneCompatible(lucene) || !targetIndex.isAnalyzerCompatible(analyzer)) {
 				String message = "Unable to consume Lucene index from bundle '" + bundle.toString() //$NON-NLS-1$
-						+ "'. The index should be rebuilt with Lucene 8.0.0"; //$NON-NLS-1$
+						+ "'. The index should be rebuilt with Lucene 8.4.1"; //$NON-NLS-1$
 				Status warningStatus = new Status(IStatus.WARNING, HelpBasePlugin.PLUGIN_ID, IStatus.OK, message, null);
 				HelpBasePlugin.logStatus(warningStatus);
 				return false;
