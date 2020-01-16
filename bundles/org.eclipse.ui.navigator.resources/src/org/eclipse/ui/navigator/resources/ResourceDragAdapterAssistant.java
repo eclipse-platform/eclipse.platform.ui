@@ -107,7 +107,7 @@ public class ResourceDragAdapterAssistant extends
 	}
 
 	private IResource[] getSelectedResources(IStructuredSelection aSelection) {
-		Set<IResource> resources = new LinkedHashSet<IResource>();
+		Set<IResource> resources = new LinkedHashSet<>();
 		IResource resource = null;
 		for (Iterator<?> iter = aSelection.iterator(); iter.hasNext();) {
 			Object selected = iter.next();

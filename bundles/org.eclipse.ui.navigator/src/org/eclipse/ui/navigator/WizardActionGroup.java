@@ -278,7 +278,7 @@ public final class WizardActionGroup extends ActionGroup {
 	 */
 	protected Map<String, IAction> getActions() {
 		if (actions == null) {
-			actions = new HashMap<String, IAction>();
+			actions = new HashMap<>();
 		}
 		return actions;
 	}

@@ -124,7 +124,7 @@ public final class ProjectExplorer extends CommonNavigator implements ISecondary
 	@Override
 	public void init(IViewSite site, IMemento memento) throws PartInitException {
 		super.init(site, memento);
-		userFilters = new ArrayList<UserFilter>();
+		userFilters = new ArrayList<>();
 		if (memento != null) {
 			IMemento[] filters = memento.getChildren(MEMENTO_REGEXP_FILTER_ELEMENT);
 			for (IMemento filterMemento : filters) {

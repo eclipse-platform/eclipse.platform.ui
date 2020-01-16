@@ -44,7 +44,7 @@ public class WidgetVisibleProperty<S extends Widget> extends WidgetDelegatingVal
 	protected IValueProperty<S, Boolean> doGetDelegate(S source) {
 		if (source instanceof Control) {
 			if (control == null) {
-				control = (IValueProperty<S, Boolean>) new ControlVisibleProperty<Control>();
+				control = (IValueProperty<S, Boolean>) new ControlVisibleProperty<>();
 			}
 			return control;
 		}

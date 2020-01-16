@@ -45,8 +45,8 @@ public class ResourceToItemsMapper implements ICommonViewerMapper {
 	private CommonViewer _commonViewer;
 
 	public ResourceToItemsMapper(CommonViewer viewer) {
-		_resourceToItem = new HashMap<IResource, Object>();
-		_reuseLists = new Stack<List<Item>>();
+		_resourceToItem = new HashMap<>();
+		_reuseLists = new Stack<>();
 
 		_commonViewer = viewer;
 		viewer.setMapper(this);
@@ -111,7 +111,7 @@ public class ResourceToItemsMapper implements ICommonViewerMapper {
 		if (!_reuseLists.isEmpty()) {
 			return _reuseLists.pop();
 		}
-		return new ArrayList<Item>(2);
+		return new ArrayList<>(2);
 	}
 
 	private void releaseList(List<Item> list) {

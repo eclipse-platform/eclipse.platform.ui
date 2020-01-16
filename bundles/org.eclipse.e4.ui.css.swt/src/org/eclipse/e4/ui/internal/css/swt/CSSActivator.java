@@ -55,7 +55,7 @@ public class CSSActivator implements BundleActivator {
 			if (context == null) {
 				return null;
 			}
-			logTracker = new ServiceTracker<LogService, LogService>(context,
+			logTracker = new ServiceTracker<>(context,
 					LogService.class.getName(), null);
 			logTracker.open();
 		}
@@ -81,7 +81,7 @@ public class CSSActivator implements BundleActivator {
 			if (context == null) {
 				return null;
 			}
-			colorAndFontProviderTracker = new ServiceTracker<IColorAndFontProvider, IColorAndFontProvider>(
+			colorAndFontProviderTracker = new ServiceTracker<>(
 					context,
 					IColorAndFontProvider.class.getName(), null);
 			colorAndFontProviderTracker.open();

@@ -51,7 +51,7 @@ public class CustomAndExpression extends Expression {
 		SafeRunner.run(new NavigatorSafeRunnable() {
 			@Override
 			public void run() throws Exception {
-				fExpressions = new ArrayList<Expression>();
+				fExpressions = new ArrayList<>();
 				for (IConfigurationElement configurationElement : children) {
 					fExpressions.add(ElementHandler.getDefault().create(
 							ExpressionConverter.getDefault(), configurationElement));

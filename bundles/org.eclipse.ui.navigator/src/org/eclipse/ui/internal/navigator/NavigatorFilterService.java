@@ -50,7 +50,7 @@ public class NavigatorFilterService implements INavigatorFilterService {
 	private final NavigatorContentService contentService;
 
 	/* Map of (ICommonFilterDescriptor, ViewerFilter)-pairs */
-	private final Map<ICommonFilterDescriptor, ViewerFilter> declaredViewerFilters = new HashMap<ICommonFilterDescriptor, ViewerFilter>();
+	private final Map<ICommonFilterDescriptor, ViewerFilter> declaredViewerFilters = new HashMap<>();
 
 	/* Set of ViewerFilters enforced from visible/active content extensions */
 	private final Set enforcedViewerFilters = new HashSet();
@@ -158,7 +158,7 @@ public class NavigatorFilterService implements INavigatorFilterService {
 		CommonFilterDescriptor[] descriptors = CommonFilterDescriptorManager
 				.getInstance().findVisibleFilters(contentService);
 
-		List<ViewerFilter> filters = new ArrayList<ViewerFilter>();
+		List<ViewerFilter> filters = new ArrayList<>();
 
 		ViewerFilter instance;
 		for (CommonFilterDescriptor descriptor : descriptors) {

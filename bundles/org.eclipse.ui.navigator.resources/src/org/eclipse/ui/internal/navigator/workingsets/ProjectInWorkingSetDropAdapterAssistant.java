@@ -112,7 +112,7 @@ public class ProjectInWorkingSetDropAdapterAssistant extends CommonDropAdapterAs
 	 */
 	private void removeFromWorkingSet(IProject project, IWorkingSet workingSet) {
 		IAdaptable[] srcElements = workingSet.getElements();
-		List<IAdaptable> newSrcElements = new ArrayList<IAdaptable>();
+		List<IAdaptable> newSrcElements = new ArrayList<>();
 		for (IAdaptable srcElement : srcElements) {
 			if (!project.equals(Adapters.adapt(srcElement, IProject.class))) {
 				newSrcElements.add(srcElement);

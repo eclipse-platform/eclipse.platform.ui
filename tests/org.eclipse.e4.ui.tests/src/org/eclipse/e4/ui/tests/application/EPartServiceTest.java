@@ -9883,7 +9883,7 @@ public class EPartServiceTest extends UITest {
 		partService.activate(partB);
 		partService.activate(partA);
 
-		WeakReference<MPart> ref = new WeakReference<MPart>(partA);
+		WeakReference<MPart> ref = new WeakReference<>(partA);
 		assertEquals(partA, ref.get());
 
 		partService.hidePart(partA, true);

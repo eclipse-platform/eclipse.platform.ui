@@ -64,7 +64,7 @@ public class OpenFolderAsProjectAction extends Action {
 	public void run() {
 		try {
 			IProject parentProject = this.folder.getProject();
-			Set<IWorkingSet> parentWorkingSets = new HashSet<IWorkingSet>();
+			Set<IWorkingSet> parentWorkingSets = new HashSet<>();
 			IWorkingSetManager workingSetManager = PlatformUI.getWorkbench().getWorkingSetManager();
 			for (IWorkingSet workingSet : workingSetManager.getWorkingSets()) {
 				for (IAdaptable element : workingSet.getElements()) {

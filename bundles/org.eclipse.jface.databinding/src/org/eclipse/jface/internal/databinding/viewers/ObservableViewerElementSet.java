@@ -161,7 +161,7 @@ public class ObservableViewerElementSet<E> extends AbstractObservableSet<E> {
 	@Override
 	public boolean retainAll(Collection<?> c) {
 		getterCalled();
-		Set<E> removals = new ViewerElementSet<E>(comparer);
+		Set<E> removals = new ViewerElementSet<>(comparer);
 		@SuppressWarnings("unchecked")
 		E[] toRetain = (E[]) c.toArray();
 		outer: for (Iterator<?> iterator = wrappedSet.iterator(); iterator.hasNext();) {

@@ -127,7 +127,7 @@ public class TreeFrame extends Frame {
 	 */
 	private List<IAdaptable> restoreElements(IMemento memento) {
 		IMemento[] elementMem = memento.getChildren(TAG_ELEMENT);
-		List<IAdaptable> elements = new ArrayList<IAdaptable>(elementMem.length);
+		List<IAdaptable> elements = new ArrayList<>(elementMem.length);
 
 		for (IMemento element : elementMem) {
 			String factoryID = element.getString(TAG_FACTORY_ID);

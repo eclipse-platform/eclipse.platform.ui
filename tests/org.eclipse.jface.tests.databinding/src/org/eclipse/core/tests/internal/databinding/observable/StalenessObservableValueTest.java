@@ -48,7 +48,7 @@ public class StalenessObservableValueTest extends AbstractDefaultRealmTestCase {
 	 */
 	@Test
 	public void valueDuringListenerCallback() {
-		IObservableValue<String> source = new WritableValue<String>("a", String.class);
+		IObservableValue<String> source = new WritableValue<>("a", String.class);
 		IObservableValue<String> delayed = Observables.observeDelayedValue(1, source);
 		IObservableValue<Boolean> stale = Observables.observeStale(delayed);
 

@@ -94,7 +94,7 @@ public final class CommonDragAdapter extends DragSourceAdapter {
 		CommonDragAdapterAssistant[] assistants = contentService
 				.getDnDService().getCommonDragAssistants();
 
-		Set<Transfer> supportedTypes = new LinkedHashSet<Transfer>();
+		Set<Transfer> supportedTypes = new LinkedHashSet<>();
 		supportedTypes.add(PluginTransfer.getInstance());
 		supportedTypes.add(LocalSelectionTransfer.getTransfer());
 		Transfer[] transferTypes = null;

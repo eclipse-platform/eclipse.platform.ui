@@ -220,7 +220,7 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 		}
 
 		void refreshWorkingSetTreeState() {
-			parents = new WeakHashMap<IAdaptable, IAdaptable>();
+			parents = new WeakHashMap<>();
 			if (workingSet.isAggregateWorkingSet()) {
 				IAggregateWorkingSet aggregateSet = (IAggregateWorkingSet) workingSet;
 				if (workingSetRoot == null)
