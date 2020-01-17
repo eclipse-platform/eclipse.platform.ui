@@ -13,10 +13,11 @@
  *******************************************************************************/
 package org.eclipse.core.internal.variables;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Deque;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Stack;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -53,7 +54,7 @@ public class StringSubstitutionEngine {
 	/**
 	 * Stack of variables to resolve
 	 */
-	private Stack<VariableReference> fStack;
+	private Deque<VariableReference> fStack;
 
 	class VariableReference {
 
@@ -138,7 +139,7 @@ public class StringSubstitutionEngine {
 	 */
 	private HashSet<String> substitute(String expression, boolean reportUndefinedVariables, boolean resolveVariables, IStringVariableManager manager) throws CoreException {
 		fResult = new StringBuilder(expression.length());
-		fStack = new Stack<>();
+		fStack = new ArrayDeque<>();
 		fSubs = false;
 
 		HashSet<String> resolvedVariables = new HashSet<>();
