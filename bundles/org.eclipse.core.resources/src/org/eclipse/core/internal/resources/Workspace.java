@@ -753,7 +753,7 @@ public class Workspace extends PlatformObject implements IWorkspace, ICoreConsta
 			// perform a depth first search rooted at it
 			if (!allAccessibleBuildConfigs.contains(project.internalGetActiveBuildConfig())) {
 				allAccessibleBuildConfigs.add(project.internalGetActiveBuildConfig());
-				Stack<IBuildConfiguration> stack = new Stack<>();
+				Deque<IBuildConfiguration> stack = new ArrayDeque<>();
 				stack.push(project.internalGetActiveBuildConfig());
 
 				while (!stack.isEmpty()) {

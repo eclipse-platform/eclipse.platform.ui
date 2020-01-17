@@ -95,7 +95,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 
 	protected final StringBuilder charBuffer = new StringBuilder();
 
-	protected Stack<Object> objectStack;
+	protected Deque<Object> objectStack;
 	protected MultiStatus problems;
 
 	/**
@@ -924,7 +924,7 @@ public class ProjectDescriptionReader extends DefaultHandler implements IModelOb
 
 	public ProjectDescription read(InputSource input) {
 		problems = new MultiStatus(ResourcesPlugin.PI_RESOURCES, IResourceStatus.FAILED_READ_METADATA, Messages.projRead_failureReadingProjectDesc, null);
-		objectStack = new Stack<>();
+		objectStack = new ArrayDeque<>();
 		state = S_INITIAL;
 		try {
 			createParser().parse(input, this);
