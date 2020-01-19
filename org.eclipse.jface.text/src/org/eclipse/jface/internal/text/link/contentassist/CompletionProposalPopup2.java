@@ -324,7 +324,7 @@ class CompletionProposalPopup2 implements IContentAssistListener2 {
 
 		Color foreground= colorRegistry.get(JFacePreferences.CONTENT_ASSIST_FOREGROUND_COLOR);
 		if (foreground == null) {
-			foreground= JFaceColors.getInformationViewerBackgroundColor(Display.getDefault());
+			foreground= JFaceColors.getInformationViewerForegroundColor(Display.getDefault());
 		}
 
 		fProposalShell.setBackground(background);
