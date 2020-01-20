@@ -21,13 +21,15 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Objects;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.PlainMessageDialog;
+import org.eclipse.jface.dialogs.PlainMessageDialog.Builder;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -408,8 +410,12 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		if (modelService.findElements(application, desc.getId(), MPerspective.class).isEmpty())
 			return true;
 
-		return MessageDialog.openQuestion(getShell(), WorkbenchMessages.PerspectivesPreference_perspectiveopen_title,
-				NLS.bind(WorkbenchMessages.PerspectivesPreference_perspectiveopen_message, desc.getLabel()));
+		Builder builder = PlainMessageDialog.getBuilder(getShell(),
+				WorkbenchMessages.PerspectivesPreference_perspectiveopen_title);
+		builder.message(NLS.bind(WorkbenchMessages.PerspectivesPreference_perspectiveopen_message, desc.getLabel()));
+		builder.image(getShell().getDisplay().getSystemImage(SWT.ICON_QUESTION));
+		builder.buttonLabels(Arrays.asList(IDialogConstants.YES_LABEL, IDialogConstants.NO_LABEL));
+		return builder.build().open() == 0;
 	}
 
 	/**

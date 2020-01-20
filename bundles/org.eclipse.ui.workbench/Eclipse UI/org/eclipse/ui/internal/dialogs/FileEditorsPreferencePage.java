@@ -22,7 +22,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.dialogs.PlainMessageDialog;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.window.Window;
@@ -126,9 +126,10 @@ public class FileEditorsPreferencePage extends PreferencePage implements IWorkbe
 			int result = newFilename.compareToIgnoreCase(resourceType.getLabel());
 			if (result == 0) {
 				// Same resource type not allowed!
-				MessageDialog.openInformation(getControl().getShell(),
-						WorkbenchMessages.FileEditorPreference_existsTitle,
-						WorkbenchMessages.FileEditorPreference_existsMessage);
+				PlainMessageDialog.getBuilder(getShell(),
+						WorkbenchMessages.FileEditorPreference_existsTitle)
+								.image(getShell().getDisplay().getSystemImage(SWT.ICON_INFORMATION))
+						.message(WorkbenchMessages.FileEditorPreference_existsMessage).build().open();
 				return;
 			}
 
