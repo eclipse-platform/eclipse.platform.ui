@@ -196,7 +196,7 @@ public abstract class AbstractRulerColumn implements IVerticalRulerColumn, IVert
 		fCanvas.setBackground(getDefaultBackground());
 		fCanvas.setFont(getFont());
 
-		fCanvas.addPaintListener(event -> AbstractRulerColumn.this.paintControl(event));
+		fCanvas.addPaintListener(AbstractRulerColumn.this::paintControl);
 
 		fCanvas.addMouseListener(fMouseHandler);
 		fCanvas.addMouseMoveListener(fMouseHandler);

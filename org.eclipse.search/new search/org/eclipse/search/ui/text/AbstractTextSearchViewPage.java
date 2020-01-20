@@ -301,7 +301,7 @@ public abstract class AbstractTextSearchViewPage extends Page implements ISearch
 		fBatchedUpdates = new HashSet<>();
 		fBatchedClearAll= false;
 
-		fListener = e -> handleSearchResultChanged(e);
+		fListener = this::handleSearchResultChanged;
 		fFilterActions= null;
 		fElementLimit= null;
 	}

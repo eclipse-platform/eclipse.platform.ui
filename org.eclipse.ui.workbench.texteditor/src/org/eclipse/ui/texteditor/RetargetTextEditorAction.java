@@ -45,7 +45,7 @@ public final class RetargetTextEditorAction extends ResourceAction {
 	 */
 	private HelpListener fLocalHelpListener;
 	/** The listener to pick up changes of the target action. */
-	private IPropertyChangeListener fListener= event -> update(event);
+	private IPropertyChangeListener fListener= this::update;
 
 	/**
 	 * Creates a new action. The action configures its initial visual

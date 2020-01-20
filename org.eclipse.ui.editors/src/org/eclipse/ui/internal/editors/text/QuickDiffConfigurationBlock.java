@@ -402,7 +402,7 @@ class QuickDiffConfigurationBlock implements IPreferenceConfigurationBlock {
 			String label = fQuickDiffProvider[1];
 			fQuickDiffProviderCombo.add(label);
 		}
-		fQuickDiffProviderCombo.getDisplay().asyncExec(() -> updateProviderList());
+		fQuickDiffProviderCombo.getDisplay().asyncExec(this::updateProviderList);
 
 		initializeFields();
 	}

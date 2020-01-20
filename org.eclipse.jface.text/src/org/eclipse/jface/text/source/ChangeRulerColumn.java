@@ -422,7 +422,7 @@ public final class ChangeRulerColumn implements IChangeRulerColumn, IRevisionRul
 		if (fCanvas != null && !fCanvas.isDisposed()) {
 			Display d= fCanvas.getDisplay();
 			if (d != null) {
-				d.asyncExec(() -> redraw());
+				d.asyncExec(this::redraw);
 			}
 		}
 	}

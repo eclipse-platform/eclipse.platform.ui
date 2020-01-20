@@ -171,7 +171,7 @@ public final class TemplatesView extends PageBookView {
 	@Override
 	public <T> T getAdapter(Class<T> key) {
 		if (key == IContributedContentsView.class) {
-			return key.cast((IContributedContentsView) () -> getCurrentContributingPart());
+			return key.cast((IContributedContentsView) this::getCurrentContributingPart);
 		}
 		return super.getAdapter(key);
 	}

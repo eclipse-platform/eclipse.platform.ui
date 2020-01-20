@@ -1377,7 +1377,7 @@ public final class RevisionPainter {
 		if (isConnected() && !fControl.isDisposed()) {
 			Display d= fControl.getDisplay();
 			if (d != null) {
-				d.asyncExec(() -> redraw());
+				d.asyncExec(this::redraw);
 			}
 		}
 	}

@@ -419,7 +419,7 @@ public class LineNumberRulerColumn implements IVerticalRulerColumn {
 	 *
 	 * @since 3.13
 	 */
-	private Consumer<StyledText> lineHeightChangeHandler= (t) -> postRedraw();
+	private Consumer<StyledText> lineHeightChangeHandler= t -> postRedraw();
 
 	/**
 	 * Constructs a new vertical ruler column.

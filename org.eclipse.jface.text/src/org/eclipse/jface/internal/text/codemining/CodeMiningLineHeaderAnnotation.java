@@ -91,7 +91,7 @@ public class CodeMiningLineHeaderAnnotation extends LineHeaderAnnotation impleme
 		if (fResolvedMinings == null || fResolvedMinings.length == 0) {
 			return false;
 		}
-		return Stream.of(fResolvedMinings).anyMatch(m -> CodeMiningManager.isValidMining(m));
+		return Stream.of(fResolvedMinings).anyMatch(CodeMiningManager::isValidMining);
 	}
 
 	@Override

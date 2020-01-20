@@ -241,7 +241,7 @@ class SelectResourcesDialog extends Dialog {
 
 	private void filterSelection() {
 
-		final IFilter filter= resource -> hasAcceptedFileType(resource);
+		final IFilter filter= this::hasAcceptedFileType;
 
 		List<Object> list= fResourceGroup.getAllWhiteCheckedItems();
 		final IResource[] resources= list.toArray(new IResource[list.size()]);

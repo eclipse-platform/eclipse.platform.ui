@@ -93,7 +93,7 @@ public class DecoratingFileSearchLabelProvider extends DecoratingStyledCellLabel
 		String property= event.getProperty();
 		if (property.equals(JFacePreferences.QUALIFIER_COLOR) || property.equals(JFacePreferences.COUNTER_COLOR) || property.equals(JFacePreferences.DECORATIONS_COLOR)
 				|| property.equals(HIGHLIGHT_BG_COLOR_NAME) || property.equals(IWorkbenchPreferenceConstants.USE_COLORED_LABELS)) {
-			Display.getDefault().asyncExec(() -> refresh());
+			Display.getDefault().asyncExec(this::refresh);
 		}
 	}
 

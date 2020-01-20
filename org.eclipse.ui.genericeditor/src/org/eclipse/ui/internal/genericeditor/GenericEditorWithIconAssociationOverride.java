@@ -41,9 +41,7 @@ public class GenericEditorWithIconAssociationOverride implements IEditorAssociat
 	@Override
 	public IEditorDescriptor[] overrideEditors(String fileName, IContentType contentType,
 			IEditorDescriptor[] editorDescriptors) {
-		return Arrays.stream(editorDescriptors).map(descriptor -> {
-			return getEditorDescriptorForFile(descriptor, fileName);
-		}).toArray(size -> new IEditorDescriptor[size]);
+		return Arrays.stream(editorDescriptors).map(descriptor -> getEditorDescriptorForFile(descriptor, fileName)).toArray(size -> new IEditorDescriptor[size]);
 	}
 
 	@Override

@@ -184,7 +184,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 	 */
 	private MouseListener fMouseListener;
 
-	private Consumer<StyledText> lineHeightChangeHandler= (t) -> postRedraw();
+	private Consumer<StyledText> lineHeightChangeHandler= t -> postRedraw();
 
 	private ITextListener fLineListener = new ITextListener() {
 		private int previousLineCount = -1;
@@ -322,9 +322,9 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		};
 		fCanvas.addMouseListener(fMouseListener);
 
-		fCanvas.addMouseMoveListener(e -> handleMouseMove(e));
+		fCanvas.addMouseMoveListener(this::handleMouseMove);
 
-		fCanvas.addMouseWheelListener(e -> handleMouseScrolled(e));
+		fCanvas.addMouseWheelListener(this::handleMouseScrolled);
 
 		if (fCachedTextViewer != null) {
 			VisibleLinesTracker.track(fCachedTextViewer, lineHeightChangeHandler);
@@ -820,7 +820,7 @@ public class AnnotationRulerColumn implements IVerticalRulerColumn, IVerticalRul
 		if (fCanvas != null && !fCanvas.isDisposed()) {
 			Display d= fCanvas.getDisplay();
 			if (d != null) {
-				d.asyncExec(() -> redraw());
+				d.asyncExec(this::redraw);
 			}
 		}
 	}

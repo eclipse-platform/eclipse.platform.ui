@@ -502,7 +502,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 
 		int sashSize= fPreferenceStore.getInt(SASH_SIZE_PREF_ID);
 		fControl.setWeights(new int[] { sashSize, 100 - sashSize });
-		fTemplateChangeListener = event -> getShell().getDisplay().asyncExec(() -> refresh());
+		fTemplateChangeListener = event -> getShell().getDisplay().asyncExec(this::refresh);
 		getTemplatePreferenceStore().addPropertyChangeListener(fTemplateChangeListener);
 		updateContextTypes(getEditorContextTypeIds());
 	}
@@ -1111,7 +1111,7 @@ public abstract class AbstractTemplatesPage extends Page implements ITemplatesPa
 	private void hookContextMenu() {
 		MenuManager menuMgr= new MenuManager(POPUP_MENU_ID);
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(manager -> fillContextMenu(manager));
+		menuMgr.addMenuListener(this::fillContextMenu);
 		fContextMenu= menuMgr.createContextMenu(fTreeViewer.getControl());
 		fTreeViewer.getControl().setMenu(fContextMenu);
 		getSite().registerContextMenu(POPUP_MENU_ID, menuMgr, fTreeViewer);

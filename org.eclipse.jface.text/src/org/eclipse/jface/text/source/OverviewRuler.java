@@ -604,9 +604,9 @@ public class OverviewRuler implements IOverviewRulerExtension, IOverviewRuler {
 			}
 		});
 
-		fCanvas.addMouseMoveListener(event -> handleMouseMove(event));
+		fCanvas.addMouseMoveListener(this::handleMouseMove);
 
-		fCanvas.addMouseWheelListener(e -> handleMouseScrolled(e));
+		fCanvas.addMouseWheelListener(this::handleMouseScrolled);
 
 		if (fTextViewer != null) {
 			fTextViewer.addTextListener(fInternalListener);

@@ -120,7 +120,7 @@ public abstract class AbstractInlinedAnnotation extends Annotation {
 	 */
 	public void redraw() {
 		StyledText text= getTextWidget();
-		InlinedAnnotationSupport.runInUIThread(text, (t) -> {
+		InlinedAnnotationSupport.runInUIThread(text, t -> {
 			Position pos= getPosition();
 			int offset= pos.getOffset();
 			ISourceViewer viewer= getViewer();

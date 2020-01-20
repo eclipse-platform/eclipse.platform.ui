@@ -637,7 +637,7 @@ public class CompositeRuler implements IVerticalRuler, IVerticalRulerExtension, 
 		if (fComposite != null && !fComposite.isDisposed()) {
 			Display d= fComposite.getDisplay();
 			if (d != null) {
-				d.asyncExec(() -> immediateUpdate());
+				d.asyncExec(this::immediateUpdate);
 			}
 		}
 	}

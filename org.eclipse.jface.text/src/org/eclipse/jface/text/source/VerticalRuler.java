@@ -450,7 +450,7 @@ public final class VerticalRuler implements IVerticalRuler, IVerticalRulerExtens
 		if (fCanvas != null && !fCanvas.isDisposed()) {
 			Display d= fCanvas.getDisplay();
 			if (d != null) {
-				d.asyncExec(() -> redraw());
+				d.asyncExec(this::redraw);
 			}
 		}
 	}

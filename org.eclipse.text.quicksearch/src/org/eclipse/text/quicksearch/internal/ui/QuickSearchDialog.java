@@ -716,7 +716,7 @@ public class QuickSearchDialog extends SelectionStatusDialog {
 
 		contextMenuManager = new MenuManager();
 		contextMenuManager.setRemoveAllWhenShown(true);
-		contextMenuManager.addMenuListener(manager -> fillContextMenu(manager));
+		contextMenuManager.addMenuListener(this::fillContextMenu);
 
 		final Table table = list.getTable();
 		Menu menu= contextMenuManager.createContextMenu(table);

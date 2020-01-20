@@ -300,7 +300,7 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 
 			StyledText widget= fTextViewer.getTextWidget();
 			if (widget != null && !widget.isDisposed()) {
-				widget.getDisplay().asyncExec(() -> hideHyperlinks());
+				widget.getDisplay().asyncExec(this::hideHyperlinks);
 			}
 		}
 	}

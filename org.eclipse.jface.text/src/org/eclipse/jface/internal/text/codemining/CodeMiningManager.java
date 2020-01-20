@@ -194,7 +194,7 @@ public class CodeMiningManager implements Runnable {
 				}))
 				.collect(Collectors.toList());
 		return CompletableFuture.allOf(com.toArray(new CompletableFuture[com.size()])).thenApply(
-				v -> com.stream().map(CompletableFuture::join).flatMap(l -> l.stream()).collect(Collectors.toList()));
+				v -> com.stream().map(CompletableFuture::join).flatMap(java.util.Collection::stream).collect(Collectors.toList()));
 	}
 
 	/**
@@ -267,7 +267,7 @@ public class CodeMiningManager implements Runnable {
 		monitor.isCanceled();
 		fInlinedAnnotationSupport.updateAnnotations(currentAnnotations);
 		// redraw the existing codemining annotations since their content can change
-		annotationsToRedraw.stream().forEach(ann -> ann.redraw());
+		annotationsToRedraw.stream().forEach(ICodeMiningAnnotation::redraw);
 	}
 
 	/**
