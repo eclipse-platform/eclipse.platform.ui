@@ -14,7 +14,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.perf;
 
-import java.util.Vector;
+import java.util.ArrayList;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.watson.ElementTree;
@@ -166,8 +166,8 @@ public class BenchElementTree extends OldCorePerformanceTest {
 	 * Returns an array of all the intermediary element trees.
 	 */
 	private ElementTree[] buildDeltaChain(ElementTree tree) {
-		Vector<ElementTree> trees = new Vector<>();
-		trees.addElement(tree);
+		ArrayList<ElementTree> trees = new ArrayList<>();
+		trees.add(tree);
 
 		int repeat = 1;
 
@@ -179,7 +179,7 @@ public class BenchElementTree extends OldCorePerformanceTest {
 			tree.createElement(filePath, data);
 
 			tree.immutable();
-			trees.addElement(tree);
+			trees.add(tree);
 			tree = tree.newEmptyDelta();
 		}
 
@@ -190,7 +190,7 @@ public class BenchElementTree extends OldCorePerformanceTest {
 				tree.setElementData(filePath, data);
 
 				tree.immutable();
-				trees.addElement(tree);
+				trees.add(tree);
 				tree = tree.newEmptyDelta();
 			}
 		}
@@ -199,12 +199,12 @@ public class BenchElementTree extends OldCorePerformanceTest {
 		for (IPath filePath : filePaths) {
 			tree.deleteElement(filePath);
 			tree.immutable();
-			trees.addElement(tree);
+			trees.add(tree);
 			tree = tree.newEmptyDelta();
 		}
 
 		ElementTree[] results = new ElementTree[trees.size()];
-		trees.copyInto(results);
+		trees.toArray(results);
 		return results;
 	}
 

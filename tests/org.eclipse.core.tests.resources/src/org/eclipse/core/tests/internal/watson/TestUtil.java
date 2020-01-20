@@ -14,8 +14,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.watson;
 
+import java.util.ArrayList;
 import java.util.Random;
-import java.util.Vector;
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -216,8 +216,8 @@ abstract class TestUtil extends WatsonTest implements IPathConstants {
 	 * Returns an array of all the intermediary ElementTrees.
 	 */
 	static protected ElementTree[] doManyRoutineOperations(ElementTree tree, IPath path) {
-		Vector<ElementTree> trees = new Vector<>();
-		trees.addElement(tree);
+		ArrayList<ElementTree> trees = new ArrayList<>();
+		trees.add(tree);
 
 		int repeat = 1;
 
@@ -229,7 +229,7 @@ abstract class TestUtil extends WatsonTest implements IPathConstants {
 			tree.createElement(file, data);
 
 			tree.immutable();
-			trees.addElement(tree);
+			trees.add(tree);
 			tree = tree.newEmptyDelta();
 		}
 
@@ -239,7 +239,7 @@ abstract class TestUtil extends WatsonTest implements IPathConstants {
 			for (IPath file : files) {
 				tree.setElementData(file, data);
 				tree.immutable();
-				trees.addElement(tree);
+				trees.add(tree);
 				tree = tree.newEmptyDelta();
 			}
 		}
@@ -248,12 +248,12 @@ abstract class TestUtil extends WatsonTest implements IPathConstants {
 		for (IPath file : files) {
 			tree.deleteElement(file);
 			tree.immutable();
-			trees.addElement(tree);
+			trees.add(tree);
 			tree = tree.newEmptyDelta();
 		}
 
 		ElementTree[] results = new ElementTree[trees.size()];
-		trees.copyInto(results);
+		trees.toArray(results);
 		return results;
 	}
 
@@ -262,8 +262,8 @@ abstract class TestUtil extends WatsonTest implements IPathConstants {
 	 * the given path.  Returns an array of all the intermediary elementtrees.
 	 */
 	static protected ElementTree[] doRoutineOperations(ElementTree tree, IPath path) {
-		Vector<ElementTree> trees = new Vector<>();
-		trees.addElement(tree);
+		ArrayList<org.eclipse.core.internal.watson.ElementTree> trees = new ArrayList<>();
+		trees.add(tree);
 
 		int repeat = 1;
 
@@ -277,7 +277,7 @@ abstract class TestUtil extends WatsonTest implements IPathConstants {
 		}
 
 		tree.immutable();
-		trees.addElement(tree);
+		trees.add(tree);
 		tree = tree.newEmptyDelta();
 
 		/* modify the data of all file elements a few times */
@@ -289,7 +289,7 @@ abstract class TestUtil extends WatsonTest implements IPathConstants {
 		}
 
 		tree.immutable();
-		trees.addElement(tree);
+		trees.add(tree);
 		tree = tree.newEmptyDelta();
 
 		/* delete all file elements */
@@ -298,10 +298,10 @@ abstract class TestUtil extends WatsonTest implements IPathConstants {
 		}
 
 		tree.immutable();
-		trees.addElement(tree);
+		trees.add(tree);
 
 		ElementTree[] results = new ElementTree[trees.size()];
-		trees.copyInto(results);
+		trees.toArray(results);
 		return results;
 	}
 

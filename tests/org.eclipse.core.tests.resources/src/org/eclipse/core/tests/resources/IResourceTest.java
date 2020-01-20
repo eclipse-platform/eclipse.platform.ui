@@ -407,23 +407,23 @@ public class IResourceTest extends ResourceTest {
 			nonExistingProject.open(null);
 			nonExistingProject.delete(true, null);
 
-			Vector<IResource> resources = new Vector<>();
-			resources.addElement(openProject);
+			ArrayList<IResource> resources = new ArrayList<>();
+			resources.add(openProject);
 			for (IResource element : resourcesInOpenProject) {
-				resources.addElement(element);
+				resources.add(element);
 			}
 
-			resources.addElement(closedProject);
+			resources.add(closedProject);
 			for (IResource element : resourcesInClosedProject) {
-				resources.addElement(element);
+				resources.add(element);
 				nonExistingResources.add(element);
 			}
 
-			resources.addElement(nonExistingProject);
+			resources.add(nonExistingProject);
 			nonExistingResources.add(nonExistingProject);
 
 			interestingResources = new IResource[resources.size()];
-			resources.copyInto(interestingResources);
+			resources.toArray(interestingResources);
 
 			String[] interestingPathnames = new String[] {"1/", "1/1/", "1/1/1/", "1/1/1/1", "1/1/2/1/", "1/1/2/2/", "1/1/2/3/", "1/2/", "1/2/1", "1/2/2", "1/2/3/", "1/2/3/1", "1/2/3/2", "1/2/3/3", "1/2/3/4", "2", "2/1", "2/2", "2/3", "2/4", "2/1/", "2/2/", "2/3/", "2/4/", ".."};
 			interestingPaths = new IPath[interestingPathnames.length];

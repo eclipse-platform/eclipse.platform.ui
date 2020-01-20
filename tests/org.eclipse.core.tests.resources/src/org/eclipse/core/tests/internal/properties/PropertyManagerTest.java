@@ -14,7 +14,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.properties;
 
-import java.util.Vector;
+import java.util.ArrayList;
 import junit.framework.Test;
 import junit.framework.TestSuite;
 import org.eclipse.core.internal.properties.IPropertyManager;
@@ -484,10 +484,10 @@ public class PropertyManagerTest extends LocalStoreTest {
 		String propValue1 = "this is the property value1";
 		String propValue2 = "this is the property value2";
 		String propValue3 = "this is the property value3";
-		Vector<StoredProperty> props = new Vector<>(3);
-		props.addElement(new StoredProperty(propName1, propValue1));
-		props.addElement(new StoredProperty(propName2, propValue2));
-		props.addElement(new StoredProperty(propName3, propValue3));
+		ArrayList<StoredProperty> props = new ArrayList<>(3);
+		props.add(new StoredProperty(propName1, propValue1));
+		props.add(new StoredProperty(propName2, propValue2));
+		props.add(new StoredProperty(propName3, propValue3));
 
 		// set the properties individually and retrieve them
 		for (StoredProperty prop : props) {
