@@ -14,10 +14,11 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -103,7 +104,7 @@ public class FilteredList extends Composite {
 
 	Label[] fLabels;
 
-	Vector<Image> fImages = new Vector<>();
+	List<Image> fImages = new ArrayList<>();
 
 	int[] fFoldedIndices;
 
