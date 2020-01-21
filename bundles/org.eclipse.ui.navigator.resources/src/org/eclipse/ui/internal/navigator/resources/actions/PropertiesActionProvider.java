@@ -21,6 +21,8 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.jface.window.IShellProvider;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.actions.ActionContext;
@@ -45,7 +47,12 @@ public class PropertiesActionProvider extends CommonActionProvider {
 	public void init(final ICommonActionExtensionSite aSite) {
 
 		delegateSelectionProvider = new DelegateSelectionProvider( aSite.getViewSite().getSelectionProvider());
-		propertiesAction = new PropertyDialogAction(() -> aSite.getViewSite().getShell(),delegateSelectionProvider);
+		propertiesAction = new PropertyDialogAction(new IShellProvider() {
+			@Override
+			public Shell getShell() {
+				return aSite.getViewSite().getShell();
+			}
+		},delegateSelectionProvider);
 		propertiesAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_PROPERTIES);
 	}
 

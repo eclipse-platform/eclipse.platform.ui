@@ -17,6 +17,7 @@ package org.eclipse.ui.internal.navigator.resources.actions;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.events.KeyEvent;
@@ -134,8 +135,14 @@ public class EditActionGroup extends ActionGroup {
 		copyAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_COPY));
 		copyAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_COPY);
 
+		IShellProvider sp = new IShellProvider() {
+			@Override
+			public Shell getShell() {
+				return shell;
+			}
+		};
 
-		deleteAction = new DeleteResourceAction(() -> shell);
+		deleteAction = new DeleteResourceAction(sp);
 		deleteAction.setDisabledImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE_DISABLED));
 		deleteAction.setImageDescriptor(images.getImageDescriptor(ISharedImages.IMG_TOOL_DELETE));
 		deleteAction.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_DELETE);

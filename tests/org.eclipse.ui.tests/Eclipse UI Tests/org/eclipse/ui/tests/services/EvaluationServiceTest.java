@@ -303,21 +303,29 @@ public class EvaluationServiceTest extends UITestCase {
 		final boolean[] propertyChanged = new boolean[1];
 		final boolean[] propertyShouldChange = new boolean[1];
 
-		IPropertyChangeListener propertyChangeListener = event -> {
-			if (event.getProperty().equals("foo")) {
-				propertyChanged[0] = true;
-			}
+		IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
 
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty().equals("foo")) {
+					propertyChanged[0] = true;
+				}
+
+			}
 		};
 		IEvaluationReference ref = evaluationService.addEvaluationListener(
 				expression, propertyChangeListener, "foo");
 		((WorkbenchWindow)window).getMenuRestrictions().add(ref);
 
-		IPropertyChangeListener propertyShouldChangeListener = event -> {
-			if (event.getProperty().equals("foo")) {
-				propertyShouldChange[0] = true;
-			}
+		IPropertyChangeListener propertyShouldChangeListener = new IPropertyChangeListener() {
 
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				if (event.getProperty().equals("foo")) {
+					propertyShouldChange[0] = true;
+				}
+
+			}
 		};
 		evaluationService.addEvaluationListener(expression,
 				propertyShouldChangeListener, "foo");
@@ -624,23 +632,26 @@ public class EvaluationServiceTest extends UITestCase {
 		processEvents();
 
 		final ArrayList<PartSelection> selection = new ArrayList<>();
-		IPropertyChangeListener listener = event -> {
-			IEvaluationContext state = service.getCurrentState();
-			try {
-				ISelection sel = null;
-				IWorkbenchPart part = null;
-				Object o = state
-						.getVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME);
-				if (o instanceof ISelection) {
-					sel = (ISelection) o;
+		IPropertyChangeListener listener = new IPropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				IEvaluationContext state = service.getCurrentState();
+				try {
+					ISelection sel = null;
+					IWorkbenchPart part = null;
+					Object o = state
+							.getVariable(ISources.ACTIVE_CURRENT_SELECTION_NAME);
+					if (o instanceof ISelection) {
+						sel = (ISelection) o;
+					}
+					o = state.getVariable(ISources.ACTIVE_PART_NAME);
+					if (o instanceof IWorkbenchPart) {
+						part = (IWorkbenchPart) o;
+					}
+					selection.add(new PartSelection(sel, part));
+				} catch (Exception e) {
+					e.printStackTrace();
 				}
-				o = state.getVariable(ISources.ACTIVE_PART_NAME);
-				if (o instanceof IWorkbenchPart) {
-					part = (IWorkbenchPart) o;
-				}
-				selection.add(new PartSelection(sel, part));
-			} catch (Exception e) {
-				e.printStackTrace();
 			}
 		};
 

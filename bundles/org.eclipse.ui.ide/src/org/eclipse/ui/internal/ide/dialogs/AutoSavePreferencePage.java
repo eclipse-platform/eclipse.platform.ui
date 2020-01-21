@@ -22,6 +22,7 @@ import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.StringFieldEditor;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -62,9 +63,12 @@ public class AutoSavePreferencePage extends PreferencePage implements IWorkbench
 
 	private Label noteMessage;
 
-	private IPropertyChangeListener validityChangeListener = event -> {
-		if (event.getProperty().equals(FieldEditor.IS_VALID)) {
-			updateValidState();
+	private IPropertyChangeListener validityChangeListener = new IPropertyChangeListener() {
+		@Override
+		public void propertyChange(PropertyChangeEvent event) {
+			if (event.getProperty().equals(FieldEditor.IS_VALID)) {
+				updateValidState();
+			}
 		}
 	};
 

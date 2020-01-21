@@ -37,6 +37,7 @@ import org.eclipse.ui.navigator.CommonViewer;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.services.IEvaluationService;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
 
 /**
@@ -112,7 +113,12 @@ public class NavigatorPlugin extends AbstractUIPlugin {
 	/** The id of the orge.eclipse.ui.navigator plugin. */
 	public static String PLUGIN_ID = "org.eclipse.ui.navigator"; //$NON-NLS-1$
 
-	private BundleListener bundleListener = event -> NavigatorSaveablesService.bundleChanged(event);
+	private BundleListener bundleListener = new BundleListener() {
+		@Override
+		public void bundleChanged(BundleEvent event) {
+			NavigatorSaveablesService.bundleChanged(event);
+		}
+	};
 
 	/**
 	 * This constant can be used via {@link CommonViewer#setData(String, Object)} to set/get the lisst

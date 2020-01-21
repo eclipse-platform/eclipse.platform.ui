@@ -25,6 +25,7 @@ import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
+import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -52,15 +53,18 @@ public class NestedProjectManager {
 
 	private NestedProjectManager() {
 		refreshProjectsList();
-		ResourcesPlugin.getWorkspace().addResourceChangeListener(event -> {
-			IResourceDelta delta = event.getDelta();
-			IResource resource = null;
-			if (delta != null) {
-				resource = delta.getResource();
-			}
-			if (resource != null
-					&& (resource.getType() == IResource.PROJECT || resource.getType() == IResource.ROOT)) {
-				refreshProjectsList();
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(new IResourceChangeListener() {
+			@Override
+			public void resourceChanged(IResourceChangeEvent event) {
+				IResourceDelta delta = event.getDelta();
+				IResource resource = null;
+				if (delta != null) {
+					resource = delta.getResource();
+				}
+				if (resource != null
+						&& (resource.getType() == IResource.PROJECT || resource.getType() == IResource.ROOT)) {
+					refreshProjectsList();
+				}
 			}
 		}, IResourceChangeEvent.POST_CHANGE);
 	}

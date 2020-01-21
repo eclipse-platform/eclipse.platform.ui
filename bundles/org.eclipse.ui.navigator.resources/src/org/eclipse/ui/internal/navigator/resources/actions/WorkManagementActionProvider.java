@@ -40,7 +40,12 @@ public class WorkManagementActionProvider extends CommonActionProvider {
 	@Override
 	public void init(ICommonActionExtensionSite aSite) {
 		final Shell shell = aSite.getViewSite().getShell();
-		IShellProvider sp = () -> shell;
+		IShellProvider sp = new IShellProvider() {
+			@Override
+			public Shell getShell() {
+				return shell;
+			}
+		};
 		addBookmarkAction = new AddBookmarkAction(sp, true);
 		addTaskAction = new AddTaskAction(sp);
 	}

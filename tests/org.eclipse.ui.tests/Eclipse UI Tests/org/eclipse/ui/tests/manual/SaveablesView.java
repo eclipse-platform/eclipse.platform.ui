@@ -14,6 +14,7 @@
 package org.eclipse.ui.tests.manual;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
@@ -48,12 +49,15 @@ public class SaveablesView extends ViewPart {
 
 	private Action printSourcesAction;
 
-	private ISaveablesLifecycleListener saveablesLifecycleListener = event -> {
-		if (event.getEventType() == SaveablesLifecycleEvent.DIRTY_CHANGED) {
-			Saveable[] saveables = event.getSaveables();
-			viewer.update(saveables, null);
-		} else {
-			viewer.refresh();
+	private ISaveablesLifecycleListener saveablesLifecycleListener = new ISaveablesLifecycleListener() {
+		@Override
+		public void handleLifecycleEvent(SaveablesLifecycleEvent event) {
+			if (event.getEventType() == SaveablesLifecycleEvent.DIRTY_CHANGED) {
+				Saveable[] saveables = event.getSaveables();
+				viewer.update(saveables, null);
+			} else {
+				viewer.refresh();
+			}
 		}
 	};
 
@@ -151,7 +155,12 @@ public class SaveablesView extends ViewPart {
 	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(manager -> SaveablesView.this.fillContextMenu(manager));
+		menuMgr.addMenuListener(new IMenuListener() {
+			@Override
+			public void menuAboutToShow(IMenuManager manager) {
+				SaveablesView.this.fillContextMenu(manager);
+			}
+		});
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);

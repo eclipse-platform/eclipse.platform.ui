@@ -114,7 +114,10 @@ public class ContributedServiceTest extends UITestCase {
 		IServiceLocatorCreator lc = parent
 				.getService(IServiceLocatorCreator.class);
 		IServiceLocator locator = lc.createServiceLocator(parent, null,
-				() -> {
+				new IDisposable() {
+					@Override
+					public void dispose() {
+					}
 				});
 
 		ILevelService l = locator
@@ -128,7 +131,10 @@ public class ContributedServiceTest extends UITestCase {
 			((IDisposable) locator).dispose();
 		}
 
-		locator = lc.createServiceLocator(parent, null, () -> {
+		locator = lc.createServiceLocator(parent, null, new IDisposable() {
+			@Override
+			public void dispose() {
+			}
 		});
 		l = locator.getService(ILevelService.class);
 		assertNotNull(l);
@@ -139,8 +145,12 @@ public class ContributedServiceTest extends UITestCase {
 			((IDisposable) locator).dispose();
 		}
 
-		locator = lc.createServiceLocator(parent, new TempLevelFactory(8), () -> {
-		});
+		locator = lc.createServiceLocator(parent, new TempLevelFactory(8),
+				new IDisposable() {
+					@Override
+					public void dispose() {
+					}
+				});
 		l = locator.getService(ILevelService.class);
 		assertNotNull(l);
 		assertEquals(8, l.getLevel());
@@ -174,7 +184,10 @@ public class ContributedServiceTest extends UITestCase {
 						}
 						return null;
 					}
-				}, () -> {
+				}, new IDisposable() {
+					@Override
+					public void dispose() {
+					}
 				});
 		IWorkbenchLocationService wls = locator
 				.getService(IWorkbenchLocationService.class);

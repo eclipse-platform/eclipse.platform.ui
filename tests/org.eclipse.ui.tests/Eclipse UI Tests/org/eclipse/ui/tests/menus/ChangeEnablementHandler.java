@@ -18,6 +18,7 @@ import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.HandlerEvent;
+import org.eclipse.core.commands.contexts.ContextManagerEvent;
 import org.eclipse.core.commands.contexts.IContextManagerListener;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -59,9 +60,14 @@ public class ChangeEnablementHandler extends AbstractHandler {
 	 */
 	private IContextManagerListener getContextListener() {
 		if (fContextManagerListener == null) {
-			fContextManagerListener = contextManagerEvent -> {
-				if (contextManagerEvent.isActiveContextsChanged()) {
-					setEnabled(contextManagerEvent.getContextManager().getActiveContextIds().contains(CONTEXT_ID));
+			fContextManagerListener = new IContextManagerListener() {
+				@Override
+				public void contextManagerChanged(
+						ContextManagerEvent contextManagerEvent) {
+					if (contextManagerEvent.isActiveContextsChanged()) {
+						setEnabled(contextManagerEvent.getContextManager()
+								.getActiveContextIds().contains(CONTEXT_ID));
+					}
 				}
 			};
 		}

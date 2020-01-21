@@ -24,6 +24,7 @@ import java.lang.management.ThreadMXBean;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.monitoring.PreferenceConstants;
@@ -51,9 +52,12 @@ public class DefaultLoggerTests {
 	}
 
 	private void createLogListener() {
-		Platform.addLogListener((status, plugin) -> {
-			if (plugin.equals(RUNTIME_ID)) {
-				loggedStatus = status;
+		Platform.addLogListener(new ILogListener() {
+			@Override
+			public void logging(IStatus status, String plugin) {
+				if (plugin.equals(RUNTIME_ID)) {
+					loggedStatus = status;
+				}
 			}
 		});
 	}

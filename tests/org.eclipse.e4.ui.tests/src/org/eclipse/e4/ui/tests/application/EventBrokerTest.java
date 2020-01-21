@@ -23,6 +23,7 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
 /**
@@ -54,9 +55,12 @@ public class EventBrokerTest extends UITest {
 		IEventBroker eb = context.get(IEventBroker.class);
 		assertNotNull(eb);
 
-		eb.subscribe(TEST_TOPIC, event -> {
-			if (TEST_TOPIC.equals(event.getTopic())) {
-				seen.incrementAndGet();
+		eb.subscribe(TEST_TOPIC, new EventHandler() {
+			@Override
+			public void handleEvent(Event event) {
+				if (TEST_TOPIC.equals(event.getTopic())) {
+					seen.incrementAndGet();
+				}
 			}
 		});
 		eb.send(TEST_TOPIC, new Object());
@@ -75,9 +79,12 @@ public class EventBrokerTest extends UITest {
 		IEclipseContext child = context.createChild();
 		IEventBroker subscriber = child.get(IEventBroker.class);
 		assertNotNull(subscriber);
-		subscriber.subscribe(TEST_TOPIC, event -> {
-			if (TEST_TOPIC.equals(event.getTopic())) {
-				seen.incrementAndGet();
+		subscriber.subscribe(TEST_TOPIC, new EventHandler() {
+			@Override
+			public void handleEvent(Event event) {
+				if (TEST_TOPIC.equals(event.getTopic())) {
+					seen.incrementAndGet();
+				}
 			}
 		});
 
@@ -95,9 +102,12 @@ public class EventBrokerTest extends UITest {
 	public void testMultipleSubscriptions() {
 		IEventBroker eb = context.get(IEventBroker.class);
 		assertNotNull(eb);
-		EventHandler handler = event -> {
-			if (TEST_TOPIC.equals(event.getTopic())) {
-				seen.incrementAndGet();
+		EventHandler handler = new EventHandler() {
+			@Override
+			public void handleEvent(Event event) {
+				if (TEST_TOPIC.equals(event.getTopic())) {
+					seen.incrementAndGet();
+				}
 			}
 		};
 

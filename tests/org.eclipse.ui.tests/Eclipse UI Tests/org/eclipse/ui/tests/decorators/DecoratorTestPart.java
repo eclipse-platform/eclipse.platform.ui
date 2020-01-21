@@ -15,6 +15,7 @@ package org.eclipse.ui.tests.decorators;
 
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IDecoratorManager;
 import org.eclipse.ui.PlatformUI;
@@ -59,8 +60,15 @@ public abstract class DecoratorTestPart extends ViewPart {
 	 * @return
 	 */
 	private ILabelProviderListener getDecoratorManagerListener() {
-		// Reset the end time each time we get an update
-		listener = event -> endTime = System.currentTimeMillis() + DELAY_TIME;
+		listener = new ILabelProviderListener() {
+
+			@Override
+			public void labelProviderChanged(LabelProviderChangedEvent event) {
+				// Reset the end time each time we get an update
+				endTime = System.currentTimeMillis() + DELAY_TIME;
+
+			}
+		};
 
 		return listener;
 	}

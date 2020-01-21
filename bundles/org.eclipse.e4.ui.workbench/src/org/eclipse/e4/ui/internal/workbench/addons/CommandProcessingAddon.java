@@ -42,6 +42,7 @@ import org.eclipse.e4.ui.model.application.commands.MCommand;
 import org.eclipse.e4.ui.model.application.commands.MCommandParameter;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
 /**
@@ -124,14 +125,17 @@ public class CommandProcessingAddon {
 	}
 
 	private void registerModelListeners() {
-		additionHandler = event -> {
-			if (application == event.getProperty(UIEvents.EventTags.ELEMENT)) {
-				if (UIEvents.isADD(event)) {
-					for (Object obj : UIEvents.asIterable(event, UIEvents.EventTags.NEW_VALUE)) {
-						if (obj instanceof MCommand) {
-							createCommand((MCommand) obj);
-						} else if (obj instanceof MCategory) {
-							createCategory((MCategory) obj);
+		additionHandler = new EventHandler() {
+			@Override
+			public void handleEvent(Event event) {
+				if (application == event.getProperty(UIEvents.EventTags.ELEMENT)) {
+					if (UIEvents.isADD(event)) {
+						for (Object obj : UIEvents.asIterable(event, UIEvents.EventTags.NEW_VALUE)) {
+							if (obj instanceof MCommand) {
+								createCommand((MCommand) obj);
+							} else if (obj instanceof MCategory) {
+								createCategory((MCategory) obj);
+							}
 						}
 					}
 				}

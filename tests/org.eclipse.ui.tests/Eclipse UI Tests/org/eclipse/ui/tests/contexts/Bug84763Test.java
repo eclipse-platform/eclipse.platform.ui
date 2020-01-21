@@ -23,6 +23,7 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
+import org.eclipse.core.commands.contexts.ContextManagerEvent;
 import org.eclipse.core.commands.contexts.IContextManagerListener;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.BindingManager;
@@ -87,14 +88,22 @@ public final class Bug84763Test extends UITestCase {
 	@Override
 	protected void doSetUp() {
 		contextManager = new ContextManager();
-		contextManagerListener = contextManagerEvent -> {
-			previousContextIds = contextManagerEvent.getPreviouslyActiveContextIds();
-			if (previousContextIds != null) {
-				previousContextIds = new HashSet<>(previousContextIds);
+		contextManagerListener = new IContextManagerListener() {
+
+			@Override
+			public void contextManagerChanged(
+					ContextManagerEvent contextManagerEvent) {
+				previousContextIds = contextManagerEvent
+						.getPreviouslyActiveContextIds();
+				if (previousContextIds != null) {
+					previousContextIds = new HashSet<>(previousContextIds);
+				}
 			}
+
 		};
 		contextManager.addContextManagerListener(contextManagerListener);
-		bindingManager = new BindingManager(contextManager, new CommandManager());
+		bindingManager = new BindingManager(contextManager,
+				new CommandManager());
 	}
 
 	/**

@@ -659,10 +659,14 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 	}
 
 	private Predicate<ISelectionModel> getCountingPredicate(boolean bool) {
-		return pT -> {
-			fCounter++;
-			System.out.println("Return " + bool);
-			return bool;
+		return new Predicate<SelectionListenerFactory.ISelectionModel>() {
+
+			@Override
+			public boolean test(ISelectionModel pT) {
+				fCounter++;
+				System.out.println("Return " + bool);
+				return bool;
+			}
 		};
 	}
 

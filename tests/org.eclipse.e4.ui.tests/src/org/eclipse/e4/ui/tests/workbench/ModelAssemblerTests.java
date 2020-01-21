@@ -53,6 +53,7 @@ import org.eclipse.e4.ui.model.fragment.MFragmentFactory;
 import org.eclipse.e4.ui.model.fragment.MModelFragment;
 import org.eclipse.e4.ui.model.fragment.MModelFragments;
 import org.eclipse.e4.ui.model.fragment.MStringModelFragment;
+import org.eclipse.e4.ui.workbench.Selector;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.EObject;
@@ -113,8 +114,13 @@ public class ModelAssemblerTests {
 		assertTrue(elements.isEmpty());
 
 		List<MApplicationElement> modelElements = modelService.findElements(application, MApplicationElement.class,
-				EModelService.ANYWHERE, element -> element.getContributorURI() != null
-						&& element.getContributorURI().equals(contributorURI));
+				EModelService.ANYWHERE, new Selector() {
+					@Override
+					public boolean select(MApplicationElement element) {
+						return element.getContributorURI() != null
+								&& element.getContributorURI().equals(contributorURI);
+					}
+				});
 		assertTrue(modelElements.isEmpty());
 
 		verifyZeroInteractions(logger);

@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
@@ -91,9 +92,12 @@ public class ScopedPreferenceStoreTestCase extends UITestCase {
 		assertEquals("1.1", value, store.getString(key));
 
 		final boolean[] found = new boolean[1];
-		IPropertyChangeListener listener= event -> {
-			if (key.equals(event.getProperty()) && value.equals(event.getOldValue())) {
-				found[0] = true;
+		IPropertyChangeListener listener= new IPropertyChangeListener() {
+			@Override
+			public void propertyChange(PropertyChangeEvent event) {
+				if (key.equals(event.getProperty()) && value.equals(event.getOldValue())) {
+					found[0] = true;
+				}
 			}
 		};
 		store.addPropertyChangeListener(listener);

@@ -16,6 +16,7 @@ package org.eclipse.ui.tests.menus;
 
 import java.lang.reflect.Field;
 
+import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
@@ -96,7 +97,14 @@ public class MenuPopulationTest extends MenuTestCase {
 
 			window.getActivePage().showView(IPageLayout.ID_PROBLEM_VIEW);
 
-			processEventsUntil(() -> window.getActivePage().getActivePart() != null, 10000);
+			processEventsUntil(new Condition() {
+
+				@Override
+				public boolean compute() {
+					return window.getActivePage().getActivePart() != null;
+				}
+
+			}, 10000);
 
 
 			IWorkbenchPart problemsView = window.getActivePage().getActivePart();
@@ -161,11 +169,15 @@ public class MenuPopulationTest extends MenuTestCase {
 	 */
 	private boolean[] addLogger() {
 		final boolean []errorLogged = new boolean[] {false};
-		Platform.addLogListener((status, plugin) -> {
-			if("org.eclipse.ui.workbench".equals(status.getPlugin())
-					&& status.getSeverity() == IStatus.ERROR
-					&& status.getException() instanceof IndexOutOfBoundsException) {
-				errorLogged[0] = true;
+		Platform.addLogListener(new ILogListener() {
+
+			@Override
+			public void logging(IStatus status, String plugin) {
+				if("org.eclipse.ui.workbench".equals(status.getPlugin())
+						&& status.getSeverity() == IStatus.ERROR
+						&& status.getException() instanceof IndexOutOfBoundsException) {
+					errorLogged[0] = true;
+				}
 			}
 		});
 		return errorLogged;
@@ -199,7 +211,12 @@ public class MenuPopulationTest extends MenuTestCase {
 
 			window.getActivePage().showView(IPageLayout.ID_PROBLEM_VIEW);
 
-			processEventsUntil(() -> window.getActivePage().getActivePart() != null, 10000);
+			processEventsUntil(new Condition() {
+				@Override
+				public boolean compute() {
+					return window.getActivePage().getActivePart() != null;
+				}
+			}, 10000);
 
 			IWorkbenchPart problemsView = window.getActivePage().getActivePart();
 			assertNotNull(problemsView);
@@ -690,7 +707,14 @@ public class MenuPopulationTest extends MenuTestCase {
 
 			window.getActivePage().showView(EmptyView.ID);
 
-				processEventsUntil(() -> window.getActivePage().getActivePart() != null, 10000);
+				processEventsUntil(new Condition() {
+
+					@Override
+					public boolean compute() {
+						return window.getActivePage().getActivePart() != null;
+					}
+
+				}, 10000);
 
 				IWorkbenchPart activePart = window.getActivePage().getActivePart();
 				assertNotNull(activePart);

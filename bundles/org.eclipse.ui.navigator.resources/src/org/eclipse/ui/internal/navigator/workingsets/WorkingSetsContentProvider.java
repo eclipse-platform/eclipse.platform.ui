@@ -26,6 +26,7 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.ui.IAggregateWorkingSet;
 import org.eclipse.ui.IMemento;
@@ -75,15 +76,21 @@ public class WorkingSetsContentProvider implements ICommonContentProvider {
 	private CommonNavigator projectExplorer;
 	private CommonViewer viewer;
 
-	private IPropertyChangeListener rootModeListener = event -> {
-		if(SHOW_TOP_LEVEL_WORKING_SETS.equals(event.getProperty())) {
-			updateRootMode();
+	private IPropertyChangeListener rootModeListener = new IPropertyChangeListener() {
+		@Override
+		public void propertyChange(PropertyChangeEvent event) {
+			if(SHOW_TOP_LEVEL_WORKING_SETS.equals(event.getProperty())) {
+				updateRootMode();
+			}
 		}
 	};
 
-	private IPropertyChangeListener workingSetManagerListener = event -> {
-		if (helper != null) {
-			helper.refreshWorkingSetTreeState();
+	private IPropertyChangeListener workingSetManagerListener = new IPropertyChangeListener() {
+		@Override
+		public void propertyChange(PropertyChangeEvent event) {
+			if (helper != null) {
+				helper.refreshWorkingSetTreeState();
+			}
 		}
 	};
 
