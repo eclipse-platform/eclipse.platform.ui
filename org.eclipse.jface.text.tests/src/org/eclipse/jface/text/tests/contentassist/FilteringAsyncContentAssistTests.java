@@ -15,6 +15,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.concurrent.CountDownLatch;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -153,7 +154,7 @@ public class FilteringAsyncContentAssistTests {
 
 		((ICompletionProposalExtension) filteredProposals.get(0)).apply(document, (char) 0,
 				viewer.getSelectedRange().x);
-		assertEquals("xxx", document.get());
+		assertEquals("xx", document.get());
 	}
 
 	/**
@@ -312,6 +313,46 @@ public class FilteringAsyncContentAssistTests {
 		filteredProposals = getFilteredProposals(ca, p -> p instanceof IncompleteCompletionProposal);
 		assertTrue(filteredProposals == null || filteredProposals.isEmpty());
 	}
+	
+	@Test
+	public void testProposalValidation() throws Exception {
+		IDocument document= viewer.getDocument();
+
+		BlockingProcessor processor= new BlockingProcessor("abcd()");
+		ca.addContentAssistProcessor(processor, IDocument.DEFAULT_CONTENT_TYPE);
+		
+		ca.install(viewer);
+		
+		viewer.setSelectedRange(0, 0);
+		
+		ca.showPossibleCompletions();
+		DisplayHelper.sleep(shell.getDisplay(), 50);
+		
+		new InsertEdit(0, "a").apply(document);
+		viewer.setSelectedRange(1, 0);
+		new InsertEdit(1, "b").apply(document);
+		viewer.setSelectedRange(2, 0);
+		
+		processor.blocked.countDown();
+		DisplayHelper.sleep(shell.getDisplay(), 100);
+		
+		new InsertEdit(2, "c").apply(document);
+		viewer.setSelectedRange(3, 0);
+		new InsertEdit(3, "d").apply(document);
+		viewer.setSelectedRange(4, 0);
+
+		DisplayHelper.sleep(shell.getDisplay(), 100);
+		
+		List<ICompletionProposal> filteredProposals= getFilteredProposals(ca,
+				p -> p instanceof CompletionProposal);
+		assertTrue(filteredProposals != null);
+		assertEquals(1, filteredProposals.size());
+		
+		filteredProposals.get(0).apply(document);
+		
+		assertEquals("abcd()", document.get());
+		
+	}
 
 	private class ImmediateContentAssistProcessor implements IContentAssistProcessor {
 
@@ -408,6 +449,26 @@ public class FilteringAsyncContentAssistTests {
 			return completionProposals;
 		}
 	}
+	
+	private class BlockingProcessor extends ImmediateContentAssistProcessor {
+
+		final CountDownLatch blocked= new CountDownLatch(1);
+
+		BlockingProcessor(String template) {
+			super(template, false);
+		}
+
+		@Override
+		public ICompletionProposal[] computeCompletionProposals(ITextViewer textViewer, int offset) {
+			try {
+				blocked.await();
+			} catch (InterruptedException e) {
+				throw new IllegalStateException("Cannot generate delayed content assist proposals!");
+			}
+
+			return super.computeCompletionProposals(textViewer, offset);
+		}
+	}
 
 	@SuppressWarnings("unchecked")
 	private static List<ICompletionProposal> getComputedProposals(ContentAssistant ca) throws Exception {
@@ -456,7 +517,7 @@ public class FilteringAsyncContentAssistTests {
 		/** The replacement offset. */
 		protected int fReplacementOffset;
 		/** The replacement length. */
-		private int fReplacementLength;
+		protected int fReplacementLength;
 		/** The cursor position after this proposal has been applied. */
 		private int fCursorPosition;
 
@@ -530,6 +591,9 @@ public class FilteringAsyncContentAssistTests {
 
 		@Override
 		public boolean validate(IDocument document, int offset, DocumentEvent event) {
+			if (event != null) {
+				fReplacementLength += event.fText.length() - event.fLength;
+			}
 			if (offset > fReplacementOffset) {
 				try {
 					return isSubstringFoundOrderedInString(document.get(fReplacementOffset, offset - fReplacementOffset), fReplacementString);

@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.osgi.util.TextProcessor;
 
@@ -350,10 +351,8 @@ class CompletionProposalPopup implements IContentAssistListener {
 	private final Runnable fFilterRunnable= new Runnable() {
 		@Override
 		public void run() {
-			if (!fIsFilterPending)
+			if (!fIsFilterPending.compareAndSet(true, false))
 				return;
-
-			fIsFilterPending= false;
 
 			if (!Helper.okToUse(fContentAssistSubjectControlAdapter.getControl()))
 				return;
@@ -367,7 +366,6 @@ class CompletionProposalPopup implements IContentAssistListener {
 					proposals= computeFilteredProposals(offset, event);
 				}
 			} catch (BadLocationException x) {
-			} finally {
 				fDocumentEvents.clear();
 			}
 			fFilterOffset= offset;
@@ -395,7 +393,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 *
 	 * @since 3.1.1
 	 */
-	private boolean fIsFilterPending= false;
+	private final AtomicBoolean fIsFilterPending= new AtomicBoolean(false);
 	/**
 	 * The info message at the bottom of the popup, or <code>null</code> for no popup (if
 	 * ContentAssistant does not provide one).
@@ -936,7 +934,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		/* Make sure that there is no filter runnable pending.
 		 * See https://bugs.eclipse.org/bugs/show_bug.cgi?id=31427
 		 */
-		if (fIsFilterPending)
+		if (fIsFilterPending.get())
 			fFilterRunnable.run();
 
 		// filter runnable may have hidden the proposals
@@ -1494,8 +1492,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * offset of the original invocation of the content assistant.
 	 */
 	void filterProposals() {
-		if (!fIsFilterPending) {
-			fIsFilterPending= true;
+		if (fIsFilterPending.compareAndSet(false, true)) {
 			Control control= fContentAssistSubjectControlAdapter.getControl();
 			control.getDisplay().asyncExec(fFilterRunnable);
 		}
@@ -1511,6 +1508,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 	 * @since 3.0
 	 */
 	List<ICompletionProposal> computeFilteredProposals(int offset, DocumentEvent event) {
+		fDocumentEvents.clear();
 
 		if (offset == fInvocationOffset && event == null) {
 			fIsFilteredSubset= false;
