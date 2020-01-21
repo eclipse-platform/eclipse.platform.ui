@@ -113,7 +113,8 @@ public abstract class AbstractCSSSWTEngineImpl extends CSSEngineImpl {
 	 */
 	protected boolean isStylable(Widget widget) {
 		// allows widgets to be selectively excluded from styling
-		return !Boolean.TRUE.equals(widget.getData("org.eclipse.e4.ui.css.disabled")); //$NON-NLS-1$
+		return !widget.isDisposed()
+			&& !Boolean.TRUE.equals(widget.getData("org.eclipse.e4.ui.css.disabled")); //$NON-NLS-1$
 	}
 
 	@Override
