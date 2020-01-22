@@ -29,6 +29,5 @@
 	<properties>
 		<testSuite>${project.artifactId}</testSuite>
 		<testClass>org.eclipse.text.quicksearch.tests.*Test</testClass>
-		<skipAPIAnalysis>true</skipAPIAnalysis> <!-- https://bugs.eclipse.org/bugs/show_bug.cgi?id=548518#c41 -->
 	</properties>
 </project>
