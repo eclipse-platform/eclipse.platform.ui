@@ -20,7 +20,6 @@ import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Font;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.dialogs.StyledStringHighlighter;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
@@ -35,14 +34,12 @@ public class StyledStringHighlighterTest extends UITestCase {
 	}
 
 	private StyledStringHighlighter cut;
-	private static Display display;
 	private static Font font;
 	private static BoldStylerProvider boldStyler;
 
 	@Override
 	public void doSetUp() {
-		display = Display.getCurrent();
-		font = new Font(display, "Arial", 14, SWT.BOLD);
+		font = new Font(fWorkbench.getDisplay(), "Arial", 14, SWT.BOLD);
 		boldStyler = new BoldStylerProvider(font);
 		cut = new StyledStringHighlighter();
 	}
@@ -56,10 +53,6 @@ public class StyledStringHighlighterTest extends UITestCase {
 		if (font != null && !font.isDisposed()) {
 			font.dispose();
 			font = null;
-		}
-		if (display != null && !display.isDisposed()) {
-			display.dispose();
-			display = null;
 		}
 	}
 
