@@ -105,36 +105,39 @@ public class WizardsStatusHandlingTestCase {
 		UITestCase.processEvents();
 
 		final CustomWizardDialog dialog = exportWizard();
-		dialog.setBlockOnOpen(false);
-		dialog.open();
+		try {
+			dialog.setBlockOnOpen(false);
+			dialog.open();
 
-		UITestCase.processEvents();
+			UITestCase.processEvents();
 
-		// selecting FaultyExportWizard
-		IWizardPage currenPage = dialog.getCurrentPage();
-		Composite control = (Composite) currenPage.getControl();
-		Control[] widgets = control.getChildren();
+			// selecting FaultyExportWizard
+			IWizardPage currenPage = dialog.getCurrentPage();
+			Composite control = (Composite) currenPage.getControl();
+			Control[] widgets = control.getChildren();
 
-		Table table = (Table) widgets[1];
+			Table table = (Table) widgets[1];
 
-		for (int i = 0; i < table.getItemCount(); i++) {
-			if (table.getItem(i).getText().equals(FAULTY_WIZARD_NAME)) {
-				table.select(i);
-				table.notifyListeners(SWT.Selection, new Event());
-				UITestCase.processEvents();
-				break;
+			for (int i = 0; i < table.getItemCount(); i++) {
+				if (table.getItem(i).getText().equals(FAULTY_WIZARD_NAME)) {
+					table.select(i);
+					table.notifyListeners(SWT.Selection, new Event());
+					UITestCase.processEvents();
+					break;
+				}
 			}
+
+			// pressing "Next"
+			TestStatusHandler.install();
+
+			dialog.nextPressed2();
+
+			UITestCase.processEvents();
+			assertStatusAdapter(TestStatusHandler.getLastHandledStatusAdapter());
+			assertEquals(TestStatusHandler.getLastHandledStyle(), StatusManager.SHOW);
+		} finally {
+			dialog.close();
 		}
-
-		// pressing "Next"
-		TestStatusHandler.install();
-
-		dialog.nextPressed2();
-
-		UITestCase.processEvents();
-		assertStatusAdapter(TestStatusHandler.getLastHandledStatusAdapter());
-		assertEquals(TestStatusHandler.getLastHandledStyle(),
-				StatusManager.SHOW);
 	}
 
 	/**

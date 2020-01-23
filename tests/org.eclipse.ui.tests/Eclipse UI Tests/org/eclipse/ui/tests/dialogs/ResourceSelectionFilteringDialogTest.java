@@ -64,12 +64,16 @@ public class ResourceSelectionFilteringDialogTest extends UITestCase {
 		IFile file = project.getFile("a/b/c/f");
 		file.create(new ByteArrayInputStream(new byte[0]), true, null);
 		SeeThroughFilteredResourcesSelectionDialog dialog = createDialog();
-		dialog.setInitialPattern("c/f");
-		dialog.open();
-		dialog.refresh();
-		Assert.assertTrue(DisplayHelper.waitForCondition(dialog.getShell().getDisplay(), 3000, () ->
-			file.equals(dialog.getSelectedItems().getFirstElement())
-		));
+		try {
+			dialog.setInitialPattern("c/f");
+			dialog.open();
+			dialog.refresh();
+			Assert.assertTrue(DisplayHelper.waitForCondition(dialog.getShell().getDisplay(), 3000,
+					() -> file.equals(dialog.getSelectedItems().getFirstElement())
+			));
+		} finally {
+			dialog.close();
+		}
 	}
 
 	@Override
