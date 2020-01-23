@@ -25,15 +25,15 @@ For a complete guide, see the [Platform UI - How to contribute wiki page][2] pag
 Test dependencies
 -----------------
 
-Several test plug-ins have a dependency to the Mockito and Hamcrest library.
-Please install them from the [Orbit Download page][3]
+Several test plug-ins have a dependency to the Mockito and Hamcrest libraries.
+Please install them from the Orbit Download page][3]:
 
-Currently the following versions are required:
-
-- org.hamcrest;bundle-version="1.3.0",
-- org.mockito;bundle-version="2.13",
-
-
+Currently the following plug-ins are required:
+- net.bytebuddy.byte-buddy
+- net.bytebuddy.byte-buddy-agent
+- org.hamcrest.core
+- org.mockito
+- org.objenesis
 
 How to build on the command line
 --------------------------------
