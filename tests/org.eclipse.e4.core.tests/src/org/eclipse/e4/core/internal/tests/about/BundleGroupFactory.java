@@ -51,7 +51,7 @@ final class BundleGroupFactory {
 
 			@Override
 			public IBundleGroup[] getBundleGroups() {
-				return groups.stream().map(x -> x.create()).toArray(IBundleGroup[]::new);
+				return groups.stream().map(BundleGroupFactory::create).toArray(IBundleGroup[]::new);
 			}
 		};
 	}

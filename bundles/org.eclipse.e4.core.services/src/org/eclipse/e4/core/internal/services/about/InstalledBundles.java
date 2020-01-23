@@ -34,7 +34,7 @@ public class InstalledBundles implements ISystemInformation {
 	public void append(PrintWriter writer) {
 		Bundle[] bundles = FrameworkUtil.getBundle(InstalledBundles.class).getBundleContext().getBundles();
 		Map<String, String> headers = Arrays.stream(bundles).collect(
-				Collectors.toMap(b -> identify(b), b -> name(b)));
+				Collectors.toMap(this::identify, this::name));
 		Arrays.stream(bundles).sorted(createComparator(headers)).forEach(b -> writeBundleInfo(writer, b));
 	}
 

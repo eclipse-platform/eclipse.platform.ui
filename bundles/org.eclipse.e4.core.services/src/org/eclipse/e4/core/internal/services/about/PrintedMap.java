@@ -25,7 +25,7 @@ abstract class PrintedMap implements ISystemInformation {
 
 	@Override
 	public void append(PrintWriter writer) {
-		source().entrySet().stream().flatMap(x -> mapEntry(x)).forEach((String s) -> writer.println(s));
+		source().entrySet().stream().flatMap(this::mapEntry).forEach((String s) -> writer.println(s));
 	}
 
 	protected abstract TreeMap<String, String> source();
