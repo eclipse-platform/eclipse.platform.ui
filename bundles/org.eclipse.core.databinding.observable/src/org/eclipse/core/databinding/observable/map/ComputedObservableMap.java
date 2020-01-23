@@ -159,7 +159,7 @@ public abstract class ComputedObservableMap<K, V> extends AbstractObservableMap<
 
 	@Override
 	protected void firstListenerAdded() {
-		getRealm().exec(() -> hookListeners());
+		getRealm().exec(this::hookListeners);
 	}
 
 	@Override

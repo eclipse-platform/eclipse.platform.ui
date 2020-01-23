@@ -87,7 +87,7 @@ public final class CompositeSideEffect implements ISideEffect {
 			return;
 		}
 		sideEffects.forEach(s -> s.removeDisposeListener(removalConsumer));
-		sideEffects.forEach(s -> s.dispose());
+		sideEffects.forEach(ISideEffect::dispose);
 		sideEffects.clear();
 		isDisposed = true;
 		if (disposeListeners != null) {
@@ -129,7 +129,7 @@ public final class CompositeSideEffect implements ISideEffect {
 		checkRealm();
 		pauseDepth++;
 		if (pauseDepth == 1) {
-			sideEffects.forEach(s -> s.pause());
+			sideEffects.forEach(ISideEffect::pause);
 		}
 	}
 
@@ -141,7 +141,7 @@ public final class CompositeSideEffect implements ISideEffect {
 			throw new IllegalStateException(
 					"The resume() method was called more times than pause()."); //$NON-NLS-1$
 		} else if (pauseDepth == 0) {
-			sideEffects.forEach(s -> s.resume());
+			sideEffects.forEach(ISideEffect::resume);
 		}
 	}
 
@@ -150,7 +150,7 @@ public final class CompositeSideEffect implements ISideEffect {
 		checkRealm();
 		pauseDepth--;
 		if (pauseDepth == 0) {
-			sideEffects.forEach(s -> s.resumeAndRunIfDirty());
+			sideEffects.forEach(ISideEffect::resumeAndRunIfDirty);
 		}
 	}
 
@@ -158,7 +158,7 @@ public final class CompositeSideEffect implements ISideEffect {
 	public void runIfDirty() {
 		checkRealm();
 		if (pauseDepth <= 0) {
-			sideEffects.forEach(s -> s.runIfDirty());
+			sideEffects.forEach(ISideEffect::runIfDirty);
 		}
 	}
 

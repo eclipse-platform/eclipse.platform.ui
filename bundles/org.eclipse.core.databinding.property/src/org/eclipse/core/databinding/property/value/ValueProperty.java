@@ -120,7 +120,7 @@ public abstract class ValueProperty<S, T> implements IValueProperty<S, T> {
 
 	@Override
 	public IObservableFactory<S, IObservableValue<T>> valueFactory() {
-		return target -> observe(target);
+		return this::observe;
 	}
 
 	@Override

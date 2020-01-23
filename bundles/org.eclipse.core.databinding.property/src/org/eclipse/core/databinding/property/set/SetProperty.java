@@ -143,7 +143,7 @@ public abstract class SetProperty<S, E> implements ISetProperty<S, E> {
 
 	@Override
 	public IObservableFactory<S, IObservableSet<E>> setFactory() {
-		return target -> observe(target);
+		return this::observe;
 	}
 
 	@Override

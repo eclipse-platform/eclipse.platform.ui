@@ -144,7 +144,7 @@ public abstract class MapProperty<S, K, V> implements IMapProperty<S, K, V> {
 
 	@Override
 	public IObservableFactory<S, IObservableMap<K, V>> mapFactory() {
-		return target -> observe(target);
+		return this::observe;
 	}
 
 	@Override

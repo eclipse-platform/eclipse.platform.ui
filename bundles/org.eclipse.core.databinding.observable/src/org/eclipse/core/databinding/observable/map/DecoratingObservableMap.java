@@ -91,7 +91,7 @@ public class DecoratingObservableMap<K, V> extends DecoratingObservable
 	@Override
 	protected void firstListenerAdded() {
 		if (mapChangeListener == null) {
-			mapChangeListener = event -> DecoratingObservableMap.this.handleMapChange(event);
+			mapChangeListener = DecoratingObservableMap.this::handleMapChange;
 		}
 		decorated.addMapChangeListener(mapChangeListener);
 		super.firstListenerAdded();

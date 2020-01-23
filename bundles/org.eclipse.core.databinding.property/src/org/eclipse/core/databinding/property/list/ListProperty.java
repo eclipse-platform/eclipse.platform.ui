@@ -141,7 +141,7 @@ public abstract class ListProperty<S, E> implements IListProperty<S, E> {
 
 	@Override
 	public IObservableFactory<S, IObservableList<E>> listFactory() {
-		return target -> observe(target);
+		return this::observe;
 	}
 
 	@Override

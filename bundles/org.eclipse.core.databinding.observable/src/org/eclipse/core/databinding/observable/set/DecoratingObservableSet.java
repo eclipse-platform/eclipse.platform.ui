@@ -83,7 +83,7 @@ public class DecoratingObservableSet<E> extends
 	@Override
 	protected void firstListenerAdded() {
 		if (setChangeListener == null) {
-			setChangeListener = event -> DecoratingObservableSet.this.handleSetChange(event);
+			setChangeListener = DecoratingObservableSet.this::handleSetChange;
 		}
 		decorated.addSetChangeListener(setChangeListener);
 		super.firstListenerAdded();

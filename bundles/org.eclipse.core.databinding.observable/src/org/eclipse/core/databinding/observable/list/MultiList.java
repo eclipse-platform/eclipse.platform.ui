@@ -160,7 +160,7 @@ public class MultiList<E> extends AbstractObservableList<E> {
 			});
 		}
 		if (staleListener == null) {
-			staleListener = staleEvent -> getRealm().exec(() -> makeStale());
+			staleListener = staleEvent -> getRealm().exec(this::makeStale);
 		}
 
 		for (IObservableList<E> list : lists) {

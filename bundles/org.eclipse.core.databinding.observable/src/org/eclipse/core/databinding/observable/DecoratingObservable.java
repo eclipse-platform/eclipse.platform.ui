@@ -69,7 +69,7 @@ public class DecoratingObservable extends AbstractObservable implements
 	@Override
 	protected void firstListenerAdded() {
 		if (staleListener == null) {
-			staleListener = staleEvent -> DecoratingObservable.this.handleStaleEvent(staleEvent);
+			staleListener = DecoratingObservable.this::handleStaleEvent;
 		}
 		decorated.addStaleListener(staleListener);
 	}

@@ -77,7 +77,7 @@ public class DecoratingObservableValue<T> extends DecoratingObservable
 	@Override
 	protected void firstListenerAdded() {
 		if (valueChangeListener == null) {
-			valueChangeListener = event -> DecoratingObservableValue.this.handleValueChange(event);
+			valueChangeListener = DecoratingObservableValue.this::handleValueChange;
 		}
 		decorated.addValueChangeListener(valueChangeListener);
 		super.firstListenerAdded();
