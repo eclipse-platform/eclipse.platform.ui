@@ -34,7 +34,7 @@ public class HistoryBucket extends Bucket {
 	 */
 	public static final class HistoryEntry extends Bucket.Entry {
 
-		final static Comparator<byte[]> COMPARATOR = (state1, state2) -> compareStates(state1, state2);
+		final static Comparator<byte[]> COMPARATOR = HistoryEntry::compareStates;
 
 		// the length of each component of the data array
 		private final static byte[][] EMPTY_DATA = new byte[0][];

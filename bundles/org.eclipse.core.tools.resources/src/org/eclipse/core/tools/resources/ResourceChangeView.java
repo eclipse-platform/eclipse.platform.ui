@@ -389,7 +389,7 @@ public class ResourceChangeView extends SpyView implements IResourceChangeListen
 
 		IActionBars bars = getViewSite().getActionBars();
 		IMenuManager menuMgr = bars.getMenuManager();
-		menuMgr.addMenuListener(manager -> fillPullDownBar(manager));
+		menuMgr.addMenuListener(this::fillPullDownBar);
 		fillPullDownBar(menuMgr);
 
 		// register for all types of events and then filter out the one that we

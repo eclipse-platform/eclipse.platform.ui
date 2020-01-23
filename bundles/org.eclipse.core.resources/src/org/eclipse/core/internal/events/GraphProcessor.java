@@ -105,7 +105,7 @@ class GraphProcessor<T> {
 		if (!complete()) {
 			if (!allTriggered()) {
 				Set<T> readyToBuild = computeReadyVertexes();
-				readyToBuild.forEach(item -> triggerJob(item));
+				readyToBuild.forEach(this::triggerJob);
 			}
 		}
 	}
