@@ -74,7 +74,7 @@ public class QuickAccessDialogTest extends UITestCase {
 		super.doSetUp();
 		Arrays.stream(Display.getDefault().getShells()).filter(isQuickAccessShell).forEach(Shell::close);
 		dialogSettings = new DialogSettings("QuickAccessDialogTest" + System.currentTimeMillis());
-		activeWorkbenchWindow = getWorkbench().getActiveWorkbenchWindow();
+		activeWorkbenchWindow = openTestWindow();
 		QuickAccessDialog warmupDialog = new QuickAccessDialog(activeWorkbenchWindow, null);
 		warmupDialog.open();
 		warmupDialog.close();
@@ -89,6 +89,7 @@ public class QuickAccessDialogTest extends UITestCase {
 	protected void doTearDown() throws Exception {
 		Arrays.stream(Display.getDefault().getShells()).filter(isQuickAccessShell)
 				.forEach(Shell::close);
+		super.doTearDown();
 	}
 
 	/**
@@ -162,7 +163,7 @@ public class QuickAccessDialogTest extends UITestCase {
 	}
 
 	@Test
-	public void testLongRunningComputerDoesntFreezeUI() throws InterruptedException {
+	public void testLongRunningComputerDoesntFreezeUI() {
 		QuickAccessDialog dialog = new QuickAccessDialog(activeWorkbenchWindow, null) {
 			@Override
 			protected IDialogSettings getDialogSettings() {
@@ -279,20 +280,20 @@ public class QuickAccessDialogTest extends UITestCase {
 		Table firstTable = dialog.getQuickAccessContents().getTable();
 		String quickAccessElementText = "Project Explorer";
 		text.setText(quickAccessElementText);
-		assertTrue("Missing entry", DisplayHelper.waitForCondition(firstTable.getDisplay(), TIMEOUT, () ->
-			dialogContains(dialog, quickAccessElementText)
-		));
-		// it seems like the 1st proposal isn't really "Project Explorer" on "official"
-		// tests?
-		System.out.println("Quick Access entries after querying '" + quickAccessElementText + '\'');
-		System.out.println(getAllEntries(firstTable).stream().map(s -> "* " + s).collect(Collectors.joining("\n")));
-		String selectedProposal = firstTable.getItem(0).getText(1);
+		assertTrue("Missing entry", DisplayHelper.waitForCondition(firstTable.getDisplay(),
+				TIMEOUT,
+				() -> dialogContains(dialog, quickAccessElementText)));
 		firstTable.select(0);
 		activateCurrentElement(dialog);
 		assertNotEquals(0, dialogSettings.getArray("orderedElements").length);
+		processEventsUntil(
+				() -> activeWorkbenchWindow.getActivePage() != null
+						&& activeWorkbenchWindow.getActivePage().getActivePart() != null
+						&& quickAccessElementText
+								.equalsIgnoreCase(activeWorkbenchWindow.getActivePage().getActivePart().getTitle()),
+				TIMEOUT);
 		// then try in a new SearchField
-		QuickAccessDialog secondDialog = new QuickAccessDialog(activeWorkbenchWindow,
-				null) {
+		QuickAccessDialog secondDialog = new QuickAccessDialog(activeWorkbenchWindow, null) {
 			@Override
 			protected IDialogSettings getDialogSettings() {
 				return dialogSettings;
@@ -301,7 +302,7 @@ public class QuickAccessDialogTest extends UITestCase {
 		secondDialog.open();
 		assertTrue("Missing entry in previous pick",
 				DisplayHelper.waitForCondition(secondDialog.getShell().getDisplay(), TIMEOUT,
-						() -> dialogContains(secondDialog, selectedProposal)));
+						() -> dialogContains(secondDialog, quickAccessElementText)));
 	}
 
 	private void activateCurrentElement(QuickAccessDialog dialog) {
