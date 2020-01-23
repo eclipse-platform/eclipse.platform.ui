@@ -36,15 +36,6 @@ public class UISynchronizer extends Synchronizer {
 	protected List pendingStartup = new ArrayList();
 
 	/**
-	 * If this boolean is set to true the synchronizer will fall back to the
-	 * behaviour it had prior to 3.3/3.4. Ie: there will be no restriction on what
-	 * runnables may be run via a/syncExec calls.
-	 *
-	 * @see IPreferenceConstants#USE_32_THREADING
-	 */
-	private boolean use32Threading = false;
-
-	/**
 	 * Setting this variable to the value {@link Boolean#TRUE} will allow a thread
 	 * to execute code during the startup sequence.
 	 */
@@ -83,8 +74,6 @@ public class UISynchronizer extends Synchronizer {
 	public UISynchronizer(Display display, UILockListener lock) {
 		super(display);
 		this.lockListener = lock;
-		use32Threading = WorkbenchPlugin.getDefault().getPreferenceStore()
-				.getBoolean(IPreferenceConstants.USE_32_THREADING);
 	}
 
 	public void started() {
@@ -109,8 +98,7 @@ public class UISynchronizer extends Synchronizer {
 
 	@Override
 	protected void asyncExec(Runnable runnable) {
-		// the following block should not be invoked if we're using 3.2 threading.
-		if (runnable != null && !use32Threading) {
+		if (runnable != null) {
 			synchronized (this) {
 				if (isStarting && !(runnable instanceof StartupRunnable) && overrideThread.get() == Boolean.FALSE) {
 
@@ -128,8 +116,7 @@ public class UISynchronizer extends Synchronizer {
 	public void syncExec(Runnable runnable) {
 
 		synchronized (this) {
-			// the following block should not be invoked if we're using 3.2 threading.
-			if (isStarting && !use32Threading && startupThread.get() == Boolean.FALSE
+			if (isStarting && startupThread.get() == Boolean.FALSE
 					&& overrideThread.get() == Boolean.FALSE) {
 				do {
 					try {
