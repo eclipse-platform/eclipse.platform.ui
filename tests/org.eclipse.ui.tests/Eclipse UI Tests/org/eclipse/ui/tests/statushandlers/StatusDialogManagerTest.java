@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -93,7 +93,7 @@ public class StatusDialogManagerTest {
 	@Before
 	public void setUp() throws Exception {
 		automatedMode = ErrorDialog.AUTOMATED_MODE;
-		wsdm = new WorkbenchStatusDialogManager(null, null);
+		wsdm = new WorkbenchStatusDialogManager(null);
 		ErrorDialog.AUTOMATED_MODE = false;
 		wsdm.setProperty(IStatusDialogConstants.ANIMATION, Boolean.FALSE);
 		FreezeMonitor.expectCompletionIn(60_000);
@@ -977,19 +977,28 @@ public class StatusDialogManagerTest {
 	@Test
 	public void testBug288765() {
 		wsdm.addStatusAdapter(createStatusAdapter(MESSAGE_1), false);
+		Shell shell = StatusDialogUtil.getStatusShell();
+		// Move to top before opening details area. The test checks if a detail area
+		// with a lot of text is larger than an area with few text. The status dialog
+		// respects the available screen space below the dialog. In rare cases the
+		// available space is so that the long text detail area is sized exactly the
+		// same as the short detail area. The dialog location depends on the parent
+		// window location and the parent window location is depending on platform
+		// random.
+		// Fix is to move the dialog to screen top to use the maximum available screen
+		// space.
+		shell.setLocation(shell.getLocation().x, 0);
 		selectWidget(StatusDialogUtil.getDetailsButton());
-		int sizeY = StatusDialogUtil.getStatusShell().getSize().y;
+		int sizeY = shell.getSize().y;
 		selectWidget(StatusDialogUtil.getOkButton());
-		MultiStatus ms = new MultiStatus("org.eclipse.ui.tests", 0, MESSAGE_1,
-				null);
+		MultiStatus ms = new MultiStatus("org.eclipse.ui.tests", 0, MESSAGE_1, null);
 		for (int i = 0; i < 50; i++) {
-			ms
-					.add(new Status(IStatus.ERROR, "org.eclipse.ui.tests",
-							MESSAGE_2));
+			ms.add(new Status(IStatus.ERROR, "org.eclipse.ui.tests", MESSAGE_2));
 		}
 		wsdm.addStatusAdapter(new StatusAdapter(ms), false);
+		shell = StatusDialogUtil.getStatusShell();
+		shell.setLocation(shell.getLocation().x, 0);
 		selectWidget(StatusDialogUtil.getDetailsButton());
-		Shell shell = StatusDialogUtil.getStatusShell();
 		Rectangle newSize = shell.getBounds();
 		assertTrue(newSize.height > sizeY);
 	}
