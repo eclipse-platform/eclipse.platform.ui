@@ -229,11 +229,6 @@ public abstract class ObservableSet<E> extends AbstractObservable implements
 	}
 
 	@Override
-	public synchronized void dispose() {
-		super.dispose();
-	}
-
-	@Override
 	public Object getElementType() {
 		return elementType;
 	}

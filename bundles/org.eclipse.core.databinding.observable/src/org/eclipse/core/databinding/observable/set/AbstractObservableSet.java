@@ -51,16 +51,6 @@ public abstract class AbstractObservableSet<E> extends AbstractObservable
 		this(Realm.getDefault());
 	}
 
-	@Override
-	protected void firstListenerAdded() {
-		super.firstListenerAdded();
-	}
-
-	@Override
-	protected void lastListenerRemoved() {
-		super.lastListenerRemoved();
-	}
-
 	protected AbstractObservableSet(Realm realm) {
 		super(realm);
 	}

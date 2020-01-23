@@ -211,9 +211,4 @@ public class ObservableMap<K, V> extends AbstractObservable implements IObservab
 		getterCalled();
 		return wrappedMap.hashCode();
 	}
-
-	@Override
-	public synchronized void dispose() {
-		super.dispose();
-	}
 }
