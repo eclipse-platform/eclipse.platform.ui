@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -30,6 +30,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceMemento;
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.widgets.Display;
@@ -130,7 +131,6 @@ public abstract class UITestCase extends TestCase {
 
 	public UITestCase(String testName) {
 		super(testName);
-		//		ErrorDialog.NO_UI = true;
 		testWindows = new ArrayList<>(3);
 	}
 
@@ -262,6 +262,19 @@ public abstract class UITestCase extends TestCase {
 		removeWindowListener();
 		doTearDown();
 		fWorkbench = null;
+
+		// Check for modal shell leak.
+		List<String> leakedModalShellTitles = new ArrayList<>();
+		Shell[] shells = PlatformUI.getWorkbench().getDisplay().getShells();
+		for (Shell shell : shells) {
+			if (!shell.isDisposed() && shell.isVisible()
+					&& (shell.getStyle() & (SWT.APPLICATION_MODAL | SWT.PRIMARY_MODAL | SWT.SYSTEM_MODAL)) != 0) {
+				leakedModalShellTitles.add(shell.getText());
+				shell.close();
+			}
+		}
+		assertEquals("Test leaked modal shell: [" + String.join(", ", leakedModalShellTitles) + "]", 0,
+				leakedModalShellTitles.size());
 	}
 
 	/**
