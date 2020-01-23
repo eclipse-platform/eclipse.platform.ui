@@ -2,7 +2,7 @@
 <?NLS TYPE="org.eclipse.help.toc"?>
 
 <!--
-     Copyright (c) 2005, 2009 IBM Corporation and others.
+     Copyright (c) 2005, 2020 IBM Corporation and others.
 
      This program and the accompanying materials
      are made available under the terms of the Eclipse Public License 2.0
@@ -35,8 +35,10 @@
   </topic>
       <topic href="data/help/search/testnl8859.htm" label="ISO 8859-1 doc">
       </topic>
+      <topic href="data/help/search/testnl8859_html5.html" label="ISO 8859-1 doc html5"/>
       <topic href="data/help/search/testnlUTF8.htm" label="UTF-8 doc">
       </topic>
+      <topic href="data/help/search/testnlUTF8_html5.html" label="UTF-8 doc html5"/>
       <topic href="data/help/search/testMeta.htm" label="HTML doc with meta">
       </topic>
       <topic href="data/help/search/testMeta.xhtml" label="XHTML doc with meta">
