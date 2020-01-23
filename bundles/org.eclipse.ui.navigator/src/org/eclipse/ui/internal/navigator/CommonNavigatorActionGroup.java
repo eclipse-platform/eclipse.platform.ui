@@ -19,8 +19,6 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.commands.ActionHandler;
 import org.eclipse.jface.resource.ResourceLocator;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -96,21 +94,18 @@ public class CommonNavigatorActionGroup extends ActionGroup implements IMementoA
 		forwardAction = new ForwardAction(frameList);
 		upAction = new UpAction(frameList);
 
-		frameList.addPropertyChangeListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getProperty().equals(FrameList.P_RESET)) {
-					upAction.setEnabled(false);
-					backAction.setEnabled(false);
-					forwardAction.setEnabled(false);
+		frameList.addPropertyChangeListener(event -> {
+			if (event.getProperty().equals(FrameList.P_RESET)) {
+				upAction.setEnabled(false);
+				backAction.setEnabled(false);
+				forwardAction.setEnabled(false);
 
-					upAction.update();
-				}
-				commonNavigator.updateTitle();
-				IActionBars actionBars = commonNavigator.getViewSite().getActionBars();
-				updateToolBar(actionBars.getToolBarManager());
-				actionBars.updateActionBars();
+				upAction.update();
 			}
+			commonNavigator.updateTitle();
+			IActionBars actionBars = commonNavigator.getViewSite().getActionBars();
+			updateToolBar(actionBars.getToolBarManager());
+			actionBars.updateActionBars();
 		});
 
 		IHandlerService service = commonNavigator.getSite().getService(IHandlerService.class);

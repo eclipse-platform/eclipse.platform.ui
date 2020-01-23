@@ -106,16 +106,13 @@ public class CocoaUIHandler {
 	@PostConstruct
 	public void init() {
 		final Display display = Display.getDefault();
-		display.syncExec(new Runnable() {
-			@Override
-			public void run() {
-				hookApplicationMenu();
-				processModelMenus();
+		display.syncExec(() -> {
+			hookApplicationMenu();
+			processModelMenus();
 
-				// modify all shells opened on startup
-				for (MWindow window : app.getChildren()) {
-					modifyWindowShell(window);
-				}
+			// modify all shells opened on startup
+			for (MWindow window : app.getChildren()) {
+				modifyWindowShell(window);
 			}
 		});
 	}

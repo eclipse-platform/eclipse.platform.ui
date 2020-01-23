@@ -15,7 +15,6 @@ package org.eclipse.jface.examples.databinding.model;
 
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.databinding.validation.ValidationStatus;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.examples.databinding.ModelObject;
 
 public class Adventure extends ModelObject {
@@ -55,14 +54,11 @@ public class Adventure extends ModelObject {
 	}
 
 	public IValidator<Integer> getMaxNumberOfPeopleDomainValidator() {
-		return new IValidator<Integer>() {
-			@Override
-			public IStatus validate(Integer value) {
-				if (value < 1 || value > 20) {
-					return ValidationStatus.error("Max number of people must be between 1 and 20 inclusive");
-				}
-				return null;
+		return value -> {
+			if (value < 1 || value > 20) {
+				return ValidationStatus.error("Max number of people must be between 1 and 20 inclusive");
 			}
+			return null;
 		};
 	}
 

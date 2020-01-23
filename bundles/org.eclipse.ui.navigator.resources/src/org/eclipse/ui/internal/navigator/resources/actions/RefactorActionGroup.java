@@ -102,12 +102,7 @@ public class RefactorActionGroup extends ActionGroup {
 	}
 
 	protected void makeActions() {
-		IShellProvider sp = new IShellProvider() {
-			@Override
-			public Shell getShell() {
-				return shell;
-			}
-		};
+		IShellProvider sp = () -> shell;
 
 		moveAction = new MoveResourceAction(sp);
 		moveAction.setActionDefinitionId(IWorkbenchCommandConstants.FILE_MOVE);

@@ -62,14 +62,10 @@ public class StatusHandlingConfigurationTest extends TestCase {
 		adapter.setProperty(IProgressConstants.NO_IMMEDIATE_ERROR_PROMPT_PROPERTY, Boolean.TRUE);
 		final StatusAdapter adapter2 = new StatusAdapter(new Status(IStatus.ERROR,"fakeplugin2","testmessage2"));
 		final boolean[] called = new boolean[]{false};
-		StatusManager.getManager().addListener(new StatusManager.INotificationListener(){
-					@Override
-					public void statusManagerNotified(int type,
-							StatusAdapter[] adapters) {
-						if (type == INotificationTypes.HANDLED) {
-							called[0] = true;
-						}
-					}
+		StatusManager.getManager().addListener((type, adapters) -> {
+			if (type == INotificationTypes.HANDLED) {
+				called[0] = true;
+			}
 		});
 		StatusManager.getManager().handle(adapter, StatusManager.SHOW);
 		assertEquals(false, called[0]);

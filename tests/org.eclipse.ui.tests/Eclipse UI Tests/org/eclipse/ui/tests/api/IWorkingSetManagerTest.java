@@ -420,22 +420,11 @@ public class IWorkingSetManagerTest extends UITestCase {
 	public void testListenerSafety() throws Throwable {
 		final boolean[] result = new boolean[1];
 		// add a bogus listener that dies unexpectedly
-		IPropertyChangeListener badListener = new IPropertyChangeListener() {
+		IPropertyChangeListener badListener = event -> {
+			throw new RuntimeException();
 
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				throw new RuntimeException();
-
-			}
 		};
-		IPropertyChangeListener goodListener = new IPropertyChangeListener() {
-
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				result[0] = true;
-
-			}
-		};
+		IPropertyChangeListener goodListener = event -> result[0] = true;
 		fWorkingSetManager.addPropertyChangeListener(badListener);
 		fWorkingSetManager.addPropertyChangeListener(goodListener);
 		try {

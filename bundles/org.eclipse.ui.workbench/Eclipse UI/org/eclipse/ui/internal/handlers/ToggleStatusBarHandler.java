@@ -32,7 +32,6 @@ import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.services.IWorkbenchLocationService;
 import org.eclipse.ui.menus.UIElement;
 import org.eclipse.ui.services.IServiceScopes;
-import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
 /**
@@ -75,18 +74,15 @@ public class ToggleStatusBarHandler extends AbstractHandler implements IElementU
 	private void initializeEventHandler(IWorkbenchWindow window) {
 		final IEventBroker eventBroker = window.getService(IEventBroker.class);
 		eventBrokers.put(window, eventBroker);
-		EventHandler eventHandler = new EventHandler() {
-			@Override
-			public void handleEvent(Event event) {
-				Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
-				// if the current-window trim is the event element
-				if (element != null && element == getTrimStatus((WorkbenchWindow) window)) {
-					// refresh menu item label, triggering updateElement()
-					ICommandService commandService = window.getService(ICommandService.class);
-					Map<String, WorkbenchWindow> filter = new HashMap<>();
-					filter.put(IServiceScopes.WINDOW_SCOPE, (WorkbenchWindow) window);
-					commandService.refreshElements(COMMAND_ID_TOGGLE_STATUSBAR, filter);
-				}
+		EventHandler eventHandler = event -> {
+			Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
+			// if the current-window trim is the event element
+			if (element != null && element == getTrimStatus((WorkbenchWindow) window)) {
+				// refresh menu item label, triggering updateElement()
+				ICommandService commandService = window.getService(ICommandService.class);
+				Map<String, WorkbenchWindow> filter = new HashMap<>();
+				filter.put(IServiceScopes.WINDOW_SCOPE, (WorkbenchWindow) window);
+				commandService.refreshElements(COMMAND_ID_TOGGLE_STATUSBAR, filter);
 			}
 		};
 		eventHandlers.put(window, eventHandler);

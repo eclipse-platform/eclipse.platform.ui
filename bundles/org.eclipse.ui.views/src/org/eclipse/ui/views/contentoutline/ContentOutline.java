@@ -162,12 +162,7 @@ public class ContentOutline extends PageBookView implements ISelectionProvider, 
 	@Override
 	public <T> T getAdapter(Class<T> key) {
 		if (key == IContributedContentsView.class) {
-			return key.cast(new IContributedContentsView() {
-				@Override
-				public IWorkbenchPart getContributingPart() {
-					return getContributingEditor();
-				}
-			});
+			return key.cast((IContributedContentsView) () -> getContributingEditor());
 		}
 		return super.getAdapter(key);
 	}

@@ -249,14 +249,11 @@ public class TestMasterDetail {
 				return String.class;
 			}
 		};
-		IValidator<String> vowelValidator = new IValidator<String>() {
-			@Override
-			public IStatus validate(String value) {
-				if (!value.matches("[aeiouAEIOU]*")) {
-					return ValidationStatus.error("only vowels allowed");
-				}
-				return Status.OK_STATUS;
+		IValidator<String> vowelValidator = value -> {
+			if (!value.matches("[aeiouAEIOU]*")) {
+				return ValidationStatus.error("only vowels allowed");
 			}
+			return Status.OK_STATUS;
 		};
 		Binding b = dbc.bindValue(WidgetProperties.text(SWT.Modify).observe(name),
 				BeanProperties.value(SimplePerson.class, "name", String.class).observeDetail(selectedPerson),

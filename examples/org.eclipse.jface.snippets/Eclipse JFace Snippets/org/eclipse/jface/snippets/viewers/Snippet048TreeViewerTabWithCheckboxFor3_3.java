@@ -40,7 +40,6 @@ import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.jface.viewers.ViewerRow;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
@@ -187,25 +186,20 @@ public class Snippet048TreeViewerTabWithCheckboxFor3_3 {
 
 		v.setContentProvider(new MyContentProvider());
 		v.setInput(createModel());
-		v.getControl().addTraverseListener(new TraverseListener() {
+		v.getControl().addTraverseListener(e -> {
+			if( (e.detail == SWT.TRAVERSE_TAB_NEXT || e.detail == SWT.TRAVERSE_TAB_PREVIOUS) && mgr.getFocusCell().getColumnIndex() == 2 ) {
+				ColumnViewerEditor editor = v.getColumnViewerEditor();
+				ViewerCell cell = mgr.getFocusCell();
 
-			@Override
-			public void keyTraversed(TraverseEvent e) {
-				if( (e.detail == SWT.TRAVERSE_TAB_NEXT || e.detail == SWT.TRAVERSE_TAB_PREVIOUS) && mgr.getFocusCell().getColumnIndex() == 2 ) {
-					ColumnViewerEditor editor = v.getColumnViewerEditor();
-					ViewerCell cell = mgr.getFocusCell();
-
-					try {
-						Method m = ColumnViewerEditor.class.getDeclaredMethod("processTraverseEvent", new Class[] {int.class,ViewerRow.class,TraverseEvent.class});
-						m.setAccessible(true);
-						m.invoke(editor, Integer.valueOf(cell.getColumnIndex()), cell.getViewerRow(), e);
-					} catch (SecurityException | NoSuchMethodException | IllegalArgumentException | IllegalAccessException | InvocationTargetException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
+				try {
+					Method m = ColumnViewerEditor.class.getDeclaredMethod("processTraverseEvent", new Class[] {int.class,ViewerRow.class,TraverseEvent.class});
+					m.setAccessible(true);
+					m.invoke(editor, Integer.valueOf(cell.getColumnIndex()), cell.getViewerRow(), e);
+				} catch (SecurityException | NoSuchMethodException | IllegalArgumentException | IllegalAccessException | InvocationTargetException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
 				}
 			}
-
 		});
 	}
 

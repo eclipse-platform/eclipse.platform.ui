@@ -77,18 +77,15 @@ public class MultiInstancePropertySheetTest extends AbstractPropertySheetTest {
 	 * many listeners are notified of events through a SafeRunner, errors caused
 	 * by mishandling of events are not propagated back to our test methods.
 	 */
-	private ILogListener logListener = new ILogListener() {
-		@Override
-		public void logging(IStatus status, String plugin) {
-			// check if it's an error
-			if (status.getSeverity() == IStatus.ERROR) {
-				// retrieve the underlying exception and wrap it if possible
-				Throwable t = status.getException();
-				if (t != null) {
-					e = new Exception(t);
-				} else {
-					e = new Exception(status.getMessage());
-				}
+	private ILogListener logListener = (status, plugin) -> {
+		// check if it's an error
+		if (status.getSeverity() == IStatus.ERROR) {
+			// retrieve the underlying exception and wrap it if possible
+			Throwable t = status.getException();
+			if (t != null) {
+				e = new Exception(t);
+			} else {
+				e = new Exception(status.getMessage());
 			}
 		}
 	};

@@ -15,7 +15,6 @@ package org.eclipse.ui.examples.propertysheet;
 
 import java.util.Vector;
 
-import org.eclipse.jface.viewers.ICellEditorValidator;
 import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.ui.views.properties.ComboBoxPropertyDescriptor;
 import org.eclipse.ui.views.properties.IPropertyDescriptor;
@@ -94,54 +93,51 @@ public class Address implements IPropertySource {
 				P_ID_POSTALCODE, P_POSTALCODE);
 		//add custom validator to propertyDescriptor limiting postalcode
 		//values to XYXYXY, where X is a letter and Y is a digit
-		propertyDescriptor.setValidator(new ICellEditorValidator() {
-			@Override
-			public String isValid(Object value) {
-				if (value == null)
-					return MessageUtil.getString("postal_code_is_incomplete"); //$NON-NLS-1$
+		propertyDescriptor.setValidator(value -> {
+			if (value == null)
+				return MessageUtil.getString("postal_code_is_incomplete"); //$NON-NLS-1$
 
-				//
-				String testPostalCode = ((String) value).toUpperCase();
-				final int length = testPostalCode.length();
-				final char space = ' ';
+			//
+			String testPostalCode = ((String) value).toUpperCase();
+			final int length = testPostalCode.length();
+			final char space = ' ';
 
-				//removes white space
-				StringBuilder postalCodeBuffer = new StringBuilder(6);
-				char current;
-				for (int i = 0; i < length; i++) {
-					current = testPostalCode.charAt(i);
-					if (current != space)
-						postalCodeBuffer.append(current);
-				}
-				testPostalCode = postalCodeBuffer.toString();
-
-				//check for proper length
-				if (testPostalCode.length() != 6) {
-					return MessageUtil.getString("postal_code_is_incomplete"); //$NON-NLS-1$
-				}
-
-				//check for proper format
-				if (testPostalCode.charAt(1) < '0'
-						|| testPostalCode.charAt(1) > '9'
-						|| testPostalCode.charAt(3) < '0'
-						|| testPostalCode.charAt(3) > '9'
-						|| testPostalCode.charAt(5) < '0'
-						|| testPostalCode.charAt(5) > '9'
-						|| testPostalCode.charAt(0) < 'A'
-						|| testPostalCode.charAt(0) > 'Z'
-						|| testPostalCode.charAt(2) < 'A'
-						|| testPostalCode.charAt(2) > 'Z'
-						|| testPostalCode.charAt(4) < 'A'
-						|| testPostalCode.charAt(4) > 'Z') {
-					//fail
-					return MessageUtil
-							.format(
-									"_is_an_invalid_format_for_a_postal_code", new Object[] { testPostalCode }); //$NON-NLS-1$
-				}
-
-				//all pass
-				return null;
+			//removes white space
+			StringBuilder postalCodeBuffer = new StringBuilder(6);
+			char current;
+			for (int i = 0; i < length; i++) {
+				current = testPostalCode.charAt(i);
+				if (current != space)
+					postalCodeBuffer.append(current);
 			}
+			testPostalCode = postalCodeBuffer.toString();
+
+			//check for proper length
+			if (testPostalCode.length() != 6) {
+				return MessageUtil.getString("postal_code_is_incomplete"); //$NON-NLS-1$
+			}
+
+			//check for proper format
+			if (testPostalCode.charAt(1) < '0'
+					|| testPostalCode.charAt(1) > '9'
+					|| testPostalCode.charAt(3) < '0'
+					|| testPostalCode.charAt(3) > '9'
+					|| testPostalCode.charAt(5) < '0'
+					|| testPostalCode.charAt(5) > '9'
+					|| testPostalCode.charAt(0) < 'A'
+					|| testPostalCode.charAt(0) > 'Z'
+					|| testPostalCode.charAt(2) < 'A'
+					|| testPostalCode.charAt(2) > 'Z'
+					|| testPostalCode.charAt(4) < 'A'
+					|| testPostalCode.charAt(4) > 'Z') {
+				//fail
+				return MessageUtil
+						.format(
+								"_is_an_invalid_format_for_a_postal_code", new Object[] { testPostalCode }); //$NON-NLS-1$
+			}
+
+			//all pass
+			return null;
 		});
 		descriptors.addElement(propertyDescriptor);
 

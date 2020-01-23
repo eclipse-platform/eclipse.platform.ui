@@ -73,13 +73,7 @@ public class WorkbenchSiteProgressServiceModelTagsTest extends UITestCase {
 		IEclipseContext context = ModelUtils.getContainingContext(site.getModel());
 		assertNotNull(context);
 
-		eventHandler = new EventHandler() {
-			@Override
-			public void handleEvent(Event event) {
-				receivedEvent = event;
-
-			}
-		};
+		eventHandler = event -> receivedEvent = event;
 
 		eventBroker = context.get(IEventBroker.class);
 		eventBroker.subscribe(UIEvents.ApplicationElement.TOPIC_TAGS, eventHandler);

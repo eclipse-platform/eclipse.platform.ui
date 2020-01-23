@@ -19,8 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
@@ -114,15 +112,11 @@ public class Snippet005TreeCustomMenu {
 		final MenuManager mgr = new MenuManager();
 		mgr.setRemoveAllWhenShown(true);
 
-		mgr.addMenuListener(new IMenuListener() {
-
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				IStructuredSelection selection = v.getStructuredSelection();
-				if (!selection.isEmpty()) {
-					a.setText("Action for " + selection.getFirstElement());
-					mgr.add(a);
-				}
+		mgr.addMenuListener(manager -> {
+			IStructuredSelection selection = v.getStructuredSelection();
+			if (!selection.isEmpty()) {
+				a.setText("Action for " + selection.getFirstElement());
+				mgr.add(a);
 			}
 		});
 		v.getControl().setMenu(mgr.createContextMenu(v.getControl()));

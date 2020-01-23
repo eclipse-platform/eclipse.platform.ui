@@ -45,7 +45,6 @@ import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolControl;
-import org.eclipse.e4.ui.workbench.Selector;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.junit.After;
 import org.junit.Before;
@@ -314,12 +313,7 @@ public class EModelServiceFindTest {
 		if (searchRoot == null || id == null)
 			return null;
 
-		List<MHandler> handlers = ms.findElements(searchRoot, MHandler.class, EModelService.ANYWHERE, new Selector() {
-			@Override
-			public boolean select(MApplicationElement element) {
-				return element instanceof MHandler && id.equals(element.getElementId());
-			}
-		});
+		List<MHandler> handlers = ms.findElements(searchRoot, MHandler.class, EModelService.ANYWHERE, element -> element instanceof MHandler && id.equals(element.getElementId()));
 		if (handlers.size() > 0) {
 			return handlers.get(0);
 		}
@@ -390,12 +384,7 @@ public class EModelServiceFindTest {
 		application.getAddons().add(addon);
 
 		List<MAddon> elements = modelService.findElements(application,
-				MAddon.class, EModelService.ANYWHERE, new Selector() {
-					@Override
-					public boolean select(MApplicationElement element) {
-						return (element instanceof MAddon);
-					}
-				});
+				MAddon.class, EModelService.ANYWHERE, element -> (element instanceof MAddon));
 
 		assertEquals(1, elements.size());
 		assertEquals(addon, elements.get(0));

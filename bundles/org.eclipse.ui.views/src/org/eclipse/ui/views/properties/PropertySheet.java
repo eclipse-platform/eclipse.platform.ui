@@ -34,8 +34,6 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.osgi.util.NLS;
@@ -232,14 +230,11 @@ public class PropertySheet extends PageBookView
 	public void createPartControl(Composite parent) {
 		super.createPartControl(parent);
 
-		pinPropertySheetAction.addPropertyChangeListener(new IPropertyChangeListener(){
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				if (IAction.CHECKED.equals(event.getProperty())) {
-					updateContentDescription();
-					if (!isPinned()) {
-						selectionChanged(currentPart, currentSelection);
-					}
+		pinPropertySheetAction.addPropertyChangeListener(event -> {
+			if (IAction.CHECKED.equals(event.getProperty())) {
+				updateContentDescription();
+				if (!isPinned()) {
+					selectionChanged(currentPart, currentSelection);
 				}
 			}
 		});
