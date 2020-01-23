@@ -152,16 +152,16 @@ class TestUtil implements IPathConstants {
 		 */
 
 		ElementTree tree = new ElementTree();
-		tree.createElement(solution, new String("solution"));
-		tree.createElement(project1, new String("project1"));
-		tree.createElement(project2, new String("project2"));
-		tree.createElement(file1, new String("file1"));
-		tree.createElement(folder1, new String("folder1"));
-		tree.createElement(folder2, new String("folder2"));
-		tree.createElement(file2, new String("file2"));
-		tree.createElement(folder3, new String("folder3"));
-		tree.createElement(folder4, new String("folder4"));
-		tree.createElement(file3, new String("file3"));
+		tree.createElement(solution, "solution");
+		tree.createElement(project1, "project1");
+		tree.createElement(project2, "project2");
+		tree.createElement(file1, "file1");
+		tree.createElement(folder1, "folder1");
+		tree.createElement(folder2, "folder2");
+		tree.createElement(file2, "file2");
+		tree.createElement(folder3, "folder3");
+		tree.createElement(folder4, "folder4");
+		tree.createElement(file3, "file3");
 
 		return tree;
 	}
