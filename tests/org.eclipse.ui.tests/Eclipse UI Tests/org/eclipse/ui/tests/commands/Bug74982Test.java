@@ -44,11 +44,21 @@ public final class Bug74982Test extends UITestCase {
 	 */
 	private boolean selectionEventFired = false;
 
+	private Shell dialog;
+
 	/**
 	 * Constructs a new instance of <code>Bug74982Test</code>.
 	 */
 	public Bug74982Test() {
 		super(Bug74982Test.class.getSimpleName());
+	}
+
+	@Override
+	protected void doTearDown() throws Exception {
+		super.doTearDown();
+		if (dialog != null) {
+			dialog.dispose();
+		}
 	}
 
 	/**
@@ -68,8 +78,7 @@ public final class Bug74982Test extends UITestCase {
 	public final void testSelectAllHandlerSendsSelectionEvent()
 			throws ExecutionException, NotHandledException {
 		// Create a dialog with a text widget.
-		final Shell dialog = new Shell(fWorkbench.getActiveWorkbenchWindow()
-				.getShell());
+		dialog = new Shell(fWorkbench.getActiveWorkbenchWindow().getShell());
 		dialog.setLayout(new GridLayout());
 		final Text text = new Text(dialog, SWT.SINGLE);
 		text.setText("Mooooooooooooooooooooooooooooo");
