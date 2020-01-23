@@ -31,6 +31,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
@@ -287,20 +288,22 @@ public class ResourceInitialSelectionTest extends UITestCase {
 	 */
 	@Test
 	public void testMultiSelectionAndTwoInitialSelectionsWithInitialPattern() {
-		boolean hasMultiSelection = true;
-		List<IFile> initialSelection = asList(FILES.get("foo.txt"), FILES.get("bar.txt"));
+		if (!Platform.OS_WIN32.equals(Platform.getOS())) { // Disabling on Windows due to bug 559353
+			boolean hasMultiSelection = true;
+			List<IFile> initialSelection = asList(FILES.get("foo.txt"), FILES.get("bar.txt"));
 
-		dialog = createDialog(hasMultiSelection);
-		dialog.setInitialPattern("**");
-		dialog.setInitialElementSelections(initialSelection);
-		dialog.open();
-		dialog.refresh();
+			dialog = createDialog(hasMultiSelection);
+			dialog.setInitialPattern("**");
+			dialog.setInitialElementSelections(initialSelection);
+			dialog.open();
+			dialog.refresh();
 
-		List<Object> selected = getSelectedItems(dialog);
-		boolean initialElementsAreSelected = selected.containsAll(initialSelection)
-				&& initialSelection.containsAll(selected);
+			List<Object> selected = getSelectedItems(dialog);
+			boolean initialElementsAreSelected = selected.containsAll(initialSelection)
+					&& initialSelection.containsAll(selected);
 
-		assertTrue("Two files should be selected by default", initialElementsAreSelected);
+			assertTrue("Two files should be selected by default", initialElementsAreSelected);
+		}
 	}
 
 	/**
@@ -309,20 +312,22 @@ public class ResourceInitialSelectionTest extends UITestCase {
 	 */
 	@Test
 	public void testMultiSelectionAndTwoInitialFilteredSelections() {
-		boolean hasMultiSelection = true;
+		if (!Platform.OS_WIN32.equals(Platform.getOS())) { // Disabling on Windows due to bug 559353
+			boolean hasMultiSelection = true;
 
-		dialog = createDialog(hasMultiSelection);
-		dialog.setInitialPattern("*.txt");
-		dialog.setInitialElementSelections(asList(FILES.get("foo.txt"), FILES.get("bar.txt"), FILES.get("foofoo")));
-		dialog.open();
-		dialog.refresh();
+			dialog = createDialog(hasMultiSelection);
+			dialog.setInitialPattern("*.txt");
+			dialog.setInitialElementSelections(asList(FILES.get("foo.txt"), FILES.get("bar.txt"), FILES.get("foofoo")));
+			dialog.open();
+			dialog.refresh();
 
-		List<Object> selected = getSelectedItems(dialog);
-		List<IFile> expectedSelection = asList(FILES.get("foo.txt"), FILES.get("bar.txt"));
-		boolean initialElementsAreSelected = selected.containsAll(expectedSelection)
-				&& expectedSelection.containsAll(selected);
+			List<Object> selected = getSelectedItems(dialog);
+			List<IFile> expectedSelection = asList(FILES.get("foo.txt"), FILES.get("bar.txt"));
+			boolean initialElementsAreSelected = selected.containsAll(expectedSelection)
+					&& expectedSelection.containsAll(selected);
 
-		assertTrue("Two files should be selected by default", initialElementsAreSelected);
+			assertTrue("Two files should be selected by default", initialElementsAreSelected);
+		}
 	}
 
 	private FilteredResourcesSelectionDialog createDialog(boolean multiSelection) {
