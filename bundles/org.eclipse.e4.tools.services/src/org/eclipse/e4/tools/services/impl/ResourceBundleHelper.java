@@ -15,8 +15,6 @@ package org.eclipse.e4.tools.services.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.security.AccessController;
@@ -29,151 +27,14 @@ import java.util.PropertyResourceBundle;
 import java.util.ResourceBundle;
 import java.util.ResourceBundle.Control;
 
-import org.eclipse.e4.tools.services.ToolsServicesActivator;
-import org.eclipse.osgi.service.localization.BundleLocalization;
 import org.osgi.framework.Bundle;
-import org.osgi.service.log.LogService;
-import org.osgi.service.packageadmin.PackageAdmin;
 
 /**
  * Helper class for retrieving {@link ResourceBundle}s out of OSGi {@link Bundle}s.
  *
  * @author Dirk Fauth
  */
-// There is no replacement for PackageAdmin#getBundles()
-@SuppressWarnings("deprecation")
 public class ResourceBundleHelper {
-
-	/**
-	 * The schema identifier used for Eclipse platform references
-	 */
-	private static final String PLATFORM_SCHEMA = "platform"; //$NON-NLS-1$
-	/**
-	 * The schema identifier used for Eclipse bundle class references
-	 */
-	private static final String BUNDLECLASS_SCHEMA = "bundleclass"; //$NON-NLS-1$
-	/**
-	 * Identifier part of the Eclipse platform schema to point to a plugin
-	 */
-	private static final String PLUGIN_SEGMENT = "/plugin/"; //$NON-NLS-1$
-	/**
-	 * Identifier part of the Eclipse platform schema to point to a fragment
-	 */
-	private static final String FRAGMENT_SEGMENT = "/fragment/"; //$NON-NLS-1$
-	/**
-	 * The separator character for paths in the platform schema
-	 */
-	private static final String PATH_SEPARATOR = "/"; //$NON-NLS-1$
-
-	/**
-	 * Parses the specified contributor URI and loads the {@link ResourceBundle} for the specified {@link Locale} out of
-	 * an OSGi {@link Bundle}.
-	 * <p>
-	 * Following URIs are supported:
-	 * <ul>
-	 * <li>platform:/[plugin|fragment]/[Bundle-SymbolicName]<br>
-	 * Load the OSGi resource bundle out of the bundle/fragment named [Bundle-SymbolicName]</li>
-	 * <li>platform:/[plugin|fragment]/[Bundle-SymbolicName]/[Path]/[Basename]<br>
-	 * Load the resource bundle specified by [Path] and [Basename] out of the bundle/fragment named
-	 * [Bundle-SymbolicName].</li>
-	 * <li>bundleclass://[plugin|fragment]/[Full-Qualified-Classname]<br>
-	 * Instantiate the class specified by [Full-Qualified-Classname] out of the bundle/fragment named
-	 * [Bundle-SymbolicName]. Note that the class needs to be a subtype of {@link ResourceBundle}.</li>
-	 * </ul>
-	 * </p>
-	 *
-	 * @param contributorURI The URI that points to a {@link ResourceBundle}
-	 * @param locale The {@link Locale} to use for loading the {@link ResourceBundle}
-	 * @param localization The service for retrieving a {@link ResourceBundle} for a given {@link Locale} out of
-	 *            the given {@link Bundle} which is specified by URI.
-	 * @return the resource bundle
-	 */
-	public static ResourceBundle getResourceBundleForUri(String contributorURI, Locale locale,
-			BundleLocalization localization) {
-		if (contributorURI == null) {
-			return null;
-		}
-
-		final LogService logService = ToolsServicesActivator.getDefault().getLogService();
-
-		URI uri;
-		try {
-			uri = new URI(contributorURI);
-		} catch (final URISyntaxException e) {
-			if (logService != null)
-			{
-				logService.log(LogService.LOG_ERROR, "Invalid contributor URI: " + contributorURI); //$NON-NLS-1$
-			}
-			return null;
-		}
-
-		String bundleName = null;
-		Bundle bundle = null;
-		String resourcePath = null;
-		String classPath = null;
-
-		// the uri follows the platform schema, so we search for .properties files in the bundle
-		if (PLATFORM_SCHEMA.equals(uri.getScheme())) {
-			bundleName = uri.getPath();
-			if (bundleName.startsWith(PLUGIN_SEGMENT)) {
-				bundleName = bundleName.substring(PLUGIN_SEGMENT.length());
-			} else if (bundleName.startsWith(FRAGMENT_SEGMENT)) {
-				bundleName = bundleName.substring(FRAGMENT_SEGMENT.length());
-			}
-
-			resourcePath = ""; //$NON-NLS-1$
-			if (bundleName.contains(PATH_SEPARATOR)) {
-				resourcePath = bundleName.substring(bundleName.indexOf(PATH_SEPARATOR) + 1);
-				bundleName = bundleName.substring(0, bundleName.indexOf(PATH_SEPARATOR));
-			}
-		} else if (BUNDLECLASS_SCHEMA.equals(uri.getScheme())) {
-			if (uri.getAuthority() == null) {
-				if (logService != null)
-				{
-					logService.log(LogService.LOG_ERROR, "Failed to get bundle for: " + contributorURI); //$NON-NLS-1$
-				}
-			}
-			bundleName = uri.getAuthority();
-			// remove the leading /
-			classPath = uri.getPath().substring(1);
-		}
-
-		ResourceBundle result = null;
-
-		if (bundleName != null) {
-			bundle = getBundleForName(bundleName);
-
-			if (bundle != null) {
-				if (resourcePath == null && classPath != null) {
-					// the URI points to a class within the bundle classpath
-					// therefore we are trying to instantiate the class
-					try {
-						final Class<?> resourceBundleClass = bundle.loadClass(classPath);
-						result = getEquinoxResourceBundle(classPath, locale, resourceBundleClass.getClassLoader());
-					} catch (final Exception e) {
-						if (logService != null)
-						{
-							logService.log(LogService.LOG_ERROR,
-									"Failed to load specified ResourceBundle: " + contributorURI, e); //$NON-NLS-1$
-						}
-					}
-				}
-				else if (resourcePath.length() > 0) {
-					// the specified URI points to a resource
-					// therefore we try to load the .properties files into a ResourceBundle
-					result = getEquinoxResourceBundle(resourcePath.replace('.', '/'), locale, bundle);
-				}
-				else {
-					// there is no class and no special resource specified within the URI
-					// therefore we load the OSGi resource bundle out of the specified Bundle
-					// for the current Locale
-					result = localization.getLocalization(bundle, locale.toString());
-				}
-			}
-		}
-
-		return result;
-	}
 
 	/**
 	 * This method searches for the {@link ResourceBundle} in a modified way by inspecting the configuration option
@@ -405,29 +266,6 @@ public class ResourceBundleHelper {
 			root = "en"; //$NON-NLS-1$
 		}
 		return root;
-	}
-
-	/**
-	 * This method is copied out of org.eclipse.e4.ui.internal.workbench.Activator
-	 * because as it is a internal resource, it is not accessible for us.
-	 *
-	 * @param bundleName
-	 *            the bundle id
-	 * @return A bundle if found, or <code>null</code>
-	 */
-	public static Bundle getBundleForName(String bundleName) {
-		final PackageAdmin packageAdmin = ToolsServicesActivator.getDefault().getPackageAdmin();
-		final Bundle[] bundles = packageAdmin.getBundles(bundleName, null);
-		if (bundles == null) {
-			return null;
-		}
-		// Return the first bundle that is not installed or uninstalled
-		for (int i = 0; i < bundles.length; i++) {
-			if ((bundles[i].getState() & (Bundle.INSTALLED | Bundle.UNINSTALLED)) == 0) {
-				return bundles[i];
-			}
-		}
-		return null;
 	}
 
 	/**
