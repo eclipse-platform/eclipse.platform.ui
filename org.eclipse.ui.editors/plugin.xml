@@ -1077,11 +1077,6 @@
                   variable="editorInput">
                <adapt
                      type="org.eclipse.core.resources.IFile">
-                  <test
-                        property="org.eclipse.core.resources.contentTypeId"
-                        value="org.eclipse.core.runtime.text"
-                        args="kindOf">
-                  </test>
                </adapt>
             </with>
          </enabledWhen>
