@@ -48,7 +48,7 @@ public class EmbeddedBrowserFactory implements IBrowserFactory {
 		if (BaseHelpSystem.getMode() == BaseHelpSystem.MODE_STANDALONE) {
 			try {
 				if (HelpUIEventLoop.isRunning()) {
-					Display.getDefault().syncExec(() -> test());
+					Display.getDefault().syncExec(this::test);
 				}
 			} catch (Exception e) {
 				// just in case

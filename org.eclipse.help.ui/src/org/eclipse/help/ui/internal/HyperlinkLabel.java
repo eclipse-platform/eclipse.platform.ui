@@ -68,7 +68,7 @@ public class HyperlinkLabel extends Canvas {
 
 		this.label = new Label(this, style);
 
-		addPaintListener(e -> paint(e));
+		addPaintListener(this::paint);
 
 		addKeyListener(new KeyAdapter() {
 

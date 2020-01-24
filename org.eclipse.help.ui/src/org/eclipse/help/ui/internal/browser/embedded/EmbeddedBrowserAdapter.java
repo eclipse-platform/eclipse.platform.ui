@@ -118,7 +118,7 @@ public class EmbeddedBrowserAdapter implements IBrowser, IBrowserCloseListener{
 		if (getBrowserDisplay() == Display.getCurrent()) {
 			uiClose();
 		} else {
-			getBrowserDisplay().syncExec(() -> uiClose());
+			getBrowserDisplay().syncExec(this::uiClose);
 		}
 	}
 	/*

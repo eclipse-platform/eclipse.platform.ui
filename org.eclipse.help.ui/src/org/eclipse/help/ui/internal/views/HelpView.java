@@ -312,7 +312,7 @@ public class HelpView extends ViewPart implements IPartListener2,
 	public void selectionChanged(SelectionChangedEvent event) {
 		if (!visible)
 			return;
-		getSite().getShell().getDisplay().asyncExec(() -> updateActivePart());
+		getSite().getShell().getDisplay().asyncExec(this::updateActivePart);
 	}
 
 	/*

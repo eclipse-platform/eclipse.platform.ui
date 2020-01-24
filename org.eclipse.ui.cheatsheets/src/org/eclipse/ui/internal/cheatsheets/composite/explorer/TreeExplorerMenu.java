@@ -36,7 +36,7 @@ public class TreeExplorerMenu {
 		this.explorer = explorer;
 		MenuManager menuMgr = new MenuManager(null);
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(manager -> fillContextMenu(manager));
+		menuMgr.addMenuListener(this::fillContextMenu);
 		Menu menu = menuMgr.createContextMenu(explorer.getControl());
 		explorer.getControl().setMenu(menu);
 	}

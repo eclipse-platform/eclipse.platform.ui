@@ -324,9 +324,9 @@ public class IntroLaunchBar {
 			toolBar.setBackground(bg);
 			// coolBar.setBackground(bg);
 		}
-		container.addPaintListener(e -> onPaint(e));
+		container.addPaintListener(this::onPaint);
 		MenuManager manager = new MenuManager();
-		IMenuListener listener = manager1 -> contextMenuAboutToShow(manager1);
+		IMenuListener listener = this::contextMenuAboutToShow;
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(listener);
 		Menu contextMenu = manager.createContextMenu(toolBarManager.getControl());

@@ -725,7 +725,7 @@ public class CustomizationContentsArea {
 
 	public boolean performOk() {
 		saveData();
-		BusyIndicator.showWhile(shell.getDisplay(), () -> restartIntro());
+		BusyIndicator.showWhile(shell.getDisplay(), this::restartIntro);
 		return true;
 	}
 

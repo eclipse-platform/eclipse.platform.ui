@@ -188,7 +188,7 @@ public class InfoCenterPage extends RootScopePage {
 
 		initializeControls();
 
-		tree.addCheckStateListener(event -> handleCheckStateChange(event));
+		tree.addCheckStateListener(this::handleCheckStateChange);
 
 		tree.addTreeListener(new ITreeViewerListener() {
 

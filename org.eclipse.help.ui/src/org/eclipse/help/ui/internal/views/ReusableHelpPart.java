@@ -193,7 +193,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 
 		@Override
 		public void run() {
-			BusyIndicator.showWhile(getControl().getDisplay(), () -> busyRun());
+			BusyIndicator.showWhile(getControl().getDisplay(), this::busyRun);
 		}
 
 		protected abstract void busyRun();
@@ -1013,7 +1013,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 		mform.getForm().setDelayedReflow(false);
 		toolkit.decorateFormHeading(mform.getForm().getForm());
 		MenuManager manager = new MenuManager();
-		IMenuListener listener = manager1 -> contextMenuAboutToShow(manager1);
+		IMenuListener listener = this::contextMenuAboutToShow;
 		manager.setRemoveAllWhenShown(true);
 		manager.addMenuListener(listener);
 		Menu contextMenu = manager.createContextMenu(form.getForm());
