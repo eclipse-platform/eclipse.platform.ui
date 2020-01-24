@@ -68,7 +68,7 @@ public class ResourceSelectionFilteringDialogTest extends UITestCase {
 		dialog.open();
 		dialog.refresh();
 		Assert.assertTrue(DisplayHelper.waitForCondition(dialog.getShell().getDisplay(), 3000, () ->
-			dialog.getSelectedItems().getFirstElement().equals(file)
+			file.equals(dialog.getSelectedItems().getFirstElement())
 		));
 	}
 
