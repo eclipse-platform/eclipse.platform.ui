@@ -88,7 +88,8 @@ public class ObservableTracker {
 	 * @param runnable
 	 *            runnable to execute
 	 * @param changeListener
-	 *            listener to register with all accessed observables
+	 *            listener to register with all accessed observables, or
+	 *            <code>null</code> if no change listener is to be registered
 	 * @param staleListener
 	 *            listener to register with all accessed observables, or
 	 *            <code>null</code> if no stale listener is to be registered
