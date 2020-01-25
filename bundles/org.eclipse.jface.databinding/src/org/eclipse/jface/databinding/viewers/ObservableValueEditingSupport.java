@@ -196,6 +196,15 @@ public abstract class ObservableValueEditingSupport<E, M, T> extends EditingSupp
 	protected abstract IObservableValue<M> doCreateElementObservable(E element, ViewerCell cell);
 
 	/**
+	 * @return the {@link DataBindingContext} that was used when creating this
+	 *         object.
+	 * @since 1.11
+	 */
+	protected final DataBindingContext getDataBindingContext() {
+		return dataBindingContext;
+	}
+
+	/**
 	 * Creates a new binding for the provided <code>target</code> and
 	 * <code>model</code>. Default {@link UpdateValueStrategy value update
 	 * strategies} are used with the target to model updating on

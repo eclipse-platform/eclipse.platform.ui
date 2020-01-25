@@ -1,13 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.jface.databinding" version="2">
-    <resource path="META-INF/MANIFEST.MF">
-        <filter comment="Bug 558698 - Increment minor component instead of major component" id="926941240">
-            <message_arguments>
-                <message_argument value="1.10.0"/>
-                <message_argument value="1.9.200"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/jface/databinding/swt/ISWTObservableList.java" type="org.eclipse.jface.databinding.swt.ISWTObservableList">
         <filter comment="Extending interface in accordance with the API specification." id="574619656">
             <message_arguments>
