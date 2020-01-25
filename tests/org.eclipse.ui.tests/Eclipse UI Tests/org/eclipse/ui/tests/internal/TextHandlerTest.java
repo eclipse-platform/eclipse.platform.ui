@@ -43,6 +43,11 @@ public class TextHandlerTest extends UITestCase {
 		view.editableText.setFocus();
 		Clipboard clipboard = new Clipboard(window.getWorkbench().getDisplay());
 		try {
+			// Clipboard clearContents will only clear own content. If clipboard contains
+			// content from another application when test starts it will be cleared and test
+			// can fail. Fix is to set anything and then clear it.
+			clipboard.setContents(new Object[] { "https://www.eclipse.org" },
+					new Transfer[] { URLTransfer.getInstance() });
 			clipboard.clearContents();
 			processEvents();
 			view.updateEnabledState();
