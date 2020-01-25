@@ -114,6 +114,10 @@ public class DelayedObservableValueTest extends AbstractDefaultRealmTestCase {
 		assertEquals(newValue, delayed.getValue());
 	}
 
+	/**
+	 * Bug 558650. Staleness state should be updated before the staleness event is
+	 * fired.
+	 */
 	@Test
 	public void testStaleListener() {
 		AtomicInteger nrEvents = new AtomicInteger();
