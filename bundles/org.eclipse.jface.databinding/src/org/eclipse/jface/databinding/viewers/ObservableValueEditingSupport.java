@@ -45,29 +45,25 @@ import org.eclipse.jface.viewers.ViewerCell;
  */
 public abstract class ObservableValueEditingSupport<E, M, T> extends EditingSupport {
 	/**
-	 * Returns an ObservableValueEditingSupport instance which binds the given
-	 * cell editor property to the given element property.
+	 * Returns an ObservableValueEditingSupport instance which binds the given cell
+	 * editor property to the given element property.
 	 *
-	 * @param viewer
-	 *            the column viewer
-	 * @param dbc
-	 *            the DataBindingContext used for binding between the cell
-	 *            editor and the viewer element.
-	 * @param cellEditor
-	 *            the cell editor
-	 * @param cellEditorProperty
-	 *            the cell editor property to be bound to the element.
-	 * @param elementProperty
-	 *            the element property to be bound to the cell editor.
-	 * @return an ObservableValueEditingSupport instance using the given
-	 *         arguments.
+	 * @param viewer             the column viewer
+	 * @param dataBindingContext the DataBindingContext used for binding between the
+	 *                           cell editor and the viewer element.
+	 * @param cellEditor         the cell editor
+	 * @param cellEditorProperty the cell editor property to be bound to the
+	 *                           element.
+	 * @param elementProperty    the element property to be bound to the cell
+	 *                           editor.
+	 * @return an ObservableValueEditingSupport instance using the given arguments.
 	 * @since 1.3
 	 */
 	public static <E, M, T> EditingSupport create(ColumnViewer viewer,
-			DataBindingContext dbc, final CellEditor cellEditor,
+			DataBindingContext dataBindingContext, final CellEditor cellEditor,
 			final IValueProperty<? super CellEditor, T> cellEditorProperty,
 			final IValueProperty<E, M> elementProperty) {
-		return new ObservableValueEditingSupport<E, M, T>(viewer, dbc) {
+		return new ObservableValueEditingSupport<E, M, T>(viewer, dataBindingContext) {
 			@Override
 			protected IObservableValue<T> doCreateCellEditorObservable(CellEditor cellEditor) {
 				return cellEditorProperty.observe(cellEditor);
@@ -95,26 +91,29 @@ public abstract class ObservableValueEditingSupport<E, M, T> extends EditingSupp
 
 	private ColumnViewer viewer;
 
-	private DataBindingContext dbc;
+	private DataBindingContext dataBindingContext;
+
+	boolean dirty = false;
+
 
 	/**
 	 * Constructs a new instance with the provided <code>viewer</code> and
-	 * <code>dbc</code>.
+	 * dataBindingContext
 	 *
 	 * @param viewer
 	 *            viewer to edit
-	 * @param dbc
-	 *            dbc to create <code>Bindings</code>
+	 * @param dataBindingContext
+	 *            used to create <code>Bindings</code>
 	 */
-	public ObservableValueEditingSupport(ColumnViewer viewer, DataBindingContext dbc) {
+	public ObservableValueEditingSupport(ColumnViewer viewer, DataBindingContext dataBindingContext) {
 		super(viewer);
 
-		if (dbc == null) {
-			throw new IllegalArgumentException("Parameter dbc was null."); //$NON-NLS-1$
+		if (dataBindingContext == null) {
+			throw new IllegalArgumentException("Parameter dataBindingContext was null."); //$NON-NLS-1$
 		}
 
 		this.viewer = viewer;
-		this.dbc = dbc;
+		this.dataBindingContext = dataBindingContext;
 	}
 
 	/**
@@ -206,12 +205,10 @@ public abstract class ObservableValueEditingSupport<E, M, T> extends EditingSupp
 	 * @param model  the model
 	 * @return binding created binding
 	 */
-	// TODO j: These values are converted, do not need to be the same
 	protected Binding createBinding(IObservableValue<T> target, IObservableValue<M> model) {
-		return dbc.bindValue(target, model, new UpdateValueStrategy<>(UpdateValueStrategy.POLICY_CONVERT), null);
+		return dataBindingContext.bindValue(target, model,
+				new UpdateValueStrategy<>(UpdateValueStrategy.POLICY_CONVERT), null);
 	}
-
-	boolean dirty = false;
 
 	/**
 	 * Updates the model from the target.
