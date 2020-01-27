@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.datatransfer;
 
+import java.io.CharArrayReader;
+import java.io.CharArrayWriter;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
@@ -23,6 +25,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Consumer;
 
 import org.eclipse.core.resources.IFile;
@@ -32,10 +35,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IAdaptable;
+import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
@@ -98,7 +103,7 @@ public class SmartImportTests extends UITestCase {
 	private void clearAll() throws CoreException, IOException {
 		processEvents();
 		boolean closed = true;
-		if (dialog != null && !dialog.getShell().isDisposed()) {
+		if (dialog != null && dialog.getShell() != null && !dialog.getShell().isDisposed()) {
 			closed = dialog.close();
 		}
 		for (IProject project : ResourcesPlugin.getWorkspace().getRoot().getProjects()) {
@@ -455,6 +460,45 @@ public class SmartImportTests extends UITestCase {
 			directoryToImport.delete();
 			workingSetManager.removeWorkingSet(workingSet);
 			workingSetManager.removeWorkingSet(workingSet2);
+		}
+	}
+
+	/**
+	 * Bug 559600 - [SmartImport] Label provider throws exception if results contain
+	 * filesystem root
+	 */
+	@Test
+	public void testBug559600() throws Exception {
+		AtomicInteger errors = new AtomicInteger();
+		ILogListener errorListener = new ILogListener() {
+			@Override
+			public void logging(IStatus status, String plugin) {
+				if (status.getSeverity() == IStatus.ERROR) {
+					errors.incrementAndGet();
+				}
+			}
+		};
+
+		CharArrayWriter existingDialogSettings = new CharArrayWriter();
+		SmartImportWizard wizard = new SmartImportWizard();
+		try {
+			Platform.addLogListener(errorListener);
+			wizard.getDialogSettings().save(existingDialogSettings);
+			wizard.setInitialImportSource(File.listRoots()[0]);
+			wizard.getDialogSettings().put("SmartImportRootWizardPage.STORE_HIDE_ALREADY_OPEN", true);
+			wizard.getDialogSettings().put("SmartImportRootWizardPage.STORE_NESTED_PROJECTS", false);
+			this.dialog = new WizardDialog(getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
+			dialog.setBlockOnOpen(false);
+			dialog.open();
+			SmartImportRootWizardPage page = (SmartImportRootWizardPage) dialog.getCurrentPage();
+			ProgressMonitorPart wizardProgressMonitor = page.getWizardProgressMonitor();
+			processEventsUntil(() -> !wizardProgressMonitor.isVisible(), 10000);
+			assertEquals("Label provider (or something else) produced error", 0, errors.get());
+			assertFalse("Searching projects should be done within 10 seconds", wizardProgressMonitor.isVisible());
+		} finally {
+			dialog.close();
+			Platform.removeLogListener(errorListener);
+			wizard.getDialogSettings().load(new CharArrayReader(existingDialogSettings.toCharArray()));
 		}
 	}
 

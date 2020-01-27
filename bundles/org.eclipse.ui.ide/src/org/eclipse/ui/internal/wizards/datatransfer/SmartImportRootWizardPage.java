@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2019 Red Hat Inc., and others
+ * Copyright (c) 2014, 2020 Red Hat Inc., and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -716,7 +716,8 @@ public class SmartImportRootWizardPage extends WizardPage {
 	}
 
 	protected boolean isExistingProjectName(File element) {
-		return ResourcesPlugin.getWorkspace().getRoot().getProject(element.getName()).exists();
+		String name = element.getName();
+		return !name.isEmpty() && ResourcesPlugin.getWorkspace().getRoot().getProject(name).exists();
 	}
 
 	protected void validatePage() {
