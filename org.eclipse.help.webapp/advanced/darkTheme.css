@@ -44,4 +44,13 @@
 	.button a, .buttonMenu a { 
 		border:1px solid #3d3d3d;;
 	}
+	
+	/* darken images to add some comfort while reading in dark theme */
+	img {
+		opacity: .75;
+		transition: opacity .5s ease-in-out;
+	}
+	img:hover {
+		opacity: 1;
+	}
 }

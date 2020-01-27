@@ -49,4 +49,13 @@ h2           { font-size: 110%; margin-top: 20px; margin-bottom: 3px }
 	body, h1, h2, h3, h4, h5, h6, p, table, td, caption, th, ul, ol, dl, li, dd, dt {
 		color: #f0f0f0;
 	}
+	
+	/* darken images to add some comfort while reading in dark theme */
+	img {
+		opacity: .75;
+		transition: opacity .5s ease-in-out;
+	}
+	img:hover {
+		opacity: 1;
+	}
 }

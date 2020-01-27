@@ -14,4 +14,13 @@
 	a.nolink:visited {
 		color:#ffffff;
 	}
+	
+	/* darken images to add some comfort while reading in dark theme */
+	img {
+		opacity: .75;
+		transition: opacity .5s ease-in-out;
+	}
+	img:hover {
+		opacity: 1;
+	}
 }
