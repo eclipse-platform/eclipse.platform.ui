@@ -240,8 +240,6 @@ import org.eclipse.ui.internal.themes.ColorDefinition;
 import org.eclipse.ui.internal.themes.FontDefinition;
 import org.eclipse.ui.internal.themes.ThemeElementHelper;
 import org.eclipse.ui.internal.themes.WorkbenchThemeManager;
-import org.eclipse.ui.internal.tweaklets.GrabFocus;
-import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.keys.IBindingService;
@@ -1665,14 +1663,6 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 
 		initializeWorkbenchImages();
 
-		StartupThreading.runWithoutExceptions(new StartupRunnable() {
-
-			@Override
-			public void runWithException() {
-				((GrabFocus) Tweaklets.get(GrabFocus.KEY)).init(getDisplay());
-			}
-		});
-
 		// hook shortcut visualizer
 		StartupThreading.runWithoutExceptions(new StartupRunnable() {
 			@Override
@@ -3022,8 +3012,6 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 		// for dynamic UI
 		registry.removeRegistryChangeListener(extensionEventHandler);
 		registry.removeRegistryChangeListener(startupRegistryListener);
-
-		((GrabFocus) Tweaklets.get(GrabFocus.KEY)).dispose();
 
 		// Bring down all of the services.
 		serviceLocator.dispose();
