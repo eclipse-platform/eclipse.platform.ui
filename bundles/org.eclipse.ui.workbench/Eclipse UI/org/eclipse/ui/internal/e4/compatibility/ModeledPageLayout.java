@@ -409,7 +409,7 @@ public class ModeledPageLayout implements IPageLayout {
 		if (viewModel != null) {
 			if (withStack) {
 				String stackId = viewId + "MStack"; // Default id...basically unusable //$NON-NLS-1$
-				MPartStack stack = insertStack(stackId, relationship, ratio, refId, visible & !isFiltered);
+				MPartStack stack = insertStack(stackId, relationship, ratio, refId, visible && !isFiltered);
 				stack.getChildren().add(viewModel);
 				retVal = stack;
 			} else {
