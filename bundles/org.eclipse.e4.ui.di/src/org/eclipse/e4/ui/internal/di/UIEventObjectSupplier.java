@@ -61,7 +61,7 @@ public class UIEventObjectSupplier extends EventObjectSupplier {
 					logger.log(Level.WARNING, "No realm found to process UI event " + event);
 				return;
 			} else {
-				uiSync.syncExec(() -> requestor.execute());
+				uiSync.syncExec(requestor::execute);
 			}
 		}
 	}
