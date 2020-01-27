@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.function.Consumer;
 import javax.inject.Inject;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.services.statusreporter.StatusReporter;
@@ -986,6 +987,9 @@ public class PartRenderingEngineTests {
 	public void testBug324839() throws Exception {
 		// if (checkMacBug466636())
 		// return;
+
+		if (Platform.OS_MACOSX.equals(Platform.getOS())) // Disabling on Mac due to bug 537639
+			return;
 
 		MWindow window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);
@@ -1978,6 +1982,9 @@ public class PartRenderingEngineTests {
 	public void testBug326175_False() {
 		// if (checkMacBug466636())
 		// return;
+		if (Platform.OS_MACOSX.equals(Platform.getOS())) // Disabling on Mac due to bug 537639
+			return;
+
 		testBug326175(false);
 	}
 
@@ -2980,6 +2987,9 @@ public class PartRenderingEngineTests {
 
 	@Test
 	public void testBug372226() {
+		if (Platform.OS_MACOSX.equals(Platform.getOS())) // Disabling on Mac due to bug 537639
+			return;
+
 		MWindow window = ems.createModelElement(MWindow.class);
 
 		application.getChildren().add(window);

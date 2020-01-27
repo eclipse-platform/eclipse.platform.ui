@@ -19,6 +19,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.core.commands.CommandServiceAddon;
 import org.eclipse.e4.core.commands.ECommandService;
 import org.eclipse.e4.core.commands.EHandlerService;
@@ -154,6 +155,9 @@ public class HandlerActivationTest {
 
 	@Test
 	public void testHandlerInWindowOnly() {
+		if (Platform.OS_MACOSX.equals(Platform.getOS())) // Disabling on Mac due to bug 537639
+			return;
+
 		TestHandler testHandler = createTestHandlerInHandlerContainer(window);
 		executeCommand();
 		assertTrue(testHandler.isExecuted());
@@ -161,6 +165,9 @@ public class HandlerActivationTest {
 
 	@Test
 	public void testHandlerInActivePerspectiveOnly() {
+		if (Platform.OS_MACOSX.equals(Platform.getOS())) // Disabling on Mac due to bug 537639
+			return;
+
 		TestHandler testHandler = createTestHandlerInHandlerContainer(perspectiveA);
 		executeCommand();
 		assertTrue(testHandler.isExecuted());
@@ -168,6 +175,9 @@ public class HandlerActivationTest {
 
 	@Test
 	public void testHandlerInActivePartOnly() {
+		if (Platform.OS_MACOSX.equals(Platform.getOS())) // Disabling on Mac due to bug 537639
+			return;
+
 		TestHandler testHandler = createTestHandlerInHandlerContainer(partA1);
 		executeCommand();
 		assertTrue(testHandler.isExecuted());
@@ -189,6 +199,9 @@ public class HandlerActivationTest {
 
 	@Test
 	public void testHandlerInActivePartAndPerspective() {
+		if (Platform.OS_MACOSX.equals(Platform.getOS())) // Disabling on Mac due to bug 537639
+			return;
+
 		TestHandler testHandler = createTestHandlerInHandlerContainer(partA1);
 		TestHandler testHandler2 = createTestHandlerInHandlerContainer(perspectiveA);
 		executeCommand();
@@ -198,6 +211,9 @@ public class HandlerActivationTest {
 
 	@Test
 	public void testHandlerInActivePartAndWindow() {
+		if (Platform.OS_MACOSX.equals(Platform.getOS())) // Disabling on Mac due to bug 537639
+			return;
+
 		TestHandler testHandler = createTestHandlerInHandlerContainer(partA1);
 		TestHandler testHandler2 = createTestHandlerInHandlerContainer(window);
 		executeCommand();
@@ -207,6 +223,9 @@ public class HandlerActivationTest {
 
 	@Test
 	public void testHandlerInActivePerspectiveAndWindow() {
+		if (Platform.OS_MACOSX.equals(Platform.getOS())) // Disabling on Mac due to bug 537639
+			return;
+
 		TestHandler testHandler = createTestHandlerInHandlerContainer(perspectiveA);
 		TestHandler testHandler2 = createTestHandlerInHandlerContainer(window);
 		executeCommand();
@@ -216,6 +235,9 @@ public class HandlerActivationTest {
 
 	@Test
 	public void testHandlerInActivePartAndPerspectiveAndWindow() {
+		if (Platform.OS_MACOSX.equals(Platform.getOS())) // Disabling on Mac due to bug 537639
+			return;
+
 		TestHandler testHandler = createTestHandlerInHandlerContainer(partA1);
 		TestHandler testHandler2 = createTestHandlerInHandlerContainer(perspectiveA);
 		TestHandler testHandler3 = createTestHandlerInHandlerContainer(window);
@@ -227,6 +249,9 @@ public class HandlerActivationTest {
 
 	@Test
 	public void testHandlerSwitchToInactivePart() {
+		if (Platform.OS_MACOSX.equals(Platform.getOS())) // Disabling on Mac due to bug 537639
+			return;
+
 		TestHandler testHandler = createTestHandlerInHandlerContainer(partA2);
 		executeCommand();
 		assertFalse(testHandler.isExecuted());
@@ -237,6 +262,9 @@ public class HandlerActivationTest {
 
 	@Test
 	public void testHandlerSwitchToInactivePerspective() {
+		if (Platform.OS_MACOSX.equals(Platform.getOS())) // Disabling on Mac due to bug 537639
+			return;
+
 		TestHandler testHandlerA = createTestHandlerInHandlerContainer(perspectiveA);
 		TestHandler testHandlerB = createTestHandlerInHandlerContainer(perspectiveB);
 		partService.switchPerspective(perspectiveB);
@@ -247,6 +275,9 @@ public class HandlerActivationTest {
 
 	@Test
 	public void testHandlerSwitchToInactivePartInOtherPerspectiveWithPerspectiveHandlers() {
+		if (Platform.OS_MACOSX.equals(Platform.getOS())) // Disabling on Mac due to bug 537639
+			return;
+
 		TestHandler testHandlerA = createTestHandlerInHandlerContainer(perspectiveA);
 		TestHandler testHandlerB = createTestHandlerInHandlerContainer(perspectiveB);
 		partService.switchPerspective(perspectiveB);
@@ -258,6 +289,9 @@ public class HandlerActivationTest {
 
 	@Test
 	public void testHandlerSwitchToInactivePartInOtherPerspectiveWithPartHandlers() {
+		if (Platform.OS_MACOSX.equals(Platform.getOS())) // Disabling on Mac due to bug 537639
+			return;
+
 		TestHandler testHandlerA = createTestHandlerInHandlerContainer(partA1);
 		TestHandler testHandlerB = createTestHandlerInHandlerContainer(partB1);
 		partService.switchPerspective(perspectiveB);
