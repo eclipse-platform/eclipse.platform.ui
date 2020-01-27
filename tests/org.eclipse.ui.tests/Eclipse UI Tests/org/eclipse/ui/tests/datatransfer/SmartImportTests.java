@@ -33,8 +33,10 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
@@ -55,6 +57,7 @@ import org.eclipse.ui.dialogs.FilteredTree;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.wizards.datatransfer.SmartImportRootWizardPage;
 import org.eclipse.ui.internal.wizards.datatransfer.SmartImportWizard;
+import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.datatransfer.contributions.ImportMeProjectConfigurator;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
@@ -330,11 +333,16 @@ public class SmartImportTests extends UITestCase {
 	@Test
 	public void testCancelWizardCancelsJob() {
 		SmartImportWizard wizard = new SmartImportWizard();
-		wizard.setInitialImportSource(File.listRoots()[0]);
+		File importRoot = File.listRoots()[0];
+		TestPlugin.getDefault().getLog().log(new Status(IStatus.INFO, TestPlugin.PLUGIN_ID,
+				"Testing job cancel with root: " + importRoot.getAbsolutePath()));
+		wizard.setInitialImportSource(importRoot);
 		this.dialog = new WizardDialog(getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
 		dialog.setBlockOnOpen(false);
 		dialog.open();
 		SmartImportRootWizardPage page = (SmartImportRootWizardPage) dialog.getCurrentPage();
+		TestPlugin.getDefault().getLog().log(new Status(IStatus.INFO, TestPlugin.PLUGIN_ID,
+				"Search nested: " + page.isDetectNestedProject()));
 		ProgressMonitorPart wizardProgressMonitor = page.getWizardProgressMonitor();
 		assertNotNull("Wizard should have a progress monitor", wizardProgressMonitor);
 		ToolItem stopButton = getStopButton(wizardProgressMonitor);
