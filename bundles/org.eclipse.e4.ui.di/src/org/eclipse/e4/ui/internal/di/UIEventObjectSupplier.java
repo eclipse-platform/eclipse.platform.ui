@@ -38,8 +38,8 @@ public class UIEventObjectSupplier extends EventObjectSupplier {
 
 	class UIEventHandler implements EventHandler {
 
-		final protected IRequestor requestor;
-		final private String topic;
+		protected final IRequestor requestor;
+		private final String topic;
 
 		public UIEventHandler(String topic, IRequestor requestor) {
 			this.topic = topic;
