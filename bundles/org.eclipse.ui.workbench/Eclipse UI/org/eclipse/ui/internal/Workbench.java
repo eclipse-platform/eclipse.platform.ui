@@ -1977,7 +1977,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 		if (!found) {
 			EModelService modelService = e4Context.get(EModelService.class);
 			MPartDescriptor descriptor = modelService.createModelElement(MPartDescriptor.class);
-			descriptor.getTags().add("Editor"); //$NON-NLS-1$
+			descriptor.getTags().add(EDITOR_TAG);
 			descriptor.getTags().add(EPartService.REMOVE_ON_HIDE_TAG);
 			descriptor.setCloseable(true);
 			descriptor.setAllowMultiple(true);
