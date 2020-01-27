@@ -345,6 +345,8 @@ public interface ISharedImages {
 	 * @deprecated in 3.0. This image is now the same as <code>IMG_TOOL_BACK</code>.
 	 *             Enabled images are now in color. The workbench itself no longer
 	 *             uses the hover image variants.
+	 * @noreference Marked for deletion see
+	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=559593
 	 */
 	@Deprecated
 	String IMG_TOOL_BACK_HOVER = "IMG_TOOL_BACK_HOVER"; //$NON-NLS-1$
@@ -365,6 +367,8 @@ public interface ISharedImages {
 	 * @deprecated in 3.0. This image is now the same as <code>IMG_TOOL_COPY</code>.
 	 *             Enabled images are now in color. The workbench itself no longer
 	 *             uses the hover image variants.
+	 * @noreference Marked for deletion see
+	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=559593
 	 */
 	@Deprecated
 	String IMG_TOOL_COPY_HOVER = "IMG_TOOL_COPY_HOVER"; //$NON-NLS-1$
@@ -385,6 +389,8 @@ public interface ISharedImages {
 	 * @deprecated in 3.0. This image is now the same as <code>IMG_TOOL_CUT</code>.
 	 *             Enabled images are now in color. The workbench itself no longer
 	 *             uses the hover image variants.
+	 * @noreference Marked for deletion see
+	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=559593
 	 */
 	@Deprecated
 	String IMG_TOOL_CUT_HOVER = "IMG_TOOL_CUT_HOVER"; //$NON-NLS-1$
@@ -409,6 +415,8 @@ public interface ISharedImages {
 	 * @deprecated in 3.0. This image is now the same as
 	 *             <code>IMG_TOOL_DELETE</code>. Enabled images are now in color.
 	 *             The workbench itself no longer uses the hover image variants.
+	 * @noreference Marked for deletion see
+	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=559593
 	 */
 	@Deprecated
 	String IMG_TOOL_DELETE_HOVER = "IMG_TOOL_DELETE_HOVER"; //$NON-NLS-1$
@@ -429,6 +437,8 @@ public interface ISharedImages {
 	 * @deprecated in 3.0. This image is now the same as
 	 *             <code>IMG_TOOL_FORWARD</code>. Enabled images are now in color.
 	 *             The workbench itself no longer uses the hover image variants.
+	 * @noreference Marked for deletion see
+	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=559593
 	 */
 	@Deprecated
 	String IMG_TOOL_FORWARD_HOVER = "IMG_TOOL_FORWARD_HOVER"; //$NON-NLS-1$
@@ -450,6 +460,8 @@ public interface ISharedImages {
 	 *             <code>IMG_TOOL_NEW_WIZARD</code>. Enabled images are now in
 	 *             color. The workbench itself no longer uses the hover image
 	 *             variants.
+	 * @noreference Marked for deletion see
+	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=559593
 	 */
 	@Deprecated
 	String IMG_TOOL_NEW_WIZARD_HOVER = "IMG_TOOL_NEW_WIZARD_HOVER"; //$NON-NLS-1$
@@ -470,6 +482,8 @@ public interface ISharedImages {
 	 * @deprecated in 3.0. This image is now the same as
 	 *             <code>IMG_TOOL_PASTE</code>. Enabled images are now in color. The
 	 *             workbench itself no longer uses the hover image variants.
+	 * @noreference Marked for deletion see
+	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=559593
 	 */
 	@Deprecated
 	String IMG_TOOL_PASTE_HOVER = "IMG_TOOL_PASTE_HOVER"; //$NON-NLS-1$
@@ -490,6 +504,9 @@ public interface ISharedImages {
 	 * @deprecated in 3.0. This image is now the same as <code>IMG_TOOL_REDO</code>.
 	 *             Enabled images are now in color. The workbench itself no longer
 	 *             uses the hover image variants.
+	 *
+	 * @noreference Marked for deletion see
+	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=559593
 	 */
 	@Deprecated
 	String IMG_TOOL_REDO_HOVER = "IMG_TOOL_REDO_HOVER"; //$NON-NLS-1$
@@ -510,6 +527,9 @@ public interface ISharedImages {
 	 * @deprecated in 3.0. This image is now the same as <code>IMG_TOOL_UNDO</code>.
 	 *             Enabled images are now in color. The workbench itself no longer
 	 *             uses the hover image variants.
+	 *
+	 * @noreference Marked for deletion see
+	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=559593
 	 */
 	@Deprecated
 	String IMG_TOOL_UNDO_HOVER = "IMG_TOOL_UNDO_HOVER"; //$NON-NLS-1$
@@ -530,6 +550,8 @@ public interface ISharedImages {
 	 * @deprecated in 3.0. This image is now the same as <code>IMG_TOOL_UP</code>.
 	 *             Enabled images are now in color. The workbench itself no longer
 	 *             uses the hover image variants.
+	 * @noreference Marked for deletion see
+	 *              https://bugs.eclipse.org/bugs/show_bug.cgi?id=559593
 	 */
 	@Deprecated
 	String IMG_TOOL_UP_HOVER = "IMG_TOOL_UP_HOVER"; //$NON-NLS-1$
