@@ -260,7 +260,7 @@ public final class CustomizableIntroPart extends IntroPart implements
 			restoreStandby = false;
 
 		boolean isStandbyPartNeeded = isStandbyPartNeeded();
-		isStandbyPartNeeded = isStandbyPartNeeded | restoreStandby;
+		isStandbyPartNeeded = isStandbyPartNeeded || restoreStandby;
 
 		try {
 			if (standbyPart == null && standby && isStandbyPartNeeded)

@@ -283,7 +283,7 @@ public class FormIntroPartImplementation extends
 	public void dynamicStandbyStateChanged(boolean standby,
 			boolean isStandbyPartNeeded) {
 		// handle action enablement first
-		if (isStandbyPartNeeded | standby) {
+		if (isStandbyPartNeeded || standby) {
 			homeAction.setEnabled(false);
 			forwardAction.setEnabled(false);
 			backAction.setEnabled(false);
