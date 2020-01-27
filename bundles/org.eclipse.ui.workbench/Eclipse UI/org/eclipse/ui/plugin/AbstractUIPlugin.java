@@ -722,11 +722,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 	 * @return an image descriptor, or <code>null</code> if no image could be found
 	 * @since 3.0
 	 *
-	 * @deprecated use
-	 *             {@link ResourceLocator#imageDescriptorFromBundle(String, String)}
-	 *             directly
 	 */
-	@Deprecated
 	public static ImageDescriptor imageDescriptorFromPlugin(String pluginId, String imageFilePath) {
 		if (pluginId == null || imageFilePath == null) {
 			throw new IllegalArgumentException();
