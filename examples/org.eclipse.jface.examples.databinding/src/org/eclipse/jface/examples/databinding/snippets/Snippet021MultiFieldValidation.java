@@ -213,7 +213,7 @@ public class Snippet021MultiFieldValidation extends WizardPage {
 			protected IStatus validate() {
 				Integer field1 = middleField1.getValue();
 				Integer field2 = middleField2.getValue();
-				if (field1 == null | field2 == null) {
+				if (field1 == null || field2 == null) {
 					return ValidationStatus.error("The fields must all be non-empty");
 				}
 

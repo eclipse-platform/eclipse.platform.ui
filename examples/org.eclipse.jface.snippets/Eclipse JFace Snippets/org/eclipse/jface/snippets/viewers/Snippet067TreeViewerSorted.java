@@ -258,7 +258,7 @@ public class Snippet067TreeViewerSorted {
 		@Override
 		public Color getForeground(Object element, int columnIndex) {
 			int category = ((MyModel) element).getCategory();
-			if (category == 0 | category == 3) {
+			if (category == 0 || category == 3) {
 				return Display.getCurrent().getSystemColor(SWT.COLOR_WHITE);
 			}
 			return null;
