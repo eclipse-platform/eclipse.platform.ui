@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Vladimir Piskarev <pisv@1c.ru> - Bug 559539
  ******************************************************************************/
 
 package org.eclipse.ui.internal.ide.undo;
@@ -23,6 +24,7 @@ import org.eclipse.core.commands.operations.IUndoableOperation;
 import org.eclipse.core.commands.operations.OperationHistoryEvent;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.IResourceDelta;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
@@ -120,16 +122,37 @@ public class WorkspaceUndoMonitor {
 			if (operationInProgress != null) {
 				return;
 			}
-			if (event.getType() == IResourceChangeEvent.POST_CHANGE
-					|| event.getType() == IResourceChangeEvent.POST_BUILD) {
-				// For now, we consider any change a change worth tracking.
-				// We can be more specific later if warranted.
+			if ((event.getType() == IResourceChangeEvent.POST_CHANGE
+				|| event.getType() == IResourceChangeEvent.POST_BUILD)
+					&& isAffectedBy(event.getDelta())) {
 				incrementChangeCount();
 				if (numChanges >= CHANGE_THRESHHOLD) {
 					checkOperationHistory();
 				}
 			}
 		};
+	}
+
+	/**
+	 * Check a resource delta to see if it is worth noting.
+	 */
+	private boolean isAffectedBy(IResourceDelta delta) {
+		// For now, we consider any change except marker changes a change
+		// worth tracking. We can be more specific later if warranted.
+		if (delta.getKind() != IResourceDelta.CHANGED) {
+			return true;
+		}
+		int flags = delta.getFlags();
+		if (flags != 0 && flags != IResourceDelta.MARKERS) {
+			return true;
+		}
+		IResourceDelta[] children = delta.getAffectedChildren();
+		for (IResourceDelta child : children) {
+			if (isAffectedBy(child)) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**

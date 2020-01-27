@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017 IBM Corporation and others.
+ * Copyright (c) 2005, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 489250
+ *     Vladimir Piskarev <pisv@1c.ru> - Bug 559539
  *******************************************************************************/
 
 package org.eclipse.ui.tests.operations;
@@ -2153,6 +2154,12 @@ public class WorkspaceOperationsTests extends UITestCase {
 		// back door delete the new file
 		file.delete(true, getMonitor());
 		changes++;
+		// don't count marker changes (bug 559539)
+		for (int i = 0; i < NUM_CHANGES; i++) {
+			IMarker marker = emptyTestFile.createMarker(IMarker.BOOKMARK);
+			marker.setAttributes(initialAttributes);
+			marker.delete();
+		}
 		// op still doesn't know it's invalid because undo monitor hasn't
 		// had changes to force checking it.
 		assertTrue("Operation should be valid", op2.canUndo());
