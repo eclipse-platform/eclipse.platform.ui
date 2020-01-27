@@ -664,7 +664,7 @@ public class DefaultDetailPane extends AbstractDetailPane implements IDetailPane
 	protected void createDetailContextMenu(Control menuControl) {
 		MenuManager menuMgr= new MenuManager();
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(mgr -> fillDetailContextMenu(mgr));
+		menuMgr.addMenuListener(this::fillDetailContextMenu);
 		Menu menu= menuMgr.createContextMenu(menuControl);
 		menuControl.setMenu(menu);
 

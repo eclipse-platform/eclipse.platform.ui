@@ -311,7 +311,7 @@ public class EnvironmentTab extends AbstractLaunchConfigurationTab {
 		environmentTable.setContentProvider(new EnvironmentVariableContentProvider());
 		environmentTable.setLabelProvider(new EnvironmentVariableLabelProvider());
 		environmentTable.setColumnProperties(new String[] { P_VARIABLE, P_VALUE });
-		environmentTable.addSelectionChangedListener(event -> handleTableSelectionChanged(event));
+		environmentTable.addSelectionChangedListener(this::handleTableSelectionChanged);
 
 		// Setup right-click context menu
 		Menu menuTable = new Menu(table);
