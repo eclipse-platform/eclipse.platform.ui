@@ -29,6 +29,7 @@ import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -57,19 +58,27 @@ public class SourceLookupService implements IDebugContextListener, ISourceDispla
 	@Override
 	public synchronized void debugContextChanged(DebugContextEvent event) {
 		if ((event.getFlags() & DebugContextEvent.ACTIVATED) > 0) {
-			if (isDebugViewActive() || canActivateDebugView()) {
+			if (isDebugViewActive(event) || canActivateDebugView()) {
 				displaySource(event.getContext(), event.getDebugContextProvider().getPart(), false);
 			}
 		}
 	}
 
-	private boolean isDebugViewActive() {
+	private boolean isDebugViewActive(DebugContextEvent event) {
 		if (isDisposed()) {
 			return false;
 		}
 		IWorkbenchPage activePage = fWindow.getActivePage();
 		if (activePage != null) {
-			return activePage.findView(IDebugUIConstants.ID_DEBUG_VIEW) != null;
+			IViewPart debugView = null;
+			IWorkbenchPart part = event.getDebugContextProvider().getPart();
+			if (part != null) {
+				debugView = activePage.findView(part.getSite().getId());
+			}
+			if (debugView == null) {
+				debugView = activePage.findView(IDebugUIConstants.ID_DEBUG_VIEW);
+			}
+			return debugView != null;
 		}
 		return false;
 	}
