@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2019 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,12 +14,11 @@
  *     Tonny Madsen, RCP Company - bug 201055
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 440136
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 485313
+ *     Christoph Läubrich - Bug 552773 - Simplify logging in platform code base
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -171,10 +170,7 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 								.getSingleton());
 			}
 		} catch (BackingStoreException e) {
-			IStatus status = new Status(IStatus.ERROR, UIPlugin.getDefault()
-					.getBundle().getSymbolicName(), IStatus.ERROR, e
-					.getLocalizedMessage(), e);
-			UIPlugin.getDefault().getLog().log(status);
+			UIPlugin.getDefault().getLog().error(e.getLocalizedMessage(), e);
 		}
 
 		rootNode
