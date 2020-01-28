@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016, 2019 Red Hat Inc. and others
+ * Copyright (c) 2016, 2020 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -39,6 +39,7 @@ import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Util;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -332,17 +333,25 @@ public class SmartImportTests extends UITestCase {
 
 	@Test
 	public void testCancelWizardCancelsJob() {
-		SmartImportWizard wizard = new SmartImportWizard();
-		File importRoot = File.listRoots()[0];
+		// Use the (probably) largest root as import source so that the importer is
+		// running long enough that we can cancel it.
+		// First version of this test used File.listRoots()[0] but while usually sorted
+		// it is not guaranteed. Additional the first root might not what you expect.
+		// The Windows test machine returns A:\ as first root which is not suitable for
+		// this test.
+		File importRoot = new File(Util.isWindows() ? "C:\\" : "/");
+		if (!importRoot.isDirectory()) {
+			importRoot = File.listRoots()[0];
+		}
 		TestPlugin.getDefault().getLog().log(new Status(IStatus.INFO, TestPlugin.PLUGIN_ID,
 				"Testing job cancel with root: " + importRoot.getAbsolutePath()));
+
+		SmartImportWizard wizard = new SmartImportWizard();
 		wizard.setInitialImportSource(importRoot);
 		this.dialog = new WizardDialog(getWorkbench().getActiveWorkbenchWindow().getShell(), wizard);
 		dialog.setBlockOnOpen(false);
 		dialog.open();
 		SmartImportRootWizardPage page = (SmartImportRootWizardPage) dialog.getCurrentPage();
-		TestPlugin.getDefault().getLog().log(new Status(IStatus.INFO, TestPlugin.PLUGIN_ID,
-				"Search nested: " + page.isDetectNestedProject()));
 		ProgressMonitorPart wizardProgressMonitor = page.getWizardProgressMonitor();
 		assertNotNull("Wizard should have a progress monitor", wizardProgressMonitor);
 		ToolItem stopButton = getStopButton(wizardProgressMonitor);
