@@ -25,10 +25,8 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.NodeChangeEvent;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.keys.IBindingService;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -155,8 +153,6 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 
 		node.putInt(IWorkbenchPreferenceConstants.RECENTLY_USED_WORKINGSETS_SIZE, 5);
 
-		migrateInternalPreferences();
-
 		IEclipsePreferences rootNode = (IEclipsePreferences) Platform
 				.getPreferencesService().getRootNode()
 				.node(InstanceScope.SCOPE);
@@ -196,46 +192,5 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 				});
 	}
 
-	/**
-	 * Migrate any old internal preferences to the API store.
-	 */
-	private void migrateInternalPreferences() {
-
-		IPreferenceStore internalStore = WorkbenchPlugin.getDefault()
-				.getPreferenceStore();
-		IPreferenceStore apiStore = PlatformUI.getPreferenceStore();
-		// Is there a value there?
-		if (internalStore
-				.contains(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION)) {
-			apiStore.setValue(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION,
-					internalStore.getInt(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION));
-			internalStore
-				.setToDefault(IWorkbenchPreferenceConstants.VIEW_TAB_POSITION);
-		}
-
-		// Is there a value there?
-		if (internalStore
-				.contains(IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION)) {
-
-			apiStore.setValue(
-					IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION,
-					internalStore.getInt(IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION));
-			internalStore
-				.setToDefault(IWorkbenchPreferenceConstants.EDITOR_TAB_POSITION);
-		}
-
-		// As default is true we need to check if a value was set
-
-		if (internalStore
-				.contains(IWorkbenchPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS)) {
-			apiStore
-					.setValue(
-							IWorkbenchPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS,
-							internalStore
-							.getBoolean(IWorkbenchPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS));
-			internalStore
-					.setToDefault(IWorkbenchPreferenceConstants.SHOW_MULTIPLE_EDITOR_TABS);
-		}
-	}
 
 }
