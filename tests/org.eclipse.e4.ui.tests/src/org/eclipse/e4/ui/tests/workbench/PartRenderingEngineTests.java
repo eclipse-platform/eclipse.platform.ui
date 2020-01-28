@@ -22,6 +22,7 @@ import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeFalse;
 
 import java.util.function.Consumer;
 import javax.inject.Inject;
@@ -988,8 +989,7 @@ public class PartRenderingEngineTests {
 		// if (checkMacBug466636())
 		// return;
 
-		if (Platform.OS_MACOSX.equals(Platform.getOS())) // Disabling on Mac due to bug 537639
-			return;
+		assumeFalse("Test fails on Mac: Bug 537639", Platform.OS_MACOSX.equals(Platform.getOS()));
 
 		MWindow window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);
@@ -1982,8 +1982,7 @@ public class PartRenderingEngineTests {
 	public void testBug326175_False() {
 		// if (checkMacBug466636())
 		// return;
-		if (Platform.OS_MACOSX.equals(Platform.getOS())) // Disabling on Mac due to bug 537639
-			return;
+		assumeFalse("Test fails on Mac: Bug 537639", Platform.OS_MACOSX.equals(Platform.getOS()));
 
 		testBug326175(false);
 	}
@@ -2987,8 +2986,7 @@ public class PartRenderingEngineTests {
 
 	@Test
 	public void testBug372226() {
-		if (Platform.OS_MACOSX.equals(Platform.getOS())) // Disabling on Mac due to bug 537639
-			return;
+		assumeFalse("Test fails on Mac: Bug 537639", Platform.OS_MACOSX.equals(Platform.getOS()));
 
 		MWindow window = ems.createModelElement(MWindow.class);
 

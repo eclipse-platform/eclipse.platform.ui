@@ -22,6 +22,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeFalse;
 
 import javax.inject.Inject;
 import org.eclipse.core.runtime.Platform;
@@ -72,8 +73,7 @@ public class MWindowTest {
 
 	@Test
 	public void testCreateWindow() {
-		if (Platform.OS_MACOSX.equals(Platform.getOS())) // Disabling on Mac due to bug 537639
-			return;
+		assumeFalse("Test fails on Mac: Bug 537639", Platform.OS_MACOSX.equals(Platform.getOS()));
 
 		final MWindow window = ems.createModelElement(MWindow.class);
 		window.setLabel("MyWindow");
@@ -149,8 +149,7 @@ public class MWindowTest {
 
 	@Test
 	public void testContextChildren() {
-		if (Platform.OS_MACOSX.equals(Platform.getOS())) // Disabling on Mac due to bug 537639
-			return;
+		assumeFalse("Test fails on Mac: Bug 537639", Platform.OS_MACOSX.equals(Platform.getOS()));
 
 		final MWindow window = createWindowWithOneView();
 
