@@ -101,13 +101,7 @@ public class AnnotationCodeMiningFilter {
 	}
 
 	private boolean isPaintable(Annotation a) {
-		// workaround for  https://bugs.eclipse.org/bugs/show_bug.cgi?id=552760
-		// (NPE on JavaAnnotationImageProvider.getQuickFixErrorImage(): No Display)
-		try {
-			return annotationAccess.isPaintable(a);
-		} catch (NullPointerException e) {
-			return false;
-		}
+		return annotationAccess.isPaintable(a);
 	}
 
 	private boolean isInScope(Annotation a) {
