@@ -57,7 +57,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -74,8 +73,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.themes.IThemeDescriptor;
-import org.eclipse.ui.internal.tweaklets.PreferencePageEnhancer;
-import org.eclipse.ui.internal.tweaklets.Tweaklets;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.themes.IThemeManager;
 import org.osgi.service.prefs.BackingStoreException;
@@ -154,11 +151,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			} else {
 				themeComboDecorator.hide();
 			}
-			try {
-				((PreferencePageEnhancer) Tweaklets.get(PreferencePageEnhancer.KEY)).setSelection(selection);
-			} catch (SWTException e) {
-				WorkbenchPlugin.log("Failed to set CSS preferences", e); //$NON-NLS-1$
-			}
 			selectColorsAndFontsTheme(getColorAndFontThemeIdByThemeId(selection.getId()));
 		});
 
@@ -167,9 +159,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		createColorsAndFontsThemeDescriptionText(comp);
 
 		createThemeIndependentComposits(comp);
-
-		((PreferencePageEnhancer) Tweaklets.get(PreferencePageEnhancer.KEY)).setSelection(currentTheme);
-		((PreferencePageEnhancer) Tweaklets.get(PreferencePageEnhancer.KEY)).createContents(comp);
 
 		if (currentTheme != null) {
 			String colorsAndFontsThemeId = getColorAndFontThemeIdByThemeId(currentTheme.getId());
@@ -282,7 +271,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, enableAnimations.getSelection());
 		apiStore.setValue(IWorkbenchPreferenceConstants.USE_COLORED_LABELS, useColoredLabels.getSelection());
-		((PreferencePageEnhancer) Tweaklets.get(PreferencePageEnhancer.KEY)).performOK();
 
 		IEclipsePreferences prefs = getSwtRendererPreferences();
 		if (enableMru != null) {
@@ -317,7 +305,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		if (engine != null) {
 			setColorsAndFontsTheme(currentColorsAndFontsTheme);
 
-			((PreferencePageEnhancer) Tweaklets.get(PreferencePageEnhancer.KEY)).performDefaults();
 			engine.setTheme(defaultTheme, true);
 			if (engine.getActiveTheme() != null) {
 				themeIdCombo.setSelection(new StructuredSelection(engine.getActiveTheme()));
