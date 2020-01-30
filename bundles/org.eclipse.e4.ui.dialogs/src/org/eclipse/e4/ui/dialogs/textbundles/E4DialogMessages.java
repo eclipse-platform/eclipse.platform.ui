@@ -26,6 +26,17 @@ public class E4DialogMessages extends NLS {
 	public static String FilteredTree_FilterMessage;
 	public static String FilteredTree_AccessibleListenerFiltered;
 
+	// ==============================================================================
+	// About Dialog
+	// ==============================================================================
+	public static String AboutPluginsDialog_state_installed;
+	public static String AboutPluginsDialog_state_resolved;
+	public static String AboutPluginsDialog_state_starting;
+	public static String AboutPluginsDialog_state_stopping;
+	public static String AboutPluginsDialog_state_uninstalled;
+	public static String AboutPluginsDialog_state_active;
+	public static String AboutPluginsDialog_state_unknown;
+
 	static {
 		// load message values from bundle file
 		reloadMessages();
