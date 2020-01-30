@@ -104,10 +104,8 @@ class CodeMiningProviderDescriptor {
 			final ElementHandler elementHandler = ElementHandler.getDefault();
 			final ExpressionConverter converter = ExpressionConverter.getDefault();
 			return elementHandler.create(converter, subChildren[0]);
-
 		}
-		throw new CoreException(new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID,
-				"<enabledWhen> element is required. Disabling " + id)); //$NON-NLS-1$
+		return null;
 	}
 
 	/**
@@ -179,6 +177,9 @@ class CodeMiningProviderDescriptor {
 	 *         and false otherwise.
 	 */
 	public boolean matches(ISourceViewer viewer, ITextEditor editor) {
+		if (fEnabledWhen == null) {
+			return true;
+		}
 		EvaluationContext context = new EvaluationContext(null, editor);
 		context.setAllowPluginActivation(true);
 		context.addVariable("viewer", viewer); //$NON-NLS-1$
