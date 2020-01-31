@@ -18,7 +18,12 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -93,6 +98,8 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 						configs.add(launchConfig);
 					}
 				}
+				configs = filterUniqueLaunchConfigurations(configs);
+
 				ILaunchConfiguration[] prototypes = getLaunchManager().getLaunchConfigurations(type, ILaunchConfiguration.PROTOTYPE);
 				Collections.addAll(configs, prototypes);
 				return configs.toArray(new ILaunchConfiguration[0]);
@@ -222,5 +229,57 @@ public class LaunchConfigurationTreeContentProvider implements ITreeContentProvi
 	 */
 	private Shell getShell() {
 		return fShell;
+	}
+
+	/**
+	 * Returns unique launch configurations from the input list Launch
+	 * configurations are unique if the following criteria are fulfilled:
+	 * <ol>
+	 * <li>The name is unique within the list</li>
+	 * <li>The set of attributes (key and value) for the launch configuration is
+	 * unique within the list</li>
+	 * </ol>
+	 *
+	 * @param launchConfigurations The list of launch configurations to filter
+	 * @return List of unique launch configurations based on criteria above
+	 * @throws CoreException If unable to fetch attributes for launch configuration
+	 */
+	private List<ILaunchConfiguration> filterUniqueLaunchConfigurations(List<ILaunchConfiguration> launchConfigurations) throws CoreException {
+		List<ILaunchConfiguration> configs = new ArrayList<>();
+
+		// Create map between name and list of launch configurations with same
+		// name
+		Map<String, List<ILaunchConfiguration>> configNameMap = new HashMap<>();
+
+		for (ILaunchConfiguration launchConfig : launchConfigurations) {
+			String name = launchConfig.getName();
+			if (!configNameMap.containsKey(name)) {
+				configNameMap.put(name, new ArrayList<>());
+			}
+			configNameMap.get(name).add(launchConfig);
+		}
+
+		// Identify unique configurations
+		for (Entry<String, List<ILaunchConfiguration>> entry : configNameMap.entrySet()) {
+			List<ILaunchConfiguration> configsWithSameName = entry.getValue();
+			if (configsWithSameName.size() == 1) {
+				// Only one configuration, add it
+				configs.add(configsWithSameName.get(0));
+			} else if (configsWithSameName.size() > 1) {
+				// More than one configuration detected with same name,
+				// verify that they are unique
+				Set<Map<String, Object>> seenConfigContent = new HashSet<>();
+				for (ILaunchConfiguration config : configsWithSameName) {
+					Map<String, Object> content = config.getAttributes();
+					if (!seenConfigContent.contains(content)) {
+						// Only add the first one with the same content
+						seenConfigContent.add(content);
+						configs.add(config);
+					}
+				}
+			}
+		}
+
+		return configs;
 	}
 }
