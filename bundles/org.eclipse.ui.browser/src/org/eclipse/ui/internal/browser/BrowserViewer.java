@@ -46,6 +46,7 @@ import org.eclipse.swt.browser.ProgressListener;
 import org.eclipse.swt.browser.VisibilityWindowAdapter;
 import org.eclipse.swt.browser.WindowEvent;
 import org.eclipse.swt.dnd.Clipboard;
+import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -273,7 +274,7 @@ public class BrowserViewer extends Composite {
 			text.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		addBrowserListeners();
-		//listen();
+		addDisposeListener(this::dispose);
 	}
 
 	/**
@@ -741,10 +742,7 @@ public class BrowserViewer extends Composite {
 	/**
 	 *
 	 */
-	@Override
-	public void dispose() {
-		super.dispose();
-
+	private void dispose(DisposeEvent event) {
 		showToolbar = false;
 
 		if (busy != null)
@@ -756,6 +754,15 @@ public class BrowserViewer extends Composite {
 		if (clipboard!=null)
 			clipboard.dispose();
 		clipboard=null;
+
+		if (watcher != null) {
+			try {
+				watcher.close();
+			} catch (IOException e) {
+				WebBrowserUIPlugin.logError(e.getMessage(), e);
+			}
+		}
+		watcher = null;
 
 		removeSynchronizationListener();
 	}
