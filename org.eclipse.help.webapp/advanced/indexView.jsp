@@ -94,7 +94,7 @@ var loadingMessage = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("Lo
 <div id = "indexList">
 
 <DIV class = "group" id = "wai_application">
-    <DIV class = "root" id = "tree_root">
+    <DIV class = "root" aria-label = "Search results" id = "tree_root">
     </DIV>
 </DIV>
 </div>
