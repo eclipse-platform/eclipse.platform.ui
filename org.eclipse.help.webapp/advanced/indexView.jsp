@@ -85,7 +85,7 @@ var loadingMessage = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("Lo
 	</tr>
 <%}%>
 	<tr>
-		<td width="100%"><input type="text" id="typein"></td>
+		<td width="100%"><input type="text" id="typein" aria-label="Find word"></td>
 	<%if (prefs.isIndexButton()) {%>
 		<td><input type="button" id="button" value="<%=ServletResources.getString("IndexTypeinButton", request)%>" onclick="this.blur();showIndex()"></td>
 	<%}%>
