@@ -107,7 +107,7 @@ A {
 
 #scopeLabel {
 	text-decoration:underline; 
-	color:#0066FF; 
+	color:#005FFF; 
 	cursor:pointer;
 	padding-left:15px;   /* This should be the same for both RTL and LTR. */
 }
