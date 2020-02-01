@@ -69,7 +69,6 @@ import org.eclipse.e4.ui.workbench.Selector;
 import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.e4.ui.workbench.UIEvents.ElementContainer;
 import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
-import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.common.util.EList;
 import org.eclipse.jface.action.AbstractGroupMarker;
@@ -122,9 +121,6 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 
 	@Inject
 	private MApplication application;
-
-	@Inject
-	EModelService modelService;
 
 	@Inject
 	@Optional
