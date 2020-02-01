@@ -43,7 +43,6 @@ import org.eclipse.e4.core.contexts.IContextFunction;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.annotations.Optional;
-import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
@@ -113,9 +112,6 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 
 	@Inject
 	private MApplication application;
-
-	@Inject
-	IEventBroker eventBroker;
 
 	@Inject
 	@Optional
