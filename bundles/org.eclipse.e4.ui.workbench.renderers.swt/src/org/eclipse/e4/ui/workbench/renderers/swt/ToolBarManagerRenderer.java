@@ -87,7 +87,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.ToolBar;
-import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 import org.osgi.service.event.Event;
 
@@ -380,7 +379,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	}
 
 	@PreDestroy
-	void preDestroy() {
+	public void preDestroy() {
 		if (Policy.DEBUG_RENDERER) {
 			logger.debug("\nTBMR:dispose: modelToManager size = {0}, managerToModel size = {1}", //$NON-NLS-1$
 					modelToManager.size(), managerToModel.size());
@@ -592,7 +591,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		}
 	}
 
-	int getOrientation(final MUIElement element) {
+	private int getOrientation(final MUIElement element) {
 		MUIElement theParent = element.getParent();
 		if (theParent instanceof MTrimBar) {
 			MTrimBar trimContainer = (MTrimBar) theParent;
@@ -636,19 +635,6 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		if (toolbar != null && !toolbar.isDisposed()) {
 			toolbar.requestLayout();
 		}
-	}
-
-	boolean hasOnlySeparators(ToolBar toolbar) {
-		ToolItem[] children = toolbar.getItems();
-		for (ToolItem toolItem : children) {
-			if ((toolItem.getStyle() & SWT.SEPARATOR) == 0) {
-				return false;
-			} else if (toolItem.getControl() != null
-					&& toolItem.getControl().getData(OWNING_ME) instanceof MToolControl) {
-				return false;
-			}
-		}
-		return true;
 	}
 
 	@Override
@@ -788,7 +774,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		linkModelToContribution(itemModel, ci);
 	}
 
-	void processOpaqueItem(ToolBarManager parentManager, MToolItem itemModel) {
+	private void processOpaqueItem(ToolBarManager parentManager, MToolItem itemModel) {
 		IContributionItem ici = getContribution(itemModel);
 		if (ici != null) {
 			return;
@@ -1013,7 +999,7 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		return super.getContext(el);
 	}
 
-	ToolItemUpdater getUpdater() {
+	/* package */ ToolItemUpdater getUpdater() {
 		return enablementUpdater;
 	}
 

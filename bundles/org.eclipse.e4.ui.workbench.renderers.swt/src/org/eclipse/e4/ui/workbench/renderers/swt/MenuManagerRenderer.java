@@ -596,7 +596,8 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		}
 	}
 
-	void removeMenuContributions(final MMenu menuModel, final ArrayList<MMenuElement> menuContributionsToRemove) {
+	private void removeMenuContributions(final MMenu menuModel,
+			final ArrayList<MMenuElement> menuContributionsToRemove) {
 		for (MMenuElement item : menuContributionsToRemove) {
 			menuModel.getChildren().remove(item);
 
@@ -695,7 +696,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	 * @param menuManager
 	 * @param childME
 	 */
-	void modelProcessSwitch(MenuManager menuManager, MMenuElement childME) {
+	/* package */ void modelProcessSwitch(MenuManager menuManager, MMenuElement childME) {
 		if (!childME.isToBeRendered()) {
 			return;
 		}
@@ -730,7 +731,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	 * @param parentManager
 	 * @param itemModel
 	 */
-	void processRenderedItem(MenuManager parentManager, MMenuItem itemModel) {
+	private void processRenderedItem(MenuManager parentManager, MMenuItem itemModel) {
 		IContributionItem ici = getContribution(itemModel);
 		if (ici != null) {
 			return;
@@ -753,7 +754,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 		linkModelToContribution(itemModel, ici);
 	}
 
-	void processOpaqueItem(MenuManager parentManager, MMenuItem itemModel) {
+	private void processOpaqueItem(MenuManager parentManager, MMenuItem itemModel) {
 		IContributionItem ici = getContribution(itemModel);
 		if (ici != null) {
 			return;
@@ -801,7 +802,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	 * @param itemModel
 	 * @param id
 	 */
-	void processDirectItem(MenuManager parentManager, MDirectMenuItem itemModel, String id) {
+	private void processDirectItem(MenuManager parentManager, MDirectMenuItem itemModel, String id) {
 		IContributionItem ici = getContribution(itemModel);
 		if (ici != null) {
 			return;
@@ -834,7 +835,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	 * @param parentManager
 	 * @param itemModel
 	 */
-	void processHandledItem(MenuManager parentManager, MHandledMenuItem itemModel) {
+	private void processHandledItem(MenuManager parentManager, MHandledMenuItem itemModel) {
 		IContributionItem ici = getContribution(itemModel);
 		if (ici != null) {
 			return;
