@@ -476,6 +476,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements IWorkb
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private void createFileAssociations(final Composite parent) {
 		Composite composite = new Composite(parent, SWT.NONE);
 		composite.setLayout(new GridLayout(2, false));
@@ -502,8 +503,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements IWorkb
 				return;
 			}
 			boolean enabled = true;
-			List<Spec> elements = selection.toList();
-			for (Spec spec : elements) {
+			for (Spec spec : (Iterable<Spec>) selection) {
 				if (spec.isPredefined) {
 					enabled = false;
 				}

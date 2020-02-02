@@ -278,9 +278,8 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
 	 * @return whether it is applicable
 	 */
 	public boolean isApplicableTo(IStructuredSelection selection, IObjectContributor contributor) {
-		Iterator elements = selection.iterator();
-		while (elements.hasNext()) {
-			if (contributor.isApplicableTo(elements.next()) == false) {
+		for (Object element : selection) {
+			if (contributor.isApplicableTo(element) == false) {
 				return false;
 			}
 		}
@@ -297,9 +296,8 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
 	 */
 
 	public boolean isApplicableTo(List list, IObjectContributor contributor) {
-		Iterator elements = list.iterator();
-		while (elements.hasNext()) {
-			if (contributor.isApplicableTo(elements.next()) == false) {
+		for (Object element : list) {
+			if (contributor.isApplicableTo(element) == false) {
 				return false;
 			}
 		}

@@ -15,7 +15,6 @@
 package org.eclipse.ui.internal;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -55,10 +54,8 @@ public class SelectionConversionService implements ISelectionConversionService {
 		}
 
 		List result = new ArrayList();
-		Iterator elements = originalSelection.iterator();
 
-		while (elements.hasNext()) {
-			Object currentElement = elements.next();
+		for (Object currentElement : originalSelection) {
 			Object resource = Adapters.adapt(currentElement, resourceClass);
 			if (resource != null) {
 				result.add(resource);

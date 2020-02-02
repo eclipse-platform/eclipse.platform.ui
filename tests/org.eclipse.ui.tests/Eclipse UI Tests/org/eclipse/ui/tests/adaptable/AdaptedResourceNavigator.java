@@ -14,7 +14,6 @@
 package org.eclipse.ui.tests.adaptable;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -130,8 +129,7 @@ public class AdaptedResourceNavigator extends ViewPart {
 		ArrayList<IResource> list = new ArrayList<>();
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
-			for (Iterator<?> i = ssel.iterator(); i.hasNext();) {
-				Object o = i.next();
+			for (Object o : ssel) {
 				IResource resource = Adapters.adapt(o, IResource.class);
 				if (resource != null) {
 					list.add(resource);

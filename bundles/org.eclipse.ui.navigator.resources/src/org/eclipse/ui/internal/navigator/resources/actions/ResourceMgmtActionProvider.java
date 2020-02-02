@@ -169,9 +169,7 @@ public class ResourceMgmtActionProvider extends CommonActionProvider {
 			return Collections.emptyList();
 		}
 		List<IProject> resources = new ArrayList<>();
-		Iterator<?> selectionIterator = selection.iterator();
-		while (selectionIterator.hasNext()) {
-			Object currentObject = selectionIterator.next();
+		for (Object currentObject : selection) {
 			if (currentObject instanceof IWorkingSet) {
 				IWorkingSet workingSet = (IWorkingSet) currentObject;
 				for (IAdaptable element : workingSet.getElements()) {

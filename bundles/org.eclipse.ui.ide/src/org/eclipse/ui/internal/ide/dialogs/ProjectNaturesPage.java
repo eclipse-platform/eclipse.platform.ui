@@ -186,7 +186,7 @@ public class ProjectNaturesPage extends PropertyPage {
 					ProjectNaturesPage.this.warningAlreadyShown = true;
 				}
 				IStructuredSelection selection = ProjectNaturesPage.this.activeNaturesList.getStructuredSelection();
-				for (Object item : selection.toList()) {
+				for (Object item : selection) {
 					String natureId = (String) item;
 					naturesIdsWorkingCopy.remove(natureId);
 				}

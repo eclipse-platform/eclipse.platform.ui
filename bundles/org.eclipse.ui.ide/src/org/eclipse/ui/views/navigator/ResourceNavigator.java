@@ -282,8 +282,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget, 
 		ArrayList<IResource> list = new ArrayList<>();
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
-			for (Iterator<?> i = ssel.iterator(); i.hasNext();) {
-				Object o = i.next();
+			for (Object o : ssel) {
 				IResource resource = Adapters.adapt(o, IResource.class);
 				if (resource != null) {
 					list.add(resource);
@@ -1459,8 +1458,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget, 
 			ISelection sel = context.getSelection();
 			if (sel instanceof IStructuredSelection) {
 				IStructuredSelection ssel = (IStructuredSelection) sel;
-				for (Iterator<?> i = ssel.iterator(); i.hasNext();) {
-					Object o1 = i.next();
+				for (Object o1 : ssel) {
 
 					IResource resource = Adapters.adapt(o1, IResource.class);
 					if (resource != null) {

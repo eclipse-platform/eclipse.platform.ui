@@ -16,7 +16,6 @@
 package org.eclipse.ui.views.markers.internal;
 
 import java.util.Date;
-import java.util.Iterator;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -300,9 +299,8 @@ public final class Util {
 	 */
 	public static boolean allConcreteSelection(IStructuredSelection selection) {
 		if (selection != null && selection.size() > 0) {
-			Iterator<?> nodes = selection.iterator();
-			while (nodes.hasNext()) {
-				if (((MarkerNode) nodes.next()).isConcrete()) {
+			for (Object node : selection) {
+				if (((MarkerNode) node).isConcrete()) {
 					continue;
 				}
 				return false;

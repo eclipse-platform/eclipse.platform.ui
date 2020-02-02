@@ -78,9 +78,7 @@ public class TabbedPropertyRegistryClassSectionFilter {
 			IFilter filter = descriptor.getFilter();
 
 			if (filter != null) {
-				for (Iterator<?> i = ((IStructuredSelection) selection).iterator(); i
-						.hasNext();) {
-					Object object = i.next();
+				for (Object object : (IStructuredSelection) selection) {
 
 					if (filter.select(object) == false) {
 						/**
@@ -98,10 +96,7 @@ public class TabbedPropertyRegistryClassSectionFilter {
 
 			Set<Class<?>> effectiveTypes = new HashSet<>();
 
-			for (Iterator<?> i = ((IStructuredSelection) selection).iterator(); i
-					.hasNext();) {
-
-				Object object = i.next();
+			for (Object object : (IStructuredSelection) selection) {
 
 				Class<?> remapType = object.getClass();
 				if (typeMapper != null) {

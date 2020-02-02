@@ -15,7 +15,6 @@
 
 package org.eclipse.ui.navigator.resources;
 
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -109,8 +108,7 @@ public class ResourceDragAdapterAssistant extends
 	private IResource[] getSelectedResources(IStructuredSelection aSelection) {
 		Set<IResource> resources = new LinkedHashSet<>();
 		IResource resource = null;
-		for (Iterator<?> iter = aSelection.iterator(); iter.hasNext();) {
-			Object selected = iter.next();
+		for (Object selected : aSelection) {
 			resource = Adapters.adapt(selected, IRESOURCE_TYPE);
 			if (resource != null) {
 				resources.add(resource);

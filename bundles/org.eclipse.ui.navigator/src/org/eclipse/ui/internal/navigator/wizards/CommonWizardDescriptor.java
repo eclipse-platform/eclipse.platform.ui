@@ -14,8 +14,6 @@
 
 package org.eclipse.ui.internal.navigator.wizards;
 
-import java.util.Iterator;
-
 import org.eclipse.core.expressions.ElementHandler;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
@@ -114,9 +112,8 @@ public class CommonWizardDescriptor implements INavigatorContentExtPtConstants, 
 		IEvaluationContext context = null;
 		IEvaluationContext parentContext = NavigatorPlugin.getApplicationContext();
 
-		Iterator elements = aStructuredSelection.iterator();
-		while (elements.hasNext()) {
-			context = new EvaluationContext(parentContext, elements.next());
+		for (Object element : aStructuredSelection) {
+			context = new EvaluationContext(parentContext, element);
 			context.setAllowPluginActivation(true);
 			if (NavigatorPlugin.safeEvaluate(enablement, context) == EvaluationResult.FALSE) {
 				return false;

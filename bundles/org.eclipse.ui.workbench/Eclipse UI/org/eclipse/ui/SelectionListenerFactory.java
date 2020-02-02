@@ -257,7 +257,7 @@ public class SelectionListenerFactory {
 					return false;
 				}
 				IStructuredSelection sel = (IStructuredSelection) model.getCurrentSelection();
-				for (Object object : sel.toArray()) {
+				for (Object object : sel) {
 					if (Adapters.adapt(object, adapterType) == null) {
 						return false;
 					}

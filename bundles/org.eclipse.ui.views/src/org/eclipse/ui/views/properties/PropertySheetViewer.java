@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -924,12 +923,9 @@ class PropertySheetViewer extends Viewer {
 	 */
 	public void resetProperties() {
 		// Determine the selection
-		IStructuredSelection selection = (IStructuredSelection) getSelection();
-
 		// Iterate over entries and reset them
-		Iterator<IPropertySheetEntry> itr = selection.iterator();
-		while (itr.hasNext()) {
-			itr.next().resetPropertyValue();
+		for (Object element : (IStructuredSelection) getSelection()) {
+			((IPropertySheetEntry) element).resetPropertyValue();
 		}
 	}
 

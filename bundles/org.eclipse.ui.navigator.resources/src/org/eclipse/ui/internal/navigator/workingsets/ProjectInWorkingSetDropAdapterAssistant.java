@@ -60,7 +60,7 @@ public class ProjectInWorkingSetDropAdapterAssistant extends CommonDropAdapterAs
 		// Verify that we have at least one project not already in the target
 		ISelection sel = LocalSelectionTransfer.getTransfer().getSelection();
 		if (!sel.isEmpty() && sel instanceof IStructuredSelection) {
-			for (Object item : ((IStructuredSelection) sel).toArray()) {
+			for (Object item : (IStructuredSelection) sel) {
 				IProject project = Adapters.adapt(item, IProject.class);
 				if (project != null && !workingSetContains(targetWorkingSet, project)) {
 					return Status.OK_STATUS;
@@ -91,7 +91,7 @@ public class ProjectInWorkingSetDropAdapterAssistant extends CommonDropAdapterAs
 				}
 			}
 		} else if (sel instanceof IStructuredSelection) {
-			for (Object item : ((IStructuredSelection) sel).toArray()) {
+			for (Object item : (IStructuredSelection) sel) {
 				IProject project = Adapters.adapt(item, IProject.class);
 				if (project != null && !workingSetContains(targetWorkingSet, project)) {
 					workingSetManager.addToWorkingSets(project, new IWorkingSet[] { targetWorkingSet });

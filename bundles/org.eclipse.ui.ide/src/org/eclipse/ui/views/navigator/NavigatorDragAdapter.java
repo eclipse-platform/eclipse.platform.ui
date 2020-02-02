@@ -14,7 +14,6 @@
 package org.eclipse.ui.views.navigator;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -196,8 +195,7 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
 		}
 
 		IStructuredSelection selection = (IStructuredSelection) selectionProvider.getSelection();
-		for (Iterator i = selection.iterator(); i.hasNext();) {
-			Object next = i.next();
+		for (Object next : selection) {
 			if (!(next instanceof IFile || next instanceof IFolder)) {
 				event.doit = false;
 				return;
@@ -221,9 +219,7 @@ public class NavigatorDragAdapter extends DragSourceAdapter {
 		IStructuredSelection structuredSelection = (IStructuredSelection) selection;
 
 		// loop through list and look for matching items
-		Iterator itr = structuredSelection.iterator();
-		while (itr.hasNext()) {
-			Object obj = itr.next();
+		for (Object obj : structuredSelection) {
 			if (obj instanceof IResource) {
 				IResource res = (IResource) obj;
 				if ((res.getType() & resourceTypes) == res.getType()) {

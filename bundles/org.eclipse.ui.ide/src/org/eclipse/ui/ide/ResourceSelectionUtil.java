@@ -14,7 +14,6 @@
 package org.eclipse.ui.ide;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
@@ -51,9 +50,7 @@ public class ResourceSelectionUtil {
 	 */
 	public static boolean allResourcesAreOfType(IStructuredSelection selection,
 			int resourceMask) {
-		Iterator resources = selection.iterator();
-		while (resources.hasNext()) {
-			Object next = resources.next();
+		for (Object next : selection) {
 			if (!(next instanceof IResource)) {
 				return false;
 			}
@@ -78,10 +75,8 @@ public class ResourceSelectionUtil {
 	 * @see IResource#getType()
 	 */
 	public static IStructuredSelection allResources(IStructuredSelection selection, int resourceMask) {
-		Iterator<?> adaptables = selection.iterator();
 		List<IResource> result = new ArrayList<>();
-		while (adaptables.hasNext()) {
-			Object next = adaptables.next();
+		for (Object next : selection) {
 			IResource resource = Adapters.adapt(next, IResource.class);
 			if (resource == null) {
 				return null;

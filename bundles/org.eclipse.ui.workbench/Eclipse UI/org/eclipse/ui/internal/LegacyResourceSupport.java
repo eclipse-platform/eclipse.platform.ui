@@ -16,7 +16,6 @@ package org.eclipse.ui.internal;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.Platform;
@@ -572,8 +571,7 @@ public final class LegacyResourceSupport {
 	 */
 	public static IStructuredSelection adaptSelection(IStructuredSelection selection, String objectClass) {
 		List<Object> newSelection = new ArrayList<>(10);
-		for (Iterator<?> it = selection.iterator(); it.hasNext();) {
-			Object element = it.next();
+		for (Object element : selection) {
 			Object adaptedElement = getAdapter(element, objectClass);
 			if (adaptedElement != null) {
 				newSelection.add(adaptedElement);

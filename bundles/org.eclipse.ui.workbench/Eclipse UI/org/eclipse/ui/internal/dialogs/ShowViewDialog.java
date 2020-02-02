@@ -17,7 +17,6 @@
 package org.eclipse.ui.internal.dialogs;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator;
@@ -398,9 +397,7 @@ public class ShowViewDialog extends Dialog implements ISelectionChangedListener,
 	 */
 	protected void updateSelection(SelectionChangedEvent event) {
 		ArrayList<MPartDescriptor> descs = new ArrayList<>();
-		IStructuredSelection sel = event.getStructuredSelection();
-		for (Iterator<?> i = sel.iterator(); i.hasNext();) {
-			Object o = i.next();
+		for (Object o : event.getStructuredSelection()) {
 			if (o instanceof MPartDescriptor) {
 				descs.add((MPartDescriptor) o);
 			}

@@ -16,7 +16,6 @@ package org.eclipse.ui;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import org.eclipse.core.runtime.Adapters;
@@ -327,8 +326,7 @@ public final class SelectionEnabler {
 		if (classes.isEmpty()) {
 			return true;
 		}
-		for (Iterator<?> elements = ssel.iterator(); elements.hasNext();) {
-			Object obj = elements.next();
+		for (Object obj : ssel) {
 			if (obj instanceof IAdaptable) {
 				IAdaptable element = (IAdaptable) obj;
 				if (verifyElement(element) == false) {

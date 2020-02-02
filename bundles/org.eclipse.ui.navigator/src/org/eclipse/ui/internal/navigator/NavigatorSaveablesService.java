@@ -318,8 +318,7 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	private Saveable[] getActiveSaveablesFromTreePathProvider(
 			IStructuredSelection selection, ITreePathContentProvider provider) {
 		Set<Saveable> result = new HashSet<>();
-		for (Iterator it = selection.iterator(); it.hasNext();) {
-			Object element = it.next();
+		for (Object element : selection) {
 			Saveable saveable = getSaveable(element);
 			if (saveable != null) {
 				result.add(saveable);
@@ -342,8 +341,7 @@ public class NavigatorSaveablesService implements INavigatorSaveablesService, Vi
 	private Saveable[] getActiveSaveablesFromTreeProvider(
 			IStructuredSelection selection, ITreeContentProvider contentProvider) {
 		Set<Saveable> result = new HashSet<>();
-		for (Iterator it = selection.iterator(); it.hasNext();) {
-			Object element = it.next();
+		for (Object element : selection) {
 			Saveable saveable = findSaveable(element, contentProvider);
 			if (saveable != null) {
 				result.add(saveable);

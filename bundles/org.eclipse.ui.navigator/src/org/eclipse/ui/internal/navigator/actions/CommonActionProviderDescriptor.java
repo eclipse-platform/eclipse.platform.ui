@@ -231,11 +231,9 @@ public class CommonActionProviderDescriptor implements
 				return false;
 			}
 		} else {
-			IEvaluationContext context = null;
 			IEvaluationContext parentContext = NavigatorPlugin.getApplicationContext();
-			Iterator elements = aStructuredSelection.iterator();
-			while (elements.hasNext()) {
-				context = new EvaluationContext(parentContext, elements.next());
+			for (Object element : aStructuredSelection) {
+				IEvaluationContext context = new EvaluationContext(parentContext, element);
 				context.setAllowPluginActivation(true);
 				if (NavigatorPlugin.safeEvaluate(enablement, context) != EvaluationResult.TRUE) {
 					return false;

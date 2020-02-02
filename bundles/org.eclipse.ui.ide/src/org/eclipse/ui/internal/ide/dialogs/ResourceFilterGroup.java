@@ -1093,12 +1093,8 @@ public class ResourceFilterGroup {
 
 	private void handleRemove() {
 		ISelection selection = filterView.getSelection();
-		IStructuredSelection structuredSelection = null;
 		if (selection instanceof IStructuredSelection) {
-			structuredSelection = ((IStructuredSelection) selection);
-			Iterator it = structuredSelection.iterator();
-			while (it.hasNext()) {
-				Object element = it.next();
+			for (Object element : (IStructuredSelection) selection) {
 				if (element instanceof FilterCopy) {
 					FilterCopy filter = (FilterCopy) element;
 					filter.getParent().removeChild(filter);

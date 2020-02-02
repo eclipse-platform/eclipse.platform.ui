@@ -15,7 +15,6 @@
 package org.eclipse.ui.views.navigator;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -150,8 +149,7 @@ public class NavigatorDropAdapter extends PluginDropAdapter implements IOverwrit
 		ISelection selection = LocalSelectionTransfer.getInstance().getSelection();
 		if (selection instanceof IStructuredSelection) {
 			IStructuredSelection ssel = (IStructuredSelection) selection;
-			for (Iterator<?> i = ssel.iterator(); i.hasNext();) {
-				Object o = i.next();
+			for (Object o : ssel) {
 
 				IResource r = Adapters.adapt(o, IResource.class);
 				if (r != null) {

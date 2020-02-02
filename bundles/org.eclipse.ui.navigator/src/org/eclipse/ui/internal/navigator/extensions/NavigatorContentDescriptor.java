@@ -15,7 +15,6 @@ package org.eclipse.ui.internal.navigator.extensions;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
@@ -461,8 +460,7 @@ public final class NavigatorContentDescriptor implements
 		if(aSelection.isEmpty()) {
 			return false;
 		}
-		for (Iterator iter = aSelection.iterator(); iter.hasNext();) {
-			Object element = iter.next();
+		for (Object element : aSelection) {
 			if(!isPossibleChild(element)) {
 				return false;
 			}

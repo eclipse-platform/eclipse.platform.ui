@@ -193,7 +193,7 @@ public class SmartImportWizard extends Wizard implements IImportWizard {
 	@Override
 	public void init(IWorkbench workbench, IStructuredSelection selection) {
 		if (selection != null) {
-			for (Object item : selection.toList()) {
+			for (Object item : selection) {
 				File asFile = toFile(item);
 				if (asFile != null && this.initialSelection == null) {
 					this.initialSelection = asFile;

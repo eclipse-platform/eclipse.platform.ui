@@ -17,7 +17,6 @@
 package org.eclipse.jface.snippets.viewers;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.jface.viewers.ArrayContentProvider;
@@ -98,13 +97,10 @@ public class Snippet022TableViewerRefreshNoScroll {
 				if (!selection.isEmpty()) {
 					int[] indices = new int[selection.size()];
 
-					Iterator<?> it = selection.iterator();
 					TableItem[] items = v.getTable().getItems();
-					Object modelElement;
 
 					int counter = 0;
-					while (it.hasNext()) {
-						modelElement = it.next();
+					for (Object modelElement : selection) {
 						for (int i = 0; i < items.length; i++) {
 							if (items[i].getData() == modelElement) {
 								indices[counter++] = i;

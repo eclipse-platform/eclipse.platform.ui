@@ -14,7 +14,6 @@
 package org.eclipse.ui.views.navigator;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
@@ -75,8 +74,7 @@ public class ShowInNavigatorAction extends SelectionProviderAction {
 	 */
 	List<IResource> getResources(IStructuredSelection selection) {
 		List<IResource> v = new ArrayList<>();
-		for (Iterator<?> i = selection.iterator(); i.hasNext();) {
-			Object o = i.next();
+		for (Object o : selection) {
 
 			IResource resource = Adapters.adapt(o, IResource.class);
 			if (resource != null) {

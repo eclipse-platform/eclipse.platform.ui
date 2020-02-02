@@ -16,7 +16,6 @@ package org.eclipse.ui.internal.ide;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
@@ -45,10 +44,8 @@ public class IDESelectionConversionService implements
 			IStructuredSelection originalSelection) {
 
 		List result = new ArrayList();
-		Iterator elements = originalSelection.iterator();
 
-		while (elements.hasNext()) {
-			Object currentElement = elements.next();
+		for (Object currentElement : originalSelection) {
 
 			IResource resource = ResourceUtil.getResource(currentElement);
 

@@ -298,13 +298,11 @@ public class ModifyWorkingSetDelegate extends AbstractWorkingSetPulldownDelegate
 	public void selectionChanged(IAction actionProxy, ISelection selection) {
 		super.selectionChanged(actionProxy, selection);
 		if (selection instanceof IStructuredSelection) {
-			Object[] selectedElements = ((IStructuredSelection) getSelection()).toArray();
 			// ensure every item is of type IAdaptable and is NOT an IWorkingSet (minimal
 			// fix for 157799)
 			boolean minimallyOkay = true;
-			for (Object selectedElement : selectedElements) {
-				Object object = selectedElement;
-				if (!(object instanceof IAdaptable) || object instanceof IWorkingSet) {
+			for (Object selectedElement : (IStructuredSelection) getSelection()) {
+				if (!(selectedElement instanceof IAdaptable) || selectedElement instanceof IWorkingSet) {
 					minimallyOkay = false;
 					break;
 				}

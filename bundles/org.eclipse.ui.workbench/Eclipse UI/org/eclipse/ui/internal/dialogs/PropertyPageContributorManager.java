@@ -232,10 +232,8 @@ public class PropertyPageContributorManager extends ObjectContributorManager {
 	 */
 	public Collection getApplicableContributors(IStructuredSelection selection) {
 		boolean isMultiSelection = selection.size() > 1;
-		Iterator<Object> selIter = selection.iterator();
 		Collection<RegistryPageContributor> result = null;
-		while (selIter.hasNext()) {
-			Object selectionElement = selIter.next();
+		for (Object selectionElement : selection) {
 			Collection<RegistryPageContributor> collection = getApplicableContributors(selectionElement);
 			if (isMultiSelection) {
 				// Most pages are not available for multi selection.

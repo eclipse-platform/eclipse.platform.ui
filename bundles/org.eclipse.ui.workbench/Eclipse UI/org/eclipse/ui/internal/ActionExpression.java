@@ -949,9 +949,8 @@ public class ActionExpression {
 			return root.isEnabledFor(null);
 		}
 
-		Iterator<?> elements = selection.iterator();
-		while (elements.hasNext()) {
-			if (!isEnabledFor(elements.next())) {
+		for (Object element : selection) {
+			if (!isEnabledFor(element)) {
 				return false;
 			}
 		}

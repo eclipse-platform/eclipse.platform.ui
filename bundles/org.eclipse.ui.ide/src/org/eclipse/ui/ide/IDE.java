@@ -21,7 +21,6 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.filesystem.EFS;
@@ -1599,8 +1598,7 @@ public final class IDE {
 	 */
 	public static List<IResource> computeSelectedResources(IStructuredSelection originalSelection) {
 		List<IResource> resources = null;
-		for (Iterator<?> e = originalSelection.iterator(); e.hasNext();) {
-			Object next = e.next();
+		for (Object next : originalSelection) {
 			IResource resource = Adapters.adapt(next, IResource.class);
 			if (resource != null) {
 				if (resources == null) {

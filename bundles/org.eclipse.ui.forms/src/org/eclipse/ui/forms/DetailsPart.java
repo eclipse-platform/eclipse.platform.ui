@@ -15,7 +15,6 @@ package org.eclipse.ui.forms;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
-import java.util.Iterator;
 
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -218,8 +217,7 @@ public final class DetailsPart implements IFormPart, IPartSelectionListener {
 	private void update() {
 		Object key = null;
 		if (currentSelection != null) {
-			for (Iterator<?> iter = currentSelection.iterator(); iter.hasNext();) {
-				Object obj = iter.next();
+			for (Object obj : currentSelection) {
 				if (key == null)
 					key = getKey(obj);
 				else if (getKey(obj).equals(key) == false) {
