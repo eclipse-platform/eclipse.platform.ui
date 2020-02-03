@@ -200,7 +200,7 @@ public class PerformanceStats {
 	 * will be empty if there are no recorded statistics.
 	 */
 	public static PerformanceStats[] getAllStats() {
-		return statMap.values().toArray(new PerformanceStats[statMap.values().size()]);
+		return statMap.values().toArray(new PerformanceStats[statMap.size()]);
 	}
 
 	/**
