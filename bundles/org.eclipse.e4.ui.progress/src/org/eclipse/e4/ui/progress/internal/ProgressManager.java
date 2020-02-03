@@ -618,18 +618,19 @@ public class ProgressManager extends ProgressProvider {
 	 * @return the removed job info
 	 */
 	public JobInfo removeJob(Job job) {
+		JobInfo info;
 		synchronized (runnableMonitors) {
-			JobInfo info = getJobInfo(job);
+			info = getJobInfo(job);
 			jobs.remove(job);
 			runnableMonitors.remove(job);
-
-			for (IJobProgressManagerListener listener : listeners) {
-				if (!isNeverDisplaying(info.getJob(), listener.showsDebug())) {
-					listener.removeJob(info);
-				}
-			}
-			return info;
 		}
+
+		for (IJobProgressManagerListener listener : listeners) {
+			if (!isNeverDisplaying(info.getJob(), listener.showsDebug())) {
+				listener.removeJob(info);
+			}
+		}
+		return info;
 	}
 
 	/**

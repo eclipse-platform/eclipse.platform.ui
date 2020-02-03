@@ -649,17 +649,18 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 * @return the removed job info
 	 */
 	public JobInfo removeJob(Job job) {
+		JobInfo info;
 		synchronized (runnableMonitors) {
-			JobInfo info = progressFor(job).getJobInfo();
+			info = progressFor(job).getJobInfo();
 			managedJobs.remove(job);
 			synchronized (pendingUpdatesMutex) {
 				Predicate<IJobProgressManagerListener> predicate = listener -> !isNeverDisplaying(info.getJob(), listener.showsDebug());
 				rememberListenersForJob(info, pendingJobRemoval, predicate);
 			}
 			runnableMonitors.remove(job);
-			uiRefreshThrottler.throttledExec();
-			return info;
 		}
+		uiRefreshThrottler.throttledExec();
+		return info;
 	}
 
 	/**
