@@ -106,13 +106,6 @@ public class CocoaUIProcessor {
 				"%command.minimize.name", "%command.minimize.desc", CONTRIBUTOR_URI), //$NON-NLS-1$ //$NON-NLS-2$
 				MinimizeWindowHandler.class, CONTRIBUTOR_URI);
 
-		MCommand toggleFullscreenCommand = defineCommand("org.eclipse.ui.category.window", //$NON-NLS-1$
-				"org.eclipse.ui.cocoa.fullscreenWindow", //$NON-NLS-1$
-				"%command.fullscreen.name", "%command.fullscreen.desc", CONTRIBUTOR_URI); //$NON-NLS-1$//$NON-NLS-2$
-		installHandler(toggleFullscreenCommand, FullscreenWindowHandler.class, CONTRIBUTOR_URI);
-		// COMMAND+ALT+F is taken by Force Return
-		installKeybinding("org.eclipse.ui.contexts.window", "COMMAND+CTRL+F", toggleFullscreenCommand); //$NON-NLS-1$ //$NON-NLS-2$
-
 		installHandler(defineCommand("org.eclipse.ui.category.window", "org.eclipse.ui.cocoa.zoomWindow", //$NON-NLS-1$ //$NON-NLS-2$
 				"%command.zoom.name", "%command.zoom.desc", CONTRIBUTOR_URI), //$NON-NLS-1$//$NON-NLS-2$
 				ZoomWindowHandler.class, CONTRIBUTOR_URI);

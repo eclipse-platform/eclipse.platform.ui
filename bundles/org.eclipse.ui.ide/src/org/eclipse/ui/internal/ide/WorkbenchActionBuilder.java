@@ -1198,7 +1198,7 @@ public final class WorkbenchActionBuilder extends ActionBarAdvisor {
 					"org.eclipse.ui.cocoa.zoomWindow", CommandContributionItem.STYLE_PUSH); //$NON-NLS-1$
 			zoomItem = new CommandContributionItem(zoomParam);
 			CommandContributionItemParameter fullscreenParam = new CommandContributionItemParameter(
-					window, null, "org.eclipse.ui.cocoa.fullscreenWindow", CommandContributionItem.STYLE_PUSH); //$NON-NLS-1$
+					window, null, "org.eclipse.ui.window.fullscreenmode", CommandContributionItem.STYLE_PUSH); //$NON-NLS-1$
 			fullscreenItem = new CommandContributionItem(fullscreenParam);
 			CommandContributionItemParameter arrangeWindowsParam = new CommandContributionItemParameter(window, null,
 					"org.eclipse.ui.cocoa.arrangeWindowsInFront", CommandContributionItem.STYLE_PUSH); //$NON-NLS-1$
