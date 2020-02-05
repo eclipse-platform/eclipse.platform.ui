@@ -21,12 +21,7 @@ import java.util.Map;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
-import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.graphics.ImageData;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.misc.Policy;
@@ -110,28 +105,6 @@ public/* final */class WorkbenchImages {
 		URL url = BundleUtility.find(PlatformUI.PLUGIN_ID, path);
 		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
 		declareImage(key, desc, shared);
-	}
-
-	private static void drawViewMenu(GC gc, GC maskgc) {
-		Display display = Display.getCurrent();
-
-		gc.setForeground(display.getSystemColor(SWT.COLOR_WIDGET_DARK_SHADOW));
-		gc.setBackground(display.getSystemColor(SWT.COLOR_LIST_BACKGROUND));
-
-		int[] shapeArray = new int[] { 1, 1, 10, 1, 6, 5, 5, 5 };
-		gc.fillPolygon(shapeArray);
-		gc.drawPolygon(shapeArray);
-
-		Color black = display.getSystemColor(SWT.COLOR_BLACK);
-		Color white = display.getSystemColor(SWT.COLOR_WHITE);
-
-		maskgc.setBackground(black);
-		maskgc.fillRectangle(0, 0, 12, 16);
-
-		maskgc.setBackground(white);
-		maskgc.setForeground(white);
-		maskgc.fillPolygon(shapeArray);
-		maskgc.drawPolygon(shapeArray);
 	}
 
 	/**
@@ -268,6 +241,7 @@ public/* final */class WorkbenchImages {
 		declareImage(IWorkbenchGraphicConstants.IMG_LCL_VIEW_MENU, PATH_ELOCALTOOL + "view_menu.png", true); //$NON-NLS-1$
 		declareImage(IWorkbenchGraphicConstants.IMG_LCL_BUTTON_MENU, PATH_ELOCALTOOL + "button_menu.png", true); //$NON-NLS-1$
 		declareImage(ISharedImages.IMG_LCL_LINKTO_HELP, PATH_ELOCALTOOL + "linkto_help.png", true); //$NON-NLS-1$
+		declareImage(IWorkbenchGraphicConstants.IMG_LCL_RENDERED_VIEW_MENU, PATH_ELOCALTOOL + "view_menu.png", true); //$NON-NLS-1$
 
 		declareImage(IWorkbenchGraphicConstants.IMG_LCL_CLOSE_VIEW_THIN, PATH_ELOCALTOOL + "thin_close_view.png", true); //$NON-NLS-1$
 		declareImage(IWorkbenchGraphicConstants.IMG_LCL_HIDE_TOOLBAR_THIN, PATH_ELOCALTOOL + "thin_hide_toolbar.png", //$NON-NLS-1$
@@ -311,27 +285,6 @@ public/* final */class WorkbenchImages {
 
 		declareHoverImages();
 
-		// Manually create the view menu
-
-		Display d = Display.getCurrent();
-
-		Image viewMenu = new Image(d, 11, 16);
-		Image viewMenuMask = new Image(d, 11, 16);
-
-		GC gc = new GC(viewMenu);
-		GC maskgc = new GC(viewMenuMask);
-		drawViewMenu(gc, maskgc);
-		gc.dispose();
-		maskgc.dispose();
-
-		ImageData data = viewMenu.getImageData();
-		data.transparentPixel = data.getPixel(0, 0);
-
-		Image vm2 = new Image(d, viewMenu.getImageData(), viewMenuMask.getImageData());
-		viewMenu.dispose();
-		viewMenuMask.dispose();
-
-		getImageRegistry().put(IWorkbenchGraphicConstants.IMG_LCL_RENDERED_VIEW_MENU, vm2);
 
 	}
 
