@@ -87,17 +87,13 @@ public final class ContributionsAnalyzer {
 		}
 		for (MTrimContribution contribution : trimContributions) {
 			String parentId = contribution.getParentId();
-			boolean filtered = isFiltered(trimModel, contribution);
-			if (filtered || !elementId.equals(parentId) || !contribution.isToBeRendered()) {
+			if (!elementId.equals(parentId) || !contribution.isToBeRendered()) {
 				continue;
 			}
 			toContribute.add(contribution);
 		}
 	}
 
-	static boolean isFiltered(MTrimBar trimModel, MTrimContribution contribution) {
-		return false;
-	}
 
 	public static void XXXgatherToolBarContributions(final MToolBar toolbarModel,
 			final List<MToolBarContribution> toolbarContributionList, final String id,
@@ -107,8 +103,7 @@ public final class ContributionsAnalyzer {
 		}
 		for (MToolBarContribution toolBarContribution : toolbarContributionList) {
 			String parentID = toolBarContribution.getParentId();
-			boolean filtered = isFiltered(toolbarModel, toolBarContribution);
-			if (filtered || !id.equals(parentID) || !toolBarContribution.isToBeRendered()) {
+			if (!id.equals(parentID) || !toolBarContribution.isToBeRendered()) {
 				continue;
 			}
 			toContribute.add(toolBarContribution);
@@ -123,16 +118,11 @@ public final class ContributionsAnalyzer {
 		}
 		for (MToolBarContribution toolBarContribution : toolbarContributionList) {
 			String parentID = toolBarContribution.getParentId();
-			boolean filtered = isFiltered(toolbarModel, toolBarContribution);
-			if (filtered || !id.equals(parentID) || !toolBarContribution.isToBeRendered()) {
+			if (!id.equals(parentID) || !toolBarContribution.isToBeRendered()) {
 				continue;
 			}
 			toContribute.add(toolBarContribution);
 		}
-	}
-
-	static boolean isFiltered(MToolBar toolbarModel, MToolBarContribution toolBarContribution) {
-		return false;
 	}
 
 	public static void XXXgatherMenuContributions(final MMenu menuModel,
