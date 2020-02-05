@@ -36,11 +36,6 @@ public class StartupClass implements IStartup {
 	public void earlyStartup() {
 		earlyStartupCalled = true;
 		Assert.assertNull("IStartup should run in non-UI thread", Display.getCurrent());
-		try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			// ignore
-		}
 		earlyStartupCompleted = true;
 	}
 
