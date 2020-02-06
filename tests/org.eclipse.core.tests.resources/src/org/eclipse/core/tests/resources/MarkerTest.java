@@ -17,8 +17,6 @@ package org.eclipse.core.tests.resources;
 import java.io.*;
 import java.io.File;
 import java.util.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.watson.IPathRequestor;
 import org.eclipse.core.resources.*;
@@ -31,22 +29,6 @@ public class MarkerTest extends ResourceTest {
 
 	/** The collection of resources used for testing. */
 	IResource[] resources;
-
-	/**
-	 * Need a zero argument constructor to satisfy the test harness.
-	 * This constructor should not do any real work nor should it be
-	 * called by user code.
-	 */
-	public MarkerTest() {
-		super();
-	}
-
-	/**
-	 * Creates a new markers test.
-	 */
-	public MarkerTest(String name) {
-		super(name);
-	}
 
 	/**
 	 * Tests the appearance of marker changes in the resource delta.
@@ -420,17 +402,6 @@ public class MarkerTest extends ResourceTest {
 	public void setUp() throws Exception {
 		super.setUp();
 		resources = createHierarchy();
-	}
-
-	/**
-	 * Configures the markers test suite.
-	 */
-	public static Test suite() {
-		return new TestSuite(MarkerTest.class);
-
-		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new MarkerTest("testMarkerChangesInDelta3"));
-		//		return suite;
 	}
 
 	@Override

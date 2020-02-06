@@ -15,8 +15,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
@@ -29,18 +27,6 @@ import org.eclipse.core.runtime.IPath;
 public class VirtualFolderTest extends ResourceTest {
 	protected IProject existingProject;
 	protected IFolder existingVirtualFolderInExistingProject;
-
-	public static Test suite() {
-		return new TestSuite(VirtualFolderTest.class);
-	}
-
-	public VirtualFolderTest() {
-		super();
-	}
-
-	public VirtualFolderTest(String name) {
-		super(name);
-	}
 
 	protected void doCleanup() throws Exception {
 		ensureExistsInWorkspace(new IResource[] {existingProject}, true);

@@ -13,24 +13,10 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 
 public class TeamPrivateMemberTest extends ResourceTest {
-	public TeamPrivateMemberTest() {
-		super();
-	}
-
-	public TeamPrivateMemberTest(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(TeamPrivateMemberTest.class);
-	}
-
 	public void testRefreshLocal() {
 		IWorkspaceRoot root = getWorkspace().getRoot();
 		IProject project = root.getProject("MyProject");

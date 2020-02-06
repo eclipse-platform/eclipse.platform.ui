@@ -15,8 +15,6 @@ package org.eclipse.core.tests.resources;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.content.*;
 import org.eclipse.core.internal.resources.ContentDescriptionManager;
 import org.eclipse.core.internal.resources.Workspace;
@@ -32,10 +30,6 @@ public class ContentDescriptionManagerTest extends ResourceTest {
 	private static final String CONTENT_TYPE_RELATED_NATURE1 = "org.eclipse.core.tests.resources.contentTypeRelated1";
 	private static final String CONTENT_TYPE_RELATED_NATURE2 = "org.eclipse.core.tests.resources.contentTypeRelated2";
 
-	public static Test suite() {
-		return new TestSuite(ContentDescriptionManagerTest.class);
-	}
-
 	/**
 	 * Blocks the calling thread until the cache flush job completes.
 	 */
@@ -45,10 +39,6 @@ public class ContentDescriptionManagerTest extends ResourceTest {
 		} catch (OperationCanceledException | InterruptedException e) {
 			//ignore
 		}
-	}
-
-	public ContentDescriptionManagerTest(String name) {
-		super(name);
 	}
 
 	private IContentDescription getDescription(String tag, IFile file) {

@@ -18,8 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.PlatformURLResourceConnection;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -32,16 +30,6 @@ public class ResourceURLTest extends ResourceTest {
 	protected static IPath[] interestingPaths;
 	protected static IResource[] interestingResources;
 	static boolean noSideEffects = false;
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(ResourceURLTest.class.getName());
-		suite.addTest(new ResourceURLTest("testNonExistantURLs"));
-		suite.addTest(new ResourceURLTest("testBasicURLs"));
-		suite.addTest(new ResourceURLTest("testExternalURLs"));
-		suite.addTest(new ResourceURLTest("testSpaces"));
-		suite.addTest(new ResourceURLTest("doCleanup"));
-		return suite;
-	}
 
 	/**
 	 * Need a zero argument constructor to satisfy the test harness.

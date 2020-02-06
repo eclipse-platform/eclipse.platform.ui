@@ -17,8 +17,6 @@ package org.eclipse.core.tests.resources;
 
 import java.io.File;
 import java.io.IOException;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -27,18 +25,6 @@ import org.eclipse.core.runtime.CoreException;
  *
  */
 public class ResourceAttributeTest extends ResourceTest {
-
-	public static Test suite() {
-		return new TestSuite(ResourceAttributeTest.class);
-	}
-
-	public ResourceAttributeTest() {
-		super();
-	}
-
-	public ResourceAttributeTest(String name) {
-		super(name);
-	}
 
 	private void setArchive(IResource resource, boolean value) throws CoreException {
 		ResourceAttributes attributes = resource.getResourceAttributes();

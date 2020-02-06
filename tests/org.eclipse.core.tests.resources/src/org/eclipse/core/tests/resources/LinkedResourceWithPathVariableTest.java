@@ -19,8 +19,6 @@ package org.eclipse.core.tests.resources;
 import java.io.*;
 import java.net.URI;
 import java.util.ArrayList;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.resources.Workspace;
@@ -42,21 +40,6 @@ public class LinkedResourceWithPathVariableTest extends LinkedResourceTest {
 	private final static String PROJECT_RELATIVE_VARIABLE_VALUE = "${PROOT}";
 	private final ArrayList<IPath> toDelete = new ArrayList<>();
 	private IFileStore toSetWritable = null;
-
-	public LinkedResourceWithPathVariableTest() {
-		super();
-	}
-
-	public LinkedResourceWithPathVariableTest(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(LinkedResourceWithPathVariableTest.class);
-		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new LinkedResourceWithPathVariableTest("testMoveFile"));
-		//		return suite;
-	}
 
 	@Override
 	protected void setUp() throws Exception {

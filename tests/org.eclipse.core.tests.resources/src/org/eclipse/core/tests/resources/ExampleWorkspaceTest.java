@@ -14,8 +14,6 @@
 package org.eclipse.core.tests.resources;
 
 import java.io.InputStream;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
@@ -24,39 +22,9 @@ import org.eclipse.core.runtime.Path;
  * Tests which use the Eclipse Platform workspace.
  */
 public class ExampleWorkspaceTest extends ResourceTest {
-	/**
-	 * Need a zero argument constructor to satisfy the test harness.
-	 * This constructor should not do any real work nor should it be
-	 * called by user code.
-	 */
-	public ExampleWorkspaceTest() {
-		super();
-	}
-
-	public ExampleWorkspaceTest(String name) {
-		super(name);
-	}
 
 	protected IProject getTestProject() {
 		return getWorkspace().getRoot().getProject("testProject");
-	}
-
-	/**
-	 * Returns the test suite for this test class.
-	 */
-	public static Test suite() {
-		TestSuite suite = new TestSuite(ExampleWorkspaceTest.class.getName());
-		suite.addTest(new ExampleWorkspaceTest("testProjectCreation"));
-		suite.addTest(new ExampleWorkspaceTest("testFolderCreation"));
-		suite.addTest(new ExampleWorkspaceTest("testFileCreation"));
-		suite.addTest(new ExampleWorkspaceTest("testFileInFolderCreation"));
-		suite.addTest(new ExampleWorkspaceTest("testSetContents"));
-		suite.addTest(new ExampleWorkspaceTest("testFileOverFolder"));
-		suite.addTest(new ExampleWorkspaceTest("testFolderOverFile"));
-		suite.addTest(new ExampleWorkspaceTest("testFolderDeletion"));
-		suite.addTest(new ExampleWorkspaceTest("testFileDeletion"));
-		suite.addTest(new ExampleWorkspaceTest("testProjectDeletion"));
-		return suite;
 	}
 
 	public void testFileCreation() throws Throwable {

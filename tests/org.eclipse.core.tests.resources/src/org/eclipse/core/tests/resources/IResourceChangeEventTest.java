@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 
@@ -36,14 +34,6 @@ public class IResourceChangeEventTest extends ResourceTest {
 	protected IMarker marker3;//on file1
 
 	protected IResource[] allResources;
-
-	public IResourceChangeEventTest() {
-		super();
-	}
-
-	public IResourceChangeEventTest(String name) {
-		super(name);
-	}
 
 	/**
 	 * Sets up the fixture, for example, open a network connection.
@@ -75,10 +65,6 @@ public class IResourceChangeEventTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("1.0", e);
 		}
-	}
-
-	public static Test suite() {
-		return new TestSuite(IResourceChangeEventTest.class);
 	}
 
 	/**

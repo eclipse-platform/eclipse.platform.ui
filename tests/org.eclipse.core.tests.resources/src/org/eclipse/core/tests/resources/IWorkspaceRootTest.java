@@ -17,8 +17,6 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
@@ -27,18 +25,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.internal.filesystem.wrapper.WrapperFileSystem;
 
 public class IWorkspaceRootTest extends ResourceTest {
-	public IWorkspaceRootTest() {
-		super();
-	}
-
-	public IWorkspaceRootTest(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		//		return new IWorkspaceRootTest("testFindFilesForLocationOnWrappedFileSystem");
-		return new TestSuite(IWorkspaceRootTest.class);
-	}
 
 	@Override
 	protected void tearDown() throws Exception {

@@ -15,28 +15,10 @@
 package org.eclipse.core.tests.resources;
 
 import java.util.Arrays;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.IMarker;
 
 public class MarkerSetTest extends ResourceTest {
-
-	/**
-	 * Need a zero argument constructor to satisfy the test harness.
-	 * This constructor should not do any real work nor should it be
-	 * called by user code.
-	 */
-	public MarkerSetTest() {
-		super();
-	}
-
-	/**
-	 * Creates a new markers test.
-	 */
-	public MarkerSetTest(String name) {
-		super(name);
-	}
 
 	public void assertEquals(String message, IMarkerSetElement[] array1, IMarkerSetElement[] array2) {
 		assertNotNull(message, array1);
@@ -59,17 +41,6 @@ public class MarkerSetTest extends ResourceTest {
 		for (int i = 0; i < m1.length; i++) {
 			assertEquals(message, m1[i].getId(), m2[i].getId());
 		}
-	}
-
-	/**
-	 * Configures the markers test suite.
-	 */
-	public static Test suite() {
-		return new TestSuite(MarkerSetTest.class);
-
-		//TestSuite suite = new TestSuite();
-		//suite.addTest(new MarkerSetTest("_testPR"));
-		//return suite;
 	}
 
 	public void testAdd() {

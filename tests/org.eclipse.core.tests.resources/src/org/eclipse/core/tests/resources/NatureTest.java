@@ -14,8 +14,6 @@
 package org.eclipse.core.tests.resources;
 
 import java.io.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.resources.CheckMissingNaturesListener;
@@ -37,27 +35,6 @@ import org.junit.Assert;
  */
 public class NatureTest extends ResourceTest {
 	IProject project;
-
-	/**
-	 * Constructor for NatureTest.
-	 */
-	public NatureTest() {
-		super();
-	}
-
-	/**
-	 * Constructor for NatureTest.
-	 *
-	 * @param name
-	 *            name of the TestCase
-	 */
-	public NatureTest(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(NatureTest.class);
-	}
 
 	/**
 	 * Sets the given set of natures for the project.  If success

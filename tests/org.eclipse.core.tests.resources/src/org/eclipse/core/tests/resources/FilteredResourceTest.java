@@ -16,8 +16,6 @@ package org.eclipse.core.tests.resources;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -50,18 +48,6 @@ public class FilteredResourceTest extends ResourceTest {
 	protected IFolder nonExistingFolderInOtherExistingProject;
 	protected IFolder nonExistingFolder2InOtherExistingProject;
 	protected IProject otherExistingProject;
-
-	public static Test suite() {
-		return new TestSuite(FilteredResourceTest.class);
-	}
-
-	public FilteredResourceTest() {
-		super();
-	}
-
-	public FilteredResourceTest(String name) {
-		super(name);
-	}
 
 	protected void doCleanup() throws Exception {
 		ensureExistsInWorkspace(new IResource[] {existingProject, otherExistingProject, closedProject, existingFolderInExistingProject, existingFolderInExistingFolder, existingFileInExistingProject}, true);

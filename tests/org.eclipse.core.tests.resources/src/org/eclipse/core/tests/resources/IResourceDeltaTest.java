@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
@@ -34,14 +32,6 @@ public class IResourceDeltaTest extends ResourceTest {
 	protected IFile file3;//below folder2
 	protected IFile file4;//below folder1
 	protected IResource[] allResources;
-
-	public IResourceDeltaTest() {
-		super();
-	}
-
-	public IResourceDeltaTest(String name) {
-		super(name);
-	}
 
 	/**
 	 * Sets up the fixture, for example, open a network connection.
@@ -70,10 +60,6 @@ public class IResourceDeltaTest extends ResourceTest {
 		} catch (CoreException e) {
 			fail("1.0", e);
 		}
-	}
-
-	public static Test suite() {
-		return new TestSuite(IResourceDeltaTest.class);
 	}
 
 	/**

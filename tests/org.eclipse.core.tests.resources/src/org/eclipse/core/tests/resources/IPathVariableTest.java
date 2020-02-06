@@ -17,8 +17,6 @@ package org.eclipse.core.tests.resources;
 import java.io.*;
 import java.net.URI;
 import java.util.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.utils.FileUtil;
@@ -155,29 +153,6 @@ public class IPathVariableTest extends ResourceTest {
 			}
 			return buffer.toString();
 		}
-	}
-
-	/**
-	 * Default constructor for this class.
-	 */
-	public IPathVariableTest() {
-		super();
-	}
-
-	/**
-	 * Constructor for the class.
-	 */
-	public IPathVariableTest(String name) {
-		super(name);
-	}
-
-	/**
-	 * Return the tests to run.
-	 *
-	 * @see org.eclipse.core.tests.harness.ResourceTest#suite()
-	 */
-	public static Test suite() {
-		return new TestSuite(IPathVariableTest.class);
 	}
 
 	/**

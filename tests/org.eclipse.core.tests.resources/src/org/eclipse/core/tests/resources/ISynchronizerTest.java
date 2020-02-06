@@ -17,8 +17,6 @@ package org.eclipse.core.tests.resources;
 import java.io.*;
 import java.io.File;
 import java.util.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.internal.watson.IPathRequestor;
 import org.eclipse.core.resources.*;
@@ -28,14 +26,6 @@ import org.eclipse.core.runtime.*;
 public class ISynchronizerTest extends ResourceTest {
 	public static int NUMBER_OF_PARTNERS = 100;
 	public IResource[] resources;
-
-	public ISynchronizerTest() {
-		super();
-	}
-
-	public ISynchronizerTest(String name) {
-		super(name);
-	}
 
 	protected void assertEquals(String message, byte[] b1, byte[] b2) {
 		assertTrue(message, b1.length == b2.length);
@@ -78,14 +68,6 @@ public class ISynchronizerTest extends ResourceTest {
 	public void setUp() throws Exception {
 		super.setUp();
 		resources = createHierarchy();
-	}
-
-	public static Test suite() {
-		return new TestSuite(ISynchronizerTest.class);
-
-		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new ISynchronizerTest("testMoveResource2"));
-		//		return suite;
 	}
 
 	@Override

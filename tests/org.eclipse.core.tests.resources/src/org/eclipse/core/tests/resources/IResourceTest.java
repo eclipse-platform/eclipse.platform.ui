@@ -16,8 +16,6 @@ package org.eclipse.core.tests.resources;
 
 import java.io.File;
 import java.util.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
@@ -153,22 +151,6 @@ public class IResourceTest extends ResourceTest {
 			}
 		}
 		return result;
-	}
-
-	public static Test suite() {
-		return new TestSuite(IResourceTest.class);
-
-		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new IResourceTest("testAttributeArchive"));
-		//		return suite;
-	}
-
-	public IResourceTest() {
-		super();
-	}
-
-	public IResourceTest(String name) {
-		super(name);
 	}
 
 	/**

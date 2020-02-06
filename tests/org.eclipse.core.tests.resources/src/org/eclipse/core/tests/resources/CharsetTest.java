@@ -18,8 +18,6 @@ package org.eclipse.core.tests.resources;
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.events.NotificationManager;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.internal.resources.CharsetDeltaJob;
@@ -122,26 +120,6 @@ public class CharsetTest extends ResourceTest {
 	static final String SAMPLE_DERIVED_ENCODING_AFTER_TRUE_DERIVED_PREFS[] = new String[] {"encoding//b1/a.txt=UTF-8", "eclipse.preferences.version=1"};
 
 	private String savedWorkspaceCharset;
-
-	public static Test suite() {
-		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new CharsetTest("testFileCreation"));
-		//		suite.addTest(new CharsetTest("testPrefsFileCreation"));
-		//		return suite;
-		//		return new CharsetTest("testMovingProject");
-
-		return new TestSuite(CharsetTest.class);
-
-		//    // cause the same test to run several times to catch a timing problem
-		//		TestSuite suite = new TestSuite();
-		//		for (int i = 0; i < 1000; i++)
-		//			suite.addTest(new CharsetTest("testDeltasFile"));
-		//		return suite;
-	}
-
-	public CharsetTest(String name) {
-		super(name);
-	}
 
 	/**
 	 * See bug 67606.

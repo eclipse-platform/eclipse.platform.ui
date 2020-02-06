@@ -19,8 +19,6 @@ import static org.junit.Assert.assertArrayEquals;
 
 import java.io.File;
 import java.io.InputStream;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -31,19 +29,6 @@ import org.eclipse.core.tests.harness.FussyProgressMonitor;
  * solution, project, folder and file.
  */
 public class WorkspaceTest extends ResourceTest {
-	/**
-	 * Need a zero argument constructor to satisfy the test harness.
-	 * This constructor should not do any real work nor should it be
-	 * called by user code.
-	 */
-	public WorkspaceTest() {
-		super();
-	}
-
-	public WorkspaceTest(String name) {
-		super(name);
-	}
-
 	/**
 	 * All of the WorkspaceTests build on each other. This test must
 	 * be run last of all to clean up from all previous tests in this class.
@@ -70,6 +55,12 @@ public class WorkspaceTest extends ResourceTest {
 		return new String[] {"/", "/1/", "/1/1", "/1/2", "/1/3", "/2/", "/2/1", "/2/2", "/2/3", "/3/", "/3/1", "/3/2", "/3/3", "/4/", "/5"};
 	}
 
+	@Override
+	protected void tearDown() throws Exception {
+		super.tearDown();
+		doCleanup();
+	}
+
 	protected IProject getTestProject() {
 		return getWorkspace().getRoot().getProject("testProject");
 	}
@@ -87,63 +78,6 @@ public class WorkspaceTest extends ResourceTest {
 		// see what happens if we get a non-existant property
 		name = new QualifiedName("itp-test", "testNonProperty");
 		assertNull("non-existant persistent property not missing", target.getPersistentProperty(name));
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(WorkspaceTest.class.getName());
-		// test the basic create operations
-		suite.addTest(new WorkspaceTest("testProjectCreation"));
-		suite.addTest(new WorkspaceTest("testFolderCreation"));
-		suite.addTest(new WorkspaceTest("testFileCreation"));
-		suite.addTest(new WorkspaceTest("testFileInFolderCreation"));
-		suite.addTest(new WorkspaceTest("testSetContents"));
-		suite.addTest(new WorkspaceTest("testFileOverFolder"));
-		suite.addTest(new WorkspaceTest("testFolderOverFile"));
-		suite.addTest(new WorkspaceTest("testProjectCreateOpenCloseDelete"));
-		suite.addTest(new WorkspaceTest("testProjectReferences"));
-		suite.addTest(new WorkspaceTest("testDanglingReferences"));
-
-		// test closing and reopening
-		suite.addTest(new WorkspaceTest("testProjectCloseOpen"));
-
-		// test persistent properties on all the different resource types.
-		suite.addTest(new WorkspaceTest("testSetGetProjectPersistentProperty"));
-		suite.addTest(new WorkspaceTest("testSetGetFolderPersistentProperty"));
-		suite.addTest(new WorkspaceTest("testSetGetFilePersistentProperty"));
-
-		// test moves
-		suite.addTest(new WorkspaceTest("testSimpleMove"));
-		suite.addTest(new WorkspaceTest("testFileMove"));
-		suite.addTest(new WorkspaceTest("testLeafFolderMove"));
-		suite.addTest(new WorkspaceTest("testFolderMove"));
-
-		// create a bunch of things at once
-		suite.addTest(new WorkspaceTest("testMultiCreation"));
-
-		// test deletions
-		suite.addTest(new WorkspaceTest("testFolderDeletion"));
-		suite.addTest(new WorkspaceTest("testFileDeletion"));
-		suite.addTest(new WorkspaceTest("testFileEmptyDeletion"));
-		suite.addTest(new WorkspaceTest("testMultiDeletion"));
-		suite.addTest(new WorkspaceTest("testProjectDeletion"));
-		suite.addTest(new WorkspaceTest("testWorkingLocationDeletion_bug433061"));
-
-		suite.addTest(new WorkspaceTest("doCleanup"));
-		return suite;
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		// overwrite the superclass and do nothing since our test methods build on each other
-	}
-
-	public void testFileCreation() throws Throwable {
-		IPath path = new Path("/testProject/testFile");
-		IFile target = getWorkspace().getRoot().getFile(path);
-		FussyProgressMonitor monitor = new FussyProgressMonitor();
-		target.create(null, true, monitor);
-		monitor.assertUsedUp();
-		assertTrue(target.exists());
 	}
 
 	public void testFileDeletion() throws Throwable {
@@ -209,15 +143,6 @@ public class WorkspaceTest extends ResourceTest {
 			return;
 		}
 		fail("Should not be able to create file over folder");
-	}
-
-	public void testFolderCreation() throws Throwable {
-		IPath path = new Path("/testProject/testFolder");
-		IFolder target = getWorkspace().getRoot().getFolder(path);
-		FussyProgressMonitor monitor = new FussyProgressMonitor();
-		target.create(true, true, monitor);
-		monitor.assertUsedUp();
-		assertTrue(target.exists());
 	}
 
 	public void testFolderDeletion() throws Throwable {
@@ -367,7 +292,8 @@ public class WorkspaceTest extends ResourceTest {
 		assertTrue(!target.exists());
 	}
 
-	public void testProjectCreation() throws Throwable {
+	@Override
+	public void setUp() throws Exception {
 		IProject target = getTestProject();
 		FussyProgressMonitor monitor = new FussyProgressMonitor();
 		target.create(null, monitor);
@@ -377,6 +303,25 @@ public class WorkspaceTest extends ResourceTest {
 		target.open(monitor);
 		monitor.assertUsedUp();
 		assertTrue(target.isOpen());
+		IPath path = new Path("/testProject/testFolder");
+		IFolder folderTarget = getWorkspace().getRoot().getFolder(path);
+		monitor = new FussyProgressMonitor();
+		folderTarget.create(true, true, monitor);
+		monitor.assertUsedUp();
+		assertTrue(folderTarget.exists());
+		IPath filePath = new Path("/testProject/testFile");
+		IFile fileTarget = getWorkspace().getRoot().getFile(filePath);
+		monitor = new FussyProgressMonitor();
+		fileTarget.create(null, true, monitor);
+		monitor.assertUsedUp();
+		assertTrue(fileTarget.exists());
+		String testString = getRandomString();
+		monitor = new FussyProgressMonitor();
+		fileTarget.setContents(getContents(testString), true, false, monitor);
+		monitor.assertUsedUp();
+		try (InputStream content = fileTarget.getContents(false)) {
+			assertTrue("get not equal set", compareContent(content, getContents(testString)));
+		}
 	}
 
 	public void testProjectDeletion() throws Throwable {

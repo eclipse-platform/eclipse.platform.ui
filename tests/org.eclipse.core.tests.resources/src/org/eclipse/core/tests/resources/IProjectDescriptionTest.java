@@ -16,8 +16,6 @@ package org.eclipse.core.tests.resources;
 
 import java.util.HashMap;
 import java.util.Map;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.events.BuildCommand;
 import org.eclipse.core.internal.resources.Project;
 import org.eclipse.core.resources.*;
@@ -29,17 +27,6 @@ import org.eclipse.core.tests.internal.builders.CustomTriggerBuilder;
  * that relates to the project description.
  */
 public class IProjectDescriptionTest extends ResourceTest {
-	public static Test suite() {
-		return new TestSuite(IProjectDescriptionTest.class);
-	}
-
-	public IProjectDescriptionTest() {
-		super();
-	}
-
-	public IProjectDescriptionTest(String name) {
-		super(name);
-	}
 
 	public void testDescriptionConstant() {
 		assertEquals("1.0", ".project", IProjectDescription.DESCRIPTION_FILE_NAME);

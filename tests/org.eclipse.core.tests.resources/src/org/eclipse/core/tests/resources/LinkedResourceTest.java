@@ -18,8 +18,6 @@ import java.io.*;
 import java.io.File;
 import java.net.URI;
 import java.util.HashMap;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
@@ -68,21 +66,6 @@ public class LinkedResourceTest extends ResourceTest {
 	protected IPath nonExistingLocation;
 	protected IProject nonExistingProject;
 	protected IProject otherExistingProject;
-
-	public static Test suite() {
-		return new TestSuite(LinkedResourceTest.class);
-		//						TestSuite suite = new TestSuite();
-		//						suite.addTest(new LinkedResourceTest("testFindFilesForLocationCaseVariant"));
-		//						return suite;
-	}
-
-	public LinkedResourceTest() {
-		super();
-	}
-
-	public LinkedResourceTest(String name) {
-		super(name);
-	}
 
 	protected void doCleanup() throws Exception {
 		ensureExistsInWorkspace(new IResource[] {existingProject, otherExistingProject, closedProject, existingFolderInExistingProject, existingFolderInExistingFolder, existingFileInExistingProject}, true);

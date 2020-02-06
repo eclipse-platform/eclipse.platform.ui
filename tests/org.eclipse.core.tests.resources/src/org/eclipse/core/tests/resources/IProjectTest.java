@@ -17,8 +17,6 @@ package org.eclipse.core.tests.resources;
 import java.io.ByteArrayInputStream;
 import java.util.HashSet;
 import java.util.Set;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.internal.resources.Workspace;
@@ -31,22 +29,6 @@ import org.osgi.service.prefs.Preferences;
 
 public class IProjectTest extends ResourceTest {
 	private final FussyProgressMonitor monitor = new FussyProgressMonitor();
-
-	public static Test suite() {
-		return new TestSuite(IProjectTest.class);
-
-		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new IProjectTest("testReplaceLocation"));
-		//		return suite;
-	}
-
-	public IProjectTest() {
-		super();
-	}
-
-	public IProjectTest(String name) {
-		super(name);
-	}
 
 	public void ensureExistsInWorkspace(final IProject project, final IProjectDescription description) {
 		if (project == null) {

@@ -13,15 +13,10 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ProjectScope;
 
 public class ProjectScopeTest extends ResourceTest {
-	public static Test suite() {
-		return new TestSuite(ProjectScopeTest.class);
-	}
 
 	public void testEqualsAndHashCode() {
 		IProject project = getWorkspace().getRoot().getProject(getUniqueString());

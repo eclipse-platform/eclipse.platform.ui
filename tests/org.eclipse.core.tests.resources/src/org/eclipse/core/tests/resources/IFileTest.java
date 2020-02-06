@@ -17,8 +17,6 @@ package org.eclipse.core.tests.resources;
 
 import java.io.*;
 import java.util.ArrayList;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.FussyProgressMonitor;
@@ -43,25 +41,6 @@ public class IFileTest extends ResourceTest {
 
 	IProject[] projects = null;
 	ArrayList<IFile> workspaceOnlyFiles = new ArrayList<>();
-
-	/**
-	 * Sets up the test suite for this class
-	 */
-	public static Test suite() {
-		return new TestSuite(IFileTest.class);
-
-		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new IFileTest("testInvalidFileNames"));
-		//		return suite;
-	}
-
-	public IFileTest() {
-		super();
-	}
-
-	public IFileTest(String name) {
-		super(name);
-	}
 
 	/**
 	 * Returns true if the given container exists, and is open

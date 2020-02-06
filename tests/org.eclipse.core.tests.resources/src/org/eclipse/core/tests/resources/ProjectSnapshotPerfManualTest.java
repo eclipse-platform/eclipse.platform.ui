@@ -16,8 +16,6 @@ package org.eclipse.core.tests.resources;
 
 import java.io.File;
 import java.net.URI;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.harness.PerformanceTestRunner;
@@ -66,13 +64,6 @@ public class ProjectSnapshotPerfManualTest extends ResourceTest {
 			result++;
 		}
 		return result;
-	}
-
-	// this test should not be in AllTests because it is only a performance test
-	public static Test suite() {
-		TestSuite suite = new TestSuite(ProjectSnapshotPerfManualTest.class.getName());
-		suite.addTest(new ProjectSnapshotPerfManualTest("testSnapshotImportPerformance"));
-		return suite;
 	}
 
 	/**

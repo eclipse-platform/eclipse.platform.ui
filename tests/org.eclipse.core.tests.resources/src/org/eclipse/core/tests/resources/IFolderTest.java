@@ -13,29 +13,10 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
 public class IFolderTest extends ResourceTest {
-	public static Test suite() {
-		return new TestSuite(IFolderTest.class);
-	}
-
-	public IFolderTest() {
-		super();
-	}
-
-	public IFolderTest(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-
 	@Override
 	protected void tearDown() throws Exception {
 		getWorkspace().getRoot().refreshLocal(IResource.DEPTH_INFINITE, null);

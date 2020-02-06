@@ -17,47 +17,39 @@ import junit.framework.*;
 
 public class AllTests extends TestCase {
 
-	public AllTests() {
-		super(null);
-	}
-
-	public AllTests(String name) {
-		super(name);
-	}
-
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTest(CharsetTest.suite());
-		suite.addTest(ContentDescriptionManagerTest.suite());
-		suite.addTest(FilteredResourceTest.suite());
-		suite.addTest(HiddenResourceTest.suite());
-		suite.addTest(VirtualFolderTest.suite());
-		suite.addTest(IFileTest.suite());
-		suite.addTest(IFolderTest.suite());
-		suite.addTest(IPathVariableTest.suite());
-		suite.addTest(IProjectDescriptionTest.suite());
-		suite.addTest(IProjectTest.suite());
-		suite.addTest(IResourceChangeEventTest.suite());
-		suite.addTest(IResourceChangeListenerTest.suite());
-		suite.addTest(IResourceDeltaTest.suite());
-		suite.addTest(IResourceTest.suite());
-		suite.addTest(ISynchronizerTest.suite());
-		suite.addTest(IWorkspaceRootTest.suite());
-		suite.addTest(IWorkspaceTest.suite());
-		suite.addTest(LinkedResourceTest.suite());
-		suite.addTest(LinkedResourceWithPathVariableTest.suite());
-		suite.addTest(LinkedResourceSyncMoveAndCopyTest.suite());
-		suite.addTest(MarkerSetTest.suite());
-		suite.addTest(MarkerTest.suite());
-		suite.addTest(NatureTest.suite());
-		suite.addTest(NonLocalLinkedResourceTest.suite());
-		suite.addTest(ProjectOrderTest.suite());
-		suite.addTest(ProjectScopeTest.suite());
-		suite.addTest(ProjectSnapshotTest.suite());
-		suite.addTest(ResourceAttributeTest.suite());
-		suite.addTest(ResourceURLTest.suite());
-		suite.addTest(TeamPrivateMemberTest.suite());
-		suite.addTest(WorkspaceTest.suite());
+		suite.addTestSuite(CharsetTest.class);
+		suite.addTestSuite(ContentDescriptionManagerTest.class);
+		suite.addTestSuite(FilteredResourceTest.class);
+		suite.addTestSuite(HiddenResourceTest.class);
+		suite.addTestSuite(VirtualFolderTest.class);
+		suite.addTestSuite(IFileTest.class);
+		suite.addTestSuite(IFolderTest.class);
+		suite.addTestSuite(IPathVariableTest.class);
+		suite.addTestSuite(IProjectDescriptionTest.class);
+		suite.addTestSuite(IProjectTest.class);
+		suite.addTestSuite(IResourceChangeEventTest.class);
+		suite.addTestSuite(IResourceChangeListenerTest.class);
+		suite.addTestSuite(IResourceDeltaTest.class);
+		suite.addTestSuite(IResourceTest.class);
+		suite.addTestSuite(ISynchronizerTest.class);
+		suite.addTestSuite(IWorkspaceRootTest.class);
+		suite.addTestSuite(IWorkspaceTest.class);
+		suite.addTestSuite(LinkedResourceTest.class);
+		suite.addTestSuite(LinkedResourceWithPathVariableTest.class);
+		suite.addTestSuite(LinkedResourceSyncMoveAndCopyTest.class);
+		suite.addTestSuite(MarkerSetTest.class);
+		suite.addTestSuite(MarkerTest.class);
+		suite.addTestSuite(NatureTest.class);
+		suite.addTestSuite(NonLocalLinkedResourceTest.class);
+		suite.addTestSuite(ProjectOrderTest.class);
+		suite.addTestSuite(ProjectScopeTest.class);
+		suite.addTestSuite(ProjectSnapshotTest.class);
+		suite.addTestSuite(ResourceAttributeTest.class);
+		suite.addTestSuite(ResourceURLTest.class);
+		suite.addTestSuite(TeamPrivateMemberTest.class);
+		suite.addTestSuite(WorkspaceTest.class);
 		return suite;
 	}
 }

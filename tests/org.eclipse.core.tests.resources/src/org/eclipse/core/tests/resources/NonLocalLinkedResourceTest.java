@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -29,18 +27,6 @@ import org.eclipse.core.tests.internal.filesystem.ram.MemoryTree;
  */
 public class NonLocalLinkedResourceTest extends ResourceTest {
 	private int nextFolder = 0;
-
-	public static Test suite() {
-		return new TestSuite(NonLocalLinkedResourceTest.class);
-	}
-
-	public NonLocalLinkedResourceTest() {
-
-	}
-
-	public NonLocalLinkedResourceTest(String name) {
-		super(name);
-	}
 
 	/**
 	 * Creates a folder in the test file system with the given name

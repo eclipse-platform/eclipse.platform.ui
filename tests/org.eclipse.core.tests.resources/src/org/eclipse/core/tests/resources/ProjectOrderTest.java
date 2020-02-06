@@ -15,8 +15,6 @@
 package org.eclipse.core.tests.resources;
 
 import java.util.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 
@@ -26,19 +24,6 @@ import org.eclipse.core.runtime.CoreException;
  * <code>IWorkspace.computePrerequisiteOrder(IProject[])</code>
  */
 public class ProjectOrderTest extends ResourceTest {
-
-	public ProjectOrderTest() {
-		super();
-	}
-
-	public ProjectOrderTest(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(ProjectOrderTest.class);
-		return suite;
-	}
 
 	/**
 	 * Adds a project reference from the given source project, which must

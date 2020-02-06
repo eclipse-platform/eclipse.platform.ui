@@ -15,8 +15,6 @@ package org.eclipse.core.tests.resources;
 
 import java.io.ByteArrayInputStream;
 import java.net.URI;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.internal.resources.projectvariables.ProjectLocationVariableResolver;
@@ -28,18 +26,6 @@ public class LinkedResourceSyncMoveAndCopyTest extends ResourceTest {
 
 	protected IProject existingProject;
 	protected IProject otherExistingProject;
-
-	public static Test suite() {
-		return new TestSuite(LinkedResourceSyncMoveAndCopyTest.class);
-	}
-
-	public LinkedResourceSyncMoveAndCopyTest() {
-		super();
-	}
-
-	public LinkedResourceSyncMoveAndCopyTest(String name) {
-		super(name);
-	}
 
 	protected void doCleanup() throws Exception {
 		ensureExistsInWorkspace(new IResource[] {existingProject, otherExistingProject}, true);
