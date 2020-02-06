@@ -14,8 +14,6 @@
 package org.eclipse.core.tests.internal.utils;
 
 import java.net.URI;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.utils.FileUtil;
@@ -27,10 +25,6 @@ import org.eclipse.core.tests.filesystem.FileSystemTest;
  * Tests for {@link FileUtil} class.
  */
 public class FileUtilTest extends FileSystemTest {
-	public static Test suite() {
-		return new TestSuite(FileUtilTest.class);
-	}
-
 	private IPath baseTestDir;
 
 	@Override

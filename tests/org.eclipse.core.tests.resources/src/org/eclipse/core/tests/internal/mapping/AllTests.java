@@ -20,18 +20,9 @@ import junit.framework.*;
  * @since 3.2
  */
 public class AllTests extends TestCase {
-
-	public AllTests() {
-		super(null);
-	}
-
-	public AllTests(String name) {
-		super(name);
-	}
-
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTest(ChangeValidationTest.suite());
+		suite.addTestSuite(ChangeValidationTest.class);
 		return suite;
 	}
 }

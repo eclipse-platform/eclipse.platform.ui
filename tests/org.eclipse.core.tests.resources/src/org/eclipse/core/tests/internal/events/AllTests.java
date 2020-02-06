@@ -17,19 +17,9 @@ import junit.framework.*;
 
 public class AllTests extends TestCase {
 
-	public AllTests() {
-		this(null);
-	}
-
-	public AllTests(String name) {
-		super(name);
-	}
-
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
-
-		suite.addTest(BuildProjectFromMultipleJobsTest.suite());
-
+		suite.addTestSuite(BuildProjectFromMultipleJobsTest.class);
 		return suite;
 	}
 }

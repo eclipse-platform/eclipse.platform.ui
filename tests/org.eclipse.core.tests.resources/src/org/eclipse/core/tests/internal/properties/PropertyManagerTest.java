@@ -15,8 +15,6 @@
 package org.eclipse.core.tests.internal.properties;
 
 import java.util.ArrayList;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.properties.IPropertyManager;
 import org.eclipse.core.internal.properties.PropertyManager2;
 import org.eclipse.core.internal.resources.Workspace;
@@ -43,21 +41,6 @@ public class PropertyManagerTest extends LocalStoreTest {
 		public String getStringValue() {
 			return value;
 		}
-	}
-
-	public static Test suite() {
-		//			TestSuite suite = new TestSuite();
-		//			suite.addTest(new PropertyManagerTest("testDeleteProperties"));
-		//			return suite;
-		return new TestSuite(PropertyManagerTest.class);
-	}
-
-	public PropertyManagerTest() {
-		super(null);
-	}
-
-	public PropertyManagerTest(String name) {
-		super(name);
 	}
 
 	private void createProperties(IFile target, QualifiedName[] names, String[] values) {

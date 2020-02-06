@@ -16,7 +16,6 @@ package org.eclipse.core.tests.resources.refresh;
 import java.util.HashMap;
 import java.util.Map;
 import junit.framework.AssertionFailedError;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -28,18 +27,6 @@ import org.eclipse.core.tests.resources.TestUtil;
  * Tests the IRefreshMonitor interface
  */
 public class RefreshProviderTest extends ResourceTest {
-
-	public static TestSuite suite() {
-		return new TestSuite(RefreshProviderTest.class);
-	}
-
-	public RefreshProviderTest() {
-		super();
-	}
-
-	public RefreshProviderTest(String name) {
-		super(name);
-	}
 
 	@Override
 	protected void setUp() throws Exception {

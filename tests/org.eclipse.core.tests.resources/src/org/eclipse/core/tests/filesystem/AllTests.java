@@ -20,21 +20,13 @@ import junit.framework.*;
  * Class for collecting all test classes that deal with the file system API.
  */
 public class AllTests extends TestCase {
-	public AllTests() {
-		super(null);
-	}
-
-	public AllTests(String name) {
-		super(name);
-	}
-
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
 		suite.addTestSuite(CreateDirectoryTest.class);
 		suite.addTestSuite(DeleteTest.class);
-		suite.addTest(EFSTest.suite());
-		suite.addTest(FileCacheTest.suite());
-		suite.addTest(FileStoreTest.suite());
+		suite.addTestSuite(EFSTest.class);
+		suite.addTestSuite(FileCacheTest.class);
+		suite.addTestSuite(FileStoreTest.class);
 		suite.addTestSuite(OpenOutputStreamTest.class);
 		suite.addTestSuite(PutInfoTest.class);
 		suite.addTestSuite(SymlinkTest.class);

@@ -16,8 +16,6 @@ package org.eclipse.core.tests.internal.alias;
 
 import java.net.URI;
 import java.util.Arrays;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.resources.*;
@@ -44,23 +42,6 @@ public class BasicAliasTest extends ResourceTest {
 	private IFile lLinked;
 	private IFile lChildLinked;
 	private IPath linkOverlapLocation;
-
-	public static Test suite() {
-		return new TestSuite(BasicAliasTest.class);
-
-		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new BasicAliasTest("testDeepLink"));
-		//		suite.addTest(new BasicAliasTest("testCreateDeleteLink"));
-		//		return suite;
-	}
-
-	public BasicAliasTest() {
-		super();
-	}
-
-	public BasicAliasTest(String name) {
-		super(name);
-	}
 
 	/**
 	 * Asserts that the two given resources are duplicates in the file system.

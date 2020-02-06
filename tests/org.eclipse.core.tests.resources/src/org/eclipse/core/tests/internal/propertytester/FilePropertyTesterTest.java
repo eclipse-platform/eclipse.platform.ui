@@ -14,7 +14,6 @@
 package org.eclipse.core.tests.internal.propertytester;
 
 import java.io.ByteArrayInputStream;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.propertytester.FilePropertyTester;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -48,10 +47,6 @@ public class FilePropertyTesterTest extends ResourceTest {
 	protected void tearDown() throws Exception {
 		project.delete(true, monitor);
 		super.tearDown();
-	}
-
-	public static TestSuite suite() {
-		return new TestSuite(FilePropertyTesterTest.class);
 	}
 
 	public void testNonExistingTextFile() throws Throwable {

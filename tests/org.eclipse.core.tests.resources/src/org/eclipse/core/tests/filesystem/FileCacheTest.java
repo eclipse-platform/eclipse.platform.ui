@@ -15,8 +15,6 @@ package org.eclipse.core.tests.filesystem;
 
 import java.io.*;
 import java.util.Arrays;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.CoreException;
@@ -28,14 +26,6 @@ import org.eclipse.core.tests.internal.filesystem.ram.MemoryTree;
  * Tests the file caching provided by FileStore.toLocalFile.
  */
 public class FileCacheTest extends FileSystemTest {
-
-	public static Test suite() {
-		return new TestSuite(FileCacheTest.class);
-	}
-
-	public FileCacheTest(String name) {
-		super(name);
-	}
 
 	/**
 	 * Overrides generic method from Assert to perform proper array equality test.

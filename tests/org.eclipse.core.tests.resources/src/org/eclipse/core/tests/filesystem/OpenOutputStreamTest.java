@@ -18,14 +18,6 @@ import org.eclipse.core.filesystem.*;
 import org.eclipse.core.runtime.CoreException;
 
 public class OpenOutputStreamTest extends FileSystemTest {
-	public OpenOutputStreamTest() {
-		super();
-	}
-
-	public OpenOutputStreamTest(String name) {
-		super(name);
-	}
-
 	public void testAppend() {
 		IFileStore file = baseStore.getChild("file");
 		ensureDoesNotExist(file);

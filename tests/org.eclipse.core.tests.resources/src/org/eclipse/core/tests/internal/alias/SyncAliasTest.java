@@ -15,8 +15,6 @@
 package org.eclipse.core.tests.internal.alias;
 
 import java.io.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceTest;
@@ -26,18 +24,6 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * resources.
  */
 public class SyncAliasTest extends ResourceTest {
-	public static Test suite() {
-		return new TestSuite(SyncAliasTest.class);
-	}
-
-	public SyncAliasTest() {
-		super();
-	}
-
-	public SyncAliasTest(String name) {
-		super(name);
-	}
-
 	/**
 	 * Tests synchronization in presence of nested projects.
 	 * See bug 244315 for details.

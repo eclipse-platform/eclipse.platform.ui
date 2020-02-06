@@ -13,14 +13,10 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.utils;
 
-import junit.framework.*;
+import junit.framework.TestCase;
 import org.eclipse.core.internal.utils.Cache;
 
 public class CacheTest extends TestCase {
-	public static Test suite() {
-		return new TestSuite(CacheTest.class);
-	}
-
 	public void testBasic() {
 		Cache cache = new Cache(1);
 		cache.addEntry("foo", "foo");

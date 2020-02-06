@@ -23,14 +23,6 @@ import org.eclipse.core.runtime.CoreException;
  */
 public class DeleteTest extends FileSystemTest {
 
-	public DeleteTest() {
-		super();
-	}
-
-	public DeleteTest(String name) {
-		super(name);
-	}
-
 	public void testDeleteFile() {
 		IFileStore file = baseStore.getChild("child");
 		ensureExists(file, false);

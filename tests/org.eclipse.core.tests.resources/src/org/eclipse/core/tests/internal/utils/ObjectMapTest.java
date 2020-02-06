@@ -15,41 +15,12 @@
 package org.eclipse.core.tests.internal.utils;
 
 import java.util.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.utils.ObjectMap;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 public class ObjectMapTest extends ResourceTest {
 	private static final int MAXIMUM = 100;
 	private Object[] values;
-
-	/**
-	 * Need a zero argument constructor to satisfy the test harness.
-	 * This constructor should not do any real work nor should it be
-	 * called by user code.
-	 */
-	public ObjectMapTest() {
-		super();
-	}
-
-	/**
-	 * Creates a new markers test.
-	 */
-	public ObjectMapTest(String name) {
-		super(name);
-	}
-
-	/**
-	 * Configures the markers test suite.
-	 */
-	public static Test suite() {
-		return new TestSuite(ObjectMapTest.class);
-
-		//TestSuite suite = new TestSuite();
-		//suite.addTest(new ObjectMapTest("_testPR"));
-		//return suite;
-	}
 
 	public void testPut() {
 

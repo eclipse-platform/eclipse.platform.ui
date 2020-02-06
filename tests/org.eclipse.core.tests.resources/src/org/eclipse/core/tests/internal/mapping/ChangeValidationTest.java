@@ -16,8 +16,6 @@ package org.eclipse.core.tests.internal.mapping;
 
 import java.util.ArrayList;
 import java.util.List;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.mapping.*;
 import org.eclipse.core.runtime.IStatus;
@@ -30,10 +28,6 @@ import org.eclipse.core.tests.resources.ResourceTest;
 public class ChangeValidationTest extends ResourceTest {
 	private IResourceChangeDescriptionFactory factory;
 	private IProject project;
-
-	public static Test suite() {
-		return new TestSuite(ChangeValidationTest.class);
-	}
 
 	private void assertStatusEqual(IStatus status, String[] expectedMessages) {
 		List<String> actualMessages = new ArrayList<>();

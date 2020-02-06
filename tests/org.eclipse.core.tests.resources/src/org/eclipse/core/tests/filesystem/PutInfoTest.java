@@ -20,11 +20,6 @@ import org.eclipse.core.runtime.CoreException;
  * Black box tests for {@link IFileStore#putInfo(IFileInfo, int, IProgressMonitor)}
  */
 public class PutInfoTest extends FileSystemTest {
-
-	public PutInfoTest() {
-		super();
-	}
-
 	public void testSetFileLastModified() {
 		IFileStore file = baseStore.getChild("file");
 		ensureExists(file, false);

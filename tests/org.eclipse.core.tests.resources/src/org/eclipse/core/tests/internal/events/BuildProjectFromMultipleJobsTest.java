@@ -14,8 +14,6 @@
 package org.eclipse.core.tests.internal.events;
 
 import java.util.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.events.BuildCommand;
 import org.eclipse.core.internal.resources.Project;
 import org.eclipse.core.resources.*;
@@ -38,14 +36,6 @@ public class BuildProjectFromMultipleJobsTest extends ResourceTest {
 
 	private final ErrorLogListener logListener = new ErrorLogListener();
 	private boolean wasAutoBuildOn;
-
-	public static Test suite() {
-		return new TestSuite(BuildProjectFromMultipleJobsTest.class);
-	}
-
-	public BuildProjectFromMultipleJobsTest(String name) {
-		super(name);
-	}
 
 	@Override
 	protected void setUp() throws Exception {

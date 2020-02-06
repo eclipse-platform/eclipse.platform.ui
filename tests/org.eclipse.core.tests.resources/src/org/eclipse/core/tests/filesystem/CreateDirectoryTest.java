@@ -25,10 +25,6 @@ import org.eclipse.core.runtime.Platform;
 public class CreateDirectoryTest extends FileSystemTest {
 	protected IFileStore topDir, subDir, file, subFile;
 
-	public CreateDirectoryTest() {
-		super();
-	}
-
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();

@@ -19,17 +19,9 @@ import junit.framework.*;
  * Runs all tests in this package.
  */
 public class AllTests extends TestCase {
-	public AllTests() {
-		super(null);
-	}
-
-	public AllTests(String name) {
-		super(name);
-	}
-
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTest(RefreshProviderTest.suite());
+		suite.addTestSuite(RefreshProviderTest.class);
 		return suite;
 	}
 }
