@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.dtree;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.dtree.*;
 import org.eclipse.core.internal.watson.DefaultElementComparator;
 import org.eclipse.core.runtime.IPath;
@@ -26,14 +24,6 @@ import org.eclipse.core.runtime.Path;
 public class DeltaDataTreeTest extends DataTreeTest {
 
 	DeltaDataTree tree, emptyTree, changedTree, deltaTree;
-
-	public DeltaDataTreeTest() {
-		super();
-	}
-
-	public DeltaDataTreeTest(String name) {
-		super(name);
-	}
 
 	/**
 	 * Assert that the given tree is the same as the final delta tree
@@ -108,39 +98,6 @@ public class DeltaDataTreeTest extends DataTreeTest {
 
 		changedTree = new DeltaDataTree();
 		changedTree.createSubtree(rootKey, tree.copyCompleteSubtree(rootKey));
-	}
-
-	/**
-	 * Run all tests
-	 */
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(DeltaDataTreeTest.class.getName());
-		suite.addTest(new DeltaDataTreeTest("testSetup"));
-
-		suite.addTest(new DeltaDataTreeTest("testAddAndRemoveOnSameLayer"));
-		suite.addTest(new DeltaDataTreeTest("testAddTwiceAndDelete"));
-		suite.addTest(new DeltaDataTreeTest("testAssembleWithIn"));
-		suite.addTest(new DeltaDataTreeTest("testCreateChild"));
-		suite.addTest(new DeltaDataTreeTest("testDeleteChild"));
-		suite.addTest(new DeltaDataTreeTest("testDeltaOnCompletelyDifferentTrees"));
-		suite.addTest(new DeltaDataTreeTest("testEmpty"));
-		suite.addTest(new DeltaDataTreeTest("testForwardDeltaOnDataDeltaNode"));
-		suite.addTest(new DeltaDataTreeTest("testForwardDeltaWith"));
-		suite.addTest(new DeltaDataTreeTest("testForwardDeltaWithEquality"));
-		suite.addTest(new DeltaDataTreeTest("testGetChild"));
-		suite.addTest(new DeltaDataTreeTest("testGetChildCount"));
-		suite.addTest(new DeltaDataTreeTest("testGetChildren"));
-		suite.addTest(new DeltaDataTreeTest("testGetNameOfChild"));
-		suite.addTest(new DeltaDataTreeTest("testGetNamesOfChildren"));
-		suite.addTest(new DeltaDataTreeTest("testIncludes"));
-		suite.addTest(new DeltaDataTreeTest("testLongDeltaChain"));
-		suite.addTest(new DeltaDataTreeTest("testNewEmptyDeltaTree"));
-		suite.addTest(new DeltaDataTreeTest("testRegression1FVVP6L"));
-		suite.addTest(new DeltaDataTreeTest("testRegression1FVVP6LWithChildren"));
-		suite.addTest(new DeltaDataTreeTest("testReroot"));
-
-		return suite;
 	}
 
 	/**

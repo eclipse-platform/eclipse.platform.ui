@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.dtree;
 
-import junit.framework.*;
+import junit.framework.TestCase;
 import org.eclipse.core.internal.dtree.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -24,14 +24,6 @@ import org.eclipse.core.runtime.Path;
 public class DataTreeTest extends TestCase {
 	DataTree tree, emptyTree;
 	IPath rootKey, leftKey, rightKey;
-
-	public DataTreeTest() {
-		super(null);
-	}
-
-	public DataTreeTest(String name) {
-		super(name);
-	}
 
 	/**
 	 * Init tests
@@ -66,22 +58,6 @@ public class DataTreeTest extends TestCase {
 			throw new Error("Error in setUp");
 		}
 
-	}
-
-	/**
-	 * Run all tests
-	 */
-	public static Test suite() {
-		TestSuite suite = new TestSuite(DataTreeTest.class);
-		suite.addTest(DeltaDataTreeTest.suite());
-		return suite;
-	}
-
-	/**
-	 */
-	@Override
-	protected void tearDown() throws Exception {
-		//data tree tests don't use the CoreTest environment
 	}
 
 	/**
