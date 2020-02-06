@@ -42,21 +42,6 @@ public class TestInterestingProjectPersistence extends WorkspaceSessionTest {
 	private IFile file4;
 
 	/**
-	 * Constructor for TestInterestingProjectPersistence.
-	 */
-	public TestInterestingProjectPersistence() {
-		super();
-	}
-
-	/**
-	 * Constructor for TestInterestingProjectPersistence.
-	 * @param name
-	 */
-	public TestInterestingProjectPersistence(String name) {
-		super(name);
-	}
-
-	/**
 	 * Sets the workspace autobuilding to the desired value.
 	 */
 	protected void setAutoBuilding(boolean value) throws CoreException {
@@ -69,9 +54,6 @@ public class TestInterestingProjectPersistence extends WorkspaceSessionTest {
 		workspace.setDescription(desc);
 	}
 
-	/*
-	 * @see TestCase#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();

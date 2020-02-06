@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.resources.ResourceTest;
@@ -24,14 +22,6 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * scheduling rule.
  */
 public class Bug_127562 extends ResourceTest {
-
-	public Bug_127562(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(Bug_127562.class);
-	}
 
 	public void testBug() {
 		final IProject project = getWorkspace().getRoot().getProject("Bug127562");

@@ -28,21 +28,6 @@ public class TestClosedProjectLocation extends WorkspaceSerializationTest {
 	IPath location = Platform.getLocation().removeLastSegments(1).append("OtherLocation");
 
 	/**
-	 * Constructor for TestClosedProjectLocation.
-	 */
-	public TestClosedProjectLocation() {
-		super();
-	}
-
-	/**
-	 * Constructor for TestClosedProjectLocation.
-	 * @param name
-	 */
-	public TestClosedProjectLocation(String name) {
-		super(name);
-	}
-
-	/**
 	 * Create a project at a non-default location, and close it.
 	 */
 	public void test1() {

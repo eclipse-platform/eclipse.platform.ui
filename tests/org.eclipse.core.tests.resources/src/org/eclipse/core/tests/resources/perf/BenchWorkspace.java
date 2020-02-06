@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.perf;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -25,27 +23,6 @@ public class BenchWorkspace extends ResourceTest {
 	private static final int FILES_PER_FOLDER = 20;
 	private static final int NUM_FOLDERS = 400;//must be multiple of 10
 	IProject project;
-
-	public static Test suite() {
-		return new TestSuite(BenchWorkspace.class);
-		//		TestSuite suite = new TestSuite(BenchWorkspace.class.getName());
-		//		suite.addTest(new BenchWorkspace("testFindMaxProblemSeverity"));
-		//		return suite;
-	}
-
-	/**
-	 * No-arg constructor to satisfy test harness.
-	 */
-	public BenchWorkspace() {
-		super();
-	}
-
-	/**
-	 * Standard test case constructor
-	 */
-	public BenchWorkspace(String testName) {
-		super(testName);
-	}
 
 	/**
 	 * Creates the given number of problem markers on each resource in the workspace.

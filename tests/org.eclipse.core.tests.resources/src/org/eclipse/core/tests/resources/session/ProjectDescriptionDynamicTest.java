@@ -32,10 +32,6 @@ public class ProjectDescriptionDynamicTest extends WorkspaceSessionTest {
 	IBuildConfiguration[] configRefs;
 	IProject[] configRefsProjects;
 
-	public ProjectDescriptionDynamicTest() {
-		super();
-	}
-
 	/**
 	 * return reference to the active configuration in the project
 	 */

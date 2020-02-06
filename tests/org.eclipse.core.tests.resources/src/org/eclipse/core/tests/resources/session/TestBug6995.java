@@ -30,20 +30,6 @@ import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
  * revert to a full build.
  */
 public class TestBug6995 extends WorkspaceSessionTest {
-	/**
-	 * Constructor for TestBug6995.
-	 */
-	public TestBug6995() {
-		super();
-	}
-
-	/**
-	 * Constructor for TestBug6995.
-	 * @param name
-	 */
-	public TestBug6995(String name) {
-		super(name);
-	}
 
 	/**
 	 * Create a project and configure a builder for it.

@@ -14,9 +14,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.usecase;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
@@ -25,13 +23,6 @@ import org.eclipse.core.runtime.Path;
  * Change some resources mixing full saves and snapshots.
  */
 public class Snapshot4Test extends SnapshotTest {
-	public Snapshot4Test() {
-		super();
-	}
-
-	public Snapshot4Test(String name) {
-		super(name);
-	}
 
 	protected static String[] defineHierarchy1() {
 		List<String> result = new ArrayList<>();

@@ -13,36 +13,12 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.perf;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.harness.PerformanceTestRunner;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 public class BenchMiscWorkspace extends ResourceTest {
-	public static Test suite() {
-		return new TestSuite(BenchMiscWorkspace.class);
-		//		TestSuite suite = new TestSuite(BenchMiscWorkspace.class.getName());
-		//		suite.addTest(new BenchMiscWorkspace("testGetProject"));
-		//		return suite;
-	}
-
-	/**
-	 * Constructor for BenchMiscWorkspace.
-	 */
-	public BenchMiscWorkspace() {
-		super();
-	}
-
-	/**
-	 * Constructor for BenchMiscWorkspace.
-	 * @param name
-	 */
-	public BenchMiscWorkspace(String name) {
-		super(name);
-	}
-
 	/**
 	 * Benchmarks performing many empty operations.
 	 */

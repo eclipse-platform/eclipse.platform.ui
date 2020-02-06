@@ -13,20 +13,11 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.usecase;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 public class ConcurrencyTest extends ResourceTest {
-	public ConcurrencyTest() {
-		super();
-	}
-
-	public ConcurrencyTest(String name) {
-		super(name);
-	}
 
 	protected void assertIsNotRunning(ConcurrentOperation01 op, String label) {
 		/* try more than once, "just in case" */
@@ -38,10 +29,6 @@ public class ConcurrencyTest extends ResourceTest {
 			}
 			assertTrue(label, !op.isRunning());
 		}
-	}
-
-	public static Test suite() {
-		return new TestSuite(ConcurrencyTest.class);
 	}
 
 	/**

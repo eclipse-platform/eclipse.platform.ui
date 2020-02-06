@@ -26,13 +26,6 @@ import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
  * cleaned up after the last test method is run.
  */
 public class SampleSessionTest extends WorkspaceSessionTest {
-	public SampleSessionTest() {
-		super();
-	}
-
-	public SampleSessionTest(String name) {
-		super(name);
-	}
 
 	public void test1() throws Exception {
 		//create a project, save workspace

@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
@@ -26,19 +24,6 @@ import org.eclipse.core.tests.resources.ResourceVisitorVerifier;
  */
 
 public class Bug_028981 extends ResourceTest {
-	public Bug_028981(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-	}
 
 	public void testBug() {
 		final QualifiedName partner = new QualifiedName("org.eclipse.core.tests.resources", "myTarget");
@@ -117,9 +102,5 @@ public class Bug_028981 extends ResourceTest {
 			fail("5.0", e);
 		}
 		assertTrue("5.1 - " + verifier.getMessage(), verifier.isValid());
-	}
-
-	public static Test suite() {
-		return new TestSuite(Bug_028981.class);
 	}
 }

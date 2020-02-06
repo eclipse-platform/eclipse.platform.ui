@@ -20,14 +20,6 @@ import org.eclipse.core.runtime.CoreException;
  * Only verifies previous session.
  */
 public class Snapshot5Test extends SnapshotTest {
-	public Snapshot5Test() {
-		super();
-	}
-
-	public Snapshot5Test(String name) {
-		super(name);
-	}
-
 	public void testVerifyPreviousSession() {
 		// MyProject
 		IProject project = getWorkspace().getRoot().getProject(PROJECT_1);

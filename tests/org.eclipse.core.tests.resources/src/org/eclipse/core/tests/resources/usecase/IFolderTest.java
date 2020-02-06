@@ -13,22 +13,10 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.usecase;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
-/**
- *
- */
 public class IFolderTest extends IResourceTest {
-	public IFolderTest() {
-		super(null);
-	}
-
-	public IFolderTest(String name) {
-		super(name);
-	}
 
 	/**
 	 * Tests failure on get/set methods invoked on a nonexistent folder.
@@ -51,12 +39,6 @@ public class IFolderTest extends IResourceTest {
 			assertTrue(method + "4.2", false);
 		}
 		assertTrue(method + "5", !wb.getRoot().exists(folder.getFullPath()));
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(IFolderTest.class.getName());
-		suite.addTest(new IFolderTest("testFolder"));
-		return suite;
 	}
 
 	/**

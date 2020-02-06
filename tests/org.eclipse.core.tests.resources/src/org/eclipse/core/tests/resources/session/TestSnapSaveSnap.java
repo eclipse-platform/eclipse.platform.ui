@@ -23,20 +23,6 @@ import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
  * Tests snapshoting, saving, snapshoting, then crash and recover.
  */
 public class TestSnapSaveSnap extends WorkspaceSerializationTest {
-	/**
-	 * Constructor for TestSnapSaveSnap.
-	 */
-	public TestSnapSaveSnap() {
-		super();
-	}
-
-	/**
-	 * Constructor for TestSnapSaveSnap.
-	 * @param name
-	 */
-	public TestSnapSaveSnap(String name) {
-		super(name);
-	}
 
 	public void test1() {
 		/* create some resource handles */

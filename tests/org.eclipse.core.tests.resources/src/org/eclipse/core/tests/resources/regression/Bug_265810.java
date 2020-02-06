@@ -16,8 +16,6 @@ package org.eclipse.core.tests.resources.regression;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -29,25 +27,6 @@ public class Bug_265810 extends ResourceTest {
 	protected final static String VARIABLE_NAME = "ROOT";
 	private final ArrayList<IPath> toDelete = new ArrayList<>();
 	List<IResourceDelta> resourceDeltas = new ArrayList<>();
-
-	/**
-	 * Constructor for Bug_265810.
-	 */
-	public Bug_265810() {
-		super();
-	}
-
-	/**
-	 * Constructor for Bug_265810.
-	 * @param name
-	 */
-	public Bug_265810(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(Bug_265810.class);
-	}
 
 	@Override
 	protected void setUp() throws Exception {

@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.*;
@@ -23,25 +21,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 public class IFolderTest extends ResourceTest {
-	/**
-	 * Constructor for IFolderTest.
-	 */
-	public IFolderTest() {
-		super();
-	}
-
-	/**
-	 * Constructor for IFolderTest.
-	 * @param name
-	 */
-	public IFolderTest(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(IFolderTest.class);
-	}
-
 	/**
 	 * Bug requests that if a failed folder creation occurs on Linux that we check
 	 * the immediate parent to see if it is read-only so we can return a better

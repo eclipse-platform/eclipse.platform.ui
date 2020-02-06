@@ -14,8 +14,6 @@
 package org.eclipse.core.tests.resources.regression;
 
 import java.io.IOException;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -31,18 +29,6 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * flag is used when the resource is deleted from the workspace.
  */
 public class Bug_044106 extends ResourceTest {
-
-	public static Test suite() {
-		return new TestSuite(Bug_044106.class);
-	}
-
-	public Bug_044106() {
-		super();
-	}
-
-	public Bug_044106(String name) {
-		super(name);
-	}
 
 	private void createSymLink(String target, String local) {
 		try {

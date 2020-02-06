@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.IPathVariableManager;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -25,10 +23,6 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * Test for Bug 380386
  */
 public class Bug_380386 extends ResourceTest {
-
-	public static Test suite() {
-		return new TestSuite(Bug_380386.class);
-	}
 
 	public void testBug() throws Exception {
 

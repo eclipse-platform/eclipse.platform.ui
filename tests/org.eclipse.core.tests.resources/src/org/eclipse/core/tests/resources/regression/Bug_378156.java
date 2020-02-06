@@ -14,8 +14,6 @@
 package org.eclipse.core.tests.resources.regression;
 
 import java.util.concurrent.Semaphore;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceTest;
@@ -29,8 +27,8 @@ public class Bug_378156 extends ResourceTest {
 
 	class ModifyFileJob extends WorkspaceJob {
 		private boolean cancel;
-		private IFile jobFile;
-		private Semaphore jobFlag;
+		private final IFile jobFile;
+		private final Semaphore jobFlag;
 
 		/**
 		 * Modifies a file and then waits for a signal before returning.
@@ -62,10 +60,6 @@ public class Bug_378156 extends ResourceTest {
 		public void setCancel() {
 			this.cancel = true;
 		}
-	}
-
-	public static Test suite() {
-		return new TestSuite(Bug_378156.class);
 	}
 
 	public void testBugTwoThreads() throws Exception {

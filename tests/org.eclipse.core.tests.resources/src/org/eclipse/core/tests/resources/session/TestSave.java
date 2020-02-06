@@ -23,20 +23,6 @@ import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
  * Tests performing a save on a workspace, then crashing and recovering.
  */
 public class TestSave extends WorkspaceSerializationTest {
-	/**
-	 * Constructor for TestSave.
-	 */
-	public TestSave() {
-		super();
-	}
-
-	/**
-	 * Constructor for TestSave.
-	 * @param name
-	 */
-	public TestSave(String name) {
-		super(name);
-	}
 
 	public void test1() {
 		/* create some resource handles */

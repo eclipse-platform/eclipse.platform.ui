@@ -26,20 +26,6 @@ import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
  * Regression test for 1G1N9GZ: ITPCORE:WIN2000 - ElementTree corruption when linking trees
  */
 public class Test1G1N9GZ extends WorkspaceSerializationTest {
-	/**
-	 * Constructor for Test1G1N9GZ.
-	 */
-	public Test1G1N9GZ() {
-		super();
-	}
-
-	/**
-	 * Constructor for Test1G1N9GZ.
-	 * @param name
-	 */
-	public Test1G1N9GZ(String name) {
-		super(name);
-	}
 
 	/**
 	 * Initial setup and save

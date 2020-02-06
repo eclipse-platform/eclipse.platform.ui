@@ -15,8 +15,6 @@ package org.eclipse.core.tests.resources.regression;
 
 import java.io.IOException;
 import java.io.InputStream;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.resources.Resource;
 import org.eclipse.core.resources.*;
@@ -29,18 +27,6 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * its children can't be deleted, both "a" and "b" become out-of-sync and resource info is lost.
  */
 public class Bug_032076 extends ResourceTest {
-
-	public Bug_032076() {
-		super("");
-	}
-
-	public Bug_032076(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(Bug_032076.class);
-	}
 
 	public void testFileBugOnWindows() {
 		if (!isWindows()) {

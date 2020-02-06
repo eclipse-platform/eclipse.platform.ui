@@ -15,26 +15,12 @@
 package org.eclipse.core.tests.resources.regression;
 
 import java.util.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 public class NLTest extends ResourceTest {
-
-	public NLTest() {
-		super();
-	}
-
-	public NLTest(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(NLTest.class);
-	}
 
 	public void getFileNames(List<String> list, char begin, char end) {
 		char current = begin;

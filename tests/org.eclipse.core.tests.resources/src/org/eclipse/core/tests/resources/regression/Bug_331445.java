@@ -15,33 +15,12 @@ package org.eclipse.core.tests.resources.regression;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 public class Bug_331445 extends ResourceTest {
-	/**
-	 * Constructor for Bug_331445.
-	 */
-	public Bug_331445() {
-		super();
-	}
-
-	/**
-	 * Constructor for Bug_331445.
-	 * @param name
-	 */
-	public Bug_331445(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(Bug_331445.class);
-	}
-
 	public void testBug() {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();
 		IProject project = root.getProject(getUniqueString());

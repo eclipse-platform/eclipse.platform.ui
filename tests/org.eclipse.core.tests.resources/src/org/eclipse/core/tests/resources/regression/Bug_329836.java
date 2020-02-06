@@ -14,8 +14,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
@@ -25,14 +23,6 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * Test for bug 329836
  */
 public class Bug_329836 extends ResourceTest {
-	public Bug_329836() {
-		super();
-	}
-
-	public Bug_329836(String name) {
-		super(name);
-	}
-
 	public void testBug() {
 		if (!Platform.getOS().equals(Platform.OS_MACOSX)) {
 			return;
@@ -76,9 +66,5 @@ public class Bug_329836 extends ResourceTest {
 		if (isAttributeSupported(EFS.ATTRIBUTE_IMMUTABLE)) {
 			assertFalse("6.0", info.getAttribute(EFS.ATTRIBUTE_IMMUTABLE));
 		}
-	}
-
-	public static Test suite() {
-		return new TestSuite(Bug_329836.class);
 	}
 }

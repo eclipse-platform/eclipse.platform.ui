@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.*;
@@ -25,14 +23,6 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * Tests copying a file to a linked folder that does not exist on disk
  */
 public class Bug_126104 extends ResourceTest {
-
-	public static Test suite() {
-		return new TestSuite(Bug_126104.class);
-	}
-
-	public Bug_126104(String name) {
-		super(name);
-	}
 
 	public void testBug() {
 		IProject project = getWorkspace().getRoot().getProject("p1");

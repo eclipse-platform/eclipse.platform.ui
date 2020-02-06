@@ -32,14 +32,6 @@ public class WorkspaceDescriptionTest extends WorkspaceSessionTest {
 	private static final long MAX_FILE_SIZE = 1024 * 53;
 	private static final long SNAPSHOT_INTERVAL = 4321;
 
-	public WorkspaceDescriptionTest() {
-		super();
-	}
-
-	public WorkspaceDescriptionTest(String name) {
-		super(name);
-	}
-
 	public void test1() {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IWorkspaceDescription desc = workspace.getDescription();

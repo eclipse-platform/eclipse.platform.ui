@@ -14,8 +14,6 @@
 package org.eclipse.core.tests.resources.regression;
 
 import java.io.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceTest;
@@ -26,14 +24,6 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * specific test cases ensure that it does not happen.
  */
 public class Bug_026294 extends ResourceTest {
-
-	public Bug_026294(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(Bug_026294.class);
-	}
 
 	/**
 	 * Tries to delete an open project containing an unremovable file.

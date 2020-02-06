@@ -13,25 +13,12 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.usecase;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.harness.PerformanceTestRunner;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 public class ConcurrencyPerformanceTest extends ResourceTest {
-	public ConcurrencyPerformanceTest() {
-		super("");
-	}
-
-	public ConcurrencyPerformanceTest(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(ConcurrencyPerformanceTest.class);
-	}
 
 	public void testSimpleCalls() {
 		final IWorkspaceRunnable job = monitor -> {

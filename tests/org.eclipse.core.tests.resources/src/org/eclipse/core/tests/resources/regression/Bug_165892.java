@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.QualifiedName;
@@ -27,18 +25,6 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * source resource.
  */
 public class Bug_165892 extends ResourceTest {
-	public static Test suite() {
-		return new TestSuite(Bug_165892.class);
-	}
-
-	public Bug_165892() {
-		super();
-	}
-
-	public Bug_165892(String name) {
-		super(name);
-	}
-
 	/**
 	 * Tests copying a file
 	 */

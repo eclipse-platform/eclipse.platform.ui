@@ -14,31 +14,11 @@
 package org.eclipse.core.tests.resources.regression;
 
 import java.io.ByteArrayInputStream;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 public class Bug_006708 extends ResourceTest {
-	/**
-	 * Constructor for Bug_6708.
-	 */
-	public Bug_006708() {
-		super();
-	}
-
-	/**
-	 * Constructor for Bug_6708.
-	 * @param name
-	 */
-	public Bug_006708(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(Bug_006708.class);
-	}
 
 	@Override
 	protected void setUp() throws Exception {

@@ -15,8 +15,6 @@ package org.eclipse.core.tests.resources.regression;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.resources.ResourceTest;
@@ -30,17 +28,6 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * the non case-change scenario.
  */
 public class Bug_025457 extends ResourceTest {
-	public static Test suite() {
-		return new TestSuite(Bug_025457.class);
-	}
-
-	public Bug_025457() {
-		super();
-	}
-
-	public Bug_025457(String name) {
-		super(name);
-	}
 
 	public void testFile() {
 		//this test only works on windows

@@ -13,20 +13,11 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.usecase;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 public class IWorkspaceRunnableUseCaseTest extends ResourceTest {
-	public IWorkspaceRunnableUseCaseTest() {
-		super();
-	}
-
-	public IWorkspaceRunnableUseCaseTest(String name) {
-		super(name);
-	}
 
 	protected IWorkspaceRunnable createRunnable(final IProject project, final IWorkspaceRunnable nestedOperation, final boolean triggerBuild, final Exception exceptionToThrow) {
 		return monitor -> {
@@ -46,10 +37,6 @@ public class IWorkspaceRunnableUseCaseTest extends ResourceTest {
 				getWorkspace().run(nestedOperation, getMonitor());
 			}
 		};
-	}
-
-	public static Test suite() {
-		return new TestSuite(IWorkspaceRunnableUseCaseTest.class);
 	}
 
 	public void testNestedOperationsAndBuilds() {

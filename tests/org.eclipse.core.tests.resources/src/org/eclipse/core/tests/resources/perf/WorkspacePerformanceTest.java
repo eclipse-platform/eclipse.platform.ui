@@ -17,8 +17,6 @@ package org.eclipse.core.tests.resources.perf;
 import java.io.ByteArrayInputStream;
 import java.net.URI;
 import java.util.Random;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
@@ -37,21 +35,6 @@ public class WorkspacePerformanceTest extends ResourceTest {
 	private final Random random = new Random();
 	IFolder testFolder;
 	IProject testProject;
-
-	public static Test suite() {
-		return new TestSuite(WorkspacePerformanceTest.class);
-		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new WorkspacePerformanceTest("testRefreshProject"));
-		//		return suite;
-	}
-
-	public WorkspacePerformanceTest() {
-		super();
-	}
-
-	public WorkspacePerformanceTest(String name) {
-		super(name);
-	}
 
 	IFolder copyFolder() {
 		IFolder destination = testProject.getFolder("CopyDestination");

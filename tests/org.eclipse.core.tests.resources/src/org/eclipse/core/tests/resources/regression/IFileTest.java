@@ -13,34 +13,13 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 public class IFileTest extends ResourceTest {
-	private boolean DISABLED = true;
-
-	/**
-	 * Constructor for IFileTest.
-	 */
-	public IFileTest() {
-		super();
-	}
-
-	/**
-	 * Constructor for IFileTest.
-	 * @param name
-	 */
-	public IFileTest(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(IFileTest.class);
-	}
+	private final boolean DISABLED = true;
 
 	/**
 	 * Bug states that the error code in the CoreException which is thrown when

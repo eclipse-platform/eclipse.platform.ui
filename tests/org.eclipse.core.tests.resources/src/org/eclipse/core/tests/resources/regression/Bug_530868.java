@@ -16,8 +16,6 @@ package org.eclipse.core.tests.resources.regression;
 import static org.junit.Assert.assertNotEquals;
 
 import java.io.ByteArrayInputStream;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.provider.FileInfo;
 import org.eclipse.core.internal.filesystem.local.LocalFileNativesManager;
 import org.eclipse.core.resources.IFile;
@@ -35,10 +33,6 @@ public class Bug_530868 extends ResourceTest {
 
 	private IProject testProject;
 	private IFile testFile;
-
-	public static Test suite() {
-		return new TestSuite(Bug_530868.class);
-	}
 
 	@Override
 	protected void setUp() throws Exception {

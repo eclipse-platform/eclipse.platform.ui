@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.perf;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.localstore.IHistoryStore;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
@@ -32,18 +30,6 @@ import org.eclipse.core.tests.resources.ResourceTest;
 public class LocalHistoryPerformanceTest extends ResourceTest {
 
 	private IWorkspaceDescription original;
-
-	public static Test suite() {
-		//				TestSuite suite = new TestSuite(LocalHistoryPerformanceTest.class.getName());
-		//				suite.addTest(new LocalHistoryPerformanceTest("testHistoryCleanUp100x4"));
-		//				suite.addTest(new LocalHistoryPerformanceTest("testHistoryCleanUp4x100"));
-		//				return suite;
-		return new TestSuite(LocalHistoryPerformanceTest.class);
-	}
-
-	public LocalHistoryPerformanceTest(String name) {
-		super(name);
-	}
 
 	void cleanHistory() {
 		((Workspace) getWorkspace()).getFileSystemManager().getHistoryStore().clean(getMonitor());

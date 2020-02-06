@@ -30,14 +30,6 @@ public class TestMasterTableCleanup extends WorkspaceSerializationTest {
 	private static final String CLOSE_OPEN = "CloseOpen";
 	private static final String CLOSE_DELETE = "CloseDelete";
 
-	public TestMasterTableCleanup() {
-		super();
-	}
-
-	public TestMasterTableCleanup(String name) {
-		super(name);
-	}
-
 	/**
 	 * Setup.  Two scenarios with stale entries were:
 	 *  1) Project that was closed and then opened

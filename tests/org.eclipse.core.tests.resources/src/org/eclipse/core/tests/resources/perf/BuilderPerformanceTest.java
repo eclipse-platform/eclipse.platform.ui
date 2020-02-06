@@ -15,8 +15,6 @@
 package org.eclipse.core.tests.resources.perf;
 
 import java.util.Map;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.harness.PerformanceTestRunner;
@@ -29,16 +27,6 @@ import org.eclipse.core.tests.internal.builders.TestBuilder;
 public class BuilderPerformanceTest extends WorkspacePerformanceTest {
 	private static final int PROJECT_COUNT = 100;
 	private static final int REPEAT = 20;
-
-	public BuilderPerformanceTest(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite();
-		suite.addTest(new BuilderPerformanceTest("testManualBuildWithAutobuildOn"));
-		return suite;
-	}
 
 	IProject[] otherProjects;
 

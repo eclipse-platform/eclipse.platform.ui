@@ -16,8 +16,6 @@ package org.eclipse.core.tests.resources.regression;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -39,10 +37,6 @@ public class Bug_192631 extends ResourceTest {
 	private static final String COMMON = "/common";
 	private static final String FOLDER_A = "/common/folderA";
 	private static final String FOLDER_B = "/common/folderB";
-
-	public static Test suite() {
-		return new TestSuite(Bug_192631.class);
-	}
 
 	@Override
 	protected void setUp() throws Exception {

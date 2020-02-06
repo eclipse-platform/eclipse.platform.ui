@@ -23,21 +23,6 @@ import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
  * Create a project, close it, save, crash, recover.  Recovered project should still be closed.
  */
 public class TestSaveWithClosedProject extends WorkspaceSerializationTest {
-	/**
-	 * Constructor for TestSaveWithClosedProject.
-	 */
-	public TestSaveWithClosedProject() {
-		super();
-	}
-
-	/**
-	 * Constructor for TestSaveWithClosedProject.
-	 * @param name
-	 */
-	public TestSaveWithClosedProject(String name) {
-		super(name);
-	}
-
 	public void test1() {
 		/* create some resource handles */
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT);

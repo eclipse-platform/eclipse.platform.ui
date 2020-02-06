@@ -20,68 +20,53 @@ import junit.framework.*;
  * A suite that runs all regression tests.
  */
 public class AllTests extends TestCase {
-	/**
-	 * AllTests constructor comment.
-	 */
-	public AllTests() {
-		super(null);
-	}
-
-	/**
-	 * AllTests constructor comment.
-	 * @param name java.lang.String
-	 */
-	public AllTests(String name) {
-		super(name);
-	}
-
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTest(Bug_006708.suite());
-		suite.addTest(Bug_025457.suite());
-		suite.addTest(Bug_026294.suite());
-		suite.addTest(Bug_027271.suite());
-		suite.addTest(Bug_028981.suite());
-		suite.addTest(Bug_029116.suite());
-		suite.addTest(Bug_029671.suite());
-		suite.addTest(Bug_029851.suite());
-		suite.addTest(Bug_032076.suite());
-		suite.addTest(Bug_044106.suite());
-		suite.addTest(Bug_092108.suite());
-		suite.addTest(Bug_097608.suite());
-		suite.addTest(Bug_098740.suite());
-		suite.addTest(Bug_126104.suite());
-		suite.addTest(Bug_127562.suite());
-		suite.addTest(Bug_132510.suite());
-		suite.addTest(Bug_134364.suite());
-		suite.addTest(Bug_147232.suite());
-		suite.addTest(Bug_160251.suite());
-		suite.addTest(Bug_165892.suite());
-		suite.addTest(Bug_192631.suite());
-		suite.addTest(Bug_226264.suite());
-		suite.addTest(Bug_231301.suite());
-		suite.addTest(Bug_233939.suite());
-		suite.addTest(Bug_265810.suite());
-		suite.addTest(Bug_264182.suite());
-		suite.addTest(Bug_288315.suite());
-		suite.addTest(Bug_303517.suite());
-		suite.addTest(Bug_329836.suite());
-		suite.addTest(Bug_331445.suite());
-		suite.addTest(Bug_332543.suite());
-		suite.addTest(Bug_378156.suite());
-		suite.addTest(IFileTest.suite());
-		suite.addTest(IFolderTest.suite());
-		suite.addTest(IProjectTest.suite());
-		suite.addTest(IResourceTest.suite());
-		suite.addTest(IWorkspaceTest.suite());
-		suite.addTest(LocalStoreRegressionTests.suite());
-		suite.addTest(NLTest.suite());
-		suite.addTest(PR_1GEAB3C_Test.suite());
-		suite.addTest(PR_1GH2B0N_Test.suite());
-		suite.addTest(PR_1GHOM0N_Test.suite());
-		suite.addTest(Bug_530868.suite());
-		suite.addTest(Bug_185247_recursiveLinks.suite());
-		suite.addTest(Bug_185247_LinuxTests.suite());
+		suite.addTestSuite(Bug_006708.class);
+		suite.addTestSuite(Bug_025457.class);
+		suite.addTestSuite(Bug_026294.class);
+		suite.addTestSuite(Bug_027271.class);
+		suite.addTestSuite(Bug_028981.class);
+		suite.addTestSuite(Bug_029116.class);
+		suite.addTestSuite(Bug_029671.class);
+		suite.addTestSuite(Bug_029851.class);
+		suite.addTestSuite(Bug_032076.class);
+		suite.addTestSuite(Bug_044106.class);
+		suite.addTestSuite(Bug_092108.class);
+		suite.addTestSuite(Bug_097608.class);
+		suite.addTestSuite(Bug_098740.class);
+		suite.addTestSuite(Bug_126104.class);
+		suite.addTestSuite(Bug_127562.class);
+		suite.addTestSuite(Bug_132510.class);
+		suite.addTestSuite(Bug_134364.class);
+		suite.addTestSuite(Bug_147232.class);
+		suite.addTestSuite(Bug_160251.class);
+		suite.addTestSuite(Bug_165892.class);
+		suite.addTestSuite(Bug_192631.class);
+		suite.addTestSuite(Bug_226264.class);
+		suite.addTestSuite(Bug_231301.class);
+		suite.addTestSuite(Bug_233939.class);
+		suite.addTestSuite(Bug_265810.class);
+		suite.addTestSuite(Bug_264182.class);
+		suite.addTestSuite(Bug_288315.class);
+		suite.addTestSuite(Bug_303517.class);
+		suite.addTestSuite(Bug_329836.class);
+		suite.addTestSuite(Bug_331445.class);
+		suite.addTestSuite(Bug_332543.class);
+		suite.addTestSuite(Bug_378156.class);
+		suite.addTestSuite(IFileTest.class);
+		suite.addTestSuite(IFolderTest.class);
+		suite.addTestSuite(IProjectTest.class);
+		suite.addTestSuite(IResourceTest.class);
+		suite.addTestSuite(IWorkspaceTest.class);
+		suite.addTestSuite(LocalStoreRegressionTests.class);
+		suite.addTestSuite(NLTest.class);
+		suite.addTestSuite(PR_1GEAB3C_Test.class);
+		suite.addTestSuite(PR_1GH2B0N_Test.class);
+		suite.addTestSuite(PR_1GHOM0N_Test.class);
+		suite.addTestSuite(Bug_530868.class);
+		suite.addTestSuite(Bug_185247_recursiveLinks.class);
+		suite.addTestSuite(Bug_185247_LinuxTests.class);
 		return suite;
 	}
 }

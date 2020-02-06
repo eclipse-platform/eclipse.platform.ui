@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.resources.ResourceTest;
@@ -23,18 +21,6 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * Tests that obtaining file info works on the root directory on windows.
  */
 public class Bug_092108 extends ResourceTest {
-	public static Test suite() {
-		return new TestSuite(Bug_092108.class);
-	}
-
-	public Bug_092108() {
-		super("");
-	}
-
-	public Bug_092108(String name) {
-		super(name);
-	}
-
 	public void testBug() {
 		if (!isWindows()) {
 			return;

@@ -13,32 +13,11 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 public class Bug_226264 extends ResourceTest {
-	/**
-	 * Constructor for Bug_226264.
-	 */
-	public Bug_226264() {
-		super();
-	}
-
-	/**
-	 * Constructor for Bug_226264.
-	 * @param name
-	 */
-	public Bug_226264(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(Bug_226264.class);
-	}
-
 	public void testBug() throws CoreException {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		final IProject project1 = workspace.getRoot().getProject("Project1");

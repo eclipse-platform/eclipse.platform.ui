@@ -16,8 +16,6 @@ package org.eclipse.core.tests.resources.regression;
 
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -27,18 +25,6 @@ import org.eclipse.core.tests.resources.ResourceTest;
 public class IResourceTest extends ResourceTest {
 
 	private final boolean DISABLED = true;
-
-	public static Test suite() {
-		return new TestSuite(IResourceTest.class);
-	}
-
-	public IResourceTest() {
-		super();
-	}
-
-	public IResourceTest(String name) {
-		super(name);
-	}
 
 	@Override
 	protected void tearDown() throws Exception {

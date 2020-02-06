@@ -32,10 +32,6 @@ public class ProjectPreferenceSessionTest extends WorkspaceSessionTest {
 		//						return new ProjectPreferenceSessionTest("testDeleteFileBeforeLoad2");
 	}
 
-	public ProjectPreferenceSessionTest(String name) {
-		super(name);
-	}
-
 	@Override
 	protected void tearDown() throws Exception {
 		getWorkspace().save(true, getMonitor());

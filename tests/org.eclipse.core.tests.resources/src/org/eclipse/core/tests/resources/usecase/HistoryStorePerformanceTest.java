@@ -13,20 +13,11 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.usecase;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 public class HistoryStorePerformanceTest extends ResourceTest {
-	public HistoryStorePerformanceTest() {
-		super();
-	}
-
-	public HistoryStorePerformanceTest(String name) {
-		super(name);
-	}
 
 	@Override
 	public void setUp() throws Exception {
@@ -38,10 +29,6 @@ public class HistoryStorePerformanceTest extends ResourceTest {
 		description.setMaxFileStates(10000);
 		description.setMaxFileStateSize(1024 * 1024); // 1 Mb
 		getWorkspace().setDescription(description);
-	}
-
-	public static Test suite() {
-		return new TestSuite(HistoryStorePerformanceTest.class);
 	}
 
 	@Override

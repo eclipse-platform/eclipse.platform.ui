@@ -23,21 +23,6 @@ import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
  * Tests recovery after adding a project and not saving
  */
 public class TestSaveCreateProject extends WorkspaceSerializationTest {
-	/**
-	 * Constructor for TestSaveCreateProject.
-	 */
-	public TestSaveCreateProject() {
-		super();
-	}
-
-	/**
-	 * Constructor for TestSaveCreateProject.
-	 * @param name
-	 */
-	public TestSaveCreateProject(String name) {
-		super(name);
-	}
-
 	public void test1() {
 		/* create some resource handles */
 		IProject project = ResourcesPlugin.getWorkspace().getRoot().getProject(PROJECT);

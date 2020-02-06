@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.SubMonitor;
@@ -25,14 +23,6 @@ public class PR_1GEAB3C_Test extends ResourceTest {
 	ResourceDeltaVerifier verifier;
 
 	protected static final String VERIFIER_NAME = "TestListener";
-
-	public PR_1GEAB3C_Test() {
-		super();
-	}
-
-	public PR_1GEAB3C_Test(String name) {
-		super(name);
-	}
 
 	public void assertDelta() {
 		assertTrue(verifier.getMessage(), verifier.isDeltaValid());
@@ -57,10 +47,6 @@ public class PR_1GEAB3C_Test extends ResourceTest {
 		waitForRefresh();
 		verifier = new ResourceDeltaVerifier();
 		getWorkspace().addResourceChangeListener(verifier);
-	}
-
-	public static Test suite() {
-		return new TestSuite(PR_1GEAB3C_Test.class);
 	}
 
 	/**

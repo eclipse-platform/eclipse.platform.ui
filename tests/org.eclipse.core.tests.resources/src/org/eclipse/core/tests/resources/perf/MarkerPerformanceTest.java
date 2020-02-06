@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.perf;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
@@ -27,28 +25,6 @@ public class MarkerPerformanceTest extends ResourceTest {
 	IMarker[] markers;
 	final int NUM_MARKERS = 5000;
 	final int REPEAT = 100;
-
-	/**
-	 * No-arg constructor to satisfy test harness.
-	 */
-	public MarkerPerformanceTest() {
-		super();
-	}
-
-	/**
-	 * Standard test case constructor
-	 */
-	public MarkerPerformanceTest(String testName) {
-		super(testName);
-	}
-
-	public static Test suite() {
-		return new TestSuite(MarkerPerformanceTest.class);
-		//		TestSuite suite = new TestSuite(MarkerPerformanceTest.class.getName());
-		//		suite.addTest(new MarkerPerformanceTest("benchSetAttributes1"));
-		//		suite.addTest(new MarkerPerformanceTest("benchSetAttributes2"));
-		//		return suite;
-	}
 
 	public void testSetAttributes1() {
 		//benchmark setting many attributes in a single operation

@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.IPathVariableManager;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.*;
@@ -30,10 +28,6 @@ public class Bug_027271 extends ResourceTest {
 	static final String VARIABLE_PREFIX = "pathvariable."; //$NON-NLS-1$
 
 	private Preferences preferences;
-
-	public Bug_027271(String name) {
-		super(name);
-	}
 
 	@Override
 	protected void setUp() throws Exception {
@@ -56,10 +50,6 @@ public class Bug_027271 extends ResourceTest {
 				preferences.setToDefault(propertyName);
 			}
 		}
-	}
-
-	public static Test suite() {
-		return new TestSuite(Bug_027271.class);
 	}
 
 	public void testBug() {

@@ -15,8 +15,6 @@ package org.eclipse.core.tests.resources.regression;
 
 import java.io.*;
 import java.net.URI;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.resources.*;
@@ -29,11 +27,6 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * This tests that I/O Exception on OuptuStream#close() after IFile#setContents is correctly reported.
  */
 public class Bug_332543 extends ResourceTest {
-
-	public static Test suite() {
-		return new TestSuite(Bug_332543.class);
-	}
-
 	/**
 	 * Wrapper FS which throws an IOException when someone
 	 * closes an output stream...
@@ -57,11 +50,6 @@ public class Bug_332543 extends ResourceTest {
 			};
 			return os;
 		}
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
 	}
 
 	@Override

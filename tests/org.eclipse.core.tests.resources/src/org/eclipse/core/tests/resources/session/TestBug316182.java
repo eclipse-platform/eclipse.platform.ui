@@ -27,14 +27,6 @@ import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
 public class TestBug316182 extends WorkspaceSessionTest {
 	public static Exception CAUGHT_EXCEPTION = null;
 
-	public TestBug316182() {
-		super();
-	}
-
-	public TestBug316182(String name) {
-		super(name);
-	}
-
 	public void test01_prepareWorkspace() throws CoreException {
 		InstanceScope.INSTANCE.getNode(ResourcesPlugin.PI_RESOURCES).putBoolean(ResourcesPlugin.PREF_AUTO_REFRESH, true);
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();

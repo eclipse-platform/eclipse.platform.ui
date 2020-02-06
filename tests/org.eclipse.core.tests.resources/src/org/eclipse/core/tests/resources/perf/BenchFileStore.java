@@ -14,8 +14,6 @@
 package org.eclipse.core.tests.resources.perf;
 
 import java.io.IOException;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.runtime.CoreException;
@@ -45,18 +43,6 @@ public class BenchFileStore extends ResourceTest {
 	protected IFileStore existingStore;
 
 	protected IFileStore nonexistingStore;
-
-	public static Test suite() {
-		return new TestSuite(BenchFileStore.class);
-	}
-
-	public BenchFileStore() {
-		super();
-	}
-
-	public BenchFileStore(String name) {
-		super(name);
-	}
 
 	protected void createStores() throws CoreException {
 		existingStore = EFS.getFileSystem(EFS.SCHEME_FILE).getStore(getRandomLocation());

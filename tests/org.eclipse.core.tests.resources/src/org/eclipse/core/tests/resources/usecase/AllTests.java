@@ -17,21 +17,13 @@ import junit.framework.*;
 
 public class AllTests extends TestCase {
 
-	public AllTests() {
-		super(null);
-	}
-
-	public AllTests(String name) {
-		super(name);
-	}
-
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTest(ConcurrencyTest.suite());
-		suite.addTest(IFileTest.suite());
-		suite.addTest(IFolderTest.suite());
-		suite.addTest(IProjectTest.suite());
-		suite.addTest(IWorkspaceRunnableUseCaseTest.suite());
+		suite.addTestSuite(ConcurrencyTest.class);
+		suite.addTestSuite(IFileTest.class);
+		suite.addTestSuite(IFolderTest.class);
+		suite.addTestSuite(IProjectTest.class);
+		suite.addTestSuite(IWorkspaceRunnableUseCaseTest.class);
 		return suite;
 	}
 }

@@ -25,20 +25,6 @@ import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
  * Tests for the bug 219568.
  */
 public class TestCreateLinkedResourceInHiddenProject extends WorkspaceSerializationTest {
-	/**
-	 * Constructor for TestCreateLinkedResourceInHiddenProject.
-	 */
-	public TestCreateLinkedResourceInHiddenProject() {
-		super();
-	}
-
-	/**
-	 * Constructor for TestCreateLinkedResourceInHiddenProject.
-	 * @param name
-	 */
-	public TestCreateLinkedResourceInHiddenProject(String name) {
-		super(name);
-	}
 
 	public void test1() {
 		/* create some resource handles */

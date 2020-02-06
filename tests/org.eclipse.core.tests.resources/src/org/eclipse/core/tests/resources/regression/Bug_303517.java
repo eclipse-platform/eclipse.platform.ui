@@ -16,8 +16,6 @@ package org.eclipse.core.tests.resources.regression;
 
 import java.io.File;
 import java.io.InputStream;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
@@ -30,10 +28,6 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * it brings the resource back into sync in a timely manner.
  */
 public class Bug_303517 extends ResourceTest {
-
-	public static Test suite() {
-		return new TestSuite(Bug_303517.class);
-	}
 
 	String[] resources = new String[] {"/", "/Bug303517/", "/Bug303517/Folder/", "/Bug303517/Folder/Resource",};
 

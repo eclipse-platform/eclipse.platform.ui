@@ -14,8 +14,6 @@
 
 package org.eclipse.core.tests.resources.regression;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
@@ -30,18 +28,6 @@ import org.eclipse.core.tests.harness.CoreTest;
  * unused trees in ElementTree.
  */
 public class Bug_134364 extends CoreTest {
-	public static Test suite() {
-		return new TestSuite(Bug_134364.class);
-	}
-
-	public Bug_134364() {
-		super("");
-	}
-
-	public Bug_134364(String name) {
-		super(name);
-	}
-
 	/**
 	 * Creates a project with a builder attached
 	 */

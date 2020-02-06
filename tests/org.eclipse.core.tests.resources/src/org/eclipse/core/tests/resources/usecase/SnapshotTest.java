@@ -37,14 +37,6 @@ public class SnapshotTest extends WorkspaceSessionTest {
 		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, SnapshotTest.class);
 	}
 
-	public SnapshotTest() {
-		super();
-	}
-
-	public SnapshotTest(String name) {
-		super(name);
-	}
-
 	private boolean skipTest() {
 		//skip on Mac due to unknown failure (bug 127752)
 		//TODO re-enable after M5 build

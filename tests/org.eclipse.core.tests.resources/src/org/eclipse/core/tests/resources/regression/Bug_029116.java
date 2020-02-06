@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.CoreException;
@@ -25,18 +23,6 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * installation of a nature caused an assertion failure.
  */
 public class Bug_029116 extends ResourceTest {
-	public Bug_029116() {
-		super();
-	}
-
-	public Bug_029116(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(Bug_029116.class);
-	}
-
 	public void testBug() {
 		// Create some resource handles
 		IProject project = getWorkspace().getRoot().getProject("PROJECT");

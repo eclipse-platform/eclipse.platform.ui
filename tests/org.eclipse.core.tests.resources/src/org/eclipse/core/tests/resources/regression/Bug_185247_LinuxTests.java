@@ -18,8 +18,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.ProjectDescription;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -34,10 +32,6 @@ public class Bug_185247_LinuxTests extends ResourceTest {
 	private static final boolean IS_LINUX = Platform.getOS().equals(Platform.OS_LINUX);
 	private final List<IProject> testProjects = new ArrayList<>();
 	private IPath testCasesLocation;
-
-	public static Test suite() {
-		return new TestSuite(Bug_185247_LinuxTests.class);
-	}
 
 	@Override
 	protected void setUp() throws Exception {

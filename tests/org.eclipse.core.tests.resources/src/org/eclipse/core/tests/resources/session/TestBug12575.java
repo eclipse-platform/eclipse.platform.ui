@@ -19,17 +19,7 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.resources.AutomatedTests;
 import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
 
-/**
- *
- */
 public class TestBug12575 extends WorkspaceSerializationTest {
-	public TestBug12575() {
-		super();
-	}
-
-	public TestBug12575(String name) {
-		super(name);
-	}
 
 	private static final String projectName = "Project";
 

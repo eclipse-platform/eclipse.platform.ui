@@ -14,8 +14,6 @@
 package org.eclipse.core.tests.resources.perf;
 
 import java.util.Random;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.harness.FileSystemHelper;
@@ -88,7 +86,4 @@ public class FileSystemPerformanceTest extends LocalStoreTest {
 		baseStore.delete(EFS.NONE, null);
 	}
 
-	public static Test suite() {
-		return new TestSuite(FileSystemPerformanceTest.class);
-	}
 }

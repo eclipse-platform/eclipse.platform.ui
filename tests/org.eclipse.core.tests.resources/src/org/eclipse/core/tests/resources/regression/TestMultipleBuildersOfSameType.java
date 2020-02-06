@@ -36,14 +36,6 @@ public class TestMultipleBuildersOfSameType extends WorkspaceSessionTest {
 	private IFolder sorted1, unsorted1;
 	private IFile unsortedFile1;
 
-	public TestMultipleBuildersOfSameType() {
-		super();
-	}
-
-	public TestMultipleBuildersOfSameType(String name) {
-		super(name);
-	}
-
 	@Override
 	protected void setUp() throws Exception {
 		IWorkspaceRoot root = getWorkspace().getRoot();

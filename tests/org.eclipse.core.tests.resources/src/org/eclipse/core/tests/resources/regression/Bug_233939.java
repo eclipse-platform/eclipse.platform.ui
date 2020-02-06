@@ -15,8 +15,6 @@
 package org.eclipse.core.tests.resources.regression;
 
 import java.net.URI;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.utils.FileUtil;
@@ -26,25 +24,6 @@ import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 public class Bug_233939 extends ResourceTest {
-	/**
-	 * Constructor for Bug_233939.
-	 */
-	public Bug_233939() {
-		super();
-	}
-
-	/**
-	 * Constructor for Bug_233939.
-	 * @param name
-	 */
-	public Bug_233939(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(Bug_233939.class);
-	}
-
 	/**
 	 * Create a symbolic link in the given container, pointing to the given target.
 	 * Refresh the workspace and verify that the symbolic link attribute is set.

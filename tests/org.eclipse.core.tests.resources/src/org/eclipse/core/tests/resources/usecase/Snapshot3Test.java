@@ -21,13 +21,6 @@ import org.eclipse.core.runtime.CoreException;
  * the same.
  */
 public class Snapshot3Test extends SnapshotTest {
-	public Snapshot3Test() {
-		super();
-	}
-
-	public Snapshot3Test(String name) {
-		super(name);
-	}
 
 	protected static String[] defineHierarchy1() {
 		return Snapshot2Test.defineHierarchy1();

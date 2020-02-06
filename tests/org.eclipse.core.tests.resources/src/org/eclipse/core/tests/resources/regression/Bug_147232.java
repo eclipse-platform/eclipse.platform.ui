@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.internal.builders.AbstractBuilderTest;
@@ -32,10 +30,6 @@ public class Bug_147232 extends AbstractBuilderTest implements IResourceChangeLi
 
 	IFile file;
 	IProject project;
-
-	public static Test suite() {
-		return new TestSuite(Bug_147232.class);
-	}
 
 	public Bug_147232(String name) {
 		super(name);

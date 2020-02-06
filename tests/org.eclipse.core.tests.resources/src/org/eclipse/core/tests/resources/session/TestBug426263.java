@@ -27,14 +27,6 @@ public class TestBug426263 extends WorkspaceSessionTest {
 		return new WorkspaceSessionTestSuite(AutomatedTests.PI_RESOURCES_TESTS, TestBug426263.class);
 	}
 
-	public TestBug426263() {
-		super();
-	}
-
-	public TestBug426263(String name) {
-		super(name);
-	}
-
 	public void testBug() {
 		IPathVariableManager manager = getWorkspace().getPathVariableManager();
 		assertFalse(manager.isUserDefined("ECLIPSE_HOME"));

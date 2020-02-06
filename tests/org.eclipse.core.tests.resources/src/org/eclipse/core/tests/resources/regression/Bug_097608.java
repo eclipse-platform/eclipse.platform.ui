@@ -15,8 +15,6 @@
 package org.eclipse.core.tests.resources.regression;
 
 import java.util.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
@@ -27,10 +25,6 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * after writing marker with value that is too long.
  */
 public class Bug_097608 extends ResourceTest {
-	public static Test suite() {
-		return new TestSuite(Bug_097608.class);
-	}
-
 	/**
 	 * Tests that creating a marker with very long value causes failure.
 	 */

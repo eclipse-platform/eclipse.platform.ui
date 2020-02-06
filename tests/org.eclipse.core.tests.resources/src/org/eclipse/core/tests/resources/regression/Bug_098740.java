@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.resources.ResourceTest;
@@ -25,14 +23,6 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * specific test cases ensure that it does not happen.
  */
 public class Bug_098740 extends ResourceTest {
-
-	public Bug_098740(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(Bug_098740.class);
-	}
 
 	public void testBug() {
 		IProject project = getWorkspace().getRoot().getProject("Bug98740");

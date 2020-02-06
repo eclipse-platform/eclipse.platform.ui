@@ -24,13 +24,6 @@ import org.eclipse.core.runtime.CoreException;
  * verified in the next session and so on.
  */
 public class Snapshot1Test extends SnapshotTest {
-	public Snapshot1Test() {
-		super();
-	}
-
-	public Snapshot1Test(String name) {
-		super(name);
-	}
 
 	protected static String[] defineHierarchy1() {
 		return new String[] {"/folder110/", "/folder110/folder120/", "/folder110/folder120/folder130/", "/folder110/folder120/folder130/folder140/", "/folder110/folder120/folder130/folder140/folder150/", "/folder110/folder120/folder130/folder140/folder150/file160", "/folder110/folder120/folder130/folder140/file150", "/folder110/folder121/", "/folder110/folder121/folder131/", "/folder110/folder120/folder130/folder141/"};

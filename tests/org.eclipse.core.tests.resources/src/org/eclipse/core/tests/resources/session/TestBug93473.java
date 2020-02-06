@@ -39,10 +39,6 @@ public class TestBug93473 extends WorkspaceSessionTest {
 		return new WorkspaceSessionTestSuite(PI_RESOURCES_TESTS, TestBug93473.class);
 	}
 
-	public TestBug93473(String name) {
-		super(name);
-	}
-
 	public void test1stSession() {
 		final IWorkspace workspace = getWorkspace();
 

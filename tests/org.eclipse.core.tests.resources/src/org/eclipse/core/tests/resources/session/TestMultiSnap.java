@@ -24,20 +24,6 @@ import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
  * never been saved, then crashing and recovering.
  */
 public class TestMultiSnap extends WorkspaceSerializationTest {
-	/**
-	 * Constructor for TestMultiSnap.
-	 */
-	public TestMultiSnap() {
-		super();
-	}
-
-	/**
-	 * Constructor for TestMultiSnap.
-	 * @param name
-	 */
-	public TestMultiSnap(String name) {
-		super(name);
-	}
 
 	public void test1() throws Exception {
 

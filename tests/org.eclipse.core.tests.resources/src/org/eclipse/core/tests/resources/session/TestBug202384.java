@@ -24,13 +24,6 @@ import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
  * Test for bug 202384
  */
 public class TestBug202384 extends WorkspaceSessionTest {
-	public TestBug202384() {
-		super();
-	}
-
-	public TestBug202384(String name) {
-		super(name);
-	}
 
 	public void testInitializeWorkspace() {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();

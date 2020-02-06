@@ -22,15 +22,15 @@ import junit.framework.TestSuite;
 public class AllTests extends TestSuite {
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTest(BenchFileStore.suite());
-		suite.addTest(BenchWorkspace.suite());
-		suite.addTest(BenchMiscWorkspace.suite());
-		suite.addTest(BuilderPerformanceTest.suite());
-		suite.addTest(MarkerPerformanceTest.suite());
-		suite.addTest(LocalHistoryPerformanceTest.suite());
-		suite.addTest(WorkspacePerformanceTest.suite());
-		suite.addTest(PropertyManagerPerformanceTest.suite());
-		suite.addTest(FileSystemPerformanceTest.suite());
+		suite.addTestSuite(BenchFileStore.class);
+		suite.addTestSuite(BenchWorkspace.class);
+		suite.addTestSuite(BenchMiscWorkspace.class);
+		suite.addTestSuite(BuilderPerformanceTest.class);
+		suite.addTestSuite(MarkerPerformanceTest.class);
+		suite.addTestSuite(LocalHistoryPerformanceTest.class);
+		suite.addTestSuite(WorkspacePerformanceTest.class);
+		suite.addTestSuite(PropertyManagerPerformanceTest.class);
+		suite.addTestSuite(FileSystemPerformanceTest.class);
 		// these tests are flawed - see bug 57137
 		// suite.addTest(ContentDescriptionPerformanceTest.suite());
 		return suite;

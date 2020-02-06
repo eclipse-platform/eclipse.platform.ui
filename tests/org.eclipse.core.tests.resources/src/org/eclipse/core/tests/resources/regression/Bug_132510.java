@@ -15,8 +15,6 @@
 package org.eclipse.core.tests.resources.regression;
 
 import java.util.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.LinkDescription;
 import org.eclipse.core.internal.resources.ProjectDescription;
 import org.eclipse.core.runtime.IPath;
@@ -27,14 +25,6 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * Tests concurrent modification of the project description link table.
  */
 public class Bug_132510 extends ResourceTest {
-	public static Test suite() {
-		return new TestSuite(Bug_132510.class);
-	}
-
-	public Bug_132510(String name) {
-		super(name);
-	}
-
 	public void testBug() {
 		ProjectDescription desc = new ProjectDescription();
 		IPath path1 = new Path("/a/b/");

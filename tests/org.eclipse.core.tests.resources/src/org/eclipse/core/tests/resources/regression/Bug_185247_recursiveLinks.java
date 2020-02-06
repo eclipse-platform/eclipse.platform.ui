@@ -16,8 +16,6 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.URIUtil;
 import org.eclipse.core.internal.resources.ProjectDescription;
 import org.eclipse.core.resources.*;
@@ -32,10 +30,6 @@ import org.eclipse.core.tests.resources.ResourceTest;
 public class Bug_185247_recursiveLinks extends ResourceTest {
 
 	private final List<IProject> testProjects = new ArrayList<>();
-
-	public static Test suite() {
-		return new TestSuite(Bug_185247_recursiveLinks.class);
-	}
 
 	@Override
 	protected void tearDown() throws Exception {

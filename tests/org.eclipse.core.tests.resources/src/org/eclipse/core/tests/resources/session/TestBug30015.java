@@ -31,14 +31,6 @@ public class TestBug30015 extends WorkspaceSessionTest {
 	protected IPath varValue;
 	protected IPath rawLocation;
 
-	public TestBug30015() {
-		super();
-	}
-
-	public TestBug30015(String name) {
-		super(name);
-	}
-
 	/**
 	 * Create and open the project
 	 */

@@ -13,34 +13,11 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 public class PR_1GHOM0N_Test extends ResourceTest {
-	public PR_1GHOM0N_Test() {
-		super();
-	}
-
-	public PR_1GHOM0N_Test(String name) {
-		super(name);
-	}
-
-	/**
-	 * Sets up the fixture, for example, open a network connection.
-	 * This method is called before a test is executed.
-	 */
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-
-	public static Test suite() {
-		return new TestSuite(PR_1GHOM0N_Test.class);
-	}
-
 	/**
 	 * Tears down the fixture, for example, close a network connection.
 	 * This method is called after a test is executed.

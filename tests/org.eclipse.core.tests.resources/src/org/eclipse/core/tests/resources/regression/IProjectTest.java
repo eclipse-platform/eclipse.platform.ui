@@ -13,22 +13,12 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.internal.builders.AbstractBuilderTest;
 import org.eclipse.core.tests.resources.usecase.SignaledBuilder;
 
 public class IProjectTest extends AbstractBuilderTest {
-	public static Test suite() {
-		return new TestSuite(IProjectTest.class);
-	}
-
-	public IProjectTest() {
-		super("");
-	}
-
 	public IProjectTest(String name) {
 		super(name);
 	}

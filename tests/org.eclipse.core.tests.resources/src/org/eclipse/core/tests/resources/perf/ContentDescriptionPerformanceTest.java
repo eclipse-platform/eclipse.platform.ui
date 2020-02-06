@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.perf;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.content.IContentDescription;
@@ -42,14 +40,6 @@ public class ContentDescriptionPerformanceTest extends ResourceTest {
 			default :
 				return NO_DESCRIPTION_FILE_NAME;
 		}
-	}
-
-	public static Test suite() {
-		return new TestSuite(ContentDescriptionPerformanceTest.class);
-	}
-
-	public ContentDescriptionPerformanceTest(String name) {
-		super(name);
 	}
 
 	void assertHasExpectedDescription(String fileName, IContentDescription description) {

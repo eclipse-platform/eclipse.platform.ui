@@ -13,25 +13,12 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 public class IWorkspaceTest extends ResourceTest {
-	public IWorkspaceTest() {
-		super();
-	}
-
-	public IWorkspaceTest(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(IWorkspaceTest.class);
-	}
 
 	@Override
 	protected void tearDown() throws Exception {

@@ -53,10 +53,6 @@ public class TestBug294854 extends WorkspaceSessionTest {
 		return suite;
 	}
 
-	public TestBug294854() {
-		super();
-	}
-
 	public TestBug294854(String name) {
 		super(name);
 	}

@@ -13,22 +13,10 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.usecase;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
-/**
- *
- */
 public class IFileTest extends IResourceTest {
-	public IFileTest() {
-		super(null);
-	}
-
-	public IFileTest(String name) {
-		super(name);
-	}
 
 	/**
 	 * Tests failure on get/set methods invoked on a nonexistent file.
@@ -60,12 +48,6 @@ public class IFileTest extends IResourceTest {
 		}
 		commonFailureTestsForResource(file, false);
 
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(IFileTest.class.getName());
-		suite.addTest(new IFileTest("testFile"));
-		return suite;
 	}
 
 	/**

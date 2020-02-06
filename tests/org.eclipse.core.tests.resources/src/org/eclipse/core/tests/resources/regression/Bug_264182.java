@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -25,13 +23,6 @@ public class Bug_264182 extends ResourceTest {
 
 	IProject project;
 	IFile dotProject;
-
-	/**
-	 * Constructor for Bug_264182.
-	 */
-	public Bug_264182() {
-		super();
-	}
 
 	@Override
 	protected void setUp() throws Exception {
@@ -56,18 +47,6 @@ public class Bug_264182 extends ResourceTest {
 		// make the description writable
 		setReadOnly(dotProject, false);
 		super.tearDown();
-	}
-
-	/**
-	 * Constructor for Bug_264182.
-	 * @param name
-	 */
-	public Bug_264182(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(Bug_264182.class);
 	}
 
 	public void testBug() {

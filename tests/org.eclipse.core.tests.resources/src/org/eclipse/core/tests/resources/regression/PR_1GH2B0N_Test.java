@@ -13,31 +13,12 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 public class PR_1GH2B0N_Test extends ResourceTest {
-	/**
-	 * Constructor for PR_1GH2B0N_Test
-	 */
-	public PR_1GH2B0N_Test() {
-		super();
-	}
-
-	/**
-	 * Constructor for PR_1GH2B0N_Test
-	 */
-	public PR_1GH2B0N_Test(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(PR_1GH2B0N_Test.class);
-	}
 
 	@Override
 	protected void tearDown() throws Exception {

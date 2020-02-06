@@ -29,14 +29,6 @@ import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
  * Test for bug 323833
  */
 public class TestBug323833 extends WorkspaceSessionTest {
-	public TestBug323833() {
-		super();
-	}
-
-	public TestBug323833(String name) {
-		super(name);
-	}
-
 	public void test1() {
 		if (!Platform.getOS().equals(Platform.OS_MACOSX)) {
 			return;

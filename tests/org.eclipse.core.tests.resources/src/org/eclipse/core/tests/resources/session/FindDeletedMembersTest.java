@@ -40,21 +40,6 @@ public class FindDeletedMembersTest extends WorkspaceSessionTest {
 	protected IFolder folder2;
 	protected IFile file3;
 
-	/**
-	 * Constructor for FindDeletedMembersTest.
-	 */
-	public FindDeletedMembersTest() {
-		super();
-	}
-
-	/**
-	 * Constructor for FindDeletedMembersTest.
-	 * @param name
-	 */
-	public FindDeletedMembersTest(String name) {
-		super(name);
-	}
-
 	@Override
 	protected void setUp() throws Exception {
 		root = getWorkspace().getRoot();

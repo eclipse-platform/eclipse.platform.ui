@@ -29,21 +29,6 @@ import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
  */
 public class TestMissingBuilder extends WorkspaceSessionTest {
 	/**
-	 * Constructor for TestMissingBuilderAcrossSessions.
-	 */
-	public TestMissingBuilder() {
-		super();
-	}
-
-	/**
-	 * Constructor for TestMissingBuilderAcrossSessions.
-	 * @param name
-	 */
-	public TestMissingBuilder(String name) {
-		super(name);
-	}
-
-	/**
 	 * Returns true if this project's build spec has the given builder,
 	 * and false otherwise.
 	 */

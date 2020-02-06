@@ -14,11 +14,7 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.perf;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import java.util.*;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -34,17 +30,6 @@ public class PropertyManagerPerformanceTest extends ResourceTest {
 			value.append((char) (Math.random() * Character.MAX_VALUE));
 		}
 		return value.toString();
-	}
-
-	public static Test suite() {
-		//			TestSuite suite = new TestSuite();
-		//			suite.addTest(new PropertyManagerTest("testProperties"));
-		//			return suite;
-		return new TestSuite(PropertyManagerPerformanceTest.class);
-	}
-
-	public PropertyManagerPerformanceTest(String name) {
-		super(name);
 	}
 
 	/**

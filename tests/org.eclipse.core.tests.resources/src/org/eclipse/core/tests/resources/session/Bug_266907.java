@@ -35,10 +35,6 @@ public class Bug_266907 extends WorkspaceSessionTest {
 		return new WorkspaceSessionTestSuite(PI_RESOURCES_TESTS, Bug_266907.class);
 	}
 
-	public Bug_266907(String name) {
-		super(name);
-	}
-
 	public void test1stSession() {
 		final IWorkspace workspace = getWorkspace();
 		IProject project = workspace.getRoot().getProject(PROJECT_NAME);

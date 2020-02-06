@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.regression;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -26,18 +24,6 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * the destination directory is empty.
  */
 public class Bug_160251 extends ResourceTest {
-	public static Test suite() {
-		return new TestSuite(Bug_160251.class);
-	}
-
-	public Bug_160251() {
-		super();
-	}
-
-	public Bug_160251(String name) {
-		super(name);
-	}
-
 	/**
 	 * The destination directory does not exist.
 	 */

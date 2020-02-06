@@ -33,21 +33,6 @@ public class TestBuilderDeltaSerialization extends WorkspaceSerializationTest {
 	private IFolder sorted1, sorted2, unsorted1, unsorted2;
 	private IFile unsortedFile1, unsortedFile2;
 
-	/**
-	 * Constructor for TestBuilderDeltaSerialization.
-	 */
-	public TestBuilderDeltaSerialization() {
-		super();
-	}
-
-	/**
-	 * Constructor for TestBuilderDeltaSerialization.
-	 * @param name
-	 */
-	public TestBuilderDeltaSerialization(String name) {
-		super(name);
-	}
-
 	@Override
 	protected void setUp() throws Exception {
 		super.setUp();

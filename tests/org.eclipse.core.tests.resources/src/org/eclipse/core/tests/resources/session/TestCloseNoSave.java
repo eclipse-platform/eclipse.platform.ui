@@ -23,21 +23,6 @@ import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
  * Tests closing a workspace without save.
  */
 public class TestCloseNoSave extends WorkspaceSerializationTest {
-	/**
-	 * Constructor for TestCloseNoSave.
-	 */
-	public TestCloseNoSave() {
-		super();
-	}
-
-	/**
-	 * Constructor for TestCloseNoSave.
-	 * @param name
-	 */
-	public TestCloseNoSave(String name) {
-		super(name);
-	}
-
 	public void test1() throws CoreException {
 		/* create some resource handles */
 		IProject project = workspace.getRoot().getProject(PROJECT);

@@ -15,8 +15,6 @@ package org.eclipse.core.tests.internal.localstore;
 
 import java.io.File;
 import java.util.Date;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -68,13 +66,6 @@ public class RefreshLocalPerformanceTest extends ResourceTest {
 	public long stopClock() {
 		Date stopDate = new Date();
 		return stopDate.getTime() - startDate.getTime();
-	}
-
-	// this test should not be in AllTests because it is only a performance test
-	public static Test suite() {
-		TestSuite suite = new TestSuite(RefreshLocalPerformanceTest.class.getName());
-		suite.addTest(new RefreshLocalPerformanceTest("testLocalRefreshPerformance"));
-		return suite;
 	}
 
 	/**

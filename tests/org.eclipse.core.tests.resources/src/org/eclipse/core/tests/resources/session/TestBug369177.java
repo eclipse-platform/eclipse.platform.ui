@@ -26,14 +26,6 @@ import org.eclipse.core.tests.session.WorkspaceSessionTestSuite;
  * Test for bug 369177
  */
 public class TestBug369177 extends WorkspaceSessionTest {
-	public TestBug369177() {
-		super();
-	}
-
-	public TestBug369177(String name) {
-		super(name);
-	}
-
 	public void test01_prepareWorkspace() throws CoreException, URISyntaxException {
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IProject project = workspace.getRoot().getProject("project");

@@ -15,8 +15,6 @@ package org.eclipse.core.tests.resources.regression;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.IResourceVisitor;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceTest;
@@ -28,19 +26,7 @@ import org.eclipse.core.tests.resources.ResourceTest;
  */
 public class Bug_029851 extends ResourceTest {
 
-	private boolean DISABLED = true;
-
-	public static Test suite() {
-		return new TestSuite(Bug_029851.class);
-	}
-
-	public Bug_029851() {
-		super();
-	}
-
-	public Bug_029851(String name) {
-		super(name);
-	}
+	private final boolean DISABLED = true;
 
 	private Collection<String> createChildren(int breadth, int depth, IPath prefix) {
 		ArrayList<String> result = new ArrayList<>();
