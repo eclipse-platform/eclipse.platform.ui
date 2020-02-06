@@ -93,7 +93,7 @@ var loadingMessage = "<%=UrlUtil.JavaScriptEncode(ServletResources.getString("Lo
 </table>
 <div id = "indexList">
 
-<DIV class = "group" id = "wai_application">
+<DIV class = "group" id = "wai_application" aria-label = "Index search results">
     <DIV class = "root" aria-label = "Search results" id = "tree_root">
     </DIV>
 </DIV>
