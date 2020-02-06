@@ -16,8 +16,6 @@ package org.eclipse.core.tests.internal.watson;
 
 import java.util.ArrayList;
 import java.util.Stack;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -26,17 +24,9 @@ import org.eclipse.core.runtime.Path;
  * Unit tests for <code>ElementTreeIterator</code>.
  */
 public class ElementTreeIteratorTest extends WatsonTest {
-	public ElementTreeIteratorTest() {
-		super(null);
-	}
 
 	public ElementTreeIteratorTest(String name) {
 		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
-		// do nothing
 	}
 
 	static void setupElementTree(ElementTree tree, int num) {
@@ -100,16 +90,6 @@ public class ElementTreeIteratorTest extends WatsonTest {
 			writer.join();
 		} catch (InterruptedException e) {
 		}
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(ElementTreeIteratorTest.class);
-		return suite;
-	}
-
-	@Override
-	protected void tearDown() throws Exception {
-		//ElementTree tests don't use the CoreTest infrastructure
 	}
 
 	public void testContentIterator() {

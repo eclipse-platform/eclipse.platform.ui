@@ -14,8 +14,6 @@
 package org.eclipse.core.tests.internal.resources;
 
 import java.util.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.resources.IWorkspace.ProjectOrder;
 import org.eclipse.core.runtime.CoreException;
@@ -36,14 +34,6 @@ public class ProjectDynamicReferencesTest extends ResourceTest {
 	private IProject project0;
 	private IProject project1;
 	private IProject project2;
-
-	public static Test suite() {
-		return new TestSuite(ProjectDynamicReferencesTest.class);
-	}
-
-	public ProjectDynamicReferencesTest(String name) {
-		super(name);
-	}
 
 	@Override
 	public void setUp() throws Exception {

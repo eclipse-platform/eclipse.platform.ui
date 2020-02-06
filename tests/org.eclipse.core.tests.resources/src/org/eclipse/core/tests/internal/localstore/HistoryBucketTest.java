@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.localstore;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.localstore.Bucket.Entry;
 import org.eclipse.core.internal.localstore.HistoryBucket;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
@@ -22,14 +20,6 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 public class HistoryBucketTest extends ResourceTest {
-
-	public static Test suite() {
-		return new TestSuite(HistoryBucketTest.class);
-	}
-
-	public HistoryBucketTest(String name) {
-		super(name);
-	}
 
 	/**
 	 * Ensures that if another entry having exactly the same UUID is added,

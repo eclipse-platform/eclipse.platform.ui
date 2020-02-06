@@ -13,20 +13,10 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.localstore;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.localstore.PrefixPool;
 import org.eclipse.core.tests.harness.CoreTest;
 
 public class PrefixPoolTest extends CoreTest {
-
-	public static Test suite() {
-		return new TestSuite(PrefixPoolTest.class);
-	}
-
-	public PrefixPoolTest(String name) {
-		super(name);
-	}
 
 	public void testIllegalCapacity() {
 		boolean exceptionOK=true;

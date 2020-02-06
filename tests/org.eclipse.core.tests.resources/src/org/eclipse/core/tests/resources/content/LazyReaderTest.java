@@ -14,7 +14,7 @@
 package org.eclipse.core.tests.resources.content;
 
 import java.io.*;
-import junit.framework.*;
+import junit.framework.TestCase;
 import org.eclipse.core.internal.content.LazyReader;
 
 /**
@@ -53,10 +53,6 @@ public class LazyReaderTest extends TestCase {
 	}
 
 	private final static String DATA = "012345678901234567890123456789";
-
-	public LazyReaderTest(String name) {
-		super(name);
-	}
 
 	public void testReadSingleChar() throws IOException {
 		CharArrayReader underlying = new CharArrayReader(DATA.toCharArray());
@@ -133,9 +129,5 @@ public class LazyReaderTest extends TestCase {
 		stream.rewind();
 		assertEquals("3.0", 0, stream.getOffset());
 		stream.close();
-	}
-
-	public static Test suite() {
-		return new TestSuite(LazyReaderTest.class);
 	}
 }

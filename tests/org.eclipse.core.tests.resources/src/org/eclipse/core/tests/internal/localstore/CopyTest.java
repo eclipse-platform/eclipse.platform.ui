@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.localstore;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 
@@ -22,20 +20,6 @@ import org.eclipse.core.runtime.*;
  * Test the copy operation.
  */
 public class CopyTest extends LocalStoreTest {
-	public CopyTest() {
-		super();
-	}
-
-	public CopyTest(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(CopyTest.class);
-		//		TestSuite suite = new TestSuite(CopyTest.class.getName());
-		//		suite.addTest(new CopyTest("testCopyResource"));
-		//		return suite;
-	}
 
 	public void testCopyResource() throws Throwable {
 		/* create common objects */

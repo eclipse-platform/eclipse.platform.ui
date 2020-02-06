@@ -16,35 +16,11 @@ package org.eclipse.core.tests.internal.resources;
 
 import java.io.*;
 import java.util.Map;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.ResourceInfo;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 public class ResourceInfoTest extends ResourceTest {
-	/**
-	 * ResourceInfoTest constructor comment.
-	 */
-	public ResourceInfoTest() {
-		super();
-	}
-
-	/**
-	 * ResourceInfoTest constructor comment.
-	 * @param name java.lang.String
-	 */
-	public ResourceInfoTest(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		// all test methods are named "test..."
-		return new TestSuite(ResourceInfoTest.class);
-		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new ResourceInfoTest("testSimple"));
-		//		return suite;
-	}
 
 	static public void assertEquals(String message, byte[] expected, byte[] actual) {
 		if (expected == null && actual == null) {

@@ -13,32 +13,12 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.localstore;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 
-/**
- *
- */
 public class DeleteTest extends LocalStoreTest {
-	public DeleteTest() {
-		super();
-	}
-
-	public DeleteTest(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(DeleteTest.class);
-
-		//	TestSuite suite = new TestSuite();
-		//	suite.addTest(new DeleteTest("testDeleteResource"));
-		//	return suite;
-	}
 
 	public void testDeleteOpenProject() {
 		IProject project = projects[0];

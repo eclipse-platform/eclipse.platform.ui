@@ -14,22 +14,12 @@
 package org.eclipse.core.tests.internal.watson;
 
 import java.io.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.runtime.IPath;
 
 public class DeltaChainFlatteningTest extends ElementTreeSerializationTest {
 	protected ElementTree[] fDeltaChain;
 	protected ElementTree[] fRefriedDeltaChain;
-
-	public DeltaChainFlatteningTest() {
-		super(null);
-	}
-
-	public DeltaChainFlatteningTest(String name) {
-		super(name);
-	}
 
 	/**
 	 * doRead method comment.
@@ -72,11 +62,6 @@ public class DeltaChainFlatteningTest extends ElementTreeSerializationTest {
 		fTree = TestUtil.createTestElementTree();
 		/* do a bunch of operations on fTree to build a delta chain */
 		fDeltaChain = TestUtil.doManyRoutineOperations(fTree, project1);
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(DeltaChainFlatteningTest.class);
-		return suite;
 	}
 
 	/**

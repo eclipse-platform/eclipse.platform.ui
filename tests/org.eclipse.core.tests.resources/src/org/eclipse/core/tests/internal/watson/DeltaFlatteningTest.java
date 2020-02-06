@@ -14,22 +14,12 @@
 package org.eclipse.core.tests.internal.watson;
 
 import java.io.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.runtime.IPath;
 
 public class DeltaFlatteningTest extends ElementTreeSerializationTest {
 	protected ElementTree fNewTree;
 	protected IPath project3, folder5, file4, file5;
-
-	public DeltaFlatteningTest() {
-		super(null);
-	}
-
-	public DeltaFlatteningTest(String name) {
-		super(name);
-	}
 
 	/**
 	 * Performs the serialization activity for this test
@@ -95,11 +85,6 @@ public class DeltaFlatteningTest extends ElementTreeSerializationTest {
 		/* assert the new structure */
 		TestUtil.assertHasPaths(fNewTree, new IPath[] {solution, project1, project2, project3, file2, file4, file5, folder1, folder2, folder4, folder5});
 		TestUtil.assertNoPaths(fNewTree, new IPath[] {file1, file3, folder3});
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(DeltaFlatteningTest.class);
-		return suite;
 	}
 
 	/**

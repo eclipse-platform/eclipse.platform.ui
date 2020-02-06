@@ -16,8 +16,6 @@ package org.eclipse.core.tests.internal.builders;
 
 import java.io.ByteArrayInputStream;
 import java.util.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.*;
@@ -32,13 +30,6 @@ import org.eclipse.core.tests.internal.builders.TestBuilder.BuilderRuleCallback;
  * depending on the builder's scheduling rule
  */
 public class RelaxedSchedRuleBuilderTest extends AbstractBuilderTest {
-	public static Test suite() {
-		return new TestSuite(RelaxedSchedRuleBuilderTest.class);
-	}
-
-	public RelaxedSchedRuleBuilderTest() {
-		super(null);
-	}
 
 	public RelaxedSchedRuleBuilderTest(String name) {
 		super(name);

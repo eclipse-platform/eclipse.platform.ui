@@ -18,8 +18,6 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.HashMap;
 import java.util.Map;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IStatus;
@@ -34,16 +32,6 @@ import org.eclipse.core.tests.harness.*;
  * IProjectDescription#setBuildSpec
  */
 public class BuilderTest extends AbstractBuilderTest {
-	public static Test suite() {
-		return new TestSuite(BuilderTest.class);
-		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new BuilderTest("testInterruptAutobuild"));
-		//		return suite;
-	}
-
-	public BuilderTest() {
-		super(null);
-	}
 
 	/**
 	 * BuilderTest constructor comment.

@@ -21,8 +21,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.URIUtil;
@@ -33,28 +31,10 @@ import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.resources.ResourceTest;
 import org.xml.sax.InputSource;
 
-/**
- *
- */
 public class ModelObjectReaderWriterTest extends ResourceTest {
 	static final IPath LONG_LOCATION = new Path("/eclipse/dev/i0218/eclipse/pffds/fds//fds///fdsfsdfsd///fdsfdsf/fsdfsdfsd/lugi/dsds/fsd//f/ffdsfdsf/fsdfdsfsd/fds//fdsfdsfdsf/fdsfdsfds/fdsfdsfdsf/fdsfdsfdsds/ns/org.eclipse.help.ui_2.1.0/contexts.xml").setDevice(isWindows() ? "D:" : null);
 	static final URI LONG_LOCATION_URI = LONG_LOCATION.toFile().toURI();
 	private static final String PATH_STRING = new Path("/abc/def").setDevice(isWindows() ? "D:" : null).toString();
-
-	public static Test suite() {
-		//	TestSuite suite = new TestSuite();
-		//	suite.addTest(new ModelObjectReaderWriterTest("testMultipleProjectDescriptions"));
-		//	return suite;
-		return new TestSuite(ModelObjectReaderWriterTest.class);
-	}
-
-	public ModelObjectReaderWriterTest() {
-		super();
-	}
-
-	public ModelObjectReaderWriterTest(String name) {
-		super(name);
-	}
 
 	private HashMap<String, ProjectDescription> buildBaselineDescriptors() {
 		HashMap<String, ProjectDescription> result = new HashMap<>();

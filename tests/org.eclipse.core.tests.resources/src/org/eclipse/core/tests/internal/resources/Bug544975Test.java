@@ -15,8 +15,6 @@ package org.eclipse.core.tests.internal.resources;
 
 import java.io.ByteArrayInputStream;
 import java.nio.file.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -24,14 +22,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.tests.resources.ResourceTest;
 
 public class Bug544975Test extends ResourceTest {
-
-	public Bug544975Test(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(Bug544975Test.class);
-	}
 
 	public void testBug544975ProjectOpenBackgroundRefresh() throws Exception {
 		IWorkspaceRoot root = ResourcesPlugin.getWorkspace().getRoot();

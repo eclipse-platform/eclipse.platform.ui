@@ -16,8 +16,6 @@ package org.eclipse.core.tests.internal.localstore;
 import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.localstore.*;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.runtime.IPath;
@@ -28,14 +26,6 @@ public class SafeChunkyInputOutputStreamTest extends LocalStoreTest {
 	private List<SafeChunkyOutputStream> streams;
 
 	private File target;
-
-	public SafeChunkyInputOutputStreamTest() {
-		super();
-	}
-
-	public SafeChunkyInputOutputStreamTest(String name) {
-		super(name);
-	}
 
 	protected boolean compare(byte[] source, byte[] target1) {
 		assertEquals(source.length, target1.length);
@@ -62,10 +52,6 @@ public class SafeChunkyInputOutputStreamTest extends LocalStoreTest {
 		temp.mkdirs();
 		assertTrue("could not create temp directory", temp.isDirectory());
 		target = new File(temp, "target");
-	}
-
-	public static Test suite() {
-		return new TestSuite(SafeChunkyInputOutputStreamTest.class);
 	}
 
 	@Override

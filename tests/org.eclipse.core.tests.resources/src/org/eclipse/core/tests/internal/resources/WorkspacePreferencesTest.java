@@ -15,7 +15,7 @@
 package org.eclipse.core.tests.internal.resources;
 
 import java.util.*;
-import junit.framework.*;
+import junit.framework.ComparisonFailure;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -24,14 +24,6 @@ import org.eclipse.core.tests.resources.ResourceTest;
 public class WorkspacePreferencesTest extends ResourceTest {
 	private IWorkspace workspace;
 	private Preferences preferences;
-
-	/**
-	 * Constructor for WorkspacePreferencesTest.
-	 * @param name
-	 */
-	public WorkspacePreferencesTest(String name) {
-		super(name);
-	}
 
 	/**
 	 * @see TestCase#setUp()
@@ -319,13 +311,5 @@ public class WorkspacePreferencesTest extends ResourceTest {
 		assertEquals(message + " - 7", description1.getMaxFileStateSize(), description2.getMaxFileStateSize());
 		assertEquals(message + " - 8", description1.getSnapshotInterval(), description2.getSnapshotInterval());
 		assertEquals(message + " - 9", description1.getMaxBuildIterations(), description2.getMaxBuildIterations());
-	}
-
-	public static Test suite() {
-		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new WorkspacePreferencesTest("testImportExport"));
-		//		return suite;
-		return new TestSuite(WorkspacePreferencesTest.class);
-
 	}
 }

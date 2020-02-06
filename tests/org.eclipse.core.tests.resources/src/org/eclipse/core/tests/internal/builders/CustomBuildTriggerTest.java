@@ -12,8 +12,6 @@
  ******************************************************************************/
 package org.eclipse.core.tests.internal.builders;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 
@@ -26,9 +24,6 @@ import org.eclipse.core.runtime.CoreException;
  * The "isConfigurable" attribute in the builder extension schema
  */
 public class CustomBuildTriggerTest extends AbstractBuilderTest {
-	public static Test suite() {
-		return new TestSuite(CustomBuildTriggerTest.class);
-	}
 
 	public CustomBuildTriggerTest(String name) {
 		super(name);

@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.localstore;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -23,32 +21,10 @@ import org.eclipse.core.runtime.*;
  * Tests the move operation.
  */
 public class MoveTest extends LocalStoreTest {
-	public MoveTest() {
-		super();
-	}
-
-	public MoveTest(String name) {
-		super(name);
-	}
 
 	@Override
 	public String[] defineHierarchy() {
 		return new String[] {"/", "/file1", "/file2", "/folder1/", "/folder1/file3", "/folder1/file4", "/folder2/", "/folder2/file5", "/folder2/file6", "/folder1/folder3/", "/folder1/folder3/file7", "/folder1/folder3/file8"};
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(MoveTest.class.getName());
-		suite.addTest(new MoveTest("testRenameProjects"));
-		suite.addTest(new MoveTest("testRenameFolder"));
-		suite.addTest(new MoveTest("testRenameFile"));
-		suite.addTest(new MoveTest("testMoveFolderBetweenProjects"));
-		suite.addTest(new MoveTest("testMoveFileBetweenProjects"));
-		suite.addTest(new MoveTest("testMoveFolderAcrossVolumes"));
-		suite.addTest(new MoveTest("testMoveFileAcrossVolumes"));
-		suite.addTest(new MoveTest("testMoveHierarchy"));
-		suite.addTest(new MoveTest("testMoveHierarchyBetweenProjects"));
-		suite.addTest(new MoveTest("testMoveResource"));
-		return suite;
 	}
 
 	/**

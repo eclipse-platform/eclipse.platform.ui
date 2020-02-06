@@ -19,22 +19,15 @@ import junit.framework.*;
  * Runs all content type tests
  */
 public class AllTests extends TestCase {
-	public AllTests() {
-		super(null);
-	}
-
-	public AllTests(String name) {
-		super(name);
-	}
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
 		suite.addTest(IContentTypeManagerTest.suite());
 		suite.addTest(SpecificContextTest.suite());
-		suite.addTest(ContentDescriptionTest.suite());
-		suite.addTest(XMLContentDescriberTest.suite());
-		suite.addTest(LazyInputStreamTest.suite());
-		suite.addTest(LazyReaderTest.suite());
+		suite.addTestSuite(ContentDescriptionTest.class);
+		suite.addTestSuite(XMLContentDescriberTest.class);
+		suite.addTestSuite(LazyInputStreamTest.class);
+		suite.addTestSuite(LazyReaderTest.class);
 		suite.addTest(TestBug94498.suite());
 		return suite;
 	}

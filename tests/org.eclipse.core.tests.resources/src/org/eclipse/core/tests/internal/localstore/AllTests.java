@@ -28,22 +28,22 @@ public class AllTests extends TestCase {
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTest(BlobStoreTest.suite());
-		suite.addTest(BucketTreeTests.suite());
-		suite.addTest(CaseSensitivityTest.suite());
-		suite.addTest(CopyTest.suite());
-		suite.addTest(DeleteTest.suite());
-		suite.addTest(FileSystemResourceManagerTest.suite());
-		suite.addTest(HistoryBucketTest.suite());
-		suite.addTest(HistoryStoreTest.suite());
-		suite.addTest(LocalSyncTest.suite());
-		suite.addTest(MoveTest.suite());
-		suite.addTest(PrefixPoolTest.suite());
-		suite.addTest(RefreshLocalTest.suite());
-		suite.addTest(SafeChunkyInputOutputStreamTest.suite());
-		suite.addTest(SafeFileInputOutputStreamTest.suite());
-		suite.addTest(SymlinkResourceTest.suite());
-		suite.addTest(UnifiedTreeTest.suite());
+		suite.addTestSuite(BlobStoreTest.class);
+		suite.addTestSuite(BucketTreeTests.class);
+		suite.addTestSuite(CaseSensitivityTest.class);
+		suite.addTestSuite(CopyTest.class);
+		suite.addTestSuite(DeleteTest.class);
+		suite.addTestSuite(FileSystemResourceManagerTest.class);
+		suite.addTestSuite(HistoryBucketTest.class);
+		suite.addTestSuite(HistoryStoreTest.class);
+		suite.addTestSuite(LocalSyncTest.class);
+		suite.addTestSuite(MoveTest.class);
+		suite.addTestSuite(PrefixPoolTest.class);
+		suite.addTestSuite(RefreshLocalTest.class);
+		suite.addTestSuite(SafeChunkyInputOutputStreamTest.class);
+		suite.addTestSuite(SafeFileInputOutputStreamTest.class);
+		suite.addTestSuite(SymlinkResourceTest.class);
+		suite.addTestSuite(UnifiedTreeTest.class);
 		return suite;
 	}
 }

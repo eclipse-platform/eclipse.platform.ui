@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.watson;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.events.ResourceComparator;
 import org.eclipse.core.internal.resources.ResourceInfo;
 import org.eclipse.core.internal.watson.ElementTree;
@@ -28,17 +26,8 @@ import org.eclipse.core.runtime.IPath;
  */
 public class ElementTreeHasChangesTest extends WatsonTest implements IPathConstants {
 
-	public ElementTreeHasChangesTest() {
-		super(null);
-	}
-
 	public ElementTreeHasChangesTest(String name) {
 		super(name);
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(ElementTreeHasChangesTest.class);
-		return suite;
 	}
 
 	/**

@@ -15,8 +15,6 @@ package org.eclipse.core.tests.resources.content;
 
 import java.io.*;
 import java.util.Arrays;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.content.IContentDescription;
@@ -35,10 +33,6 @@ public class XMLContentDescriberTest extends ContentTypeTest {
 
 	public XMLContentDescriberTest(String name) {
 		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(XMLContentDescriberTest.class);
 	}
 
 	public void testEncodedContents1() throws Exception {

@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.resources;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.BuildConfiguration;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -24,18 +22,11 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * Tests configuration project build configuration on the project description
  */
 public class ProjectBuildConfigsTest extends ResourceTest {
-	public static Test suite() {
-		return new TestSuite(ProjectBuildConfigsTest.class);
-	}
-
-	public ProjectBuildConfigsTest(String name) {
-		super(name);
-	}
 
 	private IProject project;
-	private String variantId0 = "Variant0";
-	private String variantId1 = "Variant1";
-	private String variantId2 = "Variant2";
+	private final String variantId0 = "Variant0";
+	private final String variantId1 = "Variant1";
+	private final String variantId2 = "Variant2";
 	private IBuildConfiguration variant0;
 	private IBuildConfiguration variant1;
 	private IBuildConfiguration variant2;

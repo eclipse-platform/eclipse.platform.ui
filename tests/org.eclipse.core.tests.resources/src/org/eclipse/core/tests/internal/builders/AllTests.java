@@ -17,29 +17,22 @@ package org.eclipse.core.tests.internal.builders;
 import junit.framework.*;
 
 public class AllTests extends TestCase {
-	public AllTests() {
-		super(null);
-	}
-
-	public AllTests(String name) {
-		super(name);
-	}
 
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTest(BuilderCycleTest.suite());
-		suite.addTest(BuilderEventTest.suite());
-		suite.addTest(BuilderNatureTest.suite());
-		suite.addTest(BuilderTest.suite());
-		suite.addTest(BuildDeltaVerificationTest.suite());
-		suite.addTest(CustomBuildTriggerTest.suite());
-		suite.addTest(EmptyDeltaTest.suite());
-		suite.addTest(MultiProjectBuildTest.suite());
-		suite.addTest(RelaxedSchedRuleBuilderTest.suite());
-		suite.addTest(BuildConfigurationsTest.suite());
-		suite.addTest(BuildContextTest.suite());
-		suite.addTest(ParallelBuildChainTest.suite());
-		suite.addTest(ComputeProjectOrderTest.suite());
+		suite.addTestSuite(BuilderCycleTest.class);
+		suite.addTestSuite(BuilderEventTest.class);
+		suite.addTestSuite(BuilderNatureTest.class);
+		suite.addTestSuite(BuilderTest.class);
+		suite.addTestSuite(BuildDeltaVerificationTest.class);
+		suite.addTestSuite(CustomBuildTriggerTest.class);
+		suite.addTestSuite(EmptyDeltaTest.class);
+		suite.addTestSuite(MultiProjectBuildTest.class);
+		suite.addTestSuite(RelaxedSchedRuleBuilderTest.class);
+		suite.addTestSuite(BuildConfigurationsTest.class);
+		suite.addTestSuite(BuildContextTest.class);
+		suite.addTestSuite(ParallelBuildChainTest.class);
+		suite.addTest(new JUnit4TestAdapter(ComputeProjectOrderTest.class));
 		return suite;
 	}
 }

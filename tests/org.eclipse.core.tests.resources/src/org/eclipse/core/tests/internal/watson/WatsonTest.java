@@ -27,12 +27,4 @@ public abstract class WatsonTest extends TestCase {
 	public WatsonTest(String name) {
 		super(name);
 	}
-	/*
-	 * @see Assert#assert(boolean)
-	 */
-
-	/*
-	 * @see Assert#assert(String, boolean)
-	 */
-
 }

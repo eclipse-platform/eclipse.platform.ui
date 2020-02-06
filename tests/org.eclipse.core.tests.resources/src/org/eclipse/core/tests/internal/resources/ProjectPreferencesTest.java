@@ -16,8 +16,6 @@ package org.eclipse.core.tests.internal.resources;
 
 import java.io.*;
 import java.util.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.internal.resources.ProjectPreferences;
 import org.eclipse.core.resources.*;
@@ -78,18 +76,6 @@ public class ProjectPreferencesTest extends ResourceTest {
 			log.append(event.getNewValue() == null ? "null" : event.getNewValue());
 			log.append("]");
 		}
-	}
-
-	public static Test suite() {
-		// all test methods are named "test..."
-		return new TestSuite(ProjectPreferencesTest.class);
-		//		TestSuite suite = new TestSuite();
-		//		suite.addTest(new ProjectPreferencesTest("testLoadIsImport"));
-		//		return suite;
-	}
-
-	public ProjectPreferencesTest(String name) {
-		super(name);
 	}
 
 	public void testSimple() {

@@ -17,8 +17,6 @@ package org.eclipse.core.tests.internal.localstore;
 import java.io.*;
 import java.net.URI;
 import java.util.Hashtable;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.localstore.IUnifiedTreeVisitor;
@@ -29,19 +27,8 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 
-/**
- *
- */
 public class UnifiedTreeTest extends LocalStoreTest {
 	protected static int limit = 10;
-
-	public UnifiedTreeTest() {
-		super();
-	}
-
-	public UnifiedTreeTest(String name) {
-		super(name);
-	}
 
 	protected void createFiles(IFileStore folder, Hashtable<String, String> set) throws Exception {
 		for (int i = 0; i < limit; i++) {
@@ -99,13 +86,6 @@ public class UnifiedTreeTest extends LocalStoreTest {
 				createFiles(child, set);
 			}
 		}
-	}
-
-	public static Test suite() {
-		//TestSuite suite = new TestSuite();
-		//suite.addTest(new UnifiedTreeTest("testTraverseMechanismInProjectWithMappings"));
-		//return suite;
-		return new TestSuite(UnifiedTreeTest.class);
 	}
 
 	/**

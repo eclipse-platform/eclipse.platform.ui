@@ -18,22 +18,12 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.*;
 import java.util.function.Predicate;
-import junit.framework.JUnit4TestAdapter;
 import org.eclipse.core.internal.resources.ComputeProjectOrder;
 import org.eclipse.core.internal.resources.ComputeProjectOrder.Digraph;
 import org.eclipse.core.internal.resources.ComputeProjectOrder.Digraph.Edge;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-/**
- *
- */
-@RunWith(JUnit4.class)
 public class ComputeProjectOrderTest {
-	public static junit.framework.Test suite() {
-		return new JUnit4TestAdapter(ComputeProjectOrderTest.class);
-	}
 
 	@Test
 	public void testComputeVertexOrderDuration() {

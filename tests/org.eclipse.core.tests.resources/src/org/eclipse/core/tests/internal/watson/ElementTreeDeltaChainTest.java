@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.watson;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.runtime.IPath;
 
@@ -25,10 +23,6 @@ public class ElementTreeDeltaChainTest extends WatsonTest implements IPathConsta
 	protected ElementTree fTree;
 	protected IPath project3;
 
-	public ElementTreeDeltaChainTest() {
-		super(null);
-	}
-
 	public ElementTreeDeltaChainTest(String name) {
 		super(name);
 	}
@@ -37,19 +31,6 @@ public class ElementTreeDeltaChainTest extends WatsonTest implements IPathConsta
 	protected void setUp() throws Exception {
 		fTree = TestUtil.createTestElementTree();
 		project3 = solution.append("project3");
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(ElementTreeDeltaChainTest.class);
-		return suite;
-	}
-
-	/**
-	 *
-	 */
-	@Override
-	protected void tearDown() throws Exception {
-		//ElementTree tests don't use the CoreTest infrastructure
 	}
 
 	/**

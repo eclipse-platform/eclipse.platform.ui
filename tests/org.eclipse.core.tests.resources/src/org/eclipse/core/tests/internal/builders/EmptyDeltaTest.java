@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.builders;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 
@@ -22,13 +20,6 @@ import org.eclipse.core.runtime.CoreException;
  * Tests the callOnEmptyDelta attribute of the builder extension
  */
 public class EmptyDeltaTest extends AbstractBuilderTest {
-	public static Test suite() {
-		return new TestSuite(EmptyDeltaTest.class);
-	}
-
-	public EmptyDeltaTest() {
-		super("");
-	}
 
 	public EmptyDeltaTest(String name) {
 		super(name);

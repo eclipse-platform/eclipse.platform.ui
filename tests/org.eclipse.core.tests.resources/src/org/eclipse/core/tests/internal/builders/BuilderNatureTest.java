@@ -15,8 +15,6 @@ package org.eclipse.core.tests.internal.builders;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 
@@ -26,9 +24,6 @@ import org.eclipse.core.runtime.CoreException;
  * being built.
  */
 public class BuilderNatureTest extends AbstractBuilderTest {
-	public BuilderNatureTest() {
-		super(null);
-	}
 
 	public BuilderNatureTest(String testName) {
 		super(testName);
@@ -44,14 +39,6 @@ public class BuilderNatureTest extends AbstractBuilderTest {
 		String contents = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n" + "<projectDescription>\n" + "	<name>P1</name>\n" + "	<comment></comment>\n" + "	<projects>\n" + "	</projects>\n" + "	<buildSpec>\n" + "		<buildCommand>\n" + "			<name>org.eclipse.core.tests.resources.snowbuilder</name>\n" + "			<arguments>\n" + "				<dictionary>\n" + "					<key>BuildID</key>\n" + "					<value>SnowBuild</value>\n" + "				</dictionary>\n" + "			</arguments>\n" + "		</buildCommand>\n" + "	</buildSpec>\n" + "	<natures>\n" + "		<nature>org.eclipse.core.tests.resources.snowNature</nature>\n" + "	</natures>\n" + "</projectDescription>";
 
 		return new ByteArrayInputStream(contents.getBytes());
-	}
-
-	public static Test suite() {
-		return new TestSuite(BuilderNatureTest.class);
-
-		//	TestSuite suite = new TestSuite();
-		//	suite.addTest(new BuilderNatureTest("testMissingNature"));
-		//	return suite;
 	}
 
 	public void testBasic() {

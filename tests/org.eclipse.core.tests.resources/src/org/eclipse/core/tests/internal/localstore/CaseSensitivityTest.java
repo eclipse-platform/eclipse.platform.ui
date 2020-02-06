@@ -14,27 +14,13 @@
 package org.eclipse.core.tests.internal.localstore;
 
 import java.io.IOException;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 
 public class CaseSensitivityTest extends LocalStoreTest {
-	private boolean isCaseSensitive = Workspace.caseSensitive;
-
-	public CaseSensitivityTest() {
-		super();
-	}
-
-	public CaseSensitivityTest(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(CaseSensitivityTest.class);
-	}
+	private final boolean isCaseSensitive = Workspace.caseSensitive;
 
 	public void testCreateProjects() {
 		String projectName = "testProject31415";

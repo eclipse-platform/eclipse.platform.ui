@@ -15,8 +15,6 @@ package org.eclipse.core.tests.internal.builders;
 
 import java.io.ByteArrayInputStream;
 import java.util.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -42,10 +40,6 @@ public class BuildDeltaVerificationTest extends AbstractBuilderTest {
 	IFile file1;//below folder1
 	IFile file2;//below folder1
 	IFile file3;//below folder2
-
-	public BuildDeltaVerificationTest() {
-		super(null);
-	}
 
 	/**
 	 * Creates a new instance of BuildDeltaVerificationTest.
@@ -136,13 +130,6 @@ public class BuildDeltaVerificationTest extends AbstractBuilderTest {
 		verifier = DeltaVerifierBuilder.getInstance();
 		assertNotNull("Builder was not instantiated", verifier);
 		assertTrue("First build should be a batch build", verifier.wasFullBuild());
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(BuildDeltaVerificationTest.class);
-
-		//	suite.addTest(new BuildDeltaVerificationTest("testCloseOpenReplaceFile"));
-		return suite;
 	}
 
 	/**

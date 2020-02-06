@@ -15,30 +15,13 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.localstore;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 
-/**
- *
- */
 public class SymlinkResourceTest extends LocalStoreTest {
-
-	public SymlinkResourceTest() {
-		super();
-	}
-
-	public SymlinkResourceTest(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(SymlinkResourceTest.class);
-	}
 
 	protected void mkLink(IFileStore dir, String src, String tgt, boolean isDir) {
 		try {

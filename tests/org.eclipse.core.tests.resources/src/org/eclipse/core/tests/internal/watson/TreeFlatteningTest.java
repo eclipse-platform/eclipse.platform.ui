@@ -14,8 +14,6 @@
 package org.eclipse.core.tests.internal.watson;
 
 import java.io.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
@@ -25,13 +23,6 @@ import org.eclipse.core.runtime.Path;
  * <code>ElementTreeReader</code>.
  */
 public class TreeFlatteningTest extends ElementTreeSerializationTest {
-	public TreeFlatteningTest() {
-		super();
-	}
-
-	public TreeFlatteningTest(String name) {
-		super(name);
-	}
 
 	/**
 	 * Performs the serialization activity for this test
@@ -68,11 +59,6 @@ public class TreeFlatteningTest extends ElementTreeSerializationTest {
 	protected void setUp() throws Exception {
 		super.setUp();
 		fTree = TestUtil.createTestElementTree();
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(TreeFlatteningTest.class);
-		return suite;
 	}
 
 	public void test0() {

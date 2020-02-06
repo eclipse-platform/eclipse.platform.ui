@@ -13,22 +13,12 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.localstore;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.*;
 
-///
 public class LocalSyncTest extends LocalStoreTest implements ICoreConstants {
-	public LocalSyncTest() {
-		super();
-	}
-
-	public LocalSyncTest(String name) {
-		super(name);
-	}
 
 	public void assertExistsInFileSystemWithNoContent(IFile target) {
 		assertTrue(existsInFileSystemWithNoContent(target));
@@ -42,11 +32,6 @@ public class LocalSyncTest extends LocalStoreTest implements ICoreConstants {
 	private boolean existsInFileSystemWithNoContent(IResource resource) {
 		IPath path = resource.getLocation();
 		return path.toFile().exists() && path.toFile().length() == 0;
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(LocalSyncTest.class);
-		return suite;
 	}
 
 	public void testProjectDeletion() {

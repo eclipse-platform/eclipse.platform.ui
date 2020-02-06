@@ -16,8 +16,6 @@ package org.eclipse.core.tests.internal.localstore;
 
 import java.io.*;
 import java.util.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.filesystem.provider.FileInfo;
 import org.eclipse.core.internal.localstore.IHistoryStore;
@@ -100,14 +98,6 @@ public class HistoryStoreTest extends ResourceTest {
 		assertEquals(tag + " uuid differs", ((FileState) expected).getUUID(), ((FileState) actual).getUUID());
 	}
 
-	public static Test suite() {
-		//		TestSuite suite = new TestSuite(HistoryStoreTest.class.getName());
-		//		suite.addTest(new HistoryStoreTest("testMoveProject"));
-		//		suite.addTest(new HistoryStoreTest("testFindDeleted"));
-		//		return suite;
-		return new TestSuite(HistoryStoreTest.class);
-	}
-
 	/*
 	 * This little helper method makes sure that the history store is
 	 * completely clean after it is invoked.  If a history store entry or
@@ -121,14 +111,6 @@ public class HistoryStoreTest extends ResourceTest {
 		store.remove(Path.ROOT, monitor);
 		// Now make sure all the states are really removed.
 		store.removeGarbage();
-	}
-
-	public HistoryStoreTest() {
-		super();
-	}
-
-	public HistoryStoreTest(String name) {
-		super(name);
 	}
 
 	private int numBytes(InputStream input) {

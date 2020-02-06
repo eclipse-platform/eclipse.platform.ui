@@ -16,8 +16,6 @@ package org.eclipse.core.tests.internal.localstore;
 import java.io.InputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.filesystem.IFileStore;
 import org.eclipse.core.internal.localstore.FileSystemResourceManager;
@@ -26,23 +24,11 @@ import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.tests.internal.filesystem.bug440110.Bug440110FileSystem;
 
-//
 public class FileSystemResourceManagerTest extends LocalStoreTest implements ICoreConstants {
-	public FileSystemResourceManagerTest() {
-		super();
-	}
-
-	public FileSystemResourceManagerTest(String name) {
-		super(name);
-	}
 
 	@Override
 	public String[] defineHierarchy() {
 		return new String[] {"/Folder1/", "/Folder1/File1", "/Folder1/Folder2/", "/Folder1/Folder2/File2", "/Folder1/Folder2/Folder3/"};
-	}
-
-	public static Test suite() {
-		return new TestSuite(FileSystemResourceManagerTest.class);
 	}
 
 	public void testBug440110() throws URISyntaxException, CoreException {
@@ -72,8 +58,6 @@ public class FileSystemResourceManagerTest extends LocalStoreTest implements ICo
 		assertTrue("3.0", Bug440110FileSystem.hasFetchedFileTree());
 	}
 
-	/**
-	 */
 	public void testContainerFor() throws Throwable {
 
 		/* test null parameter */
@@ -138,8 +122,6 @@ public class FileSystemResourceManagerTest extends LocalStoreTest implements ICo
 		}
 	}
 
-	/**
-	 */
 	public void testFileFor() throws Throwable {
 
 		/* test null parameter */

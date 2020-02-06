@@ -17,8 +17,6 @@ package org.eclipse.core.tests.internal.localstore;
 
 import java.io.*;
 import java.util.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.localstore.Bucket;
 import org.eclipse.core.internal.localstore.BucketTree;
 import org.eclipse.core.internal.resources.Workspace;
@@ -31,7 +29,7 @@ public class BucketTreeTests extends ResourceTest {
 	static class SimpleBucket extends Bucket {
 
 		static class SimpleEntry extends Entry {
-			private Map<String, String> value;
+			private final Map<String, String> value;
 
 			public SimpleEntry(IPath path, Map<String, String> value) {
 				super(path);
@@ -122,14 +120,6 @@ public class BucketTreeTests extends ResourceTest {
 				destination.writeUTF(entry.getValue());
 			}
 		}
-	}
-
-	public static Test suite() {
-		return new TestSuite(BucketTreeTests.class);
-	}
-
-	public BucketTreeTests(String name) {
-		super(name);
 	}
 
 	public void testVisitor() {

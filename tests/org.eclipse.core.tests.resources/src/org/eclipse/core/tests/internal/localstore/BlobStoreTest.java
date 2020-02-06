@@ -14,8 +14,6 @@
 package org.eclipse.core.tests.internal.localstore;
 
 import java.io.InputStream;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.filesystem.*;
 import org.eclipse.core.internal.localstore.BlobStore;
 import org.eclipse.core.internal.utils.UniversalUniqueIdentifier;
@@ -24,17 +22,6 @@ import org.eclipse.core.runtime.Path;
 
 //
 public class BlobStoreTest extends LocalStoreTest {
-	public BlobStoreTest() {
-		super();
-	}
-
-	public BlobStoreTest(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		return new TestSuite(BlobStoreTest.class);
-	}
 
 	public void testConstructor() {
 		/* build scenario */

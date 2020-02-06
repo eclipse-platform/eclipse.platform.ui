@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.builders;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 
@@ -26,14 +24,6 @@ import org.eclipse.core.runtime.CoreException;
 public class BuilderCycleTest extends AbstractBuilderTest {
 	public BuilderCycleTest(String name) {
 		super(name);
-	}
-
-	public BuilderCycleTest() {
-		super(null);
-	}
-
-	public static Test suite() {
-		return new TestSuite(BuilderCycleTest.class);
 	}
 
 	public void testIsBeforeThisProject() {

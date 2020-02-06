@@ -16,8 +16,6 @@ package org.eclipse.core.tests.internal.builders;
 
 import java.lang.reflect.Array;
 import java.util.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.tests.resources.TestPerformer;
@@ -38,10 +36,6 @@ public class MultiProjectBuildTest extends AbstractBuilderTest {
 	private IFile file3;
 	private IFile file4;
 
-	public MultiProjectBuildTest() {
-		super(null);
-	}
-
 	/**
 	 * Public constructor required for test harness.
 	 */
@@ -55,10 +49,6 @@ public class MultiProjectBuildTest extends AbstractBuilderTest {
 	protected IProject[][] interestingProjects() {
 		//mix things up, because requests from one run affect results in the next.
 		return new IProject[][] {new IProject[] {}, new IProject[] {project3}, new IProject[] {project1}, new IProject[] {project1, project2, project3}, new IProject[] {project2}, new IProject[] {project3}, new IProject[] {project4}, new IProject[] {project1, project2}, new IProject[] {project1, project3}, new IProject[] {project3}, new IProject[] {project2, project3}, new IProject[] {project1, project2, project3}, new IProject[] {project1, project2, project4}, new IProject[] {project1}, new IProject[] {project1, project3, project4}, new IProject[] {project1, project2}, new IProject[] {project2, project3, project4}, new IProject[] {project3, project4}, new IProject[] {project1, project2, project3, project4},};
-	}
-
-	public static Test suite() {
-		return new TestSuite(MultiProjectBuildTest.class);
 	}
 
 	/**

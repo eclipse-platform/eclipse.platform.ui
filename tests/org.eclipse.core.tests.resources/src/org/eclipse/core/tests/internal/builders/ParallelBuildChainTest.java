@@ -14,7 +14,6 @@
 package org.eclipse.core.tests.internal.builders;
 
 import java.util.*;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.events.BuildCommand;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -24,19 +23,9 @@ import org.eclipse.core.tests.internal.builders.TimerBuilder.RuleType;
 import org.junit.Assert;
 import org.junit.Test;
 
-/**
- *
- */
 public class ParallelBuildChainTest extends AbstractBuilderTest {
-	public static junit.framework.Test suite() {
-		return new TestSuite(ParallelBuildChainTest.class);
-	}
 
 	private static final int LONG_BUILD_DURATION = 1000;
-
-	public ParallelBuildChainTest() {
-		super(null);
-	}
 
 	public ParallelBuildChainTest(String name) {
 		super(name);

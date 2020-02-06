@@ -26,30 +26,15 @@ public class AllTests extends TestCase {
 	 */
 	public static Test suite() {
 		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTest(ModelObjectReaderWriterTest.suite());
-		suite.addTest(ProjectPreferencesTest.suite());
-		suite.addTest(ResourceInfoTest.suite());
-		suite.addTest(WorkspaceConcurrencyTest.suite());
-		suite.addTest(WorkspacePreferencesTest.suite());
-		suite.addTest(ProjectReferencesTest.suite());
-		suite.addTest(ProjectDynamicReferencesTest.suite());
-		suite.addTest(ProjectBuildConfigsTest.suite());
-		suite.addTest(Bug544975Test.suite());
+		suite.addTestSuite(ModelObjectReaderWriterTest.class);
+		suite.addTestSuite(ProjectPreferencesTest.class);
+		suite.addTestSuite(ResourceInfoTest.class);
+		suite.addTestSuite(WorkspaceConcurrencyTest.class);
+		suite.addTestSuite(WorkspacePreferencesTest.class);
+		suite.addTestSuite(ProjectReferencesTest.class);
+		suite.addTestSuite(ProjectDynamicReferencesTest.class);
+		suite.addTestSuite(ProjectBuildConfigsTest.class);
+		suite.addTestSuite(Bug544975Test.class);
 		return suite;
-	}
-
-	/**
-	 * AllTests constructor comment.
-	 */
-	public AllTests() {
-		super(null);
-	}
-
-	/**
-	 * AllTests constructor comment.
-	 * @param name java.lang.String
-	 */
-	public AllTests(String name) {
-		super(name);
 	}
 }

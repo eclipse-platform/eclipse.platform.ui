@@ -14,7 +14,7 @@
 package org.eclipse.core.tests.resources.content;
 
 import java.io.*;
-import junit.framework.*;
+import junit.framework.TestCase;
 import org.eclipse.core.internal.content.LazyInputStream;
 
 /**
@@ -55,10 +55,6 @@ public class LazyInputStreamTest extends TestCase {
 	private final static String DATA = "012345678901234567890123456789";
 
 	private final static int[] VARIOUS_INTS = {0xFF, 0xFE, 0xA0, 0x7F, 0x70, 0x10, 0x00};
-
-	public LazyInputStreamTest(String name) {
-		super(name);
-	}
 
 	public void testReadSingleByte() throws IOException {
 		ByteArrayInputStream underlying = new ByteArrayInputStream(DATA.getBytes());
@@ -154,9 +150,5 @@ public class LazyInputStreamTest extends TestCase {
 			assertEquals("1.0." + i, VARIOUS_INTS[i], stream.read());
 		}
 		stream.close();
-	}
-
-	public static Test suite() {
-		return new TestSuite(LazyInputStreamTest.class);
 	}
 }

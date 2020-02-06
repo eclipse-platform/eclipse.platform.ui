@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.resources;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.resources.BuildConfiguration;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.CoreException;
@@ -24,9 +22,6 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * Test project variant references
  */
 public class ProjectReferencesTest extends ResourceTest {
-	public static Test suite() {
-		return new TestSuite(ProjectReferencesTest.class);
-	}
 
 	private IProject project0;
 	private IProject project1;
@@ -39,13 +34,9 @@ public class ProjectReferencesTest extends ResourceTest {
 	private IBuildConfiguration project2v0;
 	private IBuildConfiguration project3v0;
 	private IBuildConfiguration project3v1;
-	private String bc0 = "Variant0";
-	private String bc1 = "Variant1";
-	private String nonExistentBC = "foo";
-
-	public ProjectReferencesTest(String name) {
-		super(name);
-	}
+	private final String bc0 = "Variant0";
+	private final String bc1 = "Variant1";
+	private final String nonExistentBC = "foo";
 
 	@Override
 	public void setUp() throws Exception {

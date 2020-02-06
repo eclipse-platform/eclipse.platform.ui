@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.content;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.content.*;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
@@ -118,9 +116,5 @@ public class ContentDescriptionTest extends ContentTypeTest {
 		} catch (IllegalStateException e) {
 			// success - the object was marked as immutable
 		}
-	}
-
-	public static Test suite() {
-		return new TestSuite(ContentDescriptionTest.class);
 	}
 }

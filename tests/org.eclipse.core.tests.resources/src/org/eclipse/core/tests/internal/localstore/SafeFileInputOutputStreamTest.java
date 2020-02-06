@@ -14,8 +14,6 @@
 package org.eclipse.core.tests.internal.localstore;
 
 import java.io.*;
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.internal.localstore.SafeFileInputStream;
 import org.eclipse.core.internal.localstore.SafeFileOutputStream;
 import org.eclipse.core.internal.resources.Workspace;
@@ -25,14 +23,6 @@ import org.eclipse.core.tests.resources.ResourceTest;
 
 public class SafeFileInputOutputStreamTest extends ResourceTest {
 	protected File temp;
-
-	public SafeFileInputOutputStreamTest() {
-		super();
-	}
-
-	public SafeFileInputOutputStreamTest(String name) {
-		super(name);
-	}
 
 	public SafeFileOutputStream createSafeStream(File target, String errorCode) {
 		return createSafeStream(target.getAbsolutePath(), null, errorCode);
@@ -64,10 +54,6 @@ public class SafeFileInputOutputStreamTest extends ResourceTest {
 		temp = location.append("temp").toFile();
 		temp.mkdirs();
 		assertTrue("could not create temp directory", temp.isDirectory());
-	}
-
-	public static Test suite() {
-		return new TestSuite(SafeFileInputOutputStreamTest.class);
 	}
 
 	@Override

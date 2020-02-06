@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.resources;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.ISchedulingRule;
@@ -27,18 +25,6 @@ import org.eclipse.core.tests.resources.ResourceTest;
  * Tests concurrency issues when dealing with operations on the workspace
  */
 public class WorkspaceConcurrencyTest extends ResourceTest {
-
-	public static Test suite() {
-		return new TestSuite(WorkspaceConcurrencyTest.class);
-	}
-
-	public WorkspaceConcurrencyTest() {
-		super("");
-	}
-
-	public WorkspaceConcurrencyTest(String name) {
-		super(name);
-	}
 
 	private void sleep(long duration) {
 		try {
