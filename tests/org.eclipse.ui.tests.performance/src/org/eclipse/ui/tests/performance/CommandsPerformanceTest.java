@@ -432,11 +432,11 @@ public final class CommandsPerformanceTest extends BasicPerformanceTest {
 		final KeySequence keySequence = KeySequence.getInstance("CTRL+F");
 
 		// Compute once for each context set.
-		final Set contextSet1 = contextManager.getActiveContextIds();
+		final Set<?> contextSet1 = contextManager.getActiveContextIds();
 		bindingManager.getPartialMatches(keySequence);
-		final List contextList = new ArrayList(contextSet1);
+		final List<?> contextList = new ArrayList<>(contextSet1);
 		contextList.remove(contextList.size() - 1);
-		final Set contextSet2 = new HashSet(contextList);
+		final Set<?> contextSet2 = new HashSet<>(contextList);
 		contextManager.setActiveContextIds(contextSet2);
 		bindingManager.getPartialMatches(keySequence);
 

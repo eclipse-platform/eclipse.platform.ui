@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.performance.layout;
 
-import junit.framework.Assert;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
@@ -32,6 +30,8 @@ import org.eclipse.ui.internal.EditorSite;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.tests.performance.UIPerformanceTestSetup;
+
+import junit.framework.Assert;
 
 /**
  * @since 3.1
@@ -85,7 +85,7 @@ public class EditorWidgetFactory extends TestWidgetFactory {
 	}
 
 	@Override
-	public Composite getControl() throws CoreException, WorkbenchException {
+	public Composite getControl() {
 		return ctrl;
 	}
 

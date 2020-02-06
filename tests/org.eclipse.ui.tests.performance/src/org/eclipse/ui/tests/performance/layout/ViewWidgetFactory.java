@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.performance.layout;
 
-import junit.framework.Assert;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.swt.graphics.Point;
@@ -29,6 +27,8 @@ import org.eclipse.ui.internal.ViewSite;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.tests.performance.BasicPerformanceTest;
+
+import junit.framework.Assert;
 
 /**
  * @since 3.1
@@ -79,7 +79,7 @@ public class ViewWidgetFactory extends TestWidgetFactory {
 	}
 
 	@Override
-	public Composite getControl() throws CoreException, WorkbenchException {
+	public Composite getControl() {
 		return (Composite)ctrl;
 	}
 

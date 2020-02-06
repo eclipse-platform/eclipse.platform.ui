@@ -125,7 +125,7 @@ public class ProgressReportingTest extends BasicPerformanceTest {
 	 *            of a computation here to prevent the compiler from optimizing
 	 *            it out.
 	 */
-	public void endAsyncTest(Object ignored) {
+	public void endAsyncTest() {
 		isDone = true;
 		// Trigger an empty asyncExec to ensure the event loop wakes up
 		display.asyncExec(() -> {
@@ -141,13 +141,11 @@ public class ProgressReportingTest extends BasicPerformanceTest {
 		runAsyncTest(() -> {
 			Job.create("Test Job", monitor -> {
 				int i = 0;
-				long result = 0;
 				while (i < ITERATIONS) {
-					result += i;
 					i++;
 				}
 
-				endAsyncTest(result);
+				endAsyncTest();
 			}).schedule();
 		});
 	}
@@ -162,14 +160,12 @@ public class ProgressReportingTest extends BasicPerformanceTest {
 			Job.create("Test Job", monitor -> {
 				monitor.beginTask("Test Job", ITERATIONS);
 				int i = 0;
-				long result = 0;
 				while(i < ITERATIONS) {
 					monitor.setTaskName(Integer.toString(i));
-					result += i;
 					i++;
 				}
 
-				endAsyncTest(result);
+				endAsyncTest();
 			}).schedule();
 		});
 	}
@@ -184,14 +180,12 @@ public class ProgressReportingTest extends BasicPerformanceTest {
 			Job.create("Test Job", monitor -> {
 				monitor.beginTask("Test Job", ITERATIONS);
 				int i = 0;
-				long result = 0;
 				while (i < ITERATIONS) {
 					monitor.subTask(Integer.toString(i));
-					result += i;
 					i++;
 				}
 
-				endAsyncTest(result);
+				endAsyncTest();
 			}).schedule();
 		});
 	}
@@ -206,16 +200,14 @@ public class ProgressReportingTest extends BasicPerformanceTest {
 			Job.create("Test Job", monitor -> {
 				monitor.beginTask("Test Job", ITERATIONS);
 				int i = 0;
-				long result = 0;
 				while (i < ITERATIONS) {
 					if (monitor.isCanceled()) {
 						throw new OperationCanceledException();
 					}
-					result += i;
 					i++;
 				}
 
-				endAsyncTest(result);
+				endAsyncTest();
 			}).schedule();
 		});
 	}
@@ -230,14 +222,12 @@ public class ProgressReportingTest extends BasicPerformanceTest {
 			Job.create("Test Job", monitor -> {
 				monitor.beginTask("Test Job", ITERATIONS);
 				int i = 0;
-				long result = 0;
 				while (i < ITERATIONS) {
 					monitor.worked(1);
-					result += i;
 					i++;
 				}
 
-				endAsyncTest(result);
+				endAsyncTest();
 			}).schedule();
 		});
 	}
@@ -255,14 +245,12 @@ public class ProgressReportingTest extends BasicPerformanceTest {
 			Job.create("Test Job", monitor -> {
 				SubMonitor subMonitor = SubMonitor.convert(monitor, ITERATIONS);
 				int i = 0;
-				long result = 0;
 				while (i < ITERATIONS) {
 					subMonitor.split(1);
-					result += i;
 					i++;
 				}
 
-				endAsyncTest(result);
+				endAsyncTest();
 			}).schedule();
 		});
 	}
@@ -277,14 +265,12 @@ public class ProgressReportingTest extends BasicPerformanceTest {
 			Job.create("Test Job", monitor -> {
 				SubMonitor subMonitor = SubMonitor.convert(monitor, ITERATIONS);
 				int i = 0;
-				long result = 0;
 				while (i < ITERATIONS) {
 					subMonitor.newChild(1);
-					result += i;
 					i++;
 				}
 
-				endAsyncTest(result);
+				endAsyncTest();
 			}).schedule();
 		});
 	}
@@ -299,14 +285,12 @@ public class ProgressReportingTest extends BasicPerformanceTest {
 			Job.create("Test Job", monitor -> {
 				SubMonitor subMonitor = SubMonitor.convert(monitor, ITERATIONS);
 				int i = 0;
-				long result = 0;
 				while (i < ITERATIONS) {
 					subMonitor.worked(1);
-					result += i;
 					i++;
 				}
 
-				endAsyncTest(result);
+				endAsyncTest();
 			}).schedule();
 		});
 	}
@@ -321,13 +305,11 @@ public class ProgressReportingTest extends BasicPerformanceTest {
 			Job j = Job.create("Test Job", monitor -> {
 				monitor.beginTask("Test Job", VERY_SLOW_OPERATION_ITERATIONS);
 				int i = 0;
-				long result = 0;
 				while (i < VERY_SLOW_OPERATION_ITERATIONS) {
-					result += i;
 					i++;
 				}
 
-				endAsyncTest(result);
+				endAsyncTest();
 			});
 			j.schedule();
 			PlatformUI.getWorkbench().getProgressService().showInDialog(window.getShell(), j);
@@ -344,14 +326,12 @@ public class ProgressReportingTest extends BasicPerformanceTest {
 			Job j = Job.create("Test Job", monitor -> {
 				monitor.beginTask("Test Job", VERY_SLOW_OPERATION_ITERATIONS);
 				int i = 0;
-				long result = 0;
 				while (i < VERY_SLOW_OPERATION_ITERATIONS) {
 					monitor.worked(1);
-					result += i;
 					i++;
 				}
 
-				endAsyncTest(result);
+				endAsyncTest();
 			});
 			j.schedule();
 			PlatformUI.getWorkbench().getProgressService().showInDialog(window.getShell(), j);
@@ -368,14 +348,12 @@ public class ProgressReportingTest extends BasicPerformanceTest {
 			Job j = Job.create("Test Job", monitor -> {
 				monitor.beginTask("Test Job", VERY_SLOW_OPERATION_ITERATIONS);
 				int i = 0;
-				long result = 0;
 				while (i < VERY_SLOW_OPERATION_ITERATIONS) {
 					monitor.setTaskName(Integer.toString(i));
-					result += i;
 					i++;
 				}
 
-				endAsyncTest(result);
+				endAsyncTest();
 			});
 			j.schedule();
 			PlatformUI.getWorkbench().getProgressService().showInDialog(window.getShell(), j);
@@ -392,14 +370,12 @@ public class ProgressReportingTest extends BasicPerformanceTest {
 			Job j = Job.create("Test Job", monitor -> {
 				monitor.beginTask("Test Job", VERY_SLOW_OPERATION_ITERATIONS);
 				int i = 0;
-				long result = 0;
 				while (i < VERY_SLOW_OPERATION_ITERATIONS) {
 					monitor.subTask(Integer.toString(i));
-					result += i;
 					i++;
 				}
 
-				endAsyncTest(result);
+				endAsyncTest();
 			});
 			j.schedule();
 			PlatformUI.getWorkbench().getProgressService().showInDialog(window.getShell(), j);
@@ -416,16 +392,14 @@ public class ProgressReportingTest extends BasicPerformanceTest {
 			Job j = Job.create("Test Job", monitor -> {
 				monitor.beginTask("Test Job", VERY_SLOW_OPERATION_ITERATIONS);
 				int i = 0;
-				long result = 0;
 				while (i < VERY_SLOW_OPERATION_ITERATIONS) {
 					if (monitor.isCanceled()) {
 						throw new OperationCanceledException();
 					}
-					result += i;
 					i++;
 				}
 
-				endAsyncTest(result);
+				endAsyncTest();
 			});
 			j.schedule();
 			PlatformUI.getWorkbench().getProgressService().showInDialog(window.getShell(), j);
@@ -443,13 +417,11 @@ public class ProgressReportingTest extends BasicPerformanceTest {
 				new ProgressMonitorDialog(window.getShell()).run(true, true, monitor -> {
 					monitor.beginTask("Test Job", ITERATIONS);
 					int i = 0;
-					long result = 0;
 					while (i < ITERATIONS) {
-						result += i;
 						i++;
 					}
 
-					endAsyncTest(result);
+					endAsyncTest();
 				});
 			} catch (InvocationTargetException | InterruptedException e) {
 				throw new RuntimeException(e);
@@ -467,14 +439,12 @@ public class ProgressReportingTest extends BasicPerformanceTest {
 				new ProgressMonitorDialog(window.getShell()).run(true, true, monitor -> {
 					monitor.beginTask("Test Job", ITERATIONS);
 					int i = 0;
-					long result = 0;
 					while (i < ITERATIONS) {
 						monitor.worked(1);
-						result += i;
 						i++;
 					}
 
-					endAsyncTest(result);
+					endAsyncTest();
 				});
 			} catch (InvocationTargetException | InterruptedException e) {
 				throw new RuntimeException(e);
@@ -492,16 +462,14 @@ public class ProgressReportingTest extends BasicPerformanceTest {
 				new ProgressMonitorDialog(window.getShell()).run(true, true, monitor -> {
 					monitor.beginTask("Test Job", ITERATIONS);
 					int i = 0;
-					long result = 0;
 					while (i < ITERATIONS) {
 						if (monitor.isCanceled()) {
 							throw new OperationCanceledException();
 						}
-						result += i;
 						i++;
 					}
 
-					endAsyncTest(result);
+					endAsyncTest();
 				});
 			} catch (InvocationTargetException | InterruptedException e) {
 				throw new RuntimeException(e);
@@ -519,14 +487,12 @@ public class ProgressReportingTest extends BasicPerformanceTest {
 				new ProgressMonitorDialog(window.getShell()).run(true, true, monitor -> {
 					monitor.beginTask("Test Job", ITERATIONS);
 					int i = 0;
-					long result = 0;
 					while (i < ITERATIONS) {
 						monitor.setTaskName(Integer.toString(i));
-						result += i;
 						i++;
 					}
 
-					endAsyncTest(result);
+					endAsyncTest();
 				});
 			} catch (InvocationTargetException | InterruptedException e) {
 				throw new RuntimeException(e);
@@ -544,14 +510,12 @@ public class ProgressReportingTest extends BasicPerformanceTest {
 				new ProgressMonitorDialog(window.getShell()).run(true, true, monitor -> {
 					monitor.beginTask("Test Job", ITERATIONS);
 					int i = 0;
-					long result = 0;
 					while (i < ITERATIONS) {
 						monitor.subTask(Integer.toString(i));
-						result += i;
 						i++;
 					}
 
-					endAsyncTest(result);
+					endAsyncTest();
 				});
 			} catch (InvocationTargetException | InterruptedException e) {
 				throw new RuntimeException(e);

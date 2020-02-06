@@ -65,7 +65,7 @@ public class ResourceTestHelper {
 		return FileTool.readToBuilder(new InputStreamReader(getRoot().getFile(new Path(src)).getContents()));
 	}
 
-	public static void write(String dest, final String content) throws IOException, CoreException {
+	public static void write(String dest, final String content) throws CoreException {
 		InputStream stream= new InputStream() {
 			private Reader fReader= new StringReader(content);
 			@Override
