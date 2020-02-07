@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Paul Pazderski and others.
+ * Copyright (c) 2019, 2020 Paul Pazderski and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,6 +17,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.debug.core.DebugPlugin;
@@ -57,6 +58,8 @@ public class MockProcess extends Process {
 	 * </p>
 	 */
 	private long endTime;
+	/** The simulated exit code. */
+	private int exitCode = 0;
 
 	/**
 	 * Create new silent mockup process which runs for a given amount of time.
@@ -171,7 +174,24 @@ public class MockProcess extends Process {
 				}
 			}
 		}
-		return 0;
+		return exitCode;
+	}
+
+	@Override
+	public boolean waitFor(long timeout, TimeUnit unit) throws InterruptedException {
+		long remainingMs = unit.toMillis(timeout);
+		final long timeoutMs = System.currentTimeMillis() + remainingMs;
+		synchronized (waitForTerminationLock) {
+			while (!isTerminated() && remainingMs > 0) {
+				long waitTime = endTime == RUN_FOREVER ? Long.MAX_VALUE : endTime - System.currentTimeMillis();
+				waitTime = Math.min(waitTime, remainingMs);
+				if (waitTime > 0) {
+					waitForTerminationLock.wait(waitTime);
+				}
+				remainingMs = timeoutMs - System.currentTimeMillis();
+			}
+		}
+		return isTerminated();
 	}
 
 	@Override
@@ -180,13 +200,23 @@ public class MockProcess extends Process {
 			final String end = (endTime == RUN_FOREVER ? "never." : "in " + (endTime - System.currentTimeMillis()) + " ms.");
 			throw new IllegalThreadStateException("Mockup process terminates " + end);
 		}
-		return 0;
+		return exitCode;
 	}
 
 	@Override
 	public void destroy() {
+		destroy(0);
+	}
+
+	/**
+	 * Simulate a delay for the mockup process shutdown.
+	 *
+	 * @param delay amount of milliseconds must pass after destroy was called
+	 *            and before the mockup process goes in terminated state
+	 */
+	public void destroy(int delay) {
 		synchronized (waitForTerminationLock) {
-			endTime = System.currentTimeMillis();
+			endTime = System.currentTimeMillis() + delay;
 			waitForTerminationLock.notifyAll();
 		}
 	}
@@ -198,6 +228,15 @@ public class MockProcess extends Process {
 	 */
 	private boolean isTerminated() {
 		return endTime != RUN_FOREVER && System.currentTimeMillis() > endTime;
+	}
+
+	/**
+	 * Set the exit code returned once the process is finished.
+	 *
+	 * @param exitCode new exit code
+	 */
+	public void setExitValue(int exitCode) {
+		this.exitCode = exitCode;
 	}
 
 	/**

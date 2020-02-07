@@ -23,6 +23,7 @@ import org.eclipse.debug.tests.console.IOConsoleFixedWidthTests;
 import org.eclipse.debug.tests.console.IOConsoleTests;
 import org.eclipse.debug.tests.console.ProcessConsoleManagerTests;
 import org.eclipse.debug.tests.console.ProcessConsoleTests;
+import org.eclipse.debug.tests.console.RuntimeProcessTests;
 import org.eclipse.debug.tests.console.StreamsProxyTests;
 import org.eclipse.debug.tests.console.TextConsoleViewerTest;
 import org.eclipse.debug.tests.launching.AcceleratorSubstitutionTests;
@@ -123,6 +124,7 @@ public class AutomatedSuite extends TestSuite {
 		addTest(new TestSuite(ProcessConsoleTests.class));
 		addTest(new TestSuite(StreamsProxyTests.class));
 		addTest(new TestSuite(TextConsoleViewerTest.class));
+		addTest(new TestSuite(RuntimeProcessTests.class));
 
 		// Launch Groups
 		addTest(new TestSuite(LaunchGroupTests.class));

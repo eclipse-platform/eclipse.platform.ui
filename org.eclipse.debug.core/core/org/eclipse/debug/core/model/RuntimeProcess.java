@@ -20,6 +20,7 @@ import java.nio.charset.UnsupportedCharsetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.TimeUnit;
 
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
@@ -219,7 +220,11 @@ public class RuntimeProcess extends PlatformObject implements IProcess {
 				} catch (IllegalThreadStateException ie) {
 				}
 				try {
-					Thread.sleep(TIME_TO_WAIT_FOR_THREAD_DEATH);
+					if (process != null) {
+						process.waitFor(TIME_TO_WAIT_FOR_THREAD_DEATH, TimeUnit.MILLISECONDS);
+					} else {
+						Thread.sleep(TIME_TO_WAIT_FOR_THREAD_DEATH);
+					}
 				} catch (InterruptedException e) {
 				}
 				attempts++;
