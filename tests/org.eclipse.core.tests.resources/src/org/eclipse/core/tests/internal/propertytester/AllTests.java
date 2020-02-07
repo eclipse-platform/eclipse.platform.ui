@@ -13,12 +13,11 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.propertytester;
 
-import junit.framework.TestCase;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ FilePropertyTesterTest.class })
-public class AllTests extends TestCase {
+public class AllTests {
 
 }
