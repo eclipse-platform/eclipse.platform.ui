@@ -20,9 +20,7 @@ import org.eclipse.core.internal.resources.TestingSupport;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tests.internal.resources.TestActivator;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
+import org.osgi.framework.*;
 
 public class IWorkspaceTest extends ResourceTest {
 
@@ -1166,7 +1164,7 @@ public class IWorkspaceTest extends ResourceTest {
 	}
 
 	public void testWorkspaceService() {
-		final BundleContext context = TestActivator.getContext();
+		final BundleContext context = FrameworkUtil.getBundle(IWorkspaceTest.class).getBundleContext();
 		ServiceReference<IWorkspace> ref = context.getServiceReference(IWorkspace.class);
 		assertNotNull("1.0", ref);
 		IWorkspace ws = context.getService(ref);

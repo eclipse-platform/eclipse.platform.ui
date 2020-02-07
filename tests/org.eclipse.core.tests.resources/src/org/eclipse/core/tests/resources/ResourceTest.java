@@ -78,17 +78,6 @@ public abstract class ResourceTest extends CoreTest {
 	 */
 	private final Set<IFileStore> storesToDelete = new HashSet<>();
 
-	/**
-	 * Does some garbage collections to free unused resources
-	 */
-	protected static void gc() {
-		/* make sure old stores get finalized so they free old files */
-		for (int i = 0; i < 2; i++) {
-			System.runFinalization();
-			System.gc();
-		}
-	}
-
 	public static IWorkspace getWorkspace() {
 		return ResourcesPlugin.getWorkspace();
 	}
