@@ -191,7 +191,7 @@ public class EditorAccessHighlighter extends Highlighter {
 		}
 
 		if (document != null && document.equals(textBuffer.getDocument())) {
-			Match[] matches= new Match[fMatchesToAnnotations.keySet().size()];
+			Match[] matches= new Match[fMatchesToAnnotations.size()];
 			fMatchesToAnnotations.keySet().toArray(matches);
 			removeAll();
 			addHighlights(matches);

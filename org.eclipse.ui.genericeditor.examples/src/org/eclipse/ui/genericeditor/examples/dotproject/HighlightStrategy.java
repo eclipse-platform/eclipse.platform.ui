@@ -105,7 +105,7 @@ public class HighlightStrategy implements IReconcilingStrategy, IReconcilingStra
 					annotationModel.addAnnotation(mapEntry.getKey(), mapEntry.getValue());
 				}
 			}
-			fOccurrenceAnnotations = annotationMap.keySet().toArray(new Annotation[annotationMap.keySet().size()]);
+			fOccurrenceAnnotations = annotationMap.keySet().toArray(new Annotation[annotationMap.size()]);
 		}
 	}
 

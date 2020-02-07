@@ -117,7 +117,7 @@ public class DefaultWordHighlightStrategy implements IReconcilingStrategy, IReco
 						annotationModel.addAnnotation(mapEntry.getKey(), mapEntry.getValue());
 					}
 				}
-				fOccurrenceAnnotations = annotationMap.keySet().toArray(new Annotation[annotationMap.keySet().size()]);
+				fOccurrenceAnnotations = annotationMap.keySet().toArray(new Annotation[annotationMap.size()]);
 			}
 		} else {
 			fOccurrenceAnnotations = null;

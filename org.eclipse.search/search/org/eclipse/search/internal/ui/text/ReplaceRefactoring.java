@@ -260,7 +260,7 @@ public class ReplaceRefactoring extends Refactoring {
 	}
 
 	public int getNumberOfFiles() {
-		return fMatches.keySet().size();
+		return fMatches.size();
 	}
 
 	public int getNumberOfMatches() {
