@@ -714,7 +714,7 @@ public class ComputeProjectOrder {
 				processing.add(id);
 				Set<T> resolvedAdjacents = new HashSet<>();
 				initialGraph.vertexMap.get(id).adjacent.forEach(adjacent -> {
-					if (filteredGraph.vertexMap.keySet().contains(adjacent.id)) {
+					if (filteredGraph.vertexMap.containsKey(adjacent.id)) {
 						// adjacent in target graph, just take it.
 						resolvedAdjacents.add(adjacent.id);
 					} else {
