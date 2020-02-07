@@ -14,7 +14,6 @@
 package org.eclipse.core.tests.internal.resources;
 
 import java.io.ByteArrayInputStream;
-import junit.framework.TestCase;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
@@ -25,7 +24,7 @@ import org.eclipse.core.runtime.*;
  * Not included in actual tests, since performance is only printed and not
  * asserted.
  */
-public class Bug552185PerformanceTest extends TestCase {
+public class Bug552185PerformanceTest {
 
 	public void testBug552185Performance() throws Exception {
 		// run inside a WorkspaceJob, in case there are listeners on workspace changes

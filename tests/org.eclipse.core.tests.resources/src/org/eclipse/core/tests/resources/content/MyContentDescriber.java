@@ -25,10 +25,6 @@ public class MyContentDescriber implements IContentDescriber {
 
 	public static final QualifiedName[] MY_OPTIONS = {new QualifiedName(ContentTypeTest.PI_RESOURCES_TESTS, "my_option_1"), new QualifiedName(ContentTypeTest.PI_RESOURCES_TESTS, "my_option_2"), new QualifiedName(ContentTypeTest.PI_RESOURCES_TESTS, "my_option_3")};
 
-	public MyContentDescriber() {
-		super();
-	}
-
 	@Override
 	public int describe(InputStream contents, IContentDescription description) throws IOException {
 		byte[] signature = SIGNATURE.getBytes("US-ASCII");

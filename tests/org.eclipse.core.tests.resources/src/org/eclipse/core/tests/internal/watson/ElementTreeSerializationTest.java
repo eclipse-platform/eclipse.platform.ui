@@ -13,11 +13,15 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.watson;
 
+import static org.junit.Assert.fail;
+
 import java.io.*;
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.runtime.IPath;
+import org.junit.After;
+import org.junit.Before;
 
-public abstract class ElementTreeSerializationTest extends WatsonTest implements IPathConstants {
+public abstract class ElementTreeSerializationTest implements IPathConstants {
 
 	protected ElementTree fTree;
 
@@ -41,8 +45,8 @@ public abstract class ElementTreeSerializationTest extends WatsonTest implements
 			try {
 				doWrite(fWriter, fDataOutputStream);
 			} catch (IOException e) {
-				assertTrue("Error writing delta", false);
 				e.printStackTrace();
+				fail("Error writing delta");
 			}
 		}
 	}
@@ -69,8 +73,8 @@ public abstract class ElementTreeSerializationTest extends WatsonTest implements
 			try {
 				fRefried = doRead(fReader, fDataInputStream);
 			} catch (IOException e) {
-				assertTrue("Error reading delta", false);
 				e.printStackTrace();
+				fail("Error reading delta");
 			}
 		}
 	}
@@ -87,18 +91,6 @@ public abstract class ElementTreeSerializationTest extends WatsonTest implements
 	 * The depth of the tree to write.
 	 */
 	protected int fDepth;
-
-	public ElementTreeSerializationTest() {
-		super(null);
-	}
-
-	/**
-	 * ElementTreeSerializationTests constructor comment.
-	 * @param name java.lang.String
-	 */
-	public ElementTreeSerializationTest(String name) {
-		super(name);
-	}
 
 	/**
 	 * Performs exhaustive tests for all subtrees and all depths
@@ -136,20 +128,20 @@ public abstract class ElementTreeSerializationTest extends WatsonTest implements
 			dos = new DataOutputStream(fos);
 		} catch (IOException e) {
 			e.printStackTrace();
-			assertTrue("Unable to open ouput file", false);
+			fail("Unable to open ouput file");
 		}
 		try {
 			doWrite(writer, dos);
 		} catch (IOException e) {
 			e.printStackTrace();
-			assertTrue("Error writing tree to file", false);
+			fail("Error writing tree to file");
 		} finally {
 			try {
 				dos.flush();
 				fos.close();
 			} catch (IOException e) {
 				e.printStackTrace();
-				assertTrue("Unable to close output file!", false);
+				fail("Unable to close output file!");
 			}
 		}
 
@@ -159,19 +151,19 @@ public abstract class ElementTreeSerializationTest extends WatsonTest implements
 			dis = new DataInputStream(fis);
 		} catch (IOException e) {
 			e.printStackTrace();
-			assertTrue("Unable to open input file", false);
+			fail("Unable to open input file");
 		}
 		try {
 			newTree = doRead(reader, dis);
 		} catch (IOException e) {
 			e.printStackTrace();
-			assertTrue("Error reading tree from file", false);
+			fail("Error reading tree from file");
 		} finally {
 			try {
 				fis.close();
 			} catch (IOException e) {
 				e.printStackTrace();
-				assertTrue("Unable to close input file!", false);
+				fail("Unable to close input file!");
 			}
 		}
 		return newTree;
@@ -214,7 +206,7 @@ public abstract class ElementTreeSerializationTest extends WatsonTest implements
 			oos.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-			assertTrue("Unable to open stream:", false);
+			fail("Unable to open stream:");
 		}
 		return refried;
 	}
@@ -268,8 +260,8 @@ public abstract class ElementTreeSerializationTest extends WatsonTest implements
 		return new int[] {-1, 0, 1, 2, 3, 4};
 	}
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		fTree = TestUtil.createTestElementTree();
 		/* default subtree we are interested in */
 		fSubtreePath = solution;
@@ -278,11 +270,8 @@ public abstract class ElementTreeSerializationTest extends WatsonTest implements
 		fDepth = ElementTreeWriter.D_INFINITE;
 	}
 
-	/**
-	 *
-	 */
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		//ElementTree tests don't use the CoreTest infrastructure
 		tempFile.delete();
 	}

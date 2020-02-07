@@ -223,9 +223,9 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		assertTrue("1.4", assoc1.isAssociatedWith(changeCase("text.txt_assoc1pluginadded")));
 		assertTrue("1.5", assoc1.isAssociatedWith(changeCase("text.txt_assoc1useradded")));
 
-		assertTrue("2.1", !assoc2.isAssociatedWith(changeCase("text.txt")));
-		assertTrue("2.2", !assoc2.isAssociatedWith(changeCase("text.txt_useradded")));
-		assertTrue("2.3", !assoc2.isAssociatedWith(changeCase("text.txt_pluginadded")));
+		assertFalse("2.1", assoc2.isAssociatedWith(changeCase("text.txt")));
+		assertFalse("2.2", assoc2.isAssociatedWith(changeCase("text.txt_useradded")));
+		assertFalse("2.3", assoc2.isAssociatedWith(changeCase("text.txt_pluginadded")));
 		assertTrue("2.4", assoc2.isAssociatedWith(changeCase("text.txt_assoc2pluginadded")));
 		assertTrue("2.5", assoc2.isAssociatedWith(changeCase("text.txt_assoc2builtin")));
 		assertTrue("2.6", assoc2.isAssociatedWith(changeCase("text.txt_assoc2useradded")));
@@ -284,14 +284,14 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		// check provider defined settings
 		String[] providerDefinedExtensions = text.getFileSpecs(IContentType.FILE_EXTENSION_SPEC | IContentType.IGNORE_USER_DEFINED);
 		assertTrue("1.0", contains(providerDefinedExtensions, "txt"));
-		assertTrue("1.1", !contains(providerDefinedExtensions, "txt_useradded"));
+		assertFalse("1.1", contains(providerDefinedExtensions, "txt_useradded"));
 		assertTrue("1.2", contains(providerDefinedExtensions, "txt_pluginadded"));
 
 		// check user defined settings
 		String[] textUserDefinedExtensions = text.getFileSpecs(IContentType.FILE_EXTENSION_SPEC | IContentType.IGNORE_PRE_DEFINED);
-		assertTrue("2.0", !contains(textUserDefinedExtensions, "txt"));
+		assertFalse("2.0", contains(textUserDefinedExtensions, "txt"));
 		assertTrue("2.1", contains(textUserDefinedExtensions, "txt_useradded"));
-		assertTrue("2.2", !contains(textUserDefinedExtensions, "txt_pluginadded"));
+		assertFalse("2.2", contains(textUserDefinedExtensions, "txt_pluginadded"));
 
 		// removing pre-defined file specs should not do anything
 		text.removeFileSpec("txt", IContentType.FILE_EXTENSION_SPEC);
@@ -302,9 +302,10 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 
 		// removing user file specs is the normal case and has to work as expected
 		text.removeFileSpec("txt_useradded", IContentType.FILE_EXTENSION_SPEC);
-		assertTrue("4.0", !contains(text.getFileSpecs(IContentType.FILE_EXTENSION_SPEC | IContentType.IGNORE_PRE_DEFINED), "ini"));
+		assertFalse("4.0",
+				contains(text.getFileSpecs(IContentType.FILE_EXTENSION_SPEC | IContentType.IGNORE_PRE_DEFINED), "ini"));
 		assertTrue("4.1", text.isAssociatedWith(changeCase("text.txt")));
-		assertTrue("4.2", !text.isAssociatedWith(changeCase("text.txt_useradded")));
+		assertFalse("4.2", text.isAssociatedWith(changeCase("text.txt_useradded")));
 		assertTrue("4.3", text.isAssociatedWith(changeCase("text.txt_pluginadded")));
 	}
 
@@ -683,7 +684,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		text[0] = ((ContentTypeHandler) text[0]).getTarget();
 		text[1] = ((ContentTypeHandler) text[1]).getTarget();
 		assertEquals("2.0", text[0], text[1]);
-		assertTrue("2.1", text[0] == text[1]);
+		assertEquals("2.1", text[0], text[1]);
 		//	make arbitrary dynamic changes to the contentTypes extension point
 		TestRegistryChangeListener listener = new TestRegistryChangeListener(Platform.PI_RUNTIME, ContentTypeBuilder.PT_CONTENTTYPES, null, null);
 		BundleTestingHelper.runWithBundles("3", () -> {
@@ -694,7 +695,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 			assertNotNull("3.2", text[2]);
 			text[2] = ((ContentTypeHandler) text[2]).getTarget();
 			assertEquals("3.3", text[0], text[2]);
-			assertTrue("3.4", text[0] != text[2]);
+			assertNotSame("3.4", text[0], text[2]);
 		}, getContext(), new String[] {ContentTypeTest.TEST_FILES_ROOT + "content/bundle01"}, listener);
 		assertNull("4.0", manager.getContentType("org.eclipse.bundle01.missing"));
 		// ensure the content type instances are all different
@@ -703,8 +704,8 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		text[3] = ((ContentTypeHandler) text[3]).getTarget();
 		assertEquals("5.1", text[0], text[3]);
 		assertEquals("5.2", text[2], text[3]);
-		assertTrue("5.3", text[0] != text[3]);
-		assertTrue("5.4", text[2] != text[3]);
+		assertNotSame("5.3", text[0], text[3]);
+		assertNotSame("5.4", text[2], text[3]);
 	}
 
 	/**
@@ -720,7 +721,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		text[0] = ((ContentTypeHandler) text[0]).getTarget();
 		text[1] = ((ContentTypeHandler) text[1]).getTarget();
 		assertEquals("2.0", text[0], text[1]);
-		assertTrue("2.1", text[0] == text[1]);
+		assertSame("2.1", text[0], text[1]);
 		//	make arbitrary dynamic changes to the contentTypes extension point
 		TestRegistryChangeListener listener = new TestRegistryChangeListener(IContentConstants.CONTENT_NAME, ContentTypeBuilder.PT_CONTENTTYPES, null, null);
 		BundleTestingHelper.runWithBundles("3", () -> {
@@ -731,7 +732,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 			assertNotNull("3.2 Text content type not modified", text[2]);
 			text[2] = ((ContentTypeHandler) text[2]).getTarget();
 			assertEquals("3.3", text[0], text[2]);
-			assertTrue("3.4", text[0] != text[2]);
+			assertNotSame("3.4", text[0], text[2]);
 			assertEquals("3.5 default extension not associated", contentType, manager.findContentTypeFor("file.bug485227"));
 			assertEquals("3.6 additional extension not associated", contentType, manager.findContentTypeFor("file.bug485227_2"));
 		}, getContext(), new String[] {ContentTypeTest.TEST_FILES_ROOT + "content/bug485227"}, listener);
@@ -742,8 +743,8 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		text[3] = ((ContentTypeHandler) text[3]).getTarget();
 		assertEquals("5.1", text[0], text[3]);
 		assertEquals("5.2", text[2], text[3]);
-		assertTrue("5.3", text[0] != text[3]);
-		assertTrue("5.4", text[2] != text[3]);
+		assertNotSame("5.3", text[0], text[3]);
+		assertNotSame("5.4", text[2], text[3]);
 	}
 
 	public void testEvents() {
@@ -1016,12 +1017,12 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		IContentType binaryContentType = contentTypeManager.getContentType(PI_RESOURCES_TESTS + '.' + "sample-binary1");
 		assertTrue("1.0", textContentType.isKindOf(textContentType));
 		assertTrue("2.0", xmlContentType.isKindOf(textContentType));
-		assertTrue("2.1", !textContentType.isKindOf(xmlContentType));
+		assertFalse("2.1", textContentType.isKindOf(xmlContentType));
 		assertTrue("2.2", xmlContentType.isKindOf(xmlContentType));
 		assertTrue("3.0", xmlBasedDifferentExtensionContentType.isKindOf(textContentType));
 		assertTrue("3.1", xmlBasedDifferentExtensionContentType.isKindOf(xmlContentType));
-		assertTrue("4.0", !xmlBasedDifferentExtensionContentType.isKindOf(xmlBasedSpecificNameContentType));
-		assertTrue("5.0", !binaryContentType.isKindOf(textContentType));
+		assertFalse("4.0", xmlBasedDifferentExtensionContentType.isKindOf(xmlBasedSpecificNameContentType));
+		assertFalse("5.0", binaryContentType.isKindOf(textContentType));
 	}
 
 	public void testListParsing() {
@@ -1148,7 +1149,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 			}
 			selected1 = manager.findContentTypesFor("file_with_no_extension");
 			assertEquals("1.4.0", 4, selected1.length);
-			assertTrue("1.4.1", !contains(selected1, nonEmpty));
+			assertFalse("1.4.1", contains(selected1, nonEmpty));
 		}, getContext(), new String[] {ContentTypeTest.TEST_FILES_ROOT + "content/bundle04"}, listener);
 	}
 
@@ -1295,7 +1296,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 
 		IContentType binaryContentType = contentTypeManager.getContentType(PI_RESOURCES_TESTS + '.' + "sample-binary1");
 		assertNotNull("6.0", binaryContentType);
-		assertTrue("6.1", !isText(contentTypeManager, binaryContentType));
+		assertFalse("6.1", isText(contentTypeManager, binaryContentType));
 		assertNull("6.2", binaryContentType.getBaseType());
 
 		IContentType[] binaryTypes = finder.findContentTypesFor(changeCase("foo.samplebin1"));
@@ -1375,12 +1376,12 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 
 		// bug 67975
 		IContentDescription description = contentTypeManager.getDescriptionFor(getInputStream(new byte[][] {IContentDescription.BOM_UTF_16BE, XML_ROOT_ELEMENT_NO_DECL.getBytes("UTF-16BE")}), "fake.xml", IContentDescription.ALL);
-		assertTrue("6.0", description != null);
+		assertNotNull("6.0", description);
 		assertEquals("6.1", rootElement, description.getContentType());
 		assertEquals("6.2", IContentDescription.BOM_UTF_16BE, description.getProperty(IContentDescription.BYTE_ORDER_MARK));
 
 		description = contentTypeManager.getDescriptionFor(getInputStream(new byte[][] {IContentDescription.BOM_UTF_16LE, XML_ROOT_ELEMENT_NO_DECL.getBytes("UTF-16LE")}), "fake.xml", IContentDescription.ALL);
-		assertTrue("7.0", description != null);
+		assertNotNull("7.0", description);
 		assertEquals("7.1", rootElement, description.getContentType());
 		assertEquals("7.2", IContentDescription.BOM_UTF_16LE, description.getProperty(IContentDescription.BYTE_ORDER_MARK));
 
@@ -1455,7 +1456,7 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 		IContentType type_bug182337_B = contentTypeManager.getContentType(PI_RESOURCES_TESTS + ".Bug182337_B");
 
 		IContentType[] contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NS_MATCH2, StandardCharsets.UTF_8), "Bug182337.Bug182337");
-		assertTrue("1.0", contentTypes.length == 2);
+		assertEquals("1.0", 2, contentTypes.length);
 		assertEquals("1.1", type_bug182337_A, contentTypes[0]);
 		assertEquals("1.1", type_bug182337_B, contentTypes[1]);
 
@@ -1467,11 +1468,11 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 			}
 		};
 		contentTypes = contentTypeManager.findContentTypesFor(is, "Bug182337.Bug182337");
-		assertTrue("1.2", contentTypes.length == 0);
+		assertEquals("1.2", 0, contentTypes.length);
 
 		// Describer should be invalidated by now
 		contentTypes = contentTypeManager.findContentTypesFor(getInputStream(XML_ROOT_ELEMENT_NS_MATCH2, StandardCharsets.UTF_8), "Bug182337.Bug182337");
-		assertTrue("1.3", contentTypes.length == 0);
+		assertEquals("1.3", 0, contentTypes.length);
 	}
 
 }

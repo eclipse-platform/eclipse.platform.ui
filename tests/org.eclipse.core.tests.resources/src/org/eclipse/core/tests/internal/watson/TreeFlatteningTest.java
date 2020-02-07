@@ -17,6 +17,8 @@ import java.io.*;
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Unit tests for <code>ElementTreeWriter</code> and
@@ -56,11 +58,13 @@ public class TreeFlatteningTest extends ElementTreeSerializationTest {
 	}
 
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		fTree = TestUtil.createTestElementTree();
 	}
 
+	@Test
 	public void test0() {
 		/* Get an element tree from somewhere. */
 		fTree = TestUtil.createTestElementTree();
@@ -72,10 +76,12 @@ public class TreeFlatteningTest extends ElementTreeSerializationTest {
 	/**
 	 * Tests the reading and writing of element deltas
 	 */
+	@Test
 	public void testExhaustive() {
 		doExhaustiveTests();
 	}
 
+	@Test
 	public void testNullData() {
 		/* Get an element tree from somewhere. */
 		fTree = TestUtil.createTestElementTree();
@@ -91,6 +97,7 @@ public class TreeFlatteningTest extends ElementTreeSerializationTest {
 		TestUtil.assertEqualTrees(this.getClass() + "test0", fTree, newTree);
 	}
 
+	@Test
 	public void testWriteRoot() {
 		/* Get an element tree from somewhere. */
 		fTree = TestUtil.createTestElementTree();

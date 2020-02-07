@@ -32,13 +32,6 @@ public class TestElementComparator implements IElementComparator {
 	static final int CHANGED = NodeComparison.K_CHANGED;
 
 	/**
-	 * Force clients to use the singleton
-	 */
-	protected TestElementComparator() {
-		super();
-	}
-
-	/**
 	 * Returns the type of change.
 	 */
 	@Override

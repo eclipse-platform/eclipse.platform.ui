@@ -13,22 +13,24 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.watson;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.internal.watson.ElementTree;
 import org.eclipse.core.runtime.IPath;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests the ElementTree.mergeDeltaChain() method.
  */
-public class ElementTreeDeltaChainTest extends WatsonTest implements IPathConstants {
+public class ElementTreeDeltaChainTest implements IPathConstants {
 	protected ElementTree fTree;
 	protected IPath project3;
 
-	public ElementTreeDeltaChainTest(String name) {
-		super(name);
-	}
-
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		fTree = TestUtil.createTestElementTree();
 		project3 = solution.append("project3");
 	}
@@ -36,6 +38,7 @@ public class ElementTreeDeltaChainTest extends WatsonTest implements IPathConsta
 	/**
 	 * Tries some bogus merges and makes sure an exception is thrown.
 	 */
+	@Test
 	public void testIllegalMerges() {
 		fTree = fTree.newEmptyDelta();
 
@@ -98,6 +101,7 @@ public class ElementTreeDeltaChainTest extends WatsonTest implements IPathConsta
 	/**
 	 * Tests the mergeDeltaChain method
 	 */
+	@Test
 	public void testMergeDeltaChain() {
 		/* create a tree with a whole bunch of operations in project3 */
 		ElementTree projectTree = new ElementTree();
@@ -120,8 +124,8 @@ public class ElementTreeDeltaChainTest extends WatsonTest implements IPathConsta
 
 		/* merge the delta chains */
 		ElementTree newTree = fTree.mergeDeltaChain(project3, trees);
-		assertTrue("returned tree should be different", !(newTree == fTree));
-		assertTrue("returned tree should be open", !newTree.isImmutable());
+		assertNotEquals("returned tree should be different", newTree, fTree);
+		assertFalse("returned tree should be open", newTree.isImmutable());
 
 		/* make sure old and new trees have same structure */
 		for (int i = 0; i < trees.length; i++) {
@@ -136,6 +140,7 @@ public class ElementTreeDeltaChainTest extends WatsonTest implements IPathConsta
 	 * Performs merge on trees that have nodes in common.  The chain
 	 * being merged should overwrite the receiver.
 	 */
+	@Test
 	public void testMergeOverwrite() {
 		/* create a tree with a whole bunch of operations in project3 */
 		ElementTree projectTree = new ElementTree();
@@ -151,7 +156,7 @@ public class ElementTreeDeltaChainTest extends WatsonTest implements IPathConsta
 		/* merge the delta chains */
 		ElementTree newTree = projectTree.mergeDeltaChain(solution, trees);
 
-		assertTrue(!(newTree == projectTree));
+		assertNotEquals(newTree, projectTree);
 		assertTrue(newTree.getElementData(solution).equals("solution"));
 		TestUtil.assertTreeStructure(newTree);
 	}

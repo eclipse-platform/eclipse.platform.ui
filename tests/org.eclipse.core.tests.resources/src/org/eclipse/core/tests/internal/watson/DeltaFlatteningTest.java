@@ -16,6 +16,8 @@ package org.eclipse.core.tests.internal.watson;
 import java.io.*;
 import org.eclipse.core.internal.watson.*;
 import org.eclipse.core.runtime.IPath;
+import org.junit.Before;
+import org.junit.Test;
 
 public class DeltaFlatteningTest extends ElementTreeSerializationTest {
 	protected ElementTree fNewTree;
@@ -52,7 +54,8 @@ public class DeltaFlatteningTest extends ElementTreeSerializationTest {
 	}
 
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		fTree = TestUtil.createTestElementTree();
 		/**
@@ -90,6 +93,7 @@ public class DeltaFlatteningTest extends ElementTreeSerializationTest {
 	/**
 	 * Tests the reading and writing of element deltas
 	 */
+	@Test
 	public void test0() {
 		doExhaustiveTests();
 	}

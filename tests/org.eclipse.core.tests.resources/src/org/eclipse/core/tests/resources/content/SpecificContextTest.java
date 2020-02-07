@@ -97,8 +97,8 @@ public class SpecificContextTest extends ContentTypeTest {
 			fail("0.1", e);
 		}
 		// haven't added association yet
-		assertTrue("1.0", !textContentType.isAssociatedWith("hello.foo", scope));
-		assertTrue("1.1", !textContentType.isAssociatedWith("hello.foo"));
+		assertFalse("1.0", textContentType.isAssociatedWith("hello.foo", scope));
+		assertFalse("1.1", textContentType.isAssociatedWith("hello.foo"));
 		try {
 			// associate at the scope level
 			localSettings.addFileSpec("foo", IContentType.FILE_EXTENSION_SPEC);
@@ -117,7 +117,7 @@ public class SpecificContextTest extends ContentTypeTest {
 		// now it is associated at the scope level...
 		assertTrue("2.5", textContentType.isAssociatedWith("hello.foo", scope));
 		// ...but not at the global level
-		assertTrue("2.6", !textContentType.isAssociatedWith("hello.foo"));
+		assertFalse("2.6", textContentType.isAssociatedWith("hello.foo"));
 	}
 
 }

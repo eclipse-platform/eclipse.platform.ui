@@ -32,6 +32,7 @@ public class TestBug94498 extends ContentTypeTest {
 		super(name);
 	}
 
+	@org.junit.Test
 	public void test1() {
 		IContentType text = Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
 		assertNotNull("1.0", text);
@@ -45,6 +46,7 @@ public class TestBug94498 extends ContentTypeTest {
 		assertEquals("2.1", FILE_NAME, fileSpecs[0]);
 	}
 
+	@org.junit.Test
 	public void test2() {
 		IContentType text = Platform.getContentTypeManager().getContentType(IContentTypeManager.CT_TEXT);
 		assertNotNull("1.0", text);

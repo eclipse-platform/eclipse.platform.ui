@@ -13,10 +13,17 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.utils;
 
-import junit.framework.TestCase;
-import org.eclipse.core.internal.utils.Cache;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-public class CacheTest extends TestCase {
+import org.eclipse.core.internal.utils.Cache;
+import org.junit.Test;
+
+public class CacheTest {
+	@Test
 	public void testBasic() {
 		Cache cache = new Cache(1);
 		cache.addEntry("foo", "foo");
@@ -28,6 +35,7 @@ public class CacheTest extends TestCase {
 		assertEquals("2.5", foo, cache.getHead());
 	}
 
+	@Test
 	public void testBasic2() {
 		Cache cache = new Cache(2);
 		cache.addEntry("foo", "foo");
@@ -40,12 +48,13 @@ public class CacheTest extends TestCase {
 		assertTrue("2.1", foo.isTail());
 		assertEquals("2.4", bar, cache.getHead());
 		assertEquals("2.5", foo, cache.getTail());
-		assertTrue("2.8", !bar.isTail());
-		assertTrue("2.9", !foo.isHead());
+		assertFalse("2.8", bar.isTail());
+		assertFalse("2.9", foo.isHead());
 		assertEquals("3.0", foo, bar.getNext());
 		assertEquals("3.1", bar, foo.getPrevious());
 	}
 
+	@Test
 	public void testUpdate() {
 		Cache cache = new Cache(2);
 		cache.addEntry("foo", "foo");
@@ -58,8 +67,8 @@ public class CacheTest extends TestCase {
 		assertTrue("2.1", bar.isTail());
 		assertEquals("2.4", foo, cache.getHead());
 		assertEquals("2.5", bar, cache.getTail());
-		assertTrue("2.8", !foo.isTail());
-		assertTrue("2.9", !bar.isHead());
+		assertFalse("2.8", foo.isTail());
+		assertFalse("2.9", bar.isHead());
 		assertEquals("3.0", foo, bar.getPrevious());
 		assertEquals("3.1", bar, foo.getNext());
 		bar = cache.getEntry("bar", true);
@@ -68,12 +77,13 @@ public class CacheTest extends TestCase {
 		assertTrue("5.1", foo.isTail());
 		assertEquals("5.4", bar, cache.getHead());
 		assertEquals("5.5", foo, cache.getTail());
-		assertTrue("5.8", !bar.isTail());
-		assertTrue("5.9", !foo.isHead());
+		assertFalse("5.8", bar.isTail());
+		assertFalse("5.9", foo.isHead());
 		assertEquals("6.0", foo, bar.getNext());
 		assertEquals("6.1", bar, foo.getPrevious());
 	}
 
+	@Test
 	public void testDiscardAll() {
 		Cache cache = new Cache(2);
 		assertNull("1.0", cache.getHead());
@@ -88,6 +98,7 @@ public class CacheTest extends TestCase {
 		assertEquals("2.2", 0, cache.size());
 	}
 
+	@Test
 	public void testDiscardHead() {
 		Cache cache = new Cache(2);
 		cache.addEntry("foo", "foo");
@@ -106,6 +117,7 @@ public class CacheTest extends TestCase {
 		assertNull("3.2", cache.getTail());
 	}
 
+	@Test
 	public void testCacheLimit() {
 		Cache cache = new Cache(1, 3, 0.33);
 		cache.addEntry("foo", "foo");

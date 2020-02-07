@@ -14,6 +14,10 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.watson;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Random;
 import org.eclipse.core.internal.watson.*;
@@ -24,28 +28,8 @@ import org.eclipse.core.runtime.Path;
  * Framework for running tests on element tree components.
  * Supplies convenience methods and some representative element trees.
  */
-abstract class TestUtil extends WatsonTest implements IPathConstants {
-	public TestUtil(String name) {
-		super(name);
-	}
-
+class TestUtil implements IPathConstants {
 	static final IElementComparator fComparator = TestElementComparator.getComparator();
-
-	/**
-	 * Asserts that the given comparison value has the added
-	 * bit set, and the changed/removed bits blank
-	 */
-	static void assertAdded(int compare) {
-		assertTrue(compare == TestElementComparator.ADDED);
-	}
-
-	/**
-	 * Asserts that the given comparison value has the changed
-	 * bit set, and the added/removed bits blank
-	 */
-	static void assertChanged(int compare) {
-		assertTrue(compare == TestElementComparator.CHANGED);
-	}
 
 	/**
 	 * Asserts that two trees are equal. If they are not
@@ -56,18 +40,6 @@ abstract class TestUtil extends WatsonTest implements IPathConstants {
 	 */
 	static protected void assertEqualTrees(String message, ElementTree expected, ElementTree actual) {
 		assertEqualTrees(message, expected, actual, Path.ROOT, ElementTreeWriter.D_INFINITE);
-	}
-
-	/**
-	 * Asserts that two trees are equal. If they are not
-	 * an AssertionFailedError is thrown.
-	 * @param message the detail message for this assertion
-	 * @param expected the expected value of a tree
-	 * @param actual the actual value of a tree
-	 * @param depth The depth to compare to.
-	 */
-	static protected void assertEqualTrees(String message, ElementTree expected, ElementTree actual, int depth) {
-		assertEqualTrees(message, expected, actual, Path.ROOT, depth);
 	}
 
 	/**
@@ -99,7 +71,7 @@ abstract class TestUtil extends WatsonTest implements IPathConstants {
 			/* get the children */
 			IPath[] expectedChildren = expected.getChildren(path);
 			IPath[] actualChildren = actual.getChildren(path);
-			assertTrue("Number of children", expectedChildren.length == actualChildren.length);
+			assertEquals("Number of children", expectedChildren.length, actualChildren.length);
 
 			int newDepth = depth;
 			if (depth != ElementTreeWriter.D_INFINITE) {
@@ -122,28 +94,12 @@ abstract class TestUtil extends WatsonTest implements IPathConstants {
 	}
 
 	/**
-	 * Asserts that the given comparison value has the changed
-	 * bit set, and the added/removed bits blank
-	 */
-	static void assertNoChange(int compare) {
-		assertTrue(compare == 0);
-	}
-
-	/**
 	 * Asserts that the given tree doesn not contain all of the given paths
 	 */
 	static protected void assertNoPaths(ElementTree tree, IPath[] paths) {
 		for (IPath path : paths) {
-			assertTrue("assertNoPaths: " + path, !tree.includes(path));
+			assertFalse("assertNoPaths: " + path, tree.includes(path));
 		}
-	}
-
-	/**
-	 * Asserts that the given comparison value has the removed
-	 * bit set, and the changed/added bits blank
-	 */
-	static void assertRemoved(int compare) {
-		assertTrue(compare == TestElementComparator.REMOVED);
 	}
 
 	/**
@@ -153,29 +109,29 @@ abstract class TestUtil extends WatsonTest implements IPathConstants {
 		assertHasPaths(tree, getTreePaths());
 
 		IPath[] children = tree.getChildren(Path.ROOT);
-		assertTrue(children.length == 1);
+		assertEquals(1, children.length);
 
 		/* solution children */
 		children = tree.getChildren(children[0]);
-		assertTrue(children.length == 2);
-		assertTrue(tree.getChildren(project1).length == 0);
+		assertEquals(2, children.length);
+		assertEquals(0, tree.getChildren(project1).length);
 
 		/* project2 children */
 		children = tree.getChildren(children[1]);
-		assertTrue(children.length == 3);
-		assertTrue(tree.getChildren(file1).length == 0);
-		assertTrue(tree.getChildren(folder2).length == 0);
+		assertEquals(3, children.length);
+		assertEquals(0, tree.getChildren(file1).length);
+		assertEquals(0, tree.getChildren(folder2).length);
 
 		/* folder1 children */
 		children = tree.getChildren(children[1]);
-		assertTrue(children.length == 3);
-		assertTrue(tree.getChildren(file2).length == 0);
-		assertTrue(tree.getChildren(folder4).length == 0);
+		assertEquals(3, children.length);
+		assertEquals(0, tree.getChildren(file2).length);
+		assertEquals(0, tree.getChildren(folder4).length);
 
 		/* folder3 children */
 		children = tree.getChildren(children[1]);
-		assertTrue(children.length == 1);
-		assertTrue(tree.getChildren(file3).length == 0);
+		assertEquals(1, children.length);
+		assertEquals(0, tree.getChildren(file3).length);
 	}
 
 	static ElementTree createTestElementTree() {
@@ -303,13 +259,6 @@ abstract class TestUtil extends WatsonTest implements IPathConstants {
 		ElementTree[] results = new ElementTree[trees.size()];
 		trees.toArray(results);
 		return results;
-	}
-
-	/**
-	 * Returns an element tree comparator
-	 */
-	static IElementComparator getComparator() {
-		return fComparator;
 	}
 
 	/**

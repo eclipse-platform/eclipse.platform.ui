@@ -64,7 +64,7 @@ public class ContentDescriptionTest extends ContentTypeTest {
 		description.setProperty(FOO_PROPERTY, "value1b");
 		assertEquals("1.3", "value1b", description.getProperty(FOO_PROPERTY));
 		description.setProperty(BAR_PROPERTY, "value2");
-		assertTrue("2.0", !description.isRequested(BAR_PROPERTY));
+		assertFalse("2.0", description.isRequested(BAR_PROPERTY));
 		description.setProperty(BAR_PROPERTY, "value2");
 		assertNull("2.1", description.getProperty(BAR_PROPERTY));
 		description.markImmutable();
@@ -78,7 +78,7 @@ public class ContentDescriptionTest extends ContentTypeTest {
 
 	public void testZeroProperties() {
 		ContentDescription description = new ContentDescription(new QualifiedName[0], getContentType());
-		assertTrue("1.0", !description.isRequested(FOO_PROPERTY));
+		assertFalse("1.0", description.isRequested(FOO_PROPERTY));
 		assertNull("1.1", description.getProperty(FOO_PROPERTY));
 		description.setProperty(FOO_PROPERTY, "value1");
 		assertNull("1.2", description.getProperty(FOO_PROPERTY));
@@ -106,7 +106,7 @@ public class ContentDescriptionTest extends ContentTypeTest {
 		assertTrue("2.2", description.isRequested(ZOO_PROPERTY));
 		description.setProperty(ZOO_PROPERTY, "value3");
 		assertEquals("2.3", "value3", description.getProperty(ZOO_PROPERTY));
-		assertTrue("3.0", !description.isRequested(FRED_PROPERTY));
+		assertFalse("3.0", description.isRequested(FRED_PROPERTY));
 		description.setProperty(FRED_PROPERTY, "value3");
 		assertNull("3.1", description.getProperty(FRED_PROPERTY));
 		description.markImmutable();
