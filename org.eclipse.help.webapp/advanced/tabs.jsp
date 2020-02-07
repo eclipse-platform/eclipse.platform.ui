@@ -254,10 +254,8 @@ function getPreviousLink(currentLink){
 </script>
 
 </head>
-   
 <body dir="<%=direction%>" onload="showTab('<%=data.getVisibleView()%>')">
-
-  <table cellspacing="0" cellpadding="0" border="0" width="100%" height="100%" valign="middle">
+  <table id="tab-container" role="tablist" cellspacing="0" cellpadding="0" border="0" width="100%" height="100%" valign="middle">
    <tr>
 
 <%
@@ -275,7 +273,8 @@ function getPreviousLink(currentLink){
 	<td  title="<%=UrlUtil.htmlEncode(title)%>" 
 	     align="center"  
 	     valign="middle"
-	     class="tab" 
+	     class="tab"
+	     role="tab" 
 	     id="<%=views[i].getName()%>" 
 	     onclick="parent.showView('<%=views[i].getName()%>')" 
 	     onmouseover="window.status='<%=UrlUtil.JavaScriptEncode(title)%>';return true;" 
@@ -301,7 +300,6 @@ function getPreviousLink(currentLink){
  
    </tr>
    </table>
-
 </body>
 </html>
 
