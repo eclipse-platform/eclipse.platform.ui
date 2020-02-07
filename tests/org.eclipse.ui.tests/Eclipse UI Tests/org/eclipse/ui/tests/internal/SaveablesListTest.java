@@ -425,10 +425,10 @@ public class SaveablesListTest extends UITestCase {
 		}
 
 		assertEquals(partCount, modelMap.size());
-		assertEquals(partCount, modelMap.values().size());
+		assertEquals(partCount, modelMap.size());
 
-		assertEquals(1, modelRefCounts.keySet().size());
-		assertEquals(2, equalKeys.keySet().size());
+		assertEquals(1, modelRefCounts.size());
+		assertEquals(2, equalKeys.size());
 		assertTrue(equalKeys.containsKey(badSaveable));
 		assertTrue(equalKeys.containsKey(goodSaveable));
 		assertSame(equalKeys.get(goodSaveable), equalKeys.get(badSaveable));
@@ -447,10 +447,10 @@ public class SaveablesListTest extends UITestCase {
 		assertEquals(Integer.valueOf(partCount), modelRefCounts.get(two));
 
 		assertEquals(partCount, modelMap.size());
-		assertEquals(partCount, modelMap.values().size());
+		assertEquals(partCount, modelMap.size());
 
-		assertEquals(1, modelRefCounts.keySet().size());
-		assertEquals(1, equalKeys.keySet().size());
+		assertEquals(1, modelRefCounts.size());
+		assertEquals(1, equalKeys.size());
 		assertTrue(equalKeys.containsKey(two));
 
 		assertEquals(partCount, equalSaveables.size());
@@ -465,7 +465,7 @@ public class SaveablesListTest extends UITestCase {
 
 		assertOpenModelCount(0);
 		assertEquals(0, modelMap.size());
-		assertEquals(0, modelMap.values().size());
+		assertEquals(0, modelMap.size());
 
 		assertEquals(0, modelRefCounts.size());
 		assertEquals(0, equalKeys.size());
@@ -484,13 +484,13 @@ public class SaveablesListTest extends UITestCase {
 		assertOpenModelCount(1);
 
 		assertEquals(1, modelMap.size());
-		assertEquals(1, modelMap.values().size());
+		assertEquals(1, modelMap.size());
 
-		assertEquals(1, modelRefCounts.keySet().size());
+		assertEquals(1, modelRefCounts.size());
 		assertSame(one, modelRefCounts.keySet().iterator().next());
 		assertEquals(Integer.valueOf(1), modelRefCounts.get(one));
 
-		assertEquals(1, equalKeys.keySet().size());
+		assertEquals(1, equalKeys.size());
 		assertTrue(equalKeys.containsKey(one));
 
 		assertEquals(1, equalSaveables.size());

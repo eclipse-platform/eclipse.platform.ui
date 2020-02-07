@@ -136,7 +136,7 @@ public abstract class AbstractWorkingSetPulldownDelegate
 			setsOfType.add(allSet);
 		}
 
-		IWorkingSet[][] typedSets = new IWorkingSet[map.keySet().size()][];
+		IWorkingSet[][] typedSets = new IWorkingSet[map.size()][];
 		int i = 0;
 		for (Map.Entry<String, List<IWorkingSet>> entry : map.entrySet()) {
 			List<IWorkingSet> setsOfType = entry.getValue();

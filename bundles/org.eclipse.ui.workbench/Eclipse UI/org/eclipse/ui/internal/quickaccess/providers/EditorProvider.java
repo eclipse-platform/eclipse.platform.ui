@@ -52,7 +52,7 @@ public class EditorProvider extends QuickAccessProvider {
 				idToElement.put(editorElement.getId(), editorElement);
 			}
 		}
-		return idToElement.values().toArray(new QuickAccessElement[idToElement.values().size()]);
+		return idToElement.values().toArray(new QuickAccessElement[idToElement.size()]);
 	}
 
 	@Override

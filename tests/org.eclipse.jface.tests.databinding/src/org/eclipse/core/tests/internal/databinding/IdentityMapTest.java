@@ -171,7 +171,7 @@ public class IdentityMapTest {
 		assertEquals(value, values.iterator().next());
 
 		map.remove(key);
-		assertTrue(map.values().isEmpty());
+		assertTrue(map.isEmpty());
 	}
 
 	@Test
@@ -257,7 +257,7 @@ public class IdentityMapTest {
 	public void testKeySet_Remove() {
 		map.put(key, value);
 		assertEquals(1, map.size());
-		map.keySet().remove(key);
+		map.remove(key);
 		assertTrue(map.isEmpty());
 	}
 

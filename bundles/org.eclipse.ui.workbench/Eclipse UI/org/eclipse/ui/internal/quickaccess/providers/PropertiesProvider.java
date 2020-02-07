@@ -63,7 +63,7 @@ public class PropertiesProvider extends QuickAccessProvider {
 				}
 			}
 		}
-		return idToElement.values().toArray(new QuickAccessElement[idToElement.values().size()]);
+		return idToElement.values().toArray(new QuickAccessElement[idToElement.size()]);
 	}
 
 	@Override

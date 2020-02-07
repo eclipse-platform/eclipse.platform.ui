@@ -975,7 +975,7 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 		if (page == null) {
 			WorkbenchPlugin.log(new IllegalStateException("Bug 453151: page is null in PageBookView.deactivate")); //$NON-NLS-1$
 		} else {
-			boolean hasKey = mapPageToSite.keySet().contains(page);
+			boolean hasKey = mapPageToSite.containsKey(page);
 			Integer count = mapPageToNumRecs.get(page);
 			Control control = page.getControl();
 			boolean disposed = control != null && control.isDisposed();

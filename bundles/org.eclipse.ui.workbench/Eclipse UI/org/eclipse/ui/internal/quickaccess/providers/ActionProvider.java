@@ -67,7 +67,7 @@ public class ActionProvider extends QuickAccessProvider {
 				}
 			}
 		}
-		return idToElement.values().toArray(new ActionElement[idToElement.values().size()]);
+		return idToElement.values().toArray(new ActionElement[idToElement.size()]);
 	}
 
 	private void collectContributions(MenuManager menu, Set<ActionContributionItem> result) {
