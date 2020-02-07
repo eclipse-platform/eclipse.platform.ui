@@ -20,7 +20,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.Set;
 import junit.framework.AssertionFailedError;
-import junit.framework.Test;
 import org.eclipse.core.internal.content.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
@@ -30,7 +29,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.*;
 import org.eclipse.core.tests.harness.BundleTestingHelper;
 import org.eclipse.core.tests.harness.TestRegistryChangeListener;
-import org.eclipse.test.OrderedTestSuite;
 import org.osgi.service.prefs.BackingStoreException;
 import org.osgi.service.prefs.Preferences;
 
@@ -88,10 +86,6 @@ public class IContentTypeManagerTest extends ContentTypeTest {
 	private static final String XML_ROOT_ELEMENT_NS_WILDCARD = "<?xml version=\"1.0\" encoding=\"ISO-8859-1\"?><weCouldPutAnythingHere xmlns='urn:eclipse.core.runtime.nsWild'/>";
 	private final static String XML_ROOT_ELEMENT_NS_WILDCARD2 = "<?xml version=\"1.0\" encoding=\"US-ASCII\"?><!DOCTYPE Joker SYSTEM \"org.eclipse.core.resources.tests.some.dtd3\"><Joker/>";
 	private final static String XML_ROOT_ELEMENT_EMPTY_NS = "<?xml version=\"1.0\" encoding=\"US-ASCII\"?><!DOCTYPE Joker SYSTEM \"org.eclipse.core.resources.tests.some.dtd3\"><rootElement>";
-
-	public static Test suite() {
-		return new OrderedTestSuite(IContentTypeManagerTest.class);
-	}
 
 	public IContentTypeManagerTest(String name) {
 		super(name);

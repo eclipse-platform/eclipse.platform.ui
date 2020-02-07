@@ -13,14 +13,12 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.content;
 
-import junit.framework.Test;
 import org.eclipse.core.internal.content.ContentTypeManager;
 import org.eclipse.core.internal.preferences.EclipsePreferences;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
-import org.eclipse.test.OrderedTestSuite;
 
 /**
  * Tests content type matcher with a non-default context for user preferences.
@@ -30,7 +28,7 @@ public class SpecificContextTest extends ContentTypeTest {
 	 * A minimal scope implementation.
 	 */
 	private class SingleNodeScope implements IScopeContext {
-		private IEclipsePreferences node;
+		private final IEclipsePreferences node;
 
 		SingleNodeScope() {
 			this.node = new EclipsePreferences();
@@ -51,10 +49,6 @@ public class SpecificContextTest extends ContentTypeTest {
 			assertEquals(ContentTypeManager.CONTENT_TYPE_PREF_NODE, qualifier);
 			return this.node;
 		}
-	}
-
-	public static Test suite() {
-		return new OrderedTestSuite(SpecificContextTest.class);
 	}
 
 	public SpecificContextTest(String name) {
