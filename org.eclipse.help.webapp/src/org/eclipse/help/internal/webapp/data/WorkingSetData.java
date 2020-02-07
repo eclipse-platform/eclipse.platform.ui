@@ -235,7 +235,7 @@ public class WorkingSetData extends RequestData {
 		Map<String, Set<String>> criteriaMap = new HashMap<>();
 		CriterionResource[] criteria = ws.getCriteria();
 		CriteriaUtilities.addCriteriaToMap(criteriaMap, criteria);
-		if(!criteriaMap.keySet().contains(category))
+		if(!criteriaMap.containsKey(category))
 			return STATE_UNCHECKED;
 
 		Set<String> criterionValuesFromWS = criteriaMap.get(category);
