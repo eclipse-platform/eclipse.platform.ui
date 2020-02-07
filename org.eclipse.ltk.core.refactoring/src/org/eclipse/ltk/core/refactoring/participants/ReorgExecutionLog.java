@@ -84,7 +84,7 @@ public class ReorgExecutionLog {
 	 * @since 3.3
 	 */
 	public boolean isRenamed(Object element) {
-		return fNewNames.keySet().contains(element);
+		return fNewNames.containsKey(element);
 	}
 
 	/**
