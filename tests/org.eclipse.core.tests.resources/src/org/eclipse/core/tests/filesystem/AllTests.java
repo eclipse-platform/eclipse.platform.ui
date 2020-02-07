@@ -14,23 +14,14 @@
  *******************************************************************************/
 package org.eclipse.core.tests.filesystem;
 
-import junit.framework.*;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Class for collecting all test classes that deal with the file system API.
  */
-public class AllTests extends TestCase {
-	public static Test suite() {
-		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTestSuite(CreateDirectoryTest.class);
-		suite.addTestSuite(DeleteTest.class);
-		suite.addTestSuite(EFSTest.class);
-		suite.addTestSuite(FileCacheTest.class);
-		suite.addTestSuite(FileStoreTest.class);
-		suite.addTestSuite(OpenOutputStreamTest.class);
-		suite.addTestSuite(PutInfoTest.class);
-		suite.addTestSuite(SymlinkTest.class);
-		suite.addTestSuite(URIUtilTest.class);
-		return suite;
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ CreateDirectoryTest.class, DeleteTest.class, EFSTest.class, FileCacheTest.class,
+		FileStoreTest.class, OpenOutputStreamTest.class, PutInfoTest.class, SymlinkTest.class, URIUtilTest.class })
+public class AllTests {
 }

@@ -13,15 +13,13 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.refresh;
 
-import junit.framework.*;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Runs all tests in this package.
  */
-public class AllTests extends TestCase {
-	public static Test suite() {
-		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTestSuite(RefreshProviderTest.class);
-		return suite;
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ RefreshProviderTest.class })
+public class AllTests {
 }

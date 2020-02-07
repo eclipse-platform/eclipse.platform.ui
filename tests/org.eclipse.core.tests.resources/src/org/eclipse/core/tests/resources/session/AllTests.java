@@ -13,53 +13,21 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.session;
 
-import junit.framework.*;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public class AllTests extends TestCase {
-	public static Test suite() {
-		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTest(SampleSessionTest.suite());
-		suite.addTest(TestBug93473.suite());
-		suite.addTest(TestSave.suite());
-		suite.addTest(Test1G1N9GZ.suite());
-		suite.addTest(TestCloseNoSave.suite());
-		suite.addTest(TestMultiSnap.suite());
-		suite.addTest(TestSaveCreateProject.suite());
-		suite.addTest(TestSaveSnap.suite());
-		suite.addTest(TestSaveWithClosedProject.suite());
-		suite.addTest(TestSnapSaveSnap.suite());
-		suite.addTest(TestBug6995.suite());
-		suite.addTest(TestInterestingProjectPersistence.suite());
-		suite.addTest(TestBuilderDeltaSerialization.suite());
-		suite.addTest(Test1GALH44.suite());
-		suite.addTest(TestMissingBuilder.suite());
-		suite.addTest(TestClosedProjectLocation.suite());
-		suite.addTest(FindDeletedMembersTest.suite());
-		suite.addTest(TestBug20127.suite());
-		suite.addTest(TestBug12575.suite());
-		suite.addTest(WorkspaceDescriptionTest.suite());
-		suite.addTest(TestBug30015.suite());
-		suite.addTest(TestMasterTableCleanup.suite());
-		suite.addTest(ProjectPreferenceSessionTest.suite());
-		suite.addTest(TestBug113943.suite());
-		suite.addTest(TestCreateLinkedResourceInHiddenProject.suite());
-		suite.addTest(Bug_266907.suite());
-		suite.addTest(TestBug297635.suite());
-		suite.addTest(TestBug323833.suite());
-		// this one comes from org.eclipse.core.tests.resources.saveparticipant
-		// comment this out until we have a better solution for running these tests
-		// (keeping their contents inside this plugin as subdirs and dynamically installing
-		// seems to be a promising approach)
-		//suite.addTest(SaveParticipantTest.suite());
-		//session tests from other packages
-		suite.addTest(org.eclipse.core.tests.resources.regression.TestMultipleBuildersOfSameType.suite());
-		suite.addTest(org.eclipse.core.tests.resources.usecase.SnapshotTest.suite());
-		suite.addTest(ProjectDescriptionDynamicTest.suite());
-		suite.addTest(TestBug202384.suite());
-		suite.addTest(TestBug369177.suite());
-		suite.addTest(TestBug316182.suite());
-		suite.addTest(TestBug294854.suite());
-		suite.addTest(TestBug426263.suite());
-		return suite;
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ SampleSessionTest.class, TestBug93473.class, TestSave.class, Test1G1N9GZ.class,
+		TestCloseNoSave.class, TestMultiSnap.class, TestSaveCreateProject.class, TestSaveSnap.class,
+		TestSaveWithClosedProject.class, TestSnapSaveSnap.class, TestBug6995.class,
+		TestInterestingProjectPersistence.class, TestBuilderDeltaSerialization.class, Test1GALH44.class,
+		TestMissingBuilder.class, TestClosedProjectLocation.class, FindDeletedMembersTest.class, TestBug20127.class,
+		TestBug12575.class, WorkspaceDescriptionTest.class, TestBug30015.class,
+		TestMasterTableCleanup.class,
+		ProjectPreferenceSessionTest.class, TestBug113943.class, TestCreateLinkedResourceInHiddenProject.class,
+		Bug_266907.class, TestBug297635.class, TestBug323833.class,
+		org.eclipse.core.tests.resources.regression.TestMultipleBuildersOfSameType.class,
+		org.eclipse.core.tests.resources.usecase.SnapshotTest.class, ProjectDescriptionDynamicTest.class,
+		TestBug202384.class, TestBug369177.class, TestBug316182.class, TestBug294854.class, TestBug426263.class })
+public class AllTests {
 }

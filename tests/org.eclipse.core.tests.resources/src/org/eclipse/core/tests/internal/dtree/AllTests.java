@@ -13,13 +13,10 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.dtree;
 
-import junit.framework.*;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public class AllTests extends TestCase {
-	public static Test suite() {
-		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTestSuite(DataTreeTest.class);
-		suite.addTestSuite(DeltaDataTreeTest.class);
-		return suite;
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ DataTreeTest.class, DeltaDataTreeTest.class })
+public class AllTests {
 }

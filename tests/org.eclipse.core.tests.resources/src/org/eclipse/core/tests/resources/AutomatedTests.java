@@ -13,48 +13,28 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources;
 
-import junit.framework.*;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
- * Runs the sniff tests for the build. All tests listed here should
- * be automated.
+ * Runs the sniff tests for the build. All tests listed here should be
+ * automated.
  */
-public class AutomatedTests extends TestCase {
-
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ org.eclipse.core.tests.filesystem.AllTests.class,
+		org.eclipse.core.tests.internal.alias.AllTests.class, org.eclipse.core.tests.internal.builders.AllTests.class,
+		org.eclipse.core.tests.internal.dtree.AllTests.class,
+		org.eclipse.core.tests.internal.localstore.AllTests.class,
+		org.eclipse.core.tests.internal.mapping.AllTests.class,
+		org.eclipse.core.tests.internal.properties.AllTests.class,
+		org.eclipse.core.tests.internal.propertytester.AllTests.class,
+		org.eclipse.core.tests.internal.utils.AllTests.class, org.eclipse.core.tests.internal.watson.AllTests.class,
+		org.eclipse.core.tests.resources.AllTests.class, org.eclipse.core.tests.resources.refresh.AllTests.class,
+		org.eclipse.core.tests.resources.regression.AllTests.class,
+		org.eclipse.core.tests.resources.usecase.AllTests.class,
+		org.eclipse.core.tests.resources.session.AllTests.class,
+		org.eclipse.core.tests.resources.content.AllTests.class, org.eclipse.core.tests.internal.events.AllTests.class,
+		org.eclipse.core.tests.internal.resources.AllTests.class })
+public class AutomatedTests {
 	public static final String PI_RESOURCES_TESTS = "org.eclipse.core.tests.resources"; //$NON-NLS-1$
-
-	public AutomatedTests() {
-		super(null);
-	}
-
-	public AutomatedTests(String name) {
-		super(name);
-	}
-
-	/**
-	 * Call each AllTests class from each of the test packages.
-	 */
-	public static Test suite() {
-		TestSuite suite = new TestSuite(AutomatedTests.class.getName());
-		suite.addTest(org.eclipse.core.tests.filesystem.AllTests.suite());
-		suite.addTest(org.eclipse.core.tests.internal.alias.AllTests.suite());
-		suite.addTest(org.eclipse.core.tests.internal.builders.AllTests.suite());
-		suite.addTest(org.eclipse.core.tests.internal.dtree.AllTests.suite());
-		suite.addTest(org.eclipse.core.tests.internal.localstore.AllTests.suite());
-		suite.addTest(org.eclipse.core.tests.internal.mapping.AllTests.suite());
-		suite.addTest(org.eclipse.core.tests.internal.properties.AllTests.suite());
-		suite.addTest(org.eclipse.core.tests.internal.propertytester.AllTests.suite());
-		suite.addTest(org.eclipse.core.tests.internal.utils.AllTests.suite());
-		suite.addTest(org.eclipse.core.tests.internal.watson.AllTests.suite());
-		suite.addTest(org.eclipse.core.tests.resources.AllTests.suite());
-		suite.addTest(org.eclipse.core.tests.resources.refresh.AllTests.suite());
-		suite.addTest(org.eclipse.core.tests.resources.regression.AllTests.suite());
-		suite.addTest(org.eclipse.core.tests.resources.usecase.AllTests.suite());
-		suite.addTest(org.eclipse.core.tests.resources.session.AllTests.suite());
-		suite.addTest(org.eclipse.core.tests.resources.content.AllTests.suite());
-		suite.addTest(org.eclipse.core.tests.internal.events.AllTests.suite());
-		// move last because WorkspacePreferenceTest breaks the Workspace state (https://bugs.eclipse.org/bugs/show_bug.cgi?id=525343)
-		suite.addTest(org.eclipse.core.tests.internal.resources.AllTests.suite());
-		return suite;
-	}
 }

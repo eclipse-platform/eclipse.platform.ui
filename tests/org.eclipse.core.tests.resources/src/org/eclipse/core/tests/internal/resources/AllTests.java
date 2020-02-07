@@ -14,27 +14,17 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.resources;
 
-import junit.framework.*;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
- * The suite method for this class contains test suites for all automated tests in
- * this test package.
+ * The suite method for this class contains test suites for all automated tests
+ * in this test package.
  */
-public class AllTests extends TestCase {
-	/**
-	 * Returns the test suite called by AutomatedTests and by JUnit test runners.
-	 */
-	public static Test suite() {
-		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTestSuite(ModelObjectReaderWriterTest.class);
-		suite.addTestSuite(ProjectPreferencesTest.class);
-		suite.addTestSuite(ResourceInfoTest.class);
-		suite.addTestSuite(WorkspaceConcurrencyTest.class);
-		suite.addTestSuite(WorkspacePreferencesTest.class);
-		suite.addTestSuite(ProjectReferencesTest.class);
-		suite.addTestSuite(ProjectDynamicReferencesTest.class);
-		suite.addTestSuite(ProjectBuildConfigsTest.class);
-		suite.addTestSuite(Bug544975Test.class);
-		return suite;
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ ModelObjectReaderWriterTest.class, ProjectPreferencesTest.class,
+		ResourceInfoTest.class,
+		WorkspaceConcurrencyTest.class, WorkspacePreferencesTest.class, ProjectReferencesTest.class,
+		ProjectDynamicReferencesTest.class, ProjectBuildConfigsTest.class, Bug544975Test.class, })
+public class AllTests {
 }

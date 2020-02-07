@@ -13,16 +13,16 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.mapping;
 
-import junit.framework.*;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
- * Suite containing all tests in the org.eclipse.core.tests.internal.mapping package.
+ * Suite containing all tests in the org.eclipse.core.tests.internal.mapping
+ * package.
+ *
  * @since 3.2
  */
-public class AllTests extends TestCase {
-	public static Test suite() {
-		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTestSuite(ChangeValidationTest.class);
-		return suite;
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ ChangeValidationTest.class })
+public class AllTests {
 }

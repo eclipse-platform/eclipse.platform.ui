@@ -14,36 +14,15 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.localstore;
 
-import junit.framework.*;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public class AllTests extends TestCase {
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ BlobStoreTest.class, BucketTreeTests.class, CaseSensitivityTest.class, CopyTest.class,
+		DeleteTest.class, FileSystemResourceManagerTest.class, HistoryBucketTest.class, HistoryStoreTest.class,
+		LocalSyncTest.class, MoveTest.class, PrefixPoolTest.class, RefreshLocalTest.class,
+		SafeChunkyInputOutputStreamTest.class, SafeFileInputOutputStreamTest.class, SymlinkResourceTest.class,
+		UnifiedTreeTest.class })
+public class AllTests {
 
-	public AllTests() {
-		super(null);
-	}
-
-	public AllTests(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTestSuite(BlobStoreTest.class);
-		suite.addTestSuite(BucketTreeTests.class);
-		suite.addTestSuite(CaseSensitivityTest.class);
-		suite.addTestSuite(CopyTest.class);
-		suite.addTestSuite(DeleteTest.class);
-		suite.addTestSuite(FileSystemResourceManagerTest.class);
-		suite.addTestSuite(HistoryBucketTest.class);
-		suite.addTestSuite(HistoryStoreTest.class);
-		suite.addTestSuite(LocalSyncTest.class);
-		suite.addTestSuite(MoveTest.class);
-		suite.addTestSuite(PrefixPoolTest.class);
-		suite.addTestSuite(RefreshLocalTest.class);
-		suite.addTestSuite(SafeChunkyInputOutputStreamTest.class);
-		suite.addTestSuite(SafeFileInputOutputStreamTest.class);
-		suite.addTestSuite(SymlinkResourceTest.class);
-		suite.addTestSuite(UnifiedTreeTest.class);
-		return suite;
-	}
 }

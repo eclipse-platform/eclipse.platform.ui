@@ -13,22 +13,15 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.content;
 
-import junit.framework.*;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Runs all content type tests
  */
-public class AllTests extends TestCase {
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ IContentTypeManagerTest.class, SpecificContextTest.class, ContentDescriptionTest.class,
+		XMLContentDescriberTest.class, LazyInputStreamTest.class, LazyReaderTest.class, TestBug94498.class })
+public class AllTests {
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTest(IContentTypeManagerTest.suite());
-		suite.addTest(SpecificContextTest.suite());
-		suite.addTestSuite(ContentDescriptionTest.class);
-		suite.addTestSuite(XMLContentDescriberTest.class);
-		suite.addTestSuite(LazyInputStreamTest.class);
-		suite.addTestSuite(LazyReaderTest.class);
-		suite.addTest(TestBug94498.suite());
-		return suite;
-	}
 }

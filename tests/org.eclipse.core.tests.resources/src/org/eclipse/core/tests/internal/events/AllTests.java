@@ -13,13 +13,10 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.events;
 
-import junit.framework.*;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public class AllTests extends TestCase {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTestSuite(BuildProjectFromMultipleJobsTest.class);
-		return suite;
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ BuildProjectFromMultipleJobsTest.class })
+public class AllTests {
 }

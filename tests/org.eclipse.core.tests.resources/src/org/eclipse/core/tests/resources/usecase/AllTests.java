@@ -13,17 +13,13 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.usecase;
 
-import junit.framework.*;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public class AllTests extends TestCase {
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTestSuite(ConcurrencyTest.class);
-		suite.addTestSuite(IFileTest.class);
-		suite.addTestSuite(IFolderTest.class);
-		suite.addTestSuite(IProjectTest.class);
-		suite.addTestSuite(IWorkspaceRunnableUseCaseTest.class);
-		return suite;
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+		ConcurrencyTest.class, IFileTest.class, IFolderTest.class, IProjectTest.class,
+		IWorkspaceRunnableUseCaseTest.class
+})
+public class AllTests {
 }

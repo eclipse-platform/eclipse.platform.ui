@@ -13,27 +13,16 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.alias;
 
-import junit.framework.*;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
- * Class for collecting all test classes that deal with alias support.  An alias
+ * Class for collecting all test classes that deal with alias support. An alias
  * is a resource in the workspace that has the same file system location as
- * another resource in the workspace.  When a resource changes in a way that
+ * another resource in the workspace. When a resource changes in a way that
  * affects the contents on disk, all aliases need to be updated.
  */
-public class AllTests extends TestCase {
-	public AllTests() {
-		super(null);
-	}
-
-	public AllTests(String name) {
-		super(name);
-	}
-
-	public static Test suite() {
-		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTestSuite(BasicAliasTest.class);
-		suite.addTestSuite(SyncAliasTest.class);
-		return suite;
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ BasicAliasTest.class, SyncAliasTest.class })
+public class AllTests {
 }

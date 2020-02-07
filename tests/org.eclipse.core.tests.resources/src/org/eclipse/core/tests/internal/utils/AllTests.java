@@ -14,14 +14,10 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.utils;
 
-import junit.framework.*;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public class AllTests extends TestCase {
-	public static Test suite() {
-		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTestSuite(ObjectMapTest.class);
-		suite.addTestSuite(CacheTest.class);
-		suite.addTestSuite(FileUtilTest.class);
-		return suite;
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ ObjectMapTest.class, CacheTest.class, FileUtilTest.class })
+public class AllTests {
 }

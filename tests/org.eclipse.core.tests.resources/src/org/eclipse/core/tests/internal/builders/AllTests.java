@@ -14,25 +14,14 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.builders;
 
-import junit.framework.*;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
-public class AllTests extends TestCase {
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ BuilderCycleTest.class, BuilderEventTest.class, BuilderNatureTest.class, BuilderTest.class,
+		BuildDeltaVerificationTest.class, CustomBuildTriggerTest.class, EmptyDeltaTest.class,
+		MultiProjectBuildTest.class, RelaxedSchedRuleBuilderTest.class, BuildConfigurationsTest.class,
+		BuildContextTest.class, ParallelBuildChainTest.class, ComputeProjectOrderTest.class })
+public class AllTests {
 
-	public static Test suite() {
-		TestSuite suite = new TestSuite(AllTests.class.getName());
-		suite.addTestSuite(BuilderCycleTest.class);
-		suite.addTestSuite(BuilderEventTest.class);
-		suite.addTestSuite(BuilderNatureTest.class);
-		suite.addTestSuite(BuilderTest.class);
-		suite.addTestSuite(BuildDeltaVerificationTest.class);
-		suite.addTestSuite(CustomBuildTriggerTest.class);
-		suite.addTestSuite(EmptyDeltaTest.class);
-		suite.addTestSuite(MultiProjectBuildTest.class);
-		suite.addTestSuite(RelaxedSchedRuleBuilderTest.class);
-		suite.addTestSuite(BuildConfigurationsTest.class);
-		suite.addTestSuite(BuildContextTest.class);
-		suite.addTestSuite(ParallelBuildChainTest.class);
-		suite.addTest(new JUnit4TestAdapter(ComputeProjectOrderTest.class));
-		return suite;
-	}
 }
