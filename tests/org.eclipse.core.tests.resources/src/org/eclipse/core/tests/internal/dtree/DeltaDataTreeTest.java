@@ -13,10 +13,19 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.dtree;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.internal.dtree.*;
 import org.eclipse.core.internal.watson.DefaultElementComparator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test class for delta trees.
@@ -44,7 +53,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 		assertTrue("8", originalTree.includes(rightKey.append("rightOfRight")));
 
 		/* this was removed from "tree" */
-		assertTrue("9", !originalTree.includes(leftKey.append("one")));
+		assertFalse("9", originalTree.includes(leftKey.append("one")));
 	}
 
 	/**
@@ -68,7 +77,8 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	 * Init tests
 	 */
 	@Override
-	protected void setUp() {
+	@Before
+	public void setUp() {
 
 		emptyTree = new DeltaDataTree();
 		tree = new DeltaDataTree();
@@ -103,6 +113,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	/**
 	 * Test for problem adding and deleting in same delta layer.
 	 */
+	@Test
 	public void testAddAndRemoveOnSameLayer() {
 		IPath elementA = Path.ROOT.append("A");
 		DeltaDataTree tree1 = new DeltaDataTree();
@@ -135,6 +146,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	 * Test for problem when two complete nodes exist, and then
 	 * the deleting only masks the first one.
 	 */
+	@Test
 	public void testAddTwiceAndDelete() {
 		DeltaDataTree tree1 = new DeltaDataTree();
 
@@ -151,10 +163,11 @@ public class DeltaDataTreeTest extends DataTreeTest {
 		tree1.deleteChild(Path.ROOT, "A");
 		tree1.immutable();
 
-		assertTrue(tree1.getChildCount(Path.ROOT) == 0);
+		assertEquals(0, tree1.getChildCount(Path.ROOT));
 
 	}
 
+	@Test
 	public void testAssembleWithIn() {
 
 		/**
@@ -178,7 +191,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 		assertTrue(assembledTree.includes(rootKey));
 		assertTrue(assembledTree.includes(leftKey));
 		assertTrue(assembledTree.includes(leftKey.append("one")));
-		assertTrue(!assembledTree.includes(leftKey.append("two")));
+		assertFalse(assembledTree.includes(leftKey.append("two")));
 		assertTrue(assembledTree.includes(leftKey.append("three")));
 		assertTrue(assembledTree.includes(rightKey));
 
@@ -191,6 +204,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	 *	parentKey does not exist in the receiver
 	 */
 	@Override
+	@Test
 	public void testCreateChild() {
 
 		boolean caught;
@@ -258,9 +272,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 		tree.createChild(leftKey, "double");
 		tree.createChild(leftKey, "double");
 		/* Make sure size has only increased by one */
-		assertTrue((tree.getNamesOfChildren(leftKey)).length == size + 1);
-
-		return;
+		assertEquals(size + 1, (tree.getNamesOfChildren(leftKey)).length);
 	}
 
 	/**
@@ -272,6 +284,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	 *	a child of parentKey with name localName does not exist in the receiver
 	 */
 	@Override
+	@Test
 	public void testDeleteChild() {
 
 		boolean caught;
@@ -325,8 +338,8 @@ public class DeltaDataTreeTest extends DataTreeTest {
 		} catch (ObjectNotFoundException e) {
 		}
 
-		assertTrue("8", !tree.includes(leftKey));
-		assertTrue("9", !tree.includes(leftKey.append("one")));
+		assertFalse("8", tree.includes(leftKey));
+		assertFalse("9", tree.includes(leftKey.append("one")));
 		assertTrue("10", tree.includes(rootKey));
 
 		/* delete a leaf */
@@ -334,15 +347,14 @@ public class DeltaDataTreeTest extends DataTreeTest {
 			tree.deleteChild(rightKey, "rightOfRight");
 		} catch (ObjectNotFoundException e) {
 		}
-		assertTrue("11", !tree.includes(rightKey.append("rightOfRight")));
+		assertFalse("11", tree.includes(rightKey.append("rightOfRight")));
 		assertTrue("12", tree.includes(rightKey));
-
-		return;
 	}
 
 	/**
 	 * Creates a delta on two unrelated delta trees
 	 */
+	@Test
 	public void testDeltaOnCompletelyDifferentTrees() {
 
 		DeltaDataTree newTree = new DeltaDataTree();
@@ -354,7 +366,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 			newTree.createChild(rootKey, "newLeft");
 			newTree.createChild(rootKey, "newRight");
 		} catch (ObjectNotFoundException e) {
-			throw new Error("(1) Error in setUp");
+			fail("(1) Error in setUp");
 		}
 
 		/* Add three children to left of root and one to right of root */
@@ -366,7 +378,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 			newTree.createChild(rootKey.append("newRight"), "newRightOfRight");
 			newTree.createChild(rootKey.append("newRight").append("newRightOfRight"), "bottom");
 		} catch (ObjectNotFoundException e) {
-			throw new Error("(2) Error in setUp");
+			fail("(2) Error in setUp");
 		}
 
 		/* get delta on different trees */
@@ -374,8 +386,8 @@ public class DeltaDataTreeTest extends DataTreeTest {
 
 		/* assert delta has same content as tree */
 		assertTree(deltaTree);
-		assertTrue(!deltaTree.includes(rootKey.append("newLeft")));
-		assertTrue(!deltaTree.includes(rootKey.append("newRight")));
+		assertFalse(deltaTree.includes(rootKey.append("newLeft")));
+		assertFalse(deltaTree.includes(rootKey.append("newRight")));
 
 	}
 
@@ -385,13 +397,12 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	 * have a root node with nil data and no children.
 	 */
 	@Override
+	@Test
 	public void testEmpty() {
 
 		assertTrue("1", emptyTree.includes(rootKey));
-		assertTrue("2", TestHelper.getRootNode(emptyTree) != null);
-		assertTrue("3", TestHelper.getRootNode(emptyTree).getChildren().length == 0);
-
-		return;
+		assertNotNull("2", TestHelper.getRootNode(emptyTree));
+		assertEquals("3", 0, TestHelper.getRootNode(emptyTree).getChildren().length);
 	}
 
 	/**
@@ -400,6 +411,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	 * in the new tree.
 	 * This is a regression test for a problem with DataDeltaNode.forwardDeltaWith(...).
 	 */
+	@Test
 	public void testForwardDeltaOnDataDeltaNode() {
 
 		tree.immutable();
@@ -407,12 +419,13 @@ public class DeltaDataTreeTest extends DataTreeTest {
 
 		tree1.setData(leftKey, "replaced");
 		DeltaDataTree delta = tree1.forwardDeltaWith(changedTree, DefaultElementComparator.getComparator());
-		assertTrue(delta.getData(leftKey) == null); // the value in changedTree
+		assertNull(delta.getData(leftKey)); // the value in changedTree
 	}
 
 	/**
 	 * Tests the forwardDeltaWith() function
 	 */
+	@Test
 	public void testForwardDeltaWith() {
 
 		DeltaDataTree assembledTree;
@@ -437,7 +450,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 		assertTrue(assembledTree.includes(rootKey.append("NewTopLevel")));
 
 		assertTrue(assembledTree.includes(leftKey.append("one")));
-		assertTrue(!assembledTree.includes(leftKey.append("two")));
+		assertFalse(assembledTree.includes(leftKey.append("two")));
 		assertTrue(assembledTree.includes(leftKey.append("three")));
 		assertTrue(assembledTree.includes(leftKey.append("four")));
 		assertTrue(assembledTree.includes(leftKey.append("five")));
@@ -449,6 +462,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	/**
 	 * Tests the forwardDeltaWith() function using the equality comparer.
 	 */
+	@Test
 	public void testForwardDeltaWithEquality() {
 
 		DeltaDataTree assembledTree;
@@ -471,11 +485,12 @@ public class DeltaDataTreeTest extends DataTreeTest {
 		assertTrue(assembledTree.includes(rightKey));
 
 		assertTrue(assembledTree.includes(leftKey.append("one")));
-		assertTrue(!assembledTree.includes(leftKey.append("two")));
+		assertFalse(assembledTree.includes(leftKey.append("two")));
 		assertTrue(assembledTree.includes(leftKey.append("three")));
 		assertTrue(assembledTree.includes(leftKey.append("four")));
 		Object data = assembledTree.getData(oneKey);
-		assertTrue(data != null && data.equals("New"));
+		assertNotNull(data);
+		assertEquals("New", data);
 
 	}
 
@@ -492,6 +507,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	 *	if no child with the given index (runtime exception)
 	 */
 	@Override
+	@Test
 	public void testGetChild() {
 
 		boolean caught;
@@ -504,7 +520,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 		} catch (ObjectNotFoundException e) {
 			caught = true;
 		}
-		assertTrue(!caught);
+		assertFalse(caught);
 
 		/* Get non-existant child of root */
 		caught = false;
@@ -513,7 +529,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 		} catch (ArrayIndexOutOfBoundsException e) {
 			caught = true;
 		} catch (ObjectNotFoundException e) {
-			throw new Error();
+			fail();
 		}
 		assertTrue(caught);
 
@@ -524,7 +540,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 		} catch (ArrayIndexOutOfBoundsException e) {
 			caught = true;
 		} catch (ObjectNotFoundException e) {
-			throw new Error();
+			fail();
 		}
 		assertTrue(caught);
 
@@ -535,7 +551,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 		} catch (ArrayIndexOutOfBoundsException e) {
 			caught = true;
 		} catch (ObjectNotFoundException e) {
-			throw new Error();
+			fail();
 		}
 		assertTrue(caught);
 
@@ -547,8 +563,6 @@ public class DeltaDataTreeTest extends DataTreeTest {
 			caught = true;
 		}
 		assertTrue(caught);
-
-		return;
 	}
 
 	/**
@@ -558,6 +572,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	 *	parentKey does not exist in the receiver
 	 */
 	@Override
+	@Test
 	public void testGetChildCount() {
 
 		boolean caught;
@@ -565,23 +580,23 @@ public class DeltaDataTreeTest extends DataTreeTest {
 		caught = false;
 		try {
 			/* empty tree */
-			assertTrue("1", emptyTree.getChildCount(rootKey) == 0);
+			assertEquals("1", 0, emptyTree.getChildCount(rootKey));
 
 			/* root node */
-			assertTrue("2", tree.getChildCount(rootKey) == 2);
+			assertEquals("2", 2, tree.getChildCount(rootKey));
 
 			/* interior nodes */
-			assertTrue("3", tree.getChildCount(leftKey) == 3);
-			assertTrue("4", tree.getChildCount(rightKey) == 1);
+			assertEquals("3", 3, tree.getChildCount(leftKey));
+			assertEquals("4", 1, tree.getChildCount(rightKey));
 
 			/* leaf nodes */
-			assertTrue("5", tree.getChildCount(leftKey.append("one")) == 0);
-			assertTrue("6", tree.getChildCount(leftKey.append("three")) == 0);
-			assertTrue("7", tree.getChildCount(rightKey.append("rightOfRight")) == 0);
+			assertEquals("5", 0, tree.getChildCount(leftKey.append("one")));
+			assertEquals("6", 0, tree.getChildCount(leftKey.append("three")));
+			assertEquals("7", 0, tree.getChildCount(rightKey.append("rightOfRight")));
 		} catch (ObjectNotFoundException e) {
 			caught = true;
 		} finally {
-			assertTrue(!caught);
+			assertFalse(caught);
 		}
 
 		caught = false;
@@ -601,8 +616,6 @@ public class DeltaDataTreeTest extends DataTreeTest {
 			caught = true;
 		}
 		assertTrue(caught);
-
-		return;
 	}
 
 	/**
@@ -612,6 +625,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	 *	parentKey does not exist in the receiver"
 	 */
 	@Override
+	@Test
 	public void testGetChildren() {
 
 		boolean caught;
@@ -621,31 +635,31 @@ public class DeltaDataTreeTest extends DataTreeTest {
 		try {
 			/* empty tree */
 			testChildren = emptyTree.getChildren(rootKey);
-			assertTrue("1", testChildren.length == 0);
+			assertEquals("1", 0, testChildren.length);
 
 			/* root node */
 			testChildren = tree.getChildren(rootKey);
-			assertTrue("2", testChildren.length == 2);
+			assertEquals("2", 2, testChildren.length);
 			assertTrue("3", testChildren[0].equals(rootChildren[0]));
 			assertTrue("4", testChildren[1].equals(rootChildren[1]));
 
 			/* interior nodes */
 			testChildren = tree.getChildren(leftKey);
-			assertTrue("5", testChildren.length == 3);
+			assertEquals("5", 3, testChildren.length);
 			assertTrue("6", testChildren[0].equals(leftChildren[0]));
 			assertTrue("7", testChildren[2].equals(leftChildren[1]));
 			assertTrue("8", testChildren[1].equals(leftChildren[2]));
 
 			/* leaf nodes */
 			testChildren = tree.getChildren(leftChildren[0]);
-			assertTrue("9", testChildren.length == 0);
+			assertEquals("9", 0, testChildren.length);
 
 			testChildren = tree.getChildren(rightChildren[0]);
-			assertTrue("10", testChildren.length == 0);
+			assertEquals("10", 0, testChildren.length);
 		} catch (ObjectNotFoundException e) {
 			caught = true;
 		} finally {
-			assertTrue("11", !caught);
+			assertFalse("11", caught);
 		}
 
 		caught = false;
@@ -665,24 +679,6 @@ public class DeltaDataTreeTest extends DataTreeTest {
 			caught = true;
 		}
 		assertTrue("13", caught);
-
-		return;
-	}
-
-	/**
-	 * Answer the local name of the child with the given index of the
-	 * specified node.
-	 * @exception ObjectNotFoundException
-	 *	parentKey does not exist in the receiver
-	 * @exception ArrayIndexOutOfBoundsException
-	 *	if no child with the given index
-	 */
-	@Override
-	public void testGetNameOfChild() {
-
-		/* tested thoroughly in testGetChild() and testGetNamesOfChildren */
-
-		return;
 	}
 
 	/**
@@ -692,6 +688,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	 *	parentKey does not exist in the receiver
 	 */
 	@Override
+	@Test
 	public void testGetNamesOfChildren() {
 
 		boolean caught;
@@ -701,35 +698,35 @@ public class DeltaDataTreeTest extends DataTreeTest {
 		try {
 			/* empty tree */
 			testChildren = emptyTree.getNamesOfChildren(rootKey);
-			assertTrue("1", testChildren.length == 0);
+			assertEquals("1", 0, testChildren.length);
 
 			/* root node */
 			testChildren = tree.getNamesOfChildren(rootKey);
-			assertTrue("2", testChildren.length == 2);
+			assertEquals("2", 2, testChildren.length);
 			assertTrue("3", testChildren[0].equals(rootChildren[0]));
 			assertTrue("4", testChildren[1].equals(rootChildren[1]));
 
 			/* interior nodes */
 			testChildren = tree.getNamesOfChildren(leftKey);
-			assertTrue("5", testChildren.length == 3);
+			assertEquals("5", 3, testChildren.length);
 			assertTrue("6", testChildren[0].equals(leftChildren[0]));
 			assertTrue("7", testChildren[2].equals(leftChildren[1]));
 			assertTrue("8", testChildren[1].equals(leftChildren[2]));
 
 			testChildren = tree.getNamesOfChildren(rightKey);
-			assertTrue("8.1", testChildren.length == 1);
+			assertEquals("8.1", 1, testChildren.length);
 			assertTrue("8.2", testChildren[0].equals(rightChildren[0]));
 
 			/* leaf nodes */
 			testChildren = tree.getNamesOfChildren(leftKey.append("one"));
-			assertTrue("9", testChildren.length == 0);
+			assertEquals("9", 0, testChildren.length);
 
 			testChildren = tree.getNamesOfChildren(rightKey.append("rightOfRight"));
-			assertTrue("10", testChildren.length == 0);
+			assertEquals("10", 0, testChildren.length);
 		} catch (ObjectNotFoundException e) {
 			caught = true;
 		} finally {
-			assertTrue("11", !caught);
+			assertFalse("11", caught);
 		}
 
 		caught = false;
@@ -758,6 +755,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	 * otherwise.
 	 */
 	@Override
+	@Test
 	public void testIncludes() {
 
 		/* tested in testCreateChild() and testDeleteChild() */
@@ -769,11 +767,11 @@ public class DeltaDataTreeTest extends DataTreeTest {
 		assertTrue(tree.includes(leftKey.append("one")));
 		assertTrue(tree.includes(rightKey.append("rightOfRight")));
 
-		assertTrue(!emptyTree.includes(rootKey.append("bogus")));
-		assertTrue(!tree.includes(rootKey.append("bogus")));
-		assertTrue(!tree.includes(leftKey.append("bogus")));
-		assertTrue(!tree.includes(leftKey.append("one").append("bogus")));
-		assertTrue(!tree.includes(rightKey.append("bogus")));
+		assertFalse(emptyTree.includes(rootKey.append("bogus")));
+		assertFalse(tree.includes(rootKey.append("bogus")));
+		assertFalse(tree.includes(leftKey.append("bogus")));
+		assertFalse(tree.includes(leftKey.append("one").append("bogus")));
+		assertFalse(tree.includes(rightKey.append("bogus")));
 
 		return;
 	}
@@ -781,6 +779,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	/**
 	 * Tests operations on a chain of deltas
 	 */
+	@Test
 	public void testLongDeltaChain() {
 
 		final int NUM_DELTAS = 10;
@@ -799,7 +798,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 		deltas[1] = deltas[0].newEmptyDeltaTree();
 		deltas[1].deleteChild(leftKey, "one");
 		assertEquals("parent 0 -> 1", deltas[1].getParent(), deltas[0]);
-		assertTrue(!deltas[1].includes(leftKey.append("one")));
+		assertFalse(deltas[1].includes(leftKey.append("one")));
 
 		/* create a third delta and make a change to that */
 		deltas[1].immutable();
@@ -807,7 +806,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 		deltas[2].createChild(rootKey, "newTopLevel");
 		assertEquals("parent 1 -> 2", deltas[2].getParent(), deltas[1]);
 		assertEquals("parent 0 -> 2", deltas[2].getParent().getParent(), deltas[0]);
-		assertTrue(!deltas[2].includes(leftKey.append("one")));
+		assertFalse(deltas[2].includes(leftKey.append("one")));
 		assertTrue(deltas[2].includes(rootKey.append("newTopLevel")));
 
 	}
@@ -815,18 +814,18 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	/**
 	 * Tests the newEmptyDeltaTree method
 	 */
+	@Test
 	public void testNewEmptyDeltaTree() {
-
 		tree.immutable();
 		DeltaDataTree delta = tree.newEmptyDeltaTree();
 		assertEquals("parent", tree, delta.getParent());
 		assertTree(delta);
-
 	}
 
 	/**
 	 * Test for problem deleting and re-adding in same delta layer.
 	 */
+	@Test
 	public void testRegression1FVVP6L() {
 		IPath elementA = Path.ROOT.append("A");
 
@@ -849,7 +848,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 		try {
 			tree1.copyCompleteSubtree(Path.ROOT);
 		} catch (RuntimeException e) {
-			assertTrue("Unexpected error copying tree", false);
+			fail("Unexpected error copying tree");
 		}
 
 	}
@@ -857,6 +856,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	/**
 	 * Test for problem deleting and re-adding in same delta layer.
 	 */
+	@Test
 	public void testRegression1FVVP6LWithChildren() {
 		IPath elementA = Path.ROOT.append("A");
 		IPath elementB = elementA.append("B");
@@ -877,12 +877,12 @@ public class DeltaDataTreeTest extends DataTreeTest {
 		tree1.immutable();
 		tree1 = tree1.newEmptyDeltaTree();
 
-		assertTrue("Child exists after deletion", !tree1.includes(elementC));
+		assertFalse("Child exists after deletion", tree1.includes(elementC));
 
 		try {
 			tree1.copyCompleteSubtree(Path.ROOT);
 		} catch (RuntimeException e) {
-			assertTrue("Unexpected error copying tree", false);
+			fail("Unexpected error copying tree");
 		}
 
 	}
@@ -890,6 +890,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	/**
 	 * Tests the reroot function
 	 */
+	@Test
 	public void testReroot() {
 
 		final int NUM_DELTAS = 10;
@@ -908,7 +909,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 		deltas[1] = deltas[0].newEmptyDeltaTree();
 		deltas[1].deleteChild(leftKey, "one");
 		assertEquals("parent 0 -> 1", deltas[1].getParent(), deltas[0]);
-		assertTrue(!deltas[1].includes(leftKey.append("one")));
+		assertFalse(deltas[1].includes(leftKey.append("one")));
 
 		/* create a third delta and make a change to that */
 		deltas[1].immutable();
@@ -916,7 +917,7 @@ public class DeltaDataTreeTest extends DataTreeTest {
 		deltas[2].createChild(rootKey, "newTopLevel");
 		assertEquals("parent 1 -> 2", deltas[2].getParent(), deltas[1]);
 		assertEquals("parent 0 -> 2", deltas[2].getParent().getParent(), deltas[0]);
-		assertTrue(!deltas[2].includes(leftKey.append("one")));
+		assertFalse(deltas[2].includes(leftKey.append("one")));
 		assertTrue(deltas[2].includes(rootKey.append("newTopLevel")));
 
 		/* create a fourth delta and reroot at it */
@@ -924,20 +925,20 @@ public class DeltaDataTreeTest extends DataTreeTest {
 		deltas[3] = deltas[2].newEmptyDeltaTree();
 		deltas[3].immutable();
 		deltas[3].reroot();
-		assertTrue(deltas[3].getParent() == null);
-		assertTrue(deltas[2].getParent() == deltas[3]);
-		assertTrue(deltas[1].getParent() == deltas[2]);
-		assertTrue(deltas[0].getParent() == deltas[1]);
+		assertNull(deltas[3].getParent());
+		assertEquals(deltas[2].getParent(), deltas[3]);
+		assertEquals(deltas[1].getParent(), deltas[2]);
+		assertEquals(deltas[0].getParent(), deltas[1]);
 
 		/* test that all trees have the same representation as before rerooting */
 		assertTree(tree);
-		assertTrue(!tree.includes(leftKey.append("new")));
+		assertFalse(tree.includes(leftKey.append("new")));
 		assertTrue(tree.includes(leftKey.append("one")));
 		assertTree(deltas[0]);
 		assertTrue(deltas[0].includes(leftKey.append("new")));
 		assertTrue(deltas[0].includes(leftKey.append("one")));
 		assertTrue(deltas[1].includes(leftKey.append("new")));
-		assertTrue(!deltas[1].includes(leftKey.append("one")));
+		assertFalse(deltas[1].includes(leftKey.append("one")));
 		assertDelta(deltas[2]);
 		assertDelta(deltas[3]);
 
@@ -946,11 +947,9 @@ public class DeltaDataTreeTest extends DataTreeTest {
 	/**
 	 * Tests that the setUp() method is doing what it should
 	 */
+	@Test
 	public void testSetup() {
-
 		assertTree(tree);
 		assertTree(changedTree);
-
-		return;
 	}
 }
