@@ -17,7 +17,7 @@ package org.eclipse.core.tests.resources.regression;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.core.tests.harness.CoreTest;
+import org.junit.Test;
 
 /**
  * Tests an error that occurs when a thread tries to read the workspace
@@ -27,7 +27,7 @@ import org.eclipse.core.tests.harness.CoreTest;
  * malformed state.  The fix was to synchronize the routine that collapses
  * unused trees in ElementTree.
  */
-public class Bug_134364 extends CoreTest {
+public class Bug_134364 {
 	/**
 	 * Creates a project with a builder attached
 	 */
@@ -43,6 +43,7 @@ public class Bug_134364 extends CoreTest {
 		return other;
 	}
 
+	@Test
 	public void test1() throws Exception {
 		final IProject other = createOtherProject();
 		final boolean[] done = new boolean[] {false};
@@ -97,7 +98,7 @@ public class Bug_134364 extends CoreTest {
 		writer.join();
 		done[0] = true;
 		if (failure[0] != null) {
-			fail("1.0", failure[0]);
+			throw new AssertionError("1.0", failure[0]);
 		}
 	}
 }

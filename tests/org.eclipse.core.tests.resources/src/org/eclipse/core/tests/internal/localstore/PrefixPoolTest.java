@@ -13,11 +13,16 @@
  *******************************************************************************/
 package org.eclipse.core.tests.internal.localstore;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.internal.localstore.PrefixPool;
-import org.eclipse.core.tests.harness.CoreTest;
+import org.junit.Test;
 
-public class PrefixPoolTest extends CoreTest {
+public class PrefixPoolTest {
 
+	@Test
 	public void testIllegalCapacity() {
 		boolean exceptionOK=true;
 		try {
@@ -36,6 +41,7 @@ public class PrefixPoolTest extends CoreTest {
 		assertTrue(exceptionOK);
 	}
 
+	@Test
 	public void testPrefixPool() {
 		PrefixPool p = new PrefixPool(1);
 		assertFalse(p.containsAsPrefix(""));
