@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 559885
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets;
 
@@ -27,6 +28,7 @@ public final class Messages extends NLS {
 	public static String ERROR_WRITING_STATE_FILE;
 	public static String CHEAT_SHEET_SELECTION_DIALOG_TITLE;
 	public static String CHEAT_SHEET_SELECTION_DIALOG_MSG;
+	public static String CHEAT_SHEET_UNSUPPORTED_LINK_ACTIVATION_MESSAGE;
 	public static String COLLAPSE_ALL_BUT_CURRENT_TOOLTIP;
 	public static String CATEGORY_OTHER;
 	public static String RESTORE_ALL_TOOLTIP;

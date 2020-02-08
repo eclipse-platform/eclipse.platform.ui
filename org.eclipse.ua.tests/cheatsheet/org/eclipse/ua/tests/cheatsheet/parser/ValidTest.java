@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 559885
  *******************************************************************************/
 package org.eclipse.ua.tests.cheatsheet.parser;
 
@@ -103,6 +104,11 @@ public class ValidTest {
 	@Test
 	public void testHelloWorld() throws IOException {
 		parseCheatsheet("HelloWorld.xml");
+	}
+
+	@Test
+	public void testHyperlinks() throws IOException {
+		parseCheatsheet("TestCSHyperlinks.xml");
 	}
 
 }

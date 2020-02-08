@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.0"?>
 <!--
-    Copyright (c) 2005, 2011 IBM Corporation and others.
+    Copyright (c) 2005, 2020 IBM Corporation and others.
 
     This program and the accompanying materials
     are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
    
     Contributors:
          IBM Corporation - initial API and implementation
+         George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 559885
  -->
 
 <plugin>
@@ -204,6 +205,15 @@
             contentFile="non_junit/cheatsheets/tasks/placeholder.xml"
             id="org.eclipse.ua.tests.cheatsheet.subcategory.qualified"
             name="Cheatsheet in subcategory, qualified name">
+      </cheatsheet>
+      <cheatsheet
+            category="org.eclipse.ua.tests.cheatsheet.cheatSheetsTestCat"
+            contentFile="data/cheatsheet/valid/TestCSHyperlinks.xml"
+            id="org.eclipse.ua.tests.cheatsheet.cheatsheetsHyperlinks"
+            name="Testing Cheat Sheets hyperlinks">
+         <description>
+            This cheat sheet has items to test the framework
+         </description>
       </cheatsheet>
    </extension>
 

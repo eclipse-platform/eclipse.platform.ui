@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2018 IBM Corporation and others.
+ * Copyright (c) 2002, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 559885
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.data;
 
@@ -119,7 +120,7 @@ public class CheatSheetParser implements IStatusContainer {
 	 * }
 	 * </pre>
 	 *
-	 * Tags that will be ignored {@literal <b>, </b> and <br/>
+	 * Tags that will be ignored {@literal <b>, </b>, <a>, </a> and <br/>
 	 * }.
 	 *
 	 * @param text
@@ -137,6 +138,8 @@ public class CheatSheetParser implements IStatusContainer {
 		// Create the buffer to store the resulting string
 		StringBuilder result = new StringBuilder(length);
 
+		boolean hyperlinkContext = false;
+
 		// Loop for the characters of the original string
 		for(int i=0; i<length; i++) {
 			// Grab the next character and determine how to handle it
@@ -152,7 +155,11 @@ public class CheatSheetParser implements IStatusContainer {
 					else {
 						tmp = text.substring(i, length).toLowerCase();
 					}
-					if(tmp.startsWith(IParserTags.BOLD_START_TAG) || tmp.startsWith(IParserTags.BOLD_END_TAG) || tmp.startsWith(IParserTags.BREAK_TAG)) {
+					if (hyperlinkContext || tmp.startsWith(IParserTags.HYPERLINK_START_TAG)) {
+						result.append(c);
+						hyperlinkContext = true;
+					} else if (tmp.startsWith(IParserTags.BOLD_START_TAG) || tmp.startsWith(IParserTags.BOLD_END_TAG)
+							|| tmp.startsWith(IParserTags.BREAK_TAG)) {
 						// We have a tag to ignore so just emit the character
 						result.append(c);
 					} else {
@@ -170,6 +177,15 @@ public class CheatSheetParser implements IStatusContainer {
 						tmp = text.substring(i-MAXIMUM_TAG_LENGTH, i+1).toLowerCase();
 					} else {
 						tmp = text.substring(0, i+1).toLowerCase();
+					}
+					if (tmp.endsWith(IParserTags.HYPERLINK_END_TAG)) {
+						result.append(c);
+						hyperlinkContext = false;
+						break;
+					}
+					if (hyperlinkContext) {
+						result.append(c);
+						break;
 					}
 					if(tmp.endsWith(IParserTags.BOLD_START_TAG) || tmp.endsWith(IParserTags.BOLD_END_TAG) || tmp.endsWith(IParserTags.BREAK_TAG)) {
 						// We have a tag to ignore so just emit the character
@@ -190,7 +206,7 @@ public class CheatSheetParser implements IStatusContainer {
 					break;
 				case '"':
 					// We have a quote so emit the XML escaped counterpart
-					result.append(IParserTags.QUOTE);
+					result.append(hyperlinkContext ? c : IParserTags.QUOTE);
 					break;
 				case '\t':
 					// We have a tab, replace with a space
@@ -442,7 +458,7 @@ public class CheatSheetParser implements IStatusContainer {
 				text.append(nodeValue);
 				isLeadingTrimRequired = false;
 			} else if(node.getNodeType() == Node.ELEMENT_NODE) {
-				// handle <b></b> and <br/>
+				// handle <b></b>, <br/> and <a></a>
 				switch (node.getNodeName()) {
 				case IParserTags.BOLD:
 					containsMarkup = true;
@@ -455,6 +471,19 @@ public class CheatSheetParser implements IStatusContainer {
 					containsMarkup = true;
 					text.append(IParserTags.BREAK_TAG);
 					isLeadingTrimRequired = true;
+					break;
+				case IParserTags.HYPERLINK:
+					containsMarkup = true;
+					if (node.getAttributes().getNamedItem(IParserTags.HREF) == null) {
+						text.append(NLS.bind(IParserTags.HYPERLINK_PLACEHOLDER, "")); //$NON-NLS-1$
+					} else {
+						String href = node.getAttributes().getNamedItem(IParserTags.HREF).getNodeValue();
+						String link = NLS.bind(IParserTags.HYPERLINK_PLACEHOLDER, href);
+						text.append(link);
+					}
+					text.append(node.getTextContent());
+					text.append(IParserTags.HYPERLINK_END_TAG);
+					isLeadingTrimRequired = false;
 					break;
 				default:
 					warnUnknownMarkupElement(startNode, nodeName, node);

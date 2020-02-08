@@ -44,7 +44,18 @@ The &lt;intro&gt; element is used to define the introductory text to be displaye
 <p class="ConfigMarkupElementDesc">
 The &lt;description&gt; element holds the description of a cheat sheet or of
 a cheat sheet item. The description consists of text interspersed with <a href="../../../org.eclipse.platform.doc.isv/guide/forms_controls_text_markup.htm">form text markup</a>. The cheat sheet automatically formats and lays out the text to
-make it show up reasonably in the UI. Within the text, balanced <b>&lt;b&gt;</b>...<b>&lt;/b&gt;</b>
+make it show up reasonably in the UI.
+Hyperlinks are expressed using <b>&lt;a href="URL"&gt;text&lt;a&gt;</b>, where URL is a valid URL to an external web site or a CheatSheet URL that represents a CheatSheat action. All cheat sheet URLs have the following form:  http://org.eclipse.ui.cheatsheet/&lt;action name&gt;?param1=value1&amp;param2=value2 and will be processed by the cheat sheet framework.
+<br>
+The following predefined actions are included in the cheat sheet framework:
+<p style="margin-left:15px;">
+<b>showView</b> - activates view with given view id<br>
+<i>id</i> - a view id<br>
+<br>
+<b>execute</b> - executes the specified command.  See the <code>serialize()</code> method on <code>org.eclipse.core.command.ParameterizedCommand</code> for details of the command serialization format. Since 3.2.<br>
+<i>command</i> - a serialized <code>ParameterizedCommand</code><br>
+</p>
+Within the text, balanced <b>&lt;b&gt;</b>...<b>&lt;/b&gt;</b>
 tags cause the enclosed text to be rendered in a bold font, and the <b>&lt;br/&gt;</b>
 element can be used to force a line break. These are the only formatting tags
 supported at this time (however, others may be added in the future). Certain

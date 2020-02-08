@@ -69,7 +69,17 @@ DTD fragments (&lt;a href=&quot;cheatSheetContentFileSpec.exsd&quot;&gt;machine 
          <documentation>
             The &amp;lt;description&amp;gt; element holds the description of a cheat sheet or of
 a cheat sheet item. The description consists of text interspersed with &lt;a href=&quot;../../../org.eclipse.platform.doc.isv/guide/forms_controls_text_markup.htm&quot;&gt;form text markup&lt;/a&gt;. The cheat sheet automatically formats and lays out the text to
-make it show up reasonably in the UI. Within the text, balanced &lt;b&gt;&amp;lt;b&amp;gt;&lt;/b&gt;...&lt;b&gt;&amp;lt;/b&amp;gt;&lt;/b&gt;
+make it show up reasonably in the UI. Hyperlinks are expressed using &lt;b&gt;&amp;lt;a href=&quot;URL&quot;&amp;gt;text&amp;lt;/a&amp;gt;&lt;/b&gt;, where URL is a valid URL to an external web site or a CheatSheet URL that represents a CheatSheat action. All cheat sheet URLs have the following form:  http://org.eclipse.ui.cheatsheet/&amp;lt;action name&amp;gt;?param1=value1&amp;amp;param2=value2 and will be processed by the cheat sheet framework.
+&lt;br&gt;
+The following predefined actions are included in the cheat sheet framework:
+&lt;p style=&quot;margin-left:15px;&quot;&gt;
+&lt;b&gt;showView&lt;/b&gt; - activates view with given view id&lt;br&gt;
+&lt;i&gt;id&lt;/i&gt; - a view id&lt;br&gt;
+&lt;br&gt;
+&lt;b&gt;execute&lt;/b&gt; - executes the specified command.  See the &lt;code&gt;serialize()&lt;/code&gt; method on &lt;code&gt;org.eclipse.core.command.ParameterizedCommand&lt;/code&gt; for details of the command serialization format. Since 3.2.&lt;br&gt;
+&lt;i&gt;command&lt;/i&gt; - a serialized &lt;code&gt;ParameterizedCommand&lt;/code&gt;&lt;br&gt;
+&lt;/p&gt;
+Within the text, balanced &lt;b&gt;&amp;lt;b&amp;gt;&lt;/b&gt;...&lt;b&gt;&amp;lt;/b&amp;gt;&lt;/b&gt;
 tags cause the enclosed text to be rendered in a bold font, and the &lt;b&gt;&amp;lt;br/&amp;gt;&lt;/b&gt;
 element can be used to force a line break. These are the only formatting tags
 supported at this time (however, others may be added in the future). Certain

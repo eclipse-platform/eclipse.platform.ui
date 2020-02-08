@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2015 IBM Corporation and others.
+ * Copyright (c) 2002, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 559885
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.data;
 
@@ -47,9 +48,13 @@ public interface IParserTags {
 	public static final String DESCRIPTION = "description"; //$NON-NLS-1$
 	public static final String BOLD = "b"; //$NON-NLS-1$
 	public static final String BREAK = "br"; //$NON-NLS-1$
+	public static final String HYPERLINK = "a"; //$NON-NLS-1$
 	public static final String BOLD_START_TAG = "<b>"; //$NON-NLS-1$
 	public static final String BOLD_END_TAG = "</b>"; //$NON-NLS-1$
 	public static final String BREAK_TAG = "<br/>"; //$NON-NLS-1$
+	public static final String HYPERLINK_START_TAG = "<a"; //$NON-NLS-1$
+	public static final String HYPERLINK_PLACEHOLDER = "<a href=\"{0}\">"; //$NON-NLS-1$
+	public static final String HYPERLINK_END_TAG = "</a>"; //$NON-NLS-1$
 	public static final String FORM_START_TAG = "<form><p>"; //$NON-NLS-1$
 	public static final String FORM_END_TAG = "</p></form>"; //$NON-NLS-1$
 
