@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2014 IBM Corporation and others.
+ * Copyright (c) 2010, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 420836
  *     Frank Appel <fappel@codeaffine.com> - Bug 325937
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 501250
+ *     Pierre-Yves B. <pyvesdev@gmail.com> - Bug 559434
  *******************************************************************************/
 
 @import url("platform:/plugin/org.eclipse.ui.themes/css/e4_basestyle.css");
@@ -135,4 +136,11 @@ TabbedPropertyList {
 	swt-tabNormalShadow-color   : '#org-eclipse-ui-workbench-INACTIVE_TAB_OUTLINE_COLOR';             /* color of shadow lines around the tabs */
 	swt-tabDarkShadow-color     : '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_SELECTED_TEXT_COLOR'; /* line color of the tiny scroll triangle (at top / at bottom) */
 	color                       : #505050; /* text color in the tab / tab area */
+}
+
+Tree {
+	swt-selection-background-color: #cce8ff;
+	swt-hot-background-color: #e5f3ff;
+	swt-selection-border-color: #99d1ff;
+	swt-hot-border-color: #e5f3ff;
 }
