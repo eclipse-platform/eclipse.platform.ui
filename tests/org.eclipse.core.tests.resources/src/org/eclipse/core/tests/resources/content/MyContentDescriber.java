@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.content;
 
+import static org.eclipse.core.tests.resources.AutomatedTests.PI_RESOURCES_TESTS;
+
 import java.io.IOException;
 import java.io.InputStream;
 import org.eclipse.core.runtime.QualifiedName;
@@ -20,10 +22,13 @@ import org.eclipse.core.runtime.content.IContentDescriber;
 import org.eclipse.core.runtime.content.IContentDescription;
 
 public class MyContentDescriber implements IContentDescriber {
-	public static final Object[] MY_OPTION_VALUES = {"FOO", null, "BAR"};
+	public static final Object[] MY_OPTION_VALUES = { "FOO", null, "BAR" };
 	public static final String SIGNATURE = "MY_CONTENTS";
 
-	public static final QualifiedName[] MY_OPTIONS = {new QualifiedName(ContentTypeTest.PI_RESOURCES_TESTS, "my_option_1"), new QualifiedName(ContentTypeTest.PI_RESOURCES_TESTS, "my_option_2"), new QualifiedName(ContentTypeTest.PI_RESOURCES_TESTS, "my_option_3")};
+	public static final QualifiedName[] MY_OPTIONS = { new QualifiedName(PI_RESOURCES_TESTS, "my_option_1"),
+			new QualifiedName(PI_RESOURCES_TESTS,
+					"my_option_2"),
+			new QualifiedName(PI_RESOURCES_TESTS, "my_option_3") };
 
 	@Override
 	public int describe(InputStream contents, IContentDescription description) throws IOException {

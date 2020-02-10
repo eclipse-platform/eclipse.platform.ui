@@ -13,10 +13,18 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.content;
 
+import static org.eclipse.core.tests.resources.AutomatedTests.PI_RESOURCES_TESTS;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.internal.content.*;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.content.IContentDescription;
+import org.junit.Test;
 
 public class ContentDescriptionTest extends ContentTypeTest {
 	private static final String CT_VOID = PI_RESOURCES_TESTS + '.' + "void";
@@ -25,14 +33,11 @@ public class ContentDescriptionTest extends ContentTypeTest {
 	private static final QualifiedName FOO_PROPERTY = new QualifiedName(PI_RESOURCES_TESTS, "foo");
 	private static final QualifiedName FRED_PROPERTY = new QualifiedName(PI_RESOURCES_TESTS, "fred");
 
-	public ContentDescriptionTest(String name) {
-		super(name);
-	}
-
 	private ContentType getContentType() {
 		return ((ContentTypeHandler) Platform.getContentTypeManager().getContentType(CT_VOID)).getTarget();
 	}
 
+	@Test
 	public void testAllProperties() {
 		ContentDescription description = new ContentDescription(IContentDescription.ALL, getContentType());
 		assertTrue("1.0", description.isRequested(FOO_PROPERTY));
@@ -55,6 +60,7 @@ public class ContentDescriptionTest extends ContentTypeTest {
 		}
 	}
 
+	@Test
 	public void testOneProperty() {
 		ContentDescription description = new ContentDescription(new QualifiedName[] {FOO_PROPERTY}, getContentType());
 		assertTrue("1.0", description.isRequested(FOO_PROPERTY));
@@ -76,6 +82,7 @@ public class ContentDescriptionTest extends ContentTypeTest {
 		}
 	}
 
+	@Test
 	public void testZeroProperties() {
 		ContentDescription description = new ContentDescription(new QualifiedName[0], getContentType());
 		assertFalse("1.0", description.isRequested(FOO_PROPERTY));
@@ -91,6 +98,7 @@ public class ContentDescriptionTest extends ContentTypeTest {
 		}
 	}
 
+	@Test
 	public void testMultipleProperties() {
 		ContentDescription description = new ContentDescription(new QualifiedName[] {FOO_PROPERTY, BAR_PROPERTY, ZOO_PROPERTY}, getContentType());
 		assertTrue("1.0", description.isRequested(FOO_PROPERTY));

@@ -13,11 +13,16 @@
  *******************************************************************************/
 package org.eclipse.core.tests.resources.content;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import java.io.*;
 import java.util.Arrays;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.runtime.content.IContentDescription;
+import org.junit.Test;
 
 /**
  * Ensures the XMLContentDescriber is able to handle encodings properly.
@@ -31,10 +36,7 @@ public class XMLContentDescriberTest extends ContentTypeTest {
 	private final static String ENCODING_EMPTY = "";
 	private final static String WHITESPACE_CHARACTERS = " 	\n\r";
 
-	public XMLContentDescriberTest(String name) {
-		super(name);
-	}
-
+	@Test
 	public void testEncodedContents1() throws Exception {
 		checkEncodedContents(ENCODING_UTF16, ENCODING_UTF16, ENCODING_UTF16);
 		checkEncodedContents(ENCODING_UTF8, ENCODING_UTF8, ENCODING_UTF8);
@@ -46,12 +48,14 @@ public class XMLContentDescriberTest extends ContentTypeTest {
 		checkEncodedContents(ENCODING_NOTSUPPORTED, ENCODING_NOTSUPPORTED, ENCODING_UTF16);
 	}
 
+	@Test
 	public void testEncodedContents2() throws Exception {
 		checkEncodedContents2(ENCODING_UTF16, ENCODING_UTF16);
 		checkEncodedContents2(ENCODING_UTF8, ENCODING_UTF8);
 		checkEncodedContents2(ENCODING_NOTSUPPORTED, ENCODING_NOTSUPPORTED);
 	}
 
+	@Test
 	public void testEncodedContents3() throws Exception {
 		boolean[][] flags = { {true, true, false}, {true, false, false}, {false, true, false}, {false, false, false}, {true, true, true}, {true, false, true}, {false, true, true}, {false, false, true}};
 
@@ -79,6 +83,7 @@ public class XMLContentDescriberTest extends ContentTypeTest {
 		}
 	}
 
+	@Test
 	public void testBug258208() throws Exception {
 		IContentDescription description = Platform.getContentTypeManager().getDescriptionFor(getInputStream(ENCODING_EMPTY, ENCODING_UTF8, false, true, false), "fake.xml", new QualifiedName[] {IContentDescription.CHARSET});
 		assertNull("1.0", description);
