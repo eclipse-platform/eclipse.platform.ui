@@ -597,7 +597,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	}
 
 	private void removeMenuContributions(final MMenu menuModel,
-			final ArrayList<MMenuElement> menuContributionsToRemove) {
+			final List<MMenuElement> menuContributionsToRemove) {
 		for (MMenuElement item : menuContributionsToRemove) {
 			menuModel.getChildren().remove(item);
 
@@ -1144,7 +1144,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	 * @param menuModel
 	 * @param dump
 	 */
-	public void removeDynamicMenuContributions(MenuManager menuManager, MMenu menuModel, ArrayList<MMenuElement> dump) {
+	public void removeDynamicMenuContributions(MenuManager menuManager, MMenu menuModel, List<MMenuElement> dump) {
 		removeMenuContributions(menuModel, dump);
 		for (MMenuElement mMenuElement : dump) {
 			IContributionItem ici = getContribution(mMenuElement);
@@ -1171,6 +1171,7 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	 */
 	@SuppressWarnings("unchecked")
 	public void removeDynamicMenuContributions(MenuManager menuManager, MMenu menuModel) {
+		List<MMenuElement> toBeRemoved = new ArrayList<>();
 		for (Entry<MMenuElement, IContributionItem> entry : modelToContribution.entrySet()) {
 			MMenuElement menuElement = entry.getKey();
 			if (menuElement instanceof MDynamicMenuContribution) {
@@ -1191,12 +1192,13 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 								.getTransientData().get(MenuManagerShowProcessor.DYNAMIC_ELEMENT_STORAGE_KEY);
 
 						if (childElements != null) {
-							removeDynamicMenuContributions(menuManager, menuModel, childElements);
+							toBeRemoved.addAll(childElements);
 						}
 					}
 				}
 			}
 		}
+		removeDynamicMenuContributions(menuManager, menuModel, toBeRemoved);
 	}
 
 	private void unlinkMenu(MMenu menu) {
