@@ -12,23 +12,23 @@ package org.eclipse.text.quicksearch.tests;
 
 import static org.eclipse.text.quicksearch.internal.core.priority.PriorityFunction.PRIORITY_DEFAULT;
 import static org.eclipse.text.quicksearch.internal.core.priority.PriorityFunction.PRIORITY_IGNORE;
+import static org.junit.Assert.assertEquals;
 
 import org.eclipse.core.runtime.Path;
 import org.eclipse.text.quicksearch.internal.core.priority.PrioriTree;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-@SuppressWarnings("restriction")
-public class PrioriTreeTest extends TestCase {
+public class PrioriTreeTest {
 
 	PrioriTree tree;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		tree = PrioriTree.create();
 	}
 
+	@Test
 	public void testWithEmptyTree() {
 		//In the empty tree most paths are assigned 'DEFAULT' priority.
 		checkPriority(PRIORITY_DEFAULT, "/");
@@ -47,7 +47,7 @@ public class PrioriTreeTest extends TestCase {
 		checkPriority(PRIORITY_IGNORE, "/project/build");
 
 	}
-
+	@Test
 	public void testSinglePathSet() {
 		setPriority("/foo/bar/zor", 100.0);
 
@@ -70,7 +70,7 @@ public class PrioriTreeTest extends TestCase {
 
 		checkPriority(PRIORITY_IGNORE, "/foo/bar/zor/nested/big.zip");
 	}
-
+	@Test
 	public void testSetOverlappingPaths() {
 		setPriority("/shared/foo", 50.0);
 		setPriority("/shared/bar", 100.0);
@@ -93,6 +93,7 @@ public class PrioriTreeTest extends TestCase {
 	 * priority set operations is reversed. The result should
 	 * be the same.
 	 */
+	@Test
 	public void testSetOverlappingPaths2() {
 		setPriority("/shared/bar", 100.0);
 		setPriority("/shared/foo", 50.0);
@@ -111,6 +112,7 @@ public class PrioriTreeTest extends TestCase {
 	/**
 	 * Need support for setting priority of an entire subtree.
 	 */
+	@Test
 	public void testSetTreePriority() {
 		setPriority("/promoted", 100.0);
 
@@ -130,6 +132,7 @@ public class PrioriTreeTest extends TestCase {
 	 * Check that setting priotity of a tree raises children priority also if those
 	 * children already had a priority assigned before.
 	 */
+	@Test
 	public void testSetTreePriority2() {
 		setPriority("/promoted/sub/sub", 50.0);
 		checkPriority(50.0, 			"/promoted");
@@ -159,7 +162,7 @@ public class PrioriTreeTest extends TestCase {
 
 	private void checkPriority(double expected, String pathStr) {
 		assertEquals(pathStr,
-				expected, tree.priority(new MockResource(pathStr)));
+				expected, tree.priority(new MockResource(pathStr)), 0);
 	}
 
 }
