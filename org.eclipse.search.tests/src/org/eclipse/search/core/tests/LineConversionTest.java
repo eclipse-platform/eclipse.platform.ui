@@ -14,7 +14,14 @@
 
 package org.eclipse.search.core.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+
 import java.io.ByteArrayInputStream;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
@@ -33,38 +40,37 @@ import org.eclipse.search.tests.SearchTestPlugin;
 
 import org.eclipse.search2.internal.ui.text.PositionTracker;
 
-import junit.framework.TestCase;
-
 /**
  */
-public class LineConversionTest extends TestCase {
+public class LineConversionTest {
 	private IFile fFile;
 
 	private static final String LINE_TWO= "This is the second line\n";
+
 	private static final String LINE_ONE= "This is the first line\n";
+
 	private static final String LINE_THREE= "This is the third line";
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		IProject project= ResourcesPlugin.getWorkspace().getRoot().getProject("Test");
 		project.create(null);
 		project.open(null);
 		fFile= project.getFile("/test.txt");
 		fFile.create(new ByteArrayInputStream(getFileContents().getBytes()), true, null);
-		super.setUp();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		SearchPlugin.getActivePage().closeAllEditors(false);
 		fFile.getProject().delete(true, true, null);
-		super.tearDown();
 	}
 
 	private String getFileContents() {
-		return LINE_ONE+LINE_TWO+LINE_THREE;
+		return LINE_ONE + LINE_TWO + LINE_THREE;
 	}
 
+	@Test
 	public void testConvertToCharacter() throws Exception {
 		SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), fFile);
 		ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
@@ -91,17 +97,14 @@ public class LineConversionTest extends TestCase {
 		assertEquals(p1, PositionTracker.convertToLinePosition(p2, doc));
 	}
 
+	@Test
 	public void testBogusLines() throws Exception {
 		SearchTestPlugin.openTextEditor(SearchPlugin.getActivePage(), fFile);
 		ITextFileBuffer fb= FileBuffers.getTextFileBufferManager().getTextFileBuffer(fFile.getFullPath(), LocationKind.IFILE);
 		IDocument doc= fb.getDocument();
 
 		Position p1= new Position(2, 67);
-		try {
-			PositionTracker.convertToCharacterPosition(p1, doc);
-			assertTrue("shouldn't happen", false);
-		} catch (BadLocationException e) {
-		}
+		assertThrows(BadLocationException.class, () -> PositionTracker.convertToCharacterPosition(p1, doc));
 	}
 
 	public void atestLineOffsets() throws Exception {
