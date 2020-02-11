@@ -89,15 +89,6 @@ public class ScreenshotTest {
 	/**
 	 * Takes a screenshot and dumps other debugging information to the given stream.
 	 *
-	 * <p>
-	 * Workaround for missing {@link junit.framework.TestCase#getName()} in JUnit 4:
-	 * </p>
-	 *
-	 * <pre>
-	 * &#64;Rule
-	 * public TestName testName = new TestName();
-	 * </pre>
-	 *
 	 * @param testClass test class that takes the screenshot
 	 * @param name screenshot identifier (e.g. test name)
 	 * @param out print stream to use for diagnostics.
