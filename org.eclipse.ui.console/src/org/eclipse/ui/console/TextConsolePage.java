@@ -22,7 +22,6 @@ import java.util.ResourceBundle;
 
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
@@ -32,11 +31,9 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.jface.text.IFindReplaceTarget;
 import org.eclipse.jface.text.ITextListener;
 import org.eclipse.jface.text.ITextOperationTarget;
-import org.eclipse.jface.text.TextEvent;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -83,27 +80,19 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 	protected ClearOutputAction fClearOutputAction;
 
 	// text selection listener, used to update selection dependent actions on selection changes
-	private ISelectionChangedListener selectionChangedListener =  new ISelectionChangedListener() {
-		@Override
-		public void selectionChanged(SelectionChangedEvent event) {
-			updateSelectionDependentActions();
-		}
-	};
+	private ISelectionChangedListener selectionChangedListener =  event -> updateSelectionDependentActions();
 
 	// updates the find replace action and the clear action if the document length is > 0
-	private ITextListener textListener = new ITextListener() {
-		@Override
-		public void textChanged(TextEvent event) {
-			IUpdate findReplace = (IUpdate)fGlobalActions.get(ActionFactory.FIND.getId());
-			if (findReplace != null) {
-				findReplace.update();
-			}
+	private ITextListener textListener = event -> {
+		IUpdate findReplace = (IUpdate)fGlobalActions.get(ActionFactory.FIND.getId());
+		if (findReplace != null) {
+			findReplace.update();
+		}
 
-			if (fClearOutputAction != null) {
-				IDocument doc = fViewer.getDocument();
-				if(doc != null) {
-					fClearOutputAction.setEnabled(doc.getLength() > 0);
-				}
+		if (fClearOutputAction != null) {
+			IDocument doc = fViewer.getDocument();
+			if(doc != null) {
+				fClearOutputAction.setEnabled(doc.getLength() > 0);
 			}
 		}
 	};
@@ -162,12 +151,7 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		}
 		fMenuManager= new MenuManager("#ContextMenu", id);  //$NON-NLS-1$
 		fMenuManager.setRemoveAllWhenShown(true);
-		fMenuManager.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager m) {
-				contextMenuAboutToShow(m);
-			}
-		});
+		fMenuManager.addMenuListener(m -> contextMenuAboutToShow(m));
 		Menu menu = fMenuManager.createContextMenu(getControl());
 		getControl().setMenu(menu);
 

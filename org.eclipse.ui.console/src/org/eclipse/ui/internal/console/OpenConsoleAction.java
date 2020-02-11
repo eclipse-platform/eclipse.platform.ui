@@ -14,7 +14,6 @@
 package org.eclipse.ui.internal.console;
 
 import java.util.Arrays;
-import java.util.Comparator;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.Action;
@@ -52,20 +51,16 @@ public class OpenConsoleAction extends Action implements IMenuCreator {
 
 	private ConsoleFactoryExtension[] getSortedFactories() {
 		ConsoleFactoryExtension[] factoryExtensions = ((ConsoleManager) ConsolePlugin.getDefault().getConsoleManager()).getConsoleFactoryExtensions();
-		Arrays.sort(factoryExtensions, new Comparator<ConsoleFactoryExtension>() {
-
-			@Override
-			public int compare(ConsoleFactoryExtension e1, ConsoleFactoryExtension e2) {
-				if (e1.isNewConsoleExtenson()) {
-					return -1;
-				}
-				if (e2.isNewConsoleExtenson()) {
-					return 1;
-				}
-				String first = e1.getLabel();
-				String second = e2.getLabel();
-				return first.compareTo(second);
+		Arrays.sort(factoryExtensions, (e1, e2) -> {
+			if (e1.isNewConsoleExtenson()) {
+				return -1;
 			}
+			if (e2.isNewConsoleExtenson()) {
+				return 1;
+			}
+			String first = e1.getLabel();
+			String second = e2.getLabel();
+			return first.compareTo(second);
 		});
 		return factoryExtensions;
 	}

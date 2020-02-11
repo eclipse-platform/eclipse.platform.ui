@@ -17,7 +17,6 @@ package org.eclipse.ui.internal.console;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.actions.ActionFactory;
 import org.eclipse.ui.console.IConsoleConstants;
@@ -47,13 +46,10 @@ public class IOConsolePage extends TextConsolePage {
 		super(console, view);
 		fView = view;
 
-		fPropertyChangeListener = new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				String property = event.getProperty();
-				if (property.equals(IConsoleConstants.P_CONSOLE_OUTPUT_COMPLETE)) {
-					setReadOnly();
-				}
+		fPropertyChangeListener = event -> {
+			String property = event.getProperty();
+			if (property.equals(IConsoleConstants.P_CONSOLE_OUTPUT_COMPLETE)) {
+				setReadOnly();
 			}
 		};
 		console.addPropertyChangeListener(fPropertyChangeListener);
