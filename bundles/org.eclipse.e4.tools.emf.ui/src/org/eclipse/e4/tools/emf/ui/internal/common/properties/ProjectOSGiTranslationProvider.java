@@ -66,7 +66,7 @@ public class ProjectOSGiTranslationProvider extends ResourceBundleTranslationPro
 		this.project.getWorkspace().addResourceChangeListener(event -> {
 			if (event.getType() == IResourceChangeEvent.POST_CHANGE) {
 				try {
-					event.getDelta().accept(delta -> ProjectOSGiTranslationProvider.this.visit(delta));
+					event.getDelta().accept(ProjectOSGiTranslationProvider.this::visit);
 				} catch (final CoreException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
