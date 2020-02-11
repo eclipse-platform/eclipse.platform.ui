@@ -365,8 +365,6 @@ final class DisplayWaiter {
 	 * Implements state consistency checking.
 	 *
 	 * @param states the allowed states
-	 * @throws junit.framework.AssertionFailedError if the current state is not
-	 *         in <code>states</code>
 	 */
 	private void assertStates(int states) {
 		Assert.assertTrue("illegal state", isState(states)); //$NON-NLS-1$
