@@ -169,7 +169,7 @@ public class Slider extends Composite {
 			return;
 		}
 		Arrays.stream(fScroller.getChildren()).filter(control -> !control.isDisposed())
-				.forEach(control -> control.dispose());
+				.forEach(Control::dispose);
 		List<TipProvider> providers = fTipManager.getProviders();
 		int spaceCount = Math.floorDiv(fScroller.getBounds().width, (fIconSize + fSpacing));
 		int providerCount = providers.size();
