@@ -64,6 +64,8 @@ final class TemplatesMessages extends NLS {
 	public static String TemplatePreferencePage_error_write_message;
 	public static String TemplatePreferencePage_question_create_new_title;
 	public static String TemplatePreferencePage_question_create_new_message;
+	public static String TemplatePreferencePage_question_create_new_button_create;
+	public static String TemplatePreferencePage_question_create_new_button_rename;
 	public static String TemplatePreferencePage_preview;
 	public static String EditTemplateDialog_error_noname;
 	public static String EditTemplateDialog_error_adjacent_variables;

@@ -1203,9 +1203,7 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		if (newTemplate != null) {
 
 			if (!newTemplate.getName().equals(oldTemplate.getName()) &&
-				MessageDialog.openQuestion(getShell(),
-				TemplatesMessages.TemplatePreferencePage_question_create_new_title,
-				TemplatesMessages.TemplatePreferencePage_question_create_new_message))
+					openCreateNewOrRenameDialog())
 			{
 				data= new TemplatePersistenceData(newTemplate, true);
 				fTemplateStore.add(data);
@@ -1434,6 +1432,15 @@ public abstract class TemplatePreferencePage extends PreferencePage implements I
 		String title= TemplatesMessages.TemplatePreferencePage_error_write_title;
 		String message= TemplatesMessages.TemplatePreferencePage_error_write_message;
 		MessageDialog.openError(getShell(), title, message);
+	}
+
+	private boolean openCreateNewOrRenameDialog() {
+		MessageDialog dialog = new MessageDialog(getShell(),
+				TemplatesMessages.TemplatePreferencePage_question_create_new_title, null,
+				TemplatesMessages.TemplatePreferencePage_question_create_new_message, MessageDialog.QUESTION, 0,
+				TemplatesMessages.TemplatePreferencePage_question_create_new_button_create,
+				TemplatesMessages.TemplatePreferencePage_question_create_new_button_rename);
+		return dialog.open() == 0;
 	}
 
 	protected SourceViewer getViewer() {
