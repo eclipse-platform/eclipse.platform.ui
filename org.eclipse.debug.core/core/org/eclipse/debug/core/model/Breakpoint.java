@@ -23,7 +23,6 @@ import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.core.runtime.Status;
@@ -209,12 +208,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint, 
 	 */
 	protected void setAttribute(final String attributeName, final boolean value) throws CoreException {
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
-		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-					ensureMarker().setAttribute(attributeName, value);
-				}
-			};
+		IWorkspaceRunnable runnable= monitor -> ensureMarker().setAttribute(attributeName, value);
 
 		workspace.run(runnable, getMarkerRule(), IWorkspace.AVOID_UPDATE, null);
 	}
@@ -232,12 +226,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint, 
 	 */
 	protected void setAttribute(final String attributeName, final int value) throws CoreException {
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
-		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-					ensureMarker().setAttribute(attributeName, value);
-				}
-			};
+		IWorkspaceRunnable runnable= monitor -> ensureMarker().setAttribute(attributeName, value);
 
 		workspace.run(runnable, getMarkerRule(), IWorkspace.AVOID_UPDATE, null);
 	}
@@ -255,12 +244,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint, 
 	 */
 	protected void setAttribute(final String attributeName, final Object value) throws CoreException {
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
-		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-					ensureMarker().setAttribute(attributeName, value);
-				}
-			};
+		IWorkspaceRunnable runnable= monitor -> ensureMarker().setAttribute(attributeName, value);
 
 		workspace.run(runnable, getMarkerRule(), IWorkspace.AVOID_UPDATE, null);
 	}
@@ -278,12 +262,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint, 
 	 */
 	protected void setAttributes(final String[] attributeNames, final Object[] values) throws CoreException {
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
-		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-					ensureMarker().setAttributes(attributeNames, values);
-				}
-			};
+		IWorkspaceRunnable runnable= monitor -> ensureMarker().setAttributes(attributeNames, values);
 
 		workspace.run(runnable, getMarkerRule(), IWorkspace.AVOID_UPDATE, null);
 	}
@@ -300,12 +279,7 @@ public abstract class Breakpoint extends PlatformObject implements IBreakpoint, 
 	 */
 	protected void setAttributes(final Map<String, ? extends Object> attributes) throws CoreException {
 		IWorkspace workspace= ResourcesPlugin.getWorkspace();
-		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
-				@Override
-				public void run(IProgressMonitor monitor) throws CoreException {
-					ensureMarker().setAttributes(attributes);
-				}
-			};
+		IWorkspaceRunnable runnable= monitor -> ensureMarker().setAttributes(attributes);
 
 		workspace.run(runnable, getMarkerRule(), IWorkspace.AVOID_UPDATE, null);
 	}
