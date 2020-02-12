@@ -313,6 +313,8 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 
 		private int nflexible;
 
+		private boolean updateActionBars = true;
+
 		public HelpPartPage(String id, String text) {
 			this.id = id;
 			this.text = text;
@@ -530,7 +532,10 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 					bars.activate();
 				else
 					bars.deactivate();
-				bars.updateActionBars();
+
+				if (this.updateActionBars) {
+					bars.updateActionBars();
+				}
 			} else {
 				((SubToolBarManager) subToolBarManager).setVisible(visible);
 				if (subMenuManager != null) {
@@ -1066,8 +1071,14 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 			return false;
 		if (oldPage != null) {
 			oldPage.stop();
+			oldPage.updateActionBars = false;
 			oldPage.setVisible(false);
+			oldPage.updateActionBars = true;
 		}
+
+		newPage.updateActionBars = false;
+		newPage.setVisible(true);
+		newPage.updateActionBars = true;
 		mform.getForm().setText(null); //(newPage.getText());
 		mform.getForm().getForm().setSeparatorVisible(newPage.getText()!=null);
 		Image newImage=null;
@@ -1075,7 +1086,7 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 		//if (iconId != null)
 			//newImage = HelpUIResources.getImage(iconId);
 		mform.getForm().setImage(newImage);
-		newPage.setVisible(true);
+
 		toolBarManager.update(true);
 		currentPage = newPage;
 		if (mform.isStale())
@@ -1089,6 +1100,7 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 			}
 			updateNavigation();
 		}
+
 		return true;
 	}
 
@@ -1799,4 +1811,3 @@ public class ReusableHelpPart implements IHelpUIConstants, IActivityManagerListe
 		mcPart.updateStatus();
 	}
 }
-
