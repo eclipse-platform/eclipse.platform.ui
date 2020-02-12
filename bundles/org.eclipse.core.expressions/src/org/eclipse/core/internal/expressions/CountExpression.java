@@ -64,13 +64,13 @@ public class CountExpression extends Expression {
 	private void initializeSize(String size) {
 		if (size == null)
 			size= "*"; //$NON-NLS-1$
-		if (size.equals("*")) //$NON-NLS-1$
+		if ("*".equals(size)) //$NON-NLS-1$
 			fMode= ANY_NUMBER;
-		else if (size.equals("?")) //$NON-NLS-1$
+		else if ("?".equals(size)) //$NON-NLS-1$
 			fMode= NONE_OR_ONE;
-		else if (size.equals("!")) //$NON-NLS-1$
+		else if ("!".equals(size)) //$NON-NLS-1$
 			fMode= NONE;
-		else if (size.equals("+")) //$NON-NLS-1$
+		else if ("+".equals(size)) //$NON-NLS-1$
 			fMode= ONE_OR_MORE;
 		else if (size.charAt(0) == '-' && size.charAt(size.length() - 1) == ')') {
 			try {
