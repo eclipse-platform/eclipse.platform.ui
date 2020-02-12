@@ -32,6 +32,7 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.util.Tracing;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeySequence;
@@ -377,7 +378,7 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 			BindingElement bindingElement = ((BindingElement) element);
 			switch (index) {
 			case COMMAND_NAME_COLUMN: // name
-				return bindingElement.getName();
+				return LegacyActionTools.removeMnemonics(bindingElement.getName());
 			case KEY_SEQUENCE_COLUMN: // keys
 				TriggerSequence seq = bindingElement.getTrigger();
 				return seq == null ? Util.ZERO_LENGTH_STRING : seq.format();
