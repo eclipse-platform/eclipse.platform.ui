@@ -23,12 +23,8 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
@@ -205,19 +201,9 @@ public class FileSelectionDialog extends MessageDialog {
 	 */
 	private void initializeDialog() {
 		selectionGroup
-			.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				getButton(IDialogConstants.OK_ID).setEnabled(
-					!selectionGroup.getListTableSelection().isEmpty());
-			}
-		});
-		selectionGroup.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				buttonPressed(IDialogConstants.OK_ID);
-			}
-		});
+			.addSelectionChangedListener(event -> getButton(IDialogConstants.OK_ID).setEnabled(
+				!selectionGroup.getListTableSelection().isEmpty()));
+		selectionGroup.addDoubleClickListener(event -> buttonPressed(IDialogConstants.OK_ID));
 
 		getButton(IDialogConstants.OK_ID).setEnabled(false);
 	}

@@ -36,8 +36,6 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -260,12 +258,9 @@ public abstract class ExternalToolsMainTab extends AbstractLaunchConfigurationTa
 		group.setFont(parent.getFont());
 
 		argumentField = new Text(group, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL);
-		argumentField.addTraverseListener(new TraverseListener() {
-			@Override
-			public void keyTraversed(TraverseEvent event) {
-				if (event.detail == SWT.TRAVERSE_RETURN && (event.stateMask & SWT.MODIFIER_MASK) != 0) {
-					event.doit= true;
-				}
+		argumentField.addTraverseListener(event -> {
+			if (event.detail == SWT.TRAVERSE_RETURN && (event.stateMask & SWT.MODIFIER_MASK) != 0) {
+				event.doit= true;
 			}
 		});
 

@@ -93,46 +93,41 @@ public class BuildFilesResolver implements IDynamicVariableResolver
 			final boolean trackFiles = files;
 
 
-			buildDelta.accept(new IResourceDeltaVisitor()
-			{
-				@Override
-				public boolean visit(IResourceDelta delta) throws CoreException
+			buildDelta.accept((IResourceDeltaVisitor) delta -> {
+				IResource resource = delta.getResource();
+
+				// Only track files with the right kind of delta
+				boolean isTracked = (delta.getKind() & trackDeltas) > 0;
+				if (isTracked)
 				{
-					IResource resource = delta.getResource();
-
-					// Only track files with the right kind of delta
-					boolean isTracked = (delta.getKind() & trackDeltas) > 0;
-					if (isTracked)
-					{
-						// Only track dirs if desired
-						isTracked = trackDirs && resource.getType() != IResource.FILE;
-						// Only track files if desired
-						isTracked |= trackFiles && resource.getType() == IResource.FILE;
-					}
-
-					//  If tracking a change, then add it to the change set for inclusion in the variable's output
-					if (isTracked)
-					{
-						String osPath = resource.getLocation().toOSString();
-						if (changedResources.add(osPath))
-						{
-							if (fileList.length() > 0)
-							{
-								fileList.append(FILE_LIST_SEPARATOR);
-							}
-
-							// Since space is our separator, we need to add quotes
-							// around each file to handle filenames with embedded
-							// spaces. We also need to escape out embedded quotes in
-							// the filename so they don't conflict with these
-							// special quotes.
-							//
-							osPath = osPath.replaceAll("\"", "\\\\\""); //$NON-NLS-1$ //$NON-NLS-2$
-							fileList.append("\"" + osPath + "\""); //$NON-NLS-1$ //$NON-NLS-2$
-						}
-					}
-					return true;
+					// Only track dirs if desired
+					isTracked = trackDirs && resource.getType() != IResource.FILE;
+					// Only track files if desired
+					isTracked |= trackFiles && resource.getType() == IResource.FILE;
 				}
+
+				//  If tracking a change, then add it to the change set for inclusion in the variable's output
+				if (isTracked)
+				{
+					String osPath = resource.getLocation().toOSString();
+					if (changedResources.add(osPath))
+					{
+						if (fileList.length() > 0)
+						{
+							fileList.append(FILE_LIST_SEPARATOR);
+						}
+
+						// Since space is our separator, we need to add quotes
+						// around each file to handle filenames with embedded
+						// spaces. We also need to escape out embedded quotes in
+						// the filename so they don't conflict with these
+						// special quotes.
+						//
+						osPath = osPath.replaceAll("\"", "\\\\\""); //$NON-NLS-1$ //$NON-NLS-2$
+						fileList.append("\"" + osPath + "\""); //$NON-NLS-1$ //$NON-NLS-2$
+					}
+				}
+				return true;
 			}, deltas);
 			result = fileList.toString();
 		}
