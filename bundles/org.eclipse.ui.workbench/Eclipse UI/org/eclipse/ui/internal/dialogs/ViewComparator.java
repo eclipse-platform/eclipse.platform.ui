@@ -15,6 +15,7 @@
 package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.e4.ui.model.application.descriptor.basic.MPartDescriptor;
+import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.ui.internal.WorkbenchMessages;
@@ -69,8 +70,8 @@ public class ViewComparator extends ViewerComparator {
 		if (str2 == null) {
 			str2 = EMPTY_STRING;
 		}
-		String s1 = DialogUtil.removeAccel(str1);
-		String s2 = DialogUtil.removeAccel(str2);
+		String s1 = LegacyActionTools.removeMnemonics(str1);
+		String s2 = LegacyActionTools.removeMnemonics(str2);
 		return getComparator().compare(s1, s2);
 	}
 }

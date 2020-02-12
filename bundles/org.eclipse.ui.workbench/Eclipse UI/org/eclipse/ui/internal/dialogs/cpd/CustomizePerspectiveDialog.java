@@ -59,6 +59,7 @@ import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.IContributionManager;
 import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.SubContributionItem;
 import org.eclipse.jface.action.SubMenuManager;
@@ -127,7 +128,6 @@ import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.actions.NewWizardShortcutAction;
-import org.eclipse.ui.internal.dialogs.DialogUtil;
 import org.eclipse.ui.internal.dialogs.WorkbenchWizardElement;
 import org.eclipse.ui.internal.dialogs.cpd.TreeManager.TreeItem;
 import org.eclipse.ui.internal.e4.compatibility.ModeledPageLayout;
@@ -255,7 +255,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		ActionSet actionSet;
 
 		public DisplayItem(String label, IContributionItem item) {
-			treeManager.super(label == null ? null : DialogUtil.removeAccel(removeShortcut(label)));
+			treeManager.super(label == null ? null : LegacyActionTools.removeMnemonics(removeShortcut(label)));
 			this.item = item;
 		}
 
@@ -402,7 +402,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		private List<ShortcutItem> contributionItems;
 
 		public Category(String label) {
-			treeManager.super(label == null ? null : DialogUtil.removeAccel(removeShortcut(label)));
+			treeManager.super(label == null ? null : LegacyActionTools.removeMnemonics(removeShortcut(label)));
 			this.contributionItems = new ArrayList<>();
 		}
 

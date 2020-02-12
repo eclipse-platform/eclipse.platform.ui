@@ -17,9 +17,9 @@ package org.eclipse.ui.internal.decorators;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
+import org.eclipse.jface.action.LegacyActionTools;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ResourceLocator;
-import org.eclipse.ui.internal.dialogs.DialogUtil;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
 import org.eclipse.ui.model.IWorkbenchAdapter;
 
@@ -125,7 +125,7 @@ public class LightweightActionDescriptor implements IAdaptable, IWorkbenchAdapte
 			if (end >= 0) {
 				text = text.substring(0, end);
 			}
-			return DialogUtil.removeAccel(text);
+			return LegacyActionTools.removeMnemonics(text);
 		}
 		return o == null ? "" : o.toString();//$NON-NLS-1$
 	}
