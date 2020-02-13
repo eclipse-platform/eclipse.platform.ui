@@ -107,8 +107,8 @@ public class ProjectUndoState extends ContainerUndoState {
 		}
 		monitor.done();
 	}
-	
-	
+
+
 
 	@Override
 	public String getName() {

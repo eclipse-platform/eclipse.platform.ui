@@ -100,7 +100,7 @@ public class DeleteResourceChange extends ResourceChange {
 		String label= Messages.format(
 				RefactoringCoreMessages.DeleteResourceChange_name,
 				BasicElementLabels.getPathLabel(path, false));
-		
+
 		if (path.segmentCount() == 1) {
 			IResource resource= getResource();
 			if (resource != null) {

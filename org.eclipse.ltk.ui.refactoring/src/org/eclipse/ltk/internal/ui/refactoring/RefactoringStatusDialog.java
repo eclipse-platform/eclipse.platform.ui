@@ -71,7 +71,7 @@ public class RefactoringStatusDialog extends Dialog {
 		super.configureShell(newShell);
 		newShell.setText(fWindowTitle);
 	}
-	
+
 	@Override
 	protected int getDialogBoundsStrategy() {
 		return DIALOG_PERSISTSIZE;
@@ -82,7 +82,7 @@ public class RefactoringStatusDialog extends Dialog {
 		IDialogSettings settings= RefactoringUIPlugin.getDefault().getDialogSettings();
 		return DialogSettings.getOrCreateSection(settings, "RefactoringStatusDialog"); //$NON-NLS-1$
 	}
-	
+
 	@Override
 	protected Control createDialogArea(Composite parent) {
 		Composite result= (Composite) super.createDialogArea(parent);

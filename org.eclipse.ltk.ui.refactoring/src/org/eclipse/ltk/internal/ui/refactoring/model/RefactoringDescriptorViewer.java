@@ -56,7 +56,7 @@ public class RefactoringDescriptorViewer extends Viewer {
 		Assert.isNotNull(parent);
 		fBrowser= new Browser(parent, style);
 		fBrowser.setJavascriptEnabled(false);
-		
+
 		final Display display= parent.getDisplay();
 		fBrowser.setForeground(display.getSystemColor(SWT.COLOR_LIST_FOREGROUND));
 		fBrowser.setBackground(display.getSystemColor(SWT.COLOR_LIST_BACKGROUND));

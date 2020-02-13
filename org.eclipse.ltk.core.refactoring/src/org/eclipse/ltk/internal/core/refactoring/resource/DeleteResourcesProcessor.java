@@ -114,7 +114,7 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 		if (!(Resources.containsOnlyProjects(fResources) || Resources.containsOnlyNonProjects(fResources))) {
 			return RefactoringStatus.createFatalErrorStatus(RefactoringCoreMessages.DeleteResourcesProcessor_delete_error_mixed_types);
 		}
-	
+
 		return new RefactoringStatus();
 	}
 
@@ -127,7 +127,7 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 			for (IResource resource : fResources) {
 				if (!isSynchronizedExcludingLinkedResources(resource)) {
 					String pathLabel= BasicElementLabels.getPathLabel(resource.getFullPath(), false);
-					
+
 					String locationLabel= null;
 					IPath location= resource.getLocation();
 					if (location != null) {
@@ -158,7 +158,7 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 			}
 
 			checkDirtyResources(result);
-			
+
 			ResourceChangeChecker checker= context.getChecker(ResourceChangeChecker.class);
 			IResourceChangeDescriptionFactory deltaFactory= checker.getDeltaFactory();
 			for (IResource fResource : fResources) {
@@ -179,7 +179,7 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 	/**
 	 * Checks whether this resource and its descendents are considered to be in sync with the local
 	 * file system. The linked resources and their descendents are excluded from the check.
-	 * 
+	 *
 	 * @param resource the resource to check
 	 * @return <code>true</code> if this resource and its descendents except linked resources are
 	 *         synchronized, and <code>false</code> in all other cases

@@ -27,7 +27,7 @@ public final class RefactoringHistoryProject extends RefactoringHistoryNode {
 
 	/**
 	 * Creates a new refactoring history project.
-	 * 
+	 *
 	 * @param project the project
 	 */
 	public RefactoringHistoryProject(final String project) {

@@ -54,7 +54,7 @@ public final class SWTUtil {
 	 *
 	 * @param control the control to add the accessibility support to
 	 * @param text the name
-	 * 
+	 *
 	 * @since 3.5.100
 	 */
 	public static void setAccessibilityText(Control control, final String text) {
@@ -67,7 +67,7 @@ public final class SWTUtil {
 			}
 		});
 	}
-	
+
 	private SWTUtil() {
 		// Not for instantiation
 	}

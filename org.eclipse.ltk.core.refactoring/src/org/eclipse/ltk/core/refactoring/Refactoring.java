@@ -63,7 +63,7 @@ import org.eclipse.core.runtime.SubProgressMonitor;
  * <p>
  * The class should be subclassed by clients wishing to implement new refactorings.
  * </p>
- * 
+ *
  * @see RefactoringContext
  *
  * @since 3.0

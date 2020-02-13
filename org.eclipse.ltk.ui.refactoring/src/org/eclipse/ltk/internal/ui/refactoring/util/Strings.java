@@ -16,7 +16,7 @@ package org.eclipse.ltk.internal.ui.refactoring.util;
 
 /**
  * Utility class for string-related functions.
- * 
+ *
  * @since 3.0
  */
 public final class Strings {

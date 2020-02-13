@@ -281,7 +281,7 @@ public abstract class RefactoringDescriptor implements Comparable<RefactoringDes
 			return null;
 		return new RefactoringContext(refactoring);
 	}
-	
+
 	@Override
 	public final boolean equals(final Object object) {
 		if (object instanceof RefactoringDescriptor) {

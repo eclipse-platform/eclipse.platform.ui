@@ -57,7 +57,7 @@ public class PerformRefactoringOperation implements IWorkspaceRunnable {
 	 * @param refactoring the refactoring to perform
 	 * @param style the condition checking style as defined by
 	 *  {@link CheckConditionsOperation}
-	 * @see #PerformRefactoringOperation(RefactoringContext, int) 
+	 * @see #PerformRefactoringOperation(RefactoringContext, int)
 	 */
 	public PerformRefactoringOperation(Refactoring refactoring, int style) {
 		Assert.isNotNull(refactoring);
@@ -85,7 +85,7 @@ public class PerformRefactoringOperation implements IWorkspaceRunnable {
 		fRefactoring= fRefactoringContext.getRefactoring();
 		fStyle= style;
 	}
-	
+
 	/**
 	 * Return the refactoring status of the condition checking.
 	 *

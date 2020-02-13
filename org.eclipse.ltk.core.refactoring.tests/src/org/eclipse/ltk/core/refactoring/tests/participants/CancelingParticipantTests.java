@@ -55,7 +55,7 @@ public class CancelingParticipantTests extends TestCase {
 		public String getName() {
 			return "canceling participant";
 		}
-		
+
 		@Override
 		public RefactoringStatus checkConditions(IProgressMonitor pm, CheckConditionsContext context) throws OperationCanceledException {
 			if (fCancelStep == 0) {
@@ -64,7 +64,7 @@ public class CancelingParticipantTests extends TestCase {
 			}
 			return new RefactoringStatus();
 		}
-		
+
 		@Override
 		public Change createChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 			if (fCancelStep == 1) {
@@ -73,7 +73,7 @@ public class CancelingParticipantTests extends TestCase {
 			}
 			return new NullChange("1");
 		}
-		
+
 		@Override
 		public Change createPreChange(IProgressMonitor pm) throws CoreException, OperationCanceledException {
 			if (fCancelStep == 2) {
@@ -86,7 +86,7 @@ public class CancelingParticipantTests extends TestCase {
 
 	private class TestProcessor extends RenameProcessor {
 		private Object fElement= Boolean.TRUE;
-		
+
 		@Override
 		public Object[] getElements() {
 			return new Object[] { fElement };
@@ -124,7 +124,7 @@ public class CancelingParticipantTests extends TestCase {
 	}
 
 	private int fCancelStep;
-	
+
 	private ILogListener fLogListener;
 	private List<IStatus> fLogEntries;
 
@@ -144,60 +144,60 @@ public class CancelingParticipantTests extends TestCase {
 	protected void tearDown() throws Exception {
 		Platform.removeLogListener(fLogListener);
 	}
-	
+
 	public void testCheckConditions() throws Exception {
 		RenameRefactoring refactoring= new RenameRefactoring(new TestProcessor());
-		
+
 		fCancelStep= 0;
 		PerformRefactoringOperation op= new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
 		NullProgressMonitor pm= new NullProgressMonitor();
-		
+
 		boolean exception= false;
 		try {
 			ResourcesPlugin.getWorkspace().run(op, pm);
 		} catch (OperationCanceledException e) {
 			exception= true;
 		}
-		
+
 		assertTrue(pm.isCanceled());
 		Assert.assertEquals(Collections.EMPTY_LIST.toString(), fLogEntries.toString());
 		Assert.assertTrue(exception);
 	}
-	
-	
+
+
 	public void testCreateChange() throws Exception {
 		RenameRefactoring refactoring= new RenameRefactoring(new TestProcessor());
-		
+
 		fCancelStep= 1;
 		PerformRefactoringOperation op= new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
 		NullProgressMonitor pm= new NullProgressMonitor();
-		
+
 		boolean exception= false;
 		try {
 			ResourcesPlugin.getWorkspace().run(op, pm);
 		} catch (OperationCanceledException e) {
 			exception= true;
 		}
-		
+
 		assertTrue(pm.isCanceled());
 		Assert.assertEquals(Collections.EMPTY_LIST.toString(), fLogEntries.toString());
 		Assert.assertTrue(exception);
 	}
-	
+
 	public void testCreatePreChange() throws Exception {
 		RenameRefactoring refactoring= new RenameRefactoring(new TestProcessor());
-		
+
 		fCancelStep= 2;
 		PerformRefactoringOperation op= new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
 		NullProgressMonitor pm= new NullProgressMonitor();
-		
+
 		boolean exception= false;
 		try {
 			ResourcesPlugin.getWorkspace().run(op, pm);
 		} catch (OperationCanceledException e) {
 			exception= true;
 		}
-		
+
 		assertTrue(pm.isCanceled());
 		Assert.assertEquals(Collections.EMPTY_LIST.toString(), fLogEntries.toString());
 		Assert.assertTrue(exception);

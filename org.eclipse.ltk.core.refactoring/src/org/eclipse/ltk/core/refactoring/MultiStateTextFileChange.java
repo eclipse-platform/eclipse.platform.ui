@@ -901,9 +901,9 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 			performChangesInSynchronizationContext(document, undoList, preview);
 			return;
 		}
-		
+
 		ITextFileBufferManager fileBufferManager= FileBuffers.getTextFileBufferManager();
-		
+
 		/** The lock for waiting for computation in the UI thread to complete. */
 		final Lock completionLock= new Lock();
 		final BadLocationException[] exception= new BadLocationException[1];
@@ -922,7 +922,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 				}
 			}
 		};
-		
+
 		synchronized (completionLock) {
 			fileBufferManager.execute(runnable);
 			while (! completionLock.fDone) {
@@ -932,7 +932,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 				}
 			}
 		}
-		
+
 		if (exception[0] != null) {
 			throw exception[0];
 		}
@@ -943,15 +943,15 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 		try {
 			if (document instanceof IDocumentExtension4)
 				session= ((IDocumentExtension4) document).startRewriteSession(DocumentRewriteSessionType.UNRESTRICTED);
-	
+
 			for (final Iterator<ComposableBufferChange> iterator= fChanges.iterator(); iterator.hasNext();) {
 				final ComposableBufferChange change= iterator.next();
-	
+
 				final UndoEdit edit= createTextEditProcessor(change, document, undoList != null ? TextEdit.CREATE_UNDO : TextEdit.NONE, preview).performEdits();
 				if (undoList != null)
 					undoList.addFirst(edit);
 			}
-			
+
 		} finally {
 			if (session != null)
 				((IDocumentExtension4) document).stopRewriteSession(session);

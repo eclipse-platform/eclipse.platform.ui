@@ -435,7 +435,7 @@ public class CompositeChange extends Change {
 	 * <p>
 	 * This method is not intended to be overridden or extended.
 	 * </p>
-	 * 
+	 *
 	 * @return the undo object containing all undo changes of those children that got successfully
 	 *         executed while performing this change, or <code>null</code> if all changes were
 	 *         executed successfully or if there's nothing to undo.

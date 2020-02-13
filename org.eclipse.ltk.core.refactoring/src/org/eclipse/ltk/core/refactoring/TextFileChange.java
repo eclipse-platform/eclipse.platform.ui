@@ -257,9 +257,9 @@ public class TextFileChange extends TextChange {
 		if (! fBuffer.isSynchronizationContextRequested()) {
 			return super.performEdits(document);
 		}
-		
+
 		ITextFileBufferManager fileBufferManager= FileBuffers.getTextFileBufferManager();
-		
+
 		/** The lock for waiting for computation in the UI thread to complete. */
 		final Lock completionLock= new Lock();
 		final UndoEdit[] result= new UndoEdit[1];
@@ -279,7 +279,7 @@ public class TextFileChange extends TextChange {
 				}
 			}
 		};
-		
+
 		synchronized (completionLock) {
 			fileBufferManager.execute(runnable);
 			while (! completionLock.fDone) {
@@ -289,11 +289,11 @@ public class TextFileChange extends TextChange {
 				}
 			}
 		}
-		
+
 		if (exception[0] != null) {
 			throw exception[0];
 		}
-		
+
 		return result[0];
 	}
 

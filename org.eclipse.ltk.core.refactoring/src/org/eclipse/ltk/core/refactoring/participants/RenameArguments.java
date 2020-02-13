@@ -22,7 +22,7 @@ import org.eclipse.core.runtime.Assert;
  * This class may be subclassed by refactoring processors wishing to provide special
  * rename arguments for special participants.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public class RenameArguments extends RefactoringArguments {

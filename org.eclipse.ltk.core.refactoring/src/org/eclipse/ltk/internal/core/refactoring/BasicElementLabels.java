@@ -32,7 +32,7 @@ public class BasicElementLabels {
 	 * User-readable string for separating post qualified names (e.g. " - ").
 	 */
 	public final static String CONCAT_STRING= RefactoringCoreMessages.BasicElementLabels_concat_string;
-	
+
 	private BasicElementLabels(){}
 
 	/**

@@ -218,9 +218,9 @@ public class UndoTextFileChange extends Change {
 		if (! buffer.isSynchronizationContextRequested()) {
 			return doPerformEdits(document, setContentStampSuccess);
 		}
-		
+
 		ITextFileBufferManager fileBufferManager= FileBuffers.getTextFileBufferManager();
-		
+
 		/** The lock for waiting for computation in the UI thread to complete. */
 		final Lock completionLock= new Lock();
 		final UndoEdit[] result= new UndoEdit[1];
@@ -246,7 +246,7 @@ public class UndoTextFileChange extends Change {
 				}
 			}
 		};
-		
+
 		synchronized (completionLock) {
 			fileBufferManager.execute(runnable);
 			while (! completionLock.fDone) {
@@ -256,7 +256,7 @@ public class UndoTextFileChange extends Change {
 				}
 			}
 		}
-		
+
 		if (badLocationException[0] != null) {
 			throw badLocationException[0];
 		} else if (malformedTreeException[0] != null) {

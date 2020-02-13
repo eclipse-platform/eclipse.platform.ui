@@ -58,7 +58,7 @@ import org.eclipse.core.runtime.Platform;
  *   Change change= createChange();
  *   try {
  *     change.initializeValidationData(pm);
- * 
+ *
  *     ....
  *
  *     if (!change.isEnabled())
@@ -91,7 +91,7 @@ import org.eclipse.core.runtime.Platform;
  * <p>
  * Clients may subclass this class.
  * </p>
- * 
+ *
  * @since 3.0
  */
 public abstract class Change implements IAdaptable {

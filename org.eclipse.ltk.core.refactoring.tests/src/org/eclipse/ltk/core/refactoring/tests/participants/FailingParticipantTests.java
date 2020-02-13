@@ -52,7 +52,7 @@ public class FailingParticipantTests extends TestCase {
 	protected void tearDown() throws Exception {
 		Platform.removeLogListener(fLogListener);
 	}
-	
+
 	private void resetLog() {
 		fLogEntries= new ArrayList<>();
 	}

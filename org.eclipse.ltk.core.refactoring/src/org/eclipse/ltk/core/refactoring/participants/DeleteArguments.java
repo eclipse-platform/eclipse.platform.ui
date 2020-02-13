@@ -29,26 +29,26 @@ public class DeleteArguments extends RefactoringArguments {
 	private boolean fDeleteProjectContents;
 
 	/**
-	 * Creates a new delete arguments object (deleteProjectContents is <code>false</code>). 
+	 * Creates a new delete arguments object (deleteProjectContents is <code>false</code>).
 	 */
 	public DeleteArguments() {
 		this(false);
 	}
-	
+
 	/**
 	 * Creates a new delete arguments object.
-	 * 
+	 *
 	 * @param deleteProjectContents <code>true</code> if project contents will be deleted
 	 * @since 3.6
 	 */
 	public DeleteArguments(boolean deleteProjectContents) {
 		fDeleteProjectContents= deleteProjectContents;
 	}
-	
+
 	/**
 	 * Returns whether project contents will be deleted as well. This method is not applicable for
 	 * file and folder deletions.
-	 * 
+	 *
 	 * @return <code>true</code> if the refactoring will delete the project contents,
 	 *         <code>false</code> if it only removes the reference from the workspace
 	 * @since 3.6

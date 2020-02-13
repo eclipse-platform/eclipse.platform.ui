@@ -125,7 +125,7 @@ public class RefactoringWizardOpenOperation {
 	public int run(final Shell parent, final String dialogTitle) throws InterruptedException {
 		return run(parent, dialogTitle, null);
 	}
-	
+
 	/**
 	 * Opens the refactoring dialog for the refactoring wizard passed to the constructor.
 	 * The method first checks the initial conditions of the refactoring. If the condition
@@ -146,7 +146,7 @@ public class RefactoringWizardOpenOperation {
 	 *  condition check (if any)
 	 * @param context the runnable context to use for conditions checking before the
 	 *  refactoring wizard dialog is visible. If <code>null</code>, the workbench window's
-	 *  progress service is used.  
+	 *  progress service is used.
 	 *
 	 * @return {@link #INITIAL_CONDITION_CHECKING_FAILED} if the initial condition checking
 	 *  failed and no wizard dialog was presented. Otherwise either {@link IDialogConstants#OK_ID}
@@ -155,7 +155,7 @@ public class RefactoringWizardOpenOperation {
 	 *
 	 * @throws InterruptedException if the initial condition checking got canceled by
 	 *  the user.
-	 *  
+	 *
 	 * @since 3.5
 	 */
 	public int run(final Shell parent, final String dialogTitle, final IRunnableContext context) throws InterruptedException {

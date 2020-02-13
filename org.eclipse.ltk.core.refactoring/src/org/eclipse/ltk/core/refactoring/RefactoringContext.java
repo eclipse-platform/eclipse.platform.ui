@@ -33,7 +33,7 @@ public class RefactoringContext {
 
 	/**
 	 * Creates a context for the given refactoring.
-	 * 
+	 *
 	 * @param refactoring The refactoring associated with the context. Cannot be <code>null</code>.
 	 * @throws NullPointerException if refactoring is <code>null</code>.
 	 */

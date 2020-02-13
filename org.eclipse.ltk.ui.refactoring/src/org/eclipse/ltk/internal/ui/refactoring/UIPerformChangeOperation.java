@@ -54,7 +54,7 @@ public class UIPerformChangeOperation extends PerformChangeOperation {
 			final Throwable[] exception= new Throwable[1];
 			/** Cancel button to re-enable, or <code>null</code> to do nothing. */
 			final Button[] cancelToEnable= new Button[1];
-			
+
 			final ISafeRunnable safeRunnable= new ISafeRunnable() {
 				@Override
 				public void run() {

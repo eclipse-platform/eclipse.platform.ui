@@ -15,7 +15,7 @@ package org.eclipse.ltk.internal.core.refactoring;
 
 /**
  * A simple lock object with a <em>done</em> flag.
- * 
+ *
  * @since 3.5
  */
 public class Lock {

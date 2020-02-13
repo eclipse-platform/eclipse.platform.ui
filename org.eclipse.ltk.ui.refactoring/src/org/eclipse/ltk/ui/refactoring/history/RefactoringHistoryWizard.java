@@ -873,7 +873,7 @@ public class RefactoringHistoryWizard extends Wizard {
 											} else {
 												final Change change= createChange(refactoring, new SubProgressMonitor(monitor, 5, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 												getShell().getDisplay().syncExec(new Runnable() {
-	
+
 													@Override
 													public final void run() {
 														fPreviewPage.setChange(change);

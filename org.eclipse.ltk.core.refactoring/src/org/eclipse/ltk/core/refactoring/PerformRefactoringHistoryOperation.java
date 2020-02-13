@@ -153,7 +153,7 @@ public class PerformRefactoringHistoryOperation implements IWorkspaceRunnable {
 	 * <p>
 	 * A caller of this method must ensure that {@link RefactoringContext#dispose()} is eventually called.
 	 * </p>
-	 * 
+	 *
 	 * <p>
 	 * The default implementation delegates the task to the refactoring descriptor.
 	 * </p>

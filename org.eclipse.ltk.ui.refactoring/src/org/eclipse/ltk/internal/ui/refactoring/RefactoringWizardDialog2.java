@@ -239,16 +239,16 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 		boolean previewPage= isPreviewPageActive();
 		boolean ok= fWizard.canFinish();
 		boolean canFlip= fCurrentPage.canFlipToNextPage();
-		
+
 		Button defaultButton= null;
-		
+
 		Button previewButton= getButton(PREVIEW_ID);
 		if (previewButton != null && !previewButton.isDisposed()) {
 			String previewLabel= previewPage ? IDialogConstants.BACK_LABEL : RefactoringUIMessages.RefactoringWizardDialog2_buttons_preview_label;
 			previewButton.setText(previewLabel);
 			setButtonLayoutData(previewButton);
 			getShell().layout(new Control[] { previewButton });
-			
+
 			boolean enable= true;
 			if (!previewPage)
 				enable= canFlip;
@@ -256,7 +256,7 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 			if (enable)
 				defaultButton= previewButton;
 		}
-		
+
 		Button nextButton= getButton(IDialogConstants.NEXT_ID);
 		if (nextButton != null && !nextButton.isDisposed()) {
 			nextButton.setEnabled(!previewPage);
@@ -265,18 +265,18 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 			if (nextButton.isEnabled())
 				defaultButton= nextButton;
 		}
-		
+
 		Button backButton= getButton(IDialogConstants.BACK_ID);
 		if (backButton != null && !backButton.isDisposed())
 			backButton.setEnabled(!isFirstPage());
-		
+
 		Button okButton= getButton(IDialogConstants.OK_ID);
 		if (okButton != null && !okButton.isDisposed()) {
 			okButton.setEnabled(ok);
 			if (ok)
 				defaultButton= okButton;
 		}
-		
+
 		if (defaultButton != null) {
 			defaultButton.getShell().setDefaultButton(defaultButton);
 		}
@@ -746,7 +746,7 @@ public class RefactoringWizardDialog2 extends TrayDialog implements IWizardConta
 
 		return composite;
 	}
-	
+
 	/*
 	 * @see org.eclipse.jface.dialogs.Dialog#setButtonLayoutData(org.eclipse.swt.widgets.Button)
 	 * @since 3.5

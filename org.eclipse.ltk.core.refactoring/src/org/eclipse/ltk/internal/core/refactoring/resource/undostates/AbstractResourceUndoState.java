@@ -99,7 +99,7 @@ abstract class AbstractResourceUndoState extends ResourceUndoState {
 	/**
 	 * Restore any saved attributed of the specified resource. This method is called after the
 	 * existent resource represented by the receiver has been created.
-	 * 
+	 *
 	 * @param resource the newly created resource
 	 * @throws CoreException if accessing the resource fails
 	 */

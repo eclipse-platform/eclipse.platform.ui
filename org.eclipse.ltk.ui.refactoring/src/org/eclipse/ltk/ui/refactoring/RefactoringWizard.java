@@ -149,13 +149,13 @@ public abstract class RefactoringWizard extends Wizard {
 	 * Flag (value 128) indicating that a help control should be shown.
 	 * The flag is ignored if the flag {@link #WIZARD_BASED_USER_INTERFACE}
 	 * is specified (the '?' button is always shown there).
-	 * 
+	 *
 	 * @see org.eclipse.jface.dialogs.TrayDialog#setHelpAvailable(boolean)
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public static final int SHOW_HELP_CONTROL= 1 << 7;
-	
+
 	private static final int LAST= 1 << 8;
 
 	private final int fFlags;
@@ -189,7 +189,7 @@ public abstract class RefactoringWizard extends Wizard {
 		this(null, refactoring, flags);
 		Assert.isNotNull(refactoring);
 	}
-	
+
 	/**
 	 * Creates a new refactoring wizard for the given refactoring context.
 	 *
@@ -204,7 +204,7 @@ public abstract class RefactoringWizard extends Wizard {
 		this(refactoringContext, null, flags);
 		Assert.isNotNull(refactoringContext);
 	}
-	
+
 	private RefactoringWizard(RefactoringContext refactoringContext, Refactoring refactoring, int flags) {
 		Assert.isTrue(flags < LAST);
 		if ((flags & DIALOG_BASED_USER_INTERFACE) == 0)
@@ -239,19 +239,19 @@ public abstract class RefactoringWizard extends Wizard {
 	public final RefactoringContext getRefactoringContext() {
 		return fRefactoringContext;
 	}
-	
+
 	/**
 	 * Returns the refactoring wizard flags that have been set for this wizard.
 	 * Note that the set of valid flags may grow in the future.
 	 *
 	 * @return the wizard's flags
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	public final int getWizardFlags(){
 		return fFlags;
 	}
-	
+
 	/**
 	 * Sets the default page title to the given value. This value is used
 	 * as a page title for wizard pages which don't provide their own
@@ -348,7 +348,7 @@ public abstract class RefactoringWizard extends Wizard {
 	public final Change getChange() {
 		return fChange;
 	}
-	
+
     /**
 	 * @param b {@inheritDoc}
      * @deprecated {@link #WIZARD_BASED_USER_INTERFACE} always shows a '?' button.
@@ -480,9 +480,9 @@ public abstract class RefactoringWizard extends Wizard {
 	 * Sets the runnable context that will be used to computing refactoring conditions and change
 	 * while the refactoring dialog is not yet shown. The default is to use the active workbench
 	 * window.
-	 * 
+	 *
 	 * @param context a runnable context, or <code>null</code> to re-set the default
-	 * 
+	 *
 	 * @since 3.5
 	 */
 	public void setInitialComputationContext(IRunnableContext context) {
