@@ -1,5 +1,5 @@
 /*******************************************************************************
- *  Copyright (c) 2000, 2019 IBM Corporation and others.
+ *  Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  *  This program and the accompanying materials
  *  are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Paul Pazderski  - Bug 545769: fixed rare UTF-8 character corruption bug
  *     Paul Pazderski  - Bug 552015: console finished signaled to late if input is connected to file
+ *     Paul Pazderski  - Bug 251642: add termination time in console label
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.console;
 
@@ -24,7 +25,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.eclipse.core.resources.IFile;
@@ -89,6 +92,7 @@ import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.UIJob;
 
+import com.ibm.icu.text.DateFormat;
 import com.ibm.icu.text.MessageFormat;
 
 
@@ -301,7 +305,39 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 						buffer.append(type);
 						buffer.append("] "); //$NON-NLS-1$
 					}
-					buffer.append(process.getLabel());
+
+					String launchTime = formatTimestamp(process.getAttribute(DebugPlugin.ATTR_LAUNCH_TIMESTAMP));
+					String terminateTime = formatTimestamp(process.getAttribute(DebugPlugin.ATTR_TERMINATE_TIMESTAMP));
+
+					String procLabel = process.getLabel();
+					if (launchTime != null) {
+						// FIXME workaround to remove start time from process label added from jdt for
+						// java launches
+						int idx = procLabel.lastIndexOf('(');
+						if (idx >= 0) {
+							int end = procLabel.lastIndexOf(')');
+							if (end > idx) {
+								String jdtTime = procLabel.substring(idx + 1, end);
+								try {
+									DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).parse(jdtTime);
+									procLabel = procLabel.substring(0, idx);
+								} catch (ParseException pe) {
+									// not a date. Label just contains parentheses
+								}
+							}
+						}
+					}
+
+					if (launchTime != null && terminateTime != null) {
+						buffer.append(MessageFormat.format(ConsoleMessages.ProcessConsole_commandLabel_withStartEnd,
+								procLabel, launchTime, terminateTime));
+					} else if (launchTime != null) {
+						buffer.append(MessageFormat.format(ConsoleMessages.ProcessConsole_commandLabel_withStart,
+								procLabel, launchTime));
+					} else if (terminateTime != null) {
+						buffer.append(MessageFormat.format(ConsoleMessages.ProcessConsole_commandLabel_withEnd,
+								procLabel, terminateTime));
+					}
 					label = buffer.toString();
 				}
 			}
@@ -311,6 +347,26 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 			return MessageFormat.format(ConsoleMessages.ProcessConsole_0, new Object[] { label });
 		}
 		return label;
+	}
+
+	/**
+	 * Format timestamp as datetime.
+	 *
+	 * @param timestamp a timestamp as returned from
+	 *                  {@link System#currentTimeMillis()} or <code>null</code>
+	 * @return timestamp formatted as datetime or <code>null</code> if timestamp is
+	 *         invalid
+	 */
+	private static String formatTimestamp(String timestamp) {
+		if (timestamp == null) {
+			return null;
+		}
+		try {
+			long lTimestamp = Long.parseLong(timestamp);
+			return DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date(lTimestamp));
+		} catch (NumberFormatException ex) {
+			return null;
+		}
 	}
 
 	/**

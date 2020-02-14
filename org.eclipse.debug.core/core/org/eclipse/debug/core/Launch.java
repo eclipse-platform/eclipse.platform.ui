@@ -475,6 +475,7 @@ public class Launch extends PlatformObject implements ILaunch, IDisconnect, ILau
 	 * properly created/initialized.
 	 */
 	protected void fireTerminate() {
+		setAttribute(DebugPlugin.ATTR_TERMINATE_TIMESTAMP, Long.toString(System.currentTimeMillis()));
 		if (!fSuppressChange) {
 			((LaunchManager)getLaunchManager()).fireUpdate(this, LaunchManager.TERMINATE);
 			((LaunchManager)getLaunchManager()).fireUpdate(new ILaunch[] {this}, LaunchManager.TERMINATE);

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Paul Pazderski - Bug 251642: show process termination time
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.preferences;
 
@@ -58,12 +59,21 @@ public class ProcessPropertyPage extends PropertyPage {
 
 		IProcess proc = getProcess();
 
-	//create the process time section
+		// create the process launch time section
 		SWTFactory.createLabel(parent, DebugPreferencesMessages.ProcessPropertyPage_0, fHeadingFont, 1);
 		Text text = SWTFactory.createText(parent, SWT.READ_ONLY, 1);
 		((GridData)text.getLayoutData()).horizontalIndent = 10;
 		PlatformUI.getWorkbench().getHelpSystem().setHelp(text, IDebugHelpContextIds.PROCESS_PAGE_RUN_AT);
-		text.setText(getTimeText(proc));
+		text.setText(getLaunchTimeText(proc));
+		text.setBackground(parent.getBackground());
+		SWTFactory.createVerticalSpacer(parent, 2);
+
+		// create the process terminate time section
+		SWTFactory.createLabel(parent, DebugPreferencesMessages.ProcessPropertyPage_10, fHeadingFont, 1);
+		text = SWTFactory.createText(parent, SWT.READ_ONLY, 1);
+		((GridData) text.getLayoutData()).horizontalIndent = 10;
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(text, IDebugHelpContextIds.PROCESS_PAGE_TERMINATE_AT);
+		text.setText(getTerminateTimeText(proc));
 		text.setBackground(parent.getBackground());
 		SWTFactory.createVerticalSpacer(parent, 2);
 
@@ -189,6 +199,8 @@ public class ProcessPropertyPage extends PropertyPage {
 				return tmp;
 			}
 			tmp = proc.getLabel();
+			// TODO remove this ugly workaround after removing start time from process label
+			// in jdt
 			int idx = tmp.lastIndexOf('(');
 			if(idx < 0) {
 				idx = tmp.length();
@@ -199,44 +211,70 @@ public class ProcessPropertyPage extends PropertyPage {
 	}
 
 	/**
-	 * gets the pattern of text from the process label specified by RegEx
-	 * @param proc the process to compile the RegEx against
-	 * @param deftext the default text to return if the process is null
-	 * @param regex the RegEx to match in the process label
-	 * @return the RegEx matched text or the default supplied text if the process is null
+	 * Try to get the launch time for the process.
 	 *
-	 * @see DebugPlugin#ATTR_RUN_AT_TIME
+	 * @param proc the process to get launch time for
+	 * @return the launch time or default replacement
 	 * @since 3.2
 	 */
-	private String getTimeText(IProcess proc) {
-		String text = DebugPreferencesMessages.ProcessPropertyPage_4;
-		if(proc != null) {
-			String tmp = proc.getAttribute(DebugPlugin.ATTR_LAUNCH_TIMESTAMP);
-			if(tmp != null) {
-				//check to see if the date/time is just the raw long (as a string)
-				try {
-					long l = Long.parseLong(tmp);
-					return DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date(l));
-				}
-				catch(NumberFormatException nfe) {
-					//not a number try to format the string so it always looks the same
-					try {
-						Date fdate = DateFormat.getInstance().parse(tmp);
-						return DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(fdate);
-					}
-					catch(ParseException pe) {
-						//couldn't do it, return the raw string
-					}
-				}
-				return tmp;
-			}
-			Pattern pattern = Pattern.compile("\\(.*\\)"); //$NON-NLS-1$
-			Matcher matcher = pattern.matcher(proc.getLabel());
-			if(matcher.find()) {
-				text = matcher.group(0);
+	private String getLaunchTimeText(IProcess proc) {
+		String text = getTimeFromAttribute(proc, DebugPlugin.ATTR_LAUNCH_TIMESTAMP);
+		if (text != null) {
+			return text;
+		}
+		// TODO remove this parsing when launch time is no fixed part of label anymore
+		Pattern pattern = Pattern.compile("\\(.*\\)"); //$NON-NLS-1$
+		Matcher matcher = pattern.matcher(proc.getLabel());
+		if (matcher.find()) {
+			text = matcher.group(0);
+		}
+		if (text != null) {
+			return text;
+		}
+		return DebugPreferencesMessages.ProcessPropertyPage_4;
+	}
+
+	/**
+	 * Try to get the terminate time for the process.
+	 *
+	 * @param proc the process to get terminate time for
+	 * @return the terminate time or default replacement
+	 */
+	private String getTerminateTimeText(IProcess proc) {
+		String text = getTimeFromAttribute(proc, DebugPlugin.ATTR_TERMINATE_TIMESTAMP);
+		return text != null ? text : DebugPreferencesMessages.ProcessPropertyPage_4;
+	}
+
+	/**
+	 * Try to process launch timestamp attribute.
+	 *
+	 * @param proc the process to check
+	 * @param attr the process attribute to check for timestamp
+	 * @return the timestamp string or <code>null</code>
+	 * @since 3.2
+	 */
+	private String getTimeFromAttribute(IProcess proc, String attr) {
+		if (proc == null || attr == null) {
+			return null;
+		}
+		String time = proc.getAttribute(attr);
+		if (time == null) {
+			return null;
+		}
+		// check to see if the date/time is just the raw long (as a string)
+		try {
+			long l = Long.parseLong(time);
+			return DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date(l));
+		} catch (NumberFormatException nfe) {
+			// not a number try to format the string so it always looks the same
+			try {
+				Date fdate = DateFormat.getInstance().parse(time);
+				return DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(fdate);
+			} catch (ParseException pe) {
+				// couldn't do it, return the raw string
 			}
 		}
-		return text;
+		return time;
 	}
 
 	/**

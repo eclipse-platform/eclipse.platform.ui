@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -33,7 +33,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileSystem;
 import org.eclipse.core.resources.IContainer;
@@ -55,9 +54,11 @@ import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
+import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.core.LaunchConfiguration;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.tests.TestsPlugin;
+import org.eclipse.debug.tests.console.MockProcess;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -1182,7 +1183,7 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 	}
 
 	/**
-	 * Tests that the framework adds time stamps to launch objects.
+	 * Tests that the framework adds launch time stamps to launch objects.
 	 */
 	public void testLaunchTimeStamp() throws CoreException {
 		ILaunchConfigurationWorkingCopy workingCopy = newConfiguration(null, "test-time-stamp"); //$NON-NLS-1$
@@ -1190,10 +1191,35 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 		try {
 			String stamp = launch.getAttribute(DebugPlugin.ATTR_LAUNCH_TIMESTAMP);
 			assertNotNull("missing time stamp", stamp); //$NON-NLS-1$
-			Long.parseLong(stamp); // should be a long - will throw NumberFormatException if not
+			long lstamp = Long.parseLong(stamp); // should be a long - will throw NumberFormatException if not
+			assertTrue("Time travel launch", lstamp <= System.currentTimeMillis());
 		} finally {
 			if (launch != null) {
 				getLaunchManager().removeLaunch(launch);
+			}
+		}
+	}
+
+	/**
+	 * Tests that the framework adds terminate time stamps to launch and process
+	 * objects.
+	 */
+	public void testTerminateTimeStamp() throws Exception {
+		ILaunchConfigurationWorkingCopy workingCopy = newConfiguration(null, "test-time-stamp"); //$NON-NLS-1$
+		ILaunch launch = workingCopy.launch(ILaunchManager.DEBUG_MODE, null);
+		IProcess process = null;
+		try {
+			process = DebugPlugin.newProcess(launch, new MockProcess(0), "test-terminate-timestamp");
+			String stamp = launch.getAttribute(DebugPlugin.ATTR_TERMINATE_TIMESTAMP);
+			assertNotNull("missing time stamp", stamp); //$NON-NLS-1$
+			long lstamp = Long.parseLong(stamp); // should be a long - will throw NumberFormatException if not
+			assertTrue("Time travel launch", lstamp <= System.currentTimeMillis());
+		} finally {
+			if (launch != null) {
+				getLaunchManager().removeLaunch(launch);
+			}
+			if (process != null) {
+				process.terminate();
 			}
 		}
 	}

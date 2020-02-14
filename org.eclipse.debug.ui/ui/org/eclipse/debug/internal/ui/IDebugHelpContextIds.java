@@ -137,6 +137,7 @@ public interface IDebugHelpContextIds {
 	// Property pages
 	String PROCESS_PROPERTY_PAGE = PREFIX + "process_property_page_context"; //$NON-NLS-1$
 	String PROCESS_PAGE_RUN_AT = PREFIX + "process_page_run_at_time_widget"; //$NON-NLS-1$
+	String PROCESS_PAGE_TERMINATE_AT = PREFIX + "process_page_terminate_at_time_widget"; //$NON-NLS-1$
 	String RUN_DEBUG_RESOURCE_PROPERTY_PAGE = PREFIX + "run_debug_resource_property_page"; //$NON-NLS-1$
 
 	// Launch configuration dialog pages
