@@ -1,9 +1,9 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2020 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
@@ -14,8 +14,11 @@ package org.eclipse.e4.ui.internal.dialogs.about;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.StringTokenizer;
+import java.util.stream.Collectors;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.Path;
@@ -38,18 +41,19 @@ public abstract class BrandingProperties {
 	 * @param definingBundle bundle to be used for relative paths (may be null)
 	 * @return
 	 */
-	public static URL getUrl(String value, Bundle definingBundle) {
+	public static Optional<URL> getUrl(String value, Bundle definingBundle) {
 		try {
 			if (value != null) {
-				return new URL(value);
+				return Optional.of(new URL(value));
 			}
 		} catch (MalformedURLException e) {
 			if (definingBundle != null) {
-				return FileLocator.find(definingBundle, new Path(value));
+				URL bundlePath = FileLocator.find(definingBundle, new Path(value));
+				return Optional.of(bundlePath);
 			}
 		}
 
-		return null;
+		return Optional.empty();
 	}
 
 	/**
@@ -61,9 +65,10 @@ public abstract class BrandingProperties {
 	 * @param definingBundle bundle to be used for relative paths (may be null)
 	 * @return
 	 */
-	public static ImageDescriptor getImage(String value, Bundle definingBundle) {
-		URL url = getUrl(value, definingBundle);
-		return url == null ? null : ImageDescriptor.createFromURL(url);
+	protected static Optional<ImageDescriptor> getImage(String value, Bundle definingBundle) {
+		Optional<URL> url = getUrl(value, definingBundle);
+		ImageDescriptor imageDescriptor = ImageDescriptor.createFromURL(url.get());
+		return url.isPresent() ? Optional.of(imageDescriptor) : Optional.empty();
 	}
 
 	/**
@@ -78,18 +83,21 @@ public abstract class BrandingProperties {
 	 *                       null)
 	 * @return a URL for the given property, or <code>null</code>
 	 */
-	public static URL[] getURLs(String value, Bundle definingBundle) {
+	private static List<URL> getURLs(String value, Bundle definingBundle) {
 		if (value == null) {
-			return null;
+			return Collections.emptyList();
 		}
 
 		StringTokenizer tokens = new StringTokenizer(value, ","); //$NON-NLS-1$
 		List<URL> array = new ArrayList<>(10);
 		while (tokens.hasMoreTokens()) {
-			array.add(getUrl(tokens.nextToken().trim(), definingBundle));
+			Optional<URL> urlToken = getUrl(tokens.nextToken().trim(), definingBundle);
+			if (urlToken.isPresent()) {
+				array.add(urlToken.get());
+			}
 		}
 
-		return (URL[]) array.toArray(new URL[array.size()]);
+		return array;
 	}
 
 	/**
@@ -104,17 +112,13 @@ public abstract class BrandingProperties {
 	 * @return an array of image descriptors for the given property, or
 	 *         <code>null</code>
 	 */
-	public static ImageDescriptor[] getImages(String value, Bundle definingBundle) {
-		URL[] urls = getURLs(value, definingBundle);
-		if (urls == null || urls.length <= 0) {
-			return null;
+	protected static List<ImageDescriptor> getImages(String value, Bundle definingBundle) {
+		List<URL> urls = getURLs(value, definingBundle);
+		if (urls.isEmpty()) {
+			return Collections.emptyList();
 		}
 
-		ImageDescriptor[] images = new ImageDescriptor[urls.length];
-		for (int i = 0; i < images.length; ++i) {
-			images[i] = ImageDescriptor.createFromURL(urls[i]);
-		}
-
-		return images;
+		return urls.stream().map(u -> ImageDescriptor.createFromURL(u))
+				.collect(Collectors.toList());
 	}
 }

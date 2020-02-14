@@ -1,9 +1,9 @@
 /*******************************************************************************
  * Copyright (c) 2004, 2020 IBM Corporation and others.
  * All rights reserved. This program and the accompanying materials
- * are made available under the terms of the Eclipse Public License v1.0
+ * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
- * http://www.eclipse.org/legal/epl-v10.html
+ * http://www.eclipse.org/legal/epl-v20.html
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.MissingResourceException;
+import java.util.Optional;
 import java.util.PropertyResourceBundle;
 
 import org.eclipse.core.runtime.FileLocator;
@@ -46,11 +47,11 @@ public class ProductProperties extends BrandingProperties implements IProductCon
 
 	private String aboutText;
 
-	private ImageDescriptor aboutImageDescriptor;
+	private Optional<ImageDescriptor> aboutImageDescriptor;
 
-	private ImageDescriptor[] windowImageDescriptors;
+	private List<ImageDescriptor> windowImageDescriptors;
 
-	private URL welcomePageUrl;
+	private Optional<URL> welcomePageUrl;
 
 	private String productName;
 
@@ -151,9 +152,9 @@ public class ProductProperties extends BrandingProperties implements IProductCon
 	 */
 	public ImageDescriptor getAboutImage() {
 		if (aboutImageDescriptor == null) {
-			aboutImageDescriptor = getAboutImage(product);
+			aboutImageDescriptor = aboutImage(Optional.ofNullable(product));
 		}
-		return aboutImageDescriptor;
+		return aboutImageDescriptor.get();
 	}
 
 	/**
@@ -165,7 +166,7 @@ public class ProductProperties extends BrandingProperties implements IProductCon
 	 * If this property is given, then it supercedes <code>WINDOW_IMAGE</code>.
 	 * </p>
 	 */
-	public ImageDescriptor[] getWindowImages() {
+	public List<ImageDescriptor> getWindowImages() {
 		if (windowImageDescriptors == null) {
 			windowImageDescriptors = getWindowImages(product);
 		}
@@ -178,7 +179,7 @@ public class ProductProperties extends BrandingProperties implements IProductCon
 	 * bundle. Products designed to run "headless" typically would not have such a
 	 * page.
 	 */
-	public URL getWelcomePageUrl() {
+	public Optional<URL> welcomePageUrl() {
 		if (welcomePageUrl == null) {
 			welcomePageUrl = getWelcomePageUrl(product);
 		}
@@ -226,14 +227,7 @@ public class ProductProperties extends BrandingProperties implements IProductCon
 	}
 
 	private static String getProperty(IProduct product, String prop) {
-		String property = product.getProperty(prop);
-		if (property == null) {
-			return ""; //$NON-NLS-1$
-		}
-		if (property.indexOf('{') == -1) {
-			return property;
-		}
-		return property;
+		return Optional.ofNullable(product.getProperty(prop)).orElse("");
 	}
 
 	/**
@@ -276,8 +270,12 @@ public class ProductProperties extends BrandingProperties implements IProductCon
 	 * without the "aboutText" blurb. A half-sized product image (no larger than
 	 * 250x330 pixels) is shown with the "aboutText" blurb beside it.
 	 */
-	public static ImageDescriptor getAboutImage(IProduct product) {
-		return getImage(product.getProperty(ABOUT_IMAGE), product.getDefiningBundle());
+	public static Optional<ImageDescriptor> aboutImage(Optional<IProduct> product) {
+		if (product.isPresent()) {
+			return getImage(product.get().getProperty(ABOUT_IMAGE), product.get().getDefiningBundle());
+		} else {
+			return Optional.empty();
+		}
 	}
 
 	/**
@@ -289,7 +287,7 @@ public class ProductProperties extends BrandingProperties implements IProductCon
 	 * If this property is given, then it supercedes <code>WINDOW_IMAGE</code>.
 	 * </p>
 	 */
-	public static ImageDescriptor[] getWindowImages(IProduct product) {
+	public static List<ImageDescriptor> getWindowImages(IProduct product) {
 		String property = product.getProperty(WINDOW_IMAGES);
 		return getImages(property, product.getDefiningBundle());
 	}
@@ -301,7 +299,7 @@ public class ProductProperties extends BrandingProperties implements IProductCon
 	 * a page. Use of this property is discouraged in 3.0, the new
 	 * org.eclipse.ui.e4.intro extension point should be used instead.
 	 */
-	public static URL getWelcomePageUrl(IProduct product) {
+	public static Optional<URL> getWelcomePageUrl(IProduct product) {
 		return getUrl(product.getProperty(WELCOME_PAGE), product.getDefiningBundle());
 	}
 
