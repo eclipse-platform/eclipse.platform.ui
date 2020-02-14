@@ -1,15 +1,15 @@
 
-a#platform-noteworthy img { background-image : url(../../images/topiclabel/wn_eclplatform48.png); }
-a#platform-noteworthy:hover img { background-image : url(../../images/topiclabel/wn_eclplatform48_hov.png); }
+a#platform-noteworthy img { background-image : url(../../images/topiclabel/wn_eclplatform48.svg); }
+a#platform-noteworthy:hover img { background-image : url(../../images/topiclabel/wn_eclplatform48.svg); }
 
-a#updates img { background-image : url(../../images/topiclabel/wn_updates48.gif); }
-a#updates:hover img { background-image : url(../../images/topiclabel/wn_updates48_hov.gif); }
+a#updates img { background-image : url(../../images/topiclabel/wn_updates48.svg); }
+a#updates:hover img { background-image : url(../../images/topiclabel/wn_updates48.svg); }
 
-a#eclipse img { background-image : url(../../images/topiclabel/wn_eclcommunity48.gif); }
-a#eclipse:hover img { background-image : url(../../images/topiclabel/wn_eclcommunity48_hov.gif); }
+a#eclipse img { background-image : url(../../images/topiclabel/wn_eclcommunity48.svg); }
+a#eclipse:hover img { background-image : url(../../images/topiclabel/wn_eclcommunity48.svg); }
 
-a#migration img { background-image : url(../../images/topiclabel/wn_migrate48.gif); }
-a#migration:hover img { background-image : url(../../images/topiclabel/wn_migrate48_hov.gif); }
+a#migration img { background-image : url(../../images/topiclabel/wn_migrate48.svg); }
+a#migration:hover img { background-image : url(../../images/topiclabel/wn_migrate48.svg); }
 
 div#rss-news {
 	position: relative;
@@ -33,7 +33,7 @@ div#rss-news {
 
 ul#eclipse-news {
 	list-style-type: none;
-	list-style-image: url("../../images/topiclabel/arrow.gif");
+	list-style-image: url("../../images/topiclabel/arrow.svg");
 	margin-left: 10px;
 	margin-top: 5px;
 }
@@ -47,4 +47,10 @@ ul#eclipse-news a {
 
 ul#eclipse-news a:hover {
 	text-decoration: underline;
+}
+
+@media (prefers-color-scheme: dark) {
+	ul.news-list {
+		list-style-image: url("../../images/topiclabel/arrow_light.svg");
+	}
 }
