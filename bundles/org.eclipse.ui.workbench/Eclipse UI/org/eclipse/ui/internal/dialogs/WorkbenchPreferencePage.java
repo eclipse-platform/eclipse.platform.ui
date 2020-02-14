@@ -65,9 +65,15 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 	private Button showUserDialogButton;
 
+	private Button renameModeInlineButton;
+
+	private Button renameModeDialogButton;
+
 	private IntegerFieldEditor saveInterval;
 
 	private boolean openOnSingleClick;
+
+	private boolean renameModeInline;
 
 	private boolean selectOnHover;
 
@@ -247,6 +253,28 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 				WorkbenchMessages.WorkbenchPreference_noEffectOnAllViews);
 	}
 
+	protected void createRenameModeGroup(Composite composite) {
+
+		Group buttonComposite = new Group(composite, SWT.LEFT);
+		GridLayout layout = new GridLayout();
+		buttonComposite.setLayout(layout);
+		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
+		buttonComposite.setLayoutData(data);
+		buttonComposite.setText(WorkbenchMessages.WorkbenchPreference_renameMode);
+
+		String label = WorkbenchMessages.WorkbenchPreference_renameModeInline;
+		renameModeInlineButton = createRadioButton(buttonComposite, label);
+		renameModeInlineButton.addSelectionListener(
+				widgetSelectedAdapter(e -> renameModeInline = renameModeInlineButton.getSelection()));
+		renameModeInlineButton.setSelection(renameModeInline);
+
+		label = WorkbenchMessages.WorkbenchPreference_renameModeDialog;
+		renameModeDialogButton = createRadioButton(buttonComposite, label);
+		renameModeDialogButton.addSelectionListener(
+				widgetSelectedAdapter(e -> renameModeInline = !renameModeDialogButton.getSelection()));
+		renameModeDialogButton.setSelection(!renameModeInline);
+	}
+
 	private void selectClickMode(boolean singleClick) {
 		openOnSingleClick = singleClick;
 		selectOnHoverButton.setEnabled(openOnSingleClick);
@@ -333,6 +361,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		openOnSingleClick = store.getBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK);
 		selectOnHover = store.getBoolean(IPreferenceConstants.SELECT_ON_HOVER);
 		openAfterDelay = store.getBoolean(IPreferenceConstants.OPEN_AFTER_DELAY);
+
+		readRenameModeFromPreferences();
 	}
 
 	/**
@@ -357,6 +387,11 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		showHeapStatusButton.setSelection(
 				PrefUtil.getAPIPreferenceStore().getDefaultBoolean(IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR));
 
+		String defaultRenameMode = store.getDefaultString(IWorkbenchPreferenceConstants.RESOURCE_RENAME_MODE);
+		renameModeInline = !IWorkbenchPreferenceConstants.RESOURCE_RENAME_MODE_DIALOG.equals(defaultRenameMode);
+		renameModeInlineButton.setSelection(renameModeInline);
+		renameModeDialogButton.setSelection(!renameModeInline);
+
 		super.performDefaults();
 	}
 
@@ -374,6 +409,13 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		store.setValue(IPreferenceConstants.OPEN_AFTER_DELAY, openAfterDelay);
 		store.setValue(IPreferenceConstants.RUN_IN_BACKGROUND, showUserDialogButton.getSelection());
 		store.setValue(IPreferenceConstants.WORKBENCH_SAVE_INTERVAL, saveInterval.getIntValue());
+
+		String renameModeValue = IWorkbenchPreferenceConstants.RESOURCE_RENAME_MODE_INLINE;
+		if (!renameModeInline) {
+			renameModeValue = IWorkbenchPreferenceConstants.RESOURCE_RENAME_MODE_DIALOG;
+		}
+		store.setValue(IWorkbenchPreferenceConstants.RESOURCE_RENAME_MODE, renameModeValue);
+
 		PrefUtil.getAPIPreferenceStore().setValue(IWorkbenchPreferenceConstants.SHOW_MEMORY_MONITOR,
 				showHeapStatusButton.getSelection());
 		updateHeapStatus(showHeapStatusButton.getSelection());
@@ -406,5 +448,11 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 			}
 		}
 
+	}
+
+	private void readRenameModeFromPreferences() {
+		IPreferenceStore store = getPreferenceStore();
+		String renameMode = store.getString(IWorkbenchPreferenceConstants.RESOURCE_RENAME_MODE);
+		renameModeInline = !IWorkbenchPreferenceConstants.RESOURCE_RENAME_MODE_DIALOG.equals(renameMode);
 	}
 }

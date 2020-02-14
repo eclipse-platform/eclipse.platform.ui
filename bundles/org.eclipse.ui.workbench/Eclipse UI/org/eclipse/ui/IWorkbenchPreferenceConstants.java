@@ -620,4 +620,33 @@ public interface IWorkbenchPreferenceConstants {
 	 * @since 3.112
 	 */
 	String HIDE_QUICK_ACCESS_PER_DEFAULT = "hideQuickAccessPerDefault"; //$NON-NLS-1$
+
+	/**
+	 * <p>
+	 * Whether to use inline or dialog rename on resources.
+	 * </p>
+	 *
+	 * @since 3.118
+	 */
+	String RESOURCE_RENAME_MODE = "RESOURCE_RENAME_MODE"; //$NON-NLS-1$
+
+	/**
+	 * <p>
+	 * Preference value for {@link #RESOURCE_RENAME_MODE}, indicating that
+	 * inline rename should be used.
+	 * </p>
+	 *
+	 * @since 3.118
+	 */
+	String RESOURCE_RENAME_MODE_INLINE = "inline"; //$NON-NLS-1$
+
+	/**
+	 * <p>
+	 * Preference value for {@link #RESOURCE_RENAME_MODE}, indicating that
+	 * dialog rename should be used.
+	 * </p>
+	 *
+	 * @since 3.118
+	 */
+	String RESOURCE_RENAME_MODE_DIALOG = "dialog"; //$NON-NLS-1$
 }

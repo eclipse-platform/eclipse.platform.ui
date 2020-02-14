@@ -123,6 +123,9 @@ public class WorkbenchPreferenceInitializer extends AbstractPreferenceInitialize
 		node.putBoolean(IPreferenceConstants.SHOW_KEYS_ENABLED, false);
 		node.putInt(IPreferenceConstants.SHOW_KEYS_TIME_TO_CLOSE, 3000);
 
+		node.put(IWorkbenchPreferenceConstants.RESOURCE_RENAME_MODE,
+				IWorkbenchPreferenceConstants.RESOURCE_RENAME_MODE_INLINE);
+
 		IEclipsePreferences rootNode = (IEclipsePreferences) Platform.getPreferencesService().getRootNode()
 				.node(InstanceScope.SCOPE);
 

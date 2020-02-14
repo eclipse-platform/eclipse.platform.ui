@@ -25,7 +25,9 @@ import org.eclipse.core.resources.ResourceAttributes;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -44,6 +46,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
+import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.undo.MoveResourcesOperation;
 import org.eclipse.ui.ide.undo.WorkspaceUndoUtil;
@@ -62,6 +65,8 @@ import com.ibm.icu.text.MessageFormat;
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class RenameResourceAction extends WorkspaceAction {
+
+	private static final String WORKBENCH_PLUGIN_ID = "org.eclipse.ui.workbench"; //$NON-NLS-1$
 
 	/*
 	 * The tree editing widgets. If treeEditor is null then edit using the
@@ -445,7 +450,15 @@ public class RenameResourceAction extends WorkspaceAction {
 		if (currentResource == null || !currentResource.exists()) {
 			return;
 		}
-		if (LTKLauncher.isCompositeRename(getStructuredSelection()) || this.navigatorTree == null) {
+
+		String defaultValue = ""; //$NON-NLS-1$
+		IPreferencesService preferences = Platform.getPreferencesService();
+		String renameMode = preferences.getString(WORKBENCH_PLUGIN_ID,
+				IWorkbenchPreferenceConstants.RESOURCE_RENAME_MODE, defaultValue,
+				null);
+		boolean dialogMode = IWorkbenchPreferenceConstants.RESOURCE_RENAME_MODE_DIALOG.equals(renameMode);
+
+		if (LTKLauncher.isCompositeRename(getStructuredSelection()) || this.navigatorTree == null || dialogMode) {
 			if (!LTKLauncher.openRenameWizard(getStructuredSelection())) {
 				// LTK Launcher couldn't rename the resource
 				if (!checkReadOnlyAndNull(currentResource)) {
