@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2017, 2019 Stephan Wahlbrink and others.
+ * Copyright (c) 2017, 2020 Stephan Wahlbrink and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,6 +15,7 @@ package org.eclipse.jface.text.tests.contentassist;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assume.assumeFalse;
 
 import java.util.List;
 
@@ -25,6 +26,8 @@ import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+
+import org.eclipse.core.runtime.Platform;
 
 import org.eclipse.text.tests.Accessor;
 
@@ -91,6 +94,8 @@ public class ContextInformationTest extends AbstractContentAssistTest {
 
 	@Test
 	public void testContextInfo_hide_focusOut() throws Exception {
+		assumeFalse("Test fails on Mac: Bug 558989", Platform.OS_MACOSX.equals(Platform.getOS()));
+		
 		setupSourceViewer(createBarContentAssist(), BarContentAssistProcessor.PROPOSAL);
 
 		final List<Shell> beforeShells = getCurrentShells();
