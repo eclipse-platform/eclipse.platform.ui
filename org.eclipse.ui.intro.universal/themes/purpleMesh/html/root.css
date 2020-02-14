@@ -30,7 +30,7 @@
  */
 body {
 	min-width : 770px;	/* since IE doesn't support min-width, use expression */
-	width:expression(document.body.clientWidth < 770? "770px": "auto" );	background-image : url(../graphics/root/background.jpg);	background-repeat : no-repeat;	background-position : top left;	background-color : #7169D1;
+	width:expression(document.body.clientWidth < 770? "770px": "auto" );	background-image : url(../graphics/root/background.png);	background-repeat : no-repeat;	background-position : top left;	background-color : #7169D1;
 }
 #root {
 /*

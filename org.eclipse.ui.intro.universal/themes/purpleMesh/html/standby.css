@@ -43,7 +43,7 @@ body {
 	min-width : 230px;
 	/* since IE doesn't support min-width, use expression */
 	width:expression(document.body.clientWidth < 230? "230px": "auto" );
-	background-image : url(../graphics/root/background.jpg);
+	background-image : url(../graphics/root/background.png);
 	background-repeat : no-repeat;
 	background-position : top left;
 	background-color : #7169D1;
