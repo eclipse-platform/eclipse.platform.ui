@@ -167,18 +167,20 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		}
 
 		super.showPageRec(pageRec);
+
+		if (fActiveConsole != recConsole) {
+			if (fActive && fActiveConsole != null) {
+				deactivateParticipants(fActiveConsole);
+			}
+			if (recConsole != null) {
+				activateParticipants(recConsole);
+			}
+		}
 		fActiveConsole = recConsole;
-		IConsole tos = null;
-		if (!fStack.isEmpty()) {
-			tos = fStack.get(0);
-		}
-		if (tos != null && !tos.equals(fActiveConsole) && fActive) {
-			deactivateParticipants(tos);
-		}
-		if (fActiveConsole != null && !fActiveConsole.equals(tos)) {
+		// bring active console on top of stack
+		if (fActiveConsole != null && !fStack.isEmpty() && !fActiveConsole.equals(fStack.get(0))) {
 			fStack.remove(fActiveConsole);
-			fStack.add(0,fActiveConsole);
-			activateParticipants(fActiveConsole);
+			fStack.add(0, fActiveConsole);
 		}
 		updateTitle();
 		updateHelp();
@@ -509,6 +511,11 @@ public class ConsoleView extends PageBookView implements IConsoleView, IConsoleL
 		ConsoleWorkbenchPart part = fConsoleToPart.get(console);
 		if (part != null) {
 			partActivated(part);
+			// Workaround for bug 345435: call activated for this to force PageBookView to
+			// activate the new pages context
+			if (fActive) {
+				partActivated(this);
+			}
 		}
 	}
 
