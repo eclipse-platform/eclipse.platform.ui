@@ -28,7 +28,7 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.e4.tools.services.IResourcePool;
 import org.eclipse.e4.tools.services.IResourceProviderService;
 import org.eclipse.e4.tools.services.IResourceService;
-import org.eclipse.e4.tools.services.ToolsServicesActivator;
+import org.eclipse.e4.tools.services.ToolsServicesConstants;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -107,7 +107,7 @@ public class ResourceService implements IResourceService {
 			if (resourceService == null) {
 				throw new CoreException(
 						new Status(IStatus.ERROR,
-								ToolsServicesActivator.PLUGIN_ID,
+								ToolsServicesConstants.PLUGIN_ID,
 								Messages.ResourceService_PoolDisposed));
 			}
 			IPooledResource<Image> image = null;
@@ -130,7 +130,7 @@ public class ResourceService implements IResourceService {
 			if (resourceService == null) {
 				throw new CoreException(
 						new Status(IStatus.ERROR,
-								ToolsServicesActivator.PLUGIN_ID,
+								ToolsServicesConstants.PLUGIN_ID,
 								Messages.ResourceService_PoolDisposed));
 			}
 
@@ -152,7 +152,7 @@ public class ResourceService implements IResourceService {
 			if (resourceService == null) {
 				throw new CoreException(
 						new Status(IStatus.ERROR,
-								ToolsServicesActivator.PLUGIN_ID,
+								ToolsServicesConstants.PLUGIN_ID,
 								Messages.ResourceService_PoolDisposed));
 			}
 			IPooledResource<Color> color = null;
