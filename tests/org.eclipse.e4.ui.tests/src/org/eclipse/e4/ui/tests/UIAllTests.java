@@ -50,6 +50,7 @@ import org.eclipse.e4.ui.tests.workbench.PartRenderingEngineTests;
 import org.eclipse.e4.ui.tests.workbench.SWTPartRendererTest;
 import org.eclipse.e4.ui.tests.workbench.SashRendererTest;
 import org.eclipse.e4.ui.tests.workbench.TopoSortTests;
+import org.eclipse.e4.ui.workbench.renderers.swt.MenuManagerRendererTest;
 import org.eclipse.e4.ui.workbench.renderers.swt.StackRendererTest;
 import org.eclipse.e4.ui.workbench.renderers.swt.TabStateHandlerTest;
 import org.eclipse.e4.ui.workbench.renderers.swt.ThemeDefinitionChangedHandlerTest;
@@ -80,6 +81,7 @@ import org.junit.runners.Suite;
 		MToolItemTest.class,
 		MWindowTest.class,
 		MSashTest.class,
+		MenuManagerRendererTest.class,
 		HandlerTest.class,
 		ContextTest.class,
 		Bug308317Test.class,

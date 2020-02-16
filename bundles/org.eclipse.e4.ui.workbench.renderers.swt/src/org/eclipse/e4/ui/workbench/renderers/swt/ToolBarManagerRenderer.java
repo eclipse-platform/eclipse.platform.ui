@@ -150,65 +150,72 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 
 	@Inject
 	@Optional
-	private void subscribeTopicUpdateToBeRendered(@UIEventTopic(UIEvents.UIElement.TOPIC_ALL) Event event) {
+	private void subscribeUIElementTopicToBeRendered(@UIEventTopic(UIEvents.UIElement.TOPIC_TOBERENDERED) Event event) {
 		// Ensure that this event is for a MToolBarElement
 		if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MToolBarElement)) {
 			return;
 		}
 
 		MToolBarElement itemModel = (MToolBarElement) event.getProperty(UIEvents.EventTags.ELEMENT);
-		String attName = (String) event.getProperty(UIEvents.EventTags.ATTNAME);
-		if (UIEvents.UIElement.TOBERENDERED.equals(attName)) {
-			Object obj = itemModel.getParent();
-			if (!(obj instanceof MToolBar)) {
-				return;
-			}
-			ToolBarManager parent = getManager((MToolBar) obj);
-			if (itemModel.isToBeRendered()) {
-				if (parent != null) {
-					modelProcessSwitch(parent, itemModel);
-					updateWidget(parent);
-				}
-			} else {
-				removeElement(parent, itemModel);
-				if (parent != null) {
-					updateWidget(parent);
-				}
-			}
-		} else if (UIEvents.UIElement.VISIBLE.equals(attName)) {
-			IContributionItem ici = getContribution(itemModel);
-			if (ici == null) {
-				return;
-			}
-
-			ToolBarManager parent = null;
-			if (ici instanceof MenuManager) {
-				parent = (ToolBarManager) ((MenuManager) ici).getParent();
-			} else if (ici instanceof ContributionItem) {
-				parent = (ToolBarManager) ((ContributionItem) ici).getParent();
-			}
-
-			if (parent == null) {
-				ici.setVisible(itemModel.isVisible());
-				return;
-			}
-
-			IContributionManagerOverrides ov = parent.getOverrides();
-			// partial fix for bug 383569: only change state if there are no
-			// extra override mechanics controlling element visibility
-			if (ov == null) {
-				ici.setVisible(itemModel.isVisible());
-			} else {
-				Boolean visible = ov.getVisible(ici);
-				if (visible == null) {
-					// same as above: only change state if there are no extra
-					// override mechanics controlling element visibility
-					ici.setVisible(itemModel.isVisible());
-				}
-			}
-
-			updateWidget(parent);
+		Object obj = itemModel.getParent();
+		if (!(obj instanceof MToolBar)) {
+			return;
 		}
+		ToolBarManager parent = getManager((MToolBar) obj);
+		if (itemModel.isToBeRendered()) {
+			if (parent != null) {
+				modelProcessSwitch(parent, itemModel);
+				updateWidget(parent);
+			}
+		} else {
+			removeElement(parent, itemModel);
+			if (parent != null) {
+				updateWidget(parent);
+			}
+		}
+	}
+
+	@Inject
+	@Optional
+	private void subscribeUIElementTopicVisible(@UIEventTopic(UIEvents.UIElement.TOPIC_VISIBLE) Event event) {
+		// Ensure that this event is for a MToolBarElement
+		if (!(event.getProperty(UIEvents.EventTags.ELEMENT) instanceof MToolBarElement)) {
+			return;
+		}
+
+		MToolBarElement itemModel = (MToolBarElement) event.getProperty(UIEvents.EventTags.ELEMENT);
+		IContributionItem ici = getContribution(itemModel);
+		if (ici == null) {
+			return;
+		}
+
+		ToolBarManager parent = null;
+		if (ici instanceof MenuManager) {
+			parent = (ToolBarManager) ((MenuManager) ici).getParent();
+		} else if (ici instanceof ContributionItem) {
+			parent = (ToolBarManager) ((ContributionItem) ici).getParent();
+		}
+
+		if (parent == null) {
+			ici.setVisible(itemModel.isVisible());
+			return;
+		}
+
+		IContributionManagerOverrides ov = parent.getOverrides();
+		// partial fix for bug 383569: only change state if there are no
+		// extra override mechanics controlling element visibility
+		if (ov == null) {
+			ici.setVisible(itemModel.isVisible());
+		} else {
+			Boolean visible = ov.getVisible(ici);
+			if (visible == null) {
+				// same as above: only change state if there are no extra
+				// override mechanics controlling element visibility
+				ici.setVisible(itemModel.isVisible());
+			}
+		}
+
+		updateWidget(parent);
 	}
 
 	@Inject
