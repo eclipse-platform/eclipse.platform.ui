@@ -694,8 +694,10 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 		return null;
 	}
 
-	private void modelProcessSwitch(ToolBarManager parentManager,
-			MToolBarElement childME) {
+	private void modelProcessSwitch(ToolBarManager parentManager, MToolBarElement childME) {
+		if (!childME.isToBeRendered()) {
+			return;
+		}
 		if (OpaqueElementUtil.isOpaqueToolItem(childME)) {
 			MToolItem itemModel = (MToolItem) childME;
 			processOpaqueItem(parentManager, itemModel);

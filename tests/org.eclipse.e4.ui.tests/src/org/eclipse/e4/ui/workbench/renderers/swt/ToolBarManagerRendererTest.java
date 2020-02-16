@@ -103,23 +103,22 @@ public class ToolBarManagerRendererTest {
 		toolBar.getChildren().add(toolItem1);
 
 		MToolItem toolItem2 = ems.createModelElement(MDirectToolItem.class);
-		// TODO Bug 560199 initial toBeRendered ignored
-		// toolItem2.setToBeRendered(false);
+		toolItem2.setToBeRendered(false);
 		toolBar.getChildren().add(toolItem2);
 
 		contextRule.createAndRunWorkbench(window);
 		ToolBarManager tbm = getToolBarManager();
 
-		assertEquals(2, tbm.getSize());
+		assertEquals(1, tbm.getSize());
 		assertTrue(tbm.getItems()[0].isVisible());
 
 		toolItem1.setToBeRendered(false);
 
-		assertEquals(1, tbm.getSize());
+		assertEquals(0, tbm.getSize());
 
 		toolItem1.setToBeRendered(true);
 
-		assertEquals(2, tbm.getSize());
+		assertEquals(1, tbm.getSize());
 		assertTrue(tbm.getItems()[0].isVisible());
 	}
 
