@@ -12,8 +12,6 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.browser;
-
-import org.eclipse.ui.browser.IWebBrowser;
 /**
  * Implementators of <code>org.eclipse.ui.browser.browsers</code> extension
  * points must provide an implementation of this abstract class.
