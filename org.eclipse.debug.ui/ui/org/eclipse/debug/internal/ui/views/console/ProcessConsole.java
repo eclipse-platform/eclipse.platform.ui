@@ -26,6 +26,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
 import java.text.ParseException;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -306,8 +309,8 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 						buffer.append("] "); //$NON-NLS-1$
 					}
 
-					String launchTime = formatTimestamp(process.getAttribute(DebugPlugin.ATTR_LAUNCH_TIMESTAMP));
-					String terminateTime = formatTimestamp(process.getAttribute(DebugPlugin.ATTR_TERMINATE_TIMESTAMP));
+					Date launchTime = parseTimestamp(process.getAttribute(DebugPlugin.ATTR_LAUNCH_TIMESTAMP));
+					Date terminateTime = parseTimestamp(process.getAttribute(DebugPlugin.ATTR_TERMINATE_TIMESTAMP));
 
 					String procLabel = process.getLabel();
 					if (launchTime != null) {
@@ -328,15 +331,32 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 						}
 					}
 
+					DateFormat dateTimeFormat = DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM);
 					if (launchTime != null && terminateTime != null) {
+						String launchTimeStr = dateTimeFormat.format(launchTime);
+						// Check if process started and terminated at same day. If so only print the
+						// time part of termination time and omit the date part.
+						LocalDateTime launchDate = LocalDateTime.ofInstant(launchTime.toInstant(),
+								ZoneId.systemDefault());
+						LocalDateTime terminateDate = LocalDateTime.ofInstant(terminateTime.toInstant(),
+								ZoneId.systemDefault());
+						LocalDateTime launchDay = launchDate.truncatedTo(ChronoUnit.DAYS);
+						LocalDateTime terminateDay = terminateDate.truncatedTo(ChronoUnit.DAYS);
+						String terminateTimeStr;
+						if (launchDay.equals(terminateDay)) {
+							terminateTimeStr = DateFormat.getTimeInstance(DateFormat.MEDIUM).format(terminateTime);
+						} else {
+							terminateTimeStr = dateTimeFormat.format(terminateTime);
+						}
+
 						buffer.append(MessageFormat.format(ConsoleMessages.ProcessConsole_commandLabel_withStartEnd,
-								procLabel, launchTime, terminateTime));
+								procLabel, launchTimeStr, terminateTimeStr));
 					} else if (launchTime != null) {
 						buffer.append(MessageFormat.format(ConsoleMessages.ProcessConsole_commandLabel_withStart,
-								procLabel, launchTime));
+								procLabel, dateTimeFormat.format(launchTime)));
 					} else if (terminateTime != null) {
 						buffer.append(MessageFormat.format(ConsoleMessages.ProcessConsole_commandLabel_withEnd,
-								procLabel, terminateTime));
+								procLabel, dateTimeFormat.format(terminateTime)));
 					}
 					label = buffer.toString();
 				}
@@ -350,20 +370,20 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 	}
 
 	/**
-	 * Format timestamp as datetime.
+	 * Get Date from (possibly invalid) timestamp.
 	 *
 	 * @param timestamp a timestamp as returned from
 	 *                  {@link System#currentTimeMillis()} or <code>null</code>
-	 * @return timestamp formatted as datetime or <code>null</code> if timestamp is
+	 * @return Date object for this timestamp or <code>null</code> if timestamp is
 	 *         invalid
 	 */
-	private static String formatTimestamp(String timestamp) {
+	private static Date parseTimestamp(String timestamp) {
 		if (timestamp == null) {
 			return null;
 		}
 		try {
 			long lTimestamp = Long.parseLong(timestamp);
-			return DateFormat.getDateTimeInstance(DateFormat.MEDIUM, DateFormat.MEDIUM).format(new Date(lTimestamp));
+			return new Date(lTimestamp);
 		} catch (NumberFormatException ex) {
 			return null;
 		}
