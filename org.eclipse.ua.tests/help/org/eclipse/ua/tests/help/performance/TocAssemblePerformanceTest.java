@@ -42,11 +42,6 @@ public class TocAssemblePerformanceTest extends PerformanceTestCase {
 		return new TestSuite(TocAssemblePerformanceTest.class);
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-
 	private TocContribution parse(TocFileParser parser, String tocFile)
 			throws IOException, SAXException, ParserConfigurationException {
 		return parser.parse(new TocFile(UserAssistanceTestPlugin.getPluginId(), tocFile, true, "en", null, null));

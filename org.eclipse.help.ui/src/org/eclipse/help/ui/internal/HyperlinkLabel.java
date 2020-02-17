@@ -206,12 +206,6 @@ public class HyperlinkLabel extends Canvas {
 	}
 
 	@Override
-	public void addListener(int e, Listener l) {
-		super.addListener(e, l);
-		//label.addListener(e, l);
-	}
-
-	@Override
 	public void setBackground(Color c) {
 		super.setBackground(c);
 		label.setBackground(c);

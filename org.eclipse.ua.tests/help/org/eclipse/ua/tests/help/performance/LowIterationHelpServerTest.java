@@ -35,11 +35,6 @@ public class LowIterationHelpServerTest extends PerformanceTestCase {
 	}
 
 	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-
-	@Override
 	protected void tearDown() throws Exception {
 		LoadServletUtil.stopServer();
 	}

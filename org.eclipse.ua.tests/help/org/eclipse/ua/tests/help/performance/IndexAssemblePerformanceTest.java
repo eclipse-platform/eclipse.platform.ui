@@ -43,11 +43,6 @@ public class IndexAssemblePerformanceTest extends PerformanceTestCase {
 		return new TestSuite(IndexAssemblePerformanceTest.class);
 	}
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-	}
-
 	public void testIndexAssemble() throws Exception {
 		tagAsSummary("Assemble Index", Dimension.ELAPSED_PROCESS);
 
