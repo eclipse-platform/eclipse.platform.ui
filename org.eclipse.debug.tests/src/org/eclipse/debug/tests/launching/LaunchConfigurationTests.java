@@ -33,6 +33,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.filesystem.IFileSystem;
 import org.eclipse.core.resources.IContainer;
@@ -53,6 +55,7 @@ import org.eclipse.debug.core.ILaunchConfigurationListener;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
+import org.eclipse.debug.core.ILaunchesListener2;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.internal.core.LaunchConfiguration;
@@ -1207,14 +1210,40 @@ public class LaunchConfigurationTests extends AbstractLaunchTest implements ILau
 	public void testTerminateTimeStamp() throws Exception {
 		ILaunchConfigurationWorkingCopy workingCopy = newConfiguration(null, "test-time-stamp"); //$NON-NLS-1$
 		ILaunch launch = workingCopy.launch(ILaunchManager.DEBUG_MODE, null);
+		AtomicBoolean launchTerminated = new AtomicBoolean();
+		ILaunchesListener2 listener = new ILaunchesListener2() {
+			@Override
+			public void launchesRemoved(ILaunch[] launches) {
+			}
+
+			@Override
+			public void launchesChanged(ILaunch[] launches) {
+			}
+
+			@Override
+			public void launchesAdded(ILaunch[] launches) {
+			}
+
+			@Override
+			public void launchesTerminated(ILaunch[] launches) {
+				for (ILaunch l : launches) {
+					if (l == launch) {
+						launchTerminated.set(true);
+					}
+				}
+			}
+		};
+		DebugPlugin.getDefault().getLaunchManager().addLaunchListener(listener);
 		IProcess process = null;
 		try {
 			process = DebugPlugin.newProcess(launch, new MockProcess(0), "test-terminate-timestamp");
+			waitWhile(c -> !launchTerminated.get(), testTimeout, c -> "Launch did not finished");
 			String stamp = launch.getAttribute(DebugPlugin.ATTR_TERMINATE_TIMESTAMP);
 			assertNotNull("missing time stamp", stamp); //$NON-NLS-1$
 			long lstamp = Long.parseLong(stamp); // should be a long - will throw NumberFormatException if not
 			assertTrue("Time travel launch", lstamp <= System.currentTimeMillis());
 		} finally {
+			DebugPlugin.getDefault().getLaunchManager().removeLaunchListener(listener);
 			if (launch != null) {
 				getLaunchManager().removeLaunch(launch);
 			}
