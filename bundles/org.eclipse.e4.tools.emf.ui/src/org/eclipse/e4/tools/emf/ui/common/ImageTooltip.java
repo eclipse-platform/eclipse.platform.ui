@@ -103,11 +103,6 @@ public class ImageTooltip extends ToolTip {
 
 		return parent;}
 
-	@Override
-	protected void afterHideToolTip(Event event) {
-		super.afterHideToolTip(event);
-	}
-
 	private String getImageURI() {
 		final MUILabel part = (MUILabel) editor.getMaster().getValue();
 		return part.getIconURI();

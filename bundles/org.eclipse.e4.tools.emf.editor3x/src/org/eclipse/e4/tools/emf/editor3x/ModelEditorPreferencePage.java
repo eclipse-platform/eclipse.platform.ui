@@ -176,9 +176,4 @@ public class ModelEditorPreferencePage extends PreferencePage implements IWorkbe
 		fRememberFilters.loadDefault();
 		super.performDefaults();
 	}
-
-	@Override
-	public void dispose() {
-		super.dispose();
-	}
 }
