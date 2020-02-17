@@ -26,9 +26,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
 
-import org.eclipse.text.templates.ContextTypeRegistry;
-import org.eclipse.text.templates.TemplatePersistenceData;
-
 import org.eclipse.jface.text.templates.Template;
 import org.eclipse.jface.text.templates.TemplateException;
 
