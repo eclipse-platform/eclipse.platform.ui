@@ -154,7 +154,7 @@ public class AlwaysWelcomeCheckbox implements IIntroContentProvider,IIntroAction
 
 	public boolean getAlwaysShowIntroPref()
 	{
-		// If uninitialized, we will default to false (box will be checked)
+		// If uninitialized, we will default to false (box will not be checked)
 		if (!ReopenUtil.isReopenPreferenceInitialized()) {
 			setAlwaysShowIntroPref(false);
 		}
