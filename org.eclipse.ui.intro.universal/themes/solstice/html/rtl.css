@@ -125,7 +125,7 @@ div div#rss-news {
 }
 
 div ul.news-list {
-	list-style-image: url("../graphics/icons/ctool/arrow_rtl.gif");
+	list-style-image: url("../graphics/icons/ctool/arrow_rtl.svg");
 	margin-left: 0px;
 	padding-right: 10px;
 	margin-right: 10px;
@@ -172,4 +172,10 @@ div ul.news-list {
 #page-links a#workbench .link-label { 
 	margin-right: auto !important;
 	margin-left: 0px !important;
+}
+
+@media (prefers-color-scheme: dark) {
+	div ul.news-list {
+		list-style-image: url("../graphics/icons/ctool/arrow_rtl_light.svg");
+	}
 }

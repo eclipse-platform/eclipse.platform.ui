@@ -68,7 +68,7 @@ div div#rss-news {
 }
 
 div ul#eclipse-news {
-	list-style-image: url("../graphics/icons/ctool/arrow_rtl.gif");
+	list-style-image: url("../graphics/icons/ctool/arrow_rtl.svg");
 	margin-left: 0px;
 	padding-right: 10px;
 	margin-right: 10px;
@@ -107,3 +107,8 @@ div ul#eclipse-news {
     right : 60px;
 }
 
+@media (prefers-color-scheme: dark) {
+	div ul.news-list {
+		list-style-image: url("../graphics/icons/ctool/arrow_rtl_light.svg");
+	}
+}

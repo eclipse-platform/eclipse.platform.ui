@@ -97,7 +97,7 @@ body .importance-callout {
 }
 
 ul.news-list {
-	list-style-image: url("../graphics/icons/ctool/arrow.gif");
+	list-style-image: url("../graphics/icons/ctool/arrow.svg");
 }
 
 @media (prefers-color-scheme: dark) {
@@ -115,6 +115,10 @@ ul.news-list {
 
 	body .importance-callout {
 		background-image: linear-gradient(to right, #4d4d4d00, #4d4d4dff);
+	}
+	
+	ul.news-list {
+		list-style-image: url("../graphics/icons/ctool/arrow_light.svg");
 	}
 }
 
