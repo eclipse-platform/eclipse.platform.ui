@@ -473,7 +473,6 @@ public class MenuAdditionCacheEntry {
 		element.getPersistedState().put(IWorkbench.PERSIST_STATE, Boolean.FALSE.toString());
 		element.setElementId(name);
 		if (!MenuHelper.isSeparatorVisible(sepAddition)) {
-			element.setToBeRendered(false);
 			element.setVisible(false);
 			element.getTags().add(MenuManagerRenderer.GROUP_MARKER);
 		}
