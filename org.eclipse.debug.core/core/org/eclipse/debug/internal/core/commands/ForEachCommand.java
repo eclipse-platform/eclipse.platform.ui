@@ -15,8 +15,10 @@ package org.eclipse.debug.internal.core.commands;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.jobs.ISchedulingRule;
 import org.eclipse.debug.core.IRequest;
 import org.eclipse.debug.core.commands.AbstractDebugCommand;
+import org.eclipse.debug.core.commands.IDebugCommandRequest;
 import org.eclipse.debug.core.commands.IEnabledStateRequest;
 
 /**
@@ -25,6 +27,8 @@ import org.eclipse.debug.core.commands.IEnabledStateRequest;
  * @since 3.3
  */
 public abstract class ForEachCommand extends AbstractDebugCommand {
+
+	private final ExclusiveRule exclusiveRule = new ExclusiveRule();
 
 	@Override
 	protected void doExecute(Object[] targets, IProgressMonitor monitor, IRequest request) throws CoreException {
@@ -49,4 +53,28 @@ public abstract class ForEachCommand extends AbstractDebugCommand {
 
 	protected abstract boolean isExecutable(Object target);
 
+	/*
+	 * Do not allow parallel update requests for the same command, since those
+	 * can result in race conditions, where one selected element enables a
+	 * command and another selected element disables the command. Depending on
+	 * which request is processed first, the debug command could end up with the
+	 * wrong enabled state. See bug 560274.
+	 */
+	@Override
+	protected ISchedulingRule getEnabledStateSchedulingRule(IDebugCommandRequest request) {
+		return exclusiveRule;
+	}
+
+	static class ExclusiveRule implements ISchedulingRule {
+
+		@Override
+		public boolean contains(ISchedulingRule rule) {
+			return rule == this;
+		}
+
+		@Override
+		public boolean isConflicting(ISchedulingRule rule) {
+			return contains(rule);
+		}
+	}
 }
