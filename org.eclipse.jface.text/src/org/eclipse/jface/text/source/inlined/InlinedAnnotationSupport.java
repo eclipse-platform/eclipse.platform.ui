@@ -103,6 +103,9 @@ public class InlinedAnnotationSupport {
 		@Override
 		public void applyTextPresentation(TextPresentation textPresentation) {
 			IAnnotationModel annotationModel= fViewer.getAnnotationModel();
+			if (annotationModel == null) {
+				return;
+			}
 			IRegion region= textPresentation.getExtent();
 			((IAnnotationModelExtension2) annotationModel)
 					.getAnnotationIterator(region.getOffset(), region.getLength(), true, true)
