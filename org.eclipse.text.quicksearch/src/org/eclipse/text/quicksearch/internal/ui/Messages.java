@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Pivotal Software, Inc.
+ * Copyright (c) 2019, 2020 Pivotal Software, Inc.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v2.0
  * which accompanies this distribution, and is available at
@@ -38,7 +38,6 @@ public class Messages extends NLS {
 	public static String QuickSearchDialog_title;
 	public static String QuickSearchDialog_caseSensitive_label;
 	public static String QuickSearchDialog_caseInsensitive_label;
-	public static String QuickSearchDialog_patternHint;
 	public static String QuickTextSearch_updateMatchesJob;
 	public static String quickAccessMatch;
 
