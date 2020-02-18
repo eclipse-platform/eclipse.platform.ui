@@ -730,9 +730,12 @@ public final class LegacyActionTools {
 	 * <code>"Open"</code>.
 	 *
 	 * @param text the text
-	 * @return the text sans mnemonics
+	 * @return the text sans mnemonics, or empty string
 	 */
 	public static String removeMnemonics(final String text) {
+		if (text == null || text.isEmpty()) {
+			return ""; //$NON-NLS-1$
+		}
 		int index = text.indexOf('&');
 		if (index == -1) {
 			return text;
