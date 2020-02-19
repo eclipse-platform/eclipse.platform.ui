@@ -59,8 +59,8 @@ public class NullStreamsProxy implements IStreamsProxy2 {
 		private void startReaderThread() {
 			Thread thread = new Thread((Runnable) () -> {
 				byte[] bytes = new byte[1024];
-				try {
-					while (fStream.read(bytes) >= 0) {
+				try (InputStream stream = fStream) {
+					while (stream.read(bytes) >= 0) {
 						// do nothing
 					}
 				} catch (IOException e) {
