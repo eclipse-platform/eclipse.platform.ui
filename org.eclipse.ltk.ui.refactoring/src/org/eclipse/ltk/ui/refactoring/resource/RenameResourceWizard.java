@@ -15,8 +15,6 @@
 package org.eclipse.ltk.ui.refactoring.resource;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -97,12 +95,7 @@ public class RenameResourceWizard extends RefactoringWizard {
 			fNameField.setText(resourceName);
 			fNameField.setFont(composite.getFont());
 			fNameField.setLayoutData(new GridData(GridData.FILL, GridData.BEGINNING, true, false));
-			fNameField.addModifyListener(new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					validatePage();
-				}
-			});
+			fNameField.addModifyListener(e -> validatePage());
 
 			int lastIndexOfDot= resourceName.lastIndexOf('.');
 			if ((fRefactoringProcessor.getResource().getType() == IResource.FILE) && (lastIndexOfDot > 0)) {

@@ -24,7 +24,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubProgressMonitor;
@@ -120,20 +119,17 @@ public class ChangeExceptionHandler {
 	}
 
 	private void performUndo(final Change undo) {
-		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				monitor.beginTask("", 11); //$NON-NLS-1$
-				try {
-					undo.initializeValidationData(new NotCancelableProgressMonitor(new SubProgressMonitor(monitor, 1)));
-					if (undo.isValid(new SubProgressMonitor(monitor,1)).hasFatalError()) {
-						monitor.done();
-						return;
-					}
-					undo.perform(new SubProgressMonitor(monitor, 9));
-				} finally {
-					undo.dispose();
+		IWorkspaceRunnable runnable= monitor -> {
+			monitor.beginTask("", 11); //$NON-NLS-1$
+			try {
+				undo.initializeValidationData(new NotCancelableProgressMonitor(new SubProgressMonitor(monitor, 1)));
+				if (undo.isValid(new SubProgressMonitor(monitor,1)).hasFatalError()) {
+					monitor.done();
+					return;
 				}
+				undo.perform(new SubProgressMonitor(monitor, 9));
+			} finally {
+				undo.dispose();
 			}
 		};
 		WorkbenchRunnableAdapter adapter= new WorkbenchRunnableAdapter(runnable,

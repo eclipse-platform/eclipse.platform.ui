@@ -30,9 +30,7 @@ import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.layout.PixelConverter;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -225,13 +223,10 @@ public class RefactoringStatusViewer extends SashForm {
 		fTableViewer= new TableViewer(new Table(parent, SWT.SINGLE | SWT.H_SCROLL));
 		fTableViewer.setLabelProvider(new RefactoringStatusEntryLabelProvider());
 		fTableViewer.setContentProvider(new RefactoringStatusContentProvider());
-		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				entrySelected(event.getSelection());
-				fNextProblem.update();
-				fPreviousProblem.update();
-			}
+		fTableViewer.addSelectionChangedListener(event -> {
+			entrySelected(event.getSelection());
+			fNextProblem.update();
+			fPreviousProblem.update();
 		});
 		fTableViewer.setComparator(new RefactoringStatusSorter());
 		Table tableControl= fTableViewer.getTable();

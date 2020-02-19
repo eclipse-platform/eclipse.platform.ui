@@ -16,8 +16,6 @@ package org.eclipse.ltk.ui.refactoring;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CLabel;
 import org.eclipse.swt.custom.ViewForm;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -147,12 +145,9 @@ public abstract class TextStatusContextViewer implements IStatusContextViewer {
 		fForm.marginHeight= 0;
 		fLabel= new CLabel(fForm, SWT.NONE);
 		fForm.setTopLeft(fLabel);
-		fForm.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				if (fPaneImage != null)
-					fPaneImage.dispose();
-			}
+		fForm.addDisposeListener(e -> {
+			if (fPaneImage != null)
+				fPaneImage.dispose();
 		});
 
 		Dialog.applyDialogFont(parent);

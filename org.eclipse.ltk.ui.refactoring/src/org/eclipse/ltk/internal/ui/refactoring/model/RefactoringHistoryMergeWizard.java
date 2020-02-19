@@ -28,7 +28,6 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeEvent;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.resources.IResourceDelta;
-import org.eclipse.core.resources.IResourceDeltaVisitor;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.ltk.core.refactoring.Refactoring;
@@ -63,28 +62,24 @@ public abstract class RefactoringHistoryMergeWizard extends RefactoringHistoryWi
 			final IResourceDelta delta= event.getDelta();
 			if (delta != null) {
 				try {
-					delta.accept(new IResourceDeltaVisitor() {
-
-						@Override
-						public final boolean visit(final IResourceDelta current) throws CoreException {
-							final IResource resource= current.getResource();
-							if (!resource.isDerived()) {
-								if (resource.getType() == IResource.FILE) {
-									switch (delta.getKind()) {
-										case IResourceDelta.ADDED:
-											fAddedFiles.add(resource);
-											break;
-										case IResourceDelta.REMOVED:
-											fRemovedFiles.add(resource);
-											break;
-										case IResourceDelta.CHANGED:
-											fChangedFiles.add(resource);
-											break;
-									}
+					delta.accept(current -> {
+						final IResource resource= current.getResource();
+						if (!resource.isDerived()) {
+							if (resource.getType() == IResource.FILE) {
+								switch (delta.getKind()) {
+									case IResourceDelta.ADDED:
+										fAddedFiles.add(resource);
+										break;
+									case IResourceDelta.REMOVED:
+										fRemovedFiles.add(resource);
+										break;
+									case IResourceDelta.CHANGED:
+										fChangedFiles.add(resource);
+										break;
 								}
 							}
-							return true;
 						}
+						return true;
 					});
 				} catch (CoreException exception) {
 					RefactoringUIPlugin.log(exception);

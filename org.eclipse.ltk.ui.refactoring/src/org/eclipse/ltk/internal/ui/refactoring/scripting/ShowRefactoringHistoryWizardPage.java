@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
@@ -34,13 +33,11 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.ui.PlatformUI;
 
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptorProxy;
-import org.eclipse.ltk.core.refactoring.history.RefactoringHistory;
 import org.eclipse.ltk.internal.core.refactoring.history.RefactoringHistoryService;
 import org.eclipse.ltk.internal.ui.refactoring.IRefactoringHelpContextIds;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringDescriptorDeleteQuery;
 import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryEditHelper;
 import org.eclipse.ltk.internal.ui.refactoring.history.ShowRefactoringHistoryControl;
-import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryEditHelper.IRefactoringHistoryProvider;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
 
 
@@ -154,13 +151,7 @@ public final class ShowRefactoringHistoryWizardPage extends WizardPage {
 				if (selection.length > 0) {
 					final Shell shell= getShell();
 					final IRunnableContext context= new ProgressMonitorDialog(shell);
-					RefactoringHistoryEditHelper.promptRefactoringDelete(shell, context, fHistoryControl, new RefactoringDescriptorDeleteQuery(shell, null, selection.length), new IRefactoringHistoryProvider() {
-
-						@Override
-						public RefactoringHistory getRefactoringHistory(final IProgressMonitor monitor) {
-							return RefactoringHistoryService.getInstance().getWorkspaceHistory(monitor);
-						}
-					}, selection);
+					RefactoringHistoryEditHelper.promptRefactoringDelete(shell, context, fHistoryControl, new RefactoringDescriptorDeleteQuery(shell, null, selection.length), monitor -> RefactoringHistoryService.getInstance().getWorkspaceHistory(monitor), selection);
 				}
 			}
 		});

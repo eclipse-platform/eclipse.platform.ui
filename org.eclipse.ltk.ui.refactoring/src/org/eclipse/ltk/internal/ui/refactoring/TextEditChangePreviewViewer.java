@@ -18,8 +18,6 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -85,12 +83,9 @@ public class TextEditChangePreviewViewer implements IChangePreviewViewer {
 			fCompareConfiguration.setLeftLabel(RefactoringUIMessages.ComparePreviewer_original_source);
 			fCompareConfiguration.setRightEditable(false);
 			fCompareConfiguration.setRightLabel(RefactoringUIMessages.ComparePreviewer_refactored_source);
-			addDisposeListener(new DisposeListener() {
-				@Override
-				public void widgetDisposed(DisposeEvent e) {
-					if (fImage != null && !fImage.isDisposed())
-						fImage.dispose();
-				}
+			addDisposeListener(e -> {
+				if (fImage != null && !fImage.isDisposed())
+					fImage.dispose();
 			});
 			Dialog.applyDialogFont(this);
 		}

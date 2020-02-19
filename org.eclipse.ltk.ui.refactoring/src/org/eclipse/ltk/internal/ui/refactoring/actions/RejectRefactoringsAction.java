@@ -20,11 +20,9 @@ import org.eclipse.team.core.mapping.IMergeContext;
 import org.eclipse.team.core.mapping.ISynchronizationContext;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.SubProgressMonitor;
 
 import org.eclipse.jface.action.Action;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 
 import org.eclipse.ui.PlatformUI;
 
@@ -79,19 +77,15 @@ public final class RejectRefactoringsAction extends Action {
 	public void run() {
 		if (fProxies != null) {
 			try {
-				PlatformUI.getWorkbench().getProgressService().run(true, true, new IRunnableWithProgress() {
-
-					@Override
-					public final void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-						try {
-							monitor.beginTask("", fProxies.length + 100); //$NON-NLS-1$
-							final RefactoringHistoryService service= RefactoringHistoryService.getInstance();
-							for (RefactoringDescriptorProxy proxy : fProxies) {
-								service.addRefactoringDescriptor(proxy, new SubProgressMonitor(monitor, 1));
-							}
-						} finally {
-							monitor.done();
+				PlatformUI.getWorkbench().getProgressService().run(true, true, monitor -> {
+					try {
+						monitor.beginTask("", fProxies.length + 100); //$NON-NLS-1$
+						final RefactoringHistoryService service= RefactoringHistoryService.getInstance();
+						for (RefactoringDescriptorProxy proxy : fProxies) {
+							service.addRefactoringDescriptor(proxy, new SubProgressMonitor(monitor, 1));
 						}
+					} finally {
+						monitor.done();
 					}
 				});
 			} catch (InvocationTargetException exception) {

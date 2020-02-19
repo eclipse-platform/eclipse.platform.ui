@@ -22,9 +22,7 @@ import org.eclipse.swt.widgets.Item;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.swt.widgets.Widget;
 
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTreeViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -64,24 +62,21 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 	public ChangeElementTreeViewer(Composite parentComposite) {
 		super(parentComposite, SWT.NONE);
 		addFilter(new GroupCategoryFilter());
-		addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event){
-				PreviewNode element= (PreviewNode)event.getElement();
-				boolean checked= event.getChecked();
+		addCheckStateListener(event -> {
+			PreviewNode element= (PreviewNode)event.getElement();
+			boolean checked= event.getChecked();
 
-				element.setEnabled(checked);
-				setSubtreeChecked(element, checked);
-				setSubtreeGrayed(element, false);
-				PreviewNode parent= element.getParent();
-				while(parent != null) {
-					int active= parent.getActive();
-					parent.setEnabledShallow(active == PreviewNode.PARTLY_ACTIVE || active == PreviewNode.ACTIVE);
-					boolean grayed= (active == PreviewNode.PARTLY_ACTIVE);
-					setChecked(parent, checked ? true : grayed);
-					setGrayed(parent, grayed);
-					parent= parent.getParent();
-				}
+			element.setEnabled(checked);
+			setSubtreeChecked(element, checked);
+			setSubtreeGrayed(element, false);
+			PreviewNode parent= element.getParent();
+			while(parent != null) {
+				int active= parent.getActive();
+				parent.setEnabledShallow(active == PreviewNode.PARTLY_ACTIVE || active == PreviewNode.ACTIVE);
+				boolean grayed= (active == PreviewNode.PARTLY_ACTIVE);
+				setChecked(parent, checked ? true : grayed);
+				setGrayed(parent, grayed);
+				parent= parent.getParent();
 			}
 		});
 	}

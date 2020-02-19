@@ -717,28 +717,18 @@ public class RefactoringHistoryWizard extends Wizard {
 			}
 			final Refactoring refactoring= fErrorPage.getRefactoring();
 			if (refactoring != null) {
-				final IRunnableWithProgress runnable= new IRunnableWithProgress() {
-
-					@Override
-					public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-						Assert.isNotNull(monitor);
-						try {
-							fPreviewPage.setRefactoring(refactoring);
-							final Change change= createChange(refactoring, monitor);
-							getShell().getDisplay().syncExec(new Runnable() {
-
-								@Override
-								public final void run() {
-									fPreviewPage.setChange(change);
-								}
-							});
-						} catch (CoreException exception) {
-							throw new InvocationTargetException(exception);
-						} catch (OperationCanceledException exception) {
-							throw new InterruptedException(exception.getLocalizedMessage());
-						} finally {
-							monitor.done();
-						}
+				final IRunnableWithProgress runnable= monitor -> {
+					Assert.isNotNull(monitor);
+					try {
+						fPreviewPage.setRefactoring(refactoring);
+						final Change change= createChange(refactoring, monitor);
+						getShell().getDisplay().syncExec(() -> fPreviewPage.setChange(change));
+					} catch (CoreException exception1) {
+						throw new InvocationTargetException(exception1);
+					} catch (OperationCanceledException exception2) {
+						throw new InterruptedException(exception2.getLocalizedMessage());
+					} finally {
+						monitor.done();
 					}
 				};
 				try {
@@ -827,88 +817,78 @@ public class RefactoringHistoryWizard extends Wizard {
 		final IWizardPage[] result= { null};
 		final RefactoringStatus status= new RefactoringStatus();
 		final IWizardContainer wizard= getContainer();
-		final IRunnableWithProgress runnable= new IRunnableWithProgress() {
-
-			@Override
-			public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-				Assert.isNotNull(monitor);
-				try {
-					monitor.beginTask(RefactoringUIMessages.RefactoringHistoryWizard_preparing_refactoring, 220);
-					result[0]= null;
-					if (!fAboutToPerformFired) {
-						try {
-							status.merge(fireAboutToPerformHistory(new SubProgressMonitor(monitor, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)));
-						} finally {
-							fAboutToPerformFired= true;
-						}
+		final IRunnableWithProgress runnable= monitor -> {
+			Assert.isNotNull(monitor);
+			try {
+				monitor.beginTask(RefactoringUIMessages.RefactoringHistoryWizard_preparing_refactoring, 220);
+				result[0]= null;
+				if (!fAboutToPerformFired) {
+					try {
+						status.merge(fireAboutToPerformHistory(new SubProgressMonitor(monitor, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL)));
+					} finally {
+						fAboutToPerformFired= true;
 					}
-					final boolean last= isLastRefactoring();
-					final RefactoringDescriptorProxy proxy= getRefactoringDescriptor();
-					preparePreviewPage(status, proxy, last);
-					prepareErrorPage(status, proxy, status.hasFatalError(), last || status.hasFatalError());
-					fErrorPage.setRefactoring(null);
-					if (!status.isOK()) {
-						result[0]= fErrorPage;
-					} else if (proxy != null) {
-						final IRefactoringHistoryService service= RefactoringCore.getHistoryService();
-						try {
-							service.connect();
-							final RefactoringDescriptor descriptor= proxy.requestDescriptor(new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-							if (descriptor != null) {
-								final RefactoringContext context= createRefactoringContext(descriptor, status, new SubProgressMonitor(monitor, 60, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-								try {
-									if (context != null && status.isOK()) {
-										final Refactoring refactoring= context.getRefactoring();
-										fPreviewPage.setRefactoring(refactoring);
-										fErrorPage.setRefactoring(refactoring);
-										status.merge(checkConditions(refactoring, new SubProgressMonitor(monitor, 20, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL), CheckConditionsOperation.INITIAL_CONDITONS));
+				}
+				final boolean last= isLastRefactoring();
+				final RefactoringDescriptorProxy proxy= getRefactoringDescriptor();
+				preparePreviewPage(status, proxy, last);
+				prepareErrorPage(status, proxy, status.hasFatalError(), last || status.hasFatalError());
+				fErrorPage.setRefactoring(null);
+				if (!status.isOK()) {
+					result[0]= fErrorPage;
+				} else if (proxy != null) {
+					final IRefactoringHistoryService service= RefactoringCore.getHistoryService();
+					try {
+						service.connect();
+						final RefactoringDescriptor descriptor= proxy.requestDescriptor(new SubProgressMonitor(monitor, 10, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+						if (descriptor != null) {
+							final RefactoringContext context= createRefactoringContext(descriptor, status, new SubProgressMonitor(monitor, 60, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+							try {
+								if (context != null && status.isOK()) {
+									final Refactoring refactoring= context.getRefactoring();
+									fPreviewPage.setRefactoring(refactoring);
+									fErrorPage.setRefactoring(refactoring);
+									status.merge(checkConditions(refactoring, new SubProgressMonitor(monitor, 20, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL), CheckConditionsOperation.INITIAL_CONDITONS));
+									if (!status.isOK()) {
+										prepareErrorPage(status, proxy, status.hasFatalError(), last);
+										result[0]= fErrorPage;
+									} else {
+										status.merge(checkConditions(refactoring, new SubProgressMonitor(monitor, 65, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL), CheckConditionsOperation.FINAL_CONDITIONS));
 										if (!status.isOK()) {
 											prepareErrorPage(status, proxy, status.hasFatalError(), last);
 											result[0]= fErrorPage;
 										} else {
-											status.merge(checkConditions(refactoring, new SubProgressMonitor(monitor, 65, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL), CheckConditionsOperation.FINAL_CONDITIONS));
-											if (!status.isOK()) {
-												prepareErrorPage(status, proxy, status.hasFatalError(), last);
-												result[0]= fErrorPage;
-											} else {
-												final Change change= createChange(refactoring, new SubProgressMonitor(monitor, 5, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-												getShell().getDisplay().syncExec(new Runnable() {
-
-													@Override
-													public final void run() {
-														fPreviewPage.setChange(change);
-													}
-												});
-												result[0]= fPreviewPage;
-											}
+											final Change change= createChange(refactoring, new SubProgressMonitor(monitor, 5, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+											getShell().getDisplay().syncExec(() -> fPreviewPage.setChange(change));
+											result[0]= fPreviewPage;
 										}
-									} else {
-										prepareErrorPage(status, proxy, status.hasFatalError(), last);
-										result[0]= fErrorPage;
 									}
-								} finally {
-									if (context != null)
-										context.dispose();
+								} else {
+									prepareErrorPage(status, proxy, status.hasFatalError(), last);
+									result[0]= fErrorPage;
 								}
-							} else {
-								status.merge(RefactoringStatus.createFatalErrorStatus(RefactoringUIMessages.RefactoringHistoryWizard_error_resolving_refactoring));
-								prepareErrorPage(status, proxy, status.hasFatalError(), last);
-								result[0]= fErrorPage;
+							} finally {
+								if (context != null)
+									context.dispose();
 							}
-						} finally {
-							service.disconnect();
+						} else {
+							status.merge(RefactoringStatus.createFatalErrorStatus(RefactoringUIMessages.RefactoringHistoryWizard_error_resolving_refactoring));
+							prepareErrorPage(status, proxy, status.hasFatalError(), last);
+							result[0]= fErrorPage;
 						}
-					} else {
-						prepareErrorPage(status, proxy, status.hasFatalError(), last);
-						result[0]= fErrorPage;
+					} finally {
+						service.disconnect();
 					}
-				} catch (CoreException exception) {
-					throw new InvocationTargetException(exception);
-				} catch (OperationCanceledException exception) {
-					throw new InterruptedException(exception.getLocalizedMessage());
-				} finally {
-					monitor.done();
+				} else {
+					prepareErrorPage(status, proxy, status.hasFatalError(), last);
+					result[0]= fErrorPage;
 				}
+			} catch (CoreException exception1) {
+				throw new InvocationTargetException(exception1);
+			} catch (OperationCanceledException exception2) {
+				throw new InterruptedException(exception2.getLocalizedMessage());
+			} finally {
+				monitor.done();
 			}
 		};
 		try {
@@ -989,18 +969,14 @@ public class RefactoringHistoryWizard extends Wizard {
 				if (dialog.getReturnCode() == 1)
 					return false;
 			}
-			final IRunnableWithProgress runnable= new IRunnableWithProgress() {
-
-				@Override
-				public final void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					for (int index= 0; index < fExecutedRefactorings; index++) {
-						try {
-							RefactoringCore.getUndoManager().performUndo(null, new SubProgressMonitor(monitor, 100));
-							if (fExecutedRefactorings > 0)
-								fExecutedRefactorings--;
-						} catch (CoreException exception) {
-							throw new InvocationTargetException(exception);
-						}
+			final IRunnableWithProgress runnable= monitor -> {
+				for (int index= 0; index < fExecutedRefactorings; index++) {
+					try {
+						RefactoringCore.getUndoManager().performUndo(null, new SubProgressMonitor(monitor, 100));
+						if (fExecutedRefactorings > 0)
+							fExecutedRefactorings--;
+					} catch (CoreException exception) {
+						throw new InvocationTargetException(exception);
 					}
 				}
 			};
@@ -1227,17 +1203,13 @@ public class RefactoringHistoryWizard extends Wizard {
 	 *            <code>false</code> otherwise
 	 */
 	private void prepareErrorPage(final RefactoringStatus status, final RefactoringDescriptorProxy descriptor, final boolean fatal, final boolean disabled) {
-		getShell().getDisplay().syncExec(new Runnable() {
-
-			@Override
-			public final void run() {
-				fErrorPage.setTitle(descriptor, fCurrentRefactoring, fDescriptorProxies.length);
-				fErrorPage.setNextPageDisabled(disabled && fatal);
-				fErrorPage.setPageComplete(!fatal);
-				fErrorPage.setStatus(null);
-				fErrorPage.setStatus(status);
-				getContainer().updateButtons();
-			}
+		getShell().getDisplay().syncExec(() -> {
+			fErrorPage.setTitle(descriptor, fCurrentRefactoring, fDescriptorProxies.length);
+			fErrorPage.setNextPageDisabled(disabled && fatal);
+			fErrorPage.setPageComplete(!fatal);
+			fErrorPage.setStatus(null);
+			fErrorPage.setStatus(status);
+			getContainer().updateButtons();
 		});
 	}
 
@@ -1253,16 +1225,12 @@ public class RefactoringHistoryWizard extends Wizard {
 	 *            <code>false</code> otherwise
 	 */
 	private void preparePreviewPage(final RefactoringStatus status, final RefactoringDescriptorProxy descriptor, final boolean disabled) {
-		getShell().getDisplay().syncExec(new Runnable() {
-
-			@Override
-			public final void run() {
-				fPreviewPage.setTitle(descriptor, fCurrentRefactoring, fDescriptorProxies.length);
-				fPreviewPage.setNextPageDisabled(disabled);
-				fPreviewPage.setPageComplete(!disabled);
-				fPreviewPage.setStatus(status);
-				getContainer().updateButtons();
-			}
+		getShell().getDisplay().syncExec(() -> {
+			fPreviewPage.setTitle(descriptor, fCurrentRefactoring, fDescriptorProxies.length);
+			fPreviewPage.setNextPageDisabled(disabled);
+			fPreviewPage.setPageComplete(!disabled);
+			fPreviewPage.setStatus(status);
+			getContainer().updateButtons();
 		});
 	}
 

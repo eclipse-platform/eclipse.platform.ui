@@ -18,12 +18,10 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.swt.widgets.Composite;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.wizard.WizardDialog;
 
@@ -68,17 +66,13 @@ public final class CreateRefactoringScriptAction implements IWorkbenchWindowActi
 			IRunnableContext context= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 			if (context == null)
 				context= PlatformUI.getWorkbench().getProgressService();
-			context.run(false, true, new IRunnableWithProgress() {
-
-				@Override
-				public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					final IRefactoringHistoryService service= RefactoringCore.getHistoryService();
-					try {
-						service.connect();
-						wizard.setRefactoringHistory(service.getWorkspaceHistory(monitor));
-					} finally {
-						service.disconnect();
-					}
+			context.run(false, true, monitor -> {
+				final IRefactoringHistoryService service= RefactoringCore.getHistoryService();
+				try {
+					service.connect();
+					wizard.setRefactoringHistory(service.getWorkspaceHistory(monitor));
+				} finally {
+					service.disconnect();
 				}
 			});
 		} catch (InvocationTargetException exception) {

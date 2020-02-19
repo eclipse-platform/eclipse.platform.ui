@@ -25,9 +25,7 @@ import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.ResourcesPlugin;
 
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -121,12 +119,7 @@ public class MoveResourcesWizard extends RefactoringWizard {
 					return false;
 				}
 			});
-			fDestinationField.addSelectionChangedListener(new ISelectionChangedListener() {
-				@Override
-				public void selectionChanged(SelectionChangedEvent event) {
-					validatePage();
-				}
-			});
+			fDestinationField.addSelectionChangedListener(event -> validatePage());
 			if (resourcesToMove.length > 0) {
 				fDestinationField.setSelection(new StructuredSelection(resourcesToMove[0].getParent()));
 			}

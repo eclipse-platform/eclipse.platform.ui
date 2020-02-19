@@ -37,14 +37,12 @@ import org.eclipse.swt.dnd.Transfer;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.wizard.IWizardContainer;
 import org.eclipse.jface.wizard.Wizard;
 
@@ -310,15 +308,11 @@ public final class CreateRefactoringScriptWizard extends Wizard {
 	private void writeRefactoringDescriptorProxies(final RefactoringDescriptorProxy[] writable, final OutputStream stream) throws CoreException {
 		RefactoringHistoryManager.sortRefactoringDescriptorsAscending(writable);
 		try {
-			getContainer().run(false, false, new IRunnableWithProgress() {
-
-				@Override
-				public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					try {
-						RefactoringCore.getHistoryService().writeRefactoringDescriptors(writable, stream, RefactoringDescriptor.NONE, false, monitor);
-					} catch (CoreException exception) {
-						throw new InvocationTargetException(exception);
-					}
+			getContainer().run(false, false, monitor -> {
+				try {
+					RefactoringCore.getHistoryService().writeRefactoringDescriptors(writable, stream, RefactoringDescriptor.NONE, false, monitor);
+				} catch (CoreException exception) {
+					throw new InvocationTargetException(exception);
 				}
 			});
 		} catch (InvocationTargetException exception) {

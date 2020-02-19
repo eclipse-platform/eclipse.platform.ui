@@ -18,7 +18,6 @@ import java.lang.reflect.InvocationTargetException;
 import org.eclipse.swt.widgets.Shell;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 
 import org.eclipse.jface.action.IAction;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -79,14 +78,11 @@ public class RedoRefactoringAction extends UndoManagerAction {
 					errorMessage);
 			}
 		};
-		return new IRunnableWithProgress(){
-			@Override
-			public void run(IProgressMonitor pm) throws InvocationTargetException {
-				try {
-					RefactoringCore.getUndoManager().performRedo(query, pm);
-				} catch (CoreException e) {
-					throw new InvocationTargetException(e);
-				}
+		return pm -> {
+			try {
+				RefactoringCore.getUndoManager().performRedo(query, pm);
+			} catch (CoreException e) {
+				throw new InvocationTargetException(e);
 			}
 		};
 	}

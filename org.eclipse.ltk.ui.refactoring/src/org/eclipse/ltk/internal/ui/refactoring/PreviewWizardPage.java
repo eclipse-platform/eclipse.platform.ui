@@ -60,7 +60,6 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -154,13 +153,9 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 
 		@Override
 		public void run() {
-			BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-
-				@Override
-				public void run() {
-					setActiveGroupCategory(fGroupCategory);
-					fOwner.executed(FilterAction.this);
-				}
+			BusyIndicator.showWhile(getShell().getDisplay(), () -> {
+				setActiveGroupCategory(fGroupCategory);
+				fOwner.executed(FilterAction.this);
 			});
 		}
 	}
@@ -178,13 +173,9 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 
 		@Override
 		public void run() {
-			BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-
-				@Override
-				public final void run() {
-					clearGroupCategories();
-					fOwner.executed(ShowAllAction.this);
-				}
+			BusyIndicator.showWhile(getShell().getDisplay(), () -> {
+				clearGroupCategories();
+				fOwner.executed(ShowAllAction.this);
 			});
 		}
 	}
@@ -195,13 +186,10 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 		}
 		@Override
 		public void run() {
-			BusyIndicator.showWhile(getShell().getDisplay(), new Runnable() {
-				@Override
-				public final void run() {
-					boolean hideDerived= isChecked();
-					getRefactoringSettings().put(PREVIEW_WIZARD_PAGE_HIDE_DERIVED, hideDerived);
-					setHideDerived(hideDerived);
-				}
+			BusyIndicator.showWhile(getShell().getDisplay(), () -> {
+				boolean hideDerived= isChecked();
+				getRefactoringSettings().put(PREVIEW_WIZARD_PAGE_HIDE_DERIVED, hideDerived);
+				setHideDerived(hideDerived);
 			});
 		}
 	}
@@ -599,19 +587,16 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 	}
 
 	private ISelectionChangedListener createSelectionChangedListener() {
-		return new ISelectionChangedListener(){
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection sel= (IStructuredSelection) event.getSelection();
-				if (sel.size() == 1) {
-					PreviewNode newSelection= (PreviewNode)sel.getFirstElement();
-					if (newSelection != fCurrentSelection) {
-						fCurrentSelection= newSelection;
-						showPreview(newSelection);
-					}
-				} else {
-					showPreview(null);
+		return event -> {
+			IStructuredSelection sel= (IStructuredSelection) event.getSelection();
+			if (sel.size() == 1) {
+				PreviewNode newSelection= (PreviewNode)sel.getFirstElement();
+				if (newSelection != fCurrentSelection) {
+					fCurrentSelection= newSelection;
+					showPreview(newSelection);
 				}
+			} else {
+				showPreview(null);
 			}
 		};
 	}

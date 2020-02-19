@@ -15,8 +15,6 @@ package org.eclipse.ltk.internal.ui.refactoring.history;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ViewForm;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -115,15 +113,11 @@ public class SortableRefactoringHistoryControl extends RefactoringHistoryControl
 	public SortableRefactoringHistoryControl(final Composite parent, final RefactoringHistoryControlConfiguration configuration) {
 		super(parent, configuration);
 
-		addDisposeListener(new DisposeListener() {
-
-			@Override
-			public final void widgetDisposed(final DisposeEvent event) {
-				if (fToolBarManager != null) {
-					fToolBarManager.removeAll();
-					fToolBarManager.dispose();
-					fToolBarManager= null;
-				}
+		addDisposeListener(event -> {
+			if (fToolBarManager != null) {
+				fToolBarManager.removeAll();
+				fToolBarManager.dispose();
+				fToolBarManager= null;
 			}
 		});
 	}

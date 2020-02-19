@@ -18,10 +18,6 @@ import java.io.IOException;
 import java.net.URI;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -116,13 +112,7 @@ public class RefactoringScriptLocationControl extends Composite {
 		fExternalLocationControl= new RefactoringLocationControl(fWizard, this, SETTING_HISTORY);
 		fExternalLocationControl.setLayoutData(createGridData(GridData.FILL_HORIZONTAL, 1, 0));
 		fExternalLocationControl.setEnabled(!clipboard);
-		fExternalLocationControl.getControl().addModifyListener(new ModifyListener() {
-
-			@Override
-			public final void modifyText(final ModifyEvent event) {
-				handleExternalLocationChanged();
-			}
-		});
+		fExternalLocationControl.getControl().addModifyListener(event -> handleExternalLocationChanged());
 		fExternalLocationControl.getControl().addSelectionListener(new SelectionAdapter() {
 
 			@Override
@@ -144,13 +134,9 @@ public class RefactoringScriptLocationControl extends Composite {
 				handleBrowseExternalLocation();
 			}
 		});
-		addDisposeListener(new DisposeListener() {
-
-			@Override
-			public final void widgetDisposed(final DisposeEvent event) {
-				if (settings != null)
-					settings.put(SETTING_CLIPBOARD, fFromClipboardButton.getSelection());
-			}
+		addDisposeListener(event -> {
+			if (settings != null)
+				settings.put(SETTING_CLIPBOARD, fFromClipboardButton.getSelection());
 		});
 	}
 

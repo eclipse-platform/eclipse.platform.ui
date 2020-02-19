@@ -27,8 +27,6 @@ import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.layout.PixelConverter;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.wizard.WizardPage;
 
 import org.eclipse.ui.PlatformUI;
@@ -126,13 +124,7 @@ public final class CreateRefactoringScriptWizardPage extends WizardPage {
 		fHistoryControl.setLayoutData(data);
 		final RefactoringHistory history= fWizard.getRefactoringHistory();
 		fHistoryControl.setInput(history);
-		fHistoryControl.addCheckStateListener(new ICheckStateListener() {
-
-			@Override
-			public void checkStateChanged(final CheckStateChangedEvent event) {
-				fWizard.setRefactoringDescriptors(fHistoryControl.getCheckedDescriptors());
-			}
-		});
+		fHistoryControl.addCheckStateListener(event -> fWizard.setRefactoringDescriptors(fHistoryControl.getCheckedDescriptors()));
 		final Group group= new Group(composite, SWT.NONE);
 		group.setText(ScriptingMessages.CreateRefactoringScriptWizardPage_destination_caption);
 		final GridLayout layout= new GridLayout();

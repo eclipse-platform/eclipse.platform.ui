@@ -165,13 +165,7 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 	 */
 	private static Shell getDialogShell() {
 		final Shell[] shell= new Shell[] { null};
-		Display.getDefault().syncExec(new Runnable() {
-
-			@Override
-			public final void run() {
-				shell[0]= getActiveShell();
-			}
-		});
+		Display.getDefault().syncExec(() -> shell[0]= getActiveShell());
 		return shell[0];
 	}
 
@@ -225,21 +219,17 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 				}
 				if (execute) {
 					final Shell shell= getDialogShell();
-					shell.getDisplay().syncExec(new Runnable() {
-
-						@Override
-						public final void run() {
-							if (MessageDialog.openQuestion(shell, RefactoringUIMessages.RefactoringWizard_refactoring, RefactoringUIMessages.AbstractRefactoringModelMerger_accept_question)) {
-								final RefactoringHistoryMergeWizard wizard= new RefactoringHistoryModelMergeWizard();
-								int result= Window.OK;
-								try {
-									wizard.setConfiguration(new RefactoringHistoryModelMergeConfiguration((projects != null && projects.length == 1) ? projects[0] : null));
-									wizard.setInput(history);
-									result= new WizardDialog(shell, wizard).open();
-								} finally {
-									if (result != Window.CANCEL)
-										wizard.resolveConflicts(context);
-								}
+					shell.getDisplay().syncExec(() -> {
+						if (MessageDialog.openQuestion(shell, RefactoringUIMessages.RefactoringWizard_refactoring, RefactoringUIMessages.AbstractRefactoringModelMerger_accept_question)) {
+							final RefactoringHistoryMergeWizard wizard= new RefactoringHistoryModelMergeWizard();
+							int result= Window.OK;
+							try {
+								wizard.setConfiguration(new RefactoringHistoryModelMergeConfiguration((projects != null && projects.length == 1) ? projects[0] : null));
+								wizard.setInput(history);
+								result= new WizardDialog(shell, wizard).open();
+							} finally {
+								if (result != Window.CANCEL)
+									wizard.resolveConflicts(context);
 							}
 						}
 					});

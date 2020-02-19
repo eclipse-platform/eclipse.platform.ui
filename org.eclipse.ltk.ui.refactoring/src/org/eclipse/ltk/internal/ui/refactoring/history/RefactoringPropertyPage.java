@@ -40,7 +40,6 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IScopeContext;
 
 import org.eclipse.core.resources.IProject;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ProjectScope;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
@@ -49,7 +48,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableContext;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.preference.IPreferencePageContainer;
 import org.eclipse.jface.preference.IPreferenceStore;
 
@@ -72,7 +70,6 @@ import org.eclipse.ltk.internal.ui.refactoring.Messages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIPlugin;
 import org.eclipse.ltk.internal.ui.refactoring.WorkbenchRunnableAdapter;
-import org.eclipse.ltk.internal.ui.refactoring.history.RefactoringHistoryEditHelper.IRefactoringHistoryProvider;
 import org.eclipse.ltk.ui.refactoring.history.RefactoringHistoryControlConfiguration;
 
 /**
@@ -186,13 +183,7 @@ public final class RefactoringPropertyPage extends PropertyPage {
 					final IProject project= getCurrentProject();
 					if (project != null) {
 						final Shell shell= getShell();
-						RefactoringHistoryEditHelper.promptRefactoringDelete(shell, context, fHistoryControl, new RefactoringDescriptorDeleteQuery(shell, getCurrentProject(), selection.length), new IRefactoringHistoryProvider() {
-
-							@Override
-							public RefactoringHistory getRefactoringHistory(final IProgressMonitor monitor) {
-								return RefactoringHistoryService.getInstance().getProjectHistory(project, monitor);
-							}
-						}, selection);
+						RefactoringHistoryEditHelper.promptRefactoringDelete(shell, context, fHistoryControl, new RefactoringDescriptorDeleteQuery(shell, getCurrentProject(), selection.length), monitor -> RefactoringHistoryService.getInstance().getProjectHistory(project, monitor), selection);
 					}
 				}
 			}
@@ -258,17 +249,13 @@ public final class RefactoringPropertyPage extends PropertyPage {
 		Assert.isNotNull(context);
 		Assert.isNotNull(project);
 		try {
-			context.run(false, false, new IRunnableWithProgress() {
-
-				@Override
-				public void run(final IProgressMonitor monitor) throws InvocationTargetException, InterruptedException {
-					final IRefactoringHistoryService service= RefactoringCore.getHistoryService();
-					try {
-						service.connect();
-						fHistoryControl.setInput(service.getProjectHistory(project, monitor));
-					} finally {
-						service.disconnect();
-					}
+			context.run(false, false, monitor -> {
+				final IRefactoringHistoryService service= RefactoringCore.getHistoryService();
+				try {
+					service.connect();
+					fHistoryControl.setInput(service.getProjectHistory(project, monitor));
+				} finally {
+					service.disconnect();
 				}
 			});
 		} catch (InvocationTargetException exception) {
@@ -357,39 +344,25 @@ public final class RefactoringPropertyPage extends PropertyPage {
 			service.connect();
 			try {
 				final Shell shell= getShell();
-				context.run(false, true, new WorkbenchRunnableAdapter(new IWorkspaceRunnable() {
-
-					@Override
-					public void run(final IProgressMonitor monitor) throws CoreException {
+				context.run(false, true, new WorkbenchRunnableAdapter(monitor -> {
+					try {
+						monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_deleting_refactorings, 100);
 						try {
-							monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_deleting_refactorings, 100);
-							try {
-								service.deleteRefactoringHistory(project, new SubProgressMonitor(monitor, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-							} catch (CoreException exception) {
-								final Throwable throwable= exception.getStatus().getException();
-								if (throwable instanceof IOException) {
-									shell.getDisplay().syncExec(new Runnable() {
-
-										@Override
-										public void run() {
-											MessageDialog.openError(shell, RefactoringUIMessages.ChangeExceptionHandler_refactoring, throwable.getLocalizedMessage());
-										}
-									});
-								} else
-									throw exception;
-							}
-							final RefactoringHistory history= service.getProjectHistory(project, new SubProgressMonitor(monitor, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-							shell.getDisplay().syncExec(new Runnable() {
-
-								@Override
-								public void run() {
-									fHistoryControl.setInput(history);
-									fHistoryControl.setCheckedDescriptors(EMPTY_DESCRIPTORS);
-								}
-							});
-						} finally {
-							monitor.done();
+							service.deleteRefactoringHistory(project, new SubProgressMonitor(monitor, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+						} catch (CoreException exception) {
+							final Throwable throwable= exception.getStatus().getException();
+							if (throwable instanceof IOException) {
+								shell.getDisplay().syncExec(() -> MessageDialog.openError(shell, RefactoringUIMessages.ChangeExceptionHandler_refactoring, throwable.getLocalizedMessage()));
+							} else
+								throw exception;
 						}
+						final RefactoringHistory history= service.getProjectHistory(project, new SubProgressMonitor(monitor, 50, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+						shell.getDisplay().syncExec(() -> {
+							fHistoryControl.setInput(history);
+							fHistoryControl.setCheckedDescriptors(EMPTY_DESCRIPTORS);
+						});
+					} finally {
+						monitor.done();
 					}
 				}, project));
 			} catch (InvocationTargetException exception) {

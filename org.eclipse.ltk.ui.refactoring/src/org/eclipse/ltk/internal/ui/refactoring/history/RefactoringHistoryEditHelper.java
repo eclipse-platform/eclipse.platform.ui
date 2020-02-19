@@ -30,7 +30,6 @@ import org.eclipse.core.runtime.jobs.MultiRule;
 
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspaceRoot;
-import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
 
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -119,41 +118,27 @@ public final class RefactoringHistoryEditHelper {
 			service.connect();
 			try {
 				final IProject[] affected= getAffectedProjects(descriptors);
-				context.run(false, true, new WorkbenchRunnableAdapter(new IWorkspaceRunnable() {
-
-					@Override
-					public void run(final IProgressMonitor monitor) throws CoreException {
+				context.run(false, true, new WorkbenchRunnableAdapter(monitor -> {
+					try {
+						monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_deleting_refactorings, 300);
 						try {
-							monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_deleting_refactorings, 300);
-							try {
-								service.deleteRefactoringDescriptors(descriptors, query, new SubProgressMonitor(monitor, 280, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-							} catch (CoreException exception) {
-								final Throwable throwable= exception.getStatus().getException();
-								if (throwable instanceof IOException) {
-									shell.getDisplay().syncExec(new Runnable() {
-
-										@Override
-										public void run() {
-											MessageDialog.openError(shell, RefactoringUIMessages.ChangeExceptionHandler_refactoring, throwable.getLocalizedMessage());
-										}
-									});
-								} else
-									throw exception;
-							}
-							if (query.hasDeletions()) {
-								final RefactoringHistory history= provider.getRefactoringHistory(new SubProgressMonitor(monitor, 20, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
-								shell.getDisplay().syncExec(new Runnable() {
-
-									@Override
-									public void run() {
-										control.setInput(history);
-										control.setCheckedDescriptors(RefactoringPropertyPage.EMPTY_DESCRIPTORS);
-									}
-								});
-							}
-						} finally {
-							monitor.done();
+							service.deleteRefactoringDescriptors(descriptors, query, new SubProgressMonitor(monitor, 280, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+						} catch (CoreException exception) {
+							final Throwable throwable= exception.getStatus().getException();
+							if (throwable instanceof IOException) {
+								shell.getDisplay().syncExec(() -> MessageDialog.openError(shell, RefactoringUIMessages.ChangeExceptionHandler_refactoring, throwable.getLocalizedMessage()));
+							} else
+								throw exception;
 						}
+						if (query.hasDeletions()) {
+							final RefactoringHistory history= provider.getRefactoringHistory(new SubProgressMonitor(monitor, 20, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
+							shell.getDisplay().syncExec(() -> {
+								control.setInput(history);
+								control.setCheckedDescriptors(RefactoringPropertyPage.EMPTY_DESCRIPTORS);
+							});
+						}
+					} finally {
+						monitor.done();
 					}
 				}, affected == null ? ResourcesPlugin.getWorkspace().getRoot() : (ISchedulingRule) new MultiRule(affected)));
 			} catch (InvocationTargetException exception) {

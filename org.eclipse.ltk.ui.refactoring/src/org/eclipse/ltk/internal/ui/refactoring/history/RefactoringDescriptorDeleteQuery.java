@@ -84,32 +84,28 @@ public final class RefactoringDescriptorDeleteQuery implements IRefactoringDescr
 		final IPreferenceStore store= RefactoringUIPlugin.getDefault().getPreferenceStore();
 		if (!fWarned) {
 			if (!store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE)) {
-				fShell.getDisplay().syncExec(new Runnable() {
-
-					@Override
-					public final void run() {
-						if (!fShell.isDisposed()) {
-							final String count= Integer.valueOf(fCount).toString();
-							String message= null;
-							if (fProject != null) {
-								if (fCount == 1) {
-									message= Messages.format(RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_pattern_singular, BasicElementLabels.getResourceName(fProject));
-								} else {
-									message= Messages.format(RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_pattern_plural, new String[] { count,
-											BasicElementLabels.getResourceName(fProject) });
-								}
+				fShell.getDisplay().syncExec(() -> {
+					if (!fShell.isDisposed()) {
+						final String count= Integer.valueOf(fCount).toString();
+						String message= null;
+						if (fProject != null) {
+							if (fCount == 1) {
+								message= Messages.format(RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_pattern_singular, BasicElementLabels.getResourceName(fProject));
+							} else {
+								message= Messages.format(RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_pattern_plural, new String[] { count,
+										BasicElementLabels.getResourceName(fProject) });
 							}
-							else {
-								if (fCount == 1) {
-									message= RefactoringUIMessages.RefactoringDescriptorDeleteQuery_confirm_deletion_singular;
-								} else {
-									message= Messages.format(RefactoringUIMessages.RefactoringDescriptorDeleteQuery_confirm_deletion_plural, count);
-								}
-							}
-							final MessageDialogWithToggle dialog= MessageDialogWithToggle.openYesNoQuestion(fShell, RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_caption, message, RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE), null, null);
-							store.setValue(PREFERENCE_DO_NOT_WARN_DELETE, dialog.getToggleState());
-							fReturnCode= dialog.getReturnCode();
 						}
+						else {
+							if (fCount == 1) {
+								message= RefactoringUIMessages.RefactoringDescriptorDeleteQuery_confirm_deletion_singular;
+							} else {
+								message= Messages.format(RefactoringUIMessages.RefactoringDescriptorDeleteQuery_confirm_deletion_plural, count);
+							}
+						}
+						final MessageDialogWithToggle dialog= MessageDialogWithToggle.openYesNoQuestion(fShell, RefactoringUIMessages.RefactoringPropertyPage_confirm_delete_caption, message, RefactoringUIMessages.RefactoringHistoryWizard_do_not_show_message, store.getBoolean(PREFERENCE_DO_NOT_WARN_DELETE), null, null);
+						store.setValue(PREFERENCE_DO_NOT_WARN_DELETE, dialog.getToggleState());
+						fReturnCode= dialog.getReturnCode();
 					}
 				});
 			} else
