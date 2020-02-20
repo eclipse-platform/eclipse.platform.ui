@@ -43,8 +43,7 @@ import org.osgi.framework.FrameworkUtil;
  */
 public class CocoaUIProcessor {
 	/**
-	 * Useful constants for referencing classes defined within this
-	 * host/fragment
+	 * Useful constants for referencing classes defined within this host/fragment
 	 */
 	static final String FRAGMENT_ID = "org.eclipse.e4.ui.workbench.renderers.swt.cocoa"; //$NON-NLS-1$
 	protected static final String CONTRIBUTOR_URI = "platform:/fragment/" + FRAGMENT_ID; //$NON-NLS-1$
@@ -94,64 +93,49 @@ public class CocoaUIProcessor {
 	}
 
 	/**
-	 * Install the Cocoa window handlers. Sadly this has to be done here rather
-	 * than in a <tt>fragments.e4xmi</tt> as the project
-	 * <tt>Application.e4xmi</tt> may (and likely will) use different IDs.
+	 * Install the Cocoa window handlers. Sadly this has to be done here rather than
+	 * in a <tt>fragments.e4xmi</tt> as the project <tt>Application.e4xmi</tt> may
+	 * (and likely will) use different IDs.
 	 */
 	public void installWindowHandlers() {
-		installHandler(
-				defineCommand(
-						"org.eclipse.ui.category.window", "org.eclipse.ui.cocoa.arrangeWindowsInFront", //$NON-NLS-1$ //$NON-NLS-2$
-						"%command.arrangeWindows.name", //$NON-NLS-1$
-						"%command.arrangeWindows.desc", CONTRIBUTOR_URI), //$NON-NLS-1$
+		installHandler(defineCommand("org.eclipse.ui.category.window", "org.eclipse.ui.cocoa.arrangeWindowsInFront", //$NON-NLS-1$ //$NON-NLS-2$
+				"%command.arrangeWindows.name", //$NON-NLS-1$
+				"%command.arrangeWindows.desc", CONTRIBUTOR_URI), //$NON-NLS-1$
 				ArrangeWindowHandler.class, CONTRIBUTOR_URI);
-		installHandler(
-				defineCommand(
-						"org.eclipse.ui.category.window", "org.eclipse.ui.cocoa.minimizeWindow", //$NON-NLS-1$ //$NON-NLS-2$
-						"%command.minimize.name", "%command.minimize.desc", CONTRIBUTOR_URI), //$NON-NLS-1$ //$NON-NLS-2$
+		installHandler(defineCommand("org.eclipse.ui.category.window", "org.eclipse.ui.cocoa.minimizeWindow", //$NON-NLS-1$ //$NON-NLS-2$
+				"%command.minimize.name", "%command.minimize.desc", CONTRIBUTOR_URI), //$NON-NLS-1$ //$NON-NLS-2$
 				MinimizeWindowHandler.class, CONTRIBUTOR_URI);
 
-		MCommand toggleFullscreenCommand = defineCommand(
-				"org.eclipse.ui.category.window", "org.eclipse.ui.cocoa.fullscreenWindow", //$NON-NLS-1$ //$NON-NLS-2$
+		MCommand toggleFullscreenCommand = defineCommand("org.eclipse.ui.category.window", //$NON-NLS-1$
+				"org.eclipse.ui.cocoa.fullscreenWindow", //$NON-NLS-1$
 				"%command.fullscreen.name", "%command.fullscreen.desc", CONTRIBUTOR_URI); //$NON-NLS-1$//$NON-NLS-2$
-		installHandler(toggleFullscreenCommand, FullscreenWindowHandler.class,
-				CONTRIBUTOR_URI);
+		installHandler(toggleFullscreenCommand, FullscreenWindowHandler.class, CONTRIBUTOR_URI);
 		// COMMAND+ALT+F is taken by Force Return
-		installKeybinding(
-				"org.eclipse.ui.contexts.window", "COMMAND+CTRL+F", toggleFullscreenCommand); //$NON-NLS-1$ //$NON-NLS-2$
+		installKeybinding("org.eclipse.ui.contexts.window", "COMMAND+CTRL+F", toggleFullscreenCommand); //$NON-NLS-1$ //$NON-NLS-2$
 
-		installHandler(
-				defineCommand(
-						"org.eclipse.ui.category.window", "org.eclipse.ui.cocoa.zoomWindow", //$NON-NLS-1$ //$NON-NLS-2$
-						"%command.zoom.name", "%command.zoom.desc", CONTRIBUTOR_URI), //$NON-NLS-1$//$NON-NLS-2$
+		installHandler(defineCommand("org.eclipse.ui.category.window", "org.eclipse.ui.cocoa.zoomWindow", //$NON-NLS-1$ //$NON-NLS-2$
+				"%command.zoom.name", "%command.zoom.desc", CONTRIBUTOR_URI), //$NON-NLS-1$//$NON-NLS-2$
 				ZoomWindowHandler.class, CONTRIBUTOR_URI);
 	}
 
 	/** Add the special Cmd-W dialog helper */
 	private void installCloseDialogHandlers() {
-		MCommand closeDialogCommand = defineCommand(
-				"org.eclipse.ui.category.window", COMMAND_ID_CLOSE_DIALOG, //$NON-NLS-1$
+		MCommand closeDialogCommand = defineCommand("org.eclipse.ui.category.window", COMMAND_ID_CLOSE_DIALOG, //$NON-NLS-1$
 				"%command.closeDialog.name", //$NON-NLS-1$
 				"%command.closeDialog.desc", CONTRIBUTOR_URI);//$NON-NLS-1$
-		installHandler(closeDialogCommand, CloseDialogHandler.class,
-				CONTRIBUTOR_URI);
-		installKeybinding(EBindingService.DIALOG_CONTEXT_ID,
-				CLOSE_DIALOG_KEYSEQUENCE, closeDialogCommand);
+		installHandler(closeDialogCommand, CloseDialogHandler.class, CONTRIBUTOR_URI);
+		installKeybinding(EBindingService.DIALOG_CONTEXT_ID, CLOSE_DIALOG_KEYSEQUENCE, closeDialogCommand);
 	}
 
 	/**
-	 * Install a keybinding to the provided command, providing the command is
-	 * not already bound to another keybinding.
+	 * Install a keybinding to the provided command, providing the command is not
+	 * already bound to another keybinding.
 	 *
-	 * @param bindingContextId
-	 *            the keybinding context
-	 * @param keysequence
-	 *            the key sequence to be bound
-	 * @param cmd
-	 *            the command to be bound
+	 * @param bindingContextId the keybinding context
+	 * @param keysequence      the key sequence to be bound
+	 * @param cmd              the command to be bound
 	 */
-	private void installKeybinding(String bindingContextId, String keysequence,
-			MCommand cmd) {
+	private void installKeybinding(String bindingContextId, String keysequence, MCommand cmd) {
 		// there is a one-to-one mapping between binding contexts and
 		// binding tables, though binding tables may not necessarily
 		// guaranteed an element id.
@@ -164,23 +148,18 @@ public class CocoaUIProcessor {
 				}
 			}
 			if (table.getBindingContext() != null
-					&& bindingContextId.equals(table.getBindingContext()
-							.getElementId())) {
+					&& bindingContextId.equals(table.getBindingContext().getElementId())) {
 				bindingTable = table;
 			}
 		}
 
 		if (bindingTable == null) {
-			MBindingContext bindingContext = findBindingContext(
-					app.getBindingContexts(), bindingContextId);
+			MBindingContext bindingContext = findBindingContext(app.getBindingContexts(), bindingContextId);
 			if (bindingContext == null) {
-				statusReporter
-						.get()
-						.report(new Status(
-								IStatus.WARNING,
-								CocoaUIProcessor.FRAGMENT_ID,
+				statusReporter.get()
+						.report(new Status(IStatus.WARNING, CocoaUIProcessor.FRAGMENT_ID,
 								"No binding context exists for " + bindingContextId), //$NON-NLS-1$
-						StatusReporter.LOG);
+								StatusReporter.LOG);
 				return;
 			}
 			bindingTable = MCommandsFactory.INSTANCE.createBindingTable();
@@ -200,14 +179,12 @@ public class CocoaUIProcessor {
 	 * @param bindingContextId
 	 * @return
 	 */
-	private MBindingContext findBindingContext(
-			List<MBindingContext> bindingContexts, String bindingContextId) {
+	private MBindingContext findBindingContext(List<MBindingContext> bindingContexts, String bindingContextId) {
 		for (MBindingContext bc : bindingContexts) {
 			if (bindingContextId.equals(bc.getElementId())) {
 				return bc;
 			}
-			MBindingContext result = findBindingContext(bc.getChildren(),
-					bindingContextId);
+			MBindingContext result = findBindingContext(bc.getChildren(), bindingContextId);
 			if (result != null) {
 				return result;
 			}
@@ -216,17 +193,14 @@ public class CocoaUIProcessor {
 	}
 
 	/**
-	 * Configure and install a command handler for the provided command and
-	 * handler
+	 * Configure and install a command handler for the provided command and handler
 	 *
 	 * @param handlerClass
 	 * @param command
 	 */
-	private void installHandler(MCommand command, Class<?> handlerClass,
-			String contributorURI) {
+	private void installHandler(MCommand command, Class<?> handlerClass, String contributorURI) {
 		for (MHandler handler : app.getHandlers()) {
-			if (handlerClass.getName().equals(handler.getElementId())
-					&& handler.getCommand() == command) {
+			if (handlerClass.getName().equals(handler.getElementId()) && handler.getCommand() == command) {
 				return;
 			}
 		}
@@ -247,8 +221,8 @@ public class CocoaUIProcessor {
 	 * @param description
 	 * @return the command
 	 */
-	private MCommand defineCommand(String categoryId, String commandId,
-			String name, String description, String contributorURI) {
+	private MCommand defineCommand(String categoryId, String commandId, String name, String description,
+			String contributorURI) {
 		for (MCommand command : app.getCommands()) {
 			if (commandId.equals(command.getElementId())) {
 				return command;
@@ -286,25 +260,20 @@ public class CocoaUIProcessor {
 	/**
 	 * Return a platform-style URI to reference the provided class
 	 *
-	 * @param clazz
-	 *            a class
+	 * @param clazz a class
 	 * @return a URI referencing the class
-	 * @throws IllegalArgumentException
-	 *             if the class was not defined from a bundle
+	 * @throws IllegalArgumentException if the class was not defined from a bundle
 	 */
 	private String getClassURI(Class<?> clazz) {
 		return getBundleURI(clazz) + "/" + clazz.getName(); //$NON-NLS-1$
 	}
 
 	/**
-	 * Return a platform-style URI to reference the bundle providing
-	 * {@code clazz}
+	 * Return a platform-style URI to reference the bundle providing {@code clazz}
 	 *
-	 * @param clazz
-	 *            a class
+	 * @param clazz a class
 	 * @return a URI referencing the bundle
-	 * @throws IllegalArgumentException
-	 *             if the class was not defined from a bundle
+	 * @throws IllegalArgumentException if the class was not defined from a bundle
 	 */
 	private String getBundleURI(Class<?> clazz) {
 		Bundle bundle = FrameworkUtil.getBundle(clazz);
