@@ -16,6 +16,8 @@ package org.eclipse.ui.internal.editors.text.codemining.annotation;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -101,6 +103,23 @@ public class AnnotationCodeMiningProvider extends AbstractCodeMiningProvider
 	 * Updates code minings after changes to annotations.
 	 */
 	private class AnnotationModelListener implements IAnnotationModelListener, IAnnotationModelListenerExtension {
+		private final class RemoveCodeMiningTimerTask extends TimerTask {
+			@Override
+			public void run() {
+				getCodeMiningViewer().updateCodeMinings();
+				removeTimer= null;
+			}
+		}
+
+		private Timer removeTimer;
+
+		private void scheduleTimer() {
+			if (removeTimer == null) {
+				removeTimer= new Timer("Remove Code Mining Annotations");
+				removeTimer.schedule(new RemoveCodeMiningTimerTask(), 111);
+			}
+		}
+
 		@Override
 		public void modelChanged(@Nullable IAnnotationModel model) {
 			// ignore
@@ -116,11 +135,14 @@ public class AnnotationCodeMiningProvider extends AbstractCodeMiningProvider
 				return;
 			}
 
-			AnnotationCodeMiningFilter filter= new AnnotationCodeMiningFilter(getAnnotationAccess(),
-					event.getAddedAnnotations(), event.getRemovedAnnotations(), event.getChangedAnnotations());
-
-			if (!filter.isEmpty()) {
+			AnnotationCodeMiningFilter addChangeFilter= new AnnotationCodeMiningFilter(getAnnotationAccess(), event.getAddedAnnotations(), event.getChangedAnnotations());
+			if (!addChangeFilter.isEmpty()) {
 				getCodeMiningViewer().updateCodeMinings();
+			}
+
+			AnnotationCodeMiningFilter removeFilter= new AnnotationCodeMiningFilter(getAnnotationAccess(), event.getRemovedAnnotations());
+			if (!removeFilter.isEmpty()) {
+				scheduleTimer();
 			}
 		}
 	}
