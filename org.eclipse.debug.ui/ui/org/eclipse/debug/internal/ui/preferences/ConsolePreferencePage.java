@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -26,6 +26,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.IWorkbench;
@@ -163,6 +164,9 @@ public class ConsolePreferencePage extends FieldEditorPreferencePage implements 
 
 		fInterpretControlCharactersEditor = new BooleanFieldEditor2(IDebugPreferenceConstants.CONSOLE_INTERPRET_CONTROL_CHARACTERS, DebugPreferencesMessages.ConsolePreferencePage_Interpret_control_characters, SWT.NONE, getFieldEditorParent());
 		fInterpretCrAsControlCharacterEditor = new BooleanFieldEditor2(IDebugPreferenceConstants.CONSOLE_INTERPRET_CR_AS_CONTROL_CHARACTER, DebugPreferencesMessages.ConsolePreferencePage_Interpret_cr_as_control_character, SWT.NONE, getFieldEditorParent());
+		GridData gd = new GridData(GridData.HORIZONTAL_ALIGN_BEGINNING);
+		gd.horizontalIndent = 20;
+		fInterpretCrAsControlCharacterEditor.getChangeControl(getFieldEditorParent()).setLayoutData(gd);
 
 		fInterpretControlCharactersEditor.getChangeControl(getFieldEditorParent()).addListener(SWT.Selection,
 				event -> updateInterpretCrAsControlCharacterEditor());
