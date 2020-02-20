@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.viewer.model;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
@@ -21,6 +23,7 @@ import org.eclipse.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
+import org.junit.Test;
 
 /**
  * Tests that verify that the viewer property retrieves all the content
@@ -29,10 +32,6 @@ import org.eclipse.jface.viewers.TreeSelection;
  * @since 3.6
  */
 abstract public class LazyTests extends AbstractViewerModelTest implements ITestModelUpdatesListenerConstants {
-
-	public LazyTests(String name) {
-		super(name);
-	}
 
 	@Override
 	protected TestModelUpdatesListener createListener(IInternalTreeModelViewer viewer) {
@@ -63,10 +62,10 @@ abstract public class LazyTests extends AbstractViewerModelTest implements ITest
 	}
 
 	/**
-	 * Test to make sure that if an element is expanded its children are
-	 * not automatically materialized.
-	 * (bug 305739 and bug 304277)
+	 * Test to make sure that if an element is expanded its children are not
+	 * automatically materialized. (bug 305739 and bug 304277)
 	 */
+	@Test
 	public void testExpandLargeSubTree() throws Exception {
 		// Create test model with lots of children.
 		TestModel model = largeSubtreeModel(1000);
@@ -103,10 +102,11 @@ abstract public class LazyTests extends AbstractViewerModelTest implements ITest
 	}
 
 	/**
-	 * Test to make sure that if an element that is previously selected, is
-	 * then selected and replaced, that no extra elements are retrieved.
-	 * (bug 304277 comment #24, and bug 305739 comment #9).
+	 * Test to make sure that if an element that is previously selected, is then
+	 * selected and replaced, that no extra elements are retrieved. (bug 304277
+	 * comment #24, and bug 305739 comment #9).
 	 */
+	@Test
 	public void testReplaceAndSelectInSubTreeTree() throws Exception {
 		// Create test model with lots of children.
 		TestModel model = largeSubtreeModel(1000);
@@ -154,8 +154,7 @@ abstract public class LazyTests extends AbstractViewerModelTest implements ITest
 		assertEquals(((IStructuredSelection)fViewer.getSelection()).getFirstElement(), _1_0_newElement);
 	}
 
-	/**
-	 */
+	@Test
 	public void testContentRefresh() throws Exception {
 		// Create test model with lots of children.
 		TestModel model = largeSubtreeModel(1000);

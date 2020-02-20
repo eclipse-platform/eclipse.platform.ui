@@ -13,8 +13,11 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.launching;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.tests.AbstractDebugTest;
+import org.junit.Test;
 
 /**
  * Tests accelerator adjustments for DBCS languages.
@@ -24,17 +27,11 @@ import org.eclipse.debug.tests.AbstractDebugTest;
  */
 public class AcceleratorSubstitutionTests extends AbstractDebugTest {
 
-	/**
-	 * Constructor
-	 * @param name the name of the test
-	 */
-	public AcceleratorSubstitutionTests(String name) {
-		super(name);
-	}
 
 	/**
 	 * tests a string with "..."
 	 */
+	@Test
 	public void testWithEllipses() {
 		assertEquals("incorrect DBCS accelerator substitution", //$NON-NLS-1$
 				"Open Run Dialog(&R)...", //$NON-NLS-1$
@@ -44,6 +41,7 @@ public class AcceleratorSubstitutionTests extends AbstractDebugTest {
 	/**
 	 * tests a string without "..."
 	 */
+	@Test
 	public void testWithoutEllipses() {
 		assertEquals("incorrect DBCS accelerator substitution", //$NON-NLS-1$
 				"Open Run Dialog(&R)", //$NON-NLS-1$
@@ -53,6 +51,7 @@ public class AcceleratorSubstitutionTests extends AbstractDebugTest {
 	/**
 	 * tests a string that should not change (no DBCS style accelerator).
 	 */
+	@Test
 	public void testWithoutDBCSAcclerator() {
 		assertEquals("incorrect DBCS accelerator substitution", //$NON-NLS-1$
 				"Open &Run Dialog...", //$NON-NLS-1$

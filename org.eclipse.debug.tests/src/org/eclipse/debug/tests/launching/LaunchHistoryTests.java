@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.launching;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -21,6 +25,7 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.junit.Test;
 
 /**
  * Test the utilization of launch histories: sizing, ordering, completeness and correctness
@@ -33,14 +38,6 @@ import org.eclipse.debug.ui.IDebugUIConstants;
  * @since 3.3
  */
 public class LaunchHistoryTests extends AbstractLaunchTest {
-
-	/**
-	 * Constructor
-	 * @param name
-	 */
-	public LaunchHistoryTests(String name) {
-		super(name);
-	}
 
 	/**
 	 * Returns the run launch history
@@ -75,9 +72,10 @@ public class LaunchHistoryTests extends AbstractLaunchTest {
 	}
 
 	/**
-	 * This method tests that an item added to the history is added to the head of
-	 * history.
+	 * This method tests that an item added to the history is added to the head
+	 * of history.
 	 */
+	@Test
 	public void testHistoryAddition() throws CoreException {
 		LaunchHistory runhistory = getRunLaunchHistory();
 		assertNotNull("The run launch history should not be null", runhistory); //$NON-NLS-1$
@@ -89,10 +87,11 @@ public class LaunchHistoryTests extends AbstractLaunchTest {
 	}
 
 	/**
-	 * As both the run and the debug launch histories will accept a java application
-	 * launch config, both launch histories should contain the test launch configuration
-	 * and it should be the recent launch for both of them
+	 * As both the run and the debug launch histories will accept a java
+	 * application launch config, both launch histories should contain the test
+	 * launch configuration and it should be the recent launch for both of them
 	 */
+	@Test
 	public void testHistoriesInSync() throws CoreException {
 		LaunchHistory runhistory = getRunLaunchHistory();
 		assertNotNull("The run launch history should not be null", runhistory); //$NON-NLS-1$
@@ -108,8 +107,10 @@ public class LaunchHistoryTests extends AbstractLaunchTest {
 	}
 
 	/**
-	 * If we launch config A, then config B, and then config A again, A should be the most recent launch
+	 * If we launch config A, then config B, and then config A again, A should
+	 * be the most recent launch
 	 */
+	@Test
 	public void testHistoryReodering() throws CoreException {
 		LaunchHistory runhistory = getRunLaunchHistory();
 		assertNotNull("The run launch history should not be null", runhistory); //$NON-NLS-1$
@@ -131,9 +132,10 @@ public class LaunchHistoryTests extends AbstractLaunchTest {
 	}
 
 	/**
-	 * If we rename a launch configuration it should not effect the launch history if the renamed configuration
-	 * is present in the history.
+	 * If we rename a launch configuration it should not effect the launch
+	 * history if the renamed configuration is present in the history.
 	 */
+	@Test
 	public void testRenameConfigHistoryUpdate() throws CoreException {
 		LaunchHistory runhistory = getRunLaunchHistory();
 		assertNotNull("The run launch history should not be null", runhistory); //$NON-NLS-1$
@@ -154,9 +156,11 @@ public class LaunchHistoryTests extends AbstractLaunchTest {
 	}
 
 	/**
-	 * If we delete a launch configuration and the configuration is present in the launch history, it should be removed
-	 * from the history and the history should be shifted up one place.
+	 * If we delete a launch configuration and the configuration is present in
+	 * the launch history, it should be removed from the history and the history
+	 * should be shifted up one place.
 	 */
+	@Test
 	public void testDeleteLaunchConfigurationHistoryUpdate() throws CoreException {
 		LaunchHistory runhistory = getRunLaunchHistory();
 		assertNotNull("The run launch history should not be null", runhistory); //$NON-NLS-1$
@@ -176,9 +180,10 @@ public class LaunchHistoryTests extends AbstractLaunchTest {
 	}
 
 	/**
-	 * Tests that setting the size of the launch history appropriately changes what will be returned
-	 * when the history is queried for it contents
+	 * Tests that setting the size of the launch history appropriately changes
+	 * what will be returned when the history is queried for it contents
 	 */
+	@Test
 	public void testLaunchHistorySize() throws CoreException {
 		LaunchHistory runhistory = getRunLaunchHistory();
 		assertNotNull("The run launch history should not be null", runhistory); //$NON-NLS-1$

@@ -29,15 +29,6 @@ import org.eclipse.debug.tests.AbstractDebugTest;
 public abstract class AbstractLaunchTest extends AbstractDebugTest {
 
 	/**
-	 * Constructs a test with the given name.
-	 *
-	 * @param name
-	 */
-	public AbstractLaunchTest(String name) {
-		super(name);
-	}
-
-	/**
 	 * Returns the launch manager.
 	 *
 	 * @return launch manager

@@ -13,9 +13,6 @@
  *******************************************************************************/
 package org.eclipse.debug.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.debug.tests.viewer.model.ColumnPresentationTests;
 import org.eclipse.debug.tests.viewer.model.JFaceViewerCheckTests;
 import org.eclipse.debug.tests.viewer.model.JFaceViewerContentTests;
@@ -26,6 +23,8 @@ import org.eclipse.debug.tests.viewer.model.JFaceViewerSelectionTests;
 import org.eclipse.debug.tests.viewer.model.JFaceViewerStateTests;
 import org.eclipse.debug.tests.viewer.model.JFaceViewerTopIndexTests;
 import org.eclipse.debug.tests.viewer.model.JFaceViewerUpdateTests;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Tests to run locally.  They require a user terminal to execute correctly
@@ -33,31 +32,14 @@ import org.eclipse.debug.tests.viewer.model.JFaceViewerUpdateTests;
  *
  * @since 3.7
  */
-public class LocalSuite extends TestSuite {
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+		JFaceViewerCheckTests.class, JFaceViewerContentTests.class,
+		JFaceViewerDeltaTests.class, JFaceViewerSelectionTests.class,
+		JFaceViewerStateTests.class, JFaceViewerUpdateTests.class,
+		JFaceViewerLazyTests.class, JFaceViewerTopIndexTests.class,
+		JFaceViewerFilterTests.class, ColumnPresentationTests.class
+})
+public class LocalSuite {
 
-	/**
-	 * Returns the suite.  This is required to use the JUnit Launcher.
-	 *
-	 * @return the test suite
-	 */
-	public static Test suite() {
-		return new LocalSuite();
-	}
-
-	/**
-	 * Constructs the automated test suite. Adds all tests.
-	 */
-	public LocalSuite() {
-		// JFace viewer tests
-		addTest(new TestSuite(JFaceViewerCheckTests.class));
-		addTest(new TestSuite(JFaceViewerContentTests.class));
-		addTest(new TestSuite(JFaceViewerDeltaTests.class));
-		addTest(new TestSuite(JFaceViewerSelectionTests.class));
-		addTest(new TestSuite(JFaceViewerStateTests.class));
-		addTest(new TestSuite(JFaceViewerUpdateTests.class));
-		addTest(new TestSuite(JFaceViewerLazyTests.class));
-		addTest(new TestSuite(JFaceViewerTopIndexTests.class));
-		addTest(new TestSuite(JFaceViewerFilterTests.class));
-		addTest(new TestSuite(ColumnPresentationTests.class));
-	}
 }

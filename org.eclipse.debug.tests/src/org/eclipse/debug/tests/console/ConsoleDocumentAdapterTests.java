@@ -13,6 +13,12 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.console;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -32,6 +38,7 @@ import org.eclipse.swt.custom.TextChangeListener;
 import org.eclipse.swt.custom.TextChangedEvent;
 import org.eclipse.swt.custom.TextChangingEvent;
 import org.eclipse.ui.internal.console.ConsoleDocumentAdapter;
+import org.junit.Test;
 
 /**
  * Tests {@link ConsoleDocumentAdapter}.
@@ -42,17 +49,10 @@ import org.eclipse.ui.internal.console.ConsoleDocumentAdapter;
 @SuppressWarnings("restriction")
 public class ConsoleDocumentAdapterTests extends AbstractDebugTest {
 
-	public ConsoleDocumentAdapterTests() {
-		super(ConsoleDocumentAdapterTests.class.getSimpleName());
-	}
-
-	public ConsoleDocumentAdapterTests(String name) {
-		super(name);
-	}
-
 	/**
 	 * Test {@link ConsoleDocumentAdapter#setText(String)}.
 	 */
+	@Test
 	public void testSetText() {
 		final ExpectingTextChangeListener eventListener = new ExpectingTextChangeListener(true, null);
 		final IDocumentAdapter docAdapter = new ConsoleDocumentAdapter(-1);
@@ -77,6 +77,7 @@ public class ConsoleDocumentAdapterTests extends AbstractDebugTest {
 	/**
 	 * Test fixed width line wrap. (mostly with changes affecting a single line)
 	 */
+	@Test
 	public void testLineWrap() {
 		final Random rand = new Random(4);
 		final int wrapWidth = 10;
@@ -406,6 +407,7 @@ public class ConsoleDocumentAdapterTests extends AbstractDebugTest {
 	/**
 	 * Test inserting text containing line delimiters.
 	 */
+	@Test
 	public void testMultilineInserts() {
 		final Random rand = new Random(4);
 		final int wrapWidth = 10;
@@ -577,6 +579,7 @@ public class ConsoleDocumentAdapterTests extends AbstractDebugTest {
 	/**
 	 * Test text remove affecting than one line.
 	 */
+	@Test
 	public void testMultilineRemove() {
 		final Random rand = new Random(4);
 		final int wrapWidth = 10;
@@ -701,6 +704,7 @@ public class ConsoleDocumentAdapterTests extends AbstractDebugTest {
 	/**
 	 * Test text change affecting and inserting more than one line.
 	 */
+	@Test
 	public void testMultilineReplace() {
 		final Random rand = new Random(4);
 		final int wrapWidth = 10;
@@ -797,6 +801,7 @@ public class ConsoleDocumentAdapterTests extends AbstractDebugTest {
 	/**
 	 * Test line wrapping is correctly updated if fixed width changed.
 	 */
+	@Test
 	public void testSetWidth() {
 		final Random rand = new Random(7);
 		final ConsoleDocumentAdapter docAdapter = new ConsoleDocumentAdapter(-1);
@@ -863,6 +868,7 @@ public class ConsoleDocumentAdapterTests extends AbstractDebugTest {
 	 * Some test cases derived from JavaDoc examples of {@link IDocumentAdapter}
 	 * (and its super interfaces).
 	 */
+	@Test
 	public void testInterfaceContract() {
 		final ConsoleDocumentAdapter docAdapter = new ConsoleDocumentAdapter(-1);
 		docAdapter.setDocument(new Document());
@@ -909,6 +915,7 @@ public class ConsoleDocumentAdapterTests extends AbstractDebugTest {
 	 * {@link IDocumentAdapter#setDocument(org.eclipse.jface.text.IDocument)}
 	 * and ensure old document is indeed disconnected and not notified anymore.
 	 */
+	@Test
 	public void testChangeDocument() {
 		final IDocumentAdapter docAdapter = new ConsoleDocumentAdapter(-1);
 		final IDocument doc1 = new Document();
@@ -1027,6 +1034,7 @@ public class ConsoleDocumentAdapterTests extends AbstractDebugTest {
 	/**
 	 * Test adapter with a larger number of lines. (especially tests array grow)
 	 */
+	@Test
 	public void testManyLines() {
 		final ConsoleDocumentAdapter docAdapter = new ConsoleDocumentAdapter(80);
 		docAdapter.setDocument(new Document());
@@ -1251,10 +1259,6 @@ public class ConsoleDocumentAdapterTests extends AbstractDebugTest {
 				return null;
 			}
 			assertNotNull("Unexpected event.", expectation);
-			if (expectation == null) {
-				// prevents wrong compiler warning 'expectation may be null'
-				return null;
-			}
 			if (expectation.type != eventType && allowUnexpectedEvents) {
 				return null;
 			}

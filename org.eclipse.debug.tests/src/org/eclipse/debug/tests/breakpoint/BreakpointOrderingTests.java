@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.breakpoint;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.List;
 
 import org.eclipse.core.resources.IMarker;
@@ -38,6 +42,7 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.IEditorInput;
+import org.junit.Test;
 
 /**
  * Test the ordering used in the breakpoints view.
@@ -45,10 +50,6 @@ import org.eclipse.ui.IEditorInput;
  * Using a special Comparator which sorts breakpoint texts like file:1, file:2 and file:11 in a numerical ordering.
  */
 public class BreakpointOrderingTests extends AbstractDebugTest {
-
-	public BreakpointOrderingTests(String name) {
-		super(name);
-	}
 
 	/**
 	 * Test only implementation of IBreakpoint.
@@ -366,15 +367,22 @@ public class BreakpointOrderingTests extends AbstractDebugTest {
 		return fTestBps;
 	}
 
+	@Test
 	public void testBreakpointOrdering0() throws CoreException {
 		executeTest(createTestBreakpoints0());
 	}
+
+	@Test
 	public void testBreakpointOrdering1() throws CoreException {
 		executeTest(createTestBreakpoints1());
 	}
+
+	@Test
 	public void testBreakpointOrdering2() throws CoreException {
 		executeTest(createTestBreakpoints2());
 	}
+
+	@Test
 	public void testBreakpointOrdering3() throws CoreException {
 		executeTest(createTestBreakpoints3());
 	}

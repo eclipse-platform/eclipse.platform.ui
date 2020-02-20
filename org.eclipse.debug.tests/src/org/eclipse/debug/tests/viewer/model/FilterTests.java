@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.viewer.model;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.regex.Pattern;
 
 import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
@@ -28,6 +30,7 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
+import org.junit.Test;
 
 /**
  * Tests that verify that the viewer property retrieves all the content
@@ -36,10 +39,6 @@ import org.eclipse.jface.viewers.ViewerFilter;
  * @since 3.8
  */
 abstract public class FilterTests extends AbstractViewerModelTest implements ITestModelUpdatesListenerConstants {
-
-	public FilterTests(String name) {
-		super(name);
-	}
 
 	@Override
 	protected TestModelUpdatesListener createListener(IInternalTreeModelViewer viewer) {
@@ -97,31 +96,37 @@ abstract public class FilterTests extends AbstractViewerModelTest implements ITe
 		}
 	}
 
+	@Test
 	public void testSimpleSingleLevel() throws Exception {
 		TestModel model = TestModel.simpleSingleLevel();
 		doTestSimpleLevel(model, new ViewerFilter[] { new TestViewerFilter("2") }); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testSimpleSingleLevelWithTMVFilter() throws Exception {
 		TestModel model = TestModel.simpleSingleLevel();
 		doTestSimpleLevel(model, new ViewerFilter[] { new TestTMVFilter("2", model.getRootElement()) }); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testSimpleSingleLevelWithMixedFilters() throws Exception {
 		TestModel model = TestModel.simpleSingleLevel();
 		doTestSimpleLevel(model, new ViewerFilter[] { new TestTMVFilter("2", model.getRootElement()), new TestViewerFilter("1") }); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Test
 	public void testSimpleMultiLevel() throws Exception {
 		TestModel model = TestModel.simpleMultiLevel();
 		doTestSimpleLevel(model, new ViewerFilter[] { new TestViewerFilter(".1"), new TestViewerFilter(".2") }); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Test
 	public void testSimpleMultiLevelWithTMVFilter() throws Exception {
 		TestModel model = TestModel.simpleMultiLevel();
 		doTestSimpleLevel(model, new ViewerFilter[] { new TestTMVFilter(".1", null), new TestTMVFilter(".2", null) }); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Test
 	public void testSimpleMultiLevelWithMixedFilters() throws Exception {
 		TestModel model = TestModel.simpleMultiLevel();
 		doTestSimpleLevel(model, new ViewerFilter[] { new TestViewerFilter(".1"), new TestTMVFilter(".2", null) }); //$NON-NLS-1$ //$NON-NLS-2$
@@ -147,10 +152,12 @@ abstract public class FilterTests extends AbstractViewerModelTest implements ITe
 		model.validateData(fViewer, TreePath.EMPTY, false, filters);
 	}
 
+	@Test
 	public void testLargeSingleLevel() throws Exception {
 		doTestLargeSingleLevel(new ViewerFilter[] { new TestViewerFilter("2") }); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testLargeSingleLevelWithTMVFilter() throws Exception {
 		doTestLargeSingleLevel(new ViewerFilter[] { new TestTMVFilter("2", null) }); //$NON-NLS-1$
 	}
@@ -174,18 +181,20 @@ abstract public class FilterTests extends AbstractViewerModelTest implements ITe
 
 
 	/**
-	 * Replace an element that is not visible but filtered out.  With an element that is NOT filtered out.
-	 * Fire REPLACE delta.
+	 * Replace an element that is not visible but filtered out. With an element
+	 * that is NOT filtered out. Fire REPLACE delta.
 	 */
+	@Test
 	public void testReplacedUnrealizedFilteredElement() throws Exception {
 		doTestReplacedUnrealizedFilteredElement(new ViewerFilter[] { new TestViewerFilter("2") }); //$NON-NLS-1$
 	}
 
 
 	/**
-	 * Replace an element that is not visible but filtered out.  With an element that is NOT filtered out.
-	 * Fire REPLACE delta.
+	 * Replace an element that is not visible but filtered out. With an element
+	 * that is NOT filtered out. Fire REPLACE delta.
 	 */
+	@Test
 	public void testReplacedUnrealizedFilteredElementWithTMVFilter() throws Exception {
 		doTestReplacedUnrealizedFilteredElement(new ViewerFilter[] { new TestTMVFilter("2", null) }); //$NON-NLS-1$
 	}
@@ -204,7 +213,7 @@ abstract public class FilterTests extends AbstractViewerModelTest implements ITe
 
 		// Populate the view (all elements containing a "2" will be filtered out.
 		fViewer.setInput(model.getRootElement());
-		TestUtil.waitForJobs(getName(), 300, 5000);
+		TestUtil.waitForJobs(name.getMethodName(), 300, 5000);
 
 		waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE), createListenerErrorMessage());
 
@@ -226,11 +235,12 @@ abstract public class FilterTests extends AbstractViewerModelTest implements ITe
 		assertTrue(replacedElementPaths.length != 0);
 	}
 
-
+	@Test
 	public void testRefreshUnrealizedFilteredElement() throws Exception {
 		doTestRefreshUnrealizedFilteredElement(new ViewerFilter[] { new TestViewerFilter("2") }); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testRefreshUnrealizedFilteredElementWithTMVFilter() throws Exception {
 		doTestRefreshUnrealizedFilteredElement(new ViewerFilter[] { new TestTMVFilter("2", null) }); //$NON-NLS-1$
 	}
@@ -252,7 +262,7 @@ abstract public class FilterTests extends AbstractViewerModelTest implements ITe
 
 		// Populate the view (all elements containing a "2" will be filtered out.
 		fViewer.setInput(model.getRootElement());
-		TestUtil.waitForJobs(getName(), 300, 5000);
+		TestUtil.waitForJobs(name.getMethodName(), 300, 5000);
 
 		waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE), createListenerErrorMessage());
 
@@ -274,14 +284,17 @@ abstract public class FilterTests extends AbstractViewerModelTest implements ITe
 		assertTrue(replacedElementPaths.length != 0);
 	}
 
+	@Test
 	public void testRefreshToUnfilterElements() throws Exception {
 		doTestRefreshToUnfilterElements(new ViewerFilter[] { new TestViewerFilter(".1"), new TestViewerFilter(".2") }); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Test
 	public void testRefreshToUnfilterElementsWithTMVFilter() throws Exception {
 		doTestRefreshToUnfilterElements(new ViewerFilter[] { new TestTMVFilter(".1", null), new TestTMVFilter(".2", null) }); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Test
 	public void testRefreshToUnfilterElementsWithMixedFilters() throws Exception {
 		doTestRefreshToUnfilterElements(new ViewerFilter[] { new TestViewerFilter(".1"), new TestTMVFilter(".2", null) }); //$NON-NLS-1$ //$NON-NLS-2$
 	}
@@ -305,7 +318,7 @@ abstract public class FilterTests extends AbstractViewerModelTest implements ITe
 
 		// Populate the view (all elements containing a "2" will be filtered out.
 		fViewer.setInput(model.getRootElement());
-		TestUtil.waitForJobs(getName(), 300, 5000);
+		TestUtil.waitForJobs(name.getMethodName(), 300, 5000);
 
 		waitWhile(t -> !fListener.isFinished(ALL_UPDATES_COMPLETE), createListenerErrorMessage());
 
@@ -320,6 +333,7 @@ abstract public class FilterTests extends AbstractViewerModelTest implements ITe
 		model.validateData(fViewer, TreePath.EMPTY, false, filters1);
 	}
 
+	@Test
 	public void testPreserveExpandedOnMultLevelContent() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 		TestModel model = StateTests.alternatingSubsreesModel(6);

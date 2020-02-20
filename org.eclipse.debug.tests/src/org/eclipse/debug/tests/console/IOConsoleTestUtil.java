@@ -13,6 +13,13 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.console;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
@@ -34,8 +41,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.console.IConsoleDocumentPartitioner;
 import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleOutputStream;
-
-import junit.framework.TestCase;
 
 /**
  * Utility to help testing input and output in {@link IOConsole}.
@@ -89,11 +94,11 @@ public final class IOConsoleTestUtil {
 	 */
 	public IOConsoleTestUtil(IOConsole console, StyledText textPanel, String name) {
 		this.console = console;
-		TestCase.assertNotNull(this.console);
+		assertNotNull(this.console);
 		this.doc = console.getDocument();
-		TestCase.assertNotNull(this.doc);
+		assertNotNull(this.doc);
 		final Class<?> expectedInterface = IConsoleDocumentPartitioner.class;
-		TestCase.assertTrue("Expected partitioner implements " + expectedInterface.getName() + //
+		assertTrue("Expected partitioner implements " + expectedInterface.getName() + //
 				". Found: " + this.doc.getDocumentPartitioner().getClass(), //
 				expectedInterface.isAssignableFrom(this.doc.getDocumentPartitioner().getClass()));
 		this.partitioner = (IConsoleDocumentPartitioner) this.doc.getDocumentPartitioner();
@@ -110,7 +115,7 @@ public final class IOConsoleTestUtil {
 	public IOConsoleTestUtil clear() throws Exception {
 		console.clearConsole();
 		flush();
-		TestCase.assertEquals("Console is not cleared.", 0, doc.getLength());
+		assertEquals("Console is not cleared.", 0, doc.getLength());
 		return this;
 	}
 
@@ -202,7 +207,7 @@ public final class IOConsoleTestUtil {
 	public IOConsoleTestUtil writeAndVerify(final String s, IOConsoleOutputStream out) throws Exception {
 		final int oldLength = doc.getLength();
 		write(s, out);
-		TestCase.assertEquals("Console content length not as expected.", oldLength + s.length(), doc.getLength());
+		assertEquals("Console content length not as expected.", oldLength + s.length(), doc.getLength());
 		verifyContentByOffset(s, oldLength);
 		verifyOutputPartitions(oldLength, s.length());
 		return this;
@@ -256,8 +261,8 @@ public final class IOConsoleTestUtil {
 		final int oldSelectionLength = textPanel.getSelectionCount();
 		final int oldOffset = getCaretOffset() - oldSelectionLength;
 		insert(content);
-		TestCase.assertEquals("Console content length not as expected.", oldLength + content.length() - oldSelectionLength, doc.getLength());
-		TestCase.assertEquals("Caret not at expected position.", oldOffset + content.length(), getCaretOffset());
+		assertEquals("Console content length not as expected.", oldLength + content.length() - oldSelectionLength, doc.getLength());
+		assertEquals("Caret not at expected position.", oldOffset + content.length(), getCaretOffset());
 		verifyContentByOffset(content, oldOffset);
 		verifyInputPartitions(oldOffset, content.length());
 		return this;
@@ -306,8 +311,8 @@ public final class IOConsoleTestUtil {
 		final int oldSelectionLength = textPanel.getSelectionCount();
 		final int oldOffset = getCaretOffset() - oldSelectionLength;
 		insertTyping(content);
-		TestCase.assertEquals("Console content length not as expected.", oldLength + content.length() - oldSelectionLength, doc.getLength());
-		TestCase.assertEquals("Caret not at expected position.", oldOffset + content.length(), getCaretOffset());
+		assertEquals("Console content length not as expected.", oldLength + content.length() - oldSelectionLength, doc.getLength());
+		assertEquals("Caret not at expected position.", oldOffset + content.length(), getCaretOffset());
 		verifyContentByOffset(content, oldOffset);
 		verifyInputPartitions(oldOffset, content.length());
 		return this;
@@ -525,7 +530,7 @@ public final class IOConsoleTestUtil {
 	 */
 	public IOConsoleTestUtil verifyContent(String expectedContent) {
 		verifyContentByOffset(expectedContent, 0);
-		TestCase.assertEquals("More or less content in console as expected.", expectedContent.length(), doc.getLength());
+		assertEquals("More or less content in console as expected.", expectedContent.length(), doc.getLength());
 		return this;
 	}
 
@@ -543,9 +548,9 @@ public final class IOConsoleTestUtil {
 		try {
 			final IRegion line = doc.getLineInformation(l);
 			verifyContentByOffset(expectedContent, line.getOffset());
-			TestCase.assertEquals("Line " + l + " has wrong length.", expectedContent.length(), line.getLength());
+			assertEquals("Line " + l + " has wrong length.", expectedContent.length(), line.getLength());
 		} catch (BadLocationException e) {
-			TestCase.fail("Expected line " + lineNum + " not found in console document. Bad location!");
+			fail("Expected line " + lineNum + " not found in console document. Bad location!");
 		}
 		return this;
 	}
@@ -562,9 +567,9 @@ public final class IOConsoleTestUtil {
 		try {
 			final int o = offset < 0 ? doc.getLength() + offset : offset;
 			final int len = Math.min(doc.getLength() - o, expectedContent.length());
-			TestCase.assertEquals("Expected string not found in console document.", expectedContent, doc.get(o, len));
+			assertEquals("Expected string not found in console document.", expectedContent, doc.get(o, len));
 		} catch (BadLocationException ex) {
-			TestCase.fail("Expected string '" + expectedContent + "' not found in console document. Bad location!");
+			fail("Expected string '" + expectedContent + "' not found in console document. Bad location!");
 		}
 		return this;
 	}
@@ -630,8 +635,8 @@ public final class IOConsoleTestUtil {
 	public IOConsoleTestUtil verifyPartitions(final int offset, final int length, final String expectedType, final boolean allowMixedTypes, final boolean allowGaps, int minPartitionNumber) {
 		{
 			final ITypedRegion[] partitions = getPartitioner().computePartitioning(offset, length);
-			TestCase.assertNotNull("Got no partitions.", partitions);
-			TestCase.assertTrue("Got less partitions than expected.", partitions.length >= minPartitionNumber);
+			assertNotNull("Got no partitions.", partitions);
+			assertTrue("Got less partitions than expected.", partitions.length >= minPartitionNumber);
 
 			// points to offset after last partition range aka. expected start
 			// of next partition
@@ -639,13 +644,13 @@ public final class IOConsoleTestUtil {
 			ITypedRegion lastPartition = null;
 			String partitionType = expectedType;
 			for (ITypedRegion partition : partitions) {
-				TestCase.assertNotSame("Got same partition twice.", lastPartition, partition);
-				TestCase.assertTrue("Partition overlapping. (or not sorted as expected)", partition.getOffset() >= lastEnd);
+				assertNotSame("Got same partition twice.", lastPartition, partition);
+				assertTrue("Partition overlapping. (or not sorted as expected)", partition.getOffset() >= lastEnd);
 				if (!allowGaps && lastEnd != -1) {
-					TestCase.assertTrue("Partitioning gap.", partition.getOffset() == lastEnd);
+					assertTrue("Partitioning gap.", partition.getOffset() == lastEnd);
 				}
-				TestCase.assertTrue("Not a valid partition type.", validPartionTypes.contains(partition.getType()));
-				TestCase.assertTrue("Wrong partition type.", partitionType == null || partitionType.equals(partition.getType()) || allowMixedTypes);
+				assertTrue("Not a valid partition type.", validPartionTypes.contains(partition.getType()));
+				assertTrue("Wrong partition type.", partitionType == null || partitionType.equals(partition.getType()) || allowMixedTypes);
 				if (partitionType == null && !allowMixedTypes) {
 					partitionType = partition.getType();
 				}
@@ -660,17 +665,17 @@ public final class IOConsoleTestUtil {
 		while (pos < end) {
 			final ITypedRegion partition = getPartitioner().getPartition(pos);
 			if (partition == null) {
-				TestCase.assertTrue("Did not expect 'null' partition.", allowGaps);
+				assertTrue("Did not expect 'null' partition.", allowGaps);
 				pos++;
 				continue;
 			}
-			TestCase.assertNotSame("Got same partition again.", lastPartition, partition);
-			TestCase.assertFalse("Did not expected and cannot handle empty partition.", partition.getLength() == 0);
-			TestCase.assertTrue("Got not the requested partition.", partition.getOffset() <= pos && partition.getOffset() + partition.getLength() > pos);
-			TestCase.assertTrue("Not a valid partition type.", validPartionTypes.contains(partition.getType()));
+			assertNotSame("Got same partition again.", lastPartition, partition);
+			assertFalse("Did not expected and cannot handle empty partition.", partition.getLength() == 0);
+			assertTrue("Got not the requested partition.", partition.getOffset() <= pos && partition.getOffset() + partition.getLength() > pos);
+			assertTrue("Not a valid partition type.", validPartionTypes.contains(partition.getType()));
 			lastPartition = partition;
 			if (partitionType != null && !partitionType.equals(partition.getType())) {
-				TestCase.assertTrue("Wrong partition type.", allowMixedTypes);
+				assertTrue("Wrong partition type.", allowMixedTypes);
 				pos += partition.getLength();
 				end += partition.getLength();
 				continue;
@@ -725,7 +730,7 @@ public final class IOConsoleTestUtil {
 			try {
 				defaultOut.close();
 			} catch (IOException e) {
-				TestCase.fail("Failed to close output stream.");
+				fail("Failed to close output stream.");
 			}
 		}
 	}

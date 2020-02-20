@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.console;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -38,13 +41,14 @@ import org.eclipse.debug.tests.TestUtil;
 import org.eclipse.debug.tests.launching.LaunchConfigurationTests;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.console.ConsoleColorProvider;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.IOConsoleInputStream;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests the ProcessConsole.
@@ -57,32 +61,23 @@ public class ProcessConsoleTests extends AbstractDebugTest {
 	private final AtomicInteger loggedErrors = new AtomicInteger(0);
 
 	/** Listener to count error messages in {@link ConsolePlugin} log. */
-	private final ILogListener errorLogListener = new ILogListener() {
-		@Override
-		public void logging(IStatus status, String plugin) {
-			if (status.matches(IStatus.ERROR)) {
-				loggedErrors.incrementAndGet();
-			}
+	private final ILogListener errorLogListener = (status, plugin) -> {
+		if (status.matches(IStatus.ERROR)) {
+			loggedErrors.incrementAndGet();
 		}
 	};
 
-	public ProcessConsoleTests() {
-		super(ProcessConsoleTests.class.getSimpleName());
-	}
-
-	public ProcessConsoleTests(String name) {
-		super(name);
-	}
-
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		loggedErrors.set(0);
 		Platform.addLogListener(errorLogListener);
 	}
 
 	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		Platform.removeLogListener(errorLogListener);
 		super.tearDown();
 
@@ -96,6 +91,7 @@ public class ProcessConsoleTests extends AbstractDebugTest {
 	 * This test starts every two byte character on an even byte offset.
 	 * </p>
 	 */
+	@Test
 	public void testUTF8InputEven() throws Exception {
 		// 5000 characters result in 10000 bytes which should be more than most
 		// common buffer sizes.
@@ -109,6 +105,7 @@ public class ProcessConsoleTests extends AbstractDebugTest {
 	 * This test starts every two byte character on an odd byte offset.
 	 * </p>
 	 */
+	@Test
 	public void testUTF8InputOdd() throws Exception {
 		// 5000 characters result in 10000 bytes which should be more than most
 		// common buffer sizes.
@@ -162,6 +159,7 @@ public class ProcessConsoleTests extends AbstractDebugTest {
 	 * <code>ProcessConsole.class</code> family.
 	 * </p>
 	 */
+	@Test
 	public void testInputReadJobCancel() throws Exception {
 		final MockProcess mockProcess = new MockProcess(MockProcess.RUN_FOREVER);
 		try {
@@ -174,7 +172,7 @@ public class ProcessConsoleTests extends AbstractDebugTest {
 				final Class<?> jobFamily = org.eclipse.debug.internal.ui.views.console.ProcessConsole.class;
 				assertTrue("Input read job not started.", Job.getJobManager().find(jobFamily).length > 0);
 				Job.getJobManager().cancel(jobFamily);
-				TestUtil.waitForJobs(getName(), 0, 1000);
+				TestUtil.waitForJobs(name.getMethodName(), 0, 1000);
 				assertEquals("Input read job not canceled.", 0, Job.getJobManager().find(jobFamily).length);
 			} finally {
 				console.destroy();
@@ -187,10 +185,11 @@ public class ProcessConsoleTests extends AbstractDebugTest {
 	/**
 	 * Test console finished notification with standard process console.
 	 */
+	@Test
 	public void testProcessTerminationNotification() throws Exception {
-		TestUtil.log(IStatus.INFO, getName(), "Process terminates after Console is initialized.");
+		TestUtil.log(IStatus.INFO, name.getMethodName(), "Process terminates after Console is initialized.");
 		processTerminationTest(null, false);
-		TestUtil.log(IStatus.INFO, getName(), "Process terminates before Console is initialized.");
+		TestUtil.log(IStatus.INFO, name.getMethodName(), "Process terminates before Console is initialized.");
 		processTerminationTest(null, true);
 	}
 
@@ -198,6 +197,7 @@ public class ProcessConsoleTests extends AbstractDebugTest {
 	 * Test console finished notification if process standard input is feed from
 	 * file.
 	 */
+	@Test
 	public void testProcessTerminationNotificationWithInputFile() throws Exception {
 		File inFile = DebugUIPlugin.getDefault().getStateLocation().addTrailingSeparator().append("testStdin.txt").toFile();
 		boolean fileCreated = inFile.createNewFile();
@@ -206,9 +206,9 @@ public class ProcessConsoleTests extends AbstractDebugTest {
 			ILaunchConfigurationType launchType = DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(LaunchConfigurationTests.ID_TEST_LAUNCH_TYPE);
 			ILaunchConfigurationWorkingCopy launchConfiguration = launchType.newInstance(null, "testProcessTerminationNotificationWithInputFromFile");
 			launchConfiguration.setAttribute(IDebugUIConstants.ATTR_CAPTURE_STDIN_FILE, inFile.getAbsolutePath());
-			TestUtil.log(IStatus.INFO, getName(), "Process terminates after Console is initialized.");
+			TestUtil.log(IStatus.INFO, name.getMethodName(), "Process terminates after Console is initialized.");
 			processTerminationTest(launchConfiguration, false);
-			TestUtil.log(IStatus.INFO, getName(), "Process terminates before Console is initialized.");
+			TestUtil.log(IStatus.INFO, name.getMethodName(), "Process terminates before Console is initialized.");
 			processTerminationTest(launchConfiguration, true);
 		} finally {
 			inFile.delete();
@@ -230,12 +230,9 @@ public class ProcessConsoleTests extends AbstractDebugTest {
 		final IProcess process = DebugPlugin.newProcess(new Launch(launchConfig, ILaunchManager.RUN_MODE, null), mockProcess, "testProcessTerminationNotification");
 		@SuppressWarnings("restriction")
 		final org.eclipse.debug.internal.ui.views.console.ProcessConsole console = new org.eclipse.debug.internal.ui.views.console.ProcessConsole(process, new ConsoleColorProvider());
-		console.addPropertyChangeListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				if (event.getSource() == console && IConsoleConstants.P_CONSOLE_OUTPUT_COMPLETE.equals(event.getProperty())) {
-					terminationSignaled.set(true);
-				}
+		console.addPropertyChangeListener(event -> {
+			if (event.getSource() == console && IConsoleConstants.P_CONSOLE_OUTPUT_COMPLETE.equals(event.getProperty())) {
+				terminationSignaled.set(true);
 			}
 		});
 		final IConsoleManager consoleManager = ConsolePlugin.getDefault().getConsoleManager();
@@ -244,11 +241,11 @@ public class ProcessConsoleTests extends AbstractDebugTest {
 			if (mockProcess.isAlive()) {
 				mockProcess.destroy();
 			}
-			TestUtil.waitForJobs(getName(), 50, 10000);
+			TestUtil.waitForJobs(name.getMethodName(), 50, 10000);
 			assertTrue("No console complete notification received.", terminationSignaled.get());
 		} finally {
 			consoleManager.removeConsoles(new IConsole[] { console });
-			TestUtil.waitForJobs(getName(), 0, 10000);
+			TestUtil.waitForJobs(name.getMethodName(), 0, 10000);
 		}
 	}
 }

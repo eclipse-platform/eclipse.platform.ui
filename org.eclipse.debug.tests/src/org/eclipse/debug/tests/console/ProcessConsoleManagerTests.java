@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.console;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
@@ -30,6 +34,7 @@ import org.eclipse.debug.tests.TestUtil;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsoleManager;
+import org.junit.Test;
 
 /**
  * Tests the ProcessConsoleManager.
@@ -37,19 +42,12 @@ import org.eclipse.ui.console.IConsoleManager;
 @SuppressWarnings("restriction")
 public class ProcessConsoleManagerTests extends AbstractDebugTest {
 
-	public ProcessConsoleManagerTests() {
-		super(ProcessConsoleManagerTests.class.getSimpleName());
-	}
-
-	public ProcessConsoleManagerTests(String name) {
-		super(name);
-	}
-
 	/**
 	 * Test addition and removal of a ProcessConsole. It also kind of tests
 	 * {@link LaunchManager} because the ProcessConsoleManager primary works
 	 * through an {@link ILaunchListener} which is honored by this test.
 	 */
+	@Test
 	public void testProcessConsoleLifecycle() throws Exception {
 		// ensure debug UI plugin is started before adding first launch
 		DebugUIPlugin.getDefault();
@@ -59,7 +57,7 @@ public class ProcessConsoleManagerTests extends AbstractDebugTest {
 		if (existingNumConsoles > 0) {
 			// existing consoles must not harm this test but it may be
 			// interesting in case the test fails
-			TestUtil.log(IStatus.INFO, getName(), "Found " + existingNumConsoles + " existing consoles on test start.");
+			TestUtil.log(IStatus.INFO, name.getMethodName(), "Found " + existingNumConsoles + " existing consoles on test start.");
 		}
 
 		ILaunch launch = null;
@@ -69,7 +67,7 @@ public class ProcessConsoleManagerTests extends AbstractDebugTest {
 			launch = process.getLaunch();
 			launchManager.addLaunch(launch);
 			// do not wait on input read job
-			TestUtil.waitForJobs(getName(), 0, 10000, ProcessConsole.class);
+			TestUtil.waitForJobs(name.getMethodName(), 0, 10000, ProcessConsole.class);
 			assertEquals("No console was added.", 1, consoleManager.getConsoles().length);
 		} finally {
 			mockProcess.destroy();
@@ -77,7 +75,7 @@ public class ProcessConsoleManagerTests extends AbstractDebugTest {
 
 		if (launch != null) {
 			launchManager.removeLaunch(launch);
-			TestUtil.waitForJobs(getName(), 0, 10000);
+			TestUtil.waitForJobs(name.getMethodName(), 0, 10000);
 			assertEquals("Console is not removed.", 0, consoleManager.getConsoles().length);
 		}
 	}
@@ -86,6 +84,7 @@ public class ProcessConsoleManagerTests extends AbstractDebugTest {
 	 * Test problematic scenario where launch is already removed before console
 	 * is created. see https://bugs.eclipse.org/bugs/show_bug.cgi?id=546710#c13
 	 */
+	@Test
 	public void testBug546710_ConsoleCreationRaceCondition() throws Exception {
 		final ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
 		for (ILaunch existingLaunch : launchManager.getLaunches()) {
@@ -109,7 +108,7 @@ public class ProcessConsoleManagerTests extends AbstractDebugTest {
 		}
 
 		ProcessConsoleManager processConsoleManager = DebugUIPlugin.getDefault().getProcessConsoleManager();
-		TestUtil.waitForJobs(getName(), 0, 10000);
+		TestUtil.waitForJobs(name.getMethodName(), 0, 10000);
 		int openConsoles = 0;
 		if (processConsoleManager.getConsole(process1) != null) {
 			openConsoles++;
@@ -122,7 +121,7 @@ public class ProcessConsoleManagerTests extends AbstractDebugTest {
 		final ConsoleRemoveAllTerminatedAction removeAction = new ConsoleRemoveAllTerminatedAction();
 		assertTrue("Remove terminated action should be enabled.", removeAction.isEnabled() || launchManager.getLaunches().length == 0);
 		removeAction.run();
-		TestUtil.waitForJobs(getName(), 0, 10000);
+		TestUtil.waitForJobs(name.getMethodName(), 0, 10000);
 		assertNull("First console not removed.", processConsoleManager.getConsole(process1));
 		assertNull("Second console not removed.", processConsoleManager.getConsole(process1));
 	}

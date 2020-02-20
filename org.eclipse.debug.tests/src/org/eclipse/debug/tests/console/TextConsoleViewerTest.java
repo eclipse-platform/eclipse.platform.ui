@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.console;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -23,6 +26,7 @@ import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.console.TextConsoleViewer;
+import org.junit.Test;
 
 /**
  * Not really a test for {@link TextConsoleViewer} yet since it only test one
@@ -30,18 +34,11 @@ import org.eclipse.ui.console.TextConsoleViewer;
  */
 public class TextConsoleViewerTest extends AbstractDebugTest {
 
-	public TextConsoleViewerTest() {
-		super(TextConsoleViewerTest.class.getSimpleName());
-	}
-
-	public TextConsoleViewerTest(String name) {
-		super(name);
-	}
-
 	/**
 	 * Test override of existing styles with a new style. Typically used to
 	 * apply link styling on already styled console document.
 	 */
+	@Test
 	public void testStyleOverride() throws Throwable {
 		Color colorR = null;
 		Color colorG = null;

@@ -18,6 +18,7 @@ import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.jface.viewers.TreePath;
+import org.junit.Test;
 
 /**
  * Tests which verify the check box support.  This test is very similar to the
@@ -29,15 +30,12 @@ import org.eclipse.jface.viewers.TreePath;
  */
 abstract public class CheckTests extends AbstractViewerModelTest {
 
-	public CheckTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected TestModelUpdatesListener createListener(IInternalTreeModelViewer viewer) {
 		return new TestModelUpdatesListener(viewer, false, false);
 	}
 
+	@Test
 	public void testSimpleSingleLevel() throws Exception {
 		// Create the model with test data
 		TestModel model = TestModel.simpleSingleLevel();
@@ -60,6 +58,7 @@ abstract public class CheckTests extends AbstractViewerModelTest {
 		model.validateData(fViewer, TreePath.EMPTY);
 	}
 
+	@Test
 	public void testSimpleMultiLevel() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 
@@ -104,7 +103,7 @@ abstract public class CheckTests extends AbstractViewerModelTest {
 //
 //        Assert.assertTrue(element.getChecked() != initialCheckState);
 //    }
-
+	@Test
 	public void testUpdateCheck() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 

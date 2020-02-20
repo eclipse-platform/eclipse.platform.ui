@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.launching;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.ByteArrayInputStream;
 
 import org.eclipse.core.resources.IFile;
@@ -33,19 +36,12 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.junit.Test;
 
 /**
  * Tests the refresh tab.
  */
 public class RefreshTabTests extends AbstractLaunchTest {
-
-	/**
-	 * Constructor
-	 * @param name
-	 */
-	public RefreshTabTests(String name) {
-		super(name);
-	}
 
 	/**
 	 * Sets the selected resource in the navigator view.
@@ -70,8 +66,10 @@ public class RefreshTabTests extends AbstractLaunchTest {
 
 	/**
 	 * Tests a refresh scope of the selected resource
+	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testSelectedResource() throws CoreException {
 		String scope = "${resource}"; //$NON-NLS-1$
 		IResource resource = getProject().getFolder("src"); //$NON-NLS-1$
@@ -84,8 +82,10 @@ public class RefreshTabTests extends AbstractLaunchTest {
 
 	/**
 	 * Tests a refresh scope of the selected resource's container
+	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testSelectionsFolder() throws CoreException {
 		String scope = "${container}"; //$NON-NLS-1$
 		IResource resource = getProject().getFolder("src"); //$NON-NLS-1$
@@ -98,8 +98,10 @@ public class RefreshTabTests extends AbstractLaunchTest {
 
 	/**
 	 * Tests a refresh scope of the selected resource's project
+	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testSelectionsProject() throws CoreException {
 		String scope = "${project}"; //$NON-NLS-1$
 		IResource resource = getProject().getFolder("src"); //$NON-NLS-1$
@@ -112,8 +114,10 @@ public class RefreshTabTests extends AbstractLaunchTest {
 
 	/**
 	 * Tests a refresh scope of the selected resource's project
+	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testWorkspaceScope() throws CoreException {
 		String scope = "${workspace}"; //$NON-NLS-1$
 		IResource[] result = RefreshTab.getRefreshResources(scope);
@@ -124,8 +128,10 @@ public class RefreshTabTests extends AbstractLaunchTest {
 
 	/**
 	 * Tests a refresh scope for a specific resource (old format)
+	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testSpecificResource() throws CoreException {
 		String scope = "${resource:/RefreshTabTests/some.file}"; //$NON-NLS-1$
 		IResource resource = getProject().getFile("some.file"); //$NON-NLS-1$
@@ -137,8 +143,10 @@ public class RefreshTabTests extends AbstractLaunchTest {
 
 	/**
 	 * Tests a refresh scope for a working set
+	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testWorkingSet() throws CoreException {
 		String scope= "${working_set:<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<launchConfigurationWorkingSet factoryID=\"org.eclipse.ui.internal.WorkingSetFactory\" name=\"workingSet\" editPageId=\"org.eclipse.ui.resourceWorkingSetPage\">\n<item factoryID=\"org.eclipse.ui.internal.model.ResourceFactory\" path=\"/RefreshTabTests/some.file\" type=\"1\"/>\n</launchConfigurationWorkingSet>}"; //$NON-NLS-1$
 		IResource resource = getProject().getFile("some.file"); //$NON-NLS-1$
@@ -167,11 +175,12 @@ public class RefreshTabTests extends AbstractLaunchTest {
 	}
 
 	/**
-	 * Tests the launch configuration attribute comparator extension for comparing
-	 * old/new attribute styles.
+	 * Tests the launch configuration attribute comparator extension for
+	 * comparing old/new attribute styles.
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testRefreshScopeComparator() throws CoreException {
 		String oldStyle = "${working_set:<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<launchConfigurationWorkingSet factoryID=\"org.eclipse.ui.internal.WorkingSetFactory\" name=\"workingSet\" editPageId=\"org.eclipse.ui.resourceWorkingSetPage\">\n<item factoryID=\"org.eclipse.ui.internal.model.ResourceFactory\" path=\"/RefreshTabTests/some.file\" type=\"1\"/>\n</launchConfigurationWorkingSet>}"; //$NON-NLS-1$
 		String newStyle = "${working_set:<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<resources>\n<item path=\"/RefreshTabTests/some.file\" type=\"1\"/>\n</resources>}"; //$NON-NLS-1$
@@ -183,6 +192,7 @@ public class RefreshTabTests extends AbstractLaunchTest {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testResourceMemento() throws CoreException {
 		IResource[] resources = new IResource[] { getProject(), getProject().getFile("not.exist"), getProject().getFile("some.file") }; //$NON-NLS-1$ //$NON-NLS-2$
 		String memento = RefreshUtil.toMemento(resources);
@@ -198,6 +208,7 @@ public class RefreshTabTests extends AbstractLaunchTest {
 	 *
 	 * @throws CoreException
 	 */
+	@Test
 	public void testEmptyResourceSet() throws CoreException {
 		String memento = RefreshUtil.toMemento(new IResource[]{});
 		IResource[] resources = RefreshUtil.toResources(memento);

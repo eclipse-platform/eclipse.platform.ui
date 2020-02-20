@@ -23,13 +23,13 @@ import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenCountUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IHasChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDeltaVisitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.tests.TestUtil;
 import org.eclipse.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.jface.viewers.TreePath;
 import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Tests to verify that the viewer property updates following changes in the
@@ -39,21 +39,16 @@ import org.junit.Assert;
  */
 abstract public class UpdateTests extends AbstractViewerModelTest implements ITestModelUpdatesListenerConstants {
 
-	public UpdateTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected TestModelUpdatesListener createListener(IInternalTreeModelViewer viewer) {
 		return new TestModelUpdatesListener(viewer, false, false);
 	}
 
 	/**
-	 * This test:
-	 * - creates a simple model
-	 * - replaces the list of elements with a shorter list of elements
-	 * - refreshes the viewer
+	 * This test: - creates a simple model - replaces the list of elements with
+	 * a shorter list of elements - refreshes the viewer
 	 */
+	@Test
 	public void testRemoveElements() throws Exception {
 		TestModel model = TestModel.simpleSingleLevel();
 		fViewer.setAutoExpandLevel(-1);
@@ -88,11 +83,10 @@ abstract public class UpdateTests extends AbstractViewerModelTest implements ITe
 	}
 
 	/**
-	 * This test:
-	 * - creates a simple model
-	 * - sets a list of children to one of the elements
-	 * - refreshes the viewer
+	 * This test: - creates a simple model - sets a list of children to one of
+	 * the elements - refreshes the viewer
 	 */
+	@Test
 	public void testAddNewChildren() throws Exception {
 		TestModel model = TestModel.simpleSingleLevel();
 		fViewer.setAutoExpandLevel(-1);
@@ -175,6 +169,7 @@ abstract public class UpdateTests extends AbstractViewerModelTest implements ITe
 		}
 	}
 
+	@Test
 	public void testRepeatedAddRemoveElement() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 
@@ -201,10 +196,11 @@ abstract public class UpdateTests extends AbstractViewerModelTest implements ITe
 	}
 
 	/**
-	 * This test verifies that when the viewer processes a delta that causes viewer
-	 * updates it initiates the model update sequence before it finishes processing
-	 * the delta.
+	 * This test verifies that when the viewer processes a delta that causes
+	 * viewer updates it initiates the model update sequence before it finishes
+	 * processing the delta.
 	 */
+	@Test
 	public void testNotifyUpdatesTartedOnModelChanged() throws Exception {
 		TestModel model = TestModel.simpleSingleLevel();
 		fViewer.setAutoExpandLevel(-1);
@@ -229,11 +225,12 @@ abstract public class UpdateTests extends AbstractViewerModelTest implements ITe
 
 
 	/**
-	 * This test case attempts to create a race condition between processing
-	 * of the content updates and processing of add/remove model deltas.
-	 * <br>
-	 * See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=304066">bug 304066</a>
+	 * This test case attempts to create a race condition between processing of
+	 * the content updates and processing of add/remove model deltas. <br>
+	 * See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=304066">bug
+	 * 304066</a>
 	 */
+	@Test
 	public void testContentPlusAddRemoveUpdateRaceConditionsElement() throws Exception {
 		TestModel model = TestModel.simpleSingleLevel();
 		fViewer.setAutoExpandLevel(-1);
@@ -287,11 +284,12 @@ abstract public class UpdateTests extends AbstractViewerModelTest implements ITe
 
 
 	/**
-	 * This test case attempts to create a race condition between processing
-	 * of the content updates and processing of add/remove model deltas.
-	 * <br>
-	 * See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=304066">bug 304066</a>
+	 * This test case attempts to create a race condition between processing of
+	 * the content updates and processing of add/remove model deltas. <br>
+	 * See <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=304066">bug
+	 * 304066</a>
 	 */
+	@Test
 	public void testInsertAtInvalidIndex() throws Exception {
 		TestModel model = TestModel.simpleSingleLevel();
 		fViewer.setAutoExpandLevel(-1);
@@ -308,16 +306,12 @@ abstract public class UpdateTests extends AbstractViewerModelTest implements ITe
 		final int insertIndex = model.getRootElement().getChildren().length;
 		ModelDelta delta = model.insertElementChild(TreePath.EMPTY, insertIndex, new TestElement(model, "last - invalid index", new TestElement[0])); //$NON-NLS-1$
 		// Change insert index to out of range
-		delta.accept(new IModelDeltaVisitor() {
-
-			@Override
-			public boolean visit(IModelDelta visitorDelta, int depth) {
-				if ((visitorDelta.getFlags() & IModelDelta.INSERTED) != 0) {
-					((ModelDelta)visitorDelta).setIndex(insertIndex + 1);
-					return false;
-				}
-				return true;
+		delta.accept((visitorDelta, depth) -> {
+			if ((visitorDelta.getFlags() & IModelDelta.INSERTED) != 0) {
+				((ModelDelta) visitorDelta).setIndex(insertIndex + 1);
+				return false;
 			}
+			return true;
 		});
 
 		// Remove delta should generate no new updates, but we still need to wait for the event to
@@ -330,10 +324,12 @@ abstract public class UpdateTests extends AbstractViewerModelTest implements ITe
 	}
 
 	/**
-	 * This test forces the viewer to reschedule pending content updates
-	 * due to a remove event from the model.
+	 * This test forces the viewer to reschedule pending content updates due to
+	 * a remove event from the model.
+	 *
 	 * @see org.eclipse.debug.internal.ui.viewers.model.ModelContentProvider#rescheduleUpdates
 	 */
+	@Test
 	public void testRescheduleUpdates() throws Exception {
 		TestModel model = TestModel.simpleSingleLevel();
 		fViewer.setAutoExpandLevel(-1);
@@ -369,6 +365,7 @@ abstract public class UpdateTests extends AbstractViewerModelTest implements ITe
 	 * - Process queued updates in order.<br>
 	 * </p>
 	 */
+	@Test
 	public void testCanceledUpdates1() throws Exception {
 		TestModel model = TestModel.simpleSingleLevel();
 		fViewer.setAutoExpandLevel(-1);
@@ -406,6 +403,7 @@ abstract public class UpdateTests extends AbstractViewerModelTest implements ITe
 	 * - Process queued updates in REVERSE order.<br>
 	 * </p>
 	 */
+	@Test
 	public void testCanceledUpdates2() throws Exception {
 		TestModel model = TestModel.simpleSingleLevel();
 		fViewer.setAutoExpandLevel(-1);
@@ -448,6 +446,7 @@ abstract public class UpdateTests extends AbstractViewerModelTest implements ITe
 	 * - Process queued updates in order.<br>
 	 * </p>
 	 */
+	@Test
 	public void testCanceledUpdates3() throws Exception {
 		TestModel model = TestModel.simpleSingleLevel();
 		fViewer.setAutoExpandLevel(-1);
@@ -490,6 +489,7 @@ abstract public class UpdateTests extends AbstractViewerModelTest implements ITe
 	 * - Process queued updates in REVERSE order.<br>
 	 * </p>
 	 */
+	@Test
 	public void testCanceledUpdates4() throws Exception {
 		TestModel model = TestModel.simpleSingleLevel();
 		fViewer.setAutoExpandLevel(-1);
@@ -533,12 +533,14 @@ abstract public class UpdateTests extends AbstractViewerModelTest implements ITe
 
 	/**
 	 * This test removes an element while there are updates running on its
-	 * sub-tree.  With a precise timing this operation caused Bug 373790.
+	 * sub-tree. With a precise timing this operation caused Bug 373790.
 	 * <p>
 	 * See Bug 373790 - Debug view stays busy after Resume
 	 * </p>
+	 *
 	 * @see org.eclipse.debug.internal.ui.viewers.model.ModelContentProvider#rescheduleUpdates
 	 */
+	@Test
 	public void testCancelUpdatesOnRemoveElementWhileUpdatingSubTree() throws Exception {
 		TestModel model = TestModel.simpleMultiLevel();
 		fViewer.setAutoExpandLevel(-1);
@@ -575,6 +577,7 @@ abstract public class UpdateTests extends AbstractViewerModelTest implements ITe
 	 * - Process queued updates in order.<br>
 	 * </p>
 	 */
+	@Test
 	public void testCanceledUpdatesOnSetInput() throws Exception {
 		TestModel model = TestModel.simpleSingleLevel();
 		fViewer.setAutoExpandLevel(-1);
@@ -612,6 +615,7 @@ abstract public class UpdateTests extends AbstractViewerModelTest implements ITe
 	 * - Process queued updates in order.<br>
 	 * </p>
 	 */
+	@Test
 	public void testCanceledUpdatesOnSetNullInput() throws Exception {
 		TestModel model = TestModel.simpleSingleLevel();
 		fViewer.setAutoExpandLevel(-1);

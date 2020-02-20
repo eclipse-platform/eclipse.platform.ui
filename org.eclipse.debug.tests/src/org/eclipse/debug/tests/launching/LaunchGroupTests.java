@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.launching;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
@@ -48,6 +51,9 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchHistory;
 import org.eclipse.debug.tests.TestUtil;
 import org.eclipse.debug.ui.IDebugUIConstants;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 public class LaunchGroupTests extends AbstractLaunchTest {
 
@@ -73,12 +79,9 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 		}
 	};
 
-	public LaunchGroupTests() {
-		super("Launch Groups Test"); //$NON-NLS-1$
-	}
-
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 
 		// reset count
@@ -86,7 +89,8 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 	}
 
 	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		// make sure listener is removed
 		getLaunchManager().removeLaunchListener(lcListener);
 		ILaunch[] launches = getLaunchManager().getLaunches();
@@ -100,7 +104,7 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 					launch.terminate();
 				}
 			} catch (Exception e) {
-				TestUtil.log(IStatus.ERROR, getName(), "Error terminating launch: " + launch, e);
+				TestUtil.log(IStatus.ERROR, name.getMethodName(), "Error terminating launch: " + launch, e);
 			}
 		}
 		super.tearDown();
@@ -137,6 +141,7 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 		return h;
 	}
 
+	@Test
 	public void testNone() throws Exception {
 		ILaunchConfiguration t1 = getLaunchConfiguration("Test1"); //$NON-NLS-1$
 		ILaunchConfiguration t2 = getLaunchConfiguration("Test2"); //$NON-NLS-1$
@@ -153,6 +158,7 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 		assertTrue("history[2] should be Test1", history[2].contentsEqual(t1)); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testDelay() throws Exception {
 		ILaunchConfiguration t1 = getLaunchConfiguration("Test1"); //$NON-NLS-1$
 		ILaunchConfiguration t2 = getLaunchConfiguration("Test2"); //$NON-NLS-1$
@@ -172,6 +178,7 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 		assertTrue("history[2] should be Test1", history[2].contentsEqual(t1)); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testTerminated() throws Exception {
 		final ILaunchConfiguration t1 = getLaunchConfiguration("Test1"); //$NON-NLS-1$
 		final ILaunchConfiguration t2 = getLaunchConfiguration("Test2"); //$NON-NLS-1$
@@ -217,6 +224,7 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 		assertTrue("history[2] should be Test1", history[2].contentsEqual(t1)); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testAdopt() throws Exception {
 		final ILaunchConfiguration t1 = getLaunchConfiguration("Test1"); //$NON-NLS-1$
 		final ILaunchConfiguration grp = createLaunchGroup(DEF_GRP_NAME, createLaunchGroupElement(t1, GroupElementPostLaunchAction.NONE, null, false), createLaunchGroupElement(t1, GroupElementPostLaunchAction.NONE, null, true));
@@ -235,6 +243,7 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 		assertEquals("Test1 should be launched only once", 1, launchCount.get()); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testAdoptComplex() throws Exception {
 		final ILaunchConfiguration t1 = getLaunchConfiguration("Test1"); //$NON-NLS-1$
 
@@ -265,6 +274,7 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 		assertEquals("Test1 should be launched only once", 1, launchCount.get()); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testWaitForOutput() throws Exception {
 		String testOutput = "TestOutput"; //$NON-NLS-1$
 
@@ -318,6 +328,7 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 		assertTrue("history[2] should be Test1", history[2].contentsEqual(t1)); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testRename() throws Exception {
 		ILaunchConfiguration t1 = getLaunchConfiguration("Test1"); //$NON-NLS-1$
 		ILaunchConfiguration t2 = getLaunchConfiguration("Test2"); //$NON-NLS-1$
@@ -337,8 +348,10 @@ public class LaunchGroupTests extends AbstractLaunchTest {
 	}
 
 	/**
-	 * Test for Bug 529651. Build before launch was not invoked for launches started as part of group launch.
+	 * Test for Bug 529651. Build before launch was not invoked for launches
+	 * started as part of group launch.
 	 */
+	@Test
 	public void testBuildBeforeLaunch() throws CoreException {
 		final AtomicInteger launched = new AtomicInteger(0);
 		final AtomicInteger buildRequested = new AtomicInteger(0);

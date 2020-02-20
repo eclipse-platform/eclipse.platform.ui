@@ -15,7 +15,6 @@ package org.eclipse.debug.tests.viewer.model;
 
 import java.util.function.Function;
 
-import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.debug.tests.TestUtil;
@@ -23,6 +22,8 @@ import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
+import org.junit.After;
+import org.junit.Before;
 
 public abstract class AbstractViewerModelTest extends AbstractDebugTest {
 
@@ -31,12 +32,9 @@ public abstract class AbstractViewerModelTest extends AbstractDebugTest {
 	IInternalTreeModelViewer fViewer;
 	TestModelUpdatesListener fListener;
 
-	public AbstractViewerModelTest(String name) {
-		super(name);
-	}
-
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		fDisplay = PlatformUI.getWorkbench().getDisplay();
 		fShell = new Shell(fDisplay);
@@ -49,7 +47,8 @@ public abstract class AbstractViewerModelTest extends AbstractDebugTest {
 	}
 
 	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		fListener.dispose();
 		fViewer.getPresentationContext().dispose();
 
@@ -57,15 +56,6 @@ public abstract class AbstractViewerModelTest extends AbstractDebugTest {
 		fShell.close();
 		TestUtil.processUIEvents();
 		super.tearDown();
-	}
-
-	@Override
-	protected void runTest() throws Throwable {
-		try {
-			super.runTest();
-		} catch (Throwable t) {
-			throw new ExecutionException("Test failed: " + t.getMessage() + "\n fListener = " + fListener, t); //$NON-NLS-1$ //$NON-NLS-2$
-		}
 	}
 
 	abstract protected IInternalTreeModelViewer createViewer(Display display, Shell shell);

@@ -28,10 +28,12 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.progress.UIJob;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.rules.TestName;
 
-import junit.framework.TestCase;
-
-public class AbstractDebugTest extends TestCase {
+public class AbstractDebugTest {
 
 	private static boolean welcomeClosed;
 
@@ -45,27 +47,21 @@ public class AbstractDebugTest extends TestCase {
 	 */
 	private final PreferenceMemento prefMemento = new PreferenceMemento();
 
-	public AbstractDebugTest() {
-		super();
-	}
+	@Rule
+	public TestName name = new TestName();
 
-	public AbstractDebugTest(String name) {
-		super(name);
-	}
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
-		TestUtil.log(IStatus.INFO, getName(), "setUp");
+	@Before
+	public void setUp() throws Exception {
+		TestUtil.log(IStatus.INFO, name.getMethodName(), "setUp");
 		assertWelcomeScreenClosed();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		TestUtil.log(IStatus.INFO, getName(), "tearDown");
-		TestUtil.cleanUp(getName());
+	@After
+	public void tearDown() throws Exception {
+		TestUtil.log(IStatus.INFO, name.getMethodName(), "tearDown");
+		TestUtil.cleanUp(name.getMethodName());
 		prefMemento.resetPreferences();
-		super.tearDown();
 	}
 
 	/**

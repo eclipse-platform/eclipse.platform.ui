@@ -26,10 +26,6 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class VirtualViewerFilterTests extends FilterTests {
 
-	public VirtualViewerFilterTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected IInternalTreeModelViewer createViewer(Display display, Shell shell) {
 		return new VirtualTreeModelViewer(fDisplay, SWT.VIRTUAL, new PresentationContext("TestViewer"), new VisibleVirtualItemValidator(0, 100)); //$NON-NLS-1$

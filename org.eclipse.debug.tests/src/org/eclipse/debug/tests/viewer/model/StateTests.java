@@ -14,6 +14,10 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.viewer.model;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -27,6 +31,7 @@ import org.eclipse.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
+import org.junit.Test;
 
 /**
  * Tests to verify that the viewer can save and restore correctly the expansion
@@ -35,10 +40,6 @@ import org.eclipse.jface.viewers.TreeSelection;
  * @since 3.6
  */
 abstract public class StateTests extends AbstractViewerModelTest implements ITestModelUpdatesListenerConstants {
-
-	public StateTests(String name) {
-		super(name);
-	}
 
 	@Override
 	protected TestModelUpdatesListener createListener(IInternalTreeModelViewer viewer) {
@@ -49,6 +50,7 @@ abstract public class StateTests extends AbstractViewerModelTest implements ITes
 		return fViewer;
 	}
 
+	@Test
 	public void testUpdateViewer() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 
@@ -270,6 +272,7 @@ abstract public class StateTests extends AbstractViewerModelTest implements ITes
 		TestUtil.waitWhile(t -> !listener.isFinished(CONTENT_SEQUENCE_COMPLETE | MODEL_CHANGED_COMPLETE), null, 30000, t -> "Listener not finished: " + listener);
 	}
 
+	@Test
 	public void testPreserveExpandedOnRemove() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 		TestModel model = alternatingSubsreesModel(6);
@@ -310,6 +313,7 @@ abstract public class StateTests extends AbstractViewerModelTest implements ITes
 		assertTrue( areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
 	}
 
+	@Test
 	public void testPreserveExpandedOnInsert() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 		TestModel model = alternatingSubsreesModel(6);
@@ -355,6 +359,7 @@ abstract public class StateTests extends AbstractViewerModelTest implements ITes
 		assertTrue( areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
 	}
 
+	@Test
 	public void testPreserveExpandedOnMultLevelContent() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 		TestModel model = alternatingSubsreesModel(6);
@@ -410,6 +415,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 		assertTrue( fListener.checkCoalesced(TreePath.EMPTY, 0, 5) );
 	}
 
+	@Test
 	public void testKeepCollapsedAfterRemovingAndReaddingChildrenInExpandedTree() throws Exception {
 		boolean showChildren[] = new boolean[] { true };
 		int size = 3;
@@ -535,6 +541,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 		}
 	}
 
+	@Test
 	public void testPreserveExpandedOnSubTreeContent() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 		TestModel model = TestModel.simpleMultiLevel();
@@ -585,6 +592,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 		assertTrue( areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
 	}
 
+	@Test
 	public void testPreserveExpandedOnContentStress() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 		TestModel model = alternatingSubsreesModel(6);
@@ -653,6 +661,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 		}
 	}
 
+	@Test
 	public void testPreserveLargeModelOnContent() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 		TestModel model = alternatingSubsreesModel(100);
@@ -664,7 +673,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 
 		// Set the input into the view and update the view.
 		fViewer.setInput(model.getRootElement());
-		TestUtil.waitForJobs(getName(), 300, 5000);
+		TestUtil.waitForJobs(name.getMethodName(), 300, 5000);
 		waitWhile(t -> !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE), createListenerErrorMessage());
 
 		expandAlternateElements(fListener, model, false);
@@ -712,10 +721,11 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 	}
 
 	/**
-	 * This test verifies that if the model selects a new element
-	 * following a content refresh, the state restore logic will
-	 * not override the selection requested by the model.
+	 * This test verifies that if the model selects a new element following a
+	 * content refresh, the state restore logic will not override the selection
+	 * requested by the model.
 	 */
+	@Test
 	public void testPreserveSelectionDeltaAfterContent() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 		TestModel model = TestModel.simpleMultiLevel();
@@ -758,6 +768,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 		assertEquals(new TreeSelection(model.findElement("2.1")), fViewer.getSelection()); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testPreserveCollapseDeltaAfterContent() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 		TestModel model = TestModel.simpleMultiLevel();
@@ -813,6 +824,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 		assertTrue(getInternalViewer().getExpandedState(model.findElement("3.1")) == false); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testPreserveExpandDeltaAfterContent() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 		TestModel model = TestModel.simpleMultiLevel();
@@ -851,7 +863,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 		assertTrue(getInternalViewer().getExpandedState(model.findElement("3.1")) == true); //$NON-NLS-1$
 	}
 
-
+	@Test
 	public void testSaveAndRestore1() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 		TestModel model = alternatingSubsreesModel(6);
@@ -899,6 +911,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 		}
 	}
 
+	@Test
 	public void testSaveAndRestore2() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 		TestModel model = TestModel.simpleMultiLevel();
@@ -949,6 +962,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 		}
 	}
 
+	@Test
 	public void testSaveAndRestoreInputInstance() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 		TestModel model = alternatingSubsreesModel(6);
@@ -991,6 +1005,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 		}
 	}
 
+	@Test
 	public void testSaveAndRestoreInputInstanceEquals() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 		TestModel model = alternatingSubsreesModel(6);
@@ -1036,7 +1051,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 		}
 	}
 
-
+	@Test
 	public void testSaveAndRestoreLarge() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 		TestModel model = alternatingSubsreesModel(100);
@@ -1048,7 +1063,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 
 		// Set the input into the view and update the view.
 		fViewer.setInput(model.getRootElement());
-		TestUtil.waitForJobs(getName(), 300, 5000);
+		TestUtil.waitForJobs(name.getMethodName(), 300, 5000);
 		waitWhile(t -> !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE), createListenerErrorMessage());
 
 		expandAlternateElements(fListener, model, false);
@@ -1067,7 +1082,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 		fListener.addStateUpdates(getInternalViewer(), originalState, IModelDelta.EXPAND | IModelDelta.SELECT | IModelDelta.REVEAL);
 
 		fViewer.setInput(null);
-		TestUtil.waitForJobs(getName(), 300, 5000);
+		TestUtil.waitForJobs(name.getMethodName(), 300, 5000);
 		waitWhile(t -> !fListener.isFinished(STATE_SAVE_COMPLETE | STATE_UPDATES), createListenerErrorMessage());
 
 		// Set the viewer input back to the model.  When view updates are complete
@@ -1075,7 +1090,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 		// Note: disable redundant updates because the reveal delta triggers one.
 		fListener.reset();
 		fViewer.setInput(model.getRootElement());
-		TestUtil.waitForJobs(getName(), 300, 5000);
+		TestUtil.waitForJobs(name.getMethodName(), 300, 5000);
 		waitWhile(t -> !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE), createListenerErrorMessage());
 
 		// Validate data (only select visible elements).
@@ -1092,10 +1107,11 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 	}
 
 	/**
-	 * This test saves state of a large tree.  Then the tree is modified
-	 * to contain much fewer elements.  The restore logic should discard the
-	 * rest of the saved state delta once all the elements are visible.
+	 * This test saves state of a large tree. Then the tree is modified to
+	 * contain much fewer elements. The restore logic should discard the rest of
+	 * the saved state delta once all the elements are visible.
 	 */
+	@Test
 	public void testSaveAndRestorePartialStateLarge() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 		TestModel model = alternatingSubsreesModel(100);
@@ -1107,7 +1123,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 
 		// Set the input into the view and update the view.
 		fViewer.setInput(model.getRootElement());
-		TestUtil.waitForJobs(getName(), 300, 5000);
+		TestUtil.waitForJobs(name.getMethodName(), 300, 5000);
 		waitWhile(t -> !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE), createListenerErrorMessage());
 
 		expandAlternateElements(fListener, model, false);
@@ -1126,7 +1142,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 		fListener.addStateUpdates(getInternalViewer(), originalState, IModelDelta.EXPAND | IModelDelta.SELECT | IModelDelta.REVEAL);
 
 		fViewer.setInput(null);
-		TestUtil.waitForJobs(getName(), 300, 5000);
+		TestUtil.waitForJobs(name.getMethodName(), 300, 5000);
 		waitWhile(t -> !fListener.isFinished(STATE_SAVE_COMPLETE | STATE_UPDATES), createListenerErrorMessage());
 
 
@@ -1140,7 +1156,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 		// Note: disable redundant updates because the reveal delta triggers one.
 		fListener.reset();
 		fViewer.setInput(model.getRootElement());
-		TestUtil.waitForJobs(getName(), 300, 5000);
+		TestUtil.waitForJobs(name.getMethodName(), 300, 5000);
 
 		// MONITOR FOR THE STATE RESTORE TO COMPLETE
 		waitWhile(t -> !fListener.isFinished(CONTENT_SEQUENCE_COMPLETE | STATE_RESTORE_COMPLETE), createListenerErrorMessage());
@@ -1158,6 +1174,7 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 		assertTrue( areTreeSelectionsEqual(originalSelection, (ITreeSelection)fViewer.getSelection()) );
 	}
 
+	@Test
 	public void testPreserveCollapseAndSelectDeltaAfterSaveAndRestore() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 		TestModel model = TestModel.simpleMultiLevel();
@@ -1223,8 +1240,10 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 
 	/**
 	 * Test for bug 359859.<br>
-	 * This test verifies that RESTORE state is handled after SAVE previous state was completed
+	 * This test verifies that RESTORE state is handled after SAVE previous
+	 * state was completed
 	 */
+	@Test
 	public void testSaveRestoreOrder() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 		TestModel model = TestModel.simpleMultiLevel();
@@ -1253,9 +1272,10 @@ new TreePath[] { model.findElement("5"), model.findElement("5.1"), model.findEle
 	}
 
 	/**
-	 * This test tries to restore a viewer state while input == null.
-	 * See: Bug 380288 - NPE switching to the Breakpoints View
+	 * This test tries to restore a viewer state while input == null. See: Bug
+	 * 380288 - NPE switching to the Breakpoints View
 	 */
+	@Test
 	public void testUpdateWithNullInput() throws Exception {
 		TestModel model = TestModel.simpleMultiLevel();
 		fViewer.setAutoExpandLevel(-1);

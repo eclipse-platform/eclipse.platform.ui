@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.console;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -51,6 +56,9 @@ import org.eclipse.ui.console.IConsoleDocumentPartitionerExtension;
 import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleOutputStream;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests the {@link IOConsole}. Especially the partitioner and viewer parts.
@@ -79,16 +87,9 @@ public class IOConsoleTests extends AbstractDebugTest {
 		}
 	};
 
-	public IOConsoleTests() {
-		super(IOConsoleTests.class.getSimpleName());
-	}
-
-	public IOConsoleTests(String name) {
-		super(name);
-	}
-
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 
 		// create or activate console view
@@ -111,7 +112,8 @@ public class IOConsoleTests extends AbstractDebugTest {
 	}
 
 	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		Platform.removeLogListener(errorLogListener);
 		super.tearDown();
 
@@ -134,12 +136,12 @@ public class IOConsoleTests extends AbstractDebugTest {
 		});
 		final IConsoleManager consoleManager = ConsolePlugin.getDefault().getConsoleManager();
 		consoleManager.addConsoles(new IConsole[] { console });
-		TestUtil.waitForJobs(getName(), 25, 10000);
+		TestUtil.waitForJobs(name.getMethodName(), 25, 10000);
 		consoleManager.showConsoleView(console);
 		@SuppressWarnings("restriction")
 		final org.eclipse.ui.internal.console.IOConsolePage page = (org.eclipse.ui.internal.console.IOConsolePage) consoleView.getCurrentPage();
 		final StyledText textPanel = (StyledText) page.getControl();
-		return new IOConsoleTestUtil(console, textPanel, getName());
+		return new IOConsoleTestUtil(console, textPanel, name.getMethodName());
 	}
 
 	/**
@@ -190,6 +192,7 @@ public class IOConsoleTests extends AbstractDebugTest {
 	/**
 	 * Test console clear.
 	 */
+	@Test
 	public void testConsoleClear() throws Exception {
 		final IOConsoleTestUtil c = getTestUtil("Test clear");
 
@@ -234,6 +237,7 @@ public class IOConsoleTests extends AbstractDebugTest {
 	 * Test multiple writes, i.e. {@link IOConsole} receives content from
 	 * connected {@link IOConsoleOutputStream}.
 	 */
+	@Test
 	public void testWrites() throws Exception {
 		final IOConsoleTestUtil c = getTestUtil("Test writes");
 		final String[] strings = new String[] {
@@ -254,6 +258,7 @@ public class IOConsoleTests extends AbstractDebugTest {
 	 * Test {@link IOConsole} input stream, i.e. simulate user typing or pasting
 	 * input in console.
 	 */
+	@Test
 	public void testUserInput() throws Exception {
 		final IOConsoleTestUtil c = getTestUtil("Test input");
 		final List<String> expectedInput = new ArrayList<>();
@@ -290,6 +295,7 @@ public class IOConsoleTests extends AbstractDebugTest {
 	/**
 	 * Test {@link IOConsole} with file as input source.
 	 */
+	@Test
 	public void testInputFile() throws Exception {
 		final IOConsoleTestUtil c = getTestUtil("Test input file");
 		// open default output stream to match usual behavior where two output
@@ -309,6 +315,7 @@ public class IOConsoleTests extends AbstractDebugTest {
 	/**
 	 * Test mixes of outputs and user inputs in various variants.
 	 */
+	@Test
 	public void testMixedWriteAndInput() throws Exception {
 		final IOConsoleTestUtil c = getTestUtil("Test input output mix");
 		final List<String> expectedInput = new ArrayList<>();
@@ -406,6 +413,7 @@ public class IOConsoleTests extends AbstractDebugTest {
 	/**
 	 * Test enabling/disabling control character interpretation.
 	 */
+	@Test
 	public void testControlCharacterSettings() throws Exception {
 		final IOConsoleTestUtil c = getTestUtil("Test options");
 
@@ -434,6 +442,7 @@ public class IOConsoleTests extends AbstractDebugTest {
 	/**
 	 * Test handling of <code>\b</code>.
 	 */
+	@Test
 	public void testBackspaceControlCharacter() throws Exception {
 		final IOConsoleTestUtil c = getTestUtil("Test \\b");
 		c.getConsole().setCarriageReturnAsControlCharacter(false);
@@ -515,6 +524,7 @@ public class IOConsoleTests extends AbstractDebugTest {
 	/**
 	 * Test handling of <code>\r</code>.
 	 */
+	@Test
 	public void testCarriageReturnControlCharacter() throws Exception {
 		final IOConsoleTestUtil c = getTestUtil("Test \\r");
 		c.getConsole().setCarriageReturnAsControlCharacter(true);
@@ -560,6 +570,7 @@ public class IOConsoleTests extends AbstractDebugTest {
 	/**
 	 * Test handling of <code>\f</code>.
 	 */
+	@Test
 	public void testFormFeedControlCharacter() throws Exception {
 		final IOConsoleTestUtil c = getTestUtil("Test \\f");
 		c.getConsole().setHandleControlCharacters(true);
@@ -603,6 +614,7 @@ public class IOConsoleTests extends AbstractDebugTest {
 	/**
 	 * Test larger number of partitions with pseudo random console content.
 	 */
+	@Test
 	public void testManyPartitions() throws IOException {
 		final IOConsoleTestUtil c = getTestUtil("Test many partitions");
 		final List<String> expectedInput = new ArrayList<>();
@@ -644,6 +656,7 @@ public class IOConsoleTests extends AbstractDebugTest {
 	/**
 	 * Test console trimming.
 	 */
+	@Test
 	public void testTrim() throws Exception {
 		final IOConsoleTestUtil c = getTestUtil("Test trim");
 		try (IOConsoleOutputStream defaultOut = c.getDefaultOutputStream()) {
@@ -668,6 +681,7 @@ public class IOConsoleTests extends AbstractDebugTest {
 	/**
 	 * Some extra tests for IOConsolePartitioner.
 	 */
+	@Test
 	public void testIOPartitioner() throws Exception {
 		final IOConsoleTestUtil c = getTestUtil("Test partitioner");
 
@@ -694,6 +708,7 @@ public class IOConsoleTests extends AbstractDebugTest {
 	/**
 	 * Tests for the {@link IConsoleDocumentPartitioner} interface.
 	 */
+	@Test
 	public void testIConsoleDocumentPartitioner() throws Exception {
 		final IOConsoleTestUtil c = getTestUtil("Test IConsoleDocumentPartitioner");
 		try (IOConsoleOutputStream otherOut = c.getConsole().newOutputStream()) {
@@ -815,6 +830,7 @@ public class IOConsoleTests extends AbstractDebugTest {
 	/**
 	 * Regression test for deadlock in stream processing.
 	 */
+	@Test
 	public void testBug421303_StreamProcessingDeadlock() throws Exception {
 		// Test situation is that UI thread and another thread both write a
 		// large amount of output into same IOConsoleOutputStream at same time

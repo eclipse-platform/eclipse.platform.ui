@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.viewer.model;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.viewers.model.ChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
@@ -34,6 +38,7 @@ import org.eclipse.jface.viewers.ViewerLabel;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Display;
+import org.junit.Test;
 
 /**
  * Tests coalescing of children update requests.
@@ -229,13 +234,6 @@ public class ChildrenUpdateTests extends AbstractDebugTest {
 		}
 	}
 
-	/**
-	 * @param name
-	 */
-	public ChildrenUpdateTests(String name) {
-		super(name);
-	}
-
 	protected TreeModelContentProvider getContentProvider() {
 		return new BogusModelContentProvider();
 	}
@@ -243,6 +241,7 @@ public class ChildrenUpdateTests extends AbstractDebugTest {
 	/**
 	 * Tests coalescing of requests
 	 */
+	@Test
 	public void testCoalesce () {
 		Object element = new Object();
 		TreeModelContentProvider cp = getContentProvider();

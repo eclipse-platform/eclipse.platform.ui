@@ -10,21 +10,28 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.stepfilters;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IStepFilter;
 import org.eclipse.debug.tests.AbstractDebugTest;
+import org.junit.Test;
 
 /**
  * Tests step filters
  */
 public class StepFiltersTests extends AbstractDebugTest {
-
+	@Test
 	public void testStepFitlersExtension_01() {
 		IStepFilter[] stepFilters = DebugPlugin.getStepFilters("com.example.lalala.model"); //$NON-NLS-1$
 		assertNotNull(stepFilters);
 		assertEquals(0, stepFilters.length);
 	}
 
+	@Test
 	public void testStepFitlersExtension_02() {
 		IStepFilter[] stepFilters = DebugPlugin.getStepFilters("com.example.debug.model"); //$NON-NLS-1$
 		assertNotNull(stepFilters);

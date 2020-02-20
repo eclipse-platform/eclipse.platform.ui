@@ -20,14 +20,6 @@ import org.eclipse.debug.tests.TestUtil;
  */
 public class IOConsoleFixedWidthTests extends IOConsoleTests {
 
-	public IOConsoleFixedWidthTests() {
-		super(IOConsoleFixedWidthTests.class.getSimpleName());
-	}
-
-	public IOConsoleFixedWidthTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected IOConsoleTestUtil getTestUtil(String title) {
 		final IOConsoleTestUtil c = super.getTestUtil(title);
@@ -37,7 +29,7 @@ public class IOConsoleFixedWidthTests extends IOConsoleTests {
 		c.getConsole().setConsoleWidth(3);
 		c.setIgnoreFixedConsole(true);
 		// console width is applied asynchronous
-		TestUtil.waitForJobs(getName(), 50, 1000);
+		TestUtil.waitForJobs(name.getMethodName(), 50, 1000);
 		return c;
 	}
 

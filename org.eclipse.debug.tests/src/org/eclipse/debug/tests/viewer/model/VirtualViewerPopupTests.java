@@ -25,10 +25,6 @@ import org.eclipse.swt.widgets.Shell;
  */
 public class VirtualViewerPopupTests extends PopupTests {
 
-	public VirtualViewerPopupTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected IInternalTreeModelViewer createViewer(Display display, Shell shell, int style) {
 		return new VirtualTreeModelViewer(fDisplay, style, new PresentationContext("TestViewer")); //$NON-NLS-1$

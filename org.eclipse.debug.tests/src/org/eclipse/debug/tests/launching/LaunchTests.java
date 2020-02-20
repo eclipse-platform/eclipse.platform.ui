@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.launching;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import java.util.ConcurrentModificationException;
@@ -28,6 +31,8 @@ import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.IDebugTarget;
 import org.eclipse.debug.core.model.IDisconnect;
 import org.eclipse.debug.core.model.IProcess;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for the {@link Launch} class
@@ -42,16 +47,9 @@ public class LaunchTests extends AbstractLaunchTest {
 	private Runnable writeProcessesTask;
 	private Runnable writeDebugTargetsTask;
 
-	/**
-	 * Constructor
-	 * @param name
-	 */
-	public LaunchTests(String name) {
-		super(name);
-	}
-
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		final Launch launch = new Launch(null, ILaunchManager.RUN_MODE, null);
 
@@ -94,19 +92,16 @@ public class LaunchTests extends AbstractLaunchTest {
 		};
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
-		super.tearDown();
-	}
-
 	/**
 	 * Modifies debug targets and checks if this causes
 	 * {@link ConcurrentModificationException} in the another thread
 	 */
+	@Test
 	public void testTerminatedAndWriteTargets() throws Exception {
 		assertTrue(testExecution(readIsTerminatedTask, writeDebugTargetsTask));
 	}
 
+	@Test
 	public void testDisconnectedAndWriteTargets() throws Exception {
 		assertTrue(testExecution(readIsDisconnectedTask, writeDebugTargetsTask));
 	}
@@ -115,6 +110,7 @@ public class LaunchTests extends AbstractLaunchTest {
 	 * Modifies processes and checks if this causes
 	 * {@link ConcurrentModificationException} in the another thread
 	 */
+	@Test
 	public void testTerminatedAndWriteProcesses() throws Exception {
 		assertTrue(testExecution(readIsTerminatedTask, writeProcessesTask));
 	}
@@ -123,6 +119,7 @@ public class LaunchTests extends AbstractLaunchTest {
 	 * Modifies processes and checks if this causes
 	 * {@link ConcurrentModificationException} in the another thread
 	 */
+	@Test
 	public void testDisconnectedAndWriteProcesses() throws Exception {
 		assertTrue(testExecution(readIsDisconnectedTask, writeProcessesTask));
 	}
@@ -175,7 +172,7 @@ public class LaunchTests extends AbstractLaunchTest {
 				}
 			}
 		} finally {
-			System.out.println(getName() + " runs: " + runs); //$NON-NLS-1$
+			System.out.println(name.getMethodName() + " runs: " + runs); //$NON-NLS-1$
 			job.cancel();
 		}
 

@@ -13,30 +13,26 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.console;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 
 import org.eclipse.debug.internal.core.StreamsProxy;
 import org.eclipse.debug.tests.AbstractDebugTest;
+import org.junit.Test;
 
 /**
  * Tests the {@link StreamsProxy}.
  */
 public class StreamsProxyTests extends AbstractDebugTest {
 
-	public StreamsProxyTests() {
-		super(StreamsProxyTests.class.getSimpleName());
-	}
-
-	public StreamsProxyTests(String name) {
-		super(name);
-	}
-
 	/**
 	 * Test console receiving UTF-8 output from process where two-byte UTF-8
 	 * characters start at even offsets.
 	 */
+	@Test
 	public void testReceiveUTF8Even() throws Exception {
 		// 4500 characters results in 9000 byte of output which should be more
 		// than most common buffer sizes.
@@ -47,6 +43,7 @@ public class StreamsProxyTests extends AbstractDebugTest {
 	 * Test console receiving UTF-8 output from process where two-byte UTF-8
 	 * characters start at odd offsets.
 	 */
+	@Test
 	public void testReceiveUTF8Odd() throws Exception {
 		// 4500 characters results in 9000 byte of output which should be more
 		// than most common buffer sizes.

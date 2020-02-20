@@ -14,6 +14,10 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.viewer.model;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Arrays;
 import java.util.List;
 import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
@@ -24,6 +28,7 @@ import org.eclipse.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.TreePath;
+import org.junit.Test;
 
 /**
  * Tests to verify that the viewer property retrieves and processes the
@@ -31,15 +36,12 @@ import org.eclipse.jface.viewers.TreePath;
  */
 abstract public class DeltaTests extends AbstractViewerModelTest implements ITestModelUpdatesListenerConstants {
 
-	public DeltaTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected TestModelUpdatesListener createListener(IInternalTreeModelViewer viewer) {
 		return new TestModelUpdatesListener(viewer, false, false);
 	}
 
+	@Test
 	public void testUpdateLabel() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 
@@ -65,6 +67,7 @@ abstract public class DeltaTests extends AbstractViewerModelTest implements ITes
 		model.validateData(fViewer, TreePath.EMPTY);
 	}
 
+	@Test
 	public void testRefreshStruct() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 
@@ -95,6 +98,7 @@ abstract public class DeltaTests extends AbstractViewerModelTest implements ITes
 		model.validateData(fViewer, TreePath.EMPTY);
 	}
 
+	@Test
 	public void testRefreshStruct2() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 
@@ -144,6 +148,7 @@ abstract public class DeltaTests extends AbstractViewerModelTest implements ITes
 		model.validateData(fViewer, TreePath.EMPTY);
 	}
 
+	@Test
 	public void testRefreshCoalesceStruct() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 
@@ -174,7 +179,7 @@ abstract public class DeltaTests extends AbstractViewerModelTest implements ITes
 		assertTrue( fListener.checkCoalesced(TreePath.EMPTY, 0, 6) );
 	}
 
-
+	@Test
 	public void testInsert() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 
@@ -210,9 +215,10 @@ abstract public class DeltaTests extends AbstractViewerModelTest implements ITes
 	}
 
 	/**
-	 * This test checks that insert and select delta flags are processed in correct order:
-	 * insert then select.
+	 * This test checks that insert and select delta flags are processed in
+	 * correct order: insert then select.
 	 */
+	@Test
 	public void testInsertAndSelect() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 
@@ -258,9 +264,10 @@ abstract public class DeltaTests extends AbstractViewerModelTest implements ITes
 	}
 
 	/**
-	 * This test checks that insert and remove deltas are processed in correct order:
-	 * remove deltas are processed first then insert deltas.
+	 * This test checks that insert and remove deltas are processed in correct
+	 * order: remove deltas are processed first then insert deltas.
 	 */
+	@Test
 	public void testInsertAndRemove() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 
@@ -301,7 +308,7 @@ abstract public class DeltaTests extends AbstractViewerModelTest implements ITes
 		model.validateData(fViewer, TreePath.EMPTY);
 	}
 
-
+	@Test
 	public void testAddElement() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 
@@ -425,7 +432,7 @@ abstract public class DeltaTests extends AbstractViewerModelTest implements ITes
 		model.validateData(fViewer, parentPath, true);
 	}
 
-
+	@Test
 	public void testRemove() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 
@@ -451,6 +458,7 @@ abstract public class DeltaTests extends AbstractViewerModelTest implements ITes
 		model.validateData(fViewer, TreePath.EMPTY);
 	}
 
+	@Test
 	public void testExpandAndSelect() throws Exception {
 		TestModel model = TestModel.simpleMultiLevel();
 
@@ -533,6 +541,7 @@ abstract public class DeltaTests extends AbstractViewerModelTest implements ITes
 	/**
 	 * This test verifies that expand and select updates are being ignored.
 	 */
+	@Test
 	public void testExpandAndSelect_simple() throws Exception {
 		TestModel model = TestModel.simpleMultiLevel();
 
@@ -581,6 +590,7 @@ abstract public class DeltaTests extends AbstractViewerModelTest implements ITes
 		}
 	}
 
+	@Test
 	public void testCompositeModelRefreshStruct() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 
@@ -614,6 +624,7 @@ abstract public class DeltaTests extends AbstractViewerModelTest implements ITes
 		model.validateData(fViewer, TreePath.EMPTY);
 	}
 
+	@Test
 	public void testCompositeModelAddElement() throws Exception {
 		TestModel model = TestModel.compositeMultiLevel();
 		fViewer.setAutoExpandLevel(-1);
@@ -644,6 +655,7 @@ abstract public class DeltaTests extends AbstractViewerModelTest implements ITes
 		model.validateData(fViewer, TreePath.EMPTY);
 	}
 
+	@Test
 	public void testBug292322() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 		TestModel model = TestModel.simpleMultiLevel();

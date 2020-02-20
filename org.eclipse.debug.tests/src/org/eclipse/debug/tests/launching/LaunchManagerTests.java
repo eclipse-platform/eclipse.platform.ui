@@ -13,6 +13,12 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.launching;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.Platform;
@@ -23,6 +29,7 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.tests.launching.CancellingLaunchDelegate.CancellingLaunch;
+import org.junit.Test;
 
 /**
  *
@@ -33,17 +40,11 @@ import org.eclipse.debug.tests.launching.CancellingLaunchDelegate.CancellingLaun
 @SuppressWarnings("deprecation")
 public class LaunchManagerTests extends AbstractLaunchTest {
 
-	/**
-	 * Constructor
-	 * @param name
-	 */
-	public LaunchManagerTests(String name) {
-		super(name);
-	}
 
 	/**
 	 * Tests generating a valid launch configuration name
 	 */
+	@Test
 	public void testGenereateConfigName() {
 		String configname = "launch_configuration"; //$NON-NLS-1$
 		String name = getLaunchManager().generateLaunchConfigurationName(configname);
@@ -51,9 +52,10 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 	}
 
 	/**
-	 * Tests generating a launch configuration name with an unsupported char using
-	 * the deprecated method
+	 * Tests generating a launch configuration name with an unsupported char
+	 * using the deprecated method
 	 */
+	@Test
 	public void testGenereateConfigNameBadChar() {
 		String configname = "config:name"; //$NON-NLS-1$
 		String name = getLaunchManager().generateUniqueLaunchConfigurationNameFrom(configname);
@@ -63,6 +65,7 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 	/**
 	 * Tests that a valid name is accepted as is.
 	 */
+	@Test
 	public void testGenerateValidName() {
 		String configname = "thisisavalidname"; //$NON-NLS-1$
 		String name = getLaunchManager().generateLaunchConfigurationName(configname);
@@ -70,9 +73,10 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 	}
 
 	/**
-	 * Tests generating a launch configuration name using a name that is an OS reserved
-	 * name. Win 32 test only.
+	 * Tests generating a launch configuration name using a name that is an OS
+	 * reserved name. Win 32 test only.
 	 */
+	@Test
 	public void testGenerateConfigNameReservedName() {
 		if(Platform.OS_WIN32.equals(Platform.getOS())) {
 			String configname = "aux"; //$NON-NLS-1$
@@ -84,6 +88,7 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 	/**
 	 * Tests generating a configuration name that contains an invalid character
 	 */
+	@Test
 	public void testGenerateBadConfigName() {
 		String configname = "config:name"; //$NON-NLS-1$
 		String name = getLaunchManager().generateLaunchConfigurationName(configname);
@@ -91,9 +96,10 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 	}
 
 	/**
-	 * Tests generating a name that conflicts with an OS reserved name. This test is for windows only as there
-	 * are no reserved names on other OS's.
+	 * Tests generating a name that conflicts with an OS reserved name. This
+	 * test is for windows only as there are no reserved names on other OS's.
 	 */
+	@Test
 	public void testGenerateConflictingName() {
 		if(Platform.OS_WIN32.equals(Platform.getOS())) {
 			String configname = "aux"; //$NON-NLS-1$
@@ -103,9 +109,10 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 	}
 
 	/**
-	 * Tests generating a configuration name that contains an invalid character and where there
-	 * is another config with the replaced name already
+	 * Tests generating a configuration name that contains an invalid character
+	 * and where there is another config with the replaced name already
 	 */
+	@Test
 	public void testGenerateBadCharConflict() throws Exception {
 		String configname = "config:name"; //$NON-NLS-1$
 		String name = getLaunchManager().generateLaunchConfigurationName(configname);
@@ -119,9 +126,10 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 
 	/**
 	 * Tests generating a name that conflicts with an OS reserved name and that
-	 * there is a config with the replaced name already. This test is for windows only as there
-	 * are no reserved names on other OS's.
+	 * there is a config with the replaced name already. This test is for
+	 * windows only as there are no reserved names on other OS's.
 	 */
+	@Test
 	public void testGenerateBadNameConflict() throws Exception {
 		if(Platform.OS_WIN32.equals(Platform.getOS())) {
 			String configname = "com2"; //$NON-NLS-1$
@@ -136,8 +144,11 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 	}
 
 	/**
-	 * Tests the {@link org.eclipse.debug.core.ILaunchManager#isValidLaunchConfigurationName(String)} method for correctness
+	 * Tests the
+	 * {@link org.eclipse.debug.core.ILaunchManager#isValidLaunchConfigurationName(String)}
+	 * method for correctness
 	 */
+	@Test
 	public void testValidateConfigGoodName() {
 		String configname = "configname"; //$NON-NLS-1$
 		try {
@@ -149,8 +160,11 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 	}
 
 	/**
-	 * Tests the {@link org.eclipse.debug.core.ILaunchManager#isValidLaunchConfigurationName(String)} method for correctness
+	 * Tests the
+	 * {@link org.eclipse.debug.core.ILaunchManager#isValidLaunchConfigurationName(String)}
+	 * method for correctness
 	 */
+	@Test
 	public void testValidateConfigBadCharName() {
 		String configname = "config:name"; //$NON-NLS-1$
 		try {
@@ -163,8 +177,11 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 	}
 
 	/**
-	 * Tests the {@link org.eclipse.debug.core.ILaunchManager#isValidLaunchConfigurationName(String)} method for correctness
+	 * Tests the
+	 * {@link org.eclipse.debug.core.ILaunchManager#isValidLaunchConfigurationName(String)}
+	 * method for correctness
 	 */
+	@Test
 	public void testValidateConfigBadName() {
 		if(Platform.OS_WIN32.equals(Platform.getOS())) {
 			String configname = "com1"; //$NON-NLS-1$
@@ -179,9 +196,11 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 	}
 
 	/**
-	 * Tests that generating a configuration name when there exists a configuration with that name
-	 * already properly updates a '(N)' counter at the end
+	 * Tests that generating a configuration name when there exists a
+	 * configuration with that name already properly updates a '(N)' counter at
+	 * the end
 	 */
+	@Test
 	public void testGenerateNameExistingConfig() throws Exception {
 		String configname = "x.y.z.configname"; //$NON-NLS-1$
 		getLaunchConfiguration(configname);
@@ -203,6 +222,7 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 	/**
 	 * Tests that removing an accelerator properly removes it without affecting the base string (readable) value
 	 */
+	@Test
 	public void testRemoveAcc() {
 		String text = "&Remove"; //$NON-NLS-1$
 		String label = LaunchManager.removeAccelerators(text);
@@ -259,6 +279,7 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=437122
 	 * @since 3.9.100
 	 */
+	@Test
 	public void testCancelledPreLaunchCheck() throws Exception {
 		ILaunchConfiguration config = getCancellingConfiguration(true, false, false);
 		assertNotNull("The cancelling config should have been created", config); //$NON-NLS-1$
@@ -283,6 +304,7 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=437122
 	 * @since 3.9.100
 	 */
+	@Test
 	public void testCancelledFinalLaunchCheck() throws Exception {
 		ILaunchConfiguration config = getCancellingConfiguration(false, true, false);
 		assertNotNull("The cancelling config should have been created", config); //$NON-NLS-1$
@@ -307,6 +329,7 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 	 * @see https://bugs.eclipse.org/bugs/show_bug.cgi?id=437122
 	 * @since 3.9.100
 	 */
+	@Test
 	public void testCancelledBuildForLaunch() throws Exception {
 		ILaunchConfiguration config = getCancellingConfiguration(false, false, true);
 		assertNotNull("The cancelling config should have been created", config); //$NON-NLS-1$
@@ -333,6 +356,7 @@ public class LaunchManagerTests extends AbstractLaunchTest {
 	 * the NPE in the unpatched code, increase the size of config. However,
 	 * increasing the number increases the runtime of the test substantially.
 	 */
+	@Test
 	public void testNPE_Bug484882() throws Exception {
 		// In this thread continuously creates configs so that
 		// org.eclipse.debug.internal.core.LaunchManager.clearConfigNameCache()

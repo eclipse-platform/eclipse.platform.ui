@@ -14,6 +14,9 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.viewer.model;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,15 +30,12 @@ import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
+import org.junit.Test;
 
 /**
  * Tests to verify that the viewer properly handles selection changes.
  */
 abstract public class SelectionTests extends AbstractViewerModelTest implements ITestModelUpdatesListenerConstants {
-
-	public SelectionTests(String name) {
-		super(name);
-	}
 
 	@Override
 	protected TestModelUpdatesListener createListener(IInternalTreeModelViewer viewer) {
@@ -62,11 +62,11 @@ abstract public class SelectionTests extends AbstractViewerModelTest implements 
 	}
 
 	/**
-	 * In this test:
-	 * - set selection to an element deep in the model
-	 * - verify that selection chagned listener is called
-	 * - verify that the selection is in the viewer is correct
+	 * In this test: - set selection to an element deep in the model - verify
+	 * that selection chagned listener is called - verify that the selection is
+	 * in the viewer is correct
 	 */
+	@Test
 	public void testSimpleSetSelection() throws Exception {
 		// Create the model and populate the view.
 		TestModel model = makeMultiLevelModel();
@@ -86,10 +86,10 @@ abstract public class SelectionTests extends AbstractViewerModelTest implements 
 	}
 
 	/**
-	 * In this test verify that selection policy can prevent selection
-	 * from being set and verify that a FORCE flag can override the selection
-	 * policy.
+	 * In this test verify that selection policy can prevent selection from
+	 * being set and verify that a FORCE flag can override the selection policy.
 	 */
+	@Test
 	public void testSelectionPolicy() throws Exception {
 		// Create the model and populate the view.
 		final TestModel model = makeMultiLevelModel();
@@ -151,12 +151,11 @@ abstract public class SelectionTests extends AbstractViewerModelTest implements 
 
 
 	/**
-	 * In this test:
-	 * - set a seleciton to an element
-	 * - then remove that element
-	 * - update the view with remove delta
-	 * -> The selection should be re-set to empty.
+	 * In this test: - set a seleciton to an element - then remove that element
+	 * - update the view with remove delta -> The selection should be re-set to
+	 * empty.
 	 */
+	@Test
 	public void testSelectRemove() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 
@@ -196,12 +195,10 @@ abstract public class SelectionTests extends AbstractViewerModelTest implements 
 
 
 	/**
-	 * In this test:
-	 * - set a selection to an element
-	 * - then remove that element
-	 * - then refresh the view.
-	 * -> The selection should be re-set to empty.
+	 * In this test: - set a selection to an element - then remove that element
+	 * - then refresh the view. -> The selection should be re-set to empty.
 	 */
+	@Test
 	public void testSelectRemoveRefreshStruct() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 

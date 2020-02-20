@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.viewer.model;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -31,6 +33,7 @@ import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.debug.tests.TestUtil;
 import org.eclipse.debug.tests.viewer.model.TestModel.TestElement;
 import org.eclipse.jface.viewers.TreePath;
+import org.junit.Test;
 
 /**
  * Tests that verify that the viewer property retrieves all the content
@@ -40,15 +43,12 @@ import org.eclipse.jface.viewers.TreePath;
  */
 abstract public class ContentTests extends AbstractViewerModelTest implements ITestModelUpdatesListenerConstants {
 
-	public ContentTests(String name) {
-		super(name);
-	}
-
 	@Override
 	protected TestModelUpdatesListener createListener(IInternalTreeModelViewer viewer) {
 		return new TestModelUpdatesListener(viewer, true, true);
 	}
 
+	@Test
 	public void testSimpleSingleLevel() throws Exception {
 		// Create the model with test data
 		TestModel model = TestModel.simpleSingleLevel();
@@ -73,6 +73,7 @@ abstract public class ContentTests extends AbstractViewerModelTest implements IT
 		assertTrue( fListener.checkCoalesced(TreePath.EMPTY, 0, 6) );
 	}
 
+	@Test
 	public void testSimpleMultiLevel() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 
@@ -143,6 +144,7 @@ abstract public class ContentTests extends AbstractViewerModelTest implements IT
 	 * use data from stale updates to populate the viewer.<br>
 	 * See bug 210027
 	 */
+	@Test
 	public void testLabelUpdatesCompletedOutOfSequence1() throws Exception {
 		TestModelWithCapturedUpdates model = new TestModelWithCapturedUpdates();
 		model.fCaptureLabelUpdates = true;
@@ -155,7 +157,7 @@ abstract public class ContentTests extends AbstractViewerModelTest implements IT
 		// Set input into the view to update it, but block children updates.
 		// Wait for view to start retrieving content.
 		fViewer.setInput(model.getRootElement());
-		TestUtil.waitForJobs(getName(), 300, 5000);
+		TestUtil.waitForJobs(name.getMethodName(), 300, 5000);
 		waitWhile(t -> model.fCapturedUpdates.size() < model.getRootElement().fChildren.length, createModelErrorMessage(model));
 
 		List<IViewerUpdate> firstUpdates = model.fCapturedUpdates;
@@ -194,10 +196,11 @@ abstract public class ContentTests extends AbstractViewerModelTest implements IT
 	 * Test to make sure that label provider cancels stale updates and doesn't
 	 * use data from stale updates to populate the viewer.<br>
 	 * This version of the test changes the elements in the view, and not just
-	 * the elements' labels.  In this case, the view should still cancel stale
+	 * the elements' labels. In this case, the view should still cancel stale
 	 * updates.<br>
 	 * See bug 210027
 	 */
+	@Test
 	public void testLabelUpdatesCompletedOutOfSequence2() throws Exception {
 		TestModelWithCapturedUpdates model = new TestModelWithCapturedUpdates();
 		model.fCaptureLabelUpdates = true;
@@ -210,7 +213,7 @@ abstract public class ContentTests extends AbstractViewerModelTest implements IT
 		// Set input into the view to update it, but block children updates.
 		// Wait for view to start retrieving content.
 		fViewer.setInput(model.getRootElement());
-		TestUtil.waitForJobs(getName(), 300, 5000);
+		TestUtil.waitForJobs(name.getMethodName(), 300, 5000);
 		waitWhile(t -> model.fCapturedUpdates.size() < model.getRootElement().fChildren.length, createModelErrorMessage(model));
 		List<IViewerUpdate> firstUpdates = model.fCapturedUpdates;
 		model.fCapturedUpdates = Collections.synchronizedList(new ArrayList<IViewerUpdate>(2));

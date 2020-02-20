@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.viewer.model;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
 import java.util.function.Function;
 
@@ -38,6 +40,9 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests to verify that the viewer properly handles initial columns width.
@@ -49,18 +54,16 @@ public class ColumnPresentationTests extends AbstractDebugTest implements ITestM
 	private TestModelUpdatesListener fListener;
 	private boolean fResized = false;
 
-	public ColumnPresentationTests(String name) {
-		super(name);
-	}
-
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		createViewer();
 	}
 
 	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		destroyViewer();
 		super.tearDown();
 	}
@@ -258,9 +261,10 @@ public class ColumnPresentationTests extends AbstractDebugTest implements ITestM
 	 * implementation without requiring the presentation being
 	 * IColumnPresentation2 (i.e. ensure we do not break backward compatibility
 	 * of interface). Also, we verify that the initial columns width is the
-	 * average of tree width / number of visible columns, which is the logic
-	 * in InternalTreeModelViewer.
+	 * average of tree width / number of visible columns, which is the logic in
+	 * InternalTreeModelViewer.
 	 */
+	@Test
 	public void testInitialColumnAverageWidth() throws Exception {
 		fResized = false;
 
@@ -290,6 +294,7 @@ public class ColumnPresentationTests extends AbstractDebugTest implements ITestM
 	 * Also, we verify that the initial columns width is the width computed by
 	 * the IColumnPresentation2 implementation.
 	 */
+	@Test
 	public void testInitialColumnWidth() throws Exception {
 		fResized = false;
 
@@ -317,6 +322,7 @@ public class ColumnPresentationTests extends AbstractDebugTest implements ITestM
 	 * is not used when there are user settings inside the viewer which are
 	 * created from user resizing columns.
 	 */
+	@Test
 	public void testRespectUserSettings() throws Exception {
 		MyColumnPresentation2 colPre = new MyColumnPresentation2();
 		makeModel(colPre, "m2"); //$NON-NLS-1$
@@ -361,6 +367,7 @@ public class ColumnPresentationTests extends AbstractDebugTest implements ITestM
 	 * is not used when there are user settings inside the viewer which are
 	 * restored from memento, e.g., restoring workspace, etc.
 	 */
+	@Test
 	public void testRespectMemento() throws Exception {
 		MyColumnPresentation2 colPre = new MyColumnPresentation2();
 		makeModel(colPre, "m2"); //$NON-NLS-1$
@@ -392,9 +399,10 @@ public class ColumnPresentationTests extends AbstractDebugTest implements ITestM
 	}
 
 	/**
-	 * In this test: verify that tree viewer can handle the column presentation changing
-	 * its available column IDs between runs (bug 360015).
+	 * In this test: verify that tree viewer can handle the column presentation
+	 * changing its available column IDs between runs (bug 360015).
 	 */
+	@Test
 	public void testChangedColumnIds() throws Exception {
 		MyColumnPresentation colPre = new MyColumnPresentation();
 

@@ -16,10 +16,12 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.viewer.model;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.ui.viewers.model.IInternalTreeModelViewer;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDeltaVisitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.PresentationContext;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.TreeModelViewer;
@@ -29,15 +31,12 @@ import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.Test;
 
 /**
  * @since 3.6
  */
 public class JFaceViewerTopIndexTests extends AbstractViewerModelTest implements ITestModelUpdatesListenerConstants {
-
-	public JFaceViewerTopIndexTests(String name) {
-		super(name);
-	}
 
 	@Override
 	protected TestModelUpdatesListener createListener(IInternalTreeModelViewer viewer) {
@@ -62,6 +61,7 @@ public class JFaceViewerTopIndexTests extends AbstractViewerModelTest implements
 	 * Restore REVEAL on simple model with elements without children.
 	 *
 	 */
+	@Test
 	public void testRestoreTopIndex() throws Exception {
 		TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(getCTargetViewer());
 
@@ -122,11 +122,12 @@ public class JFaceViewerTopIndexTests extends AbstractViewerModelTest implements
 	}
 
 	/**
-	 * Restore REVEAL when having also to restore an expanded element
-	 * that is just above the REVEAL element.
+	 * Restore REVEAL when having also to restore an expanded element that is
+	 * just above the REVEAL element.
 	 *
 	 * See bug 324100
 	 */
+	@Test
 	public void testRestoreTopAndExpand() throws Exception {
 		TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(getCTargetViewer());
 
@@ -219,6 +220,7 @@ public class JFaceViewerTopIndexTests extends AbstractViewerModelTest implements
 	 *
 	 * See bug 324100
 	 */
+	@Test
 	public void testRestoreTopTriggersExpand() throws Exception {
 		TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(getCTargetViewer());
 
@@ -299,6 +301,7 @@ public class JFaceViewerTopIndexTests extends AbstractViewerModelTest implements
 	 * This test verifies that canceling a reveal pending state delta is
 	 * properly handled when a new reveal delta is received from the model.
 	 */
+	@Test
 	public void testRestoreRevealAfterRevealCancel() throws Exception {
 		TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(getCTargetViewer());
 		TestModel model = TestModel.simpleMultiLevel();
@@ -362,6 +365,7 @@ public class JFaceViewerTopIndexTests extends AbstractViewerModelTest implements
 	 * This test verifies that canceling a reveal pending state delta is
 	 * properly handled when a new reveal delta is received from the model.
 	 */
+	@Test
 	public void testRestoreRevealAfterRevealCancel2() throws Exception {
 		if (Platform.getOS().equals(Platform.OS_MACOSX)) {
 			// skip this test on Mac - see bug 327557
@@ -409,13 +413,9 @@ public class JFaceViewerTopIndexTests extends AbstractViewerModelTest implements
 		// Update the viewer with new selection delta to something new in the view
 		TreePath pathToBeRevealed = model.findElement("2.1"); //$NON-NLS-1$
 		ModelDelta revealDelta = model.makeElementDelta(pathToBeRevealed, IModelDelta.REVEAL);
-		revealDelta.accept(new IModelDeltaVisitor() {
-
-			@Override
-			public boolean visit(IModelDelta delta, int depth) {
-				((ModelDelta)delta).setFlags(delta.getFlags() | IModelDelta.EXPAND);
-				return true;
-			}
+		revealDelta.accept((delta, depth) -> {
+			((ModelDelta) delta).setFlags(delta.getFlags() | IModelDelta.EXPAND);
+			return true;
 		});
 
 		// Wait for the second model delta to process
@@ -432,11 +432,12 @@ public class JFaceViewerTopIndexTests extends AbstractViewerModelTest implements
 
 
 	/**
-	 * Restore REVEAL when having also to restore an expanded element
-	 * that is just above the REVEAL element.
+	 * Restore REVEAL when having also to restore an expanded element that is
+	 * just above the REVEAL element.
 	 *
 	 * See bug 324100
 	 */
+	@Test
 	public void testRestoreDeepTreeAndReveal() throws Exception {
 		TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(getCTargetViewer());
 
@@ -490,6 +491,7 @@ public class JFaceViewerTopIndexTests extends AbstractViewerModelTest implements
 	 * This test verifies that a revealed node does not get scrolled away due to
 	 * structural updates.
 	 */
+	@Test
 	public void testRevealWithContentChanges() throws Exception {
 		@SuppressWarnings("unused")
 		TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(getCTargetViewer());

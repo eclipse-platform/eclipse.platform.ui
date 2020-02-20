@@ -24,6 +24,8 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.test.performance.Performance;
 import org.eclipse.test.performance.PerformanceMeter;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests to measure the performance of the viewer updates.
@@ -32,8 +34,8 @@ abstract public class PerformanceTests extends AbstractViewerModelTest implement
 
 	protected VisibleVirtualItemValidator fVirtualItemValidator;
 
-	public PerformanceTests(String name) {
-		super(name);
+	public String getDefaultScenarioId() {
+		return this.getClass().getName() + '#' + name.getMethodName() + "()"; //$NON-NLS-1$
 	}
 
 	@Override
@@ -42,7 +44,8 @@ abstract public class PerformanceTests extends AbstractViewerModelTest implement
 	}
 
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		fVirtualItemValidator = new VisibleVirtualItemValidator(0, Integer.MAX_VALUE);
 	}
@@ -54,7 +57,7 @@ abstract public class PerformanceTests extends AbstractViewerModelTest implement
 	 */
 	abstract protected int getTestModelDepth();
 
-
+	@Test
 	public void testRefreshStruct() throws Exception {
 		TestModel model = new TestModel();
 		model.setRoot(new TestElement(model, "root", new TestElement[0])); //$NON-NLS-1$
@@ -71,7 +74,7 @@ abstract public class PerformanceTests extends AbstractViewerModelTest implement
 		model.validateData(fViewer, TreePath.EMPTY);
 
 		Performance perf = Performance.getDefault();
-		PerformanceMeter meter = perf.createPerformanceMeter(perf.getDefaultScenarioId(this));
+		PerformanceMeter meter = perf.createPerformanceMeter(getDefaultScenarioId());
 		try {
 			for (int i = 0; i < 10; i++) {
 				// Update the model
@@ -94,6 +97,7 @@ abstract public class PerformanceTests extends AbstractViewerModelTest implement
 		}
 	}
 
+	@Test
 	public void testRefreshStruct2() throws Exception {
 		TestModel model = new TestModel();
 		model.setRoot(new TestElement(model, "root", new TestElement[0])); //$NON-NLS-1$
@@ -111,7 +115,7 @@ abstract public class PerformanceTests extends AbstractViewerModelTest implement
 		fVirtualItemValidator.setVisibleRange(0, 50);
 
 		Performance perf = Performance.getDefault();
-		PerformanceMeter meter = perf.createPerformanceMeter(perf.getDefaultScenarioId(this));
+		PerformanceMeter meter = perf.createPerformanceMeter(getDefaultScenarioId());
 		try {
 			for (int i = 0; i < 100; i++) {
 				// Update the model
@@ -137,7 +141,7 @@ abstract public class PerformanceTests extends AbstractViewerModelTest implement
 		}
 	}
 
-
+	@Test
 	public void testRefreshStructReplaceElements() throws Exception {
 		TestModel model = new TestModel();
 		model.setRoot(new TestElement(model, "root", new TestElement[0])); //$NON-NLS-1$
@@ -154,7 +158,7 @@ abstract public class PerformanceTests extends AbstractViewerModelTest implement
 		model.validateData(fViewer, TreePath.EMPTY);
 
 		Performance perf = Performance.getDefault();
-		PerformanceMeter meter = perf.createPerformanceMeter(perf.getDefaultScenarioId(this));
+		PerformanceMeter meter = perf.createPerformanceMeter(getDefaultScenarioId());
 		try {
 			for (int i = 0; i < 100; i++) {
 				// Update the model
@@ -177,7 +181,7 @@ abstract public class PerformanceTests extends AbstractViewerModelTest implement
 		}
 	}
 
-
+	@Test
 	public void testRefreshList() throws Exception {
 		TestModel model = new TestModel();
 		model.setRoot(new TestElement(model, "root", new TestElement[0])); //$NON-NLS-1$
@@ -195,7 +199,7 @@ abstract public class PerformanceTests extends AbstractViewerModelTest implement
 		model.validateData(fViewer, TreePath.EMPTY);
 
 		Performance perf = Performance.getDefault();
-		PerformanceMeter meter = perf.createPerformanceMeter(perf.getDefaultScenarioId(this));
+		PerformanceMeter meter = perf.createPerformanceMeter(getDefaultScenarioId());
 		try {
 			for (int i = 0; i < 100; i++) {
 				// Update the model
@@ -218,6 +222,7 @@ abstract public class PerformanceTests extends AbstractViewerModelTest implement
 		}
 	}
 
+	@Test
 	public void testSaveAndRestore() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 		TestModel model = TestModel.simpleMultiLevel();
@@ -240,7 +245,7 @@ abstract public class PerformanceTests extends AbstractViewerModelTest implement
 		fViewer.setAutoExpandLevel(-1);
 
 		Performance perf = Performance.getDefault();
-		PerformanceMeter meter = perf.createPerformanceMeter(perf.getDefaultScenarioId(this));
+		PerformanceMeter meter = perf.createPerformanceMeter(getDefaultScenarioId());
 		try {
 			for (int i = 0; i < 100; i++) {
 				// Update the model
@@ -272,6 +277,7 @@ abstract public class PerformanceTests extends AbstractViewerModelTest implement
 
 	}
 
+	@Test
 	public void testRefreshListFiltered() throws Exception {
 		TestModel model = new TestModel();
 		model.setRoot(new TestElement(model, "root", new TestElement[0])); //$NON-NLS-1$
@@ -305,7 +311,7 @@ abstract public class PerformanceTests extends AbstractViewerModelTest implement
 		model.validateData(fViewer, TreePath.EMPTY);
 
 		Performance perf = Performance.getDefault();
-		PerformanceMeter meter = perf.createPerformanceMeter(perf.getDefaultScenarioId(this));
+		PerformanceMeter meter = perf.createPerformanceMeter(getDefaultScenarioId());
 		try {
 			for (int i = 0; i < 100; i++) {
 				// Update the model

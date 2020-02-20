@@ -13,6 +13,13 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.sourcelookup;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -22,6 +29,7 @@ import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupFacility;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupResult;
 import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.debug.ui.sourcelookup.ISourceLookupResult;
+import org.junit.Test;
 
 /**
  * Tests {@link SourceLookupFacility}
@@ -44,19 +52,13 @@ public class SourceLookupFacilityTests extends AbstractDebugTest {
 	TestSourceLocator fTestLocator = new TestSourceLocator();
 
 	/**
-	 * @param name
-	 */
-	public SourceLookupFacilityTests(String name) {
-		super(name);
-	}
-
-	/**
 	 * Tests calling
 	 * {@link SourceLookupFacility#lookup(Object, org.eclipse.debug.core.model.ISourceLocator, boolean)}
 	 * with simple type, no locator and no forcing
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testLookupStringNoLocatorNoForce() throws Exception {
 		try {
 			String artifact = "Empty"; //$NON-NLS-1$
@@ -75,6 +77,7 @@ public class SourceLookupFacilityTests extends AbstractDebugTest {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testLookupStringNoForce() throws Exception {
 		try {
 			String artifact = "One"; //$NON-NLS-1$
@@ -100,6 +103,7 @@ public class SourceLookupFacilityTests extends AbstractDebugTest {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testLookupStringForce() throws Exception {
 		try {
 			String artifact = "Two"; //$NON-NLS-1$
@@ -125,6 +129,7 @@ public class SourceLookupFacilityTests extends AbstractDebugTest {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testLookupStringLocatorNoForce() throws Exception {
 		try {
 			String artifact = "Three"; //$NON-NLS-1$
@@ -143,6 +148,7 @@ public class SourceLookupFacilityTests extends AbstractDebugTest {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testLookupStackframeNoForce() throws Exception {
 		try {
 			ISourceLookupResult result = SourceLookupFacility.getDefault().lookup(fReusableFrame, fTestDirector, false);
@@ -167,6 +173,7 @@ public class SourceLookupFacilityTests extends AbstractDebugTest {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testLookupStackframeForce() throws Exception {
 		try {
 			ISourceLookupResult result = SourceLookupFacility.getDefault().lookup(fReusableFrame, fTestDirector, true);
@@ -191,6 +198,7 @@ public class SourceLookupFacilityTests extends AbstractDebugTest {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testLookupStackframeWithDebugElement1() throws Exception {
 		try {
 			ISourceLookupResult result = SourceLookupFacility.getDefault().lookup(new TestStackFrame(null), null, false);
@@ -208,6 +216,7 @@ public class SourceLookupFacilityTests extends AbstractDebugTest {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testLookupStackframeWithDebugElement2() throws Exception {
 		try {
 			ISourceLookupResult result = SourceLookupFacility.getDefault().lookup(fReusableFrame, null, false);
@@ -232,6 +241,7 @@ public class SourceLookupFacilityTests extends AbstractDebugTest {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testLookupStackframeWithDebugElement3() throws Exception {
 		try {
 			ISourceLookupResult result = SourceLookupFacility.getDefault().lookup(fReusableFrame, null, true);
@@ -256,6 +266,7 @@ public class SourceLookupFacilityTests extends AbstractDebugTest {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testLookupStackframeWithDebugElement4() throws Exception {
 		try {
 			ISourceLookupResult result = SourceLookupFacility.getDefault().lookup(fReusableFrame, fTestLocator, false);
@@ -280,6 +291,7 @@ public class SourceLookupFacilityTests extends AbstractDebugTest {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testLookupStackframeWithDebugElement5() throws Exception {
 		try {
 			ISourceLookupResult result = SourceLookupFacility.getDefault().lookup(fReusableFrame, fTestLocator, true);
@@ -297,6 +309,7 @@ public class SourceLookupFacilityTests extends AbstractDebugTest {
 		}
 	}
 
+	@Test
 	public void testLRU() throws Exception {
 		try {
 			final int MAX_LRU_SIZE = 10;

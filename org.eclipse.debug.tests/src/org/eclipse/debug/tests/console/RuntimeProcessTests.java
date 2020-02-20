@@ -13,38 +13,32 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.console;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.model.RuntimeProcess;
 import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.debug.tests.TestUtil;
+import org.junit.Test;
 
 public class RuntimeProcessTests extends AbstractDebugTest {
-
-	public RuntimeProcessTests() {
-		super(RuntimeProcessTests.class.getSimpleName());
-	}
-
-	public RuntimeProcessTests(String name) {
-		super(name);
-	}
 
 	/**
 	 * Test behavior of {@link RuntimeProcess} if the wrapped process
 	 * terminates.
 	 */
+	@Test
 	public void testProcessTerminated() throws Exception {
 		AtomicInteger processTerminateEvents = new AtomicInteger();
-		DebugPlugin.getDefault().addDebugEventListener(new IDebugEventSetListener() {
-			@Override
-			public void handleDebugEvents(DebugEvent[] events) {
-				for (DebugEvent event : events) {
-					if (event.getKind() == DebugEvent.TERMINATE) {
-						processTerminateEvents.incrementAndGet();
-					}
+		DebugPlugin.getDefault().addDebugEventListener(events -> {
+			for (DebugEvent event : events) {
+				if (event.getKind() == DebugEvent.TERMINATE) {
+					processTerminateEvents.incrementAndGet();
 				}
 			}
 		});
@@ -59,21 +53,19 @@ public class RuntimeProcessTests extends AbstractDebugTest {
 		mockProcess.destroy();
 
 		TestUtil.waitWhile(p -> !p.isTerminated(), runtimeProcess, 1000, p -> "RuntimePocess not terminated.");
-		TestUtil.waitForJobs(getName(), 25, 500);
+		TestUtil.waitForJobs(name.getMethodName(), 25, 500);
 		assertEquals("Wrong number of terminate events.", 1, processTerminateEvents.get());
 		assertEquals("RuntimeProcess reported wrong exit code.", 1, runtimeProcess.getExitValue());
 	}
 
 	/** Test {@link RuntimeProcess} terminating the wrapped process. */
+	@Test
 	public void testTerminateProcess() throws Exception {
 		AtomicInteger processTerminateEvents = new AtomicInteger();
-		DebugPlugin.getDefault().addDebugEventListener(new IDebugEventSetListener() {
-			@Override
-			public void handleDebugEvents(DebugEvent[] events) {
-				for (DebugEvent event : events) {
-					if (event.getKind() == DebugEvent.TERMINATE) {
-						processTerminateEvents.incrementAndGet();
-					}
+		DebugPlugin.getDefault().addDebugEventListener(events -> {
+			for (DebugEvent event : events) {
+				if (event.getKind() == DebugEvent.TERMINATE) {
+					processTerminateEvents.incrementAndGet();
 				}
 			}
 		});
@@ -89,7 +81,7 @@ public class RuntimeProcessTests extends AbstractDebugTest {
 		assertFalse("RuntimeProcess failed to terminated wrapped process.", mockProcess.isAlive());
 
 		TestUtil.waitWhile(p -> !p.isTerminated(), runtimeProcess, 1000, p -> "RuntimePocess not terminated.");
-		TestUtil.waitForJobs(getName(), 25, 500);
+		TestUtil.waitForJobs(name.getMethodName(), 25, 500);
 		assertEquals("Wrong number of terminate events.", 1, processTerminateEvents.get());
 		assertEquals("RuntimeProcess reported wrong exit code.", 1, runtimeProcess.getExitValue());
 	}

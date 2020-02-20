@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.statushandlers;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.InstanceScope;
@@ -22,6 +26,7 @@ import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.core.Preferences;
 import org.eclipse.debug.tests.AbstractDebugTest;
 import org.eclipse.debug.tests.TestsPlugin;
+import org.junit.Test;
 
 /**
  * Tests status handlers
@@ -36,6 +41,7 @@ public class StatusHandlerTests extends AbstractDebugTest {
 	/**
 	 * Tests that a status handler extension exists
 	 */
+	@Test
 	public void testStatusHandlerExtension() {
 		IStatusHandler handler = DebugPlugin.getDefault().getStatusHandler(STATUS);
 		assertNotNull("missing status handler extension", handler); //$NON-NLS-1$
@@ -45,6 +51,7 @@ public class StatusHandlerTests extends AbstractDebugTest {
 	/**
 	 * Tests that status handlers are not returned when preference is disabled
 	 */
+	@Test
 	public void testDisableStatusHandlers() {
 		try {
 			Preferences.setBoolean(DebugPlugin.getUniqueIdentifier(), IInternalDebugCoreConstants.PREF_ENABLE_STATUS_HANDLERS, false, InstanceScope.INSTANCE);

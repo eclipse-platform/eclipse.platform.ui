@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.debug.tests;
 
+import static org.junit.Assert.fail;
+
 import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.util.ArrayList;
@@ -28,8 +30,6 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.swt.widgets.Display;
 import org.junit.Assert;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 
 public class TestUtil {
 
@@ -129,7 +129,7 @@ public class TestUtil {
 		}
 		Boolean stillTrue = condition.apply(context);
 		if (stillTrue) {
-			TestCase.fail(errorMessage.apply(context));
+			fail(errorMessage.apply(context));
 		}
 	}
 

@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.console;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -35,6 +39,9 @@ import org.eclipse.ui.console.IConsoleManager;
 import org.eclipse.ui.console.IConsoleView;
 import org.eclipse.ui.part.IPageBookViewPage;
 import org.eclipse.ui.part.MessagePage;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests console manager
@@ -49,7 +56,8 @@ public class ConsoleManagerTests extends AbstractDebugTest {
 	ConsoleMock firstConsole;
 
 	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		super.setUp();
 		assertNotNull("Must run in UI thread, but was in: " + Thread.currentThread().getName(), //$NON-NLS-1$
 				Display.getCurrent());
@@ -77,13 +85,13 @@ public class ConsoleManagerTests extends AbstractDebugTest {
 		firstConsole = new ConsoleMock(0);
 		manager.addConsoles(new ConsoleMock[] { firstConsole });
 		manager.showConsoleView(firstConsole);
-		TestUtil.waitForJobs(getName(), 200, 5000);
+		TestUtil.waitForJobs(name.getMethodName(), 200, 5000);
 		TestUtil.processUIEvents(100);
 		ConsoleMock.allShownConsoles.set(0);
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@Override @After
+	public void tearDown() throws Exception {
 		executorService.shutdownNow();
 		manager.removeConsoles(consoles);
 		manager.removeConsoles(new ConsoleMock[] { firstConsole });
@@ -100,6 +108,7 @@ public class ConsoleManagerTests extends AbstractDebugTest {
 	 *
 	 * @throws Exception
 	 */
+	@Test
 	public void testShowAllConsoles() throws Exception {
 		// Create a number of threads which will start and wait for the last one
 		// created to call ConsoleManager.show.
@@ -111,7 +120,7 @@ public class ConsoleManagerTests extends AbstractDebugTest {
 
 		// Console manager starts a job with delay, let wait for him a bit
 		System.out.println("Waiting on jobs now..."); //$NON-NLS-1$
-		TestUtil.waitForJobs(getName(), 200, 5000);
+		TestUtil.waitForJobs(name.getMethodName(), 200, 5000);
 
 		// Give UI a chance to proceed pending console manager jobs
 		System.out.println("Done with jobs, processing UI events again..."); //$NON-NLS-1$
@@ -154,7 +163,7 @@ public class ConsoleManagerTests extends AbstractDebugTest {
 				latch.await(1, TimeUnit.MINUTES);
 				System.out.println("Requesting to show: " + console); //$NON-NLS-1$
 				manager.showConsoleView(console);
-				TestUtil.waitForJobs(getName(), 200, 5000);
+				TestUtil.waitForJobs(name.getMethodName(), 200, 5000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 				Thread.interrupted();

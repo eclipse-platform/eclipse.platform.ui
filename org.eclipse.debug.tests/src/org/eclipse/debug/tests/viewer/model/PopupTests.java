@@ -14,6 +14,10 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.viewer.model;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
@@ -31,6 +35,7 @@ import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
+import org.junit.Test;
 
 /**
  * Tests to verify that the viewer property updates when created
@@ -39,10 +44,6 @@ import org.eclipse.swt.widgets.Shell;
  * @since 3.6
  */
 abstract public class PopupTests extends AbstractViewerModelTest implements ITestModelUpdatesListenerConstants {
-
-	public PopupTests(String name) {
-		super(name);
-	}
 
 	@Override
 	protected TestModelUpdatesListener createListener(IInternalTreeModelViewer viewer) {
@@ -63,6 +64,7 @@ abstract public class PopupTests extends AbstractViewerModelTest implements ITes
 	/**
 	 * This test verifies that content updates are still being performed.
 	 */
+	@Test
 	public void testRefreshStruct() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 
@@ -96,6 +98,7 @@ abstract public class PopupTests extends AbstractViewerModelTest implements ITes
 	/**
 	 * This test verifies that expand and select updates are being ignored.
 	 */
+	@Test
 	public void testExpandAndSelect() throws Exception {
 		TestModel model = TestModel.simpleMultiLevel();
 
@@ -147,6 +150,7 @@ abstract public class PopupTests extends AbstractViewerModelTest implements ITes
 		}
 	}
 
+	@Test
 	public void testPreserveExpandedOnSubTreeContent() throws Exception {
 		//TreeModelViewerAutopopulateAgent autopopulateAgent = new TreeModelViewerAutopopulateAgent(fViewer);
 		TestModel model = TestModel.simpleMultiLevel();
