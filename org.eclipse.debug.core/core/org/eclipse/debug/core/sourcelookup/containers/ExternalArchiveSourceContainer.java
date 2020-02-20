@@ -78,6 +78,8 @@ public class ExternalArchiveSourceContainer extends AbstractSourceContainer {
 		fDetectRoots = detectRootPaths;
 	}
 
+	// Suppress resource leak warning. The ZipFile is provided from
+	// SourceLookupUtils which take care to close them at some point.
 	@SuppressWarnings("resource")
 	@Override
 	public Object[] findSourceElements(String name) throws CoreException {
