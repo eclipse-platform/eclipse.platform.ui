@@ -22,6 +22,7 @@ import java.util.Map.Entry;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.commands.IDebugCommandHandler;
+import org.eclipse.debug.core.commands.IDebugCommandRequest;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
@@ -109,7 +110,9 @@ public class DebugCommandService implements IDebugContextListener {
 
 	private void dispose() {
 		fContextService.removeDebugContextListener(this);
-		fgServices.remove(fWindow);
+		synchronized (fgServices) {
+			fgServices.remove(fWindow);
+		}
 		fCommandUpdates.clear();
 		fWindow = null;
 	}
@@ -122,7 +125,6 @@ public class DebugCommandService implements IDebugContextListener {
 	 */
 	public void postUpdateCommand(Class<?> commandType, IEnabledTarget action) {
 		synchronized (fCommandUpdates) {
-			Job.getJobManager().cancel(commandType);
 			List<IEnabledTarget> actions = fCommandUpdates.get(commandType);
 			if (actions == null) {
 				actions = new ArrayList<>();
@@ -177,6 +179,7 @@ public class DebugCommandService implements IDebugContextListener {
 	 * @param actions the actions to update
 	 */
 	private void updateCommand(Class<?> handlerType, Object[] elements, IEnabledTarget[] actions) {
+		cancelHandlerEnablementUpdateJobs(handlerType);
 		if (elements.length == 1) {
 			// usual case - one element
 			Object element = elements[0];
@@ -272,4 +275,30 @@ public class DebugCommandService implements IDebugContextListener {
 		return (IDebugCommandHandler)DebugPlugin.getAdapter(element, handlerType);
 	}
 
+	/**
+	 * Cancel handler enablement update jobs created in
+	 * {@link org.eclipse.debug.core.commands.AbstractDebugCommand#canExecute(org.eclipse.debug.core.commands.IEnabledStateRequest)}.
+	 * for the specified handler type. The debug command handler defines its type in
+	 * {@link org.eclipse.debug.core.commands.AbstractDebugCommand#getEnabledStateJobFamily(IDebugCommandRequest)}.
+	 *
+	 * Does not cancel jobs if there are more than 2 workbench windows, since 1
+	 * window could cancel updates from another window, breaking some updates. See
+	 * bug 560348.
+	 *
+	 * @param handlerType cancels enablement update jobs for this type of handler.
+	 */
+	private void cancelHandlerEnablementUpdateJobs(Class<?> handlerType) {
+		if (handlerType != null) {
+			boolean hasMultipleWindowServices = hasMultipleWindowServices();
+			if (!hasMultipleWindowServices) {
+				Job.getJobManager().cancel(handlerType);
+			}
+		}
+	}
+
+	private static boolean hasMultipleWindowServices() {
+		synchronized (fgServices) {
+			return fgServices.size() > 1;
+		}
+	}
 }
