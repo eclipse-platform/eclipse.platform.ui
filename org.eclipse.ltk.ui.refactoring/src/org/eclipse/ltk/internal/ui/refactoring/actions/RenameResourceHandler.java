@@ -65,8 +65,8 @@ public class RenameResourceHandler extends AbstractResourcesHandler {
 			IResource resource= getCurrentResource((IStructuredSelection) sel);
 			if (resource != null) {
 				// A new name is required in order to compute whether the change is composite or not
-				String placeHolderNewName= resource.getName() + "a"; //$NON-NLS-1$
-				RenameResourceWizard refactoringWizard= new RenameResourceWizard(resource, placeHolderNewName);
+				String placeHolderFileName = 'a' + resource.getName();
+				RenameResourceWizard refactoringWizard= new RenameResourceWizard(resource, placeHolderFileName);
 				Change change= getChange(refactoringWizard);
 				return isCompositeChange(change);
 			}
