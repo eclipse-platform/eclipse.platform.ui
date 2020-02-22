@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Paul Pazderski and others.
+ * Copyright (c) 2019, 2020 Paul Pazderski and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,12 +13,21 @@
  *******************************************************************************/
 package org.eclipse.debug.tests.console;
 
+import static org.junit.Assert.assertArrayEquals;
+
+import java.io.ByteArrayInputStream;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -41,10 +50,13 @@ import org.eclipse.debug.tests.TestUtil;
 import org.eclipse.debug.tests.launching.LaunchConfigurationTests;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.console.ConsoleColorProvider;
+import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsoleManager;
+import org.eclipse.ui.console.IOConsole;
 import org.eclipse.ui.console.IOConsoleInputStream;
 import org.junit.After;
 import org.junit.Before;
@@ -62,10 +74,13 @@ public class ProcessConsoleTests extends AbstractDebugTest {
 
 	/** Listener to count error messages in {@link ConsolePlugin} log. */
 	private final ILogListener errorLogListener = (status, plugin) -> {
-		if (status.matches(IStatus.ERROR)) {
-			loggedErrors.incrementAndGet();
-		}
+			if (status.matches(IStatus.ERROR)) {
+				loggedErrors.incrementAndGet();
+			}
 	};
+
+	/** Temporary test files created by a test. Will be deleted on teardown. */
+	private final ArrayList<File> tmpFiles = new ArrayList<>();
 
 	@Override
 	@Before
@@ -79,9 +94,31 @@ public class ProcessConsoleTests extends AbstractDebugTest {
 	@After
 	public void tearDown() throws Exception {
 		Platform.removeLogListener(errorLogListener);
+		for (File tmpFile : tmpFiles) {
+			tmpFile.delete();
+		}
+		tmpFiles.clear();
+
 		super.tearDown();
 
 		assertEquals("Test triggered errors.", 0, loggedErrors.get());
+	}
+
+	/**
+	 * Create a new temporary file for testing. File will be deleted when test
+	 * finishes.
+	 *
+	 * @param filename name of the temporary file
+	 * @return the created temporary file
+	 * @throws IOException if creating the file failed. Includes file already
+	 *             exists.
+	 */
+	private File createTmpFile(String filename) throws IOException {
+		File file = DebugUIPlugin.getDefault().getStateLocation().addTrailingSeparator().append(filename).toFile();
+		boolean fileCreated = file.createNewFile();
+		assertTrue("Failed to prepare temporary test file.", fileCreated);
+		tmpFiles.add(file);
+		return file;
 	}
 
 	/**
@@ -231,9 +268,9 @@ public class ProcessConsoleTests extends AbstractDebugTest {
 		@SuppressWarnings("restriction")
 		final org.eclipse.debug.internal.ui.views.console.ProcessConsole console = new org.eclipse.debug.internal.ui.views.console.ProcessConsole(process, new ConsoleColorProvider());
 		console.addPropertyChangeListener(event -> {
-			if (event.getSource() == console && IConsoleConstants.P_CONSOLE_OUTPUT_COMPLETE.equals(event.getProperty())) {
-				terminationSignaled.set(true);
-			}
+				if (event.getSource() == console && IConsoleConstants.P_CONSOLE_OUTPUT_COMPLETE.equals(event.getProperty())) {
+					terminationSignaled.set(true);
+				}
 		});
 		final IConsoleManager consoleManager = ConsolePlugin.getDefault().getConsoleManager();
 		try {
@@ -246,6 +283,126 @@ public class ProcessConsoleTests extends AbstractDebugTest {
 		} finally {
 			consoleManager.removeConsoles(new IConsole[] { console });
 			TestUtil.waitForJobs(name.getMethodName(), 0, 10000);
+		}
+	}
+
+	/**
+	 * Test simple redirect of console output into file.
+	 */
+	@Test
+	public void testRedirectOutputToFile() throws Exception {
+		final String testContent = "Hello World!";
+		final File outFile = createTmpFile("test.out");
+		Map<String, Object> launchConfigAttributes = new HashMap<>();
+		launchConfigAttributes.put(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, outFile.getCanonicalPath());
+		launchConfigAttributes.put(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true);
+		doConsoleOutputTest(testContent.getBytes(), launchConfigAttributes);
+		assertArrayEquals("Wrong content redirected to file.", testContent.getBytes(), Files.readAllBytes(outFile.toPath()));
+	}
+
+	/**
+	 * Test appending of console output into existing file.
+	 */
+	@Test
+	public void testAppendOutputToFile() throws Exception {
+		final String testContent = "Hello World!";
+		final File outFile = createTmpFile("test.out");
+		Map<String, Object> launchConfigAttributes = new HashMap<>();
+		launchConfigAttributes.put(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, outFile.getCanonicalPath());
+		launchConfigAttributes.put(IDebugUIConstants.ATTR_APPEND_TO_FILE, true);
+		launchConfigAttributes.put(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, true);
+		doConsoleOutputTest(testContent.getBytes(), launchConfigAttributes);
+		assertArrayEquals("Wrong content redirected to file.", testContent.getBytes(), Files.readAllBytes(outFile.toPath()));
+
+		String appendedContent = "append";
+		doConsoleOutputTest(appendedContent.getBytes(), launchConfigAttributes);
+		assertArrayEquals("Wrong content redirected to file.", (testContent + appendedContent).getBytes(), Files.readAllBytes(outFile.toPath()));
+	}
+
+	/**
+	 * Test output redirect with a filename containing regular expression
+	 * specific special characters.
+	 * <p>
+	 * Test a filename with special characters which is still a valid regular
+	 * expression and a filename whose name is an invalid regular expression.
+	 */
+	@Test
+	public void testBug333239_regexSpecialCharactersInOutputFilename() throws Exception {
+		final String testContent = "1.\n2.\n3.\n";
+		File outFile = createTmpFile("test.[out]");
+		Map<String, Object> launchConfigAttributes = new HashMap<>();
+		launchConfigAttributes.put(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, outFile.getCanonicalPath());
+		launchConfigAttributes.put(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, false);
+		IOConsole console = doConsoleOutputTest(testContent.getBytes(), launchConfigAttributes);
+		assertArrayEquals("Wrong content redirected to file.", testContent.getBytes(), Files.readAllBytes(outFile.toPath()));
+		assertEquals("Output in console.", 2, console.getDocument().getNumberOfLines());
+
+		outFile = createTmpFile("exhaustive[128-32].out");
+		launchConfigAttributes.put(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, outFile.getCanonicalPath());
+		console = doConsoleOutputTest(testContent.getBytes(), launchConfigAttributes);
+		assertArrayEquals("Wrong content redirected to file.", testContent.getBytes(), Files.readAllBytes(outFile.toPath()));
+		assertEquals("Output in console.", 2, console.getDocument().getNumberOfLines());
+
+		outFile = createTmpFile("ug(ly.out");
+		launchConfigAttributes.put(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, outFile.getCanonicalPath());
+		console = doConsoleOutputTest(testContent.getBytes(), launchConfigAttributes);
+		assertArrayEquals("Wrong content redirected to file.", testContent.getBytes(), Files.readAllBytes(outFile.toPath()));
+		assertEquals("Output in console.", 2, console.getDocument().getNumberOfLines());
+	}
+
+	/**
+	 * Shared test code for tests who want to write and verify content to
+	 * console. Method will open a console for a mockup process, output the
+	 * given content, terminate the process and close the console. If content is
+	 * expected to be found in console it will be verified. If output is
+	 * redirected to file the file path which should be printed to console is
+	 * checked.
+	 *
+	 * @param testContent content to output in console
+	 * @param launchConfigAttributes optional launch configuration attributes to
+	 *            specify behavior
+	 * @return the console object after it has finished
+	 */
+	private IOConsole doConsoleOutputTest(byte[] testContent, Map<String, Object> launchConfigAttributes) throws Exception {
+		final MockProcess mockProcess = new MockProcess(new ByteArrayInputStream(testContent), null, 0);
+		final IProcess process = mockProcess.toRuntimeProcess("Output Redirect", launchConfigAttributes);
+		final String encoding = launchConfigAttributes != null ? (String) launchConfigAttributes.get(DebugPlugin.ATTR_CONSOLE_ENCODING) : null;
+		final AtomicBoolean consoleFinished = new AtomicBoolean(false);
+		@SuppressWarnings("restriction")
+		final org.eclipse.debug.internal.ui.views.console.ProcessConsole console = new org.eclipse.debug.internal.ui.views.console.ProcessConsole(process, new ConsoleColorProvider(), encoding);
+		console.addPropertyChangeListener((PropertyChangeEvent event) -> {
+			if (event.getSource() == console && IConsoleConstants.P_CONSOLE_OUTPUT_COMPLETE.equals(event.getProperty())) {
+				consoleFinished.set(true);
+			}
+		});
+		final IConsoleManager consoleManager = ConsolePlugin.getDefault().getConsoleManager();
+		try {
+			consoleManager.addConsoles(new IConsole[] { console });
+			waitWhile(c -> !consoleFinished.get(), testTimeout, c -> "Console did not finished.");
+
+			Object value = launchConfigAttributes != null ? launchConfigAttributes.get(IDebugUIConstants.ATTR_CAPTURE_IN_FILE) : null;
+			final File outFile = value != null ? new File((String) value) : null;
+			value = launchConfigAttributes != null ? launchConfigAttributes.get(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE) : null;
+			final boolean checkOutput = value != null ? (boolean) value : true;
+			final IDocument doc = console.getDocument();
+
+			if (outFile != null) {
+				@SuppressWarnings("restriction")
+				String expectedPathMsg = MessageFormat.format(org.eclipse.debug.internal.ui.views.console.ConsoleMessages.ProcessConsole_1, new Object[] {
+						outFile.getAbsolutePath() });
+				assertEquals("No or wrong output of redirect file path in console.", expectedPathMsg, doc.get(doc.getLineOffset(0), doc.getLineLength(0)));
+				assertEquals("Expected redirect file path to be linked.", 1, console.getHyperlinks().length);
+			}
+			if (checkOutput) {
+				assertEquals("Output not found in console.", new String(testContent), doc.get(doc.getLineOffset(1), doc.getLineLength(1)));
+			}
+			return console;
+		} finally {
+			if (!process.isTerminated()) {
+				process.terminate();
+			}
+			consoleManager.removeConsoles(new IConsole[] { console });
+			TestUtil.waitForJobs(name.getMethodName(), 0, 1000);
 		}
 	}
 }

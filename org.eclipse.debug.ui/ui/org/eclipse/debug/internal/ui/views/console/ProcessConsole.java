@@ -34,6 +34,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
@@ -884,22 +885,12 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 		String fFilePath;
 
 		public ConsoleLogFilePatternMatcher(String filePath) {
-			fFilePath = escape(filePath);
-		}
-
-		private String escape(String path) {
-			StringBuilder buffer = new StringBuilder(path);
-			int index = buffer.indexOf("\\"); //$NON-NLS-1$
-			while (index >= 0) {
-				buffer.insert(index, '\\');
-				index = buffer.indexOf("\\", index+2); //$NON-NLS-1$
-			}
-			return buffer.toString();
+			fFilePath = filePath;
 		}
 
 		@Override
 		public String getPattern() {
-			return fFilePath;
+			return Pattern.quote(fFilePath);
 		}
 
 		@Override

@@ -17,13 +17,18 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.ILaunchConfigurationType;
+import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.RuntimeProcess;
+import org.eclipse.debug.tests.launching.LaunchConfigurationTests;
 
 /**
  * A mockup process which can either simulate generation of output or wait for
@@ -264,5 +269,26 @@ public class MockProcess extends Process {
 	 */
 	public RuntimeProcess toRuntimeProcess(String name) {
 		return (RuntimeProcess) DebugPlugin.newProcess(new Launch(null, ILaunchManager.RUN_MODE, null), this, name);
+	}
+
+	/**
+	 * Create a {@link RuntimeProcess} which wraps this {@link MockProcess}.
+	 * <p>
+	 * This method also attaches a
+	 * {@link LaunchConfigurationTests#ID_TEST_LAUNCH_TYPE} launch configuration
+	 * to the {@link RuntimeProcess}.
+	 * </p>
+	 *
+	 * @param name name for the process and launch configuration
+	 * @return the created {@link RuntimeProcess}
+	 */
+	public RuntimeProcess toRuntimeProcess(String name, Map<String, Object> launchConfigAttributes) throws CoreException {
+		ILaunchManager launchManager = DebugPlugin.getDefault().getLaunchManager();
+		ILaunchConfigurationType launchType = launchManager.getLaunchConfigurationType(LaunchConfigurationTests.ID_TEST_LAUNCH_TYPE);
+		ILaunchConfigurationWorkingCopy launchConfiguration = launchType.newInstance(null, name);
+		if (launchConfigAttributes != null) {
+			launchConfiguration.setAttributes(launchConfigAttributes);
+		}
+		return (RuntimeProcess) DebugPlugin.newProcess(new Launch(launchConfiguration, ILaunchManager.RUN_MODE, null), this, name);
 	}
 }
