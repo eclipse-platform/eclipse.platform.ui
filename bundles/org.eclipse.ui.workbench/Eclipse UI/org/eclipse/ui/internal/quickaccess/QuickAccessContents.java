@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 IBM Corporation and others.
+ * Copyright (c) 2005, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -675,7 +675,7 @@ public abstract class QuickAccessContents {
 			}
 		});
 		filterText.addModifyListener(e -> {
-			String text = ((Text) e.widget).getText().toLowerCase();
+			String text = ((Text) e.widget).getText();
 			updateProposals(text);
 		});
 	}
