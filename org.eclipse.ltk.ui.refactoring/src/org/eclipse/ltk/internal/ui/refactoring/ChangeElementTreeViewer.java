@@ -14,7 +14,6 @@
 package org.eclipse.ltk.internal.ui.refactoring;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.swt.SWT;
@@ -143,8 +142,8 @@ class ChangeElementTreeViewer extends CheckboxTreeViewer {
 	}
 
 	private void processDeferredTreeItemUpdates() {
-		for (Iterator<Item> iter= fDeferredTreeItemUpdates.iterator(); iter.hasNext();) {
-			TreeItem item= (TreeItem)iter.next();
+		for (Item item2 : fDeferredTreeItemUpdates) {
+			TreeItem item= (TreeItem)item2;
 			applyCheckedState(item, (PreviewNode)item.getData());
 		}
 	}

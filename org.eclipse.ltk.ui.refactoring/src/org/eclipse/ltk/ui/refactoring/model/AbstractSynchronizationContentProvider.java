@@ -14,7 +14,6 @@
 package org.eclipse.ltk.ui.refactoring.model;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.team.core.diff.IDiff;
@@ -124,14 +123,12 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 						}
 						final Set<RefactoringDescriptor> local= new HashSet<>(localDescriptors);
 						local.removeAll(remoteDescriptors);
-						for (final Iterator<RefactoringDescriptor> iterator= local.iterator(); iterator.hasNext();) {
-							final RefactoringDescriptor descriptor= iterator.next();
+						for (RefactoringDescriptor descriptor : local) {
 							result.add(new RefactoringDescriptorSynchronizationProxy(new RefactoringDescriptorProxyAdapter(descriptor), project.getName(), IThreeWayDiff.OUTGOING));
 						}
 						final Set<RefactoringDescriptor> remote= new HashSet<>(remoteDescriptors);
 						remote.removeAll(localDescriptors);
-						for (final Iterator<RefactoringDescriptor> iterator= remote.iterator(); iterator.hasNext();) {
-							final RefactoringDescriptor descriptor= iterator.next();
+						for (RefactoringDescriptor descriptor : remote) {
 							result.add(new RefactoringDescriptorSynchronizationProxy(new RefactoringDescriptorProxyAdapter(descriptor), project.getName(), IThreeWayDiff.INCOMING));
 						}
 					}
@@ -139,8 +136,7 @@ public abstract class AbstractSynchronizationContentProvider extends Synchroniza
 				}
 			}, IResource.DEPTH_INFINITE);
 
-			for (final Iterator<RefactoringDescriptorSynchronizationProxy> iterator= result.iterator(); iterator.hasNext();) {
-				final RefactoringDescriptorSynchronizationProxy proxy= iterator.next();
+			for (RefactoringDescriptorSynchronizationProxy proxy : result) {
 				if (!includeDirection(proxy.getDirection()))
 					result.remove(proxy);
 			}

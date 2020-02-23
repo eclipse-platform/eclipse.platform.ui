@@ -14,7 +14,6 @@
 package org.eclipse.ltk.internal.ui.refactoring.model;
 
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.team.core.diff.IDiff;
@@ -187,8 +186,7 @@ public abstract class RefactoringHistoryMergeWizard extends RefactoringHistoryWi
 	 */
 	public void resolveConflicts(final IMergeContext context) {
 		Assert.isNotNull(context);
-		for (final Iterator<IResource> iterator= fChangedFiles.iterator(); iterator.hasNext();) {
-			final IResource resource= iterator.next();
+		for (IResource resource : fChangedFiles) {
 			final IDiff diff= context.getDiffTree().getDiff(resource);
 			if (diff != null) {
 				try {
@@ -198,8 +196,7 @@ public abstract class RefactoringHistoryMergeWizard extends RefactoringHistoryWi
 				}
 			}
 		}
-		for (final Iterator<IResource> iterator= fAddedFiles.iterator(); iterator.hasNext();) {
-			final IResource resource= iterator.next();
+		for (IResource resource : fAddedFiles) {
 			final IDiff diff= context.getDiffTree().getDiff(resource);
 			if (diff != null) {
 				try {
@@ -209,8 +206,7 @@ public abstract class RefactoringHistoryMergeWizard extends RefactoringHistoryWi
 				}
 			}
 		}
-		for (final Iterator<IResource> iterator= fRemovedFiles.iterator(); iterator.hasNext();) {
-			final IResource resource= iterator.next();
+		for (IResource resource : fRemovedFiles) {
 			final IDiff diff= context.getDiffTree().getDiff(resource);
 			if (diff != null) {
 				try {

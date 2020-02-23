@@ -292,10 +292,9 @@ public abstract class AbstractResourceMappingMerger extends ResourceMappingMerge
 	 * @return the diffs, or an empty array
 	 */
 	private IDiff[] getDiffs(final IMergeContext context) {
-		final ResourceMapping[] mappings= context.getScope().getMappings(fModelProvider.getDescriptor().getId());
 		final Set<IDiff> set= new HashSet<>();
-		for (int index= 0; index < mappings.length; index++) {
-			final IDiff[] diffs= context.getDiffTree().getDiffs(context.getScope().getTraversals(mappings[index]));
+		for (ResourceMapping mapping : context.getScope().getMappings(fModelProvider.getDescriptor().getId())) {
+			final IDiff[] diffs= context.getDiffTree().getDiffs(context.getScope().getTraversals(mapping));
 			set.addAll(Arrays.asList(diffs));
 		}
 		return set.toArray(new IDiff[set.size()]);

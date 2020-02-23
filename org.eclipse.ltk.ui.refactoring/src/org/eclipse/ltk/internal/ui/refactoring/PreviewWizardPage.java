@@ -18,7 +18,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -233,8 +232,8 @@ public class PreviewWizardPage extends RefactoringWizardPage implements IPreview
 			fActiveAction= fShowAllAction;
 			fFilterActions= new FilterAction[list.size()];
 			int i= 0;
-			for (Iterator<GroupCategory> iter= list.iterator(); iter.hasNext();) {
-				fFilterActions[i++]= new FilterAction(this, iter.next());
+			for (GroupCategory groupCategory : list) {
+				fFilterActions[i++]= new FilterAction(this, groupCategory);
 			}
 			fHideDerivedAction= new HideDerivedAction();
 		}

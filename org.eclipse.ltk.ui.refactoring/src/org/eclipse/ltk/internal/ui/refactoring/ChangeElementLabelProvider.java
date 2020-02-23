@@ -14,7 +14,6 @@
 package org.eclipse.ltk.internal.ui.refactoring;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.eclipse.swt.graphics.Font;
@@ -63,8 +62,7 @@ class ChangeElementLabelProvider extends LabelProvider implements IFontProvider 
 
 	@Override
 	public void dispose() {
-		for (Iterator<Image> iter= fDescriptorImageMap.values().iterator(); iter.hasNext(); ) {
-			Image image= iter.next();
+		for (Image image : fDescriptorImageMap.values()) {
 			image.dispose();
 		}
 		super.dispose();

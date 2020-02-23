@@ -151,8 +151,7 @@ public class RefactoringHistoryControl extends Composite implements IRefactoring
 			}
 			int checkCount= 0;
 			final Collection<RefactoringDescriptorProxy> collection= getCoveredDescriptors(element);
-			for (final Iterator<RefactoringDescriptorProxy> iterator= collection.iterator(); iterator.hasNext();) {
-				final RefactoringDescriptorProxy proxy= iterator.next();
+			for (RefactoringDescriptorProxy proxy : collection) {
 				if (fCheckedDescriptors.contains(proxy))
 					checkCount++;
 			}
