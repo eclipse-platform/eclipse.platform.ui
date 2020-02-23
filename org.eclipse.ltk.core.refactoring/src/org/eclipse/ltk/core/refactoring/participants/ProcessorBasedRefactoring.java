@@ -297,9 +297,7 @@ public class ProcessorBasedRefactoring extends Refactoring {
 		List<Change> changes= new ArrayList<>();
 		List<Change> preChanges= new ArrayList<>();
 		Map<Change, RefactoringParticipant> participantMap= new HashMap<>();
-		for (Iterator<RefactoringParticipant> iter= fParticipants.iterator(); iter.hasNext();) {
-			final RefactoringParticipant participant= iter.next();
-
+		for (RefactoringParticipant participant : fParticipants) {
 			try {
 				final PerformanceStats stats= PerformanceStats.getStats(PERF_CREATE_CHANGES, getName() + ", " + participant.getName()); //$NON-NLS-1$
 				stats.startRun();

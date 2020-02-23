@@ -28,10 +28,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -115,16 +115,15 @@ public final class RefactoringHistoryManager {
 	 */
 	public static void checkArgumentMap(final Map<String, String> arguments) throws CoreException {
 		Assert.isNotNull(arguments);
-		for (final Iterator<? extends Entry<?, ?>> iterator= arguments.entrySet().iterator(); iterator.hasNext();) {
-			final Entry<?, ?> entry= iterator.next();
+		for (Entry<?, ?> entry : arguments.entrySet()) {
 			if (entry.getKey() instanceof String) {
 				final String string= (String) entry.getKey();
 				final char[] characters= string.toCharArray();
 				if (characters.length == 0) {
 					throw new CoreException(new Status(IStatus.ERROR, RefactoringCore.ID_PLUGIN, IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, RefactoringCoreMessages.RefactoringHistoryManager_empty_argument, null));
 				}
-				for (int index= 0; index < characters.length; index++) {
-					if (Character.isWhitespace(characters[index]))
+				for (char character : characters) {
+					if (Character.isWhitespace(character))
 						throw new CoreException(new Status(IStatus.ERROR, RefactoringCore.ID_PLUGIN, IRefactoringCoreStatusCodes.REFACTORING_HISTORY_FORMAT_ERROR, RefactoringCoreMessages.RefactoringHistoryManager_whitespace_argument_key, null));
 				}
 			} else {
@@ -314,9 +313,7 @@ public final class RefactoringHistoryManager {
 		try {
 			monitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_retrieving_history, 1);
 			final RefactoringDescriptor[] results= new RefactoringSessionReader(true, null).readSession(new InputSource(new BufferedInputStream(stream))).getRefactorings();
-			for (RefactoringDescriptor result : results) {
-				collection.add(result);
-			}
+			Collections.addAll(collection, results);
 		} finally {
 			monitor.done();
 		}
@@ -349,12 +346,9 @@ public final class RefactoringHistoryManager {
 					for (IFileStore s : stores) {
 						final IFileInfo current= s.fetchInfo(EFS.NONE, new SubProgressMonitor(subMonitor, 1, SubProgressMonitor.SUPPRESS_SUBTASK_LABEL));
 						if (current.isDirectory()) {
-							final char[] characters= s.getName().toCharArray();
-							for (int offset= 0; offset < characters.length; offset++) {
-								if (Character.isDigit(characters[offset]))
+							for (char character : s.getName().toCharArray()) {
+								if (Character.isDigit(character))
 									return;
-								else
-									continue;
 							}
 						}
 					}
@@ -444,8 +438,7 @@ public final class RefactoringHistoryManager {
 				final Map<String, String> arguments= getArgumentMap(descriptor);
 				if (arguments != null) {
 					checkArgumentMap(arguments);
-					for (final Iterator<Entry<String, String>> iterator= arguments.entrySet().iterator(); iterator.hasNext();) {
-						final Entry<String, String> entry= iterator.next();
+					for (Entry<String, String> entry : arguments.entrySet()) {
 						transformer.createArgument(entry.getKey(), entry.getValue());
 					}
 				}
@@ -640,8 +633,8 @@ public final class RefactoringHistoryManager {
 
 		private static String getEscaped(String s) {
 			StringBuilder result= new StringBuilder(s.length() + 10);
-			for (int i= 0; i < s.length(); ++i) {
-				appendEscapedChar(result, s.charAt(i));
+			for (char c : s.toCharArray()) {
+				appendEscapedChar(result, c);
 			}
 			return result.toString();
 		}
@@ -701,8 +694,7 @@ public final class RefactoringHistoryManager {
 						final Map<String, String> arguments= getArgumentMap(current);
 						if (arguments != null) {
 							checkArgumentMap(arguments);
-							for (final Iterator<Entry<String, String>> iterator= arguments.entrySet().iterator(); iterator.hasNext();) {
-								final Entry<String, String> entry= iterator.next();
+							for (Entry<String, String> entry : arguments.entrySet()) {
 								transformer.createArgument(entry.getKey(), entry.getValue());
 							}
 						}
@@ -1014,8 +1006,7 @@ public final class RefactoringHistoryManager {
 								}
 							}
 						}
-						for (final Iterator<Node> iterator= removedNodes.iterator(); iterator.hasNext();) {
-							final Node node= iterator.next();
+						for (Node node : removedNodes) {
 							node.getParentNode().removeChild(node);
 						}
 						try {
@@ -1061,8 +1052,7 @@ public final class RefactoringHistoryManager {
 			try {
 				final Set<Entry<IPath, Collection<RefactoringDescriptorProxy>>> entries= paths.entrySet();
 				subMonitor.beginTask(task, entries.size());
-				for (final Iterator<Entry<IPath, Collection<RefactoringDescriptorProxy>>> iterator= entries.iterator(); iterator.hasNext();) {
-					final Entry<IPath, Collection<RefactoringDescriptorProxy>> entry= iterator.next();
+				for (Entry<IPath, Collection<RefactoringDescriptorProxy>> entry : entries) {
 					final Collection<RefactoringDescriptorProxy> collection= entry.getValue();
 					removeRefactoringDescriptors(collection.toArray(new RefactoringDescriptorProxy[collection.size()]), entry.getKey(), new SubProgressMonitor(subMonitor, 1), task);
 				}

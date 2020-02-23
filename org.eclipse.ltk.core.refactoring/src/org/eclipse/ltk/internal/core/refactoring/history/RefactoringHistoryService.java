@@ -23,7 +23,6 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -417,8 +416,7 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 			try {
 				final Set<Entry<String, Collection<RefactoringDescriptorProxy>>> entries= projects.entrySet();
 				subMonitor.beginTask(RefactoringCoreMessages.RefactoringHistoryService_deleting_refactorings, entries.size());
-				for (final Iterator<Entry<String, Collection<RefactoringDescriptorProxy>>> iterator= entries.iterator(); iterator.hasNext();) {
-					final Entry<String, Collection<RefactoringDescriptorProxy>> entry= iterator.next();
+				for (Entry<String, Collection<RefactoringDescriptorProxy>> entry : entries) {
 					final Collection<RefactoringDescriptorProxy> collection= entry.getValue();
 					String project= entry.getKey();
 					if (project.equals(RefactoringHistoryService.NAME_WORKSPACE_PROJECT))

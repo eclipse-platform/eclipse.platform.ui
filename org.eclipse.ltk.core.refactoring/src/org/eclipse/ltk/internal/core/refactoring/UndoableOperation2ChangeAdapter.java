@@ -137,8 +137,7 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 	public boolean hasContext(IUndoContext context) {
 		if (context == null)
 			return false;
-		for (int i = 0; i< fContexts.size(); i++) {
-			IUndoContext otherContext = fContexts.get(i);
+		for (IUndoContext otherContext : fContexts) {
 			// have to check both ways because one context may be more general in
 			// its matching rules than another.
 			if (context.matches(otherContext) || otherContext.matches(context))

@@ -15,7 +15,6 @@ package org.eclipse.ltk.core.refactoring.resource;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -133,8 +132,7 @@ public class Resources {
 
 	private static Map<IFile, Long> createModificationStampMap(List<IFile> files){
 		Map<IFile, Long> map= new HashMap<>();
-		for (Iterator<IFile> iter= files.iterator(); iter.hasNext(); ) {
-			IFile file= iter.next();
+		for (IFile file : files) {
 			map.put(file, Long.valueOf(file.getModificationStamp()));
 		}
 		return map;

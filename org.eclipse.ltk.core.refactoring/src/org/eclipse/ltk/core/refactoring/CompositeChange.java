@@ -195,8 +195,8 @@ public class CompositeChange extends Change {
 	@Override
 	public void setEnabled(boolean enabled) {
 		super.setEnabled(enabled);
-		for (Iterator<Change> iter= fChanges.iterator(); iter.hasNext(); ) {
-			iter.next().setEnabled(enabled);
+		for (Change change : fChanges) {
+			change.setEnabled(enabled);
 		}
 	}
 
@@ -413,8 +413,7 @@ public class CompositeChange extends Change {
 	 */
 	@Override
 	public void dispose() {
-		for (Iterator<Change> iter= fChanges.iterator(); iter.hasNext(); ) {
-			final Change change= iter.next();
+		for (Change change : fChanges) {
 			SafeRunner.run(new ISafeRunnable() {
 				@Override
 				public void run() throws Exception {
@@ -486,8 +485,7 @@ public class CompositeChange extends Change {
 	 */
 	@Override
 	public ChangeDescriptor getDescriptor() {
-		for (final Iterator<Change> iterator= fChanges.iterator(); iterator.hasNext();) {
-			final Change change= iterator.next();
+		for (Change change : fChanges) {
 			final ChangeDescriptor descriptor= change.getDescriptor();
 			if (descriptor != null)
 				return descriptor;
@@ -500,8 +498,8 @@ public class CompositeChange extends Change {
 		StringBuilder buff= new StringBuilder();
 		buff.append(getName());
 		buff.append("\n"); //$NON-NLS-1$
-		for (Iterator<Change> iter= fChanges.iterator(); iter.hasNext();) {
-			buff.append("<").append(iter.next().toString()).append("/>\n"); //$NON-NLS-2$ //$NON-NLS-1$
+		for (Change change : fChanges) {
+			buff.append("<").append(change.toString()).append("/>\n"); //$NON-NLS-2$ //$NON-NLS-1$
 		}
 		return buff.toString();
 	}

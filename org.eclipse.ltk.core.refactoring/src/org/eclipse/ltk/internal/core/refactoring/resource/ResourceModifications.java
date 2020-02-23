@@ -14,8 +14,7 @@
 package org.eclipse.ltk.internal.core.refactoring.resource;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
+import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.runtime.Assert;
@@ -247,20 +246,20 @@ public class ResourceModifications {
 		List<RefactoringParticipant> result= new ArrayList<>(5);
 		if (fDelete != null) {
 			DeleteArguments arguments= new DeleteArguments();
-			for (Iterator<IResource> iter= fDelete.iterator(); iter.hasNext();) {
+			for (IResource iResource : fDelete) {
 				DeleteParticipant[] deletes= ParticipantManager.loadDeleteParticipants(status,
-					processor, iter.next(),
+					processor, iResource,
 					arguments, natures, shared);
-				result.addAll(Arrays.asList(deletes));
+				Collections.addAll(result, deletes);
 			}
 		}
 		if (fCreate != null) {
 			CreateArguments arguments= new CreateArguments();
-			for (Iterator<IResource> iter= fCreate.iterator(); iter.hasNext();) {
+			for (IResource iResource : fCreate) {
 				CreateParticipant[] creates= ParticipantManager.loadCreateParticipants(status,
-					processor, iter.next(),
+					processor, iResource,
 					arguments, natures, shared);
-				result.addAll(Arrays.asList(creates));
+				Collections.addAll(result, creates);
 			}
 		}
 		if (fMove != null) {
@@ -270,7 +269,7 @@ public class ResourceModifications {
 				MoveParticipant[] moves= ParticipantManager.loadMoveParticipants(status,
 					processor, element,
 					arguments, natures, shared);
-				result.addAll(Arrays.asList(moves));
+				Collections.addAll(result, moves);
 
 			}
 		}
@@ -281,7 +280,7 @@ public class ResourceModifications {
 				CopyParticipant[] copies= ParticipantManager.loadCopyParticipants(status,
 					processor, element,
 					arguments, natures, shared);
-				result.addAll(Arrays.asList(copies));
+				Collections.addAll(result, copies);
 			}
 		}
 		if (fRename != null) {
@@ -291,7 +290,7 @@ public class ResourceModifications {
 				RenameParticipant[] renames= ParticipantManager.loadRenameParticipants(status,
 					processor, resource,
 					arguments, natures, shared);
-				result.addAll(Arrays.asList(renames));
+				Collections.addAll(result, renames);
 			}
 		}
 		return result.toArray(new RefactoringParticipant[result.size()]);
@@ -339,8 +338,8 @@ public class ResourceModifications {
 	public void buildDelta(IResourceChangeDescriptionFactory builder) {
 		if (fDeltaDescriptions == null)
 			return;
-		for (Iterator<DeltaDescription> iter= fDeltaDescriptions.iterator(); iter.hasNext();) {
-			iter.next().buildDelta(builder);
+		for (DeltaDescription deltaDescription : fDeltaDescriptions) {
+			deltaDescription.buildDelta(builder);
 		}
 	}
 

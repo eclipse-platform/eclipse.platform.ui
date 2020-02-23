@@ -16,7 +16,6 @@ package org.eclipse.ltk.internal.core.refactoring;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -97,8 +96,7 @@ public final class RefactoringSessionTransformer {
 		final NamedNodeMap map= node.getAttributes();
 		if (map != null) {
 			Collections.sort(list, new AttributeComparator());
-			for (final Iterator<Attr> iterator= list.iterator(); iterator.hasNext();) {
-				final Attr attribute= iterator.next();
+			for (Attr attribute : list) {
 				map.setNamedItem(attribute);
 			}
 		}
