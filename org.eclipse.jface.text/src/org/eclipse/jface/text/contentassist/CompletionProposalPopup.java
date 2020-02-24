@@ -31,8 +31,6 @@ import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.swt.custom.StyleRange;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyAdapter;
@@ -42,7 +40,6 @@ import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
-import org.eclipse.swt.events.TraverseEvent;
 import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.graphics.Color;
@@ -607,12 +604,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		fProposalShell.setFont(JFaceResources.getDefaultFont());
 		fProposalTable= new Table(fProposalShell, SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL);
 
-		Listener listener= new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				handleSetData(event);
-			}
-		};
+		Listener listener= event -> handleSetData(event);
 		fProposalTable.addListener(SWT.SetData, listener);
 
 		fIsColoredLabelsSupportEnabled= fContentAssistant.isColoredLabelsSupportEnabled();
@@ -704,12 +696,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 
 		fPopupCloser.install(fContentAssistant, fProposalTable, fAdditionalInfoController);
 
-		fProposalShell.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				unregister(); // but don't dispose the shell, since we're being called from its disposal event!
-			}
-		});
+		fProposalShell.addDisposeListener(event -> unregister());
 
 		fProposalTable.setHeaderVisible(false);
 
@@ -771,15 +758,12 @@ class CompletionProposalPopup implements IContentAssistListener {
 				public void focusGained(FocusEvent e) {
 					if (Helper.okToUse(control)) {
 						if (fTraverseListener == null) {
-							fTraverseListener= new TraverseListener() {
-								@Override
-								public void keyTraversed(TraverseEvent event) {
-									if (event.detail == SWT.TRAVERSE_TAB_NEXT) {
-										IInformationControl iControl= fAdditionalInfoController.getCurrentInformationControl2();
-										if (fAdditionalInfoController.getInternalAccessor().canReplace(iControl)) {
-											fAdditionalInfoController.getInternalAccessor().replaceInformationControl(true);
-											event.doit= false;
-										}
+							fTraverseListener= event -> {
+								if (event.detail == SWT.TRAVERSE_TAB_NEXT) {
+									IInformationControl iControl= fAdditionalInfoController.getCurrentInformationControl2();
+									if (fAdditionalInfoController.getInternalAccessor().canReplace(iControl)) {
+										fAdditionalInfoController.getInternalAccessor().replaceInformationControl(true);
+										event.doit= false;
 									}
 								}
 							};
