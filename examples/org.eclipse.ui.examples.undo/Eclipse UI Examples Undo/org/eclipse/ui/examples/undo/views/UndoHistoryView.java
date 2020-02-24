@@ -293,7 +293,7 @@ public class UndoHistoryView extends ViewPart implements
 	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(manager -> UndoHistoryView.this.fillContextMenu(manager));
+		menuMgr.addMenuListener(UndoHistoryView.this::fillContextMenu);
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);

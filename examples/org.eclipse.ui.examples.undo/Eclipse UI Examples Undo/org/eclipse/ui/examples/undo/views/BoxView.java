@@ -295,7 +295,7 @@ public class BoxView extends ViewPart {
 	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(manager -> BoxView.this.fillContextMenu(manager));
+		menuMgr.addMenuListener(BoxView.this::fillContextMenu);
 		Menu menu = menuMgr.createContextMenu(paintCanvas);
 		paintCanvas.setMenu(menu);
 	}
