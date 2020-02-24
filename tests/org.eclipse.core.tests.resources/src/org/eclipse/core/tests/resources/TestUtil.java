@@ -36,7 +36,7 @@ public class TestUtil {
 		if (timedOut) {
 			// We don't expect any extra jobs run during the test: try to cancel them
 			log(IStatus.INFO, owner, "Trying to cancel running jobs: " + getRunningOrWaitingJobs(null));
-			getRunningOrWaitingJobs(null).forEach(job -> job.cancel());
+			getRunningOrWaitingJobs(null).forEach(Job::cancel);
 			waitForJobs(owner, 5, 1000);
 		}
 
