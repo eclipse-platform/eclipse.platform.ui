@@ -140,5 +140,14 @@ a.command-link img {
 	a:hover{
 		color: #f0f0f0;
 	}
+	
+	/* darken images to add some comfort while reading in dark theme */
+	img {
+		opacity: .75;
+		transition: opacity .5s ease-in-out;
+	}
+	img:hover {
+		opacity: 1;
+	}
 
 }
