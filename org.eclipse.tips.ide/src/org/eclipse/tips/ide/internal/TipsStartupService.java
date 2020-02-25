@@ -54,7 +54,7 @@ public class TipsStartupService implements EventHandler {
 
 	@Override
 	public void handleEvent(Event event) {
-		if (!(TipsPreferences.getStartupBehavior() == TipManager.START_DISABLE)) {
+		if (TipsPreferences.getStartupBehavior() != TipManager.START_DISABLE) {
 			Job job = new Job(Messages.Startup_1) {
 				@Override
 				protected IStatus run(IProgressMonitor monitor) {
