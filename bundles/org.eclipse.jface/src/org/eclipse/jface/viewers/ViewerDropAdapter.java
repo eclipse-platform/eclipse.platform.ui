@@ -153,6 +153,8 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
 	 */
 	protected void clearState() {
 		this.currentTarget = null;
+		this.lastValidOperation = DND.DROP_NONE;
+		this.overrideOperation = -1;
 	}
 
 	/**
@@ -231,6 +233,7 @@ public abstract class ViewerDropAdapter extends DropTargetAdapter {
 
 	@Override
 	public void dragEnter(DropTargetEvent event) {
+		clearState(); // should this be removed and better be done in client code?
 		currentTarget = determineTarget(event);
 		doDropValidation(event);
 	}
