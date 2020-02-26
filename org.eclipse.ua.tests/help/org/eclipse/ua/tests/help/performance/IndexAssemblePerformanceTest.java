@@ -31,17 +31,7 @@ import org.eclipse.test.performance.PerformanceTestCase;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.xml.sax.SAXException;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 public class IndexAssemblePerformanceTest extends PerformanceTestCase {
-
-	/*
-	 * Returns an instance of this Test.
-	 */
-	public static Test suite() {
-		return new TestSuite(IndexAssemblePerformanceTest.class);
-	}
 
 	public void testIndexAssemble() throws Exception {
 		tagAsSummary("Assemble Index", Dimension.ELAPSED_PROCESS);

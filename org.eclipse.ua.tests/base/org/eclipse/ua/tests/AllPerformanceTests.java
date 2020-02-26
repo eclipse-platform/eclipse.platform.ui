@@ -13,37 +13,23 @@
  *******************************************************************************/
 package org.eclipse.ua.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.ua.tests.cheatsheet.AllCheatSheetPerformanceTests;
 import org.eclipse.ua.tests.help.AllHelpPerformanceTests;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /*
  * Tests all user assistance performance (automated).
  */
-public class AllPerformanceTests extends TestSuite {
+@RunWith(Suite.class)
+@SuiteClasses({ AllCheatSheetPerformanceTests.class, AllHelpPerformanceTests.class })
+public class AllPerformanceTests {
 
 	/*
-	 * Returns the entire performance test suite.
+	 * Disabled due to inability to backport test to 3.2. Internal test hooks
+	 * were added in 3.2.2 code base but do not exist in 3.2 so the test will
+	 * not be accurate.
 	 */
-	public static Test suite() {
-		return new AllPerformanceTests();
-	}
-
-	/*
-	 * Constructs a new test suite.
-	 */
-	public AllPerformanceTests() {
-		addTest(AllCheatSheetPerformanceTests.suite());
-		addTest(AllHelpPerformanceTests.suite());
-
-		/*
-		 * Disabled due to inability to backport test to 3.2. Internal
-		 * test hooks were added in 3.2.2 code base but do not exist in 3.2
-		 * so the test will not be accurate.
-		 */
-		//addTest(AllIntroPerformanceTests.suite());
-
-	}
+	// addTest(AllIntroPerformanceTests.suite());
 }

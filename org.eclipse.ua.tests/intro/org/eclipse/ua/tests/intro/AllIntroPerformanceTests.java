@@ -14,26 +14,14 @@
 package org.eclipse.ua.tests.intro;
 
 import org.eclipse.ua.tests.intro.performance.OpenIntroTest;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /*
  * Tests help performance (automated).
  */
-public class AllIntroPerformanceTests extends TestSuite {
-
-	/*
-	 * Returns the entire test suite.
-	 */
-	public static Test suite() {
-		return new AllIntroPerformanceTests();
-	}
-
-	/*
-	 * Constructs a new performance test suite.
-	 */
-	public AllIntroPerformanceTests() {
-		addTest(OpenIntroTest.suite());
-	}
+@RunWith(Suite.class)
+@SuiteClasses({ OpenIntroTest.class })
+public class AllIntroPerformanceTests {
 }

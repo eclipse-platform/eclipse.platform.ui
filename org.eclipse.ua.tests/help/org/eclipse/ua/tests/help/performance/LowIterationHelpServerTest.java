@@ -14,9 +14,6 @@
 
 package org.eclipse.ua.tests.help.performance;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.PerformanceTestCase;
 import org.eclipse.ua.tests.help.util.LoadServletUtil;
@@ -26,13 +23,6 @@ import org.eclipse.ua.tests.help.util.LoadServletUtil;
  */
 
 public class LowIterationHelpServerTest extends PerformanceTestCase {
-
-	/*
-	 * Returns an instance of this Test.
-	 */
-	public static Test suite() {
-		return new TestSuite(LowIterationHelpServerTest.class);
-	}
 
 	@Override
 	protected void tearDown() throws Exception {

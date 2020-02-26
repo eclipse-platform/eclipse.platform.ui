@@ -14,38 +14,25 @@
 package org.eclipse.ua.tests.help;
 
 import org.eclipse.ua.tests.help.performance.BuildHtmlSearchIndex;
-import org.eclipse.ua.tests.help.performance.IndexAssemblePerformanceTest;
 import org.eclipse.ua.tests.help.performance.HelpServerTest;
+import org.eclipse.ua.tests.help.performance.IndexAssemblePerformanceTest;
 import org.eclipse.ua.tests.help.performance.TocAssemblePerformanceTest;
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+import org.junit.runners.Suite.SuiteClasses;
 
 /*
  * Tests help performance (automated).
  */
-public class AllHelpPerformanceTests extends TestSuite {
+@RunWith(Suite.class)
+@SuiteClasses({ TocAssemblePerformanceTest.class, IndexAssemblePerformanceTest.class, BuildHtmlSearchIndex.class,
+		HelpServerTest.class })
+public class AllHelpPerformanceTests {
 
 	/*
-	 * Returns the entire test suite.
+	 * Disabled due to inability to get reliable results. Browser/SWT changes in
+	 * timing of listener events no longer consistent in 3.3.
 	 */
-	public static Test suite() {
-		return new AllHelpPerformanceTests();
-	}
 
-	/*
-	 * Constructs a new performance test suite.
-	 */
-	public AllHelpPerformanceTests() {
-
-		/*
-		 * Disabled due to inability to get reliable results. Browser/SWT
-		 * changes in timing of listener events no longer consistent in 3.3.
-		 */
-
-		//addTest(OpenHelpTest.suite());
-		addTest(TocAssemblePerformanceTest.suite());
-		addTest(IndexAssemblePerformanceTest.suite());
-		addTest(BuildHtmlSearchIndex.suite());
-		addTest(HelpServerTest.suite());
-	}
+	// addTest(OpenHelpTest.suite());
 }

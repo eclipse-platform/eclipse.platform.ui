@@ -30,17 +30,7 @@ import org.eclipse.test.performance.PerformanceTestCase;
 import org.eclipse.ua.tests.plugin.UserAssistanceTestPlugin;
 import org.xml.sax.SAXException;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 public class TocAssemblePerformanceTest extends PerformanceTestCase {
-
-	/*
-	 * Returns an instance of this Test.
-	 */
-	public static Test suite() {
-		return new TestSuite(TocAssemblePerformanceTest.class);
-	}
 
 	private TocContribution parse(TocFileParser parser, String tocFile)
 			throws IOException, SAXException, ParserConfigurationException {

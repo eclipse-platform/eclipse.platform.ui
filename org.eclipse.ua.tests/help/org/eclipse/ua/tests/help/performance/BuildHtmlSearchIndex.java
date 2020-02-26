@@ -15,9 +15,6 @@ package org.eclipse.ua.tests.help.performance;
 
 import java.net.URL;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.AbstractIndexProvider;
@@ -39,13 +36,6 @@ public class BuildHtmlSearchIndex extends PerformanceTestCase {
 	private AbstractTocProvider[] tocProviders;
 	private AbstractIndexProvider[] indexProviders;
 	private AnalyzerDescriptor analyzerDesc;
-
-	/*
-	 * Returns an instance of this Test.
-	 */
-	public static Test suite() {
-		return new TestSuite(BuildHtmlSearchIndex.class);
-	}
 
 	@Override
 	protected void setUp() throws Exception {

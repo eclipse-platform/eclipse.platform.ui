@@ -13,9 +13,6 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.help.performance;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.AbstractIndexProvider;
 import org.eclipse.help.AbstractTocProvider;
@@ -43,13 +40,6 @@ public class OpenHelpTest extends PerformanceTestCase {
 	private AbstractTocProvider[] tocProviders;
 	private AbstractIndexProvider[] indexProviders;
 	private Shell shell;
-
-	/*
-	 * Returns an instance of this Test.
-	 */
-	public static Test suite() {
-		return new TestSuite(OpenHelpTest.class);
-	}
 
 	@Override
 	protected void setUp() throws Exception {

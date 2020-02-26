@@ -24,17 +24,7 @@ import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.intro.config.CustomizableIntroPart;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 public class OpenIntroTest extends PerformanceTestCase {
-
-	/*
-	 * Returns an instance of this Test.
-	 */
-	public static Test suite() {
-		return new TestSuite(OpenIntroTest.class);
-	}
 
 	@Override
 	protected void setUp() throws Exception {

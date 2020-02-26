@@ -13,9 +13,6 @@
  *******************************************************************************/
 package org.eclipse.ua.tests.cheatsheet.performance;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
-
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.test.performance.PerformanceTestCase;
@@ -27,13 +24,6 @@ import org.eclipse.ui.cheatsheets.OpenCheatSheetAction;
 import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 
 public class OpenCheatSheetTest extends PerformanceTestCase {
-
-	/*
-	 * Returns an instance of this Test.
-	 */
-	public static Test suite() {
-		return new TestSuite(OpenCheatSheetTest.class);
-	}
 
 	@Override
 	protected void setUp() throws Exception {
