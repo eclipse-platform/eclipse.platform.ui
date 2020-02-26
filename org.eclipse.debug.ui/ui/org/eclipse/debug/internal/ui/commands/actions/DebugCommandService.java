@@ -23,6 +23,7 @@ import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.commands.IDebugCommandHandler;
 import org.eclipse.debug.core.commands.IDebugCommandRequest;
+import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
@@ -48,12 +49,12 @@ public class DebugCommandService implements IDebugContextListener {
 	/**
 	 * Window this service is for.
 	 */
-	private IWorkbenchWindow fWindow = null;
+	private IWorkbenchWindow fWindow;
 
 	/**
 	 * The context service for this command service.
 	 */
-	private IDebugContextService fContextService = null;
+	private IDebugContextService fContextService;
 
 	/**
 	 * Service per window
@@ -186,6 +187,9 @@ public class DebugCommandService implements IDebugContextListener {
 			IDebugCommandHandler handler = getHandler(element, handlerType);
 			if (handler != null) {
 				UpdateActionsRequest request = new UpdateActionsRequest(elements, actions);
+				if (DebugUIPlugin.DEBUG_COMMAND_SERVICE) {
+					DebugUIPlugin.trace(request + " to " + handler); //$NON-NLS-1$
+				}
 				handler.canExecute(request);
 				return;
 			}
@@ -195,6 +199,9 @@ public class DebugCommandService implements IDebugContextListener {
 				ActionsUpdater updater = new ActionsUpdater(actions, map.size());
 				for (Entry<IDebugCommandHandler, List<Object>> entry : map.entrySet()) {
 					UpdateHandlerRequest request = new UpdateHandlerRequest(entry.getValue().toArray(), updater);
+					if (DebugUIPlugin.DEBUG_COMMAND_SERVICE) {
+						DebugUIPlugin.trace(request + " to " + entry.getKey()); //$NON-NLS-1$
+					}
 					entry.getKey().canExecute(request);
 				}
 				return;
@@ -291,6 +298,12 @@ public class DebugCommandService implements IDebugContextListener {
 		if (handlerType != null) {
 			boolean hasMultipleWindowServices = hasMultipleWindowServices();
 			if (!hasMultipleWindowServices) {
+				if (DebugUIPlugin.DEBUG_COMMAND_SERVICE) {
+					Job[] jobs = Job.getJobManager().find(handlerType);
+					for (Job job : jobs) {
+						DebugUIPlugin.trace("WOULD cancel " + job); //$NON-NLS-1$
+					}
+				}
 				Job.getJobManager().cancel(handlerType);
 			}
 		}

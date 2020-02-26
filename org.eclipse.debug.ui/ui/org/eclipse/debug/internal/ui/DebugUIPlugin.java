@@ -142,6 +142,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	public static boolean DEBUG_STATE_SAVE_RESTORE = false;
 	public static String DEBUG_PRESENTATION_ID = null;
 	public static boolean DEBUG_DYNAMIC_LOADING = false;
+	public static boolean DEBUG_COMMAND_SERVICE = false;
 
 	static final String DEBUG_FLAG = "org.eclipse.debug.ui/debug"; //$NON-NLS-1$
 	static final String DEBUG_BREAKPOINT_DELTAS_FLAG = "org.eclipse.debug.ui/debug/viewers/breakpointDeltas"; //$NON-NLS-1$
@@ -155,6 +156,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	static final String DEBUG_STATE_SAVE_RESTORE_FLAG = "org.eclipse.debug.ui/debug/viewers/stateSaveRestore"; //$NON-NLS-1$
 	static final String DEBUG_PRESENTATION_ID_FLAG ="org.eclipse.debug.ui/debug/viewers/presentationId"; //$NON-NLS-1$
 	static final String DEBUG_DYNAMIC_LOADING_FLAG = "org.eclipse.debug.ui/debug/memory/dynamicLoading"; //$NON-NLS-1$
+	static final String DEBUG_COMMAND_SERVICE_FLAG = "org.eclipse.debug.ui/debug/commandservice"; //$NON-NLS-1$
 	/**
 	 * The {@link DebugTrace} object to print to OSGi tracing
 	 * @since 3.8
@@ -260,16 +262,18 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	}
 
 	/**
-	 * Prints the given message to System.out and to the OSGi tracing (if started)
-	 * @param option the option or <code>null</code>
-	 * @param message the message to print or <code>null</code>
+	 * Prints the given message to System.out or to the OSGi tracing (if started)
+	 * 
+	 * @param option    the option or <code>null</code>
+	 * @param message   the message to print or <code>null</code>
 	 * @param throwable the {@link Throwable} or <code>null</code>
 	 * @since 3.8
 	 */
 	public static void trace(String option, String message, Throwable throwable) {
-		System.out.println(message);
 		if(fgDebugTrace != null) {
 			fgDebugTrace.trace(option, message, throwable);
+		} else {
+			System.out.println(message);
 		}
 	}
 
@@ -595,6 +599,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 		DEBUG_DELTAS = DEBUG && options.getBooleanOption(DEBUG_DELTAS_FLAG, false);
 		DEBUG_STATE_SAVE_RESTORE = DEBUG && options.getBooleanOption(DEBUG_STATE_SAVE_RESTORE_FLAG, false);
 		DEBUG_DYNAMIC_LOADING = DEBUG && options.getBooleanOption(DEBUG_DYNAMIC_LOADING_FLAG, false);
+		DEBUG_COMMAND_SERVICE = DEBUG && options.getBooleanOption(DEBUG_COMMAND_SERVICE_FLAG, false);
 		if(DEBUG) {
 			DEBUG_PRESENTATION_ID = options.getOption(DEBUG_PRESENTATION_ID_FLAG, IInternalDebugCoreConstants.EMPTY_STRING);
 			if(IInternalDebugCoreConstants.EMPTY_STRING.equals(DEBUG_PRESENTATION_ID)) {

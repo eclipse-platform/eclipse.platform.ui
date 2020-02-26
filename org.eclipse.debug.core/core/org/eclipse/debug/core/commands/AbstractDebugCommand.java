@@ -162,6 +162,11 @@ public abstract class AbstractDebugCommand implements IDebugCommandHandler {
 		public void sleeping(IJobChangeEvent event) {
 		}
 
+		@Override
+		public String toString() {
+			return getName() + " on " + request; //$NON-NLS-1$
+		}
+
 	}
 
 	/**
