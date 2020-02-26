@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -65,15 +65,9 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 	private Button showUserDialogButton;
 
-	private Button renameModeInlineButton;
-
-	private Button renameModeDialogButton;
-
 	private IntegerFieldEditor saveInterval;
 
 	private boolean openOnSingleClick;
-
-	private boolean renameModeInline;
 
 	private boolean selectOnHover;
 
@@ -81,7 +75,11 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 	private Button showHeapStatusButton;
 
+	private Button showInlineRenameButton;
+
 	protected static int MAX_SAVE_INTERVAL = 9999;
+
+	private boolean renameModeInline;
 
 	@Override
 	protected Control createContents(Composite parent) {
@@ -111,7 +109,6 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		createShowUserDialogPref(composite);
 		createStickyCyclePref(composite);
 		createHeapStatusPref(composite);
-		createSaveIntervalGroup(composite);
 	}
 
 	/**
@@ -170,7 +167,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 	 *
 	 * @param composite the Composite the group is created in.
 	 */
-	private void createSaveIntervalGroup(Composite composite) {
+	protected void createSaveIntervalGroup(Composite composite) {
 		Composite groupComposite = new Composite(composite, SWT.LEFT);
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
@@ -253,26 +250,16 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 				WorkbenchMessages.WorkbenchPreference_noEffectOnAllViews);
 	}
 
-	protected void createRenameModeGroup(Composite composite) {
+	protected void createInlineRenamePref(Composite composite) {
 
-		Group buttonComposite = new Group(composite, SWT.LEFT);
-		GridLayout layout = new GridLayout();
-		buttonComposite.setLayout(layout);
-		GridData data = new GridData(GridData.HORIZONTAL_ALIGN_FILL | GridData.GRAB_HORIZONTAL);
-		buttonComposite.setLayoutData(data);
-		buttonComposite.setText(WorkbenchMessages.WorkbenchPreference_renameMode);
+		showInlineRenameButton = new Button(composite, SWT.CHECK);
+		showInlineRenameButton.setText(WorkbenchMessages.WorkbenchPreference_inlineRename);
+		showInlineRenameButton.setToolTipText(WorkbenchMessages.WorkbenchPreference_inlineRename);
 
-		String label = WorkbenchMessages.WorkbenchPreference_renameModeInline;
-		renameModeInlineButton = createRadioButton(buttonComposite, label);
-		renameModeInlineButton.addSelectionListener(
-				widgetSelectedAdapter(e -> renameModeInline = renameModeInlineButton.getSelection()));
-		renameModeInlineButton.setSelection(renameModeInline);
+		showInlineRenameButton.addSelectionListener(
+				widgetSelectedAdapter(e -> renameModeInline = showInlineRenameButton.getSelection()));
 
-		label = WorkbenchMessages.WorkbenchPreference_renameModeDialog;
-		renameModeDialogButton = createRadioButton(buttonComposite, label);
-		renameModeDialogButton.addSelectionListener(
-				widgetSelectedAdapter(e -> renameModeInline = !renameModeDialogButton.getSelection()));
-		renameModeDialogButton.setSelection(!renameModeInline);
+		showInlineRenameButton.setSelection(renameModeInline);
 	}
 
 	private void selectClickMode(boolean singleClick) {
@@ -361,8 +348,8 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 		openOnSingleClick = store.getBoolean(IPreferenceConstants.OPEN_ON_SINGLE_CLICK);
 		selectOnHover = store.getBoolean(IPreferenceConstants.SELECT_ON_HOVER);
 		openAfterDelay = store.getBoolean(IPreferenceConstants.OPEN_AFTER_DELAY);
-
 		readRenameModeFromPreferences();
+
 	}
 
 	/**
@@ -389,8 +376,7 @@ public class WorkbenchPreferencePage extends PreferencePage implements IWorkbenc
 
 		String defaultRenameMode = store.getDefaultString(IWorkbenchPreferenceConstants.RESOURCE_RENAME_MODE);
 		renameModeInline = !IWorkbenchPreferenceConstants.RESOURCE_RENAME_MODE_DIALOG.equals(defaultRenameMode);
-		renameModeInlineButton.setSelection(renameModeInline);
-		renameModeDialogButton.setSelection(!renameModeInline);
+		showInlineRenameButton.setSelection(renameModeInline);
 
 		super.performDefaults();
 	}

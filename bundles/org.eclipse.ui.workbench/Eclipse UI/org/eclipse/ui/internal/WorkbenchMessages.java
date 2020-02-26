@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2018 IBM Corporation and others.
+ * Copyright (c) 2005, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -536,9 +536,7 @@ public class WorkbenchMessages extends NLS {
 	public static String WorkbenchPreference_noEffectOnAllViews;
 	public static String WorkbenchPreference_HeapStatusButton;
 	public static String WorkbenchPreference_HeapStatusButtonToolTip;
-	public static String WorkbenchPreference_renameMode;
-	public static String WorkbenchPreference_renameModeInline;
-	public static String WorkbenchPreference_renameModeDialog;
+	public static String WorkbenchPreference_inlineRename;
 
 	// --- Globalization -----
 	public static String GlobalizationPreference_nlExtensions;

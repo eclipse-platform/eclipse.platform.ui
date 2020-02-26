@@ -41,8 +41,9 @@ public class IDEWorkbenchPreferencePage extends WorkbenchPreferencePage implemen
 		Composite composite = createComposite(parent);
 
 		createSettings(composite);
+		createInlineRenamePref(composite);
+		createSaveIntervalGroup(composite);
 		createOpenModeGroup(composite);
-		createRenameModeGroup(composite);
 
 		applyDialogFont(composite);
 
