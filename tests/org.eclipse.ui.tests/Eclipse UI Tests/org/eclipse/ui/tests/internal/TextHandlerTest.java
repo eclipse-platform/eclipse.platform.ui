@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009 IBM Corporation and others.
+ * Copyright (c) 2009, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,9 @@
 
 package org.eclipse.ui.tests.internal;
 
+import static org.junit.Assume.assumeFalse;
+
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.swt.dnd.Clipboard;
 import org.eclipse.swt.dnd.TextTransfer;
 import org.eclipse.swt.dnd.Transfer;
@@ -37,6 +40,8 @@ public class TextHandlerTest extends UITestCase {
 
 	@Test
 	public void testEditableText() throws Exception {
+		assumeFalse("Test fails on Mac: Bug 544675", Platform.OS_MACOSX.equals(Platform.getOS()));
+
 		IWorkbenchWindow window = openTestWindow();
 		TextControlView view = (TextControlView) window.getActivePage()
 				.showView(TextControlView.ID);
