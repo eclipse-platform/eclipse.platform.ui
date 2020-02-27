@@ -31,6 +31,7 @@ import org.eclipse.e4.core.di.annotations.CanExecute;
 import org.eclipse.e4.core.services.contributions.IContributionFactory;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.internal.workbench.ContributionsAnalyzer;
+import org.eclipse.e4.ui.internal.workbench.OpaqueElementUtil;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.MenuService;
 import org.eclipse.e4.ui.internal.workbench.swt.Policy;
@@ -39,10 +40,12 @@ import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.MDirectMenuItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MHandledMenuItem;
+import org.eclipse.e4.ui.model.application.ui.menu.MItem;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenu;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
 import org.eclipse.e4.ui.model.application.ui.menu.MPopupMenu;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
+import org.eclipse.jface.action.IContributionItem;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
@@ -224,6 +227,14 @@ public class MenuManagerRendererFilter implements Listener {
 					} finally {
 						staticContext.dispose();
 					}
+				}
+			} else if (updateEnablement && OpaqueElementUtil.isOpaqueMenuItem(element)) {
+				Object obj = OpaqueElementUtil.getOpaqueItem(element);
+				if (obj instanceof IContributionItem) {
+					IContributionItem ici = (IContributionItem) obj;
+					ici.update();
+					// Update the model to reflect changes
+					((MItem) element).setEnabled(ici.isEnabled());
 				}
 			} else if (updateEnablement && element instanceof MDirectMenuItem) {
 				MDirectMenuItem contrib = (MDirectMenuItem) element;

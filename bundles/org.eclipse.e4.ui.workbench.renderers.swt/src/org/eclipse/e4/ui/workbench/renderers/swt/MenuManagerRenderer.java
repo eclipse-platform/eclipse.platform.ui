@@ -86,6 +86,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Decorations;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.osgi.service.event.Event;
 
 /**
@@ -233,14 +234,16 @@ public class MenuManagerRenderer extends SWTPartRenderer {
 	@Optional
 	private void subscribeItemEnabledUpdate(@UIEventTopic(UIEvents.Item.TOPIC_ENABLED) Event event) {
 		Object element = event.getProperty(UIEvents.EventTags.ELEMENT);
+
 		if (!(element instanceof MMenuItem)) {
 			return;
 		}
 
 		MMenuItem itemModel = (MMenuItem) element;
-		IContributionItem ici = getContribution(itemModel);
-		if (ici != null) {
-			ici.update();
+		Object widget = itemModel.getWidget();
+		if (widget instanceof MenuItem) {
+			boolean enabled = (boolean) event.getProperty(UIEvents.EventTags.NEW_VALUE);
+			((MenuItem) widget).setEnabled(enabled);
 		}
 	}
 
