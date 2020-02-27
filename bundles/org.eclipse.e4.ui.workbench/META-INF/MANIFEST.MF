@@ -42,8 +42,7 @@ Bundle-Activator: org.eclipse.e4.ui.internal.workbench.Activator
 Service-Component: OSGI-INF/org.eclipse.e4.ui.internal.LocaleChangeServiceContextFunction.xml,
  OSGI-INF/org.eclipse.e4.ui.internal.workbench.PartServiceCreationFunction.xml,
  OSGI-INF/org.eclipse.e4.ui.internal.workbench.ProgressMonitorFunction.xml
-Import-Package: com.ibm.icu.text;version="3.8.1",
- javax.annotation,
+Import-Package: javax.annotation,
  javax.inject;version="1.0.0",
  org.apache.commons.jxpath;version="1.3.0",
  org.osgi.service.component.annotations;version="1.2.0";resolution:=optional,
