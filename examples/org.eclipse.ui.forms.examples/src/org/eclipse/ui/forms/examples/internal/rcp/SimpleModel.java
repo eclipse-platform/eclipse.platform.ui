@@ -34,8 +34,8 @@ public class SimpleModel {
 		modelListeners.remove(listener);
 	}
 	public void fireModelChanged(Object[] objects, String type, String property) {
-		for (int i = 0; i < modelListeners.size(); i++) {
-			modelListeners.get(i).modelChanged(objects,
+		for (IModelListener modelListener : modelListeners) {
+			modelListener.modelChanged(objects,
 					type, property);
 		}
 	}

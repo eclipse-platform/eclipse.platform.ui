@@ -87,8 +87,8 @@ public class AsynchronousTestSet extends ObservableSet<Object> {
 	}
 
 	public static void recomputeAll() {
-		for (Iterator<Object> iter = allSets.iterator(); iter.hasNext();) {
-			AsynchronousTestSet next = (AsynchronousTestSet) iter.next();
+		for (Object object : allSets) {
+			AsynchronousTestSet next = (AsynchronousTestSet) object;
 
 			next.recompute();
 		}

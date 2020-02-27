@@ -50,8 +50,8 @@ public class ReadmeModelFactory {
 	protected void addSections(AdaptableList list, MarkElement element) {
 		list.add(element);
 		Object[] children = element.getChildren(element);
-		for (int i = 0; i < children.length; ++i) {
-			addSections(list, (MarkElement) children[i]);
+		for (Object child : children) {
+			addSections(list, (MarkElement) child);
 		}
 	}
 
@@ -145,7 +145,7 @@ public class ReadmeModelFactory {
 				if (i == extensions.length - 1) {
 					IConfigurationElement[] configElements = currentExtension
 							.getConfigurationElements();
-					for (int j = 0; j < configElements.length; j++) {
+					for (IConfigurationElement configElement : configElements) {
 						IConfigurationElement config = configElements[i];
 						if (config.getName()
 								.equals(IReadmeConstants.TAG_PARSER)) {

@@ -227,8 +227,8 @@ public class MultiPageEditorExample extends MultiPageEditorPart implements
 
 		Collections.sort(editorWords, Collator.getInstance());
 		StringWriter displayText = new StringWriter();
-		for (int i = 0; i < editorWords.size(); i++) {
-			displayText.write((editorWords.get(i)));
+		for (String editorWord : editorWords) {
+			displayText.write((editorWord));
 			displayText.write("\n"); //$NON-NLS-1$
 		}
 		text.setText(displayText.toString());

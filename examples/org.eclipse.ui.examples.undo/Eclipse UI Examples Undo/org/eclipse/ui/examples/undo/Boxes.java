@@ -68,8 +68,8 @@ public class Boxes  {
 	 * Draw the boxes with the specified gc.
 	 */
 	public void draw(GC gc) {
-		for (int i = 0; i < boxes.size(); i++) {
-			boxes.get(i).draw(gc);
+		for (Box box : boxes) {
+			box.draw(gc);
 		}
 	}
 
@@ -78,8 +78,7 @@ public class Boxes  {
 	 * if no box contains the point.
 	 */
 	public Box getBox(int x, int y) {
-		for (int i=0; i< boxes.size(); i++) {
-			Box box = boxes.get(i);
+		for (Box box : boxes) {
 			if (box.contains(x, y)) {
 				return box;
 			}
