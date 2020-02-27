@@ -22,27 +22,32 @@ import static org.junit.Assert.fail;
 import java.lang.reflect.Constructor;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.Format;
+import java.text.NumberFormat;
 
-import org.eclipse.core.databinding.conversion.StringToNumberConverter;
+import org.eclipse.core.databinding.conversion.text.StringToNumberConverter;
+import org.eclipse.core.internal.databinding.conversion.StringToNumberParser;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.ibm.icu.text.NumberFormat;
 
 /**
  * @since 1.1
  */
 public class StringToNumberConverterTest {
-	private NumberFormat numberFormat;
-	private NumberFormat numberIntegerFormat;
+	private Format numberFormat;
+	private Format numberIntegerFormat;
 
 	@Before
 	public void setUp() throws Exception {
-		numberFormat = NumberFormat.getNumberInstance();
-		numberFormat.setMaximumFractionDigits(305); // Used for BigDecimal test
-		numberFormat.setGroupingUsed(false); // Not really needed
+		numberFormat = StringToNumberParser.getDefaultNumberFormat();
+
+		// Use reflection to work for both ICU and java.text
+		numberFormat.getClass().getMethod("setMaximumFractionDigits", int.class).invoke(numberFormat, 305);
+		numberFormat.getClass().getMethod("setParseBigDecimal", boolean.class).invoke(numberFormat, true);
+
 		numberIntegerFormat = NumberFormat.getIntegerInstance();
 	}
+
 
 	@Test
 	public void testToTypes() throws Exception {
@@ -87,48 +92,28 @@ public class StringToNumberConverterTest {
 		}
 		catch(ClassNotFoundException | NoSuchMethodException e) {}
 	}
-	/**
-	 * Takes a java.math.BigDecimal and returns an ICU formatted string for it.
-	 * These tests depend on ICU to reliably format test strings for comparison.
-	 * Java &lt; 1.5 DecimalFormat did not format/parse BigDecimals properly,
-	 * converting them via doubleValue(), so we have a dependency for this unit test on ICU4J.
-	 * See Bug #180392 for more info.
-	 * @param bd
-	 * @return
-	 * @throws ClassNotFoundException
-	 * @throws NoSuchMethodException
-	 */
-	private String formatBigDecimal(BigDecimal javabd) throws Exception {
-		if(icuBigDecimal != null && icuBigDecimalCtr != null) {
-			// ICU Big Decimal constructor available
-			Number icubd = (Number) icuBigDecimalCtr.newInstance(javabd.unscaledValue(),
-					Integer.valueOf(javabd.scale()));
-			return numberFormat.format(icubd);
-		}
-		throw new IllegalArgumentException("ICU not present. Cannot reliably format large BigDecimal values; needed for testing. Java platforms prior to 1.5 fail to format/parse these decimals correctly.");
-	}
 
 	@Test
 	public void testConvertsToBigDecimal() throws Exception {
-		StringToNumberConverter<BigDecimal> converter = StringToNumberConverter.toBigDecimal();
+		StringToNumberConverter<BigDecimal> converter = StringToNumberConverter.toBigDecimal(numberFormat);
 		// Test 1: Decimal
 		BigDecimal input = new BigDecimal("100.23");
-		BigDecimal result = converter.convert(formatBigDecimal(input));
+		BigDecimal result = converter.convert(numberFormat.format(input));
 		assertEquals("Non-integer BigDecimal", input, result);
 
 		// Test 2: Long
 		input = BigDecimal.valueOf(Integer.MAX_VALUE + 100L);
-		result = converter.convert(formatBigDecimal(input));
+		result = converter.convert(numberFormat.format(input));
 		assertEquals("Integral BigDecimal in long range", input, result);
 
 		// Test 3: BigInteger range
 		input = new BigDecimal("92233720368547990480");
-		result = converter.convert(formatBigDecimal(input));
+		result = converter.convert(numberFormat.format(input));
 		assertEquals("Integral BigDecimal in long range", input, result);
 
 		// Test 4: Very high precision Decimal.
 		input = new BigDecimal("100404101.23345678345678893456789345678923198200134567823456789");
-		result = converter.convert(formatBigDecimal(input));
+		result = converter.convert(numberFormat.format(input));
 		assertEquals("Non-integer BigDecimal", input, result);
 	}
 

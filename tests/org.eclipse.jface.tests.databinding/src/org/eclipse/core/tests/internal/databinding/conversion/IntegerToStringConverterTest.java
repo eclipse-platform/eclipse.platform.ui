@@ -18,7 +18,7 @@ import org.eclipse.core.internal.databinding.conversion.IntegerToStringConverter
 import org.junit.Before;
 import org.junit.Test;
 
-import com.ibm.icu.text.NumberFormat;
+import java.text.NumberFormat;
 
 import junit.framework.TestCase;
 

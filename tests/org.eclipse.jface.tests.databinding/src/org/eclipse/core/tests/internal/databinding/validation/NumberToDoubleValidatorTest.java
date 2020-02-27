@@ -20,7 +20,7 @@ import org.eclipse.core.internal.databinding.conversion.NumberToDoubleConverter;
 import org.eclipse.core.internal.databinding.validation.NumberToDoubleValidator;
 import org.eclipse.core.internal.databinding.validation.NumberToNumberValidator;
 
-import com.ibm.icu.text.NumberFormat;
+import java.text.NumberFormat;
 
 /**
  * @since 1.1

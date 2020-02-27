@@ -22,8 +22,9 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 
 /**
- * Validates a number that is to be converted by a {@link NumberFormatConverter}.
- * Validation is comprised of parsing the String and range checks.
+ * Validates a number that is to be converted by a
+ * {@link NumberFormatConverter}. Validation is comprised of parsing the String
+ * and range checks.
  *
  * @since 1.0
  */

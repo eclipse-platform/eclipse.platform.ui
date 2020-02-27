@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2020 Jens Lidestrom and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,44 +9,42 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
- *     Michael Scharf - bug 240562
- *     Matt Carter - bug 180392
- *     Simon Scholz <simon.scholz@vogella.com> - Bug 445446
+ *     Jens Lidestrom - initial API and implementation
  ******************************************************************************/
 
-package org.eclipse.core.databinding.conversion;
+package org.eclipse.core.databinding.conversion.text;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.text.Format;
 
 import org.eclipse.core.internal.databinding.conversion.AbstractStringToNumberConverter;
+import org.eclipse.core.internal.databinding.conversion.StringToNumberParser;
 import org.eclipse.core.internal.databinding.validation.NumberFormatConverter;
-
-import com.ibm.icu.text.NumberFormat;
 
 /**
  * Converts a String to a Number using <code>NumberFormat.parse(...)</code>.
  * This class is thread safe.
- *
+ * <p>
  * Note that this class does not have precise type parameters because it
  * manually handles argument type mismatches and throws
  * {@link IllegalArgumentException}.
- *
+ * <p>
  * The first type parameter of {@link NumberFormatConverter} is set to
  * {@link Object} to preserve backwards compatibility, but the argument is meant
  * to always be a {@link String}.
+ * <p>
+ * This class is a variant of the class with the same name in the parent
+ * package, but it uses {@code java.text} instead of {@code com.ibm.icu}.
+ * <p>
+ * Methods on this class that don't take an argument number format use ICU if it
+ * is available on the classpath, otherwise they use {@code java.text}.
  *
  * @param <T> The type to which values are converted.
  *
- * @since 1.0
- * @deprecated Use
- *             {@link org.eclipse.core.databinding.conversion.text.StringToNumberConverter}
- *             instead, which does not use {@code com.ibm.icu} as that package
- *             may be removed in the future from platform.
+ * @since 1.9
  */
-@Deprecated
-public class StringToNumberConverter<T extends Number> extends AbstractStringToNumberConverter<T> {
+public final class StringToNumberConverter<T extends Number> extends AbstractStringToNumberConverter<T> {
 	/**
 	 * @param numberFormat used to parse the strings numbers.
 	 * @param toType       target number type.
@@ -57,17 +55,9 @@ public class StringToNumberConverter<T extends Number> extends AbstractStringToN
 	 * @param boxedType    a convenience that allows for the checking against one
 	 *                     type rather than boxed and unboxed types
 	 */
-	private StringToNumberConverter(NumberFormat numberFormat, Class<T> toType, Number min, Number max,
+	private StringToNumberConverter(Format numberFormat, Class<T> toType, Number min, Number max,
 			Class<T> boxedType) {
 		super(numberFormat, toType, min, max, boxedType);
-	}
-
-	/**
-	 * @implNote Overridden to avoid API tooling problem.
-	 */
-	@Override
-	public T convert(Object fromObject) {
-		return super.convert(fromObject);
 	}
 
 	/**
@@ -76,7 +66,7 @@ public class StringToNumberConverter<T extends Number> extends AbstractStringToN
 	 * @return to Integer converter for the default locale
 	 */
 	public static StringToNumberConverter<Integer> toInteger(boolean primitive) {
-		return toInteger(NumberFormat.getIntegerInstance(), primitive);
+		return toInteger(StringToNumberParser.getDefaultIntegerFormat(), primitive);
 	}
 
 	/**
@@ -84,7 +74,7 @@ public class StringToNumberConverter<T extends Number> extends AbstractStringToN
 	 * @param primitive    <code>true</code> if the convert to type is an int
 	 * @return to Integer converter with the provided numberFormat
 	 */
-	public static StringToNumberConverter<Integer> toInteger(NumberFormat numberFormat, boolean primitive) {
+	public static StringToNumberConverter<Integer> toInteger(Format numberFormat, boolean primitive) {
 		return new StringToNumberConverter<>(numberFormat,
 				(primitive) ? Integer.TYPE : Integer.class, MIN_INTEGER,
 				MAX_INTEGER, Integer.class);
@@ -96,7 +86,7 @@ public class StringToNumberConverter<T extends Number> extends AbstractStringToN
 	 * @return to Double converter for the default locale
 	 */
 	public static StringToNumberConverter<Double> toDouble(boolean primitive) {
-		return toDouble(NumberFormat.getNumberInstance(), primitive);
+		return toDouble(StringToNumberParser.getDefaultFormat(), primitive);
 	}
 
 	/**
@@ -104,7 +94,7 @@ public class StringToNumberConverter<T extends Number> extends AbstractStringToN
 	 * @param primitive    <code>true</code> if the convert to type is a double
 	 * @return to Double converter with the provided numberFormat
 	 */
-	public static StringToNumberConverter<Double> toDouble(NumberFormat numberFormat, boolean primitive) {
+	public static StringToNumberConverter<Double> toDouble(Format numberFormat, boolean primitive) {
 		return new StringToNumberConverter<>(numberFormat,
 				(primitive) ? Double.TYPE : Double.class, MIN_DOUBLE,
 				MAX_DOUBLE, Double.class);
@@ -116,7 +106,7 @@ public class StringToNumberConverter<T extends Number> extends AbstractStringToN
 	 * @return to Long converter for the default locale
 	 */
 	public static StringToNumberConverter<Long> toLong(boolean primitive) {
-		return toLong(NumberFormat.getIntegerInstance(), primitive);
+		return toLong(StringToNumberParser.getDefaultIntegerFormat(), primitive);
 	}
 
 	/**
@@ -124,7 +114,7 @@ public class StringToNumberConverter<T extends Number> extends AbstractStringToN
 	 * @param primitive    <code>true</code> if the convert to type is a long
 	 * @return to Long converter with the provided numberFormat
 	 */
-	public static StringToNumberConverter<Long> toLong(NumberFormat numberFormat, boolean primitive) {
+	public static StringToNumberConverter<Long> toLong(Format numberFormat, boolean primitive) {
 		return new StringToNumberConverter<>(numberFormat,
 				(primitive) ? Long.TYPE : Long.class, MIN_LONG, MAX_LONG,
 				Long.class);
@@ -136,7 +126,7 @@ public class StringToNumberConverter<T extends Number> extends AbstractStringToN
 	 * @return to Float converter for the default locale
 	 */
 	public static StringToNumberConverter<Float> toFloat(boolean primitive) {
-		return toFloat(NumberFormat.getNumberInstance(), primitive);
+		return toFloat(StringToNumberParser.getDefaultNumberFormat(), primitive);
 	}
 
 	/**
@@ -144,7 +134,7 @@ public class StringToNumberConverter<T extends Number> extends AbstractStringToN
 	 * @param primitive    <code>true</code> if the convert to type is a float
 	 * @return to Float converter with the provided numberFormat
 	 */
-	public static StringToNumberConverter<Float> toFloat(NumberFormat numberFormat, boolean primitive) {
+	public static StringToNumberConverter<Float> toFloat(Format numberFormat, boolean primitive) {
 		return new StringToNumberConverter<>(numberFormat,
 				(primitive) ? Float.TYPE : Float.class, MIN_FLOAT, MAX_FLOAT,
 				Float.class);
@@ -154,75 +144,67 @@ public class StringToNumberConverter<T extends Number> extends AbstractStringToN
 	 * @return to BigInteger converter for the default locale
 	 */
 	public static StringToNumberConverter<BigInteger> toBigInteger() {
-		return toBigInteger(NumberFormat.getIntegerInstance());
+		return toBigInteger(StringToNumberParser.getDefaultIntegerBigDecimalFormat());
 	}
 
 	/**
 	 * @param numberFormat number format used by the converter
 	 * @return to BigInteger converter with the provided numberFormat
 	 */
-	public static StringToNumberConverter<BigInteger> toBigInteger(NumberFormat numberFormat) {
+	public static StringToNumberConverter<BigInteger> toBigInteger(Format numberFormat) {
 		return new StringToNumberConverter<>(numberFormat, BigInteger.class,
 				null, null, BigInteger.class);
 	}
 
 	/**
 	 * @return to BigDecimal converter for the default locale
-	 * @since 1.2
 	 */
 	public static StringToNumberConverter<BigDecimal> toBigDecimal() {
-		return toBigDecimal(NumberFormat.getNumberInstance());
+		return toBigDecimal(StringToNumberParser.getDefaultBigDecimalFormat());
 	}
 
 	/**
 	 * @param numberFormat number format used by the converter
 	 * @return to BigDecimal converter with the provided numberFormat
-	 * @since 1.2
 	 */
-	public static StringToNumberConverter<BigDecimal> toBigDecimal(NumberFormat numberFormat) {
+	public static StringToNumberConverter<BigDecimal> toBigDecimal(Format numberFormat) {
 		return new StringToNumberConverter<>(numberFormat, BigDecimal.class,
 				null, null, BigDecimal.class);
 	}
 
 	/**
-	 * @param primitive
-	 *            <code>true</code> if the convert to type is a short
+	 * @param primitive <code>true</code> if the convert to type is a short
 	 * @return to Short converter for the default locale
-	 * @since 1.2
 	 */
 	public static StringToNumberConverter<Short> toShort(boolean primitive) {
-		return toShort(NumberFormat.getIntegerInstance(), primitive);
+		return toShort(StringToNumberParser.getDefaultIntegerFormat(), primitive);
 	}
 
 	/**
 	 * @param numberFormat number format used by the converter
 	 * @param primitive    <code>true</code> if the convert to type is a short
 	 * @return to Short converter with the provided numberFormat
-	 * @since 1.2
 	 */
-	public static StringToNumberConverter<Short> toShort(NumberFormat numberFormat, boolean primitive) {
+	public static StringToNumberConverter<Short> toShort(Format numberFormat, boolean primitive) {
 		return new StringToNumberConverter<>(numberFormat,
 				(primitive) ? Short.TYPE : Short.class, MIN_SHORT,
 				MAX_SHORT, Short.class);
 	}
 
 	/**
-	 * @param primitive
-	 *            <code>true</code> if the convert to type is a byte
+	 * @param primitive <code>true</code> if the convert to type is a byte
 	 * @return to Byte converter for the default locale
-	 * @since 1.2
 	 */
 	public static StringToNumberConverter<Byte> toByte(boolean primitive) {
-		return toByte(NumberFormat.getIntegerInstance(), primitive);
+		return toByte(StringToNumberParser.getDefaultIntegerFormat(), primitive);
 	}
 
 	/**
 	 * @param numberFormat number format used by the converter
 	 * @param primitive    <code>true</code> if the convert to type is a byte
 	 * @return to Byte converter with the provided numberFormat
-	 * @since 1.2
 	 */
-	public static StringToNumberConverter<Byte> toByte(NumberFormat numberFormat, boolean primitive) {
+	public static StringToNumberConverter<Byte> toByte(Format numberFormat, boolean primitive) {
 		return new StringToNumberConverter<>(numberFormat,
 				(primitive) ? Byte.TYPE : Byte.class, MIN_BYTE,
 				MAX_BYTE, Byte.class);

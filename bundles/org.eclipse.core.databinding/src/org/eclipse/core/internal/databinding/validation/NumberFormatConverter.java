@@ -14,29 +14,27 @@
 
 package org.eclipse.core.internal.databinding.validation;
 
-import org.eclipse.core.databinding.conversion.Converter;
+import java.text.Format;
 
-import com.ibm.icu.text.NumberFormat;
+import org.eclipse.core.databinding.conversion.Converter;
 
 /**
  * Converter that uses a number format for conversion.
  *
- * @param <F>
- *            The type from which values are converted.
- * @param <T>
- *            The type to which values are converted.
+ * @param <F> The type from which values are converted.
+ * @param <T> The type to which values are converted.
  *
  * @since 1.0
  */
 public abstract class NumberFormatConverter<F, T extends Number> extends Converter<F, T> {
-	private final NumberFormat numberFormat;
+	private final Format numberFormat;
 
 	/**
 	 * @param fromType
 	 * @param toType
 	 * @param numberFormat
 	 */
-	public NumberFormatConverter(Object fromType, Object toType, NumberFormat numberFormat) {
+	public NumberFormatConverter(Object fromType, Object toType, Format numberFormat) {
 		super(fromType, toType);
 
 		this.numberFormat = numberFormat;
@@ -45,7 +43,7 @@ public abstract class NumberFormatConverter<F, T extends Number> extends Convert
 	/**
 	 * @return number format
 	 */
-	/*package */ NumberFormat getNumberFormat() {
+	/* package */ Format getNumberFormat() {
 		return numberFormat;
 	}
 }

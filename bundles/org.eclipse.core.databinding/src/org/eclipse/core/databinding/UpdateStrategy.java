@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.core.databinding.conversion.IConverter;
-import org.eclipse.core.databinding.conversion.NumberToStringConverter;
-import org.eclipse.core.databinding.conversion.StringToNumberConverter;
+import org.eclipse.core.databinding.conversion.text.NumberToStringConverter;
+import org.eclipse.core.databinding.conversion.text.StringToNumberConverter;
 import org.eclipse.core.databinding.util.Policy;
 import org.eclipse.core.databinding.validation.ValidationStatus;
 import org.eclipse.core.internal.databinding.Activator;
@@ -45,11 +45,10 @@ import org.eclipse.core.internal.databinding.conversion.NumberToShortConverter;
 import org.eclipse.core.internal.databinding.conversion.ObjectToStringConverter;
 import org.eclipse.core.internal.databinding.conversion.StringToByteConverter;
 import org.eclipse.core.internal.databinding.conversion.StringToCharacterConverter;
+import org.eclipse.core.internal.databinding.conversion.StringToNumberParser;
 import org.eclipse.core.internal.databinding.conversion.StringToShortConverter;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-
-import com.ibm.icu.text.NumberFormat;
 
 /**
  * @since 1.0
@@ -188,12 +187,12 @@ import com.ibm.icu.text.NumberFormat;
 	private synchronized static Map<Pair, Object> getConverterMap() {
 		// using string-based lookup avoids loading of too many classes
 		if (converterMap == null) {
-			// NumberFormat to be shared across converters for the formatting of
-			// integer values
-			NumberFormat integerFormat = NumberFormat.getIntegerInstance();
-			// NumberFormat to be shared across converters for formatting non
-			// integer values
-			NumberFormat numberFormat = NumberFormat.getNumberInstance();
+			// NumberFormats to be shared across converters for the formatting of
+			// integer values, non-integer, big-integer and big non-integer numbers
+			Format integerFormat = StringToNumberParser.getDefaultIntegerFormat();
+			Format numberFormat = StringToNumberParser.getDefaultNumberFormat();
+			Format bigIntegerFormat = StringToNumberParser.getDefaultIntegerBigDecimalFormat();
+			Format bigNumberFormat = StringToNumberParser.getDefaultBigDecimalFormat();
 
 			converterMap = new HashMap<>();
 			// Standard and Boxed Types
@@ -229,10 +228,10 @@ import com.ibm.icu.text.NumberFormat;
 							new Pair(JAVA_LANG_STRING, JAVA_LANG_FLOAT), StringToNumberConverter.toFloat(numberFormat, false));
 			converterMap
 					.put(
-							new Pair(JAVA_LANG_STRING, JAVA_MATH_BIGINTEGER), StringToNumberConverter.toBigInteger(integerFormat));
+							new Pair(JAVA_LANG_STRING, JAVA_MATH_BIGINTEGER), StringToNumberConverter.toBigInteger(bigIntegerFormat));
 			converterMap
 					.put(
-							new Pair(JAVA_LANG_STRING, JAVA_MATH_BIGDECIMAL), StringToNumberConverter.toBigDecimal(numberFormat));
+							new Pair(JAVA_LANG_STRING, JAVA_MATH_BIGDECIMAL), StringToNumberConverter.toBigDecimal(bigNumberFormat));
 			converterMap
 					.put(
 							new Pair(JAVA_LANG_INTEGER, JAVA_LANG_STRING), NumberToStringConverter.fromInteger(integerFormat, false));
@@ -247,10 +246,10 @@ import com.ibm.icu.text.NumberFormat;
 							new Pair(JAVA_LANG_FLOAT, JAVA_LANG_STRING), NumberToStringConverter.fromFloat(numberFormat, false));
 			converterMap
 					.put(
-							new Pair(JAVA_MATH_BIGINTEGER, JAVA_LANG_STRING), NumberToStringConverter.fromBigInteger(integerFormat));
+							new Pair(JAVA_MATH_BIGINTEGER, JAVA_LANG_STRING), NumberToStringConverter.fromBigInteger(bigIntegerFormat));
 			converterMap
 					.put(
-							new Pair(JAVA_MATH_BIGDECIMAL, JAVA_LANG_STRING), NumberToStringConverter.fromBigDecimal(numberFormat));
+							new Pair(JAVA_MATH_BIGDECIMAL, JAVA_LANG_STRING), NumberToStringConverter.fromBigDecimal(bigNumberFormat));
 			converterMap
 					.put(
 							new Pair(JAVA_LANG_BYTE, JAVA_LANG_STRING), IntegerToStringConverter.fromByte(integerFormat, false));
@@ -410,14 +409,14 @@ import com.ibm.icu.text.NumberFormat;
 			addNumberToDoubleConverters(converterMap, numberFormat,
 					floatClasses);
 
-			addNumberToBigIntegerConverters(converterMap, integerFormat,
+			addNumberToBigIntegerConverters(converterMap, bigIntegerFormat,
 					integerClasses);
-			addNumberToBigIntegerConverters(converterMap, numberFormat,
+			addNumberToBigIntegerConverters(converterMap, bigNumberFormat,
 					floatClasses);
 
-			addNumberToBigDecimalConverters(converterMap, integerFormat,
+			addNumberToBigDecimalConverters(converterMap, bigIntegerFormat,
 					integerClasses);
-			addNumberToBigDecimalConverters(converterMap, numberFormat,
+			addNumberToBigDecimalConverters(converterMap, bigNumberFormat,
 					floatClasses);
 		}
 

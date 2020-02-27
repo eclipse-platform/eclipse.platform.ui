@@ -14,9 +14,9 @@
 
 package org.eclipse.core.internal.databinding.conversion;
 
-import org.eclipse.core.databinding.conversion.Converter;
+import java.text.Format;
 
-import com.ibm.icu.text.NumberFormat;
+import org.eclipse.core.databinding.conversion.Converter;
 
 /**
  * Converts a value that is an integer, non decimal, to a String using a
@@ -30,7 +30,7 @@ import com.ibm.icu.text.NumberFormat;
  */
 public class IntegerToStringConverter extends Converter<Object, String> {
 	private final boolean primitive;
-	private final NumberFormat numberFormat;
+	private final Format numberFormat;
 	private final Class<?> boxedType;
 
 	/**
@@ -38,7 +38,7 @@ public class IntegerToStringConverter extends Converter<Object, String> {
 	 * @param fromType
 	 * @param boxedType
 	 */
-	private IntegerToStringConverter(NumberFormat numberFormat, Class<?> fromType, Class<?> boxedType) {
+	private IntegerToStringConverter(Format numberFormat, Class<?> fromType, Class<?> boxedType) {
 		super(fromType, String.class);
 		this.primitive = fromType.isPrimitive();
 		this.numberFormat = numberFormat;
@@ -65,7 +65,7 @@ public class IntegerToStringConverter extends Converter<Object, String> {
 	 * @return converter
 	 */
 	public static IntegerToStringConverter fromShort(boolean primitive) {
-		return fromShort(NumberFormat.getIntegerInstance(), primitive);
+		return fromShort(StringToNumberParser.getDefaultIntegerFormat(), primitive);
 	}
 
 	/**
@@ -73,7 +73,7 @@ public class IntegerToStringConverter extends Converter<Object, String> {
 	 * @param primitive
 	 * @return converter
 	 */
-	public static IntegerToStringConverter fromShort(NumberFormat numberFormat,
+	public static IntegerToStringConverter fromShort(Format numberFormat,
 			boolean primitive) {
 		return new IntegerToStringConverter(numberFormat,
 				primitive ? Short.TYPE : Short.class, Short.class);
@@ -84,7 +84,7 @@ public class IntegerToStringConverter extends Converter<Object, String> {
 	 * @return converter
 	 */
 	public static IntegerToStringConverter fromByte(boolean primitive) {
-		return fromByte(NumberFormat.getIntegerInstance(), primitive);
+		return fromByte(StringToNumberParser.getDefaultIntegerFormat(), primitive);
 	}
 
 	/**
@@ -92,7 +92,7 @@ public class IntegerToStringConverter extends Converter<Object, String> {
 	 * @param primitive
 	 * @return converter
 	 */
-	public static IntegerToStringConverter fromByte(NumberFormat numberFormat,
+	public static IntegerToStringConverter fromByte(Format numberFormat,
 			boolean primitive) {
 		return new IntegerToStringConverter(numberFormat, primitive ? Byte.TYPE
 				: Byte.class, Byte.class);

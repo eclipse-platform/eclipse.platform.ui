@@ -14,10 +14,9 @@
 
 package org.eclipse.core.internal.databinding.conversion;
 
+import java.text.Format;
 import org.eclipse.core.internal.databinding.conversion.StringToNumberParser.ParseResult;
 import org.eclipse.core.internal.databinding.validation.NumberFormatConverter;
-
-import com.ibm.icu.text.NumberFormat;
 
 /**
  * Note that this class does not have precise type parameters because it
@@ -27,7 +26,7 @@ import com.ibm.icu.text.NumberFormat;
  * @since 1.0
  */
 public class StringToShortConverter extends NumberFormatConverter<Object, Short> {
-	private final NumberFormat numberFormat;
+	private final Format numberFormat;
 	private final boolean primitive;
 
 	private String outOfRangeMessage;
@@ -35,7 +34,7 @@ public class StringToShortConverter extends NumberFormatConverter<Object, Short>
 	/**
 	 * Constructs a new instance.
 	 */
-	private StringToShortConverter(NumberFormat numberFormat, Class<?> toType) {
+	private StringToShortConverter(Format numberFormat, Class<?> toType) {
 		super(String.class, toType, numberFormat);
 		this.numberFormat = numberFormat;
 		primitive = toType.isPrimitive();
@@ -80,7 +79,7 @@ public class StringToShortConverter extends NumberFormatConverter<Object, Short>
 	 * @return to Short converter for the default locale
 	 */
 	public static StringToShortConverter toShort(boolean primitive) {
-		return toShort(NumberFormat.getIntegerInstance(), primitive);
+		return toShort(StringToNumberParser.getDefaultIntegerFormat(), primitive);
 	}
 
 	/**
@@ -88,7 +87,7 @@ public class StringToShortConverter extends NumberFormatConverter<Object, Short>
 	 * @param primitive
 	 * @return to Short converter with the provided numberFormat
 	 */
-	public static StringToShortConverter toShort(NumberFormat numberFormat,
+	public static StringToShortConverter toShort(Format numberFormat,
 			boolean primitive) {
 		return new StringToShortConverter(numberFormat,
 				(primitive) ? Short.TYPE : Short.class);

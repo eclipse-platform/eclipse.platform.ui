@@ -8,4 +8,28 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/core/databinding/conversion/StringToNumberConverter.java" type="org.eclipse.core.databinding.conversion.StringToNumberConverter">
+        <filter comment="Bug 560293 - Innocuous extension of non-API type" id="576720909">
+            <message_arguments>
+                <message_argument value="AbstractStringToNumberConverter&lt;T&gt;"/>
+                <message_argument value="StringToNumberConverter&lt;T&gt;"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/core/databinding/conversion/text/NumberToStringConverter.java" type="org.eclipse.core.databinding.conversion.text.NumberToStringConverter">
+        <filter comment="Bug 560293 - Innocuous extension of non-API type" id="576720909">
+            <message_arguments>
+                <message_argument value="AbstractNumberToStringConverter"/>
+                <message_argument value="NumberToStringConverter"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/core/databinding/conversion/text/StringToNumberConverter.java" type="org.eclipse.core.databinding.conversion.text.StringToNumberConverter">
+        <filter comment="Bug 560293 - Innocuous extension of non-API type" id="576720909">
+            <message_arguments>
+                <message_argument value="AbstractStringToNumberConverter&lt;T&gt;"/>
+                <message_argument value="StringToNumberConverter&lt;T&gt;"/>
+            </message_arguments>
+        </filter>
+    </resource>
 </component>

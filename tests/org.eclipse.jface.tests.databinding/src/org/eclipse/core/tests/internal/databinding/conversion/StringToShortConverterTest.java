@@ -23,7 +23,7 @@ import org.eclipse.core.internal.databinding.conversion.StringToShortConverter;
 import org.junit.Before;
 import org.junit.Test;
 
-import com.ibm.icu.text.NumberFormat;
+import java.text.NumberFormat;
 
 
 /**

@@ -19,7 +19,7 @@ import java.math.BigInteger;
 import org.eclipse.core.databinding.conversion.IConverter;
 import org.eclipse.core.internal.databinding.conversion.NumberToBigIntegerConverter;
 
-import com.ibm.icu.text.NumberFormat;
+import java.text.NumberFormat;
 
 /**
  * @since 1.1

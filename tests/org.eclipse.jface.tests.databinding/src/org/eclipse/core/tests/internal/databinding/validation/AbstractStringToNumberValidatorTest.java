@@ -17,7 +17,7 @@ package org.eclipse.core.tests.internal.databinding.validation;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 
-import org.eclipse.core.databinding.conversion.StringToNumberConverter;
+import org.eclipse.core.databinding.conversion.text.StringToNumberConverter;
 import org.eclipse.core.internal.databinding.validation.AbstractStringToNumberValidator;
 import org.eclipse.core.internal.databinding.validation.NumberFormatConverter;
 import org.eclipse.core.runtime.IStatus;

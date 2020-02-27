@@ -17,7 +17,7 @@ package org.eclipse.core.internal.databinding;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
-import com.ibm.icu.text.MessageFormat;
+import java.text.MessageFormat;
 
 /**
  * @since 1.0

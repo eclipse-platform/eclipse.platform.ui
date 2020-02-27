@@ -14,11 +14,11 @@
 
 package org.eclipse.core.tests.internal.databinding.validation;
 
-import org.eclipse.core.databinding.conversion.StringToNumberConverter;
+import java.text.NumberFormat;
+
+import org.eclipse.core.databinding.conversion.text.StringToNumberConverter;
 import org.eclipse.core.databinding.validation.IValidator;
 import org.eclipse.core.internal.databinding.validation.StringToFloatValidator;
-
-import com.ibm.icu.text.NumberFormat;
 
 /**
  * @since 1.1

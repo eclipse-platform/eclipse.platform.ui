@@ -14,10 +14,9 @@
  */
 package org.eclipse.core.internal.databinding.conversion;
 
+import java.text.Format;
 import org.eclipse.core.internal.databinding.conversion.StringToNumberParser.ParseResult;
 import org.eclipse.core.internal.databinding.validation.NumberFormatConverter;
-
-import com.ibm.icu.text.NumberFormat;
 
 /**
  * Note that this class does not have precise type parameters because it
@@ -28,14 +27,14 @@ import com.ibm.icu.text.NumberFormat;
  */
 public class StringToByteConverter extends NumberFormatConverter<Object, Byte> {
 	private String outOfRangeMessage;
-	private NumberFormat numberFormat;
+	private Format numberFormat;
 	private boolean primitive;
 
 	/**
 	 * @param numberFormat
 	 * @param toType
 	 */
-	private StringToByteConverter(NumberFormat numberFormat, Class<?> toType) {
+	private StringToByteConverter(Format numberFormat, Class<?> toType) {
 		super(String.class, toType, numberFormat);
 		primitive = toType.isPrimitive();
 		this.numberFormat = numberFormat;
@@ -46,7 +45,7 @@ public class StringToByteConverter extends NumberFormatConverter<Object, Byte> {
 	 * @param primitive
 	 * @return converter
 	 */
-	public static StringToByteConverter toByte(NumberFormat numberFormat, boolean primitive) {
+	public static StringToByteConverter toByte(Format numberFormat, boolean primitive) {
 		return new StringToByteConverter(numberFormat, (primitive) ? Byte.TYPE : Byte.class);
 	}
 
@@ -55,7 +54,7 @@ public class StringToByteConverter extends NumberFormatConverter<Object, Byte> {
 	 * @return converter
 	 */
 	public static StringToByteConverter toByte(boolean primitive) {
-		return toByte(NumberFormat.getIntegerInstance(), primitive);
+		return toByte(StringToNumberParser.getDefaultIntegerFormat(), primitive);
 	}
 
 	@Override

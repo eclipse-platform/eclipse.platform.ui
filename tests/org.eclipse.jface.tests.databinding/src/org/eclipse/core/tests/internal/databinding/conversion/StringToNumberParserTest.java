@@ -19,12 +19,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
+import java.text.NumberFormat;
+
 import org.eclipse.core.internal.databinding.conversion.StringToNumberParser;
 import org.eclipse.core.internal.databinding.conversion.StringToNumberParser.ParseResult;
 import org.junit.Before;
 import org.junit.Test;
-
-import com.ibm.icu.text.NumberFormat;
 
 /**
  * @since 1.1
