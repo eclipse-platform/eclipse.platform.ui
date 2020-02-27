@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,9 +15,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.progress.internal;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -31,13 +30,12 @@ import org.eclipse.swt.graphics.Image;
  * display job status in a tree.
  */
 public class JobInfo extends JobTreeElement {
-
 	private IStatus blockedStatus;
 
-	private volatile boolean canceled = false;
-	private List<SubTaskInfo> children = Collections.synchronizedList(new ArrayList<>());
+	private volatile boolean canceled;
+	private final Queue<JobTreeElement> children = new ConcurrentLinkedQueue<>();
 
-	private Job job;
+	private final Job job;
 
 	private GroupInfo parent;
 
@@ -47,11 +45,11 @@ public class JobInfo extends JobTreeElement {
 
 	private FinishedJobs finishedJobs;
 
-	//Default to no progress
+	// Default to no progress
 	private int ticks = -1;
 
 	/**
-	 * Create a top level JobInfo.
+	 * Creates a top level JobInfo.
 	 *
 	 * @param enclosingJob the job to represent by this info
 	 */
@@ -63,7 +61,7 @@ public class JobInfo extends JobTreeElement {
 	}
 
 	/**
-	 * Add the subtask to the receiver.
+	 * Adds the subtask to the receiver.
 	 *
 	 * @param subTaskName name for the sub task
 	 */
@@ -72,7 +70,7 @@ public class JobInfo extends JobTreeElement {
 	}
 
 	/**
-	 * Add the amount of work to the job info.
+	 * Adds the amount of work to the job info.
 	 *
 	 * @param workIncrement
 	 */
@@ -88,7 +86,7 @@ public class JobInfo extends JobTreeElement {
 	}
 
 	/**
-	 * Begin the task called taskName with the supplied work.
+	 * Begins the task called taskName with the supplied work.
 	 *
 	 * @param taskName
 	 * @param work
@@ -101,12 +99,12 @@ public class JobInfo extends JobTreeElement {
 	public void cancel() {
 		this.canceled = true;
 		this.job.cancel();
-		//Call the refresh so that this is updated immediately
+		// Call the refresh so that this is updated immediately
 		progressManager.refreshJobInfo(this);
 	}
 
 	/**
-	 * Clear the collection of subtasks an the task info.
+	 * Clears the collection of subtasks an the task info.
 	 */
 	void clearChildren() {
 		children.clear();
@@ -118,17 +116,16 @@ public class JobInfo extends JobTreeElement {
 	}
 
 	/**
-	 * Compare the the job of the receiver to job2.
+	 * Compares the job of the receiver to another job.
 	 *
-	 * @param jobInfo
-	 *            The info we are comparing to
-	 * @return @see Comparable#compareTo(java.lang.Object)
+	 * @param jobInfo The info we are comparing to
+	 * @return Returns a negative integer, zero, or a positive integer as this
+	 *         object is less than, equal to, or greater than the specified object.
 	 */
 	private int compareJobs(JobInfo jobInfo) {
-
 		Job job2 = jobInfo.getJob();
 
-		//User jobs have top priority
+		// User jobs have top priority
 		if (job.isUser()) {
 			if (!job2.isUser()) {
 				return -1;
@@ -139,7 +136,7 @@ public class JobInfo extends JobTreeElement {
 			}
 		}
 
-		//Show the blocked ones last
+		// Show the blocked ones last.
 		if (isBlocked()) {
 			if (!jobInfo.isBlocked()) {
 				return 1;
@@ -152,7 +149,7 @@ public class JobInfo extends JobTreeElement {
 
 		int thisPriority = job.getPriority();
 		int otherPriority = job2.getPriority();
-		// If equal prio, order by names
+		// If equal priority, order by names
 		if (thisPriority == otherPriority) {
 			return job.getName().compareTo(job2.getName());
 		}
@@ -165,12 +162,11 @@ public class JobInfo extends JobTreeElement {
 	}
 
 	@Override
-	public int compareTo(Object arg0) {
-
-		if (!(arg0 instanceof JobInfo)) {
-			return super.compareTo(arg0);
+	public int compareTo(Object other) {
+		if (!(other instanceof JobInfo)) {
+			return super.compareTo(other);
 		}
-		JobInfo element = (JobInfo) arg0;
+		JobInfo element = (JobInfo) other;
 
 		boolean thisCanceled = isCanceled();
 		boolean anotherCanceled = element.isCanceled();
@@ -190,7 +186,7 @@ public class JobInfo extends JobTreeElement {
 		}
 
 		// ordering by job states, Job.RUNNING should be ordered first
-		return (thisState > anotherState ? -1 : (thisState == anotherState ? 0 : 1));
+		return Integer.compare(anotherState, thisState);
 	}
 
 	/**
@@ -205,7 +201,7 @@ public class JobInfo extends JobTreeElement {
 	/**
 	 * Return the blocked status or <code>null</code> if there isn't one.
 	 *
-	 * @return Returns the blockedStatus.
+	 * @return the blockedStatus.
 	 */
 	public IStatus getBlockedStatus() {
 		return blockedStatus;
@@ -241,10 +237,11 @@ public class JobInfo extends JobTreeElement {
 		if (state == Job.WAITING) {
 			return JFaceResources.getImage(ProgressManager.WAITING_JOB_KEY);
 		}
-		//By default return the first progress image
+		// By default return the first progress image.
 		return super.getDisplayImage();
 
 	}
+
 	@Override
 	String getDisplayString() {
 		return getDisplayString(true);
@@ -260,10 +257,10 @@ public class JobInfo extends JobTreeElement {
 	}
 
 	/**
-	 * Get the display string based on the current status and the name of the
+	 * Returns the display string based on the current status and the name of the
 	 * job.
-	 * @param showProgress a boolean to indicate if we should
-	 * show progress or not.
+	 *
+	 * @param showProgress a boolean to indicate if we should show progress or not.
 	 *
 	 * @return String
 	 */
@@ -273,8 +270,8 @@ public class JobInfo extends JobTreeElement {
 		}
 		IStatus blockedStatusLocal = getBlockedStatus();
 		if (blockedStatusLocal != null) {
-			return NLS.bind(ProgressMessages.JobInfo_Blocked, (new Object[] { getJob().getName(),
-					blockedStatusLocal.getMessage() }));
+			return NLS.bind(ProgressMessages.JobInfo_Blocked,
+					(new Object[] { getJob().getName(), blockedStatusLocal.getMessage() }));
 		}
 		if (getJob().getState() == Job.RUNNING) {
 			TaskInfo info = getTaskInfo();
@@ -288,11 +285,10 @@ public class JobInfo extends JobTreeElement {
 		}
 
 		return NLS.bind(ProgressMessages.JobInfo_Waiting, (new Object[] { getJob().getName() }));
-
 	}
 
 	/**
-	 * Return the GroupInfo for the receiver if it' is active.
+	 * Returns the GroupInfo for the receiver if it' is active.
 	 *
 	 * @return GroupInfo or <code>null</code>.
 	 */
@@ -304,7 +300,7 @@ public class JobInfo extends JobTreeElement {
 	}
 
 	/**
-	 * Return the job that the receiver is collecting data on.
+	 * Returns the job that the receiver is collecting data on.
 	 *
 	 * @return Job
 	 */
@@ -318,18 +314,18 @@ public class JobInfo extends JobTreeElement {
 	}
 
 	/**
-	 * Return the amount of progress we have had as a percentage. If there is no
+	 * Returns the amount of progress we have had as a percentage. If there is no
 	 * progress or it is indeterminate return IProgressMonitor.UNKNOWN.
 	 *
 	 * @return int
 	 */
 	int getPercentDone() {
 		TaskInfo info = getTaskInfo();
-		if (info != null){
-			if(info.totalWork == IProgressMonitor.UNKNOWN) {
+		if (info != null) {
+			if (info.totalWork == IProgressMonitor.UNKNOWN) {
 				return IProgressMonitor.UNKNOWN;
 			}
-			if(info.totalWork == 0) {
+			if (info.totalWork == 0) {
 				return 0;
 			}
 			return (int) info.preWork * 100 / info.totalWork;
@@ -338,7 +334,7 @@ public class JobInfo extends JobTreeElement {
 	}
 
 	/**
-	 * @return Returns the taskInfo.
+	 * @return the taskInfo.
 	 */
 	TaskInfo getTaskInfo() {
 		return taskInfo;
@@ -346,11 +342,11 @@ public class JobInfo extends JobTreeElement {
 
 	@Override
 	boolean hasChildren() {
-		return children.size() > 0;
+		return !children.isEmpty();
 	}
 
 	/**
-	 * Return whether or not there is a task.
+	 * Returns whether or not there is a task.
 	 *
 	 * @return boolean
 	 */
@@ -364,17 +360,16 @@ public class JobInfo extends JobTreeElement {
 	}
 
 	/**
-	 * Return whether or not the receiver is blocked.
+	 * Returns whether or not the receiver is blocked.
 	 *
-	 * @return boolean <code>true</code> if this is a currently
-	 * blocked job.
+	 * @return boolean <code>true</code> if this is a currently blocked job.
 	 */
 	public boolean isBlocked() {
 		return getBlockedStatus() != null;
 	}
 
 	/**
-	 * Return whether or not the job was cancelled in the UI.
+	 * Returns whether or not the job was cancelled in the UI.
 	 *
 	 * @return boolean
 	 */
@@ -393,17 +388,17 @@ public class JobInfo extends JobTreeElement {
 	}
 
 	/**
-	 * Set the description of the blocking status.
+	 * Sets the description of the blocking status.
 	 *
-	 * @param blockedStatus
-	 *            The IStatus that describes the blockage or <code>null</code>
+	 * @param blockedStatus The IStatus that describes the blockage or
+	 *                      <code>null</code>
 	 */
 	public void setBlockedStatus(IStatus blockedStatus) {
 		this.blockedStatus = blockedStatus;
 	}
 
 	/**
-	 * Set the GroupInfo to be the group.
+	 * Sets the GroupInfo to be the group.
 	 *
 	 * @param group
 	 */
@@ -412,7 +407,7 @@ public class JobInfo extends JobTreeElement {
 	}
 
 	/**
-	 * Set the name of the taskInfo.
+	 * Sets the name of the taskInfo.
 	 *
 	 * @param name
 	 */
@@ -421,14 +416,11 @@ public class JobInfo extends JobTreeElement {
 	}
 
 	/**
-	 * Set the number of ticks this job represents. Default is indeterminate
-	 * (-1).
+	 * Sets the number of ticks this job represents. Default is indeterminate (-1).
 	 *
-	 * @param ticks
-	 *            The ticks to set.
+	 * @param ticks The ticks to set.
 	 */
 	public void setTicks(int ticks) {
 		this.ticks = ticks;
 	}
-
 }

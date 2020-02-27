@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2015 IBM Corporation and others.
+ * Copyright (c) 2003, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -40,7 +40,11 @@ public class JobInfo extends JobTreeElement {
 
 	private TaskInfo taskInfo;
 
-	// Default to no progress.
+	private ProgressManager progressManager;
+
+	private FinishedJobs finishedJobs;
+
+	// Default to no progress
 	private int ticks = -1;
 
 	/**
@@ -50,6 +54,8 @@ public class JobInfo extends JobTreeElement {
 	 */
 	protected JobInfo(Job enclosingJob) {
 		this.job = enclosingJob;
+		this.progressManager = ProgressManager.getInstance();
+		this.finishedJobs = FinishedJobs.getInstance();
 	}
 
 	/**
@@ -91,8 +97,8 @@ public class JobInfo extends JobTreeElement {
 	public void cancel() {
 		this.canceled = true;
 		this.job.cancel();
-		// Call the refresh so that this is updated immediately.
-		ProgressManager.getInstance().refreshJobInfo(this);
+		// Call the refresh so that this is updated immediately
+		progressManager.refreshJobInfo(this);
 	}
 
 	/**
@@ -103,7 +109,7 @@ public class JobInfo extends JobTreeElement {
 	}
 
 	void clearTaskInfo() {
-		FinishedJobs.getInstance().remove(taskInfo);
+		finishedJobs.remove(taskInfo);
 		taskInfo = null;
 	}
 
@@ -117,7 +123,7 @@ public class JobInfo extends JobTreeElement {
 	private int compareJobs(JobInfo jobInfo) {
 		Job job2 = jobInfo.getJob();
 
-		// User jobs have top priority.
+		// User jobs have top priority
 		if (job.isUser()) {
 			if (!job2.isUser()) {
 				return -1;
@@ -141,12 +147,12 @@ public class JobInfo extends JobTreeElement {
 
 		int thisPriority = job.getPriority();
 		int otherPriority = job2.getPriority();
-		// If equal priority, order by names.
+		// If equal priority, order by names
 		if (thisPriority == otherPriority) {
 			return job.getName().compareTo(job2.getName());
 		}
 
-		// Order by priority (lower value is higher priority)
+		// order by priority (lower value is higher priority)
 		if (thisPriority < otherPriority) {
 			return -1;
 		}
@@ -163,7 +169,7 @@ public class JobInfo extends JobTreeElement {
 		boolean thisCanceled = isCanceled();
 		boolean anotherCanceled = element.isCanceled();
 		if (thisCanceled && !anotherCanceled) {
-			// If the receiver is cancelled then it is lowest priority.
+			// If the receiver is cancelled then it is lowest priority
 			return 1;
 		} else if (!thisCanceled && anotherCanceled) {
 			return -1;
@@ -172,17 +178,17 @@ public class JobInfo extends JobTreeElement {
 		int thisState = getJob().getState();
 		int anotherState = element.getJob().getState();
 
-		// If equal job state, compare other job attributes.
+		// if equal job state, compare other job attributes
 		if (thisState == anotherState) {
 			return compareJobs(element);
 		}
 
-		// Ordering by job states, Job.RUNNING should be ordered first.
+		// ordering by job states, Job.RUNNING should be ordered first
 		return Integer.compare(anotherState, thisState);
 	}
 
 	/**
-	 * Disposes of the receiver.
+	 * Dispose of the receiver.
 	 */
 	void dispose() {
 		if (parent != null) {
@@ -191,7 +197,7 @@ public class JobInfo extends JobTreeElement {
 	}
 
 	/**
-	 * Returns the blocked status or <code>null</code> if there isn't one.
+	 * Return the blocked status or <code>null</code> if there isn't one.
 	 *
 	 * @return the blockedStatus.
 	 */
@@ -260,10 +266,10 @@ public class JobInfo extends JobTreeElement {
 		if (isCanceled()) {
 			return NLS.bind(ProgressMessages.JobInfo_Cancelled, (new Object[] { getJob().getName() }));
 		}
-		IStatus blocked = getBlockedStatus();
-		if (blocked != null) {
+		IStatus blockedStatusLocal = getBlockedStatus();
+		if (blockedStatusLocal != null) {
 			return NLS.bind(ProgressMessages.JobInfo_Blocked,
-					(new Object[] { getJob().getName(), blocked.getMessage() }));
+					(new Object[] { getJob().getName(), blockedStatusLocal.getMessage() }));
 		}
 		if (getJob().getState() == Job.RUNNING) {
 			TaskInfo info = getTaskInfo();
@@ -326,7 +332,7 @@ public class JobInfo extends JobTreeElement {
 	}
 
 	/**
-	 * Returns the taskInfo.
+	 * @return the taskInfo.
 	 */
 	TaskInfo getTaskInfo() {
 		return taskInfo;
