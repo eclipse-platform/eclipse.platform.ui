@@ -43,7 +43,7 @@ public abstract class BasicPerformanceTest extends UITestCase {
 
 	public static final int GLOBAL = 2;
 
-	private PerformanceTester tester;
+	protected PerformanceTester tester;
 
 	private IProject testProject;
 
@@ -167,12 +167,12 @@ public abstract class BasicPerformanceTest extends UITestCase {
 	 * @param dimension
 	 *            the dimension to show in the summary
 	 */
-	private void tagAsGlobalSummary(String shortName, Dimension dimension) {
+	public void tagAsGlobalSummary(String shortName, Dimension dimension) {
 		System.out.println("GLOBAL " + shortName);
 		tester.tagAsGlobalSummary(shortName, dimension);
 	}
 
-	private void tagAsSummary(String shortName, Dimension dimension) {
+	public void tagAsSummary(String shortName, Dimension dimension) {
 		System.out.println("LOCAL " + shortName);
 		tester.tagAsSummary(shortName, dimension);
 	}

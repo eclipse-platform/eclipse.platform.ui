@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.performance;
 
-import org.eclipse.ui.tests.performance.BasicPerformanceTest;
 import org.eclipse.ui.tests.performance.FilteredTestSuite;
 import org.eclipse.ui.tests.performance.UIPerformanceTestSetup;
 
@@ -38,18 +37,14 @@ public class JFacePerformanceSuite extends FilteredTestSuite {
 
 	public JFacePerformanceSuite() {
 		super();
-		addTest(new ListViewerRefreshTest("testRefresh"));
-		addTest(new ComboViewerRefreshTest("testRefreshSmall"));
-		addTest(new FastTableViewerRefreshTest("testRefreshMultiple"));
-		addTest(new FastTableViewerRefreshTest("testUpdateMultiple"));
-		addTest(new FastTreeTest("testAddTenTenTimes"));
-		addTest(new FastTreeTest("testAddFiftyTenTimes"));
-		addTest(new TreeAddTest("testAddThousand"));
-		addTest(new FastTreeTest("testAddHundredTenTimes", BasicPerformanceTest.LOCAL));
-		addTest(new TreeAddTest("testAddThousandPreSort", BasicPerformanceTest.GLOBAL));
-		addTest(new ProgressMonitorDialogPerformanceTest("testLongNames"));
-		addTest(new ShrinkingTreeTest("testTreeViewerRefresh"));
-		addTest(new CollatorPerformanceTest("testCollator"));
+		addTestSuite(ListViewerRefreshTest.class);
+		addTestSuite(ComboViewerRefreshTest.class);
+		addTestSuite(FastTableViewerRefreshTest.class);
+		addTestSuite(FastTreeTest.class);
+		addTestSuite(TreeAddTest.class);
+		addTestSuite(ProgressMonitorDialogPerformanceTest.class);
+		addTestSuite(ShrinkingTreeTest.class);
+		addTestSuite(CollatorPerformanceTest.class);
 
 	}
 }
