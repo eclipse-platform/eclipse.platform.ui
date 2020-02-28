@@ -13,20 +13,33 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.performance;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.ide.IDE;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
  * Test editor switching.
  */
+@RunWith(Parameterized.class)
 public class EditorSwitchTest extends BasicPerformanceTest {
 
 	private String extension1;
 
 	private String extension2;
+
+	@Parameters
+	public static Collection<Object[]> data() {
+		return Arrays.asList(new Object[][] { { "perf_outline", "java" }, { "perf_basic", "perf_outline" } });
+	}
 
 	/**
 	 * Constructor.
@@ -34,17 +47,17 @@ public class EditorSwitchTest extends BasicPerformanceTest {
 	 * @param testName
 	 *            Test's name.
 	 */
-	public EditorSwitchTest(String[] pair) {
-		super("testEditorSwitch:" + pair[0] + "," + pair[1]);
-		extension1 = pair[0];
-		extension2 = pair[1];
+	public EditorSwitchTest(String extension1, String extension2) {
+		super("testEditorSwitch:" + extension1 + "," + extension2);
+		this.extension1 = extension1;
+		this.extension2 = extension2;
 	}
 
 	/**
 	 * Test editor opening performance. This test always fails.
 	 */
-	@Override
-	protected void runTest() throws CoreException {
+	@Test
+	public void test() throws CoreException {
 
 		// Open both files outside the loop so as not to include
 		// the initial time to open, just switching.

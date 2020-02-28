@@ -14,6 +14,9 @@
 
 package org.eclipse.ui.tests.performance;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.eclipse.jface.tests.performance.JFacePerformanceSuite;
 import org.eclipse.jface.viewers.CellLabelProvider;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
@@ -41,11 +44,17 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
  * Test scrolling performance with various label styles
+ *
  * @since 3.5
  */
+@RunWith(Parameterized.class)
 public class LabelProviderTest extends BasicPerformanceTest {
 
 	private class CountryEntry {
@@ -64,21 +73,21 @@ public class LabelProviderTest extends BasicPerformanceTest {
 			baseName = Integer.toString(i + 100);
 
 			switch (i % 3) {
-				case 0:
-					image = display.getSystemImage(SWT.ICON_WARNING);
-					bkColor = display.getSystemColor(SWT.COLOR_BLUE);
-					fgColor = display.getSystemColor(SWT.COLOR_RED);
-					break;
-				case 1:
-					image = display.getSystemImage(SWT.ICON_ERROR);
-					bkColor = display.getSystemColor(SWT.COLOR_GREEN);
-					fgColor = display.getSystemColor(SWT.COLOR_BLUE);
-					break;
-				case 2:
-					image = display.getSystemImage(SWT.ICON_QUESTION);
-					bkColor = display.getSystemColor(SWT.COLOR_RED);
-					fgColor = display.getSystemColor(SWT.COLOR_GREEN);
-					break;
+			case 0:
+				image = display.getSystemImage(SWT.ICON_WARNING);
+				bkColor = display.getSystemColor(SWT.COLOR_BLUE);
+				fgColor = display.getSystemColor(SWT.COLOR_RED);
+				break;
+			case 1:
+				image = display.getSystemImage(SWT.ICON_ERROR);
+				bkColor = display.getSystemColor(SWT.COLOR_GREEN);
+				fgColor = display.getSystemColor(SWT.COLOR_BLUE);
+				break;
+			case 2:
+				image = display.getSystemImage(SWT.ICON_QUESTION);
+				bkColor = display.getSystemColor(SWT.COLOR_RED);
+				fgColor = display.getSystemColor(SWT.COLOR_GREEN);
+				break;
 			}
 		}
 
@@ -114,19 +123,19 @@ public class LabelProviderTest extends BasicPerformanceTest {
 			// test so its contents has no effect on the performance results.
 			Object element = cell.getElement();
 			if (!(element instanceof CountryEntry))
-					return;
+				return;
 			cell.setText(element.toString());
 			cell.setImage(getImage(element));
 			if (useColor) {
-				cell.setForeground(((CountryEntry)element).getForegroundColor());
-				cell.setBackground(((CountryEntry)element).getBackgroundColor());
+				cell.setForeground(((CountryEntry) element).getForegroundColor());
+				cell.setBackground(((CountryEntry) element).getBackgroundColor());
 			}
 		}
 
 		@Override
 		public Image getImage(Object element) {
 			if (element instanceof CountryEntry)
-				return ((CountryEntry)element).getImage();
+				return ((CountryEntry) element).getImage();
 			return null;
 		}
 
@@ -152,18 +161,23 @@ public class LabelProviderTest extends BasicPerformanceTest {
 	private boolean styled;
 	private boolean colors;
 
+	@Parameters
+	public static Collection<Object[]> data() {
+		return Arrays.asList(new Object[][] { { true, true }, { true, false }, { false, true }, { false, false } });
+	}
+
 	/**
 	 * @param styled <code>true</code> to use DecoratingStyledCellLabelProvider
 	 * @param colors Run test with color on or off
 	 */
-	public LabelProviderTest(String testName, boolean styled, boolean colors) {
-		super(testName);
+	public LabelProviderTest(boolean styled, boolean colors) {
+		super("DecoratingLabelProviderStyled[" + styled + "]Colors[" + colors + "]");
 		this.styled = styled;
 		this.colors = colors;
 	}
 
-	@Override
-	protected void runTest() throws Throwable {
+	@Test
+	public void test() throws Throwable {
 		if (styled)
 			fViewer.setLabelProvider(getDecoratingStyledCellLabelProvider(colors));
 		else
@@ -259,17 +273,18 @@ public class LabelProviderTest extends BasicPerformanceTest {
 	private DecoratingStyledCellLabelProvider getDecoratingStyledCellLabelProvider(boolean useColor) {
 		// create our own context to avoid using default context
 		IDecorationContext context = new IDecorationContext() {
-				@Override
-				public String[] getProperties() {
-					return null;
-				}
-				@Override
-				public Object getProperty(String property) {
-					return null;
-				}
-			};
-		return new DecoratingStyledCellLabelProvider(
-				new TestCellLabelProvider(useColor), useColor ? getDecorator() : null, context);
+			@Override
+			public String[] getProperties() {
+				return null;
+			}
+
+			@Override
+			public Object getProperty(String property) {
+				return null;
+			}
+		};
+		return new DecoratingStyledCellLabelProvider(new TestCellLabelProvider(useColor),
+				useColor ? getDecorator() : null, context);
 	}
 
 	private ILabelDecorator getDecorator() {
@@ -308,14 +323,14 @@ public class LabelProviderTest extends BasicPerformanceTest {
 		@Override
 		public Color decorateBackground(Object element) {
 			if (element instanceof CountryEntry)
-				return ((CountryEntry)element).getBackgroundColor();
+				return ((CountryEntry) element).getBackgroundColor();
 			return null;
 		}
 
 		@Override
 		public Color decorateForeground(Object element) {
 			if (element instanceof CountryEntry)
-				return ((CountryEntry)element).getForegroundColor();
+				return ((CountryEntry) element).getForegroundColor();
 			return null;
 		}
 	}
@@ -326,7 +341,7 @@ public class LabelProviderTest extends BasicPerformanceTest {
 			@Override
 			public Image getImage(Object element) {
 				if (element instanceof CountryEntry)
-					return ((CountryEntry)element).getImage();
+					return ((CountryEntry) element).getImage();
 				return null;
 			}
 

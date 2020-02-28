@@ -14,32 +14,44 @@
 
 package org.eclipse.ui.tests.performance;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.ide.IDE;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
  * @since 3.1
  */
+@RunWith(Parameterized.class)
 public class OpenMultipleEditorTest extends BasicPerformanceTest {
 
 	private String extension;
 	private boolean closeAll;
 
-	/**
-	 * @param testName
-	 */
-	public OpenMultipleEditorTest(String extension, boolean closeAll, int tagging) {
-		super ("testOpenMultipleEditors:" + extension + (closeAll ? "[closeAll]" : "[closeEach]"), tagging);
+	@Parameters
+	public static Collection<Object[]> data() {
+		return Arrays.asList(new Object[][] { { "perf_basic", true }, { "perf_outline", true }, { "java", true },
+				{ "perf_basic", false }, { "perf_outline", false }, { "java", false } });
+	}
+
+	public OpenMultipleEditorTest(String extension, boolean closeAll) {
+		super("testOpenMultipleEditors:" + extension + (closeAll ? "[closeAll]" : "[closeEach]"),
+				BasicPerformanceTest.NONE);
 		this.extension = extension;
 		this.closeAll = closeAll;
 	}
 
-	@Override
-	protected void runTest() throws Throwable {
+	@Test
+	public void test() throws Throwable {
 		IWorkbenchWindow window = openTestWindow(UIPerformanceTestSetup.PERSPECTIVE1);
 		IWorkbenchPage activePage = window.getActivePage();
 

@@ -45,7 +45,6 @@ public class ViewPerformanceSuite extends TestSuite {
 	public ViewPerformanceSuite() {
 		addOpenCloseTests();
 		addResizeTests();
-		addTestSuite(OpenNavigatorFolderTest.class);
 	}
 
 	private void addOpenCloseTests() {
@@ -69,8 +68,7 @@ public class ViewPerformanceSuite extends TestSuite {
 	public static String[] getAllTestableViewIds() {
 		HashSet<String> result = new HashSet<>();
 
-		IViewDescriptor[] descriptors = PlatformUI.getWorkbench()
-				.getViewRegistry().getViews();
+		IViewDescriptor[] descriptors = PlatformUI.getWorkbench().getViewRegistry().getViews();
 		for (IViewDescriptor descriptor : descriptors) {
 			String[] categoryPath = descriptor.getCategoryPath();
 			if (categoryPath == null)

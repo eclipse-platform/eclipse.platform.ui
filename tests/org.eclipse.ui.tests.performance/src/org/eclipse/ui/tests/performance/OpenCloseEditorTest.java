@@ -14,6 +14,9 @@
 
 package org.eclipse.ui.tests.performance;
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.IEditorPart;
@@ -21,21 +24,30 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
-/**
- * @since 3.1
- */
+@RunWith(Parameterized.class)
 public class OpenCloseEditorTest extends BasicPerformanceTest {
 
 	private String extension;
+
+	@Parameters
+	public static Collection<Object[]> data() {
+		return Arrays.asList(new Object[][] { { "perf_basic", BasicPerformanceTest.NONE },
+				{ "perf_outline", BasicPerformanceTest.NONE }, { "java", BasicPerformanceTest.LOCAL } });
+	}
+
 
 	public OpenCloseEditorTest(String extension, int tagging) {
 		super("testOpenAndCloseEditors:" + extension, tagging);
 		this.extension = extension;
 	}
 
-	@Override
-	protected void runTest() throws Throwable {
+	@Test
+	public void test() throws Throwable {
 		final IFile file = getProject().getFile("1." + extension);
 		assertTrue(file.exists());
 

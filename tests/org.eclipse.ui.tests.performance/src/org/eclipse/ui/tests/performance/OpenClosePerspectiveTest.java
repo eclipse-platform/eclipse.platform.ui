@@ -15,6 +15,8 @@
 
 package org.eclipse.ui.tests.performance;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 
 import org.eclipse.core.commands.Command;
@@ -33,25 +35,34 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
+import org.eclipse.ui.tests.harness.util.EmptyPerspective;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
-/**
- * @since 3.1
- */
+@RunWith(Parameterized.class)
 public class OpenClosePerspectiveTest extends BasicPerformanceTest {
 
 	private String id;
 
-	/**
-	 * @param tagging
-	 * @param testName
-	 */
+	@Parameters
+	public static Collection<Object[]> data() {
+		return Arrays.asList(new Object[][] { { EmptyPerspective.PERSP_ID2, BasicPerformanceTest.NONE }, {
+				UIPerformanceTestSetup.PERSPECTIVE1,
+				BasicPerformanceTest.LOCAL },
+				{ "org.eclipse.ui.resourcePerspective", BasicPerformanceTest.NONE },
+				{ "org.eclipse.jdt.ui.JavaPerspective", BasicPerformanceTest.NONE },
+				{ "org.eclipse.debug.ui.DebugPerspective", BasicPerformanceTest.NONE } });
+	}
+
 	public OpenClosePerspectiveTest(String id, int tagging) {
 		super("testOpenClosePerspectives:" + id, tagging);
 		this.id = id;
 	}
 
-	@Override
-	protected void runTest() throws Throwable {
+	@Test
+	public void test() throws Throwable {
 		// Get the two perspectives to switch between.
 		final IPerspectiveRegistry registry = WorkbenchPlugin.getDefault()
 				.getPerspectiveRegistry();

@@ -13,17 +13,12 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.performance;
 
-import org.junit.runner.RunWith;
-import org.junit.runners.Suite;
-
+import junit.framework.JUnit4TestAdapter;
 import junit.framework.Test;
-import junit.framework.TestSuite;
 
 /**
  * Test all areas of the UI API.
  */
-@RunWith(Suite.class)
-@Suite.SuiteClasses({})
 public class UIPerformanceTestSuite extends FilteredTestSuite {
 
 	/**
@@ -38,12 +33,18 @@ public class UIPerformanceTestSuite extends FilteredTestSuite {
 	 */
 	public UIPerformanceTestSuite() {
 		super();
-		addTest(new ActivitiesPerformanceSuite());
+		addTestSuite(GenerateIdentifiersTest.class);
 		addTest(new WorkbenchPerformanceSuite());
+		addTest(new JUnit4TestAdapter(OpenClosePerspectiveTest.class));
+		addTest(new JUnit4TestAdapter(PerspectiveSwitchTest.class));
+		addTest(new JUnit4TestAdapter(OpenCloseWindowTest.class));
 		addTest(new ViewPerformanceSuite());
-		addTest(new EditorPerformanceSuite());
-		addTest(new TestSuite(CommandsPerformanceTest.class));
-		addTest(new LabelProviderTestSuite());
-		addTest(new TestSuite(ProgressReportingTest.class));
+		addTest(new JUnit4TestAdapter(OpenCloseEditorTest.class));
+		addTest(new JUnit4TestAdapter(OpenMultipleEditorTest.class));
+		addTest(new JUnit4TestAdapter(EditorSwitchTest.class));
+		addTestSuite(CommandsPerformanceTest.class);
+		addTest(new JUnit4TestAdapter(LabelProviderTest.class));
+		addTestSuite(ProgressReportingTest.class);
+		addTestSuite(OpenNavigatorFolderTest.class);
 	}
 }
