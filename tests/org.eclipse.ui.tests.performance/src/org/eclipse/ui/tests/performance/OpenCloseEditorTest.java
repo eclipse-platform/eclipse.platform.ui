@@ -19,6 +19,7 @@ import org.eclipse.test.performance.Dimension;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.ide.IDE;
 
 /**
@@ -41,19 +42,21 @@ public class OpenCloseEditorTest extends BasicPerformanceTest {
 		IWorkbenchWindow window = openTestWindow(UIPerformanceTestSetup.PERSPECTIVE1);
 		final IWorkbenchPage activePage = window.getActivePage();
 
-		exercise(new TestRunnable() {
-			@Override
-			public void run() throws Exception {
-				startMeasuring();
-				for (int j = 0; j < 10; j++) {
-					IEditorPart part = IDE.openEditor(activePage, file, true);
-					processEvents();
-					activePage.closeEditor(part, false);
-					processEvents();
-
+		exercise(() -> {
+			startMeasuring();
+			for (int j = 0; j < 10; j++) {
+				IEditorPart part;
+				try {
+					part = IDE.openEditor(activePage, file, true);
+				} catch (PartInitException e) {
+					throw new AssertionError("Can't open editor for " + file.getName());
 				}
-				stopMeasuring();
+				processEvents();
+				activePage.closeEditor(part, false);
+				processEvents();
+
 			}
+			stopMeasuring();
 		});
 
 		tagIfNecessary("UI - Open/Close Editor", Dimension.ELAPSED_PROCESS);

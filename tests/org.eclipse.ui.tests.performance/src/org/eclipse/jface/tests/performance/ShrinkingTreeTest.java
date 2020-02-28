@@ -15,7 +15,6 @@ package org.eclipse.jface.tests.performance;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.test.performance.Dimension;
-import org.eclipse.ui.tests.performance.TestRunnable;
 
 /**
  * ShrinkingTreeTest is a test to see how long it takes to refresh a tree that goes
@@ -68,24 +67,21 @@ public class ShrinkingTreeTest extends TreeTest {
 	private void testRefresh(final int smallSize, final int largeSize)
 			throws CoreException {
 
-		exercise(new TestRunnable() {
-			@Override
-			public void run() {
+		exercise(() -> {
 
-				TestTreeElement input = new TestTreeElement(0, null);
-				viewer.setInput(input);
-				input.createChildren(largeSize);
+			TestTreeElement input = new TestTreeElement(0, null);
+			viewer.setInput(input);
+			input.createChildren(largeSize);
 
-				processEvents();
-				viewer.refresh();
-				viewer.expandAll();
-				input.createChildren(smallSize);
-				startMeasuring();
-				viewer.refresh();
+			processEvents();
+			viewer.refresh();
+			viewer.expandAll();
+			input.createChildren(smallSize);
+			startMeasuring();
+			viewer.refresh();
 
-				stopMeasuring();
+			stopMeasuring();
 
-			}
 		}, MIN_ITERATIONS, ITERATIONS, JFacePerformanceSuite.MAX_TIME);
 
 		commitMeasurements();

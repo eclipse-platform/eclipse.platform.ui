@@ -25,7 +25,6 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.tests.performance.BasicPerformanceTest;
-import org.eclipse.ui.tests.performance.TestRunnable;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
@@ -54,54 +53,48 @@ public class FileImageDescriptorTest extends BasicPerformanceTest {
 	 */
 	public void testRefresh() throws Throwable {
 
-		exercise(new TestRunnable() {
-			@Override
-			public void run() {
-				Class<?> missing = null;
-				ArrayList<Image> images = new ArrayList<>();
+		exercise(() -> {
+			Class<?> missing = null;
+			ArrayList<Image> images = new ArrayList<>();
 
-				Bundle bundle = FrameworkUtil.getBundle(getClass());
-				Enumeration<String> bundleEntries = bundle
-						.getEntryPaths(IMAGES_DIRECTORY);
+			Bundle bundle = FrameworkUtil.getBundle(getClass());
+			Enumeration<String> bundleEntries = bundle.getEntryPaths(IMAGES_DIRECTORY);
 
 
-				while (bundleEntries.hasMoreElements()) {
-					ImageDescriptor descriptor;
-					String localImagePath = bundleEntries
-							.nextElement();
+			while (bundleEntries.hasMoreElements()) {
+				ImageDescriptor descriptor;
+				String localImagePath = bundleEntries.nextElement();
 
-					if(localImagePath.indexOf('.') < 0)
+				if (localImagePath.indexOf('.') < 0)
+					continue;
+
+				URL[] files = FileLocator.findEntries(bundle, new Path(localImagePath));
+
+				for (URL file : files) {
+					startMeasuring();
+					try {
+						descriptor = ImageDescriptor.createFromFile(missing, FileLocator.toFileURL(file).getFile());
+					} catch (IOException e) {
+						fail(e.getLocalizedMessage(), e);
 						continue;
-
-					URL[] files = FileLocator.findEntries(bundle, new Path(
-							localImagePath));
-
-					for (URL file : files) {
-						startMeasuring();
-						try {
-							descriptor = ImageDescriptor.createFromFile(missing, FileLocator.toFileURL(file).getFile());
-						} catch (IOException e) {
-							fail(e.getLocalizedMessage(), e);
-							continue;
-						}
-
-						for (int j = 0; j < 10; j++) {
-							Image image = descriptor.createImage();
-							images.add(image);
-						}
-
-						processEvents();
-						stopMeasuring();
-
 					}
 
+					for (int j = 0; j < 10; j++) {
+						Image image = descriptor.createImage();
+						images.add(image);
+					}
+
+					processEvents();
+					stopMeasuring();
+
 				}
 
+			}
 
-				Iterator<Image> imageIterator = images.iterator();
-				while (imageIterator.hasNext()) {
-					imageIterator.next().dispose();
-				}
+
+			Iterator<Image> imageIterator = images.iterator();
+			while (imageIterator.hasNext()) {
+				imageIterator.next().dispose();
 			}
 		}, 20, 100, JFacePerformanceSuite.MAX_TIME);
 

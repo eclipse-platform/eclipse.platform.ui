@@ -37,19 +37,16 @@ public class OpenCloseWindowTest extends BasicPerformanceTest {
 	protected void runTest() throws Throwable {
 		tagIfNecessary("UI - Open/Close Window", Dimension.ELAPSED_PROCESS);
 
-		exercise(new TestRunnable() {
-			@Override
-			public void run() throws Exception {
-				processEvents();
-				EditorTestHelper.calmDown(500, 30000, 500);
+		exercise(() -> {
+			processEvents();
+			EditorTestHelper.calmDown(500, 30000, 500);
 
-				startMeasuring();
-				IWorkbenchWindow window = openTestWindow(id);
-				processEvents();
-				window.close();
-				processEvents();
-				stopMeasuring();
-			}
+			startMeasuring();
+			IWorkbenchWindow window = openTestWindow(id);
+			processEvents();
+			window.close();
+			processEvents();
+			stopMeasuring();
 		});
 
 		commitMeasurements();

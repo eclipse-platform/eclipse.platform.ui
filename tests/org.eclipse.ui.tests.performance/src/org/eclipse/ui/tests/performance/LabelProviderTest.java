@@ -172,16 +172,13 @@ public class LabelProviderTest extends BasicPerformanceTest {
 		final Tree tree = ((TreeViewer) fViewer).getTree();
 		fShell.setFocus();
 
-		exercise(new TestRunnable() {
-			@Override
-			public void run() {
-				startMeasuring();
-				for (int i = 0; i < ITEM_COUNT / 5; i++) {
-					tree.setTopItem(tree.getItem(i * 5));
-					processEvents();
-				}
-				stopMeasuring();
+		exercise(() -> {
+			startMeasuring();
+			for (int i = 0; i < ITEM_COUNT / 5; i++) {
+				tree.setTopItem(tree.getItem(i * 5));
+				processEvents();
 			}
+			stopMeasuring();
 		}, MIN_ITERATIONS, ITERATIONS, JFacePerformanceSuite.MAX_TIME);
 
 		commitMeasurements();

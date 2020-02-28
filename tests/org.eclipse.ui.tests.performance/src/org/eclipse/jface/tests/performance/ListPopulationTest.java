@@ -20,7 +20,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.tests.performance.BasicPerformanceTest;
-import org.eclipse.ui.tests.performance.TestRunnable;
 
 /**
  * The ListPopulationTest is the test for simple
@@ -84,17 +83,14 @@ public class ListPopulationTest extends BasicPerformanceTest {
 		openBrowser();
 		final String [] items = getItems(count);
 
-		exercise(new TestRunnable() {
-			@Override
-			public void run() {
-				list.removeAll();
-				startMeasuring();
-				for (String item : items) {
-					list.add(item);
-				}
-				processEvents();
-				stopMeasuring();
+		exercise(() -> {
+			list.removeAll();
+			startMeasuring();
+			for (String item : items) {
+				list.add(item);
 			}
+			processEvents();
+			stopMeasuring();
 		});
 
 		commitMeasurements();
@@ -108,15 +104,12 @@ public class ListPopulationTest extends BasicPerformanceTest {
 	public void setItemsBench(int count) throws Throwable {
 		openBrowser();
 		final String [] items = getItems(count);
-		exercise(new TestRunnable() {
-			@Override
-			public void run() {
-				list.removeAll();
-				startMeasuring();
-				list.setItems(items);
-				processEvents();
-				stopMeasuring();
-			}
+		exercise(() -> {
+			list.removeAll();
+			startMeasuring();
+			list.setItems(items);
+			processEvents();
+			stopMeasuring();
 		});
 
 		commitMeasurements();

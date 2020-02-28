@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.tests.performance.BasicPerformanceTest;
-import org.eclipse.ui.tests.performance.TestRunnable;
 
 public class SWTTreeTest extends BasicPerformanceTest {
 
@@ -67,17 +66,14 @@ public class SWTTreeTest extends BasicPerformanceTest {
 	public void testGetItems() throws CoreException {
 		openBrowser();
 
-		exercise(new TestRunnable() {
-			@Override
-			public void run() throws Exception {
+		exercise(() -> {
+			processEvents();
+			startMeasuring();
+			for (int j = 0; j < TreeAddTest.TEST_COUNT; j++) {
+				tree.getItems();
 				processEvents();
-				startMeasuring();
-				for (int j = 0; j < TreeAddTest.TEST_COUNT; j++) {
-					tree.getItems();
-					processEvents();
-				}
-				stopMeasuring();
 			}
+			stopMeasuring();
 		});
 
 		commitMeasurements();
@@ -93,17 +89,14 @@ public class SWTTreeTest extends BasicPerformanceTest {
 	public void testGetItemAt() throws CoreException {
 		openBrowser();
 
-		exercise(new TestRunnable() {
-			@Override
-			public void run() throws Exception {
+		exercise(() -> {
+			processEvents();
+			startMeasuring();
+			for (int j = 0; j < TreeAddTest.TEST_COUNT; j++) {
+				tree.getItem(j);
 				processEvents();
-				startMeasuring();
-				for (int j = 0; j < TreeAddTest.TEST_COUNT; j++) {
-					tree.getItem(j);
-					processEvents();
-				}
-				stopMeasuring();
 			}
+			stopMeasuring();
 		});
 
 		commitMeasurements();

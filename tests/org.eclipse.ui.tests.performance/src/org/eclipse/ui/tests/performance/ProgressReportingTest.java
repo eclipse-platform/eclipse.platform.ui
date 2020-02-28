@@ -95,22 +95,19 @@ public class ProgressReportingTest extends BasicPerformanceTest {
 	public void runAsyncTest(Runnable testContent) throws Exception {
 		final Display display = Display.getCurrent();
 		tagIfNecessary(getName(), Dimension.ELAPSED_PROCESS);
-		exercise(new TestRunnable() {
-			@Override
-			public void run() throws Exception {
-				startMeasuring();
+		exercise(() -> {
+			startMeasuring();
 
-				isDone = false;
-				testContent.run();
+			isDone = false;
+			testContent.run();
 
-				for (; !isDone;) {
-					if (!display.readAndDispatch()) {
-						display.sleep();
-					}
+			for (; !isDone;) {
+				if (!display.readAndDispatch()) {
+					display.sleep();
 				}
-
-				stopMeasuring();
 			}
+
+			stopMeasuring();
 		}, 1, MAX_ITERATIONS, MAX_RUNTIME);
 
 		commitMeasurements();

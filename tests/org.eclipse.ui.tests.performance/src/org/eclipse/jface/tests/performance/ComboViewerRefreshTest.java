@@ -17,7 +17,6 @@ package org.eclipse.jface.tests.performance;
 import org.eclipse.jface.viewers.ComboViewer;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.tests.performance.TestRunnable;
 
 /**
  * ComboViewerRefreshTest is a test of refreshes of difference size in the combo
@@ -60,14 +59,11 @@ public class ComboViewerRefreshTest extends ViewerTest {
 		ELEMENT_COUNT = 1000;
 		openBrowser();
 
-		exercise(new TestRunnable() {
-			@Override
-			public void run() {
-				startMeasuring();
-				viewer.refresh();
-				processEvents();
-				stopMeasuring();
-			}
+		exercise(() -> {
+			startMeasuring();
+			viewer.refresh();
+			processEvents();
+			stopMeasuring();
 		}, MIN_ITERATIONS, ITERATIONS, JFacePerformanceSuite.MAX_TIME);
 
 		commitMeasurements();
@@ -83,16 +79,13 @@ public class ComboViewerRefreshTest extends ViewerTest {
 		ELEMENT_COUNT = 50;
 		openBrowser();
 
-		exercise(new TestRunnable() {
-			@Override
-			public void run() {
-				startMeasuring();
-				for (int i = 0; i < 1000; i++) {
-					viewer.refresh();
-				}
-				processEvents();
-				stopMeasuring();
+		exercise(() -> {
+			startMeasuring();
+			for (int i = 0; i < 1000; i++) {
+				viewer.refresh();
 			}
+			processEvents();
+			stopMeasuring();
 		}, MIN_ITERATIONS, slowGTKIterations(), JFacePerformanceSuite.MAX_TIME);
 
 		commitMeasurements();

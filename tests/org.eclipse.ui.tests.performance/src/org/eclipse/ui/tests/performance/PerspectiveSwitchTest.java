@@ -87,18 +87,15 @@ public class PerspectiveSwitchTest extends BasicPerformanceTest {
 
 		tagIfNecessary("UI - Perspective Switch", Dimension.ELAPSED_PROCESS);
 
-		exercise(new TestRunnable() {
-			@Override
-			public void run() throws Exception {
-				processEvents();
+		exercise(() -> {
+			processEvents();
 
-				startMeasuring();
-				page.setPerspective(perspective1);
-				processEvents();
-				page.setPerspective(perspective2);
-				processEvents();
-				stopMeasuring();
-			}
+			startMeasuring();
+			page.setPerspective(perspective1);
+			processEvents();
+			page.setPerspective(perspective2);
+			processEvents();
+			stopMeasuring();
 		});
 
 		commitMeasurements();
