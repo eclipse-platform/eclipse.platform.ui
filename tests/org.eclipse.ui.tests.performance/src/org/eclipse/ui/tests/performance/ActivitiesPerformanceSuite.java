@@ -23,8 +23,6 @@ import junit.framework.TestSuite;
  */
 public class ActivitiesPerformanceSuite extends TestSuite {
 
-
-
 	/**
 	 * Returns the suite. This is required to use the JUnit Launcher.
 	 */
@@ -32,9 +30,6 @@ public class ActivitiesPerformanceSuite extends TestSuite {
 		return new ActivitiesPerformanceSuite();
 	}
 
-	/**
-	 *
-	 */
 	public ActivitiesPerformanceSuite() {
 		super();
 		addTest(new GenerateIdentifiersTest(10000));

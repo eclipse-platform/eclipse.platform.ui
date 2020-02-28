@@ -32,8 +32,7 @@ public class FastTreeTest extends TreeAddTest {
 	}
 
 	/**
-	 * @throws CoreException
-	 *             Test addition to the tree one element at a time.
+	 * Test addition to the tree one element at a time.
 	 */
 	public void testAddTenTenTimes() throws CoreException {
 
@@ -42,8 +41,7 @@ public class FastTreeTest extends TreeAddTest {
 
 
 	/**
-	 * @throws CoreException
-	 *             Test addition to the tree one element at a time.
+	 * Test addition to the tree one element at a time.
 	 */
 	public void testAddFiftyTenTimes() throws CoreException {
 
@@ -51,8 +49,7 @@ public class FastTreeTest extends TreeAddTest {
 	}
 
 	/**
-	 * @throws CoreException
-	 *             Test addition to the tree one element at a time.
+	 * Test addition to the tree one element at a time.
 	 */
 	public void testAddHundredTenTimes() throws CoreException {
 

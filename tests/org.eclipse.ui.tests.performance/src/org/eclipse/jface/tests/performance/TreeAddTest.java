@@ -33,8 +33,7 @@ public class TreeAddTest extends TreeTest {
 	}
 
 	/**
-	 * @throws CoreException
-	 *             Test addition to the tree one element at a time.
+	 * Test addition to the tree one element at a time.
 	 */
 	public void testAddOneAtATime() {
 		openBrowser();
@@ -57,8 +56,7 @@ public class TreeAddTest extends TreeTest {
 	}
 
 	/**
-	 * @throws CoreException
-	 *             Test addition to the tree one element at a time.
+	 * Test addition to the tree one element at a time.
 	 */
 	public void testAddTen() throws CoreException {
 
@@ -66,8 +64,7 @@ public class TreeAddTest extends TreeTest {
 	}
 
 	/**
-	 * @throws CoreException
-	 *             Test addition to the tree one element at a time.
+	 * Test addition to the tree one element at a time.
 	 */
 	public void testAddFifty() throws CoreException {
 
@@ -75,8 +72,7 @@ public class TreeAddTest extends TreeTest {
 	}
 
 	/**
-	 * @throws CoreException
-	 *             Test addition to the tree one element at a time.
+	 * Test addition to the tree one element at a time.
 	 */
 	public void testAddHundred() throws CoreException {
 
@@ -142,8 +138,7 @@ public class TreeAddTest extends TreeTest {
 	}
 
 	/**
-	 * @throws CoreException
-	 *             Test addition to the tree one element at a time.
+	 * Test addition to the tree one element at a time.
 	 */
 	public void testAddTwoThousand() throws CoreException {
 
@@ -152,8 +147,7 @@ public class TreeAddTest extends TreeTest {
 	}
 
 	/**
-	 * @throws CoreException
-	 *             Test addition to the tree with the items presorted.
+	 * Test addition to the tree with the items presorted.
 	 */
 	public void testAddHundredPreSort() throws CoreException {
 
@@ -161,8 +155,7 @@ public class TreeAddTest extends TreeTest {
 	}
 
 	/**
-	 * @throws CoreException
-	 *             Test addition to the tree with the items presorted.
+	 * Test addition to the tree with the items presorted.
 	 */
 	public void testAddThousandPreSort() throws CoreException {
 		tagIfNecessary("JFace - Add 2000 items in 2 blocks to TreeViewer",

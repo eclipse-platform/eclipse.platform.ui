@@ -13,18 +13,17 @@
  *******************************************************************************/
 package org.eclipse.jface.tests.performance;
 
-import junit.framework.Test;
-
 import org.eclipse.ui.tests.performance.BasicPerformanceTest;
 import org.eclipse.ui.tests.performance.FilteredTestSuite;
 import org.eclipse.ui.tests.performance.UIPerformanceTestSetup;
+
+import junit.framework.Test;
 
 /**
  * The JFacePerformanceSuite are the performance tests for JFace.
  */
 public class JFacePerformanceSuite extends FilteredTestSuite {
 
-	//Some of these tests are very slow on 3.0
 	//Specify the minimum number of iterations
 	//and the time to drop down to a lower number
 

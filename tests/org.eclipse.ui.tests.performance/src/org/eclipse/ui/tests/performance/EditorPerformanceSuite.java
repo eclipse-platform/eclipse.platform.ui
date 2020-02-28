@@ -41,38 +41,18 @@ public class EditorPerformanceSuite extends TestSuite {
 		addOpenMultipleScenarios(false);
 	}
 
-	// Commented out: these tests don't seem to be working
-//    /**
-//     *
-//     * @since 3.1
-//     */
-//    private void addResizeScenarios() {
-//        for (int i = 0; i < EDITOR_FILE_EXTENSIONS.length; i++) {
-//            addTest(new ResizeTest(new EditorWidgetFactory("1." + EDITOR_FILE_EXTENSIONS[i])));
-//        }
-//    }
-
-	/**
-	 *
-	 */
 	private void addSwitchScenarios() {
 		for (String[] EDITOR_SWITCH_PAIR : EDITOR_SWITCH_PAIRS) {
 			addTest(new EditorSwitchTest(EDITOR_SWITCH_PAIR));
 		}
 	}
 
-	/**
-	 *
-	 */
 	private void addOpenMultipleScenarios(boolean closeAll) {
 		for (String EDITOR_FILE_EXTENSION : EDITOR_FILE_EXTENSIONS) {
 			addTest(new OpenMultipleEditorTest(EDITOR_FILE_EXTENSION, closeAll, BasicPerformanceTest.NONE));
 		}
 	}
 
-	/**
-	 *
-	 */
 	private void addOpenCloseScenarios() {
 		for (int i = 0; i < EDITOR_FILE_EXTENSIONS.length; i++) {
 			addTest(new OpenCloseEditorTest(EDITOR_FILE_EXTENSIONS[i], i == 3 ? BasicPerformanceTest.LOCAL : BasicPerformanceTest.NONE));

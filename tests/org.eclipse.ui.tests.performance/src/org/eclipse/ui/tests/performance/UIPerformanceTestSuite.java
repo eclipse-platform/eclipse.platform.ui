@@ -13,12 +13,17 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.performance;
 
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
+
 import junit.framework.Test;
 import junit.framework.TestSuite;
 
 /**
  * Test all areas of the UI API.
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({})
 public class UIPerformanceTestSuite extends FilteredTestSuite {
 
 	/**

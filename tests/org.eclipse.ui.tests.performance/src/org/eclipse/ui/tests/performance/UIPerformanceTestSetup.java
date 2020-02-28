@@ -16,9 +16,6 @@ package org.eclipse.ui.tests.performance;
 
 import java.io.ByteArrayInputStream;
 
-import junit.extensions.TestSetup;
-import junit.framework.Test;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
@@ -28,6 +25,9 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+
+import junit.extensions.TestSetup;
+import junit.framework.Test;
 
 public class UIPerformanceTestSetup extends TestSetup {
 
@@ -44,9 +44,6 @@ public class UIPerformanceTestSetup extends TestSetup {
 		super(test);
 	}
 
-	/*
-	 * @see junit.extensions.TestSetup#setUp()
-	 */
 	@Override
 	protected void setUp() throws Exception {
 		IWorkbench workbench= PlatformUI.getWorkbench();
@@ -66,9 +63,6 @@ public class UIPerformanceTestSetup extends TestSetup {
 		}
 	}
 
-	/*
-	 * @see junit.extensions.TestSetup#tearDown()
-	 */
 	@Override
 	protected void tearDown() throws Exception {
 		// do nothing, the set up workspace will be used by the open editor tests

@@ -42,18 +42,12 @@ public class ViewPerformanceSuite extends TestSuite {
 		return new ViewPerformanceSuite();
 	}
 
-	/**
-	 *
-	 */
 	public ViewPerformanceSuite() {
 		addOpenCloseTests();
 		addResizeTests();
 		addTestSuite(OpenNavigatorFolderTest.class);
 	}
 
-	/**
-	 *
-	 */
 	private void addOpenCloseTests() {
 		String[] ids = getAllTestableViewIds();
 
