@@ -81,7 +81,8 @@ public class EditorTestHelper {
 	}
 
 	public static void runEventQueue(Shell shell) {
-		while (shell.getDisplay().readAndDispatch());
+		while (shell.getDisplay().readAndDispatch()) {
+		}
 	}
 
 	public static void runEventQueue(long minTime) {

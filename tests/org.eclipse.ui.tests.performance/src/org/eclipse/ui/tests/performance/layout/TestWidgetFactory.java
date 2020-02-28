@@ -33,11 +33,9 @@ public abstract class TestWidgetFactory {
 		return Geometry.getSize(parent.getClientArea());
 	}
 
-	public void init() throws CoreException {
-	}
+	public abstract void init() throws WorkbenchException;
 
-	public void done() throws CoreException {
-	}
+	public abstract void done();
 	public abstract String getName();
 	public abstract Composite getControl() throws CoreException, WorkbenchException;
 }

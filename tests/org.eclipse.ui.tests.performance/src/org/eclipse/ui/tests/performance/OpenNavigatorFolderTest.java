@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
-import junit.framework.Assert;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -33,6 +33,7 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.views.navigator.ResourceNavigator;
 import org.osgi.framework.Bundle;
+
 
 /**
  * This class/test was originally written for WTP bug 106158, and adapted to a
@@ -81,14 +82,14 @@ public class OpenNavigatorFolderTest extends PerformanceTestCase {
 					}
 				}
 				catch (IOException e) {
-					Assert.fail(e.getMessage());
+					fail(e.getMessage());
 				}
 				finally {
 					try {
 						baos.close();
 					}
 					catch (IOException e) {
-						Assert.fail(e.getMessage());
+						fail(e.getMessage());
 					}
 				}
 				IFile file = project.getFile(entry.getName());
@@ -100,21 +101,21 @@ public class OpenNavigatorFolderTest extends PerformanceTestCase {
 						file.setContents(bais, true, false, new NullProgressMonitor());
 				}
 				catch (CoreException e) {
-					Assert.fail(e.getMessage());
+					fail(e.getMessage());
 				}
 				finally {
 					try {
 						bais.close();
 					}
 					catch (IOException e) {
-						Assert.fail(e.getMessage());
+						fail(e.getMessage());
 					}
 				}
 				entry = zis.getNextEntry();
 			}
 		}
 		catch (IOException e) {
-			Assert.fail(e.getMessage());
+			fail(e.getMessage());
 		}
 		finally {
 			try {
@@ -123,7 +124,7 @@ public class OpenNavigatorFolderTest extends PerformanceTestCase {
 				}
 			}
 			catch (IOException e) {
-				Assert.fail(e.getMessage());
+				fail(e.getMessage());
 			}
 		}
 		startMeasuring();
@@ -133,14 +134,14 @@ public class OpenNavigatorFolderTest extends PerformanceTestCase {
 			view = activePage.showView("org.eclipse.ui.views.ResourceNavigator");
 		}
 		catch (PartInitException e) {
-			Assert.fail(e.getMessage());
+			fail(e.getMessage());
 		}
 		ResourceNavigator navigatorView = null;
 		try {
 			navigatorView = (ResourceNavigator) view;
 		}
 		catch (ClassCastException e) {
-			Assert.fail(e.getMessage());
+			fail(e.getMessage());
 		}
 		navigatorView.getTreeViewer().expandAll();
 		stopMeasuring();
@@ -156,7 +157,7 @@ public class OpenNavigatorFolderTest extends PerformanceTestCase {
 				project.open(new NullProgressMonitor());
 			}
 			catch (CoreException e) {
-				Assert.fail(e.getMessage());
+				fail(e.getMessage());
 			}
 		}
 		return project;

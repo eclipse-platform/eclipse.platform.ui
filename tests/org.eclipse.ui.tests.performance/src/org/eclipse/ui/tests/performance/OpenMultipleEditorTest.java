@@ -16,7 +16,7 @@ package org.eclipse.ui.tests.performance;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.test.performance.Dimension;
-import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.ide.IDE;
@@ -56,9 +56,9 @@ public class OpenMultipleEditorTest extends BasicPerformanceTest {
 			activePage.closeAllEditors(false);
 		}
 		else {
-			IEditorPart [] parts = activePage.getEditors();
-			for (IEditorPart part : parts) {
-				activePage.closeEditor(part, false);
+			IEditorReference[] parts = activePage.getEditorReferences();
+			for (IEditorReference part : parts) {
+				activePage.closeEditor(part.getEditor(false), false);
 			}
 		}
 		stopMeasuring();

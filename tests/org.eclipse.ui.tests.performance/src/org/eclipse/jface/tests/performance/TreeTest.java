@@ -19,7 +19,7 @@ import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerSorter;
+import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.widgets.Shell;
 
 /**
@@ -27,8 +27,6 @@ import org.eclipse.swt.widgets.Shell;
  *
  */
 public abstract class TreeTest extends ViewerTest {
-
-
 
 	TreeViewer viewer;
 
@@ -55,7 +53,7 @@ public abstract class TreeTest extends ViewerTest {
 		viewer = createTreeViewer(shell);
 		viewer.setContentProvider(getContentProvider());
 		viewer.setLabelProvider(getLabelProvider());
-		viewer.setSorter(new ViewerSorter());
+		viewer.setComparator(new ViewerComparator());
 		viewer.setUseHashlookup(true);
 		return viewer;
 	}
