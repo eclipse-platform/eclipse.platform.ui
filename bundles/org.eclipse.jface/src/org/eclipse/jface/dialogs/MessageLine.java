@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,7 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Rüdiger Herrmann - 395426: [JFace] StatusDialog should escape ampersand in status message
- *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 546991
+ *     Alexander Fedorov <alexander.fedorov@arsysop.ru> - Bug 546991, Bug 560667
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
@@ -79,7 +79,7 @@ public class MessageLine extends CLabel {
 	 *               set the empty text and no image.
 	 */
 	public void setErrorStatus(IStatus status) {
-		if (status != null && !status.isOK()) {
+		if (status != null) {
 			String message = status.getMessage();
 			if (message != null && message.length() > 0) {
 				setText(LegacyActionTools.escapeMnemonics(message));
