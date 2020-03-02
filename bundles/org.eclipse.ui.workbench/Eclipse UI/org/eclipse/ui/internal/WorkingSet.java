@@ -14,7 +14,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
 import org.eclipse.core.runtime.Adapters;
@@ -26,6 +26,8 @@ import org.eclipse.ui.IElementFactory;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IWorkingSetManager;
+import org.eclipse.ui.IWorkingSetUpdater;
+import org.eclipse.ui.IWorkingSetUpdater2;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.misc.Policy;
 import org.eclipse.ui.internal.registry.WorkingSetDescriptor;
@@ -92,8 +94,8 @@ public class WorkingSet extends AbstractWorkingSet {
 		if (object instanceof WorkingSet) {
 			WorkingSet workingSet = (WorkingSet) object;
 			return Objects.equals(workingSet.getName(), getName())
-					&& Objects.equals(workingSet.getElementsArray(), getElementsArray())
-					&& Objects.equals(workingSet.getId(), getId());
+					&& Objects.equals(workingSet.getId(), getId())
+					&& Objects.equals(workingSet.getElementsArray(), getElementsArray());
 		}
 		return false;
 	}
@@ -142,12 +144,23 @@ public class WorkingSet extends AbstractWorkingSet {
 	}
 
 	/**
-	 * Recreates the working set elements from the persistence memento.
+	 * Recreates the working set elements from the persistence memento on first working set access.
 	 */
 	@Override
 	void restoreWorkingSet() {
+		IWorkingSetUpdater2 updater = getUpdater();
+		IAdaptable[] itemsArray;
+		if (updater != null && updater.isManagingPersistenceOf(this)) {
+			itemsArray = updater.restore(this);
+		} else {
+			itemsArray = restoreFromMemento();
+		}
+		internalSetElements(itemsArray);
+	}
+
+	private IAdaptable[] restoreFromMemento() {
 		IMemento[] itemMementos = workingSetMemento.getChildren(IWorkbenchConstants.TAG_ITEM);
-		final Set items = new HashSet();
+		Set<IAdaptable> items = new LinkedHashSet<>();
 		for (final IMemento itemMemento : itemMementos) {
 			final String factoryID = itemMemento.getString(IWorkbenchConstants.TAG_FACTORY_ID);
 
@@ -167,16 +180,17 @@ public class WorkingSet extends AbstractWorkingSet {
 				public void run() throws Exception {
 					IAdaptable item = factory.createElement(itemMemento);
 					if (item == null) {
-						if (Policy.DEBUG_WORKING_SETS)
+						if (Policy.DEBUG_WORKING_SETS) {
 							WorkbenchPlugin
 									.log("Unable to restore working set item - cannot instantiate item: " + factoryID); //$NON-NLS-1$
-
-					} else
+						}
+					} else {
 						items.add(item);
+					}
 				}
 			});
 		}
-		internalSetElements((IAdaptable[]) items.toArray(new IAdaptable[items.size()]));
+		return items.toArray(new IAdaptable[items.size()]);
 	}
 
 	/**
@@ -197,6 +211,10 @@ public class WorkingSet extends AbstractWorkingSet {
 			memento.putString(IWorkbenchConstants.TAG_LABEL, getLabel());
 			memento.putString(IWorkbenchConstants.TAG_ID, getUniqueId());
 			memento.putString(IWorkbenchConstants.TAG_EDIT_PAGE_ID, editPageId);
+			IWorkingSetUpdater2 updater = getUpdater();
+			if (updater != null && updater.isManagingPersistenceOf(this)) {
+				return;
+			}
 			for (IAdaptable adaptable : elements) {
 				final IPersistableElement persistable = Adapters.adapt(adaptable, IPersistableElement.class);
 				if (persistable != null) {
@@ -265,13 +283,40 @@ public class WorkingSet extends AbstractWorkingSet {
 
 	@Override
 	public IAdaptable[] adaptElements(IAdaptable[] objects) {
-		IWorkingSetManager manager = getManager();
-		if (manager instanceof WorkingSetManager) {
-			WorkingSetDescriptor descriptor = getDescriptor(null);
-			if (descriptor == null || !descriptor.isElementAdapterClassLoaded())
+		WorkingSetManager manager = getWorkingSetManager();
+		if (manager != null) {
+			WorkingSetDescriptor descriptor = getDescriptor();
+			if (descriptor == null || !descriptor.isElementAdapterClassLoaded()) {
 				return objects;
-			return ((WorkingSetManager) manager).getElementAdapter(descriptor).adaptElements(this, objects);
+			}
+			return manager.getElementAdapter(descriptor).adaptElements(this, objects);
 		}
 		return objects;
+	}
+
+	private WorkingSetManager getWorkingSetManager() {
+		IWorkingSetManager manager = getManager();
+		if (manager instanceof WorkingSetManager) {
+			return (WorkingSetManager) manager;
+		}
+		return null;
+	}
+
+	private WorkingSetDescriptor getDescriptor() {
+		return getDescriptor(null);
+	}
+
+	private IWorkingSetUpdater2 getUpdater() {
+		WorkingSetManager manager = getWorkingSetManager();
+		if (manager != null) {
+			WorkingSetDescriptor descriptor = getDescriptor();
+			if (descriptor != null) {
+				IWorkingSetUpdater updater = manager.getUpdater(descriptor);
+				if (updater instanceof IWorkingSetUpdater2) {
+					return (IWorkingSetUpdater2) updater;
+				}
+			}
+		}
+		return null;
 	}
 }

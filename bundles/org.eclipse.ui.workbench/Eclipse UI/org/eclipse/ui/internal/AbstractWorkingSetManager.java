@@ -715,7 +715,7 @@ public abstract class AbstractWorkingSetManager extends EventManager
 		}
 	}
 
-	private IWorkingSetUpdater getUpdater(WorkingSetDescriptor descriptor) {
+	IWorkingSetUpdater getUpdater(WorkingSetDescriptor descriptor) {
 		IWorkingSetUpdater updater = updaters.get(descriptor.getId());
 		if (updater == null) {
 			updater = descriptor.createWorkingSetUpdater();
