@@ -45,6 +45,6 @@ public class UIPerformanceTestSuite extends FilteredTestSuite {
 		addTestSuite(CommandsPerformanceTest.class);
 		addTest(new JUnit4TestAdapter(LabelProviderTest.class));
 		addTestSuite(ProgressReportingTest.class);
-		addTestSuite(OpenNavigatorFolderTest.class);
+		addTestSuite(OpenProjectExplorerFolderTest.class);
 	}
 }

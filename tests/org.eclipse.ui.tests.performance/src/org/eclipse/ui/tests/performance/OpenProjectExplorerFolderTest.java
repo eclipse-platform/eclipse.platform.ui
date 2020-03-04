@@ -31,7 +31,7 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.views.navigator.ResourceNavigator;
+import org.eclipse.ui.navigator.resources.ProjectExplorer;
 import org.osgi.framework.Bundle;
 
 
@@ -58,7 +58,7 @@ import org.osgi.framework.Bundle;
  * Time).
  *
  */
-public class OpenNavigatorFolderTest extends PerformanceTestCase {
+public class OpenProjectExplorerFolderTest extends PerformanceTestCase {
 	/*
 	 * performance testcase for bug 106158
 	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=106158
@@ -103,19 +103,19 @@ public class OpenNavigatorFolderTest extends PerformanceTestCase {
 		IWorkbenchPage activePage = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
 		IViewPart view = null;
 		try {
-			view = activePage.showView("org.eclipse.ui.views.ResourceNavigator");
+			view = activePage.showView(ProjectExplorer.VIEW_ID);
 		}
 		catch (PartInitException e) {
 			fail(e.getMessage());
 		}
-		ResourceNavigator navigatorView = null;
+		ProjectExplorer projectExplorer = null;
 		try {
-			navigatorView = (ResourceNavigator) view;
+			projectExplorer = (ProjectExplorer) view;
 		}
 		catch (ClassCastException e) {
 			fail(e.getMessage());
 		}
-		navigatorView.getTreeViewer().expandAll();
+		projectExplorer.getCommonViewer().expandAll();
 		stopMeasuring();
 		commitMeasurements();
 		assertPerformance();
