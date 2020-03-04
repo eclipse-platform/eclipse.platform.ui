@@ -56,6 +56,7 @@ public class TestUnitRegistrationMacOsX {
 	private String lsregisterDumpForOtherApp;
 	private String lsregisterDumpForOwnApp;
 	private String lsregisterDumpForOwnAppPlus;
+	private String lsregisterDumpMacOS10_15_3;
 
 	@Before
 	public void setup() {
@@ -75,6 +76,8 @@ public class TestUnitRegistrationMacOsX {
 		lsregisterDumpForOwnApp = convert(inputStream);
 		inputStream = getClass().getResourceAsStream("lsregisterForOwnAppPlus.txt");
 		lsregisterDumpForOwnAppPlus = convert(inputStream);
+		inputStream = getClass().getResourceAsStream("lsreigsterForOwnApp_macOS_10_15_3.txt");
+		lsregisterDumpMacOS10_15_3 = convert(inputStream);
 
 	}
 
@@ -185,6 +188,32 @@ public class TestUnitRegistrationMacOsX {
 
 	@Test
 	public void returnsRegisteredSchemes() throws Exception {
+		fileProvider.readAnswers.put(OWN_APP_PLIST_PATH, getPlistFileReaderWithAdtScheme());
+
+		processStub.result = lsregisterDumpForOwnApp;
+
+		List<ISchemeInformation> infos = registration.getSchemesInformation(Arrays.asList(ADT_SCHEME));
+
+		assertEquals(1, infos.size());
+		assertEquals("adt", infos.get(0).getName());
+		assertTrue(infos.get(0).isHandled());
+	}
+
+	@Test
+	public void returnsRegisteredSchemesOnMacOS_10_15_3() throws Exception {
+		fileProvider.readAnswers.put(OWN_APP_PLIST_PATH, getPlistFileReaderWithAdtScheme());
+
+		processStub.result = lsregisterDumpMacOS10_15_3;
+
+		List<ISchemeInformation> infos = registration.getSchemesInformation(Arrays.asList(ADT_SCHEME));
+
+		assertEquals(1, infos.size());
+		assertEquals("adt", infos.get(0).getName());
+		assertTrue(infos.get(0).isHandled());
+	}
+
+	@Test
+	public void returnsRegisteredSchemesOnMacOS10_15_3() throws Exception {
 		fileProvider.readAnswers.put(OWN_APP_PLIST_PATH, getPlistFileReaderWithAdtScheme());
 
 		processStub.result = lsregisterDumpForOwnApp;

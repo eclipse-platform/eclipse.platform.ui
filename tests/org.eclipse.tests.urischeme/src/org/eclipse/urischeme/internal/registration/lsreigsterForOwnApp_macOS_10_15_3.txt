@@ -1,0 +1,679 @@
+Checking data integrity...
+...done.
+Database is seeded.
+Status:             Preferences are loaded.
+Seeded System Version: 10.15.3 (19D76)
+Seeded Model Code:  MacBookPro15,1
+CacheGUID:          628FEC3A-9F26-4B15-9CED-7C9DA22258DD
+CacheSequenceNum:   4664
+Date Initialized:   2020-02-14 14:53 (POSIX 1581688405)
+xcode-select Version: 2373
+Path:               /var/folders/tf/1ztqf5c565gd9w8hzc_842zr0000gn/0/com.apple.LaunchServices.dv/com.apple.LaunchServices-1080-v2.csstore
+DB Object:          <LSDatabase 0x7fb4aa000000> { path = '/var/folders/tf/1ztqf5c565gd9w8hzc_842zr0000gn/0/com.apple.LaunchServices.dv/com.apple.LaunchServices-1080-v2.csstore' }
+DB Bundle:          /System/Library/Frameworks/CoreServices.framework/Frameworks/LaunchServices.framework (v 1069.11)
+Store Object:       <_CSStore 0x7fb4a8f01e60> { p = 0x103000000, gen = 679520, length = 6651904/6650964/6631996 }
+Store Bundle:       /System/Library/PrivateFrameworks/CoreServicesStore.framework (v 1069.11)
+0x00000000 00000000:	6264736c 020020bc 605e0a00 547c6500    bdsl·· ·`^··T|e·
++++++++++++++++++++++++++++++++ Structure Sizes ++++++++++++++++++++++++++++++++
+sizeof(Data):                   100 ( 100 bytes) -----
+sizeof(Table):                   80 (  80 bytes) -----
+sizeof(Unit):                     8 (   8 bytes) -----
+sizeof(IdentifierCache):          4 (   4 bytes) -----
++++++++++++++++++++++++++++++++ Memory by Table ++++++++++++++++++++++++++++++++
+<array>:                    1250270 (    1,3 MB) 19316 units (≅64 bytes/unit)
+<string>:                   1311894 (    1,3 MB) 40329 units (≅32 bytes/unit)
+ActivityTypeBinding:          16336 (     16 KB) 1 units
+Alias:                       838852 (    839 KB) 873 units (≅960 bytes/unit)
+BindableKeyMap:               65296 (     65 KB) 1 units
+BindingList:                 151264 (    151 KB) 5394 units (≅28 bytes/unit)
+Bundle:                      309096 (    309 KB) 729 units (≅424 bytes/unit)
+BundleIDBinding:               8176 (      8 KB) 1 units
+BundleNameBinding:            16336 (     16 KB) 1 units
+CanonicalString:               1176 (      1 KB) 49 units (≅24 bytes/unit)
+Claim:                        95264 (     95 KB) 1832 units (≅52 bytes/unit)
+Container:                      224 ( 224 bytes) 7 units (≅32 bytes/unit)
+DB Header:                        0 (   Zero KB) 0 units
+DeviceModelCodeBinding:        8176 (      8 KB) 1 units
+ExtensionBinding:             32656 (     33 KB) 1 units
+ExtensionPoint:                5640 (      6 KB) 94 units (≅60 bytes/unit)
+ExtensionPointIDBinding:       4096 (      4 KB) 1 units
+HandlerPref:                   7440 (      7 KB) 31 units (≅240 bytes/unit)
+LocalizedString:              86760 (     87 KB) 4338 units (≅20 bytes/unit)
+MIMEBinding:                   8176 (      8 KB) 1 units
+NSPasteboardBinding:           4096 (      4 KB) 1 units
+OSTypeBinding:                16336 (     16 KB) 1 units
+Plugin:                       26068 (     26 KB) 133 units (≅196 bytes/unit)
+PluginBundleIDBinding:         4096 (      4 KB) 1 units
+PluginProtocolBinding:         4096 (      4 KB) 1 units
+PluginUUIDBinding:             4096 (      4 KB) 1 units
+PropertyList:                936751 (    937 KB) 1608 units (≅582 bytes/unit)
+Service:                       3792 (      4 KB) 79 units (≅48 bytes/unit)
+Type:                        132872 (    133 KB) 1954 units (≅68 bytes/unit)
+URLSchemeBinding:              4096 (      4 KB) 1 units
+UTIBinding:                   32656 (     33 KB) 1 units
+++++++++++++++++++++++++++++++++ Memory Summary ++++++++++++++++++++++++++++++++
+Tables:                        3100 (      3 KB) -----
+Identifier caches:           809324 (    809 KB) -----
+String caches:               355436 (    355 KB) -----
+All units:                  5386083 (    5,4 MB) 76781 units (≅70 bytes/unit)
+Collectable:                  18968 (     19 KB) -----
+Total bytes used:           6631996 (    6,6 MB) -----
+
+--------------------------------------------------------------------------------
+bundle id:          Eclipse (0x1238)
+class:              kLSBundleClassApplication (0x2)
+container:          / (0x4)
+mount state:        mounted
+Mach-O UUIDs:       609BBFAD-8735-366C-9068-D0FA5BE6449B
+sequenceNum:        4664
+path:               /Users/myuser/Applications/Eclipse.app (0x15b0)
+directory:          ~
+name:               Eclipse
+displayName:        Eclipse
+localizedName:      "LSDefaultLocalizedValue" = "Eclipse"
+localizedShortName: "LSDefaultLocalizedValue" = "Eclipse"
+teamID:             JCDTMS22B4
+identifier:         org.eclipse.sdk.ide
+version:            4.15 ({length = 32, bytes = 0x04000000 00000000 0f000000 00000000 ... 00000000 00000000 })
+versionString:      4.15.0.I20200226-1800
+displayVersion:     4.15.0
+mod date:           2019-12-19 15:12 (POSIX 1576764737)
+reg date:           2020-03-04 09:08 (POSIX 1583309292)
+type code:          'APPL' (4150504c)
+creator code:       '????' (3f3f3f3f)
+bundle flags:       has-display-name  launch-disabled (0000000000000082)
+plist flags:        has-custom-bindings (0000000000010000)
+icon flags:         relative-icon-path (0000000000000001)
+arch flags:         x86_64 (0000000000000008)
+item flags:         package  application  container  native-app  extension-hidden (000000000010008e)
+Magnified:          capable  explicit  can-change (0000000000000007)
+App Nap:            capable (0000000000000001)
+eGPU:               capable  can-change (0000000000000005)
+platform:           native
+icons:              Contents/Resources/Eclipse.icns
+executable:         Contents/MacOS/eclipse
+inode:              58246644
+exec inode:         64509297
+execSDK ver:        10.10 ({length = 32, bytes = 0x0a000000 00000000 0a000000 00000000 ... 00000000 00000000 })
+mach min ver:       10.10 ({length = 32, bytes = 0x0a000000 00000000 0a000000 00000000 ... 00000000 00000000 })
+plistCommon:        13 values (9392 (0x24b0))
+                    {
+                        CFBundleDevelopmentRegion = English;
+                        CFBundleDisplayName = Eclipse;
+                        CFBundleExecutable = eclipse;
+                        CFBundleGetInfoString = "Eclipse 4.15 for Mac OS X, Copyright IBM Corp. and others 2002, 2019. All rights reserved.";
+                        CFBundleIconFile = "Eclipse.icns";
+                        CFBundleIdentifier = "org.eclipse.sdk.ide";
+                        CFBundleInfoDictionaryVersion = "6.0";
+                        CFBundleName = Eclipse;
+                        CFBundlePackageType = APPL;
+                        CFBundleShortVersionString = "4.15.0";
+                        CFBundleSignature = "????";
+                        CFBundleVersion = "4.15.0.I20200226-1800";
+                        NSHighResolutionCapable = 1;
+                    }
+activityTypes:      NOTIFICATION#JCDTMS22B4:org.eclipse.sdk.ide, pv-ccb114d119b53d
+claimed schemes:    hello1:, adt:, hello2
+entitlements:       6 values (9396 (0x24b4))
+                    {
+                        "com.apple.security.cs.allow-dyld-environment-variables" = 1;
+                        "com.apple.security.cs.allow-jit" = 1;
+                        "com.apple.security.cs.allow-unsigned-executable-memory" = 1;
+                        "com.apple.security.cs.debugger" = 1;
+                        "com.apple.security.cs.disable-executable-page-protection" = 1;
+                        "com.apple.security.cs.disable-library-validation" = 1;
+                    }
+--------------------------------------------------------------------------------
+claim id:           The adt demo protocol (0x395c)
+localizedNames:     "LSDefaultLocalizedValue" = "The adt demo protocol"
+rank:               Default
+bundle:             Eclipse (0x1238)
+flags:              url-type (0000000000000040)
+roles:              Viewer (0000000000000002)
+bindings:           hello1:, adt:, hello2
+
+--------------------------------------------------------------------------------
+bundle id:          Automator (0x6d0)
+class:              kLSBundleClassApplication (0x2)
+container:          /Volumes/Test (0xc)
+mount state:        mounted
+Mach-O UUIDs:       9D7A0B64-48D6-35BF-8E16-5DC2D85DE9F0
+sequenceNum:        1744
+path:               /Volumes/Test/System/Applications/Automator.app (0x9c8)
+directory:          Other (255)
+name:               Automator
+displayName:        Automator
+localizedName:      "ar" = "Automator", "ca" = "Automator", "cs" = "Automator", "da" = "Automator", "de" = "Automator", "el" = "Automator", "en" = "Automator", "en_AU" = "Automator", "en_GB" = "Automator", "es" = "Automator", "es_419" = "Automator", "fi" = "Automator", "fr" = "Automator", "fr_CA" = "Automator", "he" = "Automator", "hi" = "Automator", "hr" = "Automator", "hu" = "Automator", "id" = "Automator", "it" = "Automator", "ja" = "Automator", "ko" = "Automator", "LSDefaultLocalizedValue" = "Automator", "ms" = "Automator", "nl" = "Automator", "no" = "Automator", "pl" = "Automator", "pt" = "Automator", "pt_PT" = "Automator", "ro" = "Automator", "ru" = "Automator", "sk" = "Automator", "sv" = "Automator", "th" = "Automator", "tr" = "Automator", "uk" = "Automator", "vi" = "Automator", "zh_CN" = "自动操作", "zh_HK" = "Automator", "zh_TW" = "Automator"
+localizedShortName: "ar" = "Automator", "ca" = "Automator", "cs" = "Automator", "da" = "Automator", "de" = "Automator", "el" = "Automator", "en" = "Automator", "en_AU" = "Automator", "en_GB" = "Automator", "es" = "Automator", "es_419" = "Automator", "fi" = "Automator", "fr" = "Automator", "fr_CA" = "Automator", "he" = "Automator", "hi" = "Automator", "hr" = "Automator", "hu" = "Automator", "id" = "Automator", "it" = "Automator", "ja" = "Automator", "ko" = "Automator", "LSDefaultLocalizedValue" = "Automator", "ms" = "Automator", "nl" = "Automator", "no" = "Automator", "pl" = "Automator", "pt" = "Automator", "pt_PT" = "Automator", "ro" = "Automator", "ru" = "Automator", "sk" = "Automator", "sv" = "Automator", "th" = "Automator", "tr" = "Automator", "uk" = "Automator", "vi" = "Automator", "zh_CN" = "自动操作", "zh_HK" = "Automator", "zh_TW" = "Automator"
+teamID:             0000000000
+category:           public.app-category.utilities (0x1ee0)
+identifier:         com.apple.Automator
+canonical id:       com.apple.automator
+version:            488.0 ({length = 32, bytes = 0xe8010000 00000000 00000000 00000000 ... 00000000 00000000 })
+versionString:      488
+displayVersion:     2.10
+mod date:           2019-08-31 07:22 (POSIX 1567228964)
+reg date:           2020-02-14 14:53 (POSIX 1581688438)
+type code:          'APPL' (4150504c)
+creator code:       'ATM ' (41544d20)
+bundle flags:       apple-internal  has-display-name  launch-disabled (0000000000000083)
+plist flags:        has-custom-bindings (0000000000010000)
+icon flags:         relative-icon-path (0000000000000001)
+arch flags:         x86_64 (0000000000000008)
+item flags:         package  application  container  native-app  scriptable  extension-hidden  services (000000000030088e)
+Magnified:          capable  can-change (0000000000000005)
+App Nap:            capable (0000000000000001)
+eGPU:               capable  can-change (0000000000000005)
+platform:           native
+icons:              Contents/Resources/Automator.icns
+executable:         Contents/MacOS/Automator
+inode:              455077 (1152921500312334757)
+exec inode:         455837 (1152921500312335517)
+min version:        10.15 ({length = 32, bytes = 0x0a000000 00000000 0f000000 00000000 ... 00000000 00000000 })
+execSDK ver:        10.15 ({length = 32, bytes = 0x0a000000 00000000 0f000000 00000000 ... 00000000 00000000 })
+mach min ver:       10.15 ({length = 32, bytes = 0x0a000000 00000000 0f000000 00000000 ... 00000000 00000000 })
+plistCommon:        19 values (5384 (0x1508))
+                    {
+                        CFBundleDevelopmentRegion = English;
+                        CFBundleDisplayName = Automator;
+                        CFBundleExecutable = Automator;
+                        CFBundleHelpBookFolder = "Automator.help";
+                        CFBundleHelpBookName = "com.apple.Automator.help";
+                        CFBundleIconFile = "Automator.icns";
+                        CFBundleIdentifier = "com.apple.Automator";
+                        CFBundleInfoDictionaryVersion = "6.0";
+                        CFBundleName = Automator;
+                        CFBundlePackageType = APPL;
+                        CFBundleShortVersionString = "2.10";
+                        CFBundleSignature = "ATM ";
+                        CFBundleSupportedPlatforms =     (
+                            MacOSX
+                        );
+                        CFBundleVersion = 488;
+                        NSAppleScriptEnabled = YES;
+                        NSHumanReadableCopyright = "Copyright \U00a9 2004\U20132016 Apple Inc. All rights reserved.";
+                        NSMainNibFile = MainMenu;
+                        NSPrincipalClass = AMAutomatorApplication;
+                        NSUbiquitousContainers =     {
+                            "com.apple.Automator" =         {
+                                NSUbiquitousContainerIsDocumentScopePublic = 1;
+                            };
+                        };
+                    }
+activityTypes:      NOTIFICATION#:com.apple.Automator, pv-f771fdaf168c3c
+claimed UTIs:       com.apple.automator-workflow, com.apple.automator-conversion-action, com.apple.application-bundle, com.apple.automator-type-definition, com.apple.automator-action
+entitlements:       8 values (5388 (0x150c))
+                    {
+                        "com.apple.application-identifier" = "com.apple.Automator";
+                        "com.apple.developer.ubiquity-container-identifiers" =     (
+                            "com.apple.Automator"
+                        );
+                        "com.apple.private.automator.securityHost" = 1;
+                        "com.apple.private.cs.automator-plugins" = 1;
+                        "com.apple.private.tcc.allow" =     (
+                            kTCCServiceAppleEvents,
+                            kTCCServiceAddressBook,
+                            kTCCServiceCalendar,
+                            kTCCServiceReminders,
+                            kTCCServicePhotos
+                        );
+                        "com.apple.private.tcc.allow-prompting" =     (
+                            kTCCServiceAll
+                        );
+                        "com.apple.private.xprotect" = 1;
+                        "com.apple.webinspector.allow" = 1;
+                    }
+--------------------------------------------------------------------------------
+type id:            com.apple.cocoa.web-archive (0x32d4)
+bundle:             Automator (0x6d0)
+uti:                com.apple.cocoa.web-archive
+localizedDescription: "ar" = "محتوى الويب", "ca" = "Contingut web", "cs" = "Webový obsah", "da" = "Webindhold", "de" = "Webinhalt", "el" = "Περιεχόμενο Ιστού", "en" = "Web Content", "en_AU" = "Web Content", "en_GB" = "Web Content", "es" = "Contenido web", "es_419" = "Contenido web", "fi" = "Verkkosisältöä", "fr" = "Contenu web", "fr_CA" = "Contenu Web", "he" = "תוכן אתר אינטרנט", "hi" = "वेब कॉन्टेंट", "hr" = "Web sadržaj", "hu" = "Webes tartalom", "id" = "Konten Web", "it" = "Contenuto web", "ja" = "Webコンテンツ", "ko" = "웹 콘텐츠", "LSDefaultLocalizedValue" = "Web Content", "ms" = "Kandungan Web", "nl" = "Webmateriaal", "no" = "Nettinnhold", "pl" = "zawartość www", "pt" = "Conteúdo da Web", "pt_PT" = "Conteúdo web", "ro" = "Conținut web", "ru" = "Веб-контент", "sk" = "Webový obsah", "sv" = "Webbinnehåll", "th" = "เนื้อหาเว็บ", "tr" = "Web İçeriği", "uk" = "Вміст веб-сторінок", "vi" = "Nội dung Web", "zh_CN" = "网页内容", "zh_HK" = "網頁內容", "zh_TW" = "網頁內容"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+--------------------------------------------------------------------------------
+type id:            com.apple.remotedesktop.computer-object (0x32d8)
+bundle:             Automator (0x6d0)
+uti:                com.apple.remotedesktop.computer-object
+localizedDescription: "LSDefaultLocalizedValue" = "Remote Computers"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+--------------------------------------------------------------------------------
+type id:            com.apple.applescript.object (0x32dc)
+bundle:             Automator (0x6d0)
+uti:                com.apple.applescript.object
+localizedDescription: "ar" = "أي شيء", "ca" = "Tot", "cs" = "Cokoli", "da" = "Alt", "de" = "Beliebig", "el" = "Οτιδήποτε", "en" = "Anything", "en_AU" = "Anything", "en_GB" = "Anything", "es" = "Cualquiera", "es_419" = "Cualquiera", "fi" = "Mitä tahansa", "fr" = "Tout", "fr_CA" = "Tout", "he" = "הכל", "hi" = "कुछ भी", "hr" = "Bilo koje", "hu" = "Bármi", "id" = "Apa Pun", "it" = "Qualsiasi cosa", "ja" = "特定なし", "ko" = "모든 값", "LSDefaultLocalizedValue" = "Anything", "ms" = "Apa saja", "nl" = "Willekeurig", "no" = "Alt", "pl" = "cokolwiek", "pt" = "Qualquer Coisa", "pt_PT" = "Qualquer", "ro" = "Orice", "ru" = "Любые объекты", "sk" = "Čokoľvek", "sv" = "Vad som helst", "th" = "อะไรก็ได้", "tr" = "Herhangi Bir Şey", "uk" = "будь-що", "vi" = "Bất kỳ mục nào", "zh_CN" = "任何内容", "zh_HK" = "任何", "zh_TW" = "任何"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+--------------------------------------------------------------------------------
+type id:            com.apple.cocoa.string (0x32e0)
+bundle:             Automator (0x6d0)
+uti:                com.apple.cocoa.string
+localizedDescription: "ar" = "نص", "ca" = "Text", "cs" = "Text", "da" = "Tekst", "de" = "Text", "el" = "Κείμενο", "en" = "Text", "en_AU" = "Text", "en_GB" = "Text", "es" = "Texto", "es_419" = "Texto", "fi" = "Teksti", "fr" = "Texte", "fr_CA" = "Texte", "he" = "מלל", "hi" = "टेक्स्ट", "hr" = "Tekst", "hu" = "Szöveg", "id" = "Teks", "it" = "Testo", "ja" = "テキスト", "ko" = "텍스트", "LSDefaultLocalizedValue" = "Text", "ms" = "Teks", "nl" = "Tekst", "no" = "Tekst", "pl" = "tekst", "pt" = "Texto", "pt_PT" = "Texto", "ro" = "Text", "ru" = "Текст", "sk" = "Text", "sv" = "Text", "th" = "ข้อความ", "tr" = "Metin", "uk" = "Текст", "vi" = "Văn bản", "zh_CN" = "文本", "zh_HK" = "文字", "zh_TW" = "文字"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+--------------------------------------------------------------------------------
+type id:            com.apple.cocoa.attributed-string (0x32e4)
+bundle:             Automator (0x6d0)
+uti:                com.apple.cocoa.attributed-string
+localizedDescription: "ar" = "نص منسق", "ca" = "Text enriquit", "cs" = "RTF", "da" = "RTF", "de" = "Formatierter Text", "el" = "Εμπλουτισμένο κείμενο", "en" = "Rich Text", "en_AU" = "Rich Text", "en_GB" = "Rich Text", "es" = "Texto RTF", "es_419" = "Texto enriquecido", "fi" = "Muotoiltua tekstiä", "fr" = "Format RTF", "fr_CA" = "Format RTF", "he" = "טקסט עשיר", "hi" = "रिच टेक्स्ट", "hr" = "Bogati tekst", "hu" = "Rich Text", "id" = "Teks Kaya", "it" = "RTF", "ja" = "リッチテキスト", "ko" = "리치 텍스트", "LSDefaultLocalizedValue" = "Rich Text", "ms" = "Teks Beraneka", "nl" = "RTF-tekst", "no" = "Rik tekst", "pl" = "RTF", "pt" = "Texto RTF", "pt_PT" = "Texto formatado", "ro" = "Text îmbogățit", "ru" = "Форматированный текст", "sk" = "Formátovaný text", "sv" = "Formaterad text", "th" = "ข้อความเข้ารหัสแอสกี (RTF)", "tr" = "Zengin Metin (RTF)", "uk" = "Форматований текст", "vi" = "Văn bản Đa dạng thức", "zh_CN" = "多信息文本", "zh_HK" = "RTF", "zh_TW" = "RTF"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+--------------------------------------------------------------------------------
+type id:            com.apple.cocoa.data (0x32e8)
+bundle:             Automator (0x6d0)
+uti:                com.apple.cocoa.data
+localizedDescription: "ar" = "البيانات", "ca" = "Dades", "cs" = "Data", "da" = "Data", "de" = "Daten", "el" = "Δεδομένα", "en" = "Data", "en_AU" = "Data", "en_GB" = "Data", "es" = "Datos", "es_419" = "Datos", "fi" = "Dataa", "fr" = "Données", "fr_CA" = "Données", "he" = "נתונים", "hi" = "डेटा", "hr" = "Podaci", "hu" = "Adat", "id" = "Data", "it" = "Dati", "ja" = "データ", "ko" = "데이터", "LSDefaultLocalizedValue" = "Data", "ms" = "Data", "nl" = "Gegevens", "no" = "Data", "pl" = "dane", "pt" = "Dados", "pt_PT" = "Dados", "ro" = "Date", "ru" = "Данные", "sk" = "Dáta", "sv" = "Data", "th" = "ข้อมูล", "tr" = "Veri", "uk" = "Дані", "vi" = "Dữ liệu", "zh_CN" = "数据", "zh_HK" = "資料", "zh_TW" = "資料"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+--------------------------------------------------------------------------------
+type id:            com.apple.cocoa.url (0x32ec)
+bundle:             Automator (0x6d0)
+uti:                com.apple.cocoa.url
+localizedDescription: "ar" = "عناوين URL", "ca" = "URL", "cs" = "URL", "da" = "URL-adresser", "de" = "URLs", "el" = "διευθύνσεις URL", "en" = "URLs", "en_AU" = "URLs", "en_GB" = "URLs", "es" = "Direcciones URL", "es_419" = "Direcciones URL", "fi" = "Verkko-osoitteet", "fr" = "Adresses URL", "fr_CA" = "URL", "he" = "כתובות אינטרנט", "hi" = "URL", "hr" = "URL-ovi", "hu" = "URL-ek", "id" = "URL", "it" = "URL", "ja" = "URL", "ko" = "URL", "LSDefaultLocalizedValue" = "URLs", "ms" = "URL", "nl" = "URL's", "no" = "URL-er", "pl" = "URL", "pt" = "URLs", "pt_PT" = "Endereços URL", "ro" = "URL-uri", "ru" = "URL-адреса", "sk" = "URL", "sv" = "URL:er", "th" = "URL", "tr" = "URL’ler", "uk" = "URL", "vi" = "URL", "zh_CN" = "URL", "zh_HK" = "URL", "zh_TW" = "URL"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+--------------------------------------------------------------------------------
+type id:            com.apple.cocoa.path (0x32f0)
+bundle:             Automator (0x6d0)
+uti:                com.apple.cocoa.path
+localizedDescription: "ar" = "ملفات/مجلدات", "ca" = "Arxius/Carpetes", "cs" = "Soubory/složky", "da" = "Arkiver/mapper", "de" = "Dateien/Ordner", "el" = "Αρχεία/Φάκελοι", "en" = "Files/Folders", "en_AU" = "Files/Folders", "en_GB" = "Files/Folders", "es" = "Archivos/carpetas", "es_419" = "Archivos/Carpetas", "fi" = "Tiedostoja/kansioita", "fr" = "Fichiers/dossiers", "fr_CA" = "Fichiers/dossiers", "he" = "קבצים/תיקיות", "hi" = "फ़ाइल/फ़ोल्डर", "hr" = "Datoteke/mape", "hu" = "Fájlok/mappák", "id" = "File/Folder", "it" = "File/cartelle", "ja" = "ファイル/フォルダ", "ko" = "파일/폴더", "LSDefaultLocalizedValue" = "Files/Folders", "ms" = "Fail/Folder", "nl" = "Bestanden/mappen", "no" = "Filer/mapper", "pl" = "pliki/foldery", "pt" = "Arquivos/Pastas", "pt_PT" = "Ficheiros/pastas", "ro" = "Fișiere/dosare", "ru" = "Файлы/папки", "sk" = "Súbory/priečinky", "sv" = "Filer/mappar", "th" = "ไฟล์หรือโฟลเดอร์", "tr" = "Dosyalar/Klasörler", "uk" = "файли/папки", "vi" = "Tệp/Thư mục", "zh_CN" = "文件/文件夹", "zh_HK" = "檔案/資料夾", "zh_TW" = "檔案/檔案夾"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.cocoa.string
+--------------------------------------------------------------------------------
+type id:            com.apple.applescript.alias-object (0x32f4)
+bundle:             Automator (0x6d0)
+uti:                com.apple.applescript.alias-object
+localizedDescription: "ar" = "ملفات/مجلدات", "ca" = "Arxius/Carpetes", "cs" = "Soubory/složky", "da" = "Arkiver/mapper", "de" = "Dateien/Ordner", "el" = "Αρχεία/Φάκελοι", "en" = "Files/Folders", "en_AU" = "Files/Folders", "en_GB" = "Files/Folders", "es" = "Archivos/carpetas", "es_419" = "Archivos/Carpetas", "fi" = "Tiedostoja/kansioita", "fr" = "Fichiers/dossiers", "fr_CA" = "Fichiers/dossiers", "he" = "קבצים/תיקיות", "hi" = "फ़ाइल/फ़ोल्डर", "hr" = "Datoteke/mape", "hu" = "Fájlok/mappák", "id" = "File/Folder", "it" = "File/cartelle", "ja" = "ファイル/フォルダ", "ko" = "파일/폴더", "LSDefaultLocalizedValue" = "Files/Folders", "ms" = "Fail/Folder", "nl" = "Bestanden/mappen", "no" = "Filer/mapper", "pl" = "pliki/foldery", "pt" = "Arquivos/Pastas", "pt_PT" = "Ficheiros/pastas", "ro" = "Fișiere/dosare", "ru" = "Файлы/папки", "sk" = "Súbory/priečinky", "sv" = "Filer/mappar", "th" = "ไฟล์หรือโฟลเดอร์", "tr" = "Dosyalar/Klasörler", "uk" = "файли/папки", "vi" = "Tệp/Thư mục", "zh_CN" = "文件/文件夹", "zh_HK" = "檔案/資料夾", "zh_TW" = "檔案/檔案夾"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.applescript.object
+--------------------------------------------------------------------------------
+type id:            com.apple.applescript.alias-object.image (0x32f8)
+bundle:             Automator (0x6d0)
+uti:                com.apple.applescript.alias-object.image
+localizedDescription: "ar" = "ملفات صور", "ca" = "Arxius d’imatge", "cs" = "Obrázkové soubory", "da" = "Billedarkiver", "de" = "Bilddateien", "el" = "Αρχεία εικόνας", "en" = "Image files", "en_AU" = "Image files", "en_GB" = "Image files", "es" = "Archivos de imagen", "es_419" = "Archivos de imagen", "fi" = "Kuvatiedostoja", "fr" = "Fichiers image", "fr_CA" = "Fichiers image", "he" = "קבצי תמונה", "hi" = "इमेज फ़ाइलें", "hr" = "Slikovne datoteke", "hu" = "Képfájlok", "id" = "File gambar", "it" = "file immagine", "ja" = "イメージファイル", "ko" = "이미지 파일", "LSDefaultLocalizedValue" = "Image files", "ms" = "Fail imej", "nl" = "Afbeeldingsbestanden", "no" = "Bildefiler", "pl" = "pliki obrazków", "pt" = "Arquivos de imagem", "pt_PT" = "Ficheiros de imagem", "ro" = "Fișiere de imagine", "ru" = "Файлы изображений", "sk" = "Obrázkové súbory", "sv" = "Bildfiler", "th" = "ไฟล์ภาพ", "tr" = "Görüntü dosyaları", "uk" = "файли зображень", "vi" = "Tệp hình ảnh", "zh_CN" = "图像文件", "zh_HK" = "影像檔案", "zh_TW" = "影像檔案"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.applescript.alias-object
+--------------------------------------------------------------------------------
+type id:            com.apple.applescript.alias-object.movie (0x32fc)
+bundle:             Automator (0x6d0)
+uti:                com.apple.applescript.alias-object.movie
+localizedDescription: "ar" = "ملفات أفلام", "ca" = "Arxius de vídeo", "cs" = "Soubory filmů", "da" = "Filmarkiver", "de" = "Filmdateien", "el" = "Αρχεία ταινίας", "en" = "Movie files", "en_AU" = "Movie files", "en_GB" = "Movie files", "es" = "Archivos de vídeo", "es_419" = "Archivos de video", "fi" = "Elokuvatiedostoja", "fr" = "Fichiers de vidéo", "fr_CA" = "Fichiers vidéo", "he" = "קבצי סרט", "hi" = "फ़िल्म फ़ाइलें", "hr" = "Filmske datoteke", "hu" = "Filmfájlok", "id" = "File Film", "it" = "file filmato", "ja" = "ムービーファイル", "ko" = "동영상 파일", "LSDefaultLocalizedValue" = "Movie files", "ms" = "Fail filem", "nl" = "Filmbestanden", "no" = "Filmfiler", "pl" = "pliki filmów", "pt" = "Arquivos de Filmes", "pt_PT" = "Ficheiros de filme", "ro" = "Fișiere de film", "ru" = "Файлы фильмов", "sk" = "Filmové súbory", "sv" = "Filmfiler", "th" = "ไฟล์ภาพยนตร์", "tr" = "Film dosyaları", "uk" = "файли фільмів", "vi" = "Tệp Phim", "zh_CN" = "影片文件", "zh_HK" = "影片檔案", "zh_TW" = "影片檔案"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.applescript.alias-object
+--------------------------------------------------------------------------------
+type id:            com.apple.applescript.alias-object.pdf (0x3300)
+bundle:             Automator (0x6d0)
+uti:                com.apple.applescript.alias-object.pdf
+localizedDescription: "ar" = "ملفات PDF", "ca" = "Arxius PDF", "cs" = "PDF soubory", "da" = "PDF-dokumenter", "de" = "PDF-Dateien", "el" = "αρχεία PDF", "en" = "PDF files", "en_AU" = "PDF files", "en_GB" = "PDF files", "es" = "Archivos PDF", "es_419" = "archivos PDF", "fi" = "PDF-tiedostoja", "fr" = "Fichiers PDF", "fr_CA" = "Fichiers PDF", "he" = "קבצי PDF", "hi" = "PDF फ़ाइलें", "hr" = "PDF datoteke", "hu" = "PDF-fájlok", "id" = "File PDF", "it" = "File PDF", "ja" = "PDFファイル", "ko" = "PDF 파일", "LSDefaultLocalizedValue" = "PDF files", "ms" = "Fail PDF", "nl" = "Pdf-bestanden", "no" = "PDF-filer", "pl" = "pliki PDF", "pt" = "Arquivos PDF", "pt_PT" = "Ficheiros PDF", "ro" = "Fișiere PDF", "ru" = "Файлы PDF", "sk" = "PDF súbory", "sv" = "PDF-filer", "th" = "ไฟล์ PDF", "tr" = "PDF dosyaları", "uk" = "файли PDF", "vi" = "Tệp PDF", "zh_CN" = "PDF文件", "zh_HK" = "PDF檔案", "zh_TW" = "PDF檔案"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.applescript.alias-object
+--------------------------------------------------------------------------------
+type id:            com.microsoft.powerpoint.presentation-object (0x3304)
+bundle:             Automator (0x6d0)
+uti:                com.microsoft.powerpoint.presentation-object
+localizedDescription: "ar" = "عروض Powerpoint التقديمية", "ca" = "Presentacions en PowerPoint", "cs" = "Prezentace PowerPointu", "da" = "PowerPoint-præsentationer", "de" = "Powerpoint-Präsentationen", "el" = "Παρουσιάσεις PowerPoint", "en" = "Powerpoint presentations", "en_AU" = "Powerpoint presentations", "en_GB" = "Powerpoint presentations", "es" = "Presentaciones de Powerpoint", "es_419" = "Presentaciones de Powerpoint", "fi" = "PowerPoint-esityksiä", "fr" = "Diaporamas Powerpoint", "fr_CA" = "Diaporamas PowerPoint", "he" = "מצגות PowerPoint", "hi" = "Powerpoint प्रस्तुतीकरण", "hr" = "Powerpoint prezentacije", "hu" = "PowerPoint bemutatók", "id" = "Presentasi Powerpoint", "it" = "Presentazioni Powerpoint", "ja" = "PowerPointプレゼンテーション", "ko" = "Powerpoint 프레젠테이션", "LSDefaultLocalizedValue" = "Powerpoint presentations", "ms" = "Pembentangan Powerpoint", "nl" = "Powerpoint-presentaties", "no" = "PowerPoint-presentasjoner", "pl" = "prezentacje Powerpoint", "pt" = "Apresentações do Powerpoint", "pt_PT" = "Apresentações do Powerpoint", "ro" = "Prezentări Powerpoint", "ru" = "Презентации PowerPoint", "sk" = "Prezentácie PowerPoint", "sv" = "Powerpoint-presentationer", "th" = "งานนำเสนอ PowerPoint", "tr" = "Powerpoint sunuları", "uk" = "презентації PowerPoint", "vi" = "Bài thuyết trình Powerpoint", "zh_CN" = "Powerpoint演示文稿", "zh_HK" = "Powerpoint簡報", "zh_TW" = "Powerpoint簡報"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.applescript.object
+--------------------------------------------------------------------------------
+type id:            com.microsoft.powerpoint.slide-object (0x3308)
+bundle:             Automator (0x6d0)
+uti:                com.microsoft.powerpoint.slide-object
+localizedDescription: "ar" = "شرائح Powerpoint", "ca" = "Diapositives en PowerPoint", "cs" = "Snímky PowerPointu", "da" = "PowerPoint-lysbilleder", "de" = "Powerpoint-Folien", "el" = "Διαφάνειες PowerPoint", "en" = "Powerpoint slides", "en_AU" = "Powerpoint slides", "en_GB" = "PowerPoint slides", "es" = "Diapositivas de Powerpoint", "es_419" = "Diapositivas de Powerpoint", "fi" = "PowerPoint-kuvia", "fr" = "Diapositives Powerpoint", "fr_CA" = "Diapositives PowerPoint", "he" = "שקופיות PowerPoint", "hi" = "Powerpoint स्लाइडें", "hr" = "Powerpoint slajdovi", "hu" = "PowerPoint diák", "id" = "Slide Powerpoint", "it" = "Diapositive Powerpoint", "ja" = "PowerPointスライド", "ko" = "Powerpoint 슬라이드", "LSDefaultLocalizedValue" = "Powerpoint slides", "ms" = "Slaid Powerpoint", "nl" = "Powerpoint-dia's", "no" = "PowerPoint-lysbilder", "pl" = "slajdy Powerpoint", "pt" = "Slides do Powerpoint", "pt_PT" = "Diapositivos do Powerpoint", "ro" = "Diapozitive Powerpoint", "ru" = "Слайды PowerPoint", "sk" = "Snímky PowerPoint", "sv" = "Powerpoint-diabilder", "th" = "สไลด์ PowerPoint", "tr" = "Powerpoint slaytları", "uk" = "слайди PowerPoint", "vi" = "Trang chiếu Powerpoint", "zh_CN" = "Powerpoint幻灯片", "zh_HK" = "Powerpoint幻燈片", "zh_TW" = "Powerpoint幻燈片"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.applescript.object
+--------------------------------------------------------------------------------
+type id:            com.apple.finder.file-or-folder-object (0x330c)
+bundle:             Automator (0x6d0)
+uti:                com.apple.finder.file-or-folder-object
+localizedDescription: "ar" = "عناصر Finder", "ca" = "Ítems del Finder", "cs" = "Položky Finderu", "da" = "Finder-emner", "de" = "Finder-Objekte", "el" = "Στοιχεία Finder", "en" = "Finder items", "en_AU" = "Finder items", "en_GB" = "Finder items", "es" = "Ítems del Finder", "es_419" = "Elementos del Finder", "fi" = "Finder-kohteita", "fr" = "Éléments du Finder", "fr_CA" = "Éléments du Finder", "he" = "פריטים של Finder", "hi" = "Finder आइटम", "hr" = "Stavke Findera", "hu" = "Finder elemek", "id" = "Item Finder", "it" = "Elementi del Finder", "ja" = "Finder項目", "ko" = "Finder 항목", "LSDefaultLocalizedValue" = "Finder items", "ms" = "Item Finder", "nl" = "Finder-onderdelen", "no" = "Finder-objekter", "pl" = "rzeczy Findera", "pt" = "Itens do Finder", "pt_PT" = "Elementos do Finder", "ro" = "Articole Finder", "ru" = "Объекты Finder", "sk" = "Položky Findera", "sv" = "Finder-objekt", "th" = "รายการ Finder", "tr" = "Finder öğeleri", "uk" = "елементи Finder", "vi" = "Mục Finder", "zh_CN" = "“访达”项目", "zh_HK" = "Finder項目", "zh_TW" = "Finder項目"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.applescript.object
+--------------------------------------------------------------------------------
+type id:            com.apple.idvd.item-object (0x3310)
+bundle:             Automator (0x6d0)
+uti:                com.apple.idvd.item-object
+localizedDescription: "ar" = "عناصر iDVD", "ca" = "Ítems de l’iDVD", "cs" = "Položky iDVD", "da" = "iDVD-emner", "de" = "iDVD-Objekte", "el" = "Στοιχεία iDVD", "en" = "iDVD items", "en_AU" = "iDVD items", "en_GB" = "iDVD items", "es" = "Ítems de iDVD", "es_419" = "Elementos de iDVD", "fi" = "iDVD-kohteita", "fr" = "Éléments iDVD", "fr_CA" = "Éléments iDVD", "he" = "פריטי iDVD", "hi" = "iDVD आइटम", "hr" = "iDVD stavke", "hu" = "iDVD-elemek", "id" = "Item iDVD", "it" = "Elementi iDVD", "ja" = "iDVD項目", "ko" = "iDVD 항목", "LSDefaultLocalizedValue" = "iDVD items", "ms" = "Item iDVD", "nl" = "iDVD-onderdelen", "no" = "iDVD-objekter", "pl" = "rzeczy iDVD", "pt" = "Itens do iDVD ", "pt_PT" = "Elementos do iDVD", "ro" = "Articole iDVD", "ru" = "Объекты iDVD", "sk" = "Položky iDVD", "sv" = "iDVD-objekt", "th" = "รายการ iDVD", "tr" = "iDVD öğeleri", "uk" = "елементи iDVD", "vi" = "Mục iDVD", "zh_CN" = "iDVD项目", "zh_HK" = "iDVD項目", "zh_TW" = "iDVD項目"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.applescript.object
+--------------------------------------------------------------------------------
+type id:            com.apple.idvd.menu-object (0x3314)
+bundle:             Automator (0x6d0)
+uti:                com.apple.idvd.menu-object
+localizedDescription: "ar" = "قوائم iDVD", "ca" = "Menús de l’iDVD", "cs" = "Nabídky iDVD", "da" = "iDVD-menuer", "de" = "iDVD-Menüs", "el" = "Μενού iDVD", "en" = "iDVD menus", "en_AU" = "iDVD menus", "en_GB" = "iDVD menus", "es" = "Menús de iDVD", "es_419" = "Menús de iDVD", "fi" = "iDVD-valikkoja", "fr" = "Menus iDVD", "fr_CA" = "Menus iDVD", "he" = "תפריטי iDVD", "hi" = "iDVD मेनू", "hr" = "iDVD izbornici", "hu" = "iDVD menük", "id" = "Menu iDVD", "it" = "Menu di iDVD", "ja" = "iDVDメニュー", "ko" = "iDVD 메뉴", "LSDefaultLocalizedValue" = "iDVD menus", "ms" = "Menu iDVD", "nl" = "iDVD-menu's", "no" = "iDVD-menyer", "pl" = "menu iDVD", "pt" = "Menus do iDVD", "pt_PT" = "Menus do iDVD", "ro" = "Meniuri iDVD", "ru" = "Меню iDVD", "sk" = "Menu iDVD", "sv" = "iDVD-menyer", "th" = "เมนู iDVD", "tr" = "iDVD menüleri", "uk" = "меню iDVD", "vi" = "Menu iDVD", "zh_CN" = "iDVD菜单", "zh_HK" = "iDVD選單", "zh_TW" = "iDVD選單"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.idvd.item-object
+--------------------------------------------------------------------------------
+type id:            com.apple.idvd.slideshow-object (0x3318)
+bundle:             Automator (0x6d0)
+uti:                com.apple.idvd.slideshow-object
+localizedDescription: "ar" = "عروض شرائح iDVD", "ca" = "Projeccions de l’iDVD", "cs" = "Prezentace iDVD", "da" = "iDVD-lysbilledshow", "de" = "iDVD-Diashows", "el" = "Παρουσιάσεις iDVD", "en" = "iDVD slideshows", "en_AU" = "iDVD slide shows", "en_GB" = "iDVD slideshows", "es" = "Pases de diapositivas de iDVD", "es_419" = "Presentación de diapositivas de iDVD", "fi" = "iDVD-kuvaesityksiä", "fr" = "Diaporamas iDVD", "fr_CA" = "Diaporamas iDVD", "he" = "מצגות iDVD", "hi" = "iDVD स्लाइडशो", "hr" = "iDVD slideshow prikazi", "hu" = "iDVD diavetítések", "id" = "Pertunjukan slide iDVD", "it" = "Diapositive di iDVD", "ja" = "iDVDスライドショー", "ko" = "iDVD 슬라이드쇼", "LSDefaultLocalizedValue" = "iDVD slideshows", "ms" = "Tayangan Slaid iDVD", "nl" = "iDVD-diavoorstellingen", "no" = "iDVD-lysbildeserier", "pl" = "pokazy slajdów iDVD", "pt" = "Apresentação de slides do iDVD", "pt_PT" = "Diaporamas do iDVD", "ro" = "Diaporame iDVD", "ru" = "Слайд-шоу iDVD", "sk" = "Prezentácie iDVD", "sv" = "iDVD-bildspel", "th" = "สไลด์โชว์ iDVD", "tr" = "iDVD slayt sunuları", "uk" = "слайд-шоу iDVD", "vi" = "Bản trình chiếu iDVD", "zh_CN" = "iDVD幻灯片放映", "zh_HK" = "iDVD幻燈片", "zh_TW" = "iDVD幻燈片秀"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.idvd.item-object
+--------------------------------------------------------------------------------
+type id:            com.apple.iphoto.album-object (0x331c)
+bundle:             Automator (0x6d0)
+uti:                com.apple.iphoto.album-object
+localizedDescription: "ar" = "ألبومات iPhoto", "ca" = "Àlbums de l’iPhoto", "cs" = "Alba iPhoto", "da" = "iPhoto-album", "de" = "iPhoto-Alben", "el" = "Άλμπουμ iPhoto", "en" = "iPhoto albums", "en_AU" = "iPhoto albums", "en_GB" = "iPhoto albums", "es" = "Álbumes de iPhoto", "es_419" = "Álbumes de iPhoto", "fi" = "iPhoto-albumeja", "fr" = "Albums iPhoto", "fr_CA" = "Albums iPhoto", "he" = "אלבומי iPhoto", "hi" = "iPhoto ऐल्बम", "hr" = "iPhoto albumi", "hu" = "iPhoto albumok", "id" = "Album iPhoto", "it" = "Album di iPhoto", "ja" = "iPhotoアルバム", "ko" = "iPhoto 앨범", "LSDefaultLocalizedValue" = "iPhoto albums", "ms" = "Album iPhoto", "nl" = "iPhoto-albums", "no" = "iPhoto-albumer", "pl" = "albumy iPhoto", "pt" = "Álbuns do iPhoto", "pt_PT" = "Álbuns do iPhoto", "ro" = "Albume iPhoto", "ru" = "Альбомы iPhoto", "sk" = "iPhoto albumy", "sv" = "iPhoto-album", "th" = "อัลบั้ม iPhoto", "tr" = "iPhoto albümleri", "uk" = "колекції iPhoto", "vi" = "Album iPhoto", "zh_CN" = "iPhoto相簿", "zh_HK" = "iPhoto相簿", "zh_TW" = "iPhoto相簿"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.iphoto.item-object
+--------------------------------------------------------------------------------
+type id:            com.apple.iphoto.photo-object (0x3320)
+bundle:             Automator (0x6d0)
+uti:                com.apple.iphoto.photo-object
+localizedDescription: "ar" = "صور iPhoto", "ca" = "Fotos de l’iPhoto", "cs" = "Fotografie iPhoto", "da" = "iPhoto-fotografier", "de" = "iPhoto-Fotos", "el" = "Φωτογραφίες iPhoto", "en" = "iPhoto photos", "en_AU" = "iPhoto photos", "en_GB" = "iPhoto photos", "es" = "Fotos de iPhoto", "es_419" = "Fotos de iPhoto", "fi" = "iPhoto-kuvia", "fr" = "Photos iPhoto", "fr_CA" = "Photos iPhoto", "he" = "תמונות iPhoto", "hi" = "iPhoto तस्वीरें", "hr" = "iPhoto fotografije", "hu" = "iPhoto fotók", "id" = "Foto iPhoto", "it" = "Foto di iPhoto", "ja" = "iPhoto写真", "ko" = "iPhoto 사진", "LSDefaultLocalizedValue" = "iPhoto photos", "ms" = "Foto iPhoto", "nl" = "iPhoto-foto's", "no" = "iPhoto-bilder", "pl" = "zdjęcia iPhoto", "pt" = "Fotos do iPhoto", "pt_PT" = "Fotografias do iPhoto", "ro" = "Poze iPhoto", "ru" = "Фотографии iPhoto", "sk" = "Fotky iPhoto", "sv" = "iPhoto-bilder", "th" = "รูปภาพ iPhoto", "tr" = "iPhoto fotoğrafları", "uk" = "фотографії iPhoto", "vi" = "Ảnh iPhoto", "zh_CN" = "iPhoto照片", "zh_HK" = "iPhoto相片", "zh_TW" = "iPhoto照片"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.iphoto.item-object
+--------------------------------------------------------------------------------
+type id:            com.apple.iphoto.item-object (0x3324)
+bundle:             Automator (0x6d0)
+uti:                com.apple.iphoto.item-object
+localizedDescription: "ar" = "عناصر iPhoto", "ca" = "Ítems de l’iPhoto", "cs" = "Položky iPhota", "da" = "iPhoto-emner", "de" = "iPhoto-Objekte", "el" = "Στοιχεία iPhoto", "en" = "iPhoto items", "en_AU" = "iPhoto items", "en_GB" = "iPhoto items", "es" = "Ítems de iPhoto", "es_419" = "Elementos de iPhoto", "fi" = "iPhoto-kohteita", "fr" = "Éléments iPhoto", "fr_CA" = "Éléments iPhoto", "he" = "פריטי iPhoto", "hi" = "iPhoto आइटम", "hr" = "iPhoto stavke", "hu" = "iPhoto elemek", "id" = "Item iPhoto", "it" = "Elementi di iPhoto", "ja" = "iPhoto項目", "ko" = "iPhoto 항목", "LSDefaultLocalizedValue" = "iPhoto items", "ms" = "Item iPhoto", "nl" = "iPhoto-onderdelen", "no" = "iPhoto-objekter", "pl" = "rzeczy iPhoto", "pt" = "Itens do iPhoto", "pt_PT" = "Elementos do iPhoto", "ro" = "Articole iPhoto", "ru" = "Объекты iPhoto", "sk" = "Položky iPhoto", "sv" = "iPhoto-objekt", "th" = "รายการ iPhoto", "tr" = "iPhoto öğeleri", "uk" = "елементи iPhoto", "vi" = "Mục iPhoto", "zh_CN" = "iPhoto项目", "zh_HK" = "iPhoto項目", "zh_TW" = "iPhoto項目"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.applescript.object
+--------------------------------------------------------------------------------
+type id:            com.apple.itunes.item-object (0x3328)
+bundle:             Automator (0x6d0)
+uti:                com.apple.itunes.item-object
+localizedDescription: "ar" = "عناصر الموسيقى", "ca" = "Ítems de l’app Música", "cs" = "Položky aplikace Hudba", "da" = "Emner i Musik", "de" = "Musikobjekte", "el" = "Στοιχεία Μουσικής", "en" = "Music items", "en_AU" = "Music items", "en_GB" = "Music items", "es" = "Ítems de Música", "es_419" = "Elementos de Música", "fi" = "Musiikki-kohteet", "fr" = "Éléments Musique", "fr_CA" = "Éléments de Musique", "he" = "פריטים של ״מוסיקה״", "hi" = "संगीत आइटम", "hr" = "Glazbene stavke", "hu" = "Zene elemei", "id" = "Item Musik", "it" = "Elementi di Musica", "ja" = "ミュージック項目", "ko" = "음악 앱의 항목", "LSDefaultLocalizedValue" = "Music items", "ms" = "Item muzik", "nl" = "Muziek-onderdelen", "no" = "Musikk-objekter", "pl" = "Rzeczy Muzyki", "pt" = "Itens do app Música", "pt_PT" = "Elementos de Música", "ro" = "Articole Muzică", "ru" = "Объекты Музыки", "sk" = "Hudobné položky", "sv" = "Musik-objekt", "th" = "รายการเพลง", "tr" = "Müzik öğeleri", "uk" = "Елементи Музики", "vi" = "Mục Nhạc", "zh_CN" = "音乐项目", "zh_HK" = "音樂項目", "zh_TW" = "「音樂」項目"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.applescript.object
+--------------------------------------------------------------------------------
+type id:            com.apple.itunes.playlist-object (0x332c)
+bundle:             Automator (0x6d0)
+uti:                com.apple.itunes.playlist-object
+localizedDescription: "ar" = "قوائم تشغيل الموسيقى", "ca" = "Llistes de l’app Música", "cs" = "Playlisty aplikace Hudba", "da" = "Playlister med musik", "de" = "Musikplaylists", "el" = "Λίστες αναπαραγωγής Μουσικής", "en" = "Music playlists", "en_AU" = "Music playlists", "en_GB" = "Music playlists", "es" = "Listas de Música", "es_419" = "Playlists de Música", "fi" = "Musiikki-soittolistat", "fr" = "Playlists Musique", "fr_CA" = "Listes de lecture de Musique", "he" = "רשימות של ״מוסיקה״", "hi" = "संगीत गीतमालाएँ", "hr" = "Glazbene liste", "hu" = "A Zene lejátszási listái", "id" = "Daftar putar musik", "it" = "Playlist di Musica", "ja" = "ミュージックプレイリスト", "ko" = "음악 앱의 플레이리스트", "LSDefaultLocalizedValue" = "Music playlists", "ms" = "Senarai main muzik", "nl" = "Muziek-afspeellijsten", "no" = "Musikk-spillelister", "pl" = "Playlisty Muzyki", "pt" = "Playlists do app Música", "pt_PT" = "Listas de reprodução de Música", "ro" = "Liste de redare Muzică", "ru" = "Плейлисты Музыки", "sk" = "Playlisty v Hudbe", "sv" = "Musikspellistor", "th" = "เพลย์ลิสต์เพลง", "tr" = "Müzik listeleri", "uk" = "Підбірки музики", "vi" = "Playlist Nhạc", "zh_CN" = "音乐播放列表", "zh_HK" = "音樂播放列表", "zh_TW" = "音樂播放列表"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.itunes.item-object
+--------------------------------------------------------------------------------
+type id:            com.apple.itunes.source-object (0x3330)
+bundle:             Automator (0x6d0)
+uti:                com.apple.itunes.source-object
+localizedDescription: "ar" = "مصادر الموسيقى", "ca" = "Fonts de l’app Música", "cs" = "Zdroje aplikace Hudba", "da" = "Musik-kilder", "de" = "Musikquellen", "el" = "Πηγές Μουσικής", "en" = "Music sources", "en_AU" = "Music sources", "en_GB" = "Music sources", "es" = "Fuentes de Música", "es_419" = "Fuentes de Música", "fi" = "Musiikki-lähteet", "fr" = "Sources Musique", "fr_CA" = "Sources de Musique", "he" = "מקורות של ״מוסיקה״", "hi" = "संगीत स्रोत", "hr" = "Izvori glazbe", "hu" = "A Zene forrásai", "id" = "Sumber Musik", "it" = "Sorgenti di Musica", "ja" = "ミュージックソース", "ko" = "음악 앱의 소스", "LSDefaultLocalizedValue" = "Music sources", "ms" = "Sumber muzik", "nl" = "Muziek-bronnen", "no" = "Musikk-kilder", "pl" = "Źródła Muzyki", "pt" = "Fontes do app Música", "pt_PT" = "Fontes de Música", "ro" = "Surse Muzică", "ru" = "Источники Музыки", "sk" = "Zdroje v Hudbe", "sv" = "Musik-källor", "th" = "แหล่งเพลง", "tr" = "Müzik kaynakları", "uk" = "Джерела Музики", "vi" = "Nguồn Nhạc", "zh_CN" = "音乐来源", "zh_HK" = "音樂來源", "zh_TW" = "「音樂」來源"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.itunes.item-object
+--------------------------------------------------------------------------------
+type id:            com.apple.itunes.track-object (0x3334)
+bundle:             Automator (0x6d0)
+uti:                com.apple.itunes.track-object
+localizedDescription: "ar" = "مسارات الموسيقى", "ca" = "Pistes de l’app Música", "cs" = "Skladby aplikace Hudba", "da" = "Spor i Musik", "de" = "Musikspuren", "el" = "Κομμάτια Μουσικής", "en" = "Music tracks", "en_AU" = "Music tracks", "en_GB" = "Music tracks", "es" = "Pistas de Música", "es_419" = "Pistas de Música", "fi" = "Musiikki-raidat", "fr" = "Pistes Musique", "fr_CA" = "Pistes de Musique", "he" = "רצועות של ״מוסיקה״", "hi" = "संगीत ट्रैक", "hr" = "Glazbeni zapisi", "hu" = "A Zene zeneszámai", "id" = "Track Musik", "it" = "Tracce di Musica", "ja" = "ミュージックトラック", "ko" = "음악 앱의 트랙", "LSDefaultLocalizedValue" = "Music tracks", "ms" = "Trek muzik", "nl" = "Muziek-tracks", "no" = "Musikk-spor", "pl" = "Ścieżki Muzyki", "pt" = "Faixas do app Música", "pt_PT" = "Faixas de Música", "ro" = "Piste Muzică", "ru" = "Дорожки Музыки", "sk" = "Stopy v Hudbe", "sv" = "Musik-spår", "th" = "แทร็คเพลง", "tr" = "Müzik parçaları", "uk" = "Доріжки Музики", "vi" = "Rãnh Nhạc", "zh_CN" = "音乐音轨", "zh_HK" = "音樂音軌", "zh_TW" = "「音樂」音軌"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.itunes.item-object
+--------------------------------------------------------------------------------
+type id:            com.apple.safari.document-object (0x3338)
+bundle:             Automator (0x6d0)
+uti:                com.apple.safari.document-object
+localizedDescription: "ar" = "مستندات Safari", "ca" = "Documents de Safari", "cs" = "Dokumenty Safari", "da" = "Safari-dokumenter", "de" = "Safari-Dokumente", "el" = "Έγγραφα Safari", "en" = "Safari documents", "en_AU" = "Safari documents", "en_GB" = "Safari documents", "es" = "Documentos de Safari", "es_419" = "Documentos de Safari", "fi" = "Safari-dokumentteja", "fr" = "Documents Safari", "fr_CA" = "Documents Safari", "he" = "מסמכי Safari", "hi" = "Safari दस्तावेज़", "hr" = "Safari dokumenti", "hu" = "Safari dokumentumok", "id" = "Dokumen Safari", "it" = "Documenti Safari", "ja" = "Safari書類", "ko" = "Safari 문서", "LSDefaultLocalizedValue" = "Safari documents", "ms" = "Dokumen Safari", "nl" = "Safari-documenten", "no" = "Safari-dokumenter", "pl" = "dokumenty Safari", "pt" = "Documentos do Safari", "pt_PT" = "Documentos do Safari", "ro" = "Documente Safari", "ru" = "Документы Safari", "sk" = "Dokumenty Safari", "sv" = "Safari-dokument", "th" = "เอกสาร Safari", "tr" = "Safari belgeleri", "uk" = "документи Safari", "vi" = "Tài liệu Safari", "zh_CN" = "Safari浏览器文稿", "zh_HK" = "Safari文件", "zh_TW" = "Safari文件"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.applescript.object
+--------------------------------------------------------------------------------
+type id:            com.apple.textedit.document-object (0x333c)
+bundle:             Automator (0x6d0)
+uti:                com.apple.textedit.document-object
+localizedDescription: "ar" = "مستندات TextEdit", "ca" = "Documents de TextEdit", "cs" = "Dokumenty TextEditu", "da" = "TextEdit-dokumenter", "de" = "TextEdit-Dokumente", "el" = "Έγγραφα TextEdit", "en" = "TextEdit documents", "en_AU" = "TextEdit documents", "en_GB" = "TextEdit documents", "es" = "Documentos de TextEdit", "es_419" = "Documentos de TextEdit", "fi" = "TeXturi-dokumentteja", "fr" = "Documents TextEdit", "fr_CA" = "Documents TextEdit", "he" = "מסמכי ״עורך המלל״", "hi" = "TextEdit दस्तावेज़", "hr" = "TextEdit dokumenti", "hu" = "Szövegszerkesztő dokumentumok", "id" = "Dokumen TextEdit", "it" = "Documenti TextEdit", "ja" = "テキストエディット書類", "ko" = "텍스트 편집기 문서", "LSDefaultLocalizedValue" = "TextEdit documents", "ms" = "Dokumen TextEdit", "nl" = "Teksteditor-documenten", "no" = "TextEdit-dokumenter", "pl" = "dokumenty TextEdit", "pt" = "Documentos do Editor de Texto", "pt_PT" = "Documentos do Editor de Texto", "ro" = "Documente TextEdit", "ru" = "Документы TextEdit", "sk" = "Dokumenty TextEditu", "sv" = "Dokument i Textredigerare", "th" = "เอกสาร TextEdit", "tr" = "TextEdit belgeleri", "uk" = "документи Мініредактора", "vi" = "Tài liệu TextEdit", "zh_CN" = "文本编辑文稿", "zh_HK" = "「文字編輯」文件", "zh_TW" = "「文字編輯」文件"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.applescript.object
+--------------------------------------------------------------------------------
+type id:            com.apple.ical.item-object (0x3340)
+bundle:             Automator (0x6d0)
+uti:                com.apple.ical.item-object
+localizedDescription: "ar" = "عناصر التقويم", "ca" = "Ítems de Calendari", "cs" = "Položky aplikace Kalendář", "da" = "Emner i Kalender", "de" = "Kalender-Objekte", "el" = "Στοιχεία Ημερολογίου", "en" = "Calendar items", "en_AU" = "Calendar items", "en_GB" = "Calendar items", "es" = "Ítems de Calendario", "es_419" = "Elementos de Calendario", "fi" = "Kalenterikohteet", "fr" = "Éléments de Calendrier", "fr_CA" = "Éléments de Calendrier", "he" = "פריטים מ״לוח שנה״", "hi" = "कैलेंडर आइटम", "hr" = "Stavke kalendara", "hu" = "Naptár elemei", "id" = "Item kalender", "it" = "Elementi Calendario", "ja" = "カレンダー項目", "ko" = "캘린더 항목", "LSDefaultLocalizedValue" = "Calendar items", "ms" = "Item kalendar", "nl" = "Agenda-onderdelen", "no" = "Kalender-objekter", "pl" = "rzeczy Kalendarza", "pt" = "Itens do Calendário", "pt_PT" = "Elementos do Calendário", "ro" = "articole Calendar", "ru" = "Объекты приложения «Календарь»", "sk" = "Položky Kalendára", "sv" = "Objekt i Kalender", "th" = "รายการของปฏิทิน", "tr" = "Takvim öğeleri", "uk" = "Елементи з календаря", "vi" = "Mục lịch", "zh_CN" = "日历项目", "zh_HK" = "日曆項目", "zh_TW" = "行事曆項目"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.applescript.object
+--------------------------------------------------------------------------------
+type id:            com.apple.ical.event-object (0x3344)
+bundle:             Automator (0x6d0)
+uti:                com.apple.ical.event-object
+localizedDescription: "ar" = "أحداث التقويم", "ca" = "Esdeveniments de Calendari", "cs" = "Události aplikace Kalendář", "da" = "Begivenheder i Kalender", "de" = "Kalenderereignisse", "el" = "Γεγονότα Ημερολογίου", "en" = "Calendar events", "en_AU" = "Calendar events", "en_GB" = "Calendar events", "es" = "Eventos de Calendario", "es_419" = "Eventos de Calendario", "fi" = "Kalenteritapahtumat", "fr" = "Événements de Calendrier", "fr_CA" = "Événements de Calendrier", "he" = "אירועים מ״לוח שנה״", "hi" = "कैलेंडर इवेंट", "hr" = "Kalendarski događaji", "hu" = "Naptáresemények", "id" = "Acara Kalender", "it" = "Eventi Calendario", "ja" = "カレンダーイベント", "ko" = "캘린더 이벤트", "LSDefaultLocalizedValue" = "Calendar events", "ms" = "Peristiwa kalendar", "nl" = "Agenda-activiteiten", "no" = "Kalender-hendelser", "pl" = "wydarzenia Kalendarza", "pt" = "Eventos do Calendário", "pt_PT" = "Eventos do Calendário", "ro" = "evenimente Calendar", "ru" = "События приложения «Календарь»", "sk" = "Udalosti Kalendára", "sv" = "Aktiviteter i Kalender", "th" = "กิจกรรมปฏิทิน", "tr" = "Takvim etkinlikleri", "uk" = "Події з календаря", "vi" = "Sự kiện lịch", "zh_CN" = "日历日程", "zh_HK" = "日曆行程", "zh_TW" = "行事曆行程"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.ical.item-object
+--------------------------------------------------------------------------------
+type id:            com.apple.ical.calendar-object (0x3348)
+bundle:             Automator (0x6d0)
+uti:                com.apple.ical.calendar-object
+localizedDescription: "ar" = "تقويمات التقويم", "ca" = "Calendaris de Calendari", "cs" = "Kalendáře aplikace Kalendář", "da" = "Kalendere i Kalender", "de" = "Kalender in „Kalender“", "el" = "Ημερολόγια Ημερολογίου", "en" = "Calendar calendars", "en_AU" = "Calendar calendars", "en_GB" = "Calendar calendars", "es" = "Calendarios de Calendario", "es_419" = "Calendarios de Calendario", "fi" = "Kalenteri-kalenterit", "fr" = "Calendriers de Calendrier", "fr_CA" = "Calendriers de Calendrier", "he" = "לוחות שנה מ״לוח שנה״", "hi" = "कैलेंडर के कैलेंडर", "hr" = "Kalendari Kalendara", "hu" = "Naptár naptárak", "id" = "Kalender kalender", "it" = "Calendari Calendario", "ja" = "“カレンダー”のカレンダー", "ko" = "캘린더 앱의 캘린더", "LSDefaultLocalizedValue" = "Calendar calendars", "ms" = "Kalendar kalendar", "nl" = "Agenda-agenda's", "no" = "Kalender-kalendere", "pl" = "kalendarze Kalendarza", "pt" = "Calendários do Calendário", "pt_PT" = "Calendários do Calendário", "ro" = "calendare Calendar", "ru" = "Календари приложения «Календарь»", "sk" = "Kalendáre Kalendára", "sv" = "Kalendrar i Kalender", "th" = "ปฏิทินจากปฏิทิน", "tr" = "Takvim takvimleri", "uk" = "Календарі програми «Календар»", "vi" = "Các lịch trong Lịch", "zh_CN" = "“日历”日历", "zh_HK" = "「日曆」的日曆", "zh_TW" = "「行事曆」的行事曆"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.ical.item-object
+--------------------------------------------------------------------------------
+type id:            com.apple.ical.todo-object (0x334c)
+bundle:             Automator (0x6d0)
+uti:                com.apple.ical.todo-object
+localizedDescription: "ar" = "التذكيرات", "ca" = "Recordatoris", "cs" = "Připomínky", "da" = "Påmindelser", "de" = "Erinnerungen", "el" = "Υπομνήσεις", "en" = "Reminders", "en_AU" = "Reminders", "en_GB" = "Reminders", "es" = "Recordatorios", "es_419" = "Recordatorios", "fi" = "Muistutukset", "fr" = "Rappels", "fr_CA" = "Rappels", "he" = "תזכורות", "hi" = "रिमाइंडर", "hr" = "Podsjetnici", "hu" = "Emlékeztetők", "id" = "Pengingat", "it" = "Promemoria", "ja" = "リマインダー", "ko" = "미리 알림", "LSDefaultLocalizedValue" = "Reminders", "ms" = "Peringatan", "nl" = "Herinneringen", "no" = "Påminnelser", "pl" = "przypomnienia", "pt" = "Lembretes", "pt_PT" = "Lembretes", "ro" = "Mementouri", "ru" = "Напоминания", "sk" = "Pripomienky", "sv" = "Påminnelser", "th" = "เตือนความจำ", "tr" = "Anımsatıcılar", "uk" = "Нагадування", "vi" = "Lời nhắc", "zh_CN" = "提醒事项", "zh_HK" = "提醒事項", "zh_TW" = "提醒事項"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.ical.item-object
+--------------------------------------------------------------------------------
+type id:            com.apple.calendar-store.item (0x3350)
+bundle:             Automator (0x6d0)
+uti:                com.apple.calendar-store.item
+localizedDescription: "ar" = "عناصر التقويم", "ca" = "Ítems de Calendari", "cs" = "Položky aplikace Kalendář", "da" = "Emner i Kalender", "de" = "Kalender-Objekte", "el" = "Στοιχεία Ημερολογίου", "en" = "Calendar items", "en_AU" = "Calendar items", "en_GB" = "Calendar items", "es" = "Ítems de Calendario", "es_419" = "Elementos de Calendario", "fi" = "Kalenterikohteet", "fr" = "Éléments de Calendrier", "fr_CA" = "Éléments de Calendrier", "he" = "פריטים מ״לוח שנה״", "hi" = "कैलेंडर आइटम", "hr" = "Stavke kalendara", "hu" = "Naptár elemei", "id" = "Item kalender", "it" = "Elementi Calendario", "ja" = "カレンダー項目", "ko" = "캘린더 항목", "LSDefaultLocalizedValue" = "Calendar items", "ms" = "Item kalendar", "nl" = "Agenda-onderdelen", "no" = "Kalender-objekter", "pl" = "rzeczy Kalendarza", "pt" = "Itens do Calendário", "pt_PT" = "Elementos do Calendário", "ro" = "articole Calendar", "ru" = "Объекты приложения «Календарь»", "sk" = "Položky Kalendára", "sv" = "Objekt i Kalender", "th" = "รายการของปฏิทิน", "tr" = "Takvim öğeleri", "uk" = "Елементи з календаря", "vi" = "Mục lịch", "zh_CN" = "日历项目", "zh_HK" = "日曆項目", "zh_TW" = "行事曆項目"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+--------------------------------------------------------------------------------
+type id:            com.apple.calendar-store.event (0x3354)
+bundle:             Automator (0x6d0)
+uti:                com.apple.calendar-store.event
+localizedDescription: "ar" = "أحداث التقويم", "ca" = "Esdeveniments de Calendari", "cs" = "Události aplikace Kalendář", "da" = "Begivenheder i Kalender", "de" = "Kalenderereignisse", "el" = "Γεγονότα Ημερολογίου", "en" = "Calendar events", "en_AU" = "Calendar events", "en_GB" = "Calendar events", "es" = "Eventos de Calendario", "es_419" = "Eventos de Calendario", "fi" = "Kalenteritapahtumat", "fr" = "Événements de Calendrier", "fr_CA" = "Événements de Calendrier", "he" = "אירועים מ״לוח שנה״", "hi" = "कैलेंडर इवेंट", "hr" = "Kalendarski događaji", "hu" = "Naptáresemények", "id" = "Acara Kalender", "it" = "Eventi Calendario", "ja" = "カレンダーイベント", "ko" = "캘린더 이벤트", "LSDefaultLocalizedValue" = "Calendar events", "ms" = "Peristiwa kalendar", "nl" = "Agenda-activiteiten", "no" = "Kalender-hendelser", "pl" = "wydarzenia Kalendarza", "pt" = "Eventos do Calendário", "pt_PT" = "Eventos do Calendário", "ro" = "evenimente Calendar", "ru" = "События приложения «Календарь»", "sk" = "Udalosti Kalendára", "sv" = "Aktiviteter i Kalender", "th" = "กิจกรรมปฏิทิน", "tr" = "Takvim etkinlikleri", "uk" = "Події з календаря", "vi" = "Sự kiện lịch", "zh_CN" = "日历日程", "zh_HK" = "日曆行程", "zh_TW" = "行事曆行程"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.calendar-store.item
+--------------------------------------------------------------------------------
+type id:            com.apple.calendar-store.todo (0x3358)
+bundle:             Automator (0x6d0)
+uti:                com.apple.calendar-store.todo
+localizedDescription: "ar" = "التذكيرات", "ca" = "Recordatoris", "cs" = "Připomínky", "da" = "Påmindelser", "de" = "Erinnerungen", "el" = "Υπομνήσεις", "en" = "Reminders", "en_AU" = "Reminders", "en_GB" = "Reminders", "es" = "Recordatorios", "es_419" = "Recordatorios", "fi" = "Muistutukset", "fr" = "Rappels", "fr_CA" = "Rappels", "he" = "תזכורות", "hi" = "रिमाइंडर", "hr" = "Podsjetnici", "hu" = "Emlékeztetők", "id" = "Pengingat", "it" = "Promemoria", "ja" = "リマインダー", "ko" = "미리 알림", "LSDefaultLocalizedValue" = "Reminders", "ms" = "Peringatan", "nl" = "Herinneringen", "no" = "Påminnelser", "pl" = "przypomnienia", "pt" = "Lembretes", "pt_PT" = "Lembretes", "ro" = "Mementouri", "ru" = "Напоминания", "sk" = "Pripomienky", "sv" = "Påminnelser", "th" = "เตือนความจำ", "tr" = "Anımsatıcılar", "uk" = "Нагадування", "vi" = "Lời nhắc", "zh_CN" = "提醒事项", "zh_HK" = "提醒事項", "zh_TW" = "提醒事項"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.calendar-store.item
+--------------------------------------------------------------------------------
+type id:            com.apple.calendar-store.calendar (0x335c)
+bundle:             Automator (0x6d0)
+uti:                com.apple.calendar-store.calendar
+localizedDescription: "ar" = "تقويمات التقويم", "ca" = "Calendaris de Calendari", "cs" = "Kalendáře aplikace Kalendář", "da" = "Kalendere i Kalender", "de" = "Kalender in „Kalender“", "el" = "Ημερολόγια ημερολογίου", "en" = "Calendar Calendars", "en_AU" = "Calendar Calendars", "en_GB" = "Calendar Calendars", "es" = "Calendarios de Calendario", "es_419" = "Calendarios de Calendario", "fi" = "Kalenteri-kalenterit", "fr" = "Calendriers de Calendrier", "fr_CA" = "Calendriers de Calendrier", "he" = "לוחות שנה מ״לוח שנה״", "hi" = "कैलेंडर के कैलेंडर", "hr" = "Kalendari Kalendara", "hu" = "Naptár naptárak", "id" = "Kalender Kalender", "it" = "Calendari Calendario", "ja" = "“カレンダー”のカレンダー", "ko" = "캘린더 앱의 캘린더", "LSDefaultLocalizedValue" = "Calendar Calendars", "ms" = "Kalendar Kalendar", "nl" = "Agenda-agenda's", "no" = "Kalender-kalendere", "pl" = "kalendarze Kalendarza", "pt" = "Calendários do Calendário", "pt_PT" = "Calendários do Calendário", "ro" = "Calendare Calendar", "ru" = "Календари приложения «Календарь»", "sk" = "Kalendáre Kalendára", "sv" = "Kalendrar i Kalender", "th" = "ปฏิทินจากปฏิทิน", "tr" = "Takvim Takvimleri", "uk" = "Календарі програми «Календар»", "vi" = "Các lịch trong Lịch", "zh_CN" = "“日历”日历", "zh_HK" = "「日曆」的日曆", "zh_TW" = "「行事曆」的行事曆"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.calendar-store.item
+--------------------------------------------------------------------------------
+type id:            com.apple.event-kit.item (0x3360)
+bundle:             Automator (0x6d0)
+uti:                com.apple.event-kit.item
+localizedDescription: "ar" = "عناصر التقويم", "ca" = "Ítems de Calendari", "cs" = "Položky aplikace Kalendář", "da" = "Emner i Kalender", "de" = "Kalender-Objekte", "el" = "Στοιχεία Ημερολογίου", "en" = "Calendar items", "en_AU" = "Calendar items", "en_GB" = "Calendar items", "es" = "Ítems de Calendario", "es_419" = "Elementos de Calendario", "fi" = "Kalenterikohteet", "fr" = "Éléments de Calendrier", "fr_CA" = "Éléments de Calendrier", "he" = "פריטים מ״לוח שנה״", "hi" = "कैलेंडर आइटम", "hr" = "Stavke kalendara", "hu" = "Naptár elemei", "id" = "Item kalender", "it" = "Elementi Calendario", "ja" = "カレンダー項目", "ko" = "캘린더 항목", "LSDefaultLocalizedValue" = "Calendar items", "ms" = "Item kalendar", "nl" = "Agenda-onderdelen", "no" = "Kalender-objekter", "pl" = "rzeczy Kalendarza", "pt" = "Itens do Calendário", "pt_PT" = "Elementos do Calendário", "ro" = "articole Calendar", "ru" = "Объекты приложения «Календарь»", "sk" = "Položky Kalendára", "sv" = "Objekt i Kalender", "th" = "รายการของปฏิทิน", "tr" = "Takvim öğeleri", "uk" = "Елементи з календаря", "vi" = "Mục lịch", "zh_CN" = "日历项目", "zh_HK" = "日曆項目", "zh_TW" = "行事曆項目"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+--------------------------------------------------------------------------------
+type id:            com.apple.event-kit.event (0x3364)
+bundle:             Automator (0x6d0)
+uti:                com.apple.event-kit.event
+localizedDescription: "ar" = "أحداث التقويم", "ca" = "Esdeveniments de Calendari", "cs" = "Události aplikace Kalendář", "da" = "Begivenheder i Kalender", "de" = "Kalenderereignisse", "el" = "Γεγονότα Ημερολογίου", "en" = "Calendar events", "en_AU" = "Calendar events", "en_GB" = "Calendar events", "es" = "Eventos de Calendario", "es_419" = "Eventos de Calendario", "fi" = "Kalenteritapahtumat", "fr" = "Événements de Calendrier", "fr_CA" = "Événements de Calendrier", "he" = "אירועים מ״לוח שנה״", "hi" = "कैलेंडर इवेंट", "hr" = "Kalendarski događaji", "hu" = "Naptáresemények", "id" = "Acara Kalender", "it" = "Eventi Calendario", "ja" = "カレンダーイベント", "ko" = "캘린더 이벤트", "LSDefaultLocalizedValue" = "Calendar events", "ms" = "Peristiwa kalendar", "nl" = "Agenda-activiteiten", "no" = "Kalender-hendelser", "pl" = "wydarzenia Kalendarza", "pt" = "Eventos do Calendário", "pt_PT" = "Eventos do Calendário", "ro" = "evenimente Calendar", "ru" = "События приложения «Календарь»", "sk" = "Udalosti Kalendára", "sv" = "Aktiviteter i Kalender", "th" = "กิจกรรมปฏิทิน", "tr" = "Takvim etkinlikleri", "uk" = "Події з календаря", "vi" = "Sự kiện lịch", "zh_CN" = "日历日程", "zh_HK" = "日曆行程", "zh_TW" = "行事曆行程"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.event-kit.item
+--------------------------------------------------------------------------------
+type id:            com.apple.event-kit.reminder (0x3368)
+bundle:             Automator (0x6d0)
+uti:                com.apple.event-kit.reminder
+localizedDescription: "ar" = "التذكيرات", "ca" = "Recordatoris", "cs" = "Připomínky", "da" = "Påmindelser", "de" = "Erinnerungen", "el" = "Υπομνήσεις", "en" = "Reminders", "en_AU" = "Reminders", "en_GB" = "Reminders", "es" = "Recordatorios", "es_419" = "Recordatorios", "fi" = "Muistutukset", "fr" = "Rappels", "fr_CA" = "Rappels", "he" = "תזכורות", "hi" = "रिमाइंडर", "hr" = "Podsjetnici", "hu" = "Emlékeztetők", "id" = "Pengingat", "it" = "Promemoria", "ja" = "リマインダー", "ko" = "미리 알림", "LSDefaultLocalizedValue" = "Reminders", "ms" = "Peringatan", "nl" = "Herinneringen", "no" = "Påminnelser", "pl" = "przypomnienia", "pt" = "Lembretes", "pt_PT" = "Lembretes", "ro" = "Mementouri", "ru" = "Напоминания", "sk" = "Pripomienky", "sv" = "Påminnelser", "th" = "เตือนความจำ", "tr" = "Anımsatıcılar", "uk" = "Нагадування", "vi" = "Lời nhắc", "zh_CN" = "提醒事项", "zh_HK" = "提醒事項", "zh_TW" = "提醒事項"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.event-kit.item
+--------------------------------------------------------------------------------
+type id:            com.apple.event-kit.calendar (0x336c)
+bundle:             Automator (0x6d0)
+uti:                com.apple.event-kit.calendar
+localizedDescription: "ar" = "تقويمات التقويم", "ca" = "Calendaris de Calendari", "cs" = "Kalendáře aplikace Kalendář", "da" = "Kalendere i Kalender", "de" = "Kalender in „Kalender“", "el" = "Ημερολόγια ημερολογίου", "en" = "Calendar Calendars", "en_AU" = "Calendar Calendars", "en_GB" = "Calendar Calendars", "es" = "Calendarios de Calendario", "es_419" = "Calendarios de Calendario", "fi" = "Kalenteri-kalenterit", "fr" = "Calendriers de Calendrier", "fr_CA" = "Calendriers de Calendrier", "he" = "לוחות שנה מ״לוח שנה״", "hi" = "कैलेंडर के कैलेंडर", "hr" = "Kalendari Kalendara", "hu" = "Naptár naptárak", "id" = "Kalender Kalender", "it" = "Calendari Calendario", "ja" = "“カレンダー”のカレンダー", "ko" = "캘린더 앱의 캘린더", "LSDefaultLocalizedValue" = "Calendar Calendars", "ms" = "Kalendar Kalendar", "nl" = "Agenda-agenda's", "no" = "Kalender-kalendere", "pl" = "kalendarze Kalendarza", "pt" = "Calendários do Calendário", "pt_PT" = "Calendários do Calendário", "ro" = "Calendare Calendar", "ru" = "Календари приложения «Календарь»", "sk" = "Kalendáre Kalendára", "sv" = "Kalendrar i Kalender", "th" = "ปฏิทินจากปฏิทิน", "tr" = "Takvim Takvimleri", "uk" = "Календарі програми «Календар»", "vi" = "Các lịch trong Lịch", "zh_CN" = "“日历”日历", "zh_HK" = "「日曆」的日曆", "zh_TW" = "「行事曆」的行事曆"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.event-kit.item
+--------------------------------------------------------------------------------
+type id:            com.apple.mail.item-object (0x3370)
+bundle:             Automator (0x6d0)
+uti:                com.apple.mail.item-object
+localizedDescription: "ar" = "عناصر البريد", "ca" = "Ítems de Mail", "cs" = "Položky Mailu", "da" = "Mail-emner", "de" = "Mail-Objekte", "el" = "Στοιχεία Mail", "en" = "Mail items", "en_AU" = "Mail items", "en_GB" = "Mail items", "es" = "Ítems de Mail", "es_419" = "Elementos de Mail", "fi" = "Mail-kohteita", "fr" = "Éléments Mail", "fr_CA" = "Éléments Mail", "he" = "פריטים של ״דואר״", "hi" = "मेल आइटम", "hr" = "Mail stavke", "hu" = "Mail-elemek", "id" = "Item Mail", "it" = "elementi di Mail", "ja" = "メール項目", "ko" = "Mail 항목", "LSDefaultLocalizedValue" = "Mail items", "ms" = "Item Mail", "nl" = "Mail-onderdelen", "no" = "Mail-objekter", "pl" = "rzeczy aplikacji Mail", "pt" = "Itens do Mail", "pt_PT" = "Elementos do Mail", "ro" = "Articole Mail", "ru" = "Объекты Почты", "sk" = "Položky Mailu", "sv" = "Mail-objekt", "th" = "รายการเมล", "tr" = "Mail öğeleri", "uk" = "елементи Пошти", "vi" = "Mục thư", "zh_CN" = "邮件项", "zh_HK" = "「郵件」項目", "zh_TW" = "「郵件」項目"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.applescript.object
+--------------------------------------------------------------------------------
+type id:            com.apple.mail.message-object (0x3374)
+bundle:             Automator (0x6d0)
+uti:                com.apple.mail.message-object
+localizedDescription: "ar" = "رسائل البريد", "ca" = "Missatges de correu", "cs" = "Zprávy Mailu", "da" = "Mailbeskeder", "de" = "E-Mails", "el" = "Μηνύματα Mail", "en" = "Mail messages", "en_AU" = "Mail messages", "en_GB" = "Mail messages", "es" = "Mensajes de correo", "es_419" = "Mensajes de correo", "fi" = "Sähköpostiviestejä", "fr" = "E-mails", "fr_CA" = "Courriels", "he" = "הודעות דואר", "hi" = "मेल संदेश", "hr" = "Mail poruke", "hu" = "Mail üzenetek", "id" = "Pesan Mail", "it" = "Messaggi di Mail", "ja" = "メールメッセージ", "ko" = "Mail 메시지", "LSDefaultLocalizedValue" = "Mail messages", "ms" = "Mesej Mail", "nl" = "Mail-berichten", "no" = "E-postmeldinger", "pl" = "wiadomości aplikacji Mail", "pt" = "Mensagens do Mail", "pt_PT" = "Mensagens do Mail", "ro" = "Mesaje Mail", "ru" = "Сообщения Почты", "sk" = "Emailové správy", "sv" = "Mejl", "th" = "ข้อความเมล", "tr" = "Mail iletileri", "uk" = "листи Пошти", "vi" = "Thư trong Mail", "zh_CN" = "邮件信息", "zh_HK" = "郵件", "zh_TW" = "郵件"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.mail.item-object
+--------------------------------------------------------------------------------
+type id:            com.apple.mail.mailbox-object (0x3378)
+bundle:             Automator (0x6d0)
+uti:                com.apple.mail.mailbox-object
+localizedDescription: "ar" = "صناديق البريد", "ca" = "Bústies de correu", "cs" = "Schránky Mailu", "da" = "Mailpostkasser", "de" = "Mail-Postfächer", "el" = "Θυρίδες Mail", "en" = "Mail mailboxes", "en_AU" = "Mail mailboxes", "en_GB" = "Mail mailboxes", "es" = "Buzones de correo de Mail", "es_419" = "Buzones de correo de Mail", "fi" = "Mail-postilaatikkoja", "fr" = "Boîtes aux lettres Mail", "fr_CA" = "Boîtes aux lettres Mail", "he" = "תיבות דואר", "hi" = "मेल मेलबॉक्स", "hr" = "Mail sandučići", "hu" = "Mail postafiókok", "id" = "Kotak Mail", "it" = "Caselle di Mail", "ja" = "メールのメールボックス", "ko" = "Mail 메일상자", "LSDefaultLocalizedValue" = "Mail mailboxes", "ms" = "Peti mel Mail", "nl" = "Mail-postbussen", "no" = "Mail-postkasser", "pl" = "skrzynki pocztowe aplikacji Mail", "pt" = "Caixas de correio do Mail", "pt_PT" = "Caixas de correio do Mail", "ro" = "Cutii poștale Mail", "ru" = "Ящики Почты", "sk" = "Mailové schránky", "sv" = "Mail-brevlådor", "th" = "กล่องเมลของเมล", "tr" = "Mail posta kutuları", "uk" = "скриньки Пошти", "vi" = "Hộp thư trong Mail", "zh_CN" = "邮件邮箱", "zh_HK" = "「郵件」信箱", "zh_TW" = "「郵件」信箱"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.mail.item-object
+--------------------------------------------------------------------------------
+type id:            com.apple.mail.account-object (0x337c)
+bundle:             Automator (0x6d0)
+uti:                com.apple.mail.account-object
+localizedDescription: "ar" = "حسابات البريد", "ca" = "Comptes de correu", "cs" = "Poštovní účty", "da" = "Mail-konti", "de" = "Mail-Accounts", "el" = "Λογαριασμοί Mail", "en" = "Mail accounts", "en_AU" = "Mail accounts", "en_GB" = "Mail accounts", "es" = "Cuentas de Mail", "es_419" = "Cuentas de Mail", "fi" = "Mail-tilejä", "fr" = "Comptes Mail", "fr_CA" = "Comptes Mail", "he" = "חשבונות דואר", "hi" = "मेल खाते", "hr" = "Mail računi", "hu" = "Mail fiókok", "id" = "Akun Mail", "it" = "Account di Mail", "ja" = "メールアカウント", "ko" = "Mail 계정", "LSDefaultLocalizedValue" = "Mail accounts", "ms" = "Akaun Mail", "nl" = "Mail-accounts", "no" = "E-postkontoer", "pl" = "konta aplikacji Mail", "pt" = "Contas do Mail", "pt_PT" = "Contas de correio", "ro" = "Conturi Mail", "ru" = "Учетные записи Почты", "sk" = "Mailové účty", "sv" = "Mail-konton", "th" = "บัญชีเมล", "tr" = "Mail hesapları", "uk" = "облікові записи Пошти", "vi" = "Tài khoản Mail", "zh_CN" = "邮件帐户", "zh_HK" = "「郵件」帳户", "zh_TW" = "「郵件」帳號"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.mail.item-object
+--------------------------------------------------------------------------------
+type id:            com.apple.addressbook.item-object (0x3380)
+bundle:             Automator (0x6d0)
+uti:                com.apple.addressbook.item-object
+localizedDescription: "ar" = "عناصر جهات الاتصال", "ca" = "Ítems de Contactes", "cs" = "Položky aplikace Kontakty", "da" = "Emner i Kontakter", "de" = "Kontakte-Objekte", "el" = "Στοιχεία επαφών", "en" = "Contacts items", "en_AU" = "Contacts items", "en_GB" = "Contacts items", "es" = "Ítems de Contactos", "es_419" = "Elementos de Contactos", "fi" = "Yhteystietojen kohteet", "fr" = "Éléments de Contacts", "fr_CA" = "Éléments de Contacts", "he" = "פריטים מ״אנשי קשר״", "hi" = "संपर्क आइटम", "hr" = "Stavke kontakata", "hu" = "Kontaktok elemei", "id" = "Item Kontak", "it" = "Elementi Contatti", "ja" = "連絡先項目", "ko" = "연락처 항목", "LSDefaultLocalizedValue" = "Contacts items", "ms" = "Item kenalan", "nl" = "Contacten-onderdelen", "no" = "Kontakter-objekter", "pl" = "Rzeczy Kontaktów", "pt" = "Itens do Contatos", "pt_PT" = "Elementos de Contactos", "ro" = "articole Contacte", "ru" = "Объекты приложения «Контакты»", "sk" = "Položky Kontaktov", "sv" = "Objekt i Kontakter", "th" = "รายการรายชื่อ", "tr" = "Kişiler öğeleri", "uk" = "Елементи контактів", "vi" = "Mục Danh bạ", "zh_CN" = "通讯录项目", "zh_HK" = "通訊錄項目", "zh_TW" = "聯絡人項目"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.applescript.object
+--------------------------------------------------------------------------------
+type id:            com.apple.addressbook.group-object (0x3384)
+bundle:             Automator (0x6d0)
+uti:                com.apple.addressbook.group-object
+localizedDescription: "ar" = "مجموعات جهات الاتصال", "ca" = "Grups de contactes", "cs" = "Skupiny aplikace Kontakty", "da" = "Grupper i Kontakter", "de" = "Kontakte-Gruppen", "el" = "Ομάδες επαφών", "en" = "Contacts groups", "en_AU" = "Contacts groups", "en_GB" = "Contacts groups", "es" = "Grupos de Contactos", "es_419" = "Grupos de Contactos", "fi" = "Yhteystietojen ryhmät", "fr" = "Groupes de Contacts", "fr_CA" = "Groupes Contacts", "he" = "קבוצות מ״אנשי קשר״", "hi" = "संपर्क समूह", "hr" = "Grupe kontakata", "hu" = "Kontaktok csoportok", "id" = "Grup Kontak", "it" = "Gruppi Contatti", "ja" = "連絡先グループ", "ko" = "연락처 그룹", "LSDefaultLocalizedValue" = "Contacts groups", "ms" = "Kumpulan kenalan", "nl" = "Contacten-groepen", "no" = "Kontakter-grupper", "pl" = "Grupy Kontaktów", "pt" = "Grupos do Contatos", "pt_PT" = "Grupos de Contactos", "ro" = "grupuri Contacte", "ru" = "Группы приложения «Контакты»", "sk" = "Skupiny Kontaktov", "sv" = "Grupper i Kontakter", "th" = "กลุ่มรายชื่อ", "tr" = "Kişiler grupları", "uk" = "Групи контактів", "vi" = "Nhóm trong Danh bạ", "zh_CN" = "通讯录群组", "zh_HK" = "通訊錄群組", "zh_TW" = "聯絡人群組"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.addressbook.item-object
+--------------------------------------------------------------------------------
+type id:            com.apple.addressbook.person-object (0x3388)
+bundle:             Automator (0x6d0)
+uti:                com.apple.addressbook.person-object
+localizedDescription: "ar" = "أشخاص جهات الاتصال", "ca" = "Persones a Contactes", "cs" = "Osoby z aplikace Kontakty", "da" = "Personer i Kontakter", "de" = "Kontakte-Personen", "el" = "Άτομα επαφών", "en" = "Contacts people", "en_AU" = "Contacts people", "en_GB" = "Contacts people", "es" = "Personas de Contactos", "es_419" = "Personas de Contactos", "fi" = "Yhteystietojen henkilöt", "fr" = "Personnes de Contacts", "fr_CA" = "Personnes de Contacts", "he" = "אנשים מ״אנשי קשר״", "hi" = "संपर्क लोग", "hr" = "Osobe iz kontakata", "hu" = "Kontaktok személyek", "id" = "Orang Kontak", "it" = "Persone Contatti", "ja" = "“連絡先”の個人", "ko" = "연락처 구성원", "LSDefaultLocalizedValue" = "Contacts people", "ms" = "Orang kenalan", "nl" = "Contacten-personen", "no" = "Kontakter-personer", "pl" = "Osoby Kontaktów", "pt" = "Pessoas do Contatos", "pt_PT" = "Pessoas de Contactos", "ro" = "persoane Contacte", "ru" = "Адресаты приложения «Контакты»", "sk" = "Ľudia z Kontaktov", "sv" = "Personer i Kontakter", "th" = "รายชื่อผู้คน", "tr" = "Kişiler kişileri", "uk" = "Особи з контактів", "vi" = "Mọi người trong Danh bạ", "zh_CN" = "通讯录联系人", "zh_HK" = "通訊錄聯絡人", "zh_TW" = "聯絡人成員"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.addressbook.item-object
+--------------------------------------------------------------------------------
+type id:            com.apple.applescript.text-object (0x338c)
+bundle:             Automator (0x6d0)
+uti:                com.apple.applescript.text-object
+localizedDescription: "ar" = "نص", "ca" = "Text", "cs" = "Text", "da" = "Tekst", "de" = "Text", "el" = "Κείμενο", "en" = "Text", "en_AU" = "Text", "en_GB" = "Text", "es" = "Texto", "es_419" = "Texto", "fi" = "Teksti", "fr" = "Texte", "fr_CA" = "Texte", "he" = "מלל", "hi" = "टेक्स्ट", "hr" = "Tekst", "hu" = "Szöveg", "id" = "Teks", "it" = "Testo", "ja" = "テキスト", "ko" = "텍스트", "LSDefaultLocalizedValue" = "Text", "ms" = "Teks", "nl" = "Tekst", "no" = "Tekst", "pl" = "tekst", "pt" = "Texto", "pt_PT" = "Texto", "ro" = "Text", "ru" = "Текст", "sk" = "Text", "sv" = "Text", "th" = "ข้อความ", "tr" = "Metin", "uk" = "Текст", "vi" = "Văn bản", "zh_CN" = "文本", "zh_HK" = "文字", "zh_TW" = "文字"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.applescript.object
+--------------------------------------------------------------------------------
+type id:            com.apple.applescript.data-object (0x3390)
+bundle:             Automator (0x6d0)
+uti:                com.apple.applescript.data-object
+localizedDescription: "ar" = "البيانات", "ca" = "Dades", "cs" = "Data", "da" = "Data", "de" = "Daten", "el" = "Δεδομένα", "en" = "Data", "en_AU" = "Data", "en_GB" = "Data", "es" = "Datos", "es_419" = "Datos", "fi" = "Dataa", "fr" = "Données", "fr_CA" = "Données", "he" = "נתונים", "hi" = "डेटा", "hr" = "Podaci", "hu" = "Adat", "id" = "Data", "it" = "Dati", "ja" = "データ", "ko" = "데이터", "LSDefaultLocalizedValue" = "Data", "ms" = "Data", "nl" = "Gegevens", "no" = "Data", "pl" = "dane", "pt" = "Dados", "pt_PT" = "Dados", "ro" = "Date", "ru" = "Данные", "sk" = "Dáta", "sv" = "Data", "th" = "ข้อมูล", "tr" = "Veri", "uk" = "Дані", "vi" = "Dữ liệu", "zh_CN" = "数据", "zh_HK" = "資料", "zh_TW" = "資料"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.applescript.object
+--------------------------------------------------------------------------------
+type id:            com.apple.applescript.url-object (0x3394)
+bundle:             Automator (0x6d0)
+uti:                com.apple.applescript.url-object
+localizedDescription: "ar" = "عناوين URL", "ca" = "URL", "cs" = "URL", "da" = "URL-adresser", "de" = "URLs", "el" = "διευθύνσεις URL", "en" = "URLs", "en_AU" = "URLs", "en_GB" = "URLs", "es" = "Direcciones URL", "es_419" = "Direcciones URL", "fi" = "Verkko-osoitteet", "fr" = "Adresses URL", "fr_CA" = "URL", "he" = "כתובות אינטרנט", "hi" = "URL", "hr" = "URL-ovi", "hu" = "URL-ek", "id" = "URL", "it" = "URL", "ja" = "URL", "ko" = "URL", "LSDefaultLocalizedValue" = "URLs", "ms" = "URL", "nl" = "URL's", "no" = "URL-er", "pl" = "URL", "pt" = "URLs", "pt_PT" = "Endereços URL", "ro" = "URL-uri", "ru" = "URL-адреса", "sk" = "URL", "sv" = "URL:er", "th" = "URL", "tr" = "URL’ler", "uk" = "URL", "vi" = "URL", "zh_CN" = "URL", "zh_HK" = "URL", "zh_TW" = "URL"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.applescript.text-object
+--------------------------------------------------------------------------------
+type id:            com.apple.spotlight.item (0x3398)
+bundle:             Automator (0x6d0)
+uti:                com.apple.spotlight.item
+localizedDescription: "ar" = "عناصر Spotlight", "ca" = "Ítems de Spotlight", "cs" = "Položky Spotlight", "da" = "Spotlight-emner", "de" = "Spotlight-Objekte", "el" = "Στοιχεία Spotlight", "en" = "Spotlight items", "en_AU" = "Spotlight items", "en_GB" = "Spotlight items", "es" = "Ítems de Spotlight", "es_419" = "Elementos de Spotlight", "fi" = "Spotlight-kohteita", "fr" = "Éléments Spotlight", "fr_CA" = "Éléments Spotlight", "he" = "פריטי Spotlight", "hi" = "Spotlight आइटम", "hr" = "Spotlight stavke", "hu" = "Spotlight-elemek", "id" = "Item Spotlight", "it" = "Elementi di Spotlight", "ja" = "Spotlight項目", "ko" = "Spotlight 항목", "LSDefaultLocalizedValue" = "Spotlight items", "ms" = "Item Spotlight", "nl" = "Spotlight-onderdelen", "no" = "Spotlight-objekter", "pl" = "rzeczy Spotlight", "pt" = "Itens do Spotlight", "pt_PT" = "Elementos do Spotlight", "ro" = "Articole Spotlight", "ru" = "Объекты Spotlight", "sk" = "Položky Spotlightu", "sv" = "Spotlight-objekt", "th" = "รายการ Spotlight", "tr" = "Spotlight öğeleri", "uk" = "елементи Spotlight", "vi" = "Mục Spotlight", "zh_CN" = "“聚焦”项目", "zh_HK" = "Spotlight項目", "zh_TW" = "Spotlight項目"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+conforms to:        com.apple.cocoa.path
+--------------------------------------------------------------------------------
+type id:            com.apple.pubsub.feed (0x339c)
+bundle:             Automator (0x6d0)
+uti:                com.apple.pubsub.feed
+localizedDescription: "ar" = "مواجز RSS", "ca" = "Canals RSS", "cs" = "RSS kanály", "da" = "RSS-feeds", "de" = "RSS-Feeds", "el" = "Τροφοδοσίες RSS", "en" = "RSS feeds", "en_AU" = "RSS feeds", "en_GB" = "RSS feeds", "es" = "Canales RSS", "es_419" = "Canales RSS", "fi" = "RSS-syötteitä", "fr" = "Flux RSS", "fr_CA" = "Flux RSS", "he" = "הזנות RSS", "hi" = "RSS फ़ीड", "hr" = "RSS feedovi", "hu" = "RSS-hírcsatornák", "id" = "Umpan balik RSS", "it" = "Feed RSS", "ja" = "RSS配信", "ko" = "RSS 피드", "LSDefaultLocalizedValue" = "RSS feeds", "ms" = "Suapan RSS", "nl" = "RSS-kanalen", "no" = "RSS-strømmer", "pl" = "źródła RSS", "pt" = "Documentos RSS", "pt_PT" = "Feeds RSS", "ro" = "Fluxuri RSS", "ru" = "Источники RSS", "sk" = "RSS kanály", "sv" = "RSS-flöden", "th" = "ตัวป้อน RSS", "tr" = "RSS kaynakları", "uk" = "RSS-стрічки", "vi" = "Nguồn nạp RSS", "zh_CN" = "RSS提要", "zh_HK" = "RSS Feed", "zh_TW" = "RSS Feed"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+--------------------------------------------------------------------------------
+type id:            com.apple.pubsub.entry (0x33a0)
+bundle:             Automator (0x6d0)
+uti:                com.apple.pubsub.entry
+localizedDescription: "ar" = "مقالات RSS", "ca" = "Articles RSS", "cs" = "RSS články", "da" = "RSS-artikler", "de" = "RSS-Artikel", "el" = "Άρθρα RSS", "en" = "RSS articles", "en_AU" = "RSS articles", "en_GB" = "RSS articles", "es" = "Artículos RSS", "es_419" = "Artículos RSS", "fi" = "RSS-artikkeleja", "fr" = "Articles RSS", "fr_CA" = "Articles RSS", "he" = "כתבות RSS", "hi" = "RSS आलेख", "hr" = "RSS članci", "hu" = "RSS-cikkek", "id" = "Artikel RSS", "it" = "Articoli RSS", "ja" = "RSS記事", "ko" = "RSS 기사", "LSDefaultLocalizedValue" = "RSS articles", "ms" = "Artikel RSS", "nl" = "RSS-artikelen", "no" = "RSS-artikler", "pl" = "artykuły RSS", "pt" = "Artigos RSS", "pt_PT" = "Artigos RSS", "ro" = "Articole RSS", "ru" = "Статьи RSS", "sk" = "RSS články", "sv" = "RSS-artiklar", "th" = "บทความ RSS", "tr" = "RSS makaleleri", "uk" = "RSS-статті", "vi" = "Bài viết RSS", "zh_CN" = "RSS文章", "zh_HK" = "RSS文章", "zh_TW" = "RSS文章"
+flags:              inactive  apple-internal  exported  untrusted (0000000000000014)
+--------------------------------------------------------------------------------
+type id:            com.apple.automator-workflow (0x33a4)
+bundle:             Automator (0x6d0)
+uti:                com.apple.automator-workflow
+localizedDescription: "ar" = "مستند سير عمل Automator", "ca" = "Document de flux de treball d’Automator", "cs" = "Dokument sledu úloh Automatoru", "da" = "Dokument med Automator-arbejdsgang", "de" = "Automator-Arbeitsablaufsdokument", "el" = "Έγγραφο ροής εργασιών Automator", "en" = "Automator Workflow Document", "en_AU" = "Automator Workflow Document", "en_GB" = "Automator Workflow Document", "es" = "Documento de flujo de trabajo de Automator", "es_419" = "Documento de flujo de trabajo de Automator", "fi" = "Automatorin työnkulkudokumentti", "fr" = "Document de processus d’Automator", "fr_CA" = "Document de processus d’Automator", "he" = "מסמך תהליך עבודה של Automator", "hi" = "Automator वर्कफ़्लो दस्तावेज़", "hr" = "Dokument tijeka rada Automatora", "hu" = "Automator munkafolyamat-dokumentum", "id" = "Dokumen Alur Kerja Automator", "it" = "Documento flusso di lavoro di Automator", "ja" = "Automatorワークフロー書類", "ko" = "Automator 작업흐름 문서", "LSDefaultLocalizedValue" = "Automator Workflow Document", "ms" = "Dokumen Aliran Kerja Automator", "nl" = "Automator-takenreeksdocument", "no" = "Automator-arbeidsflytdokument", "pl" = "dokument kolejki Automatora", "pt" = "Documento de Fluxo de Trabalho do Automator", "pt_PT" = "Documento de processo do Automator", "ro" = "Document flux de lucru Automator", "ru" = "Документ процесса Automator", "sk" = "Dokument workflowu Automatora", "sv" = "Automator-arbetsflödesdokument", "th" = "เอกสารเวิร์กโฟลว์ Automator", "tr" = "Automator İş Akışı Belgesi", "uk" = "Документ сценарію Automator", "vi" = "Tài liệu Luồng công việc Automator", "zh_CN" = "“自动操作”工作流程文稿", "zh_HK" = "Automator工作流程文件", "zh_TW" = "Automator工作流程文件"
+flags:              inactive  apple-internal  rel-icon-path  exported  untrusted (000000000000001c)
+iconFiles:          Contents/Resources/AutomatorDocument.icns
+reference URL:      http://www.apple.com/macosx/features/automator/
+conforms to:        com.apple.package
+tags:               .workflow
+--------------------------------------------------------------------------------
+type id:            com.apple.automator-action (0x33a8)
+bundle:             Automator (0x6d0)
+uti:                com.apple.automator-action
+localizedDescription: "ar" = "إجراء Automator", "ca" = "Acció d’Automator", "cs" = "Akce Automatoru", "da" = "Automator-handling", "de" = "Automator-Aktion", "el" = "Ενέργεια Automator", "en" = "Automator Action", "en_AU" = "Automator Action", "en_GB" = "Automator Action", "es" = "Acción de Automator", "es_419" = "Acción de Automator", "fi" = "Automator-toiminto", "fr" = "Action d’Automator", "fr_CA" = "Action d’Automator", "he" = "פעולת Automator", "hi" = "Automator क्रिया", "hr" = "Postupak Automatora", "hu" = "Automator művelet", "id" = "Tindakan Automator", "it" = "Azione Automator", "ja" = "Automatorアクション", "ko" = "Automator 동작", "LSDefaultLocalizedValue" = "Automator Action", "ms" = "Tindakan Automator", "nl" = "Automator-taak", "no" = "Automator-handling", "pl" = "czynność Automatora", "pt" = "Ação do Automator", "pt_PT" = "Ação do Automator", "ro" = "Acțiune Automator", "ru" = "Действие Automator", "sk" = "Akcia Automatora", "sv" = "Automator-åtgärd", "th" = "การทำงาน Automator", "tr" = "Automator İşlemi", "uk" = "Дія Automator", "vi" = "Tác vụ cho Automator", "zh_CN" = "自动操作", "zh_HK" = "Automator動作", "zh_TW" = "Automator動作"
+flags:              inactive  apple-internal  rel-icon-path  exported  untrusted (000000000000001c)
+iconFiles:          Contents/Resources/AutomatorAction.icns
+reference URL:      http://www.apple.com/macosx/features/automator/
+conforms to:        com.apple.plugin
+tags:               .action
+--------------------------------------------------------------------------------
+type id:            com.apple.automator-conversion-action (0x33ac)
+bundle:             Automator (0x6d0)
+uti:                com.apple.automator-conversion-action
+localizedDescription: "ar" = "إجراء تحويل Automator", "ca" = "Acció de conversió d’Automator", "cs" = "Převodní akce Automatoru", "da" = "Automator-konverteringshandling", "de" = "Automator-Konvertierungsaktion", "el" = "Ενέργεια μετατροπής Automator", "en" = "Automator Conversion Action", "en_AU" = "Automator Conversion Action", "en_GB" = "Automator Conversion Action", "es" = "Acción de conversión de Automator", "es_419" = "Acción de conversión de Automator", "fi" = "Automator-muunnostoiminto", "fr" = "Action de conversion d’Automator", "fr_CA" = "Action de conversion d’Automator", "he" = "פעולת המרה של Automator", "hi" = "Automator रूपांतरण क्रिया", "hr" = "Postupak konverzije Automatora", "hu" = "Automator konvertáló művelet", "id" = "Tindakan Konversi Automator", "it" = "Azione di conversione Automator", "ja" = "Automator変換アクション", "ko" = "Automator 변환 동작", "LSDefaultLocalizedValue" = "Automator Conversion Action", "ms" = "Tindakan Penukaran Automator", "nl" = "Automator-conversietaak", "no" = "Automator-konverteringshandling", "pl" = "czynność konwersji Automatora", "pt" = "Ação de Conversão do Automator", "pt_PT" = "Ação de conversão do Automator", "ro" = "Acțiune de conversie Automator", "ru" = "Действие преобразования Automator", "sk" = "Konverzná akcia Automatora", "sv" = "Automator-konverteringsåtgärd", "th" = "การทำงานการแปลง Automator", "tr" = "Automator Dönüştürme İşlemi", "uk" = "Дія перетворення Automator", "vi" = "Tác vụ Chuyển đổi Automator", "zh_CN" = "自动操作转换操作", "zh_HK" = "Automator轉換動作", "zh_TW" = "Automator轉換動作"
+flags:              inactive  apple-internal  rel-icon-path  exported  untrusted (000000000000001c)
+iconFiles:          Contents/Resources/AutomatorConversionAction.icns
+reference URL:      http://www.apple.com/macosx/features/automator/
+conforms to:        com.apple.plugin
+tags:               .caction
+--------------------------------------------------------------------------------
+type id:            com.apple.automator-type-definition (0x33b0)
+bundle:             Automator (0x6d0)
+uti:                com.apple.automator-type-definition
+localizedDescription: "ar" = "تعريف نوع بيانات Automator", "ca" = "Definició de tipus de dades d’Automator", "cs" = "Definice datového typu Automatoru", "da" = "Definition af Automator-datatype", "de" = "Automator-Datentypdefinition", "el" = "Ορισμός τύπου δεδομένων Automator", "en" = "Automator Data Type Definition", "en_AU" = "Automator Data Type Definition", "en_GB" = "Automator Data Type Definition", "es" = "Definición de tipo de datos de Automator", "es_419" = "Definición de tipo de datos de Automator", "fi" = "Automatorin datatyypin määritelmä", "fr" = "Définition de type de données d’Automator", "fr_CA" = "Définition de type de données d’Automator", "he" = "הגדרת סוג נתונים של Automator", "hi" = "Automator डेटा प्रकार परिभाषा", "hr" = "Automatorova definicija vrste podataka", "hu" = "Automator adattípus-definíció", "id" = "Definisi Jenis Data Automator", "it" = "Definizione tipo di dati Automator", "ja" = "Automatorデータタイプの定義", "ko" = "Automator 데이터 유형 정의", "LSDefaultLocalizedValue" = "Automator Data Type Definition", "ms" = "Definisi Jenis Data Automator", "nl" = "Automator-gegevenstypedefinitie", "no" = "Automator-datatypedefinisjon", "pl" = "definicja typu danych Automatora", "pt" = "Definição de Tipo de Dados do Automator", "pt_PT" = "Definição de tipo de dados do Automator", "ro" = "Definiție tip de date Automator", "ru" = "Определение типа данных Automator", "sk" = "Definícia dátového typu Automatora", "sv" = "Automator-datatypsdefinition", "th" = "นิยามประเภทข้อมูล Automator", "tr" = "Automator Veri Türü Tanımı", "uk" = "Визначення типу даних Automator", "vi" = "Định nghĩa Loại Dữ liệu của Automator", "zh_CN" = "“自动操作”数据类型定义", "zh_HK" = "Automator資料類型定義", "zh_TW" = "Automator資料類型定義"
+flags:              inactive  apple-internal  rel-icon-path  exported  untrusted (000000000000001c)
+iconFiles:          Contents/Resources/AutomatorDefinition.icns
+reference URL:      http://www.apple.com/macosx/features/automator/
+conforms to:        com.apple.plugin
+tags:               .definition
+--------------------------------------------------------------------------------
+claim id:           Workflow (0x261c)
+localizedNames:     "ar" = "سير العمل", "ca" = "Flux de treball", "cs" = "Sled úloh", "da" = "Arbejdsgang", "de" = "Arbeitsablauf", "el" = "Ροή εργασιών", "en" = "Workflow", "en_AU" = "Workflow", "en_GB" = "Workflow", "es" = "Flujo de trabajo", "es_419" = "Flujo de trabajo", "fi" = "Työnkulku", "fr" = "Processus", "fr_CA" = "Processus", "he" = "תהליך עבודה", "hi" = "वर्कफ़्लो", "hr" = "Tijek rada", "hu" = "Munkafolyamat", "id" = "Alur Kerja", "it" = "Flusso di lavoro", "ja" = "ワークフロー", "ko" = "작업흐름", "LSDefaultLocalizedValue" = "Workflow", "ms" = "Aliran Kerja", "nl" = "Takenreeks", "no" = "Arbeidsflyt", "pl" = "kolejka czynności", "pt" = "Fluxo de Trabalho", "pt_PT" = "Processo", "ro" = "Flux de lucru", "ru" = "Процесс", "sk" = "Workflow", "sv" = "Arbetsflöde", "th" = "เวิร์กโฟลว์", "tr" = "İş Akışı", "uk" = "Сценарій", "vi" = "Luồng công việc", "zh_CN" = "工作流程", "zh_HK" = "工作流程", "zh_TW" = "工作流程"
+rank:               Default
+bundle:             Automator (0x6d0)
+flags:              apple-internal  relative-icon-path  package  doc-type  resolves-icloud-conflicts (000000000000022e)
+roles:              Editor (0000000000000004)
+iconFiles:          Contents/Resources/AutomatorDocument.icns
+bindings:           .workflow
+--------------------------------------------------------------------------------
+claim id:           Application (0x2620)
+localizedNames:     "ar" = "التطبيق", "ca" = "Aplicació", "cs" = "Aplikace", "da" = "Program", "de" = "Programm", "el" = "Εφαρμογή", "en" = "Application", "en_AU" = "Application", "en_GB" = "Application", "es" = "Aplicación", "es_419" = "Aplicación", "fi" = "Appi", "fr" = "Application", "fr_CA" = "Application", "he" = "יישום", "hi" = "ऐप्लिकेशन", "hr" = "Aplikacija", "hu" = "Alkalmazás", "id" = "Aplikasi", "it" = "Applicazione", "ja" = "アプリケーション", "ko" = "응용 프로그램", "LSDefaultLocalizedValue" = "Application", "ms" = "Aplikasi", "nl" = "App", "no" = "Program", "pl" = "aplikacja", "pt" = "Aplicativo", "pt_PT" = "Aplicação", "ro" = "Aplicație", "ru" = "Программа", "sk" = "Aplikácia", "sv" = "Program", "th" = "แอพพลิเคชั่น", "tr" = "Uygulama", "uk" = "Програма", "vi" = "Ứng dụng", "zh_CN" = "应用程序", "zh_HK" = "應用程式", "zh_TW" = "應用程式"
+rank:               Default
+bundle:             Automator (0x6d0)
+flags:              apple-internal  package  doc-type  resolves-icloud-conflicts (000000000000022a)
+roles:              Editor (0000000000000004)
+bindings:           .app, 'APPL'
+--------------------------------------------------------------------------------
+claim id:           Action (0x2624)
+localizedNames:     "ar" = "الإجراء", "ca" = "Acció", "cs" = "Akce", "da" = "Handling", "de" = "Aktion", "el" = "Ενέργεια", "en" = "Action", "en_AU" = "Action", "en_GB" = "Action", "es" = "Acción", "es_419" = "Acción", "fi" = "Toiminto", "fr" = "Action", "fr_CA" = "Action", "he" = "פעולה", "hi" = "क्रिया", "hr" = "Postupak", "hu" = "Művelet", "id" = "Tindakan", "it" = "Azione", "ja" = "アクション", "ko" = "동작", "LSDefaultLocalizedValue" = "Action", "ms" = "Tindakan", "nl" = "Taak", "no" = "Handling", "pl" = "czynność", "pt" = "Ação", "pt_PT" = "Ação", "ro" = "Acțiune", "ru" = "Действия", "sk" = "Akcia", "sv" = "Åtgärd", "th" = "การทำงาน", "tr" = "İşlem", "uk" = "Дія", "vi" = "Hành động", "zh_CN" = "操作", "zh_HK" = "動作", "zh_TW" = "動作"
+rank:               Default
+bundle:             Automator (0x6d0)
+flags:              apple-internal  relative-icon-path  package  doc-type  resolves-icloud-conflicts (000000000000022e)
+roles:              Viewer (0000000000000002)
+iconFiles:          Contents/Resources/AutomatorAction.icns
+bindings:           .action
+--------------------------------------------------------------------------------
+claim id:           Conversion Action (0x2628)
+localizedNames:     "ar" = "إجراء التحويل", "ca" = "Acció de conversió", "cs" = "Převodní akce", "da" = "Konverteringshandling", "de" = "Konvertierungsaktion", "el" = "Ενέργεια μετατροπής", "en" = "Conversion Action", "en_AU" = "Conversion Action", "en_GB" = "Conversion Action", "es" = "Acción de conversión", "es_419" = "Acción de conversión", "fi" = "Muunnostoiminto", "fr" = "Action de conversion", "fr_CA" = "Action de conversion", "he" = "פעולת המרה", "hi" = "रूपांतरण क्रिया", "hr" = "Postupak konverzije", "hu" = "Konvertáló művelet", "id" = "Tindakan Konversi", "it" = "Azione di conversione", "ja" = "変換アクション", "ko" = "변환 동작", "LSDefaultLocalizedValue" = "Conversion Action", "ms" = "Tindakan Penukaran", "nl" = "Conversietaak", "no" = "Konverteringshandling", "pl" = "czynność konwersji", "pt" = "Ação de Conversão", "pt_PT" = "Ação de conversão", "ro" = "Acțiune de conversie", "ru" = "Преобразование", "sk" = "Konverzná akcia", "sv" = "Konverteringsåtgärd", "th" = "การทำงานการแปลง", "tr" = "Dönüştürme İşlemi", "uk" = "Дія перетворення", "vi" = "Tác vụ Chuyển đổi", "zh_CN" = "转换操作", "zh_HK" = "轉換動作", "zh_TW" = "轉換動作"
+rank:               Default
+bundle:             Automator (0x6d0)
+flags:              apple-internal  relative-icon-path  package  doc-type  resolves-icloud-conflicts (000000000000022e)
+roles:              Viewer (0000000000000002)
+iconFiles:          Contents/Resources/AutomatorConversionAction.icns
+bindings:           .caction
+--------------------------------------------------------------------------------
+claim id:           Data Type Definition (0x262c)
+localizedNames:     "ar" = "تعريف نوع البيانات", "ca" = "Definició del tipus de dades", "cs" = "Definice datového typu", "da" = "Definition af datatype", "de" = "Datentypdefinition", "el" = "Ορισμός τύπου δεδομένων", "en" = "Data Type Definition", "en_AU" = "Data Type Definition", "en_GB" = "Data Type Definition", "es" = "Definición del tipo de datos", "es_419" = "Definición del tipo de datos", "fi" = "Datatyypin määritelmä", "fr" = "Définition de type de données", "fr_CA" = "Définition du type de données", "he" = "הגדרת סוג נתונים", "hi" = "डेटा प्रकार परिभाषा", "hr" = "Definicija vrste podataka", "hu" = "Adattípus-definíció", "id" = "Definisi Jenis Data", "it" = "Definizione del tipo di dati", "ja" = "データタイプの定義", "ko" = "데이터 유형 정의", "LSDefaultLocalizedValue" = "Data Type Definition", "ms" = "Definisi Jenis Data", "nl" = "Gegevenstypedefinitie", "no" = "Datatypedefinisjon", "pl" = "definicja typu danych", "pt" = "Definição de Tipo de Dados", "pt_PT" = "Definição de tipo de dados", "ro" = "Definiție tip de date", "ru" = "Определение типа данных", "sk" = "Definícia dátového typu", "sv" = "Datatypsdefinition", "th" = "นิยามประเภทข้อมูล", "tr" = "Veri Türü Tanımı", "uk" = "Визначення типу даних", "vi" = "Định nghĩa Loại Dữ liệu", "zh_CN" = "数据类型定义", "zh_HK" = "資料類型定義", "zh_TW" = "資料類型定義"
+rank:               Default
+bundle:             Automator (0x6d0)
+flags:              apple-internal  relative-icon-path  package  doc-type  resolves-icloud-conflicts (000000000000022e)
+roles:              Viewer (0000000000000002)
+iconFiles:          Contents/Resources/AutomatorDefinition.icns
+bindings:           .definition
+--------------------------------------------------------------------------------
+service id:         Create Service (0x184)
+menu:               Create Service
+port:               Automator
+message:            makeNewServiceWithPasteboard
+timeout:            -1
+send types:         "NSStringPboardType", "NSFilenamesPboardType"
+--------------------------------------------------------------------------------
+service id:         Create Workflow (0x188)
+menu:               Create Workflow
+port:               Automator
+message:            makeNewWorkflowServiceWithPasteboard
+timeout:            -1
+send types:         "NSStringPboardType", "NSFilenamesPboardType"
+
+--------------------------------------------------------------------------------
+

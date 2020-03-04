@@ -14,9 +14,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.eclipse.urischeme.IOperatingSystemRegistration;
@@ -31,6 +29,9 @@ public class RegistrationMacOsX implements IOperatingSystemRegistration {
 	private static final String UNREGISTER = "-u"; //$NON-NLS-1$
 	private static final String RECURSIVE = "-r"; //$NON-NLS-1$
 	private static final String DUMP = "-dump"; //$NON-NLS-1$
+	private static final String ANY_LINES = "(?:.*\\n)*"; //$NON-NLS-1$
+	private static final String TRAILING_HEX_VALUE_WITH_BRACKETS = "\\s\\(0x\\w*\\)"; //$NON-NLS-1$
+	private static final String PATH_WITH_CAPTURING_GROUP = "path:\\s*(.*)"; //$NON-NLS-1$
 
 	private IFileProvider fileProvider;
 	private IProcessExecutor processExecutor;
@@ -45,8 +46,7 @@ public class RegistrationMacOsX implements IOperatingSystemRegistration {
 	}
 
 	@Override
-	public void handleSchemes(Collection<IScheme> toAdd, Collection<IScheme> toRemove)
-			throws Exception {
+	public void handleSchemes(Collection<IScheme> toAdd, Collection<IScheme> toRemove) throws Exception {
 		String pathToEclipseApp = getPathToEclipseApp();
 
 		changePlistFile(toAdd, toRemove, pathToEclipseApp);
@@ -60,14 +60,11 @@ public class RegistrationMacOsX implements IOperatingSystemRegistration {
 
 		String lsRegisterOutput = processExecutor.execute(LSREGISTER, DUMP);
 
-		String[] lsRegisterEntries = lsRegisterOutput.split("-{80}\n"); //$NON-NLS-1$
-
 		for (IScheme scheme : schemes) {
 
-			SchemeInformation schemeInfo = new SchemeInformation(scheme.getName(),
-					scheme.getDescription());
+			SchemeInformation schemeInfo = new SchemeInformation(scheme.getName(), scheme.getDescription());
 
-			String location = determineHandlerLocation(lsRegisterEntries, scheme.getName());
+			String location = determineHandlerLocation(lsRegisterOutput, scheme.getName());
 			if (location != "" && getEclipseLauncher().startsWith(location)) { //$NON-NLS-1$
 				schemeInfo.setHandled(true);
 			}
@@ -78,26 +75,40 @@ public class RegistrationMacOsX implements IOperatingSystemRegistration {
 		return returnList;
 	}
 
-	private String determineHandlerLocation(String[] lsRegisterEntries, String scheme) throws Exception {
+	private String determineHandlerLocation(String lsRegisterDump, String scheme) throws Exception {
 
-		List<String> splitList = Stream.of(lsRegisterEntries). //
-				parallel().//
-				filter(s -> s.startsWith("BundleClass")).// //$NON-NLS-1$
-				filter(s -> s.contains(scheme + ":")).// //$NON-NLS-1$
-				collect(Collectors.toList());
+		String[] lsRegisterEntries = lsRegisterDump.split("-{80}\n"); //$NON-NLS-1$
+		String keyOfFirstLine;
+		String keyOfSchemeList;
 
-		String lines = "(?:.*\\n)*"; //$NON-NLS-1$
+		if (Stream.of(lsRegisterEntries).parallel().anyMatch(s -> s.startsWith("BundleClass:"))) { //$NON-NLS-1$
+			// pre macOS 10.15.3
+			keyOfFirstLine = "BundleClass"; //$NON-NLS-1$
+			keyOfSchemeList = "bindings:"; //$NON-NLS-1$
+		} else {
+			// starting with macOS 10.15.3
+			keyOfFirstLine = "bundle id"; //$NON-NLS-1$
+			keyOfSchemeList = "claimed schemes:"; //$NON-NLS-1$
+
+		}
+
 		Pattern pattern = Pattern.compile(
-				"^" + lines + "\\spath:\\s*(.*)\\n" + lines + "\\s*bindings:.*" + Pattern.quote(scheme) + ":", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+				"^" + ANY_LINES + "\\s*" + PATH_WITH_CAPTURING_GROUP + "\\n" + ANY_LINES + "\\s*" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
+						+ keyOfSchemeList 
+						+ ".*" //$NON-NLS-1$
+						+ Pattern.quote(scheme) + ":", //$NON-NLS-1$
 				Pattern.MULTILINE);
 
-		for (String entry : splitList) {
-			Matcher matcher = pattern.matcher(entry);
-			if (matcher.find()) {
-				return matcher.group(1);
-			}
-		}
-		return ""; //$NON-NLS-1$
+		String path = Stream.of(lsRegisterEntries). //
+				parallel().//
+				filter(s -> s.startsWith(keyOfFirstLine)).//
+				filter(s -> s.contains(scheme + ":")).// //$NON-NLS-1$
+				map(s -> pattern.matcher(s)).//
+				filter(m -> m.find()).//
+				map(m -> m.group(1)).findFirst().map(s -> s.replaceFirst(TRAILING_HEX_VALUE_WITH_BRACKETS, "")) //$NON-NLS-1$
+				.orElse(""); //$NON-NLS-1$
+
+		return path;
 	}
 
 	private PlistFileWriter getPlistFileWriter(String plistPath) throws IOException {
@@ -114,8 +125,8 @@ public class RegistrationMacOsX implements IOperatingSystemRegistration {
 		processExecutor.execute(LSREGISTER, RECURSIVE, pathToEclipseApp);
 	}
 
-	private void changePlistFile(Collection<IScheme> toAdd, Collection<IScheme> toRemove,
-			String pathToEclipseApp) throws IOException {
+	private void changePlistFile(Collection<IScheme> toAdd, Collection<IScheme> toRemove, String pathToEclipseApp)
+			throws IOException {
 		String plistPath = pathToEclipseApp + PLIST_PATH_SUFFIX;
 
 		PlistFileWriter writer = getPlistFileWriter(plistPath);
