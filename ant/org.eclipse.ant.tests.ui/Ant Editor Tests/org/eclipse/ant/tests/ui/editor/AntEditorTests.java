@@ -312,6 +312,28 @@ public class AntEditorTests extends AbstractAntUITest {
 		assertNotNull("Should have a document", doc); //$NON-NLS-1$
 	}
 
+	public void testOpenImportViaClasspath() throws PartInitException {
+		IFile file = getIFile("importViaClasspath.xml"); //$NON-NLS-1$
+		AntEditor editor = (AntEditor) EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true); //$NON-NLS-1$
+		IDocument doc = editor.getDocumentProvider().getDocument(editor.getEditorInput());
+		assertNotNull("Should have a document", doc); //$NON-NLS-1$
+
+		file = getIFile("BaseBaseBuild.xml"); //$NON-NLS-1$
+		editor = (AntEditor) EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true); //$NON-NLS-1$
+		doc = editor.getDocumentProvider().getDocument(editor.getEditorInput());
+		assertNotNull("Should have a document", doc); //$NON-NLS-1$
+
+		file = getIFile("BaseBuild.xml"); //$NON-NLS-1$
+		editor = (AntEditor) EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true); //$NON-NLS-1$
+		doc = editor.getDocumentProvider().getDocument(editor.getEditorInput());
+		assertNotNull("Should have a document", doc); //$NON-NLS-1$
+
+		file = getIFile("Base.xml"); //$NON-NLS-1$
+		editor = (AntEditor) EditorTestHelper.openInEditor(file, "org.eclipse.ant.ui.internal.editor.AntEditor", true); //$NON-NLS-1$
+		doc = editor.getDocumentProvider().getDocument(editor.getEditorInput());
+		assertNotNull("Should have a document", doc); //$NON-NLS-1$
+	}
+
 	/**
 	 * bug 195840 Import a XML file with BOM character in ant editor fails Runs on 1.5 vms or newer.
 	 */

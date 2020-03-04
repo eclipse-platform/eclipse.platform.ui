@@ -278,6 +278,17 @@ public class ProjectHelper extends ProjectHelper2 {
 	}
 
 	/**
+	 * Gets the associated project name by the absolute build-file path
+	 *
+	 * @param buildFile
+	 *            The file
+	 * @return The project name
+	 */
+	public static String getProjectNameOfBuildFile(String absolutePath) {
+		return parsedProjectNames.get(absolutePath);
+	}
+
+	/**
 	 * Builds the hash-map's build-file key
 	 *
 	 * @param buildFile
@@ -345,8 +356,11 @@ public class ProjectHelper extends ProjectHelper2 {
 				String currentProjectName = context.getCurrentProjectName();
 				// just an additional check if the name is non-empty
 				if (this.isCurrentProjectNameValid(currentProjectName)) {
-					String buildFilePath = context.getBuildFile().getAbsolutePath();
-					storeParsedProjectName(buildFilePath, currentProjectName);
+					if (context.getBuildFile() != null) {
+						storeParsedProjectName(context.getBuildFile().getAbsolutePath(), currentProjectName);
+					} else if (context.getBuildFileURL() != null) {
+						storeParsedProjectName(new File(context.getBuildFileURL().getPath()).getAbsolutePath(), currentProjectName);
+					}
 				}
 			}
 			catch (SAXParseException e) {

@@ -141,7 +141,10 @@ public class AntIncludeNode extends AntImportNode {
 		 * of any subsequent operation on the AntIncludeNode object.
 		 */
 		IFile projectSpecificBuildFile = this.handleCorrectBuildFile(importedFromNode);
-		return org.eclipse.ant.internal.ui.editor.utils.ProjectHelper.getProjectNameOfBuildFile(projectSpecificBuildFile);
+		if (projectSpecificBuildFile != null) {
+			return org.eclipse.ant.internal.ui.editor.utils.ProjectHelper.getProjectNameOfBuildFile(projectSpecificBuildFile);
+		}
+		return org.eclipse.ant.internal.ui.editor.utils.ProjectHelper.getProjectNameOfBuildFile(this.getFilePath());
 	}
 
 	/**
