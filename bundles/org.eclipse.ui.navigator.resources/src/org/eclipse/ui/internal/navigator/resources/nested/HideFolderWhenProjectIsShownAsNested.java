@@ -14,6 +14,7 @@
 package org.eclipse.ui.internal.navigator.resources.nested;
 
 import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.ui.navigator.CommonViewer;
@@ -29,8 +30,9 @@ public class HideFolderWhenProjectIsShownAsNested extends ViewerFilter {
 	public boolean select(Viewer viewer, Object parentElement, Object element) {
 		CommonViewer commonViewer = (CommonViewer)viewer;
 		if (commonViewer.getNavigatorContentService().getActivationService().isNavigatorExtensionActive(NestedProjectsContentProvider.EXTENSION_ID)) {
-			if (element instanceof IFolder) {
-				if (NestedProjectManager.getInstance().isShownAsProject((IFolder) element)) {
+			if (element instanceof IAdaptable) {
+				IFolder folder = ((IAdaptable) element).getAdapter(IFolder.class);
+				if (folder != null && NestedProjectManager.getInstance().isShownAsProject(folder)) {
 					return false;
 				}
 			}
