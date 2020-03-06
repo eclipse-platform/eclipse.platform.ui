@@ -325,10 +325,10 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 	// Copied from TextChange
 	private TextEditProcessor createTextEditProcessor(ComposableBufferChange change, IDocument document, int flags, boolean preview) {
 		List<TextEdit> excludes= new ArrayList<>(0);
-		for (final Iterator<TextEditBasedChangeGroup> iterator= change.getGroups().iterator(); iterator.hasNext();) {
-			TextEditBasedChangeGroup group= iterator.next();
-			if (!group.isEnabled())
+		for (TextEditBasedChangeGroup group : change.getGroups()) {
+			if (!group.isEnabled()) {
 				excludes.addAll(Arrays.asList(group.getTextEdits()));
+			}
 		}
 
 		if (preview) {
@@ -459,28 +459,23 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 		final Position range= new Position(region.getOffset(), region.getLength());
 		try {
 
-			ComposableBufferChange change= null;
-
 			final TextEditBasedChangeGroup[] changedGroups= getChangeGroups();
 
 			LinkedList<LinkedList<ComposableUndoEdit>> compositeUndo= new LinkedList<>();
-			for (int index= 0; index < fChanges.size(); index++) {
-				change= fChanges.get(index);
+			for (ComposableBufferChange change : fChanges) {
 
-				TextEdit copy= null;
 				try {
 					// Have to use a copy
 					fCopier= new TextEditCopier(change.getEdit());
-					copy= fCopier.perform();
+					TextEdit copy= fCopier.perform();
 
 					// Create a mapping from the copied edits to its originals
 					final Map<TextEdit, TextEdit> originalMap= new HashMap<>();
-					for (final Iterator<TextEditBasedChangeGroup> outer= change.getGroups().iterator(); outer.hasNext();) {
+					for (TextEditBasedChangeGroup textEditBasedChangeGroup : change.getGroups()) {
 
-						final ComposableBufferChangeGroup group= (ComposableBufferChangeGroup) outer.next();
-						for (final Iterator<TextEdit> inner= group.getCachedEdits().iterator(); inner.hasNext();) {
+						final ComposableBufferChangeGroup group= (ComposableBufferChangeGroup) textEditBasedChangeGroup;
+						for (TextEdit originalEdit : group.getCachedEdits()) {
 
-							final TextEdit originalEdit= inner.next();
 							final TextEdit copiedEdit= fCopier.getCopy(originalEdit);
 
 							if (copiedEdit != null)
@@ -638,10 +633,9 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 				// Undo edits for them (corresponding to the linearized net
 				// effect on the original document)
 				final LinkedList<ComposableEditPosition> undoQueue= new LinkedList<>();
-				for (final Iterator<LinkedList<ComposableUndoEdit>> outer= compositeUndo.iterator(); outer.hasNext();) {
-					for (final Iterator<ComposableUndoEdit> inner= outer.next().iterator(); inner.hasNext();) {
+				for (LinkedList<ComposableUndoEdit> outer : compositeUndo) {
+					for (ComposableUndoEdit edit : outer) {
 
-						final ComposableUndoEdit edit= inner.next();
 						final ReplaceEdit undo= edit.getUndo();
 
 						final int offset= undo.getOffset();
@@ -937,9 +931,7 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 			if (document instanceof IDocumentExtension4)
 				session= ((IDocumentExtension4) document).startRewriteSession(DocumentRewriteSessionType.UNRESTRICTED);
 
-			for (final Iterator<ComposableBufferChange> iterator= fChanges.iterator(); iterator.hasNext();) {
-				final ComposableBufferChange change= iterator.next();
-
+			for (ComposableBufferChange change : fChanges) {
 				final UndoEdit edit= createTextEditProcessor(change, document, undoList != null ? TextEdit.CREATE_UNDO : TextEdit.NONE, preview).performEdits();
 				if (undoList != null)
 					undoList.addFirst(edit);
