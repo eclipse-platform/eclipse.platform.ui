@@ -136,7 +136,7 @@ public class XMLContentDescriber extends TextContentDescriber implements ITextCo
 	private boolean isNonDefaultCharset(String charset) {
 		if (charset == null)
 			return false;
-		if (charset.equalsIgnoreCase("utf8") || charset.equalsIgnoreCase("utf-8")) //$NON-NLS-1$ //$NON-NLS-2$
+		if ("utf8".equalsIgnoreCase(charset) || "utf-8".equalsIgnoreCase(charset)) //$NON-NLS-1$ //$NON-NLS-2$
 			return false;
 		return true;
 	}

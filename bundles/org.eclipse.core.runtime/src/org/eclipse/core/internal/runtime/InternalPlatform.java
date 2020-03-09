@@ -172,7 +172,7 @@ public final class InternalPlatform {
 		String value = getOption(option);
 		if (value == null)
 			return defaultValue;
-		return value.equalsIgnoreCase("true"); //$NON-NLS-1$
+		return "true".equalsIgnoreCase(value); //$NON-NLS-1$
 	}
 
 	public BundleContext getBundleContext() {

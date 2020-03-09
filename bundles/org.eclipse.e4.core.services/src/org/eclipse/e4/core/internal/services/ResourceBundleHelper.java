@@ -709,7 +709,7 @@ public class ResourceBundleHelper {
 
 			String bundleName = toBundleName(baseName, locale);
 			ResourceBundle bundle = null;
-			if (format.equals("java.properties")) { //$NON-NLS-1$
+			if ("java.properties".equals(format)) { //$NON-NLS-1$
 				final String resourceName = toResourceName(bundleName, "properties"); //$NON-NLS-1$
 				InputStream stream = null;
 				try {

@@ -247,7 +247,7 @@ public class PerformanceStats {
 		if (!ENABLED)
 			return false;
 		String option = Platform.getDebugOption(eventName);
-		return option != null && !option.equalsIgnoreCase("false") && !option.equalsIgnoreCase("-1"); //$NON-NLS-1$ //$NON-NLS-2$
+		return option != null && !"false".equalsIgnoreCase(option) && !"-1".equalsIgnoreCase(option); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
