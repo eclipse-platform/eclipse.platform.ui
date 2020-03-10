@@ -75,7 +75,7 @@ public class FastTreeTest extends TreeAddTest {
 			viewer.setInput(input);
 			input.createChildren(total);
 			if (preSort)
-				viewer.getSorter().sort(viewer, input.children);
+				viewer.getComparator().sort(viewer, input.children);
 			Collection<Object> batches = new ArrayList<>();
 			int blocks = input.children.length / increment;
 			for (int j = 0; j < blocks; j = j + increment) {
