@@ -132,10 +132,10 @@ public class ServiceSupplier extends ExtendedObjectSupplier implements EventHand
 			}
 		}
 
-		return handleSingle(b, desiredType, requestor, descriptor, track && qualifier.dynamic(), qualifier);
+		return handleSingle(b, desiredType, requestor, track && qualifier.dynamic(), qualifier);
 	}
 
-	private Object handleSingle(Bundle bundle, Type t, IRequestor requestor, IObjectDescriptor descriptor, boolean track, Service qualifier) {
+	private Object handleSingle(Bundle bundle, Type t, IRequestor requestor, boolean track, Service qualifier) {
 		BundleContext context = bundle.getBundleContext();
 		if (context == null) {
 			context = FrameworkUtil.getBundle(getClass()).getBundleContext();

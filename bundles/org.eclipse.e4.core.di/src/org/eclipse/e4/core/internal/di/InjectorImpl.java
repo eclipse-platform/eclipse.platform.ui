@@ -519,7 +519,7 @@ public class InjectorImpl implements IInjector {
 		for (int i = 0; i < actualArgs.length; i++) {
 			if (actualArgs[i] != NOT_A_VALUE)
 				continue; // already resolved
-			ExtendedObjectSupplier extendedSupplier = findExtendedSupplier(descriptors[i], objectSupplier);
+			ExtendedObjectSupplier extendedSupplier = findExtendedSupplier(descriptors[i]);
 			if (extendedSupplier == null)
 				continue;
 			actualArgs[i] = extendedSupplier.get(descriptors[i], requestor, requestor.shouldTrack() && track, requestor.shouldGroupUpdates());
@@ -622,7 +622,7 @@ public class InjectorImpl implements IInjector {
 		return actualArgs;
 	}
 
-	private ExtendedObjectSupplier findExtendedSupplier(IObjectDescriptor descriptor, PrimaryObjectSupplier objectSupplier) {
+	private ExtendedObjectSupplier findExtendedSupplier(IObjectDescriptor descriptor) {
 		Annotation[] qualifiers = descriptor.getQualifiers();
 		if (qualifiers == null)
 			return null;
