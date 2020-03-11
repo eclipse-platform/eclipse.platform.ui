@@ -44,6 +44,7 @@ public class HTMLSearchParticipant extends SearchParticipant {
 
 
 	@Override
+	@SuppressWarnings("resource")
 	public IStatus addDocument(IHelpSearchIndex index, String pluginId, String name, URL url, String id,
 			ISearchDocument doc) {
 		// if it's XHTML, forward it on to the proper search participant

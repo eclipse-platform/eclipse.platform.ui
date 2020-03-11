@@ -137,6 +137,7 @@ public class HelpApplication implements IApplication, IExecutableExtension {
 
 	}
 
+	@SuppressWarnings("resource")
 	private void obtainLock() {
 		File lockFile = new File(metadata, APPLICATION_LOCK_FILE);
 		try {

@@ -245,6 +245,7 @@ public class EclipseController implements EclipseLifeCycleListener {
 		connection.reset();
 	}
 
+	@SuppressWarnings("resource")
 	private void obtainLock() throws IOException {
 		if (lock != null) {
 			// we already have lock
@@ -284,6 +285,7 @@ public class EclipseController implements EclipseLifeCycleListener {
 	 * Tests whether HelpApplication is running by testing if .applicationlock
 	 * is locked
 	 */
+	@SuppressWarnings("resource")
 	private boolean isApplicationRunning() {
 		File applicationLockFile = new File(Options.getLockFile()
 				.getParentFile(), ".applicationlock"); //$NON-NLS-1$

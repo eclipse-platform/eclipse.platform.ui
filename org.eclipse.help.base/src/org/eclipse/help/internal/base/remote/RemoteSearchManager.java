@@ -59,6 +59,7 @@ public class RemoteSearchManager {
 				for (int i = 0; i < numICs; i++) {
 
 					if (isEnabled[i].equals("true")) { //$NON-NLS-1$
+						@SuppressWarnings("resource")
 						InputStream in = null;
 						try {
 							URL url;

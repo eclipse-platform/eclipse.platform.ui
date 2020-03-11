@@ -76,6 +76,7 @@ public class ContentService extends HttpServlet {
 		}
 		resp.setContentType(contentType);
 
+		@SuppressWarnings("resource")
 		InputStream is = con.getInputStream();
 		OutputStream out = resp.getOutputStream();
 		if (!contentType.equals("application/xhtml+xml")  //$NON-NLS-1$

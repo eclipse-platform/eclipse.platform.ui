@@ -152,6 +152,7 @@ public class MozillaBrowserAdapter implements IBrowser {
 		 * @param browserCmd
 		 * @return int 0 if success
 		 */
+		@SuppressWarnings("resource")
 		private int openBrowser(String browserCmd) {
 			try {
 				Process pr = Runtime.getRuntime().exec(browserCmd);

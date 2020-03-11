@@ -55,6 +55,7 @@ public class RemoteIndexProvider extends AbstractIndexProvider {
 			String [] path = handler.getPathEntries();
 			for (int ic = 0; ic < handler.getTotalRemoteInfocenters(); ic++) {
 				if (isEnabled[ic].equalsIgnoreCase("true")) { //$NON-NLS-1$
+					@SuppressWarnings("resource")
 					InputStream in = null;
 					try {
 						URL url;

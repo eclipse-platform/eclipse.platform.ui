@@ -37,6 +37,7 @@ public class MozillaFactory implements IBrowserFactory, IExecutableExtension {
 		super();
 	}
 
+	@SuppressWarnings("resource")
 	@Override
 	public boolean isAvailable() {
 		if (!isSupportedOS(System.getProperty("os.name"))) { //$NON-NLS-1$

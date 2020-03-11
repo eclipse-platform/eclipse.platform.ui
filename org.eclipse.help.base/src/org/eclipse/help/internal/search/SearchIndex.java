@@ -200,8 +200,7 @@ public class SearchIndex implements IHelpSearchIndex {
 			}
 		}
 
-		try {
-			DirectoryReader.open(luceneDirectory);
+		try (DirectoryReader reader = DirectoryReader.open(luceneDirectory)) {
 		} catch (IndexFormatTooOldException | IndexNotFoundException | IllegalArgumentException e) {
 			deleteDir(indexDir);
 			indexDir.delete();
@@ -332,6 +331,7 @@ public class SearchIndex implements IHelpSearchIndex {
 	/**
 	 * Starts deletions. To be called before deleting documents.
 	 */
+	@SuppressWarnings("resource")
 	public synchronized boolean beginDeleteBatch() {
 		try {
 			if (iw != null) {
@@ -565,6 +565,7 @@ public class SearchIndex implements IHelpSearchIndex {
 		return mergedDocs;
 	}
 
+	@SuppressWarnings("resource")
 	public IStatus removeDuplicates(String name, String[] index_paths) {
 
 		try (DirectoryReader ar = DirectoryReader.open(luceneDirectory)) {
@@ -825,6 +826,7 @@ public class SearchIndex implements IHelpSearchIndex {
 			inconsistencyFile.delete();
 	}
 
+	@SuppressWarnings("resource")
 	public void openSearcher() throws IOException {
 		synchronized (searcherCreateLock) {
 			if (searcher == null) {
@@ -974,6 +976,7 @@ public class SearchIndex implements IHelpSearchIndex {
 	 * @throws OverlappingFileLockException
 	 *             if lock already obtained
 	 */
+	@SuppressWarnings("resource")
 	public synchronized boolean tryLock() throws OverlappingFileLockException {
 		if ("none".equals(System.getProperty("osgi.locking"))) {  //$NON-NLS-1$//$NON-NLS-2$
 			return true; // Act as if lock succeeded

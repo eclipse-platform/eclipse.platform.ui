@@ -381,6 +381,7 @@ public class PrintData extends RequestData {
 	/*
 	 * Returns the string content of the referenced topic in UTF-8.
 	 */
+	@SuppressWarnings("resource")
 	private String getContent(String href, String locale) {
 		InputStream in = HelpSystem.getHelpContent(href, locale);
 		StringBuilder buf = new StringBuilder();

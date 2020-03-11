@@ -90,6 +90,7 @@ public class Eclipse extends Thread {
 	 * Launches Eclipse process and waits for it.
 	 */
 	@Override
+	@SuppressWarnings("resource")
 	public void run() {
 		try {
 			prepareCommand();

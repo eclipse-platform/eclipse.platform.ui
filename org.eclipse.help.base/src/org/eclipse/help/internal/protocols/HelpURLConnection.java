@@ -117,6 +117,7 @@ public class HelpURLConnection extends URLConnection {
 	 * see URLConnection#getInputStream(); Note: this method can throw IOException, but should never
 	 * return null
 	 */
+	@SuppressWarnings("resource")
 	@Override
 	public InputStream getInputStream() throws IOException {
 		// must override parent implementation, since it does nothing.
@@ -153,6 +154,7 @@ public class HelpURLConnection extends URLConnection {
 		return in;
 	}
 
+	@SuppressWarnings("resource")
 	private InputStream getLocalHelp(Bundle plugin) {
 		// first try using content provider, then try to find the file
 		// inside doc.zip, and finally try the file system
@@ -386,6 +388,7 @@ public class HelpURLConnection extends URLConnection {
 	 * Opens a connection to the document on the remote help server, if one was specified. If the
 	 * document doesn't exist on the remote server, returns null.
 	 */
+	@SuppressWarnings("resource")
 	private InputStream openFromRemoteServer(String href, String locale) {
 		if (RemoteHelp.isEnabled()) {
 
@@ -413,6 +416,7 @@ public class HelpURLConnection extends URLConnection {
 		return null;
 	}
 
+	@SuppressWarnings("resource")
 	private InputStream getUnverifiedStream(String remoteURL,String pathSuffix)
 	{
 		URL url;
@@ -444,16 +448,16 @@ public class HelpURLConnection extends URLConnection {
 		String errPage[] = templates.get(remoteURL);
 		if (errPage==null)
 		{
-			String error = getPageText(getUnverifiedStream(remoteURL,"/rtopic/fakeurltogetatestpage/_ACEGIKMOQ246.html")); //$NON-NLS-1$
-			if (error!=null)
-			{
-				errPage = error.split("\n"); //$NON-NLS-1$
-				templates.put(remoteURL,errPage);
-			}
-			else
-			{
-				errPage = new String[0];
-				templates.put(remoteURL,errPage);
+			try (InputStream is = getUnverifiedStream(remoteURL, "/rtopic/fakeurltogetatestpage/_ACEGIKMOQ246.html")) { //$NON-NLS-1$
+				String error = getPageText(is);
+				if (error != null) {
+					errPage = error.split("\n"); //$NON-NLS-1$
+					templates.put(remoteURL, errPage);
+				} else {
+					errPage = new String[0];
+					templates.put(remoteURL, errPage);
+				}
+			} catch (IOException e) {
 			}
 		}
 
@@ -465,12 +469,15 @@ public class HelpURLConnection extends URLConnection {
 
 		// Check to see if the URL is the error page for the
 		// remote IC.  If so, return null.
-		if (compare(errPage,getUnverifiedStream(remoteURL,pathSuffix)))
-		{
-			try{
-				in.close();
-			}catch(Exception ex){}
-			return null;
+		try (InputStream is = getUnverifiedStream(remoteURL, pathSuffix)) {
+			if (compare(errPage, is)) {
+				try {
+					in.close();
+				} catch (Exception ex) {
+				}
+				return null;
+			}
+		} catch (IOException e) {
 		}
 		return in;
 	}

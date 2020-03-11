@@ -672,9 +672,8 @@ public class HelpIndexBuilder {
 				"META-INF/MANIFEST.MF"); //$NON-NLS-1$
 
 		if (OSGiFile.exists()) {
-			try {
-				Manifest OSGiManifest = new Manifest(new FileInputStream(
-						OSGiFile));
+			try (FileInputStream fis = new FileInputStream(OSGiFile)) {
+				Manifest OSGiManifest = new Manifest(fis);
 				Properties headers = manifestToProperties(OSGiManifest
 						.getMainAttributes());
 				String value = headers.get(Constants.BUNDLE_SYMBOLICNAME)

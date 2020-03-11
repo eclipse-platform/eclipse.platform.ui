@@ -34,6 +34,7 @@ public class CustomBrowser implements IBrowser {
 		return false;
 	}
 
+	@SuppressWarnings("resource")
 	@Override
 	public void displayURL(String url) throws Exception {
 		String path =  Platform.getPreferencesService().getString

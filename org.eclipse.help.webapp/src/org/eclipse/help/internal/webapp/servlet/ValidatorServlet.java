@@ -86,6 +86,7 @@ public class ValidatorServlet extends HttpServlet {
 					locale, service);
 			HelpWebappPlugin.logError(errorMsg, ex);
 
+			@SuppressWarnings("resource")
 			PrintWriter writer = resp.getWriter();
 			writer.println(errorMsg);
 			ex.printStackTrace(writer);
@@ -213,6 +214,7 @@ public class ValidatorServlet extends HttpServlet {
 			return stream;
 		}
 
+		@SuppressWarnings("resource")
 		public void commitOutput() throws IOException {
 
 			OutputStream os = response.getOutputStream();

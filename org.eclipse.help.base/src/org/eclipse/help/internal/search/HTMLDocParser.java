@@ -142,24 +142,21 @@ public class HTMLDocParser {
 	public static String getCharsetFromHTML(InputStream is) {
 		// Set up an ascii reader for the document (documents should not use
 		// other characters before encoding is defined)
-		Reader asciiReader = new ASCIIReader(is, MAX_OFFSET);
-		StreamTokenizer tokenizer = new StreamTokenizer(asciiReader);
+		String charset = null;
+		try (Reader asciiReader = new ASCIIReader(is, MAX_OFFSET)) {
+			StreamTokenizer tokenizer = new StreamTokenizer(asciiReader);
 
-		// tokenizer.eolIsSignificant(false);// default false
-		// tokenizer.slashSlashComments(false); // default false
-		// tokenizer.slashStarComments(false);// default false
-		tokenizer.lowerCaseMode(false);
+			// tokenizer.eolIsSignificant(false);// default false
+			// tokenizer.slashSlashComments(false); // default false
+			// tokenizer.slashStarComments(false);// default false
+			tokenizer.lowerCaseMode(false);
 
-		// tokenizer.quoteChar('\"'); // default quote char
-		tokenizer.ordinaryChar('\''); // default quote char
-		tokenizer.ordinaryChar('/'); // default comment character
+			// tokenizer.quoteChar('\"'); // default quote char
+			tokenizer.ordinaryChar('\''); // default quote char
+			tokenizer.ordinaryChar('/'); // default comment character
 
-		String charset = getCharsetFromHTMLTokens(tokenizer);
-		if (asciiReader != null) {
-			try {
-				asciiReader.close();
-			} catch (IOException ioe) {
-			}
+			charset = getCharsetFromHTMLTokens(tokenizer);
+		} catch (IOException ioe) {
 		}
 		return charset;
 	}

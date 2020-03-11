@@ -73,6 +73,7 @@ public class EclipseConnector {
 	}
 
 
+	@SuppressWarnings("resource")
 	public void transfer(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 
