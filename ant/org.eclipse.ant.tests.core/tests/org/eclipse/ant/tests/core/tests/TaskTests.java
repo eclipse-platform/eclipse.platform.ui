@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ant.tests.core.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.net.URL;
 
@@ -26,12 +29,9 @@ import org.eclipse.ant.tests.core.AbstractAntTest;
 import org.eclipse.ant.tests.core.testplugin.AntTestChecker;
 import org.eclipse.ant.tests.core.testplugin.ProjectHelper;
 import org.eclipse.core.runtime.CoreException;
+import org.junit.Test;
 
 public class TaskTests extends AbstractAntTest {
-
-	public TaskTests(String name) {
-		super(name);
-	}
 
 	/**
 	 * Testing the old deprecated API
@@ -39,6 +39,7 @@ public class TaskTests extends AbstractAntTest {
 	 * @throws CoreException
 	 */
 	@SuppressWarnings("deprecation")
+	@Test
 	public void testAddTaskSettingLibrary() throws CoreException {
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
 		URL[] urls = prefs.getExtraClasspathURLs();
@@ -56,6 +57,7 @@ public class TaskTests extends AbstractAntTest {
 		assertSuccessful();
 	}
 
+	@Test
 	public void testAddTaskSettingLibraryEntry() throws CoreException {
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
 		URL[] urls = prefs.getExtraClasspathURLs();
@@ -73,6 +75,7 @@ public class TaskTests extends AbstractAntTest {
 		assertSuccessful();
 	}
 
+	@Test
 	public void testRemoveTask() {
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
 		prefs.setCustomTasks(new Task[] {});
@@ -89,6 +92,7 @@ public class TaskTests extends AbstractAntTest {
 		assertTrue("Build should have failed as task no longer defined", false); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testAddTaskFromFolder() throws CoreException {
 		try {
 			AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
@@ -118,6 +122,7 @@ public class TaskTests extends AbstractAntTest {
 		}
 	}
 
+	@Test
 	public void testTasksDefinedInPropertyFile() throws CoreException {
 		try {
 			AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
@@ -130,6 +135,7 @@ public class TaskTests extends AbstractAntTest {
 		}
 	}
 
+	@Test
 	public void testTaskDefinedInExtensionPoint() throws CoreException {
 		run("ExtensionPointTask.xml"); //$NON-NLS-1$
 		String msg = AntTestChecker.getDefault().getMessages().get(1);
@@ -137,6 +143,7 @@ public class TaskTests extends AbstractAntTest {
 		assertSuccessful();
 	}
 
+	@Test
 	public void testTaskDefinedInExtensionPointHeadless() {
 		AntCorePlugin.getPlugin().setRunningHeadless(true);
 		try {
@@ -152,6 +159,7 @@ public class TaskTests extends AbstractAntTest {
 		assertTrue("Build should have failed as task was not defined to run in headless", false); //$NON-NLS-1$
 	}
 
+	@Test
 	public void testTaskDefinedInExtensionPointWithURI() throws CoreException {
 		run("ExtensionPointTask.xml"); //$NON-NLS-1$
 		String msg = AntTestChecker.getDefault().getMessages().get(2);

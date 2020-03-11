@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ant.tests.core;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.util.List;
 
@@ -46,22 +49,20 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.intro.IIntroPart;
 import org.eclipse.ui.progress.UIJob;
-
-import junit.framework.TestCase;
+import org.junit.Before;
 
 /**
  * Tests for Ant core
  */
-public abstract class AbstractAntTest extends TestCase {
+public abstract class AbstractAntTest {
 
 	protected static final String BUILD_SUCCESSFUL = "BUILD SUCCESSFUL"; //$NON-NLS-1$
 	public static final String ANT_TEST_BUILD_LOGGER = "org.eclipse.ant.tests.core.support.testloggers.TestBuildLogger"; //$NON-NLS-1$
 	public static final String ANT_TEST_BUILD_LISTENER = "org.eclipse.ant.tests.core.support.testloggers.TestBuildListener"; //$NON-NLS-1$
 	private static boolean welcomeClosed = false;
 
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+	@Before
+	public void setUp() throws Exception {
 		assertProject();
 		assertWelcomeScreenClosed();
 	}
@@ -130,10 +131,6 @@ public abstract class AbstractAntTest extends TestCase {
 	 */
 	protected IProject getProject() {
 		return ResourcesPlugin.getWorkspace().getRoot().getProject(ProjectHelper.PROJECT_NAME);
-	}
-
-	public AbstractAntTest(String name) {
-		super(name);
 	}
 
 	protected IFile getBuildFile(String buildFileName) {
@@ -252,7 +249,7 @@ public abstract class AbstractAntTest extends TestCase {
 	 * Return the log message n from the last: e.g. getLoggedMessage(0) returns the most recent message
 	 * 
 	 * @param n
-	 *            message index
+	 *              message index
 	 * @return the nth last message
 	 */
 	protected String getLoggedMessage(int n) {

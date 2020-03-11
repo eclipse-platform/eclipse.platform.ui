@@ -13,21 +13,23 @@
  *******************************************************************************/
 package org.eclipse.ant.tests.core.tests;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import org.eclipse.ant.core.AntCorePlugin;
 import org.eclipse.ant.tests.core.AbstractAntTest;
 import org.eclipse.ant.tests.core.testplugin.AntTestChecker;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
+import org.junit.Test;
 
 public class ProjectTests extends AbstractAntTest {
-
-	public ProjectTests(String name) {
-		super(name);
-	}
 
 	/**
 	 * Tests that the three properties that should always be set are correct
 	 */
+	@Test
 	public void testBasePropertiesSet() throws CoreException {
 		String buildFileName = "TestForEcho.xml"; //$NON-NLS-1$
 		run(buildFileName);
@@ -40,12 +42,14 @@ public class ProjectTests extends AbstractAntTest {
 		assertNotNull("eclipse.home should have been set", AntTestChecker.getDefault().getUserProperty("eclipse.home")); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
+	@Test
 	public void testValue() throws CoreException {
 		String buildFileName = "TestForEcho.xml"; //$NON-NLS-1$
 		run(buildFileName);
 		assertEquals("property.testing should have been set as true", "true", AntTestChecker.getDefault().getUserProperty("property.testing")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
+	@Test
 	public void testValueWithClass() throws CoreException {
 
 		String buildFileName = "TestForEcho.xml"; //$NON-NLS-1$
@@ -53,12 +57,14 @@ public class ProjectTests extends AbstractAntTest {
 		assertEquals("property.testing2 should have been set as hey", "hey", AntTestChecker.getDefault().getUserProperty("property.testing2")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
+	@Test
 	public void testClass() throws CoreException {
 		String buildFileName = "TestForEcho.xml"; //$NON-NLS-1$
 		run(buildFileName);
 		assertEquals("property.testing3 should have been set as AntTestPropertyProvider", "AntTestPropertyValueProvider", AntTestChecker.getDefault().getUserProperty("property.testing3")); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
 
+	@Test
 	public void testHeadless() throws CoreException {
 		try {
 			AntCorePlugin.getPlugin().setRunningHeadless(true);
@@ -71,6 +77,7 @@ public class ProjectTests extends AbstractAntTest {
 		}
 	}
 
+	@Test
 	public void testNotHeadless() throws CoreException {
 		String buildFileName = "TestForEcho.xml"; //$NON-NLS-1$
 		run(buildFileName);

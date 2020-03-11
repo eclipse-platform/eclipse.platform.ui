@@ -14,6 +14,11 @@
  *******************************************************************************/
 package org.eclipse.ant.tests.core.tests;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -32,12 +37,9 @@ import org.eclipse.ant.tests.core.testplugin.ProjectHelper;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
+import org.junit.Test;
 
 public class FrameworkTests extends AbstractAntTest {
-
-	public FrameworkTests(String name) {
-		super(name);
-	}
 
 	/**
 	 * Ensures that the deprecated means of setting the class path still works correctly Do not fix deprecations unless the deprecated methods are
@@ -47,6 +49,7 @@ public class FrameworkTests extends AbstractAntTest {
 	 * @throws CoreException
 	 */
 	@SuppressWarnings("deprecation")
+	@Test
 	public void testClasspathOrderingDeprecated() throws MalformedURLException, CoreException {
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
 
@@ -88,6 +91,7 @@ public class FrameworkTests extends AbstractAntTest {
 		restorePreferenceDefaults();
 	}
 
+	@Test
 	public void testClasspathOrdering() throws CoreException {
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
 
@@ -129,6 +133,7 @@ public class FrameworkTests extends AbstractAntTest {
 		restorePreferenceDefaults();
 	}
 
+	@Test
 	public void testNoDefaultTarget() throws CoreException {
 		run("NoDefault.xml"); //$NON-NLS-1$
 		assertSuccessful();
@@ -139,6 +144,7 @@ public class FrameworkTests extends AbstractAntTest {
 	 * 
 	 * @throws CoreException
 	 */
+	@Test
 	public void testSpecificTargetWithNoDefaultTarget() throws CoreException {
 		run("NoDefault.xml", new String[] { "test" }); //$NON-NLS-1$ //$NON-NLS-2$
 		assertSuccessful();
@@ -148,6 +154,7 @@ public class FrameworkTests extends AbstractAntTest {
 	 * Ensures that tasks like javac work when includeAntRuntime is specified bug 20857. This test will just return if the tests are conducted on a
 	 * JRE (no tools.jar).
 	 */
+	@Test
 	public void testIncludeAntRuntime() throws CoreException {
 		IAntClasspathEntry toolsEntry = AntCorePlugin.getPlugin().getPreferences().getToolsJarEntry();
 		if (toolsEntry == null) {
@@ -167,6 +174,7 @@ public class FrameworkTests extends AbstractAntTest {
 	/**
 	 * Tests the properties added using a global property file
 	 */
+	@Test
 	public void testGlobalPropertyFile() throws CoreException {
 
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
@@ -186,6 +194,7 @@ public class FrameworkTests extends AbstractAntTest {
 	/**
 	 * Tests the properties added using a global property
 	 */
+	@Test
 	public void testGlobalProperty() throws CoreException {
 
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
@@ -200,6 +209,7 @@ public class FrameworkTests extends AbstractAntTest {
 		restorePreferenceDefaults();
 	}
 
+	@Test
 	public void testGlobalPropertyFileWithMinusDTakingPrecedence() throws CoreException {
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
 
@@ -217,6 +227,7 @@ public class FrameworkTests extends AbstractAntTest {
 	/**
 	 * Tests that the default ANT_HOME is set and that it can be changed
 	 */
+	@Test
 	public void testSettingAntHome() throws CoreException {
 		try {
 			AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
@@ -237,6 +248,7 @@ public class FrameworkTests extends AbstractAntTest {
 	/**
 	 * Tests retrieving target info using AntRunner Covers bug 73602 at the same time
 	 */
+	@Test
 	public void testGetTargets() throws CoreException {
 
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
@@ -266,6 +278,7 @@ public class FrameworkTests extends AbstractAntTest {
 	 * 
 	 * @throws MalformedURLException
 	 */
+	@Test
 	public void testAntClasspathEntryFromUrl() throws MalformedURLException {
 
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
