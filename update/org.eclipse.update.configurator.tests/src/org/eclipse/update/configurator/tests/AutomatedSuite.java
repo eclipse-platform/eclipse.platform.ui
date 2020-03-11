@@ -17,9 +17,6 @@ import org.eclipse.update.internal.configurator.tests.FeatureEntryTests;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
-import junit.framework.JUnit4TestAdapter;
-import junit.framework.Test;
-
 /**
  * Tests for integration and nightly builds.
  *
@@ -28,14 +25,5 @@ import junit.framework.Test;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ FeatureEntryTests.class })
 public class AutomatedSuite {
-
-	/**
-	 * Returns the suite. This is required to use the JUnit Launcher.
-	 *
-	 * @return the test suite
-	 */
-	public static Test suite() {
-		return new JUnit4TestAdapter(AutomatedSuite.class);
-	}
 
 }
