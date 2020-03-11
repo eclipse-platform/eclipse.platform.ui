@@ -39,41 +39,19 @@ import org.eclipse.ant.tests.ui.editor.formatter.XmlTagFormatterTest;
 import org.eclipse.ant.tests.ui.externaltools.BuilderCoreUtilsTests;
 import org.eclipse.ant.tests.ui.externaltools.MigrationTests;
 import org.eclipse.ant.tests.ui.separateVM.SeparateVMTests;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Test suite for the Ant UI
  */
-public class AntUITests extends TestSuite {
-
-	public static Test suite() {
-
-		TestSuite suite = new AntUITests();
-		suite.setName("Ant UI Unit Tests"); //$NON-NLS-1$
-		suite.addTestSuite(BuildTests.class);
-		suite.addTestSuite(SeparateVMTests.class);
-		suite.addTestSuite(AntEditorTests.class);
-		suite.addTestSuite(CodeCompletionTest.class);
-		suite.addTestSuite(TaskDescriptionProviderTest.class);
-		suite.addTestSuite(AntEditorContentOutlineTests.class);
-		suite.addTestSuite(MigrationTests.class);
-		suite.addTestSuite(BuilderCoreUtilsTests.class);
-		suite.addTestSuite(ModelProjectTests.class);
-		suite.addTestSuite(FormattingPreferencesTest.class);
-		suite.addTestSuite(XmlDocumentFormatterTest.class);
-		suite.addTestSuite(XmlTagFormatterTest.class);
-		suite.addTestSuite(XmlFormatterTest.class);
-		suite.addTestSuite(AntUtilTests.class);
-		suite.addTestSuite(AntViewTests.class);
-		suite.addTestSuite(BreakpointTests.class);
-		suite.addTestSuite(RunToLineTests.class);
-		suite.addTestSuite(SteppingTests.class);
-		suite.addTestSuite(PropertyTests.class);
-		suite.addTestSuite(OccurrencesFinderTests.class);
-		suite.addTestSuite(StackTests.class);
-		suite.addTestSuite(APITests.class);
-		return suite;
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ BuildTests.class, SeparateVMTests.class, AntEditorTests.class, CodeCompletionTest.class,
+		TaskDescriptionProviderTest.class, AntEditorContentOutlineTests.class, MigrationTests.class,
+		BuilderCoreUtilsTests.class, ModelProjectTests.class, FormattingPreferencesTest.class,
+		XmlDocumentFormatterTest.class, XmlTagFormatterTest.class, XmlFormatterTest.class, AntUtilTests.class,
+		AntViewTests.class, BreakpointTests.class, RunToLineTests.class, SteppingTests.class, PropertyTests.class,
+		OccurrencesFinderTests.class, StackTests.class, APITests.class })
+public class AntUITests {
+	// suite
 }
