@@ -21,9 +21,8 @@ import org.eclipse.ant.tests.core.tests.PropertyTests;
 import org.eclipse.ant.tests.core.tests.TargetTests;
 import org.eclipse.ant.tests.core.tests.TaskTests;
 import org.eclipse.ant.tests.core.tests.TypeTests;
-
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Test the Eclipse Ant Core.
@@ -36,26 +35,9 @@ import junit.framework.TestSuite;
  * <li>Run the launch configuration. Output from the tests will be displayed in a JUnit view</li>
  * </ol>
  */
-public class AutomatedSuite extends TestSuite {
-
-	/**
-	 * Returns the suite. This is required to use the JUnit Launcher.
-	 */
-	public static Test suite() {
-		return new AutomatedSuite();
-	}
-
-	/**
-	 * Construct the test suite.
-	 */
-	public AutomatedSuite() {
-		addTest(new TestSuite(FrameworkTests.class));
-		addTest(new TestSuite(TargetTests.class));
-		addTest(new TestSuite(ProjectTests.class));
-		addTest(new TestSuite(OptionTests.class));
-		addTest(new TestSuite(TaskTests.class));
-		addTest(new TestSuite(TypeTests.class));
-		addTest(new TestSuite(PropertyTests.class));
-		addTest(new TestSuite(AntSecurityManagerTest.class));
-	}
+@RunWith(Suite.class)
+@Suite.SuiteClasses({ FrameworkTests.class, TargetTests.class, ProjectTests.class, OptionTests.class, TaskTests.class, TypeTests.class,
+		PropertyTests.class, AntSecurityManagerTest.class })
+public class AutomatedSuite {
+	// SUITE
 }
