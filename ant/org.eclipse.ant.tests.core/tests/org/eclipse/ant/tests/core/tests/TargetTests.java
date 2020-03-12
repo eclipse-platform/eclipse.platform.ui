@@ -16,6 +16,7 @@ package org.eclipse.ant.tests.core.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -48,20 +49,19 @@ public class TargetTests extends AbstractAntTest {
 	}
 
 	/**
-	 * Ensures that targets are found in a buildfile with a fileset based on ant_home (that ant_home is set at parse time) Bug 42926.
+	 * Ensures that targets are found in a buildfile with a fileset based on
+	 * ant_home (that ant_home is set at parse time) Bug 42926.
 	 */
 	@Test
 	public void testGetTargetsWithAntHome() {
 		System.getProperties().remove("ant.home"); //$NON-NLS-1$
-		try {
-			getTargets("Bug42926.xml"); //$NON-NLS-1$
-		}
-		catch (CoreException ce) {
-			// classpathref was successful but the task is not defined
-			String message = ce.getMessage();
-			assertTrue("Core exception message not as expected: " //$NON-NLS-1$
-					+ message, message.endsWith("Bug42926.xml:7: taskdef class com.foo.SomeTask cannot be found\n using the classloader AntClassLoader[]")); //$NON-NLS-1$
-		}
+		CoreException ce = assertThrows(CoreException.class, () -> getTargets("Bug42926.xml")); //$NON-NLS-1$
+		// classpathref was successful but the task is not defined
+		String message = ce.getMessage();
+		assertTrue("Core exception message not as expected: " //$NON-NLS-1$
+				+ message,
+				message.endsWith(
+						"Bug42926.xml:7: taskdef class com.foo.SomeTask cannot be found\n using the classloader AntClassLoader[]")); //$NON-NLS-1$
 	}
 
 	/**

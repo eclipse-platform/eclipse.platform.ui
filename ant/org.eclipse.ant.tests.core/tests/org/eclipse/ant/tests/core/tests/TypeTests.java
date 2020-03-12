@@ -14,6 +14,7 @@
 package org.eclipse.ant.tests.core.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.net.URL;
@@ -50,17 +51,15 @@ public class TypeTests extends AbstractAntTest {
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
 		prefs.setCustomTypes(new Type[] {});
 		try {
-			run("CustomType.xml"); //$NON-NLS-1$
-		}
-		catch (CoreException ce) {
+			CoreException ce = assertThrows("Build should have failed as type no longer defined", CoreException.class, //$NON-NLS-1$
+					() -> run("CustomType.xml")); //$NON-NLS-1$
 			assertTrue("Exception from undefined type is incorrect: " //$NON-NLS-1$
-					+ ce.getMessage(), ce.getMessage().trim().endsWith("Action: Check that any <presetdef>/<macrodef> declarations have taken place.")); //$NON-NLS-1$
-			return;
-		}
-		finally {
+					+ ce.getMessage(),
+					ce.getMessage().trim()
+							.endsWith("Action: Check that any <presetdef>/<macrodef> declarations have taken place.")); //$NON-NLS-1$
+		} finally {
 			restorePreferenceDefaults();
 		}
-		assertTrue("Build should have failed as type no longer defined", false); //$NON-NLS-1$
 
 	}
 
@@ -76,16 +75,14 @@ public class TypeTests extends AbstractAntTest {
 	public void testTypeDefinedInExtensionPointHeadless() {
 		AntCorePlugin.getPlugin().setRunningHeadless(true);
 		try {
-			run("ExtensionPointType.xml"); //$NON-NLS-1$
-		}
-		catch (CoreException ce) {
+			CoreException ce = assertThrows("Build should have failed as type was not defined to run in headless", //$NON-NLS-1$
+					CoreException.class, () -> run("ExtensionPointType.xml")); //$NON-NLS-1$
 			assertTrue("Exception from undefined type is incorrect: " //$NON-NLS-1$
-					+ ce.getMessage(), ce.getMessage().trim().endsWith("Action: Check that any <presetdef>/<macrodef> declarations have taken place.")); //$NON-NLS-1$
-			return;
-		}
-		finally {
+					+ ce.getMessage(),
+					ce.getMessage().trim()
+							.endsWith("Action: Check that any <presetdef>/<macrodef> declarations have taken place.")); //$NON-NLS-1$
+		} finally {
 			AntCorePlugin.getPlugin().setRunningHeadless(false);
 		}
-		assertTrue("Build should have failed as type was not defined to run in headless", false); //$NON-NLS-1$
 	}
 }

@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.ant.tests.ui.editor.formatter;
 
+import static org.junit.Assert.assertThrows;
+
 import java.util.List;
 
 import org.eclipse.ant.internal.ui.editor.formatter.FormattingPreferences;
@@ -96,7 +98,8 @@ public class XmlTagFormatterTest extends AbstractAntUITest {
 		super(name);
 	}
 
-	private FormattingPreferences getPreferences(final boolean wrapLongTags, final boolean alignCloseChar, final int maxLineWidth) {
+	private FormattingPreferences getPreferences(final boolean wrapLongTags, final boolean alignCloseChar,
+			final int maxLineWidth) {
 
 		return new FormattingPreferences() {
 
@@ -117,7 +120,8 @@ public class XmlTagFormatterTest extends AbstractAntUITest {
 		};
 	}
 
-	private void simpleTest(String source, String target, FormattingPreferences prefs, String indent, String lineDelimiter) throws Exception {
+	private void simpleTest(String source, String target, FormattingPreferences prefs, String indent,
+			String lineDelimiter) throws Exception {
 
 		String result = XmlTagFormatter.format(source, prefs, indent, lineDelimiter);
 		assertEquals(target, result);
@@ -140,23 +144,11 @@ public class XmlTagFormatterTest extends AbstractAntUITest {
 		assertEquals("x:y", tagParser.getElementName("<x:y/>")); //$NON-NLS-1$ //$NON-NLS-2$
 		assertEquals("x:y", tagParser.getElementName("<x:y abc/>")); //$NON-NLS-1$ //$NON-NLS-2$
 
-		Exception e1 = null;
-		try {
-			tagParser.getElementName("<>"); //$NON-NLS-1$
-		}
-		catch (Exception e) {
-			e1 = e;
-		}
+		Exception e1 = assertThrows(Exception.class, () -> tagParser.getElementName("<>")); //$NON-NLS-1$
 		assertNotNull(e1);
 		assertTrue(e1.getClass().isAssignableFrom(InnerClassFactory.ParseException.class));
 
-		Exception e2 = null;
-		try {
-			tagParser.getElementName("<>"); //$NON-NLS-1$
-		}
-		catch (Exception e) {
-			e2 = e;
-		}
+		Exception e2 = assertThrows(Exception.class, () -> tagParser.getElementName("<>")); //$NON-NLS-1$
 		assertNotNull(e2);
 		assertTrue(e2.getClass().isAssignableFrom(InnerClassFactory.ParseException.class));
 
@@ -182,24 +174,14 @@ public class XmlTagFormatterTest extends AbstractAntUITest {
 		InnerClassFactory.validateAttributePair(attributePairs.get(1), "attribute2", "value2'"); //$NON-NLS-1$ //$NON-NLS-2$
 
 		// test parse errors - equals in the wrong place
-		Exception e2 = null;
-		try {
-			attributePairs = tagParser.getAttibutes("<myElement attribute1=\"value1\" = attribute2=\"value2\" />"); //$NON-NLS-1$
-		}
-		catch (Exception e) {
-			e2 = e;
-		}
+		Exception e2 = assertThrows(Exception.class,
+				() -> tagParser.getAttibutes("<myElement attribute1=\"value1\" = attribute2=\"value2\" />")); //$NON-NLS-1$
 		assertNotNull(e2);
 		assertTrue(e2.getClass().isAssignableFrom(InnerClassFactory.ParseException.class));
 
 		// test parse errors - quotes in the wrong place
-		Exception e3 = null;
-		try {
-			attributePairs = tagParser.getAttibutes("<myElement attribute1=\"\"value1\"  attribute2=\"value2\" />"); //$NON-NLS-1$
-		}
-		catch (Exception e) {
-			e3 = e;
-		}
+		Exception e3 = assertThrows(Exception.class,
+				() -> tagParser.getAttibutes("<myElement attribute1=\"\"value1\"  attribute2=\"value2\" />")); //$NON-NLS-1$
 		assertNotNull(e3);
 		assertTrue(e3.getClass().isAssignableFrom(InnerClassFactory.ParseException.class));
 	}
@@ -243,12 +225,14 @@ public class XmlTagFormatterTest extends AbstractAntUITest {
 
 		InnerClassFactory.TagFormatter tagFormatter = InnerClassFactory.createTagFormatter();
 
-		boolean shouldWrap = tagFormatter.lineRequiresWrap("\t\t  <myElement attribute1=\"value1\" attribute2=\"value2\" />", //$NON-NLS-1$
+		boolean shouldWrap = tagFormatter.lineRequiresWrap(
+				"\t\t  <myElement attribute1=\"value1\" attribute2=\"value2\" />", //$NON-NLS-1$
 				70, 8);
-		boolean shouldNotWrap = tagFormatter.lineRequiresWrap("\t\t <myElement attribute1=\"value1\" attribute2=\"value2\" />", //$NON-NLS-1$
+		boolean shouldNotWrap = tagFormatter.lineRequiresWrap(
+				"\t\t <myElement attribute1=\"value1\" attribute2=\"value2\" />", //$NON-NLS-1$
 				70, 8);
 		assertTrue(shouldWrap);
-		assertTrue(!shouldNotWrap);
+		assertFalse(shouldNotWrap);
 
 	}
 
@@ -314,8 +298,8 @@ public class XmlTagFormatterTest extends AbstractAntUITest {
 
 		String lineSep = System.getProperty("line.separator"); //$NON-NLS-1$
 		assertEquals("<myElement attribute1=\"value1\"" + lineSep //$NON-NLS-1$
-				+ "\t\t             attribute2=\"value2\" />", tagFormatter //$NON-NLS-1$
-		.wrapTag(tag, dontAlignCloseChar, "\t\t  ", lineSep)); //$NON-NLS-1$
+				+ "\t\t             attribute2=\"value2\" />", //$NON-NLS-1$
+				tagFormatter.wrapTag(tag, dontAlignCloseChar, "\t\t  ", lineSep)); //$NON-NLS-1$
 
 		assertEquals("<myElement attribute1=\"value1\"" + lineSep //$NON-NLS-1$
 				+ "\t\t             attribute2=\"value2\"" + lineSep + "\t\t  />", //$NON-NLS-1$ //$NON-NLS-2$
@@ -324,8 +308,8 @@ public class XmlTagFormatterTest extends AbstractAntUITest {
 		tag.setClosed(false);
 
 		assertEquals("<myElement attribute1=\"value1\"" + lineSep //$NON-NLS-1$
-				+ "\t\t             attribute2=\"value2\">", tagFormatter //$NON-NLS-1$
-		.wrapTag(tag, dontAlignCloseChar, "\t\t  ", lineSep)); //$NON-NLS-1$
+				+ "\t\t             attribute2=\"value2\">", //$NON-NLS-1$
+				tagFormatter.wrapTag(tag, dontAlignCloseChar, "\t\t  ", lineSep)); //$NON-NLS-1$
 
 		assertEquals("<myElement attribute1=\"value1\"" + lineSep //$NON-NLS-1$
 				+ "\t\t             attribute2=\"value2\"" + lineSep + "\t\t  >", //$NON-NLS-1$ //$NON-NLS-2$
@@ -344,7 +328,7 @@ public class XmlTagFormatterTest extends AbstractAntUITest {
 		FormattingPreferences prefs = getPreferences(true, false, 60);
 		simpleTest(source1, source1, prefs, "\t", lineSep); //$NON-NLS-1$
 
-		String source2 = "<echo  file=\"foo\"/bar/baz></echo>"; //$NON-NLS-1$		
+		String source2 = "<echo  file=\"foo\"/bar/baz></echo>"; //$NON-NLS-1$
 		simpleTest(source2, source2, prefs, "\t", lineSep); //$NON-NLS-1$
 	}
 }

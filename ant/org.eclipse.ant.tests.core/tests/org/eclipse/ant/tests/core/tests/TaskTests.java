@@ -14,6 +14,7 @@
 package org.eclipse.ant.tests.core.tests;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -80,16 +81,13 @@ public class TaskTests extends AbstractAntTest {
 		AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
 		prefs.setCustomTasks(new Task[] {});
 		try {
-			run("CustomTask.xml"); //$NON-NLS-1$
-		}
-		catch (CoreException ce) {
-			assertTrue("Exception from undefined task is incorrect", ce.getMessage().trim().endsWith("Action: Check that any <presetdef>/<macrodef> declarations have taken place.")); //$NON-NLS-1$ //$NON-NLS-2$
-			return;
-		}
-		finally {
+			CoreException ce = assertThrows("Build should have failed as task no longer defined", CoreException.class, //$NON-NLS-1$
+					() -> run("CustomTask.xml")); //$NON-NLS-1$
+			assertTrue("Exception from undefined task is incorrect", ce.getMessage().trim() //$NON-NLS-1$
+					.endsWith("Action: Check that any <presetdef>/<macrodef> declarations have taken place.")); //$NON-NLS-1$
+		} finally {
 			restorePreferenceDefaults();
 		}
-		assertTrue("Build should have failed as task no longer defined", false); //$NON-NLS-1$
 	}
 
 	@Test
@@ -97,7 +95,8 @@ public class TaskTests extends AbstractAntTest {
 		try {
 			AntCorePreferences prefs = AntCorePlugin.getPlugin().getPreferences();
 			Task newTask = new Task();
-			String path = getProject().getFolder(ProjectHelper.LIB_FOLDER).getFile("taskFolder").getLocation().toFile().getAbsolutePath(); //$NON-NLS-1$
+			String path = getProject().getFolder(ProjectHelper.LIB_FOLDER).getFile("taskFolder").getLocation().toFile() //$NON-NLS-1$
+					.getAbsolutePath();
 			IAntClasspathEntry entry = new AntClasspathEntry(path + File.separatorChar);
 			IAntClasspathEntry entries[] = prefs.getAdditionalClasspathEntries();
 			IAntClasspathEntry newEntries[] = new IAntClasspathEntry[entries.length + 1];
@@ -116,8 +115,7 @@ public class TaskTests extends AbstractAntTest {
 			String msg = AntTestChecker.getDefault().getMessages().get(1);
 			assertEquals("Message incorrect: " + msg, "Testing Ant in Eclipse with a custom task", msg); //$NON-NLS-1$ //$NON-NLS-2$
 			assertSuccessful();
-		}
-		finally {
+		} finally {
 			restorePreferenceDefaults();
 		}
 	}
@@ -129,8 +127,7 @@ public class TaskTests extends AbstractAntTest {
 			Property newProp = new Property("ROOTDIR", "..//resources"); //$NON-NLS-1$ //$NON-NLS-2$
 			prefs.setCustomProperties(new Property[] { newProp });
 			run("Bug34663.xml"); //$NON-NLS-1$
-		}
-		finally {
+		} finally {
 			restorePreferenceDefaults();
 		}
 	}
@@ -147,16 +144,13 @@ public class TaskTests extends AbstractAntTest {
 	public void testTaskDefinedInExtensionPointHeadless() {
 		AntCorePlugin.getPlugin().setRunningHeadless(true);
 		try {
-			run("ExtensionPointTask.xml"); //$NON-NLS-1$
-		}
-		catch (CoreException ce) {
-			assertTrue("Exception from undefined task is incorrect", ce.getMessage().trim().endsWith("Action: Check that any <presetdef>/<macrodef> declarations have taken place.")); //$NON-NLS-1$ //$NON-NLS-2$
-			return;
-		}
-		finally {
+			CoreException ce = assertThrows("Build should have failed as task was not defined to run in headless", //$NON-NLS-1$
+					CoreException.class, () -> run("ExtensionPointTask.xml")); //$NON-NLS-1$
+			assertTrue("Exception from undefined task is incorrect", ce.getMessage().trim() //$NON-NLS-1$
+					.endsWith("Action: Check that any <presetdef>/<macrodef> declarations have taken place.")); //$NON-NLS-1$
+		} finally {
 			AntCorePlugin.getPlugin().setRunningHeadless(false);
 		}
-		assertTrue("Build should have failed as task was not defined to run in headless", false); //$NON-NLS-1$
 	}
 
 	@Test

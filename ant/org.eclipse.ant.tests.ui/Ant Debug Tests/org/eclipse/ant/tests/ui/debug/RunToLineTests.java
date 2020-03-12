@@ -51,7 +51,8 @@ public class RunToLineTests extends AbstractAntDebugTest {
 	class MyListener implements IPerspectiveListener2 {
 
 		@Override
-		public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective, IWorkbenchPartReference partRef, String changeId) {
+		public void perspectiveChanged(IWorkbenchPage page, IPerspectiveDescriptor perspective,
+				IWorkbenchPartReference partRef, String changeId) {
 			if (partRef.getTitle().equals("breakpoints.xml") && changeId == IWorkbenchPage.CHANGE_EDITOR_OPEN) { //$NON-NLS-1$
 				synchronized (fLock) {
 					fEditor = (IEditorPart) partRef.getPart(true);
@@ -101,7 +102,8 @@ public class RunToLineTests extends AbstractAntDebugTest {
 	}
 
 	/**
-	 * Test a run to line, with an extra breakpoint, and preference to skip in a separate VM
+	 * Test a run to line, with an extra breakpoint, and preference to skip in a
+	 * separate VM
 	 * 
 	 * @throws Exception
 	 */
@@ -131,22 +133,26 @@ public class RunToLineTests extends AbstractAntDebugTest {
 	}
 
 	/**
-	 * Runs to the given line number in the 'breakpoints.xml' buildfile, after stopping at the Starts from line 5 in the buildfile.
+	 * Runs to the given line number in the 'breakpoints.xml' buildfile, after
+	 * stopping at the Starts from line 5 in the buildfile.
 	 * 
-	 * @param lineNumber
-	 *            line number to run to, ONE BASED
-	 * @param expectedLineNumber
-	 *            the line number to be on after run-to-line (may differ from the target line number if the option to skip breakpoints is off).
-	 * @param skipBreakpoints
-	 *            preference value for "skip breakpoints during run to line"
+	 * @param lineNumber         line number to run to, ONE BASED
+	 * @param expectedLineNumber the line number to be on after run-to-line (may
+	 *                           differ from the target line number if the option to
+	 *                           skip breakpoints is off).
+	 * @param skipBreakpoints    preference value for "skip breakpoints during run
+	 *                           to line"
 	 * @throws Exception
 	 */
-	public void runToLine(final int lineNumber, int expectedLineNumber, boolean skipBreakpoints, boolean sepVM) throws Exception {
+	public void runToLine(final int lineNumber, int expectedLineNumber, boolean skipBreakpoints, boolean sepVM)
+			throws Exception {
 		String fileName = "breakpoints"; //$NON-NLS-1$
 		AntLineBreakpoint breakpoint = createLineBreakpoint(5, fileName + ".xml"); //$NON-NLS-1$
 
-		boolean restore = DebugUITools.getPreferenceStore().getBoolean(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE);
-		DebugUITools.getPreferenceStore().setValue(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE, skipBreakpoints);
+		boolean restore = DebugUITools.getPreferenceStore()
+				.getBoolean(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE);
+		DebugUITools.getPreferenceStore().setValue(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE,
+				skipBreakpoints);
 		AntThread thread = null;
 		final IPerspectiveListener2 listener = new MyListener();
 		try {
@@ -190,11 +196,7 @@ public class RunToLineTests extends AbstractAntDebugTest {
 					editor.selectAndReveal(lineOffset, 0);
 					// run to line
 					adapter.runToLine(editor, editor.getSelectionProvider().getSelection(), suspendee);
-				}
-				catch (CoreException e) {
-					exs[0] = e;
-				}
-				catch (BadLocationException e) {
+				} catch (CoreException | BadLocationException e) {
 					exs[0] = e;
 				}
 			};
@@ -207,11 +209,11 @@ public class RunToLineTests extends AbstractAntDebugTest {
 			IStackFrame topStackFrame = thread.getTopStackFrame();
 			assertNotNull("There must be a top stack frame", topStackFrame); //$NON-NLS-1$
 			assertEquals("wrong line", expectedLineNumber, topStackFrame.getLineNumber()); //$NON-NLS-1$
-		}
-		finally {
+		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
-			DebugUITools.getPreferenceStore().setValue(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE, restore);
+			DebugUITools.getPreferenceStore().setValue(IDebugUIConstants.PREF_SKIP_BREAKPOINTS_DURING_RUN_TO_LINE,
+					restore);
 			Runnable cleanup = () -> {
 				IWorkbenchWindow activeWorkbenchWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 				activeWorkbenchWindow.removePerspectiveListener(listener);
