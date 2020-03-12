@@ -13,15 +13,14 @@
  *******************************************************************************/
 package org.eclipse.ant.tests.ui;
 
-import org.eclipse.ant.tests.ui.testplugin.AbstractAntUITest;
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.jdt.core.JavaCore;
+import org.junit.Test;
 
-public class APITests extends AbstractAntUITest {
+public class APITests {
 
-	public APITests(String name) {
-		super(name);
-	}
-
+	@Test
 	public void testCompareJavaVersions() {
 		String vmver = "1.6"; //$NON-NLS-1$
 		int comparison = JavaCore.compareJavaVersions(vmver, JavaCore.VERSION_1_7);

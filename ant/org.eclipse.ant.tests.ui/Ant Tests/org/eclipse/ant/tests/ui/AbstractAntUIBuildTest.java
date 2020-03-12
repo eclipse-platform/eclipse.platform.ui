@@ -34,7 +34,8 @@ public abstract class AbstractAntUIBuildTest extends AbstractAntUITest {
 	}
 
 	/**
-	 * Runs the test and collects the result in a TestResult without blocking the UI thread.
+	 * Runs the test and collects the result in a TestResult without blocking the UI
+	 * thread.
 	 */
 	@Override
 	public void run(final TestResult result) {
@@ -48,8 +49,7 @@ public abstract class AbstractAntUIBuildTest extends AbstractAntUITest {
 			};
 			thread = new Thread(r);
 			thread.start();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 
@@ -57,30 +57,17 @@ public abstract class AbstractAntUIBuildTest extends AbstractAntUITest {
 			try {
 				if (!display.readAndDispatch())
 					display.sleep();
-			}
-			catch (Throwable e) {
+			} catch (Throwable e) {
 				e.printStackTrace();
 			}
 		}
 	}
 
 	/**
-	 * Launches the Ant build with the buildfile name (no extension). Waits for all of the lines to be appended to the console.
-	 * 
-	 * @param buildFileName
-	 *            the buildfile to execute
-	 * @return thread in which the first suspend event occurred
-	 */
-	@Override
-	protected void launch(String buildFileName) throws CoreException {
-		super.launch(buildFileName);
-	}
-
-	/**
-	 * Launches the launch configuration Waits for all of the lines to be appended to the console.
+	 * Launches the launch configuration Waits for all of the lines to be appended
+	 * to the console.
 	 *
-	 * @param config
-	 *            the config to execute
+	 * @param config the config to execute
 	 * @return thread in which the first suspend event occurred
 	 */
 	protected void launch(ILaunchConfiguration config) throws CoreException {
@@ -91,8 +78,4 @@ public abstract class AbstractAntUIBuildTest extends AbstractAntUITest {
 		Display.getDefault().asyncExec(() -> link.linkActivated());
 	}
 
-	@Override
-	protected void launch(String buildFileName, String arguments) throws CoreException {
-		super.launch(buildFileName, arguments);
-	}
 }
