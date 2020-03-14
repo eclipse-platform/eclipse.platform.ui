@@ -58,12 +58,17 @@ final class ColumnLayout extends Layout {
 	private static int COLUMN_TRIM;
 	static {
 		String platform= SWT.getPlatform();
-		if ("win32".equals(platform)) //$NON-NLS-1$
+		switch (platform) {
+		case "win32": //$NON-NLS-1$
 			COLUMN_TRIM= 4;
-		else if ("carbon".equals(platform)) //$NON-NLS-1$
+			break;
+		case "carbon": //$NON-NLS-1$
 			COLUMN_TRIM= 24;
-		else
+			break;
+		default:
 			COLUMN_TRIM= 3;
+			break;
+		}
 	}
 
 	private List<ColumnLayoutData> columns= new ArrayList<>();

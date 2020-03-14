@@ -63,12 +63,19 @@ public final class RulerColumnPlacement {
 		for (IConfigurationElement child : children) {
 			String name= child.getName();
 			ExtensionPointHelper childHelper= new ExtensionPointHelper(child);
+			if (name == null) {
+				childHelper.fail(RulerColumnMessages.RulerColumnPlacement_illegal_child_msg);
+				continue;
+			}
 			boolean before;
-			if (AFTER.equals(name))
+			switch (name) {
+			case AFTER:
 				before= false;
-			else if (BEFORE.equals(name))
+				break;
+			case BEFORE:
 				before= true;
-			else {
+				break;
+			default:
 				childHelper.fail(RulerColumnMessages.RulerColumnPlacement_illegal_child_msg);
 				continue;
 			}

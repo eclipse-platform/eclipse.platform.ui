@@ -197,21 +197,23 @@ public class TemplateTranslator {
 			buffer.append(string.substring(complete, matcher.start()));
 
 			// check the escaped sequence
-			if ("$".equals(matcher.group())) { //$NON-NLS-1$
+			switch (matcher.group()) {
+			case "$": //$NON-NLS-1$
 				fail(TextTemplateMessages.getString("TemplateTranslator.error.incomplete.variable")); //$NON-NLS-1$
-			} else if ("$$".equals(matcher.group())) { //$NON-NLS-1$
+				break;
+			case "$$": //$NON-NLS-1$
 				// escaped $
 				buffer.append('$');
-			} else {
+				break;
+			default:
 				// parse variable
 				String name= matcher.group(1);
 				String typeName= matcher.group(2);
 				String params= matcher.group(3);
 				TemplateVariableType type= createType(typeName, params);
-
 				updateOrCreateVariable(variables, name, type, buffer.length());
-
 				buffer.append(name);
+				break;
 			}
 			complete= matcher.end();
 		}

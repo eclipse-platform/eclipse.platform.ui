@@ -4584,18 +4584,28 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			// There is a separate handler for font preference changes
 			return;
 
-		if (PREFERENCE_COLOR_FOREGROUND.equals(property) || PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT.equals(property) ||
-				PREFERENCE_COLOR_BACKGROUND.equals(property) ||	PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT.equals(property) ||
-				PREFERENCE_COLOR_SELECTION_FOREGROUND.equals(property) || PREFERENCE_COLOR_SELECTION_FOREGROUND_SYSTEM_DEFAULT.equals(property) ||
-				PREFERENCE_COLOR_SELECTION_BACKGROUND.equals(property) ||	PREFERENCE_COLOR_SELECTION_BACKGROUND_SYSTEM_DEFAULT.equals(property))
-		{
-			initializeViewerColors(fSourceViewer);
-		} else if (PREFERENCE_COLOR_FIND_SCOPE.equals(property)) {
-			initializeFindScopeColor(fSourceViewer);
-		} else if (PREFERENCE_USE_CUSTOM_CARETS.equals(property)) {
-			updateCaret();
-		} else if (PREFERENCE_WIDE_CARET.equals(property)) {
-			updateCaret();
+		if (property != null) {
+			switch (property) {
+			case PREFERENCE_COLOR_FOREGROUND:
+			case PREFERENCE_COLOR_FOREGROUND_SYSTEM_DEFAULT:
+			case PREFERENCE_COLOR_BACKGROUND:
+			case PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT:
+			case PREFERENCE_COLOR_SELECTION_FOREGROUND:
+			case PREFERENCE_COLOR_SELECTION_FOREGROUND_SYSTEM_DEFAULT:
+			case PREFERENCE_COLOR_SELECTION_BACKGROUND:
+			case PREFERENCE_COLOR_SELECTION_BACKGROUND_SYSTEM_DEFAULT:
+				initializeViewerColors(fSourceViewer);
+				break;
+			case PREFERENCE_COLOR_FIND_SCOPE:
+				initializeFindScopeColor(fSourceViewer);
+				break;
+			case PREFERENCE_USE_CUSTOM_CARETS:
+			case PREFERENCE_WIDE_CARET:
+				updateCaret();
+				break;
+			default:
+				break;
+			}
 		}
 
 		if (affectsTextPresentation(event))
@@ -6686,11 +6696,14 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 			String text= null;
 
-			if (ITextEditorActionConstants.STATUS_CATEGORY_INPUT_POSITION.equals(category))
+			switch (category) {
+			case ITextEditorActionConstants.STATUS_CATEGORY_INPUT_POSITION:
 				text= getCursorPosition();
-			else if (ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE.equals(category))
+				break;
+			case ITextEditorActionConstants.STATUS_CATEGORY_ELEMENT_STATE:
 				text= isEditorInputReadOnly() ? fReadOnlyLabel : fWritableLabel;
-			else if (ITextEditorActionConstants.STATUS_CATEGORY_INPUT_MODE.equals(category)) {
+				break;
+			case ITextEditorActionConstants.STATUS_CATEGORY_INPUT_MODE:
 				InsertMode mode= getInsertMode();
 				if (fIsOverwriting)
 					text= fOverwriteModeLabel;
@@ -6698,6 +6711,9 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 					text= fInsertModeLabel;
 				else if (SMART_INSERT == mode)
 					text= fSmartInsertModeLabel;
+				break;
+			default:
+				break;
 			}
 
 			field.setText(text == null ? fErrorLabel : text);
