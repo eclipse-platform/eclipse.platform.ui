@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,18 +11,19 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Anton Leherbauer <anton.leherbauer@windriver.com> - [implementation] AnnotationModel.fModificationStamp leaks annotations - http://bugs.eclipse.org/345715
+ *     Sebastian Zarnekow - [bug 401391] ConcurrentModificationException in AnnotationModel.getAnnotationIterator
  *******************************************************************************/
 package org.eclipse.jface.text.source;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.IdentityHashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NoSuchElementException;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.core.runtime.Assert;
 
@@ -281,7 +282,7 @@ public class AnnotationModel implements IAnnotationModel, IAnnotationModelExtens
 	 * The model's attachment.
 	 * @since 3.0
 	 */
-	private Map<Object, IAnnotationModel> fAttachments= new HashMap<>();
+	private Map<Object, IAnnotationModel> fAttachments= new ConcurrentHashMap<>();
 	/**
 	 * The annotation model listener on attached sub-models.
 	 * @since 3.0
