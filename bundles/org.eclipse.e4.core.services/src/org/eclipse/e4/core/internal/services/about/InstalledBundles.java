@@ -56,17 +56,13 @@ public class InstalledBundles implements ISystemInformation {
 
 	private Comparator<Bundle> createComparator(Map<String, String> names) {
 		final Collator collator = Collator.getInstance(Locale.getDefault());
-		return new Comparator<Bundle>() {
-
-			@Override
-			public int compare(Bundle o1, Bundle o2) {
-				String id1 = identify(o1);
-				String id2 = identify(o2);
-				if (!id1.equals(id2)) {
-					return collator.compare(id1, id2);
-				}
-				return collator.compare(names.get(id1), names.get(id2));
+		return (Bundle o1, Bundle o2) -> {
+			String id1 = identify(o1);
+			String id2 = identify(o2);
+			if (!id1.equals(id2)) {
+				return collator.compare(id1, id2);
 			}
+			return collator.compare(names.get(id1), names.get(id2));
 		};
 	}
 

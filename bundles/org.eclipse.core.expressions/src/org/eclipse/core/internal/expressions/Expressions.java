@@ -138,15 +138,12 @@ public class Expressions {
 			fgKnownClasses= new WeakHashMap<>();
 			fgNotFoundClasses = new WeakHashMap<>();
 			BundleContext bundleContext= ExpressionPlugin.getDefault().getBundleContext();
-			BundleListener listener= new BundleListener() {
-				@Override
-				public void bundleChanged(BundleEvent event) {
-					// Invalidate the caches if any of the bundles is stopped
-					if (event.getType() == BundleEvent.STOPPED) {
-						synchronized (Expressions.class) {
-							fgKnownClasses.clear();
-							fgNotFoundClasses.clear();
-						}
+			BundleListener listener= (BundleEvent event) -> {
+				// Invalidate the caches if any of the bundles is stopped
+				if (event.getType() == BundleEvent.STOPPED) {
+					synchronized (Expressions.class) {
+						fgKnownClasses.clear();
+						fgNotFoundClasses.clear();
 					}
 				}
 			};

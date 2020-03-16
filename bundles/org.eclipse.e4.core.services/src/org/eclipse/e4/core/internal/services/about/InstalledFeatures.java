@@ -44,17 +44,13 @@ public class InstalledFeatures implements ISystemInformation {
 
 	private Comparator<IBundleGroup> createComparator() {
 		final Collator collator = Collator.getInstance(Locale.getDefault());
-		return new Comparator<IBundleGroup>() {
-
-			@Override
-			public int compare(IBundleGroup o1, IBundleGroup o2) {
-				String id1 = o1.getIdentifier();
-				String id2 = o2.getIdentifier();
-				if (!id1.equals(id2)) {
-					return collator.compare(id1, id2);
-				}
-				return collator.compare(o1.getName(), o2.getName());
+		return (IBundleGroup o1, IBundleGroup o2) -> {
+			String id1 = o1.getIdentifier();
+			String id2 = o2.getIdentifier();
+			if (!id1.equals(id2)) {
+				return collator.compare(id1, id2);
 			}
+			return collator.compare(o1.getName(), o2.getName());
 		};
 	}
 
