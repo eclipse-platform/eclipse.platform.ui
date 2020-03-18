@@ -227,22 +227,19 @@ public class UndoTextFileChange extends Change {
 		final BadLocationException[] badLocationException= new BadLocationException[1];
 		final MalformedTreeException[] malformedTreeException= new MalformedTreeException[1];
 		final CoreException[] coreException= new CoreException[1];
-		Runnable runnable= new Runnable() {
-			@Override
-			public void run() {
-				synchronized (completionLock) {
-					try {
-						result[0]= doPerformEdits(document, setContentStampSuccess);
-					} catch (BadLocationException e) {
-						badLocationException[0]= e;
-					} catch (MalformedTreeException e) {
-						malformedTreeException[0]= e;
-					} catch (CoreException e) {
-						coreException[0]= e;
-					} finally {
-						completionLock.fDone= true;
-						completionLock.notifyAll();
-					}
+		Runnable runnable= () -> {
+			synchronized (completionLock) {
+				try {
+					result[0]= doPerformEdits(document, setContentStampSuccess);
+				} catch (BadLocationException e) {
+					badLocationException[0]= e;
+				} catch (MalformedTreeException e) {
+					malformedTreeException[0]= e;
+				} catch (CoreException e) {
+					coreException[0]= e;
+				} finally {
+					completionLock.fDone= true;
+					completionLock.notifyAll();
 				}
 			}
 		};

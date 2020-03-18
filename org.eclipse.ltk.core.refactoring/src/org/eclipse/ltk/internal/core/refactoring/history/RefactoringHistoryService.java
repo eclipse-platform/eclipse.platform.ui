@@ -365,20 +365,10 @@ public final class RefactoringHistoryService implements IRefactoringHistoryServi
 	public void connect() {
 		fReferenceCount++;
 		if (fReferenceCount == 1) {
-			fOperationListener= new IOperationHistoryListener() {
-				@Override
-				public void historyNotification(final OperationHistoryEvent event) {
-					performHistoryNotification(event);
-				}
-			};
+			fOperationListener= event -> performHistoryNotification(event);
 			OperationHistoryFactory.getOperationHistory().addOperationHistoryListener(fOperationListener);
 
-			fResourceListener= new IResourceChangeListener() {
-				@Override
-				public void resourceChanged(final IResourceChangeEvent event) {
-					peformResourceChanged(event);
-				}
-			};
+			fResourceListener= event -> peformResourceChanged(event);
 			ResourcesPlugin.getWorkspace().addResourceChangeListener(fResourceListener, IResourceChangeEvent.PRE_CLOSE | IResourceChangeEvent.POST_CHANGE);
 		}
 	}

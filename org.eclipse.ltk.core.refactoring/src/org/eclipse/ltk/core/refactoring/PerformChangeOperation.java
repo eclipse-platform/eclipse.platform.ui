@@ -240,59 +240,56 @@ public class PerformChangeOperation implements IWorkspaceRunnable {
 		fChangeExecuted= false;
 		if (!fChange.isEnabled())
 			return;
-		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				boolean undoInitialized= false;
+		IWorkspaceRunnable runnable= monitor -> {
+			boolean undoInitialized= false;
+			try {
+				monitor.beginTask("", 10); //$NON-NLS-1$
+				fValidationStatus= fChange.isValid(new SubProgressMonitor(monitor, 1));
+				if (fValidationStatus.hasFatalError())
+					return;
+				boolean aboutToPerformChangeCalled= false;
 				try {
-					monitor.beginTask("", 10); //$NON-NLS-1$
-					fValidationStatus= fChange.isValid(new SubProgressMonitor(monitor, 1));
-					if (fValidationStatus.hasFatalError())
-						return;
-					boolean aboutToPerformChangeCalled= false;
-					try {
-						if (fUndoManager != null) {
-							ResourcesPlugin.getWorkspace().checkpoint(false);
-							fUndoManager.aboutToPerformChange(fChange);
-							aboutToPerformChangeCalled= true;
-						}
-						fChangeExecutionFailed= true;
-						fUndoChange= fChange.perform(new SubProgressMonitor(monitor, 9));
-						fChangeExecutionFailed= false;
-						fChangeExecuted= true;
-					} finally {
-						if (fUndoManager != null) {
-							ResourcesPlugin.getWorkspace().checkpoint(false);
-							if (aboutToPerformChangeCalled)
-								fUndoManager.changePerformed(fChange, !fChangeExecutionFailed);
-						}
-					}
-					fChange.dispose();
-					if (fUndoChange != null) {
-						fUndoChange.initializeValidationData(new NotCancelableProgressMonitor(
-							new SubProgressMonitor(monitor, 1)));
-						undoInitialized= true;
-					}
 					if (fUndoManager != null) {
-						if (fUndoChange != null) {
-							fUndoManager.addUndo(fUndoName, fUndoChange);
-						} else {
-							fUndoManager.flush();
-						}
+						ResourcesPlugin.getWorkspace().checkpoint(false);
+						fUndoManager.aboutToPerformChange(fChange);
+						aboutToPerformChangeCalled= true;
 					}
-				} catch (CoreException | RuntimeException e) {
-					if (fUndoManager != null)
-						fUndoManager.flush();
-					if (fUndoChange != null && undoInitialized) {
-						Change ch= fUndoChange;
-						fUndoChange= null;
-						ch.dispose();
-					}
-					fUndoChange= null;
-					throw e;
+					fChangeExecutionFailed= true;
+					fUndoChange= fChange.perform(new SubProgressMonitor(monitor, 9));
+					fChangeExecutionFailed= false;
+					fChangeExecuted= true;
 				} finally {
-					monitor.done();
+					if (fUndoManager != null) {
+						ResourcesPlugin.getWorkspace().checkpoint(false);
+						if (aboutToPerformChangeCalled)
+							fUndoManager.changePerformed(fChange, !fChangeExecutionFailed);
+					}
 				}
+				fChange.dispose();
+				if (fUndoChange != null) {
+					fUndoChange.initializeValidationData(new NotCancelableProgressMonitor(
+						new SubProgressMonitor(monitor, 1)));
+					undoInitialized= true;
+				}
+				if (fUndoManager != null) {
+					if (fUndoChange != null) {
+						fUndoManager.addUndo(fUndoName, fUndoChange);
+					} else {
+						fUndoManager.flush();
+					}
+				}
+			} catch (CoreException | RuntimeException e) {
+				if (fUndoManager != null)
+					fUndoManager.flush();
+				if (fUndoChange != null && undoInitialized) {
+					Change ch= fUndoChange;
+					fUndoChange= null;
+					ch.dispose();
+				}
+				fUndoChange= null;
+				throw e;
+			} finally {
+				monitor.done();
 			}
 		};
 		ResourcesPlugin.getWorkspace().run(runnable, fSchedulingRule, IWorkspace.AVOID_UPDATE, pm);

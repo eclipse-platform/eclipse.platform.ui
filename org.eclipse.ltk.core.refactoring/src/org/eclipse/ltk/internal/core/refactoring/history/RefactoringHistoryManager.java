@@ -378,18 +378,7 @@ public final class RefactoringHistoryManager {
 	 *            the refactoring descriptors
 	 */
 	public static void sortRefactoringDescriptorsAscending(final RefactoringDescriptor[] descriptors) {
-		Arrays.sort(descriptors, new Comparator<RefactoringDescriptor>() {
-
-			@Override
-			public int compare(RefactoringDescriptor first, RefactoringDescriptor second) {
-				long delta= first.getTimeStamp() - second.getTimeStamp();
-				if (delta > 0)
-					return 1;
-				else if (delta < 0)
-					return -1;
-				return 0;
-			}
-		});
+		Arrays.sort(descriptors, Comparator.comparing(RefactoringDescriptor::getTimeStamp));
 	}
 
 	/**
@@ -400,18 +389,7 @@ public final class RefactoringHistoryManager {
 	 *            the refactoring descriptor proxies
 	 */
 	public static void sortRefactoringDescriptorsAscending(final RefactoringDescriptorProxy[] proxies) {
-		Arrays.sort(proxies, new Comparator<RefactoringDescriptorProxy>() {
-
-			@Override
-			public int compare(RefactoringDescriptorProxy first, RefactoringDescriptorProxy second) {
-				long delta= first.getTimeStamp() - second.getTimeStamp();
-				if (delta > 0)
-					return 1;
-				else if (delta < 0)
-					return -1;
-				return 0;
-			}
-		});
+		Arrays.sort(proxies, Comparator.comparing(RefactoringDescriptorProxy::getTimeStamp));
 	}
 
 	/**
@@ -422,18 +400,7 @@ public final class RefactoringHistoryManager {
 	 *            the refactoring descriptor proxies
 	 */
 	public static void sortRefactoringDescriptorsDescending(final RefactoringDescriptorProxy[] proxies) {
-		Arrays.sort(proxies, new Comparator<RefactoringDescriptorProxy>() {
-
-			@Override
-			public int compare(RefactoringDescriptorProxy first, RefactoringDescriptorProxy second) {
-				long delta= second.getTimeStamp() - first.getTimeStamp();
-				if (delta > 0)
-					return 1;
-				else if (delta < 0)
-					return -1;
-				return 0;
-			}
-		});
+		Arrays.sort(proxies, Comparator.comparing(RefactoringDescriptorProxy::getTimeStamp).reversed());
 	}
 
 	/**

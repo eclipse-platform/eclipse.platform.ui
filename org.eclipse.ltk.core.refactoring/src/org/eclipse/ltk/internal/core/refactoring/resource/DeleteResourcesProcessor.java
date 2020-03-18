@@ -188,17 +188,14 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 	 */
 	public boolean isSynchronizedExcludingLinkedResources(IResource resource) throws CoreException {
 		boolean[] result= { true };
-		resource.accept(new IResourceVisitor() {
-			@Override
-			public boolean visit(IResource visitedResource) throws CoreException {
-				if (!result[0] || visitedResource.isLinked())
-					return false;
-				if (!visitedResource.isSynchronized(IResource.DEPTH_ZERO)) {
-					result[0]= false;
-					return false;
-				}
-				return true;
+		resource.accept((IResourceVisitor) visitedResource -> {
+			if (!result[0] || visitedResource.isLinked())
+				return false;
+			if (!visitedResource.isSynchronized(IResource.DEPTH_ZERO)) {
+				result[0]= false;
+				return false;
 			}
+			return true;
 		}, IResource.DEPTH_INFINITE, IContainer.DO_NOT_CHECK_EXISTENCE);
 		return result[0];
 	}
@@ -207,14 +204,11 @@ public class DeleteResourcesProcessor extends DeleteProcessor {
 		for (IResource resource : fResources) {
 			if (resource instanceof IProject && !((IProject) resource).isOpen())
 				continue;
-			resource.accept(new IResourceVisitor() {
-				@Override
-				public boolean visit(IResource visitedResource) throws CoreException {
-					if (visitedResource instanceof IFile) {
-						checkDirtyFile(result, (IFile)visitedResource);
-					}
-					return true;
+			resource.accept((IResourceVisitor) visitedResource -> {
+				if (visitedResource instanceof IFile) {
+					checkDirtyFile(result, (IFile)visitedResource);
 				}
+				return true;
 			}, IResource.DEPTH_INFINITE, false);
 		}
 	}

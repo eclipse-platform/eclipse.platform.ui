@@ -563,71 +563,67 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 				}
 			}
 
-			final IPositionUpdater positionUpdater= new IPositionUpdater() {
+			final IPositionUpdater positionUpdater= event -> {
 
-				@Override
-				public final void update(final DocumentEvent event) {
+				final int eventOffset= event.getOffset();
+				final int eventLength= event.getLength();
+				final int eventOldEndOffset= eventOffset + eventLength;
+				final String eventText= event.getText();
+				final int eventNewLength= eventText == null ? 0 : eventText.length();
+				final int eventNewEndOffset= eventOffset + eventNewLength;
+				final int deltaLength= eventNewLength - eventLength;
 
-					final int eventOffset= event.getOffset();
-					final int eventLength= event.getLength();
-					final int eventOldEndOffset= eventOffset + eventLength;
-					final String eventText= event.getText();
-					final int eventNewLength= eventText == null ? 0 : eventText.length();
-					final int eventNewEndOffset= eventOffset + eventNewLength;
-					final int deltaLength= eventNewLength - eventLength;
+				try {
 
-					try {
+					final Position[] positions= event.getDocument().getPositions(COMPOSABLE_POSITION_CATEGORY);
+					for (Position position : positions) {
+						if (position.isDeleted())
+							continue;
 
-						final Position[] positions= event.getDocument().getPositions(COMPOSABLE_POSITION_CATEGORY);
-						for (Position position : positions) {
-							if (position.isDeleted())
-								continue;
+						final int offset= position.getOffset();
+						final int length= position.getLength();
+						final int end= offset + length;
 
-							final int offset= position.getOffset();
-							final int length= position.getLength();
-							final int end= offset + length;
-
-							if (offset > eventOldEndOffset) {
-								// position comes way after change - shift
-								position.setOffset(offset + deltaLength);
-							} else if (end < eventOffset) {
-								// position comes way before change - leave
-								// alone
-							} else if (offset == eventOffset) {
-								// leave alone, since the edits are overlapping
-							} else if (offset <= eventOffset && end >= eventOldEndOffset) {
-								// event completely internal to the position
-								// -
-								// adjust length
-								position.setLength(length + deltaLength);
-							} else if (offset < eventOffset) {
-								// event extends over end of position - include
-								// the
-								// replacement text into the position
-								position.setLength(eventNewEndOffset - offset);
-							} else if (end > eventOldEndOffset) {
-								// event extends from before position into it -
-								// adjust
-								// offset and length, including the replacement
-								// text into
-								// the position
-								position.setOffset(eventOffset);
-								int deleted= eventOldEndOffset - offset;
-								position.setLength(length - deleted + eventNewLength);
-							} else {
-								// event comprises the position - keep it at the
-								// same
-								// position, but always inside the replacement
-								// text
-								int newOffset= Math.min(offset, eventNewEndOffset);
-								int newEndOffset= Math.min(end, eventNewEndOffset);
-								position.setOffset(newOffset);
-								position.setLength(newEndOffset - newOffset);
-							}
+						if (offset > eventOldEndOffset) {
+							// position comes way after change - shift
+							position.setOffset(offset + deltaLength);
+						} else if (end < eventOffset) {
+							// position comes way before change - leave
+							// alone
+						} else if (offset == eventOffset) {
+							// leave alone, since the edits are overlapping
+						} else if (offset <= eventOffset && end >= eventOldEndOffset) {
+							// event completely internal to the position
+							// -
+							// adjust length
+							position.setLength(length + deltaLength);
+						} else if (offset < eventOffset) {
+							// event extends over end of position - include
+							// the
+							// replacement text into the position
+							position.setLength(eventNewEndOffset - offset);
+						} else if (end > eventOldEndOffset) {
+							// event extends from before position into it -
+							// adjust
+							// offset and length, including the replacement
+							// text into
+							// the position
+							position.setOffset(eventOffset);
+							int deleted= eventOldEndOffset - offset;
+							position.setLength(length - deleted + eventNewLength);
+						} else {
+							// event comprises the position - keep it at the
+							// same
+							// position, but always inside the replacement
+							// text
+							int newOffset= Math.min(offset, eventNewEndOffset);
+							int newEndOffset= Math.min(end, eventNewEndOffset);
+							position.setOffset(newOffset);
+							position.setLength(newEndOffset - newOffset);
 						}
-					} catch (BadPositionCategoryException exception) {
-						// ignore and return
 					}
+				} catch (BadPositionCategoryException exception) {
+					// ignore and return
 				}
 			};
 
@@ -907,18 +903,15 @@ public class MultiStateTextFileChange extends TextEditBasedChange {
 		/** The lock for waiting for computation in the UI thread to complete. */
 		final Lock completionLock= new Lock();
 		final BadLocationException[] exception= new BadLocationException[1];
-		Runnable runnable= new Runnable() {
-			@Override
-			public void run() {
-				synchronized (completionLock) {
-					try {
-						performChangesInSynchronizationContext(document, undoList, preview);
-					} catch (BadLocationException e) {
-						exception[0]= e;
-					} finally {
-						completionLock.fDone= true;
-						completionLock.notifyAll();
-					}
+		Runnable runnable= () -> {
+			synchronized (completionLock) {
+				try {
+					performChangesInSynchronizationContext(document, undoList, preview);
+				} catch (BadLocationException e) {
+					exception[0]= e;
+				} finally {
+					completionLock.fDone= true;
+					completionLock.notifyAll();
 				}
 			}
 		};

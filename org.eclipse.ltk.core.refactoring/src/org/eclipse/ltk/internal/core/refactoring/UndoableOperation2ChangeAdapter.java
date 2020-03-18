@@ -312,44 +312,41 @@ public class UndoableOperation2ChangeAdapter implements IUndoableOperation, IAdv
 		final ExecuteResult result= new ExecuteResult();
 		if (fActiveChange == null || !fActiveChange.isEnabled())
 			return result;
-		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				boolean reverseIsInitialized= false;
-				try {
-					monitor.beginTask("", 11); //$NON-NLS-1$
-					result.validationStatus= fActiveChange.isValid(new SubProgressMonitor(monitor, 2));
-					if (result.validationStatus.hasFatalError()) {
-						query.stopped(result.validationStatus);
-						// no need to dispose here. The framework disposes
-						// the undo since it couldn't be executed.
-						return;
-					}
-					if (!result.validationStatus.isOK() && !query.proceed(result.validationStatus)) {
-						return;
-					}
-					try {
-						result.reverseChange= fActiveChange.perform(new SubProgressMonitor(monitor, 9));
-						result.changeExecuted= true;
-					} finally {
-						ResourcesPlugin.getWorkspace().checkpoint(false);
-					}
-					fActiveChange.dispose();
-					if (result.reverseChange != null) {
-						result.reverseChange.initializeValidationData(new NotCancelableProgressMonitor(
-							new SubProgressMonitor(monitor, 1)));
-						reverseIsInitialized= true;
-					}
-				} catch (CoreException | RuntimeException e) {
-					Change ch= result.reverseChange;
-					result.reverseChange= null;
-					if (ch != null && reverseIsInitialized) {
-						ch.dispose();
-					}
-					throw e;
-				} finally {
-					monitor.done();
+		IWorkspaceRunnable runnable= monitor -> {
+			boolean reverseIsInitialized= false;
+			try {
+				monitor.beginTask("", 11); //$NON-NLS-1$
+				result.validationStatus= fActiveChange.isValid(new SubProgressMonitor(monitor, 2));
+				if (result.validationStatus.hasFatalError()) {
+					query.stopped(result.validationStatus);
+					// no need to dispose here. The framework disposes
+					// the undo since it couldn't be executed.
+					return;
 				}
+				if (!result.validationStatus.isOK() && !query.proceed(result.validationStatus)) {
+					return;
+				}
+				try {
+					result.reverseChange= fActiveChange.perform(new SubProgressMonitor(monitor, 9));
+					result.changeExecuted= true;
+				} finally {
+					ResourcesPlugin.getWorkspace().checkpoint(false);
+				}
+				fActiveChange.dispose();
+				if (result.reverseChange != null) {
+					result.reverseChange.initializeValidationData(new NotCancelableProgressMonitor(
+						new SubProgressMonitor(monitor, 1)));
+					reverseIsInitialized= true;
+				}
+			} catch (CoreException | RuntimeException e) {
+				Change ch= result.reverseChange;
+				result.reverseChange= null;
+				if (ch != null && reverseIsInitialized) {
+					ch.dispose();
+				}
+				throw e;
+			} finally {
+				monitor.done();
 			}
 		};
 		ResourcesPlugin.getWorkspace().run(runnable, pm);

@@ -94,18 +94,15 @@ public class UndoDocumentChange extends Change {
 		final Lock completionLock= new Lock();
 		final UndoEdit[] result= new UndoEdit[1];
 		final BadLocationException[] exception= new BadLocationException[1];
-		Runnable runnable= new Runnable() {
-			@Override
-			public void run() {
-				synchronized (completionLock) {
-					try {
-						result[0]= fUndo.apply(fDocument, TextEdit.CREATE_UNDO);
-					} catch (BadLocationException e) {
-						exception[0]= e;
-					} finally {
-						completionLock.fDone= true;
-						completionLock.notifyAll();
-					}
+		Runnable runnable= () -> {
+			synchronized (completionLock) {
+				try {
+					result[0]= fUndo.apply(fDocument, TextEdit.CREATE_UNDO);
+				} catch (BadLocationException e) {
+					exception[0]= e;
+				} finally {
+					completionLock.fDone= true;
+					completionLock.notifyAll();
 				}
 			}
 		};

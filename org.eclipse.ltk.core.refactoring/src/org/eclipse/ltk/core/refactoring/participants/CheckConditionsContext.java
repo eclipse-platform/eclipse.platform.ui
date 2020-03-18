@@ -15,7 +15,6 @@ package org.eclipse.ltk.core.refactoring.participants;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -108,18 +107,15 @@ public class CheckConditionsContext {
 		RefactoringStatus result= new RefactoringStatus();
 		mergeResourceOperationAndValidateEdit();
 		List<IConditionChecker> values= new ArrayList<>(fCheckers.values());
-		Collections.sort(values, new Comparator<IConditionChecker>() {
-			@Override
-			public int compare(IConditionChecker o1, IConditionChecker o2) {
-				// Note there can only be one ResourceOperationChecker. So it
-				// is save to not test the case that both objects are
-				// ResourceOperationChecker
-				if (o1 instanceof ResourceChangeChecker)
-					return -1;
-				if (o2 instanceof ResourceChangeChecker)
-					return 1;
-				return 0;
-			}
+		Collections.sort(values, (o1, o2) -> {
+			// Note there can only be one ResourceOperationChecker. So it
+			// is save to not test the case that both objects are
+			// ResourceOperationChecker
+			if (o1 instanceof ResourceChangeChecker)
+				return -1;
+			if (o2 instanceof ResourceChangeChecker)
+				return 1;
+			return 0;
 		});
 		pm.beginTask("", values.size()); //$NON-NLS-1$
 		for (IConditionChecker checker : values) {
