@@ -29,10 +29,6 @@ public class UniversalIntroPlugin extends AbstractUIPlugin {
 	// The static shared instance.
 	private static UniversalIntroPlugin inst;
 
-	// used for performance logging. Time when the constructor of
-	// CustomizableIntroPart is called.
-	private long uiCreationStartTime;
-
 	// image registry that can be disposed while the
 	// plug-in is still active. This is important for
 	// switching themes after the plug-in has been loaded.
