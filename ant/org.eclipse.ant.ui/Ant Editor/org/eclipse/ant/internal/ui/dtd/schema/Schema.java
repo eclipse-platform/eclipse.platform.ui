@@ -35,7 +35,7 @@ public class Schema implements ISchema {
 
 	@Override
 	public IElement[] getElements() {
-		return fElementMap.values().toArray(new IElement[fElementMap.values().size()]);
+		return fElementMap.values().toArray(new IElement[fElementMap.size()]);
 	}
 
 	/**
