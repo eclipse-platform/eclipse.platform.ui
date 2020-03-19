@@ -27,7 +27,7 @@ import org.eclipse.jface.action.IMenuManager;
 class DynamicContributionContributionItem extends ContributionItem {
 	private MDynamicMenuContribution model;
 
-	private IMenuListener menuListener = manager -> manager.markDirty();
+	private IMenuListener menuListener = IMenuManager::markDirty;
 
 	/**
 	 * Create the item and associated model;
