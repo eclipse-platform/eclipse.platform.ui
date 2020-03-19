@@ -59,7 +59,7 @@ import org.eclipse.swt.widgets.Table;
 public final class TableFactory extends AbstractControlFactory<TableFactory, Table> {
 
 	private TableFactory(int style) {
-		super(TableFactory.class, (parent) -> new Table(parent, style));
+		super(TableFactory.class, parent -> new Table(parent, style));
 	}
 
 	/**
@@ -99,7 +99,7 @@ public final class TableFactory extends AbstractControlFactory<TableFactory, Tab
 	 * @see Table#setHeaderVisible(boolean)
 	 */
 	public TableFactory headerVisible(boolean visible) {
-		addProperty((t) -> t.setHeaderVisible(visible));
+		addProperty(t -> t.setHeaderVisible(visible));
 		return this;
 	}
 
@@ -114,7 +114,7 @@ public final class TableFactory extends AbstractControlFactory<TableFactory, Tab
 	 * @see Table#setLinesVisible(boolean)
 	 */
 	public TableFactory linesVisible(boolean visible) {
-		addProperty((t) -> t.setLinesVisible(visible));
+		addProperty(t -> t.setLinesVisible(visible));
 		return this;
 	}
 
@@ -127,7 +127,7 @@ public final class TableFactory extends AbstractControlFactory<TableFactory, Tab
 	 * @see Table#setItemCount(int)
 	 */
 	public TableFactory itemCount(int count) {
-		addProperty((t) -> t.setItemCount(count));
+		addProperty(t -> t.setItemCount(count));
 		return this;
 	}
 }

@@ -67,7 +67,7 @@ import org.eclipse.swt.widgets.Tree;
 public final class TreeFactory extends AbstractControlFactory<TreeFactory, Tree> {
 
 	private TreeFactory(int style) {
-		super(TreeFactory.class, (parent) -> new Tree(parent, style));
+		super(TreeFactory.class, parent -> new Tree(parent, style));
 	}
 
 	/**
