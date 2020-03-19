@@ -275,7 +275,7 @@ public class SelectionListenerFactory {
 		 * be unwanted because of the missing visual link.
 		 * </p>
 		 */
-		public static Predicate<ISelectionModel> selectionPartVisible = model -> model.isSelectionPartVisible();
+		public static Predicate<ISelectionModel> selectionPartVisible = ISelectionModel::isSelectionPartVisible;
 
 		/**
 		 * A predicate that tests true if the selection and the part it came from are
@@ -320,7 +320,7 @@ public class SelectionListenerFactory {
 		 * must be ignored.
 		 * </p>
 		 */
-		public static Predicate<ISelectionModel> targetPartVisible = model -> model.isTargetPartVisible();
+		public static Predicate<ISelectionModel> targetPartVisible = ISelectionModel::isTargetPartVisible;
 
 	}
 

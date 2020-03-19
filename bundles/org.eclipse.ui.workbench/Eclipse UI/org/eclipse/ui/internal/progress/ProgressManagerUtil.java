@@ -584,7 +584,7 @@ public class ProgressManagerUtil {
 	 * @return IShellProvider
 	 */
 	static IShellProvider getShellProvider() {
-		return () -> getDefaultParent();
+		return ProgressManagerUtil::getDefaultParent;
 	}
 
 	/**

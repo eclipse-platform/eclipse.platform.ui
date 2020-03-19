@@ -3516,7 +3516,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 
 	@Override
 	public IShellProvider getModalDialogShellProvider() {
-		return () -> ProgressManagerUtil.getDefaultParent();
+		return ProgressManagerUtil::getDefaultParent;
 	}
 
 	public IEclipseContext getContext() {

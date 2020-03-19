@@ -1057,7 +1057,7 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 		fShowCommandKey = new Button(controls, SWT.CHECK);
 		fShowCommandKey.setText(NewKeysPreferenceMessages.ShowCommandKeys_Text);
 		fShowCommandKey.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.SHOW_KEYS_ENABLED));
-		fShowCommandKey.addSelectionListener(SelectionListener.widgetSelectedAdapter((e) -> {
+		fShowCommandKey.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
 			// show a preview of the shortcut popup
 			if (fShowCommandKey.getSelection()) {
 				showKeysUI.openForPreview(ShowKeysToggleHandler.COMMAND_ID, null);

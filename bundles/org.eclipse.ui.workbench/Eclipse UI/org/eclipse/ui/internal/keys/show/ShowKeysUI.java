@@ -252,7 +252,7 @@ public class ShowKeysUI implements IDisposable {
 		}
 
 		private void hookDoubleClickListener(Control control) {
-			control.addListener(SWT.MouseDoubleClick, (e) -> {
+			control.addListener(SWT.MouseDoubleClick, e -> {
 				PreferencesUtil.createPreferenceDialogOn(getParentShell(), keysPageId, null, null).open();
 			});
 		}

@@ -81,7 +81,7 @@ public class FullScreenHandler extends AbstractHandler {
 		Optional<TriggerSequence> sequence = getKeybindingSequence(bindingService, commandService, bindingTableManager,
 				bindingContextService, FULL_SCREEN_COMMAND_ID);
 
-		String keybinding = sequence.map(t -> t.format()).orElse(""); //$NON-NLS-1$
+		String keybinding = sequence.map(TriggerSequence::format).orElse(""); //$NON-NLS-1$
 
 		shell.setFullScreen(!shell.getFullScreen());
 
@@ -167,7 +167,7 @@ public class FullScreenHandler extends AbstractHandler {
 			gd2.verticalIndent = PopupDialog.POPUP_VERTICALSPACING;
 			btnDoNotShow.setLayoutData(gd2);
 
-			composite.addDisposeListener((e) -> {
+			composite.addDisposeListener(e -> {
 				WorkbenchPlugin.getDefault().getPreferenceStore()
 						.setValue(FULL_SCREEN_COMMAND_DO_NOT_SHOW_INFO_AGAIN_PREF_ID, btnDoNotShow.getSelection());
 			});

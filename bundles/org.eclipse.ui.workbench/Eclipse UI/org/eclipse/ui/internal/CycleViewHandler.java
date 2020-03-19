@@ -56,7 +56,7 @@ public class CycleViewHandler extends FilteredTableBaseHandler {
 
 		List<MPart> parts = modelService
 				.findElements(currentPerspective, null, MPart.class, null, EModelService.PRESENTATION).stream()
-				.filter((p) -> !(p.getObject() instanceof SplitHost)).collect(Collectors.toList());
+				.filter(p -> !(p.getObject() instanceof SplitHost)).collect(Collectors.toList());
 
 		AtomicBoolean includeEditor = new AtomicBoolean(true);
 

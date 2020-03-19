@@ -374,7 +374,7 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	 */
 	private ISelectionChangedListener getPostSelectionChangedListener() {
 		if (postSelectionChangedListener == null) {
-			postSelectionChangedListener = event -> MultiPageEditorSite.this.handlePostSelectionChanged(event);
+			postSelectionChangedListener = MultiPageEditorSite.this::handlePostSelectionChanged;
 		}
 		return postSelectionChangedListener;
 	}
@@ -399,7 +399,7 @@ public class MultiPageEditorSite implements IEditorSite, INestable {
 	 */
 	private ISelectionChangedListener getSelectionChangedListener() {
 		if (selectionChangedListener == null) {
-			selectionChangedListener = event -> MultiPageEditorSite.this.handleSelectionChanged(event);
+			selectionChangedListener = MultiPageEditorSite.this::handleSelectionChanged;
 		}
 		return selectionChangedListener;
 	}

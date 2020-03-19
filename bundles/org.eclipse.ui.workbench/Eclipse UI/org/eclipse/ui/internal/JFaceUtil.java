@@ -44,7 +44,7 @@ final class JFaceUtil {
 	 */
 	public static void initializeJFace() {
 		// Set the SafeRunner to run all SafeRunnables
-		SafeRunnable.setRunner(code -> SafeRunner.run(code));
+		SafeRunnable.setRunner(SafeRunner::run);
 
 		// Pass all errors and warnings to the status handling facility
 		// and the rest to the main runtime log

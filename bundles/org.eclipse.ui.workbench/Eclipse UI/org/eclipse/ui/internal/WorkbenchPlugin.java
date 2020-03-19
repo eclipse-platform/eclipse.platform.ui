@@ -1129,7 +1129,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 	 */
 	private BundleListener getBundleListener() {
 		if (bundleListener == null) {
-			bundleListener = event -> WorkbenchPlugin.this.bundleChanged(event);
+			bundleListener = WorkbenchPlugin.this::bundleChanged;
 		}
 		return bundleListener;
 	}

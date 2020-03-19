@@ -98,7 +98,7 @@ public class ShowViewMenu extends ContributionItem {
 
 	private MenuManager menuManager;
 
-	private IMenuListener menuListener = manager -> manager.markDirty();
+	private IMenuListener menuListener = IMenuManager::markDirty;
 	private boolean makeFast;
 
 	private static Collator collator;
