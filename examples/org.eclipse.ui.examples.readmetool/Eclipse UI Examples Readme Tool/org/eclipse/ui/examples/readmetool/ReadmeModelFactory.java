@@ -143,14 +143,11 @@ public class ReadmeModelFactory {
 				// as a drop-down list. For the sake
 				// of simplicity, we will pick the last extension only.
 				if (i == extensions.length - 1) {
-					IConfigurationElement[] configElements = currentExtension
-							.getConfigurationElements();
+					IConfigurationElement[] configElements = currentExtension.getConfigurationElements();
 					for (IConfigurationElement configElement : configElements) {
-						IConfigurationElement config = configElements[i];
-						if (config.getName()
-								.equals(IReadmeConstants.TAG_PARSER)) {
+						if (configElement.getName().equals(IReadmeConstants.TAG_PARSER)) {
 							// process the first 'parser' element and stop
-                            processParserElement(config);
+							processParserElement(configElement);
 							break;
 						}
 					}
