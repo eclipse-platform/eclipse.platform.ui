@@ -193,7 +193,7 @@ public class RegistryCSSPropertyHandlerProvider extends AbstractCSSPropertyHandl
 					switch (handlers.size()) {
 					case 0:
 						handlers = propertyHandlerInstanceMap.computeIfAbsent(handler,
-								h -> Collections.singletonList(h));
+								Collections::singletonList);
 						break;
 					case 1:
 						handlers = new ArrayList<>(handlers);
