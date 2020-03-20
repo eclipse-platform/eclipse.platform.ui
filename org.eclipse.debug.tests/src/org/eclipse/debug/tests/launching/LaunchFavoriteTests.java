@@ -46,7 +46,7 @@ public class LaunchFavoriteTests extends AbstractLaunchTest {
 
 	/**
 	 * Returns the run launch history
-	 * 
+	 *
 	 * @return
 	 */
 	private LaunchHistory getRunLaunchHistory() {
