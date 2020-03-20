@@ -95,7 +95,7 @@ public class ContextInformationTest extends AbstractContentAssistTest {
 	@Test
 	public void testContextInfo_hide_focusOut() throws Exception {
 		assumeFalse("Test fails on Mac: Bug 558989", Platform.OS_MACOSX.equals(Platform.getOS()));
-		
+
 		setupSourceViewer(createBarContentAssist(), BarContentAssistProcessor.PROPOSAL);
 
 		final List<Shell> beforeShells = getCurrentShells();
