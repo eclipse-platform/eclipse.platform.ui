@@ -69,5 +69,6 @@
     <module>org.eclipse.tips.json</module>
     <module>org.eclipse.tips.feature</module>
     
+    <module>infocenter-web</module>
   </modules>
 </project>
