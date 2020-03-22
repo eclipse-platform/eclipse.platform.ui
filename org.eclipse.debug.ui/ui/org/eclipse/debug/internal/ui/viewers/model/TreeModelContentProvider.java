@@ -1543,7 +1543,14 @@ public class TreeModelContentProvider implements ITreeModelContentProvider, ICon
 				DebugUIPlugin.trace(" - (found) remove(" + parentPath.getLastSegment() + ", viewIndex: " + viewIndex + " modelIndex: " + modelIndex); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 			}
 			rescheduleUpdates(parentPath, modelIndex);
-			getViewer().remove(parentPath, viewIndex);
+			if (viewIndex >= 0) {
+				getViewer().remove(parentPath, viewIndex);
+			} else {
+				if (DebugUIPlugin.DEBUG_CONTENT_PROVIDER && DebugUIPlugin.DEBUG_TEST_PRESENTATION_ID(getPresentationContext())) {
+					DebugUIPlugin.trace(" - (not found in UI) remove(" + parentPath.getLastSegment() + ", viewIndex: " //$NON-NLS-1$ //$NON-NLS-2$
+							+ viewIndex + " modelIndex: " + modelIndex); //$NON-NLS-1$
+				}
+			}
 			removeElementFromFilters(parentPath, modelIndex);
 			return;
 		}
