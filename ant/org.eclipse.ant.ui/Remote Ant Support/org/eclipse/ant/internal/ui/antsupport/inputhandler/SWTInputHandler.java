@@ -20,6 +20,8 @@ import org.apache.tools.ant.input.DefaultInputHandler;
 import org.apache.tools.ant.input.InputRequest;
 import org.apache.tools.ant.input.MultipleChoiceInputRequest;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.ModifyEvent;
+import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.FontMetrics;
@@ -32,6 +34,7 @@ import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
@@ -64,19 +67,22 @@ public class SWTInputHandler extends DefaultInputHandler {
 	}
 
 	protected Runnable getHandleInputRunnable(final BuildException[] problem) {
-		return () -> {
-			String prompt;
-			if (fRequest instanceof MultipleChoiceInputRequest) {
-				prompt = fRequest.getPrompt();
-			} else {
-				prompt = getPrompt(fRequest);
-			}
-			String title = RemoteAntMessages.getString("SWTInputHandler.1"); //$NON-NLS-1$
-			boolean[] result = new boolean[1];
-			open(title, prompt, result);
+		return new Runnable() {
+			@Override
+			public void run() {
+				String prompt;
+				if (fRequest instanceof MultipleChoiceInputRequest) {
+					prompt = fRequest.getPrompt();
+				} else {
+					prompt = getPrompt(fRequest);
+				}
+				String title = RemoteAntMessages.getString("SWTInputHandler.1"); //$NON-NLS-1$
+				boolean[] result = new boolean[1];
+				open(title, prompt, result);
 
-			if (!result[0]) {
-				problem[0] = new BuildException(RemoteAntMessages.getString("SWTInputHandler.2")); //$NON-NLS-1$
+				if (!result[0]) {
+					problem[0] = new BuildException(RemoteAntMessages.getString("SWTInputHandler.2")); //$NON-NLS-1$
+				}
 			}
 		};
 	}
@@ -128,7 +134,12 @@ public class SWTInputHandler extends DefaultInputHandler {
 		} else {
 			fText = new Text(fDialog, SWT.SINGLE | SWT.BORDER);
 			fText.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
-			fText.addModifyListener(e -> validateInput());
+			fText.addModifyListener(new ModifyListener() {
+				@Override
+				public void modifyText(ModifyEvent e) {
+					validateInput();
+				}
+			});
 		}
 
 		String value = null;
@@ -206,9 +217,12 @@ public class SWTInputHandler extends DefaultInputHandler {
 
 		Button cancel = new Button(parent, SWT.PUSH);
 		cancel.setText(RemoteAntMessages.getString("SWTInputHandler.5")); //$NON-NLS-1$
-		Listener listener = event -> {
-			result[0] = event.widget == fOkButton;
-			fDialog.close();
+		Listener listener = new Listener() {
+			@Override
+			public void handleEvent(Event event) {
+				result[0] = event.widget == fOkButton;
+				fDialog.close();
+			}
 		};
 		setButtonLayoutData(cancel);
 		fOkButton.addListener(SWT.Selection, listener);
