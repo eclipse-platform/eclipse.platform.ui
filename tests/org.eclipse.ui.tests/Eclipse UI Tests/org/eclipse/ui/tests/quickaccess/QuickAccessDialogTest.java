@@ -15,7 +15,9 @@
 
 package org.eclipse.ui.tests.quickaccess;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.util.Arrays;
@@ -46,6 +48,8 @@ import org.eclipse.ui.internal.quickaccess.QuickAccessDialog;
 import org.eclipse.ui.internal.quickaccess.QuickAccessMessages;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -55,7 +59,7 @@ import org.junit.runners.JUnit4;
  * @since 3.4
  */
 @RunWith(JUnit4.class)
-public class QuickAccessDialogTest extends UITestCase {
+public class QuickAccessDialogTest {
 
 	private static final int TIMEOUT = 3000;
 	// As defined in QuickAccessDialog and in SearchField
@@ -65,16 +69,12 @@ public class QuickAccessDialogTest extends UITestCase {
 	private IDialogSettings dialogSettings;
 	private IWorkbenchWindow activeWorkbenchWindow;
 
-	public QuickAccessDialogTest() {
-		super(QuickAccessDialogTest.class.getSimpleName());
-	}
 
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public void setUp() throws Exception {
 		Arrays.stream(Display.getDefault().getShells()).filter(isQuickAccessShell).forEach(Shell::close);
 		dialogSettings = new DialogSettings("QuickAccessDialogTest" + System.currentTimeMillis());
-		activeWorkbenchWindow = openTestWindow();
+		activeWorkbenchWindow = UITestCase.openTestWindow();
 		QuickAccessDialog warmupDialog = new QuickAccessDialog(activeWorkbenchWindow, null);
 		warmupDialog.open();
 		warmupDialog.close();
@@ -85,11 +85,10 @@ public class QuickAccessDialogTest extends UITestCase {
 				.map(QuickAccessDialog.class::cast);
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		Arrays.stream(Display.getDefault().getShells()).filter(isQuickAccessShell)
 				.forEach(Shell::close);
-		super.doTearDown();
 	}
 
 	/**
@@ -98,7 +97,7 @@ public class QuickAccessDialogTest extends UITestCase {
 	 */
 	@Test
 	public void testOpenByCommand() throws Exception {
-		IHandlerService handlerService = getWorkbench().getActiveWorkbenchWindow()
+		IHandlerService handlerService = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 				.getService(IHandlerService.class);
 		Set<Shell> formerShells = new HashSet<>(Arrays.asList(Display.getDefault().getShells()));
 		handlerService.executeCommand("org.eclipse.ui.window.quickAccess", null); //$NON-NLS-1$
@@ -127,7 +126,7 @@ public class QuickAccessDialogTest extends UITestCase {
 		assertTrue("Quick access table should be empty", table.getItemCount() == 0);
 
 		text.setText("T");
-		processEventsUntil(() -> table.getItemCount() > 1, TIMEOUT);
+		UITestCase.processEventsUntil(() -> table.getItemCount() > 1, TIMEOUT);
 		int oldCount = table.getItemCount();
 		assertTrue("Not enough quick access items for simple filter", oldCount > 3);
 		assertTrue("Too many quick access items for size of table", oldCount < MAXIMUM_NUMBER_OF_ELEMENTS);
@@ -226,30 +225,31 @@ public class QuickAccessDialogTest extends UITestCase {
 
 		// Set a filter to get some items
 		text.setText("T");
-		processEventsUntil(() -> table.getItemCount() > 1, TIMEOUT);
+		UITestCase.processEventsUntil(() -> table.getItemCount() > 1, TIMEOUT);
 		final int defaultCount = table.getItemCount();
 		assertTrue("Not enough quick access items for simple filter", defaultCount > 3);
 		assertTrue("Too many quick access items for size of table", defaultCount < MAXIMUM_NUMBER_OF_ELEMENTS);
 		final String oldFirstItemText = table.getItem(0).getText(1);
 
-		IHandlerService handlerService = getWorkbench().getActiveWorkbenchWindow().getService(IHandlerService.class);
+		IHandlerService handlerService = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
+				.getService(IHandlerService.class);
 		// Run the handler to turn on show all
 		handlerService.executeCommand("org.eclipse.ui.window.quickAccess", null); //$NON-NLS-1$
-		processEventsUntil(() -> table.getItemCount() != defaultCount, TIMEOUT);
+		UITestCase.processEventsUntil(() -> table.getItemCount() != defaultCount, TIMEOUT);
 		final int allCount = table.getItemCount();
 		assertTrue("Turning on show all should display more items", allCount > defaultCount);
 		assertEquals("Turning on show all should not change the top item", oldFirstItemText, table.getItem(0).getText(1));
 
 		// Run the handler to turn off show all
 		handlerService.executeCommand("org.eclipse.ui.window.quickAccess", null); //$NON-NLS-1$
-		processEventsUntil(() -> table.getItemCount() != allCount, TIMEOUT);
+		UITestCase.processEventsUntil(() -> table.getItemCount() != allCount, TIMEOUT);
 		// Note: The table count may one off from the old count because of shell resizing (scroll bars being added then removed)
 		assertTrue("Turning off show all should limit items shown", table.getItemCount() < allCount);
 		assertEquals("Turning off show all should not change the top item", oldFirstItemText, table.getItem(0).getText(1));
 
 		// Run the handler to turn on show all
 		handlerService.executeCommand("org.eclipse.ui.window.quickAccess", null); //$NON-NLS-1$
-		processEventsUntil(() -> table.getItemCount() == allCount, TIMEOUT);
+		UITestCase.processEventsUntil(() -> table.getItemCount() == allCount, TIMEOUT);
 		assertEquals("Turning on show all twice shouldn't change the items", allCount, table.getItemCount());
 		assertEquals("Turning on show all twice shouldn't change the top item", oldFirstItemText, table.getItem(0).getText(1));
 
@@ -260,7 +260,7 @@ public class QuickAccessDialogTest extends UITestCase {
 		text = dialog.getQuickAccessContents().getFilterText();
 		Table newTable = dialog.getQuickAccessContents().getTable();
 		text.setText("T");
-		processEventsUntil(() -> newTable.getItemCount() > 1, TIMEOUT);
+		UITestCase.processEventsUntil(() -> newTable.getItemCount() > 1, TIMEOUT);
 		// Note: The table count may one off from the old count because of shell resizing (scroll bars being added then removed)
 		assertTrue("Show all should be turned off when the shell is closed and reopened",
 				newTable.getItemCount() < allCount);
@@ -286,7 +286,7 @@ public class QuickAccessDialogTest extends UITestCase {
 		firstTable.select(0);
 		activateCurrentElement(dialog);
 		assertNotEquals(0, dialogSettings.getArray("orderedElements").length);
-		processEventsUntil(
+		UITestCase.processEventsUntil(
 				() -> activeWorkbenchWindow.getActivePage() != null
 						&& activeWorkbenchWindow.getActivePage().getActivePart() != null
 						&& quickAccessElementText
@@ -310,7 +310,7 @@ public class QuickAccessDialogTest extends UITestCase {
 		enterPressed.widget = dialog.getQuickAccessContents().getFilterText();
 		enterPressed.keyCode = SWT.CR;
 		enterPressed.widget.notifyListeners(SWT.KeyDown, enterPressed);
-		processEventsUntil(() -> enterPressed.widget.isDisposed(), 500);
+		UITestCase.processEventsUntil(() -> enterPressed.widget.isDisposed(), 500);
 	}
 
 	@Test

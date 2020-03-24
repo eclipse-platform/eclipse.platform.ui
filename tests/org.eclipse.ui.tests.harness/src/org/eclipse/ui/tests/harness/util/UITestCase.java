@@ -415,7 +415,7 @@ public abstract class UITestCase extends TestCase {
 		}
 	}
 
-	protected static interface Condition {
+	public static interface Condition {
 		public boolean compute();
 	}
 
@@ -427,9 +427,9 @@ public abstract class UITestCase extends TestCase {
 	 *            , -1 if forever
 	 * @return true if successful, false if time out or interrupted
 	 */
-	protected boolean processEventsUntil(Condition condition, long timeout) {
+	public static boolean processEventsUntil(Condition condition, long timeout) {
 		long startTime = System.currentTimeMillis();
-		Display display = getWorkbench().getDisplay();
+		Display display = PlatformUI.getWorkbench().getDisplay();
 		while (condition == null || !condition.compute()) {
 			if (timeout != -1
 					&& System.currentTimeMillis() - startTime > timeout) {
@@ -450,16 +450,16 @@ public abstract class UITestCase extends TestCase {
 	/**
 	 * Open a test window with the empty perspective.
 	 */
-	public IWorkbenchWindow openTestWindow() {
+	public static IWorkbenchWindow openTestWindow() {
 		return openTestWindow(EmptyPerspective.PERSP_ID);
 	}
 
 	/**
 	 * Open a test window with the provided perspective.
 	 */
-	public IWorkbenchWindow openTestWindow(String perspectiveId) {
+	public static IWorkbenchWindow openTestWindow(String perspectiveId) {
 		try {
-			IWorkbenchWindow window = fWorkbench.openWorkbenchWindow(
+			IWorkbenchWindow window = PlatformUI.getWorkbench().openWorkbenchWindow(
 					perspectiveId, getPageInput());
 			waitOnShell(window.getShell());
 			return window;
@@ -477,7 +477,7 @@ public abstract class UITestCase extends TestCase {
 	 *            the shell to wait on
 	 * @since 3.2
 	 */
-	private void waitOnShell(Shell shell) {
+	private static void waitOnShell(Shell shell) {
 		processEvents();
 		waitForJobs(100, 5000);
 	}
