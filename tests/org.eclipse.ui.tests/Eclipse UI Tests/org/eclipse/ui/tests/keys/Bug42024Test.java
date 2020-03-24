@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.tests.keys;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.KeySequenceText;
 import org.eclipse.jface.bindings.keys.ParseException;
@@ -22,18 +24,16 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests Bug 42024
  *
  * @since 3.0
  */
-@RunWith(JUnit4.class)
-public class Bug42024Test extends UITestCase {
+public class Bug42024Test {
 
 	/** The shell on which the <code>KeySequenceText</code> is placed. */
 	private Shell shell = null;
@@ -41,20 +41,8 @@ public class Bug42024Test extends UITestCase {
 	/** The instance of <code>KeySequenceText</code> we should tinker with. */
 	private KeySequenceText text = null;
 
-	/**
-	 * Constructor for Bug42024Test.
-	 */
-	public Bug42024Test() {
-		super(Bug42024Test.class.getSimpleName());
-	}
-
-	/*
-	 * @see TestCase#setUp()
-	 */
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-
+	@Before
+	public void doSetUp() throws Exception {
 		// Create a window with a KeySequenceText
 		Display display = Display.getCurrent();
 		shell = new Shell(display);
@@ -66,10 +54,8 @@ public class Bug42024Test extends UITestCase {
 		shell.open();
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
-		super.doTearDown();
-
+	@After
+	public void doTearDown() throws Exception {
 		// Close and destroy the window
 		shell.close();
 		shell.dispose();

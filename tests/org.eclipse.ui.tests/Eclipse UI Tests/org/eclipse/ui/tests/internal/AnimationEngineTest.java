@@ -14,28 +14,25 @@
 
 package org.eclipse.ui.tests.internal;
 
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.runtime.jobs.Job;
+import org.eclipse.jface.preference.PreferenceMemento;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.internal.AnimationEngine;
 import org.eclipse.ui.internal.AnimationFeedbackBase;
 import org.eclipse.ui.internal.util.PrefUtil;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @since 3.5
  *
  */
-@RunWith(JUnit4.class)
-public class AnimationEngineTest extends UITestCase {
-
-	public AnimationEngineTest() {
-		super(AnimationEngineTest.class.getSimpleName());
-	}
+public class AnimationEngineTest {
 
 	private class TestFeedback extends AnimationFeedbackBase {
 		/**
@@ -72,14 +69,17 @@ public class AnimationEngineTest extends UITestCase {
 	Shell shell;
 	TestFeedback feedback;
 	AnimationEngine engine;
+	private PreferenceMemento memento;
 
-	@Override
-	protected void doSetUp() {
+	@Before
+	public void doSetUp() {
 		shell = new Shell(Display.getCurrent());
+		memento = new PreferenceMemento();
 	}
 
-	@Override
-	protected void doTearDown() {
+	@After
+	public void doTearDown() {
+		memento.resetPreferences();
 		shell.dispose();
 		shell = null;
 	}
@@ -97,7 +97,8 @@ public class AnimationEngineTest extends UITestCase {
 	@Test
 	public void testAnimationEngine() throws InterruptedException {
 		// Ensure that animations are turned on
-		setPreference(PrefUtil.getAPIPreferenceStore(), IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, true);
+		memento.setValue(PrefUtil.getAPIPreferenceStore(), IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS,
+				true);
 
 		feedback = new TestFeedback(shell);
 		engine = new AnimationEngine(feedback, 250, 0);

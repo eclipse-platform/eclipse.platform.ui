@@ -14,23 +14,21 @@
 
 package org.eclipse.ui.tests.keys;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.keys.KeyStroke;
 import org.eclipse.ui.keys.ParseException;
 import org.eclipse.ui.keys.SWTKeySupport;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Test for Bug 42035.
  *
  * @since 3.0
  */
-@RunWith(JUnit4.class)
-public class Bug42035Test extends UITestCase {
+public class Bug42035Test {
 
 	/**
 	 * Tests the given key event to see if generates the three key strokes
@@ -76,13 +74,6 @@ public class Bug42035Test extends UITestCase {
 						.convertEventToModifiedAccelerator(keyEvent));
 		assertEquals(
 				"Modified character with all modifiers doesn't match.", desiredKeyStroke, actualKeyStroke); //$NON-NLS-1$
-	}
-
-	/**
-	 * Constructs a new instance of this test case.
-	 */
-	public Bug42035Test() {
-		super(Bug42035Test.class.getSimpleName());
 	}
 
 	/**

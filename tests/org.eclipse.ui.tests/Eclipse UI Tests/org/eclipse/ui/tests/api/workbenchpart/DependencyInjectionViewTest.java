@@ -15,6 +15,9 @@
 
 package org.eclipse.ui.tests.api.workbenchpart;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.List;
 
@@ -31,18 +34,13 @@ import org.junit.runners.JUnit4;
 
 /**
  * @since 3.4
- *
  */
 @RunWith(JUnit4.class)
-public class DependencyInjectionViewTest extends UITestCase {
-
-	public DependencyInjectionViewTest() {
-		super(DependencyInjectionViewTest.class.getSimpleName());
-	}
+public class DependencyInjectionViewTest {
 
 	@Test
 	public void testDependencyInjectionLifecycle() throws Exception {
-		IWorkbenchWindow window = openTestWindow();
+		IWorkbenchWindow window = UITestCase.openTestWindow();
 		IWorkbenchPage page = window.getActivePage();
 		IViewPart v = page.showView(DependencyInjectionView.ID);
 		assertTrue(v instanceof DependencyInjectionView);
@@ -69,7 +67,7 @@ public class DependencyInjectionViewTest extends UITestCase {
 
 		assertEquals(expectedDisposeCallOrder, view.disposeCallOrder);
 
-		processEvents();
+		UITestCase.processEvents();
 
 
 	}

@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.tests.keys;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
@@ -21,27 +23,17 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests Bug 43597
  *
  * @since 3.0
  */
-@RunWith(JUnit4.class)
-public class Bug43597Test extends UITestCase {
+public class Bug43597Test {
 
 	private Font textFont;
-
-	/**
-	 * Constructor for Bug43597Test.
-	 */
-	public Bug43597Test() {
-		super(Bug43597Test.class.getSimpleName());
-	}
 
 	/**
 	 * Tests that setting the text on a text widget to an empty string does not
@@ -81,11 +73,10 @@ public class Bug43597Test extends UITestCase {
 		shell.dispose();
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public void doTearDown() throws Exception {
 		if (textFont != null) {
 			textFont.dispose();
 		}
-		super.doTearDown();
 	}
 }

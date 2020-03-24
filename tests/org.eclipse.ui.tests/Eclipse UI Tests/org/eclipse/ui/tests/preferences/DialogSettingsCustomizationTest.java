@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.preferences;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.lang.reflect.Field;
 import java.net.URL;
 import java.nio.file.Files;
@@ -20,16 +23,15 @@ import java.nio.file.Path;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.preference.PreferenceMemento;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.tests.TestPlugin;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
-public class DialogSettingsCustomizationTest extends UITestCase {
+public class DialogSettingsCustomizationTest {
 
 	// See AbstractUIPlugin
 	private static final String KEY_DEFAULT_DIALOG_SETTINGS_ROOTURL = "default_dialog_settings_rootUrl"; //$NON-NLS-1$
@@ -40,14 +42,10 @@ public class DialogSettingsCustomizationTest extends UITestCase {
 	private TestPlugin testPlugin;
 	private Path dialogSettingsPathBackup;
 	private String rootUrlValue;
+	private PreferenceMemento memento;
 
-	public DialogSettingsCustomizationTest() {
-		super(DialogSettingsCustomizationTest.class.getSimpleName());
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
+	@Before
+	public void doSetUp() throws Exception {
 		testPlugin = TestPlugin.getDefault();
 		rootUrlValue = "platform:/plugin/" + testPlugin.getBundle().getSymbolicName() + "/data/dialog_settings_root";
 		dialogSettingsPath = testPlugin.getStateLocation().append(FN_DIALOG_SETTINGS).toFile().toPath();
@@ -59,22 +57,23 @@ public class DialogSettingsCustomizationTest extends UITestCase {
 		settingsField = AbstractUIPlugin.class.getDeclaredField("dialogSettings");
 		settingsField.setAccessible(true);
 		settingsField.set(testPlugin, null);
+		memento = new PreferenceMemento();
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public void doTearDown() throws Exception {
 		Files.deleteIfExists(dialogSettingsPath);
 		if (Files.exists(dialogSettingsPathBackup)) {
 			Files.move(dialogSettingsPathBackup, dialogSettingsPath);
 		}
 		settingsField.set(testPlugin, null);
-		super.doTearDown();
+		memento.resetPreferences();
 	}
 
 	@Test
 	public void testDialogSettingsContributedByBundle() throws Exception {
 		assertDefaultBundleValueIsSet();
-		setPreference(PlatformUI.getPreferenceStore(), KEY_DEFAULT_DIALOG_SETTINGS_ROOTURL, rootUrlValue);
+		memento.setValue(PlatformUI.getPreferenceStore(), KEY_DEFAULT_DIALOG_SETTINGS_ROOTURL, rootUrlValue);
 		assertCustomValueIsSet();
 	}
 
@@ -82,7 +81,7 @@ public class DialogSettingsCustomizationTest extends UITestCase {
 	public void testDialogSettingsContributedByFileUrl() throws Exception {
 		String rootUrl = FileLocator.toFileURL(new URL(rootUrlValue)).toString();
 		assertDefaultBundleValueIsSet();
-		setPreference(PlatformUI.getPreferenceStore(), KEY_DEFAULT_DIALOG_SETTINGS_ROOTURL, rootUrl);
+		memento.setValue(PlatformUI.getPreferenceStore(), KEY_DEFAULT_DIALOG_SETTINGS_ROOTURL, rootUrl);
 		assertCustomValueIsSet();
 	}
 

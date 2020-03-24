@@ -22,25 +22,14 @@ import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests Bug 43168
  *
  * @since 3.0
  */
-@RunWith(JUnit4.class)
-public class Bug43168Test extends UITestCase {
-
-	/**
-	 * Constructor for Bug43168Test.
-	 */
-	public Bug43168Test() {
-		super(Bug43168Test.class.getSimpleName());
-	}
+public class Bug43168Test {
 
 	/**
 	 * Tests that a <code>StackOverflowError</code> does not occur when

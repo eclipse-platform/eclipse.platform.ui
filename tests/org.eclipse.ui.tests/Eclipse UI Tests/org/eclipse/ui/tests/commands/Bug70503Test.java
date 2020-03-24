@@ -13,13 +13,13 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.commands;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.jface.action.IAction;
 import org.eclipse.ui.actions.RetargetAction;
 import org.eclipse.ui.commands.ActionHandler;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * This test whether an ActionHandler will update its internal cache of
@@ -27,8 +27,7 @@ import org.junit.runners.JUnit4;
  *
  * @since 3.0.1
  */
-@RunWith(JUnit4.class)
-public class Bug70503Test extends UITestCase {
+public class Bug70503Test {
 
 	private class PubliclyRetargettableAction extends RetargetAction {
 		/**
@@ -56,13 +55,6 @@ public class Bug70503Test extends UITestCase {
 		private final void changeHandler(final IAction handler) {
 			super.setActionHandler(handler);
 		}
-	}
-
-	/**
-	 * Constructor for Bug70503Test.
-	 */
-	public Bug70503Test() {
-		super(Bug70503Test.class.getSimpleName());
 	}
 
 	/**

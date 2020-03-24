@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.tests.keys;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -37,23 +39,13 @@ import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests Bug 43321
  *
  * @since 3.0
  */
-@RunWith(JUnit4.class)
-public class Bug43321Test extends UITestCase {
-
-	/**
-	 * Constructor for Bug43321Test.
-	 */
-	public Bug43321Test() {
-		super(Bug43321Test.class.getSimpleName());
-	}
+public class Bug43321Test {
 
 	/**
 	 * Tests that non-check box items on the menu are not checked when activated
@@ -69,7 +61,7 @@ public class Bug43321Test extends UITestCase {
 	@Test
 	public void testNoCheckOnNonCheckbox() throws CommandException,
 			CoreException, ParseException {
-		IWorkbenchWindow window = openTestWindow();
+		IWorkbenchWindow window = UITestCase.openTestWindow();
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
 		IProject testProject = workspace.getRoot().getProject("TestProject"); //$NON-NLS-1$
 		testProject.create(null);

@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.tests.keys;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,31 +30,21 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.PluginVersionIdentifier;
 import org.eclipse.core.runtime.Preferences;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandManager;
 import org.eclipse.ui.internal.IWorkbenchConstants;
 import org.eclipse.ui.keys.KeySequence;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests Bug 36420
  *
  * @since 3.0
  */
-@RunWith(JUnit4.class)
 @Ignore("This no longer works due to focus issues related to key bindings")
 // See commit f4f9a6680173270f913891b1d2a8b5f05854b6f4
-public class Bug36420Test extends UITestCase {
-
-	/**
-	 * Constructor for Bug36420Test.
-	 */
-	public Bug36420Test() {
-		super(Bug36420Test.class.getSimpleName());
-	}
+public class Bug36420Test {
 
 	/**
 	 * Tests that importing key preferences actually has an effect.
@@ -105,7 +97,7 @@ public class Bug36420Test extends UITestCase {
 		 */
 
 		// Check to see that the key binding for the given command matches.
-		ICommandManager manager = fWorkbench.getCommandSupport()
+		ICommandManager manager = PlatformUI.getWorkbench().getCommandSupport()
 				.getCommandManager();
 		List<KeySequence> keyBindings = manager.getCommand(commandId)
 				.getKeySequenceBindings();

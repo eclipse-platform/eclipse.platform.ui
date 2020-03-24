@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.activities;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -36,18 +41,15 @@ import org.eclipse.ui.activities.NotDefinedException;
 import org.eclipse.ui.activities.WorkbenchTriggerPointAdvisor;
 import org.eclipse.ui.internal.activities.MutableActivityManager;
 import org.eclipse.ui.tests.TestPlugin;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  *
  * The dynamic test manipualtes the categories, activities and their definitions
  * and ensures that their content and their listeners are behaving properly.
  */
-@RunWith(JUnit4.class)
-public class DynamicTest extends UITestCase {
+public class DynamicTest {
 	private MutableActivityManager activityManager;
 
 	private DynamicModelActivityRegistry fixedModelRegistry;
@@ -78,8 +80,8 @@ public class DynamicTest extends UITestCase {
 
 	static final int DEFAULT_ENABLED_CHANGED = 11;
 
-	public DynamicTest() {
-		super(DynamicTest.class.getSimpleName());
+	@Before
+	public void init() {
 		fixedModelRegistry = new DynamicModelActivityRegistry();
 		activityManager = new MutableActivityManager(new WorkbenchTriggerPointAdvisor(), fixedModelRegistry);
 		listenerType = -1;
@@ -496,7 +498,7 @@ public class DynamicTest extends UITestCase {
 		try {
 			assertTrue(activity.isDefaultEnabled());
 		} catch (NotDefinedException e) {
-			fail(e.getMessage(), e);
+			fail(e.getMessage());
 		}
 
 		Set<IActivityRequirementBinding> requirementBindings = activity.getActivityRequirementBindings();

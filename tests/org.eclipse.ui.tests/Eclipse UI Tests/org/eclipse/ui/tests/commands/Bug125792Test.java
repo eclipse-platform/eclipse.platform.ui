@@ -17,11 +17,9 @@ package org.eclipse.ui.tests.commands;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests a bug found in
@@ -33,12 +31,7 @@ import org.junit.runners.JUnit4;
  *
  * @since 3.2
  */
-@RunWith(JUnit4.class)
-public class Bug125792Test extends UITestCase {
-
-	public Bug125792Test() {
-		super(Bug125792Test.class.getSimpleName());
-	}
+public class Bug125792Test {
 
 	private static final String COMMAND_ID = "org.eclipse.ui.tests.commands.bug125792";
 
@@ -50,9 +43,9 @@ public class Bug125792Test extends UITestCase {
 	}
 
 	private ICommandService getCommandService() {
-		Object serviceObject = getWorkbench().getAdapter(ICommandService.class);
+		ICommandService serviceObject = PlatformUI.getWorkbench().getAdapter(ICommandService.class);
 		if (serviceObject != null) {
-			return (ICommandService) serviceObject;
+			return serviceObject;
 		}
 		return null;
 	}

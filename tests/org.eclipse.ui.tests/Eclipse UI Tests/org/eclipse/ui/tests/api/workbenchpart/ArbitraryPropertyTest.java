@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api.workbenchpart;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IStorage;
 import org.eclipse.core.runtime.CoreException;
@@ -26,15 +29,13 @@ import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @since 3.0
  */
-@RunWith(JUnit4.class)
-public class ArbitraryPropertyTest extends UITestCase {
+public class ArbitraryPropertyTest {
 	/**
 	 *
 	 */
@@ -47,24 +48,14 @@ public class ArbitraryPropertyTest extends UITestCase {
 
 	static final String VIEW_ID = "org.eclipse.ui.tests.workbenchpart.OverriddenTitleView";
 
-	public ArbitraryPropertyTest() {
-		super(ArbitraryPropertyTest.class.getSimpleName());
-	}
-
 	IWorkbenchWindow window;
 
 	IWorkbenchPage page;
 
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-		window = openTestWindow();
+	@Before
+	public void doSetUp() throws Exception {
+		window = UITestCase.openTestWindow();
 		page = window.getActivePage();
-	}
-
-	@Override
-	protected void doTearDown() throws Exception {
-		super.doTearDown();
 	}
 
 	static class PropListener implements IPropertyChangeListener {

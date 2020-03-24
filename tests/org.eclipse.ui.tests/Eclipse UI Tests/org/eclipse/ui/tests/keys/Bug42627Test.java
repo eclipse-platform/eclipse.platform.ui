@@ -15,20 +15,16 @@
 package org.eclipse.ui.tests.keys;
 
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests Bug 42627
  *
  * @since 3.0
  */
-@RunWith(JUnit4.class)
 @Ignore("Logging piece of fix did not go in M4.") // See commit 74a677140dd3fc6a09fa1c769c0af2cac3c1c08b
-public class Bug42627Test extends UITestCase {
+public class Bug42627Test {
 
 	// TODO See if this is needed for anything.
 	//	private class DummyView extends ViewPart {
@@ -50,18 +46,6 @@ public class Bug42627Test extends UITestCase {
 	//		// Nothing to implement
 	//	}
 	//	private boolean logged;
-	/**
-	 * Constructor for Bug42627Test.
-	 */
-	public Bug42627Test(String name) {
-		super(Bug42627Test.class.getSimpleName());
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-		//		logged = false;
-	}
 
 	/**
 	 * Tests that actions with no defined command ID are logged.

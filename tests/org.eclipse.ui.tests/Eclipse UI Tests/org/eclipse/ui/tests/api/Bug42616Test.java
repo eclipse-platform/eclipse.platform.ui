@@ -13,12 +13,12 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Test to ensure that <code>WorkbenchPlugin.createExtension()</code> will only
@@ -27,12 +27,7 @@ import org.junit.runners.JUnit4;
  *
  * @since 3.0
  */
-@RunWith(JUnit4.class)
-public class Bug42616Test extends UITestCase {
-
-	public Bug42616Test() {
-		super(Bug42616Test.class.getSimpleName());
-	}
+public class Bug42616Test {
 
 	@Test
 	public void testErrorCondition() {

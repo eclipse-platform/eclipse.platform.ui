@@ -13,29 +13,25 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api.workbenchpart;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.tests.session.ViewWithState;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
-public class Bug543609Test extends UITestCase {
+public class Bug543609Test {
 
 	private static final String VIEW_WITH_STATE_ID = "org.eclipse.ui.tests.session.ViewWithState";
 
 	private IWorkbenchPage fPage;
 
-	public Bug543609Test() {
-		super(Bug543609Test.class.getSimpleName());
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-		IWorkbenchWindow window = openTestWindow();
+	@Before
+	public void doSetUp() throws Exception {
+		IWorkbenchWindow window = UITestCase.openTestWindow();
 		fPage = window.getActivePage();
 	}
 

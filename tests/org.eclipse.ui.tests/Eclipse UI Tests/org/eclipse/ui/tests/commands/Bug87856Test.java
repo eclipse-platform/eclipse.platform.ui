@@ -15,20 +15,21 @@
 
 package org.eclipse.ui.tests.commands;
 
+import static org.junit.Assert.assertTrue;
+
 import java.lang.ref.WeakReference;
 import java.util.Map;
 
 import org.eclipse.core.commands.Command;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.AbstractHandler;
 import org.eclipse.ui.commands.HandlerSubmission;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.Priority;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * This tests whether we are leaking handlers after their submission has been
@@ -36,25 +37,17 @@ import org.junit.runners.JUnit4;
  *
  * @since 3.1
  */
-@RunWith(JUnit4.class)
-public class Bug87856Test extends UITestCase {
+public class Bug87856Test {
 
 	/**
-	 * Constructs a new instance of <code>Bug87856Test</code>.
-	 */
-	public Bug87856Test() {
-		super(Bug87856Test.class.getSimpleName());
-	}
-
-	/**
-	 * Tests whether the workbench command support (or its dependencies) will
-	 * leak handlers when the process loop is run. Basically, we're checking to
-	 * see that removing a handler submission really works.
+	 * Tests whether the workbench command support (or its dependencies) will leak
+	 * handlers when the process loop is run. Basically, we're checking to see that
+	 * removing a handler submission really works.
 	 */
 	@Test
 	public final void testHandlerLeak() {
-		final IWorkbenchCommandSupport commandSupport = fWorkbench
-				.getCommandSupport();
+		IWorkbench fWorkbench = PlatformUI.getWorkbench();
+		final IWorkbenchCommandSupport commandSupport = fWorkbench.getCommandSupport();
 		final ICommandService commandService = fWorkbench.getAdapter(ICommandService.class);
 		final String commandId = Bug87856Test.class.getName();
 		final Command command = commandService.getCommand(commandId);
@@ -69,13 +62,13 @@ public class Bug87856Test extends UITestCase {
 			}
 
 		};
-		HandlerSubmission submission = new HandlerSubmission(null, null, null,
-				command.getId(), handler, Priority.MEDIUM);
+		HandlerSubmission submission = new HandlerSubmission(null, null, null, command.getId(), handler,
+				Priority.MEDIUM);
 		commandSupport.addHandlerSubmission(submission);
 
 		/*
-		 * Remove the handler with no replacement, and hold on to the handler
-		 * via a weak reference.
+		 * Remove the handler with no replacement, and hold on to the handler via a weak
+		 * reference.
 		 */
 		commandSupport.removeHandlerSubmission(submission);
 		submission = null;
@@ -94,8 +87,7 @@ public class Bug87856Test extends UITestCase {
 		Thread.yield();
 
 		// Check to see if the reference has been cleared.
-		assertTrue(
-				"We should not hold on to a handler after the submission has been removed.",
+		assertTrue("We should not hold on to a handler after the submission has been removed.",
 				reference.isEnqueued() || (reference.get() == null));
 	}
 }

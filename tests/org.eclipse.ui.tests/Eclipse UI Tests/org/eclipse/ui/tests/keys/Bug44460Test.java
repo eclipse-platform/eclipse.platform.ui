@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.tests.keys;
 
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.util.List;
 
@@ -26,6 +28,7 @@ import org.eclipse.core.resources.IProjectDescription;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Shell;
@@ -42,27 +45,14 @@ import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Test for Bug 44460.
  *
  * @since 3.0
  */
-@RunWith(JUnit4.class)
 @Ignore("disabled since it refers to the Java builder and nature, which are not available in an RCP build")
-public class Bug44460Test extends UITestCase {
-
-	/**
-	 * Constructs a new instance of this test case.
-	 *
-	 * @param testName
-	 *            The name of the test
-	 */
-	public Bug44460Test(String testName) {
-		super(Bug44460Test.class.getSimpleName());
-	}
+public class Bug44460Test {
 
 	/**
 	 * Test that pressing "Ctrl+Shift+T" in the Team Synchronizing perspective
@@ -76,7 +66,7 @@ public class Bug44460Test extends UITestCase {
 	@Test
 	public void testCtrlShiftT() throws CommandException, CoreException {
 		// Open a new test window.
-		IWorkbenchWindow window = openTestWindow();
+		IWorkbenchWindow window = UITestCase.openTestWindow();
 
 		// Open a new Java project, with a new class.
 		IWorkspace workspace = ResourcesPlugin.getWorkspace();
@@ -111,7 +101,7 @@ public class Bug44460Test extends UITestCase {
 		ctrlShiftT.stateMask = SWT.SHIFT | SWT.CTRL;
 		ctrlShiftT.character = 'T';
 		ctrlShiftT.keyCode = 't';
-		List keyStrokes = WorkbenchKeyboard
+		List<KeyStroke> keyStrokes = WorkbenchKeyboard
 				.generatePossibleKeyStrokes(ctrlShiftT);
 		Workbench workbench = (Workbench) window.getWorkbench();
 		BindingService support = (BindingService) workbench

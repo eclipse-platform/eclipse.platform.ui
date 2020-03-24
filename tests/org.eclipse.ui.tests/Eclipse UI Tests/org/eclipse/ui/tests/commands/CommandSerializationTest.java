@@ -13,17 +13,20 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.commands;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Map;
 
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.SerializationException;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Test serialization and deserialization of ParameterizedCommands. See <a
@@ -31,15 +34,7 @@ import org.junit.runners.JUnit4;
  *
  * @since 3.2
  */
-@RunWith(JUnit4.class)
-public class CommandSerializationTest extends UITestCase {
-
-	/**
-	 * Constructs a new instance of <code>CommandSerializationTest</code>.
-	 */
-	public CommandSerializationTest() {
-		super(CommandSerializationTest.class.getSimpleName());
-	}
+public class CommandSerializationTest {
 
 	private final String showPerspectiveCommandId = "org.eclipse.ui.perspectives.showPerspective";
 
@@ -337,9 +332,9 @@ public class CommandSerializationTest extends UITestCase {
 	}
 
 	private ICommandService getCommandService() {
-		Object serviceObject = getWorkbench().getAdapter(ICommandService.class);
+		ICommandService serviceObject = PlatformUI.getWorkbench().getAdapter(ICommandService.class);
 		if (serviceObject != null) {
-			return (ICommandService) serviceObject;
+			return serviceObject;
 		}
 		return null;
 	}

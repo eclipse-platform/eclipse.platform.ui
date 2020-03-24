@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.internal;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -23,19 +25,19 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests for bug 540297. Call {@link IWorkbenchPage#findView(String)} while the
  * view is open in some perspective and window, and see if the find view method
  * behaves properly.
  */
-@RunWith(JUnit4.class)
-public class Bug540297WorkbenchPageFindViewTest extends UITestCase {
+public class Bug540297WorkbenchPageFindViewTest {
 
 	public static class MyPerspective implements IPerspectiveFactory {
 		public static String ID1 = "org.eclipse.ui.tests.internal.Bug540297WorkbenchPageFindViewTest.MyPerspective1";
@@ -70,16 +72,10 @@ public class Bug540297WorkbenchPageFindViewTest extends UITestCase {
 	private IPerspectiveDescriptor activePerspective;
 	private IPerspectiveDescriptor inactivePerspective;
 
-	public Bug540297WorkbenchPageFindViewTest() {
-		super(Bug540297WorkbenchPageFindViewTest.class.getSimpleName());
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-
-		firstWindow = fWorkbench.getActiveWorkbenchWindow();
-		secondWindow = openTestWindow();
+	@Before
+	public void doSetUp() throws Exception {
+		firstWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
+		secondWindow = UITestCase.openTestWindow();
 
 		firstWindowActivePage = firstWindow.getActivePage();
 		secondWindowActivePage = secondWindow.getActivePage();
@@ -93,7 +89,7 @@ public class Bug540297WorkbenchPageFindViewTest extends UITestCase {
 		prepareWorkbenchPageForTest(firstWindowActivePage);
 		prepareWorkbenchPageForTest(secondWindowActivePage);
 
-		processEvents();
+		UITestCase.processEvents();
 	}
 
 	private void prepareWorkbenchPageForTest(IWorkbenchPage page) {
@@ -109,15 +105,14 @@ public class Bug540297WorkbenchPageFindViewTest extends UITestCase {
 		}
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public void doTearDown() throws Exception {
 		secondWindow.close();
 		firstWindowActivePage.setPerspective(originalPerspective);
 		firstWindowActivePage.resetPerspective();
 		firstWindowActivePage.closePerspective(inactivePerspective, false, false);
 		firstWindowActivePage.closePerspective(activePerspective, false, false);
-		processEvents();
-		super.doTearDown();
+		UITestCase.processEvents();
 	}
 
 	/**
@@ -218,7 +213,7 @@ public class Bug540297WorkbenchPageFindViewTest extends UITestCase {
 	private static void setPerspective(IWorkbenchPage page, IPerspectiveDescriptor perspective) {
 		page.setPerspective(perspective);
 		page.resetPerspective();
-		processEvents();
+		UITestCase.processEvents();
 	}
 
 	private static void showAndHideView(IWorkbenchPage page) throws Exception {
@@ -228,17 +223,17 @@ public class Bug540297WorkbenchPageFindViewTest extends UITestCase {
 
 	private static void showView(IWorkbenchPage page) throws Exception {
 		page.showView(MyViewPart.ID);
-		processEvents();
+		UITestCase.processEvents();
 	}
 
 	private static void hideView(IWorkbenchPage page) throws Exception {
 		IViewPart view = page.findView(MyViewPart.ID);
 		page.hideView(view);
-		processEvents();
+		UITestCase.processEvents();
 	}
 
 	private IPerspectiveDescriptor getPerspetiveDescriptor(String perspectiveId) {
-		return fWorkbench.getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
+		return PlatformUI.getWorkbench().getPerspectiveRegistry().findPerspectiveWithId(perspectiveId);
 	}
 
 	private static void assertCanFindView(IWorkbenchPage page) throws Exception {

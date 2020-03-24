@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.tests.keys;
 
+import static org.junit.Assert.assertEquals;
+
 import org.eclipse.jface.action.Action;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Display;
@@ -22,25 +24,14 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.intro.IIntroManager;
 import org.eclipse.ui.tests.harness.util.AutomationUtil;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Test for Bug 43538.
  *
  * @since 3.0
  */
-@RunWith(JUnit4.class)
-public class Bug43538Test extends UITestCase {
-
-	/**
-	 * Constructs a new instance of this test case.
-	 */
-	public Bug43538Test() {
-		super(Bug43538Test.class.getSimpleName());
-	}
+public class Bug43538Test {
 
 	/**
 	 * Tests that if "Ctrl+Space" is pressed only one key down event with the

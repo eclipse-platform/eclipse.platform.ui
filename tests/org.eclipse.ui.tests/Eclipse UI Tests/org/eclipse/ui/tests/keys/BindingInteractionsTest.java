@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.keys;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.HashSet;
 import java.util.Locale;
 import java.util.Set;
@@ -26,10 +30,9 @@ import org.eclipse.jface.bindings.BindingManager;
 import org.eclipse.jface.bindings.Scheme;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.util.Util;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Test cases covering the various interaction between bindings. Bindings that
@@ -38,8 +41,7 @@ import org.junit.runners.JUnit4;
  *
  * @since 3.1
  */
-@RunWith(JUnit4.class)
-public final class BindingInteractionsTest extends UITestCase {
+public final class BindingInteractionsTest {
 
 	/**
 	 * The binding manager to use in each test case. A new binding manager is
@@ -54,18 +56,11 @@ public final class BindingInteractionsTest extends UITestCase {
 	private ContextManager contextManager = null;
 
 	/**
-	 * Constructor for <code>BindingInteractionsTest</code>.
-	 */
-	public BindingInteractionsTest() {
-		super(BindingInteractionsTest.class.getSimpleName());
-	}
-
-	/**
 	 * Creates a new context manager and a binding manager for use in the test
 	 * cases.
 	 */
-	@Override
-	protected void doSetUp() {
+	@Before
+	public void doSetUp() {
 		contextManager = new ContextManager();
 		bindingManager = new BindingManager(contextManager,
 				new CommandManager());
@@ -74,8 +69,8 @@ public final class BindingInteractionsTest extends UITestCase {
 	/**
 	 * Releases the context manager and binding manager for garbage collection.
 	 */
-	@Override
-	protected void doTearDown() {
+	@After
+	public void doTearDown() {
 		contextManager = null;
 		bindingManager = null;
 	}

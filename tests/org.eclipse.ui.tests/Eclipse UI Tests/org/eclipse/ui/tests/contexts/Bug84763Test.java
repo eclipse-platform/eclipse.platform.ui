@@ -14,6 +14,9 @@
 
 package org.eclipse.ui.tests.contexts;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -31,10 +34,9 @@ import org.eclipse.jface.bindings.keys.KeyBinding;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.ParseException;
 import org.eclipse.jface.contexts.IContextIds;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * A test case covering the scenario described in Bug 84763. The problem was
@@ -44,8 +46,7 @@ import org.junit.runners.JUnit4;
  *
  * @since 3.1
  */
-@RunWith(JUnit4.class)
-public final class Bug84763Test extends UITestCase {
+public final class Bug84763Test {
 
 	/**
 	 * The binding manager to use in each test case. A new binding manager is
@@ -74,18 +75,11 @@ public final class Bug84763Test extends UITestCase {
 	private Set<String> previousContextIds = null;
 
 	/**
-	 * Constructor for <code>Bug84763Test</code>.
-	 */
-	public Bug84763Test() {
-		super(Bug84763Test.class.getSimpleName());
-	}
-
-	/**
 	 * Creates a new context manager and a binding manager for use in the test
 	 * cases.
 	 */
-	@Override
-	protected void doSetUp() {
+	@Before
+	public void doSetUp() {
 		contextManager = new ContextManager();
 		contextManagerListener = contextManagerEvent -> {
 			previousContextIds = contextManagerEvent.getPreviouslyActiveContextIds();
@@ -100,8 +94,8 @@ public final class Bug84763Test extends UITestCase {
 	/**
 	 * Releases the context manager and binding manager for garbage collection.
 	 */
-	@Override
-	protected void doTearDown() {
+	@After
+	public void doTearDown() {
 		contextManager = null;
 		contextManagerListener = null;
 		previousContextIds = null;

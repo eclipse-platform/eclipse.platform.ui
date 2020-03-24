@@ -13,6 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.multieditor;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -37,6 +40,7 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -44,12 +48,13 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.part.MultiEditorInput;
 import org.eclipse.ui.tests.TestPlugin;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
-public class AbstractMultiEditorTest extends UITestCase {
+public class AbstractMultiEditorTest {
 
 	private static final String PROJECT_NAME = "TiledEditorProject";
 
@@ -64,15 +69,11 @@ public class AbstractMultiEditorTest extends UITestCase {
 
 	private EditorErrorListener fErrorListener;
 
-	public AbstractMultiEditorTest() {
-		super(AbstractMultiEditorTest.class.getSimpleName());
-	}
-
 	@Test
 	public void testBug317102() throws Throwable {
 		final String[] simpleFiles = { TEST01_TXT, TEST03_ETEST };
 
-		IWorkbenchWindow window = openTestWindow();
+		IWorkbenchWindow window = UITestCase.openTestWindow();
 		WorkbenchPage page = (WorkbenchPage) window.getActivePage();
 
 		IProject testProject = findOrCreateProject(PROJECT_NAME);
@@ -151,7 +152,7 @@ public class AbstractMultiEditorTest extends UITestCase {
 			IProject testProject) throws CoreException, IOException {
 		String[] ids = new String[simpleFiles.length];
 		IEditorInput[] inputs = new IEditorInput[simpleFiles.length];
-		IEditorRegistry registry = fWorkbench.getEditorRegistry();
+		IEditorRegistry registry = PlatformUI.getWorkbench().getEditorRegistry();
 
 		for (int f = 0; f < simpleFiles.length; ++f) {
 			IFile f1 = createFile(testProject, simpleFiles[f]);
@@ -195,10 +196,9 @@ public class AbstractMultiEditorTest extends UITestCase {
 	/**
 	 * Close any editors at the beginner of a test, so the test can be clean.
 	 */
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-		IWorkbenchPage page = fWorkbench.getActiveWorkbenchWindow()
+	@Before
+	public void doSetUp() throws Exception {
+		IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow()
 				.getActivePage();
 		page.closeAllEditors(false);
 	}

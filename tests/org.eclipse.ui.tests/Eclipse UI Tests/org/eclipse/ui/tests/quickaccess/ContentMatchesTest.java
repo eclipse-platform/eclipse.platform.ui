@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.tests.quickaccess;
 
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,40 +28,31 @@ import org.eclipse.ui.internal.quickaccess.QuickAccessDialog;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.hamcrest.Matchers;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests the content of quick access for given requests
  *
  * @since 3.14
  */
-@RunWith(JUnit4.class)
-public class ContentMatchesTest extends UITestCase {
+public class ContentMatchesTest {
 
 	private static final int TIMEOUT = 3000;
 	private QuickAccessDialog dialog;
 	private QuickAccessContents quickAccessContents;
 
-	/**
-	 * @param testName
-	 */
-	public ContentMatchesTest() {
-		super(ContentMatchesTest.class.getSimpleName());
-	}
-
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-		IWorkbenchWindow window = openTestWindow();
+	@Before
+	public void doSetUp() throws Exception {
+		IWorkbenchWindow window = UITestCase.openTestWindow();
 		dialog = new QuickAccessDialog(window, null);
 		quickAccessContents = dialog.getQuickAccessContents();
 		dialog.open();
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public void doTearDown() throws Exception {
 		dialog.close();
 	}
 

@@ -14,6 +14,12 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.keys;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.HashMap;
 
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -29,15 +35,15 @@ import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchCommandConstants;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.keys.IBindingService;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Test cases covering the various interaction between bindings. Bindings that
@@ -46,28 +52,19 @@ import org.junit.runners.JUnit4;
  *
  * @since 3.1
  */
-@RunWith(JUnit4.class)
-public final class BindingPersistenceTest extends UITestCase {
+public final class BindingPersistenceTest {
 
 	private final String EMACS_SCHEME_ID = "org.eclipse.ui.emacsAcceleratorConfiguration";
 	private ICommandService commandService;
 	private IBindingService bindingService;
 
 	/**
-	 * Constructor for <code>BindingPersistenceTest</code>.
-	 */
-	public BindingPersistenceTest() {
-		super(BindingPersistenceTest.class.getSimpleName());
-	}
-
-	/**
 	 * Creates a new workbench and retrieves its context manager and a binding
 	 * manager for use in the test cases.
 	 */
-	@Override
-	protected void doSetUp() throws Exception {
-		super.doSetUp();
-		IWorkbench workbench = openTestWindow().getWorkbench();
+	@Before
+	public void doSetUp() throws Exception {
+		IWorkbench workbench = PlatformUI.getWorkbench();
 		commandService = workbench.getAdapter(ICommandService.class);
 		bindingService = workbench.getAdapter(IBindingService.class);
 	}
@@ -224,7 +221,7 @@ public final class BindingPersistenceTest extends UITestCase {
 		assertTrue("Unable to find delete marker", foundDeleteMarker);
 
 		// make sure that the proper contexts are currently active
-		IContextService contextService = fWorkbench
+		IContextService contextService = PlatformUI.getWorkbench()
 				.getService(IContextService.class);
 		contextService
 				.activateContext(IContextService.CONTEXT_ID_DIALOG_AND_WINDOW);
@@ -322,7 +319,7 @@ public final class BindingPersistenceTest extends UITestCase {
 		assertNotNull(editorBinding);
 		assertEquals(activateEditorCmd, editorBinding.getParameterizedCommand());
 
-		EBindingService ebs = fWorkbench
+		EBindingService ebs = PlatformUI.getWorkbench()
 				.getService(EBindingService.class);
 		HashMap<String, String> attrs = new HashMap<>();
 		attrs.put(EBindingService.TYPE_ATTR_TAG, "user");
@@ -394,7 +391,7 @@ public final class BindingPersistenceTest extends UITestCase {
 		assertNotNull(editorBinding);
 		assertEquals(activateEditorCmd, editorBinding.getParameterizedCommand());
 
-		EBindingService ebs = fWorkbench.getService(EBindingService.class);
+		EBindingService ebs = PlatformUI.getWorkbench().getService(EBindingService.class);
 		HashMap<String, String> attrs = new HashMap<>();
 		attrs.put(EBindingService.TYPE_ATTR_TAG, "user");
 		final Binding localAboutBinding = ebs.createBinding(keyF12, aboutCmd,
@@ -445,7 +442,7 @@ public final class BindingPersistenceTest extends UITestCase {
 				findAndReplaceBinding.getParameterizedCommand());
 		assertEquals(EMACS_SCHEME_ID, findAndReplaceBinding.getSchemeId());
 
-		EBindingService ebs = fWorkbench.getService(EBindingService.class);
+		EBindingService ebs = PlatformUI.getWorkbench().getService(EBindingService.class);
 		HashMap<String, String> attrs = new HashMap<>();
 		attrs.put(EBindingService.TYPE_ATTR_TAG, "user");
 		attrs.put(EBindingService.SCHEME_ID_ATTR_TAG, EMACS_SCHEME_ID);
@@ -571,8 +568,8 @@ public final class BindingPersistenceTest extends UITestCase {
 		assertEquals(EMACS_SCHEME_ID, pasteBinding.getSchemeId());
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public void doTearDown() throws Exception {
 		WorkbenchPlugin.getDefault().getPreferenceStore().setValue(
 						"org.eclipse.ui.commands",
 						"<?xml version=\"1.0\" encoding=\"UTF-8\"?><org.eclipse.ui.commands><activeKeyConfiguration keyConfigurationId=\""
@@ -585,6 +582,5 @@ public final class BindingPersistenceTest extends UITestCase {
 		final Binding[] originalBindings = bindingService.getBindings();
 		bindingService.savePreferences(activeScheme, originalBindings);
 		bindingService = null;
-		super.doTearDown();
 	}
 }

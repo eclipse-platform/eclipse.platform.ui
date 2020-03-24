@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.tests.keys;
 
+import static org.junit.Assert.assertFalse;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -28,23 +30,13 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.keys.IBindingService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * Tests Bug 36537
  *
  * @since 3.0
  */
-@RunWith(JUnit4.class)
-public class Bug36537Test extends UITestCase {
-
-	/**
-	 * Constructor for Bug36537Test.
-	 */
-	public Bug36537Test() {
-		super(Bug36537Test.class.getSimpleName());
-	}
+public class Bug36537Test {
 
 	/**
 	 * Tests that there are no redundant key bindings defined in the
@@ -52,7 +44,7 @@ public class Bug36537Test extends UITestCase {
 	 */
 	@Test
 	public void testForRedundantKeySequenceBindings() {
-		final IWorkbenchWindow window = openTestWindow();
+		final IWorkbenchWindow window = UITestCase.openTestWindow();
 		final IWorkbench workbench = window.getWorkbench();
 		final IBindingService bindingService = workbench.getAdapter(IBindingService.class);
 		final Binding[] bindings = bindingService.getBindings();

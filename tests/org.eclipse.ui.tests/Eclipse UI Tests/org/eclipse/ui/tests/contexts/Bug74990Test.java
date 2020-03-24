@@ -13,82 +13,68 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.contexts;
 
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.EnabledSubmission;
 import org.eclipse.ui.contexts.IContext;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * A test for whether part identifiers work properly for EnabledSubmissions.
  *
  * @since 3.1
  */
-@RunWith(JUnit4.class)
-public final class Bug74990Test extends UITestCase {
-
-	/**
-	 * Constructs a new instance of <code>Bug74990Test</code>.
-	 */
-	public Bug74990Test() {
-		super(Bug74990Test.class.getSimpleName());
-	}
+public final class Bug74990Test {
 
 	/**
 	 * Tests whether a part-specific context -- submitted via Java code -- is
-	 * matched properly. This is only using the part id. The test verifies that
-	 * it is active when the part is active, and not active when the part is not
+	 * matched properly. This is only using the part id. The test verifies that it
+	 * is active when the part is active, and not active when the part is not
 	 * active.
 	 *
-	 * @throws PartInitException
-	 *             If something goes wrong creating the part to which this
-	 *             handler is tied.
+	 * @throws PartInitException If something goes wrong creating the part to which
+	 *                           this handler is tied.
 	 *
 	 */
 	@Test
 	public final void testPartIdSubmission() throws PartInitException {
 		// Define a command.
 		final String testContextId = "org.eclipse.ui.tests.contexts.Bug74990";
-		final IWorkbenchContextSupport contextSupport = fWorkbench
-				.getContextSupport();
-		final IContext testContext = contextSupport.getContextManager()
-				.getContext(testContextId);
+		IWorkbench fWorkbench = PlatformUI.getWorkbench();
+		final IWorkbenchContextSupport contextSupport = fWorkbench.getContextSupport();
+		final IContext testContext = contextSupport.getContextManager().getContext(testContextId);
 
 		// Create an enabled submission.
-		final EnabledSubmission testSubmission = new EnabledSubmission(
-				"org.eclipse.ui.tests.api.MockViewPart", null, null,
-				testContextId);
+		final EnabledSubmission testSubmission = new EnabledSubmission("org.eclipse.ui.tests.api.MockViewPart", null,
+				null, testContextId);
 		contextSupport.addEnabledSubmission(testSubmission);
 
 		try {
 			// Test to make sure the context is not currently enabled.
-			assertTrue("The MockViewPart context should not be enabled",
-					!testContext.isEnabled());
+			assertTrue("The MockViewPart context should not be enabled", !testContext.isEnabled());
 
 			/*
-			 * Open a window with the MockViewPart, and make sure it now
-			 * enabled.
+			 * Open a window with the MockViewPart, and make sure it now enabled.
 			 */
-			final IWorkbenchPage page = openTestWindow().getActivePage();
-			final IViewPart openedView = page
-					.showView("org.eclipse.ui.tests.api.MockViewPart");
+			final IWorkbenchPage page = UITestCase.openTestWindow().getActivePage();
+			final IViewPart openedView = page.showView("org.eclipse.ui.tests.api.MockViewPart");
 			page.activate(openedView);
 			while (fWorkbench.getDisplay().readAndDispatch()) {
 			}
-			assertTrue("The MockViewPart context should be enabled",
-					testContext.isEnabled());
+			assertTrue("The MockViewPart context should be enabled", testContext.isEnabled());
 
 			// Hide the view, and test that is becomes disabled again.
 			page.hideView(openedView);
 			while (fWorkbench.getDisplay().readAndDispatch()) {
 			}
-			assertTrue("The MockViewPart context should not be enabled",
-					!testContext.isEnabled());
+			assertTrue("The MockViewPart context should not be enabled", !testContext.isEnabled());
 
 		} finally {
 			contextSupport.removeEnabledSubmission(testSubmission);

@@ -14,6 +14,12 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.commands;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.IParameter;
 import org.eclipse.core.commands.ITypedParameter;
@@ -23,28 +29,18 @@ import org.eclipse.core.commands.Parameterization;
 import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.core.commands.common.NotDefinedException;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
-public class CommandParameterTypeTest extends UITestCase {
+public class CommandParameterTypeTest {
 
 	static final String SUBTRACT = "org.eclipse.ui.tests.commands.subtractInteger";
 	static final String MINUEND = "minuend";
 	static final String SUBTRAHEND = "subtrahend";
 
 	static final String TYPE = "org.eclipse.ui.tests.commands.Integer";
-
-	/**
-	 * Constructs a new instance of <code>CommandParameterTypeTest</code>.
-	 */
-	public CommandParameterTypeTest() {
-		super(CommandParameterTypeTest.class.getSimpleName());
-	}
 
 	/**
 	 * Tests invoking a command that subtracts one number from another. The
@@ -109,7 +105,7 @@ public class CommandParameterTypeTest extends UITestCase {
 		// execute the command and check the result
 		ParameterizedCommand pCommand = new ParameterizedCommand(command,
 				parameterizations);
-		IHandlerService hs = getWorkbench().getService(IHandlerService.class);
+		IHandlerService hs = PlatformUI.getWorkbench().getService(IHandlerService.class);
 		Integer result = (Integer) pCommand.executeWithChecks(null, hs.getCurrentState());
 		assertEquals(difference, result.intValue());
 	}
@@ -278,9 +274,9 @@ public class CommandParameterTypeTest extends UITestCase {
 	}
 
 	private ICommandService getCommandService() {
-		Object serviceObject = getWorkbench().getAdapter(ICommandService.class);
+		ICommandService serviceObject = PlatformUI.getWorkbench().getAdapter(ICommandService.class);
 		if (serviceObject != null) {
-			return (ICommandService) serviceObject;
+			return serviceObject;
 		}
 		return null;
 	}

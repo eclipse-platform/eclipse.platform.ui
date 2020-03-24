@@ -14,6 +14,8 @@
 
 package org.eclipse.ui.tests.api;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,23 +33,15 @@ import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * @since 3.5
- *
  */
-@RunWith(JUnit4.class)
-public class Bug407422Test extends UITestCase {
-
-	public Bug407422Test() {
-		super(Bug407422Test.class.getName());
-	}
+public class Bug407422Test {
 
 	@Test
 	public void test() throws CoreException {
-		final IWorkbenchWindow window = openTestWindow();
+		final IWorkbenchWindow window = UITestCase.openTestWindow();
 		final IWorkbenchPage page = window.getActivePage();
 		final String EDITOR_ID = "org.eclipse.ui.DefaultTextEditor";
 
@@ -119,12 +113,5 @@ public class Bug407422Test extends UITestCase {
 		// In bug 407422, the actual returned array has length 2,
 		// one editor part for each of the lazily loaded editors.
 		assertEquals(0, editorParts.length);
-
-
-
-
-
-
 	}
-
 }

@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.decorators;
 
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IWorkspace;
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -23,18 +25,12 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.decorators.DecorationResult;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
 import org.eclipse.ui.internal.decorators.LightweightDecoratorManager;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.tests.menus.ObjectContributionClasses;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
-public class DecoratorAdaptableTests extends UITestCase {
-
-	public DecoratorAdaptableTests() {
-		super(DecoratorAdaptableTests.class.getSimpleName());
-	}
+public class DecoratorAdaptableTests {
 
 	private DecoratorManager getDecoratorManager() {
 		return WorkbenchPlugin.getDefault().getDecoratorManager();
@@ -61,22 +57,20 @@ public class DecoratorAdaptableTests extends UITestCase {
 		}
 	}
 
-	@Override
-	protected void doSetUp() throws Exception {
+	@Before
+	public void doSetUp() throws Exception {
 		PlatformUI.getWorkbench().getDecoratorManager().setEnabled(TestAdaptableDecoratorContributor.ID, true);
 		PlatformUI.getWorkbench().getDecoratorManager().setEnabled(TestUnadaptableDecoratorContributor.ID, true);
 		PlatformUI.getWorkbench().getDecoratorManager().setEnabled(TestResourceDecoratorContributor.ID, true);
 		PlatformUI.getWorkbench().getDecoratorManager().setEnabled(TestResourceMappingDecoratorContributor.ID, true);
-		super.doSetUp();
 	}
 
-	@Override
-	protected void doTearDown() throws Exception {
+	@After
+	public void doTearDown() throws Exception {
 		PlatformUI.getWorkbench().getDecoratorManager().setEnabled(TestAdaptableDecoratorContributor.ID, false);
 		PlatformUI.getWorkbench().getDecoratorManager().setEnabled(TestUnadaptableDecoratorContributor.ID, false);
 		PlatformUI.getWorkbench().getDecoratorManager().setEnabled(TestResourceDecoratorContributor.ID, false);
 		PlatformUI.getWorkbench().getDecoratorManager().setEnabled(TestResourceMappingDecoratorContributor.ID, false);
-		super.doTearDown();
 	}
 
 	/**

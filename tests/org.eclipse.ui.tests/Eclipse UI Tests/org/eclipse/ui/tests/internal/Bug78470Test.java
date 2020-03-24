@@ -14,6 +14,9 @@
 
 package org.eclipse.ui.tests.internal;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Label;
@@ -25,14 +28,12 @@ import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
-@RunWith(JUnit4.class)
-public class Bug78470Test extends UITestCase {
+public class Bug78470Test {
 
 	public static class MyPerspective implements IPerspectiveFactory {
 		public static String ID = "org.eclipse.ui.tests.internal.Bug78470Test.MyPerspective";
@@ -67,15 +68,11 @@ public class Bug78470Test extends UITestCase {
 		}
 	}
 
-	public Bug78470Test() {
-		super(Bug78470Test.class.getSimpleName());
-	}
-
 	boolean partVisibleExecuted = false;
 
 	@Test
 	public void test78470() throws Exception {
-		IWorkbench workbench = getWorkbench();
+		IWorkbench workbench = PlatformUI.getWorkbench();
 		final IWorkbenchWindow activeWorkbenchWindow = workbench
 				.getActiveWorkbenchWindow();
 		final IWorkbenchPage activePage = activeWorkbenchWindow.getActivePage();
@@ -116,7 +113,7 @@ public class Bug78470Test extends UITestCase {
 					}
 				});
 		workbench.showPerspective(MyPerspective.ID, activeWorkbenchWindow);
-		processEvents();
+		UITestCase.processEvents();
 		Thread.sleep(2000);
 		assertTrue("view was not made visible", partVisibleExecuted);
 		assertNotNull(activePage.findView(MyViewPart.ID2));

@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.core.resources.IFile;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
@@ -21,23 +25,16 @@ import org.eclipse.ui.IFileEditorInput;
 import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.harness.util.EmptyPerspective;
-import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * SessionRestoreTest runs the second half of our session
  * presistance tests.
  *
  */
-@RunWith(JUnit4.class)
-public class DeprecatedSessionRestoreTest extends UITestCase {
-
-	public DeprecatedSessionRestoreTest() {
-		super(DeprecatedSessionRestoreTest.class.getSimpleName());
-	}
+public class DeprecatedSessionRestoreTest {
 
 	/**
 	 * Generates a session state in the workbench.
@@ -48,7 +45,7 @@ public class DeprecatedSessionRestoreTest extends UITestCase {
 		IWorkbenchPage[] pages;
 
 		// Get windows.
-		windows = fWorkbench.getWorkbenchWindows();
+		windows = PlatformUI.getWorkbench().getWorkbenchWindows();
 		assertEquals(windows.length, 3);
 
 		// First window contains empty perspective.

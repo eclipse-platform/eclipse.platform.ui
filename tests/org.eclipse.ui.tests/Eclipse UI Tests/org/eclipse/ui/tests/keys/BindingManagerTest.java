@@ -14,6 +14,14 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.keys;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -36,10 +44,9 @@ import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeyBinding;
 import org.eclipse.jface.bindings.keys.KeySequence;
 import org.eclipse.jface.bindings.keys.ParseException;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * <p>
@@ -56,8 +63,7 @@ import org.junit.runners.JUnit4;
  * @see org.eclipse.ui.tests.keys.BindingInteractionsTest
  * @since 3.1
  */
-@RunWith(JUnit4.class)
-public final class BindingManagerTest extends UITestCase {
+public final class BindingManagerTest {
 
 	/**
 	 * The binding manager to use in each test case. A new binding manager is
@@ -78,18 +84,11 @@ public final class BindingManagerTest extends UITestCase {
 	private ContextManager contextManager = null;
 
 	/**
-	 * Constructor for <code>BindingInteractionsTest</code>.
-	 */
-	public BindingManagerTest() {
-		super(BindingManagerTest.class.getSimpleName());
-	}
-
-	/**
 	 * Creates a new context manager and a binding manager for use in the test
 	 * cases.
 	 */
-	@Override
-	protected void doSetUp() {
+	@Before
+	public void doSetUp() {
 		commandManager = new CommandManager();
 		contextManager = new ContextManager();
 		bindingManager = new BindingManager(contextManager, commandManager);
@@ -98,8 +97,8 @@ public final class BindingManagerTest extends UITestCase {
 	/**
 	 * Releases the context manager and binding manager for garbage collection.
 	 */
-	@Override
-	protected void doTearDown() {
+	@After
+	public void doTearDown() {
 		bindingManager = null;
 		contextManager = null;
 		commandManager = null;
@@ -108,14 +107,9 @@ public final class BindingManagerTest extends UITestCase {
 	/**
 	 * Tests that the constructor disallows a null context manager.
 	 */
-	@Test
+	@Test(expected = NullPointerException.class)
 	public void testConstructor() {
-		try {
-			new BindingManager(null, null);
-			fail("A binding manager cannot be constructed with a null context manager");
-		} catch (final NullPointerException e) {
-			// Success
-		}
+		new BindingManager(null, null);
 	}
 
 	/**

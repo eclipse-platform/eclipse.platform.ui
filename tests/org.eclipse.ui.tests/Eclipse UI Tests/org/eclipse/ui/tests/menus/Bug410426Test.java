@@ -13,6 +13,10 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.menus;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,24 +30,17 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.menus.IMenuService;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 import org.osgi.service.log.LogListener;
 import org.osgi.service.log.LogService;
 
 /**
  * @author Maxime Porhel
  */
-@RunWith(JUnit4.class)
-public class Bug410426Test extends UITestCase {
-
-	public Bug410426Test() {
-		super(Bug410426Test.class.getSimpleName());
-	}
+public class Bug410426Test {
 
 	@Test
 	public void testToolbarContributionFromFactoryVisibility() throws Exception {
-		IWorkbenchWindow window = openTestWindow();
+		IWorkbenchWindow window = UITestCase.openTestWindow();
 		IMenuService menus = window.getService(IMenuService.class);
 		ToolBarManager manager = new ToolBarManager();
 
@@ -94,7 +91,7 @@ public class Bug410426Test extends UITestCase {
 
 	@Test
 	public void testNoClassCastExceptionForMenuManagerToolbarContribution() throws Exception {
-		IWorkbenchWindow window = openTestWindow();
+		IWorkbenchWindow window = UITestCase.openTestWindow();
 		IMenuService menus = window.getService(IMenuService.class);
 		ToolBarManager manager = new ToolBarManager();
 

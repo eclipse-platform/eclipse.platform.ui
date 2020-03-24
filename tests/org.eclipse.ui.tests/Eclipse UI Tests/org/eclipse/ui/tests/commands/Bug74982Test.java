@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.commands;
 
+import static org.junit.Assert.assertTrue;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -21,23 +23,22 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ExecutionException;
 import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.NotHandledException;
 import org.eclipse.ui.internal.Workbench;
-import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
 
 /**
  * A test for whether the select all handler will send a selection event.
  *
  * @since 3.1
  */
-@RunWith(JUnit4.class)
-public final class Bug74982Test extends UITestCase {
+public final class Bug74982Test {
 
 	/**
 	 * Whether the selection event has been fired.
@@ -46,16 +47,8 @@ public final class Bug74982Test extends UITestCase {
 
 	private Shell dialog;
 
-	/**
-	 * Constructs a new instance of <code>Bug74982Test</code>.
-	 */
-	public Bug74982Test() {
-		super(Bug74982Test.class.getSimpleName());
-	}
-
-	@Override
-	protected void doTearDown() throws Exception {
-		super.doTearDown();
+	@Before
+	public void doTearDown() throws Exception {
 		if (dialog != null) {
 			dialog.dispose();
 		}
@@ -78,6 +71,7 @@ public final class Bug74982Test extends UITestCase {
 	public final void testSelectAllHandlerSendsSelectionEvent()
 			throws ExecutionException, NotHandledException {
 		// Create a dialog with a text widget.
+		IWorkbench fWorkbench = PlatformUI.getWorkbench();
 		dialog = new Shell(fWorkbench.getActiveWorkbenchWindow().getShell());
 		dialog.setLayout(new GridLayout());
 		final Text text = new Text(dialog, SWT.SINGLE);
