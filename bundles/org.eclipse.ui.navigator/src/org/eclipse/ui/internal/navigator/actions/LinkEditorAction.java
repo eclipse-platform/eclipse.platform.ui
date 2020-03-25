@@ -127,6 +127,8 @@ public class LinkEditorAction extends Action implements ISelectionChangedListene
 	 */
 	public LinkEditorAction(CommonNavigator aNavigator, CommonViewer aViewer, LinkHelperService linkHelperService) {
 		super(CommonNavigatorMessages.LinkEditorActionDelegate_0);
+		activateEditorJob.setSystem(true);
+		updateSelectionJob.setSystem(true);
 		linkService = linkHelperService;
 		setToolTipText(CommonNavigatorMessages.LinkEditorActionDelegate_1);
 		commonNavigator = aNavigator;
