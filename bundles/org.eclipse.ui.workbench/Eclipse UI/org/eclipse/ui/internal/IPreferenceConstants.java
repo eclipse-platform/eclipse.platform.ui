@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -288,9 +288,19 @@ public interface IPreferenceConstants {
 	 * The boolean default value for this preference is: <code>false</code>.
 	 * </p>
 	 *
-	 * @since 3.115
+	 * @since 3.119
 	 */
-	String SHOW_KEYS_ENABLED = "showCommandKeys"; //$NON-NLS-1$
+	String SHOW_KEYS_ENABLED_FOR_KEYBOARD = "showCommandKeysForKeyboard"; //$NON-NLS-1$
+
+	/**
+	 * Preference for whether pressed command keys are to be visualized
+	 * <p>
+	 * The boolean default value for this preference is: <code>false</code>.
+	 * </p>
+	 *
+	 * @since 3.119
+	 */
+	String SHOW_KEYS_ENABLED_FOR_MOUSE_EVENTS = "showCommandKeysForMouseEvents"; //$NON-NLS-1$
 
 	/**
 	 * Preference for the time (in ms) after the command keys UI is to be closed

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2019 IBM Corporation and others.
+ * Copyright (c) 2005, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -40,6 +40,7 @@ import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.layout.GridDataFactory;
 import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
@@ -79,6 +80,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
@@ -192,6 +194,7 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 	private TableViewer conflictViewer;
 
 	private Button fShowCommandKey;
+	private Button fShowCommandKeyForMouseEvents;
 
 	private ICommandImageService commandImageService;
 
@@ -1052,14 +1055,26 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 	private void createShowKeysControls(Composite parent) {
 		ShowKeysUI showKeysUI = new ShowKeysUI(fWorkbench, getPreferenceStore());
 
-		final Composite controls = new Composite(parent, SWT.NONE);
-		GridLayoutFactory.fillDefaults().numColumns(1).applyTo(controls);
-		fShowCommandKey = new Button(controls, SWT.CHECK);
-		fShowCommandKey.setText(NewKeysPreferenceMessages.ShowCommandKeys_Text);
-		fShowCommandKey.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.SHOW_KEYS_ENABLED));
+		final Group group = new Group(parent, SWT.NONE);
+		group.setText(NewKeysPreferenceMessages.ShowCommandKeysGroup_Title);
+		GridDataFactory.fillDefaults().applyTo(group);
+		GridLayoutFactory.fillDefaults().numColumns(1).applyTo(group);
+		fShowCommandKey = new Button(group, SWT.CHECK);
+		fShowCommandKey.setText(NewKeysPreferenceMessages.ShowCommandKeysForKeyboard_Text);
+		fShowCommandKey.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.SHOW_KEYS_ENABLED_FOR_KEYBOARD));
 		fShowCommandKey.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
 			// show a preview of the shortcut popup
 			if (fShowCommandKey.getSelection()) {
+				showKeysUI.openForPreview(ShowKeysToggleHandler.COMMAND_ID, null);
+			}
+		}));
+		fShowCommandKeyForMouseEvents = new Button(group, SWT.CHECK);
+		fShowCommandKeyForMouseEvents.setText(NewKeysPreferenceMessages.ShowCommandKeysForMouse_Text);
+		fShowCommandKeyForMouseEvents
+				.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.SHOW_KEYS_ENABLED_FOR_MOUSE_EVENTS));
+		fShowCommandKeyForMouseEvents.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
+			// show a preview of the shortcut popup
+			if (fShowCommandKeyForMouseEvents.getSelection()) {
 				showKeysUI.openForPreview(ShowKeysToggleHandler.COMMAND_ID, null);
 			}
 		}));
@@ -1100,7 +1115,10 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 	@Override
 	public boolean performOk() {
 		keyController.saveBindings(fBindingService);
-		getPreferenceStore().setValue(IPreferenceConstants.SHOW_KEYS_ENABLED, fShowCommandKey.getSelection());
+		IPreferenceStore preferenceStore = getPreferenceStore();
+		preferenceStore.setValue(IPreferenceConstants.SHOW_KEYS_ENABLED_FOR_KEYBOARD, fShowCommandKey.getSelection());
+		preferenceStore.setValue(IPreferenceConstants.SHOW_KEYS_ENABLED_FOR_MOUSE_EVENTS,
+				fShowCommandKeyForMouseEvents.getSelection());
 
 		saveState(getDialogSettings());
 		return super.performOk();
@@ -1161,7 +1179,9 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 			}
 
 			fShowCommandKey
-					.setSelection(getPreferenceStore().getDefaultBoolean(IPreferenceConstants.SHOW_KEYS_ENABLED));
+					.setSelection(getPreferenceStore().getDefaultBoolean(IPreferenceConstants.SHOW_KEYS_ENABLED_FOR_KEYBOARD));
+			fShowCommandKeyForMouseEvents.setSelection(
+					getPreferenceStore().getDefaultBoolean(IPreferenceConstants.SHOW_KEYS_ENABLED_FOR_MOUSE_EVENTS));
 		}
 
 		super.performDefaults();

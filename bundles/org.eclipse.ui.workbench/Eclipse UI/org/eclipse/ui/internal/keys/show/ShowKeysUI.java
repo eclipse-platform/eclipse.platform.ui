@@ -97,21 +97,32 @@ public class ShowKeysUI implements IDisposable {
 		if (trigger != null) {
 			int accelerator = SWTKeySupport.convertEventToUnmodifiedAccelerator(trigger);
 			KeyStroke keyStroke = SWTKeySupport.convertAcceleratorToKeyStroke(accelerator);
-			if (KeyStroke.NO_KEY != keyStroke.getNaturalKey()) {
+			// keyboard trigger
+			if (preferenceStore.getBoolean(IPreferenceConstants.SHOW_KEYS_ENABLED_FOR_KEYBOARD)
+					&& KeyStroke.NO_KEY != keyStroke.getNaturalKey()) {
 				return SWTKeySupport.getKeyFormatterForPlatform().format(keyStroke);
 			}
+			// mouse-triggered event
+			else if (preferenceStore.getBoolean(IPreferenceConstants.SHOW_KEYS_ENABLED_FOR_MOUSE_EVENTS)
+					&& KeyStroke.NO_KEY == keyStroke.getNaturalKey()) {
+				return serviceLocator.getService(IBindingService.class).getBestActiveBindingFormattedFor(commandId);
+			}
 		}
-		// fallback if trigger does not provide a key binding
-		return serviceLocator.getService(IBindingService.class).getBestActiveBindingFormattedFor(commandId);
+		return null;
 	}
 
 	private void openPopup(String shortcut, String shortcutText, String shortcutDescription) {
-		closePopup();
-		int timeToClose = this.preferenceStore.getInt(IPreferenceConstants.SHOW_KEYS_TIME_TO_CLOSE);
-		Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-		this.shortcutPopup = new ShowKeysPopup(shell, timeToClose);
-		this.shortcutPopup.setShortcut(shortcut, shortcutText, shortcutDescription);
-		this.shortcutPopup.open();
+		// Schedule the UI opening in the event loop. This allows having the popup on
+		// top of whatever UI is opened right now. E.g. we can now draw on top of the
+		// Quick Access UI rather than being hidden underneath it.
+		Display.getDefault().asyncExec(() -> {
+			closePopup();
+			int timeToClose = this.preferenceStore.getInt(IPreferenceConstants.SHOW_KEYS_TIME_TO_CLOSE);
+			Shell shell = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+			this.shortcutPopup = new ShowKeysPopup(shell, timeToClose);
+			this.shortcutPopup.setShortcut(shortcut, shortcutText, shortcutDescription);
+			this.shortcutPopup.open();
+		});
 	}
 
 	private void closePopup() {

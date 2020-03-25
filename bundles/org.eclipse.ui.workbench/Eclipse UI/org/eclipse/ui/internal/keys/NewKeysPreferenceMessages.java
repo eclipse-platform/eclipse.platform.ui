@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2019 IBM Corporation and others.
+ * Copyright (c) 2006, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -67,7 +67,9 @@ public class NewKeysPreferenceMessages extends NLS {
 	public static String InternalFilterCheckBox_Text;
 	public static String UncategorizedFilterCheckBox_Text;
 
-	public static String ShowCommandKeys_Text;
+	public static String ShowCommandKeysGroup_Title;
+	public static String ShowCommandKeysForKeyboard_Text;
+	public static String ShowCommandKeysForMouse_Text;
 
 	static {
 		// load message values from bundle file

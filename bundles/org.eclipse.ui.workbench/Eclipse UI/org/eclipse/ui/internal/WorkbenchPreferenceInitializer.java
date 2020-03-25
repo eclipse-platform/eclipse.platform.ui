@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -120,7 +120,8 @@ public class WorkbenchPreferenceInitializer extends AbstractPreferenceInitialize
 		node.putInt(IPreferenceConstants.MAX_PROGRESS_ENTRIES, 20);
 
 		// Visualized command keys
-		node.putBoolean(IPreferenceConstants.SHOW_KEYS_ENABLED, false);
+		node.putBoolean(IPreferenceConstants.SHOW_KEYS_ENABLED_FOR_KEYBOARD, false);
+		node.putBoolean(IPreferenceConstants.SHOW_KEYS_ENABLED_FOR_MOUSE_EVENTS, false);
 		node.putInt(IPreferenceConstants.SHOW_KEYS_TIME_TO_CLOSE, 3000);
 
 		node.put(IWorkbenchPreferenceConstants.RESOURCE_RENAME_MODE,

@@ -16,7 +16,6 @@ package org.eclipse.ui.internal.keys.show;
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.jface.preference.IPreferenceStore;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IPreferenceConstants;
 import org.eclipse.ui.internal.WorkbenchPlugin;
@@ -32,7 +31,10 @@ public class ShowKeysToggleHandler extends AbstractHandler {
 	@Override
 	public Object execute(ExecutionEvent event) {
 		IPreferenceStore prefStore = WorkbenchPlugin.getDefault().getPreferenceStore();
-		boolean newValue = toggleValue(IPreferenceConstants.SHOW_KEYS_ENABLED, prefStore);
+		boolean newValue = toggleValue(IPreferenceConstants.SHOW_KEYS_ENABLED_FOR_KEYBOARD, prefStore);
+		// deliberately keep both values the same, i.e. set the second pref to the same
+		// value
+		prefStore.setValue(IPreferenceConstants.SHOW_KEYS_ENABLED_FOR_MOUSE_EVENTS, newValue);
 		if (newValue) {
 			showPreview(prefStore);
 		}
@@ -51,7 +53,7 @@ public class ShowKeysToggleHandler extends AbstractHandler {
 			// do not end up in multiple popups
 			showKeysUI = new ShowKeysUI(PlatformUI.getWorkbench(), prefStore);
 		}
-		Display.getDefault().asyncExec(() -> showKeysUI.openForPreview(ShowKeysToggleHandler.COMMAND_ID, null));
+		showKeysUI.openForPreview(ShowKeysToggleHandler.COMMAND_ID, null);
 	}
 
 }

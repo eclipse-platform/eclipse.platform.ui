@@ -20,7 +20,6 @@ import org.eclipse.core.commands.NotHandledException;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.internal.IPreferenceConstants;
@@ -66,15 +65,12 @@ public class ShowKeysListener implements IExecutionListener, IPropertyChangeList
 			return;
 		}
 
-		// We never know from which thread we are called, so schedule the UI opening in
-		// the event loop. Also, this allows having the popup on top of whatever UI is
-		// opened right now. E.g. we can now draw on top of the Quick Access UI rather
-		// than being hidden underneath it.
-		Display.getDefault().asyncExec(() -> showKeysUI.open(commandId, (Event) event.getTrigger()));
+		showKeysUI.open(commandId, (Event) event.getTrigger());
 	}
 
 	private boolean isEnabled() {
-		return this.preferenceStore.getBoolean(IPreferenceConstants.SHOW_KEYS_ENABLED);
+		return this.preferenceStore.getBoolean(IPreferenceConstants.SHOW_KEYS_ENABLED_FOR_KEYBOARD)
+				|| this.preferenceStore.getBoolean(IPreferenceConstants.SHOW_KEYS_ENABLED_FOR_MOUSE_EVENTS);
 	}
 
 	@Override
@@ -92,7 +88,8 @@ public class ShowKeysListener implements IExecutionListener, IPropertyChangeList
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		String property = event.getProperty();
-		if (IPreferenceConstants.SHOW_KEYS_ENABLED.equals(property)) {
+		if (IPreferenceConstants.SHOW_KEYS_ENABLED_FOR_KEYBOARD.equals(property)
+				|| IPreferenceConstants.SHOW_KEYS_ENABLED_FOR_MOUSE_EVENTS.equals(property)) {
 			ICommandService cmdService = this.serviceLocator.getService(ICommandService.class);
 			if (isEnabled()) {
 				cmdService.addExecutionListener(this);
