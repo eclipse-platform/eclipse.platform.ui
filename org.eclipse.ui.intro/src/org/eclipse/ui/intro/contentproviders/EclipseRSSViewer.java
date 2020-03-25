@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2017 IBM Corporation and others.
+ * Copyright (c) 2009, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 
 package org.eclipse.ui.intro.contentproviders;
@@ -179,7 +180,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 			try {
 				url = new URL(getParameter("url")); //$NON-NLS-1$
 			} catch (MalformedURLException e) {
-				IntroPlugin.logError("Bad URL: "+url, e); //$NON-NLS-1$
+				IntroPlugin.getDefault().getLog().error("Bad URL: " + url, e); //$NON-NLS-1$
 			}
 			if (url != null) {
 				out.println("<p><span class=\"rss-feed-link\">"); //$NON-NLS-1$
@@ -509,10 +510,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 				}
 
 			} catch (Exception e) {
-				IntroPlugin.logError(
-						NLS.bind(
-								Messages.RSS_Malformed_feed,
-								getParameter("url"))); //$NON-NLS-1$
+				IntroPlugin.getDefault().getLog().error(NLS.bind(Messages.RSS_Malformed_feed, getParameter("url"))); //$NON-NLS-1$
 				refresh();
 			} finally {
 				threadRunning = false;
@@ -529,7 +527,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 			try{
 				Thread.sleep(SOCKET_TIMEOUT);
 			}catch(Exception ex){
-				IntroPlugin.logError("Timeout failed.", ex); //$NON-NLS-1$
+				IntroPlugin.getDefault().getLog().error("Timeout failed.", ex); //$NON-NLS-1$
 			}
 			if (threadRunning)
 			{

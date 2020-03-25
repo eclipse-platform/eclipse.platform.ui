@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2006 IBM Corporation and others.
+ * Copyright (c) 2004, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.universal.util;
 
@@ -71,11 +72,7 @@ public class Log implements IUniversalIntroConstants {
 	 * already be localized to proper local. Errors are always logged.
 	 */
 	public static synchronized void error(String message, Throwable ex) {
-		if (message == null)
-			message = ""; //$NON-NLS-1$
-		Status errorStatus = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK,
-			message, ex);
-		pluginLog.log(errorStatus);
+		pluginLog.error(message, ex);
 	}
 
 	/**
@@ -88,11 +85,7 @@ public class Log implements IUniversalIntroConstants {
 			// logging of info messages is not enabled.
 			return;
 
-		if (message == null)
-			message = ""; //$NON-NLS-1$
-		Status infoStatus = new Status(IStatus.INFO, PLUGIN_ID, IStatus.OK,
-			message, null);
-		pluginLog.log(infoStatus);
+		pluginLog.info(message);
 	}
 
 	/**
@@ -102,11 +95,7 @@ public class Log implements IUniversalIntroConstants {
 	 * controlled by the public flags in this class.
 	 */
 	public static synchronized void forcedInfo(String message) {
-		if (message == null)
-			message = ""; //$NON-NLS-1$
-		Status infoStatus = new Status(IStatus.INFO, PLUGIN_ID, IStatus.OK,
-			message, null);
-		pluginLog.log(infoStatus);
+		pluginLog.info(message);
 	}
 
 
@@ -121,11 +110,7 @@ public class Log implements IUniversalIntroConstants {
 			// to not log warning messages.
 			return;
 
-		if (message == null)
-			message = ""; //$NON-NLS-1$
-		Status warningStatus = new Status(IStatus.WARNING, PLUGIN_ID,
-			IStatus.OK, message, null);
-		pluginLog.log(warningStatus);
+		pluginLog.warn(message);
 	}
 
 	/**

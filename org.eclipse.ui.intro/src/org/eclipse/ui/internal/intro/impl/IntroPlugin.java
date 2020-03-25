@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2016 IBM Corporation and others.
+ * Copyright (c) 2004, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,12 +10,11 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.ui.internal.intro.impl;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.intro.impl.model.IntroModelRoot;
@@ -199,27 +198,6 @@ public class IntroPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Logs an Error message.  To print errors to console,
-	 * run eclipse with the -console -consolelog arguments
-	 */
-	public static synchronized void logError(String message) {
-		logError(message,null);
-	}
-
-	/**
-	 * Logs an Error message with an exception.  To print errors to console,
-	 * run eclipse with the -console -consolelog arguments
-	 */
-	public static synchronized void logError(String message, Throwable ex) {
-		if (message == null){
-			message = ""; //$NON-NLS-1$
-		}
-		Status errorStatus = new Status(IStatus.ERROR, PLUGIN_ID, message, ex);
-		IntroPlugin.getDefault().getLog().log(errorStatus);
-	}
-
-
-	/**
 	 * Logs a Warning message with an exception.  To print warnings to console,
 	 * run eclipse with the -console -consolelog arguments
 	 *
@@ -235,12 +213,8 @@ public class IntroPlugin extends AbstractUIPlugin {
 
 
 	public static synchronized void logWarning(String message,Throwable ex) {
-		if (IntroPlugin.getDefault().isDebugging() && LOG_WARN) {
-			if (message == null)
-				message = ""; //$NON-NLS-1$
-			Status warningStatus = new Status(IStatus.WARNING, PLUGIN_ID,
-					IStatus.OK, message, ex);
-			getDefault().getLog().log(warningStatus);
+		if (LOG_WARN && IntroPlugin.getDefault().isDebugging()) {
+			getDefault().getLog().warn(message, ex);
 		}
 	}
 
@@ -255,11 +229,8 @@ public class IntroPlugin extends AbstractUIPlugin {
 	 *      com.ibm.ccl.welcome.bits/debug/info=true
 	 */
 	public static synchronized void logDebug(String message) {
-		if (IntroPlugin.getDefault().isDebugging() && LOG_INFO) {
-			if (message == null)
-				message = ""; //$NON-NLS-1$
-			Status status = new Status(IStatus.INFO, PLUGIN_ID,message);
-			getDefault().getLog().log(status);
+		if (LOG_INFO && IntroPlugin.getDefault().isDebugging()) {
+			getDefault().getLog().info(message);
 		}
 	}
 
