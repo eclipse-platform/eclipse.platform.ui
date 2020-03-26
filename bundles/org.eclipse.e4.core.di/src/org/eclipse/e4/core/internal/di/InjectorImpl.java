@@ -28,6 +28,7 @@ import java.security.CodeSource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -381,11 +382,7 @@ public class InjectorImpl implements IInjector {
 			// Sort the constructors by descending number of constructor arguments
 			ArrayList<Constructor<?>> sortedConstructors = new ArrayList<>(constructors.length);
 			sortedConstructors.addAll(Arrays.asList(constructors));
-			Collections.sort(sortedConstructors, (c1, c2) -> {
-				int l1 = c1.getParameterTypes().length;
-				int l2 = c2.getParameterTypes().length;
-				return l2 - l1;
-			});
+			sortedConstructors.sort(Comparator.comparing(c -> c.getParameterTypes().length, Comparator.reverseOrder()));
 
 			for (Constructor<?> constructor : sortedConstructors) {
 				// skip private and protected constructors; allow public and package visibility
