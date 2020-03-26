@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 Angelo Zerr and others.
+ * Copyright (c) 2008, 2020 Angelo Zerr and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -500,12 +500,6 @@ public class SWTStyleHelpers {
 		try {
 			if ((style & SWT.LONG) != 0) {
 				addSWTStyle(swtStyles, "SWT.LONG", separator);
-			}
-		} catch (Exception e) {
-		}
-		try {
-			if ((style & SWT.MOZILLA) != 0) {
-				addSWTStyle(swtStyles, "SWT.MOZILLA", separator);
 			}
 		} catch (Exception e) {
 		}
