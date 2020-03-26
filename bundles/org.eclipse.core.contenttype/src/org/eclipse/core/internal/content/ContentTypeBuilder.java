@@ -178,8 +178,8 @@ public class ContentTypeBuilder {
 		if (defaultCharset != null)
 			if (defaultProperties == null)
 				defaultProperties = Collections.singletonMap(IContentDescription.CHARSET, defaultCharset);
-			else if (!defaultProperties.containsKey(IContentDescription.CHARSET))
-				defaultProperties.put(IContentDescription.CHARSET, defaultCharset);
+			else
+				defaultProperties.putIfAbsent(IContentDescription.CHARSET, defaultCharset);
 		return ContentType.createContentType(catalog, uniqueId, name, priority, fileExtensions, fileNames, filePatterns,
 				baseTypeId, aliasTargetTypeId, defaultProperties, contentTypeCE);
 	}
