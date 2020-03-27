@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Red Hat Inc. and others.
+ * Copyright (c) 2019, 2020 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -74,7 +74,7 @@ public class QuickAccessExtensionManager {
 				@Override
 				public void execute() {
 					try {
-						bundle.start();
+						bundle.start(Bundle.START_ACTIVATION_POLICY);
 						reset();
 						if (onActivate != null) {
 							onActivate.run();
