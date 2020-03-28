@@ -532,6 +532,10 @@ class AdditionalInfoController extends AbstractInformationControlManager {
 
 	@Override
 	protected void computeInformation() {
+		if (fProposalTable == null || fProposalTable.isDisposed()) {
+			return;
+		}
+
 		if (fProposal instanceof ICompletionProposalExtension3)
 			setCustomInformationControlCreator(((ICompletionProposalExtension3) fProposal).getInformationControlCreator());
 		else
