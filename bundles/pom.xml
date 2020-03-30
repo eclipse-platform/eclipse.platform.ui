@@ -61,6 +61,7 @@
     <module>org.eclipse.ui.win32</module>
     <module>org.eclipse.ui.cocoa</module>
     <module>org.eclipse.e4.ui.swt.gtk</module>
+    <module>org.eclipse.e4.ui.swt.win32</module>
     <module>org.eclipse.ui.navigator.resources</module>
     <module>org.eclipse.urischeme</module>
   </modules>
