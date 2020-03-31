@@ -40,7 +40,7 @@ import org.junit.runners.JUnit4;
  * @since 3.2
  */
 @RunWith(JUnit4.class)
-@Ignore("broke during e4 transition and still need adjustments")
+@Ignore("functionality broken since e4 transition because org.eclipse.e4.core.commands.internal.HandlerServiceHandler does not implement org.eclipse.core.commands.IObjectWithState.")
 public class StateTest extends UITestCase {
 
 	/**
