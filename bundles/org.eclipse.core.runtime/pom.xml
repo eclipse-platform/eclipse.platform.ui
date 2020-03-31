@@ -21,17 +21,4 @@
   <artifactId>org.eclipse.core.runtime</artifactId>
   <version>3.17.200-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.eclipse.tycho</groupId>
-        <artifactId>target-platform-configuration</artifactId>
-        <configuration>
-          <dependency-resolution>
-            <optionalDependencies>ignore</optionalDependencies>
-          </dependency-resolution>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>
