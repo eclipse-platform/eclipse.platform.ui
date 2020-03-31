@@ -716,19 +716,29 @@ public abstract class AbstractWorkingSetManager extends EventManager
 	}
 
 	IWorkingSetUpdater getUpdater(WorkingSetDescriptor descriptor) {
-		IWorkingSetUpdater updater = updaters.get(descriptor.getId());
+		String updaterId = descriptor.getId();
+		IWorkingSetUpdater updater = updaters.get(updaterId);
 		if (updater == null) {
 			updater = descriptor.createWorkingSetUpdater();
+			boolean fireChange = true;
 			if (updater == null) {
 				updater = NULL_UPDATER;
-			} else {
+				fireChange = false;
+			}
+			synchronized (updaters) {
+				IWorkingSetUpdater old = updaters.putIfAbsent(updaterId, updater);
+				if (fireChange) {
+					// don't fire again if already installed
+					fireChange = old == null;
+				}
+			}
+			if (fireChange) {
 				firePropertyChange(CHANGE_WORKING_SET_UPDATER_INSTALLED, null, updater);
 				PlatformUI.getWorkbench().getExtensionTracker().registerObject(
 						descriptor.getConfigurationElement().getDeclaringExtension(), updater,
 						IExtensionTracker.REF_WEAK);
 
 			}
-			updaters.put(descriptor.getId(), updater);
 		}
 		return updater;
 	}
