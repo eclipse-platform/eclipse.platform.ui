@@ -105,6 +105,7 @@ public class ModelCleanupAddon {
 		bundleContext = bundle.getBundleContext();
 
 		cleanUnavailablePartDescriptors(app, uiSync);
+		cleanUnavailableHandlers(app, uiSync);
 
 		cleanHiddenCompatibilityEditors();
 	}
@@ -123,6 +124,16 @@ public class ModelCleanupAddon {
 				.thenAccept(d -> uiSync.asyncExec(() -> iteratorRemove(app.getDescriptors(), d)));
 	}
 
+	private void cleanUnavailableHandlers(MApplication app, UISynchronize uiSync) {
+		// make copies of the lists for thread safety
+		List<MHandler> handlers = new ArrayList<>(app.getHandlers());
+
+		ExecutorService executor = Executors.newFixedThreadPool(1);
+
+		CompletableFuture.supplyAsync(() -> getObsoleteHandlers(handlers), executor)
+				.thenAccept(d -> uiSync.asyncExec(() -> iteratorRemove(app.getHandlers(), d)));
+	}
+
 	private List<MPartDescriptor> getObsoletePartDescriptors(List<MPartDescriptor> partDescriptors) {
 		for (Iterator<MPartDescriptor> iterator = partDescriptors.iterator(); iterator.hasNext();) {
 			MPartDescriptor appElement = iterator.next();
@@ -135,6 +146,23 @@ public class ModelCleanupAddon {
 		}
 
 		return partDescriptors;
+	}
+
+	// This method only removes invalid top-level handlers, in the future this might
+	// be extended to remove
+	// scope handlers, like a handler defined for a part
+	private List<MHandler> getObsoleteHandlers(List<MHandler> handlers) {
+		for (Iterator<MHandler> iterator = handlers.iterator(); iterator.hasNext();) {
+			MHandler appElement = iterator.next();
+			boolean validAppElement = isValidHandler(appElement);
+			if (validAppElement) {
+				iterator.remove();
+			} else {
+				logMissingClassWarning(appElement);
+			}
+		}
+
+		return handlers;
 	}
 
 	private void iteratorRemove(List<?> list, List<?> elementsToBeRemoved) {
@@ -221,6 +249,21 @@ public class ModelCleanupAddon {
 
 		return true;
 	}
+
+	private boolean isValidHandler(MHandler handler) {
+		String contributionURI = handler.getContributionURI();
+		if (!URIHelper.isBundleClassUri(contributionURI)) {
+			return false;
+		}
+
+			// check for e4views and usual MPartDescriptors
+			String[] bundleClass = contributionURI.substring(BUNDLECLASS_SCHEMA_LENGTH).split("/"); //$NON-NLS-1$
+			String bundleSymbolicName = bundleClass[0];
+			String className = bundleClass[1];
+			return checkPartDescriptorByBundleSymbolicNameAndClass(bundleContext, bundleSymbolicName, className);
+
+	}
+
 
 	private boolean checkPartDescriptorByBundleSymbolicNameAndClass(BundleContext bundleContext,
 			String bundleSymbolicName,
