@@ -218,6 +218,20 @@ public final class RowLayoutFactory {
 	}
 
 	/**
+	 * Center specifies whether the controls in a row should be centered vertically
+	 * in each cell for horizontal layouts, or centered horizontally in each cell
+	 * for vertical layouts.
+	 *
+	 * @param center the center status
+	 * @return this
+	 * @since 3.20
+	 */
+	public RowLayoutFactory center(boolean center) {
+		layout.center = center;
+		return this;
+	}
+
+	/**
 	 * Justify specifies whether the controls in a row should be fully
 	 * justified, with any extra space placed between the controls.
 	 *
