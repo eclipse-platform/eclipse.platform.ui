@@ -1,0 +1,156 @@
+
+# Items on a line a separated by TABs. Empty pattern or text can be written as <empty>.
+# Empty lines, comment lines, and leading and trailing whitespace is ignored.
+#
+# Tests with IgnoreCase = false are run both with false and true. Tests with IgnoreCase = true are run only case-insensitively.
+
+# IgnoreCase? Pattern Text Expected
+
+false	foo	foo	true
+false	foo	fop	false
+false	foo	fo	false
+false	fo	foo	false
+false	???	foo	true
+false	???	fo	false
+false	??	foo	false
+false	??	fo	true
+false	?	f	true
+false	f?o	foo	true
+false	f?o	fo	false
+false	f?o	f.o	true
+false	*	foo	true
+false	f*	foo	true
+false	f**	foo	true
+false	f****	foo	true
+false	***f*	foo	true
+false	*f	foo	false
+false	*o	foo	true
+false	*foo*	foo	true
+false	f*o	foo	true
+false	f*o	fabcdefghijklmnopqrstuvwxyzo	true
+false	f*o	abcdefghijklmnopqrstuvwxyzo	false
+false	f*o	fabcdefghijklmnpqrstuvwxyzo	true
+false	f*o	fabcdefghijklmnopqrstuvwxyz	false
+false	f*o	fabcdefghijklmnoooo	true
+false	f*o	gabcdefghijklmnoooo	false
+
+false	*ob*a*r*	foobar	true
+false	*ob*a*r*	oobar	true
+false	*ob*a*r*	obar	true
+false	*barz	abarabarabarz	true
+false	*barz	abarabarzbarz	true
+false	*ab	aaaaaaabababab	true
+false	foo\*	foo*	true
+false	foo\*	foobar	false
+false	foo\\*	foo*	false
+
+# Skip for StringMatcher: even number of backslashes followed by * at the end of the pattern
+#false	foo\\*	foo\*	true
+#false	foo\\*	foo\a	true
+#false	foo\\*	foo\\*	true
+#false	foo\\*	foo\\a	true
+false	foo\\*	foo\	true
+
+false	foo\?	foo?	true
+false	foo\?	foop	false
+false	foo\\?	foo\a	true
+false	foo\\?	foo\	false
+false	foo\\?	foo\\a	false
+false	foo\*bar	foobar	false
+false	foo*bar	foobar	true
+false	foo\\bar	foo\bar	true
+false	foo\\bar	foo\\bar	false
+
+# Backslash is taken literally if not followed by *, ?, or \
+false	foo\bar	foo\bar	true
+false	foo\bar	foobar	false
+
+false	foo/bar	foo/bar	true
+false	foo/*	foo/bar	true
+false	foo/*	foo/bar/baz	true
+false	foo*	foo/bar/baz	true
+false	foo/*arr	foo/baz/arr	true
+false	foo/*z	foo/baz/arr	false
+
+false	t/n	t/n	true
+false	t*n	t/n	true
+false	t?n	t/n	true
+false	*l?	ball	true
+false	*a?	ball	false
+false	*a?l	ball	true
+false	*a??	ball	true
+false	foo*bar	foo/baz/bar	true
+false	foo**bar	foo/baz/bar	true
+
+# Trailing backslash
+false	foo\	foo	false
+false	foo\	foo\	true
+false	foo\\	foo	false
+false	foo\\	foo\	true
+false	foo\\	foo\\	false
+false	fo?\\	foo\	true
+false	fo?\	foo\	true
+false	fo?\	foo	false
+
+false	b*a	aaabbb	false
+false	*ba*	aabcaa	false
+
+false	-*-*-*-*-*-*-12-*-*-*-m-*-*-*	-adobe-courier-bold-o-normal--12-120-75-75-m-70-iso8859-1	true
+false	-*-*-*-*-*-*-12-*-*-*-m-*-*-*	-adobe-courier-bold-o-normal--12-120-75-75-X-70-iso8859-1	false
+false	-*-*-*-*-*-*-12-*-*-*-m-*-*-*	-adobe-courier-bold-o-normal--12-120-75-75-/-70-iso8859-1	false
+false	-*-*-*-*-*-*-12-*-*-*-m-*-*-*	-adobe-courier-bold-o-normal--12-120-75-75-X-70-iso8859-m---	true
+false	-*-*-*-*-*-*-12-*-*-*-m-*-*-*	-adobe-courier-bold-o-normal--12-120-75-75-X-70-iso8859-m--	false
+false	*a*b*g*n*t	abcd/abcdefg/abcdefghijk/abcdefghijklmnop.txt	true
+false	*a*b*g*n*t	abcd/abcdefg/abcdefghijk/abcdefghijklmnop.txtz	false
+false	*/*a*b*g*n*t	abcd/abcdefg/abcdefghijk/abcdefghijklmnop.txt	true
+false	*/*a*b*g*n*t	abcd/abcdefg/abcdefghijk/abcdefghijklmnop.txtz	false
+false	**/*a*b*g*n*t	abcd/abcdefg/abcdefghijk/abcdefghijklmnop.txt	true
+false	**/*a*b*g*n*t	abcd/abcdefg/abcdefghijk/abcdefghijklmnop.txtz	false
+false	*/*/*	foo	false
+false	*/*/*	foo/bar	false
+false	*/*/*	foo/bba/arr	true
+false	*/*/*	foo/bb/aa/rr	true
+false	*X*i	abcXdefXghi	true
+false	*X*i	ab/cXd/efXg/hi	true
+false	*/*X*/*/*i	ab/cXd/efXg/hi	true
+false	*Xg*i	ab/cXd/efXg/hi	true
+
+# Match empty text
+false	*	<empty>	true
+false	**	<empty>	true
+false	?	<empty>	false
+false	?*	<empty>	false
+false	*?	<empty>	false
+false	x	<empty>	false
+
+# Empty patterns
+false			true
+false	<empty>		true
+false	<empty>	<empty>	true
+false	<empty>	x	false
+false	<empty>	xxx	false
+
+false	*	a	true
+false	**	a	true
+
+# Ignoring case
+true	f	f	true
+true	F	f	true
+true	f	F	true
+true	F	F	true
+true	FooBar	foobar	true
+true	FooBar	fOObAR	true
+true	FooBar	FooBar	true
+true	FooBar	Foo	false
+true	F*b?R	foobar	true
+true	F*b?R	FOOBAR	true
+true	F*b?R	foOBar	true
+true	F*b?R	foobr	false
+true	?ob*R	fobar	true
+true	?ob*R	fobaar	true
+true	?ob*R	FOBAR	true
+true	?ob*R	FOBAAR	true
+true	?ob*R	fOBar	true
+true	?ob*R	fobr	true
+true	?ob*R	fobarz	false
+true	?ob*R	fobarzr	true

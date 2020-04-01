@@ -1,0 +1,57 @@
+
+# Items on a line a separated by TABs. Empty pattern or text can be written as <empty>.
+# Empty lines, comment lines, and leading and trailing whitespace is ignored.
+
+# Expected start -1 signifies "no match expected".
+
+# Pattern Text From To Expected_Start Expected_End
+
+# Shortest match! (Longest match would be the whole string.)
+ab*ab	abXXXabYYYab	0	12	0	7
+
+# ? wildcard matches
+a?b	..ab...ayb...	0	13	7	10
+
+# Empty pattern
+<empty>	foobar	0	6	0	0
+<empty>	foobar	2	5	2	2
+
+# Only stars
+*	foobar	1	5	1	5
+**	foobar	0	3	0	3
+
+# Sub-range
+ab*ab	abXXXabYYYab	3	12	5	12
+ab*ab	abXXXabYYYab	5	12	5	12
+ab*ab	abXXXabYYYab	6	12	-1	-1
+
+# Empty text
+ab	<empty>	0	0	-1	-1
+*	<empty>	0	0	-1	-1
+
+# Start >= end
+ab*ab	abXXXabYYYab	9	5	-1	-1
+ab*ab	abXXXabYYYab	9	9	-1	-1
+
+# Leading and trailing stars are ignored
+*ab*	..ab...ayb...	0	13	2	4
+*??*	abcdef	0	6	0	2
+
+# Case insensitivity
+a?b	..ab..Ayb..ayb..AYB..	0	21	6	9
+a?b	..ab..Ayb..ayb..AYB..	7	21	11	14
+a?b	..ab..Ayb..ayb..AYB..	12	21	16	19
+aYB	..ab..Ayb..ayb..AYB..	0	21	6	9
+AYb	..ab..Ayb..ayb..AYB..	7	21	11	14
+aYb	..ab..Ayb..ayb..AYB..	12	21	16	19
+
+# No match
+ab*?cd	..abcdfoobar	0	12	-1	-1
+a*bc*d	.abeced	0	7	-1	-1
+ab*cd	abfoocd	0	6	-1	-1
+ab*cd	abfoocd	0	7	0	7
+a*bc*d	afoobcbard	0	5	-1	-1
+a*bc*d	afoobcbdrd	0	7	-1	-1
+a*bc*d	afoobcbdrd	0	10	0	8
+
+

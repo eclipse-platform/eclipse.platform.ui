@@ -1,0 +1,55 @@
+
+# Items on a line a separated by TABs. Empty pattern or text can be written as <empty>.
+# Empty lines, comment lines, and leading and trailing whitespace is ignored.
+#
+# Tests with IgnoreCase = false are run both with false and true. Tests with IgnoreCase = true are run only case-insensitively.
+
+# IgnoreCase? Pattern Text Expected
+
+false	foo	foo	true
+false	foo	fop	false
+false	foo	fo	false
+false	fo	foo	false
+false	???	foo	false
+false	???	???	true
+false	f?o	foo	false
+false	f?o	fo	false
+false	f?o	f?o	true
+false	*	foo	false
+false	*	f	false
+false	*	*	true
+false	?	f	false
+false	?	?	true
+false	foo\bar	foo\bar	true
+false	foo\\bar	foo\bar	false
+false	foo\\bar	foo\\bar	true
+false	foo*	foobar	false
+false	foo*	foo	false
+false	foo*	foo*	true
+false	foo*	foox	false
+false	foo\*	foo*	false
+false	foo\*	foo\*	true
+
+# Trailing backslash
+false	foo\	foo	false
+false	foo\	foo\	true
+false	foo\\	foo	false
+false	foo\\	foo\	false
+false	foo\\	foo\\	true
+
+# Empty patterns
+false			true
+false	<empty>		true
+false	<empty>	<empty>	true
+false	<empty>	x	false
+false	<empty>	xxx	false
+
+# Ignoring case
+true	f	f	true
+true	F	f	true
+true	f	F	true
+true	F	F	true
+true	FooBar	foobar	true
+true	FooBar	fOObAR	true
+true	FooBar	FooBar	true
+true	FooBar	Foo	false
