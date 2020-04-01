@@ -14,7 +14,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.swt.internal.copy;
 
-import org.eclipse.e4.ui.dialogs.filteredtree.StringMatcher;
+import org.eclipse.core.text.StringMatcher;
 import org.eclipse.jface.util.Util;
 
 /**

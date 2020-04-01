@@ -18,7 +18,7 @@ import org.eclipse.core.filesystem.IFileInfo;
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.filtermatchers.AbstractFileInfoMatcher;
-import org.eclipse.ui.internal.ide.StringMatcher;
+import org.eclipse.core.text.StringMatcher;
 
 /**
  * A file info filter that uses a simple string matcher to match on file name.
