@@ -36,6 +36,8 @@ public class RegistrationMacOsX implements IOperatingSystemRegistration {
 	private IFileProvider fileProvider;
 	private IProcessExecutor processExecutor;
 
+	private String lsRegisterOutput = null;
+
 	public RegistrationMacOsX() {
 		this(new FileProvider(), new ProcessExecutor());
 	}
@@ -58,13 +60,11 @@ public class RegistrationMacOsX implements IOperatingSystemRegistration {
 	public List<ISchemeInformation> getSchemesInformation(Collection<IScheme> schemes) throws Exception {
 		List<ISchemeInformation> returnList = new ArrayList<>();
 
-		String lsRegisterOutput = processExecutor.execute(LSREGISTER, DUMP);
-
 		for (IScheme scheme : schemes) {
 
 			SchemeInformation schemeInfo = new SchemeInformation(scheme.getName(), scheme.getDescription());
 
-			String location = determineHandlerLocation(lsRegisterOutput, scheme.getName());
+			String location = determineHandlerLocation(getLsRegisterOutput(), scheme.getName());
 			if (location != "" && getEclipseLauncher().startsWith(location)) { //$NON-NLS-1$
 				schemeInfo.setHandled(true);
 			}
@@ -73,6 +73,14 @@ public class RegistrationMacOsX implements IOperatingSystemRegistration {
 			returnList.add(schemeInfo);
 		}
 		return returnList;
+	}
+
+	private String getLsRegisterOutput() throws Exception {
+		if (this.lsRegisterOutput != null) {
+			return this.lsRegisterOutput;
+		}
+		this.lsRegisterOutput = processExecutor.execute(LSREGISTER, DUMP);
+		return this.lsRegisterOutput;
 	}
 
 	private String determineHandlerLocation(String lsRegisterDump, String scheme) throws Exception {
