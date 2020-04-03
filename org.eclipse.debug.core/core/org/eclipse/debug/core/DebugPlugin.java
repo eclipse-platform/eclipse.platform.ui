@@ -1653,6 +1653,8 @@ public class DebugPlugin extends Plugin {
 					} else {
 						buf.append('\\');
 					}
+				} else if (isWin32) {
+					backslashes = 0;
 				}
 				buf.append(ch);
 			}

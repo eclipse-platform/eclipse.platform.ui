@@ -204,6 +204,19 @@ public class ArgumentParsingTests extends AbstractDebugTest {
 	}
 
 	@Test
+	public void testRenderWindowsBackslash() throws Exception {
+		String[] arguments = {
+			"-Dfoo=\"abc\\def\\ghi\""
+		};
+		String rendered = DebugPlugin.renderArguments(arguments, null);
+		if (Platform.getOS().equals(Constants.OS_WIN32)) {
+			assertEquals("unexpected renderArguments result;", "-Dfoo=\\\"abc\\def\\ghi\\\"", rendered); //$NON-NLS-1$ //$NON-NLS-2$
+		} else {
+			assertEquals("unexpected renderArguments result;", "-Dfoo=\\\"abc\\\\def\\\\ghi\\\"", rendered); //$NON-NLS-1$ //$NON-NLS-2$
+		}
+	}
+
+	@Test
 	public void testEscapeDoubleQuote1() throws Exception {
 		execute1Arg("\\\"", "\"", "\\\""); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	}
