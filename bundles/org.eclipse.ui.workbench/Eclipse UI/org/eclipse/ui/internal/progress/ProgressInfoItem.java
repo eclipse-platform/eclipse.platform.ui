@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.NotEnabledException;
 import org.eclipse.core.commands.NotHandledException;
@@ -468,7 +469,8 @@ public class ProgressInfoItem extends Composite {
 					// There may be no task so we don't want to create it
 					// until we know for sure
 					for (JobInfo jobInfo : infos) {
-						if (jobInfo.hasTaskInfo() && jobInfo.getTaskInfo().totalWork == IProgressMonitor.UNKNOWN) {
+						Optional<TaskInfo> optionalInfo = jobInfo.getTaskInfo();
+						if (optionalInfo.isPresent() && optionalInfo.get().totalWork == IProgressMonitor.UNKNOWN) {
 							createProgressBar(SWT.INDETERMINATE);
 							break;
 						}
@@ -498,9 +500,9 @@ public class ProgressInfoItem extends Composite {
 
 		for (int i = 0; i < infos.length; i++) {
 			JobInfo jobInfo = infos[i];
-			TaskInfo taskInfo = jobInfo.getTaskInfo();
-
-			if (taskInfo != null) {
+			Optional<TaskInfo> optionalInfo = jobInfo.getTaskInfo();
+			if (optionalInfo.isPresent()) {
+				TaskInfo taskInfo = optionalInfo.get();
 
 				String taskString = taskInfo.getTaskName();
 				String subTaskString = null;
@@ -615,9 +617,9 @@ public class ProgressInfoItem extends Composite {
 		if (info.hasChildren()) {
 			Object[] roots = ((GroupInfo) info).getChildren();
 			if (roots.length == 1 && roots[0] instanceof JobTreeElement) {
-				TaskInfo ti = ((JobInfo) roots[0]).getTaskInfo();
-				if (ti != null) {
-					return ti.getPercentDone();
+				Optional<TaskInfo> optionalInfo = ((JobInfo) roots[0]).getTaskInfo();
+				if (optionalInfo.isPresent()) {
+					return optionalInfo.get().getPercentDone();
 				}
 			}
 			return ((GroupInfo) info).getPercentDone();

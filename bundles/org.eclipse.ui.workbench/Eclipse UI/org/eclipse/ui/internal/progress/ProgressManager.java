@@ -34,6 +34,7 @@ import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
@@ -236,8 +237,9 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 			Set<IProgressMonitorWithBlocking> newSet = new LinkedHashSet<>(monitors);
 			newSet.add(monitor);
 			this.monitors = Collections.unmodifiableSet(newSet);
-			TaskInfo currentTask = info.getTaskInfo();
-			if (currentTask != null) {
+			Optional<TaskInfo> optionalInfo = info.getTaskInfo();
+			if (optionalInfo.isPresent()) {
+				TaskInfo currentTask = optionalInfo.get();
 				monitor.beginTask(currentTaskName, currentTask.totalWork);
 				monitor.internalWorked(currentTask.preWork);
 			}
@@ -271,7 +273,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 
 		@Override
 		public void internalWorked(double work) {
-			if (info.hasTaskInfo()) {
+			if (info.getTaskInfo().isPresent()) {
 				info.addWork(work);
 				refreshJobInfo(info);
 			}
@@ -295,7 +297,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 
 		@Override
 		public void setTaskName(String taskName) {
-			if (info.hasTaskInfo()) {
+			if (info.getTaskInfo().isPresent()) {
 				info.setTaskName(taskName);
 			} else {
 				beginTask(taskName, 100);

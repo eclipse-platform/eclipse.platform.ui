@@ -15,6 +15,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.progress;
 
+import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -38,7 +39,7 @@ public class JobInfo extends JobTreeElement {
 
 	private GroupInfo parent;
 
-	private TaskInfo taskInfo;
+	private volatile Optional<TaskInfo> taskInfo;
 
 	private ProgressManager progressManager;
 
@@ -56,6 +57,7 @@ public class JobInfo extends JobTreeElement {
 		this.job = enclosingJob;
 		this.progressManager = ProgressManager.getInstance();
 		this.finishedJobs = FinishedJobs.getInstance();
+		this.taskInfo = Optional.empty();
 	}
 
 	/**
@@ -73,9 +75,11 @@ public class JobInfo extends JobTreeElement {
 	 * @param workIncrement
 	 */
 	void addWork(double workIncrement) {
-		if (taskInfo == null) {
+		Optional<TaskInfo> optionalInfo = getTaskInfo();
+		if (!optionalInfo.isPresent()) {
 			return;
 		}
+		TaskInfo taskInfo = optionalInfo.get();
 		if (parent == null || ticks < 1) {
 			taskInfo.addWork(workIncrement);
 		} else {
@@ -90,7 +94,7 @@ public class JobInfo extends JobTreeElement {
 	 * @param work
 	 */
 	void beginTask(String taskName, int work) {
-		taskInfo = new TaskInfo(this, taskName, work);
+		taskInfo = Optional.of(new TaskInfo(this, taskName, work));
 	}
 
 	@Override
@@ -109,8 +113,8 @@ public class JobInfo extends JobTreeElement {
 	}
 
 	void clearTaskInfo() {
-		finishedJobs.remove(taskInfo);
-		taskInfo = null;
+		taskInfo.ifPresent(finishedJobs::remove);
+		taskInfo = Optional.empty();
 	}
 
 	/**
@@ -212,9 +216,9 @@ public class JobInfo extends JobTreeElement {
 
 	@Override
 	String getCondensedDisplayString() {
-		TaskInfo info = getTaskInfo();
-		if (info != null) {
-			return info.getDisplayStringWithoutTask(true);
+		Optional<TaskInfo> optionalInfo = getTaskInfo();
+		if (optionalInfo.isPresent()) {
+			return optionalInfo.get().getDisplayStringWithoutTask(true);
 		}
 		return getJob().getName();
 	}
@@ -272,11 +276,11 @@ public class JobInfo extends JobTreeElement {
 					(new Object[] { getJob().getName(), blockedStatusLocal.getMessage() }));
 		}
 		if (getJob().getState() == Job.RUNNING) {
-			TaskInfo info = getTaskInfo();
-			if (info == null) {
+			Optional<TaskInfo> optionalInfo = getTaskInfo();
+			if (!optionalInfo.isPresent()) {
 				return getJob().getName();
 			}
-			return info.getDisplayString(showProgress);
+			return optionalInfo.get().getDisplayString(showProgress);
 		}
 		if (getJob().getState() == Job.SLEEPING) {
 			return NLS.bind(ProgressMessages.JobInfo_Sleeping, (new Object[] { getJob().getName() }));
@@ -318,8 +322,9 @@ public class JobInfo extends JobTreeElement {
 	 * @return int
 	 */
 	int getPercentDone() {
-		TaskInfo info = getTaskInfo();
-		if (info != null) {
+		Optional<TaskInfo> optionalInfo = getTaskInfo();
+		if (optionalInfo.isPresent()) {
+			TaskInfo info = optionalInfo.get();
 			if (info.totalWork == IProgressMonitor.UNKNOWN) {
 				return IProgressMonitor.UNKNOWN;
 			}
@@ -332,24 +337,15 @@ public class JobInfo extends JobTreeElement {
 	}
 
 	/**
-	 * @return the taskInfo.
+	 * @return the taskInfo, never null
 	 */
-	TaskInfo getTaskInfo() {
+	Optional<TaskInfo> getTaskInfo() {
 		return taskInfo;
 	}
 
 	@Override
 	boolean hasChildren() {
 		return !children.isEmpty();
-	}
-
-	/**
-	 * Returns whether or not there is a task.
-	 *
-	 * @return boolean
-	 */
-	boolean hasTaskInfo() {
-		return taskInfo != null;
 	}
 
 	@Override
@@ -410,7 +406,7 @@ public class JobInfo extends JobTreeElement {
 	 * @param name
 	 */
 	void setTaskName(String name) {
-		taskInfo.setTaskName(name);
+		taskInfo.ifPresent(info -> info.setTaskName(name));
 	}
 
 	/**

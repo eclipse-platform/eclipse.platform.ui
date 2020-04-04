@@ -18,6 +18,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import org.eclipse.core.commands.common.EventManager;
 import org.eclipse.core.runtime.IStatus;
@@ -263,8 +264,9 @@ public final class FinishedJobs extends EventManager {
 
 	private void checkTasks(JobInfo info) {
 		if (keep(info)) {
-			TaskInfo tinfo = info.getTaskInfo();
-			if (tinfo != null) {
+			Optional<TaskInfo> optional = info.getTaskInfo();
+			if (optional.isPresent()) {
+				TaskInfo tinfo = optional.get();
 				JobTreeElement[] toBeRemoved = null;
 				boolean fire = false;
 				JobInfo element = tinfo.getParent();

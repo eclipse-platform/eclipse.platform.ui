@@ -20,6 +20,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
@@ -97,8 +98,9 @@ public class TaskBarProgressManager {
 						JobInfo jobInfo = jobInfoMap.get(job);
 						if (job != null && jobInfo != null) {
 							int percentDone = getPercentDone(jobInfo);
-							if (percentDone == IProgressMonitor.UNKNOWN || (jobInfo.hasTaskInfo()
-									&& jobInfo.getTaskInfo().totalWork == IProgressMonitor.UNKNOWN)) {
+							Optional<TaskInfo> optionalInfo = jobInfo.getTaskInfo();
+							if (percentDone == IProgressMonitor.UNKNOWN
+									|| (optionalInfo.isPresent() && optionalInfo.get().totalWork == IProgressMonitor.UNKNOWN)) {
 								setProgressState(SWT.INDETERMINATE);
 							} else {
 								setProgressState(SWT.NORMAL);
@@ -139,9 +141,9 @@ public class TaskBarProgressManager {
 				if (info.hasChildren()) {
 					Object[] roots = ((GroupInfo) info).getChildren();
 					if (roots.length == 1 && roots[0] instanceof JobTreeElement) {
-						TaskInfo ti = ((JobInfo) roots[0]).getTaskInfo();
-						if (ti != null) {
-							return ti.getPercentDone();
+						Optional<TaskInfo> optionalInfo = ((JobInfo) roots[0]).getTaskInfo();
+						if (optionalInfo.isPresent()) {
+							return optionalInfo.get().getPercentDone();
 						}
 					}
 					return ((GroupInfo) info).getPercentDone();
