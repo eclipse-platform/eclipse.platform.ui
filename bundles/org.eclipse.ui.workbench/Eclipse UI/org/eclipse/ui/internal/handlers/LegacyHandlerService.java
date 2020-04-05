@@ -291,7 +291,7 @@ public class LegacyHandlerService implements IHandlerService {
 
 	@Override
 	public IHandlerActivation activateHandler(String commandId, IHandler handler) {
-		return activateHandler(commandId, handler, defaultExpression, false);
+		return activateHandler(commandId, handler, null, false);
 	}
 
 	@Override
