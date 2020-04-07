@@ -40,8 +40,6 @@ import org.eclipse.jface.bindings.keys.KeyStroke;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.resource.DeviceResourceException;
@@ -1057,8 +1055,9 @@ public class NewKeysPreferencePage extends PreferencePage implements IWorkbenchP
 
 		final Group group = new Group(parent, SWT.NONE);
 		group.setText(NewKeysPreferenceMessages.ShowCommandKeysGroup_Title);
-		GridDataFactory.fillDefaults().applyTo(group);
-		GridLayoutFactory.fillDefaults().numColumns(1).applyTo(group);
+		group.setLayout(new GridLayout(1, false));
+		group.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+
 		fShowCommandKey = new Button(group, SWT.CHECK);
 		fShowCommandKey.setText(NewKeysPreferenceMessages.ShowCommandKeysForKeyboard_Text);
 		fShowCommandKey.setSelection(getPreferenceStore().getBoolean(IPreferenceConstants.SHOW_KEYS_ENABLED_FOR_KEYBOARD));
