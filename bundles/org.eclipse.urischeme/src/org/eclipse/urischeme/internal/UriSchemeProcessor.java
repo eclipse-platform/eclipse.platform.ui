@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.urischeme.internal;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,14 +45,29 @@ public class UriSchemeProcessor implements IUriSchemeProcessor {
 	public void handleUri(String uriScheme, String uri) throws CoreException {
 		IUriSchemeHandler handler = null;
 
+		handler = getHandler(uriScheme);
+		if (handler != null) {
+			handler.handle(uri);
+		}
+	}
+
+	private IUriSchemeHandler getHandler(String uriScheme) throws CoreException {
+		IUriSchemeHandler handler;
 		if (createdHandlers.containsKey(uriScheme)) {
 			handler = createdHandlers.get(uriScheme);
 		} else {
 			handler = reader.getHandlerFromExtensionPoint(uriScheme);
 			createdHandlers.put(uriScheme, handler);
 		}
-		if (handler != null) {
-			handler.handle(uri);
+		return handler;
+	}
+
+	@Override
+	public boolean canHandle(URI uri) {
+		try {
+			return getHandler(uri.getScheme()) != null;
+		} catch (CoreException e) {
+			return false;
 		}
 	}
 

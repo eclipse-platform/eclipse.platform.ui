@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.urischeme;
 
+import java.net.URI;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.urischeme.internal.UriSchemeProcessor;
 
@@ -35,4 +37,24 @@ public interface IUriSchemeProcessor {
 	 * @throws CoreException if URI handling failed; implementation dependent
 	 */
 	void handleUri(String uriScheme, String uri) throws CoreException;
+
+	/**
+	 * Handle an URI with the given uriScheme
+	 *
+	 * @param uri the complete URI
+	 * @throws CoreException if URI handling failed; implementation dependent
+	 * @since 1.1
+	 */
+	default void handleUri(URI uri) throws CoreException {
+		handleUri(uri.getScheme(), uri.toString());
+	}
+
+	/**
+	 * Return whether a handler can process the given URI, according to its scheme.
+	 *
+	 * @param uri
+	 * @return whether a handler can process the given URI, according to its scheme.
+	 * @since 1.1
+	 */
+	boolean canHandle(URI uri);
 }

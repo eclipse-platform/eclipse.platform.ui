@@ -19,6 +19,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.io.File;
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.ClosedWatchServiceException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
@@ -29,6 +30,7 @@ import java.nio.file.WatchService;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -60,6 +62,7 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.urischeme.IUriSchemeProcessor;
 
 /**
  * A Web browser widget. It extends the Eclipse SWT Browser widget by adding an
@@ -233,6 +236,20 @@ public class BrowserViewer extends Composite {
 		//if (WebBrowserUtil.canUseInternalWebBrowser())
 		try {
 			this.browser = new Browser(this, SWT.NONE);
+			this.browser.addLocationListener(LocationListener.changingAdapter(event -> {
+					URI uri = URI.create(event.location);
+					if (!(uri.getScheme().equals("http") || uri.getScheme().equals("https") //$NON-NLS-1$ //$NON-NLS-2$
+							|| uri.getScheme().equals("file"))) //$NON-NLS-1$
+						try {
+							if (IUriSchemeProcessor.INSTANCE.canHandle(uri)) {
+								IUriSchemeProcessor.INSTANCE.handleUri(uri);
+								event.doit = false;
+							}
+						} catch (CoreException e) {
+							WebBrowserUIPlugin.logError(e.getMessage(), e);
+						}
+
+				}));
 		}
 		catch (SWTError e) {
 			if (e.code!=SWT.ERROR_NO_HANDLES) {
@@ -688,8 +705,9 @@ public class BrowserViewer extends Composite {
 		else if ("wtp".equalsIgnoreCase(url)) //$NON-NLS-1$
 			url = "http://www.eclipse.org/webtools/"; //$NON-NLS-1$
 
-		if (browse)
+		if (browse) {
 			navigate(url);
+		}
 
 		addToHistory(url);
 		updateHistory();
