@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.help.internal.index;
 
+import java.text.Collator;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -36,7 +37,6 @@ import org.eclipse.help.internal.dynamic.IncludeHandler;
 import org.eclipse.help.internal.dynamic.ProcessorHandler;
 import org.eclipse.help.internal.toc.HrefUtil;
 
-import com.ibm.icu.text.Collator;
 
 /*
  * Assembles individual keyword index contributions into a complete, fully

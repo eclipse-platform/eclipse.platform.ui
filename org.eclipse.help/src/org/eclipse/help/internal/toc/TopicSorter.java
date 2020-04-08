@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.help.internal.toc;
 
+import java.text.Collator;
 import java.util.Arrays;
 import java.util.Comparator;
 
@@ -20,7 +21,6 @@ import org.eclipse.help.ITopic;
 import org.eclipse.help.internal.Topic;
 import org.eclipse.help.internal.UAElement;
 
-import com.ibm.icu.text.Collator;
 
 /*
  * Handles the "sort" attribute on topics and tocs

@@ -14,12 +14,13 @@
 
 package org.eclipse.help.internal.index;
 
+import java.text.Collator;
+
 import org.eclipse.help.IIndexSee;
 import org.eclipse.help.IIndexSubpath;
 import org.eclipse.help.internal.UAElement;
 import org.w3c.dom.Element;
 
-import com.ibm.icu.text.Collator;
 
 public class IndexSee extends UAElement implements IIndexSee, Comparable<Object> {
 
