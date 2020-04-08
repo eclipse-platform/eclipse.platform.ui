@@ -14,6 +14,7 @@
 package org.eclipse.ui.internal.console;
 
 import java.lang.reflect.Field;
+import java.text.MessageFormat;
 
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
@@ -30,7 +31,6 @@ import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IPatternMatchListenerDelegate;
 
-import com.ibm.icu.text.MessageFormat;
 
 public class PatternMatchListenerExtension implements IPluginContribution {
 

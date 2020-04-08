@@ -14,6 +14,8 @@
 package org.eclipse.ui.console.actions;
 
 
+import java.text.MessageFormat;
+
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.text.BadLocationException;
@@ -25,7 +27,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.internal.console.ConsoleMessages;
 
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Action to position a text viewer to a specific line.
