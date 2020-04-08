@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 Angelo Zerr and others.
+ * Copyright (c) 2008, 2020 Angelo Zerr and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -527,4 +527,13 @@ public interface CSSEngine {
 	 * Reapply the styles to the objects managed by this engine.
 	 */
 	void reapply();
+
+	/**
+	 * Handle disposal of a styled widget.
+	 *
+	 * @param widget The widget that gets disposed.
+	 */
+	default void handleWidgetDisposed(Object widget) {
+		// empty default implementation
+	}
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2019 Angelo Zerr and others.
+ * Copyright (c) 2008, 2020 Angelo Zerr and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -907,7 +907,8 @@ public abstract class AbstractCSSEngine implements CSSEngine {
 	 * from the element contexts map and the widgets map. Overriding
 	 * classes must call the super implementation.
 	 */
-	protected void handleWidgetDisposed(Object widget) {
+	@Override
+	public void handleWidgetDisposed(Object widget) {
 		if (elementsContext != null) {
 			elementsContext.remove(widget);
 		}
