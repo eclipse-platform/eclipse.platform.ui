@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ltk.internal.core.refactoring;
 
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -21,8 +22,6 @@ import java.util.List;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.FactoryConfigurationError;
 import javax.xml.parsers.ParserConfigurationException;
-
-import com.ibm.icu.text.Collator;
 
 import org.w3c.dom.Attr;
 import org.w3c.dom.DOMException;

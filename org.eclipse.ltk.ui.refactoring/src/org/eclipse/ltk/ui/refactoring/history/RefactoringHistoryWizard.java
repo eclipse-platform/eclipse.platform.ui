@@ -16,10 +16,9 @@ package org.eclipse.ltk.ui.refactoring.history;
 
 import java.lang.reflect.InvocationTargetException;
 import java.text.ChoiceFormat;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-
-import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;

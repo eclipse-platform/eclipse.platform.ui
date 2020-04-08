@@ -13,11 +13,10 @@
  *******************************************************************************/
 package org.eclipse.ltk.ui.refactoring.history;
 
+import java.text.DateFormat;
 import java.text.Format;
+import java.text.SimpleDateFormat;
 import java.util.Date;
-
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.SimpleDateFormat;
 
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
