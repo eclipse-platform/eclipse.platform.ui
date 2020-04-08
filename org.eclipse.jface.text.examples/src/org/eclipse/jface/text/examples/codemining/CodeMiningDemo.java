@@ -56,7 +56,7 @@ public class CodeMiningDemo {
 		addAnnotationPainter(sourceViewer);
 		// Initialize codemining providers
 		((ISourceViewerExtension5) sourceViewer).setCodeMiningProviders(new ICodeMiningProvider[] {
-				new ClassReferenceCodeMiningProvider(), new ClassImplementationsCodeMiningProvider() });
+				new ClassReferenceCodeMiningProvider(), new ClassImplementationsCodeMiningProvider(), new ToEchoWithHeaderAndInlineCodeMiningProvider("class") });
 		// Execute codemining in a reconciler
 		MonoReconciler reconciler = new MonoReconciler(new IReconcilingStrategy() {
 

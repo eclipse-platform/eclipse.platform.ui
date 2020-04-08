@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: CodeMinig Examples
 Bundle-SymbolicName: org.eclipse.jface.text.examples
-Bundle-Version: 1.0.100.qualifier
+Bundle-Version: 1.0.200.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Require-Bundle: org.eclipse.jface.text,
  org.eclipse.core.runtime,

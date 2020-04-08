@@ -255,7 +255,8 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 			Rectangle annotationBounds= new Rectangle(charBounds.x + redrawnCharacterWidth, charBounds.y, annotation.getWidth(), charBounds.height);
 
 			// When line text has line header annotation, there is a space on the top, adjust the y by using char height
-			annotationBounds.y+= charBounds.height - textWidget.getLineHeight();
+			int verticalDrawingOffset= charBounds.height - textWidget.getLineHeight();
+			annotationBounds.y+= verticalDrawingOffset;
 
 			// Draw the line content annotation
 			annotation.setLocation(annotationBounds.x, annotationBounds.y);
@@ -300,7 +301,7 @@ class InlinedAnnotationDrawingStrategy implements IDrawingStrategy {
 					gc.setForeground(textWidget.getSelectionForeground());
 					gc.setBackground(textWidget.getSelectionBackground());
 				}
-				gc.drawString(Character.toString(hostCharacter), charBounds.x, charBounds.y, true);
+				gc.drawString(Character.toString(hostCharacter), charBounds.x, charBounds.y + verticalDrawingOffset, true);
 				// END TO REMOVE
 			} else if (style != null && style.metrics != null && style.metrics.width != 0) {
 				// line content annotation had an , reset it
