@@ -14,10 +14,12 @@
 package org.eclipse.ui.tests.navigator.resources;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.internal.resources.Marker;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
@@ -27,8 +29,10 @@ import org.eclipse.core.resources.IWorkspaceRoot;
 import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.NullProgressMonitor;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.internal.navigator.resources.nested.NestedProjectManager;
 import org.eclipse.ui.internal.navigator.resources.nested.NestedProjectsLabelProvider;
+import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
@@ -39,6 +43,7 @@ import org.junit.Test;
  */
 public class NestedResourcesTests {
 
+	private static final int TIMEOUT = 2000;
 	private Set<IProject> testProjects = new HashSet<>();
 
 	@Test
@@ -155,35 +160,42 @@ public class NestedResourcesTests {
 			IMarker marker = firstChildProject.createMarker(IMarker.PROBLEM);
 			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_WARNING);
 		}, monitor);
-		assertEquals(IMarker.SEVERITY_WARNING, labelProvider.getHighestProblemSeverity(parentProject));
+		assertTrue(DisplayHelper.waitForCondition(Display.getDefault(), TIMEOUT,
+				() -> Marker.SEVERITY_WARNING == labelProvider.getHighestProblemSeverity(parentProject)));
 		//
 		root.getWorkspace().run(aMonitor -> {
 			IMarker marker = secondChildProject.createMarker(IMarker.PROBLEM);
 			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
 		}, monitor);
-		assertEquals(IMarker.SEVERITY_ERROR, labelProvider.getHighestProblemSeverity(parentProject));
+		assertTrue(DisplayHelper.waitForCondition(Display.getDefault(), TIMEOUT,
+				() -> IMarker.SEVERITY_ERROR == labelProvider.getHighestProblemSeverity(parentProject)));
 		//
 		for (IMarker marker : secondChildProject.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE)) {
 			marker.delete();
 		}
-		assertEquals(IMarker.SEVERITY_WARNING, labelProvider.getHighestProblemSeverity(parentProject));
+		assertTrue(DisplayHelper.waitForCondition(Display.getDefault(), TIMEOUT,
+				() -> IMarker.SEVERITY_WARNING == labelProvider.getHighestProblemSeverity(parentProject)));
 		//
 		root.getWorkspace().run(aMonitor -> {
 			IMarker marker = secondChildProject.createMarker(IMarker.PROBLEM);
 			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
 		}, monitor);
-		assertEquals(IMarker.SEVERITY_ERROR, labelProvider.getHighestProblemSeverity(parentProject));
+		assertTrue(DisplayHelper.waitForCondition(Display.getDefault(), TIMEOUT,
+				() -> IMarker.SEVERITY_ERROR == labelProvider.getHighestProblemSeverity(parentProject)));
 		secondChildProject.close(monitor);
-		assertEquals(IMarker.SEVERITY_WARNING, labelProvider.getHighestProblemSeverity(parentProject));
+		assertTrue(DisplayHelper.waitForCondition(Display.getDefault(), TIMEOUT,
+				() -> IMarker.SEVERITY_WARNING == labelProvider.getHighestProblemSeverity(parentProject)));
 		secondChildProject.open(monitor);
-		assertEquals(IMarker.SEVERITY_ERROR, labelProvider.getHighestProblemSeverity(parentProject));
+		assertTrue(DisplayHelper.waitForCondition(Display.getDefault(), TIMEOUT,
+				() -> IMarker.SEVERITY_ERROR == labelProvider.getHighestProblemSeverity(parentProject)));
 		//
 		root.getWorkspace().run(aMonitor -> {
 			IMarker marker = parentProject.createMarker(IMarker.PROBLEM);
 			marker.setAttribute(IMarker.SEVERITY, IMarker.SEVERITY_ERROR);
 			secondChildProject.findMarkers(IMarker.PROBLEM, true, IResource.DEPTH_INFINITE)[0].delete();
 		}, monitor);
-		assertEquals(IMarker.SEVERITY_ERROR, labelProvider.getHighestProblemSeverity(parentProject));
+		assertTrue(DisplayHelper.waitForCondition(Display.getDefault(), TIMEOUT,
+				() -> IMarker.SEVERITY_ERROR == labelProvider.getHighestProblemSeverity(parentProject)));
 	}
 
 	@After

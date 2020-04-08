@@ -61,7 +61,7 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 public class QuickAccessDialogTest {
 
-	private static final int TIMEOUT = 3000;
+	private static final int TIMEOUT = 5000;
 	// As defined in QuickAccessDialog and in SearchField
 	private static final int MAXIMUM_NUMBER_OF_ELEMENTS = 60;
 	private static final Predicate<Shell> isQuickAccessShell = shell -> shell.getText()
