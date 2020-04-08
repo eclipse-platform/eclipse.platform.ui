@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.launching.debug.model;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,8 +26,6 @@ import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.LineBreakpoint;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Ant line breakpoint

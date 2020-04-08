@@ -14,6 +14,7 @@
 package org.eclipse.ant.internal.launching.launchConfigurations;
 
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 
 import org.eclipse.ant.core.AntCorePlugin;
@@ -32,8 +33,6 @@ import org.eclipse.jdt.launching.IRuntimeClasspathEntry;
 import org.eclipse.jdt.launching.JavaRuntime;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A classpath entry that contains a set of archives for a particular ANT_HOME.
