@@ -14,6 +14,7 @@
 package org.eclipse.search.internal.ui.text;
 
 import java.net.URI;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -25,8 +26,6 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
-
-import com.ibm.icu.text.Collator;
 
 import org.eclipse.core.filesystem.URIUtil;
 

@@ -14,10 +14,9 @@
 
 package org.eclipse.jface.internal.text.link.contentassist;
 
+import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-
-import com.ibm.icu.text.MessageFormat;
 
 
 /**

@@ -13,9 +13,8 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui;
 
+import java.text.Collator;
 import java.util.Comparator;
-
-import com.ibm.icu.text.Collator;
 
 import org.eclipse.ui.IWorkingSet;
 

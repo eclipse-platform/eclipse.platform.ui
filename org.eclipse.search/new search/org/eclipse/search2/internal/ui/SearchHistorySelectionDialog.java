@@ -14,11 +14,10 @@
  *******************************************************************************/
 package org.eclipse.search2.internal.ui;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;

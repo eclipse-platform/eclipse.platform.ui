@@ -13,10 +13,9 @@
  *******************************************************************************/
 package org.eclipse.search.internal.ui;
 
+import java.text.Collator;
 import java.util.Arrays;
 import java.util.Comparator;
-
-import com.ibm.icu.text.Collator;
 
 import org.eclipse.swt.graphics.RGB;
 import org.eclipse.swt.widgets.Composite;

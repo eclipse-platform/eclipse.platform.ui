@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.editors.text;
 
-import com.ibm.icu.text.MessageFormat;
+import java.text.MessageFormat;
 
 /**
  * A number of routines used for string externalization.

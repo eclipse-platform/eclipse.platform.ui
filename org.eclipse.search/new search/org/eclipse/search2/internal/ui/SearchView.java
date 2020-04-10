@@ -17,10 +17,9 @@
  *******************************************************************************/
 package org.eclipse.search2.internal.ui;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map.Entry;
-
-import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.osgi.util.NLS;
 

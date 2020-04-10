@@ -17,8 +17,7 @@ package org.eclipse.jface.internal.text.link.contentassist;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.Reader;
-
-import com.ibm.icu.text.BreakIterator;
+import java.text.BreakIterator;
 
 import org.eclipse.swt.graphics.GC;
 

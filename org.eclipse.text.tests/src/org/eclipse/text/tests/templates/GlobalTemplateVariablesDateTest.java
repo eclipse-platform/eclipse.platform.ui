@@ -17,9 +17,9 @@ package org.eclipse.text.tests.templates;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.SimpleDateFormat;
-import com.ibm.icu.util.ULocale;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -82,9 +82,9 @@ public class GlobalTemplateVariablesDateTest  {
 
 		StringBuilder expected= new StringBuilder();
 		expected.append("From ");
-		expected.append(new SimpleDateFormat("dd MMM YYYY", ULocale.FRENCH).format(new java.util.Date()));
+		expected.append(new SimpleDateFormat("dd MMM YYYY", Locale.FRENCH).format(new java.util.Date()));
 		expected.append(" to ");
-		expected.append(new SimpleDateFormat("dd MMM YYYY", ULocale.FRENCH).format(new java.util.Date()));
+		expected.append(new SimpleDateFormat("dd MMM YYYY", Locale.FRENCH).format(new java.util.Date()));
 		assertBufferStringAndVariables(expected.toString(), buffer);
 	}
 
@@ -95,9 +95,9 @@ public class GlobalTemplateVariablesDateTest  {
 
 		StringBuilder expected= new StringBuilder();
 		expected.append("France ");
-		expected.append(new SimpleDateFormat("EEEE dd MMMM YYYY", ULocale.FRANCE).format(new java.util.Date()));
+		expected.append(new SimpleDateFormat("EEEE dd MMMM YYYY", Locale.FRANCE).format(new java.util.Date()));
 		expected.append(" and Germany ");
-		expected.append(new SimpleDateFormat("EEEE dd. MMMM YYYY", ULocale.GERMANY).format(new java.util.Date()));
+		expected.append(new SimpleDateFormat("EEEE dd. MMMM YYYY", Locale.GERMANY).format(new java.util.Date()));
 		assertBufferStringAndVariables(expected.toString(), buffer);
 	}
 
@@ -120,7 +120,8 @@ public class GlobalTemplateVariablesDateTest  {
 
 		StringBuilder expected= new StringBuilder();
 		expected.append("Today is ");
-		expected.append(new SimpleDateFormat("YYYY-MM-dd", new ULocale("this_invalid_locale")).format(new java.util.Date()));
+		expected.append(
+				new SimpleDateFormat("YYYY-MM-dd", new Locale("this_invalid_locale")).format(new java.util.Date()));
 		expected.append("!");
 		assertBufferStringAndVariables(expected.toString(), buffer);
 	}

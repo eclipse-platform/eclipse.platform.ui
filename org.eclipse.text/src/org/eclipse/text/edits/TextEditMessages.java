@@ -13,10 +13,9 @@
  *******************************************************************************/
 package org.eclipse.text.edits;
 
+import java.text.MessageFormat;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
-
-import com.ibm.icu.text.MessageFormat;
 
 class TextEditMessages {
 

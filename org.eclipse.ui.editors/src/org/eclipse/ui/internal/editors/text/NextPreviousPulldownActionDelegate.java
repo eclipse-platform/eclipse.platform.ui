@@ -14,11 +14,10 @@
 
 package org.eclipse.ui.internal.editors.text;
 
+import java.text.Collator;
 import java.util.Iterator;
 import java.util.SortedSet;
 import java.util.TreeSet;
-
-import com.ibm.icu.text.Collator;
 
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;

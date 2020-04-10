@@ -14,8 +14,7 @@
 package org.eclipse.ui.internal.texteditor.rulers;
 
 import java.net.URL;
-
-import com.ibm.icu.text.MessageFormat;
+import java.text.MessageFormat;
 
 import org.osgi.framework.Bundle;
 

@@ -14,10 +14,10 @@
 
 package org.eclipse.jface.text;
 
+import java.text.BreakIterator;
 import java.text.CharacterIterator;
 import java.util.Locale;
 
-import com.ibm.icu.text.BreakIterator;
 
 
 /**

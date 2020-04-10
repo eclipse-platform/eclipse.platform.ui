@@ -13,7 +13,8 @@
  *******************************************************************************/
 package org.eclipse.jface.text.hyperlink;
 
-import com.ibm.icu.text.MessageFormat;
+
+import java.text.MessageFormat;
 
 import org.eclipse.swt.program.Program;
 

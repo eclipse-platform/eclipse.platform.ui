@@ -20,10 +20,9 @@ import java.nio.charset.CharsetEncoder;
 import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
+import java.text.BreakIterator;
+import java.text.MessageFormat;
 import java.util.Iterator;
-
-import com.ibm.icu.text.BreakIterator;
-import com.ibm.icu.text.MessageFormat;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StyledText;
