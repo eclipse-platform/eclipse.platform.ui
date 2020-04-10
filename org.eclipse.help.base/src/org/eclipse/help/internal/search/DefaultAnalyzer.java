@@ -15,6 +15,7 @@
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
+import java.text.BreakIterator;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
@@ -24,9 +25,6 @@ import org.apache.lucene.analysis.core.LowerCaseFilter;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.base.HelpBasePlugin;
-
-import com.ibm.icu.text.BreakIterator;
-
 
 /**
  * Lucene Analyzer. LowerCaseFilter-&gt;StandardTokenizer

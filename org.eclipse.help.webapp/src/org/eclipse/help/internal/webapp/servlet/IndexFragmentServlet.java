@@ -15,6 +15,7 @@
 package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.IOException;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -39,8 +40,6 @@ import org.eclipse.help.internal.webapp.data.ActivitiesData;
 import org.eclipse.help.internal.webapp.data.RequestScope;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 import org.eclipse.osgi.util.NLS;
-
-import com.ibm.icu.text.Collator;
 
 /*
  * Creates xml representing selected parts of the index

@@ -15,6 +15,7 @@
 package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.IOException;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -32,8 +33,6 @@ import org.eclipse.help.internal.webapp.WebappResources;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
-
-import com.ibm.icu.text.Collator;
 
 /**
  * A servlet that provides an informational page about the plugins that make up

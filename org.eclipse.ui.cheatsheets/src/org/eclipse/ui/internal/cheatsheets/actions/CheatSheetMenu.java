@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.actions;
 
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -37,8 +38,6 @@ import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetCollectionElement;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetElement;
 import org.eclipse.ui.internal.cheatsheets.registry.CheatSheetRegistryReader;
 import org.eclipse.ui.internal.cheatsheets.views.CheatSheetView;
-
-import com.ibm.icu.text.Collator;
 
 /**
  * A menu for cheatsheet selection.

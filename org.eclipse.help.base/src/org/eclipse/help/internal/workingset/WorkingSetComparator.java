@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.help.internal.workingset;
 
-import com.ibm.icu.text.Collator;
+import java.text.Collator;
 import java.util.Comparator;
 
 /**

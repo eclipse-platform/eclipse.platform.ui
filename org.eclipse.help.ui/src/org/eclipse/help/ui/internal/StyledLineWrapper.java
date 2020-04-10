@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal;
 
+import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.Iterator;
 
@@ -22,8 +23,6 @@ import org.eclipse.swt.custom.StyledTextContent;
 import org.eclipse.swt.custom.TextChangeListener;
 import org.eclipse.swt.graphics.Drawable;
 import org.eclipse.swt.graphics.GC;
-
-import com.ibm.icu.text.BreakIterator;
 
 public class StyledLineWrapper implements StyledTextContent {
 

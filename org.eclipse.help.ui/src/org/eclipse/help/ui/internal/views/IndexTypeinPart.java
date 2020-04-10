@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
+import java.text.Collator;
+
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.action.IAction;
@@ -36,9 +38,6 @@ import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.TableWrapData;
 import org.eclipse.ui.forms.widgets.TableWrapLayout;
-
-import com.ibm.icu.text.Collator;
-
 
 public class IndexTypeinPart extends AbstractFormPart implements IHelpPart, IHelpUIConstants {
 	private ReusableHelpPart parent;

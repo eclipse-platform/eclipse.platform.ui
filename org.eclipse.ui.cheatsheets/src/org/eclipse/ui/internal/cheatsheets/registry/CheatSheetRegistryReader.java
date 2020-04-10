@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.registry;
 
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -30,8 +31,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.internal.cheatsheets.CheatSheetPlugin;
 import org.eclipse.ui.internal.cheatsheets.ICheatSheetResource;
 import org.eclipse.ui.internal.cheatsheets.Messages;
-
-import com.ibm.icu.text.Collator;
 
 /**
  *  Instances access the registry that is provided at creation time

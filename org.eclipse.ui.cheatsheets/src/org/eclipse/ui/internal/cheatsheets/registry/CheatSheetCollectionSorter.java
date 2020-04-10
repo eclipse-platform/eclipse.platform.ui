@@ -13,12 +13,12 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.cheatsheets.registry;
 
+import java.text.Collator;
+
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.ui.model.WorkbenchAdapter;
-
-import com.ibm.icu.text.Collator;
 
 /**
  *	A Viewer element sorter that sorts Elements by their name attribute.
