@@ -50,6 +50,11 @@ CTabItem:selected {
 	color: '#org-eclipse-ui-workbench-ACTIVE_TAB_TEXT_COLOR';
 }
 
+CTabFolder.MArea {
+	swt-tab-renderer: url('bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
+	padding: 0px;
+}
+
 CTabFolder.MArea .MPartStack, CTabFolder.MArea .MPartStack.active {
 	swt-shadow-visible: false;
 }

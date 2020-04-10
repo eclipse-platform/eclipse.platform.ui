@@ -68,6 +68,15 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_OUTER_KEYLINE_COLOR {
 	swt-outer-keyline-color: #C4C5C1;
 }
 
+CTabFolder.MArea {
+	background-color: #E8E8E8;
+	swt-selected-tab-fill: #E8E8E8;
+	swt-unselected-tabs-color: #E8E8E8;
+	swt-outer-keyline-color: #E8E8E8;
+	swt-inner-keyline-color: #E8E8E8;
+	swt-tab-outline: #E8E8E8;
+}
+
 CTabFolder {
   swt-selected-tabs-background: #CCE0F6 #3F97F9 100%;
 }

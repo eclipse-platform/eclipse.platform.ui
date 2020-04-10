@@ -97,6 +97,15 @@ ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_OUTLINE_COLOR {
 	swt-mru-visible: false;
 }
 
+CTabFolder.MArea {
+	background-color: #E2E2E2;
+	swt-selected-tab-fill: #E2E2E2;
+	swt-unselected-tabs-color: #E2E2E2;
+	swt-outer-keyline-color: #E2E2E2;
+	swt-inner-keyline-color: #E2E2E2;
+	swt-tab-outline: #E2E2E2;
+}
+
 CTabFolder Canvas {
 	background-color: #F8F8F8;
 }

@@ -49,6 +49,17 @@ CTabFolder[style~='SWT.DOWN'][style~='SWT.BOTTOM'] {
     swt-unselected-hot-tab-color-background: #161616; /* Bug 465711 */
 }
 
+CTabFolder.MArea {
+    swt-tab-renderer: url('bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
+    padding: 0px;
+    background-color: #515658;
+    swt-selected-tab-fill: #515658;
+    swt-unselected-tabs-color: #515658;
+    swt-outer-keyline-color: #515658;
+    swt-inner-keyline-color: #515658;
+    swt-tab-outline: #515658;
+}
+
 CTabItem,
 CTabItem CLabel {
     background-color: '#org-eclipse-ui-workbench-ACTIVE_TAB_BG_END'; /* HACK for background of CTabFolder inner Toolbars */
@@ -76,6 +87,11 @@ CTabItem:selected CLabel {
 
 CTabFolder > Composite#ToolbarComposite {
   background-color: '#org-eclipse-ui-workbench-ACTIVE_TAB_BG_END'; /* HACK for background of CTabFolder inner Toolbars */
+}
+
+CTabFolder.MArea CTabItem, 
+CTabFolder.MArea CTabItem CLabel {
+    background-color: #515658; /* Disable HACK for background of CTabFolder inner Toolbars */
 }
 
 CTabItem.busy {
