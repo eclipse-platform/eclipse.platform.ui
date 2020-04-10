@@ -31,13 +31,12 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_OUTER_KEYLINE_COLOR {
 	background-color: #E1E6F6;
 }
 
-.MPartStack {
-	swt-simple: true;
-	swt-mru-visible: true;
-}
-
 .MTrimBar {
 	background-color: #E1E6F6;
+}
+
+.MTrimBar#org-eclipse-ui-main-toolbar {
+	background-image:  url(./win7.png);
 }
 
 .MToolControl.TrimStack {
@@ -47,17 +46,9 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_OUTER_KEYLINE_COLOR {
 	handle-image-rotated:  url(./win7Handle-rotated.png);
 }
 
-.MTrimBar#org-eclipse-ui-main-toolbar {
-	background-image:  url(./win7.png);
-}
-
-#org-eclipse-ui-editorss {
-	swt-tab-height: 8px;
-	padding: 0px 5px 7px;
-}
-
-CTabFolder.MArea .MPartStack, CTabFolder.MArea .MPartStack.active {
-	swt-shadow-visible: false;
+.MPartStack {
+	swt-simple: true;
+	swt-mru-visible: true;
 }
 
 CTabFolder Canvas {

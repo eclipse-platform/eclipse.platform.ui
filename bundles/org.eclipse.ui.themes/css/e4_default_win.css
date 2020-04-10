@@ -58,11 +58,6 @@ ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_BG_END {
 	background-color: #E1E6F6;
 }
 
-.MPartStack {
-	swt-simple: true;
-	swt-mru-visible: false;
-}
-
 .MTrimBar {
 	background-color: #E1E6F6;
 }
@@ -78,13 +73,9 @@ ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_BG_END {
 	handle-image-rotated:  url(./win7Handle-rotated.png);
 }
 
-#org-eclipse-ui-editorss {
-	swt-tab-height: 8px;
-	padding: 0px 5px 7px;
-}
-
-CTabFolder.MArea .MPartStack, CTabFolder.MArea .MPartStack.active {
-	swt-shadow-visible: false;
+.MPartStack {
+	swt-simple: true;
+	swt-mru-visible: false;
 }
 
 CTabFolder Canvas {
@@ -108,7 +99,6 @@ Form {
 	h-bottom-keyline-2-color: #eaeaea;
 	h-bottom-keyline-1-color: #eaeaea;
 }
-
 
 
 Section {

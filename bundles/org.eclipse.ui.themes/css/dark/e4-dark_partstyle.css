@@ -17,8 +17,17 @@
 /* ################################ CSS for .MParts ########################## */
 
 .MPart {
+    font-family: '#org-eclipse-ui-workbench-TAB_TEXT_FONT';
     background-color: #323435;
     color: #DDDDDD;
+}
+
+.MPart.busy {
+    font-style: italic;
+}
+
+.MPart.highlighted {
+    font-weight: bold;
 }
 
 .MPart Composite,

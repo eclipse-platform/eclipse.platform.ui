@@ -27,58 +27,12 @@
 	margin-right: 1px;
 }
 
-.MPartStack, .MPart {
-    font-family: '#org-eclipse-ui-workbench-TAB_TEXT_FONT';
-}
-
-
-.MPart.busy {
-    font-style: italic;
-}
-
-.MPart.highlighted {
-    font-weight: bold;
-}
-
-CTabItem,
-CTabItem CLabel {
-    background-color: '#org-eclipse-ui-workbench-INACTIVE_TAB_BG_END'; /* HACK for background of CTabFolder inner Toolbars */
-    color: '#org-eclipse-ui-workbench-INACTIVE_TAB_UNSELECTED_TEXT_COLOR';
-}
-CTabItem:selected,
-CTabItem:selected CLabel {
-    color: '#org-eclipse-ui-workbench-INACTIVE_TAB_SELECTED_TEXT_COLOR';
-}
-
-.MPartStack.active > CTabItem,
-.MPartStack.active > CTabItem CLabel {
-    background-color: '#org-eclipse-ui-workbench-ACTIVE_TAB_BG_END'; /* HACK for background of CTabFolder inner Toolbars */
-    color: '#org-eclipse-ui-workbench-ACTIVE_TAB_UNSELECTED_TEXT_COLOR';
-}
-.MPartStack.active > CTabItem:selected,
-.MPartStack.active > CTabItem:selected CLabel {
-    color: '#org-eclipse-ui-workbench-ACTIVE_TAB_SELECTED_TEXT_COLOR';
-}
-
-.MPartStack.active.noFocus > CTabItem:selected {
-    color: '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_SELECTED_TEXT_COLOR';
-}
-
-CTabItem.busy {
-    color: #888888;
-}
-
 .MToolControl.TrimStack {
     /*frame-image:  url(./gtkTSFrame.png);*/
     handle-image:  url(./dragHandle.png);
     /*frame-image-rotated:  url(./gtkTSFrame-rotated.png);*/
     handle-image-rotated:  url(./dragHandle-rotated.png);
     frame-cuts: 5px 1px 5px 16px;
-}
-
-
-CTabFolder.MArea .MPartStack,CTabFolder.MArea .MPartStack.active {
-    swt-shadow-visible: false;
 }
 
 CTabFolder Canvas {

@@ -77,11 +77,6 @@ ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_OUTLINE_COLOR {
 	background-color: #E2E2E2;
 }
 
-.MPartStack {
-	swt-simple: false;
-	swt-mru-visible: false;
-}
-
 .MTrimBar {
 	background-color: #E2E2E2;
 }
@@ -97,13 +92,9 @@ ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_OUTLINE_COLOR {
 	handle-image-rotated:  url(./gtkHandle-rotated.png);
 }
 
-#org-eclipse-ui-editorss {
-	swt-tab-height: 8px;
-	padding: 0px 5px 7px;
-}
-
-CTabFolder.MArea .MPartStack, CTabFolder.MArea .MPartStack.active {
-	swt-shadow-visible: false;
+.MPartStack {
+	swt-simple: false;
+	swt-mru-visible: false;
 }
 
 CTabFolder Canvas {

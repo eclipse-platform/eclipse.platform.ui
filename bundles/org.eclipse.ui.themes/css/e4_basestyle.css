@@ -132,6 +132,11 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_TEXT_COLOR {
 	font-weight: bold;
 }
 
+#org-eclipse-ui-editorss {
+	swt-tab-height: 8px;
+	padding: 0px 5px 7px;
+}
+
 .MPartStack, .MPart {
 	font-family: '#org-eclipse-ui-workbench-TAB_TEXT_FONT';
 }
@@ -168,6 +173,10 @@ CTabItem:selected {
 
 .MPartStack.active.noFocus > CTabItem:selected {
 	color: '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_TEXT_COLOR';
+}
+
+CTabFolder.MArea .MPartStack, CTabFolder.MArea .MPartStack.active {
+	swt-shadow-visible: false;
 }
 
 .MToolControl.TrimStack {

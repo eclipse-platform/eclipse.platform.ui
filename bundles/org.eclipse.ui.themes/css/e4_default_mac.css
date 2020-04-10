@@ -28,23 +28,9 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_OUTER_KEYLINE_COLOR {
 	color: #C4C5C1;
 }
 
+
 .MTrimmedWindow {
 	background-color: #E8E8E8;
-}
-
-.MPartStack {
-	swt-simple: false;
-	swt-mru-visible: false;
-	swt-unselected-tabs-color: #E8E8E8 #FFFFFF 100%;
-	swt-outer-keyline-color: #FFFFFF;
-	swt-inner-keyline-color: #FFFFFF;
-	swt-tab-outline: #B6BCCC;
-}
-
-.MPartStack.active {
-	swt-tab-outline: #B6BCCC;
-	swt-shadow-visible: false;
-	swt-outer-keyline-color: #C4C5C1;
 }
 
 .MTrimBar {
@@ -67,13 +53,7 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_OUTER_KEYLINE_COLOR {
 	handle-image: url(./macHandle.png);
 }
 
-.MTrimmedWindow {
-	background-color: #E8E8E8;
-}
-
 #org-eclipse-ui-editorss {
-	swt-tab-height: 8px;
-	padding: 0px 5px 7px;
 	swt-unselected-tabs-color: #D6DDE5 #D6DDE5 #D6DDE5 100% 100%;
 	swt-outer-keyline-color: #D6DDE5;
 	swt-inner-keyline-color: #D6DDE5;
@@ -81,8 +61,27 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_OUTER_KEYLINE_COLOR {
 	color: #D6DDE5;
 }
 
-CTabFolder.MArea .MPartStack, CTabFolder.MArea .MPartStack.active {
+.MPartStack {
+	swt-simple: false;
+	swt-mru-visible: false;
+	swt-unselected-tabs-color: #E8E8E8 #FFFFFF 100%;
+	swt-outer-keyline-color: #FFFFFF;
+	swt-inner-keyline-color: #FFFFFF;
+	swt-tab-outline: #B6BCCC;
+}
+
+.MPartStack.active {
+	swt-tab-outline: #B6BCCC;
 	swt-shadow-visible: false;
+	swt-outer-keyline-color: #C4C5C1;
+}
+
+CTabFolder {
+  swt-selected-tabs-background: #CCE0F6 #3F97F9 100%;
+}
+
+CTabFolder CTabItem:selected {
+  background-color: #E9E8E9;
 }
 
 CTabFolder Canvas {
@@ -114,14 +113,6 @@ Section {
   	background-color-titlebar: #eaeaea;
   	background-color-gradient-titlebar: #eaeaea;
   	border-color-titlebar: #ffffff;
-}
-
-CTabFolder {
-  swt-selected-tabs-background: #CCE0F6 #3F97F9 100%;
-}
-
-CTabFolder CTabItem:selected {
-  background-color: #E9E8E9;
 }
 
 TabbedPropertyTitle > CLabel{
