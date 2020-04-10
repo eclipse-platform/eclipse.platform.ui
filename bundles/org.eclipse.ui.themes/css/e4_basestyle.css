@@ -134,7 +134,6 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_TEXT_COLOR {
 
 #org-eclipse-ui-editorss {
 	swt-tab-height: 8px;
-	padding: 0px 5px 7px;
 }
 
 .MPartStack, .MPart {

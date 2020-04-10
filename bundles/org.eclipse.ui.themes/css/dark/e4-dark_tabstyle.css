@@ -16,6 +16,10 @@
 
 /* ################################ CSS for Tabs ########################## */
 
+#org-eclipse-ui-editorss {
+	swt-tab-height: 8px;
+}
+
 .MPartStack {
     font-family: '#org-eclipse-ui-workbench-TAB_TEXT_FONT';
     swt-tab-renderer: url('bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
