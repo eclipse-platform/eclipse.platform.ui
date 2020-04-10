@@ -18,6 +18,7 @@ package org.eclipse.debug.ui;
 
 import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -86,8 +87,6 @@ import org.eclipse.ui.ide.IDEEncoding;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
 import org.eclipse.ui.views.navigator.ResourceComparator;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Launch configuration tab used to specify the location a launch configuration

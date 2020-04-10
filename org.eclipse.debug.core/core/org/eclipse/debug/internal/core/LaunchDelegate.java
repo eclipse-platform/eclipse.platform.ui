@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,8 +27,6 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchDelegate;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Proxy to a launch delegate extension.

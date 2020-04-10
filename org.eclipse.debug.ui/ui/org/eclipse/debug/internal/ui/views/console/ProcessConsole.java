@@ -25,6 +25,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.Charset;
+import java.text.DateFormat;
+import java.text.MessageFormat;
 import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
@@ -94,10 +96,6 @@ import org.eclipse.ui.console.TextConsole;
 import org.eclipse.ui.editors.text.EditorsUI;
 import org.eclipse.ui.part.FileEditorInput;
 import org.eclipse.ui.progress.UIJob;
-
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.MessageFormat;
-
 
 /**
  * A console for a system process with standard I/O streams.

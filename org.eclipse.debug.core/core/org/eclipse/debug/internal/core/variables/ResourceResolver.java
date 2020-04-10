@@ -15,6 +15,7 @@ package org.eclipse.debug.internal.core.variables;
 
 import java.io.File;
 import java.net.URI;
+import java.text.MessageFormat;
 
 import org.eclipse.core.filesystem.EFS;
 import org.eclipse.core.resources.IResource;
@@ -30,8 +31,6 @@ import org.eclipse.core.variables.IDynamicVariableResolver;
 import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugPlugin;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Common function of variable resolvers.

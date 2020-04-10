@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions.variables.details;
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IValueModification;
@@ -37,8 +39,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Action which assigns a value to a variable from the detail pane

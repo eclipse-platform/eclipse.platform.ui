@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.net.URI;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -66,8 +67,6 @@ import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Launch configuration handle.

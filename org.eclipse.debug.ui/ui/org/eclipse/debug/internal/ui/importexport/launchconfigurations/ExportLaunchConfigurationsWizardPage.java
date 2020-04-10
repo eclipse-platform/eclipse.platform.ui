@@ -21,6 +21,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -66,8 +67,6 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.model.WorkbenchViewerComparator;
 import org.eclipse.ui.progress.UIJob;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * This calls provides the one and only wizard page to the

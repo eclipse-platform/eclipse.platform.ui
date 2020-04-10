@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -52,8 +53,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Dialog for organizing favorite launch configurations

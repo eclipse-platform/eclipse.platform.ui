@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.debug.ui.sourcelookup;
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.sourcelookup.SourceLookupUIMessages;
@@ -21,8 +23,6 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Editor input for the <code>CommonSourceNotFoundEditor</code>. The editor

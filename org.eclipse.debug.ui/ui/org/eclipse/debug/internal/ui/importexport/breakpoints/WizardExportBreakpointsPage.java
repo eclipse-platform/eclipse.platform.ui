@@ -16,6 +16,7 @@
 package org.eclipse.debug.internal.ui.importexport.breakpoints;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,8 +49,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * <p>

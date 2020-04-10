@@ -14,6 +14,8 @@
 package org.eclipse.debug.ui.actions;
 
 
+import java.text.MessageFormat;
+
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
@@ -34,8 +36,6 @@ import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Opens the launch configuration dialog in the context of a launch group.

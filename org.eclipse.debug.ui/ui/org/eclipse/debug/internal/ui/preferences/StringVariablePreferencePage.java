@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.preferences;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -65,8 +66,6 @@ import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Preference page for creating and configuring simple

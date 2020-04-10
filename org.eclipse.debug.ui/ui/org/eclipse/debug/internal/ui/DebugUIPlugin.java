@@ -20,6 +20,7 @@ package org.eclipse.debug.internal.ui;
 import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Set;
@@ -115,8 +116,6 @@ import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.prefs.BackingStoreException;
 import org.w3c.dom.Document;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * The Debug UI Plug-in.

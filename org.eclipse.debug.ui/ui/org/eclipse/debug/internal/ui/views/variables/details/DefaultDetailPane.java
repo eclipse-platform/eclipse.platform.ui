@@ -16,6 +16,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.variables.details;
 
+import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.ResourceBundle;
 
@@ -108,8 +109,6 @@ import org.eclipse.ui.texteditor.FindReplaceAction;
 import org.eclipse.ui.texteditor.IAbstractTextEditorHelpContextIds;
 import org.eclipse.ui.texteditor.ITextEditorActionConstants;
 import org.eclipse.ui.texteditor.ITextEditorActionDefinitionIds;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * This detail pane uses a source viewer to display detailed information about the current

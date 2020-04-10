@@ -15,6 +15,7 @@
 package org.eclipse.debug.internal.ui.actions.variables;
 
 
+import java.text.MessageFormat;
 import java.util.Iterator;
 
 import org.eclipse.debug.core.DebugException;
@@ -36,8 +37,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionProviderAction;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Action for changing the value of primitives and <code>String</code> variables.

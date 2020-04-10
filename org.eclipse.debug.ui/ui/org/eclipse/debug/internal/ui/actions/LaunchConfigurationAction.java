@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.actions;
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
@@ -23,8 +25,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * This class provides an action wrapper for adding launch configuration actions to the context menu

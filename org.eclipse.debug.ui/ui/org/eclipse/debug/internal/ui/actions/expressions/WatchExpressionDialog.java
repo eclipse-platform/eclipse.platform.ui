@@ -15,6 +15,8 @@
 package org.eclipse.debug.internal.ui.actions.expressions;
 
 
+import java.text.MessageFormat;
+
 import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
@@ -49,8 +51,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.actions.TextViewerAction;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Dialog for edit watch expression.

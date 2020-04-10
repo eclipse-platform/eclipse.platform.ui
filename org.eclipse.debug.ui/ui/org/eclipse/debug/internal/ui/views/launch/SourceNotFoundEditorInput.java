@@ -14,6 +14,8 @@
 package org.eclipse.debug.internal.ui.views.launch;
 
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.PlatformObject;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IStackFrame;
@@ -23,8 +25,6 @@ import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IPersistableElement;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Editor input for a stack frame for which source could not be located.

@@ -14,6 +14,7 @@
 package org.eclipse.debug.internal.ui.actions;
 
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,8 +36,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.custom.BusyIndicator;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionListenerAction;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Adds the selected launch configuration to the launch favorites.

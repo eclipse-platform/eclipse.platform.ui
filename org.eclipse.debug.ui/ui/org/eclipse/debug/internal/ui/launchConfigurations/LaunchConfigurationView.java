@@ -16,6 +16,8 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchConfiguration;
@@ -49,8 +51,6 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PatternFilter;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A tree view of launch configurations

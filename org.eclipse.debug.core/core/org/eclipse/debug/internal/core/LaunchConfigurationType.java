@@ -15,6 +15,7 @@
 package org.eclipse.debug.internal.core;
 
 
+import java.text.MessageFormat;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -41,8 +42,6 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.ILaunchMode;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.sourcelookup.ISourcePathComputer;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A launch configuration type wrappers a configuration

@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,8 +30,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.model.WorkbenchViewerComparator;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * This dialog is used to select one or more launch configurations to add to your favorites

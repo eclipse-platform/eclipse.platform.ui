@@ -19,6 +19,7 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -82,8 +83,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.WorkbenchJob;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A viewer that displays tabs for a launch configuration, with apply and revert

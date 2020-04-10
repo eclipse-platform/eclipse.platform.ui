@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.contextlaunching;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.eclipse.core.resources.IProject;
@@ -38,8 +39,6 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.ui.IEditorPart;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Static runner for context launching to provide the base capability of context

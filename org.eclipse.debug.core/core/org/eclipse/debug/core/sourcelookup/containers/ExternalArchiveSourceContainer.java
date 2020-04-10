@@ -15,6 +15,7 @@ package org.eclipse.debug.core.sourcelookup.containers;
 
 import java.io.File;
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashSet;
@@ -31,8 +32,6 @@ import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.sourcelookup.ISourceContainerType;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupMessages;
 import org.eclipse.debug.internal.core.sourcelookup.SourceLookupUtils;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * An archive in the local file system. Returns instances

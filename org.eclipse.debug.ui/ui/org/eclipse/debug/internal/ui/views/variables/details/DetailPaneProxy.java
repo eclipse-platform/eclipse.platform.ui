@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.variables.details;
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.core.runtime.IProgressMonitor;
@@ -36,8 +38,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISaveablePart;
 import org.eclipse.ui.IWorkbenchPartSite;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Acts as a proxy between a view and a detail pane. Controls how information is displayed

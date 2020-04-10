@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.debug.ui;
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.commands.AbstractHandler;
 import org.eclipse.core.commands.ExecutionEvent;
 import org.eclipse.core.commands.ExecutionException;
@@ -31,8 +33,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.IHandlerActivation;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.keys.IBindingService;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A <code>PopupDialog</code> that is automatically positioned relative

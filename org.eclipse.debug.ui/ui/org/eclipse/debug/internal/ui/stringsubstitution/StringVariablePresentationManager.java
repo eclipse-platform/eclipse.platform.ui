@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.stringsubstitution;
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -23,8 +24,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.variables.IStringVariable;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.ui.stringsubstitution.IArgumentSelector;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Manages argument selectors (choosers) for string variables.

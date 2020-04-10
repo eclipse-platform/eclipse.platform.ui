@@ -14,6 +14,8 @@
 package org.eclipse.debug.internal.ui.preferences;
 
 
+import java.text.MessageFormat;
+
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.jface.preference.BooleanFieldEditor;
@@ -34,8 +36,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsoleConstants;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A page to set the preferences for the console

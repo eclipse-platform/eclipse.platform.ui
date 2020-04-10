@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.preferences;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -62,8 +63,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
 import org.eclipse.ui.dialogs.SelectionDialog;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Displays default launch configuration settings for a selected resource - associated launch configurations.

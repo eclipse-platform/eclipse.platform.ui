@@ -17,6 +17,7 @@
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -92,8 +93,6 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.TreeItem;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.progress.WorkbenchJob;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * The dialog used to edit and launch launch configurations.

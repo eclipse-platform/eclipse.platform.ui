@@ -16,6 +16,7 @@
 package org.eclipse.debug.internal.ui.viewers.model;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,8 +53,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IWorkbenchCommandConstants;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.IUpdate;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Action which prompts user with a filtered list selection dialog to find an element in tree.

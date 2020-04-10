@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.contextlaunching;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -68,8 +69,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.WorkbenchActivityHelper;
 import org.eclipse.ui.internal.WorkbenchWindow;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * This manager is used to calculate the labels for the current resource or for the current

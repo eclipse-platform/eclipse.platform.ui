@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
+import java.text.MessageFormat;
 import java.util.Set;
 
 import org.eclipse.core.runtime.CoreException;
@@ -43,8 +44,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Allows the user to specify to see and copy the command line to be executed

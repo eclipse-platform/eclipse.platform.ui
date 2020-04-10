@@ -18,6 +18,7 @@
  *******************************************************************************/
 package org.eclipse.debug.ui;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -94,8 +95,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.PlatformUI;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Launch configuration tab for configuring the environment passed into

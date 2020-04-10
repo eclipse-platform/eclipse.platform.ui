@@ -13,14 +13,14 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.ILaunchMode;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Proxy to a launch mode extension.

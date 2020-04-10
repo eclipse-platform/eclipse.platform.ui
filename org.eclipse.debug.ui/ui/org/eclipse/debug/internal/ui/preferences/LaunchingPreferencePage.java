@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.preferences;
 
+import java.text.MessageFormat;
+
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.IInternalDebugUIConstants;
@@ -37,8 +39,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A preference page for configuring launching preferences.

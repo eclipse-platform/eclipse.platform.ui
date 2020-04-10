@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.launchConfigurations;
 
+import java.text.MessageFormat;
 import java.util.List;
 
 import org.eclipse.core.resources.IResource;
@@ -33,8 +34,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Text;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Specialized dialog for showing/selecting a specific launch shortcut extension, and allowing it

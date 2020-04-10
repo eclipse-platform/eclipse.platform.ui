@@ -15,6 +15,8 @@
 package org.eclipse.debug.ui.actions;
 
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
@@ -46,8 +48,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Re-launches the last launch.

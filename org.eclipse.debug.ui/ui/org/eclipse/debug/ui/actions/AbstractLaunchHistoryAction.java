@@ -14,6 +14,7 @@
 package org.eclipse.debug.ui.actions;
 
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -59,8 +60,6 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.ui.IActionDelegate2;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.IWorkbenchWindowPulldownDelegate2;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Abstract implementation of an action that displays a drop-down launch

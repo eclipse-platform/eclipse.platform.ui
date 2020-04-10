@@ -15,6 +15,7 @@
 package org.eclipse.debug.internal.ui.importexport.launchconfigurations;
 
 import java.io.File;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,8 +55,6 @@ import org.eclipse.ui.dialogs.WizardResourceImportPage;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * This class providers the one and only page for the import launch configurations wizard

@@ -16,6 +16,7 @@ package org.eclipse.debug.internal.ui.importexport.breakpoints;
 
 import java.io.File;
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -45,8 +46,6 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Widget;
 import org.eclipse.ui.PlatformUI;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * The import breakpoints wizard page.

@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IStatus;
@@ -22,8 +24,6 @@ import org.eclipse.debug.core.ILogicalStructureType;
 import org.eclipse.debug.core.model.ILogicalStructureTypeDelegate;
 import org.eclipse.debug.core.model.ILogicalStructureTypeDelegate2;
 import org.eclipse.debug.core.model.IValue;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Proxy to a logical structure type extension.

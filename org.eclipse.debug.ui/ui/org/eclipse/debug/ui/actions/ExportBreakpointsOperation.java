@@ -21,6 +21,7 @@ import java.io.StringWriter;
 import java.io.Writer;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.util.Map.Entry;
 
 import org.eclipse.core.resources.IMarker;
@@ -40,8 +41,6 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Exports breakpoints to a file or string buffer.

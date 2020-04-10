@@ -16,6 +16,7 @@
 package org.eclipse.debug.internal.ui;
 
 
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -56,8 +57,6 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.model.IWorkbenchAdapter;
-
-import com.ibm.icu.text.MessageFormat;
 
 public class DefaultLabelProvider implements ILabelProvider {
 

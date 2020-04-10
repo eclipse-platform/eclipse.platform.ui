@@ -14,6 +14,7 @@
 package org.eclipse.debug.internal.ui.views.console;
 
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -41,8 +42,6 @@ import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleManager;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Creates documents for processes as they are registered with a launch.

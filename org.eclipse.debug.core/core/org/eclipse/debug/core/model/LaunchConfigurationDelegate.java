@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.debug.core.model;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -43,8 +44,6 @@ import org.eclipse.debug.core.ILaunchManager;
 import org.eclipse.debug.core.IStatusHandler;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Default implementation of a launch configuration delegate. Provides

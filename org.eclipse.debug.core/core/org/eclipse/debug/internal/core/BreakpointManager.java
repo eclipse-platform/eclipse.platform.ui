@@ -14,6 +14,7 @@
 package org.eclipse.debug.internal.core;
 
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -54,8 +55,6 @@ import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.IBreakpointImportParticipant;
 import org.eclipse.debug.core.model.ITriggerPoint;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * The breakpoint manager manages all registered breakpoints for the Debug plug-in. It is

@@ -16,6 +16,7 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 
 
 import java.io.IOException;
+import java.text.MessageFormat;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -69,8 +70,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * The perspective manager manages the 'perspective' settings

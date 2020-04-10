@@ -16,6 +16,7 @@ package org.eclipse.debug.core;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,8 +36,6 @@ import org.eclipse.debug.internal.core.DebugCoreMessages;
 import org.eclipse.debug.internal.core.IMementoConstants;
 import org.eclipse.debug.internal.core.ResourceFactory;
 import org.eclipse.debug.internal.core.XMLMemento;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Utilities for launch configurations that persist, restore, and refresh

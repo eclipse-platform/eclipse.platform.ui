@@ -23,6 +23,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -52,8 +53,6 @@ import org.eclipse.ui.IWorkingSet;
 import org.eclipse.ui.IWorkingSetManager;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.XMLMemento;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Imports breakpoints from a file or string buffer into the workspace.

@@ -14,6 +14,7 @@
 package org.eclipse.debug.ui.actions;
 
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Set;
 
@@ -35,8 +36,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.ui.PlatformUI;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Launches a launch configuration in a specific mode.

@@ -14,6 +14,8 @@
 package org.eclipse.debug.internal.ui.actions;
 
 
+import java.text.MessageFormat;
+
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IAdaptable;
 import org.eclipse.debug.core.DebugPlugin;
@@ -31,8 +33,6 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.actions.SelectionListenerAction;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Opens the launch configuration dialog on a single launch configuration, based

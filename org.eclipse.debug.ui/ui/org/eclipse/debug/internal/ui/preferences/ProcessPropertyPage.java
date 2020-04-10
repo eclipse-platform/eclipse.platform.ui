@@ -15,6 +15,7 @@
 package org.eclipse.debug.internal.ui.preferences;
 
 
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
@@ -38,8 +39,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.PropertyPage;
-
-import com.ibm.icu.text.DateFormat;
 
 public class ProcessPropertyPage extends PropertyPage {
 
