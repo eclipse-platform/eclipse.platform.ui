@@ -289,27 +289,9 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 	}
 
 	void drawTabHeader(GC gc, Rectangle bounds, int state) {
-		// gc.setClipping(bounds.x, bounds.y, bounds.width,
-		// parent.getTabHeight() + 1);
-
 		boolean onBottom = parent.getTabPosition() == SWT.BOTTOM;
-		int[] points = new int[1024];
-		int index = 0;
-		int radius = cornerSize / 2;
-		int marginWidth = parent.marginWidth;
-		int marginHeight = parent.marginHeight;
-		int delta = INNER_KEYLINE + OUTER_KEYLINE + 2 * (shadowEnabled ? SIDE_DROP_WIDTH : 0) + 2 * marginWidth;
-		int width = bounds.width - delta;
-		int height = bounds.height - INNER_KEYLINE - OUTER_KEYLINE - 2 * marginHeight
-				- (shadowEnabled ? BOTTOM_DROP_WIDTH : 0);
-		int circX = bounds.x + delta / 2 + radius;
-		int circY = bounds.y + radius;
-
-		int header = shadowEnabled ? onBottom ? 6 : 3 : 1; // TODO: this
-															// needs
-		// to be added to
-		// computeTrim for
-		// HEADER
+		// TODO: this needs to be added to computeTrim for HEADER
+		int header = shadowEnabled ? onBottom ? 6 : 3 : 1;
 		Rectangle trim = computeTrim(PART_HEADER, state, 0, 0, 0, 0);
 		trim.width = bounds.width - trim.width;
 
@@ -320,28 +302,6 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 		trim.x = -trim.x;
 		trim.y = onBottom ? bounds.height - parent.getTabHeight() - 1 - header : -trim.y;
 		draw(PART_BACKGROUND, SWT.NONE, trim, gc);
-
-		int[] ltt = drawCircle(circX + 1, circY + 1, radius, CirclePart.LEFT_TOP);
-		System.arraycopy(ltt, 0, points, index, ltt.length);
-		index += ltt.length;
-
-		int[] lbb = drawCircle(circX + 1, circY + height - (radius * 2) - 2, radius, CirclePart.LEFT_BOTTOM);
-		System.arraycopy(lbb, 0, points, index, lbb.length);
-		index += lbb.length;
-
-		int[] rb = drawCircle(circX + width - (radius * 2) - 2, circY + height - (radius * 2) - 2, radius,
-				CirclePart.RIGHT_BOTTOM);
-		System.arraycopy(rb, 0, points, index, rb.length);
-		index += rb.length;
-
-		int[] rt = drawCircle(circX + width - (radius * 2) - 2, circY + 1, radius, CirclePart.RIGHT_TOP);
-		System.arraycopy(rt, 0, points, index, rt.length);
-		index += rt.length;
-		points[index++] = points[0];
-		points[index++] = points[1];
-
-		int[] tempPoints = new int[index];
-		System.arraycopy(points, 0, tempPoints, 0, index);
 
 		if (outerKeyline == null)
 			outerKeyline = gc.getDevice().getSystemColor(SWT.COLOR_BLACK);
