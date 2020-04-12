@@ -16,6 +16,8 @@
 package org.eclipse.ui.internal.views.markers;
 
 import java.net.URL;
+import java.text.CollationKey;
+import java.text.Collator;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
@@ -47,9 +49,6 @@ import org.eclipse.ui.views.markers.MarkerItem;
 import org.eclipse.ui.views.markers.internal.MarkerGroup;
 import org.eclipse.ui.views.markers.internal.MarkerGroupingEntry;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
-
-import com.ibm.icu.text.CollationKey;
-import com.ibm.icu.text.Collator;
 
 /**
  * MarkerSupportUtilities is the class that maintains constants and

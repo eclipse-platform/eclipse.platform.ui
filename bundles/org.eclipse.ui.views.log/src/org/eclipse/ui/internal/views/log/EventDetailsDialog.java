@@ -16,9 +16,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
-import com.ibm.icu.text.DateFormat;
 import java.io.*;
 import java.text.Collator;
+import java.text.DateFormat;
 import java.util.*;
 import java.util.List;
 import org.eclipse.core.runtime.IAdaptable;

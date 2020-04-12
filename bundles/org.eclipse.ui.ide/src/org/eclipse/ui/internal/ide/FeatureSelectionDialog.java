@@ -16,6 +16,7 @@
 
 package org.eclipse.ui.internal.ide;
 
+import java.text.Collator;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Locale;
@@ -32,8 +33,6 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
-
-import com.ibm.icu.text.Collator;
 
 /**
  * Dialog to allow the user to select a feature from a list.

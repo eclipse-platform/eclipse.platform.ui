@@ -16,6 +16,9 @@
 package org.eclipse.ui.internal.ide.dialogs;
 
 import java.net.URI;
+import java.text.DateFormat;
+import java.text.MessageFormat;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -37,10 +40,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.statushandlers.StatusManager;
-
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.MessageFormat;
-import com.ibm.icu.text.NumberFormat;
 
 /**
  * Utility class supporting common information required from resources.

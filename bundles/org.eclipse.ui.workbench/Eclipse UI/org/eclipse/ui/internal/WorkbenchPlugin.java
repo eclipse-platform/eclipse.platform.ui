@@ -16,8 +16,9 @@
 
 package org.eclipse.ui.internal;
 
-import com.ibm.icu.text.MessageFormat;
 import java.lang.reflect.InvocationTargetException;
+import java.text.Bidi;
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -881,7 +882,7 @@ public class WorkbenchPlugin extends AbstractUIPlugin {
 		try {
 			// use qualified class name to avoid import statement
 			// and premature attempt to resolve class reference
-			boolean isBidi = com.ibm.icu.text.Bidi.requiresBidi(message.toCharArray(), 0, message.length());
+			boolean isBidi = Bidi.requiresBidi(message.toCharArray(), 0, message.length());
 			return Boolean.valueOf(isBidi);
 		} catch (NoClassDefFoundError e) {
 			// the ICU Base bundle used in place of ICU?

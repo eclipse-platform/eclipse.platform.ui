@@ -14,7 +14,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.activities.ws;
 
-import com.ibm.icu.text.MessageFormat;
+import java.text.MessageFormat;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Properties;

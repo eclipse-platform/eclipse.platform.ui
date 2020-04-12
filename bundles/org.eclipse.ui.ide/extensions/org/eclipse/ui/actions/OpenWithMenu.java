@@ -16,6 +16,7 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -49,8 +50,6 @@ import org.eclipse.ui.internal.ide.DialogUtil;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.part.FileEditorInput;
-
-import com.ibm.icu.text.Collator;
 
 /**
  * A menu for opening files in the workbench.

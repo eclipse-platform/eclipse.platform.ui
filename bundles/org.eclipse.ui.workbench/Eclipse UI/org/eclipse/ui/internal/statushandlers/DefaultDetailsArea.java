@@ -15,7 +15,7 @@
 
 package org.eclipse.ui.internal.statushandlers;
 
-import com.ibm.icu.text.DateFormat;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;

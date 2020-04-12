@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,9 +29,6 @@ import org.eclipse.core.runtime.SafeRunner;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.util.SafeRunnable;
 import org.eclipse.ui.ide.IEditorAssociationOverride;
-
-import com.ibm.icu.text.MessageFormat;
-
 
 /**
  * Describes a contribution to the 'org.eclipse.ui.ide.editorAssociationOverride' extension point.

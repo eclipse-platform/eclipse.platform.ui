@@ -13,6 +13,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.views.markers;
 
+import java.text.CollationKey;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.viewers.CellEditor;
@@ -24,8 +26,6 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerItem;
-
-import com.ibm.icu.text.CollationKey;
 
 /**
  * MarkerDescriptionField is the field for showing the description of a marker.

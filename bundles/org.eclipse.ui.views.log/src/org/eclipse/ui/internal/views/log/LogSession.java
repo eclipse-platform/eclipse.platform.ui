@@ -15,9 +15,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.views.log;
 
-import com.ibm.icu.text.SimpleDateFormat;
 import java.io.PrintWriter;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 
 /**

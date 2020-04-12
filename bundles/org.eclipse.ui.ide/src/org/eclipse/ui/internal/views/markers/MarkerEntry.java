@@ -16,6 +16,8 @@
 
 package org.eclipse.ui.internal.views.markers;
 
+import java.text.CollationKey;
+import java.text.Collator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -34,9 +36,6 @@ import org.eclipse.ui.model.IWorkbenchAdapter;
 import org.eclipse.ui.views.markers.MarkerViewUtil;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerTypesModel;
-
-import com.ibm.icu.text.CollationKey;
-import com.ibm.icu.text.Collator;
 
 /**
  * The MarkerEntry is the class that wrappers an {@link IMarker} for display in

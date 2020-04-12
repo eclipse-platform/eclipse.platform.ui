@@ -14,16 +14,15 @@
 
 package org.eclipse.ui.internal.views.markers;
 
+import java.text.CollationKey;
+
 import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.ui.views.markers.MarkerViewUtil;
 import org.eclipse.ui.views.markers.internal.MarkerTypesModel;
 
-import com.ibm.icu.text.CollationKey;
-
 /**
  * The DeltaMarkerEntry is the class that wraps an {@link IMarkerDelta} for testing.
-
  *
  * @since 3.6
  *

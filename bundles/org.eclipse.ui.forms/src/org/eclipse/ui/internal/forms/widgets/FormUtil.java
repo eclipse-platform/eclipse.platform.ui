@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.forms.widgets;
 
+import java.text.BreakIterator;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.ScrolledComposite;
 import org.eclipse.swt.events.MouseEvent;
@@ -37,8 +39,6 @@ import org.eclipse.ui.forms.widgets.Form;
 import org.eclipse.ui.forms.widgets.FormText;
 import org.eclipse.ui.forms.widgets.FormToolkit;
 import org.eclipse.ui.forms.widgets.SizeCache;
-
-import com.ibm.icu.text.BreakIterator;
 
 public class FormUtil {
 	public static final String PLUGIN_ID = "org.eclipse.ui.forms"; //$NON-NLS-1$

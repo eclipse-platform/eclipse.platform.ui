@@ -25,8 +25,7 @@ Require-Bundle: org.eclipse.ui.ide;bundle-version="[3.16.0,4.0.0)",
 Export-Package: org.eclipse.ui.internal.ide.application;x-internal:=true,
  org.eclipse.ui.internal.ide.application.addons;x-internal:=true,
  org.eclipse.ui.internal.ide.application.dialogs;x-internal:=true
-Import-Package: com.ibm.icu.text,
- javax.inject
+Import-Package: javax.inject
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Bundle-ActivationPolicy: lazy
 Automatic-Module-Name: org.eclipse.ui.ide.application

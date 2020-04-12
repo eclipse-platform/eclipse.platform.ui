@@ -13,8 +13,9 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.progress.internal;
 
-import com.ibm.icu.text.DateFormat;
+import java.text.DateFormat;
 import java.util.Date;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.resource.JFaceResources;

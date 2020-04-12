@@ -14,13 +14,12 @@
 
 package org.eclipse.ui.views.bookmarkexplorer;
 
+import java.text.DateFormat;
 import java.util.Date;
 
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
-
-import com.ibm.icu.text.DateFormat;
 
 /**
  * Utility class for accessing marker attributes.

@@ -16,11 +16,12 @@ package org.eclipse.ui.internal;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.text.Collator;
+import java.text.DateFormat;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.Locale;
-
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.Platform;
@@ -28,9 +29,6 @@ import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.about.ISystemSummarySection;
 import org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants;
-
-import com.ibm.icu.text.Collator;
-import com.ibm.icu.text.DateFormat;
 
 /**
  * This class contains utility methods that clients may use to obtain

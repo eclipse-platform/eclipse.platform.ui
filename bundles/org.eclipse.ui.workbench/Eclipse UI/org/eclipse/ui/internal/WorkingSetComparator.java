@@ -13,11 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
+import java.text.Collator;
 import java.util.Comparator;
-
 import org.eclipse.ui.IWorkingSet;
-
-import com.ibm.icu.text.Collator;
 
 /**
  * Compares two working sets by name.

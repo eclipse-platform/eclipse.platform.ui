@@ -15,7 +15,7 @@
 
 package org.eclipse.ui.internal.themes;
 
-import com.ibm.icu.text.MessageFormat;
+import java.text.MessageFormat;
 import java.util.ResourceBundle;
 
 /**

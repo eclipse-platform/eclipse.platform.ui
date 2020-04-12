@@ -15,6 +15,7 @@
 
 package org.eclipse.ui.views.markers.internal;
 
+import java.text.DateFormat;
 import java.util.Date;
 
 import org.eclipse.core.resources.IMarker;
@@ -30,8 +31,6 @@ import org.eclipse.ui.internal.ide.IDEInternalWorkbenchImages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.Policy;
 import org.eclipse.ui.views.markers.MarkerViewUtil;
-
-import com.ibm.icu.text.DateFormat;
 
 /**
  * The Util class is the class of general utilities used by the marker support.

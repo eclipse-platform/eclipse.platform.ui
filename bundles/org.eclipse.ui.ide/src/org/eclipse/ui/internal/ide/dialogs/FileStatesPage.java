@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
@@ -39,8 +40,6 @@ import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * The FileStatesPage is the page used to set the file states sizes for the workbench.

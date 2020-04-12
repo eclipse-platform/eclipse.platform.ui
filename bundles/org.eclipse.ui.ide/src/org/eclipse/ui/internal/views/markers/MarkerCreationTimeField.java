@@ -14,13 +14,12 @@
 
 package org.eclipse.ui.internal.views.markers;
 
+import java.text.DateFormat;
 import java.util.Date;
 
 import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.ui.views.markers.MarkerField;
 import org.eclipse.ui.views.markers.MarkerItem;
-
-import com.ibm.icu.text.DateFormat;
 
 /**
  * MarkerCreationTimeField is the field that shows the creation time of a field.

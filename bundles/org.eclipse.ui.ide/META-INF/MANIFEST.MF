@@ -72,8 +72,7 @@ Require-Bundle: org.eclipse.core.resources;bundle-version="[3.7.0,4.0.0)";resolu
  org.eclipse.ui.navigator;bundle-version="3.7.400",
  org.eclipse.jface;bundle-version="[3.18.0,4.0.0)"
 Import-Package: javax.annotation,
- javax.inject,
- com.ibm.icu.text
+ javax.inject
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: org.eclipse.ui.ide
 

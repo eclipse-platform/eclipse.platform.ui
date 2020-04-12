@@ -19,6 +19,7 @@
 package org.eclipse.ui.internal.ide.dialogs;
 
 import java.net.URI;
+import java.text.Collator;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -74,8 +75,6 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-
-import com.ibm.icu.text.Collator;
 
 /**
  * A widget group that displays path variables.

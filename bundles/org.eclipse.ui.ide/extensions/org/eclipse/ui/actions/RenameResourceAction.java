@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -54,8 +55,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.IIDEHelpContextIds;
 import org.eclipse.ui.internal.ide.actions.LTKLauncher;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Standard action for renaming the selected resources.

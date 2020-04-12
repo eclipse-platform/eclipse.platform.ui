@@ -14,6 +14,7 @@ package org.eclipse.e4.ui.internal.dialogs.about;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,8 +27,6 @@ import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.osgi.framework.Bundle;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * A class that converts the strings returned by

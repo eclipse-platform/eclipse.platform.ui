@@ -15,7 +15,7 @@
 
 package org.eclipse.ui.internal;
 
-import com.ibm.icu.text.Collator;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;

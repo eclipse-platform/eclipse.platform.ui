@@ -15,6 +15,7 @@
 package org.eclipse.e4.ui.progress.internal;
 
 import java.net.URL;
+import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -56,8 +57,6 @@ import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.osgi.framework.FrameworkUtil;
-
-import com.ibm.icu.text.DateFormat;
 
 
 /**

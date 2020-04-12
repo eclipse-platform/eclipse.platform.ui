@@ -15,6 +15,7 @@
  *******************************************************************************/
 package org.eclipse.ui.actions;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,8 +29,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * The ReadOnlyStateChecker is a helper class that takes a set of resource

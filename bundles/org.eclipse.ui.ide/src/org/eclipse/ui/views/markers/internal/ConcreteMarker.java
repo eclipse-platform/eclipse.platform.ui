@@ -14,13 +14,13 @@
  *******************************************************************************/
 package org.eclipse.ui.views.markers.internal;
 
+import java.text.CollationKey;
+import java.text.Collator;
+
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.e4.ui.internal.workspace.markers.Translation;
-
-import com.ibm.icu.text.CollationKey;
-import com.ibm.icu.text.Collator;
 
 /**
  * This is a concrete class that stores the same type of information as the IMarkers

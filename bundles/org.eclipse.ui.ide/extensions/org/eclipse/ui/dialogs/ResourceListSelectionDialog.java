@@ -15,6 +15,7 @@
  *******************************************************************************/
 package org.eclipse.ui.dialogs;
 
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -45,8 +46,6 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
 import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
 import org.eclipse.ui.internal.ide.StringMatcher;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-
-import com.ibm.icu.text.Collator;
 
 /**
  * Shows a list of resources to the user with a text entry field for a string

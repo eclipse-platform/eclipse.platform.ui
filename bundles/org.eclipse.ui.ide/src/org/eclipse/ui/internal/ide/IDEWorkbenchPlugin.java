@@ -16,6 +16,7 @@
 
 package org.eclipse.ui.internal.ide;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,8 +51,6 @@ import org.eclipse.ui.internal.ide.registry.UnassociatedEditorStrategyRegistry;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * This internal class represents the top of the IDE workbench.

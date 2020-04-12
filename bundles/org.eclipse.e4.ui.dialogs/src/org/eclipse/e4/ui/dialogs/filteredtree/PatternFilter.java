@@ -15,6 +15,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.dialogs.filteredtree;
 
+import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -32,8 +33,6 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.StyledString;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-
-import com.ibm.icu.text.BreakIterator;
 
 /**
  * Based on org.eclipse.ui.dialogs.PatternFilter.

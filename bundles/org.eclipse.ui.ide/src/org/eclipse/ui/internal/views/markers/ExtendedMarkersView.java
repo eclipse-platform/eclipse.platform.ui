@@ -19,6 +19,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.views.markers;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -112,9 +113,6 @@ import org.eclipse.ui.views.markers.internal.ContentGeneratorDescriptor;
 import org.eclipse.ui.views.markers.internal.MarkerGroup;
 import org.eclipse.ui.views.markers.internal.MarkerMessages;
 import org.eclipse.ui.views.markers.internal.MarkerSupportRegistry;
-
-import com.ibm.icu.text.MessageFormat;
-
 
 /**
  * The ExtendedMarkersView is the internal implementation of the view that shows

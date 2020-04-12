@@ -15,7 +15,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.misc;
 
-import com.ibm.icu.text.BreakIterator;
+import java.text.BreakIterator;
 import java.util.ArrayList;
 import java.util.List;
 
