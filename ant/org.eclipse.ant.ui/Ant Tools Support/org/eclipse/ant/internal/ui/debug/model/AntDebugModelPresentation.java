@@ -15,6 +15,7 @@
 package org.eclipse.ant.internal.ui.debug.model;
 
 import java.io.File;
+import java.text.MessageFormat;
 
 import org.eclipse.ant.internal.core.IAntCoreConstants;
 import org.eclipse.ant.internal.launching.debug.model.AntLineBreakpoint;
@@ -42,8 +43,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.ide.FileStoreEditorInput;
 import org.eclipse.ui.part.FileEditorInput;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Renders Ant debug elements

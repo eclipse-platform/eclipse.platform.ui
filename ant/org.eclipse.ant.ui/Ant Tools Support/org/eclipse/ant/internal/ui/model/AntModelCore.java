@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.model;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -28,8 +29,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugPlugin;
 import org.eclipse.debug.core.IBreakpointsListener;
 import org.eclipse.debug.core.model.IBreakpoint;
-
-import com.ibm.icu.text.MessageFormat;
 
 public class AntModelCore implements IBreakpointsListener {
 
@@ -82,7 +81,8 @@ public class AntModelCore implements IBreakpointsListener {
 					IMarker marker = breakpoint.getMarker();
 					if (marker.exists()) {
 						int lineNumber = marker.getAttribute(IMarker.LINE_NUMBER, 0);
-						marker.setAttribute(IMarker.MESSAGE, MessageFormat.format(DebugModelMessages.AntLineBreakpoint_0, new Object[] { Integer.toString(lineNumber) }));
+						marker.setAttribute(IMarker.MESSAGE, MessageFormat.format(DebugModelMessages.AntLineBreakpoint_0, new Object[] {
+								Integer.toString(lineNumber) }));
 					}
 				}
 			}

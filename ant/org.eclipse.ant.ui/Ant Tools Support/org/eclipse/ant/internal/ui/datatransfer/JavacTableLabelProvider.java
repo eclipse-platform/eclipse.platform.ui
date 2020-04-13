@@ -13,11 +13,11 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.datatransfer;
 
+import java.text.MessageFormat;
+
 import org.eclipse.ant.internal.ui.model.AntElementNode;
 import org.eclipse.ant.internal.ui.model.AntModelLabelProvider;
 import org.eclipse.jface.viewers.StyledString;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Ant javac task label provider for a table

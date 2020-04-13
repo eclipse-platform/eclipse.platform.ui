@@ -14,6 +14,8 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.preferences;
 
+import java.text.MessageFormat;
+
 import org.eclipse.ant.internal.launching.AntLaunching;
 import org.eclipse.ant.internal.launching.IAntLaunchingPreferenceConstants;
 import org.eclipse.ant.internal.ui.AntUIPlugin;
@@ -46,8 +48,6 @@ import org.eclipse.swt.widgets.List;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
-
-import com.ibm.icu.text.MessageFormat;
 
 public class AntPreferencePage extends FieldEditorPreferencePage implements IWorkbenchPreferencePage {
 

@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.views.actions;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Hashtable;
@@ -38,8 +39,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * 

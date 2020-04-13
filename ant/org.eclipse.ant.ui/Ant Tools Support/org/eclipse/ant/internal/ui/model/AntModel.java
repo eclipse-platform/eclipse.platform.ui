@@ -20,6 +20,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URLClassLoader;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -83,8 +84,6 @@ import org.eclipse.jface.text.IDocumentListener;
 import org.eclipse.jface.text.ISynchronizable;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXParseException;
-
-import com.ibm.icu.text.MessageFormat;
 
 public class AntModel implements IAntModel {
 

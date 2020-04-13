@@ -17,6 +17,7 @@ package org.eclipse.ant.internal.ui.datatransfer;
 
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -56,8 +57,6 @@ import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
-
-import com.ibm.icu.text.MessageFormat;
 
 public class AntBuildfileExportPage extends WizardPage {
 

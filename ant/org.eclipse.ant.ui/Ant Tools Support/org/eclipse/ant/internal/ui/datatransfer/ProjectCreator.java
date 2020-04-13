@@ -14,6 +14,7 @@
 package org.eclipse.ant.internal.ui.datatransfer;
 
 import java.io.File;
+import java.text.MessageFormat;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.taskdefs.Javac;
@@ -37,8 +38,6 @@ import org.eclipse.jdt.core.IPackageFragmentRoot;
 import org.eclipse.jdt.core.JavaCore;
 import org.eclipse.jdt.core.JavaModelException;
 import org.eclipse.jdt.launching.JavaRuntime;
-
-import com.ibm.icu.text.MessageFormat;
 
 public class ProjectCreator {
 

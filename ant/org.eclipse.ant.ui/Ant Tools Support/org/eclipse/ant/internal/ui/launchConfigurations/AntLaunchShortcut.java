@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -60,8 +61,6 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.dialogs.ElementListSelectionDialog;
 import org.eclipse.ui.editors.text.ILocationProvider;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * This class provides the Run/Debug As -&gt; Ant Build launch shortcut.

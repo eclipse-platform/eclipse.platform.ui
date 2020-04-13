@@ -13,7 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.dtd.schema;
 
-import com.ibm.icu.text.MessageFormat;
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;

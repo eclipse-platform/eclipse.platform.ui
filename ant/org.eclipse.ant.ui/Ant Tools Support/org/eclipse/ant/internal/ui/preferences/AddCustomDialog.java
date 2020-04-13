@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
+import java.text.MessageFormat;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -63,8 +64,6 @@ import org.eclipse.ui.model.WorkbenchViewerComparator;
 import org.eclipse.ui.wizards.datatransfer.FileSystemStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.IImportStructureProvider;
 import org.eclipse.ui.wizards.datatransfer.ZipFileStructureProvider;
-
-import com.ibm.icu.text.MessageFormat;
 
 public class AddCustomDialog extends StatusDialog {
 

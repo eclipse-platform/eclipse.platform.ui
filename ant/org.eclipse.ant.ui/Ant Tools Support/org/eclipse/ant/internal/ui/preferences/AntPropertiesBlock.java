@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.preferences;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -53,8 +54,6 @@ import org.eclipse.swt.widgets.FileDialog;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
-
-import com.ibm.icu.text.MessageFormat;
 
 public class AntPropertiesBlock {
 
@@ -495,7 +494,8 @@ public class AntPropertiesBlock {
 							propertyName, property.getPluginLabel() }));
 					return false;
 				}
-				boolean overWrite = MessageDialog.openQuestion(propertyTableViewer.getControl().getShell(), AntPreferencesMessages.AntPropertiesBlock_15, MessageFormat.format(AntPreferencesMessages.AntPropertiesBlock_16, new Object[] { name }));
+				boolean overWrite = MessageDialog.openQuestion(propertyTableViewer.getControl().getShell(), AntPreferencesMessages.AntPropertiesBlock_15, MessageFormat.format(AntPreferencesMessages.AntPropertiesBlock_16, new Object[] {
+						name }));
 				if (!overWrite) {
 					return false;
 				}

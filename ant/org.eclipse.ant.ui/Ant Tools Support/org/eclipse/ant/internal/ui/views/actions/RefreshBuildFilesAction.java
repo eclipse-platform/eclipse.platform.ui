@@ -14,6 +14,7 @@
 package org.eclipse.ant.internal.ui.views.actions;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -29,8 +30,6 @@ import org.eclipse.jface.action.Action;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.texteditor.IUpdate;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * Action which refreshes the selected buildfiles in the Ant view
@@ -75,7 +74,8 @@ public class RefreshBuildFilesAction extends Action implements IUpdate {
 				AntProjectNodeProxy project;
 				while (iter.hasNext()) {
 					project = (AntProjectNodeProxy) iter.next();
-					monitor.subTask(MessageFormat.format(AntViewActionMessages.RefreshBuildFilesAction_Refreshing__0__4, new Object[] { project.getBuildFileName() }));
+					monitor.subTask(MessageFormat.format(AntViewActionMessages.RefreshBuildFilesAction_Refreshing__0__4, new Object[] {
+							project.getBuildFileName() }));
 					project.parseBuildFile(true);
 					monitor.worked(1);
 				}

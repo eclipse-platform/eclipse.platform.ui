@@ -13,10 +13,9 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.dtd.util;
 
+import java.text.MessageFormat;
 import java.util.Comparator;
 import java.util.Iterator;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * @author Bob Foster

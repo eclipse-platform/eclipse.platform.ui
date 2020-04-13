@@ -14,6 +14,7 @@
 package org.eclipse.ant.internal.ui.views.actions;
 
 import java.lang.reflect.InvocationTargetException;
+import java.text.MessageFormat;
 
 import org.eclipse.ant.internal.ui.AntUIImages;
 import org.eclipse.ant.internal.ui.IAntUIConstants;
@@ -28,8 +29,6 @@ import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.PlatformUI;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * This action opens a dialog to search for build files and adds the resulting projects to the ant view.
@@ -61,7 +60,8 @@ public class SearchForBuildFilesAction extends Action {
 						monitor.beginTask(AntViewActionMessages.SearchForBuildFilesAction_Processing_search_results_3, files.length);
 						for (int i = 0; i < files.length && !monitor.isCanceled(); i++) {
 							String buildFileName = files[i].getFullPath().toString();
-							monitor.subTask(MessageFormat.format(AntViewActionMessages.SearchForBuildFilesAction_Adding__0__4, new Object[] { buildFileName }));
+							monitor.subTask(MessageFormat.format(AntViewActionMessages.SearchForBuildFilesAction_Adding__0__4, new Object[] {
+									buildFileName }));
 							if (alreadyAdded(buildFileName)) {
 								// Don't parse projects that have already been added.
 								continue;

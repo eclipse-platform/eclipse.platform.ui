@@ -14,6 +14,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.dtd.schema;
 
+import java.text.MessageFormat;
 import java.util.HashSet;
 import java.util.LinkedList;
 
@@ -21,8 +22,6 @@ import org.eclipse.ant.internal.ui.dtd.IModel;
 import org.eclipse.ant.internal.ui.dtd.ISchema;
 import org.xml.sax.SAXException;
 import org.xml.sax.ext.DeclHandler;
-
-import com.ibm.icu.text.MessageFormat;
 
 /**
  * SchemaFactory is a SAX DeclHandler that converts DTD ELEMENT and ATTLIST declarations to schema form on the fly. The only two methods available to

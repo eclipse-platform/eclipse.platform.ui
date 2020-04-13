@@ -14,14 +14,14 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.launchConfigurations;
 
+import java.text.MessageFormat;
+
 import org.eclipse.ant.internal.ui.AntUIPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.jdt.internal.debug.ui.launcher.JavaWorkingDirectoryBlock;
 import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.ui.externaltools.internal.launchConfigurations.ExternalToolsUtil;
-
-import com.ibm.icu.text.MessageFormat;
 
 public class AntWorkingDirectoryBlock extends JavaWorkingDirectoryBlock {
 

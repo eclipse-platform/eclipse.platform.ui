@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.ant.internal.ui.refactoring;
 
+import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,8 +45,6 @@ import org.eclipse.jdt.launching.IJavaLaunchConfigurationConstants;
 import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
-
-import com.ibm.icu.text.MessageFormat;
 
 public class LaunchConfigurationBuildfileChange extends Change {
 
