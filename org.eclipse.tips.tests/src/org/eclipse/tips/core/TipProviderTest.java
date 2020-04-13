@@ -165,7 +165,7 @@ public class TipProviderTest {
 			@Override
 			public IStatus loadNewTips(IProgressMonitor pMonitor) {
 				assertTrue(getTips(null).size() == 0);
-				assertTrue(setTips(Arrays.asList(new Tip[] { new TestTip(getID(), "DDD", "XXX") })).getTips(null)
+				assertTrue(setTips(Arrays.asList(new TestTip(getID(), "DDD", "XXX"))).getTips(null)
 						.size() == 1);
 				return Status.OK_STATUS;
 			}
@@ -181,9 +181,9 @@ public class TipProviderTest {
 			@Override
 			public IStatus loadNewTips(IProgressMonitor pMonitor) {
 				assertTrue(getTips(null).size() == 0);
-				assertTrue(setTips(Arrays.asList(new Tip[] { new TestTip(getID(), "DDD", "XXX") })).getTips(null)
+				assertTrue(setTips(Arrays.asList(new TestTip(getID(), "DDD", "XXX"))).getTips(null)
 						.size() == 1);
-				assertTrue(addTips(Arrays.asList(new Tip[] { new TestTip(getID(), "DDD", "XXX") })).getTips(null)
+				assertTrue(addTips(Arrays.asList(new TestTip(getID(), "DDD", "XXX"))).getTips(null)
 						.size() == 2);
 				return Status.OK_STATUS;
 			}

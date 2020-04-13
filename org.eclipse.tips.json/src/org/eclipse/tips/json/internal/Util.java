@@ -145,8 +145,7 @@ public class Util {
 			HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
 			int responseCode = httpCon.getResponseCode();
 			if (responseCode != 200) {
-				return new Status(IStatus.ERROR, symbolicName, MessageFormat
-						.format("Received response code {0} from {1}.", new Object[] { responseCode + "", pUrl }));
+				return new Status(IStatus.ERROR, symbolicName, MessageFormat.format("Received response code {0} from {1}.", responseCode + "", pUrl));
 			}
 			if (httpCon.getContentLength() <= 0) {
 				return new Status(IStatus.ERROR, symbolicName,

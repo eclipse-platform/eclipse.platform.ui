@@ -70,8 +70,7 @@ public class WebappResources {
 		// get value
 		try {
 			String stringFromPropertiesFile = bundle.getString(name);
-			stringFromPropertiesFile = MessageFormat.format(
-					stringFromPropertiesFile, new Object[]{replace0});
+			stringFromPropertiesFile = MessageFormat.format(stringFromPropertiesFile, replace0);
 			return stringFromPropertiesFile;
 		} catch (Exception e) {
 			return name;
