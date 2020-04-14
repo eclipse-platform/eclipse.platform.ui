@@ -577,6 +577,15 @@
          unpack="false"/>
 
    <plugin
+         id="org.eclipse.e4.ui.swt.win32"
+         ws="win32"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+
+   <plugin
          id="org.eclipse.e4.core.di.extensions.supplier"
          download-size="0"
          install-size="0"
