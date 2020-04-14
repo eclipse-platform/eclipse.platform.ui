@@ -231,10 +231,8 @@ public class MarkersPropertyPage extends PropertyPage {
 		composite.setLayout(layout);
 
 		priorityCombo = new Combo(composite, SWT.READ_ONLY);
-		priorityCombo.setItems(new String[] {
-				MarkerMessages.propertiesDialog_priorityLow,
-				MarkerMessages.propertiesDialog_priorityNormal,
-				MarkerMessages.propertiesDialog_priorityHigh });
+		priorityCombo.setItems(MarkerMessages.propertiesDialog_priorityLow,
+				MarkerMessages.propertiesDialog_priorityNormal, MarkerMessages.propertiesDialog_priorityHigh);
 
 		priorityCombo.select(marker.getAttribute(IMarker.PRIORITY, IMarker.PRIORITY_NORMAL));
 		priorityCombo.setEnabled(Util.isEditable(marker));

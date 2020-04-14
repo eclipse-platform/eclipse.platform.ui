@@ -866,7 +866,7 @@ public class WizardFileSystemResourceImportPage1 extends WizardResourceImportPag
 		if (shouldImportTopLevelFoldersRecursively)
 			operation = new ImportOperation(getContainerFullPath(),
 					sourceDirectory, fileSystemStructureProvider,
-					this, Arrays.asList(new File[] {getSourceDirectory()}));
+					this, Arrays.asList(getSourceDirectory()));
 		else
 			operation = new ImportOperation(getContainerFullPath(),
 				sourceDirectory, fileSystemStructureProvider,

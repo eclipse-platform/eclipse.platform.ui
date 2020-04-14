@@ -83,8 +83,7 @@ public class DialogTaskProperties extends DialogMarkerProperties {
 		composite.setLayout(layout);
 
 		priorityCombo = new Combo(composite, SWT.READ_ONLY);
-		priorityCombo.setItems(new String[] { PRIORITY_HIGH, PRIORITY_NORMAL,
-				PRIORITY_LOW });
+		priorityCombo.setItems(PRIORITY_HIGH, PRIORITY_NORMAL, PRIORITY_LOW);
 		// Prevent Esc and Return from closing the dialog when the combo is active.
 		priorityCombo.addTraverseListener(e -> {
 			if (e.detail == SWT.TRAVERSE_ESCAPE

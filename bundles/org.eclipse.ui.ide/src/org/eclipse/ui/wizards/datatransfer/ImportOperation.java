@@ -380,7 +380,7 @@ public class ImportOperation extends WorkspaceModifyOperation {
 			if (selectedFiles == null) {
 				ContainerGenerator generator = new ContainerGenerator(destinationPath);
 				subMonitor.worked(3);
-				validateFiles(Arrays.asList(new Object[] { source }), subMonitor.split(3));
+				validateFiles(Arrays.asList(source), subMonitor.split(3));
 				destinationContainer = generator.generateContainer(subMonitor.split(4));
 				importRecursivelyFrom(source, POLICY_DEFAULT, subMonitor.split(90));
 			} else {

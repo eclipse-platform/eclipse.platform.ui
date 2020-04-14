@@ -2792,7 +2792,8 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 			data = new GridData(SWT.FILL, SWT.TOP, true, false);
 			argumentsBoolean.setLayoutData(data);
 			argumentsBoolean.setFont(multiArgumentComposite.getFont());
-			argumentsBoolean.setItems(new String[] {MultiMatcherLocalization.getLocalMultiMatcherKey(Boolean.TRUE.toString()), MultiMatcherLocalization.getLocalMultiMatcherKey(Boolean.FALSE.toString())});
+			argumentsBoolean.setItems(MultiMatcherLocalization.getLocalMultiMatcherKey(Boolean.TRUE.toString()),
+					MultiMatcherLocalization.getLocalMultiMatcherKey(Boolean.FALSE.toString()));
 			argumentsBoolean.addSelectionListener(new SelectionAdapter() {
 				@Override
 				public void widgetSelected(SelectionEvent e) {
