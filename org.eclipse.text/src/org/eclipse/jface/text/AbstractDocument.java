@@ -22,6 +22,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.regex.PatternSyntaxException;
 
 import org.eclipse.core.runtime.Assert;
@@ -293,7 +294,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 
 		fPositions= new HashMap<>();
 		fEndPositions= new HashMap<>();
-		fPositionUpdaters= new ArrayList<>();
+		fPositionUpdaters= new CopyOnWriteArrayList<>();
 		fDocumentListeners= new ListenerList<>(ListenerList.IDENTITY);
 		fPrenotifiedDocumentListeners= new ListenerList<>(ListenerList.IDENTITY);
 		fDocumentPartitioningListeners= new ListenerList<>(ListenerList.IDENTITY);
@@ -951,9 +952,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 
 	@Override
 	public IPositionUpdater[] getPositionUpdaters() {
-		IPositionUpdater[] updaters= new IPositionUpdater[fPositionUpdaters.size()];
-		fPositionUpdaters.toArray(updaters);
-		return updaters;
+		return fPositionUpdaters.toArray(new IPositionUpdater[fPositionUpdaters.size()]);
 	}
 
 	@Override
@@ -971,16 +970,12 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 
 	@Override
 	public void insertPositionUpdater(IPositionUpdater updater, int index) {
-
-		for (int i= fPositionUpdaters.size() - 1; i >= 0; i--) {
-			if (fPositionUpdaters.get(i) == updater)
+		for (IPositionUpdater u: fPositionUpdaters) {
+			if (u == updater) {
 				return;
+			}
 		}
-
-		if (index == fPositionUpdaters.size())
-			fPositionUpdaters.add(updater);
-		else
-			fPositionUpdaters.add(index, updater);
+		fPositionUpdaters.add(index, updater);
 	}
 
 	@Override
@@ -1154,10 +1149,7 @@ public abstract class AbstractDocument implements IDocument, IDocumentExtension,
 	 *            the positions
 	 */
 	protected void updatePositions(DocumentEvent event) {
-		List<IPositionUpdater> list= new ArrayList<>(fPositionUpdaters);
-		Iterator<IPositionUpdater> e= list.iterator();
-		while (e.hasNext()) {
-			IPositionUpdater u= e.next();
+		for(IPositionUpdater u: fPositionUpdaters) {
 			u.update(event);
 		}
 	}
