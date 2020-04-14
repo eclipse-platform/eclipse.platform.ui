@@ -659,8 +659,8 @@ public abstract class RefactoringWizard extends Wizard {
 	private Change createChange(CreateChangeOperation operation, boolean updateStatus, IRunnableContext context){
 		InvocationTargetException exception= null;
 		try {
-			context.run((context != PlatformUI.getWorkbench().getActiveWorkbenchWindow()), fIsChangeCreationCancelable, new WorkbenchRunnableAdapter(
-				operation, ResourcesPlugin.getWorkspace().getRoot()));
+			context.run(true, fIsChangeCreationCancelable, new WorkbenchRunnableAdapter(
+					operation, ResourcesPlugin.getWorkspace().getRoot()));
 		} catch (InterruptedException e) {
 			setConditionCheckingStatus(null);
 			return null;

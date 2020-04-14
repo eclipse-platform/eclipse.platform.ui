@@ -24,10 +24,10 @@ import org.eclipse.core.runtime.NullProgressMonitor;
 
 import org.eclipse.core.resources.IResource;
 
+import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 
-import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.handlers.HandlerUtil;
 
 import org.eclipse.ltk.core.refactoring.Change;
@@ -118,7 +118,7 @@ public class RenameResourceHandler extends AbstractResourcesHandler {
 
 	private Change getChange(RenameResourceWizard refactoringWizard) {
 		refactoringWizard.setChangeCreationCancelable(true);
-		refactoringWizard.setInitialComputationContext(PlatformUI.getWorkbench().getActiveWorkbenchWindow());
+		refactoringWizard.setInitialComputationContext((boolean fork, boolean cancelable, IRunnableWithProgress runnable) -> runnable.run(new NullProgressMonitor()));
 		return refactoringWizard.internalCreateChange(InternalAPI.INSTANCE,
 				new CreateChangeOperation(new CheckConditionsOperation(refactoringWizard.getRefactoring(), CheckConditionsOperation.FINAL_CONDITIONS), RefactoringStatus.FATAL), true);
 	}
