@@ -13,18 +13,25 @@
  *******************************************************************************/
 package org.eclipse.ui.tests.api;
 
+import org.eclipse.core.resources.IWorkspace;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.ui.IPageListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.tests.harness.util.EmptyPerspective;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 /**
  * Tests the IPageListener class.
  */
+@RunWith(JUnit4.class)
 public class IPageListenerTest extends UITestCase implements IPageListener {
 	private IWorkbenchWindow fWindow;
+	private IWorkspace fWorkspace;
 
 	private int eventsReceived = 0;
 
@@ -36,14 +43,15 @@ public class IPageListenerTest extends UITestCase implements IPageListener {
 
 	private IWorkbenchPage pageMask;
 
-	public IPageListenerTest(String testName) {
-		super(testName);
+	public IPageListenerTest() {
+		super(IPageListenerTest.class.getSimpleName());
 	}
 
 	@Override
 	protected void doSetUp() throws Exception {
 		super.doSetUp();
 		fWindow = openTestWindow();
+		fWorkspace = ResourcesPlugin.getWorkspace();
 		fWindow.addPageListener(this);
 	}
 
@@ -60,9 +68,9 @@ public class IPageListenerTest extends UITestCase implements IPageListener {
 	@Ignore
 	public void testPageOpened() throws Throwable {
 		/*
-		 * Commented out because until test case can be updated to work
-		 * with new window/page/perspective implementation
-		 *
+		 * Commented out because until test case can be updated to work with new
+		 * window/page/perspective implementation
+		 */
 		 // From Javadoc: "Notifies this listener that the given page has been opened."
 
 		 // Test open page.
@@ -73,7 +81,6 @@ public class IPageListenerTest extends UITestCase implements IPageListener {
 
 		 // Close page.
 		 page.close();
-		 */
 	}
 
 	/**
@@ -85,7 +92,7 @@ public class IPageListenerTest extends UITestCase implements IPageListener {
 		/*
 		 * Commented out because until test case can be updated to work
 		 * with new window/page/perspective implementation
-		 *
+		 */
 		 // From Javadoc: "Notifies this listener that the given page has been closed."
 
 		 // Open page.
@@ -97,7 +104,6 @@ public class IPageListenerTest extends UITestCase implements IPageListener {
 		 pageMask = page;
 		 page.close();
 		 assertEquals(eventsReceived, CLOSE);
-		 */
 	}
 
 	/**
@@ -109,7 +115,7 @@ public class IPageListenerTest extends UITestCase implements IPageListener {
 		/*
 		 * Commented out because until test case can be updated to work
 		 * with new window/page/perspective implementation
-		 *
+		 */
 		 // From Javadoc: "Notifies this listener that the given page has been activated."
 
 		 // Add pages.
@@ -133,7 +139,6 @@ public class IPageListenerTest extends UITestCase implements IPageListener {
 		 // Cleanup.
 		 page1.close();
 		 page2.close();
-		 */
 	}
 
 	/**
