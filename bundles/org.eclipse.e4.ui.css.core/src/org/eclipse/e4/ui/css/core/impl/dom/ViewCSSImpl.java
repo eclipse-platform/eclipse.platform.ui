@@ -25,6 +25,7 @@ import org.eclipse.e4.ui.css.core.impl.sac.ExtendedSelector;
 import org.w3c.css.sac.Selector;
 import org.w3c.css.sac.SelectorList;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 import org.w3c.dom.css.CSSRule;
 import org.w3c.dom.css.CSSRuleList;
 import org.w3c.dom.css.CSSStyleDeclaration;
@@ -111,6 +112,17 @@ public class ViewCSSImpl implements ViewCSS, ExtendedDocumentCSS.StyleSheetChang
 	}
 
 	private CSSStyleDeclaration getComputedStyle(List<CSSRule> ruleList, Element elt, String pseudoElt) {
+		Node parent = elt.getParentNode();
+
+		Node[] hierarchy = null;
+		if (parent != null) {
+			List<Node> hierarchyList = new ArrayList<>();
+			for (Node n = parent; n != null; n = n.getParentNode()) {
+				hierarchyList.add(n);
+			}
+			hierarchy = hierarchyList.toArray(new Node[hierarchyList.size()]);
+		}
+
 		List<StyleWrapper> styleDeclarations = null;
 		StyleWrapper firstStyleDeclaration = null;
 		int position = 0;
@@ -127,7 +139,7 @@ public class ViewCSSImpl implements ViewCSS, ExtendedDocumentCSS.StyleSheetChang
 				Selector selector = selectorList.item(j);
 				if (selector instanceof ExtendedSelector) {
 					ExtendedSelector extendedSelector = (ExtendedSelector) selector;
-					if (extendedSelector.match(elt, pseudoElt)) {
+					if (extendedSelector.match(elt, hierarchy, 0, pseudoElt)) {
 						CSSStyleDeclaration style = styleRule.getStyle();
 						int specificity = extendedSelector.getSpecificity();
 						StyleWrapper wrapper = new StyleWrapper(style, specificity, position++);

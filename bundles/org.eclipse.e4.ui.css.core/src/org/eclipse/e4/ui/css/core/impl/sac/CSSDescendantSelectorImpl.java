@@ -52,14 +52,39 @@ public class CSSDescendantSelectorImpl extends AbstractDescendantSelector {
 	 * Tests whether this selector matches the given element.
 	 */
 	@Override
+	public boolean match(Element e, Node[] hierarchy, int parentIndex, String pseudoE) {
+		ExtendedSelector p = (ExtendedSelector) getAncestorSelector();
+		if (!((ExtendedSelector) getSimpleSelector()).match(e, hierarchy, parentIndex, pseudoE)) {
+			return false;
+		}
+
+		if (hierarchy == null) {
+			return false;
+		}
+
+		Node n;
+		int length = hierarchy.length;
+		for (int i = parentIndex; i < length; i++) {
+			n = hierarchy[i];
+			if (n != null && n.getNodeType() == Node.ELEMENT_NODE
+					&& p.match((Element) n, hierarchy, i + 1, null)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Tests whether this selector matches the given element.
+	 */
+	@Override
 	public boolean match(Element e, String pseudoE) {
-		ExtendedSelector p = (ExtendedSelector)getAncestorSelector();
-		if (!((ExtendedSelector)getSimpleSelector()).match(e,pseudoE)) {
+		ExtendedSelector p = (ExtendedSelector) getAncestorSelector();
+		if (!((ExtendedSelector) getSimpleSelector()).match(e, pseudoE)) {
 			return false;
 		}
 		for (Node n = e.getParentNode(); n != null; n = n.getParentNode()) {
-			if (n.getNodeType() == Node.ELEMENT_NODE &&
-					p.match((Element)n, null)) {
+			if (n.getNodeType() == Node.ELEMENT_NODE && p.match((Element) n, null)) {
 				return true;
 			}
 		}

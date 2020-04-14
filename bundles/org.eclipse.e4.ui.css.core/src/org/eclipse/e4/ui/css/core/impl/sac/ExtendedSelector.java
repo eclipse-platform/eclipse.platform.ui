@@ -23,11 +23,16 @@ package org.eclipse.e4.ui.css.core.impl.sac;
 import java.util.Set;
 import org.w3c.css.sac.Selector;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * This interface extends the {@link org.w3c.css.sac.Selector}.
  */
 public interface ExtendedSelector extends Selector {
+
+	default boolean match(Element e, Node[] ancestors, int parentIndex, String pseudoE) {
+		return match(e, pseudoE);
+	}
 
 	/**
 	 * Tests whether this selector matches the given element.

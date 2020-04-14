@@ -25,6 +25,7 @@ import org.w3c.css.sac.Condition;
 import org.w3c.css.sac.ConditionalSelector;
 import org.w3c.css.sac.SimpleSelector;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 /**
  * This class provides an implementation of the
@@ -73,6 +74,12 @@ public class CSSConditionalSelectorImpl implements ConditionalSelector, Extended
 		return SAC_CONDITIONAL_SELECTOR;
 	}
 
+	@Override
+	public boolean match(Element e, Node[] hierarchy, int parentIndex, String pseudoE) {
+		return ((ExtendedSelector)getSimpleSelector()).match(e, hierarchy, parentIndex, pseudoE) &&
+				((ExtendedCondition)getCondition()).match(e, pseudoE);
+	}
+	
 	/**
 	 * Tests whether this selector matches the given element.
 	 */
