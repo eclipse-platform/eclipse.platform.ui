@@ -69,28 +69,28 @@ import org.eclipse.swt.widgets.ToolItem;
 	public static final int DELAY_PROGRESS = 500;
 
 	/** visibility state of the progressbar */
-	protected boolean fProgressIsVisible = false;
+	protected volatile boolean fProgressIsVisible = false;
 
 	/** visibility state of the cancle button */
 	protected boolean fCancelButtonIsVisible = false;
 
 	/** enablement state of the cancle button */
-	protected boolean fCancelEnabled = false;
+	protected volatile boolean fCancelEnabled = false;
 
 	/** name of the task */
-	protected String fTaskName;
+	protected volatile String fTaskName;
 
 	/** is the task is cancled */
 	protected volatile boolean fIsCanceled;
 
 	/** the start time of the task */
-	protected long fStartTime;
+	protected volatile long fStartTime;
 
 	/** the message text */
-	protected String fMessageText;
+	protected volatile String fMessageText;
 
 	/** the message image */
-	protected Image fMessageImage;
+	protected volatile Image fMessageImage;
 
 	/** the error text */
 	protected String fErrorText;
@@ -105,13 +105,13 @@ import org.eclipse.swt.widgets.ToolItem;
 	protected Composite fProgressBarComposite;
 
 	/** the progress bar */
-	protected ProgressIndicator fProgressBar;
+	protected volatile ProgressIndicator fProgressBar;
 
 	/** the toolbar */
-	protected ToolBar fToolBar;
+	protected volatile ToolBar fToolBar;
 
 	/** the cancle button */
-	protected ToolItem fCancelButton;
+	protected volatile ToolItem fCancelButton;
 
 	/** stop image descriptor */
 	protected static ImageDescriptor fgStopImage = ImageDescriptor
@@ -351,24 +351,37 @@ import org.eclipse.swt.widgets.ToolItem;
 	public void beginTask(String name, int totalWork) {
 		final long timestamp = System.currentTimeMillis();
 		fStartTime = timestamp;
+		if (fProgressBar == null) {
+			return;
+		}
 		final boolean animated = (totalWork == UNKNOWN || totalWork == 0);
 		// make sure the progress bar is made visible while
 		// the task is running. Fixes bug 32198 for the non-animated case.
 		Runnable timer = () -> StatusLine.this.startTask(timestamp, animated);
-		if (fProgressBar == null) {
-			return;
-		}
+		inUIThread(() -> {
+			fProgressBar.getDisplay().timerExec(DELAY_PROGRESS, timer);
+			if (!animated) {
+				fProgressBar.beginTask(totalWork);
+			}
+			if (name == null) {
+				fTaskName = Util.ZERO_LENGTH_STRING;
+			} else {
+				fTaskName = name;
+			}
+			setMessage(fTaskName);
+		});
+	}
 
-		fProgressBar.getDisplay().timerExec(DELAY_PROGRESS, timer);
-		if (!animated) {
-			fProgressBar.beginTask(totalWork);
-		}
-		if (name == null) {
-			fTaskName = Util.ZERO_LENGTH_STRING;
+	private void inUIThread(Runnable r) {
+		if (Display.getCurrent() != null) {
+			r.run();
 		} else {
-			fTaskName = name;
+			getDisplay().asyncExec(() -> {
+				if (!isDisposed()) {
+					r.run();
+				}
+			});
 		}
-		setMessage(fTaskName);
 	}
 
 	/**
@@ -380,14 +393,14 @@ import org.eclipse.swt.widgets.ToolItem;
 	public void done() {
 
 		fStartTime = 0;
-
-		if (fProgressBar != null) {
-			fProgressBar.sendRemainingWork();
-			fProgressBar.done();
-		}
-		setMessage(null);
-
-		hideProgress();
+		inUIThread(() -> {
+			if (fProgressBar != null) {
+				fProgressBar.sendRemainingWork();
+				fProgressBar.done();
+			}
+			setMessage(null);
+			hideProgress();
+		});
 	}
 
 	/**
@@ -435,15 +448,16 @@ import org.eclipse.swt.widgets.ToolItem;
 	 */
 	@Override
 	public void internalWorked(double work) {
-		if (!fProgressIsVisible) {
-			if (System.currentTimeMillis() - fStartTime > DELAY_PROGRESS) {
-				showProgress();
+		inUIThread(() -> {
+			if (!fProgressIsVisible) {
+				if (System.currentTimeMillis() - fStartTime > DELAY_PROGRESS) {
+					showProgress();
+				}
 			}
-		}
-
-		if (fProgressBar != null) {
-			fProgressBar.worked(work);
-		}
+			if (fProgressBar != null) {
+				fProgressBar.worked(work);
+			}
+		});
 	}
 
 	/**
@@ -474,7 +488,9 @@ import org.eclipse.swt.widgets.ToolItem;
 	public void setCanceled(boolean b) {
 		fIsCanceled = b;
 		if (fCancelButton != null) {
-			fCancelButton.setEnabled(!b);
+			inUIThread(() -> {
+				fCancelButton.setEnabled(!b);
+			});
 		}
 	}
 
@@ -556,7 +572,7 @@ import org.eclipse.swt.widgets.ToolItem;
 	public void setMessage(Image image, String message) {
 		fMessageText = trim(message);
 		fMessageImage = image;
-		updateMessageLabel();
+		inUIThread(() -> updateMessageLabel());
 	}
 
 	/**
@@ -606,12 +622,14 @@ import org.eclipse.swt.widgets.ToolItem;
 	 */
 	void startTask(final long timestamp, final boolean animated) {
 		if (!fProgressIsVisible && fStartTime == timestamp) {
-			showProgress();
-			if (animated) {
-				if (fProgressBar != null && !fProgressBar.isDisposed()) {
-					fProgressBar.beginAnimatedTask();
+			inUIThread(() -> {
+				showProgress();
+				if (animated) {
+					if (fProgressBar != null && !fProgressBar.isDisposed()) {
+						fProgressBar.beginAnimatedTask();
+					}
 				}
-			}
+			});
 		}
 	}
 
