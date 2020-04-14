@@ -53,14 +53,6 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_OUTER_KEYLINE_COLOR {
 	handle-image: url(./macHandle.png);
 }
 
-#org-eclipse-ui-editorss {
-	swt-unselected-tabs-color: #D6DDE5 #D6DDE5 #D6DDE5 100% 100%;
-	swt-outer-keyline-color: #D6DDE5;
-	swt-inner-keyline-color: #D6DDE5;
-	swt-tab-outline: #D6DDE5;
-	color: #D6DDE5;
-}
-
 .MPartStack {
 	swt-simple: false;
 	swt-mru-visible: false;
