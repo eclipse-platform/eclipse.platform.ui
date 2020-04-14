@@ -23,7 +23,9 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.menus.IMenuService;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Rule;
 import org.junit.Test;
 
 /**
@@ -33,6 +35,9 @@ import org.junit.Test;
  *
  */
 public class Bug231304Test {
+
+	@Rule
+	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	@Test
 	public void testToolTip() throws Exception {

@@ -30,7 +30,7 @@ import org.eclipse.ui.commands.ICommand;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.NotHandledException;
 import org.eclipse.ui.internal.Workbench;
-import org.junit.Before;
+import org.junit.After;
 import org.junit.Test;
 
 /**
@@ -47,7 +47,7 @@ public final class Bug74982Test {
 
 	private Shell dialog;
 
-	@Before
+	@After
 	public void doTearDown() throws Exception {
 		if (dialog != null) {
 			dialog.dispose();

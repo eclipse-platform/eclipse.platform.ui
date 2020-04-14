@@ -30,7 +30,9 @@ import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.Priority;
 import org.eclipse.ui.internal.Workbench;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Rule;
 import org.junit.Test;
 
 /**
@@ -39,6 +41,9 @@ import org.junit.Test;
  * @since 3.1
  */
 public final class Bug74990Test {
+
+	@Rule
+	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	/**
 	 * Tests whether a part-specific handler -- submitted via Java code -- is

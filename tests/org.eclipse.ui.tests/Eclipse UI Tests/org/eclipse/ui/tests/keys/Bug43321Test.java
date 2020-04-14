@@ -36,8 +36,10 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.internal.Workbench;
 import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.keys.IBindingService;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.texteditor.AbstractTextEditor;
+import org.junit.Rule;
 import org.junit.Test;
 
 /**
@@ -46,6 +48,9 @@ import org.junit.Test;
  * @since 3.0
  */
 public class Bug43321Test {
+
+	@Rule
+	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	/**
 	 * Tests that non-check box items on the menu are not checked when activated

@@ -23,7 +23,9 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.EnabledSubmission;
 import org.eclipse.ui.contexts.IContext;
 import org.eclipse.ui.contexts.IWorkbenchContextSupport;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Rule;
 import org.junit.Test;
 
 /**
@@ -32,6 +34,9 @@ import org.junit.Test;
  * @since 3.1
  */
 public final class Bug74990Test {
+
+	@Rule
+	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	/**
 	 * Tests whether a part-specific context -- submitted via Java code -- is

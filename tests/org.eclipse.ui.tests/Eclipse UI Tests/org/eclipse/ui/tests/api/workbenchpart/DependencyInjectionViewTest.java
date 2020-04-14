@@ -26,8 +26,10 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -37,6 +39,9 @@ import org.junit.runners.JUnit4;
  */
 @RunWith(JUnit4.class)
 public class DependencyInjectionViewTest {
+
+	@Rule
+	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	@Test
 	public void testDependencyInjectionLifecycle() throws Exception {

@@ -35,7 +35,6 @@ import org.eclipse.swt.events.ShellEvent;
 import org.eclipse.swt.events.ShellListener;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -69,41 +68,13 @@ public abstract class UITestCase extends TestCase {
 		return ResourcesPlugin.getWorkspace().getRoot();
 	}
 
-	class TestWindowListener implements IWindowListener {
-		private boolean enabled = true;
-
-		public void setEnabled(boolean enabled) {
-			this.enabled = enabled;
-		}
-
-		@Override
-		public void windowActivated(IWorkbenchWindow window) {
-			// do nothing
-		}
-
-		@Override
-		public void windowDeactivated(IWorkbenchWindow window) {
-			// do nothing
-		}
-
-		@Override
-		public void windowClosed(IWorkbenchWindow window) {
-			if (enabled)
-				testWindows.remove(window);
-		}
-
-		@Override
-		public void windowOpened(IWorkbenchWindow window) {
-			if (enabled)
-				testWindows.add(window);
-		}
-	}
+	/**
+	 * Rule to close windows opened during the test case, manually called to remain
+	 * compatible with JUnit3
+	 */
+	private CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	protected IWorkbench fWorkbench;
-
-	private List<IWorkbenchWindow> testWindows;
-
-	private TestWindowListener windowListener;
 
 	/** Preference helper to restore changed preference values after test run. */
 	private PreferenceMemento prefMemento = new PreferenceMemento();
@@ -131,7 +102,6 @@ public abstract class UITestCase extends TestCase {
 
 	public UITestCase(String testName) {
 		super(testName);
-		testWindows = new ArrayList<>(3);
 	}
 
 	/**
@@ -186,24 +156,6 @@ public abstract class UITestCase extends TestCase {
 	}
 
 	/**
-	 * Adds a window listener to the workbench to keep track of
-	 * opened test windows.
-	 */
-	private void addWindowListener() {
-		windowListener = new TestWindowListener();
-		fWorkbench.addWindowListener(windowListener);
-	}
-
-	/**
-	 * Removes the listener added by <code>addWindowListener</code>.
-	 */
-	private void removeWindowListener() {
-		if (windowListener != null) {
-			fWorkbench.removeWindowListener(windowListener);
-		}
-	}
-
-	/**
 	 * Outputs a trace message to the trace output device, if enabled.
 	 * By default, trace messages are sent to <code>System.out</code>.
 	 *
@@ -226,10 +178,10 @@ public abstract class UITestCase extends TestCase {
 	@Override
 	public final void setUp() throws Exception {
 		super.setUp();
+		closeTestWindows.before();
 		fWorkbench = PlatformUI.getWorkbench();
 		String name = runningTest != null ? runningTest : this.getName();
 		trace(TestRunLogUtil.formatTestStartMessage(name));
-		addWindowListener();
 		doSetUp();
 
 	}
@@ -259,7 +211,6 @@ public abstract class UITestCase extends TestCase {
 		String name = runningTest != null ? runningTest : this.getName();
 		trace(TestRunLogUtil.formatTestFinishedMessage(name));
 		prefMemento.resetPreferences();
-		removeWindowListener();
 		doTearDown();
 		fWorkbench = null;
 
@@ -285,9 +236,7 @@ public abstract class UITestCase extends TestCase {
 	 * Subclasses may extend.
 	 */
 	protected void doTearDown() throws Exception {
-		processEvents();
-		closeAllTestWindows();
-		processEvents();
+		closeTestWindows.after();
 	}
 
 	public static void processEvents() {
@@ -486,11 +435,7 @@ public abstract class UITestCase extends TestCase {
 	 * Close all test windows.
 	 */
 	public void closeAllTestWindows() {
-		List<IWorkbenchWindow> testWindowsCopy = new ArrayList<>(testWindows);
-		for (IWorkbenchWindow testWindow : testWindowsCopy) {
-			testWindow.close();
-		}
-		testWindows.clear();
+		closeTestWindows.closeAllTestWindows();
 	}
 
 	/**
@@ -536,7 +481,7 @@ public abstract class UITestCase extends TestCase {
 	 * Set whether the window listener will manage opening and closing of created windows.
 	 */
 	protected void manageWindows(boolean manage) {
-		windowListener.setEnabled(manage);
+		closeTestWindows.setEnabled(manage);
 	}
 
 	/**

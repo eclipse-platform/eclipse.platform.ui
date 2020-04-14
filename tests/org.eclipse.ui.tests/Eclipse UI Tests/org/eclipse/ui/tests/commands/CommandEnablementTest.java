@@ -67,10 +67,12 @@ import org.eclipse.ui.menus.MenuUtil;
 import org.eclipse.ui.menus.UIElement;
 import org.eclipse.ui.services.IEvaluationService;
 import org.eclipse.ui.services.ISourceProviderService;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -82,6 +84,9 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 @Ignore("broke during e4 transition and still need adjustments")
 public class CommandEnablementTest {
+
+	@Rule
+	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	private static final String CONTEXT_TEST2 = "org.eclipse.ui.command.contexts.enablement_test2";
 	private static final String CONTEXT_TEST1 = "org.eclipse.ui.command.contexts.enablement_test1";

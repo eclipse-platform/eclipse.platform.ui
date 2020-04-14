@@ -32,8 +32,10 @@ import org.eclipse.ui.commands.IHandler;
 import org.eclipse.ui.commands.IWorkbenchCommandSupport;
 import org.eclipse.ui.commands.NotHandledException;
 import org.eclipse.ui.commands.Priority;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 
 /**
@@ -45,6 +47,9 @@ import org.junit.Test;
  */
 @Ignore("broke during e4 transition and still need adjustments")
 public final class Bug66182Test {
+
+	@Rule
+	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	/**
 	 * Tests that the dialog handlers will take priority. The set-up is a

@@ -28,8 +28,10 @@ import org.eclipse.ui.IPersistableElement;
 import org.eclipse.ui.IViewReference;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 /**
@@ -51,6 +53,9 @@ public class ArbitraryPropertyTest {
 	IWorkbenchWindow window;
 
 	IWorkbenchPage page;
+
+	@Rule
+	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	@Before
 	public void doSetUp() throws Exception {

@@ -28,7 +28,9 @@ import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.keys.IBindingService;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Rule;
 import org.junit.Test;
 
 /**
@@ -37,6 +39,9 @@ import org.junit.Test;
  * @since 3.0
  */
 public class Bug36537Test {
+
+	@Rule
+	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	/**
 	 * Tests that there are no redundant key bindings defined in the

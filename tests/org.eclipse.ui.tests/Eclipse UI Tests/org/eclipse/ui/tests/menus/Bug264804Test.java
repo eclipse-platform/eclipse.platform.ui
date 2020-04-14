@@ -30,7 +30,9 @@ import org.eclipse.ui.internal.PartSite;
 import org.eclipse.ui.internal.PopupMenuExtender;
 import org.eclipse.ui.tests.api.ListElement;
 import org.eclipse.ui.tests.api.ListView;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Rule;
 import org.junit.Test;
 
 /**
@@ -39,6 +41,9 @@ import org.junit.Test;
  *
  */
 public class Bug264804Test {
+
+	@Rule
+	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	@Test
 	public void testPopup() throws Exception {

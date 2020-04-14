@@ -18,9 +18,11 @@ import static org.junit.Assert.assertNotSame;
 
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.eclipse.ui.tests.session.ViewWithState;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 public class Bug543609Test {
@@ -28,6 +30,9 @@ public class Bug543609Test {
 	private static final String VIEW_WITH_STATE_ID = "org.eclipse.ui.tests.session.ViewWithState";
 
 	private IWorkbenchPage fPage;
+
+	@Rule
+	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	@Before
 	public void doSetUp() throws Exception {

@@ -42,8 +42,10 @@ import org.eclipse.ui.internal.WorkbenchPage;
 import org.eclipse.ui.internal.keys.BindingService;
 import org.eclipse.ui.internal.keys.WorkbenchKeyboard;
 import org.eclipse.ui.keys.IBindingService;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 
 /**
@@ -53,6 +55,9 @@ import org.junit.Test;
  */
 @Ignore("disabled since it refers to the Java builder and nature, which are not available in an RCP build")
 public class Bug44460Test {
+
+	@Rule
+	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	/**
 	 * Test that pressing "Ctrl+Shift+T" in the Team Synchronizing perspective

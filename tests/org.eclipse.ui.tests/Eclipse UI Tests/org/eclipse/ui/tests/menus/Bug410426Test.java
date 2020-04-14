@@ -28,7 +28,9 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.menus.IMenuService;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Rule;
 import org.junit.Test;
 import org.osgi.service.log.LogListener;
 import org.osgi.service.log.LogService;
@@ -37,6 +39,9 @@ import org.osgi.service.log.LogService;
  * @author Maxime Porhel
  */
 public class Bug410426Test {
+
+	@Rule
+	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	@Test
 	public void testToolbarContributionFromFactoryVisibility() throws Exception {

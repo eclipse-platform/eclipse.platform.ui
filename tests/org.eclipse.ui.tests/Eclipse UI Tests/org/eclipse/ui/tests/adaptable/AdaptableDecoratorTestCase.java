@@ -32,15 +32,20 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.decorators.DecoratorDefinition;
 import org.eclipse.ui.internal.decorators.DecoratorManager;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 /**
  * @version 1.0
  */
 public class AdaptableDecoratorTestCase implements ILabelProviderListener {
+
+	@Rule
+	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	private DecoratorDefinition fullDefinition;
 

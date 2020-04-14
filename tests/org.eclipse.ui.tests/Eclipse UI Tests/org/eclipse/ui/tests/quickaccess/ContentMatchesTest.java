@@ -25,11 +25,13 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.internal.quickaccess.QuickAccessContents;
 import org.eclipse.ui.internal.quickaccess.QuickAccessDialog;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.DisplayHelper;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.hamcrest.Matchers;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 
 /**
@@ -38,6 +40,9 @@ import org.junit.Test;
  * @since 3.14
  */
 public class ContentMatchesTest {
+
+	@Rule
+	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
 
 	private static final int TIMEOUT = 3000;
 	private QuickAccessDialog dialog;

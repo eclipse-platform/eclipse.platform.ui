@@ -35,9 +35,11 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.handlers.IHandlerService;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.tests.api.workbenchpart.MenuContributionHarness;
+import org.eclipse.ui.tests.harness.util.CloseTestWindowsRule;
 import org.eclipse.ui.tests.harness.util.FileUtil;
 import org.eclipse.ui.tests.harness.util.UITestCase;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -49,6 +51,10 @@ import org.junit.runners.JUnit4;
 @RunWith(JUnit4.class)
 @Ignore("broke during e4 transition and still need adjustments")
 public class ActionDelegateProxyTest {
+
+	@Rule
+	public CloseTestWindowsRule closeTestWindows = new CloseTestWindowsRule();
+
 	/**
 	 *
 	 */
