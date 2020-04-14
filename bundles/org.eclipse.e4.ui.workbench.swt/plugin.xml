@@ -66,4 +66,13 @@
          </bundle>
       </component>
    </extension>
+
+   <extension
+         point="org.eclipse.urischeme.uriSchemeHandlers">
+      <uriSchemeHandler
+            class="org.eclipse.e4.ui.internal.workbench.swt.handlers.EclipseCommandURIHandler"
+            uriScheme="eclipse+command"
+            uriSchemeDescription="%eclipseCommandURIHandler">
+      </uriSchemeHandler>
+   </extension>
 </plugin>
