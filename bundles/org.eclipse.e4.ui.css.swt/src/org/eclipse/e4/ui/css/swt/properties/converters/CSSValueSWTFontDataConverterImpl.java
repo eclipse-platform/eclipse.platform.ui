@@ -84,26 +84,21 @@ public class CSSValueSWTFontDataConverterImpl extends AbstractCSSValueConverter 
 	public String convert(Object value, CSSEngine engine, Object context,
 			ICSSValueConverterConfig config) throws Exception {
 		FontData fontData = (FontData) value;
-		if (context instanceof String) {
-			String property = (String) context;
-			if ("font-family".equals(property)) {
-				return CSSSWTFontHelper.getFontFamily(fontData);
-			}
-			if ("font-size".equals(property)) {
-				return CSSSWTFontHelper.getFontSize(fontData);
-			}
-			if ("font-style".equals(property)) {
-				return CSSSWTFontHelper.getFontStyle(fontData);
-			}
-			if ("font-weight".equals(property)) {
-				return CSSSWTFontHelper.getFontWeight(fontData);
-			}
-			if ("font".equals(property)) {
-				return CSSSWTFontHelper.getFontComposite(fontData);
-			}
+		String property = (context instanceof String) ? (String) context : "";
+		switch (property) {
+		case "font-family":
+			return CSSSWTFontHelper.getFontFamily(fontData);
+		case "font-size":
+			return CSSSWTFontHelper.getFontSize(fontData);
+		case "font-style":
+			return CSSSWTFontHelper.getFontStyle(fontData);
+		case "font-weight":
+			return CSSSWTFontHelper.getFontWeight(fontData);
+		case "font":
+			return CSSSWTFontHelper.getFontComposite(fontData);
+		default:
+			return null;
 		}
-		return null;
-
 	}
 
 	protected Display getDisplay(Object context) {

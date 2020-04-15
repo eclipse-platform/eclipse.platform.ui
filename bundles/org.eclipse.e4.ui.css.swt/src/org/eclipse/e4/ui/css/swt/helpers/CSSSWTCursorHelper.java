@@ -102,82 +102,69 @@ public class CSSSWTCursorHelper {
 
 	public static int getSWTCursorId(CSSPrimitiveValue value) {
 		String cursorName = value.getStringValue();
-		if ("default".equals(cursorName)) {
+		switch (cursorName) {
+		case "default":
 			// The default cursor (often an arrow)
 			return SWT.NONE;
-		}
-		if ("auto".equals(cursorName)) {
+		case "auto":
 			// TODO : manage auto
 			// Default. The browser sets a cursor
 			return SWT.NONE;
-		}
-		if ("crosshair".equals(cursorName)) {
+		case "crosshair":
 			// The cursor render as a crosshair
 			return SWT.CURSOR_CROSS;
-		}
-		if ("pointer".equals(cursorName)) {
+		case "pointer":
 			// The cursor render as a pointer (a hand) that indicates a link
 			return SWT.CURSOR_HAND;
-		}
-		if ("move".equals(cursorName)) {
+		case "move":
 			// The cursor indicates something that should be moved
 			return SWT.CURSOR_UPARROW;
-		}
-		if ("e-resize".equals(cursorName)) {
+		case "e-resize":
 			// The cursor indicates that an edge of a box is to be moved right
 			// (east)
 			return SWT.CURSOR_SIZEE;
-		}
-		if ("ne-resize".equals(cursorName)) {
+		case "ne-resize":
 			// The cursor indicates that an edge of a box is to be moved up and
 			// right (north/east)
 			return SWT.CURSOR_SIZENE;
-		}
-		if ("nw-resize".equals(cursorName)) {
+		case "nw-resize":
 			// The cursor indicates that an edge of a box is to be moved up and
 			// left (north/west)
 			return SWT.CURSOR_SIZENW;
-		}
-		if ("n-resize".equals(cursorName)) {
+		case "n-resize":
 			// The cursor indicates that an edge of a box is to be moved up
 			// (north)
 			return SWT.CURSOR_SIZEN;
-		}
-		if ("se-resize".equals(cursorName)) {
+		case "se-resize":
 			// The cursor indicates that an edge of a box is to be moved down
 			// and right (south/east)
 			return SWT.CURSOR_SIZESE;
-		}
-		if ("sw-resize".equals(cursorName)) {
+		case "sw-resize":
 			// The cursor indicates that an edge of a box is to be moved down
 			// and left (south/west)
 			return SWT.CURSOR_SIZESW;
-		}
-		if ("s-resize".equals(cursorName)) {
+		case "s-resize":
 			// The cursor indicates that an edge of a box is to be moved down
 			// (south)
 			return SWT.CURSOR_SIZES;
-		}
-		if ("w-resize".equals(cursorName)) {
+		case "w-resize":
 			// The cursor indicates that an edge of a box is to be moved left
 			// (west)
 			return SWT.CURSOR_SIZEW;
-		}
-		if ("text".equals(cursorName)) {
+		case "text":
 			// The cursor indicates text
 			return SWT.CURSOR_UPARROW;
-		}
-		if ("wait".equals(cursorName)) {
+		case "wait":
 			// The cursor indicates that the program is busy (often a watch or
 			// an hourglass)
 			return SWT.CURSOR_WAIT;
-		}
-		if ("help".equals(cursorName)) {
+		case "help":
 			// The cursor indicates that help is available (often a question
 			// mark or a balloon)
 			return SWT.CURSOR_HELP;
+		default:
+			return SWT.NONE;
 		}
-		return SWT.NONE;
 	}
 
 	public static void storeDefaultCursor(Control control) {
@@ -189,8 +176,8 @@ public class CSSSWTCursorHelper {
 	public static void restoreDefaultCursor(Control control) {
 		Cursor defaultCursor = (Cursor) control.getData(DEFAULT_CURSOR);
 		if (defaultCursor != null) {
-			control.setCursor(defaultCursor.isDisposed() ? control.getDisplay()
-					.getSystemCursor(SWT.ARROW) : defaultCursor);
+			control.setCursor(
+					defaultCursor.isDisposed() ? control.getDisplay().getSystemCursor(SWT.ARROW) : defaultCursor);
 		}
 	}
 }

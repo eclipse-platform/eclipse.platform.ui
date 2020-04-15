@@ -53,8 +53,9 @@ public class CSS2FontPropertiesHelpers {
 	 * @param context
 	 */
 	public static void setCSS2FontProperties(CSS2FontProperties fontProperties, CSSElementContext context) {
-		if (fontProperties == null)
+		if (fontProperties == null) {
 			return;
+		}
 		context.setData(CSS2FONT_KEY, fontProperties);
 	}
 
@@ -81,16 +82,25 @@ public class CSS2FontPropertiesHelpers {
 	 * @param value
 	 */
 	public static void updateCSSPropertyFont(CSS2FontProperties fontProperties, String property, CSSValue value) {
-		if ("font-family".equals(property))
+		switch (property) {
+		case "font-family":
 			updateCSSPropertyFontFamily(fontProperties, value);
-		else if ("font-size".equals(property))
+			break;
+		case "font-size":
 			updateCSSPropertyFontSize(fontProperties, value);
-		else if ("font-style".equals(property))
+			break;
+		case "font-style":
 			updateCSSPropertyFontStyle(fontProperties, value);
-		else if ("font-weight".equals(property))
+			break;
+		case "font-weight":
 			updateCSSPropertyFontWeight(fontProperties, value);
-		else if ("font".equals(property))
+			break;
+		case "font":
 			updateCSSPropertyFontComposite(fontProperties, value);
+			break;
+		default:
+			break;
+		}
 	}
 
 	/**

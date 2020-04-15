@@ -31,10 +31,12 @@ public class CSS2FontHelper {
 	 * @return
 	 */
 	public static String getFontFamily(String family) {
-		if (family == null)
+		if (family == null) {
 			return null;
-		if (family.indexOf(' ') != -1 || family.startsWith("@"))
+		}
+		if (family.indexOf(' ') != -1 || family.startsWith("@")) {
 			family = "\"" + family + "\"";
+		}
 		return family;
 	}
 
@@ -55,8 +57,9 @@ public class CSS2FontHelper {
 	 * @return
 	 */
 	public static String getFontStyle(boolean isItalic) {
-		if (isItalic)
+		if (isItalic) {
 			return "italic";
+		}
 		return "normal";
 	}
 
@@ -67,8 +70,9 @@ public class CSS2FontHelper {
 	 * @return
 	 */
 	public static String getFontWeight(boolean isBold) {
-		if (isBold)
+		if (isBold) {
 			return "bold";
+		}
 		return "normal";
 	}
 
@@ -84,14 +88,17 @@ public class CSS2FontHelper {
 		switch (type) {
 		case CSSPrimitiveValue.CSS_STRING:
 		case CSSPrimitiveValue.CSS_IDENT:
-			String s = value.getStringValue();
-			if (/* "normal".equals(s) || */"italic".equals(s) || "oblique".equals(s)) {
+			switch (value.getStringValue()) {
+			case "italic":
+			case "oblique":
 				return "font-style";
-			}
-			if ("normal".equals(s) || "bold".equals(s) || "bolder".equals(s)) {
+			case "normal":
+			case "bold":
+			case "bolder":
 				return "font-weight";
+			default:
+				return "font-family";
 			}
-			return "font-family";
 		case CSSPrimitiveValue.CSS_PT:
 		case CSSPrimitiveValue.CSS_NUMBER:
 		case CSSPrimitiveValue.CSS_PX:

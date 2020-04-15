@@ -115,16 +115,15 @@ public class CSSSWTHelpers {
 	}
 
 	public static int getLineStyle(String borderStyle) {
-		if (borderStyle == null) {
+		borderStyle = borderStyle != null ? borderStyle : "";
+		// one hidden dotted dashed solid double groove ridge inset outset
+		switch (borderStyle) {
+		case "dashed":
+			return SWT.LINE_DASH;
+		case "dotted":
+			return SWT.LINE_DOT;
+		default:
 			return SWT.LINE_SOLID;
 		}
-		// one hidden dotted dashed solid double groove ridge inset outset
-		if ("dashed".equals(borderStyle)) {
-			return SWT.LINE_DASH;
-		}
-		if ("dotted".equals(borderStyle)) {
-			return SWT.LINE_DOT;
-		}
-		return SWT.LINE_SOLID;
 	}
 }

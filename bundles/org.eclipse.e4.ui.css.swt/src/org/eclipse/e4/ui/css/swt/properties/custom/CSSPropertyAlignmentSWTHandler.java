@@ -33,44 +33,60 @@ public class CSSPropertyAlignmentSWTHandler extends AbstractCSSPropertySWTHandle
 			CSSValue value, String pseudo, CSSEngine engine) throws Exception {
 		if (control instanceof Button) {
 			Button button = (Button)control;
-			String stringValue = value.getCssText().toLowerCase();
-			if ("left".equals(stringValue)){
+			switch (value.getCssText().toLowerCase()) {
+			case "left":
 				button.setAlignment(SWT.LEFT);
-			} else if ("lead".equals(stringValue)){
+				break;
+			case "lead":
 				button.setAlignment(SWT.LEAD);
-			} else if ("right".equals(stringValue)){
+				break;
+			case "right":
 				button.setAlignment(SWT.RIGHT);
-			} else if ("trail".equals(stringValue)){
+				break;
+			case "trail":
 				button.setAlignment(SWT.TRAIL);
-			} else if ("center".equals(stringValue)){
+				break;
+			case "center":
 				button.setAlignment(SWT.CENTER);
-			} else if ("up".equals(stringValue)){
+				break;
+			case "up":
 				button.setAlignment(SWT.UP);
-			} else if ("down".equals(stringValue)){
+				break;
+			case "down":
 				button.setAlignment(SWT.DOWN);
-			} else if ("inherit".equals(stringValue)) {
+				break;
+			case "inherit":
 				// todo
+				break;
+			default:
+				break;
 			}
-
 		}
 		else if (control instanceof Label) {
 			Label label = (Label)control;
-			String stringValue = value.getCssText().toLowerCase();
-			if ("left".equals(stringValue)){
+			switch (value.getCssText().toLowerCase()) {
+			case "left":
 				label.setAlignment(SWT.LEFT);
-			} else if ("lead".equals(stringValue)){
+				break;
+			case "lead":
 				label.setAlignment(SWT.LEAD);
-			} else if ("right".equals(stringValue)){
+				break;
+			case "right":
 				label.setAlignment(SWT.RIGHT);
-			} else if ("trail".equals(stringValue)){
+				break;
+			case "trail":
 				label.setAlignment(SWT.TRAIL);
-			} else if ("center".equals(stringValue)){
+				break;
+			case "center":
 				label.setAlignment(SWT.CENTER);
-			} else if ("inherit".equals(stringValue)) {
+				break;
+			case "inherit":
 				// todo
+				break;
+			default:
+				break;
 			}
 		}
-
 	}
 
 	@Override

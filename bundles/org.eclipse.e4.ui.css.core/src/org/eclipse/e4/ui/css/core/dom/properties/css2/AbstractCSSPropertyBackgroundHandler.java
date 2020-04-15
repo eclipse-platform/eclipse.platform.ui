@@ -60,24 +60,22 @@ ICSSPropertyBackgroundHandler {
 	@Override
 	public String retrieveCSSProperty(Object element, String property,
 			String pseudo, CSSEngine engine) throws Exception {
-		if ("background-attachment".equals(property)) {
+		switch (property) {
+		case "background-attachment":
 			return retrieveCSSPropertyBackgroundAttachment(element, pseudo,
 					engine);
-		}
-		if ("background-color".equals(property)) {
+		case "background-color":
 			return retrieveCSSPropertyBackgroundColor(element, pseudo, engine);
-		}
-		if ("background-image".equals(property)) {
+		case "background-image":
 			return retrieveCSSPropertyBackgroundImage(element, pseudo, engine);
-		}
-		if ("background-position".equals(property)) {
+		case "background-position":
 			return retrieveCSSPropertyBackgroundPosition(element, pseudo,
 					engine);
-		}
-		if ("background-repeat".equals(property)) {
+		case "background-repeat":
 			return retrieveCSSPropertyBackgroundRepeat(element, pseudo, engine);
+		default:
+			return null;
 		}
-		return null;
 	}
 
 	@Override

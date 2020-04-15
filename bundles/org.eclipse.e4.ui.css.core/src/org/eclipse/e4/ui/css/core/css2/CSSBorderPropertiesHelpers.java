@@ -35,12 +35,19 @@ public class CSSBorderPropertiesHelpers {
 	 * @param value
 	 */
 	public static void updateCSSProperty(CSSBorderProperties borderProperties, String property, CSSValue value) {
-		if ("border-style".equals(property))
+		switch (property) {
+		case "border-style":
 			updateCSSPropertyBorderStyle(borderProperties, value);
-		else if ("border-color".equals(property))
+			break;
+		case "border-color":
 			updateCSSPropertyBorderColor(borderProperties, value);
-		else if ("border-width".equals(property))
+			break;
+		case "border-width":
 			updateCSSPropertyBorderWidth(borderProperties, value);
+			break;
+		default:
+			break;
+		}
 	}
 
 	/**

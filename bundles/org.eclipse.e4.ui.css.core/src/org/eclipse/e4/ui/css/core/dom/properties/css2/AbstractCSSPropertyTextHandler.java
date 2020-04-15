@@ -86,20 +86,24 @@ ICSSPropertyTextHandler {
 			String defaultText) {
 		if (value.getCssValueType() == CSSValue.CSS_PRIMITIVE_VALUE) {
 			CSSPrimitiveValue primitiveValue = (CSSPrimitiveValue) value;
-			String textTransform = primitiveValue.getStringValue();
-			if ("capitalize".equals(textTransform)) {
+			switch (primitiveValue.getStringValue()) {
+			case "capitalize":
 				return StringUtils.capitalize(text);
-			}
-			if ("uppercase".equals(textTransform) && text != null) {
-				return text.toUpperCase();
-			}
-			if ("lowercase".equals(textTransform) && text != null) {
-				return text.toLowerCase();
-			}
-			if ("inherit".equals(textTransform)) {
+			case "uppercase":
+				if (text != null) {
+					return text.toUpperCase();
+				}
+				break;
+			case "lowercase":
+				if (text != null) {
+					return text.toLowerCase();
+				}
+				break;
+			case "inherit":
 				return text;
+			default:
+				// TODO : manage inherit
 			}
-			// TODO : manage inherit
 		}
 		if (defaultText != null) {
 			return defaultText;
@@ -113,25 +117,28 @@ ICSSPropertyTextHandler {
 			return textToInsert;
 		}
 
-		String textTransform = ((CSSPrimitiveValue) value).getStringValue();
-		if ("capitalize".equals(textTransform)) {
+		switch (((CSSPrimitiveValue) value).getStringValue()) {
+		case "capitalize":
 			String newText = StringUtils.capitalize(oldText + textToInsert);
 			if (newText.length() > 0) {
 				return newText.substring(newText.length() - 1);
 			}
-		}
-		if ("uppercase".equals(textTransform) && textToInsert != null) {
-			return textToInsert.toUpperCase();
-		}
-		if ("lowercase".equals(textTransform) && textToInsert != null) {
-			return textToInsert.toLowerCase();
-		}
-		if ("inherit".equals(textTransform)) {
+			return textToInsert;
+		case "uppercase":
+			if (textToInsert != null) {
+				return textToInsert.toUpperCase();
+			}
+			return textToInsert;
+		case "lowercase":
+			if (textToInsert != null) {
+				return textToInsert.toLowerCase();
+			}
+			return textToInsert;
+		case "inherit":
+		default:
+			// TODO : manage inherit
 			return textToInsert;
 		}
-		// TODO : manage inherit
-
-		return textToInsert;
 	}
 
 	protected boolean hasTextTransform(CSSValue value) {

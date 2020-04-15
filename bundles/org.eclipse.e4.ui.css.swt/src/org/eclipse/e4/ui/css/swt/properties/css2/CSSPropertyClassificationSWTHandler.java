@@ -69,12 +69,13 @@ AbstractCSSPropertyClassificationHandler {
 			Control control = (Control) element;
 			CSSPrimitiveValue primitiveValue = (CSSPrimitiveValue) value;
 			String visibility = primitiveValue.getStringValue();
-			if ("hidden".equals(visibility)) {
-				control.setVisible(false);
-			} else if ("collapse".equals(visibility)) {
+			switch (visibility) {
+			case "hidden":
+			case "collapse":
 				// TODO : manage collapse
 				control.setVisible(false);
-			} else {
+				break;
+			default:
 				control.setVisible(true);
 			}
 		}
