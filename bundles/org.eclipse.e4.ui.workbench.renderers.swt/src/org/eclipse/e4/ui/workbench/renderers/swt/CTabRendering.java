@@ -71,12 +71,14 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 	static final int INNER_KEYLINE = 0;
 	static final int TOP_KEYLINE = 0;
 
+	// The tab has an outline, it contributes to the trim.  See Bug 562183.
+	static final int TAB_OUTLINE = 1;
+
 	// Item Constants
 	static final int ITEM_TOP_MARGIN = 2;
 	static final int ITEM_BOTTOM_MARGIN = 6;
 	static final int ITEM_LEFT_MARGIN = 4;
 	static final int ITEM_RIGHT_MARGIN = 4;
-	static final int INTERNAL_SPACING = 4;
 
 	static final String E4_TOOLBAR_ACTIVE_IMAGE = "org.eclipse.e4.renderer.toolbar_background_active_image"; //$NON-NLS-1$
 	static final String E4_TOOLBAR_INACTIVE_IMAGE = "org.eclipse.e4.renderer.toolbar_background_inactive_image"; //$NON-NLS-1$
@@ -125,20 +127,21 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 		int marginWidth = parent.marginWidth;
 		int marginHeight = parent.marginHeight;
 		int sideDropWidth = shadowEnabled ? SIDE_DROP_WIDTH : 0;
+
+		//Trim is not affected by the corner size.
 		switch (part) {
 		case PART_BODY:
 			if (state == SWT.FILL) {
 				x = -1 - paddingLeft;
 				int tabHeight = parent.getTabHeight() + 1;
-				y = onBottom ? y - paddingTop - marginHeight - borderTop - (cornerSize / 4)
-						: y - paddingTop - marginHeight - tabHeight - borderTop - (cornerSize / 4);
+				y = onBottom ? y - paddingTop - marginHeight - borderTop - TAB_OUTLINE
+						: y - paddingTop - marginHeight - tabHeight - borderTop - TAB_OUTLINE;
 				width = 2 + paddingLeft + paddingRight;
-				height += paddingTop + paddingBottom;
-				height += tabHeight + (cornerSize / 4) + borderBottom + borderTop;
+				height += paddingTop + paddingBottom + TAB_OUTLINE;
+				height += tabHeight + borderBottom + borderTop;
 			} else {
-				x = x - marginWidth - OUTER_KEYLINE - INNER_KEYLINE - sideDropWidth - (cornerSize / 2);
-				width = width + 2 * OUTER_KEYLINE + 2 * INNER_KEYLINE + 2 * marginWidth + 2 * sideDropWidth
-						+ cornerSize;
+				x = x - marginWidth - OUTER_KEYLINE - INNER_KEYLINE - sideDropWidth;
+				width = width + 2 * OUTER_KEYLINE + 2 * INNER_KEYLINE + 2 * marginWidth + 2 * sideDropWidth;
 				int tabHeight = parent.getTabHeight() + 1; // TODO: Figure out
 				// what
 				// to do about the
@@ -153,10 +156,10 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 					// - borderTop: y - marginHeight - highlight_header -
 					// tabHeight
 					// - borderTop;
-					y = onBottom ? y - marginHeight - borderTop - (cornerSize / 4)
-							: y - marginHeight - tabHeight - borderTop - (cornerSize / 4);
-					height = height + borderBottom + borderTop + 2 * marginHeight + tabHeight + cornerSize / 2
-							+ cornerSize / 4 + (shadowEnabled ? BOTTOM_DROP_WIDTH : 0);
+					y = onBottom ? y - marginHeight - borderTop
+							: y - marginHeight - tabHeight - borderTop - TAB_OUTLINE;
+					height = height + borderBottom + borderTop + 2 * marginHeight + tabHeight + TAB_OUTLINE
+							+ (shadowEnabled ? BOTTOM_DROP_WIDTH : 0);
 				}
 			}
 			break;
@@ -165,8 +168,8 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 			width = width + 2 * (INNER_KEYLINE + OUTER_KEYLINE + sideDropWidth);
 			break;
 		case PART_BORDER:
-			x = x - INNER_KEYLINE - OUTER_KEYLINE - sideDropWidth - (cornerSize / 4);
-			width = width + 2 * (INNER_KEYLINE + OUTER_KEYLINE + sideDropWidth) + cornerSize / 2;
+			x = x - INNER_KEYLINE - OUTER_KEYLINE - sideDropWidth;
+			width = width + 2 * (INNER_KEYLINE + OUTER_KEYLINE + sideDropWidth);
 			height += borderTop + borderBottom;
 			y -= borderTop;
 			if (onBottom) {
