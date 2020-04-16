@@ -180,7 +180,9 @@ public class ProgramLaunchDelegate extends LaunchConfigurationDelegate {
 		}
 		StringBuilder buf = new StringBuilder();
 		for (String c : commandLine) {
-			buf.append(' ');
+			if (buf.length() > 0) {
+				buf.append(' ');
+			}
 			StringBuilder command = new StringBuilder();
 			boolean containsSpace = false;
 			for (char character : c.toCharArray()) {
