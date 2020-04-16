@@ -922,7 +922,7 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 
 	@Override
 	public void setCornerRadius(int radius) {
-		cornerSize = radius;
+		cornerSize = (radius < 6) ? 0 : radius;
 		parent.redraw();
 	}
 
