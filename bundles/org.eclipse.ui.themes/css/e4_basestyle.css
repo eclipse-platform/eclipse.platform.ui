@@ -13,6 +13,8 @@
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 420836
  *******************************************************************************/
 
+@import url("platform:/plugin/org.eclipse.ui.themes/css/common/e4_globalstyle.css");
+
 /* New ColorDefinitions for the E4 default theme */ 
 ThemesExtension { color-definition: 
 	'#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_START', 
@@ -115,13 +117,6 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_BG_END {
 ColorDefinition#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_TEXT_COLOR {
 	/* Never use black */
 	color: #101010;
-}
-
-.MTrimmedWindow.topLevel {
-	margin-top: 0px;
-	margin-bottom: 0px;
-	margin-left: 1px;
-	margin-right: 1px;
 }
 
 .MPart.busy {

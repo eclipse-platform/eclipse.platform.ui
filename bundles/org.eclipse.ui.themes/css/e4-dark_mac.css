@@ -12,26 +12,12 @@
  *     Andrea Guarinoni <andrea.guarinoni.dev@outlook.com> - initial API and implementation
  *******************************************************************************/
 
-/*******************************************************************************
- * The following bugs are referred to in this style sheet
- * 2.) Bug 430052 - Imported rules cannot be overridden
- *******************************************************************************/
-
-
-/* @import url("platform:/plugin/org.eclipse.ui.themes/css/e4-dark.css"); Bug 430052 */
+@import url("platform:/plugin/org.eclipse.ui.themes/css/common/e4_globalstyle.css");
 @import url("platform:/plugin/org.eclipse.ui.themes/css/dark/e4-dark_ide_colorextensions.css");
 @import url("platform:/plugin/org.eclipse.ui.themes/css/dark/e4-dark_globalstyle.css"); /* Remove this to have ONLY the main IDE shell dark */
 @import url("platform:/plugin/org.eclipse.ui.themes/css/dark/e4-dark_partstyle.css");
 @import url("platform:/plugin/org.eclipse.ui.themes/css/dark/e4-dark_tabstyle.css");
 @import url("platform:/plugin/org.eclipse.ui.themes/css/dark/e4-dark-drag-styling.css");
-
-
-.MTrimmedWindow.topLevel {
-	margin-top: 0px;
-	margin-bottom: 0px;
-	margin-left: 1px;
-	margin-right: 1px;
-}
 
 .MToolControl.TrimStack {
     /*frame-image:  url(./gtkTSFrame.png);*/

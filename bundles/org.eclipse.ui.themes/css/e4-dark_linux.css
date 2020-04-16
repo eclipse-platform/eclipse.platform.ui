@@ -13,19 +13,12 @@
  *     Lars Vogel - initial API and implementation
  *******************************************************************************/
 
+@import url("platform:/plugin/org.eclipse.ui.themes/css/common/e4_globalstyle.css");
 @import url("platform:/plugin/org.eclipse.ui.themes/css/dark/e4-dark_ide_colorextensions.css");
 @import url("platform:/plugin/org.eclipse.ui.themes/css/dark/e4-dark_globalstyle.css"); /* Remove this to have ONLY the main IDE shell dark */
 @import url("platform:/plugin/org.eclipse.ui.themes/css/dark/e4-dark_partstyle.css");
 @import url("platform:/plugin/org.eclipse.ui.themes/css/dark/e4-dark_tabstyle.css");
 @import url("platform:/plugin/org.eclipse.ui.themes/css/dark/e4-dark-drag-styling.css");
-
-
-.MTrimmedWindow.topLevel {
-	margin-top: 0px;
-	margin-bottom: 0px;
-	margin-left: 1px;
-	margin-right: 1px;
-}
 
 .MToolControl.TrimStack {
     /*frame-image:  url(./gtkTSFrame.png);*/

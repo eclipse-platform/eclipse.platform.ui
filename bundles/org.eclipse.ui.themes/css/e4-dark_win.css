@@ -15,13 +15,7 @@
  *     Fabio Zadrozny <fabiofz@gmail.com> - Bug 434201, 434309, 430278
  *******************************************************************************/
 
-/*******************************************************************************
- * The following bugs are referred to in this style sheet
- * 1.) Bug 430052 - Imported rules cannot be overridden
- *******************************************************************************/
-
-
-/* @import url("platform:/plugin/org.eclipse.ui.themes/css/e4-dark.css"); Bug 430052 */
+@import url("platform:/plugin/org.eclipse.ui.themes/css/common/e4_globalstyle.css");
 @import url("platform:/plugin/org.eclipse.ui.themes/css/dark/e4-dark_ide_colorextensions.css");
 @import url("platform:/plugin/org.eclipse.ui.themes/css/dark/e4-dark_globalstyle.css"); /* Remove this to have ONLY the main IDE shell dark */
 @import url("platform:/plugin/org.eclipse.ui.themes/css/dark/e4-dark_partstyle.css");
@@ -62,14 +56,6 @@ Table {
 	swt-hot-background-color: #2F2F2F;
 	swt-selection-border-color: #7F7D68;
 	swt-hot-border-color: #545454;
-}
-
-
-.MTrimmedWindow.topLevel {
-	margin-top: 0px;
-	margin-bottom: 0px;
-	margin-left: 1px;
-	margin-right: 1px;
 }
 
 .MToolControl.TrimStack {
