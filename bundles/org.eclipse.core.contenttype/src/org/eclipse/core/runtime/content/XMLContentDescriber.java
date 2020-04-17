@@ -48,7 +48,7 @@ import org.eclipse.core.runtime.QualifiedName;
  * @see "http://www.w3.org/TR/REC-xml *"
  * @since org.eclipse.core.contenttype 3.4
  */
-public class XMLContentDescriber extends TextContentDescriber implements ITextContentDescriber {
+public class XMLContentDescriber extends TextContentDescriber {
 	private static final QualifiedName[] SUPPORTED_OPTIONS = new QualifiedName[] {IContentDescription.CHARSET, IContentDescription.BYTE_ORDER_MARK};
 	private static final String XML_PREFIX = "<?xml "; //$NON-NLS-1$
 	private static final String XML_DECL_END = "?>"; //$NON-NLS-1$

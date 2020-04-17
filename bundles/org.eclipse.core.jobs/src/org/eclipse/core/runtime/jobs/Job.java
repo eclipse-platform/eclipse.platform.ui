@@ -47,7 +47,7 @@ import org.eclipse.core.runtime.*;
  * @see IJobManager
  * @since 3.0
  */
-public abstract class Job extends InternalJob implements IAdaptable {
+public abstract class Job extends InternalJob {
 
 	/**
 	 * Job status return value that is used to indicate asynchronous job completion.

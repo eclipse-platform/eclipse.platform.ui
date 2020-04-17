@@ -16,13 +16,12 @@ package org.eclipse.core.internal.runtime;
 
 import org.eclipse.core.runtime.Plugin;
 import org.eclipse.equinox.internal.app.CommandLineArgs;
-import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 /**
  * Activator for the Eclipse runtime.
  */
-public class PlatformActivator extends Plugin implements BundleActivator {
+public class PlatformActivator extends Plugin {
 	private static BundleContext context;
 
 	public static BundleContext getContext() {
