@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2018 BestSolution.at and others.
+ * Copyright (c) 2010, 2020 BestSolution.at and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
  *     René Brandstetter - Bug 419749
  *     Brian de Alwis (MTI) - Bug 433053
  *     Alexandra Buzila - Refactoring, Bug 475934
+ *     Gerhard Kreuzer - Bug 561324
  ******************************************************************************/
 
 package org.eclipse.e4.ui.internal.workbench;
@@ -443,9 +444,6 @@ public class ModelAssembler {
 		Map<MApplicationElement, MApplicationElement> importMaps = new HashMap<>();
 		for (MApplicationElement importedElement : imports) {
 			MApplicationElement realElement = ModelUtils.findElementById(application, importedElement.getElementId());
-			if (realElement == null) {
-				logger.warn("Could not resolve an import element for '" + importedElement.getElementId() + "'"); //$NON-NLS-1$ //$NON-NLS-2$
-			}
 			importMaps.put(importedElement, realElement);
 		}
 
@@ -465,10 +463,11 @@ public class ModelAssembler {
 					MApplicationElement el = null;
 					if (importObject instanceof MApplicationElement) {
 						el = importMaps.get((MApplicationElement) importObject);
-					}
 
-					if (el == null) {
-						logger.warn("Could not resolve import for " + el); //$NON-NLS-1$
+						if (el == null) {
+							logger.warn("Could not resolve import for " //$NON-NLS-1$
+									+ ((MApplicationElement) importObject).getElementId());
+						}
 					}
 
 					final EObject interalTarget = o;

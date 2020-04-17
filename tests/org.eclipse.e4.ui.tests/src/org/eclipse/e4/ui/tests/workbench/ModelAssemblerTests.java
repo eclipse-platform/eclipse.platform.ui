@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 EclipseSource Muenchen GmbH and others.
+ * Copyright (c) 2016, 2020 EclipseSource Muenchen GmbH and others.
  *
  *
  * This program and the accompanying materials
@@ -11,6 +11,7 @@
  *
  * Contributors:
  * Alexandra Buzila - initial API and implementation
+ * Gerhard Kreuzer  - Bug 561324
  ******************************************************************************/
 
 package org.eclipse.e4.ui.tests.workbench;
@@ -294,7 +295,6 @@ public class ModelAssemblerTests {
 
 		assembler.resolveImports(imports, addedElements);
 		assertEquals(null, placeholder.getRef());
-		verify(logger).warn("Could not resolve an import element for 'null'");
 		verify(logger).warn("Could not resolve import for null");
 		verifyZeroInteractions(logger);
 	}
