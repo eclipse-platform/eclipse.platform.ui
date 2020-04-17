@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 Red Hat Inc.
+ * Copyright (c) 2014, 2020 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,9 +13,6 @@
  ******************************************************************************/
 package org.eclipse.ui.internal.navigator.resources.nested;
 
-import java.util.Collections;
-import java.util.LinkedHashSet;
-import java.util.Set;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -33,8 +30,9 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
-import org.eclipse.jface.viewers.StructuredViewer;
+import org.eclipse.jface.viewers.LabelProviderChangedEvent;
 import org.eclipse.osgi.util.NLS;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorMessages;
 import org.eclipse.ui.internal.navigator.resources.plugin.WorkbenchNavigatorPlugin;
 import org.eclipse.ui.internal.navigator.resources.workbench.ResourceExtensionLabelProvider;
@@ -46,7 +44,7 @@ public class NestedProjectsLabelProvider extends ResourceExtensionLabelProvider 
 	private IResourceChangeListener refreshSeveritiesOnProblemMarkerChange;
 	private NestedProjectsProblemsModel model;
 	private CompletableFuture<NestedProjectsProblemsModel> refreshModelJob;
-	static final Set<StructuredViewer> viewersToUpdate = Collections.synchronizedSet(new LinkedHashSet<>());
+	private volatile boolean isDisposed;
 
 	@Override
 	public void init(ICommonContentExtensionSite aConfig) {
@@ -78,13 +76,10 @@ public class NestedProjectsLabelProvider extends ResourceExtensionLabelProvider 
 			if (model.isDirty()) {
 				refreshModelJob = refreshSeverities();
 				refreshModelJob.thenAccept(model -> {
-					Object[] toUpdate = model.getResourcesWithModifiedSeverity().toArray();
-					StructuredViewer[] viewers;
-					synchronized (viewersToUpdate) {
-						viewers = viewersToUpdate.toArray(new StructuredViewer[0]);
-					}
-					for (StructuredViewer viewer : viewers) {
-						viewer.update(toUpdate, new String[] {});
+					if (!isDisposed) {
+						Object[] toUpdate = model.getResourcesWithModifiedSeverity().toArray();
+						LabelProviderChangedEvent evt = new LabelProviderChangedEvent(this, toUpdate);
+						PlatformUI.getWorkbench().getDisplay().asyncExec(() -> fireLabelProviderChanged(evt));
 					}
 				});
 			}
@@ -94,6 +89,7 @@ public class NestedProjectsLabelProvider extends ResourceExtensionLabelProvider 
 
 	@Override
 	public void dispose() {
+		isDisposed = true;
 		WorkbenchNavigatorPlugin.getWorkspace().removeResourceChangeListener(refreshSeveritiesOnProblemMarkerChange);
 		super.dispose();
 	}
