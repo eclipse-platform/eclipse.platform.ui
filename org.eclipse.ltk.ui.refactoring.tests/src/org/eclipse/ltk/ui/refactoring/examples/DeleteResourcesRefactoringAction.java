@@ -136,8 +136,7 @@ public class DeleteResourcesRefactoringAction extends Action implements IActionD
 
 			// not in list and no nested or nesting element in list
 			IPath path= resource.getFullPath();
-			for (int i= 0; i < res.size(); i++) {
-				IResource curr= res.get(i);
+			for (IResource curr : res) {
 				IPath currPath= curr.getFullPath();
 				if (path.isPrefixOf(currPath) || currPath.isPrefixOf(path) || currPath.equals(path)) {
 					return false;
