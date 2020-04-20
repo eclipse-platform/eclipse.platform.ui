@@ -16,16 +16,19 @@ package org.eclipse.e4.ui.bindings.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.core.commands.ParameterizedCommand;
+import org.eclipse.core.commands.common.NotDefinedException;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.ContextManager;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.ui.bindings.EBindingService;
+import org.eclipse.e4.ui.services.IServiceConstants;
 import org.eclipse.jface.bindings.Binding;
 import org.eclipse.jface.bindings.TriggerSequence;
 import org.eclipse.jface.bindings.keys.KeyBinding;
@@ -37,7 +40,6 @@ import org.eclipse.jface.bindings.keys.ParseException;
  */
 public class BindingServiceImpl implements EBindingService {
 
-	static final String ACTIVE_CONTEXTS = "activeContexts"; //$NON-NLS-1$
 	static final String USER_TYPE = "user"; //$NON-NLS-1$
 
 	@Inject
@@ -168,14 +170,27 @@ public class BindingServiceImpl implements EBindingService {
 	}
 
 	@Inject
-	public void setContextIds(@Named(ACTIVE_CONTEXTS) @Optional Set<String> set) {
+	private void setContextIds(@Named(IServiceConstants.ACTIVE_CONTEXTS) @Optional Set<String> set) {
 		if (set == null || set.isEmpty() || contextManager == null) {
 			contextSet = ContextSet.EMPTY;
 			return;
 		}
-		ArrayList<Context> contexts = new ArrayList<>();
+		Set<Context> contexts = new HashSet<>();
 		for (String id : set) {
-			contexts.add(contextManager.getContext(id));
+			while (id != null) {
+				Context context = contextManager.getContext(id);
+
+				if (!contexts.add(context) || !context.isDefined()) {
+					// Parent is already added or is not defined
+					break;
+				}
+
+				try {
+					id = context.getParentId();
+				} catch (NotDefinedException e) {
+					// This should never happen
+				}
+			}
 		}
 		contextSet = manager.createContextSet(contexts);
 	}
