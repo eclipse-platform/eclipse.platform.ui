@@ -22,8 +22,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
@@ -121,13 +119,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 			}
 
 			viewer = new DetailedProgressViewer(viewerComposite, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER);
-			viewer.setComparator(new ViewerComparator() {
-				@SuppressWarnings({ "unchecked", "rawtypes" })
-				@Override
-				public int compare(Viewer testViewer, Object e1, Object e2) {
-					return ((Comparable) e1).compareTo(e2);
-				}
-			});
+			viewer.setComparator(ProgressManagerUtil.getProgressViewerComparator());
 
 			viewer.setContentProvider(new ProgressViewerContentProvider(viewer, true, false) {
 				@Override

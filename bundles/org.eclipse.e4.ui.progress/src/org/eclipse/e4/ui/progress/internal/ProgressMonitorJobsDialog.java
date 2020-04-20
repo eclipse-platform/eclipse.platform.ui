@@ -24,8 +24,6 @@ import org.eclipse.e4.ui.progress.internal.legacy.Policy;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
-import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -144,13 +142,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 
 			viewer = new DetailedProgressViewer(viewerComposite, SWT.MULTI
 					| SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER, progressService, finishedJobs);
-			viewer.setComparator(new ViewerComparator() {
-				@Override
-				@SuppressWarnings("unchecked")
-				public int compare(Viewer testViewer, Object e1, Object e2) {
-					return ((Comparable<Object>) e1).compareTo(e2);
-				}
-			});
+			viewer.setComparator(ProgressManagerUtil.getProgressViewerComparator());
 
 			viewer.setContentProvider(contentProviderFactory
 					.getProgressViewerContentProvider(viewer, true, false));
