@@ -25,7 +25,6 @@ import org.eclipse.e4.ui.workbench.IWorkbench;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Shell;
 import org.eclipse.urischeme.IUriSchemeHandler;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
@@ -45,7 +44,6 @@ public class EclipseCommandURIHandler implements IUriSchemeHandler {
 		ECommandService commandService = context.get(ECommandService.class);
 		EHandlerService eHandlerService = context.get(EHandlerService.class);
 		Command command = commandService.getCommand(commandId);
-		Shell activeShell = Display.getDefault().getActiveShell();
 		String query = uri.getQuery();
 		if (query == null) {
 			query = ""; //$NON-NLS-1$
@@ -57,14 +55,15 @@ public class EclipseCommandURIHandler implements IUriSchemeHandler {
 		ParameterizedCommand parametrizedCommand = ParameterizedCommand.generateCommand(command, uriParams);
 		// a confirmation dialog is required as invoking arbitrary commands from
 		// external applications is an unsecure operation
-		activeShell.getDisplay().asyncExec(() -> {
+		Display.getDefault().asyncExec(() -> {
 			String commandName = E4WorkbenchSWTMessages.openCommandFromUIHandler_undefined;
 			try {
 				commandName = command.getName();
 			} catch (NotDefinedException e) {
 				// nothing to do
 			}
-			if (MessageDialog.openConfirm(activeShell, E4WorkbenchSWTMessages.openCommandFromURIHandler_confirm_title,
+			if (MessageDialog.openConfirm(Display.getCurrent().getActiveShell(),
+					E4WorkbenchSWTMessages.openCommandFromURIHandler_confirm_title,
 					NLS.bind(E4WorkbenchSWTMessages.openCommandFromURIHandler_confirm_message, uri, commandName))) {
 				eHandlerService.executeHandler(parametrizedCommand);
 			}
