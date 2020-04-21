@@ -12,7 +12,7 @@
  *     Andrea Guarinoni <andrea.guarinoni.dev@outlook.com> - initial API and implementation
  *     Stefan Winkler <stefan@winklerweb.net> - Bug 434189, 430848
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 431635
- *     Fabio Zadrozny <fabiofz@gmail.com> - Bug 465148, 465711, 430278
+ *     Fabio Zadrozny <fabiofz@gmail.com> - Bug 465148, 465711
  *     Lars Vogel <Lars.Vogel@vogella.com> Bug 463652,466275
  *******************************************************************************/
 
@@ -20,7 +20,6 @@
  * The following bugs are referred to in this style sheet
  * 2.) Bug 419377 - Setting a property to 'inherit' is not supported
  * 3.) Bug 430051 - Regression for CTabRendering when drawing bottom tabs
- * 5.) Bug 430278 - Add support for styling Scrollbars
  *******************************************************************************/
 
 

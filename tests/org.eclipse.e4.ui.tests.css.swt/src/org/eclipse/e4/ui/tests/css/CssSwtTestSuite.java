@@ -49,7 +49,6 @@ import org.eclipse.e4.ui.tests.css.swt.LinkTest;
 import org.eclipse.e4.ui.tests.css.swt.MarginTest;
 import org.eclipse.e4.ui.tests.css.swt.ShellActiveTest;
 import org.eclipse.e4.ui.tests.css.swt.ShellTest;
-import org.eclipse.e4.ui.tests.css.swt.StyledTextScrollbarTest;
 import org.eclipse.e4.ui.tests.css.swt.TableTest;
 import org.eclipse.e4.ui.tests.css.swt.TextTextTransformTest;
 import org.eclipse.e4.ui.tests.css.swt.ThemeTest;
@@ -93,7 +92,6 @@ import org.junit.runners.Suite;
 	Bug419482Test.class,
 	ShellActiveTest.class,
 	InheritTest.class,
-	StyledTextScrollbarTest.class,
 	TableTest.class,
 	TreeTest.class,
 	TabbedPropertiesListTest.class,

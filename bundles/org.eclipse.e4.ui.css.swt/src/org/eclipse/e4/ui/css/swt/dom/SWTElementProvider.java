@@ -19,7 +19,6 @@ import org.eclipse.e4.ui.css.core.dom.IElementProvider;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -79,9 +78,6 @@ public class SWTElementProvider implements IElementProvider {
 		}
 		if (element instanceof Table) {
 			return new TableElement((Table) element, engine);
-		}
-		if (element instanceof StyledText) {
-			return new StyledTextElement((StyledText) element, engine);
 		}
 		if (element instanceof Link) {
 			return new LinkElement((Link) element, engine);
