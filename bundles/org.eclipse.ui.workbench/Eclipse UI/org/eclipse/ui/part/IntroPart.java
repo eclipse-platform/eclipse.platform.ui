@@ -66,7 +66,7 @@ public abstract class IntroPart extends EventManager implements IIntroPart, IExe
 
 	private IConfigurationElement configElement;
 
-	private Optional<ImageDescriptor> imageDescriptor;
+	private Optional<ImageDescriptor> imageDescriptor = Optional.empty();
 
 	private IIntroSite partSite;
 
@@ -248,11 +248,11 @@ public abstract class IntroPart extends EventManager implements IIntroPart, IExe
 		titleLabel = cfig.getAttribute(IWorkbenchRegistryConstants.ATT_LABEL);
 		// Icon.
 		String strIcon = cfig.getAttribute(IWorkbenchRegistryConstants.ATT_ICON);
-		if (strIcon == null) {
-			return;
+		if (strIcon != null) {
+			imageDescriptor = ResourceLocator.imageDescriptorFromBundle(configElement.getContributor().getName(),
+					strIcon);
+			imageDescriptor.ifPresent(d -> titleImage = JFaceResources.getResources().createImageWithDefault(d));
 		}
-		imageDescriptor = ResourceLocator.imageDescriptorFromBundle(configElement.getContributor().getName(), strIcon);
-		imageDescriptor.ifPresent(d -> titleImage = JFaceResources.getResources().createImageWithDefault(d));
 	}
 
 	/**
