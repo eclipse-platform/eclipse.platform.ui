@@ -35,16 +35,17 @@ import org.junit.Test;
 public class TestUnitRegistrationLinux {
 
 	private static final String PRODUCT_NAME = "myProduct";
-	private static final String USER_HOME = "user.home";
+	private static final String USER_HOME = System.getProperty("user.home");
 	private static final String ECLIPSE_LAUNCHER = "eclipse.launcher";
 	private static final String ECLIPSE_HOME_LOCATION = "eclipse.home.location";
-	private static final String OTHER_APP_EXECUTABLE_PATH = "/home/myuser/otherApp/app";
+	private  static final String OTHER_APP_EXECUTABLE_PATH = "/home/myuser/otherApp/app";
 	private static final String OTHER_APP_DESKTOP_FILE = "otherApp.desktop";
-	private static final String PATH_OTHER_APP_DESKTOP_FILE = "~/.local/share/applications/" + OTHER_APP_DESKTOP_FILE;
+	private static final String PATH_OTHER_APP_DESKTOP_FILE = USER_HOME + "/.local/share/applications/"
+			+ OTHER_APP_DESKTOP_FILE;
 
 	private static final String OWN_EXECUTABLE_PATH = "/home/myuser/Eclipse/Eclipse";
 	private static final String OWN_DESKTOP_FILE = "_home_myuser_Eclipse_.desktop";
-	private static final String PATH_OWN_DESKTOP_FILE = "~/.local/share/applications/" + OWN_DESKTOP_FILE;
+	private static final String PATH_OWN_DESKTOP_FILE = USER_HOME + "/.local/share/applications/" + OWN_DESKTOP_FILE;
 
 	private static final IScheme ADT_SCHEME = new Scheme("adt", "");
 
@@ -53,7 +54,6 @@ public class TestUnitRegistrationLinux {
 
 	private static String originalEclipseHomeLocation;
 	private static String originalEclipseLauncher;
-	private static String originalUserHome;
 
 	private IOperatingSystemRegistration registration;
 
@@ -67,7 +67,6 @@ public class TestUnitRegistrationLinux {
 
 		System.setProperty(ECLIPSE_HOME_LOCATION, "file:/home/myuser/Eclipse/");
 		System.setProperty(ECLIPSE_LAUNCHER, "/home/myuser/Eclipse/Eclipse");
-		System.setProperty(USER_HOME, "~");
 
 		registration = new RegistrationLinux(fileProvider, processStub, PRODUCT_NAME);
 	}
@@ -76,14 +75,12 @@ public class TestUnitRegistrationLinux {
 	public static void classSetup() {
 		originalEclipseHomeLocation = System.getProperty(ECLIPSE_HOME_LOCATION, "");
 		originalEclipseLauncher = System.getProperty(ECLIPSE_LAUNCHER, "");
-		originalUserHome = System.getProperty(USER_HOME);
 	}
 
 	@AfterClass
 	public static void classTearDown() {
 		System.setProperty(ECLIPSE_HOME_LOCATION, originalEclipseHomeLocation);
 		System.setProperty(ECLIPSE_LAUNCHER, originalEclipseLauncher);
-		System.setProperty(USER_HOME, originalUserHome);
 	}
 
 	@Test

@@ -12,6 +12,7 @@ package org.eclipse.urischeme.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -30,7 +31,10 @@ import org.eclipse.urischeme.IUriSchemeHandler;
  */
 public class UriSchemeExtensionReader implements IUriSchemeExtensionReader {
 
-	private static final String PLUGIN_ID = "org.eclipse.urischeme"; //$NON-NLS-1$
+	/**
+	 * The bundle symbolic name.
+	 */
+	public static final String PLUGIN_ID = "org.eclipse.urischeme"; //$NON-NLS-1$
 	/**
 	 * Id of the extension point for uri scheme handlers
 	 */
@@ -115,5 +119,20 @@ public class UriSchemeExtensionReader implements IUriSchemeExtensionReader {
 			return uriSchemeDescription;
 		}
 
+		@Override
+		public boolean equals(Object o) {
+			if (o.getClass() != this.getClass()) {
+				return false;
+			}
+			Scheme other = (Scheme) o;
+			return Objects.equals(this.uriScheme, other.uriScheme)
+					&& Objects.equals(this.uriSchemeDescription, other.uriSchemeDescription);
+		}
+
+		@Override
+		public int hashCode() {
+			return Objects.hash(uriScheme, uriSchemeDescription);
+		}
 	}
+
 }

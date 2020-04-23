@@ -85,6 +85,7 @@ import org.eclipse.ui.internal.ide.undo.WorkspaceUndoMonitor;
 import org.eclipse.ui.internal.progress.ProgressMonitorJobsDialog;
 import org.eclipse.ui.progress.IProgressService;
 import org.eclipse.ui.statushandlers.AbstractStatusHandler;
+import org.eclipse.urischeme.AutoRegisterSchemeHandlersJob;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.Version;
@@ -220,6 +221,7 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 			jfaceComparatorIsSet = true;
 		}
 
+		new AutoRegisterSchemeHandlersJob().schedule();
 	}
 
 	@Override
