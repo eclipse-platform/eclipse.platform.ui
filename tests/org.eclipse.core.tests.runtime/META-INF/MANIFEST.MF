@@ -9,8 +9,7 @@ Export-Package: org.eclipse.core.tests.internal.preferences,
  org.eclipse.core.tests.internal.runtime,
  org.eclipse.core.tests.runtime,
  org.eclipse.core.tests.runtime.jobs,
- org.eclipse.core.tests.runtime.perf,
- org.eclipse.core.tests.text
+ org.eclipse.core.tests.runtime.perf
 Require-Bundle: org.junit,
  org.eclipse.test.performance;resolution:=optional,
  org.eclipse.core.runtime;bundle-version="3.18.0",
