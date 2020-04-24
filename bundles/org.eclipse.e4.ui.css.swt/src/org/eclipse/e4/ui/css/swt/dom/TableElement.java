@@ -41,11 +41,10 @@ implements ISelectionBackgroundCustomizationElement, IHeaderCustomizationElement
 				// focused, but we still want to remove the selected state on
 				// the other selected cells.
 				event.detail &= ~SWT.SELECTED;
-			} else {
-				// it doesn't have focus: don't change the drawing
-				// as the table selection won't appear properly if we
-				// remove the selected state.
 			}
+			// if it does not have focus change the drawing
+			// as the table selection won't appear properly if we
+			// remove the selected state.
 		}
 
 		@Override
