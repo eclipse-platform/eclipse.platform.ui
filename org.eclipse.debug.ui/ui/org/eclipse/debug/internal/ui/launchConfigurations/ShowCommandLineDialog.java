@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 IBM Corporation and others.
+ * Copyright (c) 2018, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -27,6 +27,7 @@ import org.eclipse.debug.core.Launch;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate;
 import org.eclipse.debug.core.model.ILaunchConfigurationDelegate2;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
+import org.eclipse.debug.internal.core.LaunchConfiguration;
 import org.eclipse.debug.internal.core.LaunchManager;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.dialogs.Dialog;
@@ -108,8 +109,15 @@ public class ShowCommandLineDialog extends Dialog {
 			Set<String> modes = flaunchConfiguration.getModes();
 			modes.add(fMode);
 			ILaunchDelegate[] delegates = flaunchConfiguration.getType().getDelegates(modes);
-			if (delegates.length ==1) {
-				ILaunchConfigurationDelegate delegate = delegates[0].getDelegate();
+			ILaunchConfigurationDelegate delegate = null;
+			if (delegates.length == 1) {
+				delegate = delegates[0].getDelegate();
+			} else {
+				if (flaunchConfiguration instanceof LaunchConfiguration) {
+					delegate = ((LaunchConfiguration) flaunchConfiguration).getPreferredLaunchDelegate(fMode);
+				}
+			}
+			if (delegate != null) {
 				ILaunchConfigurationDelegate2 delegate2;
 				ILaunch launch = null;
 				if (delegate instanceof ILaunchConfigurationDelegate2) {
