@@ -66,7 +66,6 @@ import org.w3c.dom.css.CSSStyleDeclaration;
 
 public class ThemeEngine implements IThemeEngine {
 	private List<Theme> themes = new ArrayList<>();
-	private Map<String, List<String>> themesToVarients = new HashMap<>();
 	private List<CSSEngine> cssEngines = new ArrayList<>();
 
 	// kept for theme notifications only
@@ -115,300 +114,128 @@ public class ThemeEngine implements IThemeEngine {
 		boolean e4_dark_mac_found = false;
 
 		for (IExtension e : extPoint.getExtensions()) {
-			for (IConfigurationElement ce : e.getConfigurationElements()) {
-				if (ce.getName().equals("theme")) {
-					try {
-						String id = ce.getAttribute("id");
-						String os = ce.getAttribute("os");
-						String version = ce.getAttribute("os_version");
+			for (IConfigurationElement ce : getPlatformMatches(e.getConfigurationElements())) {
+					if (ce.getName().equals("theme")) {
+						try {
+							String id = ce.getAttribute("id");
+							String os = ce.getAttribute("os");
+							String version = ce.getAttribute("os_version");
 
-						/*
-						 * Code to support e4 dark theme on Mac 10.13 and older. For e4 dark theme on
-						 * Mac, register the theme with matching OS version if specified.
-						 */
-						if (E4_DARK_THEME_ID.equals(id) && Platform.OS_MACOSX.equals(currentOS) && os != null
-								&& os.equals(currentOS)) {
-							// If e4 dark theme on Mac was already registered, don't try to match or
-							// register again.
-							if (e4_dark_mac_found) {
-								continue;
+							/*
+							 * Code to support e4 dark theme on Mac 10.13 and older. For e4 dark theme on
+							 * Mac, register the theme with matching OS version if specified.
+							 */
+							if (E4_DARK_THEME_ID.equals(id) && Platform.OS_MACOSX.equals(currentOS) && os != null
+									&& os.equals(currentOS)) {
+								// If e4 dark theme on Mac was already registered, don't try to match or
+								// register again.
+								if (e4_dark_mac_found) {
+									continue;
+								}
+								if (version != null && !isOsVersionMatch(version)) {
+									continue;
+								} else {
+									e4_dark_mac_found = true;
+									version = "";
+								}
 							}
-							if (version != null && !isOsVersionMatch(version)) {
-								continue;
-							} else {
-								e4_dark_mac_found = true;
+
+							if (version == null) {
 								version = "";
 							}
-						}
 
-						if (version == null) {
-							version = "";
-						}
-
-						final String themeBaseId = id + version;
-						String themeId = themeBaseId;
-						String label = ce.getAttribute("label");
-						String ws = ce.getAttribute("ws");
-						if ((os != null && !os.equals(currentOS)) || (ws != null && !ws.equals(currentWS))) {
-							if (!themesToVarients.containsKey(themeBaseId)) {
-								themesToVarients.put(themeBaseId, new ArrayList<>());
+							final String themeBaseId = id + version;
+							String themeId = themeBaseId;
+							String label = ce.getAttribute("label");
+							String originalCSSFile;
+							String basestylesheeturi = originalCSSFile = ce.getAttribute("basestylesheeturi");
+							if (!basestylesheeturi.startsWith("platform:/plugin/")) {
+								basestylesheeturi = "platform:/plugin/" + ce.getContributor().getName() + "/"
+										+ basestylesheeturi;
 							}
-							themeId = getVarientThemeId(themeBaseId, os, ws);
-							themesToVarients.get(themeBaseId).add(themeId);
-							label = getVarientThemeLabel(label, os, ws);
-						}
-						String originalCSSFile;
-						String basestylesheeturi = originalCSSFile = ce.getAttribute("basestylesheeturi");
-						if (!basestylesheeturi.startsWith("platform:/plugin/")) {
-							basestylesheeturi = "platform:/plugin/" + ce.getContributor().getName() + "/"
-									+ basestylesheeturi;
-						}
-						registerTheme(themeId, label, basestylesheeturi, version);
+							registerTheme(themeId, label, basestylesheeturi, version);
 
-						//check for modified files
-						if (modifiedFiles != null) {
-							int slash = originalCSSFile.lastIndexOf('/');
-							if (slash != -1) {
-								originalCSSFile = originalCSSFile.substring(slash + 1);
-								for (File modifiedFile : modifiedFiles) {
-									String modifiedFileName = modifiedFile.getName();
-									if (modifiedFileName.contains(".css") && modifiedFileName.equals(originalCSSFile)) {  //$NON-NLS-1$
-										//								modifiedStylesheets
-										ArrayList<String> styleSheets = new ArrayList<>();
-										styleSheets.add(modifiedFile.toURI().toString());
-										modifiedStylesheets.put(themeId, styleSheets);
+							//check for modified files
+							if (modifiedFiles != null) {
+								int slash = originalCSSFile.lastIndexOf('/');
+								if (slash != -1) {
+									originalCSSFile = originalCSSFile.substring(slash + 1);
+									for (File modifiedFile : modifiedFiles) {
+										String modifiedFileName = modifiedFile.getName();
+										if (modifiedFileName.contains(".css") && modifiedFileName.equals(originalCSSFile)) {  //$NON-NLS-1$
+											//								modifiedStylesheets
+											ArrayList<String> styleSheets = new ArrayList<>();
+											styleSheets.add(modifiedFile.toURI().toString());
+											modifiedStylesheets.put(themeId, styleSheets);
+										}
 									}
 								}
 							}
+						} catch (IllegalArgumentException e1) {
+							ThemeEngineManager.logError(e1.getMessage(), e1);
 						}
-					} catch (IllegalArgumentException e1) {
-						ThemeEngineManager.logError(e1.getMessage(), e1);
 					}
 				}
 			}
-		}
 
-		for (IExtension e : extPoint.getExtensions()) {
-			for (IConfigurationElement ce : e.getConfigurationElements()) {
-				if (ce.getName().equals("stylesheet")) {
-					IConfigurationElement[] cces = ce.getChildren("themeid");
-					if (cces.length == 0) {
-						registerStylesheet("platform:/plugin/"
-								+ ce.getContributor().getName() + "/"
-								+ ce.getAttribute("uri"));
+			for (IExtension e : extPoint.getExtensions()) {
+				for (IConfigurationElement ce : getPlatformMatches(e.getConfigurationElements())) {
+					if (ce.getName().equals("stylesheet")) {
+						IConfigurationElement[] cces = ce.getChildren("themeid");
+						if (cces.length == 0) {
+							registerStylesheet("platform:/plugin/"
+									+ ce.getContributor().getName() + "/"
+									+ ce.getAttribute("uri"));
 
-						for (IConfigurationElement resourceEl : ce
-								.getChildren("osgiresourcelocator")) {
-							String uri = resourceEl.getAttribute("uri");
-							if (uri != null) {
-								registerResourceLocator(new OSGiResourceLocator(
-										uri));
+							for (IConfigurationElement resourceEl : ce
+									.getChildren("osgiresourcelocator")) {
+								String uri = resourceEl.getAttribute("uri");
+								if (uri != null) {
+									registerResourceLocator(new OSGiResourceLocator(
+											uri));
+								}
 							}
-						}
-					} else {
-						List<String> themes = new ArrayList<>();
-						for (IConfigurationElement cce : cces) {
-							String refid = cce.getAttribute("refid");
-							List<String> varientOSList = themesToVarients.get(refid);
-							if (varientOSList != null) {
-								themes.addAll(varientOSList);
+						} else {
+							String[] themes = new String[cces.length];
+							for (int i = 0; i < cces.length; i++) {
+								themes[i] = cces[i].getAttribute("refid");
 							}
-							themes.add(refid);
-						}
-						registerStylesheet(
-								"platform:/plugin/" + ce.getContributor().getName() + "/" + ce.getAttribute("uri"),
-								themes.toArray(new String[themes.size()]));
-						for (IConfigurationElement resourceEl : ce
-								.getChildren("osgiresourcelocator")) {
-							String uri = resourceEl.getAttribute("uri");
-							if (uri != null) {
-								registerResourceLocator(new OSGiResourceLocator(
-										uri));
+							registerStylesheet(
+									"platform:/plugin/" + ce.getContributor().getName() + "/" + ce.getAttribute("uri"),
+									themes);
+
+							for (IConfigurationElement resourceEl : ce
+									.getChildren("osgiresourcelocator")) {
+								String uri = resourceEl.getAttribute("uri");
+								if (uri != null) {
+									registerResourceLocator(new OSGiResourceLocator(
+											uri));
+								}
 							}
 						}
 					}
 				}
 			}
+
+			// register a default resolver for platform uri's
+			registerResourceLocator(new OSGiResourceLocator(
+					"platform:/plugin/org.eclipse.ui.themes/css/"));
+			// register a default resolver for file uri's
+			registerResourceLocator(new FileResourcesLocatorImpl());
+			// FIXME: perhaps ResourcesLocatorManager shouldn't have a default?
+			// registerResourceLocator(new HttpResourcesLocatorImpl());
 		}
 
-		// register a default resolver for platform uri's
-		registerResourceLocator(new OSGiResourceLocator(
-				"platform:/plugin/org.eclipse.ui.themes/css/"));
-		// register a default resolver for file uri's
-		registerResourceLocator(new FileResourcesLocatorImpl());
-		// FIXME: perhaps ResourcesLocatorManager shouldn't have a default?
-		// registerResourceLocator(new HttpResourcesLocatorImpl());
-	}
 
-	private String getVarientThemeId(String id, String os, String ws) {
-		if (os != null) {
-			id += '_' + os;
-		}
-		if (ws != null) {
-			id += '-' + ws;
-		}
-		return id;
-	}
-
-	private String getVarientThemeLabel(String label, String os, String ws) {
-		String currentOS = Platform.getOS();
-		String currentWS = Platform.getWS();
-		if (os != null && !os.equals(currentOS)) {
-			String osName;
-			switch (os) {
-			case Platform.OS_LINUX:		osName="Linux";break;
-			case Platform.OS_MACOSX:	osName="Mac OS X";break;
-			case Platform.OS_WIN32:		osName="Windows";break;
-			default:					osName=os;break;
-			}
-			label += " [" + osName;
-		}
-		if (ws != null && !ws.equals(currentWS)) {
-			String wsName;
-			switch (ws) {
-			case Platform.WS_COCOA:		wsName="Cocoa";break;
-			case Platform.WS_GTK:		wsName="GTK";break;
-			case Platform.WS_WPF:		wsName="WPF";break;
-			default:					wsName=ws;break;
-			}
-			label += " - " + wsName;
-		}
-		if (os != null && !os.equals(currentOS)) {
-			label += "]";
-		}
-		return label;
-	}
-
-	private boolean isOsVersionMatch(String osVersionList) {
-		boolean found = false;
-		String osVersion = System.getProperty("os.version");
-		if (osVersion != null) {
-			if (osVersionList != null) {
-				String[] osVersions = osVersionList.split(","); //$NON-NLS-1$
-				for (String osVersionFromTheme : osVersions) {
-					if (osVersionFromTheme != null) {
-						if (osVersion.contains(osVersionFromTheme)) {
-							found = true;
-							break;
-						}
-					}
-				}
-			}
-		}
-		return found;
-	}
-
-	@Override
-	public synchronized ITheme registerTheme(String id, String label, String basestylesheetURI)
-			throws IllegalArgumentException {
-		return  registerTheme(id, label, basestylesheetURI, "");
-	}
-
-	public synchronized ITheme registerTheme(String id, String label,
-			String basestylesheetURI, String osVersion) throws IllegalArgumentException {
-		for (Theme t : themes) {
-			if (t.getId().equals(id)) {
-				throw new IllegalArgumentException("A theme with the id '" + id
-						+ "' is already registered");
-			}
-		}
-		Theme theme = new Theme(id, label);
-		if (osVersion != "") {
-			theme.setOsVersion(osVersion);
-		}
-		themes.add(theme);
-		registerStyle(id, basestylesheetURI);
-		return theme;
-	}
-
-	@Override
-	public synchronized void registerStylesheet(String uri, String... themes) {
-		Bundle bundle = FrameworkUtil.getBundle(ThemeEngine.class);
-		String osname = bundle.getBundleContext().getProperty("osgi.os");
-		String wsname = bundle.getBundleContext().getProperty("osgi.ws");
-
-		uri = uri.replaceAll("\\$os\\$", osname).replaceAll("\\$ws\\$", wsname);
-
-		if (themes.length == 0) {
-			globalStyles.add(uri);
-		} else {
-			for (String t : themes) {
-				registerStyle(t, uri);
-			}
-		}
-	}
-
-	@Override
-	public synchronized void registerResourceLocator(IResourceLocator locator,
-			String... themes) {
-		if (themes.length == 0) {
-			globalSourceLocators.add(locator);
-		} else {
-			for (String t : themes) {
-				List<IResourceLocator> list = sourceLocators.get(t);
-				if (list == null) {
-					list = new ArrayList<>();
-					sourceLocators.put(t, list);
-				}
-				list.add(locator);
-			}
-		}
-	}
-
-	private void registerStyle(String id, String stylesheet) {
-		List<String> s = stylesheets.get(id);
-		if (s == null) {
-			s = new ArrayList<>();
-			stylesheets.put(id, s);
-		}
-		s.add(stylesheet);
-	}
-
-	private List<String> getAllStyles(String id) {
-		// check for any modifications first
-		List<String> m = modifiedStylesheets.get(id);
-		if (m != null) {
-			m = new ArrayList<>(m);
-			m.addAll(globalStyles);
-			return m;
-		}
-
-		List<String> s = stylesheets.get(id);
-		if (s == null) {
-			s = Collections.emptyList();
-		}
-
-		s = new ArrayList<>(s);
-		s.addAll(globalStyles);
-		return s;
-
-	}
-
-	private List<IResourceLocator> getResourceLocators(String id) {
-		List<IResourceLocator> list = new ArrayList<>(
-				globalSourceLocators);
-		List<IResourceLocator> s = sourceLocators.get(id);
-		if (s != null) {
-			list.addAll(s);
-		}
-
-		return list;
-	}
-
-	@Override
-	public void setTheme(String themeId, boolean restore) {
-		String osVersion = System.getProperty("os.version");
-		if (osVersion != null) {
+		private boolean isOsVersionMatch(String osVersionList) {
 			boolean found = false;
-			for (Theme t : themes) {
-				String osVersionList = t.getOsVersion();
+			String osVersion = System.getProperty("os.version");
+			if (osVersion != null) {
 				if (osVersionList != null) {
 					String[] osVersions = osVersionList.split(","); //$NON-NLS-1$
 					for (String osVersionFromTheme : osVersions) {
-						if (osVersionFromTheme != null && osVersion.contains(osVersionFromTheme)) {
-							String themeVersion = themeId + osVersionList;
-							if (t.getId().equals(themeVersion)) {
-								setTheme(t, restore);
+						if (osVersionFromTheme != null) {
+							if (osVersion.contains(osVersionFromTheme)) {
 								found = true;
 								break;
 							}
@@ -416,259 +243,405 @@ public class ThemeEngine implements IThemeEngine {
 					}
 				}
 			}
-			if (found) {
-				return;
+			return found;
+		}
+
+		@Override
+		public synchronized ITheme registerTheme(String id, String label, String basestylesheetURI)
+				throws IllegalArgumentException {
+			return  registerTheme(id, label, basestylesheetURI, "");
+		}
+
+		public synchronized ITheme registerTheme(String id, String label,
+				String basestylesheetURI, String osVersion) throws IllegalArgumentException {
+			for (Theme t : themes) {
+				if (t.getId().equals(id)) {
+					throw new IllegalArgumentException("A theme with the id '" + id
+							+ "' is already registered");
+				}
+			}
+			Theme theme = new Theme(id, label);
+			if (osVersion != "") {
+				theme.setOsVersion(osVersion);
+			}
+			themes.add(theme);
+			registerStyle(id, basestylesheetURI);
+			return theme;
+		}
+
+		@Override
+		public synchronized void registerStylesheet(String uri, String... themes) {
+			Bundle bundle = FrameworkUtil.getBundle(ThemeEngine.class);
+			String osname = bundle.getBundleContext().getProperty("osgi.os");
+			String wsname = bundle.getBundleContext().getProperty("osgi.ws");
+
+			uri = uri.replaceAll("\\$os\\$", osname).replaceAll("\\$ws\\$", wsname);
+
+			if (themes.length == 0) {
+				globalStyles.add(uri);
+			} else {
+				for (String t : themes) {
+					registerStyle(t, uri);
+				}
 			}
 		}
-		//try generic
-		for (Theme t : themes) {
-			if (t.getId().equals(themeId)) {
-				setTheme(t, restore);
-				break;
-			}
-		}
-	}
 
-	@Override
-	public void setTheme(ITheme theme, boolean restore) {
-		setTheme(theme, restore, false);
-	}
-
-	public void setTheme(ITheme theme, boolean restore, boolean force) {
-		Assert.isNotNull(theme, "The theme must not be null");
-
-		if (this.currentTheme != theme || force) {
-			if (currentTheme != null) {
-				for (IResourceLocator l : getResourceLocators(currentTheme
-						.getId())) {
-					for (CSSEngine engine : cssEngines) {
-						engine.getResourcesLocatorManager()
-						.unregisterResourceLocator(l);
+		@Override
+		public synchronized void registerResourceLocator(IResourceLocator locator,
+				String... themes) {
+			if (themes.length == 0) {
+				globalSourceLocators.add(locator);
+			} else {
+				for (String t : themes) {
+					List<IResourceLocator> list = sourceLocators.get(t);
+					if (list == null) {
+						list = new ArrayList<>();
+						sourceLocators.put(t, list);
 					}
+					list.add(locator);
 				}
 			}
+		}
 
-			this.currentTheme = theme;
-			for (CSSEngine engine : cssEngines) {
-				engine.reset();
+		private void registerStyle(String id, String stylesheet) {
+			List<String> s = stylesheets.get(id);
+			if (s == null) {
+				s = new ArrayList<>();
+				stylesheets.put(id, s);
+			}
+			s.add(stylesheet);
+		}
+
+		private List<String> getAllStyles(String id) {
+			// check for any modifications first
+			List<String> m = modifiedStylesheets.get(id);
+			if (m != null) {
+				m = new ArrayList<>(m);
+				m.addAll(globalStyles);
+				return m;
 			}
 
-			for (IResourceLocator l : getResourceLocators(theme.getId())) {
-				for (CSSEngine engine : cssEngines) {
-					engine.getResourcesLocatorManager()
-					.registerResourceLocator(l);
+			List<String> s = stylesheets.get(id);
+			if (s == null) {
+				s = Collections.emptyList();
+			}
+
+			s = new ArrayList<>(s);
+			s.addAll(globalStyles);
+			return s;
+
+		}
+
+		private List<IResourceLocator> getResourceLocators(String id) {
+			List<IResourceLocator> list = new ArrayList<>(
+					globalSourceLocators);
+			List<IResourceLocator> s = sourceLocators.get(id);
+			if (s != null) {
+				list.addAll(s);
+			}
+
+			return list;
+		}
+
+		/**
+		 * Get all elements that have os/ws attributes that best match the current
+		 * platform.
+		 *
+		 * @param elements the elements to check
+		 * @return the best matches, if any
+		 */
+		private IConfigurationElement[] getPlatformMatches(IConfigurationElement[] elements) {
+			Bundle bundle = FrameworkUtil.getBundle(ThemeEngine.class);
+			String osname = bundle.getBundleContext().getProperty("osgi.os");
+			// TODO: Need to differentiate win32 versions
+			String wsname = bundle.getBundleContext().getProperty("osgi.ws");
+			ArrayList<IConfigurationElement> matchingElements = new ArrayList<>();
+			for (IConfigurationElement element : elements) {
+				String elementOs = element.getAttribute("os");
+				String elementWs = element.getAttribute("ws");
+				if (osname != null && (elementOs == null || elementOs.contains(osname))) {
+					matchingElements.add(element);
+				} else if (wsname != null && wsname.equalsIgnoreCase(elementWs)) {
+					matchingElements.add(element);
 				}
 			}
-			for (String stylesheet : getAllStyles(theme.getId())) {
-				URL url;
-				InputStream stream = null;
-				try {
-					url = FileLocator.resolve(new URL(stylesheet));
-					for (CSSEngine engine : cssEngines) {
-						try {
-							stream = url.openStream();
-							InputSource source = new InputSource();
-							source.setByteStream(stream);
-							source.setURI(url.toString());
-							engine.parseStyleSheet(source);
-						} catch (IOException e) {
-							ThemeEngineManager.logError(e.getMessage(), e);
-						} finally {
-							if (stream != null) {
-								try {
-									stream.close();
-								} catch (IOException e) {
-									ThemeEngineManager.logError(e.getMessage(), e);
+			return matchingElements.toArray(new IConfigurationElement[matchingElements.size()]);
+		}
+
+		@Override
+		public void setTheme(String themeId, boolean restore) {
+			String osVersion = System.getProperty("os.version");
+			if (osVersion != null) {
+				boolean found = false;
+				for (Theme t : themes) {
+					String osVersionList = t.getOsVersion();
+					if (osVersionList != null) {
+						String[] osVersions = osVersionList.split(","); //$NON-NLS-1$
+						for (String osVersionFromTheme : osVersions) {
+							if (osVersionFromTheme != null && osVersion.contains(osVersionFromTheme)) {
+								String themeVersion = themeId + osVersionList;
+								if (t.getId().equals(themeVersion)) {
+									setTheme(t, restore);
+									found = true;
+									break;
 								}
 							}
 						}
 					}
-				} catch (IOException e) {
-					ThemeEngineManager.logError(e.getMessage(), e);
+				}
+				if (found) {
+					return;
 				}
 			}
-		}
-
-		if (restore) {
-			IEclipsePreferences pref = getPreferences();
-			EclipsePreferencesHelper.setPreviousThemeId(pref.get(THEMEID_KEY, null));
-			EclipsePreferencesHelper.setCurrentThemeId(theme.getId());
-
-			pref.put(THEMEID_KEY, theme.getId());
-			try {
-				pref.flush();
-			} catch (BackingStoreException e) {
-				ThemeEngineManager.logError(e.getMessage(), e);
-			}
-		}
-		sendThemeChangeEvent(restore);
-
-		for (CSSEngine engine : cssEngines) {
-			engine.reapply();
-		}
-	}
-
-	/**
-	 * Broadcast theme-change event using OSGi Event Admin.
-	 */
-	private void sendThemeChangeEvent(boolean restore) {
-		EventAdmin eventAdmin = getEventAdmin();
-		if (eventAdmin == null) {
-			return;
-		}
-		Map<String, Object> data = new HashMap<>();
-		data.put(IThemeEngine.Events.THEME_ENGINE, this);
-		data.put(IThemeEngine.Events.THEME, currentTheme);
-		data.put(IThemeEngine.Events.DEVICE, display);
-		data.put(IThemeEngine.Events.RESTORE, restore);
-		Event event = new Event(IThemeEngine.Events.THEME_CHANGED, data);
-		eventAdmin.sendEvent(event); // synchronous
-	}
-
-	public List<IResourceLocator> getCurrentResourceLocators() {
-		if(currentTheme == null) { return Collections.emptyList(); }
-		return getResourceLocators(currentTheme.getId());
-	}
-
-	private EventAdmin getEventAdmin() {
-		Bundle bundle = FrameworkUtil.getBundle(this.getClass());
-		if (bundle == null) {
-			return null;
-		}
-		BundleContext context = bundle.getBundleContext();
-		ServiceReference<EventAdmin> eventAdminRef = context.getServiceReference(EventAdmin.class);
-		return context.getService(eventAdminRef);
-	}
-
-	@Override
-	public synchronized List<ITheme> getThemes() {
-		return Collections.unmodifiableList(new ArrayList<ITheme>(themes));
-	}
-
-	@Override
-	public void applyStyles(Object widget, boolean applyStylesToChildNodes) {
-		for (CSSEngine engine : cssEngines) {
-			Element element = engine.getElement(widget);
-			if (element != null) {
-				engine.applyStyles(element, applyStylesToChildNodes);
-			}
-		}
-	}
-
-	private String getPreferenceThemeId() {
-		return getPreferences().get(THEMEID_KEY, null);
-	}
-
-	private IEclipsePreferences getPreferences() {
-		return InstanceScope.INSTANCE.getNode(FrameworkUtil.getBundle(ThemeEngine.class).getSymbolicName());
-	}
-
-	void copyFile(String from, String to) throws IOException {
-		FileInputStream fStream = null;
-		BufferedOutputStream outputStream = null;
-		try {
-			fStream = new FileInputStream(from);
-			outputStream = new BufferedOutputStream(new FileOutputStream(to));
-			byte[] buffer = new byte[4096];
-			int c;
-			while ((c = fStream.read(buffer)) != -1) {
-				outputStream.write(buffer, 0, c);
-			}
-
-		} finally {
-			if (fStream != null) {
-				fStream.close();
-			}
-			if (outputStream != null) {
-				outputStream.close();
-			}
-		}
-	}
-
-	@Override
-	public void restore(String alternateTheme) {
-		String prefThemeId = getPreferenceThemeId();
-		boolean flag = true;
-		if (prefThemeId != null) {
-			for (ITheme t : getThemes()) {
-				if (prefThemeId.equals(t.getId())) {
-					setTheme(t, false);
-					flag = false;
+			//try generic
+			for (Theme t : themes) {
+				if (t.getId().equals(themeId)) {
+					setTheme(t, restore);
 					break;
 				}
 			}
 		}
 
-		// For Mac & GTK, if the system has Dark appearance set and Eclipse is using the
-		// default settings, then start Eclipse in Dark theme.
-
-		// Check that there is a dark theme present
-		boolean hasDarkTheme = getThemes().stream().anyMatch(t -> t.getId().startsWith(E4_DARK_THEME_ID));
-
-		String os = Platform.getOS();
-		String themeToRestore = (Platform.OS_LINUX.equals(os) || Platform.OS_MACOSX.equals(os))
-				&& Display.isSystemDarkTheme() && hasDarkTheme ? E4_DARK_THEME_ID : alternateTheme;
-		if (themeToRestore != null && flag) {
-			setTheme(themeToRestore, false);
+		@Override
+		public void setTheme(ITheme theme, boolean restore) {
+			setTheme(theme, restore, false);
 		}
-	}
 
-	@Override
-	public ITheme getActiveTheme() {
-		return currentTheme;
-	}
+		public void setTheme(ITheme theme, boolean restore, boolean force) {
+			Assert.isNotNull(theme, "The theme must not be null");
 
-	@Override
-	public CSSStyleDeclaration getStyle(Object widget) {
-		for (CSSEngine engine : cssEngines) {
-			CSSElementContext context = engine.getCSSElementContext(widget);
-			if (context != null) {
-				Element e = context.getElement();
-				if (e != null) {
-					return engine.getViewCSS().getComputedStyle(e, null);
+			if (this.currentTheme != theme || force) {
+				if (currentTheme != null) {
+					for (IResourceLocator l : getResourceLocators(currentTheme
+							.getId())) {
+						for (CSSEngine engine : cssEngines) {
+							engine.getResourcesLocatorManager()
+							.unregisterResourceLocator(l);
+						}
+					}
+				}
+
+				this.currentTheme = theme;
+				for (CSSEngine engine : cssEngines) {
+					engine.reset();
+				}
+
+				for (IResourceLocator l : getResourceLocators(theme.getId())) {
+					for (CSSEngine engine : cssEngines) {
+						engine.getResourcesLocatorManager()
+						.registerResourceLocator(l);
+					}
+				}
+				for (String stylesheet : getAllStyles(theme.getId())) {
+					URL url;
+					InputStream stream = null;
+					try {
+						url = FileLocator.resolve(new URL(stylesheet));
+						for (CSSEngine engine : cssEngines) {
+							try {
+								stream = url.openStream();
+								InputSource source = new InputSource();
+								source.setByteStream(stream);
+								source.setURI(url.toString());
+								engine.parseStyleSheet(source);
+							} catch (IOException e) {
+								ThemeEngineManager.logError(e.getMessage(), e);
+							} finally {
+								if (stream != null) {
+									try {
+										stream.close();
+									} catch (IOException e) {
+										ThemeEngineManager.logError(e.getMessage(), e);
+									}
+								}
+							}
+						}
+					} catch (IOException e) {
+						ThemeEngineManager.logError(e.getMessage(), e);
+					}
+				}
+			}
+
+			if (restore) {
+				IEclipsePreferences pref = getPreferences();
+				EclipsePreferencesHelper.setPreviousThemeId(pref.get(THEMEID_KEY, null));
+				EclipsePreferencesHelper.setCurrentThemeId(theme.getId());
+
+				pref.put(THEMEID_KEY, theme.getId());
+				try {
+					pref.flush();
+				} catch (BackingStoreException e) {
+					ThemeEngineManager.logError(e.getMessage(), e);
+				}
+			}
+			sendThemeChangeEvent(restore);
+
+			for (CSSEngine engine : cssEngines) {
+				engine.reapply();
+			}
+		}
+
+		/**
+		 * Broadcast theme-change event using OSGi Event Admin.
+		 */
+		private void sendThemeChangeEvent(boolean restore) {
+			EventAdmin eventAdmin = getEventAdmin();
+			if (eventAdmin == null) {
+				return;
+			}
+			Map<String, Object> data = new HashMap<>();
+			data.put(IThemeEngine.Events.THEME_ENGINE, this);
+			data.put(IThemeEngine.Events.THEME, currentTheme);
+			data.put(IThemeEngine.Events.DEVICE, display);
+			data.put(IThemeEngine.Events.RESTORE, restore);
+			Event event = new Event(IThemeEngine.Events.THEME_CHANGED, data);
+			eventAdmin.sendEvent(event); // synchronous
+		}
+
+		public List<IResourceLocator> getCurrentResourceLocators() {
+			if(currentTheme == null) { return Collections.emptyList(); }
+			return getResourceLocators(currentTheme.getId());
+		}
+
+		private EventAdmin getEventAdmin() {
+			Bundle bundle = FrameworkUtil.getBundle(this.getClass());
+			if (bundle == null) {
+				return null;
+			}
+			BundleContext context = bundle.getBundleContext();
+			ServiceReference<EventAdmin> eventAdminRef = context.getServiceReference(EventAdmin.class);
+			return context.getService(eventAdminRef);
+		}
+
+		@Override
+		public synchronized List<ITheme> getThemes() {
+			return Collections.unmodifiableList(new ArrayList<ITheme>(themes));
+		}
+
+		@Override
+		public void applyStyles(Object widget, boolean applyStylesToChildNodes) {
+			for (CSSEngine engine : cssEngines) {
+				Element element = engine.getElement(widget);
+				if (element != null) {
+					engine.applyStyles(element, applyStylesToChildNodes);
 				}
 			}
 		}
-		return null;
-	}
 
-	public List<String> getStylesheets(ITheme selection) {
-		List<String> ss  = stylesheets.get(selection.getId());
-		return ss == null ? new ArrayList<>() : ss;
-	}
+		private String getPreferenceThemeId() {
+			return getPreferences().get(THEMEID_KEY, null);
+		}
 
-	public void themeModified(ITheme theme, List<String> paths) {
-		modifiedStylesheets.put(theme.getId(), paths);
-		setTheme(theme, false, true);
-	}
+		private IEclipsePreferences getPreferences() {
+			return InstanceScope.INSTANCE.getNode(FrameworkUtil.getBundle(ThemeEngine.class).getSymbolicName());
+		}
 
-	public void resetCurrentTheme() {
-		if (currentTheme != null) {
-			setTheme(currentTheme, false, true);
+		void copyFile(String from, String to) throws IOException {
+			FileInputStream fStream = null;
+			BufferedOutputStream outputStream = null;
+			try {
+				fStream = new FileInputStream(from);
+				outputStream = new BufferedOutputStream(new FileOutputStream(to));
+				byte[] buffer = new byte[4096];
+				int c;
+				while ((c = fStream.read(buffer)) != -1) {
+					outputStream.write(buffer, 0, c);
+				}
+
+			} finally {
+				if (fStream != null) {
+					fStream.close();
+				}
+				if (outputStream != null) {
+					outputStream.close();
+				}
+			}
+		}
+
+		@Override
+		public void restore(String alternateTheme) {
+			String prefThemeId = getPreferenceThemeId();
+			boolean flag = true;
+			if (prefThemeId != null) {
+				for (ITheme t : getThemes()) {
+					if (prefThemeId.equals(t.getId())) {
+						setTheme(t, false);
+						flag = false;
+						break;
+					}
+				}
+			}
+
+			// For Mac & GTK, if the system has Dark appearance set and Eclipse is using the
+			// default settings, then start Eclipse in Dark theme.
+
+			// Check that there is a dark theme present
+			boolean hasDarkTheme = getThemes().stream().anyMatch(t -> t.getId().startsWith(E4_DARK_THEME_ID));
+
+			String os = Platform.getOS();
+			String themeToRestore = (Platform.OS_LINUX.equals(os) || Platform.OS_MACOSX.equals(os))
+					&& Display.isSystemDarkTheme() && hasDarkTheme ? E4_DARK_THEME_ID : alternateTheme;
+			if (themeToRestore != null && flag) {
+				setTheme(themeToRestore, false);
+			}
+		}
+
+		@Override
+		public ITheme getActiveTheme() {
+			return currentTheme;
+		}
+
+		@Override
+		public CSSStyleDeclaration getStyle(Object widget) {
+			for (CSSEngine engine : cssEngines) {
+				CSSElementContext context = engine.getCSSElementContext(widget);
+				if (context != null) {
+					Element e = context.getElement();
+					if (e != null) {
+						return engine.getViewCSS().getComputedStyle(e, null);
+					}
+				}
+			}
+			return null;
+		}
+
+		public List<String> getStylesheets(ITheme selection) {
+			List<String> ss  = stylesheets.get(selection.getId());
+			return ss == null ? new ArrayList<>() : ss;
+		}
+
+		public void themeModified(ITheme theme, List<String> paths) {
+			modifiedStylesheets.put(theme.getId(), paths);
+			setTheme(theme, false, true);
+		}
+
+		public void resetCurrentTheme() {
+			if (currentTheme != null) {
+				setTheme(currentTheme, false, true);
+			}
+		}
+
+		public List<String> getModifiedStylesheets(ITheme selection) {
+			List<String> ss  = modifiedStylesheets.get(selection.getId());
+			return ss == null ? new ArrayList<>() : ss;
+		}
+
+		public void resetModifiedStylesheets(ITheme selection) {
+			modifiedStylesheets.remove(selection.getId());
+		}
+
+		@Override
+		public void addCSSEngine(CSSEngine cssEngine) {
+			cssEngines.add(cssEngine);
+			resetCurrentTheme();
+		}
+
+		public Collection<CSSEngine> getCSSEngines() {
+			return cssEngines;
+		}
+
+		@Override
+		public void removeCSSEngine(CSSEngine cssEngine) {
+			cssEngines.remove(cssEngine);
 		}
 	}
-
-	public List<String> getModifiedStylesheets(ITheme selection) {
-		List<String> ss  = modifiedStylesheets.get(selection.getId());
-		return ss == null ? new ArrayList<>() : ss;
-	}
-
-	public void resetModifiedStylesheets(ITheme selection) {
-		modifiedStylesheets.remove(selection.getId());
-	}
-
-	@Override
-	public void addCSSEngine(CSSEngine cssEngine) {
-		cssEngines.add(cssEngine);
-		resetCurrentTheme();
-	}
-
-	public Collection<CSSEngine> getCSSEngines() {
-		return cssEngines;
-	}
-
-	@Override
-	public void removeCSSEngine(CSSEngine cssEngine) {
-		cssEngines.remove(cssEngine);
-	}
-}
