@@ -54,18 +54,6 @@ ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_BG_END {
 	color: #FFFFFF;
 }
 
-.MTrimmedWindow {
-	background-color: #E1E6F6;
-}
-
-.MTrimBar {
-	background-color: #E1E6F6;
-}
-
-.MTrimBar#org-eclipse-ui-main-toolbar {
-	background-color: #F5F7FC #E1E6F6 100%;
-}
-
 .MToolControl.TrimStack {
 	frame-image:  url(./win7TSFrame.png);
 	handle-image:  url(./win7Handle.png);
