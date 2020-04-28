@@ -478,7 +478,8 @@
                helpContextId="org.eclipse.ui.goto_last_edit_position_action_context"
                label="%goToLastEditPosition.label"
                menubarPath="navigate/"
-               tooltip="%goToLastEditPosition.tooltip">
+               tooltip="%goToLastEditPosition.tooltip"
+               initialEnabled="false">
          </action>
       </actionSet>
 	  <actionSet
