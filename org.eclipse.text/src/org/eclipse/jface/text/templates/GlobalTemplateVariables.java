@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,12 +16,11 @@
  *******************************************************************************/
 package org.eclipse.jface.text.templates;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.List;
-
-import com.ibm.icu.text.DateFormat;
-import com.ibm.icu.text.SimpleDateFormat;
-import com.ibm.icu.util.Calendar;
-import com.ibm.icu.util.ULocale;
+import java.util.Locale;
 
 /**
  * Global variables which are available in any context.
@@ -153,7 +152,7 @@ public class GlobalTemplateVariables {
 	 * The date variable evaluates to the current date. This supports a <code>pattern</code> and a
 	 * <code>locale</code> as optional parameters. <code>pattern</code> is a pattern compatible with
 	 * {@link SimpleDateFormat}. <code>locale</code> is a string representation of the locale
-	 * compatible with the constructor parameter {@link ULocale#ULocale(String)}.
+	 * compatible with the constructor parameter {@link Locale#Locale(String)}.
 	 */
 	public static class Date extends SimpleTemplateVariableResolver {
 		/**
@@ -179,7 +178,13 @@ public class GlobalTemplateVariables {
 				// There is a least one parameter (params.get(0) is not null), set the format depending on second parameter:
 				DateFormat format;
 				if (params.size() >= 2 && params.get(1) != null) {
-					format= new SimpleDateFormat(params.get(0), new ULocale(params.get(1)));
+					String localeString = params.get(1);
+					if (localeString.contains("_")) { //$NON-NLS-1$
+						String[] localeData= localeString.split("_"); //$NON-NLS-1$
+						format= new SimpleDateFormat(params.get(0), new Locale(localeData[0], localeData[1]));
+					} else {
+						format= new SimpleDateFormat(params.get(0), new Locale(localeString));
+					}
 				} else {
 					format= new SimpleDateFormat(params.get(0));
 				}
