@@ -7,7 +7,8 @@ Bundle-Vendor: Eclipse.org
 Require-Bundle: org.eclipse.jface;bundle-version="[3.18.0,4.0.0)",
  org.eclipse.jface.databinding,
  org.eclipse.core.runtime,
- org.eclipse.core.databinding
+ org.eclipse.core.databinding,
+ org.eclipse.jface.notifications
 Export-Package: org.eclipse.jface.snippets.dialogs,
  org.eclipse.jface.snippets.layout,
  org.eclipse.jface.snippets.resources,
