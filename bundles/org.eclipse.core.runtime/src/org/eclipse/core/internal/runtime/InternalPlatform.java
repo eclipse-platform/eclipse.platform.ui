@@ -272,15 +272,15 @@ public final class InternalPlatform {
 	 * Lazy initialize ContentTypeManager - it can only be used after the registry is up and running
 	 */
 	public IContentTypeManager getContentTypeManager() {
-		return contentTracker == null ? null : (IContentTypeManager) contentTracker.getService();
+		return contentTracker == null ? null : contentTracker.getService();
 	}
 
 	public EnvironmentInfo getEnvironmentInfoService() {
-		return environmentTracker == null ? null : (EnvironmentInfo) environmentTracker.getService();
+		return environmentTracker == null ? null : environmentTracker.getService();
 	}
 
 	public FrameworkLog getFrameworkLog() {
-		return logTracker == null ? null : (FrameworkLog) logTracker.getService();
+		return logTracker == null ? null : logTracker.getService();
 	}
 
 	public Bundle[] getFragments(Bundle bundle) {
@@ -408,7 +408,7 @@ public final class InternalPlatform {
 
 
 	public IPreferencesService getPreferencesService() {
-		return preferencesTracker == null ? null : (IPreferencesService) preferencesTracker.getService();
+		return preferencesTracker == null ? null : preferencesTracker.getService();
 	}
 
 	/*
