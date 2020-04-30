@@ -66,10 +66,25 @@ public class StreamsProxy implements IStreamsProxy, IStreamsProxy2 {
 	}
 
 	/**
-	 * Causes the proxy to close all
-	 * communications between it and the
-	 * underlying streams after all remaining data
-	 * in the streams is read.
+	 * Creates a <code>StreamsProxy</code> on the streams of the given system
+	 * process.
+	 *
+	 * @param process system process to create a streams proxy on
+	 * @param encoding the process's encoding or <code>null</code> if default
+	 * @deprecated use {@link #StreamsProxy(Process, Charset)} instead
+	 */
+	@Deprecated
+	public StreamsProxy(Process process, String encoding) {
+		// This constructor was once removed in favor of the Charset variant
+		// but Bug 562653 brought up a client which use this internal class via
+		// reflection and breaks without this constructor. So we restored the
+		// old constructor for the time being.
+		this(process, Charset.forName(encoding));
+	}
+
+	/**
+	 * Causes the proxy to close all communications between it and the
+	 * underlying streams after all remaining data in the streams is read.
 	 */
 	public void close() {
 		if (!isClosed(true)) {
