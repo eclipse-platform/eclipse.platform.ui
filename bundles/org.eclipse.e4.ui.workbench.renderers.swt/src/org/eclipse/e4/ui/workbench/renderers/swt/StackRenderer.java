@@ -1426,11 +1426,22 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 			}
 		}
 
-		if (closeableElements > 0) {
-			new MenuItem(menu, SWT.SEPARATOR);
-		}
-		createMenuItem(menu, SWTRenderersMessages.menuDetach, e -> detachActivePart(menu));
+		if (isDetachable(part)) {
+			if (closeableElements > 0) {
+				new MenuItem(menu, SWT.SEPARATOR);
+			}
 
+			createMenuItem(menu, SWTRenderersMessages.menuDetach, e -> detachActivePart(menu));
+		}
+	}
+
+	protected boolean isDetachable(MPart part) {
+		// if it's a shared part check its current ref
+		if (part.getCurSharedRef() != null) {
+			return !part.getCurSharedRef().getTags().contains(IPresentationEngine.NO_DETACH);
+		}
+
+		return !part.getTags().contains(IPresentationEngine.NO_DETACH);
 	}
 
 	/**
