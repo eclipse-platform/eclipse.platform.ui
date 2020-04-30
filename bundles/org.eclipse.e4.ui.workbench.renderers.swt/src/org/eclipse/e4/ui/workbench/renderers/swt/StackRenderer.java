@@ -116,8 +116,8 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 	private static final String THE_PART_KEY = "thePart"; //$NON-NLS-1$
 
 	/**
-	 * Key to control the default default value of the "most recently used"
-	 * order enablement
+	 * Key to control the default default value of the "most recently used" order
+	 * enablement
 	 */
 	public static final String MRU_KEY_DEFAULT = "enableMRUDefault"; //$NON-NLS-1$
 
@@ -139,12 +139,12 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 	public static final boolean MRU_DEFAULT = true;
 
 	/*
-	 * org.eclipse.ui.internal.dialogs.ViewsPreferencePage controls currently
-	 * the MRU behavior via IEclipsePreferences, so that CSS values from the
-	 * themes aren't used.
+	 * org.eclipse.ui.internal.dialogs.ViewsPreferencePage controls currently the
+	 * MRU behavior via IEclipsePreferences, so that CSS values from the themes
+	 * aren't used.
 	 *
-	 * TODO once we can use preferences from CSS (and update the value on the
-	 * fly) we can switch this default to true, see discussion on bug 388476.
+	 * TODO once we can use preferences from CSS (and update the value on the fly)
+	 * we can switch this default to true, see discussion on bug 388476.
 	 */
 	private static final boolean MRU_CONTROLLED_BY_CSS_DEFAULT = false;
 
@@ -166,9 +166,9 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 	private static final String STACK_SELECTED_PART = "stack_selected_part"; //$NON-NLS-1$
 
 	/**
-	 * Add this tag to prevent the next tab's activation from granting focus
-	 * toac the part. This is used to keep the focus on the CTabFolder when
-	 * traversing the tabs using the keyboard.
+	 * Add this tag to prevent the next tab's activation from granting focus toac
+	 * the part. This is used to keep the focus on the CTabFolder when traversing
+	 * the tabs using the keyboard.
 	 */
 	private static final String INHIBIT_FOCUS = "InhibitFocus"; //$NON-NLS-1$
 
@@ -387,8 +387,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 
 	@Inject
 	@Optional
-	void subscribeTopicClosablePlaceholderChanged(
-			@UIEventTopic(UIEvents.Placeholder.TOPIC_CLOSEABLE) Event event) {
+	void subscribeTopicClosablePlaceholderChanged(@UIEventTopic(UIEvents.Placeholder.TOPIC_CLOSEABLE) Event event) {
 		updateClosableTab(event);
 	}
 
@@ -455,9 +454,9 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 	}
 
 	/**
-	 * An event handler for listening to changes to the state of view menus and
-	 * its child menu items. Depending on what state these items are in, the
-	 * view menu should or should not be rendered in the tab folder.
+	 * An event handler for listening to changes to the state of view menus and its
+	 * child menu items. Depending on what state these items are in, the view menu
+	 * should or should not be rendered in the tab folder.
 	 */
 	private void shouldViewMenuBeRendered(Event event) {
 		Object objElement = event.getProperty(UIEvents.EventTags.ELEMENT);
@@ -1162,8 +1161,8 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 
 	/**
 	 * Shows a popup dialog with the list of editors availavle in a given
-	 * {@link CTabFolder}. By default the popup origin will be located close to
-	 * the chevron location.
+	 * {@link CTabFolder}. By default the popup origin will be located close to the
+	 * chevron location.
 	 *
 	 * @param stack
 	 * @param tabFolder
@@ -1175,18 +1174,17 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 	/**
 	 * Shows a popup dialog with the list of editors available in the given
 	 * CTabFolder. If {@code forceCenter} enabled, the dialog is centered
-	 * horizontally; otherwise, the dialog origin is placed at chevron location.
-	 * he dialog is placed at
+	 * horizontally; otherwise, the dialog origin is placed at chevron location. he
+	 * dialog is placed at
 	 *
 	 * @param stack
 	 * @param tabFolder
-	 * @param forceCenter
-	 *            center the dialog if true
+	 * @param forceCenter center the dialog if true
 	 */
 	public void showAvailableItems(MElementContainer<?> stack, CTabFolder tabFolder, boolean forceCenter) {
 		IEclipseContext ctxt = getContext(stack);
-		final BasicPartList editorList = new BasicPartList(tabFolder.getShell(), SWT.ON_TOP, SWT.V_SCROLL | SWT.H_SCROLL,
-				ctxt.get(EPartService.class), stack, this, getMRUValueFromPreferences());
+		final BasicPartList editorList = new BasicPartList(tabFolder.getShell(), SWT.ON_TOP,
+				SWT.V_SCROLL | SWT.H_SCROLL, ctxt.get(EPartService.class), stack, this, getMRUValueFromPreferences());
 		editorList.setInput();
 
 		Point size = editorList.computeSizeHint();
@@ -1249,8 +1247,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 	/**
 	 * Closes the part that's backed by the given widget.
 	 *
-	 * @param widget
-	 *            the part that owns this widget
+	 * @param widget the part that owns this widget
 	 * @return <tt>true</tt> if the part was closed, <tt>false</tt> otherwise
 	 */
 	private boolean closePart(Widget widget) {
@@ -1358,7 +1355,6 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 		}
 		return viewMenuImage;
 	}
-
 
 	private void openMenuFor(MPart part, CTabFolder folder, Point point) {
 		Menu tabMenu = createTabMenu(folder, part);
@@ -1655,10 +1651,8 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 	/**
 	 * Determine whether the given view menu has any visible menu items.
 	 *
-	 * @param viewMenu
-	 *            the view menu to check
-	 * @param part
-	 *            the view menu's parent part
+	 * @param viewMenu the view menu to check
+	 * @param part     the view menu's parent part
 	 * @return <tt>true</tt> if the specified view menu has visible children,
 	 *         <tt>false</tt> otherwise
 	 */
@@ -1711,8 +1705,8 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 
 	/**
 	 * An event handler for listening to changes to the children of an element
-	 * container. The tab folder may need to layout itself again if a part's
-	 * toolbar has been changed.
+	 * container. The tab folder may need to layout itself again if a part's toolbar
+	 * has been changed.
 	 */
 	@SuppressWarnings("javadoc")
 	public class TabStateHandler implements EventHandler {
@@ -1807,8 +1801,8 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 	}
 
 	/**
-	 * Updates the visual for busy state of the part tab in case CSS engine is
-	 * not active
+	 * Updates the visual for busy state of the part tab in case CSS engine is not
+	 * active
 	 */
 	static void updateBusyStateNoCss(CTabItem cti, Object newValue, Object oldValue) {
 		Font updatedFont = null;
