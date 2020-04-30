@@ -46,6 +46,7 @@
     <module>org.eclipse.e4.ui.workbench3</module>
     <module>org.eclipse.jface</module>
     <module>org.eclipse.jface.databinding</module>
+    <module>org.eclipse.jface.notifications</module>
     <module>org.eclipse.ui</module>
     <module>org.eclipse.ui.browser</module>
     <module>org.eclipse.ui.forms</module>
