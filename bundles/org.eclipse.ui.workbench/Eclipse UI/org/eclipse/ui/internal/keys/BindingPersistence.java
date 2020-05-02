@@ -680,7 +680,7 @@ public class BindingPersistence extends PreferencePersistence {
 
 		int j = 0;
 		for (; j < platforms.length; j++) {
-			if (platforms[j].equals(SWT.getPlatform())) {
+			if (platforms[j].equals(platform)) {
 				KeyBinding newBinding = new KeyBinding(KeySequence.getInstance(modifiedSequence), parameterizedCommand,
 						schemeId, contextId, locale, platforms[j], null, Binding.SYSTEM);
 				bindings.add(newBinding);
@@ -689,8 +689,8 @@ public class BindingPersistence extends PreferencePersistence {
 		}
 		if (j == platforms.length) {
 			// platform doesn't match. use the unmodified sequence
-			KeyBinding newBinding = new KeyBinding(keySequence, parameterizedCommand, schemeId, contextId, locale, null,
-					null, Binding.SYSTEM);
+			KeyBinding newBinding = new KeyBinding(keySequence, parameterizedCommand, schemeId, contextId, locale,
+					platform, null, Binding.SYSTEM);
 			bindings.add(newBinding);
 		}
 	}

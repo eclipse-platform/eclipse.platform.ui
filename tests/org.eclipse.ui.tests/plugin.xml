@@ -4373,10 +4373,24 @@
       <key
             commandId="org.eclipse.ui.file.import"
             contextId="org.eclipse.ui.contexts.window"
-            platform="carbon,cocoa,gtk,win32"
+            platform="cocoa"
             schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
             sequence="M1+8 I">
-	  </key>
+      </key>
+      <key
+            commandId="org.eclipse.ui.file.import"
+            contextId="org.eclipse.ui.contexts.window"
+            platform="gtk"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+8 I">
+      </key>
+      <key
+            commandId="org.eclipse.ui.file.import"
+            contextId="org.eclipse.ui.contexts.window"
+            platform="win32"
+            schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+            sequence="M1+8 I">
+     </key>
    </extension>
       <extension
             point="org.eclipse.ui.bindings">
