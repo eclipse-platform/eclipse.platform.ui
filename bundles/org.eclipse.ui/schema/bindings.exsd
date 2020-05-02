@@ -191,7 +191,7 @@ If no command identifier is specified, this is a deletion marker.  This means th
          <attribute name="platform" type="string">
             <annotation>
                <documentation>
-                  The platform on which this binding applies.  The platform should be specified in the same way as the string from &lt;code&gt;SWT.getPlatform()&lt;/code&gt;.  For example, the following strings are considered valid: &lt;code&gt;win32&lt;/code&gt;, &lt;code&gt;gtk&lt;/code&gt;, &lt;code&gt;motif&lt;/code&gt;, &lt;code&gt;carbon&lt;/code&gt; and &lt;code&gt;photon&lt;/code&gt;.
+                  The platform on which this binding applies.  The platform should be specified in the same way as the string from &lt;code&gt;SWT.getPlatform()&lt;/code&gt;.  For example, the following strings are considered valid: &lt;code&gt;cocoa&lt;/code&gt; (&lt;code&gt;carbon&lt;/code&gt; for compatibility), &lt;code&gt;gtk&lt;/code&gt;, and &lt;code&gt;win32&lt;/code&gt; (for all windows versions).
                </documentation>
             </annotation>
          </attribute>
@@ -269,7 +269,7 @@ The recognized modifiers keys are &lt;code&gt;M1&lt;/code&gt;, &lt;code&gt;M2&lt
          <attribute name="platforms" type="string" use="required">
             <annotation>
                <documentation>
-                  A comma seperated value of the platforms for which the modifier to be applied on . The individual platform string should be specified in the same way as the string from &lt;code&gt;SWT.getPlatform()&lt;/code&gt;.  For example, the following strings are considered valid for a platform: &lt;code&gt;win32&lt;/code&gt;, &lt;code&gt;gtk&lt;/code&gt;, &lt;code&gt;motif&lt;/code&gt;, &lt;code&gt;carbon&lt;/code&gt; and &lt;code&gt;photon&lt;/code&gt;.
+                  A comma seperated value of the platforms for which the modifier to be applied on. The individual platform string should be specified in the same way as the string from &lt;code&gt;SWT.getPlatform()&lt;/code&gt;.  For example, the following strings are considered valid for a platform: &lt;code&gt;cocoa&lt;/code&gt;, &lt;code&gt;gtk&lt;/code&gt;, and &lt;code&gt;win32&lt;/code&gt;.
                </documentation>
             </annotation>
          </attribute>
