@@ -13,45 +13,45 @@
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 420836
  *     Frank Appel <fappel@codeaffine.com> - Bug 325937
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 501250
- *     Pierre-Yves B. <pyvesdev@gmail.com> - Bug 559434
+ *     Pierre-Yves B. <pyvesdev@gmail.com> - Bug 559434, bug 551462
  *******************************************************************************/
 
 @import url("platform:/plugin/org.eclipse.ui.themes/css/e4_basestyle.css");
 
 ColorDefinition#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_START {
-	color: #D2E1F0;
+	color: #F2F2F2;
 }
 
 ColorDefinition#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_END {
-	color: #CEDDED;
+	color: #F0F0F0;
 }
 
 ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_OUTER_KEYLINE_COLOR {
-	color: #CCCCCC;
+	color: #DADADA;
 }
 
 ColorDefinition#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_START {
-	color: #F4F6FC;
+	color: #DADADA;
 }
 
 ColorDefinition#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_END {
-	color: #F4F6FC;
+	color: #D7D7D7;
 }
 
 ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_OUTER_KEYLINE_COLOR {
-	color: #FFFFFF;
+	color: #DADADA;
 }
 
 ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_OUTLINE_COLOR {
-	color: #CED5E5;
+	color: #797979;
 }
 
 ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_BG_START {
-	color: #D5E1ED;
+	color: #F2F2F2;
 }
 
 ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_BG_END {
-	color: #FFFFFF;
+	color: #F0F0F0;
 }
 
 .MToolControl.TrimStack {
