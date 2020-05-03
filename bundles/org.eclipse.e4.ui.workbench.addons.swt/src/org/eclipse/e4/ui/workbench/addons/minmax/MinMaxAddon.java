@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2018 IBM Corporation and others.
+ * Copyright (c) 2011, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
  *     Dirk Fauth (dirk.fauth@googlemail.com) - Bug 459285
  *     Eugen Neufeld (eneufeld@eclipsesource.com) - Bug 432466, Bug 455568
  *     Christoph Läubrich - Bug 365525
+ *     Pierre-Yves B. (pyvesdev@gmail.com) - Bug 562747
  ******************************************************************************/
 
 package org.eclipse.e4.ui.workbench.addons.minmax;
@@ -183,10 +184,6 @@ public class MinMaxAddon {
 
 				MUIElement elementToChange = getElementToChange(e);
 				CTabFolder ctf = (CTabFolder) e.widget;
-
-				if (!getCTFFor(elementToChange).getMaximizeVisible()) {
-					return;
-				}
 
 				// Only fire if we're in the 'tab' area
 				if (e.y > ctf.getTabHeight()) {
