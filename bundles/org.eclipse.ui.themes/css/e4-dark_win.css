@@ -22,7 +22,7 @@
 @import url("platform:/plugin/org.eclipse.ui.themes/css/dark/e4-dark_tabstyle.css");
 @import url("platform:/plugin/org.eclipse.ui.themes/css/dark/e4-dark-drag-styling.css");
 
-Tree {
+Tree, Table {
 
 	/* See Bug 434309: Customize the tree/table selection to work properly
 	 * with the dark theme.
@@ -31,22 +31,6 @@ Tree {
 	 * foreground because our background is also a bit lighter in this case.
 	 */
 	swt-selection-foreground-color: #fcfcf9;
-	swt-selection-background-color: #494949;
-	swt-hot-background-color: #2F2F2F;
-	swt-selection-border-color: #7F7D68;
-	swt-hot-border-color: #545454;
-}
-
-
-Table {
-	/* See Bug 434309: Customize the tree/table selection to work properly
-	 * with the dark theme.
-	 *
-	 * Note that the selection foreground is a bit lighter than the regular
-	 * foreground because our background is also a bit lighter in this case.
-	 */
-	swt-selection-foreground-color: #fcfcf9;
-
 	swt-selection-background-color: #494949;
 	swt-hot-background-color: #2F2F2F;
 	swt-selection-border-color: #7F7D68;
