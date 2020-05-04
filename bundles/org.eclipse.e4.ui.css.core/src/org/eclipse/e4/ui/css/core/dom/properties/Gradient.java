@@ -25,11 +25,11 @@ import org.w3c.dom.css.CSSPrimitiveValue;
  */
 public class Gradient {
 
-	private final List<Object> rgbs = new ArrayList<>();
-	private final List<Integer> percents = new ArrayList<>();
+	private final List<Object> rgbs = new ArrayList<>(2);
+	private final List<Integer> percents = new ArrayList<>(2);
 
 	//TODO see bug #278077
-	private final List<CSSPrimitiveValue> values = new ArrayList<>();
+	private final List<CSSPrimitiveValue> values = new ArrayList<>(2);
 
 	private boolean isLinear = true;
 
