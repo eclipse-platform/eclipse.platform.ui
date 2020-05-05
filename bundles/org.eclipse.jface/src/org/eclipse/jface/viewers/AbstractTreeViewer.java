@@ -104,6 +104,11 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	private boolean isExpandableCheckFilters = false;
 
 	/**
+	 * Indicates if the viewer's content provider is an instance of ITreePathContentProvider.
+	 */
+	private boolean isTreePathContentProvider = false;
+
+	/**
 	 * Safe runnable used to update an item.
 	 */
 	class UpdateItemSafeRunnable extends SafeRunnable {
@@ -816,7 +821,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			if (d != null) {
 				Object parentElement = d;
 				Object[] children;
-				if (isTreePathContentProvider() && widget instanceof Item) {
+				if (isTreePathContentProvider && widget instanceof Item) {
 					TreePath path = getTreePathFromItem((Item) widget);
 					children = getSortedChildren(path);
 				} else {
@@ -1797,8 +1802,9 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	protected void internalExpandToLevel(Widget widget, int level) {
 		if (level == ALL_LEVELS || level > 0) {
-			if (widget instanceof Item && widget.getData() != null
-					&& !isExpandable((Item) widget, null, widget.getData())) {
+			Object data = widget.getData();
+			if (widget instanceof Item && data != null
+					&& !isExpandable((Item) widget, null, data)) {
 				return;
 			}
 			createChildren(widget, false);
@@ -2187,7 +2193,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	 */
 	private boolean isExpandable(Item item, TreePath parentPath, Object element) {
 		Object elementOrTreePath = element;
-		if (isTreePathContentProvider()) {
+		if (isTreePathContentProvider) {
 			if (parentPath != null) {
 				elementOrTreePath = parentPath.createChildPath(element);
 			} else {
@@ -2394,6 +2400,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 	public void setContentProvider(IContentProvider provider) {
 		// the actual check is in assertContentProviderType
 		super.setContentProvider(provider);
+		isTreePathContentProvider = provider instanceof ITreePathContentProvider;
 	}
 
 	@Override
@@ -2659,7 +2666,7 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 		// If the children weren't passed in, get them now since they're needed
 		// below.
 		if (elementChildren == null) {
-			if (isTreePathContentProvider() && widget instanceof Item) {
+			if (isTreePathContentProvider && widget instanceof Item) {
 				TreePath path = getTreePathFromItem((Item) widget);
 				elementChildren = getSortedChildren(path);
 			} else {
@@ -3048,10 +3055,6 @@ public abstract class AbstractTreeViewer extends ColumnViewer {
 			}
 		}
 		return result.toArray(new TreePath[items.size()]);
-	}
-
-	private boolean isTreePathContentProvider() {
-		return getContentProvider() instanceof ITreePathContentProvider;
 	}
 
 	/**
