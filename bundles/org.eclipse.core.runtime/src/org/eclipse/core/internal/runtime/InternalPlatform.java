@@ -359,7 +359,7 @@ public final class InternalPlatform {
 		if (result != null)
 			return result;
 		ExtendedLogService logService = extendedLogTracker.getService();
-		Logger logger = logService == null ? null : logService.getLogger(bundle, PlatformLogWriter.EQUINOX_LOGGER_NAME);
+		Logger logger = logService != null ? logService.getLogger(bundle, PlatformLogWriter.EQUINOX_LOGGER_NAME) : null;
 		result = new Log(bundle, logger);
 		ExtendedLogReaderService logReader = logReaderTracker.getService();
 		logReader.addLogListener(result, result);
@@ -745,55 +745,42 @@ public final class InternalPlatform {
 	private void closeOSGITrackers() {
 		if (preferencesTracker != null) {
 			preferencesTracker.close();
-			preferencesTracker = null;
 		}
 		if (contentTracker != null) {
 			contentTracker.close();
-			contentTracker = null;
 		}
 		if (debugTracker != null) {
 			debugTracker.close();
-			debugTracker = null;
 		}
 		if (platformTracker != null) {
 			platformTracker.close();
-			platformTracker = null;
 		}
 		if (logTracker != null) {
 			logTracker.close();
-			logTracker = null;
 		}
 		if (groupProviderTracker != null) {
 			groupProviderTracker.close();
-			groupProviderTracker = null;
 		}
 		if (environmentTracker != null) {
 			environmentTracker.close();
-			environmentTracker = null;
 		}
 		if (logReaderTracker != null) {
 			logReaderTracker.close();
-			logReaderTracker = null;
 		}
 		if (extendedLogTracker != null) {
 			extendedLogTracker.close();
-			extendedLogTracker = null;
 		}
 		if (installLocation != null) {
 			installLocation.close();
-			installLocation = null;
 		}
 		if (userLocation != null) {
 			userLocation.close();
-			userLocation = null;
 		}
 		if (configurationLocation != null) {
 			configurationLocation.close();
-			configurationLocation = null;
 		}
 		if (instanceLocation != null) {
 			instanceLocation.close();
-			instanceLocation = null;
 		}
 	}
 
