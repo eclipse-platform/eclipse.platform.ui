@@ -56,7 +56,7 @@ public class AnimationUtil {
 		private final IFadeListener fadeListener;
 
 		public FadeJob(Shell shell, int increment, long delay, IFadeListener fadeListener) {
-			super("FaceJob");
+			super(Messages.AnimationUtil_FadeJobTitle);
 			if (increment < -255 || increment == 0 || increment > 255) {
 				throw new IllegalArgumentException("-255 <= increment <= 255 && increment != 0"); //$NON-NLS-1$
 			}
