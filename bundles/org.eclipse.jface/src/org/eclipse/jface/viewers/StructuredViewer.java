@@ -850,6 +850,9 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 	 */
 	protected Object[] getFilteredChildren(Object parent) {
 		Object[] result = getRawChildren(parent);
+		if (result.length == 0) {
+			return result;
+		}
 		if (filters != null) {
 			for (Object element : filters) {
 				ViewerFilter f = (ViewerFilter) element;
