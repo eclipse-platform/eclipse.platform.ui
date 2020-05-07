@@ -620,9 +620,9 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 				System.arraycopy(points, 0, tmpPoints, 0, index);
 				gc.fillPolygon(tmpPoints);
 
-				Color tempBorder = new Color(gc.getDevice(), 182, 188, 204);
-				gc.setForeground(tempBorder);
-				tempBorder.dispose();
+				if (tabOutlineColor == null)
+					tabOutlineColor = gc.getDevice().getSystemColor(SWT.COLOR_BLACK);
+				gc.setForeground(tabOutlineColor);
 
 				if (active) {
 					gc.drawPolyline(tmpPoints);
