@@ -1858,24 +1858,6 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	}
 
 	private void initializeE4Services() {
-		// track the workbench preference and update the eclipse context with
-		// the new value
-		IPreferenceStore preferenceStore = PrefUtil.getAPIPreferenceStore();
-		preferenceStore.addPropertyChangeListener(event -> {
-			if (IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS.equals(event.getProperty())) {
-				Object o = event.getNewValue();
-				if (o instanceof Boolean) {
-					// Boolean if notified after the preference page has
-					// been closed
-					e4Context.set(IPresentationEngine.ANIMATIONS_ENABLED, o);
-				} else if (o instanceof String) {
-					// String if notified via an import of the preference
-					e4Context.set(IPresentationEngine.ANIMATIONS_ENABLED,
-							Boolean.parseBoolean((String) event.getNewValue()));
-				}
-			}
-		});
-
 		eventBroker.subscribe(UIEvents.ElementContainer.TOPIC_CHILDREN, event -> {
 			if (application == event.getProperty(UIEvents.EventTags.ELEMENT)) {
 				if (UIEvents.isREMOVE(event)) {

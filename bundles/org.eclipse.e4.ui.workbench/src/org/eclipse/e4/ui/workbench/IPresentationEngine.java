@@ -211,7 +211,10 @@ public interface IPresentationEngine {
 	String ADORNMENT_PIN = "Pin Adornment"; //$NON-NLS-1$
 
 	/**
-	 * This is a <b>Boolean</b> preference used to control animations in the application
+	 * This is a <b>Boolean</b> preference used to control animations in the
+	 * application
+	 *
+	 * @deprecated not supported in the Eclipse platform anymore
 	 */
 	String ANIMATIONS_ENABLED = "Animations Enabled"; //$NON-NLS-1$
 

@@ -27,8 +27,6 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
-import org.eclipse.e4.ui.internal.workbench.swt.AnimationEngine;
-import org.eclipse.e4.ui.internal.workbench.swt.FaderAnimationFeedback;
 import org.eclipse.e4.ui.model.application.MAddon;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -741,14 +739,7 @@ public class MinMaxAddon {
 		}
 
 		List<MUIElement> elementsToMinimize = getElementsToMinimize(element);
-		Shell hostShell = (Shell) modelService.getTopLevelWindowFor(element).getWidget();
 		MWindow win = MinMaxAddonUtil.getWindowFor(element);
-
-		if (hostShell != null) {
-			FaderAnimationFeedback fader = new FaderAnimationFeedback(hostShell);
-			AnimationEngine engine = new AnimationEngine(win.getContext(), fader, 300);
-			engine.schedule();
-		}
 
 		// Restore any currently maximized element
 		restoreMaximizedElement(element, win);
@@ -935,13 +926,6 @@ public class MinMaxAddon {
 
 	void unzoom(final MUIElement element) {
 		MWindow win = MinMaxAddonUtil.getWindowFor(element);
-
-		Shell hostShell = (Shell) win.getWidget();
-		if (hostShell != null) {
-			FaderAnimationFeedback fader = new FaderAnimationFeedback(hostShell);
-			AnimationEngine engine = new AnimationEngine(win.getContext(), fader, 300);
-			engine.schedule();
-		}
 
 		List<MUIElement> elementsToRestore = getElementsToRestore(element);
 		for (MUIElement toRestore : elementsToRestore) {
