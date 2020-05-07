@@ -41,7 +41,7 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 	 * (<code>HandlerSubmission</code>). This map should be <code>null</code> if
 	 * there are no such activations.
 	 */
-	private Map activationsBySubmission = null;
+	private Map<HandlerSubmission, IHandlerActivation> activationsBySubmission = null;
 
 	/**
 	 * The mutable command manager that should be notified of changes to the list of
@@ -90,16 +90,16 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 				new LegacyHandlerSubmissionExpression(handlerSubmission.getActivePartId(),
 						handlerSubmission.getActiveShell(), handlerSubmission.getActiveWorkbenchPartSite()));
 		if (activationsBySubmission == null) {
-			activationsBySubmission = new HashMap();
+			activationsBySubmission = new HashMap<>();
 		}
 		activationsBySubmission.put(handlerSubmission, activation);
 	}
 
 	@Override
 	public final void addHandlerSubmissions(final Collection handlerSubmissions) {
-		final Iterator submissionItr = handlerSubmissions.iterator();
+		final Iterator<HandlerSubmission> submissionItr = handlerSubmissions.iterator();
 		while (submissionItr.hasNext()) {
-			addHandlerSubmission((HandlerSubmission) submissionItr.next());
+			addHandlerSubmission(submissionItr.next());
 		}
 	}
 
@@ -114,18 +114,17 @@ public class WorkbenchCommandSupport implements IWorkbenchCommandSupport {
 			return;
 		}
 
-		final Object value = activationsBySubmission.remove(handlerSubmission);
-		if (value instanceof IHandlerActivation) {
-			final IHandlerActivation activation = (IHandlerActivation) value;
+		final IHandlerActivation activation = activationsBySubmission.remove(handlerSubmission);
+		if (activation != null) {
 			handlerService.deactivateHandler(activation);
 		}
 	}
 
 	@Override
 	public final void removeHandlerSubmissions(final Collection handlerSubmissions) {
-		final Iterator submissionItr = handlerSubmissions.iterator();
+		final Iterator<HandlerSubmission> submissionItr = handlerSubmissions.iterator();
 		while (submissionItr.hasNext()) {
-			removeHandlerSubmission((HandlerSubmission) submissionItr.next());
+			removeHandlerSubmission(submissionItr.next());
 		}
 	}
 }

@@ -167,7 +167,7 @@ public class WorkbenchStatusDialogManager {
 	 *
 	 * @return collection of {@link StatusAdapter} objects
 	 */
-	public Collection getStatusAdapters() {
+	public Collection/* <StatusAdapter> */ getStatusAdapters() {
 		return manager.getStatusAdapters();
 	}
 

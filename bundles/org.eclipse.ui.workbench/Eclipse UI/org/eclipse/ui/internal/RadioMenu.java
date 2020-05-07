@@ -36,7 +36,7 @@ public class RadioMenu implements IChangeListener {
 
 	private Menu parent;
 
-	private List items = new ArrayList();
+	private List<MenuItem> items = new ArrayList<>();
 
 	SelectionListener selectionAdapter = widgetSelectedAdapter(e -> {
 		Object newState = e.widget.getData();
@@ -97,9 +97,9 @@ public class RadioMenu implements IChangeListener {
 	 * Disposes all menu items
 	 */
 	public void dispose() {
-		Iterator iter = items.iterator();
+		Iterator<MenuItem> iter = items.iterator();
 		while (iter.hasNext()) {
-			MenuItem next = (MenuItem) iter.next();
+			MenuItem next = iter.next();
 
 			if (!next.isDisposed()) {
 				next.removeSelectionListener(selectionAdapter);
@@ -114,9 +114,9 @@ public class RadioMenu implements IChangeListener {
 	 * Refreshes the selected menu items to match the current state of the model.
 	 */
 	private void refreshSelection() {
-		Iterator iter = items.iterator();
+		Iterator<MenuItem> iter = items.iterator();
 		while (iter.hasNext()) {
-			MenuItem next = (MenuItem) iter.next();
+			MenuItem next = iter.next();
 
 			if (!next.isDisposed()) {
 				next.setSelection(isEqual(data.getState(), next.getData()));

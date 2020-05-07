@@ -246,7 +246,7 @@ public class LightweightDecoratorManager extends ObjectContributorManager {
 	 * @return LightweightDecoratorDefinition[]
 	 */
 	LightweightDecoratorDefinition[] enabledDefinitions() {
-		ArrayList result = new ArrayList();
+		ArrayList<LightweightDecoratorDefinition> result = new ArrayList<>();
 		for (LightweightDecoratorDefinition lightweightDefinition : lightweightDefinitions) {
 			if (lightweightDefinition.isEnabled()) {
 				result.add(lightweightDefinition);

@@ -83,7 +83,7 @@ public class ActionBarAdvisor {
 
 	private IActionBarConfigurer actionBarConfigurer;
 
-	private Map actions = new HashMap();
+	private Map<String, IAction> actions = new HashMap<>();
 
 	private boolean menuCreated;
 
@@ -215,7 +215,7 @@ public class ActionBarAdvisor {
 	 * @see IAction#getId()
 	 */
 	protected IAction getAction(String id) {
-		return (IAction) actions.get(id);
+		return actions.get(id);
 	}
 
 	/**
@@ -296,8 +296,8 @@ public class ActionBarAdvisor {
 	 * <code>disposeAction(IAction)</code>.
 	 */
 	protected void disposeActions() {
-		for (Iterator i = actions.values().iterator(); i.hasNext();) {
-			IAction action = (IAction) i.next();
+		for (Iterator<IAction> i = actions.values().iterator(); i.hasNext();) {
+			IAction action = i.next();
 			disposeAction(action);
 		}
 		actions.clear();

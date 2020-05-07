@@ -116,7 +116,6 @@ public class StatusManager {
 
 	private volatile AbstractStatusHandler statusHandler;
 
-	// Note: we use Vector to be MT safe on add/remove operations
 	private List<IStatus> loggedStatuses = new Vector<>();
 
 	private ListenerList<INotificationListener> listeners = new ListenerList<>();

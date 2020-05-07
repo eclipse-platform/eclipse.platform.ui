@@ -54,7 +54,7 @@ public class PageSite implements IPageSite, INestable {
 	/**
 	 * The list of menu extender for each registered menu.
 	 */
-	private ArrayList menuExtenders;
+	private ArrayList<PopupMenuExtender> menuExtenders;
 
 	/**
 	 * The "parent" view site
@@ -139,15 +139,15 @@ public class PageSite implements IPageSite, INestable {
 	 */
 	protected void dispose() {
 		if (menuExtenders != null) {
-			HashSet managers = new HashSet(menuExtenders.size());
-			for (Object menuExtender : menuExtenders) {
-				PopupMenuExtender ext = (PopupMenuExtender) menuExtender;
+			HashSet<MenuManager> managers = new HashSet<>(menuExtenders.size());
+			for (PopupMenuExtender menuExtender : menuExtenders) {
+				PopupMenuExtender ext = menuExtender;
 				managers.add(ext.getManager());
 				ext.dispose();
 			}
 			if (managers.size() > 0) {
-				for (Iterator iterator = managers.iterator(); iterator.hasNext();) {
-					MenuManager mgr = (MenuManager) iterator.next();
+				for (Iterator<MenuManager> iterator = managers.iterator(); iterator.hasNext();) {
+					MenuManager mgr = iterator.next();
 					mgr.dispose();
 				}
 			}
@@ -216,7 +216,7 @@ public class PageSite implements IPageSite, INestable {
 	@Override
 	public void registerContextMenu(String menuID, MenuManager menuMgr, ISelectionProvider selProvider) {
 		if (menuExtenders == null) {
-			menuExtenders = new ArrayList(1);
+			menuExtenders = new ArrayList<>(1);
 		}
 		PartSite.registerContextMenu(menuID, menuMgr, selProvider, false, parentSite.getPart(), e4Context,
 				menuExtenders);

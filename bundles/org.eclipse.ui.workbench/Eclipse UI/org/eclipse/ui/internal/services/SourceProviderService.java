@@ -43,13 +43,13 @@ public final class SourceProviderService implements ISourceProviderService, IDis
 	 * <code>null</code>. This is a map of the source name ({@link String}) to the
 	 * source provider ({@link ISourceProvider}).
 	 */
-	private final Map sourceProvidersByName = new HashMap();
+	private final Map<String, ISourceProvider> sourceProvidersByName = new HashMap<>();
 
 	/**
 	 * All of the source providers registered with this service. This value is never
 	 * <code>null</code>.
 	 */
-	private final Set sourceProviders = new HashSet();
+	private final Set<ISourceProvider> sourceProviders = new HashSet<>();
 
 	private IServiceLocator locator;
 
@@ -59,9 +59,9 @@ public final class SourceProviderService implements ISourceProviderService, IDis
 
 	@Override
 	public void dispose() {
-		final Iterator sourceProviderItr = sourceProviders.iterator();
+		final Iterator<ISourceProvider> sourceProviderItr = sourceProviders.iterator();
 		while (sourceProviderItr.hasNext()) {
-			final ISourceProvider sourceProvider = (ISourceProvider) sourceProviderItr.next();
+			final ISourceProvider sourceProvider = sourceProviderItr.next();
 			sourceProvider.dispose();
 		}
 		sourceProviders.clear();
@@ -70,12 +70,12 @@ public final class SourceProviderService implements ISourceProviderService, IDis
 
 	@Override
 	public ISourceProvider getSourceProvider(final String sourceName) {
-		return (ISourceProvider) sourceProvidersByName.get(sourceName);
+		return sourceProvidersByName.get(sourceName);
 	}
 
 	@Override
 	public ISourceProvider[] getSourceProviders() {
-		return (ISourceProvider[]) sourceProviders.toArray(new ISourceProvider[sourceProviders.size()]);
+		return sourceProviders.toArray(new ISourceProvider[sourceProviders.size()]);
 	}
 
 	public void registerProvider(final ISourceProvider sourceProvider) {

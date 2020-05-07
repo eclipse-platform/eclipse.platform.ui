@@ -40,7 +40,7 @@ public class ShellPool {
 	 */
 	private Shell parentShell;
 
-	private LinkedList availableShells = new LinkedList();
+	private LinkedList<Shell> availableShells = new LinkedList<>();
 
 	private static final String CLOSE_LISTENER = "close listener"; //$NON-NLS-1$
 
@@ -104,7 +104,7 @@ public class ShellPool {
 	public Shell allocateShell(ShellListener closeListener) {
 		Shell result;
 		if (!availableShells.isEmpty()) {
-			result = (Shell) availableShells.removeFirst();
+			result = availableShells.removeFirst();
 		} else {
 			result = new Shell(parentShell, flags);
 			result.addShellListener(this.closeListener);
@@ -122,8 +122,8 @@ public class ShellPool {
 	 * @since 3.1
 	 */
 	public void dispose() {
-		for (Iterator iter = availableShells.iterator(); iter.hasNext();) {
-			Shell next = (Shell) iter.next();
+		for (Iterator<Shell> iter = availableShells.iterator(); iter.hasNext();) {
+			Shell next = iter.next();
 			next.removeDisposeListener(disposeListener);
 
 			next.dispose();

@@ -49,7 +49,7 @@ public class WWinPluginAction extends PluginAction implements IActionSetContribu
 
 	private RetargetAction retargetAction;
 
-	private static ArrayList staticActionList = new ArrayList(50);
+	private static ArrayList<WWinPluginAction> staticActionList = new ArrayList<>(50);
 
 	/**
 	 * Constructs a new <code>WWinPluginAction</code> object.
@@ -150,9 +150,9 @@ public class WWinPluginAction extends PluginAction implements IActionSetContribu
 	 * Creates any actions which belong to an activated plugin.
 	 */
 	public static void refreshActionList() {
-		Iterator iter = staticActionList.iterator();
+		Iterator<WWinPluginAction> iter = staticActionList.iterator();
 		while (iter.hasNext()) {
-			WWinPluginAction action = (WWinPluginAction) iter.next();
+			WWinPluginAction action = iter.next();
 			if ((action.getDelegate() == null) && action.isOkToCreateDelegate()) {
 				action.createDelegate();
 				// creating the delegate also refreshes its enablement

@@ -75,10 +75,11 @@ public class PreferenceLinkArea extends Object {
 	 * @return IPreferenceNode
 	 */
 	private IPreferenceNode getPreferenceNode(String pageId) {
-		Iterator iterator = PlatformUI.getWorkbench().getPreferenceManager().getElements(PreferenceManager.PRE_ORDER)
+		Iterator<IPreferenceNode> iterator = PlatformUI.getWorkbench().getPreferenceManager().getElements(
+				PreferenceManager.PRE_ORDER)
 				.iterator();
 		while (iterator.hasNext()) {
-			IPreferenceNode next = (IPreferenceNode) iterator.next();
+			IPreferenceNode next = iterator.next();
 			if (next.getId().equals(pageId)) {
 				return next;
 			}

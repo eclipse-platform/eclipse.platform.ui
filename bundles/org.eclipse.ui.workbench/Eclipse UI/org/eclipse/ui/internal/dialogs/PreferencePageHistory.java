@@ -57,7 +57,7 @@ class PreferencePageHistory {
 	 * A list of preference history domain elements that stores the history of the
 	 * visited preference pages.
 	 */
-	private List history = new ArrayList();
+	private List<PreferenceHistoryEntry> history = new ArrayList<>();
 
 	/**
 	 * Stores the current entry into <code>history</code> and
@@ -73,7 +73,7 @@ class PreferencePageHistory {
 	/**
 	 * The handler submission for these controls.
 	 */
-	private Set activations = new HashSet();
+	private Set<IHandlerActivation> activations = new HashSet<>();
 
 	/**
 	 * Creates a new history for the given dialog.
@@ -94,7 +94,7 @@ class PreferencePageHistory {
 	 */
 	private PreferenceHistoryEntry getHistoryEntry(int index) {
 		if (index >= 0 && index < history.size()) {
-			return (PreferenceHistoryEntry) history.get(index);
+			return history.get(index);
 		}
 		return null;
 	}
@@ -311,9 +311,9 @@ class PreferencePageHistory {
 	 */
 	public void dispose() {
 		final IHandlerService handlerService = PlatformUI.getWorkbench().getService(IHandlerService.class);
-		final Iterator iterator = activations.iterator();
+		final Iterator<IHandlerActivation> iterator = activations.iterator();
 		while (iterator.hasNext()) {
-			handlerService.deactivateHandler((IHandlerActivation) iterator.next());
+			handlerService.deactivateHandler(iterator.next());
 		}
 		activations.clear();
 

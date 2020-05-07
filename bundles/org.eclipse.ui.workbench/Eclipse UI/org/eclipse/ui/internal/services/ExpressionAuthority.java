@@ -113,9 +113,9 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 	 * not override.
 	 */
 	public void dispose() {
-		final Iterator providerItr = providers.iterator();
+		final Iterator<ISourceProvider> providerItr = providers.iterator();
 		while (providerItr.hasNext()) {
-			final ISourceProvider provider = (ISourceProvider) providerItr.next();
+			final ISourceProvider provider = providerItr.next();
 			provider.removeSourceProviderListener(this);
 		}
 
@@ -296,9 +296,9 @@ public abstract class ExpressionAuthority implements ISourceProviderListener {
 	 * providers.
 	 */
 	protected final void updateCurrentState() {
-		final Iterator providerItr = providers.iterator();
+		final Iterator<ISourceProvider> providerItr = providers.iterator();
 		while (providerItr.hasNext()) {
-			final ISourceProvider provider = (ISourceProvider) providerItr.next();
+			final ISourceProvider provider = providerItr.next();
 			final Map currentState = provider.getCurrentState();
 			final Iterator variableItr = currentState.entrySet().iterator();
 			while (variableItr.hasNext()) {

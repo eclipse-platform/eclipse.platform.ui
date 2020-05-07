@@ -114,15 +114,15 @@ public class WorkingSetRegistry implements IExtensionChangeHandler {
 	 * @return an array of all working set descriptors having a page class attribute
 	 */
 	public WorkingSetDescriptor[] getNewPageWorkingSetDescriptors() {
-		Collection descriptors = workingSetDescriptors.values();
-		List result = new ArrayList(descriptors.size());
-		for (Iterator iter = descriptors.iterator(); iter.hasNext();) {
-			WorkingSetDescriptor descriptor = (WorkingSetDescriptor) iter.next();
+		Collection<WorkingSetDescriptor> descriptors = workingSetDescriptors.values();
+		List<WorkingSetDescriptor> result = new ArrayList<>(descriptors.size());
+		for (Iterator<WorkingSetDescriptor> iter = descriptors.iterator(); iter.hasNext();) {
+			WorkingSetDescriptor descriptor = iter.next();
 			if (descriptor.getPageClassName() != null) {
 				result.add(descriptor);
 			}
 		}
-		return (WorkingSetDescriptor[]) result.toArray(new WorkingSetDescriptor[result.size()]);
+		return result.toArray(new WorkingSetDescriptor[result.size()]);
 	}
 
 	/**
@@ -132,9 +132,9 @@ public class WorkingSetRegistry implements IExtensionChangeHandler {
 	 * @return whether a descriptor with a page class attribute exists
 	 */
 	public boolean hasNewPageWorkingSetDescriptor() {
-		Collection descriptors = workingSetDescriptors.values();
-		for (Iterator iter = descriptors.iterator(); iter.hasNext();) {
-			WorkingSetDescriptor descriptor = (WorkingSetDescriptor) iter.next();
+		Collection<WorkingSetDescriptor> descriptors = workingSetDescriptors.values();
+		for (Iterator<WorkingSetDescriptor> iter = descriptors.iterator(); iter.hasNext();) {
+			WorkingSetDescriptor descriptor = iter.next();
 			if (descriptor.getPageClassName() != null) {
 				return true;
 			}
@@ -158,15 +158,15 @@ public class WorkingSetRegistry implements IExtensionChangeHandler {
 	public WorkingSetDescriptor[] getElementAdapterDescriptorsForNamespace(String namespace) {
 		if (namespace == null) // fix for Bug 84225
 			return new WorkingSetDescriptor[0];
-		Collection descriptors = workingSetDescriptors.values();
-		List result = new ArrayList();
-		for (Iterator iter = descriptors.iterator(); iter.hasNext();) {
-			WorkingSetDescriptor descriptor = (WorkingSetDescriptor) iter.next();
+		Collection<WorkingSetDescriptor> descriptors = workingSetDescriptors.values();
+		List<WorkingSetDescriptor> result = new ArrayList<>();
+		for (Iterator<WorkingSetDescriptor> iter = descriptors.iterator(); iter.hasNext();) {
+			WorkingSetDescriptor descriptor = iter.next();
 			if (namespace.equals(descriptor.getDeclaringNamespace())) {
 				result.add(descriptor);
 			}
 		}
-		return (WorkingSetDescriptor[]) result.toArray(new WorkingSetDescriptor[result.size()]);
+		return result.toArray(new WorkingSetDescriptor[result.size()]);
 	}
 
 	/**

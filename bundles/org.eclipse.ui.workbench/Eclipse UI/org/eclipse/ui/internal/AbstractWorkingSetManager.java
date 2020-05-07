@@ -446,9 +446,9 @@ public abstract class AbstractWorkingSetManager extends EventManager
 	 * @param list    the working sets to save
 	 * @since 3.2
 	 */
-	private void saveWorkingSetState(final IMemento memento, List list) {
-		for (Iterator i = list.iterator(); i.hasNext();) {
-			final IPersistableElement persistable = (IWorkingSet) i.next();
+	private void saveWorkingSetState(final IMemento memento, List<IWorkingSet> list) {
+		for (Iterator<IWorkingSet> i = list.iterator(); i.hasNext();) {
+			final IPersistableElement persistable = i.next();
 			SafeRunner.run(new WorkingSetRunnable() {
 
 				@Override

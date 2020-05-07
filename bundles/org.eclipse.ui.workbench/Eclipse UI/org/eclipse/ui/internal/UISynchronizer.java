@@ -33,38 +33,38 @@ public class UISynchronizer extends Synchronizer {
 	 * List of non-workbench Runnables that need executing at some point in the
 	 * future
 	 */
-	protected List pendingStartup = new ArrayList();
+	protected List<Runnable> pendingStartup = new ArrayList<>();
 
 	/**
 	 * Setting this variable to the value {@link Boolean#TRUE} will allow a thread
 	 * to execute code during the startup sequence.
 	 */
-	public static final ThreadLocal startupThread = new ThreadLocal() {
+	public static final ThreadLocal<Boolean> startupThread = new ThreadLocal<Boolean>() {
 
 		@Override
-		protected Object initialValue() {
+		protected Boolean initialValue() {
 			return Boolean.FALSE;
 		}
 
 		@Override
-		public void set(Object value) {
+		public void set(Boolean value) {
 			if (value != Boolean.TRUE && value != Boolean.FALSE)
 				throw new IllegalArgumentException();
 			super.set(value);
 		}
 	};
 
-	public static final ThreadLocal overrideThread = new ThreadLocal() {
+	public static final ThreadLocal<Boolean> overrideThread = new ThreadLocal<Boolean>() {
 		@Override
-		protected Object initialValue() {
+		protected Boolean initialValue() {
 			return Boolean.FALSE;
 		}
 
 		@Override
-		public void set(Object value) {
+		public void set(Boolean value) {
 			if (value != Boolean.TRUE && value != Boolean.FALSE)
 				throw new IllegalArgumentException();
-			if (value == Boolean.TRUE && ((Boolean) startupThread.get()).booleanValue()) {
+			if (value == Boolean.TRUE && startupThread.get().booleanValue()) {
 				throw new IllegalStateException();
 			}
 			super.set(value);
@@ -81,8 +81,8 @@ public class UISynchronizer extends Synchronizer {
 			if (!isStarting)
 				throw new IllegalStateException();
 			isStarting = false;
-			for (Iterator i = pendingStartup.iterator(); i.hasNext();) {
-				Runnable runnable = (Runnable) i.next();
+			for (Iterator<Runnable> i = pendingStartup.iterator(); i.hasNext();) {
+				Runnable runnable = i.next();
 				try {
 					// queue up all pending asyncs
 					super.asyncExec(runnable);

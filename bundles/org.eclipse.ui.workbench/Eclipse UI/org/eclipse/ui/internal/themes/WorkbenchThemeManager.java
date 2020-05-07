@@ -100,7 +100,7 @@ public class WorkbenchThemeManager extends EventManager implements IThemeManager
 
 	private IThemeRegistry themeRegistry;
 
-	private Map themes = new HashMap(7);
+	private Map<IThemeDescriptor, ITheme> themes = new HashMap<>(7);
 
 	private EventHandler themeChangedHandler = new WorkbenchThemeChangedHandler();
 
@@ -179,7 +179,7 @@ public class WorkbenchThemeManager extends EventManager implements IThemeManager
 		IThemeDescriptor[] themeDescriptors = getThemeRegistry().getThemes();
 
 		for (IThemeDescriptor themeDescriptor : themeDescriptors) {
-			ITheme theme = (ITheme) themes.get(themeDescriptor);
+			ITheme theme = themes.get(themeDescriptor);
 			// If theme is in our themes table then its already been populated
 			if (theme != null) {
 				ColorDefinition[] colorDefinitions = themeDescriptor.getColors();
@@ -205,8 +205,8 @@ public class WorkbenchThemeManager extends EventManager implements IThemeManager
 			eventBroker.unsubscribe(themeRegistryModifiedHandler);
 		}
 
-		for (Iterator i = themes.values().iterator(); i.hasNext();) {
-			ITheme theme = (ITheme) i.next();
+		for (Iterator<ITheme> i = themes.values().iterator(); i.hasNext();) {
+			ITheme theme = i.next();
 			theme.removePropertyChangeListener(currentThemeListener);
 			theme.dispose();
 		}
@@ -278,7 +278,7 @@ public class WorkbenchThemeManager extends EventManager implements IThemeManager
 	}
 
 	private ITheme getTheme(IThemeDescriptor td) {
-		ITheme theme = (ITheme) themes.get(td);
+		ITheme theme = themes.get(td);
 		if (theme == null) {
 			theme = new Theme(td);
 			themes.put(td, theme);

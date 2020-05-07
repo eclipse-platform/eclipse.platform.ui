@@ -42,7 +42,7 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 	 * (<code>HandlerSubmission</code>). This map should be <code>null</code> if
 	 * there are no such activations.
 	 */
-	private Map activationsBySubmission = null;
+	private Map<EnabledSubmission, IContextActivation> activationsBySubmission = null;
 
 	/**
 	 * The binding service for the workbench. This value is never <code>null</code>.
@@ -87,16 +87,16 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 				new LegacyHandlerSubmissionExpression(enabledSubmission.getActivePartId(),
 						enabledSubmission.getActiveShell(), enabledSubmission.getActiveWorkbenchPartSite()));
 		if (activationsBySubmission == null) {
-			activationsBySubmission = new HashMap();
+			activationsBySubmission = new HashMap<>();
 		}
 		activationsBySubmission.put(enabledSubmission, activation);
 	}
 
 	@Override
 	public final void addEnabledSubmissions(final Collection enabledSubmissions) {
-		final Iterator submissionItr = enabledSubmissions.iterator();
+		final Iterator<EnabledSubmission> submissionItr = enabledSubmissions.iterator();
 		while (submissionItr.hasNext()) {
-			addEnabledSubmission((EnabledSubmission) submissionItr.next());
+			addEnabledSubmission(submissionItr.next());
 		}
 	}
 
@@ -140,9 +140,9 @@ public class WorkbenchContextSupport implements IWorkbenchContextSupport {
 
 	@Override
 	public final void removeEnabledSubmissions(final Collection enabledSubmissions) {
-		final Iterator submissionItr = enabledSubmissions.iterator();
+		final Iterator<EnabledSubmission> submissionItr = enabledSubmissions.iterator();
 		while (submissionItr.hasNext()) {
-			removeEnabledSubmission((EnabledSubmission) submissionItr.next());
+			removeEnabledSubmission(submissionItr.next());
 		}
 	}
 

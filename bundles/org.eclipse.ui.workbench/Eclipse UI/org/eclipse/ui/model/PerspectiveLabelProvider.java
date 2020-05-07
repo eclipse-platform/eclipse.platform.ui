@@ -15,7 +15,6 @@ package org.eclipse.ui.model;
 
 import java.util.HashMap;
 import java.util.Iterator;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.ITableLabelProvider;
 import org.eclipse.jface.viewers.LabelProvider;
@@ -42,7 +41,7 @@ public final class PerspectiveLabelProvider extends LabelProvider implements ITa
 	/**
 	 * List of all Image objects this label provider is responsible for.
 	 */
-	private HashMap imageCache = new HashMap(5);
+	private HashMap<ImageDescriptor, Image> imageCache = new HashMap<>(5);
 
 	/**
 	 * Indicates whether the default perspective is visually marked.
@@ -77,7 +76,7 @@ public final class PerspectiveLabelProvider extends LabelProvider implements ITa
 			if (imageDescriptor == null) {
 				imageDescriptor = WorkbenchImages.getImageDescriptor(ISharedImages.IMG_ETOOL_DEF_PERSPECTIVE);
 			}
-			Image image = (Image) imageCache.get(imageDescriptor);
+			Image image = imageCache.get(imageDescriptor);
 			if (image == null) {
 				image = imageDescriptor.createImage();
 				imageCache.put(imageDescriptor, image);
@@ -89,8 +88,8 @@ public final class PerspectiveLabelProvider extends LabelProvider implements ITa
 
 	@Override
 	public void dispose() {
-		for (Iterator i = imageCache.values().iterator(); i.hasNext();) {
-			((Image) i.next()).dispose();
+		for (Iterator<Image> i = imageCache.values().iterator(); i.hasNext();) {
+			i.next().dispose();
 		}
 		imageCache.clear();
 	}

@@ -133,8 +133,8 @@ public abstract class ObjectContributorManager implements IExtensionChangeHandle
 	 * Adds contributors for the given types to the result list.
 	 */
 	private void addContributorsFor(List types, List result) {
-		for (Iterator classes = types.iterator(); classes.hasNext();) {
-			Class clazz = (Class) classes.next();
+		for (Iterator<Class> classes = types.iterator(); classes.hasNext();) {
+			Class clazz = classes.next();
 			List contributorList = (List) contributors.get(clazz.getName());
 			if (contributorList != null) {
 				result.addAll(contributorList);

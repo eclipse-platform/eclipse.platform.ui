@@ -43,11 +43,11 @@ public class WizardsRegistryReader extends RegistryReader {
 
 	private WizardCollectionElement wizardElements = null;
 
-	private ArrayList deferWizards = null;
+	private ArrayList<WorkbenchWizardElement> deferWizards = null;
 
-	private ArrayList deferCategories = null;
+	private ArrayList<Category> deferCategories = null;
 
-	private Set deferPrimary;
+	private Set<String> deferPrimary;
 
 	// constants
 	/**
@@ -95,13 +95,13 @@ public class WizardsRegistryReader extends RegistryReader {
 		}
 	}
 
-	private static final Comparator comparer = new Comparator() {
+	private static final Comparator<CategoryNode> comparer = new Comparator<CategoryNode>() {
 		private Collator collator = Collator.getInstance();
 
 		@Override
-		public int compare(Object arg0, Object arg1) {
-			String s1 = ((CategoryNode) arg0).getPath();
-			String s2 = ((CategoryNode) arg1).getPath();
+		public int compare(CategoryNode arg0, CategoryNode arg1) {
+			String s1 = arg0.getPath();
+			String s2 = arg1.getPath();
 			return collator.compare(s1, s2);
 		}
 	};
@@ -198,7 +198,7 @@ public class WizardsRegistryReader extends RegistryReader {
 
 		// Defer for later processing.
 		if (deferCategories == null) {
-			deferCategories = new ArrayList(20);
+			deferCategories = new ArrayList<>(20);
 		}
 		deferCategories.add(category);
 	}
@@ -208,7 +208,7 @@ public class WizardsRegistryReader extends RegistryReader {
 	 */
 	private void deferWizard(WorkbenchWizardElement element) {
 		if (deferWizards == null) {
-			deferWizards = new ArrayList(50);
+			deferWizards = new ArrayList<>(50);
 		}
 		deferWizards.add(element);
 	}
@@ -226,7 +226,7 @@ public class WizardsRegistryReader extends RegistryReader {
 		// Sort categories by flattened name.
 		CategoryNode[] flatArray = new CategoryNode[deferCategories.size()];
 		for (int i = 0; i < deferCategories.size(); i++) {
-			flatArray[i] = new CategoryNode((Category) deferCategories.get(i));
+			flatArray[i] = new CategoryNode(deferCategories.get(i));
 		}
 		Arrays.asList(flatArray).sort(comparer);
 
@@ -277,16 +277,16 @@ public class WizardsRegistryReader extends RegistryReader {
 	 */
 	private void finishPrimary() {
 		if (deferPrimary != null) {
-			ArrayList primary = new ArrayList();
-			for (Iterator i = deferPrimary.iterator(); i.hasNext();) {
-				String id = (String) i.next();
+			ArrayList<WorkbenchWizardElement> primary = new ArrayList<>();
+			for (Iterator<String> i = deferPrimary.iterator(); i.hasNext();) {
+				String id = i.next();
 				WorkbenchWizardElement element = wizardElements == null ? null : wizardElements.findWizard(id, true);
 				if (element != null) {
 					primary.add(element);
 				}
 			}
 
-			primaryWizards = (WorkbenchWizardElement[]) primary.toArray(new WorkbenchWizardElement[primary.size()]);
+			primaryWizards = primary.toArray(new WorkbenchWizardElement[primary.size()]);
 
 			deferPrimary = null;
 		}
@@ -331,9 +331,9 @@ public class WizardsRegistryReader extends RegistryReader {
 	 */
 	private void finishWizards() {
 		if (deferWizards != null) {
-			Iterator iter = deferWizards.iterator();
+			Iterator<WorkbenchWizardElement> iter = deferWizards.iterator();
 			while (iter.hasNext()) {
-				WorkbenchWizardElement wizard = (WorkbenchWizardElement) iter.next();
+				WorkbenchWizardElement wizard = iter.next();
 				IConfigurationElement config = wizard.getConfigurationElement();
 				finishWizard(wizard, config);
 			}
@@ -412,7 +412,7 @@ public class WizardsRegistryReader extends RegistryReader {
 			return true;
 		} else if (element.getName().equals(IWorkbenchRegistryConstants.TAG_PRIMARYWIZARD)) {
 			if (deferPrimary == null) {
-				deferPrimary = new HashSet();
+				deferPrimary = new HashSet<>();
 			}
 			deferPrimary.add(element.getAttribute(IWorkbenchRegistryConstants.ATT_ID));
 

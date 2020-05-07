@@ -18,6 +18,7 @@ package org.eclipse.ui.internal.dialogs;
 import java.util.Iterator;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.jface.dialogs.MessageDialog;
+import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.PreferenceManager;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -62,7 +63,7 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 		// fill the manager with contributions from the matching contributors
 		PropertyPageContributorManager.getManager().contribute(pageManager, element);
 		// testing if there are pages in the manager
-		Iterator pages = pageManager.getElements(PreferenceManager.PRE_ORDER).iterator();
+		Iterator<IPreferenceNode> pages = pageManager.getElements(PreferenceManager.PRE_ORDER).iterator();
 		String name = getName(element);
 		if (!pages.hasNext()) {
 			if ("".equals(name)) { //$NON-NLS-1$

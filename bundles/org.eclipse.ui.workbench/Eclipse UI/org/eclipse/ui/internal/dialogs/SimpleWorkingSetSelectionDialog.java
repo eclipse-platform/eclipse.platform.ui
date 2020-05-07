@@ -156,7 +156,7 @@ public class SimpleWorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 	}
 
 	@Override
-	protected List getSelectedWorkingSets() {
+	protected List<IWorkingSet> getSelectedWorkingSets() {
 		return viewer.getStructuredSelection().toList();
 	}
 

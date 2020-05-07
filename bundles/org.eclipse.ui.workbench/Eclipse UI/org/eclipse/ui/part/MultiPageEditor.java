@@ -60,7 +60,7 @@ import org.eclipse.swt.widgets.TabFolder;
  */
 @Deprecated
 public abstract class MultiPageEditor extends EditorPart {
-	private List syncVector;
+	private List<PageBook> syncVector;
 
 	private TabFolder tabFolder;
 
@@ -83,7 +83,7 @@ public abstract class MultiPageEditor extends EditorPart {
 	protected void addSyncroPageBook(PageBook pageBook) {
 		// Add the page.
 		if (syncVector == null) {
-			syncVector = new ArrayList(1);
+			syncVector = new ArrayList<>(1);
 		}
 		syncVector.add(pageBook);
 
@@ -115,9 +115,9 @@ public abstract class MultiPageEditor extends EditorPart {
 	 */
 	protected void onPageChange() {
 		if (syncVector != null) {
-			Iterator itr = syncVector.iterator();
+			Iterator<PageBook> itr = syncVector.iterator();
 			while (itr.hasNext()) {
-				PageBook pageBook = (PageBook) itr.next();
+				PageBook pageBook = itr.next();
 				syncPageBook(pageBook);
 			}
 		}
@@ -141,9 +141,9 @@ public abstract class MultiPageEditor extends EditorPart {
 	 */
 	protected void sync() {
 		if (syncVector != null) {
-			Iterator itr = syncVector.iterator();
+			Iterator<PageBook> itr = syncVector.iterator();
 			while (itr.hasNext()) {
-				PageBook pageBook = (PageBook) itr.next();
+				PageBook pageBook = itr.next();
 				syncPageBook(pageBook);
 			}
 		}

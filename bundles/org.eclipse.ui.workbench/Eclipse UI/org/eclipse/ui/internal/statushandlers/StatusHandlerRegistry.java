@@ -43,9 +43,9 @@ public class StatusHandlerRegistry implements IExtensionChangeHandler {
 
 	private static final String STATUSHANDLER_ARG = "-statushandler"; //$NON-NLS-1$
 
-	private ArrayList statusHandlerDescriptors = new ArrayList();
+	private ArrayList<StatusHandlerDescriptor> statusHandlerDescriptors = new ArrayList<>();
 
-	private ArrayList productBindingDescriptors = new ArrayList();
+	private ArrayList<StatusHandlerProductBindingDescriptor> productBindingDescriptors = new ArrayList<>();
 
 	private StatusHandlerDescriptorsMap statusHandlerDescriptorsMap;
 
@@ -150,8 +150,8 @@ public class StatusHandlerRegistry implements IExtensionChangeHandler {
 	 */
 	public StatusHandlerDescriptor getHandlerDescriptor(String statusHandlerId) {
 		StatusHandlerDescriptor descriptor = null;
-		for (Iterator it = statusHandlerDescriptors.iterator(); it.hasNext();) {
-			descriptor = (StatusHandlerDescriptor) it.next();
+		for (Iterator<StatusHandlerDescriptor> it = statusHandlerDescriptors.iterator(); it.hasNext();) {
+			descriptor = it.next();
 			if (descriptor.getId().equals(statusHandlerId)) {
 				return descriptor;
 			}
@@ -199,15 +199,16 @@ public class StatusHandlerRegistry implements IExtensionChangeHandler {
 
 		String productId = Platform.getProduct() != null ? Platform.getProduct().getId() : null;
 
-		List allHandlers = new ArrayList();
+		List<StatusHandlerDescriptor> allHandlers = new ArrayList<>();
 
 		String defaultHandlerId = resolveUserStatusHandlerId();
 
 		if (defaultHandlerId == null) {
 			// we look for product related statushandler if it was not passed as
 			// an argument to Eclipse
-			for (Iterator it = productBindingDescriptors.iterator(); it.hasNext();) {
-				StatusHandlerProductBindingDescriptor descriptor = ((StatusHandlerProductBindingDescriptor) it.next());
+			for (Iterator<StatusHandlerProductBindingDescriptor> it = productBindingDescriptors.iterator(); it
+					.hasNext();) {
+				StatusHandlerProductBindingDescriptor descriptor = (it.next());
 
 				if (descriptor.getProductId().equals(productId)) {
 					defaultHandlerId = descriptor.getHandlerId();
@@ -215,16 +216,16 @@ public class StatusHandlerRegistry implements IExtensionChangeHandler {
 			}
 		}
 
-		for (Iterator it = statusHandlerDescriptors.iterator(); it.hasNext();) {
-			StatusHandlerDescriptor descriptor = ((StatusHandlerDescriptor) it.next());
+		for (Iterator<StatusHandlerDescriptor> it = statusHandlerDescriptors.iterator(); it.hasNext();) {
+			StatusHandlerDescriptor descriptor = (it.next());
 
 			allHandlers.add(descriptor);
 		}
 
 		StatusHandlerDescriptor handlerDescriptor = null;
 
-		for (Iterator it = allHandlers.iterator(); it.hasNext();) {
-			handlerDescriptor = (StatusHandlerDescriptor) it.next();
+		for (Iterator<StatusHandlerDescriptor> it = allHandlers.iterator(); it.hasNext();) {
+			handlerDescriptor = it.next();
 
 			if (handlerDescriptor.getId().equals(defaultHandlerId)) {
 				defaultHandlerDescriptor = handlerDescriptor;

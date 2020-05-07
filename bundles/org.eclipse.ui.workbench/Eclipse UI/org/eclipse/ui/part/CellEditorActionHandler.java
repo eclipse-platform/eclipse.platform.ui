@@ -106,14 +106,14 @@ public class CellEditorActionHandler {
 
 	private Listener controlListener = new ControlListener();
 
-	private HashMap controlToEditor = new HashMap();
+	private HashMap<Control, CellEditor> controlToEditor = new HashMap<>();
 
 	private class ControlListener implements Listener {
 		@Override
 		public void handleEvent(Event event) {
 			switch (event.type) {
 			case SWT.Activate:
-				activeEditor = (CellEditor) controlToEditor.get(event.widget);
+				activeEditor = controlToEditor.get(event.widget);
 				if (activeEditor != null) {
 					activeEditor.addPropertyChangeListener(cellListener);
 				}
@@ -527,9 +527,9 @@ public class CellEditorActionHandler {
 		setUndoAction(null);
 		setRedoAction(null);
 
-		Iterator itr = controlToEditor.keySet().iterator();
+		Iterator<Control> itr = controlToEditor.keySet().iterator();
 		while (itr.hasNext()) {
-			Control control = (Control) itr.next();
+			Control control = itr.next();
 			if (!control.isDisposed()) {
 				control.removeListener(SWT.Activate, controlListener);
 				control.removeListener(SWT.Deactivate, controlListener);

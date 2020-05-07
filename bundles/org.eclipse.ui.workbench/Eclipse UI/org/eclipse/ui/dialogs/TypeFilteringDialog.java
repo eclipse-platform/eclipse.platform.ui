@@ -170,10 +170,10 @@ public class TypeFilteringDialog extends SelectionDialog {
 			}
 		}
 		// Now add in the ones not selected to the user defined list
-		Iterator initialIterator = this.initialSelections.iterator();
+		Iterator<String> initialIterator = this.initialSelections.iterator();
 		StringBuilder entries = new StringBuilder();
 		while (initialIterator.hasNext()) {
-			String nextExtension = (String) initialIterator.next();
+			String nextExtension = initialIterator.next();
 			if (!selectedMappings.contains(nextExtension)) {
 				if (entries.length() != 0) {
 					entries.append(',');

@@ -20,6 +20,7 @@ package org.eclipse.ui.internal;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import org.eclipse.core.runtime.Adapters;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
@@ -144,7 +145,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 
 	private ListenerList<IPropertyChangeListener> partChangeListeners = new ListenerList<>();
 
-	protected Map propertyCache = new HashMap();
+	protected Map<String, String> propertyCache = new HashMap<>();
 
 	private IPropertyListener propertyChangeListener = this::partPropertyChanged;
 
@@ -476,7 +477,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 				return ((IWorkbenchPart3) legacyPart).getPartProperty(key);
 			}
 		} else {
-			return (String) propertyCache.get(key);
+			return propertyCache.get(key);
 		}
 		return null;
 	}
@@ -504,10 +505,10 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 	}
 
 	protected void createPartProperties(IWorkbenchPart3 workbenchPart) {
-		Iterator i = propertyCache.entrySet().iterator();
+		Iterator<Entry<String, String>> i = propertyCache.entrySet().iterator();
 		while (i.hasNext()) {
-			Map.Entry e = (Map.Entry) i.next();
-			workbenchPart.setPartProperty((String) e.getKey(), (String) e.getValue());
+			Entry<String, String> e = i.next();
+			workbenchPart.setPartProperty(e.getKey(), e.getValue());
 		}
 	}
 

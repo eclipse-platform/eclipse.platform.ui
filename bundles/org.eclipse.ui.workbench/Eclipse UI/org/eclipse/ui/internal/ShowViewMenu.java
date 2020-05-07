@@ -88,10 +88,10 @@ public class ShowViewMenu extends ContributionItem {
 
 	private Action showDlgAction;
 
-	private Map actions = new HashMap(21);
+	private Map<String, ?> actions = new HashMap<>(21);
 
 	// Maps pages to a list of opened views
-	private Map openedViews = new HashMap();
+	private Map<IWorkbenchPage, ArrayList<String>> openedViews = new HashMap<>();
 
 	private MenuManager menuManager;
 
@@ -173,14 +173,14 @@ public class ShowViewMenu extends ContributionItem {
 		}
 
 		// Get visible actions.
-		List viewIds = Arrays.asList(page.getShowViewShortcuts());
+		List<String> viewIds = Arrays.asList(page.getShowViewShortcuts());
 
 		// add all open views
 		viewIds = addOpenedViews(page, viewIds);
 
-		List actions = new ArrayList(viewIds.size());
-		for (Iterator i = viewIds.iterator(); i.hasNext();) {
-			String id = (String) i.next();
+		List<CommandContributionItemParameter> actions = new ArrayList<>(viewIds.size());
+		for (Iterator<String> i = viewIds.iterator(); i.hasNext();) {
+			String id = i.next();
 			if (id.equals(IIntroConstants.INTRO_VIEW_ID)) {
 				continue;
 			}
@@ -190,8 +190,8 @@ public class ShowViewMenu extends ContributionItem {
 			}
 		}
 		actions.sort(actionComparator);
-		for (Iterator i = actions.iterator(); i.hasNext();) {
-			CommandContributionItemParameter ccip = (CommandContributionItemParameter) i.next();
+		for (Iterator<CommandContributionItemParameter> i = actions.iterator(); i.hasNext();) {
+			CommandContributionItemParameter ccip = i.next();
 			if (WorkbenchActivityHelper.filterItem(ccip)) {
 				continue;
 			}
@@ -233,6 +233,7 @@ public class ShowViewMenu extends ContributionItem {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	private CommandContributionItemParameter getItem(String viewId) {
 		IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();
 		IViewDescriptor desc = reg.find(viewId);
@@ -245,7 +246,7 @@ public class ShowViewMenu extends ContributionItem {
 				IWorkbenchCommandConstants.VIEWS_SHOW_VIEW, CommandContributionItem.STYLE_PUSH);
 		parms.label = label;
 		parms.icon = desc.getImageDescriptor();
-		parms.parameters = new HashMap();
+		parms.parameters = new HashMap<String, String>();
 
 		parms.parameters.put(VIEW_ID_PARM, viewId);
 		if (makeFast) {
@@ -254,17 +255,17 @@ public class ShowViewMenu extends ContributionItem {
 		return parms;
 	}
 
-	private List addOpenedViews(IWorkbenchPage page, List actions) {
-		ArrayList views = getParts(page);
-		ArrayList result = new ArrayList(views.size() + actions.size());
+	private List<String> addOpenedViews(IWorkbenchPage page, List<String> actions) {
+		ArrayList<String> views = getParts(page);
+		ArrayList<String> result = new ArrayList<>(views.size() + actions.size());
 
-		for (Object element : actions) {
+		for (String element : actions) {
 			if (result.indexOf(element) < 0) {
 				result.add(element);
 			}
 		}
 		for (int i = 0; i < views.size(); i++) {
-			Object element = views.get(i);
+			String element = views.get(i);
 			if (result.indexOf(element) < 0) {
 				result.add(element);
 			}
@@ -272,10 +273,10 @@ public class ShowViewMenu extends ContributionItem {
 		return result;
 	}
 
-	private ArrayList getParts(IWorkbenchPage page) {
-		ArrayList parts = (ArrayList) openedViews.get(page);
+	private ArrayList<String> getParts(IWorkbenchPage page) {
+		ArrayList<String> parts = openedViews.get(page);
 		if (parts == null) {
-			parts = new ArrayList();
+			parts = new ArrayList<>();
 			openedViews.put(page, parts);
 		}
 		return parts;

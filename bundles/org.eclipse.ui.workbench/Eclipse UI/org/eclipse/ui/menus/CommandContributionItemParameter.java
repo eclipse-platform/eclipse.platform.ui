@@ -15,7 +15,6 @@
 package org.eclipse.ui.menus;
 
 import java.util.Map;
-
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.ui.IWorkbenchPartSite;
 import org.eclipse.ui.IWorkbenchWindow;
@@ -52,7 +51,7 @@ public class CommandContributionItemParameter {
 	 * parameter names must match those in the command definition. May be
 	 * <code>null</code>
 	 */
-	public Map parameters;
+	public Map/* <String, String> */ parameters;
 
 	/**
 	 * An icon for this item. May be <code>null</code>.
