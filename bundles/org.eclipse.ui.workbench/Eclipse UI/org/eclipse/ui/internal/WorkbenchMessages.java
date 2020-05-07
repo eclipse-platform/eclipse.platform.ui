@@ -569,6 +569,7 @@ public class WorkbenchMessages extends NLS {
 	public static String PropertyDialog_toolTip;
 	public static String PropertyDialog_messageTitle;
 	public static String PropertyDialog_noPropertyMessage;
+	public static String PropertyDialog_noPropertyMessageForUnknown;
 	public static String PropertyDialog_propertyMessage;
 	public static String PropertyPageNode_errorMessage;
 

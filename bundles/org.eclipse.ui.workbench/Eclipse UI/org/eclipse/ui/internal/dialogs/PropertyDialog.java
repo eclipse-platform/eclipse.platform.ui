@@ -65,8 +65,13 @@ public class PropertyDialog extends FilteredPreferenceDialog {
 		Iterator pages = pageManager.getElements(PreferenceManager.PRE_ORDER).iterator();
 		String name = getName(element);
 		if (!pages.hasNext()) {
-			MessageDialog.openInformation(shell, WorkbenchMessages.PropertyDialog_messageTitle,
-					NLS.bind(WorkbenchMessages.PropertyDialog_noPropertyMessage, name));
+			if ("".equals(name)) { //$NON-NLS-1$
+				MessageDialog.openInformation(shell, WorkbenchMessages.PropertyDialog_messageTitle,
+						WorkbenchMessages.PropertyDialog_noPropertyMessageForUnknown);
+			} else {
+				MessageDialog.openInformation(shell, WorkbenchMessages.PropertyDialog_messageTitle,
+						NLS.bind(WorkbenchMessages.PropertyDialog_noPropertyMessage, name));
+			}
 			return null;
 		}
 		title = NLS.bind(WorkbenchMessages.PropertyDialog_propertyMessage, name);
