@@ -51,6 +51,7 @@ import javax.inject.Qualifier;
  * {@link org.osgi.framework.BundleContext} for the bundle that supplies class
  * B, not class A.
  *
+ * @since 0.16
  */
 @Qualifier
 @Documented

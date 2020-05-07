@@ -21,7 +21,7 @@ import java.lang.annotation.Target;
 import javax.inject.Qualifier;
 
 /**
- *
+ * @since 0.16
  */
 @Qualifier
 @Documented

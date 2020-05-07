@@ -22,6 +22,8 @@ import javax.inject.Qualifier;
 
 /**
  * Annotation to use with DI to support dynamics and multiple services
+ *
+ * @since 0.16
  */
 @Qualifier
 @Documented

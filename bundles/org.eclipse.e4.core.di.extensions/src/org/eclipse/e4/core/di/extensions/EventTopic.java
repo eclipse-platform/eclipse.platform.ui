@@ -43,6 +43,8 @@ import javax.inject.Qualifier;
  * the class of the injected variable is org.osgi.service.event.Event. In that case the whole event
  * object is injected.
  * </p>
+ *
+ * @since 0.16
  */
 @Qualifier
 @Documented
