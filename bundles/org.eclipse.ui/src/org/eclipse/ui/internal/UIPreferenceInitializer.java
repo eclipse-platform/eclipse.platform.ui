@@ -68,6 +68,7 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 				false);
 
 		node.putBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, false);
+		node.putBoolean(IWorkbenchPreferenceConstants.USE_ROUND_TABS, false);
 		node.putBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS, true);
 		node.put(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR,
 				IWorkbenchPreferenceConstants.TOP_LEFT);

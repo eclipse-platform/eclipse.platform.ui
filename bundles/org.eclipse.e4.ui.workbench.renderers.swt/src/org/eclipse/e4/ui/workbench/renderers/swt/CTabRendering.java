@@ -18,6 +18,10 @@ package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import java.lang.reflect.Field;
 import javax.inject.Inject;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
+import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.e4.ui.internal.css.swt.ICTabRendering;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -34,7 +38,10 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 
 @SuppressWarnings("restriction")
-public class CTabRendering extends CTabFolderRenderer implements ICTabRendering {
+public class CTabRendering extends CTabFolderRenderer implements ICTabRendering, IPropertyChangeListener {
+
+	// Preference constants
+	private static final String USE_ROUND_TABS = "USE_ROUND_TABS"; //$NON-NLS-1$
 
 	// Constants for circle drawing
 	static enum CirclePart {
@@ -74,7 +81,7 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 	static final int INNER_KEYLINE = 0;
 	static final int TOP_KEYLINE = 0;
 
-	// The tab has an outline, it contributes to the trim.  See Bug 562183.
+	// The tab has an outline, it contributes to the trim. See Bug 562183.
 	static final int TAB_OUTLINE = 1;
 
 	// Item Constants
@@ -91,7 +98,9 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 
 	Image shadowImage, toolbarActiveImage, toolbarInactiveImage;
 
-	int cornerSize = 14;
+
+	IPreferencesService preferenceService = Platform.getPreferencesService();
+	int cornerSize = 0;
 
 	boolean shadowEnabled = true;
 	Color shadowColor;
@@ -116,6 +125,7 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 	public CTabRendering(CTabFolder parent) {
 		super(parent);
 		parentWrapper = new CTabFolderWrapper(parent);
+		propertyChange(null);
 	}
 
 	@Override
@@ -132,7 +142,7 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 		int marginHeight = parent.marginHeight;
 		int sideDropWidth = shadowEnabled ? SIDE_DROP_WIDTH : 0;
 
-		//Trim is not affected by the corner size.
+		// Trim is not affected by the corner size.
 		switch (part) {
 		case PART_BODY:
 			if (state == SWT.FILL) {
@@ -878,8 +888,7 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 		return dst;
 	}
 
-	private void convolve(float[] kernel, int[] inPixels, int[] outPixels,
-			int width, int height, boolean alpha) {
+	private void convolve(float[] kernel, int[] inPixels, int[] outPixels, int width, int height, boolean alpha) {
 		int kernelWidth = kernel.length;
 		int kernelMid = kernelWidth / 2;
 		for (int y = 0; y < height; y++) {
@@ -1039,8 +1048,8 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 		drawTabBackground(gc, partHeaderBounds, state, vertical, defaultBackground);
 	}
 
-	private void drawUnselectedTabBackground(GC gc, Rectangle partHeaderBounds,
-			int state, boolean vertical, Color defaultBackground) {
+	private void drawUnselectedTabBackground(GC gc, Rectangle partHeaderBounds, int state, boolean vertical,
+			Color defaultBackground) {
 		if (unselectedTabsColors == null) {
 			boolean selected = (state & SWT.SELECTED) != 0;
 			unselectedTabsColors = selected ? parentWrapper.getSelectionGradientColors()
@@ -1053,12 +1062,12 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 			unselectedTabsPercents = new int[] { 100 };
 		}
 
-		drawBackground(gc, partHeaderBounds.x, partHeaderBounds.y - 1, partHeaderBounds.width,
-				partHeaderBounds.height, defaultBackground, unselectedTabsColors, unselectedTabsPercents, vertical);
+		drawBackground(gc, partHeaderBounds.x, partHeaderBounds.y - 1, partHeaderBounds.width, partHeaderBounds.height,
+				defaultBackground, unselectedTabsColors, unselectedTabsPercents, vertical);
 	}
 
-	private void drawTabBackground(GC gc, Rectangle partHeaderBounds,
-			int state, boolean vertical, Color defaultBackground) {
+	private void drawTabBackground(GC gc, Rectangle partHeaderBounds, int state, boolean vertical,
+			Color defaultBackground) {
 		Color[] colors = selectedTabFillColors;
 		int[] percents = selectedTabFillPercents;
 
@@ -1080,8 +1089,8 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 
 	/*
 	 * Copied the relevant parts from the package private
-	 * org.eclipse.swt.custom.CTabFolderRenderer.drawBackground(GC, int[], int,
-	 * int, int, int, Color, Image, Color[], int[], boolean) method.
+	 * org.eclipse.swt.custom.CTabFolderRenderer.drawBackground(GC, int[], int, int,
+	 * int, int, Color, Image, Color[], int[], boolean) method.
 	 */
 	private void drawBackground(GC gc, int x, int y, int width, int height, Color defaultBackground, Color[] colors,
 			int[] percents, boolean vertical) {
@@ -1263,5 +1272,11 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering 
 			}
 			return null;
 		}
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent event) {
+		cornerSize = preferenceService.getBoolean("org.eclipse.ui", USE_ROUND_TABS, //$NON-NLS-1$
+				false, null) ? 14 : 0;
 	}
 }

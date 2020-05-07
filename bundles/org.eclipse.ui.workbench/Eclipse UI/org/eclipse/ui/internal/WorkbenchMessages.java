@@ -462,6 +462,7 @@ public class WorkbenchMessages extends NLS {
 	public static String ViewsPreference_currentThemeDescription;
 	public static String ViewsPreference_currentThemeFormat;
 	public static String ViewsPreference_enableAnimations;
+	public static String ViewsPreference_useRoundTabs;
 	public static String ViewsPreference_visibleTabs_description;
 	public static String ViewsPreference_enableMRU;
 	public static String ViewsPreference_useColoredLabels;

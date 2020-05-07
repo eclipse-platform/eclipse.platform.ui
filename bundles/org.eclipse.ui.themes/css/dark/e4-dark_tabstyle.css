@@ -26,7 +26,6 @@
     padding: 2px 2px;
     swt-shadow-visible: false;
     swt-mru-visible: true;
-    swt-corner-radius: 16px;
 }
 
 CTabFolder {
@@ -39,7 +38,6 @@ CTabFolder {
     swt-unselected-tabs-color: '#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_START' '#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_END' 100% 100%; /* title background for unselected tab */
     swt-selected-tab-fill: '#org-eclipse-ui-workbench-ACTIVE_TAB_BG_END'; /* title background for selected tab */
     swt-shadow-visible: false;
-    swt-corner-radius: 16px;
     swt-unselected-hot-tab-color-background: #161616; /* Bug 465711 */
 }
 

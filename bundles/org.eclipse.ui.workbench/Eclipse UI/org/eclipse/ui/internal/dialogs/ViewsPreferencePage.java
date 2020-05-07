@@ -91,6 +91,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	private ControlDecoration themeComboDecorator;
 	private ITheme currentTheme;
 	private String defaultTheme;
+	private Button useRoundTabs;
 	private Button enableMru;
 	private Button useColoredLabels;
 
@@ -172,6 +173,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	}
 
 	private void createThemeIndependentComposits(Composite comp) {
+		createUseRoundTabs(comp);
 		createColoredLabelsPref(comp);
 		createEnableMruPref(comp);
 	}
@@ -222,6 +224,12 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		return label;
 	}
 
+	protected void createUseRoundTabs(Composite composite) {
+		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+		useRoundTabs = createCheckButton(composite, WorkbenchMessages.ViewsPreference_useRoundTabs,
+				apiStore.getBoolean(IWorkbenchPreferenceConstants.USE_ROUND_TABS));
+	}
+
 	protected void createEnableMruPref(Composite composite) {
 		createLabel(composite, ""); //$NON-NLS-1$
 		createLabel(composite, WorkbenchMessages.ViewsPreference_visibleTabs_description);
@@ -261,6 +269,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		}
 
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+		apiStore.setValue(IWorkbenchPreferenceConstants.USE_ROUND_TABS, useRoundTabs.getSelection());
 		apiStore.setValue(IWorkbenchPreferenceConstants.USE_COLORED_LABELS, useColoredLabels.getSelection());
 
 		IEclipsePreferences prefs = getSwtRendererPreferences();
@@ -302,6 +311,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			}
 		}
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
+		useRoundTabs.setSelection(apiStore.getDefaultBoolean(IWorkbenchPreferenceConstants.USE_ROUND_TABS));
 		useColoredLabels.setSelection(apiStore.getDefaultBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS));
 		if (enableMru != null) {
 			enableMru.setSelection(getDefaultMRUValue());
@@ -327,9 +337,12 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		super.performApply();
 		if (engine != null) {
 			ITheme theme = getSelectedTheme();
+			IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
 			boolean themeChanged = theme != null && !theme.equals(currentTheme);
 			boolean colorsAndFontsThemeChanged = !PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getId()
 					.equals(currentColorsAndFontsTheme.getId());
+			boolean tabCornersChanged = !useRoundTabs.getSelection() != apiStore
+					.getBoolean(IWorkbenchPreferenceConstants.USE_ROUND_TABS);
 
 			if (theme != null) {
 				currentTheme = theme;
@@ -343,7 +356,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			themeComboDecorator.hide();
 			colorFontsDecorator.hide();
 
-			if (themeChanged || colorsAndFontsThemeChanged) {
+			if (themeChanged || colorsAndFontsThemeChanged || tabCornersChanged) {
 				MessageDialog.openWarning(getShell(), WorkbenchMessages.ThemeChangeWarningTitle,
 						WorkbenchMessages.ThemeChangeWarningText);
 			}
@@ -406,8 +419,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			colorAndFontThemeId = currentColorsAndFontsTheme.getId();
 		}
 
-		for (ColorsAndFontsTheme theme : (List<ColorsAndFontsTheme>) colorsAndFontsThemeCombo
-				.getInput()) {
+		for (ColorsAndFontsTheme theme : (List<ColorsAndFontsTheme>) colorsAndFontsThemeCombo.getInput()) {
 			if (theme.getId().equals(colorAndFontThemeId)) {
 				ISelection selection = new StructuredSelection(theme);
 				colorsAndFontsThemeCombo.setSelection(selection);

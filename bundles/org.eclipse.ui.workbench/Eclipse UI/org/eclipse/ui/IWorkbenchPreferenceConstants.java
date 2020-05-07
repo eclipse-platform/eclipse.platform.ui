@@ -370,6 +370,18 @@ public interface IWorkbenchPreferenceConstants {
 	String ENABLE_ANIMATIONS = "ENABLE_ANIMATIONS"; //$NON-NLS-1$
 
 	/**
+	 * A named preference for setting CTabFolder's to be rendered with rounded
+	 * corners
+	 * <p>
+	 * The default value for this preference is: <code>false</code> (render
+	 * CTabFolder's with square corners)
+	 * </p>
+	 *
+	 * @since 3.119
+	 */
+	String USE_ROUND_TABS = "USE_ROUND_TABS"; //$NON-NLS-1$
+
+	/**
 	 * A named preference that view implementors can used to determine whether or
 	 * not they should utilize colored labels.
 	 *
@@ -632,8 +644,8 @@ public interface IWorkbenchPreferenceConstants {
 
 	/**
 	 * <p>
-	 * Preference value for {@link #RESOURCE_RENAME_MODE}, indicating that
-	 * inline rename should be used.
+	 * Preference value for {@link #RESOURCE_RENAME_MODE}, indicating that inline
+	 * rename should be used.
 	 * </p>
 	 *
 	 * @since 3.118
@@ -642,11 +654,12 @@ public interface IWorkbenchPreferenceConstants {
 
 	/**
 	 * <p>
-	 * Preference value for {@link #RESOURCE_RENAME_MODE}, indicating that
-	 * dialog rename should be used.
+	 * Preference value for {@link #RESOURCE_RENAME_MODE}, indicating that dialog
+	 * rename should be used.
 	 * </p>
 	 *
 	 * @since 3.118
 	 */
 	String RESOURCE_RENAME_MODE_DIALOG = "dialog"; //$NON-NLS-1$
+
 }
