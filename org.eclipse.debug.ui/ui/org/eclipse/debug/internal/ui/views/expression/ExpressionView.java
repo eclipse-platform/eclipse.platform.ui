@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -190,11 +190,8 @@ public class ExpressionView extends VariablesView {
 	 * @return whether the given selection can be pasted into the given target
 	 */
 	public boolean canPaste() {
-		String clipboardText = getClipboardText();
-		if (clipboardText != null && clipboardText.length() > 0) {
-			return true;
-		}
-		return false;
+		// Checking the content of Clipboard can freeze the UI Bug 562608
+		return true;
 	}
 
 	/**
