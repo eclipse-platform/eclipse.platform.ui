@@ -178,11 +178,9 @@ public class PartRenderingEngine implements IPresentationEngine {
 			}
 
 			if (okToRender) {
-				// Un-maximize the element before tearing it down
-				if (changedElement.getTags().contains(MAXIMIZED)) {
-					changedElement.getTags().remove(MAXIMIZED);
-				}
-
+				// Un-maximize the element before tearing it down, required for example to show
+				// the views after the intro page is closed
+				changedElement.getTags().remove(MAXIMIZED);
 				// Note that the 'removeGui' protocol calls 'childRemoved'
 				removeGui(changedElement);
 			}
