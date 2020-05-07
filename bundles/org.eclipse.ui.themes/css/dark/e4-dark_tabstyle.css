@@ -51,7 +51,7 @@ CTabFolder[style~='SWT.DOWN'][style~='SWT.BOTTOM'] {
 
 CTabItem,
 CTabItem CLabel {
-    background-color: '#org-eclipse-ui-workbench-INACTIVE_TAB_BG_END'; /* HACK for background of CTabFolder inner Toolbars */
+    background-color: '#org-eclipse-ui-workbench-ACTIVE_TAB_BG_END'; /* HACK for background of CTabFolder inner Toolbars */
     color: '#org-eclipse-ui-workbench-INACTIVE_TAB_UNSELECTED_TEXT_COLOR';
 }
 
@@ -72,6 +72,10 @@ CTabItem:selected CLabel {
 
 .MPartStack.active.noFocus > CTabItem:selected {
     color: '#org-eclipse-ui-workbench-ACTIVE_NOFOCUS_TAB_SELECTED_TEXT_COLOR';
+}
+
+CTabFolder > Composite#ToolbarComposite {
+  background-color: '#org-eclipse-ui-workbench-ACTIVE_TAB_BG_END'; /* HACK for background of CTabFolder inner Toolbars */
 }
 
 CTabItem.busy {
