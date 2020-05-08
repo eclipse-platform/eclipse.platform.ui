@@ -15,8 +15,8 @@
 
 package org.eclipse.ui.statushandlers;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Vector;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.ILogListener;
 import org.eclipse.core.runtime.IStatus;
@@ -116,7 +116,8 @@ public class StatusManager {
 
 	private volatile AbstractStatusHandler statusHandler;
 
-	private List loggedStatuses = new ArrayList();
+	// Note: we use Vector to be MT safe on add/remove operations
+	private List<IStatus> loggedStatuses = new Vector<>();
 
 	private ListenerList<INotificationListener> listeners = new ListenerList<>();
 
