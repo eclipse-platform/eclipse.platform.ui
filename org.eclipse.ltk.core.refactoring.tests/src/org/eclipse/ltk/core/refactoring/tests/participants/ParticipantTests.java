@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,16 +13,14 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.tests.participants;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	FailingParticipantTests.class,
+	SharedTextChangeTests.class,
+	CancelingParticipantTests.class
+})
 public class ParticipantTests {
-
-	public static Test suite() {
-		TestSuite suite= new TestSuite(ParticipantTests.class.getName());
-		suite.addTestSuite(FailingParticipantTests.class);
-		suite.addTestSuite(SharedTextChangeTests.class);
-		suite.addTestSuite(CancelingParticipantTests.class);
-		return suite;
-	}
 }

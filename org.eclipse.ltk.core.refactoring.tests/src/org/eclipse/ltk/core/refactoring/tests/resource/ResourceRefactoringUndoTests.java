@@ -13,6 +13,11 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.tests.resource;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -25,6 +30,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.commands.operations.IOperationHistory;
@@ -63,11 +72,7 @@ import org.eclipse.ltk.core.refactoring.tests.participants.ElementRenameRefactor
 import org.eclipse.ltk.core.refactoring.tests.util.SimpleTestProject;
 import org.eclipse.ltk.internal.core.refactoring.RefactoringCorePlugin;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-public class ResourceRefactoringUndoTests extends TestCase {
+public class ResourceRefactoringUndoTests {
 	private static final String TEST_NEWPROJECT_NAME= "projectTestNew";
 	private static final String TEST_FOLDER_NAME= "test";
 	private static final String TEST_NEWFOLDER_NAME= "testNew";
@@ -82,12 +87,6 @@ public class ResourceRefactoringUndoTests extends TestCase {
 		fileNameExcludes.add(".project");
 	}
 
-	public static Test suite() {
-		TestSuite suite= new TestSuite(ResourceRefactoringUndoTests.class.getName());
-		suite.addTestSuite(ResourceRefactoringUndoTests.class);
-		return suite;
-	}
-
 	private static final String CONTENT= "hello";
 	private SimpleTestProject fProject;
 	private IFolder testFolder;
@@ -99,8 +98,8 @@ public class ResourceRefactoringUndoTests extends TestCase {
 	private IFile testLinkedFile;
 	private IFolder testSubFolder;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		fProject= new SimpleTestProject();
 
 		testFolder= fProject.createFolder(TEST_FOLDER_NAME);
@@ -127,8 +126,8 @@ public class ResourceRefactoringUndoTests extends TestCase {
 		context= RefactoringCorePlugin.getUndoContext();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		fProject.delete();
 		final IFileStore[] toDelete= storesToDelete.toArray(new IFileStore[storesToDelete.size()]);
 		storesToDelete.clear();
@@ -138,6 +137,7 @@ public class ResourceRefactoringUndoTests extends TestCase {
 	}
 
 
+	@Test
 	public void testFileRenameUndoRedoLTK() throws ExecutionException, CoreException {
 		RefactoringContribution renameContribution= RefactoringCore.getRefactoringContribution(RenameResourceDescriptor.ID);
 		RenameResourceDescriptor desc= (RenameResourceDescriptor) renameContribution.createDescriptor();
@@ -163,6 +163,7 @@ public class ResourceRefactoringUndoTests extends TestCase {
 		assertTrue("File CONTENT was altered on redo rename", snap.isValid(testFolder));
 	}
 
+	@Test
 	public void testFolderRenameUndoRedoLTK() throws ExecutionException, CoreException {
 		RefactoringContribution renameContribution= RefactoringCore.getRefactoringContribution(RenameResourceDescriptor.ID);
 		RenameResourceDescriptor desc= (RenameResourceDescriptor) renameContribution.createDescriptor();
@@ -187,6 +188,7 @@ public class ResourceRefactoringUndoTests extends TestCase {
 		assertTrue("Folder CONTENT was altered on redo rename", snap.isValid(fProject.getProject()));
 	}
 
+	@Test
 	public void testProjectRenameUndoRedoLTK() throws ExecutionException, CoreException {
 		IProject renamedProject= null;
 		try {
@@ -214,6 +216,7 @@ public class ResourceRefactoringUndoTests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testFileDeleteUndoRedoLTK() throws ExecutionException, CoreException {
 		RefactoringContribution renameContribution= RefactoringCore.getRefactoringContribution(DeleteResourcesDescriptor.ID);
 		DeleteResourcesDescriptor desc= (DeleteResourcesDescriptor) renameContribution.createDescriptor();
@@ -233,6 +236,7 @@ public class ResourceRefactoringUndoTests extends TestCase {
 		assertFalse("Redo delete failed", testFile.exists());
 	}
 
+	@Test
 	public void testFileLinkedDeleteUndoRedoLTK() throws ExecutionException, CoreException {
 		RefactoringContribution renameContribution= RefactoringCore.getRefactoringContribution(DeleteResourcesDescriptor.ID);
 		DeleteResourcesDescriptor desc= (DeleteResourcesDescriptor) renameContribution.createDescriptor();
@@ -252,6 +256,7 @@ public class ResourceRefactoringUndoTests extends TestCase {
 		assertFalse("Redo delete failed", testLinkedFile.exists());
 	}
 
+	@Test
 	public void testFolderDeleteUndoRedoLTK() throws ExecutionException, CoreException {
 		RefactoringContribution renameContribution= RefactoringCore.getRefactoringContribution(DeleteResourcesDescriptor.ID);
 		DeleteResourcesDescriptor desc= (DeleteResourcesDescriptor) renameContribution.createDescriptor();
@@ -271,6 +276,7 @@ public class ResourceRefactoringUndoTests extends TestCase {
 		assertFalse("Redo delete failed", testSubFolder.exists());
 	}
 
+	@Test
 	public void testFolderDeleteLinkedUndoRedoLTK() throws ExecutionException, CoreException {
 		RefactoringContribution renameContribution= RefactoringCore.getRefactoringContribution(DeleteResourcesDescriptor.ID);
 		DeleteResourcesDescriptor desc= (DeleteResourcesDescriptor) renameContribution.createDescriptor();
@@ -288,6 +294,7 @@ public class ResourceRefactoringUndoTests extends TestCase {
 		assertFalse("Redo delete failed", testLinkedFolder.exists());
 	}
 
+	@Test
 	public void testFolderDeleteLinkedDeletedOnFilesystemUndoRedoLTK() throws ExecutionException, CoreException {
 		RefactoringContribution deleteContribution= RefactoringCore.getRefactoringContribution(DeleteResourcesDescriptor.ID);
 		DeleteResourcesDescriptor desc= (DeleteResourcesDescriptor) deleteContribution.createDescriptor();
@@ -318,6 +325,7 @@ public class ResourceRefactoringUndoTests extends TestCase {
 		assertFalse("Redo delete failed", testLinkedFolder.exists());
 	}
 
+	@Test
 	public void testProjectDeleteUndoRedoLTK() throws ExecutionException, CoreException {
 		RefactoringContribution renameContribution= RefactoringCore.getRefactoringContribution(DeleteResourcesDescriptor.ID);
 		DeleteResourcesDescriptor desc= (DeleteResourcesDescriptor) renameContribution.createDescriptor();
@@ -344,11 +352,13 @@ public class ResourceRefactoringUndoTests extends TestCase {
 		undo();
 	}
 
+	@Test
 	public void testProjectClosedDeleteUndoRedoLTK() throws ExecutionException, CoreException {
 		fProject.getProject().close(getMonitor());
 		testProjectDeleteUndoRedoLTK();
 	}
 
+	@Test
 	public void testProjectDeleteWithContentUndoRedoLTK() throws ExecutionException, CoreException {
 		RefactoringContribution renameContribution= RefactoringCore.getRefactoringContribution(DeleteResourcesDescriptor.ID);
 		DeleteResourcesDescriptor desc= (DeleteResourcesDescriptor) renameContribution.createDescriptor();
@@ -366,11 +376,13 @@ public class ResourceRefactoringUndoTests extends TestCase {
 		assertFalse("Redo delete failed", fProject.getProject().exists());
 	}
 
+	@Test
 	public void testProjectClosedDeleteWithContentUndoRedoLTK() throws ExecutionException, CoreException {
 		fProject.getProject().close(getMonitor());
 		testProjectDeleteWithContentUndoRedoLTK();
 	}
 
+	@Test
 	public void testPreChangeUndoRedoLTK() throws ExecutionException, CoreException {
 		Refactoring ref= new ElementRenameRefactoring(ElementRenameRefactoring.WORKING | ElementRenameRefactoring.ALWAYS_ENABLED | ElementRenameRefactoring.PRE_CHANGE);
 

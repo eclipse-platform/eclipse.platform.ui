@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2019 IBM Corporation and others.
+ * Copyright (c) 2008, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,7 +14,16 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.tests.resource;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
 import org.eclipse.core.filesystem.EFS;
 
@@ -46,31 +55,20 @@ import org.eclipse.ltk.core.refactoring.resource.MoveResourceChange;
 import org.eclipse.ltk.core.refactoring.resource.MoveResourcesDescriptor;
 import org.eclipse.ltk.core.refactoring.tests.util.SimpleTestProject;
 
-import junit.framework.Test;
-import junit.framework.TestCase;
-import junit.framework.TestSuite;
-
-public class ResourceRefactoringTests extends TestCase {
-
-	public static Test suite() {
-		TestSuite suite= new TestSuite(ResourceRefactoringTests.class.getName());
-		suite.addTestSuite(ResourceRefactoringTests.class);
-		suite.addTestSuite(ResourceRefactoringUndoTests.class);
-		return suite;
-	}
-
+public class ResourceRefactoringTests {
 	private SimpleTestProject fProject;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		fProject= new SimpleTestProject();
 	}
 
-	@Override
-	protected void tearDown() throws Exception {
+	@After
+	public void tearDown() throws Exception {
 		fProject.delete();
 	}
 
+	@Test
 	public void testMoveChange1() throws Exception {
 
 		String content= "hello";
@@ -89,6 +87,7 @@ public class ResourceRefactoringTests extends TestCase {
 		assertMove(movedResource, file.getParent(), content);
 	}
 
+	@Test
 	public void testMoveChange2() throws Exception {
 
 		String content= "hello";
@@ -110,6 +109,7 @@ public class ResourceRefactoringTests extends TestCase {
 		assertTrue(testFolder.getFile("myFile.txt").exists());
 	}
 
+	@Test
 	public void testMoveChange3() throws Exception {
 		// move with overwrite
 
@@ -130,9 +130,10 @@ public class ResourceRefactoringTests extends TestCase {
 
 		assertMove(movedResource, file1.getParent(), content1);
 
-		assertTrue(content2.equals(fProject.getContent(file2)));
+		assertEquals(content2, fProject.getContent(file2));
 	}
 
+	@Test
 	public void testMoveRefactoring1() throws Exception {
 
 		String content= "hello";
@@ -157,6 +158,7 @@ public class ResourceRefactoringTests extends TestCase {
 		assertMove(movedResource, file.getParent(), content);
 	}
 
+	@Test
 	public void testMoveRefactoring2() throws Exception {
 
 		String content= "hello";
@@ -183,6 +185,7 @@ public class ResourceRefactoringTests extends TestCase {
 		assertTrue(testFolder.getFile("myFile.txt").exists());
 	}
 
+	@Test
 	public void testMoveRefactoring3() throws Exception {
 		// move with overwrite
 
@@ -208,9 +211,10 @@ public class ResourceRefactoringTests extends TestCase {
 		perform(undoChange);
 
 		assertMove(movedResource, file1.getParent(), content1);
-		assertTrue(content2.equals(fProject.getContent(file2)));
+		assertEquals(content2, fProject.getContent(file2));
 	}
 
+	@Test
 	public void testMoveRenameRefactoring1() throws Exception {
 
 		String content= "hello";
@@ -236,6 +240,7 @@ public class ResourceRefactoringTests extends TestCase {
 		assertMove(file, file.getParent(), content);
 	}
 
+	@Test
 	public void testMoveRenameRefactoring2() throws Exception {
 
 		String content= "hello";
@@ -263,6 +268,7 @@ public class ResourceRefactoringTests extends TestCase {
 		assertTrue(testFolder.getFile("myFile.txt").exists());
 	}
 
+	@Test
 	public void testMoveRenameRefactoring3() throws Exception {
 		// move with overwrite
 
@@ -289,9 +295,10 @@ public class ResourceRefactoringTests extends TestCase {
 		perform(undoChange);
 
 		assertMove(file1, file1.getParent(), content1);
-		assertTrue(content2.equals(fProject.getContent(file2)));
+		assertEquals(content2, fProject.getContent(file2));
 	}
 
+	@Test
 	public void testDeleteRefactoring1_bug343584() throws Exception {
 		IFolder testFolder= fProject.createFolder("test");
 		fProject.createFile(testFolder, "myFile.txt", "hello");
@@ -316,6 +323,7 @@ public class ResourceRefactoringTests extends TestCase {
 		}
 	}
 
+	@Test
 	public void testDeleteRefactoring2_bug343584() throws Exception {
 		IPath location= fProject.getProject().getLocation();
 		IFolder testFolder= fProject.createFolder("test");
@@ -345,6 +353,7 @@ public class ResourceRefactoringTests extends TestCase {
 		assertFalse(p2Location.toFile().exists());
 	}
 
+	@Test
 	public void testDeleteRefactoring3_bug343584() throws Exception {
 		IPath location= fProject.getProject().getLocation();
 		IFolder testFolder= fProject.createFolder("test");
@@ -399,7 +408,8 @@ public class ResourceRefactoringTests extends TestCase {
 			PerformRefactoringOperation op= new PerformRefactoringOperation(refactoring, CheckConditionsOperation.ALL_CONDITIONS);
 			op.run(null);
 			RefactoringStatus validationStatus= op.getValidationStatus();
-			assertTrue(!validationStatus.hasFatalError() && !validationStatus.hasError());
+			assertFalse(validationStatus.hasFatalError());
+			assertFalse(validationStatus.hasError());
 			return op.getUndoChange();
 		} finally {
 			if (context != null)
@@ -410,11 +420,11 @@ public class ResourceRefactoringTests extends TestCase {
 	private IResource assertMove(IResource source, IContainer destination, String content) throws CoreException, IOException {
 		IResource res= destination.findMember(source.getName());
 
-		assertTrue(res != null);
-		assertTrue(res.getType() == source.getType());
+		assertNotNull(res);
+		assertEquals(res.getType(), source.getType());
 
 		if (res instanceof IFile) {
-			assertTrue(content.equals(fProject.getContent((IFile) res)));
+			assertEquals(content, fProject.getContent((IFile) res));
 		}
 		return res;
 	}
@@ -422,13 +432,12 @@ public class ResourceRefactoringTests extends TestCase {
 	private IResource assertMoveRename(IResource source, IContainer destination, String newName, String content) throws CoreException, IOException {
 		IResource res= destination.findMember(newName);
 
-		assertTrue(res != null);
-		assertTrue(res.getType() == source.getType());
+		assertNotNull(res);
+		assertEquals(res.getType(), source.getType());
 
 		if (res instanceof IFile) {
-			assertTrue(content.equals(fProject.getContent((IFile) res)));
+			assertEquals(content, fProject.getContent((IFile) res));
 		}
 		return res;
 	}
-
 }

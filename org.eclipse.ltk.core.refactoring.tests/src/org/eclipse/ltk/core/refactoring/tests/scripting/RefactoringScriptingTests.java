@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2013 IBM Corporation and others.
+ * Copyright (c) 2006, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,14 +13,12 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.tests.scripting;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	RefactoringScriptApplicationTests.class
+})
 public class RefactoringScriptingTests {
-
-	public static Test suite() {
-		TestSuite suite= new TestSuite(RefactoringScriptingTests.class.getName());
-		suite.addTestSuite(RefactoringScriptApplicationTests.class);
-		return suite;
-	}
 }

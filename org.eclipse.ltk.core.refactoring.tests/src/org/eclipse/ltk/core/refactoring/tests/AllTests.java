@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,25 +13,23 @@
  *******************************************************************************/
 package org.eclipse.ltk.core.refactoring.tests;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 import org.eclipse.ltk.core.refactoring.tests.history.RefactoringHistoryTests;
 import org.eclipse.ltk.core.refactoring.tests.participants.ParticipantTests;
 import org.eclipse.ltk.core.refactoring.tests.resource.ResourceRefactoringTests;
+import org.eclipse.ltk.core.refactoring.tests.resource.ResourceRefactoringUndoTests;
 import org.eclipse.ltk.core.refactoring.tests.scripting.RefactoringScriptingTests;
 
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	RefactoringContextTest.class,
+	ParticipantTests.class,
+	RefactoringHistoryTests.class,
+	RefactoringScriptingTests.class,
+	ResourceRefactoringTests.class,
+	ResourceRefactoringUndoTests.class
+})
 public class AllTests {
-
-	public static Test suite() {
-		TestSuite suite= new TestSuite(AllTests.class.getName());
-
-		suite.addTestSuite(RefactoringContextTest.class);
-
-		suite.addTest(ParticipantTests.suite());
-		suite.addTest(RefactoringHistoryTests.suite());
-		suite.addTest(RefactoringScriptingTests.suite());
-		suite.addTest(ResourceRefactoringTests.suite());
-		return suite;
-	}
 }
