@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2018 IBM Corporation and others.
+ * Copyright (c) 2007, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -30,6 +30,7 @@ import org.eclipse.ltk.core.refactoring.RefactoringChangeDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringDescriptor;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.CheckConditionsContext;
+import org.eclipse.ltk.core.refactoring.participants.IRenameResourceProcessor;
 import org.eclipse.ltk.core.refactoring.participants.ParticipantManager;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringParticipant;
 import org.eclipse.ltk.core.refactoring.participants.RenameArguments;
@@ -49,7 +50,7 @@ import org.eclipse.ltk.internal.core.refactoring.RefactoringCoreMessages;
  *
  * @since 3.4
  */
-public class RenameResourceProcessor extends RenameProcessor {
+public class RenameResourceProcessor extends RenameProcessor implements IRenameResourceProcessor{
 
 	private IResource fResource;
 	private String fNewResourceName;
@@ -77,6 +78,7 @@ public class RenameResourceProcessor extends RenameProcessor {
 	 *
 	 * @return the resource to rename
 	 */
+	@Override
 	public IResource getResource() {
 		return fResource;
 	}
@@ -86,6 +88,7 @@ public class RenameResourceProcessor extends RenameProcessor {
 	 *
 	 * @return the new resource name
 	 */
+	@Override
 	public String getNewResourceName() {
 		return fNewResourceName;
 	}
@@ -95,6 +98,7 @@ public class RenameResourceProcessor extends RenameProcessor {
 	 *
 	 * @param newName the new resource name
 	 */
+	@Override
 	public void setNewResourceName(String newName) {
 		Assert.isNotNull(newName);
 		fNewResourceName= newName;
@@ -105,6 +109,7 @@ public class RenameResourceProcessor extends RenameProcessor {
 	 *
 	 * @return <code>true</code> if the refactoring processor also updates references
 	 */
+	@Override
 	public boolean isUpdateReferences() {
 		return fUpdateReferences;
 	}
@@ -114,6 +119,7 @@ public class RenameResourceProcessor extends RenameProcessor {
 	 *
 	 * @param updateReferences <code>true</code> if the refactoring processor should also updates references
 	 */
+	@Override
 	public void setUpdateReferences(boolean updateReferences) {
 		fUpdateReferences= updateReferences;
 	}
@@ -155,6 +161,7 @@ public class RenameResourceProcessor extends RenameProcessor {
 	 * @param newName the name to validate
 	 * @return returns the resulting status of the validation
 	 */
+	@Override
 	public RefactoringStatus validateNewElementName(String newName) {
 		Assert.isNotNull(newName, "new name"); //$NON-NLS-1$
 		IContainer c= fResource.getParent();

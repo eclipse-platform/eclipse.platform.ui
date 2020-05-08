@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2019 IBM Corporation and others.
+ * Copyright (c) 2007, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -26,6 +26,7 @@ import org.eclipse.core.resources.IResource;
 import org.eclipse.jface.wizard.IWizardPage;
 
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
+import org.eclipse.ltk.core.refactoring.participants.IRenameResourceProcessor;
 import org.eclipse.ltk.core.refactoring.participants.RenameRefactoring;
 import org.eclipse.ltk.internal.core.refactoring.resource.RenameResourceProcessor;
 import org.eclipse.ltk.internal.ui.refactoring.RefactoringUIMessages;
@@ -65,20 +66,46 @@ public class RenameResourceWizard extends RefactoringWizard {
 
 	@Override
 	protected void addUserInputPages() {
-		RenameResourceProcessor processor= getRefactoring().getAdapter(RenameResourceProcessor.class);
-		addPage(new RenameResourceRefactoringConfigurationPage(processor));
+		addPage(new RenameResourceRefactoringConfigurationPage(getProcessor()));
 	}
 
-	private static class RenameResourceRefactoringConfigurationPage extends UserInputWizardPage {
+	/**
+	 * @return the IRenameResourceProcessor used by this wizard
+	 * @since 3.11
+	 */
+	protected IRenameResourceProcessor getProcessor() {
+		return getRefactoring().getAdapter(RenameResourceProcessor.class);
+	}
 
-		private final RenameResourceProcessor fRefactoringProcessor;
+	/**
+	 * @since 3.11
+	 */
+	public static class RenameResourceRefactoringConfigurationPage extends UserInputWizardPage {
+
+		private final IRenameResourceProcessor fRefactoringProcessor;
 		private Text fNameField;
 
-		public RenameResourceRefactoringConfigurationPage(RenameResourceProcessor processor) {
+		public RenameResourceRefactoringConfigurationPage(IRenameResourceProcessor processor) {
 			super("RenameResourceRefactoringInputPage"); //$NON-NLS-1$
 			fRefactoringProcessor= processor;
 		}
 
+		public RenameResourceRefactoringConfigurationPage(String name, IRenameResourceProcessor processor) {
+			super(name);
+			fRefactoringProcessor= processor;
+		}
+
+		/**
+		 * Creates the top level Composite for this dialog page
+		 * under the given parent composite.
+		 * <p>
+		 * The created top level Composite will be set as the top level control
+		 * for this dialog page and can be accessed using <code>getControl</code>
+		 * </p>
+		 * <p>
+		 * The top level Composite will have a GridLayout of 2 columns of unequal width
+		 * </p>
+		 */
 		@Override
 		public void createControl(Composite parent) {
 			Composite composite= new Composite(parent, SWT.NONE);
@@ -135,11 +162,16 @@ public class RenameResourceWizard extends RefactoringWizard {
 			return super.getNextPage();
 		}
 
-		private void storeSettings() {
+		protected void storeSettings() {
+			//do nothing
 		}
 
-		private void initializeRefactoring() {
+		protected void initializeRefactoring() {
 			fRefactoringProcessor.setNewResourceName(fNameField.getText());
+		}
+
+		protected IRenameResourceProcessor getProcessor() {
+			return fRefactoringProcessor;
 		}
 	}
 }
