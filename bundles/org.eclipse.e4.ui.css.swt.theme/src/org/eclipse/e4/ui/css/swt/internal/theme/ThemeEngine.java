@@ -110,7 +110,6 @@ public class ThemeEngine implements IThemeEngine {
 
 		File[] modifiedFiles = modDir.listFiles();
 		String currentOS = Platform.getOS();
-		String currentWS = Platform.getWS();
 		boolean e4_dark_mac_found = false;
 
 		for (IExtension e : extPoint.getExtensions()) {
