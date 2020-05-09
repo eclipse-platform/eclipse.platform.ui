@@ -16,6 +16,20 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/jface/viewers/TreeNodeContentProvider.java" type="org.eclipse.jface.viewers.TreeNodeContentProvider">
+        <filter comment="False positive: Empty implementation became obsolete with default implementation on interface IContentProvider" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.TreeNodeContentProvider"/>
+                <message_argument value="dispose()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="False positive: Empty implementation became obsolete with default implementation on interface IContentProvider" id="338792546">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.viewers.TreeNodeContentProvider"/>
+                <message_argument value="inputChanged(Viewer, Object, Object)"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/jface/widgets/ButtonFactory.java" type="org.eclipse.jface.widgets.ButtonFactory">
         <filter comment="The method was moved to the super class so not API breakage" id="338792546">
             <message_arguments>

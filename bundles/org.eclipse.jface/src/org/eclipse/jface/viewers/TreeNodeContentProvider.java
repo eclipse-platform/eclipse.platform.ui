@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2015 IBM Corporation and others.
+ * Copyright (c) 2005, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -31,11 +31,6 @@ package org.eclipse.jface.viewers;
 public class TreeNodeContentProvider implements ITreeContentProvider {
 
 	@Override
-	public void dispose() {
-		// Do nothing
-	}
-
-	@Override
 	public Object[] getChildren(final Object parentElement) {
 		final TreeNode node = (TreeNode) parentElement;
 		return node.getChildren();
@@ -61,10 +56,5 @@ public class TreeNodeContentProvider implements ITreeContentProvider {
 		return node.hasChildren();
 	}
 
-	@Override
-	public void inputChanged(final Viewer viewer, final Object oldInput,
-			final Object newInput) {
-		// Do nothing
-	}
 }
 
