@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2019 IBM Corporation and others.
+ * Copyright (c) 2006, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,7 +19,6 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -82,7 +81,7 @@ public class XMLUtil extends Assert {
 			for (int i=0;i<attributes.getLength();++i) {
 				list.add(attributes.getQName(i));
 			}
-			Collections.sort(list);
+			list.sort(null);
 			Iterator<String> iter = list.iterator();
 			while (iter.hasNext()) {
 				String name = iter.next();

@@ -19,7 +19,6 @@ package org.eclipse.help.internal.webapp.data;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -168,7 +167,7 @@ public class SearchData extends ActivitiesData {
 						searchWord = query;
 				}
 			}
-			Collections.sort(altList);
+			altList.sort(null);
 
 			loadSearchResults();
 			if (queryException != null) {

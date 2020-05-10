@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -491,7 +490,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 					continue;
 				criterionIds.add(criterion);
 			}
-			Collections.sort(criterionIds);
+			criterionIds.sort(null);
 		}
 		String[] ids = new String[criterionIds.size()];
 		criterionIds.toArray(ids);
@@ -508,7 +507,7 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 			Set<String> criterionValues = allCriteriaValues.get(criterionName);
 			if(null != criterionValues && !criterionValues.isEmpty()) {
 				valueIds.addAll(criterionValues);
-				Collections.sort(valueIds);
+				valueIds.sort(null);
 				valueIds.add(UNCATEGORIZED);
 			}
 		}

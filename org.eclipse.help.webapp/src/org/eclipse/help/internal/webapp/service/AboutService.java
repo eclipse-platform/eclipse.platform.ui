@@ -18,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -191,7 +190,7 @@ public class AboutService extends AboutServlet {
 		}
 
 		Comparator<PluginDetails> pluginComparator = new PluginComparator(sortColumn);
-		Collections.sort(plugins, pluginComparator );
+		plugins.sort(pluginComparator);
 
 		String[] headerColumns = new String[]{
 			"provider", //$NON-NLS-1$

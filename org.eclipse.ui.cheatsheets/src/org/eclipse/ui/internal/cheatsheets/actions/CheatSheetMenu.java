@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2002, 2015 IBM Corporation and others.
+ * Copyright (c) 2002, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,6 @@ package org.eclipse.ui.internal.cheatsheets.actions;
 
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -131,7 +130,7 @@ public class CheatSheetMenu extends ContributionItem {
 
 		// Collect and sort cheatsheet items.
 		ArrayList<CheatSheetElement> cheatsheets = getCheatSheetItems();
-		Collections.sort(cheatsheets, comparator);
+		cheatsheets.sort(comparator);
 
 		// Add cheatsheet shortcuts
 		for (int i = 0; i < cheatsheets.size(); i++) {

@@ -72,7 +72,7 @@ public class ExtraFilters implements IFilter {
 	}
 
 	private static void sortFilters() {
-		Collections.sort(filters);
+		filters.sort(null);
 		Collections.reverse(filters);
 	}
 

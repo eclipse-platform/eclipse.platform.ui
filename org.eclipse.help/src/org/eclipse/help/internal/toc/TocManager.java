@@ -16,7 +16,6 @@ package org.eclipse.help.internal.toc;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -277,7 +276,7 @@ public class TocManager {
 					}
 				}
 			}
-			Collections.sort(providers, new TocProviderComparator());
+			providers.sort(new TocProviderComparator());
 			tocProviders = providers.toArray(new AbstractTocProvider[providers.size()]);
 		}
 		return tocProviders;

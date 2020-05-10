@@ -136,7 +136,7 @@ public class ToolbarData extends RequestData {
 			}
 		}
 
-		Collections.sort(extensionButtons);
+		extensionButtons.sort(null);
 
 		for (AbstractButton button : extensionButtons) {
 			String scriptFile = button.getJavaScriptURL();

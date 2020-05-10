@@ -15,7 +15,6 @@
 package org.eclipse.help.internal.webapp.data;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -57,7 +56,7 @@ public class FrameData extends RequestData {
 					allFrames.add((AbstractFrame) obj);
 				}
 			}
-			Collections.sort(allFrames);
+			allFrames.sort(null);
 		}
 
 		List<AbstractFrame> frameList = new ArrayList<>();

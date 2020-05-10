@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,7 +16,6 @@ package org.eclipse.help.internal.webapp.servlet;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -426,7 +425,7 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 					continue;
 				criterionIds.add(criterion);
 			}
-			Collections.sort(criterionIds);
+			criterionIds.sort(null);
 		}
 		String[] ids = new String[criterionIds.size()];
 		criterionIds.toArray(ids);
@@ -444,7 +443,7 @@ public class InfocenterWorkingSetManager implements IHelpWorkingSetManager {
 			Set<String> criterionValues = allCriteriaValues.get(criterionName);
 			if(null != criterionValues && !criterionValues.isEmpty()) {
 				valueIds.addAll(criterionValues);
-				Collections.sort(valueIds);
+				valueIds.sort(null);
 				valueIds.add(UNCATEGORIZED);
 			}
 		}

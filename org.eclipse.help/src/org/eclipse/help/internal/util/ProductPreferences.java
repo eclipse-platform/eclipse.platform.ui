@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -19,7 +19,6 @@ import java.net.URL;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -250,7 +249,7 @@ public class ProductPreferences {
 	}
 
 	private static void sortByName(List<String> remaining, Map<String, String> categorized) {
-		Collections.sort(remaining, new NameComparator(categorized));
+		remaining.sort(new NameComparator(categorized));
 	}
 
 	public static synchronized String getPluginId(Properties prefs) {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -15,7 +15,6 @@
 package org.eclipse.help.internal.webapp.data;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.ServletContext;
@@ -57,7 +56,7 @@ public class ButtonData extends RequestData {
 					allButtons.add((AbstractButton) obj);
 				}
 			}
-			Collections.sort(allButtons);
+			allButtons.sort(null);
 		}
 
 		List<AbstractButton> buttonList = new ArrayList<>();
