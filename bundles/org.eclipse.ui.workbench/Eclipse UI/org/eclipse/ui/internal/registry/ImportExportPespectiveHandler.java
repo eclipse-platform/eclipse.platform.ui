@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 IBM Corporation and others.
+ * Copyright (c) 2015, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -52,7 +52,6 @@ import org.eclipse.ui.internal.wizards.preferences.PreferencesExportWizard;
 import org.eclipse.ui.internal.wizards.preferences.PreferencesImportWizard;
 import org.osgi.service.event.EventHandler;
 
-@SuppressWarnings("restriction")
 public class ImportExportPespectiveHandler {
 
 	private static final String PERSPECTIVE_SUFFIX_4X = "_e4persp"; //$NON-NLS-1$
