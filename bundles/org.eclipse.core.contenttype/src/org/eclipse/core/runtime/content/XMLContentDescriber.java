@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2010 IBM Corporation and others.
+ * Copyright (c) 2004, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -122,7 +122,7 @@ public class XMLContentDescriber extends TextContentDescriber {
 		if (fullXMLDecl == null || !fullXMLDecl.booleanValue())
 			return INDETERMINATE;
 		if (description == null)
-			return VALID;
+			return INDETERMINATE;
 		String charset = (String) properties.get(CHARSET);
 		if (description.isRequested(IContentDescription.CHARSET)) {
 			if (charset != null && !isCharsetValid(charset))
