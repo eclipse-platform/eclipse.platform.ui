@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -31,6 +31,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.core.runtime.URIUtil;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.MissingContentManager;
 import org.eclipse.help.internal.base.remote.RemoteHelpInputStream;
@@ -47,7 +48,7 @@ import org.eclipse.help.webapp.IFilter;
  */
 public class EclipseConnector {
 	public interface INotFoundCallout {
-		public void notFound(String url);
+		void notFound(String url);
 	}
 	private static final String errorPageBegin = "<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Transitional//EN\">\n" //$NON-NLS-1$
 			+ "<html><head>\n" //$NON-NLS-1$
@@ -115,6 +116,7 @@ public class EclipseConnector {
 				// enable activities matching url
 				// HelpBasePlugin.getActivitySupport().enableActivities(url);
 
+				url = URIUtil.fromString(url).toString();
 				url = "help:" + url; //$NON-NLS-1$
 			}
 

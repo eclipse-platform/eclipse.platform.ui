@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Red Hat Inc. and others.
+ * Copyright (c) 2018, 2020 Red Hat Inc. and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -50,8 +50,9 @@ public class EclipseConnectorTests {
 
 	@Test
 	public void testEncodedAmpersand() throws Exception {
-		final String path = "/data/help/index/" + URIUtil.fromString("topic&.html").toString();
-		String remoteContent = getHelpContent("mock.toc", path, "en");
+		final String path = "/data/help/index/topic&.html";
+		final String requestPath = URIUtil.fromString(path).toString();
+		String remoteContent = getHelpContent("mock.toc", requestPath, "en");
 		int port = TestServerManager.getPort(0);
 		String expectedContent = RemoteTestUtils.createMockContent("mock.toc", path, "en", port);
 		assertEquals(expectedContent, remoteContent);
@@ -59,8 +60,9 @@ public class EclipseConnectorTests {
 
 	@Test
 	public void testEncodedSpace() throws Exception {
-		final String path = "/data/help/index/" + URIUtil.fromString("topic .html").toString();
-		String remoteContent = getHelpContent("mock.toc", path, "en");
+		final String path = "/data/help/index/topic .html";
+		final String requestPath = URIUtil.fromString(path).toString();
+		String remoteContent = getHelpContent("mock.toc", requestPath, "en");
 		int port = TestServerManager.getPort(0);
 		String expectedContent = RemoteTestUtils.createMockContent("mock.toc", path, "en", port);
 		assertEquals(expectedContent, remoteContent);
@@ -68,8 +70,9 @@ public class EclipseConnectorTests {
 
 	@Test
 	public void testEncodedPercentSign() throws Exception {
-		final String path = "/data/help/index/" + URIUtil.fromString("topic%.html").toString();
-		String remoteContent = getHelpContent("mock.toc", path, "en");
+		final String path = "/data/help/index/topic%.html";
+		final String requestPath = URIUtil.fromString(path).toString();
+		String remoteContent = getHelpContent("mock.toc", requestPath, "en");
 		int port = TestServerManager.getPort(0);
 		String expectedContent = RemoteTestUtils.createMockContent("mock.toc", path, "en", port);
 		assertEquals(expectedContent, remoteContent);
