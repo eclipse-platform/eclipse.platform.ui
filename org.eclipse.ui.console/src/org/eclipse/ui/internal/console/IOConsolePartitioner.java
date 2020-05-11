@@ -447,8 +447,10 @@ public class IOConsolePartitioner
 			pendingSize = 0;
 		}
 		synchronized (partitions) {
-			trimJob.setTrimOffset(document.getLength());
-			trimJob.schedule();
+			if (document != null) {
+				trimJob.setTrimOffset(document.getLength());
+				trimJob.schedule();
+			}
 		}
 	}
 
@@ -803,7 +805,9 @@ public class IOConsolePartitioner
 				pendingPartitions.notifyAll();
 			}
 			synchronized (partitions) {
-				applyStreamOutput(pendingCopy, size);
+				if (document != null) {
+					applyStreamOutput(pendingCopy, size);
+				}
 			}
 			checkFinished();
 			checkBufferSize();
