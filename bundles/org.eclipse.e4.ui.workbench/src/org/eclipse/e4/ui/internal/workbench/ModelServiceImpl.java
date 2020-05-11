@@ -95,19 +95,16 @@ public class ModelServiceImpl implements EModelService {
 	private ServiceRegistration<?> handlerRegistration;
 
 	/**
-	 * This is a singleton service. One instance is used throughout the running application
+	 * This is a singleton service. One instance is used throughout the running
+	 * application
 	 *
-	 * @param appContext
-	 *            The applicationContext to get the eventBroker from
+	 * @param appContext The applicationContext to get the eventBroker from
 	 *
-	 * @throws NullPointerException
-	 *             if the given appContext is <code>null</code>
+	 * @throws NullPointerException if the given appContext is <code>null</code>
 	 */
 	@Inject
 	public ModelServiceImpl(IEclipseContext appContext) {
-		if (appContext == null) {
-			throw new NullPointerException("No application context given!"); //$NON-NLS-1$
-		}
+		Objects.requireNonNull(appContext, "No application context given!"); //$NON-NLS-1$
 
 		this.appContext = appContext;
 
