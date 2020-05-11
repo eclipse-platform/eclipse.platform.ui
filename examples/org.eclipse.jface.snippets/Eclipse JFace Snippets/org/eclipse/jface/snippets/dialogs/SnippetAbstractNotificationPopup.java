@@ -24,14 +24,17 @@ import org.eclipse.swt.widgets.Shell;
 @SuppressWarnings("restriction")
 public class SnippetAbstractNotificationPopup {
 
-	public static void main(String[] args) {
-		Display display = new Display();
-		Shell shell = new Shell(display);
-		shell.setLayout(new FillLayout());
-		shell.open();
-		display.readAndDispatch(); // so that activeShell is set
+	private Display display = new Display();
+	private final Shell shell = new Shell(display);
 
-		NotificationPopUp notificationPopUp = new NotificationPopUp(display);
+	public static void main(String[] args) {
+		new SnippetAbstractNotificationPopup().start();
+	}
+
+	private void start() {
+		shell.setLayout(new FillLayout());
+
+		NotificationPopUp notificationPopUp = this.new NotificationPopUp(display);
 		notificationPopUp.open();
 		while (!shell.isDisposed()) {
 			if (!display.readAndDispatch())
@@ -39,10 +42,9 @@ public class SnippetAbstractNotificationPopup {
 		}
 
 		display.dispose();
-
 	}
 
-	private static class NotificationPopUp extends AbstractNotificationPopup {
+	private class NotificationPopUp extends AbstractNotificationPopup {
 
 		public NotificationPopUp(Display display) {
 			super(display);
@@ -57,6 +59,13 @@ public class SnippetAbstractNotificationPopup {
 		protected void createContentArea(Composite parent) {
 			Label label = new Label(parent, SWT.WRAP);
 			label.setText("Hello World");
+		}
+
+		@Override
+		public boolean close() {
+			boolean closed = super.close();
+			shell.close();
+			return closed;
 		}
 	}
 

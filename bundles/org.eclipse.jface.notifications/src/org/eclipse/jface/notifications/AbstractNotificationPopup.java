@@ -29,17 +29,13 @@ import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.resource.LocalResourceManager;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ControlAdapter;
-import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseTrackAdapter;
 import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
-import org.eclipse.swt.graphics.Region;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
@@ -73,10 +69,6 @@ public abstract class AbstractNotificationPopup extends Window {
 
 	private Shell shell;
 
-	private Region lastUsedRegion;
-
-	private Image lastUsedBgImage;
-
 	private final Job closeJob = new Job(LABEL_JOB_CLOSE) {
 
 		@Override
@@ -108,10 +100,6 @@ public abstract class AbstractNotificationPopup extends Window {
 		}
 	};
 
-	private final boolean respectDisplayBounds = true;
-
-	private final boolean respectMonitorBounds = true;
-
 	private FadeJob fadeJob;
 
 	private boolean fadingEnabled;
@@ -141,7 +129,6 @@ public abstract class AbstractNotificationPopup extends Window {
 	@Override
 	public void create() {
 		super.create();
-		addRegion(this.shell);
 	}
 
 	@Override
@@ -152,7 +139,6 @@ public abstract class AbstractNotificationPopup extends Window {
 		}
 
 		constrainShellSize();
-		this.shell.setLocation(fixupDisplayBounds(this.shell.getSize(), this.shell.getLocation()));
 
 		if (isFadingEnabled()) {
 			this.shell.setAlpha(0);
@@ -177,12 +163,6 @@ public abstract class AbstractNotificationPopup extends Window {
 	@Override
 	public boolean close() {
 		this.resources.dispose();
-		if (this.lastUsedRegion != null) {
-			this.lastUsedRegion.dispose();
-		}
-		if (this.lastUsedBgImage != null && !this.lastUsedBgImage.isDisposed()) {
-			this.lastUsedBgImage.dispose();
-		}
 		return super.close();
 	}
 
@@ -302,9 +282,7 @@ public abstract class AbstractNotificationPopup extends Window {
 	@Override
 	protected void configureShell(Shell newShell) {
 		super.configureShell(newShell);
-
 		this.shell = newShell;
-		newShell.setBackground(getBackground());
 	}
 
 	protected void scheduleAutoClose() {
@@ -321,69 +299,6 @@ public abstract class AbstractNotificationPopup extends Window {
 		/* Outer Composite holding the controls */
 		final Composite outerCircle = new Composite(parent, SWT.NO_FOCUS);
 		outerCircle.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		outerCircle.setBackgroundMode(SWT.INHERIT_FORCE);
-
-		outerCircle.addControlListener(new ControlAdapter() {
-
-			@Override
-			public void controlResized(ControlEvent e) {
-				Rectangle clArea = outerCircle.getClientArea();
-				AbstractNotificationPopup.this.lastUsedBgImage = new Image(outerCircle.getDisplay(), clArea.width, clArea.height);
-				GC gc = new GC(AbstractNotificationPopup.this.lastUsedBgImage);
-
-				/* Gradient */
-				drawBackground(gc, clArea);
-
-				/* Fix Region Shape */
-				fixRegion(gc, clArea);
-
-				gc.dispose();
-
-				Image oldBGImage = outerCircle.getBackgroundImage();
-				outerCircle.setBackgroundImage(AbstractNotificationPopup.this.lastUsedBgImage);
-
-				if (oldBGImage != null) {
-					oldBGImage.dispose();
-				}
-			}
-
-			private void drawBackground(GC gc, Rectangle clArea) {
-				gc.setBackground(getBackground());
-				gc.fillRectangle(clArea);
-			}
-
-			private void fixRegion(GC gc, Rectangle clArea) {
-				gc.setForeground(getBackground());
-
-				/* Fill Top Left */
-				gc.drawPoint(2, 0);
-				gc.drawPoint(3, 0);
-				gc.drawPoint(1, 1);
-				gc.drawPoint(0, 2);
-				gc.drawPoint(0, 3);
-
-				/* Fill Top Right */
-				gc.drawPoint(clArea.width - 4, 0);
-				gc.drawPoint(clArea.width - 3, 0);
-				gc.drawPoint(clArea.width - 2, 1);
-				gc.drawPoint(clArea.width - 1, 2);
-				gc.drawPoint(clArea.width - 1, 3);
-
-				/* Fill Bottom Left */
-				gc.drawPoint(2, clArea.height - 0);
-				gc.drawPoint(3, clArea.height - 0);
-				gc.drawPoint(1, clArea.height - 1);
-				gc.drawPoint(0, clArea.height - 2);
-				gc.drawPoint(0, clArea.height - 3);
-
-				/* Fill Bottom Right */
-				gc.drawPoint(clArea.width - 4, clArea.height - 0);
-				gc.drawPoint(clArea.width - 3, clArea.height - 0);
-				gc.drawPoint(clArea.width - 2, clArea.height - 1);
-				gc.drawPoint(clArea.width - 1, clArea.height - 2);
-				gc.drawPoint(clArea.width - 1, clArea.height - 3);
-			}
-		});
 
 		GridLayout layout = new GridLayout(1, false);
 		layout.marginWidth = 0;
@@ -395,7 +310,6 @@ public abstract class AbstractNotificationPopup extends Window {
 		/* Title area containing label and close button */
 		final Composite titleCircle = new Composite(outerCircle, SWT.NO_FOCUS);
 		titleCircle.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
-		titleCircle.setBackgroundMode(SWT.INHERIT_FORCE);
 
 		layout = new GridLayout(4, false);
 		layout.marginWidth = 3;
@@ -410,7 +324,6 @@ public abstract class AbstractNotificationPopup extends Window {
 
 		/* Outer composite to hold content controlls */
 		Composite outerContentCircle = new Composite(outerCircle, SWT.NONE);
-		outerContentCircle.setBackgroundMode(SWT.INHERIT_FORCE);
 
 		layout = new GridLayout(1, false);
 		layout.marginWidth = 0;
@@ -418,11 +331,9 @@ public abstract class AbstractNotificationPopup extends Window {
 
 		outerContentCircle.setLayout(layout);
 		outerContentCircle.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		outerContentCircle.setBackground(outerCircle.getBackground());
 
 		/* Middle composite to show a 1px black line around the content controls */
 		Composite middleContentCircle = new Composite(outerContentCircle, SWT.NO_FOCUS);
-		middleContentCircle.setBackgroundMode(SWT.INHERIT_FORCE);
 
 		layout = new GridLayout(1, false);
 		layout.marginWidth = 0;
@@ -431,12 +342,10 @@ public abstract class AbstractNotificationPopup extends Window {
 
 		middleContentCircle.setLayout(layout);
 		middleContentCircle.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		middleContentCircle.setBackground(getBackground());
 
 		/* Inner composite containing the content controls */
 		Composite innerContent = new Composite(middleContentCircle, SWT.NO_FOCUS);
 		innerContent.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		innerContent.setBackgroundMode(SWT.INHERIT_FORCE);
 
 		layout = new GridLayout(1, false);
 		layout.marginWidth = 0;
@@ -449,8 +358,6 @@ public abstract class AbstractNotificationPopup extends Window {
 
 		/* Content Area */
 		createContentArea(innerContent);
-
-		setNullBackground(outerCircle);
 
 		return outerCircle;
 	}
@@ -483,77 +390,6 @@ public abstract class AbstractNotificationPopup extends Window {
 		return null;
 	}
 
-	private Color getBackground() {
-		Color themeBg = display.getActiveShell().getBackground();
-		Color impliedBg = getImpliedBackground();
-		if (themeBg == null) {
-			return impliedBg;
-		}
-		// use the theme background only if it is significantly different than the
-		// implied
-		if (absoluteDifference(themeBg.getRGB().red, impliedBg.getRGB().red) < 40
-				&& absoluteDifference(themeBg.getRGB().blue, impliedBg.getRGB().blue) < 40
-				&& absoluteDifference(themeBg.getRGB().green, impliedBg.getRGB().green) < 40) {
-			return impliedBg;
-		}
-		return themeBg;
-	}
-
-	private Color getImpliedBackground() {
-		return this.display.getSystemColor(SWT.COLOR_LIST_BACKGROUND);
-	}
-
-	private int absoluteDifference(int a, int b) {
-		return Math.abs(a - b);
-	}
-
-	private void addRegion(Shell shell) {
-		Region region = new Region();
-		Point s = shell.getSize();
-
-		/* Add entire Shell */
-		region.add(0, 0, s.x, s.y);
-
-		/* Subtract Top-Left Corner */
-		region.subtract(0, 0, 5, 1);
-		region.subtract(0, 1, 3, 1);
-		region.subtract(0, 2, 2, 1);
-		region.subtract(0, 3, 1, 1);
-		region.subtract(0, 4, 1, 1);
-
-		/* Subtract Top-Right Corner */
-		region.subtract(s.x - 5, 0, 5, 1);
-		region.subtract(s.x - 3, 1, 3, 1);
-		region.subtract(s.x - 2, 2, 2, 1);
-		region.subtract(s.x - 1, 3, 1, 1);
-		region.subtract(s.x - 1, 4, 1, 1);
-
-		/* Subtract Bottom-Left Corner */
-		region.subtract(0, s.y, 5, 1);
-		region.subtract(0, s.y - 1, 3, 1);
-		region.subtract(0, s.y - 2, 2, 1);
-		region.subtract(0, s.y - 3, 1, 1);
-		region.subtract(0, s.y - 4, 1, 1);
-
-		/* Subtract Bottom-Right Corner */
-		region.subtract(s.x - 5, s.y - 0, 5, 1);
-		region.subtract(s.x - 3, s.y - 1, 3, 1);
-		region.subtract(s.x - 2, s.y - 2, 2, 1);
-		region.subtract(s.x - 1, s.y - 3, 1, 1);
-		region.subtract(s.x - 1, s.y - 4, 1, 1);
-
-		/* Dispose old first */
-		if (shell.getRegion() != null) {
-			shell.getRegion().dispose();
-		}
-
-		/* Apply Region */
-		shell.setRegion(region);
-
-		/* Remember to dispose later */
-		this.lastUsedRegion = region;
-	}
-
 	private boolean isMouseOver(Shell shell) {
 		if (this.display.isDisposed()) {
 			return false;
@@ -561,50 +397,9 @@ public abstract class AbstractNotificationPopup extends Window {
 		return shell.getBounds().contains(this.display.getCursorLocation());
 	}
 
-	private void setNullBackground(final Composite outerCircle) {
-		for (Control c : outerCircle.getChildren()) {
-			c.setBackground(null);
-			if (c instanceof Composite) {
-				setNullBackground((Composite) c);
-			}
-		}
-	}
-
 	private Rectangle getPrimaryClientArea() {
 		Monitor primaryMonitor = this.shell.getDisplay().getPrimaryMonitor();
 		return (primaryMonitor != null) ? primaryMonitor.getClientArea() : this.shell.getDisplay().getClientArea();
-	}
-
-	private Point fixupDisplayBounds(Point tipSize, Point location) {
-		if (this.respectDisplayBounds) {
-			Rectangle bounds;
-			Point rightBounds = new Point(tipSize.x + location.x, tipSize.y + location.y);
-
-			if (this.respectMonitorBounds) {
-				bounds = this.shell.getDisplay().getPrimaryMonitor().getBounds();
-			} else {
-				bounds = getPrimaryClientArea();
-			}
-
-			if (!(bounds.contains(location) && bounds.contains(rightBounds))) {
-				if (rightBounds.x > bounds.x + bounds.width) {
-					location.x -= rightBounds.x - (bounds.x + bounds.width);
-				}
-
-				if (rightBounds.y > bounds.y + bounds.height) {
-					location.y -= rightBounds.y - (bounds.y + bounds.height);
-				}
-
-				if (location.x < bounds.x) {
-					location.x = bounds.x;
-				}
-
-				if (location.y < bounds.y) {
-					location.y = bounds.y;
-				}
-			}
-		}
-		return location;
 	}
 
 }
