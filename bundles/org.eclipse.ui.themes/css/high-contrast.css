@@ -12,7 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
  
- @import url("platform:/plugin/org.eclipse.ui.themes/css/e4_classic_win7.css");
+ @import url("platform:/plugin/org.eclipse.ui.themes/css/e4_classic.css");
 
 CTabItem:selected {
  	color: '#org-eclipse-ui-workbench-INACTIVE_TAB_TEXT_COLOR';
