@@ -13,7 +13,7 @@
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 420836
  *     Frank Appel <fappel@codeaffine.com> - Bug 325937
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 501250
- *     Pierre-Yves B. <pyvesdev@gmail.com> - Bug 551462
+ *     Pierre-Yves B. <pyvesdev@gmail.com> - Bug 551462, bug 563079
  *******************************************************************************/
 
 @import url("platform:/plugin/org.eclipse.ui.themes/css/e4_basestyle.css");
@@ -59,10 +59,10 @@ ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_BG_END {
 }
 
 .MToolControl.TrimStack {
-	frame-image:  url(./win7TSFrame.png);
-	handle-image:  url(./win7Handle.png);
-	frame-image-rotated:  url(./win7TSFrame-rotated.png);
-	handle-image-rotated:  url(./win7Handle-rotated.png);
+	frame-image:  url(./winTSFrame.png);
+	handle-image:  url(./winHandle.png);
+	frame-image-rotated:  url(./winTSFrame-rotated.png);
+	handle-image-rotated:  url(./winHandle-rotated.png);
 }
 
 .MPartStack {
