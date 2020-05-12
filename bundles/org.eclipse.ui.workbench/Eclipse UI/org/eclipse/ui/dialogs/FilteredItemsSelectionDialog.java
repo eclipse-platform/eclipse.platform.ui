@@ -2487,7 +2487,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 			}
 
 			synchronized (lastSortedItems) {
-				Collections.sort(lastSortedItems, getHistoryComparator());
+				lastSortedItems.sort(getHistoryComparator());
 			}
 			return item;
 		}
@@ -2506,7 +2506,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 				this.lastSortedItems.remove(item);
 			}
 			synchronized (lastSortedItems) {
-				Collections.sort(lastSortedItems, getHistoryComparator());
+				lastSortedItems.sort(getHistoryComparator());
 			}
 			this.refresh();
 		}
@@ -2580,7 +2580,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 				synchronized (lastSortedItems) {
 					lastSortedItems.clear();
 					lastSortedItems.addAll(items);
-					Collections.sort(lastSortedItems, getHistoryComparator());
+					lastSortedItems.sort(getHistoryComparator());
 				}
 			}
 			return lastSortedItems.toArray();

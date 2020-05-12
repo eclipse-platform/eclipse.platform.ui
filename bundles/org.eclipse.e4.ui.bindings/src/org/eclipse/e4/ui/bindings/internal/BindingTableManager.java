@@ -16,7 +16,6 @@ package org.eclipse.e4.ui.bindings.internal;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 import java.util.ListIterator;
 import javax.inject.Inject;
@@ -187,7 +186,7 @@ public class BindingTableManager {
 				}
 			}
 		}
-		Collections.sort(bindings, BindingTable.BEST_SEQUENCE);
+		bindings.sort(BindingTable.BEST_SEQUENCE);
 		return bindings;
 	}
 

@@ -14,7 +14,6 @@
 package org.eclipse.ui.internal.ide.registry;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Hashtable;
 
@@ -120,7 +119,7 @@ public abstract class IDERegistryReader {
 		// dependent in the order listed in the XML file.
 		IExtension[] sortedExtension = new IExtension[extensions.length];
 		System.arraycopy(extensions, 0, sortedExtension, 0, extensions.length);
-		Collections.sort(Arrays.asList(sortedExtension), comparer);
+		Arrays.asList(sortedExtension).sort(comparer);
 		return sortedExtension;
 	}
 

@@ -18,7 +18,6 @@ package org.eclipse.ui.internal;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -80,13 +79,11 @@ public class ShowViewMenu extends ContributionItem {
 
 	private static final String NO_TARGETS_MSG = WorkbenchMessages.Workbench_showInNoTargets;
 
-	private Comparator actionComparator = (o1, o2) -> {
+	private Comparator<CommandContributionItemParameter> actionComparator = (o1, o2) -> {
 		if (collator == null) {
 			collator = Collator.getInstance();
 		}
-		CommandContributionItemParameter a1 = (CommandContributionItemParameter) o1;
-		CommandContributionItemParameter a2 = (CommandContributionItemParameter) o2;
-		return collator.compare(a1.label, a2.label);
+		return collator.compare(o1.label, o2.label);
 	};
 
 	private Action showDlgAction;
@@ -192,7 +189,7 @@ public class ShowViewMenu extends ContributionItem {
 				actions.add(item);
 			}
 		}
-		Collections.sort(actions, actionComparator);
+		actions.sort(actionComparator);
 		for (Iterator i = actions.iterator(); i.hasNext();) {
 			CommandContributionItemParameter ccip = (CommandContributionItemParameter) i.next();
 			if (WorkbenchActivityHelper.filterItem(ccip)) {

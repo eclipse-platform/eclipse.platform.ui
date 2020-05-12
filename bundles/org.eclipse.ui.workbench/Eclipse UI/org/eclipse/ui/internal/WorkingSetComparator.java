@@ -20,17 +20,17 @@ import org.eclipse.ui.IWorkingSet;
 /**
  * Compares two working sets by name.
  */
-public class WorkingSetComparator implements Comparator {
+public class WorkingSetComparator implements Comparator<IWorkingSet> {
 
-	private static ThreadLocal INSTANCES = new ThreadLocal() {
+	private static ThreadLocal<WorkingSetComparator> INSTANCES = new ThreadLocal<WorkingSetComparator>() {
 		@Override
-		protected synchronized Object initialValue() {
+		protected synchronized WorkingSetComparator initialValue() {
 			return new WorkingSetComparator();
 		}
 	};
 
 	public static WorkingSetComparator getInstance() {
-		return (WorkingSetComparator) INSTANCES.get();
+		return INSTANCES.get();
 	}
 
 	private Collator fCollator = Collator.getInstance();
@@ -41,28 +41,15 @@ public class WorkingSetComparator implements Comparator {
 	 * @see Comparator#compare(Object, Object)
 	 */
 	@Override
-	public int compare(Object o1, Object o2) {
-		String name1 = null;
-		String name2 = null;
-
-		if (o1 instanceof IWorkingSet) {
-			name1 = ((IWorkingSet) o1).getLabel();
-		}
-
-		if (o2 instanceof IWorkingSet) {
-			name2 = ((IWorkingSet) o2).getLabel();
-		}
+	public int compare(IWorkingSet o1, IWorkingSet o2) {
+		String name1 = o1.getLabel();
+		String name2 = o2.getLabel();
 
 		int result = fCollator.compare(name1, name2);
 		if (result == 0) { // okay, same name - now try the unique id
 
-			if (o1 instanceof IWorkingSet) {
-				name1 = ((IWorkingSet) o1).getName();
-			}
-
-			if (o2 instanceof IWorkingSet) {
-				name2 = ((IWorkingSet) o2).getName();
-			}
+			name1 = o1.getName();
+			name2 = o2.getName();
 			result = name1.compareTo(name2);
 		}
 		return result;

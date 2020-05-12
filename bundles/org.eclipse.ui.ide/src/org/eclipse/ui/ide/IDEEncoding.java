@@ -17,7 +17,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.IllegalCharsetNameException;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 import org.eclipse.core.resources.ResourcesPlugin;
@@ -84,7 +83,7 @@ public final class IDEEncoding {
 			encodings.add(enc);
 		}
 
-		Collections.sort(encodings);
+		encodings.sort(null);
 		return encodings;
 	}
 

@@ -16,7 +16,6 @@ package org.eclipse.ui.examples.multipageeditor;
 import java.io.StringWriter;
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.StringTokenizer;
 
@@ -225,7 +224,7 @@ public class MultiPageEditorExample extends MultiPageEditorPart implements
 			editorWords.add(tokenizer.nextToken());
 		}
 
-		Collections.sort(editorWords, Collator.getInstance());
+		editorWords.sort(Collator.getInstance());
 		StringWriter displayText = new StringWriter();
 		for (String editorWord : editorWords) {
 			displayText.write((editorWord));

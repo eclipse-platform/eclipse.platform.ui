@@ -76,7 +76,7 @@ public class JobInfoTestOrdering {
 		ji = new ExtendedJobInfo(job);
 		jobinfos.add(ji);
 
-		Collections.sort(jobinfos);
+		jobinfos.sort(null);
 		assertEquals(Job.RUNNING,  jobinfos.get(0).getJob().getState());
 		assertEquals(Job.WAITING,  jobinfos.get(1).getJob().getState());
 		assertEquals(Job.SLEEPING, jobinfos.get(2).getJob().getState());
@@ -113,7 +113,7 @@ public class JobInfoTestOrdering {
 		jobInfos.add(new ExtendedJobInfo(job));
 
 		Collections.shuffle(jobInfos);
-		Collections.sort(jobInfos);
+		jobInfos.sort(null);
 		assertEquals(Job.INTERACTIVE, jobInfos.get(0).getJob().getPriority());
 		assertEquals(Job.SHORT,       jobInfos.get(1).getJob().getPriority());
 		assertEquals(Job.LONG,        jobInfos.get(2).getJob().getPriority());

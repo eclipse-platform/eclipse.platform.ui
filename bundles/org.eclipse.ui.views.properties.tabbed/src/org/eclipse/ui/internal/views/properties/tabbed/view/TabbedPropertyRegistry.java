@@ -16,7 +16,6 @@ package org.eclipse.ui.internal.views.properties.tabbed.view;
 
 import java.text.MessageFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -401,7 +400,7 @@ public class TabbedPropertyRegistry {
 	 * Sorts the tab descriptors in the given list according to category.
 	 */
 	protected List<TabDescriptor> sortTabDescriptorsByCategory(List<TabDescriptor> descriptors) {
-		Collections.sort(descriptors, (one, two) -> {
+		descriptors.sort((one, two) -> {
 			String categoryOne = one.getCategory();
 			String categoryTwo = two.getCategory();
 			int categoryOnePosition = getIndex(propertyCategories.toArray(), categoryOne);
@@ -437,7 +436,7 @@ public class TabbedPropertyRegistry {
 					categoryList.add(tabs.get(j));
 				}
 			}
-			Collections.sort(categoryList, (one, two) -> {
+			categoryList.sort((one, two) -> {
 				if (two.getAfterTab().equals(one.getId())) {
 					return -1;
 				} else if (one.getAfterTab().equals(two.getId())) {

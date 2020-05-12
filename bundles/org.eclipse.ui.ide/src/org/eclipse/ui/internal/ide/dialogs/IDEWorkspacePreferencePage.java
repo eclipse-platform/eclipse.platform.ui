@@ -20,7 +20,6 @@
 *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -540,7 +539,7 @@ public class IDEWorkspacePreferencePage extends PreferencePage implements IWorkb
 		clearUserSettings = true;
 
 		List<String> encodings = WorkbenchEncoding.getDefinedEncodings();
-		Collections.sort(encodings);
+		encodings.sort(null);
 		encodingEditor.loadDefault();
 		lineSeparatorEditor.loadDefault();
 		openReferencesEditor.loadDefault();

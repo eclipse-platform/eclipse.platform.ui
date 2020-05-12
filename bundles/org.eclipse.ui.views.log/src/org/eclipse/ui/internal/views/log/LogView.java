@@ -991,7 +991,7 @@ public class LogView extends ViewPart implements LogListener {
 					copy.addAll(children);
 				}
 
-				Collections.sort(copy, dateComparator);
+				copy.sort(dateComparator);
 				List<AbstractEntry> toRemove = copy.subList(0, copy.size() - limit);
 
 				for (AbstractEntry group : elements) {

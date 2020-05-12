@@ -16,7 +16,6 @@ package org.eclipse.ui.internal.monitoring;
 
 import java.lang.management.ThreadInfo;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
@@ -138,7 +137,7 @@ public class FilterHandler {
 			}
 		}
 
-		Collections.sort(stackFrames);
+		stackFrames.sort(null);
 		filterFrames = stackFrames.toArray(new StackFrame[stackFrames.size()]);
 		filterPatterns = stackPatterns.toArray(new Pattern[stackPatterns.size()]);
 	}

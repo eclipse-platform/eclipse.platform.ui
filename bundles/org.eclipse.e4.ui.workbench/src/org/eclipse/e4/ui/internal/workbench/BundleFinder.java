@@ -17,7 +17,6 @@
 package org.eclipse.e4.ui.internal.workbench;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
@@ -61,7 +60,7 @@ final class BundleFinder implements BundleTrackerCustomizer<List<Bundle>> {
 		case 1:
 			return snapshot.get(0);
 		default:
-			Collections.sort(snapshot, VersionComperator.INSTANCE); // sort the snapshot by version
+			snapshot.sort(VersionComperator.INSTANCE); // sort the snapshot by version
 			return snapshot.get(0); // the highest is the first entry in the list
 		}
 	}

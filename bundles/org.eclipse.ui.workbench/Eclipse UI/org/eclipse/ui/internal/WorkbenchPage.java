@@ -2464,7 +2464,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	 * @param partIds the collection of part ids to rearrange
 	 */
 	public void sortShowInPartIds(ArrayList<?> partIds) {
-		Collections.sort(partIds, (ob1, ob2) -> {
+		partIds.sort((ob1, ob2) -> {
 			int index1 = mruShowInPartIds.indexOf(ob1);
 			int index2 = mruShowInPartIds.indexOf(ob2);
 			if (index1 != -1 && index2 == -1)
@@ -4456,7 +4456,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 				// sort the list by activation order (most recently activated
 				// first)
-				Collections.sort(stack, (o1, o2) -> {
+				stack.sort((o1, o2) -> {
 					MPart model1 = o1.getModel();
 					MPart model2 = o2.getModel();
 

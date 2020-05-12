@@ -1640,7 +1640,7 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 
 			// Populate the category combo box.
 			List<String> categoryNames = new ArrayList<>(categoryIdsByUniqueName.keySet());
-			Collections.sort(categoryNames, Collator.getInstance());
+			categoryNames.sort(Collator.getInstance());
 			if (commandIdsByCategoryId.containsKey(null)) {
 				categoryNames.add(0, Util.translateString(RESOURCE_BUNDLE, "other")); //$NON-NLS-1$
 			}
@@ -1653,7 +1653,7 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 
 			// Populate the scheme combo box.
 			List<String> schemeNames = new ArrayList<>(schemeIdsByUniqueName.keySet());
-			Collections.sort(schemeNames, Collator.getInstance());
+			schemeNames.sort(Collator.getInstance());
 			comboScheme.setItems(schemeNames.toArray(new String[schemeNames.size()]));
 			setScheme(activeScheme);
 
@@ -1808,7 +1808,7 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 			String id2 = o2.getId();
 			return collator.compare(id1, id2);
 		};
-		Collections.sort(commands, comparator);
+		commands.sort(comparator);
 		return commands;
 	}
 
@@ -1820,7 +1820,7 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 		final Map<String, String> contextIdsByName = new HashMap<>(contextIdsByUniqueName);
 
 		final List<String> contextNames = new ArrayList<>(contextIdsByName.keySet());
-		Collections.sort(contextNames, Collator.getInstance());
+		contextNames.sort(Collator.getInstance());
 
 		comboContext.setItems(contextNames.toArray(new String[contextNames.size()]));
 		setContextId(contextId);
@@ -2058,7 +2058,7 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 
 		// Get a sorted list of key binding contents.
 		final List<Binding> bindings = new ArrayList<>(localChangeManager.getActiveBindingsDisregardingContextFlat());
-		Collections.sort(bindings, new Comparator<Binding>() {
+		bindings.sort(new Comparator<Binding>() {
 			/**
 			 * Compares two instances of <code>Binding</code> based on the current sort
 			 * order.

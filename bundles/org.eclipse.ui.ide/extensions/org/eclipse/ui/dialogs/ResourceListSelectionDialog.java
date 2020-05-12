@@ -18,7 +18,6 @@ package org.eclipse.ui.dialogs;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IResource;
@@ -869,7 +868,7 @@ public class ResourceListSelectionDialog extends SelectionDialog {
 		BusyIndicator.showWhile(getShell().getDisplay(), () -> {
 			if (!desc.resourcesSorted) {
 				// sort the folder names
-				Collections.sort(desc.resources, (o1, o2) -> {
+				desc.resources.sort((o1, o2) -> {
 					String s1 = getParentLabel((IResource) o1);
 					String s2 = getParentLabel((IResource) o2);
 					return collator.compare(s1, s2);

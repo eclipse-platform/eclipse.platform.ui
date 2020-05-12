@@ -17,7 +17,6 @@ package org.eclipse.ui.internal.registry;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -229,7 +228,7 @@ public class WizardsRegistryReader extends RegistryReader {
 		for (int i = 0; i < deferCategories.size(); i++) {
 			flatArray[i] = new CategoryNode((Category) deferCategories.get(i));
 		}
-		Collections.sort(Arrays.asList(flatArray), comparer);
+		Arrays.asList(flatArray).sort(comparer);
 
 		// Add each category.
 		for (CategoryNode categoryNode : flatArray) {

@@ -21,7 +21,6 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Objects;
 import org.eclipse.e4.ui.model.application.MApplication;
@@ -109,9 +108,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		private Collator collator = Collator.getInstance();
 
 		@Override
-		public int compare(IPerspectiveDescriptor ob1, IPerspectiveDescriptor ob2) {
-			IPerspectiveDescriptor d1 = ob1;
-			IPerspectiveDescriptor d2 = ob2;
+		public int compare(IPerspectiveDescriptor d1, IPerspectiveDescriptor d2) {
 			return collator.compare(d1.getLabel(), d2.getLabel());
 		}
 	};
@@ -234,7 +231,7 @@ public class PerspectivesPreferencePage extends PreferencePage implements IWorkb
 		for (int i = 0; i < persps.length; i++) {
 			perspectives.add(i, persps[i]);
 		}
-		Collections.sort(perspectives, comparator);
+		perspectives.sort(comparator);
 		defaultPerspectiveId = perspectiveRegistry.getDefaultPerspective();
 		updatePerspectivesTable();
 

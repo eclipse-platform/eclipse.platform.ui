@@ -15,7 +15,6 @@ package org.eclipse.ui.internal.dialogs;
 
 import java.text.Collator;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Comparator;
 import org.eclipse.jface.preference.IPreferencePage;
 import org.eclipse.jface.preference.PreferencePage;
@@ -146,7 +145,7 @@ public class DecoratorsPreferencePage extends PreferencePage implements IWorkben
 				Object[] elements = (Object[]) inputElement;
 				Object[] results = new Object[elements.length];
 				System.arraycopy(elements, 0, results, 0, elements.length);
-				Collections.sort(Arrays.asList(results), comparer);
+				Arrays.asList(results).sort(comparer);
 				return results;
 			}
 

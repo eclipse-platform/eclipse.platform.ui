@@ -17,7 +17,6 @@ package org.eclipse.e4.ui.internal.workbench;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -143,13 +142,13 @@ public abstract class TopologicalSort<T, ID> {
 			}
 			return comparison;
 		};
-		Collections.sort(sortedByOutdegree, outdegreeSorter);
+		sortedByOutdegree.sort(outdegreeSorter);
 
 		while (!sortedByOutdegree.isEmpty()) {
 			// don't sort unnecessarily: the current ordering is fine providing
 			// item #0 still has no dependencies
 			if (!requires.get(sortedByOutdegree.get(0)).isEmpty()) {
-				Collections.sort(sortedByOutdegree, outdegreeSorter);
+				sortedByOutdegree.sort(outdegreeSorter);
 			}
 			LinkedList<ID> cycleToBeDone = new LinkedList<>();
 			cycleToBeDone.add(sortedByOutdegree.remove(0));

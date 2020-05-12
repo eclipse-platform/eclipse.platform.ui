@@ -17,7 +17,6 @@ package org.eclipse.ui.internal.registry;
 
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -80,7 +79,7 @@ public class PreferenceTransferRegistryReader extends RegistryReader {
 	public PreferenceTransferElement[] getPreferenceTransfers() {
 		readPreferenceTransfers();
 		PreferenceTransferElement[] transfers = new PreferenceTransferElement[preferenceTransfers.size()];
-		Collections.sort(preferenceTransfers, (o1, o2) -> {
+		preferenceTransfers.sort((o1, o2) -> {
 			String name1 = o1.getName();
 			String name2 = o2.getName();
 

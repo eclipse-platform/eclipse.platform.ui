@@ -16,8 +16,6 @@ package org.eclipse.ui.actions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.action.IContributionItem;
@@ -104,9 +102,9 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 			@Override
 			protected IContributionItem[] getContributionItems() {
 				IWorkingSet[] workingSets = PlatformUI.getWorkbench().getWorkingSetManager().getRecentWorkingSets();
-				List items = new ArrayList(workingSets.length);
-				List sortedWorkingSets = Arrays.asList(workingSets);
-				Collections.sort(sortedWorkingSets, new WorkingSetComparator());
+				List<IContributionItem> items = new ArrayList<>(workingSets.length);
+				List<IWorkingSet> sortedWorkingSets = Arrays.asList(workingSets);
+				sortedWorkingSets.sort(new WorkingSetComparator());
 
 				int mruMenuCount = 0;
 				if (page != null && page.getAggregateWorkingSet() != null) {
@@ -114,15 +112,14 @@ public class WorkingSetFilterActionGroup extends ActionGroup {
 							WorkingSetFilterActionGroup.this, page.getAggregateWorkingSet());
 					items.add(item);
 				}
-				for (Iterator i = sortedWorkingSets.iterator(); i.hasNext();) {
-					IWorkingSet workingSet = (IWorkingSet) i.next();
+				for (IWorkingSet workingSet : sortedWorkingSets) {
 					if (workingSet != null && !workingSet.isAggregateWorkingSet()) {
 						IContributionItem item = new WorkingSetMenuContributionItem(++mruMenuCount,
 								WorkingSetFilterActionGroup.this, workingSet);
 						items.add(item);
 					}
 				}
-				return (IContributionItem[]) items.toArray(new IContributionItem[items.size()]);
+				return items.toArray(new IContributionItem[items.size()]);
 			}
 		};
 

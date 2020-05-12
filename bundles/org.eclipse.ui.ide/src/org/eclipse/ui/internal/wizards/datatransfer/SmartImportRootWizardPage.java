@@ -499,7 +499,7 @@ public class SmartImportRootWizardPage extends WizardPage {
 				message.append('\n');
 				List<String> extensionsLabels = new ArrayList<>(
 						ProjectConfiguratorExtensionManager.getAllExtensionLabels());
-				Collections.sort(extensionsLabels);
+				extensionsLabels.sort(null);
 				for (String extensionLabel : extensionsLabels) {
 					message.append("* "); //$NON-NLS-1$
 					message.append(extensionLabel);

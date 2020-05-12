@@ -17,7 +17,6 @@ package org.eclipse.ui.actions;
 
 import java.text.Collator;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -182,7 +181,7 @@ public abstract class PerspectiveMenu extends ContributionItem {
 
 		// Collect and sort perspective descriptors.
 		final List<IPerspectiveDescriptor> persps = getPerspectiveItems();
-		Collections.sort(persps, comparator);
+		persps.sort(comparator);
 
 		/*
 		 * Convert the perspective descriptors to actions, and filter out actions using

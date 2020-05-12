@@ -17,7 +17,6 @@ package org.eclipse.ui.internal.ide.registry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -166,7 +165,7 @@ public class MarkerHelpRegistry implements IMarkerHelpRegistry {
 			Set<MarkerQuery> set = helpQueries.keySet();
 			sortedHelpQueries = new ArrayList<>(set.size());
 			sortedHelpQueries.addAll(set);
-			Collections.sort(sortedHelpQueries, new QueryComparator());
+			sortedHelpQueries.sort(new QueryComparator());
 		}
 
 	    // Return the first match (we assume there is only one)

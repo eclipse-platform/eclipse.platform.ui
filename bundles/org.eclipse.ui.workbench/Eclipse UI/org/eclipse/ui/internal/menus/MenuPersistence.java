@@ -17,7 +17,6 @@
 package org.eclipse.ui.internal.menus;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.Iterator;
 import java.util.regex.Pattern;
@@ -127,7 +126,7 @@ final public class MenuPersistence extends RegistryPersistence {
 				}
 			}
 		}
-		Collections.sort(configElements, comparer);
+		configElements.sort(comparer);
 		Iterator<IConfigurationElement> i = configElements.iterator();
 		while (i.hasNext()) {
 			final IConfigurationElement configElement = i.next();
