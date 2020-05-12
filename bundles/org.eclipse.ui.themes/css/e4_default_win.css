@@ -13,7 +13,7 @@
  *     Lars Vogel <Lars.Vogel@gmail.com> - Bug 420836
  *     Frank Appel <fappel@codeaffine.com> - Bug 325937
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 501250
- *     Pierre-Yves B. <pyvesdev@gmail.com> - Bug 559434, bug 551462
+ *     Pierre-Yves B. <pyvesdev@gmail.com> - Bug 551462
  *******************************************************************************/
 
 @import url("platform:/plugin/org.eclipse.ui.themes/css/e4_basestyle.css");
@@ -81,11 +81,4 @@ CTabFolder.MArea {
 
 CTabFolder Canvas {
 	background-color: #F8F8F8;
-}
-
-Tree {
-	swt-selection-background-color: #cce8ff;
-	swt-hot-background-color: #e5f3ff;
-	swt-selection-border-color: #99d1ff;
-	swt-hot-border-color: #e5f3ff;
 }
