@@ -16,7 +16,6 @@ package org.eclipse.e4.tools.emf.ui.internal.common.properties;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import javax.inject.Named;
@@ -231,7 +230,7 @@ public class ExportIdsHandler {
 				}
 			}
 
-			Collections.sort(entries);
+			entries.sort(null);
 
 			viewer.setContentProvider(new ArrayContentProvider());
 			viewer.setInput(entries);

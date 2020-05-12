@@ -19,7 +19,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -725,7 +724,7 @@ public class ListTab implements IViewEObjects {
 			}
 		}
 		final ArrayList<String> sorted = new ArrayList<>(set);
-		Collections.sort(sorted);
+		sorted.sort(null);
 
 		// Select Attribute
 		final ILabelProvider renderer = new LabelProvider() {
@@ -762,7 +761,7 @@ public class ListTab implements IViewEObjects {
 		}
 
 		final ArrayList<String> sorted = new ArrayList<>(set);
-		Collections.sort(sorted);
+		sorted.sort(null);
 
 		final ILabelProvider renderer = new LabelProvider() {
 			@Override

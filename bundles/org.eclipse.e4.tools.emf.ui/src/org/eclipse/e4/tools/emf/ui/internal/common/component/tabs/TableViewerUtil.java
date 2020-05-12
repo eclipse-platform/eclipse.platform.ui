@@ -16,7 +16,6 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component.tabs;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 import org.eclipse.jface.viewers.ColumnLabelProvider;
 import org.eclipse.jface.viewers.TableViewer;
@@ -205,7 +204,7 @@ public class TableViewerUtil {
 	static public ArrayList<TableColumn> getColumnsInDisplayOrder(TableViewer viewer) {
 		final ArrayList<TableColumn> allCols = new ArrayList<>(Arrays.asList(viewer.getTable().getColumns()));
 		final int[] order = viewer.getTable().getColumnOrder();
-		Collections.sort(allCols, (o1, o2) -> order[allCols.indexOf(o1)] - order[allCols.indexOf(o2)]);
+		allCols.sort((o1, o2) -> order[allCols.indexOf(o1)] - order[allCols.indexOf(o2)]);
 		return allCols;
 	}
 

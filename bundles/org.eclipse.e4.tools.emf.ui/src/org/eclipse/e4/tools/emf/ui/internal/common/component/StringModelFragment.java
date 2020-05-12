@@ -494,7 +494,7 @@ public class StringModelFragment extends AbstractComponentEditor<MStringModelFra
 				}
 			}
 
-			Collections.sort(contents, (o1, o2) -> o1[0].compareTo(o2[0]));
+			contents.sort((o1, o2) -> o1[0].compareTo(o2[0]));
 
 			IContentProposal[] contentProposals = new IContentProposal[contents.size()];
 			for (int i = 0; i < contents.size(); i++) {
@@ -570,7 +570,7 @@ public class StringModelFragment extends AbstractComponentEditor<MStringModelFra
 	public List<Action> getActions(Object element) {
 		final ArrayList<Action> l = new ArrayList<>(super.getActions(element));
 		l.addAll(actions);
-		Collections.sort(l, (o1, o2) -> o1.getText().compareTo(o2.getText()));
+		l.sort((o1, o2) -> o1.getText().compareTo(o2.getText()));
 		return l;
 	}
 

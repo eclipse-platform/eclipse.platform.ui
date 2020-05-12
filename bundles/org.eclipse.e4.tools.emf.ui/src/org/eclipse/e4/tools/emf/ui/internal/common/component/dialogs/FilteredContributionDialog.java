@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2017 TwelveTone LLC and others.
+ * Copyright (c) 2014, 2020 TwelveTone LLC and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -24,7 +24,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
@@ -670,7 +669,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 		}
 
 		final ArrayList<String> sorted = new ArrayList<>(bundleIds);
-		Collections.sort(sorted);
+		sorted.sort(null);
 
 		final TitleAreaFilterDialog dlg = new TitleAreaFilterDialog(getShell(), new ColumnLabelProvider()) {
 			@Override
@@ -710,7 +709,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 		}
 
 		final ArrayList<String> sorted = new ArrayList<>(packages);
-		Collections.sort(sorted);
+		sorted.sort(null);
 
 		final TitleAreaFilterDialog dlg = new TitleAreaFilterDialog(getShell(), new ColumnLabelProvider()) {
 			@Override
@@ -772,7 +771,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 		}
 
 		final ArrayList<String> sorted = new ArrayList<>(parentLocations);
-		Collections.sort(sorted);
+		sorted.sort(null);
 
 		final TitleAreaFilterDialog dlg = new TitleAreaFilterDialog(getShell(), new ColumnLabelProvider()) {
 			@Override

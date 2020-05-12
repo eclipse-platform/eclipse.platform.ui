@@ -16,7 +16,6 @@ package org.eclipse.e4.tools.emf.ui.internal.common.component.virtual;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
@@ -108,7 +107,7 @@ public class VWindowControlEditor extends AbstractComponentEditor<MElementContai
 			}
 		});
 
-		Collections.sort(actions, (o1, o2) -> o1.getText().compareTo(o2.getText()));
+		actions.sort((o1, o2) -> o1.getText().compareTo(o2.getText()));
 	}
 
 	@Override
