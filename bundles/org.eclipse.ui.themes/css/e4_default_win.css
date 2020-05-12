@@ -35,11 +35,11 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_OUTLINE_COLOR {
 }
 
 ColorDefinition#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_START {
-	color: #DADADA;
+	color: #F2F2F2;
 }
 
 ColorDefinition#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_END {
-	color: #D7D7D7;
+	color: #F0F0F0;
 }
 
 ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_OUTER_KEYLINE_COLOR {
