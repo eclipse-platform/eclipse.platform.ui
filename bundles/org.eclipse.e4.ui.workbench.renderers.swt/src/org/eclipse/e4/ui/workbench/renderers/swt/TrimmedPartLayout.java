@@ -187,87 +187,82 @@ public class TrimmedPartLayout extends Layout {
 	 * @return
 	 */
 	public Composite getTrimComposite(Composite parent, int side) {
-		if (side == SWT.TOP) {
+		switch (side) {
+		case SWT.TOP:
 			if (top == null) {
 				top = new Composite(parent, SWT.NONE);
 				top.setLayout(new TrimBarLayout(true));
 				top.addDisposeListener(e -> top = null);
 			}
 			return top;
-		} else if (side == SWT.BOTTOM) {
+		case SWT.BOTTOM:
 			if (bottom == null) {
 				bottom = new Composite(parent, SWT.NONE);
 				bottom.setLayout(new TrimBarLayout(true));
 				bottom.addDisposeListener(e -> bottom = null);
 			}
 			return bottom;
-		} else if (side == SWT.LEFT) {
+		case SWT.LEFT:
 			if (left == null) {
 				left = new Composite(parent, SWT.NONE);
 				left.setLayout(new TrimBarLayout(false));
 				left.addDisposeListener(e -> left = null);
 			}
 			return left;
-		} else if (side == SWT.RIGHT) {
+		case SWT.RIGHT:
 			if (right == null) {
 				right = new Composite(parent, SWT.NONE);
 				right.setLayout(new TrimBarLayout(false));
 				right.addDisposeListener(e -> right = null);
 			}
 			return right;
+		default:
+			// Unknown location
+			return null;
 		}
-
-		// Unknown location
-		return null;
 	}
 
 	public Rectangle getTrimRect(int side) {
 		Rectangle caBounds = clientArea.getBounds();
-		caBounds = Display.getCurrent().map(clientArea.getParent(), null,
-				caBounds);
+		caBounds = Display.getCurrent().map(clientArea.getParent(), null, caBounds);
 
-		if (side == SWT.TOP) {
+		switch (side) {
+		case SWT.TOP:
 			if (top != null) {
 				Rectangle b = top.getBounds();
 				return top.getDisplay().map(top.getParent(), null, b);
 			}
-
 			// Fake one
 			caBounds.height = 25;
 			return caBounds;
-		}
-		if (side == SWT.BOTTOM) {
+		case SWT.BOTTOM:
 			if (bottom != null) {
 				Rectangle b = bottom.getBounds();
 				return bottom.getDisplay().map(bottom.getParent(), null, b);
 			}
-
 			// Fake one
 			caBounds.y = (caBounds.y + caBounds.height) - 25;
 			caBounds.height = 25;
 			return caBounds;
-		}
-		if (side == SWT.LEFT) {
+		case SWT.LEFT:
 			if (left != null && left.getChildren().length > 0) {
 				Rectangle b = left.getBounds();
 				return left.getDisplay().map(left.getParent(), null, b);
 			}
-
 			// Fake one
 			caBounds.width = 25;
 			return caBounds;
-		}
-		if (side == SWT.RIGHT) {
+		case SWT.RIGHT:
 			if (right != null && right.getChildren().length > 0) {
 				Rectangle b = right.getBounds();
 				return right.getDisplay().map(right.getParent(), null, b);
 			}
-
 			// Fake one
 			caBounds.x = (caBounds.x + caBounds.width) - 25;
 			caBounds.width = 25;
 			return caBounds;
+		default:
+			return null;
 		}
-		return null;
 	}
 }
