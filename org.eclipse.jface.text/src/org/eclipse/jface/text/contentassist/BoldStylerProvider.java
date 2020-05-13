@@ -25,10 +25,7 @@ import org.eclipse.jface.viewers.StyledString.Styler;
  * Provides {@link Styler} that applies bold style on the given font.
  *
  * @since 3.11
- *
- * @deprecated use {@link org.eclipse.jface.viewers.BoldStylerProvider} directly
  */
-@Deprecated
 public final class BoldStylerProvider {
 
 	private Font fFont;
