@@ -226,7 +226,7 @@ public class ModelObjectWriter implements IModelObjectConstants {
 			if (links != null) {
 				// ensure consistent order of map elements
 				List<LinkDescription> sorted = new ArrayList<>(links.values());
-				Collections.sort(sorted);
+				sorted.sort(null);
 				write(LINKED_RESOURCES, sorted, writer);
 			}
 			HashMap<IPath, LinkedList<FilterDescription>> filters = description.getFilters();
@@ -236,13 +236,13 @@ public class ModelObjectWriter implements IModelObjectConstants {
 					List<FilterDescription> list = linkedList;
 					sorted.addAll(list);
 				}
-				Collections.sort(sorted);
+				sorted.sort(null);
 				write(FILTERED_RESOURCES, sorted, writer);
 			}
 			HashMap<String, VariableDescription> variables = description.getVariables();
 			if (variables != null) {
 				List<VariableDescription> sorted = new ArrayList<>(variables.values());
-				Collections.sort(sorted);
+				sorted.sort(null);
 				write(VARIABLE_LIST, sorted, writer);
 			}
 		}
@@ -264,7 +264,7 @@ public class ModelObjectWriter implements IModelObjectConstants {
 		if (table != null) {
 			// ensure consistent order of map elements
 			List<String> sorted = new ArrayList<>(table.keySet());
-			Collections.sort(sorted);
+			sorted.sort(null);
 
 			for (String key : sorted) {
 				Object value = table.get(key);

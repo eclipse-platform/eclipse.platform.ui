@@ -870,7 +870,7 @@ public class ProjectPreferencesTest extends ResourceTest {
 				}
 			}
 			assertEquals(2, lines.size());
-			Collections.sort(lines);
+			lines.sort(null);
 			assertTrue(lines.get(0).equals("KEY=VALUE"));
 			assertTrue(lines.get(1).equals("NEW_KEY=NEW_VALUE"));
 		} catch (IOException e) {

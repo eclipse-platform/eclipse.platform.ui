@@ -207,7 +207,7 @@ public class CountResourcesAction implements IWorkbenchWindowActionDelegate {
 			return;
 
 		//	we sort the resources list by path so it is easier to check for redundancies
-		Collections.sort(resourcesList, (resource1, resource2) -> resource1.getFullPath().toString().compareTo(resource2.getFullPath().toString()));
+		resourcesList.sort((resource1, resource2) -> resource1.getFullPath().toString().compareTo(resource2.getFullPath().toString()));
 
 		// We iterate through the list removing any resource which is descendant
 		// from any resource previously visited

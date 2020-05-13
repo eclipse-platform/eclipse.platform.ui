@@ -157,40 +157,6 @@ public class CharsetTest extends ResourceTest {
 		}
 	}
 
-	//	private void checkPreferencesContent(String tag, IFile prefs, String[] lines) {
-	//		BufferedReader br = null;
-	//		try {
-	//			br = new BufferedReader(new FileReader(prefs.getLocation().toFile()));
-	//			List<String> actualList = new ArrayList<String>();
-	//			String line = br.readLine();
-	//			while (line != null) {
-	//				if (!line.startsWith("#")) {
-	//					actualList.add(line);
-	//				}
-	//				line = br.readLine();
-	//			}
-	//
-	//			assertEquals(tag, lines.length, actualList.size());
-	//			List<String> expectedLines = Arrays.asList(lines);
-	//			Collections.sort(expectedLines);
-	//			Collections.sort(actualList);
-	//			for (int i = 0; i < expectedLines.size(); i++) {
-	//				assertTrue(tag, expectedLines.get(i).equals(actualList.get(i)));
-	//			}
-	//		} catch (FileNotFoundException e) {
-	//			fail(tag, e);
-	//		} catch (IOException e) {
-	//			fail(tag, e);
-	//		} finally {
-	//			if (br != null)
-	//				try {
-	//					br.close();
-	//				} catch (IOException e) {
-	//					fail(tag, e);
-	//				}
-	//		}
-	//	}
-
 	private void clearAllEncodings(IResource root) throws CoreException {
 		if (root == null || !root.exists()) {
 			return;

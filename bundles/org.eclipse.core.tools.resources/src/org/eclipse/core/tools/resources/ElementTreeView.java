@@ -117,7 +117,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 
 		void analyzeStrings() {
 			sortedList = new ArrayList<>(strings.values());
-			Collections.sort(sortedList);
+			sortedList.sort(null);
 		}
 
 		void analyzeTrees() {
@@ -323,7 +323,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 		private List<Map.Entry<Object, Integer>> sortEntrySet(Set<Map.Entry<Object, Integer>> set) {
 			List<Map.Entry<Object, Integer>> result = new ArrayList<>();
 			result.addAll(set);
-			Collections.sort(result, (arg0, arg1) -> arg1.getValue().intValue() - arg0.getValue().intValue());
+			result.sort((arg0, arg1) -> arg1.getValue().intValue() - arg0.getValue().intValue());
 			return result;
 		}
 
