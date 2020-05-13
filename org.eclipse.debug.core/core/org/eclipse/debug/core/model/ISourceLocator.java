@@ -14,8 +14,6 @@
 package org.eclipse.debug.core.model;
 
 
-import org.eclipse.debug.core.model.IStackFrame;
-
 /**
  * A source locator locates source elements for stack frames. A launch (optionally)
  * specifies a source locator which is
