@@ -15,8 +15,6 @@ package org.eclipse.ui;
 
 import java.net.URI;
 
-import org.eclipse.ui.IEditorInput;
-
 /**
  * This interface defines an editor input based on a URI.
  * <p>
