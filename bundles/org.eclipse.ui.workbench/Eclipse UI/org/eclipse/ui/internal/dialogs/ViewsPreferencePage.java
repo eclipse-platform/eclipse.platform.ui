@@ -91,7 +91,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	private ControlDecoration themeComboDecorator;
 	private ITheme currentTheme;
 	private String defaultTheme;
-	private Button enableAnimations;
 	private Button enableMru;
 	private Button useColoredLabels;
 
@@ -173,7 +172,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	}
 
 	private void createThemeIndependentComposits(Composite comp) {
-		createEnableAnimationsPref(comp);
 		createColoredLabelsPref(comp);
 		createEnableMruPref(comp);
 	}
@@ -239,12 +237,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		enableMru = createCheckButton(composite, WorkbenchMessages.ViewsPreference_enableMRU, actualValue);
 	}
 
-	protected void createEnableAnimationsPref(Composite composite) {
-		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
-
-		enableAnimations = createCheckButton(composite, WorkbenchMessages.ViewsPreference_enableAnimations,
-				apiStore.getBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS));
-	}
 
 	/** @return the currently selected theme or null if there are no themes */
 	private ITheme getSelectedTheme() {
@@ -269,7 +261,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		}
 
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
-		apiStore.setValue(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS, enableAnimations.getSelection());
 		apiStore.setValue(IWorkbenchPreferenceConstants.USE_COLORED_LABELS, useColoredLabels.getSelection());
 
 		IEclipsePreferences prefs = getSwtRendererPreferences();
@@ -311,7 +302,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			}
 		}
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
-		enableAnimations.setSelection(apiStore.getDefaultBoolean(IWorkbenchPreferenceConstants.ENABLE_ANIMATIONS));
 		useColoredLabels.setSelection(apiStore.getDefaultBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS));
 		if (enableMru != null) {
 			enableMru.setSelection(getDefaultMRUValue());
