@@ -19,9 +19,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWindowListener;
@@ -32,7 +30,6 @@ import org.eclipse.ui.application.IActionBarConfigurer;
 import org.eclipse.ui.application.IWorkbenchConfigurer;
 import org.eclipse.ui.application.IWorkbenchWindowConfigurer;
 import org.eclipse.ui.application.WorkbenchAdvisor;
-import org.eclipse.ui.internal.progress.ProgressManagerUtil;
 import org.eclipse.ui.tests.rcp.util.WorkbenchAdvisorObserver;
 import org.junit.After;
 import org.junit.Before;
@@ -291,18 +288,6 @@ public class WorkbenchAdvisorTest {
 				super.preWindowOpen(configurer);
 				configurer.setShowProgressIndicator(false);
 			}
-
-			@Override
-			public void postWindowOpen(IWorkbenchWindowConfigurer configurer) {
-				try {
-					ProgressManagerUtil.animateUp(new Rectangle(0, 0, 100, 50));
-				}
-				catch (NullPointerException e) {
-					// we shouldn't get here
-					fail(e.getMessage());
-				}
-			}
-
 		};
 
 		int code = PlatformUI.createAndRunWorkbench(display, wa);

@@ -95,7 +95,6 @@ public class StatusDialogManagerTest {
 		automatedMode = ErrorDialog.AUTOMATED_MODE;
 		wsdm = new WorkbenchStatusDialogManager(null);
 		ErrorDialog.AUTOMATED_MODE = false;
-		wsdm.setProperty(IStatusDialogConstants.ANIMATION, Boolean.FALSE);
 		FreezeMonitor.expectCompletionIn(60_000);
 	}
 

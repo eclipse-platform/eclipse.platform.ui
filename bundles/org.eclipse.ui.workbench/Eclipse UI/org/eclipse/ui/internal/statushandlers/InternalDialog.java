@@ -307,11 +307,6 @@ public class InternalDialog extends TrayDialog {
 			if (getBooleanValue(IStatusDialogConstants.TRAY_OPENED)) {
 				openTray();
 			}
-		} else {
-			if (getBooleanValue(IStatusDialogConstants.ANIMATION)) {
-				Rectangle shellPosition = getShell().getBounds();
-				ProgressManagerUtil.animateUp(shellPosition);
-			}
 		}
 		return result;
 	}
@@ -654,9 +649,6 @@ public class InternalDialog extends TrayDialog {
 		dialogState.put(IStatusDialogConstants.SHELL_BOUNDS, getShell().getBounds());
 		statusListViewer = null;
 		boolean result = super.close();
-		if (!modalitySwitch && getBooleanValue(IStatusDialogConstants.ANIMATION)) {
-			ProgressManagerUtil.animateDown(getShellBounds());
-		}
 		return result;
 	}
 
