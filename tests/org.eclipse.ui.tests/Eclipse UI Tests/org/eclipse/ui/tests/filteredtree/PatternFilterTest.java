@@ -23,6 +23,7 @@ import org.eclipse.jface.viewers.ContentViewer;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.dialogs.PatternFilter;
+import org.eclipse.ui.internal.misc.StringMatcher;
 import org.eclipse.ui.tests.harness.util.TestRunLogUtil;
 import org.junit.Before;
 import org.junit.Rule;
@@ -95,6 +96,13 @@ public class PatternFilterTest {
 
 		filter.setPattern("jre");
 		assertTrue(filter.select(viewer, null, "Java build path buildpath problem exclusion inclusion pattern folder outputfolder filtered resource output compiler 1.5 5.0 J2SE5 project specific projectspecific strictly compatible JRE execution environment"));
+	}
+
+	@Test
+	public void testStringMatcher() {
+		assertTrue(new StringMatcher("huhn h?hner", false, false).match("hahn henne hühner küken huhn"));
+		assertFalse(new StringMatcher("fo*ar", false, false).match("foobar_123"));
+		assertFalse(new StringMatcher("fo*ar", false, false).match("foobar_baz"));
 	}
 
 	@Test
