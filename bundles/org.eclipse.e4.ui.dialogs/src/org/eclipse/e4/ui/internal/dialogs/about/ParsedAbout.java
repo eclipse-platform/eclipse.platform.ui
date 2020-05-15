@@ -18,54 +18,43 @@ import java.util.Optional;
 /**
  * Holds the information for text appearing in the about dialog
  */
-public class AboutItem {
+public class ParsedAbout {
 	private final String text;
-
-	private final List<HyperlinkRange> linkRanges = new ArrayList<>();
-
-	private final List<String> hrefs;
+	private final List<HyperlinkRange> ranges = new ArrayList<>();
+	private final List<String> links = new ArrayList<>();
 
 	/**
 	 * Creates a new about item
 	 */
-	public AboutItem(String text, List<HyperlinkRange> linkRanges, List<String> links) {
+	ParsedAbout(String text, List<HyperlinkRange> linkRanges, List<String> links) {
 		this.text = text;
-		this.linkRanges.addAll(linkRanges);
-		this.hrefs = links;
+		this.ranges.addAll(linkRanges);
+		this.links.addAll(links);
 	}
 
 	/**
 	 * Returns the link ranges (character locations)
 	 */
-	public List<HyperlinkRange> getLinkRanges() {
-		return linkRanges;
+	public List<HyperlinkRange> linkRanges() {
+		return ranges;
 	}
 
 	/**
 	 * Returns the text to display
 	 */
-	public String getText() {
+	public String text() {
 		return text;
 	}
 
 	/**
-	 * Returns true if a link is present at the given character location
+	 * Returns the {@link Optional} that contains a link at the given offset (if
+	 * there is one), otherwise returns empty {@link Optional}.
 	 */
-	public boolean isLinkAt(int offset) {
+	public Optional<String> linkAt(int offset) {
 		// Check if there is a link at the offset
-		Optional<HyperlinkRange> potentialMatch = linkRanges.stream().filter(r -> r.contains(offset)).findAny();
-		return potentialMatch.isPresent();
-	}
-
-	/**
-	 * Returns the link at the given offset (if there is one), otherwise returns
-	 * <code>null</code>.
-	 */
-	public Optional<String> getLinkAt(int offset) {
-		// Check if there is a link at the offset
-		for (int i = 0; i < linkRanges.size(); i++) {
-			if (linkRanges.get(i).contains(offset)) {
-				return Optional.of(hrefs.get(i));
+		for (int i = 0; i < ranges.size(); i++) {
+			if (ranges.get(i).contains(offset)) {
+				return Optional.of(links.get(i));
 			}
 		}
 		return Optional.empty();

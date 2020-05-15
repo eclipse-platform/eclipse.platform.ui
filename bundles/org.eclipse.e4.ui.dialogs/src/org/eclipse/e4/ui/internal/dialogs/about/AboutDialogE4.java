@@ -82,7 +82,7 @@ public class AboutDialogE4 extends TrayDialog {
 	protected Control createDialogArea(final Composite parent) {
 		// brand the about box if there is product info
 		Optional<Image> aboutImage = Optional.empty();
-		Optional<AboutItem> aboutItem = Optional.empty();
+		Optional<ParsedAbout> aboutItem = Optional.empty();
 
 		// if the about image is small enough, then show the text
 		aboutImage = product.getAboutImage();
@@ -128,7 +128,7 @@ public class AboutDialogE4 extends TrayDialog {
 		return workArea;
 	}
 
-	private void createTextWidget(final Composite parent, AboutItem aboutItem, Color background, Color foreground,
+	private void createTextWidget(final Composite parent, ParsedAbout aboutItem, Color background, Color foreground,
 			final Composite topContainer) {
 		final Composite textComposite = WidgetFactory.composite(SWT.NONE).background(background).create(topContainer);
 
@@ -137,7 +137,7 @@ public class AboutDialogE4 extends TrayDialog {
 
 		textWidget = new StyledText(textComposite, SWT.MULTI | SWT.WRAP | SWT.BORDER | SWT.V_SCROLL | SWT.READ_ONLY);
 		textWidget.setFont(parent.getFont());
-		textWidget.setText(aboutItem.getText());
+		textWidget.setText(aboutItem.text());
 		textWidget.setBackground(background);
 		textWidget.setForeground(foreground);
 		textWidget.setAlwaysShowScrollBars(false);

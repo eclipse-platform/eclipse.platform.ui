@@ -49,13 +49,13 @@ public class AboutText {
 	private boolean mouseDown = false;
 	private boolean dragEvent = false;
 
-	private AboutItem item;
+	private ParsedAbout item;
 
-	public AboutText(final Supplier<AboutItem> item) {
+	public AboutText(final Supplier<ParsedAbout> item) {
 		this.setItem(item.get());
 	}
 
-	public AboutText(StyledText text, final Supplier<AboutItem> item) {
+	public AboutText(StyledText text, final Supplier<ParsedAbout> item) {
 		this.styledText = text;
 		this.setItem(item.get());
 		createCursors();
@@ -77,7 +77,7 @@ public class AboutText {
 		}
 
 		HyperlinkExtractor hyperlinkExtractor = new HyperlinkExtractor(aboutProperty);
-		setItem(new AboutItem(aboutProperty, hyperlinkExtractor.getLinkRanges(), hyperlinkExtractor.getLinks()));
+		setItem(new ParsedAbout(aboutProperty, hyperlinkExtractor.getLinkRanges(), hyperlinkExtractor.getLinks()));
 	}
 
 	private void createCursors() {
@@ -108,18 +108,15 @@ public class AboutText {
 			public void mouseUp(MouseEvent e) {
 				mouseDown = false;
 				int offset = styledText.getCaretOffset();
+				Optional<String> link = safeLinkAt(offset);
 				if (dragEvent) {
 					// don't activate a link during a drag/mouse up operation
 					dragEvent = false;
-					if (item != null && item.isLinkAt(offset)) {
+					if (link.isPresent()) {
 						styledText.setCursor(handCursor);
 					}
-				} else if (item != null && item.isLinkAt(offset)) {
-					styledText.setCursor(busyCursor);
-					item.getLinkAt(offset).ifPresent(l -> Program.launch(l));
-					StyleRange selectionRange = getCurrentRange();
-					styledText.setSelectionRange(selectionRange.start, selectionRange.length);
-					styledText.setCursor(null);
+				} else if (link.isPresent()) {
+					launch(styledText, link.get());
 				}
 			}
 		});
@@ -143,7 +140,7 @@ public class AboutText {
 			}
 			if (offset == -1) {
 				text.setCursor(null);
-			} else if (item != null && item.isLinkAt(offset)) {
+			} else if (safeLinkAt(offset).isPresent()) {
 				text.setCursor(handCursor);
 			} else {
 				text.setCursor(null);
@@ -204,24 +201,26 @@ public class AboutText {
 		styledText.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent event) {
-				StyledText text = (StyledText) event.widget;
 				if (event.character == ' ' || event.character == SWT.CR) {
-					if (item != null) {
-						// Be sure we are in the selection
-						int offset = text.getSelection().x + 1;
-
-						if (item.isLinkAt(offset)) {
-							text.setCursor(busyCursor);
-							item.getLinkAt(offset).ifPresent(l -> Program.launch(l));
-							StyleRange selectionRange = getCurrentRange();
-							text.setSelectionRange(selectionRange.start, selectionRange.length);
-							text.setCursor(null);
-						}
-					}
-					return;
+					StyledText text = (StyledText) event.widget;
+					// Be sure we are in the selection
+					int offset = text.getSelection().x + 1;
+					safeLinkAt(offset).ifPresent(l -> launch(text, l));
 				}
 			}
 		});
+	}
+
+	private Optional<String> safeLinkAt(int offset) {
+		return Optional.ofNullable(item).flatMap(a -> a.linkAt(offset));
+	}
+
+	private void launch(StyledText text, String link) {
+		text.setCursor(busyCursor);
+		Program.launch(link);
+		StyleRange selectionRange = getCurrentRange();
+		text.setSelectionRange(selectionRange.start, selectionRange.length);
+		text.setCursor(null);
 	}
 
 	/**
@@ -229,7 +228,7 @@ public class AboutText {
 	 *
 	 * @return the about item
 	 */
-	public Optional<AboutItem> getAboutItem() {
+	public Optional<ParsedAbout> getAboutItem() {
 		if (item == null) {
 			createAboutItem();
 		}
@@ -241,11 +240,11 @@ public class AboutText {
 	 *
 	 * @param item about item
 	 */
-	private void setItem(AboutItem item) {
+	private void setItem(ParsedAbout item) {
 		this.item = item;
 		if (item != null && styledText != null) {
-			styledText.setText(item.getText());
-			setLinkRanges(item.getLinkRanges());
+			styledText.setText(item.text());
+			setLinkRanges(item.linkRanges());
 		}
 	}
 
