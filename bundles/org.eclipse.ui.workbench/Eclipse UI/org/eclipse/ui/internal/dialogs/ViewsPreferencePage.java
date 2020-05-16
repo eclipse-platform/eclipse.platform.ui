@@ -57,7 +57,6 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.GC;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -65,7 +64,6 @@ import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -95,7 +93,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	private Button enableMru;
 	private Button useColoredLabels;
 
-	private Text colorsAndFontsThemeDescriptionText;
 	private ComboViewer colorsAndFontsThemeCombo;
 	private ControlDecoration colorFontsDecorator;
 	private ColorsAndFontsTheme currentColorsAndFontsTheme;
@@ -156,7 +153,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 		currentColorsAndFontsTheme = getCurrentColorsAndFontsTheme();
 		createColorsAndFontsThemeCombo(comp);
-		createColorsAndFontsThemeDescriptionText(comp);
 
 		createThemeIndependentComposits(comp);
 
@@ -388,29 +384,8 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 				colorFontsDecorator.show();
 			} else
 				colorFontsDecorator.hide();
-			refreshColorsAndFontsThemeDescriptionText(colorsAndFontsTheme);
 			setColorsAndFontsTheme(colorsAndFontsTheme);
 		});
-	}
-
-	/**
-	 * Create the text box that will contain the current theme description text (if
-	 * any).
-	 *
-	 * @param parent the parent <code>Composite</code>.
-	 */
-	private void createColorsAndFontsThemeDescriptionText(Composite parent) {
-		new Label(parent, SWT.NONE).setText(WorkbenchMessages.ViewsPreference_currentThemeDescription);
-
-		colorsAndFontsThemeDescriptionText = new Text(parent,
-				SWT.H_SCROLL | SWT.V_SCROLL | SWT.READ_ONLY | SWT.BORDER | SWT.WRAP);
-		GridData layoutData = new GridData(SWT.FILL, SWT.FILL, true, true);
-		// give a height hint that'll show at least two lines (and let the
-		// scroll bars draw nicely if necessary)
-		GC gc = new GC(parent);
-		layoutData.heightHint = Dialog.convertHeightInCharsToPixels(gc.getFontMetrics(), 2);
-		gc.dispose();
-		colorsAndFontsThemeDescriptionText.setLayoutData(layoutData);
 	}
 
 	@SuppressWarnings("unchecked")
@@ -488,20 +463,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			result.add(new ColorsAndFontsTheme(themeDescriptor.getId(), themeString));
 		}
 		return result;
-	}
-
-	private void refreshColorsAndFontsThemeDescriptionText(ColorsAndFontsTheme theme) {
-		String description = ""; //$NON-NLS-1$
-		if (theme != null) {
-			IThemeDescriptor[] descs = WorkbenchPlugin.getDefault().getThemeRegistry().getThemes();
-			for (IThemeDescriptor desc : descs) {
-				if (desc.getId().equals(theme.getId()) && desc.getDescription() != null) {
-					description = desc.getDescription();
-					break;
-				}
-			}
-		}
-		colorsAndFontsThemeDescriptionText.setText(description);
 	}
 
 	private ColorsAndFontsTheme getSelectedColorsAndFontsTheme() {
