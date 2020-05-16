@@ -71,6 +71,7 @@ import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.HandlerUtil;
 import org.eclipse.ui.keys.IBindingService;
@@ -334,7 +335,7 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 	private FocusAdapter fAdapter = new FocusAdapter() {
 		@Override
 		public void focusLost(FocusEvent e) {
-			dialog.getDisplay().asyncExec(() -> {
+			PlatformUI.getWorkbench().getDisplay().asyncExec(() -> {
 				// once event complete, if dialog still open..
 				if (dialog.isDisposed()) {
 					return;
