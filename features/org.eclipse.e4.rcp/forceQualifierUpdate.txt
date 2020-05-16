@@ -18,3 +18,4 @@ Bug 543193 - IBuild I20190105-1800 failed due to unresolved project dependencies
 Bug 553238 - Unanticipated comparator errors in I20191119-1800
 Bug 544571 - Felix scr 2.1.16 update
 Touch feature for org.eclipse.e4.core.services version change.
+Bug 563249 - 4.16 I-Build: I20200516-0600 - BUILD FAILED
