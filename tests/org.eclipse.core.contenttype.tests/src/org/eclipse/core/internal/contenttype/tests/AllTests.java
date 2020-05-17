@@ -22,7 +22,7 @@ import org.junit.runners.Suite.SuiteClasses;
  * eclipse.platform.resources repository (and move those tests here)
  */
 @RunWith(Suite.class)
-@SuiteClasses(value = { UserContentTypeTest.class, })
+@SuiteClasses(value = { UserContentTypeTest.class, XMLRootHandlerTest.class, })
 public class AllTests {
 
 }

@@ -16,6 +16,7 @@ package org.eclipse.core.internal.content;
 import java.io.IOException;
 import java.io.StringReader;
 import javax.xml.parsers.*;
+import org.osgi.framework.*;
 import org.xml.sax.*;
 import org.xml.sax.ext.LexicalHandler;
 import org.xml.sax.helpers.DefaultHandler;
@@ -147,18 +148,33 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 		return namespaceFound;
 	}
 
+	private static final BundleContext CONTEXT;
+
+	static {
+		Bundle BUNDLE = FrameworkUtil.getBundle(XMLRootHandler.class);
+		CONTEXT = BUNDLE == null ? null : BUNDLE.getBundleContext();
+	}
+
 	public boolean parseContents(InputSource contents) throws IOException, ParserConfigurationException, SAXException {
 		// Parse the file into we have what we need (or an error occurs).
+		if (CONTEXT == null)
+			return false;
+		ServiceReference<SAXParserFactory> serviceReference = CONTEXT.getServiceReference(SAXParserFactory.class);
 		try {
-			SAXParserFactory factory = Activator.getDefault().getFactory();
+
+			SAXParserFactory factory = CONTEXT.getService(serviceReference);
 			if (factory == null)
 				return false;
+			factory.setNamespaceAware(true);
 			final SAXParser parser = createParser(factory);
 			// to support external entities specified as relative URIs (see bug 63298)
 			contents.setSystemId("/"); //$NON-NLS-1$
 			parser.parse(contents, this);
+
 		} catch (StopParsingException e) {
 			// Abort the parsing normally. Fall through...
+		} finally {
+			CONTEXT.ungetService(serviceReference);
 		}
 		return true;
 	}

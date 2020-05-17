@@ -14,7 +14,6 @@
 package org.eclipse.core.internal.content;
 
 import java.util.Hashtable;
-import javax.xml.parsers.SAXParserFactory;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.content.IContentTypeManager;
 import org.eclipse.osgi.service.debug.DebugOptions;
@@ -30,7 +29,6 @@ public class Activator implements BundleActivator, ServiceTrackerCustomizer<IExt
 	private static Activator singleton;
 	private static BundleContext bundleContext;
 	private ServiceRegistration<IContentTypeManager> contentManagerService;
-	private ServiceTracker<SAXParserFactory, Object> parserTracker;
 	private ServiceTracker<DebugOptions, Object> debugTracker;
 	private ServiceTracker<IExtensionRegistry, IExtensionRegistry> registryTracker;
 
@@ -56,10 +54,6 @@ public class Activator implements BundleActivator, ServiceTrackerCustomizer<IExt
 			contentManagerService.unregister();
 			contentManagerService = null;
 		}
-		if (parserTracker != null) {
-			parserTracker.close();
-			parserTracker = null;
-		}
 		if (debugTracker != null) {
 			debugTracker.close();
 			debugTracker = null;
@@ -70,21 +64,6 @@ public class Activator implements BundleActivator, ServiceTrackerCustomizer<IExt
 		}
 		ContentTypeManager.shutdown();
 		bundleContext = null;
-	}
-
-	/**
-	 * Return the registered SAX parser factory or null if one
-	 * does not exist.
-	 */
-	public SAXParserFactory getFactory() {
-		if (parserTracker == null) {
-			parserTracker = new ServiceTracker<>(bundleContext, SAXParserFactory.class, null);
-			parserTracker.open();
-		}
-		SAXParserFactory theFactory = (SAXParserFactory) parserTracker.getService();
-		if (theFactory != null)
-			theFactory.setNamespaceAware(true);
-		return theFactory;
 	}
 
 	/**
