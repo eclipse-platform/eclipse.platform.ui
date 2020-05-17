@@ -88,7 +88,7 @@ public class Activator implements BundleActivator, ServiceTrackerCustomizer<IExt
 	public IExtensionRegistry addingService(ServiceReference<IExtensionRegistry> reference) {
 		IExtensionRegistry registry = bundleContext.getService(reference);
 		// registry is available; add the change listener
-		ContentTypeManager.addRegistryChangeListener(registry);
+		ContentTypeManager.getInstance().addRegistryChangeListener(registry);
 		return registry;
 	}
 
@@ -100,7 +100,7 @@ public class Activator implements BundleActivator, ServiceTrackerCustomizer<IExt
 	@Override
 	public void removedService(ServiceReference<IExtensionRegistry> reference, IExtensionRegistry service) {
 		// registry is unavailable; remove the change listener
-		ContentTypeManager.removeRegistryChangeListener(service);
+		ContentTypeManager.getInstance().removeRegistryChangeListener(service);
 		bundleContext.ungetService(reference);
 	}
 }

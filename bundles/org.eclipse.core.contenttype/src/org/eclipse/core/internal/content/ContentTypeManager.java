@@ -58,7 +58,7 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 	protected final ListenerList<IContentTypeChangeListener> contentTypeListeners = new ListenerList<>();
 
 
-	public static void addRegistryChangeListener(IExtensionRegistry registry) {
+	public void addRegistryChangeListener(IExtensionRegistry registry) {
 		if (registry == null)
 			return;
 		// Different instances of listener required. See documentation of
@@ -76,7 +76,7 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 		instance = null;
 	}
 
-	public static void removeRegistryChangeListener(IExtensionRegistry registry) {
+	public void removeRegistryChangeListener(IExtensionRegistry registry) {
 		if (registry == null)
 			return;
 		getInstance().invalidate();
@@ -120,6 +120,7 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 
 	public ContentTypeManager() {
 		super(null, InstanceScope.INSTANCE);
+		instance = this;
 	}
 
 	protected ContentTypeBuilder createBuilder(ContentTypeCatalog newCatalog) {

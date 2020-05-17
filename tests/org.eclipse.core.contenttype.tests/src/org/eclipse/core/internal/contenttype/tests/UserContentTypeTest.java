@@ -48,6 +48,7 @@ public class UserContentTypeTest {
 		if (this.createdUserContentType != null) {
 			this.manager.removeContentType(this.createdUserContentType.getId());
 		}
+		ContentTypeManager.shutdown();
 	}
 
 	@Test
@@ -85,6 +86,7 @@ public class UserContentTypeTest {
 		testAddUserDefinedContentTypes();
 		this.createdUserContentType.addFileSpec("fileSpec", IContentType.FILE_NAME_SPEC);
 		// use a new manager to retrigger parsing and test persistency
+		ContentTypeManager.shutdown(); // shut down the old one first
 		this.manager = new ContentTypeManager();
 		Assert.assertEquals("Content type wasn't persisted", initialContentTypes.length + 1,
 				manager.getAllContentTypes().length);
