@@ -10,7 +10,6 @@ Require-Bundle: org.eclipse.equinox.preferences;bundle-version="[3.2.0,4.0.0)",
  org.eclipse.equinox.common;bundle-version="[3.2.0,4.0.0)"
 Export-Package: org.eclipse.core.internal.content;x-internal:=true,
  org.eclipse.core.runtime.content
-Bundle-Activator: org.eclipse.core.internal.content.Activator
 Bundle-ActivationPolicy: lazy
 Import-Package: javax.xml.parsers,
  org.eclipse.osgi.service.debug,
@@ -22,3 +21,4 @@ Import-Package: javax.xml.parsers,
  org.xml.sax.helpers
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
 Automatic-Module-Name: org.eclipse.core.contenttype
+Service-Component: OSGI-INF/contenttypemanager.xml
