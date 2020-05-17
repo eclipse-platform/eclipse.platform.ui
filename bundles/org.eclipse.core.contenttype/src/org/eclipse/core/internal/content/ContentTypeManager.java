@@ -21,7 +21,9 @@ import java.util.stream.Collectors;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.*;
 import org.eclipse.core.runtime.preferences.*;
+import org.eclipse.osgi.service.debug.DebugOptions;
 import org.eclipse.osgi.util.NLS;
+import org.osgi.framework.*;
 import org.osgi.service.prefs.BackingStoreException;
 
 public class ContentTypeManager extends ContentTypeMatcher implements IContentTypeManager {
@@ -44,10 +46,23 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 
 	public static final int BLOCK_SIZE = 0x400;
 	public static final String CONTENT_TYPE_PREF_NODE = IContentConstants.RUNTIME_NAME + IPath.SEPARATOR + "content-types"; //$NON-NLS-1$
-	private static final String OPTION_DEBUG_CONTENT_TYPES = "org.eclipse.core.contenttype/debug"; //$NON-NLS-1$;
-	static final boolean DEBUGGING = Activator.getDefault().getBooleanDebugOption(OPTION_DEBUG_CONTENT_TYPES, false);
+	private static final String OPTION_DEBUG_CONTENT_TYPES = "org.eclipse.core.contenttype/debug"; //$NON-NLS-1$
+	static final boolean DEBUGGING;
 	private ContentTypeCatalog catalog;
 	private int catalogGeneration;
+
+	static {
+		boolean debugging = false;
+		Bundle bundle = FrameworkUtil.getBundle(ContentTypeManager.class);
+		BundleContext context = bundle == null ? null : bundle.getBundleContext();
+		ServiceReference<DebugOptions> reference = context.getServiceReference(DebugOptions.class);
+		DebugOptions debugOptions = reference == null ? null : context.getService(reference);
+		if (debugOptions != null) {
+			debugging = debugOptions.getBooleanOption(OPTION_DEBUG_CONTENT_TYPES, false);
+			context.ungetService(reference);
+		}
+		DEBUGGING = debugging;
+	}
 
 	/**
 	 * List of registered listeners (element type:
