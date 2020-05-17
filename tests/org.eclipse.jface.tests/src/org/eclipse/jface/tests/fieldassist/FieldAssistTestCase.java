@@ -139,7 +139,7 @@ public abstract class FieldAssistTestCase extends AbstractFieldAssistTestCase {
 		event.type = SWT.KeyDown;
 		event.keyCode = SWT.ARROW_LEFT;
 		window.getDisplay().post(event);
-		window.getDisplay().asyncExec(() -> closeFieldAssistWindow());
+		window.getDisplay().asyncExec(this::closeFieldAssistWindow);
 		spinEventLoop();
 	}
 

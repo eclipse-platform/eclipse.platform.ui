@@ -320,7 +320,7 @@ public class HandlerTest {
 
 			@Override
 			public IParameterValues getValues() throws ParameterValuesException {
-				return () -> Collections.emptyMap();
+				return Collections::emptyMap;
 			}
 
 			@Override

@@ -60,7 +60,7 @@ public class ImportPage extends ImportExportPage {
 		importTree = new CategorizedWizardSelectionTree(root, WorkbenchMessages.ImportWizard_selectWizard);
 		Composite importComp = importTree.createControl(parent);
 		importTree.getViewer().addSelectionChangedListener(event -> listSelectionChanged(event.getSelection()));
-		importTree.getViewer().addDoubleClickListener(event -> treeDoubleClicked(event));
+		importTree.getViewer().addDoubleClickListener(this::treeDoubleClicked);
 		setTreeViewer(importTree.getViewer());
 		return importComp;
 	}

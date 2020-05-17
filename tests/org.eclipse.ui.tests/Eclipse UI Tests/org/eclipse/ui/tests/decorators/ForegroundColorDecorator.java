@@ -34,7 +34,7 @@ public class ForegroundColorDecorator implements ILightweightLabelDecorator {
 	public void decorate(Object element, IDecoration decoration) {
 
 		if(color == null){
-			PlatformUI.getWorkbench().getDisplay().syncExec(() -> setUpColor());
+			PlatformUI.getWorkbench().getDisplay().syncExec(ForegroundColorDecorator::setUpColor);
 		}
 		decoration.setForegroundColor(color);
 

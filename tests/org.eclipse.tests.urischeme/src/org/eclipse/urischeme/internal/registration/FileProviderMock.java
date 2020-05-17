@@ -98,7 +98,7 @@ public class FileProviderMock implements IFileProvider {
 
 			@Override
 			public Iterator<Path> iterator() {
-				return newDirectoryStreamAnswers.get(dir).get(glob).stream().map(name -> Paths.get(name)).iterator();
+				return newDirectoryStreamAnswers.get(dir).get(glob).stream().map(Paths::get).iterator();
 			}
 		};
 	}

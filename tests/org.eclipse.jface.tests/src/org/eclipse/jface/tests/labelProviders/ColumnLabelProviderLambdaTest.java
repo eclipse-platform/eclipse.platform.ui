@@ -17,7 +17,7 @@ public class ColumnLabelProviderLambdaTest extends TestCase {
 		Shell shell = LabelProviderLambdaTest.initializeShell();
 		TableViewer viewer = (TableViewer) LabelProviderLambdaTest.initializeViewer(shell);
 		TableViewerColumn columnViewer = new TableViewerColumn(viewer, SWT.NONE, 0);
-		columnViewer.setLabelProvider(ColumnLabelProvider.createTextProvider(inputElement -> inputElement.toString()));
+		columnViewer.setLabelProvider(ColumnLabelProvider.createTextProvider(Object::toString));
 		shell.open();
 		Integer[] model = (Integer[]) columnViewer.getViewer().getInput();
 		ColumnLabelProvider provider = (ColumnLabelProvider) columnViewer.getViewer().getLabelProvider(0);
@@ -43,7 +43,7 @@ public class ColumnLabelProviderLambdaTest extends TestCase {
 		Image fgImage = ImageDescriptor.createFromFile(TestLabelProvider.class, "images/java.gif").createImage();
 		TableViewerColumn columnViewer = new TableViewerColumn(viewer, SWT.NONE, 0);
 		columnViewer.setLabelProvider(ColumnLabelProvider
-				.createTextImageProvider(inputElement -> inputElement.toString(), inputElement -> fgImage));
+				.createTextImageProvider(Object::toString, inputElement -> fgImage));
 		shell.open();
 		Integer[] model = (Integer[]) columnViewer.getViewer().getInput();
 		ColumnLabelProvider provider = (ColumnLabelProvider) columnViewer.getViewer().getLabelProvider(0);

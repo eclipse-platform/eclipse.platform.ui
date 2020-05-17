@@ -138,7 +138,7 @@ public class MenuContributionHarness extends ViewPart {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(manager -> MenuContributionHarness.this.fillContextMenu(manager));
+		menuMgr.addMenuListener(MenuContributionHarness.this::fillContextMenu);
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);

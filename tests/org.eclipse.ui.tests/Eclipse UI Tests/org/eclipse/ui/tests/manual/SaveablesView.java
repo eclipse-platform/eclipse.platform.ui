@@ -151,7 +151,7 @@ public class SaveablesView extends ViewPart {
 	private void hookContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu");
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(manager -> SaveablesView.this.fillContextMenu(manager));
+		menuMgr.addMenuListener(SaveablesView.this::fillContextMenu);
 		Menu menu = menuMgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);

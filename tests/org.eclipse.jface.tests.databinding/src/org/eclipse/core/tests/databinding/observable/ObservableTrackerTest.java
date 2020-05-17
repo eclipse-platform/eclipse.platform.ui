@@ -91,7 +91,7 @@ public class ObservableTrackerTest extends AbstractDefaultRealmTestCase {
 	@Test
 	public void testRunAndIgnore_RunAndCollect() throws Exception {
 		IObservable[] result = ObservableTracker
-				.runAndCollect(() -> ObservableTracker.runAndIgnore(() -> new ObservableStub()));
+				.runAndCollect(() -> ObservableTracker.runAndIgnore(ObservableStub::new));
 		assertEquals(0, result.length);
 	}
 

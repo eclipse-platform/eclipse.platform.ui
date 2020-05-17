@@ -60,7 +60,7 @@ public class ExportPage extends ImportExportPage {
 		exportTree = new CategorizedWizardSelectionTree(root, WorkbenchMessages.ExportWizard_selectWizard);
 		Composite exportComp = exportTree.createControl(parent);
 		exportTree.getViewer().addSelectionChangedListener(event -> listSelectionChanged(event.getSelection()));
-		exportTree.getViewer().addDoubleClickListener(event -> treeDoubleClicked(event));
+		exportTree.getViewer().addDoubleClickListener(this::treeDoubleClicked);
 		setTreeViewer(exportTree.getViewer());
 		return exportComp;
 	}

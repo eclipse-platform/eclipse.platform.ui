@@ -156,7 +156,7 @@ public class AdaptedResourceNavigator extends ViewPart {
 
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(manager1 -> AdaptedResourceNavigator.this.fillContextMenu(manager1));
+		menuMgr.addMenuListener(AdaptedResourceNavigator.this::fillContextMenu);
 		Menu menu = menuMgr.createContextMenu(viewer.getTree());
 		viewer.getTree().setMenu(menu);
 		getSite().registerContextMenu(menuMgr, viewer);
@@ -168,8 +168,8 @@ public class AdaptedResourceNavigator extends ViewPart {
 		IStructuredSelection selection = viewer.getStructuredSelection();
 		actionGroup.updateGlobalActions(selection);
 
-		viewer.addSelectionChangedListener(event -> handleSelectionChanged(event));
-		viewer.addDoubleClickListener(event -> handleDoubleClick(event));
+		viewer.addSelectionChangedListener(this::handleSelectionChanged);
+		viewer.addDoubleClickListener(this::handleDoubleClick);
 		viewer.getControl().addKeyListener(new KeyListener() {
 			@Override
 			public void keyPressed(KeyEvent event) {

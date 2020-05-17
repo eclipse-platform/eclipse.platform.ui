@@ -33,7 +33,7 @@ public class FontDecorator implements ILightweightLabelDecorator {
 	public void decorate(Object element, IDecoration decoration) {
 
 		if(font == null){
-			PlatformUI.getWorkbench().getDisplay().syncExec(() -> setUpFont());
+			PlatformUI.getWorkbench().getDisplay().syncExec(FontDecorator::setUpFont);
 		}
 
 		decoration.setFont(font);

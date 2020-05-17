@@ -49,7 +49,7 @@ public class EditorIconTest extends UITestCase {
 			i1 = fWorkbench.getEditorRegistry().getDefaultEditor(
 					"foo.icontest1").getImageDescriptor().createImage();
 			i2 = ResourceLocator.imageDescriptorFromBundle("org.eclipse.ui", "icons/full/obj16/font.png")
-					.orElseThrow(() -> new AssertionError()).createImage();
+					.orElseThrow(AssertionError::new).createImage();
 			ImageTests.assertEquals(i1, i2);
 		}
 		finally {
@@ -71,7 +71,7 @@ public class EditorIconTest extends UITestCase {
 					"foo.icontest2").getImageDescriptor().createImage();
 			i2 = ResourceLocator.imageDescriptorFromBundle(
 					"org.eclipse.jdt.ui", "icons/full/obj16/class_obj.png") // layer breaker!
-					.orElseThrow(() -> new AssertionError()).createImage();
+					.orElseThrow(AssertionError::new).createImage();
 			ImageTests.assertEquals(i1, i2);
 		}
 		finally {
@@ -93,7 +93,7 @@ public class EditorIconTest extends UITestCase {
 			i1 = fWorkbench.getEditorRegistry().getDefaultEditor(
 					"foo.icontest3").getImageDescriptor().createImage();
 			i2 = ResourceLocator.imageDescriptorFromBundle("org.eclipse.ui", "icons/full/obj16/file_obj.png")
-					.orElseThrow(() -> new AssertionError()).createImage();
+					.orElseThrow(AssertionError::new).createImage();
 			ImageTests.assertEquals(i1, i2);
 		}
 		finally {
@@ -113,7 +113,7 @@ public class EditorIconTest extends UITestCase {
 	public void testBug395126() {
 		ImageDescriptor imageDescriptor = ResourceLocator.imageDescriptorFromBundle("org.eclipse.jface",
 				"platform:/plugin/org.eclipse.jface/$nl$/icons/full/message_error.png")
-				.orElseThrow(() -> new AssertionError());
+				.orElseThrow(AssertionError::new);
 		Image image = null;
 		try {
 			image = imageDescriptor.createImage(false);
@@ -150,7 +150,7 @@ public class EditorIconTest extends UITestCase {
 	public void testBug474072() throws Exception {
 		URL url = FileLocator.find(new URL("platform:/plugin/org.eclipse.jface/$nl$/icons/full/message_error.png"));
 		ImageDescriptor imageDescriptor = ResourceLocator.imageDescriptorFromBundle("org.eclipse.jface", url.toString())
-				.orElseThrow(() -> new AssertionError());
+				.orElseThrow(AssertionError::new);
 		Image image = null;
 		try {
 			image = imageDescriptor.createImage(false);

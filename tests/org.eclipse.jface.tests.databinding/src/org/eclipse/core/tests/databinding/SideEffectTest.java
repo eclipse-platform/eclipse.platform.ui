@@ -277,7 +277,7 @@ public class SideEffectTest extends AbstractDefaultRealmTestCase {
 			}
 		};
 
-		ISideEffect consumeOnce = ISideEffect.consumeOnceAsync(value::getValue, (Object) -> {
+		ISideEffect consumeOnce = ISideEffect.consumeOnceAsync(value::getValue, Object -> {
 			consumerHasRun.set(true);
 		});
 
@@ -302,7 +302,7 @@ public class SideEffectTest extends AbstractDefaultRealmTestCase {
 			}
 		};
 
-		ISideEffect consumeOnce = ISideEffect.consumeOnceAsync(value::getValue, (Object) -> {
+		ISideEffect consumeOnce = ISideEffect.consumeOnceAsync(value::getValue, Object -> {
 			numberOfRuns.set(numberOfRuns.get() + 1);
 		});
 
@@ -325,7 +325,7 @@ public class SideEffectTest extends AbstractDefaultRealmTestCase {
 		AtomicInteger numberOfRuns = new AtomicInteger();
 		WritableValue<Object> returnValue = new WritableValue<>("foo", null);
 
-		ISideEffect consumeOnce = ISideEffect.consumeOnceAsync(returnValue::getValue, (Object) -> {
+		ISideEffect consumeOnce = ISideEffect.consumeOnceAsync(returnValue::getValue, Object -> {
 			numberOfRuns.set(numberOfRuns.get() + 1);
 		});
 
@@ -340,7 +340,7 @@ public class SideEffectTest extends AbstractDefaultRealmTestCase {
 		AtomicInteger numberOfRuns = new AtomicInteger();
 		WritableValue<Object> returnValue = new WritableValue<>("foo", null);
 
-		ISideEffect consumeOnce = ISideEffect.consumeOnceAsync(returnValue::getValue, (Object) -> {
+		ISideEffect consumeOnce = ISideEffect.consumeOnceAsync(returnValue::getValue, Object -> {
 			numberOfRuns.set(numberOfRuns.get() + 1);
 		});
 

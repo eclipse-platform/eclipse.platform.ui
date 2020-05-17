@@ -42,7 +42,7 @@ public class LabelProviderLambdaTest extends TestCase {
 	public void testCreateTextProvider() {
 		Shell shell = initializeShell();
 		StructuredViewer viewer = initializeViewer(shell);
-		viewer.setLabelProvider(LabelProvider.createTextProvider(inputElement -> inputElement.toString()));
+		viewer.setLabelProvider(LabelProvider.createTextProvider(Object::toString));
 		shell.open();
 		Table table = (Table) viewer.getControl();
 		String firstElementText = table.getItem(0).getText();
@@ -53,7 +53,7 @@ public class LabelProviderLambdaTest extends TestCase {
 		Shell shell = initializeShell();
 		StructuredViewer viewer = initializeViewer(shell);
 		Image fgImage = ImageDescriptor.createFromFile(TestLabelProvider.class, "images/java.gif").createImage();
-		viewer.setLabelProvider(LabelProvider.createTextImageProvider(inputElement -> inputElement.toString(),
+		viewer.setLabelProvider(LabelProvider.createTextImageProvider(Object::toString,
 				inputElement -> fgImage));
 		shell.open();
 		Table table = (Table) viewer.getControl();
