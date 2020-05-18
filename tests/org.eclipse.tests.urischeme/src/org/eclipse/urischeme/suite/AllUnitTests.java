@@ -20,6 +20,7 @@ import org.eclipse.urischeme.internal.registration.TestUnitRegistrationLinux;
 import org.eclipse.urischeme.internal.registration.TestUnitRegistrationMacOsX;
 import org.eclipse.urischeme.internal.registration.TestUnitRegistrationWindows;
 import org.eclipse.urischeme.internal.registration.TestUnitRegistryWriter;
+import org.eclipse.urischeme.internal.registration.TestUnitWinRegistry;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
@@ -32,7 +33,8 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestUnitRegistrationMacOsX.class, //
 		TestUnitRegistrationLinux.class, //
 		TestUnitRegistrationWindows.class, //
-		TestUnitRegistryWriter.class
+		TestUnitRegistryWriter.class, //
+		TestUnitWinRegistry.class, //
 })
 public class AllUnitTests {
 }
