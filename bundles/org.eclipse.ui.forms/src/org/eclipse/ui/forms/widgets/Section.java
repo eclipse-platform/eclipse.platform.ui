@@ -188,16 +188,15 @@ public class Section extends ExpandableComposite {
 	}
 
 	/**
-	 * Sets the foreground of the section.
+	 * Sets the foreground of the section and the description control if there is
+	 * one.
 	 *
-	 * @param fg
-	 *            the new foreground.
+	 * @param fg the new foreground.
 	 */
 	@Override
 	public void setForeground(Color fg) {
 		super.setForeground(fg);
-		if (descriptionControl != null
-				&& (getExpansionStyle() & DESCRIPTION) != 0)
+		if (descriptionControl != null)
 			descriptionControl.setForeground(fg);
 	}
 
