@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -40,6 +40,7 @@ import org.eclipse.ui.console.IConsole;
 import org.eclipse.ui.console.IConsoleConstants;
 import org.eclipse.ui.console.IConsolePageParticipant;
 import org.eclipse.ui.console.IConsoleView;
+import org.eclipse.ui.console.actions.ClearOutputAction;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
 import org.eclipse.ui.handlers.IHandlerActivation;
@@ -70,10 +71,13 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
 
 	private IConsoleView fView;
 
+	private static final String fContextId = "org.eclipse.debug.ui.console"; //$NON-NLS-1$;
 	private EOFHandler fEOFHandler;
-	private String fContextId = "org.eclipse.debug.ui.console"; //$NON-NLS-1$;
+	private ClearConsoleHandler fClearConsoleHandler;
+	private ClearOutputAction fClearConsoleAction;
 	private IContextActivation fActivatedContext;
-	private IHandlerActivation fActivatedHandler;
+	private IHandlerActivation fEOFActivatedHandler;
+	private IHandlerActivation fClearConsoleActivatedHandler;
 	/**
 	 * Handler to send EOF
 	 */
@@ -90,7 +94,19 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
 			}
 			return null;
 		}
+	}
 
+	/**
+	 * Handler to send clear console
+	 */
+	private class ClearConsoleHandler extends AbstractHandler {
+		@Override
+		public Object execute(ExecutionEvent event) throws org.eclipse.core.commands.ExecutionException {
+			if (fClearConsoleAction != null) {
+				fClearConsoleAction.run();
+			}
+			return null;
+		}
 	}
 
 	@Override
@@ -113,8 +129,10 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
 		IActionBars actionBars = fPage.getSite().getActionBars();
 		configureToolBar(actionBars.getToolBarManager());
 
-		// create handler and submissions for EOF
+		// create handler for EOF and clear
 		fEOFHandler = new EOFHandler();
+		fClearConsoleHandler = new ClearConsoleHandler();
+		fClearConsoleAction = new ClearOutputAction(fConsole);
 	}
 
 	@Override
@@ -223,26 +241,31 @@ public class ProcessConsolePageParticipant implements IConsolePageParticipant, I
 
 	@Override
 	public void activated() {
-		// add EOF submissions
+		// add EOF and clear submissions
 		IPageSite site = fPage.getSite();
-		if(fActivatedContext == null && fActivatedHandler == null) {
+		if (fActivatedContext == null) {
 			IHandlerService handlerService = site.getService(IHandlerService.class);
 			IContextService contextService = site.getService(IContextService.class);
 			fActivatedContext = contextService.activateContext(fContextId);
-			fActivatedHandler = handlerService.activateHandler("org.eclipse.debug.ui.commands.eof", fEOFHandler); //$NON-NLS-1$
+			fEOFActivatedHandler = handlerService.activateHandler("org.eclipse.debug.ui.commands.eof", fEOFHandler); //$NON-NLS-1$
+			fClearConsoleActivatedHandler = handlerService
+					.activateHandler("org.eclipse.debug.ui.commands.console.clear", fClearConsoleHandler); //$NON-NLS-1$
 		}
 	}
 
 	@Override
 	public void deactivated() {
-		// remove EOF submissions
+		// remove EOF and clear submissions
 		IPageSite site = fPage.getSite();
 		IHandlerService handlerService = site.getService(IHandlerService.class);
 		IContextService contextService = site.getService(IContextService.class);
-		handlerService.deactivateHandler(fActivatedHandler);
+		handlerService.deactivateHandler(fClearConsoleActivatedHandler);
+		handlerService.deactivateHandler(fEOFActivatedHandler);
 		contextService.deactivateContext(fActivatedContext);
 		fActivatedContext = null;
-		fActivatedHandler = null;
+		fEOFActivatedHandler = null;
+		fClearConsoleActivatedHandler = null;
+		fClearConsoleAction = null;
 	}
 
 	@Override

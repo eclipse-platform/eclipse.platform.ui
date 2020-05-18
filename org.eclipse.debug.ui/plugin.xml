@@ -1989,21 +1989,27 @@ M4 = Platform-specific fourth key
             categoryId="org.eclipse.debug.ui.category.run"
             id="org.eclipse.debug.ui.commands.ToggleMethodBreakpoint">
       </command>
-<!-- console -->      
+<!-- console -->
       <command
             name="%ActionDefinition.eof.name"
             categoryId="org.eclipse.debug.ui.category.run"
             description="%ActionDefinition.eof.description"
             id="org.eclipse.debug.ui.commands.eof">
       </command>
+      <command
+            name="%ActionDefinition.clear.name"
+            categoryId="org.eclipse.debug.ui.category.run"
+            description="%ActionDefinition.clear.description"
+            id="org.eclipse.debug.ui.commands.console.clear">
+      </command>
 <!-- Memory View -->
  	  <command
        		categoryId="org.eclipse.debug.ui.category.run"
       		description="%ActionDefinition.addMemoryBlock.description"
      		id="org.eclipse.debug.ui.commands.addMemoryMonitor"
-     		name="%ActionDefinition.addMemoryBlock.name"/>           
+     		name="%ActionDefinition.addMemoryBlock.name"/>
 <!-- views -->
-<!-- Perspective -->      
+<!-- Perspective -->
 	<command
       		name="%DebugPerspective.name"
       		description="%command.openDebugPerspective.description"
@@ -2059,6 +2065,12 @@ M4 = Platform-specific fourth key
  </command> 
    </extension>
    <extension point="org.eclipse.ui.bindings">
+     <key
+           commandId="org.eclipse.debug.ui.commands.console.clear"
+           contextId="org.eclipse.ui.console.ConsoleView"
+           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+           sequence="M1+L">
+     </key>
      <key
             sequence="M2+F5"
             
