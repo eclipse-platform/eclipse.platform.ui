@@ -10,8 +10,7 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.ide.dialogs;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.LinkedHashMap;
 
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -41,9 +40,8 @@ public class OpenResourceQuickAccessComputer implements IQuickAccessComputer, IQ
 		SearchPattern searchPattern = new SearchPattern();
 		searchPattern.setPattern(query);
 
-		List<QuickAccessElement> res = new ArrayList<>();
+		LinkedHashMap<String, IFile> res = new LinkedHashMap<>();
 		long startTime = System.currentTimeMillis();
-		WorkbenchLabelProvider labelProvider = new WorkbenchLabelProvider();
 		try {
 			ResourcesPlugin.getWorkspace().getRoot().accept(resourceProxy -> {
 				if (resourceProxy.isDerived() || !resourceProxy.isAccessible()) {
@@ -54,7 +52,15 @@ public class OpenResourceQuickAccessComputer implements IQuickAccessComputer, IQ
 					String name = resourceProxy.getName();
 					if (searchPattern.matches(name)) {
 						IFile file = (IFile) resourceProxy.requestResource();
-						res.add(new ResourceElement(labelProvider, file));
+						if (!res.containsKey(name)) {
+							res.put(name, file);
+						} else {
+							IFile previousFile = res.get(name);
+							if (previousFile.getFullPath().segmentCount() > file.getFullPath().segmentCount()) {
+								// take file pointer that's the "less deep" inside project
+								res.put(file.getName(), file);
+							}
+						}
 					}
 				}
 				return !monitor.isCanceled() && System.currentTimeMillis() - startTime < TIMEOUT_MS;
@@ -62,8 +68,12 @@ public class OpenResourceQuickAccessComputer implements IQuickAccessComputer, IQ
 		} catch (CoreException e) {
 			IDEWorkbenchPlugin.log(e.getMessage(), e);
 		}
+		WorkbenchLabelProvider labelProvider = new WorkbenchLabelProvider();
+		QuickAccessElement[] proposals = res.values().stream() //
+				.map(file -> new ResourceElement(labelProvider, file)) //
+				.toArray(QuickAccessElement[]::new);
 		labelProvider.dispose();
-		return res.toArray(new QuickAccessElement[res.size()]);
+		return proposals;
 	}
 
 	@Override
