@@ -24,10 +24,23 @@
 	</parent>
 	<groupId>org.eclipse.text</groupId>
 	<artifactId>org.eclipse.text.quicksearch.tests</artifactId>
-	<version>1.0.200-SNAPSHOT</version>
+	<version>1.0.300-SNAPSHOT</version>
 	<packaging>eclipse-test-plugin</packaging>
 	<properties>
 		<testSuite>${project.artifactId}</testSuite>
 		<testClass>org.eclipse.text.quicksearch.tests.*Test</testClass>
 	</properties>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.eclipse.tycho</groupId>
+				<artifactId>tycho-surefire-plugin</artifactId>
+				<configuration>
+					<useUIHarness>true</useUIHarness>
+					<useUIThread>true</useUIThread>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 </project>

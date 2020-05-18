@@ -46,7 +46,7 @@ public class QuickTextQuery {
 		}
 	}
 
-	private boolean caseSensitive;
+	private boolean caseInsensitive;
 	private String orgPattern; //Original pattern case preserved even if search is case insensitive.
 	private Pattern pattern;
 
@@ -57,10 +57,10 @@ public class QuickTextQuery {
 		this("", true); //$NON-NLS-1$
 	}
 
-	public QuickTextQuery(String substring, boolean caseSensitive) {
+	public QuickTextQuery(String substring, boolean caseInsensitive) {
 		this.orgPattern = substring;
-		this.caseSensitive = caseSensitive;
-		createMatcher(substring, caseSensitive);
+		this.caseInsensitive = caseInsensitive;
+		createMatcher(substring, caseInsensitive);
 	}
 
 	/**
@@ -101,7 +101,7 @@ public class QuickTextQuery {
 		//Don't forget to process that last segment.
 		appendSegment(segment, regexp);
 
-		this.pattern = Pattern.compile(regexp.toString(), caseSensitive?0:Pattern.CASE_INSENSITIVE);
+		this.pattern = Pattern.compile(regexp.toString(), caseSensitive? Pattern.CASE_INSENSITIVE : 0);
 //		this.matcher = pattern.matcher("");
 	}
 
@@ -118,7 +118,7 @@ public class QuickTextQuery {
 	public boolean equalsFilter(QuickTextQuery o) {
 		//TODO: actually for case insensitive matches we could relax this and treat patterns that
 		// differ only in case as the same.
-		return this.caseSensitive == o.caseSensitive && this.orgPattern.equals(o.orgPattern);
+		return this.caseInsensitive == o.caseInsensitive && this.orgPattern.equals(o.orgPattern);
 	}
 
 	/**
@@ -134,8 +134,8 @@ public class QuickTextQuery {
 		if (this.isTrivial()) {
 			return false;
 		}
-		if (this.caseSensitive==other.caseSensitive) {
-			boolean caseSensitive = this.caseSensitive;
+		if (this.caseInsensitive==other.caseInsensitive) {
+			boolean caseSensitive = this.caseInsensitive;
 			String otherPat = normalize(other.orgPattern, caseSensitive);
 			String thisPat = normalize(this.orgPattern, caseSensitive);
 			return otherPat.contains(thisPat);
@@ -189,7 +189,7 @@ public class QuickTextQuery {
 
 	@Override
 	public String toString() {
-		return "QTQuery("+orgPattern+", "+(caseSensitive?"caseSens":"caseInSens")+")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
+		return "QTQuery("+orgPattern+", "+(caseInsensitive?"caseSens":"caseInSens")+")"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$ //$NON-NLS-5$
 	}
 
 	public List<TextRange> findAll(String text) {
@@ -222,10 +222,5 @@ public class QuickTextQuery {
 	public String getPatternString() {
 		return orgPattern;
 	}
-
-	public boolean isCaseSensitive() {
-		return caseSensitive;
-	}
-
 
 }

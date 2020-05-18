@@ -43,23 +43,25 @@ public class QuickSearchQuickAccessComputer extends QuickTextSearchRequestor imp
 
 	@Override public QuickAccessElement[] computeElements(String query, IProgressMonitor monitor) {
 		List<LineItem> matches = Collections.synchronizedList(new ArrayList<>());
-		QuickTextSearcher searcher = new QuickTextSearcher(new QuickTextQuery("", false), priorities, 100, new QuickTextSearchRequestor() { //$NON-NLS-1$
-				@Override public void add(LineItem match) {
+		QuickTextQuery newQuery = new QuickTextQuery(query, true);
+		QuickTextSearcher searcher = new QuickTextSearcher(newQuery, priorities, QuickSearchActivator.getDefault().getPreferences().getMaxLineLen(), new QuickTextSearchRequestor() {
+			@Override public void add(LineItem match) {
+				if (matches.size() < MAX_ENTRIES) {
 					matches.add(match);
 				}
+			}
 
-				@Override public void clear() {
-					matches.clear();
-				}
+			@Override public void clear() {
+				matches.clear();
+			}
 
-				@Override public void revoke(LineItem line) {
-					matches.remove(line);
-				}
+			@Override public void revoke(LineItem line) {
+				matches.remove(line);
+			}
 		});
 		searcher.setMaxResults(MAX_ENTRIES);
-		searcher.setQuery(new QuickTextQuery(query, false), true);
 		long start = System.currentTimeMillis();
-		while (matches.size() < 20 && !searcher.isDone() && System.currentTimeMillis() - start < TIMEOUT) {
+		while (matches.size() < MAX_ENTRIES && !searcher.isDone() && System.currentTimeMillis() - start < TIMEOUT) {
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {

@@ -1,0 +1,1025 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html lang="en">
+
+<head>
+
+<meta name="copyright" content="Copyright (c) IBM Corporation and others 2000, 2019. This page is made available under license. For full details see the LEGAL in the documentation book that contains this page." >
+
+<meta http-equiv="Content-Language" content="en-us">
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
+<link rel="STYLESHEET" href="../book.css" charset="ISO-8859-1" type="text/css">
+<script language="JavaScript" src="PLUGINS_ROOT/org.eclipse.help/livehelp.js" type="text/javascript"></script>
+<title>Platform Tips and Tricks</title>
+</head>
+
+<body>
+
+<h1>Tips and Tricks</h1>
+
+<p>The following tips and tricks give some helpful ideas for increasing your
+productivity. They are divided into the following sections:</p>
+<ul>
+<li><a href="#Workbench">Workbench</a></li>
+<li><a href="#Editing">Editing</a></li>
+<li><a href="#Ant">Ant</a></li>
+<li><a href="#Help">Help</a></li>
+<li><a href="#Team">Team</a></li>
+</ul>
+
+<h3><a name="Workbench">Workbench</a></h3>
+
+<table border="1" cellpadding="10" cellspacing="0">
+   <tr>
+    <td width="20%" valign="top" align="left"><b>Using the dark theme</b></td>
+    <td width="80%" valign="top" align="left">You can use Eclipse with the default dark theme. You can select the dark theme on the 
+      <p><a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.ui.preferencePages.Views)")'>
+        <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+        <strong>General &gt; Appearance</strong></a>
+        preferences page.</p>
+      
+     <p><img src="images/dark-theme-preference.png" alt="Preference setting for the dark theme"></p>
+     <p>After a theme switch it is recommended to restart Eclipse via  <b>File &gt; Restart</b></p>
+     <p><img src="images/dark-themed-ide.png" alt="Dark themed IDE"></p>
+     </td>
+    </tr>
+  <tr>
+    <td width="20%" valign="top" align="left"><b>Now, where was I?</b></td>
+    <td width="80%" valign="top" align="left">Workbench editors keep a navigation 
+      history. If&nbsp; you open a second editor while you're editing, you 
+      can press <b>Navigate &gt; Backward</b>  (<b>Alt+Left Arrow</b>, or the <img border="0" src="images/backward_nav.svg" alt="Left arrow icon" >
+      back arrow 
+      on the workbench toolbar) to go back to the last editor. This makes working with several open editors a whole lot easier.</td>
+  </tr>
+    
+  <tr> 
+    <td width="20%" valign="top" align="left"><b>Find Actions</b></td>
+    <td width="80%" valign="top" align="left">You can quickly find all manner of user interface elements with the <b>Find Actions</b> search button at the
+    top of the workbench window. Click the button or use the <b>Ctrl+3</b> binding to switch focus to it. Matching elements include
+    (but are not limited to) open editors, available perspectives, views, preferences, wizards, commands, and launch configurations.
+    Simply start typing the name of the item you wish to invoke and we will attempt to find something in the Workbench that matches the provided string.
+    <p><img src="images/quickaccess.png" alt="Find Actions dialog" > </p>
+    </td>    
+  </tr>
+
+  <tr>
+    <td width="20%" valign="top" align="left"><b>Full Screen mode</b></td>
+    <td width="80%" valign="top" align="left">
+      You can toggle the Eclipse full screen mode via shortcut (<b>Alt+F11</b>) or menu (<b>Window &gt; Appearance &gt; Toggle Full Screen</b>).
+    </td>
+  </tr>
+
+  <tr> 
+    <td width="20%" valign="top" align="left"><b>Ctrl+E editor list</b></td>
+    <td width="80%" valign="top" align="left">You can quickly switch editors using 
+      the <b>Ctrl+E</b> keybinding which opens a list of all open editors. The list supports 
+      type-ahead to find the editor as well as allows you to close editors using 
+      a popup menu or the Delete key. </td>
+  </tr>
+ 
+  <tr> 
+    <td width="20%" valign="top" align="left"><b>Like to start afresh each session?</b></td>
+    <td width="80%" valign="top" align="left">A setting on the 
+    
+      <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.ui.preferencePages.Editors)")'>
+      <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+      <strong>General &gt; Editors</strong></a>
+
+      preference page closes all open editors automatically whenever 
+      you exit. This makes start-up cleaner and a bit faster.</td>
+  </tr>
+
+  <tr>
+    <td width="20%" valign="top" align="left"><b>Automatic Save of dirty editors</b></td>
+    <td width="80%" valign="top" align="left">
+      You can configure the automatic save of dirty editors in Eclipse via the
+      <a class="command-link" 
+      href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.ui.preferencePages.AutoSave)")'> 
+      <b>General &gt; Editors &gt; Autosave</b></a> preference page 
+      which allows you to enable/disable the autosave and change the interval of autosave.
+      <p><img src="images/autosave-preference-page.png" alt=""></p>
+    </td>
+  </tr>
+
+  <tr>
+    <td width="20%" valign="top" align="left"><b>Prevent in-place OLE editors</b></td>
+    <td width="80%" valign="top" align="left">By default, on Windows, OLE applications like Microsoft Word or Excel open as in-place editors inside of Eclipse.
+    You can force OLE applications to open as stand-alone applications by unchecking the "Allow in-place system editors" option on the
+      <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.ui.preferencePages.Editors)")'>
+      <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+      <strong>General &gt; Editors</strong></a>
+    preference page.</td>
+  </tr>
+  
+    <tr> 
+    <td width="20%" valign="top" align="left"><b>Opening editors using drag and 
+      drop</b></td>
+    <td width="80%" valign="top" align="left">You can open an editor on an item 
+      by dragging the item from a view like the Project Explorer or Package Explorer 
+      and dropping it over the editor area.</td>
+  </tr>
+     <tr> 
+    <td width="20%" valign="top" align="left"><b>Tiling the editor work area</b></td>
+    <td width="80%" valign="top" align="left">You can use drag and drop to modify 
+      the layout of your editor work area. Grab an editor or view tab and drag it to the 
+      edge of the editor work area. The green drop rectangles indicate which way the editor work area will split. 
+      <p><img src="images/editor-tiles.png" alt="Tiled editor work area"  border="0"></p></td>
+  </tr>
+     <tr> 
+    <td width="20%" valign="top" align="left"><b>Splitting an editor</b></td>
+    <td width="80%" valign="top" align="left">To view or edit multiple sections of an editor at once, you can split / unsplit the currently active editor via:
+    <ul>
+     <li><b>Window &gt; Editor &gt; Toggle Split Editor (Horizontal)</b></li>
+     <li><b>Window &gt; Editor &gt; Toggle Split Editor (Vertical)</b></li>
+    </ul>
+    Or just use one of the key bindings:
+    <ul>
+     <li><b>Ctrl+_</b> to split horizontally</li>
+     <li><b>Ctrl+{</b> to split vertically</li>
+    </ul>
+    You can also open a second editor instance via <b>Window &gt; Editor &gt; Clone</b>.</td>
+  </tr>
+    <tr> 
+    <td width="20%" valign="top" align="left"><b>Open editors with a single click</b></td>
+    <td width="80%" valign="top" align="left">Use the Open mode setting on the 
+      
+      <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.ui.preferencePages.Workbench)")'>
+      <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+      <strong>General</strong></a>
+      preference page to activate single click opening for editors. 
+      In single click mode, a single click on a file in the Project Explorer view (and 
+      similar views) selects and immediately opens it. </td>
+  </tr>
+    <tr> 
+    <td width="20%" valign="top" align="left"><b>Collapsing all open items</b></td>
+    <td width="80%" valign="top" align="left">Use the <b>Collapse All</b> button 
+      on the toolbar of the Project Explorer view (and similar views) to collapse all 
+      expanded project and folder items. 
+      <p><img src="images/collapse-all.png" alt="Collapse all button on navigator toolbar" > </p> </td></tr>
+    <tr> 
+    <td valign="top" align="left" width="20%"> <strong>Global find/replace</strong> 
+    </td>
+    <td valign="top" align="left" width="80%"> Use
+    
+      <a class="command-link" href='javascript:executeCommand("org.eclipse.search.ui.openFileSearchPage")'>
+      <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+      <strong>Search &gt; File</strong></a>
+    
+      from the main menu to specify the text that you want to replace and the scope
+      in which you want to replace it. Then press <b>Replace...</b>.</td>
+  </tr>
+  <TR>
+		<TD width="20%" valign="top" align="left"><B>Replace from Search view</B>
+		</TD>
+		<TD width="80%" valign="top" align="left">You can replace the matches in the files by using <B>Replace...</B> or <B>Replace
+			Selected...</B> from the context menu in the Search view.</TD>
+  </TR>
+  <tr>
+    <td width="20%" valign="top" align="left"><b>Show In System Explorer</b></td>
+    <td width="80%" valign="top" align="left">
+      If you select a resource and right click, there is a <b>Show In &gt; System Explorer</b> context menu entry
+      that will open the folder containing that resource in your system's file explorer. 
+      <p><img src="images/shown-in-system-explorer.png" alt="menu popup with Show In System Explorer"></p>
+      
+      The command for launching the system explorer can be configured on the 
+          <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.ui.preferencePages.Workspace)")'>
+          <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+      <strong>General &gt; Workspace</strong></a>
+      preference page.
+    </td>
+  </tr>
+  <tr> 
+    <td width="20%" valign="top" align="left"><b>Linking view to current open 
+      editor</b></td>
+    <td width="80%" valign="top" align="left"> <p>The resource Project Explorer view 
+        (and similar views) is not tightly linked to the currently open editor 
+        by default. This means that closing or switching editors does not change 
+        the selection in the Project Explorer view. Toggling the <b>Link with Editor</b> 
+        button in the Project Explorer view toolbar ties the view to always show the 
+        current file being edited. </p>
+      <p><img src="images/link-with-editor.png" alt="Project Explorer linked with editor"  border="0"></p></td>
+  </tr>
+    <tr> 
+    <td width="20%" valign="top" align="left"><b>Manual editor / view 
+      synchronization</b></td>
+    <td width="80%" valign="top" align="left">The <b>Navigate &gt; Show In</b> 
+      command provides a uniform way to navigate from an open editor to a view 
+      showing the corresponding file (e.g., in the Project Explorer view), or 
+      from a file selected in one view to the same file in a different view (e.g., 
+      from the resource Project Explorer view to the Package Explorer view).
+      <p>Typing <b>Alt+Shift+W</b> opens a shortcut menu with the available view
+      targets.</p>
+      <p><img src="images/show-in.png" alt="Shortcut menu for Show in command"  border="0"></p>
+    </td>
+  </tr>
+    <tr> 
+    <td width="20%" valign="top" align="left"><b>Quick navigation between views, 
+      editors and perspectives</b></td>
+    <td width="80%" valign="top" align="left">A look at the <b>Window &gt; Navigation</b> 
+      menu reveals a number of ways to quickly navigate between the various views, 
+      editors, perspectives, and menus in the workbench. These commands have keyword 
+      accelerators such as <b>Ctrl+F6</b> for switching between editors, <b>Ctrl+F7</b> 
+      for switching between views, <b>Ctrl+F8</b> for switching between perspectives, 
+      and <b>F12</b> for activating the editor. 
+      <p><img src="images/keyboard-shortcut.png" alt="Navigation shortcuts menu"  border="0"></p> 
+      <p>To directly navigate to a particular view you can define a keyboard shortcut 
+        to a view via the <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.ui.preferencePages.Keys)")'>
+      <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+      <strong>General &gt; Keys</strong></a> preference page.</p></td>
+  </tr>
+  <tr id="switch-editors">
+    <td width="30%" valign="top" align="left">
+        <b>Switch editors and multi-page editors</b>
+    </td>
+    <td width="70%" valign="top">
+        You can use <b>Ctrl</b>+<b>PageDown</b> and <b>Ctrl</b>+<b>PageUp</b> to
+        activate the next or previous editor tab, even in multi-page editors. To switch between pages of a multi-page
+        editor, use <b>Alt</b>+<b>PageDown</b> and <b>Alt</b>+<b>PageUp</b>.
+    </td>
+  </tr>
+
+    <tr> 
+    <td width="20%" valign="top" align="left"><b>Pinning editors</b></td>
+    <td width="80%" valign="top" align="left">When the <b> Close editors automatically</b> 
+      preference is active (found on the
+      
+      <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.ui.preferencePages.Editors)")'>
+      <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+      <strong>General &gt; Editors</strong></a>
+      preference page), you can stop an editor from being closed by using the
+      <b>Pin Editor</b> button which appears in the workbench toolbar. 
+      <p><img src="images/pin-editor.png" alt="Pin editor button"  border="0"></p></td>
+  </tr>
+  <tr> 
+    <td width="20%" valign="top" align="left"><b>Reordering editor tabs</b></td>
+    <td width="80%" valign="top" align="left">You can rearrange the order of open 
+      editors by using drag and drop. Grab the editor tab and drag it to the position 
+      you want the editor to appear. When positioning editors, the stack icon 
+      <img src="../images/drop_stack.svg"  align="top" border="0" alt="Stack icon"> 
+      indicates a valid spot to drop.</td>
+  </tr>
+
+  <tr>
+    <td width="20%" valign="top" align="left"><b>Middle mouse button closes tabs</b></td>
+    <td width="80%" valign="top" align="left">You can click on a view or editor tab with your middle mouse button to close
+    it. If you do not have a middle mouse button, try clicking on the scroll wheel if you have one.</td>
+  </tr>
+  
+  <tr>
+    <td width="20%" valign="top" align="left"><b>Close Tabs to the Left/Right</b></td>
+    <td width="80%" valign="top" align="left">The context menu of editor and view tabs offers <b>Close Tabs to the Left</b> and <b>Close Tabs to the Right</b> menu to close the corresponding tabs.</td>
+  </tr>
+
+     <tr> 
+    <td width="20%" valign="top" align="left"><b>Minimizing views and editors</b>
+    </td>
+    <td width="80%" valign="top" align="left">Running out of space? Try minimizing 
+      your unused views to reclaim screen real-estate. Each view stack contains 
+      a minimize icon along side the maximize icon. 
+      <p><img src="images/mini-view.png" alt="Minimized View Stack"  border="0" align="left"></p></td>
+  </tr>
+  <tr> 
+    <td width="20%" valign="top" align="left"><b>Maximizing views and editors</b></td>
+    <td width="80%" valign="top" align="left">You can maximize a view or editor 
+      by double-clicking on the view's title bar or the editor's tab. Double-click 
+      again to restore it to its usual size.</td>
+  </tr>
+  <tr> 
+    <td width="20%" valign="top" align="left"><b>Detached views and editors</b>
+    </td>
+    <td width="80%" valign="top" align="left">It's possible to detach a view or editor
+          so that it can be placed wherever desired, including over another Eclipse 
+          window.
+        <p>Simply drag the view by its tab to a location outside the workbench window to detach it. 
+          You can also drag and drop other views into the same window.</p> 
+        <p><img src="images/detachview2.png" alt="Screenshot of the floating view"> </p>
+       <p>To return the view to the workbench window, simply drag the view by its tab
+         back into the workbench window.</p></td>
+  </tr>
+    <tr> 
+    <td width="20%" valign="top" align="left"><b>Restoring a perspective's layout</b></td>
+    <td width="80%" valign="top" align="left">Rearranging and closing the views 
+      in a perspective can sometimes render it unrecognizable and hard to work 
+      with. To return it to a familiar state, use <b>Reset Perspective</b> on the 
+      <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.resetPerspective")'>
+      <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+      <strong>Window &gt; Perspective</strong></a> preference page.
+    </td>
+  </tr>
+    <tr> 
+    <td width="20%" valign="top" align="left"><b>User customizable<br>
+      key bindings</b></td>
+    <td width="80%" valign="top" align="left">If you find yourself repeatedly 
+      doing some command, you might be able to streamline things by assigning 
+      a key sequence to trigger that command. Assigning new key bindings, and 
+      viewing existing bindings, is done from the
+      
+      <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.ui.preferencePages.Keys)")'>
+      <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+      <strong>General &gt; Keys</strong></a>
+      preference page. 
+      <p><img src="images/key-bindings.png" alt="Key bindings preference dialog"></p></td>
+  </tr>
+   <tr> 
+      <td width="20%" valign="top" align="left"><b>View all 
+          keyboard shortcuts</b></td>
+      <td width="80%" valign="top" align="left">While working with your favorite editors and 
+        views in Eclipse, just press <b>Ctrl+Shift+L</b> to see a full list of the currently 
+        available key bindings. This is a great way to learn what is available 
+        in the UI and to speed up your productivity by learning more key bindings. 
+        This information is also available in the improved
+        
+        <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.ui.preferencePages.Keys)")'>
+        <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+        <strong>General &gt; Keys</strong></a>
+        preference page.
+        <p><img border="0" src="images/keycompletions.png" alt="Screenshot of keybindings" ></p></td>
+    </tr>
+      <tr> 
+    <td width="20%" valign="top" align="left"><b>Key binding assistance</b></td>
+    <td width="80%" valign="top" align="left">Eclipse supports key bindings 
+        that contain more than one key stroke. Examples of such key bindings are 
+        <b>Ctrl+X S</b> (<b>Save</b> in the Emacs key configuration) or <b>Alt+Shift+Q Y</b> 
+        (<b>Show View (View: Synchronize)</b> in the Default key configuration). It is hard 
+        to learn these keys, and it can also be hard to remember them if you don't 
+        use them very often. If you initiate such a key sequence and wait a second, a little pop-up showing 
+        you the possible completions will appear.
+      <p><img src="images/key-assist.png" alt="Key Assist"  border="0"></p>
+    </td>
+  </tr>
+   <tr> 
+    <td width="20%" valign="top" align="left"><b>Customizing toolbar and menu 
+      bar</b></td>
+    <td width="80%" valign="top" align="left">You can customize which items appear 
+      on the main toolbar and menu bar using the
+      
+      <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.customizePerspective")'>
+      <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+      <strong>Window &gt; Perspective &gt; Customize Perspective</strong></a>
+      
+      command. 
+      <p><img src="images/perspective-other.png" alt="Customizing toolbar and menu bar"  border="0"></p></td>
+  </tr>
+  <tr> 
+    <td width="20%" valign="top" align="left"><b>Restoring deleted resources</b></td>
+    <td width="80%" valign="top" align="left">Select a container resource and 
+      use <b>Restore from Local History</b> to restore deleted files. You can 
+      restore more than one file at one time. 
+      <p><img src="images/restore-local.png"  border="0" alt="Restore from local history dialog" align="left"></p></td>
+  </tr>
+  <tr> 
+    <td width="20%" valign="top" align="left"><b>Faster workspace navigation</b></td>
+    <td width="80%" valign="top" align="left">
+    
+      <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.navigate.openResource")'>
+      <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+      <strong>Navigate &gt; Open Resource...</strong></a>
+
+      (<b>Ctrl+Shift+R</b>) brings up a dialog that allows you to quickly locate and 
+      open an editor on any file in the workspace.</td>
+  </tr>
+  <tr> 
+    <td width="20%" valign="top" align="left"><b>Quickly find a resource</b></td>
+    <td width="80%" valign="top" align="left">Use the <b>Navigate &gt; Go To &gt; 
+      Resource</b> command to quickly find a resource. If the <b>Go To &gt; Resource</b> 
+      command does not appear in your perspective, you can add it by selecting 
+      
+      <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.customizePerspective")'>
+      <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+      <strong>Window &gt; Perspective &gt; Customize Perspective</strong></a>,
+      
+      then <b>Other &gt; Resource Navigation</b>.</td>
+  </tr>
+  <tr> 
+    <td width="20%" valign="top" align="left"><b>Copying and moving resources</b></td>
+    <td width="80%" valign="top" align="left">You can drag and drop files and 
+      folders within the Project Explorer view to move them around. Hold down the <b>Ctrl</b> 
+      key to make copies.</td>
+  </tr>
+  <tr> 
+    <td width="20%" valign="top" align="left"><b>Importing files</b></td>
+    <td width="80%" valign="top" align="left">You can quickly import files and 
+      folders into your workspace by dragging them from the file system (e.g., 
+      from a Windows Explorer window) and dropping them into the Project Explorer view. 
+      The files and folder are always copied into the project; the originals are 
+      not affected. Copy and paste also work.</td>
+  </tr>
+  <tr> 
+    <td width="20%" valign="top" align="left"><b>Exporting files</b></td>
+    <td width="80%" valign="top" align="left">Dragging files and folder from the 
+      Project Explorer view to the file system (e.g., to a Windows Explorer window) exports 
+      the files and folders. The files and folder are always copied; workspace 
+      resources are not affected. Copy and paste also work.</td>
+  </tr>
+  <tr> 
+    <td width="20%" valign="top" align="left"><b>Transfer preferences</b></td>
+    <td width="80%" valign="top" align="left">The preferences can be transferred from
+    one workspace to another by exporting and importing them. In addition, it is possible
+    to only do this for selected categories:
+    <p><img src="images/preference-transfer-compiler.png" alt="New Java Compiler Preference transfer"></p>
+    <p>Easily accessible buttons for opening the <b>Import/Export</b> preferences wizard are available in the lower left corner of the <b>Preferences</b> dialog. 
+    The wizards are also accessible via <b>File &gt; Import.../Export... &gt; General &gt; Preferences</b>.</p>
+    <p><img src="images/preference-import-export.png" alt=""></p> 
+    </td>
+  </tr>
+  <tr> 
+    <td width="20%" valign="top" align="left"><b>Copy preferences during workspace switch</b></td>
+    <td width="80%" valign="top" align="left">You can copy preferences during a switch to a new or existing workspace.
+    <p><img src="images/copy-preferences-ws-switch.png" alt=""></p> 
+    </td>
+  </tr>
+  <tr> 
+    <td width="20%" valign="top" align="left"><b>Workspace project management</b></td>
+    <td width="80%" valign="top" align="left">Use the <b>Project &gt; Close Project</b> 
+      command to manage projects within your workspace. When a project is closed, 
+      its resources are temporarily &quot;offline&quot; and no longer appear in 
+      the Workbench (they are still sitting in the local file system). Closed 
+      projects require less memory. Also, since they are not examined during builds, 
+      closing a project can improve build times. </td>
+  </tr>
+  <tr> 
+    <td width="20%" valign="top" align="left"><b>Describing your configuration</b></td>
+    <td width="80%" valign="top" align="left">When reporting a problem, it's often 
+      important to be able to capture details about your particular setup. The 
+      <b>Installation Details</b> button on the
+
+      <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.help.aboutAction")'>
+      <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+      <strong>Help &gt; About <i>Product</i></strong></a>
+      
+      dialog opens a dialog containing pages that describe different aspects of
+      your installation.  The <b>Configuration</b> page displays a file 
+      containing various pieces of information about your 
+      setup, including plug-in versions, preference settings, and the contents 
+      of the internal log file. You can copy and save this information, and attach the saved file to your 
+      problem report.</td>
+  </tr>
+ <tr> 
+    <td width="20%" valign="top" align="left"><b>Deleting completed tasks</b></td>
+    <td width="80%" valign="top" align="left">Use the <b>Delete Completed Tasks</b> 
+      command in the Task view context menu to remove all completed tasks from 
+      the Tasks view. This is more convenient than individually selecting and 
+      deleting completed tasks.</td>
+  </tr>
+  <tr> 
+    <td width="20%" valign="top" align="left"><b>Viewing resource properties</b></td>
+    <td width="80%" valign="top" align="left">Use the Properties view
+
+      (<a class="command-link" href='javascript:executeCommand("org.eclipse.ui.views.showView(org.eclipse.ui.views.showView.viewId=org.eclipse.ui.views.PropertySheet)")'><img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+      <strong>Window &gt; Perspective &gt; Show View &gt; Properties</strong></a>)
+    
+      when viewing the properties for many 
+      resources. Using this view is faster than opening the Properties dialog 
+      for each resource. 
+      <p><img src="images/props-view.png" alt="Resource properties dialog"  border="0"></p></td>
+  </tr>
+  <tr> 
+    <td width="20%" valign="top" align="left"><b>Extra resource information</b></td>
+    <td width="80%" valign="top" align="left">Label decorations are a general 
+      mechanism for showing extra information about a resource. Use the
+      
+      <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.ui.preferencePages.Decorators)")'>
+      <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+      <strong>General &gt; Appearance &gt; Label Decorations</strong></a>
+      preference page to select which of the available 
+      kinds of decorations you want to see.</td>
+  </tr>
+  <tr> 
+    <td width="20%" valign="top" align="left"><b>Filtering resources</b></td>
+    <td width="80%" valign="top" align="left">Most views that show resources 
+      support filtering of their items. You control which items are visible by 
+      applying filters or working sets. The commands to filter are found 
+      in the view menu.</td>
+  </tr>
+  <tr> 
+    <td width="20%" valign="top" align="left"><b>Quick fix in Tasks view</b></td>
+    <td width="80%" valign="top" align="left">You can use the <b>Quick Fix</b> 
+      command in the Tasks view to suggest an automatic fix for the selected item. 
+      The <b>Quick Fix</b> command is only enabled when there is a suggested fix.</td>
+  </tr>
+  <tr> 
+    <td width="20%" valign="top" align="left"><b>Creating path variables</b></td>
+    <td width="80%" valign="top" align="left">When creating a linked folder or 
+      file, you can specify the target location relative to a path variable. By 
+      using path variables, you can share projects containing linked resources 
+      without requiring team members to have exactly the same path in the file 
+      system. You can define a path variable at the time you create a linked resource, 
+      or via the
+      
+      <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.ui.preferencePages.LinkedResources)")'>
+      <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+      <strong>General &gt; Workspace &gt; Linked Resources</strong></a>
+      preference page. 
+      <p><img src="images/path-vars.png" alt="Path variables dialog"></p></td>
+  </tr>
+  <tr> 
+    <td valign="top" align="left" width="20%"> <strong>Comparing zip archives 
+      with each other or with a folder</strong> </td>
+    <td valign="top" align="left" width="80%"> Select two zip archives or one 
+      archive and a folder in the resource Project Explorer view and choose <strong>Compare 
+      With &gt; Each Other</strong> from the view's popup menu. Any differences 
+      between the two inputs are opened in a Compare editor. The top pane shows 
+      all the archive entries that differ. Double clicking on an item performs 
+      a content compare in the bottom pane. 
+      <p> This works in any context where a file comparison is involved. So if 
+        a CVS Synchronize operation lists an archive in the resource tree, you 
+        can double click on it in order to drill down into changes within the 
+        archive.</p></td>
+  </tr>
+  <tr>
+    <td width="20%" valign="top" align="left"><b>Switch workspace</b>
+    </td>
+    <td width="80%" valign="top" align="left">Instead of shutting down eclipse and restarting 
+    	with a different workspace you can instead use
+    	
+    	<a class="command-link" href='javascript:executeCommand("org.eclipse.ui.file.openWorkspace")'>
+        <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+        <strong>File &gt; Switch Workspace</strong></a>.  From here you can either open previous workspaces 
+        directly from the menu or you can open the workspace chooser dialog to choose a new one.
+    	
+      <p>When you change certain preferences that require 
+        a restart to take effect (such as the
+        
+        <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.ui.preferencePages.Views)")'>
+        <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+        <strong>General &gt; Appearance</strong></a>
+        
+        preferences), use <b>File &gt; Restart</b>.</p>
+    </td>
+  </tr>
+    <tr>
+    <td width="20%" valign="top" align="left"><b>Show workspace path</b>
+    </td>
+    <td width="80%" valign="top" align="left">The
+          
+          <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.ui.preferencePages.Workspace)")'>
+          <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+          <strong>General &gt; Workspace</strong></a>
+          preference page shows the current workspace path. In addition, you can show the path in window title by checking the option "Show current workspace path in window title".
+          <p>The <code>-showLocation</code> command line argument can also be used to show the path in window title and it overrides the preference.</p> 
+    </td>
+  </tr>
+  <tr>
+    <td width="20%" valign="top" align="left"><b>Disabling unused capabilities</b></td>
+    <td width="80%" valign="top" align="left">If there are parts of the Eclipse 
+        Platform that you never use (for instance, you don't use CVS repositories 
+        or you don't develop Plug-ins) it's possible that you can disable them 
+        from the UI entirely. Segments of the Workbench that may be filtered can 
+        be found in the
+        
+        <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.sdk.capabilities)")'>
+        <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+        <strong>General &gt; Capabilities</strong></a>
+        preference page. By disabling capabilities you are able to hide views,
+        perspectives, preference pages and other assorted contributions.
+	    
+      <p><img src="images/cap-pref.png" alt="Capabilities Preference Page"></p>
+    </td>
+  </tr>
+  <tr>
+    <td width="20%" valign="top" align="left"><b>Storing the encoding of derived resources separately</b></td>
+    <td width="80%" valign="top" align="left">Usually the encodings for all files
+    in a project are stored in one preferences file. If you are using a version
+    control system and the preferences file is shared, the encodings for all
+    resources, including derived, are shared along with it. To store the encodings of derived resources
+    in a separate preferences file and avoid sharing it, go to <b>Project &gt; Properties &gt; Resource</b> 
+    and select the <b>Store the encoding of derived resources separately</b> option.
+    
+    <p><img src="images/separate_derived_encodings.png" alt="Storing the encoding of derived resources separately"></p>
+    </td>
+  </tr>
+  <tr>
+    <td width="20%" valign="top" align="left"><b>Debug option for resource change notifications</b></td>
+    <td width="80%" valign="top" align="left">
+      In order to help troubleshooting problems with resource change listeners and to print information about which event triggers which listener, 
+      you can use the given debug option. To get a better picture of the flow of all workspace change events and how other plug-ins react to those changes, 
+      you can enable this debug option by adding
+      <pre>
+      org.eclipse.core.resources/debug=true
+      org.eclipse.core.resources/notifications=true</pre>
+      in your <b>.options file</b> or using the
+      <a class="command-link" 
+      href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.ui.trace.tracingPage)")'>
+      <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link"> 
+      <b>General &gt; Tracing</b></a> preference page.
+    </td>
+  </tr>
+  <tr>
+    <td width="20%" valign="top" align="left"><b>Terminate and Relaunch from history</b></td>
+    <td width="80%" valign="top" align="left">
+      You can use the <b>Terminate and Relaunch while launching from history</b> option on the
+      <a class="command-link" 
+      href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.debug.ui.LaunchingPreferencePage)")'>
+      <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link"> 
+      <b>Run/Debug &gt; Launching</b></a> preference page
+      to configure automatic termination of previous launches while launching from history.      
+      <p>
+        The behavior not selected on the preference page can also be activated on-demand by holding
+        the <b>Shift</b> key while launching the configuration from history.
+      </p>
+	  <p><img src="images/launch-preference-history-relaunch.png" alt=""></p>
+      <p>
+        Hint: You can still open the dialog to <b>edit a launch configuration</b> by holding
+        the <b>Ctrl</b> key while selecting the configuration from history.
+      </p>  
+    </td>
+  </tr>
+  <tr>
+    <td width="20%" valign="top" align="left"><b>Launch multiple launch configurations sequentially</b></td>
+    <td width="80%" valign="top" align="left">
+      You can create a <b>Launch Group</b> via the <b>Run &gt; Run Configurations...</b> or <b>Run &gt; Debug Configurations...</b> dialog to 
+      launch multiple launch configurations sequentially, with configurable actions after launching each group member:
+      <ul>
+      	<li>None: Continue launching the next member right away</li>
+      	<li>Wait until terminated: Continue launching the next member only after this member has terminated</li>
+      	<li>Delay: Delay launching the next member for a given amount of seconds.</li>
+      	<li>Wait for console output (regexp): Allows to delay further processing of launch group elements until 
+      	a certain output (matching a regular expression) appears on the console of the given group element.</li>
+      	<li>Adopt launch if already running: Allows to control the behaviour of the group when
+      	the launch configuration referenced by the launch group element is already running
+      	(no matter who launched it). If checked, the launch configuration will not be launched
+      	again if it is running already. The existing launch will be adopted by the group (i.e.
+      	terminating the group will also terminate this launch). Any configured post launch
+      	action will still be executed!</li>
+      </ul>
+	  <p><img src="images/launch-groups.png" alt=""></p>
+    </td>
+  </tr>
+  <tr>
+    <td width="20%" valign="top" align="left"><b>Export Launch Configurations</b></td>
+    <td width="80%" valign="top" align="left">
+      The <b>Export Launch Configurations</b> wizard can be easily accessed via the context menu on Launch Configurations. 
+      This wizard is also available with <b>File &gt; Export &gt; Run/Debug &gt; Launch Configurations</b>.
+      <p>
+        <img src="images/right-click-export-launch-config.png" alt="">
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td width="20%" valign="top" align="left"><b>Sort breakpoints by creation time</b></td>
+    <td width="80%" valign="top" align="left">
+      You can use the <b>Sort By &gt; Creation Time</b> option in <b>Breakpoints</b> view's view menu to show the newly created breakpoints on top.
+	  <p><img src="images/breakpoints-sort-by.png" alt=""></p>
+    </td>
+  </tr>
+  </table>
+
+<h3><a name="Editing">Editing</a></h3>
+<table border="1" cellpadding="10" cellspacing="0" width="670">
+  <tr>
+	<td valign="top" align="left" width="20%">
+		<b>Finding a string incrementally</b></td>
+    <td valign="top" align="left" width="80%">
+        Use <b>Edit &gt; Incremental Find Next (Ctrl+J)</b> or <b>Edit &gt; Incremental Find Previous
+        (Ctrl+Shift+J)</b>
+        to enter the incremental find mode, and start typing the string to match.
+        Matches are found incrementally as you type.
+        The search string is shown in the status line. Press <b>Ctrl+J</b> or
+        <b>Ctrl+Shift+J</b> to go to the next or previous match. Press <b>Enter</b> or <b>Esc</b> to
+        exit incremental find mode.
+	</td>
+  </tr>
+  <tr>
+    <td width="20%" valign="top" align="left"><b>Go to last edit location</b></td>
+    <td width="80%" valign="top" align="left"><b>Navigate &gt; Go
+      to Last Edit Location (Ctrl+Q)</b> takes you back to
+      the place where you last made a change. A corresponding button marked <img border="0" src="images/last_edit_pos.svg" alt="Go to last edit position icon" >
+      is shown in the toolbar. If this toolbar button does not appear in your perspective, you can 
+    add it by selecting
+    
+    <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.customizePerspective")'>
+    <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+    <strong>Window &gt; Perspective &gt; Customize Perspective</strong></a>,
+    
+    then <b>Other &gt; Editor Navigation</b>.</td>
+  </tr>
+	<TR>
+		<TD width="20%" valign="top" align="left">
+      <B>Shortcuts for manipulating lines</B>
+      </TD><TD width="80%" valign="top">
+      
+			All text editors based on the
+			Eclipse editor framework support editing functions, including
+			moving lines up or down (<b>Alt+Arrow Up</b> and <b>Alt+Arrow Down</b>),
+			copying lines (<b>Ctrl+Alt+Arrow Up</b> and <b>Ctrl+Alt+Arrow Down</b>), inserting
+			a new line above or below the current line (<b>Ctrl+Shift+Enter</b> and
+			<b>Shift+Enter</b>), and converting to lowercase or uppercase (<b>Ctrl+Shift+Y</b>
+			and <b>Ctrl+Shift+X</b>).
+			</TD>
+		
+	</TR>
+		<TR>
+			<TD width="20%" valign="top" align="left"><B>Quick Diff: seeing what has changed as you edit</B>
+			</TD>
+			
+    <TD width="80%" valign="top"> Quick Diff provides color-coded change indication 
+      while you are typing. It can be turned on for text editors using either 
+      the ruler context menu, <b>Ctrl+Shift+Q</b> or for all new editors on the
+      
+      <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.ui.editors.preferencePages.QuickDiff)")'>
+      <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+      <strong>General &gt; Editors &gt; Text Editors &gt; Quick Diff</strong></a>
+      preference page. The 
+      colors show additions, deletions, and changes to the editor buffer as compared 
+      to a reference, for example, the contents of the file on disk or its latest 
+      CVS revision. 
+      <P><img src="images/quickdiff-hover.png"  alt="Quick Diff"></P>
+			<P>When the mouse cursor is placed over a change in the vertical
+			ruler, a hover displays the original content, which can be restored using the ruler's context
+			menu. The context menu also allows you to enable/disable Quick Diff.</P></TD>
+		</TR>
+		<TR>
+			<TD width="20%" valign="top" align="left"><b>Customizing the presentation of 
+      annotations</b></TD>
+			
+    <TD width="80%" valign="top"> You can customize the presentation of annotations 
+      in editors on the
+      
+      <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.ui.editors.preferencePages.Annotations)")'>
+      <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+      <strong>General &gt; Editors &gt; Text Editors &gt; Annotations</strong></a>
+      preference page: 
+      <P><img src="images/annotations-preferences.png" alt="Annotations preference page" title="Annotations Preference Page">
+</P>
+			</TD>
+		</TR>
+ 
+ 
+  <tr> 
+    <td width="20%" valign="top" align="left"><b>Next / previous navigation</b></td>
+    <td width="80%" valign="top" align="left">You can use <b>Ctrl+.</b> and <b>Ctrl+,</b> to 
+      navigate to the next or previous search match, editor error, or compare 
+      difference. These are the shortcut keys for <b>Navigate &gt; Next</b> and 
+      <b>Navigate &gt; Previous</b>.</td>
+  </tr>
+      <tr> 
+    <td width="20%" valign="top" align="left"><b>Line delimiter support</b></td>
+    <td width="80%" valign="top" align="left">You can set the line delimiter that 
+          is used when creating new text files. You can provide a single setting 
+          for the entire workspace, using the
+          
+          <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.ui.preferencePages.Workspace)")'>
+          <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+          <strong>General &gt; Workspace</strong></a>
+          
+          preferences, or for a given project.
+        <p><img src="images/line-delimiter.png" alt="Screenshot of default delimiter dialog"></p>
+        <p><strong>Note:</strong> Changing those settings does not convert existing files. To convert
+        the line delimiters in a project, folder or file use <b>File &gt; Convert Line Delimiters To &gt;</b>.</p>
+        </td>
+    </tr>
+        <tr> 
+      <td width="20%" valign="top" align="left"><b>Word completion</b></td>
+      <td width="80%" valign="top" align="left">In any text editor you can complete a 
+        prefix to a word occurring in all currently open editors or buffers. The 
+        default key binding for word completion is <b>Alt+/.</b> (<b>Ctrl+.</b> on the Mac).
+    </td>
+    </tr>
+
+    <tr> 
+      <td width="20%" valign="top" align="left"><b>Open untitled 
+          files</b></td>
+      <td width="80%" valign="top" align="left">A text editor can be opened without creating 
+        a file first: select <strong>File &gt; New &gt; Untitled Text File</strong>.
+        </td> 
+    </tr>
+	
+	<tr> 
+      <td width="20%" valign="top" align="left"><b>Commands to zoom in text editors</b></td>
+      <td width="80%" valign="top" align="left">
+    	In text editors, you can use <b>Zoom In</b> (<b>Ctrl++</b> or <b>Ctrl+=</b>) and <b>Zoom Out</b> (<b>Ctrl+-</b>) commands
+    	to increase and decrease the font size.
+    	<p>
+      	Like a change in the
+      	<a class="command-link" 
+      	href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.ui.preferencePages.ColorsAndFonts)")'> 
+      	<img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link"> 
+      	<b>General &gt; Appearance &gt; Colors and Fonts</b></a> preference page, the commands persistently
+      	change the font size in all editors of the same type. If the editor type's font is configured to use a default font,
+      	then that default font will be zoomed.
+    	</p>
+      </td> 
+    </tr>
+    
+    <tr> 
+      <td width="20%" valign="top" align="left"><b>Pinch to zoom in text editors</b></td>
+      <td width="80%" valign="top" align="left">
+      	To temporarily zoom the editor font in text editors, use a "<b>pinch</b>" gesture on a touchpad.
+      	Put two fingers on the touchpad and move them apart or together.
+      	<p>
+        	To reset the original font size, rotate two fingers by at least 45<sup>o</sup>, or close and reopen the editor (<b>Navigate &gt; Back</b>).
+      	</p>
+      	<p>
+        	Those gestures only affect the current editor. Changes are neither propagated to other editors nor persisted.
+      	</p>
+      	<p>
+        	Note: SWT currently only supports these gestures on OS X and on Windows systems that use the native
+        	multi-touch support. Touchpads that emulate mouse move/scroll events don't support gestures.
+        	Gesture support on GTK is not implemented yet.
+      	</p>
+      </td> 
+    </tr>
+  <tr>
+    <td width="20%" valign="top" align="left"><b>Browser Editor can toggle auto-refresh</b></td>
+    <td width="80%" valign="top" align="left">
+      The <b>Browser Editor</b> contains a drop down option for enabling auto-refresh for local pages. When enabled, the <b>Browser Editor</b> will automatically refresh if the opened file is edited and saved.
+      <p>
+        <img src="images/browser-autorefresh.png" alt="">
+      </p>
+    </td>
+  </tr>
+  <tr>
+    <td width="20%" valign="top" align="left"><b>Show problem markers inline</b></td>
+    <td width="80%" valign="top" align="left">
+      You can see error, warning, and info problem markers inline in text editors supporting code minings by setting the <b>Show Code Minings for Annotations</b> option on <b>General &gt; Editors &gt; Text Editors</b> preference page.
+      <p>
+        <img src="images/annotation-code-mining-jdt.png" alt="">
+      </p>
+    </td>
+  </tr>
+
+</table>
+
+<h3><a name="Ant">Ant</a></h3>
+<table border="1" cellpadding="10" cellspacing="0" width="670">
+  <tr>
+    <td width="20%" valign="top" align="left"><b>Launching from the Context menu</b>
+    </td>
+    <td width="80%" valign="top" align="left">You can launch an Ant build from 
+      the context menu. Select an Ant buildfile and then choose <b>Run &gt; Ant 
+      Build</b> from the context menu. To configure options before running the 
+      build, use <strong>Run &gt; Ant Build...</strong> which will open the
+      launch configuration dialog. A build can also be started from the Ant
+      editor outline context menu.</td>
+  </tr>
+   <tr>
+    <td width="20%" valign="top" align="left"><b>Specification of JRE</b>
+    </td>
+    <td width="80%" valign="top" align="left">You can specify the JRE that an 
+      Ant build occurs in using the <b>JRE</b> tab of the launch configuration 
+      dialog for an Ant launch configuration. The build can be set to run in a 
+      separate JRE (the default setting) or the same JRE as the Eclipse workspace. 
+      Note that some Eclipse specific tasks require that the build occurs in the 
+      same JRE as Eclipse.</td>
+  </tr>
+  <tr>
+    <td width="20%" valign="top" align="left"><b>Running Ant targets in the Ant view</b></td>
+    <td width="80%" valign="top" align="left">You can double click on a target
+      in the Ant view to run it (equivalent to selecting the target and choosing
+      the <b>Run</b> command from the context menu). </td>
+  </tr>
+  <tr>
+    <td width="20%" valign="top" align="left"><b>Terminating Ant builds</b></td>
+    <td width="80%" valign="top" align="left">The <b>Terminate</b> command in the
+      console (or Debug view) can be used to terminate an Ant build running in
+      the background.</td>
+  </tr>
+  <tr>
+    <td width="20%" valign="top" align="left"><b>Ant output and hyperlinks</b></td>
+    <td width="80%" valign="top" align="left">The output from Ant builds is
+      written to the <b><a href="PLUGINS_ROOT/org.eclipse.jdt.doc.user/reference/views/console/ref-console_view.htm">Console view</a></b> in the same hierarchical format seen
+      when running Ant from the command line. Ant tasks (for example <code>[mkdir]</code>)
+      are hyper-linked to the associated Ant buildfile, and <code>javac</code> error reports
+      are hyper-linked to the associated Java source file and line number.
+      <p>The Console supports hyperlinks for <code>javac</code> and <code>jikes</code> as well as the
+        Eclipse Java compiler. All such error reports are hyper-linked to the associated 
+        Java source file and line number.</p></td>
+  </tr>
+  <tr>
+    <td width="20%" valign="top" align="left"><b>Ant can find it</b></td>
+    <td width="80%" valign="top" align="left"> When the <b>Run &gt; External Tools &gt; Run As &gt; Ant Build</b>
+      launch shortcut is used, it searches for the buildfile
+      to execute starting in the folder of the selected resource and working its way
+      upwards (some will recognize this as Ant's &quot;-find&quot;
+      feature).
+      The names of buildfiles to search for are specified in the  <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.ant.ui.AntPreferencePage)")'>
+          <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+          <strong>Ant</strong></a> preference page.</td>
+  </tr>
+</table>
+
+<h3><a name="Help">Help</a></h3>
+<table border="1" cellpadding="10" cellspacing="0" width="670">
+  <tr>
+    <td width="20%" valign="top" align="left"><b>Show in external window</b></td>
+    <td width="80%" valign="top" align="left">Having trouble reading help topics
+    from the Help view/tray? Use the <img border="0"
+    src="images/help_external_window.svg" alt="Show in external window"> <b>Show
+    in external window</b> button from the toolbar to view the document in the
+    full help window.
+    </td>
+  </tr>
+  <tr>
+    <td width="20%" valign="top" align="left"><b>Find that topic</b></td>
+    <td width="80%" valign="top" align="left">While browsing a searched topic,
+    you can find out where that topic is in the table of contents by using
+    the <img border="0" src="images/help_show_topic.svg"
+    alt="Show in table of contents"> <b>Show in table of contents</b> button in
+    the toolbar.</td>
+  </tr>
+  <tr>
+    <td width="20%" valign="top" align="left"><b>Bookmarks</b></td>
+    <td width="80%" valign="top" align="left">You can keep your own list of
+      bookmarks to pages in help books. Create a bookmark with the
+      <img border="0" src="images/help_bookmarks_1.svg" alt="Bookmark document icon">
+      <b>Bookmark Document</b> button on the toolbar of the Help browser. The
+      bookmarks show up in the <img border="0" src="images/help_bookmarks_2.svg"
+      alt="Bookmarks icon"> <b>Bookmarks</b> tab.</td>
+  </tr>
+  <tr>
+    <td width="20%" valign="top" align="left"><b>Infopops</b></td>
+    <td width="80%" valign="top" align="left">If you prefer the yellow pop-ups
+      (infopops) used in previous releases for context-sensitive help, you can
+      configure Help to use these instead of the Help view/tray from the
+      
+      <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.help.ui.browsersPreferencePage)")'>
+      <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+      <strong>Help</strong></a>
+      preference page.</td>
+  </tr>
+  <tr>
+    <td width="20%" valign="top" align="left"><b>Cheat Sheets</b></td>
+    <td width="80%" valign="top" align="left">Cheat sheets provide step by step 
+    guidance on how to perform common tasks. To see what cheat sheets exist use 
+    the
+    
+    <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.cheatsheets.openCheatSheet")'>
+    <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+    <strong>Help &gt; Cheat Sheets...</strong></a>
+    
+    menu item. This menu item may not appear in all perspectives.</td>
+  </tr>
+  <tr>
+    <td width="20%" valign="top" align="left"><b>Cheat Sheet State</b></td>
+    <td width="80%" valign="top" align="left">A cheat sheet will remember which 
+    steps you have performed even if you close the cheat sheet view, open 
+    another cheat sheet or exit Eclipse.</td>
+  </tr>
+</table>
+
+<h3><a name="Team">Team</a></h3>
+
+<table border="1" cellpadding="10" cellspacing="0" width="670">
+  <tr> 
+    <td width="20%" valign="top" align="left"><b>Determining who last modified a line with the Show Revision Information command</b></td>
+    <td width="80%" valign="top" align="left">
+    The <b>Show Revision Information</b> command allows you to pick any file and get a listing of who changed what line and when.
+    The <b>Team &gt; Show Revision Information</b> action is available from the Project and Package Explorers, and the text editor context menus.
+    The action works in a Quick Diff flavor and displays the annotations in the vertical ruler at the left of the editor.
+    It can also be applied to a previous version file opened from the History view to get the annotations on that revision.
+    To turn off the annotations, select <b>Revisions &gt; Hide Revision Information</b> from the ruler context menu.
+    </td>
+  </tr>
+  <tr> 
+    <td width="20%" valign="top" align="left"><b>Working set for imported team 
+      projects</b></td>
+    <td width="80%" valign="top" align="left">There is an option to create a working 
+      set for projects imported into the workspace via
+      
+      <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.file.import(importWizardId=org.eclipse.team.ui.ProjectSetImportWizard)")'>
+      <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+      <strong>Import &gt; Team Project Set</strong></a>.
+      
+      This works for all types of repositories. 
+      <p><img border="0" src="images/team-project-set.png"  alt="Team project set import dialog"></p></td>
+  </tr>
+  <tr> 
+    <td width="20%" valign="top" align="left"><b>Comparing different versions</b></td>
+    <td width="80%" valign="top" align="left">Select any folder or file in the  project explorer
+      and choose <b>Compare With</b> from context menu to 
+      compare it against another version, branch, or date.</td>
+  </tr>
+  <tr> 
+    <td valign="top" align="left" width="20%"> <b>Show ancestor pane in 3-way 
+      compares</b> </td>
+    <td valign="top" align="left" width="80%"> Whenever a team operatoin 
+      results in a conflict, it is helpful to view the common ancestor on which 
+      the two conflicting versions are based. 
+      <p> You can view the common ancestor by toggling the <b>Show Ancestor Pane</b> 
+        button in the compare viewer's local toolbar.</p> 
+      <p> <img src="images/compare-showancestor.png"  alt="Show Ancestor Pane button in compare viewer" border="0"> </p>
+      <p> If you always want to have the ancestor pane open automatically for 
+        conflicts, you can check the option <b>Initially show ancestor pane</b> 
+        on the Text Compare tab of the <a class="command-link" 
+        href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.compare.internal.ComparePreferencePage)")'>
+        <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+        <strong>Compare/Patch</strong></a> preference page.</p> </td>
+  </tr>
+  <TR> 
+    <TD width="20%" valign="top" align="left"><B>Merge in Compare editor</B> </TD>
+    <TD width="80%" valign="top" align="left">You can merge conflicting changes in 
+      the compare editor with one click. Hover over the small square in the middle 
+      of the line connecting two ranges of an incoming or conflicting change. 
+      A button appears that allows you to accept the change. 
+      <P><IMG border="0" src="images/compare-merge-button.png" alt="Merge button" ></P>
+      <P>Note that for this the option <B>Connect ranges with single line</B> 
+        on the
+
+        <a class="command-link" href='javascript:executeCommand("org.eclipse.ui.window.preferences(preferencePageId=org.eclipse.compare.internal.ComparePreferencePage)")'>
+        <img src="PLUGINS_ROOT/org.eclipse.help/command_link.svg" alt="command link">
+        <strong>General &gt; Compare/Patch</strong></a>
+        <strong>&gt; Text Compare</strong> preference page has to be enabled.</P></TD>
+  </TR>
+</table>
+
+</body>
+</html>
