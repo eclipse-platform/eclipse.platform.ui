@@ -94,7 +94,7 @@ public abstract class MenuUpdater {
 
 	}
 
-	private Runnable updateRunnable = () -> updateMenu();
+	private Runnable updateRunnable = this::updateMenu;
 
 	private PrivateInterface privateInterface = new PrivateInterface();
 	private Menu theMenu;

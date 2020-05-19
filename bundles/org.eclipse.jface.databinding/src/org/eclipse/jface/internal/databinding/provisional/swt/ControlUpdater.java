@@ -108,7 +108,7 @@ public abstract class ControlUpdater {
 
 	}
 
-	private Runnable updateRunnable = () -> updateControl();
+	private Runnable updateRunnable = this::updateControl;
 
 	private PrivateInterface privateInterface = new PrivateInterface();
 	private Control theControl;

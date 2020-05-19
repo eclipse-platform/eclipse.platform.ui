@@ -41,7 +41,7 @@ public class DateTimeSelectionProperty extends WidgetValueProperty<DateTime, Dat
 	}
 
 	// One calendar per thread to preserve thread-safety
-	private static final ThreadLocal<Calendar> calendar = ThreadLocal.withInitial(() -> Calendar.getInstance());
+	private static final ThreadLocal<Calendar> calendar = ThreadLocal.withInitial(Calendar::getInstance);
 
 	@Override
 	protected Date doGetValue(DateTime source) {
