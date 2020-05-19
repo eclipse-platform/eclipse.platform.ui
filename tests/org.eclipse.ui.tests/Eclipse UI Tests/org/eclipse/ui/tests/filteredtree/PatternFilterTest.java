@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 IBM Corporation and others.
+ * Copyright (c) 2006, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -82,12 +82,12 @@ public class PatternFilterTest {
 	@Before
 	public void setup() {
 		viewer = new MockViewer();
+		viewer.setContentProvider(new ArrayContentProvider());
+		viewer.setInput(new String[] {});
 	}
 
 	@Test
 	public void testBasicFilter() {
-		viewer.setContentProvider(new ArrayContentProvider());
-		viewer.setInput(new String[] {});
 		PatternFilter filter = new PatternFilter();
 
 		filter.setPattern("b");
@@ -99,8 +99,6 @@ public class PatternFilterTest {
 
 	@Test
 	public void testPatternFilterOrder() {
-		viewer.setContentProvider(new ArrayContentProvider());
-		viewer.setInput(new String[] {});
 		PatternFilter filter = new PatternFilter();
 		filter.setPattern("a b");
 		// simple match prefix
@@ -130,8 +128,6 @@ public class PatternFilterTest {
 
 	@Test
 	public void testEmptyItemNotMatched() {
-		viewer.setContentProvider(new ArrayContentProvider());
-		viewer.setInput(new String[] {});
 		PatternFilter filter = new PatternFilter();
 		filter.setPattern("a");
 		assertFalse(filter.select(viewer, null, ""));
@@ -139,8 +135,6 @@ public class PatternFilterTest {
 
 	@Test
 	public void testWildcardAndCaseInsensitive() {
-		viewer.setContentProvider(new ArrayContentProvider());
-		viewer.setInput(new String[] {});
 		PatternFilter filter = new PatternFilter();
 
 		filter.setPattern("a*b");
