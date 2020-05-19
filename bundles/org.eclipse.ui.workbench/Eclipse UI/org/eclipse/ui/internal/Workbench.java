@@ -3537,7 +3537,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	 */
 	private IStatus saveWorkbenchState(IMemento memento) {
 		MultiStatus result = new MultiStatus(PlatformUI.PLUGIN_ID, IStatus.OK,
-				WorkbenchMessages.Workbench_problemsSaving, null);
+				WorkbenchMessages.Workbench_problemsSaving);
 
 		// TODO: Currently we store the editors history only. Add more if needed
 
