@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
@@ -120,7 +121,7 @@ public class ToolbarData extends RequestData {
 			try {
 				obj = element.createExecutableExtension("class"); //$NON-NLS-1$
 			} catch (CoreException e) {
-				HelpWebappPlugin.logError("Create extension failed:[" //$NON-NLS-1$
+				Platform.getLog(getClass()).error("Create extension failed:[" //$NON-NLS-1$
 						+ BUTTON_EXTENSION_POINT + "].", e); //$NON-NLS-1$
 			}
 			if (obj instanceof AbstractButton) {

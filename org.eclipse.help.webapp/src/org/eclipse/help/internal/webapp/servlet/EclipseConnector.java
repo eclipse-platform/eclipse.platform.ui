@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.servlet;
 
@@ -32,6 +33,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.core.runtime.URIUtil;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.MissingContentManager;
 import org.eclipse.help.internal.base.remote.RemoteHelpInputStream;
@@ -213,7 +215,7 @@ public class EclipseConnector {
 
 		} catch (Exception e) {
 			String msg = "Error processing help request " + url; //$NON-NLS-1$
-			HelpWebappPlugin.logError(msg, e);
+			Platform.getLog(getClass()).error(msg, e);
 		}
 	}
 

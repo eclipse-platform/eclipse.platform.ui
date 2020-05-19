@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
  *     Holger Voormann - fix for bug 365549 (http://eclip.se/365549)
  *     Holger Voormann - fix for bug 364324 (http://eclip.se/364324)
  *     Alex Blewitt - Bug 474070
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
@@ -438,8 +439,7 @@ public class SearchData extends ActivitiesData {
 						results, pm);
 				hits = results.getSearchHits();
 				if (hits == null) {
-					HelpWebappPlugin
-							.logWarning("No search results returned.  Help index is in use."); //$NON-NLS-1$
+					Platform.getLog(getClass()).warn("No search results returned.  Help index is in use."); //$NON-NLS-1$
 				}
 				return;
 			}

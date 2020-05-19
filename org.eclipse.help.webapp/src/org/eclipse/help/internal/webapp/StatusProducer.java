@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2016 IBM Corporation and others.
+ * Copyright (c) 2009, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 
 package org.eclipse.help.internal.webapp;
@@ -121,9 +122,9 @@ public class StatusProducer implements IHelpContentProducer {
 								HelpURLStreamHandler.getDefault());
 					return ProxyUtil.getStream(helpURL);
 				} catch (MalformedURLException e) {
-					HelpWebappPlugin.logError("Unable to locate error page: "+errorPage, e); //$NON-NLS-1$
+					Platform.getLog(getClass()).error("Unable to locate error page: "+ errorPage, e); //$NON-NLS-1$
 				} catch (IOException e) {
-					HelpWebappPlugin.logError("Unable to open error page: "+errorPage, e); //$NON-NLS-1$
+					Platform.getLog(getClass()).error("Unable to open error page: "+ errorPage, e); //$NON-NLS-1$
 				}
 
 			}
