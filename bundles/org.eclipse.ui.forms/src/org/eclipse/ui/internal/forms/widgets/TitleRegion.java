@@ -279,7 +279,7 @@ public class TitleRegion extends Canvas {
 		addMouseMoveListener(listener);
 		titleLabel.addMouseTrackListener(listener);
 		titleLabel.addMouseMoveListener(listener);
-		addPaintListener(e -> onPaint(e));
+		addPaintListener(this::onPaint);
 	}
 
 	private void onPaint(PaintEvent e) {

@@ -612,7 +612,7 @@ public class FormHeading extends Canvas {
 			if (gradientInfo != null || (backgroundImage != null && !isBackgroundImageTiled()))
 				updateGradientImage();
 		});
-		addMouseMoveListener(e -> updateTitleRegionHoverState(e));
+		addMouseMoveListener(this::updateTitleRegionHoverState);
 		addMouseTrackListener(new MouseTrackListener() {
 			@Override
 			public void mouseEnter(MouseEvent e) {

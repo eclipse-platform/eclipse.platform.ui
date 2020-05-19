@@ -78,7 +78,7 @@ public abstract class AbstractHyperlink extends Canvas {
 				handleActivate(e);
 			}
 		});
-		addPaintListener(e -> paint(e));
+		addPaintListener(this::paint);
 		addListener(SWT.Traverse, e -> {
 			switch (e.detail) {
 			case SWT.TRAVERSE_PAGE_NEXT:

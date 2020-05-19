@@ -70,7 +70,7 @@ public final class BusyIndicator extends Canvas {
 			}
 		};
 
-		addPaintListener(event -> onPaint(event));
+		addPaintListener(this::onPaint);
 
 		addDisposeListener(e -> clearImages());
 	}

@@ -170,7 +170,7 @@ public class ManagedForm implements IManagedForm {
 		if (t.equals(dt))
 			doRefresh();
 		else {
-			toolkit.getColors().getDisplay().asyncExec(() -> doRefresh());
+			toolkit.getColors().getDisplay().asyncExec(this::doRefresh);
 		}
 	}
 

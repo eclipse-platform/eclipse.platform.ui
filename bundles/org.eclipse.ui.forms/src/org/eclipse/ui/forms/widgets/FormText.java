@@ -368,7 +368,7 @@ public class FormText extends Canvas {
 			model.dispose();
 			disposeResourceTable(true);
 		});
-		addPaintListener(e -> paint(e));
+		addPaintListener(this::paint);
 		addListener(SWT.KeyDown, e -> {
 			if (e.character == '\r') {
 				activateSelectedLink();
@@ -461,7 +461,7 @@ public class FormText extends Canvas {
 				handleMouseHover(e);
 			}
 		});
-		addMouseMoveListener(e -> handleMouseMove(e));
+		addMouseMoveListener(this::handleMouseMove);
 		initAccessible();
 		ensureBoldFontPresent(getFont());
 		createMenu();
