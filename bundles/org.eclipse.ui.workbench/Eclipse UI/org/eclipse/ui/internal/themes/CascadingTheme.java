@@ -32,7 +32,7 @@ public class CascadingTheme extends EventManager implements ITheme {
 
 	private ITheme currentTheme;
 
-	private IPropertyChangeListener listener = event -> fire(event);
+	private IPropertyChangeListener listener = this::fire;
 
 	/**
 	 * @param colorRegistry

@@ -31,7 +31,7 @@ import org.eclipse.jface.viewers.IStructuredSelection;
 public class SelectionAdapterFactory implements IAdapterFactory {
 	private static final ICountable ICOUNT_0 = () -> 0;
 	private static final ICountable ICOUNT_1 = () -> 1;
-	private static final IIterable ITERATE_EMPTY = () -> Collections.EMPTY_LIST.iterator();
+	private static final IIterable ITERATE_EMPTY = Collections.EMPTY_LIST::iterator;
 
 	/**
 	 * The classes we can adapt to.
@@ -58,7 +58,7 @@ public class SelectionAdapterFactory implements IAdapterFactory {
 			return (IIterable) () -> ((IStructuredSelection) sel).iterator();
 		}
 		final List list = Arrays.asList(new Object[] { sel });
-		return (IIterable) () -> list.iterator();
+		return (IIterable) list::iterator;
 	}
 
 	private Object countable(final ISelection sel) {
@@ -67,7 +67,7 @@ public class SelectionAdapterFactory implements IAdapterFactory {
 		}
 		if (sel instanceof IStructuredSelection) {
 			final IStructuredSelection ss = (IStructuredSelection) sel;
-			return (ICountable) () -> ss.size();
+			return (ICountable) ss::size;
 		}
 		return ICOUNT_1;
 	}

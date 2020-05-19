@@ -186,7 +186,7 @@ public class Theme extends EventManager implements ITheme {
 	 */
 	private IPropertyChangeListener getCascadeListener() {
 		if (themeListener == null) {
-			themeListener = event -> firePropertyChange(event);
+			themeListener = this::firePropertyChange;
 		}
 		return themeListener;
 	}

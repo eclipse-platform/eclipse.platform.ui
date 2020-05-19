@@ -622,7 +622,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 				return (IServiceLocator) data;
 			} else if (data == null) {
 				IServiceLocatorCreator slc = getSite().getService(IServiceLocatorCreator.class);
-				IServiceLocator sl = slc.createServiceLocator(getSite(), null, () -> close());
+				IServiceLocator sl = slc.createServiceLocator(getSite(), null, this::close);
 				item.setData(sl);
 				pageSites.add(sl);
 				return sl;
@@ -651,7 +651,7 @@ public abstract class MultiPageEditorPart extends EditorPart implements IPageCha
 	private IServiceLocator getPageContainerSite() {
 		if (pageContainerSite == null) {
 			IServiceLocatorCreator slc = getSite().getService(IServiceLocatorCreator.class);
-			pageContainerSite = slc.createServiceLocator(getSite(), null, () -> close());
+			pageContainerSite = slc.createServiceLocator(getSite(), null, this::close);
 		}
 		return pageContainerSite;
 	}

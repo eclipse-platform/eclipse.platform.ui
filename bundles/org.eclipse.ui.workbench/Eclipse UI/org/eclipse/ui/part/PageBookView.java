@@ -157,12 +157,12 @@ public abstract class PageBookView extends ViewPart implements IPartListener {
 	/**
 	 * Selection change listener to listen for page selection changes
 	 */
-	private ISelectionChangedListener selectionChangedListener = event -> pageSelectionChanged(event);
+	private ISelectionChangedListener selectionChangedListener = this::pageSelectionChanged;
 
 	/**
 	 * Selection change listener to listen for page selection changes
 	 */
-	private ISelectionChangedListener postSelectionListener = event -> postSelectionChanged(event);
+	private ISelectionChangedListener postSelectionListener = this::postSelectionChanged;
 
 	/**
 	 * Selection provider for this view's site

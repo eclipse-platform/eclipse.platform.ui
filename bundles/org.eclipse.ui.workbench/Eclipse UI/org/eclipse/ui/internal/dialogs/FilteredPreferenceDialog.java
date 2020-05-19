@@ -227,7 +227,7 @@ public abstract class FilteredPreferenceDialog extends PreferenceDialog implemen
 
 		tree.addFilter(new CapabilityFilter());
 
-		tree.addSelectionChangedListener(event -> handleTreeSelectionChanged(event));
+		tree.addSelectionChangedListener(this::handleTreeSelectionChanged);
 
 		super.addListeners(tree);
 		return tree;

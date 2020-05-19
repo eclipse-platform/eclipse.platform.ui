@@ -146,9 +146,9 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 
 	protected Map propertyCache = new HashMap();
 
-	private IPropertyListener propertyChangeListener = (source, propId) -> partPropertyChanged(source, propId);
+	private IPropertyListener propertyChangeListener = this::partPropertyChanged;
 
-	private IPropertyChangeListener partPropertyChangeListener = event -> partPropertyChanged(event);
+	private IPropertyChangeListener partPropertyChangeListener = this::partPropertyChanged;
 
 	private IWorkbenchPage page;
 
@@ -171,7 +171,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 
 	private EventHandler createContextEventHandler() {
 		if (contextEventHandler == null) {
-			contextEventHandler = event -> handleContextSet(event);
+			contextEventHandler = this::handleContextSet;
 		}
 		return contextEventHandler;
 	}

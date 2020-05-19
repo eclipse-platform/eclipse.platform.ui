@@ -577,7 +577,7 @@ public class PopupMenuExtender implements IMenuListener2, IRegistryChangeListene
 				}
 
 				if (clearPopups) {
-					display.syncExec(() -> clearStaticActions());
+					display.syncExec(this::clearStaticActions);
 				}
 			}
 		}

@@ -581,7 +581,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 
 		contextMenuManager = new MenuManager();
 		contextMenuManager.setRemoveAllWhenShown(true);
-		contextMenuManager.addMenuListener(manager -> fillContextMenu(manager));
+		contextMenuManager.addMenuListener(this::fillContextMenu);
 
 		final Table table = tableViewer.getTable();
 		Menu menu = contextMenuManager.createContextMenu(table);

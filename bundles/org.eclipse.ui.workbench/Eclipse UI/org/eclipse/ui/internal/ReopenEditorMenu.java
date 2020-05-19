@@ -248,9 +248,7 @@ public class ReopenEditorMenu extends ContributionItem {
 		new MenuItem(menu, SWT.SEPARATOR);
 		MenuItem miClear = new MenuItem(menu, SWT.PUSH);
 		miClear.setText(WorkbenchMessages.OpenRecentDocumentsClear_text);
-		miClear.addSelectionListener(widgetSelectedAdapter(e -> Arrays.stream(history.getItems()).forEach(item -> {
-			history.remove(item);
-		})));
+		miClear.addSelectionListener(widgetSelectedAdapter(e -> Arrays.stream(history.getItems()).forEach(history::remove)));
 		miClear.setEnabled(nItems > 0);
 	}
 

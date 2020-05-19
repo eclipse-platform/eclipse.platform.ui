@@ -516,7 +516,7 @@ public abstract class RegistryPersistence implements IDisposable, IWorkbenchRegi
 	protected RegistryPersistence() {
 		registryChangeListener = event -> {
 			if (isChangeImportant(event)) {
-				Display.getDefault().asyncExec(() -> read());
+				Display.getDefault().asyncExec(this::read);
 			}
 		};
 	}

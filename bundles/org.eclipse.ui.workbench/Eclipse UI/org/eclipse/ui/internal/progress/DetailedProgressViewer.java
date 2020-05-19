@@ -139,7 +139,7 @@ public class DetailedProgressViewer extends AbstractProgressViewer {
 
 		IPreferenceStore prefs = WorkbenchPlugin.getDefault().getPreferenceStore();
 		updateMaxDisplayedValue(prefs);
-		IPropertyChangeListener listener = x -> propertyChange(x);
+		IPropertyChangeListener listener = this::propertyChange;
 		prefs.addPropertyChangeListener(listener);
 		scrolled.addDisposeListener(x -> prefs.removePropertyChangeListener(listener));
 	}
