@@ -11,7 +11,7 @@
  * Contributors:
  *     SAP SE - initial version
  *******************************************************************************/
-package org.eclipse.uirscheme.suite;
+package org.eclipse.urischeme.suite;
 
 import org.eclipse.urischeme.internal.UriSchemeProcessorUnitTest;
 import org.eclipse.urischeme.internal.registration.TestUnitDesktopFileWriter;
