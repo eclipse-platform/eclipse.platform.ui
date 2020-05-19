@@ -20,6 +20,7 @@ import java.util.stream.Stream;
 import org.eclipse.urischeme.IOperatingSystemRegistration;
 import org.eclipse.urischeme.IScheme;
 import org.eclipse.urischeme.ISchemeInformation;
+import java.util.regex.Matcher;
 
 @SuppressWarnings("javadoc")
 public class RegistrationMacOsX implements IOperatingSystemRegistration {
@@ -111,8 +112,8 @@ public class RegistrationMacOsX implements IOperatingSystemRegistration {
 				parallel().//
 				filter(s -> s.startsWith(keyOfFirstLine)).//
 				filter(s -> s.contains(scheme + ":")).// //$NON-NLS-1$
-				map(s -> pattern.matcher(s)).//
-				filter(m -> m.find()).//
+				map(pattern::matcher).//
+				filter(Matcher::find).//
 				map(m -> m.group(1)).findFirst().map(s -> s.replaceFirst(TRAILING_HEX_VALUE_WITH_BRACKETS, "")) //$NON-NLS-1$
 				.orElse(""); //$NON-NLS-1$
 

@@ -114,7 +114,7 @@ public class RegistrationLinux implements IOperatingSystemRegistration {
 			return;
 		}
 		String scheme = schemes.stream(). //
-				map(s -> s.getName()). //
+				map(IScheme::getName). //
 				collect(Collectors.joining(" " + X_SCHEME_HANDLER_PREFIX, X_SCHEME_HANDLER_PREFIX, "")); //$NON-NLS-1$ //$NON-NLS-2$
 		processExecutor.execute(XDG_MIME, DEFAULT, desktopFilePath, scheme);
 	}
