@@ -492,9 +492,8 @@ public class IDEWorkbenchAdvisor extends WorkbenchAdvisor {
 	 */
 	private void disconnectFromWorkspace() {
 		// save the workspace
-		final MultiStatus status = new MultiStatus(
-				IDEWorkbenchPlugin.IDE_WORKBENCH, 1,
-				IDEWorkbenchMessages.ProblemSavingWorkbench, null);
+		final MultiStatus status = new MultiStatus(IDEWorkbenchPlugin.IDE_WORKBENCH, 1,
+				IDEWorkbenchMessages.ProblemSavingWorkbench);
 		try {
 			final ProgressMonitorJobsDialog p = new CancelableProgressMonitorJobsDialog(
 					null);
