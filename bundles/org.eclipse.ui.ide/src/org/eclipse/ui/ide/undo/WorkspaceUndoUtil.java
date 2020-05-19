@@ -834,7 +834,7 @@ public class WorkspaceUndoUtil {
 				return super.getShellStyle() | SWT.SHEET;
 			}
 		};
-		shell.getDisplay().syncExec(() -> dialog.open());
+		shell.getDisplay().syncExec(dialog::open);
 		int result = dialog.getReturnCode();
 		if (result == 0) {
 			return IDialogConstants.YES_ID;

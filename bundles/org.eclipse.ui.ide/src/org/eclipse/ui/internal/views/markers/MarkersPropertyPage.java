@@ -331,7 +331,7 @@ public class MarkersPropertyPage extends PropertyPage {
 		Label resourceLabel = new Label(parent, SWT.NONE);
 		resourceLabel.setText(MarkerMessages.propertiesDialog_resource_text);
 		Text resourceText = createReadOnlyText(parent);
-		translation.name(marker).ifPresent(n -> resourceText.setText(n));
+		translation.name(marker).ifPresent(resourceText::setText);
 	}
 
 	@Override

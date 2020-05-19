@@ -87,7 +87,7 @@ class DelegateProgressMonitorInUIThreadAndPreservingFocus implements IProgressMo
 
 	@Override
 	public void done() {
-		inUIThread(() -> delegate.done());
+		inUIThread(delegate::done);
 	}
 
 	@Override
@@ -117,6 +117,6 @@ class DelegateProgressMonitorInUIThreadAndPreservingFocus implements IProgressMo
 
 	@Override
 	public void clearBlocked() {
-		inUIThread(() -> delegate.clearBlocked());
+		inUIThread(delegate::clearBlocked);
 	}
 }

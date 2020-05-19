@@ -99,7 +99,7 @@ public class MainActionGroup extends ResourceNavigatorActionGroup {
 	 */
 	public MainActionGroup(IResourceNavigator navigator) {
 		super(navigator);
-		resourceChangeListener = event -> handleResourceChanged(event);
+		resourceChangeListener = this::handleResourceChanged;
 		ResourcesPlugin.getWorkspace().addResourceChangeListener(resourceChangeListener,
 				IResourceChangeEvent.POST_CHANGE);
 		makeSubGroups();

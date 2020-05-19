@@ -63,7 +63,7 @@ public class MonitoringStartup implements IStartup {
 		// Final setup and start asynchronously on the display thread.
 		display.asyncExec(() -> {
 			// If we're still running when display gets disposed, shutdown the thread.
-			display.disposeExec(() -> thread.shutdown());
+			display.disposeExec(thread::shutdown);
 			thread.start();
 		});
 

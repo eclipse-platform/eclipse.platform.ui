@@ -118,7 +118,7 @@ public abstract class BrandingProperties {
 			return Collections.emptyList();
 		}
 
-		return urls.stream().map(u -> ImageDescriptor.createFromURL(u))
+		return urls.stream().map(ImageDescriptor::createFromURL)
 				.collect(Collectors.toList());
 	}
 }

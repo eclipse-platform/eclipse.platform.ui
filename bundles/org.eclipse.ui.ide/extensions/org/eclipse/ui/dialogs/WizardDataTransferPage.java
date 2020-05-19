@@ -273,7 +273,7 @@ public abstract class WizardDataTransferPage extends WizardPage implements Liste
 		String[] response = new String[] { YES, ALL, NO, NO_ALL, CANCEL };
 		// run in syncExec because callback is from an operation,
 		// which is probably not running in the UI thread.
-		getControl().getDisplay().syncExec(() -> dialog.open());
+		getControl().getDisplay().syncExec(dialog::open);
 		return dialog.getReturnCode() < 0 ? CANCEL : response[dialog.getReturnCode()];
 	}
 

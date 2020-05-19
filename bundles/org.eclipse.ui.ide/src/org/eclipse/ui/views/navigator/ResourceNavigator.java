@@ -359,7 +359,7 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget, 
 	protected void initContextMenu() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(manager -> ResourceNavigator.this.fillContextMenu(manager));
+		menuMgr.addMenuListener(ResourceNavigator.this::fillContextMenu);
 		TreeViewer viewer = getTreeViewer();
 		Menu menu = menuMgr.createContextMenu(viewer.getTree());
 		viewer.getTree().setMenu(menu);
@@ -439,8 +439,8 @@ public class ResourceNavigator extends ViewPart implements ISetSelectionTarget, 
 	 * @since 2.0
 	 */
 	protected void initListeners(final TreeViewer viewer) {
-		viewer.addSelectionChangedListener(event -> handleSelectionChanged(event));
-		viewer.addDoubleClickListener(event -> handleDoubleClick(event));
+		viewer.addSelectionChangedListener(this::handleSelectionChanged);
+		viewer.addDoubleClickListener(this::handleDoubleClick);
 
 		openAndLinkWithEditorHelper = new OpenAndLinkWithEditorHelper(viewer) {
 			@Override

@@ -42,7 +42,7 @@ public class TreeViewerFrameSource implements IFrameSource {
 	 * so that when the current frame changes, the viewer is updated.
 	 */
 	public void connectTo(FrameList frameList) {
-		frameList.addPropertyChangeListener(event -> TreeViewerFrameSource.this.handlePropertyChange(event));
+		frameList.addPropertyChangeListener(TreeViewerFrameSource.this::handlePropertyChange);
 	}
 
 	/**

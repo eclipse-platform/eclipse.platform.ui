@@ -153,7 +153,7 @@ public class BrowserDescriptorDialog extends Dialog {
 		}));
 
 		SWTUtil.createLabel(composite, Messages.parameters).setFont(font);
-		browserParametersTextfield = createText(composite, browser.getParameters(), s -> browser.setParameters(s),
+		browserParametersTextfield = createText(composite, browser.getParameters(), browser::setParameters,
 				true);
 		browserParametersTextfield.setFont(font);
 

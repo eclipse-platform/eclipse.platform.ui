@@ -84,7 +84,7 @@ class MarkerComparator implements Comparator<MarkerItem> {
 	 * @return Comparator
 	 */
 	Comparator<MarkerItem> getCategoryComparator() {
-		return (o1, o2) -> compareCategory(o1, o2);
+		return this::compareCategory;
 	}
 
 	@Override
@@ -123,7 +123,7 @@ class MarkerComparator implements Comparator<MarkerItem> {
 	 * @return Comparator
 	 */
 	Comparator<MarkerItem> getFieldsComparator() {
-		return (o1, o2) -> compareFields(o1, o2);
+		return this::compareFields;
 	}
 
 	/**

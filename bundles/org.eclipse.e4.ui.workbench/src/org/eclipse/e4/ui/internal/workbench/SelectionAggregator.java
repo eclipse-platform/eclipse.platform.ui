@@ -199,7 +199,7 @@ public class SelectionAggregator {
 		IEclipseContext context = part.getContext();
 		if (context != null && tracked.add(context)) {
 			if (context instanceof EclipseContext) {
-				((EclipseContext) context).notifyOnDisposal(context1 -> tracked.remove(context1));
+				((EclipseContext) context).notifyOnDisposal(tracked::remove);
 			}
 
 			context.runAndTrack(new RunAndTrack() {

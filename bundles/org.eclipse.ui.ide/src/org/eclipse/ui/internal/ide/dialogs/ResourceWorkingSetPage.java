@@ -162,7 +162,7 @@ public class ResourceWorkingSetPage extends WizardPage implements IWorkingSetPag
 		data.widthHint = SIZING_SELECTION_WIDGET_WIDTH;
 		tree.getControl().setLayoutData(data);
 
-		tree.addCheckStateListener(event -> handleCheckStateChange(event));
+		tree.addCheckStateListener(this::handleCheckStateChange);
 
 		tree.addTreeListener(new ITreeViewerListener() {
 			@Override

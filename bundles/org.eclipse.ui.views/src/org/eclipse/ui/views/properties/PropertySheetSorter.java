@@ -118,7 +118,7 @@ public class PropertySheetSorter  {
 	 *            the elements to sort
 	 */
 	public void sort(IPropertySheetEntry[] entries) {
-		Arrays.sort(entries, (a, b) -> PropertySheetSorter.this.compare(a, b));
+		Arrays.sort(entries, PropertySheetSorter.this::compare);
 	}
 
 	/**

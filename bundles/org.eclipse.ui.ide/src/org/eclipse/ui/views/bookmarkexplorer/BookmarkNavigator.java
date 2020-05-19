@@ -261,7 +261,7 @@ public class BookmarkNavigator extends ViewPart {
 		// support action contributions.
 		MenuManager mgr = new MenuManager();
 		mgr.setRemoveAllWhenShown(true);
-		mgr.addMenuListener(mgr1 -> fillContextMenu(mgr1));
+		mgr.addMenuListener(this::fillContextMenu);
 		Menu menu = mgr.createContextMenu(viewer.getControl());
 		viewer.getControl().setMenu(menu);
 		getSite().registerContextMenu(mgr, viewer);

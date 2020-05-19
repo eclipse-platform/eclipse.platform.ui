@@ -1427,7 +1427,7 @@ public class LogView extends ViewPart implements LogListener {
 		gd.grabExcessHorizontalSpace = true;
 		fTextLabel.setLayoutData(gd);
 		fTextLabel.setEditable(false);
-		fTextShell.addDisposeListener(e -> onTextShellDispose(e));
+		fTextShell.addDisposeListener(this::onTextShellDispose);
 	}
 
 	void onTextShellDispose(DisposeEvent e) {

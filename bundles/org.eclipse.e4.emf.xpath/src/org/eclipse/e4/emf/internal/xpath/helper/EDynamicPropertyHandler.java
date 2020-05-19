@@ -35,7 +35,7 @@ public class EDynamicPropertyHandler implements DynamicPropertyHandler {
 		Assert.isLegal(object instanceof EObject);
 		EClass eClass = ((EObject) object).eClass();
 		return eClass2PropNames.computeIfAbsent(eClass,
-				clz -> clz.getEAllStructuralFeatures().stream().map(f -> f.getName()).toArray(String[]::new));
+				clz -> clz.getEAllStructuralFeatures().stream().map(EStructuralFeature::getName).toArray(String[]::new));
 	}
 
 	@Override

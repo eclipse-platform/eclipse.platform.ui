@@ -51,7 +51,7 @@ public class BusyIndicator extends Canvas {
 			images[i] = imageManager.getImage(id);
 		}
 
-		addPaintListener(event -> onPaint(event));
+		addPaintListener(this::onPaint);
 
 		image = images[0];
 	}

@@ -95,7 +95,7 @@ public class BrowserText {
 		link.setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		link.setToolTipText(Messages.BrowserText_tooltip);
 		link.addSelectionListener(SelectionListener.widgetSelectedAdapter(e -> {
-			BusyIndicator.showWhile(link.getDisplay(), () -> doOpenExternal());
+			BusyIndicator.showWhile(link.getDisplay(), this::doOpenExternal);
 		}));
 		link.setBackground(bg);
 		sep = new Label(parent, SWT.SEPARATOR | SWT.HORIZONTAL);

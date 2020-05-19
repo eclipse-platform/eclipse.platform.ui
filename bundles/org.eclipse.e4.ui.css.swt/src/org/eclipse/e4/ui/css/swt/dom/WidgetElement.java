@@ -259,7 +259,7 @@ public class WidgetElement extends ElementAdapter implements NodeList {
 		default:
 			Object o = widget.getData(attr.toLowerCase());
 			if (o != null) {
-				return () -> o.toString();
+				return o::toString;
 			}
 		}
 
