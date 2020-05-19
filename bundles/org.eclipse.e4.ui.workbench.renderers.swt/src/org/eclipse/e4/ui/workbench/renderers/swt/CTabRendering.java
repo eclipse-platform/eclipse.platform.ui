@@ -585,6 +585,11 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 
 			// Remember for use in header drawing
 			if (cornerSize == SQUARE_CORNER) {
+				//We don't require clipping.  The clip is not clear coming in, but  
+				//in the round case it is always set coming in and cleared going out
+				//so in the square case we can just clear off the bat.
+				gc.setClipping((Rectangle) null);
+
 				Color color = hotUnselectedTabsColorBackground;
 				if (color == null) {
 					// Fallback: if color was not set, use white for highlighting
