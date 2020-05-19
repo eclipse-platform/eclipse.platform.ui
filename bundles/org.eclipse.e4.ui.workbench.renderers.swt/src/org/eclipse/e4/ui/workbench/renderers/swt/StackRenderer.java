@@ -37,6 +37,7 @@ import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
 import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMruVisibleSWTHandler;
 import org.eclipse.e4.ui.di.UIEventTopic;
+import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.internal.workbench.OpaqueElementUtil;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.BasicPartList;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.SWTRenderersMessages;
@@ -444,51 +445,56 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 	@Inject
 	@Optional
 	void subscribeTopicVisibleChanged(@UIEventTopic(UIEvents.UIElement.TOPIC_VISIBLE) Event event) {
-		shouldViewMenuBeRendered(event);
+		shouldTopRightAdjusted(event);
 	}
 
 	@Inject
 	@Optional
 	void subscribeTopicToBeRenderedChanged(@UIEventTopic(UIEvents.UIElement.TOPIC_TOBERENDERED) Event event) {
-		shouldViewMenuBeRendered(event);
+		shouldTopRightAdjusted(event);
 	}
 
+	@Inject
+	@Optional
+	private UISynchronize synchronize;
+
 	/**
-	 * An event handler for listening to changes to the state of view menus and its
-	 * child menu items. Depending on what state these items are in, the view menu
-	 * should or should not be rendered in the tab folder.
+	 * An event handler for listening to changes to the state of view menus and part
+	 * toolbars. Depending on what state these items are in, the view menu and
+	 * toolbar should or should not be rendered on the tab folder.
 	 */
-	private void shouldViewMenuBeRendered(Event event) {
+	private void shouldTopRightAdjusted(Event event) {
 		Object objElement = event.getProperty(UIEvents.EventTags.ELEMENT);
 
-		// Ensure that this event is for a MMenuItem
-		if (!(objElement instanceof MMenuElement)) {
+		// Ensure that this event is for a MMenuItem or MToolBar
+		if (!(objElement instanceof MMenuElement) && !(objElement instanceof MToolBar)) {
 			return;
 		}
 
-		// Ensure that it's a View part's menu
-		MMenuElement menuModel = (MMenuElement) objElement;
-		MUIElement menuParent = modelService.getContainer(menuModel);
-		if (!(menuParent instanceof MPart))
+		// Ensure that it's a View part's menu or toolbar
+		MUIElement uiElement = (MUIElement) objElement;
+		MUIElement parent = modelService.getContainer(uiElement);
+		if (!(parent instanceof MPart)) {
 			return;
+		}
 
-		MPart element = (MPart) menuParent;
+		// Get the partstack and the element in the partstack
+		MStackElement element = (MPart) parent;
+		if (element.getCurSharedRef() != null) {
+			element = element.getCurSharedRef();
+		}
 		MUIElement parentElement = element.getParent();
-		if (parentElement == null) {
-			MPlaceholder placeholder = element.getCurSharedRef();
-			if (placeholder == null) {
-				return;
-			}
 
-			parentElement = placeholder.getParent();
-			if (parentElement == null) {
-				return;
-			}
+		if (!(parentElement instanceof MPartStack)) {
+			return;
 		}
 
 		Object widget = parentElement.getWidget();
 		if (widget instanceof CTabFolder) {
-			adjustTopRight((CTabFolder) widget);
+			// The widget is created by the PartRenderingEngine, however the order of this
+			// call and the call in the engine are unknown. Therefore, call it
+			// asynchronously such that it is always last.
+			synchronize.asyncExec(() -> adjustTopRight((CTabFolder) widget));
 		}
 	}
 
@@ -716,6 +722,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 		// Create a toolbar for the view's drop-down menu
 		ToolBar menuTB = new ToolBar(trComp, SWT.FLAT | SWT.RIGHT);
 		menuTB.setData(TAG_VIEW_MENU);
+		tabFolder.setData(TAG_VIEW_MENU, menuTB);
 		RowData rd = new RowData();
 		menuTB.setLayoutData(rd);
 		ToolItem ti = new ToolItem(menuTB, SWT.PUSH);
@@ -755,85 +762,56 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 		trComp.pack();
 	}
 
-	boolean adjusting = false;
 
-	public void adjustTopRight(final CTabFolder tabFolder) {
-		if (adjusting)
+	protected void adjustTopRight(final CTabFolder tabFolder) {
+		if (tabFolder.isDisposed()) {
 			return;
-
-		adjusting = true;
-
-		try {
-			// Gather the parameters...old part, new part...
-			MPartStack stack = (MPartStack) tabFolder.getData(OWNING_ME);
-			MUIElement element = stack.getSelectedElement();
-			MPart curPart = (MPart) tabFolder.getTopRight().getData(THE_PART_KEY);
-			MPart part = null;
-			if (element != null) {
-				part = (MPart) ((element instanceof MPart) ? element : ((MPlaceholder) element).getRef());
-			}
-
-			// Hide the old TB if we're changing
-			if (part != curPart && curPart != null && curPart.getToolbar() != null) {
-				curPart.getToolbar().setVisible(false);
-			}
-
-			Composite trComp = (Composite) tabFolder.getTopRight();
-			Control[] kids = trComp.getChildren();
-
-			boolean needsTB = part != null && part.getToolbar() != null && part.getToolbar().isToBeRendered();
-
-			// View menu (if any)
-			MMenu viewMenu = getViewMenu(part);
-			boolean needsMenu = viewMenu != null && hasVisibleMenuItems(viewMenu, part);
-
-			// Check the current state of the TB's
-			ToolBar menuTB = (ToolBar) kids[kids.length - 1];
-
-			// We need to modify the 'exclude' bit based on if the menuTB is
-			// visible or not
-			RowData rd = (RowData) menuTB.getLayoutData();
-			if (needsMenu) {
-				menuTB.getItem(0).setData(THE_PART_KEY, part);
-				menuTB.moveBelow(null);
-				menuTB.pack();
-				rd.exclude = false;
-				menuTB.setVisible(true);
-			} else {
-				menuTB.getItem(0).setData(THE_PART_KEY, null);
-				rd.exclude = true;
-				menuTB.setVisible(false);
-			}
-
-			ToolBar newViewTB = null;
-			if (needsTB && part != null && part.getObject() != null) {
-				part.getToolbar().setVisible(true);
-				newViewTB = (ToolBar) renderer.createGui(part.getToolbar(), tabFolder.getTopRight(), part.getContext());
-				// We can get calls during shutdown in which case the
-				// rendering engine will return 'null' because you can't
-				// render anything while a removeGui is taking place...
-				if (newViewTB == null) {
-					adjusting = false;
-					return;
-				}
-				newViewTB.moveAbove(null);
-				newViewTB.pack();
-			}
-
-			if (needsMenu || needsTB) {
-				tabFolder.getTopRight().setData(THE_PART_KEY, part);
-				tabFolder.getTopRight().pack(true);
-				tabFolder.getTopRight().setVisible(true);
-			} else {
-				tabFolder.getTopRight().setData(THE_PART_KEY, null);
-				tabFolder.getTopRight().setVisible(false);
-			}
-
-			// Pack the result
-			trComp.pack();
-		} finally {
-			adjusting = false;
 		}
+
+		// Gather the parameters
+		MPartStack stack = (MPartStack) tabFolder.getData(OWNING_ME);
+		MUIElement element = stack.getSelectedElement();
+		MPart part = null;
+		if (element != null) {
+			part = (MPart) ((element instanceof MPart) ? element : ((MPlaceholder) element).getRef());
+		}
+
+		Composite trComp = (Composite) tabFolder.getTopRight();
+
+		boolean needsTB = part != null && part.getToolbar() != null && part.getToolbar().isToBeRendered();
+
+		// View menu (if any)
+		MMenu viewMenu = getViewMenu(part);
+		boolean needsMenu = viewMenu != null && hasVisibleMenuItems(viewMenu, part);
+
+		// Check the current state of the TB's
+		ToolBar menuTB = (ToolBar) tabFolder.getData(TAG_VIEW_MENU);
+
+		// We need to modify the 'exclude' bit based on if the menuTB is
+		// visible or not
+		RowData rd = (RowData) menuTB.getLayoutData();
+		if (needsMenu) {
+			menuTB.getItem(0).setData(THE_PART_KEY, part);
+			rd.exclude = false;
+			menuTB.setVisible(true);
+		} else {
+			menuTB.getItem(0).setData(THE_PART_KEY, null);
+			rd.exclude = true;
+			menuTB.setVisible(false);
+		}
+
+		menuTB.moveBelow(null);
+
+		if (needsMenu || needsTB) {
+			tabFolder.getTopRight().setVisible(true);
+		} else {
+			tabFolder.getTopRight().setVisible(false);
+		}
+
+		// Pack the result
+		trComp.pack();
+		trComp.requestLayout();
+
 		updateMRUValue(tabFolder);
 	}
 

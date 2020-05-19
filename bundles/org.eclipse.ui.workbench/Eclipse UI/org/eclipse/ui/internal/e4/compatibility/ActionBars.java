@@ -16,12 +16,9 @@ package org.eclipse.ui.internal.e4.compatibility;
 
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
-import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
-import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
-import org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer;
 import org.eclipse.e4.ui.workbench.renderers.swt.ToolBarManagerRenderer;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -99,41 +96,7 @@ public class ActionBars extends SubActionBars {
 			}
 		}
 
-		MUIElement parent = getParentModel();
-		if (parent != null && isOnTop()) {
-			Object renderer = parent.getRenderer();
-			if (renderer instanceof StackRenderer) {
-				StackRenderer stackRenderer = (StackRenderer) renderer;
-				CTabFolder folder = (CTabFolder) parent.getWidget();
-				stackRenderer.adjustTopRight(folder);
-			}
-		}
-
 		super.updateActionBars();
-	}
-
-	private MUIElement getParentModel() {
-		MElementContainer<MUIElement> parent = part.getParent();
-		if (parent == null) {
-			MPlaceholder placeholder = part.getCurSharedRef();
-			return placeholder == null ? null : placeholder.getParent();
-		}
-		return parent;
-	}
-
-	private boolean isOnTop() {
-		MUIElement parentModel = getParentModel();
-		if (parentModel.getRenderer() instanceof StackRenderer) {
-			MPartStack stack = (MPartStack) parentModel;
-			if (stack.getSelectedElement() == part)
-				return true;
-			if (stack.getSelectedElement() instanceof MPlaceholder) {
-				MPlaceholder ph = (MPlaceholder) stack.getSelectedElement();
-				return ph.getRef() == part;
-			}
-		}
-
-		return true;
 	}
 
 	private Control getPackParent(Control control) {

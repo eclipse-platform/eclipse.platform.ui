@@ -32,9 +32,9 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.e4.ui.workbench.UIEvents;
-import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
@@ -184,6 +184,13 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			element.setVisible(false);
 		}
 
+		if (element instanceof MPart) {
+			MToolBar toolbar = ((MPart) element).getToolbar();
+			if (toolbar != null) {
+				toolbar.setVisible(false);
+			}
+		}
+
 		if (element instanceof MGenericStack<?>) {
 			// For stacks only the currently selected elements are being hidden
 			MGenericStack<?> container = (MGenericStack<?>) element;
@@ -215,18 +222,12 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 
 		if (element instanceof MPartStack && element.getRenderer() instanceof StackRenderer) {
 			MPartStack stackModel = (MPartStack) element;
-			StackRenderer sr = (StackRenderer) element.getRenderer();
-			CTabFolder ctf = (CTabFolder) element.getWidget();
 
 			MUIElement curSel = stackModel.getSelectedElement();
-			MPart part = (MPart) ((curSel instanceof MPlaceholder) ? ((MPlaceholder) curSel).getRef() : curSel);
 
-			// Ensure that the placeholder's ref is set correctly before
-			// adjusting its toolbar
-			if (curSel instanceof MPlaceholder) {
-				part.setCurSharedRef((MPlaceholder) curSel);
+			if (curSel != null) {
+				showElementRecursive(curSel);
 			}
-			sr.adjustTopRight(ctf);
 		}
 
 		if (element instanceof MPlaceholder && element.getWidget() != null) {
@@ -247,6 +248,13 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 			}
 
 			element = ref;
+		}
+
+		if (element instanceof MPart) {
+			MToolBar toolbar = ((MPart) element).getToolbar();
+			if (toolbar != null) {
+				toolbar.setVisible(true);
+			}
 		}
 
 		if (element instanceof MContext) {
