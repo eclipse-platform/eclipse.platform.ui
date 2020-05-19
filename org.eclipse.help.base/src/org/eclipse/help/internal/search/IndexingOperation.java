@@ -251,8 +251,7 @@ class IndexingOperation {
 					multiStatus = new MultiStatus(
 							HelpBasePlugin.PLUGIN_ID,
 							IStatus.ERROR,
-							"Help documentation could not be indexed completely.", //$NON-NLS-1$
-							null);
+							"Help documentation could not be indexed completely."); //$NON-NLS-1$
 				}
 				multiStatus.add(status);
 			}

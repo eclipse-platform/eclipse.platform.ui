@@ -119,8 +119,7 @@ public class Log implements IIntroConstants {
 	public static synchronized void debugMessage(String className,
 			String message) {
 		if (DEBUG) {
-			MultiStatus debugStatus = new MultiStatus(PLUGIN_ID, IStatus.OK,
-				className, null);
+			MultiStatus debugStatus = new MultiStatus(PLUGIN_ID, IStatus.OK, className);
 			Status infoStatus = new Status(IStatus.OK, PLUGIN_ID, IStatus.OK,
 				message, null);
 			debugStatus.add(infoStatus);
