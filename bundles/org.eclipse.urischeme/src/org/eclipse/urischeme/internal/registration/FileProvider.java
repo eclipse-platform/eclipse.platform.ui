@@ -35,6 +35,7 @@ public class FileProvider implements IFileProvider {
 	@Override
 	public void write(String path, byte[] bytes) throws IOException {
 		Path filePath = Paths.get(path);
+		Files.createDirectories(filePath.getParent());
 		Files.write(filePath, bytes);
 	}
 
