@@ -26,7 +26,7 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 public abstract class FrameAction extends Action {
 	private FrameList frameList;
 
-	private IPropertyChangeListener propertyChangeListener = event -> FrameAction.this.handlePropertyChange(event);
+	private IPropertyChangeListener propertyChangeListener = FrameAction.this::handlePropertyChange;
 
 	/**
 	 * Constructs a new action for the specified frame list.

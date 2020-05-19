@@ -44,7 +44,7 @@ public class TreeViewerFrameSource implements IFrameSource {
 	 * @param frameList
 	 */
 	public void connectTo(FrameList frameList) {
-		frameList.addPropertyChangeListener(event -> TreeViewerFrameSource.this.handlePropertyChange(event));
+		frameList.addPropertyChangeListener(TreeViewerFrameSource.this::handlePropertyChange);
 	}
 
 	/**

@@ -41,7 +41,7 @@ public class CustomizationTab extends Composite {
 	private CheckboxTableViewer tableViewer;
 	private final Set checkedItems = new HashSet();
 
-	private ICheckStateListener checkListener = event -> CustomizationTab.this.checkStateChanged(event);
+	private ICheckStateListener checkListener = CustomizationTab.this::checkStateChanged;
 
 	protected CustomizationTab(Composite parent,
 			INavigatorContentService aContentService) {

@@ -112,7 +112,7 @@ public class NavigatorPlugin extends AbstractUIPlugin {
 	/** The id of the orge.eclipse.ui.navigator plugin. */
 	public static String PLUGIN_ID = "org.eclipse.ui.navigator"; //$NON-NLS-1$
 
-	private BundleListener bundleListener = event -> NavigatorSaveablesService.bundleChanged(event);
+	private BundleListener bundleListener = NavigatorSaveablesService::bundleChanged;
 
 	/**
 	 * This constant can be used via {@link CommonViewer#setData(String, Object)} to set/get the lisst

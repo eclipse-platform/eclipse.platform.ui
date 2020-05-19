@@ -489,7 +489,7 @@ public class ResourceDropAdapterAssistant extends CommonDropAdapterAssistant {
 				final PerformRefactoringOperation op = new PerformRefactoringOperation(refactoring,
 						CheckConditionsOperation.ALL_CONDITIONS);
 
-				final IWorkspaceRunnable r = monitor -> op.run(monitor);
+				final IWorkspaceRunnable r = op::run;
 
 				returnStatus = null;
 				IRunnableWithProgress refactorOp = monitor -> {

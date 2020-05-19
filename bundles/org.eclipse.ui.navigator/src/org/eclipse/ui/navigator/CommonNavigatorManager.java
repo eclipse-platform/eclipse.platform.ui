@@ -267,7 +267,7 @@ public final class CommonNavigatorManager implements ISelectionChangedListener {
 		MenuManager menuMgr = new MenuManager(contentService
 				.getViewerDescriptor().getPopupMenuId());
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(manager -> fillContextMenu(manager));
+		menuMgr.addMenuListener(this::fillContextMenu);
 		TreeViewer commonViewer = commonNavigator.getCommonViewer();
 		Menu menu = menuMgr.createContextMenu(commonViewer.getTree());
 
