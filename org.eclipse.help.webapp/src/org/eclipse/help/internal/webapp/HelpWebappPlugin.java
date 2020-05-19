@@ -34,46 +34,15 @@ public class HelpWebappPlugin extends Plugin {
 	protected static HelpWebappPlugin plugin;
 
 	/**
-	 * Logs an Error message with an exception.
-	 */
-	public static synchronized void logError(String message, Throwable ex) {
-		if (message == null)
-			message = ""; //$NON-NLS-1$
-		Status errorStatus = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK,
-				message, ex);
-		HelpWebappPlugin.getDefault().getLog().log(errorStatus);
-	}
-
-	/**
-	 * Logs a Warning message with an exception. Note that the message should
-	 * already be localized to proper locale. ie: WebappResources.getString()
-	 * should already have been called
-	 */
-	public static synchronized void logWarning(String message) {
-		if (HelpWebappPlugin.DEBUG) {
-			if (message == null)
-				message = ""; //$NON-NLS-1$
-			Status warningStatus = new Status(IStatus.WARNING, PLUGIN_ID,
-					IStatus.OK, message, null);
-			HelpWebappPlugin.getDefault().getLog().log(warningStatus);
-		}
-	}
-
-	/**
 	 * @return the singleton instance of the help webapp plugin
 	 */
 	public static HelpWebappPlugin getDefault() {
 		return plugin;
 	}
 
-	private static BundleContext bundleContext;
-
 	@Override
 	public void start(BundleContext context) throws Exception {
 		super.start(context);
-		plugin = this;
-		bundleContext = context;
-		// Setup debugging options
 		// Setup debugging options
 		DEBUG = isDebugging();
 		if (DEBUG) {
@@ -81,14 +50,4 @@ public class HelpWebappPlugin extends Plugin {
 		}
 	}
 
-	@Override
-	public void stop(BundleContext context) throws Exception {
-		plugin = null;
-		//bundleContext = null;
-		super.stop(context);
-	}
-
-	public static BundleContext getContext() {
-		return bundleContext;
-	}
 }

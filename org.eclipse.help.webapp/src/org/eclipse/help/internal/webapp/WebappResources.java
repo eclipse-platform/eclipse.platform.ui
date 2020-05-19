@@ -26,6 +26,7 @@ import java.util.StringTokenizer;
 
 import org.eclipse.core.runtime.Platform;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Uses a resource bundle to load images and strings from a property file in a
@@ -155,8 +156,9 @@ public class WebappResources {
 
 	private static ResourceBundle getResourceBundle(String key) {
 		ResourceBundle bundle;
-		Bundle hostBundle = Platform.getBundle(HelpWebappPlugin.getDefault()
-				.getBundle().getSymbolicName());
+
+	;
+		Bundle hostBundle = Platform.getBundle(FrameworkUtil.getBundle(HelpWebappPlugin.class).getSymbolicName());
 		if (hostBundle == null)
 			return null;
 

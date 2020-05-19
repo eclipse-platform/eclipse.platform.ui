@@ -34,6 +34,7 @@ import org.eclipse.help.internal.webapp.servlet.PreferenceWriter;
 import org.eclipse.help.internal.webapp.servlet.XMLGenerator;
 import org.eclipse.help.internal.webapp.utils.Utils;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * Generates either xml, json or html page having informations about either
@@ -184,7 +185,7 @@ public class AboutService extends AboutServlet {
 
 		List<PluginDetails> plugins = new ArrayList<>();
 
-		Bundle[] bundles = HelpWebappPlugin.getContext().getBundles();
+		Bundle[] bundles =  FrameworkUtil.getBundle(AboutServlet.class).getBundleContext().getBundles();
 		for (Bundle bundle : bundles) {
 			plugins.add(pluginDetails(bundle));
 		}

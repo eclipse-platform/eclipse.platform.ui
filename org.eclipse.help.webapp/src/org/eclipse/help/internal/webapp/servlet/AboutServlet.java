@@ -32,6 +32,7 @@ import org.eclipse.help.internal.webapp.WebappResources;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * A servlet that provides an informational page about the plugins that make up
@@ -123,8 +124,7 @@ public class AboutServlet extends HttpServlet {
 
 		buf.append("<table>"); //$NON-NLS-1$
 		List<PluginDetails> plugins = new ArrayList<>();
-
-		Bundle[] bundles = HelpWebappPlugin.getContext().getBundles();
+		Bundle[] bundles = FrameworkUtil.getBundle(AboutServlet.class).getBundleContext().getBundles();
 		for (Bundle bundle : bundles) {
 			plugins.add(pluginDetails(bundle));
 		}
