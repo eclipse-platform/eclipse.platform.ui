@@ -149,8 +149,7 @@ public final class AggregateValidationStatus extends ComputedValue<IStatus> {
 		}
 		if (!statuses.isEmpty()) {
 			MultiStatus result = new MultiStatus(Policy.JFACE_DATABINDING, 0,
-					BindingMessages
-							.getString(BindingMessages.MULTIPLE_PROBLEMS), null);
+					BindingMessages.getString(BindingMessages.MULTIPLE_PROBLEMS));
 			for (IStatus status : statuses) {
 				result.merge(status);
 			}
