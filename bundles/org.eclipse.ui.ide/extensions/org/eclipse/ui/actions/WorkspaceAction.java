@@ -298,7 +298,7 @@ public abstract class WorkspaceAction extends SelectionListenerAction {
 	 */
 	MultiStatus recordError(MultiStatus errors, CoreException error) {
 		if (errors == null) {
-			errors = new MultiStatus(IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.ERROR, getProblemsMessage(), null);
+			errors = new MultiStatus(IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.ERROR, getProblemsMessage());
 		}
 		errors.merge(error.getStatus());
 		return errors;
