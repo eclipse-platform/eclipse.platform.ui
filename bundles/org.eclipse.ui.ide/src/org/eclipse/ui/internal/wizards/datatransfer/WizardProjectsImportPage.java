@@ -1267,7 +1267,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 				// Import as many projects as we can; accumulate errors to
 				// report to the user
 				MultiStatus status = new MultiStatus(IDEWorkbenchPlugin.IDE_WORKBENCH, 1,
-						DataTransferMessages.WizardProjectsImportPage_projectsInWorkspaceAndInvalid, null);
+						DataTransferMessages.WizardProjectsImportPage_projectsInWorkspaceAndInvalid);
 				for (Object element : selected) {
 					status.add(createExistingProject((ProjectRecord) element, subMonitor.split(1)));
 				}
