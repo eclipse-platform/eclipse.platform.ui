@@ -143,7 +143,7 @@ public class TextCellEditor extends CellEditor {
 	@Override
 	protected Control createControl(Composite parent) {
 		text = new Text(parent, getStyle());
-		text.addSelectionListener(widgetDefaultSelectedAdapter(e -> handleDefaultSelection(e)));
+		text.addSelectionListener(widgetDefaultSelectedAdapter(this::handleDefaultSelection));
 		text.addKeyListener(new KeyAdapter() {
 			// hook key pressed - see PR 14201
 			@Override

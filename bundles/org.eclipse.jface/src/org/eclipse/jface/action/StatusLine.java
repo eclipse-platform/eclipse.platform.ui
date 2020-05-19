@@ -572,7 +572,7 @@ import org.eclipse.swt.widgets.ToolItem;
 	public void setMessage(Image image, String message) {
 		fMessageText = trim(message);
 		fMessageImage = image;
-		inUIThread(() -> updateMessageLabel());
+		inUIThread(this::updateMessageLabel);
 	}
 
 	/**

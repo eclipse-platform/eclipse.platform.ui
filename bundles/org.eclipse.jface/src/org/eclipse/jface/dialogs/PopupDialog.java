@@ -647,7 +647,7 @@ public class PopupDialog extends Window {
 		// workaround for https://bugs.eclipse.org/bugs/show_bug.cgi?id=152010
 		Shell shell = getShell();
 		if (shell != null && !shell.isDisposed()) {
-			shell.getDisplay().asyncExec(() -> close());
+			shell.getDisplay().asyncExec(this::close);
 		}
 	}
 

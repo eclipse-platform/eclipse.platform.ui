@@ -185,13 +185,8 @@ public class Snippet070GenericSelectionDialog {
 		@Override
 		protected void okPressed() {
 			IStructuredSelection selection = listViewer.getStructuredSelection();
-			setResult(selection);
+			setResult(selection, Model.class);
 			super.okPressed();
-		}
-
-		@SuppressWarnings("unchecked")
-		private void setResult(IStructuredSelection selection) {
-			setResult(selection.toList());
 		}
 	}
 

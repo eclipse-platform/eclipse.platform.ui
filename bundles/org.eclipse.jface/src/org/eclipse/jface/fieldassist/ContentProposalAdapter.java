@@ -616,7 +616,7 @@ public class ContentProposalAdapter {
 		protected final Control createDialogArea(final Composite parent) {
 			proposalTable = new Table(parent, SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL);
 
-			Listener listener = event -> handleSetData(event);
+			Listener listener = this::handleSetData;
 			proposalTable.addListener(SWT.SetData, listener);
 			// set the proposals to force population of the table.
 			setProposals(filterProposals(proposals, filterText));

@@ -229,7 +229,7 @@ public class ToolBarContributionItem extends ContributionItem implements IToolBa
 			}
 
 			// Handle for disposal
-			coolItem.addDisposeListener(event -> handleWidgetDispose(event));
+			coolItem.addDisposeListener(this::handleWidgetDispose);
 
 			// Sets the size of the coolItem
 			updateSize(true);

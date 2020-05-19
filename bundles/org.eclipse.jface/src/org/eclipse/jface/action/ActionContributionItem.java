@@ -128,7 +128,7 @@ public class ActionContributionItem extends ContributionItem {
 	/**
 	 * Listener for action property change notifications.
 	 */
-	private final IPropertyChangeListener propertyListener = event -> actionPropertyChange(event);
+	private final IPropertyChangeListener propertyListener = this::actionPropertyChange;
 
 	/**
 	 * Listener for SWT tool item widget events.

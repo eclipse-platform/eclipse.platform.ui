@@ -1213,7 +1213,7 @@ public abstract class StructuredViewer extends ContentViewer implements IPostSel
 				handleDoubleSelect(e);
 			}
 		});
-		handler.addPostSelectionListener(widgetSelectedAdapter(e -> handlePostSelect(e)));
+		handler.addPostSelectionListener(widgetSelectedAdapter(this::handlePostSelect));
 		handler.addOpenListener(StructuredViewer.this::handleOpen);
 	}
 
