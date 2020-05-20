@@ -18,71 +18,69 @@
 @import url("platform:/plugin/org.eclipse.ui.themes/css/e4_basestyle.css");
 
 ColorDefinition#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_START {
-	color: #EEEEEE;
+	color: #E1DEDB;
 }
 
 ColorDefinition#org-eclipse-ui-workbench-ACTIVE_UNSELECTED_TABS_COLOR_END {
-	color: #EEEEEE;
+	color: #E1DEDB;
 }
-/* Higher contrast keylines for selected stack */
+
 ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_OUTER_KEYLINE_COLOR {
-	color: #A0A0A0;
+	color: #CDC7C2;
 }
 ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_INNER_KEYLINE_COLOR {
-	color: #A0A0A0;
+	color: #CDC7C2;
 }
 ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_OUTLINE_COLOR {
-	color: #A0A0A0;
+	color: #CDC7C2;
 }
 
-
 ColorDefinition#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_START {
-	color: #DCDCDC;
+	color: #EAE8E6;
 }
 
 ColorDefinition#org-eclipse-ui-workbench-INACTIVE_UNSELECTED_TABS_COLOR_END {
-	color: #DCDCDC;
+	color: #EAE8E6;
 }
 
 ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_OUTER_KEYLINE_COLOR {
-	color: #B4B4B4;
+	color: #D5D0CC;
 }
 
 ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_INNER_KEYLINE_COLOR {
-	color: #B4B4B4;
-}
-
-ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_BG_START{
-	color: #E2E2E2;
-}
-
-ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_BG_END {
-	color: #E2E2E2;
-}
-
-ColorDefinition#org-eclipse-ui-workbench-INACTIVE_NOFOCUS_TAB_BG_START {
-	color: #E2E2E2;
-}
-
-ColorDefinition#org-eclipse-ui-workbench-INACTIVE_NOFOCUS_TAB_BG_END {
-	color: #E2E2E2;
+	color: #D5D0CC;
 }
 
 ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_OUTLINE_COLOR {
-	color: #B4B4B4;
+	color: #D5D0CC;
 }
 
+ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_BG_START {
+	color: #F6F5F4;
+}
+
+ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_BG_END {
+	color: #F6F5F4;
+}
+
+ColorDefinition#org-eclipse-ui-workbench-INACTIVE_NOFOCUS_TAB_BG_START {
+	color: #EAE8E6;
+}
+
+ColorDefinition#org-eclipse-ui-workbench-INACTIVE_NOFOCUS_TAB_BG_END {
+	color: #EAE8E6;
+}
 
 .MTrimmedWindow {
-	background-color: #E2E2E2;
+	background-color: #F6F5F4;
 }
 
 .MTrimBar {
-	background-color: #E2E2E2;
+	background-color: #F6F5F4;
 }
 
 .MTrimBar#org-eclipse-ui-main-toolbar  {
-	background-color: COLOR-WIDGET-BACKGROUND #E2E2E2 100%;
+	background-color: COLOR-WIDGET-BACKGROUND #F6F5F4 100%;
 }
 
 .MToolControl.TrimStack {
@@ -98,14 +96,14 @@ ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_OUTLINE_COLOR {
 }
 
 CTabFolder.MArea {
-	background-color: #E2E2E2;
-	swt-selected-tab-fill: #E2E2E2;
-	swt-unselected-tabs-color: #E2E2E2;
-	swt-outer-keyline-color: #E2E2E2;
-	swt-inner-keyline-color: #E2E2E2;
-	swt-tab-outline: #E2E2E2;
+	background-color: #F6F5F4;
+	swt-selected-tab-fill: #F6F5F4;
+	swt-unselected-tabs-color: #F6F5F4;
+	swt-outer-keyline-color: #F6F5F4;
+	swt-inner-keyline-color: #F6F5F4;
+	swt-tab-outline: #F6F5F4;
 }
 
 CTabFolder Canvas {
-	background-color: #F8F8F8;
+	background-color: #F8F7F6;
 }
