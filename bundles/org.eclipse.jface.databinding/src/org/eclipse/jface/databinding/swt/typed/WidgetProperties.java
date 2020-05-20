@@ -17,6 +17,8 @@
 
 package org.eclipse.jface.databinding.swt.typed;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.Date;
 
 import org.eclipse.jface.databinding.swt.IWidgetListProperty;
@@ -33,6 +35,8 @@ import org.eclipse.jface.internal.databinding.swt.ControlLocationProperty;
 import org.eclipse.jface.internal.databinding.swt.ControlSizeProperty;
 import org.eclipse.jface.internal.databinding.swt.DateTimeSelectionProperty;
 import org.eclipse.jface.internal.databinding.swt.ListSelectionProperty;
+import org.eclipse.jface.internal.databinding.swt.LocalDateSelectionProperty;
+import org.eclipse.jface.internal.databinding.swt.LocalTimeSelectionProperty;
 import org.eclipse.jface.internal.databinding.swt.MenuItemSelectionProperty;
 import org.eclipse.jface.internal.databinding.swt.ScaleSelectionProperty;
 import org.eclipse.jface.internal.databinding.swt.SliderSelectionProperty;
@@ -263,6 +267,30 @@ public class WidgetProperties {
 	 */
 	public static IWidgetValueProperty<DateTime, Date> dateTimeSelection() {
 		return new DateTimeSelectionProperty();
+	}
+
+	/**
+	 * Returns a value property for observing the selection state of a
+	 * {@link DateTime} with the {@link SWT#DATE} or {@link SWT#CALENDAR} style.
+	 *
+	 * @return a value property for observing the selection state of a
+	 *         {@link DateTime}.
+	 * @since 1.12
+	 */
+	public static IWidgetValueProperty<DateTime, LocalDate> localDateSelection() {
+		return new LocalDateSelectionProperty();
+	}
+
+	/**
+	 * Returns a value property for observing the selection state of a
+	 * {@link DateTime} with the {@link SWT#TIME} style.
+	 *
+	 * @return a value property for observing the selection state of a
+	 *         {@link DateTime}.
+	 * @since 1.12
+	 */
+	public static IWidgetValueProperty<DateTime, LocalTime> localTimeSelection() {
+		return new LocalTimeSelectionProperty();
 	}
 
 	/**

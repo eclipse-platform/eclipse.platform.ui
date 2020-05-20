@@ -14,7 +14,7 @@
 
 package org.eclipse.jface.examples.databinding.snippets;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.Realm;
@@ -88,8 +88,8 @@ public class Snippet033CrossValidationControlDecoration {
 	}
 
 	private void bindUI() {
-		IObservableValue<Date> startDateObservable = WidgetProperties.dateTimeSelection().observe(startDate);
-		IObservableValue<Date> endDateObservable = WidgetProperties.dateTimeSelection().observe(endDate);
+		IObservableValue<LocalDate> startDateObservable = WidgetProperties.localDateSelection().observe(startDate);
+		IObservableValue<LocalDate> endDateObservable = WidgetProperties.localDateSelection().observe(endDate);
 
 		ControlDecorationSupport.create(new DateRangeValidator(startDateObservable, endDateObservable,
 				"Start date must be on or before end date"), SWT.LEFT | SWT.CENTER);
@@ -107,17 +107,17 @@ public class Snippet033CrossValidationControlDecoration {
 			}
 		};
 		ControlDecorationSupport.create(
-				new DateRangeValidator(Observables.constantObservableValue(new Date()), startDateObservable,
+				new DateRangeValidator(Observables.constantObservableValue(LocalDate.now()), startDateObservable,
 						"Choose a starting date later than today"),
 				SWT.LEFT | SWT.TOP, (Composite) null, decorationUpdater);
 	}
 
 	private static class DateRangeValidator extends MultiValidator {
-		private final IObservableValue<Date> start;
-		private final IObservableValue<Date> end;
+		private final IObservableValue<LocalDate> start;
+		private final IObservableValue<LocalDate> end;
 		private final String errorMessage;
 
-		public DateRangeValidator(IObservableValue<Date> start, IObservableValue<Date> end, String errorMessage) {
+		public DateRangeValidator(IObservableValue<LocalDate> start, IObservableValue<LocalDate> end, String errorMessage) {
 			this.start = start;
 			this.end = end;
 			this.errorMessage = errorMessage;
