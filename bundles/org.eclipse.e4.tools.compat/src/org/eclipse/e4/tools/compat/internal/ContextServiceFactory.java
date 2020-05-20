@@ -45,7 +45,7 @@ public class ContextServiceFactory extends AbstractServiceFactory {
 
 	@Override
 	public Object create(Class serviceInterface, IServiceLocator parentLocator,
-		IServiceLocator locator) {
+			IServiceLocator locator) {
 		if (!IEclipseContext.class.equals(serviceInterface)) {
 			return null;
 		}
@@ -70,17 +70,21 @@ public class ContextServiceFactory extends AbstractServiceFactory {
 			appContext.set(IClipboardService.class, new ClipboardServiceImpl());
 			appContext.set(Realm.class, Realm.getDefault());
 
-			final Display d = Display.getCurrent();
+			final Display display = Display.getCurrent();
 			appContext.set(UISynchronize.class, new UISynchronize() {
 
 				@Override
 				public void syncExec(Runnable runnable) {
-					d.syncExec(runnable);
+					if (display != null && !display.isDisposed()) {
+						display.syncExec(runnable);
+					}
 				}
 
 				@Override
 				public void asyncExec(Runnable runnable) {
-					d.asyncExec(runnable);
+					if (display != null && !display.isDisposed()) {
+						display.asyncExec(runnable);
+					}
 				}
 			});
 
@@ -114,7 +118,7 @@ public class ContextServiceFactory extends AbstractServiceFactory {
 
 				@Override
 				public void setClassnameAndId(Object widget, String classname,
-					String id) {
+						String id) {
 					((Widget) widget).setData("org.eclipse.e4.ui.css.CssClassName", classname); //$NON-NLS-1$
 					((Widget) widget).setData("org.eclipse.e4.ui.css.id", id); //$NON-NLS-1$
 					engine.applyStyles(widget, true);
@@ -123,7 +127,7 @@ public class ContextServiceFactory extends AbstractServiceFactory {
 
 			if (appContext.get(ILoggerProvider.class) == null) {
 				appContext.set(ILoggerProvider.class,
-					ContextInjectionFactory.make(DefaultLoggerProvider.class, appContext));
+						ContextInjectionFactory.make(DefaultLoggerProvider.class, appContext));
 			}
 
 			return appContext;
