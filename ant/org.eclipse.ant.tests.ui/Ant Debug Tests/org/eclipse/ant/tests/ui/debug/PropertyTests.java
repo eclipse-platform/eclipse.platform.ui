@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2019 IBM Corporation and others.
+ * Copyright (c) 2005, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -27,7 +27,7 @@ import org.eclipse.debug.core.model.IVariable;
 
 public class PropertyTests extends AbstractAntDebugTest {
 
-	private static final String ANT_VERSION = "Apache Ant(TM) version 1.10.7"; //$NON-NLS-1$
+	private static final String ANT_VERSION = "Apache Ant(TM) version 1.10.8"; //$NON-NLS-1$
 
 	public PropertyTests(String name) {
 		super(name);
@@ -61,8 +61,7 @@ public class PropertyTests extends AbstractAntDebugTest {
 			assertNotNull(property);
 
 			assertProperty(thread, "ant.project.name", "debugEcho"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		finally {
+		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 		}
@@ -97,8 +96,7 @@ public class PropertyTests extends AbstractAntDebugTest {
 
 			assertPropertyStartsWith(thread, "ant.version", ANT_VERSION); //$NON-NLS-1$
 			assertProperty(thread, "ant.project.name", "debugEcho"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		finally {
+		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 		}
@@ -135,14 +133,14 @@ public class PropertyTests extends AbstractAntDebugTest {
 
 			stepOver(frame);
 			assertProperty(thread, "CCC", "ccc"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		finally {
+		} finally {
 			terminateAndRemove(thread);
 			removeAllBreakpoints();
 		}
 	}
 
-	private AntStackFrame assertProperty(AntThread thread, String propertyName, String propertyValue) throws DebugException {
+	private AntStackFrame assertProperty(AntThread thread, String propertyName, String propertyValue)
+			throws DebugException {
 		AntStackFrame frame = (AntStackFrame) thread.getTopStackFrame();
 		AntProperty property = frame.findProperty(propertyName);
 		assertNotNull("Did not find property: " + propertyName, property); //$NON-NLS-1$
@@ -151,12 +149,14 @@ public class PropertyTests extends AbstractAntDebugTest {
 		return frame;
 	}
 
-	private AntStackFrame assertPropertyStartsWith(AntThread thread, String propertyName, String propertyValue) throws DebugException {
+	private AntStackFrame assertPropertyStartsWith(AntThread thread, String propertyName, String propertyValue)
+			throws DebugException {
 		AntStackFrame frame = (AntStackFrame) thread.getTopStackFrame();
 		AntProperty property = frame.findProperty(propertyName);
 		assertNotNull("Did not find property: " + propertyName, property); //$NON-NLS-1$
 		AntValue value = (AntValue) property.getValue();
-		assertTrue("Value of property" + propertyName + " incorrect: " + value.getValueString(), value.getValueString().startsWith(propertyValue)); //$NON-NLS-1$ //$NON-NLS-2$
+		assertTrue("Value of property" + propertyName + " incorrect: " + value.getValueString() + " should start with " //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+				+ propertyValue, value.getValueString().startsWith(propertyValue));
 		return frame;
 	}
 }
