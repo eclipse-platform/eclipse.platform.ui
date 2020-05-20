@@ -134,19 +134,24 @@ public class MaximizableChildrenTag {
 				.setContributionURI("bundleclass://org.eclipse.e4.ui.workbench.addons.swt/org.eclipse.e4.ui.workbench.addons.minmax.MinMaxAddon"); //$NON-NLS-1$
 
 		appContext = E4Application.createDefaultContext();
-		appContext.set(Display.class, Display.getDefault());
+		Display display = Display.getDefault();
+		appContext.set(Display.class, display);
 		appContext.set(MApplication.class.getName(), application);
 		appContext.set(MWindow.class, window);
 		appContext.set(UISynchronize.class, new UISynchronize() {
 
 			@Override
 			public void syncExec(Runnable runnable) {
-				runnable.run();
+				if (display != null && !display.isDisposed()) {
+					display.syncExec(runnable);
+				}
 			}
 
 			@Override
 			public void asyncExec(Runnable runnable) {
-				runnable.run();
+				if (display != null && !display.isDisposed()) {
+					display.asyncExec(runnable);
+				}
 			}
 		});
 		appContext.set(EModelService.class, new ModelServiceImpl(appContext));
