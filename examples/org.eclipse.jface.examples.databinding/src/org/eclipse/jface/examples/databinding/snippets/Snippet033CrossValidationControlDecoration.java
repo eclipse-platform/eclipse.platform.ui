@@ -81,6 +81,9 @@ public class Snippet033CrossValidationControlDecoration {
 
 		bindUI();
 
+		shell.open();
+		shell.pack();
+
 		return shell;
 	}
 
