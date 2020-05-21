@@ -76,6 +76,10 @@ public class WorkingSetsLabelProvider implements ILabelProvider {
 		if (workingSetImage != null) {
 			workingSetImage.dispose();
 		}
+		if (labelProvider != null) {
+			labelProvider.dispose();
+			labelProvider = null;
+		}
 	}
 
 	@Override
