@@ -219,7 +219,8 @@ public class IDEWorkbenchWindowAdvisor extends WorkbenchWindowAdvisor {
 							parentShell,
 							IDEWorkbenchMessages.PromptOnExitDialog_shellTitle,
 							null,
-							message, MessageDialog.CONFIRM, buttonLabelToIdMap, 0, null, false);
+							message, MessageDialog.CONFIRM, buttonLabelToIdMap, 0,
+							IDEWorkbenchMessages.PromptOnExitDialog_choice, false);
 			dlg.open();
 			if (dlg.getReturnCode() != IDialogConstants.OK_ID) {
 				return false;
