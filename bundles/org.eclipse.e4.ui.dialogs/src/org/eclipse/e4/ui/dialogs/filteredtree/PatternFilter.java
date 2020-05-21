@@ -15,11 +15,9 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.dialogs.filteredtree;
 
-import java.text.BreakIterator;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.text.StringMatcher;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
@@ -65,6 +63,8 @@ public class PatternFilter extends ViewerFilter {
 	private boolean useEarlyReturnIfMatcherIsNull = true;
 
 	private static Object[] EMPTY = new Object[0];
+
+	private static final Pattern NON_WORD = Pattern.compile("\\W+", Pattern.UNICODE_CHARACTER_CLASS); //$NON-NLS-1$
 
 	public PatternFilter() {
 	}
@@ -343,31 +343,7 @@ public class PatternFilter extends ViewerFilter {
 	 * @return an array of words
 	 */
 	private String[] getWords(String text) {
-		List<String> words = new ArrayList<>();
-		// Break the text up into words, separating based on whitespace and
-		// common punctuation.
-		// Previously used String.split(..., "\\W"), where "\W" is a regular
-		// expression (see the Javadoc for class Pattern).
-		// Need to avoid both String.split and regular expressions, in order to
-		// compile against JCL Foundation (bug 80053).
-		// Also need to do this in an NL-sensitive way. The use of BreakIterator
-		// was suggested in bug 90579.
-		BreakIterator iter = BreakIterator.getWordInstance();
-		iter.setText(text);
-		int i = iter.first();
-		while (i != java.text.BreakIterator.DONE && i < text.length()) {
-			int j = iter.following(i);
-			if (j == java.text.BreakIterator.DONE) {
-				j = text.length();
-			}
-			// match the word
-			if (Character.isLetterOrDigit(text.charAt(i))) {
-				String word = text.substring(i, j);
-				words.add(word);
-			}
-			i = j;
-		}
-		return words.toArray(new String[words.size()]);
+		return NON_WORD.split(text, 0);
 	}
 
 	/**
