@@ -71,6 +71,8 @@ import org.eclipse.jface.text.tests.templates.persistence.TemplatePersistenceDat
 		CodeMiningProjectionViewerTest.class,
 
 		TabsToSpacesConverterTest.class,
+
+		DefaultTextDoubleClickStrategyTest.class,
 })
 public class JFaceTextTestSuite {
 	// see @SuiteClasses
