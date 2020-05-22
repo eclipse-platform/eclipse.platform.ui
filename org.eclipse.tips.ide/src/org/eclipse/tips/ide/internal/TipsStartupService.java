@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2018 Remain Software
+ * Copyright (c) 2018, 2020 Remain Software and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     wim.jongman@remainsoftware.com - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.tips.ide.internal;
 
@@ -208,7 +209,6 @@ public class TipsStartupService implements EventHandler {
 
 	private static void log(CoreException e) {
 		Bundle bundle = FrameworkUtil.getBundle(TipsStartupService.class);
-		Status status = new Status(IStatus.ERROR, bundle.getSymbolicName(), e.getMessage(), e);
-		Platform.getLog(bundle).log(status);
+		Platform.getLog(bundle).error(e.getMessage(), e);
 	}
 }
