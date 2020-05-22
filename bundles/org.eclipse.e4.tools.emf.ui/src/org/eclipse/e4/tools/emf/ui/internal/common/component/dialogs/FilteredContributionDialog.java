@@ -430,7 +430,7 @@ public abstract class FilteredContributionDialog extends SaveDialogBoundsSetting
 	}
 
 	protected Image getTitleImage() {
-		return imageCache.create("/icons/full/wizban/newsearch_wiz.gif"); //$NON-NLS-1$
+		return imageCache.create("/icons/full/wizban/newsearch_wiz.png"); //$NON-NLS-1$
 	}
 
 	protected void createOptions(Composite compOptions) {
