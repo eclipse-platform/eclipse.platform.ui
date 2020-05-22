@@ -301,28 +301,15 @@ public class IntroLaunchBar {
 		container = new Composite(parent, SWT.NULL);
 		computeColors(parent.getDisplay());
 		container.setLayout(new BarLayout());
-		// boolean vertical = (orientation & SWT.VERTICAL) != 0;
 		toolBarManager = new ToolBarManager(SWT.FLAT | getOrientation());
 
 
 		fillToolBar();
-		// coolBar = new CoolBar(container, SWT.NULL);
-		// CoolItem coolItem = new CoolItem(coolBar, SWT.NULL);
-		// toolBarManager.createControl(coolBar);
 		toolBarManager.createControl(container);
 		ToolBar toolBar = toolBarManager.getControl();
 
-		// coolItem.setControl(toolBar);
-		// Point toolBarSize = toolBar.computeSize(SWT.DEFAULT,
-		// SWT.DEFAULT);
-		// Set the preffered size to the size of the toolbar plus trim
-		// Point preferredSize = coolItem.computeSize(toolBarSize.x,
-		// toolBarSize.y);
-		// coolItem.setPreferredSize(preferredSize);
-
 		if (bg != null) {
 			toolBar.setBackground(bg);
-			// coolBar.setBackground(bg);
 		}
 		container.addPaintListener(this::onPaint);
 		MenuManager manager = new MenuManager();
