@@ -23,7 +23,7 @@ import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
-import org.eclipse.ui.internal.misc.StringMatcher;
+import org.eclipse.ui.internal.misc.TextMatcher;
 
 /**
  * A filter used in conjunction with <code>FilteredTree</code>. In order to
@@ -57,7 +57,7 @@ public class PatternFilter extends ViewerFilter {
 	/**
 	 * The string pattern matcher used for this pattern filter.
 	 */
-	private StringMatcher matcher;
+	private TextMatcher matcher;
 
 	private boolean useEarlyReturnIfMatcherIsNull = true;
 
@@ -175,7 +175,7 @@ public class PatternFilter extends ViewerFilter {
 			if (includeLeadingWildcard) {
 				pattern = "*" + pattern; //$NON-NLS-1$
 			}
-			matcher = new StringMatcher(pattern, true, false);
+			matcher = new TextMatcher(pattern, true, false);
 		}
 	}
 
@@ -291,7 +291,7 @@ public class PatternFilter extends ViewerFilter {
 		}
 
 		// Otherwise check if any of the words of the text matches
-		String[] words = StringMatcher.getWords(text);
+		String[] words = TextMatcher.getWords(text);
 		for (String word : words) {
 			if (!match(word)) {
 				return false;

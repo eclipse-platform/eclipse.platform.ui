@@ -36,7 +36,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.ui.internal.WorkbenchMessages;
-import org.eclipse.ui.internal.misc.StringMatcher;
+import org.eclipse.ui.internal.misc.TextMatcher;
 import org.eclipse.ui.internal.util.Util;
 import org.eclipse.ui.progress.WorkbenchJob;
 
@@ -73,11 +73,11 @@ public class FilteredList extends Composite {
 	}
 
 	private class DefaultFilterMatcher implements FilterMatcher {
-		private StringMatcher fMatcher;
+		private TextMatcher fMatcher;
 
 		@Override
 		public void setFilter(String pattern, boolean ignoreCase, boolean ignoreWildCards) {
-			fMatcher = new StringMatcher(pattern + '*', ignoreCase, ignoreWildCards);
+			fMatcher = new TextMatcher(pattern + '*', ignoreCase, ignoreWildCards);
 		}
 
 		@Override

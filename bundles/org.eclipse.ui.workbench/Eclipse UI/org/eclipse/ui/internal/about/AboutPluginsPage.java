@@ -72,7 +72,7 @@ import org.eclipse.ui.internal.WorkbenchImages;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.misc.StatusUtil;
-import org.eclipse.ui.internal.misc.StringMatcher;
+import org.eclipse.ui.internal.misc.TextMatcher;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.progress.WorkbenchJob;
 import org.eclipse.ui.statushandlers.StatusManager;
@@ -674,14 +674,14 @@ class TableComparator extends ViewerComparator {
 
 class BundlePatternFilter extends ViewerFilter {
 
-	private StringMatcher matcher;
+	private TextMatcher matcher;
 
 	public void setPattern(String searchPattern) {
 		if (searchPattern == null || searchPattern.length() == 0) {
 			this.matcher = null;
 		} else {
 			String pattern = "*" + searchPattern + "*"; //$NON-NLS-1$//$NON-NLS-2$
-			this.matcher = new StringMatcher(pattern, true, false);
+			this.matcher = new TextMatcher(pattern, true, false);
 		}
 	}
 

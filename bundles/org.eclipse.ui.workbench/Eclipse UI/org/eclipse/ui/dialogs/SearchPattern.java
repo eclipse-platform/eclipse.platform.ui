@@ -14,7 +14,7 @@
 package org.eclipse.ui.dialogs;
 
 import org.eclipse.jface.util.Util;
-import org.eclipse.ui.internal.misc.StringMatcher;
+import org.eclipse.ui.internal.misc.TextMatcher;
 
 /**
  * A search pattern defines how search results are found.
@@ -95,7 +95,7 @@ public class SearchPattern {
 
 	private String initialPattern;
 
-	private StringMatcher stringMatcher;
+	private TextMatcher stringMatcher;
 
 	private static final char END_SYMBOL = '<';
 
@@ -158,7 +158,7 @@ public class SearchPattern {
 		initializePatternAndMatchRule(stringPattern);
 		matchRule = matchRule & this.allowedRules;
 		if (matchRule == RULE_PATTERN_MATCH) {
-			stringMatcher = new StringMatcher(this.stringPattern, true, false);
+			stringMatcher = new TextMatcher(this.stringPattern, true, false);
 		}
 	}
 
