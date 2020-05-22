@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,20 +10,17 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.base;
 
 import java.io.File;
 import java.net.URL;
 
-import org.osgi.framework.BundleContext;
-
-import org.eclipse.osgi.service.datalocation.Location;
-
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.osgi.service.datalocation.Location;
+import org.osgi.framework.BundleContext;
 
 /**
  * Help Base plug-in.
@@ -76,17 +73,6 @@ public class HelpBasePlugin extends Plugin {
 		}
 	};
 
-	public static synchronized void logError(String message, Throwable ex) {
-		if (message == null) {
-			message = ""; //$NON-NLS-1$
-		}
-		Status errorStatus = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, message, ex);
-		HelpBasePlugin.getDefault().getLog().log(errorStatus);
-	}
-
-	public static synchronized void logStatus(IStatus errorStatus) {
-		HelpBasePlugin.getDefault().getLog().log(errorStatus);
-	}
 
 	public static HelpBasePlugin getDefault() {
 		return plugin;
