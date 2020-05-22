@@ -17,7 +17,6 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.HelpEvaluationContext;
@@ -55,7 +54,7 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 		if (message == null)
 			message = ""; //$NON-NLS-1$
 		Status errorStatus = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, message, ex);
-		HelpPlugin.getDefault().getLog().log(errorStatus);
+		Platform.getLog(HelpUIPlugin.class).log(errorStatus);
 		if (openDialog)
 			ErrorDialog.openError(null, null, null, errorStatus);
 	}

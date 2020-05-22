@@ -84,7 +84,7 @@ public class EmbeddedBrowserFactory implements IBrowserFactory {
 				} else {
 					Status errorStatus = new Status(IStatus.WARNING, HelpUIPlugin.PLUGIN_ID, IStatus.OK,
 							"An error occurred during creation of embedded help browser.", new Exception(se)); //$NON-NLS-1$
-					HelpPlugin.getDefault().getLog().log(errorStatus);
+					Platform.getLog(getClass()).log(errorStatus);
 				}
 			} catch (Exception e) {
 				// Browser not implemented
