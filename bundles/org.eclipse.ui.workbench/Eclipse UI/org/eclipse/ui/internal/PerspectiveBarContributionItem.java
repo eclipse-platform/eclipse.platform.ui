@@ -127,12 +127,7 @@ public class PerspectiveBarContributionItem extends ContributionItem {
 		if (toolItem != null && !toolItem.isDisposed()) {
 			toolItem.setSelection(workbenchPage.getPerspective() == perspective);
 			if (apiPreferenceStore.getBoolean(IWorkbenchPreferenceConstants.SHOW_TEXT_ON_PERSPECTIVE_BAR)) {
-				if (apiPreferenceStore.getString(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR)
-						.equals(IWorkbenchPreferenceConstants.TOP_LEFT)) {
-					toolItem.setText(perspective.getLabel());
-				} else {
-					toolItem.setText(shortenText(perspective.getLabel(), toolItem));
-				}
+				toolItem.setText(perspective.getLabel());
 			} else {
 				toolItem.setText(""); //$NON-NLS-1$
 			}

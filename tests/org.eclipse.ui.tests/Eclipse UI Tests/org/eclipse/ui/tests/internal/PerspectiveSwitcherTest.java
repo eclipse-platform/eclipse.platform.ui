@@ -32,45 +32,22 @@ public class PerspectiveSwitcherTest extends UITestCase {
 	}
 
 	/**
-	 * This test ensures that our workbench window's perspective bar can be
-	 * docked at the other side of the window even if the 'Open Perspective'
-	 * contribution item is not there.
+	 * This test ensures that our workbench window's perspective bar can opened if
+	 * the 'Open Perspective' contribution item is not there.
 	 */
 	@Test
-	public void testCreateBarManagerBug274486() {
-		// we want to move the perspective bar to the other side so that it will
-		// be recreated, TOP_RIGHT and TOP_LEFT should switch to LEFT, LEFT
-		// should switch to TOP_RIGHT or TOP_LEFT
+	public void testCreatePerspectiveSwithcerInToolbar() {
 		IPreferenceStore apiPreferenceStore = PrefUtil.getAPIPreferenceStore();
-		String originalPerspectiveBarPosition = apiPreferenceStore
-				.getString(IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR);
-		String targetDockPosition = null;
-		if (IWorkbenchPreferenceConstants.TOP_RIGHT.equals(originalPerspectiveBarPosition)
-				|| IWorkbenchPreferenceConstants.TOP_LEFT.equals(originalPerspectiveBarPosition)) {
-			targetDockPosition = IWorkbenchPreferenceConstants.LEFT;
-		} else if (IWorkbenchPreferenceConstants.LEFT.equals(originalPerspectiveBarPosition)) {
-			targetDockPosition = IWorkbenchPreferenceConstants.TOP_RIGHT;
-		} else {
-			throw new IllegalStateException("The current perspective bar position is unknown: " //$NON-NLS-1$
-					+ originalPerspectiveBarPosition);
-		}
 
 		WorkbenchWindow window = (WorkbenchWindow) fWorkbench.getActiveWorkbenchWindow();
-		assertNotNull("We should have a perspective bar in the beginning", //$NON-NLS-1$
-				getPerspectiveSwitcher(window));
+		assertNotNull("We should have a perspective bar in the beginning", getPerspectiveSwitcher(window)); //$NON-NLS-1$
 
 		// turn off the 'Open Perspective' item
 		setPreference(apiPreferenceStore, IWorkbenchPreferenceConstants.SHOW_OPEN_ON_PERSPECTIVE_BAR, false);
 
-		// now we dock the perspective bar on the other end
-		setPreference(apiPreferenceStore, IWorkbenchPreferenceConstants.DOCK_PERSPECTIVE_BAR, targetDockPosition);
+		// check that we still have a perspective bar
+		assertNotNull("The perspective bar should have been created successfully", getPerspectiveSwitcher(window)); //$NON-NLS-1$
 
-		// check that we have a perspective bar, the setValue(String, String)
-		// method does not throw an exception because the perspective bar
-		// creation code is wrapped around a SafeRunner so the exception does
-		// not get propagated, hence, we need to check here
-		assertNotNull("The perspective bar should have been created successfully", //$NON-NLS-1$
-				getPerspectiveSwitcher(window));
 	}
 
 	private static Object getPerspectiveSwitcher(WorkbenchWindow window) {

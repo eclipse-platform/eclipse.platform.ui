@@ -158,8 +158,10 @@ public interface IWorkbenchPreferenceConstants {
 	 * {@link #TOP_LEFT}, or {@link #LEFT}.
 	 * </p>
 	 *
+	 * @deprecated not used anymore by platform
 	 * @since 3.0
 	 */
+	@Deprecated
 	String DOCK_PERSPECTIVE_BAR = "DOCK_PERSPECTIVE_BAR"; //$NON-NLS-1$
 
 	/**
@@ -194,16 +196,20 @@ public interface IWorkbenchPreferenceConstants {
 	 * Constant to be used when referring to the top right of the workbench window.
 	 *
 	 * @see #DOCK_PERSPECTIVE_BAR
+	 * @deprecated not used anymore by platform
 	 * @since 3.0
 	 */
+	@Deprecated
 	String TOP_RIGHT = "topRight"; //$NON-NLS-1$
 
 	/**
 	 * Constant to be used when referring to the top left of the workbench window.
 	 *
 	 * @see #DOCK_PERSPECTIVE_BAR
+	 * @deprecated not used anymore by platform
 	 * @since 3.0
 	 */
+	@Deprecated
 	String TOP_LEFT = "topLeft"; //$NON-NLS-1$
 
 	/**
