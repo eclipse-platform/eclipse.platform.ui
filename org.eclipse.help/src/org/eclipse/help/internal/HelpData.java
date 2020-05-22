@@ -180,7 +180,7 @@ public class HelpData {
 			}
 			catch (Throwable t) {
 				String msg = "Error loading help data file \"" + url + "\""; //$NON-NLS-1$ //$NON-NLS-2$
-				HelpPlugin.logError(msg, t);
+				Platform.getLog(getClass()).error(msg, t);
 			}
 		} else {
 			// Derive information from preferences

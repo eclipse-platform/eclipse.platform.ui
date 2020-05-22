@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.util;
 
@@ -346,7 +347,8 @@ public class ProductPreferences {
 					return properties;
 				} catch (IOException e) {
 					// log the fact that it couldn't load it
-					HelpPlugin.logError("Error opening product's plugin customization file: " + bundleId + "/" + path, e); //$NON-NLS-1$ //$NON-NLS-2$
+					Platform.getLog(ProductPreferences.class)
+							.error("Error opening product's plugin customization file: " + bundleId + "/" + path, e); //$NON-NLS-1$ //$NON-NLS-2$
 				}
 			}
 		}

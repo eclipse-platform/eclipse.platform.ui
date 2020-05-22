@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,13 +10,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.dynamic;
 
 import java.util.Map;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.ITocContribution;
-import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.UAElement;
 
 /*
@@ -52,7 +53,7 @@ public class ValidationHandler extends ProcessorHandler {
 			String suggestion = deprecatedElements.get(element.getElementName());
 			if (suggestion != null) {
 				String msg = "The \"" + element.getElementName() + "\" element is deprecated in \"" + id + "\"; use \"" + suggestion + "\" instead."; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-				HelpPlugin.logWarning(msg);
+				Platform.getLog(getClass()).warn(msg);
 			}
 		}
 		String[] attributes = requiredAttributes.get(element.getElementName());
@@ -67,7 +68,7 @@ public class ValidationHandler extends ProcessorHandler {
 					if (parent != null && !(parent instanceof ITocContribution)) {
 						msg += " (skipping element)"; //$NON-NLS-1$
 						parent.removeChild(element);
-						HelpPlugin.logError(msg);
+						Platform.getLog(getClass()).error(msg);
 						return HANDLED_SKIP;
 					}
 					else {

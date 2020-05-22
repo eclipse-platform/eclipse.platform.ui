@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal;
 
@@ -18,6 +19,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IAnchor;
 import org.eclipse.help.ICommandLink;
 import org.eclipse.help.IContentExtension;
@@ -35,6 +37,7 @@ import org.eclipse.help.ILink;
 import org.eclipse.help.IToc;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.IUAElement;
+import org.eclipse.help.UAContentFilter;
 import org.eclipse.help.internal.context.Context;
 import org.eclipse.help.internal.criteria.Criteria;
 import org.eclipse.help.internal.criteria.CriteriaDefinition;
@@ -109,7 +112,7 @@ public class UAElementFactory {
 			}
 			catch (Exception e) {
 				String msg = "Error creating document model element"; //$NON-NLS-1$
-				HelpPlugin.logError(msg, e);
+				Platform.getLog(UAElementFactory.class).error(msg, e);
 			}
 		}
 		return new UAElement(element);
@@ -126,7 +129,7 @@ public class UAElementFactory {
 				}
 				catch (Exception e) {
 					String msg = "Error creating document model element"; //$NON-NLS-1$
-					HelpPlugin.logError(msg, e);
+					Platform.getLog(UAContentFilter.class).error(msg, e);
 				}
 			}
 		}

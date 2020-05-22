@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     IBM Corporation - add support for filtering of the index view
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.index;
 
@@ -24,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IIndexEntry;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.IUAElement;
@@ -302,7 +304,7 @@ public class IndexAssembler {
 					}
 					else {
 						String msg = "Unable to look up label for help keyword index topic \"" + topic.getHref() + "\" with missing \"" + Topic.ATTRIBUTE_LABEL + "\" attribute (topic does not exist in table of contents; using href as label)"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						HelpPlugin.logError(msg);
+						Platform.getLog(getClass()).error(msg);
 						topic.setLabel(topic.getHref());
 					}
 				}

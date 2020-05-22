@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 
 package org.eclipse.help.internal.toc;
@@ -21,8 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.ITocContribution;
-import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.util.ProductPreferences;
 
 public class TocSorter {
@@ -101,7 +102,7 @@ public class TocSorter {
 			catch (Throwable t) {
 				// log and skip
 				String msg = "Error retrieving categoryId from " + ITocContribution.class.getName() + ": " + toc.getClass().getName(); //$NON-NLS-1$ //$NON-NLS-2$
-				HelpPlugin.logError(msg, t);
+				Platform.getLog(getClass()).error(msg, t);
 				continue;
 			}
 			if (categoryId != null && categoryId.length() > 0) {
@@ -138,7 +139,7 @@ public class TocSorter {
 				catch (Throwable t) {
 					// log and skip
 					String msg = "Error retrieving id from " + ITocContribution.class.getName() + ": " + toc.getClass().getName(); //$NON-NLS-1$ //$NON-NLS-2$
-					HelpPlugin.logError(msg, t);
+					Platform.getLog(getClass()).error(msg, t);
 					continue;
 				}
 				categorized.put(id, toc);

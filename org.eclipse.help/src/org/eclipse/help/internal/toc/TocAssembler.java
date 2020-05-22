@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.toc;
 
@@ -23,6 +24,7 @@ import java.util.ListIterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.ICriteria;
 import org.eclipse.help.ITocContribution;
 import org.eclipse.help.IUAElement;
@@ -177,7 +179,7 @@ public class TocAssembler {
 			catch (Throwable t) {
 				iter.remove();
 				String msg = "Error processing help table of contents: " + contrib.getId() + " (skipping)"; //$NON-NLS-1$ //$NON-NLS-2$
-				HelpPlugin.logError(msg, t);
+				Platform.getLog(getClass()).error(msg, t);
 			}
 		}
 		return linkedContributionIds;

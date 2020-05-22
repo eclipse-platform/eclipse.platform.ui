@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.extension;
 
@@ -58,7 +59,7 @@ public class ContentExtensionFileProvider extends AbstractContentExtensionProvid
 				}
 				catch (Throwable t) {
 					String msg = "Error reading user assistance content extension file /\"" + bundleId + '/' + file + "\" (skipping file)"; //$NON-NLS-1$ //$NON-NLS-2$
-					HelpPlugin.logError(msg, t);
+					Platform.getLog(getClass()).error(msg, t);
 				}
 			}
 		}

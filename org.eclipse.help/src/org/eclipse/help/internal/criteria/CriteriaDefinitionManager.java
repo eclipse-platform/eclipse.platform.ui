@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.criteria;
 
@@ -86,7 +87,7 @@ public class CriteriaDefinitionManager {
 			catch (Throwable t) {
 				// log, and skip the offending provider
 				String msg = "Error getting help criteria definition data from provider: " + providers[i].getClass().getName() + " (skipping provider)"; //$NON-NLS-1$ //$NON-NLS-2$
-				HelpPlugin.logError(msg, t);
+				Platform.getLog(getClass()).error(msg, t);
 				continue;
 			}
 
@@ -94,11 +95,11 @@ public class CriteriaDefinitionManager {
 			for (int j=0;j<contrib.length;++j) {
 				if (contrib[j] == null) {
 					String msg = "Help criteria definition provider \"" + providers[i].getClass().getName() + "\" returned a null contribution (skipping)"; //$NON-NLS-1$ //$NON-NLS-2$
-					HelpPlugin.logError(msg);
+					Platform.getLog(getClass()).error(msg);
 				}
 				else if (contrib[j].getCriteriaDefinition() == null) {
 					String msg = "Help criteria definition provider \"" + providers[i].getClass().getName() + "\" returned a contribution with a null root element (expected a \"" + CriteriaDefinition.NAME + "\" element; skipping)"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-					HelpPlugin.logError(msg);
+					Platform.getLog(getClass()).error(msg);
 				}
 				else {
 					CriteriaDefinitionContribution contribution = new CriteriaDefinitionContribution();
@@ -141,7 +142,7 @@ public class CriteriaDefinitionManager {
 					catch (CoreException e) {
 						// log and skip
 						String msg = "Error instantiating help keyword index provider class \"" + elem.getAttribute(ATTRIBUTE_NAME_CLASS) + '"'; //$NON-NLS-1$
-						HelpPlugin.logError(msg, e);
+						Platform.getLog(getClass()).error(msg, e);
 					}
 				}
 			}

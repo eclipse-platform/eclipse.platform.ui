@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.util;
 
@@ -83,9 +84,9 @@ public class ResourceLocator {
 					if (o instanceof IHelpContentProducer)
 						producer = (IHelpContentProducer) o;
 				} catch (CoreException ce) {
-					HelpPlugin
-							.logError(
-									"Exception occurred creating help content producer for plug-in " + config.getContributor().getName() + ".", ce); //$NON-NLS-1$ //$NON-NLS-2$
+					Platform.getLog(getClass())
+							.error("Exception occurred creating help content producer for plug-in " //$NON-NLS-1$
+									+ config.getContributor().getName() + ".", ce); //$NON-NLS-1$
 				}
 			}
 			return producer;
@@ -190,7 +191,7 @@ public class ResourceLocator {
 				continue;
 			}
 			if (keys.contains(key)) {
-				HelpPlugin.logWarning(
+				Platform.getLog(ResourceLocator.class).warn(
 						"Extension " + CONTENTPRODUCER_XP_FULLNAME + //$NON-NLS-1$
 						"in " + pluginName + " contains more than  <" //$NON-NLS-1$ //$NON-NLS-2$
 						+ CONTENTPRODUCER_XP_NAME + "> or <" //$NON-NLS-1$

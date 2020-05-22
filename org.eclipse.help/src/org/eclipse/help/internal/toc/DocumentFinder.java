@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.toc;
 
@@ -29,7 +30,6 @@ import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.util.ResourceLocator;
 import org.osgi.framework.Bundle;
 
@@ -88,14 +88,14 @@ public class DocumentFinder {
 				return result;
 			}
 		} catch (IOException ioe) {
-			HelpPlugin.logError("IOException occurred, when resolving URL " //$NON-NLS-1$
+			Platform.getLog(DocumentFinder.class).error("IOException occurred, when resolving URL " //$NON-NLS-1$
 					+ url.toString() + ".", ioe); //$NON-NLS-1$
 			return result;
 		}
 		try (ZipFile zipFile = new ZipFile(realZipURL.getFile())) {
 			result = createExtraTopicsFromZipFile(pluginID, zipFile, directory);
 		} catch (IOException ioe) {
-			HelpPlugin.logError(
+			Platform.getLog(DocumentFinder.class).error(
 					"IOException occurred, when accessing Zip file " //$NON-NLS-1$
 							+ realZipURL.getFile()
 							+ ".  File might not be locally available.", ioe); //$NON-NLS-1$

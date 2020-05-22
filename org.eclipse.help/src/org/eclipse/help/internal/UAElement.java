@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2016 IBM Corporation and others.
+ * Copyright (c) 2007, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal;
 
@@ -27,6 +28,7 @@ import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.ExpressionTagNames;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.CoreException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IUAElement;
 import org.eclipse.help.internal.dynamic.FilterResolver;
 import org.eclipse.help.internal.entityresolver.LocalEntityResolver;
@@ -221,7 +223,7 @@ public class UAElement implements IUAElement {
 				}
 				catch (ParserConfigurationException e) {
 					String msg = "Error creating document builder"; //$NON-NLS-1$
-					HelpPlugin.logError(msg, e);
+					Platform.getLog(UAElement.class).error(msg, e);
 				}
 			}
 			document = builder.newDocument();

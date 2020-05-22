@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 
 package org.eclipse.help.internal.criteria;
@@ -28,7 +29,6 @@ import org.eclipse.help.IToc;
 import org.eclipse.help.IToc2;
 import org.eclipse.help.ITopic;
 import org.eclipse.help.ITopic2;
-import org.eclipse.help.internal.HelpPlugin;
 
 public class CriteriaProviderRegistry {
 
@@ -64,7 +64,7 @@ public class CriteriaProviderRegistry {
 			try {
 				obj = elements[i].createExecutableExtension("class"); //$NON-NLS-1$
 			} catch (CoreException e) {
-				HelpPlugin.logError("Create extension failed:[" //$NON-NLS-1$
+				Platform.getLog(getClass()).error("Create extension failed:[" //$NON-NLS-1$
 						+ PROVIDER_XP_NAME + "].", e); //$NON-NLS-1$
 			}
 			if (obj instanceof AbstractCriteriaProvider) {

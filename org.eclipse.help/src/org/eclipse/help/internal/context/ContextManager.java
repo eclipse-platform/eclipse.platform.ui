@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.context;
 
@@ -76,7 +77,7 @@ public class ContextManager {
 				catch (Throwable t) {
 					// log and skip
 					String msg = "Error querying context provider (" + provider.getClass().getName() + ") with context Id: " + contextId; //$NON-NLS-1$ //$NON-NLS-2$
-					HelpPlugin.logError(msg, t);
+					Platform.getLog(getClass()).error(msg, t);
 				}
 			}
 		}
@@ -162,7 +163,7 @@ public class ContextManager {
 				catch (CoreException e) {
 					// log and skip
 					String msg = "Error instantiating context-sensitive help provider class \"" + elem.getAttribute(ATTRIBUTE_NAME_CLASS) + '"'; //$NON-NLS-1$
-					HelpPlugin.logError(msg, e);
+					Platform.getLog(getClass()).error(msg, e);
 				}
 			}
 		}

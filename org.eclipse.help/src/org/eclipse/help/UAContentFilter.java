@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,13 +10,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help;
 
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.help.internal.HelpPlugin;
 
 /**
  * <p>
@@ -84,7 +84,7 @@ public class UAContentFilter {
 			}
 			catch (Throwable t) {
 				String msg = "Error while checking element filter"; //$NON-NLS-1$
-				HelpPlugin.logError(msg, t);
+				Platform.getLog(UAContentFilter.class).error(msg, t);
 			}
 		}
 		return false;

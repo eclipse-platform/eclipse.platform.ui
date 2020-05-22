@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.toc;
 
@@ -61,7 +62,7 @@ public class TocFileProvider extends AbstractTocProvider {
 					+ ResourceLocator.getErrorPath(pluginId, file, locale)
 					+ locationInfo
 					+ "\" (skipping file)"; //$NON-NLS-1$
-				HelpPlugin.logError(msg, t);
+				Platform.getLog(getClass()).error(msg, t);
 			}
 		}
 		return contributions.toArray(new ITocContribution[contributions.size()]);

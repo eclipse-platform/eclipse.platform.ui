@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2016 Intel Corporation and others.
+ * Copyright (c) 2005, 2020 Intel Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     IBM Corporation - 122967 [Help] Remote help system
  *                       163558 Dynamic content support for all UA
  *                       165168 [Help] Better control of how help content is arranged and ordered
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.index;
 
@@ -93,10 +94,10 @@ public class IndexManager {
 				for (int j = 0; j < contrib.length; ++j) {
 					if (contrib[j] == null) {
 						String msg = "Help keyword index provider \"" + providers[i].getClass().getName() + "\" returned a null contribution (skipping)"; //$NON-NLS-1$ //$NON-NLS-2$
-						HelpPlugin.logError(msg);
+						Platform.getLog(getClass()).error(msg);
 					} else if (contrib[j].getIndex() == null) {
 						String msg = "Help keyword index provider \"" + providers[i].getClass().getName() + "\" returned a contribution with a null root element (expected a \"" + Index.NAME + "\" element; skipping)"; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-						HelpPlugin.logError(msg);
+						Platform.getLog(getClass()).error(msg);
 					} else {
 						IndexContribution contribution = new IndexContribution();
 						contribution.setId(contrib[j].getId());
@@ -110,7 +111,7 @@ public class IndexManager {
 			} catch (Throwable t) {
 				// log, and skip the offending provider
 				String msg = "Error getting help keyword index data from provider: " + providers[i].getClass().getName() + " (skipping provider)"; //$NON-NLS-1$ //$NON-NLS-2$
-				HelpPlugin.logError(msg, t);
+				Platform.getLog(getClass()).error(msg, t);
 				continue;
 			}
 		}
@@ -145,7 +146,7 @@ public class IndexManager {
 					catch (CoreException e) {
 						// log and skip
 						String msg = "Error instantiating help keyword index provider class \"" + elem.getAttribute(ATTRIBUTE_NAME_CLASS) + '"'; //$NON-NLS-1$
-						HelpPlugin.logError(msg, e);
+						Platform.getLog(getClass()).error(msg, e);
 					}
 				}
 			}

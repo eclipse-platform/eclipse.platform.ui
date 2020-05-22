@@ -12,7 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.context;
-import org.eclipse.help.*;
+import org.eclipse.help.IContext;
 /**
  * <p>
  * An enhanced version of <code>org.eclipse.help.IContext</code> interface

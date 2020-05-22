@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.context;
 
@@ -204,7 +205,7 @@ public class ContextFileProvider extends AbstractContextProvider {
 			}
 		} catch (Throwable t) {
 			String msg = "Error reading context-sensitive help file /\"" + getErrorPath(descriptor, locale) + "\" (skipping file)"; //$NON-NLS-1$ //$NON-NLS-2$
-			HelpPlugin.logError(msg, t);
+			Platform.getLog(getClass()).error(msg, t);
 		}
 		return null;
 	}
@@ -258,7 +259,7 @@ public class ContextFileProvider extends AbstractContextProvider {
 		}
 		else {
 			String msg = "Required root element \"contexts\" missing from context-sensitive help file \"/" + getErrorPath(descriptor, locale) + "\" (skipping)"; //$NON-NLS-1$ //$NON-NLS-2$
-			HelpPlugin.logError(msg);
+			Platform.getLog(getClass()).error(msg);
 		}
 		return null;
 	}
@@ -308,7 +309,7 @@ public class ContextFileProvider extends AbstractContextProvider {
 							}
 							catch (TransformerException e) {
 								String msg = "Internal error while normalizing context-sensitive help descriptions"; //$NON-NLS-1$
-								HelpPlugin.logError(msg, e);
+								Platform.getLog(getClass()).error(msg, e);
 							}
 						}
 						Node old = node;
