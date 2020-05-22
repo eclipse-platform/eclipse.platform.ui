@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Red Hat Inc. and others
+ * Copyright (c) 2016, 2020 Red Hat Inc. and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -94,5 +94,64 @@ public class DecorationOverlayIconTest extends TestCase {
 		icon2 = new DecorationOverlayIcon(baseDescriptor1, overlayDescriptor2, IDecoration.TOP_LEFT);
 		assertFalse(icon1.equals(icon2));
 		assertNotEquals(icon1.hashCode(), icon2.hashCode());
+	}
+
+	private static class SimpleImageDescriptor extends ImageDescriptor {
+		private String pretendFileName;
+
+		public SimpleImageDescriptor(String pretendFileName) {
+			this.pretendFileName = pretendFileName;
+		}
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((pretendFileName == null) ? 0 : pretendFileName.hashCode());
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj) {
+				return true;
+			}
+			if (obj == null) {
+				return false;
+			}
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+			SimpleImageDescriptor other = (SimpleImageDescriptor) obj;
+			if (pretendFileName == null) {
+				if (other.pretendFileName != null) {
+					return false;
+				}
+			} else if (!pretendFileName.equals(other.pretendFileName)) {
+				return false;
+			}
+			return true;
+		}
+
+	}
+
+	public void testEqualsAndHashCode2() {
+		// what is true about the underlying image descriptors should be true about
+		// the DecorationOverlayIcon too.
+
+		// first verify image descriptor's equals/hashcode
+		SimpleImageDescriptor equalButDifferent1 = new SimpleImageDescriptor("pretend_file_name");
+		SimpleImageDescriptor equalButDifferent2 = new SimpleImageDescriptor("pretend_file_name");
+		assertTrue(equalButDifferent1.equals(equalButDifferent2));
+		assertEquals(equalButDifferent1.hashCode(), equalButDifferent2.hashCode());
+
+		// second verify overlay's equals/hashcode still maintain contract when wrapping
+		// the above descriptors
+		DecorationOverlayIcon equalButDifferentIcon1 = new DecorationOverlayIcon(equalButDifferent1, overlayDescriptor1,
+				IDecoration.TOP_LEFT);
+		DecorationOverlayIcon equalButDifferentIcon2 = new DecorationOverlayIcon(equalButDifferent2, overlayDescriptor1,
+				IDecoration.TOP_LEFT);
+		assertTrue(equalButDifferentIcon1.equals(equalButDifferentIcon2));
+		assertEquals(equalButDifferentIcon1.hashCode(), equalButDifferentIcon2.hashCode());
 	}
 }

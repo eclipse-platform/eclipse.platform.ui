@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2015 IBM Corporation and others.
+ * Copyright (c) 2006, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
 package org.eclipse.jface.viewers;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.eclipse.jface.resource.CompositeImageDescriptor;
@@ -179,24 +180,28 @@ public class DecorationOverlayIcon extends CompositeImageDescriptor {
 	}
 
 	@Override
-	public boolean equals(Object o) {
-		if (!(o instanceof DecorationOverlayIcon)) {
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null) {
 			return false;
 		}
-		DecorationOverlayIcon other = (DecorationOverlayIcon) o;
-		return referenceImageOrDescriptor.equals(other.referenceImageOrDescriptor)
-				&& Arrays.equals(overlays, other.overlays);
+		if (getClass() != obj.getClass()) {
+			return false;
+		}
+		DecorationOverlayIcon other = (DecorationOverlayIcon) obj;
+		return Arrays.equals(overlays, other.overlays)
+				&& Objects.equals(referenceImageOrDescriptor, other.referenceImageOrDescriptor);
 	}
 
 	@Override
 	public int hashCode() {
-		int code = System.identityHashCode(referenceImageOrDescriptor);
-		for (ImageDescriptor overlay : overlays) {
-			if (overlay != null) {
-				code ^= overlay.hashCode();
-			}
-		}
-		return code;
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + Arrays.hashCode(overlays);
+		result = prime * result + Objects.hash(referenceImageOrDescriptor);
+		return result;
 	}
 
 	@Override
