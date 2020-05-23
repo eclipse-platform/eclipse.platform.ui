@@ -451,7 +451,6 @@ public class BreakpointsView extends VariablesView implements IBreakpointManager
 			// update the presentation context organizer
 			viewer.getPresentationContext().setProperty(IBreakpointUIConstants.PROP_BREAKPOINTS_ORGANIZERS, fOrganizers);
 		}
-		System.out.println();
 	}
 
 	/**
