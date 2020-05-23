@@ -17,10 +17,8 @@ import java.io.File;
 import java.io.InputStream;
 import java.net.URL;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.help.internal.context.ContextManager;
 import org.eclipse.help.internal.criteria.CriteriaManager;
 import org.eclipse.help.internal.extension.ContentExtensionManager;
@@ -59,28 +57,6 @@ public class HelpPlugin extends Plugin {
 	private CriteriaManager criteriaManager;
 	private IHelpProvider helpProvider;
 	private File configurationDirectory;
-
-	public static void logWarning(String message) {
-		Status errorStatus = new Status(IStatus.WARNING, PLUGIN_ID, IStatus.OK, message, null);
-		logStatus(errorStatus);
-	}
-
-	public static void logError(String message) {
-		Status errorStatus = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, message, null);
-		logStatus(errorStatus);
-	}
-
-	public static void logError(String message, Throwable ex) {
-		if (message == null) {
-			message = ""; //$NON-NLS-1$
-		}
-		Status errorStatus = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, message, ex);
-		logStatus(errorStatus);
-	}
-
-	private static synchronized void logStatus(IStatus errorStatus) {
-		HelpPlugin.getDefault().getLog().log(errorStatus);
-	}
 
 	/**
 	 * @return the singleton instance of the plugin
