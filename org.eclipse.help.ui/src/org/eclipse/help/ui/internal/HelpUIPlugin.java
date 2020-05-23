@@ -14,9 +14,7 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal;
 
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
@@ -25,7 +23,6 @@ import org.eclipse.help.internal.dynamic.FilterResolver;
 import org.eclipse.help.internal.search.federated.IndexerJob;
 import org.eclipse.help.ui.internal.dynamic.FilterResolverExtension;
 import org.eclipse.help.ui.internal.util.ErrorUtil;
-import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -42,23 +39,6 @@ public class HelpUIPlugin extends AbstractUIPlugin {
 	public static boolean DEBUG_INFOPOP = false;
 
 	private static HelpUIPlugin plugin;
-
-	/**
-	 * Logs an Error message with an exception. Note that the message should already be localized to
-	 * proper locale. ie: Resources.getString() should already have been called
-	 */
-	public static synchronized void logError(String message, Throwable ex) {
-		logError(message, ex, true, false);
-	}
-
-	public static synchronized void logError(String message, Throwable ex, boolean log, boolean openDialog) {
-		if (message == null)
-			message = ""; //$NON-NLS-1$
-		Status errorStatus = new Status(IStatus.ERROR, PLUGIN_ID, IStatus.OK, message, ex);
-		Platform.getLog(HelpUIPlugin.class).log(errorStatus);
-		if (openDialog)
-			ErrorDialog.openError(null, null, null, errorStatus);
-	}
 
 	/**
 	 * Provides access to singleton
