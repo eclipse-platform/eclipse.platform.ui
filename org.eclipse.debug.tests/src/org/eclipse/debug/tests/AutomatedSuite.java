@@ -16,6 +16,7 @@
 package org.eclipse.debug.tests;
 
 import org.eclipse.debug.tests.breakpoint.BreakpointOrderingTests;
+import org.eclipse.debug.tests.breakpoint.BreakpointTests;
 import org.eclipse.debug.tests.console.ConsoleDocumentAdapterTests;
 import org.eclipse.debug.tests.console.ConsoleManagerTests;
 import org.eclipse.debug.tests.console.ConsoleTests;
@@ -65,6 +66,7 @@ import org.junit.runners.Suite;
 		SourceLookupFacilityTests.class,
 		// BP tests
 		BreakpointOrderingTests.class,
+		BreakpointTests.class,
 		// Note: jface viewer tests were moved out of nightly tests
 		// due to frequent problems on nightly build machines.
 		// (Bug 343308).

@@ -19,20 +19,12 @@ import static org.junit.Assert.fail;
 
 import java.util.List;
 
-import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.resources.IResource;
-import org.eclipse.core.resources.IWorkspaceRunnable;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.ILineBreakpoint;
 import org.eclipse.debug.core.model.IValue;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsComparator;
 import org.eclipse.debug.tests.AbstractDebugTest;
-import org.eclipse.debug.tests.TestsPlugin;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IValueDetailListener;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
@@ -50,110 +42,6 @@ import org.junit.Test;
  * Using a special Comparator which sorts breakpoint texts like file:1, file:2 and file:11 in a numerical ordering.
  */
 public class BreakpointOrderingTests extends AbstractDebugTest {
-
-	/**
-	 * Test only implementation of IBreakpoint.
-	 */
-	static class TestBreakpoint implements IBreakpoint {
-
-		private final String fText;
-		private IMarker fMarker = null;
-
-		TestBreakpoint(String text) {
-			this(text, IBreakpoint.BREAKPOINT_MARKER);
-		}
-
-		TestBreakpoint(String text, final String markerType) {
-			fText = text;
-			final IResource resource = ResourcesPlugin.getWorkspace().getRoot();
-			IWorkspaceRunnable wr = new IWorkspaceRunnable() {
-
-				@Override
-				public void run( IProgressMonitor monitor ) throws CoreException {
-					// create the marker
-					setMarker(resource.createMarker(markerType));
-				}
-			};
-			try {
-				ResourcesPlugin.getWorkspace().run( wr, null );
-			}
-			catch ( CoreException e ) {
-				fail("Unexpected exception: " + e); //$NON-NLS-1$
-			}
-
-		}
-
-		void ReportFailure(String msg) throws CoreException {
-			throw new CoreException(new Status(IStatus.ERROR, TestsPlugin.PLUGIN_ID, msg));
-		}
-
-
-		String getText() {
-			return fText;
-		}
-
-		@Override
-		public void delete() throws CoreException {
-			fMarker.delete();
-		}
-
-		@Override
-		public IMarker getMarker() {
-			return fMarker;
-		}
-
-		@Override
-		public String getModelIdentifier() {
-			return "Test"; //$NON-NLS-1$
-		}
-
-		@Override
-		public boolean isEnabled() throws CoreException {
-			fail("not implemented in test"); //$NON-NLS-1$
-			return false;
-		}
-
-		@Override
-		public boolean isPersisted() throws CoreException {
-			fail("not implemented in test"); //$NON-NLS-1$
-			return false;
-		}
-
-		@Override
-		public boolean isRegistered() throws CoreException {
-			fail("not implemented in test"); //$NON-NLS-1$
-			return false;
-		}
-
-		@Override
-		public void setEnabled(boolean enabled) throws CoreException {
-			fail("not implemented in test"); //$NON-NLS-1$
-		}
-
-		@Override
-		public void setMarker(IMarker marker) throws CoreException {
-			assertTrue(fMarker == null && marker != null);
-			fMarker = marker;
-		}
-
-		@Override
-		public void setPersisted(boolean registered) throws CoreException {
-			fail("not implemented in test"); //$NON-NLS-1$
-		}
-
-		@Override
-		public void setRegistered(boolean registered) throws CoreException {
-			fail("not implemented in test"); //$NON-NLS-1$
-
-		}
-
-		@Override
-		public <T> T getAdapter(Class<T> adapter) {
-			fail("not implemented in test"); //$NON-NLS-1$
-			return null;
-		}
-
-	}
 
 	/**
 	 * Test only implementation of ILineBreakpoint.

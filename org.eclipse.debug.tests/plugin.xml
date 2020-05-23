@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <!--
-     Copyright (c) 2009 IBM Corporation and others.
+     Copyright (c) 2009, 2020 IBM Corporation and others.
 
      This program and the accompanying materials
      are made available under the terms of the Eclipse Public License 2.0
@@ -31,7 +31,7 @@
             id="rendering_type_3"
             name="%renderingType.name.1"
             class="org.eclipse.debug.tests.view.memory.RenderingTypeDelegate">
-      </renderingType>      
+      </renderingType>
       <renderingBindings
       		primaryId="rendering_type_1">
       		<enablement>
@@ -55,7 +55,7 @@
       		<enablement>
       			<instanceof value="org.eclipse.debug.tests.view.memory.MemoryBlockDynamic"/>
       		</enablement>
-      </renderingBindings>                  
+      </renderingBindings>
    </extension>
    <extension
          point="org.eclipse.debug.core.launchConfigurationTypes">
@@ -111,5 +111,27 @@
             class="org.eclipse.debug.tests.stepfilters.TestStepFilter"
             modelIdentifier="com.example.debug.model">
       </stepFilter>
-   </extension>   
+   </extension>
+   <extension point="org.eclipse.debug.core.breakpoints">
+      <breakpoint
+          id="org.eclipse.debug.tests.testBreakpoint"
+          class="org.eclipse.debug.tests.breakpoint.TestBreakpoint"
+          markerType="org.eclipse.debug.core.breakpointMarker">
+      </breakpoint>
+   </extension>
+   <extension
+         id="org.eclipse.debug.tests.testBreakpointMarker"
+         name="%testBreakpoint.name"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.debug.core.breakpointMarker">
+      </super>
+   </extension>
+   <extension
+         point="org.eclipse.debug.ui.debugModelPresentations">
+      <debugModelPresentation
+            class="org.eclipse.debug.tests.viewer.model.DebugTestModelPresentation"
+            id="org.eclipse.debug.tests">
+      </debugModelPresentation>
+   </extension>
 </plugin>

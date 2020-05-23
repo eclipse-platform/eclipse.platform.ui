@@ -763,7 +763,7 @@ public class BreakpointManager implements IBreakpointManager, IResourceChangeLis
 						}
 					};
 					getWorkspace().run(runnable, null, 0, null);
-					addBreakpoints(fAdded.toArray(new IBreakpoint[fAdded.size()]), false);
+					addBreakpoints(fAdded.toArray(new IBreakpoint[fAdded.size()]), true);
 				} catch (CoreException e) {
 					DebugPlugin.log(e);
 				}
