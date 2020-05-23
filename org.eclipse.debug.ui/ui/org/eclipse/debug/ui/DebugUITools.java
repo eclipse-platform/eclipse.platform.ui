@@ -301,6 +301,13 @@ public class DebugUITools {
 	 * @since 3.7
 	 */
 	public static void deleteBreakpoints(IBreakpoint[] breakpoints, final Shell shell, IProgressMonitor progressMonitor) throws CoreException {
+		if (breakpoints.length == 0) {
+			// Note: this is not only a small performance optimization but also the fix for
+			// bug 344352. When removing no breakpoints the DeleteMarkersOperation will show
+			// an error dialog about missing markers.
+			return;
+		}
+
 		IMarker[] markers= new IMarker[breakpoints.length];
 		int markerCount;
 		for (markerCount= 0; markerCount < breakpoints.length; markerCount++) {
