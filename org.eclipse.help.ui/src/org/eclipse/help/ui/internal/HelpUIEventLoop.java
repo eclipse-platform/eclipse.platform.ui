@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2007 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,10 +10,14 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.ui.internal;
-import org.eclipse.help.internal.base.*;
-import org.eclipse.swt.widgets.*;
+
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.help.internal.base.HelpApplication;
+import org.eclipse.swt.widgets.Display;
+
 public class HelpUIEventLoop {
 	/**
 	 * Indicates whether run had a chance to execute and display got created
@@ -24,6 +28,7 @@ public class HelpUIEventLoop {
 	 */
 	private static boolean running = false;
 	private static Display display;
+
 	/**
 	 * Called by base in stand-alone help since it cannot run event loop
 	 */
@@ -44,7 +49,7 @@ public class HelpUIEventLoop {
 						display.sleep();
 					}
 				} catch (Throwable t) {
-					HelpBasePlugin.logError(t.getMessage(), t);
+					Platform.getLog(HelpUIEventLoop.class).error(t.getMessage(), t);
 				}
 			}
 			display.dispose();
@@ -53,6 +58,7 @@ public class HelpUIEventLoop {
 			running = false;
 		}
 	}
+
 	public static void wakeup() {
 		Display d = display;
 		if (d != null)
@@ -61,6 +67,7 @@ public class HelpUIEventLoop {
 			} catch (Exception e) {
 			}
 	}
+
 	/**
 	 * Blocks until the loop is started (Display created)
 	 */
@@ -72,6 +79,7 @@ public class HelpUIEventLoop {
 			}
 		}
 	}
+
 	/**
 	 * @return Returns if loop is running.
 	 */

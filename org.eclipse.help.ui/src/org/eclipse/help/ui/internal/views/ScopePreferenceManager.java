@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,12 +10,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
-import org.eclipse.help.ui.internal.HelpUIPlugin;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.jface.preference.IPreferenceNode;
 import org.eclipse.jface.preference.IPreferencePage;
@@ -42,7 +43,7 @@ public class ScopePreferenceManager extends PreferenceManager implements IHelpUI
 				page.setTitle(getLabelText());
 			}
 			catch (CoreException e) {
-				HelpUIPlugin.logError("Unable to create executable extension", e); //$NON-NLS-1$
+				Platform.getLog(getClass()).error("Unable to create executable extension", e); //$NON-NLS-1$
 			}
 		}
 	}

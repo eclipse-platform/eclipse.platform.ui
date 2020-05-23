@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
@@ -17,11 +18,11 @@ import java.util.Dictionary;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.search.ISearchEngine;
 import org.eclipse.help.search.ISearchScope;
 import org.eclipse.help.ui.ISearchScopeFactory;
 import org.eclipse.help.ui.RootScopePage;
-import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -108,7 +109,7 @@ public class EngineTypeDescriptor {
 					return (ISearchEngine)obj;
 			}
 			catch (CoreException e) {
-				HelpUIPlugin.logError("Engine " + eclass + " cannot be instantiated", null); //$NON-NLS-1$ //$NON-NLS-2$
+				Platform.getLog(getClass()).error("Engine " + eclass + " cannot be instantiated", null); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 		}
 		return null;
@@ -126,7 +127,8 @@ public class EngineTypeDescriptor {
 					}
 				}
 				catch (CoreException e) {
-					HelpUIPlugin.logError("Scope factory " + fclass + " cannot be instantiated", null); //$NON-NLS-1$ //$NON-NLS-2$
+					Platform.getLog(getClass()).error("Scope factory " + fclass + " cannot be instantiated", //$NON-NLS-1$ //$NON-NLS-2$
+							null);
 				}
 			}
 		}

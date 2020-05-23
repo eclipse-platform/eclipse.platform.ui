@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,7 +10,8 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- * Martin Oberhuber (Wind River) - [352077] error dialogs when just probing browser
+ *     Martin Oberhuber (Wind River) - [352077] error dialogs when just probing browser
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.ui.internal.browser.embedded;
 
@@ -19,7 +20,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.help.browser.IBrowser;
 import org.eclipse.help.browser.IBrowserFactory;
-import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.ui.internal.HelpUIEventLoop;
 import org.eclipse.help.ui.internal.HelpUIPlugin;

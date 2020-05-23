@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2010 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
@@ -19,6 +20,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 import org.eclipse.core.runtime.IPath;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.jface.preference.IPreferenceStore;
@@ -86,7 +88,7 @@ public class ScopeSet {
 			}
 			catch (IOException e) {
 				String message = Messages.bind(Messages.ScopeSet_errorLoading, name);
-				HelpUIPlugin.logError(message, e);
+				Platform.getLog(getClass()).error(message, e);
 			}
 		}
 		return preferenceStore;
@@ -154,7 +156,7 @@ public class ScopeSet {
 				preferenceStore.save();
 			} catch (IOException e) {
 				String message = Messages.bind(Messages.ScopeSet_errorSaving, name);
-				HelpUIPlugin.logError(message, e);
+				Platform.getLog(getClass()).error(message, e);
 			}
 		}
 		this.name = name;
@@ -171,7 +173,7 @@ public class ScopeSet {
 			}
 			catch (IOException e) {
 				String message = Messages.bind(Messages.ScopeSet_errorSaving, name);
-				HelpUIPlugin.logError(message, e);
+				Platform.getLog(getClass()).error(message, e);
 			}
 		}
 	}

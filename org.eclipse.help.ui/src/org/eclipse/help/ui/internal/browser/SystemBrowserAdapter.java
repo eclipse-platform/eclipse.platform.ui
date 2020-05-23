@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,11 +10,12 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.ui.internal.browser;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.browser.IBrowser;
-import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.help.ui.internal.util.ErrorUtil;
 import org.eclipse.osgi.util.NLS;
@@ -40,8 +41,8 @@ public class SystemBrowserAdapter implements IBrowser {
 	public void displayURL(String url) {
 		//		if (Constants.WS_WIN32.equalsIgnoreCase(Platform.getOS())) {
 		if (!Program.launch(url)) {
-			HelpUIPlugin
-					.logError(
+			Platform.getLog(getClass())
+					.error(
 							"Browser adapter for System Browser failed.  The system has no program registered for file " //$NON-NLS-1$
 									+ url
 									+ ".  Change the file association or choose a different help web browser in the preferences.", //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
@@ -386,7 +387,7 @@ public class ContextHelpPart extends SectionPart implements IHelpPart {
 			getSection().layout();
 			getManagedForm().reflow(true);
 		} catch (Exception e) {
-			HelpUIPlugin.logError("Error displaying context help text " + helpText, e); //$NON-NLS-1$
+			Platform.getLog(getClass()).error("Error displaying context help text " + helpText, e); //$NON-NLS-1$
 		}
 	}
 

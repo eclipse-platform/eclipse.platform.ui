@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2011, 2016 IBM Corporation and others.
+ * Copyright (c) 2011, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 
 package org.eclipse.help.ui.internal.preferences;
@@ -18,12 +19,12 @@ import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.DefaultScope;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.IHelpBaseConstants;
-import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.osgi.service.prefs.BackingStoreException;
 
 
@@ -96,7 +97,7 @@ public class ICPreferences {
 						"true".equalsIgnoreCase(states[i])); //$NON-NLS-1$
 					ics.add(ic);
 				} catch (MalformedURLException e) {
-					HelpUIPlugin.logError(e.getMessage(), e);
+					Platform.getLog(ICPreferences.class).error(e.getMessage(), e);
 				}
 			}
 		}

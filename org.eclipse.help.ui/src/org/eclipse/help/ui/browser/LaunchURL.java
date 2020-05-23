@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.ui.browser;
 
@@ -18,9 +19,9 @@ import java.util.Hashtable;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExecutableExtension;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.browser.IBrowser;
 import org.eclipse.help.internal.browser.BrowserManager;
-import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.help.ui.internal.Messages;
 import org.eclipse.help.ui.internal.util.ErrorUtil;
 import org.eclipse.jface.action.IAction;
@@ -85,8 +86,8 @@ public class LaunchURL implements IWorkbenchWindowActionDelegate,
 		try {
 			browser.displayURL(url);
 		} catch (Exception e) {
-			HelpUIPlugin.logError("Exception occurred when opening URL: " + url //$NON-NLS-1$
-					+ ".", e); //$NON-NLS-1$
+			Platform.getLog(getClass()).error("Exception occurred when opening URL: " //$NON-NLS-1$
+					+ url + ".", e); //$NON-NLS-1$
 			ErrorUtil.displayErrorDialog(Messages.LaunchURL_exception);
 		}
 	}

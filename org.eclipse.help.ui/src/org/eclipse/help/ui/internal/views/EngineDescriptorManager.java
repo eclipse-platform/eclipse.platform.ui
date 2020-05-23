@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
@@ -127,7 +128,7 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 			writer.flush();
 		}
 		catch (IOException e) {
-			HelpUIPlugin.logError(Messages.EngineDescriptorManager_errorSaving, e);
+			Platform.getLog(getClass()).error(Messages.EngineDescriptorManager_errorSaving, e);
 		}
 		finally {
 			if (osw!=null) {
@@ -155,7 +156,7 @@ public class EngineDescriptorManager extends Observable implements IHelpUIConsta
 			load(fileName);
 		}
 		catch (IOException e) {
-			HelpUIPlugin.logError(Messages.EngineDescriptorManager_errorLoading, e);
+			Platform.getLog(getClass()).error(Messages.EngineDescriptorManager_errorLoading, e);
 		}
 	}
 
