@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2019 IBM Corporation and others.
+ * Copyright (c) 2010, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.search;
 
@@ -23,6 +24,7 @@ import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.util.ProxyUtil;
@@ -373,7 +375,7 @@ public abstract class SearchParticipantXML extends SearchParticipant {
 		}
 		catch (Throwable t) {
 			String msg = "An error occured while pre-processing user assistance document \"" + name + "\" for search indexing"; //$NON-NLS-1$ //$NON-NLS-2$
-			HelpBasePlugin.logError(msg, t);
+			Platform.getLog(getClass()).error(msg, t);
 			return in;
 		}
 	}

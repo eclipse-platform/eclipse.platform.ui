@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2015 IBM Corporation and others.
+ * Copyright (c) 2008, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 
 package org.eclipse.help.internal.server;
@@ -145,7 +146,7 @@ public class JettyHelpServer extends HelpServer {
 			execute(stopRunnable);
 		}
 		catch (Exception e) {
-			HelpBasePlugin.logError("An error occured while stopping the help server", e); //$NON-NLS-1$
+			Platform.getLog(getClass()).error("An error occured while stopping the help server", e); //$NON-NLS-1$
 		}
 	}
 
@@ -189,7 +190,7 @@ public class JettyHelpServer extends HelpServer {
 				}
 				catch (NumberFormatException e) {
 					String msg = "Help server port specified in VM arguments is invalid (" + portCommandLineOverride + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-					HelpBasePlugin.logError(msg, e);
+					Platform.getLog(getClass()).error(msg, e);
 				}
 			}
 		}

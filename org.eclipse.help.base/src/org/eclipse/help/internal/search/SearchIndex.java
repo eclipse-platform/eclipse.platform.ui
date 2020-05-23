@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     Holger Voormann - fix for bug 426785 (http://eclip.se/426785)
  *     Alexander Kurtakov - Bug 460787
  *     Sopot Cela - Bug 466829
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
@@ -323,7 +324,7 @@ public class SearchIndex implements IHelpSearchIndex {
 			iw = new IndexWriter(luceneDirectory, writerConfig);
 			return true;
 		} catch (IOException e) {
-			HelpBasePlugin.logError("Exception occurred in search indexing at beginAddBatch.", e); //$NON-NLS-1$
+			Platform.getLog(getClass()).error("Exception occurred in search indexing at beginAddBatch.", e); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -343,7 +344,7 @@ public class SearchIndex implements IHelpSearchIndex {
 			iw = new IndexWriter(luceneDirectory, new IndexWriterConfig(analyzerDescriptor.getAnalyzer()));
 			return true;
 		} catch (IOException e) {
-			HelpBasePlugin.logError("Exception occurred in search indexing at beginDeleteBatch.", e); //$NON-NLS-1$
+			Platform.getLog(getClass()).error("Exception occurred in search indexing at beginDeleteBatch.", e); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -362,7 +363,7 @@ public class SearchIndex implements IHelpSearchIndex {
 			}
 			return true;
 		} catch (IOException e) {
-			HelpBasePlugin.logError("Exception occurred in search indexing at beginDeleteBatch.", e); //$NON-NLS-1$
+			Platform.getLog(getClass()).error("Exception occurred in search indexing at beginDeleteBatch.", e); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -420,7 +421,7 @@ public class SearchIndex implements IHelpSearchIndex {
 			}
 			return true;
 		} catch (IOException e) {
-			HelpBasePlugin.logError("Exception occurred in search indexing at endAddBatch.", e); //$NON-NLS-1$
+			Platform.getLog(getClass()).error("Exception occurred in search indexing at endAddBatch.", e); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -452,7 +453,7 @@ public class SearchIndex implements IHelpSearchIndex {
 			}
 			return true;
 		} catch (IOException e) {
-			HelpBasePlugin.logError("Exception occurred in search indexing at endDeleteBatch.", e); //$NON-NLS-1$
+			Platform.getLog(getClass()).error("Exception occurred in search indexing at endDeleteBatch.", e); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -478,7 +479,7 @@ public class SearchIndex implements IHelpSearchIndex {
 			setInconsistent(false);
 			return true;
 		} catch (IOException e) {
-			HelpBasePlugin.logError("Exception occurred in search indexing at endDeleteBatch.", e); //$NON-NLS-1$
+			Platform.getLog(getClass()).error("Exception occurred in search indexing at endDeleteBatch.", e); //$NON-NLS-1$
 			return false;
 		}
 	}
@@ -512,9 +513,8 @@ public class SearchIndex implements IHelpSearchIndex {
 					NIOFSDirectory dir = new NIOFSDirectory(new File(indexPath).toPath());
 					dirList.add(dir);
 				} catch (IOException ioe) {
-					HelpBasePlugin
-							.logError(
-									"Help search indexing directory could not be created for directory " + indexPath, ioe); //$NON-NLS-1$
+					Platform.getLog(getClass()).error(
+							"Help search indexing directory could not be created for directory " + indexPath, ioe); //$NON-NLS-1$
 					continue;
 				}
 
@@ -559,7 +559,7 @@ public class SearchIndex implements IHelpSearchIndex {
 			iw.addIndexes(luceneDirs);
 			iw.forceMerge(1, true);
 		} catch (IOException ioe) {
-			HelpBasePlugin.logError("Merging search indexes failed.", ioe); //$NON-NLS-1$
+			Platform.getLog(getClass()).error("Merging search indexes failed.", ioe); //$NON-NLS-1$
 			return new HashMap<>();
 		}
 		return mergedDocs;
@@ -670,7 +670,8 @@ public class SearchIndex implements IHelpSearchIndex {
 		} catch (QueryTooComplexException qe) {
 			collector.addQTCException(qe);
 		} catch (Exception e) {
-			HelpBasePlugin.logError("Exception occurred performing search for: " //$NON-NLS-1$
+			Platform.getLog(getClass()).error(
+					"Exception occurred performing search for: " //$NON-NLS-1$
 					+ searchQuery.getSearchWord() + ".", e); //$NON-NLS-1$
 		} finally {
 			unregisterSearch(Thread.currentThread());
@@ -1014,7 +1015,7 @@ public class SearchIndex implements IHelpSearchIndex {
 
 	private void logLockFailure(IOException ioe) {
 		if (!errorReported) {
-			HelpBasePlugin.logError("Unable to Lock Help Search Index", ioe); //$NON-NLS-1$
+			Platform.getLog(getClass()).error("Unable to Lock Help Search Index", ioe); //$NON-NLS-1$
 			errorReported = true;
 		}
 	}

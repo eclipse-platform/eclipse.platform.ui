@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the
  * accompanying materials are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Alexander Kurtakov - Bug 460787
  *     Sopot Cela - Bug 466829
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
@@ -24,7 +25,6 @@ import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.core.LowerCaseFilter;
 import org.apache.lucene.analysis.standard.StandardTokenizer;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.help.internal.base.HelpBasePlugin;
 
 /**
  * Lucene Analyzer. LowerCaseFilter-&gt;StandardTokenizer
@@ -73,8 +73,7 @@ public final class DefaultAnalyzer extends Analyzer {
 
 		if (locale == null) {
 			// Locale is not supported, will use en_US
-			HelpBasePlugin
-					.logError(
+			Platform.getLog(getClass()).error(
 							"Text Analyzer could not be created for locale {0}.  An analyzer that extends org.eclipse.help.luceneAnalyzer extension point needs to be plugged in for locale " //$NON-NLS-1$
 									+ localeString
 									+ ", or Java Virtual Machine needs to be upgraded to version with proper support for locale {0}.", //$NON-NLS-1$

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2007, 2015 IBM Corporation and others.
+ * Copyright (c) 2007, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.server;
 
@@ -18,7 +19,6 @@ import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.server.HelpServer;
 
 public class WebappManager {
@@ -70,7 +70,7 @@ public class WebappManager {
 					server = (HelpServer) (serverElement
 							.createExecutableExtension(SERVER_CLASS_ATTRIBUTE));
 				} catch (CoreException e) {
-					HelpBasePlugin.logStatus(e.getStatus());
+					Platform.getLog(WebappManager.class).log(e.getStatus());
 				}
 			}
 		}

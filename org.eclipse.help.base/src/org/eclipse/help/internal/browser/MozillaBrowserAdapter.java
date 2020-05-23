@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.browser;
 
@@ -169,8 +170,7 @@ public class MozillaBrowserAdapter implements IBrowser {
 				return ret;
 			} catch (InterruptedException e) {
 			} catch (IOException e) {
-				HelpBasePlugin.logError("Launching " + executableName //$NON-NLS-1$
-						+ " has failed.", e); //$NON-NLS-1$
+				Platform.getLog(getClass()).error("Launching " + executableName + " has failed.", e); //$NON-NLS-1$ //$NON-NLS-2$
 				String msg = NLS.bind(HelpBaseResources.MozillaBrowserAdapter_executeFailed, executableName);
 				BaseHelpSystem.getDefaultErrorUtil()
 						.displayError(msg, uiThread);

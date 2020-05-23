@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 
 package org.eclipse.help.internal.base;
@@ -108,7 +109,7 @@ public class MissingContentManager {
 				} catch (Exception e) {
 					// log and skip
 					String msg = "Exception reading " + ELEMENT_NAME_PLACEHOLDER + " extension in bundle" + pluginId; //$NON-NLS-1$ //$NON-NLS-2$
-					HelpPlugin.logError(msg, e);
+					Platform.getLog(getClass()).error(msg, e);
 				}
 			}
 		}
@@ -213,7 +214,7 @@ public class MissingContentManager {
 		try {
 			prefs.flush();
 		} catch (BackingStoreException e) {
-			HelpBasePlugin.logError("Cannot save preferences", e); //$NON-NLS-1$
+			Platform.getLog(getClass()).error("Cannot save preferences", e); //$NON-NLS-1$
 		}
 	}
 

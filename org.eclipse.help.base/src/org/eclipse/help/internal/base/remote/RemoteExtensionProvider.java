@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2016 IBM Corporation and others.
+ * Copyright (c) 2006, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.base.remote;
 
@@ -20,10 +21,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.AbstractContentExtensionProvider;
 import org.eclipse.help.IContentExtension;
 import org.eclipse.help.internal.UAElement;
-import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.util.ProxyUtil;
 import org.eclipse.help.internal.dynamic.DocumentReader;
 
@@ -68,10 +69,10 @@ public class RemoteExtensionProvider extends AbstractContentExtensionProvider {
 						Collections.addAll(contributions, children);
 					} catch (IOException e) {
 						String msg = "I/O error while trying to contact the remote help server"; //$NON-NLS-1$
-						HelpBasePlugin.logError(msg, e);
+						Platform.getLog(getClass()).error(msg, e);
 					} catch (Throwable t) {
 						String msg = "Internal error while reading topic extensions from remote server"; //$NON-NLS-1$
-						HelpBasePlugin.logError(msg, t);
+						Platform.getLog(getClass()).error(msg, t);
 					} finally {
 						if (in != null) {
 							try {

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Holger Voormann - Fix for Bug 352434
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
@@ -41,7 +42,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IHelpResource;
 import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
-import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.search.IndexingOperation.IndexingException;
 import org.eclipse.help.internal.util.URLCoder;
 import org.eclipse.help.search.SearchParticipant;
@@ -101,7 +101,8 @@ public class LocalSearchManager {
 						participant.init(getId());
 					}
 				} catch (Throwable t) {
-					HelpPlugin.logError("Exception occurred creating Lucene search participant.", t); //$NON-NLS-1$
+					Platform.getLog(getClass()).error("Exception occurred creating Lucene search participant.", //$NON-NLS-1$
+							t);
 				}
 			}
 			return participant;
@@ -138,7 +139,8 @@ public class LocalSearchManager {
 					participant.clear();
 				}
 				catch (Throwable t) {
-					HelpBasePlugin.logError("Error occured in search participant's clear() operation: " + participant.getClass().getName(), t); //$NON-NLS-1$
+					Platform.getLog(getClass()).error("Error occured in search participant's clear() operation: " //$NON-NLS-1$
+									+ participant.getClass().getName(), t);
 				}
 			}
 		}
@@ -170,7 +172,7 @@ public class LocalSearchManager {
 				list.add(new SearchHit(href, label, summary, score, null, id, participantId, isPotentialHit));
 			}
 			catch (IOException e) {
-				HelpBasePlugin.logError("An error occured while reading search hits", e); //$NON-NLS-1$
+				Platform.getLog(LocalSearchManager.class).error("An error occured while reading search hits", e); //$NON-NLS-1$
 				continue;
 			}
 		}
@@ -370,7 +372,8 @@ public class LocalSearchManager {
 				ids = gp.getContributingPlugins();
 			}
 			catch (Throwable t) {
-				HelpBasePlugin.logError("Error getting the contributing plugins from help search participant: " //$NON-NLS-1$
+				Platform.getLog(getClass())
+						.error("Error getting the contributing plugins from help search participant: " //$NON-NLS-1$
 						+ gp.getClass().getName() + ". skipping this one.", t); //$NON-NLS-1$
 				continue;
 			}
@@ -632,7 +635,7 @@ public class LocalSearchManager {
 		}
 		catch (IndexingException e) {
 			String msg = "Error indexing documents"; //$NON-NLS-1$
-			HelpBasePlugin.logError(msg, e);
+			Platform.getLog(getClass()).error(msg, e);
 		}
 	}
 

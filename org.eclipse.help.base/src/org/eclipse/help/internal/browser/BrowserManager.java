@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.browser;
 
@@ -146,8 +147,8 @@ public class BrowserManager {
 
 								@Override
 								public void displayURL(String url) {
-									HelpBasePlugin
-											.logError(
+											Platform.getLog(getClass())
+													.error(
 													"There is no browser adapter configured to display " //$NON-NLS-1$
 															+ url
 															+ ".  Ensure that you have a required browser and adapter installed, and that the browser program is available on the system path.", //$NON-NLS-1$

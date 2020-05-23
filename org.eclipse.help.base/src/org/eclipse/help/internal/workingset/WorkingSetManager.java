@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.workingset;
 
@@ -217,18 +218,15 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 
 				return true;
 			} catch (ParserConfigurationException pce) {
-				HelpPlugin
-						.logError(
-								"DocumentBuilder implementation could not be loaded, to restore working set state.", pce); //$NON-NLS-1$
+				Platform.getLog(getClass()).error(
+						"DocumentBuilder implementation could not be loaded, to restore working set state.", pce); //$NON-NLS-1$
 				return false;
 			} catch (SAXException se) {
-				HelpBasePlugin
-						.logError(
+				Platform.getLog(getClass()).error(
 								"Error occurred parsing file " + stateFile.toString() + ", while restoring working set state.", se); //$NON-NLS-1$ //$NON-NLS-2$
 				return false;
 			} catch (IOException ioe) {
-				HelpBasePlugin
-						.logError(
+				Platform.getLog(getClass()).error(
 								"Error occurred parsing file " + stateFile.toString() + ", while restoring working set state.", ioe); //$NON-NLS-1$ //$NON-NLS-2$
 				return false;
 			}
@@ -363,15 +361,15 @@ public class WorkingSetManager implements IHelpWorkingSetManager {
 			}
 			return true;
 		} catch (ParserConfigurationException pce) {
-			HelpPlugin.logError(
+			HelpPlugin.getDefault().getLog().error(
 					"DocumentBuilder implementation could not be loaded.", pce); //$NON-NLS-1$
 			return false;
 		} catch (TransformerException e) {
-			HelpPlugin.logError("Problems occurred while saving working sets."); //$NON-NLS-1$
+			HelpPlugin.getDefault().getLog().error("Problems occurred while saving working sets."); //$NON-NLS-1$
 			return false;
 		} catch (IOException e) {
 			stateFile.delete();
-			HelpPlugin.logError(
+			HelpPlugin.getDefault().getLog().error(
 					"Problems occurred while saving working set file."); //$NON-NLS-1$
 			return false;
 		}

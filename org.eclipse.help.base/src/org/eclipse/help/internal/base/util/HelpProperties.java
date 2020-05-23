@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.base.util;
 
@@ -17,7 +18,6 @@ import java.io.*;
 import java.util.Properties;
 
 import org.eclipse.core.runtime.*;
-import org.eclipse.help.internal.*;
 
 /**
  * Properties stored in file.
@@ -73,7 +73,7 @@ public class HelpProperties extends Properties {
 			super.load(in);
 			loaded = true;
 		} catch (IOException ioe00) {
-			HelpPlugin.logError("File " + file.getName() + " cannot be read."); //$NON-NLS-1$ //$NON-NLS-2$
+			Platform.getLog(getClass()).error("File " + file.getName() + " cannot be read."); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return loaded;
 	}
@@ -89,7 +89,7 @@ public class HelpProperties extends Properties {
 			super.store(out, "This is a generated file; do not edit."); //$NON-NLS-1$
 			ret = true;
 		} catch (IOException ioe00) {
-			HelpPlugin.logError("Exception occurred while saving table " + name //$NON-NLS-1$
+			Platform.getLog(getClass()).error("Exception occurred while saving table " + name //$NON-NLS-1$
 					+ " to file " + file.getAbsolutePath() + ".", ioe00); //$NON-NLS-1$ //$NON-NLS-2$
 		}
 		return ret;

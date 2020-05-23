@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
@@ -26,7 +27,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.SubMonitor;
 import org.eclipse.core.runtime.jobs.Job;
-import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.remote.RemoteHelp;
 import org.eclipse.help.internal.base.remote.RemoteSearchManager;
 import org.eclipse.help.internal.search.federated.FederatedSearchEntry;
@@ -132,7 +132,7 @@ public class SearchManager {
 		}
 		catch (InterruptedException e) {
 			String msg = "Unexpected InterruptedException while waiting for help search jobs to finish"; //$NON-NLS-1$
-			HelpBasePlugin.logError(msg, e);
+			Platform.getLog(getClass()).error(msg, e);
 		}
 
 		// results are in; send them off to the collector

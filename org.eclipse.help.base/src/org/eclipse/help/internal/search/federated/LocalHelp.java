@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.search.federated;
 
@@ -150,7 +151,9 @@ public class LocalHelp implements ISearchEngine2 {
 			return participant.open(id);
 		}
 		catch (Throwable t) {
-			HelpBasePlugin.logError("Error occured in search participant trying to open document with id: " + id + ", participant: " + participant.getClass().getName(), t); //$NON-NLS-1$ //$NON-NLS-2$
+			Platform.getLog(getClass())
+					.error("Error occured in search participant trying to open document with id: " + id //$NON-NLS-1$
+							+ ", participant: " + participant.getClass().getName(), t); //$NON-NLS-1$
 			return false;
 		}
 	}

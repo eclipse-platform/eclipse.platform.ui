@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
@@ -226,7 +227,7 @@ class IndexingOperation {
 			checkCancelled(pm);
 			pm.worked(1);
 			if (multiStatus != null) {
-				HelpBasePlugin.logStatus(multiStatus);
+				Platform.getLog(getClass()).log(multiStatus);
 			}
 		}
 		if (!index.endRemoveDuplicatesBatch()) {
@@ -259,7 +260,7 @@ class IndexingOperation {
 			pm.worked(1);
 		}
 		if (multiStatus != null) {
-			HelpBasePlugin.logStatus(multiStatus);
+			Platform.getLog(getClass()).log(multiStatus);
 		}
 		pm.subTask(HelpBaseResources.Writing_index);
 		if (!index.endAddBatch(addedDocs.size() > 0, lastOperation))
@@ -297,7 +298,7 @@ class IndexingOperation {
 				pm.worked(1);
 			}
 			if (multiStatus != null) {
-				HelpBasePlugin.logStatus(multiStatus);
+				Platform.getLog(getClass()).log(multiStatus);
 			}
 			if (!index.endDeleteBatch()) {
 				throw new IndexingException();
@@ -373,7 +374,8 @@ class IndexingOperation {
 			}
 			catch (Throwable t) {
 				// log the error and skip this participant
-				HelpBasePlugin.logError("Failed to get help search participant id for: " //$NON-NLS-1$
+				Platform.getLog(getClass()).error(
+						"Failed to get help search participant id for: " //$NON-NLS-1$
 						+ participant.getClass().getName() + "; skipping this one.", t); //$NON-NLS-1$
 				continue;
 			}
@@ -383,7 +385,8 @@ class IndexingOperation {
 			}
 			catch (Throwable t) {
 				// log the error and skip this participant
-				HelpBasePlugin.logError("Failed to retrieve documents from one of the help search participants: " //$NON-NLS-1$
+				Platform.getLog(getClass())
+						.error("Failed to retrieve documents from one of the help search participants: " //$NON-NLS-1$
 						+ participant.getClass().getName() + "; skipping this one.", t); //$NON-NLS-1$
 				continue;
 			}
@@ -517,7 +520,7 @@ class IndexingOperation {
 						}
 						else {
 							String msg = "Element \"index\" in extension of \"org.eclipse.help.toc\" must specify a \"path\" attribute (plug-in: " + pluginId + ")"; //$NON-NLS-1$ //$NON-NLS-2$
-							HelpBasePlugin.logError(msg, null);
+							Platform.getLog(getClass()).error(msg, null);
 						}
 					}
 				}

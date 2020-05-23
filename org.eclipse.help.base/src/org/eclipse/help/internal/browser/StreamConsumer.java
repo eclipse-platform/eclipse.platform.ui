@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,12 +10,13 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.browser;
 
 import java.io.*;
 
-import org.eclipse.help.internal.base.*;
+import org.eclipse.core.runtime.Platform;
 
 /**
  * Used to receive output from processes
@@ -41,7 +42,7 @@ public class StreamConsumer extends Thread {
 			}
 			bReader.close();
 		} catch (IOException ioe) {
-			HelpBasePlugin.logError(
+			Platform.getLog(getClass()).error(
 					"Exception occurred reading from web browser.", ioe); //$NON-NLS-1$
 		}
 	}

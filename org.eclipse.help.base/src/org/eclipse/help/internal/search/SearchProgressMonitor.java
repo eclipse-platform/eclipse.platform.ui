@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
@@ -21,6 +22,7 @@ import java.util.Map;
 
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.OperationCanceledException;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.HelpBasePlugin;
 
@@ -179,8 +181,9 @@ public class SearchProgressMonitor implements IProgressMonitor {
 			} catch (Exception e) {
 				progressMonitors.remove(locale);
 				if (HelpBasePlugin.getDefault() != null) {
-					HelpBasePlugin.logError("Problem occurred during indexing of documentation.", //$NON-NLS-1$
-							e);
+					Platform.getLog(SearchProgressMonitor.class)
+							.error(
+							"Problem occurred during indexing of documentation.", e); //$NON-NLS-1$
 				} else {
 					// Plugin has been shut down
 				}

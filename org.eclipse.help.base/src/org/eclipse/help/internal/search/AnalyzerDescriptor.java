@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the
  * accompanying materials are made available under the terms of the Eclipse Public License 2.0
@@ -8,7 +8,9 @@
  *
  * SPDX-License-Identifier: EPL-2.0
  *
- * Contributors: IBM Corporation - initial API and implementation
+ * Contributors:
+ *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
@@ -129,9 +131,10 @@ public class AnalyzerDescriptor {
 					return this.luceneAnalyzer;
 				}
 			} catch (CoreException ce) {
-				HelpBasePlugin.logError("Exception occurred creating text analyzer " //$NON-NLS-1$
-						+ configElement.getAttribute("class") //$NON-NLS-1$
-						+ " for " + locale + " locale.", ce); //$NON-NLS-1$ //$NON-NLS-2$
+				Platform.getLog(getClass()).error(
+						"Exception occurred creating text analyzer " //$NON-NLS-1$
+								+ configElement.getAttribute("class") + " for " + locale + " locale.", //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+						ce);
 			}
 		}
 

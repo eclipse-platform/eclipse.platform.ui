@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.browser;
 
@@ -50,14 +51,8 @@ public class CustomBrowser implements IBrowser {
 			errConsumer.setName("Custom browser adapter error reader"); //$NON-NLS-1$
 			errConsumer.start();
 		} catch (Exception e) {
-			HelpBasePlugin
-					.logError(
-							"Launching URL \"" //$NON-NLS-1$
-									+ url
-									+ "\" using browser program \"" //$NON-NLS-1$
-									+ path
-									+ "\" has failed.  Specify another browser in help preferences.", //$NON-NLS-1$
-							e);
+			Platform.getLog(getClass()).error("Launching URL \"" + url + "\" using browser program \"" //$NON-NLS-1$ //$NON-NLS-2$
+							+ path + "\" has failed.  Specify another browser in help preferences.", e); //$NON-NLS-1$
 			throw new Exception(NLS.bind(HelpBaseResources.CustomBrowser_errorLaunching, url, path));
 		}
 	}

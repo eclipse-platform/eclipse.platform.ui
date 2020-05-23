@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2019 IBM Corporation and others.
+ * Copyright (c) 2006, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.base.remote;
 
@@ -18,9 +19,9 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.AbstractContextProvider;
 import org.eclipse.help.IContext;
-import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.base.util.ProxyUtil;
 import org.eclipse.help.internal.context.Context;
 import org.eclipse.help.internal.dynamic.DocumentReader;
@@ -83,10 +84,10 @@ public class RemoteContextProvider extends AbstractContextProvider {
 
 					} catch (IOException e) {
 						String msg = "I/O error while trying to contact the remote help server"; //$NON-NLS-1$
-						HelpBasePlugin.logError(msg, e);
+						Platform.getLog(getClass()).error(msg, e);
 					} catch (Throwable t) {
 						String msg = "Internal error while reading search results from remote server"; //$NON-NLS-1$
-						HelpBasePlugin.logError(msg, t);
+						Platform.getLog(getClass()).error(msg, t);
 					} finally {
 						if (in != null) {
 							try {

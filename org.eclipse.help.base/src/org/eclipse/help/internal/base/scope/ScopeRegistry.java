@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2015 IBM Corporation and others.
+ * Copyright (c) 2010, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 
 package org.eclipse.help.internal.base.scope;
@@ -26,7 +27,6 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.base.AbstractHelpScope;
 import org.eclipse.help.base.IHelpScopeProducer;
 import org.eclipse.help.base.IScopeHandle;
-import org.eclipse.help.internal.base.HelpBasePlugin;
 
 public class ScopeRegistry {
 
@@ -82,8 +82,7 @@ public class ScopeRegistry {
 			try {
 				obj = element.createExecutableExtension("class"); //$NON-NLS-1$
 			} catch (CoreException e) {
-				HelpBasePlugin.logError("Create extension failed:[" //$NON-NLS-1$
-						+ SCOPE_XP_NAME + "].", e); //$NON-NLS-1$
+				Platform.getLog(getClass()).error("Create extension failed:[" + SCOPE_XP_NAME + "].", e); //$NON-NLS-1$ //$NON-NLS-2$
 			}
 			if (obj instanceof AbstractHelpScope) {
 				String id = element.getAttribute("id"); //$NON-NLS-1$

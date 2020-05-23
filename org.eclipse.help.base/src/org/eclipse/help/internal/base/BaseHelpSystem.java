@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     George Suaridze <suag@1c.ru> (1C-Soft LLC) - Bug 560168
  *******************************************************************************/
 package org.eclipse.help.internal.base;
 
@@ -17,9 +18,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProduct;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.help.HelpSystem;
 import org.eclipse.help.ILiveHelpAction;
 import org.eclipse.help.browser.IBrowser;
@@ -167,9 +166,7 @@ public final class BaseHelpSystem {
 			});
 		}
 		catch (Exception e) {
-			HelpBasePlugin.getDefault().getLog().log(
-					new Status(IStatus.ERROR, HelpBasePlugin.PLUGIN_ID, 0,
-							"Error launching help.", e)); //$NON-NLS-1$
+			Platform.getLog(BaseHelpSystem.class).error("Error launching help.", e); //$NON-NLS-1$
 		}
 
 		/*
@@ -186,7 +183,7 @@ public final class BaseHelpSystem {
 				// start the help web app
 				WebappManager.start("help"); //$NON-NLS-1$
 			} catch (Exception e) {
-				HelpBasePlugin.logError(HelpBaseResources.HelpWebappNotStarted, e);
+				Platform.getLog(BaseHelpSystem.class).error(HelpBaseResources.HelpWebappNotStarted, e);
 				return false;
 			}
 			getInstance().webappRunning = true;
