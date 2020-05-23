@@ -43,12 +43,12 @@ import org.eclipse.debug.core.DebugPlugin;
  *      markerType="com.example.BreakpointMarker"&gt;
  *   &lt;/breakpoint&gt;
  * &lt;/extension&gt;
- * &lt;extension point="org.eclipse.core.resources.markers"&gt;
- *   &lt;marker
+ * &lt;extension
+ *      point="org.eclipse.core.resources.markers"
  *      id="com.example.BreakpointMarker"
- *      super type="org.eclipse.debug.core.breakpointMarker"
- *      attribute name ="exampleAttribute"&gt;
- *   &lt;/marker&gt;
+ *      name="Example Breakpoint"&gt;
+ *   &lt;super type="org.eclipse.debug.core.breakpointMarker"/&gt;
+ *   &lt;attribute name="exampleAttribute"/&gt;
  * &lt;/extension&gt;
  * </pre>
  * <p>
