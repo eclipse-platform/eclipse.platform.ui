@@ -57,14 +57,15 @@ public class FileLink implements IConsoleHyperlink {
 	/**
 	 * Constructs a hyperlink to the specified file.
 	 *
-	 * @param file the file to open when activated
-	 * @param editorId the identifier of the editor to open the file in, or
-	 * <code>null</code> if the default editor should be used
-	 * @param fileOffset the offset in the file to select when activated, or -1
-	 * @param fileLength the length of text to select in the file when activated
-	 * or -1
-	 * @param fileLineNumber the line number to select in the file when
-	 * activated, or -1
+	 * @param file           the file to open when activated
+	 * @param editorId       the identifier of the editor to open the file in, or
+	 *                       <code>null</code> if the default editor should be used
+	 * @param fileOffset     the offset in the file to select when activated, or -1
+	 * @param fileLength     the length of text to select in the file when activated
+	 *                       or -1
+	 * @param fileLineNumber the line number to select in the file when activated,
+	 *                       or -1. First line number is 1. Only used if
+	 *                       <em>fileOffset</em> is not set.
 	 */
 	public FileLink(IFile file, String editorId, int fileOffset, int fileLength, int fileLineNumber) {
 		fFile = file;
@@ -82,7 +83,7 @@ public class FileLink implements IConsoleHyperlink {
 			if (page != null) {
 				try {
 					IEditorPart editorPart = page.openEditor(new FileEditorInput(fFile), getEditorId() , true);
-					if (fFileLineNumber > 0) {
+					if (fFileLineNumber > 0 || (fFileOffset >= 0 && fFileLength >= 0)) {
 						ITextEditor textEditor = null;
 						if (editorPart instanceof ITextEditor) {
 							textEditor = (ITextEditor) editorPart;
@@ -90,8 +91,8 @@ public class FileLink implements IConsoleHyperlink {
 							textEditor = editorPart.getAdapter(ITextEditor.class);
 						}
 						if (textEditor != null) {
-							IEditorInput input = editorPart.getEditorInput();
 							if (fFileOffset < 0) {
+								IEditorInput input = editorPart.getEditorInput();
 								IDocumentProvider provider = textEditor.getDocumentProvider();
 								try {
 									provider.connect(input);

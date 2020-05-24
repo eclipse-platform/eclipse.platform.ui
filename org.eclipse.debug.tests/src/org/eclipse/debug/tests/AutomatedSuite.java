@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2019 IBM Corporation and others.
+ * Copyright (c) 2009, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,6 +20,7 @@ import org.eclipse.debug.tests.breakpoint.BreakpointTests;
 import org.eclipse.debug.tests.console.ConsoleDocumentAdapterTests;
 import org.eclipse.debug.tests.console.ConsoleManagerTests;
 import org.eclipse.debug.tests.console.ConsoleTests;
+import org.eclipse.debug.tests.console.FileLinkTests;
 import org.eclipse.debug.tests.console.IOConsoleFixedWidthTests;
 import org.eclipse.debug.tests.console.IOConsoleTests;
 import org.eclipse.debug.tests.console.InputStreamMonitorTests;
@@ -100,10 +101,10 @@ import org.junit.runners.Suite;
 
 		// Status handlers
 		StatusHandlerTests.class,
-		
+
 		// Step filters
 		StepFiltersTests.class,
-		
+
 		// Console view
 		ConsoleDocumentAdapterTests.class,
 		ConsoleManagerTests.class,
@@ -117,7 +118,8 @@ import org.junit.runners.Suite;
 		RuntimeProcessTests.class,
 		OutputStreamMonitorTests.class,
 		InputStreamMonitorTests.class,
-		
+		FileLinkTests.class,
+
 		// Launch Groups
 		LaunchGroupTests.class,
 })
