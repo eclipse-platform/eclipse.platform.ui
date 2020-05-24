@@ -98,12 +98,12 @@ public class IOConsolePartitioner
 	 * Pattern used to find supported ASCII control characters <b>except</b>
 	 * carriage return.
 	 */
-	private static final String CONTROL_CHARACTERS_PATTERN_STR = "(?:\b+|\u000b+|\f+)"; //$NON-NLS-1$
+	private static final String CONTROL_CHARACTERS_PATTERN_STR = "(?:\b+|\u0000+|\u000b+|\f+)"; //$NON-NLS-1$
 	/**
 	 * Pattern used to find supported ASCII control characters <b>including</b>
 	 * carriage return.
 	 */
-	private static final String CONTROL_CHARACTERS_WITH_CR_PATTERN_STR = "(?:\b+|\u000b+|\f+|\r+(?!\n))"; //$NON-NLS-1$
+	private static final String CONTROL_CHARACTERS_WITH_CR_PATTERN_STR = "(?:\b+|\u0000+|\u000b+|\f+|\r+(?!\n))"; //$NON-NLS-1$
 
 	/** The connected {@link IDocument} this partitioner manages. */
 	private IDocument document;
@@ -881,6 +881,7 @@ public class IOConsolePartitioner
 						applyOutputToDocument(content.toString(), nextWriteOffset, replaceLength);
 						content.setLength(0);
 						replaceLength = 0;
+						nextWriteOffset = outputOffset;
 
 						final String controlCharacterMatch = controlCharacterMatcher.group();
 						final char controlCharacter = controlCharacterMatch.charAt(0);
@@ -947,6 +948,13 @@ public class IOConsolePartitioner
 							outputOffset = document.getLength();
 							nextWriteOffset = outputOffset;
 							partititonContent(pending.stream, vtab, 0, vtab.length());
+							break;
+
+						case 0:
+							// Do nothing for null bytes. The use of this is that a null byte which reach
+							// the IOConsoleViewer will truncate the line on some platforms and will disturb
+							// copying text on most platforms.
+							// This case should simply filter out any null bytes.
 							break;
 
 						default:

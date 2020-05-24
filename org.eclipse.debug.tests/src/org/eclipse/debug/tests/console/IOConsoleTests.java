@@ -612,6 +612,26 @@ public class IOConsoleTests extends AbstractDebugTest {
 	}
 
 	/**
+	 * Test handling of <code>\0</code>.
+	 */
+	@Test
+	public void testNullByte() throws Exception {
+		final IOConsoleTestUtil c = getTestUtil("Test \\0");
+		c.getConsole().setHandleControlCharacters(true);
+		try (IOConsoleOutputStream err = c.getConsole().newOutputStream()) {
+			c.write("\u0000").verifyContent("");
+			c.write("abc\u0000123").verifyContent("abc123");
+			c.writeFast("\u0000", err).writeAndVerify("output");
+			c.write("\n\u0000x\u0000y\u0000z\u0000\u0000\u0000987", err).verifyContentByLine("xyz987", 1).verifyPartitions();
+			assertFalse(c.getDocument().get().contains("\u0000"));
+
+			c.clear();
+			c.writeFast("123").writeFast("\b\b\b").write("+\u0000+").verifyContent("++3").verifyPartitions();
+		}
+		closeConsole(c);
+	}
+
+	/**
 	 * Test larger number of partitions with pseudo random console content.
 	 */
 	@Test
