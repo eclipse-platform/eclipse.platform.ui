@@ -215,7 +215,6 @@ public class Snippet019TreeViewerWithListFactory {
 		initExtraBindings(m_bindingContext);
 
 		shell.open();
-		shell.layout();
 
 		return shell;
 	}
