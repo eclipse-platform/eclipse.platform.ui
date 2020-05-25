@@ -85,7 +85,6 @@ public class Snippet024SelectObservableValue {
 		bindingContext.bindValue(radioGroup, listViewerSelection);
 
 		shell.open();
-		shell.layout();
 		return shell;
 	}
 

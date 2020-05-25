@@ -325,7 +325,6 @@ public class Snippet026AnonymousBeanProperties {
 		bindUI();
 
 		shell.open();
-		shell.layout();
 		return shell;
 	}
 

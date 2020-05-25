@@ -69,7 +69,6 @@ public class Snippet029TreeViewerMultiListProperty {
 		bindUI();
 
 		shell.open();
-		shell.layout();
 		return shell;
 	}
 

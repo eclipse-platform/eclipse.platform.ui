@@ -218,7 +218,6 @@ public class Snippet020TreeViewerWithSetFactory {
 		initExtraBindings(m_bindingContext);
 
 		shell.open();
-		shell.layout();
 
 		return shell;
 	}
