@@ -35,7 +35,6 @@ import org.eclipse.help.internal.base.HelpEvaluationContext;
 import org.eclipse.help.internal.context.Context;
 import org.eclipse.help.ui.internal.DefaultHelpUI;
 import org.eclipse.help.ui.internal.ExecuteCommandAction;
-import org.eclipse.help.ui.internal.HelpUIPlugin;
 import org.eclipse.help.ui.internal.HelpUIResources;
 import org.eclipse.help.ui.internal.IHelpUIConstants;
 import org.eclipse.help.ui.internal.Messages;
