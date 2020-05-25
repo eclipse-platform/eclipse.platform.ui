@@ -18,12 +18,10 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.e4.ui.css.core.engine.CSSEngine;
 import org.eclipse.e4.ui.css.swt.helpers.URI;
 import org.eclipse.e4.ui.css.swt.properties.AbstractCSSPropertySWTHandler;
-import org.eclipse.e4.ui.internal.css.swt.CSSActivator;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolderRenderer;
 import org.eclipse.swt.widgets.Control;
 import org.osgi.framework.Bundle;
-import org.osgi.service.log.LogService;
 import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSValue;
 
@@ -42,7 +40,7 @@ public class CSSPropertyTabRendererSWTHandler extends AbstractCSSPropertySWTHand
 				URI uri = URI.createURI(rendURL);
 				Bundle bundle = Platform.getBundle(uri.authority());
 				if (bundle == null) {
-					CSSActivator.getDefault().log(LogService.LOG_ERROR, "Failed to get bundle for: " + rendURL); //$NON-NLS-1$
+					Platform.getLog(getClass()).error("Failed to get bundle for: " + rendURL); //$NON-NLS-1$
 				} else {
 					if (uri.segmentCount() > 1) {
 						//TODO: handle this case?
@@ -67,7 +65,7 @@ public class CSSPropertyTabRendererSWTHandler extends AbstractCSSPropertySWTHand
 						} catch (ClassNotFoundException e) {
 							String message = "Unable to load class '" + clazz + "' from bundle '" //$NON-NLS-1$ //$NON-NLS-2$
 									+ bundle.getBundleId() + "'"; //$NON-NLS-1$
-							CSSActivator.getDefault().log(LogService.LOG_ERROR, message);
+							Platform.getLog(getClass()).error(message);
 						}
 					}
 				}

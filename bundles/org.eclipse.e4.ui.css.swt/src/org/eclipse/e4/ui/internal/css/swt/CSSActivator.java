@@ -16,7 +16,6 @@ package org.eclipse.e4.ui.internal.css.swt;
 import org.eclipse.e4.ui.internal.css.swt.definition.IColorAndFontProvider;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.osgi.service.log.LogService;
 import org.osgi.util.tracker.ServiceTracker;
 
 public class CSSActivator implements BundleActivator {
@@ -24,7 +23,6 @@ public class CSSActivator implements BundleActivator {
 	private static CSSActivator activator;
 
 	private BundleContext context;
-	private ServiceTracker<LogService, LogService> logTracker;
 	private ServiceTracker<IColorAndFontProvider, IColorAndFontProvider> colorAndFontProviderTracker;
 
 	public static CSSActivator getDefault() {
@@ -39,41 +37,11 @@ public class CSSActivator implements BundleActivator {
 
 	@Override
 	public void stop(BundleContext context) throws Exception {
-		if (logTracker != null) {
-			logTracker.close();
-			logTracker = null;
-		}
 		if (colorAndFontProviderTracker != null) {
 			colorAndFontProviderTracker.close();
 			colorAndFontProviderTracker = null;
 		}
 		this.context = null;
-	}
-
-	private LogService getLogger() {
-		if (logTracker == null) {
-			if (context == null) {
-				return null;
-			}
-			logTracker = new ServiceTracker<>(context,
-					LogService.class.getName(), null);
-			logTracker.open();
-		}
-		return logTracker.getService();
-	}
-
-	public void log(int logError, String message) {
-		LogService logger = getLogger();
-		if (logger != null) {
-			logger.log(logError, message);
-		}
-	}
-
-	public void log(int logError, String message, Throwable e) {
-		LogService logger = getLogger();
-		if (logger != null) {
-			logger.log(logError, message, e);
-		}
 	}
 
 	public IColorAndFontProvider getColorAndFontProvider() {

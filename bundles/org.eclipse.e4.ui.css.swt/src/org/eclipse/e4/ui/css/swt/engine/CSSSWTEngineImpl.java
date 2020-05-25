@@ -14,16 +14,15 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.css.swt.engine;
 
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.RegistryFactory;
 import org.eclipse.e4.ui.css.core.impl.engine.RegistryCSSElementProvider;
 import org.eclipse.e4.ui.css.core.impl.engine.RegistryCSSPropertyHandlerProvider;
-import org.eclipse.e4.ui.internal.css.swt.CSSActivator;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Widget;
-import org.osgi.service.log.LogService;
 
 /**
  * CSS SWT Engine implementation which configure CSSEngineImpl to apply styles
@@ -76,7 +75,7 @@ public class CSSSWTEngineImpl extends AbstractCSSSWTEngineImpl {
 				s.reskin(SWT.ALL);
 				applyStyles(s, true);
 			} catch (Exception e) {
-				CSSActivator.getDefault().log(LogService.LOG_ERROR, e.getMessage(), e);
+				Platform.getLog(getClass()).error(e.getMessage(), e);
 			} finally {
 				s.setRedraw(true);
 			}
