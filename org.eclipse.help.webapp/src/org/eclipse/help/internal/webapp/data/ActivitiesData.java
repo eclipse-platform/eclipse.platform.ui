@@ -12,10 +12,11 @@
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
-import javax.servlet.*;
-import javax.servlet.http.*;
+import javax.servlet.ServletContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.help.internal.base.*;
+import org.eclipse.help.internal.base.HelpBasePlugin;
 /**
  * Helper for pages in navigation frames. Used enabling/disabling activity
  * filtering

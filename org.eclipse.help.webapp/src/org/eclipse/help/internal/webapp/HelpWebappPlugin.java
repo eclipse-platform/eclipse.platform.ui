@@ -14,8 +14,11 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp;
 
-import org.eclipse.core.runtime.*;
-import org.osgi.framework.*;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Platform;
+import org.eclipse.core.runtime.Plugin;
+import org.eclipse.core.runtime.Status;
+import org.osgi.framework.BundleContext;
 
 /**
  * Welp web application plug-in.

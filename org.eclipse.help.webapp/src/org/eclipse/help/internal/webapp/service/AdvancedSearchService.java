@@ -29,8 +29,8 @@ import org.eclipse.help.internal.search.SearchProgressMonitor;
 import org.eclipse.help.internal.webapp.data.SearchData;
 import org.eclipse.help.internal.webapp.data.UrlUtil;
 import org.eclipse.help.internal.webapp.parser.SearchParser;
-import org.eclipse.help.internal.webapp.utils.Utils;
 import org.eclipse.help.internal.webapp.utils.SearchXMLGenerator;
+import org.eclipse.help.internal.webapp.utils.Utils;
 
 /**
  * Returns the search hits in <code>xml</code> or <code>json</code>

@@ -13,13 +13,16 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.servlet;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.HashSet;
 
-import javax.servlet.http.*;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-import org.eclipse.help.internal.webapp.*;
-import org.eclipse.help.internal.webapp.data.*;
+import org.eclipse.help.internal.webapp.HelpWebappPlugin;
+import org.eclipse.help.internal.webapp.WebappResources;
+import org.eclipse.help.internal.webapp.data.UrlUtil;
 
 /**
  * Utilities for working with cookies

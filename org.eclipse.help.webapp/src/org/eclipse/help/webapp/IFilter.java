@@ -13,9 +13,9 @@
  *******************************************************************************/
 package org.eclipse.help.webapp;
 
-import java.io.*;
+import java.io.OutputStream;
 
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServletRequest;
 
 /**
  * Filter for filtering out content of help documents delivered to the client

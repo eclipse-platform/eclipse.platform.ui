@@ -14,7 +14,10 @@
 
 package org.eclipse.help.internal.webapp.servlet;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.FilterOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 
 /**
  * Filters output stream and inserts specified bytes before the end of HEAD

@@ -43,7 +43,6 @@ import org.eclipse.help.internal.HelpPlugin;
 import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.scope.ScopeUtils;
 import org.eclipse.help.internal.search.HTMLDocParser;
-import org.eclipse.help.internal.webapp.HelpWebappPlugin;
 import org.eclipse.help.internal.xhtml.DynamicXHTMLProcessor;
 
 /*

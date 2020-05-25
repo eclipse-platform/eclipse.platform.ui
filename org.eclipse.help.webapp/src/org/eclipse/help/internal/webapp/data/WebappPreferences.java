@@ -13,10 +13,11 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
-import org.eclipse.core.runtime.*;
+import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.help.internal.base.*;
+import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.base.HelpBasePlugin;
 import org.eclipse.help.internal.util.ProductPreferences;
 import org.osgi.service.prefs.BackingStoreException;
 

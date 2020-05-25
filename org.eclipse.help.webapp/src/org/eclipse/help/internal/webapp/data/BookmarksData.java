@@ -14,10 +14,12 @@
 package org.eclipse.help.internal.webapp.data;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.eclipse.help.IHelpResource;
-import org.eclipse.help.internal.base.*;
+import org.eclipse.help.internal.base.BaseHelpSystem;
+import org.eclipse.help.internal.base.BookmarkManager;
 
 /**
  * This class manages bookmarks.

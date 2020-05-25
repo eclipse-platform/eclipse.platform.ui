@@ -14,12 +14,17 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.servlet;
 
-import java.io.*;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.help.internal.base.util.*;
-import org.eclipse.help.internal.webapp.*;
+import org.eclipse.help.internal.base.util.TString;
 
 /**
  * Helper class to generate xml files.

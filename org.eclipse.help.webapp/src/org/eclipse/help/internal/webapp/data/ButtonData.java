@@ -26,7 +26,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionRegistry;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.help.internal.webapp.HelpWebappPlugin;
 import org.eclipse.help.webapp.AbstractButton;
 
 public class ButtonData extends RequestData {

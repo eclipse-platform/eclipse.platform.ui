@@ -13,12 +13,12 @@
  *******************************************************************************/
 package org.eclipse.help.internal.webapp.data;
 
-import java.util.*;
+import java.util.Locale;
 
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServletRequest;
 
 import org.eclipse.help.internal.base.HelpBasePlugin;
-import org.eclipse.help.internal.webapp.*;
+import org.eclipse.help.internal.webapp.WebappResources;
 
 /**
  * Uses a resource bundle to load images and strings from a property file in a

@@ -14,13 +14,14 @@
 
 package org.eclipse.help.internal.webapp.servlet;
 
-import java.io.*;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
-import javax.servlet.http.*;
+import javax.servlet.http.HttpServletRequest;
 
-import org.eclipse.help.internal.webapp.data.*;
+import org.eclipse.help.internal.webapp.data.UrlUtil;
 import org.eclipse.help.webapp.IFilter;
 
 /**
