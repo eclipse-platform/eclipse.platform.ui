@@ -198,27 +198,6 @@ public class IntroPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * Logs a Warning message with an exception.  To print warnings to console,
-	 * run eclipse with the -console -consolelog arguments
-	 *
-	 * Only logs if the following conditions are true:
-	 * 	-debug switch is enabled at the command line
-	 *  .options file is placed at the eclipse work directory with the contents:
-	 *      com.ibm.ccl.welcome.bits/debug=true
-	 *      com.ibm.ccl.welcome.bits/debug/warn=true
-	 */
-	public static synchronized void logWarning(String message) {
-		logWarning(message,null);
-	}
-
-
-	public static synchronized void logWarning(String message,Throwable ex) {
-		if (LOG_WARN && IntroPlugin.getDefault().isDebugging()) {
-			getDefault().getLog().warn(message, ex);
-		}
-	}
-
-	/**
 	 * Logs a debug message.  To print messages to console,
 	 * run eclipse with the -console -consolelog arguments
 	 *

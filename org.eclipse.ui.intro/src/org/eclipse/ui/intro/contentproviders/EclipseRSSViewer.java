@@ -180,7 +180,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 			try {
 				url = new URL(getParameter("url")); //$NON-NLS-1$
 			} catch (MalformedURLException e) {
-				IntroPlugin.getDefault().getLog().error("Bad URL: " + url, e); //$NON-NLS-1$
+				Platform.getLog(getClass()).error("Bad URL: " + url, e); //$NON-NLS-1$
 			}
 			if (url != null) {
 				out.println("<p><span class=\"rss-feed-link\">"); //$NON-NLS-1$
@@ -510,7 +510,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 				}
 
 			} catch (Exception e) {
-				IntroPlugin.getDefault().getLog().error(NLS.bind(Messages.RSS_Malformed_feed, getParameter("url"))); //$NON-NLS-1$
+				Platform.getLog(getClass()).error(NLS.bind(Messages.RSS_Malformed_feed, getParameter("url"))); //$NON-NLS-1$
 				refresh();
 			} finally {
 				threadRunning = false;
@@ -527,7 +527,7 @@ public class EclipseRSSViewer implements IIntroContentProvider {
 			try{
 				Thread.sleep(SOCKET_TIMEOUT);
 			}catch(Exception ex){
-				IntroPlugin.getDefault().getLog().error("Timeout failed.", ex); //$NON-NLS-1$
+				Platform.getLog(getClass()).error("Timeout failed.", ex); //$NON-NLS-1$
 			}
 			if (threadRunning)
 			{
