@@ -180,7 +180,7 @@ public class PartStackEditor extends AbstractComponentEditor<MPartStack> {
 
 			if (stackLayout.topControl != topControl) {
 				stackLayout.topControl = topControl;
-				composite.layout(true, true);
+				composite.requestLayout();
 			}
 		}
 		viewer.setInput(E4Properties.<MStackElement>children().observeDetail(getMaster()));

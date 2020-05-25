@@ -103,7 +103,7 @@ public class MenuSeparatorEditor extends AbstractComponentEditor<MMenuSeparator>
 
 			if (stackLayout.topControl != topControl) {
 				stackLayout.topControl = topControl;
-				composite.layout(true, true);
+				composite.requestLayout();
 			}
 		}
 

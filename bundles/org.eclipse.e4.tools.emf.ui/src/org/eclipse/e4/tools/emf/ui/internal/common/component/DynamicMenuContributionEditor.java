@@ -107,7 +107,7 @@ public class DynamicMenuContributionEditor extends AbstractComponentEditor<MDyna
 
 			if (stackLayout.topControl != topControl) {
 				stackLayout.topControl = topControl;
-				composite.layout(true, true);
+				composite.requestLayout();
 			}
 		}
 

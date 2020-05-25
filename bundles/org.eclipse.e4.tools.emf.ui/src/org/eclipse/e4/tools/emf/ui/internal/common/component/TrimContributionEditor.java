@@ -161,7 +161,7 @@ public class TrimContributionEditor extends AbstractComponentEditor<MTrimContrib
 
 			if (stackLayout.topControl != topControl) {
 				stackLayout.topControl = topControl;
-				composite.layout(true, true);
+				composite.requestLayout();
 			}
 		}
 

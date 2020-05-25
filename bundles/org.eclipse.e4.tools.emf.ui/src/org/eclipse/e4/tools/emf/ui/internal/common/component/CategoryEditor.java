@@ -95,7 +95,7 @@ public class CategoryEditor extends AbstractComponentEditor<MCategory> {
 
 			if (stackLayout.topControl != topControl) {
 				stackLayout.topControl = topControl;
-				composite.layout(true, true);
+				composite.requestLayout();
 			}
 		}
 

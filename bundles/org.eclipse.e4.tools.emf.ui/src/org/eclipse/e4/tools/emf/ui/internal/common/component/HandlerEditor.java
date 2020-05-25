@@ -117,7 +117,7 @@ public class HandlerEditor extends AbstractComponentEditor<MHandler> {
 
 			if (stackLayout.topControl != topControl) {
 				stackLayout.topControl = topControl;
-				composite.layout(true, true);
+				composite.requestLayout();
 			}
 		}
 

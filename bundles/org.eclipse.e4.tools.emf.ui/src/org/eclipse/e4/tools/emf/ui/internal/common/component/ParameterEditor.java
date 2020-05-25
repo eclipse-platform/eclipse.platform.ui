@@ -112,7 +112,7 @@ public class ParameterEditor extends AbstractComponentEditor<MParameter> {
 
 			if (stackLayout.topControl != topControl) {
 				stackLayout.topControl = topControl;
-				composite.layout(true, true);
+				composite.requestLayout();
 			}
 		}
 

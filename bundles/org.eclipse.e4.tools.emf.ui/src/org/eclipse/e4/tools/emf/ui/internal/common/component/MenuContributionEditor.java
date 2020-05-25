@@ -166,7 +166,7 @@ public class MenuContributionEditor extends AbstractComponentEditor<MMenuContrib
 
 			if (stackLayout.topControl != topControl) {
 				stackLayout.topControl = topControl;
-				composite.layout(true, true);
+				composite.requestLayout();
 			}
 		}
 

@@ -127,7 +127,7 @@ public class CommandEditor extends AbstractComponentEditor<MCommand> {
 
 			if (stackLayout.topControl != topControl) {
 				stackLayout.topControl = topControl;
-				composite.layout(true, true);
+				composite.requestLayout();
 			}
 		}
 

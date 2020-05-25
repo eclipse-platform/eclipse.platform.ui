@@ -138,7 +138,7 @@ public class WindowEditor extends AbstractComponentEditor<MWindow> {
 
 			if (stackLayout.topControl != topControl) {
 				stackLayout.topControl = topControl;
-				composite.layout(true, true);
+				composite.requestLayout();
 			}
 		}
 

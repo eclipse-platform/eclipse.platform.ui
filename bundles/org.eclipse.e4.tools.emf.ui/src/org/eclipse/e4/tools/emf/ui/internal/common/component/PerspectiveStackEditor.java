@@ -151,7 +151,7 @@ public class PerspectiveStackEditor extends AbstractComponentEditor<MPerspective
 
 			if (stackLayout.topControl != topControl) {
 				stackLayout.topControl = topControl;
-				composite.layout(true, true);
+				composite.requestLayout();
 			}
 		}
 

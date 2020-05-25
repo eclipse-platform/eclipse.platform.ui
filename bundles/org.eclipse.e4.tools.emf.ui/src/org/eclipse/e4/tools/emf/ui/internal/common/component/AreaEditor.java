@@ -180,7 +180,7 @@ public class AreaEditor extends AbstractComponentEditor<MArea> {
 
 			if (stackLayout.topControl != topControl) {
 				stackLayout.topControl = topControl;
-				composite.layout(true, true);
+				composite.requestLayout();
 			}
 		}
 

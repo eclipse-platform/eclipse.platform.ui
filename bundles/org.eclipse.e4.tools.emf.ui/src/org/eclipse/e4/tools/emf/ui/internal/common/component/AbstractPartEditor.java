@@ -114,7 +114,7 @@ public abstract class AbstractPartEditor<M extends MPart> extends AbstractCompon
 
 			if (stackLayout.topControl != topControl) {
 				stackLayout.topControl = topControl;
-				composite.layout(true, true);
+				composite.requestLayout();
 			}
 		}
 

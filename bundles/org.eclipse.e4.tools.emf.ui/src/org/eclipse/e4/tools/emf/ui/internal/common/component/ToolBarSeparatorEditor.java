@@ -104,7 +104,7 @@ public class ToolBarSeparatorEditor extends AbstractComponentEditor<MToolBarSepa
 
 			if (stackLayout.topControl != topControl) {
 				stackLayout.topControl = topControl;
-				composite.layout(true, true);
+				composite.requestLayout();
 			}
 		}
 

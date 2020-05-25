@@ -110,7 +110,7 @@ public class CommandParameterEditor extends AbstractComponentEditor<MCommandPara
 
 			if (stackLayout.topControl != topControl) {
 				stackLayout.topControl = topControl;
-				composite.layout(true, true);
+				composite.requestLayout();
 			}
 		}
 

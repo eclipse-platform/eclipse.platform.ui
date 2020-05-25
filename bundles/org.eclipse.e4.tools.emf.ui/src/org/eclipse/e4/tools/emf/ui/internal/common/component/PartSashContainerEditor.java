@@ -202,7 +202,7 @@ public class PartSashContainerEditor extends AbstractComponentEditor<MPartSashCo
 
 			if (stackLayout.topControl != topControl) {
 				stackLayout.topControl = topControl;
-				composite.layout(true, true);
+				composite.requestLayout();
 			}
 		}
 

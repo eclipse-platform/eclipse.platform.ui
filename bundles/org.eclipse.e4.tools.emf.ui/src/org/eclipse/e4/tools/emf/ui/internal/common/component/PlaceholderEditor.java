@@ -149,7 +149,7 @@ public class PlaceholderEditor extends AbstractComponentEditor<MPlaceholder> {
 
 			if (stackLayout.topControl != topControl) {
 				stackLayout.topControl = topControl;
-				composite.layout(true, true);
+				composite.requestLayout();
 			}
 		}
 

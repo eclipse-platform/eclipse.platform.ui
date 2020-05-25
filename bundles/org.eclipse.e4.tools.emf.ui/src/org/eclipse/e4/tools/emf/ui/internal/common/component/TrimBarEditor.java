@@ -152,7 +152,7 @@ public class TrimBarEditor extends AbstractComponentEditor<MTrimBar> {
 
 			if (stackLayout.topControl != topControl) {
 				stackLayout.topControl = topControl;
-				composite.layout(true, true);
+				composite.requestLayout();
 			}
 		}
 

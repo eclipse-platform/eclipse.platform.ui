@@ -118,7 +118,7 @@ public abstract class ToolItemEditor<M extends MToolItem> extends AbstractCompon
 
 			if (stackLayout.topControl != topControl) {
 				stackLayout.topControl = topControl;
-				composite.layout(true, true);
+				composite.requestLayout();
 			}
 		}
 

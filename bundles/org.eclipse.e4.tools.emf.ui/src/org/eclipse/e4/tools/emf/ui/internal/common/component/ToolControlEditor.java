@@ -121,7 +121,7 @@ public class ToolControlEditor extends AbstractComponentEditor<MToolControl> {
 
 			if (stackLayout.topControl != topControl) {
 				stackLayout.topControl = topControl;
-				composite.layout(true, true);
+				composite.requestLayout();
 			}
 		}
 

@@ -193,7 +193,7 @@ public class MenuEditor extends AbstractComponentEditor<MMenu> {
 
 		if (stackLayout.topControl != topControl) {
 			stackLayout.topControl = topControl;
-			composite.layout(true, true);
+			composite.requestLayout();
 		}
 
 		getMaster().setValue((MMenu) object);
