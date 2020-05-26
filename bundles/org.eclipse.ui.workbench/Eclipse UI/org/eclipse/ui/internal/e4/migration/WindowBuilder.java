@@ -14,8 +14,9 @@
 
 package org.eclipse.ui.internal.e4.migration;
 
+import static java.util.Collections.singletonList;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -194,7 +195,7 @@ public class WindowBuilder {
 	private void createTrimBars(MPerspective perspective) {
 		// Find any minimized stacks and show their trim
 		List<MUIElement> minimizedElements = modelService.findElements(perspective, null, MUIElement.class,
-				Arrays.asList(IPresentationEngine.MINIMIZED));
+				singletonList(IPresentationEngine.MINIMIZED));
 		for (MUIElement element : minimizedElements) {
 			createTrim(element, perspective);
 		}

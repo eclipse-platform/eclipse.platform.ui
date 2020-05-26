@@ -19,8 +19,9 @@
 
 package org.eclipse.e4.ui.workbench.addons.minmax;
 
+import static java.util.Collections.singletonList;
+
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
@@ -335,11 +336,8 @@ public class MinMaxAddon {
 
 		final MPerspective curPersp = ps.getSelectedElement();
 		if (curPersp != null) {
-			List<String> tags = new ArrayList<>();
-			tags.add(IPresentationEngine.MINIMIZED);
-
-			List<MUIElement> minimizedElements = modelService.findElements(curPersp, null,
-					MUIElement.class, tags);
+			List<MUIElement> minimizedElements = modelService.findElements(curPersp, null, MUIElement.class,
+					singletonList(IPresentationEngine.MINIMIZED));
 			// Show any minimized stack from the current perspective
 			for (MUIElement ele : minimizedElements) {
 				String fullId = TrimStackIdHelper.createTrimStackId(ele, curPersp, window);
@@ -538,7 +536,7 @@ public class MinMaxAddon {
 
 		// Find any minimized stacks and show their trim
 		List<MUIElement> minimizedElements = modelService.findElements(resetPersp, null,
-				MUIElement.class, Arrays.asList(IPresentationEngine.MINIMIZED));
+				MUIElement.class, singletonList(IPresentationEngine.MINIMIZED));
 		for (MUIElement element : minimizedElements) {
 			createTrim(element);
 		}
@@ -562,7 +560,7 @@ public class MinMaxAddon {
 
 		// Find any minimized stacks and show their trim
 		List<MUIElement> minimizedElements = modelService.findElements(openedPersp, null,
-				MUIElement.class, Arrays.asList(IPresentationEngine.MINIMIZED));
+				MUIElement.class, singletonList(IPresentationEngine.MINIMIZED));
 		for (MUIElement element : minimizedElements) {
 			createTrim(element);
 		}
@@ -696,8 +694,7 @@ public class MinMaxAddon {
 
 		adjustCTFButtons(element);
 
-		List<String> maximizeTag = new ArrayList<>();
-		maximizeTag.add(IPresentationEngine.MAXIMIZED);
+		List<String> maximizeTag = singletonList(IPresentationEngine.MAXIMIZED);
 		List<MUIElement> curMax = modelService.findElements(window, null, MUIElement.class,
 				maximizeTag, EModelService.PRESENTATION);
 
@@ -889,9 +886,7 @@ public class MinMaxAddon {
 		if (elePersp == null) {
 			return;
 		}
-		List<String> maxTag = new ArrayList<>();
-		maxTag.add(MAXIMIZED);
-		List<MUIElement> curMax = modelService.findElements(win, null, MUIElement.class, maxTag);
+		List<MUIElement> curMax = modelService.findElements(win, null, MUIElement.class, singletonList(MAXIMIZED));
 		if (curMax.size() > 0) {
 			for (MUIElement maxElement : curMax) {
 				// Only unmax elements in this window

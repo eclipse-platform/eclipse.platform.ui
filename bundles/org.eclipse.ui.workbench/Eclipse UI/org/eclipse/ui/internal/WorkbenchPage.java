@@ -23,6 +23,8 @@
 
 package org.eclipse.ui.internal;
 
+import static java.util.Collections.singletonList;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
@@ -2994,9 +2996,8 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 	@Override
 	public boolean isPageZoomed() {
-		List<String> maxTag = new ArrayList<>();
-		maxTag.add(IPresentationEngine.MAXIMIZED);
-		List<Object> maxElements = modelService.findElements(window, null, null, maxTag);
+		List<Object> maxElements = modelService.findElements(window, null, null,
+				singletonList(IPresentationEngine.MAXIMIZED));
 		return maxElements.size() > 0;
 	}
 

@@ -18,6 +18,8 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
+import static java.util.Collections.singletonList;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -527,10 +529,8 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 
 		MPartStack pStack = (MPartStack) (partParent instanceof MPartStack ? partParent : null);
 
-		List<String> tags = new ArrayList<>();
-		tags.add(CSSConstants.CSS_ACTIVE_CLASS);
 		List<MUIElement> activeElements = modelService.findElements(modelService.getTopLevelWindowFor(newActivePart),
-				null, MUIElement.class, tags);
+				null, MUIElement.class, singletonList(CSSConstants.CSS_ACTIVE_CLASS));
 		for (MUIElement element : activeElements) {
 			if (element instanceof MPartStack && element != pStack) {
 				styleElement(element, false);

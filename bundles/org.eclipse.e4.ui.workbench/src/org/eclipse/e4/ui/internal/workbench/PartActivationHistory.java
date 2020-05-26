@@ -15,6 +15,8 @@
 
 package org.eclipse.e4.ui.internal.workbench;
 
+import static java.util.Collections.singletonList;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -308,10 +310,8 @@ class PartActivationHistory {
 			}
 		}
 
-		List<String> activeTag = new ArrayList<>();
-		activeTag.add(EPartService.ACTIVE_ON_CLOSE_TAG);
 		List<MPart> activeCandidates = modelService.findElements(perspective, null, MPart.class,
-				activeTag);
+				singletonList(EPartService.ACTIVE_ON_CLOSE_TAG));
 		if (activeCandidates.size() > 0) {
 			activeCandidates.get(0).getTags().remove(EPartService.ACTIVE_ON_CLOSE_TAG);
 			MPart candidate = activeCandidates.get(0);

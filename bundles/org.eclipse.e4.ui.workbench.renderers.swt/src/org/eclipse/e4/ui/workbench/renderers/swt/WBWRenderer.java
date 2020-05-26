@@ -16,6 +16,7 @@
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
+import static java.util.Collections.singletonList;
 import static org.eclipse.jface.viewers.LabelProvider.createTextProvider;
 
 import java.util.ArrayList;
@@ -604,8 +605,8 @@ public class WBWRenderer extends SWTPartRenderer {
 			return;
 		}
 
-		List<MPartStack> stacks = modelService.findElements(perspective, null,
-				MPartStack.class, Arrays.asList(CSSConstants.CSS_ACTIVE_CLASS));
+		List<MPartStack> stacks = modelService.findElements(perspective, null, MPartStack.class,
+				singletonList(CSSConstants.CSS_ACTIVE_CLASS));
 		if (stacks.isEmpty()) {
 			return;
 		}
