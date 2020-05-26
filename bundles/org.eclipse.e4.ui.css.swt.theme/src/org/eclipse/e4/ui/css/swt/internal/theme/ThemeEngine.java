@@ -560,6 +560,16 @@ public class ThemeEngine implements IThemeEngine {
 		@Override
 		public void restore(String alternateTheme) {
 			String prefThemeId = getPreferenceThemeId();
+
+			// Bug 562794, 563601: Eclipse once contained two identical themes named
+			// "Classic" and "Windows Classic" and the second was removed with bug 562794.
+			// An old workspace using the removed "Windows Classic" theme would be reseted
+			// to the default theme on update. Since both themes are identical we silently
+			// change the theme to the remaining "Classic" theme and don't disturb the user.
+			if ("org.eclipse.e4.ui.css.theme.e4_classic6.0,6.1,6.2,6.3".equals(prefThemeId)) { //$NON-NLS-1$
+				prefThemeId = "org.eclipse.e4.ui.css.theme.e4_classic"; //$NON-NLS-1$
+			}
+
 			boolean flag = true;
 			if (prefThemeId != null) {
 				for (ITheme t : getThemes()) {
