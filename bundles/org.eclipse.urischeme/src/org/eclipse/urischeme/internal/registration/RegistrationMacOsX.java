@@ -14,13 +14,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 import org.eclipse.urischeme.IOperatingSystemRegistration;
 import org.eclipse.urischeme.IScheme;
 import org.eclipse.urischeme.ISchemeInformation;
-import java.util.regex.Matcher;
 
 @SuppressWarnings("javadoc")
 public class RegistrationMacOsX implements IOperatingSystemRegistration {
@@ -151,9 +151,30 @@ public class RegistrationMacOsX implements IOperatingSystemRegistration {
 		writer.writeTo(fileProvider.newWriter(plistPath));
 	}
 
+	/**
+	 * Depending if Eclipse is running stand alone (productive use-case) or started
+	 * from another Eclipse ("Run as Eclipse Application" use-case) the
+	 * "eclipse.home.location" property looks differently. The
+	 * "eclipse.home.location" property is also dependent on the how the target
+	 * platform is defined.<br>
+	 *
+	 * <ol>
+	 * <li>Productive Use:
+	 * <code>file:/path/to/Eclipse.app/Contents/Eclipse/</code></li>
+	 * <li>As Eclipse Application (running Platform):
+	 * <code>file:/path/to/Eclipse.app/Contents/Eclipse/</code></li>
+	 * <li>As Eclipse Application :
+	 * <code>file:/path/to/FolderwithoutDotApp/Contents/Eclipse/</code></li>
+	 * <li>As Eclipse Application :
+	 * <code>file:/path/to/FolderwithoutDotApp/Contents/Eclipse/plugins/</code></li>
+	 * </ol>
+	 *
+	 * @return The path the app
+	 */
 	private String getPathToEclipseApp() {
 		String homeLocationProperty = System.getProperty("eclipse.home.location"); //$NON-NLS-1$
-		return homeLocationProperty.replaceAll("file:(.*.app).*", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
+		// remove the "file:" prefix and everything starting at "/Contents/Eclipse"
+		return homeLocationProperty.replaceAll("file:(.*)\\/Contents\\/Eclipse.*", "$1"); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**
