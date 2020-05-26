@@ -21,7 +21,9 @@ import java.nio.charset.IllegalCharsetNameException;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 import java.text.BreakIterator;
+import java.text.DateFormat;
 import java.text.MessageFormat;
+import java.util.Date;
 import java.util.Iterator;
 
 import org.eclipse.swt.SWT;
@@ -1374,7 +1376,8 @@ public abstract class AbstractDecoratedTextEditor extends StatusTextEditor {
 				options.printTextForeground= true;
 				options.printTextBackground= true;
 				options.jobName= getTitle();
-				options.header= StyledTextPrintOptions.SEPARATOR + getTitle();
+				options.header= getTitle() + StyledTextPrintOptions.SEPARATOR + StyledTextPrintOptions.SEPARATOR
+						+ DateFormat.getDateTimeInstance(DateFormat.FULL, DateFormat.SHORT).format(new Date());
 				options.footer= StyledTextPrintOptions.SEPARATOR + NLSUtility.format(TextEditorMessages.AbstractDecoratedTextEditor_printPageNumber, StyledTextPrintOptions.PAGE_TAG);
 
 				if (isLineNumberRulerVisible()) {
