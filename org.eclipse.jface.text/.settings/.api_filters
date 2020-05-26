@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.jface.text" version="2">
     <resource path="META-INF/MANIFEST.MF">
+        <filter comment="Bug 552134 - org.eclipse.rcp misses dependency to org.eclipse.jface.text" id="924844039">
+            <message_arguments>
+                <message_argument value="3.16.300"/>
+                <message_argument value="3.16.200"/>
+            </message_arguments>
+        </filter>
         <filter comment="Version wrongly bumped again in Bug 483846 - [typing] Spaces only mode: backspace key to remove many spaces " id="931135546">
             <message_arguments>
                 <message_argument value="3.16.100"/>
