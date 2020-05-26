@@ -165,7 +165,7 @@
          unpack="false"/>
 
    <plugin
-         id="org.apache.batik.util.gui"
+         id="org.apache.batik.i18n"
          download-size="0"
          install-size="0"
          version="0.0.0"
