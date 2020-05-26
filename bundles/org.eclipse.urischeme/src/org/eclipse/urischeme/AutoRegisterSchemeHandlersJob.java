@@ -80,10 +80,10 @@ public class AutoRegisterSchemeHandlersJob extends Job {
 					processedSchemes.stream().collect(Collectors.joining(SCHEME_LIST_PREFERENCE_SEPARATOR)));
 			preferenceNode.flush();
 			alreadyTriggered = true;
-			return Status.OK_STATUS;
 		} catch (Exception e) {
-			return new Status(IStatus.ERROR, UriSchemeExtensionReader.PLUGIN_ID, e.getMessage(), e);
+			Platform.getLog(getClass()).error(e.getMessage(), e);
 		}
+		return Status.OK_STATUS;
 	}
 
 	@Override
