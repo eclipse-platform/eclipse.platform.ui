@@ -185,8 +185,8 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 			width = width + 2 * (INNER_KEYLINE + OUTER_KEYLINE + sideDropWidth);
 			break;
 		case PART_BORDER:
-			x = x - INNER_KEYLINE - OUTER_KEYLINE - sideDropWidth;
-			width = width + 2 * (INNER_KEYLINE + OUTER_KEYLINE + sideDropWidth);
+			x = x - INNER_KEYLINE - OUTER_KEYLINE - sideDropWidth - ITEM_LEFT_MARGIN;
+			width = width + 2 * (INNER_KEYLINE + OUTER_KEYLINE + sideDropWidth) + ITEM_RIGHT_MARGIN;
 			height += borderTop + borderBottom;
 			y -= borderTop;
 			if (onBottom) {
@@ -600,7 +600,7 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 
 			// Remember for use in header drawing
 			if (cornerSize == SQUARE_CORNER) {
-				//We don't require clipping.  The clip is not clear coming in, but  
+				//We don't require clipping.  The clip is not clear coming in, but
 				//in the round case it is always set coming in and cleared going out
 				//so in the square case we can just clear off the bat.
 				gc.setClipping((Rectangle) null);
