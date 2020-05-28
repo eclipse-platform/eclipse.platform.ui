@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2018 IBM Corporation and others.
+ * Copyright (c) 2008, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 337588, 388476, 461573
  *     Simon Scholz <simon.scholz@vogella.com> - Bug 442285, 487348
  *     Patrik Suzzi <psuzzi@gmail.com> - Bug 497618
+ *     Christoph Läubrich - Bug 433465
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -1343,9 +1344,13 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 	}
 
 	protected boolean isClosable(MPart part) {
-		// if it's a shared part check its current ref
-		if (part.getCurSharedRef() != null) {
-			return !(part.getCurSharedRef().getTags().contains(IPresentationEngine.NO_CLOSE));
+		MPlaceholder curSharedRef = part.getCurSharedRef();
+		if (curSharedRef != null) {
+			// if it's a shared part check its current ref
+			if (curSharedRef.getTags().contains(IPresentationEngine.NO_CLOSE)) {
+				return false;
+			}
+			return curSharedRef.isCloseable();
 		}
 
 		return part.isCloseable();
