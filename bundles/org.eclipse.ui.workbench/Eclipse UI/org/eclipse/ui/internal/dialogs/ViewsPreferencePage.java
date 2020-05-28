@@ -42,6 +42,7 @@ import org.eclipse.e4.ui.css.swt.theme.IThemeEngine;
 import org.eclipse.e4.ui.internal.workbench.swt.E4Application;
 import org.eclipse.e4.ui.internal.workbench.swt.PartRenderingEngine;
 import org.eclipse.e4.ui.model.application.MApplication;
+import org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering;
 import org.eclipse.e4.ui.workbench.renderers.swt.StackRenderer;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -221,9 +222,9 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 	}
 
 	protected void createUseRoundTabs(Composite composite) {
-		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
-		useRoundTabs = createCheckButton(composite, WorkbenchMessages.ViewsPreference_useRoundTabs,
-				apiStore.getBoolean(IWorkbenchPreferenceConstants.USE_ROUND_TABS));
+		IEclipsePreferences prefs = getSwtRendererPreferences();
+		boolean enabled = prefs.getBoolean(CTabRendering.USE_ROUND_TABS, CTabRendering.USE_ROUND_TABS_DEFAULT);
+		useRoundTabs = createCheckButton(composite, WorkbenchMessages.ViewsPreference_useRoundTabs, enabled);
 	}
 
 	protected void createEnableMruPref(Composite composite) {
@@ -265,14 +266,12 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		}
 
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
-		apiStore.setValue(IWorkbenchPreferenceConstants.USE_ROUND_TABS, useRoundTabs.getSelection());
 		apiStore.setValue(IWorkbenchPreferenceConstants.USE_COLORED_LABELS, useColoredLabels.getSelection());
 
 		IEclipsePreferences prefs = getSwtRendererPreferences();
-		if (enableMru != null) {
-			prefs.putBoolean(StackRenderer.MRU_KEY, enableMru.getSelection());
-		}
+		prefs.putBoolean(StackRenderer.MRU_KEY, enableMru.getSelection());
 		prefs.putBoolean(PartRenderingEngine.ENABLED_THEME_KEY, themingEnabled.getSelection());
+		prefs.putBoolean(CTabRendering.USE_ROUND_TABS, useRoundTabs.getSelection());
 		try {
 			prefs.flush();
 		} catch (BackingStoreException e) {
@@ -284,8 +283,6 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			boolean themeChanged = theme != null && !theme.equals(currentTheme);
 			boolean colorsAndFontsThemeChanged = !PlatformUI.getWorkbench().getThemeManager().getCurrentTheme().getId()
 					.equals(currentColorsAndFontsTheme.getId());
-			boolean tabCornersChanged = !useRoundTabs.getSelection() != apiStore
-					.getBoolean(IWorkbenchPreferenceConstants.USE_ROUND_TABS);
 
 			if (theme != null) {
 				currentTheme = theme;
@@ -299,7 +296,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			themeComboDecorator.hide();
 			colorFontsDecorator.hide();
 
-			if (themeChanged || colorsAndFontsThemeChanged || tabCornersChanged) {
+			if (themeChanged || colorsAndFontsThemeChanged) {
 				MessageDialog.openWarning(getShell(), WorkbenchMessages.ThemeChangeWarningTitle,
 						WorkbenchMessages.ThemeChangeWarningText);
 			}
@@ -334,11 +331,10 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			}
 		}
 		IPreferenceStore apiStore = PrefUtil.getAPIPreferenceStore();
-		useRoundTabs.setSelection(apiStore.getDefaultBoolean(IWorkbenchPreferenceConstants.USE_ROUND_TABS));
 		useColoredLabels.setSelection(apiStore.getDefaultBoolean(IWorkbenchPreferenceConstants.USE_COLORED_LABELS));
-		if (enableMru != null) {
-			enableMru.setSelection(getDefaultMRUValue());
-		}
+
+		useRoundTabs.setSelection(CTabRendering.USE_ROUND_TABS_DEFAULT);
+		enableMru.setSelection(getDefaultMRUValue());
 		super.performDefaults();
 	}
 

@@ -19,10 +19,10 @@ package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import java.lang.reflect.Field;
 import javax.inject.Inject;
-import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.runtime.Preferences.IPropertyChangeListener;
-import org.eclipse.core.runtime.Preferences.PropertyChangeEvent;
-import org.eclipse.core.runtime.preferences.IPreferencesService;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
+import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.e4.ui.internal.css.swt.ICTabRendering;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
@@ -39,10 +39,22 @@ import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 
 @SuppressWarnings("restriction")
-public class CTabRendering extends CTabFolderRenderer implements ICTabRendering, IPropertyChangeListener {
+public class CTabRendering extends CTabFolderRenderer implements ICTabRendering, IPreferenceChangeListener {
 
-	// Preference constants
-	private static final String USE_ROUND_TABS = "USE_ROUND_TABS"; //$NON-NLS-1$
+	/**
+	 * A named preference for setting CTabFolder's to be rendered with rounded
+	 * corners
+	 * <p>
+	 * The default value for this preference is: <code>false</code> (render
+	 * CTabFolder's with square corners)
+	 * </p>
+	 */
+	public static final String USE_ROUND_TABS = "USE_ROUND_TABS"; //$NON-NLS-1$
+
+	/**
+	 * Default value for "use round tabs" preference
+	 */
+	public static final boolean USE_ROUND_TABS_DEFAULT = false;
 
 	// Constants for circle drawing
 	static enum CirclePart {
@@ -99,8 +111,6 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 
 	Image shadowImage, toolbarActiveImage, toolbarInactiveImage;
 
-
-	IPreferencesService preferenceService = Platform.getPreferencesService();
 	int cornerSize = 0;
 
 	boolean shadowEnabled = true;
@@ -128,7 +138,12 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 	public CTabRendering(CTabFolder parent) {
 		super(parent);
 		parentWrapper = new CTabFolderWrapper(parent);
-		propertyChange(null);
+
+		IEclipsePreferences preferences = getSwtRendererPreferences();
+		preferences.addPreferenceChangeListener(this);
+		parent.addDisposeListener(e -> preferences.removePreferenceChangeListener(this));
+
+		cornerRadiusPreferenceChanged();
 	}
 
 	@Override
@@ -1314,9 +1329,21 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		parent.redraw();
 	}
 
+	private void cornerRadiusPreferenceChanged() {
+		IEclipsePreferences preferences = getSwtRendererPreferences();
+		boolean useRound = preferences.getBoolean(USE_ROUND_TABS, USE_ROUND_TABS_DEFAULT);
+		setCornerRadius(useRound ? 16 : 0);
+	}
+
 	@Override
-	public void propertyChange(PropertyChangeEvent event) {
-		cornerSize = preferenceService.getBoolean("org.eclipse.ui", USE_ROUND_TABS, //$NON-NLS-1$
-				false, null) ? 16 : 0;
+	public void preferenceChange(PreferenceChangeEvent event) {
+		if (!USE_ROUND_TABS.equals(event.getKey())) {
+			return;
+		}
+		cornerRadiusPreferenceChanged();
+	}
+
+	private IEclipsePreferences getSwtRendererPreferences() {
+		return InstanceScope.INSTANCE.getNode("org.eclipse.e4.ui.workbench.renderers.swt"); //$NON-NLS-1$
 	}
 }

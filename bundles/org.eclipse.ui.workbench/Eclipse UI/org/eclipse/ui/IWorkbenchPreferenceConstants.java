@@ -386,8 +386,11 @@ public interface IWorkbenchPreferenceConstants {
 	 * CTabFolder's with square corners)
 	 * </p>
 	 *
+	 * @deprecated No longer in use. Use swt-corner-radius CSS property to override
+	 *             when round or square corners are desired.
 	 * @since 3.119
 	 */
+	@Deprecated
 	String USE_ROUND_TABS = "USE_ROUND_TABS"; //$NON-NLS-1$
 
 	/**
