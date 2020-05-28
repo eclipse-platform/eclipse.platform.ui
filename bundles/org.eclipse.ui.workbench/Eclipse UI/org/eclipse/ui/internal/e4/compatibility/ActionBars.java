@@ -79,10 +79,6 @@ public class ActionBars extends SubActionBars {
 				if (!tbCtrl.isDisposed()) {
 					Control packParent = getPackParent(tbCtrl);
 					packParent.pack();
-
-					// Specifically lay out the CTF
-					if (packParent.getParent() instanceof CTabFolder)
-						packParent.requestLayout();
 				}
 			}
 
