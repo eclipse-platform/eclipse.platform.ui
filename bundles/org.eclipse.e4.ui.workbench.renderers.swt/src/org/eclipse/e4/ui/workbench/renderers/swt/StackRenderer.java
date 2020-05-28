@@ -713,6 +713,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 		Composite trComp = new Composite(tabFolder, SWT.NONE);
 		RowLayout rl = new RowLayout();
 		trComp.setLayout(rl);
+		rl.spacing = 0;
 		rl.marginBottom = rl.marginTop = rl.marginRight = rl.marginLeft = 0;
 		tabFolder.setTopRight(trComp, SWT.RIGHT | SWT.WRAP);
 
