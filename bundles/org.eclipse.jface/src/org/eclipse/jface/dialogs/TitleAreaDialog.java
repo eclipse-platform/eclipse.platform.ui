@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,6 +14,7 @@
  *     [Dialogs] Bug with Image in TitleAreaDialog
  *     Sebastian Davids <sdavids@gmx.de> - Fix for bug 82064
  *     [Dialogs] TitleAreaDialog#setTitleImage cannot be called before open()
+ *     Christoph Läubrich - Fix for bug 563472
  *******************************************************************************/
 package org.eclipse.jface.dialogs;
 
@@ -237,7 +238,7 @@ public class TitleAreaDialog extends TrayDialog {
 		// Dialog image @ right
 		titleImageLabel = new Label(parent, SWT.CENTER);
 		titleImageLabel.setBackground(background);
-		if (titleAreaImage == null)
+		if (titleAreaImage == null || titleAreaImage.isDisposed())
 			titleImageLabel.setImage(JFaceResources
 					.getImage(DLG_IMG_TITLE_BANNER));
 		else
