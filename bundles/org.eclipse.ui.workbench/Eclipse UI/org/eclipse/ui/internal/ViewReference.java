@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2019 IBM Corporation and others.
+ * Copyright (c) 2005, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Friederike Schertel <friederike@schertel.org> - Bug 478336
+ *     Christoph Läubrich - fix Bug 541228
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
@@ -69,7 +70,7 @@ public class ViewReference extends WorkbenchPartReference implements IViewRefere
 
 	@Override
 	public String getPartName() {
-		return descriptor.getLabel();
+		return descriptor == null ? "" : descriptor.getLabel(); //$NON-NLS-1$
 	}
 
 	@Override
