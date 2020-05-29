@@ -108,7 +108,7 @@ public class StatusTextEditor extends AbstractTextEditor {
 
 		if (fStackLayout.topControl != front) {
 			fStackLayout.topControl= front;
-			fParent.layout();
+			front.requestLayout();
 			updateStatusFields();
 		}
 
