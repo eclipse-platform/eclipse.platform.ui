@@ -32,6 +32,7 @@ import org.eclipse.jface.resource.FontRegistry;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
+import org.eclipse.jface.util.Util;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.graphics.RGB;
@@ -168,6 +169,12 @@ public class WorkbenchThemeManager extends EventManager implements IThemeManager
 	 * themes and recompute the registries.
 	 */
 	private void updateThemes() {
+		// This code was added to fix a windows specific issue, see Bug 19229
+		// However, it's causing issues on Linux, see Bug 563001
+		if (Util.isLinux()) {
+			return;
+		}
+
 		// reread the themes since their descriptors have changed in value
 		ThemeRegistryReader reader = new ThemeRegistryReader();
 		reader.readThemes(Platform.getExtensionRegistry(), (ThemeRegistry) getThemeRegistry());
