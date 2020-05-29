@@ -1309,6 +1309,6 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		cornerSize = preferenceService.getBoolean("org.eclipse.ui", USE_ROUND_TABS, //$NON-NLS-1$
-				false, null) ? 14 : 0;
+				false, null) ? 16 : 0;
 	}
 }
