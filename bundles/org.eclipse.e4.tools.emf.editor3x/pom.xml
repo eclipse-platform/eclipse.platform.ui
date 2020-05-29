@@ -10,7 +10,7 @@
 
   <groupId>eclipse.platform.ui.tools</groupId>
   <artifactId>org.eclipse.e4.tools.emf.editor3x</artifactId>
-  <version>4.7.500-SNAPSHOT</version>
+  <version>4.7.600-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 
   <properties>
