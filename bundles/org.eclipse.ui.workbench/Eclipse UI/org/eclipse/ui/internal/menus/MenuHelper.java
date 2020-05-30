@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Supplier;
 import java.util.regex.Pattern;
 import org.eclipse.core.commands.Command;
 import org.eclipse.core.commands.ParameterizedCommand;
@@ -74,6 +75,7 @@ public class MenuHelper {
 
 	private static final Pattern SCHEME_PATTERN = Pattern.compile("\\p{Alpha}[\\p{Alnum}+.-]*:.*"); //$NON-NLS-1$
 	private static Field urlField;
+	private static Field urlSupplierField;
 
 	/**
 	 * The private 'location' field that is defined in the FileImageDescriptor.
@@ -102,6 +104,25 @@ public class MenuHelper {
 			Object value = urlField.get(imageDescriptor);
 			if (value != null) {
 				return value.toString();
+			}
+		} catch (SecurityException | NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
+			WorkbenchPlugin.log(e);
+		}
+		return null;
+	}
+
+	private static String getUrlSupplier(Class<? extends ImageDescriptor> idc, ImageDescriptor imageDescriptor) {
+		try {
+			if (urlSupplierField == null) {
+				urlSupplierField = idc.getDeclaredField("supplier"); //$NON-NLS-1$
+				urlSupplierField.setAccessible(true);
+			}
+			Object value = urlSupplierField.get(imageDescriptor);
+			if (value != null && value instanceof Supplier) {
+				@SuppressWarnings("unchecked")
+				Supplier<URL> supplier = (Supplier<URL>) value;
+				URL url = supplier.get();
+				return url == null ? null : url.toString();
 			}
 		} catch (SecurityException | NoSuchFieldException | IllegalArgumentException | IllegalAccessException e) {
 			WorkbenchPlugin.log(e);
@@ -441,6 +462,9 @@ public class MenuHelper {
 		// durable form in case it's to be persisted
 		if (descriptor.getClass().toString().endsWith("URLImageDescriptor")) { //$NON-NLS-1$
 			String url = getUrl(descriptor.getClass(), descriptor);
+			return rewriteDurableURL(url);
+		} else if (descriptor.getClass().toString().endsWith("DeferredImageDescriptor")) { //$NON-NLS-1$
+			String url = getUrlSupplier(descriptor.getClass(), descriptor);
 			return rewriteDurableURL(url);
 		} else if (descriptor.getClass().toString().endsWith("FileImageDescriptor")) { //$NON-NLS-1$
 			Class<?> sourceClass = getLocation(descriptor);

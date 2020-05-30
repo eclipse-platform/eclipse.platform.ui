@@ -15,7 +15,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal;
 
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import org.eclipse.core.runtime.Assert;
@@ -102,8 +101,10 @@ public/* final */class WorkbenchImages {
 	 *               <code>false</code> if this is not a shared image
 	 */
 	private static final void declareImage(String key, String path, boolean shared) {
-		URL url = BundleUtility.find(PlatformUI.PLUGIN_ID, path);
-		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
+		ImageDescriptor desc = ImageDescriptor
+				.createFromURLSupplier(true, () -> {
+					return BundleUtility.find(PlatformUI.PLUGIN_ID, path);
+				});
 		declareImage(key, desc, shared);
 	}
 
@@ -481,6 +482,7 @@ public/* final */class WorkbenchImages {
 	 * @return ImageDescriptor
 	 */
 	public static ImageDescriptor getWorkbenchImageDescriptor(String relativePath) {
-		return ImageDescriptor.createFromURL(BundleUtility.find(PlatformUI.PLUGIN_ID, ICONS_PATH + relativePath));
+		return ImageDescriptor
+				.createFromURLSupplier(true, () -> BundleUtility.find(PlatformUI.PLUGIN_ID, ICONS_PATH + relativePath));
 	}
 }
