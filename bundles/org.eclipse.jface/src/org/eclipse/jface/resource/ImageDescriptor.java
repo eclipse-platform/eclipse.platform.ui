@@ -16,6 +16,7 @@ package org.eclipse.jface.resource;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.util.function.Supplier;
 
 import org.eclipse.swt.SWTException;
 import org.eclipse.swt.graphics.Device;
@@ -168,6 +169,9 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor {
 	/**
 	 * Creates and returns a new image descriptor from a URL.
 	 *
+	 * If the URL requires scanning IO to calculate, consider using
+	 * {@link #createFromURLSupplier(boolean,Supplier)} instead.
+	 *
 	 * @param url The URL of the image file.
 	 * @return a new image descriptor
 	 */
@@ -178,6 +182,25 @@ public abstract class ImageDescriptor extends DeviceResourceDescriptor {
 		return new URLImageDescriptor(url);
 	}
 
+	/**
+	 * Creates and returns a new image descriptor from a supplier of a URL.
+	 *
+	 * The URL will not be calculated until the image data is requested, at which
+	 * point, the URL supplier will be asked to provide the URL.
+	 *
+	 * If the URL supplier returns <code>null</code>, then an image from
+	 * {@link #getMissingImageDescriptor()} will be returned if
+	 * <code>useMissingImage</code> is <code>true</code>, and <code>null</code>
+	 * otherwise.
+	 * @param useMissingImage if the supplied URL is null, use missing image or null
+	 * @param supplier        the supplier of the image
+	 *
+	 * @return the image descriptor with a deferred lookup of the URL
+	 * @since 3.21
+	 */
+	public static ImageDescriptor createFromURLSupplier(boolean useMissingImage, Supplier<URL> supplier) {
+		return new DeferredImageDescriptor(useMissingImage, supplier);
+	}
 
 	/**
 	 * Convenient method to create an ImageDescriptor from an URI

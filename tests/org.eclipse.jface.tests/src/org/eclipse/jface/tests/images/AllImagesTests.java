@@ -20,7 +20,7 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({ ImageRegistryTest.class, ResourceManagerTest.class, FileImageDescriptorTest.class,
-		DecorationOverlayIconTest.class })
+		DecorationOverlayIconTest.class, DeferredImageDescriptorTest.class })
 public class AllImagesTests {
 
 	public static void main(String[] args) {
