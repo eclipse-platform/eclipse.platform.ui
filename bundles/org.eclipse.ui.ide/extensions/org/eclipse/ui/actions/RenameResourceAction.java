@@ -34,6 +34,7 @@ import org.eclipse.jface.dialogs.InputDialog;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.IStructuredSelection;
+import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
@@ -545,7 +546,7 @@ public class RenameResourceAction extends WorkspaceAction {
 					if (!status.isOK()) {
 						displayError(status.getMessage());
 					} else {
-						if (!LTKLauncher.renameResource(newName, getStructuredSelection())) {
+						if (!LTKLauncher.renameResource(newName, new StructuredSelection(inlinedResource))) {
 							// LTK Launcher couldn't rename the resource
 							IPath newPath = inlinedResource.getFullPath().removeLastSegments(1).append(newName);
 							runWithNewPath(newPath, inlinedResource);
