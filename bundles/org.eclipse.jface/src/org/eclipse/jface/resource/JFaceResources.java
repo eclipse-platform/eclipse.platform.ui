@@ -20,6 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.function.Supplier;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.FileLocator;
@@ -468,19 +469,17 @@ public class JFaceResources {
 	private static final void declareImage(Object bundle, String key, String path, Class<?> fallback,
 			String fallbackPath) {
 
-		ImageDescriptor descriptor = null;
+		Supplier<URL> supplier = () -> {
+			if (bundle != null) {
+				URL url = FileLocator.find((Bundle) bundle, new Path(path), null);
+				if (url != null)
+					return url;
+			}
+			URL url = fallback.getResource(fallbackPath);
+			return url;
+		};
 
-		if (bundle != null) {
-			URL url = FileLocator.find((Bundle) bundle, new Path(path), null);
-			if (url != null)
-				descriptor = ImageDescriptor.createFromURL(url);
-		}
-
-		// If we failed then load from the backup file
-		if (descriptor == null)
-			descriptor = ImageDescriptor.createFromFile(fallback, fallbackPath);
-
-		imageRegistry.put(key, descriptor);
+		imageRegistry.put(key, ImageDescriptor.createFromURLSupplier(false, supplier));
 	}
 
 	/**
