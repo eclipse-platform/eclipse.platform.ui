@@ -468,27 +468,22 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 
 	//prep selection context, remove types from the equation
 		HashSet<ILaunchDelegate> delegates = new HashSet<>();
-		Object o = null;
-		for(int i = 0; i < selection.length; i++) {
-			o = selection[i];
+		for (Object o : selection) {
 			if(o instanceof ILaunchDelegate) {
 				delegates.add((ILaunchDelegate) o);
 			}
 			else if(o instanceof ILaunchConfigurationType) {
 				fgCurrentWorkingContext.add(o);
-				Object[] kids = fTreeViewer.getFilteredChildren(o);
-				for (int j = 0; j < kids.length; j++) {
-					delegates.add((ILaunchDelegate) kids[i]);
+				for (Object kid : fTreeViewer.getFilteredChildren(o)) {
+					delegates.add((ILaunchDelegate) kid);
 				}
 			}
 		}
 	//compare the listing of delegates to find common mode sets
 		HashSet<Set<String>> common = new HashSet<>();
-		List<Set<String>> modes = null;
 		HashSet<Set<String>> pruned = new HashSet<>();
 		for (ILaunchDelegate delegate : delegates) {
-			modes = delegate.getModes();
-			for (Set<String> fmodes : modes) {
+			for (Set<String> fmodes : delegate.getModes()) {
 				if (isCommonModeset(fmodes, delegates, pruned)) {
 					common.add(fmodes);
 					fgCurrentWorkingContext.add(delegate);
