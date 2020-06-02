@@ -194,7 +194,13 @@ public class CloseResourceAction extends WorkspaceAction implements IResourceCha
 			return;
 		}
 
-		closeMatchingEditors(projects, false);
+
+		try {
+			getShell().setLayoutDeferred(true);
+			closeMatchingEditors(projects, false);
+		} finally {
+			getShell().setLayoutDeferred(false);
+		}
 
 		//be conservative and include all projects in the selection - projects
 		//can change state between now and when the job starts
