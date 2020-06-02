@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2009, 2019 IBM Corporation and others.
+ * Copyright (c) 2009, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -27,8 +27,8 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.IdentityHashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.PostConstruct;
@@ -104,15 +104,15 @@ public class ToolBarManagerRenderer extends SWTPartRenderer {
 	public static final String UPDATE_VARS = "ToolBarManagerRenderer.updateVars"; //$NON-NLS-1$
 	private static final String DISPOSE_ADDED = "ToolBarManagerRenderer.disposeAdded"; //$NON-NLS-1$
 
-	private Map<MToolBar, ToolBarManager> modelToManager = new HashMap<>();
-	private Map<ToolBarManager, MToolBar> managerToModel = new HashMap<>();
+	private Map<MToolBar, ToolBarManager> modelToManager = new IdentityHashMap<>();
+	private Map<ToolBarManager, MToolBar> managerToModel = new IdentityHashMap<>();
 
-	private Map<MToolBarElement, IContributionItem> modelToContribution = new HashMap<>();
-	private Map<IContributionItem, MToolBarElement> contributionToModel = new HashMap<>();
+	private Map<MToolBarElement, IContributionItem> modelToContribution = new IdentityHashMap<>();
+	private Map<IContributionItem, MToolBarElement> contributionToModel = new IdentityHashMap<>();
 
-	private Map<MToolBarElement, ToolBarContributionRecord> modelContributionToRecord = new HashMap<>();
+	private Map<MToolBarElement, ToolBarContributionRecord> modelContributionToRecord = new IdentityHashMap<>();
 
-	private Map<MToolBarElement, ArrayList<ToolBarContributionRecord>> sharedElementToRecord = new HashMap<>();
+	private Map<MToolBarElement, ArrayList<ToolBarContributionRecord>> sharedElementToRecord = new IdentityHashMap<>();
 
 	private ToolItemUpdater enablementUpdater = new ToolItemUpdater();
 

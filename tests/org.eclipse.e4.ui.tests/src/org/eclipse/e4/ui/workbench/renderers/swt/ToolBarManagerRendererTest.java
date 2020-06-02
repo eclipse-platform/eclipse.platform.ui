@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Rolf Theunissen and others.
+ * Copyright (c) 2019, 2020 Rolf Theunissen and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -412,6 +412,31 @@ public class ToolBarManagerRendererTest {
 		assertFalse(toolBar.getChildren().get(1).isVisible());
 		assertTrue(item1.isVisible());
 		assertFalse(item2.isVisible());
+	}
+
+	/*
+	 * Bug 562645 - Ensure that Object Identity is used instead of equals
+	 */
+	@Test
+	public void testDynamicItem_Reconcile_Action_Multiple() {
+		contextRule.createAndRunWorkbench(window);
+		ToolBarManagerRenderer renderer = getToolBarManagerRenderer();
+		ToolBarManager tbm = getToolBarManager();
+
+		assertEquals(0, toolBar.getChildren().size());
+		assertEquals(0, tbm.getSize());
+
+		Action action = new Action("Dummy") {
+		};
+
+		tbm.add(action);
+		tbm.add(action);
+
+		assertEquals(2, tbm.getSize());
+
+		renderer.reconcileManagerToModel(tbm, toolBar);
+
+		assertEquals(2, toolBar.getChildren().size());
 	}
 
 	private ToolBarManagerRenderer getToolBarManagerRenderer() {
