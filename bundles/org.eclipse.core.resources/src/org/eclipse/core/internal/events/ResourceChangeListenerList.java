@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.core.internal.events;
 
+import java.util.Arrays;
 import org.eclipse.core.resources.IResourceChangeListener;
 import org.eclipse.core.runtime.Assert;
 
@@ -39,6 +40,17 @@ public class ResourceChangeListenerList {
 		ListenerEntry(IResourceChangeListener listener, int eventMask) {
 			this.listener = listener;
 			this.eventMask = eventMask;
+		}
+
+		@Override
+		public String toString() {
+			StringBuilder sb = new StringBuilder();
+			sb.append("Listener [eventMask="); //$NON-NLS-1$
+			sb.append(eventMask);
+			sb.append(", "); //$NON-NLS-1$
+			sb.append(listener);
+			sb.append("]"); //$NON-NLS-1$
+			return sb.toString();
 		}
 	}
 
@@ -179,5 +191,17 @@ public class ResourceChangeListenerList {
 			count16--;
 		if ((mask & 32) != 0)
 			count32--;
+	}
+
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("ResourceChangeListenerList ["); //$NON-NLS-1$
+		if (listeners != null) {
+			builder.append("listeners="); //$NON-NLS-1$
+			builder.append(Arrays.toString(listeners));
+		}
+		builder.append("]"); //$NON-NLS-1$
+		return builder.toString();
 	}
 }
