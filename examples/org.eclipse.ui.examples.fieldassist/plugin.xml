@@ -17,7 +17,7 @@
          </menu>
          <action
                label="%Actions.TestDialogName"
-               icon="icons/sample.gif"
+               icon="icons/sample.png"
                class="org.eclipse.ui.examples.fieldassist.actions.TestDialogAction"
                tooltip="%Actions.TestDialogTooltip"
                menubarPath="exampleMenu/exampleGroup"
