@@ -32,13 +32,6 @@ import org.eclipse.urischeme.internal.UriSchemeExtensionReader;
  */
 public class AutoRegisterSchemeHandlersJob extends Job {
 
-	/**
-	 * see https://bugs.eclipse.org/bugs/show_bug.cgi?id=562426#c14 and
-	 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=541653#c1 about skipping on
-	 * Windows with Java 11+
-	 */
-	private static final boolean IS_WIN_JAVA_11 = Platform.getOS().equals(Platform.OS_WIN32)
-			&& Integer.parseInt(System.getProperty("java.version").split("\\.")[0].split("-")[0]) >= 11; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	private static final String SKIP_PREFERENCE = "skipAutoRegistration"; //$NON-NLS-1$
 	private static final String PROCESSED_SCHEMES_PREFERENCE = "processedSchemes"; //$NON-NLS-1$
 	private static final String SCHEME_LIST_PREFERENCE_SEPARATOR = ","; //$NON-NLS-1$
@@ -88,7 +81,12 @@ public class AutoRegisterSchemeHandlersJob extends Job {
 
 	@Override
 	public boolean shouldSchedule() {
-		return !(IS_WIN_JAVA_11 || alreadyTriggered || Platform.getPreferencesService()
+		/**
+		 * see https://bugs.eclipse.org/bugs/show_bug.cgi?id=562426#c14 and
+		 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=541653#c1 about skipping on
+		 * Windows
+		 */
+		return !(Platform.getOS().equals(Platform.OS_WIN32) || alreadyTriggered || Platform.getPreferencesService()
 				.getBoolean(UriSchemeExtensionReader.PLUGIN_ID, SKIP_PREFERENCE, false, null));
 	}
 }
