@@ -310,11 +310,11 @@ public class Util {
 			ResourcesPlugin.getWorkspace().addResourceChangeListener(new IResourceChangeListener() {
 				@Override
 				public void resourceChanged(IResourceChangeEvent event) {
-					// Nothing to do if resource set not yet used !
-					if (modelResourceSet == null) {
+					IResourceDelta delta = event.getDelta();
+					// Nothing to do if resource set not yet used or no resource change recorded!
+					if (modelResourceSet == null || delta == null) {
 						return;
 					}
-					IResourceDelta delta = event.getDelta();
 					checkDeltaContainsE4xmi(delta);
 				}
 
