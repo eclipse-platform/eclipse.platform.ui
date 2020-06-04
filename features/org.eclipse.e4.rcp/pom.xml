@@ -14,12 +14,12 @@
   <parent>
     <artifactId>eclipse.platform.ui</artifactId>
     <groupId>eclipse.platform.ui</groupId>
-    <version>4.16.0-SNAPSHOT</version>
+    <version>4.17.0-SNAPSHOT</version>
     <relativePath>../../</relativePath>
   </parent>
   <groupId>org.eclipse.e4.feature</groupId>
   <artifactId>org.eclipse.e4.rcp</artifactId>
-  <version>4.16.0-SNAPSHOT</version>
+  <version>4.17.0-SNAPSHOT</version>
   <packaging>eclipse-feature</packaging>
   <build>
     <plugins>
