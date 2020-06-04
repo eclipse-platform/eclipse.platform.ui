@@ -14,7 +14,7 @@
           		value="%productIntroTitle"/>
           <property
           		name="introBrandingImage"
-          		value="product:intro-eclipse.png"/>
+          		value="product:intro-eclipse.svg"/>
           <property
           		name="introBrandingImageText"
           		value="%productIntroBrandingText"/>
