@@ -10,3 +10,4 @@ Snap.*
 target/
 .DS_Store
 .metadata
+.project
