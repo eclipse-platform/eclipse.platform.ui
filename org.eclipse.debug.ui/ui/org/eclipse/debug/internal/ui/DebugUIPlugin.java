@@ -263,7 +263,7 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 
 	/**
 	 * Prints the given message to System.out or to the OSGi tracing (if started)
-	 * 
+	 *
 	 * @param option    the option or <code>null</code>
 	 * @param message   the message to print or <code>null</code>
 	 * @param throwable the {@link Throwable} or <code>null</code>
