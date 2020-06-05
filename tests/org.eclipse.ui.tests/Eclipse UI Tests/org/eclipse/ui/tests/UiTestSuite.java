@@ -25,6 +25,7 @@ import org.eclipse.ui.tests.api.StartupTest;
 import org.eclipse.ui.tests.commands.CommandsTestSuite;
 import org.eclipse.ui.tests.concurrency.ConcurrencyTestSuite;
 import org.eclipse.ui.tests.contexts.ContextsTestSuite;
+import org.eclipse.ui.tests.databinding.WorkbenchDatabindingTest;
 import org.eclipse.ui.tests.datatransfer.DataTransferTestSuite;
 import org.eclipse.ui.tests.decorators.DecoratorsTestSuite;
 import org.eclipse.ui.tests.dialogs.FilteredResourcesSelectionDialogTestSuite;
@@ -100,6 +101,7 @@ import org.junit.runners.Suite;
 	IntroTestSuite.class,
 	MultiEditorTestSuite.class,
 	OpenSystemInPlaceEditorTest.class,
+	WorkbenchDatabindingTest.class,
 })
 public class UiTestSuite {
 }

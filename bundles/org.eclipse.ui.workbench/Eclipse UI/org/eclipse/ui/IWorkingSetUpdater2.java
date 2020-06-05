@@ -19,7 +19,7 @@ import org.eclipse.core.runtime.IAdaptable;
  * <code>IWorkingSetUpdater2</code> can be used to restore the content of a
  * working set, if the working set content shouldn't be persisted by the framework.
  *
- * @since 3.119
+ * @since 3.120
  */
 public interface IWorkingSetUpdater2 extends IWorkingSetUpdater {
 

@@ -388,7 +388,7 @@ public interface IWorkbenchPreferenceConstants {
 	 *
 	 * @deprecated No longer in use. Use swt-corner-radius CSS property to override
 	 *             when round or square corners are desired.
-	 * @since 3.119
+	 * @since 3.120
 	 */
 	@Deprecated
 	String USE_ROUND_TABS = "USE_ROUND_TABS"; //$NON-NLS-1$

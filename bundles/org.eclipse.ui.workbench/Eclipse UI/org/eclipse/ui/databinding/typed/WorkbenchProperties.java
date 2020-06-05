@@ -14,12 +14,26 @@
  *******************************************************************************/
 package org.eclipse.ui.databinding.typed;
 
+import org.eclipse.core.databinding.property.Properties;
 import org.eclipse.core.databinding.property.list.IListProperty;
 import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.core.runtime.IAdapterManager;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.ui.IEditorInput;
+import org.eclipse.ui.IEditorPart;
+import org.eclipse.ui.IEditorReference;
+import org.eclipse.ui.IPageService;
+import org.eclipse.ui.IPartService;
 import org.eclipse.ui.ISelectionService;
+import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchPartReference;
+import org.eclipse.ui.IWorkbenchWindow;
+import org.eclipse.ui.internal.databinding.ActivePageProperty;
+import org.eclipse.ui.internal.databinding.ActivePartProperty;
+import org.eclipse.ui.internal.databinding.ActiveWindowProperty;
 import org.eclipse.ui.internal.databinding.AdaptedValueProperty;
+import org.eclipse.ui.internal.databinding.EditorInputProperty;
 import org.eclipse.ui.internal.databinding.MultiSelectionProperty;
 import org.eclipse.ui.internal.databinding.SingleSelectionProperty;
 
@@ -175,4 +189,70 @@ public class WorkbenchProperties {
 		return new MultiSelectionProperty<>(partId, postSelection, elementType);
 	}
 
+	/**
+	 * Returns a property for observing the active window of a workbench. The value
+	 * is null if there is no active window.
+	 *
+	 * @return the property
+	 * @see IWorkbench#getActiveWorkbenchWindow
+	 * @see IWorkbench#addWindowListener
+	 * @since 3.120
+	 */
+	public static <S extends IWorkbench> IValueProperty<S, IWorkbenchWindow> activeWindow() {
+		return new ActiveWindowProperty<>();
+	}
+
+	/**
+	 * Returns a property for observing the active page of a workbench window. The
+	 * value is null if there is no active page.
+	 *
+	 * @return the property
+	 * @see IWorkbenchWindow#getActivePage
+	 * @see IWorkbenchWindow#addPageListener
+	 * @since 3.120
+	 */
+	public static <S extends IPageService> IValueProperty<S, IWorkbenchPage> activePage() {
+		return new ActivePageProperty<>();
+	}
+
+	/**
+	 * Returns a property for observing the active part reference of a part service.
+	 * The value is null if there is no active part.
+	 *
+	 * @return the property
+	 * @see IPartService#getActivePart
+	 * @see IPartService#addPartListener
+	 * @since 3.120
+	 */
+	public static <S extends IPartService> IValueProperty<S, IWorkbenchPartReference> activePartReference() {
+		return new ActivePartProperty<>();
+	}
+
+	/**
+	 * Returns a property for observing the active part reference of a part service,
+	 * casted to {@link IEditorReference}. The value is null if the active part is
+	 * not an {@code IEditorReference}. Note that this value is different from
+	 * {@link IWorkbenchPage#getActiveEditor}.
+	 *
+	 * @return the property
+	 * @see IPartService#getActivePart
+	 * @see IPartService#addPartListener
+	 * @since 3.120
+	 */
+	public static <S extends IPartService> IValueProperty<S, IEditorReference> activePartAsEditorReference() {
+		return WorkbenchProperties.<S>activePartReference().value(Properties.convertedValue(IEditorReference.class,
+						part -> part instanceof IEditorReference ? (IEditorReference) part : null));
+	}
+
+	/**
+	 * Returns a property for observing the editor input an editor part.
+	 *
+	 * @return the property
+	 * @see IEditorPart#getEditorInput
+	 * @see IEditorPart#addPropertyListener
+	 * @since 3.120
+	 */
+	public static <S extends IEditorPart> IValueProperty<S, IEditorInput> editorInput() {
+		return new EditorInputProperty<>();
+	}
 }

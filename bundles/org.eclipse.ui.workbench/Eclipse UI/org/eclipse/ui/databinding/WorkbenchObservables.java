@@ -16,10 +16,6 @@
  *******************************************************************************/
 package org.eclipse.ui.databinding;
 
-import org.eclipse.core.databinding.observable.Diffs;
-import org.eclipse.core.databinding.observable.IObservable;
-import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.value.AbstractObservableValue;
 import org.eclipse.core.databinding.observable.value.ComputedValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.runtime.Assert;
@@ -28,15 +24,10 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.ui.IEditorInput;
 import org.eclipse.ui.IEditorPart;
 import org.eclipse.ui.IEditorReference;
-import org.eclipse.ui.IPageListener;
-import org.eclipse.ui.IPartListener2;
 import org.eclipse.ui.IPartService;
-import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISelectionService;
-import org.eclipse.ui.IWindowListener;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.IWorkbenchPartConstants;
 import org.eclipse.ui.IWorkbenchPartReference;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.databinding.typed.WorkbenchProperties;
@@ -119,44 +110,7 @@ public class WorkbenchObservables {
 	 */
 	public static IObservableValue<IWorkbenchWindow> observeActiveWorkbenchWindow(IWorkbench workbench) {
 		Assert.isNotNull(workbench);
-		return new ListeningValue<IWorkbenchWindow>() {
-			private final IWindowListener listener = new IWindowListener() {
-				@Override
-				public void windowActivated(IWorkbenchWindow window) {
-					protectedSetValue(window);
-				}
-
-				@Override
-				public void windowDeactivated(IWorkbenchWindow window) {
-					if (window == doGetValue()) {
-						protectedSetValue(null);
-					}
-				}
-
-				@Override
-				public void windowClosed(IWorkbenchWindow window) {
-				}
-
-				@Override
-				public void windowOpened(IWorkbenchWindow window) {
-				}
-			};
-
-			@Override
-			protected void startListening() {
-				workbench.addWindowListener(listener);
-			}
-
-			@Override
-			protected void stopListening() {
-				workbench.removeWindowListener(listener);
-			}
-
-			@Override
-			protected IWorkbenchWindow calculate() {
-				return workbench.getActiveWorkbenchWindow();
-			}
-		};
+		return WorkbenchProperties.activeWindow().observe(workbench);
 	}
 
 	/**
@@ -169,40 +123,7 @@ public class WorkbenchObservables {
 	 */
 	public static IObservableValue<IWorkbenchPage> observeActiveWorkbenchPage(IWorkbenchWindow window) {
 		Assert.isNotNull(window);
-		return new ListeningValue<IWorkbenchPage>() {
-			private final IPageListener listener = new IPageListener() {
-				@Override
-				public void pageActivated(IWorkbenchPage page) {
-					protectedSetValue(page);
-				}
-
-				@Override
-				public void pageClosed(IWorkbenchPage page) {
-					if (page == doGetValue()) {
-						protectedSetValue(null);
-					}
-				}
-
-				@Override
-				public void pageOpened(IWorkbenchPage page) {
-				}
-			};
-
-			@Override
-			protected void startListening() {
-				window.addPageListener(listener);
-			}
-
-			@Override
-			protected void stopListening() {
-				window.removePageListener(listener);
-			}
-
-			@Override
-			protected IWorkbenchPage calculate() {
-				return window.getActivePage();
-			}
-		};
+		return WorkbenchProperties.activePage().observe(window);
 	}
 
 	/**
@@ -216,60 +137,7 @@ public class WorkbenchObservables {
 	 */
 	public static IObservableValue<IWorkbenchPartReference> observeActivePart(IPartService partService) {
 		Assert.isNotNull(partService);
-		return new ListeningValue<IWorkbenchPartReference>() {
-			private final IPartListener2 listener = new IPartListener2() {
-				@Override
-				public void partActivated(IWorkbenchPartReference partRef) {
-					protectedSetValue(partRef);
-				}
-
-				@Override
-				public void partDeactivated(IWorkbenchPartReference partRef) {
-					if (partRef == doGetValue()) {
-						protectedSetValue(null);
-					}
-				}
-
-				@Override
-				public void partBroughtToTop(IWorkbenchPartReference partRef) {
-				}
-
-				@Override
-				public void partClosed(IWorkbenchPartReference partRef) {
-				}
-
-				@Override
-				public void partOpened(IWorkbenchPartReference partRef) {
-				}
-
-				@Override
-				public void partHidden(IWorkbenchPartReference partRef) {
-				}
-
-				@Override
-				public void partVisible(IWorkbenchPartReference partRef) {
-				}
-
-				@Override
-				public void partInputChanged(IWorkbenchPartReference partRef) {
-				}
-			};
-
-			@Override
-			protected void startListening() {
-				partService.addPartListener(listener);
-			}
-
-			@Override
-			protected void stopListening() {
-				partService.removePartListener(listener);
-			}
-
-			@Override
-			protected IWorkbenchPartReference calculate() {
-				return partService.getActivePartReference();
-			}
-		};
+		return WorkbenchProperties.activePartReference().observe(partService);
 	}
 
 	/**
@@ -299,131 +167,6 @@ public class WorkbenchObservables {
 	 */
 	public static IObservableValue<IEditorInput> observeEditorInput(IEditorPart editor) {
 		Assert.isNotNull(editor);
-		return new ListeningValue<IEditorInput>() {
-			private final IPropertyListener listener = (Object source, int propId) -> {
-				if (propId == IWorkbenchPartConstants.PROP_INPUT) {
-					protectedSetValue(editor.getEditorInput());
-				}
-			};
-
-			@Override
-			protected void startListening() {
-				editor.addPropertyListener(listener);
-			}
-
-			@Override
-			protected void stopListening() {
-				editor.removePropertyListener(listener);
-			}
-
-			@Override
-			protected IEditorInput calculate() {
-				return editor.getEditorInput();
-			}
-		};
-	}
-
-	/**
-	 * A base class for creating observable values that track the state of a
-	 * non-{@link IObservable} objects.
-	 */
-	private abstract static class ListeningValue<T> extends AbstractObservableValue<T> {
-		private T value;
-		private boolean isListening;
-		private volatile boolean hasListeners;
-
-		@Override
-		protected final T doGetValue() {
-			// The value is not kept up to date when we are not listening.
-			if (isListening) {
-				return value;
-			}
-			return calculate();
-		}
-
-		/**
-		 * Sets the value. Must be invoked in the {@link Realm} of the observable.
-		 * Subclasses must call this method instead of {@link #setValue} or
-		 * {@link #doSetValue}.
-		 *
-		 * @param value the value to set
-		 */
-		protected final void protectedSetValue(T value) {
-			checkRealm();
-			if (!isListening)
-				throw new IllegalStateException();
-			if (this.value != value) {
-				fireValueChange(Diffs.createValueDiff(this.value, this.value = value));
-			}
-		}
-
-		@Override
-		protected final void firstListenerAdded() {
-			if (getRealm().isCurrent()) {
-				startListeningInternal();
-			} else {
-				getRealm().asyncExec(() -> {
-					if (hasListeners && !isListening) {
-						startListeningInternal();
-					}
-				});
-			}
-			hasListeners = true;
-			super.firstListenerAdded();
-		}
-
-		@Override
-		protected final void lastListenerRemoved() {
-			if (getRealm().isCurrent()) {
-				stopListeningInternal();
-			} else {
-				getRealm().asyncExec(() -> {
-					if (!hasListeners && isListening) {
-						stopListeningInternal();
-					}
-				});
-			}
-			hasListeners = false;
-			super.lastListenerRemoved();
-		}
-
-		private void startListeningInternal() {
-			isListening = true;
-			value = calculate();
-			startListening();
-		}
-
-		private void stopListeningInternal() {
-			isListening = false;
-			value = null;
-			stopListening();
-		}
-
-		/**
-		 * Subclasses must override this method to attach listeners to the
-		 * non-{@link IObservable} objects the state of which is tracked by this
-		 * observable.
-		 */
-		protected abstract void startListening();
-
-		/**
-		 * Subclasses must override this method to detach listeners from the
-		 * non-{@link IObservable} objects the state of which is tracked by this
-		 * observable.
-		 */
-		protected abstract void stopListening();
-
-		/**
-		 * Subclasses must override this method to provide the object's value that will
-		 * be used when the value is not set explicitly by {@link #doSetValue(Object)}.
-		 *
-		 * @return the object's value
-		 */
-		protected abstract T calculate();
-
-		@Override
-		public Object getValueType() {
-			return null;
-		}
+		return WorkbenchProperties.editorInput().observe(editor);
 	}
 }
