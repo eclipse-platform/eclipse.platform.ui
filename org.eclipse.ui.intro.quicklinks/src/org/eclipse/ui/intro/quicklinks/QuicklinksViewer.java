@@ -486,7 +486,7 @@ public class QuicklinksViewer implements IIntroContentProvider {
 				return super.getImage(element);
 			}
 		});
-		tableViewer.setContentProvider(new ArrayContentProvider());
+		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		tableViewer.setInput(getQuicklinks().toArray());
 	}
 
