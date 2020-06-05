@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - derived implementation
  *******************************************************************************/
@@ -30,11 +30,11 @@ import org.apache.tools.ant.ProjectComponent;
 /**
  * A subclass of Project to facilitate "faster" parsing with less garbage generated. This class is not used on Ant 1.6 and newer due to the
  * improvements in lazy loading of these Ant versions.
- * 
+ *
  * Only three tasks are loaded (property, taskdef and typedef: three tasks that can be defined outside of a target on Ant 1.5.1 or older).
- * 
+ *
  * Datatypes are loaded if requested.
- * 
+ *
  * Derived from the original Ant Project class
  */
 public class InternalProject extends Project {

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Philippe Ombredanne (pombredanne@nexb.com) - bug 125367
@@ -35,18 +35,18 @@ import org.xml.sax.SAXException;
  * likely Ant element is found (classpath, import, macrodef, path, property, taskdef, typedef) returns VALID else: returns INDETERMINATE else returns
  * INDETERMINATE
  * </p>
- * 
+ *
  * @since 3.1
  */
 public final class AntBuildfileContentDescriber extends XMLContentDescriber implements IExecutableExtension {
 
 	/*
 	 * (Intentionally not included in javadoc) Determines the validation status for the given contents.
-	 * 
+	 *
 	 * @param contents the contents to be evaluated
-	 * 
+	 *
 	 * @return one of the following:<ul> <li><code>VALID</code></li>, <li><code>INVALID</code></li>, <li><code>INDETERMINATE</code></li> </ul>
-	 * 
+	 *
 	 * @throws IOException
 	 */
 	private int checkCriteria(InputSource contents) throws IOException {

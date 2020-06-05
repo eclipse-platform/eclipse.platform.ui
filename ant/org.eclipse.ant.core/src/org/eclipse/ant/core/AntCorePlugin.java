@@ -30,7 +30,7 @@ import org.osgi.framework.BundleContext;
 
 /**
  * The plug-in runtime class for the Ant Core plug-in. Clients may not instantiate or subclass this class.
- * 
+ *
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -38,7 +38,7 @@ public class AntCorePlugin extends Plugin {
 
 	/**
 	 * Status code indicating an unexpected internal error.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	public static final int INTERNAL_ERROR = 120;
@@ -75,14 +75,14 @@ public class AntCorePlugin extends Plugin {
 
 	/**
 	 * Simple identifier constant (value <code>"antProperties"</code>) for the Ant properties extension point.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static final String PT_PROPERTIES = "antProperties"; //$NON-NLS-1$
 
 	/**
 	 * Simple identifier constant (value <code>"org.eclipse.ant.core.antBuildFile"</code>) for the content type of an Ant BuildFile
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static final String ANT_BUILDFILE_CONTENT_TYPE = PI_ANTCORE + ".antBuildFile"; //$NON-NLS-1$
@@ -104,28 +104,28 @@ public class AntCorePlugin extends Plugin {
 
 	/**
 	 * Simple identifier constant (value <code>"headless"</code>) of a tag that appears in Ant extensions.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	public static final String HEADLESS = "headless"; //$NON-NLS-1$
 
 	/**
 	 * Simple identifier constant (value <code>"eclipseRuntime"</code>) of a tag that appears in Ant extensions.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static final String ECLIPSE_RUNTIME = "eclipseRuntime"; //$NON-NLS-1$
 
 	/**
 	 * Simple identifier constant (value <code>"uri"</code>) of a tag that appears in Ant extensions.
-	 * 
+	 *
 	 * @since 3.2
 	 */
 	public static final String URI = "uri"; //$NON-NLS-1$
 
 	/**
 	 * Simple identifier constant (value <code>"value"</code>) of a tag that appears in Ant extensions.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static final String VALUE = "value"; //$NON-NLS-1$
@@ -138,21 +138,21 @@ public class AntCorePlugin extends Plugin {
 
 	/**
 	 * Status code indicating an error occurred running a build.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	public static final int ERROR_RUNNING_BUILD = 1;
 
 	/**
 	 * Status code indicating an error occurred due to a malformed URL.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	public static final int ERROR_MALFORMED_URL = 2;
 
 	/**
 	 * Status code indicating an error occurred as a library was not specified
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	public static final int ERROR_LIBRARY_NOT_SPECIFIED = 3;
@@ -163,9 +163,9 @@ public class AntCorePlugin extends Plugin {
 	 * An instance of this plug-in runtime class is automatically created when the facilities provided by the Ant Core plug-in are required.
 	 * <b>Clients must never explicitly instantiate a plug-in runtime class.</b>
 	 * </p>
-	 * 
+	 *
 	 * @since 3.1
-	 * 
+	 *
 	 */
 	public AntCorePlugin() {
 		plugin = this;
@@ -195,7 +195,7 @@ public class AntCorePlugin extends Plugin {
 
 	/**
 	 * Given an extension point name, extract its extensions and return them as a List.
-	 * 
+	 *
 	 * @param pointName
 	 *            The name of the extension point
 	 * @return The list of the extensions
@@ -211,7 +211,7 @@ public class AntCorePlugin extends Plugin {
 
 	/**
 	 * Returns an object representing this plug-in's preferences.
-	 * 
+	 *
 	 * @return the Ant core object representing the preferences for this plug-in.
 	 */
 	public AntCorePreferences getPreferences() {
@@ -224,7 +224,7 @@ public class AntCorePlugin extends Plugin {
 	/**
 	 * Set this plug-in's preferences for running headless based on the headless parameter. This method is public for testing purposes only. It should
 	 * not be called outside of the Ant integration framework.
-	 * 
+	 *
 	 * @param headless
 	 *            Whether or not to mark that the plug-in is running headless or not
 	 */
@@ -234,7 +234,7 @@ public class AntCorePlugin extends Plugin {
 
 	/**
 	 * Returns this plug-in instance.
-	 * 
+	 *
 	 * @return the single instance of this plug-in runtime class
 	 */
 	public static AntCorePlugin getPlugin() {
@@ -243,7 +243,7 @@ public class AntCorePlugin extends Plugin {
 
 	/**
 	 * Returns a new class loader to use when executing Ant builds.
-	 * 
+	 *
 	 * @return the new class loader
 	 */
 	public ClassLoader getNewClassLoader() {
@@ -253,7 +253,7 @@ public class AntCorePlugin extends Plugin {
 
 	/**
 	 * Returns a new class loader to use when executing Ant builds.
-	 * 
+	 *
 	 * @param urls
 	 *            the URLs that define the classpath of the new classloader
 	 * @return the new class loader
@@ -265,7 +265,7 @@ public class AntCorePlugin extends Plugin {
 
 	/**
 	 * Returns a new class loader to use when executing Ant builds or other applications such as parsing or code proposal determination.
-	 * 
+	 *
 	 * @param allowLoading
 	 *            whether to allow plug-in classloaders associated with the new classloader to load Apache Ant classes or resources.
 	 * @return the new class loader
@@ -278,7 +278,7 @@ public class AntCorePlugin extends Plugin {
 
 	/**
 	 * Returns a new class loader to use when executing Ant builds or other applications such as parsing or code proposal determination.
-	 * 
+	 *
 	 * @param allowLoading
 	 *            whether to allow plug-in classloaders associated with the new classloader to load Apache Ant classes or resources.
 	 * @param urls
@@ -296,7 +296,7 @@ public class AntCorePlugin extends Plugin {
 
 	/**
 	 * Logs the specified throwable with this plug-in's log.
-	 * 
+	 *
 	 * @param t
 	 *            throwable to log
 	 * @since 2.1

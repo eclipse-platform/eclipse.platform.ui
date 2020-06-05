@@ -48,7 +48,7 @@ import org.eclipse.osgi.util.NLS;
  * Refer to the "Platform Ant Support" chapter of the Programmer's Guide section in the Platform Plug-in Developer Guide for complete details.
  * </p>
  * </div>
- * 
+ *
  * @noextend This class is not intended to be subclassed by clients.
  */
 public class AntRunner implements IApplication {
@@ -69,7 +69,7 @@ public class AntRunner implements IApplication {
 
 	/**
 	 * Sets the build file location on the file system.
-	 * 
+	 *
 	 * @param buildFileLocation
 	 *            the file system location of the build file
 	 */
@@ -92,7 +92,7 @@ public class AntRunner implements IApplication {
 	 * <li><code>org.apache.tools.ant.Project.VERBOSE</code> or
 	 * <li><code>org.apache.tools.ant.Project.DEBUG</code>
 	 * </ul>
-	 * 
+	 *
 	 * @param level
 	 *            the message output level
 	 */
@@ -102,7 +102,7 @@ public class AntRunner implements IApplication {
 
 	/**
 	 * Sets the arguments to be passed to the build (e.g. -Dos=win32 -Dws=win32 - verbose).
-	 * 
+	 *
 	 * @param arguments
 	 *            the arguments to be passed to the build
 	 */
@@ -150,7 +150,7 @@ public class AntRunner implements IApplication {
 
 	/**
 	 * Sets the arguments to be passed to the build (e.g. -Dos=win32 -Dws=win32 -verbose).
-	 * 
+	 *
 	 * @param arguments
 	 *            the arguments to be passed to the build
 	 * @since 2.1
@@ -161,7 +161,7 @@ public class AntRunner implements IApplication {
 
 	/**
 	 * Sets the targets and execution order.
-	 * 
+	 *
 	 * @param executionTargets
 	 *            which targets should be run and in which order
 	 */
@@ -173,10 +173,10 @@ public class AntRunner implements IApplication {
 	 * Adds a build listener. The parameter <code>className</code> is the class name of an <code>org.apache.tools.ant.BuildListener</code>
 	 * implementation. The class will be instantiated at runtime and the listener will be called on build events (
 	 * <code>org.apache.tools.ant.BuildEvent</code>).
-	 * 
+	 *
 	 * <p>
 	 * Refer to {@link AntRunner Usage Note} for implementation details.
-	 * 
+	 *
 	 * @param className
 	 *            a build listener class name
 	 */
@@ -194,10 +194,10 @@ public class AntRunner implements IApplication {
 	 * Sets the build logger. The parameter <code>className</code> is the class name of an <code>org.apache.tools.ant.BuildLogger</code>
 	 * implementation. The class will be instantiated at runtime and the logger will be called on build events (
 	 * <code>org.apache.tools.ant.BuildEvent</code>). Only one build logger is permitted for any build.
-	 * 
+	 *
 	 * <p>
 	 * Refer to {@link AntRunner Usage Note} for implementation details.
-	 * 
+	 *
 	 * @param className
 	 *            a build logger class name
 	 */
@@ -207,7 +207,7 @@ public class AntRunner implements IApplication {
 
 	/**
 	 * Adds user-defined properties. Keys and values must be String objects.
-	 * 
+	 *
 	 * @param properties
 	 *            a Map of user-defined properties
 	 */
@@ -221,9 +221,9 @@ public class AntRunner implements IApplication {
 
 	/**
 	 * Returns the buildfile target information.
-	 * 
+	 *
 	 * @return an array containing the target information
-	 * 
+	 *
 	 * @see TargetInfo
 	 * @since 2.1
 	 * @throws CoreException
@@ -295,11 +295,11 @@ public class AntRunner implements IApplication {
 	 * Runs the build file. If a progress monitor is specified it will be available during the script execution as a reference in the Ant Project (
 	 * <code>org.apache.tools.ant.Project.getReferences()</code>). A long- running task could, for example, get the monitor during its execution and
 	 * check for cancellation. The key value to retrieve the progress monitor instance is <code>AntCorePlugin.ECLIPSE_PROGRESS_MONITOR</code>.
-	 * 
+	 *
 	 * Only one build can occur at any given time.
-	 * 
+	 *
 	 * Sets the current threads context class loader to the AntClassLoader for the duration of the build.
-	 * 
+	 *
 	 * @param monitor
 	 *            a progress monitor, or <code>null</code> if progress reporting and cancellation are not desired
 	 * @throws CoreException
@@ -415,7 +415,7 @@ public class AntRunner implements IApplication {
 
 	/*
 	 * Handles exceptions that are loaded by the Ant Class Loader by asking the Internal Ant Runner class for the correct error message.
-	 * 
+	 *
 	 * Handles OperationCanceledExceptions, nested NoClassDefFoundError and nested ClassNotFoundException
 	 */
 	protected void handleInvocationTargetException(Object runner, Class<?> classInternalAntRunner, InvocationTargetException e) throws CoreException {
@@ -468,7 +468,7 @@ public class AntRunner implements IApplication {
 
 	/**
 	 * Runs the build file.
-	 * 
+	 *
 	 * @throws CoreException
 	 *             Thrown if a build is already occurring or if an exception occurs during the build
 	 */
@@ -479,9 +479,9 @@ public class AntRunner implements IApplication {
 	/**
 	 * Invokes the building of a project object and executes a build using either a given target or the default target. This method is called when
 	 * running Eclipse headless and specifying <code>org.eclipse.ant.core.antRunner</code> as the application.
-	 * 
+	 *
 	 * Sets the current threads context class loader to the AntClassLoader for the duration of the build.
-	 * 
+	 *
 	 * @param argArray
 	 *            the command line arguments
 	 * @exception Exception
@@ -535,10 +535,10 @@ public class AntRunner implements IApplication {
 	 * Sets the input handler. The parameter <code>className</code> is the class name of an <code>org.apache.tools.ant.input.InputHandler</code>
 	 * implementation. The class will be instantiated at runtime and the input handler will be used to respond to &lt;input&gt; requests Only one
 	 * input handler is permitted for any build.
-	 * 
+	 *
 	 * <p>
 	 * Refer to {@link AntRunner Usage Note} for implementation details.
-	 * 
+	 *
 	 * @param className
 	 *            an input handler class name
 	 * @since 2.1
@@ -549,7 +549,7 @@ public class AntRunner implements IApplication {
 
 	/**
 	 * Sets the user specified property files.
-	 * 
+	 *
 	 * @param propertyFiles
 	 *            array of property file paths
 	 * @since 2.1
@@ -560,7 +560,7 @@ public class AntRunner implements IApplication {
 
 	/**
 	 * Sets the custom classpath to use for this build
-	 * 
+	 *
 	 * @param customClasspath
 	 *            array of URLs that define the custom classpath
 	 */
@@ -570,7 +570,7 @@ public class AntRunner implements IApplication {
 
 	/**
 	 * Sets the Ant home to use for this build
-	 * 
+	 *
 	 * @param antHome
 	 *            String specifying the Ant home to use
 	 * @since 2.1
@@ -581,9 +581,9 @@ public class AntRunner implements IApplication {
 
 	/**
 	 * Returns whether an Ant build is already in progress
-	 * 
+	 *
 	 * Only one Ant build can occur at any given time.
-	 * 
+	 *
 	 * @since 2.1
 	 * @return boolean
 	 */
@@ -594,9 +594,9 @@ public class AntRunner implements IApplication {
 	/**
 	 * Invokes the building of a project object and executes a build using either a given target or the default target. This method is called when
 	 * running Eclipse headless and specifying <code>org.eclipse.ant.core.antRunner</code> as the application.
-	 * 
+	 *
 	 * Sets the current threads context class loader to the <code>AntClassLoader</code> for the duration of the build.
-	 * 
+	 *
 	 * @param context
 	 *            the context used to start the application
 	 * @exception Exception

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Thierry Lach (thierry.lach@bbdodetroit.com) - bug 40502
@@ -73,7 +73,7 @@ import org.osgi.util.tracker.ServiceTracker;
 /**
  * Represents the Ant Core plug-in's preferences providing utilities for extracting, changing and updating the underlying preferences. Clients may not
  * instantiate or subclass this class.
- * 
+ *
  * @since 2.1
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
@@ -199,7 +199,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * When a preference changes, update the in-memory cache of the preference.
-	 * 
+	 *
 	 * @param event
 	 *            The property change event that has occurred.
 	 * @see org.eclipse.core.runtime.Preferences.IPropertyChangeListener#propertyChange(org.eclipse.core.runtime.Preferences.PropertyChangeEvent)
@@ -339,7 +339,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Returns the absolute path of the default ant.home to use for the build. The default is the org.apache.ant plug-in folder provided with Eclipse.
-	 * 
+	 *
 	 * @return String absolute path of the default ant.home
 	 * @since 3.0
 	 */
@@ -438,9 +438,9 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Returns the array of URLs that is the default set of URLs defining the Ant classpath.
-	 * 
+	 *
 	 * Ant running through the command line tries to find tools.jar to help the user. Try emulating the same behavior here.
-	 * 
+	 *
 	 * @return the default set of URLs defining the Ant classpath
 	 * @deprecated use {@link #getDefaultAntHomeEntries()} instead
 	 */
@@ -459,7 +459,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Returns the array of classpath entries that is the default set of entries defining the Ant classpath.
-	 * 
+	 *
 	 * @return the default set of classpath entries defining the Ant classpath
 	 */
 	public synchronized IAntClasspathEntry[] getDefaultAntHomeEntries() {
@@ -517,7 +517,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=282851">https://bugs.eclipse.org/bugs/show_bug.cgi?id=282851</a></li>
 	 * <li><a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=325125">https://bugs.eclipse.org/bugs/show_bug.cgi?id=325125</a></li>
 	 * </ul>
-	 * 
+	 *
 	 * @param packages
 	 *            the live list of {@link ExportedPackage}s to inspect
 	 * @return the bundle that represents the highest version of <code>org.apache.ant</code> or <code>null</code> if there are no
@@ -552,7 +552,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Returns the array of URLs that is the set of URLs defining the Ant classpath.
-	 * 
+	 *
 	 * @return the set of URLs defining the Ant classpath
 	 * @deprecated use getAntHomeClasspathEntries and getToolsJarEntry
 	 */
@@ -580,7 +580,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Returns the complete list of pre-configured {@link Task}s
-	 * 
+	 *
 	 * @param tasks
 	 *            the {@link IConfigurationElement} handles for contributed {@link Task}s
 	 * @return the list of {@link Task}s
@@ -623,7 +623,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Returns the complete listing of pre-configured {@link Type}s
-	 * 
+	 *
 	 * @param types
 	 *            the list of {@link IConfigurationElement} handles to contributed {@link Type}s
 	 * @return the list of {@link Type}s
@@ -673,7 +673,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Configures the given {@link AntObject} and returns if it should be retained
-	 * 
+	 *
 	 * @param element
 	 * @param antObject
 	 * @param objectName
@@ -785,7 +785,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/*
 	 * Scan the Ant property extensions for properties to set.
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	private void computeDefaultProperties(List<IConfigurationElement> properties) {
@@ -829,7 +829,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	/**
 	 * Returns the IAntClasspathEntry for the tools.jar associated with the path supplied. May return <code>null</code> if no tools.jar is found (e.g.
 	 * the path points to a JRE install).
-	 * 
+	 *
 	 * @param javaHomePath
 	 *            path for Java home
 	 * @return IAntClasspathEntry tools.jar IAntClasspathEntry or <code>null</code>
@@ -859,7 +859,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * Returns the URL for the tools.jar associated with the System property "java.home" location. If "java.home" has no associated tools.jar (such as
 	 * a JRE install), the environment variable "JAVA_HOME" is resolved to check for a tools.jar. May return <code>null</code> if no tools.jar is
 	 * found.
-	 * 
+	 *
 	 * @return URL tools.jar URL or <code>null</code>
 	 * @deprecated use getToolsJarEntry()
 	 */
@@ -893,7 +893,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	 * Returns the <code>IAntClasspathEntry</code> for the tools.jar associated with the System property "java.home" location. If "java.home" has no
 	 * associated tools.jar (such as a JRE install), the environment variable "JAVA_HOME" is resolved to check for a tools.jar. May return
 	 * <code>null</code> if no tools.jar is found.
-	 * 
+	 *
 	 * @return IAntClasspathEntry tools.jar IAntClasspathEntry or <code>null</code>
 	 */
 	public IAntClasspathEntry getToolsJarEntry() {
@@ -920,9 +920,9 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Returns the <code>IAntClasspathEntry</code>s for the jars from ${user.home}/.ant/lib May return <code>null</code> if jars are found.
-	 * 
+	 *
 	 * TODO Should be promoted to API post 3.1
-	 * 
+	 *
 	 * @return the collection of <code>IAntClasspathEntry</code> found at ${user.home}/.ant/lib or <code>null</code> if none found of location does
 	 *         not exist
 	 */
@@ -975,7 +975,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Add the libraries contributed by the Ant plug-in, to the classpath.
-	 * 
+	 *
 	 * @param source
 	 * @param destination
 	 * @throws IOException
@@ -1012,7 +1012,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Returns the list of URLs added to the classpath by the extra classpath entries extension point.
-	 * 
+	 *
 	 * @return the list of extra classpath URLs
 	 */
 	public URL[] getExtraClasspathURLs() {
@@ -1028,7 +1028,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	/**
 	 * Returns the list of URLs added to the classpath by the extra classpath entries extension point for an Ant build that is occurring without the
 	 * Eclipse runtime.
-	 * 
+	 *
 	 * @return the list of extra classpath URLs
 	 * @since 3.0
 	 */
@@ -1045,7 +1045,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Returns the entire set of URLs that define the Ant runtime classpath. Includes the Ant URLs, the additional URLs and extra classpath URLs.
-	 * 
+	 *
 	 * @return the entire runtime classpath of URLs
 	 */
 	public URL[] getURLs() {
@@ -1275,7 +1275,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Returns the default and custom tasks.
-	 * 
+	 *
 	 * @return the list of default and custom tasks.
 	 */
 	public List<Task> getTasks() {
@@ -1291,7 +1291,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Returns the default and custom tasks that are relevant when there is no Eclipse runtime context (an Ant build in a separate VM).
-	 * 
+	 *
 	 * @return the list of default and custom tasks.
 	 */
 	public List<Task> getRemoteTasks() {
@@ -1313,7 +1313,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Returns the user defined custom tasks
-	 * 
+	 *
 	 * @return the user defined tasks
 	 */
 	public Task[] getCustomTasks() {
@@ -1322,7 +1322,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Returns the user defined custom types
-	 * 
+	 *
 	 * @return the user defined types
 	 */
 	public Type[] getCustomTypes() {
@@ -1331,7 +1331,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Returns the custom user properties specified for Ant builds.
-	 * 
+	 *
 	 * @return the properties defined for Ant builds.
 	 */
 	public Property[] getCustomProperties() {
@@ -1340,7 +1340,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Returns the default and custom properties.
-	 * 
+	 *
 	 * @return the list of default and custom properties.
 	 * @since 3.0
 	 */
@@ -1357,7 +1357,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Returns the default and custom properties that are relevant when there is no Eclipse runtime context (Ant build in a separate VM).
-	 * 
+	 *
 	 * @return the list of default and custom properties.
 	 * @since 3.0
 	 */
@@ -1380,7 +1380,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Returns the custom property files specified for Ant builds performing any required string substitution if indicated.
-	 * 
+	 *
 	 * @param performStringSubstition
 	 *            whether or not to perform the string substitution on the property file strings
 	 * @return the property files defined for Ant builds.
@@ -1407,7 +1407,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Returns the custom property files specified for Ant builds.
-	 * 
+	 *
 	 * @return the property files defined for Ant builds.
 	 */
 	public String[] getCustomPropertyFiles() {
@@ -1416,7 +1416,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Returns the custom URLs specified for the Ant classpath
-	 * 
+	 *
 	 * @return the URLs defining the Ant classpath
 	 * @deprecated
 	 */
@@ -1436,7 +1436,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Sets the user defined custom tasks. To commit the changes, updatePluginPreferences must be called.
-	 * 
+	 *
 	 * @param tasks
 	 *            The custom tasks.
 	 */
@@ -1447,7 +1447,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Sets the user defined custom types. To commit the changes, updatePluginPreferences must be called.
-	 * 
+	 *
 	 * @param types
 	 *            The custom types
 	 */
@@ -1458,7 +1458,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Sets the custom URLs specified for the Ant classpath. To commit the changes, updatePluginPreferences must be called.
-	 * 
+	 *
 	 * @param urls
 	 *            the URLs defining the Ant classpath
 	 * @deprecated use setAdditionalEntries(IAntClasspathEntry)[]
@@ -1475,7 +1475,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Sets the Ant URLs specified for the Ant classpath. To commit the changes, updatePluginPreferences must be called.
-	 * 
+	 *
 	 * @param urls
 	 *            the URLs defining the Ant classpath
 	 * @deprecated use setAntHomeEntires(IAntClasspathEntry[])
@@ -1492,7 +1492,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Sets the custom property files specified for Ant builds. To commit the changes, updatePluginPreferences must be called.
-	 * 
+	 *
 	 * @param paths
 	 *            the absolute paths defining the property files to use.
 	 */
@@ -1502,7 +1502,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Sets the custom user properties specified for Ant builds. To commit the changes, updatePluginPreferences must be called.
-	 * 
+	 *
 	 * @param properties
 	 *            the properties defining the Ant properties
 	 */
@@ -1513,7 +1513,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Returns the default and custom types.
-	 * 
+	 *
 	 * @return all of the defined types
 	 */
 	public List<Type> getTypes() {
@@ -1529,7 +1529,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Returns the default and custom types that are relevant when there is no Eclipse runtime context (an Ant build in a separate VM).
-	 * 
+	 *
 	 * @return the list of default and custom types.
 	 */
 	public List<Type> getRemoteTypes() {
@@ -1551,7 +1551,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Returns the default types defined via the type extension point
-	 * 
+	 *
 	 * @return all of the default types
 	 */
 	public List<Type> getDefaultTypes() {
@@ -1564,7 +1564,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Returns the default tasks defined via the task extension point
-	 * 
+	 *
 	 * @return all of the default tasks
 	 */
 	public List<Task> getDefaultTasks() {
@@ -1577,7 +1577,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Returns the default properties defined via the properties extension point
-	 * 
+	 *
 	 * @return all of the default properties
 	 * @since 3.0
 	 */
@@ -1778,7 +1778,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Sets the string that defines the Ant home set by the user. May be set to <code>null</code>.
-	 * 
+	 *
 	 * @param antHome
 	 *            the fully qualified path to Ant home
 	 */
@@ -1789,7 +1789,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 	/**
 	 * Returns the string that defines the Ant home set by the user or the location of the Eclipse Ant plug-in if Ant home has not been specifically
 	 * set by the user. Can return <code>null</code>
-	 * 
+	 *
 	 * @return the fully qualified path to Ant home
 	 */
 	public String getAntHome() {
@@ -1798,7 +1798,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Returns the set of classpath entries that compose the libraries added to the Ant runtime classpath from the Ant home location.
-	 * 
+	 *
 	 * @return the set of ant home classpath entries
 	 * @since 3.0
 	 */
@@ -1808,7 +1808,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Returns the set of classpath entries that the user has added to the Ant runtime classpath.
-	 * 
+	 *
 	 * @return the set of user classpath entries
 	 * @since 3.0
 	 */
@@ -1818,7 +1818,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Sets the set of classpath entries that compose the libraries added to the Ant runtime classpath from the Ant home location.
-	 * 
+	 *
 	 * @param entries
 	 *            the set of ant home classpath entries
 	 * @since 3.0
@@ -1829,7 +1829,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Sets the set of classpath entries that the user has added to the Ant runtime classpath.
-	 * 
+	 *
 	 * @param entries
 	 *            the set of user classpath entries
 	 * @since 3.0
@@ -1840,7 +1840,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Returns the list of URLs to added to the classpath for an Ant build that is occurring without the Eclipse runtime.
-	 * 
+	 *
 	 * @return the list of classpath entries
 	 * @since 3.0
 	 */
@@ -1869,7 +1869,7 @@ public class AntCorePreferences implements IPropertyChangeListener {
 
 	/**
 	 * Returns all contributed classpath entries via the <code>extraClasspathEntries</code> extension point.
-	 * 
+	 *
 	 * @return all contributed classpath entries via the <code>extraClasspathEntries</code> extension point
 	 * @since 3.0
 	 */

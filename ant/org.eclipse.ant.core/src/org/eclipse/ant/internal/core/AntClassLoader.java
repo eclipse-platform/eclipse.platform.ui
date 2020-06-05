@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Tromey (tromey@redhat.com) - patch for bug 40972
@@ -153,7 +153,7 @@ public class AntClassLoader extends URLClassLoader {
 
 	/**
 	 * Sets whether this class loader will allow Apache Ant classes or resources to be found or loaded from its set of plug-in class loaders.
-	 * 
+	 *
 	 * @param allowLoading
 	 *            whether or not to allow the plug-in class loaders to load the Apache Ant classes or resources
 	 */

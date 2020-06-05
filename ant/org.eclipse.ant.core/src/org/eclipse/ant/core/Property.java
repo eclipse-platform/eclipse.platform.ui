@@ -21,7 +21,7 @@ import org.eclipse.core.variables.VariablesPlugin;
 
 /**
  * Represents a Ant property. Clients may instantiate this class; it is not intended to be subclassed.
- * 
+ *
  * @since 2.1
  * @noextend This class is not intended to be subclassed by clients.
  */
@@ -45,7 +45,7 @@ public class Property {
 
 	/**
 	 * Gets the name
-	 * 
+	 *
 	 * @return Returns a String
 	 */
 	public String getName() {
@@ -54,7 +54,7 @@ public class Property {
 
 	/**
 	 * Sets the name
-	 * 
+	 *
 	 * @param name
 	 *            The name to set
 	 */
@@ -78,7 +78,7 @@ public class Property {
 
 	/**
 	 * Returns the value. Equivalent to calling #getValue(true);
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getValue() {
@@ -87,7 +87,7 @@ public class Property {
 
 	/**
 	 * Returns the value.
-	 * 
+	 *
 	 * @param substituteVariables
 	 *            whether the value has any variables resolved.
 	 * @return String
@@ -134,7 +134,7 @@ public class Property {
 
 	/**
 	 * Sets the value.
-	 * 
+	 *
 	 * @param value
 	 *            The value to set
 	 */
@@ -144,7 +144,7 @@ public class Property {
 
 	/**
 	 * Returns whether this Ant property has been created because of an extension point definition.
-	 * 
+	 *
 	 * @return boolean
 	 * @since 3.0
 	 */
@@ -154,7 +154,7 @@ public class Property {
 
 	/**
 	 * Sets the label of the plug-in that contributed this Ant property via an extension point.
-	 * 
+	 *
 	 * @param pluginLabel
 	 *            The label of the plug-in
 	 * @since 3.0
@@ -165,7 +165,7 @@ public class Property {
 
 	/**
 	 * Returns the label of the plug-in that contributed this Ant property via an extension point.
-	 * 
+	 *
 	 * @return pluginLabel The label of the plug-in
 	 * @since 3.0
 	 */
@@ -176,7 +176,7 @@ public class Property {
 	/**
 	 * Sets the name of the class that is an <code>IAntPropertyValueProvider</code> to be used to dynamically provide a value for this property. Sets
 	 * the class loader to load the <code>IAntPropertyValueProvider</code> to be used to dynamically provide a value for this property.
-	 * 
+	 *
 	 * @param className
 	 *            The name of the value provider class to use to resolve the value of this property
 	 * @param loader
@@ -200,7 +200,7 @@ public class Property {
 
 	/**
 	 * Returns whether this property requires the Eclipse runtime to be relevant. Defaults value is <code>true</code>
-	 * 
+	 *
 	 * @return whether this property requires the Eclipse runtime
 	 * @since 3.0
 	 */

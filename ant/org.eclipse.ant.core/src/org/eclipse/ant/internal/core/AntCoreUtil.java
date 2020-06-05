@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -62,7 +62,7 @@ public class AntCoreUtil {
 
 	/*
 	 * From a command line list, get the argument for the given parameter. The parameter and its argument are removed from the list.
-	 * 
+	 *
 	 * @return <code>null</code> if the parameter is not found or an empty String if no arguments are found
 	 */
 	public static String getArgument(List<String> commands, String param) {
@@ -134,7 +134,7 @@ public class AntCoreUtil {
 
 	/**
 	 * Returns a list of Properties contained in the list of fileNames.
-	 * 
+	 *
 	 * @param fileNames
 	 *            the names of the properties files to load from
 	 * @param base

@@ -1,13 +1,13 @@
 /*******************************************************************************
  * Copyright (c) 2003, 2006 BBDO Detroit and others.
  *
- * This program and the accompanying materials 
+ * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
  * which accompanies this distribution, and is available at
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     Thierry Lach (thierry.lach@bbdodetroit.com) - initial API and implementation for bug 40502
  *     IBM Corporation - added eclipse.running property, bug 65655
@@ -25,9 +25,9 @@ import org.eclipse.core.runtime.URIUtil;
 
 /**
  * Dynamic provider for Ant properties.
- * 
+ *
  * Provides the dynamic values for the following Ant properties:
- * 
+ *
  * <ul>
  * <li><code>eclipse.home</code> - set to the Eclipse installation directory</li>
  * </ul>
@@ -35,13 +35,13 @@ import org.eclipse.core.runtime.URIUtil;
  * <ul>
  * <li><code>eclipse.running</code> - set (to "true") when Eclipse is running</li>
  * </ul>
- * 
+ *
  * @since 3.0
  */
 public class AntPropertyValueProvider implements IAntPropertyValueProvider {
 	/**
 	 * Returns the dynamic property values for Ant properties.
-	 * 
+	 *
 	 * @param propertyName
 	 *            The name of the property to resolve the value for
 	 * @return The resolved value for the property

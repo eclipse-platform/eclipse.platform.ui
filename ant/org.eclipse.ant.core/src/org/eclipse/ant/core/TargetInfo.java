@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -17,7 +17,7 @@ import org.eclipse.ant.internal.core.IAntCoreConstants;
 
 /**
  * Represents information about a target within an Ant build file. Clients may not instantiate or subclass this class.
- * 
+ *
  * @since 2.1
  * @noinstantiate This class is not intended to be instantiated by clients.
  * @noextend This class is not intended to be subclassed by clients.
@@ -32,7 +32,7 @@ public class TargetInfo {
 
 	/**
 	 * Create a target information
-	 * 
+	 *
 	 * @param name
 	 *            target name
 	 * @param description
@@ -55,7 +55,7 @@ public class TargetInfo {
 
 	/**
 	 * Returns the target name.
-	 * 
+	 *
 	 * @return the target name
 	 */
 	public String getName() {
@@ -64,7 +64,7 @@ public class TargetInfo {
 
 	/**
 	 * Returns the target description or <code>null</code> if no description is provided.
-	 * 
+	 *
 	 * @return the target description or <code>null</code> if none
 	 */
 	public String getDescription() {
@@ -73,7 +73,7 @@ public class TargetInfo {
 
 	/**
 	 * Returns the ProjectInfo of the enclosing project.
-	 * 
+	 *
 	 * @return the project info for the enclosing project
 	 */
 	public ProjectInfo getProject() {
@@ -82,7 +82,7 @@ public class TargetInfo {
 
 	/**
 	 * Return the names of the targets that this target depends on.
-	 * 
+	 *
 	 * @return the dependent names
 	 */
 	public String[] getDependencies() {
@@ -91,7 +91,7 @@ public class TargetInfo {
 
 	/**
 	 * Returns whether this is the build file default target.
-	 * 
+	 *
 	 * @return whether this is the build file default target
 	 */
 	public boolean isDefault() {

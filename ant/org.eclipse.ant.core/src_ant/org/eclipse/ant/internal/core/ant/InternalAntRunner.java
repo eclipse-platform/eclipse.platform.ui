@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - derived implementation
  *     Blake Meike (blakem@world.std.com)- patch for bug 31691 and bug 34488
@@ -145,14 +145,14 @@ public class InternalAntRunner {
 
 	/**
 	 * Indicates whether to execute all targets that do not depend on failed targets
-	 * 
+	 *
 	 * @since Ant 1.6.0
 	 */
 	private boolean keepGoing = false;
 
 	/**
 	 * Indicates whether this build is to support interactive input
-	 * 
+	 *
 	 * @since Ant 1.6.0
 	 */
 	private boolean allowInput = true;
@@ -163,7 +163,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Adds a build listener.
-	 * 
+	 *
 	 * @param classNames
 	 *            the fully qualified names of the build listeners to be added
 	 */
@@ -183,7 +183,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Adds a build logger. There can be only one build logger.
-	 * 
+	 *
 	 * @param className
 	 *            The fully qualified name of the build logger to add
 	 */
@@ -193,7 +193,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Adds user properties to the current collection of user properties.
-	 * 
+	 *
 	 * @param properties
 	 *            The user properties to be added
 	 */
@@ -208,7 +208,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Adds user property files.
-	 * 
+	 *
 	 * @param additionalPropertyFiles
 	 *            The property files to add
 	 * @since 2.1
@@ -219,7 +219,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Tries to add the build listeners to the backing {@link Project}
-	 * 
+	 *
 	 * @param project
 	 *            the project to add the listeners to
 	 * @param log
@@ -285,7 +285,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Sets the default <code>ant.file</code> and <code>ant.version</code> properties in the given {@link Project}
-	 * 
+	 *
 	 * @param project
 	 */
 	protected void setBuiltInProperties(Project project) {
@@ -369,7 +369,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Parses the build file and adds necessary information into the given project.
-	 * 
+	 *
 	 * @param project
 	 *            The project to configure
 	 */
@@ -405,7 +405,7 @@ public class InternalAntRunner {
 	 * Gets all the target information from the build script. Returns a list of lists. Each item in the enclosing list represents a target, where the
 	 * first element is the name, the second element is the description, the third element is the project name, and the last elements is an array of
 	 * dependencies.
-	 * 
+	 *
 	 * @return a list of {@link TargetInfo} objects
 	 */
 	public List<TargetInfo> getTargets() {
@@ -465,7 +465,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Returns a list of target names in the build script.
-	 * 
+	 *
 	 * @return a list of target names
 	 */
 	private List<String> getTargetNames() {
@@ -518,7 +518,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Returns the default target name that was last computed or <code>null</code> if no default target has been computed.
-	 * 
+	 *
 	 * @return the default target name
 	 */
 	public String getDefaultTarget() {
@@ -562,7 +562,7 @@ public class InternalAntRunner {
 	/**
 	 * Invokes the building of a project object and executes a build using either a given target or the default target. This method is called if
 	 * running in headless mode.
-	 * 
+	 *
 	 * @see org.eclipse.ant.core.AntRunner#run(Object)
 	 * @param argArray
 	 *            the command line arguments
@@ -581,7 +581,7 @@ public class InternalAntRunner {
 	 * <ul>
 	 * <li><b>-projecthelp</b>, <b>-p</b> - print project help information</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param argList
 	 *            the raw list of command line arguments
 	 */
@@ -790,7 +790,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Creates and returns the default build logger for logging build events to the ant log.
-	 * 
+	 *
 	 * @return the default build logger for logging build events to the ant log can return <code>null</code> if no logging is to occur
 	 */
 	protected BuildLogger createLogger() {
@@ -843,7 +843,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Sends the the event to the backing project that the build has completed
-	 * 
+	 *
 	 * @param project
 	 * @param error
 	 */
@@ -907,7 +907,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Sets the buildFileLocation.
-	 * 
+	 *
 	 * @param buildFileLocation
 	 *            the file system location of the build file
 	 */
@@ -920,7 +920,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Sets the input handler class name.
-	 * 
+	 *
 	 * @param inputHandlerClassname
 	 *            the name of the class to use for the input handler
 	 */
@@ -930,7 +930,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Returns the class name of the input handler to use
-	 * 
+	 *
 	 * @return the input handler class name
 	 */
 	protected String getInputHandler() {
@@ -943,7 +943,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Returns the location of the buildfile. If one has not been supplied the default location of <code>build.xml</code> will be returned
-	 * 
+	 *
 	 * @return the absolute location of the build file
 	 */
 	protected String getBuildFileLocation() {
@@ -955,7 +955,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Sets the message output level. Use -1 for none.
-	 * 
+	 *
 	 * @param level
 	 *            The message output level
 	 */
@@ -968,7 +968,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Sets the extra user arguments
-	 * 
+	 *
 	 * @param args
 	 *            The extra user arguments
 	 */
@@ -978,7 +978,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Sets the execution targets.
-	 * 
+	 *
 	 * @param executionTargets
 	 *            The targets to execute for the build
 	 */
@@ -1032,7 +1032,7 @@ public class InternalAntRunner {
 	 * <li><b>-logger</b> <em>&lt;classname&gt;</em> - the class which is to perform logging</li>
 	 * <li><b>-listener</b> <em>&lt;classname&gt;</em> - add an instance of class as a project listener</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param commands
 	 *            the raw command line arguments passed in from the application
 	 * @return <code>true</code> if it is OK to run with the given list of arguments <code>false</code> otherwise
@@ -1106,7 +1106,7 @@ public class InternalAntRunner {
 	 * <li><b>-autoproxy</b> - Java 1.5+ : use the OS proxies</li>
 	 * <li><b>-main</b> <em>&lt;class&gt;</em> - override Ant's normal entry point</li>
 	 * </ul>
-	 * 
+	 *
 	 * @param commands
 	 *            the raw command line arguments passed in from the application
 	 * @return <code>true</code> if it is OK to run with the given list of arguments <code>false</code> otherwise
@@ -1242,7 +1242,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Checks for unrecognized targets on the command line and removes them.
-	 * 
+	 *
 	 * @since 3.6
 	 */
 	private void processUnrecognizedTargets(List<String> commands) {
@@ -1373,7 +1373,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Process properties specified using <code>-D</code>
-	 * 
+	 *
 	 * @param commands
 	 */
 	protected void processMinusDProperties(List<String> commands) {
@@ -1392,7 +1392,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Sets the build progress monitor.
-	 * 
+	 *
 	 * @param monitor
 	 *            The progress monitor to use
 	 */
@@ -1402,7 +1402,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Returns the current {@link Project} context
-	 * 
+	 *
 	 * @return the current {@link Project}
 	 */
 	protected Project getCurrentProject() {
@@ -1411,7 +1411,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Sets the current {@link Project} context
-	 * 
+	 *
 	 * @param currentProject
 	 *            the new {@link Project}
 	 */
@@ -1457,7 +1457,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Creates the InputHandler and adds it to the project.
-	 * 
+	 *
 	 * @exception BuildException
 	 *                if a specified InputHandler implementation could not be loaded.
 	 */
@@ -1502,7 +1502,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Sets the custom classpath to be included when setting the Java classpath for this build.
-	 * 
+	 *
 	 * @param classpath
 	 *            The custom classpath for this build.
 	 */

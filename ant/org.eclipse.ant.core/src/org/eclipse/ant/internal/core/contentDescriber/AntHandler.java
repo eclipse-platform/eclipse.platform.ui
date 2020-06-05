@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Philippe Ombredanne (pombredanne@nexb.com) - bug 125367
@@ -33,13 +33,13 @@ import org.xml.sax.helpers.DefaultHandler;
 /**
  * An xml event handler for detecting the project top-level element in an Ant buildfile. Also records whether a default attribute is present for the
  * project and if any target or some other typical ant elements are present. There are still cases where we could ignore a valid ant buildfile though.
- * 
+ *
  * @since 3.1
  */
 public final class AntHandler extends DefaultHandler {
 	/**
 	 * An exception indicating that the parsing should stop.
-	 * 
+	 *
 	 * @since 3.1
 	 */
 	private class StopParsingException extends SAXException {
@@ -81,7 +81,7 @@ public final class AntHandler extends DefaultHandler {
 
 	/**
 	 * Creates a new SAX parser for use within this instance.
-	 * 
+	 *
 	 * @return The newly created parser.
 	 * @throws ParserConfigurationException
 	 *             If a parser of the given configuration cannot be created.
@@ -139,7 +139,7 @@ public final class AntHandler extends DefaultHandler {
 	/*
 	 * Resolve external entity definitions to an empty string. This is to speed up processing of files with external DTDs. Not resolving the contents
 	 * of the DTD is ok, as only the System ID of the DTD declaration is used.
-	 * 
+	 *
 	 * @see org.xml.sax.helpers.DefaultHandler#resolveEntity(java.lang.String, java.lang.String)
 	 */
 	@Override

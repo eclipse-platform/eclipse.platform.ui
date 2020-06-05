@@ -29,7 +29,7 @@ public abstract class AntObject {
 
 	/**
 	 * Returns the class name.
-	 * 
+	 *
 	 * @return Returns a String
 	 */
 	public String getClassName() {
@@ -38,7 +38,7 @@ public abstract class AntObject {
 
 	/**
 	 * Sets the className.
-	 * 
+	 *
 	 * @param className
 	 *            The className to set
 	 */
@@ -48,7 +48,7 @@ public abstract class AntObject {
 
 	/**
 	 * Gets the library.
-	 * 
+	 *
 	 * @return Returns a URL
 	 * @deprecated use #getLibraryEntry()
 	 */
@@ -62,7 +62,7 @@ public abstract class AntObject {
 
 	/**
 	 * Sets the library.
-	 * 
+	 *
 	 * @param library
 	 *            The library to set
 	 * @deprecated use #setLibraryEntry(IAntClasspathEntry)
@@ -74,7 +74,7 @@ public abstract class AntObject {
 
 	/**
 	 * Gets the library classpath entry.
-	 * 
+	 *
 	 * @return Returns a classpath entry for the library of this Ant object
 	 */
 	public IAntClasspathEntry getLibraryEntry() {
@@ -87,7 +87,7 @@ public abstract class AntObject {
 
 	/**
 	 * Sets the library classpath entry.
-	 * 
+	 *
 	 * @param libraryEntry
 	 *            The library entry to set
 	 */
@@ -105,7 +105,7 @@ public abstract class AntObject {
 
 	/**
 	 * Returns whether this Ant object has been created because of an extension point definition.
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean isDefault() {
@@ -114,7 +114,7 @@ public abstract class AntObject {
 
 	/**
 	 * Sets that this Ant object has been created by the appropriate extension point.
-	 * 
+	 *
 	 * @param isDefault
 	 *            Whether this Ant object has been created because of an extension point definition.
 	 * @deprecated Since 3.0 Set the plugin label to indicate a default object
@@ -128,7 +128,7 @@ public abstract class AntObject {
 
 	/**
 	 * Sets the label of the plugin that contributed this Ant object via an extension point.
-	 * 
+	 *
 	 * @param pluginLabel
 	 *            The label of the plugin
 	 * @since 3.0
@@ -139,7 +139,7 @@ public abstract class AntObject {
 
 	/**
 	 * Returns the label of the plugin that contributed this Ant object via an extension point.
-	 * 
+	 *
 	 * @return pluginLabel The label of the plugin
 	 * @since 3.0
 	 */
@@ -149,7 +149,7 @@ public abstract class AntObject {
 
 	/**
 	 * Returns whether this Ant object requires the Eclipse runtime to be relevant. Defaults value is <code>true</code>
-	 * 
+	 *
 	 * @return whether this Ant object requires the Eclipse runtime
 	 * @since 3.0
 	 */
@@ -163,7 +163,7 @@ public abstract class AntObject {
 
 	/**
 	 * Returns the URI namespace that this Ant object should live in. Default value is <code>null</code>
-	 * 
+	 *
 	 * @return The URI that this Ant object should live in
 	 * @since 3.2
 	 */
