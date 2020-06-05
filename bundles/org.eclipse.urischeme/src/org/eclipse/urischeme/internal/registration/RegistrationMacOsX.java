@@ -102,7 +102,7 @@ public class RegistrationMacOsX implements IOperatingSystemRegistration {
 
 		Pattern pattern = Pattern.compile(
 				"^" + ANY_LINES + "\\s*" + PATH_WITH_CAPTURING_GROUP + "\\n" + ANY_LINES + "\\s*" //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
-						+ keyOfSchemeList 
+						+ keyOfSchemeList
 						+ ".*" //$NON-NLS-1$
 						+ Pattern.quote(scheme) + ":", //$NON-NLS-1$
 				Pattern.MULTILINE);

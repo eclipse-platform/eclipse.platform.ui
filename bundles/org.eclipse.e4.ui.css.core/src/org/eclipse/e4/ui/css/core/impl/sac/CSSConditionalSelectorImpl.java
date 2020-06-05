@@ -79,7 +79,7 @@ public class CSSConditionalSelectorImpl implements ConditionalSelector, Extended
 		return ((ExtendedSelector)getSimpleSelector()).match(e, hierarchy, parentIndex, pseudoE) &&
 				((ExtendedCondition)getCondition()).match(e, pseudoE);
 	}
-	
+
 	/**
 	 * Tests whether this selector matches the given element.
 	 */
