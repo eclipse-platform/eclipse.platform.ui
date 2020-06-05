@@ -49,19 +49,19 @@ public class IPerspectiveRegistryTest {
 		assertNull(suspect);
 	}
 
-	/*
-	 public void testFindPerspectiveWithLabel()
-	 {
-	 IPerspectiveDescriptor pers = ( IPerspectiveDescriptor )ArrayUtil.pickRandom( fReg.getPerspectives() );
+	@Ignore
+	@Test
+	public void testFindPerspectiveWithLabel() {
+		IPerspectiveDescriptor pers = (IPerspectiveDescriptor) ArrayUtil.pickRandom(fReg.getPerspectives());
 
-	 IPerspectiveDescriptor suspect = fReg.findPerspectiveWithLabel( pers.getLabel() );
-	 assertNotNull( suspect );
-	 assertEquals( pers, suspect );
+		IPerspectiveDescriptor suspect = fReg.findPerspectiveWithLabel(pers.getLabel());
+		assertNotNull(suspect);
+		assertEquals(pers, suspect);
 
-	 suspect = fReg.findPerspectiveWithLabel( IConstants.FakeLabel );
-	 assertNull( suspect );
-	 }
-	 */
+		suspect = fReg.findPerspectiveWithLabel(IConstants.FakeLabel);
+		assertNull(suspect);
+	}
+
 	@Test
 	public void testGetDefaultPerspective() {
 		String id = fReg.getDefaultPerspective();

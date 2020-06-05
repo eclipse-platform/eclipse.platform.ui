@@ -21,6 +21,7 @@ import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
+import org.eclipse.ui.INullSelectionListener;
 import org.eclipse.ui.ISelectionListener;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchPart;
@@ -30,6 +31,7 @@ import org.eclipse.ui.SelectionListenerFactory.ISelectionModel;
 import org.eclipse.ui.SelectionListenerFactory.Predicates;
 import org.eclipse.ui.tests.SelectionProviderView;
 import org.eclipse.ui.tests.harness.util.UITestCase;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -602,23 +604,25 @@ public class SelectionListenerFactoryTest extends UITestCase implements ISelecti
 		}
 	}
 
-//	/**
-//	 * Null Listener test. Selection should be offered when the view is made
-//	 * visible.
-//	 */
-//	public void testNullListener() throws Throwable {
-//		INullSelectionListener nullSelectionListener = (pPart, pSelection) -> fEventReceived = true;
-//		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
-//		ISelectionListener listener = SelectionListenerFactory.createVisibleListener(view, nullSelectionListener,
-//				m -> true);
-//		fPage.addSelectionListener(listener);
-//		view.setSelection(new StructuredSelection(KNOCK_KNOCK));
+	/**
+	 * Null Listener test. Selection should be offered when the view is made
+	 * visible.
+	 */
+	@Test
+	@Ignore
+	public void testNullListener() throws Throwable {
+		INullSelectionListener nullSelectionListener = (pPart, pSelection) -> fEventReceived = true;
+		SelectionProviderView view = (SelectionProviderView) fPage.showView(SelectionProviderView.ID);
+		ISelectionListener listener = SelectionListenerFactory.createVisibleListener(view, nullSelectionListener,
+				m -> true);
+		fPage.addSelectionListener(listener);
+		view.setSelection(new StructuredSelection(KNOCK_KNOCK));
 //		SelectionProviderView view2 = (SelectionProviderView) fPage.showView(SelectionProviderView.ID_2);
 //		view2.setNullSelection();
-//		clearEventState();
-//		fPage.showView(SelectionProviderView.ID);
-//		assertTrue("Selection not offered", fEventReceived);
-//	}
+		clearEventState();
+		fPage.showView(SelectionProviderView.ID);
+		assertTrue("Selection not offered", fEventReceived);
+	}
 
 	/**
 	 * Test the decorate method 1.

@@ -22,6 +22,7 @@ import org.eclipse.ui.IFileEditorMapping;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.harness.util.ArrayUtil;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class IFileEditorMappingTest {
@@ -77,8 +78,10 @@ public class IFileEditorMappingTest {
 
 	//how do i set the default editor?
 	@Test
+	@Ignore
 	public void testGetDefaultEditor() throws Throwable {
-		/*		for( int i = 0; i < fMappings.length; i ++ )
-		 assertNotNull( fMappings[ i ].getDefaultEditor() );*/
+		for (IFileEditorMapping fMapping : fMappings) {
+			assertNotNull(fMapping.getDefaultEditor());
+		}
 	}
 }
