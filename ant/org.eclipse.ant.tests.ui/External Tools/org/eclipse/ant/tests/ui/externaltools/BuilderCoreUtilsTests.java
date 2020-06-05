@@ -503,8 +503,7 @@ public class BuilderCoreUtilsTests extends AbstractExternalToolTest {
 		assertNotNull("The build kinds array cannot be null", array); //$NON-NLS-1$
 		boolean contains = true;
 		for (int element : array) {
-			contains &= (element == IncrementalProjectBuilder.AUTO_BUILD) | (element == IncrementalProjectBuilder.CLEAN_BUILD)
-					| (element == IncrementalProjectBuilder.FULL_BUILD) | (element == IncrementalProjectBuilder.INCREMENTAL_BUILD);
+			contains &= (element == IncrementalProjectBuilder.AUTO_BUILD) || (element == IncrementalProjectBuilder.CLEAN_BUILD) || (element == IncrementalProjectBuilder.FULL_BUILD) || (element == IncrementalProjectBuilder.INCREMENTAL_BUILD);
 			if (!contains) {
 				break;
 			}

@@ -263,7 +263,7 @@ public class RemoteAntBuildLogger extends DefaultLogger {
 	}
 
 	private void processEvent(BuildEvent event) {
-		if (event.getTask() != null & !emacsMode) {
+		if (event.getTask() != null && !emacsMode) {
 			try {
 				marshalTaskMessage(event);
 			}
