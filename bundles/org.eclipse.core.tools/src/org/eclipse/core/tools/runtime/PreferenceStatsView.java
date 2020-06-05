@@ -21,6 +21,7 @@ import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IPreferenceNodeVisitor;
 import org.eclipse.core.tools.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -62,7 +63,9 @@ public class PreferenceStatsView extends SpyView {
 		UpdateAction() {
 			super("Update view"); //$NON-NLS-1$
 			this.setToolTipText("Update"); //$NON-NLS-1$
-			this.setImageDescriptor(CoreToolsPlugin.createImageDescriptor("refresh.gif")); //$NON-NLS-1$
+			this.setImageDescriptor(ImageDescriptor.createFromURLSupplier(true, () -> {
+				return PreferenceStatsView.class.getResource("/icons/refresh.gif"); //$NON-NLS-1$
+			}));
 		}
 
 		@Override

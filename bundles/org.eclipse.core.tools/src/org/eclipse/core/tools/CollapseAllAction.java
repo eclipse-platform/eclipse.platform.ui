@@ -14,6 +14,7 @@
 package org.eclipse.core.tools;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.TreeViewer;
 
 /**
@@ -22,14 +23,15 @@ import org.eclipse.jface.viewers.TreeViewer;
 public class CollapseAllAction extends Action {
 
 	private static final String label = "Collapse All"; //$NON-NLS-1$
-	private static final String imageName = "collapseall.gif"; //$NON-NLS-1$
 	private TreeViewer viewer;
 
 	public CollapseAllAction(TreeViewer viewer) {
 		super(label);
 		this.setToolTipText(label);
 		this.viewer = viewer;
-		this.setImageDescriptor(CoreToolsPlugin.createImageDescriptor(imageName));
+		this.setImageDescriptor(ImageDescriptor.createFromURLSupplier(true, () -> {
+			return CollapseAllAction.class.getResource("/icons/collapseall.gif"); //$NON-NLS-1$
+		}));
 	}
 
 	@Override

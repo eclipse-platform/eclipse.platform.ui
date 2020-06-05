@@ -13,8 +13,7 @@
  *******************************************************************************/
 package org.eclipse.core.tools;
 
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.PlatformUI;
@@ -32,11 +31,10 @@ public class ErrorUtil {
 	 * @param userMessage an optional  higher-level explanation for the exception
 	 */
 	public static void logException(Exception exception, String userMessage) {
-		String pluginID = CoreToolsPlugin.PI_TOOLS;
 		if (userMessage == null)
 			userMessage = exception.getMessage();
-		IStatus status = new Status(IStatus.ERROR, pluginID, -1, userMessage, exception);
-		CoreToolsPlugin.getDefault().getLog().log(status);
+		IStatus status = new Status(IStatus.ERROR, ErrorUtil.class, -1, userMessage, exception);
+		Platform.getLog(ErrorUtil.class).log(status);
 	}
 
 	/**

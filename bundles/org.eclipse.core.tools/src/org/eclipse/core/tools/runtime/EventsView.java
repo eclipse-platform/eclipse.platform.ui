@@ -19,6 +19,7 @@ import java.util.Iterator;
 import org.eclipse.core.runtime.PerformanceStats;
 import org.eclipse.core.tools.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
@@ -211,7 +212,9 @@ public class EventsView extends TableWithTotalView {
 			}
 		};
 		resetAction.setToolTipText("Reset all event statistics"); //$NON-NLS-1$
-		resetAction.setImageDescriptor(CoreToolsPlugin.createImageDescriptor("clear.gif")); //$NON-NLS-1$
+		resetAction.setImageDescriptor(ImageDescriptor.createFromURLSupplier(true, () -> {
+			return EventsView.class.getResource("/icons/clear.gif"); //$NON-NLS-1$
+		}));
 		// Add copy selection action
 
 		IActionBars bars = getViewSite().getActionBars();

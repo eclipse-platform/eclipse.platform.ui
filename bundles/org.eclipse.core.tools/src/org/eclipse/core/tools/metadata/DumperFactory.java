@@ -16,13 +16,13 @@ package org.eclipse.core.tools.metadata;
 import java.io.File;
 import java.util.Properties;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tools.CoreToolsPlugin;
 
 /**
  * A dumper factory creates a dumper object given a file name.
  */
 public class DumperFactory {
 
+	private static final String TOOLS_EXTENSION_POINT = "org.eclipse.core.tools"; //$NON-NLS-1$
 	private static final String ELEM_DUMPER = "dumper"; //$NON-NLS-1$
 	private static final String ATTR_FILE_NAME = "file-name"; //$NON-NLS-1$
 	private static final String PT_METADATA_DUMPERS = "metadataDumpers"; //$NON-NLS-1$
@@ -57,7 +57,8 @@ public class DumperFactory {
 	}
 
 	private void loadDumpers() {
-		IExtensionPoint dumpersPoint = Platform.getExtensionRegistry().getExtensionPoint(CoreToolsPlugin.PI_TOOLS, PT_METADATA_DUMPERS);
+		IExtensionPoint dumpersPoint = Platform.getExtensionRegistry().getExtensionPoint(TOOLS_EXTENSION_POINT,
+				PT_METADATA_DUMPERS);
 		IConfigurationElement[] dumperDefinitions = dumpersPoint.getConfigurationElements();
 		for (IConfigurationElement dumperDefinition : dumperDefinitions)
 			if (dumperDefinition.getName().equals(ELEM_DUMPER))

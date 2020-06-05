@@ -15,15 +15,15 @@ package org.eclipse.core.tools.runtime;
 
 import java.util.*;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.core.tools.*;
+import org.eclipse.core.tools.Messages;
+import org.eclipse.core.tools.SpyView;
 import org.eclipse.jface.viewers.*;
 import org.eclipse.osgi.service.resolver.BundleDescription;
 import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Composite;
-import org.osgi.framework.Bundle;
-import org.osgi.framework.BundleContext;
+import org.osgi.framework.*;
 
 public class PluginListView extends SpyView implements IStructuredContentProvider {
 
@@ -61,7 +61,7 @@ public class PluginListView extends SpyView implements IStructuredContentProvide
 				return id1.compareTo(id2);
 			};
 			Set<BundleDescription> set = new TreeSet<>(comparator);
-			BundleContext context = CoreToolsPlugin.getDefault().getContext();
+			BundleContext context = FrameworkUtil.getBundle(PluginListView.class).getBundleContext();
 			Bundle[] allBundles = context.getBundles();
 			State state = Platform.getPlatformAdmin().getState(false);
 			for (Bundle allBundle : allBundles)

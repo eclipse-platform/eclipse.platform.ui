@@ -13,6 +13,7 @@
  *******************************************************************************/
 package org.eclipse.core.tools;
 
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.IDocument;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IWorkbenchCommandConstants;
@@ -42,7 +43,9 @@ public class ClearTextAction extends GlobalAction {
 		// then we need to provide an action definition id
 		// so clients can register this action in their key binding services
 		this.setActionDefinitionId(IWorkbenchCommandConstants.EDIT_DELETE);
-		this.setImageDescriptor(CoreToolsPlugin.createImageDescriptor("clear.gif")); //$NON-NLS-1$
+		this.setImageDescriptor(ImageDescriptor.createFromURLSupplier(true, () -> {
+			return ClearTextAction.class.getResource("/icons/clear.gif"); //$NON-NLS-1$
+		}));
 	}
 
 	/**

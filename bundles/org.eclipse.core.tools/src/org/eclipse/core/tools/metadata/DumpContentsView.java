@@ -14,6 +14,7 @@
 package org.eclipse.core.tools.metadata;
 
 import java.io.File;
+import org.eclipse.core.runtime.*;
 import org.eclipse.core.tools.*;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.text.Document;
@@ -109,7 +110,9 @@ public class DumpContentsView extends SpyView {
 		// dumps file
 		IDump dump = dumper.dump(file);
 		if (dump.isFailed()) {
-			CoreToolsPlugin.getDefault().log("Error during file dump", dump.getFailureReason()); //$NON-NLS-1$
+			Status status = new Status(IStatus.ERROR, DumpContentsView.class, 0, "Error during file dump", //$NON-NLS-1$
+					dump.getFailureReason());
+			Platform.getLog(DumpContentsView.class).log(status);
 			String message = "File dumping did not complete successfully. Reason: " + dump.getFailureReason(); //$NON-NLS-1$
 			ErrorUtil.showErrorMessage(message, "Error during file dump"); //$NON-NLS-1$
 		}

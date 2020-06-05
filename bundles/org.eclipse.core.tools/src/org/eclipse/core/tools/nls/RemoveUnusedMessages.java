@@ -19,7 +19,6 @@ import java.util.List;
 import org.eclipse.core.filebuffers.*;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tools.CoreToolsPlugin;
 import org.eclipse.jdt.core.*;
 import org.eclipse.jdt.core.dom.*;
 import org.eclipse.jdt.core.dom.rewrite.ASTRewrite;
@@ -151,7 +150,8 @@ public class RemoveUnusedMessages extends Refactoring {
 						LocationKind.NORMALIZE, null);
 			}
 		} catch (IOException e) {
-			throw new CoreException(new Status(IStatus.ERROR, CoreToolsPlugin.PI_TOOLS, IStatus.ERROR, e.getMessage(), e));
+			throw new CoreException(
+					new Status(IStatus.ERROR, RemoveUnusedMessages.class, IStatus.ERROR, e.getMessage(), e));
 		}
 	}
 
