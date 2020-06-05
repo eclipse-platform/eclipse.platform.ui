@@ -896,7 +896,7 @@ public class LaunchConfigurationInfo {
 			String strAttr1 = null;
 			String strAttr2 = null;
 			if (fgIsSun14x) {
-				if(attr2 instanceof String & attr1 instanceof String) {
+				if(attr2 instanceof String && attr1 instanceof String) {
 					// this is a hack for bug 110215, on SUN 1.4.x, \r
 					// is stripped off when the stream is written to the
 					// DOM

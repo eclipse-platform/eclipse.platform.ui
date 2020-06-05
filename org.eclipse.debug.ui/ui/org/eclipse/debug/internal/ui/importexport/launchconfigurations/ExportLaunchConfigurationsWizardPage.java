@@ -254,8 +254,8 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 					onechecked = true;
 				}
 			}
-			fViewer.setGrayed(parent, onechecked & !checked);
-			fViewer.setChecked(parent, checked | onechecked);
+			fViewer.setGrayed(parent, onechecked && !checked);
+			fViewer.setChecked(parent, checked || onechecked);
 		}
 	}
 
@@ -366,7 +366,7 @@ public class ExportLaunchConfigurationsWizardPage extends WizardPage {
 									errors.add(new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), MessageFormat.format(WizardMessages.ExportLaunchConfigurationsWizardPage_19, new Object[] { launchConfig.getName() }), null));
 								} else {
 									newfile = new File(destpath.append(file.getName()).toOSString());
-									if(newfile.exists() & !overwrite) {
+									if(newfile.exists() && !overwrite) {
 										if(nowall) {
 											continue;
 										}

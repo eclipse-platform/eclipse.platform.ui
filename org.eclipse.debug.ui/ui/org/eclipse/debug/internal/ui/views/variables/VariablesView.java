@@ -576,7 +576,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 			sw = memento.getInteger(SASH_DETAILS_PART);
 			if(sw != null) {
 				int details = sw.intValue();
-				if(view > -1 & details > -1) {
+				if(view > -1 && details > -1) {
 					return new int[] {view, details};
 				}
 			}

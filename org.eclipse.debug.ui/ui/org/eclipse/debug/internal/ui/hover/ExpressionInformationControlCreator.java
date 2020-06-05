@@ -195,7 +195,7 @@ public class ExpressionInformationControlCreator implements IInformationControlC
 		private IDialogSettings getDialogSettings(boolean create) {
 			IDialogSettings settings = DebugUIPlugin.getDefault().getDialogSettings();
 			IDialogSettings section = settings.getSection(this.getClass().getName());
-			if (section == null & create) {
+			if (section == null && create) {
 				section = settings.addNewSection(this.getClass().getName());
 			}
 			return section;

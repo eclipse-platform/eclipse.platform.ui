@@ -1630,7 +1630,7 @@ public class LaunchManager extends PlatformObject implements ILaunchManager, IRe
 						LaunchDelegate delegate = getLaunchDelegateExtension(typeid, delegateid, modeset);
 						if (delegate != null) {
 							//take type id, modeset, delegate and create entry
-							if(!IInternalDebugCoreConstants.EMPTY_STRING.equals(typeid) & modeset != null) {
+							if(!IInternalDebugCoreConstants.EMPTY_STRING.equals(typeid) && modeset != null) {
 								fPreferredDelegates.add(new PreferredDelegate(delegate, typeid, modeset));
 							}
 						}

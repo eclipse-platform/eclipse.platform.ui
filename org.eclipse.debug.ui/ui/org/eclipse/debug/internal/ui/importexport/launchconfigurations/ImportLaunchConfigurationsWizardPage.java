@@ -174,7 +174,7 @@ public class ImportLaunchConfigurationsWizardPage extends WizardResourceImportPa
 		for (Object resource :  getSelectedResources()) {
 			config = (File) ((DebugFileSystemElement) resource).getFileSystemObject();
 			newconfig = new File(new Path(LaunchManager.LOCAL_LAUNCH_CONFIGURATION_CONTAINER_PATH.toOSString()).append(config.getName()).toOSString());
-			if(newconfig.exists() & !overwrite) {
+			if(newconfig.exists() && !overwrite) {
 				if(nowall) {
 					continue;
 				}

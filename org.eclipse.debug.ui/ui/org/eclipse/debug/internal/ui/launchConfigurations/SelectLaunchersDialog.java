@@ -108,7 +108,7 @@ public class SelectLaunchersDialog extends AbstractDebugListSelectionDialog {
 			try {
 				int width = settings.getInt("DIALOG_WIDTH"); //$NON-NLS-1$
 				int height = settings.getInt("DIALOG_HEIGHT"); //$NON-NLS-1$
-				if(width > 0 & height > 0) {
+				if(width > 0 && height > 0) {
 					return new Point(width, height);
 				}
 			}
