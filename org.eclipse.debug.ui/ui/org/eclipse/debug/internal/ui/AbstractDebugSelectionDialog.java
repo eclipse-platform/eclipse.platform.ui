@@ -88,7 +88,7 @@ public abstract class AbstractDebugSelectionDialog extends SelectionDialog {
 	 */
 	protected IContentProvider getContentProvider() {
 		//by default return a simple array content provider
-		return new ArrayContentProvider();
+		return ArrayContentProvider.getInstance();
 	}
 
 	/**
