@@ -218,7 +218,7 @@ public class BrowserViewer extends Composite {
 			if (showURLbar)
 				createLocationBar(toolbarComp);
 
-			if (showToolbar | showURLbar) {
+			if (showToolbar || showURLbar) {
 				busy = new BusyIndicator(toolbarComp, SWT.NONE);
 				busy.setLayoutData(new GridData(GridData.HORIZONTAL_ALIGN_END));
 				busy.addMouseListener(new MouseAdapter() {
