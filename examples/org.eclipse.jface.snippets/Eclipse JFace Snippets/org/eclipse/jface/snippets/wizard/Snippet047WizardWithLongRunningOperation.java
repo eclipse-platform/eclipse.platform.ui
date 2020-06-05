@@ -108,7 +108,7 @@ public class Snippet047WizardWithLongRunningOperation {
 			comp.setLayout(new GridLayout(1, false));
 
 			v = new TableViewer(comp, SWT.FULL_SELECTION);
-			v.setContentProvider(new ArrayContentProvider());
+			v.setContentProvider(ArrayContentProvider.getInstance());
 			v.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
 			v.addSelectionChangedListener(event -> getWizard().getContainer().updateButtons());
 

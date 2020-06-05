@@ -56,7 +56,7 @@ public class SelectionProviderMultiSelectionObservableListTest {
 	public void setUp() throws Exception {
 		Shell shell = new Shell();
 		viewer = new TableViewer(shell, SWT.MULTI);
-		viewer.setContentProvider(new ArrayContentProvider());
+		viewer.setContentProvider(ArrayContentProvider.getInstance());
 		viewer.setInput(model);
 		selectionProvider = viewer;
 	}

@@ -83,7 +83,7 @@ public class PatternFilterTest {
 	@Before
 	public void setup() {
 		viewer = new MockViewer();
-		viewer.setContentProvider(new ArrayContentProvider());
+		viewer.setContentProvider(ArrayContentProvider.getInstance());
 		viewer.setInput(new String[] {});
 	}
 

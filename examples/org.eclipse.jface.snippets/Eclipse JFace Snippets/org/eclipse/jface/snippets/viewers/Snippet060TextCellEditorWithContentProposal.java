@@ -180,7 +180,7 @@ public class Snippet060TextCellEditorWithContentProposal {
 		colorColumn.setLabelProvider(new ColumnLabelProvider());
 		colorColumn.setEditingSupport(new ColorNameEditingSupport(viewer));
 
-		viewer.setContentProvider(new ArrayContentProvider());
+		viewer.setContentProvider(ArrayContentProvider.getInstance());
 
 		ColumnViewerEditorActivationStrategy activationSupport = new ColumnViewerEditorActivationStrategy(viewer) {
 			@Override

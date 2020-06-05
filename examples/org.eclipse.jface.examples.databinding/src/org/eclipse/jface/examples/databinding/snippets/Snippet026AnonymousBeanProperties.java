@@ -359,7 +359,7 @@ public class Snippet026AnonymousBeanProperties {
 		bindingContext.bindValue(WidgetProperties.text(SWT.Modify).observe(nameText),
 				BeanProperties.value("name").observeDetail(selection));
 
-		statusViewer.setContentProvider(new ArrayContentProvider());
+		statusViewer.setContentProvider(ArrayContentProvider.getInstance());
 		statusViewer.setInput(STATUSES);
 
 		bindingContext.bindValue(ViewerProperties.singleSelection().observe(statusViewer),

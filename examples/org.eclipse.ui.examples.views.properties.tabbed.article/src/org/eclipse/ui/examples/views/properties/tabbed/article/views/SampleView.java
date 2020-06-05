@@ -72,7 +72,7 @@ public class SampleView
 		ButtonElement btnEl = new ButtonElement(btn, "Button");//$NON-NLS-1$
 		ctlList.add(btnEl);
 
-		viewer.setContentProvider(new ArrayContentProvider());
+		viewer.setContentProvider(ArrayContentProvider.getInstance());
 		viewer.setLabelProvider(new WorkbenchLabelProvider());
 		viewer.setInput(ctlList);
 		getSite().setSelectionProvider(viewer);

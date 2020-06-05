@@ -382,7 +382,7 @@ public class AboutPluginsPage extends ProductInfoPage {
 			column.addSelectionListener(widgetSelectedAdapter(e -> updateTableSorting(columnIndex)));
 		}
 
-		vendorInfo.setContentProvider(new ArrayContentProvider());
+		vendorInfo.setContentProvider(ArrayContentProvider.getInstance());
 		vendorInfo.setLabelProvider(new BundleTableLabelProvider());
 
 		final BundlePatternFilter searchFilter = new BundlePatternFilter();

@@ -128,7 +128,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 
 		themeIdCombo = new ComboViewer(comp, SWT.READ_ONLY);
 		themeIdCombo.setLabelProvider(createTextProvider(element -> ((ITheme) element).getLabel()));
-		themeIdCombo.setContentProvider(new ArrayContentProvider());
+		themeIdCombo.setContentProvider(ArrayContentProvider.getInstance());
 		themeIdCombo.setInput(getCSSThemes(highContrastMode));
 		themeIdCombo.getCombo().setEnabled(!highContrastMode);
 		themeIdCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
@@ -371,7 +371,7 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 			}
 		});
 		colorFontsDecorator = new ControlDecoration(colorsAndFontsThemeCombo.getCombo(), SWT.TOP | SWT.LEFT);
-		colorsAndFontsThemeCombo.setContentProvider(new ArrayContentProvider());
+		colorsAndFontsThemeCombo.setContentProvider(ArrayContentProvider.getInstance());
 		colorsAndFontsThemeCombo.setInput(getColorsAndFontsThemes());
 		colorsAndFontsThemeCombo.getControl().setLayoutData(new GridData(GridData.FILL_HORIZONTAL));
 		colorsAndFontsThemeCombo.addSelectionChangedListener(event -> {

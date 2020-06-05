@@ -45,7 +45,7 @@ public class Bug203657TableViewerTest extends ViewerTestCase {
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 		final TableViewer tableViewer = new TableViewer(parent, SWT.FULL_SELECTION);
-		tableViewer.setContentProvider(new ArrayContentProvider());
+		tableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		tableViewer.setCellEditors(new CellEditor[] { new TextCellEditor(
 				tableViewer.getTable()) });
 		tableViewer.setColumnProperties(new String[] { "0" });

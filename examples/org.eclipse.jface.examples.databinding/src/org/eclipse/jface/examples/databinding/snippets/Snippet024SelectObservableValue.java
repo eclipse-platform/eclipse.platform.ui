@@ -60,7 +60,7 @@ public class Snippet024SelectObservableValue {
 		shell.setText("Snippet024SelectObservableValue");
 
 		final ListViewer listViewer = new ListViewer(shell, SWT.BORDER);
-		listViewer.setContentProvider(new ArrayContentProvider());
+		listViewer.setContentProvider(ArrayContentProvider.getInstance());
 		listViewer.getList().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		final Group group = new Group(shell, SWT.NONE);

@@ -123,7 +123,7 @@ public class ProjectNaturesPage extends PropertyPage {
 		this.activeNaturesList.getControl().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
 		this.activeNaturesList.setLabelProvider(new NatureLabelProvider(this.project.getWorkspace()));
-		this.activeNaturesList.setContentProvider(new ArrayContentProvider());
+		this.activeNaturesList.setContentProvider(ArrayContentProvider.getInstance());
 		try {
 			this.naturesIdsWorkingCopy = new ArrayList<>();
 			this.naturesIdsWorkingCopy.addAll(Arrays.asList(project.getDescription().getNatureIds()));

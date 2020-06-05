@@ -109,7 +109,7 @@ public class WorkingSetTypePage extends WizardPage {
 		typesListViewer.getTable().setFont(font);
 		typesListViewer.addSelectionChangedListener(event -> handleSelectionChanged());
 		typesListViewer.addDoubleClickListener(event -> handleDoubleClick());
-		typesListViewer.setContentProvider(new ArrayContentProvider());
+		typesListViewer.setContentProvider(ArrayContentProvider.getInstance());
 		typesListViewer.setLabelProvider(new LabelProvider() {
 			private ResourceManager images = new LocalResourceManager(JFaceResources.getResources());
 

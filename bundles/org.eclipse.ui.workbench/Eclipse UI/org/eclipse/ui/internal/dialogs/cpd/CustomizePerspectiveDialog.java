@@ -773,7 +773,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 				SWT.BORDER | SWT.H_SCROLL | SWT.V_SCROLL);
 		actionSetAvailabilityTable = actionSetsViewer;
 		actionSetsViewer.getTable().setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
-		actionSetsViewer.setContentProvider(new ArrayContentProvider());
+		actionSetsViewer.setContentProvider(ArrayContentProvider.getInstance());
 		actionSetsViewer.setComparator(new WorkbenchViewerComparator());
 		actionSetsViewer.setCheckStateProvider(new ICheckStateProvider() {
 			@Override
@@ -1165,7 +1165,7 @@ public class CustomizePerspectiveDialog extends TrayDialog {
 		actionSetViewer.getTable().setLayoutData(new GridData(GridData.FILL_BOTH));
 		actionSetViewer.setLabelProvider(new GrayOutUnavailableLabelProvider(null));
 		actionSetViewer.setComparator(new WorkbenchViewerComparator());
-		actionSetViewer.setContentProvider(new ArrayContentProvider());
+		actionSetViewer.setContentProvider(ArrayContentProvider.getInstance());
 
 		// Tooltip on tree items
 		Table table = actionSetViewer.getTable();

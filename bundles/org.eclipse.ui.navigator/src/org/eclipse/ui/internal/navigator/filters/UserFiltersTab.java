@@ -111,7 +111,7 @@ public class UserFiltersTab extends CustomizationTab {
 		TableLayout tableLayout = new TableLayout();
 		tableLayout.addColumnData(new ColumnWeightData(200));
 		filtersViewer.getTable().setLayout(tableLayout);
-		filtersViewer.setContentProvider(new ArrayContentProvider());
+		filtersViewer.setContentProvider(ArrayContentProvider.getInstance());
 		TableViewerColumn column = new TableViewerColumn(filtersViewer, SWT.FULL_SELECTION, 0);
 		column.setLabelProvider(new ColumnLabelProvider() {
 			@Override

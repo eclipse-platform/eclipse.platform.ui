@@ -85,7 +85,7 @@ public class Snippet035PostSelectionProvider {
 		listViewer = new ListViewer(section, SWT.SINGLE | SWT.BORDER);
 		GridDataFactory.fillDefaults().grab(true, true).hint(250, 250).applyTo(listViewer.getList());
 
-		listViewer.setContentProvider(new ArrayContentProvider());
+		listViewer.setContentProvider(ArrayContentProvider.getInstance());
 		listViewer.setLabelProvider(new LabelProvider());
 
 		String[] names = new String[] { "John Doe", "Steve Northover", "Grant Gayed", "Veronika Irvine", "Mike Wilson",

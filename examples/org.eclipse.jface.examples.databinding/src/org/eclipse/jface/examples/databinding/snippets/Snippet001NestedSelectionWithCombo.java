@@ -166,7 +166,7 @@ public class Snippet001NestedSelectionWithCombo {
 			IObservableMap<Person, String> attributeMap = BeanProperties.value(Person.class, "name", String.class)
 					.observeDetail(Observables.staticObservableSet(new HashSet<>(people)));
 			peopleListViewer.setLabelProvider(new ObservableMapLabelProvider(attributeMap));
-			peopleListViewer.setContentProvider(new ArrayContentProvider());
+			peopleListViewer.setContentProvider(ArrayContentProvider.getInstance());
 			peopleListViewer.setInput(people);
 
 			DataBindingContext bindingContext = new DataBindingContext();
@@ -176,7 +176,7 @@ public class Snippet001NestedSelectionWithCombo {
 					BeanProperties.value(Person.class, "name", String.class).observeDetail(selectedPerson));
 
 			ComboViewer cityViewer = new ComboViewer(city);
-			cityViewer.setContentProvider(new ArrayContentProvider());
+			cityViewer.setContentProvider(ArrayContentProvider.getInstance());
 			cityViewer.setInput(cities);
 
 			IObservableValue<String> citySelection = ViewerProperties.singleSelection(String.class).observe(cityViewer);

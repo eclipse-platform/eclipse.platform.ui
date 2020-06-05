@@ -123,7 +123,7 @@ public class Snippet031TableViewerCustomTooltipsMultiSelection {
 
 		v.setColumnProperties(new String[] { column1, column2 });
 		v.setLabelProvider(new MyLableProvider());
-		v.setContentProvider(new ArrayContentProvider());
+		v.setContentProvider(ArrayContentProvider.getInstance());
 		v.setInput(createModel());
 
 		/**

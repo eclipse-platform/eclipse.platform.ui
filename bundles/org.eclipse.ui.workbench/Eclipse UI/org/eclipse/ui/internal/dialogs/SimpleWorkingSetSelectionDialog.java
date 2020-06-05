@@ -120,7 +120,7 @@ public class SimpleWorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 		viewer = CheckboxTableViewer.newCheckList(viewerComposite, SWT.BORDER);
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		viewer.setLabelProvider(new WorkingSetLabelProvider());
-		viewer.setContentProvider(new ArrayContentProvider());
+		viewer.setContentProvider(ArrayContentProvider.getInstance());
 		viewer.addFilter(new WorkingSetFilter(null));
 		IWorkingSet[] workingSets = PlatformUI.getWorkbench().getWorkingSetManager().getWorkingSets();
 		viewer.setInput(workingSets);

@@ -79,7 +79,7 @@ public class ExtendedFileEditorsPreferencePage extends FileEditorsPreferencePage
 				return NLS.bind(IDEWorkbenchMessages.ExtendedFileEditorsPreferencePage_labelNotResolved, id);
 			}
 		});
-		viewer.setContentProvider(new ArrayContentProvider());
+		viewer.setContentProvider(ArrayContentProvider.getInstance());
 		viewer.setInput(registry.retrieveAllStrategies());
 		this.idePreferenceStore = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 		viewer.setSelection(
