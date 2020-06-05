@@ -114,7 +114,7 @@ public class SearchResultViewer extends TableViewer {
 			fPotentialMatchFgColor= new Color(SearchPlugin.getActiveWorkbenchShell().getDisplay(), SearchPreferencePage.getPotentialMatchForegroundColor());
 
 		setUseHashlookup(true);
-		setContentProvider(new ArrayContentProvider());
+		setContentProvider(ArrayContentProvider.getInstance());
 
 		ILabelProvider labelProvider= new SearchResultLabelProvider(new FileLabelProvider(FileLabelProvider.SHOW_LABEL));
 		setLabelProvider(labelProvider);

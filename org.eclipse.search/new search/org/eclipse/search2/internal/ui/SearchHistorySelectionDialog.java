@@ -295,7 +295,7 @@ public class SearchHistorySelectionDialog extends SelectionDialog {
 		parent.setLayoutData(new GridData(GridData.FILL_BOTH));
 
 		fViewer= new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.BORDER | SWT.FULL_SELECTION);
-		fViewer.setContentProvider(new ArrayContentProvider());
+		fViewer.setContentProvider(ArrayContentProvider.getInstance());
 
 		final Table table= fViewer.getTable();
 		table.addMouseListener(new MouseAdapter() {

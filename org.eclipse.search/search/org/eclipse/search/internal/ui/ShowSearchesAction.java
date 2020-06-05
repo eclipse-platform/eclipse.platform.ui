@@ -126,7 +126,7 @@ class ShowSearchesAction extends Action {
 		ListDialog dlg= new ListDialog(SearchPlugin.getActiveWorkbenchShell());
 		dlg.setInput(input);
 		dlg.setTitle(title);
-		dlg.setContentProvider(new ArrayContentProvider());
+		dlg.setContentProvider(ArrayContentProvider.getInstance());
 		dlg.setLabelProvider(labelProvider);
 		dlg.setMessage(message);
 		if (selectedAction != null) {

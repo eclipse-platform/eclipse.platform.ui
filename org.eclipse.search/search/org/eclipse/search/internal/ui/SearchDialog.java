@@ -333,7 +333,8 @@ public class SearchDialog extends ExtendedDialogWindow implements ISearchPageCon
 
 		String message= SearchMessages.SearchPageSelectionDialog_message;
 
-		ListSelectionDialog dialog= new ListSelectionDialog(getShell(), input, new ArrayContentProvider(), labelProvider, message) {
+		ListSelectionDialog dialog = new ListSelectionDialog(getShell(), input, ArrayContentProvider.getInstance(),
+				labelProvider, message) {
 			Button fLastUsedPageButton;
 
 			@Override

@@ -272,7 +272,7 @@ class LinkedModeConfigurationBlock implements IPreferenceConfigurationBlock {
 		fShowInTextCheckBox.setLayoutData(gd);
 
 		fDecorationViewer= new ComboViewer(optionsComposite, SWT.READ_ONLY);
-		fDecorationViewer.setContentProvider(new ArrayContentProvider());
+		fDecorationViewer.setContentProvider(ArrayContentProvider.getInstance());
 		fDecorationViewer.setLabelProvider(new ArrayLabelProvider());
 		fDecorationViewer.setComparator(new ViewerComparator(Collator.getInstance()));
 

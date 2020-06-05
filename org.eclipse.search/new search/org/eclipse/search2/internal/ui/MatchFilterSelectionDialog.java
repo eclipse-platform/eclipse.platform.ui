@@ -172,7 +172,7 @@ public class MatchFilterSelectionDialog extends StatusDialog {
 		ListenerAndLabelProvider listenerAndLP= new ListenerAndLabelProvider();
 
 		fListViewer.setLabelProvider(listenerAndLP);
-		fListViewer.setContentProvider(new ArrayContentProvider());
+		fListViewer.setContentProvider(ArrayContentProvider.getInstance());
 		fListViewer.addSelectionChangedListener(listenerAndLP);
 		fListViewer.addCheckStateListener(listenerAndLP);
 		fListViewer.setInput(fAllFilters);
