@@ -93,6 +93,6 @@ public class ExpressionStatus extends Status {
 	 * @param exception a low-level exception, or <code>null</code> if not applicable
 	 */
 	public ExpressionStatus(int errorCode, String message, Throwable exception) {
-		super(IStatus.ERROR, ExpressionPlugin.getPluginId(), errorCode, message, exception);
+		super(IStatus.ERROR, ExpressionStatus.class, errorCode, message, exception);
 	}
 }

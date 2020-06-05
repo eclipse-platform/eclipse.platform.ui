@@ -26,6 +26,7 @@ import java.util.WeakHashMap;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.BundleListener;
+import org.osgi.framework.FrameworkUtil;
 
 import org.w3c.dom.Element;
 
@@ -137,7 +138,7 @@ public class Expressions {
 		if (fgKnownClasses == null) {
 			fgKnownClasses= new WeakHashMap<>();
 			fgNotFoundClasses = new WeakHashMap<>();
-			BundleContext bundleContext= ExpressionPlugin.getDefault().getBundleContext();
+			BundleContext bundleContext = FrameworkUtil.getBundle(Expressions.class).getBundleContext();
 			BundleListener listener= (BundleEvent event) -> {
 				// Invalidate the caches if any of the bundles is stopped
 				if (event.getType() == BundleEvent.STOPPED) {
@@ -147,7 +148,6 @@ public class Expressions {
 					}
 				}
 			};
-			ExpressionPlugin.fgBundleListener = listener;
 			bundleContext.addBundleListener(listener);
 		}
 	}

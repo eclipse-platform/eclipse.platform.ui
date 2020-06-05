@@ -32,6 +32,8 @@ import org.eclipse.core.runtime.Platform;
 
 public class AdaptExpression extends CompositeExpression {
 
+	private static final String PREFERENCE_NAMESPACE = "org.eclipse.core.expressions"; //$NON-NLS-1$
+
 	private static final String ATT_TYPE= "type"; //$NON-NLS-1$
 
 	/**
@@ -119,7 +121,7 @@ public class AdaptExpression extends CompositeExpression {
 	}
 
 	private boolean forceLoadEnabled() {
-		return Platform.getPreferencesService().getBoolean(ExpressionPlugin.getPluginId(), "forceLoadAdapters", true, //$NON-NLS-1$
+		return Platform.getPreferencesService().getBoolean(PREFERENCE_NAMESPACE, "forceLoadAdapters", true, //$NON-NLS-1$
 				null);
 	}
 

@@ -26,8 +26,8 @@ import org.junit.rules.TestName;
 import org.junit.runners.MethodSorters;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 
-import org.eclipse.core.internal.expressions.ExpressionPlugin;
 import org.eclipse.core.internal.expressions.Expressions;
 
 
@@ -47,7 +47,8 @@ public class ExpressionTestsPluginUnloading {
 	public void test01PluginStopping() throws Exception {
 		Bundle bundle= getBundle("com.ibm.icu");
 
-		assertEquals(Bundle.STARTING, bundle.getState());
+		int state = bundle.getState();
+		assertTrue(state == Bundle.STARTING || state == Bundle.ACTIVE);
 
 		doTestInstanceofICUDecimalFormat(bundle);
 		assertEquals(Bundle.ACTIVE, bundle.getState());
@@ -103,7 +104,7 @@ public class ExpressionTestsPluginUnloading {
 	}
 
 	private static Bundle getBundle(String bundleName) {
-		BundleContext bundleContext= ExpressionPlugin.getDefault().getBundleContext();
+		BundleContext bundleContext = FrameworkUtil.getBundle(ExpressionTestsPluginUnloading.class).getBundleContext();
 		Bundle[] bundles= bundleContext.getBundles();
 		for (Bundle bundle : bundles) {
 			if (bundleName.equals(bundle.getSymbolicName())) {

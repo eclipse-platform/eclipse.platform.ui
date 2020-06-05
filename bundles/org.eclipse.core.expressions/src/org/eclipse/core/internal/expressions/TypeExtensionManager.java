@@ -31,6 +31,7 @@ import org.eclipse.core.runtime.Platform;
 
 public class TypeExtensionManager implements IRegistryChangeListener {
 
+	private static final String EXTENSION_NAMESPACE = "org.eclipse.core.expressions"; //$NON-NLS-1$
 	private String fExtensionPoint;
 
 	/**
@@ -167,8 +168,7 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 			fConfigurationElementMap= new HashMap<>();
 			IExtensionRegistry registry= Platform.getExtensionRegistry();
 			IConfigurationElement[] ces= registry.getConfigurationElementsFor(
-				ExpressionPlugin.getPluginId(),
-				fExtensionPoint);
+					EXTENSION_NAMESPACE, fExtensionPoint);
 			for (IConfigurationElement config : ces) {
 				String typeAttr= config.getAttribute(TYPE);
 				List<IConfigurationElement> typeConfigs= fConfigurationElementMap.get(typeAttr);
@@ -190,7 +190,7 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 				try {
 					result[i]= new PropertyTesterDescriptor(config);
 				} catch (CoreException e) {
-					ExpressionPlugin.getDefault().getLog().log(e.getStatus());
+					Platform.getLog(TypeExtensionManager.class).log(e.getStatus());
 					result[i]= NULL_PROPERTY_TESTER;
 				}
 			}
@@ -201,7 +201,7 @@ public class TypeExtensionManager implements IRegistryChangeListener {
 
 	@Override
 	public void registryChanged(IRegistryChangeEvent event) {
-		IExtensionDelta[] deltas= event.getExtensionDeltas(ExpressionPlugin.getPluginId(), fExtensionPoint);
+		IExtensionDelta[] deltas = event.getExtensionDeltas(EXTENSION_NAMESPACE, fExtensionPoint);
 		if (deltas.length > 0) {
 			initializeCaches();
 		}

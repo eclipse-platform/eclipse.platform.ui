@@ -17,7 +17,6 @@ import org.w3c.dom.Element;
 
 import org.eclipse.core.internal.expressions.CompositeExpression;
 import org.eclipse.core.internal.expressions.ExpressionMessages;
-import org.eclipse.core.internal.expressions.ExpressionPlugin;
 import org.eclipse.core.internal.expressions.StandardElementHandler;
 
 import org.eclipse.core.runtime.CoreException;
@@ -80,7 +79,7 @@ public abstract class ElementHandler {
 	 * @since 3.3
 	 */
 	public Expression create(ExpressionConverter converter, Element element) throws CoreException {
-		throw new CoreException(new Status(IStatus.ERROR, ExpressionPlugin.getPluginId(),
+		throw new CoreException(new Status(IStatus.ERROR, ElementHandler.class,
 				IStatus.ERROR,
 				ExpressionMessages.ElementHandler_unsupported_element,
 				null));

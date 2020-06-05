@@ -38,7 +38,7 @@ public class PropertyTesterDescriptor implements IPropertyTester {
 		fConfigElement= element;
 		fNamespace= fConfigElement.getAttribute(NAMESPACE);
 		if (fNamespace == null) {
-			throw new CoreException(new Status(IStatus.ERROR, ExpressionPlugin.getPluginId(),
+			throw new CoreException(new Status(IStatus.ERROR, PropertyTesterDescriptor.class,
 				IStatus.ERROR,
 				ExpressionMessages.PropertyTesterDescriptor_no_namespace,
 				null));
@@ -46,7 +46,7 @@ public class PropertyTesterDescriptor implements IPropertyTester {
 		StringBuilder buffer= new StringBuilder(","); //$NON-NLS-1$
 		String properties= element.getAttribute(PROPERTIES);
 		if (properties == null) {
-			throw new CoreException(new Status(IStatus.ERROR, ExpressionPlugin.getPluginId(),
+			throw new CoreException(new Status(IStatus.ERROR, PropertyTesterDescriptor.class,
 				IStatus.ERROR,
 				ExpressionMessages.PropertyTesterDescritpri_no_properties,
 				null));

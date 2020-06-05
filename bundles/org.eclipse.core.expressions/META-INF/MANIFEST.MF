@@ -4,7 +4,6 @@ Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.core.expressions; singleton:=true
 Bundle-Version: 3.6.900.qualifier
 Bundle-ClassPath: .
-Bundle-Activator: org.eclipse.core.internal.expressions.ExpressionPlugin
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Export-Package: org.eclipse.core.expressions,

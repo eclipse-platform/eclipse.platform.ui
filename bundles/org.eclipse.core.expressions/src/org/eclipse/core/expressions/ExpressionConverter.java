@@ -18,7 +18,6 @@ import org.w3c.dom.Node;
 
 import org.eclipse.core.internal.expressions.CompositeExpression;
 import org.eclipse.core.internal.expressions.ExpressionMessages;
-import org.eclipse.core.internal.expressions.ExpressionPlugin;
 import org.eclipse.core.internal.expressions.Messages;
 
 import org.eclipse.core.runtime.Assert;
@@ -126,7 +125,7 @@ public final class ExpressionConverter {
 			for (IConfigurationElement configElement : children) {
 				Expression child= perform(configElement);
 				if (child == null)
-					throw new CoreException(new Status(IStatus.ERROR, ExpressionPlugin.getPluginId(),
+					throw new CoreException(new Status(IStatus.ERROR, ExpressionConverter.class,
 						IStatus.ERROR,
 						Messages.format(
 							ExpressionMessages.Expression_unknown_element,
@@ -170,7 +169,7 @@ public final class ExpressionConverter {
 			if (child.getNodeType() == Node.ELEMENT_NODE) {
 				Expression exp= perform((Element)child);
 				if (exp == null)
-					throw new CoreException(new Status(IStatus.ERROR, ExpressionPlugin.getPluginId(),
+					throw new CoreException(new Status(IStatus.ERROR, ExpressionConverter.class,
 						IStatus.ERROR,
 						Messages.format(
 							ExpressionMessages.Expression_unknown_element,

@@ -65,7 +65,7 @@ public class Property {
 			return fTester.test(receiver, fName, args, expectedValue);
 		} catch (Exception e) {
 			String message = "Error evaluating " + this; //$NON-NLS-1$
-			throw new CoreException(new Status(IStatus.ERROR, ExpressionPlugin.getPluginId(), message, e));
+			throw new CoreException(new Status(IStatus.ERROR, Property.class, message, e));
 		}
 	}
 
