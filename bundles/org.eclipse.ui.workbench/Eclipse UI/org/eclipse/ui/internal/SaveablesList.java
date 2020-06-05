@@ -773,7 +773,7 @@ public class SaveablesList implements ISaveablesLifecycleListener {
 				}
 			} else {
 				MyListSelectionDialog dlg = new MyListSelectionDialog(shellProvider.getShell(), modelsToSave,
-						new ArrayContentProvider(), new WorkbenchPartLabelProvider(),
+						ArrayContentProvider.getInstance(), new WorkbenchPartLabelProvider(),
 						stillOpenElsewhere ? WorkbenchMessages.EditorManager_saveResourcesOptionallyMessage
 								: WorkbenchMessages.EditorManager_saveResourcesMessage,
 						canCancel, stillOpenElsewhere);

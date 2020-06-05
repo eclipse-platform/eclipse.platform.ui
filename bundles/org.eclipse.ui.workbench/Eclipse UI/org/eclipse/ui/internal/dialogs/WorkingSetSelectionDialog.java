@@ -95,7 +95,7 @@ public class WorkingSetSelectionDialog extends AbstractWorkingSetDialog {
 		super(parentShell, workingSetIds, true);
 		initWorkbenchWindow();
 
-		contentProvider = new ArrayContentProvider();
+		contentProvider = ArrayContentProvider.getInstance();
 		labelProvider = new WorkingSetLabelProvider();
 		multiSelect = multi;
 		if (multiSelect) {
