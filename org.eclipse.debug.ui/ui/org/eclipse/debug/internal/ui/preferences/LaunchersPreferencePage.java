@@ -221,7 +221,7 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 		fTableViewer = new CheckboxTableViewer(table);
 		fTableViewer.setComparator(new WorkbenchViewerComparator());
 		fTableViewer.setLabelProvider(new LabelProvider());
-		fTableViewer.setContentProvider(new ArrayContentProvider());
+		fTableViewer.setContentProvider(ArrayContentProvider.getInstance());
 		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
 			@Override
 			public void selectionChanged(SelectionChangedEvent event) {

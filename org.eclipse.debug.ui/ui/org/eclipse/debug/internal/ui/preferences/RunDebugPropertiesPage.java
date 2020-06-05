@@ -177,7 +177,7 @@ public class RunDebugPropertiesPage extends PropertyPage {
 	protected TableViewer createViewer(Composite parent){
 		TableViewer viewer = new TableViewer(parent, SWT.MULTI | SWT.H_SCROLL | SWT.V_SCROLL | SWT.FULL_SELECTION | SWT.BORDER);
 		viewer.setLabelProvider(new DefaultLabelProvider());
-		viewer.setContentProvider(new ArrayContentProvider());
+		viewer.setContentProvider(ArrayContentProvider.getInstance());
 		viewer.setComparator(new LaunchConfigurationComparator());
 		Table builderTable = viewer.getTable();
 		GridData tableGridData = new GridData(GridData.FILL_BOTH);
