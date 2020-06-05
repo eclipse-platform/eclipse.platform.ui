@@ -763,7 +763,7 @@ public class BrowserIntroPartImplementation extends
 			boolean isStandbyPartNeeded) {
 		// if we have a standby part, regardless if standby state, disable
 		// actions. Same behavior for static html.
-		if (isStandbyPartNeeded | standby) {
+		if (isStandbyPartNeeded || standby) {
 			homeAction.setEnabled(false);
 			forwardAction.setEnabled(false);
 			backAction.setEnabled(false);
