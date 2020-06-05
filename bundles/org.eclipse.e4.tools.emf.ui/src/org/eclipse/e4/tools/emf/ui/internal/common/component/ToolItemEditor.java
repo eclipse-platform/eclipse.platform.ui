@@ -195,7 +195,7 @@ public abstract class ToolItemEditor<M extends MToolItem> extends AbstractCompon
 			l.setLayoutData(new GridData());
 
 			final ComboViewer viewer = new ComboViewer(parent);
-			viewer.setContentProvider(new ArrayContentProvider());
+			viewer.setContentProvider(ArrayContentProvider.getInstance());
 			viewer.setInput(new ItemType[] { ItemType.CHECK, ItemType.PUSH, ItemType.RADIO });
 			final GridData gd = new GridData();
 			gd.horizontalSpan = 2;
@@ -303,7 +303,7 @@ public abstract class ToolItemEditor<M extends MToolItem> extends AbstractCompon
 
 			final ComboViewer combo = new ComboViewer(parent);
 			combo.getControl().setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
-			combo.setContentProvider(new ArrayContentProvider());
+			combo.setContentProvider(ArrayContentProvider.getInstance());
 			combo.setLabelProvider(new LabelProvider() {
 				@Override
 				public String getText(Object element) {

@@ -85,7 +85,7 @@ public class BindingContextSelectionDialog extends SaveDialogBoundsSettingsDialo
 
 		new Label(container, SWT.NONE);
 		viewer = new TableViewer(container);
-		viewer.setContentProvider(new ArrayContentProvider());
+		viewer.setContentProvider(ArrayContentProvider.getInstance());
 		viewer.setLabelProvider(new LabelProviderImpl());
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
 		viewer.addDoubleClickListener(event -> okPressed());

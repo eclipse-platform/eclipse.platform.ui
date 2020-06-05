@@ -232,7 +232,7 @@ public class ExportIdsHandler {
 
 			entries.sort(null);
 
-			viewer.setContentProvider(new ArrayContentProvider());
+			viewer.setContentProvider(ArrayContentProvider.getInstance());
 			viewer.setInput(entries);
 			viewer.setAllChecked(true);
 

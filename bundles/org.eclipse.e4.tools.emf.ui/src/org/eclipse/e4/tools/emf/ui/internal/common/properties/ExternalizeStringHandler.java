@@ -201,7 +201,7 @@ public class ExternalizeStringHandler {
 					}
 				}
 			}
-			viewer.setContentProvider(new ArrayContentProvider());
+			viewer.setContentProvider(ArrayContentProvider.getInstance());
 			viewer.setInput(entries);
 			viewer.setAllChecked(true);
 

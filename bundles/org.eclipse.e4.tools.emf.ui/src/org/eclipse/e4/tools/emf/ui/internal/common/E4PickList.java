@@ -97,7 +97,7 @@ public class E4PickList extends AbstractPickList {
 		this.componentEditor = componentEditor;
 		this.feature = feature;
 
-		picker.setContentProvider(new ArrayContentProvider());
+		picker.setContentProvider(ArrayContentProvider.getInstance());
 		picker.setLabelProvider(new LabelProvider() {
 			@Override
 			public String getText(Object element) {

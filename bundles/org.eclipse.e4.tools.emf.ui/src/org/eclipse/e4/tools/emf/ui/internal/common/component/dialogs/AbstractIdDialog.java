@@ -113,7 +113,7 @@ SaveDialogBoundsSettingsDialog {
 		l = new Label(container, SWT.NONE);
 		viewer = new TableViewer(container);
 		viewer.getControl().setLayoutData(new GridData(GridData.FILL_BOTH));
-		viewer.setContentProvider(new ArrayContentProvider());
+		viewer.setContentProvider(ArrayContentProvider.getInstance());
 		viewer.setLabelProvider(getLabelProvider());
 		viewer.addFilter(filter);
 		viewer.addDoubleClickListener(event -> okPressed());

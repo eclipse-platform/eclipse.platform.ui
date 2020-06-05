@@ -448,7 +448,7 @@ public class ApplicationEditor extends AbstractComponentEditor<MApplication> {
 						.setStyle(SWT.ITALIC);
 				bindtableViewer.setLabelProvider(new DelegatingStyledCellLabelProvider(
 						new ComponentLabelProvider(getEditor(), Messages, italicFontDescriptor)));
-				bindtableViewer.setContentProvider(new ArrayContentProvider());
+				bindtableViewer.setContentProvider(ArrayContentProvider.getInstance());
 				bindtableViewer.setInput(application.getBindingTables());
 				bindtableViewer.addSelectionChangedListener(event -> setPageComplete(isPageComplete()));
 				bindtableViewer.setSelection(new StructuredSelection(application.getBindingTables().get(0)));
@@ -512,7 +512,7 @@ public class ApplicationEditor extends AbstractComponentEditor<MApplication> {
 				l.setText(Messages.ApplicationEditor_Type);
 
 				typeViewer = new ComboViewer(group, SWT.READ_ONLY);
-				typeViewer.setContentProvider(new ArrayContentProvider());
+				typeViewer.setContentProvider(ArrayContentProvider.getInstance());
 				typeViewer.setInput(ItemType.values());
 				typeViewer.setSelection(new StructuredSelection(ItemType.PUSH));
 			}
@@ -524,7 +524,7 @@ public class ApplicationEditor extends AbstractComponentEditor<MApplication> {
 
 				menuViewer = new TableViewer(group);
 				menuViewer.setLabelProvider(new HiearchyLabelProvider());
-				menuViewer.setContentProvider(new ArrayContentProvider());
+				menuViewer.setContentProvider(ArrayContentProvider.getInstance());
 
 				final List<MMenu> menuList = new ArrayList<>();
 				final Iterator<EObject> it = EcoreUtil.getAllContents(Collections.singleton(application));
@@ -597,7 +597,7 @@ public class ApplicationEditor extends AbstractComponentEditor<MApplication> {
 
 				typeViewer = new ComboViewer(group, SWT.READ_ONLY);
 				// viewer.setLabelProvider(labelProvider)
-				typeViewer.setContentProvider(new ArrayContentProvider());
+				typeViewer.setContentProvider(ArrayContentProvider.getInstance());
 				typeViewer.setInput(ItemType.values());
 			}
 
@@ -608,7 +608,7 @@ public class ApplicationEditor extends AbstractComponentEditor<MApplication> {
 
 				toolbarViewer = new TableViewer(group);
 				toolbarViewer.setLabelProvider(new HiearchyLabelProvider());
-				toolbarViewer.setContentProvider(new ArrayContentProvider());
+				toolbarViewer.setContentProvider(ArrayContentProvider.getInstance());
 
 				final List<MToolBar> toolbarList = new ArrayList<>();
 				final Iterator<EObject> it = EcoreUtil.getAllContents(Collections.singleton(application));

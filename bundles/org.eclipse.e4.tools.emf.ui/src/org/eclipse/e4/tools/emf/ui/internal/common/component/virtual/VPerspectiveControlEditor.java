@@ -150,7 +150,7 @@ public class VPerspectiveControlEditor extends AbstractComponentEditor<MElementC
 			pickList.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
 			viewer = pickList.getList();
 
-			pickList.setContentProvider(new ArrayContentProvider());
+			pickList.setContentProvider(ArrayContentProvider.getInstance());
 			pickList.setLabelProvider(new EClassLabelProvider(getEditor()));
 			pickList.setInput(new EClass[] { BasicPackageImpl.Literals.PART_SASH_CONTAINER,
 					BasicPackageImpl.Literals.PART_STACK, BasicPackageImpl.Literals.PART,

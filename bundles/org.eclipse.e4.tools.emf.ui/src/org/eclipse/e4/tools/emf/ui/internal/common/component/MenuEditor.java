@@ -296,7 +296,7 @@ public class MenuEditor extends AbstractComponentEditor<MMenu> {
 
 			final ComboViewer combo = new ComboViewer(parent);
 			combo.getControl().setLayoutData(new GridData(GridData.FILL, GridData.CENTER, true, false, 2, 1));
-			combo.setContentProvider(new ArrayContentProvider());
+			combo.setContentProvider(ArrayContentProvider.getInstance());
 			combo.setLabelProvider(new LabelProvider() {
 				@Override
 				public String getText(Object element) {

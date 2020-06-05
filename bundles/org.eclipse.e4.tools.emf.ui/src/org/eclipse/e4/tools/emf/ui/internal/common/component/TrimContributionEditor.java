@@ -243,7 +243,7 @@ public class TrimContributionEditor extends AbstractComponentEditor<MTrimContrib
 			viewer.setContentProvider(new ObservableListContentProvider<>());
 			viewer.setInput(E4Properties.<MTrimElement>children().observeDetail(getMaster()));
 
-			pickList.setContentProvider(new ArrayContentProvider());
+			pickList.setContentProvider(ArrayContentProvider.getInstance());
 			pickList.setLabelProvider(new LabelProvider() {
 				@Override
 				public String getText(Object element) {

@@ -140,7 +140,7 @@ public class FindParentReferenceElementDialog extends SaveDialogBoundsSettingsDi
 		combo.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
 		eClassViewer.setLabelProvider(LabelProvider.createTextProvider(element -> ((EClass) element).getName()));
 
-		eClassViewer.setContentProvider(new ArrayContentProvider());
+		eClassViewer.setContentProvider(ArrayContentProvider.getInstance());
 		final List<EClass> eClassList = getExtendableClasses();
 		eClassViewer.setComparator(new ViewerComparator() {
 			@Override
