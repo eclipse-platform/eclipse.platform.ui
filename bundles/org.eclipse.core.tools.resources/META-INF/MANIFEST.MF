@@ -4,7 +4,6 @@ Bundle-Name: Core Resources Tools
 Bundle-SymbolicName: org.eclipse.core.tools.resources;singleton:=true
 Bundle-Version: 1.5.0.qualifier
 Bundle-Vendor: Eclipse.org
-Bundle-Activator: org.eclipse.core.tools.resources.CoreResourcesToolsPlugin
 Export-Package: org.eclipse.core.tools.resources,
  org.eclipse.core.tools.resources.markers
 Require-Bundle: org.eclipse.core.resources,

@@ -278,7 +278,9 @@ public class LocalHistoryBrowserView extends ViewPart {
 		};
 		refreshAction.setText("Refresh View"); //$NON-NLS-1$
 		refreshAction.setToolTipText("Refresh View"); //$NON-NLS-1$
-		refreshAction.setImageDescriptor(CoreResourcesToolsPlugin.createImageDescriptor("refresh.gif")); //$NON-NLS-1$
+		refreshAction.setImageDescriptor(ImageDescriptor.createFromURLSupplier(true, () -> {
+			return LocalHistoryBrowserView.class.getResource("/icons/refresh.gif");
+		})); //$NON-NLS-1$
 
 		doubleClickAction = new Action() {
 			@Override
@@ -288,7 +290,7 @@ public class LocalHistoryBrowserView extends ViewPart {
 				if (obj instanceof IFileState) {
 					// Show the file contents
 					IFileState state = (IFileState) obj;
-					IWorkbench workbench = CoreResourcesToolsPlugin.getDefault().getWorkbench();
+					IWorkbench workbench = PlatformUI.getWorkbench();
 					IEditorRegistry editorRegistry = workbench.getEditorRegistry();
 					IEditorDescriptor descriptor = editorRegistry.getDefaultEditor(state.getName());
 					String editorID = descriptor == null ? EditorsUI.DEFAULT_TEXT_EDITOR_ID : descriptor.getId();

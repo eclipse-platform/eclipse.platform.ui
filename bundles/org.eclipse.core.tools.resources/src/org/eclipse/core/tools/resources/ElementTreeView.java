@@ -24,6 +24,7 @@ import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
 import org.eclipse.core.tools.*;
 import org.eclipse.jface.action.*;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.text.*;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyAdapter;
@@ -93,7 +94,9 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 		UpdateAction() {
 			super("Update view");
 			this.setToolTipText("Update");
-			this.setImageDescriptor(CoreResourcesToolsPlugin.createImageDescriptor("refresh.gif"));
+			this.setImageDescriptor(ImageDescriptor.createFromURLSupplier(true, () -> {
+				return ElementTreeView.class.getResource("/icons/refresh.gif");
+			}));
 		}
 
 		void addToStringCount(String name) {

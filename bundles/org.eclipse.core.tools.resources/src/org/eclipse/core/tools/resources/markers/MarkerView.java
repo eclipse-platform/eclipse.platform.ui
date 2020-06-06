@@ -22,7 +22,6 @@ import java.util.*;
 import java.util.List;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
-import org.eclipse.core.tools.resources.CoreResourcesToolsPlugin;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.ErrorDialog;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -354,7 +353,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 					return message == null ? type : message + " : " + type;
 				}
 			} catch (CoreException e) {
-				CoreResourcesToolsPlugin.logProblem(e);
+				Platform.getLog(MarkerView.class).log(e.getStatus());
 			}
 			return obj.toString();
 		}
@@ -391,7 +390,7 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 					} else if (marker.isSubtypeOf(IMarker.TASK))
 						imageKey = SharedImages.IMG_OBJS_TASK_TSK;
 				} catch (CoreException e) {
-					CoreResourcesToolsPlugin.logProblem(e);
+					Platform.getLog(MarkerView.class).log(e.getStatus());
 				}
 			}
 			return PlatformUI.getWorkbench().getSharedImages().getImage(imageKey);
@@ -402,9 +401,15 @@ public class MarkerView extends ViewPart implements ISelectionListener, IResourc
 	 * The constructor.
 	 */
 	public MarkerView() {
-		zeroImageDesc = CoreResourcesToolsPlugin.createImageDescriptor("zero.gif");
-		oneImageDesc = CoreResourcesToolsPlugin.createImageDescriptor("one.gif");
-		infiniteImageDesc = CoreResourcesToolsPlugin.createImageDescriptor("infinity.gif");
+		zeroImageDesc = ImageDescriptor.createFromURLSupplier(true, () -> {
+			return MarkerView.class.getResource("/icons/zero.gif");
+		});
+		oneImageDesc = ImageDescriptor.createFromURLSupplier(true, () -> {
+			return MarkerView.class.getResource("/icons/one.gif");
+		});
+		infiniteImageDesc = ImageDescriptor.createFromURLSupplier(true, () -> {
+			return MarkerView.class.getResource("/icons/infinity.gif");
+		});
 		model = new MarkerExtensionModel();
 		propertySource = new ReadOnlyMarkerPropertySource(this, model);
 	}

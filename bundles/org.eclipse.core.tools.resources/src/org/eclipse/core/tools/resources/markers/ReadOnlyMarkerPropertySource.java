@@ -17,9 +17,7 @@ package org.eclipse.core.tools.resources.markers;
 import org.eclipse.ui.views.properties.PropertyDescriptor;
 import java.util.*;
 import org.eclipse.core.resources.IMarker;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.tools.resources.CoreResourcesToolsPlugin;
+import org.eclipse.core.runtime.*;
 import org.eclipse.ui.views.properties.*;
 
 /**
@@ -88,7 +86,7 @@ public class ReadOnlyMarkerPropertySource implements IPropertySource {
 		for (String superId : anInfo.declaredSupers) {
 			MarkerExtensionModel.MarkerInfo superInfo = model.getInfo(superId);
 			if (superInfo == null) {
-				CoreResourcesToolsPlugin.logProblem("internal error. could not find supertype" + superId + "of marker" + info.id, IStatus.ERROR);
+				Platform.getLog(ReadOnlyMarkerPropertySource.class).log(new Status(IStatus.ERROR,ReadOnlyMarkerPropertySource.class,"internal error. could not find supertype" + superId + "of marker" + info.id));
 				continue;
 			}
 			findDeclaredPropertyDescriptorsFor(superInfo, descriptorList, actualAttributeSet);
@@ -103,7 +101,7 @@ public class ReadOnlyMarkerPropertySource implements IPropertySource {
 		try {
 			return marker.getAttribute(name);
 		} catch (CoreException e) {
-			CoreResourcesToolsPlugin.logProblem(e);
+			Platform.getLog(ReadOnlyMarkerPropertySource.class).log(e.getStatus());
 			return "exception occured accessing: " + name;
 		}
 	}
@@ -116,7 +114,7 @@ public class ReadOnlyMarkerPropertySource implements IPropertySource {
 		try {
 			return marker.getAttribute(name) != null;
 		} catch (CoreException e) {
-			CoreResourcesToolsPlugin.logProblem(e);
+			Platform.getLog(ReadOnlyMarkerPropertySource.class).log(e.getStatus());
 			return false;
 		}
 	}
@@ -140,7 +138,7 @@ public class ReadOnlyMarkerPropertySource implements IPropertySource {
 		try {
 			this.info = model.getInfo(marker.getType());
 		} catch (CoreException e) {
-			CoreResourcesToolsPlugin.logProblem(e);
+			Platform.getLog(ReadOnlyMarkerPropertySource.class).log(e.getStatus());
 		}
 	}
 }
