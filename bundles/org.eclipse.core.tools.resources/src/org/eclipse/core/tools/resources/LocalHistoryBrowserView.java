@@ -20,7 +20,6 @@ import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.Path;
-import org.eclipse.core.tools.CoreToolsPlugin;
 import org.eclipse.jface.action.*;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -279,7 +278,7 @@ public class LocalHistoryBrowserView extends ViewPart {
 		};
 		refreshAction.setText("Refresh View"); //$NON-NLS-1$
 		refreshAction.setToolTipText("Refresh View"); //$NON-NLS-1$
-		refreshAction.setImageDescriptor(CoreToolsPlugin.createImageDescriptor("refresh.gif")); //$NON-NLS-1$
+		refreshAction.setImageDescriptor(CoreResourcesToolsPlugin.createImageDescriptor("refresh.gif")); //$NON-NLS-1$
 
 		doubleClickAction = new Action() {
 			@Override
@@ -289,7 +288,7 @@ public class LocalHistoryBrowserView extends ViewPart {
 				if (obj instanceof IFileState) {
 					// Show the file contents
 					IFileState state = (IFileState) obj;
-					IWorkbench workbench = CoreToolsPlugin.getDefault().getWorkbench();
+					IWorkbench workbench = CoreResourcesToolsPlugin.getDefault().getWorkbench();
 					IEditorRegistry editorRegistry = workbench.getEditorRegistry();
 					IEditorDescriptor descriptor = editorRegistry.getDefaultEditor(state.getName());
 					String editorID = descriptor == null ? EditorsUI.DEFAULT_TEXT_EDITOR_ID : descriptor.getId();
