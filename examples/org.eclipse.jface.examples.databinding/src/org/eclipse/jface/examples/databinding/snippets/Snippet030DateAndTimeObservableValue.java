@@ -14,12 +14,13 @@
 
 package org.eclipse.jface.examples.databinding.snippets;
 
-import java.util.Date;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.observable.Realm;
-import org.eclipse.core.databinding.observable.value.DateAndTimeObservableValue;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
+import org.eclipse.core.databinding.observable.value.LocalDateTimeObservableValue;
 import org.eclipse.core.databinding.observable.value.WritableValue;
 import org.eclipse.jface.databinding.swt.DisplayRealm;
 import org.eclipse.jface.databinding.swt.typed.WidgetProperties;
@@ -29,9 +30,7 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.DateTime;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
@@ -96,36 +95,36 @@ public class Snippet030DateAndTimeObservableValue {
 	private void bindUI() {
 		DataBindingContext bindingContext = new DataBindingContext();
 
-		IObservableValue<Date> model = WritableValue.withValueType(Date.class);
-		model.setValue(new Date());
+		IObservableValue<LocalDateTime> model = WritableValue.withValueType(LocalDateTime.class);
+		model.setValue(LocalDateTime.now());
 
 		bindingContext.bindValue(WidgetProperties.text().observe(modelText), model);
 
-		final IObservableValue<Date> timeSelection = WidgetProperties.dateTimeSelection().observe(time);
+		final IObservableValue<LocalTime> timeSelection = WidgetProperties.localTimeSelection().observe(time);
 
-		bindingContext.bindValue(new DateAndTimeObservableValue(WidgetProperties.dateTimeSelection().observe(date), timeSelection),
-				model);
 		bindingContext.bindValue(
-				new DateAndTimeObservableValue(WidgetProperties.dateTimeSelection().observe(calendar), timeSelection),
+				new LocalDateTimeObservableValue(WidgetProperties.localDateSelection().observe(date), timeSelection),
 				model);
 
-		syncTime.addListener(SWT.Selection, new Listener() {
+		bindingContext.bindValue(
+				new LocalDateTimeObservableValue(WidgetProperties.localDateSelection().observe(calendar),
+						timeSelection),
+				model);
+
+		syncTime.addListener(SWT.Selection, event -> {
 			Runnable runnable = new Runnable() {
 				@Override
 				public void run() {
-					if (syncTime.getSelection()) {
-						timeSelection.setValue(new Date());
+					if (!syncTime.isDisposed() && syncTime.getSelection()) {
+						timeSelection.setValue(LocalTime.now());
 						Display.getCurrent().timerExec(100, this);
 					}
 				}
 			};
 
-			@Override
-			public void handleEvent(Event event) {
-				time.setEnabled(!syncTime.getSelection());
-				if (syncTime.getSelection()) {
-					runnable.run();
-				}
+			time.setEnabled(!syncTime.getSelection());
+			if (syncTime.getSelection()) {
+				runnable.run();
 			}
 		});
 	}
