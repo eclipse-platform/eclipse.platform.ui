@@ -357,4 +357,11 @@ public class PlatformTest extends RuntimeTest {
 		file.deleteOnExit();
 		return file;
 	}
+
+	public void testDebugOption() {
+		assertNull(Platform.getDebugOption("Missing Option"));
+		assertFalse(Platform.getDebugBoolean("Missing Option"));
+		String option = Platform.getDebugOption("org.eclipse.core.runtime/debug-test");
+		assertEquals("true".equalsIgnoreCase(option), Platform.getDebugBoolean("org.eclipse.core.runtime/debug-test"));
+	}
 }
