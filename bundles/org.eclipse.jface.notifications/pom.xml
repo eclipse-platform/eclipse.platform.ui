@@ -22,8 +22,4 @@
   <version>0.1.100-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 
-  <properties>
-    <skipAPIAnalysis>true</skipAPIAnalysis>
-  </properties>
-
 </project>
