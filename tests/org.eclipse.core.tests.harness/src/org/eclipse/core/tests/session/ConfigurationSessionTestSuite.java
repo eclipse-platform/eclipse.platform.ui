@@ -54,6 +54,7 @@ public class ConfigurationSessionTestSuite extends SessionTestSuite {
 			"org.eclipse.pde.junit.runtime", //
 			"org.hamcrest.core", //
 			"org.junit", //
+			"org.junit.jupiter.api",
 			"org.eclipse.test.performance"};
 
 	private static final String PROP_CONFIG_AREA_READ_ONLY = InternalPlatform.PROP_CONFIG_AREA + ".readOnly";
