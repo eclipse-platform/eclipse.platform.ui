@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015 Red Hat Inc.
+ * Copyright (c) 2020 Red Hat Inc.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,14 +10,19 @@
  *
  * Contributors:
  *     Mickael Istria (Red Hat Inc.) - 469918 Zoom In/Out
+ *     John Taylor <johnpaultaylorii@gmail.com> - Bug 564099
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
-import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Queue;
 import java.util.Set;
 
 import org.eclipse.swt.graphics.FontData;
@@ -75,17 +80,19 @@ abstract class AbstractTextZoomHandler extends AbstractHandler {
 		if (fontProperty == null) {
 			fontProperty= JFaceResources.TEXT_FONT;
 		}
-		Set<String> fontsToSet= getAffectedFontNames(fontProperty, fontRegistry);
-		FontData[] initialFontData= null;
-		String currentFontName= fontProperty;
-		while (currentFontName != null && (initialFontData= fontRegistry.getFontData(currentFontName)) == null) {
-			currentFontName= fgFontToDefault.get(currentFontName);
+		List<String> fontsToSet = getAffectedFontNames(fontProperty, fontRegistry);
+		for (String fontName : fontsToSet) {
+			FontData[] currentFontData = null;
+			String currentFontName = fontName;
+			while (currentFontName != null && (currentFontData = fontRegistry.getFontData(currentFontName)) == null) {
+				currentFontName = fgFontToDefault.get(currentFontName);
+			}
+			FontData[] newFontData = createFontDescriptor(currentFontData).getFontData();
+			if (newFontData != null) {
+				fontRegistry.put(fontName, newFontData);
+			}
 		}
 
-		FontData[] newFontData= createFontDescriptor(initialFontData).getFontData();
-		if (newFontData != null) {
-			fontsToSet.stream().forEach(fontName -> fontRegistry.put(fontName, newFontData));
-		}
 		return Status.OK_STATUS;
 	}
 
@@ -133,7 +140,7 @@ abstract class AbstractTextZoomHandler extends AbstractHandler {
 	 *         are set to default or inherit from reference font or a common parent that is affected
 	 *         too.
 	 */
-	private Set<String> getAffectedFontNames(String referenceFontName, FontRegistry fontRegistry) {
+	private List<String> getAffectedFontNames(String referenceFontName, FontRegistry fontRegistry) {
 		synchronized (AbstractTextZoomHandler.class) {
 			if (fgFontToDefault == null) {
 				// TODO: This should rely on ThemeRegistry and IThemeElementDefinition,
@@ -158,43 +165,42 @@ abstract class AbstractTextZoomHandler extends AbstractHandler {
 				}
 			}
 		}
-		Set<String> res= new HashSet<>();
-		FontData[] referenceFontData= fontRegistry.getFontData(referenceFontName);
-		if (fontRegistry.hasValueFor(referenceFontName)) {
-			res.add(referenceFontName);
-		}
+
 		String currentFontName= referenceFontName;
-		String rootFontName= referenceFontName;
+
 		// identify "root" font to change
+		String rootFontName = currentFontName;
 		do {
 			currentFontName= fgFontToDefault.get(currentFontName);
-			if (currentFontName != null && Arrays.equals(referenceFontData, fontRegistry.getFontData(currentFontName))) {
+			if (currentFontName != null) {
 				rootFontName= currentFontName;
 			}
 		} while (currentFontName != null);
-		LinkedList<String> fontsToProcess= new LinkedList<>();
+
+		// propagate to "children" fonts
+		Set<String> fontNames = new LinkedHashSet<>();
+		Set<String> alreadyProcessed = new HashSet<>();
+		Queue<String> fontsToProcess = new LinkedList<>();
 		fontsToProcess.add(rootFontName);
-		// propage to "children" fonts
-		Set<String> alreadyProcessed= new HashSet<>();
 		while (!fontsToProcess.isEmpty()) {
-			currentFontName= fontsToProcess.get(0);
-			fontsToProcess.remove(0);
-			// with recent Java, use currentFOntName = fontsToProcess.poll instead of the 2 lines above
+			currentFontName = fontsToProcess.poll();
 			if (!alreadyProcessed.contains(currentFontName)) { // avoid infinite loop
 				alreadyProcessed.add(currentFontName);
-				FontData[] currentFontData= fontRegistry.getFontData(currentFontName);
-				if (currentFontData == null || Arrays.equals(referenceFontData, currentFontData)) {
 					if (fontRegistry.hasValueFor(currentFontName)) {
-						res.add(currentFontName);
+						fontNames.add(currentFontName);
 					}
 					Set<String> children= fgDefaultToFonts.get(currentFontName);
 					if (children != null) {
 						fontsToProcess.addAll(children);
 					}
 				}
-			}
 		}
-		return res;
+
+		// Order matters. Child fonts must be set before parent fonts to avoid
+		// double impacts.
+		List<String> result = new ArrayList<>(fontNames);
+		Collections.reverse(result);
+		return result;
 	}
 
 }
