@@ -21,10 +21,8 @@ import org.eclipse.core.commands.ParameterizedCommand;
 import org.eclipse.core.commands.common.CommandException;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.IActionDelegate;
 import org.eclipse.ui.IWorkbench;
@@ -33,7 +31,6 @@ import org.eclipse.ui.IWorkbenchWindowActionDelegate;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.commands.ICommandService;
 import org.eclipse.ui.handlers.IHandlerService;
-import org.eclipse.ui.internal.AnimationEngine;
 import org.eclipse.ui.internal.intro.impl.IIntroConstants;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.Messages;
@@ -642,30 +639,22 @@ public class IntroURL implements IIntroURL {
 
 
 	private boolean switchToLaunchBar() {
-		IIntroPart intro = PlatformUI.getWorkbench().getIntroManager()
-			.getIntro();
+		IIntroPart intro = PlatformUI.getWorkbench().getIntroManager().getIntro();
 		if (intro == null)
 			return false;
 
-		CustomizableIntroPart cpart = (CustomizableIntroPart) intro;
 		IntroModelRoot modelRoot = IntroPlugin.getDefault().getIntroModelRoot();
-		Rectangle bounds = cpart.getControl().getBounds();
-		Rectangle startBounds = Geometry.toDisplay(cpart.getControl()
-			.getParent(), bounds);
 
 		IntroLaunchBarElement launchBarElement = modelRoot.getPresentation().getLaunchBarElement();
 		if (launchBarElement == null)
 			return true;
 		IWorkbenchWindow window = intro.getIntroSite().getWorkbenchWindow();
-		IntroLaunchBar launchBar = IntroLaunchBar.create(window, modelRoot, launchBarElement);
+		IntroLaunchBar.create(window, modelRoot, launchBarElement);
 
 		PlatformUI.getWorkbench().getIntroManager().setIntroStandby(intro, true);
 
 		closeIntro();
-		Rectangle endBounds = Geometry.toDisplay(launchBar.getControl()
-			.getParent(), launchBar.getControl().getBounds());
 
-		AnimationEngine.createTweakedAnimation(window.getShell(), 400, startBounds, endBounds);
 		return true;
 	}
 }

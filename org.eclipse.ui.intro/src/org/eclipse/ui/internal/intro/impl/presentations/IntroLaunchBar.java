@@ -37,7 +37,6 @@ import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.jface.dialogs.IDialogSettings;
-import org.eclipse.jface.util.Geometry;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Point;
@@ -52,7 +51,6 @@ import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.AnimationEngine;
 import org.eclipse.ui.internal.intro.impl.IntroPlugin;
 import org.eclipse.ui.internal.intro.impl.Messages;
 import org.eclipse.ui.internal.intro.impl.model.IntroLaunchBarElement;
@@ -62,7 +60,6 @@ import org.eclipse.ui.internal.intro.impl.model.IntroTheme;
 import org.eclipse.ui.internal.intro.impl.swt.SharedStyleManager;
 import org.eclipse.ui.internal.intro.impl.util.ImageUtil;
 import org.eclipse.ui.intro.IIntroPart;
-import org.eclipse.ui.intro.config.CustomizableIntroPart;
 import org.eclipse.ui.intro.config.IIntroURL;
 import org.eclipse.ui.intro.config.IntroURLFactory;
 
@@ -453,12 +450,6 @@ public class IntroLaunchBar {
 		if (restore) {
 			IWorkbenchWindow window = getWorkbenchWindow();
 			intro = PlatformUI.getWorkbench().getIntroManager().showIntro(window, false);
-			CustomizableIntroPart cpart = (CustomizableIntroPart) intro;
-			Rectangle startBounds = Geometry.toDisplay(getControl().getParent(), getControl().getBounds());
-			Rectangle endBounds = Geometry.toDisplay(cpart.getControl().getParent(), cpart.getControl()
-					.getBounds());
-
-			AnimationEngine.createTweakedAnimation(window.getShell(), 400, startBounds, endBounds);
 		}
 		dispose();
 		return intro;
