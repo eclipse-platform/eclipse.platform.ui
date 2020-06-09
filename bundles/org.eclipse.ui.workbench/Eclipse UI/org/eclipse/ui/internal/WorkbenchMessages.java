@@ -352,10 +352,6 @@ public class WorkbenchMessages extends NLS {
 
 	public static String AboutSystemPage_RetrievingSystemInfo;
 
-	// --- Shortcutbar ---
-	public static String PerspectiveBarContributionItem_toolTip;
-	public static String PerspectiveBarNewContributionItem_toolTip;
-
 	// --- Coolbar ---
 	public static String WorkbenchWindow_FileToolbar;
 	public static String WorkbenchWindow_EditToolbar;
