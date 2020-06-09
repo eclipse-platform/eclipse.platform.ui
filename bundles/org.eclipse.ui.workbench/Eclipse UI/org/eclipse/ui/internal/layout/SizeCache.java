@@ -97,14 +97,14 @@ public class SizeCache {
 	 *                   return (0,0)
 	 */
 	public void setControl(Control newControl) {
-		if (newControl != control && !newControl.isDisposed()) {
+		if (newControl != control) {
 			control = newControl;
 			if (control == null) {
 				independentDimensions = true;
 				preferredWidthOrLargerIsMinimumHeight = false;
 				widthAdjustment = 0;
 				heightAdjustment = 0;
-			} else {
+			} else if (!control.isDisposed()) {
 				independentDimensions = independentLengthAndWidth(control);
 				preferredWidthOrLargerIsMinimumHeight = isPreferredWidthMaximum(control);
 				computeHintOffset(control);
