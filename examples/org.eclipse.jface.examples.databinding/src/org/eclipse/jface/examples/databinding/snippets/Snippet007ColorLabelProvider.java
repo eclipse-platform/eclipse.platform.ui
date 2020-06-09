@@ -98,6 +98,7 @@ public class Snippet007ColorLabelProvider {
 
 		// This does not have to correspond to the columns in the table,
 		// we just list all attributes that affect the table content
+		@SuppressWarnings("unchecked")
 		IObservableMap<Person, ?>[] attributes = new IObservableMap[] {
 				BeanProperties.value(Person.class, "name").observeDetail(contentProvider.getKnownElements()),
 				BeanProperties.value(Person.class, "gender").observeDetail(contentProvider.getKnownElements()) };

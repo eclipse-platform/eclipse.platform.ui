@@ -64,7 +64,9 @@ public class Snippet006Spreadsheet {
 	 */
 	private static boolean FUNKY_FORMULAS = true;
 
+	@SuppressWarnings("unchecked")
 	static WritableValue<String>[][] cellFormulas = new WritableValue[NUM_ROWS][NUM_COLUMNS];
+	@SuppressWarnings("unchecked")
 	static ComputedValue<String>[][] cellValues = new ComputedValue[NUM_ROWS][NUM_COLUMNS];
 
 	static class ComputedCellValue extends ComputedValue<String> {

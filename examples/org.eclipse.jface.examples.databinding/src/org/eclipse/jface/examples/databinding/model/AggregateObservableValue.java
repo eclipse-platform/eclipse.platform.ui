@@ -45,6 +45,7 @@ public class AggregateObservableValue extends AbstractObservableValue<Object> {
 	 * @param observableValues
 	 * @param delimiter
 	 */
+	@SuppressWarnings("unchecked")
 	public AggregateObservableValue(IObservableValue<Object>[] observableValues,
 			String delimiter) {
 		this.observableValues = observableValues;
@@ -55,6 +56,7 @@ public class AggregateObservableValue extends AbstractObservableValue<Object> {
 		doGetValue();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public void doSetValue(Object value) {
 		Object oldValue = doGetValue();
@@ -94,6 +96,7 @@ public class AggregateObservableValue extends AbstractObservableValue<Object> {
 		return String.class;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public synchronized void dispose() {
 		for (IObservableValue observableValue : observableValues) {

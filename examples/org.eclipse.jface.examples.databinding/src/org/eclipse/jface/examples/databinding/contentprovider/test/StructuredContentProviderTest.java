@@ -213,6 +213,7 @@ public class StructuredContentProviderTest {
 			@Override
 			protected Double calculate() {
 				double sum = 0.0;
+				@SuppressWarnings("unchecked")
 				Set<Double> elems = outputSet;
 				for (double elem : elems) {
 					sum += elem;

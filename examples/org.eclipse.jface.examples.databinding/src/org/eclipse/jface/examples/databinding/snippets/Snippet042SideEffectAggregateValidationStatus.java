@@ -40,6 +40,7 @@ public class Snippet042SideEffectAggregateValidationStatus {
 		display.dispose();
 	}
 
+	@SuppressWarnings("unchecked")
 	private static void run(final Display display) {
 		Shell shell = new Shell(display);
 		shell.setText("ISideEffect & AggregateValidationStatus");

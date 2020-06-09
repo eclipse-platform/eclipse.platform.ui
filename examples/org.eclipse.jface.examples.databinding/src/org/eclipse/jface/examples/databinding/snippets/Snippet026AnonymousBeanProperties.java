@@ -335,6 +335,7 @@ public class Snippet026AnonymousBeanProperties {
 			ISetProperty<ContactGroup, Contact> groupContacts = BeanProperties.set(ContactGroup.class, "contacts",
 					Contact.class);
 
+			@SuppressWarnings("unchecked")
 			@Override
 			protected ISetProperty<Object, Object> doGetDelegate(Object source) {
 				if (source instanceof ApplicationModel) {
