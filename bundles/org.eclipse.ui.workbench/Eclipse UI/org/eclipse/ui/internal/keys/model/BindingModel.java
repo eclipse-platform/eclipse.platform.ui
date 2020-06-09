@@ -62,7 +62,7 @@ public class BindingModel extends CommonModel {
 		return deletes;
 	}
 
-	private Collection<BindingElement> allParameterizedCommands;
+	private Collection<ParameterizedCommand> allParameterizedCommands;
 	private BindingManager bindingManager;
 
 	/**
@@ -177,9 +177,9 @@ public class BindingModel extends CommonModel {
 			}
 		}
 
-		i = allParameterizedCommands.iterator();
-		while (i.hasNext()) {
-			ParameterizedCommand cmd = (ParameterizedCommand) i.next();
+		Iterator<ParameterizedCommand> ii = allParameterizedCommands.iterator();
+		while (ii.hasNext()) {
+			ParameterizedCommand cmd = ii.next();
 			if (!cmdsForBindings.contains(cmd)) {
 				BindingElement be = new BindingElement(controller);
 				be.init(cmd);
