@@ -28,17 +28,13 @@ import org.eclipse.jface.viewers.ViewerComparator;
 import org.eclipse.jface.window.IShellProvider;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.GC;
-import org.eclipse.swt.graphics.Point;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.internal.AnimationEngine;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.eclipse.ui.internal.WorkbenchWindow;
 import org.eclipse.ui.internal.misc.StatusUtil;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.progress.IProgressConstants;
@@ -523,58 +519,6 @@ public class ProgressManagerUtil {
 		return null;
 	}
 
-	/**
-	 * Animate the closing of a window given the start position down to the progress
-	 * region.
-	 *
-	 * @param startPosition Rectangle. The position to start drawing from.
-	 */
-	public static void animateDown(Rectangle startPosition) {
-		IWorkbenchWindow currentWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (currentWindow == null) {
-			return;
-		}
-		WorkbenchWindow internalWindow = (WorkbenchWindow) currentWindow;
-
-		ProgressRegion progressRegion = internalWindow.getProgressRegion();
-		if (progressRegion == null) {
-			return;
-		}
-		Rectangle endPosition = progressRegion.getControl().getBounds();
-
-		Point windowLocation = internalWindow.getShell().getLocation();
-		endPosition.x += windowLocation.x;
-		endPosition.y += windowLocation.y;
-
-		// animate the progress dialog's removal
-		AnimationEngine.createTweakedAnimation(internalWindow.getShell(), 400, startPosition, endPosition);
-	}
-
-	/**
-	 * Animate the opening of a window given the start position down to the progress
-	 * region.
-	 *
-	 * @param endPosition Rectangle. The position to end drawing at.
-	 */
-	public static void animateUp(Rectangle endPosition) {
-		IWorkbenchWindow currentWindow = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		if (currentWindow == null) {
-			return;
-		}
-		WorkbenchWindow internalWindow = (WorkbenchWindow) currentWindow;
-		Point windowLocation = internalWindow.getShell().getLocation();
-
-		ProgressRegion progressRegion = internalWindow.getProgressRegion();
-		if (progressRegion == null) {
-			return;
-		}
-		Rectangle startPosition = progressRegion.getControl().getBounds();
-		startPosition.x += windowLocation.x;
-		startPosition.y += windowLocation.y;
-
-		// animate the progress dialog's arrival
-		AnimationEngine.createTweakedAnimation(internalWindow.getShell(), 400, startPosition, endPosition);
-	}
 
 	/**
 	 * Get the shell provider to use in the progress support dialogs. This provider

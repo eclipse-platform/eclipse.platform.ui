@@ -29,7 +29,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.operation.ProgressMonitorUtil;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.BusyIndicator;
-import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
@@ -89,10 +88,8 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 		Button runInWorkspace = createButton(parent, IDialogConstants.CLOSE_ID,
 				ProgressMessages.ProgressMonitorFocusJobDialog_RunInBackgroundButton, true);
 		runInWorkspace.addSelectionListener(widgetSelectedAdapter(e -> {
-			Rectangle shellPosition = getShell().getBounds();
 			job.setProperty(IProgressConstants.PROPERTY_IN_DIALOG, Boolean.FALSE);
 			finishedRun();
-			ProgressManagerUtil.animateDown(shellPosition);
 		}));
 		runInWorkspace.setCursor(arrowCursor);
 
