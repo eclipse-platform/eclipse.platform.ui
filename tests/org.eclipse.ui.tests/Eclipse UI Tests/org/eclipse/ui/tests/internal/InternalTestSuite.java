@@ -31,6 +31,7 @@ import org.junit.runners.Suite;
 
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
+	AnimationEngineTest.class,
 	EditorActionBarsTest.class,
 	ActionSetExpressionTest.class,
 	PopupMenuExpressionTest.class,

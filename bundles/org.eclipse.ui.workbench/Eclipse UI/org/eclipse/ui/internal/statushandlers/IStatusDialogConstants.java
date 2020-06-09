@@ -168,5 +168,12 @@ public interface IStatusDialogConstants {
 	 */
 	Object MODALITY_SWITCH = new Object();
 
+	/**
+	 * This flag controls animations. It is for testing purposes only. If it set to
+	 * false, animations will not be created. Animation means shell closing/opening
+	 * animation.
+	 */
+	Object ANIMATION = new Object();
+
 	Object MANAGER_IMPL = WorkbenchStatusDialogManagerImpl.class;
 }

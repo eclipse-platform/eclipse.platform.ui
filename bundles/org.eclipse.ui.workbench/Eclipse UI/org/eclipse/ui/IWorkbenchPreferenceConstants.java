@@ -372,10 +372,7 @@ public interface IWorkbenchPreferenceConstants {
 	 * </p>
 	 *
 	 * @since 3.1
-	 *
-	 * @deprecated not supported by the platform anymore
 	 */
-	@Deprecated
 	String ENABLE_ANIMATIONS = "ENABLE_ANIMATIONS"; //$NON-NLS-1$
 
 	/**

@@ -40,6 +40,7 @@ public class WorkbenchStatusDialogManagerImplTest {
 	@Before
 	public void setUp() throws Exception {
 		mgr = new WorkbenchStatusDialogManagerImpl(0xFFFFFF, null);
+		mgr.setProperty(IStatusDialogConstants.ANIMATION, Boolean.FALSE);
 	}
 
 	@After

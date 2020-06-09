@@ -154,6 +154,7 @@ public class WorkbenchStatusDialogManagerImpl implements KeptJobsListener {
 		dialogState.put(IStatusDialogConstants.STATUS_MODALS, new HashMap<>());
 		dialogState.put(IStatusDialogConstants.LABEL_PROVIDER, new LabelProviderWrapper(dialogState));
 		dialogState.put(IStatusDialogConstants.MODALITY_SWITCH, Boolean.FALSE);
+		dialogState.put(IStatusDialogConstants.ANIMATION, Boolean.TRUE);
 		return dialogState;
 	}
 
