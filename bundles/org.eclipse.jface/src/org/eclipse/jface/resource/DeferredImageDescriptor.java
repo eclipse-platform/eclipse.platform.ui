@@ -17,6 +17,8 @@ import java.net.URL;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+import org.eclipse.swt.graphics.Device;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.ImageData;
 
 /**
@@ -66,5 +68,14 @@ final class DeferredImageDescriptor extends ImageDescriptor {
 			return useMissingImage ? ImageDescriptor.getMissingImageDescriptor().getImageData(zoom) : null;
 		}
 		return ImageDescriptor.createFromURL(url).getImageData(zoom);
+	}
+
+	@Override
+	public Image createImage(boolean returnMissingImageOnError, Device device) {
+		URL url = supplier.get();
+		if (url == null) {
+			return returnMissingImageOnError ? ImageDescriptor.getMissingImageDescriptor().createImage() : null;
+		}
+		return ImageDescriptor.createFromURL(url).createImage(returnMissingImageOnError, device);
 	}
 }

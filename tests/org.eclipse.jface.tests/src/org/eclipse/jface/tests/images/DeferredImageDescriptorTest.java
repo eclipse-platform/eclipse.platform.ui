@@ -35,4 +35,9 @@ public class DeferredImageDescriptorTest extends TestCase {
 				.getImageData(100));
 	}
 
+	public void testCreateImage() {
+		assertNotNull(ImageDescriptor
+				.createFromURLSupplier(true, () -> DeferredImageDescriptorTest.class.getResource("anything.gif"))
+				.createImage());
+	}
 }
