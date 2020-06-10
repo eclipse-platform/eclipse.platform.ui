@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -36,7 +36,7 @@ public class AntStackFrame extends AntDebugElement implements IStackFrame {
 
 	/**
 	 * Constructs a stack frame in the given thread with the given id.
-	 * 
+	 *
 	 * @param antThread
 	 * @param id
 	 *            stack frame id (0 is the top of the stack)
@@ -198,7 +198,7 @@ public class AntStackFrame extends AntDebugElement implements IStackFrame {
 
 	/**
 	 * Returns the name of the buildfile this stack frame is associated with.
-	 * 
+	 *
 	 * @return the name of the buildfile this stack frame is associated with
 	 */
 	public String getSourceName() {
@@ -227,7 +227,7 @@ public class AntStackFrame extends AntDebugElement implements IStackFrame {
 
 	/**
 	 * Returns this stack frame's unique identifier within its thread
-	 * 
+	 *
 	 * @return this stack frame's unique identifier within its thread
 	 */
 	protected int getIdentifier() {
@@ -236,7 +236,7 @@ public class AntStackFrame extends AntDebugElement implements IStackFrame {
 
 	/**
 	 * Returns the system, user or runtime property name, or <code>null</code> if unable to resolve a property with the name.
-	 * 
+	 *
 	 * @param propertyName
 	 *            the name of the variable to search for
 	 * @return a property, or <code>null</code> if none

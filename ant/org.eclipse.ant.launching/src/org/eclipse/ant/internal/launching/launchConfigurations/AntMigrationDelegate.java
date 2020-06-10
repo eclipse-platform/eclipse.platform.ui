@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -27,14 +27,14 @@ import org.eclipse.debug.core.ILaunchConfigurationWorkingCopy;
 /**
  * Delegate for migrating Ant launch configurations. The migration process involves a resource mapping being created such that launch configurations
  * can be filtered from the launch configuration dialog based on resource availability.
- * 
+ *
  * @since 3.2
  */
 public class AntMigrationDelegate implements ILaunchConfigurationMigrationDelegate {
 
 	/**
 	 * Method to get the file for the specified launch configuration that should be mapped to the launch configuration
-	 * 
+	 *
 	 * @param candidate
 	 *            the launch configuration that the file will be mapped to.
 	 * @return the buildfile or <code>null</code> if not in the workspace

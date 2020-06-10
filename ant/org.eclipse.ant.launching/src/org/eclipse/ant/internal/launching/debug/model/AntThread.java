@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -71,7 +71,7 @@ public class AntThread extends AntDebugElement implements IThread {
 
 	/**
 	 * Constructs a new thread for the given target
-	 * 
+	 *
 	 * @param target
 	 *            the Ant Build
 	 */
@@ -92,7 +92,7 @@ public class AntThread extends AntDebugElement implements IThread {
 
 	/**
 	 * Retrieves the current stack frames in the thread possibly waiting until the frames are populated
-	 * 
+	 *
 	 */
 	private void getStackFrames0() throws DebugException {
 		synchronized (fFrames) {
@@ -155,7 +155,7 @@ public class AntThread extends AntDebugElement implements IThread {
 
 	/**
 	 * Sets the breakpoints this thread is suspended at, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param breakpoints
 	 *            the breakpoints this thread is suspended at, or <code>null</code> if none
 	 */
@@ -186,7 +186,7 @@ public class AntThread extends AntDebugElement implements IThread {
 
 	/**
 	 * Call-back when the target is resumed
-	 * 
+	 *
 	 * @since 1.0
 	 */
 	void resumedByTarget() {
@@ -271,7 +271,7 @@ public class AntThread extends AntDebugElement implements IThread {
 
 	/**
 	 * Sets whether this thread is stepping
-	 * 
+	 *
 	 * @param stepping
 	 *            whether stepping
 	 */

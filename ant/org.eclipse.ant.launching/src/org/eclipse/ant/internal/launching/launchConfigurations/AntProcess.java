@@ -163,7 +163,7 @@ public class AntProcess extends PlatformObject implements IProcess, IProgressMon
 
 	/**
 	 * Sets a progress monitor to delegate to or <code>null</code> if none.
-	 * 
+	 *
 	 * @param monitor
 	 *            delegate monitor or <code>null</code>
 	 */

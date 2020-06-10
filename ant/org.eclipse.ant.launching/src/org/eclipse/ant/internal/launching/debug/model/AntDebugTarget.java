@@ -67,7 +67,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 
 	/**
 	 * Constructs a new debug target in the given launch for the associated Ant build process.
-	 * 
+	 *
 	 * @param launch
 	 *            containing launch
 	 * @param process
@@ -181,7 +181,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 
 	/**
 	 * Notification the target has suspended for the given reason
-	 * 
+	 *
 	 * @param detail
 	 *            reason for the suspend
 	 */
@@ -346,7 +346,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 
 	/**
 	 * Notification a breakpoint was encountered. Determine which breakpoint was hit and fire a suspend event.
-	 * 
+	 *
 	 * @param event
 	 *            debug event
 	 */
@@ -417,7 +417,7 @@ public class AntDebugTarget extends AntDebugElement implements IDebugTarget, IDe
 
 	/**
 	 * When the breakpoint manager disables, remove all registered breakpoints requests from the VM. When it enables, reinstall them.
-	 * 
+	 *
 	 * @see org.eclipse.debug.core.IBreakpointManagerListener#breakpointManagerEnablementChanged(boolean)
 	 */
 	@Override

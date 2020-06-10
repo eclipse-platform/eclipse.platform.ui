@@ -83,7 +83,7 @@ public class AntProcessBuildLogger extends NullBuildLogger {
 	/**
 	 * Builds a right justified task prefix for the given build event, placing it in the given string buffer. Creates the hyperlinks for the task
 	 * prefix.
-	 * 
+	 *
 	 * @param event
 	 *            build event
 	 * @param fullMessage

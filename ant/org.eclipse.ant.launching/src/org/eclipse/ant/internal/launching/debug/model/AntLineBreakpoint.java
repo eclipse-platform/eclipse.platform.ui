@@ -42,7 +42,7 @@ public class AntLineBreakpoint extends LineBreakpoint {
 	/**
 	 * Constructs a line breakpoint on the given resource at the given line number. The line number is 1-based (i.e. the first line of a file is line
 	 * number 1).
-	 * 
+	 *
 	 * @param resource
 	 *            file on which to set the breakpoint
 	 * @param lineNumber
@@ -57,7 +57,7 @@ public class AntLineBreakpoint extends LineBreakpoint {
 	/**
 	 * Constructs a line breakpoint on the given resource at the given line number. The line number is 1-based (i.e. the first line of a file is line
 	 * number 1).
-	 * 
+	 *
 	 * @param resource
 	 *            file on which to set the breakpoint
 	 * @param lineNumber

@@ -36,7 +36,7 @@ import org.w3c.dom.Element;
 
 /**
  * A classpath entry that contains a set of archives for a particular ANT_HOME.
- * 
+ *
  * @since 3.0
  */
 @SuppressWarnings("restriction")
@@ -58,7 +58,7 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 
 	/**
 	 * Constructs an AntHome entry for the Ant installed at the specified root directory.
-	 * 
+	 *
 	 * @param antHome
 	 *            path in the local file system to an Ant installation
 	 */
@@ -159,7 +159,7 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 
 	/**
 	 * Return whether s1 is equivalent to s2.
-	 * 
+	 *
 	 * @param s1
 	 * @param s2
 	 * @return whether s1 is equivalent to s2
@@ -178,7 +178,7 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 
 	/**
 	 * Sets the ant home to use.
-	 * 
+	 *
 	 * @param path
 	 *            path to toor of an ant home installation
 	 */
@@ -188,7 +188,7 @@ public class AntHomeClasspathEntry extends AbstractRuntimeClasspathEntry {
 
 	/**
 	 * Returns the ant home location
-	 * 
+	 *
 	 * @return path to root ant installation directory
 	 */
 	public String getAntHome() {

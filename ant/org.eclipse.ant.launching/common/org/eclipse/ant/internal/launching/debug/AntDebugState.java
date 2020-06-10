@@ -73,7 +73,7 @@ public class AntDebugState {
 
 	/**
 	 * Call-back from {@link org.eclipse.ant.internal.launching.runtime.logger.AntProcessDebugBuildLogger} when the build has finished
-	 * 
+	 *
 	 * @since 1.0.1
 	 */
 	public void buildFinished() {
@@ -527,7 +527,7 @@ public class AntDebugState {
 
 	private String escapeLineSeparator(String stringToEscape) {
 		if (!(stringToEscape.indexOf('\r') != -1 || stringToEscape.indexOf('\n') != -1 || stringToEscape.contains("\\r") //$NON-NLS-1$
-		
+
 				|| stringToEscape.contains("\\n"))) { //$NON-NLS-1$
 			return stringToEscape;
 		}

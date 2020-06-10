@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -66,7 +66,7 @@ public class AntProcessDebugBuildLogger extends AntProcessBuildLogger implements
 	 * Cleans up all held memory. <br>
 	 * <br>
 	 * Called from {@link #buildFinished(BuildEvent)} and {@link #terminate()}
-	 * 
+	 *
 	 * @since 1.0.1
 	 */
 	void cleanup() {

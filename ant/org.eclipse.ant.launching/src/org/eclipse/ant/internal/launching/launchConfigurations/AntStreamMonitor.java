@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -43,7 +43,7 @@ public class AntStreamMonitor implements IFlushableStreamMonitor {
 
 	/**
 	 * Appends the given message to this stream, and notifies listeners.
-	 * 
+	 *
 	 * @param message
 	 */
 	public void append(String message) {

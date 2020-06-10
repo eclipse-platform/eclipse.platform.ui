@@ -2,11 +2,11 @@
  * Copyright (c) 2000, 2019 IBM Corporation and others.
  * Portions Copyright  2000-2005 The Apache Software Foundation
  *
- * This program and the accompanying materials are made 
- * available under the terms of the Apache Software License v2.0 which 
- * accompanies this distribution and is available at 
+ * This program and the accompanying materials are made
+ * available under the terms of the Apache Software License v2.0 which
+ * accompanies this distribution and is available at
  * http://www.apache.org/licenses/LICENSE-2.0.
- * 
+ *
  * Contributors:
  *     IBM Corporation - derived implementation
  *     Rob Stryker - Bug 459188 - InternalAntRunner tries to set null user property
@@ -124,14 +124,14 @@ public class InternalAntRunner {
 
 	/**
 	 * Indicates whether to execute all targets that do not depend on failed targets
-	 * 
+	 *
 	 * @since Ant 1.6.0
 	 */
 	private boolean keepGoing = false;
 
 	/**
 	 * Indicates whether this build is to support interactive input
-	 * 
+	 *
 	 * @since Ant 1.6.0
 	 */
 	private boolean allowInput = true;
@@ -198,7 +198,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Parses the build file and adds necessary information into the given project.
-	 * 
+	 *
 	 * @param project
 	 *            The project to configure
 	 */
@@ -244,7 +244,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Logs a message with the client that lists the targets in a project
-	 * 
+	 *
 	 * @param project
 	 *            the project to list targets from
 	 */
@@ -306,7 +306,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Logs a message with the client that lists the target names and optional descriptions
-	 * 
+	 *
 	 * @param project
 	 *            the enclosing target
 	 * @param names
@@ -557,7 +557,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Creates and returns the default build logger for logging build events to the ant log.
-	 * 
+	 *
 	 * @return the default build logger for logging build events to the ant log can return <code>null</code> if no logging is to occur
 	 */
 	private BuildLogger createLogger() {
@@ -633,7 +633,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Sets the buildFileLocation.
-	 * 
+	 *
 	 * @param buildFileLocation
 	 *            the file system location of the build file
 	 */
@@ -653,7 +653,7 @@ public class InternalAntRunner {
 
 	/**
 	 * Sets the message output level. Use -1 for none.
-	 * 
+	 *
 	 * @param level
 	 *            The message output level
 	 */
@@ -1244,7 +1244,7 @@ public class InternalAntRunner {
 
 	/*
 	 * From a command line list, return the argument for the given parameter. The parameter and its argument are removed from the list.
-	 * 
+	 *
 	 * @return <code>null</code> if the parameter is not found or an empty String if no arguments are found
 	 */
 	private String getArgument(List<String> commands, String param) {
@@ -1310,7 +1310,7 @@ public class InternalAntRunner {
 
 	/*
 	 * Creates the InputHandler and adds it to the project.
-	 * 
+	 *
 	 * @exception BuildException if a specified InputHandler implementation could not be loaded.
 	 */
 	private void addInputHandler(Project project) {

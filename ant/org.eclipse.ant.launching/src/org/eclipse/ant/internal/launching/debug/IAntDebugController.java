@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -39,14 +39,14 @@ public interface IAntDebugController {
 
 	/**
 	 * The debugging session has terminated
-	 * 
+	 *
 	 * @since 1.0.1
 	 */
 	public void terminate();
 
 	/**
 	 * The provided breakpoint has been added or removed depending on the <code>added</code> parameter. Updates the controller for this change.
-	 * 
+	 *
 	 * @param breakpoint
 	 *            the breakpoint that has been added or removed
 	 * @param added
@@ -66,7 +66,7 @@ public interface IAntDebugController {
 
 	/**
 	 * Some strings are escaped when marshalled for socket communication. The Ant debug controller will properly unescape these Strings if required.
-	 * 
+	 *
 	 * @param value
 	 *            The buffer of the string to unescape
 	 * @return The unescaped string

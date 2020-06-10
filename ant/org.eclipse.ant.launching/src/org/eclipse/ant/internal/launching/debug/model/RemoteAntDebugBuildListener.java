@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -78,7 +78,7 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param launch
 	 *            the backing launch to listen to
 	 * @param encoding
@@ -179,7 +179,7 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 
 	/**
 	 * Start listening to an Ant build. Start a server connection that the RemoteAntDebugBuildLogger can connect to.
-	 * 
+	 *
 	 * @param eventPort
 	 *            The port number to create the server connection on
 	 * @param requestPort
@@ -192,7 +192,7 @@ public class RemoteAntDebugBuildListener extends RemoteAntBuildListener implemen
 
 	/**
 	 * Sends a request to the Ant build
-	 * 
+	 *
 	 * @param request
 	 *            debug command
 	 */

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -30,7 +30,7 @@ public interface IAntCoreConstants {
 
 	/**
 	 * Preferences
-	 * 
+	 *
 	 * @since 3.0
 	 */
 	public static final String PREFERENCE_ANT_HOME_ENTRIES = "ant_home_entries"; //$NON-NLS-1$
@@ -40,7 +40,7 @@ public interface IAntCoreConstants {
 
 	/**
 	 * Preferences
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	public static final String PREFERENCE_ANT_HOME = "ant_home"; //$NON-NLS-1$
@@ -52,7 +52,7 @@ public interface IAntCoreConstants {
 	 * Constant representing the word 'id' <br>
 	 * <br>
 	 * Value is: <code>id</code>
-	 * 
+	 *
 	 * @since 3.2.500
 	 */
 	public static final String ID = "id"; //$NON-NLS-1$
@@ -61,7 +61,7 @@ public interface IAntCoreConstants {
 	 * Constant representing the word 'augment' <br>
 	 * <br>
 	 * Value is: <code>augment</code>
-	 * 
+	 *
 	 * @since 3.2.500
 	 */
 	public static final String AUGMENT = "augment"; //$NON-NLS-1$
@@ -70,7 +70,7 @@ public interface IAntCoreConstants {
 	 * Constant for the word 'default' <br>
 	 * <br>
 	 * Value is: <code>default</code>
-	 * 
+	 *
 	 * @since org.eclipse.ant.core 3.2.200
 	 */
 	public static final String DEFAULT = "default"; //$NON-NLS-1$
@@ -79,14 +79,14 @@ public interface IAntCoreConstants {
 	 * Constant for the word 'dir' <br>
 	 * <br>
 	 * Value is: <code>dir</code>
-	 * 
+	 *
 	 * @since org.eclipse.ant.core 3.2.200
 	 */
 	public static final String DIR = "dir"; //$NON-NLS-1$
 
 	/**
 	 * Constant for the empty {@link String}
-	 * 
+	 *
 	 * @since org.eclipse.ant.core 3.2.200
 	 */
 	public static final String EMPTY_STRING = ""; //$NON-NLS-1$
@@ -95,7 +95,7 @@ public interface IAntCoreConstants {
 	 * Constant for the word 'file' <br>
 	 * <br>
 	 * Value is: <code>file</code>
-	 * 
+	 *
 	 * @since org.eclipse.ant.core 3.2.200
 	 */
 	public static final String FILE = "file"; //$NON-NLS-1$
@@ -104,7 +104,7 @@ public interface IAntCoreConstants {
 	 * Constant representing a file URL protocol <br>
 	 * <br>
 	 * Value is: <code>file:</code>
-	 * 
+	 *
 	 * @since org.eclipse.ant.core 3.2.200
 	 */
 	public static final String FILE_PROTOCOL = "file:"; //$NON-NLS-1$
@@ -113,7 +113,7 @@ public interface IAntCoreConstants {
 	 * Constant for the word 'description' <br>
 	 * <br>
 	 * Value is: <code>description</code>
-	 * 
+	 *
 	 * @since org.eclipse.ant.core 3.2.200
 	 */
 	public static final String DESCRIPTION = "description"; //$NON-NLS-1$
@@ -122,7 +122,7 @@ public interface IAntCoreConstants {
 	 * Constant for the encoding <code>UTF-8</code> <br>
 	 * <br>
 	 * Value is: <code>UTF-8</code>
-	 * 
+	 *
 	 * @since org.eclipse.ant.core 3.3.0
 	 */
 	public static final String UTF_8 = "UTF-8"; //$NON-NLS-1$
@@ -131,7 +131,7 @@ public interface IAntCoreConstants {
 	 * The name of the XML build file extension. <br>
 	 * <br>
 	 * Value is: <code>xml</code>
-	 * 
+	 *
 	 * @since 3.8
 	 */
 	public static final String XML_EXTENSION = "xml"; //$NON-NLS-1$
@@ -140,7 +140,7 @@ public interface IAntCoreConstants {
 	 * The name of the target vector property used by the Eclipse executor <br>
 	 * <br>
 	 * Value is: <code>eclipse.ant.targetVector</code>
-	 * 
+	 *
 	 * @since 3.3.0
 	 */
 	public static final String TARGET_VECTOR_NAME = "eclipse.ant.targetVector"; //$NON-NLS-1$

@@ -68,7 +68,7 @@ public final class AntLaunchingUtil {
 
 	/**
 	 * Returns a single-string of the strings for storage.
-	 * 
+	 *
 	 * @param strings
 	 *            the array of strings
 	 * @return a single-string representation of the strings or <code>null</code> if the array is empty.
@@ -92,7 +92,7 @@ public final class AntLaunchingUtil {
 	/**
 	 * Returns an array of targets to be run, or <code>null</code> if none are specified (indicating the default target or implicit target should be
 	 * run).
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return array of target names, or <code>null</code>
@@ -133,7 +133,7 @@ public final class AntLaunchingUtil {
 	/**
 	 * Returns a map of properties to be defined for the build, or <code>null</code> if none are specified (indicating no additional properties
 	 * specified for the build).
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return map of properties (name --&gt; value), or <code>null</code>
@@ -148,7 +148,7 @@ public final class AntLaunchingUtil {
 
 	/**
 	 * Returns a String specifying the Ant home to use for the build.
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return String specifying Ant home to use or <code>null</code>
@@ -171,7 +171,7 @@ public final class AntLaunchingUtil {
 	/**
 	 * Returns an array of property files to be used for the build, or <code>null</code> if none are specified (indicating no additional property
 	 * files specified for the build).
-	 * 
+	 *
 	 * @param configuration
 	 *            launch configuration
 	 * @return array of property file names, or <code>null</code>
@@ -194,11 +194,11 @@ public final class AntLaunchingUtil {
 
 	/**
 	 * Returns the list of URLs that define the custom classpath for the Ant build, or <code>null</code> if the global classpath is to be used.
-	 * 
+	 *
 	 * @param config
 	 *            launch configuration
 	 * @return a list of <code>URL</code>
-	 * 
+	 *
 	 * @throws CoreException
 	 *             if file does not exist, IO problems, or invalid format.
 	 */
@@ -240,7 +240,7 @@ public final class AntLaunchingUtil {
 
 	/**
 	 * Returns the list of target names to run
-	 * 
+	 *
 	 * @param extraAttibuteValue
 	 *            the external tool's extra attribute value for the run targets key.
 	 * @return a list of target names
@@ -251,7 +251,7 @@ public final class AntLaunchingUtil {
 
 	/**
 	 * Returns the list of Strings that were delimiter separated.
-	 * 
+	 *
 	 * @param delimString
 	 *            the String to be tokenized based on the delimiter
 	 * @return a list of Strings
@@ -283,9 +283,9 @@ public final class AntLaunchingUtil {
 	/**
 	 * Returns the workspace file associated with the given path in the local file system, or <code>null</code> if none. If the path happens to be a
 	 * relative path, then the path is interpreted as relative to the specified parent file.
-	 * 
+	 *
 	 * Attempts to handle linked files; the first found linked file with the correct path is returned.
-	 * 
+	 *
 	 * @param path
 	 * @param buildFileParent
 	 * @return file or <code>null</code>
@@ -339,7 +339,7 @@ public final class AntLaunchingUtil {
 	/**
 	 * Migrates the classpath in the given configuration from the old format to the new format. The old format is not preserved. Instead, the default
 	 * classpath will be used. However, ANT_HOME settings are preserved.
-	 * 
+	 *
 	 * @param configuration
 	 *            a configuration to migrate
 	 * @throws CoreException
@@ -446,7 +446,7 @@ public final class AntLaunchingUtil {
 	/**
 	 * Returns whether the given configuration should be launched in the background. When unspecified, the default value for an Ant launch
 	 * configuration is <code>true</code>.
-	 * 
+	 *
 	 * @param configuration
 	 *            the configuration
 	 * @return whether the configuration is configured to launch in the background

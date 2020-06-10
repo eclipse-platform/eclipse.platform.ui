@@ -43,7 +43,7 @@ public class AntLaunching extends Plugin {
 
 	/**
 	 * Size of left-hand column for right-justified task name. Used for Ant Build logging.
-	 * 
+	 *
 	 * @see org.eclipse.ant.internal.ui.antsupport.logger.AntProcessBuildLogger
 	 * @see org.eclipse.ant.internal.launching.launchConfigurations.RemoteAntBuildListener
 	 */
@@ -52,7 +52,7 @@ public class AntLaunching extends Plugin {
 	/**
 	 * String attribute indicating the custom runtime classpath to use for an Ant build. Default value is <code>null</code> which indicates that the
 	 * global classpath is to be used. Format is a comma separated listing of URLs.
-	 * 
+	 *
 	 * @deprecated no longer supported: use {@link IJavaLaunchConfigurationConstants#ATTR_CLASSPATH_PROVIDER}
 	 * @see IJavaLaunchConfigurationConstants#ATTR_DEFAULT_CLASSPATH
 	 */
@@ -61,7 +61,7 @@ public class AntLaunching extends Plugin {
 	/**
 	 * String attribute indicating the custom Ant home to use for an Ant build. Default value is <code>null</code> which indicates that no Ant home is
 	 * to be set
-	 * 
+	 *
 	 * @deprecated no longer supported: use {@link IJavaLaunchConfigurationConstants#ATTR_CLASSPATH_PROVIDER}
 	 * @see IJavaLaunchConfigurationConstants#ATTR_DEFAULT_CLASSPATH
 	 */
@@ -70,7 +70,7 @@ public class AntLaunching extends Plugin {
 
 	/**
 	 * Status code indicating an unexpected internal error.
-	 * 
+	 *
 	 * @since 2.1
 	 */
 	public static final int INTERNAL_ERROR = 120;
@@ -98,7 +98,7 @@ public class AntLaunching extends Plugin {
 
 	/**
 	 * Returns the shared instance
-	 * 
+	 *
 	 * @return the shared instance
 	 */
 	public static AntLaunching getDefault() {
@@ -111,7 +111,7 @@ public class AntLaunching extends Plugin {
 
 	/**
 	 * Logs the specified throwable with this plug-in's log.
-	 * 
+	 *
 	 * @param t
 	 *            throwable to log
 	 */
@@ -122,7 +122,7 @@ public class AntLaunching extends Plugin {
 
 	/**
 	 * Logs the specified status with this plug-in's log.
-	 * 
+	 *
 	 * @param status
 	 *            status
 	 */
@@ -132,7 +132,7 @@ public class AntLaunching extends Plugin {
 
 	/**
 	 * Writes the message to the plug-in's log
-	 * 
+	 *
 	 * @param message
 	 *            the text to write to the log
 	 */

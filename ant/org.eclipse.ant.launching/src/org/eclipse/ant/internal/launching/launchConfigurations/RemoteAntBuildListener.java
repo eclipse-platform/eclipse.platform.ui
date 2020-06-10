@@ -7,7 +7,7 @@
  *  https://www.eclipse.org/legal/epl-2.0/
  *
  *  SPDX-License-Identifier: EPL-2.0
- * 
+ *
  *  Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -65,7 +65,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 	private boolean fBuildFailed = false;
 	/**
 	 * The encoding to use
-	 * 
+	 *
 	 * @since 3.7
 	 */
 	private String fEncoding;
@@ -112,7 +112,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 
 	/**
 	 * Constructor
-	 * 
+	 *
 	 * @param launch
 	 *            the backing launch to listen to
 	 * @param encoding
@@ -127,7 +127,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 
 	/**
 	 * Returns the encoding set on the listener
-	 * 
+	 *
 	 * @return the encoding set on the listener
 	 * @since 3.7
 	 */
@@ -137,7 +137,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 
 	/**
 	 * Start listening to an Ant build. Start a server connection that the RemoteAntBuildLogger can connect to.
-	 * 
+	 *
 	 * @param eventPort
 	 *            The port number to create the server connection on
 	 */
@@ -329,7 +329,7 @@ public class RemoteAntBuildListener implements ILaunchesListener {
 
 	/**
 	 * Builds a right justified task prefix for the given build event, placing it in the given string buffer.
-	 * 
+	 *
 	 * @param taskName
 	 *            the name of the task, can be <code>null</code>
 	 * @param line

@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *******************************************************************************/
@@ -18,7 +18,7 @@ import org.eclipse.core.externaltools.internal.IExternalToolConstants;
 
 /**
  * Constant definitions for Ant launch configurations.
- * 
+ *
  * @since 1.0
  * @noimplement This interface is not intended to be implemented by clients.
  */
@@ -75,7 +75,7 @@ public interface IAntLaunchConstants {
 	 * Map attribute indicating the Ant properties to be defined during the build. Default value is <code>null</code> which indicates no additional
 	 * properties will be defined.
 	 */
-	public static final String ATTR_ANT_PROPERTIES = IExternalToolConstants.UI_PLUGIN_ID + ".ATTR_ANT_PROPERTIES"; //$NON-NLS-1$					
+	public static final String ATTR_ANT_PROPERTIES = IExternalToolConstants.UI_PLUGIN_ID + ".ATTR_ANT_PROPERTIES"; //$NON-NLS-1$
 
 	/**
 	 * String attribute indicating the Ant targets to execute. Default value is <code>null</code> which indicates that no additional property files

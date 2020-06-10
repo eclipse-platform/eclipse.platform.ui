@@ -51,7 +51,7 @@ import org.w3c.dom.Element;
 
 /**
  * A classpath entry that contains a contributed classpath entries via the <code>extraClasspathEntries</code> extension point.
- * 
+ *
  * @since 3.0
  */
 @SuppressWarnings("restriction")
@@ -219,7 +219,7 @@ public class ContributedClasspathEntriesEntry extends AbstractRuntimeClasspathEn
 
 	/**
 	 * Returns the tools.jar to use for this launch configuration, or <code>null</code> if none.
-	 * 
+	 *
 	 * @param configuration
 	 *            configuration to resolve a tools.jar for
 	 * @return associated tools.jar archive, or <code>null</code>

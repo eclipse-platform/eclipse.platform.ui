@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Juan A. Hernandez - bug 89926
@@ -95,7 +95,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 
 	/**
 	 * String attribute identifying the build scope for a launch configuration. <code>null</code> indicates the default workspace build.
-	 * 
+	 *
 	 * Note: this attribute was used with the old 'AntBuildTab' which has been replaced by the 'ExternalToolsBuildTab'. The 'ExternalToolsBuildTab'
 	 * uses a different attribute key, so use the external tools attribute when present: IExternalToolConstants.ATTR_BUILD_SCOPE
 	 */
@@ -104,7 +104,7 @@ public class AntLaunchDelegate extends LaunchConfigurationDelegate {
 	/**
 	 * Attribute identifier specifying whether referenced projects should be considered when computing the projects to build. Default value is
 	 * <code>true</code>.
-	 * 
+	 *
 	 * Note: this attribute was used with the old 'AntBuildTab' which has been replaced by the 'ExternalToolsBuildTab'. The 'ExternalToolsBuildTab'
 	 * uses a different attribute key, so use the external tools attribute when present: IExternalToolConstants.ATTR_INCLUDE_REFERENCED_PROJECTS
 	 */

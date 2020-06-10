@@ -27,7 +27,7 @@ public abstract class AntDebugElement extends DebugElement {
 
 	/**
 	 * Constructs a new debug element contained in the given debug target.
-	 * 
+	 *
 	 * @param target
 	 *            debug target
 	 */

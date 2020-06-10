@@ -7,7 +7,7 @@
  * https://www.eclipse.org/legal/epl-2.0/
  *
  * SPDX-License-Identifier: EPL-2.0
- * 
+ *
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brock Janiczak (brockj@tpg.com.au) - bug 154907
@@ -28,7 +28,7 @@ public class AntProperty extends AntDebugElement implements IVariable, Comparabl
 
 	/**
 	 * Constructs a variable associated with the debug target with the given name and value.
-	 * 
+	 *
 	 * @param target
 	 *            the debug target
 	 * @param name
