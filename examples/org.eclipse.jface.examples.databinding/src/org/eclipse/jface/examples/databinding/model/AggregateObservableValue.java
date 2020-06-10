@@ -45,18 +45,16 @@ public class AggregateObservableValue extends AbstractObservableValue<Object> {
 	 * @param observableValues
 	 * @param delimiter
 	 */
-	@SuppressWarnings("unchecked")
 	public AggregateObservableValue(IObservableValue<Object>[] observableValues,
 			String delimiter) {
 		this.observableValues = observableValues;
 		this.delimiter = delimiter;
-		for (IObservableValue observableValue : observableValues) {
+		for (IObservableValue<?> observableValue : observableValues) {
 			observableValue.addValueChangeListener(listener);
 		}
 		doGetValue();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public void doSetValue(Object value) {
 		Object oldValue = doGetValue();
@@ -64,7 +62,7 @@ public class AggregateObservableValue extends AbstractObservableValue<Object> {
 				delimiter);
 		try {
 			updating = true;
-			for (IObservableValue observableValue : observableValues) {
+			for (IObservableValue<Object> observableValue : observableValues) {
 				if (tokenizer.hasMoreElements()) {
 					observableValue.setValue(tokenizer.nextElement());
 				} else {
@@ -96,10 +94,9 @@ public class AggregateObservableValue extends AbstractObservableValue<Object> {
 		return String.class;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public synchronized void dispose() {
-		for (IObservableValue observableValue : observableValues) {
+		for (IObservableValue<?> observableValue : observableValues) {
 			observableValue.removeValueChangeListener(listener);
 		}
 		super.dispose();
