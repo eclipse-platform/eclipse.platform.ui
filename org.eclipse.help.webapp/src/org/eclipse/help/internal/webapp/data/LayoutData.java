@@ -29,7 +29,6 @@ import org.eclipse.help.internal.base.BaseHelpSystem;
 import org.eclipse.help.internal.base.MissingContentManager;
 import org.eclipse.help.internal.base.remote.RemoteStatusData;
 import org.eclipse.help.internal.webapp.HelpWebappPlugin;
-import org.eclipse.help.internal.webapp.servlet.AboutServlet;
 import org.eclipse.help.webapp.AbstractView;
 import org.eclipse.osgi.service.localization.BundleLocalization;
 import org.osgi.framework.Bundle;
