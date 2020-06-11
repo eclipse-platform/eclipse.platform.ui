@@ -151,7 +151,7 @@ public class TextConsolePage implements IPageBookViewPage, IPropertyChangeListen
 		}
 		fMenuManager= new MenuManager("#ContextMenu", id);  //$NON-NLS-1$
 		fMenuManager.setRemoveAllWhenShown(true);
-		fMenuManager.addMenuListener(m -> contextMenuAboutToShow(m));
+		fMenuManager.addMenuListener(this::contextMenuAboutToShow);
 		Menu menu = fMenuManager.createContextMenu(getControl());
 		getControl().setMenu(menu);
 
