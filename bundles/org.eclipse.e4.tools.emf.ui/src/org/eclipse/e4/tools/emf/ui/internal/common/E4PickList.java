@@ -17,8 +17,11 @@ package org.eclipse.e4.tools.emf.ui.internal.common;
 
 import java.util.List;
 
+import org.eclipse.core.databinding.observable.map.IObservableMap;
+import org.eclipse.core.databinding.property.value.IValueProperty;
 import org.eclipse.e4.tools.emf.ui.common.Util;
 import org.eclipse.e4.tools.emf.ui.common.component.AbstractComponentEditor;
+import org.eclipse.e4.tools.emf.ui.internal.E4Properties;
 import org.eclipse.e4.tools.emf.ui.internal.Messages;
 import org.eclipse.e4.ui.model.application.MApplicationElement;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
@@ -35,6 +38,7 @@ import org.eclipse.emf.edit.command.AddCommand;
 import org.eclipse.emf.edit.command.MoveCommand;
 import org.eclipse.emf.edit.command.RemoveCommand;
 import org.eclipse.jface.databinding.viewers.ObservableListContentProvider;
+import org.eclipse.jface.databinding.viewers.ObservableMapCellLabelProvider;
 import org.eclipse.jface.resource.FontDescriptor;
 import org.eclipse.jface.viewers.ArrayContentProvider;
 import org.eclipse.jface.viewers.CellNavigationStrategy;
@@ -49,6 +53,7 @@ import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewerEditor;
 import org.eclipse.jface.viewers.TableViewerFocusCellManager;
+import org.eclipse.jface.viewers.ViewerCell;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.widgets.Composite;
@@ -106,12 +111,27 @@ public class E4PickList extends AbstractPickList {
 			}
 		});
 
-		final FontDescriptor italicFontDescriptor = FontDescriptor.createFrom(viewer.getControl().getFont())
-				.setStyle(SWT.ITALIC);
-		viewer.setLabelProvider(new DelegatingStyledCellLabelProvider(
-				new ComponentLabelProvider(componentEditor.getEditor(), new Messages(), italicFontDescriptor)));
 		final ObservableListContentProvider<?> cp = new ObservableListContentProvider<>();
 		viewer.setContentProvider(cp);
+
+		final FontDescriptor italicFontDescriptor = FontDescriptor.createFrom(viewer.getControl().getFont())
+				.setStyle(SWT.ITALIC);
+		DelegatingStyledCellLabelProvider labelprovider = new DelegatingStyledCellLabelProvider(
+				new ComponentLabelProvider(componentEditor.getEditor(), new Messages(), italicFontDescriptor));
+
+		@SuppressWarnings({ "unchecked", "rawtypes" })
+		// Cast, because MUILabel is not part of E's type
+		final IObservableMap<?, ?> attributeMap = ((IValueProperty) E4Properties
+				.label(componentEditor.getEditingDomain())).observeDetail(cp.getKnownElements());
+
+		ObservableMapCellLabelProvider observableLabelProvider = new ObservableMapCellLabelProvider(attributeMap) {
+			@Override
+			public void update(ViewerCell cell) {
+				labelprovider.update(cell);
+			}
+		};
+
+		viewer.setLabelProvider(observableLabelProvider);
 
 		viewer.addOpenListener(event -> {
 			if (event.getSelection() instanceof IStructuredSelection) {
