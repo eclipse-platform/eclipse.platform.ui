@@ -94,9 +94,7 @@ public class ElementTreeView extends SpyView implements IResourceChangeListener 
 		UpdateAction() {
 			super("Update view");
 			this.setToolTipText("Update");
-			this.setImageDescriptor(ImageDescriptor.createFromURLSupplier(true, () -> {
-				return ElementTreeView.class.getResource("/icons/refresh.gif");
-			}));
+			this.setImageDescriptor(ImageDescriptor.createFromURLSupplier(true, () -> ElementTreeView.class.getResource("/icons/refresh.gif")));
 		}
 
 		void addToStringCount(String name) {

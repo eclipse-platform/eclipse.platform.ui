@@ -637,13 +637,10 @@ public class IResourceTest extends ResourceTest {
 
 		try {
 			// pass DEPTH_ONE to avoid using proxy visitor
-			a.accept(new IResourceVisitor() {
-				@Override
-				public boolean visit(IResource resource) {
-					// we should not get that far if the resource does not exist
-					fail("1.0");
-					return true;
-				}
+			a.accept((IResourceVisitor) resource -> {
+				// we should not get that far if the resource does not exist
+				fail("1.0");
+				return true;
 			}, IResource.DEPTH_ONE, IResource.NONE);
 			fail("1.1");
 		} catch (CoreException e) {
@@ -651,13 +648,10 @@ public class IResourceTest extends ResourceTest {
 		}
 
 		try {
-			a.accept(new IResourceProxyVisitor() {
-				@Override
-				public boolean visit(IResourceProxy proxy) {
-					// we should not get that far if the resource does not exist
-					fail("2.0");
-					return true;
-				}
+			a.accept(proxy -> {
+				// we should not get that far if the resource does not exist
+				fail("2.0");
+				return true;
 			}, IResource.NONE);
 			fail("2.1");
 		} catch (CoreException e) {
@@ -666,23 +660,17 @@ public class IResourceTest extends ResourceTest {
 
 		// pass DEPTH_ONE to avoid using proxy visitor
 		// if we don't check for existence, then no exception should be thrown
-		a.accept(new IResourceVisitor() {
-			@Override
-			public boolean visit(IResource resource) {
-				// we should not get that far if the resource does not exist
-				fail("3.0");
-				return true;
-			}
+		a.accept((IResourceVisitor) resource -> {
+			// we should not get that far if the resource does not exist
+			fail("3.0");
+			return true;
 		}, IResource.DEPTH_ONE, IContainer.DO_NOT_CHECK_EXISTENCE);
 
 		// if we don't check for existence, then no exception should be thrown
-		a.accept(new IResourceProxyVisitor() {
-			@Override
-			public boolean visit(IResourceProxy proxy) {
-				// we should not get that far if the resource does not exist
-				fail("4.0");
-				return true;
-			}
+		a.accept(proxy -> {
+			// we should not get that far if the resource does not exist
+			fail("4.0");
+			return true;
 		}, IContainer.DO_NOT_CHECK_EXISTENCE);
 	}
 
@@ -700,13 +688,10 @@ public class IResourceTest extends ResourceTest {
 		final Set<IResource> toVisit = new HashSet<>();
 		final int toVisitCount[] = new int[] {0};
 
-		IResourceProxyVisitor visitor = new IResourceProxyVisitor() {
-			@Override
-			public boolean visit(IResourceProxy proxy) {
-				toVisit.remove(proxy.requestResource());
-				toVisitCount[0]--;
-				return true;
-			}
+		IResourceProxyVisitor visitor = proxy -> {
+			toVisit.remove(proxy.requestResource());
+			toVisitCount[0]--;
+			return true;
 		};
 
 		ensureExistsInWorkspace(new IResource[] {project, a, a1, a2, b, b1, b2, c, c1, c2}, true);
