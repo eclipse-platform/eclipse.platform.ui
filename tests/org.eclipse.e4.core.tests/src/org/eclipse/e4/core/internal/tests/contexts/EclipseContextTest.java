@@ -25,7 +25,6 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.contexts.RunAndTrack;
 import org.eclipse.e4.core.di.IInjector;
 import org.eclipse.e4.core.internal.contexts.EclipseContext;
-import org.eclipse.e4.core.internal.contexts.IContextDisposalListener;
 import org.junit.Before;
 import org.junit.Test;
 import org.osgi.framework.FrameworkUtil;
@@ -114,12 +113,7 @@ public class EclipseContextTest {
 
 	@Test
 	public void testDisposeClearsNotifyOnDisposalSet() {
-		((EclipseContext) context).notifyOnDisposal(new IContextDisposalListener() {
-			@Override
-			public void disposed(IEclipseContext context) {
-				runCounter++;
-			}
-		});
+		((EclipseContext) context).notifyOnDisposal(context -> runCounter++);
 		context.dispose();
 		assertEquals(1, runCounter);
 		context.dispose();
