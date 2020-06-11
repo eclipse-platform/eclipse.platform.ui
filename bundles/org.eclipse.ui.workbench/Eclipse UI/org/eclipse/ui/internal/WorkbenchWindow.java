@@ -2668,7 +2668,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		MUIElement hsElement = modelService.find("org.eclipse.ui.HeapStatus", model); //$NON-NLS-1$
 		if (hsElement != null && hsElement.isToBeRendered() != show) {
 			hsElement.setToBeRendered(show);
-			getShell().layout(null, SWT.ALL | SWT.CHANGED | SWT.DEFER);
+			Object widget = hsElement.getParent().getWidget();
+			if (widget instanceof Control) {
+				((Control) widget).requestLayout();
+			}
 		}
 	}
 
