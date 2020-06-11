@@ -177,7 +177,7 @@ public class TreeAndListGroup implements ISelectionChangedListener {
 		listViewer.setContentProvider(listContentProvider);
 		listViewer.setLabelProvider(listLabelProvider);
 		listViewer.setComparator(new ResourceComparator(ResourceComparator.NAME));
-		listViewer.addSelectionChangedListener(event -> notifySelectionListeners(event));
+		listViewer.addSelectionChangedListener(this::notifySelectionListeners);
 		listViewer.addDoubleClickListener(event -> {
 			if (!event.getSelection().isEmpty()) {
 				notifyDoubleClickListeners(event);
