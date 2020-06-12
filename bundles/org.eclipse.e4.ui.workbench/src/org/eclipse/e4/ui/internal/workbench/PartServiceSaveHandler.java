@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2015 IBM Corporation and others.
+ * Copyright (c) 2013, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
+ *     Christoph Läubrich - Bug 538301
  ******************************************************************************/
 
 package org.eclipse.e4.ui.internal.workbench;
@@ -20,6 +21,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import org.eclipse.e4.core.contexts.ContextInjectionFactory;
+import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.InjectionException;
 import org.eclipse.e4.core.services.log.Logger;
 import org.eclipse.e4.ui.di.Persist;
@@ -44,6 +46,14 @@ public class PartServiceSaveHandler implements ISaveHandler {
 
 	@Override
 	public boolean save(MPart dirtyPart, boolean confirm) {
+		Object client = dirtyPart.getObject();
+		IEclipseContext context = dirtyPart.getContext();
+		if (client == null || context == null) {
+			log("Failed to persist contents of part", //$NON-NLS-1$
+					"Failed to persist contents of part ({0}) because the part was not rendered", //$NON-NLS-1$
+					dirtyPart.getElementId(), new RuntimeException());
+			return false;
+		}
 		if (confirm) {
 			switch (promptToSave(dirtyPart)) {
 			case NO:
@@ -54,10 +64,8 @@ public class PartServiceSaveHandler implements ISaveHandler {
 				break;
 			}
 		}
-
-		Object client = dirtyPart.getObject();
 		try {
-			ContextInjectionFactory.invoke(client, Persist.class, dirtyPart.getContext());
+			ContextInjectionFactory.invoke(client, Persist.class, context);
 		} catch (InjectionException e) {
 			log("Failed to persist contents of part", "Failed to persist contents of part ({0})", //$NON-NLS-1$ //$NON-NLS-2$
 					dirtyPart.getElementId(), e);
