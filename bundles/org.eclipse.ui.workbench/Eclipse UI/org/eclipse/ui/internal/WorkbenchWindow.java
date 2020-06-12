@@ -2998,7 +2998,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		MTrimBar topTrim = getTopTrim();
 		if (topTrim != null) {
 			topTrim.setVisible(isToolbarVisible());
-			getShell().layout();
+			Shell shell = getShell();
+			if (shell != null && !shell.isDisposed()) {
+				shell.layout();
+			}
 		}
 	}
 
