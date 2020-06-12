@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2019 IBM Corporation and others.
+ * Copyright (c) 2010, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 434611, 472654
  *     Manumitting Technologies Inc - Bug 380609
  *     Stefan Nöbauer - Bug 547997
+ *     Christoph Läubrich - Bug 538153
  ******************************************************************************/
 
 package org.eclipse.e4.ui.internal.workbench;
@@ -1147,6 +1148,9 @@ public class ModelServiceImpl implements EModelService {
 	 * @param parent
 	 */
 	private void setStackVisibility(MElementContainer<MUIElement> parent) {
+		if (parent == null) {
+			return;
+		}
 		for (MUIElement child : parent.getChildren()) {
 			if (child.isToBeRendered() && child.isVisible()) {
 				parent.setToBeRendered(true);
