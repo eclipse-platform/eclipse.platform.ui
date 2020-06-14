@@ -58,11 +58,13 @@ import org.eclipse.core.runtime.Assert;
  * interface elements, one for editing date and one for editing time:
  *
  * <pre>
+ * {@code
  * DataBindingContext bindingContext = new DataBindingContext();
  * IObservableValue&lt;LocalDateTime&gt;  beanValue = BeansObservables.observeValue(...);
  * IObservableValue&lt;LocalDate&gt; dateObservable = WidgetProperties.localDateSelection().observe(dateWidget);
  * IObservableValue&lt;LocalTime&gt; timeObservable = WidgetProperties.localTimeSelection().observe(timeWidget);
  * bindingContext.bindValue(new LocalDateTimeObservableValue(dateObservable, timeObservable), beanValue);
+ * }
  * </pre>
  *
  * A second use is editing only the date or time value of a date-and-time value.
@@ -71,13 +73,14 @@ import org.eclipse.core.runtime.Assert;
  * value. The example below allows editing the date while preserving the time:
  *
  * <pre>
+ * {@code
  * DataBindingContext bindingContext = new DataBindingContext();
- * IObservableValue&lt;LocalDateTime&gt; beanValue = BeansObservables.observeValue(...);
- * IObservableValue&lt;LocalDate&gt; dateObservable = WidgetProperties.localDateSelection().observe(dateWidget);
- * IObservableValue&lt;LocalTime&gt; timeObservable = new WritableValue<>(dateObservable.getRealm(),
+ * IObservableValue<LocalDateTime> beanValue = BeansObservables.observeValue(...);
+ * IObservableValue<LocalDate> dateObservable = WidgetProperties.localDateSelection().observe(dateWidget);
+ * IObservableValue<LocalTime> timeObservable = new WritableValue<>(dateObservable.getRealm(),
  * 		beanValue.getValue(), LocalTime.class);
  * bindingContext.bindValue(new LocalDateTimeObservableValue(dateObservable, timeObservable), beanValue);
- *
+ * }
  * </pre>
  *
  * @since 1.10
