@@ -217,25 +217,6 @@ public class StringMatcher {
 
 	}
 
-	public static class Position {
-		int start; // inclusive
-
-		int end; // exclusive
-
-		public Position(int start, int end) {
-			this.start = start;
-			this.end = end;
-		}
-
-		public int getStart() {
-			return start;
-		}
-
-		public int getEnd() {
-			return end;
-		}
-	}
-
 	/**
 	 * StringMatcher constructor takes in a String object that is a simple pattern
 	 * which may contain '*' for 0 and many characters and '?' for exactly one
