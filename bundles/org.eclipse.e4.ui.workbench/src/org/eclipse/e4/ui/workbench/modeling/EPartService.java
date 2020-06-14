@@ -17,10 +17,8 @@ package org.eclipse.e4.ui.workbench.modeling;
 
 import java.util.Collection;
 import java.util.Optional;
-import org.eclipse.core.runtime.AssertionFailedException;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
-import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 
 /**
@@ -325,22 +323,6 @@ public interface EPartService {
 	 *         user canceled the operation or if an error occurred while saving the changes
 	 */
 	boolean saveAll(boolean confirm);
-
-	/**
-	 * Returns a collection of all {@link MInputPart} with the inputURI-Attribute
-	 * set to the given value
-	 *
-	 * @param inputUri
-	 *            the input uri to search for, must not be <code>null</code>
-	 * @return list of parts or an empty collection
-	 * @throws AssertionFailedException
-	 *             if null passed as argument
-	 * @deprecated This method should never be used as MInputPart are deprecated
-	 * @noreference This method is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
-	 */
-	@Deprecated Collection<MInputPart> getInputParts(String inputUri);
 
 	/**
 	 * Switch to the specified perspective. It will be selected and brought to top (if necessary).

@@ -15,7 +15,6 @@ package org.eclipse.e4.ui.model.application.ui.basic.impl;
 
 import org.eclipse.e4.ui.model.application.ui.basic.MBasicFactory;
 import org.eclipse.e4.ui.model.application.ui.basic.MCompositePart;
-import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
@@ -34,7 +33,6 @@ import org.eclipse.emf.ecore.plugin.EcorePlugin;
  * <!-- end-user-doc -->
  * @generated
  */
-@SuppressWarnings("deprecation")
 public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	/**
 	 * The singleton instance of the factory.
@@ -85,8 +83,6 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 			return (EObject) createPart();
 		case BasicPackageImpl.COMPOSITE_PART:
 			return (EObject) createCompositePart();
-		case BasicPackageImpl.INPUT_PART:
-			return (EObject) createInputPart();
 		case BasicPackageImpl.PART_STACK:
 			return (EObject) createPartStack();
 		case BasicPackageImpl.PART_SASH_CONTAINER:
@@ -122,20 +118,6 @@ public class BasicFactoryImpl extends EFactoryImpl implements MBasicFactory {
 	@Override
 	public MCompositePart createCompositePart() {
 		return new CompositePartImpl();
-	}
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.0
-	 * @deprecated See {@link MInputPart model documentation} for details.
-	 * @noreference See {@link MInputPart model documentation} for details.
-	 * @generated
-	 */
-	@Deprecated
-	@Override
-	public MInputPart createInputPart() {
-		return new InputPartImpl();
 	}
 
 	/**

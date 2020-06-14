@@ -23,13 +23,11 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MGenericTile;
 import org.eclipse.e4.ui.model.application.ui.MGenericTrimContainer;
-import org.eclipse.e4.ui.model.application.ui.MInput;
 import org.eclipse.e4.ui.model.application.ui.MLocalizable;
 import org.eclipse.e4.ui.model.application.ui.MSnippetContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.basic.MCompositePart;
-import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
@@ -58,7 +56,6 @@ import org.eclipse.emf.ecore.util.Switch;
  * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl
  * @generated
  */
-@SuppressWarnings("deprecation")
 public class BasicSwitch<T1> extends Switch<T1> {
 	/**
 	 * The cached model package
@@ -167,41 +164,6 @@ public class BasicSwitch<T1> extends Switch<T1> {
 				result = caseApplicationElement(compositePart);
 			if (result == null)
 				result = caseLocalizable(compositePart);
-			if (result == null)
-				result = defaultCase(theEObject);
-			return result;
-		}
-		case BasicPackageImpl.INPUT_PART: {
-			MInputPart inputPart = (MInputPart) theEObject;
-			T1 result = caseInputPart(inputPart);
-			if (result == null)
-				result = casePart(inputPart);
-			if (result == null)
-				result = caseInput(inputPart);
-			if (result == null)
-				result = casePartSashContainerElement(inputPart);
-			if (result == null)
-				result = caseStackElement(inputPart);
-			if (result == null)
-				result = caseContribution(inputPart);
-			if (result == null)
-				result = caseContext(inputPart);
-			if (result == null)
-				result = caseUILabel(inputPart);
-			if (result == null)
-				result = caseHandlerContainer(inputPart);
-			if (result == null)
-				result = caseDirtyable(inputPart);
-			if (result == null)
-				result = caseBindings(inputPart);
-			if (result == null)
-				result = caseWindowElement(inputPart);
-			if (result == null)
-				result = caseUIElement(inputPart);
-			if (result == null)
-				result = caseApplicationElement(inputPart);
-			if (result == null)
-				result = caseLocalizable(inputPart);
 			if (result == null)
 				result = defaultCase(theEObject);
 			return result;
@@ -403,25 +365,6 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @generated
 	 */
 	public T1 caseCompositePart(MCompositePart object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Input Part</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Input Part</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @since 1.0
-	 * @deprecated See {@link MInputPart model documentation} for details.
-	 * @noreference See {@link MInputPart model documentation} for details.
-	 * @generated
-	 */
-	@Deprecated
-	public T1 caseInputPart(MInputPart object) {
 		return null;
 	}
 
@@ -742,25 +685,6 @@ public class BasicSwitch<T1> extends Switch<T1> {
 	 * @generated
 	 */
 	public <T extends MUIElement> T1 caseGenericTile(MGenericTile<T> object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Input</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Input</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @since 1.0
-	 * @deprecated See {@link MInput model documentation} for details.
-	 * @noreference See {@link MInput model documentation} for details.
-	 * @generated
-	 */
-	@Deprecated
-	public T1 caseInput(MInput object) {
 		return null;
 	}
 

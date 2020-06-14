@@ -22,7 +22,6 @@ import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.ui.model.application.MApplication;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPerspective;
 import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
-import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.IPartListener;
@@ -166,17 +165,6 @@ public class ApplicationPartServiceImpl implements EPartService {
 	@Override
 	public boolean saveAll(boolean confirm) {
 		return getActiveWindowService().saveAll(confirm);
-	}
-
-	/**
-	 * @noreference This method is not intended to be referenced by clients.
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
-	 */
-	@Deprecated
-	@Override
-	public Collection<MInputPart> getInputParts(String inputUri) {
-		return getActiveWindowService().getInputParts(inputUri);
 	}
 
 }

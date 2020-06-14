@@ -24,7 +24,6 @@ import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MGenericTile;
 import org.eclipse.e4.ui.model.application.ui.MGenericTrimContainer;
 import org.eclipse.e4.ui.model.application.ui.MImperativeExpression;
-import org.eclipse.e4.ui.model.application.ui.MInput;
 import org.eclipse.e4.ui.model.application.ui.MLocalizable;
 import org.eclipse.e4.ui.model.application.ui.MSnippetContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -61,7 +60,6 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
  * @model kind="package"
  * @generated
  */
-@SuppressWarnings("deprecation")
 public class UiPackageImpl extends EPackageImpl {
 	/**
 	 * The package name.
@@ -198,59 +196,6 @@ public class UiPackageImpl extends EPackageImpl {
 	public static final int DIRTYABLE_OPERATION_COUNT = 0;
 
 	/**
-	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.MInput <em>Input</em>}' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @see org.eclipse.e4.ui.model.application.ui.MInput
-	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getInput()
-	 * @since 1.0
-	 * @deprecated See {@link MInput model documentation} for details.
-	 * @noreference See {@link MInput model documentation} for details.
-	 * @generated
-	 */
-	@Deprecated
-	public static final int INPUT = 2;
-
-	/**
-	 * The feature id for the '<em><b>Input URI</b></em>' attribute.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.0
-	 * @deprecated See {@link org.eclipse.e4.ui.model.application.ui.MInput#getInputURI() model documentation} for details.
-	 * @noreference See {@link org.eclipse.e4.ui.model.application.ui.MInput#getInputURI() model documentation} for details.
-	 * @generated
-	 * @ordered
-	 */
-	@Deprecated
-	public static final int INPUT__INPUT_URI = 0;
-
-	/**
-	 * The number of structural features of the '<em>Input</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.0
-	 * @deprecated See {@link MInput model documentation} for details.
-	 * @noreference See {@link MInput model documentation} for details.
-	 * @generated
-	 * @ordered
-	 */
-	@Deprecated
-	public static final int INPUT_FEATURE_COUNT = 1;
-
-	/**
-	 * The number of operations of the '<em>Input</em>' class.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.0
-	 * @deprecated See {@link MInput model documentation} for details.
-	 * @noreference See {@link MInput model documentation} for details.
-	 * @generated
-	 * @ordered
-	 */
-	@Deprecated
-	public static final int INPUT_OPERATION_COUNT = 0;
-
-	/**
 	 * The meta object id for the '{@link org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl <em>UI Element</em>}' class.
 	 * <!-- begin-user-doc -->
 	 * <!-- end-user-doc -->
@@ -259,7 +204,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @since 1.0
 	 * @generated
 	 */
-	public static final int UI_ELEMENT = 3;
+	public static final int UI_ELEMENT = 2;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -463,7 +408,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @since 1.0
 	 * @generated
 	 */
-	public static final int ELEMENT_CONTAINER = 4;
+	public static final int ELEMENT_CONTAINER = 3;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -684,7 +629,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @since 1.1
 	 * @generated
 	 */
-	public static final int LOCALIZABLE = 13;
+	public static final int LOCALIZABLE = 12;
 
 	/**
 	 * The number of structural features of the '<em>Localizable</em>' class.
@@ -725,7 +670,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @since 1.0
 	 * @generated
 	 */
-	public static final int UI_LABEL = 5;
+	public static final int UI_LABEL = 4;
 
 	/**
 	 * The feature id for the '<em><b>Label</b></em>' attribute.
@@ -816,7 +761,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @since 1.0
 	 * @generated
 	 */
-	public static final int GENERIC_STACK = 6;
+	public static final int GENERIC_STACK = 5;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -1037,7 +982,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @since 1.0
 	 * @generated
 	 */
-	public static final int GENERIC_TILE = 7;
+	public static final int GENERIC_TILE = 6;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -1268,7 +1213,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @since 1.0
 	 * @generated
 	 */
-	public static final int GENERIC_TRIM_CONTAINER = 8;
+	public static final int GENERIC_TRIM_CONTAINER = 7;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -1499,7 +1444,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @since 1.0
 	 * @generated
 	 */
-	public static final int EXPRESSION = 9;
+	public static final int EXPRESSION = 8;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -1580,7 +1525,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @since 1.0
 	 * @generated
 	 */
-	public static final int CORE_EXPRESSION = 10;
+	public static final int CORE_EXPRESSION = 9;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -1680,7 +1625,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getImperativeExpression()
 	 * @generated
 	 */
-	public static final int IMPERATIVE_EXPRESSION = 11;
+	public static final int IMPERATIVE_EXPRESSION = 10;
 
 	/**
 	 * The feature id for the '<em><b>Element Id</b></em>' attribute.
@@ -1788,7 +1733,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @since 1.0
 	 * @generated
 	 */
-	public static final int SNIPPET_CONTAINER = 12;
+	public static final int SNIPPET_CONTAINER = 11;
 
 	/**
 	 * The feature id for the '<em><b>Snippets</b></em>' containment reference list.
@@ -1829,7 +1774,7 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @since 1.0
 	 * @generated
 	 */
-	public static final int SIDE_VALUE = 14;
+	public static final int SIDE_VALUE = 13;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -1846,16 +1791,6 @@ public class UiPackageImpl extends EPackageImpl {
 	 * @generated
 	 */
 	private EClass dirtyableEClass = null;
-
-	/**
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @since 1.0
-	 * @deprecated See {@link MInput model documentation} for details.
-	 * @generated
-	 */
-	@Deprecated
-	private EClass inputEClass = null;
 
 	/**
 	 * <!-- begin-user-doc -->
@@ -2134,39 +2069,6 @@ public class UiPackageImpl extends EPackageImpl {
 	 */
 	public EAttribute getDirtyable_Dirty() {
 		return (EAttribute) dirtyableEClass.getEStructuralFeatures().get(0);
-	}
-
-	/**
-	 * Returns the meta object for class '{@link org.eclipse.e4.ui.model.application.ui.MInput <em>Input</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for class '<em>Input</em>'.
-	 * @see org.eclipse.e4.ui.model.application.ui.MInput
-	 * @since 1.0
-	 * @deprecated See {@link MInput model documentation} for details.
-	 * @noreference See {@link MInput model documentation} for details.
-	 * @generated
-	 */
-	@Deprecated
-	public EClass getInput() {
-		return inputEClass;
-	}
-
-	/**
-	 * Returns the meta object for the attribute '{@link org.eclipse.e4.ui.model.application.ui.MInput#getInputURI <em>Input URI</em>}'.
-	 * <!-- begin-user-doc -->
-	 * <!-- end-user-doc -->
-	 * @return the meta object for the attribute '<em>Input URI</em>'.
-	 * @see org.eclipse.e4.ui.model.application.ui.MInput#getInputURI()
-	 * @see #getInput()
-	 * @since 1.0
-	 * @deprecated See {@link org.eclipse.e4.ui.model.application.ui.MInput#getInputURI() model documentation} for details.
-	 * @noreference See {@link org.eclipse.e4.ui.model.application.ui.MInput#getInputURI() model documentation} for details.
-	 * @generated
-	 */
-	@Deprecated
-	public EAttribute getInput_InputURI() {
-		return (EAttribute) inputEClass.getEStructuralFeatures().get(0);
 	}
 
 	/**
@@ -2724,9 +2626,6 @@ public class UiPackageImpl extends EPackageImpl {
 		dirtyableEClass = createEClass(DIRTYABLE);
 		createEAttribute(dirtyableEClass, DIRTYABLE__DIRTY);
 
-		inputEClass = createEClass(INPUT);
-		createEAttribute(inputEClass, INPUT__INPUT_URI);
-
 		uiElementEClass = createEClass(UI_ELEMENT);
 		createEAttribute(uiElementEClass, UI_ELEMENT__WIDGET);
 		createEAttribute(uiElementEClass, UI_ELEMENT__RENDERER);
@@ -2872,10 +2771,6 @@ public class UiPackageImpl extends EPackageImpl {
 				IS_GENERATED_INSTANCE_CLASS);
 		initEAttribute(getDirtyable_Dirty(), ecorePackage.getEBoolean(), "dirty", null, 0, 1, MDirtyable.class, //$NON-NLS-1$
 				IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, IS_DERIVED, IS_ORDERED);
-
-		initEClass(inputEClass, MInput.class, "Input", IS_ABSTRACT, IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS); //$NON-NLS-1$
-		initEAttribute(getInput_InputURI(), ecorePackage.getEString(), "inputURI", null, 0, 1, MInput.class, //$NON-NLS-1$
-				!IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
 		initEClass(uiElementEClass, MUIElement.class, "UIElement", IS_ABSTRACT, !IS_INTERFACE, //$NON-NLS-1$
 				IS_GENERATED_INSTANCE_CLASS);
@@ -3062,32 +2957,6 @@ public class UiPackageImpl extends EPackageImpl {
 		 * @generated
 		 */
 		public static final EAttribute DIRTYABLE__DIRTY = eINSTANCE.getDirtyable_Dirty();
-
-		/**
-		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.MInput <em>Input</em>}' class.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @see org.eclipse.e4.ui.model.application.ui.MInput
-		 * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl#getInput()
-		 * @since 1.0
-		 * @deprecated See {@link MInput model documentation} for details.
-		 * @noreference See {@link MInput model documentation} for details.
-		 * @generated
-		 */
-		@Deprecated
-		public static final EClass INPUT = eINSTANCE.getInput();
-
-		/**
-		 * The meta object literal for the '<em><b>Input URI</b></em>' attribute feature.
-		 * <!-- begin-user-doc -->
-		 * <!-- end-user-doc -->
-		 * @since 1.0
-		 * @deprecated See {@link org.eclipse.e4.ui.model.application.ui.MInput#getInputURI() model documentation} for details.
-		 * @noreference See {@link org.eclipse.e4.ui.model.application.ui.MInput#getInputURI() model documentation} for details.
-		 * @generated
-		 */
-		@Deprecated
-		public static final EAttribute INPUT__INPUT_URI = eINSTANCE.getInput_InputURI();
 
 		/**
 		 * The meta object literal for the '{@link org.eclipse.e4.ui.model.application.ui.impl.UIElementImpl <em>UI Element</em>}' class.

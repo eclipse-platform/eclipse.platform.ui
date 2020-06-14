@@ -23,13 +23,11 @@ import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MGenericTile;
 import org.eclipse.e4.ui.model.application.ui.MGenericTrimContainer;
-import org.eclipse.e4.ui.model.application.ui.MInput;
 import org.eclipse.e4.ui.model.application.ui.MLocalizable;
 import org.eclipse.e4.ui.model.application.ui.MSnippetContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.model.application.ui.MUILabel;
 import org.eclipse.e4.ui.model.application.ui.basic.MCompositePart;
-import org.eclipse.e4.ui.model.application.ui.basic.MInputPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainer;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartSashContainerElement;
@@ -54,7 +52,6 @@ import org.eclipse.emf.ecore.EObject;
  * @see org.eclipse.e4.ui.model.application.ui.basic.impl.BasicPackageImpl
  * @generated
  */
-@SuppressWarnings("deprecation")
 public class BasicAdapterFactory extends AdapterFactoryImpl {
 	/**
 	 * The cached model package.
@@ -110,11 +107,6 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 		@Override
 		public Adapter caseCompositePart(MCompositePart object) {
 			return createCompositePartAdapter();
-		}
-
-		@Override
-		public Adapter caseInputPart(MInputPart object) {
-			return createInputPartAdapter();
 		}
 
 		@Override
@@ -218,11 +210,6 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 		}
 
 		@Override
-		public Adapter caseInput(MInput object) {
-			return createInputAdapter();
-		}
-
-		@Override
 		public <T extends MUIElement> Adapter caseGenericStack(MGenericStack<T> object) {
 			return createGenericStackAdapter();
 		}
@@ -283,24 +270,6 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createCompositePartAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.basic.MInputPart <em>Input Part</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.ui.basic.MInputPart
-	 * @since 1.0
-	 * @deprecated See {@link MInputPart model documentation} for details.
-	 * @noreference See {@link MInputPart model documentation} for details.
-	 * @generated
-	 */
-	@Deprecated
-	public Adapter createInputPartAdapter() {
 		return null;
 	}
 
@@ -601,24 +570,6 @@ public class BasicAdapterFactory extends AdapterFactoryImpl {
 	 * @generated
 	 */
 	public Adapter createGenericTileAdapter() {
-		return null;
-	}
-
-	/**
-	 * Creates a new adapter for an object of class '{@link org.eclipse.e4.ui.model.application.ui.MInput <em>Input</em>}'.
-	 * <!-- begin-user-doc -->
-	 * This default implementation returns null so that we can easily ignore cases;
-	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
-	 * <!-- end-user-doc -->
-	 * @return the new adapter.
-	 * @see org.eclipse.e4.ui.model.application.ui.MInput
-	 * @since 1.0
-	 * @deprecated See {@link MInput model documentation} for details.
-	 * @noreference See {@link MInput model documentation} for details.
-	 * @generated
-	 */
-	@Deprecated
-	public Adapter createInputAdapter() {
 		return null;
 	}
 

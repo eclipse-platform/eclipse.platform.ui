@@ -73,7 +73,8 @@ public class TestPackageImpl extends EPackageImpl implements MTestPackage {
 		if (isInited) return (MTestPackage)EPackage.Registry.INSTANCE.getEPackage(MTestPackage.eNS_URI);
 
 		// Obtain or create and register package
-		TestPackageImpl theTestPackage = (TestPackageImpl)(EPackage.Registry.INSTANCE.get(eNS_URI) instanceof TestPackageImpl ? EPackage.Registry.INSTANCE.get(eNS_URI) : new TestPackageImpl());
+		Object registeredTestPackage = EPackage.Registry.INSTANCE.get(eNS_URI);
+		TestPackageImpl theTestPackage = registeredTestPackage instanceof TestPackageImpl ? (TestPackageImpl)registeredTestPackage : new TestPackageImpl();
 
 		isInited = true;
 
@@ -88,7 +89,6 @@ public class TestPackageImpl extends EPackageImpl implements MTestPackage {
 
 		// Mark meta-data to indicate it can't be changed
 		theTestPackage.freeze();
-
 
 		// Update the registry and return the package
 		EPackage.Registry.INSTANCE.put(MTestPackage.eNS_URI, theTestPackage);
@@ -179,8 +179,6 @@ public class TestPackageImpl extends EPackageImpl implements MTestPackage {
 		g1.getETypeArguments().add(g2);
 		testHarnessEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(theCommandsPackage.getParameter());
-		testHarnessEClass.getEGenericSuperTypes().add(g1);
-		g1 = createEGenericType(theUiPackage.getInput());
 		testHarnessEClass.getEGenericSuperTypes().add(g1);
 		g1 = createEGenericType(theUiPackage.getUILabel());
 		testHarnessEClass.getEGenericSuperTypes().add(g1);

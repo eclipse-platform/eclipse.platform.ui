@@ -125,9 +125,6 @@
       <genClasses image="false" ecoreClass="UIElements.ecore#//ui/Dirtyable">
         <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/Dirtyable/dirty"/>
       </genClasses>
-      <genClasses image="false" ecoreClass="UIElements.ecore#//ui/Input">
-        <genFeatures createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/Input/inputURI"/>
-      </genClasses>
       <genClasses image="false" ecoreClass="UIElements.ecore#//ui/UIElement">
         <genFeatures property="None" createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/UIElement/widget"/>
         <genFeatures property="None" createChild="false" ecoreFeature="ecore:EAttribute UIElements.ecore#//ui/UIElement/renderer"/>
@@ -270,7 +267,6 @@
               body="if (eNotificationRequired()) {&#xA;&#x9;eNotify(new ENotificationImpl(&#xA;&#x9;&#x9;&#x9;this, Notification.SET, BasicPackageImpl.PART__LOCALIZED_LABEL, null, getLocalizedLabel()));&#xA;&#x9;eNotify(new ENotificationImpl(&#xA;&#x9;&#x9;&#x9;this, Notification.SET, BasicPackageImpl.PART__LOCALIZED_TOOLTIP, null, getLocalizedTooltip()));&#xA;&#x9;eNotify(new ENotificationImpl(&#xA;&#x9;&#x9;&#x9;this, Notification.SET, BasicPackageImpl.PART__LOCALIZED_DESCRIPTION, null, getLocalizedDescription()));&#xA;}"/>
         </genClasses>
         <genClasses ecoreClass="UIElements.ecore#//ui/basic/CompositePart"/>
-        <genClasses ecoreClass="UIElements.ecore#//ui/basic/InputPart" labelFeature="#//application/Contribution/contributionURI"/>
         <genClasses ecoreClass="UIElements.ecore#//ui/basic/PartStack"/>
         <genClasses ecoreClass="UIElements.ecore#//ui/basic/PartSashContainer"/>
         <genClasses ecoreClass="UIElements.ecore#//ui/basic/Window" labelFeature="#//application/ui/UILabel/label">

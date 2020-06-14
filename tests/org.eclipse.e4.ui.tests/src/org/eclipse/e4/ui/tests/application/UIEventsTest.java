@@ -40,7 +40,6 @@ import org.eclipse.e4.ui.workbench.UIEvents.Contribution;
 import org.eclipse.e4.ui.workbench.UIEvents.Dirtyable;
 import org.eclipse.e4.ui.workbench.UIEvents.ElementContainer;
 import org.eclipse.e4.ui.workbench.UIEvents.EventTags;
-import org.eclipse.e4.ui.workbench.UIEvents.Input;
 import org.eclipse.e4.ui.workbench.UIEvents.Parameter;
 import org.eclipse.e4.ui.workbench.UIEvents.UIElement;
 import org.eclipse.e4.ui.workbench.UIEvents.UILabel;
@@ -165,13 +164,6 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		}
 	}
 
-	public class InputTester extends EventTester {
-		InputTester(IEventBroker eventBroker) {
-			super("Input", Input.TOPIC_ALL, new String[] { Input.INPUTURI },
-					eventBroker);
-		}
-	}
-
 	public class ParameterTester extends EventTester {
 		ParameterTester(IEventBroker eventBroker) {
 			super("Parameter", Parameter.TOPIC_ALL, new String[] {
@@ -225,7 +217,6 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		ElementContainerTester elementContainerTester = new ElementContainerTester(
 				eventBroker);
 		DirtyableTester dirtyableTester = new DirtyableTester(eventBroker);
-		InputTester inputTester = new InputTester(eventBroker);
 		ParameterTester parameterTester = new ParameterTester(eventBroker);
 		UIElementTester uiElementTester = new UIElementTester(eventBroker);
 		UIItemTester uiItemTester = new UIItemTester(eventBroker);
@@ -234,7 +225,7 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		// Create an array to check for 'cross talk' (i.e. events being fired
 		// on incorrect topics
 		EventTester[] allTesters = { appTester, commandTester, contextTester,
-				contributionTester, elementContainerTester, inputTester,
+				contributionTester, elementContainerTester,
 				parameterTester, uiElementTester, uiItemTester, windowTester };
 
 		// Create the test harness and hook up the event publisher
@@ -283,11 +274,6 @@ public class UIEventsTest extends HeadlessApplicationElementTest {
 		allData.getChildren().add(menu);
 		allData.setSelectedElement(menu);
 		checkForFailures(allTesters, elementContainerTester);
-
-		// Input
-		reset(allTesters);
-		allData.setInputURI("New Input Uri");
-		checkForFailures(allTesters, inputTester);
 
 		// Dirtyable
 		reset(allTesters);

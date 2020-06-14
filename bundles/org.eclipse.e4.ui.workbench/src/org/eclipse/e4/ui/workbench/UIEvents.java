@@ -1084,55 +1084,6 @@ public class UIEvents {
 		String TRACKING = "tracking"; //$NON-NLS-1$
 	}
 
-	/**
-	 * @noimplement This interface is not intended to be implemented by clients.
-	 * @noextend This interface is not intended to be extended by clients.
-	 * @noreference This interface is not intended to be referenced by clients
-	 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-	 *      509868</a>
-	 */
-	@Deprecated
-	public interface Input {
-
-		// Topics that can be subscribed to
-
-		/**
-		 * @deprecated
-		 * @noreference This field is not intended to be referenced by clients.
-		 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-		 *      509868</a>
-		 */
-		@Deprecated
-		String TOPIC = "org/eclipse/e4/ui/model/ui/Input"; //$NON-NLS-1$
-
-		/**
-		 * @deprecated
-		 * @noreference This field is not intended to be referenced by clients.
-		 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-		 *      509868</a>
-		 */
-		@Deprecated
-		String TOPIC_ALL = "org/eclipse/e4/ui/model/ui/Input/*"; //$NON-NLS-1$
-
-		/**
-		 * @deprecated
-		 * @noreference This field is not intended to be referenced by clients.
-		 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-		 *      509868</a>
-		 */
-		@Deprecated
-		String TOPIC_INPUTURI = "org/eclipse/e4/ui/model/ui/Input/inputURI/*"; //$NON-NLS-1$
-
-		/**
-		 * @deprecated
-		 * @noreference This field is not intended to be referenced by clients.
-		 * @see <a href="https://bugs.eclipse.org/bugs/show_bug.cgi?id=509868">Bug
-		 *      509868</a>
-		 */
-		@Deprecated
-		// Attributes that can be tested in event handlers
-		String INPUTURI = "inputURI"; //$NON-NLS-1$
-	}
 
 	@SuppressWarnings("javadoc")
 	public interface SnippetContainer {

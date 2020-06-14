@@ -24,7 +24,6 @@ import org.eclipse.e4.ui.model.application.ui.MGenericStack;
 import org.eclipse.e4.ui.model.application.ui.MGenericTile;
 import org.eclipse.e4.ui.model.application.ui.MGenericTrimContainer;
 import org.eclipse.e4.ui.model.application.ui.MImperativeExpression;
-import org.eclipse.e4.ui.model.application.ui.MInput;
 import org.eclipse.e4.ui.model.application.ui.MLocalizable;
 import org.eclipse.e4.ui.model.application.ui.MSnippetContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -47,7 +46,6 @@ import org.eclipse.emf.ecore.util.Switch;
  * @see org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl
  * @generated
  */
-@SuppressWarnings("deprecation")
 public class UiSwitch<T1> extends Switch<T1> {
 	/**
 	 * The cached model package
@@ -102,13 +100,6 @@ public class UiSwitch<T1> extends Switch<T1> {
 		case UiPackageImpl.DIRTYABLE: {
 			MDirtyable dirtyable = (MDirtyable) theEObject;
 			T1 result = caseDirtyable(dirtyable);
-			if (result == null)
-				result = defaultCase(theEObject);
-			return result;
-		}
-		case UiPackageImpl.INPUT: {
-			MInput input = (MInput) theEObject;
-			T1 result = caseInput(input);
 			if (result == null)
 				result = defaultCase(theEObject);
 			return result;
@@ -272,25 +263,6 @@ public class UiSwitch<T1> extends Switch<T1> {
 	 * @generated
 	 */
 	public T1 caseDirtyable(MDirtyable object) {
-		return null;
-	}
-
-	/**
-	 * Returns the result of interpreting the object as an instance of '<em>Input</em>'.
-	 * <!-- begin-user-doc -->
-	 * This implementation returns null;
-	 * returning a non-null result will terminate the switch.
-	 * <!-- end-user-doc -->
-	 * @param object the target of the switch.
-	 * @return the result of interpreting the object as an instance of '<em>Input</em>'.
-	 * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-	 * @since 1.0
-	 * @deprecated See {@link MInput model documentation} for details.
-	 * @noreference See {@link MInput model documentation} for details.
-	 * @generated
-	 */
-	@Deprecated
-	public T1 caseInput(MInput object) {
 		return null;
 	}
 
