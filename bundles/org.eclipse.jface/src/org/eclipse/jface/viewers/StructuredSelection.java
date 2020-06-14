@@ -201,7 +201,7 @@ public class StructuredSelection implements IStructuredSelection {
 
 	@Override
 	public Object[] toArray() {
-		return elements == null ? new Object[0] : (Object[]) elements.clone();
+		return elements == null ? new Object[0] : elements.clone();
 	}
 
 	@Override

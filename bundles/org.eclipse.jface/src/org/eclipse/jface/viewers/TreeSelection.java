@@ -193,7 +193,7 @@ public class TreeSelection extends StructuredSelection implements ITreeSelection
 
 	@Override
 	public TreePath[] getPaths() {
-		return paths==null ? EMPTY_TREE_PATHS : (TreePath[]) paths.clone();
+		return paths==null ? EMPTY_TREE_PATHS : paths.clone();
 	}
 
 	@Override
