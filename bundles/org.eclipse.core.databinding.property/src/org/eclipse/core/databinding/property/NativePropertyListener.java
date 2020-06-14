@@ -60,13 +60,12 @@ public abstract class NativePropertyListener<S, D extends IDiff> implements INat
 	protected abstract void doRemoveFrom(S source);
 
 	/**
-	 * Notifies the listener that a property change occurred on the source
-	 * object.
+	 * Notifies the listener that a property change occurred on the source object.
 	 *
 	 * @param source
 	 *            the source object whose property changed
-	 * @param diff
-	 *            a diff describing the change in state
+	 * @param diff   a diff describing the change in state, or <code>null</code> for
+	 *               an auto-generated diff
 	 */
 	protected void fireChange(S source, D diff) {
 		listener.handleEvent(new SimplePropertyEvent<>(
