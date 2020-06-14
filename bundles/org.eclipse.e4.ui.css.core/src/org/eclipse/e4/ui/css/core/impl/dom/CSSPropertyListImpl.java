@@ -37,7 +37,7 @@ public class CSSPropertyListImpl implements CSSPropertyList {
 
 	@Override
 	public CSSProperty item(int index) {
-		return (properties != null) ? (CSSProperty) properties.get(index)
+		return (properties != null) ? properties.get(index)
 				: null;
 	}
 

@@ -522,7 +522,7 @@ public final class URI
 	// immutability.
 	private static String[] fix(String[] segments)
 	{
-		return segments == null ? NO_SEGMENTS : (String[])segments.clone();
+		return segments == null ? NO_SEGMENTS : segments.clone();
 	}
 
 	/**

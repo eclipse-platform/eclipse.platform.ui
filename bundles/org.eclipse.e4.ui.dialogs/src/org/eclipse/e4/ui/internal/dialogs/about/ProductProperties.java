@@ -85,13 +85,13 @@ public class ProductProperties extends BrandingProperties implements IProductCon
 				i++;
 			}
 		}
-		String[] mappings = (String[]) mappingsList.toArray(new String[mappingsList.size()]);
+		String[] mappings = mappingsList.toArray(new String[mappingsList.size()]);
 		mappingsMap.put(definingBundle, mappings);
 		return mappings;
 	}
 
 	private static String[] getMappings(Bundle definingBundle) {
-		String[] mappings = (String[]) mappingsMap.get(definingBundle);
+		String[] mappings = mappingsMap.get(definingBundle);
 		if (mappings == null) {
 			mappings = loadMappings(definingBundle);
 		}

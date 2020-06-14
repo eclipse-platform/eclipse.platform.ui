@@ -36,7 +36,7 @@ public class StyleSheetListImpl implements StyleSheetList {
 
 	@Override
 	public StyleSheet item(int index) {
-		return (styleSheets != null) ? (StyleSheet) styleSheets.get(index) : null;
+		return (styleSheets != null) ? styleSheets.get(index) : null;
 	}
 
 	/**

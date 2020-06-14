@@ -51,7 +51,7 @@ public class Activator implements BundleActivator {
 
 		Policy.setLog(status -> {
 			ServiceTracker<?, FrameworkLog> frameworkLogTracker = _frameworkLogTracker;
-			FrameworkLog log = frameworkLogTracker == null ? null : (FrameworkLog) frameworkLogTracker.getService();
+			FrameworkLog log = frameworkLogTracker == null ? null : frameworkLogTracker.getService();
 			if (log != null) {
 				log.log(createLogEntry(status));
 			} else {

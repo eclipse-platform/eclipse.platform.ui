@@ -77,7 +77,7 @@ public class MappedSet extends ObservableSet {
 		}
 	};
 
-	private IMapChangeListener mapChangeListener = (IMapChangeListener) (MapChangeEvent event) -> {
+	private IMapChangeListener mapChangeListener = (MapChangeEvent event) -> {
 		MapDiff diff = event.diff;
 		Set additions = new HashSet();
 		Set removals = new HashSet();
