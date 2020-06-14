@@ -119,19 +119,19 @@ public class E4XMIResource extends XMIResourceImpl {
 
 	static final Map<String, ObjectCreator> deprecatedTypeMappings = new HashMap<>();
 	static {
-		deprecatedTypeMappings.put("OpaqueMenu", (ObjectCreator) OpaqueElementUtil::createOpaqueMenu //$NON-NLS-1$
+		deprecatedTypeMappings.put("OpaqueMenu", OpaqueElementUtil::createOpaqueMenu //$NON-NLS-1$
 				);
-		deprecatedTypeMappings.put("OpaqueMenuItem", (ObjectCreator) OpaqueElementUtil::createOpaqueMenuItem //$NON-NLS-1$
+		deprecatedTypeMappings.put("OpaqueMenuItem", OpaqueElementUtil::createOpaqueMenuItem //$NON-NLS-1$
 				);
-		deprecatedTypeMappings.put("OpaqueMenuSeparator", (ObjectCreator) OpaqueElementUtil::createOpaqueMenuSeparator //$NON-NLS-1$
+		deprecatedTypeMappings.put("OpaqueMenuSeparator", OpaqueElementUtil::createOpaqueMenuSeparator //$NON-NLS-1$
 				);
-		deprecatedTypeMappings.put("OpaqueToolItem", (ObjectCreator) OpaqueElementUtil::createOpaqueToolItem //$NON-NLS-1$
+		deprecatedTypeMappings.put("OpaqueToolItem", OpaqueElementUtil::createOpaqueToolItem //$NON-NLS-1$
 				);
-		deprecatedTypeMappings.put("RenderedMenu", (ObjectCreator) RenderedElementUtil::createRenderedMenu //$NON-NLS-1$
+		deprecatedTypeMappings.put("RenderedMenu", RenderedElementUtil::createRenderedMenu //$NON-NLS-1$
 				);
-		deprecatedTypeMappings.put("RenderedMenuItem", (ObjectCreator) RenderedElementUtil::createRenderedMenuItem //$NON-NLS-1$
+		deprecatedTypeMappings.put("RenderedMenuItem", RenderedElementUtil::createRenderedMenuItem //$NON-NLS-1$
 				);
-		deprecatedTypeMappings.put("RenderedToolBar", (ObjectCreator) RenderedElementUtil::createRenderedToolBar //$NON-NLS-1$
+		deprecatedTypeMappings.put("RenderedToolBar", RenderedElementUtil::createRenderedToolBar //$NON-NLS-1$
 				);
 	}
 

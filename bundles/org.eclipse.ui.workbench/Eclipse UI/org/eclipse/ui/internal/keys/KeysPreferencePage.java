@@ -1023,7 +1023,7 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 	 */
 	private String getCategoryId() {
 		return !commandIdsByCategoryId.containsKey(null) || comboCategory.getSelectionIndex() > 0
-				? (String) categoryIdsByUniqueName.get(comboCategory.getText())
+				? categoryIdsByUniqueName.get(comboCategory.getText())
 				: null;
 	}
 
@@ -1033,7 +1033,7 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 	 * @return The selected context; <code>null</code> if none.
 	 */
 	private String getContextId() {
-		return comboContext.getSelectionIndex() >= 0 ? (String) contextIdsByUniqueName.get(comboContext.getText())
+		return comboContext.getSelectionIndex() >= 0 ? contextIdsByUniqueName.get(comboContext.getText())
 				: null;
 	}
 
@@ -1066,7 +1066,7 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 	 * @return The selected scheme; <code>null</code> if none.
 	 */
 	private String getSchemeId() {
-		return comboScheme.getSelectionIndex() >= 0 ? (String) schemeIdsByUniqueName.get(comboScheme.getText()) : null;
+		return comboScheme.getSelectionIndex() >= 0 ? schemeIdsByUniqueName.get(comboScheme.getText()) : null;
 	}
 
 	@Override
