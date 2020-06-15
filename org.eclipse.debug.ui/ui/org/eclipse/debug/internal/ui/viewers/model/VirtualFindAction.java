@@ -32,7 +32,6 @@ import org.eclipse.debug.internal.ui.viewers.FindElementDialog;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IChildrenUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ILabelUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDelta;
-import org.eclipse.debug.internal.ui.viewers.model.provisional.IModelDeltaVisitor;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdate;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.IViewerUpdateListener;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.ModelDelta;
@@ -41,7 +40,6 @@ import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualItem;
 import org.eclipse.debug.internal.ui.viewers.model.provisional.VirtualTreeModelViewer;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
-import org.eclipse.jface.operation.IRunnableWithProgress;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
@@ -193,20 +191,17 @@ public class VirtualFindAction extends Action implements IUpdate {
 		try {
 			dialog.run(
 				true, true,
-				new IRunnableWithProgress() {
-					@Override
-					public void run(final IProgressMonitor m) throws InvocationTargetException, InterruptedException {
-						synchronized(listener) {
-							listener.fProgressMonitor = m;
-							listener.fProgressMonitor.beginTask(DebugUIPlugin.removeAccelerators(getText()), listener.fRemainingUpdatesCount);
-						}
+				m -> {
+					synchronized(listener) {
+						listener.fProgressMonitor = m;
+						listener.fProgressMonitor.beginTask(DebugUIPlugin.removeAccelerators(getText()), listener.fRemainingUpdatesCount);
+					}
 
-						while ((!listener.fLabelUpdatesComplete || !listener.fViewerUpdatesComplete) && !listener.fProgressMonitor.isCanceled()) {
-							Thread.sleep(1);
-						}
-						synchronized(listener) {
-							listener.fProgressMonitor = null;
-						}
+					while ((!listener.fLabelUpdatesComplete || !listener.fViewerUpdatesComplete) && !listener.fProgressMonitor.isCanceled()) {
+						Thread.sleep(1);
+					}
+					synchronized(listener) {
+						listener.fProgressMonitor = null;
 					}
 				});
 		} catch (InvocationTargetException e) {
@@ -234,15 +229,12 @@ public class VirtualFindAction extends Action implements IUpdate {
 
 	private int calcUpdatesCount(IModelDelta stateDelta) {
 		final int[] count = new int[] {0};
-		stateDelta.accept( new IModelDeltaVisitor() {
-			@Override
-			public boolean visit(IModelDelta delta, int depth) {
-				if ((delta.getFlags() & IModelDelta.EXPAND) != 0) {
-					count[0] += delta.getChildCount();
-					return true;
-				}
-				return false;
+		stateDelta.accept( (delta, depth) -> {
+			if ((delta.getFlags() & IModelDelta.EXPAND) != 0) {
+				count[0] += delta.getChildCount();
+				return true;
 			}
+			return false;
 		});
 
 		// Double it to account for separate element and label update ticks.
@@ -282,14 +274,11 @@ public class VirtualFindAction extends Action implements IUpdate {
 		ModelDelta stateDelta = new ModelDelta(virtualViewer.getInput(), IModelDelta.NO_CHANGE);
 		virtualViewer.saveElementState(TreePath.EMPTY, stateDelta, IModelDelta.SELECT);
 		// Set the force flag to all select delta in order to override model's selection policy.
-		stateDelta.accept(new IModelDeltaVisitor() {
-			@Override
-			public boolean visit(IModelDelta delta, int depth) {
-				if ((delta.getFlags() & IModelDelta.SELECT) != 0) {
-					((ModelDelta)delta).setFlags(delta.getFlags() | IModelDelta.FORCE);
-				}
-				return true;
+		stateDelta.accept((delta, depth) -> {
+			if ((delta.getFlags() & IModelDelta.SELECT) != 0) {
+				((ModelDelta)delta).setFlags(delta.getFlags() | IModelDelta.FORCE);
 			}
+			return true;
 		});
 		fClientViewer.updateViewer(stateDelta);
 

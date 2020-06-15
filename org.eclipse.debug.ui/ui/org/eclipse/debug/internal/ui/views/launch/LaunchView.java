@@ -87,7 +87,6 @@ import org.eclipse.debug.ui.contexts.IDebugContextProvider;
 import org.eclipse.jface.action.ActionContributionItem;
 import org.eclipse.jface.action.GroupMarker;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
@@ -469,12 +468,7 @@ public class LaunchView extends AbstractDebugView
 	 */
 	private PageRec fDefaultPageRec = null;
 
-	private ISelectionChangedListener fTreeViewerSelectionChangedListener = new ISelectionChangedListener() {
-		@Override
-		public void selectionChanged(SelectionChangedEvent event) {
-			fTreeViewerDebugContextProvider.activate(event.getSelection());
-		}
-	};
+	private ISelectionChangedListener fTreeViewerSelectionChangedListener = event -> fTreeViewerDebugContextProvider.activate(event.getSelection());
 
 	private class ContextProviderProxy extends AbstractDebugContextProvider implements IDebugContextListener {
 		private IDebugContextProvider fActiveProvider;
@@ -750,15 +744,12 @@ public class LaunchView extends AbstractDebugView
 		modeSubmenu.add(fBreadcrumbDropDownAutoExpandAction);
 		viewMenu.add(modeSubmenu);
 
-		modeSubmenu.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				modeSubmenu.add(fDebugViewModeActions[0]);
-				modeSubmenu.add(fDebugViewModeActions[1]);
-				modeSubmenu.add(fDebugViewModeActions[2]);
-				modeSubmenu.add(new Separator());
-				modeSubmenu.add(fBreadcrumbDropDownAutoExpandAction);
-			}
+		modeSubmenu.addMenuListener(manager -> {
+			modeSubmenu.add(fDebugViewModeActions[0]);
+			modeSubmenu.add(fDebugViewModeActions[1]);
+			modeSubmenu.add(fDebugViewModeActions[2]);
+			modeSubmenu.add(new Separator());
+			modeSubmenu.add(fBreadcrumbDropDownAutoExpandAction);
 		});
 	}
 

@@ -52,9 +52,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -64,7 +62,6 @@ import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -82,7 +79,6 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.ContainerSelectionDialog;
 import org.eclipse.ui.dialogs.ElementTreeSelectionDialog;
-import org.eclipse.ui.dialogs.ISelectionStatusValidator;
 import org.eclipse.ui.ide.IDEEncoding;
 import org.eclipse.ui.model.WorkbenchContentProvider;
 import org.eclipse.ui.model.WorkbenchLabelProvider;
@@ -154,12 +150,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 	/**
 	 * Modify listener that simply updates the owning launch configuration dialog.
 	 */
-	private ModifyListener fBasicModifyListener = new ModifyListener() {
-		@Override
-		public void modifyText(ModifyEvent evt) {
-			scheduleUpdateJob();
-		}
-	};
+	private ModifyListener fBasicModifyListener = evt -> scheduleUpdateJob();
 
 	/**
 	 * Constructs a new tab with default context help.
@@ -214,12 +205,7 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 		table.setFont(parent.getFont());
 		fFavoritesTable.setContentProvider(new FavoritesContentProvider());
 		fFavoritesTable.setLabelProvider(new FavoritesLabelProvider());
-		fFavoritesTable.addCheckStateListener(new ICheckStateListener() {
-				@Override
-				public void checkStateChanged(CheckStateChangedEvent event) {
-					updateLaunchConfigurationDialog();
-				}
-			});
+		fFavoritesTable.addCheckStateListener(event -> updateLaunchConfigurationDialog());
 	}
 
 	/**
@@ -393,20 +379,16 @@ public class CommonTab extends AbstractLaunchConfigurationTab {
 			public void widgetSelected(SelectionEvent e) {
 				ElementTreeSelectionDialog dialog = new ElementTreeSelectionDialog(getShell(), new WorkbenchLabelProvider(), new WorkbenchContentProvider());
 				dialog.setTitle(LaunchConfigurationsMessages.CommonTab_13);
-				dialog.setValidator(new ISelectionStatusValidator() {
-
-					@Override
-					public IStatus validate(Object[] selection) {
-						if (selection.length == 0) {
+				dialog.setValidator(selection -> {
+					if (selection.length == 0) {
+						return new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, IInternalDebugCoreConstants.EMPTY_STRING, null);
+					}
+					for (Object f : selection) {
+						if (!(f instanceof IFile)) {
 							return new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, IInternalDebugCoreConstants.EMPTY_STRING, null);
 						}
-						for (Object f : selection) {
-							if (!(f instanceof IFile)) {
-								return new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, IInternalDebugCoreConstants.EMPTY_STRING, null);
-							}
-						}
-						return new Status(IStatus.OK, DebugUIPlugin.getUniqueIdentifier(), 0, IInternalDebugCoreConstants.EMPTY_STRING, null);
 					}
+					return new Status(IStatus.OK, DebugUIPlugin.getUniqueIdentifier(), 0, IInternalDebugCoreConstants.EMPTY_STRING, null);
 				});
 				dialog.setMessage(LaunchConfigurationsMessages.CommonTab_18);
 				dialog.setInput(ResourcesPlugin.getWorkspace().getRoot());

@@ -25,9 +25,7 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -89,15 +87,12 @@ public class LaunchShortcutSelectionDialog extends AbstractDebugListSelectionDia
 	@Override
 	protected void addViewerListeners(StructuredViewer viewer) {
 		super.addViewerListeners(viewer);
-		viewer.addSelectionChangedListener(new ISelectionChangedListener(){
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection selection = event.getStructuredSelection();
-				if (!selection.isEmpty()) {
-					LaunchShortcutExtension shortcutSource = (LaunchShortcutExtension) selection.getFirstElement();
-					String description = shortcutSource.getShortcutDescription(fMode);
-					fDescriptionText.setText((description == null ? LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_3 : description));
-				}
+		viewer.addSelectionChangedListener(event -> {
+			IStructuredSelection selection = event.getStructuredSelection();
+			if (!selection.isEmpty()) {
+				LaunchShortcutExtension shortcutSource = (LaunchShortcutExtension) selection.getFirstElement();
+				String description = shortcutSource.getShortcutDescription(fMode);
+				fDescriptionText.setText((description == null ? LaunchConfigurationsMessages.LaunchShortcutSelectionDialog_3 : description));
 			}
 		});
 	}

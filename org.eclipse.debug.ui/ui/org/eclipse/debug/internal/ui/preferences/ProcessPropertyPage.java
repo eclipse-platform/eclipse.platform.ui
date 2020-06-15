@@ -29,8 +29,6 @@ import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.BidiSegmentEvent;
-import org.eclipse.swt.custom.BidiSegmentListener;
 import org.eclipse.swt.custom.StyledText;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
@@ -112,34 +110,31 @@ public class ProcessPropertyPage extends PropertyPage {
 				final int[] segments = new int[count - 1];
 				commandLineText = DebugPlugin.renderArguments(arguments, segments);
 
-				styledText.addBidiSegmentListener(new BidiSegmentListener() {
-					@Override
-					public void lineGetSegments(BidiSegmentEvent event) {
-						int offset = event.lineOffset;
-						int end = offset + event.lineText.length();
+				styledText.addBidiSegmentListener(event -> {
+					int offset = event.lineOffset;
+					int end = offset + event.lineText.length();
 
-						// extract segments for the current line:
-						int iStart = Arrays.binarySearch(segments, offset);
-						if (iStart < 0) {
-							iStart = -iStart - 1;
+					// extract segments for the current line:
+					int iStart = Arrays.binarySearch(segments, offset);
+					if (iStart < 0) {
+						iStart = -iStart - 1;
+					}
+					int i = iStart;
+					while (i < segments.length && segments[i] < end) {
+						i++;
+					}
+					int n = i - iStart;
+					if (n > 0) {
+						if (n == segments.length) {
+							event.segments = segments;
+						} else {
+							int[] lineSegments = new int[n];
+							System.arraycopy(segments, iStart, lineSegments, 0, n);
+							event.segments = lineSegments;
 						}
-						int i = iStart;
-						while (i < segments.length && segments[i] < end) {
-							i++;
-						}
-						int n = i - iStart;
-						if (n > 0) {
-							if (n == segments.length) {
-								event.segments = segments;
-							} else {
-								int[] lineSegments = new int[n];
-								System.arraycopy(segments, iStart, lineSegments, 0, n);
-								event.segments = lineSegments;
-							}
-							final char[] chars = new char[n];
-							Arrays.fill(chars, '\n');
-							event.segmentsChars = chars;
-						}
+						final char[] chars = new char[n];
+						Arrays.fill(chars, '\n');
+						event.segmentsChars = chars;
 					}
 				});
 			}

@@ -15,7 +15,6 @@ package org.eclipse.debug.internal.ui.launchConfigurations;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -66,14 +65,10 @@ public class LaunchConfigurationComparator extends WorkbenchViewerComparator {
 		if (fgCategories == null) {
 			fgCategories = new HashMap<>();
 			List<ILaunchConfigurationType> types = Arrays.asList(DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationTypes());
-			Collections.sort(types, new Comparator<ILaunchConfigurationType>() {
-				@Override
-				public int compare(ILaunchConfigurationType o1, ILaunchConfigurationType o2) {
-					ILaunchConfigurationType t1 = o1;
-					ILaunchConfigurationType t2 = o2;
-					return t1.getName().compareTo(t2.getName());
-				}
-
+			Collections.sort(types, (o1, o2) -> {
+				ILaunchConfigurationType t1 = o1;
+				ILaunchConfigurationType t2 = o2;
+				return t1.getName().compareTo(t2.getName());
 			});
 			Iterator<ILaunchConfigurationType> iterator = types.iterator();
 			int i = 0;

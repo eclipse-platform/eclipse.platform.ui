@@ -14,12 +14,8 @@
 package org.eclipse.debug.internal.ui;
 
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.swt.SWT;
@@ -57,18 +53,10 @@ public abstract class AbstractDebugListSelectionDialog extends AbstractDebugSele
 
 	@Override
 	protected void addViewerListeners(StructuredViewer viewer) {
-		viewer.addSelectionChangedListener(new ISelectionChangedListener(){
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				getButton(IDialogConstants.OK_ID).setEnabled(isValid());
-			}
-		});
-		viewer.addDoubleClickListener(new IDoubleClickListener(){
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				if (isValid()){
-					okPressed();
-				}
+		viewer.addSelectionChangedListener(event -> getButton(IDialogConstants.OK_ID).setEnabled(isValid()));
+		viewer.addDoubleClickListener(event -> {
+			if (isValid()){
+				okPressed();
 			}
 		});
 	}

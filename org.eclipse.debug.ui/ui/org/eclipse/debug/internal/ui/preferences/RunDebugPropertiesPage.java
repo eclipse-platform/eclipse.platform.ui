@@ -17,7 +17,6 @@ import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,12 +41,8 @@ import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationsDi
 import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ISelection;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.window.Window;
@@ -186,27 +181,19 @@ public class RunDebugPropertiesPage extends PropertyPage {
 		builderTable.setLayoutData(tableGridData);
 		IResource resource = getResource();
 		viewer.setInput(collectConfigCandidates(resource));
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				ISelection sel = event.getSelection();
-				if(sel instanceof IStructuredSelection) {
-					IStructuredSelection ss = (IStructuredSelection) sel;
-					boolean empty = ss.isEmpty();
-					int size = ss.size();
-					fEditButton.setEnabled(!empty && size == 1);
-					fDuplicateButton.setEnabled(!empty && size == 1);
-					fDeleteButton.setEnabled(!empty);
-					setErrorMessage(null);
-				}
+		viewer.addSelectionChangedListener(event -> {
+			ISelection sel = event.getSelection();
+			if(sel instanceof IStructuredSelection) {
+				IStructuredSelection ss = (IStructuredSelection) sel;
+				boolean empty = ss.isEmpty();
+				int size = ss.size();
+				fEditButton.setEnabled(!empty && size == 1);
+				fDuplicateButton.setEnabled(!empty && size == 1);
+				fDeleteButton.setEnabled(!empty);
+				setErrorMessage(null);
 			}
 		});
-		viewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent arg0) {
-				handleEdit();
-			}
-		});
+		viewer.addDoubleClickListener(arg0 -> handleEdit());
 		return viewer;
 	}
 
@@ -254,13 +241,10 @@ public class RunDebugPropertiesPage extends PropertyPage {
 				fTypeCandidates.add(DebugPlugin.getDefault().getLaunchManager().getLaunchConfigurationType(type));
 			}
 
-			Collections.sort(fTypeCandidates, new Comparator<ILaunchConfigurationType>() {
-				@Override
-				public int compare(ILaunchConfigurationType o1, ILaunchConfigurationType o2) {
-					ILaunchConfigurationType t1 = o1;
-					ILaunchConfigurationType t2 = o2;
-					return t1.getName().compareTo(t2.getName());
-				}
+			Collections.sort(fTypeCandidates, (o1, o2) -> {
+				ILaunchConfigurationType t1 = o1;
+				ILaunchConfigurationType t2 = o2;
+				return t1.getName().compareTo(t2.getName());
 			});
 		}
 		return fTypeCandidates.toArray(new ILaunchConfigurationType[fTypeCandidates.size()]);

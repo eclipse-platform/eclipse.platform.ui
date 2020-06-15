@@ -32,7 +32,6 @@ import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.HelpEvent;
-import org.eclipse.swt.events.HelpListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.dialogs.FilteredTree;
@@ -87,12 +86,7 @@ public final class LaunchConfigurationFilteredTree extends FilteredTree {
 				treeViewer.addFilter(filter);
 			}
 		}
-		treeViewer.getControl().addHelpListener(new HelpListener() {
-			@Override
-			public void helpRequested(HelpEvent evt) {
-				handleHelpRequest(evt);
-			}
-		});
+		treeViewer.getControl().addHelpListener(this::handleHelpRequest);
 		return treeViewer;
 	}
 

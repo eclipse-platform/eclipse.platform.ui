@@ -36,8 +36,6 @@ import org.eclipse.debug.ui.memory.IMemoryRenderingBindingsListener;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelDecorator;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
@@ -47,7 +45,6 @@ import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ListViewer;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -102,21 +99,17 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		}
 	};
 
-	private IMemoryRenderingBindingsListener fBindingListener = new IMemoryRenderingBindingsListener() {
-		@Override
-		public void memoryRenderingBindingsChanged() {
-			UIJob job = new UIJob("refresh") { //$NON-NLS-1$
+	private IMemoryRenderingBindingsListener fBindingListener = () -> {
+		UIJob job = new UIJob("refresh") { //$NON-NLS-1$
 
-				@Override
-				public IStatus runInUIThread(IProgressMonitor monitor) {
-					fViewer.refresh();
-					return Status.OK_STATUS;
-				}
-			};
-			job.setSystem(true);
-			job.schedule();
-		}
-
+			@Override
+			public IStatus runInUIThread(IProgressMonitor monitor) {
+				fViewer.refresh();
+				return Status.OK_STATUS;
+			}
+		};
+		job.setSystem(true);
+		job.schedule();
 	};
 
 	class MemoryRenderingLabelProvider implements ILabelProvider {
@@ -319,13 +312,7 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 		listLayout.heightHint = 140;
 		fViewer.getControl().setLayoutData(listLayout);
 
-		fViewer.addDoubleClickListener(new IDoubleClickListener() {
-
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				okPressed();
-			}
-		});
+		fViewer.addDoubleClickListener(event -> okPressed());
 
 		IMemoryBlock currentBlock = getMemoryBlockToSelect(null);
 		if (currentBlock == null) {
@@ -334,17 +321,13 @@ public class AddMemoryRenderingDialog extends SelectionDialog {
 			populateDialog(currentBlock);
 		}
 
-		fSelectionChangedListener = new ISelectionChangedListener() {
+		fSelectionChangedListener = event -> {
+			ISelection selection = fViewer.getSelection();
 
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				ISelection selection = fViewer.getSelection();
-
-				if (selection.isEmpty()) {
-					getButton(IDialogConstants.OK_ID).setEnabled(false);
-				} else {
-					getButton(IDialogConstants.OK_ID).setEnabled(true);
-				}
+			if (selection.isEmpty()) {
+				getButton(IDialogConstants.OK_ID).setEnabled(false);
+			} else {
+				getButton(IDialogConstants.OK_ID).setEnabled(true);
 			}
 		};
 

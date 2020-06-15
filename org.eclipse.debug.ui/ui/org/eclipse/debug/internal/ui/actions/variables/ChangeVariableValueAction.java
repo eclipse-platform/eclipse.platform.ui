@@ -31,7 +31,6 @@ import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.views.variables.VariablesView;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.actions.IVariableValueEditor;
-import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.widgets.Shell;
@@ -126,21 +125,15 @@ public class ChangeVariableValueAction extends SelectionProviderAction {
 			DebugUIPlugin.errorDialog(shell, ActionMessages.ChangeVariableValue_errorDialogTitle,ActionMessages.ChangeVariableValue_errorDialogMessage, exception);	//
 			return;
 		}
-		ChangeVariableValueInputDialog inputDialog = new ChangeVariableValueInputDialog(shell, ActionMessages.ChangeVariableValue_1, MessageFormat.format(ActionMessages.ChangeVariableValue_2, new Object[] { name }), value, new IInputValidator() { //
-			/**
-			 * Returns an error string if the input is invalid
-			 */
-			@Override
-			public String isValid(String input) {
-				try {
-					if (fVariable.verifyValue(input)) {
-						return null; // null means valid
-					}
-				} catch (DebugException exception) {
-					return ActionMessages.ChangeVariableValue_3;
+		ChangeVariableValueInputDialog inputDialog = new ChangeVariableValueInputDialog(shell, ActionMessages.ChangeVariableValue_1, MessageFormat.format(ActionMessages.ChangeVariableValue_2, new Object[] { name }), value, input -> {
+			try {
+				if (fVariable.verifyValue(input)) {
+					return null; // null means valid
 				}
-				return ActionMessages.ChangeVariableValue_4;
+			} catch (DebugException exception) {
+				return ActionMessages.ChangeVariableValue_3;
 			}
+			return ActionMessages.ChangeVariableValue_4;
 		});
 
 		inputDialog.open();

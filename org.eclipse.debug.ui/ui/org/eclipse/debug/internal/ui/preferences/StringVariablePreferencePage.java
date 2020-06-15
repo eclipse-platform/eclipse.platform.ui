@@ -32,10 +32,7 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ColumnLayoutData;
 import org.eclipse.jface.viewers.ColumnWeightData;
-import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IColorProvider;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -178,19 +175,11 @@ public class StringVariablePreferencePage extends PreferencePage implements IWor
 			}
 		});
 
-		variableTable.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				handleTableSelectionChanged(event);
-			}
-		});
+		variableTable.addSelectionChangedListener(this::handleTableSelectionChanged);
 
-		variableTable.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				if (!variableTable.getSelection().isEmpty()) {
-					handleEditButtonPressed();
-				}
+		variableTable.addDoubleClickListener(event -> {
+			if (!variableTable.getSelection().isEmpty()) {
+				handleEditButtonPressed();
 			}
 		});
 		variableTable.getTable().addKeyListener(new KeyAdapter() {

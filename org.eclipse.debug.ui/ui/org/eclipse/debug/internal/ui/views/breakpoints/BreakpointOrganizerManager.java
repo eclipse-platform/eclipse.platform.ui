@@ -117,9 +117,7 @@ public class BreakpointOrganizerManager {
 			Collection<IBreakpointOrganizer> collection = fOrganizers.values();
 			fSorted = new ArrayList<>();
 			fSorted.addAll(collection);
-			Collections.sort(fSorted, (o1, o2) -> {
-				return o1.getLabel().compareTo(o2.getLabel());
-			});
+			Collections.sort(fSorted, (o1, o2) -> o1.getLabel().compareTo(o2.getLabel()));
 		}
 		return fSorted.toArray(new IBreakpointOrganizer[fSorted.size()]);
 	}

@@ -35,7 +35,6 @@ import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsViewer;
 import org.eclipse.debug.ui.IDebugModelPresentation;
 import org.eclipse.debug.ui.IDebugUIConstants;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -62,12 +61,7 @@ public class EmbeddedBreakpointsViewer {
 	private BreakpointsContentProvider fProvider = null;
 	private Tree fTree = null;
 	private BreakpointsViewer fViewer = null;
-	private ICheckStateListener fCheckListener = new ICheckStateListener() {
-		@Override
-		public void checkStateChanged(CheckStateChangedEvent event) {
-			updateCheckedState(event.getElement(), event.getChecked());
-		}
-	};
+	private ICheckStateListener fCheckListener = event -> updateCheckedState(event.getElement(), event.getChecked());
 
 	/**
 	 * This constructor allows a specific selection to be used in stead of the default

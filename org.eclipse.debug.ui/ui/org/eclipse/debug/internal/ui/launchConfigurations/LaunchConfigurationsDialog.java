@@ -61,7 +61,6 @@ import org.eclipse.jface.operation.ModalContext;
 import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
@@ -588,20 +587,17 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		GridData gd = new GridData(GridData.FILL_BOTH);
 		control.setLayoutData(gd);
 		viewForm.setContent(viewFormContents);
-		AbstractLaunchConfigurationAction.IConfirmationRequestor requestor = new AbstractLaunchConfigurationAction.IConfirmationRequestor() {
-			@Override
-			public boolean getConfirmation() {
-				int status = shouldSaveCurrentConfig();
-				if(status == IDialogConstants.YES_ID) {
-					fTabViewer.handleApplyPressed();
-					return true;
-				}
-				else if(status == IDialogConstants.NO_ID) {
-					fTabViewer.handleRevertPressed();
-					return true;
-				}
-				return false;
+		AbstractLaunchConfigurationAction.IConfirmationRequestor requestor = () -> {
+			int status = shouldSaveCurrentConfig();
+			if(status == IDialogConstants.YES_ID) {
+				fTabViewer.handleApplyPressed();
+				return true;
 			}
+			else if(status == IDialogConstants.NO_ID) {
+				fTabViewer.handleRevertPressed();
+				return true;
+			}
+			return false;
 		};
 		getDuplicateAction().setConfirmationRequestor(requestor);
 		getExportAction().setConfirmationRequestor(requestor);
@@ -610,19 +606,16 @@ public class LaunchConfigurationsDialog extends TitleAreaDialog implements ILaun
 		getLinkPrototypeAction().setConfirmationRequestor(requestor);
 		getUnlinkPrototypeAction().setConfirmationRequestor(requestor);
 		getResetWithPrototypeValuesAction().setConfirmationRequestor(requestor);
-		((StructuredViewer) viewer).addPostSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				handleLaunchConfigurationSelectionChanged(event);
-				getNewAction().setEnabled(getNewAction().isEnabled());
-				getNewPrototypeAction().setEnabled(getNewPrototypeAction().isEnabled());
-				getDeleteAction().setEnabled(getDeleteAction().isEnabled());
-				getExportAction().setEnabled(getExportAction().isEnabled());
-				getDuplicateAction().setEnabled(getDuplicateAction().isEnabled());
-				getLinkPrototypeAction().setEnabled(getLinkPrototypeAction().isEnabled());
-				getUnlinkPrototypeAction().setEnabled(getUnlinkPrototypeAction().isEnabled());
-				getResetWithPrototypeValuesAction().setEnabled(getResetWithPrototypeValuesAction().isEnabled());
-			}
+		((StructuredViewer) viewer).addPostSelectionChangedListener(event -> {
+			handleLaunchConfigurationSelectionChanged(event);
+			getNewAction().setEnabled(getNewAction().isEnabled());
+			getNewPrototypeAction().setEnabled(getNewPrototypeAction().isEnabled());
+			getDeleteAction().setEnabled(getDeleteAction().isEnabled());
+			getExportAction().setEnabled(getExportAction().isEnabled());
+			getDuplicateAction().setEnabled(getDuplicateAction().isEnabled());
+			getLinkPrototypeAction().setEnabled(getLinkPrototypeAction().isEnabled());
+			getUnlinkPrototypeAction().setEnabled(getUnlinkPrototypeAction().isEnabled());
+			getResetWithPrototypeValuesAction().setEnabled(getResetWithPrototypeValuesAction().isEnabled());
 		});
 		return comp;
 	}

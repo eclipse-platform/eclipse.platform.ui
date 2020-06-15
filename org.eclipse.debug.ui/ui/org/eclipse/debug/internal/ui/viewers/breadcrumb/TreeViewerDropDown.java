@@ -23,11 +23,9 @@ import org.eclipse.core.runtime.Status;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.jface.util.OpenStrategy;
-import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ITreeSelection;
 import org.eclipse.jface.viewers.ITreeViewerListener;
-import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.TreeExpansionEvent;
 import org.eclipse.jface.viewers.TreePath;
 import org.eclipse.jface.viewers.TreeSelection;
@@ -86,14 +84,11 @@ public abstract class TreeViewerDropDown {
 		fDropDownSite = site;
 		fDropDownViewer= createTreeViewer(composite, SWT.SINGLE | SWT.H_SCROLL | SWT.V_SCROLL, path);
 
-		fDropDownViewer.addOpenListener(new IOpenListener() {
-			@Override
-			public void open(OpenEvent event) {
-				if (DebugUIPlugin.DEBUG_TREE_VIEWER_DROPDOWN) {
-					DebugUIPlugin.trace("BreadcrumbItemDropDown.showMenu()$treeViewer>open"); //$NON-NLS-1$
-				}
-				openElement(event.getSelection());
+		fDropDownViewer.addOpenListener(event -> {
+			if (DebugUIPlugin.DEBUG_TREE_VIEWER_DROPDOWN) {
+				DebugUIPlugin.trace("BreadcrumbItemDropDown.showMenu()$treeViewer>open"); //$NON-NLS-1$
 			}
+			openElement(event.getSelection());
 		});
 
 		final Tree tree = fDropDownViewer.getTree();

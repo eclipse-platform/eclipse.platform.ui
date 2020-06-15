@@ -31,9 +31,7 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -245,16 +243,13 @@ public class SelectLaunchersDialog extends AbstractDebugListSelectionDialog {
 	@Override
 	protected void addViewerListeners(StructuredViewer viewer) {
 		// Override super to use custom listeners
-		viewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection ss = event.getStructuredSelection();
-				if(ss != null && !ss.isEmpty()) {
-					SelectLaunchersDialog.this.description.setText(((ILaunchDelegate)ss.getFirstElement()).getDescription());
-				}
-				else {
-					SelectLaunchersDialog.this.description.setText(IInternalDebugCoreConstants.EMPTY_STRING);
-				}
+		viewer.addSelectionChangedListener(event -> {
+			IStructuredSelection ss = event.getStructuredSelection();
+			if(ss != null && !ss.isEmpty()) {
+				SelectLaunchersDialog.this.description.setText(((ILaunchDelegate)ss.getFirstElement()).getDescription());
+			}
+			else {
+				SelectLaunchersDialog.this.description.setText(IInternalDebugCoreConstants.EMPTY_STRING);
 			}
 		});
 		super.addViewerListeners(viewer);

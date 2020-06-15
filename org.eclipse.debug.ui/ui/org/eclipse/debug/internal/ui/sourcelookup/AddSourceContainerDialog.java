@@ -28,11 +28,7 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.ViewerComparator;
@@ -92,29 +88,21 @@ public class AddSourceContainerDialog extends TitleAreaDialog {
 		gd = new GridData(GridData.FILL_BOTH);
 		table.setLayoutData(gd);
 
-		fViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				okPressed();
-			}
-		});
+		fViewer.addDoubleClickListener(event -> okPressed());
 
 		fViewer.setLabelProvider(new SourceContainerLabelProvider());
 		fViewer.setContentProvider(ArrayContentProvider.getInstance());
 		fViewer.setComparator(new ViewerComparator());
-		fViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection selection = event.getStructuredSelection();
-				if (!selection.isEmpty()) {
-					ISourceContainerType type = (ISourceContainerType) selection.getFirstElement();
-					setMessage(type.getDescription());
-					getButton(IDialogConstants.OK_ID).setEnabled(true);
-				}
-				else {
-					getButton(IDialogConstants.OK_ID).setEnabled(false);
-					setMessage(SourceLookupUIMessages.AddSourceContainerDialog_select_source_container);
-				}
+		fViewer.addSelectionChangedListener(event -> {
+			IStructuredSelection selection = event.getStructuredSelection();
+			if (!selection.isEmpty()) {
+				ISourceContainerType type = (ISourceContainerType) selection.getFirstElement();
+				setMessage(type.getDescription());
+				getButton(IDialogConstants.OK_ID).setEnabled(true);
+			}
+			else {
+				getButton(IDialogConstants.OK_ID).setEnabled(false);
+				setMessage(SourceLookupUIMessages.AddSourceContainerDialog_select_source_container);
 			}
 		});
 		if(types.length != 0) {

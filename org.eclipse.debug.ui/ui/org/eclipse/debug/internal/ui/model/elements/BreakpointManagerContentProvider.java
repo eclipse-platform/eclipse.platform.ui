@@ -112,20 +112,9 @@ public class BreakpointManagerContentProvider extends ElementContentProvider
 
 		private IStructuredSelection fDebugContext = StructuredSelection.EMPTY;
 
-		private IPropertyChangeListener fOrganizersListener = new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				// For any property changes in breakpoint organizers, refresh the containers.
-				updateContainers();
-			}
-		};
+		private IPropertyChangeListener fOrganizersListener = event -> updateContainers();
 
-		private IPropertyChangeListener fPresentationContextListener = new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				presentationPropertyChanged(event);
-			}
-		};
+		private IPropertyChangeListener fPresentationContextListener = this::presentationPropertyChanged;
 
 		private IDebugContextListener fDebugContextListener = InputData.this::debugContextChanged;
 

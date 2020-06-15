@@ -21,8 +21,6 @@ import org.eclipse.debug.core.model.IWatchExpression;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.internal.ui.actions.ActionMessages;
 import org.eclipse.debug.internal.ui.actions.StatusInfo;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.bindings.keys.IKeyLookup;
 import org.eclipse.jface.bindings.keys.KeyLookupFactory;
@@ -149,13 +147,10 @@ public class WatchExpressionDialog extends StatusDialog {
 		menuManager.add(cutAction);
 		menuManager.add(copyAction);
 		menuManager.add(pasteAction);
-		menuManager.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				cutAction.update();
-				copyAction.update();
-				pasteAction.update();
-			}
+		menuManager.addMenuListener(manager -> {
+			cutAction.update();
+			copyAction.update();
+			pasteAction.update();
 		});
 		Menu menu = menuManager.createContextMenu(fSnippetViewer.getTextWidget());
 		fSnippetViewer.getTextWidget().setMenu(menu);

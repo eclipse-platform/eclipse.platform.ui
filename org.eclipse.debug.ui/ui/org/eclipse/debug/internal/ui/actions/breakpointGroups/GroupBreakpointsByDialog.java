@@ -27,15 +27,11 @@ import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsView;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
 import org.eclipse.jface.viewers.LabelProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
@@ -186,18 +182,8 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 		Table table = fAvailableViewer.getTable();
 		table.setLayoutData(new GridData(GridData.FILL_BOTH));
 		table.setFont(parent.getFont());
-		fAvailableViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				handleAddPressed();
-			}
-		});
-		fAvailableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				updateAddButton();
-			}
-		});
+		fAvailableViewer.addDoubleClickListener(event -> handleAddPressed());
+		fAvailableViewer.addSelectionChangedListener(event -> updateAddButton());
 	}
 
 	/**
@@ -229,18 +215,8 @@ public class GroupBreakpointsByDialog extends TrayDialog {
 		Tree tree = fSelectedViewer.getTree();
 		tree.setLayoutData(new GridData(GridData.FILL_BOTH));
 		tree.setFont(parent.getFont());
-		fSelectedViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				handleRemovePressed();
-			}
-		});
-		fSelectedViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				updateSelectedButtons();
-			}
-		});
+		fSelectedViewer.addDoubleClickListener(event -> handleRemovePressed());
+		fSelectedViewer.addSelectionChangedListener(event -> updateSelectedButtons());
 	}
 
 	public void createButtons(Composite parent) {

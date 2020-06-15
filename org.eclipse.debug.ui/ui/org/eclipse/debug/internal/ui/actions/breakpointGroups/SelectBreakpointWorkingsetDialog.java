@@ -20,9 +20,7 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.IDebugHelpContextIds;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.dialogs.IDialogConstants;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.IWorkingSet;
@@ -52,12 +50,9 @@ public class SelectBreakpointWorkingsetDialog extends AbstractDebugCheckboxSelec
 	protected void addViewerListeners(StructuredViewer viewer) {
 		CheckboxTableViewer checkViewer = getCheckBoxTableViewer();
 		if (checkViewer != null){
-			checkViewer.addCheckStateListener(new ICheckStateListener(){
-				@Override
-				public void checkStateChanged(CheckStateChangedEvent event) {
-					getCheckBoxTableViewer().setCheckedElements(new Object[] {event.getElement()});
-					getButton(IDialogConstants.OK_ID).setEnabled(true);
-				}
+			checkViewer.addCheckStateListener(event -> {
+				getCheckBoxTableViewer().setCheckedElements(new Object[] {event.getElement()});
+				getButton(IDialogConstants.OK_ID).setEnabled(true);
 			});
 		}
 	}

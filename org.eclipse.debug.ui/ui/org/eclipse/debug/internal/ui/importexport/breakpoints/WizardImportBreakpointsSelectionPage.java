@@ -29,7 +29,6 @@ import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointContainer;
 import org.eclipse.debug.internal.ui.views.breakpoints.BreakpointsViewer;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.actions.ImportBreakpointsOperation;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.DecoratingLabelProvider;
 import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProvider;
@@ -54,12 +53,7 @@ public class WizardImportBreakpointsSelectionPage extends WizardPage implements 
 	private Button fSelectAll = null;
 	private Button fDeselectAll = null;
 
-	private ICheckStateListener fImportCheckListener = new ICheckStateListener() {
-		@Override
-		public void checkStateChanged(CheckStateChangedEvent event) {
-			updateCheckedState(event.getChecked());
-		}
-	};
+	private ICheckStateListener fImportCheckListener = event -> updateCheckedState(event.getChecked());
 	protected WizardImportBreakpointsSelectionPage(String pageName) {
 		super(pageName, ImportExportMessages.WizardImportBreakpointsSelectionPage_2, null);
 	}

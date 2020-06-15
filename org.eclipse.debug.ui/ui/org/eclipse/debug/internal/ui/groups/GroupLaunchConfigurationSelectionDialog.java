@@ -50,8 +50,6 @@ import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.layout.GridData;
@@ -257,21 +255,18 @@ class GroupLaunchConfigurationSelectionDialog extends TitleAreaDialog implements
 		fActionParamLabel = new Label(comp, SWT.NONE);
 		fActionParamWidget = new Text(comp, SWT.SINGLE | SWT.BORDER);
 		GridDataFactory.fillDefaults().applyTo(fActionParamWidget);
-		fActionParamWidget.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				String text = ((Text) e.widget).getText();
-				if (action == GroupElementPostLaunchAction.DELAY) {
-					try {
-						actionParam = Integer.valueOf(text);
-					} catch (NumberFormatException exc) {
-						actionParam = null;
-					}
-				} else if (action == GroupElementPostLaunchAction.OUTPUT_REGEXP) {
-					actionParam = text;
+		fActionParamWidget.addModifyListener(e -> {
+			String text = ((Text) e.widget).getText();
+			if (action == GroupElementPostLaunchAction.DELAY) {
+				try {
+					actionParam = Integer.valueOf(text);
+				} catch (NumberFormatException exc) {
+					actionParam = null;
 				}
-				validate();
+			} else if (action == GroupElementPostLaunchAction.OUTPUT_REGEXP) {
+				actionParam = text;
 			}
+			validate();
 		});
 		if (actionParam instanceof Integer) {
 			fActionParamWidget.setText(((Integer) actionParam).toString());

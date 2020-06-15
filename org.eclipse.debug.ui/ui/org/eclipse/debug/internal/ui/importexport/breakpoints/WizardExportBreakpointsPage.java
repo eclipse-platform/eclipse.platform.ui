@@ -34,8 +34,6 @@ import org.eclipse.debug.ui.actions.ExportBreakpointsOperation;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.MessageDialog;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
@@ -173,12 +171,7 @@ public class WizardExportBreakpointsPage extends WizardPage implements Listener 
 		Composite composite = SWTFactory.createComposite(parent, 1, 1, GridData.FILL_BOTH);
 		SWTFactory.createLabel(composite, ImportExportMessages.WizardExportBreakpointsPage_2, 1);
 		fTView = new EmbeddedBreakpointsViewer(composite, DebugPlugin.getDefault().getBreakpointManager(), fSelection);
-		fTView.getViewer().addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				setPageComplete(detectPageComplete());
-			}
-		});
+		fTView.getViewer().addCheckStateListener(event -> setPageComplete(detectPageComplete()));
 		fTView.getViewer().setSelection(fSelection);
 		//ensure we can see the beginning check-boxes etc. (bug 180971)
 		//this will not work in Windows Vista as there is no way to over-ride the default viewer item showing policy

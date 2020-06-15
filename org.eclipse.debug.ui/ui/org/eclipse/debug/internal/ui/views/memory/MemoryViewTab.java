@@ -26,7 +26,6 @@ import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabItem;
-import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Control;
@@ -72,13 +71,9 @@ public class MemoryViewTab implements IMemoryViewTab, IPropertyChangeListener, L
 		fTabItem.setText(getLabel());
 		fTabItem.setImage(getImage());
 
-		fTabItem.addDisposeListener(fDisposeListener = new DisposeListener() {
-
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				fTabItem.removeDisposeListener(fDisposeListener);
-				dispose();
-			}
+		fTabItem.addDisposeListener(fDisposeListener = e -> {
+			fTabItem.removeDisposeListener(fDisposeListener);
+			dispose();
 		});
 	}
 

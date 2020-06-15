@@ -42,12 +42,8 @@ import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.MessageDialogWithToggle;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.preference.RadioGroupFieldEditor;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
@@ -328,20 +324,12 @@ public class LaunchPerspectivePreferencePage extends PreferencePage implements I
 		gd.heightHint = 250;
 		fTree.setLayoutData(gd);
 		fTreeViewer = new PerspectivesTreeViewer(fTree);
-		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				fPerspectivesPanel.refreshPanel(event.getStructuredSelection());
-			}
-		});
-		fTreeViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				IStructuredSelection ss = (IStructuredSelection) event.getSelection();
-				if(!ss.isEmpty()) {
-					Object obj = ss.getFirstElement();
-					fTreeViewer.setExpandedState(obj, !fTreeViewer.getExpandedState(obj));
-				}
+		fTreeViewer.addSelectionChangedListener(event -> fPerspectivesPanel.refreshPanel(event.getStructuredSelection()));
+		fTreeViewer.addDoubleClickListener(event -> {
+			IStructuredSelection ss = (IStructuredSelection) event.getSelection();
+			if(!ss.isEmpty()) {
+				Object obj = ss.getFirstElement();
+				fTreeViewer.setExpandedState(obj, !fTreeViewer.getExpandedState(obj));
 			}
 		});
 		fTreeViewer.setLabelProvider(DebugUITools.newDebugModelPresentation());

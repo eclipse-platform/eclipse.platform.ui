@@ -33,12 +33,9 @@ public class ViewerInputService {
 	 *
 	 * @since 3.6
 	 */
-	public final static Object NULL_INPUT = new IViewerInputProvider() {
-		@Override
-		public void update(IViewerInputUpdate update) {
-			update.setInputElement(null);
-			update.done();
-		}
+	public final static Object NULL_INPUT = (IViewerInputProvider) update -> {
+		update.setInputElement(null);
+		update.done();
 	};
 
 	// previous update request, cancelled when a new request comes in
@@ -48,16 +45,13 @@ public class ViewerInputService {
 
 	private ITreeModelViewer fViewer;
 
-	private IViewerInputRequestor fProxyRequest = new IViewerInputRequestor() {
-		@Override
-		public void viewerInputComplete(final IViewerInputUpdate update) {
-			synchronized (ViewerInputService.this) {
-				if (fPendingUpdate == update) {
-					fPendingUpdate = null;
-				}
+	private IViewerInputRequestor fProxyRequest = update -> {
+		synchronized (ViewerInputService.this) {
+			if (fPendingUpdate == update) {
+				fPendingUpdate = null;
 			}
-			fRequestor.viewerInputComplete(update);
 		}
+		fRequestor.viewerInputComplete(update);
 	};
 
 	/**

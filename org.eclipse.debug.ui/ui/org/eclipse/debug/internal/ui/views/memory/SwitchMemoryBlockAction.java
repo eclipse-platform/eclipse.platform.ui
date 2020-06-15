@@ -31,7 +31,6 @@ import org.eclipse.debug.core.model.IMemoryBlockRetrieval;
 import org.eclipse.debug.internal.core.IInternalDebugCoreConstants;
 import org.eclipse.debug.internal.ui.DebugUIMessages;
 import org.eclipse.debug.ui.DebugUITools;
-import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.memory.IMemoryRendering;
 import org.eclipse.jface.action.Action;
@@ -127,12 +126,9 @@ public class SwitchMemoryBlockAction extends Action implements IViewActionDelega
 	/**
 	 * Listens for debug context changes and updates action delegate enablement
 	 */
-	private IDebugContextListener fDebugContextListener = new IDebugContextListener() {
-		@Override
-		public void debugContextChanged(DebugContextEvent event) {
-			if (fAction != null) {
-				fUpdateJob.schedule();
-			}
+	private IDebugContextListener fDebugContextListener = event -> {
+		if (fAction != null) {
+			fUpdateJob.schedule();
 		}
 	};
 

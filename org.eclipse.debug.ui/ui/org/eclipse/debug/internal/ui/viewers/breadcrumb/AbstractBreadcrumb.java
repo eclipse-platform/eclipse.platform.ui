@@ -15,13 +15,9 @@
 package org.eclipse.debug.internal.ui.viewers.breadcrumb;
 
 import org.eclipse.core.runtime.Assert;
-import org.eclipse.jface.viewers.DoubleClickEvent;
-import org.eclipse.jface.viewers.IDoubleClickListener;
-import org.eclipse.jface.viewers.IOpenListener;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.OpenEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
@@ -169,48 +165,37 @@ public abstract class AbstractBreadcrumb {
 		gridLayout.horizontalSpacing= 0;
 		fComposite.setLayout(gridLayout);
 
-		fDisplayFocusListener= new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				if (fComposite.isDisposed()) return;
+		fDisplayFocusListener= event -> {
+			if (fComposite.isDisposed()) return;
 
-				if (isBreadcrumbEvent(event)) {
-					if (fHasFocus)
-						return;
+			if (isBreadcrumbEvent(event)) {
+				if (fHasFocus)
+					return;
 
-					focusGained();
-				} else {
-					if (!fHasFocus)
-						return;
+				focusGained();
+			} else {
+				if (!fHasFocus)
+					return;
 
-					focusLost();
-				}
+				focusLost();
 			}
 		};
 		Display.getCurrent().addFilter(SWT.FocusIn, fDisplayFocusListener);
 
 		fBreadcrumbViewer= createViewer(fComposite);
 
-		fBreadcrumbViewer.addDoubleClickListener(new IDoubleClickListener() {
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				Object element= ((IStructuredSelection) event.getSelection()).getFirstElement();
-				if (element == null)
-					return;
+		fBreadcrumbViewer.addDoubleClickListener(event -> {
+			Object element= ((IStructuredSelection) event.getSelection()).getFirstElement();
+			if (element == null)
+				return;
 
-				BreadcrumbItem item= (BreadcrumbItem) fBreadcrumbViewer.doFindItem(element);
-				if (item == null)
-					return;
-				item.openDropDownMenu();
-			}
+			BreadcrumbItem item= (BreadcrumbItem) fBreadcrumbViewer.doFindItem(element);
+			if (item == null)
+				return;
+			item.openDropDownMenu();
 		});
 
-		fBreadcrumbViewer.addOpenListener(new IOpenListener() {
-			@Override
-			public void open(OpenEvent event) {
-				doOpen(event.getSelection());
-			}
-		});
+		fBreadcrumbViewer.addOpenListener(event -> doOpen(event.getSelection()));
 
 		return fComposite;
 	}
@@ -269,15 +254,12 @@ public abstract class AbstractBreadcrumb {
 		//Sanity check
 		deinstallDisplayListeners();
 
-		fDisplayKeyListener= new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				if (event.keyCode != SWT.ESC)
-					return;
+		fDisplayKeyListener= event -> {
+			if (event.keyCode != SWT.ESC)
+				return;
 
-				if (!isBreadcrumbEvent(event))
-					return;
-			}
+			if (!isBreadcrumbEvent(event))
+				return;
 		};
 		Display.getDefault().addFilter(SWT.KeyDown, fDisplayKeyListener);
 	}

@@ -48,9 +48,7 @@ import org.eclipse.debug.ui.ILaunchGroup;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.resource.ImageDescriptor;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.ITableLabelProvider;
@@ -58,7 +56,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.accessibility.AccessibleAdapter;
 import org.eclipse.swt.accessibility.AccessibleEvent;
-import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
@@ -111,12 +108,7 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 	/**
 	 * Modify listener that simply updates the owning launch configuration dialog.
 	 */
-	private ModifyListener fBasicModifyListener = new ModifyListener() {
-		@Override
-		public void modifyText(ModifyEvent evt) {
-			updateLaunchConfigurationDialog();
-		}
-	};
+	private ModifyListener fBasicModifyListener = evt -> updateLaunchConfigurationDialog();
 
 	@Override
 	public void createControl(Composite parent) {
@@ -144,12 +136,7 @@ class CommonTabLite extends AbstractLaunchConfigurationTab {
 		table.setFont(parent.getFont());
 		fFavoritesTable.setContentProvider(new FavoritesContentProvider());
 		fFavoritesTable.setLabelProvider(new FavoritesLabelProvider());
-		fFavoritesTable.addCheckStateListener(new ICheckStateListener() {
-				@Override
-				public void checkStateChanged(CheckStateChangedEvent event) {
-					updateLaunchConfigurationDialog();
-				}
-			});
+		fFavoritesTable.addCheckStateListener(event -> updateLaunchConfigurationDialog());
 	}
 
 	/**

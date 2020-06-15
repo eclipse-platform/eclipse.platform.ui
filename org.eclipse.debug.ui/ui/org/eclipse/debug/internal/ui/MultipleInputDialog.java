@@ -25,12 +25,8 @@ import org.eclipse.debug.ui.StringVariableSelectionDialog;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
@@ -151,12 +147,7 @@ public class MultipleInputDialog extends Dialog {
 					return !text.getText().equals(IInternalDebugCoreConstants.EMPTY_STRING);
 				}
 			});
-			text.addModifyListener(new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					validateFields();
-				}
-			});
+			text.addModifyListener(e -> validateFields());
 		}
 
 		controlList.add(text);
@@ -195,12 +186,7 @@ public class MultipleInputDialog extends Dialog {
 				}
 			});
 
-			text.addModifyListener(new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					validateFields();
-				}
-			});
+			text.addModifyListener(e -> validateFields());
 		}
 
 		Button button = createButton(comp, IDialogConstants.IGNORE_ID, DebugUIMessages.MultipleInputDialog_6, false);
@@ -262,12 +248,7 @@ public class MultipleInputDialog extends Dialog {
 				}
 			});
 
-			text.addModifyListener(new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					validateFields();
-				}
-			});
+			text.addModifyListener(e -> validateFields());
 		}
 
 		Button button = createButton(comp, IDialogConstants.IGNORE_ID, DebugUIMessages.MultipleInputDialog_8, false);
@@ -304,12 +285,9 @@ public class MultipleInputDialog extends Dialog {
 		text.setLayoutData(gd);
 		text.setData(FIELD_NAME, labelText);
 
-		text.addTraverseListener(new TraverseListener () {
-			@Override
-			public void keyTraversed(TraverseEvent e) {
-				if(e.detail == SWT.TRAVERSE_RETURN && e.stateMask == SWT.SHIFT) {
-					e.doit = true;
-				}
+		text.addTraverseListener(e -> {
+			if(e.detail == SWT.TRAVERSE_RETURN && e.stateMask == SWT.SHIFT) {
+				e.doit = true;
 			}
 		});
 
@@ -328,12 +306,7 @@ public class MultipleInputDialog extends Dialog {
 				}
 			});
 
-			text.addModifyListener(new ModifyListener() {
-				@Override
-				public void modifyText(ModifyEvent e) {
-					validateFields();
-				}
-			});
+			text.addModifyListener(e -> validateFields());
 		}
 		Composite comp = SWTFactory.createComposite(panel, panel.getFont(), 1, 2, GridData.HORIZONTAL_ALIGN_END);
 		GridLayout ld = (GridLayout)comp.getLayout();

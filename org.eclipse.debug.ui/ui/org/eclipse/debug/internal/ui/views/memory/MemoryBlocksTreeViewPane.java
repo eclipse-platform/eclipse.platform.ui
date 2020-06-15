@@ -45,8 +45,6 @@ import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IMemoryRenderingSite;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
@@ -295,13 +293,9 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 		fDebugContextListener = new TreeViewPaneContextListener();
 		DebugUITools.addPartDebugContextListener(fParent.getSite(), fDebugContextListener);
 
-		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				ISelection treeSelected = event.getSelection();
-				fSelectionProvider.setSelection(treeSelected);
-			}
+		fTreeViewer.addSelectionChangedListener(event -> {
+			ISelection treeSelected = event.getSelection();
+			fSelectionProvider.setSelection(treeSelected);
 		});
 
 		updateRetrieval();
@@ -336,13 +330,10 @@ public class MemoryBlocksTreeViewPane implements ISelectionListener, ISelectionC
 	protected MenuManager createContextMenuManager() {
 		MenuManager menuMgr = new MenuManager("#PopupMenu"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				manager.add(fAddMemoryBlockAction);
-				manager.add(fRemoveMemoryBlockAction);
-				manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
-			}
+		menuMgr.addMenuListener(manager -> {
+			manager.add(fAddMemoryBlockAction);
+			manager.add(fRemoveMemoryBlockAction);
+			manager.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 		});
 
 		// register a context menu manager, use its pane id as the menu id

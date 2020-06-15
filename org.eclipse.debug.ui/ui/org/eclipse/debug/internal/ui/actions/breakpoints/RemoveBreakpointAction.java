@@ -60,92 +60,89 @@ public class RemoveBreakpointAction extends AbstractSelectionActionDelegate {
 		}
 		final Iterator<?> itr = selection.iterator();
 		final CoreException[] exception= new CoreException[1];
-		IWorkspaceRunnable runnable= new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) {
-				Set<IBreakpoint> breakpointsToDelete = new LinkedHashSet<>();
-				ArrayList<IWorkingSet> groupsToDelete = new ArrayList<>();
-				boolean deleteAll = false;
-				boolean deleteContainer = false;
-				boolean prompted = false;
-				while (itr.hasNext()) {
-					Object next= itr.next();
-					IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(next, IBreakpoint.class);
-					if (breakpoint != null) {
-						breakpointsToDelete.add(breakpoint);
-					} else if (next instanceof IBreakpointContainer) {
-						//the the container is a workingset, ask if they want to delete it as well
-						IBreakpointContainer bpc = (IBreakpointContainer) next;
-						if(bpc.getCategory() instanceof WorkingSetCategory) {
-							IWorkingSet set = ((WorkingSetCategory)bpc.getCategory()).getWorkingSet();
-							if(!prompted) {
-								prompted = true;
-								DeleteWorkingsetsMessageDialog dialog = new DeleteWorkingsetsMessageDialog(getView().getSite().getShell(),
-										ActionMessages.RemoveBreakpointAction_3,
-										null,
-										ActionMessages.RemoveBreakpointAction_4,
-										MessageDialog.QUESTION,
-										new String[] {ActionMessages.RemoveBreakpointAction_5, ActionMessages.RemoveBreakpointAction_6},
-										0);
-								if (dialog.open() == Window.CANCEL) {
-									return;
-								}
-								deleteAll = dialog.deleteAllBreakpoints();
-								deleteContainer = dialog.deleteWorkingset();
+		IWorkspaceRunnable runnable= monitor -> {
+			Set<IBreakpoint> breakpointsToDelete = new LinkedHashSet<>();
+			ArrayList<IWorkingSet> groupsToDelete = new ArrayList<>();
+			boolean deleteAll = false;
+			boolean deleteContainer = false;
+			boolean prompted = false;
+			while (itr.hasNext()) {
+				Object next= itr.next();
+				IBreakpoint breakpoint = (IBreakpoint)DebugPlugin.getAdapter(next, IBreakpoint.class);
+				if (breakpoint != null) {
+					breakpointsToDelete.add(breakpoint);
+				} else if (next instanceof IBreakpointContainer) {
+					//the the container is a workingset, ask if they want to delete it as well
+					IBreakpointContainer bpc = (IBreakpointContainer) next;
+					if(bpc.getCategory() instanceof WorkingSetCategory) {
+						IWorkingSet set = ((WorkingSetCategory)bpc.getCategory()).getWorkingSet();
+						if(!prompted) {
+							prompted = true;
+							DeleteWorkingsetsMessageDialog dialog = new DeleteWorkingsetsMessageDialog(getView().getSite().getShell(),
+									ActionMessages.RemoveBreakpointAction_3,
+									null,
+									ActionMessages.RemoveBreakpointAction_4,
+									MessageDialog.QUESTION,
+									new String[] {ActionMessages.RemoveBreakpointAction_5, ActionMessages.RemoveBreakpointAction_6},
+									0);
+							if (dialog.open() == Window.CANCEL) {
+								return;
 							}
-							if(deleteContainer) {
-								groupsToDelete.add(set);
-							}
+							deleteAll = dialog.deleteAllBreakpoints();
+							deleteContainer = dialog.deleteWorkingset();
 						}
-						else {
-							if(!prompted) {
-								IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
-								prompted = store.getBoolean(IDebugPreferenceConstants.PREF_PROMPT_REMOVE_BREAKPOINTS_FROM_CONTAINER);
-								if(prompted) {
-									MessageDialogWithToggle mdwt = MessageDialogWithToggle.openYesNoQuestion(getView().getSite().getShell(), ActionMessages.RemoveBreakpointAction_0,
-											ActionMessages.RemoveBreakpointAction_1, ActionMessages.RemoveAllBreakpointsAction_3, !prompted, null, null);
-									if(mdwt.getReturnCode() == IDialogConstants.NO_ID) {
-										deleteAll = false;
-									}
-									else {
-										store.setValue(IDebugPreferenceConstants.PREF_PROMPT_REMOVE_BREAKPOINTS_FROM_CONTAINER, !mdwt.getToggleState());
-										deleteAll = true;
-									}
+						if(deleteContainer) {
+							groupsToDelete.add(set);
+						}
+					}
+					else {
+						if(!prompted) {
+							IPreferenceStore store = DebugUIPlugin.getDefault().getPreferenceStore();
+							prompted = store.getBoolean(IDebugPreferenceConstants.PREF_PROMPT_REMOVE_BREAKPOINTS_FROM_CONTAINER);
+							if(prompted) {
+								MessageDialogWithToggle mdwt = MessageDialogWithToggle.openYesNoQuestion(getView().getSite().getShell(), ActionMessages.RemoveBreakpointAction_0,
+										ActionMessages.RemoveBreakpointAction_1, ActionMessages.RemoveAllBreakpointsAction_3, !prompted, null, null);
+								if(mdwt.getReturnCode() == IDialogConstants.NO_ID) {
+									deleteAll = false;
 								}
 								else {
-									deleteAll = !prompted;
+									store.setValue(IDebugPreferenceConstants.PREF_PROMPT_REMOVE_BREAKPOINTS_FROM_CONTAINER, !mdwt.getToggleState());
+									deleteAll = true;
 								}
 							}
-						}
-						if(deleteAll) {
-							IBreakpoint[] breakpoints = bpc.getBreakpoints();
-							Collections.addAll(breakpointsToDelete, breakpoints);
-						}
-					}
-				}
-				final IBreakpoint[] breakpoints = breakpointsToDelete.toArray(new IBreakpoint[0]);
-				final IWorkingSet[] sets = groupsToDelete.toArray(new IWorkingSet[groupsToDelete.size()]);
-				if(breakpoints.length > 0) {
-					((BreakpointsView)getView()).preserveSelection(getSelection());
-				}
-				new Job(ActionMessages.RemoveBreakpointAction_2) {
-					@Override
-					protected IStatus run(IProgressMonitor pmonitor) {
-						try {
-							Shell shell= getView() != null ? getView().getSite().getShell() : null;
-							DebugUITools.deleteBreakpoints(breakpoints, shell, pmonitor);
-
-							for (IWorkingSet set : sets) {
-								PlatformUI.getWorkbench().getWorkingSetManager().removeWorkingSet(set);
+							else {
+								deleteAll = !prompted;
 							}
-							return Status.OK_STATUS;
-						} catch (CoreException e) {
-							DebugUIPlugin.log(e);
 						}
-						return Status.CANCEL_STATUS;
 					}
-				}.schedule();
+					if(deleteAll) {
+						IBreakpoint[] breakpoints1 = bpc.getBreakpoints();
+						Collections.addAll(breakpointsToDelete, breakpoints1);
+					}
+				}
 			}
+			final IBreakpoint[] breakpoints2 = breakpointsToDelete.toArray(new IBreakpoint[0]);
+			final IWorkingSet[] sets = groupsToDelete.toArray(new IWorkingSet[groupsToDelete.size()]);
+			if(breakpoints2.length > 0) {
+				((BreakpointsView)getView()).preserveSelection(getSelection());
+			}
+			new Job(ActionMessages.RemoveBreakpointAction_2) {
+				@Override
+				protected IStatus run(IProgressMonitor pmonitor) {
+					try {
+						Shell shell= getView() != null ? getView().getSite().getShell() : null;
+						DebugUITools.deleteBreakpoints(breakpoints2, shell, pmonitor);
+
+						for (IWorkingSet set : sets) {
+							PlatformUI.getWorkbench().getWorkingSetManager().removeWorkingSet(set);
+						}
+						return Status.OK_STATUS;
+					} catch (CoreException e) {
+						DebugUIPlugin.log(e);
+					}
+					return Status.CANCEL_STATUS;
+				}
+			}.schedule();
 		};
 		try {
 			ResourcesPlugin.getWorkspace().run(runnable, null, 0, null);

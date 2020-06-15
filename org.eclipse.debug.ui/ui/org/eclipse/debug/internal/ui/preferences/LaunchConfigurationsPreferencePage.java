@@ -37,8 +37,6 @@ import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.preference.BooleanFieldEditor;
 import org.eclipse.jface.preference.FieldEditor;
 import org.eclipse.jface.preference.PreferencePage;
-import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
 import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IContentProvider;
@@ -228,22 +226,19 @@ public class LaunchConfigurationsPreferencePage extends PreferencePage implement
 	private Composite createTypeFiltering(Composite parent) {
 		Composite comp = SWTFactory.createComposite(parent, parent.getFont(), 1, 1, GridData.FILL_HORIZONTAL);
 		BooleanFieldEditor2 editor = new BooleanFieldEditor2(IInternalDebugUIConstants.PREF_FILTER_LAUNCH_TYPES, DebugPreferencesMessages.LaunchConfigurationsPreferencePage_0, SWT.NONE, comp);
-		editor.setPropertyChangeListener(new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-				boolean newvalue = false;
-				if(event.getNewValue() instanceof Boolean) {
-					newvalue = ((Boolean)event.getNewValue()).booleanValue();
-				}
-				else {
-					newvalue = Boolean.valueOf(event.getNewValue().toString()).booleanValue();
-				}
-				if(newvalue) {
-					fTable.setEnabled(true);
-				}
-				else {
-					fTable.setEnabled(false);
-				}
+		editor.setPropertyChangeListener(event -> {
+			boolean newvalue = false;
+			if(event.getNewValue() instanceof Boolean) {
+				newvalue = ((Boolean)event.getNewValue()).booleanValue();
+			}
+			else {
+				newvalue = Boolean.valueOf(event.getNewValue().toString()).booleanValue();
+			}
+			if(newvalue) {
+				fTable.setEnabled(true);
+			}
+			else {
+				fTable.setEnabled(false);
 			}
 		});
 		fFieldEditors.add(editor);

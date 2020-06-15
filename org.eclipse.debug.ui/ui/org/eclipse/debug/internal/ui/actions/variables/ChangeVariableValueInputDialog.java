@@ -21,8 +21,6 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
@@ -161,16 +159,13 @@ public class ChangeVariableValueInputDialog extends TrayDialog {
 		text.setLayoutData(gridData);
 		text.setFont(font);
 		text.addModifyListener(
-				new ModifyListener() {
-					@Override
-					public void modifyText(ModifyEvent e) {
-						if (okButton.isEnabled()) {
-							return;
-						}
-						errorMessageLabel.setText(IInternalDebugCoreConstants.EMPTY_STRING);
-						errorMessageLabel.getParent().update();
-						okButton.setEnabled(true);
+				e -> {
+					if (okButton.isEnabled()) {
+						return;
 					}
+					errorMessageLabel.setText(IInternalDebugCoreConstants.EMPTY_STRING);
+					errorMessageLabel.getParent().update();
+					okButton.setEnabled(true);
 				}
 		);
 

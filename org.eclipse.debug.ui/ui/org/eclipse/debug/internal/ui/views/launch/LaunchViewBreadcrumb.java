@@ -35,8 +35,6 @@ import org.eclipse.debug.ui.contexts.AbstractDebugContextProvider;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
 import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.contexts.IDebugContextProvider;
-import org.eclipse.jface.action.IMenuListener;
-import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.viewers.AbstractTreeViewer;
 import org.eclipse.jface.viewers.BaseLabelProvider;
@@ -53,8 +51,6 @@ import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.jface.viewers.ViewerFilter;
 import org.eclipse.jface.viewers.ViewerLabel;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.MenuDetectEvent;
-import org.eclipse.swt.events.MenuDetectListener;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Menu;
@@ -282,12 +278,7 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
 	protected void createMenuManager() {
 		MenuManager menuMgr = new MenuManager("#PopUp"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager mgr) {
-				fView.fillContextMenu(mgr);
-			}
-		});
+		menuMgr.addMenuListener(mgr -> fView.fillContextMenu(mgr));
 		final Menu menu= menuMgr.createContextMenu(fViewer.getControl());
 
 		// register the context menu such that other plug-ins may contribute to it
@@ -296,15 +287,12 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
 		}
 		fView.addContextMenuManager(menuMgr);
 
-		fViewer.addMenuDetectListener(new MenuDetectListener() {
-			@Override
-			public void menuDetected(MenuDetectEvent event) {
-				menu.setLocation(event.x + 10, event.y + 10);
-				menu.setVisible(true);
-				while (!menu.isDisposed() && menu.isVisible()) {
-					if (!menu.getDisplay().readAndDispatch()) {
-						menu.getDisplay().sleep();
-					}
+		fViewer.addMenuDetectListener(event -> {
+			menu.setLocation(event.x + 10, event.y + 10);
+			menu.setVisible(true);
+			while (!menu.isDisposed() && menu.isVisible()) {
+				if (!menu.getDisplay().readAndDispatch()) {
+					menu.getDisplay().sleep();
 				}
 			}
 		});
@@ -529,14 +517,11 @@ public class LaunchViewBreadcrumb extends AbstractBreadcrumb implements IDebugCo
 					fDropDownViewer.saveElementState(TreePath.EMPTY, delta, IModelDelta.EXPAND | IModelDelta.SELECT);
 
 					// Add the IModelDelta.FORCE flag to override the current selection in view.
-					rootDelta.accept(new IModelDeltaVisitor(){
-						@Override
-						public boolean visit(IModelDelta paramDelta, int depth) {
-							if ((paramDelta.getFlags() & IModelDelta.SELECT) != 0) {
-								((ModelDelta)paramDelta).setFlags(paramDelta.getFlags() | IModelDelta.FORCE);
-							}
-							return true;
+					rootDelta.accept((paramDelta, depth) -> {
+						if ((paramDelta.getFlags() & IModelDelta.SELECT) != 0) {
+							((ModelDelta)paramDelta).setFlags(paramDelta.getFlags() | IModelDelta.FORCE);
 						}
+						return true;
 					});
 
 					// If elements in the drop-down were auto-expanded, then collapse the drop-down's sub tree in the

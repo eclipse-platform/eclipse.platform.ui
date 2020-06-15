@@ -23,8 +23,6 @@ import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.dialogs.IInputValidator;
 import org.eclipse.jface.dialogs.TrayDialog;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
@@ -57,21 +55,17 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
 		super(parent);
 		setShellStyle(getShellStyle() | SWT.RESIZE);
 		fValue = Integer.toString(DebugUIPlugin.getDefault().getPreferenceStore().getInt(IDebugUIConstants.PREF_MAX_DETAIL_LENGTH));
-		fValidator = new IInputValidator() {
-					@Override
-					public String isValid(String newText) {
-						try {
-							int num = Integer.parseInt(newText);
-							if (num < 0) {
-								return VariablesViewMessages.DetailPaneMaxLengthDialog_2;
-							}
-						} catch (NumberFormatException e) {
-							return VariablesViewMessages.DetailPaneMaxLengthDialog_3;
-						}
-						return null;
-					}
-
-				};
+		fValidator = newText -> {
+			try {
+				int num = Integer.parseInt(newText);
+				if (num < 0) {
+					return VariablesViewMessages.DetailPaneMaxLengthDialog_2;
+				}
+			} catch (NumberFormatException e) {
+				return VariablesViewMessages.DetailPaneMaxLengthDialog_3;
+			}
+			return null;
+		};
 	}
 
 	@Override
@@ -104,12 +98,9 @@ public class DetailPaneMaxLengthDialog extends TrayDialog {
 		fTextWidget = new Text(composite, SWT.SINGLE | SWT.BORDER);
 		fTextWidget.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL | GridData.HORIZONTAL_ALIGN_FILL));
 		fTextWidget.setText(fValue);
-		fTextWidget.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText(ModifyEvent e) {
-				validateInput();
-				fValue = fTextWidget.getText();
-			}
+		fTextWidget.addModifyListener(e -> {
+			validateInput();
+			fValue = fTextWidget.getText();
 		});
 		fErrorTextWidget = new Text(composite, SWT.READ_ONLY);
 		fErrorTextWidget.setLayoutData(new GridData(GridData.GRAB_HORIZONTAL

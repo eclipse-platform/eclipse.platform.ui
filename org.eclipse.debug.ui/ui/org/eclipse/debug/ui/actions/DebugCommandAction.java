@@ -16,7 +16,6 @@ package org.eclipse.debug.ui.actions;
 
 import org.eclipse.debug.core.IRequest;
 import org.eclipse.debug.internal.ui.commands.actions.DebugCommandService;
-import org.eclipse.debug.internal.ui.commands.actions.ICommandParticipant;
 import org.eclipse.debug.internal.ui.commands.actions.IEnabledTarget;
 import org.eclipse.debug.ui.DebugUITools;
 import org.eclipse.debug.ui.contexts.DebugContextEvent;
@@ -117,12 +116,7 @@ public abstract class DebugCommandAction extends Action implements IDebugContext
 	private boolean execute(final Object[] targets) {
 		return fUpdateService.executeCommand(
 			getCommandType(), targets,
-			new ICommandParticipant() {
-				@Override
-				public void requestDone(org.eclipse.debug.core.IRequest request) {
-					DebugCommandAction.this.postExecute(request, targets);
-				}
-			});
+			request -> DebugCommandAction.this.postExecute(request, targets));
 	}
 
 	/**

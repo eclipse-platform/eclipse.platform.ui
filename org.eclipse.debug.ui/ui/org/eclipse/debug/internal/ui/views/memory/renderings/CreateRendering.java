@@ -36,9 +36,7 @@ import org.eclipse.debug.ui.memory.IMemoryRenderingBindingsListener;
 import org.eclipse.debug.ui.memory.IMemoryRenderingContainer;
 import org.eclipse.debug.ui.memory.IMemoryRenderingType;
 import org.eclipse.jface.util.PropertyChangeEvent;
-import org.eclipse.jface.viewers.DoubleClickEvent;
 import org.eclipse.jface.viewers.IBasicPropertyConstants;
-import org.eclipse.jface.viewers.IDoubleClickListener;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.ILabelProviderListener;
 import org.eclipse.jface.viewers.ISelection;
@@ -186,12 +184,7 @@ public class CreateRendering extends AbstractMemoryRendering implements IMemoryR
 		listLayout.horizontalSpan = 1;
 		fViewer.getControl().setLayoutData(listLayout);
 
-		fViewer.addDoubleClickListener(new IDoubleClickListener (){
-
-			@Override
-			public void doubleClick(DoubleClickEvent event) {
-				addRenderings();
-			}});
+		fViewer.addDoubleClickListener(event -> addRenderings());
 
 		// listen for enter being pressed
 		fViewer.getList().addKeyListener(new KeyAdapter() {

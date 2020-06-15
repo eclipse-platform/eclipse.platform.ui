@@ -20,7 +20,6 @@ import org.eclipse.core.runtime.CoreException;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.DebugPlugin;
-import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILogicalStructureType;
 import org.eclipse.debug.core.model.IDebugElement;
 import org.eclipse.debug.core.model.IIndexedValue;
@@ -233,23 +232,20 @@ public class VariableContentProvider extends ElementContentProvider {
 		if (fgLogicalCache == null){
 			fgLogicalCache = new LogicalStructureCache();
 			// Add a listener to clear the cache when resuming, terminating, or suspending
-			DebugPlugin.getDefault().addDebugEventListener(new IDebugEventSetListener(){
-				@Override
-				public void handleDebugEvents(DebugEvent[] events) {
-					for (DebugEvent event : events) {
-						if (event.getKind() == DebugEvent.TERMINATE) {
-							fgLogicalCache.clear();
-							break;
-						} else if (event.getKind() == DebugEvent.RESUME && event.getDetail() != DebugEvent.EVALUATION_IMPLICIT) {
-							fgLogicalCache.clear();
-							break;
-						} else if (event.getKind() == DebugEvent.SUSPEND && event.getDetail() != DebugEvent.EVALUATION_IMPLICIT) {
-							fgLogicalCache.clear();
-							break;
-						} else if (event.getKind() == DebugEvent.CHANGE && event.getDetail() == DebugEvent.CONTENT) {
-							fgLogicalCache.clear();
-							break;
-						}
+			DebugPlugin.getDefault().addDebugEventListener(events -> {
+				for (DebugEvent event : events) {
+					if (event.getKind() == DebugEvent.TERMINATE) {
+						fgLogicalCache.clear();
+						break;
+					} else if (event.getKind() == DebugEvent.RESUME && event.getDetail() != DebugEvent.EVALUATION_IMPLICIT) {
+						fgLogicalCache.clear();
+						break;
+					} else if (event.getKind() == DebugEvent.SUSPEND && event.getDetail() != DebugEvent.EVALUATION_IMPLICIT) {
+						fgLogicalCache.clear();
+						break;
+					} else if (event.getKind() == DebugEvent.CHANGE && event.getDetail() == DebugEvent.CONTENT) {
+						fgLogicalCache.clear();
+						break;
 					}
 				}
 			});

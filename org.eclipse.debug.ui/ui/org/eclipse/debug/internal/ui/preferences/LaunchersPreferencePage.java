@@ -33,13 +33,9 @@ import org.eclipse.debug.internal.ui.SWTFactory;
 import org.eclipse.debug.internal.ui.launchConfigurations.LaunchConfigurationPresentationManager;
 import org.eclipse.jface.preference.PreferencePage;
 import org.eclipse.jface.viewers.ArrayContentProvider;
-import org.eclipse.jface.viewers.CheckStateChangedEvent;
 import org.eclipse.jface.viewers.CheckboxTableViewer;
-import org.eclipse.jface.viewers.ICheckStateListener;
-import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.jface.viewers.ITreeContentProvider;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.StructuredSelection;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.swt.SWT;
@@ -190,24 +186,21 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 		fTreeViewer.setLabelProvider(new LabelProvider());
 		fTreeViewer.setInput(fDuplicates);
 		fTreeViewer.expandToLevel(2);
-		fTreeViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				Object obj = event.getStructuredSelection().getFirstElement();
-				if(obj instanceof DuplicateDelegate) {
-					fTableViewer.setAllChecked(false);
-					DuplicateDelegate dd = (DuplicateDelegate) obj;
-					fTableViewer.setInput(dd.getDelegates());
-					fTableViewer.setSelection(null);
-					obj = fDupeSelections.get(dd);
-					if(obj != null) {
-						fTableViewer.setChecked(obj, true);
-						fTableViewer.setSelection(new StructuredSelection(obj));
-					}
+		fTreeViewer.addSelectionChangedListener(event -> {
+			Object obj = event.getStructuredSelection().getFirstElement();
+			if(obj instanceof DuplicateDelegate) {
+				fTableViewer.setAllChecked(false);
+				DuplicateDelegate dd = (DuplicateDelegate) obj;
+				fTableViewer.setInput(dd.getDelegates());
+				fTableViewer.setSelection(null);
+				obj = fDupeSelections.get(dd);
+				if(obj != null) {
+					fTableViewer.setChecked(obj, true);
+					fTableViewer.setSelection(new StructuredSelection(obj));
 				}
-				else {
-					fTableViewer.setInput(null);
-				}
+			}
+			else {
+				fTableViewer.setInput(null);
 			}
 		});
 
@@ -222,39 +215,33 @@ public class LaunchersPreferencePage extends PreferencePage implements IWorkbenc
 		fTableViewer.setComparator(new WorkbenchViewerComparator());
 		fTableViewer.setLabelProvider(new LabelProvider());
 		fTableViewer.setContentProvider(ArrayContentProvider.getInstance());
-		fTableViewer.addSelectionChangedListener(new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				IStructuredSelection ss = event.getStructuredSelection();
-				if(ss != null && !ss.isEmpty()) {
-					ILaunchDelegate delegate = (ILaunchDelegate)ss.getFirstElement();
-					fDescription.setText(delegate.getDescription());
-				}
-				else {
-					fDescription.setText(IInternalDebugCoreConstants.EMPTY_STRING);
-				}
+		fTableViewer.addSelectionChangedListener(event -> {
+			IStructuredSelection ss = event.getStructuredSelection();
+			if(ss != null && !ss.isEmpty()) {
+				ILaunchDelegate delegate = (ILaunchDelegate)ss.getFirstElement();
+				fDescription.setText(delegate.getDescription());
+			}
+			else {
+				fDescription.setText(IInternalDebugCoreConstants.EMPTY_STRING);
 			}
 		});
-		fTableViewer.addCheckStateListener(new ICheckStateListener() {
-			@Override
-			public void checkStateChanged(CheckStateChangedEvent event) {
-				fDirty = true;
-				Object element = event.getElement();
-				boolean checked = event.getChecked();
-				//always set checked, this way users cannot 'undo' a change to selecting a preferred delegate
-				//The story for this is that on startup if there are dupes, the user is prompted to pick a delegate, after that they cannot
-				//return to a state of not being able to launch something, but can pick a different delegate
-				fTableViewer.setCheckedElements(new Object[] {element});
-				//set the selection to be the checked element
-				//https://bugs.eclipse.org/bugs/show_bug.cgi?id=233233
-				fTableViewer.setSelection(new StructuredSelection(element));
-				//persist the selection
-				Object obj = fTreeViewer.getStructuredSelection().getFirstElement();
-				if(obj instanceof DuplicateDelegate) {
-					fDupeSelections.remove(obj);
-					if(checked) {
-						fDupeSelections.put((DuplicateDelegate) obj, (ILaunchDelegate) element);
-					}
+		fTableViewer.addCheckStateListener(event -> {
+			fDirty = true;
+			Object element = event.getElement();
+			boolean checked = event.getChecked();
+			//always set checked, this way users cannot 'undo' a change to selecting a preferred delegate
+			//The story for this is that on startup if there are dupes, the user is prompted to pick a delegate, after that they cannot
+			//return to a state of not being able to launch something, but can pick a different delegate
+			fTableViewer.setCheckedElements(new Object[] {element});
+			//set the selection to be the checked element
+			//https://bugs.eclipse.org/bugs/show_bug.cgi?id=233233
+			fTableViewer.setSelection(new StructuredSelection(element));
+			//persist the selection
+			Object obj = fTreeViewer.getStructuredSelection().getFirstElement();
+			if(obj instanceof DuplicateDelegate) {
+				fDupeSelections.remove(obj);
+				if(checked) {
+					fDupeSelections.put((DuplicateDelegate) obj, (ILaunchDelegate) element);
 				}
 			}
 		});

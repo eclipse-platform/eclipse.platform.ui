@@ -89,16 +89,13 @@ public class FolderSourceContainerDialog extends ElementTreeSelectionDialog {
 		setTitle(SourceLookupUIMessages.folderSelection_title);	//
 		setInput(ResourcesPlugin.getWorkspace().getRoot());
 		setComparator(new ResourceComparator(ResourceComparator.NAME));
-		ISelectionStatusValidator validator= new ISelectionStatusValidator() {
-			@Override
-			public IStatus validate(Object[] selection) {
-				for (Object f : selection) {
-					if (!(f instanceof IFolder)) {
-						return new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), -1, SourceLookupUIMessages.sourceSearch_folderSelectionError, null); //
-					}
+		ISelectionStatusValidator validator= selection -> {
+			for (Object f : selection) {
+				if (!(f instanceof IFolder)) {
+					return new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), -1, SourceLookupUIMessages.sourceSearch_folderSelectionError, null); //
 				}
-				return new Status(IStatus.OK, DebugUIPlugin.getUniqueIdentifier(), 0, IInternalDebugCoreConstants.EMPTY_STRING, null);
 			}
+			return new Status(IStatus.OK, DebugUIPlugin.getUniqueIdentifier(), 0, IInternalDebugCoreConstants.EMPTY_STRING, null);
 		};
 		setValidator(validator);
 		setDoubleClickSelects(true);

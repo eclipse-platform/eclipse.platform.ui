@@ -29,8 +29,6 @@ import org.eclipse.swt.accessibility.AccessibleEvent;
 import org.eclipse.swt.events.ControlAdapter;
 import org.eclipse.swt.events.ControlEvent;
 import org.eclipse.swt.events.ControlListener;
-import org.eclipse.swt.events.DisposeEvent;
-import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.ShellEvent;
@@ -48,7 +46,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
@@ -330,42 +327,39 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 	 * @param shell the shell to install the closer to
 	 */
 	private void installCloser(final Shell shell) {
-		final Listener focusListener= new Listener() {
-			@Override
-			public void handleEvent(Event event) {
-				Widget focusElement= event.widget;
-				boolean isFocusBreadcrumbTreeFocusWidget= focusElement == shell || focusElement instanceof Control && ((Control)focusElement).getShell() == shell;
-				boolean isFocusWidgetParentShell= focusElement instanceof Control && ((Control)focusElement).getShell().getParent() == shell;
+		final Listener focusListener= event -> {
+			Widget focusElement= event.widget;
+			boolean isFocusBreadcrumbTreeFocusWidget= focusElement == shell || focusElement instanceof Control && ((Control)focusElement).getShell() == shell;
+			boolean isFocusWidgetParentShell= focusElement instanceof Control && ((Control)focusElement).getShell().getParent() == shell;
 
-				switch (event.type) {
-					case SWT.FocusIn:
+			switch (event.type) {
+				case SWT.FocusIn:
+					if (DebugUIPlugin.DEBUG_BREADCRUMB) {
+						DebugUIPlugin.trace("focusIn - is breadcrumb tree: " + isFocusBreadcrumbTreeFocusWidget); //$NON-NLS-1$
+					}
+
+					if (!isFocusBreadcrumbTreeFocusWidget && !isFocusWidgetParentShell) {
 						if (DebugUIPlugin.DEBUG_BREADCRUMB) {
-							DebugUIPlugin.trace("focusIn - is breadcrumb tree: " + isFocusBreadcrumbTreeFocusWidget); //$NON-NLS-1$
+							DebugUIPlugin.trace("==> closing shell since focus in other widget"); //$NON-NLS-1$
 						}
+						shell.close();
+					}
+					break;
 
-						if (!isFocusBreadcrumbTreeFocusWidget && !isFocusWidgetParentShell) {
-							if (DebugUIPlugin.DEBUG_BREADCRUMB) {
-								DebugUIPlugin.trace("==> closing shell since focus in other widget"); //$NON-NLS-1$
-							}
-							shell.close();
-						}
-						break;
-
-					case SWT.FocusOut:
+				case SWT.FocusOut:
+					if (DebugUIPlugin.DEBUG_BREADCRUMB) {
+						DebugUIPlugin.trace("focusOut - is breadcrumb tree: " + isFocusBreadcrumbTreeFocusWidget); //$NON-NLS-1$
+					}
+					if (event.display.getActiveShell() == null) {
 						if (DebugUIPlugin.DEBUG_BREADCRUMB) {
-							DebugUIPlugin.trace("focusOut - is breadcrumb tree: " + isFocusBreadcrumbTreeFocusWidget); //$NON-NLS-1$
+							DebugUIPlugin.trace("==> closing shell since event.display.getActiveShell() != shell"); //$NON-NLS-1$
 						}
-						if (event.display.getActiveShell() == null) {
-							if (DebugUIPlugin.DEBUG_BREADCRUMB) {
-								DebugUIPlugin.trace("==> closing shell since event.display.getActiveShell() != shell"); //$NON-NLS-1$
-							}
-							shell.close();
-						}
-						break;
+						shell.close();
+					}
+					break;
 
-					default:
-						Assert.isTrue(false);
-				}
+				default:
+					Assert.isTrue(false);
 			}
 		};
 
@@ -390,19 +384,16 @@ class BreadcrumbItemDropDown implements IBreadcrumbDropDownSite {
 		};
 		fToolBar.getShell().addControlListener(controlListener);
 
-		shell.addDisposeListener(new DisposeListener() {
-			@Override
-			public void widgetDisposed(DisposeEvent e) {
-				if (DebugUIPlugin.DEBUG_BREADCRUMB) {
-					DebugUIPlugin.trace("==> shell disposed"); //$NON-NLS-1$
-				}
+		shell.addDisposeListener(e -> {
+			if (DebugUIPlugin.DEBUG_BREADCRUMB) {
+				DebugUIPlugin.trace("==> shell disposed"); //$NON-NLS-1$
+			}
 
-				display.removeFilter(SWT.FocusIn, focusListener);
-				display.removeFilter(SWT.FocusOut, focusListener);
+			display.removeFilter(SWT.FocusIn, focusListener);
+			display.removeFilter(SWT.FocusOut, focusListener);
 
-				if (!fToolBar.isDisposed()) {
-					fToolBar.getShell().removeControlListener(controlListener);
-				}
+			if (!fToolBar.isDisposed()) {
+				fToolBar.getShell().removeControlListener(controlListener);
 			}
 		});
 		shell.addShellListener(new ShellListener() {

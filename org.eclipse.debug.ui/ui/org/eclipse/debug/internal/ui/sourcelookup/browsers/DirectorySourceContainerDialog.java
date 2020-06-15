@@ -26,8 +26,6 @@ import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.TitleAreaDialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.events.ModifyEvent;
-import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.graphics.Font;
@@ -142,12 +140,7 @@ public class DirectorySourceContainerDialog extends TitleAreaDialog {
 		data.horizontalSpan = 1;
 		fDirText.setLayoutData(data);
 		fDirText.setFont(font);
-		fDirText.addModifyListener(new ModifyListener() {
-			@Override
-			public void modifyText( ModifyEvent e ) {
-				validate();
-			}
-		});
+		fDirText.addModifyListener(e -> validate());
 
 		Button button = new Button(dirComposite, SWT.PUSH);
 		button.setText(SourceLookupUIMessages.DirectorySourceContainerDialog_5);

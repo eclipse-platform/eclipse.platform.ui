@@ -37,7 +37,6 @@ import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
 import org.eclipse.jface.viewers.IStructuredSelection;
-import org.eclipse.jface.viewers.SelectionChangedEvent;
 import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.Viewer;
 import org.eclipse.swt.SWT;
@@ -99,12 +98,7 @@ public class FavoritesDialog extends TrayDialog {
 	/**
 	 * Listener that delegates when the selection changes in a table
 	 */
-	private ISelectionChangedListener fSelectionChangedListener= new ISelectionChangedListener() {
-		@Override
-		public void selectionChanged(SelectionChangedEvent event) {
-			handleFavoriteSelectionChanged();
-		}
-	};
+	private ISelectionChangedListener fSelectionChangedListener= event -> handleFavoriteSelectionChanged();
 
 	/**
 	 * Listener that delegates when a key is pressed in a table

@@ -21,14 +21,8 @@ import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.MenuDetectEvent;
-import org.eclipse.swt.events.MenuDetectListener;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
-import org.eclipse.swt.events.PaintEvent;
-import org.eclipse.swt.events.PaintListener;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -76,12 +70,9 @@ class BreadcrumbItemDetails {
 		layout.marginHeight= 1;
 		layout.marginWidth= 2;
 		fImageComposite.setLayout(layout);
-		fImageComposite.addPaintListener(new PaintListener() {
-			@Override
-			public void paintControl(PaintEvent e) {
-				if (fHasFocus && !isTextVisible()) {
-					e.gc.drawFocus(e.x, e.y, e.width, e.height);
-				}
+		fImageComposite.addPaintListener(e -> {
+			if (fHasFocus && !isTextVisible()) {
+				e.gc.drawFocus(e.x, e.y, e.width, e.height);
 			}
 		});
 		installFocusComposite(fImageComposite);
@@ -99,12 +90,9 @@ class BreadcrumbItemDetails {
 		layout.marginWidth= 2;
 		fTextComposite.setLayout(layout);
 		addElementListener(fTextComposite);
-		fTextComposite.addPaintListener(new PaintListener() {
-			@Override
-			public void paintControl(PaintEvent e) {
-				if (fHasFocus && isTextVisible()) {
-					e.gc.drawFocus(e.x, e.y, e.width, e.height);
-				}
+		fTextComposite.addPaintListener(e -> {
+			if (fHasFocus && isTextVisible()) {
+				e.gc.drawFocus(e.x, e.y, e.width, e.height);
 			}
 		});
 		installFocusComposite(fTextComposite);
@@ -276,23 +264,20 @@ class BreadcrumbItemDetails {
 	 * @param composite the composite which may get focus
 	 */
 	private void installFocusComposite(Composite composite) {
-		composite.addTraverseListener(new TraverseListener() {
-			@Override
-			public void keyTraversed(TraverseEvent e) {
-				if (e.detail == SWT.TRAVERSE_TAB_NEXT || e.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
-					int index= fParent.getViewer().getIndexOfItem(fParent);
-					if (e.detail == SWT.TRAVERSE_TAB_NEXT) {
-						index++;
-					} else {
-						index--;
-					}
-
-					if (index > 0 && index < fParent.getViewer().getItemCount()) {
-						fParent.getViewer().selectItem(fParent.getViewer().getItem(index));
-					}
-
-					e.doit= true;
+		composite.addTraverseListener(e -> {
+			if (e.detail == SWT.TRAVERSE_TAB_NEXT || e.detail == SWT.TRAVERSE_TAB_PREVIOUS) {
+				int index= fParent.getViewer().getIndexOfItem(fParent);
+				if (e.detail == SWT.TRAVERSE_TAB_NEXT) {
+					index++;
+				} else {
+					index--;
 				}
+
+				if (index > 0 && index < fParent.getViewer().getItemCount()) {
+					fParent.getViewer().selectItem(fParent.getViewer().getItem(index));
+				}
+
+				e.doit= true;
 			}
 		});
 		composite.addKeyListener(new KeyListener() {
@@ -400,13 +385,10 @@ class BreadcrumbItemDetails {
 			public void mouseUp(MouseEvent e) {
 			}
 		});
-		control.addMenuDetectListener(new MenuDetectListener() {
-			@Override
-			public void menuDetected(MenuDetectEvent e) {
-				BreadcrumbViewer viewer= fParent.getViewer();
-				viewer.selectItem(fParent);
-				fParent.getViewer().fireMenuDetect(e);
-			}
+		control.addMenuDetectListener(e -> {
+			BreadcrumbViewer viewer= fParent.getViewer();
+			viewer.selectItem(fParent);
+			fParent.getViewer().fireMenuDetect(e);
 		});
 	}
 }

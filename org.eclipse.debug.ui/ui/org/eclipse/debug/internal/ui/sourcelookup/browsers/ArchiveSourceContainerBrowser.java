@@ -44,19 +44,16 @@ import org.eclipse.ui.views.navigator.ResourceComparator;
  */
 public class ArchiveSourceContainerBrowser extends AbstractSourceContainerBrowser {
 
-	private ISelectionStatusValidator validator= new ISelectionStatusValidator() {
-		@Override
-		public IStatus validate(Object[] selection) {
-			if (selection.length == 0) {
+	private ISelectionStatusValidator validator= selection -> {
+		if (selection.length == 0) {
+			return new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, IInternalDebugCoreConstants.EMPTY_STRING, null);
+		}
+		for (Object f : selection) {
+			if (!(f instanceof IFile)) {
 				return new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, IInternalDebugCoreConstants.EMPTY_STRING, null);
 			}
-			for (Object f : selection) {
-				if (!(f instanceof IFile)) {
-					return new Status(IStatus.ERROR, DebugUIPlugin.getUniqueIdentifier(), 0, IInternalDebugCoreConstants.EMPTY_STRING, null);
-				}
-			}
-			return new Status(IStatus.OK, DebugUIPlugin.getUniqueIdentifier(), 0, IInternalDebugCoreConstants.EMPTY_STRING, null);
 		}
+		return new Status(IStatus.OK, DebugUIPlugin.getUniqueIdentifier(), 0, IInternalDebugCoreConstants.EMPTY_STRING, null);
 	};
 
 	/**

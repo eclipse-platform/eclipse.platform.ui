@@ -78,7 +78,6 @@ import org.eclipse.debug.ui.contexts.IDebugContextListener;
 import org.eclipse.debug.ui.contexts.IDebugContextService;
 import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuListener;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IStatusLineManager;
 import org.eclipse.jface.action.IToolBarManager;
@@ -114,7 +113,6 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.TreeItem;
@@ -123,7 +121,6 @@ import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.IMemento;
 import org.eclipse.ui.IPerspectiveDescriptor;
 import org.eclipse.ui.IPerspectiveListener;
-import org.eclipse.ui.IPropertyListener;
 import org.eclipse.ui.ISaveablePart2;
 import org.eclipse.ui.IViewSite;
 import org.eclipse.ui.IWorkbenchActionConstants;
@@ -156,12 +153,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 */
 	private static class SelectionProviderWrapper implements ISelectionProvider {
 		private final ListenerList<ISelectionChangedListener> fListenerList = new ListenerList<>(ListenerList.IDENTITY);
-		private final ISelectionChangedListener fListener = new ISelectionChangedListener() {
-			@Override
-			public void selectionChanged(SelectionChangedEvent event) {
-				fireSelectionChanged(event);
-			}
-		};
+		private final ISelectionChangedListener fListener = this::fireSelectionChanged;
 		private ISelectionProvider fActiveProvider;
 
 		private SelectionProviderWrapper(ISelectionProvider provider) {
@@ -293,12 +285,9 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 * Viewer input requester used to update the viewer once the viewer input has been
 	 * resolved.
 	 */
-	private IViewerInputRequestor fRequester = new IViewerInputRequestor() {
-		@Override
-		public void viewerInputComplete(IViewerInputUpdate update) {
-			if (!update.isCanceled()) {
-				viewerInputUpdateComplete(update);
-			}
+	private IViewerInputRequestor fRequester = update -> {
+		if (!update.isCanceled()) {
+			viewerInputUpdateComplete(update);
 		}
 	};
 
@@ -505,12 +494,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		}
 
 		fDetailPane = new DetailPaneProxy(this);
-		fDetailPane.addProperyListener(new IPropertyListener() {
-			@Override
-			public void propertyChanged(Object source, int propId) {
-				firePropertyChange(propId);
-			}
-		});
+		fDetailPane.addProperyListener((source, propId) -> firePropertyChange(propId));
 		setDetailPaneOrientation(orientation);
 
 		IMemento memento = getMemento();
@@ -652,14 +636,11 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 			}
 		});
 		variablesViewer.getPresentationContext().addPropertyChangeListener(
-				new IPropertyChangeListener() {
-					@Override
-					public void propertyChange(PropertyChangeEvent event) {
-						if (IPresentationContext.PROPERTY_COLUMNS.equals(event.getProperty())) {
-							IAction action = getAction("ShowTypeNames"); //$NON-NLS-1$
-							if (action != null) {
-								action.setEnabled(event.getNewValue() == null);
-							}
+				event -> {
+					if (IPresentationContext.PROPERTY_COLUMNS.equals(event.getProperty())) {
+						IAction action = getAction("ShowTypeNames"); //$NON-NLS-1$
+						if (action != null) {
+							action.setEnabled(event.getNewValue() == null);
 						}
 					}
 				});
@@ -1017,23 +998,20 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 		fConfigureColumnsAction = new ConfigureColumnsAction(viewer);
 		setAction("ToggleColmns", new ToggleShowColumnsAction(viewer)); //$NON-NLS-1$
 
-		layoutSubMenu.addMenuListener(new IMenuListener() {
-			@Override
-			public void menuAboutToShow(IMenuManager manager) {
-				layoutSubMenu.add(fToggleDetailPaneActions[0]);
-				layoutSubMenu.add(fToggleDetailPaneActions[1]);
-				layoutSubMenu.add(fToggleDetailPaneActions[2]);
-				layoutSubMenu.add(fToggleDetailPaneActions[3]);
-				layoutSubMenu.add(new Separator());
-				IAction action = getAction("ToggleColmns"); //$NON-NLS-1$
-				((IUpdate)action).update();
-				if (action.isEnabled()) {
-					layoutSubMenu.add(action);
-				}
-				fConfigureColumnsAction.update();
-				if (fConfigureColumnsAction.isEnabled()) {
-					layoutSubMenu.add(fConfigureColumnsAction);
-				}
+		layoutSubMenu.addMenuListener(manager -> {
+			layoutSubMenu.add(fToggleDetailPaneActions[0]);
+			layoutSubMenu.add(fToggleDetailPaneActions[1]);
+			layoutSubMenu.add(fToggleDetailPaneActions[2]);
+			layoutSubMenu.add(fToggleDetailPaneActions[3]);
+			layoutSubMenu.add(new Separator());
+			IAction action = getAction("ToggleColmns"); //$NON-NLS-1$
+			((IUpdate)action).update();
+			if (action.isEnabled()) {
+				layoutSubMenu.add(action);
+			}
+			fConfigureColumnsAction.update();
+			if (fConfigureColumnsAction.isEnabled()) {
+				layoutSubMenu.add(fConfigureColumnsAction);
 			}
 		});
 	}
@@ -1099,18 +1077,15 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	 */
 	protected ISelectionChangedListener getTreeSelectionChangedListener() {
 		if (fTreeSelectionChangedListener == null) {
-			fTreeSelectionChangedListener = new ISelectionChangedListener() {
-				@Override
-				public void selectionChanged(final SelectionChangedEvent event) {
-					if (event.getSelectionProvider().equals(getViewer())) {
-						clearStatusLine();
-						// if the detail pane is not visible, don't waste time retrieving details
-						if (fSashForm.getMaximizedControl() == getViewer().getControl()) {
-							return;
-						}
-						refreshDetailPaneContents();
-						treeSelectionChanged(event);
+			fTreeSelectionChangedListener = event -> {
+				if (event.getSelectionProvider().equals(getViewer())) {
+					clearStatusLine();
+					// if the detail pane is not visible, don't waste time retrieving details
+					if (fSashForm.getMaximizedControl() == getViewer().getControl()) {
+						return;
 					}
+					refreshDetailPaneContents();
+					treeSelectionChanged(event);
 				}
 			};
 		}
@@ -1173,12 +1148,7 @@ public class VariablesView extends AbstractDebugView implements IDebugContextLis
 	@Override
 	public void paneChanged(String newPaneID) {
 		if (fDetailPaneActivatedListener == null){
-			fDetailPaneActivatedListener = 	new Listener() {
-				@Override
-				public void handleEvent(Event event) {
-					fTreeHasFocus = false;
-				}
-			};
+			fDetailPaneActivatedListener = 	event -> fTreeHasFocus = false;
 		}
 		fDetailPane.getCurrentControl().addListener(SWT.Activate, fDetailPaneActivatedListener);
 	}
