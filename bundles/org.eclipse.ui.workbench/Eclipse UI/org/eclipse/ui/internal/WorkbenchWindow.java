@@ -316,24 +316,21 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	private IPerspectiveDescriptor perspective;
 
-	private EventHandler windowWidgetHandler = new EventHandler() {
-		@Override
-		public void handleEvent(Event event) {
-			if (event.getProperty(UIEvents.EventTags.ELEMENT) == model
-					&& event.getProperty(UIEvents.EventTags.NEW_VALUE) == null) {
-				// HandledContributionItem.toolItemUpdater.removeWindowRunnable(menuUpdater);
-				manageChanges = false;
-				canUpdateMenus = false;
-				menuUpdater = null;
+	private EventHandler windowWidgetHandler = event -> {
+		if (event.getProperty(UIEvents.EventTags.ELEMENT) == model
+				&& event.getProperty(UIEvents.EventTags.NEW_VALUE) == null) {
+			// HandledContributionItem.toolItemUpdater.removeWindowRunnable(menuUpdater);
+			this.manageChanges = false;
+			this.canUpdateMenus = false;
+			this.menuUpdater = null;
 
-				MMenu menu = model.getMainMenu();
-				if (menu != null) {
-					engine.removeGui(menu);
-					model.setMainMenu(null);
-				}
-
-				eventBroker.unsubscribe(windowWidgetHandler);
+			MMenu menu = model.getMainMenu();
+			if (menu != null) {
+				engine.removeGui(menu);
+				model.setMainMenu(null);
 			}
+
+			eventBroker.unsubscribe(this.windowWidgetHandler);
 		}
 	};
 
@@ -517,12 +514,7 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 				}
 			});
 
-			windowContext.set(IWindowCloseHandler.class.getName(), new IWindowCloseHandler() {
-				@Override
-				public boolean close(MWindow window) {
-					return getWindowAdvisor().preWindowShellClose() && WorkbenchWindow.this.close();
-				}
-			});
+			windowContext.set(IWindowCloseHandler.class.getName(), (IWindowCloseHandler) window -> getWindowAdvisor().preWindowShellClose() && WorkbenchWindow.this.close());
 
 			final ISaveHandler defaultSaveHandler = windowContext.get(ISaveHandler.class);
 			final PartServiceSaveHandler localSaveHandler = new WWinPartServiceSaveHandler() {

@@ -22,12 +22,9 @@ import org.eclipse.core.databinding.DataBindingContext;
 import org.eclipse.core.databinding.ValidationStatusProvider;
 import org.eclipse.core.databinding.observable.IChangeListener;
 import org.eclipse.core.databinding.observable.IObservable;
-import org.eclipse.core.databinding.observable.IStaleListener;
 import org.eclipse.core.databinding.observable.ObservableTracker;
-import org.eclipse.core.databinding.observable.StaleEvent;
 import org.eclipse.core.databinding.observable.list.IListChangeListener;
 import org.eclipse.core.databinding.observable.list.IObservableList;
-import org.eclipse.core.databinding.observable.list.ListChangeEvent;
 import org.eclipse.core.databinding.observable.list.ListDiffEntry;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.util.Policy;
@@ -67,34 +64,28 @@ public class DialogPageSupport {
 	private IObservableValue<ValidationStatusProvider> aggregateStatusProvider;
 	private boolean uiChanged = false;
 	private IChangeListener uiChangeListener = event -> handleUIChanged();
-	private IListChangeListener<ValidationStatusProvider> validationStatusProvidersListener = new IListChangeListener<ValidationStatusProvider>() {
-		@Override
-		public void handleListChange(ListChangeEvent<? extends ValidationStatusProvider> event) {
-			for (ListDiffEntry<? extends ValidationStatusProvider> listDiffEntry : event.diff.getDifferences()) {
-				IObservableList<IObservable> targets = listDiffEntry.getElement().getTargets();
-				if (listDiffEntry.isAddition()) {
-					targets.addListChangeListener(validationStatusProviderTargetsListener);
-					for (IObservable observable : targets) {
-						observable.addChangeListener(uiChangeListener);
-					}
-				} else {
-					targets.removeListChangeListener(validationStatusProviderTargetsListener);
-					for (IObservable observable : targets) {
-						observable.removeChangeListener(uiChangeListener);
-					}
+	private IListChangeListener<ValidationStatusProvider> validationStatusProvidersListener = event -> {
+		for (ListDiffEntry<? extends ValidationStatusProvider> listDiffEntry : event.diff.getDifferences()) {
+			IObservableList<IObservable> targets = listDiffEntry.getElement().getTargets();
+			if (listDiffEntry.isAddition()) {
+				targets.addListChangeListener(this.validationStatusProviderTargetsListener);
+				for (IObservable observable : targets) {
+					observable.addChangeListener(uiChangeListener);
+				}
+			} else {
+				targets.removeListChangeListener(this.validationStatusProviderTargetsListener);
+				for (IObservable observable : targets) {
+					observable.removeChangeListener(uiChangeListener);
 				}
 			}
 		}
 	};
-	private IListChangeListener<IObservable> validationStatusProviderTargetsListener = new IListChangeListener<IObservable>() {
-		@Override
-		public void handleListChange(ListChangeEvent<? extends IObservable> event) {
-			for (ListDiffEntry<? extends IObservable> listDiffEntry : event.diff.getDifferences()) {
-				if (listDiffEntry.isAddition()) {
-					listDiffEntry.getElement().addChangeListener(uiChangeListener);
-				} else {
-					listDiffEntry.getElement().removeChangeListener(uiChangeListener);
-				}
+	private IListChangeListener<IObservable> validationStatusProviderTargetsListener = event -> {
+		for (ListDiffEntry<? extends IObservable> listDiffEntry : event.diff.getDifferences()) {
+			if (listDiffEntry.isAddition()) {
+				listDiffEntry.getElement().addChangeListener(uiChangeListener);
+			} else {
+				listDiffEntry.getElement().removeChangeListener(uiChangeListener);
 			}
 		}
 	};
@@ -152,12 +143,9 @@ public class DialogPageSupport {
 
 		aggregateStatusProvider.addValueChangeListener(event -> statusProviderChanged());
 		dialogPage.getShell().addListener(SWT.Dispose, event -> dispose());
-		aggregateStatusProvider.addStaleListener(new IStaleListener() {
-			@Override
-			public void handleStale(StaleEvent staleEvent) {
-				currentStatusStale = true;
-				handleStatusChanged();
-			}
+		aggregateStatusProvider.addStaleListener(staleEvent -> {
+			currentStatusStale = true;
+			handleStatusChanged();
 		});
 		statusProviderChanged();
 		dbc.getValidationStatusProviders().addListChangeListener(validationStatusProvidersListener);

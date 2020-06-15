@@ -470,12 +470,9 @@ public class SmartImportTests extends UITestCase {
 	@Test
 	public void testBug559600() throws Exception {
 		AtomicInteger errors = new AtomicInteger();
-		ILogListener errorListener = new ILogListener() {
-			@Override
-			public void logging(IStatus status, String plugin) {
-				if (status.getSeverity() == IStatus.ERROR) {
-					errors.incrementAndGet();
-				}
+		ILogListener errorListener = (status, plugin) -> {
+			if (status.getSeverity() == IStatus.ERROR) {
+				errors.incrementAndGet();
 			}
 		};
 

@@ -65,7 +65,7 @@ import org.eclipse.swt.widgets.Sash;
 public final class SashFactory extends AbstractControlFactory<SashFactory, Sash> {
 
 	private SashFactory(int style) {
-		super(SashFactory.class, (composite) -> new Sash(composite, style));
+		super(SashFactory.class, composite -> new Sash(composite, style));
 	}
 
 	/**

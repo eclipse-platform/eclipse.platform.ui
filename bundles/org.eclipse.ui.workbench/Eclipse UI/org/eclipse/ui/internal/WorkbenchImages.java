@@ -102,9 +102,7 @@ public/* final */class WorkbenchImages {
 	 */
 	private static final void declareImage(String key, String path, boolean shared) {
 		ImageDescriptor desc = ImageDescriptor
-				.createFromURLSupplier(true, () -> {
-					return BundleUtility.find(PlatformUI.PLUGIN_ID, path);
-				});
+				.createFromURLSupplier(true, () -> BundleUtility.find(PlatformUI.PLUGIN_ID, path));
 		declareImage(key, desc, shared);
 	}
 

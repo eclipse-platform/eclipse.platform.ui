@@ -27,8 +27,6 @@ import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.TraverseEvent;
-import org.eclipse.swt.events.TraverseListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Cursor;
 import org.eclipse.swt.graphics.Point;
@@ -147,53 +145,50 @@ public class AboutText {
 			}
 		});
 
-		styledText.addTraverseListener(new TraverseListener() {
-			@Override
-			public void keyTraversed(TraverseEvent e) {
-				switch (e.detail) {
-				case SWT.TRAVERSE_ESCAPE:
-					e.doit = true;
-					break;
-				case SWT.TRAVERSE_TAB_NEXT:
-					// Previously traverse out in the backward direction?
-					Point nextSelection = styledText.getSelection();
-					int charCount = styledText.getCharCount();
-					if ((nextSelection.x == charCount) && (nextSelection.y == charCount)) {
-						styledText.setSelection(0);
-					}
-					StyleRange nextRange = findNextRange();
-					if (nextRange == null) {
-						// Next time in start at beginning, also used by
-						// TRAVERSE_TAB_PREVIOUS to indicate we traversed out
-						// in the forward direction
-						styledText.setSelection(0);
-					} else {
-						styledText.setSelectionRange(nextRange.start, nextRange.length);
-						e.detail = SWT.TRAVERSE_NONE;
-					}
-					e.doit = true;
-					break;
-				case SWT.TRAVERSE_TAB_PREVIOUS:
-					// Previously traverse out in the forward direction?
-					Point previousSelection = styledText.getSelection();
-					if ((previousSelection.x == 0) && (previousSelection.y == 0)) {
-						styledText.setSelection(styledText.getCharCount());
-					}
-					StyleRange previousRange = findPreviousRange();
-					if (previousRange == null) {
-						// Next time in start at the end, also used by
-						// TRAVERSE_TAB_NEXT to indicate we traversed out
-						// in the backward direction
-						styledText.setSelection(styledText.getCharCount());
-					} else {
-						styledText.setSelectionRange(previousRange.start, previousRange.length);
-						e.detail = SWT.TRAVERSE_NONE;
-					}
-					e.doit = true;
-					break;
-				default:
-					break;
+		styledText.addTraverseListener(e -> {
+			switch (e.detail) {
+			case SWT.TRAVERSE_ESCAPE:
+				e.doit = true;
+				break;
+			case SWT.TRAVERSE_TAB_NEXT:
+				// Previously traverse out in the backward direction?
+				Point nextSelection = styledText.getSelection();
+				int charCount = styledText.getCharCount();
+				if ((nextSelection.x == charCount) && (nextSelection.y == charCount)) {
+					styledText.setSelection(0);
 				}
+				StyleRange nextRange = findNextRange();
+				if (nextRange == null) {
+					// Next time in start at beginning, also used by
+					// TRAVERSE_TAB_PREVIOUS to indicate we traversed out
+					// in the forward direction
+					styledText.setSelection(0);
+				} else {
+					styledText.setSelectionRange(nextRange.start, nextRange.length);
+					e.detail = SWT.TRAVERSE_NONE;
+				}
+				e.doit = true;
+				break;
+			case SWT.TRAVERSE_TAB_PREVIOUS:
+				// Previously traverse out in the forward direction?
+				Point previousSelection = styledText.getSelection();
+				if ((previousSelection.x == 0) && (previousSelection.y == 0)) {
+					styledText.setSelection(styledText.getCharCount());
+				}
+				StyleRange previousRange = findPreviousRange();
+				if (previousRange == null) {
+					// Next time in start at the end, also used by
+					// TRAVERSE_TAB_NEXT to indicate we traversed out
+					// in the backward direction
+					styledText.setSelection(styledText.getCharCount());
+				} else {
+					styledText.setSelectionRange(previousRange.start, previousRange.length);
+					e.detail = SWT.TRAVERSE_NONE;
+				}
+				e.doit = true;
+				break;
+			default:
+				break;
 			}
 		});
 

@@ -19,12 +19,10 @@ import java.beans.PropertyChangeSupport;
 
 import org.eclipse.jface.examples.databinding.mask.internal.EditMaskParser;
 import org.eclipse.jface.examples.databinding.mask.internal.SWTUtil;
-import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.FocusAdapter;
 import org.eclipse.swt.events.FocusEvent;
 import org.eclipse.swt.events.FocusListener;
-import org.eclipse.swt.events.VerifyEvent;
 import org.eclipse.swt.events.VerifyListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.widgets.Display;
@@ -331,34 +329,31 @@ public class EditMask {
 	protected String oldRawText = "";
 	protected boolean replacedSelectedText = false;
 
-	private VerifyListener verifyListener = new VerifyListener() {
-		@Override
-		public void verifyText(VerifyEvent e) {
-			// If the edit mask is already full, don't let the user type
-			// any new characters
-			if (editMaskParser.isComplete() && // should eventually be .isFull() to account for optional characters
-				e.start == e.end &&
-				e.text.length() > 0)
-			{
-				e.doit=false;
-				return;
+	private VerifyListener verifyListener = e -> {
+		// If the edit mask is already full, don't let the user type
+		// any new characters
+		if (editMaskParser.isComplete() && // should eventually be .isFull() to account for optional characters
+			e.start == e.end &&
+			e.text.length() > 0)
+		{
+			e.doit=false;
+			return;
+		}
+
+		oldSelection = selection;
+		Point selectionRange = text.getSelection();
+		selection = selectionRange.x;
+
+		if (!updating) {
+			replacedSelectedText = false;
+			if (selectionRange.y - selectionRange.x > 0 && e.text.length() > 0) {
+				replacedSelectedText = true;
 			}
-
-			oldSelection = selection;
-			Point selectionRange = text.getSelection();
-			selection = selectionRange.x;
-
-			if (!updating) {
-				replacedSelectedText = false;
-				if (selectionRange.y - selectionRange.x > 0 && e.text.length() > 0) {
-					replacedSelectedText = true;
-				}
-				// If the machine is loaded down (ie: spyware, malware), we might
-				// get another keystroke before asyncExec can process, so we use
-				// greedyExec instead.
-				SWTUtil.greedyExec(Display.getCurrent(), updateTextField);
+			// If the machine is loaded down (ie: spyware, malware), we might
+			// get another keystroke before asyncExec can process, so we use
+			// greedyExec instead.
+			SWTUtil.greedyExec(Display.getCurrent(), this.updateTextField);
 //				Display.getCurrent().asyncExec(updateTextField);
-			}
 		}
 	};
 
@@ -446,13 +441,10 @@ public class EditMask {
 		}
 	};
 
-	private DisposeListener disposeListener = new DisposeListener() {
-		@Override
-		public void widgetDisposed(DisposeEvent e) {
-			text.removeVerifyListener(verifyListener);
-			text.removeFocusListener(focusListener);
-			text.removeDisposeListener(disposeListener);
-		}
+	private DisposeListener disposeListener = e -> {
+		text.removeVerifyListener(verifyListener);
+		text.removeFocusListener(focusListener);
+		text.removeDisposeListener(this.disposeListener);
 	};
 
 }

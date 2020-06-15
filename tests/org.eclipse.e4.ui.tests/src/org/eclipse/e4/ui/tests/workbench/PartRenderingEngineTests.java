@@ -70,7 +70,6 @@ import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TestName;
-import org.osgi.service.log.LogEntry;
 import org.osgi.service.log.LogLevel;
 import org.osgi.service.log.LogListener;
 import org.osgi.service.log.LogReaderService;
@@ -89,12 +88,9 @@ public class PartRenderingEngineTests {
 	@Inject
 	private MApplication application;
 
-	private LogListener listener = new LogListener() {
-		@Override
-		public void logged(LogEntry entry) {
-			if (!logged) {
-				logged = entry.getLogLevel() == LogLevel.ERROR;
-			}
+	private LogListener listener = entry -> {
+		if (!this.logged) {
+			this.logged = entry.getLogLevel() == LogLevel.ERROR;
 		}
 	};
 	private boolean logged = false;

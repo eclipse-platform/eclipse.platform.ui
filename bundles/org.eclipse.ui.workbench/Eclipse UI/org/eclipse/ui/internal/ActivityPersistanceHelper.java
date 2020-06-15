@@ -19,7 +19,6 @@ import java.util.Iterator;
 import java.util.Set;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.activities.ActivityManagerEvent;
 import org.eclipse.ui.activities.IActivity;
@@ -66,29 +65,25 @@ final class ActivityPersistanceHelper {
 	/**
 	 * The listener that responds to preference changes
 	 */
-	private final IPropertyChangeListener propertyChangeListener = new IPropertyChangeListener() {
+	private final IPropertyChangeListener propertyChangeListener = event -> {
+		// dont process property events if we're in the process of
+		// serializing state.
+		if (!this.saving && event.getProperty().startsWith(PREFIX)) {
+			String activityId = event.getProperty().substring(PREFIX.length());
+			IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
+			IActivityManager activityManager = support.getActivityManager();
 
-		@Override
-		public void propertyChange(PropertyChangeEvent event) {
-			// dont process property events if we're in the process of
-			// serializing state.
-			if (!saving && event.getProperty().startsWith(PREFIX)) {
-				String activityId = event.getProperty().substring(PREFIX.length());
-				IWorkbenchActivitySupport support = PlatformUI.getWorkbench().getActivitySupport();
-				IActivityManager activityManager = support.getActivityManager();
-
-				boolean enabled = Boolean.parseBoolean(event.getNewValue().toString());
-				// if we're turning an activity off we'll need to create its dependency tree to
-				// ensuure that all dependencies are also disabled.
-				Set<String> set = new HashSet<>(activityManager.getEnabledActivityIds());
-				if (enabled == false) {
-					Set<String> dependencies = buildDependencies(activityManager, activityId);
-					set.removeAll(dependencies);
-				} else {
-					set.add(activityId);
-				}
-				support.setEnabledActivityIds(set);
+			boolean enabled = Boolean.parseBoolean(event.getNewValue().toString());
+			// if we're turning an activity off we'll need to create its dependency tree to
+			// ensuure that all dependencies are also disabled.
+			Set<String> set = new HashSet<>(activityManager.getEnabledActivityIds());
+			if (enabled == false) {
+				Set<String> dependencies = buildDependencies(activityManager, activityId);
+				set.removeAll(dependencies);
+			} else {
+				set.add(activityId);
 			}
+			support.setEnabledActivityIds(set);
 		}
 	};
 
