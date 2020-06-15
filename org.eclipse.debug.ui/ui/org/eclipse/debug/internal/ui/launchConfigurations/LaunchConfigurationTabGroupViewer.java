@@ -586,7 +586,8 @@ public class LaunchConfigurationTabGroupViewer {
 		} else {
 			fOptionsErrorLabel.setImage(null);
 		}
-		fViewform.layout(true, true);
+		fOptionsLink.requestLayout();
+		fOptionsErrorLabel.requestLayout();
 	}
 
 	/**
@@ -805,13 +806,14 @@ public class LaunchConfigurationTabGroupViewer {
 		fApplyButton.setVisible(visible);
 		fRevertButton.setVisible(visible);
 		fOptionsLink.setVisible(visible);
+		StackLayout layout = (StackLayout)fTabPlaceHolder.getLayout();
 		if(visible) {
-			((StackLayout)fTabPlaceHolder.getLayout()).topControl = fGroupComposite;
+			layout.topControl = fGroupComposite;
 		}
 		else {
-			((StackLayout)fTabPlaceHolder.getLayout()).topControl = fGettingStarted;
+			layout.topControl = fGettingStarted;
 		}
-		fTabPlaceHolder.layout(true, true);
+		layout.topControl.requestLayout();
 	}
 
 	private void updateShowCommandLineVisibility(boolean visible) {
