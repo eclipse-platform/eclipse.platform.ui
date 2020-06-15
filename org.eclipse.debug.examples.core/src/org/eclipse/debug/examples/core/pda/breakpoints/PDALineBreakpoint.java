@@ -19,7 +19,6 @@ import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.model.IBreakpoint;
 import org.eclipse.debug.core.model.LineBreakpoint;
 import org.eclipse.debug.examples.core.pda.DebugCorePlugin;
@@ -62,16 +61,13 @@ public class PDALineBreakpoint extends LineBreakpoint implements IPDAEventListen
 	 * @throws CoreException if unable to create the breakpoint
 	 */
 	public PDALineBreakpoint(final IResource resource, final int lineNumber) throws CoreException {
-		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				IMarker marker = resource.createMarker("org.eclipse.debug.examples.core.pda.markerType.lineBreakpoint"); //$NON-NLS-1$
-				setMarker(marker);
-				marker.setAttribute(IBreakpoint.ENABLED, Boolean.TRUE);
-				marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
-				marker.setAttribute(IBreakpoint.ID, getModelIdentifier());
-				marker.setAttribute(IMarker.MESSAGE, "Line Breakpoint: " + resource.getName() + " [line: " + lineNumber + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-			}
+		IWorkspaceRunnable runnable = monitor -> {
+			IMarker marker = resource.createMarker("org.eclipse.debug.examples.core.pda.markerType.lineBreakpoint"); //$NON-NLS-1$
+			setMarker(marker);
+			marker.setAttribute(IBreakpoint.ENABLED, Boolean.TRUE);
+			marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
+			marker.setAttribute(IBreakpoint.ID, getModelIdentifier());
+			marker.setAttribute(IMarker.MESSAGE, "Line Breakpoint: " + resource.getName() + " [line: " + lineNumber + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		};
 		run(getMarkerRule(resource), runnable);
 	}

@@ -18,8 +18,6 @@ import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IWorkspaceRunnable;
 import org.eclipse.core.resources.ResourcesPlugin;
-import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.debug.core.DebugException;
 import org.eclipse.debug.core.model.IBreakpoint;
 
@@ -38,18 +36,15 @@ public class PDARunToLineBreakpoint extends PDALineBreakpoint {
 	 * @exception DebugException if unable to create the breakpoint
 	 */
 	public PDARunToLineBreakpoint(final IFile resource, final int lineNumber) throws DebugException {
-		IWorkspaceRunnable runnable = new IWorkspaceRunnable() {
-			@Override
-			public void run(IProgressMonitor monitor) throws CoreException {
-				// associate with workspace root to avoid drawing in editor ruler
-				IMarker marker = ResourcesPlugin.getWorkspace().getRoot().createMarker("org.eclipse.debug.examples.core.pda.markerType.lineBreakpoint"); //$NON-NLS-1$
-				setMarker(marker);
-				marker.setAttribute(IBreakpoint.ENABLED, Boolean.TRUE);
-				marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
-				marker.setAttribute(IBreakpoint.ID, getModelIdentifier());
-				setRegistered(false);
-				fSourceFile = resource;
-			}
+		IWorkspaceRunnable runnable = monitor -> {
+			// associate with workspace root to avoid drawing in editor ruler
+			IMarker marker = ResourcesPlugin.getWorkspace().getRoot().createMarker("org.eclipse.debug.examples.core.pda.markerType.lineBreakpoint"); //$NON-NLS-1$
+			setMarker(marker);
+			marker.setAttribute(IBreakpoint.ENABLED, Boolean.TRUE);
+			marker.setAttribute(IMarker.LINE_NUMBER, lineNumber);
+			marker.setAttribute(IBreakpoint.ID, getModelIdentifier());
+			setRegistered(false);
+			fSourceFile = resource;
 		};
 		run(getMarkerRule(resource), runnable);
 	}
