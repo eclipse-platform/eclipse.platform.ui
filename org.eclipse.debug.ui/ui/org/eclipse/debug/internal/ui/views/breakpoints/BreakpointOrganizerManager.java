@@ -16,7 +16,6 @@ package org.eclipse.debug.internal.ui.views.breakpoints;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +27,6 @@ import org.eclipse.debug.internal.ui.DebugUIPlugin;
 import org.eclipse.debug.internal.ui.breakpoints.provisional.IBreakpointOrganizer;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.jface.util.IPropertyChangeListener;
-import org.eclipse.jface.util.PropertyChangeEvent;
 
 /**
  * Manager which provides access to the breakpoint organizers
@@ -78,10 +76,7 @@ public class BreakpointOrganizerManager {
 	 */
 	private void start(String organizerId) {
 		IBreakpointOrganizer organizer = getOrganizer(organizerId);
-		IPropertyChangeListener listener = new IPropertyChangeListener() {
-			@Override
-			public void propertyChange(PropertyChangeEvent event) {
-			}
+		IPropertyChangeListener listener = event -> {
 		};
 		organizer.addPropertyChangeListener(listener);
 		organizer.removePropertyChangeListener(listener);
@@ -122,13 +117,8 @@ public class BreakpointOrganizerManager {
 			Collection<IBreakpointOrganizer> collection = fOrganizers.values();
 			fSorted = new ArrayList<>();
 			fSorted.addAll(collection);
-			Collections.sort(fSorted, new Comparator<Object>() {
-				@Override
-				public int compare(Object o1, Object o2) {
-					IBreakpointOrganizer b1 = (IBreakpointOrganizer)o1;
-					IBreakpointOrganizer b2 = (IBreakpointOrganizer)o2;
-					return b1.getLabel().compareTo(b2.getLabel());
-				}
+			Collections.sort(fSorted, (o1, o2) -> {
+				return o1.getLabel().compareTo(o2.getLabel());
 			});
 		}
 		return fSorted.toArray(new IBreakpointOrganizer[fSorted.size()]);
