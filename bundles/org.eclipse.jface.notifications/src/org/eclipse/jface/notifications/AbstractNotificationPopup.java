@@ -384,6 +384,10 @@ public abstract class AbstractNotificationPopup extends Window {
 	}
 
 	private Rectangle getPrimaryClientArea() {
+		if (getParentShell() != null) {
+			return getParentShell().getBounds();
+		}
+		// else display on primary monitor
 		Monitor primaryMonitor = this.shell.getDisplay().getPrimaryMonitor();
 		return (primaryMonitor != null) ? primaryMonitor.getClientArea() : this.shell.getDisplay().getClientArea();
 	}
