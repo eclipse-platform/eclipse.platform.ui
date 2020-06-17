@@ -81,12 +81,7 @@ public class AutoRegisterSchemeHandlersJob extends Job {
 
 	@Override
 	public boolean shouldSchedule() {
-		/**
-		 * see https://bugs.eclipse.org/bugs/show_bug.cgi?id=562426#c14 and
-		 * https://bugs.eclipse.org/bugs/show_bug.cgi?id=541653#c1 about skipping on
-		 * Windows
-		 */
-		return !(Platform.getOS().equals(Platform.OS_WIN32) || alreadyTriggered || Platform.getPreferencesService()
-				.getBoolean(UriSchemeExtensionReader.PLUGIN_ID, SKIP_PREFERENCE, false, null));
+		return !(alreadyTriggered || Platform.getPreferencesService().getBoolean(UriSchemeExtensionReader.PLUGIN_ID,
+				SKIP_PREFERENCE, false, null));
 	}
 }
