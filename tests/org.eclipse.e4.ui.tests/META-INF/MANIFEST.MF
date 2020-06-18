@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.e4.ui.tests;singleton:=true
-Bundle-Version: 0.13.300.qualifier
+Bundle-Version: 0.14.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
@@ -38,7 +38,7 @@ Require-Bundle: org.eclipse.emf.ecore.xmi;bundle-version="2.4.0",
  org.mockito;bundle-version="2.13.0",
  org.eclipse.e4.ui.css.core;bundle-version="0.10.100",
  org.eclipse.test.performance;bundle-version="3.13.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.8
+Bundle-RequiredExecutionEnvironment: JavaSE-11
 Export-Package: org.eclipse.e4.ui.tests.model.test,
  org.eclipse.e4.ui.tests.model.test.impl,
  org.eclipse.e4.ui.tests.model.test.util
