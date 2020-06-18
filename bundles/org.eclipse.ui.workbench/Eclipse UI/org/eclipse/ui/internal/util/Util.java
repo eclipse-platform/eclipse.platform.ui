@@ -15,21 +15,17 @@
 package org.eclipse.ui.internal.util;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.MissingResourceException;
 import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.Set;
-import java.util.SortedMap;
 import java.util.SortedSet;
-import java.util.TreeMap;
 import java.util.TreeSet;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -44,10 +40,6 @@ import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 
 public final class Util {
-
-	public static final SortedMap<?, ?> EMPTY_SORTED_MAP = Collections.unmodifiableSortedMap(new TreeMap<>());
-
-	public static final SortedSet<?> EMPTY_SORTED_SET = Collections.unmodifiableSortedSet(new TreeSet<>());
 
 	public static final String ZERO_LENGTH_STRING = ""; //$NON-NLS-1$
 
@@ -196,54 +188,6 @@ public final class Util {
 		}
 	}
 
-	public static void diff(Map<?, ?> left, Map<?, ?> right, Set leftOnly, Set different, Set rightOnly) {
-		if (left == null || right == null || leftOnly == null || different == null || rightOnly == null) {
-			throw new NullPointerException();
-		}
-
-		for (Entry<?, ?> leftEntry : left.entrySet()) {
-			Object key = leftEntry.getKey();
-
-			if (!right.containsKey(key)) {
-				leftOnly.add(key);
-			} else if (!Objects.equals(leftEntry.getValue(), right.get(key))) {
-				different.add(key);
-			}
-		}
-
-		for (Object rightKey : right.keySet()) {
-			if (!left.containsKey(rightKey)) {
-				rightOnly.add(rightKey);
-			}
-		}
-	}
-
-	public static void diff(Set left, Set right, Set leftOnly, Set rightOnly) {
-		if (left == null || right == null || leftOnly == null || rightOnly == null) {
-			throw new NullPointerException();
-		}
-
-		Iterator iterator = left.iterator();
-
-		while (iterator.hasNext()) {
-			Object object = iterator.next();
-
-			if (!right.contains(object)) {
-				leftOnly.add(object);
-			}
-		}
-
-		iterator = right.iterator();
-
-		while (iterator.hasNext()) {
-			Object object = iterator.next();
-
-			if (!left.contains(object)) {
-				rightOnly.add(object);
-			}
-		}
-	}
-
 	public static boolean endsWith(List left, List right, boolean equals) {
 		if (left == null || right == null) {
 			return false;
@@ -264,45 +208,6 @@ public final class Util {
 		return true;
 	}
 
-	public static boolean endsWith(Object[] left, Object[] right, boolean equals) {
-		if (left == null || right == null) {
-			return false;
-		}
-		int l = left.length;
-		int r = right.length;
-
-		if (r > l || !equals && r == l) {
-			return false;
-		}
-
-		for (int i = 0; i < r; i++) {
-			if (!Objects.equals(left[l - i - 1], right[r - i - 1])) {
-				return false;
-			}
-		}
-
-		return true;
-	}
-
-	public static Collection safeCopy(Collection collection, Class c) {
-		return safeCopy(collection, c, false);
-	}
-
-	public static Collection safeCopy(Collection collection, Class c, boolean allowNullElements) {
-		if (collection == null || c == null) {
-			throw new NullPointerException();
-		}
-
-		collection = Collections.unmodifiableCollection(new ArrayList(collection));
-		Iterator iterator = collection.iterator();
-
-		while (iterator.hasNext()) {
-			assertInstance(iterator.next(), c, allowNullElements);
-		}
-
-		return collection;
-	}
-
 	public static List safeCopy(List list, Class c) {
 		return safeCopy(list, c, false);
 	}
@@ -320,10 +225,6 @@ public final class Util {
 		}
 
 		return list;
-	}
-
-	public static Map safeCopy(Map map, Class keyClass, Class valueClass) {
-		return safeCopy(map, keyClass, valueClass, false, false);
 	}
 
 	public static Map safeCopy(Map map, Class keyClass, Class valueClass, boolean allowNullKeys,
@@ -363,28 +264,6 @@ public final class Util {
 		return set;
 	}
 
-	public static SortedMap safeCopy(SortedMap sortedMap, Class keyClass, Class valueClass) {
-		return safeCopy(sortedMap, keyClass, valueClass, false, false);
-	}
-
-	public static SortedMap safeCopy(SortedMap sortedMap, Class keyClass, Class valueClass, boolean allowNullKeys,
-			boolean allowNullValues) {
-		if (sortedMap == null || keyClass == null || valueClass == null) {
-			throw new NullPointerException();
-		}
-
-		sortedMap = Collections.unmodifiableSortedMap(new TreeMap(sortedMap));
-		Iterator iterator = sortedMap.entrySet().iterator();
-
-		while (iterator.hasNext()) {
-			Map.Entry entry = (Map.Entry) iterator.next();
-			assertInstance(entry.getKey(), keyClass, allowNullKeys);
-			assertInstance(entry.getValue(), valueClass, allowNullValues);
-		}
-
-		return sortedMap;
-	}
-
 	public static SortedSet safeCopy(SortedSet sortedSet, Class c) {
 		return safeCopy(sortedSet, c, false);
 	}
@@ -417,27 +296,6 @@ public final class Util {
 
 			for (int i = 0; i < r; i++) {
 				if (!Objects.equals(left.get(i), right.get(i))) {
-					return false;
-				}
-			}
-
-			return true;
-		}
-	}
-
-	public static boolean startsWith(Object[] left, Object[] right, boolean equals) {
-		if (left == null || right == null) {
-			return false;
-		} else {
-			int l = left.length;
-			int r = right.length;
-
-			if (r > l || !equals && r == l) {
-				return false;
-			}
-
-			for (int i = 0; i < r; i++) {
-				if (!Objects.equals(left[i], right[i])) {
 					return false;
 				}
 			}
@@ -485,21 +343,6 @@ public final class Util {
 		}
 	}
 
-	/**
-	 * Appends array2 to the end of array1 and returns the result
-	 *
-	 * @param array1
-	 * @param array2
-	 * @return
-	 * @since 3.1
-	 */
-	public static Object[] appendArray(Object[] array1, Object[] array2) {
-		Object[] result = new Object[array1.length + array2.length];
-		System.arraycopy(array1, 0, result, 0, array1.length);
-		System.arraycopy(array2, 0, result, array1.length, array2.length);
-		return result;
-	}
-
 	private Util() {
 	}
 
@@ -525,48 +368,6 @@ public final class Util {
 	 */
 	public static String createList(String item1, String item2) {
 		return NLS.bind(WorkbenchMessages.Util_List, item1, item2);
-	}
-
-	/**
-	 * Creates a {@link String} representing the elements in <code>items</code> as a
-	 * list. This method uses the {@link Object#toString()} method on the objects to
-	 * create them as a String.
-	 *
-	 * @param items the List to make into a String
-	 * @return a string which presents <code>items</code> in String form.
-	 */
-	public static String createList(List items) {
-		String list = null;
-		for (Iterator i = items.iterator(); i.hasNext();) {
-			Object object = i.next();
-			final String string = object == null ? WorkbenchMessages.Util_listNull : object.toString();
-			if (list == null) {
-				list = string;
-			} else {
-				list = createList(list, string);
-			}
-		}
-		return safeString(list);
-	}
-
-	/**
-	 * Creates a {@link String} representing the elements in <code>items</code> as a
-	 * list. This method uses the {@link Object#toString()} method on the objects to
-	 * create them as a String.
-	 *
-	 * @param items the array to make into a String
-	 * @return a string which presents <code>items</code> in String form.
-	 */
-	public static String createList(Object[] items) {
-		String list = null;
-		for (Object item : items) {
-			if (list == null) {
-				list = item.toString();
-			} else {
-				list = createList(list, item.toString());
-			}
-		}
-		return safeString(list);
 	}
 
 	/**
