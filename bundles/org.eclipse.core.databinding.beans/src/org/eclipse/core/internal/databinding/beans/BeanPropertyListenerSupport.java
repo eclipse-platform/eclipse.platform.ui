@@ -30,6 +30,8 @@ import org.eclipse.core.runtime.Status;
  * @since 1.0
  */
 public class BeanPropertyListenerSupport {
+	private static final boolean DEBUG = true;
+
 	/**
 	 * Start listen to target (if it supports the JavaBean property change
 	 * listener pattern)
@@ -117,9 +119,8 @@ public class BeanPropertyListenerSupport {
 	/**
 	 * Logs a message to the Data Binding logger.
 	 */
-	@SuppressWarnings("deprecation")
 	private static void log(int severity, String message, Throwable throwable) {
-		if (org.eclipse.core.databinding.beans.BeansObservables.DEBUG) {
+		if (DEBUG) {
 			Policy.getLog().log(
 					new Status(severity, Policy.JFACE_DATABINDING, IStatus.OK,
 							message, throwable));

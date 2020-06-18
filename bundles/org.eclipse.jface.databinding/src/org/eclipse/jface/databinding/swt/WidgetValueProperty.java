@@ -15,12 +15,14 @@
 
 package org.eclipse.jface.databinding.swt;
 
+import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.observable.value.ValueDiff;
 import org.eclipse.core.databinding.property.INativePropertyListener;
 import org.eclipse.core.databinding.property.ISimplePropertyListener;
 import org.eclipse.core.databinding.property.value.SimpleValueProperty;
+import org.eclipse.jface.internal.databinding.swt.SWTDelayedObservableValueDecorator;
 import org.eclipse.jface.internal.databinding.swt.SWTObservableValueDecorator;
 import org.eclipse.jface.internal.databinding.swt.WidgetListener;
 import org.eclipse.swt.widgets.Listener;
@@ -116,10 +118,10 @@ public abstract class WidgetValueProperty<S extends Widget, T> extends SimpleVal
 		return observe(DisplayRealm.getRealm(widget.getDisplay()), widget);
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public ISWTObservableValue<T> observeDelayed(int delay, S widget) {
-		return SWTObservables.observeDelayedValue(delay, observe(widget));
+		ISWTObservableValue<T> observable = observe(widget);
+		return new SWTDelayedObservableValueDecorator<>(Observables.observeDelayedValue(delay, observable), widget);
 	}
 
 }

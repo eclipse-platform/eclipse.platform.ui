@@ -15,6 +15,7 @@
 
 package org.eclipse.jface.databinding.viewers;
 
+import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.Realm;
 import org.eclipse.core.databinding.observable.value.IObservableValue;
 import org.eclipse.core.databinding.property.value.SimpleValueProperty;
@@ -64,6 +65,7 @@ public abstract class ViewerValueProperty<S, T> extends SimpleValueProperty<S, T
 
 	@Override
 	public IViewerObservableValue<T> observeDelayed(int delay, Viewer viewer) {
-		return ViewersObservables.observeDelayedValue(delay, observe(viewer));
+		IViewerObservableValue<T> observable = observe(viewer);
+		return new ViewerObservableValueDecorator<>(Observables.observeDelayedValue(delay, observable), viewer);
 	}
 }
