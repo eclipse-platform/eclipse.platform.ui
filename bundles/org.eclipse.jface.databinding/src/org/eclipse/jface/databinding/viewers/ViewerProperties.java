@@ -32,11 +32,13 @@ import org.eclipse.jface.viewers.Viewer;
 /**
  * A factory for creating properties of JFace {@link Viewer viewers}.
  *
- * @deprecated This class has replaced by the class
+ * @noreference
+ * @deprecated This class will be removed in a future release. See
+ *             https://bugs.eclipse.org/bugs/show_bug.cgi?id=546822 for more
+ *             information. It has been replaced by the class
  *             {@link org.eclipse.jface.databinding.viewers.typed.ViewerProperties}.
  *             That class creates typed property objects, while this class
- *             creates raw property objects. This class has been preserved for
- *             backwards compatibility reasons.
+ *             creates raw property objects.
  *
  * @since 1.3
  */

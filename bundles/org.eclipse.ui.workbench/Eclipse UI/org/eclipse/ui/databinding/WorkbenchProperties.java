@@ -31,11 +31,13 @@ import org.eclipse.ui.ISelectionService;
  * WorkbenchProperties.singleSelection().observe(getSite().getService(ISelectionService.class))
  * </pre>
  *
- * @deprecated This class has replaced by the class
+ * @noreference
+ * @deprecated This class will be removed in a future release. See
+ *             https://bugs.eclipse.org/bugs/show_bug.cgi?id=546822 for more
+ *             information. It has been replaced by the class
  *             {@link org.eclipse.ui.databinding.typed.WorkbenchProperties}.
  *             That class creates typed property objects, while this class
- *             creates raw property objects. This class has been preserved for
- *             backwards compatibility reasons.
+ *             creates raw property objects.
  *
  * @since 3.5
  */

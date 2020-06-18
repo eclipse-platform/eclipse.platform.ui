@@ -20,6 +20,122 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/core/databinding/beans/BeanProperties.java" type="org.eclipse.core.databinding.beans.BeanProperties">
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeanProperties"/>
+                <message_argument value="list(Class, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeanProperties"/>
+                <message_argument value="list(Class, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeanProperties"/>
+                <message_argument value="list(String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeanProperties"/>
+                <message_argument value="list(String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeanProperties"/>
+                <message_argument value="map(Class, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeanProperties"/>
+                <message_argument value="map(Class, String, Class, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeanProperties"/>
+                <message_argument value="map(String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeanProperties"/>
+                <message_argument value="map(String, Class, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeanProperties"/>
+                <message_argument value="set(Class, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeanProperties"/>
+                <message_argument value="set(Class, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeanProperties"/>
+                <message_argument value="set(String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeanProperties"/>
+                <message_argument value="set(String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeanProperties"/>
+                <message_argument value="value(Class, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeanProperties"/>
+                <message_argument value="value(Class, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeanProperties"/>
+                <message_argument value="value(String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeanProperties"/>
+                <message_argument value="value(String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeanProperties"/>
+                <message_argument value="values(Class, String[])"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeanProperties"/>
+                <message_argument value="values(String[])"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338948223">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeanProperties"/>
+                <message_argument value="BeanProperties()"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/core/databinding/beans/BeansObservables.java" type="org.eclipse.core.databinding.beans.BeansObservables">
         <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
             <message_arguments>
@@ -549,6 +665,122 @@
             <message_arguments>
                 <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
                 <message_argument value="PojoObservables()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/core/databinding/beans/PojoProperties.java" type="org.eclipse.core.databinding.beans.PojoProperties">
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoProperties"/>
+                <message_argument value="list(Class, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoProperties"/>
+                <message_argument value="list(Class, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoProperties"/>
+                <message_argument value="list(String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoProperties"/>
+                <message_argument value="list(String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoProperties"/>
+                <message_argument value="map(Class, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoProperties"/>
+                <message_argument value="map(Class, String, Class, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoProperties"/>
+                <message_argument value="map(String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoProperties"/>
+                <message_argument value="map(String, Class, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoProperties"/>
+                <message_argument value="set(Class, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoProperties"/>
+                <message_argument value="set(Class, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoProperties"/>
+                <message_argument value="set(String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoProperties"/>
+                <message_argument value="set(String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoProperties"/>
+                <message_argument value="value(Class, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoProperties"/>
+                <message_argument value="value(Class, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoProperties"/>
+                <message_argument value="value(String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoProperties"/>
+                <message_argument value="value(String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoProperties"/>
+                <message_argument value="values(Class, String[])"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoProperties"/>
+                <message_argument value="values(String[])"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338948223">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoProperties"/>
+                <message_argument value="PojoProperties()"/>
             </message_arguments>
         </filter>
     </resource>

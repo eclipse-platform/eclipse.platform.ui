@@ -224,6 +224,140 @@
             </message_arguments>
         </filter>
     </resource>
+    <resource path="src/org/eclipse/jface/databinding/swt/WidgetProperties.java" type="org.eclipse.jface.databinding.swt.WidgetProperties">
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="background()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="bounds()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="editable()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="enabled()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="focused()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="font()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="foreground()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="image()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="items()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="location()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="maximum()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="message()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="minimum()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="selection()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="singleSelectionIndex()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="size()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="text()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="text(int)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="text(int[])"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="tooltipText()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="visible()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338948223">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.swt.WidgetProperties"/>
+                <message_argument value="WidgetProperties()"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="src/org/eclipse/jface/databinding/swt/WidgetValueProperty.java" type="org.eclipse.jface.databinding.swt.WidgetValueProperty">
         <filter comment="Extending interface in accordance with the API specification." id="576725006">
             <message_arguments>
@@ -301,6 +435,56 @@
             <message_arguments>
                 <message_argument value="IViewerListProperty&lt;S, E&gt;"/>
                 <message_argument value="ViewerListProperty&lt;S, E&gt;"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/jface/databinding/viewers/ViewerProperties.java" type="org.eclipse.jface.databinding.viewers.ViewerProperties">
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewerProperties"/>
+                <message_argument value="checkedElements(Object)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewerProperties"/>
+                <message_argument value="filters()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewerProperties"/>
+                <message_argument value="input()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewerProperties"/>
+                <message_argument value="multiplePostSelection()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewerProperties"/>
+                <message_argument value="multipleSelection()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewerProperties"/>
+                <message_argument value="singlePostSelection()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewerProperties"/>
+                <message_argument value="singleSelection()"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546822 - [Databinding] Mark non generic factories for deletion" id="338948223">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.databinding.viewers.ViewerProperties"/>
+                <message_argument value="ViewerProperties()"/>
             </message_arguments>
         </filter>
     </resource>
