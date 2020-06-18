@@ -1,10 +1,264 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.core.databinding.beans" version="2">
     <resource path="META-INF/MANIFEST.MF">
+        <filter comment="Bug 546820 -  Mark deprecated observable factory classes for deletion" id="923795461">
+            <message_arguments>
+                <message_argument value="1.7.0"/>
+                <message_argument value="1.6.100"/>
+            </message_arguments>
+        </filter>
         <filter comment="Bug 549659 - API change was not detected by tooling" id="926941240">
             <message_arguments>
                 <message_argument value="1.6.100"/>
                 <message_argument value="1.5.100"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="926941240">
+            <message_arguments>
+                <message_argument value="1.7.0"/>
+                <message_argument value="1.6.100"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/core/databinding/beans/BeansObservables.java" type="org.eclipse.core.databinding.beans.BeansObservables">
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="listFactory(Realm, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="listFactory(String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="mapPropertyFactory(Realm, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="mapPropertyFactory(String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="observeDetailList(IObservableValue, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="observeDetailList(Realm, IObservableValue, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="observeDetailMap(IObservableValue, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="observeDetailMap(Realm, IObservableValue, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="observeDetailSet(IObservableValue, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="observeDetailSet(Realm, IObservableValue, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="observeDetailValue(IObservableValue, Class, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="observeDetailValue(IObservableValue, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="observeDetailValue(Realm, IObservableValue, Class, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="observeDetailValue(Realm, IObservableValue, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="observeList(Object, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="observeList(Object, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="observeList(Realm, Object, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="observeList(Realm, Object, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="observeMap(IObservableSet, Class, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="observeMap(IObservableSet, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="observeMap(Object, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="observeMap(Object, String, Class, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="observeMap(Realm, Object, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="observeMap(Realm, Object, String, Class, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="observeMaps(IObservableSet, Class, String[])"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="observeMaps(IObservableSet, String[])"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="observeSet(Object, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="observeSet(Object, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="observeSet(Realm, Object, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="observeSet(Realm, Object, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="observeValue(Object, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="observeValue(Realm, Object, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="setFactory(Realm, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="setFactory(Realm, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="setFactory(String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="setFactory(String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="setToMapFactory(Class, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="valueFactory(Realm, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="valueFactory(String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338948223">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.BeansObservables"/>
+                <message_argument value="BeansObservables()"/>
             </message_arguments>
         </filter>
     </resource>
@@ -71,6 +325,230 @@
                 <message_argument value="IBeanProperty"/>
                 <message_argument value="IBeanValueProperty&lt;S, T&gt;"/>
                 <message_argument value="IProperty"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="src/org/eclipse/core/databinding/beans/PojoObservables.java" type="org.eclipse.core.databinding.beans.PojoObservables">
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="listFactory(Realm, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="listFactory(String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="mapPropertyFactory(Realm, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="mapPropertyFactory(String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="observeDetailList(IObservableValue, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="observeDetailList(Realm, IObservableValue, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="observeDetailMap(IObservableValue, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="observeDetailMap(Realm, IObservableValue, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="observeDetailSet(IObservableValue, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="observeDetailSet(Realm, IObservableValue, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="observeDetailValue(IObservableValue, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="observeDetailValue(Realm, IObservableValue, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="observeList(Object, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="observeList(Object, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="observeList(Realm, Object, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="observeList(Realm, Object, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="observeMap(IObservableSet, Class, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="observeMap(IObservableSet, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="observeMap(Object, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="observeMap(Object, String, Class, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="observeMap(Realm, Object, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="observeMap(Realm, Object, String, Class, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="observeMaps(IObservableSet, Class, String[])"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="observeMaps(IObservableSet, String[])"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="observeSet(Object, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="observeSet(Object, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="observeSet(Realm, Object, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="observeSet(Realm, Object, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="observeValue(Object, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="observeValue(Realm, Object, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="setFactory(Realm, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="setFactory(Realm, String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="setFactory(String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="setFactory(String, Class)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="valueFactory(Realm, String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="valueFactory(String)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - [DataBinding] Mark deprecated observable factory classes for deletion" id="338948223">
+            <message_arguments>
+                <message_argument value="org.eclipse.core.databinding.beans.PojoObservables"/>
+                <message_argument value="PojoObservables()"/>
             </message_arguments>
         </filter>
     </resource>

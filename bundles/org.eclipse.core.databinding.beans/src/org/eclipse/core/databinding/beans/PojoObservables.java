@@ -40,7 +40,10 @@ import org.eclipse.core.internal.databinding.beans.BeanPropertyHelper;
  *
  * @since 1.1
  *
- * @deprecated use <code>PojoProperties</code> instead
+ * @noreference
+ * @deprecated This class will be removed in a future release. See
+ *             https://bugs.eclipse.org/bugs/show_bug.cgi?id=546820 for more
+ *             information. Use <code>PojoProperties</code> instead.
  */
 @Deprecated
 @SuppressWarnings({ "rawtypes", "unchecked" })

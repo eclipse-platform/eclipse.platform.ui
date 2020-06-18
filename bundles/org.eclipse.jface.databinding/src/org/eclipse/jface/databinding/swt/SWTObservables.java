@@ -41,7 +41,10 @@ import org.eclipse.swt.widgets.Widget;
  * A factory for creating observables for SWT widgets
  *
  * @since 1.1
- * @deprecated
+ * @noreference
+ * @deprecated This class will be removed in a future release. See
+ *             https://bugs.eclipse.org/bugs/show_bug.cgi?id=546820 for more
+ *             information. Use <code>WidgetProperties</code> instead.
  */
 @Deprecated
 @SuppressWarnings("rawtypes")

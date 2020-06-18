@@ -46,7 +46,10 @@ import org.eclipse.core.runtime.Status;
  *
  * @since 1.1
  *
- * @deprecated use <code>BeanProperties</code> instead
+ * @noreference
+ * @deprecated This class will be removed in a future release. See
+ *             https://bugs.eclipse.org/bugs/show_bug.cgi?id=546820 for more
+ *             information. Use <code>BeanProperties</code> instead.
  */
 @Deprecated
 @SuppressWarnings({ "rawtypes", "unchecked" })

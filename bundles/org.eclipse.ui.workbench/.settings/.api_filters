@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.ui.workbench" version="2">
+    <resource path="Eclipse UI/org/eclipse/ui/databinding/WorkbenchObservables.java" type="org.eclipse.ui.databinding.WorkbenchObservables">
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.databinding.WorkbenchObservables"/>
+                <message_argument value="observeActiveEditor(IPartService)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.databinding.WorkbenchObservables"/>
+                <message_argument value="observeActivePart(IPartService)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.databinding.WorkbenchObservables"/>
+                <message_argument value="observeActiveWorkbenchPage(IWorkbenchWindow)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.databinding.WorkbenchObservables"/>
+                <message_argument value="observeActiveWorkbenchWindow(IWorkbench)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.databinding.WorkbenchObservables"/>
+                <message_argument value="observeAdaptedSingleSelection(IServiceLocator, Class&lt;T&gt;)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.databinding.WorkbenchObservables"/>
+                <message_argument value="observeDetailAdaptedValue(IObservableValue&lt;?&gt;, Class&lt;T&gt;)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338944126">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.databinding.WorkbenchObservables"/>
+                <message_argument value="observeEditorInput(IEditorPart)"/>
+            </message_arguments>
+        </filter>
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="338948223">
+            <message_arguments>
+                <message_argument value="org.eclipse.ui.databinding.WorkbenchObservables"/>
+                <message_argument value="WorkbenchObservables()"/>
+            </message_arguments>
+        </filter>
+    </resource>
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="923795461">
+            <message_arguments>
+                <message_argument value="3.120.0"/>
+                <message_argument value="3.118.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>

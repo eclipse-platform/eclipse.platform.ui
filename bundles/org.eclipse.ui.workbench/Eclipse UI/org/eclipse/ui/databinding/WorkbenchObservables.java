@@ -37,7 +37,12 @@ import org.eclipse.ui.services.IServiceLocator;
  * Factory methods for creating observables for Workbench objects
  *
  * @since 3.5
+ * @noreference
+ * @deprecated This class will be removed in a future release. See
+ *             https://bugs.eclipse.org/bugs/show_bug.cgi?id=546820 for more
+ *             information. Use <code>WorkbenchProperties</code> instead.
  */
+@Deprecated
 public class WorkbenchObservables {
 	/**
 	 * Returns an observable with values of the given target type. If the wrapped
