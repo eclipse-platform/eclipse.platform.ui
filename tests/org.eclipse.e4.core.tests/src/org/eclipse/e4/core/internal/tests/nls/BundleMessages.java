@@ -38,4 +38,8 @@ public class BundleMessages {
 	public void format() {
 		messageFour = MessageFormat.format(messageFour, "Tom"); //$NON-NLS-1$
 	}
+
+	public String getMessage() {
+		return message;
+	}
 }

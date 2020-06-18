@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015  Dirk Fauth and others.
+ * Copyright (c) 2014, 2020  Dirk Fauth and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -90,6 +90,22 @@ public class MessageRegistryTest {
 	}
 
 	@Test
+	public void testRegisterLocalizationByMethodReference() {
+		// ensure the en Locale is set for this test
+		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
+		TestObject o = ContextInjectionFactory.make(TestObject.class, this.context);
+
+		TestLocalizableObject control = new TestLocalizableObject();
+		o.registry.register(control::setLocalizableValue, (m) -> m.message);
+
+		// test value is set
+		assertNotNull(control.getLocalizableValue());
+
+		// test the set value
+		assertEquals("BundleMessage", control.getLocalizableValue());
+	}
+
+	@Test
 	public void testRegisterLocalizationByPropertyAndChangeLocale() {
 		// ensure the en Locale is set for this test
 		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
@@ -131,5 +147,24 @@ public class MessageRegistryTest {
 		assertEquals("BundleNachricht", control.getLocalizableValue());
 	}
 
-	// TODO add testcases for Java 8 method references
+	@Test
+	public void testRegisterLocalizationByMethodReferenceAndChangeLocale() {
+		// ensure the en Locale is set for this test
+		this.context.set(TranslationService.LOCALE, Locale.ENGLISH);
+		TestObject o = ContextInjectionFactory.make(TestObject.class, this.context);
+
+		TestLocalizableObject control = new TestLocalizableObject();
+		o.registry.register(control::setLocalizableValue, BundleMessages::getMessage);
+
+		// test value is set
+		assertNotNull(control.getLocalizableValue());
+
+		// test the set value
+		assertEquals("BundleMessage", control.getLocalizableValue());
+
+		// change the locale to GERMAN
+		this.context.set(TranslationService.LOCALE, Locale.GERMAN);
+
+		assertEquals("BundleNachricht", control.getLocalizableValue());
+	}
 }
