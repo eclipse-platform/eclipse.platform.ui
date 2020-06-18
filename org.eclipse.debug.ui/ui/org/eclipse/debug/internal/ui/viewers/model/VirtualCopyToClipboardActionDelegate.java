@@ -149,8 +149,9 @@ public class VirtualCopyToClipboardActionDelegate extends AbstractDebugActionDel
 			for (String label : labels) {
 				String text = trimLabel(label);
 				if (text != null && !text.equals(IInternalDebugCoreConstants.EMPTY_STRING)) {
-					buffer.append(text+TAB);
+					buffer.append(text);
 				}
+				buffer.append(TAB);
 			}
 			buffer.append(System.getProperty(SEPARATOR));
 		}
