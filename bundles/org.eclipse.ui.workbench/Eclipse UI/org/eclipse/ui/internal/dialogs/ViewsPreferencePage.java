@@ -19,6 +19,7 @@
 package org.eclipse.ui.internal.dialogs;
 
 import static org.eclipse.jface.viewers.LabelProvider.createTextProvider;
+import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 import static org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants.ATT_COLOR_AND_FONT_ID;
 import static org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants.ATT_OS_VERSION;
 import static org.eclipse.ui.internal.registry.IWorkbenchRegistryConstants.ATT_THEME_ASSOCIATION;
@@ -67,6 +68,7 @@ import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Link;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.IWorkbenchPreferenceConstants;
 import org.eclipse.ui.IWorkbenchPreferencePage;
@@ -526,8 +528,9 @@ public class ViewsPreferencePage extends PreferencePage implements IWorkbenchPre
 		protected void createContentArea(Composite parent) {
 			parent.setLayout(new RowLayout());
 
-			Label label = new Label(parent, SWT.WRAP);
-			label.setText(WorkbenchMessages.ThemeChangeWarningText);
+			Link link = new Link(parent, SWT.WRAP);
+			link.setText(WorkbenchMessages.ThemeChangeWarningText);
+			link.addSelectionListener(widgetSelectedAdapter(e -> PlatformUI.getWorkbench().restart(true)));
 		}
 	}
 
