@@ -189,11 +189,11 @@ public class WorkbenchThemeManager extends EventManager implements IThemeManager
 			ITheme theme = themes.get(themeDescriptor);
 			// If theme is in our themes table then its already been populated
 			if (theme != null) {
-				ColorDefinition[] colorDefinitions = themeDescriptor.getColors();
-
-				if (colorDefinitions.length > 0) {
-					ThemeElementHelper.populateRegistry(theme, colorDefinitions, PrefUtil.getInternalPreferenceStore());
-				}
+				// By the time updateThemes is called, all colors have overrides in the
+				// CascadingColorRegistry (due to Workbench.initializeApplicationColors), so
+				// we need to repopulate using getColorsFor() to update everything.
+				ThemeElementHelper.populateRegistry(theme, getThemeRegistry().getColorsFor(theme.getId()),
+						PrefUtil.getInternalPreferenceStore());
 			}
 		}
 	}

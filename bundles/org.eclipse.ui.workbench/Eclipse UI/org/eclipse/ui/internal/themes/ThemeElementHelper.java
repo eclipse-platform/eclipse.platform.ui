@@ -16,6 +16,7 @@ package org.eclipse.ui.internal.themes;
 import java.util.Arrays;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import org.eclipse.core.runtime.Assert;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.preference.PreferenceConverter;
 import org.eclipse.jface.resource.ColorRegistry;
@@ -274,15 +275,12 @@ public final class ThemeElementHelper {
 
 	private static void installColor(ColorDefinition definition, ITheme theme, IPreferenceStore store,
 			boolean setInRegistry) {
-
-		// TODO: store shouldn't be null, should assert instead of checking null all
-		// over
+		Assert.isNotNull(store);
 
 		ColorRegistry registry = theme.getColorRegistry();
 
 		String id = definition.getId();
 		String key = createPreferenceKey(theme, id);
-		RGB prefColor = store != null ? PreferenceConverter.getColor(store, key) : null;
 		RGB defaultColor;
 		if (definition.getValue() != null) {
 			defaultColor = definition.getValue();
@@ -290,17 +288,11 @@ public final class ThemeElementHelper {
 			String defaultsToKey = createPreferenceKey(theme, definition.getDefaultsTo());
 			defaultColor = PreferenceConverter.getDefaultColor(store, defaultsToKey);
 		} else {
-			defaultColor = null;
-		}
-
-		if (defaultColor == null) {
-			// default is null, likely because we have a bad definition - the
-			// defaultsTo color doesn't exist. We still need a sensible default,
-			// however.
 			defaultColor = PreferenceConverter.COLOR_DEFAULT_DEFAULT;
 		}
 
-		if (prefColor == null || prefColor == PreferenceConverter.COLOR_DEFAULT_DEFAULT) {
+		RGB prefColor = PreferenceConverter.getColor(store, key);
+		if (prefColor == PreferenceConverter.COLOR_DEFAULT_DEFAULT || store.isDefault(key)) {
 			if (definition.getValue() != null) {
 				prefColor = definition.getValue();
 			} else if (definition.getDefaultsTo() != null) {
@@ -312,12 +304,12 @@ public final class ThemeElementHelper {
 			prefColor = defaultColor;
 		}
 
-		if (setInRegistry) {
-			registry.put(id, prefColor);
-		}
-
 		if (store != null) {
 			PreferenceConverter.setDefault(store, key, defaultColor);
+		}
+
+		if (setInRegistry) {
+			registry.put(id, prefColor);
 		}
 	}
 

@@ -296,6 +296,70 @@ public class ThemeAPITest extends ThemeTest {
 	}
 
 	@Test
+	public void testColorRegistryListener_def_swtcolor() {
+		IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
+		ITheme defaultTheme = getDefaultTheme();
+
+		testColorRegistryPut(defaultTheme, store, SWTCOLOR);
+	}
+
+	@Test
+	public void testColorRegistryListener_def_rgbcolor() {
+		IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
+		ITheme defaultTheme = getDefaultTheme();
+
+		testColorRegistryPut(defaultTheme, store, RGBCOLOR);
+	}
+
+	@Test
+	public void testColorRegistryListener_def_defaultedcolor() {
+		IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
+		ITheme defaultTheme = getDefaultTheme();
+
+		testColorRegistryPut(defaultTheme, store, DEFAULTEDCOLOR);
+	}
+
+	@Test
+	public void testColorRegistryListener_def_nooverridecolor() {
+		IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
+		ITheme defaultTheme = getDefaultTheme();
+
+		testColorRegistryPut(defaultTheme, store, NOOVERRIDECOLOR);
+	}
+
+	@Test
+	public void testColorRegistryListener_th1_swtcolor() {
+		IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
+		ITheme theme1 = getTheme1();
+
+		testColorRegistryPut(theme1, store, SWTCOLOR);
+	}
+
+	@Test
+	public void testColorRegistryListener_th1_rgbcolor() {
+		IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
+		ITheme theme1 = getTheme1();
+
+		testColorRegistryPut(theme1, store, RGBCOLOR);
+	}
+
+	@Test
+	public void testColorRegistryListener_th1_defaultedcolor() {
+		IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
+		ITheme theme1 = getTheme1();
+
+		testColorRegistryPut(theme1, store, DEFAULTEDCOLOR);
+	}
+
+	@Test
+	public void testColorRegistryListener_th1_nooverridecolor() {
+		IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
+		ITheme theme1 = getTheme1();
+
+		testColorRegistryPut(theme1, store, NOOVERRIDECOLOR);
+	}
+
+	@Test
 	public void testDataKeySet_data1() {
 		ITheme defaultTheme = getDefaultTheme();
 		Set<String> themeKeys = defaultTheme.keySet();
@@ -536,6 +600,19 @@ public class ThemeAPITest extends ThemeTest {
 				SWT.ITALIC) }, theme1.getFontRegistry()
 				.getFontData(NOVALFONT));
 
+	}
+
+	private void testColorRegistryPut(ITheme theme, IPreferenceStore store, String color) {
+		String key = ThemeElementHelper.createPreferenceKey(theme, color);
+		RGB oldRGB = PreferenceConverter.getColor(store, key);
+		RGB newRGB = new RGB(57, 12, 86);
+
+		theme.getColorRegistry().put(color, newRGB);
+		assertEquals(newRGB, store.isDefault(key) ? PreferenceConverter.getDefaultColor(store, key)
+				: PreferenceConverter.getColor(store, key));
+		theme.getColorRegistry().put(color, oldRGB);
+		assertEquals(oldRGB, store.isDefault(key) ? PreferenceConverter.getDefaultColor(store, key)
+				: PreferenceConverter.getColor(store, key));
 	}
 
 	private void testOverrideColorPreference(ITheme theme,

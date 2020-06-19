@@ -86,8 +86,42 @@ public class Theme extends EventManager implements ITheme {
 		}
 
 		getColorRegistry().addListener(getCascadeListener());
+		getColorRegistry().addListener(this::registryColorChangeEvent);
 		getFontRegistry().addListener(getCascadeListener());
 		PrefUtil.getInternalPreferenceStore().addPropertyChangeListener(getPropertyListener());
+	}
+
+	/**
+	 * When a color in the registry is updated, update the backing preferences
+	 * appropriately.
+	 *
+	 * @param event the color change event
+	 */
+	private void registryColorChangeEvent(PropertyChangeEvent event) {
+		if (event.getNewValue() instanceof RGB) {
+			String key = ThemeElementHelper.createPreferenceKey(this, event.getProperty());
+			IPreferenceStore store = PrefUtil.getInternalPreferenceStore();
+			if (store.contains(key)) {
+				RGB newColor = (RGB) event.getNewValue();
+				if (store.isDefault(key)) {
+					RGB oldColor = PreferenceConverter.getDefaultColor(store, key);
+					if (oldColor == PreferenceConverter.COLOR_DEFAULT_DEFAULT) {
+						// If the preference is set to default, but there is no actual default value,
+						// then the preference state is inconsistent. Do nothing.
+					} else if (!newColor.equals(oldColor))
+						PreferenceConverter.setValue(store, key, newColor);
+				} else {
+					RGB oldColor = PreferenceConverter.getColor(store, key);
+					if (!newColor.equals(oldColor)) {
+						oldColor = PreferenceConverter.getDefaultColor(store, key);
+						if (oldColor != PreferenceConverter.COLOR_DEFAULT_DEFAULT && newColor.equals(oldColor))
+							store.setToDefault(key);
+						else
+							PreferenceConverter.setValue(store, key, newColor);
+					}
+				}
+			}
+		}
 	}
 
 	/**
@@ -118,15 +152,14 @@ public class Theme extends EventManager implements ITheme {
 
 								getFontRegistry().put(key, data);
 								processDefaultsTo(key, data);
-								return;
 							} else if (getColorRegistry().hasValueFor(key)) {
 								RGB rgb = event.getNewValue() instanceof String
 										? StringConverter.asRGB((String) event.getNewValue())
 										: (RGB) event.getNewValue();
-
-								getColorRegistry().put(key, rgb);
-								processDefaultsTo(key, rgb);
-								return;
+								if (!Objects.equals(getColorRegistry().getRGB(key), rgb)) {
+									getColorRegistry().put(key, rgb);
+									processDefaultsTo(key, rgb);
+								}
 							}
 						}
 					} catch (DataFormatException e) {
@@ -167,8 +200,10 @@ public class Theme extends EventManager implements ITheme {
 						String defaultsTo = colorDefinition.getDefaultsTo();
 						if (defaultsTo != null && defaultsTo.equals(key)) {
 							IPreferenceStore store = WorkbenchPlugin.getDefault().getPreferenceStore();
-							if (store.isDefault(
-									ThemeElementHelper.createPreferenceKey(Theme.this, colorDefinition.getId()))) {
+							String prefkey = ThemeElementHelper.createPreferenceKey(Theme.this,
+									colorDefinition.getId());
+							if (store.isDefault(prefkey)) {
+								PreferenceConverter.setDefault(store, prefkey, rgb);
 								getColorRegistry().put(colorDefinition.getId(), rgb);
 								processDefaultsTo(colorDefinition.getId(), rgb);
 							}
@@ -213,6 +248,7 @@ public class Theme extends EventManager implements ITheme {
 	public void dispose() {
 		if (themeColorRegistry != null) {
 			themeColorRegistry.removeListener(themeListener);
+			themeColorRegistry.removeListener(this::registryColorChangeEvent);
 			themeColorRegistry.dispose();
 		}
 		if (themeFontRegistry != null) {
