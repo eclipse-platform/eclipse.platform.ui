@@ -19,7 +19,7 @@ import java.util.Map;
 
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
-import org.eclipse.core.internal.expressions.TestExpression;
+import org.eclipse.core.expressions.TestExpression;
 import org.eclipse.core.resources.IFolder;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;

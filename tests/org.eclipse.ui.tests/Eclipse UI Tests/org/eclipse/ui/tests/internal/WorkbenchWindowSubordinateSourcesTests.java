@@ -14,10 +14,10 @@
 
 package org.eclipse.ui.tests.internal;
 
+import org.eclipse.core.expressions.EqualsExpression;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.IEvaluationContext;
-import org.eclipse.core.internal.expressions.EqualsExpression;
-import org.eclipse.core.internal.expressions.WithExpression;
+import org.eclipse.core.expressions.WithExpression;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.util.IPropertyChangeListener;
 import org.eclipse.jface.util.PropertyChangeEvent;

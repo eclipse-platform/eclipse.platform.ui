@@ -24,7 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;
-import org.eclipse.core.internal.expressions.OrExpression;
+import org.eclipse.core.expressions.OrExpression;
 import org.eclipse.e4.core.commands.ExpressionContext;
 import org.eclipse.e4.core.contexts.EclipseContextFactory;
 import org.eclipse.e4.core.contexts.IContextFunction;

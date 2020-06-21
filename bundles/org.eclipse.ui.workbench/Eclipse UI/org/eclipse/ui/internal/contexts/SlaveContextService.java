@@ -22,12 +22,12 @@ import java.util.Map;
 import java.util.Set;
 import org.eclipse.core.commands.contexts.Context;
 import org.eclipse.core.commands.contexts.IContextManagerListener;
+import org.eclipse.core.expressions.AndExpression;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.ui.ISourceProvider;
 import org.eclipse.ui.contexts.IContextActivation;
 import org.eclipse.ui.contexts.IContextService;
-import org.eclipse.ui.internal.expressions.AndExpression;
 
 /**
  * A context service which delegates almost all responsibility to the parent

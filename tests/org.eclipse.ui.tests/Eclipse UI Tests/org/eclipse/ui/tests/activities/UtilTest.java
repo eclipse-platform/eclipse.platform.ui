@@ -26,7 +26,7 @@ import java.util.regex.Pattern;
 
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
-import org.eclipse.core.internal.expressions.TestExpression;
+import org.eclipse.core.expressions.TestExpression;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.ui.AbstractSourceProvider;
 import org.eclipse.ui.IPluginContribution;
