@@ -215,7 +215,7 @@ public abstract class AbstractNotificationPopup extends Window {
 	/**
 	 * Override to populate with notifications.
 	 *
-	 * @param parent
+	 * @param parent Parent for this component.
 	 */
 	protected void createContentArea(Composite parent) {
 		// empty by default
