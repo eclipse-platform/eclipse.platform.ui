@@ -336,20 +336,6 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 
 	static final String TEXT_DELIMITERS = TextProcessor.getDefaultDelimiters() + "-"; //$NON-NLS-1$
 
-	// constants for shortcut bar group ids
-	static final String GRP_PAGES = "pages"; //$NON-NLS-1$
-
-	static final String GRP_PERSPECTIVES = "perspectives"; //$NON-NLS-1$
-
-	static final String GRP_FAST_VIEWS = "fastViews"; //$NON-NLS-1$
-
-	// static fields for inner classes.
-	static final int VGAP = 0;
-
-	static final int CLIENT_INSET = 3;
-
-	static final int BAR_SIZE = 23;
-
 	/** Marks the beginning of a tag which contains positioning information. */
 	static final String MOVE_TAG = "move_"; //$NON-NLS-1$
 
