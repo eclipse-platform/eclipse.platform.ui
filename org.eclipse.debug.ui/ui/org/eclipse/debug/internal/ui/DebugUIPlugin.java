@@ -1339,22 +1339,22 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	 * @return image descriptor or <code>null</code>
 	 */
 	public static ImageDescriptor getImageDescriptor(IConfigurationElement element, String attr) {
-		Bundle bundle = Platform.getBundle(element.getContributor().getName());
 		String iconPath = element.getAttribute(attr);
 		if (iconPath != null) {
-			URL iconURL = FileLocator.find(bundle , new Path(iconPath), null);
-			if (iconURL != null) {
-				return ImageDescriptor.createFromURL(iconURL);
-			} else { // try to search as a URL in case it is absolute path
-				try {
-					iconURL = FileLocator.find(new URL(iconPath));
-					if (iconURL != null) {
-						return ImageDescriptor.createFromURL(iconURL);
+			Bundle bundle = Platform.getBundle(element.getContributor().getName());
+			return ImageDescriptor.createFromURLSupplier(true, () -> {
+				URL iconURL = FileLocator.find(bundle, new Path(iconPath), null);
+				if (iconURL != null) {
+					return iconURL;
+				} else { // try to search as a URL in case it is absolute path
+					try {
+						return FileLocator.find(new URL(iconPath));
+					} catch (MalformedURLException e) {
+						// return null
 					}
-				} catch (MalformedURLException e) {
-					// return null
 				}
-			}
+				return null;
+			});
 		}
 		return null;
 	}
@@ -1369,12 +1369,9 @@ public class DebugUIPlugin extends AbstractUIPlugin implements ILaunchListener, 
 	 * @since 3.3
 	 */
 	public static ImageDescriptor getImageDescriptor(String bundleName, String path) {
-		Bundle bundle = Platform.getBundle(bundleName);
 		if (path != null) {
-			URL iconURL = FileLocator.find(bundle , new Path(path), null);
-			if (iconURL != null) {
-				return ImageDescriptor.createFromURL(iconURL);
-			}
+			Bundle bundle = Platform.getBundle(bundleName);
+			return ImageDescriptor.createFromURLSupplier(true, () -> FileLocator.find(bundle, new Path(path), null));
 		}
 		return null;
 	}

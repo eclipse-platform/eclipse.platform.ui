@@ -20,8 +20,6 @@
 package org.eclipse.debug.internal.ui;
 
 
-import java.net.URL;
-
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.core.runtime.IConfigurationElement;
 import org.eclipse.core.runtime.IExtensionPoint;
@@ -33,6 +31,7 @@ import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.jface.resource.ImageRegistry;
 import org.eclipse.swt.graphics.Image;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 
 /**
  * The images provided by the debug plugin.
@@ -292,16 +291,13 @@ public class DebugPluginImages {
 	 *				this plugin class is found (i.e. typically the packages directory)
 	 */
 	private final static void declareRegistryImage(String key, String path) {
-		ImageDescriptor desc = ImageDescriptor.getMissingImageDescriptor();
-		Bundle bundle = Platform.getBundle(DebugUIPlugin.getUniqueIdentifier());
-		URL url = null;
-		if (bundle != null){
-			url = FileLocator.find(bundle, new Path(path), null);
-			if(url != null) {
-				desc = ImageDescriptor.createFromURL(url);
-			}
+		Bundle bundle = FrameworkUtil.getBundle(DebugPluginImages.class);
+		if (bundle == null) {
+			imageRegistry.put(key, ImageDescriptor.getMissingImageDescriptor());
+		} else {
+			imageRegistry.put(key,
+					ImageDescriptor.createFromURLSupplier(true, () -> FileLocator.find(bundle, new Path(path), null)));
 		}
-		imageRegistry.put(key, desc);
 	}
 
 	/**
