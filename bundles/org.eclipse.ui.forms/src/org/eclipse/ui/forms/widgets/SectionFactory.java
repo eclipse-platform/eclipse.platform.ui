@@ -17,6 +17,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.eclipse.jface.widgets.AbstractCompositeFactory;
+import org.eclipse.jface.widgets.AbstractWidgetFactory;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.forms.events.ExpansionEvent;
@@ -74,7 +75,7 @@ public final class SectionFactory extends AbstractCompositeFactory<SectionFactor
 	 * Creates a new SectionFactory with the given style. Refer to
 	 * {@link Section#Section(Composite, int)} for possible styles.
 	 *
-	 * @param style
+	 * @param style the style to use
 	 * @return a new SectionFactory instance
 	 */
 	public static SectionFactory newSection(int style) {
@@ -96,7 +97,7 @@ public final class SectionFactory extends AbstractCompositeFactory<SectionFactor
 
 	/**
 	 * Sets the description text. Has no effect if DESCRIPTION style was not used in
-	 * {@link #create(Composite)}
+	 * {@link AbstractWidgetFactory#create}
 	 *
 	 * @param description new description text; not <code>null</code>
 	 *
