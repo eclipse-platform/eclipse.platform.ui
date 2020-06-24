@@ -6,7 +6,7 @@
          <meta.schema plugin="org.eclipse.ui.cheatsheets" id="cheatSheetContent" name="Cheat Sheet Content"/>
       </appinfo>
       <documentation>
-         This extension point is used to register cheat sheet content contributions. Cheat sheets appear as choices from the &quot;Help&quot; menu or from within the cheat sheet view, and are typically used to aid a user through a series of comlex tasks to accomplish an overall goal.
+         This extension point is used to register cheat sheet content contributions. Cheat sheets appear as choices from the &quot;Help&quot; menu or from within the cheat sheet view, and are typically used to aid a user through a series of complex tasks to accomplish an overall goal.
 &lt;p&gt;
 The cheat sheets are organized into categories which usually reflect a particular problem domain.  For instance, a Java oriented plug-in may define a category called &quot;Java&quot; which is appropriate for cheat sheets that would aid a user with any of the Java tools.  The categories defined by one plug-in can be referenced by other plug-ins using the category attribute of a cheatsheet element. Uncategorized cheat sheets, as well as cheat sheets with invalid category paths, will end up in an &quot;Other&quot; category. 
 &lt;p&gt;
