@@ -53,7 +53,7 @@ public class IDEPreferenceInitializer extends AbstractPreferenceInitializer {
 		node.putBoolean(IDEInternalPreferences.REFRESH_WORKSPACE_ON_STARTUP,
 				false);
 		node.putBoolean(
-				IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW, true);
+				IDEInternalPreferences.EXIT_PROMPT_ON_CLOSE_LAST_WINDOW, false);
 		node.put(IDEInternalPreferences.PROJECT_SWITCH_PERSP_MODE,
 				IDEInternalPreferences.PSPM_PROMPT);
 		node.put(IDEInternalPreferences.OPEN_REQUIRED_PROJECTS,
