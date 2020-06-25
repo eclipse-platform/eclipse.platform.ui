@@ -214,7 +214,7 @@ public final class ContentTypeCatalog {
 		}
 	}
 
-	private int collectMatchingByContents(int valid, IContentType[] subset, List<ContentType> destination, ILazySource contents, Map<String, Object> properties) throws IOException {
+	private int collectMatchingByContents(int valid, IContentType[] subset, List<ContentType> destination, ILazySource contents, Map<String, Object> properties) {
 		for (IContentType element : subset) {
 			ContentType current = (ContentType) element;
 			IContentDescriber describer = current.getDescriber();
@@ -236,7 +236,7 @@ public final class ContentTypeCatalog {
 	}
 
 	@SuppressWarnings("deprecation")
-	int describe(ContentType type, ILazySource contents, ContentDescription description, Map<String, Object> properties) throws IOException {
+	int describe(ContentType type, ILazySource contents, ContentDescription description, Map<String, Object> properties) {
 		IContentDescriber describer = type.getDescriber();
 		try {
 			if (contents.isText()) {
@@ -258,18 +258,16 @@ public final class ContentTypeCatalog {
 			// describer seems to be buggy. just disable it (logging the reason)
 			type.invalidateDescriber(re);
 		} catch (Error e) {
-			// describer got some serious problem. disable it (logging the reason) and throw the error again
+			// describer got some serious problem. disable it (logging the reason)
 			type.invalidateDescriber(e);
-			throw e;
 		} catch (LowLevelIOException llioe) {
-			// throw the actual exception
-			throw llioe.getActualException();
+			// describer got some IO problem. Log the reason
+			String message = NLS.bind(ContentMessages.content_errorReadingContents, type.getId());
+			ContentType.log(message, llioe.getActualException());
 		} catch (IOException ioe) {
 			// bugs 67841/ 62443  - non-low level IOException should be "ignored"
-			if (ContentTypeManager.DEBUGGING) {
-				String message = NLS.bind(ContentMessages.content_errorReadingContents, type.getId());
-				ContentType.log(message, ioe);
-			}
+			String message = NLS.bind(ContentMessages.content_errorReadingContents, type.getId());
+			ContentType.log(message, ioe);
 			// we don't know what the describer would say if the exception didn't occur
 			return IContentDescriber.INDETERMINATE;
 		} finally {
@@ -330,7 +328,7 @@ public final class ContentTypeCatalog {
 		return true;
 	}
 
-	IContentType[] findContentTypesFor(ContentTypeMatcher matcher, InputStream contents, String fileName) throws IOException {
+	IContentType[] findContentTypesFor(ContentTypeMatcher matcher, InputStream contents, String fileName) {
 		final ILazySource buffer = ContentTypeManager.readBuffer(contents);
 		IContentType[] selected = internalFindContentTypesFor(matcher, buffer, fileName, true);
 		// give the policy a chance to change the results
@@ -434,7 +432,7 @@ public final class ContentTypeCatalog {
 		return true;
 	}
 
-	private IContentType[] internalFindContentTypesFor(ILazySource buffer, IContentType[][] subset, Comparator<IContentType> validPolicy, Comparator<IContentType> indeterminatePolicy) throws IOException {
+	private IContentType[] internalFindContentTypesFor(ILazySource buffer, IContentType[][] subset,Comparator<IContentType> validPolicy, Comparator<IContentType> indeterminatePolicy) {
 		Map<String, Object> properties = new HashMap<>();
 		final List<ContentType> appropriate = new ArrayList<>(5);
 		final int validFullName = collectMatchingByContents(0, subset[0], appropriate, buffer, properties);
@@ -464,7 +462,7 @@ public final class ContentTypeCatalog {
 		return result;
 	}
 
-	private IContentType[] internalFindContentTypesFor(ContentTypeMatcher matcher, ILazySource buffer, String fileName, boolean forceValidation) throws IOException {
+	private IContentType[] internalFindContentTypesFor(ContentTypeMatcher matcher, ILazySource buffer, String fileName, boolean forceValidation) {
 		final IContentType[][] subset;
 		final Comparator<IContentType> validPolicy;
 		Comparator<IContentType> indeterminatePolicy;
