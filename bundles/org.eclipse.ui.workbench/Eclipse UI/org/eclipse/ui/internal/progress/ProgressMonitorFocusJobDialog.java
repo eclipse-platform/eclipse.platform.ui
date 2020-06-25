@@ -117,20 +117,17 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 				if (getShell() == null) {
 					return;
 				}
-				WorkbenchJob closeJob = new WorkbenchJob(
-						ProgressMessages.ProgressMonitorFocusJobDialog_CLoseDialogJob) {
+
+				PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
 					@Override
-					public IStatus runInUIThread(IProgressMonitor monitor) {
+					public void run() {
 						Shell currentShell = getShell();
 						if (currentShell == null || currentShell.isDisposed()) {
-							return Status.CANCEL_STATUS;
+							return;
 						}
 						finishedRun();
-						return Status.OK_STATUS;
 					}
-				};
-				closeJob.setSystem(true);
-				closeJob.schedule();
+				});
 			}
 		};
 	}
@@ -201,8 +198,6 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 
 				// if the job is done at this point, we don't need the dialog
 				if (job.getState() == Job.NONE) {
-					finishedRun();
-					cleanUpFinishedJob();
 					return Status.CANCEL_STATUS;
 				}
 
@@ -226,6 +221,17 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 				return Status.OK_STATUS;
 			}
 		};
+		openJob.addJobChangeListener(new JobChangeAdapter() {
+			@Override
+			public void done(IJobChangeEvent event) {
+				openJob.removeJobChangeListener(this);
+				IStatus result = openJob.getResult();
+				if (result != null && result == Status.CANCEL_STATUS) {
+					finishedRun();
+					cleanUpFinishedJob();
+				}
+			}
+		});
 		openJob.setSystem(true);
 		openJob.schedule();
 
