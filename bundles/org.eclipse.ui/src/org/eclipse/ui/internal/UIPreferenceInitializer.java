@@ -46,8 +46,9 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 
 
 		IScopeContext context = DefaultScope.INSTANCE;
-		IEclipsePreferences node = context.getNode(UIPlugin.getDefault()
-				.getBundle().getSymbolicName());
+		IEclipsePreferences node = context.getNode(UIPlugin.getDefault().getBundle().getSymbolicName());
+		// initialize preference node, see Bug 564662
+		context.getNode(WorkbenchPlugin.getDefault().getBundle().getSymbolicName());
 		node.put(IWorkbenchPreferenceConstants.OPEN_NEW_PERSPECTIVE,
 				IWorkbenchPreferenceConstants.OPEN_PERSPECTIVE_REPLACE);
 
@@ -189,6 +190,5 @@ public class UIPreferenceInitializer extends AbstractPreferenceInitializer {
 
 				});
 	}
-
 
 }
