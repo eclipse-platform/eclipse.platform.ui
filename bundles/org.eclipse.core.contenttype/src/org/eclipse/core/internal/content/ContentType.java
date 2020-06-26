@@ -192,7 +192,7 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 			throw llioe.getActualException();
 		} catch (IOException ioe) {
 			// bugs 67841/ 62443  - non-low level IOException should be "ignored"
-			if (ContentTypeManager.DEBUGGING) {
+			if (ContentTypeManager.DebuggingHolder.DEBUGGING) {
 				String message = NLS.bind(ContentMessages.content_errorReadingContents, id);
 				ContentType.log(message, ioe);
 			}
@@ -630,7 +630,7 @@ public final class ContentType implements IContentType, IContentTypeInfo {
 
 	void setValidation(byte validation) {
 		this.validation = validation;
-		if (ContentTypeManager.DEBUGGING)
+		if (ContentTypeManager.DebuggingHolder.DEBUGGING)
 			ContentMessages.message("Validating " + this + ": " + getValidationString(validation)); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 

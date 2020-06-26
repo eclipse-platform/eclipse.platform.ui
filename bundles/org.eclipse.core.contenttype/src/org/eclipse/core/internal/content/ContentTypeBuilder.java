@@ -19,7 +19,8 @@ import org.eclipse.core.internal.runtime.RuntimeLog;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.content.IContentDescription;
 import org.eclipse.core.runtime.content.IContentType;
-import org.eclipse.core.runtime.preferences.*;
+import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IScopeContext;
 import org.eclipse.osgi.util.NLS;
 import org.osgi.service.prefs.BackingStoreException;
 
@@ -165,7 +166,7 @@ public class ContentTypeBuilder {
 				String propertyKey = propertyCE.getAttribute("name"); //$NON-NLS-1$
 				QualifiedName qualifiedKey = parseQualifiedName(namespace, propertyKey);
 				if (qualifiedKey == null) {
-					if (ContentTypeManager.DEBUGGING) {
+					if (ContentTypeManager.DebuggingHolder.DEBUGGING) {
 						String message = NLS.bind(ContentMessages.content_invalidProperty, propertyKey, getUniqueId(namespace, simpleId));
 						ContentType.log(message, null);
 					}

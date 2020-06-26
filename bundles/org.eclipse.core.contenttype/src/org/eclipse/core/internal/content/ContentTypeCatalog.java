@@ -660,7 +660,7 @@ public final class ContentTypeCatalog {
 			if (ensureValid(type))
 				associate(type);
 		}
-		if (ContentTypeManager.DEBUGGING)
+		if (ContentTypeManager.DebuggingHolder.DEBUGGING)
 			for (IContentType iContentType : contentTypes.values()) {
 				ContentType type = (ContentType) iContentType;
 				if (!type.isValid())
