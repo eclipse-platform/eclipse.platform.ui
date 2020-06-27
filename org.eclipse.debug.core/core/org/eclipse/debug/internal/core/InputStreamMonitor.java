@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2019 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,6 +10,7 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
+ *     Paul Pazderski  - Bug 558463: add handling of raw stream content instead of strings
  *******************************************************************************/
 package org.eclipse.debug.internal.core;
 
@@ -22,11 +23,10 @@ import java.util.Vector;
 import org.eclipse.debug.core.DebugPlugin;
 
 /**
- * Writes to the input stream of a system process,
- * queueing output if the stream is blocked.
+ * Writes to the input stream of a system process, queuing output if the stream
+ * is blocked.
  *
- * The input stream monitor writes to system in via
- * an output stream.
+ * The input stream monitor writes to system in via an output stream.
  */
 public class InputStreamMonitor {
 
@@ -34,14 +34,17 @@ public class InputStreamMonitor {
 	 * The stream which is being written to (connected to system in).
 	 */
 	private OutputStream fStream;
+
 	/**
 	 * The queue of output.
 	 */
-	private Vector<String> fQueue;
+	private Vector<byte[]> fQueue;
+
 	/**
 	 * The thread which writes to the stream.
 	 */
 	private Thread fThread;
+
 	/**
 	 * A lock for ensuring that writes to the queue are contiguous
 	 */
@@ -101,8 +104,25 @@ public class InputStreamMonitor {
 	 * @param text text to append
 	 */
 	public void write(String text) {
-		synchronized(fLock) {
-			fQueue.add(text);
+		synchronized (fLock) {
+			fQueue.add(fCharset == null ? text.getBytes() : text.getBytes(fCharset));
+			fLock.notifyAll();
+		}
+	}
+
+	/**
+	 * Appends the given binary data to the stream, or queues the text to be
+	 * written at a later time if the stream is blocked.
+	 *
+	 * @param data data to append; not <code>null</code>
+	 * @param offset start offset in data
+	 * @param length number of bytes in data
+	 */
+	public void write(byte[] data, int offset, int length) {
+		synchronized (fLock) {
+			byte[] copy = new byte[length];
+			System.arraycopy(data, offset, copy, 0, length);
+			fQueue.add(copy);
 			fLock.notifyAll();
 		}
 	}
@@ -151,14 +171,10 @@ public class InputStreamMonitor {
 	 */
 	protected void writeNext() {
 		while (!fQueue.isEmpty() && !fClosed) {
-			String text = fQueue.firstElement();
+			byte[] data = fQueue.firstElement();
 			fQueue.removeElementAt(0);
 			try {
-				if (fCharset != null) {
-					fStream.write(text.getBytes(fCharset));
-				} else {
-					fStream.write(text.getBytes());
-				}
+				fStream.write(data);
 				fStream.flush();
 			} catch (IOException e) {
 				DebugPlugin.log(e);
@@ -180,7 +196,8 @@ public class InputStreamMonitor {
 	 * Closes the output stream attached to the standard input stream of this
 	 * monitor's process.
 	 *
-	 * @exception IOException if an exception occurs closing the input stream
+	 * @exception IOException if an exception occurs closing the input stream or
+	 *                stream is already closed
 	 */
 	public void closeInputStream() throws IOException {
 		if (!fClosed) {

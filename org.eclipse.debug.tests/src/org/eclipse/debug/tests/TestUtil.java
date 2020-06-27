@@ -24,6 +24,8 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Function;
+import java.util.function.Supplier;
+
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
@@ -108,8 +110,8 @@ public class TestUtil {
 	 * background thread, just waits.
 	 *
 	 * @param <T> type of the context
-	 * @param context test context
 	 * @param condition function which will be evaluated while waiting
+	 * @param context test context
 	 * @param timeout max wait time in milliseconds to wait on given condition
 	 * @param errorMessage message which will be used to construct the failure
 	 *            exception in case the condition will still return {@code true}
@@ -131,6 +133,39 @@ public class TestUtil {
 		if (stillTrue) {
 			fail(errorMessage.apply(context));
 		}
+	}
+
+	/**
+	 * A simplified variant of
+	 * {@link #waitWhile(Function, Object, long, Function)}.
+	 * <p>
+	 * Waits while given condition is {@code true} for a given amount of
+	 * milliseconds.
+	 * <p>
+	 * Will process UI events while waiting in UI thread, if called from
+	 * background thread, just waits.
+	 *
+	 * @param condition function which will be evaluated while waiting
+	 * @param timeout max wait time in milliseconds to wait on given condition
+	 * @return value of condition when method returned
+	 */
+	public static boolean waitWhile(Supplier<Boolean> condition, long timeout) throws Exception {
+		if (condition == null) {
+			condition = () -> true;
+		}
+		long start = System.currentTimeMillis();
+		Display display = Display.getCurrent();
+		while (System.currentTimeMillis() - start < timeout && condition.get()) {
+			Thread.yield();
+			if (display != null && !display.isDisposed()) {
+				if (!display.readAndDispatch()) {
+					Thread.sleep(1);
+				}
+			} else {
+				Thread.sleep(5);
+			}
+		}
+		return condition.get();
 	}
 
 	/**

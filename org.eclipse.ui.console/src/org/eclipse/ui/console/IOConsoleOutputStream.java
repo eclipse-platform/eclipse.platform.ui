@@ -18,10 +18,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
 
+import org.eclipse.debug.internal.core.StreamDecoder;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.ui.WorkbenchEncoding;
 import org.eclipse.ui.internal.console.IOConsolePartitioner;
-import org.eclipse.ui.internal.console.StreamDecoder;
 
 /**
  * OutputStream used to write to an IOConsole.

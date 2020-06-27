@@ -14,13 +14,15 @@
 package org.eclipse.debug.tests.console;
 
 import static org.junit.Assert.assertArrayEquals;
-
-import java.io.ByteArrayInputStream;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.PipedInputStream;
+import java.io.PipedOutputStream;
+import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.text.MessageFormat;
@@ -51,6 +53,7 @@ import org.eclipse.debug.tests.launching.LaunchConfigurationTests;
 import org.eclipse.debug.ui.IDebugUIConstants;
 import org.eclipse.debug.ui.console.ConsoleColorProvider;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IRegion;
 import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.ui.console.ConsolePlugin;
 import org.eclipse.ui.console.IConsole;
@@ -404,5 +407,122 @@ public class ProcessConsoleTests extends AbstractDebugTest {
 			consoleManager.removeConsoles(new IConsole[] { console });
 			TestUtil.waitForJobs(name.getMethodName(), 0, 1000);
 		}
+	}
+
+	/**
+	 * Simulate the common case of a process which constantly produce output.
+	 * This should cover the situation that a process produce output before
+	 * ProcessConsole is initialized and more output after console is ready.
+	 */
+	@Test
+	public void testOutput() throws Exception {
+		String[] lines = new String[] {
+				"'Native' process started.",
+				"'Eclipse' process started. Stream proxying started.",
+				"Console created.", "Console initialized.",
+				"Stopping mock process.", };
+		String consoleEncoding = StandardCharsets.UTF_8.name();
+		try (PipedOutputStream procOut = new PipedOutputStream(); PrintStream sysout = new PrintStream(procOut, true, consoleEncoding)) {
+			@SuppressWarnings("resource")
+			final MockProcess mockProcess = new MockProcess(new PipedInputStream(procOut), null, MockProcess.RUN_FOREVER);
+			sysout.println(lines[0]);
+			try {
+				Map<String, Object> launchConfigAttributes = new HashMap<>();
+				launchConfigAttributes.put(DebugPlugin.ATTR_CONSOLE_ENCODING, consoleEncoding);
+				final IProcess process = mockProcess.toRuntimeProcess("simpleOutput", launchConfigAttributes);
+				sysout.println(lines[1]);
+				@SuppressWarnings("restriction")
+				final org.eclipse.debug.internal.ui.views.console.ProcessConsole console = new org.eclipse.debug.internal.ui.views.console.ProcessConsole(process, new ConsoleColorProvider(), consoleEncoding);
+				sysout.println(lines[2]);
+				try {
+					console.initialize();
+					sysout.println(lines[3]);
+					sysout.println(lines[4]);
+					mockProcess.destroy();
+					sysout.close();
+					TestUtil.processUIEvents(200);
+
+					for (int i = 0; i < lines.length; i++) {
+						IRegion lineInfo = console.getDocument().getLineInformation(i);
+						String line = console.getDocument().get(lineInfo.getOffset(), lineInfo.getLength());
+						assertEquals("Wrong content in line " + i, lines[i], line);
+					}
+				} finally {
+					console.destroy();
+				}
+			} finally {
+				mockProcess.destroy();
+			}
+		}
+	}
+
+	/**
+	 * Test a process which produces binary output and a launch which redirects
+	 * output to file. The process output must not be changed in any way due to
+	 * the redirection. See bug 558463.
+	 */
+	@Test
+	public void testBinaryOutputToFile() throws Exception {
+		byte[] output = new byte[] { (byte) 0xac };
+		String consoleEncoding = StandardCharsets.UTF_8.name();
+
+		final File outFile = createTmpFile("testoutput.bin");
+		final MockProcess mockProcess = new MockProcess(new ByteArrayInputStream(output), null, MockProcess.RUN_FOREVER);
+		try {
+			Map<String, Object> launchConfigAttributes = new HashMap<>();
+			launchConfigAttributes.put(DebugPlugin.ATTR_CONSOLE_ENCODING, consoleEncoding);
+			launchConfigAttributes.put(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, outFile.getCanonicalPath());
+			launchConfigAttributes.put(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, false);
+			final IProcess process = mockProcess.toRuntimeProcess("redirectBinaryOutput", launchConfigAttributes);
+			@SuppressWarnings("restriction")
+			final org.eclipse.debug.internal.ui.views.console.ProcessConsole console = new org.eclipse.debug.internal.ui.views.console.ProcessConsole(process, new ConsoleColorProvider(), consoleEncoding);
+			try {
+				console.initialize();
+				mockProcess.waitFor(100, TimeUnit.MILLISECONDS);
+				mockProcess.destroy();
+			} finally {
+				console.destroy();
+			}
+		} finally {
+			mockProcess.destroy();
+		}
+
+		byte[] receivedOutput = Files.readAllBytes(outFile.toPath());
+		assertArrayEquals(output, receivedOutput);
+	}
+
+	/**
+	 * Test a process which reads binary input from a file through Eclipse
+	 * console. The input must not be changed in any way due to the redirection.
+	 * See bug 558463.
+	 */
+	@Test
+	public void testBinaryInputFromFile() throws Exception {
+		byte[] input = new byte[] { (byte) 0xac };
+		String consoleEncoding = StandardCharsets.UTF_8.name();
+
+		final File inFile = createTmpFile("testinput.bin");
+		Files.write(inFile.toPath(), input);
+		final MockProcess mockProcess = new MockProcess(input.length, testTimeout);
+		try {
+			Map<String, Object> launchConfigAttributes = new HashMap<>();
+			launchConfigAttributes.put(DebugPlugin.ATTR_CONSOLE_ENCODING, consoleEncoding);
+			launchConfigAttributes.put(IDebugUIConstants.ATTR_CAPTURE_STDIN_FILE, inFile.getCanonicalPath());
+			launchConfigAttributes.put(IDebugUIConstants.ATTR_CAPTURE_IN_CONSOLE, false);
+			final IProcess process = mockProcess.toRuntimeProcess("redirectBinaryInput", launchConfigAttributes);
+			@SuppressWarnings("restriction")
+			final org.eclipse.debug.internal.ui.views.console.ProcessConsole console = new org.eclipse.debug.internal.ui.views.console.ProcessConsole(process, new ConsoleColorProvider(), consoleEncoding);
+			try {
+				console.initialize();
+				mockProcess.waitFor(testTimeout, TimeUnit.MILLISECONDS);
+			} finally {
+				console.destroy();
+			}
+		} finally {
+			mockProcess.destroy();
+		}
+
+		byte[] receivedInput = mockProcess.getReceivedInput();
+		assertArrayEquals(input, receivedInput);
 	}
 }

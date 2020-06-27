@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,15 +17,19 @@ package org.eclipse.debug.internal.core;
 import java.io.IOException;
 import java.nio.charset.Charset;
 
+import org.eclipse.debug.core.model.IBinaryStreamMonitor;
+import org.eclipse.debug.core.model.IBinaryStreamsProxy;
 import org.eclipse.debug.core.model.IStreamMonitor;
 import org.eclipse.debug.core.model.IStreamsProxy;
 import org.eclipse.debug.core.model.IStreamsProxy2;
 
 /**
- * Standard implementation of a streams proxy for IStreamsProxy.
+ * Standard implementation of a streams proxy for {@link IStreamsProxy},
+ * {@link IStreamsProxy2} and {@link IBinaryStreamsProxy}.
+ * <p>
+ * Will use the same monitor instances for binary and string stream handling.
  */
-
-public class StreamsProxy implements IStreamsProxy, IStreamsProxy2 {
+public class StreamsProxy implements IBinaryStreamsProxy {
 	/**
 	 * The monitor for the output stream (connected to standard out of the process)
 	 */
@@ -155,4 +159,22 @@ public class StreamsProxy implements IStreamsProxy, IStreamsProxy2 {
 
 	}
 
+	@Override
+	public IBinaryStreamMonitor getBinaryErrorStreamMonitor() {
+		return fErrorMonitor;
+	}
+
+	@Override
+	public IBinaryStreamMonitor getBinaryOutputStreamMonitor() {
+		return fOutputMonitor;
+	}
+
+	@Override
+	public void write(byte[] data, int offset, int length) throws IOException {
+		if (!isClosed(false)) {
+			fInputMonitor.write(data, offset, length);
+		} else {
+			throw new IOException();
+		}
+	}
 }

@@ -27,6 +27,7 @@ import java.io.IOException;
  * provide an implementation of this interface.
  * </p>
  * @see IProcess
+ * @see IBinaryStreamsProxy
  */
 public interface IStreamsProxy {
 	/**

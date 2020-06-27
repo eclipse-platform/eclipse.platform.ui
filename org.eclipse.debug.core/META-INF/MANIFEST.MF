@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.debug.core; singleton:=true
-Bundle-Version: 3.15.200.qualifier
+Bundle-Version: 3.16.0.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: org.eclipse.debug.core.DebugPlugin
 Bundle-Vendor: %providerName
@@ -12,7 +12,7 @@ Export-Package: org.eclipse.debug.core,
  org.eclipse.debug.core.model,
  org.eclipse.debug.core.sourcelookup,
  org.eclipse.debug.core.sourcelookup.containers,
- org.eclipse.debug.internal.core;x-friends:="org.eclipse.debug.ui,org.eclipse.debug.tests,org.eclipse.debug.examples.mixedmode,org.eclipse.jdt.launching",
+ org.eclipse.debug.internal.core;x-friends:="org.eclipse.debug.ui,org.eclipse.debug.tests,org.eclipse.debug.examples.mixedmode,org.eclipse.jdt.launching,org.eclipse.ui.console",
  org.eclipse.debug.internal.core.commands;x-friends:="org.eclipse.debug.ui",
  org.eclipse.debug.internal.core.groups;x-friends:="org.eclipse.debug.ui",
  org.eclipse.debug.internal.core.groups.observer;x-internal:=true,

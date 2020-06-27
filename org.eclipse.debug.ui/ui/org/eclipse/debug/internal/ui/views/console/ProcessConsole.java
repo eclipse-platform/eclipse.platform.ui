@@ -13,6 +13,7 @@
  *     Paul Pazderski  - Bug 545769: fixed rare UTF-8 character corruption bug
  *     Paul Pazderski  - Bug 552015: console finished signaled to late if input is connected to file
  *     Paul Pazderski  - Bug 251642: add termination time in console label
+ *     Paul Pazderski  - Bug 558463: add handling of raw stream content instead of strings
  *******************************************************************************/
 package org.eclipse.debug.internal.ui.views.console;
 
@@ -53,10 +54,13 @@ import org.eclipse.core.variables.IStringVariableManager;
 import org.eclipse.core.variables.VariablesPlugin;
 import org.eclipse.debug.core.DebugEvent;
 import org.eclipse.debug.core.DebugPlugin;
+import org.eclipse.debug.core.IBinaryStreamListener;
 import org.eclipse.debug.core.IDebugEventSetListener;
 import org.eclipse.debug.core.ILaunchConfiguration;
 import org.eclipse.debug.core.ILaunchConfigurationType;
 import org.eclipse.debug.core.IStreamListener;
+import org.eclipse.debug.core.model.IBinaryStreamMonitor;
+import org.eclipse.debug.core.model.IBinaryStreamsProxy;
 import org.eclipse.debug.core.model.IFlushableStreamMonitor;
 import org.eclipse.debug.core.model.IProcess;
 import org.eclipse.debug.core.model.IStreamMonitor;
@@ -711,11 +715,25 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 	 * Received output will be redirected to given {@link IOConsoleOutputStream} to
 	 * get it shown in console and to {@link #fFileOutputStream} if set.
 	 */
-	private class StreamListener implements IStreamListener {
+	private class StreamListener implements IStreamListener, IBinaryStreamListener {
 
 		private IOConsoleOutputStream fStream;
 
+		/**
+		 * The monitors from which this listener class is notified about new content.
+		 * Initial and for a long time IO handling in context of Eclipse console was
+		 * based on strings and later extended with a variant passing the raw binary
+		 * data.
+		 * <p>
+		 * As a result of this history it is expectable to have a stream monitor passing
+		 * the content decoded as string but optional to have access to the
+		 * raw/unchanged data.
+		 * <p>
+		 * Therefore the following two monitor instances either point to the same class
+		 * implementing both interfaces or the binary variant is <code>null</code>.
+		 */
 		private IStreamMonitor fStreamMonitor;
+		private IBinaryStreamMonitor fBinaryStreamMonitor;
 
 		private String fStreamId;
 
@@ -723,12 +741,16 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 		private boolean fStreamClosed = false;
 
 		public StreamListener(String streamIdentifier, IStreamMonitor monitor, IOConsoleOutputStream stream) {
-			this.fStreamId = streamIdentifier;
-			this.fStreamMonitor = monitor;
-			this.fStream = stream;
+			fStreamId = streamIdentifier;
+			fStreamMonitor = monitor;
+			fStream = stream;
 			fStreamMonitor.addListener(this);
-			//fix to bug 121454. Ensure that output to fast processes is processed.
-			flushAndDisableBuffer(monitor);
+			if (fStreamMonitor instanceof IBinaryStreamMonitor && fFileOutputStream != null) {
+				fBinaryStreamMonitor = (IBinaryStreamMonitor) monitor;
+				fBinaryStreamMonitor.addBinaryListener(this);
+			}
+			// fix to bug 121454. Ensure that output to fast processes is processed.
+			flushAndDisableBuffer();
 		}
 
 		/**
@@ -737,17 +759,37 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 		 *
 		 * @param monitor the monitor which might have buffered content
 		 */
-		private void flushAndDisableBuffer(IStreamMonitor monitor) {
+		private void flushAndDisableBuffer() {
+			byte[] data = null;
 			String contents;
-			synchronized (monitor) {
-				contents = monitor.getContents();
-				if (monitor instanceof IFlushableStreamMonitor) {
-					IFlushableStreamMonitor m = (IFlushableStreamMonitor) monitor;
+			synchronized (fStreamMonitor) {
+				if (fBinaryStreamMonitor != null) {
+					data = fBinaryStreamMonitor.getData();
+				}
+				contents = fStreamMonitor.getContents();
+				if (fStreamMonitor instanceof IFlushableStreamMonitor) {
+					IFlushableStreamMonitor m = (IFlushableStreamMonitor) fStreamMonitor;
 					m.flushContents();
 					m.setBuffered(false);
 				}
 			}
-			streamAppended(contents, monitor);
+			if (data != null) {
+				streamAppended(data, fBinaryStreamMonitor);
+			}
+			streamAppended(contents, fStreamMonitor);
+		}
+
+		@Override
+		public void streamAppended(byte[] data, IBinaryStreamMonitor monitor) {
+			if (fFileOutputStream != null) {
+				synchronized (fFileOutputStream) {
+					try {
+						fFileOutputStream.write(data);
+					} catch (IOException e) {
+						DebugUIPlugin.log(e);
+					}
+				}
+			}
 		}
 
 		@Override
@@ -755,22 +797,20 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 			if (text == null || text.length() == 0) {
 				return;
 			}
-			try {
-				if (fStream != null) {
+			if (fStream != null) {
+				try {
 					fStream.write(text);
+				} catch (IOException e) {
+					DebugUIPlugin.log(e);
 				}
-				if (fFileOutputStream != null) {
-					Charset charset = getCharset();
-					synchronized (fFileOutputStream) {
-						if (charset == null) {
-							fFileOutputStream.write(text.getBytes());
-						} else {
-							fFileOutputStream.write(text.getBytes(charset));
-						}
-					}
-				}
-			} catch (IOException e) {
-				DebugUIPlugin.log(e);
+			}
+			// If the monitor does not provide the raw data API and we need to redirect to
+			// a file the second best (and in the past only) option is to write the encoded
+			// text to file.
+			if (fBinaryStreamMonitor == null && fFileOutputStream != null) {
+				Charset charset = getCharset();
+				byte[] data = charset == null ? text.getBytes() : text.getBytes(charset);
+				streamAppended(data, null);
 			}
 		}
 
@@ -780,6 +820,9 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 			}
 			synchronized (fStreamMonitor) {
 				fStreamMonitor.removeListener(this);
+				if (fBinaryStreamMonitor != null) {
+					fBinaryStreamMonitor.removeBinaryListener(this);
+				}
 				fStreamClosed = true;
 
 				try {
@@ -842,31 +885,56 @@ public class ProcessConsole extends IOConsole implements IConsole, IDebugEventSe
 			if (fInput == null || fStreamsClosed) {
 				return monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;
 			}
-			Charset encoding = getCharset();
-			readingStream = fInput;
-			InputStreamReader streamReader = (encoding == null ? new InputStreamReader(readingStream)
-					: new InputStreamReader(readingStream, encoding));
-			try {
-				char[] cbuf = new char[1024];
-				int charRead = 0;
-				while (charRead >= 0 && !monitor.isCanceled()) {
-					if (fInput == null || fStreamsClosed) {
-						break;
+			if (streamsProxy instanceof IBinaryStreamsProxy) {
+				// Pass data without processing. The preferred variant. There is no need for
+				// this job to know about encodings.
+				try {
+					byte[] buffer = new byte[1024];
+					int bytesRead = 0;
+					while (bytesRead >= 0 && !monitor.isCanceled()) {
+						if (fInput == null || fStreamsClosed) {
+							break;
+						}
+						if (fInput != readingStream) {
+							readingStream = fInput;
+						}
+						bytesRead = readingStream.read(buffer);
+						if (bytesRead > 0) {
+							((IBinaryStreamsProxy) streamsProxy).write(buffer, 0, bytesRead);
+						}
 					}
-					if (fInput != readingStream) {
-						readingStream = fInput;
-						streamReader = (encoding == null ? new InputStreamReader(readingStream)
-								: new InputStreamReader(readingStream, encoding));
-					}
-
-					charRead = streamReader.read(cbuf);
-					if (charRead > 0) {
-						String s = new String(cbuf, 0, charRead);
-						streamsProxy.write(s);
-					}
+				} catch (IOException e) {
+					DebugUIPlugin.log(e);
 				}
-			} catch (IOException e) {
-				DebugUIPlugin.log(e);
+			} else {
+				// Decode data to strings. The legacy variant used if the proxy does not
+				// implement the binary API.
+				Charset encoding = getCharset();
+				readingStream = fInput;
+				InputStreamReader streamReader = (encoding == null ? new InputStreamReader(readingStream)
+						: new InputStreamReader(readingStream, encoding));
+				try {
+					char[] cbuf = new char[1024];
+					int charRead = 0;
+					while (charRead >= 0 && !monitor.isCanceled()) {
+						if (fInput == null || fStreamsClosed) {
+							break;
+						}
+						if (fInput != readingStream) {
+							readingStream = fInput;
+							streamReader = (encoding == null ? new InputStreamReader(readingStream)
+									: new InputStreamReader(readingStream, encoding));
+						}
+
+						charRead = streamReader.read(cbuf);
+						if (charRead > 0) {
+							String s = new String(cbuf, 0, charRead);
+							streamsProxy.write(s);
+						}
+					}
+				} catch (IOException e) {
+					DebugUIPlugin.log(e);
+				}
 			}
 			readingStream = null;
 			return monitor.isCanceled() ? Status.CANCEL_STATUS : Status.OK_STATUS;

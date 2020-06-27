@@ -22,6 +22,8 @@ package org.eclipse.debug.core.model;
  * Clients may implement this interface.
  * </p>
  * @since 2.1
+ * @see IStreamMonitor
+ * @see IBinaryStreamMonitor
  */
 public interface IFlushableStreamMonitor extends IStreamMonitor {
 

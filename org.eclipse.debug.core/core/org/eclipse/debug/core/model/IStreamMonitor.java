@@ -27,6 +27,7 @@ import org.eclipse.debug.core.IStreamListener;
  * </p>
  * @see org.eclipse.debug.core.model.IStreamsProxy
  * @see org.eclipse.debug.core.model.IFlushableStreamMonitor
+ * @see org.eclipse.debug.core.model.IBinaryStreamMonitor
  */
 public interface IStreamMonitor {
 	/**
