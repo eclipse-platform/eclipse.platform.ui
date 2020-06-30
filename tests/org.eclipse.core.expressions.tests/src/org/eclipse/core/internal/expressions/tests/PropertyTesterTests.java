@@ -21,8 +21,8 @@ import org.osgi.framework.Bundle;
 
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
+import org.eclipse.core.expressions.TestExpression;
 import org.eclipse.core.internal.expressions.Property;
-import org.eclipse.core.internal.expressions.TestExpression;
 import org.eclipse.core.internal.expressions.TypeExtensionManager;
 
 import org.eclipse.core.runtime.CoreException;

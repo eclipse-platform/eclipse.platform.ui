@@ -40,17 +40,18 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
+import org.eclipse.core.expressions.CountExpression;
+import org.eclipse.core.expressions.EqualsExpression;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.IEvaluationContext;
 import org.eclipse.core.expressions.IVariableResolver;
+import org.eclipse.core.expressions.TestExpression;
 import org.eclipse.core.internal.expressions.AdaptExpression;
 import org.eclipse.core.internal.expressions.AndExpression;
-import org.eclipse.core.internal.expressions.CountExpression;
 import org.eclipse.core.internal.expressions.EnablementExpression;
-import org.eclipse.core.internal.expressions.EqualsExpression;
 import org.eclipse.core.internal.expressions.ExpressionStatus;
 import org.eclipse.core.internal.expressions.Expressions;
 import org.eclipse.core.internal.expressions.InstanceofExpression;
@@ -59,7 +60,6 @@ import org.eclipse.core.internal.expressions.NotExpression;
 import org.eclipse.core.internal.expressions.OrExpression;
 import org.eclipse.core.internal.expressions.ResolveExpression;
 import org.eclipse.core.internal.expressions.SystemTestExpression;
-import org.eclipse.core.internal.expressions.TestExpression;
 import org.eclipse.core.internal.expressions.WithExpression;
 
 import org.eclipse.core.runtime.CoreException;

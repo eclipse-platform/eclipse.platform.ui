@@ -18,9 +18,9 @@ import java.util.List;
 
 import org.junit.Assert;
 
+import org.eclipse.core.expressions.CountExpression;
 import org.eclipse.core.expressions.EvaluationContext;
 import org.eclipse.core.expressions.EvaluationResult;
-import org.eclipse.core.internal.expressions.CountExpression;
 
 import org.eclipse.core.runtime.CoreException;
 
