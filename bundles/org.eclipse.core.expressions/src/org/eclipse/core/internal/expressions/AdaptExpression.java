@@ -18,6 +18,7 @@ import java.util.Arrays;
 
 import org.w3c.dom.Element;
 
+import org.eclipse.core.expressions.CompositeExpression;
 import org.eclipse.core.expressions.EvaluationResult;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionInfo;

@@ -17,18 +17,18 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.core.expressions.AndExpression;
 import org.eclipse.core.expressions.CountExpression;
 import org.eclipse.core.expressions.EqualsExpression;
 import org.eclipse.core.expressions.ExpressionInfo;
 import org.eclipse.core.expressions.TestExpression;
+import org.eclipse.core.expressions.WithExpression;
 import org.eclipse.core.internal.expressions.AdaptExpression;
-import org.eclipse.core.internal.expressions.AndExpression;
 import org.eclipse.core.internal.expressions.InstanceofExpression;
 import org.eclipse.core.internal.expressions.IterateExpression;
 import org.eclipse.core.internal.expressions.NotExpression;
 import org.eclipse.core.internal.expressions.ResolveExpression;
 import org.eclipse.core.internal.expressions.SystemTestExpression;
-import org.eclipse.core.internal.expressions.WithExpression;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

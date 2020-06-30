@@ -16,14 +16,17 @@ package org.eclipse.core.internal.expressions;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
+import org.eclipse.core.expressions.AndExpression;
 import org.eclipse.core.expressions.CountExpression;
 import org.eclipse.core.expressions.ElementHandler;
 import org.eclipse.core.expressions.EqualsExpression;
 import org.eclipse.core.expressions.Expression;
 import org.eclipse.core.expressions.ExpressionConverter;
 import org.eclipse.core.expressions.ExpressionTagNames;
+import org.eclipse.core.expressions.OrExpression;
 import org.eclipse.core.expressions.ReferenceExpression;
 import org.eclipse.core.expressions.TestExpression;
+import org.eclipse.core.expressions.WithExpression;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;

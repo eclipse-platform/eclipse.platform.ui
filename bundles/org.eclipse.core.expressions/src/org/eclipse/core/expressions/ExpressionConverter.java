@@ -16,7 +16,6 @@ package org.eclipse.core.expressions;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
-import org.eclipse.core.internal.expressions.CompositeExpression;
 import org.eclipse.core.internal.expressions.ExpressionMessages;
 import org.eclipse.core.internal.expressions.Messages;
 
