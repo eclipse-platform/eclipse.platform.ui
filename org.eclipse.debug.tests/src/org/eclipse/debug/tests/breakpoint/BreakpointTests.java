@@ -127,7 +127,7 @@ public class BreakpointTests extends AbstractDebugTest {
 			}, this, testTimeout, c -> "Breakpoint not restored in view");
 		} finally {
 			if (!viewVisible) {
-				view.dispose();
+				DebugUIPlugin.getActiveWorkbenchWindow().getActivePage().hideView(view);
 			}
 		}
 	}

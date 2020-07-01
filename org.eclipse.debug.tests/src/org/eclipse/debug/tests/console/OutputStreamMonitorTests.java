@@ -73,7 +73,7 @@ public class OutputStreamMonitorTests extends AbstractDebugTest {
 	@Before
 	@SuppressWarnings("resource")
 	public void setUp() throws IOException {
-		monitor = new TestOutputStreamMonitor(new PipedInputStream(sysout), null);
+		monitor = new TestOutputStreamMonitor(new PipedInputStream(sysout), StandardCharsets.UTF_8);
 	}
 
 	/**
@@ -161,18 +161,28 @@ public class OutputStreamMonitorTests extends AbstractDebugTest {
 	 * Test that passing <code>null</code> as charset does not raise exceptions.
 	 */
 	@Test
+	@SuppressWarnings("resource")
 	public void testNullCharset() throws Exception {
 		String input = "o\u00F6O\u00EFiI\u00D6\u00D8\u00F8";
 
-		monitor.addListener(fStreamListener);
-		monitor.startMonitoring();
-		try (PrintStream out = new PrintStream(sysout)) {
-			out.print(input);
-		}
-		sysout.flush();
+		sysout.close();
+		sysout = new PipedOutputStream();
+		monitor.close();
+		monitor = new TestOutputStreamMonitor(new PipedInputStream(sysout), null);
+		try {
+			monitor.addListener(fStreamListener);
+			monitor.startMonitoring();
+			try (PrintStream out = new PrintStream(sysout)) {
+				out.print(input);
+			}
+			sysout.flush();
 
-		TestUtil.waitWhile(() -> notifiedChars.length() < input.length(), 500);
-		assertEquals("Monitor read wrong content.", input, notifiedChars.toString());
+			TestUtil.waitWhile(() -> notifiedChars.length() < input.length(), 500);
+			assertEquals("Monitor read wrong content.", input, notifiedChars.toString());
+		} finally {
+			sysout.close();
+			monitor.close();
+		}
 	}
 
 	/**

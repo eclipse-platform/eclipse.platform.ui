@@ -22,6 +22,7 @@ import java.io.PipedInputStream;
 import java.io.PipedOutputStream;
 import java.nio.charset.Charset;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.debug.internal.core.DebugCoreMessages;
@@ -95,8 +96,12 @@ public class InputStreamMonitorTests extends AbstractDebugTest {
 	@Test
 	@SuppressWarnings("resource")
 	public void testClose() throws Exception {
-		Set<Thread> allThreads = Thread.getAllStackTraces().keySet();
-		long alreadyLeakedThreads = allThreads.stream().filter(t -> DebugCoreMessages.InputStreamMonitor_label.equals(t.getName())).count();
+		Supplier<Long> getInputStreamMonitorThreads = () -> {
+			Set<Thread> allThreads = Thread.getAllStackTraces().keySet();
+			long numMonitorThreads = allThreads.stream().filter(t -> DebugCoreMessages.InputStreamMonitor_label.equals(t.getName())).count();
+			return numMonitorThreads;
+		};
+		long alreadyLeakedThreads = getInputStreamMonitorThreads.get();
 		if (alreadyLeakedThreads > 0) {
 			Platform.getLog(TestsPlugin.class).warn("Test started with " + alreadyLeakedThreads + " leaked monitor threads.");
 		}
@@ -130,9 +135,8 @@ public class InputStreamMonitorTests extends AbstractDebugTest {
 			assertEquals("Stream not closed or to often.", 1, testStream.numClosed);
 		}
 
-		allThreads = Thread.getAllStackTraces().keySet();
-		long numMonitorThreads = allThreads.stream().filter(t -> DebugCoreMessages.InputStreamMonitor_label.equals(t.getName())).count();
-		assertEquals("Leaked monitor threads.", 0, numMonitorThreads);
+		TestUtil.waitWhile(() -> getInputStreamMonitorThreads.get() > 0, 500);
+		assertEquals("Leaked monitor threads.", 0, (long) getInputStreamMonitorThreads.get());
 	}
 
 	/**
