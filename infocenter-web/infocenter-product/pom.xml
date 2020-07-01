@@ -15,6 +15,7 @@
 	</parent>
 	<artifactId>infocenter-product</artifactId>
 	<packaging>eclipse-repository</packaging>
+	<version>1.0.0-SNAPSHOT</version>
 	<build>
 		<plugins>
 			<plugin>
