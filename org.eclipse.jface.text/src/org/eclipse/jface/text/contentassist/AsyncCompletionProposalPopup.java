@@ -293,7 +293,6 @@ class AsyncCompletionProposalPopup extends CompletionProposalPopup {
 				displayProposals();
 			}
 		}, true, false, true);
-		fFilteredProposals= new ArrayList<>(fComputedProposals != null ? fComputedProposals : Collections.emptyList());
 		return getErrorMessage();
 	}
 

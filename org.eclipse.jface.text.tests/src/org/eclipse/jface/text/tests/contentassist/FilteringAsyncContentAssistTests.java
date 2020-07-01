@@ -10,10 +10,13 @@
  *******************************************************************************/
 package org.eclipse.jface.text.tests.contentassist;
 
+import static java.util.Collections.singletonList;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.function.Predicate;
@@ -35,12 +38,14 @@ import org.eclipse.jface.text.BadLocationException;
 import org.eclipse.jface.text.Document;
 import org.eclipse.jface.text.DocumentEvent;
 import org.eclipse.jface.text.IDocument;
+import org.eclipse.jface.text.IInformationControlCreator;
 import org.eclipse.jface.text.ITextViewer;
 import org.eclipse.jface.text.contentassist.ContentAssistant;
 import org.eclipse.jface.text.contentassist.ContextInformationValidator;
 import org.eclipse.jface.text.contentassist.ICompletionProposal;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension;
 import org.eclipse.jface.text.contentassist.ICompletionProposalExtension2;
+import org.eclipse.jface.text.contentassist.ICompletionProposalExtension3;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.contentassist.IContextInformation;
 import org.eclipse.jface.text.contentassist.IContextInformationValidator;
@@ -203,7 +208,7 @@ public class FilteringAsyncContentAssistTests {
 		IDocument document = viewer.getDocument();
 
 		ca.addContentAssistProcessor(new ImmediateContentAssistProcessor("xx"), IDocument.DEFAULT_CONTENT_TYPE);
-		ca.addContentAssistProcessor(new DelayedContentAssistProcessor("yy", 3000, false),
+		ca.addContentAssistProcessor(new DelayedContentAssistProcessor(singletonList("yy"), 3000, false),
 				IDocument.DEFAULT_CONTENT_TYPE);
 
 		ca.install(viewer);
@@ -247,7 +252,7 @@ public class FilteringAsyncContentAssistTests {
 	public void testCA_WithFirstDelayedThenImmediateProposals() throws Exception {
 		IDocument document = viewer.getDocument();
 
-		ca.addContentAssistProcessor(new LongInitialContentAssistProcessor("abc", 500, true),
+		ca.addContentAssistProcessor(new LongInitialContentAssistProcessor(singletonList("abc"), 500, true),
 				IDocument.DEFAULT_CONTENT_TYPE);
 
 		ca.install(viewer);
@@ -287,7 +292,7 @@ public class FilteringAsyncContentAssistTests {
 		IDocument document = viewer.getDocument();
 
 		ca.addContentAssistProcessor(new ImmediateContentAssistProcessor("xxxx"), IDocument.DEFAULT_CONTENT_TYPE);
-		ca.addContentAssistProcessor(new DelayedContentAssistProcessor("yyyy", 5000, false),
+		ca.addContentAssistProcessor(new DelayedContentAssistProcessor(singletonList("yyyy"), 5000, false),
 				IDocument.DEFAULT_CONTENT_TYPE);
 
 		ca.install(viewer);
@@ -354,37 +359,38 @@ public class FilteringAsyncContentAssistTests {
 
 	}
 
-	private class ImmediateContentAssistProcessor implements IContentAssistProcessor {
+	static class ImmediateContentAssistProcessor implements IContentAssistProcessor {
 
-		final private String template;
+		final private List<String> templates;
 		final private boolean incomplete;
 
-		ImmediateContentAssistProcessor(String template) {
-			this(template, false);
+		ImmediateContentAssistProcessor(String... templates) {
+			this(Arrays.asList(templates), false);
 		}
 
-		ImmediateContentAssistProcessor(String template, boolean incomplete) {
-			this.template = template;
+		ImmediateContentAssistProcessor(List<String> templates, boolean incomplete) {
+			this.templates= templates;
 			this.incomplete = incomplete;
 		}
 
 		@Override
 		public ICompletionProposal[] computeCompletionProposals(ITextViewer textViewer, int offset) {
+			List<ICompletionProposal> proposals= new ArrayList<>();
 			try {
 				IDocument document= textViewer.getDocument();
-				if (document != null && (document.getLength() == 0 || isSubstringFoundOrderedInString(document.get(0, offset), template))) {
-					if (incomplete) {
-						return new ICompletionProposal[] {
-								new IncompleteCompletionProposal(template, offset, 0, offset, template) };
-					} else {
-						CompletionProposal proposal = new CompletionProposal(template, offset, 0, offset, template);
-						return new ICompletionProposal[] { proposal };
+				for (String template : templates) {
+					if (document != null && (document.getLength() == 0 || isSubstringFoundOrderedInString(document.get(0, offset), template))) {
+						if (incomplete) {
+							proposals.add(new IncompleteCompletionProposal(template, offset, 0, offset, template));
+						} else {
+							proposals.add(new CompletionProposal(template, offset, 0, offset, template));
+						}
 					}
 				}
 			} catch (BadLocationException e) {
 				throw new IllegalStateException("Error computing proposals");
 			}
-			return new ICompletionProposal[0];
+			return proposals.toArray(new ICompletionProposal[0]);
 		}
 
 		@Override
@@ -414,12 +420,12 @@ public class FilteringAsyncContentAssistTests {
 
 	}
 
-	private class DelayedContentAssistProcessor extends ImmediateContentAssistProcessor {
+	static class DelayedContentAssistProcessor extends ImmediateContentAssistProcessor {
 
 		protected long delay;
 
-		DelayedContentAssistProcessor(String template, long delay, boolean incomplete) {
-			super(template, incomplete);
+		DelayedContentAssistProcessor(List<String> templates, long delay, boolean incomplete) {
+			super(templates, incomplete);
 			this.delay = delay;
 		}
 
@@ -432,14 +438,14 @@ public class FilteringAsyncContentAssistTests {
 					throw new IllegalStateException("Cannot generate delayed content assist proposals!");
 				}
 			}
-			return super.computeCompletionProposals(viewer, offset);
+			return super.computeCompletionProposals(textViewer, offset);
 		}
 	}
 
 	private class LongInitialContentAssistProcessor extends DelayedContentAssistProcessor {
 
-		LongInitialContentAssistProcessor(String template, long delay, boolean incomplete) {
-			super(template, delay, incomplete);
+		LongInitialContentAssistProcessor(List<String> templates, long delay, boolean incomplete) {
+			super(templates, delay, incomplete);
 		}
 
 		@Override
@@ -454,8 +460,8 @@ public class FilteringAsyncContentAssistTests {
 
 		final CountDownLatch blocked= new CountDownLatch(1);
 
-		BlockingProcessor(String template) {
-			super(template, false);
+		BlockingProcessor(String... templates) {
+			super(Arrays.asList(templates), false);
 		}
 
 		@Override
@@ -484,7 +490,7 @@ public class FilteringAsyncContentAssistTests {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static List<ICompletionProposal> getFilteredProposals(ContentAssistant ca) throws Exception {
+	static List<ICompletionProposal> getFilteredProposals(ContentAssistant ca) throws Exception {
 		Field f = ContentAssistant.class.getDeclaredField("fProposalPopup");
 		f.setAccessible(true);
 		Object caPopup = f.get(ca);
@@ -566,8 +572,8 @@ public class FilteringAsyncContentAssistTests {
 		}
 	}
 
-	private static class CompletionProposal extends IncompleteCompletionProposal
-		implements ICompletionProposalExtension, ICompletionProposalExtension2 {
+	static class CompletionProposal extends IncompleteCompletionProposal
+			implements ICompletionProposalExtension, ICompletionProposalExtension2, ICompletionProposalExtension3 {
 
 		public CompletionProposal(String replacementString, int replacementOffset, int replacementLength,
 				int cursorPosition, String displayString) {
@@ -624,6 +630,25 @@ public class FilteringAsyncContentAssistTests {
 			return 0;
 		}
 
+		@Override
+		public int getPrefixCompletionStart(IDocument document, int completionOffset) {
+			return 0;
+		}
+
+		@Override
+		public CharSequence getPrefixCompletionText(IDocument document, int completionOffset) {
+			return getDisplayString();
+		}
+
+		@Override
+		public IInformationControlCreator getInformationControlCreator() {
+			return null;
+		}
+
+		@Override
+		public String toString() {
+			return getDisplayString();
+		}
 	}
 
 	@SuppressWarnings("boxing")
