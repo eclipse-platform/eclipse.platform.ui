@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2017, 2019 IBM Corporation and others.
+ * Copyright (c) 2005, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -22,7 +22,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
@@ -210,8 +209,7 @@ public class Bug75909Test {
 	}
 
 
-	private void loadSettings(IDialogSettings settings, String resource)
-			throws UnsupportedEncodingException, IOException {
+	private void loadSettings(IDialogSettings settings, String resource) throws IOException {
 		try (InputStream io = getClass().getResourceAsStream(resource)) {
 			BufferedReader reader = new BufferedReader(new InputStreamReader(io, StandardCharsets.UTF_8));
 			settings.load(reader);
