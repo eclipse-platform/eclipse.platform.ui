@@ -305,7 +305,7 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 			if (schemeInfo.checked) {
 				handlerLocation.setText(currentLocation);
 
-			} else if (schemeIsHandledByOther(schemeInfo.information)) {
+			} else if (schemeInfo.information.schemeIsHandledByOther()) {
 				handlerLocation.setText(schemeInfo.information.getHandlerInstanceLocation());
 			} else {
 				// checkbox not checked and:
@@ -318,7 +318,7 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 
 		private void handleCheckbox(CheckStateChangedEvent event) {
 			UiSchemeInformation schemeInformation = (UiSchemeInformation) event.getElement();
-			if (event.getChecked() && schemeIsHandledByOther(schemeInformation.information)) {
+			if (event.getChecked() && schemeInformation.information.schemeIsHandledByOther()) {
 				if (operatingSystemRegistration.canOverwriteOtherApplicationsRegistration()) {
 					boolean answer = messageDialogWrapper.openQuestion(getShell(),
 							UriHandlerPreferencePage_Warning_OtherApp_Confirmation,
@@ -349,13 +349,6 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 		}
 	}
 
-	private boolean schemeIsHandledByOther(ISchemeInformation info) {
-		boolean schemeIsNotHandled = !info.isHandled();
-		boolean handlerLocationIsSet = info.getHandlerInstanceLocation() != null
-				&& !info.getHandlerInstanceLocation().isEmpty();
-		return schemeIsNotHandled && handlerLocationIsSet;
-	}
-
 	private final class ItemLabelProvider extends LabelProvider implements ITableLabelProvider {
 
 		@Override
@@ -379,7 +372,7 @@ public class UriSchemeHandlerPreferencePage extends PreferencePage implements IW
 						text = schemeInfo.getHandlerInstanceLocation();
 					else if (schemeInfo.isChecked()) {
 						text = UrlHandlerPreferencePage_Column_Handler_Text_Current_Application;
-					} else if (schemeIsHandledByOther(schemeInfo.information)) {
+					} else if (schemeInfo.information.schemeIsHandledByOther()) {
 						text = UrlHandlerPreferencePage_Column_Handler_Text_Other_Application;
 					}
 					return text;

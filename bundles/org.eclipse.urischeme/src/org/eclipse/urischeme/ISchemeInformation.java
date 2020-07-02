@@ -26,4 +26,15 @@ public interface ISchemeInformation extends IScheme {
 	 * @return the path of the application
 	 */
 	String getHandlerInstanceLocation();
+
+	/**
+	 * @return true if the scheme is handled by another application; false
+	 *         otherwise.
+	 */
+	default boolean schemeIsHandledByOther() {
+		boolean schemeIsNotHandled = !isHandled();
+		String handlerInstanceLocation = getHandlerInstanceLocation();
+		boolean handlerLocationIsSet = handlerInstanceLocation != null && !handlerInstanceLocation.isEmpty();
+		return schemeIsNotHandled && handlerLocationIsSet;
+	}
 }

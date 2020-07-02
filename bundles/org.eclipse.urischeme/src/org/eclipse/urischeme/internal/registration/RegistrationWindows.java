@@ -57,11 +57,14 @@ public class RegistrationWindows implements IOperatingSystemRegistration {
 	@Override
 	public void handleSchemes(Collection<IScheme> toAdd, Collection<IScheme> toRemove)
 			throws Exception {
-		for (IScheme scheme : toAdd) {
-			registryWriter.addScheme(scheme.getName(), getEclipseLauncher());
-		}
-		for (IScheme scheme : toRemove) {
-			registryWriter.removeScheme(scheme.getName());
+		String eclipseLauncher = getEclipseLauncher();
+		if (eclipseLauncher != null) {
+			for (IScheme scheme : toAdd) {
+				registryWriter.addScheme(scheme.getName(), eclipseLauncher);
+			}
+			for (IScheme scheme : toRemove) {
+				registryWriter.removeScheme(scheme.getName());
+			}
 		}
 	}
 

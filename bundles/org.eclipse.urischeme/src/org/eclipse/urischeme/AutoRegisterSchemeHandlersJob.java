@@ -61,7 +61,7 @@ public class AutoRegisterSchemeHandlersJob extends Job {
 		IOperatingSystemRegistration osRegistration = IOperatingSystemRegistration.getInstance();
 		try {
 			toProcessSchemes = osRegistration.getSchemesInformation(toProcessSchemes).stream() //
-					.filter(scheme -> !scheme.isHandled()) //
+					.filter(scheme -> !scheme.schemeIsHandledByOther()) //
 					.collect(Collectors.toSet());
 			if (toProcessSchemes.isEmpty()) {
 				alreadyTriggered = true;
