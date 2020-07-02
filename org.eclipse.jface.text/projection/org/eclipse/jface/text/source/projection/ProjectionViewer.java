@@ -856,7 +856,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 				try {
 					catchupWithProjectionAnnotationModel(event);
 				} catch (BadLocationException x) {
-					throw new IllegalArgumentException();
+					throw new IllegalArgumentException(x);
 				}
 
 			} else
@@ -894,7 +894,7 @@ public class ProjectionViewer extends SourceViewer implements ITextViewerExtensi
 								try {
 									catchupWithProjectionAnnotationModel(null);
 								} catch (BadLocationException x1) {
-									throw new IllegalArgumentException();
+									throw new IllegalArgumentException(x1);
 								} finally {
 									synchronized (fLock) {
 										fPendingRequests.clear();
