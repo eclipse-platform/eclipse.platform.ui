@@ -16,10 +16,15 @@ package org.eclipse.core.tests.resources;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Dictionary;
+import java.util.Hashtable;
+import java.util.function.BooleanSupplier;
 import org.eclipse.core.internal.resources.Workspace;
 import org.eclipse.core.resources.*;
 import org.eclipse.core.runtime.*;
 import org.eclipse.core.runtime.jobs.Job;
+import org.osgi.framework.*;
+import org.osgi.service.log.*;
 
 /**
  * Tests behavior of IResourceChangeListener, including validation
@@ -1296,6 +1301,112 @@ public class IResourceChangeListenerTest extends ResourceTest {
 			getWorkspace().removeResourceChangeListener(listener1);
 			getWorkspace().removeResourceChangeListener(listener2);
 		}
+	}
+
+	public void testAutoPublishService() {
+		class Loggy implements LogListener {
+			public boolean done = false;
+			@Override
+			public void logged(LogEntry entry) {
+				String message = entry.getMessage();
+				LogLevel level = entry.getLogLevel();
+				if (level == LogLevel.WARN && message.startsWith("event.mask of IResourceChangeListener")) {
+					done = true;
+					assertEquals(
+						"event.mask of IResourceChangeListener service: expected Integer but was class java.lang.String (from class org.eclipse.core.tests.resources.IResourceChangeListenerTest$1Listener3): Not an integer",
+						message);
+				}
+			}
+		}
+		class Listener1 implements IResourceChangeListener {
+			public boolean done = false;
+			@Override
+			public void resourceChanged(IResourceChangeEvent event) {
+				assertEquals("1.0", IResourceChangeEvent.POST_CHANGE, event.getType());
+				done = event.getType() == IResourceChangeEvent.POST_CHANGE;
+			}
+		}
+		class Listener2 extends Listener1 implements IResourceChangeListener {
+			@Override
+			public void resourceChanged(IResourceChangeEvent event) {
+				assertEquals("2.0", IResourceChangeEvent.POST_BUILD, event.getType());
+				done = true;
+			}
+		}
+		class Listener3 extends Listener1 implements IResourceChangeListener {
+			@Override
+			public void resourceChanged(IResourceChangeEvent event) {
+				assertEquals("3.0", IResourceChangeEvent.POST_CHANGE, event.getType());
+				done = true;
+			}
+		}
+		Loggy loggy = new Loggy();
+		Listener1 listener1 = new Listener1();
+		Listener2 listener2 = new Listener2();
+		Listener3 listener3 = new Listener3();
+		Bundle bundle = FrameworkUtil.getBundle(getWorkspace().getClass());
+		BundleContext context = bundle.getBundleContext();
+		ServiceReference<LogReaderService> logReaderService = context.getServiceReference(LogReaderService.class);
+		LogReaderService reader = logReaderService == null ? null : context.getService(logReaderService);
+		if (reader != null) {
+			reader.addLogListener(loggy);
+		}
+		// Default is event.mask = IResourceChangeEvent.PRE_CLOSE |
+		// IResourceChangeEvent.PRE_DELETE | IResourceChangeEvent.POST_CHANGE
+		ServiceRegistration<IResourceChangeListener> reg1 = context.registerService(IResourceChangeListener.class,
+				listener1, null);
+		ServiceRegistration<IResourceChangeListener> reg2 = context.registerService(IResourceChangeListener.class,
+				listener2, with("event.mask", IResourceChangeEvent.POST_BUILD));
+		ServiceRegistration<IResourceChangeListener> reg3 = context.registerService(IResourceChangeListener.class,
+				listener3, with("event.mask", "Not an integer"));
+		try {
+			assertTrue(waitUntil(() -> reg1.getReference().getUsingBundles() != null));
+			assertTrue(waitUntil(() -> reg2.getReference().getUsingBundles() != null));
+			assertTrue(waitUntil(() -> reg3.getReference().getUsingBundles() != null));
+			try {
+				project1.touch(getMonitor());
+			} catch (CoreException e) {
+				handleCoreException(e);
+			}
+			assertTrue(waitUntil(
+					() -> listener1.done && listener2.done && listener3.done && (loggy.done || reader == null)));
+		} finally {
+			if (reader != null) {
+				reader.removeLogListener(loggy);
+			}
+			if (logReaderService != null) {
+				context.ungetService(logReaderService);
+			}
+			if (reg1 != null) {
+				reg1.unregister();
+			}
+			if (reg2 != null) {
+				reg2.unregister();
+			}
+			if (reg3 != null) {
+				reg3.unregister();
+			}
+		}
+	}
+
+	public boolean waitUntil(BooleanSupplier condition) {
+		int i = 0;
+		while (!condition.getAsBoolean()) {
+			if (i++ > 600) {
+				return false;
+			}
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e1) {
+			}
+		}
+		return true;
+	}
+
+	private static Dictionary<String, Object> with(String key, Object value) {
+		Hashtable<String, Object> dict = new Hashtable<>();
+		dict.put(key, value);
+		return dict;
 	}
 
 	public void testProjectDescriptionComment() {
