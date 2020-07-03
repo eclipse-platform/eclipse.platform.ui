@@ -131,9 +131,8 @@ public final class PlatformUI {
 	 * Use {@link #createDisplay createDisplay} to create the display to pass in.
 	 * </p>
 	 * <p>
-	 * Note that this method is intended to be called by the application
-	 * (<code>org.eclipse.core.boot.IPlatformRunnable</code>). It must be called
-	 * exactly once, and early on before anyone else asks
+	 * Note that this method is intended to be called by the application. It must be
+	 * called exactly once, and early on before anyone else asks
 	 * <code>getWorkbench()</code> for the workbench.
 	 * </p>
 	 *

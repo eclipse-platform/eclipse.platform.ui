@@ -372,7 +372,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 	private boolean windowsClosed = false;
 
 	/**
-	 * PlatformUI return code (as opposed to IPlatformRunnable return code).
+	 * PlatformUI return code
 	 */
 	private int returnCode = PlatformUI.RETURN_UNSTARTABLE;
 
