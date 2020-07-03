@@ -524,10 +524,16 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		if (selectedTabFillColors.length == 1) {
 			gc.setBackground(selectedTabFillColors[0]);
 			gc.setForeground(selectedTabFillColors[0]);
-		} else if (!onBottom && selectedTabFillColors.length == 2) {
+		} else if (selectedTabFillColors.length == 2) {
 			// for now we support the 2-colors gradient for selected tab
-			backgroundPattern = new Pattern(gc.getDevice(), 0, 0, 0, bounds.height + 1, selectedTabFillColors[0],
-					selectedTabFillColors[1]);
+			if (!onBottom) {
+				backgroundPattern = new Pattern(gc.getDevice(), 0, 0, 0, bounds.height + 1, selectedTabFillColors[0],
+						selectedTabFillColors[1]);
+			} else {
+				backgroundPattern = new Pattern(gc.getDevice(), 0, 0, 0, bounds.height + 1, selectedTabFillColors[1],
+						selectedTabFillColors[0]);
+			}
+
 			gc.setBackgroundPattern(backgroundPattern);
 			gc.setForeground(selectedTabFillColors[1]);
 		}
