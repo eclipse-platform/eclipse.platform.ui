@@ -67,7 +67,6 @@ import org.eclipse.core.runtime.IExtension;
 import org.eclipse.core.runtime.IExtensionDelta;
 import org.eclipse.core.runtime.IExtensionPoint;
 import org.eclipse.core.runtime.IExtensionRegistry;
-import org.eclipse.core.runtime.IPlatformRunnable;
 import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IRegistryChangeListener;
@@ -736,7 +735,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 				if (runs.length > 0) {
 					Object runnable;
 					runnable = runs[0].createExecutableExtension("class");//$NON-NLS-1$
-					if (runnable instanceof IPlatformRunnable || runnable instanceof IApplication)
+					if (runnable instanceof IApplication)
 						return runnable;
 				}
 			}
