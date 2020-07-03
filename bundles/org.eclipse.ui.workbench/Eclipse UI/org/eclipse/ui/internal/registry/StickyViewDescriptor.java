@@ -36,20 +36,6 @@ public class StickyViewDescriptor implements IStickyViewDescriptor, IPluginContr
 	 */
 	public static final String STICKY_FOLDER_RIGHT = "stickyFolderRight"; //$NON-NLS-1$
 
-	/**
-	 * Folder constant for left sticky views.
-	 */
-	public static final String STICKY_FOLDER_LEFT = "stickyFolderLeft"; //$NON-NLS-1$
-
-	/**
-	 * Folder constant for top sticky views.
-	 */
-	public static final String STICKY_FOLDER_TOP = "stickyFolderTop"; //$NON-NLS-1$
-
-	/**
-	 * Folder constant for bottom sticky views.
-	 */
-	public static final String STICKY_FOLDER_BOTTOM = "stickyFolderBottom"; //$NON-NLS-1$
 
 	/**
 	 * @param element
