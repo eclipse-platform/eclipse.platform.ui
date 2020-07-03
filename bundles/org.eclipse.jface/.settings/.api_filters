@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<component id="org.eclipse.jface" version="2">
+    <resource path="META-INF/MANIFEST.MF" type="org.eclipse.jface.util.Assert">
+        <filter comment="Planned deletion" id="305324134">
+            <message_arguments>
+                <message_argument value="org.eclipse.jface.util.Assert"/>
+                <message_argument value="org.eclipse.jface_3.21.0"/>
+            </message_arguments>
+        </filter>
+    </resource>
+</component>
