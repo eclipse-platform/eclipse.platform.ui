@@ -21,8 +21,6 @@ import java.net.URL;
 import java.util.*;
 import org.eclipse.core.internal.runtime.*;
 import org.eclipse.core.runtime.content.IContentTypeManager;
-import org.eclipse.core.runtime.jobs.IJobManager;
-import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.osgi.service.datalocation.Location;
@@ -891,19 +889,6 @@ public final class Platform {
 	@Deprecated
 	public static void run(ISafeRunnable runnable) {
 		SafeRunner.run(runnable);
-	}
-
-	/**
-	 * Returns the platform job manager.
-	 *
-	 * @return the platform's job manager
-	 * @since 3.0
-	 * @deprecated The method {@link Job#getJobManager()} should be used instead.
-	 * @noreference This method is planned for removal. See bug#528192 for details.
-	 */
-	@Deprecated
-	public static IJobManager getJobManager() {
-		return Job.getJobManager();
 	}
 
 	/**
