@@ -39,6 +39,7 @@ import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Listener;
 import org.osgi.framework.Bundle;
+import org.osgi.framework.FrameworkUtil;
 import org.w3c.dom.css.CSSPrimitiveValue;
 import org.w3c.dom.css.CSSStyleDeclaration;
 import org.w3c.dom.css.CSSValue;
@@ -47,6 +48,7 @@ import org.w3c.dom.css.CSSValueList;
 public class CSSRenderingUtils {
 
 	private static final String DRAG_HANDLE = "org.eclipse.e4.ui.workbench.swt.DRAG_HANDLE";
+	private static final String DRAG_HANDLE_ROTATED = "org.eclipse.e4.ui.workbench.swt.DRAG_HANDLE-ROTATED";
 
 	private static final String FRAME_IMAGE_PROP = "frame-image";
 
@@ -91,7 +93,8 @@ public class CSSRenderingUtils {
 			// see bug 472761
 			handleImage = JFaceResources.getImage(DRAG_HANDLE);
 			if (handleImage == null) {
-				handleImage = initDragHandleResource();
+				initDragHandleResource();
+				handleImage = JFaceResources.getImage(DRAG_HANDLE);
 			}
 
 		}
@@ -101,7 +104,11 @@ public class CSSRenderingUtils {
 			if (handleImageRotated != null) {
 				handleImage = handleImageRotated;
 			} else {
-				handleImage = rotateImage(toFrame.getDisplay(), handleImage, null);
+				handleImage = JFaceResources.getImage(DRAG_HANDLE_ROTATED);
+				if (handleImage == null) {
+					initDragHandleResource();
+					handleImage = JFaceResources.getImage(DRAG_HANDLE_ROTATED);
+				}
 			}
 		}
 		if (frameImage != null) {
@@ -121,14 +128,18 @@ public class CSSRenderingUtils {
 		return toFrame;
 	}
 
-	private Image initDragHandleResource() {
-		Bundle bundle = org.eclipse.e4.ui.internal.workbench.swt.WorkbenchSWTActivator.getDefault().getBundle();
+	private void initDragHandleResource() {
+		Bundle bundle = FrameworkUtil.getBundle(getClass());
 		IPath path = new Path("$ws$/images/dragHandle.png");
 		URL url = FileLocator.find(bundle, path, null);
 		ImageDescriptor desc = ImageDescriptor.createFromURL(url);
 		if (desc != null)
 			JFaceResources.getImageRegistry().put(DRAG_HANDLE, desc);
-		return JFaceResources.getImage(DRAG_HANDLE);
+		path = new Path("$ws$/images/dragHandle-rotated.png");
+		url = FileLocator.find(bundle, path, null);
+		ImageDescriptor desc_rotated = ImageDescriptor.createFromURL(url);
+		if (desc_rotated != null)
+			JFaceResources.getImageRegistry().put(DRAG_HANDLE_ROTATED, desc_rotated);
 	}
 
 	private Image rotateImage(Display display, Image image, Integer[] frameInts) {

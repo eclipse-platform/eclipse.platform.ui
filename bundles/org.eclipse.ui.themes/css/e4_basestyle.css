@@ -19,11 +19,3 @@
 @import url("platform:/plugin/org.eclipse.ui.themes/css/light/e4-light_partstyle.css");
 @import url("platform:/plugin/org.eclipse.ui.themes/css/light/e4-light_tabstyle.css");
 @import url("platform:/plugin/org.eclipse.ui.themes/css/light/e4-light-drag-styling.css");
-
-.MToolControl.TrimStack {
-	frame-image:  url(./winXPTSFrame.png);
-	handle-image:  url(./winXPHandle.png);
-	frame-image-rotated:  url(./winXPTSFrame-rotated.png);
-	handle-image-rotated:  url(./winXPHandle-rotated.png);
-	frame-cuts: 5px 1px 5px 16px;
-}
