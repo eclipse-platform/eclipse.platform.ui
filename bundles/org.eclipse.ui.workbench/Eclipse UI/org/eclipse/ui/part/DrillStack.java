@@ -72,7 +72,7 @@ import java.util.Deque;
 	 * Navigate to the home record.
 	 */
 	public DrillFrame goHome() {
-		DrillFrame aFrame = fStack.getFirst();
+		DrillFrame aFrame = fStack.getLast();
 		reset();
 		return aFrame;
 	}
