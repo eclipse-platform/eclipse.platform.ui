@@ -37,14 +37,12 @@ public class QuickAccessMessages extends NLS {
 	public static String QuickAccess_PressKeyToShowAllMatches;
 	public static String QuickAccess_StartTypingToFindMatches;
 	public static String QuickAccess_AvailableCategories;
-	public static String QuickAccess_SelectedString;
 	public static String QuickAccess_ViewWithCategory;
 	public static String QuickAccessContents_NoMatchingResults;
 	public static String QuickAccessContents_PressKeyToLimitResults;
 	public static String QuickAccessContents_QuickAccess;
 	public static String QuickAccessContents_SearchInHelpLabel;
 	public static String QuickAccessContents_HelpCategory;
-	public static String QuickAccessContents_RestoringPreviousChoicesLabel;
 	public static String QuickAccessContents_activate;
 	public static String QuickAccessContents_computeMatchingEntries_displayFeedback_jobName;
 	public static String QuickaAcessContents_computeMatchingEntries;
