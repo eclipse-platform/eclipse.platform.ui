@@ -281,7 +281,7 @@ public class StyledString implements CharSequence {
 	 * @return returns a reference to this object
 	 */
 	public StyledString append(String string, Styler styler) {
-		if (string.length() == 0)
+		if (string.isEmpty())
 			return this;
 
 		int offset = fBuffer.length(); // the length before appending

@@ -228,7 +228,7 @@ public class DecoratingLabelProvider extends LabelProvider implements IViewerLab
 		// update icon and label
 
 		if (decorationReady || oldText == null
-				|| settings.getText().length() == 0) {
+				|| settings.getText().isEmpty()) {
 			settings.setText(getText(element));
 		}
 
@@ -336,13 +336,13 @@ public class DecoratingLabelProvider extends LabelProvider implements IViewerLab
 		if (provider instanceof ITreePathLabelProvider) {
 			ITreePathLabelProvider pprov = (ITreePathLabelProvider) provider;
 			if (decorationReady || oldText == null
-					|| settings.getText().length() == 0) {
+					|| settings.getText().isEmpty()) {
 				pprov.updateLabel(settings, elementPath);
 				decorateSettings(settings, elementPath);
 			}
 		} else {
 			if (decorationReady || oldText == null
-					|| settings.getText().length() == 0) {
+					|| settings.getText().isEmpty()) {
 				settings.setText(getText(element));
 			}
 

@@ -651,7 +651,7 @@ import org.eclipse.swt.widgets.ToolItem;
 			newName = name;
 
 		String text;
-		if (fTaskName == null || fTaskName.length() == 0) {
+		if (fTaskName == null || fTaskName.isEmpty()) {
 			text = newName;
 		} else {
 			text = JFaceResources.format("Set_SubTask", fTaskName, newName);//$NON-NLS-1$

@@ -779,7 +779,7 @@ public class ActionContributionItem extends ContributionItem {
 
 		if (tooltipTextChanged || textChanged) {
 			String toolTip = action.getToolTipText();
-			if ((toolTip == null) || (toolTip.length() == 0)) {
+			if ((toolTip == null) || (toolTip.isEmpty())) {
 				toolTip = text;
 			}
 

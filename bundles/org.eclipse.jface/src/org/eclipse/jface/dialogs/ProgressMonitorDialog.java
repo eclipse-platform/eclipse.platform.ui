@@ -632,7 +632,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 		int result = super.open();
 		// update message label just in case beginTask() has been invoked
 		// already
-		if (task == null || task.length() == 0)
+		if (task == null || task.isEmpty())
 			setMessage(DEFAULT_TASKNAME, true);
 		else
 			setMessage(task, true);

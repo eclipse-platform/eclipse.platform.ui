@@ -124,7 +124,7 @@ public class FileFieldEditor extends StringButtonFieldEditor {
 		} else {
 			path = "";//$NON-NLS-1$
 		}
-		if (path.length() == 0) {
+		if (path.isEmpty()) {
 			if (!isEmptyStringAllowed()) {
 				msg = getErrorMessage();
 			}

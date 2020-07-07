@@ -67,7 +67,7 @@ import org.eclipse.swt.widgets.Control;
 	}
 
 	protected boolean isRTLValue(String stringValue) {
-		if (stringValue == null || stringValue.length() == 0 || BidiUtils.LEFT_TO_RIGHT.equals(textDirection))
+		if (stringValue == null || stringValue.isEmpty() || BidiUtils.LEFT_TO_RIGHT.equals(textDirection))
 			return false;
 
 		if (BidiUtils.RIGHT_TO_LEFT.equals(textDirection))

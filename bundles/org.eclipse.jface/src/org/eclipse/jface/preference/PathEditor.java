@@ -84,7 +84,7 @@ public class PathEditor extends ListEditor {
 		String dir = dialog.open();
 		if (dir != null) {
 			dir = dir.trim();
-			if (dir.length() == 0) {
+			if (dir.isEmpty()) {
 				return null;
 			}
 			lastPath = dir;

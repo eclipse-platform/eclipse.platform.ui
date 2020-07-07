@@ -119,7 +119,7 @@ public class DecoratingStyledCellLabelProvider extends
 			isDecorationPending = !((IDelayedLabelDecorator) this.decorator)
 					.prepareDecoration(element, oldText);
 		}
-		if (isDecorationPending && oldText.length() == 0) {
+		if (isDecorationPending && oldText.isEmpty()) {
 			// item is empty: is shown for the first time: don't wait
 			return false;
 		}

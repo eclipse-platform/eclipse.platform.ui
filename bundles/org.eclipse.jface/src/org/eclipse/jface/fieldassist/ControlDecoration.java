@@ -1077,7 +1077,7 @@ public class ControlDecoration {
 
 		// If there is no text, any existing hover should be hidden, and
 		// there is nothing more to do.
-		if (text == null || text.length() == 0) {
+		if (text == null || text.isEmpty()) {
 			hideHover();
 			return;
 		}

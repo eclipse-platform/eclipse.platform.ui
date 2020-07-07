@@ -281,7 +281,7 @@ public final class BidiUtils {
 					color = SWT.COLOR_CYAN;
 				}
 				field.setBackground(field.getDisplay().getSystemColor(color));
-				if (field.getMessage().length() == 0) {
+				if (field.getMessage().isEmpty()) {
 					field.setMessage('<' + handlingType + '>');
 				}
 				if (field.getToolTipText() == null) {

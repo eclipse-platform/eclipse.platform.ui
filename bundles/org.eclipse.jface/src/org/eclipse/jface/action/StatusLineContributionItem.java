@@ -163,7 +163,7 @@ public class StatusLineContributionItem extends ContributionItem {
 			label.setText(this.text);
 		}
 
-		if (this.text.length() == 0) {
+		if (this.text.isEmpty()) {
 			if (isVisible()) {
 				setVisible(false);
 				IContributionManager contributionManager = getParent();
