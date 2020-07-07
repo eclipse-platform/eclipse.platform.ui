@@ -21,12 +21,11 @@ import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.jface.viewers.TreeNode;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.Viewer;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 
 /**
- * Description of the bug:
- * Initially tree is populated by way shown below and is completely expanded.
+ * Description of the bug: Initially tree is populated by way shown below and is
+ * completely expanded.
  *
  * root
  *     |-a
@@ -58,7 +57,6 @@ public class Bug138608Test extends ViewerTestCase {
 	@Override
 	protected StructuredViewer createViewer(Composite parent) {
 		final TreeViewer viewer = new TreeViewer(parent);
-		viewer.getTree().setLayoutData(new GridData(GridData.FILL_BOTH));
 		contentProvider = new TreeContentProvider();
 		LabelProvider labelProvider = new LabelProvider();
 		viewer.setContentProvider(contentProvider);
@@ -89,8 +87,7 @@ public class Bug138608Test extends ViewerTestCase {
 		processEvents();
 		// Add 'd' as child of 'b' in data model first
 
-		contentProvider.root.getChildren()[1].setChildren(contentProvider.root
-				.getChildren()[0].getChildren());
+		contentProvider.root.getChildren()[1].setChildren(contentProvider.root.getChildren()[0].getChildren());
 		// Then add 'd' as child of 'b' in tree itself
 		// THE PROBLEM IS HERE - after this call Tree will not show his
 		// new child
@@ -98,14 +95,12 @@ public class Bug138608Test extends ViewerTestCase {
 		getTreeViewer().add(contentProvider.root.getChildren()[1],
 				contentProvider.root.getChildren()[1].getChildren()[1]);
 
-		assertEquals("expected two children of node b", 2, getTreeViewer()
-				.getTree().getItem(1).getItemCount());
+		assertEquals("expected two children of node b", 2, getTreeViewer().getTree().getItem(1).getItemCount());
 
 		getTreeViewer().add(contentProvider.root.getChildren()[1],
 				contentProvider.root.getChildren()[1].getChildren()[1]);
 
-		assertEquals("expected two children of node b", 2, getTreeViewer()
-				.getTree().getItem(1).getItemCount());
+		assertEquals("expected two children of node b", 2, getTreeViewer().getTree().getItem(1).getItemCount());
 
 	}
 

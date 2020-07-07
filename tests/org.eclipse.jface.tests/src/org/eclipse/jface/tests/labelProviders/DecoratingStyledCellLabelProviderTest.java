@@ -40,7 +40,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.graphics.TextLayout;
 import org.eclipse.swt.graphics.TextStyle;
-import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Event;
@@ -163,9 +162,6 @@ public class DecoratingStyledCellLabelProviderTest extends ViewerTestCase {
 		createColumns(viewer);
 		viewer.setLabelProvider(createLabelProvider());
 
-		GridData data = new GridData(GridData.GRAB_HORIZONTAL | GridData.GRAB_VERTICAL | GridData.FILL_BOTH);
-
-		viewer.getControl().setLayoutData(data);
 		viewer.setSelection(new StructuredSelection(entries[1]));
 
 		return viewer;
