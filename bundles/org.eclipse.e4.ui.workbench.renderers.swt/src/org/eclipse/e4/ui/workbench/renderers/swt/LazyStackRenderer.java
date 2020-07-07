@@ -20,8 +20,11 @@ import static org.eclipse.core.runtime.Assert.isNotNull;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.inject.Inject;
 import org.eclipse.e4.core.contexts.IEclipseContext;
+import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.services.events.IEventBroker;
+import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.model.application.ui.MContext;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MGenericStack;
@@ -38,6 +41,7 @@ import org.eclipse.e4.ui.workbench.UIEvents;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Shell;
+import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
 
 /**
@@ -111,6 +115,35 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 					break;
 				}
 			}
+		}
+	}
+
+	@Inject
+	@Optional
+	private void subscribePartTopicToolbar(@UIEventTopic(UIEvents.Part.TOPIC_TOOLBAR) Event event) {
+		Object obj = event.getProperty(UIEvents.EventTags.ELEMENT);
+		Object value = event.getProperty(UIEvents.EventTags.NEW_VALUE);
+		if (!(obj instanceof MPart) || !(value instanceof MToolBar)) {
+			return;
+		}
+
+		MUIElement element = (MUIElement) obj;
+		if (element.getCurSharedRef() != null) {
+			element = element.getCurSharedRef();
+		}
+
+		MElementContainer<MUIElement> parent = element.getParent();
+		if (parent.getRenderer() != LazyStackRenderer.this) {
+			return;
+		}
+
+		// A new ToolBar is added to a MPart in a lazy stack; make it visible when it is
+		// for the selected part, otherwise hide it.
+		MToolBar toolbar = (MToolBar) value;
+		if (element == parent.getSelectedElement()) {
+			toolbar.setVisible(true);
+		} else {
+			toolbar.setVisible(false);
 		}
 	}
 
