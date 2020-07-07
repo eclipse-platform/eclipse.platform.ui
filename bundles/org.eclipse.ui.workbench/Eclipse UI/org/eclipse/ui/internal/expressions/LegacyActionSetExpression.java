@@ -36,11 +36,6 @@ import org.eclipse.ui.IWorkbenchWindow;
 public final class LegacyActionSetExpression extends WorkbenchWindowExpression {
 
 	/**
-	 * The seed for the hash code for all schemes.
-	 */
-	private static final int HASH_INITIAL = LegacyActionSetExpression.class.getName().hashCode();
-
-	/**
 	 * The identifier of the action set that must be active for this expression to
 	 * evaluate to <code>true</code>. This value is never <code>null</code>.
 	 */
@@ -68,11 +63,6 @@ public final class LegacyActionSetExpression extends WorkbenchWindowExpression {
 	public void collectExpressionInfo(final ExpressionInfo info) {
 		super.collectExpressionInfo(info);
 		info.addVariableNameAccess(ISources.ACTIVE_CONTEXT_NAME);
-	}
-
-	protected int computeHhashCode() {
-		int hashCode = HASH_INITIAL * HASH_FACTOR + hashCode(getWindow());
-		return hashCode * HASH_FACTOR + hashCode(actionSetId);
 	}
 
 	@Override
