@@ -37,7 +37,6 @@ public class NewKeysPreferenceMessages extends NLS {
 	public static String UserColumn_Text;
 	public static String CommandNameLabel_Text;
 	public static String CommandDescriptionLabel_Text;
-	public static String DeleteSchemeButton_Text;
 	public static String ConflictsLabel_Text;
 	public static String RemoveBindingButton_Text;
 	public static String RestoreBindingButton_Text;
@@ -45,22 +44,14 @@ public class NewKeysPreferenceMessages extends NLS {
 	public static String TriggerSequenceColumn_Text;
 	public static String WhenColumn_Text;
 	public static String WhenLabel_Text;
-	public static String Asterisk_Text;
-
-	public static String GroupingCombo_Label;
-	public static String GroupingCombo_Category_Text;
-	public static String GroupingCombo_None_Text;
-	public static String GroupingCombo_When_Text;
 
 	public static String PreferenceStoreError_Message;
-	public static String PreferenceStoreError_Title;
 
 	public static String RestoreDefaultsMessageBoxText;
 	public static String RestoreDefaultsMessageBoxMessage;
 
 	public static String Undefined_Command;
 	public static String Unavailable_Category;
-	public static String Undefined_Context;
 
 	public static String KeysPreferenceFilterDialog_Title;
 	public static String ActionSetFilterCheckBox_Text;
