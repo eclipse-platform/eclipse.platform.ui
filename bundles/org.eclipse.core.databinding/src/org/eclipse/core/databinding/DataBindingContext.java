@@ -17,6 +17,7 @@
  *******************************************************************************/
 package org.eclipse.core.databinding;
 
+import org.eclipse.core.databinding.observable.IObservableCollection;
 import org.eclipse.core.databinding.observable.ObservableTracker;
 import org.eclipse.core.databinding.observable.Observables;
 import org.eclipse.core.databinding.observable.Realm;
@@ -51,6 +52,41 @@ import org.eclipse.core.runtime.IStatus;
  * an <code>IWizardPage</code> could use a single context and the statuses could
  * be aggregated to set the page status and fulfillment. Each page in the
  * <code>IWizard</code> would have its own context instance.
+ * </p>
+ *
+ * <h3>Default converters</h3>
+ * <p>
+ * If the model and target types do not match and no converter is set on the
+ * update strategy object then an attempt is made to find a default converter
+ * between them. {@link IObservableValue#getValueType} or
+ * {@link IObservableCollection#getElementType} is used for this.
+ * </p>
+ * <p>
+ * There are default converters available between the following types:
+ * </p>
+ *
+ * <ul>
+ * <li>Strings to/from numeric types, including {@code BigInteger} and
+ * {@code BigDecimal}.
+ *
+ * <li>String to/from boolean, using constant names provided the internal
+ * messages file.
+ *
+ * <li>String to/from {@code Date}, using the pattern in the internal messages
+ * file.
+ *
+ * <li>{@link IStatus} to string, using the status message.
+ *
+ * <li>{@code Object} to string, using {@link Object#toString}.
+ * </ul>
+ * <p>
+ * More default converters might be added in a future version. This might cause
+ * the types that now use the object-to-string converter to instead use a more
+ * specific converter.
+ * </p>
+ * <p>
+ * The internal messages file is located at
+ * {@code org.eclipse.core.databinding/src/org/eclipse/core/internal/databinding/messages.properties}.
  * </p>
  *
  * @since 1.0

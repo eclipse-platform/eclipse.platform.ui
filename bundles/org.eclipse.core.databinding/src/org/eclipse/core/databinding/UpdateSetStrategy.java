@@ -120,13 +120,13 @@ public class UpdateSetStrategy<S, D> extends UpdateStrategy<S, D> {
 	/**
 	 * Creates a new update list strategy with a configurable update policy. A
 	 * default converter will be provided if <code>provideDefaults</code> is
-	 * <code>true</code>. The defaults can be changed by calling one of the
-	 * setter methods.
+	 * <code>true</code>, see {@link DataBindingContext}. The defaults can be
+	 * changed by calling one of the setter methods.
 	 *
 	 * @param provideDefaults
 	 *            if <code>true</code>, default validators and a default
 	 *            converter will be provided based on the observable list's
-	 *            type.
+	 *            type, see {@link DataBindingContext}
 	 * @param updatePolicy
 	 *            one of {@link #POLICY_NEVER}, {@link #POLICY_ON_REQUEST}, or
 	 *            {@link #POLICY_UPDATE}

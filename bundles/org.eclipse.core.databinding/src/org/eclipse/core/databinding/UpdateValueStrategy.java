@@ -200,13 +200,14 @@ public class UpdateValueStrategy<S, D> extends UpdateStrategy<S, D> {
 	/**
 	 * Creates a new update value strategy with a configurable update policy.
 	 * Default validators and a default converter will be provided if
-	 * <code>provideDefaults</code> is <code>true</code>. The defaults can be
-	 * changed by calling one of the setter methods.
+	 * <code>provideDefaults</code> is <code>true</code>, see
+	 * {@link DataBindingContext} The defaults can be changed by calling one
+	 * of the setter methods.
 	 *
 	 * @param provideDefaults
 	 *            if <code>true</code>, default validators and a default
 	 *            converter will be provided based on the observable value's
-	 *            type.
+	 *            type, see {@link DataBindingContext}
 	 * @param updatePolicy
 	 *            one of {@link #POLICY_NEVER}, {@link #POLICY_ON_REQUEST},
 	 *            {@link #POLICY_CONVERT}, or {@link #POLICY_UPDATE}
