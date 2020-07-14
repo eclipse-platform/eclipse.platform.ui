@@ -16,7 +16,6 @@ package org.eclipse.jface.resource;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -146,18 +145,6 @@ public class ColorRegistry extends ResourceRegistry {
 	}
 
 	/**
-	 * Dispose of all of the <code>Color</code>s in this iterator.
-	 *
-	 * @param iterator over <code>Collection</code> of <code>Color</code>
-	 */
-	private void disposeColors(Iterator<Color> iterator) {
-		while (iterator.hasNext()) {
-			Object next = iterator.next();
-			((Color) next).dispose();
-		}
-	}
-
-	/**
 	 * Returns the <code>color</code> associated with the given symbolic color
 	 * name, or <code>null</code> if no such definition exists.
 	 *
@@ -240,8 +227,6 @@ public class ColorRegistry extends ResourceRegistry {
 
 	@Override
 	protected void clearCaches() {
-		disposeColors(stringToColor.values().iterator());
-		disposeColors(staleColors.iterator());
 		stringToColor.clear();
 		staleColors.clear();
 		display = null;

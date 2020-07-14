@@ -195,11 +195,6 @@ public class FieldAssistColors {
 			// color or else the comparison between this color and the one
 			// in the map will fail.
 			displays.remove(color);
-			// Dispose it
-			if (DEBUG) {
-				System.out.println("Disposing color " + color); //$NON-NLS-1$
-			}
-			color.dispose();
 		}
 		if (DEBUG) {
 			System.out.println("Display map is " + displays); //$NON-NLS-1$

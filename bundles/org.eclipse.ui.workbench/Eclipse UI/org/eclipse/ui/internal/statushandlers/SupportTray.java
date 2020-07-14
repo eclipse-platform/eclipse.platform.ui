@@ -180,7 +180,6 @@ public class SupportTray extends DialogTray implements ISelectionChangedListener
 		gc.drawPolygon(shape);
 		gc.dispose();
 
-		backgroundHot.dispose();
 	}
 
 	/**

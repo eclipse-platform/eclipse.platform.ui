@@ -84,12 +84,7 @@ public class SWTResourcesRegistry extends AbstractResourcesRegistry {
 	@Override
 	public void disposeResource(Object type, Object key, Object resource) {
 		// Dispose SWT Resource
-		if (resource instanceof Color) {
-			((Color)resource).dispose();
-			//TODO replace with eclipse logging
-			//			if (logger.isDebugEnabled())
-			//				logger.debug("Dispose SWT Color key=" + key);
-		} else if (resource instanceof Cursor) {
+		if (resource instanceof Cursor) {
 			((Cursor)resource).dispose();
 			//TODO replace with eclipse logging
 			//			if (logger.isDebugEnabled())

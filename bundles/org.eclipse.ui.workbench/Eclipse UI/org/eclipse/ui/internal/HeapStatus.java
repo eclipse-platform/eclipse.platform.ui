@@ -265,15 +265,6 @@ public class HeapStatus extends Composite {
 			disabledGcImage.dispose();
 		}
 
-		if (usedMemCol != null) {
-			usedMemCol.dispose();
-		}
-		if (lowMemCol != null) {
-			lowMemCol.dispose();
-		}
-		if (freeMemCol != null) {
-			freeMemCol.dispose();
-		}
 	}
 
 	@Override

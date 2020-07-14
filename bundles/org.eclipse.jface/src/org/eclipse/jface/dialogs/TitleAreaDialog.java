@@ -213,12 +213,6 @@ public class TitleAreaDialog extends TrayDialog {
 	 */
 	private Control createTitleArea(Composite parent) {
 
-		// add a dispose listener
-		parent.addDisposeListener(e -> {
-			if (titleAreaColor != null) {
-				titleAreaColor.dispose();
-			}
-		});
 		// Determine the background color of the title bar
 		Display display = parent.getDisplay();
 		Color background;

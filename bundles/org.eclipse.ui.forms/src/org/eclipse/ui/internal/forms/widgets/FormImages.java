@@ -124,8 +124,6 @@ public class FormImages {
 			gc.setBackground(color1);
 			gc.fillGradientRectangle(0, fMarginHeight + 2, 1, fTheight - 2, true);
 			gc.dispose();
-			color1.dispose();
-			color2.dispose();
 			return image;
 		}
 	}
@@ -192,10 +190,6 @@ public class FormImages {
 			Color bg = fBgRGB == null ? null : new Color(device, fBgRGB);
 			drawTextGradient(gc, width, height, colors, fPercents, fVertical, bg);
 			gc.dispose();
-			for (Color color : colors)
-				color.dispose();
-			if (bg != null)
-				bg.dispose();
 			return gradient;
 		}
 
@@ -291,8 +285,6 @@ public class FormImages {
 			gc.setBackground(originalBgColor);
 			gc.fillRectangle(0, fTheight - fMarginHeight - 4, 1, 4);
 			gc.dispose();
-			color1.dispose();
-			originalBgColor.dispose();
 			return image;
 		}
 	}
@@ -318,8 +310,6 @@ public class FormImages {
 			gc.setBackground(color1);
 			gc.fillGradientRectangle(0, fMarginHeight + 2, 1, fTheight - 2, true);
 			gc.dispose();
-			color1.dispose();
-			color2.dispose();
 
 			return image;
 		}

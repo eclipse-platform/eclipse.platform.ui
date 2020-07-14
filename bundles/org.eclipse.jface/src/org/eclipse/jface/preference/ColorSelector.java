@@ -79,10 +79,6 @@ public class ColorSelector extends EventManager {
 				fImage.dispose();
 				fImage = null;
 			}
-			if (fColor != null) {
-				fColor.dispose();
-				fColor = null;
-			}
 		});
 		fButton.getAccessible().addAccessibleListener(new AccessibleAdapter() {
 			@Override

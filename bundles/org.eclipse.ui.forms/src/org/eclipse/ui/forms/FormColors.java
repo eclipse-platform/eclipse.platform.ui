@@ -633,7 +633,6 @@ public class FormColors {
 		Color color = getColor(key);
 		if (color != null) {
 			colorRegistry.remove(key);
-			color.dispose();
 		}
 	}
 
