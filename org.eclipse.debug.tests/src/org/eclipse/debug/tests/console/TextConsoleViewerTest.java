@@ -224,23 +224,6 @@ public class TextConsoleViewerTest extends AbstractDebugTest {
 			// if this happened the method may have be renamed or moved
 			throw e;
 		}
-		finally {
-			if (colorR != null) {
-				colorR.dispose();
-			}
-			if (colorG != null) {
-				colorG.dispose();
-			}
-			if (colorB != null) {
-				colorB.dispose();
-			}
-			if (colorK != null) {
-				colorK.dispose();
-			}
-			if (colorW != null) {
-				colorW.dispose();
-			}
-		}
 	}
 
 	/**
