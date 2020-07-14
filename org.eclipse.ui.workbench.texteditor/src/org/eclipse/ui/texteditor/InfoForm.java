@@ -80,7 +80,6 @@ public class InfoForm {
 		fScrolledComposite.addDisposeListener(e -> {
 			JFaceResources.getFontRegistry().removeListener(fPropertyChangeListener);
 			fScrolledComposite = null;
-			fSeparatorColor.dispose();
 			fSeparatorColor = null;
 			fHeader = null;
 			fBanner = null;

@@ -73,12 +73,6 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 	private Label fSeparator;
 	/** The font of the optional status text label.*/
 	private Font fStatusTextFont;
-	/**
-	 * The color of the optional status text label or <code>null</code> if none.
-	 *
-	 * @since 3.6
-	 */
-	private Color fStatusTextForegroundColor;
 	/** The maximal widget width. */
 	private int fMaxWidth;
 	/** The maximal widget height. */
@@ -173,8 +167,9 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 			GridData gd2= new GridData(GridData.FILL_VERTICAL | GridData.FILL_HORIZONTAL | GridData.HORIZONTAL_ALIGN_BEGINNING | GridData.VERTICAL_ALIGN_BEGINNING);
 			fStatusField.setLayoutData(gd2);
 
-			fStatusTextForegroundColor= new Color(fStatusField.getDisplay(), blend(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND).getRGB(), display.getSystemColor(SWT.COLOR_INFO_FOREGROUND).getRGB(), 0.56f));
-			fStatusField.setForeground(fStatusTextForegroundColor);
+			Color statusTextForegroundColor= new Color(fStatusField.getDisplay(),
+					blend(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND).getRGB(), display.getSystemColor(SWT.COLOR_INFO_FOREGROUND).getRGB(), 0.56f));
+			fStatusField.setForeground(statusTextForegroundColor);
 
 			fStatusField.setBackground(display.getSystemColor(SWT.COLOR_INFO_BACKGROUND));
 		}
@@ -240,9 +235,6 @@ class SourceViewerInformationControl implements IInformationControl, IInformatio
 		if (fStatusTextFont != null && !fStatusTextFont.isDisposed())
 			fStatusTextFont.dispose();
 		fStatusTextFont= null;
-		if (fStatusTextForegroundColor != null && !fStatusTextForegroundColor.isDisposed())
-			fStatusTextForegroundColor.dispose();
-		fStatusTextForegroundColor= null;
 
 		fTextFont= null;
 		fShell= null;

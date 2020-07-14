@@ -2378,26 +2378,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	private SelectionListener fSelectionListener;
 	/** The editor's font. */
-	private Font fFont;	/**
-	 * The editor's foreground color.
-	 * @since 2.0
-	 */
-	private Color fForegroundColor;
-	/**
-	 * The editor's background color.
-	 * @since 2.0
-	 */
-	private Color fBackgroundColor;
-	/**
-	 * The editor's selection foreground color.
-	 * @since 3.0
-	 */
-	private Color fSelectionForegroundColor;
-	/**
-	 * The editor's selection background color.
-	 * @since 3.0
-	 */
-	private Color fSelectionBackgroundColor;
+	private Font fFont;
 	/**
 	 * The find scope's highlight color.
 	 * @since 2.0
@@ -3932,21 +3913,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				: createColor(store, PREFERENCE_COLOR_FOREGROUND, styledText.getDisplay());
 			styledText.setForeground(color);
 
-			if (fForegroundColor != null)
-				fForegroundColor.dispose();
-
-			fForegroundColor= color;
-
 			// ---------- background color ----------------------
 			color= store.getBoolean(PREFERENCE_COLOR_BACKGROUND_SYSTEM_DEFAULT)
 				? null
 				: createColor(store, PREFERENCE_COLOR_BACKGROUND, styledText.getDisplay());
 			styledText.setBackground(color);
-
-			if (fBackgroundColor != null)
-				fBackgroundColor.dispose();
-
-			fBackgroundColor= color;
 
 			// ----------- selection foreground color --------------------
 			color= store.getBoolean(PREFERENCE_COLOR_SELECTION_FOREGROUND_SYSTEM_DEFAULT)
@@ -3954,10 +3925,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				: createColor(store, PREFERENCE_COLOR_SELECTION_FOREGROUND, styledText.getDisplay());
 			styledText.setSelectionForeground(color);
 
-			if (fSelectionForegroundColor != null)
-				fSelectionForegroundColor.dispose();
-
-			fSelectionForegroundColor= color;
 
 			// ---------- selection background color ----------------------
 			color= store.getBoolean(PREFERENCE_COLOR_SELECTION_BACKGROUND_SYSTEM_DEFAULT)
@@ -3965,10 +3932,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				: createColor(store, PREFERENCE_COLOR_SELECTION_BACKGROUND, styledText.getDisplay());
 			styledText.setSelectionBackground(color);
 
-			if (fSelectionBackgroundColor != null)
-				fSelectionBackgroundColor.dispose();
-
-			fSelectionBackgroundColor= color;
 		}
 	}
 
@@ -3992,10 +3955,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 			if (target != null && target instanceof IFindReplaceTargetExtension)
 				((IFindReplaceTargetExtension) target).setScopeHighlightColor(color);
 
-			if (fFindScopeHighlightColor != null)
-				fFindScopeHighlightColor.dispose();
-
-			fFindScopeHighlightColor= color;
 		}
 	}
 
@@ -4334,31 +4293,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		disposeNonDefaultCaret();
 		fInitialCaret= null;
-
-		if (fForegroundColor != null) {
-			fForegroundColor.dispose();
-			fForegroundColor= null;
-		}
-
-		if (fBackgroundColor != null) {
-			fBackgroundColor.dispose();
-			fBackgroundColor= null;
-		}
-
-		if (fSelectionForegroundColor != null) {
-			fSelectionForegroundColor.dispose();
-			fSelectionForegroundColor= null;
-		}
-
-		if (fSelectionBackgroundColor != null) {
-			fSelectionBackgroundColor.dispose();
-			fSelectionBackgroundColor= null;
-		}
-
-		if (fFindScopeHighlightColor != null) {
-			fFindScopeHighlightColor.dispose();
-			fFindScopeHighlightColor= null;
-		}
 
 		if (fFontPropertyChangeListener != null) {
 			JFaceResources.getFontRegistry().removeListener(fFontPropertyChangeListener);
