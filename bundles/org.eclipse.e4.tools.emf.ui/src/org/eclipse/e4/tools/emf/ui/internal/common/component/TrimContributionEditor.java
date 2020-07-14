@@ -38,12 +38,14 @@ import org.eclipse.e4.tools.emf.ui.internal.common.ComponentLabelProvider;
 import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.TrimIdDialog;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.E;
 import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.UIViewer;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.basic.MTrimElement;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MTrimContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.TrimContributionImpl;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
@@ -128,6 +130,13 @@ public class TrimContributionEditor extends AbstractComponentEditor<MTrimContrib
 
 	@Override
 	public String getDetailLabel(Object element) {
+
+		if (element instanceof TrimContributionImpl) {
+			String pid = ((TrimContributionImpl) element).getParentId();
+			if (E.notEmpty(pid)) {
+				return pid;
+			}
+		}
 		return null;
 	}
 

@@ -36,12 +36,14 @@ import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList.Struct;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.ToolBarIdDialog;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.E;
 import org.eclipse.e4.tools.emf.ui.internal.common.uistructure.UIViewer;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBarElement;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.ToolBarContributionImpl;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.emf.common.command.Command;
 import org.eclipse.emf.databinding.EMFDataBindingContext;
@@ -136,6 +138,13 @@ public class ToolBarContributionEditor extends AbstractComponentEditor<MToolBarC
 
 	@Override
 	public String getDetailLabel(Object element) {
+
+		if (element instanceof ToolBarContributionImpl) {
+			String pid = ((ToolBarContributionImpl) element).getParentId();
+			if (E.notEmpty(pid)) {
+				return pid;
+			}
+		}
 		return null;
 	}
 

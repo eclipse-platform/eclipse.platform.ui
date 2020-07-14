@@ -34,10 +34,12 @@ import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList;
 import org.eclipse.e4.tools.emf.ui.internal.common.E4PickList.Struct;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.ControlFactory.TextPasteHandler;
 import org.eclipse.e4.tools.emf.ui.internal.common.component.dialogs.MenuIdDialog;
+import org.eclipse.e4.tools.emf.ui.internal.common.component.tabs.empty.E;
 import org.eclipse.e4.ui.model.application.impl.ApplicationPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.impl.UiPackageImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuContribution;
 import org.eclipse.e4.ui.model.application.ui.menu.MMenuElement;
+import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuContributionImpl;
 import org.eclipse.e4.ui.model.application.ui.menu.impl.MenuPackageImpl;
 import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.emf.common.command.Command;
@@ -133,7 +135,14 @@ public class MenuContributionEditor extends AbstractComponentEditor<MMenuContrib
 
 	@Override
 	public String getDetailLabel(Object element) {
-		return null;
+
+		if (element instanceof MenuContributionImpl) {
+			String pid = ((MenuContributionImpl) element).getParentId();
+			if (E.notEmpty(pid)) {
+				return pid;
+			}
+		}
+	return null;
 	}
 
 	@Override
