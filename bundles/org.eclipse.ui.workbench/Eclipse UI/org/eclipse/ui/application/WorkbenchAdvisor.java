@@ -46,7 +46,6 @@ import org.eclipse.ui.statushandlers.WorkbenchErrorHandler;
  * properly initialized.
  * </p>
  * <p>
- * <p>
  * An application should declare a subclass of <code>WorkbenchAdvisor</code> and
  * override methods to configure the workbench to suit the needs of the
  * particular application.
