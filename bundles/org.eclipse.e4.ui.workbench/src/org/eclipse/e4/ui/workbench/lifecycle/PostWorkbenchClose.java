@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     Stefan N�bauer <stefan.noebauer@kgu-consulting.com> - initial API and implementation
+ *     Stefan Nobauer <stefan.noebauer@kgu-consulting.com> - initial API and implementation
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.lifecycle;
 

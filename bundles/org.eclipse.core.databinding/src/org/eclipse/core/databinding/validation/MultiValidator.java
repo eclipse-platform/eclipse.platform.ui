@@ -13,7 +13,7 @@
  *     Boris Bokowski - bug 218269
  *     Matthew Hall - bug 237884, 240590, 251003, 251424, 278550, 332504
  *     Ovidio Mallo - bug 238909, 235859
- *     Stefan R�ck - bug 332504
+ *     Stefan Rock - bug 332504
  ******************************************************************************/
 
 package org.eclipse.core.databinding.validation;
