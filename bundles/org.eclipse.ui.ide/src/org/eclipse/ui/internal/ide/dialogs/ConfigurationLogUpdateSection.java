@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.eclipse.core.runtime.ServiceCaller;
 import org.eclipse.equinox.p2.engine.IProfile;
 import org.eclipse.equinox.p2.engine.IProfileRegistry;
 import org.eclipse.equinox.p2.metadata.IInstallableUnit;
@@ -29,9 +30,6 @@ import org.eclipse.osgi.service.resolver.State;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.about.ISystemSummarySection;
 import org.eclipse.ui.internal.ide.IDEWorkbenchMessages;
-import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 
 /**
  * Writes information about the update configurer into the system summary.
@@ -44,18 +42,7 @@ public class ConfigurationLogUpdateSection implements ISystemSummarySection {
 	 * Query the profile and print out the list of IUs which are installed.
 	 */
 	private void writeInstalledIUs(PrintWriter writer) {
-		BundleContext context = IDEWorkbenchPlugin.getDefault().getBundle().getBundleContext();
-		if (context == null)
-			return;
-
-		// Print out the list of IUs which are installed in the profile.
-		ServiceReference<IProfileRegistry> reference = context.getServiceReference(IProfileRegistry.class);
-		if (reference == null)
-			return;
-		try {
-			IProfileRegistry registry = context.getService(reference);
-			if (registry == null)
-				return;
+		ServiceCaller.callOnce(getClass(), IProfileRegistry.class, (registry) -> {
 			IProfile profile = registry.getProfile(IProfileRegistry.SELF);
 			if (profile == null)
 				return;
@@ -79,23 +66,14 @@ public class ConfigurationLogUpdateSection implements ISystemSummarySection {
 				for (String string : sorted)
 					writer.println(string);
 			}
-		} finally {
-			context.ungetService(reference);
-		}
+		});
 	}
 
 	/*
 	 * Query OSGi and print out the list of known bundles.
 	 */
 	private void writeBundles(PrintWriter writer) {
-		BundleContext context = IDEWorkbenchPlugin.getDefault().getBundle().getBundleContext();
-		if (context == null)
-			return;
-		ServiceReference<PlatformAdmin> reference = context.getServiceReference(PlatformAdmin.class);
-		if (reference == null)
-			return;
-		PlatformAdmin admin = context.getService(reference);
-		try {
+		ServiceCaller.callOnce(getClass(), PlatformAdmin.class, (admin) -> {
 			State state = admin.getState(false);
 			// Since this code is only called in the Help -> About -> Configuration Details case we
 			// won't worry too much about performance here and we will sort the query results
@@ -114,9 +92,7 @@ public class ConfigurationLogUpdateSection implements ISystemSummarySection {
 				for (String string : sorted)
 					writer.println(string);
 			}
-		} finally {
-			context.ungetService(reference);
-		}
+		});
 	}
 
 	@Override
