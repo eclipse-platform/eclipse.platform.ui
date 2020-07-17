@@ -16,12 +16,11 @@ package org.eclipse.core.internal.runtime;
 import java.io.File;
 import java.lang.reflect.*;
 import java.net.URL;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import org.eclipse.core.runtime.*;
 import org.eclipse.osgi.service.datalocation.Location;
 import org.eclipse.osgi.util.NLS;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
 
 /**
  * This class factors out the management of the .keyring location, and manages
@@ -74,23 +73,15 @@ public class AuthorizationHandler {
 		if (keyring != null && new File(keyringFile).lastModified() == keyringTimeStamp)
 			return true;
 		if (keyringFile == null) {
-			Collection<ServiceReference<Location>> refs = null;
-			try {
-				refs = PlatformActivator.getContext().getServiceReferences(Location.class, Location.CONFIGURATION_FILTER);
-				if (refs == null || refs.isEmpty())
-					return true;
-			} catch (InvalidSyntaxException e) {
-				// ignore this.  It should never happen as we have tested the above format.
+			boolean found = ServiceCaller.callOnce(AuthorizationHandler.class, Location.class,
+					Location.CONFIGURATION_FILTER, (configurationLocation) -> {
+						File file = new File(configurationLocation.getURL().getPath() + "/org.eclipse.core.runtime"); //$NON-NLS-1$
+						file = new File(file, F_KEYRING);
+						keyringFile = file.getAbsolutePath();
+					});
+			if (!found) {
 				return true;
 			}
-			ServiceReference<Location> serviceRef = refs.iterator().next();
-			Location configurationLocation = PlatformActivator.getContext().getService(serviceRef);
-			if (configurationLocation == null)
-				return true;
-			File file = new File(configurationLocation.getURL().getPath() + "/org.eclipse.core.runtime"); //$NON-NLS-1$
-			PlatformActivator.getContext().ungetService(serviceRef);
-			file = new File(file, F_KEYRING);
-			keyringFile = file.getAbsolutePath();
 		}
 		try {
 			Constructor<?> constructor = authClass.getConstructor(String.class, String.class);
