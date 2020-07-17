@@ -148,9 +148,9 @@ public final class InternalPlatform {
 				return; // do not do this more than once
 			splashEnded = true;
 		}
-		IApplicationContext applicationContext = getApplicationContext();
-		if (applicationContext != null)
-			applicationContext.applicationRunning();
+		final String filter = "(eclipse.application.type=main.thread)"; //$NON-NLS-1$
+		ServiceCaller.callOnce(InternalPlatform.class, IApplicationContext.class,
+				filter, IApplicationContext::applicationRunning);
 	}
 
 	/**
@@ -458,25 +458,6 @@ public final class InternalPlatform {
 	 */
 	public Plugin getRuntimeInstance() {
 		return runtimeInstance;
-	}
-
-	private IApplicationContext getApplicationContext() {
-		Collection<ServiceReference<IApplicationContext>> references;
-		try {
-			references = context.getServiceReferences(IApplicationContext.class, "(eclipse.application.type=main.thread)"); //$NON-NLS-1$
-		} catch (InvalidSyntaxException e) {
-			return null;
-		}
-		if (references == null || references.isEmpty())
-			return null;
-		// assumes the application context is available as a service
-		ServiceReference<IApplicationContext> firstRef = references.iterator().next();
-		IApplicationContext result = context.getService(firstRef);
-		if (result != null) {
-			context.ungetService(firstRef);
-			return result;
-		}
-		return null;
 	}
 
 	/**
