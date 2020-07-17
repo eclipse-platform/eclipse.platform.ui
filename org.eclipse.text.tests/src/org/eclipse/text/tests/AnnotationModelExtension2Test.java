@@ -146,8 +146,7 @@ public class AnnotationModelExtension2Test {
 
 		if (!expectedSet.isEmpty()) {
 			String message= "Missing annotations in result with models [" + getAnnotationModelNames(insideModel, beforeModel, afterModel) + "]";
-			for (Iterator<Annotation> iterator= expectedSet.iterator(); iterator.hasNext();) {
-				Annotation missing= iterator.next();
+			for (Annotation missing : expectedSet) {
 				message= message + "\n" + getName(missing);
 			}
 			assertTrue(message, false);

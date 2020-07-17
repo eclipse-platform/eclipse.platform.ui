@@ -17,7 +17,6 @@ import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Iterator;
 import java.util.List;
 
 import org.junit.After;
@@ -326,8 +325,7 @@ public class TextEditTests {
 
 	private static void compare(List<TextEdit> org, List<TextEdit> copy) {
 		assertTrue("Same length", org.size() == copy.size());
-		for (Iterator<TextEdit> iter= copy.iterator(); iter.hasNext();) {
-			TextEdit edit= iter.next();
+		for (TextEdit edit : copy) {
 			assertTrue("Original is part of copy list", !org.contains(edit));
 			if (edit instanceof MoveSourceEdit) {
 				MoveSourceEdit source= (MoveSourceEdit)edit;

@@ -18,7 +18,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 import org.junit.Assert;
@@ -192,8 +191,7 @@ public class TextUtilitiesTest {
 			events.add(new DocumentEvent(reference, 9, 2, "asd"));
 			events.add(new DocumentEvent(reference, 0, 2, "asd"));
 
-			for (Iterator<DocumentEvent> iterator= events.iterator(); iterator.hasNext();) {
-				DocumentEvent event= iterator.next();
+			for (DocumentEvent event : events) {
 				currentLength += event.getText().length() - event.getLength();
 			}
 
@@ -204,8 +202,7 @@ public class TextUtilitiesTest {
 				events.add(event);
 			}
 
-			for (Iterator<DocumentEvent> iterator= events.iterator(); iterator.hasNext();) {
-				DocumentEvent event= iterator.next();
+			for (DocumentEvent event : events) {
 
 //				System.err.println(event.getOffset() + ", " + event.getLength() + ", [" + event.getText() + "]") ;
 
@@ -245,8 +242,7 @@ public class TextUtilitiesTest {
 			events.add(new DocumentEvent(reference, 9, 2, "asd"));
 			events.add(new DocumentEvent(reference, 0, 2, "asd"));
 
-			for (Iterator<DocumentEvent> iterator= events.iterator(); iterator.hasNext();) {
-				DocumentEvent event= iterator.next();
+			for (DocumentEvent event : events) {
 				currentLength += event.getText().length() - event.getLength();
 			}
 
@@ -257,9 +253,7 @@ public class TextUtilitiesTest {
 				events.add(event);
 			}
 
-			for (Iterator<DocumentEvent> iterator= events.iterator(); iterator.hasNext();) {
-				DocumentEvent event= iterator.next();
-
+			for (DocumentEvent event : events) {
 				reference.replace(event.getOffset(), event.getLength(), event.getText());
 				if (Math.random() < 0.3) {
 					check(reference, testee);

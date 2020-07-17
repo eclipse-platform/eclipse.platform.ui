@@ -1279,8 +1279,7 @@ public class AnnotationModelStressTest {
 	}
 
 	private void assertExist(ArrayList<AnnotationData> added) {
-		for (int i= 0, size= added.size(); i < size; i++) {
-			AnnotationData data= added.get(i);
+		for (AnnotationData data : added) {
 			IAnnotationModel model= getModel(data.annotationNumber);
 			assertTrue(model.getPosition(data.annotation) == data.position);
 		}
@@ -1288,9 +1287,7 @@ public class AnnotationModelStressTest {
 		ArrayList<Annotation> annotations= getAllAnnotations();
 		assertEquals(added.size(), annotations.size());
 
-		for (int i= 0, size= annotations.size(); i < size; i++) {
-			Annotation annotation= annotations.get(i);
-
+		for (Annotation annotation : annotations) {
 			AnnotationData data= getAnnotationData(added, annotation);
 			assertNotNull(data);
 
@@ -1299,8 +1296,7 @@ public class AnnotationModelStressTest {
 	}
 
 	private void assertExistNew(ArrayList<AnnotationData> added) {
-		for (int i= 0, size= added.size(); i < size; i++) {
-			AnnotationData data= added.get(i);
+		for (AnnotationData data : added) {
 			IAnnotationModel model= getModel(data.annotationNumber);
 			assertTrue(model.getPosition(data.annotation) == data.position);
 		}
@@ -1308,9 +1304,7 @@ public class AnnotationModelStressTest {
 		ArrayList<Annotation> annotations= getAllAnnotationsNew();
 		assertEquals(added.size(), annotations.size());
 
-		for (int i= 0, size= annotations.size(); i < size; i++) {
-			Annotation annotation= annotations.get(i);
-
+		for (Annotation annotation : annotations) {
 			AnnotationData data= getAnnotationData(added, annotation);
 			assertNotNull(data);
 
@@ -1319,8 +1313,7 @@ public class AnnotationModelStressTest {
 	}
 
 	private AnnotationData getAnnotationData(ArrayList<AnnotationData> datas, Annotation annotation) {
-		for (int i= 0, size= datas.size(); i < size; i++) {
-			AnnotationData data= datas.get(i);
+		for (AnnotationData data : datas) {
 			if (data.annotation == annotation)
 				return data;
 		}
