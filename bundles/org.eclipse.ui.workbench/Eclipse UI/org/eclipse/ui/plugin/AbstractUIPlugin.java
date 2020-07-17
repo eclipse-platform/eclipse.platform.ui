@@ -16,22 +16,10 @@
  *******************************************************************************/
 package org.eclipse.ui.plugin;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
 import org.eclipse.core.runtime.CoreException;
-import org.eclipse.core.runtime.FileLocator;
-import org.eclipse.core.runtime.IPath;
-import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Plugin;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.preferences.InstanceScope;
-import org.eclipse.jface.dialogs.DialogSettings;
 import org.eclipse.jface.dialogs.IDialogSettings;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.jface.resource.ImageDescriptor;
@@ -44,7 +32,6 @@ import org.eclipse.ui.ISharedImages;
 import org.eclipse.ui.IWorkbench;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WWinPluginAction;
-import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.BundleUtility;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.osgi.framework.Bundle;
@@ -124,25 +111,6 @@ import org.osgi.framework.BundleListener;
 public abstract class AbstractUIPlugin extends Plugin {
 
 	/**
-	 * The name of the dialog settings file (value
-	 * <code>"dialog_settings.xml"</code>).
-	 */
-	private static final String FN_DIALOG_SETTINGS = "dialog_settings.xml"; //$NON-NLS-1$
-
-	/**
-	 * Key used to allow dialog_settings.xml customization. The value is the root
-	 * url of the parent directory containing settings for different plug-ins. Each
-	 * plug-in dialog_settings.xml file should reside in the directory with the
-	 * plug-in name.
-	 */
-	private static final String KEY_DEFAULT_DIALOG_SETTINGS_ROOTURL = "default_dialog_settings_rootUrl"; //$NON-NLS-1$
-
-	/**
-	 * Storage for dialog and wizard data; <code>null</code> if not yet initialized.
-	 */
-	private IDialogSettings dialogSettings;
-
-	/**
 	 * Storage for preferences.
 	 */
 	private ScopedPreferenceStore preferenceStore;
@@ -204,24 +172,12 @@ public abstract class AbstractUIPlugin extends Plugin {
 	}
 
 	/**
-	 * Returns the dialog settings for this UI plug-in. The dialog settings is used
-	 * to hold persistent state data for the various wizards and dialogs of this
-	 * plug-in in the context of a workbench.
-	 * <p>
-	 * If an error occurs reading the dialog store, an empty one is quietly created
-	 * and returned.
-	 * </p>
-	 * <p>
-	 * Subclasses may override this method but are not expected to.
-	 * </p>
-	 *
 	 * @return the dialog settings
+	 * @deprecated @see {@link PlatformUI#getDialogSettingsProvider(Bundle)}
 	 */
+	@Deprecated
 	public IDialogSettings getDialogSettings() {
-		if (dialogSettings == null) {
-			loadDialogSettings();
-		}
-		return dialogSettings;
+		return PlatformUI.getDialogSettingsProvider(getBundle()).getDialogSettings();
 	}
 
 	/**
@@ -383,122 +339,16 @@ public abstract class AbstractUIPlugin extends Plugin {
 	}
 
 	/**
-	 * Loads the dialog settings for this plug-in. The default implementation first
-	 * looks for a standard named file in the plug-in's read/write state area; if no
-	 * such file exists, default product dialog settings directory (specified by
-	 * org.eclipse.ui/default_dialog_settings_rootUrl property) is checked to see if
-	 * there is a file with default plug-in dialog settings exists; if no such file
-	 * exists, the plug-in's install directory is checked to see if one was
-	 * installed with some default settings; if no file is found in either place, a
-	 * new empty dialog settings is created. If a problem occurs, an empty settings
-	 * is silently used.
-	 * <p>
+	 * Reloads the dialog settings for this bundle.
+	 *
 	 * This framework method may be overridden, although this is typically
 	 * unnecessary.
-	 * </p>
+	 *
+	 * @deprecated see {@link PlatformUI#getDialogSettingsProvider(Bundle)}
 	 */
+	@Deprecated
 	protected void loadDialogSettings() {
-		dialogSettings = createEmptySettings();
-		boolean loaded = loadDialogSettingsFromWorkspace();
-		// otherwise look for product custom dialog settings
-		if (!loaded) {
-			loaded = loadDefaultDialogSettingsFromProduct();
-		}
-		// otherwise look for bundle specific dialog settings
-		if (!loaded) {
-			loadDefaultDialogSettingsFromBundle();
-		}
-	}
-
-	/**
-	 * @return true if the product specific settings file was successfully read
-	 */
-	private boolean loadDefaultDialogSettingsFromProduct() {
-		String rootUrl = PlatformUI.getPreferenceStore().getString(KEY_DEFAULT_DIALOG_SETTINGS_ROOTURL);
-		if (rootUrl == null || rootUrl.isEmpty()) {
-			return false;
-		}
-		String bundlePart = getBundle().getSymbolicName() + "/" + FN_DIALOG_SETTINGS; //$NON-NLS-1$
-		String fullUrl = rootUrl.endsWith("/") ? rootUrl + bundlePart : rootUrl + "/" + bundlePart; //$NON-NLS-1$//$NON-NLS-2$
-		URL url;
-		try {
-			url = new URL(fullUrl);
-		} catch (MalformedURLException e) {
-			getLog().log(new Status(IStatus.ERROR, getBundle().getSymbolicName(),
-					"Failed to load dialog settings from: " + fullUrl, e)); //$NON-NLS-1$
-			return false;
-		}
-
-		try {
-			url = FileLocator.resolve(url);
-		} catch (IOException e) {
-			if (WorkbenchPlugin.DEBUG) {
-				getLog().log(new Status(IStatus.ERROR, getBundle().getSymbolicName(),
-						"Failed to load dialog settings from: " + fullUrl, e)); //$NON-NLS-1$
-			}
-			return false;
-		}
-
-		try (BufferedReader reader = new BufferedReader(
-				new InputStreamReader(url.openStream(), StandardCharsets.UTF_8))) {
-			dialogSettings.load(reader);
-			return true;
-		} catch (IOException e) {
-			// load failed so ensure we have an empty settings
-			dialogSettings = createEmptySettings();
-			getLog().log(new Status(IStatus.ERROR, getBundle().getSymbolicName(),
-					"Failed to load dialog settings from: " + url, e)); //$NON-NLS-1$
-		}
-		return false;
-	}
-
-	/**
-	 * @return true if the workspace settings file was successfully read
-	 */
-	private boolean loadDialogSettingsFromWorkspace() {
-		IPath dataLocation = getStateLocationOrNull();
-		if (dataLocation == null) {
-			// bug 69387: The instance area should not be created (in the call to
-			// #getStateLocation) if -data @none or -data @noDefault was used
-			return false;
-		}
-		// try r/w state area in the local file system
-		String readWritePath = dataLocation.append(FN_DIALOG_SETTINGS).toOSString();
-		File settingsFile = new File(readWritePath);
-		if (settingsFile.exists()) {
-			try {
-				dialogSettings.load(readWritePath);
-			} catch (IOException e) {
-				// load failed so ensure we have an empty settings
-				dialogSettings = createEmptySettings();
-				getLog().log(new Status(IStatus.ERROR, getBundle().getSymbolicName(),
-						"Failed to load dialog settings from: " + settingsFile, e)); //$NON-NLS-1$
-			}
-			return true;
-		}
-		return false;
-	}
-
-	private void loadDefaultDialogSettingsFromBundle() {
-		Bundle bundle = getBundle();
-		URL dsURL = BundleUtility.find(bundle, FN_DIALOG_SETTINGS);
-		if (dsURL == null) {
-			// no bundle defaults
-			return;
-		}
-		try (BufferedReader reader = new BufferedReader(
-				new InputStreamReader(dsURL.openStream(), StandardCharsets.UTF_8))) {
-			dialogSettings.load(reader);
-		} catch (IOException e) {
-			getLog().log(new Status(IStatus.ERROR, bundle.getSymbolicName(),
-					"Failed to load dialog settings from: " + dsURL, e)); //$NON-NLS-1$
-			// load failed so ensure we have an empty settings
-			dialogSettings = createEmptySettings();
-		}
-	}
-
-	private DialogSettings createEmptySettings() {
-		return new DialogSettings("Workbench"); //$NON-NLS-1$
+		PlatformUI.getDialogSettingsProvider(getBundle()).loadDialogSettings();
 	}
 
 	/**
@@ -543,24 +393,13 @@ public abstract class AbstractUIPlugin extends Plugin {
 	}
 
 	/**
-	 * Saves this plug-in's dialog settings. Any problems which arise are silently
-	 * ignored.
+	 * Dialog settings are saved automatically when the workbench stops.
+	 *
+	 * @deprecated @see DialogSettingsService
 	 */
+	@Deprecated
 	protected void saveDialogSettings() {
-		if (dialogSettings == null) {
-			return;
-		}
-
-		try {
-			IPath path = getStateLocationOrNull();
-			if (path == null) {
-				return;
-			}
-			String readWritePath = path.append(FN_DIALOG_SETTINGS).toOSString();
-			dialogSettings.save(readWritePath);
-		} catch (IOException | IllegalStateException e) {
-			// spec'ed to ignore problems
-		}
+		PlatformUI.getDialogSettingsProvider(getBundle()).saveDialogSettings();
 	}
 
 	/**
@@ -678,7 +517,7 @@ public abstract class AbstractUIPlugin extends Plugin {
 			if (bundleListener != null) {
 				context.removeBundleListener(bundleListener);
 			}
-			saveDialogSettings();
+			// saveDialogSettings(); -> now done by DialogSettingsProvider
 			savePreferenceStore();
 			preferenceStore = null;
 			if (imageRegistry != null)
@@ -741,28 +580,4 @@ public abstract class AbstractUIPlugin extends Plugin {
 		}
 		return ResourceLocator.imageDescriptorFromBundle(pluginId, imageFilePath).orElse(null);
 	}
-
-	/**
-	 * FOR INTERNAL WORKBENCH USE ONLY.
-	 *
-	 * Returns the path to a location in the file system that can be used to
-	 * persist/restore state between workbench invocations. If the location did not
-	 * exist prior to this call it will be created. Returns <code>null</code> if no
-	 * such location is available.
-	 *
-	 * @return path to a location in the file system where this plug-in can persist
-	 *         data between sessions, or <code>null</code> if no such location is
-	 *         available.
-	 * @since 3.1
-	 */
-	private IPath getStateLocationOrNull() {
-		try {
-			return getStateLocation();
-		} catch (IllegalStateException e) {
-			// This occurs if -data=@none is explicitly specified, so ignore this silently.
-			// Is this OK? See bug 85071.
-			return null;
-		}
-	}
-
 }

@@ -16,16 +16,15 @@ package org.eclipse.ui.tests.preferences;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.lang.reflect.Field;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import org.eclipse.core.runtime.FileLocator;
 import org.eclipse.jface.dialogs.IDialogSettings;
+import org.eclipse.jface.dialogs.IDialogSettingsProvider;
 import org.eclipse.jface.preference.PreferenceMemento;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.ui.tests.TestPlugin;
 import org.junit.After;
 import org.junit.Before;
@@ -33,16 +32,16 @@ import org.junit.Test;
 
 public class DialogSettingsCustomizationTest {
 
-	// See AbstractUIPlugin
+	// See DialogSettingsProvider
 	private static final String KEY_DEFAULT_DIALOG_SETTINGS_ROOTURL = "default_dialog_settings_rootUrl"; //$NON-NLS-1$
 	private static final String FN_DIALOG_SETTINGS = "dialog_settings.xml"; //$NON-NLS-1$
 
 	private Path dialogSettingsPath;
-	private Field settingsField;
 	private TestPlugin testPlugin;
 	private Path dialogSettingsPathBackup;
 	private String rootUrlValue;
 	private PreferenceMemento memento;
+	private IDialogSettingsProvider dialogSettingsProvider;
 
 	@Before
 	public void doSetUp() throws Exception {
@@ -54,9 +53,8 @@ public class DialogSettingsCustomizationTest {
 			Files.deleteIfExists(dialogSettingsPathBackup);
 			Files.move(dialogSettingsPath, dialogSettingsPathBackup);
 		}
-		settingsField = AbstractUIPlugin.class.getDeclaredField("dialogSettings");
-		settingsField.setAccessible(true);
-		settingsField.set(testPlugin, null);
+		dialogSettingsProvider = PlatformUI.getDialogSettingsProvider(testPlugin.getBundle());
+		dialogSettingsProvider.loadDialogSettings();
 		memento = new PreferenceMemento();
 	}
 
@@ -66,7 +64,7 @@ public class DialogSettingsCustomizationTest {
 		if (Files.exists(dialogSettingsPathBackup)) {
 			Files.move(dialogSettingsPathBackup, dialogSettingsPath);
 		}
-		settingsField.set(testPlugin, null);
+		dialogSettingsProvider.loadDialogSettings();
 		memento.resetPreferences();
 	}
 
@@ -86,18 +84,15 @@ public class DialogSettingsCustomizationTest {
 	}
 
 	private void assertDefaultBundleValueIsSet() {
-		IDialogSettings section = testPlugin.getDialogSettings().getSection("DialogSettingsCustomizationTest");
+		IDialogSettings section = dialogSettingsProvider.getDialogSettings().getSection("DialogSettingsCustomizationTest");
 		assertNotNull(section);
 		assertEquals("defaultBundleValue", section.get("testKey"));
 	}
 
 	private void assertCustomValueIsSet() throws Exception {
-		// delete previously read value to enforce settings load
-		settingsField.set(testPlugin, null);
-
-		IDialogSettings section = testPlugin.getDialogSettings().getSection("DialogSettingsCustomizationTest");
+		dialogSettingsProvider.loadDialogSettings();
+		IDialogSettings section = dialogSettingsProvider.getDialogSettings().getSection("DialogSettingsCustomizationTest");
 		assertNotNull(section);
 		assertEquals("testValue", section.get("testKey"));
 	}
-
 }

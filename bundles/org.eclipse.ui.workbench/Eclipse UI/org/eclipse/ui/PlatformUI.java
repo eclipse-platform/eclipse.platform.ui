@@ -15,6 +15,8 @@
 package org.eclipse.ui;
 
 import org.eclipse.core.runtime.preferences.InstanceScope;
+import org.eclipse.e4.ui.internal.workbench.swt.DialogSettingsProviderService;
+import org.eclipse.jface.dialogs.IDialogSettingsProvider;
 import org.eclipse.jface.preference.IPreferenceStore;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.application.WorkbenchAdvisor;
@@ -24,6 +26,7 @@ import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.internal.util.PrefUtil;
 import org.eclipse.ui.preferences.ScopedPreferenceStore;
 import org.eclipse.ui.testing.TestableObject;
+import org.osgi.framework.Bundle;
 import org.osgi.framework.FrameworkUtil;
 
 /**
@@ -198,6 +201,25 @@ public final class PlatformUI {
 	 */
 	public static IPreferenceStore getPreferenceStore() {
 		return PrefUtil.getAPIPreferenceStore();
+	}
+
+	/**
+	 * Returns the dialog settings provider for the passed bundle. The dialog
+	 * settings is used to hold persistent state data for the various wizards and
+	 * dialogs of the bundle in the context of a workbench.
+	 * <p>
+	 * If an error occurs reading the dialog store, an empty one is quietly created
+	 * and returned (errors are logged).
+	 * </p>
+	 *
+	 * @param bundle the bundle for which the dialog settings are to be returned
+	 *
+	 * @return the dialog settings provider
+	 * @since 3.122
+	 */
+
+	public static IDialogSettingsProvider getDialogSettingsProvider(Bundle bundle) {
+		return DialogSettingsProviderService.instance.getProvider(bundle);
 	}
 
 	/**
