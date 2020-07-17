@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -213,11 +212,8 @@ public final class HippieProposalProcessor implements IContentAssistProcessor {
 			if (prefix == null || prefix.isEmpty())
 				return NO_PROPOSALS;
 
-			List<String> suggestions= getSuggestions(viewer, offset, prefix);
-
 			List<ICompletionProposal> result= new ArrayList<>();
-			for (Iterator<String> it= suggestions.iterator(); it.hasNext();) {
-				String string= it.next();
+			for (String string : getSuggestions(viewer, offset, prefix)) {
 				if (!string.isEmpty())
 					result.add(createProposal(string, prefix, offset));
 			}

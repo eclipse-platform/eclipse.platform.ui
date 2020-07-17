@@ -14,7 +14,6 @@
 package org.eclipse.ui.internal.texteditor.rulers;
 
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -148,11 +147,11 @@ public final class DAG<E> {
 	 */
 	public void removeVertex(E vertex) {
 		Set<E> targets= fOut.removeAll(vertex);
-		for (Iterator<E> it= targets.iterator(); it.hasNext();)
-			fIn.remove(it.next(), vertex);
+		for (E e : targets)
+			fIn.remove(e, vertex);
 		Set<E> origins= fIn.removeAll(vertex);
-		for (Iterator<E> it= origins.iterator(); it.hasNext();)
-			fOut.remove(it.next(), vertex);
+		for (E e : origins)
+			fOut.remove(e, vertex);
 	}
 
 	/**
@@ -200,10 +199,9 @@ public final class DAG<E> {
 		if (start == end)
 			return true;
 
-		Set<E> children= fOut.get(start);
-		for (Iterator<E> it= children.iterator(); it.hasNext();)
+		for (E e : fOut.get(start))
 			// recursion
-			if (hasPath(it.next(), end))
+			if (hasPath(e, end))
 				return true;
 		return false;
 	}

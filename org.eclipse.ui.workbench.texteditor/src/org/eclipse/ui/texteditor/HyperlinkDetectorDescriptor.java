@@ -136,9 +136,9 @@ public final class HyperlinkDetectorDescriptor {
 			return false;
 
 		String targetId= getTargetId();
-		for (int i= 0; i < targets.length; i++) {
-			if (targetId.equals(targets[i].getId())) {
-				fTarget= targets[i];
+		for (HyperlinkDetectorTargetDescriptor target : targets) {
+			if (targetId.equals(target.getId())) {
+				fTarget= target;
 				return true;
 			}
 		}
@@ -225,8 +225,7 @@ public final class HyperlinkDetectorDescriptor {
 	private static HyperlinkDetectorDescriptor[] createDescriptors(IConfigurationElement[] elements) {
 		HyperlinkDetectorTargetDescriptor[] targets= HyperlinkDetectorTargetDescriptor.getContributedHyperlinkDetectorTargets();
 		List<HyperlinkDetectorDescriptor> result= new ArrayList<>(elements.length);
-		for (int i= 0; i < elements.length; i++) {
-			IConfigurationElement element= elements[i];
+		for (IConfigurationElement element : elements) {
 			if (HYPERLINK_DETECTOR_ELEMENT.equals(element.getName())) {
 				HyperlinkDetectorDescriptor desc= new HyperlinkDetectorDescriptor(element);
 				if (desc.isValid(targets))

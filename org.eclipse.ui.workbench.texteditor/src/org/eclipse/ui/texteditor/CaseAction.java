@@ -87,8 +87,7 @@ public class CaseAction extends TextEditorAction {
 			IRegion[] ranges= JFaceTextUtil.getCoveredRanges(viewer, selection);
 			if (ranges.length > 1 && viewer instanceof ITextViewerExtension)
 				((ITextViewerExtension) viewer).getRewriteTarget().beginCompoundChange();
-			for (int i= 0; i < ranges.length; i++) {
-				IRegion region= ranges[i];
+			for (IRegion region : ranges) {
 				String target= document.get(region.getOffset(), region.getLength());
 				String replacement= (fToUpper ? target.toUpperCase() : target.toLowerCase());
 				if (!target.equals(replacement)) {

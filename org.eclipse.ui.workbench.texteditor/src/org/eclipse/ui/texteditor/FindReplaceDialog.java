@@ -468,9 +468,8 @@ class FindReplaceDialog extends Dialog {
 						if ((button.getStyle() & SWT.RADIO) != 0) {
 							Composite buttonParent= button.getParent();
 							if (buttonParent != null) {
-								Control[] children= buttonParent.getChildren();
-								for (int i= 0; i < children.length; i++)
-									((Button)children[i]).setSelection(false);
+								for (Control child : buttonParent.getChildren())
+									((Button)child).setSelection(false);
 							}
 							button.setSelection(true);
 						} else {
@@ -1639,8 +1638,8 @@ class FindReplaceDialog extends Dialog {
 	 */
 	private void updateCombo(Combo combo, List<String> content) {
 		combo.removeAll();
-		for (int i= 0; i < content.size(); i++) {
-			combo.add(content.get(i).toString());
+		for (String element : content) {
+			combo.add(element.toString());
 		}
 	}
 

@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
@@ -152,8 +151,7 @@ public final class RulerColumnRegistry {
 		List<RulerColumnDescriptor> descriptors= new ArrayList<>();
 		Map<String, RulerColumnDescriptor> descriptorMap= new HashMap<>();
 
-		for (Iterator<IConfigurationElement> iter= elements.iterator(); iter.hasNext();) {
-			IConfigurationElement element= iter.next();
+		for (IConfigurationElement element : elements) {
 			try {
 				RulerColumnDescriptor desc= new RulerColumnDescriptor(element, this);
 				String id= desc.getId();

@@ -147,9 +147,8 @@ abstract class AbstractTextZoomHandler extends AbstractHandler {
 				// but those aren't visible at that time. So we're recreating the font hierarchy
 				fgFontToDefault= new HashMap<>();
 				fgDefaultToFonts= new HashMap<>();
-				IConfigurationElement[] themeElements= Platform.getExtensionRegistry().getConfigurationElementsFor("org.eclipse.ui.themes"); //$NON-NLS-1$
-				for (int i= 0; i < themeElements.length; i++) {
-					IConfigurationElement extension= themeElements[i];
+				for (IConfigurationElement extension : Platform.getExtensionRegistry()
+						.getConfigurationElementsFor("org.eclipse.ui.themes")) { //$NON-NLS-1$
 					if ("fontDefinition".equals(extension.getName())) { //$NON-NLS-1$
 						String fontId= extension.getAttribute("id"); //$NON-NLS-1$
 						String defaultsTo= extension.getAttribute("defaultsTo"); //$NON-NLS-1$

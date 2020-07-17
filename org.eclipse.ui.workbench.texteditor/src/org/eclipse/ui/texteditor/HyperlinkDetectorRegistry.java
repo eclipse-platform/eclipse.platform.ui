@@ -162,9 +162,9 @@ public final class HyperlinkDetectorRegistry {
 		initHyperlinkDetectorDescriptors();
 
 		List<HyperlinkDetectorDelegate> result= new ArrayList<>();
-		for (int i= 0; i < fHyperlinkDetectorDescriptors.length; i++) {
-			if (targetId.equals(fHyperlinkDetectorDescriptors[i].getTargetId())) {
-				HyperlinkDetectorDelegate detector= new HyperlinkDetectorDelegate(fHyperlinkDetectorDescriptors[i]);
+		for (HyperlinkDetectorDescriptor fHyperlinkDetectorDescriptor : fHyperlinkDetectorDescriptors) {
+			if (targetId.equals(fHyperlinkDetectorDescriptor.getTargetId())) {
+				HyperlinkDetectorDelegate detector= new HyperlinkDetectorDelegate(fHyperlinkDetectorDescriptor);
 				result.add(detector);
 				detector.setContext(context);
 			}

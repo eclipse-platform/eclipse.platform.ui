@@ -127,8 +127,7 @@ public final class HyperlinkDetectorTargetDescriptor {
 
 	private static HyperlinkDetectorTargetDescriptor[] createDescriptors(IConfigurationElement[] elements) {
 		List<HyperlinkDetectorTargetDescriptor> result= new ArrayList<>(elements.length);
-		for (int i= 0; i < elements.length; i++) {
-			IConfigurationElement element= elements[i];
+		for (IConfigurationElement element : elements) {
 			if (TARGET_ELEMENT.equals(element.getName())) {
 				HyperlinkDetectorTargetDescriptor desc= new HyperlinkDetectorTargetDescriptor(element);
 				if (desc.isValid())

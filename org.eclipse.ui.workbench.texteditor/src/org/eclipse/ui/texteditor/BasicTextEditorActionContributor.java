@@ -168,8 +168,7 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		fHippieCompletion.setActionDefinitionId(ITextEditorActionDefinitionIds.HIPPIE_COMPLETION);
 
 		fStatusFields= new HashMap<>(3);
-		for (int i= 0; i < STATUS_FIELD_DEFS.length; i++) {
-			StatusFieldDef fieldDef= STATUS_FIELD_DEFS[i];
+		for (StatusFieldDef fieldDef : STATUS_FIELD_DEFS) {
 			fStatusFields.put(fieldDef, new StatusLineContributionItem(fieldDef.category, fieldDef.visible, fieldDef.widthInChars));
 		}
 	}
@@ -209,16 +208,16 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 
 		if (fActiveEditorPart instanceof ITextEditorExtension) {
 			ITextEditorExtension extension= (ITextEditorExtension) fActiveEditorPart;
-			for (int i= 0; i < STATUS_FIELD_DEFS.length; i++)
-				extension.setStatusField(null, STATUS_FIELD_DEFS[i].category);
+			for (StatusFieldDef element : STATUS_FIELD_DEFS)
+				extension.setStatusField(null, element.category);
 		}
 
 		fActiveEditorPart= part;
 		ITextEditor editor= (part instanceof ITextEditor) ? (ITextEditor) part : null;
 
 		IActionBars actionBars= getActionBars();
-		for (int i= 0; i < ACTIONS.length; i++)
-			actionBars.setGlobalActionHandler(ACTIONS[i], getAction(editor, ACTIONS[i]));
+		for (String element : ACTIONS)
+			actionBars.setGlobalActionHandler(element, getAction(editor, element));
 		actionBars.setGlobalActionHandler(ITextEditorActionDefinitionIds.SHOW_WHITESPACE_CHARACTERS, getAction(editor, ITextEditorActionConstants.SHOW_WHITESPACE_CHARACTERS));
 		actionBars.setGlobalActionHandler(ITextEditorActionDefinitionIds.BLOCK_SELECTION_MODE, getAction(editor, ITextEditorActionConstants.BLOCK_SELECTION_MODE));
 		if (editor instanceof AbstractTextEditor && ((AbstractTextEditor)editor).isWordWrapSupported())
@@ -231,12 +230,12 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 		fGotoLine.setAction(getAction(editor, ITextEditorActionConstants.GOTO_LINE));
 		fHippieCompletion.setAction(getAction(editor, ITextEditorActionConstants.HIPPIE_COMPLETION));
 
-		for (int i= 0; i < STATUS_FIELD_DEFS.length; i++) {
+		for (StatusFieldDef element : STATUS_FIELD_DEFS) {
 			if (fActiveEditorPart instanceof ITextEditorExtension) {
-				StatusLineContributionItem statusField= fStatusFields.get(STATUS_FIELD_DEFS[i]);
-				statusField.setActionHandler(getAction(editor, STATUS_FIELD_DEFS[i].actionId));
+				StatusLineContributionItem statusField= fStatusFields.get(element);
+				statusField.setActionHandler(getAction(editor, element.actionId));
 				ITextEditorExtension extension= (ITextEditorExtension) fActiveEditorPart;
-				extension.setStatusField(statusField, STATUS_FIELD_DEFS[i].category);
+				extension.setStatusField(statusField, element.category);
 			}
 		}
 	}
@@ -302,8 +301,8 @@ public class BasicTextEditorActionContributor extends EditorActionBarContributor
 	@Override
 	public void contributeToStatusLine(IStatusLineManager statusLineManager) {
 		super.contributeToStatusLine(statusLineManager);
-		for (int i= 0; i < STATUS_FIELD_DEFS.length; i++)
-			statusLineManager.add(fStatusFields.get(STATUS_FIELD_DEFS[i]));
+		for (StatusFieldDef element : STATUS_FIELD_DEFS)
+			statusLineManager.add(fStatusFields.get(element));
 	}
 
 	@Override

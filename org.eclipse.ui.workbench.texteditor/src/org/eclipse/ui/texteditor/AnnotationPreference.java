@@ -1072,9 +1072,9 @@ public class AnnotationPreference {
 		if (!getAnnotationType().equals(preference.getAnnotationType()))
 			return;
 
-		for (int i= 0; i < ATTRIBUTES.length; i++) {
-			if (!hasValue(ATTRIBUTES[i]))
-				setValue(ATTRIBUTES[i], preference.getValue(ATTRIBUTES[i]));
+		for (Object element : ATTRIBUTES) {
+			if (!hasValue(element))
+				setValue(element, preference.getValue(element));
 		}
 
 		if (fAnnotationImageProvider == null)

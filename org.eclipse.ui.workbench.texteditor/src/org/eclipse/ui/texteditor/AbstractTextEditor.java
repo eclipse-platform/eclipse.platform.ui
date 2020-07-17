@@ -1739,8 +1739,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 */
 		@Override
 		public void dispose() {
-			for (Iterator<IContributedRulerColumn> iter= new ArrayList<>(fColumns).iterator(); iter.hasNext();)
-				removeColumn(getRuler(), iter.next());
+			for (IContributedRulerColumn iContributedRulerColumn : new ArrayList<>(fColumns))
+				removeColumn(getRuler(), iContributedRulerColumn);
 			fColumns.clear();
 		}
 	}
@@ -3232,8 +3232,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		RulerColumnRegistry registry= RulerColumnRegistry.getDefault();
 		List<RulerColumnDescriptor> descriptors= registry.getColumnDescriptors();
-		for (Iterator<RulerColumnDescriptor> it= descriptors.iterator(); it.hasNext();) {
-			final RulerColumnDescriptor descriptor= it.next();
+		for (RulerColumnDescriptor descriptor : descriptors) {
 			support.setColumnVisible(descriptor, adapter == null || adapter.isEnabled(descriptor));
 		}
 	}
@@ -4568,8 +4567,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		if (PREFERENCE_RULER_CONTRIBUTIONS.equals(property)) {
 			String[] difference= StringSetSerializer.getDifference((String) event.getOldValue(), (String) event.getNewValue());
 			IColumnSupport support= getAdapter(IColumnSupport.class);
-			for (int i= 0; i < difference.length; i++) {
-				RulerColumnDescriptor desc= RulerColumnRegistry.getDefault().getColumnDescriptor(difference[i]);
+			for (String element : difference) {
+				RulerColumnDescriptor desc= RulerColumnRegistry.getDefault().getColumnDescriptor(element);
 				if (desc != null &&  support.isColumnSupported(desc)) {
 					boolean newState= !support.isColumnVisible(desc);
 					support.setColumnVisible(desc, newState);
@@ -5291,8 +5290,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	private IAction findContributedAction(String actionID) {
 		List<IConfigurationElement> actions= new ArrayList<>();
 		IConfigurationElement[] elements= Platform.getExtensionRegistry().getConfigurationElementsFor(PlatformUI.PLUGIN_ID, "editorActions"); //$NON-NLS-1$
-		for (int i= 0; i < elements.length; i++) {
-			IConfigurationElement element= elements[i];
+		for (IConfigurationElement element : elements) {
 			if (TAG_CONTRIBUTION_TYPE.equals(element.getName())) {
 				IWorkbenchPartSite site = getSite();
 				if (site == null) {
@@ -5301,9 +5299,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				if (!site.getId().equals(element.getAttribute("targetID"))) //$NON-NLS-1$
 					continue;
 
-				IConfigurationElement[] children= element.getChildren("action"); //$NON-NLS-1$
-				for (int j= 0; j < children.length; j++) {
-					IConfigurationElement child= children[j];
+				for (IConfigurationElement child : element.getChildren("action")) { //$NON-NLS-1$
 					if (actionID.equals(child.getAttribute("actionID"))) //$NON-NLS-1$
 						actions.add(child);
 				}
@@ -5472,8 +5468,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		IAction action;
 
 		StyledText textWidget= fSourceViewer.getTextWidget();
-		for (int i= 0; i < ACTION_MAP.length; i++) {
-			IdMapEntry entry= ACTION_MAP[i];
+		for (IdMapEntry entry : ACTION_MAP) {
 			action= new TextNavigationAction(textWidget, entry.getAction());
 			action.setActionDefinitionId(entry.getActionId());
 			setAction(entry.getActionId(), action);
@@ -6038,8 +6033,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		menu.add(new Separator(ITextEditorActionConstants.GROUP_REST));
 		menu.add(new Separator(IWorkbenchActionConstants.MB_ADDITIONS));
 
-		for (Iterator<IMenuListener> i= fRulerContextMenuListeners.iterator(); i.hasNext();)
-			i.next().menuAboutToShow(menu);
+		for (IMenuListener iMenuListener : fRulerContextMenuListeners)
+			iMenuListener.menuAboutToShow(menu);
 
 		addAction(menu, ITextEditorActionConstants.RULER_MANAGE_BOOKMARKS);
 		addAction(menu, ITextEditorActionConstants.RULER_MANAGE_TASKS);
@@ -6316,12 +6311,11 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 2.1
 	 */
 	protected void editorSaved() {
-		INavigationLocation[] locations= getSite().getPage().getNavigationHistory().getLocations();
 		IEditorInput input= getEditorInput();
-		for (int i= 0; i < locations.length; i++) {
-			if (locations[i] instanceof TextSelectionNavigationLocation) {
-				if(input.equals(locations[i].getInput())) {
-					TextSelectionNavigationLocation location= (TextSelectionNavigationLocation) locations[i];
+		for (INavigationLocation location2 : getSite().getPage().getNavigationHistory().getLocations()) {
+			if (location2 instanceof TextSelectionNavigationLocation) {
+				if(input.equals(location2.getInput())) {
+					TextSelectionNavigationLocation location= (TextSelectionNavigationLocation) location2;
 					location.partSaved(this);
 				}
 			}
@@ -7282,11 +7276,10 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 */
 	protected final void updateIndentPrefixes() {
 		SourceViewerConfiguration configuration= getSourceViewerConfiguration();
-		String[] types= configuration.getConfiguredContentTypes(fSourceViewer);
-		for (int i= 0; i < types.length; i++) {
-			String[] prefixes= configuration.getIndentPrefixes(fSourceViewer, types[i]);
+		for (String type : configuration.getConfiguredContentTypes(fSourceViewer)) {
+			String[] prefixes= configuration.getIndentPrefixes(fSourceViewer, type);
 			if (prefixes != null && prefixes.length > 0)
-				fSourceViewer.setIndentPrefixes(prefixes, types[i]);
+				fSourceViewer.setIndentPrefixes(prefixes, type);
 		}
 	}
 
