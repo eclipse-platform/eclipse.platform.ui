@@ -1,18 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.core.databinding.beans" version="2">
     <resource path="META-INF/MANIFEST.MF">
-        <filter comment="Bug 546820 -  Mark deprecated observable factory classes for deletion" id="923795461">
-            <message_arguments>
-                <message_argument value="1.7.0"/>
-                <message_argument value="1.6.100"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Bug 549659 - API change was not detected by tooling" id="926941240">
-            <message_arguments>
-                <message_argument value="1.6.100"/>
-                <message_argument value="1.5.100"/>
-            </message_arguments>
-        </filter>
         <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="926941240">
             <message_arguments>
                 <message_argument value="1.7.0"/>
@@ -781,14 +769,6 @@
             <message_arguments>
                 <message_argument value="org.eclipse.core.databinding.beans.PojoProperties"/>
                 <message_argument value="PojoProperties()"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/core/databinding/beans/typed/BeanProperties.java" type="org.eclipse.core.databinding.beans.typed.BeanProperties">
-        <filter comment="Bug 549659 - Fix BeanProperties#list. This is an acceptable very small API breakage, so minor version is increased instead of major version." id="420679712">
-            <message_arguments>
-                <message_argument value="org.eclipse.core.databinding.beans.typed.BeanProperties.list(Class&lt;S&gt;, String)"/>
-                <message_argument value="E"/>
             </message_arguments>
         </filter>
     </resource>

@@ -1,19 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.jface.databinding" version="2">
-    <resource path="META-INF/MANIFEST.MF">
-        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="923795461">
-            <message_arguments>
-                <message_argument value="1.12.0"/>
-                <message_argument value="1.11.0"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Bug 546820 - Mark deprecated observable factory classes for deletion" id="926941240">
-            <message_arguments>
-                <message_argument value="1.12.0"/>
-                <message_argument value="1.11.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/jface/databinding/swt/ISWTObservableList.java" type="org.eclipse.jface.databinding.swt.ISWTObservableList">
         <filter comment="Extending interface in accordance with the API specification." id="574619656">
             <message_arguments>
@@ -363,14 +349,6 @@
             <message_arguments>
                 <message_argument value="IWidgetValueProperty&lt;S, T&gt;"/>
                 <message_argument value="WidgetValueProperty&lt;S, T&gt;"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/jface/databinding/swt/typed/WidgetProperties.java" type="org.eclipse.jface.databinding.swt.typed.WidgetProperties">
-        <filter comment="Bug 558698 - Filter problem for changed type bound" id="438329396">
-            <message_arguments>
-                <message_argument value="org.eclipse.jface.databinding.swt.typed.WidgetProperties.visible()"/>
-                <message_argument value="S"/>
             </message_arguments>
         </filter>
     </resource>

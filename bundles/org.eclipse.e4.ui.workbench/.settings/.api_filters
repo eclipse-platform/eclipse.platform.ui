@@ -1,13 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.e4.ui.workbench" version="2">
-    <resource path="META-INF/MANIFEST.MF">
-        <filter comment="he removal of MInput and MInput part was announced so the removal does not break API" id="923795461">
-            <message_arguments>
-                <message_argument value="1.11.400"/>
-                <message_argument value="1.11.300"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/e4/ui/workbench/UIEvents.java" type="org.eclipse.e4.ui.workbench.UIEvents">
         <filter comment="he removal of MInput and MInput part was announced so the removal does not break API" id="338886760">
             <message_arguments>
