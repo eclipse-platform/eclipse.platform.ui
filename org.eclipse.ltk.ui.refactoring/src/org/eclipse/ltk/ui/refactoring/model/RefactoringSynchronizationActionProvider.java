@@ -15,7 +15,6 @@ package org.eclipse.ltk.ui.refactoring.model;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import org.eclipse.team.core.mapping.ISynchronizationContext;
@@ -286,8 +285,7 @@ public class RefactoringSynchronizationActionProvider extends SynchronizationAct
 		final ISelection selection= getContext().getSelection();
 		if (selection instanceof IStructuredSelection) {
 			final IStructuredSelection extended= (IStructuredSelection) selection;
-			for (final Iterator<?> iterator= extended.iterator(); iterator.hasNext();) {
-				final Object element= iterator.next();
+			for (Object element : extended) {
 				if (element instanceof RefactoringDescriptorProxy || element instanceof RefactoringDescriptor || element instanceof RefactoringHistory) {
 					return true;
 				}

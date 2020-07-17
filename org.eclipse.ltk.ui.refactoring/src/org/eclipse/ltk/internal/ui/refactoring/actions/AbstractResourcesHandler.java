@@ -15,7 +15,6 @@ package org.eclipse.ltk.internal.ui.refactoring.actions;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Iterator;
 import java.util.List;
 
 import org.eclipse.core.commands.AbstractHandler;
@@ -39,8 +38,7 @@ public abstract class AbstractResourcesHandler extends AbstractHandler {
 
 	protected IResource[] getSelectedResources(IStructuredSelection sel) {
 		List<IResource> resources= new ArrayList<>(sel.size());
-		for (Iterator<?> e= sel.iterator(); e.hasNext();) {
-			Object next= e.next();
+		for (Object next : sel) {
 			if (next instanceof IResource) {
 				resources.add((IResource) next);
 				continue;
