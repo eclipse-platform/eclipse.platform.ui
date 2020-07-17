@@ -91,7 +91,7 @@ public class ResourcePatternFilter extends ViewerFilter {
 		IPreferenceStore viewsPrefs = IDEWorkbenchPlugin.getDefault().getPreferenceStore();
 		String storedPatterns = viewsPrefs.getString(FILTERS_TAG);
 
-		if (storedPatterns.length() == 0) {
+		if (storedPatterns.isEmpty()) {
 			// try to migrate patterns from old workbench preference store location
 			IPreferenceStore workbenchPrefs = PrefUtil.getInternalPreferenceStore();
 			storedPatterns = workbenchPrefs.getString(FILTERS_TAG);
@@ -101,7 +101,7 @@ public class ResourcePatternFilter extends ViewerFilter {
 			}
 		}
 
-		if (storedPatterns.length() == 0) {
+		if (storedPatterns.isEmpty()) {
 			// revert to all filter extensions with selected == "true"
 			// if there are no filters in the preference store
 			List<String> defaultFilters = FiltersContentProvider.getDefaultFilters();

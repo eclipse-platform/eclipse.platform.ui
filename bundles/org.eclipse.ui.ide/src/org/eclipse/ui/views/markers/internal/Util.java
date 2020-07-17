@@ -268,7 +268,7 @@ public final class Util {
 
 		String result = marker.getResource().getProjectRelativePath()
 				.removeLastSegments(1).toOSString();
-		if (result.trim().length() == 0) {
+		if (result.trim().isEmpty()) {
 			return MarkerMessages.Util_ProjectRoot;
 		}
 		return result;

@@ -277,11 +277,11 @@ public class WizardExternalProjectImportPage extends WizardPage {
 		dialog.setMessage(DataTransferMessages.WizardExternalProjectImportPage_directoryLabel);
 
 		String dirName = getProjectLocationFieldValue();
-		if (dirName.length() == 0) {
+		if (dirName.isEmpty()) {
 			dirName = previouslyBrowsedDirectory;
 		}
 
-		if (dirName.length() == 0) {
+		if (dirName.isEmpty()) {
 			dialog.setFilterPath(getWorkspace().getRoot().getLocation().toOSString());
 		} else {
 			File path = new File(dirName);

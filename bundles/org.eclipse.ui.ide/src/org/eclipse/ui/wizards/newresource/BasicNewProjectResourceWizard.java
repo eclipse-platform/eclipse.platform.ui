@@ -556,7 +556,7 @@ try {
 		}
 		String desc = finalPersp.getDescription();
 		String message;
-		if (desc == null || desc.length() == 0)
+		if (desc == null || desc.isEmpty())
 			message = NLS.bind(ResourceMessages.NewProject_perspSwitchMessage,
 					finalPersp.getLabel());
 		else

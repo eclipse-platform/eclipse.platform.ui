@@ -390,7 +390,7 @@ public abstract class AbstractEncodingFieldEditor extends FieldEditor {
 
 		if (encodingSetting == null) {
 			// Changed if default is selected and there is no setting
-			return current == null || current.length() == 0;
+			return current == null || current.isEmpty();
 		}
 		return encodingSetting.equals(current);
 	}

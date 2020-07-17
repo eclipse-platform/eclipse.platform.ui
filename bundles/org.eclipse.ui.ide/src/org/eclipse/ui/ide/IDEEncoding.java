@@ -96,7 +96,7 @@ public final class IDEEncoding {
 	public static String getResourceEncoding() {
 		String preference = ResourcesPlugin.getPlugin().getPluginPreferences().getString(
 				ResourcesPlugin.PREF_ENCODING);
-		if (preference == null || preference.length() == 0) {
+		if (preference == null || preference.isEmpty()) {
 			return null;
 		}
 		return preference;
@@ -158,7 +158,7 @@ public final class IDEEncoding {
 		String encodings = IDEWorkbenchPlugin.getDefault().getPreferenceStore().getString(
 				IDE_ENCODINGS_PREFERENCE);
 
-		if (encodings == null || encodings.length() == 0) {
+		if (encodings == null || encodings.isEmpty()) {
 			return new ArrayList<>();
 		}
 

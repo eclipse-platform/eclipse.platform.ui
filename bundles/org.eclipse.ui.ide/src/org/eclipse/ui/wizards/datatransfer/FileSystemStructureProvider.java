@@ -75,7 +75,7 @@ public class FileSystemStructureProvider implements IImportStructureProvider {
 		//Get the name - if it is empty then return the path as it is a file root
 		File file = (File) element;
 		String name = file.getName();
-		if (name.length() == 0) {
+		if (name.isEmpty()) {
 			return file.getPath();
 		}
 		return name;

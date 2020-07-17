@@ -200,7 +200,7 @@ public abstract class WizardDataTransferPage extends WizardPage implements Liste
 	protected IPath getPathFromText(Text textField) {
 		String text = textField.getText();
 		// Do not make an empty path absolute so as not to confuse with the root
-		if (text.length() == 0) {
+		if (text.isEmpty()) {
 			return new Path(text);
 		}
 

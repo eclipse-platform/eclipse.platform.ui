@@ -218,7 +218,7 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 	 * @param text the new subtitle
 	 */
 	private void setSubtitle(String text) {
-		if (text == null || text.length() == 0) {
+		if (text == null || text.isEmpty()) {
 			getShell().setText(title);
 		} else {
 			getShell().setText(title + " - " + text); //$NON-NLS-1$
@@ -680,7 +680,7 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 		private List<Position> getMatchPositions(String string, String matching) {
 			final String originalMatching = matching;
 			List<Position> positions = new ArrayList<>();
-			if (matching.length() == 0 || string.length() == 0) {
+			if (matching.isEmpty() || string.isEmpty()) {
 				return positions;
 			}
 
@@ -973,7 +973,7 @@ public class FilteredResourcesSelectionDialog extends FilteredItemsSelectionDial
 					filenamePattern = "**"; //$NON-NLS-1$
 
 				if (sep > 0) {
-					if (filenamePattern.length() == 0) // relative patterns don't need a file name
+					if (filenamePattern.isEmpty()) // relative patterns don't need a file name
 						filenamePattern = "**"; //$NON-NLS-1$
 
 					String containerPattern = stringPattern.substring(0, sep);
