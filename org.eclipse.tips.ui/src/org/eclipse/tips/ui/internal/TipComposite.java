@@ -89,6 +89,7 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 	private Menu fActionMenu;
 	private ToolBar ftoolBar;
 	private ToolItem fStartupItem;
+	private Button fNextTipButton;
 
 	/**
 	 * Constructor.
@@ -224,15 +225,16 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 		});
 		fPreviousTipButton.setEnabled(false);
 
-		Button btnNextTip = new Button(buttonBar, SWT.NONE);
-		btnNextTip.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
-		btnNextTip.setText(Messages.TipComposite_8);
-		btnNextTip.addSelectionListener(new SelectionAdapter() {
+		fNextTipButton = new Button(buttonBar, SWT.NONE);
+		fNextTipButton.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, false, 1, 1));
+		fNextTipButton.setText(Messages.TipComposite_8);
+		fNextTipButton.addSelectionListener(new SelectionAdapter() {
 			@Override
 			public void widgetSelected(SelectionEvent e) {
 				getNextTip();
 			}
 		});
+		fNextTipButton.setEnabled(false);
 
 		Button btnClose = new Button(buttonBar, SWT.NONE);
 		btnClose.addSelectionListener(new SelectionAdapter() {
@@ -332,6 +334,10 @@ public class TipComposite extends Composite implements ProviderSelectionListener
 	 * @param provider the {@link TipProvider}
 	 */
 	public void setProvider(TipProvider provider) {
+		if (provider == null) {
+			return;
+		}
+		fNextTipButton.setEnabled(true);
 		fProvider = provider;
 		fSlider.setTipProvider(provider);
 		getCurrentTip();
