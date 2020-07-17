@@ -21,15 +21,13 @@ import static org.eclipse.e4.core.services.about.AboutSections.SECTION_SYSTEM_PR
 import static org.eclipse.e4.core.services.about.AboutSections.SECTION_USER_PREFERENCES;
 
 import java.io.PrintWriter;
+import org.eclipse.core.runtime.ServiceCaller;
 import org.eclipse.e4.core.services.about.AboutSections;
 import org.eclipse.e4.core.services.about.ISystemInformation;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.ui.about.ISystemSummarySection;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.FrameworkUtil;
-import org.osgi.framework.ServiceReference;
 
 /**
  * This class puts basic platform information into the system summary log. This
@@ -42,34 +40,28 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
 
 	@Override
 	public void write(PrintWriter writer) {
-		BundleContext context = FrameworkUtil.getBundle(ISystemSummarySection.class).getBundleContext();
-		appendSection(SECTION_SYSTEM_PROPERTIES, WorkbenchMessages.SystemSummary_systemProperties, writer, context);
-		appendSection(SECTION_SYSTEM_ENVIRONMENT, WorkbenchMessages.SystemSummary_systemVariables, writer, context);
-		appendSection(SECTION_INSTALLED_FEATURES, WorkbenchMessages.SystemSummary_features, writer, context);
-		appendSection(SECTION_INSTALLED_BUNDLES, WorkbenchMessages.SystemSummary_pluginRegistry, writer, context);
-		appendSection(SECTION_USER_PREFERENCES, WorkbenchMessages.SystemSummary_userPreferences, writer, context);
+		appendSection(SECTION_SYSTEM_PROPERTIES, WorkbenchMessages.SystemSummary_systemProperties, writer);
+		appendSection(SECTION_SYSTEM_ENVIRONMENT, WorkbenchMessages.SystemSummary_systemVariables, writer);
+		appendSection(SECTION_INSTALLED_FEATURES, WorkbenchMessages.SystemSummary_features, writer);
+		appendSection(SECTION_INSTALLED_BUNDLES, WorkbenchMessages.SystemSummary_pluginRegistry, writer);
+		appendSection(SECTION_USER_PREFERENCES, WorkbenchMessages.SystemSummary_userPreferences, writer);
 	}
 
 	/**
 	 * @param writer
 	 */
-	private void appendSection(String section, String caption, PrintWriter writer, BundleContext context) {
+	private void appendSection(String section, String caption, PrintWriter writer) {
 		writer.println();
 		writer.println(caption);
-		ServiceReference<ISystemInformation> reference = null;
 		try {
-			reference = context
-					.getServiceReferences(ISystemInformation.class, AboutSections.createSectionFilter(section))
-					.stream().findFirst().get();
-			ISystemInformation service = context.getService(reference);
-			service.append(writer);
+			if (!ServiceCaller.callOnce(getClass(), ISystemInformation.class,
+					AboutSections.createSectionFilter(section),
+					(systemInformation) -> systemInformation.append(writer))) {
+				throw new IllegalStateException();
+			}
 		} catch (Exception e) {
 			WorkbenchPlugin.log(NLS.bind("Failed to retrieve data for section: {0}", section), e); //$NON-NLS-1$
 			writer.println(WorkbenchMessages.SystemSummary_sectionError);
-		} finally {
-			if (reference != null) {
-				context.ungetService(reference);
-			}
 		}
 	}
 

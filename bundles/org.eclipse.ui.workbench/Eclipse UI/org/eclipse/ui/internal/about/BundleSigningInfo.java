@@ -15,8 +15,6 @@
 
 package org.eclipse.ui.internal.about;
 
-import java.io.IOException;
-import java.security.GeneralSecurityException;
 import java.security.cert.Certificate;
 import java.security.cert.X509Certificate;
 import java.text.DateFormat;
@@ -28,14 +26,12 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.StringTokenizer;
 import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.OperationCanceledException;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.IJobFunction;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.resource.JFaceResources;
 import org.eclipse.osgi.signedcontent.SignedContent;
-import org.eclipse.osgi.signedcontent.SignedContentFactory;
 import org.eclipse.osgi.signedcontent.SignerInfo;
 import org.eclipse.osgi.util.NLS;
 import org.eclipse.swt.SWT;
@@ -52,8 +48,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.WorkbenchMessages;
 import org.eclipse.ui.internal.WorkbenchPlugin;
 import org.eclipse.ui.statushandlers.StatusManager;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceReference;
 
 /**
  * @since 3.3
@@ -118,94 +112,67 @@ public class BundleSigningInfo {
 			return;
 		certificate.setText(WorkbenchMessages.BundleSigningTray_Working);
 		date.setText(WorkbenchMessages.BundleSigningTray_Working);
-		final BundleContext bundleContext = WorkbenchPlugin.getDefault().getBundleContext();
-		final ServiceReference<SignedContentFactory> factoryRef = bundleContext
-				.getServiceReference(SignedContentFactory.class);
-		if (factoryRef == null) {
-			StatusManager.getManager().handle(new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
-					WorkbenchMessages.BundleSigningTray_Cant_Find_Service), StatusManager.LOG);
-			return;
-		}
-
-		final SignedContentFactory contentFactory = bundleContext.getService(factoryRef);
-		if (contentFactory == null) {
-			StatusManager.getManager().handle(new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
-					WorkbenchMessages.BundleSigningTray_Cant_Find_Service), StatusManager.LOG);
-			return;
-		}
 
 		final AboutBundleData myData = data;
 		final Job signerJob = Job.create(
 				NLS.bind(WorkbenchMessages.BundleSigningTray_Determine_Signer_For, myData.getId()),
 				(IJobFunction) monitor -> {
-					try {
-						if (myData != data)
-							return Status.OK_STATUS;
-						SignedContent signedContent = contentFactory.getSignedContent(myData.getBundle());
-						if (myData != data)
-							return Status.OK_STATUS;
-						SignerInfo[] signers = signedContent.getSignerInfos();
-						final String signerText, dateText;
-						if (!isOpen() && BundleSigningInfo.this.data == myData)
-							return Status.OK_STATUS;
+					if (myData != data)
+						return Status.OK_STATUS;
+					SignedContent signedContent = myData.getSignedContent();
+					if (signedContent == null) {
+						StatusManager.getManager().handle(new Status(IStatus.WARNING, WorkbenchPlugin.PI_WORKBENCH,
+								WorkbenchMessages.BundleSigningTray_Cant_Find_Service), StatusManager.LOG);
+						return Status.OK_STATUS;
+					}
+					if (myData != data)
+						return Status.OK_STATUS;
+					SignerInfo[] signers = signedContent.getSignerInfos();
+					final String signerText, dateText;
+					if (!isOpen() && BundleSigningInfo.this.data == myData)
+						return Status.OK_STATUS;
 
-						if (signers.length == 0) {
-							signerText = WorkbenchMessages.BundleSigningTray_Unsigned;
-							dateText = WorkbenchMessages.BundleSigningTray_Unsigned;
-						} else {
-							Properties[] certs = parseCerts(signers[0].getCertificateChain());
-							if (certs.length == 0)
-								signerText = WorkbenchMessages.BundleSigningTray_Unknown;
-							else {
-								StringBuilder buffer = new StringBuilder();
-								for (Iterator<Entry<Object, Object>> i = certs[0].entrySet().iterator(); i.hasNext();) {
-									Entry<Object, Object> entry = i.next();
-									buffer.append(entry.getKey());
-									buffer.append('=');
-									buffer.append(entry.getValue());
-									if (i.hasNext())
-										buffer.append('\n');
-								}
-								signerText = buffer.toString();
+					if (signers.length == 0) {
+						signerText = WorkbenchMessages.BundleSigningTray_Unsigned;
+						dateText = WorkbenchMessages.BundleSigningTray_Unsigned;
+					} else {
+						Properties[] certs = parseCerts(signers[0].getCertificateChain());
+						if (certs.length == 0)
+							signerText = WorkbenchMessages.BundleSigningTray_Unknown;
+						else {
+							StringBuilder buffer = new StringBuilder();
+							for (Iterator<Entry<Object, Object>> i = certs[0].entrySet().iterator(); i.hasNext();) {
+								Entry<Object, Object> entry = i.next();
+								buffer.append(entry.getKey());
+								buffer.append('=');
+								buffer.append(entry.getValue());
+								if (i.hasNext())
+									buffer.append('\n');
 							}
-
-							Date signDate = signedContent.getSigningTime(signers[0]);
-							if (signDate != null)
-								dateText = DateFormat.getDateTimeInstance().format(signDate);
-							else
-								dateText = WorkbenchMessages.BundleSigningTray_Unknown;
+							signerText = buffer.toString();
 						}
 
-						PlatformUI.getWorkbench().getDisplay().asyncExec(() -> {
-							// check to see if the tray is still visible
-							// and if
-							// we're still looking at the same item
-							if (!isOpen() && BundleSigningInfo.this.data != myData)
-								return;
-							certificate.setText(signerText);
-							date.setText(dateText);
-						});
-
-					} catch (IOException | GeneralSecurityException e2) {
-						return new Status(IStatus.ERROR, WorkbenchPlugin.PI_WORKBENCH, e2.getMessage(), e2);
+						Date signDate = signedContent.getSigningTime(signers[0]);
+						if (signDate != null)
+							dateText = DateFormat.getDateTimeInstance().format(signDate);
+						else
+							dateText = WorkbenchMessages.BundleSigningTray_Unknown;
 					}
+
+					PlatformUI.getWorkbench().getDisplay().asyncExec(() -> {
+						// check to see if the tray is still visible
+						// and if
+						// we're still looking at the same item
+						if (!isOpen() && BundleSigningInfo.this.data != myData)
+							return;
+						certificate.setText(signerText);
+						date.setText(dateText);
+					});
 					return Status.OK_STATUS;
 				});
 		signerJob.setSystem(true);
 		signerJob.belongsTo(signerJob);
 		signerJob.schedule();
-
-		Job cleanup = Job.create(WorkbenchMessages.BundleSigningTray_Unget_Signing_Service, (IJobFunction) monitor -> {
-			try {
-				Job.getJobManager().join(signerJob, monitor);
-			} catch (OperationCanceledException | InterruptedException e2) {
-			}
-			bundleContext.ungetService(factoryRef);
-			return Status.OK_STATUS;
-		});
-		cleanup.setSystem(true);
-		cleanup.schedule();
-
 	}
 
 	/**
