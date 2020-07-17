@@ -51,7 +51,7 @@ public class MarkerLocationField extends MarkerField {
 		String location1 = item1.getAttributeValue(IMarker.LOCATION, MarkerItemDefaults.LOCATION_DEFAULT);
 		String location2 = item2.getAttributeValue(IMarker.LOCATION, MarkerItemDefaults.LOCATION_DEFAULT);
 
-		if (location1.length() == 0 || location2.length() == 0)
+		if (location1.isEmpty() || location2.isEmpty())
 			return item1.getAttributeValue(IMarker.LINE_NUMBER, -1)
 					- item2.getAttributeValue(IMarker.LINE_NUMBER, -1);
 

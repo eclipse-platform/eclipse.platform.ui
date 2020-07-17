@@ -470,7 +470,7 @@ public class WizardFileSystemResourceExportPage1 extends
 	@Override
 	protected boolean validateDestinationGroup() {
 		String destinationValue = getDestinationValue();
-		if (destinationValue.length() == 0) {
+		if (destinationValue.isEmpty()) {
 			setMessage(destinationEmptyMessage());
 			return false;
 		}

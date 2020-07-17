@@ -506,7 +506,7 @@ public class FiltersConfigurationDialog extends ViewSettingsDialog {
 	private IInputValidator getNameValidator(final String currentName, final Collection<String> existingNames) {
 		return newText -> {
 			newText = newText.trim();
-			if (newText.length() == 0) {
+			if (newText.isEmpty()) {
 				return MarkerMessages.MarkerFilterDialog_emptyMessage;
 			}
 			if(existingNames.contains(newText) && !currentName.equals(newText)) {

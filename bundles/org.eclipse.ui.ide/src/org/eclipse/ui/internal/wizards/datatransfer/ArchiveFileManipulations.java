@@ -39,7 +39,7 @@ public class ArchiveFileManipulations {
 	 * @return true if the file is in tar format
 	 */
 	public static boolean isTarFile(String fileName) {
-		if (fileName.length() == 0) {
+		if (fileName.isEmpty()) {
 			return false;
 		}
 
@@ -70,7 +70,7 @@ public class ArchiveFileManipulations {
 	 * @return true if the file is in tar format
 	 */
 	public static boolean isZipFile(String fileName) {
-		if (fileName.length() == 0) {
+		if (fileName.isEmpty()) {
 			return false;
 		}
 

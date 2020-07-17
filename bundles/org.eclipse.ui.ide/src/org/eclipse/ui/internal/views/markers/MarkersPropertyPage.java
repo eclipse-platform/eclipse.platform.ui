@@ -299,9 +299,9 @@ public class MarkersPropertyPage extends PropertyPage {
 		Text locationText = createReadOnlyText(parent);
 
 		String line = Util.getProperty(IMarker.LINE_NUMBER, marker);
-		if (line.length() == 0) {
+		if (line.isEmpty()) {
 			String location = Util.getProperty(IMarker.LOCATION, marker);
-			if (location.length() == 0) {
+			if (location.isEmpty()) {
 				locationText.setText(MarkerItemDefaults.LOCATION_DEFAULT);
 			} else {
 				locationText.setText(location);

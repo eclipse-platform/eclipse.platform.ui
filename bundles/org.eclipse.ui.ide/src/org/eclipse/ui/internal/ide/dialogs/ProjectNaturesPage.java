@@ -259,7 +259,7 @@ public class ProjectNaturesPage extends PropertyPage {
 		protected String getNatureDescriptorLabel(
 				IProjectNatureDescriptor natureDescriptor) {
 			String label = natureDescriptor.getLabel();
-			if (label.trim().length() == 0)
+			if (label.trim().isEmpty())
 				return natureDescriptor.getNatureId();
 			return label;
 		}

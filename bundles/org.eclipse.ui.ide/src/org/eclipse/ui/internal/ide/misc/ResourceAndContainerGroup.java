@@ -549,7 +549,7 @@ public class ResourceAndContainerGroup implements Listener {
 	protected boolean validateResourceName() {
 		String resourceName = getResource();
 
-		if (resourceName.length() == 0) {
+		if (resourceName.isEmpty()) {
 			problemType = PROBLEM_RESOURCE_EMPTY;
 			problemMessage = NLS.bind(
 					IDEWorkbenchMessages.ResourceGroup_emptyName, resourceType);

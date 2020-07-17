@@ -134,7 +134,7 @@ public class ChooseWorkspaceDialog extends TitleAreaDialog {
 		if (recent != null && recent.length > 0) {
 			workspace = recent[0];
 		}
-		if (workspace == null || workspace.length() == 0) {
+		if (workspace == null || workspace.isEmpty()) {
 			workspace = launchData.getInitialDefault();
 		}
 		launchData.workspaceSelected(TextProcessor.deprocess(workspace));

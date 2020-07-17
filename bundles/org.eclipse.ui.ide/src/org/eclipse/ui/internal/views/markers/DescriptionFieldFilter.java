@@ -84,7 +84,7 @@ public class DescriptionFieldFilter extends CompatibilityFieldFilter {
 
 	@Override
 	public boolean select(MarkerItem item) {
-		if (containsText.length() == 0)
+		if (containsText.isEmpty())
 			return true;
 
 		String value = getField().getValue(item);

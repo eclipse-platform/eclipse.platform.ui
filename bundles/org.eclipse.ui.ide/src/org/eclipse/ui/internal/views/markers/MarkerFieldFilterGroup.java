@@ -144,7 +144,7 @@ class MarkerFieldFilterGroup {
 			enabled = false;
 		}
 		stringValue = configurationElement.getAttribute(MarkerSupportRegistry.FILTER_LIMIT);
-		if (stringValue == null || stringValue.length() == 0) {
+		if (stringValue == null || stringValue.isEmpty()) {
 			limit = -1;
 		}
 	}

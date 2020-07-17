@@ -881,7 +881,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 
 	private void updateProjectsList(final String path, boolean forceUpdate) {
 		// on an empty path empty selectedProjects
-		if (path == null || path.length() == 0) {
+		if (path == null || path.isEmpty()) {
 			setMessage(DataTransferMessages.WizardProjectsImportPage_ImportProjectsDescription);
 			selectedProjects = new ProjectRecord[0];
 			projectsList.refresh(true);
@@ -1035,7 +1035,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 	 * Return null if this file does not exist or is not of valid format.
 	 */
 	private ZipFile getSpecifiedZipSourceFile(String fileName) {
-		if (fileName.length() == 0) {
+		if (fileName.isEmpty()) {
 			return null;
 		}
 
@@ -1056,7 +1056,7 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 	 * Return null if this file does not exist or is not of valid format.
 	 */
 	private TarFile getSpecifiedTarSourceFile(String fileName) {
-		if (fileName.length() == 0) {
+		if (fileName.isEmpty()) {
 			return null;
 		}
 
@@ -1192,11 +1192,11 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 				.setMessage(DataTransferMessages.WizardProjectsImportPage_SelectDialogTitle);
 
 		String dirName = directoryPathField.getText().trim();
-		if (dirName.length() == 0) {
+		if (dirName.isEmpty()) {
 			dirName = previouslyBrowsedDirectory;
 		}
 
-		if (dirName.length() == 0) {
+		if (dirName.isEmpty()) {
 			dialog.setFilterPath(IDEWorkbenchPlugin.getPluginWorkspace()
 					.getRoot().getLocation().toOSString());
 		} else {
@@ -1226,11 +1226,11 @@ public class WizardProjectsImportPage extends WizardDataTransferPage {
 				.setText(DataTransferMessages.WizardProjectsImportPage_SelectArchiveDialogTitle);
 
 		String fileName = archivePathField.getText().trim();
-		if (fileName.length() == 0) {
+		if (fileName.isEmpty()) {
 			fileName = previouslyBrowsedArchive;
 		}
 
-		if (fileName.length() == 0) {
+		if (fileName.isEmpty()) {
 			dialog.setFilterPath(IDEWorkbenchPlugin.getPluginWorkspace()
 					.getRoot().getLocation().toOSString());
 		} else {

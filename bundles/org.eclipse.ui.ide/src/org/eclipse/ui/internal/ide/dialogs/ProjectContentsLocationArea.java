@@ -394,7 +394,7 @@ public class ProjectContentsLocationArea {
 	public String checkValidLocation() {
 
 		String locationFieldContents = locationPathField.getText();
-		if (locationFieldContents.length() == 0) {
+		if (locationFieldContents.isEmpty()) {
 			return IDEWorkbenchMessages.WizardNewProjectCreationPage_projectLocationEmpty;
 		}
 

@@ -2802,7 +2802,7 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 			});
 			if (filter.hasStringArguments()) {
 				FileInfoAttributesMatcher.Argument argument = FileInfoAttributesMatcher.decodeArguments((String) filter.getArguments());
-				if (argument.pattern.length() == 0)
+				if (argument.pattern.isEmpty())
 					argumentsBoolean.select(0);
 				else
 					argumentsBoolean.select(Boolean.parseBoolean(argument.pattern) ? 0:1);
@@ -2830,7 +2830,7 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 	private double[] timeIntervalScale = {60, 60, 24};
 
 	private String convertToEditableTimeInterval(String string) {
-		if (string.length() == 0)
+		if (string.isEmpty())
 			return string;
 		long value;
 		try {
@@ -2849,7 +2849,7 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 	}
 
 	private String convertFromEditableTimeInterval(String string) {
-		if (string.length() == 0)
+		if (string.isEmpty())
 			return string;
 		for (int i = 1; i < timeIntervalPrefixes.length; i++) {
 			if (string.endsWith(timeIntervalPrefixes[i])) {
@@ -2868,7 +2868,7 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 
 	// converts "32768" to "32k"
 	private String convertToEditableLength(String string) {
-		if (string.length() == 0)
+		if (string.isEmpty())
 			return string;
 		long value;
 		try {
@@ -2889,7 +2889,7 @@ class MultiMatcherCustomFilterArgumentUI implements ICustomFilterArgumentUI {
 
 	// converts "32k" to "32768"
 	private String convertFromEditableLength(String string) throws NumberFormatException {
-		if (string.length() == 0)
+		if (string.isEmpty())
 			return string;
 		for (int i = 1; i < lengthPrefixes.length; i++) {
 			if (string.endsWith(lengthPrefixes[i])) {

@@ -216,7 +216,7 @@ class MarkerEntry extends MarkerSupportItem implements IAdaptable {
 			attributeValue = getAttributeValue(attribute, defaultValue);
 		}
 
-		if (attributeValue.length() == 0) {
+		if (attributeValue.isEmpty()) {
 			return MarkerSupportInternalUtilities.EMPTY_COLLATION_KEY;
 		}
 		CollationKey key = Collator.getInstance().getCollationKey(attributeValue);

@@ -302,7 +302,7 @@ public class WizardArchiveFileResourceImportPage1 extends
 	 *	Return null if this file does not exist or is not of valid format.
 	 */
 	private ZipFile getSpecifiedZipSourceFile(String fileName) {
-		if (fileName.length() == 0) {
+		if (fileName.isEmpty()) {
 			return null;
 		}
 
@@ -329,7 +329,7 @@ public class WizardArchiveFileResourceImportPage1 extends
 	 *	Return null if this file does not exist or is not of valid format.
 	 */
 	private TarFile getSpecifiedTarSourceFile(String fileName) {
-		if (fileName.length() == 0) {
+		if (fileName.isEmpty()) {
 			return null;
 		}
 

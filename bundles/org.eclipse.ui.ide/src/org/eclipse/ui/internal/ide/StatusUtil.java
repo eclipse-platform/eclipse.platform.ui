@@ -63,7 +63,7 @@ public class StatusUtil {
 	protected static IStatus newStatus(IStatus[] stati, String message,
 			Throwable exception) {
 
-		if (message == null || message.trim().length() == 0) {
+		if (message == null || message.trim().isEmpty()) {
 			throw new IllegalArgumentException();
 		}
 		return new MultiStatus(IDEWorkbenchPlugin.IDE_WORKBENCH, IStatus.ERROR,
@@ -85,7 +85,7 @@ public class StatusUtil {
 	public static IStatus newStatus(int severity, String message, Throwable exception) {
 
 		String statusMessage = message;
-		if (message == null || message.trim().length() == 0) {
+		if (message == null || message.trim().isEmpty()) {
 			if (exception == null) {
 				throw new IllegalArgumentException();
 			} else if (exception.getMessage() == null) {

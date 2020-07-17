@@ -550,7 +550,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 		String message = standardMessage;
 		int newValidationStatus = IMessageProvider.NONE;
 
-		if (variableName.length() == 0) {
+		if (variableName.isEmpty()) {
 			// the variable name is empty
 			if (nameEntered) {
 				// a name was entered before and is now empty
@@ -605,7 +605,7 @@ public class PathVariableDialog extends TitleAreaDialog {
 		String message = standardMessage;
 		int newValidationStatus = IMessageProvider.NONE;
 
-		if (variableValue.length() == 0) {
+		if (variableValue.isEmpty()) {
 			// the variable value is empty
 			if (locationEntered) {
 				// a location value was entered before and is now empty
