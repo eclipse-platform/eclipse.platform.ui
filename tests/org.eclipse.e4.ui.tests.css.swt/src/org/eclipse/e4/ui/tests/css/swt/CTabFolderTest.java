@@ -19,7 +19,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotSame;
 
 import org.eclipse.e4.ui.css.swt.dom.CTabFolderElement;
-import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMruVisibleSWTHandler;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -220,40 +219,6 @@ public class CTabFolderTest extends CSSSWTTestCase {
 	}
 
 	@Test
-	public void testMRUVisible() {
-		final boolean mruControlledByCSSDefault = CSSPropertyMruVisibleSWTHandler.isMRUControlledByCSS();
-		try {
-			CSSPropertyMruVisibleSWTHandler.setMRUControlledByCSS(true);
-			CTabFolder folderToTest = createTestCTabFolder("CTabFolder { swt-mru-visible: true}");
-			assertEquals(true, folderToTest.getMRUVisible());
-			assertEquals("true", engine.retrieveCSSProperty(folderToTest, "swt-mru-visible", null));
-			folderToTest.getShell().close();
-			folderToTest = createTestCTabFolder("CTabFolder { swt-mru-visible: false}");
-			assertEquals("false", engine.retrieveCSSProperty(folderToTest, "swt-mru-visible", null));
-			assertEquals(false, folderToTest.getMRUVisible());
-		} finally {
-			CSSPropertyMruVisibleSWTHandler.setMRUControlledByCSS(mruControlledByCSSDefault);
-		}
-	}
-
-	@Test
-	public void testMRUVisibleCSSControlOff() {
-		final boolean mruControlledByCSSDefault = CSSPropertyMruVisibleSWTHandler.isMRUControlledByCSS();
-		try {
-			CSSPropertyMruVisibleSWTHandler.setMRUControlledByCSS(false);
-			CTabFolder folderToTest = createTestCTabFolder("CTabFolder { swt-mru-visible: true}");
-			assertEquals(false, folderToTest.getMRUVisible());
-			assertEquals("false", engine.retrieveCSSProperty(folderToTest, "swt-mru-visible", null));
-			folderToTest.getShell().close();
-			folderToTest = createTestCTabFolder("CTabFolder { swt-mru-visible: false}");
-			assertEquals("false", engine.retrieveCSSProperty(folderToTest, "swt-mru-visible", null));
-			assertEquals(false, folderToTest.getMRUVisible());
-		} finally {
-			CSSPropertyMruVisibleSWTHandler.setMRUControlledByCSS(mruControlledByCSSDefault);
-		}
-	}
-
-	@Test
 	public void testMaximized() {
 		CTabFolder folderToTest = createTestCTabFolder("CTabFolder { swt-maximized: true}");
 		assertEquals(true, folderToTest.getMaximized());
@@ -328,7 +293,6 @@ public class CTabFolderTest extends CSSSWTTestCase {
 		assertEquals(null, engine.retrieveCSSProperty(shell, "swt-maximized", null));
 		assertEquals(null, engine.retrieveCSSProperty(shell, "swt-maximize-visible", null));
 		assertEquals(null, engine.retrieveCSSProperty(shell, "swt-minimize-visible", null));
-		assertEquals(null, engine.retrieveCSSProperty(shell, "swt-mru-visible", null));
 		assertEquals(null, engine.retrieveCSSProperty(shell, "show-close", null));
 		assertEquals(null, engine.retrieveCSSProperty(shell, "swt-simple", null));
 		assertEquals(null, engine.retrieveCSSProperty(shell, "swt-single", null));

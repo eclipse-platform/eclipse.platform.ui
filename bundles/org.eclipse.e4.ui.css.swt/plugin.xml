@@ -305,14 +305,6 @@
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
             composite="false"
-            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMruVisibleSWTHandler">
-         <property-name
-               name="swt-mru-visible">
-         </property-name>
-      </handler>
-      <handler
-            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
-            composite="false"
             handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMaximizedSWTHandler">
          <property-name
                name="swt-maximized">

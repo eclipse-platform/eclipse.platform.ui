@@ -38,7 +38,6 @@ import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.Preference;
 import org.eclipse.e4.core.services.events.IEventBroker;
 import org.eclipse.e4.ui.css.swt.dom.WidgetElement;
-import org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyMruVisibleSWTHandler;
 import org.eclipse.e4.ui.di.UIEventTopic;
 import org.eclipse.e4.ui.di.UISynchronize;
 import org.eclipse.e4.ui.internal.workbench.OpaqueElementUtil;
@@ -46,7 +45,6 @@ import org.eclipse.e4.ui.internal.workbench.renderers.swt.BasicPartList;
 import org.eclipse.e4.ui.internal.workbench.renderers.swt.SWTRenderersMessages;
 import org.eclipse.e4.ui.internal.workbench.swt.AbstractPartRenderer;
 import org.eclipse.e4.ui.internal.workbench.swt.CSSConstants;
-import org.eclipse.e4.ui.internal.workbench.swt.CSSRenderingUtils;
 import org.eclipse.e4.ui.model.application.ui.MDirtyable;
 import org.eclipse.e4.ui.model.application.ui.MElementContainer;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
@@ -104,7 +102,6 @@ import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Widget;
 import org.osgi.service.event.Event;
 import org.osgi.service.event.EventHandler;
-import org.w3c.dom.css.CSSValue;
 
 /**
  * SWT default renderer for a MPartStack model elements
@@ -132,25 +129,9 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 	public static final String MRU_KEY = "enableMRU"; //$NON-NLS-1$
 
 	/**
-	 * Key to switch if the "most recently used" behavior controlled via CSS or
-	 * preferences
-	 */
-	public static final String MRU_CONTROLLED_BY_CSS_KEY = "MRUControlledByCSS"; //$NON-NLS-1$
-
-	/**
 	 * Default default value for MRU behavior.
 	 */
 	public static final boolean MRU_DEFAULT = true;
-
-	/*
-	 * org.eclipse.ui.internal.dialogs.ViewsPreferencePage controls currently the
-	 * MRU behavior via IEclipsePreferences, so that CSS values from the themes
-	 * aren't used.
-	 *
-	 * TODO once we can use preferences from CSS (and update the value on the fly)
-	 * we can switch this default to true, see discussion on bug 388476.
-	 */
-	private static final boolean MRU_CONTROLLED_BY_CSS_DEFAULT = false;
 
 	/*
 	 * JFace key for default workbench tab font
@@ -667,27 +648,7 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 		return tabFolder;
 	}
 
-	private boolean getInitialMRUValue(Control control) {
-		CSSRenderingUtils util = context.get(CSSRenderingUtils.class);
-		if (util == null) {
-			return getMRUValueFromPreferences();
-		}
-
-		CSSValue value = util.getCSSValue(control, "MPartStack", "swt-mru-visible"); //$NON-NLS-1$ //$NON-NLS-2$
-
-		if (value == null) {
-			value = util.getCSSValue(control, "MPartStack", "mru-visible"); //$NON-NLS-1$ //$NON-NLS-2$
-		}
-		if (value == null) {
-			return getMRUValueFromPreferences();
-		}
-		return Boolean.parseBoolean(value.getCssText());
-	}
-
 	private boolean getMRUValue(Control control) {
-		if (CSSPropertyMruVisibleSWTHandler.isMRUControlledByCSS()) {
-			return getInitialMRUValue(control);
-		}
 		return getMRUValueFromPreferences();
 	}
 
@@ -703,8 +664,6 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 
 	@Override
 	public void preferenceChange(PreferenceChangeEvent event) {
-		boolean mruControlledByCSS = preferences.getBoolean(MRU_CONTROLLED_BY_CSS_KEY, MRU_CONTROLLED_BY_CSS_DEFAULT);
-		CSSPropertyMruVisibleSWTHandler.setMRUControlledByCSS(mruControlledByCSS);
 	}
 
 	/**
