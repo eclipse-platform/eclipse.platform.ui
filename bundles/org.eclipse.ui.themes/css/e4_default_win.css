@@ -67,7 +67,6 @@ ColorDefinition#org-eclipse-ui-workbench-INACTIVE_TAB_BG_END {
 
 .MPartStack {
 	swt-simple: true;
-	swt-mru-visible: false;
 }
 
 CTabFolder.MArea {

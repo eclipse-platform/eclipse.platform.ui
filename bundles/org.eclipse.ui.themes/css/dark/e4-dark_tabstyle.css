@@ -25,7 +25,6 @@
     swt-tab-renderer: url('bundleclass://org.eclipse.e4.ui.workbench.renderers.swt/org.eclipse.e4.ui.workbench.renderers.swt.CTabRendering');
     padding: 2px 2px;
     swt-shadow-visible: false;
-    swt-mru-visible: true;
 }
 
 CTabFolder {

@@ -55,7 +55,6 @@ ColorDefinition#org-eclipse-ui-workbench-ACTIVE_TAB_OUTER_KEYLINE_COLOR {
 
 .MPartStack {
 	swt-simple: false;
-	swt-mru-visible: false;
 	swt-unselected-tabs-color: #E8E8E8 #FFFFFF 100%;
 	swt-outer-keyline-color: #FFFFFF;
 	swt-inner-keyline-color: #FFFFFF;
