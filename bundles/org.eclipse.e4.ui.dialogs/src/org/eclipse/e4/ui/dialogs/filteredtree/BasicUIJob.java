@@ -22,6 +22,8 @@ import org.eclipse.swt.widgets.Display;
 /**
  * Merge of UIJob and WokbenchJob minus tracking whether the workbench is
  * running - do not use for long running jobs!
+ *
+ * @since 1.2
  */
 public abstract class BasicUIJob extends Job {
 

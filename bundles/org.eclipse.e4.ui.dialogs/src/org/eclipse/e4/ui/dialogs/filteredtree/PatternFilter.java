@@ -35,6 +35,8 @@ import org.eclipse.jface.viewers.ViewerFilter;
 
 /**
  * Based on org.eclipse.ui.dialogs.PatternFilter.
+ *
+ * @since 1.2
  */
 public class PatternFilter extends ViewerFilter {
 	/*

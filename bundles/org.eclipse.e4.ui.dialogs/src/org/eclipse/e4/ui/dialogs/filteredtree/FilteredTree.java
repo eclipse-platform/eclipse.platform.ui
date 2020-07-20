@@ -54,6 +54,8 @@ import org.osgi.framework.FrameworkUtil;
 
 /**
  * Based on org.eclipse.ui.dialogs.FilteredTree.
+ *
+ * @since 1.2
  */
 public class FilteredTree extends Composite {
 
