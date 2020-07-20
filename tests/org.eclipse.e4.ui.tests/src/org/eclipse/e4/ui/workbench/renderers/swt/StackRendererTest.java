@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2019 IBM Corporation and others.
+ * Copyright (c) 2013, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -10,13 +10,15 @@
  *
  * Contributors:
  *     IBM Corporation - initial API and implementation
- *     Rolf Theunissen <rolf.theunissen@gmail.com> - Bug 546632
+ *     Rolf Theunissen <rolf.theunissen@gmail.com> - Bug 546632, 564561
  ******************************************************************************/
 
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
@@ -34,6 +36,7 @@ import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.basic.MPartStack;
 import org.eclipse.e4.ui.model.application.ui.basic.MWindow;
+import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.services.IStylingEngine;
 import org.eclipse.e4.ui.services.internal.events.EventBroker;
 import org.eclipse.e4.ui.tests.rules.WorkbenchContextRule;
@@ -219,5 +222,84 @@ public class StackRendererTest {
 		assertNotEquals(ovrwriteIcon, partIcon);
 		assertEquals(ovrwriteIcon, descImage);
 	}
+
+	@Test
+	public void testBug564561_ToolbarVisible_initial() {
+		MPart part1 = ems.createModelElement(MPart.class);
+		MPart part2 = ems.createModelElement(MPart.class);
+
+		partStack.getChildren().add(part1);
+		partStack.getChildren().add(part2);
+		partStack.setSelectedElement(part1);
+
+		MToolBar toolbar1 = ems.createModelElement(MToolBar.class);
+		toolbar1.setVisible(false);
+		part1.setToolbar(toolbar1);
+
+		MToolBar toolbar2 = ems.createModelElement(MToolBar.class);
+		toolbar2.setVisible(true);
+		part2.setToolbar(toolbar2);
+
+		contextRule.createAndRunWorkbench(window);
+
+		assertTrue(toolbar1.isVisible());
+		assertFalse(toolbar2.isVisible());
+
+		partStack.setSelectedElement(part2);
+
+		assertFalse(toolbar1.isVisible());
+		assertTrue(toolbar2.isVisible());
+	}
+
+	@Test
+	public void testBug564561_ToolbarVisible_added1() {
+		MPart part1 = ems.createModelElement(MPart.class);
+
+		partStack.getChildren().add(part1);
+		partStack.setSelectedElement(part1);
+
+		contextRule.createAndRunWorkbench(window);
+
+		MPart part2 = ems.createModelElement(MPart.class);
+		MToolBar toolbar2 = ems.createModelElement(MToolBar.class);
+		toolbar2.setVisible(true);
+		part2.setToolbar(toolbar2);
+
+		partStack.getChildren().add(part2);
+
+		assertFalse(toolbar2.isVisible());
+	}
+
+	@Test
+	public void testBug564561_ToolbarVisible_added2() {
+		MPart part1 = ems.createModelElement(MPart.class);
+		MPart part2 = ems.createModelElement(MPart.class);
+
+		partStack.getChildren().add(part1);
+		partStack.getChildren().add(part2);
+		partStack.setSelectedElement(part1);
+
+		contextRule.createAndRunWorkbench(window);
+
+		MToolBar toolbar1 = ems.createModelElement(MToolBar.class);
+		toolbar1.setVisible(false);
+		part1.setToolbar(toolbar1);
+
+		MToolBar toolbar2 = ems.createModelElement(MToolBar.class);
+		toolbar2.setVisible(true);
+		part2.setToolbar(toolbar2);
+
+		assertTrue(toolbar1.isVisible());
+		assertFalse(toolbar2.isVisible());
+	}
+
+	// helper functions
+
+	/*
+	 * TODO tests: 1. switching tabs: are toolbars hidden, shown 2. add visible
+	 * toolbar to hidden part, add invisible toolbar to shown part 3. shared part
+	 * with visible toolbar on hidden part (do-render) (initial, and add tab after
+	 * render)
+	 */
 
 }

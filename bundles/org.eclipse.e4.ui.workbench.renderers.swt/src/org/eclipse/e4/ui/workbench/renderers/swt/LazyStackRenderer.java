@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2008, 2016 IBM Corporation and others.
+ * Copyright (c) 2008, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,6 +13,7 @@
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 441150, 472654
  *     Fabio Zadrozny (fabiofz@gmail.com) - Bug 436763
  *     Dirk Fauth <dirk.fauth@googlemail.com> - Bug 457939
+ *     Rolf Theunissen <rolf.theunissen@gmail.com> - Bug 564561
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
@@ -118,6 +119,16 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		}
 	}
 
+	@Override
+	public void childRendered(MElementContainer<MUIElement> parentElement, MUIElement element) {
+		super.childRendered(parentElement, element);
+
+		if (parentElement.getSelectedElement() != element) {
+			// Make sure that everything is hidden
+			hideElementRecursive(element);
+		}
+	}
+
 	@Inject
 	@Optional
 	private void subscribePartTopicToolbar(@UIEventTopic(UIEvents.Part.TOPIC_TOOLBAR) Event event) {
@@ -154,6 +165,9 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		IPresentationEngine renderer = context.get(IPresentationEngine.class);
 
 		for (MUIElement element : me.getChildren()) {
+			// Make sure that everything is hidden
+			hideElementRecursive(element);
+
 			if (!element.isToBeRendered() || !element.isVisible()) {
 				continue;
 			}
@@ -203,7 +217,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 	}
 
 	private void hideElementRecursive(MUIElement element) {
-		if (element == null || element.getWidget() == null) {
+		if (element == null) {
 			return;
 		}
 
@@ -213,7 +227,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		}
 
 		// Hide any floating windows
-		if (element instanceof MWindow && element.getWidget() != null) {
+		if (element instanceof MWindow) {
 			element.setVisible(false);
 		}
 
