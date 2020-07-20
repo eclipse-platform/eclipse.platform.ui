@@ -63,66 +63,63 @@ public class StackRendererTest {
 	@Inject
 	private MApplication application;
 
-	private MPart part1;
-	private MPart part2;
-	private CTabItemStylingMethodsListener executedMethodsListener;
+	private MWindow window;
 	private MPartStack partStack;
 
 	@Before
 	public void setUp() throws Exception {
-		MWindow window = ems.createModelElement(MWindow.class);
-		partStack = ems.createModelElement(MPartStack.class);
-
+		window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
 
-		MPartDescriptor partDescriptor = ems.createModelElement(MPartDescriptor.class);
-		partDescriptor.setElementId("myelementid");
-		partDescriptor.setLabel("some title");
-		partDescriptor.setIconURI(PART_DESC_ICON);
-		application.getDescriptors().add(partDescriptor);
-
-		part1 = ems.createPart(partDescriptor);
-		part2 = ems.createPart(partDescriptor);
-
+		partStack = ems.createModelElement(MPartStack.class);
 		window.getChildren().add(partStack);
-		partStack.getChildren().add(part1);
-		partStack.getChildren().add(part2);
+	}
 
-		executedMethodsListener = new CTabItemStylingMethodsListener(part1);
+	@Test
+	public void testTabStateHandlerWhenOneOfSupportedTagChangeEvents() throws Exception {
+		MPart part = ems.createModelElement(MPart.class);
+		partStack.getChildren().add(part);
+		part.setLabel("some title");
+
+		CTabItemStylingMethodsListener executedMethodsListener = new CTabItemStylingMethodsListener(part);
 
 		context.set(IStylingEngine.class, (IStylingEngine) Proxy.newProxyInstance(getClass().getClassLoader(),
 				new Class<?>[] { IStylingEngine.class }, executedMethodsListener));
 
 		contextRule.createAndRunWorkbench(window);
-	}
 
-	@Test
-	public void testTabStateHandlerWhenOneOfSupportedTagChangeEvents()
-			throws Exception {
 		// given
 		HashMap<String, Object> params = new HashMap<>();
-		params.put(UIEvents.EventTags.ELEMENT, part1);
+		params.put(UIEvents.EventTags.ELEMENT, part);
 		params.put(UIEvents.EventTags.NEW_VALUE, CSSConstants.CSS_BUSY_CLASS);
 		params.put(UIEvents.EventTags.OLD_VALUE, null);
 
 		// when
 		context.get(EventBroker.class).send(
-				UIEvents.ApplicationElement.TOPIC_TAGS.replace(
-						UIEvents.ALL_SUB_TOPICS, UIEvents.EventTypes.SET),
+				UIEvents.ApplicationElement.TOPIC_TAGS.replace(UIEvents.ALL_SUB_TOPICS, UIEvents.EventTypes.SET),
 				params);
 
 		// then
-		assertEquals(1,
-				executedMethodsListener
-						.getMethodExecutionCount("setClassnameAndId(.+)"));
+		assertEquals(1, executedMethodsListener.getMethodExecutionCount("setClassnameAndId(.+)"));
 	}
 
 	@Test
 	public void testTabStateHandlerWhenSelectionChangedEvent() throws Exception {
+		MPart part = ems.createModelElement(MPart.class);
+		partStack.getChildren().add(part);
+		part.setLabel("some title");
+
+		CTabItemStylingMethodsListener executedMethodsListener = new CTabItemStylingMethodsListener(part);
+
+		context.set(IStylingEngine.class, (IStylingEngine) Proxy.newProxyInstance(getClass().getClassLoader(),
+				new Class<?>[] { IStylingEngine.class }, executedMethodsListener));
+
+		contextRule.createAndRunWorkbench(window);
+
 		// given
 		MPlaceholder placeHolder = ems.createModelElement(MPlaceholder.class);
-		placeHolder.setRef(part1);
+		placeHolder.setRef(part);
 
 		HashMap<String, Object> params = new HashMap<>();
 		params.put(UIEvents.EventTags.ELEMENT, partStack);
@@ -130,19 +127,61 @@ public class StackRendererTest {
 		params.put(UIEvents.EventTags.OLD_VALUE, null);
 
 		// when
-		context.get(EventBroker.class).send(
-				UIEvents.ElementContainer.TOPIC_SELECTEDELEMENT.replace(
-						UIEvents.ALL_SUB_TOPICS, UIEvents.EventTypes.SET),
-				params);
+		context.get(EventBroker.class).send(UIEvents.ElementContainer.TOPIC_SELECTEDELEMENT
+				.replace(UIEvents.ALL_SUB_TOPICS, UIEvents.EventTypes.SET), params);
 
 		// then
-		assertEquals(1,
-				executedMethodsListener
-						.getMethodExecutionCount("setClassnameAndId(.+)"));
+		assertEquals(1, executedMethodsListener.getMethodExecutionCount("setClassnameAndId(.+)"));
+	}
+
+	private static class CTabItemStylingMethodsListener implements InvocationHandler {
+		private MPart part;
+		private List<String> methods;
+
+		public CTabItemStylingMethodsListener(MPart part) {
+			this.part = part;
+			methods = new ArrayList<>();
+		}
+
+		@Override
+		public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
+			if (isTabItemForPart(args[0])) {
+				methods.add(String.format("%s(%s)", method.getName(), Arrays.toString(args)));
+			}
+			return null;
+		}
+
+		private boolean isTabItemForPart(Object obj) {
+			return obj instanceof CTabItem && part.getLabel().equals(((CTabItem) obj).getText());
+		}
+
+		public int getMethodExecutionCount(String methodPattern) {
+			int result = 0;
+			for (String method : methods) {
+				if (method.matches(methodPattern)) {
+					result++;
+				}
+			}
+			return result;
+		}
 	}
 
 	@Test
 	public void testBug475357_IconChanges() throws Exception {
+		MPartDescriptor partDescriptor = ems.createModelElement(MPartDescriptor.class);
+		partDescriptor.setElementId("myelementid");
+		partDescriptor.setLabel("some title");
+		partDescriptor.setIconURI(PART_DESC_ICON);
+		application.getDescriptors().add(partDescriptor);
+
+		MPart part1 = ems.createPart(partDescriptor);
+		MPart part2 = ems.createPart(partDescriptor);
+
+		partStack.getChildren().add(part1);
+		partStack.getChildren().add(part2);
+
+		contextRule.createAndRunWorkbench(window);
+
 		part1.setIconURI(PART_DESC_ICON);
 		CTabItem item = ((CTabFolder) partStack.getWidget()).getItem(0);
 		Image image = item.getImage();
@@ -153,6 +192,19 @@ public class StackRendererTest {
 
 	@Test
 	public void testBug475357_PartIconOverridesDescriptor() throws Exception {
+		MPartDescriptor partDescriptor = ems.createModelElement(MPartDescriptor.class);
+		partDescriptor.setElementId("myelementid");
+		partDescriptor.setLabel("some title");
+		partDescriptor.setIconURI(PART_DESC_ICON);
+		application.getDescriptors().add(partDescriptor);
+
+		MPart part1 = ems.createPart(partDescriptor);
+		MPart part2 = ems.createPart(partDescriptor);
+
+		partStack.getChildren().add(part1);
+		partStack.getChildren().add(part2);
+
+		contextRule.createAndRunWorkbench(window);
 
 		// check that Renderer uses Part's icon over PartDescriptor's icon
 		CTabItem item = ((CTabFolder) partStack.getWidget()).getItem(1);
@@ -168,40 +220,4 @@ public class StackRendererTest {
 		assertEquals(ovrwriteIcon, descImage);
 	}
 
-	// helper functions
-	private static class CTabItemStylingMethodsListener implements
-			InvocationHandler {
-		private MPart part;
-		private List<String> methods;
-
-		public CTabItemStylingMethodsListener(MPart part) {
-			this.part = part;
-			methods = new ArrayList<>();
-		}
-
-		@Override
-		public Object invoke(Object proxy, Method method, Object[] args)
-				throws Throwable {
-			if (isTabItemForPart(args[0])) {
-				methods.add(String.format("%s(%s)", method.getName(),
-						Arrays.toString(args)));
-			}
-			return null;
-		}
-
-		private boolean isTabItemForPart(Object obj) {
-			return obj instanceof CTabItem
-					&& part.getLabel().equals(((CTabItem) obj).getText());
-		}
-
-		public int getMethodExecutionCount(String methodPattern) {
-			int result = 0;
-			for (String method : methods) {
-				if (method.matches(methodPattern)) {
-					result++;
-				}
-			}
-			return result;
-		}
-	}
 }
