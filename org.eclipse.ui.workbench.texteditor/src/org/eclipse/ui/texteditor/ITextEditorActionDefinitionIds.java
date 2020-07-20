@@ -442,6 +442,14 @@ public interface ITextEditorActionDefinitionIds extends IWorkbenchActionDefiniti
 	String GOTO_LAST_EDIT_POSITION= "org.eclipse.ui.edit.text.gotoLastEditPosition"; //$NON-NLS-1$
 
 	/**
+	 * Action definition id of go to next edit position action. Value:
+	 * <code>"org.eclipse.ui.edit.text.gotoNextEditPosition"</code>
+	 *
+	 * @since 3.15
+	 */
+	String GOTO_NEXT_EDIT_POSITION= "org.eclipse.ui.edit.text.gotoNextEditPosition"; //$NON-NLS-1$
+
+	/**
 	 * Action definition id of go to next annotation action.
 	 * Value: <code>"org.eclipse.ui.edit.text.gotoNextAnnotation"</code>
 	 * @since 3.0

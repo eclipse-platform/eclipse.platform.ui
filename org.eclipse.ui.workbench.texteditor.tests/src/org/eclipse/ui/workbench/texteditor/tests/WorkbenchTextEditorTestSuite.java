@@ -42,7 +42,8 @@ import org.eclipse.ui.workbench.texteditor.tests.rulers.RulerTestSuite;
 		AbstractTextZoomHandlerTest.class,
 		DocumentLineDifferTest.class,
 		MinimapPageTest.class,
-		MinimapWidgetTest.class
+		MinimapWidgetTest.class,
+		TextEditorPluginTest.class
 })
 public class WorkbenchTextEditorTestSuite {
 	// see @SuiteClasses

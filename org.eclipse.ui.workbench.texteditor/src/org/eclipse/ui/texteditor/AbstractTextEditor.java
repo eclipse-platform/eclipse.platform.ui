@@ -215,6 +215,7 @@ import org.eclipse.ui.dialogs.PropertyDialogAction;
 import org.eclipse.ui.dnd.IDragAndDropService;
 import org.eclipse.ui.internal.texteditor.EditPosition;
 import org.eclipse.ui.internal.texteditor.FocusedInformationPresenter;
+import org.eclipse.ui.internal.texteditor.HistoryTracker;
 import org.eclipse.ui.internal.texteditor.NLSUtility;
 import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 import org.eclipse.ui.internal.texteditor.rulers.StringSetSerializer;
@@ -605,7 +606,6 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 		 *
 		 * @since 3.0
 		 */
-		private Position fLocalLastEditPosition;
 
 		/** The posted updater code. */
 		private Runnable fRunnable = () -> {
@@ -616,35 +616,36 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 				// remember the last edit position
 				if (isDirty() && fUpdateLastEditPosition) {
+					HistoryTracker<EditPosition> positionHistory = TextEditorPlugin.getDefault()
+							.getEditPositionHistory();
 					fUpdateLastEditPosition = false;
 					ISelection sel = getSelectionProvider().getSelection();
 					IEditorInput input = getEditorInput();
 					IDocument document = getDocumentProvider().getDocument(input);
-
-					if (fLocalLastEditPosition != null) {
-						if (document != null) {
-							document.removePosition(fLocalLastEditPosition);
-						}
-						fLocalLastEditPosition = null;
-					}
+					IEditorSite editorSite = getEditorSite();
+					if (editorSite instanceof MultiPageEditorSite)
+						editorSite = ((MultiPageEditorSite) editorSite).getMultiPageEditor().getEditorSite();
 
 					if (sel instanceof ITextSelection && !sel.isEmpty()) {
 						ITextSelection s = (ITextSelection) sel;
-						fLocalLastEditPosition = new Position(s.getOffset(), s.getLength());
+						Position newPosition = new Position(s.getOffset(), s.getLength());
+						EditPosition newEditPosition = new EditPosition(input, editorSite.getId(), newPosition);
+						EditPosition replaced = positionHistory.addOrReplace(newEditPosition);
 						if (document != null) {
+							if (replaced != null) {
+								document.removePosition(replaced.getPosition());
+							}
 							try {
-								document.addPosition(fLocalLastEditPosition);
+								if (positionHistory.getSize() > 0) {
+									document.addPosition(positionHistory.getCurrentBrowsePoint().getPosition());
+								}
 							} catch (BadLocationException ex) {
-								fLocalLastEditPosition = null;
+								positionHistory.deleteLast();
 							}
 						}
 					}
 
-					IEditorSite editorSite = getEditorSite();
-					if (editorSite instanceof MultiPageEditorSite)
-						editorSite = ((MultiPageEditorSite) editorSite).getMultiPageEditor().getEditorSite();
-					TextEditorPlugin.getDefault()
-							.setLastEditPosition(new EditPosition(input, editorSite.getId(), fLocalLastEditPosition));
+					TextEditorPlugin.getDefault().enableLastEditPositionDependentActions();
 				}
 			}
 		};
@@ -681,14 +682,25 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 		@Override
 		public void inputDocumentAboutToBeChanged(IDocument oldInput, IDocument newInput) {
-			if (oldInput != null && fLocalLastEditPosition != null) {
-				oldInput.removePosition(fLocalLastEditPosition);
-				fLocalLastEditPosition= null;
+			HistoryTracker<EditPosition> positionHistory = TextEditorPlugin.getDefault().getEditPositionHistory();
+			if (oldInput != null && !positionHistory.isEmpty()) {
+				for (int i = 0; i < positionHistory.getSize(); i++)
+					oldInput.removePosition(positionHistory.browseBackward().getPosition());
 			}
 		}
 
 		@Override
 		public void inputDocumentChanged(IDocument oldInput, IDocument newInput) {
+			discardHistoryFor(oldInput);
+		}
+
+		private void discardHistoryFor(IDocument input) {
+			HistoryTracker<EditPosition> positionHistory = TextEditorPlugin.getDefault().getEditPositionHistory();
+			if (input != null && !positionHistory.isEmpty()) {
+				for (int i = 0; i < positionHistory.getSize(); i++)
+					input.removePosition(positionHistory.browseBackward().getPosition());
+			}
+
 		}
 	}
 
@@ -3073,7 +3085,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 				private Runnable fRunnable = () -> {
 					// check whether editor has not been disposed yet
 					if (fSourceViewer != null && fSourceViewer.getDocument() != null) {
-						handleCursorPositionChanged();
+						handleCursorPositionChangedWrapper();
 						updateSelectionDependentActions();
 					}
 				};
@@ -3110,7 +3122,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 				@Override
 				public void keyPressed(KeyEvent e) {
-					handleCursorPositionChanged();
+					handleCursorPositionChangedWrapper();
 				}
 
 				@Override
@@ -3127,7 +3139,7 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 
 				@Override
 				public void mouseUp(MouseEvent e) {
-					handleCursorPositionChanged();
+					handleCursorPositionChangedWrapper();
 				}
 			};
 		}
@@ -6599,8 +6611,20 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	}
 
 	/**
-	 * Handles a potential change of the cursor position.
-	 * Subclasses may extend.
+	 * Prepares to handles a potential change of the cursor position. Wraps the
+	 * actual handler which cannot itself be modified for fear of disrupting
+	 * existing subclasses which may have overridden it without calling
+	 * super.handleCursorPositionChanged()
+	 *
+	 * @since 3.15
+	 */
+	private void handleCursorPositionChangedWrapper() {
+		TextEditorPlugin.getDefault().setMovedSinceLastEditRecall(true);
+		handleCursorPositionChanged();
+	}
+
+	/**
+	 * Handles a potential change of the cursor position. Subclasses may extend.
 	 *
 	 * @since 2.0
 	 */

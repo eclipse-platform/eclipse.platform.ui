@@ -359,6 +359,12 @@
 	        id="org.eclipse.ui.edit.text.gotoLastEditPosition">
 	  </command>
 	  <command
+	        name="%goToNextEditPosition.label"
+	        description="%goToNextEditPosition.description"
+	        categoryId="org.eclipse.ui.category.navigate"
+	        id="org.eclipse.ui.edit.text.gotoNextEditPosition">
+	  </command>
+	  <command
 	        name="%smartEnter.label"
 	        description="%smartEnter.description"
 	        categoryId="org.eclipse.ui.category.textEditor"
@@ -592,6 +598,11 @@
 	        contextId="org.eclipse.ui.contexts.window"
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
 	        sequence="CTRL+Q"/>	<!-- Command+Q is quit on carbon, so don't overwrite it -->
+	  <key
+	        commandId="org.eclipse.ui.edit.text.gotoNextEditPosition"
+	        contextId="org.eclipse.ui.contexts.window"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	        sequence="M3+CTRL+Q"/>
 	  <key
 	        commandId="org.eclipse.ui.edit.text.smartEnter"
 	        contextId="org.eclipse.ui.textEditorScope"

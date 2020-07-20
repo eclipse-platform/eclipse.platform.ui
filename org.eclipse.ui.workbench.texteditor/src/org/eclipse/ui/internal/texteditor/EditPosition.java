@@ -32,6 +32,12 @@ public final class EditPosition {
 	private final String fEditorId;
 	/** The position */
 	private final Position fPosition;
+	/**
+	 * how many characters may come in between two edit positions for them to
+	 * still be lumped into same bucket in position history (designed to prevent
+	 * filling history with meaningless noise of very similar positions)
+	 */
+	public static final int PROXIMITY_THRESHOLD = 30;
 
 	/**
 	 * Creates a new edit position.
@@ -72,5 +78,48 @@ public final class EditPosition {
 	 */
 	public Position getPosition() {
 		return fPosition;
+	}
+
+	/**
+	 * @param a         Position to compare the other arg against
+	 * @param b         Another position to compare the first arg against
+	 * @param threshold The maximum allowed distance between Position args for them
+	 *                  to be considered co-located
+	 * @return true if both Position args are colocated as defined by the threshold
+	 *         param
+	 * @since 3.15
+	 */
+	public static boolean areCoLocated(Position a, Position b, int threshold) {
+		if (a == null || b == null) {
+			return false;
+		}
+		int center1 = a.offset + (a.length / 2);
+		int center2 = b.offset + (b.length / 2);
+		int centerDistance = Math.abs(center1 - center2);
+		int minWithoutOverlap = a.length / 2 + b.length / 2;
+		return centerDistance < (minWithoutOverlap + threshold);
+	}
+
+	/**
+	 * @since 3.15
+	 */
+	public static boolean areCoLocated(Position a, Position b) {
+		return EditPosition.areCoLocated(a, b, EditPosition.PROXIMITY_THRESHOLD);
+	}
+
+	/**
+	 * @since 3.15
+	 */
+	public static boolean areCoLocated(EditPosition a, EditPosition b, int threshold) {
+		return a != null && b != null && a.getEditorInput().getName()
+				.equals(b.getEditorInput().getName())
+				&& EditPosition.areCoLocated(a.getPosition(), b.getPosition(), threshold);
+	}
+
+	/**
+	 * @since 3.15
+	 */
+	public static boolean areCoLocated(EditPosition a, EditPosition b) {
+		return EditPosition.areCoLocated(a, b, EditPosition.PROXIMITY_THRESHOLD);
 	}
 }

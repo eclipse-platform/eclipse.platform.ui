@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2013 IBM Corporation and others.
+ * Copyright (c) 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: EPL-2.0
  *
  * Contributors:
- *     IBM Corporation - initial API and implementation
+ *     Ari Kast - initial API and implementation
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
@@ -36,11 +36,13 @@ import org.eclipse.ui.internal.texteditor.TextEditorPlugin;
 
 
 /**
- * Goes to last edit position.
+ * Goes to next edit position, ie travels forward in the edit position history
+ * Acts as a complement to GotoLastEditPositionAction which travels backward in
+ * the history.
  *
- * @since 3.5
+ * @since 3.15
  */
-public class GotoLastEditPositionAction extends Action implements IWorkbenchWindowActionDelegate {
+public class GotoNextEditPositionAction extends Action implements IWorkbenchWindowActionDelegate {
 
 	/** The workbench window */
 	private IWorkbenchWindow fWindow;
@@ -48,12 +50,13 @@ public class GotoLastEditPositionAction extends Action implements IWorkbenchWind
 	private IAction fAction;
 
 	/**
-	 * Creates a goto last edit action.
+	 * Creates a goto next edit action.
 	 */
-	public GotoLastEditPositionAction() {
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(this, IAbstractTextEditorHelpContextIds.GOTO_LAST_EDIT_POSITION_ACTION);
-		setId(ITextEditorActionDefinitionIds.GOTO_LAST_EDIT_POSITION);
-		setActionDefinitionId(ITextEditorActionDefinitionIds.GOTO_LAST_EDIT_POSITION);
+	public GotoNextEditPositionAction() {
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(this,
+				IAbstractTextEditorHelpContextIds.GOTO_NEXT_EDIT_POSITION_ACTION);
+		setId(ITextEditorActionDefinitionIds.GOTO_NEXT_EDIT_POSITION);
+		setActionDefinitionId(ITextEditorActionDefinitionIds.GOTO_NEXT_EDIT_POSITION);
 		setEnabled(false);
 	}
 
@@ -70,24 +73,21 @@ public class GotoLastEditPositionAction extends Action implements IWorkbenchWind
 	@Override
 	public void run() {
 		if (!TextEditorPlugin.getDefault().isMovedSinceLastEditRecall()) {
-			TextEditorPlugin.getDefault().backtrackEditPosition();
+			TextEditorPlugin.getDefault().advanceEditPosition();
 		}
-		EditPosition editPosition = TextEditorPlugin.getDefault().getLastEditPosition();
+		EditPosition editPosition = TextEditorPlugin.getDefault().getNextEditPosition();
 		try {
 
-			if (editPosition == null) {
+			if (editPosition == null)
 				return;
-			}
 
 			final Position pos = editPosition.getPosition();
-			if (pos == null || pos.isDeleted) {
+			if (pos == null || pos.isDeleted)
 				return;
-			}
 
 			IWorkbenchWindow window = getWindow();
-			if (window == null) {
+			if (window == null)
 				return;
-			}
 
 			IWorkbenchPage page = window.getActivePage();
 
@@ -114,14 +114,12 @@ public class GotoLastEditPositionAction extends Action implements IWorkbenchWind
 			 */
 			if (editor != null) {
 				IEditorSite site = editor.getEditorSite();
-				if (site == null) {
+				if (site == null)
 					return;
-				}
 
 				ISelectionProvider provider = editor.getEditorSite().getSelectionProvider();
-				if (provider == null) {
+				if (provider == null)
 					return;
-				}
 
 				provider.setSelection(new TextSelection(pos.offset, pos.length));
 			}
@@ -151,9 +149,8 @@ public class GotoLastEditPositionAction extends Action implements IWorkbenchWind
 	 * @return the workbench window
 	 */
 	private IWorkbenchWindow getWindow() {
-		if (fWindow == null) {
+		if (fWindow == null)
 			fWindow= PlatformUI.getWorkbench().getActiveWorkbenchWindow();
-		}
 		return fWindow;
 	}
 

@@ -28,6 +28,8 @@ final class EditorMessages extends NLS {
 
 	public static String Editor_error_gotoLastEditPosition_title;
 	public static String Editor_error_gotoLastEditPosition_message;
+	public static String Editor_error_gotoNextEditPosition_title;
+	public static String Editor_error_gotoNextEditPosition_message;
 
 	static {
 		NLS.initializeMessages(BUNDLE_NAME, EditorMessages.class);

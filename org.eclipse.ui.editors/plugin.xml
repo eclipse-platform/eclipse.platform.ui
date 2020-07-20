@@ -481,6 +481,19 @@
                tooltip="%goToLastEditPosition.tooltip"
                initialEnabled="false">
          </action>
+         <action
+               toolbarPath="org.eclipse.ui.workbench.navigate/history.group"
+               id="org.eclipse.ui.edit.text.gotoNextEditPosition"
+               class="org.eclipse.ui.texteditor.GotoNextEditPositionAction"
+               definitionId="org.eclipse.ui.edit.text.gotoNextEditPosition"
+               disabledIcon="$nl$/icons/full/dtool16/next_edit_pos.png"
+               icon="$nl$/icons/full/etool16/next_edit_pos.png"
+               helpContextId="org.eclipse.ui.goto_next_edit_position_action_context"
+               label="%goToNextEditPosition.label"
+               menubarPath="navigate/"
+               tooltip="%goToNextEditPosition.tooltip"
+               initialEnabled="false">
+         </action>
       </actionSet>
 	  <actionSet
 	    label="%conversionActionSet.label"

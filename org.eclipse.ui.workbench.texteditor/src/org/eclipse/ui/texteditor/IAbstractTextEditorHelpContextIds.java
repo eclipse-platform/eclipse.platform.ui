@@ -299,8 +299,17 @@ public interface IAbstractTextEditorHelpContextIds {
 	String GOTO_LAST_EDIT_POSITION_ACTION= PREFIX + "goto_last_edit_position" + ACTION_POSTFIX; //$NON-NLS-1$
 
 	/**
-	 * Help context id for the action.
-	 * Value: <code>"org.eclipse.ui.move_lines_action_context"</code>
+	 * Help context id for the action. Value:
+	 * <code>"org.eclipse.ui.goto_next_edit_position_action_context"</code>
+	 *
+	 * @since 3.15
+	 */
+	String GOTO_NEXT_EDIT_POSITION_ACTION = PREFIX + "goto_next_edit_position" + ACTION_POSTFIX; //$NON-NLS-1$
+
+	/**
+	 * Help context id for the action. Value:
+	 * <code>"org.eclipse.ui.move_lines_action_context"</code>
+	 *
 	 * @since 3.0
 	 */
 	String MOVE_LINES_ACTION= PREFIX + "move_lines" + ACTION_POSTFIX; //$NON-NLS-1$
