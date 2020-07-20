@@ -26,6 +26,7 @@ import org.eclipse.core.resources.IMarkerDelta;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IResourceChangeListener;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -55,7 +56,7 @@ public class NestedProjectsLabelProvider extends ResourceExtensionLabelProvider 
 			if (event.getDelta() == null) {
 				return;
 			}
-			MarkerManager markerManager = ((Workspace) WorkbenchNavigatorPlugin.getWorkspace()).getMarkerManager();
+			MarkerManager markerManager = ((Workspace) ResourcesPlugin.getWorkspace()).getMarkerManager();
 			try {
 				event.getDelta().accept(delta -> {
 					IMarkerDelta[] markerDeltas = delta.getMarkerDeltas();
@@ -84,13 +85,13 @@ public class NestedProjectsLabelProvider extends ResourceExtensionLabelProvider 
 				});
 			}
 		};
-		WorkbenchNavigatorPlugin.getWorkspace().addResourceChangeListener(refreshSeveritiesOnProblemMarkerChange);
+		ResourcesPlugin.getWorkspace().addResourceChangeListener(refreshSeveritiesOnProblemMarkerChange);
 	}
 
 	@Override
 	public void dispose() {
 		isDisposed = true;
-		WorkbenchNavigatorPlugin.getWorkspace().removeResourceChangeListener(refreshSeveritiesOnProblemMarkerChange);
+		ResourcesPlugin.getWorkspace().removeResourceChangeListener(refreshSeveritiesOnProblemMarkerChange);
 		super.dispose();
 	}
 

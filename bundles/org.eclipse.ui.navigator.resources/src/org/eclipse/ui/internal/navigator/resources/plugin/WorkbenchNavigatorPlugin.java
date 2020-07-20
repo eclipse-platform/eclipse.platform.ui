@@ -13,8 +13,6 @@
  *******************************************************************************/
 package org.eclipse.ui.internal.navigator.resources.plugin;
 
-import org.eclipse.core.resources.IWorkspace;
-import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
@@ -47,13 +45,6 @@ public class WorkbenchNavigatorPlugin extends AbstractUIPlugin {
 	}
 
 	/**
-	 * @return the workspace instance.
-	 */
-	public static IWorkspace getWorkspace() {
-		return ResourcesPlugin.getWorkspace();
-	}
-
-	/**
 	 * Logs errors.
 	 * @param message The message to log
 	 * @param status The status to log
@@ -78,10 +69,8 @@ public class WorkbenchNavigatorPlugin extends AbstractUIPlugin {
 	 * @return A status configured with this plugin's id and the given
 	 *         parameters.
 	 */
-	public static IStatus createStatus(int severity, int aCode,
-			String aMessage, Throwable exception) {
-		return new Status(severity, PLUGIN_ID, aCode,
-				aMessage != null ? aMessage : "No message.", exception); //$NON-NLS-1$
+	public static IStatus createStatus(int severity, int aCode, String aMessage, Throwable exception) {
+		return new Status(severity, PLUGIN_ID, aCode, aMessage != null ? aMessage : "No message.", exception); //$NON-NLS-1$
 	}
 
 	/**
@@ -130,14 +119,4 @@ public class WorkbenchNavigatorPlugin extends AbstractUIPlugin {
 		return createStatus(IStatus.INFO, 0, aMessage, null);
 	}
 
-
-	/**
-	 *
-	 * @param aMessage
-	 * @return A status configured with this plugin's id and the given
-	 *         parameters.
-	 */
-	public static IStatus createWarningStatus(String aMessage) {
-		return createStatus(IStatus.WARNING, 0, aMessage, null);
-	}
 }

@@ -26,6 +26,7 @@ import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IMarker;
 import org.eclipse.core.resources.IProject;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IPath;
 import org.eclipse.core.runtime.IStatus;
@@ -57,7 +58,7 @@ public class NestedProjectsProblemsModel {
 		modifiedSeveritySinceLastRun.addAll(localDirty);
 
 		try {
-			for (IMarker marker : WorkbenchNavigatorPlugin.getWorkspace().getRoot().findMarkers(IMarker.PROBLEM, true,
+			for (IMarker marker : ResourcesPlugin.getWorkspace().getRoot().findMarkers(IMarker.PROBLEM, true,
 					IResource.DEPTH_INFINITE)) {
 				IResource resource = marker.getResource();
 				if (resource != null && (neverRan || localDirty.contains(resource))) {
