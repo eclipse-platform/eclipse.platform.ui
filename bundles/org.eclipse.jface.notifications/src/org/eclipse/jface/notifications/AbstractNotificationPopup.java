@@ -44,6 +44,9 @@ import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Monitor;
 import org.eclipse.swt.widgets.Shell;
 
+/**
+ * @since 0.2
+ */
 public abstract class AbstractNotificationPopup extends Window {
 
 	private static final int TITLE_HEIGHT = 24;

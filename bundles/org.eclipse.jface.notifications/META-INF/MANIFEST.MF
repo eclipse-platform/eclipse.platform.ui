@@ -4,9 +4,9 @@ Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-SymbolicName: org.eclipse.jface.notifications
-Bundle-Version: 0.1.100.qualifier
+Bundle-Version: 0.2.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Export-Package: org.eclipse.jface.notifications;x-internal:=true,
+Export-Package: org.eclipse.jface.notifications,
  org.eclipse.jface.notifications.internal;x-internal:=true
 Automatic-Module-Name: org.eclipse.jface.notifications
 Require-Bundle: org.eclipse.core.runtime;bundle-version="3.18.0",
