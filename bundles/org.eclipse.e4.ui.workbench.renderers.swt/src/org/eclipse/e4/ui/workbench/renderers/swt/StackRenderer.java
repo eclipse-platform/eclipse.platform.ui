@@ -31,8 +31,6 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
-import org.eclipse.core.runtime.preferences.IEclipsePreferences.PreferenceChangeEvent;
 import org.eclipse.e4.core.contexts.IEclipseContext;
 import org.eclipse.e4.core.di.annotations.Optional;
 import org.eclipse.e4.core.di.extensions.Preference;
@@ -110,7 +108,7 @@ import org.osgi.service.event.EventHandler;
  * IPresentation.STYLE_OVERRIDE_KEY key
  *
  */
-public class StackRenderer extends LazyStackRenderer implements IPreferenceChangeListener {
+public class StackRenderer extends LazyStackRenderer {
 	/**
 	 *
 	 */
@@ -550,9 +548,6 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 	@PostConstruct
 	public void init() {
 		super.init(eventBroker);
-
-		preferences.addPreferenceChangeListener(this);
-		preferenceChange(null);
 	}
 
 	protected void updateTab(CTabItem cti, MPart part, String attName, Object newValue) {
@@ -660,10 +655,6 @@ public class StackRenderer extends LazyStackRenderer implements IPreferenceChang
 	private void updateMRUValue(CTabFolder tabFolder) {
 		boolean actualMRUValue = getMRUValue(tabFolder);
 		tabFolder.setMRUVisible(actualMRUValue);
-	}
-
-	@Override
-	public void preferenceChange(PreferenceChangeEvent event) {
 	}
 
 	/**
