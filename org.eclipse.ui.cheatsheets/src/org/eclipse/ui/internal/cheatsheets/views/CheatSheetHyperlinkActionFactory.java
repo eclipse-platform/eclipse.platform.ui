@@ -14,7 +14,6 @@
 package org.eclipse.ui.internal.cheatsheets.views;
 
 import java.io.ByteArrayOutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
@@ -197,7 +196,7 @@ public class CheatSheetHyperlinkActionFactory {
 		if (value != null) {
 			try {
 				if (decode != null && decode.equalsIgnoreCase(VALUE_TRUE)) {
-					return decode(value, "UTF-8"); //$NON-NLS-1$
+					return URLDecoder.decode(value, StandardCharsets.UTF_8); // $NON-NLS-1$
 				}
 				return value;
 			} catch (Exception e) {
@@ -205,14 +204,6 @@ public class CheatSheetHyperlinkActionFactory {
 			}
 		}
 		return value;
-	}
-
-	private String decode(String s, String enc) throws UnsupportedEncodingException {
-		try {
-			return URLDecoder.decode(s, enc);
-		} catch (Exception ex) {
-			return s;
-		}
 	}
 
 	public static abstract class CheatSheetHyperlinkAction {
