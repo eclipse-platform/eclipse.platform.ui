@@ -107,10 +107,10 @@ public class ColorRegistry extends ResourceRegistry {
 	/**
 	 * Create a new instance of the receiver.
 	 *
-	 * @param display the <code>Display</code> to hook into
-	 * @param cleanOnDisplayDisposal
-	 *            whether all fonts allocated by this <code>ColorRegistry</code>
-	 *            should be disposed when the display is disposed
+	 * @param display                the <code>Display</code> to hook into
+	 * @param cleanOnDisplayDisposal whether all colors allocated by this
+	 *                               <code>ColorRegistry</code> should be disposed
+	 *                               when the display is disposed
 	 * @since 3.1
 	 */
 	public ColorRegistry(Display display, boolean cleanOnDisplayDisposal) {
