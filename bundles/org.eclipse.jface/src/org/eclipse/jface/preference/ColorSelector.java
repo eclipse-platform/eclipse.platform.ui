@@ -49,8 +49,6 @@ public class ColorSelector extends EventManager {
 
 	private Button fButton;
 
-	private Color fColor;
-
 	private RGB fColorValue;
 
 	private Point fExtent;
@@ -177,11 +175,8 @@ public class ColorSelector extends EventManager {
 	protected void updateColorImage() {
 		Display display = fButton.getDisplay();
 		GC gc = new GC(fImage);
-		if (fColor != null) {
-			fColor.dispose();
-		}
-		fColor = new Color(display, fColorValue);
-		gc.setBackground(fColor);
+		Color color = new Color(display, fColorValue);
+		gc.setBackground(color);
 		gc.fillRectangle(1, 1, fExtent.x - 2, fExtent.y - 2);
 		gc.dispose();
 		fButton.setImage(fImage);
