@@ -19,6 +19,19 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.GroupMarker;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuManager;
+import org.eclipse.jface.action.MenuManager;
+import org.eclipse.jface.action.Separator;
+import org.eclipse.jface.layout.GridDataFactory;
+import org.eclipse.jface.layout.GridLayoutFactory;
+import org.eclipse.jface.preference.JFacePreferences;
+import org.eclipse.jface.resource.JFaceResources;
+import org.eclipse.jface.util.Util;
+import org.eclipse.jface.window.Window;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -39,21 +52,6 @@ import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.ToolBar;
 import org.eclipse.swt.widgets.ToolItem;
 import org.eclipse.swt.widgets.Tracker;
-
-import org.eclipse.core.runtime.Assert;
-
-import org.eclipse.jface.action.Action;
-import org.eclipse.jface.action.GroupMarker;
-import org.eclipse.jface.action.IAction;
-import org.eclipse.jface.action.IMenuManager;
-import org.eclipse.jface.action.MenuManager;
-import org.eclipse.jface.action.Separator;
-import org.eclipse.jface.layout.GridDataFactory;
-import org.eclipse.jface.layout.GridLayoutFactory;
-import org.eclipse.jface.preference.JFacePreferences;
-import org.eclipse.jface.resource.JFaceResources;
-import org.eclipse.jface.util.Util;
-import org.eclipse.jface.window.Window;
 
 /**
  * A lightweight, transient dialog that is popped up to show contextual or
@@ -294,13 +292,6 @@ public class PopupDialog extends Window {
 	 * Separator controls. Cached so they can be excluded from color changes.
 	 */
 	private Control titleSeparator, infoSeparator;
-
-	/**
-	 * Color to be used for the info area text.
-	 *
-	 * @since 3.6
-	 */
-	private Color infoColor;
 
 	/**
 	 * Font to be used for the info area text. Computed based on the dialog's
@@ -867,7 +858,7 @@ public class PopupDialog extends Window {
 		Color foregroundColor = getForeground();
 		if (foregroundColor == null)
 			foregroundColor = getDefaultForeground();
-		infoColor = new Color(display, blend(
+		Color infoColor = new Color(display, blend(
 				backgroundColor.getRGB(), foregroundColor.getRGB(),
 				0.56f));
 
@@ -1604,10 +1595,6 @@ public class PopupDialog extends Window {
 	 *
 	 */
 	private void handleDispose() {
-		if (infoColor != null && !infoColor.isDisposed()) {
-			infoColor.dispose();
-		}
-		infoColor = null;
 		if (infoFont != null && !infoFont.isDisposed()) {
 			infoFont.dispose();
 		}
