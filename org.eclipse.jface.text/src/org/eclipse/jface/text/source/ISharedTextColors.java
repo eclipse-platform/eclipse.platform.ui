@@ -38,7 +38,11 @@ public interface ISharedTextColors {
 	Color getColor(RGB rgb);
 
 	/**
-	 * Tells this object to dispose all its managed colors.
+	 * Tells this object to dispose all its managed objects- Note that colors do not need dispose
+	 * anymore
+	 *
 	 */
-	void dispose();
+	default void dispose() {
+		// nothing to do anymore as colors do not require disposal
+	}
 }
