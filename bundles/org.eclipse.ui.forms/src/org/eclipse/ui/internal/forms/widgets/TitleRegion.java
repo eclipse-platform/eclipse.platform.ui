@@ -390,7 +390,8 @@ public class TitleRegion extends Canvas {
 			titleText.setText(text);
 		}
 		currentTitleControl.setVisible(text != null);
-		layout();
+		titleLabel.requestLayout();
+		titleText.requestLayout();
 		redraw();
 	}
 
@@ -417,7 +418,8 @@ public class TitleRegion extends Canvas {
 			this.titleText.setVisible(false);
 			this.currentTitleControl = this.titleLabel;
 		}
-		layout();
+		titleLabel.requestLayout();
+		titleText.requestLayout();
 		redraw();
 	}
 
@@ -428,7 +430,8 @@ public class TitleRegion extends Canvas {
 		titleText.setFont(font);
 		fontHeight = -1;
 		fontBaselineHeight = -1;
-		layout();
+		titleLabel.requestLayout();
+		titleText.requestLayout();
 	}
 
 	private void ensureBusyLabelExists() {
