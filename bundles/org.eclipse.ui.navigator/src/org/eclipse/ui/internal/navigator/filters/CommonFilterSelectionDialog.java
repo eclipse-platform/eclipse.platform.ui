@@ -156,6 +156,10 @@ public class CommonFilterSelectionDialog extends TrayDialog {
 		}
 
 
+		if (customizationsTabFolder.getTabList().length > 0) {
+			customizationsTabFolder.setSelection(0);
+
+		}
 		return customizationsTabFolder;
 	}
 
