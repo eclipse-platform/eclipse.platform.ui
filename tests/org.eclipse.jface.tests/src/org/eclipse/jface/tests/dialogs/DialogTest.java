@@ -19,6 +19,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
+import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 
 import junit.framework.TestCase;
@@ -57,6 +58,11 @@ public class DialogTest extends TestCase {
 		forceLayoutDialog.setBlockOnOpen(false);
 		// open the dialog so the widgets will be realized
 		forceLayoutDialog.open();
+
+		int waitEvents = 0;
+		while (Display.getDefault().readAndDispatch() && waitEvents++ < 500) {
+			// spin the event loop
+		}
 
 		// retrieve the 'OK' and 'Cancel' buttons
 		Button okBtn = forceLayoutDialog.getButton(IDialogConstants.OK_ID);
