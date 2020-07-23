@@ -147,6 +147,7 @@ public class CommonFilterSelectionDialog extends TrayDialog {
 
 		if (commonFiltersTab != null) {
 			commonFiltersTab.addSelectionChangedListener(getSelectionListener());
+			commonFiltersTab.setInitialFocus();
 		}
 
 		if (contentExtensionsTab != null) {
@@ -154,7 +155,6 @@ public class CommonFilterSelectionDialog extends TrayDialog {
 					.addSelectionChangedListener(getSelectionListener());
 		}
 
-		commonFiltersTab.setInitialFocus();
 
 		return customizationsTabFolder;
 	}
