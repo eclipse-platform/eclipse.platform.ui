@@ -87,12 +87,6 @@ public abstract class AbstractInformationControl implements IInformationControl,
 	 * @since 3.4.2
 	 */
 	private Font fStatusLabelFont;
-	/**
-	 * Color for the label in the status line or <code>null</code> if none.
-	 *
-	 * @since 3.6
-	 */
-	private Color fStatusLabelForeground;
 	/** The toolbar manager used by the toolbar or <code>null</code> if none. */
 	private final ToolBarManager fToolBarManager;
 	/** Status line toolbar or <code>null</code> if none. */
@@ -517,10 +511,6 @@ public abstract class AbstractInformationControl implements IInformationControl,
 			fStatusLabelFont.dispose();
 			fStatusLabelFont= null;
 		}
-		if (fStatusLabelForeground != null) {
-			fStatusLabelForeground.dispose();
-			fStatusLabelForeground= null;
-		}
 	}
 
 	@Override
@@ -635,11 +625,8 @@ public abstract class AbstractInformationControl implements IInformationControl,
 
 	private void setStatusLabelColors(Color foreground, Color background) {
 		if (foreground == null || background == null) return;
-		if (fStatusLabelForeground != null) {
-			fStatusLabelForeground.dispose();
-		}
-		fStatusLabelForeground = new Color(fStatusLabel.getDisplay(), Colors.blend(background.getRGB(), foreground.getRGB(), 0.56f));
-		fStatusLabel.setForeground(fStatusLabelForeground);
+		Color statusLabelForeground= new Color(fStatusLabel.getDisplay(), Colors.blend(background.getRGB(), foreground.getRGB(), 0.56f));
+		fStatusLabel.setForeground(statusLabelForeground);
 		fStatusLabel.setBackground(background);
 	}
 
