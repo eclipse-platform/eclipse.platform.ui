@@ -52,7 +52,7 @@ public class IncrementalAsyncContentAssistTests {
 		viewer.setDocument(document);
 		ca= new ContentAssistant(true);
 
-		Comparator<ICompletionProposal> comparator= Comparator.comparing(p -> p.getDisplayString());
+		Comparator<ICompletionProposal> comparator= Comparator.comparing(ICompletionProposal::getDisplayString);
 		ca.setSorter(comparator::compare);
 	}
 
@@ -81,7 +81,7 @@ public class IncrementalAsyncContentAssistTests {
 		DisplayHelper.sleep(shell.getDisplay(), 300);
 
 		List<String> filteredProposals= FilteringAsyncContentAssistTests.getFilteredProposals(ca).stream() //
-				.map(p -> p.getDisplayString()) //
+				.map(ICompletionProposal::getDisplayString) //
 				.collect(toList());
 		assertEquals(Arrays.asList("testA", "testB", "testC"), filteredProposals);
 	}
@@ -101,7 +101,7 @@ public class IncrementalAsyncContentAssistTests {
 		DisplayHelper.sleep(shell.getDisplay(), delay + 100);
 
 		List<String> filteredProposals= FilteringAsyncContentAssistTests.getFilteredProposals(ca).stream() //
-				.map(p -> p.getDisplayString()) //
+				.map(ICompletionProposal::getDisplayString) //
 				.collect(toList());
 		assertEquals(Arrays.asList("testA", "testB", "testC"), filteredProposals);
 	}

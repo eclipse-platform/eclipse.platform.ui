@@ -333,7 +333,7 @@ public class SearchManager implements IResourceChangeListener {
 		if (Thread.currentThread() == display.getThread())
 			handleNewSearchResult();
 		else {
-			display.syncExec(() -> handleNewSearchResult());
+			display.syncExec(this::handleNewSearchResult);
 		}
 		SearchPlugin.getWorkspace().addResourceChangeListener(this);
 	}

@@ -604,7 +604,7 @@ class CompletionProposalPopup implements IContentAssistListener {
 		fProposalShell.setFont(JFaceResources.getDefaultFont());
 		fProposalTable= new Table(fProposalShell, SWT.H_SCROLL | SWT.V_SCROLL | SWT.VIRTUAL);
 
-		Listener listener= event -> handleSetData(event);
+		Listener listener= this::handleSetData;
 		fProposalTable.addListener(SWT.SetData, listener);
 
 		fIsColoredLabelsSupportEnabled= fContentAssistant.isColoredLabelsSupportEnabled();
