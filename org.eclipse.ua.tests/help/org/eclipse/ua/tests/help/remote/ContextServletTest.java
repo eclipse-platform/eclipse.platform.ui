@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,7 +81,8 @@ public class ContextServletTest {
 	protected Element[] getContextsFromServlet(String phrase)
 			throws Exception {
 		int port = WebappManager.getPort();
-		URL url = new URL("http", "localhost", port, "/help/context?id=" + URLEncoder.encode(phrase, "UTF-8"));
+		URL url = new URL("http", "localhost", port,
+				"/help/context?id=" + URLEncoder.encode(phrase, StandardCharsets.UTF_8));
 		return makeServletCall(url);
 	}
 
@@ -88,7 +90,7 @@ public class ContextServletTest {
 			throws Exception {
 		int port = WebappManager.getPort();
 		URL url = new URL("http", "localhost", port, "/help/context?id="
-				+ URLEncoder.encode(phrase, "UTF-8") + "&lang=" + locale);
+				+ URLEncoder.encode(phrase, StandardCharsets.UTF_8) + "&lang=" + locale);
 		return makeServletCall(url);
 	}
 

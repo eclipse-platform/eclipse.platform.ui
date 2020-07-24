@@ -13,8 +13,8 @@
  *******************************************************************************/
 package org.eclipse.help.internal.search;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import org.eclipse.core.runtime.*;
 import org.eclipse.help.IHelpResource;
@@ -75,16 +75,8 @@ public final class WebSearch implements ISearchEngine {
 
 		@Override
 		public String getHref() {
-			String href = null;
-			String equery;
-			try {
-				equery = URLEncoder.encode(query, "UTF-8"); //$NON-NLS-1$
-
-			} catch (UnsupportedEncodingException e) {
-				equery = query;
-			}
-			href = composeURL(equery, urlTemplate);
-			return href;
+			String equery = URLEncoder.encode(query, StandardCharsets.UTF_8);
+			return composeURL(equery, urlTemplate);
 		}
 
 		@Override

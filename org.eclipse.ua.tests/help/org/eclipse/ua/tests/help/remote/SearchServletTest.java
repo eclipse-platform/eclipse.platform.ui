@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -119,7 +120,8 @@ public class SearchServletTest {
 	protected Node[] getSearchHitsFromServlet(String phrase)
 			throws Exception {
 		int port = WebappManager.getPort();
-		URL url = new URL("http", "localhost", port, "/help/search?phrase=" + URLEncoder.encode(phrase, "UTF-8"));
+		URL url = new URL("http", "localhost", port,
+				"/help/search?phrase=" + URLEncoder.encode(phrase, StandardCharsets.UTF_8));
 		return makeServletCall(url);
 	}
 
@@ -127,7 +129,7 @@ public class SearchServletTest {
 			throws Exception {
 		int port = WebappManager.getPort();
 		URL url = new URL("http", "localhost", port, "/help/search?phrase="
-				+ URLEncoder.encode(phrase, "UTF-8") + "&lang=" + locale);
+				+ URLEncoder.encode(phrase, StandardCharsets.UTF_8) + "&lang=" + locale);
 		return makeServletCall(url);
 	}
 

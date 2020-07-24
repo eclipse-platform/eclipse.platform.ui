@@ -15,9 +15,9 @@
  **************************************************************************************************/
 package org.eclipse.help.ui.internal;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.help.IContext;
@@ -203,11 +203,7 @@ public class DefaultHelpUI extends AbstractHelpUI {
 				if (searchFromBrowser) {
 					String parameters = "tab=search"; //$NON-NLS-1$
 					if (expression != null) {
-						try {
-							parameters += "&searchWord=" + URLEncoder.encode(expression, "UTF-8"); //$NON-NLS-1$ //$NON-NLS-2$
-						} catch (UnsupportedEncodingException e) {
-							// Should not happen: UTF-8 is a required encoding for every Java version
-						}
+						parameters += "&searchWord=" + URLEncoder.encode(expression, StandardCharsets.UTF_8); //$NON-NLS-1$
 					}
 					BaseHelpSystem.getHelpDisplay().displayHelpResource(parameters, false);
 				} else {

@@ -17,6 +17,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import org.eclipse.help.internal.server.WebappManager;
 import org.eclipse.ua.tests.help.remote.ContextServletTest;
@@ -30,7 +31,7 @@ public class ContextServiceTest extends ContextServletTest {
 			throws Exception {
 		int port = WebappManager.getPort();
 		URL url = new URL("http", "localhost", port, "/help/vs/service/context?id="
-				+ URLEncoder.encode(phrase, "UTF-8"));
+				+ URLEncoder.encode(phrase, StandardCharsets.UTF_8));
 		return makeServletCall(url);
 	}
 
@@ -39,7 +40,7 @@ public class ContextServiceTest extends ContextServletTest {
 			throws Exception {
 		int port = WebappManager.getPort();
 		URL url = new URL("http", "localhost", port, "/help/vs/service/context?id="
-				+ URLEncoder.encode(phrase, "UTF-8") + "&lang=" + locale);
+				+ URLEncoder.encode(phrase, StandardCharsets.UTF_8) + "&lang=" + locale);
 		return makeServletCall(url);
 	}
 

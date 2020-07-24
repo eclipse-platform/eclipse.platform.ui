@@ -256,22 +256,13 @@ public final class InfoCenter implements ISearchEngine {
 			buf.append("/search?phrase="); //$NON-NLS-1$
 		else
 			buf.append("search?phrase="); //$NON-NLS-1$
-		try {
-			buf.append(URLEncoder.encode(query, "UTF-8")); //$NON-NLS-1$
-		} catch (UnsupportedEncodingException e) {
-			buf.append(query);
-		}
+		buf.append(URLEncoder.encode(query, StandardCharsets.UTF_8));
 		buf.append("&locale="); //$NON-NLS-1$
 		buf.append(Platform.getNL());
 		if (scope.searchSelected && scope.tocs != null) {
 			buf.append("&scopedSearch=true"); //$NON-NLS-1$
 			for (int i = 0; i < scope.tocs.length; i++) {
-				String toc;
-				try {
-					toc = URLEncoder.encode(scope.tocs[i], "UTF-8"); //$NON-NLS-1$
-				} catch (UnsupportedEncodingException e) {
-					toc = scope.tocs[i];
-				}
+				String toc = URLEncoder.encode(scope.tocs[i], StandardCharsets.UTF_8);
 				buf.append("&scope="); //$NON-NLS-1$
 				buf.append(toc);
 			}

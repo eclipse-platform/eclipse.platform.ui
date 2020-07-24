@@ -18,6 +18,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import org.eclipse.help.internal.server.WebappManager;
 import org.eclipse.ua.tests.help.remote.SearchServletTest;
@@ -30,7 +31,8 @@ public class SearchServiceTest extends SearchServletTest {
 	protected Node[] getSearchHitsFromServlet(String phrase)
 			throws Exception {
 		int port = WebappManager.getPort();
-		URL url = new URL("http", "localhost", port, "/help/vs/service/search?phrase=" + URLEncoder.encode(phrase, "UTF-8"));
+		URL url = new URL("http", "localhost", port,
+				"/help/vs/service/search?phrase=" + URLEncoder.encode(phrase, StandardCharsets.UTF_8));
 		return makeServletCall(url);
 	}
 
@@ -39,7 +41,7 @@ public class SearchServiceTest extends SearchServletTest {
 			throws Exception {
 		int port = WebappManager.getPort();
 		URL url = new URL("http", "localhost", port, "/help/vs/service/search?phrase="
-				+ URLEncoder.encode(phrase, "UTF-8") + "&lang=" + locale);
+				+ URLEncoder.encode(phrase, StandardCharsets.UTF_8) + "&lang=" + locale);
 		return makeServletCall(url);
 	}
 
@@ -48,7 +50,7 @@ public class SearchServiceTest extends SearchServletTest {
 			throws Exception {
 		int port = WebappManager.getPort();
 		URL url = new URL("http", "localhost", port,
-				"/help/vs/service/search?phrase=" + URLEncoder.encode("jehcyqpfjs vkrhjewiwh", "UTF-8"));
+				"/help/vs/service/search?phrase=" + URLEncoder.encode("jehcyqpfjs vkrhjewiwh", StandardCharsets.UTF_8));
 		URL schemaUrl = new URL("http", "localhost", port, "/help/test/schema/xml/search.xsd");
 		String schema = schemaUrl.toString();
 		String uri = url.toString();
@@ -62,7 +64,8 @@ public class SearchServiceTest extends SearchServletTest {
 			throws Exception {
 		int port = WebappManager.getPort();
 		URL url = new URL("http", "localhost", port,
-				"/help/vs/service/search?phrase=" + URLEncoder.encode("\"jehcyqpfjs vkrhjewiwh\"", "UTF-8"));
+				"/help/vs/service/search?phrase="
+						+ URLEncoder.encode("\"jehcyqpfjs vkrhjewiwh\"", StandardCharsets.UTF_8));
 		URL schemaUrl = new URL("http", "localhost", port, "/help/test/schema/xml/search.xsd");
 		String schema = schemaUrl.toString();
 		String uri = url.toString();

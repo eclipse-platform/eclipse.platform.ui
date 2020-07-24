@@ -14,8 +14,8 @@
  *******************************************************************************/
 package org.eclipse.help.internal.base;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IConfigurationElement;
@@ -96,11 +96,7 @@ public class HelpDisplay {
 			displayHelpURL(href, forceExternal);
 		} else { // assume this is a topic
 			if (getNoframesURL(href) == null) {
-				try {
-					displayHelpURL(
-							"topic=" + URLEncoder.encode(href, "UTF-8"), forceExternal); //$NON-NLS-1$ //$NON-NLS-2$
-				} catch (UnsupportedEncodingException uee) {
-				}
+				displayHelpURL("topic=" + URLEncoder.encode(href, StandardCharsets.UTF_8), forceExternal); //$NON-NLS-1$
 			} else if (href.startsWith("jar:") || href.startsWith("platform:")) { //$NON-NLS-1$ //$NON-NLS-2$
 				// topic from a jar/workspace to display without frames
 				displayHelpURL(
@@ -161,14 +157,10 @@ public class HelpDisplay {
 		if (searchQuery == null || topic == null)
 			return;
 		if (getNoframesURL(topic) == null) {
-			try {
-				String url = "tab=search&" //$NON-NLS-1$
-						+ searchQuery + "&topic=" //$NON-NLS-1$
-						+ URLEncoder.encode(getTopicURL(topic), "UTF-8"); //$NON-NLS-1$
-				displayHelpURL(url, forceExternal);
-			} catch (UnsupportedEncodingException uee) {
-			}
-
+			String url = "tab=search&" //$NON-NLS-1$
+					+ searchQuery + "&topic=" //$NON-NLS-1$
+					+ URLEncoder.encode(getTopicURL(topic), StandardCharsets.UTF_8);
+			displayHelpURL(url, forceExternal);
 		} else {
 			displayHelpURL(getNoframesURL(topic), true);
 		}

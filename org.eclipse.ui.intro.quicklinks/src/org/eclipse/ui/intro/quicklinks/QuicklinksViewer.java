@@ -18,10 +18,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Base64;
@@ -346,40 +346,36 @@ public class QuicklinksViewer implements IIntroContentProvider {
 	public void createContent(String id, PrintWriter out) {
 		// Content is already embedded within a <div id="...">
 		getQuicklinks().forEach(ql -> {
-			try {
-				// ah how lovely to embed HTML in code
-				String urlEncodedCommand = asEmbeddedURL(ql);
-				out.append("<a class='content-link'"); //$NON-NLS-1$
-				if (ql.commandSpec != null) {
-					out.append(" id='").append(asCSSId(ql.commandSpec)).append("' "); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-				out.append(" href='"); //$NON-NLS-1$
-				out.append(urlEncodedCommand);
-				out.append("'>"); //$NON-NLS-1$
-				if (ql.iconUrl != null) {
-					out.append("<img class='background-image' src='").append(ql.iconUrl).append("'>"); //$NON-NLS-1$ //$NON-NLS-2$
-				}
-				out.append("\n<div class='link-extra-div'></div>\n"); // UNKNOWN //$NON-NLS-1$
-				out.append("<span class='link-label'>"); //$NON-NLS-1$
-				out.append(ql.label);
-				out.append("</span>"); //$NON-NLS-1$
-				if (ql.description != null) {
-					out.append("\n<p><span class='text'>"); //$NON-NLS-1$
-					out.append(ql.description);
-					out.append("</span></p>"); //$NON-NLS-1$
-				}
-				out.append("</a>"); //$NON-NLS-1$
-			} catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
+			// ah how lovely to embed HTML in code
+			String urlEncodedCommand = asEmbeddedURL(ql);
+			out.append("<a class='content-link'"); //$NON-NLS-1$
+			if (ql.commandSpec != null) {
+				out.append(" id='").append(asCSSId(ql.commandSpec)).append("' "); //$NON-NLS-1$ //$NON-NLS-2$
 			}
+			out.append(" href='"); //$NON-NLS-1$
+			out.append(urlEncodedCommand);
+			out.append("'>"); //$NON-NLS-1$
+			if (ql.iconUrl != null) {
+				out.append("<img class='background-image' src='").append(ql.iconUrl).append("'>"); //$NON-NLS-1$ //$NON-NLS-2$
+			}
+			out.append("\n<div class='link-extra-div'></div>\n"); // UNKNOWN //$NON-NLS-1$
+			out.append("<span class='link-label'>"); //$NON-NLS-1$
+			out.append(ql.label);
+			out.append("</span>"); //$NON-NLS-1$
+			if (ql.description != null) {
+				out.append("\n<p><span class='text'>"); //$NON-NLS-1$
+				out.append(ql.description);
+				out.append("</span></p>"); //$NON-NLS-1$
+			}
+			out.append("</a>"); //$NON-NLS-1$
 		});
 	}
 
-	private String asEmbeddedURL(Quicklink ql) throws UnsupportedEncodingException {
+	private String asEmbeddedURL(Quicklink ql) {
 		if (ql.url != null) {
 			return ql.url;
 		}
-		String encoded = URLEncoder.encode(ql.commandSpec, "UTF-8"); //$NON-NLS-1$
+		String encoded = URLEncoder.encode(ql.commandSpec, StandardCharsets.UTF_8);
 		if (ql.resolution != null) {
 			encoded += "&standby=" + ql.resolution; //$NON-NLS-1$
 		}

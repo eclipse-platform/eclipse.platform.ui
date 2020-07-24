@@ -15,7 +15,6 @@
 package org.eclipse.help.internal.webapp.servlet;
 
 import java.io.OutputStream;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
@@ -74,17 +73,13 @@ public class FramesetFilter implements IFilter {
 			script.append("index.jsp?topic="); //$NON-NLS-1$
 		}
 
-		try{
-			// Bug 317055 -  [webapp] URLEncode url requests from local users
-			url = URLEncoder.encode(url, "UTF-8"); //$NON-NLS-1$
-			if ( query != null ) {
-				query = URLEncoder.encode(query, "UTF-8"); //$NON-NLS-1$
-				url = url + UrlUtil.JavaScriptEncode("&")  + query;  //$NON-NLS-1$
-			}
-			script.append(url);
-		} catch (UnsupportedEncodingException uee){
-			return out;
+		// Bug 317055 -  [webapp] URLEncode url requests from local users
+		url = URLEncoder.encode(url, StandardCharsets.UTF_8);
+		if ( query != null ) {
+			query = URLEncoder.encode(query, StandardCharsets.UTF_8);
+			url = url + UrlUtil.JavaScriptEncode("&")  + query;  //$NON-NLS-1$
 		}
+		script.append(url);
 
 		script.append(scriptPart3);
 		return new FilterHTMLHeadOutputStream(out, script.toString().getBytes(StandardCharsets.US_ASCII));

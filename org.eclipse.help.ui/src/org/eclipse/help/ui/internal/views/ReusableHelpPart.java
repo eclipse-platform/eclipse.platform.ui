@@ -14,10 +14,10 @@
  *******************************************************************************/
 package org.eclipse.help.ui.internal.views;
 
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.text.Collator;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -1649,10 +1649,7 @@ public class ReusableHelpPart implements IHelpUIConstants,
 			if (href != null && href.startsWith("__")) //$NON-NLS-1$
 				href = null;
 			if (href != null) {
-				try {
-					href = URLDecoder.decode(href, "UTF-8"); //$NON-NLS-1$
-				} catch (UnsupportedEncodingException ex) {
-				}
+				href = URLDecoder.decode(href, StandardCharsets.UTF_8);
 				// Next line unnecessary following fix for Bug 78746
 				//href = href.replaceAll("&", "&&"); //$NON-NLS-1$ //$NON-NLS-2$
 			}
