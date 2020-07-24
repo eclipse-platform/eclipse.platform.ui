@@ -305,7 +305,7 @@ public class AntEditorContentOutlinePage extends ContentOutlinePage implements I
 
 		MenuManager manager = new MenuManager("#PopUp"); //$NON-NLS-1$
 		manager.setRemoveAllWhenShown(true);
-		manager.addMenuListener(menuManager -> contextMenuAboutToShow(menuManager));
+		manager.addMenuListener(this::contextMenuAboutToShow);
 		fMenu = manager.createContextMenu(viewer.getTree());
 		viewer.getTree().setMenu(fMenu);
 

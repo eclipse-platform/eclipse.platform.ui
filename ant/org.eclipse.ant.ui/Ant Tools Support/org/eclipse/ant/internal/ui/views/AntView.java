@@ -197,7 +197,7 @@ public class AntView extends ViewPart implements IResourceChangeListener, IShowI
 		Control menuControl = viewer.getControl();
 		MenuManager menuMgr = new MenuManager("#PopUp"); //$NON-NLS-1$
 		menuMgr.setRemoveAllWhenShown(true);
-		menuMgr.addMenuListener(mgr -> fillContextMenu(mgr));
+		menuMgr.addMenuListener(this::fillContextMenu);
 		Menu menu = menuMgr.createContextMenu(menuControl);
 		menuControl.setMenu(menu);
 

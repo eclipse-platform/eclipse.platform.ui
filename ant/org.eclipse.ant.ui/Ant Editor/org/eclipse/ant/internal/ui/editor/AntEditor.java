@@ -920,7 +920,7 @@ public class AntEditor extends TextEditor implements IReconcilingParticipant, IP
 
 	private void createFoldingSupport(ProjectionViewer projectionViewer) {
 		fProjectionSupport = new ProjectionSupport(projectionViewer, getAnnotationAccess(), getSharedColors());
-		fProjectionSupport.setHoverControlCreator(shell -> new AntSourceViewerInformationControl(shell));
+		fProjectionSupport.setHoverControlCreator(AntSourceViewerInformationControl::new);
 		fProjectionSupport.install();
 		((ProjectionViewer) getViewer()).addProjectionListener(this);
 

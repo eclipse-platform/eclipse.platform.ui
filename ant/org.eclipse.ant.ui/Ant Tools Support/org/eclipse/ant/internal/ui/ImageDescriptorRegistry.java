@@ -17,12 +17,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.core.runtime.Assert;
+import org.eclipse.jface.resource.ImageDescriptor;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.core.runtime.Assert;
-
-import org.eclipse.jface.resource.ImageDescriptor;
 
 /**
  * A registry that maps <code>ImageDescriptors</code> to <code>Image</code>.
@@ -85,6 +83,6 @@ public class ImageDescriptorRegistry {
 	}
 
 	private void hookDisplay() {
-		fDisplay.asyncExec(() -> fDisplay.disposeExec(() -> dispose()));
+		fDisplay.asyncExec(() -> fDisplay.disposeExec(this::dispose));
 	}
 }
