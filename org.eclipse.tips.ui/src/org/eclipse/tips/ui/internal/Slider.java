@@ -149,7 +149,7 @@ public class Slider extends Composite {
 	private void setupProviderListener() {
 		fPropertyChangeListener = provider -> {
 			if (!isDisposed()) {
-				getDisplay().asyncExec(() -> load());
+				getDisplay().asyncExec(this::load);
 			}
 		};
 	}
