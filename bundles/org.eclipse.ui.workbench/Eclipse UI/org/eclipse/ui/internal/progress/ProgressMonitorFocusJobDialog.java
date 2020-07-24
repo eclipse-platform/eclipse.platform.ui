@@ -118,15 +118,12 @@ public class ProgressMonitorFocusJobDialog extends ProgressMonitorJobsDialog {
 					return;
 				}
 
-				PlatformUI.getWorkbench().getDisplay().asyncExec(new Runnable() {
-					@Override
-					public void run() {
-						Shell currentShell = getShell();
-						if (currentShell == null || currentShell.isDisposed()) {
-							return;
-						}
-						finishedRun();
+				PlatformUI.getWorkbench().getDisplay().asyncExec(() -> {
+					Shell currentShell = getShell();
+					if (currentShell == null || currentShell.isDisposed()) {
+						return;
 					}
+					finishedRun();
 				});
 			}
 		};
