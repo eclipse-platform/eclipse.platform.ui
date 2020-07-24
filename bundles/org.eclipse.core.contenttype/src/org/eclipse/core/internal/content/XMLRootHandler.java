@@ -155,7 +155,7 @@ public final class XMLRootHandler extends DefaultHandler implements LexicalHandl
 
 	public boolean parseContents(InputSource contents) throws IOException, ParserConfigurationException, SAXException {
 		// Parse the file into we have what we need (or an error occurs).
-		return ServiceCaller.callOnce(getClass(), SAXParserFactory.class, (factory) -> {
+		return ServiceCaller.callOnce(getClass(), SAXParserFactory.class, factory -> {
 			try {
 				factory.setNamespaceAware(true);
 				final SAXParser parser = createParser(factory);

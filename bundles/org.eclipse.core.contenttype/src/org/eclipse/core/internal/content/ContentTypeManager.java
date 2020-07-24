@@ -59,7 +59,7 @@ public class ContentTypeManager extends ContentTypeMatcher implements IContentTy
 		static {
 			boolean[] debugging = { false };
 			ServiceCaller.callOnce(DebuggingHolder.class, DebugOptions.class,
-					(debugOptions) -> {
+					debugOptions -> {
 						debugging[0] = debugOptions.getBooleanOption(OPTION_DEBUG_CONTENT_TYPES, false);
 					});
 			DEBUGGING = debugging[0];
