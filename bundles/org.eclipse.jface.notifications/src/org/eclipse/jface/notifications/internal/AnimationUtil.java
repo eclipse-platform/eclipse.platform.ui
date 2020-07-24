@@ -90,12 +90,9 @@ public class AnimationUtil {
 				return;
 			}
 			cancel();
-			Display.getDefault().syncExec(new Runnable() {
-				@Override
-				public void run() {
-					if (setAlpha) {
-						FadeJob.this.shell.setAlpha(getLastAlpha());
-					}
+			Display.getDefault().syncExec(() -> {
+				if (setAlpha) {
+					FadeJob.this.shell.setAlpha(getLastAlpha());
 				}
 			});
 		}
@@ -113,23 +110,20 @@ public class AnimationUtil {
 				this.currentAlpha = 255;
 			}
 
-			Display.getDefault().syncExec(new Runnable() {
-				@Override
-				public void run() {
-					if (FadeJob.this.stopped) {
-						return;
-					}
+			Display.getDefault().syncExec(() -> {
+				if (FadeJob.this.stopped) {
+					return;
+				}
 
-					if (FadeJob.this.shell.isDisposed()) {
-						FadeJob.this.stopped = true;
-						return;
-					}
+				if (FadeJob.this.shell.isDisposed()) {
+					FadeJob.this.stopped = true;
+					return;
+				}
 
-					FadeJob.this.shell.setAlpha(FadeJob.this.currentAlpha);
+				FadeJob.this.shell.setAlpha(FadeJob.this.currentAlpha);
 
-					if (FadeJob.this.fadeListener != null) {
-						FadeJob.this.fadeListener.faded(FadeJob.this.shell, FadeJob.this.currentAlpha);
-					}
+				if (FadeJob.this.fadeListener != null) {
+					FadeJob.this.fadeListener.faded(FadeJob.this.shell, FadeJob.this.currentAlpha);
 				}
 			});
 
