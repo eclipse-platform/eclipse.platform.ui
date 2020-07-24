@@ -59,7 +59,7 @@ public class CheatSheetMenu extends ContributionItem {
 
 	private IMenuContributor menuContributor;
 
-	private Comparator<CheatSheetElement> comparator = new Comparator<CheatSheetElement>() {
+	private Comparator<CheatSheetElement> comparator = new Comparator<>() {
 		private Collator collator = Collator.getInstance();
 
 		@Override
