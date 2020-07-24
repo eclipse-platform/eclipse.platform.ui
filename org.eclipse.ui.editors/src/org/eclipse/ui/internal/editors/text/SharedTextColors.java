@@ -92,14 +92,9 @@ class SharedTextColors implements ISharedTextColors {
 	 * @since 3.3
 	 */
 	private void dispose(Map<RGB, Color> colorTable) {
-		if (colorTable == null)
-			return;
-
-		Iterator<Color> iter= colorTable.values().iterator();
-		while (iter.hasNext())
-			iter.next().dispose();
-
-		colorTable.clear();
+		if (colorTable != null) {
+			colorTable.clear();
+		}
 	}
 
 }

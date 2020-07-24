@@ -98,10 +98,6 @@ public class CodeMiningProjectionViewerTest {
 			public Color getColor(RGB rgb) {
 				return null;
 			}
-
-			@Override
-			public void dispose() {
-			}
 		});
 		projectionSupport.install();
 		fViewer.doOperation(ProjectionViewer.TOGGLE);
