@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -286,22 +286,21 @@ public final class Util {
 	public static boolean startsWith(List left, List right, boolean equals) {
 		if (left == null || right == null) {
 			return false;
-		} else {
-			int l = left.size();
-			int r = right.size();
+		}
+		int l = left.size();
+		int r = right.size();
 
-			if (r > l || !equals && r == l) {
+		if (r > l || !equals && r == l) {
+			return false;
+		}
+
+		for (int i = 0; i < r; i++) {
+			if (!Objects.equals(left.get(i), right.get(i))) {
 				return false;
 			}
-
-			for (int i = 0; i < r; i++) {
-				if (!Objects.equals(left.get(i), right.get(i))) {
-					return false;
-				}
-			}
-
-			return true;
 		}
+
+		return true;
 	}
 
 	public static String translateString(ResourceBundle resourceBundle, String key) {
