@@ -992,7 +992,7 @@ public class BrowserViewer extends Composite {
 			}
 			watcher = FileSystems.getDefault().newWatchService();
 			final Path path = FileSystems.getDefault().getPath(file.getAbsolutePath());
-			path.register(watcher, StandardWatchEventKinds.ENTRY_MODIFY);
+			path.register(watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY);
 			new Thread(() -> {
 				try {
 					WatchKey key = watcher.take();
