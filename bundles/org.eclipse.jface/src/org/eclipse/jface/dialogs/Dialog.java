@@ -710,9 +710,10 @@ public abstract class Dialog extends Window {
 			if (shell.getDisplay().getDismissalAlignment() == SWT.RIGHT) {
 				// make the default button the right-most button
 				Button defaultButton = shell.getDefaultButton();
-				if (defaultButton != null && isContained(buttonBar, defaultButton)) {
+				if (defaultButton != null
+						&& isContained(buttonBar, defaultButton)) {
 					defaultButton.moveBelow(null);
-					defaultButton.requestLayout();
+					defaultButton.getParent().layout();
 				}
 			}
 		}
