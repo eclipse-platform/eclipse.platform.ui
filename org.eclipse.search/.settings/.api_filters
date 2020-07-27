@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.search" version="2">
+    <resource path="META-INF/MANIFEST.MF">
+        <filter comment="Revert of Java 11 update, version cannot be decreased anymore" id="926941240">
+            <message_arguments>
+                <message_argument value="3.12.0"/>
+                <message_argument value="3.11.1000"/>
+            </message_arguments>
+        </filter>
+    </resource>
     <resource path="search/org/eclipse/search/internal/ui/SearchDialog.java" type="org.eclipse.search.internal.ui.SearchDialog">
         <filter id="571519004">
             <message_arguments>
