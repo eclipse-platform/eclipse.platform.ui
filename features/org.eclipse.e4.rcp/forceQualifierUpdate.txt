@@ -3,3 +3,4 @@ Bug 563249 - 4.16 I-Build: I20200516-0600 - BUILD FAILED
 Bug 563511 - Build failed in I20200523-1800
 Bug 564264 - Update to javax.annotation 1.3.5
 Bug 565342 - 4.17 I-Build: I20200719-2010 - BUILD FAILED
+Bug 565618 - Comparator errors in I20200728-1800
