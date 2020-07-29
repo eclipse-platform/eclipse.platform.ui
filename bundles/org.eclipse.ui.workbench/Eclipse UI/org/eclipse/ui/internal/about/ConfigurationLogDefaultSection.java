@@ -56,7 +56,7 @@ public class ConfigurationLogDefaultSection implements ISystemSummarySection {
 		try {
 			if (!ServiceCaller.callOnce(getClass(), ISystemInformation.class,
 					AboutSections.createSectionFilter(section),
-					(systemInformation) -> systemInformation.append(writer))) {
+					systemInformation -> systemInformation.append(writer))) {
 				throw new IllegalStateException();
 			}
 		} catch (Exception e) {
