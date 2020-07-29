@@ -19,7 +19,6 @@ package org.eclipse.core.databinding.observable.set;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
@@ -58,16 +57,14 @@ public class MappedSet extends ObservableSet {
 		@Override
 		public void handleSetChange(SetChangeEvent event) {
 			Set additions = new HashSet();
-			for (Iterator it = event.diff.getAdditions().iterator(); it.hasNext();) {
-				Object added = it.next();
+			for (Object added : event.diff.getAdditions()) {
 				Object mapValue = wrappedMap.get(added);
 				if (handleAddition(mapValue)) {
 					additions.add(mapValue);
 				}
 			}
 			Set removals = new HashSet();
-			for (Iterator it = event.diff.getRemovals().iterator(); it.hasNext();) {
-				Object removed = it.next();
+			for (Object removed : event.diff.getRemovals()) {
 				Object mapValue = wrappedMap.get(removed);
 				if (handleRemoval(mapValue)) {
 					removals.add(mapValue);
@@ -81,15 +78,13 @@ public class MappedSet extends ObservableSet {
 		MapDiff diff = event.diff;
 		Set additions = new HashSet();
 		Set removals = new HashSet();
-		for (Iterator it = diff.getRemovedKeys().iterator(); it.hasNext();) {
-			Object key = it.next();
+		for (Object key : diff.getRemovedKeys()) {
 			Object oldValue = diff.getOldValue(key);
 			if (handleRemoval(oldValue)) {
 				removals.add(oldValue);
 			}
 		}
-		for (Iterator it = diff.getChangedKeys().iterator(); it.hasNext();) {
-			Object key = it.next();
+		for (Object key : diff.getChangedKeys()) {
 			Object oldValue = diff.getOldValue(key);
 			Object newValue = diff.getNewValue(key);
 			if (handleRemoval(oldValue)) {
@@ -99,8 +94,7 @@ public class MappedSet extends ObservableSet {
 				additions.add(newValue);
 			}
 		}
-		for (Iterator it = diff.getAddedKeys().iterator(); it.hasNext();) {
-			Object key = it.next();
+		for (Object key : diff.getAddedKeys()) {
 			Object newValue = diff.getNewValue(key);
 			if (handleAddition(newValue)) {
 				additions.add(newValue);
@@ -120,8 +114,7 @@ public class MappedSet extends ObservableSet {
 		setWrappedSet(valueCounts.keySet());
 		this.wrappedMap = map;
 		this.input = input;
-		for (Iterator it = input.iterator(); it.hasNext();) {
-			Object element = it.next();
+		for (Object element : input) {
 			Object functionValue = wrappedMap.get(element);
 			handleAddition(functionValue);
 		}
