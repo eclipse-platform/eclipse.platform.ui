@@ -18,6 +18,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -73,7 +74,7 @@ public class TestUnitAutoRegisterSchemeHandlersJob {
 		helloSchemeInfo.setHandled(true);
 		SchemeInformation hello1SchemeInfo = new SchemeInformation(hello1Scheme.getName(), hello1Scheme.getDescription());
 		hello1SchemeInfo.setHandled(false);
-		List<ISchemeInformation> schemeInfos = Arrays.asList(helloSchemeInfo, hello1SchemeInfo);
+		List<ISchemeInformation> schemeInfos = Arrays.asList(hello1SchemeInfo);
 
 		AutoRegisterSchemeHandlersJob job = createJob(Arrays.asList(helloScheme, hello1Scheme), HELLO_URI_SCHEME,
 				schemeInfos);
@@ -96,7 +97,7 @@ public class TestUnitAutoRegisterSchemeHandlersJob {
 		SchemeInformation hello1SchemeInfo = new SchemeInformation(hello1Scheme.getName(),
 				hello1Scheme.getDescription());
 		hello1SchemeInfo.setHandled(true);
-		List<ISchemeInformation> schemeInfos = Arrays.asList(helloSchemeInfo, hello1SchemeInfo);
+		List<ISchemeInformation> schemeInfos = new ArrayList<>();
 
 		AutoRegisterSchemeHandlersJob job = createJob(Arrays.asList(helloScheme, hello1Scheme), HELLO_URI_SCHEME,
 				schemeInfos);

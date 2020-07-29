@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.eclipse.core.runtime.IProduct;
 import org.eclipse.core.runtime.Platform;
 import org.eclipse.urischeme.IOperatingSystemRegistration;
 import org.eclipse.urischeme.IScheme;
@@ -24,6 +25,7 @@ import org.eclipse.urischeme.ISchemeInformation;
 @SuppressWarnings("javadoc")
 public class RegistrationLinux implements IOperatingSystemRegistration {
 
+	private static final String DEFAULT_PRODUCT_NAME = "Eclipse SDK"; //$NON-NLS-1$
 	private static final String USER_HOME = System.getProperty("user.home"); //$NON-NLS-1$
 	private static final String PATH_TO_LOCAL_SHARE_APPS = USER_HOME + "/.local/share/applications/"; //$NON-NLS-1$
 	private static final String DESKTOP_FILE_EXT = ".desktop"; //$NON-NLS-1$
@@ -39,7 +41,13 @@ public class RegistrationLinux implements IOperatingSystemRegistration {
 	private String productName;
 
 	public RegistrationLinux() {
-		this(new FileProvider(), new ProcessExecutor(), Platform.getProduct().getName());
+		this(new FileProvider(), new ProcessExecutor(), getProductName());
+	}
+
+	private static String getProductName() {
+		IProduct product = Platform.getProduct();
+		String name = product == null ? DEFAULT_PRODUCT_NAME : product.getName();
+		return name == null ? DEFAULT_PRODUCT_NAME : name;
 	}
 
 	public RegistrationLinux(IFileProvider fileProvider, IProcessExecutor processExecutor, String productName) {
