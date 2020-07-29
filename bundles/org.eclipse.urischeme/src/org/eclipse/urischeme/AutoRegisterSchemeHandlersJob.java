@@ -19,6 +19,7 @@ import org.eclipse.core.runtime.Platform;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
+import org.eclipse.core.runtime.preferences.IPreferencesService;
 import org.eclipse.core.runtime.preferences.InstanceScope;
 import org.eclipse.urischeme.internal.UriSchemeExtensionReader;
 
@@ -36,37 +37,52 @@ public class AutoRegisterSchemeHandlersJob extends Job {
 	private static final String PROCESSED_SCHEMES_PREFERENCE = "processedSchemes"; //$NON-NLS-1$
 	private static final String SCHEME_LIST_PREFERENCE_SEPARATOR = ","; //$NON-NLS-1$
 	private static boolean alreadyTriggered = false;
-	private IEclipsePreferences preferenceNode;
-	private IUriSchemeExtensionReader extensionReader;
-	private IOperatingSystemRegistration osRegistration;	
+	private IEclipsePreferences testPreferenceNode;
+	private IUriSchemeExtensionReader testExtensionReader;
+	private IOperatingSystemRegistration testOsRegistration;
 
 	/**
 	 *
 	 */
 	public AutoRegisterSchemeHandlersJob() {
-		this(InstanceScope.INSTANCE.getNode(UriSchemeExtensionReader.PLUGIN_ID),
-				IUriSchemeExtensionReader.newInstance(), IOperatingSystemRegistration.getInstance());
+		// all defaults for lazy init NOT on UI thread
+		this(null, null, null);
 	}
 
-	AutoRegisterSchemeHandlersJob(IEclipsePreferences preferenceNode, IUriSchemeExtensionReader extensionReader,
-			IOperatingSystemRegistration osRegistration) {
+	/**
+	 * For tests only
+	 */
+	AutoRegisterSchemeHandlersJob(IEclipsePreferences testPreferenceNode, IUriSchemeExtensionReader testExtensionReader,
+			IOperatingSystemRegistration testOsRegistration) {
 		super(AutoRegisterSchemeHandlersJob.class.getSimpleName());
-		this.preferenceNode = preferenceNode;
-		this.extensionReader = extensionReader;
-		this.osRegistration = osRegistration;
+		this.testPreferenceNode = testPreferenceNode;
+		this.testExtensionReader = testExtensionReader;
+		this.testOsRegistration = testOsRegistration;
 		setSystem(true);
 	}
 
 	@Override
 	protected IStatus run(IProgressMonitor monitor) {
+
+		IUriSchemeExtensionReader extensionReader = testExtensionReader != null ? testExtensionReader
+				: IUriSchemeExtensionReader.newInstance();
+
+		IPreferencesService preferences = Platform.getPreferencesService();
+		String schemes = testPreferenceNode != null ? testPreferenceNode.get(PROCESSED_SCHEMES_PREFERENCE, "") //$NON-NLS-1$
+				: preferences.getString(UriSchemeExtensionReader.PLUGIN_ID, PROCESSED_SCHEMES_PREFERENCE, "", //$NON-NLS-1$
+				null);
+
 		Collection<String> processedSchemes = new LinkedHashSet<>(Arrays
-				.asList(preferenceNode.get(PROCESSED_SCHEMES_PREFERENCE, "").split(SCHEME_LIST_PREFERENCE_SEPARATOR))); //$NON-NLS-1$
+				.asList(schemes.split(SCHEME_LIST_PREFERENCE_SEPARATOR)));
 		Collection<IScheme> toProcessSchemes = new LinkedHashSet<>(extensionReader.getSchemes());
 		toProcessSchemes.removeIf(scheme -> processedSchemes.contains(scheme.getName()));
 		if (toProcessSchemes.isEmpty()) {
 			alreadyTriggered = true;
 			return Status.OK_STATUS;
 		}
+
+		IOperatingSystemRegistration osRegistration = testOsRegistration != null ? testOsRegistration
+				: IOperatingSystemRegistration.getInstance();
 		try {
 			toProcessSchemes = osRegistration.getSchemesInformation(toProcessSchemes).stream() //
 					.filter(scheme -> !scheme.schemeIsHandledByOther()) //
@@ -77,6 +93,8 @@ public class AutoRegisterSchemeHandlersJob extends Job {
 			}
 			osRegistration.handleSchemes(toProcessSchemes, Collections.emptyList());
 			processedSchemes.addAll(toProcessSchemes.stream().map(IScheme::getName).collect(Collectors.toList()));
+			IEclipsePreferences preferenceNode = testPreferenceNode != null ? testPreferenceNode
+					: InstanceScope.INSTANCE.getNode(UriSchemeExtensionReader.PLUGIN_ID);
 			preferenceNode.put(PROCESSED_SCHEMES_PREFERENCE,
 					processedSchemes.stream().collect(Collectors.joining(SCHEME_LIST_PREFERENCE_SEPARATOR)));
 			preferenceNode.flush();
