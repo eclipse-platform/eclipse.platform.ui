@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2016 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,6 +11,7 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Tom Eicher (Avaloq Evolution AG) - block selection mode
+ *     Pierre-Yves Bigourdan, pyvesdev@gmail.com - Bug 564929: Delete line shortcut does not delete last editor line
  *******************************************************************************/
 package org.eclipse.ui.texteditor;
 
@@ -269,6 +270,15 @@ public class TextViewerDeleteLineTarget implements IDeleteLineTarget {
 				resultOffset= document.getLineOffset(line);
 				int endLine= selection.getEndLine();
 				resultLength= document.getLineOffset(endLine) + document.getLineLength(endLine) - resultOffset;
+				if (resultLength == 0 && line > 0) {
+					// Selection is on the last empty line of the editor. Delete
+					// delimiter of the previous line to effectively remove it.
+					String previousLineDelimiter= document.getLineDelimiter(line - 1);
+					if (previousLineDelimiter != null) {
+						resultOffset-= previousLineDelimiter.length();
+						resultLength= previousLineDelimiter.length();
+					}
+				}
 				break;
 
 		case DeleteLineAction.TO_BEGINNING:
