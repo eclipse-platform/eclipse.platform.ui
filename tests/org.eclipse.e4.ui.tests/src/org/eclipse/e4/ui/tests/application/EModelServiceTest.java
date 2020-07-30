@@ -34,101 +34,101 @@ public class EModelServiceTest extends UITest {
 
 	@Test
 	public void testGetPerspectiveFor_RegularElement() {
-		MWindow window = ems.createModelElement(MWindow.class);
+		var window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
 
-		MPerspectiveStack perspectiveStack = ems.createModelElement(MPerspectiveStack.class);
+		var perspectiveStack = ems.createModelElement(MPerspectiveStack.class);
 		window.getChildren().add(perspectiveStack);
 		window.setSelectedElement(perspectiveStack);
 
-		MPerspective perspective = ems.createModelElement(MPerspective.class);
+		var perspective = ems.createModelElement(MPerspective.class);
 		perspectiveStack.getChildren().add(perspective);
 		perspectiveStack.setSelectedElement(perspective);
 
-		MPartStack partStack = ems.createModelElement(MPartStack.class);
+		var partStack = ems.createModelElement(MPartStack.class);
 		perspective.getChildren().add(partStack);
 		perspective.setSelectedElement(partStack);
 
 		getEngine().createGui(window);
 
-		EModelService modelService = window.getContext().get(EModelService.class);
-		MPerspective foundPerspective = modelService.getPerspectiveFor(partStack);
+		var modelService = window.getContext().get(EModelService.class);
+		var foundPerspective = modelService.getPerspectiveFor(partStack);
 		assertNotNull(foundPerspective);
 		assertEquals(perspective, foundPerspective);
 	}
 
 	@Test
 	public void testGetPerspectiveFor_SharedElement() {
-		MWindow window = ems.createModelElement(MWindow.class);
+		var window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
 
-		MPerspectiveStack perspectiveStack = ems.createModelElement(MPerspectiveStack.class);
+		var perspectiveStack = ems.createModelElement(MPerspectiveStack.class);
 		window.getChildren().add(perspectiveStack);
 		window.setSelectedElement(perspectiveStack);
 
-		MPerspective perspective = ems.createModelElement(MPerspective.class);
+		var perspective = ems.createModelElement(MPerspective.class);
 		perspectiveStack.getChildren().add(perspective);
 		perspectiveStack.setSelectedElement(perspective);
 
-		MPlaceholder placeholder = ems.createModelElement(MPlaceholder.class);
+		var placeholder = ems.createModelElement(MPlaceholder.class);
 		perspective.getChildren().add(placeholder);
 		perspective.setSelectedElement(placeholder);
 
-		MPartStack partStack = ems.createModelElement(MPartStack.class);
+		var partStack = ems.createModelElement(MPartStack.class);
 		placeholder.setRef(partStack);
 		partStack.setCurSharedRef(placeholder);
 
 		getEngine().createGui(window);
 
-		EModelService modelService = window.getContext().get(EModelService.class);
-		MPerspective foundPerspective = modelService.getPerspectiveFor(partStack);
+		var modelService = window.getContext().get(EModelService.class);
+		var foundPerspective = modelService.getPerspectiveFor(partStack);
 		assertNotNull(foundPerspective);
 		assertEquals(perspective, foundPerspective);
 	}
 
 	@Test
 	public void testGetPerspectiveFor_SharedElement2() {
-		MWindow window = ems.createModelElement(MWindow.class);
+		var window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
 
-		MPerspectiveStack perspectiveStack = ems.createModelElement(MPerspectiveStack.class);
+		var perspectiveStack = ems.createModelElement(MPerspectiveStack.class);
 		window.getChildren().add(perspectiveStack);
 		window.setSelectedElement(perspectiveStack);
 
-		MPerspective perspective = ems.createModelElement(MPerspective.class);
+		var perspective = ems.createModelElement(MPerspective.class);
 		perspectiveStack.getChildren().add(perspective);
 		perspectiveStack.setSelectedElement(perspective);
 
-		MPlaceholder placeholder = ems.createModelElement(MPlaceholder.class);
+		var placeholder = ems.createModelElement(MPlaceholder.class);
 		perspective.getChildren().add(placeholder);
 		perspective.setSelectedElement(placeholder);
 
-		MPartSashContainer partSashContainer = ems.createModelElement(MPartSashContainer.class);
+		var partSashContainer = ems.createModelElement(MPartSashContainer.class);
 		placeholder.setRef(partSashContainer);
 		partSashContainer.setCurSharedRef(placeholder);
 
-		MPartStack partStack = ems.createModelElement(MPartStack.class);
+		var partStack = ems.createModelElement(MPartStack.class);
 		partSashContainer.getChildren().add(partStack);
 		partSashContainer.setSelectedElement(partStack);
 
 		getEngine().createGui(window);
 
-		EModelService modelService = window.getContext().get(EModelService.class);
-		MPerspective foundPerspective = modelService.getPerspectiveFor(partStack);
+		var modelService = window.getContext().get(EModelService.class);
+		var foundPerspective = modelService.getPerspectiveFor(partStack);
 		assertNotNull(foundPerspective);
 		assertEquals(perspective, foundPerspective);
 	}
 
 	@Test
 	public void testBringToTop01() {
-		MWindow windowA = ems.createModelElement(MWindow.class);
+		var windowA = ems.createModelElement(MWindow.class);
 		application.getChildren().add(windowA);
 		application.setSelectedElement(windowA);
 
-		MWindow windowB = ems.createModelElement(MWindow.class);
+		var windowB = ems.createModelElement(MWindow.class);
 		application.getChildren().add(windowB);
 
 		getEngine().createGui(windowA);
@@ -136,7 +136,7 @@ public class EModelServiceTest extends UITest {
 
 		assertEquals(windowA, application.getSelectedElement());
 
-		EModelService modelService = applicationContext.get(EModelService.class);
+		var modelService = applicationContext.get(EModelService.class);
 		modelService.bringToTop(windowA);
 		assertEquals(windowA, application.getSelectedElement());
 
@@ -146,14 +146,14 @@ public class EModelServiceTest extends UITest {
 
 	@Test
 	public void testBringToTop02() {
-		MWindow windowA = ems.createModelElement(MWindow.class);
+		var windowA = ems.createModelElement(MWindow.class);
 		application.getChildren().add(windowA);
 		application.setSelectedElement(windowA);
 
-		MWindow windowB = ems.createModelElement(MWindow.class);
+		var windowB = ems.createModelElement(MWindow.class);
 		application.getChildren().add(windowB);
 
-		MPart partB = ems.createModelElement(MPart.class);
+		var partB = ems.createModelElement(MPart.class);
 		windowB.getChildren().add(partB);
 		windowB.setSelectedElement(partB);
 
@@ -162,7 +162,7 @@ public class EModelServiceTest extends UITest {
 
 		assertEquals(windowB, application.getSelectedElement());
 
-		EModelService modelService = applicationContext.get(EModelService.class);
+		var modelService = applicationContext.get(EModelService.class);
 		modelService.bringToTop(windowA);
 		assertEquals(windowA, application.getSelectedElement());
 
@@ -172,15 +172,15 @@ public class EModelServiceTest extends UITest {
 
 	@Test
 	public void testBringToTop_Bug334411() {
-		MWindow window = ems.createModelElement(MWindow.class);
+		var window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
 
-		MWindow detachedWindow = ems.createModelElement(MWindow.class);
+		var detachedWindow = ems.createModelElement(MWindow.class);
 		detachedWindow.setToBeRendered(false);
 		window.getWindows().add(detachedWindow);
 
-		MPart part = ems.createModelElement(MPart.class);
+		var part = ems.createModelElement(MPart.class);
 		part.setToBeRendered(false);
 		detachedWindow.getChildren().add(part);
 
@@ -188,7 +188,7 @@ public class EModelServiceTest extends UITest {
 
 		assertEquals(window, application.getSelectedElement());
 
-		EModelService modelService = applicationContext.get(EModelService.class);
+		var modelService = applicationContext.get(EModelService.class);
 		modelService.bringToTop(part);
 		assertTrue(part.isToBeRendered());
 		assertTrue(detachedWindow.isToBeRendered());
@@ -196,101 +196,101 @@ public class EModelServiceTest extends UITest {
 
 	@Test
 	public void testGetElementLocation_Bug331062_01() {
-		MPerspective perspective = ems.createModelElement(MPerspective.class);
-		MPart part = ems.createModelElement(MPart.class);
+		var perspective = ems.createModelElement(MPerspective.class);
+		var part = ems.createModelElement(MPart.class);
 		perspective.getChildren().add(part);
 
-		EModelService modelService = applicationContext.get(EModelService.class);
+		var modelService = applicationContext.get(EModelService.class);
 		assertEquals(EModelService.NOT_IN_UI, modelService.getElementLocation(part));
 	}
 
 	@Test
 	public void testGetElementLocation_Bug331062_02() {
-		MPerspective perspective = ems.createModelElement(MPerspective.class);
-		MWindow detachedWindow = ems.createModelElement(MWindow.class);
+		var perspective = ems.createModelElement(MPerspective.class);
+		var detachedWindow = ems.createModelElement(MWindow.class);
 		perspective.getWindows().add(detachedWindow);
 
-		MWindow innerWindow = ems.createModelElement(MWindow.class);
+		var innerWindow = ems.createModelElement(MWindow.class);
 		detachedWindow.getWindows().add(innerWindow);
 
-		EModelService modelService = applicationContext.get(EModelService.class);
+		var modelService = applicationContext.get(EModelService.class);
 		assertEquals(EModelService.NOT_IN_UI, modelService.getElementLocation(innerWindow));
 	}
 
 	@Test
 	public void testMoveWithoutIndexNoOtherElements() {
-		MWindow source = ems.createModelElement(MWindow.class);
-		MWindow window = ems.createModelElement(MWindow.class);
-		MPart part = ems.createModelElement(MPart.class);
+		var source = ems.createModelElement(MWindow.class);
+		var window = ems.createModelElement(MWindow.class);
+		var part = ems.createModelElement(MPart.class);
 		source.getChildren().add(part);
-		EModelService modelService = applicationContext.get(EModelService.class);
+		var modelService = applicationContext.get(EModelService.class);
 		modelService.move(part, window);
 		assertEquals(part, window.getChildren().get(0));
 	}
 
 	@Test
 	public void testMoveWithoutIndexWithOneOtherElements() {
-		MWindow source = ems.createModelElement(MWindow.class);
-		MWindow window = ems.createModelElement(MWindow.class);
-		MPart part = ems.createModelElement(MPart.class);
-		MPart part2 = ems.createModelElement(MPart.class);
+		var source = ems.createModelElement(MWindow.class);
+		var window = ems.createModelElement(MWindow.class);
+		var part = ems.createModelElement(MPart.class);
+		var part2 = ems.createModelElement(MPart.class);
 		source.getChildren().add(part);
 		window.getChildren().add(part2);
-		EModelService modelService = applicationContext.get(EModelService.class);
+		var modelService = applicationContext.get(EModelService.class);
 		modelService.move(part, window);
 		assertSame(part, window.getChildren().get(1));
 	}
 
 	@Test
 	public void testMoveWithIndexWithTwoOtherElement() {
-		MWindow source = ems.createModelElement(MWindow.class);
-		MWindow window = ems.createModelElement(MWindow.class);
-		MPart part = ems.createModelElement(MPart.class);
-		MPart part2 = ems.createModelElement(MPart.class);
-		MPart part3 = ems.createModelElement(MPart.class);
+		var source = ems.createModelElement(MWindow.class);
+		var window = ems.createModelElement(MWindow.class);
+		var part = ems.createModelElement(MPart.class);
+		var part2 = ems.createModelElement(MPart.class);
+		var part3 = ems.createModelElement(MPart.class);
 		source.getChildren().add(part);
 		window.getChildren().add(part2);
 		window.getChildren().add(part3);
-		EModelService modelService = applicationContext.get(EModelService.class);
+		var modelService = applicationContext.get(EModelService.class);
 		modelService.move(part, window, 1);
 		assertSame(part, window.getChildren().get(1));
 	}
 
 	@Test
 	public void testCountRenderableChildren_WithWindows() {
-		MWindow window = ems.createModelElement(MWindow.class);
+		var window = ems.createModelElement(MWindow.class);
 		application.getChildren().add(window);
 		application.setSelectedElement(window);
 
-		MPerspectiveStack perspectiveStack = ems.createModelElement(MPerspectiveStack.class);
+		var perspectiveStack = ems.createModelElement(MPerspectiveStack.class);
 		window.getChildren().add(perspectiveStack);
 		window.setSelectedElement(perspectiveStack);
 
-		MPerspective perspective = ems.createModelElement(MPerspective.class);
+		var perspective = ems.createModelElement(MPerspective.class);
 		perspectiveStack.getChildren().add(perspective);
 		perspectiveStack.setSelectedElement(perspective);
 
-		MPartStack partStack = ems.createModelElement(MPartStack.class);
+		var partStack = ems.createModelElement(MPartStack.class);
 		perspective.getChildren().add(partStack);
 		perspective.setSelectedElement(partStack);
 
-		MWindow perspectiveWindow = ems.createModelElement(MWindow.class);
+		var perspectiveWindow = ems.createModelElement(MWindow.class);
 		perspective.getWindows().add(perspectiveWindow);
 
 		getEngine().createGui(window);
 
-		EModelService modelService = window.getContext().get(EModelService.class);
+		var modelService = window.getContext().get(EModelService.class);
 		assertEquals(2, modelService.countRenderableChildren(perspective));
 	}
 
 	@Test
 	public void testCreatePartFromDescriptorWithTrimBars() {
-		MPartDescriptor mPartDescriptor = ems.createModelElement(MPartDescriptor.class);
-		MTrimBar mTrimBar = ems.createModelElement(MTrimBar.class);
+		var mPartDescriptor = ems.createModelElement(MPartDescriptor.class);
+		var mTrimBar = ems.createModelElement(MTrimBar.class);
 		mTrimBar.setElementId("test.trimbar.id");
 		mPartDescriptor.getTrimBars().add(mTrimBar);
 
-		MPart newPart = ems.createPart(mPartDescriptor);
+		var newPart = ems.createPart(mPartDescriptor);
 
 		assertEquals(1, newPart.getTrimBars().size());
 		assertEquals(1, mPartDescriptor.getTrimBars().size());
