@@ -742,8 +742,7 @@ public class WBWRenderer extends SWTPartRenderer {
 				shell.setMinimized(true);
 			}
 
-			shell.layout(true);
-			forceLayout(shell);
+			forceLayout(shell); // See Bug 375576
 		} finally {
 			if (shellME.isVisible()) {
 				shell.open();
@@ -898,11 +897,11 @@ public class WBWRenderer extends SWTPartRenderer {
 
 	private void forceLayout(Shell shell) {
 		int i = 0;
-		while(shell.isLayoutDeferred()) {
+		while (shell.isLayoutDeferred()) {
 			shell.setLayoutDeferred(false);
 			i++;
 		}
-		while(i > 0) {
+		while (i > 0) {
 			shell.setLayoutDeferred(true);
 			i--;
 		}
