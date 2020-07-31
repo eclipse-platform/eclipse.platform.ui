@@ -53,9 +53,7 @@ public class LocalDateSelectionPropertyTest extends AbstractSWTTestCase {
 		ValueChangeEventTracker<LocalDate> tracker = new ValueChangeEventTracker<>();
 		time.addValueChangeListener(tracker);
 
-		control.setYear(1999);
-		control.setMonth(10); // 0 based month
-		control.setDay(22);
+		control.setDate(1999, 10, 22); // 0 based month
 
 		control.notifyListeners(SWT.Selection, null);
 
