@@ -74,6 +74,7 @@ import org.eclipse.core.tests.databinding.observable.value.AbstractVetoableValue
 import org.eclipse.core.tests.databinding.observable.value.ComputedValueTest;
 import org.eclipse.core.tests.databinding.observable.value.DateAndTimeObservableValueTest;
 import org.eclipse.core.tests.databinding.observable.value.DuplexingObservableValueTest;
+import org.eclipse.core.tests.databinding.observable.value.LocalDateTimeObservableValueTest;
 import org.eclipse.core.tests.databinding.observable.value.WritableValueTest;
 import org.eclipse.core.tests.databinding.util.PolicyTest;
 import org.eclipse.core.tests.databinding.validation.MultiValidatorTest;
@@ -189,6 +190,7 @@ import org.eclipse.jface.tests.internal.databinding.swt.DateTimeTimeObservableVa
 import org.eclipse.jface.tests.internal.databinding.swt.GroupObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.LabelObservableValueTest;
 import org.eclipse.jface.tests.internal.databinding.swt.ListSingleSelectionObservableValueTest;
+import org.eclipse.jface.tests.internal.databinding.swt.LocalDateSelectionPropertyTest;
 import org.eclipse.jface.tests.internal.databinding.swt.SWTDelayedObservableValueDecoratorTest;
 import org.eclipse.jface.tests.internal.databinding.swt.ScaleObservableValueMaxTest;
 import org.eclipse.jface.tests.internal.databinding.swt.ScaleObservableValueMinTest;
@@ -237,7 +239,8 @@ import org.junit.runners.Suite.SuiteClasses;
 		ConstantObservableValueTest.class, ControlObservableValueTest.class, ConverterValuePropertyTest.class,
 		DatabindingContextTest.class, DateAndTimeObservableValueTest.class, DateConversionSupportTest.class,
 		DateTimeCalendarObservableValueTest.class, DateTimeDateObservableValueTest.class,
-		DateTimeSelectionPropertyTest.class, DateTimeTimeObservableValueTest.class, DecoratingObservableTest.class,
+		DateTimeSelectionPropertyTest.class, DateTimeTimeObservableValueTest.class,
+		LocalDateSelectionPropertyTest.class, DecoratingObservableTest.class, LocalDateTimeObservableValueTest.class,
 		DelayedObservableValueTest.class, DetailObservableListTest.class, DetailObservableMapTest.class,
 		DetailObservableSetTest.class, DetailObservableValueTest.class, DifferentRealmsBindingTest.class,
 		Diffs_ListDiffTests.class, DiffsTest.class, DuplexingObservableValueTest.class, EditMaskLexerAndTokenTest.class,
