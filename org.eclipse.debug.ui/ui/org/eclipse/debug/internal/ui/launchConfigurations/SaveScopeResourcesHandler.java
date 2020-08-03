@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2006, 2017 IBM Corporation and others.
+ * Copyright (c) 2006, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -35,6 +35,7 @@ import org.eclipse.jface.viewers.IBaseLabelProvider;
 import org.eclipse.jface.viewers.IContentProvider;
 import org.eclipse.jface.viewers.ILabelProvider;
 import org.eclipse.jface.viewers.IStructuredContentProvider;
+import org.eclipse.jface.viewers.LabelProvider;
 import org.eclipse.jface.viewers.StructuredViewer;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionAdapter;
@@ -49,7 +50,6 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.model.AdaptableList;
 import org.eclipse.ui.model.WorkbenchContentProvider;
-import org.eclipse.ui.model.WorkbenchLabelProvider;
 
 /**
  * Status handler to prompt for saving of resources prior to launching.
@@ -244,7 +244,7 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 				ScopedResourcesSelectionDialog lsd = new ScopedResourcesSelectionDialog(DebugUIPlugin.getShell(),
 						new AdaptableList(resources),
 						new WorkbenchContentProvider(),
-						new WorkbenchLabelProvider());
+						new SaveResourceDialogWorkbenchLabelProvider());
 				lsd.setInitialSelections((Object[]) resources);
 				lsd.setTitle(LaunchConfigurationsMessages.SaveScopeResourcesHandler_3);
 				if(lsd.open() == IDialogConstants.CANCEL_ID) {
@@ -262,4 +262,17 @@ public class SaveScopeResourcesHandler implements IStatusHandler {
 		}
 		return IDialogConstants.OK_ID;
 	}
+
+}
+
+
+class SaveResourceDialogWorkbenchLabelProvider extends LabelProvider {
+	@Override
+	public final String getText(Object element) {
+		if (element instanceof IResource) {
+			return ((IResource)element).getFullPath().toString();
+		}
+		return super.getText(element);
+	}
+
 }
