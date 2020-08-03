@@ -143,6 +143,25 @@ public class ColorDefinitionTest extends CSSSWTTestCase {
 		shell.dispose();
 	}
 
+	@Test
+	public void testSetColorDefinitionWithSystemColor() {
+		// given
+		CSSEngine engine = createEngine("ColorDefinition#ACTIVE_HYPERLINK_COLOR{color: '#COLOR-LIST-SELECTION'}",
+				display);
+		ColorDefinition definition = colorDefinition("ACTIVE_HYPERLINK_COLOR", "name", "categoryId", "description");
+
+		assertEquals(new RGB(0, 0, 0), definition.getValue());
+		assertFalse(definition.isOverridden());
+
+		// when
+		engine.applyStyles(definition, true);
+
+		// then
+		assertEquals(display.getSystemColor(SWT.COLOR_LIST_SELECTION).getRGB(), definition.getValue());
+		assertTrue(definition.isOverridden());
+		engine.dispose();
+	}
+
 	private ColorDefinition colorDefinition(String uniqueId, String name,
 			String categoryId, String description) {
 		return new ColorDefinition(name, uniqueId, "defaultsTo", "black",

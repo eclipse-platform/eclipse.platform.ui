@@ -77,6 +77,9 @@ public class CSSSWTColorHelper {
 			} else if (name.contains("-")) {
 				name = name.replace('-', '_');
 				rgba = process(display, name);
+				if (rgba == null) {
+					rgba = display.getSystemColor(SWT.COLOR_BLACK).getRGBA();
+				}
 			}
 		}
 		return rgba;
@@ -103,10 +106,9 @@ public class CSSSWTColorHelper {
 	/**
 	 * Process the given string and return a corresponding RGBA object.
 	 *
-	 * @param value
-	 *            the SWT constant <code>String</code>
-	 * @return the value of the SWT constant, or <code>SWT.COLOR_BLACK</code> if
-	 *         it could not be determined
+	 * @param value the SWT constant <code>String</code>
+	 * @return the value of the SWT constant, or <code>null</code> if it could not
+	 *         be determined
 	 */
 	private static RGBA process(Display display, String value) {
 		Field [] fields = getFields();
@@ -120,7 +122,7 @@ public class CSSSWTColorHelper {
 			// no op - shouldnt happen. We check for public before calling
 			// getInt(null)
 		}
-		return  display.getSystemColor(SWT.COLOR_BLACK).getRGBA();
+		return null;
 	}
 
 	/**
@@ -155,6 +157,17 @@ public class CSSSWTColorHelper {
 		RGBColor color = CSS2ColorHelper.getRGBColor(name);
 		if (color != null) {
 			return getRGBA(color);
+		}
+		Display display = Display.getCurrent();
+		if (display == null) {
+			display = Display.getDefault();
+		}
+		if (display != null) {
+			name = name.replace('-', '_');
+			if (name.startsWith("#")) { //$NON-NLS-1$
+				name = name.substring(1);
+			}
+			return process(display, name);
 		}
 		return null;
 	}
