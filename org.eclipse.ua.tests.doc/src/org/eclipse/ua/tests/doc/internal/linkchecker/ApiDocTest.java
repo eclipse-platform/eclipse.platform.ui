@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2015, 2016 IBM Corporation and others.
+ * Copyright (c) 2015, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -184,7 +184,7 @@ public class ApiDocTest {
 	}
 
 	private static void checkExtensionPoints(Set<String> extIds, StringBuilder problems) throws Exception {
-		Callable<BundleInfo[]> sourceBundlesCache= new Callable<BundleInfo[]>() {
+		Callable<BundleInfo[]> sourceBundlesCache = new Callable<>() {
 			private BundleInfo[] bundleInfos;
 
 			@Override
