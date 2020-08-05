@@ -476,7 +476,7 @@
          id="org.eclipse.swt.gtk.linux.aarch64"
          os="linux"
          ws="gtk"
-         arch="ppc64le"
+         arch="aarch64"
          download-size="0"
          install-size="0"
          version="0.0.0"
