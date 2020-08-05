@@ -43,6 +43,7 @@ public final class OpenCheatSheetAction extends Action {
 	private URL url;
 	private String xml;
 	private String basePath;
+	private Shell targetShell;
 
 	/**
 	 * Creates an action that opens the cheat sheet with the given id.
@@ -116,7 +117,7 @@ public final class OpenCheatSheetAction extends Action {
 	 */
 	@Override
 	public void run() {
-		Shell shell = Display.getDefault().getActiveShell();
+		Shell shell = getShell();
 		// are we in a dialog that can show a cheat sheet?
 		if (shell != null && !shell.isFocusControl() && shell.getData() instanceof TrayDialog) {
 			TrayDialog dialog = (TrayDialog)shell.getData();
@@ -152,5 +153,25 @@ public final class OpenCheatSheetAction extends Action {
 			IWorkbenchPage page = view.getSite().getWorkbenchWindow().getActivePage();
 			page.bringToTop(view);
 		}
+	}
+
+	/**
+	 * Sets the shell in which the cheat sheet is opened. If this is not set,
+	 * the active shell of the default display is used.
+	 *
+	 * @param shell
+	 *            The shell in which the cheat sheet is opened.
+	 * @since 3.7
+	 */
+	public void setTargetShell(Shell shell) {
+		this.targetShell = shell;
+	}
+
+	private Shell getShell() {
+		Shell shell = targetShell;
+		if (shell == null) {
+			shell = Display.getDefault().getActiveShell();
+		}
+		return shell;
 	}
 }

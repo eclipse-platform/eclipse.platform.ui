@@ -571,7 +571,9 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 					.getTriggerPoint(ICheatSheetResource.TRIGGER_POINT_ID);
 			if (WorkbenchActivityHelper.allowUseOf(triggerPoint,
 					currentSelection)) {
-				new OpenCheatSheetAction(currentSelection.getID()).run();
+				OpenCheatSheetAction openCheatSheetAction = new OpenCheatSheetAction(currentSelection.getID());
+				openCheatSheetAction.setTargetShell(getParentShell());
+				openCheatSheetAction.run();
 			}
 		}
 	}
@@ -591,7 +593,9 @@ public class CheatSheetCategoryBasedSelectionDialog extends TrayDialog //extends
 		try {
 			File contentFile = new File(selectFileCombo.getText());
 			url = contentFile.toURI().toURL();
-			new OpenCheatSheetAction(id, id ,url).run();
+			OpenCheatSheetAction openCheatSheetAction = new OpenCheatSheetAction(id, id, url);
+			openCheatSheetAction.setTargetShell(getParentShell());
+			openCheatSheetAction.run();
 			opened = true;
 		} catch (MalformedURLException e) {
 			opened = false;
