@@ -411,6 +411,17 @@
          install-size="0"
          version="0.0.0"
          fragment="true"/>
+         
+   <plugin
+         id="org.eclipse.equinox.launcher.gtk.linux.aarch64"
+         os="linux"
+         ws="gtk"
+         arch="aarch64"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"/>
+
 
    <plugin
          id="org.eclipse.equinox.launcher.gtk.linux.x86_64"
@@ -452,6 +463,17 @@
 
    <plugin
          id="org.eclipse.swt.gtk.linux.ppc64le"
+         os="linux"
+         ws="gtk"
+         arch="ppc64le"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         fragment="true"
+         unpack="false"/>
+   
+   <plugin
+         id="org.eclipse.swt.gtk.linux.aarch64"
          os="linux"
          ws="gtk"
          arch="ppc64le"
