@@ -375,11 +375,6 @@ public class IntroLaunchBar {
 
 		toolBarManager = null;
 		container = null;
-
-		if (bg != null)
-			bg.dispose();
-		if (fg != null)
-			fg.dispose();
 	}
 
 	private void fillToolBar() {
