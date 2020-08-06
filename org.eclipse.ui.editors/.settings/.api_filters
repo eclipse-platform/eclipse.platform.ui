@@ -1,43 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.ui.editors" version="2">
-    <resource path="src/org/eclipse/ui/editors/text/EncodingActionGroup.java" type="org.eclipse.ui.editors.text.EncodingActionGroup">
-        <filter id="338944126">
-            <message_arguments>
-                <message_argument value="org.eclipse.ui.editors.text.EncodingActionGroup"/>
-                <message_argument value="dispose()"/>
-            </message_arguments>
-        </filter>
-        <filter id="338944126">
-            <message_arguments>
-                <message_argument value="org.eclipse.ui.editors.text.EncodingActionGroup"/>
-                <message_argument value="fillActionBars(IActionBars)"/>
-            </message_arguments>
-        </filter>
-        <filter id="338944126">
-            <message_arguments>
-                <message_argument value="org.eclipse.ui.editors.text.EncodingActionGroup"/>
-                <message_argument value="retarget(ITextEditor)"/>
-            </message_arguments>
-        </filter>
-        <filter id="338944126">
-            <message_arguments>
-                <message_argument value="org.eclipse.ui.editors.text.EncodingActionGroup"/>
-                <message_argument value="update()"/>
-            </message_arguments>
-        </filter>
-        <filter id="338948223">
-            <message_arguments>
-                <message_argument value="org.eclipse.ui.editors.text.EncodingActionGroup"/>
-                <message_argument value="EncodingActionGroup()"/>
-            </message_arguments>
-        </filter>
-        <filter id="338948223">
-            <message_arguments>
-                <message_argument value="org.eclipse.ui.editors.text.EncodingActionGroup"/>
-                <message_argument value="EncodingActionGroup(ITextEditor)"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/ui/editors/text/ITextEditorHelpContextIds.java" type="org.eclipse.ui.editors.text.ITextEditorHelpContextIds">
         <filter id="571473929">
             <message_arguments>

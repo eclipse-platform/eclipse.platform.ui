@@ -1,27 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <component id="org.eclipse.ui.workbench.texteditor" version="2">
-    <resource path="META-INF/MANIFEST.MF">
-        <filter comment="Bug 549604" id="926941240">
-            <message_arguments>
-                <message_argument value="3.13.0"/>
-                <message_argument value="3.12.0"/>
-            </message_arguments>
-        </filter>
-    </resource>
-    <resource path="src/org/eclipse/ui/texteditor/AbstractTextEditor.java" type="org.eclipse.ui.texteditor.AbstractTextEditor">
-        <filter comment="Bug 549604" id="336658481">
-            <message_arguments>
-                <message_argument value="org.eclipse.ui.texteditor.AbstractTextEditor"/>
-                <message_argument value="PREFERENCE_SHOW_CARET_OFFSET"/>
-            </message_arguments>
-        </filter>
-        <filter comment="Bug 549604" id="336658481">
-            <message_arguments>
-                <message_argument value="org.eclipse.ui.texteditor.AbstractTextEditor"/>
-                <message_argument value="PREFERENCE_SHOW_SELECTION_SIZE"/>
-            </message_arguments>
-        </filter>
-    </resource>
     <resource path="src/org/eclipse/ui/texteditor/ITextEditorActionConstants.java" type="org.eclipse.ui.texteditor.ITextEditorActionConstants">
         <filter id="571473929">
             <message_arguments>
