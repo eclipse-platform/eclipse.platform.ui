@@ -199,10 +199,5 @@ public class Snippet007ColorLabelProvider {
 			return ((Person) element).getGender() == Gender.MALE ? maleColor : femaleColor;
 		}
 
-		@Override
-		public void dispose() {
-			super.dispose();
-			femaleColor.dispose();
-		}
 	}
 }

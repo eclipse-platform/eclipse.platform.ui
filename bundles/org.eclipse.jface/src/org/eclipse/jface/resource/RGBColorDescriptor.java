@@ -84,10 +84,6 @@ class RGBColorDescriptor extends ColorDescriptor {
 
 	@Override
 	public void destroyColor(Color toDestroy) {
-		if (toDestroy == originalColor) {
-			return;
-		}
-
-		toDestroy.dispose();
+		// Colors do not need disposal
 	}
 }
