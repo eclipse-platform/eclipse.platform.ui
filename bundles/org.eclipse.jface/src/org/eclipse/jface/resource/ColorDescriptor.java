@@ -87,9 +87,15 @@ public abstract class ColorDescriptor extends DeviceResourceDescriptor {
 	 *
 	 * @since 3.1
 	 *
-	 * @param toDestroy a Color that was previously allocated by an equal ColorDescriptor
+	 * @deprecated Colors do not need disposal anymore
+	 *
+	 * @param toDestroy a Color that was previously allocated by an equal
+	 *                  ColorDescriptor
 	 */
-	public abstract void destroyColor(Color toDestroy);
+	@Deprecated
+	public void destroyColor(Color toDestroy) {
+		// Colors do not need disposal
+	}
 
 	@Override
 	public final Object createResource(Device device) throws DeviceResourceException {
