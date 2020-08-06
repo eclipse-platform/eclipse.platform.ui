@@ -91,8 +91,6 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 	private boolean fIsUsingNativeLinkColor;
 	/** The link color specification. May be <code>null</code>. */
 	private RGB fRGB;
-	/** Tells whether to dispose the color on uninstall. */
-	private boolean fDisposeColor;
 	/** The currently active region. */
 	private IRegion fActiveRegion;
 	/** The currently active style range as position. */
@@ -109,7 +107,6 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 	 */
 	public DefaultHyperlinkPresenter(IPreferenceStore store) {
 		fPreferenceStore= store;
-		fDisposeColor= true;
 	}
 
 	/**
@@ -130,7 +127,6 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 	 */
 	public DefaultHyperlinkPresenter(RGB color) {
 		fRGB= color;
-		fDisposeColor= true;
 	}
 
 	@Override
@@ -194,8 +190,6 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 			document.removeDocumentListener(this);
 
 		if (fColor != null) {
-			if (fDisposeColor)
-				fColor.dispose();
 			fColor= null;
 		}
 
@@ -218,8 +212,6 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 	public void setColor(Color color) {
 		Assert.isNotNull(fTextViewer);
 		Assert.isTrue(fPreferenceStore == null, "Cannot set color if preference store is set"); //$NON-NLS-1$
-		if (fColor != null && fDisposeColor)
-			fColor.dispose();
 		fColor= color;
 	}
 
@@ -350,8 +342,6 @@ public class DefaultHyperlinkPresenter implements IHyperlinkPresenter, IHyperlin
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		if (HYPERLINK_COLOR.equals(event.getProperty())) {
-			if (fColor != null && fDisposeColor)
-				fColor.dispose();
 			fColor= createColorFromPreferenceStore();
 			return;
 		}
