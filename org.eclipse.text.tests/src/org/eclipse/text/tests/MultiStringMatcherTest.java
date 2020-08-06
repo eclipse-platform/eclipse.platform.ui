@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2019 Thomas Wolf and others.
+ * Copyright (c) 2019, 2020 Thomas Wolf and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,21 +13,17 @@ package org.eclipse.text.tests;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 
 import java.util.Collections;
 import java.util.List;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import org.eclipse.jface.text.MultiStringMatcher;
 import org.eclipse.jface.text.MultiStringMatcher.Match;
 
 public class MultiStringMatcherTest {
-
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
 
 	private static Match run(String text, String... needles) {
 		return run(text, 0, needles);
@@ -444,16 +440,14 @@ public class MultiStringMatcherTest {
 	public void addAfterBuild() throws Exception {
 		MultiStringMatcher.Builder b = MultiStringMatcher.builder().add("he", "she").add("his", "hers");
 		b.build();
-		thrown.expect(IllegalStateException.class);
-		b.add("us");
+		assertThrows(IllegalStateException.class, () -> b.add("us"));
 	}
 
 	@Test
 	public void reuseBuilder() throws Exception {
 		MultiStringMatcher.Builder b = MultiStringMatcher.builder().add("he", "she").add("his", "hers");
 		b.build();
-		thrown.expect(IllegalStateException.class);
-		b.build();
+		assertThrows(IllegalStateException.class, () -> b.build());
 	}
 
 	@Test
