@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2017 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -30,8 +30,6 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.tests.internal.util.VerifyDialog;
 
-import junit.framework.Assert;
-
 /**
  * A <code>DialogCheck</code> is used test a dialog in various ways.
  * <p>
@@ -44,33 +42,6 @@ public class DialogCheck {
 	}
 
 	private static VerifyDialog _verifyDialog;
-
-	/**
-	 * Asserts that a given dialog is not null and that it passes certain visual
-	 * tests. These tests will be verified manually by the tester using an input
-	 * dialog. Use this assert method to verify a dialog's sizing, initial focus, or
-	 * accessibility. To ensure that both the input dialog and the test dialog are
-	 * accessible by the tester, the getShell() method should be used when creating
-	 * the test dialog.
-	 *
-	 * Example usage:
-	 * <code>Dialog dialog = new AboutDialog( DialogCheck.getShell() );
-	 * DialogCheck.assertDialog(dialog, this);</code>
-	 *
-	 * @param dialog
-	 *            the test dialog to be verified.
-	 * @param assertion
-	 *            this is the test case object, assertions will be executed on this
-	 *            object.
-	 *
-	 * @deprecated The <code>junit.framework.Assert</code> parameter is not used at
-	 *             all. Use {@link #assertDialog(Dialog) assertDialog(Dialog)}
-	 *             method.
-	 */
-	@Deprecated
-	public static void assertDialog(Dialog dialog, Assert assertion) {
-		assertDialog(dialog);
-	}
 
 	/**
 	 * Asserts that a given dialog is not null and that it passes certain visual
@@ -96,25 +67,6 @@ public class DialogCheck {
 		if (_verifyDialog.open(dialog) == IDialogConstants.NO_ID) {
 			assertTrue(_verifyDialog.getFailureText(), false);
 		}
-	}
-
-	/**
-	 * Automated test that checks all the labels and buttons of a dialog to make
-	 * sure there is enough room to display all the text. Any text that wraps is
-	 * only approximated and is currently not accurate.
-	 *
-	 * @param dialog
-	 *            the test dialog to be verified.
-	 * @param assertion
-	 *            this is the test case object, assertions will be executed on this
-	 *            object.
-	 * @deprecated The <code>junit.framework.Assert</code> parameter is not used at
-	 *             all. Use {@link #assertDialogTexts(Dialog)
-	 *             assertDialogTexts(Dialog)} method.
-	 */
-	@Deprecated
-	public static void assertDialogTexts(Dialog dialog, Assert assertion) {
-		assertDialogTexts(dialog);
 	}
 
 	/**
