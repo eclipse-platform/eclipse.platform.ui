@@ -34,6 +34,7 @@ import org.eclipse.ltk.core.refactoring.Change;
 import org.eclipse.ltk.core.refactoring.CheckConditionsOperation;
 import org.eclipse.ltk.core.refactoring.CompositeChange;
 import org.eclipse.ltk.core.refactoring.CreateChangeOperation;
+import org.eclipse.ltk.core.refactoring.RefactoringCore;
 import org.eclipse.ltk.core.refactoring.RefactoringStatus;
 import org.eclipse.ltk.core.refactoring.participants.ProcessorBasedRefactoring;
 import org.eclipse.ltk.core.refactoring.participants.RefactoringProcessor;
@@ -105,11 +106,15 @@ public class RenameResourceHandler extends AbstractResourcesHandler {
 						op.run(activeShell, RefactoringUIMessages.RenameResourceHandler_title);
 					} else {
 						//Silently perform the rename without the dialog
-						change.perform(new NullProgressMonitor());
+						RefactoringCore.getUndoManager().aboutToPerformChange(change);
+						Change undo= change.perform(new NullProgressMonitor());
+						RefactoringCore.getUndoManager().changePerformed(change, true);
+						RefactoringCore.getUndoManager().addUndo(RefactoringUIMessages.RenameResourceHandler_title, undo);
 					}
 				} catch (InterruptedException e) {
 					// do nothing
 				} catch (CoreException e) {
+					RefactoringCore.getUndoManager().changePerformed(change, false);
 					RefactoringUIPlugin.log(e);
 				}
 			}
