@@ -119,8 +119,6 @@ public class IntroLaunchBar {
 
 	private final static String LAUNCH_COMMAND_BASE = "http://org.eclipse.ui.intro/showPage?id="; //$NON-NLS-1$
 
-	private Color fg;
-
 	private Color bg;
 
 	private MToolControl trimControl;
@@ -334,14 +332,6 @@ public class IntroLaunchBar {
 				RGB r = SharedStyleManager.parseRGB(value);
 				if (r != null)
 					bg = new Color(display, r);
-			}
-		}
-		if (element.getForeground() != null) {
-			String value = resolveColor(element.getForeground());
-			if (value!=null) {
-				RGB r = SharedStyleManager.parseRGB(value);
-				if (r != null)
-					fg = new Color(display, r);
 			}
 		}
 	}
