@@ -7,3 +7,4 @@ Bug 534597 - Unanticipated comparator errors in I20180511-2000
 Bug 558905 - Comparator error in I20200108-0025
 Bug 559861 - Unanticipated comparator errors in I20200205-0030
 Bug 562167 - Comparator errors in I20200415-0620
+Bug 565905 - Comparator Errors Found in I20200807-1800
