@@ -33,7 +33,6 @@ import org.eclipse.core.internal.localstore.FileSystemResourceManager;
 import org.eclipse.core.internal.resources.File;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
 import org.eclipse.core.runtime.NullProgressMonitor;
 import org.eclipse.core.runtime.jobs.Job;
 
@@ -94,7 +93,6 @@ public class TextFileDocumentProviderTest {
 		assertNotNull(progressMonitor);
 		assertFalse(progressMonitor instanceof NullProgressMonitor);
 		assertFalse(progressMonitor instanceof EventLoopProgressMonitor);
-		assertTrue(progressMonitor instanceof IProgressMonitorWithBlocking);
 
 		// Because this monitor is not EventLoopProgressMonitor, it will not
 		// process UI events while waiting on workspace lock
