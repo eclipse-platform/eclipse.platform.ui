@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -14,7 +14,6 @@
 package org.eclipse.ui.internal.dialogs;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ProgressMonitorWrapper;
 import org.eclipse.jface.dialogs.Dialog;
@@ -29,7 +28,7 @@ import org.eclipse.ui.internal.ExceptionHandler;
  * thread, this was not done for 1.0, so this was added to keep the UI live
  * (including allowing the cancel button to work).
  */
-public class EventLoopProgressMonitor extends ProgressMonitorWrapper implements IProgressMonitorWithBlocking {
+public class EventLoopProgressMonitor extends ProgressMonitorWrapper implements IProgressMonitor {
 	/**
 	 * Threshold for how often the event loop is spun, in ms.
 	 */

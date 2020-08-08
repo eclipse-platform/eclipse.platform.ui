@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2016 Red Hat Inc., and others
+ * Copyright (c) 2016, 2020 Red Hat Inc., and others
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -13,7 +13,7 @@
  ******************************************************************************/
 package org.eclipse.ui.internal.wizards.datatransfer;
 
-import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.wizard.ProgressMonitorPart;
 import org.eclipse.swt.graphics.Point;
@@ -29,7 +29,7 @@ import org.eclipse.ui.PlatformUI;
  *
  * @since 3.12
  */
-class DelegateProgressMonitorInUIThreadAndPreservingFocus implements IProgressMonitorWithBlocking {
+class DelegateProgressMonitorInUIThreadAndPreservingFocus implements IProgressMonitor {
 	private ProgressMonitorPart delegate;
 	private Display display;
 

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2018 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,7 +16,6 @@ package org.eclipse.jface.dialogs;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.operation.IRunnableContext;
 import org.eclipse.jface.operation.IRunnableWithProgress;
@@ -140,7 +139,7 @@ public class ProgressMonitorDialog extends IconAndMessageDialog implements
 	/**
 	 * Internal progress monitor implementation.
 	 */
-	private class ProgressMonitor implements IProgressMonitorWithBlocking {
+	private class ProgressMonitor implements IProgressMonitor {
 		private String fSubTask = "";//$NON-NLS-1$
 
 		private volatile boolean fIsCanceled;

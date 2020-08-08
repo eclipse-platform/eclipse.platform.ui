@@ -16,7 +16,6 @@ package org.eclipse.e4.ui.progress.internal;
 import java.lang.reflect.InvocationTargetException;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.e4.ui.progress.IProgressService;
 import org.eclipse.e4.ui.progress.internal.legacy.PlatformUI;
@@ -285,7 +284,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 	 *
 	 */
 	public void createWrapperedMonitor() {
-		wrapperedMonitor = new IProgressMonitorWithBlocking() {
+		wrapperedMonitor = new IProgressMonitor() {
 
 			IProgressMonitor superMonitor = ProgressMonitorJobsDialog.super
 					.getProgressMonitor();
@@ -375,20 +374,14 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 			@Override
 			public void clearBlocked() {
 				//We want to open on blocking too
-				if (superMonitor instanceof IProgressMonitorWithBlocking) {
-					((IProgressMonitorWithBlocking) superMonitor)
-							.clearBlocked();
-				}
+				superMonitor.clearBlocked();
 
 			}
 
 			@Override
 			public void setBlocked(IStatus reason) {
 				openDialog();
-				if (superMonitor instanceof IProgressMonitorWithBlocking) {
-					((IProgressMonitorWithBlocking) superMonitor)
-							.setBlocked(reason);
-				}
+				superMonitor.setBlocked(reason);
 
 			}
 

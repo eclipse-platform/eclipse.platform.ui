@@ -33,7 +33,6 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -235,12 +234,12 @@ public class ProgressManager extends ProgressProvider {
 	 * The JobMonitor is the inner class that handles the IProgressMonitor
 	 * integration with the ProgressMonitor.
 	 */
-	class JobMonitor implements IProgressMonitorWithBlocking {
+	class JobMonitor implements IProgressMonitor {
 		Job job;
 
 		String currentTaskName;
 
-		IProgressMonitorWithBlocking listener;
+		IProgressMonitor listener;
 
 		/**
 		 * Create a monitor on the supplied job.
@@ -256,7 +255,7 @@ public class ProgressManager extends ProgressProvider {
 		 *
 		 * @param monitor
 		 */
-		void addProgressListener(IProgressMonitorWithBlocking monitor) {
+		void addProgressListener(IProgressMonitor monitor) {
 			listener = monitor;
 			JobInfo info = getJobInfo(job);
 			TaskInfo currentTask = info.getTaskInfo();

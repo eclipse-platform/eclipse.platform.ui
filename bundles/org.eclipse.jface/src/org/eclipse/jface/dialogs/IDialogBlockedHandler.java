@@ -19,12 +19,12 @@ import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.Shell;
 
 /**
- * The IDialogBlockedHandler is the handler used by
- * JFace to provide extra information when a
- * blocking has occured. There is one static instance
- * of this class used by WizardDialog and ModalContext.
- * @see org.eclipse.core.runtime.IProgressMonitorWithBlocking#clearBlocked()
- * @see  org.eclipse.core.runtime.IProgressMonitorWithBlocking#setBlocked(IStatus)
+ * The IDialogBlockedHandler is the handler used by JFace to provide extra
+ * information when a blocking has occured. There is one static instance of this
+ * class used by WizardDialog and ModalContext.
+ *
+ * @see org.eclipse.core.runtime.IProgressMonitor#clearBlocked()
+ * @see org.eclipse.core.runtime.IProgressMonitor#setBlocked(IStatus)
  * @see WizardDialog
  * @since 3.0
  */

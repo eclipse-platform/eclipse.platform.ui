@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2005, 2018 IBM Corporation and others.
+ * Copyright (c) 2005, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -16,7 +16,7 @@ package org.eclipse.jface.snippets.dialogs;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
+import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -50,7 +50,7 @@ public class Snippet058VistaProgressBars {
 
 		return monitor -> {
 
-			IProgressMonitorWithBlocking blocking = (IProgressMonitorWithBlocking) monitor;
+			IProgressMonitor blocking = monitor;
 
 			blocking.beginTask("Vista Coolness", 100);
 			for (int i = 0; i < 10; i++) {

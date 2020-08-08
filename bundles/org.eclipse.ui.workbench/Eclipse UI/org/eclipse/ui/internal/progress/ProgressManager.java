@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2016 IBM Corporation and others.
+ * Copyright (c) 2003, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -40,7 +40,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Predicate;
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ListenerList;
 import org.eclipse.core.runtime.NullProgressMonitor;
@@ -201,11 +200,11 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 	 * The JobMonitor is the inner class that handles the IProgressMonitor
 	 * integration with the ProgressMonitor.
 	 */
-	public class JobMonitor implements IProgressMonitorWithBlocking {
+	public class JobMonitor implements IProgressMonitor {
 		Job job;
 		JobInfo info;
 		String currentTaskName;
-		Set<IProgressMonitorWithBlocking> monitors = Collections.emptySet();
+		Set<IProgressMonitor> monitors = Collections.emptySet();
 
 		/**
 		 * Creates a monitor on the supplied job.
@@ -232,9 +231,9 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		 *
 		 * @param monitor the listening monitor to add
 		 */
-		public void addProgressListener(IProgressMonitorWithBlocking monitor) {
+		public void addProgressListener(IProgressMonitor monitor) {
 			Assert.isNotNull(monitor);
-			Set<IProgressMonitorWithBlocking> newSet = new LinkedHashSet<>(monitors);
+			Set<IProgressMonitor> newSet = new LinkedHashSet<>(monitors);
 			newSet.add(monitor);
 			this.monitors = Collections.unmodifiableSet(newSet);
 			Optional<TaskInfo> optionalInfo = info.getTaskInfo();
@@ -250,8 +249,8 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		 *
 		 * @param monitor the listening monitor to remove
 		 */
-		public void removeProgresListener(IProgressMonitorWithBlocking monitor) {
-			Set<IProgressMonitorWithBlocking> newSet = new LinkedHashSet<>(monitors);
+		public void removeProgresListener(IProgressMonitor monitor) {
+			Set<IProgressMonitor> newSet = new LinkedHashSet<>(monitors);
 			newSet.remove(monitor);
 			this.monitors = Collections.unmodifiableSet(newSet);
 		}
@@ -268,7 +267,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		public void done() {
 			info.clearTaskInfo();
 			info.clearChildren();
-			monitors.forEach(IProgressMonitorWithBlocking::done);
+			monitors.forEach(IProgressMonitor::done);
 		}
 
 		@Override
@@ -329,7 +328,7 @@ public class ProgressManager extends ProgressProvider implements IProgressServic
 		public void clearBlocked() {
 			info.setBlockedStatus(null);
 			refreshJobInfo(info);
-			monitors.forEach(IProgressMonitorWithBlocking::clearBlocked);
+			monitors.forEach(IProgressMonitor::clearBlocked);
 		}
 
 		@Override

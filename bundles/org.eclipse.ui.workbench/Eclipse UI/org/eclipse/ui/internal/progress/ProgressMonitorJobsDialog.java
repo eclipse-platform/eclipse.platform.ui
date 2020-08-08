@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2004, 2015 IBM Corporation and others.
+ * Copyright (c) 2004, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -17,7 +17,6 @@ import static org.eclipse.swt.events.SelectionListener.widgetSelectedAdapter;
 
 import java.lang.reflect.InvocationTargetException;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
@@ -255,7 +254,7 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 	 *
 	 */
 	public void createWrapperedMonitor() {
-		wrapperedMonitor = new IProgressMonitorWithBlocking() {
+		wrapperedMonitor = new IProgressMonitor() {
 
 			IProgressMonitor superMonitor = ProgressMonitorJobsDialog.super.getProgressMonitor();
 
@@ -345,19 +344,14 @@ public class ProgressMonitorJobsDialog extends ProgressMonitorDialog {
 			@Override
 			public void clearBlocked() {
 				// We want to open on blocking too
-				if (superMonitor instanceof IProgressMonitorWithBlocking) {
-					((IProgressMonitorWithBlocking) superMonitor).clearBlocked();
-				}
+				superMonitor.clearBlocked();
 
 			}
 
 			@Override
 			public void setBlocked(IStatus reason) {
 				openDialog();
-				if (superMonitor instanceof IProgressMonitorWithBlocking) {
-					((IProgressMonitorWithBlocking) superMonitor).setBlocked(reason);
-				}
-
+				superMonitor.setBlocked(reason);
 			}
 
 		};
