@@ -369,6 +369,14 @@
       <handler
             adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
             composite="false"
+            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertyCustomTabContentBackgroundSWTHandler">
+         <property-name
+               name="swt-draw-custom-tab-content-background">
+         </property-name>
+      </handler>
+      <handler
+            adapter="org.eclipse.e4.ui.css.swt.dom.CTabFolderElement"
+            composite="false"
             handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertye4SelectedTabFillHandler">
          <property-name
                name="swt-selected-tab-highlight">

@@ -134,6 +134,9 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 	private Color selectedTabHighlightColor;
 	private boolean drawTabHighlightOnTop = true;
 
+
+	private boolean drawCustomTabContentBackground;
+
 	@Inject
 	public CTabRendering(CTabFolder parent) {
 		super(parent);
@@ -248,7 +251,11 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 
 		switch (part) {
 		case PART_BACKGROUND:
-			this.drawCustomBackground(gc, bounds, state);
+			if (this.drawCustomTabContentBackground) {
+				this.drawCustomBackground(gc, bounds, state);
+			} else {
+				super.draw(part, state, bounds, gc);
+			}
 			return;
 		case PART_BODY:
 			this.drawTabBody(gc, bounds);
@@ -1085,14 +1092,32 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		this.active = active;
 	}
 
+	/**
+	 * Sets whether to use a custom tab background (reusing tab colors and
+	 * gradients), or default one from plain CTabFolder (using widget background
+	 * color).
+	 *
+	 * @param drawCustomTabContentBackground
+	 */
+	@Override
+	public void setDrawCustomTabContentBackground(boolean drawCustomTabContentBackground) {
+		this.drawCustomTabContentBackground = drawCustomTabContentBackground;
+	}
+
+	/**
+	 * Draws tab content background, deriving the colors from the tab colors.
+	 *
+	 * @param gc
+	 * @param bounds
+	 * @param state
+	 */
 	private void drawCustomBackground(GC gc, Rectangle bounds, int state) {
 		boolean selected = (state & SWT.SELECTED) != 0;
-		Color defaultBackground = selected ? parent.getSelectionBackground() : parent.getBackground();
 		boolean vertical = selected ? parentWrapper.isSelectionGradientVertical() : parentWrapper.isGradientVertical();
 		Rectangle partHeaderBounds = computeTrim(PART_HEADER, state, bounds.x, bounds.y, bounds.width, bounds.height);
 
-		drawUnselectedTabBackground(gc, partHeaderBounds, state, vertical, defaultBackground);
-		drawTabBackground(gc, partHeaderBounds, state, vertical, defaultBackground);
+		drawUnselectedTabBackground(gc, partHeaderBounds, state, vertical, parent.getBackground());
+		drawSelectedTabBackground(gc, partHeaderBounds, state, vertical, parent.getBackground());
 	}
 
 	private void drawUnselectedTabBackground(GC gc, Rectangle partHeaderBounds, int state, boolean vertical,
@@ -1113,7 +1138,7 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 				defaultBackground, unselectedTabsColors, unselectedTabsPercents, vertical);
 	}
 
-	private void drawTabBackground(GC gc, Rectangle partHeaderBounds, int state, boolean vertical,
+	private void drawSelectedTabBackground(GC gc, Rectangle partHeaderBounds, int state, boolean vertical,
 			Color defaultBackground) {
 		Color[] colors = selectedTabFillColors;
 		int[] percents = selectedTabFillPercents;
