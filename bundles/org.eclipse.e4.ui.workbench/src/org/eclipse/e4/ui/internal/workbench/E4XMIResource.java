@@ -15,24 +15,15 @@
 
 package org.eclipse.e4.ui.internal.workbench;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.WeakHashMap;
-import org.eclipse.e4.ui.model.application.MApplicationElement;
-import org.eclipse.e4.ui.model.application.ui.menu.MMenuFactory;
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EClass;
-import org.eclipse.emf.ecore.EClassifier;
-import org.eclipse.emf.ecore.EFactory;
 import org.eclipse.emf.ecore.EObject;
-import org.eclipse.emf.ecore.EcoreFactory;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.eclipse.emf.ecore.xmi.XMLHelper;
 import org.eclipse.emf.ecore.xmi.XMLSave;
-import org.eclipse.emf.ecore.xmi.impl.XMIHelperImpl;
 import org.eclipse.emf.ecore.xmi.impl.XMIResourceImpl;
 
 public class E4XMIResource extends XMIResourceImpl {
@@ -108,62 +99,6 @@ public class E4XMIResource extends XMIResourceImpl {
 		id = getUniqueId();
 		setID(eObject, id);
 		return id;
-	}
-
-	/**
-	 * Functional interface for creating objects
-	 */
-	private interface ObjectCreator {
-		MApplicationElement create();
-	}
-
-	static final Map<String, ObjectCreator> deprecatedTypeMappings = new HashMap<>();
-	static {
-		deprecatedTypeMappings.put("OpaqueMenu", OpaqueElementUtil::createOpaqueMenu //$NON-NLS-1$
-				);
-		deprecatedTypeMappings.put("OpaqueMenuItem", OpaqueElementUtil::createOpaqueMenuItem //$NON-NLS-1$
-				);
-		deprecatedTypeMappings.put("OpaqueMenuSeparator", OpaqueElementUtil::createOpaqueMenuSeparator //$NON-NLS-1$
-				);
-		deprecatedTypeMappings.put("OpaqueToolItem", OpaqueElementUtil::createOpaqueToolItem //$NON-NLS-1$
-				);
-		deprecatedTypeMappings.put("RenderedMenu", RenderedElementUtil::createRenderedMenu //$NON-NLS-1$
-				);
-		deprecatedTypeMappings.put("RenderedMenuItem", RenderedElementUtil::createRenderedMenuItem //$NON-NLS-1$
-				);
-		deprecatedTypeMappings.put("RenderedToolBar", RenderedElementUtil::createRenderedToolBar //$NON-NLS-1$
-				);
-	}
-
-	@Override
-	protected XMLHelper createXMLHelper() {
-		// Handle mapping of deprecated types
-		return new XMIHelperImpl(this) {
-
-			@Override
-			public EObject createObject(EFactory eFactory, EClassifier type) {
-				if (MMenuFactory.INSTANCE == eFactory && type != null && type.getName() != null) {
-					final ObjectCreator objectCreator = deprecatedTypeMappings.get(type.getName());
-					if (objectCreator != null) {
-						return (EObject) objectCreator.create();
-					}
-				}
-				return super.createObject(eFactory, type);
-			}
-
-			@Override
-			public EClassifier getType(EFactory eFactory, String typeName) {
-				if (deprecatedTypeMappings.containsKey(typeName)) {
-					// need a temp instance of the now removed EClass so that
-					// createObject, above, can do it's work.
-					final EClass tempEClass = EcoreFactory.eINSTANCE.createEClass();
-					tempEClass.setName(typeName);
-					return tempEClass;
-				}
-				return super.getType(eFactory, typeName);
-			}
-
-		};
 	}
 
 	/*
