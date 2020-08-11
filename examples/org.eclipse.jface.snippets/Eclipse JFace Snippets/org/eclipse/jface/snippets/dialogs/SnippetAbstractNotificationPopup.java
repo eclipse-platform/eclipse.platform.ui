@@ -21,7 +21,6 @@ import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 
-@SuppressWarnings("restriction")
 public class SnippetAbstractNotificationPopup {
 
 	private Display display = new Display();
