@@ -218,6 +218,20 @@ public class UpdateValueStrategyTest extends AbstractDefaultRealmTestCase {
 		}
 	}
 
+	/**
+	 * A rare case where the converter is null even when a default converter has
+	 * been found. Bug 566006.
+	 */
+	@Test
+	public void testCreateValidatorWithNullConverter() {
+		// Valid use: source type String extends converter from-type Object
+		UpdateValueStrategyStub<Object, Object> strategy = new UpdateValueStrategyStub<>();
+
+		strategy.fillDefaults(WritableValue.withValueType(String.class), WritableValue.withValueType(Object.class));
+		strategy.setConverter(null);
+		strategy.createValidator(String.class, Object.class);
+	}
+
 	@Test
 	public void testFillDefaults_AssertConverterToTypeExtendsDestinationType() {
 		// Valid use: converter to-type String extends destination type Object

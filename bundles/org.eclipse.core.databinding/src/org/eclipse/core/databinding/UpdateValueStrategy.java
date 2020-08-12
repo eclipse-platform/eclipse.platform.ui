@@ -277,9 +277,12 @@ public class UpdateValueStrategy<S, D> extends UpdateStrategy<S, D> {
 
 		// We only default the validator if we defaulted the converter since the
 		// two are tightly coupled.
+
 		if (defaultedConverter) {
 			if (String.class.equals(fromType)) {
-				result = validatorsByConverter.get(converter);
+				// The converter is usually only null when defaultedConverter is false, but
+				// there are rare cases when that doesn't hold
+				result = converter == null ? null : validatorsByConverter.get(converter);
 
 				if (result == null) {
 					// TODO sring based lookup
