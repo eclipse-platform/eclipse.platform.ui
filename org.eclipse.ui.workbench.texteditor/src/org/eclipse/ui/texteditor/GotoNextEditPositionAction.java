@@ -72,7 +72,8 @@ public class GotoNextEditPositionAction extends Action implements IWorkbenchWind
 
 	@Override
 	public void run() {
-		if (!TextEditorPlugin.getDefault().isMovedSinceLastEditRecall()) {
+		if (TextEditorPlugin.TraversalDirection.FORWARD == TextEditorPlugin.getDefault()
+				.getEditHistoryTraversalDirection()) {
 			TextEditorPlugin.getDefault().advanceEditPosition();
 		}
 		EditPosition editPosition = TextEditorPlugin.getDefault().getNextEditPosition();
@@ -124,7 +125,8 @@ public class GotoNextEditPositionAction extends Action implements IWorkbenchWind
 				provider.setSelection(new TextSelection(pos.offset, pos.length));
 			}
 		} finally {
-			TextEditorPlugin.getDefault().setMovedSinceLastEditRecall(false);
+			TextEditorPlugin.getDefault()
+					.setEditHistoryTraversalDirection(TextEditorPlugin.TraversalDirection.FORWARD);
 		}
 	}
 

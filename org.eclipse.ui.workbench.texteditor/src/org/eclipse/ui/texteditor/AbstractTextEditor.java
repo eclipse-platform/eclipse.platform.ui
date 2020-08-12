@@ -6619,7 +6619,8 @@ public abstract class AbstractTextEditor extends EditorPart implements ITextEdit
 	 * @since 3.15
 	 */
 	private void handleCursorPositionChangedWrapper() {
-		TextEditorPlugin.getDefault().setMovedSinceLastEditRecall(true);
+		TextEditorPlugin.getDefault()
+				.setEditHistoryTraversalDirection(TextEditorPlugin.TraversalDirection.NONE);
 		handleCursorPositionChanged();
 	}
 

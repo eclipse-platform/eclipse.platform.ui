@@ -25,8 +25,8 @@ import java.lang.reflect.Array;
  *         location in linear mode, if history size is N, then calling
  *         goBackward N times brings you to the beginning, after which
  *         additional calls to goBackward will have no effect until either
- *         goForward is called or a new entry is added Both linear and ring mode
- *         overwrite history as needed when buffer is full
+ *         goForward is called or a new entry is added. Both linear and ring
+ *         mode overwrite history as needed when buffer is full
  * @param <T> the type of the object instances being tracked in history
  *
  * @since 3.15

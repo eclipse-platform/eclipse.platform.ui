@@ -54,14 +54,15 @@ public final class TextEditorPlugin extends AbstractUIPlugin implements IRegistr
 	private static TextEditorPlugin fgPlugin;
 
 	/**
-	 * tracks whether cursor has moved since fEditPositionHistory was used to
-	 * return to prior location. If cursor has moved, then goto last edit
-	 * location simply returns to last edit location. But if cursor has not
-	 * moved, that means the command was invoked twice in a row without
-	 * intervening other actions; in that case we start traversing backward thru
-	 * history to prior edit locations
+	 * tracks whether cursor has moved since fEditPositionHistory was used to return
+	 * to prior or next location. If cursor has moved, then goto last edit location
+	 * simply returns to last edit location. But if cursor has not moved, that means
+	 * the command was invoked twice in a row without intervening other actions; in
+	 * that case we are in a traversal state of BACKWARD (or FORWARD), so we start
+	 * traversing backward (or forward) through history to prior (or next) edit
+	 * locations.
 	 */
-	boolean movedSinceLastEditRecall = true;
+	TraversalDirection fEditHistoryTraversalDirection = TraversalDirection.NONE;
 
 	// an ordered history of prior edit positions
 	private HistoryTracker<EditPosition> fEditPositionHistory = new HistoryTracker<>(
@@ -123,12 +124,12 @@ public final class TextEditorPlugin extends AbstractUIPlugin implements IRegistr
 	 */
 	public static final String REFERENCE_PROVIDER_EXTENSION_POINT= "quickDiffReferenceProvider"; //$NON-NLS-1$
 
-	public boolean isMovedSinceLastEditRecall() {
-		return movedSinceLastEditRecall;
+	public TraversalDirection getEditHistoryTraversalDirection() {
+		return fEditHistoryTraversalDirection;
 	}
 
-	public void setMovedSinceLastEditRecall(boolean movedSinceLastEditRecall) {
-		this.movedSinceLastEditRecall = movedSinceLastEditRecall;
+	public void setEditHistoryTraversalDirection(TraversalDirection direction) {
+		this.fEditHistoryTraversalDirection = direction;
 	}
 
 	public HistoryTracker<EditPosition> getEditPositionHistory() {
@@ -280,4 +281,7 @@ public final class TextEditorPlugin extends AbstractUIPlugin implements IRegistr
 		return fCodeMiningProviderRegistry;
 	}
 
+	public static enum TraversalDirection {
+		NONE, BACKWARD, FORWARD;
+	}
 }

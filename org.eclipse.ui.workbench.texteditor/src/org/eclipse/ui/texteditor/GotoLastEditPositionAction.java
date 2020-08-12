@@ -69,7 +69,8 @@ public class GotoLastEditPositionAction extends Action implements IWorkbenchWind
 
 	@Override
 	public void run() {
-		if (!TextEditorPlugin.getDefault().isMovedSinceLastEditRecall()) {
+		if (TextEditorPlugin.TraversalDirection.BACKWARD == TextEditorPlugin.getDefault()
+				.getEditHistoryTraversalDirection()) {
 			TextEditorPlugin.getDefault().backtrackEditPosition();
 		}
 		EditPosition editPosition = TextEditorPlugin.getDefault().getLastEditPosition();
@@ -126,7 +127,8 @@ public class GotoLastEditPositionAction extends Action implements IWorkbenchWind
 				provider.setSelection(new TextSelection(pos.offset, pos.length));
 			}
 		} finally {
-			TextEditorPlugin.getDefault().setMovedSinceLastEditRecall(false);
+			TextEditorPlugin.getDefault()
+					.setEditHistoryTraversalDirection(TextEditorPlugin.TraversalDirection.BACKWARD);
 		}
 	}
 
