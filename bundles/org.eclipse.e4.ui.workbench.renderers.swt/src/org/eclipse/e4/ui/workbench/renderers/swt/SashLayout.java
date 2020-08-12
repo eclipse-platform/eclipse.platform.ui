@@ -18,6 +18,7 @@ package org.eclipse.e4.ui.workbench.renderers.swt;
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.Platform;
+import org.eclipse.e4.ui.internal.css.swt.ISashLayout;
 import org.eclipse.e4.ui.model.application.ui.MGenericTile;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
@@ -31,7 +32,8 @@ import org.eclipse.swt.widgets.Layout;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
-public class SashLayout extends Layout {
+@SuppressWarnings("restriction")
+public class SashLayout extends Layout implements ISashLayout {
 	// The minimum value (as a percentage) that a sash can be dragged to
 	int minSashPercent = 10;
 
@@ -227,6 +229,16 @@ public class SashLayout extends Layout {
 			return;
 		}
 		e.type = SWT.None; // Filter out event as we're currently interacting with a sash.
+	}
+
+	@Override
+	public int getSashWidth() {
+		return sashWidth;
+	}
+
+	@Override
+	public void setSashWidth(int sashWidth) {
+		this.sashWidth = sashWidth;
 	}
 
 	@Override

@@ -502,6 +502,13 @@
           handler="org.eclipse.e4.ui.css.swt.properties.preference.EclipsePreferencesHandler">
           <property-name name="preferences"/>
       </handler>
+      <handler
+            adapter="org.eclipse.e4.ui.css.swt.dom.CompositeElement"
+            handler="org.eclipse.e4.ui.css.swt.properties.custom.CSSPropertySashLayoutWidthHandler">
+         <property-name
+               name="swt-sash-width">
+         </property-name>
+      </handler>
    </extension>
                
 
