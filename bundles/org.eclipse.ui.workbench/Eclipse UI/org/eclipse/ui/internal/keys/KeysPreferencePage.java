@@ -2189,7 +2189,7 @@ public final class KeysPreferencePage extends PreferencePage implements IWorkben
 			}
 
 			// Ignore items with a meaningless command name.
-			if ((commandName == null) || (commandName.length() == 0)) {
+			if ((commandName == null) || (commandName.isEmpty())) {
 				continue;
 			}
 

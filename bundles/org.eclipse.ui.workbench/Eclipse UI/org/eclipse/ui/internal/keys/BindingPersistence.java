@@ -818,7 +818,7 @@ public class BindingPersistence extends PreferencePersistence {
 	 */
 	private static String readNonEmptyAttribute(IConfigurationElement configurationElement, String attribute) {
 		String attributeValue = configurationElement.getAttribute(attribute);
-		if ((attributeValue != null) && (attributeValue.length() == 0)) {
+		if ((attributeValue != null) && (attributeValue.isEmpty())) {
 			attributeValue = null;
 		}
 		return attributeValue;
@@ -828,13 +828,13 @@ public class BindingPersistence extends PreferencePersistence {
 		String contextId = configurationElement.getAttribute(ATT_CONTEXT_ID);
 		if (LEGACY_DEFAULT_SCOPE.equals(contextId)) {
 			contextId = null;
-		} else if ((contextId == null) || (contextId.length() == 0)) {
+		} else if ((contextId == null) || (contextId.isEmpty())) {
 			contextId = configurationElement.getAttribute(ATT_SCOPE);
 			if (LEGACY_DEFAULT_SCOPE.equals(contextId)) {
 				contextId = null;
 			}
 		}
-		if ((contextId == null) || (contextId.length() == 0)) {
+		if ((contextId == null) || (contextId.isEmpty())) {
 			contextId = IContextIds.CONTEXT_ID_WINDOW;
 		}
 		return contextId;
@@ -844,11 +844,11 @@ public class BindingPersistence extends PreferencePersistence {
 			String commandId) {
 
 		String schemeId = configurationElement.getAttribute(ATT_SCHEME_ID);
-		if ((schemeId == null) || (schemeId.length() == 0)) {
+		if ((schemeId == null) || (schemeId.isEmpty())) {
 			schemeId = configurationElement.getAttribute(ATT_KEY_CONFIGURATION_ID);
-			if ((schemeId == null) || (schemeId.length() == 0)) {
+			if ((schemeId == null) || (schemeId.isEmpty())) {
 				schemeId = configurationElement.getAttribute(ATT_CONFIGURATION);
-				if ((schemeId == null) || (schemeId.length() == 0)) {
+				if ((schemeId == null) || (schemeId.isEmpty())) {
 					// The scheme id should never be null. This is invalid.
 					addWarning(warningsToLog, "Key bindings need a scheme", //$NON-NLS-1$
 							configurationElement, commandId);
@@ -860,17 +860,17 @@ public class BindingPersistence extends PreferencePersistence {
 
 	private static String readCommandId(final IConfigurationElement configurationElement) {
 		String commandId = configurationElement.getAttribute(ATT_COMMAND_ID);
-		if ((commandId == null) || (commandId.length() == 0)) {
+		if ((commandId == null) || (commandId.isEmpty())) {
 			commandId = configurationElement.getAttribute(ATT_COMMAND);
 		}
-		if ((commandId != null) && (commandId.length() == 0)) {
+		if ((commandId != null) && (commandId.isEmpty())) {
 			commandId = null;
 		}
 		return commandId;
 	}
 
 	private static boolean isEmpty(String string) {
-		return string == null || string.length() == 0;
+		return string == null || string.isEmpty();
 	}
 
 	/**
@@ -913,9 +913,9 @@ public class BindingPersistence extends PreferencePersistence {
 			final String description = readOptional(configurationElement, ATT_DESCRIPTION);
 
 			String parentId = configurationElement.getAttribute(ATT_PARENT_ID);
-			if ((parentId != null) && (parentId.length() == 0)) {
+			if ((parentId != null) && (parentId.isEmpty())) {
 				parentId = configurationElement.getAttribute(ATT_PARENT);
-				if ((parentId != null) && (parentId.length() == 0)) {
+				if ((parentId != null) && (parentId.isEmpty())) {
 					parentId = null;
 				}
 			}

@@ -177,7 +177,7 @@ public class FileEditorMapping extends Object implements IFileEditorMapping, Clo
 
 	@Override
 	public String getLabel() {
-		return TextProcessor.process(name + (extension.length() == 0 ? "" : DOT + extension), STAR + DOT); //$NON-NLS-1$
+		return TextProcessor.process(name + (extension.isEmpty() ? "" : DOT + extension), STAR + DOT); //$NON-NLS-1$
 	}
 
 	@Override

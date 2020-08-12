@@ -125,7 +125,7 @@ public class StatusUtil {
 	public static IStatus newStatus(int severity, String message, Throwable exception) {
 
 		String statusMessage = message;
-		if (message == null || message.trim().length() == 0) {
+		if (message == null || message.trim().isEmpty()) {
 			if (exception.getMessage() == null) {
 				statusMessage = exception.toString();
 			} else {

@@ -114,7 +114,7 @@ public class FileEditorsPreferencePage extends PreferencePage implements IWorkbe
 		}
 
 		// Find the index at which to insert the new entry.
-		String newFilename = (newName + (newExtension == null || newExtension.length() == 0 ? "" : "." + newExtension)) //$NON-NLS-1$ //$NON-NLS-2$
+		String newFilename = (newName + (newExtension == null || newExtension.isEmpty() ? "" : "." + newExtension)) //$NON-NLS-1$ //$NON-NLS-2$
 				.toUpperCase();
 		IFileEditorMapping resourceType;
 		TableItem[] items = resourceTypeTable.getItems();

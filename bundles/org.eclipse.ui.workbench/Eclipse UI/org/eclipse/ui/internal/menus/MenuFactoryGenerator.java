@@ -53,7 +53,7 @@ public class MenuFactoryGenerator {
 
 	public void mergeIntoModel(ArrayList<MMenuContribution> menuContributions,
 			ArrayList<MToolBarContribution> toolBarContributions, ArrayList<MTrimContribution> trimContributions) {
-		if (location.getPath() == null || location.getPath().length() == 0) {
+		if (location.getPath() == null || location.getPath().isEmpty()) {
 			WorkbenchPlugin.log("MenuFactoryGenerator.mergeIntoModel: Invalid menu URI: " + location); //$NON-NLS-1$
 			return;
 		}
@@ -63,7 +63,7 @@ public class MenuFactoryGenerator {
 				// configElement);
 			} else {
 				String query = location.getQuery();
-				if (query == null || query.length() == 0) {
+				if (query == null || query.isEmpty()) {
 					query = "after=additions"; //$NON-NLS-1$
 				}
 				processToolbarChildren(toolBarContributions, configElement, location.getPath(), query);
@@ -82,7 +82,7 @@ public class MenuFactoryGenerator {
 			menuContribution.setParentId(location.getPath());
 		}
 		String query = location.getQuery();
-		if (query == null || query.length() == 0) {
+		if (query == null || query.isEmpty()) {
 			query = "after=additions"; //$NON-NLS-1$
 		}
 		menuContribution.setPositionInParent(query);

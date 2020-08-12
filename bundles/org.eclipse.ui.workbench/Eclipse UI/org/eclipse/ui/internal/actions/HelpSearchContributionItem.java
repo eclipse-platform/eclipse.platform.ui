@@ -95,7 +95,7 @@ public class HelpSearchContributionItem extends ControlContribution {
 	}
 
 	private void doSearch(String phrase, boolean updateList) {
-		if (phrase.length() == 0) {
+		if (phrase.isEmpty()) {
 			window.getWorkbench().getHelpSystem().displaySearch();
 			return;
 		}

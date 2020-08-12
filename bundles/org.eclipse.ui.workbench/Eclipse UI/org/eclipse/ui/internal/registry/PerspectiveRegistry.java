@@ -212,7 +212,7 @@ public class PerspectiveRegistry implements IPerspectiveRegistry, IExtensionChan
 				.getString(IWorkbenchPreferenceConstants.DEFAULT_PERSPECTIVE_ID);
 		// empty string may be returned but we want to return null if nothing
 		// found
-		if (defaultId.length() == 0 || findPerspectiveWithId(defaultId) == null) {
+		if (defaultId.isEmpty() || findPerspectiveWithId(defaultId) == null) {
 			Workbench instance = Workbench.getInstance();
 			return instance == null ? null : instance.getDefaultPerspectiveId();
 		}

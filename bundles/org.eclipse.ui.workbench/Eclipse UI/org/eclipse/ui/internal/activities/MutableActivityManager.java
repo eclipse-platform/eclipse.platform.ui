@@ -261,7 +261,7 @@ public final class MutableActivityManager extends AbstractActivityManager
 			ActivityDefinition activityDefinition = iterator.next();
 			String name = activityDefinition.getName();
 
-			if (name == null || name.length() == 0) {
+			if (name == null || name.isEmpty()) {
 				iterator.remove();
 			}
 		}
@@ -275,7 +275,7 @@ public final class MutableActivityManager extends AbstractActivityManager
 			CategoryDefinition categoryDefinition = iterator.next();
 			String name = categoryDefinition.getName();
 
-			if (name == null || name.length() == 0) {
+			if (name == null || name.isEmpty()) {
 				iterator.remove();
 			}
 		}

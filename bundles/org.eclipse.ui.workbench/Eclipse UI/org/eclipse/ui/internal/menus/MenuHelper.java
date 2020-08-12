@@ -237,10 +237,10 @@ public class MenuHelper {
 		// For sub-menu management -all- items must be id'd so enforce this
 		// here (we could optimize by checking the 'name' of the config
 		// element == "menu"
-		if (id == null || id.length() == 0) {
+		if (id == null || id.isEmpty()) {
 			id = getCommandId(element);
 		}
-		if (id == null || id.length() == 0) {
+		if (id == null || id.isEmpty()) {
 			id = getConfigurationHandleId(element);
 		}
 		return id;
@@ -319,7 +319,7 @@ public class MenuHelper {
 
 	public static ItemType getStyle(IConfigurationElement element) {
 		String style = element.getAttribute(IWorkbenchRegistryConstants.ATT_STYLE);
-		if (style == null || style.length() == 0) {
+		if (style == null || style.isEmpty()) {
 			return ItemType.PUSH;
 		}
 		if (IWorkbenchRegistryConstants.STYLE_TOGGLE.equals(style)) {

@@ -299,7 +299,7 @@ public class SelectPerspectiveDialog extends Dialog implements ISelectionChanged
 				Object o = selection.getFirstElement();
 				if (o instanceof IPerspectiveDescriptor) {
 					String description = ((IPerspectiveDescriptor) o).getDescription();
-					if (description.length() == 0) {
+					if (description.isEmpty()) {
 						description = WorkbenchMessages.SelectPerspective_noDesc;
 					}
 					popUp(description);

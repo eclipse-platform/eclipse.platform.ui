@@ -81,13 +81,13 @@ public final class ContextPersistence extends RegistryPersistence {
 
 			// Read out the parent id.
 			String parentId = configurationElement.getAttribute(ATT_PARENT_ID);
-			if ((parentId == null) || (parentId.length() == 0)) {
+			if ((parentId == null) || (parentId.isEmpty())) {
 				parentId = configurationElement.getAttribute(ATT_PARENT);
-				if ((parentId == null) || (parentId.length() == 0)) {
+				if ((parentId == null) || (parentId.isEmpty())) {
 					parentId = configurationElement.getAttribute(ATT_PARENT_SCOPE);
 				}
 			}
-			if ((parentId != null) && (parentId.length() == 0)) {
+			if ((parentId != null) && (parentId.isEmpty())) {
 				parentId = null;
 			}
 

@@ -271,7 +271,7 @@ public abstract class RegistryPersistence implements IDisposable, IWorkbenchRegi
 	protected static final String readOptional(final IConfigurationElement configurationElement,
 			final String attribute) {
 		String value = configurationElement.getAttribute(attribute);
-		if ((value != null) && (value.length() == 0)) {
+		if ((value != null) && (value.isEmpty())) {
 			value = null;
 		}
 
@@ -341,7 +341,7 @@ public abstract class RegistryPersistence implements IDisposable, IWorkbenchRegi
 		for (final IConfigurationElement parameterElement : parameterElements) {
 			// Read out the id.
 			final String id = parameterElement.getAttribute(ATT_ID);
-			if ((id == null) || (id.length() == 0)) {
+			if ((id == null) || (id.isEmpty())) {
 				// The name should never be null. This is invalid.
 				addWarning(warningsToLog, "Parameters need a name", //$NON-NLS-1$
 						configurationElement);
@@ -373,7 +373,7 @@ public abstract class RegistryPersistence implements IDisposable, IWorkbenchRegi
 
 			// Read out the value.
 			final String value = parameterElement.getAttribute(ATT_VALUE);
-			if ((value == null) || (value.length() == 0)) {
+			if ((value == null) || (value.isEmpty())) {
 				// The name should never be null. This is invalid.
 				addWarning(warningsToLog, "Parameters need a value", //$NON-NLS-1$
 						configurationElement, id);
@@ -428,7 +428,7 @@ public abstract class RegistryPersistence implements IDisposable, IWorkbenchRegi
 	protected static final String readRequired(final IConfigurationElement configurationElement, final String attribute,
 			final List<IStatus> warningsToLog, final String message, final String id) {
 		final String value = configurationElement.getAttribute(attribute);
-		if ((value == null) || (value.length() == 0)) {
+		if ((value == null) || (value.isEmpty())) {
 			addWarning(warningsToLog, message, configurationElement, id);
 			return null;
 		}

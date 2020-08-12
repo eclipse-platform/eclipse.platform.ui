@@ -121,7 +121,7 @@ public class MenuAdditionCacheEntry {
 				return;
 			}
 		}
-		if (location.getPath() == null || location.getPath().length() == 0) {
+		if (location.getPath() == null || location.getPath().isEmpty()) {
 			WorkbenchPlugin.log("MenuAdditionCacheEntry.mergeIntoModel: Invalid menu URI: " + location); //$NON-NLS-1$
 			return;
 		}
@@ -131,7 +131,7 @@ public class MenuAdditionCacheEntry {
 			} else {
 				String query = location.getQuery();
 				hasAdditions = AFTER_ADDITIONS.equals(query);
-				if (query == null || query.length() == 0) {
+				if (query == null || query.isEmpty()) {
 					query = AFTER_ADDITIONS;
 				}
 				processToolbarChildren(toolBarContributions, configElement, location.getPath(), query, hasAdditions);
@@ -151,7 +151,7 @@ public class MenuAdditionCacheEntry {
 			menuContribution.setParentId(location.getPath());
 			hasAdditions = AFTER_ADDITIONS.equals(query);
 		}
-		if (query == null || query.length() == 0) {
+		if (query == null || query.isEmpty()) {
 			query = AFTER_ADDITIONS;
 		}
 		menuContribution.setPositionInParent(query);
@@ -339,7 +339,7 @@ public class MenuAdditionCacheEntry {
 	}
 
 	private boolean isUndefined(String query) {
-		if (query == null || query.length() == 0) {
+		if (query == null || query.isEmpty()) {
 			return true;
 		}
 
@@ -357,7 +357,7 @@ public class MenuAdditionCacheEntry {
 			contribution.setPositionInParent(query);
 		} else {
 			contribution.setParentId(location.getPath());
-			if (query == null || query.length() == 0) {
+			if (query == null || query.isEmpty()) {
 				query = AFTER_ADDITIONS;
 			}
 			contribution.setPositionInParent(query);

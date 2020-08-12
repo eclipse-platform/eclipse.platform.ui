@@ -172,7 +172,7 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 	 */
 	protected static final String readOptional(final IMemento memento, final String attribute) {
 		String value = memento.getString(attribute);
-		if ((value != null) && (value.length() == 0)) {
+		if ((value != null) && (value.isEmpty())) {
 			value = null;
 		}
 
@@ -237,7 +237,7 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 		for (final IMemento parameterMemento : parameterMementos) {
 			// Read out the id.
 			final String id = parameterMemento.getString(ATT_ID);
-			if ((id == null) || (id.length() == 0)) {
+			if ((id == null) || (id.isEmpty())) {
 				// The name should never be null. This is invalid.
 				addWarning(warningsToLog, "Parameters need a name"); //$NON-NLS-1$
 				continue;
@@ -267,7 +267,7 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 
 			// Read out the value.
 			final String value = parameterMemento.getString(ATT_VALUE);
-			if ((value == null) || (value.length() == 0)) {
+			if ((value == null) || (value.isEmpty())) {
 				// The name should never be null. This is invalid.
 				addWarning(warningsToLog, "Parameters need a value", id); //$NON-NLS-1$
 				continue;
@@ -316,7 +316,7 @@ public abstract class PreferencePersistence extends RegistryPersistence {
 	protected static final String readRequired(final IMemento memento, final String attribute,
 			final List<IStatus> warningsToLog, final String message, final String id) {
 		final String value = memento.getString(attribute);
-		if ((value == null) || (value.length() == 0)) {
+		if ((value == null) || (value.isEmpty())) {
 			addWarning(warningsToLog, message, id);
 			return null;
 		}

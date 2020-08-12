@@ -224,7 +224,7 @@ public class ProgressAnimationItem extends AnimationItem implements FinishedJobs
 					if (action != null && action.isEnabled()) {
 						// green arrow with exclamation mark
 						String tt = action.getToolTipText();
-						if (tt == null || tt.trim().length() == 0) {
+						if (tt == null || tt.trim().isEmpty()) {
 							tt = NLS.bind(ProgressMessages.ProgressAnimationItem_ok, job.getName());
 						}
 						initButton(okImage, tt);

@@ -158,9 +158,9 @@ public final class CommandPersistence extends RegistryPersistence {
 
 			// Read out the category id.
 			String categoryId = configurationElement.getAttribute(ATT_CATEGORY_ID);
-			if ((categoryId == null) || (categoryId.length() == 0)) {
+			if ((categoryId == null) || (categoryId.isEmpty())) {
 				categoryId = configurationElement.getAttribute(ATT_CATEGORY);
-				if ((categoryId != null) && (categoryId.length() == 0)) {
+				if ((categoryId != null) && (categoryId.isEmpty())) {
 					categoryId = null;
 				}
 			}

@@ -72,7 +72,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 
 		@Override
 		String getDisplayString() {
-			if (blockedTaskName == null || blockedTaskName.length() == 0) {
+			if (blockedTaskName == null || blockedTaskName.isEmpty()) {
 				return ProgressMessages.BlockedJobsDialog_UserInterfaceTreeElement;
 			}
 			return blockedTaskName;
@@ -134,7 +134,7 @@ public class BlockedJobsDialog extends IconAndMessageDialog {
 		}
 		singleton = new BlockedJobsDialog(parentShell, blockedMonitor, reason);
 
-		if (taskName == null || taskName.length() == 0) {
+		if (taskName == null || taskName.isEmpty()) {
 			singleton.setBlockedTaskName(ProgressMessages.BlockedJobsDialog_UserInterfaceTreeElement);
 		} else {
 			singleton.setBlockedTaskName(taskName);

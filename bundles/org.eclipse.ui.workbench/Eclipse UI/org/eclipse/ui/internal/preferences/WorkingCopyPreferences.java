@@ -423,7 +423,7 @@ public class WorkingCopyPreferences extends EventManager implements IEclipsePref
 	@Override
 	public boolean nodeExists(String pathName) throws BackingStoreException {
 		// short circuit for this node
-		if (pathName.length() == 0) {
+		if (pathName.isEmpty()) {
 			return removed ? false : getOriginal().nodeExists(pathName);
 		}
 		return getOriginal().nodeExists(pathName);

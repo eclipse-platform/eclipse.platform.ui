@@ -440,7 +440,7 @@ public class ContentTypesPreferencePage extends PreferencePage implements IWorkb
 		setButton.addSelectionListener(widgetSelectedAdapter(e -> {
 			try {
 				String text = charsetField.getText().trim();
-				if (text.length() == 0) {
+				if (text.isEmpty()) {
 					text = null;
 				}
 				getSelectedContentType().setDefaultCharset(text);

@@ -144,7 +144,7 @@ public class ContentTypeFilenameAssociationDialog extends TitleAreaDialog {
 		// We need kernel api to validate the extension or a filename
 
 		// check for empty name and extension
-		if (filename.length() == 0) {
+		if (filename.isEmpty()) {
 			setErrorMessage(null);
 			return false;
 		}

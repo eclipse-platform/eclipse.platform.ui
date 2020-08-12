@@ -211,7 +211,7 @@ public class DecoratorsPreferencePage extends PreferencePage implements IWorkben
 			return;
 		}
 		String text = definition.getDescription();
-		if (text == null || text.length() == 0) {
+		if (text == null || text.isEmpty()) {
 			descriptionText.setText(WorkbenchMessages.PreferencePage_noDescription);
 		} else {
 			descriptionText.setText(text);

@@ -974,7 +974,7 @@ public class DecoratorManager implements ILabelProviderListener, IDecoratorManag
 		// Force an update if there is a text already
 		boolean force = true;
 		// If not then do not force as the undecorated value is fine
-		if (originalText == null || originalText.length() == 0) {
+		if (originalText == null || originalText.isEmpty()) {
 			force = false;
 		}
 

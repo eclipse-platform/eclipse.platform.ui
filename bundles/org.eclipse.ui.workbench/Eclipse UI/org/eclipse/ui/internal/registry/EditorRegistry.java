@@ -588,7 +588,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	 * @param defaultEditors the default editors to set
 	 */
 	private void setProductDefaults(String defaultEditors) {
-		if (defaultEditors == null || defaultEditors.length() == 0) {
+		if (defaultEditors == null || defaultEditors.isEmpty()) {
 			return;
 		}
 
@@ -637,7 +637,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 		try {
 			// Get the editors defined in the preferences store
 			String xmlString = store.getString(IPreferenceConstants.EDITORS);
-			if (xmlString == null || xmlString.length() == 0) {
+			if (xmlString == null || xmlString.isEmpty()) {
 				stream = new FileInputStream(
 						workbenchStatePath.append(IWorkbenchConstants.EDITOR_FILE_NAME).toOSString());
 				reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
@@ -846,7 +846,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 		try {
 			// Get the resource types
 			String xmlString = store.getString(IPreferenceConstants.RESOURCES);
-			if (xmlString == null || xmlString.length() == 0) {
+			if (xmlString == null || xmlString.isEmpty()) {
 				stream = new FileInputStream(
 						workbenchStatePath.append(IWorkbenchConstants.RESOURCE_TYPE_FILE_NAME).toOSString());
 				reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
@@ -906,7 +906,7 @@ public class EditorRegistry extends EventManager implements IEditorRegistry, IEx
 	 */
 	private String mappingKeyFor(FileEditorMapping mapping) {
 		return mappingKeyFor(
-				mapping.getName() + (mapping.getExtension().length() == 0 ? "" : "." + mapping.getExtension())); //$NON-NLS-1$ //$NON-NLS-2$
+				mapping.getName() + (mapping.getExtension().isEmpty() ? "" : "." + mapping.getExtension())); //$NON-NLS-1$ //$NON-NLS-2$
 	}
 
 	/**

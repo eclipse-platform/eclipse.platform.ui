@@ -512,7 +512,7 @@ public class ProgressInfoItem extends Composite {
 				}
 
 				if (subTaskString != null) {
-					if (taskString == null || taskString.length() == 0) {
+					if (taskString == null || taskString.isEmpty()) {
 						taskString = subTaskString;
 					} else {
 						taskString = NLS.bind(ProgressMessages.JobInfo_DoneNoProgressMessage, taskString,
@@ -526,7 +526,7 @@ public class ProgressInfoItem extends Composite {
 				Job job = jobInfo.getJob();
 				IStatus result = job.getResult();
 
-				if (result == null || result.getMessage().length() == 0 && !info.isJobInfo()) {
+				if (result == null || result.getMessage().isEmpty() && !info.isJobInfo()) {
 					setLinkText(job, getJobNameAndStatus(jobInfo), i);
 				} else {
 					setLinkText(job, result.getMessage(), i);

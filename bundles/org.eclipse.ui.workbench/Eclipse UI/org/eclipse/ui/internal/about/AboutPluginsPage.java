@@ -677,7 +677,7 @@ class BundlePatternFilter extends ViewerFilter {
 	private TextMatcher matcher;
 
 	public void setPattern(String searchPattern) {
-		if (searchPattern == null || searchPattern.length() == 0) {
+		if (searchPattern == null || searchPattern.isEmpty()) {
 			this.matcher = null;
 		} else {
 			String pattern = "*" + searchPattern + "*"; //$NON-NLS-1$//$NON-NLS-2$

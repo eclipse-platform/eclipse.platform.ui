@@ -193,11 +193,11 @@ public class WorkbenchServiceRegistry implements IExtensionChangeHandler {
 	private void processVariables(IConfigurationElement[] children) {
 		for (IConfigurationElement configElement : children) {
 			String name = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_NAME);
-			if (name == null || name.length() == 0) {
+			if (name == null || name.isEmpty()) {
 				continue;
 			}
 			String level = configElement.getAttribute(IWorkbenchRegistryConstants.ATT_PRIORITY_LEVEL);
-			if (level == null || level.length() == 0) {
+			if (level == null || level.isEmpty()) {
 				level = WORKBENCH_LEVEL;
 			} else {
 				boolean found = false;

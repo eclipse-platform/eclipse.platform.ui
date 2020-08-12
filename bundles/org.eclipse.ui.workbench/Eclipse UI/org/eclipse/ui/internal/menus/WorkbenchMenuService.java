@@ -117,7 +117,7 @@ public class WorkbenchMenuService implements IMenuService, IMenuServiceWorkaroun
 	@Override
 	public void addContributionFactory(final AbstractContributionFactory factory) {
 		MenuLocationURI location = new MenuLocationURI(factory.getLocation());
-		if (location.getPath() == null || location.getPath().length() == 0) {
+		if (location.getPath() == null || location.getPath().isEmpty()) {
 			WorkbenchPlugin.log("WorkbenchMenuService.addContributionFactory: Invalid menu URI: " + location); //$NON-NLS-1$
 			return;
 		}
@@ -128,7 +128,7 @@ public class WorkbenchMenuService implements IMenuService, IMenuServiceWorkaroun
 				// configElement);
 			} else {
 				String query = location.getQuery();
-				if (query == null || query.length() == 0) {
+				if (query == null || query.isEmpty()) {
 					query = "after=additions"; //$NON-NLS-1$
 				}
 				processToolbarChildren(factory, location, location.getPath(), query);
@@ -146,7 +146,7 @@ public class WorkbenchMenuService implements IMenuService, IMenuServiceWorkaroun
 			menuContribution.setParentId(location.getPath());
 		}
 		String query = location.getQuery();
-		if (query == null || query.length() == 0) {
+		if (query == null || query.isEmpty()) {
 			query = "after=additions"; //$NON-NLS-1$
 		}
 		menuContribution.setPositionInParent(query);
