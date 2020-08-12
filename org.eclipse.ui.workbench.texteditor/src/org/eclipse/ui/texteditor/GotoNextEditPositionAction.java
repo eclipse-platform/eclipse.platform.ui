@@ -97,7 +97,7 @@ public class GotoNextEditPositionAction extends Action implements IWorkbenchWind
 				editor = page.openEditor(editPosition.getEditorInput(), editPosition.getEditorId());
 			} catch (PartInitException ex) {
 				IStatus status = new Status(IStatus.ERROR, TextEditorPlugin.PLUGIN_ID, IStatus.OK,
-						"Go to Last Edit Location failed", ex); //$NON-NLS-1$
+						"Go to Next Edit Location failed", ex); //$NON-NLS-1$
 				TextEditorPlugin.getDefault().getLog().log(status);
 				return;
 			}

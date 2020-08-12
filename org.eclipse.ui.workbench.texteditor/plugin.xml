@@ -597,17 +597,17 @@
 	        commandId="org.eclipse.ui.edit.text.gotoLastEditPosition"
 	        contextId="org.eclipse.ui.contexts.window"
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-	        sequence="CTRL+Q"/>
-	  <key
-	        commandId="org.eclipse.ui.edit.text.gotoLastEditPosition"
-	        contextId="org.eclipse.ui.contexts.window"
-			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
 	        sequence="M3+CTRL+ARROW_LEFT"/>
 	  <key
 	        commandId="org.eclipse.ui.edit.text.gotoNextEditPosition"
 	        contextId="org.eclipse.ui.contexts.window"
 			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
 	        sequence="M3+CTRL+ARROW_RIGHT"/>
+	  <key
+	        commandId="org.eclipse.ui.edit.text.gotoLastEditPosition"
+	        contextId="org.eclipse.ui.contexts.window"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+	        sequence="CTRL+Q"/><!-- legacy mapping -->
 	  <key
 	        commandId="org.eclipse.ui.edit.text.smartEnter"
 	        contextId="org.eclipse.ui.textEditorScope"

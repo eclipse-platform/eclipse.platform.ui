@@ -470,19 +470,6 @@
             id="org.eclipse.ui.edit.text.actionSet.navigation">
          <action
                toolbarPath="org.eclipse.ui.workbench.navigate/history.group"
-               id="org.eclipse.ui.edit.text.gotoLastEditPosition"
-               class="org.eclipse.ui.texteditor.GotoLastEditPositionAction"
-               definitionId="org.eclipse.ui.edit.text.gotoLastEditPosition"
-               disabledIcon="$nl$/icons/full/dtool16/last_edit_pos.png"
-               icon="$nl$/icons/full/etool16/last_edit_pos.png"
-               helpContextId="org.eclipse.ui.goto_last_edit_position_action_context"
-               label="%goToLastEditPosition.label"
-               menubarPath="navigate/"
-               tooltip="%goToLastEditPosition.tooltip"
-               initialEnabled="false">
-         </action>
-         <action
-               toolbarPath="org.eclipse.ui.workbench.navigate/history.group"
                id="org.eclipse.ui.edit.text.gotoNextEditPosition"
                class="org.eclipse.ui.texteditor.GotoNextEditPositionAction"
                definitionId="org.eclipse.ui.edit.text.gotoNextEditPosition"
@@ -492,6 +479,19 @@
                label="%goToNextEditPosition.label"
                menubarPath="navigate/"
                tooltip="%goToNextEditPosition.tooltip"
+               initialEnabled="false">
+         </action>
+         <action
+               toolbarPath="org.eclipse.ui.workbench.navigate/history.group"
+               id="org.eclipse.ui.edit.text.gotoLastEditPosition"
+               class="org.eclipse.ui.texteditor.GotoLastEditPositionAction"
+               definitionId="org.eclipse.ui.edit.text.gotoLastEditPosition"
+               disabledIcon="$nl$/icons/full/dtool16/last_edit_pos.png"
+               icon="$nl$/icons/full/etool16/last_edit_pos.png"
+               helpContextId="org.eclipse.ui.goto_last_edit_position_action_context"
+               label="%goToLastEditPosition.label"
+               menubarPath="navigate/"
+               tooltip="%goToLastEditPosition.tooltip"
                initialEnabled="false">
          </action>
       </actionSet>
