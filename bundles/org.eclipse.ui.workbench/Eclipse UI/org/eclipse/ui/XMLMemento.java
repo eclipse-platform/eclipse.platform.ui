@@ -131,7 +131,7 @@ public final class XMLMemento implements IMemento {
 		if (exception != null) {
 			problemText = exception.getMessage();
 		}
-		if (problemText == null || problemText.length() == 0) {
+		if (problemText == null || problemText.isEmpty()) {
 			problemText = errorMessage != null ? errorMessage : WorkbenchMessages.XMLMemento_noElement;
 		}
 		throw new WorkbenchException(problemText, exception);

@@ -1448,10 +1448,10 @@ public class WorkbenchWindow implements IWorkbenchWindow {
 		// For sub-menu management -all- items must be id'd so enforce this
 		// here (we could optimize by checking the 'name' of the config
 		// element == "menu"
-		if (id == null || id.length() == 0) {
+		if (id == null || id.isEmpty()) {
 			id = getCommandId(element);
 		}
-		if (id == null || id.length() == 0) {
+		if (id == null || id.isEmpty()) {
 			id = element.toString();
 		}
 

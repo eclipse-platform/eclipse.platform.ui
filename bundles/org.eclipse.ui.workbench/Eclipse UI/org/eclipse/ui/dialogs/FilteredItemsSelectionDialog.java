@@ -2480,7 +2480,7 @@ public abstract class FilteredItemsSelectionDialog extends SelectionStatusDialog
 		public Object removeHistoryElement(Object item) {
 			if (this.selectionHistory != null)
 				this.selectionHistory.remove(item);
-			if (filter == null || filter.getPattern().length() == 0) {
+			if (filter == null || filter.getPattern().isEmpty()) {
 				items.remove(item);
 				duplicates.remove(item);
 				this.lastSortedItems.remove(item);

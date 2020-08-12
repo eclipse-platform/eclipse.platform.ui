@@ -227,7 +227,7 @@ public class EditorReference extends WorkbenchPartReference implements IEditorRe
 	@Override
 	public String getTitle() {
 		String label = Util.safeString(getModel().getLocalizedLabel());
-		if (label.length() == 0) {
+		if (label.isEmpty()) {
 			if (input == null) {
 				if (descriptor != null) {
 					return descriptor.getLabel();

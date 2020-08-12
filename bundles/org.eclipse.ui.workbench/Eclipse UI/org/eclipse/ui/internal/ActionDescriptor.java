@@ -346,7 +346,7 @@ public class ActionDescriptor implements IPluginContribution {
 	 */
 	private void processAccelerator(IAction action, String acceleratorText) {
 
-		if (acceleratorText.length() == 0) {
+		if (acceleratorText.isEmpty()) {
 			return;
 		}
 

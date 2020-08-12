@@ -168,7 +168,7 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 
 			@Override
 			public void widgetSelected(SelectionEvent e) {
-				if (text.getSelectionText().length() == 0) {
+				if (text.getSelectionText().isEmpty()) {
 					if (copyAction != null && !copyAction.isDisposed()) {
 						copyAction.setEnabled(false);
 					}
@@ -270,7 +270,7 @@ public class DefaultDetailsArea extends AbstractStatusAreaProvider {
 
 		});
 		text.setMenu(menu);
-		if (text.getSelectionText().length() == 0) {
+		if (text.getSelectionText().isEmpty()) {
 			copyAction.setEnabled(false);
 		}
 	}

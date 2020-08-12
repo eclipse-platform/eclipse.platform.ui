@@ -69,7 +69,7 @@ public class PreferenceProvider extends QuickAccessProvider {
 			if (!WorkbenchActivityHelper.filterItem(subNode)) {
 				PreferenceElement preferenceElement = new PreferenceElement(subNode, prefix);
 				result.add(preferenceElement);
-				String nestedPrefix = prefix.length() == 0 ? subNode.getLabelText() : (prefix + "/" + subNode.getLabelText()); //$NON-NLS-1$
+				String nestedPrefix = prefix.isEmpty() ? subNode.getLabelText() : (prefix + "/" + subNode.getLabelText()); //$NON-NLS-1$
 				collectElements(nestedPrefix, subNode.getSubNodes(), result);
 			}
 		}

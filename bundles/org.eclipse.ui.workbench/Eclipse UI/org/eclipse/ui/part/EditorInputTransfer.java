@@ -202,7 +202,7 @@ public class EditorInputTransfer extends ByteArrayTransfer {
 		String factoryId = dataIn.readUTF();
 		String xmlString = dataIn.readUTF();
 
-		if (xmlString == null || xmlString.length() == 0) {
+		if (xmlString == null || xmlString.isEmpty()) {
 			return null;
 		}
 

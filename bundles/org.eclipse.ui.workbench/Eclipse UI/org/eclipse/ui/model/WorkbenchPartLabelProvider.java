@@ -80,7 +80,7 @@ public final class WorkbenchPartLabelProvider extends LabelProvider implements I
 		if (element instanceof IWorkbenchPart) {
 			IWorkbenchPart part = (IWorkbenchPart) element;
 			String path = part.getTitleToolTip();
-			if (path == null || path.trim().length() == 0) {
+			if (path == null || path.trim().isEmpty()) {
 				return part.getTitle();
 			}
 			return part.getTitle() + "  [" + path + "]"; //$NON-NLS-1$ //$NON-NLS-2$
@@ -88,7 +88,7 @@ public final class WorkbenchPartLabelProvider extends LabelProvider implements I
 		if (element instanceof Saveable) {
 			Saveable model = (Saveable) element;
 			String path = model.getToolTipText();
-			if (path == null || path.trim().length() == 0) {
+			if (path == null || path.trim().isEmpty()) {
 				return model.getName();
 			}
 			return model.getName() + "  [" + path + "]"; //$NON-NLS-1$ //$NON-NLS-2$

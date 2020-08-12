@@ -546,7 +546,7 @@ public class CommandContributionItem extends ContributionItem {
 				try {
 					text = command.getCommand().getName();
 					tooltip = command.getCommand().getDescription();
-					if (tooltip == null || tooltip.trim().length() == 0) {
+					if (tooltip == null || tooltip.trim().isEmpty()) {
 						tooltip = text;
 					}
 				} catch (NotDefinedException e) {

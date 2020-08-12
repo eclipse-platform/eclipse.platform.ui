@@ -102,7 +102,7 @@ public class LabelRetargetAction extends RetargetAction {
 		} else {
 			// If no text is specified by the handler, use the default text. Fixes 22529.
 			String handlerText = handler.getText();
-			if (handlerText == null || handlerText.length() == 0) {
+			if (handlerText == null || handlerText.isEmpty()) {
 				handlerText = defaultText;
 			}
 			super.setText(appendAccelerator(handlerText));

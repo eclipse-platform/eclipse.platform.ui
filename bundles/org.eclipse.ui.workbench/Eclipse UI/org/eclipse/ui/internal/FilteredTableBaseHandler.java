@@ -490,7 +490,7 @@ public abstract class FilteredTableBaseHandler extends AbstractHandler implement
 					break;
 				case SWT.DEL:
 					// no filter text, closes selected item
-					if (text.getText().length() == 0) {
+					if (text.getText().isEmpty()) {
 						deleteSelectedItem();
 					}
 					break;

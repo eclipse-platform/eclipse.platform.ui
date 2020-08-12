@@ -500,7 +500,7 @@ public class FilteredList extends Composite {
 	 * elements after filtering.
 	 */
 	private int filter() {
-		if (((fFilter == null) || (fFilter.length() == 0)) && !fMatchEmptyString) {
+		if (((fFilter == null) || (fFilter.isEmpty())) && !fMatchEmptyString) {
 			return 0;
 		}
 		fFilterMatcher.setFilter(fFilter.trim(), fIgnoreCase, false);

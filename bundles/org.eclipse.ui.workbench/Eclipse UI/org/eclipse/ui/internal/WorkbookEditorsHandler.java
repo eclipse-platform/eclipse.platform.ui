@@ -109,7 +109,7 @@ public class WorkbookEditorsHandler extends FilteredTableBaseHandler {
 
 	@Override
 	protected void setMatcherString(String pattern) {
-		if (pattern.length() == 0) {
+		if (pattern.isEmpty()) {
 			searchPattern = null;
 		} else {
 			searchPattern = new SearchPattern();

@@ -140,7 +140,7 @@ public class WorkbenchThemeManager extends EventManager implements IThemeManager
 				.getDefaultString(IWorkbenchPreferenceConstants.CURRENT_THEME_ID);
 
 		// If not set, use default
-		if (themeId.length() == 0)
+		if (themeId.isEmpty())
 			themeId = IThemeManager.DEFAULT_THEME;
 
 		final boolean highContrast = Display.getCurrent().getHighContrast();

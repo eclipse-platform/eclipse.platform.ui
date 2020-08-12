@@ -4235,7 +4235,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 	public IViewPart showView(final String viewID, final String secondaryID, final int mode) throws PartInitException {
 
 		if (secondaryID != null) {
-			if (secondaryID.length() == 0 || secondaryID.indexOf(':') != -1) {
+			if (secondaryID.isEmpty() || secondaryID.indexOf(':') != -1) {
 				throw new IllegalArgumentException(WorkbenchMessages.WorkbenchPage_IllegalSecondaryId);
 			}
 		}
@@ -5468,7 +5468,7 @@ public class WorkbenchPage implements IWorkbenchPage {
 
 		String newValue = hiddenIDs.replaceFirst(persistedID, ""); //$NON-NLS-1$
 		if (hiddenIDs.length() != newValue.length()) {
-			if (newValue.length() == 0)
+			if (newValue.isEmpty())
 				perspective.getPersistedState().remove(ModeledPageLayout.HIDDEN_ITEMS_KEY);
 			else
 				perspective.getPersistedState().put(ModeledPageLayout.HIDDEN_ITEMS_KEY, newValue);

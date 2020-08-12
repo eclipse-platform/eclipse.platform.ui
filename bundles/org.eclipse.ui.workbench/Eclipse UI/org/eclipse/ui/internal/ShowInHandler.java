@@ -122,7 +122,7 @@ public class ShowInHandler extends AbstractHandler implements IElementUpdater {
 	@Override
 	public void updateElement(UIElement element, Map parameters) {
 		String targetId = (String) parameters.get(IWorkbenchCommandConstants.NAVIGATE_SHOW_IN_PARM_TARGET);
-		if (targetId == null || targetId.length() == 0) {
+		if (targetId == null || targetId.isEmpty()) {
 			return;
 		}
 		IViewRegistry reg = WorkbenchPlugin.getDefault().getViewRegistry();

@@ -294,7 +294,7 @@ public abstract class WorkbenchPartReference implements IWorkbenchPartReference,
 	@Override
 	public String getTitleToolTip() {
 		String toolTip = (String) part.getTransientData().get(IPresentationEngine.OVERRIDE_TITLE_TOOL_TIP_KEY);
-		if (toolTip == null || toolTip.length() == 0)
+		if (toolTip == null || toolTip.isEmpty())
 			toolTip = part.getLocalizedTooltip();
 		return Util.safeString(toolTip);
 	}

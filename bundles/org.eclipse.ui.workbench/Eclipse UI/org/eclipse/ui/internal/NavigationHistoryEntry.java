@@ -51,7 +51,7 @@ public class NavigationHistoryEntry {
 			historyText = location.getText();
 		}
 		// ensure that the historyText is initialized to something
-		if (historyText == null || historyText.length() == 0) {
+		if (historyText == null || historyText.isEmpty()) {
 			if (part != null) {
 				historyText = part.getTitle();
 			}
