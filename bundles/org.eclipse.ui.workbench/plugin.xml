@@ -22,10 +22,6 @@
               beforefragment="true"
               class="org.eclipse.ui.internal.BindingToModelProcessor">
         </processor>
-         <processor
-               beforefragment="true"
-               class="org.eclipse.ui.internal.ModelMigrationProcessor">
-         </processor>
      </extension>
    <extension point="org.eclipse.ui.themes">
       <themeElementCategory
