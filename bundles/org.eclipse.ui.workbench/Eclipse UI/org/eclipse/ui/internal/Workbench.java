@@ -205,7 +205,6 @@ import org.eclipse.ui.internal.dialogs.PropertyPageContributorManager;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityEditor;
 import org.eclipse.ui.internal.e4.compatibility.CompatibilityPart;
 import org.eclipse.ui.internal.e4.compatibility.E4Util;
-import org.eclipse.ui.internal.e4.migration.WorkbenchMigrationProcessor;
 import org.eclipse.ui.internal.handlers.LegacyHandlerService;
 import org.eclipse.ui.internal.help.WorkbenchHelpSystem;
 import org.eclipse.ui.internal.intro.IIntroRegistry;
@@ -526,10 +525,6 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 		return instance;
 	}
 
-	private static boolean isFirstE4WorkbenchRun(MApplication app) {
-		return app.getContext().containsKey(E4Workbench.NO_SAVED_MODEL_FOUND);
-	}
-
 	/**
 	 * Creates the workbench and associates it with the the given display and
 	 * workbench advisor, and runs the workbench UI. This entails processing and
@@ -579,10 +574,7 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 
 				MApplication appModel = e4Workbench.getApplication();
 				IEclipseContext context = e4Workbench.getContext();
-				WorkbenchMigrationProcessor migrationProcessor = null;
-				if (isFirstE4WorkbenchRun(appModel)) {
-					migrationProcessor = rune3WorkbenchMigration(context);
-				}
+
 				// create the workbench instance
 				Workbench workbench = new Workbench(display, advisor, appModel, context);
 
@@ -643,11 +635,6 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 				setSearchContribution(appModel, true);
 				// run the legacy workbench once
 				returnCode[0] = workbench.runUI();
-				if (migrationProcessor != null && migrationProcessor.isWorkbenchMigrated()) {
-					migrationProcessor.updatePartsAfterMigration(WorkbenchPlugin.getDefault().getPerspectiveRegistry(),
-							WorkbenchPlugin.getDefault().getViewRegistry());
-					WorkbenchPlugin.log(StatusUtil.newStatus(IStatus.INFO, "Workbench migration finished", null)); //$NON-NLS-1$
-				}
 
 				if (returnCode[0] == PlatformUI.RETURN_OK) {
 					// run the e4 event loop and instantiate ... well, stuff
@@ -672,26 +659,6 @@ public final class Workbench extends EventManager implements IWorkbench, org.ecl
 			}
 		});
 		return returnCode[0];
-	}
-
-	private static WorkbenchMigrationProcessor rune3WorkbenchMigration(IEclipseContext context) {
-		WorkbenchMigrationProcessor migrationProcessor = null;
-		try {
-			migrationProcessor = ContextInjectionFactory.make(WorkbenchMigrationProcessor.class, context);
-		} catch (InjectionException e1) {
-			WorkbenchPlugin.log(e1);
-		}
-
-		if (migrationProcessor != null && migrationProcessor.isLegacyWorkbenchDetected()) {
-			try {
-				WorkbenchPlugin.log(StatusUtil.newStatus(IStatus.INFO, "Workbench migration started", null)); //$NON-NLS-1$
-				migrationProcessor.migrate();
-			} catch (Exception e2) {
-				WorkbenchPlugin.log("Workbench migration failed", e2); //$NON-NLS-1$
-				migrationProcessor.restoreDefaultModel();
-			}
-		}
-		return migrationProcessor;
 	}
 
 	private static void setSearchContribution(MApplication app, boolean enabled) {
