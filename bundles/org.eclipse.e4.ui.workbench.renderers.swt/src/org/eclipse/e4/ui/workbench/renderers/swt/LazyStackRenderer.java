@@ -70,6 +70,9 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		}
 		LazyStackRenderer lsr = (LazyStackRenderer) stack.getRenderer();
 
+		Control widget = (Control) stack.getWidget();
+		widget.setRedraw(false);
+
 		// Gather up the elements that are being 'hidden' by this change
 		MUIElement oldSel = (MUIElement) event.getProperty(UIEvents.EventTags.OLD_VALUE);
 		if (oldSel != null) {
@@ -79,6 +82,7 @@ public abstract class LazyStackRenderer extends SWTPartRenderer {
 		if (stack.getSelectedElement() != null) {
 			lsr.showTab(stack.getSelectedElement());
 		}
+		widget.setRedraw(true);
 	};
 
 	public void init(IEventBroker eventBroker) {
