@@ -268,6 +268,9 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 			return;
 		default:
 			if (0 <= part && part < parent.getItemCount()) {
+				// Sometimes the clipping is incorrect, see Bug 428697 and Bug 563345
+				// Resetting it before draw the tabs prevents draw issues.
+				gc.setClipping((Rectangle) null);
 				gc.setAdvanced(true);
 				if (bounds.width == 0 || bounds.height == 0)
 					return;
@@ -628,11 +631,6 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 
 			// Remember for use in header drawing
 			if (cornerSize == SQUARE_CORNER) {
-				//We don't require clipping.  The clip is not clear coming in, but
-				//in the round case it is always set coming in and cleared going out
-				//so in the square case we can just clear off the bat.
-				gc.setClipping((Rectangle) null);
-
 				Color color = hotUnselectedTabsColorBackground;
 				if (color == null) {
 					// Fallback: if color was not set, use white for highlighting
