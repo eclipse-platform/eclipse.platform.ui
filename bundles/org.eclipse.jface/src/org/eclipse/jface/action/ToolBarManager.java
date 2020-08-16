@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -12,6 +12,7 @@
  *     IBM Corporation - initial API and implementation
  *     Andrey Loskutov <loskutov@gmx.de> - Bug 457211
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 457214
+ *     Rolf Theunissen <rolf.theunissen@gmail.com> - Bug 90757
  *******************************************************************************/
 package org.eclipse.jface.action;
 
@@ -210,31 +211,38 @@ public class ToolBarManager extends ContributionManager implements IToolBarManag
 	 */
 	protected void relayout(ToolBar layoutBar, int oldCount, int newCount) {
 		if (oldCount != newCount && newCount != 0) {
-			Point beforePack = layoutBar.getSize();
-			layoutBar.pack(true);
-			Point afterPack = layoutBar.getSize();
+			Composite parent = layoutBar.getParent();
+			try {
+				parent.setRedraw(false);
 
-			// If the TB didn't change size then we're done
-			if (beforePack.equals(afterPack)) {
-				return;
-			}
+				Point beforePack = layoutBar.getSize();
+				layoutBar.pack(true);
+				Point afterPack = layoutBar.getSize();
 
-			// OK, we need to re-layout the TB
-			layoutBar.getParent().pack();
-			layoutBar.getParent().requestLayout();
+				// If the TB didn't change size then we're done
+				if (beforePack.equals(afterPack)) {
+					return;
+				}
 
-			// Now, if we're in a CoolBar then change the CoolItem size as well
-			if (layoutBar.getParent() instanceof CoolBar) {
-				CoolBar cb = (CoolBar) layoutBar.getParent();
-				CoolItem[] items = cb.getItems();
-				for (CoolItem item : items) {
-					if (item.getControl() == layoutBar) {
-						Point curSize = item.getSize();
-						item.setSize(curSize.x + (afterPack.x - beforePack.x),
-								curSize.y + (afterPack.y - beforePack.y));
-						return;
+				// OK, we need to re-layout the TB
+				parent.pack();
+				parent.requestLayout();
+
+				// Now, if we're in a CoolBar then change the CoolItem size as well
+				if (parent instanceof CoolBar) {
+					CoolBar cb = (CoolBar) layoutBar.getParent();
+					CoolItem[] items = cb.getItems();
+					for (CoolItem item : items) {
+						if (item.getControl() == layoutBar) {
+							Point curSize = item.getSize();
+							item.setSize(curSize.x + (afterPack.x - beforePack.x),
+									curSize.y + (afterPack.y - beforePack.y));
+							return;
+						}
 					}
 				}
+			} finally {
+				parent.setRedraw(true);
 			}
 		}
 	}

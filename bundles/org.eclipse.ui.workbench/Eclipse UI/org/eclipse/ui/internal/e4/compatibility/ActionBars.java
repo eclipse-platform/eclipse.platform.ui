@@ -14,9 +14,6 @@
 
 package org.eclipse.ui.internal.e4.compatibility;
 
-import org.eclipse.e4.ui.model.application.ui.MElementContainer;
-import org.eclipse.e4.ui.model.application.ui.MGenericStack;
-import org.eclipse.e4.ui.model.application.ui.advanced.MPlaceholder;
 import org.eclipse.e4.ui.model.application.ui.basic.MPart;
 import org.eclipse.e4.ui.model.application.ui.menu.MToolBar;
 import org.eclipse.e4.ui.workbench.renderers.swt.ToolBarManagerRenderer;
@@ -25,9 +22,6 @@ import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.action.MenuManager;
 import org.eclipse.jface.action.ToolBarManager;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Control;
 import org.eclipse.ui.IActionBars;
 import org.eclipse.ui.SubActionBars;
 import org.eclipse.ui.services.IServiceLocator;
@@ -67,20 +61,7 @@ public class ActionBars extends SubActionBars {
 		getStatusLineManager().update(false);
 		getMenuManager().update(false);
 		if (toolbarManager != null) {
-			// System.err.println("update toolbar manager for " + part.getElementId());
-			// //$NON-NLS-1$
-			Control tbCtrl = toolbarManager.getControl();
-			if (tbCtrl == null || tbCtrl.isDisposed()) {
-				if (part.getContext() != null) {
-					// TODO what to do
-				}
-			} else {
-				toolbarManager.update(true);
-				if (!tbCtrl.isDisposed()) {
-					Control packParent = getPackParent(tbCtrl);
-					packParent.pack();
-				}
-			}
+			toolbarManager.update(true);
 
 			MToolBar toolbar = part.getToolbar();
 			if (toolbar != null) {
@@ -93,35 +74,6 @@ public class ActionBars extends SubActionBars {
 		}
 
 		super.updateActionBars();
-	}
-
-	private Control getPackParent(Control control) {
-		Composite parent = control.getParent();
-		while (parent != null) {
-			if (parent instanceof CTabFolder) {
-				Control topRight = ((CTabFolder) parent).getTopRight();
-				if (topRight != null) {
-					return topRight;
-				}
-				break;
-			}
-			parent = parent.getParent();
-		}
-		return control.getParent();
-	}
-
-	boolean isSelected(MPart part) {
-		MElementContainer<?> parent = part.getParent();
-		if (parent == null) {
-			MPlaceholder placeholder = part.getCurSharedRef();
-			if (placeholder == null) {
-				return false;
-			}
-
-			parent = placeholder.getParent();
-			return parent instanceof MGenericStack ? parent.getSelectedElement() == placeholder : parent != null;
-		}
-		return !(parent instanceof MGenericStack) || parent.getSelectedElement() == part;
 	}
 
 	@Override
