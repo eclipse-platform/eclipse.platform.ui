@@ -13,7 +13,6 @@
  *******************************************************************************/
 package org.eclipse.update.internal.configurator;
 
-import java.io.DataInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -31,7 +30,6 @@ import org.eclipse.update.configurator.IPlatformConfiguration.IFeatureEntry;
 import org.eclipse.update.configurator.IPlatformConfigurationFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 
@@ -55,12 +53,6 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	// Location of the configuration data
 	private Location configLocation;
 
-	//Need to store that because it is not provided by the platformConfiguration
-	private long lastTimeStamp;
-
-	// The expected states timestamp
-	private long lastStateTimeStamp;
-
 	// Singleton
 	private static ConfigurationActivator configurator;
 
@@ -81,34 +73,9 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			throw e;
 		}
 
-		//Short cut, if the configuration has not changed
-		if (canRunWithCachedData()) {
-			Utils.debug("Running with cached data"); //$NON-NLS-1$
-			registerBundleGroupProvider();
-			return;
-		}
-
 		Utils.debug("Starting update configurator..."); //$NON-NLS-1$
-
-		registerBundleGroupProvider();
 	}
 	
-	private void registerBundleGroupProvider() {
-		final String serviceName = IBundleGroupProvider.class.getName();
-		try {
-			//don't register the service if this bundle has already registered it declaratively
-			ServiceReference<?>[] refs = getBundleContext().getServiceReferences(serviceName, null);
-			if (refs != null) {
-				for (ServiceReference<?> ref : refs)
-					if (PI_CONFIGURATOR.equals(ref.getBundle().getSymbolicName()))
-						return;
-			}
-		} catch (InvalidSyntaxException e) {
-			//can't happen because we don't pass a filter
-		}
-		bundleGroupProviderSR = getBundleContext().registerService(serviceName, this, null);
-	}
-
 	private void initialize() throws Exception {
 		// TODO this test is not really needed any more than any plugin has 
 		// to test to see if the runtime is running.  It was there from earlier days
@@ -134,22 +101,6 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 		if (configuration == null)
 			throw Utils.newCoreException(NLS.bind(Messages.ConfigurationActivator_createConfig, (new String[] {configLocation.getURL().toExternalForm()})), null);
 
-		DataInputStream stream = null;
-		try {
-			stream = new DataInputStream(new URL(configLocation.getURL(), NAME_SPACE + '/' + LAST_CONFIG_STAMP).openStream());
-			lastTimeStamp = stream.readLong();
-			lastStateTimeStamp = stream.readLong();
-		} catch (Exception e) {
-			lastTimeStamp = configuration.getChangeStamp() - 1;
-			lastStateTimeStamp = -1;
-		} finally {
-			if (stream != null)
-				try {
-					stream.close();
-				} catch (IOException e1) {
-					Utils.log(e1.getLocalizedMessage());
-				}
-		}
 	}
 
 	@Override
@@ -198,11 +149,6 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 			// we have what we want - release the service
 			context.ungetService(reference);
 		}
-	}
-
-	private boolean canRunWithCachedData() {
-		return !"true".equals(context.getProperty("osgi.checkConfiguration")) && //$NON-NLS-1$ //$NON-NLS-2$
-				lastTimeStamp == configuration.getChangeStamp() && lastStateTimeStamp == Utils.getStateStamp();
 	}
 
 	public static BundleContext getBundleContext() {
