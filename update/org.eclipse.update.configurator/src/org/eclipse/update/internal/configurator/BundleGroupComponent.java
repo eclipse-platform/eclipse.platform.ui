@@ -15,12 +15,14 @@ package org.eclipse.update.internal.configurator;
 
 import org.eclipse.core.runtime.IBundleGroup;
 import org.eclipse.core.runtime.IBundleGroupProvider;
+import org.osgi.service.component.annotations.Component;
 
 /**
  * Declarative services component that provides an implementation of
  * {@link IBundleGroupProvider}. This allows the bundle group provider to be
  * made available in the service registry before this bundle has started.
  */
+@Component
 public class BundleGroupComponent implements IBundleGroupProvider {
 
 	@Override
