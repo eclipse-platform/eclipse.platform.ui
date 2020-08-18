@@ -77,12 +77,6 @@ public class ConfigurationActivator implements BundleActivator, IBundleGroupProv
 	}
 	
 	private void initialize() throws Exception {
-		// TODO this test is not really needed any more than any plugin has 
-		// to test to see if the runtime is running.  It was there from earlier days
-		// where startup was much more disjoint.  Some day that level of decoupling
-		// will return but for now...
-		if (!Utils.isRunning())
-			throw new Exception(Messages.ConfigurationActivator_initialize);
 
 		configLocation = Utils.getConfigurationLocation();
 		// create the name space directory for update (configuration/org.eclipse.update)
