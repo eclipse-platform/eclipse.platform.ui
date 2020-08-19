@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2013, 2020 IBM Corporation and others.
+ * Copyright (c) 2013, 2018 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,29 +11,27 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Lars Vogel <Lars.Vogel@vogella.com> - Bug 472654
- *     Pierre-Yves Bigourdan <pyvesdev@gmail.com> - Bug 562536 - Allow changing sash width
  *******************************************************************************/
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import java.util.ArrayList;
 import java.util.List;
 import org.eclipse.core.runtime.Platform;
-import org.eclipse.e4.ui.internal.css.swt.ISashLayout;
 import org.eclipse.e4.ui.model.application.ui.MGenericTile;
 import org.eclipse.e4.ui.model.application.ui.MUIElement;
 import org.eclipse.e4.ui.workbench.IPresentationEngine;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseTrackListener;
 import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Layout;
-import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Shell;
 
-@SuppressWarnings("restriction")
-public class SashLayout extends Layout implements ISashLayout {
+public class SashLayout extends Layout {
 	// The minimum value (as a percentage) that a sash can be dragged to
 	int minSashPercent = 10;
 
@@ -62,38 +60,49 @@ public class SashLayout extends Layout implements ISashLayout {
 	}
 
 	List<SashRect> sashes = new ArrayList<>();
+
+	boolean draggingSashes = false;
 	List<SashRect> sashesToDrag;
 
-	static enum State {
-		DRAGGING, HOVERING_NS, HOVERING_WE, HOVERING_ALL, OTHER
-	}
-
-	State state = State.OTHER;
-
 	public boolean layoutUpdateInProgress = false;
+
+	/**
+	 * Remember last cursor set on the sash to prevent repeated setCursor calls.
+	 * Value can be <code>0</code> which means default cursor was set or one of the
+	 * SWT.CURSOR_* constants.
+	 */
+	int lastCursor = 0;
 
 	public SashLayout(final Composite host, MUIElement root) {
 		this.root = root;
 		this.host = host;
 
-		Listener mouseMoveListener = this::onMouseMove;
-		Listener mouseUpListener = this::onMouseUp;
-		Listener mouseDownListener = this::onMouseDown;
-		Listener dragDetectListener = this::onDragDetect;
-		Listener activateListener = this::onActivate;
+		host.addMouseTrackListener(MouseTrackListener.mouseExitAdapter(e -> {
+			host.setCursor(null);
+			lastCursor = 0;
+		}));
 
-		host.getDisplay().addFilter(SWT.MouseMove, mouseMoveListener);
-		host.getDisplay().addFilter(SWT.MouseUp, mouseUpListener);
-		host.getDisplay().addFilter(SWT.MouseDown, mouseDownListener);
-		host.getDisplay().addFilter(SWT.DragDetect, dragDetectListener);
-		host.getDisplay().addFilter(SWT.Activate, activateListener);
+		host.addMouseMoveListener(this::onMouseMove);
 
-		host.addDisposeListener(e -> {
-			host.getDisplay().removeFilter(SWT.MouseMove, mouseMoveListener);
-			host.getDisplay().removeFilter(SWT.MouseUp, mouseUpListener);
-			host.getDisplay().removeFilter(SWT.MouseDown, mouseDownListener);
-			host.getDisplay().removeFilter(SWT.DragDetect, dragDetectListener);
-			host.getDisplay().removeFilter(SWT.Activate, activateListener);
+		host.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseUp(MouseEvent e) {
+				host.setCapture(false);
+				draggingSashes = false;
+			}
+
+			@Override
+			public void mouseDown(MouseEvent e) {
+				if (e.button != 1) {
+					return;
+				}
+
+				sashesToDrag = getSashRects(e.x, e.y);
+				if (sashesToDrag.size() > 0) {
+					draggingSashes = true;
+					host.setCapture(true);
+				}
+			}
 		});
 	}
 
@@ -103,19 +112,30 @@ public class SashLayout extends Layout implements ISashLayout {
 	 *
 	 * @param e the mouse event
 	 */
-	private void onMouseMove(Event e) {
-		if (!(e.widget instanceof Control)) {
-			return;
-		}
-		Control control = (Control) e.widget;
-		if (control.getShell() != host.getShell()) {
-			return;
-		}
-		Point relativeToHost = host.getDisplay().map(control, host, e.x, e.y);
-		if (state == State.DRAGGING) {
+	private void onMouseMove(MouseEvent e) {
+		if (!draggingSashes) {
+			// Set the cursor feedback
+			List<SashRect> sashList = getSashRects(e.x, e.y);
+			final int newCursor;
+			if (sashList.isEmpty()) {
+				newCursor = SWT.CURSOR_ARROW;
+			} else if (sashList.size() == 1) {
+				if (sashList.get(0).container.isHorizontal()) {
+					newCursor = SWT.CURSOR_SIZEWE;
+				} else {
+					newCursor = SWT.CURSOR_SIZENS;
+				}
+			} else {
+				newCursor = SWT.CURSOR_SIZEALL;
+			}
+			if (lastCursor != newCursor) {
+				host.setCursor(host.getDisplay().getSystemCursor(newCursor));
+				lastCursor = newCursor;
+			}
+		} else {
 			try {
 				layoutUpdateInProgress = true;
-				adjustWeights(sashesToDrag, relativeToHost.x, relativeToHost.y);
+				adjustWeights(sashesToDrag, e.x, e.y);
 				// FIXME SWT Win requires a synchronous layout call to update the UI
 				// see https://bugs.eclipse.org/bugs/show_bug.cgi?id=558392
 				// once this is fixed, the requestLayout call should be sufficient
@@ -133,112 +153,7 @@ public class SashLayout extends Layout implements ISashLayout {
 			} finally {
 				layoutUpdateInProgress = false;
 			}
-		} else {
-			// Set the cursor feedback. Comparison with the previous state is needed to
-			// prevent repeated setCursor calls.
-			List<SashRect> sashList = getSashRects(relativeToHost.x, relativeToHost.y);
-			if (sashList.isEmpty()) {
-				if (state != State.OTHER) {
-					state = State.OTHER;
-					host.setCursor(host.getDisplay().getSystemCursor(SWT.CURSOR_ARROW));
-				}
-				return; // Not an interaction with a sash: return now to avoid e.type = SWT.None call.
-			} else if (sashList.size() > 1) {
-				if (state != State.HOVERING_ALL) {
-					state = State.HOVERING_ALL;
-					host.setCursor(host.getDisplay().getSystemCursor(SWT.CURSOR_SIZEALL));
-				}
-			} else if (sashList.get(0).container.isHorizontal()) {
-				if (state != State.HOVERING_WE) {
-					state = State.HOVERING_WE;
-					host.setCursor(host.getDisplay().getSystemCursor(SWT.CURSOR_SIZEWE));
-				}
-			} else {
-				if (state != State.HOVERING_NS) {
-					state = State.HOVERING_NS;
-					host.setCursor(host.getDisplay().getSystemCursor(SWT.CURSOR_SIZENS));
-				}
-			}
 		}
-		e.type = SWT.None; // Filter out event as we're interacting with a sash.
-	}
-
-	/**
-	 * Used to signal the end of any layout changes when the mouse is released.
-	 *
-	 * @param e the mouse event
-	 */
-	private void onMouseUp(Event e) {
-		if (state == State.OTHER) {
-			return;
-		}
-		host.setCapture(false);
-		state = State.OTHER;
-		e.type = SWT.None;
-	}
-
-	/**
-	 * Used to signal and prepare the start of layout changes. The
-	 * {@link #onMouseMove(Event)} method will then keep track of the actual
-	 * dragging and perform layout updates.
-	 *
-	 * @param e the mouse event
-	 */
-	private void onMouseDown(Event e) {
-		if (state == State.OTHER || e.button != 1 || !(e.widget instanceof Control)) {
-			return;
-		}
-		Control control = (Control) e.widget;
-		if (control.getShell() != host.getShell()) {
-			return;
-		}
-
-		e.type = SWT.None; // Filter out event as we're interacting with a sash.
-
-		Point relativeToHost = host.getDisplay().map(control, host, e.x, e.y);
-		sashesToDrag = getSashRects(relativeToHost.x, relativeToHost.y);
-		if (sashesToDrag.size() > 0) {
-			state = State.DRAGGING;
-			host.setCapture(true);
-		}
-	}
-
-	/**
-	 * Used to filter out drag events when there is an ongoing interaction with a
-	 * sash, as layout updates through dragging are handled via the
-	 * {@link #onMouseMove(Event)} method.
-	 *
-	 * @param e the mouse event
-	 */
-	private void onDragDetect(Event e) {
-		if (state == State.OTHER) {
-			return;
-		}
-		e.type = SWT.None; // Filter out event as we're currently interacting with a sash.
-	}
-
-	/**
-	 * Used to filter out activate events when there is an ongoing interaction with
-	 * a sash. Without this, starting to update the sash layout by clicking with the
-	 * mouse ({@link #onMouseDown(Event)}) would change the active part.
-	 *
-	 * @param e the mouse event
-	 */
-	private void onActivate(Event e) {
-		if (state == State.OTHER) {
-			return;
-		}
-		e.type = SWT.None; // Filter out event as we're currently interacting with a sash.
-	}
-
-	@Override
-	public int getSashWidth() {
-		return sashWidth;
-	}
-
-	@Override
-	public void setSashWidth(int sashWidth) {
-		this.sashWidth = sashWidth;
 	}
 
 	@Override
