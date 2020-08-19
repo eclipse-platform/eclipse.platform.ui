@@ -18,6 +18,7 @@
 package org.eclipse.e4.ui.workbench.renderers.swt;
 
 import java.lang.reflect.Field;
+import java.util.Objects;
 import javax.inject.Inject;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences;
 import org.eclipse.core.runtime.preferences.IEclipsePreferences.IPreferenceChangeListener;
@@ -421,23 +422,20 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 			drawShadow(display, bounds, gc);
 	}
 
-	private int[] computeSquareTabOutline(int itemIndex, boolean onBottom, int startX, int endX, int bottomY,
+	private int[] computeSquareTabOutline(boolean onBottom, int startX, int endX, int bottomY,
 			Rectangle bounds, Point parentSize) {
 		int index = 0;
-		int outlineY = onBottom ? bottomY + bounds.height : bottomY - bounds.height - 1;
-		int[] points = new int[12];
+		int outlineY = onBottom ? bottomY + bounds.height : bottomY - bounds.height;
+		int[] points = new int[20];
 
-		if (itemIndex == 0 && bounds.x == -computeTrim(CTabFolderRenderer.PART_HEADER, SWT.NONE, 0, 0, 0, 0).x) {
-			points[index++] = startX;
-			points[index++] = bottomY;
-		} else {
-			if (active) {
-				points[index++] = shadowEnabled ? SIDE_DROP_WIDTH : 0 + INNER_KEYLINE + OUTER_KEYLINE;
-				points[index++] = bottomY;
-			}
-			points[index++] = startX;
-			points[index++] = bottomY;
-		}
+		int margin = shadowEnabled ? SIDE_DROP_WIDTH
+				: (Objects.equals(outerKeyline, tabOutlineColor) || Objects.equals(outerKeyline, parent.getBackground())
+						? 0
+						: 1);
+		points[index++] = margin;
+		points[index++] = bottomY;
+		points[index++] = startX;
+		points[index++] = bottomY;
 
 		points[index++] = startX;
 		points[index++] = outlineY;
@@ -449,15 +447,25 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		points[index++] = bottomY;
 
 		if (active) {
-			points[index++] = parentSize.x - (shadowEnabled ? SIDE_DROP_WIDTH : 0 + INNER_KEYLINE + OUTER_KEYLINE);
+			points[index++] = parentSize.x - 1 - margin;
 			points[index++] = bottomY;
 		}
+
+		points[index++] = parentSize.x - 1 - margin;
+		points[index++] = parentSize.y - 1;
+
+		points[index++] = points[0];
+		points[index++] = parentSize.y - 1;
+
+		points[index++] = points[0];
+		points[index++] = points[1];
 
 		int[] tmpPoints = new int[index];
 		System.arraycopy(points, 0, tmpPoints, 0, index);
 
 		return tmpPoints;
 	}
+
 
 	private int[] computeRoundTabOutline(int itemIndex, boolean onBottom, int bottomY, Rectangle bounds,
 			Point parentSize) {
@@ -520,7 +528,7 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		int bottomY = onBottom ? bounds.y - header : bounds.y + bounds.height;
 		int selectionX1, selectionY1, selectionX2, selectionY2;
 		int startX, endX;
-		int[] tmpPoints = null;
+		int[] tabOutlinePoints = null;
 		Point parentSize = parent.getSize();
 
 		gc.setClipping(0, onBottom ? bounds.y - header : bounds.y,
@@ -556,11 +564,11 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		selectionY2 = bottomY;
 
 		if (cornerSize == SQUARE_CORNER) {
-			tmpPoints = computeSquareTabOutline(itemIndex, onBottom, startX, endX, bottomY, bounds, parentSize);
+			tabOutlinePoints = computeSquareTabOutline(onBottom, startX, endX, bottomY, bounds, parentSize);
 			gc.fillRectangle(bounds);
 		} else {
-			tmpPoints = computeRoundTabOutline(itemIndex, onBottom, bottomY, bounds, parentSize);
-			gc.fillPolygon(tmpPoints);
+			tabOutlinePoints = computeRoundTabOutline(itemIndex, onBottom, bottomY, bounds, parentSize);
+			gc.fillPolygon(tabOutlinePoints);
 		}
 
 		gc.drawLine(selectionX1, selectionY1, selectionX2, selectionY2);
@@ -579,8 +587,6 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 					gc.getDevice().getSystemColor(SWT.COLOR_WHITE));
 			gc.setForegroundPattern(foregroundPattern);
 		}
-
-		gc.drawPolyline(tmpPoints);
 
 		gc.setClipping((Rectangle) null);
 
@@ -620,6 +626,9 @@ public class CTabRendering extends CTabFolderRenderer implements ICTabRendering,
 		if (foregroundPattern != null) {
 			foregroundPattern.dispose();
 		}
+
+		gc.setForeground(tabOutlineColor);
+		gc.drawPolyline(tabOutlinePoints);
 	}
 
 	void drawUnselectedTab(int itemIndex, GC gc, Rectangle bounds, int state) {
