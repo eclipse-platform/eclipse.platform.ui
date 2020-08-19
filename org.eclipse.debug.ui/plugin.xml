@@ -2066,12 +2066,6 @@ M4 = Platform-specific fourth key
    </extension>
    <extension point="org.eclipse.ui.bindings">
      <key
-           commandId="org.eclipse.debug.ui.commands.console.clear"
-           contextId="org.eclipse.ui.console.ConsoleView"
-           schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
-           sequence="M1+L">
-     </key>
-     <key
             sequence="M2+F5"
             
             commandId="org.eclipse.debug.ui.commands.ToggleStepFilters"
