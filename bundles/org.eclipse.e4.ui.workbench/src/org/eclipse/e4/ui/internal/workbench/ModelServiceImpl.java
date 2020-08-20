@@ -72,6 +72,7 @@ import org.eclipse.e4.ui.workbench.modeling.EModelService;
 import org.eclipse.e4.ui.workbench.modeling.EPartService;
 import org.eclipse.e4.ui.workbench.modeling.EPlaceholderResolver;
 import org.eclipse.e4.ui.workbench.modeling.ElementMatcher;
+import org.eclipse.emf.common.util.ECollections;
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.osgi.framework.Bundle;
@@ -717,7 +718,10 @@ public class ModelServiceImpl implements EModelService {
 		int curIndex = curParent.getChildren().indexOf(element);
 
 		// Move the model element
-		if (index == -1) {
+		if (newParent == curParent) {
+			int target = index != -1 ? index : newParent.getChildren().size() - 1;
+			ECollections.move(newParent.getChildren(), target, element);
+		} else if (index == -1) {
 			newParent.getChildren().add(element);
 		} else {
 			newParent.getChildren().add(index, element);
