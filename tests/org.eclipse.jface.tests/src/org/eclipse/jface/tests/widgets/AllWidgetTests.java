@@ -17,14 +17,18 @@ import org.junit.runners.Suite.SuiteClasses;
 @RunWith(Suite.class)
 @SuiteClasses({ TestUnitButtonFactory.class, //
 		TestUnitCompositeFactory.class, //
+		TestUnitControlFactory.class, //
+		TestUnitItemFactory.class, //
 		TestUnitLabelFactory.class, //
 		TestUnitSashFactory.class, //
 		TestUnitSashFormFactory.class, //
 		TestUnitShellFactory.class, //
 		TestUnitSpinnerFactory.class, //
-		TestUnitTextFactory.class, //
 		TestUnitTableFactory.class, //
 		TestUnitTableColumnFactory.class, //
+		TestUnitTextFactory.class, //
+		TestUnitTreeColumnFactory.class, //
+		TestUnitTreeFactory.class, //
 })
 public class AllWidgetTests {
 
