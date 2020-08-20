@@ -659,8 +659,9 @@ public class EventLoopMonitorThread extends Thread {
 					if (threadId == uiThreadId) {
 						// Swap the UI thread to first slot in the array if it is not there already.
 						if (index != 0) {
+							ThreadInfo uiThread = thread;
 							thread = threadStacks[0];
-							threadStacks[0] = thread;
+							threadStacks[0] = uiThread;
 						}
 					} else if (!isInteresting(thread)) {
 						continue; // Skip the non-interesting thread.
