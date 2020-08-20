@@ -29,6 +29,7 @@ import org.junit.runners.Suite.SuiteClasses;
 		TestUnitTextFactory.class, //
 		TestUnitTreeColumnFactory.class, //
 		TestUnitTreeFactory.class, //
+		TestUnitWidgetFactory.class, //
 })
 public class AllWidgetTests {
 
