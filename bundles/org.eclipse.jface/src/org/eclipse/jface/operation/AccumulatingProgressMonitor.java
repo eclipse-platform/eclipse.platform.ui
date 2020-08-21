@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2000, 2015 IBM Corporation and others.
+ * Copyright (c) 2000, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -11,12 +11,12 @@
  * Contributors:
  *     IBM Corporation - initial API and implementation
  *     Brian de Alwis (MTI) - bug 432826: accumulate task-name too
+ *     Christoph Laeubrich - Bug 552683 remove deprecated api
  *******************************************************************************/
 package org.eclipse.jface.operation;
 
 import org.eclipse.core.runtime.Assert;
 import org.eclipse.core.runtime.IProgressMonitor;
-import org.eclipse.core.runtime.IProgressMonitorWithBlocking;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.ProgressMonitorWrapper;
 import org.eclipse.jface.dialogs.Dialog;
@@ -219,32 +219,31 @@ import org.eclipse.swt.widgets.Display;
 	@Override
 	public void clearBlocked() {
 
-		//If this is a monitor that can report blocking do so.
-		//Don't bother with a collector as this should only ever
-		//happen once and prevent any more progress.
+		// Don't bother with a collector as this should only ever
+		// happen once and prevent any more progress.
 		final IProgressMonitor pm = getWrappedProgressMonitor();
-		if (!(pm instanceof IProgressMonitorWithBlocking)) {
+		if (pm == null) {
 			return;
 		}
 
 		display.asyncExec(() -> {
-			((IProgressMonitorWithBlocking) pm).clearBlocked();
+			pm.clearBlocked();
 			Dialog.getBlockedHandler().clearBlocked();
 		});
 	}
 
 	@Override
 	public void setBlocked(final IStatus reason) {
-		//If this is a monitor that can report blocking do so.
-		//Don't bother with a collector as this should only ever
-		//happen once and prevent any more progress.
+
+		// Don't bother with a collector as this should only ever
+		// happen once and prevent any more progress.
 		final IProgressMonitor pm = getWrappedProgressMonitor();
-		if (!(pm instanceof IProgressMonitorWithBlocking)) {
+		if (pm == null) {
 			return;
 		}
 
 		display.asyncExec(() -> {
-			((IProgressMonitorWithBlocking) pm).setBlocked(reason);
+			pm.setBlocked(reason);
 			//Do not give a shell as we want it to block until it opens.
 			Dialog.getBlockedHandler().showBlocked(pm, reason, currentTask);
 		});
