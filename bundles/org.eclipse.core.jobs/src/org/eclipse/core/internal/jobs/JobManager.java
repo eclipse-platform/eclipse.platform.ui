@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2003, 2019 IBM Corporation and others.
+ * Copyright (c) 2003, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -20,6 +20,7 @@
  *     Jan Koehnlein - Fix for bug 60964 (454698)
  *     Terry Parker - Bug 457504, Publish a job group's final status to IJobChangeListeners
  *     Xored Software Inc - Fix for bug 550738
+ *     Christoph Laeubrich - remove deprecated API
  *******************************************************************************/
 package org.eclipse.core.internal.jobs;
 
@@ -1167,8 +1168,6 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 	 * @see #reportUnblocked
 	 */
 	final void reportBlocked(IProgressMonitor monitor, InternalJob blockingJob) {
-		if (!(monitor instanceof IProgressMonitorWithBlocking))
-			return;
 		IStatus reason;
 		if (blockingJob == null || blockingJob instanceof ThreadJob || blockingJob.isSystem()) {
 			reason = new Status(IStatus.INFO, JobManager.PI_JOBS, 1, JobMessages.jobs_blocked0, null);
@@ -1176,7 +1175,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 			String msg = NLS.bind(JobMessages.jobs_blocked1, blockingJob.getName());
 			reason = new JobStatus(IStatus.INFO, (Job) blockingJob, msg);
 		}
-		((IProgressMonitorWithBlocking) monitor).setBlocked(reason);
+		monitor.setBlocked(reason);
 	}
 
 	/**
@@ -1186,8 +1185,7 @@ public class JobManager implements IJobManager, DebugOptionsListener {
 	 * @see #reportBlocked
 	 */
 	final void reportUnblocked(IProgressMonitor monitor) {
-		if (monitor instanceof IProgressMonitorWithBlocking)
-			((IProgressMonitorWithBlocking) monitor).clearBlocked();
+		monitor.clearBlocked();
 	}
 
 	@Override
