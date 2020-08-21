@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2010, 2019 IBM Corporation and others.
+ * Copyright (c) 2010, 2020 IBM Corporation and others.
  *
  * This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License 2.0
@@ -76,11 +76,7 @@ public class SaveAsHandler extends AbstractSaveHandler {
 		if (saveablePart == null)
 			return EvaluationResult.FALSE;
 
-		if (activeMPart != null && activeMPart.isDirty()) {
-			return EvaluationResult.FALSE;
-		}
-
-		// if its availble, return whatever it says
+		// if its available, return whatever it says
 		return saveablePart.isSaveAsAllowed() ? EvaluationResult.TRUE : EvaluationResult.FALSE;
 	}
 
