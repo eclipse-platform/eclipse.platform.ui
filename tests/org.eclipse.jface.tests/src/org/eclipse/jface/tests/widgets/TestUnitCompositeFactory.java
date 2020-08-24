@@ -15,6 +15,7 @@ package org.eclipse.jface.tests.widgets;
 
 import static org.junit.Assert.assertEquals;
 
+import org.eclipse.jface.layout.GridLayoutFactory;
 import org.eclipse.jface.widgets.CompositeFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridLayout;
@@ -28,6 +29,15 @@ public class TestUnitCompositeFactory extends AbstractFactoryTest {
 
 		assertEquals(shell, composite.getParent());
 		assertEquals(SWT.MULTI, composite.getStyle() & SWT.MULTI);
+	}
+
+	@Test
+	public void createsCompositeWithLayoutSupplier() {
+		GridLayoutFactory gridLayoutFactory = GridLayoutFactory.fillDefaults();
+		Composite composite = CompositeFactory.newComposite(SWT.MULTI).supplyLayout(gridLayoutFactory::create)
+				.create(shell);
+
+		assertEquals(GridLayout.class, composite.getLayout().getClass());
 	}
 
 	@Test

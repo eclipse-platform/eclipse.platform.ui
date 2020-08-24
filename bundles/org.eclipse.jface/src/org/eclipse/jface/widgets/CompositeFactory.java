@@ -13,7 +13,10 @@
  *******************************************************************************/
 package org.eclipse.jface.widgets;
 
+import java.util.function.Supplier;
+
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Layout;
 
 /**
  * This class provides a convenient shorthand for creating and initializing
@@ -46,4 +49,35 @@ public final class CompositeFactory extends AbstractCompositeFactory<CompositeFa
 	public static CompositeFactory newComposite(int style) {
 		return new CompositeFactory(style);
 	}
+
+
+	/**
+	 * Sets a {@link Supplier} for the creation of layout associated with the
+	 * receiver. The supplier should always create a new instance of the layout in
+	 * order to make this factory reusable
+	 *
+	 * <pre>
+	 * GridLayoutFactory gridFactory = GridLayoutFactory.fillDefaults();
+	 * CompositeFactory.newComposite(SWT.BODER).supplyLayout(gridFactory::create);
+	 * </pre>
+	 *
+	 * or without GridDataFactory:
+	 *
+	 * <pre>
+	 * CompositeFactory.newComposite(SWT.BODER).supplyLayout(GridLayout::new);
+	 * </pre>
+	 *
+	 * @param layoutSupplier {@link Supplier} creating a new layout instance on
+	 *                       every call
+	 * @return this
+	 *
+	 * @see Composite#setLayout(Layout)
+	 * @since 3.22
+	 */
+	public CompositeFactory supplyLayout(Supplier<Layout> layoutSupplier) {
+		addProperty(c -> c.setLayout(layoutSupplier.get()));
+		return cast(this);
+	}
+
+
 }
