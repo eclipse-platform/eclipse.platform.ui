@@ -280,28 +280,7 @@ public class StackRenderer extends LazyStackRenderer {
 	@Inject
 	@Optional
 	void subscribeTopicChildrenChanged(@UIEventTopic(UIEvents.ElementContainer.TOPIC_CHILDREN) Event event) {
-
-		Object changedObj = event.getProperty(UIEvents.EventTags.ELEMENT);
-		// only interested in changes to toolbars and view menu (not popup menus)
-		if (!(changedObj instanceof MToolBar)
-				&& !(changedObj instanceof MMenu && !(changedObj instanceof MPopupMenu))) {
-			return;
-		}
-
-		MUIElement container = modelService.getContainer((MUIElement) changedObj);
-		// check if this is a part's toolbar
-		if (container instanceof MPart) {
-			MElementContainer<?> parent = ((MPart) container).getParent();
-			// only relayout if this part is the selected element and we
-			// actually rendered this element
-			if (parent instanceof MPartStack && parent.getSelectedElement() == container
-					&& parent.getRenderer() == StackRenderer.this) {
-				Object widget = parent.getWidget();
-				if (widget instanceof CTabFolder) {
-					adjustTopRight((CTabFolder) widget);
-				}
-			}
-		}
+		shouldTopRightAdjusted(event);
 	}
 
 	@Inject
@@ -449,7 +428,8 @@ public class StackRenderer extends LazyStackRenderer {
 		Object objElement = event.getProperty(UIEvents.EventTags.ELEMENT);
 
 		// Ensure that this event is for a MMenuItem or MToolBar
-		if (!(objElement instanceof MMenuElement) && !(objElement instanceof MToolBar)) {
+		if (!(objElement instanceof MMenuElement && !(objElement instanceof MPopupMenu))
+				&& !(objElement instanceof MToolBar)) {
 			return;
 		}
 
@@ -715,7 +695,7 @@ public class StackRenderer extends LazyStackRenderer {
 	}
 
 
-	protected void adjustTopRight(final CTabFolder tabFolder) {
+	public void adjustTopRight(final CTabFolder tabFolder) {
 		if (tabFolder.isDisposed()) {
 			return;
 		}
