@@ -15,12 +15,12 @@
 package org.eclipse.ui.internal.ide.application.dialogs;
 
 import org.eclipse.jface.preference.IPreferenceStore;
+import org.eclipse.jface.widgets.LabelFactory;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Label;
 import org.eclipse.ui.IWorkbenchPreferencePage;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.internal.IWorkbenchHelpContextIds;
@@ -36,8 +36,7 @@ import org.eclipse.ui.internal.ide.IDEWorkbenchPlugin;
  *   however the superclass, StartupPreferencePage, is internal
  * @since 3.0
  */
-public class IDEStartupPreferencePage extends StartupPreferencePage implements
-		IWorkbenchPreferencePage {
+public class IDEStartupPreferencePage extends StartupPreferencePage implements IWorkbenchPreferencePage {
 
 	private Button refreshButton;
 
@@ -48,8 +47,7 @@ public class IDEStartupPreferencePage extends StartupPreferencePage implements
 	@Override
 	protected Control createContents(Composite parent) {
 
-		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent,
-				IWorkbenchHelpContextIds.STARTUP_PREFERENCE_PAGE);
+		PlatformUI.getWorkbench().getHelpSystem().setHelp(parent, IWorkbenchHelpContextIds.STARTUP_PREFERENCE_PAGE);
 
 		Composite composite = createComposite(parent);
 
@@ -57,8 +55,7 @@ public class IDEStartupPreferencePage extends StartupPreferencePage implements
 		createProblemsViewOnStartupPref(composite);
 		createExitPromptPref(composite);
 
-		Label space = new Label(composite,SWT.NONE);
-		space.setLayoutData(new GridData());
+		LabelFactory.newLabel(SWT.NONE).layoutData(new GridData()).create(composite);
 
 		createEarlyStartupSelection(composite);
 
