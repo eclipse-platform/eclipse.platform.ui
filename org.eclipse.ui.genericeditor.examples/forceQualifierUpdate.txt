@@ -1,1 +1,2 @@
 Bug 521182 - [compiler] method reference on null object should throw NPE at runtime (JLS compliance)
+Bug 566471 - I20200828-0150 - Comparator Errors Found
