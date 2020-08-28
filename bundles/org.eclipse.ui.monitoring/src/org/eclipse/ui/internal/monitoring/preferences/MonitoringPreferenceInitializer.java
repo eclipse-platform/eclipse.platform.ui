@@ -30,7 +30,7 @@ public class MonitoringPreferenceInitializer extends AbstractPreferenceInitializ
 
 		store.setDefault(PreferenceConstants.MONITORING_ENABLED, false);
 		store.setDefault(PreferenceConstants.LONG_EVENT_WARNING_THRESHOLD_MILLIS, 500); // 0.5 sec
-		store.setDefault(PreferenceConstants.LONG_EVENT_ERROR_THRESHOLD_MILLIS, 2000); // 2 sec
+		store.setDefault(PreferenceConstants.LONG_EVENT_ERROR_THRESHOLD_MILLIS, 1200); // 2 sec
 		store.setDefault(PreferenceConstants.MAX_STACK_SAMPLES, 3);
 		store.setDefault(PreferenceConstants.DEADLOCK_REPORTING_THRESHOLD_MILLIS,
 				5 * 60 * 1000); // 5 min
