@@ -3,3 +3,4 @@ Bug 403352 - Update all parent versions to match our build stream
 Bug 429101 - [Metadata] comparator errors in most recent I-builds
 Bug 509973 - Comparator errors in I20170105-0320
 Bug 562167 - Comparator errors in I20200415-0620
+Bug 566471 - I20200828-0150 - Comparator Errors Found
