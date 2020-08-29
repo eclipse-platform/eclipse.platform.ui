@@ -232,7 +232,7 @@ public class MockProcess extends Process {
 	 * @return <code>true</code> if process is terminated
 	 */
 	private boolean isTerminated() {
-		return endTime != RUN_FOREVER && System.currentTimeMillis() > endTime;
+		return endTime != RUN_FOREVER && System.currentTimeMillis() >= endTime;
 	}
 
 	/**

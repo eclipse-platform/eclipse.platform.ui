@@ -309,7 +309,7 @@ public class ProcessConsoleTests extends AbstractDebugTest {
 	@Test
 	public void testAppendOutputToFile() throws Exception {
 		final String testContent = "Hello World!";
-		final File outFile = createTmpFile("test.out");
+		final File outFile = createTmpFile("test-append.out");
 		Map<String, Object> launchConfigAttributes = new HashMap<>();
 		launchConfigAttributes.put(IDebugUIConstants.ATTR_CAPTURE_IN_FILE, outFile.getCanonicalPath());
 		launchConfigAttributes.put(IDebugUIConstants.ATTR_APPEND_TO_FILE, true);
@@ -367,7 +367,7 @@ public class ProcessConsoleTests extends AbstractDebugTest {
 	 * @return the console object after it has finished
 	 */
 	private IOConsole doConsoleOutputTest(byte[] testContent, Map<String, Object> launchConfigAttributes) throws Exception {
-		final MockProcess mockProcess = new MockProcess(new ByteArrayInputStream(testContent), null, 0);
+		final MockProcess mockProcess = new MockProcess(new ByteArrayInputStream(testContent), null, MockProcess.RUN_FOREVER);
 		final IProcess process = mockProcess.toRuntimeProcess("Output Redirect", launchConfigAttributes);
 		final String encoding = launchConfigAttributes != null ? (String) launchConfigAttributes.get(DebugPlugin.ATTR_CONSOLE_ENCODING) : null;
 		final AtomicBoolean consoleFinished = new AtomicBoolean(false);
@@ -381,6 +381,7 @@ public class ProcessConsoleTests extends AbstractDebugTest {
 		final IConsoleManager consoleManager = ConsolePlugin.getDefault().getConsoleManager();
 		try {
 			consoleManager.addConsoles(new IConsole[] { console });
+			mockProcess.destroy();
 			waitWhile(c -> !consoleFinished.get(), testTimeout, c -> "Console did not finished.");
 
 			Object value = launchConfigAttributes != null ? launchConfigAttributes.get(IDebugUIConstants.ATTR_CAPTURE_IN_FILE) : null;
