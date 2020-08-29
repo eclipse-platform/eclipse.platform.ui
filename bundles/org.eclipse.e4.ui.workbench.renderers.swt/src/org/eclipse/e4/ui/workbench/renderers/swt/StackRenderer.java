@@ -741,8 +741,13 @@ public class StackRenderer extends LazyStackRenderer {
 		}
 
 		// Pack the result
-		trComp.pack();
-		trComp.requestLayout();
+		try {
+			trComp.setRedraw(false);
+			trComp.pack();
+			trComp.requestLayout();
+		} finally {
+			trComp.setRedraw(true);
+		}
 
 		updateMRUValue(tabFolder);
 	}

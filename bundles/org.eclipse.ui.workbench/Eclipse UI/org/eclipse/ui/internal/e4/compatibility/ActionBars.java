@@ -62,15 +62,7 @@ public class ActionBars extends SubActionBars {
 
 	@Override
 	public void updateActionBars() {
-		// FIXME compat: updateActionBars : should do something useful
 		getStatusLineManager().update(false);
-		if (menuManager != null) {
-			menuManager.update(false);
-
-			// Changes in the menuManager are not propagated to the E4 model, forcing UI
-			// update to properly show the view menu, see Bug 566375
-			forceUpdateTopRight();
-		}
 
 		if (toolbarManager != null) {
 			toolbarManager.update(true);
@@ -83,6 +75,14 @@ public class ActionBars extends SubActionBars {
 					((ToolBarManagerRenderer) renderer).reconcileManagerToModel(toolbarManager, toolbar);
 				}
 			}
+		}
+
+		if (menuManager != null) {
+			menuManager.update(false);
+
+			// Changes in the menuManager are not propagated to the E4 model, forcing UI
+			// update to properly show the view menu, see Bug 566375
+			forceUpdateTopRight();
 		}
 
 		super.updateActionBars();
